@@ -1,110 +1,290 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>嵌入式加载示例</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flyfish Viewer iframe 嵌入示例</title>
   <style>
-      html, body {
-          margin: 0;
-          padding: 0;
+      :root {
+          color-scheme: light;
+          --ink: #172033;
+          --muted: #647084;
+          --line: #d9e2ec;
+          --panel: #ffffff;
+          --soft: #f4f7fb;
+          --brand: #1d6fd6;
+          --brand-dark: #164f9c;
+          --accent: #0f8a7a;
+          --shadow: 0 22px 54px rgba(23, 32, 51, 0.12);
+      }
+
+      * {
+          box-sizing: border-box;
+      }
+
+      html,
+      body {
           width: 100%;
           height: 100%;
+          margin: 0;
+          color: var(--ink);
+          background: var(--soft);
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       }
 
-      .url {
-          position: fixed;
+      body {
+          display: flex;
+          flex-direction: column;
+      }
+
+      .embed-shell {
+          display: grid;
+          grid-template-rows: auto minmax(0, 1fr);
+          width: 100%;
+          min-height: 100vh;
+      }
+
+      .embed-header {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 24px;
+          align-items: center;
+          padding: 18px 24px;
+          border-bottom: 1px solid var(--line);
+          background:
+              linear-gradient(135deg, rgba(29, 111, 214, 0.08), rgba(15, 138, 122, 0.08)),
+              rgba(255, 255, 255, 0.94);
+          backdrop-filter: blur(14px) saturate(140%);
+      }
+
+      .brand {
+          display: flex;
+          gap: 14px;
+          align-items: center;
+          min-width: 0;
+      }
+
+      .brand-mark {
+          display: grid;
+          flex: 0 0 auto;
+          place-items: center;
+          width: 42px;
+          height: 42px;
+          border-radius: 10px;
+          background: #172033;
+          color: #ffffff;
+          font-weight: 800;
+          letter-spacing: 0;
+          box-shadow: 0 10px 24px rgba(23, 32, 51, 0.2);
+      }
+
+      .brand strong {
           display: block;
-          left: 10px;
-          top: 10px;
+          font-size: 18px;
+          line-height: 1.2;
       }
 
-      .url input {
-          width: 500px;
+      .brand span {
+          display: block;
+          margin-top: 4px;
+          color: var(--muted);
+          font-size: 13px;
+          line-height: 1.4;
+      }
+
+      .toolbar {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          min-width: 0;
+      }
+
+      .toolbar label {
+          color: var(--muted);
+          font-size: 13px;
+          font-weight: 700;
+      }
+
+      select,
+      button {
+          height: 40px;
+          border-radius: 8px;
+          font: inherit;
+      }
+
+      select {
+          min-width: 230px;
+          border: 1px solid var(--line);
+          padding: 0 36px 0 12px;
+          background: #ffffff;
+          color: var(--ink);
+      }
+
+      button {
+          border: 1px solid var(--brand);
+          padding: 0 18px;
+          background: var(--brand);
+          color: #ffffff;
+          font-weight: 760;
+          cursor: pointer;
+          transition:
+              background 0.18s ease,
+              border-color 0.18s ease,
+              transform 0.18s ease;
+      }
+
+      button:hover {
+          border-color: var(--brand-dark);
+          background: var(--brand-dark);
+          transform: translateY(-1px);
+      }
+
+      .viewer-frame-wrap {
+          position: relative;
+          min-height: 0;
+          padding: 18px;
       }
 
       iframe {
-          border: 0;
-          padding: 0;
-          margin: 0;
-          min-height: 100vh;
+          display: block;
           width: 100%;
+          height: calc(100vh - 113px);
+          min-height: 640px;
+          border: 1px solid var(--line);
+          border-radius: 10px;
+          background: #ffffff;
+          box-shadow: var(--shadow);
       }
+
       #loading {
           position: absolute;
-          background: #96c1ff;
-          left: 0;
-          top: 0;
-          color: white;
-          width: 100%;
-          height: 100%;
-          font-size: 60px;
-          line-height: 200px;
-          text-align: center;
-          padding-top: 100px;
+          inset: 18px;
+          display: none;
+          place-items: center;
+          border-radius: 10px;
+          background: rgba(244, 247, 251, 0.78);
+          color: var(--brand-dark);
+          font-size: 18px;
+          font-weight: 760;
+          backdrop-filter: blur(8px);
+      }
+
+      #loading[aria-hidden="false"] {
+          display: grid;
+      }
+
+      @media (max-width: 860px) {
+          .embed-header {
+              grid-template-columns: 1fr;
+              gap: 16px;
+              padding: 16px;
+          }
+
+          .toolbar {
+              align-items: stretch;
+              flex-direction: column;
+          }
+
+          select,
+          button {
+              width: 100%;
+          }
+
+          .viewer-frame-wrap {
+              padding: 12px;
+          }
+
+          iframe {
+              height: calc(100vh - 214px);
+          }
+
+          #loading {
+              inset: 12px;
+          }
       }
   </style>
 </head>
 <body>
-<div id='loading' style='display: none'>
-  正在加载服务器文件...
-</div>
-<div class="url">
-  <select value="./word.docx" onchange="context.url = this.value" placeholder="请输入测试url">
-    <option value="./test.doc">测试doc文档</option>
-    <option value="./word.docx">测试word文档</option>
-    <option value="./excel.xlsx">测试Excel文档</option>
-    <option value="./ppt.pptx">测试PPT文档</option>
-    <option value="./pic.png">测试PNG图片</option>
-    <option value="./pdf.pdf">测试PDF文档</option>
-    <option value="./video.mp4">测试视频</option>
-  </select>
-  <button onclick="loadFromUrl()">预览</button>
-</div>
+<main class="embed-shell">
+  <header class="embed-header">
+    <div class="brand">
+      <div class="brand-mark">FV</div>
+      <div>
+        <strong>Flyfish Viewer iframe 示例</strong>
+        <span>宿主系统下载文件后，通过 postMessage 把 Blob 推送给独立预览器。</span>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <label for="fileSelect">示例文件</label>
+      <select id="fileSelect" onchange="context.url = this.value">
+        <option value="./word.docx">Word 文档</option>
+        <option value="./test.doc">DOC 文档</option>
+        <option value="./pdf.pdf">PDF 文档</option>
+        <option value="./ofd.ofd">OFD 版式文件</option>
+        <option value="./excel.xlsx">Excel 表格</option>
+        <option value="./ppt.pptx">PPT 演示</option>
+        <option value="./sample.dxf">CAD 图纸</option>
+        <option value="./component.vue">Vue 代码</option>
+        <option value="./pic.png">PNG 图片</option>
+        <option value="./video.mp4">MP4 视频</option>
+      </select>
+      <button type="button" onclick="loadFromUrl()">预览</button>
+    </div>
+  </header>
+
+  <section class="viewer-frame-wrap" aria-label="嵌入式文件预览">
+    <div id="loading" aria-hidden="true">正在加载服务器文件...</div>
+  </section>
+</main>
+
 <script>
   var context = {
-    // 查看器的源，当前示例为在线，本地测试请改为 http://localhost:5173
-    origin: 'https://viewer.flyfish.dev',
-    // 目标frame
+    // 独立部署预览器的源。示例页和预览器同站部署时直接使用当前 origin，便于本地和线上共用。
+    origin: location.origin,
     frame: null,
-    // 文件url
     url: './word.docx',
   };
-  var loading = document.getElementById('loading')
+  var loading = document.getElementById('loading');
+  var frameWrap = document.querySelector('.viewer-frame-wrap');
+
   function appendFrame(src) {
     if (context.frame) {
-      document.body.removeChild(context.frame);
+      context.frame.remove();
     }
-    // 构建frame
+
     var frame = context.frame = document.createElement('iframe');
     frame.src = src;
-    frame.style = ''
-    return document.body.appendChild(frame)
+    frame.title = 'Flyfish Viewer 文件预览';
+    frameWrap.appendChild(frame);
+    return frame;
+  }
+
+  function setLoading(active) {
+    loading.setAttribute('aria-hidden', active ? 'false' : 'true');
   }
 
   function loadFromUrl() {
-    // 要预览的文件地址
+    // 宿主系统负责拿到真实文件，再把 Blob 推送给 iframe，适合鉴权文件和内网接口。
     var url = context.url;
-    // 取得文件名
     var filename = url.substr(url.lastIndexOf('/') + 1);
-    // 拼接iframe请求url
     var src = context.origin + '?name=' + encodeURIComponent(filename) + '&from=' + encodeURIComponent(location.origin);
-    // 拼接frame
     var frame = appendFrame(src);
-    // 绑定事件
-    frame.onload = () => {
-      loading.style.display = 'block';
-      fetch(url, { mode: "no-cors" }).then(function (res) {
+
+    frame.onload = function() {
+      setLoading(true);
+      fetch(url, { mode: 'no-cors' }).then(function(res) {
         return res.blob();
-      }).then(function (data) {
+      }).then(function(data) {
         if (!data) {
           console.error('文件下载失败');
+          return;
         }
-        console.log(data)
         frame.contentWindow.postMessage(data, context.origin);
       }).finally(function() {
-        loading.style.display = 'none';
-      })
-    }
+        setLoading(false);
+      });
+    };
   }
 
   loadFromUrl();
