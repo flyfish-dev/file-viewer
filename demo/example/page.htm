@@ -1,9 +1,29 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light dark">
     <title>HTM Source Sample</title>
   </head>
   <body>
-    <main>Rendered as highlighted source, not executed.</main>
+    <form action="/preview" method="post" enctype="multipart/form-data">
+      <fieldset>
+        <legend>Upload preview file</legend>
+        <label>
+          File
+          <input type="file" name="attachment" accept=".pdf,.ofd,.dxf,.docx">
+        </label>
+        <label>
+          Preferred renderer
+          <select name="renderer">
+            <option value="auto">Auto detect</option>
+            <option value="pdf">PDF.js</option>
+            <option value="ofd">ofd.js</option>
+            <option value="cad">CAD viewer</option>
+          </select>
+        </label>
+      </fieldset>
+      <p>This file is intentionally displayed as source code in the demo.</p>
+    </form>
   </body>
 </html>

@@ -2,9 +2,32 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Safe HTML Preview</title>
   </head>
   <body>
-    <h1>This HTML is displayed as highlighted source code.</h1>
+    <main class="preview-layout" data-renderer="highlight.js">
+      <header>
+        <p>Rendered as highlighted source code, not executed as DOM.</p>
+        <h1>Flyfish Viewer Sample</h1>
+      </header>
+
+      <section aria-labelledby="formats-title">
+        <h2 id="formats-title">Supported sample formats</h2>
+        <ul>
+          <li><strong>Document:</strong> DOCX, PDF, OFD</li>
+          <li><strong>Drawing:</strong> DXF with DWG compatibility notice</li>
+          <li><strong>Code:</strong> JS, TS, JSX, TSX, Vue, YAML, SQL</li>
+        </ul>
+      </section>
+
+      <template id="preview-card-template">
+        <article class="preview-card">
+          <h3></h3>
+          <p></p>
+          <button type="button">Open</button>
+        </article>
+      </template>
+    </main>
   </body>
 </html>

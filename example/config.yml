@@ -1,3 +1,22 @@
 demo:
   route: /example/config.yml
   renderer: highlight.js
+  sourceOnly: true
+  files:
+    - name: contract.pdf
+      category: document
+      expected: pdf-toolbar
+    - name: invoice.ofd
+      category: document
+      expected: ofd-pages
+    - name: drawing.dxf
+      category: drawing
+      expected: canvas-pan-zoom
+
+ci:
+  commands:
+    typeCheck: pnpm run type-check
+    build: pnpm run build-only
+    docs: pnpm docs:build
+  allowWarnings:
+    - large async preview chunks

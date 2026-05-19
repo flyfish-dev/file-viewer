@@ -1,6 +1,39 @@
 viewer:
+  name: Flyfish Viewer
+  mode: component
+  packages:
+    vue3: "@flyfish-group/file-viewer3@1.0.6"
+    vue2: "@flyfish-group/file-viewer@1.0.6"
   lazy: true
-  formats:
-    - ofd
-    - dxf
-    - markdown
+  defaultInput: url
+  toolbar:
+    density: compact
+    allowUpload: true
+    allowUrlPreview: true
+  groups:
+    documents:
+      label: Documents
+      formats: [doc, docx, pdf, ofd]
+      defaultScale: fit-width
+    drawings:
+      label: CAD Drawings
+      formats: [dxf, dwg]
+      fallback: convert-dwg-to-dxf
+    source:
+      label: Code and Data
+      renderer: highlight.js
+      escapeHtml: true
+      formats:
+        - json
+        - js
+        - ts
+        - tsx
+        - vue
+        - yaml
+        - sql
+  smoke:
+    browser: chrome
+    assertions:
+      - sample-picker-closes-after-select
+      - pdf-nav-can-toggle
+      - code-viewer-renders-highlight

@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preview>
-  <format name="ofd" enabled="true" />
-  <format name="dxf" enabled="true" />
-</preview>
+<preview-suite name="Flyfish Viewer" version="1.0.6">
+  <environment framework="vue2.7" bundler="vite" />
+
+  <groups>
+    <group id="document" label="Documents">
+      <format extension="docx" renderer="docx-preview" async="true" />
+      <format extension="pdf" renderer="pdfjs-dist" navigation="true" />
+      <format extension="ofd" renderer="DLTech21/ofd.js" async="true" />
+    </group>
+    <group id="drawing" label="CAD">
+      <format extension="dxf" renderer="@cadview/core" pan="true" zoom="true" />
+      <format extension="dwg" renderer="compatibility-message" />
+    </group>
+    <group id="source" label="Code and Data">
+      <format extension="ts" renderer="highlight.js" />
+      <format extension="json" renderer="highlight.js" />
+      <format extension="vue" renderer="highlight.js" />
+    </group>
+  </groups>
+
+  <smoke-tests>
+    <test id="picker-default" expected="first-group-open" />
+    <test id="pdf-fit-width" expected="toolbar-and-nav-visible" />
+    <test id="code-highlight" expected="escaped-source" />
+  </smoke-tests>
+</preview-suite>
