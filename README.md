@@ -40,7 +40,7 @@ React / 纯 JS 包推荐用 `npm install` 获得安装即复制的体验。pnpm 
 - **纯前端 Serverless。** 文档解析和展示全部在浏览器内完成，部署简单，不依赖 Office 服务端、LibreOffice 守护进程或额外转码链路。
 - **格式覆盖完整。** 当前内置 135 个扩展名映射，覆盖 Word、Excel、PowerPoint、PDF、OFD、压缩包、邮件、OLB/DRA、CAD、3D 模型、Excalidraw、draw.io、EPUB、UMD、Markdown、图片、音频、代码/文本和 MP4，能覆盖绝大多数业务附件场景。
 - **按需异步加载。** PDF、OFD、压缩包、邮件、OLB/DRA、CAD、3D 模型、绘图、Office、EPUB、UMD、Markdown 和代码高亮渲染器都按需加载，重型解析依赖不会进入其他格式的首屏路径。
-- **预览器操作完整。** 内置下载原文件、打印当前渲染结果、导出渲染后 HTML、水印开关和水印 options，适合合同、归档和审批类场景。
+- **预览器操作完整。** 内置下载原文件、打印完整渲染结果、导出渲染后 HTML、水印开关和水印 options，适合合同、归档和审批类场景。
 - **阅读体验更像产品。** `.doc`、`.docx`、PDF 都保留灰色工作台、白色纸张、居中阅读和自适应缩放，避免“内容能打开但不好读”的落差。
 - **Demo 更适合验收。** 示例文件按文档、表格、图纸、代码、图片等类型分组展示，点击样例即可打开并自动收起选择器。
 - **Vue2 / Vue3 体验一致。** `main` 分支面向 Vue2.7，`v3` 分支面向 Vue3；两边共享完整格式覆盖、示例文件盒子、文档站和 iframe 集成体验。
@@ -212,7 +212,7 @@ pnpm --filter @flyfish-group/file-viewer-demo preview
 - 如果下载地址本身没有明确扩展名，建议先在业务侧取回文件，再包装成 `File`
 - PPTX 渲染器会尽量还原常见组合图形、旋转/翻转、主题背景、图片裁剪和 EMF 矢量图片；复杂 Office 特效仍建议用真实业务文件做回归
 - OFD、压缩包、邮件、OLB/DRA、CAD、3D 模型、绘图、EPUB、UMD、PDF、Office、Markdown、音频和代码高亮渲染器都按需异步加载，只有命中格式时才拉取对应代码块
-- `options.watermark` 支持文字或图片水印；`options.toolbar` 可控制下载原文件、打印和导出 HTML；`options.archive` 可配置 libarchive worker、缓存和体积上限
+- `options.watermark` 支持文字或图片水印；`options.toolbar` 可控制下载原文件、打印完整渲染结果和导出 HTML；PDF 打印会逐页生成完整页面，避免只打印当前视口；`options.archive` 可配置 libarchive worker、缓存和体积上限
 
 ```ts
 const blob = await response.blob()

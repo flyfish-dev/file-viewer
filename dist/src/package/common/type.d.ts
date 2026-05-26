@@ -80,6 +80,27 @@ export interface FileViewerOptions {
     archive?: FileViewerArchiveOptions;
 }
 /**
+ * 导出/打印模式。
+ */
+export type FileRenderExportMode = 'export' | 'print';
+/**
+ * 渲染器自定义导出上下文。
+ *
+ * 大多数格式可以直接克隆当前 DOM；PDF 这类虚拟滚动或按需渲染格式
+ * 需要在打印前重新生成完整页面，因此允许渲染器注册专属适配器。
+ */
+export interface FileRenderExportOptions {
+    mode: FileRenderExportMode;
+    title: string;
+}
+/**
+ * 渲染器专属导出适配器。
+ */
+export interface FileRenderExportAdapter {
+    beforeSnapshot?: () => Promise<void> | void;
+    toHtml?: (options: FileRenderExportOptions) => Promise<string> | string;
+}
+/**
  * 渲染器可选上下文。
  *
  * 部分格式需要知道原始 URL 的目录，例如 glTF / DAE / FBX 会继续加载
@@ -90,6 +111,7 @@ export interface FileRenderContext {
     filename?: string;
     url?: string;
     options?: FileViewerOptions;
+    registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void;
 }
 /**
  * 文件处理逻辑，用于声明具体格式的异步渲染器。
