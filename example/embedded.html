@@ -224,11 +224,17 @@
         <option value="./ofd.ofd">OFD 版式文件</option>
         <option value="./excel.xlsx">Excel 表格</option>
         <option value="./ppt.pptx">PPT 演示</option>
-        <option value="./sample.dxf">CAD 图纸</option>
+        <option value="./drawing.dxf">CAD 图纸</option>
         <option value="./flow.excalidraw">Excalidraw 图纸</option>
         <option value="./process.drawio">draw.io 图纸</option>
         <option value="./book.epub">EPUB 电子书</option>
         <option value="./book.umd">UMD 电子书</option>
+        <option value="./archive.zip">ZIP 压缩包</option>
+        <option value="./archive.tar.gz">TAR.GZ 压缩包</option>
+        <option value="./sample.eml">EML 邮件</option>
+        <option value="./sample.msg">MSG 邮件</option>
+        <option value="./sample.olb">OLB 元件库</option>
+        <option value="./sample.dra">DRA 图纸</option>
         <option value="./component.vue">Vue 代码</option>
         <option value="./pic.png">PNG 图片</option>
         <option value="./audio.mp3">MP3 音频</option>
@@ -250,6 +256,13 @@
     origin: location.origin,
     frame: null,
     url: './word.docx',
+    options: {
+      toolbar: true,
+      archive: {
+        workerUrl: '/vendor/libarchive/worker-bundle.js',
+        cache: true
+      }
+    }
   };
   var loading = document.getElementById('loading');
   var frameWrap = document.querySelector('.viewer-frame-wrap');
@@ -274,12 +287,15 @@
     // 宿主系统负责拿到真实文件，再把 Blob 推送给 iframe，适合鉴权文件和内网接口。
     var url = context.url;
     var filename = url.substr(url.lastIndexOf('/') + 1);
-    var src = context.origin + '?name=' + encodeURIComponent(filename) + '&from=' + encodeURIComponent(location.origin);
+    var src = context.origin +
+      '?name=' + encodeURIComponent(filename) +
+      '&from=' + encodeURIComponent(location.origin) +
+      '&options=' + encodeURIComponent(JSON.stringify(context.options));
     var frame = appendFrame(src);
 
     frame.onload = function() {
       setLoading(true);
-      fetch(url, { mode: 'no-cors' }).then(function(res) {
+      fetch(url).then(function(res) {
         return res.blob();
       }).then(function(data) {
         if (!data) {

@@ -1,0 +1,46 @@
+From: Flyfish Viewer <viewer@flyfish.dev>
+To: Demo User <demo@flyfish.dev>
+Subject: Flyfish Viewer EML Sample
+Date: Tue, 26 May 2026 10:00:00 +0800
+MIME-Version: 1.0
+Message-ID: <sample-eml-20260526@flyfish.dev>
+Content-Type: multipart/mixed; boundary="flyfish-mixed-boundary"
+
+--flyfish-mixed-boundary
+Content-Type: multipart/alternative; boundary="flyfish-alt-boundary"
+
+--flyfish-alt-boundary
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+
+这是一封用于验证 EML 在线预览的示例邮件。
+
+它包含纯文本正文、HTML 正文和一个文本附件，便于验证邮件头信息、正文切换、附件下载与附件预览。
+
+--flyfish-alt-boundary
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+
+<!doctype html>
+<html>
+  <body>
+    <h1>Flyfish Viewer EML Sample</h1>
+    <p>这是一封用于验证 <strong>EML 在线预览</strong> 的示例邮件。</p>
+    <ul>
+      <li>HTML 正文安全地渲染在 sandbox iframe 中。</li>
+      <li>附件会按需读取并继续调用统一文件预览链路。</li>
+      <li>头信息、纯文本和 HTML 可以独立切换。</li>
+    </ul>
+  </body>
+</html>
+
+--flyfish-alt-boundary--
+
+--flyfish-mixed-boundary
+Content-Type: text/plain; charset="UTF-8"; name="attachment.txt"
+Content-Disposition: attachment; filename="attachment.txt"
+Content-Transfer-Encoding: base64
+
+Rmx5ZmlzaCBWaWV3ZXIgZW1haWwgYXR0YWNobWVudCBzYW1wbGUuCg==
+
+--flyfish-mixed-boundary--

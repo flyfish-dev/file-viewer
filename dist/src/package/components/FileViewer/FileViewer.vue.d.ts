@@ -1,4 +1,4 @@
-import { FileRef } from '../../common/type';
+import { FileRef, FileViewerOptions } from '../../common/type';
 type __VLS_Props = {
     /**
      * 本地二进制输入。优先级高于 `url`。
@@ -14,6 +14,12 @@ type __VLS_Props = {
      * 再通过 `file` 参数传入。
      */
     url?: string;
+    /**
+     * 预览器通用选项。
+     *
+     * 目前覆盖内置操作栏、水印，以及压缩包内文件预览的缓存/体积限制。
+     */
+    options?: FileViewerOptions;
 };
 declare const __VLS_export: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, string, import('vue').PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, any>;
 declare const _default: typeof __VLS_export;

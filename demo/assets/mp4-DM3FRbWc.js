@@ -1,0 +1,1 @@
+function e(e,t){let n=document.createElement(`video`);n.width=840,n.height=480,n.controls=!0,Object.assign(n.style,{margin:`40px auto`,display:`block`});let r=document.createElement(`source`);r.src=URL.createObjectURL(new Blob([e])),n.appendChild(r),t.appendChild(n)}export{e as default};

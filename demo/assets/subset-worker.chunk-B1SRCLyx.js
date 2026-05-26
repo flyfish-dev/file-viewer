@@ -1,1 +1,0 @@
-import"./chunk-SRAX5OIU-Bp5xA2OF.js";import{n as e,r as t}from"./chunk-EIO257PC-BOzhMRfZ.js";var n=import.meta.url?new URL(import.meta.url):void 0;typeof window>`u`&&typeof self<`u`&&(self.onmessage=async n=>{switch(n.data.command){case e.Subset:let r=await t(n.data.arrayBuffer,n.data.codePoints);self.postMessage(r,{transfer:[r]});break}});export{n as WorkerUrl};
