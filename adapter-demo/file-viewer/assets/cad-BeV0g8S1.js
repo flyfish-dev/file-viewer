@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./CadViewer-CU6FVGs9.js","./index-BI5HB5Rl.js","./index-CJLM3dyI.css","./CadViewer-DZAS6XFY.css"])))=>i.map(i=>d[i]);
+import{S as e,d as t,t as n,x as r}from"./index-BI5HB5Rl.js";var i=e(()=>n(()=>import(`./CadViewer-CU6FVGs9.js`),__vite__mapDeps([0,1,2,3]),import.meta.url));async function a(e,n,a){let o=t({render:()=>r(i,{data:e,type:a||`dxf`},null)});return o.mount(n),o}export{a as default};

@@ -1,14 +1,297 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="./favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Viewer在线预览器vue3.0版本</title>
-    <script type="module" crossorigin src="./assets/index-kFSstoL8.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-D8hVflyC.css">
+    <meta name="theme-color" content="#eef5f1">
+    <title>Flyfish File Viewer 在线预览器 Vue3</title>
+    <style>
+      :root {
+        color-scheme: light;
+        background: #eef5f1;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100%;
+        background: #eef5f1;
+        color: #172033;
+        font-family: Aptos, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body {
+        min-height: 100vh;
+      }
+
+      #app {
+        min-height: 100vh;
+      }
+
+      /* Vue 挂载前的首屏骨架，避免大文件预览器资源加载期间出现空白或黑屏。 */
+      .app-boot-screen {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+        background:
+          linear-gradient(90deg, rgba(31, 150, 110, 0.07) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(31, 150, 110, 0.06) 1px, transparent 1px),
+          linear-gradient(135deg, #eef5f1 0%, #f8fbff 52%, #edf7f2 100%);
+        background-size: 28px 28px, 28px 28px, auto;
+        box-sizing: border-box;
+      }
+
+      .app-boot-shell {
+        width: min(960px, 100%);
+        display: grid;
+        grid-template-columns: minmax(220px, 0.85fr) minmax(320px, 1.45fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .app-boot-brand,
+      .app-boot-preview {
+        min-width: 0;
+        border: 1px solid rgba(114, 137, 161, 0.2);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 24px 70px rgba(41, 66, 90, 0.12);
+      }
+
+      .app-boot-brand {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 26px;
+      }
+
+      .app-boot-title {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .app-boot-mark {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: #1f966e;
+        color: #ffffff;
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+      }
+
+      .app-boot-name {
+        display: block;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .app-boot-status {
+        display: block;
+        margin-top: 6px;
+        color: #6b7b8f;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .app-boot-progress {
+        position: relative;
+        height: 6px;
+        margin-top: 42px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #dce7ee;
+      }
+
+      .app-boot-progress::after {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 42%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #1f966e, #3b82f6);
+        animation: bootProgress 1.35s ease-in-out infinite;
+        content: "";
+      }
+
+      .app-boot-preview {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        overflow: hidden;
+      }
+
+      .app-boot-toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(114, 137, 161, 0.18);
+      }
+
+      .app-boot-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #1f966e;
+      }
+
+      .app-boot-chip,
+      .app-boot-line,
+      .app-boot-page {
+        background: linear-gradient(90deg, #eef3f7 0%, #f9fbfd 45%, #e7eff4 100%);
+        background-size: 240% 100%;
+        animation: bootShimmer 1.6s ease-in-out infinite;
+      }
+
+      .app-boot-chip {
+        width: 86px;
+        height: 18px;
+        border-radius: 999px;
+      }
+
+      .app-boot-chip:nth-child(4) {
+        width: 118px;
+        margin-left: auto;
+      }
+
+      .app-boot-canvas {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 18px;
+        padding: 18px;
+        background: #f4f8fb;
+      }
+
+      .app-boot-nav {
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+
+      .app-boot-line {
+        height: 14px;
+        border-radius: 999px;
+      }
+
+      .app-boot-line:nth-child(2) {
+        width: 72%;
+      }
+
+      .app-boot-line:nth-child(3) {
+        width: 86%;
+      }
+
+      .app-boot-page {
+        min-height: 300px;
+        border: 1px solid rgba(114, 137, 161, 0.16);
+        border-radius: 8px;
+        background-color: #ffffff;
+      }
+
+      @keyframes bootProgress {
+        0% {
+          transform: translateX(-110%);
+        }
+
+        50% {
+          transform: translateX(75%);
+        }
+
+        100% {
+          transform: translateX(240%);
+        }
+      }
+
+      @keyframes bootShimmer {
+        0% {
+          background-position: 160% 0;
+        }
+
+        100% {
+          background-position: -120% 0;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app-boot-screen {
+          padding: 18px;
+        }
+
+        .app-boot-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .app-boot-brand {
+          padding: 22px;
+        }
+
+        .app-boot-progress {
+          margin-top: 26px;
+        }
+
+        .app-boot-canvas {
+          grid-template-columns: 1fr;
+        }
+
+        .app-boot-nav {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .app-boot-progress::after,
+        .app-boot-chip,
+        .app-boot-line,
+        .app-boot-page {
+          animation: none;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-BI5HB5Rl.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CJLM3dyI.css">
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <main class="app-boot-screen" role="status" aria-live="polite" aria-label="正在加载 Flyfish File Viewer">
+        <div class="app-boot-shell">
+          <section class="app-boot-brand">
+            <div class="app-boot-title">
+              <div class="app-boot-mark" aria-hidden="true">F</div>
+              <div>
+                <strong class="app-boot-name">Flyfish File Viewer</strong>
+                <span class="app-boot-status">正在准备文档预览环境...</span>
+              </div>
+            </div>
+            <div class="app-boot-progress" aria-hidden="true"></div>
+          </section>
+          <section class="app-boot-preview" aria-hidden="true">
+            <div class="app-boot-toolbar">
+              <span class="app-boot-dot"></span>
+              <span class="app-boot-chip"></span>
+              <span class="app-boot-chip"></span>
+              <span class="app-boot-chip"></span>
+            </div>
+            <div class="app-boot-canvas">
+              <div class="app-boot-nav">
+                <span class="app-boot-line"></span>
+                <span class="app-boot-line"></span>
+                <span class="app-boot-line"></span>
+              </div>
+              <div class="app-boot-page"></div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
   </body>
 </html>

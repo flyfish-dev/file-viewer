@@ -1,2 +1,0 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./ImageViewer-y2k0Kgfw.js","./index-kFSstoL8.js","./index-D8hVflyC.css","./ImageViewer-D2_fTk_7.css"])))=>i.map(i=>d[i]);
-import{S as e,d as t,s as n,t as r,x as i}from"./index-kFSstoL8.js";var a=e(()=>r(()=>import(`./ImageViewer-y2k0Kgfw.js`),__vite__mapDeps([0,1,2,3]),import.meta.url));async function o(e,r){let o=await n(e),s=t({render:()=>i(a,{image:o},null)});return s.mount(r),s}export{o as default};
