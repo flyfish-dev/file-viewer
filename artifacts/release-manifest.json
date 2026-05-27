@@ -1,12 +1,12 @@
 {
-  "version": "1.0.12",
+  "version": "1.0.13",
   "package": "@flyfish-group/file-viewer3",
-  "generatedAt": "2026-05-26T08:03:56.767Z",
+  "generatedAt": "2026-05-27T11:27:49.606Z",
   "sourceBranch": "v3",
-  "sourceCommit": "ad16ba5",
+  "sourceCommit": "d92113f",
   "adapterPackages": {
-    "@flyfish-group/file-viewer-web": "1.0.12",
-    "@flyfish-group/file-viewer-react": "1.0.12"
+    "@flyfish-group/file-viewer-web": "1.0.13",
+    "@flyfish-group/file-viewer-react": "1.0.13"
   },
   "publicRepo": "/Users/wangyu/IdeaProjects/file-viewer-public",
   "artifactOnly": true,
