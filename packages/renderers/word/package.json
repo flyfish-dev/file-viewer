@@ -58,7 +58,8 @@
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:page-defaults": "pnpm build && node scripts/verify-docx-page-defaults.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.2.3",
@@ -68,6 +69,7 @@
     "rtf.js": "^3.0.9"
   },
   "devDependencies": {
+    "@xmldom/xmldom": "0.9.10",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

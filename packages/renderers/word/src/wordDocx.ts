@@ -24,6 +24,10 @@ import {
   type FileViewerZoomState,
   type PrintPageSize,
 } from '@file-viewer/core'
+import {
+  createBrowserDocxXmlRuntime,
+  normalizeDocxPageLayout
+} from './docxPageDefaults.js'
 
 const DOCX_DEFAULT_PAGE_SIZE: PrintPageSize = {
   width: 794,
@@ -667,10 +671,14 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
   }
   const docxOptions = createDocxOptions(target, context, notifyProgressiveRender)
   const { defaultOptions, renderAsync } = await loadLibrary()
+  const xmlRuntime = createBrowserDocxXmlRuntime(target.ownerDocument)
+  const renderBuffer = xmlRuntime
+    ? await normalizeDocxPageLayout(buffer, xmlRuntime)
+    : buffer
 
   target.dataset.docxWorker = docxOptions.useWorker ? 'self' : 'false'
   target.dataset.docxDarkMode = docxOptions.darkMode ? 'true' : 'false'
-  const usedHeaderFooterFallback = await renderDocxWithHeaderFooterFallback(renderAsync, buffer, target, {
+  const usedHeaderFooterFallback = await renderDocxWithHeaderFooterFallback(renderAsync, renderBuffer, target, {
     ...defaultOptions,
     ...docxOptions
   })
