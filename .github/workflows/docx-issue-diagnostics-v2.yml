@@ -1,0 +1,158 @@
+name: DOCX issue diagnostics v2
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    if: github.head_ref == 'feature/docx-layout-155-161'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Download public fixtures
+        run: |
+          mkdir -p apps/viewer-demo/public/issue-fixtures
+          curl --fail --location --retry 3 'https://github.com/user-attachments/files/30333140/Japanese-Template.docx' --output apps/viewer-demo/public/issue-fixtures/issue-155.docx
+          curl --fail --location --retry 3 'https://github.com/user-attachments/files/30398444/-.W00213.docx' --output apps/viewer-demo/public/issue-fixtures/issue-161.docx
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+
+      - name: Capture current rendering
+        shell: bash
+        run: |
+          mkdir -p /tmp/docx-diagnostics-v2
+          cat > .docx-diagnostics-v2.mjs <<'NODE'
+          import { createReadStream, existsSync, statSync, writeFileSync } from 'node:fs'
+          import { createServer } from 'node:http'
+          import { extname, join, normalize, resolve } from 'node:path'
+          import { chromium } from 'playwright'
+
+          const dist = resolve('apps/viewer-demo/dist')
+          const entry = join(dist, 'index.html')
+          const outputDir = '/tmp/docx-diagnostics-v2'
+          const mime = {
+            '.css': 'text/css; charset=utf-8',
+            '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            '.html': 'text/html; charset=utf-8',
+            '.js': 'text/javascript; charset=utf-8',
+            '.json': 'application/json; charset=utf-8',
+            '.mjs': 'text/javascript; charset=utf-8',
+            '.png': 'image/png',
+            '.svg': 'image/svg+xml',
+            '.wasm': 'application/wasm'
+          }
+          const server = createServer((request, response) => {
+            const pathname = decodeURIComponent(new URL(request.url || '/', 'http://127.0.0.1').pathname)
+            const candidate = pathname === '/' ? entry : join(dist, normalize(pathname).replace(/^[/\\]+/, ''))
+            const file = existsSync(candidate) && statSync(candidate).isFile() ? candidate : entry
+            response.writeHead(200, { 'Content-Type': mime[extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' })
+            createReadStream(file).pipe(response)
+          })
+          await new Promise((resolveListen, rejectListen) => {
+            server.once('error', rejectListen)
+            server.listen(0, '127.0.0.1', resolveListen)
+          })
+          const address = server.address()
+          const base = `http://127.0.0.1:${address.port}`
+          const browser = await chromium.launch({ headless: true })
+          const cases = [['155', 'issue-155.docx'], ['161', 'issue-161.docx']]
+
+          try {
+            for (const [id, filename] of cases) {
+              const page = await browser.newPage({ viewport: { width: 1600, height: 1100 } })
+              const errors = []
+              page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
+              page.on('pageerror', error => errors.push(error.stack || error.message))
+              await page.goto(`${base}/?lang=zh&url=${encodeURIComponent(`/issue-fixtures/${filename}`)}`, { waitUntil: 'domcontentloaded', timeout: 120000 })
+              await page.waitForSelector('.file-viewer .content.docx-fit-viewer:not(.hidden)', { timeout: 120000 })
+              await page.waitForTimeout(4000)
+
+              const data = await page.evaluate(() => {
+                const root = document.querySelector('.docx-fit-viewer')
+                const frames = Array.from(root?.querySelectorAll('.docx-page-frame, .docx-flow-frame') || [])
+                const sections = Array.from(root?.querySelectorAll('section.docx') || [])
+                const elements = root ? Array.from(root.querySelectorAll('*')) : []
+                const leaves = elements.filter(element => !element.children.length && element.textContent?.trim())
+                const textNodes = leaves.slice(0, 3000).map(element => {
+                  const rect = element.getBoundingClientRect()
+                  const style = getComputedStyle(element)
+                  return {
+                    text: element.textContent.trim().slice(0, 180),
+                    tag: element.tagName,
+                    className: element.className,
+                    rect: [rect.left, rect.top, rect.width, rect.height],
+                    fontSize: style.fontSize,
+                    lineHeight: style.lineHeight,
+                    fontFamily: style.fontFamily,
+                    position: style.position,
+                    transform: style.transform,
+                    overflow: style.overflow
+                  }
+                })
+                const summary = nodes => nodes.map((node, index) => {
+                  const rect = node.getBoundingClientRect()
+                  const style = getComputedStyle(node)
+                  return {
+                    index,
+                    className: node.className,
+                    rect: [rect.left, rect.top, rect.width, rect.height],
+                    scroll: [node.scrollWidth, node.scrollHeight],
+                    position: style.position,
+                    overflow: style.overflow,
+                    transform: style.transform,
+                    section: node.dataset.docxSection,
+                    sectionNumber: node.dataset.docxSectionNumber
+                  }
+                })
+                return {
+                  rootClassName: root?.className || '',
+                  rootHtmlLength: root?.innerHTML.length || 0,
+                  counts: {
+                    frames: frames.length,
+                    sections: sections.length,
+                    drawings: root?.querySelectorAll('svg,img,canvas').length || 0,
+                    absolute: elements.filter(element => getComputedStyle(element).position === 'absolute').length
+                  },
+                  frames: summary(frames),
+                  sections: summary(sections),
+                  textNodes
+                }
+              })
+              data.consoleErrors = errors
+              writeFileSync(`${outputDir}/issue-${id}-dom.json`, JSON.stringify(data, null, 2))
+              writeFileSync(`${outputDir}/issue-${id}-rendered.html`, await page.locator('.docx-fit-viewer').first().evaluate(element => element.outerHTML))
+              await page.screenshot({ path: `${outputDir}/issue-${id}-viewport.png` })
+              const first = page.locator('.docx-page-frame, .docx-flow-frame').first()
+              if (await first.count()) await first.screenshot({ path: `${outputDir}/issue-${id}-first-frame.png` })
+              await page.close()
+            }
+          } finally {
+            await browser.close()
+            await new Promise(resolveClose => server.close(resolveClose))
+          }
+          NODE
+          node .docx-diagnostics-v2.mjs 2>&1 | tee /tmp/docx-diagnostics-v2/render.log
+          rm .docx-diagnostics-v2.mjs
+
+      - name: Upload diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: file-viewer-docx-issues-155-161-diagnostics-v2
+          path: /tmp/docx-diagnostics-v2
+          if-no-files-found: error
+          retention-days: 2
