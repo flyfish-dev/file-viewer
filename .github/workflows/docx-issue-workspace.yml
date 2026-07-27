@@ -1,0 +1,58 @@
+name: DOCX issue workspace
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    if: github.head_ref == 'feature/docx-layout-155-161'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+
+      - name: Download public issue fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p issue-fixtures
+          curl --fail --location --retry 3 \
+            'https://github.com/user-attachments/files/30333140/Japanese-Template.docx' \
+            --output issue-fixtures/issue-155-japanese-template.docx
+          curl --fail --location --retry 3 \
+            'https://github.com/user-attachments/files/30398444/-.W00213.docx' \
+            --output issue-fixtures/issue-161-resume.docx
+          unzip -t issue-fixtures/issue-155-japanese-template.docx
+          unzip -t issue-fixtures/issue-161-resume.docx
+          sha256sum issue-fixtures/*.docx > issue-fixtures/SHA256SUMS
+
+      - name: Stage source workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=/tmp/file-viewer-docx-workspace
+          rm -rf "$root"
+          mkdir -p "$root/file-viewer"
+          rsync -a ./ "$root/file-viewer/" \
+            --exclude '.git/' \
+            --exclude 'node_modules/' \
+            --exclude '**/dist/' \
+            --exclude '**/.vitepress/cache/'
+          printf 'head=%s\n' "$GITHUB_SHA" > "$root/file-viewer/WORKSPACE_SOURCE.txt"
+
+      - name: Upload workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: file-viewer-docx-issues-155-161-workspace
+          path: /tmp/file-viewer-docx-workspace
+          if-no-files-found: error
+          retention-days: 2
+          compression-level: 6
