@@ -51,8 +51,12 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Render diagnostic snapshots
+        id: render
+        continue-on-error: true
         shell: bash
         run: |
+          set -o pipefail
+          mkdir -p /tmp/docx-issue-diagnostics
           cat > /tmp/render-docx-diagnostics.mjs <<'NODE'
           import { createReadStream, existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs'
           import { createServer } from 'node:http'
@@ -65,16 +69,25 @@ jobs:
           const entryPath = join(distDir, 'index.html')
           if (!existsSync(entryPath)) throw new Error(`Missing demo build: ${entryPath}`)
           const types = {
-            '.css': 'text/css; charset=utf-8', '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
-            '.mjs': 'text/javascript; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.wasm': 'application/wasm'
+            '.css': 'text/css; charset=utf-8',
+            '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            '.html': 'text/html; charset=utf-8',
+            '.js': 'text/javascript; charset=utf-8',
+            '.json': 'application/json; charset=utf-8',
+            '.mjs': 'text/javascript; charset=utf-8',
+            '.png': 'image/png',
+            '.svg': 'image/svg+xml',
+            '.wasm': 'application/wasm'
           }
           const server = createServer((request, response) => {
             const url = new URL(request.url || '/', 'http://127.0.0.1')
             const clean = decodeURIComponent(url.pathname)
             const candidate = clean === '/' ? entryPath : join(distDir, normalize(clean).replace(/^[/\\]+/, ''))
             const file = existsSync(candidate) && statSync(candidate).isFile() ? candidate : entryPath
-            response.writeHead(200, { 'Content-Type': types[extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' })
+            response.writeHead(200, {
+              'Content-Type': types[extname(file).toLowerCase()] || 'application/octet-stream',
+              'Cache-Control': 'no-store'
+            })
             createReadStream(file).pipe(response)
           })
           await new Promise((resolveListen, rejectListen) => {
@@ -84,23 +97,33 @@ jobs:
           const address = server.address()
           const baseUrl = `http://127.0.0.1:${address.port}`
           const browser = await chromium.launch({ headless: true })
-
           const cases = [
             ['155', '/issue-fixtures/issue-155-japanese-template.docx'],
             ['161', '/issue-fixtures/issue-161-resume.docx']
           ]
+
           try {
             for (const [id, url] of cases) {
               const page = await browser.newPage({ viewport: { width: 1600, height: 1100 }, deviceScaleFactor: 1 })
               const consoleErrors = []
-              page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()) })
+              page.on('console', message => {
+                if (message.type() === 'error') consoleErrors.push(message.text())
+              })
               page.on('pageerror', error => consoleErrors.push(error.stack || error.message))
-              await page.goto(`${baseUrl}/?lang=zh&url=${encodeURIComponent(url)}&diagnostic=issue-${id}`, { waitUntil: 'domcontentloaded', timeout: 120000 })
-              await page.waitForSelector('.file-viewer .content:not(.hidden) .docx-fit-viewer', { timeout: 120000 })
+
+              await page.goto(`${baseUrl}/?lang=zh&url=${encodeURIComponent(url)}&diagnostic=issue-${id}`, {
+                waitUntil: 'domcontentloaded',
+                timeout: 120000
+              })
+              await page.waitForSelector('.file-viewer .content.docx-fit-viewer:not(.hidden)', { timeout: 120000 })
               await page.waitForTimeout(5000)
               await page.screenshot({ path: join(outputDir, `issue-${id}-viewport.png`), fullPage: false })
-              const viewer = page.locator('.file-viewer').first()
-              await viewer.screenshot({ path: join(outputDir, `issue-${id}-viewer.png`) })
+
+              const firstFrame = page.locator('.docx-page-frame, .docx-flow-frame').first()
+              if (await firstFrame.count()) {
+                await firstFrame.screenshot({ path: join(outputDir, `issue-${id}-first-frame.png`) })
+              }
+
               const data = await page.evaluate(() => {
                 const root = document.querySelector('.docx-fit-viewer')
                 const wrapper = root?.querySelector('.docx-wrapper')
@@ -117,34 +140,62 @@ jobs:
                   const rect = parent.getBoundingClientRect()
                   const style = getComputedStyle(parent)
                   textNodes.push({
-                    text: text.slice(0, 120), tag: parent.tagName, className: parent.className,
-                    left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height,
-                    fontSize: style.fontSize, lineHeight: style.lineHeight, fontFamily: style.fontFamily,
-                    position: style.position, transform: style.transform, whiteSpace: style.whiteSpace,
-                    verticalAlign: style.verticalAlign, display: style.display
+                    text: text.slice(0, 160),
+                    tag: parent.tagName,
+                    className: parent.className,
+                    left: rect.left,
+                    top: rect.top,
+                    right: rect.right,
+                    bottom: rect.bottom,
+                    width: rect.width,
+                    height: rect.height,
+                    fontSize: style.fontSize,
+                    lineHeight: style.lineHeight,
+                    fontFamily: style.fontFamily,
+                    position: style.position,
+                    transform: style.transform,
+                    whiteSpace: style.whiteSpace,
+                    verticalAlign: style.verticalAlign,
+                    display: style.display
                   })
-                  if (textNodes.length >= 1500) break
+                  if (textNodes.length >= 2500) break
                 }
                 const elementSummary = elements => elements.map((element, index) => {
                   const rect = element.getBoundingClientRect()
                   const style = getComputedStyle(element)
                   return {
-                    index, className: element.className, left: rect.left, top: rect.top, width: rect.width, height: rect.height,
-                    scrollWidth: element.scrollWidth, scrollHeight: element.scrollHeight,
-                    position: style.position, overflow: style.overflow, transform: style.transform,
-                    pageWidth: style.getPropertyValue('--docx-page-width'), pageHeight: style.getPropertyValue('--docx-page-height')
+                    index,
+                    className: element.className,
+                    left: rect.left,
+                    top: rect.top,
+                    width: rect.width,
+                    height: rect.height,
+                    scrollWidth: element.scrollWidth,
+                    scrollHeight: element.scrollHeight,
+                    position: style.position,
+                    overflow: style.overflow,
+                    transform: style.transform,
+                    pageWidth: style.getPropertyValue('--docx-page-width'),
+                    pageHeight: style.getPropertyValue('--docx-page-height')
                   }
                 })
+                const allElements = root ? Array.from(root.querySelectorAll('*')) : []
                 return {
                   href: location.href,
+                  rootClassName: root?.className || '',
                   rootHtmlLength: root?.innerHTML.length || 0,
                   wrapper: wrapper ? elementSummary([wrapper])[0] : null,
-                  frames: elementSummary(frames), sections: elementSummary(sections), articles: elementSummary(articles),
+                  frames: elementSummary(frames),
+                  sections: elementSummary(sections),
+                  articles: elementSummary(articles),
                   textNodes,
                   counts: {
-                    frames: frames.length, sections: sections.length, articles: articles.length,
+                    frames: frames.length,
+                    sections: sections.length,
+                    articles: articles.length,
                     drawings: root?.querySelectorAll('svg, canvas, img').length || 0,
-                    absolute: root ? Array.from(root.querySelectorAll('*')).filter(el => getComputedStyle(el).position === 'absolute').length : 0
+                    absolute: allElements.filter(element => getComputedStyle(element).position === 'absolute').length,
+                    alternateChoiceMarkers: root?.querySelectorAll('[data-mc-choice], [data-alternate-choice]').length || 0
                   }
                 }
               })
@@ -159,19 +210,24 @@ jobs:
             await new Promise(resolveClose => server.close(resolveClose))
           }
           NODE
-          node /tmp/render-docx-diagnostics.mjs
+          node /tmp/render-docx-diagnostics.mjs 2>&1 | tee /tmp/docx-issue-diagnostics/render.log
 
       - name: Copy DOCX engine package
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
-          engine=$(find node_modules/.pnpm -type d -path '*/node_modules/@file-viewer/docx' | head -n 1)
-          test -n "$engine"
           mkdir -p /tmp/docx-issue-diagnostics/engine
-          cp -a "$engine"/. /tmp/docx-issue-diagnostics/engine/
-          printf '%s\n' "$engine" > /tmp/docx-issue-diagnostics/engine-source-path.txt
+          engine=$(find node_modules/.pnpm -type d -path '*/node_modules/@file-viewer/docx' -print -quit)
+          if [ -n "$engine" ]; then
+            cp -a "$engine"/. /tmp/docx-issue-diagnostics/engine/
+            printf '%s\n' "$engine" > /tmp/docx-issue-diagnostics/engine-source-path.txt
+          else
+            printf 'DOCX engine package not found\n' > /tmp/docx-issue-diagnostics/engine-copy-error.txt
+          fi
 
       - name: Upload diagnostics
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: file-viewer-docx-issues-155-161-diagnostics
@@ -179,3 +235,7 @@ jobs:
           if-no-files-found: error
           retention-days: 2
           compression-level: 6
+
+      - name: Fail when rendering diagnostics failed
+        if: steps.render.outcome == 'failure'
+        run: exit 1
