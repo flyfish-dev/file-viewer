@@ -32,15 +32,11 @@ Sponsorship helps preserve focused maintenance time for the public project inste
 | WeChat / Alipay | Domestic users who prefer a simple one-time contribution | A direct thank-you that supports the same public maintenance work. |
 | Enterprise support | Organizations that need contracts, invoices, private deployment, custom compatibility, or committed delivery | A separately scoped commercial engagement with explicit requirements, boundaries, and response expectations. |
 
-## How much should I sponsor?
+## What should I contribute?
 
-There is no required amount. A practical guide is:
+There is no required amount or fixed tier. A one-time “thanks, this saved me a headache” tip is useful; recurring support helps even more because maintenance time becomes easier to plan.
 
-- **$5–10 per month:** a recurring thank-you that shows the project is worth maintaining.
-- **$20–50 per month:** meaningful support for compatibility testing, documentation, and release work.
-- **$100+ per month:** substantial backing for regular public maintenance; use enterprise support when your organization also requires an SLA, contract, or defined deliverable.
-
-A one-time contribution is equally welcome. Consistent small sponsorships are especially useful because they make maintenance capacity easier to plan.
+Choose whatever feels reasonable for the time and trouble File Viewer saved you. If your company needs an SLA, contract, invoice, confidential file handling, or a defined deliverable, use enterprise support instead. A larger donation still does not buy issue priority.
 
 ## Clear boundaries
 
