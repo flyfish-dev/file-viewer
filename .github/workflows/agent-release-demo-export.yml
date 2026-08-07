@@ -11,7 +11,7 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Resolve, download and inspect release demo
         shell: bash
@@ -27,24 +27,52 @@ jobs:
             -o /tmp/release.json
           jq -r '.assets[] | [.name, (.size | tostring), .url, .browser_download_url] | @tsv' \
             /tmp/release.json > /tmp/release-assets.txt
-          asset_url="$(jq -r '[.assets[] | select(.name | test("demo.*\\.zip$"; "i"))][0].url // empty' /tmp/release.json)"
-          asset_name="$(jq -r '[.assets[] | select(.name | test("demo.*\\.zip$"; "i"))][0].name // empty' /tmp/release.json)"
+          asset_url="$(jq -r '.assets[] | select(.name == "file-viewer-v2-2.2.5-demo.tar.gz") | .url' /tmp/release.json)"
           if [[ -z "${asset_url}" ]]; then
-            printf 'No demo ZIP asset is present in release v2.2.5.\n' > /tmp/demo-diagnostic.txt
+            printf 'Expected demo asset is absent from release v2.2.5.\n' > /tmp/demo-diagnostic.txt
             exit 0
           fi
-          printf 'Resolved release asset: %s\n' "${asset_name}" > /tmp/demo-diagnostic.txt
           curl -L --fail --retry 3 --retry-all-errors \
             -H 'Accept: application/octet-stream' \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H 'X-GitHub-Api-Version: 2022-11-28' \
-            "${asset_url}" -o /tmp/demo-2.2.5.zip
+            "${asset_url}" -o /tmp/demo-2.2.5.tar.gz
+          sha256sum /tmp/demo-2.2.5.tar.gz > /tmp/demo-2.2.5.sha256
           mkdir -p /tmp/demo-2.2.5
-          unzip -q /tmp/demo-2.2.5.zip -d /tmp/demo-2.2.5
-          find /tmp/demo-2.2.5 -maxdepth 5 -type f -printf '%P\t%s\n' | sort > /tmp/demo-2.2.5-file-list.txt
-          printf '\nPPT runtime files:\n' >> /tmp/demo-2.2.5-file-list.txt
-          find /tmp/demo-2.2.5 -type f -path '*/vendor/ppt/*' -printf '%P\t%s\n' | sort >> /tmp/demo-2.2.5-file-list.txt
-          sha256sum /tmp/demo-2.2.5.zip > /tmp/demo-2.2.5.sha256
+          tar -xzf /tmp/demo-2.2.5.tar.gz -C /tmp/demo-2.2.5
+          find /tmp/demo-2.2.5 -maxdepth 6 -type f -printf '%P\t%s\n' | sort > /tmp/demo-2.2.5-file-list.txt
+          root="$(dirname "$(find /tmp/demo-2.2.5 -type f -name index.html -print -quit)")"
+          {
+            printf 'Resolved asset: file-viewer-v2-2.2.5-demo.tar.gz\n'
+            printf 'Extracted web root: %s\n' "${root}"
+            printf 'Top-level entries:\n'
+            find "${root}" -mindepth 1 -maxdepth 2 -printf '%P\t%y\n' | sort | head -n 200
+            printf '\nPPT runtime entries:\n'
+            find "${root}" -type f -path '*/vendor/ppt/*' -printf '%P\t%s\n' | sort
+            printf '\nBuilt references to PPT runtime:\n'
+            grep -R -n -m 20 -E 'vendor/ppt/(index|worker)\.mjs|ppt-native\.wasm' "${root}" --include='*.js' --include='*.mjs' || true
+          } > /tmp/demo-diagnostic.txt
+          (
+            cd "${root}"
+            python3 -m http.server 8011 >/tmp/http-server.log 2>&1 &
+            server_pid=$!
+            trap 'kill ${server_pid} 2>/dev/null || true' EXIT
+            for attempt in {1..20}; do
+              curl -sSf http://127.0.0.1:8011/ >/dev/null && break
+              sleep 0.2
+            done
+            {
+              printf '\nHTTP probes:\n'
+              for path in / /vendor/ppt/index.mjs /vendor/ppt/worker.mjs /vendor/ppt/ppt-native.wasm /vendor/ppt/ppt-font-cjk.otf; do
+                status="$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:8011${path}" || true)"
+                printf '%s\t%s\n' "${status}" "${path}"
+              done
+            } >> /tmp/demo-diagnostic.txt
+          )
+          mkdir -p /tmp/ppt-runtime-sample
+          if [[ -d "${root}/vendor/ppt" ]]; then
+            find "${root}/vendor/ppt" -maxdepth 1 -type f \( -name '*.mjs' -o -name '*.js' \) -exec cp -t /tmp/ppt-runtime-sample {} +
+          fi
       - name: Upload release diagnostics
         if: always()
         uses: actions/upload-artifact@v4
@@ -53,8 +81,9 @@ jobs:
           path: |
             /tmp/release-assets.txt
             /tmp/demo-diagnostic.txt
-            /tmp/demo-2.2.5.zip
             /tmp/demo-2.2.5-file-list.txt
             /tmp/demo-2.2.5.sha256
+            /tmp/http-server.log
+            /tmp/ppt-runtime-sample
           retention-days: 1
           if-no-files-found: warn
