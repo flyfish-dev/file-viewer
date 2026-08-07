@@ -30,6 +30,7 @@ import type {
   ParagraphBlock,
   ParagraphModel,
   ParagraphRange,
+  ParsedFib,
   ResolvedStyle,
   StyleCollection,
   TableBlock,
@@ -169,12 +170,80 @@ function normalizePlainTextChar(ch: string): string {
     case DOC_CONTROL.nonBreakingHyphen:
       return '-';
     case DOC_CONTROL.nonRequiredHyphen:
-      return '';
     case DOC_CONTROL.annotationRef:
+    case DOC_CONTROL.textBoxPlaceholder:
       return '';
     default:
       return ch;
   }
+}
+
+function normalizeParagraphText(text: string): string {
+  return text.replaceAll(DOC_CONTROL.textBoxPlaceholder, '');
+}
+
+interface StoryRange {
+  kind: 'main' | 'footnote' | 'header' | 'macro' | 'annotation' | 'endnote' | 'textbox' | 'header-textbox';
+  cpStart: number;
+  cpEnd: number;
+}
+
+function getDocumentStoryRanges(fib: ParsedFib, documentLength: number): StoryRange[] {
+  const storyLengths: Array<[StoryRange['kind'], number]> = [
+    ['main', fib.fibRgLw.ccpText],
+    ['footnote', fib.fibRgLw.ccpFtn],
+    ['header', fib.fibRgLw.ccpHdd],
+    ['macro', fib.fibRgLw.ccpMcr],
+    ['annotation', fib.fibRgLw.ccpAtn],
+    ['endnote', fib.fibRgLw.ccpEdn],
+    ['textbox', fib.fibRgLw.ccpTxbx],
+    ['header-textbox', fib.fibRgLw.ccpHdrTxbx],
+  ];
+  const hasDeclaredStories = storyLengths.some(([, length]) => length > 0);
+  if (!hasDeclaredStories) return [{ kind: 'main', cpStart: 0, cpEnd: documentLength }];
+
+  const ranges: StoryRange[] = [];
+  let cp = 0;
+  for (const [kind, rawLength] of storyLengths) {
+    const length = Math.max(0, rawLength || 0);
+    const cpStart = Math.min(cp, documentLength);
+    cp += length;
+    const cpEnd = Math.min(cp, documentLength);
+    ranges.push({ kind, cpStart, cpEnd });
+  }
+  return ranges;
+}
+
+function buildStoryParagraphRanges(
+  story: StoryRange,
+  documentText: string,
+  papxRuns: Array<{ cpStart: number; cpEnd: number; styleId: number; properties: DecodedProperty[] }>,
+): Array<ParagraphRange & { storyKind: StoryRange['kind'] }> {
+  if (story.cpEnd <= story.cpStart) return [];
+  const runs = papxRuns.filter((run) => run.cpStart < story.cpEnd && run.cpEnd > story.cpStart);
+  if (runs.length) {
+    return runs.map((run) => {
+      const cpStart = Math.max(story.cpStart, run.cpStart);
+      const cpEnd = Math.min(story.cpEnd, run.cpEnd);
+      return {
+        cpStart,
+        cpEnd,
+        terminator: documentText[cpEnd - 1] || '',
+        styleId: run.styleId,
+        properties: run.properties,
+        storyKind: story.kind,
+      };
+    }).filter((range) => range.cpEnd > range.cpStart);
+  }
+
+  return splitParagraphRanges(documentText.slice(story.cpStart, story.cpEnd)).map((range) => ({
+    ...range,
+    cpStart: range.cpStart + story.cpStart,
+    cpEnd: range.cpEnd + story.cpStart,
+    styleId: 0,
+    properties: [],
+    storyKind: story.kind,
+  }));
 }
 
 function buildInlineNodes(segments: CharSegment[], resolveAsset: (charState: CharState) => MsDocAsset | null): InlineNode[] {
@@ -264,6 +333,7 @@ function buildCharSegments(
   baseCharProps: DecodedProperty[],
   resolveFont: (fontId: number | undefined) => FontInfo | null,
   cursorRef: { index: number },
+  forceReadableColors = false,
 ): CharSegment[] {
   const overlaps = getOverlappingRuns(chpxRuns, range.cpStart, range.cpEnd, cursorRef);
   const boundaries = new Set<number>([range.cpStart, range.cpEnd]);
@@ -284,6 +354,7 @@ function buildCharSegments(
     const charStyleProps = directState.charStyleId != null ? styles.resolveStyle(directState.charStyleId).charProps : [];
     const finalProps = mergePropertyArrays(baseCharProps, charStyleProps, directProps);
     const state = charPropsToState(finalProps);
+    if (forceReadableColors && state.colorIndex === 8) state.colorIndex = 1;
     const font = resolveFont(state.fontFamilyId);
     if (font) state.fontFamily = font.name || font.altName || undefined;
     const localStart = cpStart - range.cpStart;
@@ -301,6 +372,7 @@ function buildCharSegments(
 
   if (!segments.length && paragraphText) {
     const state = charPropsToState(baseCharProps);
+    if (forceReadableColors && state.colorIndex === 8) state.colorIndex = 1;
     const font = resolveFont(state.fontFamilyId);
     if (font) state.fontFamily = font.name || font.altName || undefined;
     segments.push({ cpStart: range.cpStart, cpEnd: range.cpEnd, text: paragraphText, state });
@@ -310,7 +382,7 @@ function buildCharSegments(
 }
 
 function buildParagraphModel(
-  range: ParagraphRange,
+  range: ParagraphRange & { storyKind?: StoryRange['kind'] },
   paragraphText: string,
   styles: StyleCollection,
   fonts: FontsCollection,
@@ -331,7 +403,16 @@ function buildParagraphModel(
 
   const baseCharProps = paraStyle.charProps;
   const resolveFont = (fontId: number | undefined) => fonts.byIndex(fontId);
-  const segments = buildCharSegments(range, paragraphText, chpxRuns, styles, baseCharProps, resolveFont, chpxCursor);
+  const segments = buildCharSegments(
+    range,
+    paragraphText,
+    chpxRuns,
+    styles,
+    baseCharProps,
+    resolveFont,
+    chpxCursor,
+    range.storyKind === 'textbox' || range.storyKind === 'header-textbox',
+  );
   const inlines = buildInlineNodes(segments, resolveAsset);
 
   return {
@@ -689,24 +770,32 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
   const clx = parseClx(tableBytes, fib.fibRgFcLcb);
   const pieceTexts = buildPieceTextCache(wordBytes, clx);
   const documentText = pieceTexts.join('');
-  const mainStoryEnd = fib.fibRgLw.ccpText > 0 ? fib.fibRgLw.ccpText : documentText.length;
+  const stories = getDocumentStoryRanges(fib, documentText.length);
+  const mainStory = stories.find((story) => story.kind === 'main') || { kind: 'main' as const, cpStart: 0, cpEnd: documentText.length };
+  const supplementalTextStories = stories.filter((story) => (
+    (story.kind === 'textbox' || story.kind === 'header-textbox')
+    && normalizeParagraphText(documentText.slice(story.cpStart, story.cpEnd)).replace(/[\r\u0007]/g, '').trim().length > 0
+  ));
 
   const styles = parseStyles(tableBytes, fib.fibRgFcLcb);
   const fonts = parseFonts(tableBytes, fib.fibRgFcLcb);
-  const chpxRuns = readChpxRuns(wordBytes, tableBytes, fib, clx).filter((run) => run.cpStart < mainStoryEnd);
+  const relevantStoryEnd = Math.max(mainStory.cpEnd, ...supplementalTextStories.map((story) => story.cpEnd));
+  const chpxRuns = readChpxRuns(wordBytes, tableBytes, fib, clx)
+    .filter((run) => run.cpStart < relevantStoryEnd)
+    .map((run) => ({ ...run, cpEnd: Math.min(run.cpEnd, relevantStoryEnd) }));
   const papxRuns = readPapxRuns(wordBytes, tableBytes, fib, clx, dataBytes)
-    .filter((run) => run.cpStart < mainStoryEnd)
-    .map((run) => ({ ...run, cpEnd: Math.min(run.cpEnd, mainStoryEnd) }));
+    .filter((run) => run.cpStart < relevantStoryEnd)
+    .map((run) => ({ ...run, cpEnd: Math.min(run.cpEnd, relevantStoryEnd) }));
 
-  const ranges: ParagraphRange[] = papxRuns.length
-    ? papxRuns.map((run) => ({
-        cpStart: run.cpStart,
-        cpEnd: run.cpEnd,
-        terminator: documentText[run.cpEnd - 1] || '',
-        styleId: run.styleId,
-        properties: run.properties,
-      }))
-    : splitParagraphRanges(documentText.slice(0, mainStoryEnd)).map((range) => ({ ...range, styleId: 0, properties: [] }));
+  const ranges: Array<ParagraphRange & { storyKind: StoryRange['kind'] }> = [mainStory, ...supplementalTextStories]
+    .flatMap((story) => buildStoryParagraphRanges(story, documentText, papxRuns));
+  if (supplementalTextStories.length) {
+    pushWarning(
+      warnings,
+      'Recovered text from a legacy Word text-box story; text-box positioning is unavailable, so the content was linearized after the main story.',
+      { code: 'MSDOC_TEXTBOX_STORY_LINEARIZED', storyCount: supplementalTextStories.length },
+    );
+  }
 
   const objectPool = extractObjectPool(cfb);
   const assets: MsDocAsset[] = [];
@@ -715,13 +804,16 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
   const resolveAsset = createAssetResolver(dataBytes, objectPool, assets, usedAttachmentNames, assetCache, options);
   const chpxCursor = { index: 0 };
 
-  const paragraphs = ranges.map((range) => {
+  const paragraphs = ranges.flatMap((range) => {
     const rawParagraphText = getTextByCp(wordBytes, clx, pieceTexts, range.cpStart, range.cpEnd);
     const terminator = range.terminator === DOC_CONTROL.paragraph || range.terminator === DOC_CONTROL.cellMark ? range.terminator : '';
-    const paragraphText = terminator && rawParagraphText.endsWith(terminator)
+    const rawContent = terminator && rawParagraphText.endsWith(terminator)
       ? rawParagraphText.slice(0, -1)
       : rawParagraphText;
-    return buildParagraphModel({ ...range, terminator }, paragraphText, styles, fonts, chpxRuns, resolveAsset, chpxCursor);
+    const paragraphText = normalizeParagraphText(rawContent);
+    const isTextBoxStory = range.storyKind === 'textbox' || range.storyKind === 'header-textbox';
+    if ((rawContent.includes(DOC_CONTROL.textBoxPlaceholder) || isTextBoxStory) && !paragraphText.trim()) return [];
+    return [buildParagraphModel({ ...range, terminator }, paragraphText, styles, fonts, chpxRuns, resolveAsset, chpxCursor)];
   });
 
   normalizeRowEndOnlyTables(paragraphs);
