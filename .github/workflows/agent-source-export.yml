@@ -1,0 +1,29 @@
+name: Agent source export
+
+on:
+  push:
+    branches:
+      - agent/source-export-20260807
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Create source archive
+        shell: bash
+        run: zip -q -r /tmp/source-export.zip . -x '.git/*'
+      - name: Upload source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-export-file-viewer
+          path: /tmp/source-export.zip
+          retention-days: 1
+          if-no-files-found: error
