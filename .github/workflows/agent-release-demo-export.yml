@@ -13,26 +13,48 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Download and inspect release demo
+      - name: Resolve, download and inspect release demo
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           curl -L --fail --retry 3 --retry-all-errors \
-            'https://github.com/flyfish-dev/file-viewer/releases/download/v2.2.5/demo-2.2.5.zip' \
-            -o /tmp/demo-2.2.5.zip
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            'https://api.github.com/repos/flyfish-dev/file-viewer/releases/tags/v2.2.5' \
+            -o /tmp/release.json
+          jq -r '.assets[] | [.name, (.size | tostring), .url, .browser_download_url] | @tsv' \
+            /tmp/release.json > /tmp/release-assets.txt
+          asset_url="$(jq -r '[.assets[] | select(.name | test("demo.*\\.zip$"; "i"))][0].url // empty' /tmp/release.json)"
+          asset_name="$(jq -r '[.assets[] | select(.name | test("demo.*\\.zip$"; "i"))][0].name // empty' /tmp/release.json)"
+          if [[ -z "${asset_url}" ]]; then
+            printf 'No demo ZIP asset is present in release v2.2.5.\n' > /tmp/demo-diagnostic.txt
+            exit 0
+          fi
+          printf 'Resolved release asset: %s\n' "${asset_name}" > /tmp/demo-diagnostic.txt
+          curl -L --fail --retry 3 --retry-all-errors \
+            -H 'Accept: application/octet-stream' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${asset_url}" -o /tmp/demo-2.2.5.zip
           mkdir -p /tmp/demo-2.2.5
           unzip -q /tmp/demo-2.2.5.zip -d /tmp/demo-2.2.5
-          find /tmp/demo-2.2.5 -maxdepth 4 -type f -printf '%P\t%s\n' | sort > /tmp/demo-2.2.5-file-list.txt
+          find /tmp/demo-2.2.5 -maxdepth 5 -type f -printf '%P\t%s\n' | sort > /tmp/demo-2.2.5-file-list.txt
           printf '\nPPT runtime files:\n' >> /tmp/demo-2.2.5-file-list.txt
           find /tmp/demo-2.2.5 -type f -path '*/vendor/ppt/*' -printf '%P\t%s\n' | sort >> /tmp/demo-2.2.5-file-list.txt
           sha256sum /tmp/demo-2.2.5.zip > /tmp/demo-2.2.5.sha256
-      - name: Upload release demo
+      - name: Upload release diagnostics
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: file-viewer-demo-2.2.5-release
           path: |
+            /tmp/release-assets.txt
+            /tmp/demo-diagnostic.txt
             /tmp/demo-2.2.5.zip
             /tmp/demo-2.2.5-file-list.txt
             /tmp/demo-2.2.5.sha256
           retention-days: 1
-          if-no-files-found: error
+          if-no-files-found: warn
