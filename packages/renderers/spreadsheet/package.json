@@ -71,7 +71,8 @@
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json --force && node scripts/build-worker.mjs",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:github-175": "pnpm build && node scripts/verify-github-175.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.2.5",
