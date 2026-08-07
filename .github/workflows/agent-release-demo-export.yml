@@ -1,0 +1,38 @@
+name: Agent release demo export
+
+on:
+  push:
+    branches:
+      - agent/source-export-20260807
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download and inspect release demo
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 --retry-all-errors \
+            'https://github.com/flyfish-dev/file-viewer/releases/download/v2.2.5/demo-2.2.5.zip' \
+            -o /tmp/demo-2.2.5.zip
+          mkdir -p /tmp/demo-2.2.5
+          unzip -q /tmp/demo-2.2.5.zip -d /tmp/demo-2.2.5
+          find /tmp/demo-2.2.5 -maxdepth 4 -type f -printf '%P\t%s\n' | sort > /tmp/demo-2.2.5-file-list.txt
+          printf '\nPPT runtime files:\n' >> /tmp/demo-2.2.5-file-list.txt
+          find /tmp/demo-2.2.5 -type f -path '*/vendor/ppt/*' -printf '%P\t%s\n' | sort >> /tmp/demo-2.2.5-file-list.txt
+          sha256sum /tmp/demo-2.2.5.zip > /tmp/demo-2.2.5.sha256
+      - name: Upload release demo
+        uses: actions/upload-artifact@v4
+        with:
+          name: file-viewer-demo-2.2.5-release
+          path: |
+            /tmp/demo-2.2.5.zip
+            /tmp/demo-2.2.5-file-list.txt
+            /tmp/demo-2.2.5.sha256
+          retention-days: 1
+          if-no-files-found: error
