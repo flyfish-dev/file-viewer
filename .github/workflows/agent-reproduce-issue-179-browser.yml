@@ -1,0 +1,108 @@
+name: Agent reproduce issue 179 in browser
+
+on:
+  push:
+    branches:
+      - agent/source-export-20260807
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.0.9
+          run_install: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Download release demo
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -sSfL \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            'https://api.github.com/repos/flyfish-dev/file-viewer/releases/tags/v2.2.5' \
+            -o /tmp/release.json
+          asset_url="$(jq -r '.assets[] | select(.name == "file-viewer-v2-2.2.5-demo.tar.gz") | .url' /tmp/release.json)"
+          curl -sSfL \
+            -H 'Accept: application/octet-stream' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${asset_url}" -o /tmp/demo.tar.gz
+          mkdir -p /tmp/demo
+          tar -xzf /tmp/demo.tar.gz -C /tmp/demo
+      - name: Reproduce local PPT preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/demo
+          python3 -m http.server 8011 >/tmp/issue-179-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill ${server_pid} 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            curl -sSf http://127.0.0.1:8011/ >/dev/null && break
+            sleep 0.2
+          done
+          cd "$GITHUB_WORKSPACE"
+          node <<'NODE' | tee /tmp/issue-179-browser.log
+          import { chromium } from 'playwright'
+          const browser = await chromium.launch({ headless: true })
+          const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+          const events = []
+          page.on('console', message => events.push({ type: `console:${message.type()}`, text: message.text() }))
+          page.on('pageerror', error => events.push({ type: 'pageerror', text: error.stack || error.message }))
+          page.on('requestfailed', request => events.push({ type: 'requestfailed', text: `${request.url()} :: ${request.failure()?.errorText || 'unknown'}` }))
+          page.on('response', response => {
+            if (/vendor\/ppt|ppt-packaged-runtime/.test(response.url())) {
+              events.push({ type: 'response', text: `${response.status()} ${response.headers()['content-type'] || ''} ${response.url()}` })
+            }
+          })
+          let outcome = 'unknown'
+          try {
+            await page.goto('http://127.0.0.1:8011/?lang=zh-CN&issue=179', { waitUntil: 'domcontentloaded', timeout: 60_000 })
+            await page.locator('.rail-nav-button--upload').click()
+            await page.locator('.desktop-upload-dropzone input[type=file]').setInputFiles('apps/component-demo/public/example/office-demo.ppt')
+            await Promise.race([
+              page.waitForSelector('.ppt-binary-page canvas', { timeout: 90_000 }).then(() => { outcome = 'rendered' }),
+              page.waitForSelector('.ppt-binary-error:not([hidden])', { timeout: 90_000 }).then(() => { outcome = 'renderer-error' })
+            ])
+            const state = await page.evaluate(() => ({
+              outcome: document.querySelector('.ppt-binary-page canvas') ? 'rendered' : 'not-rendered',
+              runtimeMode: document.querySelector('.ppt-binary-shell')?.getAttribute('data-ppt-runtime-mode') || null,
+              error: document.querySelector('.ppt-binary-error p')?.textContent || null,
+              pageCount: document.querySelectorAll('.ppt-binary-page').length
+            }))
+            console.log(JSON.stringify({ outcome, state, events }, null, 2))
+            if (outcome !== 'rendered') process.exitCode = 2
+          } finally {
+            await browser.close()
+          }
+          NODE
+      - name: Upload reproduction logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-179-browser-reproduction
+          path: |
+            /tmp/issue-179-browser.log
+            /tmp/issue-179-server.log
+          retention-days: 1
+          if-no-files-found: warn
