@@ -1,0 +1,35 @@
+name: Agent open issue sample export
+
+on:
+  push:
+    branches:
+      - agent/source-export-20260807
+
+permissions:
+  contents: read
+
+jobs:
+  export-samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download issue samples and screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/issue-samples
+          curl -L --fail --retry 3 --retry-all-errors 'https://github.com/user-attachments/files/30651664/W00307.doc' -o '/tmp/issue-samples/issue-171-W00307.doc'
+          curl -L --fail --retry 3 --retry-all-errors 'https://github.com/user-attachments/assets/876646d8-e42c-4e98-bdc6-59639649f25c' -o '/tmp/issue-samples/issue-171-preview.png'
+          curl -L --fail --retry 3 --retry-all-errors 'https://github.com/user-attachments/files/30654108/default.xls' -o '/tmp/issue-samples/issue-172-default.xls'
+          curl -L --fail --retry 3 --retry-all-errors 'https://github.com/user-attachments/files/30730492/4000562803.xlsx' -o '/tmp/issue-samples/issue-175-4000562803.xlsx'
+          curl -L --fail --retry 3 --retry-all-errors 'https://github.com/user-attachments/assets/3bbf5f11-3fe7-438f-bfc3-83c2ef868ea0' -o '/tmp/issue-samples/issue-176-source.png'
+          curl -L --fail --retry 3 --retry-all-errors 'https://github.com/user-attachments/assets/f8dbf10e-0170-441b-9455-ff1f1d6a7191' -o '/tmp/issue-samples/issue-176-preview.png'
+          curl -L --fail --retry 3 --retry-all-errors 'https://github.com/user-attachments/assets/722f0391-9e63-4781-b09f-b2809273d88e' -o '/tmp/issue-samples/issue-178-source.png'
+          find /tmp/issue-samples -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
+      - name: Upload issue samples
+        uses: actions/upload-artifact@v4
+        with:
+          name: file-viewer-open-issue-samples
+          path: /tmp/issue-samples
+          retention-days: 1
+          if-no-files-found: error
