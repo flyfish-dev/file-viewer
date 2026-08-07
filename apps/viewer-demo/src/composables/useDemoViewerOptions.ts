@@ -149,10 +149,10 @@ export function useDemoViewerOptions(input: UseDemoViewerOptionsInput) {
         : {})
     }
 
-    // The legacy PPT engine is copied into the demo's local vendor directory.
-    // Querying by runtime version prevents mixed WASM/worker browser caches.
+    // Keep the ESM entry inside the Vite bundle. Some simple Windows static
+    // servers expose `.mjs` as `application/octet-stream`, which browsers reject
+    // for native dynamic imports. Runtime assets stay external and versioned.
     options.presentation = {
-      pptModuleUrl: pptRuntimeAssetUrl('vendor/ppt/index.mjs'),
       pptWorkerUrl: pptRuntimeAssetUrl('vendor/ppt/worker.mjs'),
       pptWasmUrl: pptRuntimeAssetUrl('vendor/ppt/ppt-native.wasm'),
       pptFontUrl: pptRuntimeAssetUrl('vendor/ppt/ppt-font-cjk.otf'),
