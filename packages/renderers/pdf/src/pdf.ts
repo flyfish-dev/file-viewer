@@ -155,6 +155,11 @@ type PdfJsConsoleWarningSuppression = {
 type PdfNavigationResult = void | PromiseLike<void>;
 type PdfFindMatchesCount = { current: number; total: number };
 
+interface PdfPageScrollAnchor {
+  page: number;
+  inPageRatio: number;
+}
+
 interface PdfOutlineItemView {
   id: string;
   title: string;
@@ -533,6 +538,8 @@ export default async function renderPdf(
   let suppressScrollEventUntil = 0;
   let userScrollIntentUntil = 0;
   let scrollStateFrame = 0;
+  let rotationOperationVersion = 0;
+  let pendingUserRotationAnchor: PdfPageScrollAnchor | null = null;
   let pdfSearchState = createPdfSearchState();
   let pdfMatchesCount: PdfFindMatchesCount = { current: 0, total: 0 };
   let pdfSearchOptions: FileViewerSearchOptions | undefined;
@@ -671,9 +678,23 @@ export default async function renderPdf(
     return result;
   };
 
+  const navScrollTopByMode: Record<PdfNavMode, number> = {
+    pages: 0,
+    outline: 0,
+  };
+
   const renderNavList = () => {
+    if (navList.classList.contains('pdf-page-list')) {
+      navScrollTopByMode.pages = navList.scrollTop;
+    } else if (navList.classList.contains('pdf-outline-list')) {
+      navScrollTopByMode.outline = navList.scrollTop;
+    }
     navList.replaceChildren();
     navList.className = navMode === 'pages' ? 'pdf-page-list' : 'pdf-outline-list';
+
+    const restoreNavScrollTop = () => {
+      navList.scrollTop = navScrollTopByMode[navMode];
+    };
 
     if (navMode === 'pages') {
       thumbnailObserver?.disconnect();
@@ -696,6 +717,7 @@ export default async function renderPdf(
         button.addEventListener('click', () => goToPage(page, 'page-click', 'user'));
         navList.append(button);
       }
+      restoreNavScrollTop();
       return;
     }
 
@@ -720,6 +742,7 @@ export default async function renderPdf(
     if (!entries.length) {
       navList.append(createElement(documentRef, 'div', 'pdf-outline-empty', t('pdf.nav.outlineEmpty')));
     }
+    restoreNavScrollTop();
   };
 
   const paintPdfThumbnail = (pageNumber: number, thumb: HTMLElement) => {
@@ -1304,7 +1327,97 @@ export default async function renderPdf(
     activeFitRequest = null;
   };
 
+  const getPdfPageElement = (pageNumber: number) => {
+    const pageView = pdfContext.viewer?.getPageView(pageNumber - 1) as { div?: HTMLElement } | null;
+    return pageView?.div ||
+      pdfViewerRoot.querySelector<HTMLElement>(`.page[data-page-number="${pageNumber}"]`);
+  };
+
+  const captureCurrentPdfPageAnchor = (): PdfPageScrollAnchor | null => {
+    const pageElement = getPdfPageElement(currentPage);
+    if (!pageElement) {
+      return null;
+    }
+    const containerRect = container.getBoundingClientRect();
+    const pageRect = pageElement.getBoundingClientRect();
+    const pageHeight = pageElement.offsetHeight || pageRect.height;
+    if (pageHeight <= 0) {
+      return null;
+    }
+    const pageTop = pageRect.top - containerRect.top + container.scrollTop;
+    const inPageRatio = (container.scrollTop - pageTop) / pageHeight;
+    return {
+      page: currentPage,
+      inPageRatio: Math.max(0, Math.min(1, inPageRatio)),
+    };
+  };
+
+  const cancelPendingUserRotationRestore = () => {
+    if (!pendingUserRotationAnchor) {
+      return;
+    }
+    pendingUserRotationAnchor = null;
+    rotationOperationVersion += 1;
+  };
+
+  const restoreUserRotationAnchor = (
+    anchor: PdfPageScrollAnchor,
+    operationVersion: number
+  ) => {
+    const apply = () => {
+      if (
+        destroyed ||
+        operationVersion !== rotationOperationVersion ||
+        pendingUserRotationAnchor !== anchor
+      ) {
+        return false;
+      }
+      const pageElement = getPdfPageElement(anchor.page);
+      if (!pageElement) {
+        return false;
+      }
+      const containerRect = container.getBoundingClientRect();
+      const pageRect = pageElement.getBoundingClientRect();
+      const pageHeight = pageElement.offsetHeight || pageRect.height;
+      if (pageHeight <= 0) {
+        return false;
+      }
+      const pageTop = pageRect.top - containerRect.top + container.scrollTop;
+      const maxTop = Math.max(0, container.scrollHeight - container.clientHeight);
+      suppressProgrammaticScrollEvents();
+      container.scrollTop = Math.max(
+        0,
+        Math.min(maxTop, pageTop + anchor.inPageRatio * pageHeight)
+      );
+      currentPage = anchor.page;
+      syncUi();
+      return true;
+    };
+
+    apply();
+    void waitForPaint(targetWindow)
+      .then(() => {
+        apply();
+        return waitForPaint(targetWindow);
+      })
+      .then(apply);
+    targetWindow.requestAnimationFrame(() => {
+      apply();
+      targetWindow.requestAnimationFrame(apply);
+    });
+    targetWindow.setTimeout(() => {
+      apply();
+      if (
+        operationVersion === rotationOperationVersion &&
+        pendingUserRotationAnchor === anchor
+      ) {
+        pendingUserRotationAnchor = null;
+      }
+    }, 180);
+  };
+
   const recordUserScrollIntent = () => {
+    cancelPendingUserRotationRestore();
     userScrollIntentUntil = Date.now() + 750;
     suppressScrollEventUntil = 0;
     markFitInteraction('user');
@@ -1640,6 +1753,17 @@ export default async function renderPdf(
   ) => {
     markFitInteraction(source);
     const normalized = normalizeRotation(rotation);
+    if (source === 'user' && pdfContext.viewer) {
+      pendingUserRotationAnchor ||= captureCurrentPdfPageAnchor();
+    } else {
+      cancelPendingUserRotationRestore();
+    }
+    const pageAnchor = source === 'user' ? pendingUserRotationAnchor : null;
+    const operationVersion = ++rotationOperationVersion;
+    if (pageAnchor) {
+      suppressProgrammaticScrollEvents();
+      currentPage = pageAnchor.page;
+    }
     currentRotation = normalized;
     pdfThumbnails.clear();
     pendingPdfThumbnails.clear();
@@ -1649,6 +1773,9 @@ export default async function renderPdf(
     }
     pdfContext.viewer.pagesRotation = normalized;
     void waitForPaint(targetWindow).then(() => {
+      if (operationVersion !== rotationOperationVersion) {
+        return;
+      }
       const refocusBoundingBoxes = () => {
         if (pdfBoundingBoxController.hasBoxes()) {
           void waitForPaint(targetWindow)
@@ -1657,6 +1784,9 @@ export default async function renderPdf(
         }
       };
       if (reapplyFitAfterLayout(source, notifyViewState)) {
+        if (pageAnchor) {
+          restoreUserRotationAnchor(pageAnchor, operationVersion);
+        }
         if (notifyViewState) {
           emitViewStateChange(action, source);
         }
@@ -1666,6 +1796,9 @@ export default async function renderPdf(
       pdfContext.viewer?.update();
       scheduleLegacyPageDimensionPatch();
       syncUi();
+      if (pageAnchor) {
+        restoreUserRotationAnchor(pageAnchor, operationVersion);
+      }
       if (notifyViewState) {
         emitViewStateChange(action, source);
       }
@@ -1690,6 +1823,9 @@ export default async function renderPdf(
   ) {
     if (!pdfContext.viewer || !pageCount) {
       return;
+    }
+    if (source === 'user') {
+      cancelPendingUserRotationRestore();
     }
     markFitInteraction(source);
     const nextPage = Math.min(pageCount, Math.max(1, pageNumber));
@@ -1960,6 +2096,11 @@ export default async function renderPdf(
         }
       });
       eventBus.on('pagechanging', ({ pageNumber }: { pageNumber: number }) => {
+        if (pendingUserRotationAnchor && pageNumber !== pendingUserRotationAnchor.page) {
+          currentPage = pendingUserRotationAnchor.page;
+          syncUi();
+          return;
+        }
         const previousPage = currentPage;
         currentPage = pageNumber;
         syncUi();
