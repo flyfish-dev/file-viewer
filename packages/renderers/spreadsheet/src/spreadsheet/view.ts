@@ -24,6 +24,8 @@ import {
 } from './state.js'
 
 export const INDEX_COLUMN_WIDTH = 68
+export const SPREADSHEET_MIN_ZOOM = 0.25
+export const SPREADSHEET_MAX_ZOOM = 2.5
 const TABLE_FONT_FAMILY = 'Aptos, Calibri, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif'
 const TABLE_FONT_SIZE = 11
 const MIN_RENDERABLE_ROW_HEIGHT = 8
@@ -89,7 +91,9 @@ let measureCanvas: HTMLCanvasElement | undefined
 const textWidthCache = new Map<string, number>()
 
 const normalizeZoomScale = (scale = 1) => {
-  return Number.isFinite(scale) ? Math.min(2.5, Math.max(0.5, scale)) : 1
+  return Number.isFinite(scale)
+    ? Math.min(SPREADSHEET_MAX_ZOOM, Math.max(SPREADSHEET_MIN_ZOOM, scale))
+    : 1
 }
 
 const scaleNumber = (value: number, zoomScale: number) => {
