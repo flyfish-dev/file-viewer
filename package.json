@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-open-source",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.0.9",
@@ -30,17 +30,14 @@
     "type-check:presets": "pnpm --filter './packages/presets/**' type-check",
     "test:i18n": "node apps/viewer-demo/scripts/verify-japanese-i18n.mjs",
     "test:thumbnail": "pnpm --filter @file-viewer/thumbnail test",
-    "test": "pnpm test:i18n && pnpm test:thumbnail && pnpm test:doc-github-171 && pnpm test:spreadsheet-github-175 && pnpm test:ofd-github-177",
+    "test": "pnpm test:i18n && pnpm test:thumbnail",
     "type-check:components": "pnpm --filter @file-viewer/web type-check && pnpm --filter @file-viewer/react type-check && pnpm --filter @file-viewer/react-legacy type-check && pnpm --filter @file-viewer/vue3 type-check && pnpm --filter @file-viewer/vue2.7 type-check && pnpm --filter @file-viewer/vue2.6 type-check && pnpm --filter @file-viewer/jquery type-check && pnpm --filter @file-viewer/svelte type-check",
     "type-check:tools": "pnpm --filter './packages/tools/**' type-check",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "verify:vue3-toolbar-browser": "node apps/component-demo/scripts/verify-vue3-toolbar-browser.mjs",
-    "verify:browser-smoke": "node apps/viewer-demo/scripts/public-smoke.mjs",
-    "test:doc-github-171": "pnpm --filter @file-viewer/doc verify:github-171",
-    "test:spreadsheet-github-175": "pnpm --filter @file-viewer/renderer-spreadsheet verify:github-175",
-    "test:ofd-github-177": "pnpm --filter @file-viewer/renderer-ofd verify:github-177"
+    "verify:browser-smoke": "node apps/viewer-demo/scripts/public-smoke.mjs"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",

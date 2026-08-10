@@ -11,7 +11,7 @@
 </p>
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.5-formats-en.gif" alt="Flyfish Viewer v2.2.5 English demo showing DOCX, PPTX, DWG, interactive 3D STEP, and the file-capsule fusion" width="1200" height="750" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-formats-en.gif" alt="Flyfish Viewer v2.2.6 English demo showing DOCX, PPTX, DWG, interactive 3D STEP, and the file-capsule fusion" width="1200" height="750" loading="lazy" />
   <p class="doc-caption">The sequence holds on a richly formatted DOCX, a NASA PPTX cover, an Autodesk DWG floor plan, and a rotating STEP solid, with the real sample-library and capsule-fusion transitions between them.</p>
 </div>
 
@@ -45,7 +45,7 @@ The demo follows the browser language by default. Chinese browsers open the Chin
 The English demo uses public real-world samples for DOCX, PDF, PPTX, and XLSX, plus local lightweight fixtures for Markdown, text, logs, CSV, JSON, TypeScript, JavaScript, GeoJSON, glTF, and archive nesting. All files are served from the demo origin so enterprise intranet deployments do not depend on public CDNs at runtime.
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.5-samples-en.webp" alt="Flyfish Viewer v2.2.5 English dark sample library with format-specific file icons" width="1440" height="900" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="Flyfish Viewer v2.2.6 English dark sample library with format-specific file icons" width="1440" height="900" loading="lazy" />
   <p class="doc-caption">The sample library opens next to the active source, expands one group at a time, and uses coordinated dark-mode icon palettes instead of filtering light assets.</p>
 </div>
 

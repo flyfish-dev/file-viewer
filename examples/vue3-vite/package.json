@@ -9,11 +9,11 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "@file-viewer/vue3-full": "^2.2.5",
+    "@file-viewer/vue3-full": "^2.2.6",
     "vue": "^3.5.35"
   },
   "devDependencies": {
-    "@file-viewer/vite-plugin": "^2.2.5",
+    "@file-viewer/vite-plugin": "^2.2.6",
     "@vitejs/plugin-vue": "^6.0.7",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",

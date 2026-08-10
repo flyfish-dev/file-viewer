@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-site",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,11 +11,9 @@
   "dependencies": {
     "@lucide/vue": "^1.17.0",
     "highlight.js": "^11.11.1",
-    "three": "^0.184.0",
     "vue": "^3.5.35"
   },
   "devDependencies": {
-    "@types/three": "^0.184.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/tsconfig": "^0.9.1",
     "typescript": "^6.0.3",

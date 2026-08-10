@@ -74,6 +74,6 @@ Flyfish Viewer 可以为业务系统快速补齐文件在线预览能力。它�
 File Viewer 自有代码遵循 `Apache-2.0` 许可证。二开或商用时，请保留许可证、版权和来源说明，并注明项目来源为 Flyfish Viewer / `@flyfish-group/file-viewer3` 或 `@flyfish-group/file-viewer`。第三方与独立版本依赖继续适用各自许可证；`@file-viewer/ppt` 不属于 Apache-2.0 范围，公开运行时保留可见水印，移除 PPT 水印需要商业授权。如果你基于项目修复了通用问题或增强了通用能力，也欢迎一起贡献。
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.5-formats-zh.gif" alt="Flyfish Viewer v2.2.5 中文特色 DOCX、PPTX、DWG 与可交互三维 STEP 预览动图" width="1200" height="750" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-formats-zh.gif" alt="Flyfish Viewer v2.2.6 中文特色 DOCX、PPTX、DWG 与可交互三维 STEP 预览动图" width="1200" height="750" loading="lazy" />
   <p class="doc-caption">最新中文 Demo 展示固定工具栏、文件胶囊融合、按格式分组的样例选择器，以及 DOCX、PPTX、XMind、工程文件和压缩包共享的统一交互。</p>
 </div>

@@ -6,6 +6,18 @@
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
 
+## `v2.2.6` 大文件、分页导航与 Office 交互稳定性补丁 — 2026-08-10
+
+- Spreadsheet 会在解析阶段按真实单元格收紧异常 worksheet dimensions，避免格式化到整张工作表的文件造成巨量空行/列；图表发现改为读取 worksheet relationship，不再重复把大型 worksheet XML 解压为字符串（GitHub #173/#175）。
+- Vue 3 与其他窄宿主首次打开 Spreadsheet 时按实际可视宽度计算 fit，桌面宽容器仍保持 100% 初始比例（GitHub #172）。
+- OFD renderer 新增上一页、下一页、当前页/总页数、手动滚动同步、首尾禁用状态与键盘导航；resize 后保留活动页，打印时隐藏导航工具栏（GitHub #177）。
+- Word renderer 会在正确的 DOCX renderer 边界拦截内部关系和外部 URL 的默认导航，同时保留链接文字；旧版 DOC 的文本框 story 也会从底层结构恢复，不再只显示占位字形（GitHub #171/#183）。
+- PDF 在目录跳转、翻页、旋转和缩放状态回放后保留当前页与可视锚点，页码和页面不再突然向上跳动（GitHub #184）。
+- `@file-viewer/pptx` 修复 connector 起终点、翻转和零尺寸 viewport 的几何计算；File Viewer 仅同步正式引擎产物，并通过专用几何 harness 与完整浏览器回归（GitHub #176）。
+- 官网重新整理导航、支持矩阵、商业版和移动端入口，补齐 canonical redirect、IndexNow 和机器可读引用元数据；Crawler URL 仍不会进入离线运行时资产错误扫描。
+- 发布前后回归覆盖冷安装、全 workspace 类型检查、根测试、全量构建、离线与 renderer 资产、28 格式矩阵、PDF/DOCX/XLSX/PPTX Demo，以及八类标准组件浏览器入口。
+- 54 个 npm 目标、208 个扩展名和 25 条预览链路保持不变。
+
 ## `v2.2.5` 文档审阅、打印与 Office 图形渲染补丁 — 2026-08-01
 
 - 文档比对页使用成熟的 `jsdiff` 对两侧提取文字逐行对齐，并在替换行内标记具体字符；提供新增、删除、修改、未变化计数、上下差异导航和“只看差异”。DOCX、Markdown、代码和纯文本是稳定路径；PDF 仅在文本层覆盖完整页面时展示，扫描 PDF 暂不内置 OCR（GitHub #145）。

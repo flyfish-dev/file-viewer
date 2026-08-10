@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-epub",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
   "type": "module",
   "description": "Standalone EPUB and UMD reader renderer plugin for File Viewer powered by epubjs and pako.",
@@ -57,7 +57,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.5",
+    "@file-viewer/core": "workspace:2.2.6",
     "pako": "^2.1.0"
   },
   "devDependencies": {

@@ -36,8 +36,8 @@ titleTemplate: false
 
 <figure class="doc-capability-panel doc-product-preview" aria-label="File Viewer 浏览器原生 DOCX 预览工作区">
 <picture>
-<source media="(max-width: 720px)" srcset="/_media/file-viewer-demo-v2.2.5-mobile-zh.webp" />
-<img src="/_media/file-viewer-demo-v2.2.5-desktop-zh.webp" alt="File Viewer 中文浏览器原生 DOCX 预览工作区" width="1600" height="900" />
+<source media="(max-width: 720px)" srcset="/_media/file-viewer-demo-v2.2.6-mobile-zh.webp" />
+<img src="/_media/file-viewer-demo-v2.2.6-desktop-zh.webp" alt="File Viewer 中文浏览器原生 DOCX 预览工作区" width="1600" height="900" />
 </picture>
 <figcaption><strong>208 个扩展名</strong><span>25 条按需预览链路 · Worker、WASM、字体和 vendor 资源均可自托管</span></figcaption>
 </figure>
@@ -62,11 +62,11 @@ titleTemplate: false
 <div class="doc-section-heading">
 <span>Live Experience</span>
 <h2>先体验真实文件，再决定装配哪些能力。</h2>
-<p>v2.2.5 Demo 使用沉浸式文档工作台：页面只让文档容器滚动，顶部来源胶囊和右侧工具组保持固定；每个操作打开自己的就近浮层，移动端则收敛为一个“更多”入口。</p>
+<p>v2.2.6 Demo 使用沉浸式文档工作台：页面只让文档容器滚动，顶部来源胶囊和右侧工具组保持固定；每个操作打开自己的就近浮层，移动端则收敛为一个“更多”入口。</p>
 </div>
 <div class="doc-demo-layout">
 <figure class="doc-demo-visual">
-<img src="/_media/file-viewer-demo-v2.2.5-formats-zh.gif" alt="File Viewer v2.2.5 中文 Demo：特色 DOCX、PPTX、DWG 与可交互的三维 STEP 模型预览" width="1200" height="750" loading="lazy" />
+<img src="/_media/file-viewer-demo-v2.2.6-formats-zh.gif" alt="File Viewer v2.2.6 中文 Demo：特色 DOCX、PPTX、DWG 与可交互的三维 STEP 模型预览" width="1200" height="750" loading="lazy" />
 <figcaption>最新中文 Demo 依次展示特色 DOCX、NASA PPTX、Autodesk DWG 与旋转 STEP 模型，同时保留文件胶囊融合和完整样例库交互。</figcaption>
 </figure>
 <div class="doc-demo-actions">

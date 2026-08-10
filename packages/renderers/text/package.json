@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-text",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
   "type": "module",
   "description": "Standalone code, text, Markdown, patch diff, and Git bundle renderer plugin for File Viewer.",
@@ -61,7 +61,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.5",
+    "@file-viewer/core": "workspace:2.2.6",
     "diff2html": "^3.4.56",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",

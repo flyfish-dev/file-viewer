@@ -24,7 +24,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolveSiteFile('./index.html'),
-        en: resolveSiteFile('./en/index.html')
+        en: resolveSiteFile('./en/index.html'),
+        commercial: resolveSiteFile('./commercial/index.html'),
+        commercialEn: resolveSiteFile('./en/commercial/index.html')
       }
     }
   }

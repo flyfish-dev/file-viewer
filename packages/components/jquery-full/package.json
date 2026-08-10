@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/jquery-full",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
   "type": "module",
   "description": "Full jQuery package with preset-all; Vite publishes deployment-base/file-viewer assets, and other bundlers use the included same-version copy CLI.",
@@ -64,9 +64,9 @@
     "jquery": ">=3 <5"
   },
   "dependencies": {
-    "@file-viewer/jquery": "workspace:2.2.5",
-    "@file-viewer/preset-all": "workspace:2.2.5",
-    "file-viewer-copy-assets": "workspace:2.2.5"
+    "@file-viewer/jquery": "workspace:2.2.6",
+    "@file-viewer/preset-all": "workspace:2.2.6",
+    "file-viewer-copy-assets": "workspace:2.2.6"
   },
   "devDependencies": {
     "@types/jquery": "^4.0.1",

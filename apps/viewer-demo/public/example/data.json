@@ -1,14 +1,14 @@
 {
   "name": "file-viewer",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "environment": {
     "framework": "vue3",
     "viewerSite": "https://demo.file-viewer.app",
     "docs": "https://doc.file-viewer.app"
   },
   "packages": {
-    "vue3": "@file-viewer/vue3@2.2.5",
-    "vue2": "@file-viewer/vue2.7@2.2.5"
+    "vue3": "@file-viewer/vue3@2.2.6",
+    "vue2": "@file-viewer/vue2.7@2.2.6"
   },
   "features": [
     {

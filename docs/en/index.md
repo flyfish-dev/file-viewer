@@ -36,8 +36,8 @@ Browser-native preview should not need a conversion server. Uploading a private 
 
 <figure class="doc-capability-panel doc-product-preview" aria-label="File Viewer browser-native DOCX preview workspace">
 <picture>
-<source media="(max-width: 720px)" srcset="/_media/file-viewer-demo-v2.2.5-mobile-en.webp" />
-<img src="/_media/file-viewer-demo-v2.2.5-desktop-en.webp" alt="File Viewer browser-native DOCX preview workspace in English" width="1600" height="900" />
+<source media="(max-width: 720px)" srcset="/_media/file-viewer-demo-v2.2.6-mobile-en.webp" />
+<img src="/_media/file-viewer-demo-v2.2.6-desktop-en.webp" alt="File Viewer browser-native DOCX preview workspace in English" width="1600" height="900" />
 </picture>
 <figcaption><strong>208 extensions</strong><span>25 lazy preview pipelines · self-hosted Worker, WASM, fonts, and vendor assets</span></figcaption>
 </figure>
@@ -62,11 +62,11 @@ Browser-native preview should not need a conversion server. Uploading a private 
 <div class="doc-section-heading">
 <span>Live Experience</span>
 <h2>Try real files before choosing what to ship.</h2>
-<p>The v2.2.5 demo is an immersive document workspace: only the document surface scrolls, the source capsule and format toolbar stay fixed, each action owns a nearby panel, and mobile collapses secondary controls into one More menu.</p>
+<p>The v2.2.6 demo is an immersive document workspace: only the document surface scrolls, the source capsule and format toolbar stay fixed, each action owns a nearby panel, and mobile collapses secondary controls into one More menu.</p>
 </div>
 <div class="doc-demo-layout">
 <figure class="doc-demo-visual">
-<img src="/_media/file-viewer-demo-v2.2.5-formats-en.gif" alt="File Viewer v2.2.5 English demo with rich DOCX, PPTX, DWG, and interactive 3D STEP previews" width="1200" height="750" loading="lazy" />
+<img src="/_media/file-viewer-demo-v2.2.6-formats-en.gif" alt="File Viewer v2.2.6 English demo with rich DOCX, PPTX, DWG, and interactive 3D STEP previews" width="1200" height="750" loading="lazy" />
 <figcaption>The current English demo holds on a rich DOCX, NASA PPTX, Autodesk DWG, and rotating STEP model while the file capsule flows into the top action bar.</figcaption>
 </figure>
 <div class="doc-demo-actions">

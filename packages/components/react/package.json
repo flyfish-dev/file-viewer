@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/react",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
   "type": "module",
   "description": "Standard React component package for File Viewer",
@@ -59,7 +59,7 @@
     "react": ">=17 <20"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.5"
+    "@file-viewer/core": "workspace:2.2.6"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

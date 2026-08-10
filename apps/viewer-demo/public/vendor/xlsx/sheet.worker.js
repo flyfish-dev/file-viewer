@@ -27349,10 +27349,8 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 	for (let e of Av(r.documentElement, "sheet")) {
 		let n = e.getAttribute("name") || "", r = Bv(i, Pv(e));
 		if (!n || !(r != null && r.type.endsWith(Sv))) continue;
-		let [o, s] = await Promise.all([Rv(t, r.target), zv(t, r.target)]);
-		if (!o) continue;
-		let c = Av(o.documentElement, "drawing").map((e) => Bv(s, Pv(e))).filter((e) => e == null ? void 0 : e.type.endsWith(xv)).map((e) => e.target), l = (await Promise.all(c.map((e) => qv(t, e)))).flat();
-		l.length && (a[n] = l);
+		let o = await zv(t, r.target), s = Array.from(new Set(o.filter((e) => e.type.endsWith(xv)).map((e) => e.target))), c = (await Promise.all(s.map((e) => qv(t, e)))).flat();
+		c.length && (a[n] = c);
 	}
 	return a;
 }, Yv = new Set(["csv", "tsv"]), Xv = new Set(["text/csv", "text/tab-separated-values"]), Zv = (e) => String(e || "").trim().toLowerCase().replace(/^\./, "").split(/[?#;]/, 1)[0], Qv = (e) => {
@@ -27481,28 +27479,74 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 }, {
 	rowCount: 0,
 	colCount: 0
-}), fy = (e) => {
+}), fy = 1e3, py = 256, my = 256, hy = 64, gy = 4, _y = (e) => {
+	let t = {
+		rowCount: 0,
+		colCount: 0
+	};
+	if (!e) return t;
+	let n = Array.isArray(e) ? e : e["!data"];
+	if (Array.isArray(n)) {
+		for (let e of Object.keys(n)) {
+			let r = Number(e), i = n[r];
+			if (!(!Number.isInteger(r) || r < 0 || !Array.isArray(i))) for (let e of Object.keys(i)) {
+				let n = Number(e);
+				!Number.isInteger(n) || n < 0 || i[n] == null || (t.rowCount = Math.max(t.rowCount, r + 1), t.colCount = Math.max(t.colCount, n + 1));
+			}
+		}
+		return t;
+	}
+	for (let n of Object.keys(e)) if (!(n.startsWith("!") || !/^[A-Z]+[1-9][0-9]*$/i.test(n) || e[n] == null)) try {
+		let e = Lg.decode_cell(n);
+		t.rowCount = Math.max(t.rowCount, e.r + 1), t.colCount = Math.max(t.colCount, e.c + 1);
+	} catch {}
+	return t;
+}, vy = (e) => ((e == null ? void 0 : e["!merges"]) || []).reduce((e, t) => {
+	var n, r, i, a, o, s;
+	let c = Number((n = (r = t.e) == null ? void 0 : r.row) == null ? (i = t.e) == null ? void 0 : i.r : n), l = Number((a = (o = t.e) == null ? void 0 : o.col) == null ? (s = t.e) == null ? void 0 : s.c : a);
+	return {
+		rowCount: Number.isFinite(c) ? Math.max(e.rowCount, c + 1) : e.rowCount,
+		colCount: Number.isFinite(l) ? Math.max(e.colCount, l + 1) : e.colCount
+	};
+}, {
+	rowCount: 0,
+	colCount: 0
+}), yy = (e, t, n, r) => t <= 0 ? Math.min(Math.max(e, 1), r) : e <= Math.max(t + n, t * gy) ? Math.max(e, t) : t, by = (e, t) => {
+	let n = 0, r = 0, i = e == null ? void 0 : e["!ref"];
+	if (i) try {
+		let e = Lg.decode_range(i);
+		n = e.e.r + 1, r = e.e.c + 1;
+	} catch {}
+	let a = _y(e), o = vy(e), s = uy(e), c = dy(t), l = Math.max(a.rowCount, o.rowCount, s.rowCount, c.rowCount), u = Math.max(a.colCount, o.colCount, s.colCount, c.colCount), d = yy(n, l, my, fy), f = yy(r, u, hy, py);
+	return {
+		rowCount: d,
+		colCount: f,
+		declaredRowCount: n,
+		declaredColCount: r,
+		observedRowCount: l,
+		observedColCount: u,
+		trimmed: d < n || f < r
+	};
+}, xy = (e) => {
 	var t;
 	let n = e.workbook;
 	if (!(n != null && n.SheetNames)) return [];
 	let r = ((t = n.Workbook) == null ? void 0 : t.Sheets) || [];
 	return e.sheets = n.SheetNames.reduce((t, i, a) => {
 		var o;
-		let s = n.Sheets[i], c = s == null ? void 0 : s["!ref"], l = uy(s), u = dy(e.charts[i]);
-		if (!c && !l.rowCount && !l.colCount && !u.rowCount && !u.colCount) return t;
-		let d = c ? Lg.decode_range(c) : Lg.decode_range("A1");
-		return t.push({
+		let s = n.Sheets[i], c = by(s, e.charts[i]);
+		return !(s != null && s["!ref"]) && !c.observedRowCount && !c.observedColCount ? t : (c.trimmed && console.warn(`[file-viewer] Ignored pathological worksheet dimensions for ${i}: ${c.declaredRowCount}x${c.declaredColCount} -> ${c.rowCount}x${c.colCount}.`), t.push({
 			id: t.length,
 			name: i,
 			hidden: !!((o = r[a]) != null && o.Hidden),
-			rowCount: Math.max(d.e.r + 1, l.rowCount, u.rowCount),
-			colCount: Math.max(d.e.c + 1, l.colCount, u.colCount)
-		}), t;
+			rowCount: c.rowCount,
+			colCount: c.colCount
+		}), t);
 	}, []), [{
 		type: "sheets",
 		payload: { sheets: e.sheets }
 	}];
-}, py = async (e, t, n = {}) => {
+}, Sy = async (e, t, n = {}) => {
 	try {
 		let r = oy(t, n);
 		if (e.workbook = r.kind === "text" ? _g(r.data, {
@@ -27514,11 +27558,11 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 			e.charts = {}, console.warn("[file-viewer] Spreadsheet chart parsing failed; continuing with cell content.", t);
 		}
 		else e.charts = {};
-		return fy(e);
+		return xy(e);
 	} catch (e) {
 		return [ly(e)];
 	}
-}, my = (e, t = {}) => {
+}, Cy = (e, t = {}) => {
 	let { sheet: n, startRow: r = 0, pageSize: i = 500, sessionId: a = 0 } = t;
 	try {
 		var o;
@@ -27550,26 +27594,26 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 			startRow: r
 		})];
 	}
-}, hy = (e, t) => {
+}, wy = (e, t) => {
 	switch (t.type) {
 		case "parseWorkbook":
 			var n, r, i, a;
-			return py(e, (n = t.payload) == null ? void 0 : n.workbook, {
+			return Sy(e, (n = t.payload) == null ? void 0 : n.workbook, {
 				fileType: (r = t.payload) == null ? void 0 : r.fileType,
 				filename: (i = t.payload) == null ? void 0 : i.filename,
 				textEncoding: (a = t.payload) == null ? void 0 : a.textEncoding
 			});
-		case "parseSheet": return my(e, t.payload);
+		case "parseSheet": return Cy(e, t.payload);
 		default: return [];
 	}
-}, gy = typeof self > "u" ? null : self;
-if (gy) {
+}, Ty = typeof self > "u" ? null : self;
+if (Ty) {
 	let e = cy();
-	gy.onmessage = async (t) => {
-		(await hy(e, t.data)).forEach((e) => {
-			gy.postMessage(e);
+	Ty.onmessage = async (t) => {
+		(await wy(e, t.data)).forEach((e) => {
+			Ty.postMessage(e);
 		});
-	}, gy.onerror = (e) => {
+	}, Ty.onerror = (e) => {
 		console.error(e);
 	};
 }

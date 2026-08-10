@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-eda",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
   "type": "module",
   "description": "Standalone EDA renderer plugin for File Viewer with OLB, DRA, GDSII, and OASIS structure preview.",
@@ -61,9 +61,9 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.5",
-    "@file-viewer/eda-layout": "workspace:2.2.5",
-    "@file-viewer/eda-orcad": "workspace:2.2.5",
+    "@file-viewer/core": "workspace:2.2.6",
+    "@file-viewer/eda-layout": "workspace:2.2.6",
+    "@file-viewer/eda-orcad": "workspace:2.2.6",
     "cfb": "^1.2.2"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-pdf",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
   "type": "module",
   "description": "Standalone PDF renderer plugin for File Viewer powered by PDF.js.",
@@ -58,7 +58,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.5",
+    "@file-viewer/core": "workspace:2.2.6",
     "@fontsource-variable/noto-sans-sc": "5.2.10",
     "pdf-lib": "1.17.1",
     "pdfjs-dist": "5.4.624"

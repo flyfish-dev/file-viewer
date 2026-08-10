@@ -64,7 +64,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/doc": "workspace:2.2.5"
+    "@file-viewer/doc": "workspace:2.2.6"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

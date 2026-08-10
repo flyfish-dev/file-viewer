@@ -2,6 +2,27 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.2.6 — 2026-08-10
+
+这是大文件、分页导航和 Office 交互稳定性补丁，同时完成官网与公开检索入口升级。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。
+
+### Highlights
+
+- Spreadsheet 不再信任异常的整表维度，也不会为了发现图表而把大型 worksheet XML 重复解压成字符串；窄容器首次打开时会按真实可视宽度适配（#172/#173/#175）。
+- OFD 新增上一页、下一页、页码计数、滚动同步与键盘导航；打印时工具栏自动隐藏（#177）。
+- Word renderer 阻止 DOCX 内外部超链接触发页面跳转，同时保留文本可读性；旧版 DOC 文本框 story 内容也会从底层结构恢复（#171/#183）。
+- PDF 在目录跳转、翻页和旋转后保持当前页与可视锚点，避免页码和文档突然向上跳动（#184）。
+- PPTX connector 的起终点、翻转和零尺寸 viewport 在 `@file-viewer/pptx` 引擎边界修复，File Viewer 只同步正式引擎产物（#176）。
+- 官网重构为更紧凑的产品入口，补齐中英文商业版、canonical、IndexNow 与机器可读引用元数据；运行时离线扫描继续排除 crawler metadata URL。
+- 真实 post-merge main 已完成冷安装、全 workspace 类型检查、根测试、全量构建、28 格式矩阵、离线资产、关键 Demo 和全部标准组件浏览器回归。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.2.6
+pnpm add -D @file-viewer/vite-plugin@2.2.6
+```
+
 ## File Viewer v2.2.5 — 2026-08-01
 
 这是文档审阅、打印和复杂 Office 图形渲染补丁。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。

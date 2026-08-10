@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-email",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": false,
   "type": "module",
   "description": "Standalone email renderer plugin for File Viewer with EML, MSG, MBOX, attachments, and nested previews.",
@@ -59,7 +59,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.5",
+    "@file-viewer/core": "workspace:2.2.6",
     "@kenjiuno/msgreader": "^1.28.0",
     "postal-mime": "^2.7.4"
   },
