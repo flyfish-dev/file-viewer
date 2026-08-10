@@ -1,6 +1,8 @@
 export {
   createSpreadsheetParserContext,
-  handleSpreadsheetWorkerRequest
+  getWorksheetDisplayBounds,
+  handleSpreadsheetWorkerRequest,
+  type WorksheetDisplayBounds
 } from './parser.js'
 export {
   decodeSpreadsheetText,

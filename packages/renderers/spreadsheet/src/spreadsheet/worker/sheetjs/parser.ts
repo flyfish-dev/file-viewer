@@ -105,6 +105,147 @@ const getChartBounds = (charts: SheetChartDefinition[] | undefined) => {
   });
 };
 
+interface WorksheetRangeLike extends WorksheetWithDrawings {
+  '!ref'?: string;
+  '!data'?: Array<Array<unknown> | undefined>;
+  '!merges'?: Array<{ e?: DrawingMarkerLike }>;
+  [key: string]: unknown;
+}
+
+export interface WorksheetDisplayBounds {
+  rowCount: number;
+  colCount: number;
+  declaredRowCount: number;
+  declaredColCount: number;
+  observedRowCount: number;
+  observedColCount: number;
+  trimmed: boolean;
+}
+
+const EMPTY_RANGE_ROW_LIMIT = 1000;
+const EMPTY_RANGE_COLUMN_LIMIT = 256;
+const RANGE_ROW_SLACK = 256;
+const RANGE_COLUMN_SLACK = 64;
+const RANGE_GROWTH_FACTOR = 4;
+
+const getCellBounds = (worksheet: WorksheetRangeLike | undefined) => {
+  const bounds = { rowCount: 0, colCount: 0 };
+  if (!worksheet) return bounds;
+
+  const denseRows = Array.isArray(worksheet)
+    ? worksheet as Array<Array<unknown> | undefined>
+    : worksheet['!data'];
+  if (Array.isArray(denseRows)) {
+    for (const rowKey of Object.keys(denseRows)) {
+      const rowIndex = Number(rowKey);
+      const row = denseRows[rowIndex];
+      if (!Number.isInteger(rowIndex) || rowIndex < 0 || !Array.isArray(row)) continue;
+      for (const colKey of Object.keys(row)) {
+        const colIndex = Number(colKey);
+        if (!Number.isInteger(colIndex) || colIndex < 0 || row[colIndex] == null) continue;
+        bounds.rowCount = Math.max(bounds.rowCount, rowIndex + 1);
+        bounds.colCount = Math.max(bounds.colCount, colIndex + 1);
+      }
+    }
+    return bounds;
+  }
+
+  for (const key of Object.keys(worksheet)) {
+    if (key.startsWith('!') || !/^[A-Z]+[1-9][0-9]*$/i.test(key) || worksheet[key] == null) continue;
+    try {
+      const cell = utils.decode_cell(key);
+      bounds.rowCount = Math.max(bounds.rowCount, cell.r + 1);
+      bounds.colCount = Math.max(bounds.colCount, cell.c + 1);
+    } catch {
+      // Ignore non-cell extension keys exposed by third-party workbook producers.
+    }
+  }
+  return bounds;
+};
+
+const getMergeBounds = (worksheet: WorksheetRangeLike | undefined) => {
+  return (worksheet?.['!merges'] || []).reduce((bounds, merge) => {
+    const row = Number(merge.e?.row ?? (merge.e as { r?: number } | undefined)?.r);
+    const col = Number(merge.e?.col ?? (merge.e as { c?: number } | undefined)?.c);
+    return {
+      rowCount: Number.isFinite(row) ? Math.max(bounds.rowCount, row + 1) : bounds.rowCount,
+      colCount: Number.isFinite(col) ? Math.max(bounds.colCount, col + 1) : bounds.colCount,
+    };
+  }, { rowCount: 0, colCount: 0 });
+};
+
+const reconcileDeclaredRange = (
+  declaredCount: number,
+  observedCount: number,
+  slack: number,
+  emptyLimit: number
+) => {
+  if (observedCount <= 0) {
+    return Math.min(Math.max(declaredCount, 1), emptyLimit);
+  }
+  const plausibleLimit = Math.max(observedCount + slack, observedCount * RANGE_GROWTH_FACTOR);
+  return declaredCount <= plausibleLimit
+    ? Math.max(declaredCount, observedCount)
+    : observedCount;
+};
+
+export const getWorksheetDisplayBounds = (
+  worksheet: WorksheetRangeLike | undefined,
+  charts: SheetChartDefinition[] | undefined
+): WorksheetDisplayBounds => {
+  let declaredRowCount = 0;
+  let declaredColCount = 0;
+  const ref = worksheet?.['!ref'];
+  if (ref) {
+    try {
+      const range = utils.decode_range(ref);
+      declaredRowCount = range.e.r + 1;
+      declaredColCount = range.e.c + 1;
+    } catch {
+      // Invalid producer dimensions must not block content-based recovery.
+    }
+  }
+
+  const cellBounds = getCellBounds(worksheet);
+  const mergeBounds = getMergeBounds(worksheet);
+  const drawingBounds = getDrawingBounds(worksheet);
+  const chartBounds = getChartBounds(charts);
+  const observedRowCount = Math.max(
+    cellBounds.rowCount,
+    mergeBounds.rowCount,
+    drawingBounds.rowCount,
+    chartBounds.rowCount
+  );
+  const observedColCount = Math.max(
+    cellBounds.colCount,
+    mergeBounds.colCount,
+    drawingBounds.colCount,
+    chartBounds.colCount
+  );
+  const rowCount = reconcileDeclaredRange(
+    declaredRowCount,
+    observedRowCount,
+    RANGE_ROW_SLACK,
+    EMPTY_RANGE_ROW_LIMIT
+  );
+  const colCount = reconcileDeclaredRange(
+    declaredColCount,
+    observedColCount,
+    RANGE_COLUMN_SLACK,
+    EMPTY_RANGE_COLUMN_LIMIT
+  );
+
+  return {
+    rowCount,
+    colCount,
+    declaredRowCount,
+    declaredColCount,
+    observedRowCount,
+    observedColCount,
+    trimmed: rowCount < declaredRowCount || colCount < declaredColCount,
+  };
+};
+
 const parseSheets = (context: SpreadsheetParserContext): SpreadsheetWorkerResponse[] => {
   const workbook = context.workbook;
   if (!workbook?.SheetNames) {
@@ -113,20 +254,23 @@ const parseSheets = (context: SpreadsheetParserContext): SpreadsheetWorkerRespon
 
   const workbookSheets = workbook.Workbook?.Sheets || [];
   context.sheets = workbook.SheetNames.reduce<SheetDefinition[]>((result, name, sourceIndex) => {
-    const worksheet = workbook.Sheets[name];
-    const ref = worksheet?.['!ref'];
-    const drawingBounds = getDrawingBounds(worksheet as WorksheetWithDrawings | undefined);
-    const chartBounds = getChartBounds(context.charts[name]);
-    if (!ref && !drawingBounds.rowCount && !drawingBounds.colCount && !chartBounds.rowCount && !chartBounds.colCount) {
+    const worksheet = workbook.Sheets[name] as WorksheetRangeLike | undefined;
+    const bounds = getWorksheetDisplayBounds(worksheet, context.charts[name]);
+    if (!worksheet?.['!ref'] && !bounds.observedRowCount && !bounds.observedColCount) {
       return result;
     }
-    const range = ref ? utils.decode_range(ref) : utils.decode_range('A1');
+    if (bounds.trimmed) {
+      console.warn(
+        `[file-viewer] Ignored pathological worksheet dimensions for ${name}: `
+        + `${bounds.declaredRowCount}x${bounds.declaredColCount} -> ${bounds.rowCount}x${bounds.colCount}.`
+      );
+    }
     result.push({
       id: result.length,
       name,
       hidden: !!workbookSheets[sourceIndex]?.Hidden,
-      rowCount: Math.max(range.e.r + 1, drawingBounds.rowCount, chartBounds.rowCount),
-      colCount: Math.max(range.e.c + 1, drawingBounds.colCount, chartBounds.colCount),
+      rowCount: bounds.rowCount,
+      colCount: bounds.colCount,
     });
     return result;
   }, []);
