@@ -19,9 +19,17 @@ const OFD_MAX_SCALE = 3;
 const OFD_ZOOM_STEP = 0.1;
 
 const ofdStyle = `
-.ofd-viewer{position:relative;box-sizing:border-box;min-height:100%;background:var(--file-viewer-render-surface-background,#e9edf2);color:#172033;font-family:Aptos,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
+.ofd-viewer{position:relative;display:flex;box-sizing:border-box;min-height:100%;min-width:0;flex-direction:column;background:var(--file-viewer-render-surface-background,#e9edf2);color:#172033;font-family:Aptos,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
 .ofd-viewer *{box-sizing:border-box}
-.ofd-stage{min-height:100%;padding:18px 0 28px;overflow:auto;scrollbar-gutter:stable}
+.ofd-toolbar{position:sticky;top:0;z-index:4;display:flex;min-height:44px;align-items:center;justify-content:center;border-bottom:1px solid rgba(148,163,184,.32);background:rgba(255,255,255,.92);box-shadow:0 4px 14px rgba(15,23,42,.06);backdrop-filter:blur(10px)}
+.ofd-toolbar-group{display:inline-flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid #d7dee8;border-radius:9px;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.06)}
+.ofd-page-button{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border:1px solid transparent;border-radius:7px;color:#334155;background:transparent;font:700 22px/1 Aptos,'Segoe UI',sans-serif;cursor:pointer}
+.ofd-page-button:hover:not(:disabled){border-color:#b9d4f6;color:#1769d8;background:#edf5ff}
+.ofd-page-button:focus-visible{outline:2px solid #408fff;outline-offset:1px}
+.ofd-page-button:disabled{color:#a7b0bd;cursor:not-allowed}
+.ofd-page-meter{display:inline-flex;min-width:92px;align-items:baseline;justify-content:center;gap:5px;color:#64748b;font-size:12px;white-space:nowrap}
+.ofd-page-meter strong{color:#172033;font-size:13px}
+.ofd-stage{position:relative;flex:1;min-width:0;min-height:0;padding:18px 0 28px;overflow:auto;scrollbar-gutter:stable}
 .ofd-state{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;background:rgba(246,248,250,.92);color:#64748b;font-size:14px}
 .ofd-state[hidden]{display:none!important}
 .ofd-state.error{color:#b42318}
@@ -31,8 +39,15 @@ const ofdStyle = `
 .ofd-page svg,.ofd-page canvas,.ofd-page img{filter:none!important;mix-blend-mode:normal!important}
 [data-viewer-theme='dark'] .ofd-viewer{background:var(--file-viewer-render-surface-background,#172033);color:#e5eef8}
 [data-viewer-theme='dark'] .ofd-state{background:rgba(15,23,42,.9);color:#cbd5e1}
-@media (prefers-color-scheme:dark){[data-viewer-theme='system'] .ofd-viewer{background:var(--file-viewer-render-surface-background,#172033);color:#e5eef8}[data-viewer-theme='system'] .ofd-state{background:rgba(15,23,42,.9);color:#cbd5e1}}
-@media print{.ofd-viewer{background:#fff!important}.ofd-stage{padding:0!important;overflow:visible!important}.ofd-page-frame{break-after:page;page-break-after:always;margin:0 auto!important}.ofd-page-frame:last-child{break-after:auto;page-break-after:auto}.ofd-page{box-shadow:none!important;transition:none!important}}
+[data-viewer-theme='dark'] .ofd-toolbar{border-color:rgba(100,116,139,.5);background:rgba(15,23,42,.9)}
+[data-viewer-theme='dark'] .ofd-toolbar-group{border-color:#475569;background:#1e293b}
+[data-viewer-theme='dark'] .ofd-page-button{color:#e2e8f0}
+[data-viewer-theme='dark'] .ofd-page-button:hover:not(:disabled){border-color:#4d79ad;color:#93c5fd;background:#263b55}
+[data-viewer-theme='dark'] .ofd-page-button:disabled{color:#64748b}
+[data-viewer-theme='dark'] .ofd-page-meter{color:#94a3b8}
+[data-viewer-theme='dark'] .ofd-page-meter strong{color:#f1f5f9}
+@media (prefers-color-scheme:dark){[data-viewer-theme='system'] .ofd-viewer{background:var(--file-viewer-render-surface-background,#172033);color:#e5eef8}[data-viewer-theme='system'] .ofd-state{background:rgba(15,23,42,.9);color:#cbd5e1}[data-viewer-theme='system'] .ofd-toolbar{border-color:rgba(100,116,139,.5);background:rgba(15,23,42,.9)}[data-viewer-theme='system'] .ofd-toolbar-group{border-color:#475569;background:#1e293b}[data-viewer-theme='system'] .ofd-page-button{color:#e2e8f0}[data-viewer-theme='system'] .ofd-page-button:hover:not(:disabled){border-color:#4d79ad;color:#93c5fd;background:#263b55}[data-viewer-theme='system'] .ofd-page-button:disabled{color:#64748b}[data-viewer-theme='system'] .ofd-page-meter{color:#94a3b8}[data-viewer-theme='system'] .ofd-page-meter strong{color:#f1f5f9}}
+@media print{.ofd-viewer{display:block;background:#fff!important}.ofd-toolbar{display:none!important}.ofd-stage{padding:0!important;overflow:visible!important}.ofd-page-frame{break-after:page;page-break-after:always;margin:0 auto!important}.ofd-page-frame:last-child{break-after:auto;page-break-after:auto}.ofd-page{box-shadow:none!important;transition:none!important}}
 `;
 
 const loadOfdModule = (() => {
@@ -187,6 +202,9 @@ export default async function renderOfd(
   let state: OfdRenderState = 'loading';
   let errorMessage = '';
   let zoom = 1;
+  let currentPage = 1;
+  let pageCount = 0;
+  let scrollFrame = 0;
   let ofdDocumentPromise: Promise<unknown> | null = null;
 
   const style = createStyle(documentRef);
@@ -194,8 +212,29 @@ export default async function renderOfd(
   viewer.dataset.viewerZoomProvider = 'ofd';
   const stateNode = createElement(documentRef, 'div', 'ofd-state', t('ofd.state.loading'));
   stateNode.setAttribute('aria-live', 'polite');
+  const toolbar = createElement(documentRef, 'div', 'ofd-toolbar');
+  toolbar.setAttribute('role', 'toolbar');
+  toolbar.setAttribute('aria-label', t('ofd.toolbar.pageNavigation'));
+  const pageGroup = createElement(documentRef, 'div', 'ofd-toolbar-group');
+  const previousPageButton = createElement(documentRef, 'button', 'ofd-page-button', '‹') as HTMLButtonElement;
+  previousPageButton.type = 'button';
+  previousPageButton.title = t('ofd.toolbar.previousPage');
+  previousPageButton.setAttribute('aria-label', t('ofd.toolbar.previousPage'));
+  const pageMeter = createElement(documentRef, 'span', 'ofd-page-meter');
+  pageMeter.setAttribute('aria-live', 'polite');
+  const pageMeterCurrent = createElement(documentRef, 'strong', undefined, '1');
+  const pageMeterTotal = createElement(documentRef, 'span', undefined, '/ -');
+  pageMeter.append(pageMeterCurrent, pageMeterTotal);
+  const nextPageButton = createElement(documentRef, 'button', 'ofd-page-button', '›') as HTMLButtonElement;
+  nextPageButton.type = 'button';
+  nextPageButton.title = t('ofd.toolbar.nextPage');
+  nextPageButton.setAttribute('aria-label', t('ofd.toolbar.nextPage'));
+  pageGroup.append(previousPageButton, pageMeter, nextPageButton);
+  toolbar.append(pageGroup);
   const stage = createElement(documentRef, 'div', 'ofd-stage');
-  viewer.append(stateNode, stage);
+  stage.tabIndex = 0;
+  stage.setAttribute('aria-label', t('ofd.toolbar.documentPages'));
+  viewer.append(toolbar, stateNode, stage);
   target.replaceChildren(style, viewer);
 
   const clearStage = () => {
@@ -206,6 +245,88 @@ export default async function renderOfd(
     stateNode.hidden = state === 'ready';
     stateNode.classList.toggle('error', state === 'error');
     stateNode.textContent = state === 'error' ? errorMessage : t('ofd.state.loading');
+  };
+
+  const getPageFrames = () => Array.from(
+    stage.querySelectorAll<HTMLElement>('.ofd-page-frame')
+  );
+
+  const syncPageNavigation = () => {
+    pageCount = getPageFrames().length;
+    currentPage = pageCount ? Math.min(pageCount, Math.max(1, currentPage)) : 0;
+    pageMeterCurrent.textContent = pageCount ? String(currentPage) : '-';
+    pageMeterTotal.textContent = `/ ${pageCount || '-'}`;
+    pageMeter.setAttribute(
+      'aria-label',
+      pageCount
+        ? t('ofd.toolbar.pageStatus', { current: currentPage, total: pageCount })
+        : t('ofd.toolbar.noPages')
+    );
+    previousPageButton.disabled = currentPage <= 1;
+    nextPageButton.disabled = currentPage <= 0 || currentPage >= pageCount;
+  };
+
+  const scrollToPage = (
+    requestedPage: number,
+    behavior: ScrollBehavior = 'smooth'
+  ) => {
+    const frames = getPageFrames();
+    if (!frames.length) {
+      currentPage = 0;
+      syncPageNavigation();
+      return false;
+    }
+    const nextPage = Math.min(frames.length, Math.max(1, Math.round(requestedPage)));
+    currentPage = nextPage;
+    syncPageNavigation();
+    const frame = frames[nextPage - 1];
+    if (typeof frame?.scrollIntoView === 'function') {
+      frame.scrollIntoView({ block: 'start', inline: 'nearest', behavior });
+    }
+    return true;
+  };
+
+  const detectCurrentPage = () => {
+    const frames = getPageFrames();
+    if (!frames.length) {
+      currentPage = 0;
+      syncPageNavigation();
+      return;
+    }
+    const stageRect = stage.getBoundingClientRect();
+    const viewportCenter = stageRect.top + stage.clientHeight / 2;
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+    frames.forEach((frame, index) => {
+      const rect = frame.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const distance = Math.abs(center - viewportCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+    const detectedPage = closestIndex + 1;
+    if (detectedPage !== currentPage) {
+      currentPage = detectedPage;
+      syncPageNavigation();
+    }
+  };
+
+  const scheduleCurrentPageDetection = () => {
+    if (scrollFrame) return;
+    const requestFrame = targetWindow?.requestAnimationFrame?.bind(targetWindow);
+    if (requestFrame) {
+      scrollFrame = requestFrame(() => {
+        scrollFrame = 0;
+        detectCurrentPage();
+      });
+      return;
+    }
+    scrollFrame = targetWindow?.setTimeout(() => {
+      scrollFrame = 0;
+      detectCurrentPage();
+    }, 0) || 0;
   };
 
   const getOfdDocument = async (ofd: OfdModule) => {
@@ -328,6 +449,8 @@ export default async function renderOfd(
       lastRenderedWidth = width;
       await waitForPaint(targetWindow);
       syncPageZoom();
+      syncPageNavigation();
+      if (currentPage > 1) scrollToPage(currentPage, 'auto');
       state = 'ready';
       syncState();
       zoomEmitter.emit();
@@ -359,6 +482,29 @@ export default async function renderOfd(
     });
     resizeObserver.observe(viewer);
   };
+
+  previousPageButton.addEventListener('click', () => {
+    scrollToPage(currentPage - 1);
+  });
+  nextPageButton.addEventListener('click', () => {
+    scrollToPage(currentPage + 1);
+  });
+  stage.addEventListener('scroll', scheduleCurrentPageDetection, { passive: true });
+  stage.addEventListener('keydown', event => {
+    if (event.key === 'PageUp') {
+      event.preventDefault();
+      scrollToPage(currentPage - 1);
+    } else if (event.key === 'PageDown') {
+      event.preventDefault();
+      scrollToPage(currentPage + 1);
+    } else if (event.key === 'Home' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      scrollToPage(1);
+    } else if (event.key === 'End' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      scrollToPage(pageCount);
+    }
+  });
 
   try {
     // Do not report the renderer as loaded until page surfaces exist. This
@@ -411,6 +557,11 @@ export default async function renderOfd(
       disposed = true;
       renderVersion += 1;
       targetWindow?.clearTimeout(resizeTimer);
+      if (scrollFrame) {
+        if (targetWindow?.cancelAnimationFrame) targetWindow.cancelAnimationFrame(scrollFrame);
+        else targetWindow?.clearTimeout(scrollFrame);
+      }
+      scrollFrame = 0;
       resizeObserver?.disconnect();
       resizeObserver = null;
       unregisterFileViewerZoomProvider(viewer);

@@ -58,7 +58,8 @@
     "verify:github-94": "node scripts/verify-github-94.mjs",
     "verify:image-placement": "node scripts/verify-image-placement.mjs",
     "verify:pageblock-render": "node scripts/verify-pageblock-render.mjs",
-    "verify:render-fidelity": "node scripts/verify-render-fidelity.mjs"
+    "verify:render-fidelity": "node scripts/verify-render-fidelity.mjs",
+    "verify:github-177": "pnpm --filter @file-viewer/core build && pnpm exec tsc -b tsconfig.json --force && node scripts/verify-github-177.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.2.5",
