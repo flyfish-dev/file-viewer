@@ -372,18 +372,17 @@ export const parseSpreadsheetCharts = async (data: ArrayBuffer) => {
       continue
     }
 
-    const [worksheetDocument, worksheetRelationships] = await Promise.all([
-      loadXml(zip, worksheetRelationship.target),
-      loadRelationships(zip, worksheetRelationship.target)
-    ])
-    if (!worksheetDocument) {
-      continue
-    }
-
-    const drawingParts = elementsByLocal(worksheetDocument.documentElement, 'drawing')
-      .map((drawing) => relationById(worksheetRelationships, relationshipId(drawing)))
-      .filter((relationship) => relationship?.type.endsWith(DRAWING_RELATIONSHIP_SUFFIX))
-      .map((relationship) => relationship!.target)
+    // A worksheet can expand to hundreds of megabytes even when the drawing
+    // relationship part is only a few hundred bytes. Loading sheetN.xml as a
+    // string here duplicates the cell parser's work and can exceed V8's string
+    // limit before chart parsing starts. Drawing relationships already carry
+    // the typed targets needed by the chart parser, so discover them directly.
+    const worksheetRelationships = await loadRelationships(zip, worksheetRelationship.target)
+    const drawingParts = Array.from(new Set(
+      worksheetRelationships
+        .filter((relationship) => relationship.type.endsWith(DRAWING_RELATIONSHIP_SUFFIX))
+        .map((relationship) => relationship.target)
+    ))
     const charts = (
       await Promise.all(drawingParts.map((part) => parseDrawingCharts(zip, part)))
     ).flat()
