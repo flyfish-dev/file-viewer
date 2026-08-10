@@ -61,7 +61,8 @@
   ],
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -b tsconfig.json --force && node scripts/build-worker.mjs && node scripts/copy-assets.mjs && node scripts/fix-esm-extensions.mjs",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:github-176": "node scripts/verify-github-176.mjs"
   },
   "dependencies": {
     "billboard.js": "^3.17.2",

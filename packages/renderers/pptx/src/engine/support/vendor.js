@@ -51,6 +51,92 @@ const DEFAULT_SLIDE_EMU_SIZE = { cx: 9144000, cy: 6858000 };
 const OPENXML_REL_PREFIX = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
 const MS_REL_PREFIX = "http://schemas.microsoft.com/office/2007/relationships/";
 
+function isConnectorShapeType(shapeType) {
+  return shapeType === "line" ||
+    shapeType === "straightConnector1" ||
+    /^bentConnector[2-5]$/.test(shapeType || "") ||
+    /^curvedConnector[2-5]$/.test(shapeType || "");
+}
+
+function getPresetGeometryAdjustments(node, defaults) {
+  const adjustments = Object.assign({}, defaults);
+  const guides = asArray(getTextByPathList(node, [ "p:spPr", "a:prstGeom", "a:avLst", "a:gd" ]));
+  guides.forEach(function (guide) {
+    const attrs = guide && guide["attrs"];
+    if (!attrs || !Object.prototype.hasOwnProperty.call(adjustments, attrs["name"])) {
+      return;
+    }
+    const formulaMatch = /^val\s+(-?(?:\d+(?:\.\d*)?|\.\d+))$/.exec(String(attrs["fmla"] || "").trim());
+    if (!formulaMatch) {
+      return;
+    }
+    const value = Number(formulaMatch[1]);
+    if (Number.isFinite(value)) {
+      adjustments[attrs["name"]] = value;
+    }
+  });
+  return adjustments;
+}
+
+export function normalizeConnectorPoints(points) {
+  const normalized = [];
+  points.forEach(function (point) {
+    const previous = normalized[normalized.length - 1];
+    if (!previous || previous[0] !== point[0] || previous[1] !== point[1]) {
+      normalized.push(point);
+    }
+  });
+  if (normalized.length === 1 && points.length > 1) {
+    normalized.push(normalized[0]);
+  }
+  return normalized;
+}
+
+export function getBentConnectorPoints(shapeType, node, width, height) {
+  const w = toFiniteNumber(width, 0);
+  const h = toFiniteNumber(height, 0);
+  const adjustments = getPresetGeometryAdjustments(node, {
+    adj1: 50000,
+    adj2: 50000,
+    adj3: 50000
+  });
+  const x1 = w * adjustments.adj1 / 100000;
+  const y2 = h * adjustments.adj2 / 100000;
+  const x3 = w * adjustments.adj3 / 100000;
+
+  switch (shapeType) {
+    case "bentConnector2":
+      return normalizeConnectorPoints([ [ 0, 0 ], [ w, 0 ], [ w, h ] ]);
+    case "bentConnector3":
+      return normalizeConnectorPoints([ [ 0, 0 ], [ x1, 0 ], [ x1, h ], [ w, h ] ]);
+    case "bentConnector4":
+      return normalizeConnectorPoints([ [ 0, 0 ], [ x1, 0 ], [ x1, y2 ], [ w, y2 ], [ w, h ] ]);
+    case "bentConnector5":
+      return normalizeConnectorPoints([ [ 0, 0 ], [ x1, 0 ], [ x1, y2 ], [ x3, y2 ], [ x3, h ], [ w, h ] ]);
+    default:
+      return [];
+  }
+}
+
+function getConnectorMarkerAttributes(shpId, headEndNodeAttrs, tailEndNodeAttrs) {
+  var attributes = "";
+  if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
+    attributes += "marker-start='url(#markerTriangle_" + shpId + ")' ";
+  }
+  if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
+    attributes += "marker-end='url(#markerTriangle_" + shpId + ")' ";
+  }
+  return attributes;
+}
+
+export function getConnectorViewportStyle(shapeType, width, height) {
+  if (!isConnectorShapeType(shapeType)) {
+    return "";
+  }
+  return " min-width:1px; min-height:1px; overflow:visible; transform-origin:" +
+    (toFiniteNumber(width, 0) / 2) + "px " + (toFiniteNumber(height, 0) / 2) + "px;";
+}
+
 function normalizePartPath(path) {
   const parts = [];
   String(path || "").split("/").forEach(function (part) {
@@ -982,6 +1068,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
       "' style='" +
       getPosition(slideXfrmNode, pNode, undefined, undefined, sType, groupContext) +
       getSize(slideXfrmNode, undefined, undefined, groupContext) +
+      getConnectorViewportStyle(shapType, w, h) +
       " z-index: " + order + ";" +
       "transform: rotate(" + ((rotate !== undefined) ? rotate : 0) + "deg)" + flip + ";" +
       "'>";
@@ -1142,7 +1229,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
     ////////////////////////////////////////////////////////////////////////////////////////
     if ((headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) ||
       (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow"))) {
-      var triangleMarker = "<marker id='markerTriangle_" + shpId + "' viewBox='0 0 10 10' refX='1' refY='5' markerWidth='5' markerHeight='5' stroke='" + border.color + "' fill='" + border.color +
+      var triangleMarker = "<marker id='markerTriangle_" + shpId + "' viewBox='0 0 10 10' refX='10' refY='5' markerWidth='5' markerHeight='5' stroke='" + border.color + "' fill='" + border.color +
         "' orient='auto-start-reverse' markerUnits='strokeWidth'><path d='M 0 0 L 10 5 L 0 10 z' /></marker>";
       result += triangleMarker;
     }
@@ -1997,21 +2084,10 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
           "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
         break;
       case "bentConnector2":
-        var d = "";
-        // if (isFlipV) {
-        //     d = "M 0 " + w + " L " + h + " " + w + " L " + h + " 0";
-        // } else {
-        d = "M " + w + " 0 L " + w + " " + h + " L 0 " + h;
-        //}
-        result += "<path d='" + d + "' stroke='" + border.color +
-          "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' fill='none' ";
-        if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-          result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-        }
-        if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-          result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-        }
-        result += "/>";
+        var connectorPoints = getBentConnectorPoints(shapType, node, w, h);
+        result += "<polyline points='" + connectorPoints.map(function (point) { return point[0] + " " + point[1]; }).join(",") +
+          "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray +
+          "' fill='none' " + getConnectorMarkerAttributes(shpId, headEndNodeAttrs, tailEndNodeAttrs) + "/>";
         break;
       case "rtTriangle":
         result += " <polygon points='0 0,0 " + h + "," + w + " " + h + "' fill='" + (!imgFillFlg ? (grndFillFlg ? "url(#linGrd_" + shpId + ")" : fillColor) : "url(#imgPtrn_" + shpId + ")") +
@@ -3672,25 +3748,10 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
           "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' />";
         break;
       case "bentConnector3":
-        var shapAdjst = getTextByPathList(node, [ "p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla" ]);
-        var shapAdjst_val = 0.5;
-        if (shapAdjst !== undefined) {
-          shapAdjst_val = parseInt(shapAdjst.substr(4)) / 100000;
-          // if (isFlipV) {
-          //     result += " <polyline points='" + w + " 0," + ((1 - shapAdjst_val) * w) + " 0," + ((1 - shapAdjst_val) * w) + " " + h + ",0 " + h + "' fill='transparent'" +
-          //         "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
-          // } else {
-          result += " <polyline points='0 0," + (shapAdjst_val) * w + " 0," + (shapAdjst_val) * w + " " + h + "," + w + " " + h + "' fill='transparent'" +
-            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
-          //}
-          if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-            result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-          }
-          if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-            result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-          }
-          result += "/>";
-        }
+        var connectorPoints = getBentConnectorPoints(shapType, node, w, h);
+        result += "<polyline points='" + connectorPoints.map(function (point) { return point[0] + " " + point[1]; }).join(",") +
+          "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray +
+          "' fill='none' " + getConnectorMarkerAttributes(shpId, headEndNodeAttrs, tailEndNodeAttrs) + "/>";
         break;
       case "plus":
         var shapAdjst = getTextByPathList(node, [ "p:spPr", "a:prstGeom", "a:avLst", "a:gd", "attrs", "fmla" ]);
@@ -5360,6 +5421,13 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
       case "straightConnector1":
       case "bentConnector4":
       case "bentConnector5":
+        if (shapType === "bentConnector4" || shapType === "bentConnector5") {
+          var connectorPoints = getBentConnectorPoints(shapType, node, w, h);
+          result += "<polyline points='" + connectorPoints.map(function (point) { return point[0] + " " + point[1]; }).join(",") +
+            "' stroke='" + border.color + "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray +
+            "' fill='none' " + getConnectorMarkerAttributes(shpId, headEndNodeAttrs, tailEndNodeAttrs) + "/>";
+          break;
+        }
       case "curvedConnector2":
       case "curvedConnector3":
       case "curvedConnector4":
@@ -5371,14 +5439,9 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
         //         "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
         // } else {
         result += "<line x1='0' y1='0' x2='" + lineX2 + "' y2='" + lineY2 + "' stroke='" + border.color +
-          "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' ";
+          "' stroke-width='" + border.width + "' stroke-dasharray='" + border.strokeDasharray + "' " +
+          getConnectorMarkerAttributes(shpId, headEndNodeAttrs, tailEndNodeAttrs);
         //}
-        if (headEndNodeAttrs !== undefined && (headEndNodeAttrs["type"] === "triangle" || headEndNodeAttrs["type"] === "arrow")) {
-          result += "marker-start='url(#markerTriangle_" + shpId + ")' ";
-        }
-        if (tailEndNodeAttrs !== undefined && (tailEndNodeAttrs["type"] === "triangle" || tailEndNodeAttrs["type"] === "arrow")) {
-          result += "marker-end='url(#markerTriangle_" + shpId + ")' ";
-        }
         result += "/>";
         break;
       case "rightArrow":
