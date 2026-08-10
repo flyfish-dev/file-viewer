@@ -3,7 +3,7 @@
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  X-Robots-Tag: index, follow
+  X-Robots-Tag: index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
@@ -15,6 +15,10 @@
   Content-Type: application/xml; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
 
+/sitemap.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600, must-revalidate
+
 /robots.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
@@ -24,6 +28,18 @@
   Cache-Control: public, max-age=3600, must-revalidate
 
 /llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/software.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/en/browser-file-viewer/index.html.md
+  Content-Type: text/markdown; charset=utf-8
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/B3769A37-31E9-4B9D-8A28-1568695B0943.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
 

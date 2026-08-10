@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If File Viewer helps your work, cite the repository and release you tested."
+title: "File Viewer by Flyfish"
+type: software
+version: 2.2.5
+date-released: 2026-08-01
+repository-code: "https://github.com/flyfish-dev/file-viewer"
+url: "https://file-viewer.app/"
+license: Apache-2.0
+abstract: "Browser-native, offline-first, self-hosted multi-format file preview components with 54 npm targets, 208 extension mappings, and 25 preview pipelines."
+keywords:
+  - file-viewer
+  - document-preview
+  - browser-native
+  - self-hosted
+  - offline-first
+  - office-viewer
+  - cad-viewer
+  - webassembly
+authors:
+  - family-names: Wang
+    given-names: Yu
+    alias: wybaby168
+    affiliation: Flyfish
+    website: "https://github.com/wybaby168"

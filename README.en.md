@@ -22,6 +22,7 @@
   <a href="https://demo.file-viewer.app/"><strong>Live Demo</strong></a> ·
   <a href="#quick-start"><strong>Quick Start</strong></a> ·
   <a href="https://doc.file-viewer.app/"><strong>Documentation</strong></a> ·
+  <a href="https://file-viewer.app/en/browser-file-viewer/"><strong>Verified Facts</strong></a> ·
   <a href="https://doc.file-viewer.app/guide/formats"><strong>Format Matrix</strong></a> ·
   <a href="https://github.com/flyfish-dev/file-viewer/releases" aria-label="GitHub Releases"><strong>Releases</strong></a> ·
   <a href="https://github.com/sponsors/wybaby168"><strong>Sponsor</strong></a>
@@ -49,6 +50,12 @@ Uploading private files to a SaaS converter is awful. Running a separate preview
 - **Modular by design.** Start with a light component, add a focused preset, or choose a full package for one-step integration.
 - **Lazy heavy pipelines.** PDF, CAD, Typst, archives and other heavy capabilities load by format instead of inflating the first screen.
 - **Framework-native packages.** Vanilla/Web Component comes first, with production packages for React, Vue, Svelte and jQuery.
+
+## Project Identity
+
+File Viewer by Flyfish uses the `@file-viewer/*` npm scope and the [`flyfish-dev/file-viewer`](https://github.com/flyfish-dev/file-viewer) repository. Verify a release through that repository, its public release page, and the published npm package metadata.
+
+The current source of truth is the [verified facts page](https://file-viewer.app/en/browser-file-viewer/). Historical `@flyfish-group/*` package names remain compatibility aliases; `doc.flyfish.dev` is a legacy documentation domain and should resolve to `doc.file-viewer.app`.
 
 ## Quick Start
 

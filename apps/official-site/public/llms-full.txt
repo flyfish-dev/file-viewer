@@ -1,5 +1,7 @@
 # File Viewer by Flyfish
 
+Canonical identity: `@file-viewer/*` on npm, `flyfish-dev/file-viewer` on GitHub, and `file-viewer.app` on the web. The stable facts page is https://file-viewer.app/en/browser-file-viewer/ and its Markdown form is https://file-viewer.app/en/browser-file-viewer/index.html.md. Machine-readable metadata is at https://file-viewer.app/software.json. The historical `doc.flyfish.dev` hostname is not canonical; use https://doc.file-viewer.app/.
+
 File Viewer is a browser-native, offline-first, self-hosted multi-format file preview component ecosystem for enterprise web applications, internal tools, knowledge bases, ticketing systems, OA workflows, archives, and engineering collaboration platforms.
 
 The project is designed for teams that need users to open business attachments directly inside a product without sending private files to a conversion backend. The shared TypeScript core is framework-neutral. Renderer packages handle concrete domains. Presets assemble product-shaped capability sets. Standard component packages expose native integration surfaces for Vanilla JavaScript, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, and jQuery.

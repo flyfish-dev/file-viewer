@@ -5,7 +5,7 @@
 >
   <url>
     <loc>https://file-viewer.app/</loc>
-    <lastmod>2026-07-15</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://file-viewer.app/" />
@@ -14,11 +14,37 @@
   </url>
   <url>
     <loc>https://file-viewer.app/en/</loc>
-    <lastmod>2026-07-15</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://file-viewer.app/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://file-viewer.app/en/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://file-viewer.app/" />
+  </url>
+  <url>
+    <loc>https://file-viewer.app/commercial/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://file-viewer.app/commercial/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://file-viewer.app/en/commercial/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://file-viewer.app/commercial/" />
+  </url>
+  <url>
+    <loc>https://file-viewer.app/en/commercial/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://file-viewer.app/commercial/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://file-viewer.app/en/commercial/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://file-viewer.app/commercial/" />
+  </url>
+  <url>
+    <loc>https://file-viewer.app/en/browser-file-viewer/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://file-viewer.app/en/browser-file-viewer/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://file-viewer.app/en/browser-file-viewer/" />
   </url>
 </urlset>

@@ -13,6 +13,13 @@ const textAssetExtensions = new Set([
   '.xml'
 ])
 const ignoredTextDirectories = new Set(['example'])
+const ignoredMetadataFileNames = new Set([
+  'llms-full.txt',
+  'llms.txt',
+  'robots.txt',
+  'sitemap.txt',
+  'sitemap.xml'
+])
 
 const replacements = [
   {
@@ -204,7 +211,8 @@ async function collectTextFiles(root, files = []) {
   }
   const info = await stat(root)
   if (info.isFile()) {
-    if (textAssetExtensions.has(extname(root))) {
+    const fileName = root.replaceAll('\\', '/').split('/').pop() || ''
+    if (textAssetExtensions.has(extname(root)) && !ignoredMetadataFileNames.has(fileName)) {
       files.push(root)
     }
     return files

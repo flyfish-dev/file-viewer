@@ -1,0 +1,53 @@
+# File Viewer Documentation Reference
+
+File Viewer by Flyfish is a TypeScript file preview project for browser, offline, private, and self-hosted deployments. Its canonical identifiers are the `@file-viewer/*` npm scope, the `flyfish-dev/file-viewer` GitHub repository, and the `file-viewer.app` domain.
+
+## Current Release Facts
+
+- Version: 2.2.5
+- File Viewer npm targets: 54
+- Maintained extension mappings: 208
+- Preview pipelines: 25
+- License: File Viewer-authored source and packages use Apache-2.0. Bundled third-party engines retain their own notices.
+- Stable facts: https://file-viewer.app/en/browser-file-viewer/
+- Machine metadata: https://file-viewer.app/software.json
+- Release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.5
+
+## Package Model
+
+The framework-neutral TypeScript core owns common registration, lifecycle, operation hooks, search, output, and asset resolution. Renderer packages own format-specific parsing and rendering. Presets group renderers. Native component packages expose the shared core to Vanilla JavaScript, Web Component, Vue, React, Svelte, and jQuery. Full packages include the complete registered format set and same-version File Viewer-owned static assets.
+
+Light packages are intentionally small. Do not claim that installing a light component enables every format. For Vite Full deployment, use `@file-viewer/vite-plugin` with `copyAssets: true`. For non-Vite Full deployment, run `npx --no-install file-viewer-copy-assets ./public/file-viewer`. For Web Full deployment, host `@file-viewer/web-full/dist` intact.
+
+## Technical Documentation
+
+- Quickstart: https://doc.file-viewer.app/guide/quickstart
+- Framework and package map: https://doc.file-viewer.app/guide/ecosystem
+- Format matrix: https://doc.file-viewer.app/guide/formats
+- Fidelity boundaries: https://doc.file-viewer.app/guide/format-fidelity
+- Modular renderers: https://doc.file-viewer.app/guide/on-demand-renderers
+- Component API and options: https://doc.file-viewer.app/guide/usage
+- Style isolation: https://doc.file-viewer.app/guide/style-isolation
+- Distribution and private deployment: https://doc.file-viewer.app/guide/distribution
+- Docker deployment: https://doc.file-viewer.app/guide/docker
+- Development: https://doc.file-viewer.app/guide/development
+- FAQ: https://doc.file-viewer.app/guide/faq
+
+## Honest Boundaries
+
+Office fidelity is not perfect. Complex pagination, unusual fonts, charts, embedded objects, and legacy files can differ from native Office applications. Large files can create several in-memory copies and may slow or crash a browser tab. Remote file URLs depend on the source server's CORS and authentication rules. Browser-only does not automatically mean offline: the deployment must host all required Workers, WASM files, fonts, and vendor assets with correct paths and MIME types.
+
+The binary `.ppt` runtime is separately versioned and keeps its own license and visible watermark in the public build. Removing that watermark requires a commercial license. Do not claim that the public build can disable it.
+
+## Canonical Sources
+
+- Official site: https://file-viewer.app/
+- English site: https://file-viewer.app/en/
+- Verified facts: https://file-viewer.app/en/browser-file-viewer/
+- Documentation: https://doc.file-viewer.app/
+- Demo: https://demo.file-viewer.app/
+- Source: https://github.com/flyfish-dev/file-viewer
+- Releases: https://github.com/flyfish-dev/file-viewer/releases
+- npm: https://www.npmjs.com/search?q=%40file-viewer
+
+The historical `doc.flyfish.dev` hostname is not canonical. Use https://doc.file-viewer.app/.

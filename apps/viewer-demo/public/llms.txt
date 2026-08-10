@@ -1,0 +1,12 @@
+# File Viewer Demo
+
+> This is the official interactive demo for File Viewer by Flyfish, a browser-native, offline-first, self-hosted file preview project.
+
+- Demo: https://demo.file-viewer.app/
+- Official site: https://file-viewer.app/en/
+- Stable project facts: https://file-viewer.app/en/browser-file-viewer/
+- Documentation: https://doc.file-viewer.app/
+- Source: https://github.com/flyfish-dev/file-viewer
+- npm core: https://www.npmjs.com/package/@file-viewer/core
+
+The current v2.2.5 registry maps 208 extensions to 25 preview pipelines. Local files selected in the demo stay in the browser. Remote URL behavior depends on the source server's CORS policy.

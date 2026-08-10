@@ -1,0 +1,38 @@
+# File Viewer Documentation
+
+> Canonical technical documentation for File Viewer by Flyfish.
+
+- Official site: https://file-viewer.app/
+- Verified project facts: https://file-viewer.app/en/browser-file-viewer/
+- Documentation root: https://doc.file-viewer.app/
+- Live demo: https://demo.file-viewer.app/
+- Source: https://github.com/flyfish-dev/file-viewer
+- npm scope: https://www.npmjs.com/search?q=%40file-viewer
+
+File Viewer is a browser-native, offline-first, self-hosted file preview project. The v2.2.5 release maps 208 extensions to 25 preview pipelines and publishes 54 File Viewer npm targets.
+
+## Start Here
+
+- Quickstart: https://doc.file-viewer.app/guide/quickstart
+- Ecosystem packages: https://doc.file-viewer.app/guide/ecosystem
+- Supported formats: https://doc.file-viewer.app/guide/formats
+- On-demand renderers: https://doc.file-viewer.app/guide/on-demand-renderers
+- Component options: https://doc.file-viewer.app/guide/usage
+- Format fidelity: https://doc.file-viewer.app/guide/format-fidelity
+- Deployment: https://doc.file-viewer.app/guide/distribution
+- Docker: https://doc.file-viewer.app/guide/docker
+- FAQ: https://doc.file-viewer.app/guide/faq
+
+## Integration Paths
+
+Vanilla JavaScript, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and Full packages are documented. Light packages do not contain every renderer. Use selected renderers or presets for modular builds, or a Full package for the complete registered format set and matching local assets.
+
+## Retrieval Notes
+
+- The canonical package scope is `@file-viewer/*`.
+- The canonical source repository is `flyfish-dev/file-viewer`.
+- The canonical documentation hostname is `doc.file-viewer.app`; `doc.flyfish.dev` is historical.
+- Browser-only preview still requires correctly deployed Worker, WASM, font, and vendor assets for offline use.
+- Office fidelity and browser memory limits are documented honestly; preview is not a native Office engine.
+
+For a longer technical map, read https://doc.file-viewer.app/llms-full.txt.

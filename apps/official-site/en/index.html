@@ -32,10 +32,14 @@
     <link rel="alternate" hreflang="zh-CN" href="https://file-viewer.app/" />
     <link rel="alternate" hreflang="en" href="https://file-viewer.app/en/" />
     <link rel="alternate" hreflang="x-default" href="https://file-viewer.app/" />
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-readable project overview" />
+    <link rel="alternate" type="application/json" href="/software.json" title="Machine-readable software metadata" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="File Viewer" />
     <meta property="og:locale" content="en_US" />
@@ -89,8 +93,9 @@
             "@type": "SoftwareApplication",
             "@id": "https://file-viewer.app/#software",
             "name": "File Viewer",
-            "alternateName": ["Flyfish File Viewer", "Flyfish Viewer"],
+            "alternateName": ["File Viewer by Flyfish", "Flyfish File Viewer", "Flyfish Viewer"],
             "url": "https://file-viewer.app/",
+            "mainEntityOfPage": "https://file-viewer.app/en/browser-file-viewer/",
             "image": "https://file-viewer.app/file-viewer-demo-v2.2.5-desktop-en.webp",
             "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 54 npm targets, 208 extensions, and 25 preview pipelines.",
             "applicationCategory": "DeveloperApplication",
@@ -100,6 +105,15 @@
             "license": "https://www.apache.org/licenses/LICENSE-2.0",
             "codeRepository": "https://github.com/flyfish-dev/file-viewer",
             "downloadUrl": "https://github.com/flyfish-dev/file-viewer/releases",
+            "sameAs": [
+              "https://www.npmjs.com/package/@file-viewer/core",
+              "https://www.producthunt.com/products/flyfish-file-viewer",
+              "https://peerlist.io/wybaby168/project/file-viewer",
+              "https://www.saashub.com/fileviewer-app",
+              "https://kittylaunch.com/p/file-viewer",
+              "https://stackshare.io/file-viewer",
+              "https://hub.docker.com/r/flyfishdev/file-viewer"
+            ],
             "softwareVersion": "2.2.5",
             "releaseNotes": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.5",
             "featureList": [
@@ -123,7 +137,22 @@
             },
             "publisher": {
               "@id": "https://file-viewer.app/#organization"
+            },
+            "author": {
+              "@id": "https://file-viewer.app/#maintainer"
             }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://file-viewer.app/#maintainer",
+            "name": "Yu Wang",
+            "jobTitle": "CTO at Flyfish",
+            "url": "https://github.com/wybaby168",
+            "sameAs": [
+              "https://github.com/wybaby168",
+              "https://daily.dev/yuwang6",
+              "https://peerlist.io/wybaby168"
+            ]
           },
           {
             "@type": "FAQPage",

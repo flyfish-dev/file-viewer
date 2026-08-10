@@ -414,11 +414,14 @@ export default defineConfig({
   },
   head: [
     ['meta', { name: 'theme-color', content: '#31a66f' }],
+    ['meta', { name: 'robots', content: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' }],
     ['meta', { property: 'og:title', content: 'File Viewer' }],
     ['meta', { property: 'og:description', content: 'Browser-native file preview for internal web apps, covering 208 extensions across 25 preview pipelines without server-side conversion.' }],
     ['meta', { property: 'og:image', content: 'https://doc.file-viewer.app/_media/social-preview.png' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:image', content: 'https://doc.file-viewer.app/_media/social-preview.png' }]
+    ['meta', { name: 'twitter:image', content: 'https://doc.file-viewer.app/_media/social-preview.png' }],
+    ['link', { rel: 'sitemap', type: 'application/xml', href: 'https://doc.file-viewer.app/sitemap.xml' }],
+    ['link', { rel: 'alternate', type: 'text/plain', href: 'https://doc.file-viewer.app/llms.txt', title: 'File Viewer documentation index' }]
   ],
   themeConfig: {
     logo: '/_media/logo.png',

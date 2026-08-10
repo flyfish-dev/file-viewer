@@ -1,0 +1,38 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": "SoftwareSourceCode",
+  "@id": "https://file-viewer.app/#software",
+  "name": "File Viewer",
+  "alternateName": ["File Viewer by Flyfish", "Flyfish File Viewer", "Flyfish Viewer"],
+  "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 54 npm targets, 208 extension mappings, and 25 preview pipelines.",
+  "version": "2.2.5",
+  "dateModified": "2026-08-10",
+  "codeRepository": "https://github.com/flyfish-dev/file-viewer",
+  "issueTracker": "https://github.com/flyfish-dev/file-viewer/issues",
+  "downloadUrl": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.5",
+  "license": "https://spdx.org/licenses/Apache-2.0",
+  "programmingLanguage": ["TypeScript", "JavaScript"],
+  "runtimePlatform": "Web Browser",
+  "applicationCategory": "DeveloperApplication",
+  "keywords": [
+    "file viewer",
+    "document preview",
+    "browser-native",
+    "self-hosted",
+    "offline-first",
+    "Office viewer",
+    "PDF viewer",
+    "CAD viewer",
+    "WebAssembly"
+  ],
+  "author": {
+    "@type": "Person",
+    "name": "Yu Wang",
+    "url": "https://github.com/wybaby168"
+  },
+  "maintainer": {
+    "@type": "Person",
+    "name": "Yu Wang",
+    "url": "https://github.com/wybaby168"
+  }
+}

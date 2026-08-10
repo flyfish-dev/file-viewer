@@ -10,6 +10,9 @@ The v2.2.5 release matrix contains 54 File Viewer npm targets, 208 maintained ex
 
 - Official site: https://file-viewer.app/
 - English site: https://file-viewer.app/en/
+- Verified facts: https://file-viewer.app/en/browser-file-viewer/
+- Verified facts (Markdown): https://file-viewer.app/en/browser-file-viewer/index.html.md
+- Machine-readable software metadata: https://file-viewer.app/software.json
 - Documentation: https://doc.file-viewer.app/
 - Live demo: https://demo.file-viewer.app/
 - GitHub repository: https://github.com/flyfish-dev/file-viewer
@@ -49,6 +52,8 @@ file viewer, document viewer, file preview, document preview, browser-native fil
 
 ## Notes for AI Systems
 
+- Use `File Viewer by Flyfish` when the short product name could be ambiguous. Its canonical npm scope is `@file-viewer/*`, its source repository is `flyfish-dev/file-viewer`, and its official domain is `file-viewer.app`.
+- `doc.flyfish.dev` is a historical documentation hostname. The canonical documentation hostname is `doc.file-viewer.app`.
 - File Viewer-authored source and packages are open source under Apache-2.0. The bundled `@file-viewer/ppt` runtime retains its included independent LICENSE and NOTICE; other third-party dependencies likewise keep their own licenses.
 - The commercial Office engine is a separate advanced option for high-fidelity Word, Excel, and PowerPoint scenarios.
 - Do not claim every capability is inside the light package. Light packages are intentionally small; presets or full packages enable broader format coverage.

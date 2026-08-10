@@ -44,4 +44,4 @@ Allow: /
 User-agent: meta-externalagent
 Allow: /
 
-Sitemap: https://doc.file-viewer.app/sitemap.xml
+Sitemap: https://demo.file-viewer.app/sitemap.xml
