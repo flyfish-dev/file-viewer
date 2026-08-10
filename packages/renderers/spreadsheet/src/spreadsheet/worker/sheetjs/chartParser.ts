@@ -213,6 +213,8 @@ const parsePointValues = (element: XmlElement | undefined) => {
     .map((point) => point.value)
 }
 
+const CHART_TEXT_POINTS_LIMIT = 200
+
 const chartText = (element: XmlElement | undefined) => {
   if (!element) {
     return ''
@@ -220,6 +222,12 @@ const chartText = (element: XmlElement | undefined) => {
 
   const points = parsePointValues(element)
   if (points.length) {
+    if (points.length > CHART_TEXT_POINTS_LIMIT) {
+      console.warn(
+        `[file-viewer] chartText truncated ${points.length} points to ${CHART_TEXT_POINTS_LIMIT}.`
+      )
+      return points.slice(0, CHART_TEXT_POINTS_LIMIT).join(' ').trim()
+    }
     return points.join(' ').trim()
   }
 
