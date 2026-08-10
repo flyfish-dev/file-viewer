@@ -4,10 +4,13 @@ import {
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   registerFileViewerZoomProvider,
   resolveFileViewerColorScheme,
+  resolveFileViewerFitScale,
   resolveFileViewerRuntimeAssetBaseUrl,
   resolveFileViewerSpreadsheetWorkerUrl,
   unregisterFileViewerZoomProvider,
   type FileRenderContext,
+  type FileViewerFitRequest,
+  type FileViewerFitResult,
   type FileViewerRenderedInstance as AppWrapper,
   type FileViewerWorkerFactory,
   type FileViewerZoomState,
@@ -42,6 +45,8 @@ import {
   normalizeRowHeight,
   RESIZABLE_COLUMN_MIN_WIDTH,
   RESIZABLE_ROW_MIN_HEIGHT,
+  SPREADSHEET_MAX_ZOOM,
+  SPREADSHEET_MIN_ZOOM,
 } from './spreadsheet/view.js';
 
 type EVirtTableInstance = {
@@ -649,7 +654,10 @@ const setHidden = (element: HTMLElement, hidden: boolean) => {
 };
 
 const clampZoom = (value: number) => {
-  return Math.min(2.5, Math.max(0.5, Number(value.toFixed(2))));
+  return Math.min(
+    SPREADSHEET_MAX_ZOOM,
+    Math.max(SPREADSHEET_MIN_ZOOM, Number(value.toFixed(2)))
+  );
 };
 
 const serializeSpreadsheetCopyCell = (value: unknown) => {
@@ -851,6 +859,7 @@ const renderFileViewerSpreadsheet = async (
   let sheetSessionId = 0;
   let disposed = false;
   let hasNotifiedFirstPaint = false;
+  let hasAppliedDefaultInitialFit = false;
   const resizableColumns = context?.options?.spreadsheet?.resizableColumns === true;
   const resizableRows = context?.options?.spreadsheet?.resizableRows === true;
 
@@ -913,11 +922,11 @@ const renderFileViewerSpreadsheet = async (
   const getZoomState = (): FileViewerZoomState => ({
     scale: zoom,
     label: `${Math.round(zoom * 100)}%`,
-    canZoomIn: zoom < 2.5,
-    canZoomOut: zoom > 0.5,
+    canZoomIn: zoom < SPREADSHEET_MAX_ZOOM,
+    canZoomOut: zoom > SPREADSHEET_MIN_ZOOM,
     canReset: zoom !== 1,
-    minScale: 0.5,
-    maxScale: 2.5,
+    minScale: SPREADSHEET_MIN_ZOOM,
+    maxScale: SPREADSHEET_MAX_ZOOM,
   });
 
   const getImageViewportScrollbarGuard = () => {
@@ -1075,11 +1084,124 @@ const renderFileViewerSpreadsheet = async (
     return getZoomState();
   };
 
+  const getSpreadsheetContentSize = () => {
+    const contentWidth = virtualState.columns.reduce((sum, column) => {
+      const candidate = column as { hide?: boolean; width?: unknown };
+      if (candidate.hide) {
+        return sum;
+      }
+      const width = Number(candidate.width);
+      return sum + (Number.isFinite(width) && width > 0 ? width : sheetDefaults.colWidth);
+    }, 0);
+    const defaultRowHeight = normalizeRowHeight(
+      sheetDefaults.rowHeight,
+      DEFAULT_SHEET_DEFAULTS.rowHeight
+    );
+    let explicitHeight = 0;
+    let explicitRows = 0;
+    virtualState.rowHeightCache.forEach((height) => {
+      explicitHeight += normalizeRowHeight(height, defaultRowHeight);
+      explicitRows += 1;
+    });
+    const contentHeight = HEADER_HEIGHT + explicitHeight +
+      Math.max(0, virtualState.totalRows - explicitRows) * defaultRowHeight;
+    return { contentWidth, contentHeight };
+  };
+
+  const resolveSpreadsheetScale = (request: FileViewerFitRequest) => {
+    const content = getSpreadsheetContentSize();
+    const autoMode = request.mode === 'auto';
+    const viewportWidth = request.viewportWidth || tableHost.clientWidth || 0;
+    const viewportHeight = request.viewportHeight || tableHost.clientHeight || 0;
+    if (viewportWidth <= 0 || viewportHeight <= 0) {
+      return undefined;
+    }
+    return resolveFileViewerFitScale({
+      mode: autoMode ? 'width' : request.mode,
+      viewportWidth,
+      viewportHeight,
+      contentWidth: content.contentWidth,
+      contentHeight: content.contentHeight,
+      currentScale: zoom,
+      minScale: request.minScale ?? SPREADSHEET_MIN_ZOOM,
+      maxScale: request.maxScale ?? (autoMode ? 1 : SPREADSHEET_MAX_ZOOM),
+    });
+  };
+
+  const fitSpreadsheet = (request: FileViewerFitRequest): FileViewerFitResult => {
+    if (!virtualState.active || !virtualState.columns.length) {
+      return {
+        applied: false,
+        mode: request.mode,
+        resize: request.resize,
+        source: request.source,
+        reason: 'pending',
+        provider: 'zoom',
+      };
+    }
+    const scale = resolveSpreadsheetScale(request);
+    if (!scale) {
+      return {
+        applied: false,
+        mode: request.mode,
+        resize: request.resize,
+        source: request.source,
+        reason: 'unmeasurable',
+        provider: 'zoom',
+      };
+    }
+    const state = setZoom(scale);
+    return {
+      applied: true,
+      mode: request.mode,
+      resize: request.resize,
+      scale: state.scale,
+      source: request.source,
+      provider: 'zoom',
+    };
+  };
+
+  const applyDefaultInitialFit = () => {
+    const explicitInitialScale = Number(
+      context?.options?.initialViewState?.scale ??
+      context?.options?.initialViewState?.zoom?.scale
+    );
+    if (
+      hasAppliedDefaultInitialFit ||
+      context?.options?.fit !== undefined ||
+      (Number.isFinite(explicitInitialScale) && explicitInitialScale > 0)
+    ) {
+      hasAppliedDefaultInitialFit = true;
+      return;
+    }
+    const scale = resolveSpreadsheetScale({
+      mode: 'auto',
+      resize: 'initial',
+      padding: 0,
+      source: 'initial',
+      reason: 'initial',
+      viewportWidth: tableHost.clientWidth || target.clientWidth || 0,
+      viewportHeight: tableHost.clientHeight || target.clientHeight || 0,
+      container: tableHost,
+    });
+    if (!scale || scale >= zoom) {
+      if (scale) {
+        hasAppliedDefaultInitialFit = true;
+      }
+      return;
+    }
+    zoom = clampZoom(scale);
+    syncScaledRowHeights();
+    zoomEmitter.emit();
+    hasAppliedDefaultInitialFit = true;
+  };
+
   registerFileViewerZoomProvider(root, {
     zoomIn: () => setZoom(zoom + 0.1),
     zoomOut: () => setZoom(zoom - 0.1),
     resetZoom: () => setZoom(1),
     setZoom,
+    fit: fitSpreadsheet,
     getState: getZoomState,
     subscribe: zoomEmitter.subscribe,
   });
@@ -1286,6 +1408,7 @@ const renderFileViewerSpreadsheet = async (
       return;
     }
 
+    applyDefaultInitialFit();
     syncTableLayout();
   };
 
@@ -1625,6 +1748,7 @@ const renderFileViewerSpreadsheet = async (
     applySheetStructure(ws);
     applyWindowRows(ws);
     applyWindowCells(ws);
+    applyDefaultInitialFit();
 
     virtualState.loadedWindows.add(meta.startRow);
     virtualState.loadingWindows.delete(meta.startRow);
