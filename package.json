@@ -30,14 +30,15 @@
     "type-check:presets": "pnpm --filter './packages/presets/**' type-check",
     "test:i18n": "node apps/viewer-demo/scripts/verify-japanese-i18n.mjs",
     "test:thumbnail": "pnpm --filter @file-viewer/thumbnail test",
-    "test": "pnpm test:i18n && pnpm test:thumbnail",
+    "test": "pnpm test:i18n && pnpm test:thumbnail && pnpm test:doc-github-171",
     "type-check:components": "pnpm --filter @file-viewer/web type-check && pnpm --filter @file-viewer/react type-check && pnpm --filter @file-viewer/react-legacy type-check && pnpm --filter @file-viewer/vue3 type-check && pnpm --filter @file-viewer/vue2.7 type-check && pnpm --filter @file-viewer/vue2.6 type-check && pnpm --filter @file-viewer/jquery type-check && pnpm --filter @file-viewer/svelte type-check",
     "type-check:tools": "pnpm --filter './packages/tools/**' type-check",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "verify:vue3-toolbar-browser": "node apps/component-demo/scripts/verify-vue3-toolbar-browser.mjs",
-    "verify:browser-smoke": "node apps/viewer-demo/scripts/public-smoke.mjs"
+    "verify:browser-smoke": "node apps/viewer-demo/scripts/public-smoke.mjs",
+    "test:doc-github-171": "pnpm --filter @file-viewer/doc verify:github-171"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",

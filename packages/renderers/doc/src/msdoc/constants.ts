@@ -2,6 +2,7 @@ export const DOC_CONTROL = {
   paragraph: '\u000d',
   cellMark: '\u0007',
   picture: '\u0001',
+  textBoxPlaceholder: '\u0008',
   fieldStart: '\u0013',
   fieldSeparator: '\u0014',
   fieldEnd: '\u0015',
