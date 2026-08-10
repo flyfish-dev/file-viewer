@@ -68,6 +68,10 @@ type DocxLibraryImport = DocxLibrary & {
 }
 
 type DocxRenderAsync = typeof renderAsync
+type DocxExternalLinkPolicy = NonNullable<FileViewerDocxOptions['externalLinkPolicy']>
+type DocxRenderOptions = Partial<Options> & {
+  externalLinkPolicy: DocxExternalLinkPolicy
+}
 
 // Modern bundlers expose the ESM named exports, while some legacy webpack
 // configurations wrap the CommonJS browser API in `default`.
@@ -366,11 +370,36 @@ const appendDocxVendorAssetVersion = (url: string | undefined, explicitUrl: bool
   return `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${DOCX_VENDOR_ASSET_VERSION}`
 }
 
-const createDocxOptions = (
+export const applyDocxExternalLinkPolicy = (
+  target: Pick<ParentNode, 'querySelectorAll'>,
+  policy: DocxExternalLinkPolicy
+) => {
+  if (policy === 'allow') {
+    return 0
+  }
+
+  let blocked = 0
+  target.querySelectorAll<HTMLAnchorElement>('a[href]').forEach(anchor => {
+    const href = anchor.getAttribute('href')
+    if (!href || href.startsWith('#')) {
+      return
+    }
+
+    if (!anchor.hasAttribute('data-docx-external-href')) {
+      anchor.setAttribute('data-docx-external-href', href)
+    }
+    anchor.removeAttribute('href')
+    anchor.setAttribute('aria-disabled', 'true')
+    blocked += 1
+  })
+  return blocked
+}
+
+export const createDocxOptions = (
   target: HTMLDivElement,
   context: FileRenderContext | undefined,
   notifyProgressiveRender: () => void
-): Partial<Options> => {
+): DocxRenderOptions => {
   const docxOptions = context?.options?.docx
   const documentBaseUrl = resolveFileViewerRuntimeAssetBaseUrl(target.ownerDocument)
   const useWorker = shouldUseDocxWorker(target, docxOptions)
@@ -382,12 +411,19 @@ const createDocxOptions = (
     }
   }
 
-  const options: Partial<Options> = {
+  const externalLinkPolicy = docxOptions?.externalLinkPolicy ?? 'block'
+  const options: DocxRenderOptions = {
     useWorker,
     breakPages: usePagedLayout,
     ignoreLastRenderedPageBreak: docxOptions?.ignoreLastRenderedPageBreak ?? !usePagedLayout,
+    externalLinkPolicy,
     darkMode,
-    progress
+    progress: event => {
+      if (event.phase === 'render' || event.phase === 'layout' || event.phase === 'done') {
+        applyDocxExternalLinkPolicy(target, externalLinkPolicy)
+      }
+      progress(event)
+    }
   }
 
   if (useWorker) {
@@ -848,6 +884,7 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
     ...defaultOptions,
     ...docxOptions
   })
+  applyDocxExternalLinkPolicy(target, docxOptions.externalLinkPolicy)
   target.dataset.docxHeaderFooterFallback = usedHeaderFooterFallback ? 'true' : 'false'
   target.dataset.docxPageBackground =
     applyDocxPageBackgroundImage(target, pageBackgroundImage) > 0 ? 'true' : 'false'

@@ -700,6 +700,8 @@ export interface FileViewerDocxOptions {
   updatePageReferences?: boolean;
   hideWebHiddenContent?: boolean;
   ignoreLastRenderedPageBreak?: boolean;
+  /** External DOCX links are blocked by default; internal bookmark links remain active. */
+  externalLinkPolicy?: 'allow' | 'block';
   /** Overrides automatic DOCX dark rendering derived from the viewer theme. */
   darkMode?: boolean;
 }
