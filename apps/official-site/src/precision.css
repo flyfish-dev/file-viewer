@@ -3185,6 +3185,14 @@ html[data-theme='dark'] body {
   animation-play-state: paused;
 }
 
+.hero-preview-event-shield {
+  position: absolute;
+  z-index: 30;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.001);
+  cursor: default;
+}
+
 .hero-preview-item.is-preview-cancelling .hero-preview-focus {
   transition-duration: 180ms;
 }

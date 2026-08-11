@@ -49,6 +49,17 @@ type SiteTheme = 'light' | 'dark'
 type HighlightLanguage = 'bash' | 'javascript' | 'typescript' | 'xml'
 type HeroPreviewId = 'word' | 'cad' | 'sheet' | 'slide'
 type HeroPreviewPhase = 'idle' | 'entering' | 'active' | 'leaving'
+type HeroPreviewShield = {
+  id: HeroPreviewId
+  left: number
+  top: number
+  width: number
+  height: number
+  clientLeft: number
+  clientTop: number
+  clientRight: number
+  clientBottom: number
+}
 
 type MetricItem = {
   title: string
@@ -193,6 +204,7 @@ const navExplorerOpen = ref(false)
 const activeHeroPreviewId = ref<HeroPreviewId | null>(null)
 const pinnedHeroPreviewId = ref<HeroPreviewId | null>(null)
 const heroPreviewPhase = ref<HeroPreviewPhase>('idle')
+const heroPreviewShield = ref<HeroPreviewShield | null>(null)
 const demoRevealActive = ref(false)
 const demoFrameMounted = ref(false)
 const demoFrameReady = ref(false)
@@ -210,6 +222,16 @@ const nextThemeLabel = computed(() =>
       ? '切换到亮色主题'
       : 'Switch to light theme'
 )
+const heroPreviewShieldStyle = computed(() => {
+  const shield = heroPreviewShield.value
+  if (!shield) return undefined
+  return {
+    left: `${shield.left}px`,
+    top: `${shield.top}px`,
+    width: `${shield.width}px`,
+    height: `${shield.height}px`
+  }
+})
 const githubStarsLabel = computed(() => formatStarCount(githubStarCount.value))
 const githubStarsAriaLabel = computed(() =>
   isZh.value
@@ -1243,6 +1265,7 @@ function scheduleHeroPreviewTransitionFallback(callback: () => void, delay: numb
 function finishHeroPreviewLeave() {
   if (heroPreviewPhase.value !== 'leaving') return
   clearHeroPreviewTransitionTimer()
+  heroPreviewShield.value = null
   activeHeroPreviewId.value = null
   heroPreviewPhase.value = 'idle'
   heroPreviewExitRequested = false
@@ -1292,13 +1315,37 @@ function startHeroPreviewEnter(id: HeroPreviewId) {
   scheduleHeroPreviewTransitionFallback(finishHeroPreviewEnter, heroPreviewEnterFallbackMs)
 }
 
-function setHeroPreviewPointerAnchor(event: PointerEvent) {
+function setHeroPreviewPointerAnchor(event: PointerEvent, id: HeroPreviewId) {
   if (!(event.currentTarget instanceof HTMLElement)) return
   const bounds = event.currentTarget.getBoundingClientRect()
   const anchorX = Math.min(bounds.width, Math.max(0, event.clientX - bounds.left))
   const anchorY = Math.min(bounds.height, Math.max(0, event.clientY - bounds.top))
   event.currentTarget.style.setProperty('--focus-origin-x', `${anchorX}px`)
   event.currentTarget.style.setProperty('--focus-origin-y', `${anchorY}px`)
+
+  const stage = event.currentTarget.closest<HTMLElement>('.hero-orbit-stage')
+  if (!stage) return
+  const stageBounds = stage.getBoundingClientRect()
+  const focusScale =
+    Number.parseFloat(
+      window.getComputedStyle(event.currentTarget).getPropertyValue('--focus-scale')
+    ) || 1
+  const guard = 10
+  const clientLeft = event.clientX - anchorX * focusScale - guard
+  const clientTop = event.clientY - anchorY * focusScale - guard
+  const width = bounds.width * focusScale + guard * 2
+  const height = bounds.height * focusScale + guard * 2
+  heroPreviewShield.value = {
+    id,
+    left: clientLeft - stageBounds.left,
+    top: clientTop - stageBounds.top,
+    width,
+    height,
+    clientLeft,
+    clientTop,
+    clientRight: clientLeft + width,
+    clientBottom: clientTop + height
+  }
 }
 
 function resetHeroPreviewPointerAnchor(event: Event) {
@@ -1311,14 +1358,14 @@ function handleHeroPreviewPointerEnter(event: PointerEvent, id: HeroPreviewId) {
   if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
 
   if (heroPreviewPhase.value === 'idle') {
-    setHeroPreviewPointerAnchor(event)
+    setHeroPreviewPointerAnchor(event, id)
     startHeroPreviewEnter(id)
   } else if (heroPreviewPhase.value === 'entering' && activeHeroPreviewId.value === id) {
     heroPreviewExitRequested = false
   }
 }
 
-function handleHeroPreviewPointerLeave(id: HeroPreviewId) {
+function requestHeroPreviewPointerLeave(id: HeroPreviewId) {
   if (usesCoarsePointer() || pinnedHeroPreviewId.value || activeHeroPreviewId.value !== id) {
     return
   }
@@ -1327,6 +1374,32 @@ function handleHeroPreviewPointerLeave(id: HeroPreviewId) {
     heroPreviewExitRequested = true
   } else if (heroPreviewPhase.value === 'active') {
     startHeroPreviewLeave()
+  }
+}
+
+function handleHeroPreviewPointerLeave(event: PointerEvent, id: HeroPreviewId) {
+  const shield = heroPreviewShield.value
+  if (
+    shield?.id === id &&
+    event.clientX >= shield.clientLeft &&
+    event.clientX <= shield.clientRight &&
+    event.clientY >= shield.clientTop &&
+    event.clientY <= shield.clientBottom
+  ) {
+    return
+  }
+  requestHeroPreviewPointerLeave(id)
+}
+
+function handleHeroPreviewShieldPointerEnter() {
+  if (heroPreviewPhase.value === 'entering') {
+    heroPreviewExitRequested = false
+  }
+}
+
+function handleHeroPreviewShieldPointerLeave() {
+  if (activeHeroPreviewId.value) {
+    requestHeroPreviewPointerLeave(activeHeroPreviewId.value)
   }
 }
 
@@ -1884,7 +1957,7 @@ onBeforeUnmount(() => {
             :aria-pressed="pinnedHeroPreviewId === 'word'"
             :aria-label="isZh ? '置顶查看 DOCX 预览' : 'Bring the DOCX preview to front'"
             @pointerenter="handleHeroPreviewPointerEnter($event, 'word')"
-            @pointerleave="handleHeroPreviewPointerLeave('word')"
+            @pointerleave="handleHeroPreviewPointerLeave($event, 'word')"
             @pointerdown="activateHeroPreview($event, 'word')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'word')"
           >
@@ -1921,7 +1994,7 @@ onBeforeUnmount(() => {
             :aria-pressed="pinnedHeroPreviewId === 'cad'"
             :aria-label="isZh ? '置顶查看 DWG 预览' : 'Bring the DWG preview to front'"
             @pointerenter="handleHeroPreviewPointerEnter($event, 'cad')"
-            @pointerleave="handleHeroPreviewPointerLeave('cad')"
+            @pointerleave="handleHeroPreviewPointerLeave($event, 'cad')"
             @pointerdown="activateHeroPreview($event, 'cad')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'cad')"
           >
@@ -1958,7 +2031,7 @@ onBeforeUnmount(() => {
             :aria-pressed="pinnedHeroPreviewId === 'sheet'"
             :aria-label="isZh ? '置顶查看 XLSX 预览' : 'Bring the XLSX preview to front'"
             @pointerenter="handleHeroPreviewPointerEnter($event, 'sheet')"
-            @pointerleave="handleHeroPreviewPointerLeave('sheet')"
+            @pointerleave="handleHeroPreviewPointerLeave($event, 'sheet')"
             @pointerdown="activateHeroPreview($event, 'sheet')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'sheet')"
           >
@@ -1995,7 +2068,7 @@ onBeforeUnmount(() => {
             :aria-pressed="pinnedHeroPreviewId === 'slide'"
             :aria-label="isZh ? '置顶查看 PPTX 预览' : 'Bring the PPTX preview to front'"
             @pointerenter="handleHeroPreviewPointerEnter($event, 'slide')"
-            @pointerleave="handleHeroPreviewPointerLeave('slide')"
+            @pointerleave="handleHeroPreviewPointerLeave($event, 'slide')"
             @pointerdown="activateHeroPreview($event, 'slide')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'slide')"
           >
@@ -2019,6 +2092,15 @@ onBeforeUnmount(() => {
             </div>
           </div>
         </div>
+        <div
+          v-if="heroPreviewShield"
+          class="hero-preview-event-shield"
+          :data-preview-shield="heroPreviewShield.id"
+          :style="heroPreviewShieldStyle"
+          aria-hidden="true"
+          @pointerenter="handleHeroPreviewShieldPointerEnter"
+          @pointerleave="handleHeroPreviewShieldPointerLeave"
+        />
         <div class="hero-orbit-status" aria-hidden="true">
           <span><LockKeyhole :size="14" />{{ isZh ? '浏览器本地渲染' : 'Browser-local' }}</span>
           <span><Zap :size="14" />{{ isZh ? 'CSS 3D 合成' : 'CSS 3D compositing' }}</span>
