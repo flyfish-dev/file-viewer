@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-11T16:23:42.753Z",
+  "generatedAt": "2026-08-11T16:54:10.412Z",
   "version": "2.2.8",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "164b3990e2cae4f4293e0b49caf46b04234430d2",
+      "hash": "8ae3863daf60df6131353fc5b03628afb4abf2f5",
       "error": ""
     },
     "gitee": {
