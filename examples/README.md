@@ -1,6 +1,6 @@
 # Runnable integration examples
 
-These projects are intentionally small, self-contained starting points built against the public `2.2.6` packages. Each one has a local sample, a file picker, production asset copying, and a real build command.
+These projects are intentionally small, self-contained starting points built against the public `2.2.7` packages. Each one has a local sample, a file picker, production asset copying, and a real build command.
 
 | Example                                      | Best for                                         | Capability path                                       |
 | -------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------- |
@@ -29,7 +29,7 @@ pnpm build:examples
 
 ## Use as a standalone starter
 
-Copy one example directory outside this monorepo, then run `pnpm install && pnpm dev`. Its normal `^2.2.6` dependency ranges install the published packages from npm; the workspace-only overrides are not copied with it.
+Copy one example directory outside this monorepo, then run `pnpm install && pnpm dev`. Its normal `^2.2.7` dependency ranges install the published packages from npm; the workspace-only overrides are not copied with it.
 
 The examples keep their viewer assets local through `@file-viewer/vite-plugin`. Replace the bundled sample with your own URL or `File`, and choose `preset-lite`, `preset-office`, `preset-engineering`, `preset-all`, or a matching full package according to your format and bundle requirements.
 

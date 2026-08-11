@@ -6,6 +6,14 @@
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
 
+## `v2.2.7` PDF 缩放定位与旧版 Word 容错补丁 — 2026-08-11
+
+- PDF 工具栏的放大、缩小和 API 缩放会先记录当前页与页内可视比例，再在 PDF.js 完成重新布局后恢复同一锚点；连续点击也不会短暂切换活动页（GitHub #191）。
+- 部分扩展名为 `.doc` 的文件实际是 CFB 容器，`WordDocument` 流中保存 GB18030/UTF-8 HTML 且没有 `0Table`/`1Table`。解析器现在会在 FIB 之前识别这种明确格式，过滤脚本等不安全内容并转换为正常 AST，不再报 `Missing table stream`（GitHub #192）。
+- `flyfish-dev/docjs` 所属仓库同步当前 legacy DOC 引擎，并独立通过表格、WPS、OfficeArt 图片、文本框 story 和 HTML-in-WordDocument 样例回归。
+- 官网的文件预览 Hero 增加可交互卡片、悬停焦点和主题切换，同时收紧桌面与移动端的信息层级。
+- 54 个 npm 目标、208 个扩展名和 25 条预览链路保持不变。
+
 ## `v2.2.6` 大文件、分页导航与 Office 交互稳定性补丁 — 2026-08-10
 
 - Spreadsheet 会在解析阶段按真实单元格收紧异常 worksheet dimensions，避免格式化到整张工作表的文件造成巨量空行/列；图表发现改为读取 worksheet relationship，不再重复把大型 worksheet XML 解压为字符串（GitHub #173/#175）。

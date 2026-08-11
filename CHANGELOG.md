@@ -2,6 +2,25 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.2.7 — 2026-08-11
+
+这是 PDF 缩放定位、旧版 Word 容错和官网交互的补丁版本。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。
+
+### Highlights
+
+- PDF 工具栏缩放会保留当前页及页内可视比例；单次点击、连续放大和反向缩小都不会再把活动页跳到页首或相邻页（#191）。
+- 旧版 `.doc` 若实际是 CFB 容器内嵌 HTML，不再误当二进制 FIB 读取并报 `Missing table stream`；解析器会在 `WordDocument` 边界识别编码、过滤不安全内容并转换为正常文档 AST（#192）。
+- `flyfish-dev/docjs` 同步了当前 legacy DOC 引擎、历史表格/OfficeArt/文本框修复和样例回归，并在所属仓库完成独立构建验证。
+- 官网新增可交互的 CSS 预览卡片、主题切换和更紧凑的预览层级，桌面与移动布局保持一致。
+- 发布回归覆盖 PDF 缩放/旋转/导航浏览器 harness、真实问题 DOC 样例、legacy DOC 表格/图片/文本框矩阵，以及全量构建、离线资产和标准组件入口。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.2.7
+pnpm add -D @file-viewer/vite-plugin@2.2.7
+```
+
 ## File Viewer v2.2.6 — 2026-08-10
 
 这是大文件、分页导航和 Office 交互稳定性补丁，同时完成官网与公开检索入口升级。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。

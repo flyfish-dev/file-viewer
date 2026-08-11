@@ -13,8 +13,8 @@ pnpm exec file-viewer-copy-assets ./public/file-viewer
 When using a standard package, explicitly install the matching CLI. For standalone execution, use an explicitly versioned `npx` command:
 
 ```bash
-npm install -D file-viewer-copy-assets@2.2.6
-npx --yes file-viewer-copy-assets@2.2.6 ./public/file-viewer
+npm install -D file-viewer-copy-assets@2.2.7
+npx --yes file-viewer-copy-assets@2.2.7 ./public/file-viewer
 ```
 
 The CLI carries a version-matched asset payload, copies Worker, WASM, font, PDF, CAD, Typst, Archive, Draw.io, and Office vendor assets, and writes a `flyfish-viewer-assets.json` integrity manifest. Installing it or running `--version` does not modify the project; only the copy command writes to the selected target. Runtime assets remain self-hosted with no public CDN dependency.
@@ -35,7 +35,7 @@ pnpm exec file-viewer-copy-assets
 pnpm exec file-viewer-copy-assets ./public/file-viewer --no-clean
 
 # With no local dependency, pin the standalone CLI version explicitly
-pnpm dlx file-viewer-copy-assets@2.2.6 ./public/file-viewer
+pnpm dlx file-viewer-copy-assets@2.2.7 ./public/file-viewer
 ```
 
 Set `FILE_VIEWER_PUBLIC_DIR` to override the default output or `FILE_VIEWER_SKIP_ASSET_COPY=1` when a CI step should skip copying. See the [File Viewer deployment guide](https://doc.file-viewer.app/guide/distribution) for full details.

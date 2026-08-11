@@ -2,8 +2,8 @@ viewer:
   name: File Viewer
   mode: component
   packages:
-    vue3: "@file-viewer/vue3@2.2.6"
-    vue2: "@file-viewer/vue2.7@2.2.6"
+    vue3: "@file-viewer/vue3@2.2.7"
+    vue2: "@file-viewer/vue2.7@2.2.7"
   lazy: true
   defaultInput: url
   toolbar:

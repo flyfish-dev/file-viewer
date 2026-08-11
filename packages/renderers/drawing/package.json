@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-drawing",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "private": false,
   "type": "module",
   "description": "Standalone Draw.io, Excalidraw, Mermaid, and PlantUML renderer plugin for File Viewer with pan/zoom support.",
@@ -60,7 +60,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.6",
+    "@file-viewer/core": "workspace:2.2.7",
     "@panzoom/panzoom": "^4.6.2",
     "mermaid": "^11.15.0",
     "plantuml-encoder": "^1.4.0",

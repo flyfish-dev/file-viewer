@@ -6,7 +6,7 @@
   New integrations should prefer the standard <code>@file-viewer/*</code> packages.
   Historical <code>@flyfish-group/*</code> names remain available for existing users.
   Each package line keeps the host framework native while presets and renderers make format capability and install boundaries explicit.
-  The v2.2.6 release maintains 54 npm targets over one 208-extension, 25-pipeline capability matrix.
+  The v2.2.7 release maintains 54 npm targets over one 208-extension, 25-pipeline capability matrix.
 </p>
 
 ## Recommended Packages
@@ -26,7 +26,7 @@ Standard component packages are intentionally light. Installing `@file-viewer/vu
 
 ## Full Package Asset Contract
 
-Since `2.1.30`, all eight Full packages share one delivery contract. They include and enable `preset-all` together with version-aligned renderer, Worker, WASM, font, Draw.io, SQLite, and other vendor assets; Vite or the included CLI publishes that payload on the application's own origin. The v2.2.6 layout includes both the integrity-checked binary `.ppt` 0.3.2 runtime and the lazy local EPUB engine with its NOTICE, so neither path needs a runtime CDN.
+Since `2.1.30`, all eight Full packages share one delivery contract. They include and enable `preset-all` together with version-aligned renderer, Worker, WASM, font, Draw.io, SQLite, and other vendor assets; Vite or the included CLI publishes that payload on the application's own origin. The v2.2.7 layout includes both the integrity-checked binary `.ppt` 0.3.2 runtime and the lazy local EPUB engine with its NOTICE, so neither path needs a runtime CDN.
 
 | Build path | Complete deployment |
 | --- | --- |

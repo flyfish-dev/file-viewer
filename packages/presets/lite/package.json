@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/preset-lite",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "private": false,
   "type": "module",
   "description": "Lite renderer preset for File Viewer with text, Markdown, code, image, audio, and video preview lines.",
@@ -56,10 +56,10 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.6",
-    "@file-viewer/renderer-image": "workspace:2.2.6",
-    "@file-viewer/renderer-media": "workspace:2.2.6",
-    "@file-viewer/renderer-text": "workspace:2.2.6"
+    "@file-viewer/core": "workspace:2.2.7",
+    "@file-viewer/renderer-image": "workspace:2.2.7",
+    "@file-viewer/renderer-media": "workspace:2.2.7",
+    "@file-viewer/renderer-text": "workspace:2.2.7"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
