@@ -2995,16 +2995,25 @@ html[data-theme='dark'] body {
 
 .hero-preview-item {
   --focus-x: 0px;
-  --focus-y: -10px;
+  --focus-y: -8px;
+  --focus-scale: 1.04;
   position: absolute;
   margin: 0;
-  transform: translate3d(0, 0, 0);
   transform-style: preserve-3d;
   transition:
-    transform 560ms var(--precision-ease),
-    opacity 280ms ease,
-    filter 280ms ease;
-  will-change: transform, opacity;
+    opacity 320ms ease,
+    filter 320ms ease;
+  cursor: zoom-in;
+  will-change: opacity, filter;
+}
+
+.hero-preview-focus {
+  width: 100%;
+  height: 100%;
+  transform: translate3d(0, 0, 0) scale(1);
+  transform-style: preserve-3d;
+  transition: transform 620ms var(--precision-ease);
+  will-change: transform;
 }
 
 .hero-preview-card {
@@ -3070,11 +3079,12 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-word {
-  top: 39%;
-  left: 10%;
+  --focus-scale: 1.025;
+  top: 22%;
+  left: 17%;
   z-index: 4;
-  width: min(58%, 470px);
-  height: 50%;
+  width: min(72%, 570px);
+  height: 61%;
 }
 
 .hero-preview-word .hero-preview-card {
@@ -3082,11 +3092,14 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-cad {
-  top: 10%;
+  --focus-x: clamp(130px, 14vw, 190px);
+  --focus-y: -4px;
+  --focus-scale: 1.3;
+  top: 31%;
   left: -1%;
   z-index: 2;
-  width: 48%;
-  height: 42%;
+  width: 50%;
+  height: 44%;
 }
 
 .hero-preview-cad .hero-preview-card {
@@ -3094,11 +3107,14 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-sheet {
-  top: 1%;
-  left: 45%;
+  --focus-x: -6px;
+  --focus-y: clamp(132px, 12.5vw, 168px);
+  --focus-scale: 1.32;
+  top: 2%;
+  left: 28%;
   z-index: 1;
-  width: 49%;
-  height: 42%;
+  width: 52%;
+  height: 43%;
 }
 
 .hero-preview-sheet .hero-preview-card {
@@ -3106,11 +3122,14 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-slide {
-  top: 48%;
-  right: -1%;
+  --focus-x: clamp(-190px, -13vw, -130px);
+  --focus-y: clamp(-58px, -4vw, -38px);
+  --focus-scale: 1.34;
+  top: 39%;
+  right: -2%;
   z-index: 3;
-  width: 47%;
-  height: 41%;
+  width: 48%;
+  height: 42%;
 }
 
 .hero-preview-slide .hero-preview-card {
@@ -3146,7 +3165,11 @@ html[data-theme='dark'] body {
 .hero-preview-item:focus-visible {
   z-index: 20;
   outline: none;
-  transform: translate3d(var(--focus-x), var(--focus-y), 150px) scale(1.055);
+  cursor: default;
+}
+
+.hero-preview-item:focus-visible .hero-preview-focus {
+  transform: translate3d(var(--focus-x), var(--focus-y), 170px) scale(var(--focus-scale));
 }
 
 .hero-preview-item:focus-visible .hero-preview-card {
@@ -3160,14 +3183,18 @@ html[data-theme='dark'] body {
 }
 
 .hero-orbit-stack:has(.hero-preview-item:focus-visible) .hero-preview-item:not(:focus-visible) {
-  opacity: 0.82;
-  filter: saturate(0.82) contrast(0.96);
+  opacity: 0.74;
+  filter: saturate(0.76) contrast(0.94);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .hero-preview-item:hover {
     z-index: 20;
-    transform: translate3d(var(--focus-x), var(--focus-y), 150px) scale(1.055);
+    cursor: default;
+  }
+
+  .hero-preview-item:hover .hero-preview-focus {
+    transform: translate3d(var(--focus-x), var(--focus-y), 170px) scale(var(--focus-scale));
   }
 
   .hero-preview-item:hover .hero-preview-card {
@@ -3181,8 +3208,8 @@ html[data-theme='dark'] body {
   }
 
   .hero-orbit-stack:has(.hero-preview-item:hover) .hero-preview-item:not(:hover) {
-    opacity: 0.82;
-    filter: saturate(0.82) contrast(0.96);
+    opacity: 0.74;
+    filter: saturate(0.76) contrast(0.94);
   }
 }
 
@@ -3601,31 +3628,41 @@ html[data-theme='dark'] body {
   }
 
   .hero-preview-word {
-    top: 34%;
-    left: 9%;
-    width: 68%;
-    height: 52%;
+    --focus-scale: 1.02;
+    top: 20%;
+    left: 14%;
+    width: 74%;
+    height: 61%;
   }
 
   .hero-preview-cad {
-    top: 12%;
+    --focus-x: clamp(88px, 30vw, 116px);
+    --focus-y: -2px;
+    --focus-scale: 1.42;
+    top: 33%;
     left: -4%;
-    width: 48%;
-    height: 40%;
+    width: 49%;
+    height: 43%;
   }
 
   .hero-preview-sheet {
+    --focus-x: -4px;
+    --focus-y: clamp(82px, 28vw, 106px);
+    --focus-scale: 1.28;
     top: 1%;
-    left: 45%;
-    width: 55%;
-    height: 40%;
+    left: 24%;
+    width: 57%;
+    height: 43%;
   }
 
   .hero-preview-slide {
-    top: 48%;
+    --focus-x: clamp(-116px, -29vw, -82px);
+    --focus-y: -28px;
+    --focus-scale: 1.48;
+    top: 38%;
     right: -4%;
-    width: 47%;
-    height: 39%;
+    width: 48%;
+    height: 42%;
   }
 
   .hero-orbit-status {
@@ -3687,6 +3724,7 @@ html[data-theme='dark'] body {
 @media (prefers-reduced-motion: reduce) {
   .hero-orbit-stack,
   .hero-preview-item,
+  .hero-preview-focus,
   .hero-preview-card,
   .theme-toggle svg {
     animation: none !important;
@@ -3723,5 +3761,10 @@ html[data-theme='dark'] body {
 
   .hero-preview-slide .hero-preview-card {
     transform: translate3d(0, 0, -16px) rotateY(-9deg) rotateZ(2deg);
+  }
+
+  .hero-preview-item:focus-visible .hero-preview-focus,
+  .hero-preview-item:hover .hero-preview-focus {
+    transform: none !important;
   }
 }

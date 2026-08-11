@@ -1701,20 +1701,22 @@ onBeforeUnmount(() => {
             tabindex="0"
             :aria-label="isZh ? '置顶查看 DOCX 预览' : 'Bring the DOCX preview to front'"
           >
-            <figure class="hero-preview-card">
-              <figcaption>
-                <span><FileText :size="15" />DOCX</span>
-                <strong>{{ isZh ? '版式文档' : 'Layout document' }}</strong>
-              </figcaption>
-              <img
-                src="/hero-previews/word.webp"
-                :alt="isZh ? 'Word 文档真实渲染样例' : 'Real Word document rendering sample'"
-                width="1280"
-                height="800"
-                decoding="async"
-                fetchpriority="high"
-              />
-            </figure>
+            <div class="hero-preview-focus">
+              <figure class="hero-preview-card">
+                <figcaption>
+                  <span><FileText :size="15" />DOCX</span>
+                  <strong>{{ isZh ? '版式文档' : 'Layout document' }}</strong>
+                </figcaption>
+                <img
+                  src="/hero-previews/word.webp"
+                  :alt="isZh ? 'Word 文档真实渲染样例' : 'Real Word document rendering sample'"
+                  width="1280"
+                  height="800"
+                  decoding="async"
+                  fetchpriority="high"
+                />
+              </figure>
+            </div>
           </div>
 
           <div
@@ -1722,19 +1724,21 @@ onBeforeUnmount(() => {
             tabindex="0"
             :aria-label="isZh ? '置顶查看 DWG 预览' : 'Bring the DWG preview to front'"
           >
-            <figure class="hero-preview-card">
-              <figcaption>
-                <span><Layers3 :size="15" />DWG</span>
-                <strong>{{ isZh ? '工程图纸' : 'CAD drawing' }}</strong>
-              </figcaption>
-              <img
-                src="/hero-previews/cad.webp"
-                :alt="isZh ? 'CAD 图纸真实渲染样例' : 'Real CAD drawing rendering sample'"
-                width="1280"
-                height="800"
-                decoding="async"
-              />
-            </figure>
+            <div class="hero-preview-focus">
+              <figure class="hero-preview-card">
+                <figcaption>
+                  <span><Layers3 :size="15" />DWG</span>
+                  <strong>{{ isZh ? '工程图纸' : 'CAD drawing' }}</strong>
+                </figcaption>
+                <img
+                  src="/hero-previews/cad.webp"
+                  :alt="isZh ? 'CAD 图纸真实渲染样例' : 'Real CAD drawing rendering sample'"
+                  width="1280"
+                  height="800"
+                  decoding="async"
+                />
+              </figure>
+            </div>
           </div>
 
           <div
@@ -1742,19 +1746,21 @@ onBeforeUnmount(() => {
             tabindex="0"
             :aria-label="isZh ? '置顶查看 XLSX 预览' : 'Bring the XLSX preview to front'"
           >
-            <figure class="hero-preview-card">
-              <figcaption>
-                <span><FileSpreadsheet :size="15" />XLSX</span>
-                <strong>{{ isZh ? '数据报表' : 'Spreadsheet' }}</strong>
-              </figcaption>
-              <img
-                src="/hero-previews/spreadsheet.webp"
-                :alt="isZh ? '电子表格真实渲染样例' : 'Real spreadsheet rendering sample'"
-                width="1280"
-                height="818"
-                decoding="async"
-              />
-            </figure>
+            <div class="hero-preview-focus">
+              <figure class="hero-preview-card">
+                <figcaption>
+                  <span><FileSpreadsheet :size="15" />XLSX</span>
+                  <strong>{{ isZh ? '数据报表' : 'Spreadsheet' }}</strong>
+                </figcaption>
+                <img
+                  src="/hero-previews/spreadsheet.webp"
+                  :alt="isZh ? '电子表格真实渲染样例' : 'Real spreadsheet rendering sample'"
+                  width="1280"
+                  height="818"
+                  decoding="async"
+                />
+              </figure>
+            </div>
           </div>
 
           <div
@@ -1762,19 +1768,21 @@ onBeforeUnmount(() => {
             tabindex="0"
             :aria-label="isZh ? '置顶查看 PPTX 预览' : 'Bring the PPTX preview to front'"
           >
-            <figure class="hero-preview-card">
-              <figcaption>
-                <span><PanelTop :size="15" />PPTX</span>
-                <strong>{{ isZh ? '演示文稿' : 'Presentation' }}</strong>
-              </figcaption>
-              <img
-                src="/hero-previews/presentation.webp"
-                :alt="isZh ? '演示文稿真实渲染样例' : 'Real presentation rendering sample'"
-                width="1280"
-                height="800"
-                decoding="async"
-              />
-            </figure>
+            <div class="hero-preview-focus">
+              <figure class="hero-preview-card">
+                <figcaption>
+                  <span><PanelTop :size="15" />PPTX</span>
+                  <strong>{{ isZh ? '演示文稿' : 'Presentation' }}</strong>
+                </figcaption>
+                <img
+                  src="/hero-previews/presentation.webp"
+                  :alt="isZh ? '演示文稿真实渲染样例' : 'Real presentation rendering sample'"
+                  width="1280"
+                  height="800"
+                  decoding="async"
+                />
+              </figure>
+            </div>
           </div>
         </div>
         <div class="hero-orbit-status" aria-hidden="true">
