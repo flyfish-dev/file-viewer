@@ -26,6 +26,7 @@ import {
   LockKeyhole,
   Mail,
   Menu,
+  Moon,
   MonitorPlay,
   PackageCheck,
   PanelTop,
@@ -37,12 +38,14 @@ import {
   ShoppingCart,
   Sparkles,
   Star,
+  Sun,
   Wrench,
   X,
   Zap
 } from '@lucide/vue'
 
 type Locale = 'zh' | 'en'
+type SiteTheme = 'light' | 'dark'
 type HighlightLanguage = 'bash' | 'javascript' | 'typescript' | 'xml'
 
 type MetricItem = {
@@ -134,6 +137,7 @@ const sitePreviewImageUrls = {
   en: `${siteRootUrl}${demoPreviewDesktopPaths.en.slice(1)}`
 } satisfies Record<Locale, string>
 const siteLocalePreferenceKey = 'flyfish-site-locale-preference'
+const siteThemePreferenceKey = 'flyfish-site-theme-preference'
 
 type SiteMetadata = {
   lang: string
@@ -174,6 +178,7 @@ hljs.registerLanguage('typescript', typescript)
 hljs.registerLanguage('xml', xml)
 
 const locale = ref<Locale>('en')
+const siteTheme = ref<SiteTheme>('light')
 const siteMain = ref<HTMLElement | null>(null)
 const topbar = ref<HTMLElement | null>(null)
 const flatNav = ref<HTMLElement | null>(null)
@@ -191,6 +196,15 @@ const activeQuickStartIndex = ref(0)
 const githubStarCount = ref(githubStarCountFallback)
 const isZh = computed(() => locale.value === 'zh')
 const nextLocaleLabel = computed(() => (isZh.value ? 'EN' : '中文'))
+const nextThemeLabel = computed(() =>
+  siteTheme.value === 'light'
+    ? isZh.value
+      ? '切换到暗色主题'
+      : 'Switch to dark theme'
+    : isZh.value
+      ? '切换到亮色主题'
+      : 'Switch to light theme'
+)
 const githubStarsLabel = computed(() => formatStarCount(githubStarCount.value))
 const githubStarsAriaLabel = computed(() =>
   isZh.value
@@ -228,6 +242,34 @@ function formatStarCount(count: number) {
     return `${Number((count / 1000).toFixed(1))}k`
   }
   return `${count}`
+}
+
+function resolveInitialTheme(): SiteTheme {
+  const documentTheme = document.documentElement.dataset.theme
+  if (documentTheme === 'light' || documentTheme === 'dark') {
+    return documentTheme
+  }
+  try {
+    const storedTheme = window.localStorage.getItem(siteThemePreferenceKey)
+    if (storedTheme === 'light' || storedTheme === 'dark') {
+      return storedTheme
+    }
+  } catch {
+    // Use the operating-system theme when storage is unavailable.
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+function applyTheme(nextTheme: SiteTheme) {
+  document.documentElement.dataset.theme = nextTheme
+  document.documentElement.style.colorScheme = nextTheme
+  document
+    .querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    ?.setAttribute('content', nextTheme === 'dark' ? '#081b16' : '#fbfdfc')
+}
+
+function toggleTheme() {
+  siteTheme.value = siteTheme.value === 'light' ? 'dark' : 'light'
 }
 
 async function loadGithubStarCount() {
@@ -1371,7 +1413,18 @@ watch(locale, (nextLocale) => {
   void nextTick(syncFlatNavHighlight)
 })
 
+watch(siteTheme, (nextTheme) => {
+  applyTheme(nextTheme)
+  try {
+    window.localStorage.setItem(siteThemePreferenceKey, nextTheme)
+  } catch {
+    // The active theme still applies when storage is unavailable.
+  }
+})
+
 onMounted(async () => {
+  siteTheme.value = resolveInitialTheme()
+  applyTheme(siteTheme.value)
   locale.value = resolveInitialLocale()
   if (readStoredLocalePreference() || prefersChineseEnvironment()) {
     syncBrowserPathForLocale(locale.value)
@@ -1562,6 +1615,16 @@ onBeforeUnmount(() => {
         </div>
       </section>
       <div class="topbar-actions">
+        <button
+          class="nav-icon-button theme-toggle"
+          type="button"
+          :aria-label="nextThemeLabel"
+          :title="nextThemeLabel"
+          @click="toggleTheme"
+        >
+          <Moon v-if="siteTheme === 'light'" :size="17" />
+          <Sun v-else :size="17" />
+        </button>
         <a
           class="nav-icon-button github-star-button"
           :href="githubUrl"
@@ -1624,33 +1687,83 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <div class="hero-visual" aria-label="File Viewer browser-native preview workspace">
-        <div class="hero-product-window">
-          <div class="hero-product-tabs" aria-hidden="true">
-            <span class="is-active">{{ isZh ? '文档预览' : 'document.pdf' }}</span>
-            <span>{{ isZh ? '工程图纸' : 'diagram.dwg' }}</span>
-            <span>{{ isZh ? '三维模型' : 'model.step' }}</span>
-            <span>{{ isZh ? '数据报表' : 'report.xlsx' }}</span>
+      <div
+        class="hero-visual hero-orbit-stage"
+        :aria-label="
+          isZh
+            ? 'Word、CAD、电子表格与演示文稿的真实浏览器预览'
+            : 'Real browser previews for Word, CAD, spreadsheets, and presentations'
+        "
+      >
+        <div class="hero-orbit-stack">
+          <div class="hero-preview-item hero-preview-word">
+            <figure class="hero-preview-card">
+              <figcaption>
+                <span><FileText :size="15" />DOCX</span>
+                <strong>{{ isZh ? '版式文档' : 'Layout document' }}</strong>
+              </figcaption>
+              <img
+                src="/hero-previews/word.webp"
+                :alt="isZh ? 'Word 文档真实渲染样例' : 'Real Word document rendering sample'"
+                width="1280"
+                height="800"
+                decoding="async"
+                fetchpriority="high"
+              />
+            </figure>
           </div>
-          <picture>
-            <source media="(max-width: 760px)" :srcset="demoPreviewMobilePath" />
-            <img
-              :src="demoPreviewDesktopPath"
-              :alt="
-                isZh
-                  ? 'File Viewer v2.2.6 浏览器原生文件预览工作区'
-                  : 'File Viewer v2.2.6 browser-native file preview workspace'
-              "
-              width="1600"
-              height="900"
-              decoding="async"
-              fetchpriority="high"
-            />
-          </picture>
-          <div class="hero-product-status" aria-hidden="true">
-            <span><LockKeyhole :size="15" />{{ isZh ? '本地渲染' : 'Browser-local' }}</span>
-            <span><Zap :size="15" />{{ isZh ? '按需加载' : 'On demand' }}</span>
+
+          <div class="hero-preview-item hero-preview-cad">
+            <figure class="hero-preview-card">
+              <figcaption>
+                <span><Layers3 :size="15" />DWG</span>
+                <strong>{{ isZh ? '工程图纸' : 'CAD drawing' }}</strong>
+              </figcaption>
+              <img
+                src="/hero-previews/cad.webp"
+                :alt="isZh ? 'CAD 图纸真实渲染样例' : 'Real CAD drawing rendering sample'"
+                width="1280"
+                height="800"
+                decoding="async"
+              />
+            </figure>
           </div>
+
+          <div class="hero-preview-item hero-preview-sheet">
+            <figure class="hero-preview-card">
+              <figcaption>
+                <span><FileSpreadsheet :size="15" />XLSX</span>
+                <strong>{{ isZh ? '数据报表' : 'Spreadsheet' }}</strong>
+              </figcaption>
+              <img
+                src="/hero-previews/spreadsheet.webp"
+                :alt="isZh ? '电子表格真实渲染样例' : 'Real spreadsheet rendering sample'"
+                width="1280"
+                height="818"
+                decoding="async"
+              />
+            </figure>
+          </div>
+
+          <div class="hero-preview-item hero-preview-slide">
+            <figure class="hero-preview-card">
+              <figcaption>
+                <span><PanelTop :size="15" />PPTX</span>
+                <strong>{{ isZh ? '演示文稿' : 'Presentation' }}</strong>
+              </figcaption>
+              <img
+                src="/hero-previews/presentation.webp"
+                :alt="isZh ? '演示文稿真实渲染样例' : 'Real presentation rendering sample'"
+                width="1280"
+                height="800"
+                decoding="async"
+              />
+            </figure>
+          </div>
+        </div>
+        <div class="hero-orbit-status" aria-hidden="true">
+          <span><LockKeyhole :size="14" />{{ isZh ? '浏览器本地渲染' : 'Browser-local' }}</span>
+          <span><Zap :size="14" />{{ isZh ? 'CSS 3D 合成' : 'CSS 3D compositing' }}</span>
         </div>
       </div>
     </section>

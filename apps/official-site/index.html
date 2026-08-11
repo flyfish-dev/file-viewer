@@ -28,6 +28,23 @@
       content="File Viewer, Flyfish File Viewer, 文件预览, 文档预览, Vue 文件预览, React 文件预览, Web Component 文件预览, Office viewer, PDF viewer, DOCX preview, PPT preview, PPTX preview, XLSX preview, OFD viewer, CAD viewer, DWG viewer, DXF viewer, XMind viewer, archive viewer, offline document preview, private deployment"
     />
     <meta name="theme-color" content="#31a66f" />
+    <script>
+      ;(() => {
+        try {
+          const storedTheme = localStorage.getItem('flyfish-site-theme-preference')
+          const theme =
+            storedTheme === 'light' || storedTheme === 'dark'
+              ? storedTheme
+              : matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.dataset.theme = theme
+          document.documentElement.style.colorScheme = theme
+        } catch {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
     <link rel="canonical" href="https://file-viewer.app/" />
     <link rel="alternate" hreflang="zh-CN" href="https://file-viewer.app/" />
     <link rel="alternate" hreflang="en" href="https://file-viewer.app/en/" />
