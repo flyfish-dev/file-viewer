@@ -188,6 +188,7 @@ const quickStartTrack = ref<HTMLElement | null>(null)
 const isTopbarPinned = ref(false)
 const activeSectionId = ref<SectionId>('top')
 const navExplorerOpen = ref(false)
+const activeHeroPreviewId = ref<string | null>(null)
 const demoRevealActive = ref(false)
 const demoFrameMounted = ref(false)
 const demoFrameReady = ref(false)
@@ -1212,6 +1213,28 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+function usesCoarsePointer() {
+  return window.matchMedia('(hover: none), (pointer: coarse)').matches
+}
+
+function activateHeroPreview(event: PointerEvent, id: string) {
+  if (event.pointerType !== 'touch' && !usesCoarsePointer()) return
+  activeHeroPreviewId.value = activeHeroPreviewId.value === id ? null : id
+}
+
+function activateHeroPreviewFromKeyboard(event: KeyboardEvent, id: string) {
+  if (event.key !== 'Enter' && event.key !== ' ') return
+  event.preventDefault()
+  activeHeroPreviewId.value = activeHeroPreviewId.value === id ? null : id
+}
+
+function clearHeroPreviewOutside(event: PointerEvent) {
+  if (!activeHeroPreviewId.value || !(event.target instanceof Element)) return
+  if (!event.target.closest('.hero-preview-item')) {
+    activeHeroPreviewId.value = null
+  }
+}
+
 function getTopbarScrollOffset() {
   const rect = topbar.value?.getBoundingClientRect()
   const height = rect?.height ?? 72
@@ -1439,6 +1462,7 @@ onMounted(async () => {
   window.addEventListener('scroll', requestPageNavStateUpdate, { passive: true })
   window.addEventListener('resize', requestPageNavStateUpdate)
   window.addEventListener('keydown', handleGlobalKeydown)
+  window.addEventListener('pointerdown', clearHeroPreviewOutside, { passive: true })
   updatePageNavStateNow()
   syncFlatNavHighlight()
   setupSiteRevealMotion()
@@ -1481,6 +1505,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', requestPageNavStateUpdate)
   window.removeEventListener('resize', requestPageNavStateUpdate)
   window.removeEventListener('keydown', handleGlobalKeydown)
+  window.removeEventListener('pointerdown', clearHeroPreviewOutside)
   demoRevealObserver?.disconnect()
   quickStartObserver?.disconnect()
   siteRevealObserver?.disconnect()
@@ -1698,8 +1723,13 @@ onBeforeUnmount(() => {
         <div class="hero-orbit-stack">
           <div
             class="hero-preview-item hero-preview-word"
+            :class="{ 'is-touch-active': activeHeroPreviewId === 'word' }"
             tabindex="0"
+            role="button"
+            :aria-pressed="activeHeroPreviewId === 'word'"
             :aria-label="isZh ? '置顶查看 DOCX 预览' : 'Bring the DOCX preview to front'"
+            @pointerdown="activateHeroPreview($event, 'word')"
+            @keydown="activateHeroPreviewFromKeyboard($event, 'word')"
           >
             <div class="hero-preview-focus">
               <figure class="hero-preview-card">
@@ -1721,8 +1751,13 @@ onBeforeUnmount(() => {
 
           <div
             class="hero-preview-item hero-preview-cad"
+            :class="{ 'is-touch-active': activeHeroPreviewId === 'cad' }"
             tabindex="0"
+            role="button"
+            :aria-pressed="activeHeroPreviewId === 'cad'"
             :aria-label="isZh ? '置顶查看 DWG 预览' : 'Bring the DWG preview to front'"
+            @pointerdown="activateHeroPreview($event, 'cad')"
+            @keydown="activateHeroPreviewFromKeyboard($event, 'cad')"
           >
             <div class="hero-preview-focus">
               <figure class="hero-preview-card">
@@ -1743,8 +1778,13 @@ onBeforeUnmount(() => {
 
           <div
             class="hero-preview-item hero-preview-sheet"
+            :class="{ 'is-touch-active': activeHeroPreviewId === 'sheet' }"
             tabindex="0"
+            role="button"
+            :aria-pressed="activeHeroPreviewId === 'sheet'"
             :aria-label="isZh ? '置顶查看 XLSX 预览' : 'Bring the XLSX preview to front'"
+            @pointerdown="activateHeroPreview($event, 'sheet')"
+            @keydown="activateHeroPreviewFromKeyboard($event, 'sheet')"
           >
             <div class="hero-preview-focus">
               <figure class="hero-preview-card">
@@ -1765,8 +1805,13 @@ onBeforeUnmount(() => {
 
           <div
             class="hero-preview-item hero-preview-slide"
+            :class="{ 'is-touch-active': activeHeroPreviewId === 'slide' }"
             tabindex="0"
+            role="button"
+            :aria-pressed="activeHeroPreviewId === 'slide'"
             :aria-label="isZh ? '置顶查看 PPTX 预览' : 'Bring the PPTX preview to front'"
+            @pointerdown="activateHeroPreview($event, 'slide')"
+            @keydown="activateHeroPreviewFromKeyboard($event, 'slide')"
           >
             <div class="hero-preview-focus">
               <figure class="hero-preview-card">
