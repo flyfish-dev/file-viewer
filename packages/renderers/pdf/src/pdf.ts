@@ -540,6 +540,8 @@ export default async function renderPdf(
   let scrollStateFrame = 0;
   let rotationOperationVersion = 0;
   let pendingUserRotationAnchor: PdfPageScrollAnchor | null = null;
+  let zoomOperationVersion = 0;
+  let pendingUserZoomAnchor: PdfPageScrollAnchor | null = null;
   let pdfSearchState = createPdfSearchState();
   let pdfMatchesCount: PdfFindMatchesCount = { current: 0, total: 0 };
   let pdfSearchOptions: FileViewerSearchOptions | undefined;
@@ -1360,16 +1362,21 @@ export default async function renderPdf(
     rotationOperationVersion += 1;
   };
 
-  const restoreUserRotationAnchor = (
+  const cancelPendingUserZoomRestore = () => {
+    if (!pendingUserZoomAnchor) {
+      return;
+    }
+    pendingUserZoomAnchor = null;
+    zoomOperationVersion += 1;
+  };
+
+  const restorePdfPageAnchor = (
     anchor: PdfPageScrollAnchor,
-    operationVersion: number
+    isActive: () => boolean,
+    release: () => void
   ) => {
     const apply = () => {
-      if (
-        destroyed ||
-        operationVersion !== rotationOperationVersion ||
-        pendingUserRotationAnchor !== anchor
-      ) {
+      if (destroyed || !isActive()) {
         return false;
       }
       const pageElement = getPdfPageElement(anchor.page);
@@ -1407,17 +1414,35 @@ export default async function renderPdf(
     });
     targetWindow.setTimeout(() => {
       apply();
-      if (
-        operationVersion === rotationOperationVersion &&
-        pendingUserRotationAnchor === anchor
-      ) {
-        pendingUserRotationAnchor = null;
-      }
+      if (isActive()) release();
     }, 180);
   };
 
+  const restoreUserRotationAnchor = (
+    anchor: PdfPageScrollAnchor,
+    operationVersion: number
+  ) => restorePdfPageAnchor(
+    anchor,
+    () => operationVersion === rotationOperationVersion && pendingUserRotationAnchor === anchor,
+    () => {
+      pendingUserRotationAnchor = null;
+    }
+  );
+
+  const restoreUserZoomAnchor = (
+    anchor: PdfPageScrollAnchor,
+    operationVersion: number
+  ) => restorePdfPageAnchor(
+    anchor,
+    () => operationVersion === zoomOperationVersion && pendingUserZoomAnchor === anchor,
+    () => {
+      pendingUserZoomAnchor = null;
+    }
+  );
+
   const recordUserScrollIntent = () => {
     cancelPendingUserRotationRestore();
+    cancelPendingUserZoomRestore();
     userScrollIntentUntil = Date.now() + 750;
     suppressScrollEventUntil = 0;
     markFitInteraction('user');
@@ -1616,6 +1641,7 @@ export default async function renderPdf(
     if (!pdfContext.viewer) {
       return;
     }
+    cancelPendingUserZoomRestore();
     userScrollIntentUntil = 0;
     suppressProgrammaticScrollEvents();
     autoFitWidth = true;
@@ -1626,6 +1652,7 @@ export default async function renderPdf(
   };
 
   const applyPdfFit = async (request: FileViewerFitRequest): Promise<FileViewerFitResult> => {
+    cancelPendingUserZoomRestore();
     userScrollIntentUntil = 0;
     activeFitRequest = { ...request };
     if (!pdfContext.viewer || loadStatus !== 'ready') {
@@ -1717,14 +1744,36 @@ export default async function renderPdf(
     });
   };
 
+  const setAnchoredScale = (
+    scale: number,
+    action: FileViewerViewStateChangeAction,
+    source: FileViewerViewStateChangeSource
+  ) => {
+    if (!pdfContext.viewer) {
+      return;
+    }
+    cancelPendingUserRotationRestore();
+    pendingUserZoomAnchor ||= captureCurrentPdfPageAnchor();
+    const pageAnchor = pendingUserZoomAnchor;
+    const operationVersion = ++zoomOperationVersion;
+    if (pageAnchor) {
+      suppressProgrammaticScrollEvents();
+      currentPage = pageAnchor.page;
+    }
+    setScale(scale, action, source);
+    if (pageAnchor) {
+      restoreUserZoomAnchor(pageAnchor, operationVersion);
+    }
+  };
+
   const zoomIn = (source: FileViewerViewStateChangeSource = 'user') => {
     markFitInteraction(source);
-    setScale(currentScale + SCALE_STEP, 'zoom-in', source);
+    setAnchoredScale(currentScale + SCALE_STEP, 'zoom-in', source);
   };
 
   const zoomOut = (source: FileViewerViewStateChangeSource = 'user') => {
     markFitInteraction(source);
-    setScale(currentScale - SCALE_STEP, 'zoom-out', source);
+    setAnchoredScale(currentScale - SCALE_STEP, 'zoom-out', source);
   };
 
   const reapplyFitAfterLayout = (
@@ -1754,6 +1803,7 @@ export default async function renderPdf(
     markFitInteraction(source);
     const normalized = normalizeRotation(rotation);
     if (source === 'user' && pdfContext.viewer) {
+      cancelPendingUserZoomRestore();
       pendingUserRotationAnchor ||= captureCurrentPdfPageAnchor();
     } else {
       cancelPendingUserRotationRestore();
@@ -1826,6 +1876,7 @@ export default async function renderPdf(
     }
     if (source === 'user') {
       cancelPendingUserRotationRestore();
+      cancelPendingUserZoomRestore();
     }
     markFitInteraction(source);
     const nextPage = Math.min(pageCount, Math.max(1, pageNumber));
@@ -2096,8 +2147,9 @@ export default async function renderPdf(
         }
       });
       eventBus.on('pagechanging', ({ pageNumber }: { pageNumber: number }) => {
-        if (pendingUserRotationAnchor && pageNumber !== pendingUserRotationAnchor.page) {
-          currentPage = pendingUserRotationAnchor.page;
+        const pendingPageAnchor = pendingUserRotationAnchor || pendingUserZoomAnchor;
+        if (pendingPageAnchor && pageNumber !== pendingPageAnchor.page) {
+          currentPage = pendingPageAnchor.page;
           syncUi();
           return;
         }
@@ -2359,12 +2411,12 @@ export default async function renderPdf(
     },
     resetZoom: () => {
       markFitInteraction('api');
-      setScale(1, 'zoom-reset', 'api');
+      setAnchoredScale(1, 'zoom-reset', 'api');
       return getPdfZoomState();
     },
     setZoom: scale => {
       markFitInteraction('api');
-      setScale(scale, 'zoom-change', 'api');
+      setAnchoredScale(scale, 'zoom-change', 'api');
       return getPdfZoomState();
     },
     fit: applyPdfFit,
