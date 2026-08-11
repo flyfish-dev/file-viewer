@@ -47,6 +47,8 @@ import {
 type Locale = 'zh' | 'en'
 type SiteTheme = 'light' | 'dark'
 type HighlightLanguage = 'bash' | 'javascript' | 'typescript' | 'xml'
+type HeroPreviewId = 'word' | 'cad' | 'sheet' | 'slide'
+type HeroPreviewPhase = 'idle' | 'entering' | 'active' | 'leaving'
 
 type MetricItem = {
   title: string
@@ -188,7 +190,10 @@ const quickStartTrack = ref<HTMLElement | null>(null)
 const isTopbarPinned = ref(false)
 const activeSectionId = ref<SectionId>('top')
 const navExplorerOpen = ref(false)
-const activeHeroPreviewId = ref<string | null>(null)
+const activeHeroPreviewId = ref<HeroPreviewId | null>(null)
+const pinnedHeroPreviewId = ref<HeroPreviewId | null>(null)
+const heroPreviewHoverCandidateId = ref<HeroPreviewId | null>(null)
+const heroPreviewPhase = ref<HeroPreviewPhase>('idle')
 const demoRevealActive = ref(false)
 const demoFrameMounted = ref(false)
 const demoFrameReady = ref(false)
@@ -1217,21 +1222,144 @@ function usesCoarsePointer() {
   return window.matchMedia('(hover: none), (pointer: coarse)').matches
 }
 
-function activateHeroPreview(event: PointerEvent, id: string) {
-  if (event.pointerType !== 'touch' && !usesCoarsePointer()) return
-  activeHeroPreviewId.value = activeHeroPreviewId.value === id ? null : id
+const heroPreviewEnterFallbackMs = 740
+const heroPreviewLeaveFallbackMs = 230
+let heroPreviewTransitionTimer: number | null = null
+
+function clearHeroPreviewTransitionTimer() {
+  if (heroPreviewTransitionTimer === null) return
+  window.clearTimeout(heroPreviewTransitionTimer)
+  heroPreviewTransitionTimer = null
 }
 
-function activateHeroPreviewFromKeyboard(event: KeyboardEvent, id: string) {
+function desiredHeroPreviewId() {
+  return pinnedHeroPreviewId.value ?? heroPreviewHoverCandidateId.value
+}
+
+function scheduleHeroPreviewTransitionFallback(callback: () => void, delay: number) {
+  clearHeroPreviewTransitionTimer()
+  heroPreviewTransitionTimer = window.setTimeout(() => {
+    heroPreviewTransitionTimer = null
+    callback()
+  }, delay)
+}
+
+function finishHeroPreviewLeave() {
+  if (heroPreviewPhase.value !== 'leaving') return
+  clearHeroPreviewTransitionTimer()
+  activeHeroPreviewId.value = null
+  heroPreviewPhase.value = 'idle'
+
+  const nextId = desiredHeroPreviewId()
+  if (nextId) startHeroPreviewEnter(nextId)
+}
+
+function startHeroPreviewLeave() {
+  if (heroPreviewPhase.value !== 'active' || !activeHeroPreviewId.value) return
+  heroPreviewPhase.value = 'leaving'
+
+  if (prefersReducedMotion()) {
+    finishHeroPreviewLeave()
+    return
+  }
+
+  scheduleHeroPreviewTransitionFallback(finishHeroPreviewLeave, heroPreviewLeaveFallbackMs)
+}
+
+function finishHeroPreviewEnter() {
+  if (heroPreviewPhase.value !== 'entering' || !activeHeroPreviewId.value) return
+  clearHeroPreviewTransitionTimer()
+  heroPreviewPhase.value = 'active'
+
+  if (desiredHeroPreviewId() !== activeHeroPreviewId.value) {
+    startHeroPreviewLeave()
+  }
+}
+
+function startHeroPreviewEnter(id: HeroPreviewId) {
+  if (heroPreviewPhase.value !== 'idle') return
+  clearHeroPreviewTransitionTimer()
+  activeHeroPreviewId.value = id
+  heroPreviewPhase.value = 'entering'
+
+  if (prefersReducedMotion()) {
+    finishHeroPreviewEnter()
+    return
+  }
+
+  scheduleHeroPreviewTransitionFallback(finishHeroPreviewEnter, heroPreviewEnterFallbackMs)
+}
+
+function syncHeroPreviewInteraction() {
+  const desiredId = desiredHeroPreviewId()
+
+  if (heroPreviewPhase.value === 'idle') {
+    if (desiredId) startHeroPreviewEnter(desiredId)
+    return
+  }
+
+  if (heroPreviewPhase.value === 'active' && desiredId !== activeHeroPreviewId.value) {
+    startHeroPreviewLeave()
+  }
+}
+
+function handleHeroPreviewPointerEnter(id: HeroPreviewId) {
+  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
+  heroPreviewHoverCandidateId.value = id
+  syncHeroPreviewInteraction()
+}
+
+function handleHeroPreviewPointerLeave(id: HeroPreviewId) {
+  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
+  if (heroPreviewHoverCandidateId.value === id) {
+    heroPreviewHoverCandidateId.value = null
+  }
+  syncHeroPreviewInteraction()
+}
+
+function handleHeroPreviewStagePointerLeave() {
+  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
+  heroPreviewHoverCandidateId.value = null
+  syncHeroPreviewInteraction()
+}
+
+function setPinnedHeroPreview(id: HeroPreviewId | null) {
+  pinnedHeroPreviewId.value = id
+  heroPreviewHoverCandidateId.value = null
+  syncHeroPreviewInteraction()
+}
+
+function activateHeroPreview(event: PointerEvent, id: HeroPreviewId) {
+  if (event.pointerType !== 'touch' && !usesCoarsePointer()) return
+  setPinnedHeroPreview(pinnedHeroPreviewId.value === id ? null : id)
+}
+
+function activateHeroPreviewFromKeyboard(event: KeyboardEvent, id: HeroPreviewId) {
   if (event.key !== 'Enter' && event.key !== ' ') return
   event.preventDefault()
-  activeHeroPreviewId.value = activeHeroPreviewId.value === id ? null : id
+  setPinnedHeroPreview(pinnedHeroPreviewId.value === id ? null : id)
+}
+
+function handleHeroPreviewTransitionEnd(event: TransitionEvent, id: HeroPreviewId) {
+  if (
+    event.target !== event.currentTarget ||
+    event.propertyName !== 'transform' ||
+    activeHeroPreviewId.value !== id
+  ) {
+    return
+  }
+
+  if (heroPreviewPhase.value === 'entering') {
+    finishHeroPreviewEnter()
+  } else if (heroPreviewPhase.value === 'leaving') {
+    finishHeroPreviewLeave()
+  }
 }
 
 function clearHeroPreviewOutside(event: PointerEvent) {
-  if (!activeHeroPreviewId.value || !(event.target instanceof Element)) return
+  if (!pinnedHeroPreviewId.value || !(event.target instanceof Element)) return
   if (!event.target.closest('.hero-preview-item')) {
-    activeHeroPreviewId.value = null
+    setPinnedHeroPreview(null)
   }
 }
 
@@ -1510,6 +1638,7 @@ onBeforeUnmount(() => {
   quickStartObserver?.disconnect()
   siteRevealObserver?.disconnect()
   topbarResizeObserver?.disconnect()
+  clearHeroPreviewTransitionTimer()
   clearFrameUnmountTimers()
   window.cancelAnimationFrame(quickStartScrollFrame)
   window.cancelAnimationFrame(pageScrollFrame)
@@ -1714,24 +1843,37 @@ onBeforeUnmount(() => {
 
       <div
         class="hero-visual hero-orbit-stage"
+        :data-preview-phase="heroPreviewPhase"
+        :data-preview-active="activeHeroPreviewId || undefined"
+        :data-preview-candidate="heroPreviewHoverCandidateId || undefined"
         :aria-label="
           isZh
             ? 'Word、CAD、电子表格与演示文稿的真实浏览器预览'
             : 'Real browser previews for Word, CAD, spreadsheets, and presentations'
         "
+        @pointerleave="handleHeroPreviewStagePointerLeave"
       >
         <div class="hero-orbit-stack">
           <div
             class="hero-preview-item hero-preview-word"
-            :class="{ 'is-touch-active': activeHeroPreviewId === 'word' }"
+            :class="{
+              'is-preview-active': activeHeroPreviewId === 'word' && heroPreviewPhase !== 'leaving',
+              'is-preview-cancelling':
+                activeHeroPreviewId === 'word' && heroPreviewPhase === 'leaving'
+            }"
             tabindex="0"
             role="button"
-            :aria-pressed="activeHeroPreviewId === 'word'"
+            :aria-pressed="pinnedHeroPreviewId === 'word'"
             :aria-label="isZh ? '置顶查看 DOCX 预览' : 'Bring the DOCX preview to front'"
+            @pointerenter="handleHeroPreviewPointerEnter('word')"
+            @pointerleave="handleHeroPreviewPointerLeave('word')"
             @pointerdown="activateHeroPreview($event, 'word')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'word')"
           >
-            <div class="hero-preview-focus">
+            <div
+              class="hero-preview-focus"
+              @transitionend="handleHeroPreviewTransitionEnd($event, 'word')"
+            >
               <figure class="hero-preview-card">
                 <figcaption>
                   <span><FileText :size="15" />DOCX</span>
@@ -1751,15 +1893,24 @@ onBeforeUnmount(() => {
 
           <div
             class="hero-preview-item hero-preview-cad"
-            :class="{ 'is-touch-active': activeHeroPreviewId === 'cad' }"
+            :class="{
+              'is-preview-active': activeHeroPreviewId === 'cad' && heroPreviewPhase !== 'leaving',
+              'is-preview-cancelling':
+                activeHeroPreviewId === 'cad' && heroPreviewPhase === 'leaving'
+            }"
             tabindex="0"
             role="button"
-            :aria-pressed="activeHeroPreviewId === 'cad'"
+            :aria-pressed="pinnedHeroPreviewId === 'cad'"
             :aria-label="isZh ? '置顶查看 DWG 预览' : 'Bring the DWG preview to front'"
+            @pointerenter="handleHeroPreviewPointerEnter('cad')"
+            @pointerleave="handleHeroPreviewPointerLeave('cad')"
             @pointerdown="activateHeroPreview($event, 'cad')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'cad')"
           >
-            <div class="hero-preview-focus">
+            <div
+              class="hero-preview-focus"
+              @transitionend="handleHeroPreviewTransitionEnd($event, 'cad')"
+            >
               <figure class="hero-preview-card">
                 <figcaption>
                   <span><Layers3 :size="15" />DWG</span>
@@ -1778,15 +1929,25 @@ onBeforeUnmount(() => {
 
           <div
             class="hero-preview-item hero-preview-sheet"
-            :class="{ 'is-touch-active': activeHeroPreviewId === 'sheet' }"
+            :class="{
+              'is-preview-active':
+                activeHeroPreviewId === 'sheet' && heroPreviewPhase !== 'leaving',
+              'is-preview-cancelling':
+                activeHeroPreviewId === 'sheet' && heroPreviewPhase === 'leaving'
+            }"
             tabindex="0"
             role="button"
-            :aria-pressed="activeHeroPreviewId === 'sheet'"
+            :aria-pressed="pinnedHeroPreviewId === 'sheet'"
             :aria-label="isZh ? '置顶查看 XLSX 预览' : 'Bring the XLSX preview to front'"
+            @pointerenter="handleHeroPreviewPointerEnter('sheet')"
+            @pointerleave="handleHeroPreviewPointerLeave('sheet')"
             @pointerdown="activateHeroPreview($event, 'sheet')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'sheet')"
           >
-            <div class="hero-preview-focus">
+            <div
+              class="hero-preview-focus"
+              @transitionend="handleHeroPreviewTransitionEnd($event, 'sheet')"
+            >
               <figure class="hero-preview-card">
                 <figcaption>
                   <span><FileSpreadsheet :size="15" />XLSX</span>
@@ -1805,15 +1966,25 @@ onBeforeUnmount(() => {
 
           <div
             class="hero-preview-item hero-preview-slide"
-            :class="{ 'is-touch-active': activeHeroPreviewId === 'slide' }"
+            :class="{
+              'is-preview-active':
+                activeHeroPreviewId === 'slide' && heroPreviewPhase !== 'leaving',
+              'is-preview-cancelling':
+                activeHeroPreviewId === 'slide' && heroPreviewPhase === 'leaving'
+            }"
             tabindex="0"
             role="button"
-            :aria-pressed="activeHeroPreviewId === 'slide'"
+            :aria-pressed="pinnedHeroPreviewId === 'slide'"
             :aria-label="isZh ? '置顶查看 PPTX 预览' : 'Bring the PPTX preview to front'"
+            @pointerenter="handleHeroPreviewPointerEnter('slide')"
+            @pointerleave="handleHeroPreviewPointerLeave('slide')"
             @pointerdown="activateHeroPreview($event, 'slide')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'slide')"
           >
-            <div class="hero-preview-focus">
+            <div
+              class="hero-preview-focus"
+              @transitionend="handleHeroPreviewTransitionEnd($event, 'slide')"
+            >
               <figure class="hero-preview-card">
                 <figcaption>
                   <span><PanelTop :size="15" />PPTX</span>

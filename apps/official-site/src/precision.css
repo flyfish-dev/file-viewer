@@ -3031,6 +3031,9 @@ html[data-theme='dark'] body {
   transform-origin: 50% 50%;
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  transition:
+    border-color 180ms ease,
+    box-shadow 320ms var(--precision-ease);
   will-change: transform;
 }
 
@@ -3162,66 +3165,50 @@ html[data-theme='dark'] body {
   color: var(--precision-green);
 }
 
-.hero-preview-item:is(:focus-visible, .is-touch-active) {
-  z-index: 20;
+.hero-preview-item:focus-visible {
   outline: none;
+}
+
+.hero-preview-item:focus-visible .hero-preview-card {
+  border-color: rgba(10, 155, 100, 0.5);
+  box-shadow:
+    0 0 0 3px rgba(10, 155, 100, 0.13),
+    0 24px 64px rgba(8, 46, 35, 0.16);
+}
+
+.hero-preview-item.is-preview-active,
+.hero-preview-item.is-preview-cancelling {
+  z-index: 20;
   cursor: default;
 }
 
-.hero-preview-item:is(:focus-visible, .is-touch-active) .hero-preview-focus {
+.hero-preview-item.is-preview-active .hero-preview-focus {
   transform: translate3d(var(--focus-x), var(--focus-y), 170px) scale(var(--focus-scale));
 }
 
-.hero-preview-item:is(:focus-visible, .is-touch-active) .hero-preview-card {
+.hero-preview-item.is-preview-active .hero-preview-card {
   border-color: rgba(10, 155, 100, 0.45);
   box-shadow: 0 42px 100px rgba(8, 46, 35, 0.25);
   animation-play-state: paused;
 }
 
-.hero-orbit-stack:has(.hero-preview-item:is(:focus-visible, .is-touch-active)) {
+.hero-preview-item.is-preview-cancelling .hero-preview-focus {
+  transition-duration: 180ms;
+}
+
+.hero-preview-item.is-preview-cancelling .hero-preview-card {
+  transition-duration: 160ms;
   animation-play-state: paused;
 }
 
-.hero-orbit-stack:has(.hero-preview-item:is(:focus-visible, .is-touch-active))
-  .hero-preview-item:not(:focus-visible, .is-touch-active) {
-  opacity: 0.74;
-  filter: saturate(0.76) contrast(0.94);
+.hero-orbit-stack:has(.hero-preview-item:is(.is-preview-active, .is-preview-cancelling)) {
+  animation-play-state: paused;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .hero-orbit-stack:not(:has(.hero-preview-item:is(:focus-visible, .is-touch-active)))
-    .hero-preview-item:hover {
-    z-index: 20;
-    cursor: default;
-  }
-
-  .hero-orbit-stack:not(:has(.hero-preview-item:is(:focus-visible, .is-touch-active)))
-    .hero-preview-item:hover
-    .hero-preview-focus {
-    transform: translate3d(var(--focus-x), var(--focus-y), 170px) scale(var(--focus-scale));
-  }
-
-  .hero-orbit-stack:not(:has(.hero-preview-item:is(:focus-visible, .is-touch-active)))
-    .hero-preview-item:hover
-    .hero-preview-card {
-    border-color: rgba(10, 155, 100, 0.45);
-    box-shadow: 0 42px 100px rgba(8, 46, 35, 0.25);
-    animation-play-state: paused;
-  }
-
-  .hero-orbit-stack:not(:has(.hero-preview-item:is(:focus-visible, .is-touch-active))):has(
-      .hero-preview-item:hover
-    ) {
-    animation-play-state: paused;
-  }
-
-  .hero-orbit-stack:not(:has(.hero-preview-item:is(:focus-visible, .is-touch-active))):has(
-      .hero-preview-item:hover
-    )
-    .hero-preview-item:not(:hover) {
-    opacity: 0.74;
-    filter: saturate(0.76) contrast(0.94);
-  }
+.hero-orbit-stack:has(.hero-preview-item.is-preview-active)
+  .hero-preview-item:not(.is-preview-active) {
+  opacity: 0.74;
+  filter: saturate(0.76) contrast(0.94);
 }
 
 @keyframes hero-orbit-breathe {
@@ -3845,8 +3832,8 @@ html[data-theme='dark'] body {
     transform: translate3d(0, 0, -16px) rotateY(-9deg) rotateZ(2deg);
   }
 
-  .hero-preview-item:is(:focus-visible, .is-touch-active) .hero-preview-focus,
-  .hero-preview-item:hover .hero-preview-focus {
+  .hero-preview-item.is-preview-active .hero-preview-focus,
+  .hero-preview-item.is-preview-cancelling .hero-preview-focus {
     transform: none !important;
   }
 }
