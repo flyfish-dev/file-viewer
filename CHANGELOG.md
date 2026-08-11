@@ -2,6 +2,25 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.2.8 — 2026-08-11
+
+这是大表格性能、OFD 首屏稳定性和二进制 PPT 观感修复版本，同时完成 2.2.7 未结束的公开分发链路。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。
+
+### Highlights
+
+- Spreadsheet 的自动列宽推断改为有界取样，不再对大工作表重复全量扫描；76 MB / 259,702 行样例（#173）和 38,732,752 字节 / 100,545 行原始问题样例（#193）均完成真实浏览器回归，后者冷首屏为 4.194 秒。
+- OFD 首次渲染不再重放页面 transform 动画，消除内容出现后的瞬时闪动，同时保留后续缩放过渡和 `prefers-reduced-motion` 边界（#194）。
+- 二进制 `.ppt` 运行时升级至 `@file-viewer/ppt@0.3.3`：开源版强制水印收紧到右下角，覆盖像素减少约 93%；1x/2x/3x 高分屏使用整数设备像素缩放，避免半像素取整导致的模糊。
+- PDF 缩放锚点（#191）和 HTML-in-WordDocument 旧版 DOC 容错（#192）继续纳入本次完整公开分发与生产回归。
+- 官网预览卡片的指针归属、悬停切换和移动交互完成稳定性加固；发布脚本对 registry 超时、查询失败和中断后续传保持 fail-closed。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.2.8
+pnpm add -D @file-viewer/vite-plugin@2.2.8
+```
+
 ## File Viewer v2.2.7 — 2026-08-11
 
 这是 PDF 缩放定位、旧版 Word 容错和官网交互的补丁版本。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。

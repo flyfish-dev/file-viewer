@@ -9,13 +9,13 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "@file-viewer/preset-office": "^2.2.7",
-    "@file-viewer/react": "^2.2.7",
+    "@file-viewer/preset-office": "^2.2.8",
+    "@file-viewer/react": "^2.2.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@file-viewer/vite-plugin": "^2.2.7",
+    "@file-viewer/vite-plugin": "^2.2.8",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",

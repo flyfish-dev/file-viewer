@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-mindmap",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "private": false,
   "type": "module",
   "description": "Standalone XMind and mind map renderer plugin for File Viewer.",
@@ -57,7 +57,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.7",
+    "@file-viewer/core": "workspace:2.2.8",
     "@ljheee/xmind-parser": "^1.1.3",
     "@panzoom/panzoom": "^4.6.2",
     "jszip": "^3.10.1"

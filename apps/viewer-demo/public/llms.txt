@@ -9,4 +9,4 @@
 - Source: https://github.com/flyfish-dev/file-viewer
 - npm core: https://www.npmjs.com/package/@file-viewer/core
 
-The current v2.2.7 registry maps 208 extensions to 25 preview pipelines. Local files selected in the demo stay in the browser. Remote URL behavior depends on the source server's CORS policy.
+The current v2.2.8 registry maps 208 extensions to 25 preview pipelines. Local files selected in the demo stay in the browser. Remote URL behavior depends on the source server's CORS policy.

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/eda-layout",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "private": false,
   "type": "module",
   "description": "Pure TypeScript EDA layout inspection engine for File Viewer with GDSII quick preview primitives and OASIS upgrade boundaries.",

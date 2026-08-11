@@ -17,7 +17,7 @@ The project is designed for teams that need users to open business attachments d
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
 - Release scope: 54 File Viewer npm targets, 208 maintained extensions, and 25 preview pipelines; independently versioned renderer dependencies are not counted as File Viewer npm targets.
-- Current release: v2.2.7, https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.7. PDF zoom keeps the active page and reading position; legacy DOC files with HTML in the CFB WordDocument stream recover through the safe document AST.
+- Current release: v2.2.8, https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.8. PDF zoom keeps the active page and reading position; legacy DOC files with HTML in the CFB WordDocument stream recover through the safe document AST.
 
 ## Format Coverage
 
@@ -28,7 +28,7 @@ The format matrix covers Office documents, fixed-layout documents, engineering a
 - Archives and communication files: zip, 7z, rar, tar, eml, msg, mbox, epub.
 - Code, data, media, and geo: markdown, JSON, TypeScript, Python, patch/diff, git bundle, SQLite, Parquet, video, audio, GeoJSON, KML.
 
-The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/office/engineering/all presets. Every v2.2.7 Full package already includes preset-all and must not be documented as requiring a separate preset install or `options.preset`.
+The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/office/engineering/all presets. Every v2.2.8 Full package already includes preset-all and must not be documented as requiring a separate preset install or `options.preset`.
 
 PowerPoint has two strict rendering routes. Binary `.ppt` files use the independently versioned `@file-viewer/ppt@0.3.3` runtime. Demo, Full, copy-assets, and CDN/IIFE distributions include its verified public ESM/Worker/WASM/CJK-font files under `vendor/ppt/`. Open XML `.pptx` files use the separate `@file-viewer/pptx` Worker engine. Documentation and examples should not collapse these into one renderer.
 

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/eda-orcad",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "private": false,
   "type": "module",
   "description": "Pure TypeScript OrCAD and Allegro binary inspection helpers for File Viewer with CFB detection and safe string extraction.",

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/core",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "private": false,
   "type": "module",
   "description": "Framework-neutral modular TypeScript core for File Viewer renderer orchestration, lifecycle APIs, search, zoom, print, and export",

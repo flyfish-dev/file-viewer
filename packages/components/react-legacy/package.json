@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/react-legacy",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "private": false,
   "type": "module",
   "description": "Standard React 16/17 legacy component package for File Viewer",
@@ -60,7 +60,7 @@
     "react": ">=16.8 <18"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.7"
+    "@file-viewer/core": "workspace:2.2.8"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

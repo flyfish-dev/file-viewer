@@ -1,6 +1,6 @@
 {
   "name": "file-viewer3",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "private": false,
   "type": "module",
   "description": "Compatibility alias package for File Viewer Vue 3",
@@ -60,7 +60,7 @@
     "vue": ">=3.3 <4"
   },
   "dependencies": {
-    "@file-viewer/vue3": "workspace:2.2.7"
+    "@file-viewer/vue3": "workspace:2.2.8"
   },
   "license": "Apache-2.0"
 }

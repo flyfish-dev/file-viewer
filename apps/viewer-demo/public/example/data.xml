@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preview-suite name="File Viewer" version="2.2.7">
+<preview-suite name="File Viewer" version="2.2.8">
   <environment framework="vue3" bundler="vite" />
 
   <groups>
