@@ -1696,7 +1696,11 @@ onBeforeUnmount(() => {
         "
       >
         <div class="hero-orbit-stack">
-          <div class="hero-preview-item hero-preview-word">
+          <div
+            class="hero-preview-item hero-preview-word"
+            tabindex="0"
+            :aria-label="isZh ? '置顶查看 DOCX 预览' : 'Bring the DOCX preview to front'"
+          >
             <figure class="hero-preview-card">
               <figcaption>
                 <span><FileText :size="15" />DOCX</span>
@@ -1713,7 +1717,11 @@ onBeforeUnmount(() => {
             </figure>
           </div>
 
-          <div class="hero-preview-item hero-preview-cad">
+          <div
+            class="hero-preview-item hero-preview-cad"
+            tabindex="0"
+            :aria-label="isZh ? '置顶查看 DWG 预览' : 'Bring the DWG preview to front'"
+          >
             <figure class="hero-preview-card">
               <figcaption>
                 <span><Layers3 :size="15" />DWG</span>
@@ -1729,7 +1737,11 @@ onBeforeUnmount(() => {
             </figure>
           </div>
 
-          <div class="hero-preview-item hero-preview-sheet">
+          <div
+            class="hero-preview-item hero-preview-sheet"
+            tabindex="0"
+            :aria-label="isZh ? '置顶查看 XLSX 预览' : 'Bring the XLSX preview to front'"
+          >
             <figure class="hero-preview-card">
               <figcaption>
                 <span><FileSpreadsheet :size="15" />XLSX</span>
@@ -1745,7 +1757,11 @@ onBeforeUnmount(() => {
             </figure>
           </div>
 
-          <div class="hero-preview-item hero-preview-slide">
+          <div
+            class="hero-preview-item hero-preview-slide"
+            tabindex="0"
+            :aria-label="isZh ? '置顶查看 PPTX 预览' : 'Bring the PPTX preview to front'"
+          >
             <figure class="hero-preview-card">
               <figcaption>
                 <span><PanelTop :size="15" />PPTX</span>

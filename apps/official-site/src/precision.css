@@ -2994,12 +2994,17 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-item {
+  --focus-x: 0px;
+  --focus-y: -10px;
   position: absolute;
   margin: 0;
   transform: translate3d(0, 0, 0);
   transform-style: preserve-3d;
-  transition: transform 720ms var(--precision-ease);
-  will-change: transform;
+  transition:
+    transform 560ms var(--precision-ease),
+    opacity 280ms ease,
+    filter 280ms ease;
+  will-change: transform, opacity;
 }
 
 .hero-preview-card {
@@ -3065,11 +3070,11 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-word {
-  top: 22%;
-  left: 17%;
+  top: 39%;
+  left: 10%;
   z-index: 4;
-  width: min(72%, 570px);
-  height: 61%;
+  width: min(58%, 470px);
+  height: 50%;
 }
 
 .hero-preview-word .hero-preview-card {
@@ -3077,11 +3082,11 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-cad {
-  top: 31%;
+  top: 10%;
   left: -1%;
   z-index: 2;
-  width: 50%;
-  height: 44%;
+  width: 48%;
+  height: 42%;
 }
 
 .hero-preview-cad .hero-preview-card {
@@ -3089,11 +3094,11 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-sheet {
-  top: 2%;
-  left: 28%;
+  top: 1%;
+  left: 45%;
   z-index: 1;
-  width: 52%;
-  height: 43%;
+  width: 49%;
+  height: 42%;
 }
 
 .hero-preview-sheet .hero-preview-card {
@@ -3101,11 +3106,11 @@ html[data-theme='dark'] body {
 }
 
 .hero-preview-slide {
-  top: 39%;
-  right: -2%;
+  top: 48%;
+  right: -1%;
   z-index: 3;
-  width: 48%;
-  height: 42%;
+  width: 47%;
+  height: 41%;
 }
 
 .hero-preview-slide .hero-preview-card {
@@ -3138,26 +3143,46 @@ html[data-theme='dark'] body {
   color: var(--precision-green);
 }
 
+.hero-preview-item:focus-visible {
+  z-index: 20;
+  outline: none;
+  transform: translate3d(var(--focus-x), var(--focus-y), 150px) scale(1.055);
+}
+
+.hero-preview-item:focus-visible .hero-preview-card {
+  border-color: rgba(10, 155, 100, 0.45);
+  box-shadow: 0 42px 100px rgba(8, 46, 35, 0.25);
+  animation-play-state: paused;
+}
+
+.hero-orbit-stack:has(.hero-preview-item:focus-visible) {
+  animation-play-state: paused;
+}
+
+.hero-orbit-stack:has(.hero-preview-item:focus-visible) .hero-preview-item:not(:focus-visible) {
+  opacity: 0.82;
+  filter: saturate(0.82) contrast(0.96);
+}
+
 @media (hover: hover) and (pointer: fine) {
-  .hero-orbit-stage:hover .hero-preview-card,
-  .hero-orbit-stage:hover .hero-orbit-stack {
+  .hero-preview-item:hover {
+    z-index: 20;
+    transform: translate3d(var(--focus-x), var(--focus-y), 150px) scale(1.055);
+  }
+
+  .hero-preview-item:hover .hero-preview-card {
+    border-color: rgba(10, 155, 100, 0.45);
+    box-shadow: 0 42px 100px rgba(8, 46, 35, 0.25);
     animation-play-state: paused;
   }
 
-  .hero-orbit-stage:hover .hero-preview-word {
-    transform: translate3d(34px, 48px, 96px) rotateZ(1.2deg) scale(1.025);
+  .hero-orbit-stack:has(.hero-preview-item:hover) {
+    animation-play-state: paused;
   }
 
-  .hero-orbit-stage:hover .hero-preview-cad {
-    transform: translate3d(-54px, 28px, 42px) rotateZ(-4deg) scale(0.96);
-  }
-
-  .hero-orbit-stage:hover .hero-preview-sheet {
-    transform: translate3d(26px, -54px, 28px) rotateZ(2.8deg) scale(0.97);
-  }
-
-  .hero-orbit-stage:hover .hero-preview-slide {
-    transform: translate3d(62px, 36px, 54px) rotateZ(4deg) scale(0.98);
+  .hero-orbit-stack:has(.hero-preview-item:hover) .hero-preview-item:not(:hover) {
+    opacity: 0.82;
+    filter: saturate(0.82) contrast(0.96);
   }
 }
 
@@ -3576,31 +3601,31 @@ html[data-theme='dark'] body {
   }
 
   .hero-preview-word {
-    top: 20%;
-    left: 14%;
-    width: 74%;
-    height: 61%;
+    top: 34%;
+    left: 9%;
+    width: 68%;
+    height: 52%;
   }
 
   .hero-preview-cad {
-    top: 33%;
+    top: 12%;
     left: -4%;
-    width: 49%;
-    height: 43%;
+    width: 48%;
+    height: 40%;
   }
 
   .hero-preview-sheet {
     top: 1%;
-    left: 24%;
-    width: 57%;
-    height: 43%;
+    left: 45%;
+    width: 55%;
+    height: 40%;
   }
 
   .hero-preview-slide {
-    top: 38%;
+    top: 48%;
     right: -4%;
-    width: 48%;
-    height: 42%;
+    width: 47%;
+    height: 39%;
   }
 
   .hero-orbit-status {
