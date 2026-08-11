@@ -67,7 +67,7 @@ Install a single renderer when a product needs the smallest possible capability 
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG, DXF, DWF, DWFx, XPS |
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D models and lightweight geometry signatures |
 
-Binary PowerPoint and OpenXML PowerPoint share the presentation plugin but keep separate lazy engine boundaries. The packaged `.ppt` 0.3.2 runtime is zero-config in standard layouts; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
+Binary PowerPoint and OpenXML PowerPoint share the presentation plugin but keep separate lazy engine boundaries. The packaged `.ppt` 0.3.3 runtime is zero-config in standard layouts; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io, Excalidraw, Mermaid, PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON, KML, GPX, SHP |

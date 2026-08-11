@@ -162,7 +162,7 @@ module.exports = function isolatePdfjsWebpackRuntime(source) {
 
 只替换 `__webpack_require__` 不够。PDF.js 内部的 `__webpack_exports__` 会在 webpack 4 外层模块中被提升并遮蔽宿主导出：首次打开 PDF 常表现为 `Cannot convert undefined or null to object`，再次选择同一文件则会进一步表现为从 `undefined` 读取 `createFileViewerTranslator`。上面的 loader 同时隔离 `modules`、`module_cache`、`exports`、`require` 四个标识。
 
-`@file-viewer/docx` 的 alias 也必须保留：webpack 4 默认优先选择 UMD `browser` 入口，该文件经过 Babel 转译后会丢失 CommonJS 导出，上传 DOCX 时表现为 `@file-viewer/docx did not expose a compatible renderAsync function`。另一个补丁 `build/babel-transform-import-meta-url.cjs` 负责让 webpack 4 解析 PPTX worker 模块。`scripts/copy-file-viewer-assets.cjs` 会把 PDF/DOCX/PPTX/Excel 资产和 `@file-viewer/ppt@0.3.2` 的 ESM、Worker、帧缓存、WASM、CJK 字体、manifest、package metadata、LICENSE、NOTICE 九个文件复制到 `public/file-viewer/`。
+`@file-viewer/docx` 的 alias 也必须保留：webpack 4 默认优先选择 UMD `browser` 入口，该文件经过 Babel 转译后会丢失 CommonJS 导出，上传 DOCX 时表现为 `@file-viewer/docx did not expose a compatible renderAsync function`。另一个补丁 `build/babel-transform-import-meta-url.cjs` 负责让 webpack 4 解析 PPTX worker 模块。`scripts/copy-file-viewer-assets.cjs` 会把 PDF/DOCX/PPTX/Excel 资产和 `@file-viewer/ppt@0.3.3` 的 ESM、Worker、帧缓存、WASM、CJK 字体、manifest、package metadata、LICENSE、NOTICE 九个文件复制到 `public/file-viewer/`。
 
 `npm run serve` 对应的 `.env.normalServe` 使用 `NODE_ENV=production`，是为了避开 Vue CLI 3.1 dev server 对 HMR 客户端的强注入；真实项目可以先用这个模式确认 `preset-office` 构建链可用，再决定是否保留热更新。
 

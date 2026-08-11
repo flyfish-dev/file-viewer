@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 import { basename, join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
-export const PPT_RUNTIME_VERSION = '0.3.2'
+export const PPT_RUNTIME_VERSION = '0.3.3'
 export const PPT_RUNTIME_RELATIVE_ROOT = 'vendor/ppt'
 export const PPT_RUNTIME_REQUIRED_FILES = Object.freeze([
   'index.mjs',

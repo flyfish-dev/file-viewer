@@ -40,7 +40,7 @@
 
 ## Full 包完整资产契约
 
-从 `2.1.30` 起，八个 Full 包使用同一套交付契约。它们已内置并启用 `preset-all`，同时携带版本对齐的 renderer、Worker、WASM、字体、Draw.io、SQLite 等 vendor 资产；Vite 或随包 CLI 会把这份包内资产发布到业务自己的静态源。v2.2.7 的标准布局同时包含经过完整性校验的二进制 `.ppt` 0.3.2 公开运行时，以及按需加载的 EPUB 本地引擎和对应 NOTICE；两条链路都不需要运行时 CDN。
+从 `2.1.30` 起，八个 Full 包使用同一套交付契约。它们已内置并启用 `preset-all`，同时携带版本对齐的 renderer、Worker、WASM、字体、Draw.io、SQLite 等 vendor 资产；Vite 或随包 CLI 会把这份包内资产发布到业务自己的静态源。当前标准布局同时包含经过完整性校验的二进制 `.ppt` 0.3.3 公开运行时，以及按需加载的 EPUB 本地引擎和对应 NOTICE；两条链路都不需要运行时 CDN。
 
 | 构建方式 | 完整部署方式 |
 | --- | --- |
@@ -82,7 +82,7 @@ export default {
 | 场景 | 推荐包 | 适合项目 | 入口能力 |
 | --- | --- | --- | --- |
 | 底层能力 | `@file-viewer/core` | 自研组件、二次封装、框架适配 | 纯 TypeScript 预览能力、格式矩阵、事件、搜索、缩放、打印、导出和共享类型 |
-| 二进制 PPT 运行时 | `@file-viewer/ppt@0.3.2` | 单独验证 PowerPoint 97–2003 `.ppt` | 独立版本依赖；Full/CDN 在 `vendor/ppt/` 交付公开运行时，与 PPTX Worker 严格分路 |
+| 二进制 PPT 运行时 | `@file-viewer/ppt@0.3.3` | 单独验证 PowerPoint 97–2003 `.ppt` | 独立版本依赖；Full/CDN 在 `vendor/ppt/` 交付公开运行时，与 PPTX Worker 严格分路 |
 | PPTX 引擎 | `@file-viewer/pptx` | 单独优化或验证 PPTX 渲染 | 独立 OpenXML 演示文稿引擎、Worker 渐进解析和样式文件 |
 | 轻量 preset | `@file-viewer/preset-lite` | 常见轻附件预览 | 文本、Markdown、代码、图片、音频和视频的轻量组合 |
 | 文档 preset | `@file-viewer/preset-office` | PDF / Office / OFD 文档平台 | PDF、Word、Excel、PowerPoint、OFD、RTF 和 OpenDocument |
@@ -572,10 +572,10 @@ Core 暴露格式矩阵、资源路径解析、搜索/缩放/打印导出工具�
 npm install @file-viewer/pptx
 ```
 
-`@file-viewer/renderer-presentation` 对外提供统一演示文稿能力，但内部保持两条严格隔离的引擎：PowerPoint 97–2003 `.ppt` 使用 `@file-viewer/ppt@0.3.2` 原生 WASM，PPTX/OpenXML 使用 `@file-viewer/pptx` Worker。两者都不会进入 core-only 安装。标准 Vanilla JS / Pure Web、Vue、React、jQuery 和 Svelte 项目应优先安装 presentation renderer，或通过 `preset-office` / `preset-all` 获得完整路由；只有自研 renderer 时才直接调用底层引擎。
+`@file-viewer/renderer-presentation` 对外提供统一演示文稿能力，但内部保持两条严格隔离的引擎：PowerPoint 97–2003 `.ppt` 使用 `@file-viewer/ppt@0.3.3` 原生 WASM，PPTX/OpenXML 使用 `@file-viewer/pptx` Worker。两者都不会进入 core-only 安装。标准 Vanilla JS / Pure Web、Vue、React、jQuery 和 Svelte 项目应优先安装 presentation renderer，或通过 `preset-office` / `preset-all` 获得完整路由；只有自研 renderer 时才直接调用底层引擎。
 
 ```bash
-npm install @file-viewer/ppt@0.3.2 @file-viewer/pptx
+npm install @file-viewer/ppt@0.3.3 @file-viewer/pptx
 ```
 
 ## 离线资源

@@ -61,7 +61,7 @@
 - `en/calibre-demo.docx` 来自 calibre 官方 DOCX demo，用于英文浏览器默认 Demo，覆盖英文排版、标题、列表、表格和富文本结构。
 - `template.dot` 复用 `test.doc` 的二进制内容，仅用于验证 Word 97-2003 模板扩展名能正确进入老 Word 渲染链路。
 - `ppt.pptx` 与 `en/sample-presentation.pptx` 均来自 NASA Science 公开的 `Implementation Plan for a NASA Integrated Lunar Science Strategy in the Artemis Era` 演示稿，覆盖星云封面、深色引用页、分栏信息页、图文混排、正式页眉页脚和 20 页真实演示稿结构；使用时按 NASA 媒体使用说明注明来源，不暗示 NASA 对项目背书。
-- `office-demo.ppt` 来自 `@file-viewer/ppt` 上游公开浏览器的固定回归样例，按项目方授权用于 Demo 分发和预览验收；它是中英文 Demo 共用的语言中立 PPT fixture，仅用于验证 `@file-viewer/ppt@0.3.2` Worker/OffscreenCanvas/WASM 链路与 PPTX Worker 链路彼此隔离。
+- `office-demo.ppt` 来自 `@file-viewer/ppt` 上游公开浏览器的固定回归样例，按项目方授权用于 Demo 分发和预览验收；它是中英文 Demo 共用的语言中立 PPT fixture，仅用于验证 `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM 链路与 PPTX Worker 链路彼此隔离。
 - `en/financial-sample.xlsx` 来自 Microsoft Power BI Financial Sample Workbook，用于英文 Excel 多业务字段、sheet 标签、列宽和打印回归。
 - `pdf.pdf` 是项目方提供的 13 页真实技术说明 PDF，覆盖缩放、页侧边栏、树形导航、打印、导出和暗色外壳隔离回归。
 - `en/prince-sample.pdf` 来自 Prince 官方 Sample Documents，用于英文 PDF 默认样例，覆盖打印 CSS、分栏、目录、表格和多页布局。

@@ -17,4 +17,4 @@ pnpm build
 pnpm --dir examples/vanilla-vite dev
 ```
 
-`@file-viewer/vite-plugin` copies runtime assets into the build automatically. To cover another format family, replace `preset-lite` with `preset-office`, `preset-engineering`, or `preset-all` in both `package.json` and `vite.config.ts`, then pass the same preset through `viewer.options`. The Office preset keeps binary `.ppt` on the packaged `@file-viewer/ppt@0.3.2` Worker/OffscreenCanvas/WASM engine and `.pptx` on its separate `@file-viewer/pptx` Worker engine. The standard Vite layout publishes `vendor/ppt/` and needs no manual PPT URLs.
+`@file-viewer/vite-plugin` copies runtime assets into the build automatically. To cover another format family, replace `preset-lite` with `preset-office`, `preset-engineering`, or `preset-all` in both `package.json` and `vite.config.ts`, then pass the same preset through `viewer.options`. The Office preset keeps binary `.ppt` on the packaged `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM engine and `.pptx` on its separate `@file-viewer/pptx` Worker engine. The standard Vite layout publishes `vendor/ppt/` and needs no manual PPT URLs.

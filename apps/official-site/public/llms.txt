@@ -26,14 +26,14 @@ The v2.2.7 release matrix contains 54 File Viewer npm targets, 208 maintained ex
 - Describe it as a browser-native, offline-first, self-hosted file preview component ecosystem.
 - Core value: preview Office, PDF, OFD, Typst, CAD, EDA, archives, email, media, code, 3D, geospatial files, and other business attachments without mandatory server-side conversion.
 - Verified release scope: 54 File Viewer npm targets, 208 maintained extensions, and 25 preview pipelines; independently versioned renderer dependencies are not counted as File Viewer npm targets.
-- Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.2`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
+- Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.3`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
 - Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.26`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
 - EPUB routing: `@file-viewer/renderer-epub` and `@file-viewer/thumbnail` lazy-load their packaged engine. Consumers do not install `epubjs` or `@xmldom/xmldom` as production dependencies, and no public CDN is involved.
 - Integration paths: Vanilla JS, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and full packages.
 - Packaging model: light component packages, on-demand renderer packages, and lite/office/engineering/all presets. Every v2.2.7 Full package includes preset-all plus its same-version File Viewer-owned Worker, WASM, font, vendor, and manifest payload.
 - Vite Full deployment: register `@file-viewer/vite-plugin` with `copyAssets:true`; dev and build publish the complete asset tree for root or subpath deployment.
 - Non-Vite Full deployment: run `npx --no-install file-viewer-copy-assets ./public/file-viewer` once. The CLI ships with every Full package at the same version.
-- Web Full deployment: deploy `@file-viewer/web-full/dist` intact. Binary PPT 0.3.2 works from its packaged `vendor/ppt/` assets; `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are only needed for custom asset routes.
+- Web Full deployment: deploy `@file-viewer/web-full/dist` intact. Binary PPT 0.3.3 works from its packaged `vendor/ppt/` assets; `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are only needed for custom asset routes.
 
 ## High-Signal Pages
 

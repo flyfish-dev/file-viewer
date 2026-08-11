@@ -30,7 +30,7 @@ The format matrix covers Office documents, fixed-layout documents, engineering a
 
 The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/office/engineering/all presets. Every v2.2.7 Full package already includes preset-all and must not be documented as requiring a separate preset install or `options.preset`.
 
-PowerPoint has two strict rendering routes. Binary `.ppt` files use the independently versioned `@file-viewer/ppt@0.3.2` runtime. Demo, Full, copy-assets, and CDN/IIFE distributions include its verified public ESM/Worker/WASM/CJK-font files under `vendor/ppt/`. Open XML `.pptx` files use the separate `@file-viewer/pptx` Worker engine. Documentation and examples should not collapse these into one renderer.
+PowerPoint has two strict rendering routes. Binary `.ppt` files use the independently versioned `@file-viewer/ppt@0.3.3` runtime. Demo, Full, copy-assets, and CDN/IIFE distributions include its verified public ESM/Worker/WASM/CJK-font files under `vendor/ppt/`. Open XML `.pptx` files use the separate `@file-viewer/pptx` Worker engine. Documentation and examples should not collapse these into one renderer.
 
 ## Integration Model
 
@@ -39,7 +39,7 @@ PowerPoint has two strict rendering routes. Binary `.ppt` files use the independ
 3. Vite Full: install the framework Full package plus `@file-viewer/vite-plugin`, then register `fileViewerRenderers({ copyAssets: true })`. Vite dev and build publish the File Viewer-owned asset tree under the deployment base, including root and subpath deployments.
 4. Non-Vite Full: install the framework Full package, then run `npx --no-install file-viewer-copy-assets ./public/file-viewer` once. Every Full package exposes this same-version CLI.
 5. Web Full: deploy `@file-viewer/web-full/dist` intact. Its File Viewer-owned preset-all renderers, Workers, WASM, fonts, vendor files, and integrity manifest need no copy step.
-6. CDN/IIFE: script-tag usage is supported, while heavy renderers and assets stay lazy-loaded. For offline or private hosting, deploy the complete web-full `dist/`; binary PPT 0.3.2 then works from packaged `vendor/ppt/` assets without URL configuration. `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are advanced overrides for custom routes.
+6. CDN/IIFE: script-tag usage is supported, while heavy renderers and assets stay lazy-loaded. For offline or private hosting, deploy the complete web-full `dist/`; binary PPT 0.3.3 then works from packaged `vendor/ppt/` assets without URL configuration. `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are advanced overrides for custom routes.
 
 ## Full Package Delivery Contract Since v2.1.30
 

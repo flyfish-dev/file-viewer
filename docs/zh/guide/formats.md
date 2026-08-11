@@ -99,7 +99,7 @@
 
 - `ppt` 使用 `@file-viewer/renderer-presentation` 按需加载独立的 `@file-viewer/ppt` 原生 WASM 引擎，按页渲染二进制 PowerPoint 97–2003 文件；它与 PPTX 解析器保持严格路由边界。
 - `pptx` 等 OOXML 演示文稿使用独立的 `@file-viewer/pptx` 原生渲染引擎，各标准组件包共享同一条 renderer 链路，core-only 安装不会拉取任何演示文稿引擎。
-- 二进制 PPT 0.3.2 默认使用 Worker/OffscreenCanvas/WASM 和有界帧缓存；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局会自动发布并解析 `vendor/ppt/`，非标准资源布局才需要通过 `options.presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` 覆盖。PPTX 继续使用 `workerUrl` / `workerType` 配置另一条 Worker。
+- 二进制 PPT 0.3.3 默认使用 Worker/OffscreenCanvas/WASM 和有界帧缓存；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局会自动发布并解析 `vendor/ppt/`，非标准资源布局才需要通过 `options.presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` 覆盖。PPTX 继续使用 `workerUrl` / `workerType` 配置另一条 Worker。
 - PPTX 默认通过 renderer 内部的模块 Worker 渐进解析；私有静态资源路径、旧 WebView、严格 CSP 或自托管 CDN 场景可以用 `options.presentation.workerUrl` / `options.presentation.workerType` 固定 Worker 地址和类型，避免运行时从错误路径加载。
 - PPTX 渲染器现在会按 DrawingML 的组合图形坐标系处理 `chOff/chExt`，组合内元素在缩放、旋转、翻转时会更接近 PowerPoint 中的位置关系。
 - 主题背景支持从 `fillStyleLst` / `bgFillStyleLst` 解析纯色、渐变、图片和平铺图案；PPTX 内嵌的 EMF 图片会尽量转换为 SVG 数据图，避免只显示空白占位。

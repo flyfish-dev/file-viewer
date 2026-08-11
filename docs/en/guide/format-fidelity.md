@@ -16,7 +16,7 @@
 - CAD preview is powered by `@flyfish-dev/cad-viewer` through `@file-viewer/renderer-cad`; DWG, DXF, DWF, and DWFx assets stay self-hostable.
 - STEP / STP, IGES / IGS, and BREP preview uses a self-hosted OCCT worker, runtime, and WASM module to build renderable meshes locally, with orbit controls, fit-to-view, and unified zoom.
 - Word preview uses `@file-viewer/renderer-word` and the self-maintained `@file-viewer/docx` path for readable stream-style DOCX rendering.
-- Presentation preview uses `@file-viewer/renderer-presentation` with two isolated native engines: PowerPoint 97–2003 `.ppt` lazy-loads the independently versioned native-WASM `@file-viewer/ppt@0.3.2` runtime, while PPTX/OpenXML lazy-loads `@file-viewer/pptx` and its Worker. Full and CDN/IIFE distributions ship both routes' matching assets; `@file-viewer/ppt` keeps its included license and visible public watermark.
+- Presentation preview uses `@file-viewer/renderer-presentation` with two isolated native engines: PowerPoint 97–2003 `.ppt` lazy-loads the independently versioned native-WASM `@file-viewer/ppt@0.3.3` runtime, while PPTX/OpenXML lazy-loads `@file-viewer/pptx` and its Worker. Full and CDN/IIFE distributions ship both routes' matching assets; `@file-viewer/ppt` keeps its included license and visible public watermark.
 
 ## Structure-first Lines
 

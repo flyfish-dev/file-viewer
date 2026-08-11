@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.2.7",
-    "@file-viewer/ppt": "0.3.2",
+    "@file-viewer/ppt": "0.3.3",
     "@file-viewer/pptx": "workspace:2.2.7"
   },
   "devDependencies": {

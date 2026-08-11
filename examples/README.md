@@ -33,6 +33,6 @@ Copy one example directory outside this monorepo, then run `pnpm install && pnpm
 
 The examples keep their viewer assets local through `@file-viewer/vite-plugin`. Replace the bundled sample with your own URL or `File`, and choose `preset-lite`, `preset-office`, `preset-engineering`, `preset-all`, or a matching full package according to your format and bundle requirements.
 
-Presentation files use two independent routes: binary `.ppt` is rendered by the packaged `@file-viewer/ppt@0.3.2` Worker/OffscreenCanvas/WASM runtime, while `.pptx` is rendered by `@file-viewer/pptx`. Office preset and Full examples publish the complete verified `vendor/ppt/` payload automatically. File Viewer-authored code remains Apache-2.0; the bundled PPT runtime keeps its own included LICENSE and NOTICE.
+Presentation files use two independent routes: binary `.ppt` is rendered by the packaged `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM runtime, while `.pptx` is rendered by `@file-viewer/pptx`. Office preset and Full examples publish the complete verified `vendor/ppt/` payload automatically. File Viewer-authored code remains Apache-2.0; the bundled PPT runtime keeps its own included LICENSE and NOTICE.
 
 The Vue 2.6 project is deliberately kept outside the modern pnpm workspace because its Vue CLI 3 / webpack 4 dependency graph is a standalone compatibility harness.

@@ -7,7 +7,7 @@
       <format extension="docx" renderer="@file-viewer/docx" async="true" />
       <format extension="rtf" renderer="rtf.js" async="true" />
       <format extension="odt" renderer="open-document" async="true" />
-      <format extension="ppt" renderer="@file-viewer/ppt@0.3.2" async="true" worker="true" offscreen-canvas="true" wasm="true" font-pack="true" frame-cache="bounded" />
+      <format extension="ppt" renderer="@file-viewer/ppt@0.3.3" async="true" worker="true" offscreen-canvas="true" wasm="true" font-pack="true" frame-cache="bounded" />
       <format extension="pptx" renderer="@file-viewer/pptx" async="true" worker="true" />
       <format extension="pdf" renderer="pdfjs-dist" navigation="true" />
       <format extension="ofd" renderer="DLTech21/ofd.js" async="true" />

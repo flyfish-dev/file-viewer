@@ -66,7 +66,7 @@
 | STEP / STP、IGES / IGS、BREP | OpenCascade / OCCT WASM 在浏览器内解析 B-Rep 并输出 Three.js 可用网格 | `@file-viewer/geometry-engine` 已接入本地 OCCT Worker、runtime 和 WASM；`@file-viewer/renderer-3d` 保留装配层级、实例、法线和面颜色，并注册统一缩放 provider；重型内核不进入 core 默认路径 |
 | IFC / 3DM | IFC 走 `web-ifc` / That Open 生态，3DM 走 `rhino3dm` + Three.js Rhino3dmLoader | 当前只维护格式签名和接入提示，后续在独立几何包中实现，不影响已经落地的 OCCT 预览链路 |
 | Draw.io / Excalidraw / Mermaid / PlantUML | Draw.io 最佳链路是自托管 diagrams.net offline viewer；Excalidraw 默认使用 rough.js 只读 SVG，运行环境提供官方 ESM 模块时尝试官方 restore/export；Mermaid 使用官方 SVG renderer；PlantUML 默认离线预览源码，可选接入自托管 SVG 服务 | 已拆成 `@file-viewer/renderer-drawing` 独立维护，继续离线 vendor 分发；PlantUML 完整图形渲染推荐企业内网自托管服务端点 |
-| Presentation / PPT / PPTX | 二进制 PPT 与 OOXML 演示文稿都适合独立 engine + renderer 双层维护，避免 core 被解析器、主题和媒体链路拖重 | `@file-viewer/renderer-presentation` 暴露标准 renderer 插件，`.ppt` 使用独立版本且保留包内许可证的 `@file-viewer/ppt@0.3.2`，OpenXML 文件使用 `@file-viewer/pptx` Worker；Full/CDN 分别交付两条链路的匹配资产 |
+| Presentation / PPT / PPTX | 二进制 PPT 与 OOXML 演示文稿都适合独立 engine + renderer 双层维护，避免 core 被解析器、主题和媒体链路拖重 | `@file-viewer/renderer-presentation` 暴露标准 renderer 插件，`.ppt` 使用独立版本且保留包内许可证的 `@file-viewer/ppt@0.3.3`，OpenXML 文件使用 `@file-viewer/pptx` Worker；Full/CDN 分别交付两条链路的匹配资产 |
 | GeoJSON / KML / GPX / SHP | KML/GPX 有稳定 toGeoJSON 转换路线，Shapefile 可用纯 JS 解析到 GeoJSON，MapLibre 可承接离线矢量叠加层 | 已拆 `@file-viewer/renderer-geo` 并从 core 直接依赖中移除转换和地图库；当前补齐 CRS 归一化、MapLibre 叠加层、SVG fallback 和解析 harness，后续继续补海量要素抽稀和真实公开样本 |
 | Typst | 官方 Rust 编译器生态已可通过 `typst.ts` 在浏览器 WASM 编译并渲染为 SVG/PDF | 保持 `@file-viewer/renderer-typst` 独立维护 compiler/renderer WASM、超时和资源错误提示 |
 
