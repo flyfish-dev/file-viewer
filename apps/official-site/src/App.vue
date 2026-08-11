@@ -1292,10 +1292,26 @@ function startHeroPreviewEnter(id: HeroPreviewId) {
   scheduleHeroPreviewTransitionFallback(finishHeroPreviewEnter, heroPreviewEnterFallbackMs)
 }
 
-function handleHeroPreviewPointerEnter(id: HeroPreviewId) {
+function setHeroPreviewPointerAnchor(event: PointerEvent) {
+  if (!(event.currentTarget instanceof HTMLElement)) return
+  const bounds = event.currentTarget.getBoundingClientRect()
+  const anchorX = Math.min(bounds.width, Math.max(0, event.clientX - bounds.left))
+  const anchorY = Math.min(bounds.height, Math.max(0, event.clientY - bounds.top))
+  event.currentTarget.style.setProperty('--focus-origin-x', `${anchorX}px`)
+  event.currentTarget.style.setProperty('--focus-origin-y', `${anchorY}px`)
+}
+
+function resetHeroPreviewPointerAnchor(event: Event) {
+  if (!(event.currentTarget instanceof HTMLElement)) return
+  event.currentTarget.style.setProperty('--focus-origin-x', '50%')
+  event.currentTarget.style.setProperty('--focus-origin-y', '50%')
+}
+
+function handleHeroPreviewPointerEnter(event: PointerEvent, id: HeroPreviewId) {
   if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
 
   if (heroPreviewPhase.value === 'idle') {
+    setHeroPreviewPointerAnchor(event)
     startHeroPreviewEnter(id)
   } else if (heroPreviewPhase.value === 'entering' && activeHeroPreviewId.value === id) {
     heroPreviewExitRequested = false
@@ -1333,12 +1349,14 @@ function setPinnedHeroPreview(id: HeroPreviewId | null) {
 
 function activateHeroPreview(event: PointerEvent, id: HeroPreviewId) {
   if (event.pointerType !== 'touch' && !usesCoarsePointer()) return
+  resetHeroPreviewPointerAnchor(event)
   setPinnedHeroPreview(pinnedHeroPreviewId.value === id ? null : id)
 }
 
 function activateHeroPreviewFromKeyboard(event: KeyboardEvent, id: HeroPreviewId) {
   if (event.key !== 'Enter' && event.key !== ' ') return
   event.preventDefault()
+  resetHeroPreviewPointerAnchor(event)
   setPinnedHeroPreview(pinnedHeroPreviewId.value === id ? null : id)
 }
 
@@ -1865,7 +1883,7 @@ onBeforeUnmount(() => {
             role="button"
             :aria-pressed="pinnedHeroPreviewId === 'word'"
             :aria-label="isZh ? '置顶查看 DOCX 预览' : 'Bring the DOCX preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter('word')"
+            @pointerenter="handleHeroPreviewPointerEnter($event, 'word')"
             @pointerleave="handleHeroPreviewPointerLeave('word')"
             @pointerdown="activateHeroPreview($event, 'word')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'word')"
@@ -1902,7 +1920,7 @@ onBeforeUnmount(() => {
             role="button"
             :aria-pressed="pinnedHeroPreviewId === 'cad'"
             :aria-label="isZh ? '置顶查看 DWG 预览' : 'Bring the DWG preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter('cad')"
+            @pointerenter="handleHeroPreviewPointerEnter($event, 'cad')"
             @pointerleave="handleHeroPreviewPointerLeave('cad')"
             @pointerdown="activateHeroPreview($event, 'cad')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'cad')"
@@ -1939,7 +1957,7 @@ onBeforeUnmount(() => {
             role="button"
             :aria-pressed="pinnedHeroPreviewId === 'sheet'"
             :aria-label="isZh ? '置顶查看 XLSX 预览' : 'Bring the XLSX preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter('sheet')"
+            @pointerenter="handleHeroPreviewPointerEnter($event, 'sheet')"
             @pointerleave="handleHeroPreviewPointerLeave('sheet')"
             @pointerdown="activateHeroPreview($event, 'sheet')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'sheet')"
@@ -1976,7 +1994,7 @@ onBeforeUnmount(() => {
             role="button"
             :aria-pressed="pinnedHeroPreviewId === 'slide'"
             :aria-label="isZh ? '置顶查看 PPTX 预览' : 'Bring the PPTX preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter('slide')"
+            @pointerenter="handleHeroPreviewPointerEnter($event, 'slide')"
             @pointerleave="handleHeroPreviewPointerLeave('slide')"
             @pointerdown="activateHeroPreview($event, 'slide')"
             @keydown="activateHeroPreviewFromKeyboard($event, 'slide')"
