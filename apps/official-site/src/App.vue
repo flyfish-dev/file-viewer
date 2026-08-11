@@ -192,7 +192,6 @@ const activeSectionId = ref<SectionId>('top')
 const navExplorerOpen = ref(false)
 const activeHeroPreviewId = ref<HeroPreviewId | null>(null)
 const pinnedHeroPreviewId = ref<HeroPreviewId | null>(null)
-const heroPreviewHoverCandidateId = ref<HeroPreviewId | null>(null)
 const heroPreviewPhase = ref<HeroPreviewPhase>('idle')
 const demoRevealActive = ref(false)
 const demoFrameMounted = ref(false)
@@ -1225,15 +1224,12 @@ function usesCoarsePointer() {
 const heroPreviewEnterFallbackMs = 740
 const heroPreviewLeaveFallbackMs = 230
 let heroPreviewTransitionTimer: number | null = null
+let heroPreviewExitRequested = false
 
 function clearHeroPreviewTransitionTimer() {
   if (heroPreviewTransitionTimer === null) return
   window.clearTimeout(heroPreviewTransitionTimer)
   heroPreviewTransitionTimer = null
-}
-
-function desiredHeroPreviewId() {
-  return pinnedHeroPreviewId.value ?? heroPreviewHoverCandidateId.value
 }
 
 function scheduleHeroPreviewTransitionFallback(callback: () => void, delay: number) {
@@ -1249,9 +1245,11 @@ function finishHeroPreviewLeave() {
   clearHeroPreviewTransitionTimer()
   activeHeroPreviewId.value = null
   heroPreviewPhase.value = 'idle'
+  heroPreviewExitRequested = false
 
-  const nextId = desiredHeroPreviewId()
-  if (nextId) startHeroPreviewEnter(nextId)
+  if (pinnedHeroPreviewId.value) {
+    startHeroPreviewEnter(pinnedHeroPreviewId.value)
+  }
 }
 
 function startHeroPreviewLeave() {
@@ -1271,7 +1269,10 @@ function finishHeroPreviewEnter() {
   clearHeroPreviewTransitionTimer()
   heroPreviewPhase.value = 'active'
 
-  if (desiredHeroPreviewId() !== activeHeroPreviewId.value) {
+  if (
+    heroPreviewExitRequested ||
+    (pinnedHeroPreviewId.value && pinnedHeroPreviewId.value !== activeHeroPreviewId.value)
+  ) {
     startHeroPreviewLeave()
   }
 }
@@ -1279,6 +1280,7 @@ function finishHeroPreviewEnter() {
 function startHeroPreviewEnter(id: HeroPreviewId) {
   if (heroPreviewPhase.value !== 'idle') return
   clearHeroPreviewTransitionTimer()
+  heroPreviewExitRequested = false
   activeHeroPreviewId.value = id
   heroPreviewPhase.value = 'entering'
 
@@ -1290,43 +1292,43 @@ function startHeroPreviewEnter(id: HeroPreviewId) {
   scheduleHeroPreviewTransitionFallback(finishHeroPreviewEnter, heroPreviewEnterFallbackMs)
 }
 
-function syncHeroPreviewInteraction() {
-  const desiredId = desiredHeroPreviewId()
+function handleHeroPreviewPointerEnter(id: HeroPreviewId) {
+  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
 
   if (heroPreviewPhase.value === 'idle') {
-    if (desiredId) startHeroPreviewEnter(desiredId)
+    startHeroPreviewEnter(id)
+  } else if (heroPreviewPhase.value === 'entering' && activeHeroPreviewId.value === id) {
+    heroPreviewExitRequested = false
+  }
+}
+
+function handleHeroPreviewPointerLeave(id: HeroPreviewId) {
+  if (usesCoarsePointer() || pinnedHeroPreviewId.value || activeHeroPreviewId.value !== id) {
     return
   }
 
-  if (heroPreviewPhase.value === 'active' && desiredId !== activeHeroPreviewId.value) {
+  if (heroPreviewPhase.value === 'entering') {
+    heroPreviewExitRequested = true
+  } else if (heroPreviewPhase.value === 'active') {
     startHeroPreviewLeave()
   }
 }
 
-function handleHeroPreviewPointerEnter(id: HeroPreviewId) {
-  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
-  heroPreviewHoverCandidateId.value = id
-  syncHeroPreviewInteraction()
-}
-
-function handleHeroPreviewPointerLeave(id: HeroPreviewId) {
-  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
-  if (heroPreviewHoverCandidateId.value === id) {
-    heroPreviewHoverCandidateId.value = null
-  }
-  syncHeroPreviewInteraction()
-}
-
-function handleHeroPreviewStagePointerLeave() {
-  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
-  heroPreviewHoverCandidateId.value = null
-  syncHeroPreviewInteraction()
-}
-
 function setPinnedHeroPreview(id: HeroPreviewId | null) {
   pinnedHeroPreviewId.value = id
-  heroPreviewHoverCandidateId.value = null
-  syncHeroPreviewInteraction()
+
+  if (heroPreviewPhase.value === 'idle') {
+    if (id) startHeroPreviewEnter(id)
+    return
+  }
+
+  if (activeHeroPreviewId.value === id) {
+    heroPreviewExitRequested = false
+  } else if (heroPreviewPhase.value === 'entering') {
+    heroPreviewExitRequested = true
+  } else if (heroPreviewPhase.value === 'active') {
+    startHeroPreviewLeave()
+  }
 }
 
 function activateHeroPreview(event: PointerEvent, id: HeroPreviewId) {
@@ -1845,13 +1847,11 @@ onBeforeUnmount(() => {
         class="hero-visual hero-orbit-stage"
         :data-preview-phase="heroPreviewPhase"
         :data-preview-active="activeHeroPreviewId || undefined"
-        :data-preview-candidate="heroPreviewHoverCandidateId || undefined"
         :aria-label="
           isZh
             ? 'Word、CAD、电子表格与演示文稿的真实浏览器预览'
             : 'Real browser previews for Word, CAD, spreadsheets, and presentations'
         "
-        @pointerleave="handleHeroPreviewStagePointerLeave"
       >
         <div class="hero-orbit-stack">
           <div

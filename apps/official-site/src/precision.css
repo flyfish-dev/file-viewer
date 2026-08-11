@@ -3205,6 +3205,11 @@ html[data-theme='dark'] body {
   animation-play-state: paused;
 }
 
+.hero-orbit-stack:has(.hero-preview-item:is(.is-preview-active, .is-preview-cancelling))
+  .hero-preview-item:not(:is(.is-preview-active, .is-preview-cancelling)) {
+  pointer-events: none;
+}
+
 .hero-orbit-stack:has(.hero-preview-item.is-preview-active)
   .hero-preview-item:not(.is-preview-active) {
   opacity: 0.74;
