@@ -5,6 +5,7 @@ import { DOC_CONTROL } from './constants.js';
 import { parseFib } from './fib.js';
 import { readChpxRuns, readPapxRuns, type ChpxRun } from './fkp.js';
 import { parseFonts } from './fonts.js';
+import { parseHtmlWordDocumentStream } from './html-word.js';
 import { extractObjectPool, extractPictureAsset } from './objects.js';
 import {
   applyTableStateToCells,
@@ -754,6 +755,12 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
 
   const wordBytes = cfb.getStream('/WordDocument');
   if (!wordBytes) throw new Error('Missing WordDocument stream');
+
+  const htmlDocument = parseHtmlWordDocumentStream(wordBytes);
+  if (htmlDocument) {
+    htmlDocument.warnings.unshift(...(cfb.warnings || []));
+    return htmlDocument;
+  }
 
   const fib = parseFib(wordBytes);
   if (fib.base.wIdent !== 0xA5EC) {
