@@ -336,7 +336,9 @@ export const parseSpreadsheetSheet = (
       totalCols: sheetMeta?.colCount,
       charts: context.charts[sheetName],
     });
-    const windowData = sheetModel.toObject();
+    // Keep the first response backward-compatible; later virtual windows only need rows and cells.
+    // Avoid recalculating auto-fit column widths for every 500-row request.
+    const windowData = sheetModel.toObject({ includeLayout: startRow === 0 });
     const structure = startRow === 0 ? sheetModel.structure : undefined;
 
     return [{

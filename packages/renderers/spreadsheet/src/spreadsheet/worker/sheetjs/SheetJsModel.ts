@@ -31,6 +31,51 @@ const DEFAULT_IMAGE_WIDTH = 480
 const DEFAULT_IMAGE_HEIGHT = 288
 const AUTO_FIT_MIN_WIDTH = 24
 const AUTO_FIT_PADDING = 8
+const AUTO_FIT_MAX_SAMPLE_CELLS = 100_000
+const AUTO_FIT_MAX_SAMPLE_WINDOWS = 8
+const AUTO_FIT_MAX_ROWS_PER_WINDOW = 128
+
+export const createAutoFitSampleRanges = (totalRowCount: number, totalColCount: number): Range[] => {
+  const totalRows = Math.max(totalRowCount, 1)
+  const totalCols = Math.max(totalColCount, 1)
+  const endColumn = totalCols - 1
+  const totalCells = totalRows * totalCols
+
+  if (totalCells <= AUTO_FIT_MAX_SAMPLE_CELLS) {
+    return [{
+      s: { r: 0, c: 0 },
+      e: { r: totalRows - 1, c: endColumn }
+    }]
+  }
+
+  const rowsPerWindow = Math.max(1, Math.min(
+    AUTO_FIT_MAX_ROWS_PER_WINDOW,
+    Math.floor(AUTO_FIT_MAX_SAMPLE_CELLS / totalCols / AUTO_FIT_MAX_SAMPLE_WINDOWS)
+  ))
+  const maxStartRow = Math.max(totalRows - rowsPerWindow, 0)
+  const maxWindowsWithinBudget = Math.max(
+    1,
+    Math.floor(AUTO_FIT_MAX_SAMPLE_CELLS / totalCols / rowsPerWindow)
+  )
+  const windowCount = Math.min(
+    AUTO_FIT_MAX_SAMPLE_WINDOWS,
+    maxWindowsWithinBudget,
+    Math.ceil(totalRows / rowsPerWindow)
+  )
+  const starts = new Set<number>()
+
+  for (let index = 0; index < windowCount; index += 1) {
+    const startRow = windowCount === 1
+      ? 0
+      : Math.round(maxStartRow * index / (windowCount - 1))
+    starts.add(startRow)
+  }
+
+  return Array.from(starts, startRow => ({
+    s: { r: startRow, c: 0 },
+    e: { r: Math.min(startRow + rowsPerWindow - 1, totalRows - 1), c: endColumn }
+  }))
+}
 
 const toFiniteNumber = (value: unknown) => {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined
@@ -59,6 +104,10 @@ interface SheetSliceOptions {
   totalRows?: number
   totalCols?: number
   charts?: SheetChartDefinition[]
+}
+
+interface SheetObjectOptions {
+  includeLayout?: boolean
 }
 
 type SheetColumnMeta = ColInfo & {
@@ -719,18 +768,43 @@ export default class SheetJsModel implements SheetModel {
     }
 
     try {
-      // 自动列宽只作为缺失列宽的兜底。合并标题和 Excel 溢出文本不应该反向撑开基础列宽。
-      return autoFitColumns(this.ws, {
-        set: false,
-        skipHidden: true,
-        includeMerged: false,
-        minPx: AUTO_FIT_MIN_WIDTH,
-        padding: AUTO_FIT_PADDING
-      }) as SheetColumnMeta[]
+      const sampleRanges = this.getAutoFitSampleRanges()
+      const fittedColumns: SheetColumnMeta[] = []
+
+      for (const range of sampleRanges) {
+        // 自动列宽只作为缺失列宽的兜底。合并标题和 Excel 溢出文本不应该反向撑开基础列宽。
+        // 大表只抽样固定数量的单元格，避免为了首屏列宽扫描整张工作表。
+        const measuredColumns = autoFitColumns(this.ws, {
+          range,
+          set: false,
+          skipHidden: true,
+          includeMerged: false,
+          minPx: AUTO_FIT_MIN_WIDTH,
+          padding: AUTO_FIT_PADDING
+        }) as SheetColumnMeta[]
+
+        for (let colIndex = 0; colIndex < this.totalCols; colIndex += 1) {
+          const measured = measuredColumns?.[colIndex]
+          if (!measured) {
+            continue
+          }
+          const currentWidth = getColumnPixelWidth(fittedColumns[colIndex]) ?? -1
+          const measuredWidth = getColumnPixelWidth(measured) ?? -1
+          if (!fittedColumns[colIndex] || measuredWidth > currentWidth) {
+            fittedColumns[colIndex] = measured
+          }
+        }
+      }
+
+      return fittedColumns.length ? fittedColumns : undefined
     } catch (error) {
       console.warn('[file-viewer] Excel 自动列宽计算失败，已回退到原始列宽。', error)
       return undefined
     }
+  }
+
+  private getAutoFitSampleRanges(): Range[] {
+    return createAutoFitSampleRanges(this.totalRows, this.totalCols)
   }
 
   private get autoFitColumns() {
@@ -789,16 +863,18 @@ export default class SheetJsModel implements SheetModel {
     }
   }
 
-  public toObject(): object {
-    const { defaults, data, cell, merge, rowHeights, colWidths, columns, meta } = this
+  public toObject(options: SheetObjectOptions = {}): object {
+    const { defaults, data, cell, merge, rowHeights, meta } = this
     return {
       defaults,
       data,
       cell,
       merge,
       rowHeights,
-      colWidths,
-      columns,
+      ...(options.includeLayout === false ? {} : {
+        colWidths: this.colWidths,
+        columns: this.columns
+      }),
       meta
     }
   }
