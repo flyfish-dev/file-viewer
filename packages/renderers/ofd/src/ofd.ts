@@ -34,7 +34,8 @@ const ofdStyle = `
 .ofd-state[hidden]{display:none!important}
 .ofd-state.error{color:#b42318}
 .ofd-page-frame{position:relative;display:block;margin:0 auto 20px;overflow:visible}
-.ofd-page{display:block;margin-left:auto!important;margin-right:auto!important;background:#fff!important;color:#111827!important;color-scheme:only light;forced-color-adjust:none;isolation:isolate;box-shadow:0 10px 26px rgba(15,23,42,.12);transition:transform .16s ease}
+.ofd-page{display:block;margin-left:auto!important;margin-right:auto!important;background:#fff!important;color:#111827!important;color-scheme:only light;forced-color-adjust:none;isolation:isolate;box-shadow:0 10px 26px rgba(15,23,42,.12);transition:none}
+.ofd-page.ofd-page--zoom-ready{transition:transform .16s ease}
 .ofd-page,.ofd-page *{color-scheme:only light;forced-color-adjust:none}
 .ofd-page svg,.ofd-page canvas,.ofd-page img{filter:none!important;mix-blend-mode:normal!important}
 [data-viewer-theme='dark'] .ofd-viewer{background:var(--file-viewer-render-surface-background,#172033);color:#e5eef8}
@@ -47,6 +48,7 @@ const ofdStyle = `
 [data-viewer-theme='dark'] .ofd-page-meter{color:#94a3b8}
 [data-viewer-theme='dark'] .ofd-page-meter strong{color:#f1f5f9}
 @media (prefers-color-scheme:dark){[data-viewer-theme='system'] .ofd-viewer{background:var(--file-viewer-render-surface-background,#172033);color:#e5eef8}[data-viewer-theme='system'] .ofd-state{background:rgba(15,23,42,.9);color:#cbd5e1}[data-viewer-theme='system'] .ofd-toolbar{border-color:rgba(100,116,139,.5);background:rgba(15,23,42,.9)}[data-viewer-theme='system'] .ofd-toolbar-group{border-color:#475569;background:#1e293b}[data-viewer-theme='system'] .ofd-page-button{color:#e2e8f0}[data-viewer-theme='system'] .ofd-page-button:hover:not(:disabled){border-color:#4d79ad;color:#93c5fd;background:#263b55}[data-viewer-theme='system'] .ofd-page-button:disabled{color:#64748b}[data-viewer-theme='system'] .ofd-page-meter{color:#94a3b8}[data-viewer-theme='system'] .ofd-page-meter strong{color:#f1f5f9}}
+@media (prefers-reduced-motion:reduce){.ofd-page.ofd-page--zoom-ready{transition:none}}
 @media print{.ofd-viewer{display:block;background:#fff!important}.ofd-toolbar{display:none!important}.ofd-stage{padding:0!important;overflow:visible!important}.ofd-page-frame{break-after:page;page-break-after:always;margin:0 auto!important}.ofd-page-frame:last-child{break-after:auto;page-break-after:auto}.ofd-page{box-shadow:none!important;transition:none!important}}
 `;
 
@@ -356,7 +358,7 @@ export default async function renderOfd(
     maxScale: OFD_MAX_SCALE,
   });
 
-  const syncPageZoom = () => {
+  const syncPageZoom = (animate = false) => {
     const HTMLElementCtor = targetWindow?.HTMLElement || globalThis.HTMLElement;
     stage.querySelectorAll<HTMLElement>('.ofd-page-frame').forEach(frame => {
       const page = frame.firstElementChild;
@@ -364,6 +366,7 @@ export default async function renderOfd(
         return;
       }
 
+      page.classList.toggle('ofd-page--zoom-ready', animate);
       page.style.position = 'absolute';
       page.style.top = '0';
       page.style.left = '50%';
@@ -383,9 +386,19 @@ export default async function renderOfd(
     });
   };
 
+  const enablePageZoomTransitions = () => {
+    stage.querySelectorAll<HTMLElement>('.ofd-page').forEach(page => {
+      // Commit the initial centering transform without a transition. Otherwise
+      // a newly inserted page animates from `none` to `translateX(-50%)` and
+      // looks like the document was opened a second time.
+      page.getBoundingClientRect();
+      page.classList.add('ofd-page--zoom-ready');
+    });
+  };
+
   const setZoom = (nextZoom: number) => {
     zoom = clampZoom(nextZoom);
-    syncPageZoom();
+    syncPageZoom(true);
     zoomEmitter.emit();
     return getZoomState();
   };
@@ -449,6 +462,7 @@ export default async function renderOfd(
       lastRenderedWidth = width;
       await waitForPaint(targetWindow);
       syncPageZoom();
+      enablePageZoomTransitions();
       syncPageNavigation();
       if (currentPage > 1) scrollToPage(currentPage, 'auto');
       state = 'ready';
