@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/ppt",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Professional native WebAssembly canvas viewer for PowerPoint 97-2003 (.ppt) files.",
   "type": "module",
   "main": "./index.mjs",

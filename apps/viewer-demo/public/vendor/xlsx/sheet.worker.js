@@ -19855,48 +19855,75 @@ function M_(e, t) {
 }
 //#endregion
 //#region ../../packages/renderers/spreadsheet/src/spreadsheet/worker/sheetjs/SheetJsModel.ts
-var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 24, V_ = 8, H_ = (e) => typeof e == "number" && Number.isFinite(e) ? e : void 0, U_ = {
+var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 24, V_ = 8, H_ = 1e5, U_ = 8, W_ = 128, G_ = (e, t) => {
+	let n = Math.max(e, 1), r = Math.max(t, 1), i = r - 1;
+	if (n * r <= H_) return [{
+		s: {
+			r: 0,
+			c: 0
+		},
+		e: {
+			r: n - 1,
+			c: i
+		}
+	}];
+	let a = Math.max(1, Math.min(W_, Math.floor(H_ / r / U_))), o = Math.max(n - a, 0), s = Math.max(1, Math.floor(H_ / r / a)), c = Math.min(U_, s, Math.ceil(n / a)), l = /* @__PURE__ */ new Set();
+	for (let e = 0; e < c; e += 1) {
+		let t = c === 1 ? 0 : Math.round(o * e / (c - 1));
+		l.add(t);
+	}
+	return Array.from(l, (e) => ({
+		s: {
+			r: e,
+			c: 0
+		},
+		e: {
+			r: Math.min(e + a - 1, n - 1),
+			c: i
+		}
+	}));
+}, K_ = (e) => typeof e == "number" && Number.isFinite(e) ? e : void 0, q_ = {
 	rowHeight: (() => {
 		var e;
 		let t = Lg.row_height_to_px, n = typeof t == "function" ? t(F_) : void 0;
-		return Math.ceil((e = H_(n)) == null ? 20 : e);
+		return Math.ceil((e = K_(n)) == null ? 20 : e);
 	})(),
 	colWidth: (() => {
 		var e;
 		let t = Lg.col_width_to_px, n = typeof t == "function" ? t(P_) : void 0;
-		return Math.ceil((e = H_(n)) == null ? 64 : e);
+		return Math.ceil((e = K_(n)) == null ? 64 : e);
 	})()
-}, W_ = (e, t) => `${e}-${t}`, G_ = (e) => e ? e.w !== void 0 && e.w !== null ? `${e.w}` : e.v === void 0 || e.v === null ? "" : e.t === "d" && e.v instanceof Date ? e.v.toLocaleDateString() : `${e.v}` : "", K_ = (e) => {
+}, J_ = (e, t) => `${e}-${t}`, Y_ = (e) => e ? e.w !== void 0 && e.w !== null ? `${e.w}` : e.v === void 0 || e.v === null ? "" : e.t === "d" && e.v instanceof Date ? e.v.toLocaleDateString() : `${e.v}` : "", X_ = (e) => {
 	if (!e) return;
 	if (e.hidden) return 0;
-	let t = H_(e.wpx);
+	let t = K_(e.wpx);
 	if (t !== void 0 && t >= 0) return Math.ceil(t);
-	let n = H_(e.width);
+	let n = K_(e.width);
 	if (n === 0) return 0;
 	if (n !== void 0 && n > 0) {
-		let t = Lg.col_width_to_px, r = typeof t == "function" ? H_(t(n)) : void 0;
+		let t = Lg.col_width_to_px, r = typeof t == "function" ? K_(t(n)) : void 0;
 		return Math.ceil(r === void 0 ? n * (e.MDW || 7) : r);
 	}
-	let r = H_(e.wch);
+	let r = K_(e.wch);
 	if (r === 0) return 0;
 	if (r !== void 0 && r > 0) return Math.ceil(r * (e.MDW || 7) + 5);
-}, q_ = (e, t, n) => {
+}, Z_ = (e, t, n) => {
 	var r;
 	return typeof e == "number" ? e : (r = e == null ? void 0 : e[t]) == null ? n : r;
-}, J_ = (e) => (e || 0) / L_, Y_ = (e) => {
+}, Q_ = (e) => (e || 0) / L_, $_ = (e) => {
 	var t, n, r;
-	return e ? e.hidden ? !0 : ((t = H_(e.wpx)) == null ? -1 : t) >= 0 || ((n = H_(e.width)) == null ? -1 : n) >= 0 || ((r = H_(e.wch)) == null ? -1 : r) >= 0 : !1;
-}, X_ = (e) => {
+	return e ? e.hidden ? !0 : ((t = K_(e.wpx)) == null ? -1 : t) >= 0 || ((n = K_(e.width)) == null ? -1 : n) >= 0 || ((r = K_(e.wch)) == null ? -1 : r) >= 0 : !1;
+}, ev = (e) => {
 	if (!e) return;
 	if (e.hidden) return 0;
-	let t = H_(e.hpx);
+	let t = K_(e.hpx);
 	if (t !== void 0 && t >= 0) return Math.ceil(t);
-	let n = H_(e.hpt);
+	let n = K_(e.hpt);
 	if (n !== void 0 && n >= 0) {
-		let e = Lg.row_height_to_px, t = typeof e == "function" ? H_(e(n)) : void 0;
+		let e = Lg.row_height_to_px, t = typeof e == "function" ? K_(e(n)) : void 0;
 		return Math.ceil(t == null ? n * 96 / 72 : t);
 	}
-}, Z_ = (e) => {
+}, tv = (e) => {
 	switch (`${e || ""}`) {
 		case "left": return "Left";
 		case "center":
@@ -19906,7 +19933,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 		case "right": return "Right";
 		default: return;
 	}
-}, Q_ = (e) => {
+}, nv = (e) => {
 	switch (`${e || ""}`) {
 		case "top": return "Top";
 		case "center":
@@ -19916,11 +19943,11 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 		case "bottom": return "Bottom";
 		default: return;
 	}
-}, $_ = (e) => {
+}, rv = (e) => {
 	if (!e) return "";
-	let t = [Z_(e.horizontal), Q_(e.vertical)].filter(Boolean).map((e) => `ht${e}`);
+	let t = [tv(e.horizontal), nv(e.vertical)].filter(Boolean).map((e) => `ht${e}`);
 	return e.wrapText && t.push("htWrap"), e.shrinkToFit && t.push("htShrink"), t.join(" ");
-}, ev = (e) => {
+}, iv = (e) => {
 	if (!e) return;
 	let t = e.raw_rgb && typeof e.tint == "number" ? M_(e.raw_rgb, e.tint) : void 0, n = e.rgb || t || e.raw_rgb;
 	if (typeof n == "string" && n) {
@@ -19932,7 +19959,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 		let e = T_[r];
 		if (e) return `#${e.slice(-6)}`;
 	}
-}, tv = (e) => e ? (typeof e.indexed == "number" ? e.indexed : e.index) === 32767 : !1, nv = (e) => tv(e) ? I_ : ev(e), rv = (e) => {
+}, av = (e) => e ? (typeof e.indexed == "number" ? e.indexed : e.index) === 32767 : !1, ov = (e) => av(e) ? I_ : iv(e), sv = (e) => {
 	switch (e) {
 		case "hair": return "0.5px";
 		case "medium":
@@ -19943,7 +19970,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 		case "double": return "3px";
 		default: return "1px";
 	}
-}, iv = (e) => {
+}, cv = (e) => {
 	switch (e) {
 		case "dashed":
 		case "mediumDashed":
@@ -19956,7 +19983,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 		case "double": return "double";
 		default: return "solid";
 	}
-}, av = (...e) => {
+}, lv = (...e) => {
 	let t = {};
 	return e.forEach((e) => {
 		e && Object.entries(e).forEach(([e, n]) => {
@@ -19970,10 +19997,10 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 			t[e] = n;
 		});
 	}), Object.keys(t).length ? t : void 0;
-}, ov = (e) => {
-	let t = {}, n = (e == null ? void 0 : e.fill) || {}, r = ev((e == null ? void 0 : e.fgColor) || n.fgColor || (e == null ? void 0 : e.bgColor) || n.bgColor), i = (e == null ? void 0 : e.patternType) || n.patternType;
+}, uv = (e) => {
+	let t = {}, n = (e == null ? void 0 : e.fill) || {}, r = iv((e == null ? void 0 : e.fgColor) || n.fgColor || (e == null ? void 0 : e.bgColor) || n.bgColor), i = (e == null ? void 0 : e.patternType) || n.patternType;
 	r && i !== "none" && (t.backgroundColor = r);
-	let a = (e == null ? void 0 : e.font) || {}, o = nv(a.color || (e == null ? void 0 : e.color));
+	let a = (e == null ? void 0 : e.font) || {}, o = ov(a.color || (e == null ? void 0 : e.color));
 	o && (t.color = o), (a.italic || e != null && e.italic) && (t.fontStyle = "italic"), (a.bold || e != null && e.bold) && (t.fontWeight = "bold");
 	let s = a.sz || (e == null ? void 0 : e.sz);
 	s && (t.fontSize = `${s}px`);
@@ -19989,12 +20016,12 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 		let n = l[e];
 		if (!(n != null && n.style) || n.style === "none") return;
 		let r = `border${e.charAt(0).toUpperCase()}${e.slice(1)}`;
-		t[`${r}Width`] = rv(n.style), t[`${r}Style`] = iv(n.style), t[`${r}Color`] = ev(n.color) || "#000000";
+		t[`${r}Width`] = sv(n.style), t[`${r}Style`] = cv(n.style), t[`${r}Color`] = iv(n.color) || "#000000";
 	}), Object.keys(t).length ? t : void 0;
-}, sv = (e, t) => {
+}, dv = (e, t) => {
 	for (let n of e) for (let e = 0; e < t; e += 1) (n[e] === void 0 || n[e] === null) && (n[e] = "");
 	return e;
-}, cv = class e {
+}, fv = class e {
 	static create(t, n = {}) {
 		return new e(t, n);
 	}
@@ -20078,14 +20105,14 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	}
 	getAxisOffset(e, t, n) {
 		let r = 0;
-		for (let i = 0; i < e; i += 1) r += q_(t, i, n);
+		for (let i = 0; i < e; i += 1) r += Z_(t, i, n);
 		return r;
 	}
 	getMarkerLeft(e) {
-		return e ? this.getAxisOffset(e.col || 0, this.getColWidths(), this.defaults.colWidth) + J_(e.colOff) : 0;
+		return e ? this.getAxisOffset(e.col || 0, this.getColWidths(), this.defaults.colWidth) + Q_(e.colOff) : 0;
 	}
 	getMarkerTop(e) {
-		return e ? this.getAxisOffset(e.row || 0, this.getAllRowHeights(), this.defaults.rowHeight) + J_(e.rowOff) : 0;
+		return e ? this.getAxisOffset(e.row || 0, this.getAllRowHeights(), this.defaults.rowHeight) + Q_(e.rowOff) : 0;
 	}
 	getImages() {
 		let e = this.ws["!drawings"], t = (e == null ? void 0 : e.images) || [];
@@ -20094,7 +20121,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 			var n, r, i, a, o;
 			let s = e.anchor;
 			if (!e.dataURI || !s) return [];
-			let c = s.from, l = c ? this.getMarkerLeft(c) : J_((n = s.pos) == null ? void 0 : n.x), u = c ? this.getMarkerTop(c) : J_((r = s.pos) == null ? void 0 : r.y), d = s.to ? this.getMarkerLeft(s.to) : l + J_((i = s.ext) == null ? void 0 : i.cx), f = s.to ? this.getMarkerTop(s.to) : u + J_((a = s.ext) == null ? void 0 : a.cy);
+			let c = s.from, l = c ? this.getMarkerLeft(c) : Q_((n = s.pos) == null ? void 0 : n.x), u = c ? this.getMarkerTop(c) : Q_((r = s.pos) == null ? void 0 : r.y), d = s.to ? this.getMarkerLeft(s.to) : l + Q_((i = s.ext) == null ? void 0 : i.cx), f = s.to ? this.getMarkerTop(s.to) : u + Q_((a = s.ext) == null ? void 0 : a.cy);
 			return [{
 				id: e.id || ((o = e.objectId) == null ? void 0 : o.toString()) || e.target || `image-${t + 1}`,
 				src: e.dataURI,
@@ -20112,7 +20139,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getCharts() {
 		let e = this._charts.map((e) => {
 			var t, n;
-			let r = this.getMarkerLeft(e.from), i = this.getMarkerTop(e.from), a = e.to ? this.getMarkerLeft(e.to) : r + J_((t = e.ext) == null ? void 0 : t.width), o = e.to ? this.getMarkerTop(e.to) : i + J_((n = e.ext) == null ? void 0 : n.height);
+			let r = this.getMarkerLeft(e.from), i = this.getMarkerTop(e.from), a = e.to ? this.getMarkerLeft(e.to) : r + Q_((t = e.ext) == null ? void 0 : t.width), o = e.to ? this.getMarkerTop(e.to) : i + Q_((n = e.ext) == null ? void 0 : n.height);
 			return {
 				id: e.id,
 				type: e.type,
@@ -20148,17 +20175,17 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getData() {
 		let e = [], t = this.denseRows;
 		for (let n = this.startRow; n < this.endRow; n += 1) {
-			let r = t == null ? void 0 : t[n], i = r ? r.slice(0, this.totalCols).map((e) => G_(e)) : Array.from({ length: this.totalCols }, (e, t) => G_(this.getCellAt(n, t)));
+			let r = t == null ? void 0 : t[n], i = r ? r.slice(0, this.totalCols).map((e) => Y_(e)) : Array.from({ length: this.totalCols }, (e, t) => Y_(this.getCellAt(n, t)));
 			e.push(i);
 		}
-		return sv(e, this.totalCols);
+		return dv(e, this.totalCols);
 	}
 	getCell() {
 		let e = {}, { "!cols": t = [], "!rows": n = [] } = this.ws;
 		for (let a = this.startRow; a < this.endRow; a += 1) for (let o = 0; o < this.totalCols; o += 1) {
 			var r, i;
-			let s = this.getCellAt(a, o), c = av((r = t[o]) == null ? void 0 : r.s, (i = n[a]) == null ? void 0 : i.s, s == null ? void 0 : s.s), l = $_(c == null ? void 0 : c.alignment), u = ov(c);
-			!l && !u || (e[W_(a - this.startRow, o)] = {
+			let s = this.getCellAt(a, o), c = lv((r = t[o]) == null ? void 0 : r.s, (i = n[a]) == null ? void 0 : i.s, s == null ? void 0 : s.s), l = rv(c == null ? void 0 : c.alignment), u = uv(c);
+			!l && !u || (e[J_(a - this.startRow, o)] = {
 				...l ? { className: l } : {},
 				style: u || {}
 			});
@@ -20174,7 +20201,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getRowHeights() {
 		let { rowHeight: e } = this.defaults, { "!rows": t = [] } = this.ws, n = [];
 		if (t.length && this.endRow > this.startRow) for (let e = this.startRow; e < this.endRow; e += 1) {
-			let r = X_(t[e]);
+			let r = ev(t[e]);
 			r !== void 0 && (n[e - this.startRow] = r);
 		}
 		return n.length === 1 ? n[0] : n.length ? n : e;
@@ -20182,7 +20209,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getAllRowHeights() {
 		let { "!rows": e = [] } = this.ws, t = [];
 		if (e.length) for (let n = 0; n < this.totalRows; n += 1) {
-			let r = X_(e[n]);
+			let r = ev(e[n]);
 			r !== void 0 && (t[n] = r);
 		}
 		return t.length ? t : void 0;
@@ -20190,17 +20217,32 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getAutoFitColumns() {
 		let e = Lg.auto_fit_columns || Lg.autofit_columns;
 		if (typeof e == "function") try {
-			return e(this.ws, {
-				set: !1,
-				skipHidden: !0,
-				includeMerged: !1,
-				minPx: B_,
-				padding: V_
-			});
+			let r = this.getAutoFitSampleRanges(), i = [];
+			for (let a of r) {
+				let r = e(this.ws, {
+					range: a,
+					set: !1,
+					skipHidden: !0,
+					includeMerged: !1,
+					minPx: B_,
+					padding: V_
+				});
+				for (let e = 0; e < this.totalCols; e += 1) {
+					var t, n;
+					let a = r == null ? void 0 : r[e];
+					if (!a) continue;
+					let o = (t = X_(i[e])) == null ? -1 : t, s = (n = X_(a)) == null ? -1 : n;
+					(!i[e] || s > o) && (i[e] = a);
+				}
+			}
+			return i.length ? i : void 0;
 		} catch (e) {
 			console.warn("[file-viewer] Excel 自动列宽计算失败，已回退到原始列宽。", e);
 			return;
 		}
+	}
+	getAutoFitSampleRanges() {
+		return G_(this.totalRows, this.totalCols);
 	}
 	get autoFitColumns() {
 		return this._autoFitColumns === void 0 && (this._autoFitColumns = this.getAutoFitColumns() || null), this._autoFitColumns || void 0;
@@ -20208,12 +20250,12 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getColumnMeta(e, t) {
 		var n;
 		let r = e[t];
-		return Y_(r) ? r : ((n = this.autoFitColumns) == null ? void 0 : n[t]) || r;
+		return $_(r) ? r : ((n = this.autoFitColumns) == null ? void 0 : n[t]) || r;
 	}
 	getColWidths() {
 		let { colWidth: e } = this.defaults, { "!cols": t = [] } = this.ws, n = [];
 		for (let e = 0; e < this.totalCols; e += 1) {
-			let r = K_(this.getColumnMeta(t, e));
+			let r = X_(this.getColumnMeta(t, e));
 			r !== void 0 && (n[e] = r);
 		}
 		return n.length ? n : e;
@@ -20228,7 +20270,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 				title: Lg.encode_col(n),
 				hidden: !!(i != null && i.hidden),
 				editor: !1,
-				className: $_(i == null || (r = i.s) == null ? void 0 : r.alignment),
+				className: rv(i == null || (r = i.s) == null ? void 0 : r.alignment),
 				renderer: "styleRender"
 			};
 		});
@@ -20243,24 +20285,26 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 			charts: this.getCharts()
 		};
 	}
-	toObject() {
-		let { defaults: e, data: t, cell: n, merge: r, rowHeights: i, colWidths: a, columns: o, meta: s } = this;
+	toObject(e = {}) {
+		let { defaults: t, data: n, cell: r, merge: i, rowHeights: a, meta: o } = this;
 		return {
-			defaults: e,
-			data: t,
-			cell: n,
-			merge: r,
-			rowHeights: i,
-			colWidths: a,
-			columns: o,
-			meta: s
+			defaults: t,
+			data: n,
+			cell: r,
+			merge: i,
+			rowHeights: a,
+			...e.includeLayout === !1 ? {} : {
+				colWidths: this.colWidths,
+				columns: this.columns
+			},
+			meta: o
 		};
 	}
 };
-N_ = cv, N_.defaults = U_;
+N_ = fv, N_.defaults = q_;
 //#endregion
 //#region ../../node_modules/.pnpm/@xmldom+xmldom@0.9.10/node_modules/@xmldom/xmldom/lib/conventions.js
-var lv = /* @__PURE__ */ o(((e) => {
+var pv = /* @__PURE__ */ o(((e) => {
 	function t(e, t, n) {
 		if (n === void 0 && (n = Array.prototype), e && typeof n.find == "function") return n.find.call(e, t);
 		for (var i = 0; i < e.length; i++) if (r(e, i)) {
@@ -20366,8 +20410,8 @@ var lv = /* @__PURE__ */ o(((e) => {
 		XMLNS: "http://www.w3.org/2000/xmlns/"
 	});
 	e.assign = i, e.find = t, e.freeze = n, e.HTML_BOOLEAN_ATTRIBUTES = a, e.HTML_RAW_TEXT_ELEMENTS = l, e.HTML_VOID_ELEMENTS = s, e.hasDefaultHTMLNamespace = p, e.hasOwn = r, e.isHTMLBooleanAttribute = o, e.isHTMLRawTextElement = u, e.isHTMLEscapableRawTextElement = d, e.isHTMLMimeType = f, e.isHTMLVoidElement = c, e.isValidMimeType = g, e.MIME_TYPE = m, e.NAMESPACE = _;
-})), uv = /* @__PURE__ */ o(((e) => {
-	var t = lv();
+})), mv = /* @__PURE__ */ o(((e) => {
+	var t = pv();
 	function n(e, t) {
 		e.prototype = Object.create(Error.prototype, {
 			constructor: { value: e },
@@ -20467,7 +20511,7 @@ var lv = /* @__PURE__ */ o(((e) => {
 		this.message = e, this.locator = t, Error.captureStackTrace && Error.captureStackTrace(this, f);
 	}
 	n(f), e.DOMException = s, e.DOMExceptionName = r, e.ExceptionCode = c, e.ParseError = f;
-})), dv = /* @__PURE__ */ o(((e) => {
+})), hv = /* @__PURE__ */ o(((e) => {
 	function t(e) {
 		try {
 			typeof e != "function" && (e = RegExp);
@@ -20506,8 +20550,8 @@ var lv = /* @__PURE__ */ o(((e) => {
 	n && (m = a("[", r(m), "\\u{10000}-\\u{10FFFF}", "]"));
 	var h = a("[", r(m), r(/[-.0-9\xB7]/), r(/[\u0300-\u036F\u203F-\u2040]/), "]"), g = a(m, h, "*"), _ = a(h, "+"), v = o(a("&", g, ";"), "|", o(/&#[0-9]+;|&#x[0-9a-fA-F]+;/)), y = a("%", g, ";"), b = o(a("\"", o(/[^%&"]/, "|", y, "|", v), "*", "\""), "|", a("'", o(/[^%&']/, "|", y, "|", v), "*", "'")), x = o("\"", o(/[^<&"]/, "|", v), "*", "\"", "|", "'", o(/[^<&']/, "|", v), "*", "'"), S = a(i(m, ":"), i(h, ":"), "*"), C = a(S, o(":", S), "?"), w = a("^", C, "$"), T = a("(", C, ")"), E = o(/"[^"]*"|'[^']*'/), D = a(/^<\?/, "(", g, ")", o(f, "(", c, "*?)"), "?", /\?>/), O = /[\x20\x0D\x0Aa-zA-Z0-9-'()+,./:=?;!*#@$_%]/, k = o("\"", O, "*\"", "|", "'", i(O, "'"), "*'"), A = "<!--", j = "-->", M = a(A, o(i(c, "-"), "|", a("-", i(c, "-"))), "*", j), N = "#PCDATA", P = o("EMPTY", "|", "ANY", "|", o(a(/\(/, p, N, o(p, /\|/, p, C), "*", p, /\)\*/), "|", a(/\(/, p, N, p, /\)/)), "|", a(/\([^>]+\)/, /[?*+]?/)), F = a("<!ELEMENT", f, o(C, "|", y), f, o(P, "|", y), p, ">"), I = a("<!ATTLIST", f, g, o(f, g, f, o(/CDATA|ID|IDREF|IDREFS|ENTITY|ENTITIES|NMTOKEN|NMTOKENS/, "|", o(a("NOTATION", f, /\(/, p, g, o(p, /\|/, p, g), "*", p, /\)/), "|", a(/\(/, p, _, o(p, /\|/, p, _), "*", p, /\)/))), f, o(/#REQUIRED|#IMPLIED/, "|", o(o("#FIXED", f), "?", x))), "*", p, ">"), L = "about:legacy-compat", R = o("\"" + L + "\"", "|", "'" + L + "'"), z = "SYSTEM", B = "PUBLIC", V = o(o(z, f, E), "|", o(B, f, k, f, E)), H = a("^", o(o(z, f, "(?<SystemLiteralOnly>", E, ")"), "|", o(B, f, "(?<PubidLiteral>", k, ")", f, "(?<SystemLiteral>", E, ")"))), U = a("^", k, "$"), W = a("^", E, "$"), ee = o(b, "|", o(V, o(f, "NDATA", f, g), "?")), te = "<!ENTITY", ne = o(a(te, f, g, f, ee, p, ">"), "|", a(te, f, "%", f, g, f, o(b, "|", V), p, ">")), re = a("<!NOTATION", f, g, f, o(V, "|", a(B, f, k)), p, ">"), G = a(p, "=", p), ie = /1[.]\d+/, ae = a(f, "version", G, o("'", ie, "'", "|", "\"", ie, "\"")), K = /[A-Za-z][-A-Za-z0-9._]*/, oe = a(/^<\?xml/, ae, o(f, "encoding", G, o("\"", K, "\"", "|", "'", K, "'")), "?", o(f, "standalone", G, o("'", o("yes", "|", "no"), "'", "|", "\"", o("yes", "|", "no"), "\"")), "?", p, /\?>/), q = "<!DOCTYPE", se = "<![CDATA[", ce = "]]>", J = a(/<!\[CDATA\[/, a(c, "*?", /\]\]>/));
 	e.chars = r, e.chars_without = i, e.detectUnicodeSupport = t, e.reg = a, e.regg = o, e.ABOUT_LEGACY_COMPAT = L, e.ABOUT_LEGACY_COMPAT_SystemLiteral = R, e.AttlistDecl = I, e.CDATA_START = se, e.CDATA_END = ce, e.CDSect = J, e.Char = c, e.Comment = M, e.COMMENT_START = A, e.COMMENT_END = j, e.DOCTYPE_DECL_START = q, e.elementdecl = F, e.EntityDecl = ne, e.EntityValue = b, e.ExternalID = V, e.ExternalID_match = H, e.Name = g, e.NotationDecl = re, e.Reference = v, e.PEReference = y, e.PI = D, e.PUBLIC = B, e.PubidLiteral = k, e.PubidLiteral_match = U, e.QName = C, e.QName_exact = w, e.QName_group = T, e.S = f, e.SChar_s = d, e.S_OPT = p, e.SYSTEM = z, e.SystemLiteral = E, e.SystemLiteral_match = W, e.InvalidChar = l, e.UNICODE_REPLACEMENT_CHARACTER = s, e.UNICODE_SUPPORT = n, e.XMLDecl = oe;
-})), fv = /* @__PURE__ */ o(((e) => {
-	var t = lv(), n = t.find, r = t.hasDefaultHTMLNamespace, i = t.hasOwn, a = t.isHTMLMimeType, o = t.isHTMLRawTextElement, s = t.isHTMLVoidElement, c = t.MIME_TYPE, l = t.NAMESPACE, u = Symbol(), d = uv(), f = d.DOMException, p = d.DOMExceptionName, m = dv();
+})), gv = /* @__PURE__ */ o(((e) => {
+	var t = pv(), n = t.find, r = t.hasDefaultHTMLNamespace, i = t.hasOwn, a = t.isHTMLMimeType, o = t.isHTMLRawTextElement, s = t.isHTMLVoidElement, c = t.MIME_TYPE, l = t.NAMESPACE, u = Symbol(), d = mv(), f = d.DOMException, p = d.DOMExceptionName, m = hv();
 	function h(e) {
 		if (e !== u) throw TypeError("Illegal constructor");
 	}
@@ -21541,8 +21585,8 @@ var lv = /* @__PURE__ */ o(((e) => {
 		});
 	} catch {}
 	e._updateLiveList = U, e.Attr = xe, e.CDATASection = Te, e.CharacterData = Se, e.Comment = we, e.Document = oe, e.DocumentFragment = ke, e.DocumentType = Y, e.DOMImplementation = re, e.Element = be, e.Entity = De, e.EntityReference = Oe, e.LiveNodeList = H, e.NamedNodeMap = W, e.Node = G, e.NodeList = V, e.Notation = Ee, e.Text = Ce, e.ProcessingInstruction = Ae, e.walkDOM = K, e.XMLSerializer = je;
-})), pv = /* @__PURE__ */ o(((e) => {
-	var t = lv().freeze;
+})), _v = /* @__PURE__ */ o(((e) => {
+	var t = pv().freeze;
 	e.XML_ENTITIES = t({
 		amp: "&",
 		apos: "'",
@@ -23676,8 +23720,8 @@ var lv = /* @__PURE__ */ o(((e) => {
 		zwj: "‍",
 		zwnj: "‌"
 	}), e.entityMap = e.HTML_ENTITIES;
-})), mv = /* @__PURE__ */ o(((e) => {
-	var t = lv(), n = dv(), r = uv(), i = t.isHTMLEscapableRawTextElement, a = t.isHTMLMimeType, o = t.isHTMLRawTextElement, s = t.hasOwn, c = t.NAMESPACE, l = r.ParseError, u = r.DOMException, d = 0, f = 1, p = 2, m = 3, h = 4, g = 5, _ = 6, v = 7;
+})), vv = /* @__PURE__ */ o(((e) => {
+	var t = pv(), n = hv(), r = mv(), i = t.isHTMLEscapableRawTextElement, a = t.isHTMLMimeType, o = t.isHTMLRawTextElement, s = t.hasOwn, c = t.NAMESPACE, l = r.ParseError, u = r.DOMException, d = 0, f = 1, p = 2, m = 3, h = 4, g = 5, _ = 6, v = 7;
 	function y() {}
 	y.prototype = { parse: function(e, t, n) {
 		var r = this.domBuilder;
@@ -24039,8 +24083,8 @@ var lv = /* @__PURE__ */ o(((e) => {
 			return this[e].value;
 		}
 	}, e.XMLReader = y, e.parseUtils = D, e.parseDoctypeCommentOrCData = k;
-})), hv = /* @__PURE__ */ o(((e) => {
-	var t = lv(), n = fv(), r = uv(), i = pv(), a = mv(), o = n.DOMImplementation, s = t.hasDefaultHTMLNamespace, c = t.isHTMLMimeType, l = t.isValidMimeType, u = t.MIME_TYPE, d = t.NAMESPACE, f = r.ParseError, p = a.XMLReader;
+})), yv = /* @__PURE__ */ o(((e) => {
+	var t = pv(), n = gv(), r = mv(), i = _v(), a = vv(), o = n.DOMImplementation, s = t.hasDefaultHTMLNamespace, c = t.isHTMLMimeType, l = t.isValidMimeType, u = t.MIME_TYPE, d = t.NAMESPACE, f = r.ParseError, p = a.XMLReader;
 	function m(e) {
 		return e.replace(/\r[\n\u0085]/g, "\n").replace(/[\r\u0085\u2028\u2029]/g, "\n");
 	}
@@ -24162,16 +24206,16 @@ var lv = /* @__PURE__ */ o(((e) => {
 		throw "onWarningStopParsing";
 	}
 	e.__DOMHandler = g, e.DOMParser = h, e.normalizeLineEndings = m, e.onErrorStopParsing = x, e.onWarningStopParsing = S;
-})), gv = /* @__PURE__ */ o(((e) => {
-	var t = lv();
+})), bv = /* @__PURE__ */ o(((e) => {
+	var t = pv();
 	e.assign = t.assign, e.hasDefaultHTMLNamespace = t.hasDefaultHTMLNamespace, e.isHTMLMimeType = t.isHTMLMimeType, e.isValidMimeType = t.isValidMimeType, e.MIME_TYPE = t.MIME_TYPE, e.NAMESPACE = t.NAMESPACE;
-	var n = uv();
+	var n = mv();
 	e.DOMException = n.DOMException, e.DOMExceptionName = n.DOMExceptionName, e.ExceptionCode = n.ExceptionCode, e.ParseError = n.ParseError;
-	var r = fv();
+	var r = gv();
 	e.Attr = r.Attr, e.CDATASection = r.CDATASection, e.CharacterData = r.CharacterData, e.Comment = r.Comment, e.Document = r.Document, e.DocumentFragment = r.DocumentFragment, e.DocumentType = r.DocumentType, e.DOMImplementation = r.DOMImplementation, e.Element = r.Element, e.Entity = r.Entity, e.EntityReference = r.EntityReference, e.LiveNodeList = r.LiveNodeList, e.NamedNodeMap = r.NamedNodeMap, e.Node = r.Node, e.NodeList = r.NodeList, e.Notation = r.Notation, e.ProcessingInstruction = r.ProcessingInstruction, e.Text = r.Text, e.XMLSerializer = r.XMLSerializer;
-	var i = hv();
+	var i = yv();
 	e.DOMParser = i.DOMParser, e.normalizeLineEndings = i.normalizeLineEndings, e.onErrorStopParsing = i.onErrorStopParsing, e.onWarningStopParsing = i.onWarningStopParsing;
-})), _v = /* @__PURE__ */ o(((e, t) => {
+})), xv = /* @__PURE__ */ o(((e, t) => {
 	(function(n) {
 		typeof e == "object" && t !== void 0 ? t.exports = n() : typeof define == "function" && define.amd ? define([], n) : (typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : this).JSZip = n();
 	})(function() {
@@ -27199,7 +27243,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 			}, {}]
 		}, {}, [10])(10);
 	});
-})), vv = gv(), yv = /* @__PURE__ */ c(_v(), 1), bv = "/chart", xv = "/drawing", Sv = "/worksheet", Cv = {
+})), Sv = bv(), Cv = /* @__PURE__ */ c(xv(), 1), wv = "/chart", Tv = "/drawing", Ev = "/worksheet", Dv = {
 	areaChart: "area",
 	area3DChart: "area",
 	barChart: "bar",
@@ -27211,13 +27255,13 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 	pie3DChart: "pie",
 	radarChart: "radar",
 	scatterChart: "scatter"
-}, wv = {
+}, Ov = {
 	b: "bottom",
 	l: "left",
 	r: "right",
 	t: "top",
 	tr: "top"
-}, Tv = {
+}, kv = {
 	accent1: "#4472c4",
 	accent2: "#ed7d31",
 	accent3: "#a5a5a5",
@@ -27230,23 +27274,23 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 	lt2: "#e7e6e6",
 	tx1: "#000000",
 	tx2: "#44546a"
-}, Ev = (e) => {
+}, Av = (e) => {
 	let t = e.localName || e.nodeName;
 	return t.split(":").pop() || t;
-}, Dv = (e) => e ? Array.from(e.childNodes).filter((e) => e.nodeType === 1) : [], Ov = (e, t) => Dv(e).filter((e) => Ev(e) === t), kv = (e, t) => Ov(e, t)[0], Av = (e, t) => {
+}, jv = (e) => e ? Array.from(e.childNodes).filter((e) => e.nodeType === 1) : [], Mv = (e, t) => jv(e).filter((e) => Av(e) === t), Nv = (e, t) => Mv(e, t)[0], Pv = (e, t) => {
 	let n = [], r = (e) => {
-		Dv(e).forEach((e) => {
-			Ev(e) === t && n.push(e), r(e);
+		jv(e).forEach((e) => {
+			Av(e) === t && n.push(e), r(e);
 		});
 	};
 	return e && r(e), n;
-}, jv = (e, t) => Av(e, t)[0], Mv = (e, t = "val") => {
+}, Fv = (e, t) => Pv(e, t)[0], Iv = (e, t = "val") => {
 	let n = Number(e == null ? void 0 : e.getAttribute(t));
 	return Number.isFinite(n) ? n : 0;
-}, Nv = (e) => {
+}, Lv = (e) => {
 	var t;
 	return (e == null || (t = e.textContent) == null ? void 0 : t.trim()) || "";
-}, Pv = (e) => e && (e.getAttribute("r:id") || e.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id")) || "", Fv = (e, t) => {
+}, Rv = (e) => e && (e.getAttribute("r:id") || e.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id")) || "", zv = (e, t) => {
 	let n = e.includes("/") ? e.slice(0, e.lastIndexOf("/")) : "", r = (t.startsWith("/") ? t.slice(1) : `${n}/${t}`).split("/"), i = [];
 	for (let e of r) if (!(!e || e === ".")) {
 		if (e === "..") {
@@ -27256,117 +27300,117 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		i.push(e);
 	}
 	return i.join("/");
-}, Iv = (e) => {
+}, Bv = (e) => {
 	let t = e.lastIndexOf("/"), n = t >= 0 ? e.slice(0, t) : "", r = t >= 0 ? e.slice(t + 1) : e;
 	return `${n ? `${n}/` : ""}_rels/${r}.rels`;
-}, Lv = (e) => new vv.DOMParser().parseFromString(e, "application/xml"), Rv = async (e, t) => {
+}, Vv = (e) => new Sv.DOMParser().parseFromString(e, "application/xml"), Hv = async (e, t) => {
 	let n = e.file(t);
-	return n ? Lv(await n.async("text")) : null;
-}, zv = async (e, t) => {
-	let n = await Rv(e, Iv(t));
-	return n ? Av(n.documentElement, "Relationship").flatMap((e) => {
+	return n ? Vv(await n.async("text")) : null;
+}, Uv = async (e, t) => {
+	let n = await Hv(e, Bv(t));
+	return n ? Pv(n.documentElement, "Relationship").flatMap((e) => {
 		let n = e.getAttribute("Id") || "", r = e.getAttribute("Target") || "", i = e.getAttribute("Type") || "";
 		return !n || !r || e.getAttribute("TargetMode") === "External" ? [] : [{
 			id: n,
-			target: Fv(t, r),
+			target: zv(t, r),
 			type: i
 		}];
 	}) : [];
-}, Bv = (e, t) => e.find((e) => e.id === t), Vv = (e) => {
+}, Wv = (e, t) => e.find((e) => e.id === t), Gv = (e) => {
 	if (e) return {
-		row: Number(Nv(kv(e, "row"))) || 0,
-		col: Number(Nv(kv(e, "col"))) || 0,
-		rowOff: Number(Nv(kv(e, "rowOff"))) || 0,
-		colOff: Number(Nv(kv(e, "colOff"))) || 0
+		row: Number(Lv(Nv(e, "row"))) || 0,
+		col: Number(Lv(Nv(e, "col"))) || 0,
+		rowOff: Number(Lv(Nv(e, "rowOff"))) || 0,
+		colOff: Number(Lv(Nv(e, "colOff"))) || 0
 	};
-}, Hv = (e) => e ? Av(e, "pt").map((e) => ({
+}, Kv = (e) => e ? Pv(e, "pt").map((e) => ({
 	index: Number(e.getAttribute("idx")) || 0,
-	value: Nv(kv(e, "v")) || Nv(jv(e, "v"))
-})).sort((e, t) => e.index - t.index).map((e) => e.value) : [], Uv = (e) => {
+	value: Lv(Nv(e, "v")) || Lv(Fv(e, "v"))
+})).sort((e, t) => e.index - t.index).map((e) => e.value) : [], qv = (e) => {
 	if (!e) return "";
-	let t = Hv(e);
-	return t.length ? t.join(" ").trim() : Av(e, "t").map(Nv).filter(Boolean).join(" ").trim() || Nv(jv(e, "v"));
-}, Wv = (e) => {
+	let t = Kv(e);
+	return t.length ? t.join(" ").trim() : Pv(e, "t").map(Lv).filter(Boolean).join(" ").trim() || Lv(Fv(e, "v"));
+}, Jv = (e) => {
 	var t, n;
-	let r = jv(kv(e, "spPr"), "solidFill"), i = (t = jv(r, "srgbClr")) == null ? void 0 : t.getAttribute("val");
-	return i && /^[0-9a-f]{6}$/i.test(i) ? `#${i}` : Tv[((n = jv(r, "schemeClr")) == null ? void 0 : n.getAttribute("val")) || ""];
-}, Gv = (e) => Ov(e, "ser").map((e, t) => {
-	let n = kv(e, "tx"), r = kv(e, "cat") || kv(e, "xVal"), i = kv(e, "val") || kv(e, "yVal"), a = Hv(r), o = Hv(i).map(Number).filter(Number.isFinite);
+	let r = Fv(Nv(e, "spPr"), "solidFill"), i = (t = Fv(r, "srgbClr")) == null ? void 0 : t.getAttribute("val");
+	return i && /^[0-9a-f]{6}$/i.test(i) ? `#${i}` : kv[((n = Fv(r, "schemeClr")) == null ? void 0 : n.getAttribute("val")) || ""];
+}, Yv = (e) => Mv(e, "ser").map((e, t) => {
+	let n = Nv(e, "tx"), r = Nv(e, "cat") || Nv(e, "xVal"), i = Nv(e, "val") || Nv(e, "yVal"), a = Kv(r), o = Kv(i).map(Number).filter(Number.isFinite);
 	return {
-		name: Uv(n) || `Series ${t + 1}`,
+		name: qv(n) || `Series ${t + 1}`,
 		categories: a.length ? a : o.map((e, t) => `${t + 1}`),
 		values: o,
-		color: Wv(e)
+		color: Jv(e)
 	};
-}), Kv = (e) => {
+}), Xv = (e) => {
 	var t, n, r;
-	let i = e.documentElement, a = jv(i, "chart"), o = kv(a, "plotArea") || jv(a, "plotArea"), s = Dv(o).map((e) => ({
+	let i = e.documentElement, a = Fv(i, "chart"), o = Nv(a, "plotArea") || Fv(a, "plotArea"), s = jv(o).map((e) => ({
 		element: e,
-		type: Cv[Ev(e)]
+		type: Dv[Av(e)]
 	})).find((e) => e.type);
 	if (!s) return null;
-	let c = kv(a, "legend"), l = ((t = kv(c, "legendPos")) == null ? void 0 : t.getAttribute("val")) || "", u = kv(o, "catAx"), d = kv(o, "valAx"), f = ((n = kv(s.element, "barDir")) == null ? void 0 : n.getAttribute("val")) === "bar" ? "bar" : "column";
+	let c = Nv(a, "legend"), l = ((t = Nv(c, "legendPos")) == null ? void 0 : t.getAttribute("val")) || "", u = Nv(o, "catAx"), d = Nv(o, "valAx"), f = ((n = Nv(s.element, "barDir")) == null ? void 0 : n.getAttribute("val")) === "bar" ? "bar" : "column";
 	return {
 		type: s.type,
-		title: Uv(kv(a, "title")) || void 0,
-		categoryAxisTitle: Uv(kv(u, "title")) || void 0,
-		valueAxisTitle: Uv(kv(d, "title")) || void 0,
+		title: qv(Nv(a, "title")) || void 0,
+		categoryAxisTitle: qv(Nv(u, "title")) || void 0,
+		valueAxisTitle: qv(Nv(d, "title")) || void 0,
 		barDirection: f,
-		grouping: ((r = kv(s.element, "grouping")) == null ? void 0 : r.getAttribute("val")) || void 0,
-		legendPosition: c ? wv[l] || "bottom" : void 0,
-		series: Gv(s.element)
+		grouping: ((r = Nv(s.element, "grouping")) == null ? void 0 : r.getAttribute("val")) || void 0,
+		legendPosition: c ? Ov[l] || "bottom" : void 0,
+		series: Yv(s.element)
 	};
-}, qv = async (e, t) => {
-	let [n, r] = await Promise.all([Rv(e, t), zv(e, t)]);
+}, Zv = async (e, t) => {
+	let [n, r] = await Promise.all([Hv(e, t), Uv(e, t)]);
 	if (!n) return [];
-	let i = Dv(n.documentElement).filter((e) => Ev(e).endsWith("Anchor"));
+	let i = jv(n.documentElement).filter((e) => Av(e).endsWith("Anchor"));
 	return (await Promise.all(i.map(async (t, n) => {
 		var i;
-		let a = Bv(r, Pv(jv(t, "chart")));
-		if (!(a != null && a.type.endsWith(bv))) return null;
-		let o = await Rv(e, a.target), s = o ? Kv(o) : null;
+		let a = Wv(r, Rv(Fv(t, "chart")));
+		if (!(a != null && a.type.endsWith(wv))) return null;
+		let o = await Hv(e, a.target), s = o ? Xv(o) : null;
 		if (!s || !s.series.length || s.series.every((e) => !e.values.length)) return null;
-		let c = Vv(kv(t, "from")) || {
+		let c = Gv(Nv(t, "from")) || {
 			row: 0,
 			col: 0,
-			rowOff: Mv(kv(t, "pos"), "y"),
-			colOff: Mv(kv(t, "pos"), "x")
-		}, l = Vv(kv(t, "to")), u = kv(t, "ext"), d = (i = jv(t, "cNvPr")) == null ? void 0 : i.getAttribute("name");
+			rowOff: Iv(Nv(t, "pos"), "y"),
+			colOff: Iv(Nv(t, "pos"), "x")
+		}, l = Gv(Nv(t, "to")), u = Nv(t, "ext"), d = (i = Fv(t, "cNvPr")) == null ? void 0 : i.getAttribute("name");
 		return {
 			...s,
 			id: d || a.target || `chart-${n + 1}`,
 			from: c,
 			to: l,
 			ext: u ? {
-				width: Mv(u, "cx"),
-				height: Mv(u, "cy")
+				width: Iv(u, "cx"),
+				height: Iv(u, "cy")
 			} : void 0
 		};
 	}))).filter((e) => e !== null);
-}, Jv = async (e) => {
-	let t = await yv.default.loadAsync(e), n = "xl/workbook.xml", [r, i] = await Promise.all([Rv(t, n), zv(t, n)]), a = {};
+}, Qv = async (e) => {
+	let t = await Cv.default.loadAsync(e), n = "xl/workbook.xml", [r, i] = await Promise.all([Hv(t, n), Uv(t, n)]), a = {};
 	if (!r) return a;
-	for (let e of Av(r.documentElement, "sheet")) {
-		let n = e.getAttribute("name") || "", r = Bv(i, Pv(e));
-		if (!n || !(r != null && r.type.endsWith(Sv))) continue;
-		let o = await zv(t, r.target), s = Array.from(new Set(o.filter((e) => e.type.endsWith(xv)).map((e) => e.target))), c = (await Promise.all(s.map((e) => qv(t, e)))).flat();
+	for (let e of Pv(r.documentElement, "sheet")) {
+		let n = e.getAttribute("name") || "", r = Wv(i, Rv(e));
+		if (!n || !(r != null && r.type.endsWith(Ev))) continue;
+		let o = await Uv(t, r.target), s = Array.from(new Set(o.filter((e) => e.type.endsWith(Tv)).map((e) => e.target))), c = (await Promise.all(s.map((e) => Zv(t, e)))).flat();
 		c.length && (a[n] = c);
 	}
 	return a;
-}, Yv = new Set(["csv", "tsv"]), Xv = new Set(["text/csv", "text/tab-separated-values"]), Zv = (e) => String(e || "").trim().toLowerCase().replace(/^\./, "").split(/[?#;]/, 1)[0], Qv = (e) => {
+}, $v = new Set(["csv", "tsv"]), ey = new Set(["text/csv", "text/tab-separated-values"]), ty = (e) => String(e || "").trim().toLowerCase().replace(/^\./, "").split(/[?#;]/, 1)[0], ny = (e) => {
 	let t = String(e || "").trim().toLowerCase().split(/[?#]/, 1)[0], n = Math.max(t.lastIndexOf("/"), t.lastIndexOf("\\")), r = t.lastIndexOf(".");
 	return r > n ? t.slice(r + 1) : "";
-}, $v = ({ fileType: e, filename: t }) => {
-	let n = Zv(e);
-	return n ? Yv.has(n) || Xv.has(n) : Yv.has(Qv(t));
-}, ey = (e, t) => {
+}, ry = ({ fileType: e, filename: t }) => {
+	let n = ty(e);
+	return n ? $v.has(n) || ey.has(n) : $v.has(ny(t));
+}, iy = (e, t) => {
 	if (typeof TextDecoder > "u") throw Error("Spreadsheet text decoding requires the browser TextDecoder API.");
 	try {
 		return new TextDecoder(t).decode(e);
 	} catch (e) {
 		throw t === "gb18030" && e instanceof RangeError ? Error("This browser does not provide GB18030 text decoding. Use a current browser or set spreadsheet.textEncoding to \"utf-8\".") : e;
 	}
-}, ty = (e) => e.length >= 3 && e[0] === 239 && e[1] === 187 && e[2] === 191, ny = (e) => e !== void 0 && e >= 128 && e <= 191, ry = (e) => {
+}, ay = (e) => e.length >= 3 && e[0] === 239 && e[1] === 187 && e[2] === 191, oy = (e) => e !== void 0 && e >= 128 && e <= 191, sy = (e) => {
 	for (let t = 0; t < e.length;) {
 		let n = e[t];
 		if (n === void 0) return !1;
@@ -27375,70 +27419,70 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 			continue;
 		}
 		let r = e[t + 1], i = e[t + 2], a = e[t + 3];
-		if (n >= 194 && n <= 223 && ny(r)) {
+		if (n >= 194 && n <= 223 && oy(r)) {
 			t += 2;
 			continue;
 		}
-		if (n === 224 && r !== void 0 && r >= 160 && r <= 191 && ny(i)) {
+		if (n === 224 && r !== void 0 && r >= 160 && r <= 191 && oy(i)) {
 			t += 3;
 			continue;
 		}
-		if ((n >= 225 && n <= 236 || n >= 238 && n <= 239) && ny(r) && ny(i)) {
+		if ((n >= 225 && n <= 236 || n >= 238 && n <= 239) && oy(r) && oy(i)) {
 			t += 3;
 			continue;
 		}
-		if (n === 237 && r !== void 0 && r >= 128 && r <= 159 && ny(i)) {
+		if (n === 237 && r !== void 0 && r >= 128 && r <= 159 && oy(i)) {
 			t += 3;
 			continue;
 		}
-		if (n === 240 && r !== void 0 && r >= 144 && r <= 191 && ny(i) && ny(a)) {
+		if (n === 240 && r !== void 0 && r >= 144 && r <= 191 && oy(i) && oy(a)) {
 			t += 4;
 			continue;
 		}
-		if (n >= 241 && n <= 243 && ny(r) && ny(i) && ny(a)) {
+		if (n >= 241 && n <= 243 && oy(r) && oy(i) && oy(a)) {
 			t += 4;
 			continue;
 		}
-		if (n === 244 && r !== void 0 && r >= 128 && r <= 143 && ny(i) && ny(a)) {
+		if (n === 244 && r !== void 0 && r >= 128 && r <= 143 && oy(i) && oy(a)) {
 			t += 4;
 			continue;
 		}
 		return !1;
 	}
 	return !0;
-}, iy = (e) => {
+}, cy = (e) => {
 	let t = String(e || "auto").trim().toLowerCase().replace("_", "-");
 	return t === "utf8" || t === "utf-8" ? "utf-8" : t === "gbk" || t === "cp936" || t === "gb2312" ? "gbk" : t === "gb18030" ? "gb18030" : "auto";
-}, ay = (e, t = "auto") => {
-	let n = new Uint8Array(e), r = iy(t);
+}, ly = (e, t = "auto") => {
+	let n = new Uint8Array(e), r = cy(t);
 	return r === "utf-8" ? {
-		text: ey(ty(n) ? n.subarray(3) : n, "utf-8"),
+		text: iy(ay(n) ? n.subarray(3) : n, "utf-8"),
 		encoding: "utf-8"
 	} : r === "gbk" || r === "gb18030" ? {
-		text: ey(n, "gb18030"),
+		text: iy(n, "gb18030"),
 		encoding: "gb18030"
-	} : ty(n) ? {
-		text: ey(n.subarray(3), "utf-8"),
+	} : ay(n) ? {
+		text: iy(n.subarray(3), "utf-8"),
 		encoding: "utf-8"
-	} : ry(n) ? {
-		text: ey(n, "utf-8"),
+	} : sy(n) ? {
+		text: iy(n, "utf-8"),
 		encoding: "utf-8"
 	} : {
-		text: ey(n, "gb18030"),
+		text: iy(n, "gb18030"),
 		encoding: "gb18030"
 	};
-}, oy = (e, t = {}) => {
-	if (!$v(t)) return {
+}, uy = (e, t = {}) => {
+	if (!ry(t)) return {
 		kind: "binary",
 		data: e
 	};
-	let n = ay(e, t.textEncoding);
+	let n = ly(e, t.textEncoding);
 	return {
 		kind: "text",
 		data: n.text,
 		encoding: n.encoding
 	};
-}, sy = {
+}, dy = {
 	type: "array",
 	dense: !0,
 	cellDates: !0,
@@ -27446,17 +27490,17 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 	browserPixels: !0,
 	drawings: !0,
 	validateMerges: !0
-}, cy = () => ({
+}, fy = () => ({
 	workbook: null,
 	sheets: [],
 	charts: {}
-}), ly = (e, t = {}) => ({
+}), py = (e, t = {}) => ({
 	type: "parseError",
 	payload: {
 		...t,
 		message: e instanceof Error ? e.message : String(e)
 	}
-}), uy = (e) => {
+}), my = (e) => {
 	var t;
 	return ((e == null || (t = e["!drawings"]) == null ? void 0 : t.images) || []).reduce((e, t) => {
 		var n, r, i, a, o, s;
@@ -27469,7 +27513,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		rowCount: 0,
 		colCount: 0
 	});
-}, dy = (e) => (e || []).reduce((e, t) => {
+}, hy = (e) => (e || []).reduce((e, t) => {
 	var n, r, i, a, o, s;
 	let c = (n = t.ext) != null && n.height ? Math.ceil(t.ext.height / 9525 / 20) : 0, l = (r = t.ext) != null && r.width ? Math.ceil(t.ext.width / 9525 / 64) : 0, u = (i = (a = t.to) == null ? void 0 : a.row) == null ? t.from.row + c : i, d = (o = (s = t.to) == null ? void 0 : s.col) == null ? t.from.col + l : o;
 	return {
@@ -27479,7 +27523,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 }, {
 	rowCount: 0,
 	colCount: 0
-}), fy = 1e3, py = 256, my = 256, hy = 64, gy = 4, _y = (e) => {
+}), gy = 1e3, _y = 256, vy = 256, yy = 64, by = 4, xy = (e) => {
 	let t = {
 		rowCount: 0,
 		colCount: 0
@@ -27501,7 +27545,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		t.rowCount = Math.max(t.rowCount, e.r + 1), t.colCount = Math.max(t.colCount, e.c + 1);
 	} catch {}
 	return t;
-}, vy = (e) => ((e == null ? void 0 : e["!merges"]) || []).reduce((e, t) => {
+}, Sy = (e) => ((e == null ? void 0 : e["!merges"]) || []).reduce((e, t) => {
 	var n, r, i, a, o, s;
 	let c = Number((n = (r = t.e) == null ? void 0 : r.row) == null ? (i = t.e) == null ? void 0 : i.r : n), l = Number((a = (o = t.e) == null ? void 0 : o.col) == null ? (s = t.e) == null ? void 0 : s.c : a);
 	return {
@@ -27511,13 +27555,13 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 }, {
 	rowCount: 0,
 	colCount: 0
-}), yy = (e, t, n, r) => t <= 0 ? Math.min(Math.max(e, 1), r) : e <= Math.max(t + n, t * gy) ? Math.max(e, t) : t, by = (e, t) => {
+}), Cy = (e, t, n, r) => t <= 0 ? Math.min(Math.max(e, 1), r) : e <= Math.max(t + n, t * by) ? Math.max(e, t) : t, wy = (e, t) => {
 	let n = 0, r = 0, i = e == null ? void 0 : e["!ref"];
 	if (i) try {
 		let e = Lg.decode_range(i);
 		n = e.e.r + 1, r = e.e.c + 1;
 	} catch {}
-	let a = _y(e), o = vy(e), s = uy(e), c = dy(t), l = Math.max(a.rowCount, o.rowCount, s.rowCount, c.rowCount), u = Math.max(a.colCount, o.colCount, s.colCount, c.colCount), d = yy(n, l, my, fy), f = yy(r, u, hy, py);
+	let a = xy(e), o = Sy(e), s = my(e), c = hy(t), l = Math.max(a.rowCount, o.rowCount, s.rowCount, c.rowCount), u = Math.max(a.colCount, o.colCount, s.colCount, c.colCount), d = Cy(n, l, vy, gy), f = Cy(r, u, yy, _y);
 	return {
 		rowCount: d,
 		colCount: f,
@@ -27527,14 +27571,14 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		observedColCount: u,
 		trimmed: d < n || f < r
 	};
-}, xy = (e) => {
+}, Ty = (e) => {
 	var t;
 	let n = e.workbook;
 	if (!(n != null && n.SheetNames)) return [];
 	let r = ((t = n.Workbook) == null ? void 0 : t.Sheets) || [];
 	return e.sheets = n.SheetNames.reduce((t, i, a) => {
 		var o;
-		let s = n.Sheets[i], c = by(s, e.charts[i]);
+		let s = n.Sheets[i], c = wy(s, e.charts[i]);
 		return !(s != null && s["!ref"]) && !c.observedRowCount && !c.observedColCount ? t : (c.trimmed && console.warn(`[file-viewer] Ignored pathological worksheet dimensions for ${i}: ${c.declaredRowCount}x${c.declaredColCount} -> ${c.rowCount}x${c.colCount}.`), t.push({
 			id: t.length,
 			name: i,
@@ -27546,23 +27590,23 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		type: "sheets",
 		payload: { sheets: e.sheets }
 	}];
-}, Sy = async (e, t, n = {}) => {
+}, Ey = async (e, t, n = {}) => {
 	try {
-		let r = oy(t, n);
+		let r = uy(t, n);
 		if (e.workbook = r.kind === "text" ? _g(r.data, {
-			...sy,
+			...dy,
 			type: "string"
-		}) : _g(r.data, sy), (t.byteLength >= 2 ? new DataView(t).getUint16(0, !1) : 0) === 20555) try {
-			e.charts = await Jv(t);
+		}) : _g(r.data, dy), (t.byteLength >= 2 ? new DataView(t).getUint16(0, !1) : 0) === 20555) try {
+			e.charts = await Qv(t);
 		} catch (t) {
 			e.charts = {}, console.warn("[file-viewer] Spreadsheet chart parsing failed; continuing with cell content.", t);
 		}
 		else e.charts = {};
-		return xy(e);
+		return Ty(e);
 	} catch (e) {
-		return [ly(e)];
+		return [py(e)];
 	}
-}, Cy = (e, t = {}) => {
+}, Dy = (e, t = {}) => {
 	let { sheet: n, startRow: r = 0, pageSize: i = 500, sessionId: a = 0 } = t;
 	try {
 		var o;
@@ -27570,13 +27614,13 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		if (!(t != null && t.Sheets) || !s) return [];
 		let c = t.Sheets[s];
 		if (!c) return [];
-		let l = e.sheets.find((e) => e.id === n), u = cv.create(c, {
+		let l = e.sheets.find((e) => e.id === n), u = fv.create(c, {
 			startRow: r,
 			pageSize: i,
 			totalRows: l == null ? void 0 : l.rowCount,
 			totalCols: l == null ? void 0 : l.colCount,
 			charts: e.charts[s]
-		}), d = u.toObject(), f = r === 0 ? u.structure : void 0;
+		}), d = u.toObject({ includeLayout: r === 0 }), f = r === 0 ? u.structure : void 0;
 		return [{
 			type: "parseSheet",
 			payload: {
@@ -27589,31 +27633,31 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 			}
 		}];
 	} catch (e) {
-		return [ly(e, {
+		return [py(e, {
 			sessionId: a,
 			startRow: r
 		})];
 	}
-}, wy = (e, t) => {
+}, Oy = (e, t) => {
 	switch (t.type) {
 		case "parseWorkbook":
 			var n, r, i, a;
-			return Sy(e, (n = t.payload) == null ? void 0 : n.workbook, {
+			return Ey(e, (n = t.payload) == null ? void 0 : n.workbook, {
 				fileType: (r = t.payload) == null ? void 0 : r.fileType,
 				filename: (i = t.payload) == null ? void 0 : i.filename,
 				textEncoding: (a = t.payload) == null ? void 0 : a.textEncoding
 			});
-		case "parseSheet": return Cy(e, t.payload);
+		case "parseSheet": return Dy(e, t.payload);
 		default: return [];
 	}
-}, Ty = typeof self > "u" ? null : self;
-if (Ty) {
-	let e = cy();
-	Ty.onmessage = async (t) => {
-		(await wy(e, t.data)).forEach((e) => {
-			Ty.postMessage(e);
+}, ky = typeof self > "u" ? null : self;
+if (ky) {
+	let e = fy();
+	ky.onmessage = async (t) => {
+		(await Oy(e, t.data)).forEach((e) => {
+			ky.postMessage(e);
 		});
-	}, Ty.onerror = (e) => {
+	}, ky.onerror = (e) => {
 		console.error(e);
 	};
 }

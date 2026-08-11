@@ -29,12 +29,12 @@ allowBuilds:
 overrides:
   'epubjs>@xmldom/xmldom': 0.9.10
   dompurify: 3.4.12
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:2.2.6
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:2.2.6
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:2.2.6
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:2.2.6
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.2.6
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:2.2.6
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.2.6
-  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.2.6
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.2.6
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:2.2.8
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:2.2.8
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:2.2.8
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:2.2.8
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.2.8
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:2.2.8
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.2.8
+  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.2.8
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.2.8
