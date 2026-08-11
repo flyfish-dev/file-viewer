@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-11T16:02:11.453Z",
+  "generatedAt": "2026-08-11T16:23:42.753Z",
   "version": "2.2.8",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "1aece00a8fb9ac991345478b5f0a1e556a844ab8",
+      "hash": "164b3990e2cae4f4293e0b49caf46b04234430d2",
       "error": ""
     },
     "gitee": {
@@ -54,10 +54,10 @@
     "ok": true,
     "tag": "v2.2.8",
     "url": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.8",
-    "assetCount": 0,
-    "hasManifest": false,
-    "hasStatus": false,
-    "hasSchema": false,
+    "assetCount": 63,
+    "hasManifest": true,
+    "hasStatus": true,
+    "hasSchema": true,
     "error": ""
   },
   "componentRepositories": [
@@ -748,50 +748,17 @@
       "error": ""
     }
   ],
-  "gaps": [
-    "GitHub Release v2.2.8 missing release-manifest.json",
-    "GitHub Release v2.2.8 missing release-status.json",
-    "GitHub Release v2.2.8 missing release-status.schema.json"
-  ],
+  "gaps": [],
   "gapSummary": {
-    "total": 3,
-    "externalBlockers": 3,
+    "total": 0,
+    "externalBlockers": 0,
     "localActionable": 0,
-    "byChannel": {
-      "github-release": 3
-    },
-    "externalBlockerChannels": [
-      "github-release"
-    ],
+    "byChannel": {},
+    "externalBlockerChannels": [],
     "localActionableChannels": []
   },
-  "gapDetails": [
-    {
-      "id": "github-release-github-release-v2.2.8-missing-release-manifest.json",
-      "channel": "github-release",
-      "scope": "release-assets",
-      "externalBlocker": true,
-      "message": "GitHub Release v2.2.8 missing release-manifest.json",
-      "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
-    },
-    {
-      "id": "github-release-github-release-v2.2.8-missing-release-status.json",
-      "channel": "github-release",
-      "scope": "release-assets",
-      "externalBlocker": true,
-      "message": "GitHub Release v2.2.8 missing release-status.json",
-      "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
-    },
-    {
-      "id": "github-release-github-release-v2.2.8-missing-release-status.schema.json",
-      "channel": "github-release",
-      "scope": "release-assets",
-      "externalBlocker": true,
-      "message": "GitHub Release v2.2.8 missing release-status.schema.json",
-      "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
-    }
-  ],
+  "gapDetails": [],
   "nextActions": [
-    "Create or update the GitHub Release assets, then rerun `pnpm release:public`."
+    "Release channels are aligned. Keep this report attached to the GitHub Release for downstream verification."
   ]
 }
