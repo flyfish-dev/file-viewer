@@ -1,6 +1,8 @@
 import { renderPptxPostProcessing } from './chart';
 import type { PptxPostProcessingHandle } from './chart';
 import { resolvePptxEngineOptions, RECOMMENDED_ZIP_LIMITS } from './options';
+import { PptxPresentation } from './presentation';
+import type { PptxPresentationState } from './presentation';
 import { ensurePptxViewerStyles, scopePptxContentStyleText } from './styles';
 import type { PptxDiagnosticError, PptxSlideSize, PptxViewerOptions, PptxWorkerMessage } from './types';
 import { createPptxWorker } from './worker';
@@ -182,6 +184,7 @@ export class PptxViewer {
   private readonly mediaRecords = new Map<string, PptxMediaRecord>();
   private disposed = false;
   private completed = false;
+  private presentation: PptxPresentation | null = null;
   private readonly handleSlideWindowChange = () => this.scheduleSlideWindowUpdate();
 
   private constructor(buffer: ArrayBuffer, target: HTMLElement, options: PptxViewerOptions) {
@@ -208,6 +211,83 @@ export class PptxViewer {
     return this.previewThumbnailDataUrl;
   }
 
+  get slideCount() {
+    return this.slideRecords.length;
+  }
+
+  get slideDimensions() {
+    const width = Number(this.slideSize?.width);
+    const height = Number(this.slideSize?.height);
+    return Number.isFinite(width) && width > 0 && Number.isFinite(height) && height > 0
+      ? { width, height }
+      : null;
+  }
+
+  get presenting() {
+    return Boolean(this.presentation?.active);
+  }
+
+  get presentationSlideNumber() {
+    return this.presentation?.slideNumber ?? 1;
+  }
+
+  /**
+   * Where the slideshow overlay is mounted. It has to share a root with the injected slide styles,
+   * or the engine's scoped CSS stops applying once the slides move into the overlay.
+   */
+  get presentationRoot(): ShadowRoot | HTMLElement {
+    const documentRef = this.target.ownerDocument || document;
+    if (this.options.styleRoot) {
+      return this.options.styleRoot;
+    }
+    const root = this.target.getRootNode();
+    const ShadowRootCtor = documentRef.defaultView?.ShadowRoot;
+    if (ShadowRootCtor && root instanceof ShadowRootCtor) {
+      return root as ShadowRoot;
+    }
+    return documentRef.body || documentRef.documentElement;
+  }
+
+  /** Force a slide out of the virtualized window so the slideshow can show it immediately. */
+  ensureSlideRendered(slideNumber: number) {
+    const record = this.slideRecords.find(item => item.slideNumber === slideNumber);
+    if (!record) {
+      return null;
+    }
+    if (!record.rendered) {
+      this.renderSlideRecord(record);
+    }
+    return record.element;
+  }
+
+  refreshLayout() {
+    this.scheduleResize();
+  }
+
+  emitPresentationChange(state: PptxPresentationState) {
+    this.options.onPresentationChange?.(state);
+  }
+
+  async enterPresentation(slideNumber?: number) {
+    if (this.disposed || this.slideRecords.length === 0) {
+      return;
+    }
+    this.presentation ||= new PptxPresentation(this, this.options.presentationLabels);
+    await this.presentation.enter(slideNumber);
+  }
+
+  exitPresentation() {
+    this.presentation?.exit();
+  }
+
+  async togglePresentation(slideNumber?: number) {
+    if (this.presenting) {
+      this.exitPresentation();
+      return;
+    }
+    await this.enterPresentation(slideNumber);
+  }
+
   async open() {
     ensureZipWithinLimits(this.buffer, this.options);
     ensurePptxViewerStyles(this.target.ownerDocument || document, this.options.styleRoot);
@@ -225,6 +305,8 @@ export class PptxViewer {
 
   destroy() {
     this.disposed = true;
+    this.presentation?.destroy();
+    this.presentation = null;
     this.previewThumbnailDataUrl = null;
     this.releaseCharts();
     this.releaseMedia();
@@ -958,6 +1040,12 @@ export class PptxViewer {
   }
 
   private resize() {
+    // While presenting, the slideshow owns the transform of the same nodes.
+    if (this.presentation?.active) {
+      this.presentation.layout();
+      return;
+    }
+
     const slides = this.getMountedSlideElements();
 
     const sizeWidth = Number(this.slideSize?.width);

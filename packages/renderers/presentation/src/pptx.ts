@@ -29,6 +29,14 @@ const pptxStyle = `
 .pptx-loading[hidden],.pptx-error[hidden]{display:none!important}
 .pptx-loading-dot{width:9px;height:9px;border-radius:999px;background:#1f9d67;box-shadow:0 0 0 6px rgba(31,157,103,.13)}
 .pptx-error{box-sizing:border-box;width:min(680px,calc(100% - 32px));margin:48px auto;padding:24px;border:1px solid rgba(28,43,58,.12);border-radius:14px;background:#fff;color:#1f2d3b;box-shadow:0 16px 42px rgba(25,42,54,.08)}
+.pptx-slideshow-button{position:sticky;top:12px;z-index:4;float:right;display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:8px 14px;border:1px solid rgba(42,94,144,.16);border-radius:999px;background:rgba(255,255,255,.94);color:#2a5e90;font:13px/1.2 inherit;cursor:pointer;box-shadow:0 10px 26px rgba(24,44,64,.12)}
+.pptx-slideshow-button:hover{border-color:rgba(42,94,144,.34);color:#1d4a75}
+.pptx-slideshow-button:focus-visible{outline:2px solid #2a5e90;outline-offset:2px}
+.pptx-slideshow-button[hidden]{display:none!important}
+.pptx-slideshow-button-glyph{font-size:11px;line-height:1}
+.pptx-slideshow-button-key{padding:1px 6px;border-radius:6px;background:rgba(42,94,144,.1);font-size:11px;letter-spacing:.04em}
+[data-viewer-theme='dark'] .pptx-slideshow-button{border-color:rgba(148,163,184,.2);background:rgba(15,23,42,.92);color:#cbd5e1}
+[data-viewer-theme='dark'] .pptx-slideshow-button-key{background:rgba(148,163,184,.16)}
 .pptx-error strong{display:block;margin-bottom:10px;font-size:18px}
 .pptx-error p{margin:0;color:#607282;line-height:1.7}
 [data-viewer-theme='dark'] .pptx-viewer-shell{background:var(--file-viewer-render-surface-background,#101820);color:#e5eef8}
@@ -58,6 +66,8 @@ const pptxPrintStyle = `
     page-break-after: auto;
   }
 `;
+
+const SLIDESHOW_HOTKEY_LABEL = 'F5 / P';
 
 const createStyle = (documentRef: Document) => {
   const style = documentRef.createElement('style');
@@ -395,9 +405,45 @@ export default async function renderPptx(
   const errorText = createElement(documentRef, 'p');
   error.append(errorTitle, errorText);
 
+  const slideshowButton = createElement(documentRef, 'button', 'pptx-slideshow-button');
+  slideshowButton.type = 'button';
+  slideshowButton.hidden = true;
+  const slideshowGlyph = createElement(documentRef, 'span', 'pptx-slideshow-button-glyph', '▶');
+  const slideshowText = createElement(documentRef, 'span', undefined, t('presentation.slideshow.start'));
+  const slideshowKey = createElement(documentRef, 'span', 'pptx-slideshow-button-key', SLIDESHOW_HOTKEY_LABEL);
+  slideshowButton.append(slideshowGlyph, slideshowText, slideshowKey);
+  slideshowButton.addEventListener('click', () => {
+    void viewer?.togglePresentation();
+  });
+
   const surface = createElement(documentRef, 'div', 'pptx-render-surface');
-  shell.append(loading, error, surface);
+  shell.append(loading, error, slideshowButton, surface);
   target.replaceChildren(style, shell);
+
+  // F5 mirrors PowerPoint; P is the keyboard-only toggle for browsers where F5 is spoken for.
+  // Typing in a field must never start a slideshow, so editable targets are skipped.
+  const isEditableTarget = (node: EventTarget | null) => {
+    const element = node as HTMLElement | null;
+    if (!element || typeof element.closest !== 'function') {
+      return false;
+    }
+    return Boolean(element.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]'));
+  };
+
+  const handleShortcut = (event: KeyboardEvent) => {
+    if (disposed || !viewer || event.altKey || event.ctrlKey || event.metaKey) {
+      return;
+    }
+    if (event.key !== 'F5' && event.key !== 'p' && event.key !== 'P') {
+      return;
+    }
+    if (!shell.isConnected || isEditableTarget(event.target)) {
+      return;
+    }
+    event.preventDefault();
+    void viewer.togglePresentation();
+  };
+  documentRef.addEventListener('keydown', handleShortcut);
   context?.registerThumbnailAdapter?.({
     captureSource: 'embedded',
     beforeCapture: async ({ signal }) => {
@@ -464,6 +510,12 @@ export default async function renderPptx(
     error.hidden = state !== 'error';
     errorText.textContent = errorMessage;
     surface.classList.toggle('is-loading', state === 'loading');
+    const presenting = Boolean(viewer?.presenting);
+    slideshowButton.hidden = state !== 'ready' || (viewer?.slideCount ?? 0) === 0;
+    slideshowText.textContent = presenting
+      ? t('presentation.slideshow.exit')
+      : t('presentation.slideshow.start');
+    slideshowButton.setAttribute('aria-pressed', presenting ? 'true' : 'false');
   };
 
   const registerExportAdapter = () => {
@@ -531,6 +583,15 @@ export default async function renderPptx(
           batchSize: 4,
           overscanViewport: 1.5,
         },
+        presentationLabels: {
+          exit: t('presentation.slideshow.exit'),
+          hint: t('presentation.slideshow.hint'),
+        },
+        onPresentationChange: () => {
+          if (!disposed) {
+            syncUi();
+          }
+        },
         onSlideRendered: () => notifyProgressiveReady(),
         onRenderComplete: () => {
           if (disposed || context?.signal?.aborted) {
@@ -594,6 +655,7 @@ export default async function renderPptx(
     $el: shell,
     unmount() {
       disposed = true;
+      documentRef.removeEventListener('keydown', handleShortcut);
       context?.registerExportAdapter?.(null);
       context?.registerThumbnailAdapter?.(null);
       unregisterFileViewerZoomProvider(shell);

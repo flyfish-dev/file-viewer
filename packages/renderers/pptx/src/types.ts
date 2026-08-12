@@ -1,3 +1,5 @@
+import type { PptxPresentationLabels, PptxPresentationState } from './presentation';
+
 export type PptxFitMode = 'contain' | 'none';
 
 export interface PptxZipLimits {
@@ -80,6 +82,8 @@ export interface PptxViewerOptions extends PptxWorkerFactoryOptions {
   onRenderComplete?: () => void;
   onWarning?: (warning: unknown) => void;
   onError?: (error: unknown) => void;
+  presentationLabels?: PptxPresentationLabels;
+  onPresentationChange?: (state: PptxPresentationState) => void;
 }
 
 export interface PptxWorkerMessage {
