@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/pptx",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": false,
   "type": "module",
   "description": "Native PPTX renderer extracted from File Viewer",
@@ -68,6 +68,7 @@
     "billboard.js": "^3.17.2",
     "d3-format": "^3.1.2",
     "dingbat-to-unicode": "^1.0.1",
+    "dompurify": "^3.4.13",
     "jszip": "^3.10.1",
     "tinycolor2": "^1.6.0",
     "utif": "^3.1.0"

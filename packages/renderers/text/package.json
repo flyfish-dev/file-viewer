@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-text",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": false,
   "type": "module",
   "description": "Standalone code, text, Markdown, patch diff, and Git bundle renderer plugin for File Viewer.",
@@ -61,11 +61,12 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.8",
+    "@file-viewer/core": "workspace:2.2.9",
     "diff2html": "^3.4.56",
+    "dompurify": "^3.4.13",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
-    "mermaid": "^11.15.0",
+    "mermaid": "^11.16.1",
     "pako": "^2.1.0"
   },
   "devDependencies": {
