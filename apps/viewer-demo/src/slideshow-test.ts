@@ -20,6 +20,7 @@ interface SlideshowTestApi {
   focusExitButton: (name: ViewerName) => void
   destroy: (name: ViewerName) => void
   unmountRenderer: (name: RendererName) => void
+  renderFailure: () => Promise<{ rejected: boolean; childCount: number }>
   exitFullscreen: () => Promise<void>
   fullscreenElementClass: () => string
 }
@@ -195,6 +196,18 @@ const init = async () => {
         destroyRenderedInstance(instance)
       }
       renderers.delete(name)
+    },
+    renderFailure: async () => {
+      const target = document.getElementById('renderer-failure') as HTMLDivElement
+      let rejected = false
+      try {
+        await renderFileViewerPresentation(buffer, target, 'pptx', {
+          options: { presentation: { workerUrl: '/missing-pptx-worker.js' } },
+        })
+      } catch {
+        rejected = true
+      }
+      return { rejected, childCount: target.childElementCount }
     },
     exitFullscreen: () => document.exitFullscreen(),
     fullscreenElementClass: () => {

@@ -114,6 +114,8 @@ console.log('1) deck rendered, slideshow button visible')
 const slotCount = await page.locator('.flyfish-pptx-slide-slot').count()
 assert.ok(slotCount > 1, `expected several slides, got ${slotCount}`)
 
+// Shortcuts are scoped to a viewer the user has explicitly activated.
+await deep('.pptx-render-surface').click({ position: { x: 8, y: 8 } })
 await page.keyboard.press('F5')
 await deep('.flyfish-pptx-presentation').waitFor({ state: 'visible', timeout: 10_000 })
 console.log('2) F5 opened the slideshow overlay')
@@ -236,11 +238,26 @@ await waitOverlay(0, 5_000)
 await page.setViewportSize({ width: 1280, height: 800 })
 console.log('11) active slide keeps its content after a resize')
 
-// 12) two renderer instances on one page: one P opens exactly one overlay, and
-//     with two overlays open only the focused one advances.
+// 12) Host controls never activate a viewer shortcut. Once a viewer is
+//     explicitly activated, one P opens exactly one overlay; with two overlays
+//     open only the focused one advances.
+await page.click('#unrelated-host-action')
+await page.evaluate(() => {
+  window.__hostShortcutPrevented = null
+  document.addEventListener('keydown', event => {
+    if (event.key === 'p' || event.key === 'P') {
+      window.__hostShortcutPrevented = event.defaultPrevented
+    }
+  }, { once: true })
+})
+await page.keyboard.press('KeyP')
+await page.waitForTimeout(250)
+assert.equal(await call('overlayCount'), 0, 'P on an unrelated host control must not open a slideshow')
+assert.equal(await page.evaluate(() => window.__hostShortcutPrevented), false, 'host P key must not be prevented')
+await page.click('#renderer-b')
 await page.keyboard.press('KeyP')
 await waitOverlay(1)
-console.log('12) two instances: one P opens exactly one overlay')
+console.log('12) host shortcut isolation and two-instance arbitration work')
 await page.keyboard.press('KeyP')
 await waitOverlay(0, 5_000)
 await page.click('#renderer-a')
@@ -316,6 +333,41 @@ const afterTransform = await call('transform', 'default')
 assert.equal(afterScroll, beforeScroll, `scroll position should be restored, got ${afterScroll} expected ${beforeScroll}`)
 assert.equal(afterTransform, beforeTransform, `transform should be restored, got "${afterTransform}" expected "${beforeTransform}"`)
 console.log('16) scroll position and transform restored exactly')
+
+// 17) A renderer that rejects during worker startup returns no instance, so it
+//     must remove its document listener and shell before propagating the error.
+await page.evaluate(() => {
+  const added = []
+  const removed = []
+  const originalAdd = document.addEventListener.bind(document)
+  const originalRemove = document.removeEventListener.bind(document)
+  window.__failedRendererListenerProbe = { added, removed, originalAdd, originalRemove }
+  document.addEventListener = (type, listener, options) => {
+    if (type === 'keydown') added.push(listener)
+    return originalAdd(type, listener, options)
+  }
+  document.removeEventListener = (type, listener, options) => {
+    if (type === 'keydown') removed.push(listener)
+    return originalRemove(type, listener, options)
+  }
+})
+const failure = await call('renderFailure')
+const failureListeners = await page.evaluate(() => {
+  const probe = window.__failedRendererListenerProbe
+  document.addEventListener = probe.originalAdd
+  document.removeEventListener = probe.originalRemove
+  return {
+    added: probe.added.length,
+    removed: probe.removed.length,
+    leaked: probe.added.filter(listener => !probe.removed.includes(listener)).length,
+  }
+})
+assert.equal(failure.rejected, true, 'invalid worker startup should reject')
+assert.equal(failure.childCount, 0, 'failed renderer shell should be removed')
+assert.equal(failureListeners.added, 1, 'failed renderer should install one keydown listener')
+assert.equal(failureListeners.removed, 1, 'failed renderer should remove its keydown listener')
+assert.equal(failureListeners.leaked, 0, 'failed renderer must not leak a keydown listener')
+console.log('17) failed renderer startup cleans its shell and document listener')
 
 await call('unmountRenderer', 'rendererB')
 

@@ -70,10 +70,9 @@ const pptxPrintStyle = `
 const SLIDESHOW_HOTKEY_LABEL = 'F5 / P';
 
 // With several viewers on one page each renderer installs a document-level
-// F5/P listener. A single module-level arbiter makes the last-mounted (or
-// last-focused) shell the only one that answers, so one keypress opens exactly
-// one slideshow instead of one per viewer.
-let activePptxShell: HTMLElement | null = null;
+// F5/P listener. Keep one explicitly activated shell per document so shortcuts
+// never leak across viewers, host controls, or iframe documents.
+const activePptxShells = new WeakMap<Document, HTMLElement>();
 
 const createStyle = (documentRef: Document) => {
   const style = documentRef.createElement('style');
@@ -426,13 +425,31 @@ export default async function renderPptx(
   shell.append(loading, error, slideshowButton, surface);
   target.replaceChildren(style, shell);
 
-  // The last-mounted shell owns the shortcut until the user focuses another one.
+  // A viewer owns the shortcut only after the user interacts with it. Moving
+  // focus or the pointer back to the host page releases that ownership.
   const activateShell = () => {
-    activePptxShell = shell;
+    activePptxShells.set(documentRef, shell);
   };
-  activePptxShell = shell;
+  const deactivateShell = (event: Event) => {
+    if (viewer?.presenting || activePptxShells.get(documentRef) !== shell) {
+      return;
+    }
+    if (event.composedPath().includes(shell)) {
+      return;
+    }
+    const targetElement = event.target as HTMLElement | null;
+    if (
+      event.type === 'focusin' &&
+      !targetElement?.matches('button, a, input, textarea, select, [contenteditable], [tabindex]')
+    ) {
+      return;
+    }
+    activePptxShells.delete(documentRef);
+  };
   shell.addEventListener('pointerdown', activateShell);
   shell.addEventListener('focusin', activateShell);
+  documentRef.addEventListener('pointerdown', deactivateShell);
+  documentRef.addEventListener('focusin', deactivateShell);
 
   // F5 mirrors PowerPoint; P is the keyboard-only toggle for browsers where F5 is spoken for.
   // Typing in a field must never start a slideshow, so editable targets are skipped.
@@ -456,7 +473,7 @@ export default async function renderPptx(
     }
     // Only the focused/last-activated shell answers, and a key pressed inside
     // another shell belongs to that shell.
-    if (activePptxShell && activePptxShell !== shell) {
+    if (activePptxShells.get(documentRef) !== shell) {
       return;
     }
     const targetElement = event.target as HTMLElement | null;
@@ -613,8 +630,11 @@ export default async function renderPptx(
           exit: t('presentation.slideshow.exit'),
           hint: t('presentation.slideshow.hint'),
         },
-        onPresentationChange: () => {
+        onPresentationChange: state => {
           if (!disposed) {
+            if (state.active) {
+              activePptxShells.set(documentRef, shell);
+            }
             syncUi();
           }
         },
@@ -675,24 +695,36 @@ export default async function renderPptx(
     }
   };
 
-  await openPresentation();
+  const cleanup = () => {
+    if (disposed) {
+      return;
+    }
+    disposed = true;
+    documentRef.removeEventListener('keydown', handleShortcut);
+    documentRef.removeEventListener('pointerdown', deactivateShell);
+    documentRef.removeEventListener('focusin', deactivateShell);
+    shell.removeEventListener('pointerdown', activateShell);
+    shell.removeEventListener('focusin', activateShell);
+    if (activePptxShells.get(documentRef) === shell) {
+      activePptxShells.delete(documentRef);
+    }
+    context?.registerExportAdapter?.(null);
+    context?.registerThumbnailAdapter?.(null);
+    unregisterFileViewerZoomProvider(shell);
+    viewer?.destroy();
+    viewer = null;
+    target.replaceChildren();
+  };
+
+  try {
+    await openPresentation();
+  } catch (error) {
+    cleanup();
+    throw error;
+  }
 
   return {
     $el: shell,
-    unmount() {
-      disposed = true;
-      documentRef.removeEventListener('keydown', handleShortcut);
-      shell.removeEventListener('pointerdown', activateShell);
-      shell.removeEventListener('focusin', activateShell);
-      if (activePptxShell === shell) {
-        activePptxShell = null;
-      }
-      context?.registerExportAdapter?.(null);
-      context?.registerThumbnailAdapter?.(null);
-      unregisterFileViewerZoomProvider(shell);
-      viewer?.destroy();
-      viewer = null;
-      target.replaceChildren();
-    },
+    unmount: cleanup,
   };
 }

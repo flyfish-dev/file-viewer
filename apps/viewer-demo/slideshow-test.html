@@ -45,6 +45,7 @@
     <p class="note">Driven by <code>verify-pptx-slideshow.mjs</code>. Exposes <code>window.__slideshowTest</code>.</p>
 
     <div class="controls">
+      <button id="unrelated-host-action" type="button">Unrelated host action</button>
       <button id="enter-shadow" type="button">Enter shadow (fullscreen)</button>
       <button id="enter-default" type="button">Enter default</button>
       <button id="enter-windowed" type="button">Enter windowed</button>
@@ -74,6 +75,8 @@
       <h2>renderer B (renderPptx)</h2>
       <div id="renderer-b"></div>
     </section>
+
+    <div id="renderer-failure"></div>
 
     <script type="module" src="/src/slideshow-test.ts"></script>
   </body>
