@@ -130,7 +130,7 @@ const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '2.2.8'
+const currentReleaseVersion = '2.2.9'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
 const githubSponsorsUrl = 'https://github.com/sponsors/wybaby168'
 const domesticSponsorUrl = 'https://dev.flyfish.group/sponsor?source=github'
@@ -172,7 +172,7 @@ const siteMetadata = {
       'File Viewer by Flyfish 是浏览器原生、离线优先的多格式预览组件：208 个扩展名通过 25 条独立预览链路按需加载，54 个 npm 目标覆盖主流前端生态。',
     ogLocale: 'zh_CN',
     ogLocaleAlternate: 'en_US',
-    imageAlt: 'File Viewer v2.2.8 浏览器原生 DOCX 预览工作区'
+    imageAlt: 'File Viewer v2.2.9 浏览器原生 DOCX 预览工作区'
   },
   en: {
     lang: 'en',
@@ -182,7 +182,7 @@ const siteMetadata = {
       'File Viewer by Flyfish is a browser-native, offline-first preview component. It routes 208 extensions through 25 lazy preview pipelines and ships 54 npm targets for the main frontend stacks.',
     ogLocale: 'en_US',
     ogLocaleAlternate: 'zh_CN',
-    imageAlt: 'File Viewer v2.2.8 browser-native DOCX preview workspace'
+    imageAlt: 'File Viewer v2.2.9 browser-native DOCX preview workspace'
   }
 } satisfies Record<Locale, SiteMetadata>
 
@@ -339,7 +339,7 @@ const copy = {
       demo: '在线体验'
     },
     hero: {
-      eyebrow: 'v2.2.8 · 208 个扩展名 · 无需转码服务器',
+      eyebrow: 'v2.2.9 · 208 个扩展名 · 无需转码服务器',
       title: '文件预览，全部在浏览器完成。',
       subtitle:
         '为了预览一份内部 DOCX 就把它上传到服务器，糟透了。File Viewer 让 Office、PDF、CAD、压缩包、邮件等文件留在浏览器里，并且可以完整离线部署。',
@@ -370,7 +370,7 @@ const copy = {
     commercialCta: '了解商业授权',
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
-    releaseTitle: 'v2.2.8 已发布：PDF 缩放保持阅读位置，旧版 DOC 的 HTML 文档流可安全恢复。',
+    releaseTitle: 'v2.2.9 安全补丁：PPTX 与 Markdown 不受信任内容在进入 DOM 前统一净化。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -385,7 +385,7 @@ const copy = {
       demo: 'Live Demo'
     },
     hero: {
-      eyebrow: 'v2.2.8 · 208 extensions · no conversion server',
+      eyebrow: 'v2.2.9 · 208 extensions · no conversion server',
       title: 'Preview files entirely in the browser.',
       subtitle:
         'Uploading a private DOCX just to preview it is awful. File Viewer keeps Office, PDF, CAD, archives, email, and more in the browser, with every runtime asset ready for self-hosting.',
@@ -423,7 +423,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v2.2.8 keeps the PDF reading position while zooming and safely recovers HTML-backed legacy DOC files.',
+      'v2.2.9 sanitizes untrusted PPTX and Markdown content before it reaches the DOM.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -670,7 +670,7 @@ const quickStartItems = computed<QuickStartItem[]>(() => [
   {
     label: isZh.value ? 'Vanilla JS Full' : 'Vanilla JS Full',
     packageName: '@file-viewer/web-full',
-    install: 'npm install @file-viewer/web-full@2.2.8',
+    install: 'npm install @file-viewer/web-full@2.2.9',
     title: isZh.value
       ? '完整部署 dist，零 copy 直接预览'
       : 'Deploy the complete dist with zero copy steps',
@@ -2254,8 +2254,8 @@ onBeforeUnmount(() => {
                   :src="demoPreviewDesktopPath"
                   :alt="
                     isZh
-                      ? 'File Viewer v2.2.8 沉浸式 DOCX 预览界面'
-                      : 'File Viewer v2.2.8 immersive DOCX preview UI'
+                      ? 'File Viewer v2.2.9 沉浸式 DOCX 预览界面'
+                      : 'File Viewer v2.2.9 immersive DOCX preview UI'
                   "
                   width="1600"
                   height="900"

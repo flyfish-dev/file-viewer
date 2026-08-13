@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-3d",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": false,
   "type": "module",
   "description": "Standalone 3D model renderer plugin for File Viewer powered by Three.js loaders and OrbitControls.",
@@ -61,8 +61,8 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.8",
-    "@file-viewer/geometry-engine": "workspace:2.2.8",
+    "@file-viewer/core": "workspace:2.2.9",
+    "@file-viewer/geometry-engine": "workspace:2.2.9",
     "three": "^0.184.0"
   },
   "devDependencies": {

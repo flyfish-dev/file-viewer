@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": false,
   "type": "module",
   "description": "Compatibility alias package for File Viewer Vue 2.7",
@@ -60,7 +60,7 @@
     "vue": ">=2.7 <3"
   },
   "dependencies": {
-    "@file-viewer/vue2.7": "workspace:2.2.8"
+    "@file-viewer/vue2.7": "workspace:2.2.9"
   },
   "license": "Apache-2.0"
 }

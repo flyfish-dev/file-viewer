@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If File Viewer helps your work, cite the repository and release you tested."
 title: "File Viewer by Flyfish"
 type: software
-version: 2.2.8
-date-released: 2026-08-11
+version: 2.2.9
+date-released: 2026-08-13
 repository-code: "https://github.com/flyfish-dev/file-viewer"
 url: "https://file-viewer.app/"
 license: Apache-2.0

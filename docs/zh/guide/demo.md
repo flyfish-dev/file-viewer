@@ -8,7 +8,7 @@
 
 <p class="doc-lead">
   一个好用的 Demo，不只是“给别人看看”，也是团队内部确认能力边界、联调文件样本和复现问题的最快入口。
-  v2.2.8 的能力矩阵包含 208 个扩展名映射和 25 条预览链路；Demo 为每条链路提供可重复验证的代表样例，适合在本地开发、依赖升级和上线前做完整回归。
+  v2.2.9 的能力矩阵包含 208 个扩展名映射和 25 条预览链路；Demo 为每条链路提供可重复验证的代表样例，适合在本地开发、依赖升级和上线前做完整回归。
 </p>
 
 ## 四个验证入口
@@ -35,12 +35,12 @@
 Demo 默认跟随浏览器语言。中文浏览器进入中文样例体系，其他语言进入英文样例体系；推荐用 `?locale=zh-CN` 或 `?locale=en-US` 固定语言，历史 `lang` 参数继续兼容。英文体系包含公开英文 DOCX、PDF、PPTX、XLSX 样例，以及本地英文 Markdown、文本、日志、CSV、JSON、TypeScript、JavaScript、GeoJSON、glTF 和压缩包嵌套样例，运行时不依赖公网 CDN。
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.6-formats-zh.gif" alt="Flyfish Viewer v2.2.8 中文主 Demo，展示 DOCX、PPTX、DWG、可交互三维 STEP 与文件胶囊融合" width="1200" height="750" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-formats-zh.gif" alt="Flyfish Viewer v2.2.9 中文主 Demo，展示 DOCX、PPTX、DWG、可交互三维 STEP 与文件胶囊融合" width="1200" height="750" loading="lazy" />
   <p class="doc-caption">动图依次停留在中文 DOCX、NASA PPTX、Autodesk DWG 平面图和可旋转的 STEP 实体，并保留真实的样例库与文件胶囊融合交互。</p>
 </div>
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="Flyfish Viewer v2.2.8 中文深色样例选择器，按格式分组展示专业文件图标" width="1440" height="900" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="Flyfish Viewer v2.2.9 中文深色样例选择器，按格式分组展示专业文件图标" width="1440" height="900" loading="lazy" />
   <p class="doc-caption">样例选择器在当前文件附近打开，默认展开当前分组；不同文件类型使用一致的文档轮廓与专属色彩，暗色模式不会对整张图标粗暴套用滤镜。</p>
 </div>
 

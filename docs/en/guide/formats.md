@@ -8,7 +8,7 @@
 </p>
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="Flyfish Viewer v2.2.8 English format sample library with grouped filenames and format-specific icons" width="1440" height="900" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="Flyfish Viewer v2.2.9 English format sample library with grouped filenames and format-specific icons" width="1440" height="900" loading="lazy" />
   <p class="doc-caption">The demo groups representative samples for all 25 preview pipelines. The active group opens by default, and each item carries its real filename, format label, and theme-aware file icon.</p>
 </div>
 

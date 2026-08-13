@@ -8,7 +8,7 @@
 </p>
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="Flyfish Viewer v2.2.8 中文格式样例库，展示分组、文件名与格式专属图标" width="1440" height="900" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="Flyfish Viewer v2.2.9 中文格式样例库，展示分组、文件名与格式专属图标" width="1440" height="900" loading="lazy" />
   <p class="doc-caption">Demo 把 25 条预览链路的代表样例按类型分组；当前文件所在分组默认展开，每个条目展示真实文件名、格式标签和主题协调的专属图标。</p>
 </div>
 
@@ -171,7 +171,7 @@
 
 ### 电子书
 
-- EPUB 链路已拆为 `@file-viewer/renderer-epub` 独立包。v2.2.8 将阅读引擎构建为确定性的包内 vendor 资产，连同依赖许可 NOTICE 一起分发；只有命中 `.epub` 时才加载，不需要公网脚本，也不会把旧版 XML 解析依赖带进业务生产依赖树。
+- EPUB 链路已拆为 `@file-viewer/renderer-epub` 独立包。v2.2.9 将阅读引擎构建为确定性的包内 vendor 资产，连同依赖许可 NOTICE 一起分发；只有命中 `.epub` 时才加载，不需要公网脚本，也不会把旧版 XML 解析依赖带进业务生产依赖树。
 - EPUB 预览提供目录窗格、上一章/下一章式导航和阅读进度。正文区域使用滚动文档模式，避免部分浏览器在超宽分页布局下出现白板。为了安全，阅读器不会允许书内脚本执行。
 - `umd` 是早期移动阅读器常见的电子书封装。当前没有可靠维护的前端 UMD 阅读库，组件按公开文件结构解析文件头、元数据、章节偏移、章节标题和正文数据块，正文 zlib 解压交给 `pako`。
 - UMD 文本正文按 UTF-16LE 解码，保留章节目录和换行；图片/漫画类 UMD 会尽量按图像数据块展示，但复杂混排文件建议用真实样本补充回归。

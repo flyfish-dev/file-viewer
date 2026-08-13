@@ -1,6 +1,6 @@
 {
   "name": "file-viewer-copy-assets",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": false,
   "type": "module",
   "description": "Official npx CLI for copying File Viewer Worker, WASM, font, and vendor assets into self-hosted web projects.",
