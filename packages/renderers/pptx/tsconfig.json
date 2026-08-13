@@ -24,6 +24,7 @@
     "src/styles.ts",
     "src/chart.ts",
     "src/worker.ts",
-    "src/viewer.ts"
+    "src/viewer.ts",
+    "src/presentation.ts"
   ]
 }

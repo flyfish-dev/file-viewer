@@ -19,6 +19,8 @@
       "@/*": ["./src/*"],
       "@file-viewer/core": ["../../packages/core/src/index.ts"],
       "@file-viewer/core/browser": ["../../packages/core/src/browser.ts"],
+      "@file-viewer/pptx": ["../../packages/renderers/pptx/src/index.ts"],
+      "@file-viewer/renderer-presentation": ["../../packages/renderers/presentation/src/index.ts"],
       "@file-viewer/vue3": ["../../packages/components/vue3/src/package/index.ts"],
       "@file-viewer/web": ["../../packages/components/web/src/index.ts"],
       "@flyfish-group/file-viewer3": ["../../packages/components/vue3/src/package/index.ts"]

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPTX slideshow test harness</title>
+    <style>
+      html, body { margin: 0; }
+      body {
+        font: 14px/1.5 system-ui, sans-serif;
+        background: #eef3f8;
+        color: #1f2d3b;
+        /* The deck must be scrollable so the scroll-restoration path is exercised. */
+        overflow-y: auto;
+        padding: 24px;
+      }
+      h1 { font-size: 18px; margin: 0 0 8px; }
+      p.note { color: #607282; margin: 0 0 20px; }
+      .viewer {
+        box-sizing: border-box;
+        min-height: 320px;
+        margin: 0 0 24px;
+        padding: 12px;
+        border: 1px solid rgba(42, 94, 144, .18);
+        border-radius: 10px;
+        background: #fff;
+      }
+      .viewer > h2 { font-size: 13px; margin: 0 0 8px; color: #41556b; }
+      .viewer > div { min-height: 240px; }
+      .controls { margin: 0 0 20px; }
+      .controls button {
+        margin: 0 8px 8px 0;
+        padding: 6px 12px;
+        border: 1px solid rgba(42, 94, 144, .3);
+        border-radius: 8px;
+        background: #fff;
+        color: #2a5e90;
+        cursor: pointer;
+      }
+      .controls button:hover { background: #f0f6fc; }
+    </style>
+  </head>
+  <body>
+    <h1>PPTX slideshow test harness</h1>
+    <p class="note">Driven by <code>verify-pptx-slideshow.mjs</code>. Exposes <code>window.__slideshowTest</code>.</p>
+
+    <div class="controls">
+      <button id="unrelated-host-action" type="button">Unrelated host action</button>
+      <button id="enter-shadow" type="button">Enter shadow (fullscreen)</button>
+      <button id="enter-default" type="button">Enter default</button>
+      <button id="enter-windowed" type="button">Enter windowed</button>
+    </div>
+
+    <section class="viewer">
+      <h2>default (non-windowed API)</h2>
+      <div id="viewer-default"></div>
+    </section>
+
+    <section class="viewer">
+      <h2>windowed (lazySlides)</h2>
+      <div id="viewer-windowed"></div>
+    </section>
+
+    <section class="viewer">
+      <h2>shadow root (non-windowed)</h2>
+      <div id="viewer-shadow-host"></div>
+    </section>
+
+    <section class="viewer">
+      <h2>renderer A (renderPptx)</h2>
+      <div id="renderer-a"></div>
+    </section>
+
+    <section class="viewer">
+      <h2>renderer B (renderPptx)</h2>
+      <div id="renderer-b"></div>
+    </section>
+
+    <div id="renderer-failure"></div>
+
+    <script type="module" src="/src/slideshow-test.ts"></script>
+  </body>
+</html>
