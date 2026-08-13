@@ -1,7 +1,8 @@
 import { renderPptxPostProcessing } from './chart';
 import type { PptxPostProcessingHandle } from './chart';
 import { resolvePptxEngineOptions, RECOMMENDED_ZIP_LIMITS } from './options';
-import { ensurePptxViewerStyles, scopePptxContentStyleText } from './styles';
+import { sanitizePptxCss, sanitizePptxMarkup } from './sanitize';
+import { ensurePptxViewerStyles } from './styles';
 import type { PptxDiagnosticError, PptxSlideSize, PptxViewerOptions, PptxWorkerMessage } from './types';
 import { createPptxWorker } from './worker';
 
@@ -65,10 +66,9 @@ const ensureZipWithinLimits = (buffer: ArrayBuffer, options: PptxViewerOptions) 
 };
 
 const appendHtml = (container: HTMLElement, html: string) => {
-  const template = container.ownerDocument.createElement('template');
-  template.innerHTML = html;
-  const nodes = Array.from(template.content.children);
-  container.append(template.content);
+  const fragment = sanitizePptxMarkup(container.ownerDocument, html);
+  const nodes = Array.from(fragment.children);
+  container.append(fragment);
   return nodes[0] || null;
 };
 
@@ -363,12 +363,13 @@ export class PptxViewer {
   }
 
   private appendGlobalCss(css: string) {
-    if (!css) {
+    const sanitized = sanitizePptxCss(this.target.ownerDocument, css);
+    if (!sanitized) {
       return;
     }
 
     const style = this.target.ownerDocument.createElement('style');
-    style.textContent = scopePptxContentStyleText(css);
+    style.textContent = sanitized;
     this.content.append(style);
   }
 
