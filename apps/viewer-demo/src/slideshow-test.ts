@@ -12,6 +12,7 @@ interface SlideshowTestApi {
   presenting: (name: ViewerName) => boolean
   activeNumber: (name: ViewerName) => number
   activeSlideHasContent: (name: ViewerName) => boolean
+  presentationIsVisible: (name: ViewerName) => boolean
   counter: (name: ViewerName) => string
   transform: (name: ViewerName) => string
   overlayCount: () => number
@@ -176,6 +177,39 @@ const init = async () => {
         ? active.firstElementChild
         : active
       return Boolean(slide && slide.classList.contains('slide') && slide.textContent?.trim())
+    },
+    presentationIsVisible: name => {
+      const overlay = overlayFor(name) as HTMLElement | null
+      const viewer = viewers.get(name)
+      if (!overlay || !viewer) {
+        return false
+      }
+      const containers = Array.from(
+        viewer.content.querySelectorAll<HTMLElement>(':scope > .flyfish-pptx-slide-slot, :scope > .slide')
+      )
+      const active = containers.find(container => container.classList.contains('is-active-slide'))
+      const slide = active?.classList.contains('flyfish-pptx-slide-slot')
+        ? active.firstElementChild as HTMLElement | null
+        : active
+      if (!slide) {
+        return false
+      }
+      const root = overlay.getRootNode()
+      const hasViewerStyles = root instanceof ShadowRoot
+        ? Boolean(root.querySelector('#flyfish-pptx-native-style'))
+        : Boolean(document.getElementById('flyfish-pptx-native-style'))
+      const overlayRect = overlay.getBoundingClientRect()
+      const slideRect = slide.getBoundingClientRect()
+      const slideStyle = getComputedStyle(slide)
+      const intersectsOverlay = slideRect.right > overlayRect.left &&
+        slideRect.left < overlayRect.right &&
+        slideRect.bottom > overlayRect.top &&
+        slideRect.top < overlayRect.bottom
+      return hasViewerStyles &&
+        slideStyle.display !== 'none' &&
+        slideRect.width > 0 &&
+        slideRect.height > 0 &&
+        intersectsOverlay
     },
     counter: name => overlayFor(name)?.querySelector('.flyfish-pptx-presentation-counter')?.textContent ?? '',
     transform: name => viewers.get(name)?.content.style.transform ?? '',

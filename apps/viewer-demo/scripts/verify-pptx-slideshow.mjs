@@ -287,9 +287,15 @@ await page.waitForFunction(
   { timeout: 5_000 }
 )
 assert.equal(await call('overlayCount'), 1, 'shadow viewer should be presenting')
+await page.waitForFunction(
+  () => window.__slideshowTest.presentationIsVisible('shadow'),
+  null,
+  { timeout: 5_000 }
+)
+assert.equal(await call('presentationIsVisible', 'shadow'), true, 'shadow viewer should show its active slide')
 await call('exitFullscreen')
 await waitOverlay(0, 5_000)
-console.log('13) shadow-root native fullscreen exit closes the overlay')
+console.log('13) shadow-root fullscreen shows the slide and browser exit closes the overlay')
 
 // 14) Enter/Space on the focused exit button activates it, not the slide.
 await call('enter', 'default')

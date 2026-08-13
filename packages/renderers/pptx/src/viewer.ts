@@ -238,19 +238,27 @@ export class PptxViewer {
     return this.presentation?.slideNumber ?? 1;
   }
 
+  private get styleRoot(): Document | ShadowRoot {
+    if (this.options.styleRoot) {
+      return this.options.styleRoot;
+    }
+    const documentRef = this.target.ownerDocument || document;
+    const root = this.target.getRootNode();
+    const ShadowRootCtor = documentRef.defaultView?.ShadowRoot;
+    return ShadowRootCtor && root instanceof ShadowRootCtor
+      ? root as ShadowRoot
+      : documentRef;
+  }
+
   /**
    * Where the slideshow overlay is mounted. It has to share a root with the injected slide styles,
    * or the engine's scoped CSS stops applying once the slides move into the overlay.
    */
   get presentationRoot(): ShadowRoot | HTMLElement {
     const documentRef = this.target.ownerDocument || document;
-    if (this.options.styleRoot) {
-      return this.options.styleRoot;
-    }
-    const root = this.target.getRootNode();
-    const ShadowRootCtor = documentRef.defaultView?.ShadowRoot;
-    if (ShadowRootCtor && root instanceof ShadowRootCtor) {
-      return root as ShadowRoot;
+    const styleRoot = this.styleRoot;
+    if (styleRoot !== documentRef) {
+      return styleRoot as ShadowRoot;
     }
     return documentRef.body || documentRef.documentElement;
   }
@@ -325,7 +333,7 @@ export class PptxViewer {
 
   async open() {
     ensureZipWithinLimits(this.buffer, this.options);
-    ensurePptxViewerStyles(this.target.ownerDocument || document, this.options.styleRoot);
+    ensurePptxViewerStyles(this.target.ownerDocument || document, this.styleRoot);
     this.target.replaceChildren(this.scaleBox);
     this.attachResizeObserver();
     this.attachSlideWindowListeners();
