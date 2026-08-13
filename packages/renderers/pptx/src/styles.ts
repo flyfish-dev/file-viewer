@@ -70,6 +70,8 @@ ${scopePptxContentStyleText(legacyPptxCss)}
 .flyfish-pptx-presentation .flyfish-pptx-thumbnail{display:none}
 .flyfish-pptx-content.is-presenting > .flyfish-pptx-slide-slot{display:none;min-height:0}
 .flyfish-pptx-content.is-presenting > .flyfish-pptx-slide-slot.is-active-slide{display:flow-root}
+.flyfish-pptx-content.is-presenting > .slide{display:none}
+.flyfish-pptx-content.is-presenting > .slide.is-active-slide{display:block}
 .flyfish-pptx-content.is-presenting .slide{margin:0!important;box-shadow:none}
 .flyfish-pptx-presentation-counter{position:absolute;right:18px;bottom:14px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font:13px/1.4 system-ui,sans-serif;letter-spacing:.02em;pointer-events:none}
 .flyfish-pptx-presentation-hint{position:absolute;left:18px;bottom:14px;color:rgba(255,255,255,.55);font:12px/1.4 system-ui,sans-serif;pointer-events:none}
@@ -77,7 +79,7 @@ ${scopePptxContentStyleText(legacyPptxCss)}
 .flyfish-pptx-presentation-exit{position:absolute;top:14px;right:14px;width:34px;height:34px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font-size:15px;line-height:1;cursor:pointer}
 .flyfish-pptx-presentation-exit:hover{background:rgba(255,255,255,.26)}
 .flyfish-pptx-presentation-exit:focus-visible{outline:2px solid #fff;outline-offset:2px}
-@media (prefers-reduced-motion:no-preference){.flyfish-pptx-content.is-presenting > .flyfish-pptx-slide-slot.is-active-slide{animation:flyfish-pptx-slide-in 140ms ease-out}}
+@media (prefers-reduced-motion:no-preference){.flyfish-pptx-content.is-presenting > .flyfish-pptx-slide-slot.is-active-slide,.flyfish-pptx-content.is-presenting > .slide.is-active-slide{animation:flyfish-pptx-slide-in 140ms ease-out}}
 @keyframes flyfish-pptx-slide-in{from{opacity:.35}to{opacity:1}}
 `;
 

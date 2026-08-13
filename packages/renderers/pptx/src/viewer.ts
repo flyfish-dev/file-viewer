@@ -176,6 +176,13 @@ export class PptxViewer {
   private previewThumbnailDataUrl: string | null = null;
   private slideSize: PptxSlideSize | null = null;
   private slideRecords: WindowedSlideRecord[] = [];
+  // Total slides received from the worker. The windowed path mirrors this in
+  // slideRecords, but the default (non-windowed) path appends slides straight
+  // into the content node without creating records, so the deck size has to be
+  // counted independently of the virtualization bookkeeping.
+  private totalSlides = 0;
+  private savedScroll: { top: number; left: number } | null = null;
+  private pendingScrollRestore: { top: number; left: number } | null = null;
   private slideWindowTarget: HTMLElement | Window | null = null;
   private slideWindowListeners: Array<{ target: EventTarget; type: string; listener: EventListener }> = [];
   private slideWindowFrame = 0;
@@ -212,7 +219,7 @@ export class PptxViewer {
   }
 
   get slideCount() {
-    return this.slideRecords.length;
+    return this.totalSlides;
   }
 
   get slideDimensions() {
@@ -264,15 +271,43 @@ export class PptxViewer {
     this.scheduleResize();
   }
 
+  /**
+   * Remember where the deck was scrolled before the slideshow moves the scale
+   * box into the overlay. Moving it collapses the scroller and clamps scrollTop
+   * to zero, so the position has to be captured up front and restored on exit.
+   */
+  saveScrollPosition() {
+    const view = this.target.ownerDocument.defaultView || window;
+    const HTMLElementCtor = view.HTMLElement;
+    const scroller = this.slideWindowTarget || this.findSlideWindowTarget();
+    if (scroller instanceof HTMLElementCtor) {
+      this.savedScroll = { top: scroller.scrollTop, left: scroller.scrollLeft };
+    } else {
+      this.savedScroll = { top: view.scrollY, left: view.scrollX };
+    }
+  }
+
+  restoreScrollPosition() {
+    if (this.savedScroll) {
+      this.pendingScrollRestore = this.savedScroll;
+      this.savedScroll = null;
+    }
+    this.scheduleResize();
+  }
+
   emitPresentationChange(state: PptxPresentationState) {
     this.options.onPresentationChange?.(state);
   }
 
   async enterPresentation(slideNumber?: number) {
-    if (this.disposed || this.slideRecords.length === 0) {
+    if (this.disposed || this.totalSlides === 0) {
       return;
     }
-    this.presentation ||= new PptxPresentation(this, this.options.presentationLabels);
+    this.presentation ||= new PptxPresentation(
+      this,
+      this.options.presentationLabels,
+      this.options.presentationFullscreen
+    );
     await this.presentation.enter(slideNumber);
   }
 
@@ -333,6 +368,7 @@ export class PptxViewer {
     this.previewThumbnailDataUrl = null;
     this.slideSize = null;
     this.slideRecords = [];
+    this.totalSlides = 0;
     this.content.replaceChildren();
     this.content.dataset.renderState = 'loading';
     try {
@@ -380,6 +416,7 @@ export class PptxViewer {
     switch (message.type) {
       case 'slide': {
         this.clearThumbnail();
+        this.totalSlides += 1;
         if (this.shouldWindowSlides()) {
           this.appendWindowedSlide(String(message.data || ''), Number(message.slide_num || 0));
         } else {
@@ -398,6 +435,7 @@ export class PptxViewer {
         const error = message.data;
         const html = buildSlideErrorHtml(slideNumber, error);
         this.clearThumbnail();
+        this.totalSlides += 1;
         if (this.shouldWindowSlides()) {
           this.appendWindowedSlide(html, slideNumber);
         } else {
@@ -639,6 +677,23 @@ export class PptxViewer {
 
     const windowOptions = this.getSlideWindowOptions();
     const indexesToRender = this.getWindowedSlideIndexes(windowOptions);
+
+    // While presenting, the active slide and its neighbour live inside the fixed
+    // overlay, outside the scroll-view geometry the windowing code measures. Keep
+    // them mounted so a resize cannot unmount the slide that is on screen.
+    const presentation = this.presentation;
+    if (presentation?.active) {
+      const activeIndex = this.slideRecords.findIndex(
+        record => record.slideNumber === presentation.slideNumber
+      );
+      if (activeIndex >= 0) {
+        indexesToRender.add(activeIndex);
+        if (activeIndex + 1 < this.slideRecords.length) {
+          indexesToRender.add(activeIndex + 1);
+        }
+      }
+    }
+
     let changed = false;
 
     this.slideRecords.forEach((record, index) => {
@@ -1067,6 +1122,22 @@ export class PptxViewer {
     this.scaleBox.style.width = `${Math.ceil(slideWidth * effectiveScale)}px`;
     this.scaleBox.style.height = `${Math.ceil(this.content.scrollHeight * effectiveScale)}px`;
     this.scaleBox.style.minHeight = '';
+
+    // The scale box height is recomputed above; only now can the saved scroll
+    // position be applied without the scroller clamping it back to zero.
+    if (this.pendingScrollRestore) {
+      const { top, left } = this.pendingScrollRestore;
+      this.pendingScrollRestore = null;
+      const view = this.target.ownerDocument.defaultView || window;
+      const HTMLElementCtor = view.HTMLElement;
+      const scroller = this.slideWindowTarget || this.findSlideWindowTarget();
+      if (scroller instanceof HTMLElementCtor) {
+        scroller.scrollTop = top;
+        scroller.scrollLeft = left;
+      } else {
+        view.scrollTo(left, top);
+      }
+    }
   }
 
   private getMountedSlideElements() {

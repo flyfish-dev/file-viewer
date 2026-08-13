@@ -83,6 +83,7 @@ export interface PptxViewerOptions extends PptxWorkerFactoryOptions {
   onWarning?: (warning: unknown) => void;
   onError?: (error: unknown) => void;
   presentationLabels?: PptxPresentationLabels;
+  presentationFullscreen?: boolean;
   onPresentationChange?: (state: PptxPresentationState) => void;
 }
 

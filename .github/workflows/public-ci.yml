@@ -64,3 +64,6 @@ jobs:
 
       - name: Browser smoke
         run: pnpm verify:browser-smoke
+
+      - name: Verify PPTX slideshow
+        run: pnpm verify:pptx-slideshow

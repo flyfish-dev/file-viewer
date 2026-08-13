@@ -69,6 +69,12 @@ const pptxPrintStyle = `
 
 const SLIDESHOW_HOTKEY_LABEL = 'F5 / P';
 
+// With several viewers on one page each renderer installs a document-level
+// F5/P listener. A single module-level arbiter makes the last-mounted (or
+// last-focused) shell the only one that answers, so one keypress opens exactly
+// one slideshow instead of one per viewer.
+let activePptxShell: HTMLElement | null = null;
+
 const createStyle = (documentRef: Document) => {
   const style = documentRef.createElement('style');
   style.textContent = pptxStyle;
@@ -420,6 +426,14 @@ export default async function renderPptx(
   shell.append(loading, error, slideshowButton, surface);
   target.replaceChildren(style, shell);
 
+  // The last-mounted shell owns the shortcut until the user focuses another one.
+  const activateShell = () => {
+    activePptxShell = shell;
+  };
+  activePptxShell = shell;
+  shell.addEventListener('pointerdown', activateShell);
+  shell.addEventListener('focusin', activateShell);
+
   // F5 mirrors PowerPoint; P is the keyboard-only toggle for browsers where F5 is spoken for.
   // Typing in a field must never start a slideshow, so editable targets are skipped.
   const isEditableTarget = (node: EventTarget | null) => {
@@ -439,6 +453,18 @@ export default async function renderPptx(
     }
     if (!shell.isConnected || isEditableTarget(event.target)) {
       return;
+    }
+    // Only the focused/last-activated shell answers, and a key pressed inside
+    // another shell belongs to that shell.
+    if (activePptxShell && activePptxShell !== shell) {
+      return;
+    }
+    const targetElement = event.target as HTMLElement | null;
+    if (targetElement && typeof targetElement.closest === 'function') {
+      const targetShell = targetElement.closest('.pptx-viewer-shell');
+      if (targetShell && targetShell !== shell) {
+        return;
+      }
     }
     event.preventDefault();
     void viewer.togglePresentation();
@@ -656,6 +682,11 @@ export default async function renderPptx(
     unmount() {
       disposed = true;
       documentRef.removeEventListener('keydown', handleShortcut);
+      shell.removeEventListener('pointerdown', activateShell);
+      shell.removeEventListener('focusin', activateShell);
+      if (activePptxShell === shell) {
+        activePptxShell = null;
+      }
       context?.registerExportAdapter?.(null);
       context?.registerThumbnailAdapter?.(null);
       unregisterFileViewerZoomProvider(shell);

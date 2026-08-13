@@ -1,29 +1,110 @@
 import { chromium } from 'playwright'
 import assert from 'node:assert/strict'
+import { createServer } from 'node:http'
+import { readFile } from 'node:fs/promises'
+import { extname, join, normalize, sep } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const BASE = process.env.BASE || 'http://127.0.0.1:8081'
+// Self-host the built demo so the script needs no external server and can run
+// in CI. Build first: `pnpm build`, then `pnpm verify:pptx-slideshow`.
+const DIST = fileURLToPath(new URL('../dist', import.meta.url))
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript',
+  '.mjs': 'text/javascript',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json',
+  '.wasm': 'application/wasm',
+  '.otf': 'font/otf',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.txt': 'text/plain; charset=utf-8',
+  '.xml': 'application/xml',
+  '.mp3': 'audio/mpeg',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.pdf': 'application/pdf',
+  '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  '.zip': 'application/zip',
+  '.gz': 'application/gzip',
+  '.log': 'text/plain; charset=utf-8',
+  '.kt': 'text/plain; charset=utf-8',
+  '.md': 'text/plain; charset=utf-8',
+  '.mermaid': 'text/plain; charset=utf-8',
+  '.epub': 'application/epub+zip',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  '.eml': 'message/rfc822',
+  '.msg': 'application/vnd.ms-outlook',
+  '.dwg': 'application/acad',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.bmp': 'image/bmp',
+  '.tif': 'image/tiff',
+  '.tiff': 'image/tiff',
+  '.csv': 'text/csv; charset=utf-8',
+  '.yaml': 'text/plain; charset=utf-8',
+  '.yml': 'text/plain; charset=utf-8',
+  '.toml': 'text/plain; charset=utf-8',
+  '.py': 'text/plain; charset=utf-8',
+  '.jsx': 'text/javascript',
+  '.ts': 'text/plain; charset=utf-8',
+  '.tsx': 'text/plain; charset=utf-8',
+  '.sql': 'text/plain; charset=utf-8',
+  '.map': 'application/json',
+}
+
+const server = createServer(async (req, res) => {
+  try {
+    const url = new URL(req.url, 'http://localhost')
+    let pathname = decodeURIComponent(url.pathname)
+    if (pathname === '/') {
+      pathname = '/index.html'
+    }
+    let filePath = join(DIST, normalize(pathname))
+    if (!extname(pathname)) {
+      filePath = join(DIST, `${pathname}.html`)
+    }
+    if (!filePath.startsWith(DIST + sep)) {
+      res.writeHead(403)
+      res.end('forbidden')
+      return
+    }
+    let body
+    try {
+      body = await readFile(filePath)
+    } catch {
+      // SPA fallback: unknown routes render the app shell.
+      body = await readFile(join(DIST, 'index.html'))
+    }
+    res.writeHead(200, {
+      'Content-Type': MIME[extname(filePath)] || 'application/octet-stream',
+      'Cache-Control': 'no-store',
+    })
+    res.end(body)
+  } catch (error) {
+    res.writeHead(500)
+    res.end(String(error))
+  }
+})
+
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+const { port } = server.address()
+const BASE = `http://127.0.0.1:${port}`
+
 const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
 const errors = []
 page.on('pageerror', e => errors.push(String(e)))
 
-// The demo picks files through an input; point it straight at the bundled sample instead.
-await page.goto(`${BASE}/?url=${encodeURIComponent("/example/ppt.pptx")}`, { waitUntil: 'load' })
-
-const deep = (sel) => page.locator(sel).first()
-
-// Slides render inside the viewer's shadow root; Playwright pierces it automatically.
-await deep('.flyfish-pptx-slide-slot').waitFor({ state: 'attached', timeout: 60_000 })
-await deep('.pptx-slideshow-button').waitFor({ state: 'visible', timeout: 60_000 })
-console.log('1) deck rendered, slideshow button visible')
-
-const slotCount = await page.locator('.flyfish-pptx-slide-slot').count()
-assert.ok(slotCount > 1, `expected several slides, got ${slotCount}`)
-
-// Enter via the keyboard shortcut, which is the path the feature request named.
-await page.keyboard.press('F5')
-await deep('.flyfish-pptx-presentation').waitFor({ state: 'visible', timeout: 10_000 })
-console.log('2) F5 opened the slideshow overlay')
+const deep = sel => page.locator(sel).first()
 
 // The viewer renders inside a shadow root, so plain document.querySelector misses everything.
 const DEEP = `
@@ -54,6 +135,22 @@ const readState = () => page.evaluate(`(() => {
   }
 })()`)
 
+// ---------------------------------------------------------------------------
+// Part 1: the demo app (renderer wrapper integration)
+// ---------------------------------------------------------------------------
+await page.goto(`${BASE}/?url=${encodeURIComponent('/example/ppt.pptx')}`, { waitUntil: 'load' })
+
+await deep('.flyfish-pptx-slide-slot').waitFor({ state: 'attached', timeout: 60_000 })
+await deep('.pptx-slideshow-button').waitFor({ state: 'visible', timeout: 60_000 })
+console.log('1) deck rendered, slideshow button visible')
+
+const slotCount = await page.locator('.flyfish-pptx-slide-slot').count()
+assert.ok(slotCount > 1, `expected several slides, got ${slotCount}`)
+
+await page.keyboard.press('F5')
+await deep('.flyfish-pptx-presentation').waitFor({ state: 'visible', timeout: 10_000 })
+console.log('2) F5 opened the slideshow overlay')
+
 let state = await readState()
 assert.equal(state.presenting, true, 'content should carry is-presenting')
 assert.equal(state.visibleSlides, 1, `exactly one slide should be visible, got ${state.visibleSlides}`)
@@ -75,12 +172,10 @@ state = await readState()
 assert.equal(state.activeNumber, '1', `ArrowLeft should go back, active=${state.activeNumber}`)
 console.log('5) ArrowLeft went back to slide 1')
 
-// Click on the right side advances, PowerPoint-style.
 await page.mouse.click(1000, 400)
 await page.waitForTimeout(250)
 state = await readState()
 assert.equal(state.activeNumber, '2', `right-side click should advance, active=${state.activeNumber}`)
-// Click on the left edge goes back.
 await page.mouse.click(60, 400)
 await page.waitForTimeout(250)
 state = await readState()
@@ -113,7 +208,6 @@ assert.equal(restored.backInSurface, true, 'the scale box should return to the r
 assert.ok(restored.visible > 1, `all slides should be visible again, got ${restored.visible}`)
 console.log(`8) Escape restored the scroll view (${restored.visible} slides visible again)`)
 
-// Re-entering must work after a full round trip.
 await page.keyboard.press('KeyP')
 await deep('.flyfish-pptx-presentation').waitFor({ state: 'visible', timeout: 10_000 })
 state = await readState()
@@ -122,6 +216,129 @@ console.log(`9) P re-entered the slideshow (${state.counter})`)
 await page.keyboard.press('Escape')
 await page.waitForTimeout(300)
 
+// ---------------------------------------------------------------------------
+// Part 2: API-level harness (default/non-windowed, resize, two instances,
+// shadow fullscreen, focusable controls, unmount cleanup, scroll/transform)
+// ---------------------------------------------------------------------------
+await page.goto(`${BASE}/slideshow-test.html`, { waitUntil: 'load' })
+await page.waitForFunction(
+  () => document.documentElement.dataset.slideshowTestReady === 'true',
+  null,
+  { timeout: 60_000 }
+)
+
+const call = (method, ...args) => page.evaluate(
+  ({ method, args }) => window.__slideshowTest[method](...args),
+  { method, args }
+)
+const waitOverlay = (count, timeout = 10_000) => page.waitForFunction(
+  expected => window.__slideshowTest.overlayCount() === expected,
+  count,
+  { timeout }
+)
+
+// 10) default/non-windowed API: slideCount counts the deck, enter works, and
+//     the active slide is a real rendered slide, not an empty slot marker.
+const defaultCount = await call('slideCount', 'default')
+assert.equal(defaultCount, 20, `default viewer should count 20 slides, got ${defaultCount}`)
+await call('enter', 'default')
+await waitOverlay(1)
+assert.equal(await call('activeNumber', 'default'), 1, 'default viewer should start on slide 1')
+assert.equal(await call('activeSlideHasContent', 'default'), true, 'active slide should have content')
+assert.match(await call('counter', 'default'), /^1 \/ 20$/, 'counter should read 1 / 20')
+await page.keyboard.press('ArrowRight')
+await page.waitForTimeout(250)
+assert.equal(await call('activeNumber', 'default'), 2, 'non-windowed deck should navigate')
+assert.equal(await call('activeSlideHasContent', 'default'), true, 'slide 2 should have content')
+await call('exit', 'default')
+await waitOverlay(0, 5_000)
+console.log('10) default/non-windowed API: slideCount, enter, navigate, content, exit')
+
+// 11) virtualization must not unmount the active slide during a presentation.
+await call('enter', 'windowed', 20)
+await waitOverlay(1)
+assert.equal(await call('activeNumber', 'windowed'), 20, 'windowed viewer should jump to slide 20')
+assert.equal(await call('activeSlideHasContent', 'windowed'), true, 'slide 20 should be rendered')
+await page.setViewportSize({ width: 1000, height: 700 })
+await page.waitForTimeout(400)
+assert.equal(await call('activeNumber', 'windowed'), 20, 'active slide should survive a resize')
+assert.equal(await call('activeSlideHasContent', 'windowed'), true, 'active slide should keep content after a resize')
+await call('exit', 'windowed')
+await waitOverlay(0, 5_000)
+await page.setViewportSize({ width: 1280, height: 800 })
+console.log('11) active slide keeps its content after a resize')
+
+// 12) two renderer instances on one page: one P opens exactly one overlay.
+await page.keyboard.press('KeyP')
+await waitOverlay(1)
+console.log('12) two instances: one P opens exactly one overlay')
+await page.keyboard.press('KeyP')
+await waitOverlay(0, 5_000)
+await page.click('#renderer-a')
+await page.keyboard.press('KeyP')
+await waitOverlay(1)
+await page.keyboard.press('KeyP')
+await waitOverlay(0, 5_000)
+
+// 13) native fullscreen inside a shadow root: the browser's own exit closes the
+//     overlay instead of leaving a fixed layer behind.
+await page.click('#enter-shadow')
+await page.waitForFunction(
+  () => Boolean(window.__slideshowTest.fullscreenElementClass()),
+  null,
+  { timeout: 5_000 }
+)
+assert.equal(await call('overlayCount'), 1, 'shadow viewer should be presenting')
+await call('exitFullscreen')
+await waitOverlay(0, 5_000)
+console.log('13) shadow-root native fullscreen exit closes the overlay')
+
+// 14) Enter/Space on the focused exit button activates it, not the slide.
+await call('enter', 'default')
+await waitOverlay(1)
+await call('focusExitButton', 'default')
+await page.keyboard.press('Enter')
+await waitOverlay(0, 5_000)
+await call('enter', 'default')
+await waitOverlay(1)
+await call('focusExitButton', 'default')
+await page.keyboard.press('Space')
+await waitOverlay(0, 5_000)
+console.log('14) Enter/Space on the exit button exits instead of advancing')
+
+// 15) unmount/destroy while presenting cleans the overlay up.
+await call('enter', 'windowed')
+await waitOverlay(1)
+await call('destroy', 'windowed')
+await waitOverlay(0, 5_000)
+await page.click('#renderer-a')
+await page.keyboard.press('KeyP')
+await waitOverlay(1)
+await call('unmountRenderer', 'rendererA')
+await waitOverlay(0, 5_000)
+console.log('15) destroy/unmount while presenting removes the overlay')
+
+// 16) exiting from a scrolled deck restores the exact scroll position and the
+//     original scale transform.
+await call('scrollTo', 600)
+await page.waitForTimeout(100)
+const beforeScroll = await call('scrollTop')
+const beforeTransform = await call('transform', 'default')
+assert.ok(beforeScroll >= 600, `expected the page to scroll to ~600, got ${beforeScroll}`)
+await call('enter', 'default')
+await waitOverlay(1)
+await call('exit', 'default')
+await waitOverlay(0, 5_000)
+await page.waitForTimeout(300)
+const afterScroll = await call('scrollTop')
+const afterTransform = await call('transform', 'default')
+assert.equal(afterScroll, beforeScroll, `scroll position should be restored, got ${afterScroll} expected ${beforeScroll}`)
+assert.equal(afterTransform, beforeTransform, `transform should be restored, got "${afterTransform}" expected "${beforeTransform}"`)
+console.log('16) scroll position and transform restored exactly')
+
+await call('unmountRenderer', 'rendererB')
+
 assert.deepEqual(errors, [], `page errors: ${errors.join(' | ')}`)
 console.log('\nall slideshow checks passed')
 await browser.close()
+server.close()

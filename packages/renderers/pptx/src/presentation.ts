@@ -26,6 +26,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 export class PptxPresentation {
   private readonly viewer: PptxViewer;
   private readonly labels: PptxPresentationLabels;
+  private readonly fullscreen: boolean;
   private overlay: HTMLDivElement | null = null;
   private stage: HTMLDivElement | null = null;
   private counter: HTMLDivElement | null = null;
@@ -35,9 +36,10 @@ export class PptxPresentation {
   private ownsFullscreen = false;
   private current = 1;
 
-  constructor(viewer: PptxViewer, labels: PptxPresentationLabels = {}) {
+  constructor(viewer: PptxViewer, labels: PptxPresentationLabels = {}, fullscreen = true) {
     this.viewer = viewer;
     this.labels = labels;
+    this.fullscreen = fullscreen;
   }
 
   get active() {
@@ -97,6 +99,7 @@ export class PptxPresentation {
 
     // Park a comment where the scale box lived so exit() can restore the exact position.
     this.placeholder = documentRef.createComment('flyfish-pptx-presentation');
+    this.viewer.saveScrollPosition();
     this.viewer.scaleBox.replaceWith(this.placeholder);
     stage.appendChild(this.viewer.scaleBox);
     this.viewer.content.classList.add('is-presenting');
@@ -104,13 +107,15 @@ export class PptxPresentation {
     this.attach(documentRef, overlay);
     this.goTo(slideNumber);
 
-    try {
-      await overlay.requestFullscreen?.();
-      this.ownsFullscreen = Boolean(documentRef.fullscreenElement === overlay);
-    } catch {
-      // Fullscreen needs a user gesture and can be blocked by permissions policy. The overlay is
-      // position:fixed, so the slideshow still fills the viewport without it.
-      this.ownsFullscreen = false;
+    if (this.fullscreen) {
+      try {
+        await overlay.requestFullscreen?.();
+        this.ownsFullscreen = this.isFullscreenElement(overlay);
+      } catch {
+        // Fullscreen needs a user gesture and can be blocked by permissions policy. The overlay is
+        // position:fixed, so the slideshow still fills the viewport without it.
+        this.ownsFullscreen = false;
+      }
     }
 
     overlay.focus({ preventScroll: true });
@@ -125,6 +130,9 @@ export class PptxPresentation {
     }
 
     const documentRef = this.viewer.target.ownerDocument || document;
+    // Capture before the overlay leaves the DOM: a detached node's getRootNode()
+    // is the document, so the fullscreen check would fail after removal.
+    const shouldExitFullscreen = this.ownsFullscreen && this.isFullscreenElement(overlay);
     this.detach();
 
     if (this.layoutFrame) {
@@ -133,8 +141,8 @@ export class PptxPresentation {
     }
 
     this.viewer.content.classList.remove('is-presenting');
-    for (const slot of this.slots()) {
-      slot.classList.remove('is-active-slide');
+    for (const container of this.slideContainers()) {
+      container.classList.remove('is-active-slide');
     }
 
     if (this.placeholder?.parentNode) {
@@ -149,12 +157,12 @@ export class PptxPresentation {
     this.stage = null;
     this.counter = null;
 
-    if (this.ownsFullscreen && documentRef.fullscreenElement) {
+    if (shouldExitFullscreen) {
       void documentRef.exitFullscreen?.().catch(() => undefined);
     }
     this.ownsFullscreen = false;
 
-    this.viewer.refreshLayout();
+    this.viewer.restoreScrollPosition();
     this.notify();
   }
 
@@ -177,10 +185,16 @@ export class PptxPresentation {
     // Rendering the neighbour keeps the next step instant without defeating virtualization.
     this.viewer.ensureSlideRendered(this.current + 1);
 
-    for (const slot of this.slots()) {
-      const isActive = Number(slot.dataset.slideNumber) === this.current;
-      slot.classList.toggle('is-active-slide', isActive);
-    }
+    const containers = this.slideContainers();
+    // Windowed decks tag each slot with its slide number; non-windowed decks
+    // append slides in order, so the active one is found by index.
+    const byNumber = containers.some(container => Boolean(container.dataset.slideNumber));
+    containers.forEach((container, index) => {
+      const isActive = byNumber
+        ? Number(container.dataset.slideNumber) === this.current
+        : index === this.current - 1;
+      container.classList.toggle('is-active-slide', isActive);
+    });
 
     if (this.counter) {
       this.counter.textContent = `${this.current} / ${total}`;
@@ -211,8 +225,13 @@ export class PptxPresentation {
       return;
     }
 
-    const slot = this.slots().find(item => Number(item.dataset.slideNumber) === this.current);
-    const slide = slot?.firstElementChild as HTMLElement | null;
+    const container = this.slideContainers().find((item, index) => {
+      if (item.dataset.slideNumber) {
+        return Number(item.dataset.slideNumber) === this.current;
+      }
+      return index === this.current - 1;
+    });
+    const slide = (container?.firstElementChild || container) as HTMLElement | null;
     const size = this.viewer.slideDimensions;
     const slideWidth = slide?.offsetWidth || size?.width || 0;
     const slideHeight = slide?.offsetHeight || size?.height || 0;
@@ -244,6 +263,38 @@ export class PptxPresentation {
     return Array.from(
       this.viewer.content.querySelectorAll<HTMLElement>(':scope > .flyfish-pptx-slide-slot')
     );
+  }
+
+  /**
+   * The nodes the slideshow toggles between. Windowed decks wrap each slide in a
+   * slot; the default (non-windowed) deck appends slides directly to the content
+   * node, so those are the containers there.
+   */
+  private slideContainers() {
+    const slots = this.slots();
+    if (slots.length > 0) {
+      return slots;
+    }
+    return Array.from(
+      this.viewer.content.querySelectorAll<HTMLElement>(':scope > .slide')
+    );
+  }
+
+  /**
+   * Chromium reports the fullscreen element of a shadow root on the shadow root
+   * itself while document.fullscreenElement stays on the host, so both have to
+   * be checked before deciding who owns fullscreen.
+   */
+  private isFullscreenElement(overlay: HTMLElement) {
+    const documentRef = this.viewer.target.ownerDocument || document;
+    if (documentRef.fullscreenElement === overlay) {
+      return true;
+    }
+    const root = overlay.getRootNode();
+    if (root !== documentRef && 'fullscreenElement' in root) {
+      return (root as ShadowRoot).fullscreenElement === overlay;
+    }
+    return false;
   }
 
   private scheduleLayout() {
@@ -279,7 +330,7 @@ export class PptxPresentation {
     this.on(documentRef, 'fullscreenchange', () => {
       // Leaving fullscreen with the browser's own Esc must close the slideshow too, otherwise the
       // overlay would stay up as a plain fixed layer.
-      if (this.ownsFullscreen && !documentRef.fullscreenElement) {
+      if (this.ownsFullscreen && !this.isFullscreenElement(overlay)) {
         this.ownsFullscreen = false;
         this.exit();
       }
@@ -310,6 +361,17 @@ export class PptxPresentation {
 
   private handleKey(event: KeyboardEvent) {
     if (!this.active || event.altKey || event.metaKey || event.ctrlKey) {
+      return;
+    }
+
+    // Enter/Space on a focused control (the exit button) must activate that
+    // control, not advance the slide. Let the browser's default run instead.
+    const target = event.target as HTMLElement | null;
+    if (
+      target &&
+      typeof target.closest === 'function' &&
+      target.closest('button, a, input, textarea, select, [contenteditable="true"], [contenteditable=""]')
+    ) {
       return;
     }
 
