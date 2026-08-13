@@ -62,5 +62,8 @@ jobs:
       - name: Verify Vue 3 toolbar in Chromium
         run: pnpm verify:vue3-toolbar-browser
 
+      - name: Verify untrusted renderer markup sanitization
+        run: pnpm verify:renderer-sanitization
+
       - name: Browser smoke
         run: pnpm verify:browser-smoke
