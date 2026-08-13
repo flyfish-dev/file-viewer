@@ -25,40 +25,7 @@ const MIME = {
   '.ico': 'image/x-icon',
   '.txt': 'text/plain; charset=utf-8',
   '.xml': 'application/xml',
-  '.mp3': 'audio/mpeg',
-  '.mp4': 'video/mp4',
-  '.webm': 'video/webm',
-  '.pdf': 'application/pdf',
   '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  '.zip': 'application/zip',
-  '.gz': 'application/gzip',
-  '.log': 'text/plain; charset=utf-8',
-  '.kt': 'text/plain; charset=utf-8',
-  '.md': 'text/plain; charset=utf-8',
-  '.mermaid': 'text/plain; charset=utf-8',
-  '.epub': 'application/epub+zip',
-  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  '.eml': 'message/rfc822',
-  '.msg': 'application/vnd.ms-outlook',
-  '.dwg': 'application/acad',
-  '.webp': 'image/webp',
-  '.gif': 'image/gif',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.bmp': 'image/bmp',
-  '.tif': 'image/tiff',
-  '.tiff': 'image/tiff',
-  '.csv': 'text/csv; charset=utf-8',
-  '.yaml': 'text/plain; charset=utf-8',
-  '.yml': 'text/plain; charset=utf-8',
-  '.toml': 'text/plain; charset=utf-8',
-  '.py': 'text/plain; charset=utf-8',
-  '.jsx': 'text/javascript',
-  '.ts': 'text/plain; charset=utf-8',
-  '.tsx': 'text/plain; charset=utf-8',
-  '.sql': 'text/plain; charset=utf-8',
-  '.map': 'application/json',
 }
 
 const server = createServer(async (req, res) => {
@@ -246,6 +213,7 @@ await waitOverlay(1)
 assert.equal(await call('activeNumber', 'default'), 1, 'default viewer should start on slide 1')
 assert.equal(await call('activeSlideHasContent', 'default'), true, 'active slide should have content')
 assert.match(await call('counter', 'default'), /^1 \/ 20$/, 'counter should read 1 / 20')
+assert.match(await call('transform', 'default'), /scale\(/, 'non-windowed slide should be scaled to fit')
 await page.keyboard.press('ArrowRight')
 await page.waitForTimeout(250)
 assert.equal(await call('activeNumber', 'default'), 2, 'non-windowed deck should navigate')
@@ -268,7 +236,8 @@ await waitOverlay(0, 5_000)
 await page.setViewportSize({ width: 1280, height: 800 })
 console.log('11) active slide keeps its content after a resize')
 
-// 12) two renderer instances on one page: one P opens exactly one overlay.
+// 12) two renderer instances on one page: one P opens exactly one overlay, and
+//     with two overlays open only the focused one advances.
 await page.keyboard.press('KeyP')
 await waitOverlay(1)
 console.log('12) two instances: one P opens exactly one overlay')
@@ -278,6 +247,18 @@ await page.click('#renderer-a')
 await page.keyboard.press('KeyP')
 await waitOverlay(1)
 await page.keyboard.press('KeyP')
+await waitOverlay(0, 5_000)
+await call('enter', 'default')
+await call('enter', 'windowed', 1)
+await waitOverlay(2)
+const defaultBefore = await call('activeNumber', 'default')
+const focusedBefore = await call('activeNumber', 'windowed')
+await page.keyboard.press('ArrowRight')
+await page.waitForTimeout(250)
+assert.equal(await call('activeNumber', 'windowed'), focusedBefore + 1, 'focused overlay should advance')
+assert.equal(await call('activeNumber', 'default'), defaultBefore, 'unfocused overlay should stay put')
+await call('exit', 'default')
+await call('exit', 'windowed')
 await waitOverlay(0, 5_000)
 
 // 13) native fullscreen inside a shadow root: the browser's own exit closes the

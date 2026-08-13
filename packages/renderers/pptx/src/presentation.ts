@@ -118,6 +118,16 @@ export class PptxPresentation {
       }
     }
 
+    // exit() may have run while fullscreen was being requested. Leave the
+    // browser out of fullscreen rather than stranded with no overlay.
+    if (this.overlay !== overlay) {
+      if (this.ownsFullscreen) {
+        void documentRef.exitFullscreen?.().catch(() => undefined);
+      }
+      this.ownsFullscreen = false;
+      return;
+    }
+
     overlay.focus({ preventScroll: true });
     this.scheduleLayout();
     this.notify();
@@ -231,7 +241,10 @@ export class PptxPresentation {
       }
       return index === this.current - 1;
     });
-    const slide = (container?.firstElementChild || container) as HTMLElement | null;
+    // Windowed decks wrap the slide in a slot; non-windowed decks are the slide.
+    const slide = container && container.classList.contains('flyfish-pptx-slide-slot')
+      ? container.firstElementChild as HTMLElement | null
+      : container as HTMLElement | null;
     const size = this.viewer.slideDimensions;
     const slideWidth = slide?.offsetWidth || size?.width || 0;
     const slideHeight = slide?.offsetHeight || size?.height || 0;
@@ -373,6 +386,15 @@ export class PptxPresentation {
       target.closest('button, a, input, textarea, select, [contenteditable="true"], [contenteditable=""]')
     ) {
       return;
+    }
+
+    // With two slideshows open, a key pressed inside the other overlay belongs
+    // to that overlay; only the focused one advances.
+    if (target && typeof target.closest === 'function') {
+      const otherOverlay = target.closest('.flyfish-pptx-presentation');
+      if (otherOverlay && otherOverlay !== this.overlay) {
+        return;
+      }
     }
 
     switch (event.key) {
