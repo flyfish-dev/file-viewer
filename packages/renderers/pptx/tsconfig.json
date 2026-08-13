@@ -20,6 +20,7 @@
     "src/index.ts",
     "src/types.ts",
     "src/options.ts",
+    "src/sanitize.ts",
     "src/styles.ts",
     "src/chart.ts",
     "src/worker.ts",

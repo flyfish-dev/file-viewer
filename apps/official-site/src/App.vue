@@ -19,26 +19,28 @@ import {
   FileText,
   Gem,
   GitBranch,
-  HandCoins,
   HeartHandshake,
   Languages,
   Layers3,
   LockKeyhole,
   Mail,
   Menu,
+  MessageCircle,
   Moon,
   MonitorPlay,
+  Newspaper,
   PackageCheck,
   PanelTop,
-  QrCode,
   Radar,
   Rocket,
   SearchCheck,
+  Send,
   ShieldCheck,
   ShoppingCart,
   Sparkles,
   Star,
   Sun,
+  Users,
   Wrench,
   X,
   Zap
@@ -46,6 +48,8 @@ import {
 
 type Locale = 'zh' | 'en'
 type SiteTheme = 'light' | 'dark'
+type SupportDialogView = 'sponsor' | 'contact'
+type ChineseContactId = 'service' | 'updates' | 'community'
 type HighlightLanguage = 'bash' | 'javascript' | 'typescript' | 'xml'
 type HeroPreviewId = 'word' | 'cad' | 'sheet' | 'slide'
 type HeroPreviewPhase = 'idle' | 'entering' | 'active' | 'leaving'
@@ -88,10 +92,8 @@ type QrItem = {
   image: string
 }
 
-type SupportOption = {
-  label: string
-  note: string
-  href: string
+type ChineseContactItem = QrItem & {
+  id: ChineseContactId
   icon: Component
 }
 
@@ -128,13 +130,12 @@ const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '2.2.8'
+const currentReleaseVersion = '2.2.9'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
 const githubSponsorsUrl = 'https://github.com/sponsors/wybaby168'
 const domesticSponsorUrl = 'https://dev.flyfish.group/sponsor?source=github'
-const prioritySupportUrl = 'https://dev.flyfish.group/shop'
-const studioUrl = 'https://flyfish.dev/'
-const commercialUrl = 'https://product.flyfish.group/'
+const whatsappContactUrl = 'https://wa.me/qr/DY3NG2HEGJFGL1'
+const telegramContactUrl = 'https://t.me/wybaby168'
 const siteRootUrl = 'https://file-viewer.app/'
 const siteEnglishUrl = `${siteRootUrl}en/`
 const demoPreviewDesktopPaths = {
@@ -171,7 +172,7 @@ const siteMetadata = {
       'File Viewer by Flyfish 是浏览器原生、离线优先的多格式预览组件：208 个扩展名通过 25 条独立预览链路按需加载，54 个 npm 目标覆盖主流前端生态。',
     ogLocale: 'zh_CN',
     ogLocaleAlternate: 'en_US',
-    imageAlt: 'File Viewer v2.2.8 浏览器原生 DOCX 预览工作区'
+    imageAlt: 'File Viewer v2.2.9 浏览器原生 DOCX 预览工作区'
   },
   en: {
     lang: 'en',
@@ -181,7 +182,7 @@ const siteMetadata = {
       'File Viewer by Flyfish is a browser-native, offline-first preview component. It routes 208 extensions through 25 lazy preview pipelines and ships 54 npm targets for the main frontend stacks.',
     ogLocale: 'en_US',
     ogLocaleAlternate: 'zh_CN',
-    imageAlt: 'File Viewer v2.2.8 browser-native DOCX preview workspace'
+    imageAlt: 'File Viewer v2.2.9 browser-native DOCX preview workspace'
   }
 } satisfies Record<Locale, SiteMetadata>
 
@@ -198,6 +199,10 @@ const flatNav = ref<HTMLElement | null>(null)
 const demoReveal = ref<HTMLElement | null>(null)
 const quickStartSection = ref<HTMLElement | null>(null)
 const quickStartTrack = ref<HTMLElement | null>(null)
+const supportDialogPanel = ref<HTMLElement | null>(null)
+const supportDialogCloseButton = ref<HTMLButtonElement | null>(null)
+const supportDialogSponsorTriggerButton = ref<HTMLButtonElement | null>(null)
+const supportDialogContactTriggerButton = ref<HTMLButtonElement | null>(null)
 const isTopbarPinned = ref(false)
 const activeSectionId = ref<SectionId>('top')
 const navExplorerOpen = ref(false)
@@ -211,6 +216,9 @@ const demoFrameReady = ref(false)
 const quickStartSectionActive = ref(false)
 const activeQuickStartIndex = ref(0)
 const githubStarCount = ref(githubStarCountFallback)
+const supportDialogOpen = ref(false)
+const supportDialogView = ref<SupportDialogView>('sponsor')
+const activeChineseContactId = ref<ChineseContactId>('service')
 const isZh = computed(() => locale.value === 'zh')
 const nextLocaleLabel = computed(() => (isZh.value ? 'EN' : '中文'))
 const nextThemeLabel = computed(() =>
@@ -331,7 +339,7 @@ const copy = {
       demo: '在线体验'
     },
     hero: {
-      eyebrow: 'v2.2.8 · 208 个扩展名 · 无需转码服务器',
+      eyebrow: 'v2.2.9 · 208 个扩展名 · 无需转码服务器',
       title: '文件预览，全部在浏览器完成。',
       subtitle:
         '为了预览一份内部 DOCX 就把它上传到服务器，糟透了。File Viewer 让 Office、PDF、CAD、压缩包、邮件等文件留在浏览器里，并且可以完整离线部署。',
@@ -360,10 +368,9 @@ const copy = {
     commercialIntro:
       '开源 File Viewer 负责浏览器原生、多格式、可离线部署的通用预览；商业版来自 Flyfish Office 自研原生文档引擎，专注 Word、Excel、PowerPoint 的高还原、大文件性能、授权交付和优先支持。两者不是二选一：商业版可以作为可替换的 Office 能力接入现有 File Viewer 组件，获得 file-viewer-pro 体验。',
     commercialCta: '了解商业授权',
-    supportTitle: '支持 File Viewer 持续维护，也为企业需求保留清晰入口。',
-    supportIntro:
-      'GitHub Sponsors 支持一次性或持续赞助，国内用户也可使用微信或支付宝。赞助用于开源维护，不影响开源功能；私有化、定制与明确响应时间请使用企业技术支持入口。',
-    releaseTitle: 'v2.2.8 已发布：PDF 缩放保持阅读位置，旧版 DOC 的 HTML 文档流可安全恢复。',
+    supportTitle: '让开源维护持续下去。',
+    supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
+    releaseTitle: 'v2.2.9 安全补丁：PPTX 与 Markdown 不受信任内容在进入 DOM 前统一净化。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -378,7 +385,7 @@ const copy = {
       demo: 'Live Demo'
     },
     hero: {
-      eyebrow: 'v2.2.8 · 208 extensions · no conversion server',
+      eyebrow: 'v2.2.9 · 208 extensions · no conversion server',
       title: 'Preview files entirely in the browser.',
       subtitle:
         'Uploading a private DOCX just to preview it is awful. File Viewer keeps Office, PDF, CAD, archives, email, and more in the browser, with every runtime asset ready for self-hosting.',
@@ -412,11 +419,11 @@ const copy = {
     commercialIntro:
       'The open-source File Viewer focuses on browser-native, multi-format, offline-ready preview. The commercial edition comes from the Flyfish Office product line and focuses on Word, Excel, and PowerPoint fidelity, large-file performance, licensed delivery, and priority support. They are not mutually exclusive: the commercial engine can replace the Office capability inside the same File Viewer integration to deliver a file-viewer-pro experience.',
     commercialCta: 'Commercial Licensing',
-    supportTitle: 'Support sustainable maintenance, with a clear path for enterprise help.',
+    supportTitle: 'Keep the open-source work moving.',
     supportIntro:
-      'Back the open-source work through GitHub Sponsors, buy us a lemonade in the support shop, or explore the commercial edition when Office fidelity, private delivery, and committed support matter.',
+      'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v2.2.8 keeps the PDF reading position while zooming and safely recovers HTML-backed legacy DOC files.',
+      'v2.2.9 sanitizes untrusted PPTX and Markdown content before it reaches the DOM.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -663,7 +670,7 @@ const quickStartItems = computed<QuickStartItem[]>(() => [
   {
     label: isZh.value ? 'Vanilla JS Full' : 'Vanilla JS Full',
     packageName: '@file-viewer/web-full',
-    install: 'npm install @file-viewer/web-full@2.2.8',
+    install: 'npm install @file-viewer/web-full@2.2.9',
     title: isZh.value
       ? '完整部署 dist，零 copy 直接预览'
       : 'Deploy the complete dist with zero copy steps',
@@ -944,34 +951,48 @@ const activeQuickStart = computed(() => {
   return items[activeQuickStartIndex.value] ?? items[0]!
 })
 
-const qrItems: QrItem[] = [
-  { label: '微信打赏', note: '请我们喝杯柠檬水', image: '/donate-wx.jpg?v=637db1a6' },
-  { label: '支付宝打赏', note: '支持开源持续迭代', image: '/donate-alipay.jpg?v=3b614e81' },
-  { label: '客服微信', note: '优先支持与商业沟通', image: '/contact.jpg' },
-  { label: '公众号', note: '关注更新与实践文章', image: '/wechat-mp.png' },
-  { label: '交流群', note: '加入用户交流群', image: '/invite.webp' }
-]
-
-const englishSupportOptions: SupportOption[] = [
+const donationQrItems: QrItem[] = [
   {
-    label: 'GitHub Sponsors',
-    note: 'Make a one-time or recurring contribution to open-source maintenance.',
-    href: githubSponsorsUrl,
-    icon: HandCoins
+    label: '微信打赏',
+    note: '微信扫码，请维护者喝杯柠檬水',
+    image: '/donate-wx.jpg?v=637db1a6'
   },
   {
-    label: 'Support Shop',
-    note: 'Buy us a lemonade or choose a maintainer support option that fits your team.',
-    href: prioritySupportUrl,
-    icon: ShoppingCart
-  },
-  {
-    label: 'Commercial Edition',
-    note: 'Explore the native Office engine for higher fidelity, private delivery, and enterprise support.',
-    href: `${siteRootUrl}en/commercial/`,
-    icon: Gem
+    label: '支付宝打赏',
+    note: '支付宝扫码，支持开源持续迭代',
+    image: '/donate-alipay.jpg?v=3b614e81'
   }
 ]
+
+const chineseContactItems: ChineseContactItem[] = [
+  {
+    id: 'service',
+    label: '客服微信',
+    note: '商务咨询、商业授权与优先技术支持',
+    image: '/contact.jpg',
+    icon: MessageCircle
+  },
+  {
+    id: 'updates',
+    label: '微信公众号',
+    note: '获取版本更新与文件预览实践文章',
+    image: '/wechat-mp.png',
+    icon: Newspaper
+  },
+  {
+    id: 'community',
+    label: '用户交流群',
+    note: '与开发者和 File Viewer 用户交流',
+    image: '/invite.webp',
+    icon: Users
+  }
+]
+
+const activeChineseContact = computed(
+  () =>
+    chineseContactItems.find((item) => item.id === activeChineseContactId.value) ??
+    chineseContactItems[0]!
+)
 
 const currentCopy = computed(() => copy[locale.value])
 
@@ -1556,8 +1577,65 @@ function scrollToSection(event: MouseEvent, id: SectionId) {
   window.scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
 }
 
+let supportDialogPreviousBodyOverflow = ''
+let supportDialogReturnFocusElement: HTMLButtonElement | null = null
+
+function openSupportDialog(view: SupportDialogView) {
+  if (supportDialogOpen.value) return
+
+  navExplorerOpen.value = false
+  supportDialogView.value = view
+  activeChineseContactId.value = 'service'
+  supportDialogReturnFocusElement =
+    view === 'sponsor'
+      ? supportDialogSponsorTriggerButton.value
+      : supportDialogContactTriggerButton.value
+  supportDialogPreviousBodyOverflow = document.body.style.overflow
+  document.body.style.overflow = 'hidden'
+  supportDialogOpen.value = true
+  void nextTick(() => supportDialogCloseButton.value?.focus())
+}
+
+function closeSupportDialog() {
+  if (!supportDialogOpen.value) return
+
+  supportDialogOpen.value = false
+  document.body.style.overflow = supportDialogPreviousBodyOverflow
+  void nextTick(() => supportDialogReturnFocusElement?.focus())
+}
+
+function handleSupportDialogKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Tab' || !supportDialogOpen.value) return
+
+  const focusableElements = Array.from(
+    supportDialogPanel.value?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ) ?? []
+  ).filter((element) => !element.hasAttribute('disabled'))
+  if (!focusableElements.length) return
+
+  const firstElement = focusableElements[0]!
+  const lastElement = focusableElements[focusableElements.length - 1]!
+  const activeElement = document.activeElement
+
+  if (
+    event.shiftKey &&
+    (activeElement === firstElement || !supportDialogPanel.value?.contains(activeElement))
+  ) {
+    event.preventDefault()
+    lastElement.focus()
+  } else if (!event.shiftKey && activeElement === lastElement) {
+    event.preventDefault()
+    firstElement.focus()
+  }
+}
+
 function handleGlobalKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
+    if (supportDialogOpen.value) {
+      closeSupportDialog()
+      return
+    }
     navExplorerOpen.value = false
   }
 }
@@ -1582,8 +1660,7 @@ function setupSiteRevealMotion() {
     '.trust-rail-heading > *',
     '.trust-flow article',
     '.support-copy > *',
-    '.qr-card',
-    '.support-option-card',
+    '.support-entry',
     '.footer-bottom'
   ]
   const elements = Array.from(
@@ -1723,6 +1800,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  if (supportDialogOpen.value) {
+    document.body.style.overflow = supportDialogPreviousBodyOverflow
+  }
   window.removeEventListener('scroll', requestPageNavStateUpdate)
   window.removeEventListener('resize', requestPageNavStateUpdate)
   window.removeEventListener('keydown', handleGlobalKeydown)
@@ -2174,8 +2254,8 @@ onBeforeUnmount(() => {
                   :src="demoPreviewDesktopPath"
                   :alt="
                     isZh
-                      ? 'File Viewer v2.2.8 沉浸式 DOCX 预览界面'
-                      : 'File Viewer v2.2.8 immersive DOCX preview UI'
+                      ? 'File Viewer v2.2.9 沉浸式 DOCX 预览界面'
+                      : 'File Viewer v2.2.9 immersive DOCX preview UI'
                   "
                   width="1600"
                   height="900"
@@ -2405,60 +2485,34 @@ onBeforeUnmount(() => {
         </div>
         <h2>{{ currentCopy.supportTitle }}</h2>
         <p>{{ currentCopy.supportIntro }}</p>
-        <div v-if="isZh" class="footer-links">
-          <a :href="githubSponsorsUrl" target="_blank" rel="noreferrer">
-            <HandCoins :size="16" />
-            GitHub Sponsors
-          </a>
-          <a :href="domesticSponsorUrl" target="_blank" rel="noreferrer">
-            <QrCode :size="16" />
-            微信 / 支付宝
-          </a>
-          <a :href="prioritySupportUrl" target="_blank" rel="noreferrer">
-            <HeartHandshake :size="16" />
-            企业技术支持
-          </a>
-          <a :href="studioUrl" target="_blank" rel="noreferrer">
-            <Rocket :size="16" />
-            Flyfish Dev
-          </a>
-          <a :href="githubUrl" target="_blank" rel="noreferrer">
-            <GitHubMark />
-            GitHub
-          </a>
-        </div>
       </div>
-      <div v-if="isZh" class="qr-grid">
-        <article
-          v-for="(item, index) in qrItems"
-          :key="item.label"
-          class="qr-card"
-          :class="`support-tone-${index + 1}`"
+      <div class="support-entry">
+        <button
+          ref="supportDialogSponsorTriggerButton"
+          type="button"
+          class="support-trigger"
+          aria-haspopup="dialog"
+          :aria-expanded="supportDialogOpen && supportDialogView === 'sponsor'"
+          aria-controls="support-dialog"
+          @click="openSupportDialog('sponsor')"
         >
-          <div class="qr-image" :class="{ 'is-contact-code': item.image.startsWith('/contact') }">
-            <img :src="item.image" :alt="item.label" loading="lazy" decoding="async" />
-          </div>
-          <strong>{{ item.label }}</strong>
-          <span>{{ item.note }}</span>
-        </article>
-      </div>
-      <div v-else class="support-option-grid" aria-label="Ways to support File Viewer">
-        <a
-          v-for="(item, index) in englishSupportOptions"
-          :key="item.label"
-          class="support-option-card"
-          :class="`support-tone-${index + 1}`"
-          :href="item.href"
-          target="_blank"
-          rel="noreferrer"
+          <HeartHandshake :size="20" aria-hidden="true" />
+          <span>{{ isZh ? '打赏支持' : 'Support the project' }}</span>
+          <ArrowRight :size="18" aria-hidden="true" />
+        </button>
+        <button
+          ref="supportDialogContactTriggerButton"
+          type="button"
+          class="support-trigger is-contact"
+          aria-haspopup="dialog"
+          :aria-expanded="supportDialogOpen && supportDialogView === 'contact'"
+          aria-controls="support-dialog"
+          @click="openSupportDialog('contact')"
         >
-          <span class="support-option-icon"><component :is="item.icon" :size="24" /></span>
-          <span class="support-option-copy">
-            <strong>{{ item.label }}</strong>
-            <span>{{ item.note }}</span>
-          </span>
-          <ArrowRight class="support-option-arrow" :size="20" aria-hidden="true" />
-        </a>
+          <MessageCircle :size="20" aria-hidden="true" />
+          <span>{{ isZh ? '联系我们' : 'Contact us' }}</span>
+          <ArrowRight :size="18" aria-hidden="true" />
+        </button>
       </div>
       <div class="footer-bottom">
         <p>{{ currentCopy.footer }}</p>
@@ -2499,4 +2553,250 @@ onBeforeUnmount(() => {
       </div>
     </footer>
   </main>
+
+  <Teleport to="body">
+    <Transition name="support-dialog">
+      <div
+        v-show="supportDialogOpen"
+        id="support-dialog"
+        class="support-dialog-backdrop"
+        :aria-hidden="!supportDialogOpen"
+        @click.self="closeSupportDialog"
+      >
+        <section
+          ref="supportDialogPanel"
+          class="support-dialog-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="support-dialog-title"
+          aria-describedby="support-dialog-description"
+          @keydown="handleSupportDialogKeydown"
+        >
+          <button
+            ref="supportDialogCloseButton"
+            type="button"
+            class="support-dialog-close"
+            :aria-label="
+              isZh
+                ? supportDialogView === 'sponsor'
+                  ? '关闭打赏弹层'
+                  : '关闭联系弹层'
+                : supportDialogView === 'sponsor'
+                  ? 'Close support dialog'
+                  : 'Close contact dialog'
+            "
+            @click="closeSupportDialog"
+          >
+            <X :size="20" aria-hidden="true" />
+          </button>
+
+          <header class="support-dialog-heading">
+            <span>
+              <MessageCircle v-if="supportDialogView === 'contact'" :size="16" aria-hidden="true" />
+              <HeartHandshake v-else :size="16" aria-hidden="true" />
+              {{
+                supportDialogView === 'contact'
+                  ? isZh
+                    ? '中文联系渠道'
+                    : 'International contact'
+                  : isZh
+                    ? '支持开源维护'
+                    : 'Support open source'
+              }}
+            </span>
+            <h2 id="support-dialog-title">
+              {{
+                supportDialogView === 'contact'
+                  ? isZh
+                    ? '选择最适合你的联系渠道'
+                    : 'Choose a direct contact channel.'
+                  : isZh
+                    ? '选择你方便的支持方式'
+                    : 'Support open-source maintenance.'
+              }}
+            </h2>
+            <p id="support-dialog-description">
+              {{
+                supportDialogView === 'contact'
+                  ? isZh
+                    ? '客服微信用于商务与优先支持；公众号和交流群用于获取更新与社区交流。'
+                    : 'Reach the File Viewer team through WhatsApp or Telegram.'
+                  : isZh
+                    ? '扫描微信或支付宝二维码，也可以使用 GitHub Sponsors 或小铺直链。'
+                    : 'Choose GitHub Sponsors for recurring support, or open the support shop directly.'
+              }}
+            </p>
+          </header>
+
+          <div
+            v-if="isZh && supportDialogView === 'sponsor'"
+            class="support-dialog-sponsor"
+            data-support-locale="zh-CN"
+          >
+            <div class="support-dialog-qr-grid">
+              <article
+                v-for="item in donationQrItems"
+                :key="item.label"
+                class="support-dialog-qr-card"
+              >
+                <div class="support-dialog-qr-image">
+                  <img :src="item.image" :alt="item.label" decoding="async" />
+                </div>
+                <strong>{{ item.label }}</strong>
+                <span>{{ item.note }}</span>
+              </article>
+            </div>
+
+            <div class="support-dialog-actions" aria-label="其他打赏方式">
+              <a
+                class="is-github"
+                :href="githubSponsorsUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHubMark />
+                <span>
+                  <strong>GitHub Sponsors</strong>
+                  <small>一次性或持续赞助</small>
+                </span>
+                <ArrowRight :size="18" aria-hidden="true" />
+              </a>
+              <a :href="domesticSponsorUrl" target="_blank" rel="noopener noreferrer">
+                <ShoppingCart :size="20" aria-hidden="true" />
+                <span>
+                  <strong>小铺打赏</strong>
+                  <small>直达小铺支持页面</small>
+                </span>
+                <ArrowRight :size="18" aria-hidden="true" />
+              </a>
+            </div>
+
+            <p class="support-dialog-note">
+              打赏完全自愿，不影响 File Viewer 的开源功能与使用许可。
+            </p>
+          </div>
+
+          <div
+            v-else-if="isZh && supportDialogView === 'contact'"
+            class="support-dialog-contact-layout"
+            data-support-locale="zh-CN"
+          >
+            <div class="support-contact-list" aria-label="中文联系渠道">
+              <button
+                v-for="item in chineseContactItems"
+                :key="item.id"
+                type="button"
+                :aria-pressed="activeChineseContactId === item.id"
+                :class="{ 'is-active': activeChineseContactId === item.id }"
+                @click="activeChineseContactId = item.id"
+              >
+                <span class="support-contact-list-icon">
+                  <component :is="item.icon" :size="18" aria-hidden="true" />
+                </span>
+                <span>
+                  <strong>{{ item.label }}</strong>
+                  <small>{{ item.note }}</small>
+                </span>
+                <ArrowRight :size="17" aria-hidden="true" />
+              </button>
+            </div>
+
+            <article class="support-contact-preview" aria-live="polite">
+              <div
+                class="support-contact-preview-image"
+                :class="{ 'is-portrait': activeChineseContact.id === 'service' }"
+              >
+                <img
+                  :src="activeChineseContact.image"
+                  :alt="`${activeChineseContact.label}二维码`"
+                  decoding="async"
+                />
+              </div>
+              <strong>{{ activeChineseContact.label }}</strong>
+              <span>{{ activeChineseContact.note }}</span>
+            </article>
+          </div>
+
+          <div
+            v-else-if="supportDialogView === 'sponsor'"
+            class="support-dialog-international is-sponsor-only"
+            data-support-locale="international"
+          >
+            <section aria-labelledby="international-support-title">
+              <h3 id="international-support-title">Support maintenance</h3>
+              <div class="support-dialog-actions" aria-label="International support options">
+                <a
+                  class="is-github"
+                  :href="githubSponsorsUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <GitHubMark />
+                  <span>
+                    <strong>GitHub Sponsors</strong>
+                    <small>One-time or recurring support</small>
+                  </span>
+                  <ArrowRight :size="18" aria-hidden="true" />
+                </a>
+                <a :href="domesticSponsorUrl" target="_blank" rel="noopener noreferrer">
+                  <ShoppingCart :size="20" aria-hidden="true" />
+                  <span>
+                    <strong>Support shop</strong>
+                    <small>Open the direct support page</small>
+                  </span>
+                  <ArrowRight :size="18" aria-hidden="true" />
+                </a>
+              </div>
+            </section>
+
+            <p class="support-dialog-note">
+              Support is optional and does not change the open-source features or license.
+            </p>
+          </div>
+
+          <div
+            v-else
+            class="support-dialog-international is-contact-only"
+            data-support-locale="international"
+          >
+            <section aria-labelledby="international-contact-title">
+              <h3 id="international-contact-title">International contact</h3>
+              <div class="support-international-grid">
+                <a
+                  :href="whatsappContactUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open WhatsApp contact"
+                >
+                  <span class="support-international-icon is-whatsapp">
+                    <MessageCircle :size="20" aria-hidden="true" />
+                  </span>
+                  <span>
+                    <strong>WhatsApp</strong>
+                    <small>Open a direct chat</small>
+                  </span>
+                  <ArrowRight :size="18" aria-hidden="true" />
+                </a>
+                <a
+                  :href="telegramContactUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open Telegram contact"
+                >
+                  <span class="support-international-icon is-telegram">
+                    <Send :size="20" aria-hidden="true" />
+                  </span>
+                  <span>
+                    <strong>Telegram</strong>
+                    <small>@wybaby168</small>
+                  </span>
+                  <ArrowRight :size="18" aria-hidden="true" />
+                </a>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </Transition>
+  </Teleport>
 </template>

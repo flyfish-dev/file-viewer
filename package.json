@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-open-source",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.0.9",
@@ -37,6 +37,7 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "verify:vue3-toolbar-browser": "node apps/component-demo/scripts/verify-vue3-toolbar-browser.mjs",
+    "verify:renderer-sanitization": "pnpm --filter @file-viewer/pptx build && node apps/viewer-demo/scripts/verify-renderer-sanitization.mjs",
     "verify:browser-smoke": "node apps/viewer-demo/scripts/public-smoke.mjs",
     "verify:pptx-slideshow": "node apps/viewer-demo/scripts/verify-pptx-slideshow.mjs"
   },

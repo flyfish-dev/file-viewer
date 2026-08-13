@@ -7,7 +7,7 @@
     "smokeMatrix": "ecosystem/smoke-matrix.json",
     "rendererDefinitions": "packages/core/src/registry/formats.ts"
   },
-  "version": "2.2.8",
+  "version": "2.2.9",
   "releasePolicy": {
     "defaultBlocking": true,
     "nonBlockingChannels": [
@@ -221,9 +221,9 @@
       "id": "core",
       "kind": "core",
       "packageName": "@file-viewer/core",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/core",
-      "tarball": "file-viewer-core-2.2.8.tgz",
+      "tarball": "file-viewer-core-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -241,9 +241,9 @@
       "id": "thumbnail",
       "kind": "utility",
       "packageName": "@file-viewer/thumbnail",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/thumbnail",
-      "tarball": "file-viewer-thumbnail-2.2.8.tgz",
+      "tarball": "file-viewer-thumbnail-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -261,9 +261,9 @@
       "id": "copy-assets-cli",
       "kind": "utility",
       "packageName": "file-viewer-copy-assets",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/tools/copy-assets",
-      "tarball": "file-viewer-copy-assets-2.2.8.tgz",
+      "tarball": "file-viewer-copy-assets-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -281,9 +281,9 @@
       "id": "renderer-pdf",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-pdf",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/pdf",
-      "tarball": "file-viewer-renderer-pdf-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-pdf-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -304,9 +304,9 @@
       "id": "renderer-ofd",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-ofd",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/ofd",
-      "tarball": "file-viewer-renderer-ofd-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-ofd-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -328,9 +328,9 @@
       "id": "renderer-presentation",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-presentation",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/presentation",
-      "tarball": "file-viewer-renderer-presentation-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-presentation-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -351,9 +351,9 @@
       "id": "renderer-doc",
       "kind": "renderer",
       "packageName": "@file-viewer/doc",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/doc",
-      "tarball": "file-viewer-doc-2.2.8.tgz",
+      "tarball": "file-viewer-doc-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -375,9 +375,9 @@
       "id": "renderer-word",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-word",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/word",
-      "tarball": "file-viewer-renderer-word-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-word-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -398,9 +398,9 @@
       "id": "renderer-spreadsheet",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-spreadsheet",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/spreadsheet",
-      "tarball": "file-viewer-renderer-spreadsheet-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-spreadsheet-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -422,9 +422,9 @@
       "id": "renderer-drawing",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-drawing",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/drawing",
-      "tarball": "file-viewer-renderer-drawing-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-drawing-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -445,9 +445,9 @@
       "id": "renderer-model",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-3d",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/3d",
-      "tarball": "file-viewer-renderer-3d-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-3d-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -468,9 +468,9 @@
       "id": "renderer-mindmap",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-mindmap",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/mindmap",
-      "tarball": "file-viewer-renderer-mindmap-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-mindmap-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -491,9 +491,9 @@
       "id": "renderer-cad",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-cad",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/cad",
-      "tarball": "file-viewer-renderer-cad-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-cad-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -514,9 +514,9 @@
       "id": "renderer-typst",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-typst",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/typst",
-      "tarball": "file-viewer-renderer-typst-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-typst-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -537,9 +537,9 @@
       "id": "renderer-archive",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-archive",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/archive",
-      "tarball": "file-viewer-renderer-archive-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-archive-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -560,9 +560,9 @@
       "id": "renderer-email",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-email",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/email",
-      "tarball": "file-viewer-renderer-email-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-email-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -583,9 +583,9 @@
       "id": "renderer-ebook",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-epub",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/ebook",
-      "tarball": "file-viewer-renderer-epub-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-epub-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -606,9 +606,9 @@
       "id": "renderer-text",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-text",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/text",
-      "tarball": "file-viewer-renderer-text-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-text-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -629,9 +629,9 @@
       "id": "renderer-image",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-image",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/image",
-      "tarball": "file-viewer-renderer-image-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-image-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -652,9 +652,9 @@
       "id": "renderer-media",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-media",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/media",
-      "tarball": "file-viewer-renderer-media-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-media-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -675,9 +675,9 @@
       "id": "renderer-geo",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-geo",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/geo",
-      "tarball": "file-viewer-renderer-geo-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-geo-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -698,9 +698,9 @@
       "id": "renderer-data",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-data",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/data",
-      "tarball": "file-viewer-renderer-data-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-data-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -721,9 +721,9 @@
       "id": "renderer-eda-layout",
       "kind": "renderer",
       "packageName": "@file-viewer/eda-layout",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/eda-layout",
-      "tarball": "file-viewer-eda-layout-2.2.8.tgz",
+      "tarball": "file-viewer-eda-layout-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -744,9 +744,9 @@
       "id": "renderer-eda-orcad",
       "kind": "renderer",
       "packageName": "@file-viewer/eda-orcad",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/eda-orcad",
-      "tarball": "file-viewer-eda-orcad-2.2.8.tgz",
+      "tarball": "file-viewer-eda-orcad-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -767,9 +767,9 @@
       "id": "renderer-geometry-engine",
       "kind": "renderer",
       "packageName": "@file-viewer/geometry-engine",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/geometry-engine",
-      "tarball": "file-viewer-geometry-engine-2.2.8.tgz",
+      "tarball": "file-viewer-geometry-engine-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -790,9 +790,9 @@
       "id": "renderer-eda",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-eda",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/eda",
-      "tarball": "file-viewer-renderer-eda-2.2.8.tgz",
+      "tarball": "file-viewer-renderer-eda-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -813,9 +813,9 @@
       "id": "renderer-pptx",
       "kind": "renderer",
       "packageName": "@file-viewer/pptx",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/renderers/pptx",
-      "tarball": "file-viewer-pptx-2.2.8.tgz",
+      "tarball": "file-viewer-pptx-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -837,9 +837,9 @@
       "id": "preset-all",
       "kind": "preset",
       "packageName": "@file-viewer/preset-all",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/presets/all",
-      "tarball": "file-viewer-preset-all-2.2.8.tgz",
+      "tarball": "file-viewer-preset-all-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -860,9 +860,9 @@
       "id": "preset-lite",
       "kind": "preset",
       "packageName": "@file-viewer/preset-lite",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/presets/lite",
-      "tarball": "file-viewer-preset-lite-2.2.8.tgz",
+      "tarball": "file-viewer-preset-lite-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -883,9 +883,9 @@
       "id": "preset-office",
       "kind": "preset",
       "packageName": "@file-viewer/preset-office",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/presets/office",
-      "tarball": "file-viewer-preset-office-2.2.8.tgz",
+      "tarball": "file-viewer-preset-office-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -906,9 +906,9 @@
       "id": "preset-engineering",
       "kind": "preset",
       "packageName": "@file-viewer/preset-engineering",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/presets/engineering",
-      "tarball": "file-viewer-preset-engineering-2.2.8.tgz",
+      "tarball": "file-viewer-preset-engineering-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -929,9 +929,9 @@
       "id": "preset-vite-plugin",
       "kind": "preset",
       "packageName": "@file-viewer/vite-plugin",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/presets/vite-plugin",
-      "tarball": "file-viewer-vite-plugin-2.2.8.tgz",
+      "tarball": "file-viewer-vite-plugin-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -952,9 +952,9 @@
       "id": "vue3-compat-scoped",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer3",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/compat/vue3-scoped",
-      "tarball": "flyfish-group-file-viewer3-2.2.8.tgz",
+      "tarball": "flyfish-group-file-viewer3-2.2.9.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
@@ -972,9 +972,9 @@
       "id": "vue3-compat-unscoped",
       "kind": "compatibility",
       "packageName": "file-viewer3",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/compat/vue3-unscoped",
-      "tarball": "file-viewer3-2.2.8.tgz",
+      "tarball": "file-viewer3-2.2.9.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": false,
@@ -994,9 +994,9 @@
       "id": "vue27-compat-scoped",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/compat/vue2.7",
-      "tarball": "flyfish-group-file-viewer-2.2.8.tgz",
+      "tarball": "flyfish-group-file-viewer-2.2.9.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
@@ -1014,9 +1014,9 @@
       "id": "web-compat",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer-web",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/compat/web",
-      "tarball": "flyfish-group-file-viewer-web-2.2.8.tgz",
+      "tarball": "flyfish-group-file-viewer-web-2.2.9.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
@@ -1034,9 +1034,9 @@
       "id": "react-compat",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer-react",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/compat/react",
-      "tarball": "flyfish-group-file-viewer-react-2.2.8.tgz",
+      "tarball": "flyfish-group-file-viewer-react-2.2.9.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
@@ -1074,9 +1074,9 @@
       "id": "web",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/web",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/web",
-      "tarball": "file-viewer-web-2.2.8.tgz",
+      "tarball": "file-viewer-web-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1100,9 +1100,9 @@
       "id": "web-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/web-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/web-full",
-      "tarball": "file-viewer-web-full-2.2.8.tgz",
+      "tarball": "file-viewer-web-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1124,9 +1124,9 @@
       "id": "vue3",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue3",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/vue3",
-      "tarball": "file-viewer-vue3-2.2.8.tgz",
+      "tarball": "file-viewer-vue3-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1147,9 +1147,9 @@
       "id": "vue3-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue3-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/vue3-full",
-      "tarball": "file-viewer-vue3-full-2.2.8.tgz",
+      "tarball": "file-viewer-vue3-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1170,9 +1170,9 @@
       "id": "vue2.7",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.7",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/vue2.7",
-      "tarball": "file-viewer-vue2.7-2.2.8.tgz",
+      "tarball": "file-viewer-vue2.7-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1193,9 +1193,9 @@
       "id": "vue2.7-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.7-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/vue2.7-full",
-      "tarball": "file-viewer-vue2.7-full-2.2.8.tgz",
+      "tarball": "file-viewer-vue2.7-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1216,9 +1216,9 @@
       "id": "vue2.6",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.6",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/vue2.6",
-      "tarball": "file-viewer-vue2.6-2.2.8.tgz",
+      "tarball": "file-viewer-vue2.6-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1239,9 +1239,9 @@
       "id": "vue2.6-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.6-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/vue2.6-full",
-      "tarball": "file-viewer-vue2.6-full-2.2.8.tgz",
+      "tarball": "file-viewer-vue2.6-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1262,9 +1262,9 @@
       "id": "react",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/react",
-      "tarball": "file-viewer-react-2.2.8.tgz",
+      "tarball": "file-viewer-react-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1285,9 +1285,9 @@
       "id": "react-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/react-full",
-      "tarball": "file-viewer-react-full-2.2.8.tgz",
+      "tarball": "file-viewer-react-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1308,9 +1308,9 @@
       "id": "react-legacy",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react-legacy",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/react-legacy",
-      "tarball": "file-viewer-react-legacy-2.2.8.tgz",
+      "tarball": "file-viewer-react-legacy-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1331,9 +1331,9 @@
       "id": "react-legacy-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react-legacy-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/react-legacy-full",
-      "tarball": "file-viewer-react-legacy-full-2.2.8.tgz",
+      "tarball": "file-viewer-react-legacy-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1354,9 +1354,9 @@
       "id": "jquery",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/jquery",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/jquery",
-      "tarball": "file-viewer-jquery-2.2.8.tgz",
+      "tarball": "file-viewer-jquery-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1377,9 +1377,9 @@
       "id": "jquery-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/jquery-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/jquery-full",
-      "tarball": "file-viewer-jquery-full-2.2.8.tgz",
+      "tarball": "file-viewer-jquery-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1400,9 +1400,9 @@
       "id": "svelte",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/svelte",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/svelte",
-      "tarball": "file-viewer-svelte-2.2.8.tgz",
+      "tarball": "file-viewer-svelte-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
@@ -1424,9 +1424,9 @@
       "id": "svelte-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/svelte-full",
-      "version": "2.2.8",
+      "version": "2.2.9",
       "packageDir": "packages/components/svelte-full",
-      "tarball": "file-viewer-svelte-full-2.2.8.tgz",
+      "tarball": "file-viewer-svelte-full-2.2.9.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true

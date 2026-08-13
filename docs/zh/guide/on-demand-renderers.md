@@ -542,7 +542,7 @@ pnpm audit:renderer-deps -- --json
 | XMind | `.xmind` 按 ZIP 容器读取，现代文件优先解析 `content.json`，经典文件解析 `content.xml`；Panzoom 交互由 `@file-viewer/renderer-mindmap` 维护。 | 继续补多结构布局、更多 marker 图标和复杂图片资源还原，交互回归覆盖 Pointer、真实鼠标、触摸和移动端双指缩放。 |
 | Archive | `@file-viewer/renderer-archive` 使用 `libarchive.js` Worker + WASM，Worker 不可用时降级 ZIP/TAR/GZIP。 | 保持 Worker 超时、IndexedDB 缓存和体积上限，不把压缩包依赖带回 core。 |
 | Email | `@file-viewer/renderer-email` 使用 `postal-mime` 和 `@kenjiuno/msgreader`，邮件附件复用统一嵌套预览。 | 增强 MSG 边界样例和附件安全策略。 |
-| EPUB/UMD | EPUB 使用 `@file-viewer/renderer-epub` 与按需加载的包内本地引擎；UMD 同样由 `@file-viewer/renderer-epub` 维护结构解析和 `pako` 解压。 | 电子书能力统一在 ebook renderer 中维护，core 保持零运行时依赖；v2.2.8 的 EPUB vendor 不从公网加载，也不向业务生产依赖树暴露内部 XML 解析器。 |
+| EPUB/UMD | EPUB 使用 `@file-viewer/renderer-epub` 与按需加载的包内本地引擎；UMD 同样由 `@file-viewer/renderer-epub` 维护结构解析和 `pako` 解压。 | 电子书能力统一在 ebook renderer 中维护，core 保持零运行时依赖；v2.2.9 的 EPUB vendor 不从公网加载，也不向业务生产依赖树暴露内部 XML 解析器。 |
 | OLB/DRA | `@file-viewer/renderer-eda` 当前基于 CFB 和二进制线索做安全结构树、实体候选、属性、字符串和诊断展示。 | OrCAD/Allegro 属于专业私有工程格式，完整几何/电气语义会像 PPTX 一样拆独立引擎长期维护，必要时引入自研 WASM。 |
 | GDS/OASIS | GDSII 已做记录级解析，小图输出 SVG，大元素集输出 WebGL canvas；OASIS 文本夹具可输出 SVG，真实二进制 OASIS 先做安全结构索引和诊断。 | OASIS 完整几何继续走独立 WASM/增量渲染路线，不进入 core 首屏链路。 |
 | DWF/DWFx/CAD | CAD 能力由 `@file-viewer/renderer-cad` 和 `@flyfish-dev/cad-viewer` 承接，WASM/Worker 资源通过资产 manifest 自托管。 | 随 cad-viewer 持续升级 DWF/DWFx、DWG/DXF 体验，core 只保留协议和资源发现。 |

@@ -1,4 +1,6 @@
 import { marked } from 'marked';
+import createDOMPurify from 'dompurify';
+import type { WindowLike } from 'dompurify';
 import {
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   readFileViewerText as readText,
@@ -12,6 +14,40 @@ import {
   type FileViewerThemeMode,
   type FileViewerZoomState,
 } from '@file-viewer/core';
+
+const createSafeTextFragment = (documentRef: Document, value: string) => {
+  const fragment = documentRef.createDocumentFragment();
+  fragment.append(documentRef.createTextNode(value));
+  return fragment;
+};
+
+const sanitizeMarkdownHtml = (documentRef: Document, html: string) => {
+  const windowRef = documentRef.defaultView;
+  if (!windowRef) {
+    return createSafeTextFragment(documentRef, html);
+  }
+
+  const purifier = createDOMPurify(windowRef as unknown as WindowLike);
+  if (!purifier.isSupported) {
+    return createSafeTextFragment(documentRef, html);
+  }
+
+  return purifier.sanitize(html, {
+    RETURN_DOM_FRAGMENT: true,
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ['target'],
+    FORBID_TAGS: ['style', 'iframe', 'object', 'embed', 'form'],
+    FORBID_ATTR: ['style', 'srcdoc'],
+  });
+};
+
+const hardenMarkdownLinks = (root: ParentNode) => {
+  root.querySelectorAll<HTMLAnchorElement>('a[target]').forEach(anchor => {
+    if ((anchor.getAttribute('target') || '').trim().toLowerCase() === '_blank') {
+      anchor.rel = 'noopener noreferrer';
+    }
+  });
+};
 
 const markdownStyle = `
 .markdown-viewer{min-height:100%;padding:28px 16px 48px;background:var(--file-viewer-render-surface-background,#eef1f4);overflow:auto;box-sizing:border-box}
@@ -218,7 +254,9 @@ export default async function renderMarkdown(
 
   const article = document.createElement('article');
   article.className = 'markdown-body';
-  article.innerHTML = await marked(stripMarkdownFrontmatter(text));
+  const renderedHtml = await marked(stripMarkdownFrontmatter(text));
+  article.append(sanitizeMarkdownHtml(article.ownerDocument, renderedHtml));
+  hardenMarkdownLinks(article);
 
   applyMarkdownZoom(root, zoom);
   root.append(article);

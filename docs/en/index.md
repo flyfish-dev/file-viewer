@@ -62,11 +62,11 @@ Browser-native preview should not need a conversion server. Uploading a private 
 <div class="doc-section-heading">
 <span>Live Experience</span>
 <h2>Try real files before choosing what to ship.</h2>
-<p>The v2.2.8 demo is an immersive document workspace: only the document surface scrolls, the source capsule and format toolbar stay fixed, each action owns a nearby panel, and mobile collapses secondary controls into one More menu.</p>
+<p>The v2.2.9 demo is an immersive document workspace: only the document surface scrolls, the source capsule and format toolbar stay fixed, each action owns a nearby panel, and mobile collapses secondary controls into one More menu.</p>
 </div>
 <div class="doc-demo-layout">
 <figure class="doc-demo-visual">
-<img src="/_media/file-viewer-demo-v2.2.6-formats-en.gif" alt="File Viewer v2.2.8 English demo with rich DOCX, PPTX, DWG, and interactive 3D STEP previews" width="1200" height="750" loading="lazy" />
+<img src="/_media/file-viewer-demo-v2.2.6-formats-en.gif" alt="File Viewer v2.2.9 English demo with rich DOCX, PPTX, DWG, and interactive 3D STEP previews" width="1200" height="750" loading="lazy" />
 <figcaption>The current English demo holds on a rich DOCX, NASA PPTX, Autodesk DWG, and rotating STEP model while the file capsule flows into the top action bar.</figcaption>
 </figure>
 <div class="doc-demo-actions">

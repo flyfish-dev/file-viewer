@@ -2,6 +2,24 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.2.9 — 2026-08-13
+
+这是 PPTX 与 Markdown 渲染路径的安全补丁版本。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。
+
+### Security
+
+- `@file-viewer/pptx` 在 Worker 输出进入 DOM 前统一净化 HTML/SVG、内联样式、生成 CSS、链接与资源 URL；恶意演示文稿不能再借 tooltip、形状属性、颜色或字体字段注入脚本、全局 CSS 或外部资源请求。
+- `@file-viewer/renderer-text` 不再把 Marked 输出直接写入 `innerHTML`，而是在插入前使用 DOMPurify 过滤不受信任的 Markdown HTML，并为新窗口链接补充 `noopener noreferrer`。
+- DOMPurify 升级至 3.4.13，Mermaid 升级至 11.16.1；构建链固定到已修复的 PostCSS 8.5.23 与 NanoID 3.3.17。
+- 新增真实 PPTX Worker 与 Chromium 安全门禁，覆盖普通/虚拟化渲染、SVG 根节点和子节点 URL 属性、Markdown 原始 HTML，并断言没有脚本执行、越界样式或外部请求。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.2.9
+pnpm add -D @file-viewer/vite-plugin@2.2.9
+```
+
 ## File Viewer v2.2.8 — 2026-08-11
 
 这是大表格性能、OFD 首屏稳定性和二进制 PPT 观感修复版本，同时完成 2.2.7 未结束的公开分发链路。能力矩阵保持 54 个 npm 目标、208 个扩展名和 25 条预览链路。

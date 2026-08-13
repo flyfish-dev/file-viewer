@@ -9306,7 +9306,10 @@ async function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, w
     var typefaceNode = getTextByPathList(pPrNode, [ "a:buFont", "attrs", "typeface" ]);
     var typeface = "";
     if (typefaceNode !== undefined) {
-      typeface = "font-family: " + typefaceNode;
+      var quotedTypeface = quoteCssFontFamily(typefaceNode);
+      if (quotedTypeface !== undefined) {
+        typeface = "font-family: " + quotedTypeface;
+      }
     }
     // var marginLeft = parseInt(getTextByPathList(marLNode)) * slideFactor;
     // var marginRight = parseInt(getTextByPathList(marRNode)) * slideFactor;
@@ -9646,7 +9649,7 @@ async function genSpanElement(node, rIndex, pNode, textBodyNode, pFontStyle, sli
   if (linkID !== undefined) {
     linkTooltip = getTextByPathList(node, [ "a:rPr", "a:hlinkClick", "attrs", "tooltip" ]);
     if (linkTooltip !== undefined) {
-      linkTooltip = "title='" + linkTooltip + "'";
+      linkTooltip = "title='" + escapeHtml(linkTooltip) + "'";
     }
     defLinkClr = getSchemeColorFromTheme("a:hlink", undefined, undefined, warpObj);
 
@@ -9822,13 +9825,14 @@ async function genSpanElement(node, rIndex, pNode, textBodyNode, pFontStyle, sli
   }
 
   if (linkID !== undefined && linkID != "") {
-    var linkURL = warpObj["slideResObj"][linkID]["target"];
-    linkURL = escapeHtml(linkURL);
-    return openElemnt + " class='text-block " + cssName + "' style='" + text_style + "'><a href='" + linkURL + "' " + linkColorSyle + "  " + linkTooltip + " target='_blank'>" +
-      escapeTextForHtml(text) + "</a>" + closeElemnt;
-  } else {
-    return openElemnt + " class='text-block " + cssName + "' style='" + text_style + "'>" + escapeTextForHtml(text) + closeElemnt;//"</bdi>";
+    var linkURL = sanitizePptxHyperlinkTarget(warpObj["slideResObj"][linkID]["target"]);
+    if (linkURL !== "") {
+      linkURL = escapeHtml(linkURL);
+      return openElemnt + " class='text-block " + cssName + "' style='" + text_style + "'><a href='" + linkURL + "' " + linkColorSyle + "  " + linkTooltip + " target='_blank' rel='noopener noreferrer'>" +
+        escapeTextForHtml(text) + "</a>" + closeElemnt;
+    }
   }
+  return openElemnt + " class='text-block " + cssName + "' style='" + text_style + "'>" + escapeTextForHtml(text) + closeElemnt;//"</bdi>";
 
 }
 
@@ -11218,13 +11222,14 @@ function mergeFontSlots(target, source) {
 }
 
 function quoteCssFontFamily(fontName) {
-  if (fontName === undefined || fontName === "") {
+  var normalizedFontName = sanitizePptxFontName(fontName);
+  if (normalizedFontName === "") {
     return undefined;
   }
-  if (/^(inherit|serif|sans-serif|monospace|cursive|fantasy|system-ui)$/i.test(fontName)) {
-    return fontName;
+  if (/^(inherit|serif|sans-serif|monospace|cursive|fantasy|system-ui)$/i.test(normalizedFontName)) {
+    return normalizedFontName;
   }
-  return "\"" + String(fontName).replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\"";
+  return "\"" + normalizedFontName.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + "\"";
 }
 
 function getCssFontFamilies(fontName) {
@@ -13348,6 +13353,7 @@ function getSolidFill(node, clrMap, phClr, warpObj) {
       color = sysClr;
     }
   }
+  color = sanitizeHexColor(color);
   //console.log("color: [%cstart]", "color: #" + color, tinycolor(color).toHslString(), color)
 
   //fix color -------------------------------------------------------- TODO
@@ -13795,7 +13801,7 @@ function getSchemeColorFromTheme(schemeClr, clrMap, phClr, warpObj) {
     }
   }
   //console.log(color)
-  return color;
+  return sanitizeHexColor(color);
 }
 
 function extractChartData(serNode) {
@@ -14458,7 +14464,35 @@ function extractFileExtension(filename) {
   return filename.substr((~-filename.lastIndexOf(".") >>> 0) + 2);
 }
 
-function escapeHtml(text) {
+export function sanitizePptxHyperlinkTarget(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+  var normalized = value.trim();
+  var compact = normalized.replace(/[\u0000-\u0020\u007f-\u009f]/g, "");
+  if (/^(?:https?|ftp|mailto|tel):/i.test(compact)) {
+    return normalized;
+  }
+  if (/^(?:\/\/|\\)/.test(normalized) || /^[a-z][a-z0-9+.-]*:/i.test(compact)) {
+    return "";
+  }
+  return normalized;
+}
+
+export function sanitizeHexColor(value) {
+  var normalized = String(value == null ? "" : value).trim();
+  return /^[0-9a-f]{6}(?:[0-9a-f]{2})?$/i.test(normalized) ? normalized : "000000";
+}
+
+export function sanitizePptxFontName(value) {
+  return String(value == null ? "" : value)
+    .replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029;{}]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 256);
+}
+
+export function escapeHtml(text) {
   var map = {
     '&': '&amp;',
     '<': '&lt;',
@@ -14466,5 +14500,5 @@ function escapeHtml(text) {
     '"': '&quot;',
     "'": '&#039;'
   };
-  return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+  return String(text == null ? "" : text).replace(/[&<>"']/g, function (m) { return map[m]; });
 }
