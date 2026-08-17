@@ -2,11 +2,21 @@ export interface HangulTableCell {
   text: string;
   colSpan?: number;
   rowSpan?: number;
+  widthPx?: number;
+  heightPx?: number;
+  padding?: {
+    topPx: number;
+    rightPx: number;
+    bottomPx: number;
+    leftPx: number;
+  };
 }
 
 export interface HangulTable {
   rows: string[][];
   cells?: HangulTableCell[][];
+  widthPx?: number;
+  heightPx?: number;
 }
 
 export interface HangulPageGeometry {
@@ -29,6 +39,17 @@ export interface HangulSection {
   footers?: string[];
   notes?: string[];
   page?: HangulPageGeometry;
+  placedMedia?: HangulMediaPlacement[];
+}
+
+export interface HangulMediaPlacement {
+  mediaId: string;
+  alt?: string;
+  widthPx?: number;
+  heightPx?: number;
+  xPx?: number;
+  yPx?: number;
+  position: 'flow' | 'page';
 }
 
 export interface HangulMedia {

@@ -1,11 +1,18 @@
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core';
+import type { HangulMedia, HangulMediaPlacement, HangulTableCell } from './model.js';
 import { parseHangulWithWorker } from './workerClient.js';
 
 const styleText = `
-.hangul-viewer{width:100%;height:100%;overflow:auto;padding:28px;background:var(--file-viewer-render-surface-background,#e6eaf0);box-sizing:border-box;color:#172033;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif}.hangul-shell{width:min(100%,920px);margin:0 auto}.hangul-page{min-height:780px;margin:0 auto 20px;padding:54px 58px;background:#fff;box-shadow:0 16px 38px rgba(15,23,42,.12);box-sizing:border-box;overflow:hidden}.hangul-page p{margin:0 0 12px;font-size:15px;line-height:1.85;white-space:pre-wrap}.hangul-header,.hangul-footer{font-size:12px;color:#64748b;white-space:pre-wrap}.hangul-header{margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e2e8f0}.hangul-footer{margin-top:24px;padding-top:10px;border-top:1px solid #e2e8f0}.hangul-notes{margin-top:18px;padding-top:12px;border-top:1px dashed #cbd5e1;font-size:12px;color:#475569}.hangul-structured-html{overflow-wrap:anywhere}.hangul-table{width:100%;margin:18px 0;border-collapse:collapse}.hangul-table td{padding:8px 10px;border:1px solid #cbd5e1;vertical-align:top;white-space:pre-wrap}.hangul-media{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:24px}.hangul-media img{max-width:100%;height:auto}
-[data-viewer-theme='dark'] .hangul-viewer{background:var(--file-viewer-render-surface-background,#0d1117)}[data-viewer-theme='dark'] .hangul-page{background:#161b22;color:#e6edf3;border:1px solid #30363d}.hangul-page{color-scheme:light}
-@media(max-width:720px){.hangul-viewer{padding:10px}.hangul-page{min-height:0!important;padding:30px 22px!important}}
+.hangul-viewer{width:100%;height:100%;overflow:auto;padding:28px;background:var(--file-viewer-render-surface-background,#e6eaf0);box-sizing:border-box;color:#172033;font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif}.hangul-shell{width:min(100%,920px);margin:0 auto}.hangul-page{position:relative;width:min(100%,793.7067px);min-height:1122.5067px;margin:0 auto 20px;padding:75.5733px 113.3867px 56.6933px;background:#fff;box-shadow:0 16px 38px rgba(15,23,42,.12);box-sizing:border-box;overflow:hidden;color-scheme:light}.hangul-page p{margin:0 0 12px;font-size:13.333px;line-height:1.6;white-space:pre-wrap}.hangul-header,.hangul-footer{position:relative;z-index:2;font-size:12px;color:#64748b;white-space:pre-wrap}.hangul-header{margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e2e8f0}.hangul-footer{margin-top:24px;padding-top:10px;border-top:1px solid #e2e8f0}.hangul-notes{position:relative;z-index:2;margin-top:18px;padding-top:12px;border-top:1px dashed #cbd5e1;font-size:12px;color:#475569}.hangul-structured-html{position:relative;z-index:2;overflow-wrap:anywhere}.hangul-table{position:relative;z-index:2;max-width:100%;margin:18px 0;border-collapse:collapse;background:#fff}.hangul-table td{box-sizing:border-box;padding:6px 8px;border:1px solid #94a3b8;vertical-align:middle;white-space:pre-wrap;overflow-wrap:anywhere}.hangul-page-media{display:block;position:relative;z-index:1;max-width:100%;height:auto;margin:20px auto;object-fit:contain}.hangul-page-media--positioned{position:absolute;margin:0}
+[data-viewer-theme='dark'] .hangul-viewer{background:var(--file-viewer-render-surface-background,#0d1117)}
+@media(max-width:720px){.hangul-viewer{padding:10px}.hangul-page{min-height:0!important;padding:30px 22px!important}.hangul-page-media--positioned{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;margin:20px auto}}
 `;
+
+const mediaLookupKey = (value: string) => value
+  .replace(/\\/g, '/')
+  .split('/').pop()!
+  .replace(/\.[^.]+$/, '')
+  .toLowerCase();
 
 export default async function renderHangul(
   buffer: ArrayBuffer,
@@ -15,6 +22,35 @@ export default async function renderHangul(
 ): Promise<FileViewerRenderedInstance> {
   const documentModel = await parseHangulWithWorker(buffer.slice(0), type, context?.options?.hangul, context?.signal);
   const objectUrls: string[] = [];
+  const mediaUrls = new Map<HangulMedia, string>();
+  const resolveMedia = (mediaId: string) => documentModel.media.find(media =>
+    media.id.toLowerCase() === mediaId.toLowerCase() || mediaLookupKey(media.id) === mediaLookupKey(mediaId));
+  const mediaUrl = (media: HangulMedia) => {
+    const existing = mediaUrls.get(media);
+    if (existing) return existing;
+    const copy = new Uint8Array(media.bytes.length);
+    copy.set(media.bytes);
+    const url = URL.createObjectURL(new Blob([copy], { type: media.mimeType }));
+    mediaUrls.set(media, url);
+    objectUrls.push(url);
+    return url;
+  };
+  const usedMedia = new Set<HangulMedia>();
+  const appendMedia = (page: HTMLElement, placement: HangulMediaPlacement, media: HangulMedia) => {
+    const image = document.createElement('img');
+    image.className = 'hangul-page-media';
+    image.src = mediaUrl(media);
+    image.alt = placement.alt || '';
+    if (placement.widthPx) image.style.width = `${placement.widthPx}px`;
+    if (placement.heightPx) image.style.height = `${placement.heightPx}px`;
+    if (placement.position === 'page' && placement.xPx != null && placement.yPx != null) {
+      image.classList.add('hangul-page-media--positioned');
+      image.style.left = `${placement.xPx}px`;
+      image.style.top = `${placement.yPx}px`;
+    }
+    page.appendChild(image);
+    usedMedia.add(media);
+  };
   const style = document.createElement('style');
   style.textContent = styleText;
   const root = document.createElement('div');
@@ -61,7 +97,13 @@ export default async function renderHangul(
     section.tables.forEach(table => {
       const element = document.createElement('table');
       element.className = 'hangul-table';
-      const rows: Array<Array<{ text: string; colSpan?: number; rowSpan?: number }>> = table.cells ||
+      if (table.widthPx) {
+        element.style.width = `${table.widthPx}px`;
+        element.style.tableLayout = 'fixed';
+      } else {
+        element.style.width = '100%';
+      }
+      const rows: HangulTableCell[][] = table.cells ||
         table.rows.map(row => row.map(value => ({ text: value })));
       rows.forEach(row => {
         const tr = document.createElement('tr');
@@ -70,11 +112,20 @@ export default async function renderHangul(
           cell.textContent = value.text;
           if (value.colSpan && value.colSpan > 1) cell.colSpan = value.colSpan;
           if (value.rowSpan && value.rowSpan > 1) cell.rowSpan = value.rowSpan;
+          if (value.widthPx) cell.style.width = `${value.widthPx}px`;
+          if (value.heightPx) cell.style.height = `${value.heightPx}px`;
+          if (value.padding) {
+            cell.style.padding = `${value.padding.topPx}px ${value.padding.rightPx}px ${value.padding.bottomPx}px ${value.padding.leftPx}px`;
+          }
           tr.appendChild(cell);
         });
         element.appendChild(tr);
       });
       page.appendChild(element);
+    });
+    section.placedMedia?.forEach(placement => {
+      const media = resolveMedia(placement.mediaId);
+      if (media?.mimeType.startsWith('image/')) appendMedia(page, placement, media);
     });
     if (section.notes?.length) {
       const notes = document.createElement('aside');
@@ -90,22 +141,12 @@ export default async function renderHangul(
     }
     shell.appendChild(page);
   });
-  const imageMedia = documentModel.media.filter(media => media.mimeType.startsWith('image/'));
-  if (imageMedia.length) {
-    const gallery = document.createElement('section');
-    gallery.className = 'hangul-media';
-    imageMedia.forEach(media => {
-      const copy = new Uint8Array(media.bytes.length);
-      copy.set(media.bytes);
-      const url = URL.createObjectURL(new Blob([copy], { type: media.mimeType }));
-      objectUrls.push(url);
-      const image = document.createElement('img');
-      image.src = url;
-      image.alt = media.id;
-      gallery.appendChild(image);
+  const fallbackPage = shell.querySelector<HTMLElement>('.hangul-page');
+  documentModel.media
+    .filter(media => media.mimeType.startsWith('image/') && !usedMedia.has(media))
+    .forEach(media => {
+      if (fallbackPage) appendMedia(fallbackPage, { mediaId: media.id, position: 'flow' }, media);
     });
-    shell.appendChild(gallery);
-  }
   root.appendChild(shell);
   target.replaceChildren(style, root);
   context?.registerThumbnailAdapter?.({ getTarget: () => shell.querySelector('.hangul-page') || shell });

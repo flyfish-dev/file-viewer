@@ -6,6 +6,7 @@ import { DEFAULT_HANGUL_PARSE_LIMITS } from './limits.js';
 import type {
   HangulDocument,
   HangulMedia,
+  HangulMediaPlacement,
   HangulPageGeometry,
   HangulParseLimits,
   HangulSection,
@@ -16,6 +17,7 @@ import type {
 export type {
   HangulDocument,
   HangulMedia,
+  HangulMediaPlacement,
   HangulPageGeometry,
   HangulParseLimits,
   HangulSection,
@@ -172,19 +174,70 @@ const createHwpxParagraphHtml = (paragraph: Element, styles: HwpxStyleMaps) => {
 };
 
 const tableFromXml = (table: Element): HangulTable => {
+  const size = descendants(table, 'sz')[0];
   const tableRows = descendants(table, 'tr').filter(row => nearestAncestor(row, 'tbl') === table);
   const cells = tableRows.map(row => descendants(row, 'tc')
     .filter(cell => nearestAncestor(cell, 'tr') === row)
     .map(cell => {
       const span = descendants(cell, 'cellspan')[0];
+      const cellSize = descendants(cell, 'cellsz')[0];
+      const cellMargin = descendants(cell, 'cellmargin')[0];
+      const marginValue = (name: string) => hwpUnitToPx(positiveNumber(cellMargin?.getAttribute(name)) || 0);
       return {
         text: descendants(cell, 't').map(inlineText).filter(Boolean).join('').replace(/\s+/g, ' ').trim(),
         colSpan: positiveNumber(span?.getAttribute('colSpan')) || 1,
         rowSpan: positiveNumber(span?.getAttribute('rowSpan')) || 1,
+        widthPx: positiveNumber(cellSize?.getAttribute('width')) != null
+          ? hwpUnitToPx(positiveNumber(cellSize?.getAttribute('width')) || 0)
+          : undefined,
+        heightPx: positiveNumber(cellSize?.getAttribute('height')) != null
+          ? hwpUnitToPx(positiveNumber(cellSize?.getAttribute('height')) || 0)
+          : undefined,
+        padding: cellMargin ? {
+          topPx: marginValue('top'),
+          rightPx: marginValue('right'),
+          bottomPx: marginValue('bottom'),
+          leftPx: marginValue('left'),
+        } : undefined,
       };
     }));
-  return { rows: cells.map(row => row.map(cell => cell.text)), cells };
+  return {
+    rows: cells.map(row => row.map(cell => cell.text)),
+    cells,
+    widthPx: positiveNumber(size?.getAttribute('width')) != null
+      ? hwpUnitToPx(positiveNumber(size?.getAttribute('width')) || 0)
+      : undefined,
+    heightPx: positiveNumber(size?.getAttribute('height')) != null
+      ? hwpUnitToPx(positiveNumber(size?.getAttribute('height')) || 0)
+      : undefined,
+  };
 };
+
+const mediaPlacementsFromXml = (document: Document): HangulMediaPlacement[] => descendants(document.documentElement, 'pic')
+  .flatMap(picture => {
+    const image = descendants(picture, 'img')[0];
+    const mediaId = image?.getAttribute('binaryItemIDRef')?.trim();
+    if (!mediaId) return [];
+    const size = descendants(picture, 'cursz')[0] || descendants(picture, 'sz')[0];
+    const position = descendants(picture, 'pos').find(item => item.hasAttribute('treatAsChar'));
+    const shapeComment = text(descendants(picture, 'shapecomment')[0]);
+    const width = positiveNumber(size?.getAttribute('width'));
+    const height = positiveNumber(size?.getAttribute('height'));
+    const x = positiveNumber(position?.getAttribute('horzOffset'));
+    const y = positiveNumber(position?.getAttribute('vertOffset'));
+    const pagePositioned = position?.getAttribute('treatAsChar') !== '1' &&
+      ['paper', 'page'].includes(position?.getAttribute('horzRelTo')?.toLowerCase() || '') &&
+      ['paper', 'page'].includes(position?.getAttribute('vertRelTo')?.toLowerCase() || '');
+    return [{
+      mediaId,
+      alt: shapeComment || undefined,
+      widthPx: width != null ? hwpUnitToPx(width) : undefined,
+      heightPx: height != null ? hwpUnitToPx(height) : undefined,
+      xPx: pagePositioned && x != null ? hwpUnitToPx(x) : undefined,
+      yPx: pagePositioned && y != null ? hwpUnitToPx(y) : undefined,
+      position: pagePositioned ? 'page' : 'flow',
+    } satisfies HangulMediaPlacement];
+  });
 
 const pageGeometryFromXml = (document: Document): HangulPageGeometry | undefined => {
   const page = descendants(document.documentElement, 'pagepr')[0];
@@ -280,6 +333,7 @@ const parseHwpx = async (
       footers: collectControlParagraphs(document, 'footer'),
       notes: [...collectControlParagraphs(document, 'footnote'), ...collectControlParagraphs(document, 'endnote')],
       page: pageGeometryFromXml(document),
+      placedMedia: mediaPlacementsFromXml(document),
     });
   }
 
@@ -399,6 +453,12 @@ const structuredControlParagraphs = (
     ? control.paragraphs.map(item => item.text).filter(Boolean)
     : []));
 
+const structuredMediaPlacements = (paragraphs: StructuredHwpParagraph[]): HangulMediaPlacement[] => {
+  return paragraphs.flatMap(paragraph => paragraph.controls.flatMap(control => control.kind === 'picture'
+    ? [{ mediaId: `BinData/${control.binDataId}`, position: 'flow' as const }]
+    : []));
+};
+
 const parseHwp = async (buffer: ArrayBuffer, limits: HangulParseLimits): Promise<HangulDocument> => {
   if (buffer.byteLength > limits.maxUncompressedBytes) throw new Error('HWP container exceeds the configured safe limit.');
   const CFB = await import('cfb');
@@ -454,6 +514,7 @@ const parseHwp = async (buffer: ArrayBuffer, limits: HangulParseLimits): Promise
       headers: structuredControlParagraphs(section.paragraphs, 'header'),
       footers: structuredControlParagraphs(section.paragraphs, 'footer'),
       notes: structuredControlParagraphs(section.paragraphs, 'footnote'),
+      placedMedia: structuredMediaPlacements(section.paragraphs),
     })));
     media.splice(0, media.length, ...[...structured.binData.entries()].map(([id, item]) => ({
       id: `BinData/${id}.${item.extension}`,
