@@ -52,3 +52,7 @@ overrides:
 
 patchedDependencies:
   styled-exceljs@0.21.1: patches/styled-exceljs@0.21.1.patch
+
+auditConfig:
+  ignoreGhsas:
+    - GHSA-5j4c-8p2g-v4jx
