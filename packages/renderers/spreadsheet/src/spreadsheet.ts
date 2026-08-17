@@ -134,6 +134,13 @@ const spreadsheetStyle = `
 .excel-wrapper .excel-image{position:absolute;display:block;max-width:none;height:auto;object-fit:contain;user-select:none}
 .excel-wrapper .excel-chart{position:absolute;display:block;max-width:none;overflow:hidden;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.08);user-select:none}
 .excel-wrapper .excel-chart svg{display:block;width:100%;height:100%;overflow:visible}
+.excel-wrapper .excel-image-lightbox{position:absolute;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:clamp(16px,4vw,48px);background:rgba(15,23,42,.9);box-sizing:border-box;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,visibility 0s linear .18s}
+.excel-wrapper .excel-image-lightbox[data-open='true']{opacity:1;visibility:visible;pointer-events:auto;transition-delay:0s}
+.excel-wrapper .excel-image-lightbox img{display:block;max-width:100%;max-height:100%;object-fit:contain;background:#fff;box-shadow:0 30px 80px rgba(0,0,0,.4);transform:scale(.985);transition:transform .18s ease;user-select:none}
+.excel-wrapper .excel-image-lightbox[data-open='true'] img{transform:scale(1)}
+.excel-wrapper .excel-image-lightbox button{position:absolute;top:16px;right:16px;display:grid;width:40px;height:40px;place-items:center;padding:0;border:1px solid rgba(255,255,255,.7);border-radius:999px;background:rgba(255,255,255,.96);color:#172033;font:400 27px/1 Arial,sans-serif;cursor:pointer;box-shadow:0 12px 28px rgba(0,0,0,.24);transition:background-color .14s ease,transform .14s ease}
+.excel-wrapper .excel-image-lightbox button:hover{background:#fff;transform:scale(1.04)}
+.excel-wrapper .excel-image-lightbox button:focus-visible{outline:3px solid #60a5fa;outline-offset:2px}
 .excel-wrapper .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.96);z-index:999;backdrop-filter:blur(6px)}
 .excel-wrapper .loading-card{width:min(100%,460px);display:flex;align-items:center;gap:18px;padding:22px;border-radius:24px;background:rgba(255,255,255,.92);border:1px solid rgba(33,163,102,.1);box-shadow:0 22px 48px rgba(18,36,27,.12)}
 .excel-wrapper .loading-brand{flex-shrink:0;width:78px;height:78px;display:flex;align-items:center;justify-content:center;border-radius:22px;background:linear-gradient(135deg,rgba(33,163,102,.14),rgba(33,163,102,.04));color:#1a7f50;font-size:18px;font-weight:900;letter-spacing:0}
@@ -164,7 +171,8 @@ const spreadsheetStyle = `
 .excel-wrapper[data-spreadsheet-theme='dark'] .error{border-color:rgba(251,146,60,.28);background:#2a1710;color:#fdba74;box-shadow:0 20px 48px rgba(0,0,0,.36)}
 @keyframes file-viewer-spreadsheet-loading-spin{to{transform:rotate(360deg)}}
 @keyframes file-viewer-spreadsheet-loading-pulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1)}}
-@media (max-width:720px){.excel-wrapper .toolbar{align-items:stretch;flex-direction:column}.excel-wrapper .btn-group{flex:0 0 auto}.excel-wrapper .summary{max-width:none;white-space:normal}.excel-wrapper .sheet-loading{left:12px;right:12px;bottom:58px;justify-content:center}.excel-wrapper .loading-card{margin:18px;flex-direction:column;text-align:center}}
+@media (max-width:720px){.excel-wrapper .toolbar{align-items:stretch;flex-direction:column}.excel-wrapper .btn-group{flex:0 0 auto}.excel-wrapper .summary{max-width:none;white-space:normal}.excel-wrapper .sheet-loading{left:12px;right:12px;bottom:58px;justify-content:center}.excel-wrapper .loading-card{margin:18px;flex-direction:column;text-align:center}.excel-wrapper .excel-image-lightbox button{top:12px;right:12px}}
+@media (prefers-reduced-motion:reduce){.excel-wrapper .excel-image-lightbox,.excel-wrapper .excel-image-lightbox img,.excel-wrapper .excel-image-lightbox button{transition:none}}
 `;
 const scopedSpreadsheetStyle = spreadsheetStyle.replace(
   /\.excel-wrapper/g,
@@ -807,6 +815,21 @@ const renderFileViewerSpreadsheet = async (
   tableHostShell.append(tableHost, imageViewport);
   tableWrapper.append(sheetLoading, tableHostShell);
 
+  const imageLightbox = documentRef.createElement('div');
+  imageLightbox.className = 'excel-image-lightbox';
+  imageLightbox.dataset.open = 'false';
+  imageLightbox.setAttribute('role', 'dialog');
+  imageLightbox.setAttribute('aria-modal', 'true');
+  imageLightbox.setAttribute('aria-hidden', 'true');
+  const lightboxImage = documentRef.createElement('img');
+  lightboxImage.alt = t('image.lightbox.alt');
+  lightboxImage.draggable = false;
+  const lightboxCloseButton = documentRef.createElement('button');
+  lightboxCloseButton.type = 'button';
+  lightboxCloseButton.setAttribute('aria-label', t('image.lightbox.close'));
+  lightboxCloseButton.textContent = '×';
+  imageLightbox.append(lightboxImage, lightboxCloseButton);
+
   const toolbar = documentRef.createElement('div');
   toolbar.className = 'toolbar';
   const sheetTabsBar = documentRef.createElement('div');
@@ -816,7 +839,7 @@ const renderFileViewerSpreadsheet = async (
   summary.className = 'summary';
   toolbar.append(sheetTabsBar, summary);
 
-  root.append(loading, error, tableWrapper, toolbar);
+  root.append(loading, error, tableWrapper, toolbar, imageLightbox);
   target.replaceChildren(
     createEVirtTableStyle(documentRef, target, loadedEVirtTable.styleText),
     createStyle(documentRef),
@@ -858,6 +881,7 @@ const renderFileViewerSpreadsheet = async (
   let lastScrollY = 0;
   let sheetSessionId = 0;
   let disposed = false;
+  let imageLightboxPreviousFocus: HTMLElement | null = null;
   let hasNotifiedFirstPaint = false;
   let hasAppliedDefaultInitialFit = false;
   const resizableColumns = context?.options?.spreadsheet?.resizableColumns === true;
@@ -882,6 +906,86 @@ const renderFileViewerSpreadsheet = async (
     loadingWindowCount > 0;
   const scalePx = (value: number) => Math.max(1, Math.round(value * zoom));
   const scaleRowHeight = (value: number) => Math.max(0.1, Math.round(value * zoom));
+
+  const closeImageLightbox = () => {
+    if (imageLightbox.dataset.open !== 'true') {
+      return;
+    }
+    imageLightbox.dataset.open = 'false';
+    imageLightbox.setAttribute('aria-hidden', 'true');
+    delete imageLightbox.dataset.imageId;
+    if (imageLightboxPreviousFocus?.isConnected) {
+      imageLightboxPreviousFocus.focus({ preventScroll: true });
+    }
+    imageLightboxPreviousFocus = null;
+  };
+
+  const openImageLightbox = (image: SheetImage) => {
+    imageLightboxPreviousFocus = documentRef.activeElement instanceof HTMLElement
+      ? documentRef.activeElement
+      : null;
+    lightboxImage.src = image.src;
+    imageLightbox.dataset.imageId = image.id;
+    imageLightbox.dataset.open = 'true';
+    imageLightbox.setAttribute('aria-hidden', 'false');
+    lightboxCloseButton.focus({ preventScroll: true });
+  };
+
+  const containsViewportPoint = (
+    item: Pick<SheetImage, 'left' | 'top' | 'width' | 'height'>,
+    x: number,
+    y: number
+  ) => {
+    const left = scalePx(item.left) - imageViewportState.scrollX;
+    const top = scalePx(item.top) - imageViewportState.scrollY;
+    const right = left + scalePx(item.width);
+    const bottom = top + scalePx(item.height);
+    return x >= left && x <= right && y >= top && y <= bottom;
+  };
+
+  const findImageAtViewportPoint = (clientX: number, clientY: number) => {
+    const viewportRect = imageViewport.getBoundingClientRect();
+    const x = clientX - viewportRect.left;
+    const y = clientY - viewportRect.top;
+    if (x < 0 || y < 0 || x > viewportRect.width || y > viewportRect.height) {
+      return undefined;
+    }
+
+    // Charts are appended after images and therefore paint above them. Do not
+    // open an image hidden under a chart when their saved bounds overlap.
+    if ([...sheetCharts].reverse().some(chart => containsViewportPoint(chart, x, y))) {
+      return undefined;
+    }
+    return [...sheetImages].reverse().find(image => containsViewportPoint(image, x, y));
+  };
+
+  const handleImageDoubleClick = (event: MouseEvent) => {
+    const image = findImageAtViewportPoint(event.clientX, event.clientY);
+    if (!image) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    openImageLightbox(image);
+  };
+
+  const handleImageLightboxClick = (event: MouseEvent) => {
+    if (event.target === imageLightbox) {
+      closeImageLightbox();
+    }
+  };
+
+  const handleImageLightboxKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && imageLightbox.dataset.open === 'true') {
+      event.preventDefault();
+      closeImageLightbox();
+    }
+  };
+
+  tableHostShell.addEventListener('dblclick', handleImageDoubleClick, true);
+  imageLightbox.addEventListener('click', handleImageLightboxClick);
+  lightboxCloseButton.addEventListener('click', closeImageLightbox);
+  documentRef.addEventListener('keydown', handleImageLightboxKeyDown);
 
   const getSheetLoadingText = () => {
     if (!sheets.length) {
@@ -1979,6 +2083,11 @@ const renderFileViewerSpreadsheet = async (
     $el: root,
     unmount() {
       disposed = true;
+      closeImageLightbox();
+      tableHostShell.removeEventListener('dblclick', handleImageDoubleClick, true);
+      imageLightbox.removeEventListener('click', handleImageLightboxClick);
+      lightboxCloseButton.removeEventListener('click', closeImageLightbox);
+      documentRef.removeEventListener('keydown', handleImageLightboxKeyDown);
       if (resizeFrame) {
         cancelAnimationFrame(resizeFrame);
       }

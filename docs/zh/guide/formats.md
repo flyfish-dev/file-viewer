@@ -38,7 +38,7 @@
 | Word | `docx`、`docm`、`dotx`、`dotm` | `@file-viewer/renderer-word` + 自研 `@file-viewer/docx` | 文档阅读面跟随 viewer 主题，浅色下保留白色纸张，暗色下使用深色文档面；支持宽度自适应；默认使用 Worker 解析、真实浏览器 DOM 渲染、连续流式阅读、目录字段缓存和异步分批渲染，模板/宏格式按只读预览处理 | 新生成的 Word 文档、正式公文、Word 模板 |
 | Word | `doc`、`dot` | `@file-viewer/renderer-word` + `msdoc-viewer` | 使用 Word 风格页面容器，页面居中显示在灰色工作台中，增强 CFB 容错和表格布局 | 存量老文档、Word 97-2003 模板、历史附件回溯 |
 | 兼容文档 | `rtf`、`odt` | `@file-viewer/renderer-word` + `rtf.js` / OpenDocument `content.xml` | RTF 走 RTFJS 生成只读 HTML，ODT 读取 ODF 包内正文并套用纸张阅读面 | RTF 富文本、OpenDocument 文本文档 |
-| Excel | `xlsx`、`xltx` | `@file-viewer/renderer-spreadsheet` + `styled-exceljs` + `e-virt-table` + 自动静态 Worker | 支持虚拟滚动、列宽/行高、合并单元格、常见样式、workbook drawing 图片和可选表头拖拽调整列宽；默认 `worker: auto`，大文件自动启用 Worker，小文件保留主线程兼容路径；打印按钮按能力隐藏 | 大表格预览、报表、Excel 模板 |
+| Excel | `xlsx`、`xltx` | `@file-viewer/renderer-spreadsheet` + `styled-exceljs` + `e-virt-table` + 自动静态 Worker | 支持虚拟滚动、列宽/行高、合并单元格、常见样式、Office 365 / WPS 单元格内嵌图片、workbook drawing 图片、图片双击大图预览和可选表头拖拽调整列宽；默认 `worker: auto`，大文件自动启用 Worker，小文件保留主线程兼容路径；打印按钮按能力隐藏 | 大表格预览、报表、Excel 模板 |
 | Excel 兼容格式 | `xlsm`、`xlsb`、`xls`、`xlt`、`xltm`、`csv`、`tsv`、`ods`、`fods`、`numbers` | `@file-viewer/renderer-spreadsheet` + `styled-exceljs` + `e-virt-table` + 可选静态 Worker | CSV / TSV 自动识别 UTF-8、GBK 和 GB18030；其余格式统一读取数据、尺寸和可用样式，默认主线程渐进还原，部署环境确认可用时再开启 Worker | 老表格、跨平台导出的表格 |
 | PowerPoint 97–2003 | `ppt` | `@file-viewer/renderer-presentation` + `@file-viewer/ppt` 原生 WASM | 二进制 `.ppt` 使用独立原生引擎按页渲染 Canvas，支持统一缩放、打印和 HTML 导出，不会误走 PPTX OOXML 解析器 | 历史汇报材料、旧版培训课件 |
 | PowerPoint OpenXML | `pptx`、`pptm`、`potx`、`potm`、`ppsx`、`ppsm` | `@file-viewer/renderer-presentation` + `@file-viewer/pptx` | OOXML 演示文稿通过 Worker 渐进解析并按页输出，支持统一缩放、打印和导出 HTML | 汇报材料、说明文档、培训课件、演示模板 |
@@ -87,7 +87,7 @@
 
 ### 表格类文件
 
-- 表格类文件统一走 `styled-exceljs` 解析和 `e-virt-table` 虚拟渲染，适合需要保留表格结构、合并单元格、workbook drawing 图片和视觉层级的场景。
+- 表格类文件统一走 `styled-exceljs` 解析和 `e-virt-table` 虚拟渲染，适合需要保留表格结构、合并单元格、Office 365 / WPS 单元格内嵌图片、workbook drawing 图片和视觉层级的场景；渲染出的图片可双击进入大图预览，并通过 Escape、遮罩或关闭按钮退出。
 - 表格解析默认使用 `options.spreadsheet.worker: 'auto'`：小文件走同一套 `styled-exceljs` 主线程解析以保持本地服务器、手机 WebView、MIME 和 CSP 兼容；大文件达到 `options.spreadsheet.workerAutoThreshold`（默认 1MB）时自动尝试 `vendor/xlsx/sheet.worker.js`，避免百万单元格解析阻塞 UI。静态资源路径特殊时可配置 `options.spreadsheet.workerUrl`，不希望自动启用时设为 `worker: false`。
 - CSV / TSV 默认按 UTF-8 BOM、严格 UTF-8、GB18030 的固定顺序识别文本编码，GB18030 同时覆盖常见 GBK 文件。来源编码已知或字节序列存在歧义时，可用 `options.spreadsheet.textEncoding` 显式选择 `utf-8`、`gbk` 或 `gb18030`；XLS / XLSX 等二进制表格不会进入文本解码路径。
 - 如果业务用户经常查看被截断的长文本，可以开启 `options.spreadsheet.resizableColumns: true`，用户即可拖拽表头右侧边界调整列宽。该能力默认关闭以保持历史交互兼容，官方 Demo 默认开启用于体验。

@@ -32,7 +32,7 @@ const options = {
 - CSV / TSV automatically detects UTF-8 (with or without BOM) and GBK / GB18030. For known inputs, set `options.spreadsheet.textEncoding` to `utf-8`, `gbk`, or `gb18030`.
 - Defaults to `options.spreadsheet.worker: 'auto'`: small files keep the main-thread compatibility path, while files at or above `options.spreadsheet.workerAutoThreshold` (1MB by default) automatically try the static worker.
 - Can force the static worker with `options.spreadsheet.worker: true`, disable auto worker with `worker: false`, and override custom static paths with `options.spreadsheet.workerUrl`.
-- Supports multiple sheets, horizontally scrollable sheet tabs, merged cells, row and column sizing, borders, fills, alignment, text color, workbook images, the global zoom provider, and optional header drag column resizing.
+- Supports multiple sheets, horizontally scrollable sheet tabs, merged cells, row and column sizing, borders, fills, alignment, text color, Office 365 and WPS in-cell images, workbook drawing images, double-click image previews, the global zoom provider, and optional header drag column resizing.
 - Uses virtual rendering for interaction. Host components usually hide full-document print for spreadsheets to avoid printing only the current viewport.
 
 ## Offline Assets

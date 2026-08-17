@@ -526,11 +526,141 @@ try {
         `Issue #178 worker selection did not match the requested mode:\n${diagnostics}`
       )
 
+      const previewTargetIds = format === 'xlsx'
+        ? result.images
+          .filter((image) => image.id.startsWith('cell-image-'))
+          .map((image) => image.id)
+        : result.images.slice(0, 1).map((image) => image.id)
+      assert(
+        previewTargetIds.length > 0,
+        `Issue #178 did not expose an image for double-click preview:\n${diagnostics}`
+      )
+      const previewResults = []
+      for (const [previewIndex, imageId] of previewTargetIds.entries()) {
+        const doubleClickPoint = await page.evaluate((targetImageId) => {
+          const host = document.querySelector('.file-viewer-vue3-shadow-host')
+          const root = host?.shadowRoot || document
+          const image = [...root.querySelectorAll('.excel-image')]
+            .find((candidate) => candidate.getAttribute('alt') === targetImageId)
+          const viewport = root.querySelector('.excel-image-viewport')
+          if (!(image instanceof HTMLImageElement) || !(viewport instanceof HTMLElement)) {
+            return false
+          }
+          const imageRect = image.getBoundingClientRect()
+          const viewportRect = viewport.getBoundingClientRect()
+          const visibleLeft = Math.max(imageRect.left, viewportRect.left)
+          const visibleTop = Math.max(imageRect.top, viewportRect.top)
+          const visibleRight = Math.min(imageRect.right, viewportRect.right)
+          const visibleBottom = Math.min(imageRect.bottom, viewportRect.bottom)
+          if (visibleRight <= visibleLeft || visibleBottom <= visibleTop) {
+            return false
+          }
+          return {
+            x: (visibleLeft + visibleRight) / 2,
+            y: (visibleTop + visibleBottom) / 2
+          }
+        }, imageId)
+        assert(
+          doubleClickPoint && typeof doubleClickPoint === 'object',
+          `Issue #178 could not double-click image ${imageId}:\n${diagnostics}`
+        )
+        await page.mouse.dblclick(doubleClickPoint.x, doubleClickPoint.y)
+        await page.waitForFunction(
+          (targetImageId) => {
+            const host = document.querySelector('.file-viewer-vue3-shadow-host')
+            const root = host?.shadowRoot || document
+            const lightbox = root.querySelector('.excel-image-lightbox')
+            const preview = lightbox?.querySelector('img')
+            return lightbox?.getAttribute('data-open') === 'true' &&
+              lightbox?.getAttribute('data-image-id') === targetImageId &&
+              preview instanceof HTMLImageElement &&
+              preview.complete &&
+              preview.naturalWidth > 0 &&
+              preview.naturalHeight > 0
+          },
+          imageId,
+          { timeout }
+        )
+        await page.waitForFunction(() => {
+          const host = document.querySelector('.file-viewer-vue3-shadow-host')
+          const root = host?.shadowRoot || document
+          const lightbox = root.querySelector('.excel-image-lightbox')
+          return lightbox instanceof HTMLElement &&
+            Number.parseFloat(getComputedStyle(lightbox).opacity) >= 0.99
+        }, undefined, { timeout })
+        const preview = await page.evaluate((targetImageId) => {
+          const host = document.querySelector('.file-viewer-vue3-shadow-host')
+          const root = host?.shadowRoot || document
+          const source = [...root.querySelectorAll('.excel-image')]
+            .find((candidate) => candidate.getAttribute('alt') === targetImageId)
+          const lightbox = root.querySelector('.excel-image-lightbox')
+          const previewImage = lightbox?.querySelector('img')
+          const closeButton = lightbox?.querySelector('button')
+          const previewRect = previewImage?.getBoundingClientRect()
+          const lightboxStyle = lightbox instanceof HTMLElement
+            ? getComputedStyle(lightbox)
+            : null
+          return {
+            imageId: lightbox?.getAttribute('data-image-id') || '',
+            open: lightbox?.getAttribute('data-open') === 'true',
+            ariaHidden: lightbox?.getAttribute('aria-hidden'),
+            sourceMatches: source instanceof HTMLImageElement &&
+              previewImage instanceof HTMLImageElement &&
+              source.src === previewImage.src,
+            naturalWidth: previewImage instanceof HTMLImageElement
+              ? previewImage.naturalWidth
+              : 0,
+            naturalHeight: previewImage instanceof HTMLImageElement
+              ? previewImage.naturalHeight
+              : 0,
+            opacity: lightboxStyle?.opacity || '',
+            visibility: lightboxStyle?.visibility || '',
+            closeLabel: closeButton?.getAttribute('aria-label') || '',
+            rect: previewRect
+              ? { width: previewRect.width, height: previewRect.height }
+              : null
+          }
+        }, imageId)
+        assert.equal(preview.open, true, `Image preview did not open:\n${JSON.stringify(preview)}`)
+        assert.equal(preview.ariaHidden, 'false', `Image preview stayed hidden:\n${JSON.stringify(preview)}`)
+        assert.equal(preview.imageId, imageId, `Image preview identity changed:\n${JSON.stringify(preview)}`)
+        assert.equal(preview.sourceMatches, true, `Image preview source changed:\n${JSON.stringify(preview)}`)
+        assert(
+          Number.parseFloat(preview.opacity) >= 0.99,
+          `Image preview did not finish opening:\n${JSON.stringify(preview)}`
+        )
+        assert.equal(preview.visibility, 'visible', `Image preview is not visible:\n${JSON.stringify(preview)}`)
+        assert(preview.closeLabel, `Image preview close button lost its label:\n${JSON.stringify(preview)}`)
+        assert(
+          preview.rect?.width > 0 && preview.rect?.height > 0,
+          `Image preview collapsed:\n${JSON.stringify(preview)}`
+        )
+        if (previewIndex === 0) {
+          await page.screenshot({
+            path: join(
+              screenshotDir,
+              `${format}-${workerMode ? 'worker' : 'main-thread'}-lightbox.png`
+            ),
+            fullPage: true
+          })
+        }
+        await page.keyboard.press('Escape')
+        await page.waitForFunction(() => {
+          const host = document.querySelector('.file-viewer-vue3-shadow-host')
+          const root = host?.shadowRoot || document
+          const lightbox = root.querySelector('.excel-image-lightbox')
+          return lightbox?.getAttribute('data-open') === 'false' &&
+            lightbox?.getAttribute('aria-hidden') === 'true'
+        }, undefined, { timeout })
+        previewResults.push(preview)
+      }
+
       results.push({
         format,
         privateSample,
         mode: workerMode ? 'worker' : 'main-thread',
         images: result.images.map((image) => ({ id: image.id, rect: image.rect })),
+        previews: previewResults,
         viewport: result.viewportRect,
         workerRequests: workerRequests.length
       })
