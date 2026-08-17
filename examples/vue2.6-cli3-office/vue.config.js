@@ -44,6 +44,9 @@ module.exports = {
     },
     resolve: {
       alias: {
+        // Keep the legacy compatibility demo on Vue's runtime-only build. File
+        // Viewer never compiles user-controlled Vue template strings.
+        'vue$': 'vue/dist/vue.runtime.esm.js',
         '@file-viewer/core/assets$': resolvePackageFile('@file-viewer/core', 'dist/assets.js'),
         '@file-viewer/core/browser$': resolvePackageFile('@file-viewer/core', 'dist/browser.js'),
         '@file-viewer/core/headless$': resolvePackageFile('@file-viewer/core', 'dist/headless.js'),

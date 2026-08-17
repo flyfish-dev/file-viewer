@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@types/tinycolor2": "^1.4.6",
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.28.2",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

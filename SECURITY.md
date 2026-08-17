@@ -25,3 +25,9 @@ File Viewer 运行在浏览器端，会处理用户选择或业务系统传入�
 - 不在公开 issue 中讨论尚未修复的可利用细节。
 - 优先修复会影响默认配置、Demo、组件包和 self-hosted 静态资源路径的问题。
 - 安全修复发布后，会在 changelog 或 release notes 中说明影响范围和升级建议。
+
+## Vue 2 兼容边界
+
+`@file-viewer/vue2.6` 和 `@file-viewer/vue2.7` 是面向存量系统的兼容组件，Vue 仅作为 peer dependency，不会打包进 File Viewer 产物。仓库内的 Vue 2 兼容测试只使用 runtime-only build 和受信任的静态 SFC，不调用 `Vue.compile`，也不接受用户可控的 Vue 模板字符串。
+
+Vue 2 已终止上游维护。新项目应优先使用 `@file-viewer/vue3`；必须继续使用 Vue 2 的宿主系统，不应在运行时编译不可信模板。
