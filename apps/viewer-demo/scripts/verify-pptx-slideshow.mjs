@@ -1,9 +1,41 @@
-import { chromium } from 'playwright'
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { readFile } from 'node:fs/promises'
-import { extname, join, normalize, sep } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
+import { delimiter, extname, join, normalize, resolve, sep } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+
+const require = createRequire(import.meta.url)
+
+const importPlaywright = async () => {
+  try {
+    return await import('playwright')
+  } catch (error) {
+    const candidatePaths =
+      process.env.PATH?.split(delimiter)
+        .filter((pathEntry) => pathEntry.endsWith(`${sep}node_modules${sep}.bin`))
+        .map((binDir) => resolve(binDir, '..'))
+        .filter(existsSync) || []
+
+    for (const candidatePath of candidatePaths) {
+      try {
+        const playwrightEntry = require.resolve('playwright', { paths: [candidatePath] })
+        return await import(pathToFileURL(playwrightEntry).href)
+      } catch {
+        // Continue probing npm exec / npx injected package roots.
+      }
+    }
+
+    throw new Error(
+      'Missing playwright module. Run this harness through the package script.',
+      { cause: error }
+    )
+  }
+}
+
+const playwrightModule = await importPlaywright()
+const { chromium } = playwrightModule.chromium ? playwrightModule : playwrightModule.default
 
 // Self-host the built demo so the script needs no external server and can run
 // in CI. Build first: `pnpm build`, then `pnpm verify:pptx-slideshow`.
