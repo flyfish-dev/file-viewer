@@ -29,24 +29,24 @@
     "type-check:renderers": "pnpm --filter './packages/renderers/**' type-check",
     "type-check:presets": "pnpm --filter './packages/presets/**' type-check",
     "test:i18n": "node apps/viewer-demo/scripts/verify-japanese-i18n.mjs",
+    "test:spreadsheet-github-178": "pnpm --filter @file-viewer/renderer-spreadsheet verify:github-178",
     "test:thumbnail": "pnpm --filter @file-viewer/thumbnail test",
     "test": "pnpm test:i18n && pnpm test:thumbnail",
     "type-check:components": "pnpm --filter @file-viewer/web type-check && pnpm --filter @file-viewer/react type-check && pnpm --filter @file-viewer/react-legacy type-check && pnpm --filter @file-viewer/vue3 type-check && pnpm --filter @file-viewer/vue2.7 type-check && pnpm --filter @file-viewer/vue2.6 type-check && pnpm --filter @file-viewer/jquery type-check && pnpm --filter @file-viewer/svelte type-check",
     "type-check:tools": "pnpm --filter './packages/tools/**' type-check",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
+    "docs:dev": "pnpm --filter @flyfish-group/file-viewer-docs dev",
+    "docs:build": "pnpm --filter @flyfish-group/file-viewer-docs build",
+    "docs:preview": "pnpm --filter @flyfish-group/file-viewer-docs preview",
     "verify:vue3-toolbar-browser": "node apps/component-demo/scripts/verify-vue3-toolbar-browser.mjs",
     "verify:renderer-sanitization": "pnpm --filter @file-viewer/pptx build && node apps/viewer-demo/scripts/verify-renderer-sanitization.mjs",
     "verify:browser-smoke": "node apps/viewer-demo/scripts/public-smoke.mjs",
-    "verify:pptx-slideshow": "node apps/viewer-demo/scripts/verify-pptx-slideshow.mjs"
+    "verify:pptx-slideshow": "npm exec --yes --package playwright -- node apps/viewer-demo/scripts/verify-pptx-slideshow.mjs"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",
     "prettier": "^3.8.3",
     "playwright": "^1.61.1",
-    "typescript": "^6.0.3",
-    "vitepress": "^1.6.4"
+    "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"
 }
