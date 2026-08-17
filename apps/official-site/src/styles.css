@@ -140,7 +140,9 @@ button {
 .footer-brand img {
   width: 38px;
   height: 38px;
-  border-radius: 12px;
+  object-fit: contain;
+  border-radius: 0;
+  filter: drop-shadow(0 7px 12px rgba(18, 107, 75, 0.16));
 }
 
 .topbar-links {

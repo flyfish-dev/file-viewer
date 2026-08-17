@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://file-viewer.app"><img src="docs/public/_media/logo.png" width="92" alt="File Viewer logo"></a>
+  <a href="https://file-viewer.app/en/"><img src="docs/public/_media/logo.png" width="92" alt="File Viewer browser file preview"></a>
 </p>
 
 <h1 align="center">File Viewer</h1>
@@ -19,6 +19,7 @@
 </p>
 
 <p align="center">
+  <a href="https://file-viewer.app/en/"><strong>Official Website</strong></a> ·
   <a href="https://demo.file-viewer.app/"><strong>Live Demo</strong></a> ·
   <a href="#quick-start"><strong>Quick Start</strong></a> ·
   <a href="https://doc.file-viewer.app/"><strong>Documentation</strong></a> ·

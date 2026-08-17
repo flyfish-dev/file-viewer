@@ -95,7 +95,14 @@
   align-items: center;
   gap: 11px;
   padding: 0;
+  color: inherit;
+  text-decoration: none;
   pointer-events: auto;
+}
+
+.rail-brand:focus-visible {
+  outline: 2px solid #1f966e;
+  outline-offset: 5px;
 }
 
 .rail-brand .brand-mark {

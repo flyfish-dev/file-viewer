@@ -71,7 +71,9 @@ button {
 .commercial-footer img {
   width: 34px;
   height: 34px;
-  border-radius: 9px;
+  object-fit: contain;
+  border-radius: 0;
+  filter: drop-shadow(0 7px 12px rgba(18, 107, 75, 0.16));
 }
 
 .commercial-nav-actions {

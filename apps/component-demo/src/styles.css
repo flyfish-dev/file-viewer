@@ -56,8 +56,8 @@ a {
 .brand-lockup img {
   width: 42px;
   height: 42px;
-  border-radius: 13px;
-  box-shadow: 0 10px 24px rgba(35, 86, 70, 0.13);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 16px rgba(35, 86, 70, 0.16));
 }
 
 .topbar h1,

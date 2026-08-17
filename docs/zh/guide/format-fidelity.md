@@ -7,7 +7,7 @@
 <div class="doc-kicker">Rendering Fidelity</div>
 
 <p class="doc-lead">
-  Flyfish Viewer 的目标不是“识别一个扩展名就算支持”，而是尽量让文件在浏览器里形成可理解、可操作、可交付的预览体验。
+  File Viewer by Flyfish 的目标不是“识别一个扩展名就算支持”，而是尽量让文件在浏览器里形成可理解、可操作、可交付的预览体验。
   本页基于当前实现和公开生态调研，说明新增复杂格式的真实完整度、WASM / 手写解析可行性，以及后续需要独立维护的 renderer 方向。
   依赖拆包和按需安装路线见 <a href="/zh/guide/on-demand-renderers">按需渲染架构计划</a>。
 </p>
@@ -58,7 +58,7 @@
 
 ## 当前落地策略
 
-| 格式线 | 浏览器端可行方案 | Flyfish Viewer 当前动作 |
+| 格式线 | 浏览器端可行方案 | File Viewer by Flyfish 当前动作 |
 | --- | --- | --- |
 | XMind | `.xmind` 本质是 ZIP，现代 XMind 使用 `content.json`，经典 XMind 8 使用 `content.xml`；成熟 viewer 都以“解析包结构 + 可拖拽缩放画布”为体验基线 | `@ljheee/xmind-parser` 只保留在独立 `@file-viewer/renderer-mindmap` 内，core 默认安装不再携带脑图解析依赖；当前画布式平移和缩放由 `@panzoom/panzoom` 承接，并保留从空白画布或节点卡片起手拖拽、移动端双指缩放、键盘方向键、Ctrl/Command 滚轮锚点缩放、双击适配视图、容器 resize 自动适配和统一 toolbar 状态同步 |
 | OLB / DRA / PSM | Cadence 格式没有稳定官方 Web SDK；公开可用路线主要是 OpenOrCadParser / OpenAllegroParser 这类 C++ 解析器，后续可以 Emscripten/WASM 化或按样本逐步 TS 移植 | 当前只声明为结构预览，不虚标完整图形；底层能力已拆到 `@file-viewer/eda-orcad`，后续像 PPTX 一样长期维护 |

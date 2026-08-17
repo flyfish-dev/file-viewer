@@ -113,6 +113,9 @@ const {
 } = useDemoPreferences({
   onSystemThemeChange: () => syncDemoDocumentChrome()
 })
+const officialSiteUrl = computed(() => (
+  demoLocale.value === 'zh-CN' ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/'
+))
 const { copy: demoCopy, getCopy: getDemoCopy } = useDemoCopy(demoLocale)
 const url = ref(demoFileHandoff.isEmbedRequest && !demoFileHandoff.initialUrl ? '' : DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value])
 const preview = ref('')
@@ -1330,12 +1333,18 @@ function handleWindowResize() {
           :class='{ "desktop-source-open": desktopSourcePanelOpen, "settings-open": settingsPanelOpen }'
           :data-source-mode='desktopSourceMode'
         >
-          <header class='rail-brand'>
+          <a
+            class='rail-brand'
+            :href='officialSiteUrl'
+            target='_blank'
+            rel='noreferrer'
+            :aria-label='demoLocale === "zh-CN" ? "打开 File Viewer 官网" : "Open the File Viewer official website"'
+          >
             <span class='brand-mark'>
               <img :src='brandLogo' alt='' />
             </span>
-            <h1>File Viewer</h1>
-          </header>
+            <h1>File Viewer Demo</h1>
+          </a>
 
           <button type='button' class='mobile-sheet-close' :aria-label='demoCopy.closePanel' @click='closeMobileControls'>
             <X :size='18' :stroke-width='2.5' />

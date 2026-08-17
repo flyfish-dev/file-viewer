@@ -3,7 +3,7 @@
 <div class="doc-kicker">Start From The Right Door</div>
 
 <p class="doc-lead">
-  Flyfish Viewer is an offline-first frontend file preview system for web applications.
+  File Viewer by Flyfish is an offline-first frontend file preview system for web applications.
   It is designed for attachment centers, workflow tools, knowledge bases, support portals, and self-hosted intranet products that need broad file coverage without running a document conversion backend.
   The current format matrix covers 208 file extensions across 25 preview pipelines.
 </p>
@@ -33,7 +33,7 @@
 
 ## Positioning
 
-Flyfish Viewer is not trying to replace specialist editors. It gives business products a practical, embedded preview layer for common and uncommon attachments: documents, spreadsheets, slides, PDFs, archives, email, diagrams, CAD drawings, 3D assets, code, logs, media, and data files.
+File Viewer by Flyfish is not trying to replace specialist editors. It gives business products a practical, embedded preview layer for common and uncommon attachments: documents, spreadsheets, slides, PDFs, archives, email, diagrams, CAD drawings, 3D assets, code, logs, media, and data files.
 
 The project keeps a pure TypeScript core under `@file-viewer/core`, split renderer packages for heavier formats, native component packages for Web Components, Vue, React, jQuery, and Svelte, and product-shaped presets for common capability sets.
 

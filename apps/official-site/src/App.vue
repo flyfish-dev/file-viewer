@@ -167,9 +167,9 @@ const siteMetadata = {
   zh: {
     lang: 'zh-CN',
     canonical: siteRootUrl,
-    title: 'File Viewer by Flyfish - 浏览器原生多格式文件预览',
+    title: 'File Viewer - Office、PDF、CAD 浏览器文件预览',
     description:
-      'File Viewer by Flyfish 是浏览器原生、离线优先的多格式预览组件：208 个扩展名通过 25 条独立预览链路按需加载，54 个 npm 目标覆盖主流前端生态。',
+      '开源 File Viewer 在浏览器内预览 Office、PDF、CAD 等 208 个扩展名，无需服务端转码，支持离线与私有化部署。',
     ogLocale: 'zh_CN',
     ogLocaleAlternate: 'en_US',
     imageAlt: 'File Viewer v2.2.9 浏览器原生 DOCX 预览工作区'
@@ -177,9 +177,9 @@ const siteMetadata = {
   en: {
     lang: 'en',
     canonical: siteEnglishUrl,
-    title: 'File Viewer by Flyfish - Browser-native multi-format file preview',
+    title: 'File Viewer for Office, PDF & CAD | Flyfish',
     description:
-      'File Viewer by Flyfish is a browser-native, offline-first preview component. It routes 208 extensions through 25 lazy preview pipelines and ships 54 npm targets for the main frontend stacks.',
+      'Open-source browser file viewer for Office, PDF, CAD, archives, email, and 200+ formats. No conversion server. Self-hosted and offline-ready.',
     ogLocale: 'en_US',
     ogLocaleAlternate: 'zh_CN',
     imageAlt: 'File Viewer v2.2.9 browser-native DOCX preview workspace'
@@ -1833,7 +1833,7 @@ onBeforeUnmount(() => {
       aria-label="Primary navigation"
     >
       <a class="brand" href="#top" aria-label="File Viewer" @click="scrollToSection($event, 'top')">
-        <img src="/logo.png" alt="" />
+        <img src="/brand-mark-96.png" alt="" />
         <span>File Viewer</span>
       </a>
       <div ref="flatNav" class="flat-nav" aria-label="Homepage sections">
@@ -1985,14 +1985,14 @@ onBeforeUnmount(() => {
         </p>
         <h1>
           <template v-if="isZh">
-            <span class="hero-title-line">浏览器原生。</span>
-            <span class="hero-title-line">离线优先。</span>
-            <span class="hero-title-line hero-title-accent">企业级文件预览。</span>
+            <span class="hero-title-line">File Viewer.</span>
+            <span class="hero-title-line">Office、PDF 与 CAD。</span>
+            <span class="hero-title-line hero-title-accent">全部在浏览器预览。</span>
           </template>
           <template v-else>
-            <span class="hero-title-line">Browser-native.</span>
-            <span class="hero-title-line">Offline-first.</span>
-            <span class="hero-title-line hero-title-accent">Enterprise-ready.</span>
+            <span class="hero-title-line">File Viewer.</span>
+            <span class="hero-title-line">Office, PDF & CAD.</span>
+            <span class="hero-title-line hero-title-accent">Entirely in your browser.</span>
           </template>
         </h1>
         <p class="hero-subtitle">{{ currentCopy.hero.subtitle }}</p>
@@ -2480,7 +2480,7 @@ onBeforeUnmount(() => {
     <footer id="support" class="support-footer">
       <div class="support-copy">
         <div class="footer-brand">
-          <img src="/logo.png" alt="" />
+          <img src="/brand-mark-96.png" alt="" />
           <strong>File Viewer</strong>
         </div>
         <h2>{{ currentCopy.supportTitle }}</h2>

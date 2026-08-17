@@ -3,12 +3,12 @@
 <div class="doc-kicker">One Component, One Line, Fast Integration</div>
 
 <p class="doc-lead">
-  Flyfish Viewer is a modular, offline-first file preview ecosystem for product teams that need reliable attachment preview inside real web applications.
+  File Viewer by Flyfish is a modular, offline-first file preview ecosystem for product teams that need reliable attachment preview inside real web applications.
 </p>
 
 ## What It Solves
 
-Flyfish Viewer lets users preview business attachments without downloading every file or sending private documents to a conversion backend. It covers Office documents, PDF/OFD, Typst, CAD, EDA, archives, email, diagrams, mind maps, 3D, media, code, and structured data through lazy renderer packages.
+File Viewer by Flyfish lets users preview business attachments without downloading every file or sending private documents to a conversion backend. It covers Office documents, PDF/OFD, Typst, CAD, EDA, archives, email, diagrams, mind maps, 3D, media, code, and structured data through lazy renderer packages.
 
 The current registry declares **208 extensions** across **25 preview pipelines**.
 

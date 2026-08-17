@@ -773,7 +773,7 @@ pnpm dev
 
 - `pnpm build`: 构建示例站点
 - `pnpm build:vue3`: 构建 Vue3 标准组件包产物
-- `pnpm docs:dev`: 启动 VitePress 文档站
+- `pnpm docs:dev`: 启动 Fumadocs + Next.js 文档站
 - `pnpm docs:build`: 构建文档站
 - `pnpm type-check`: 执行 TypeScript 类型检查
 - `pnpm dev:components`: 启动 React + 纯 JS 组件 Demo
@@ -812,7 +812,7 @@ pnpm release:ecosystem:pack
 - `apps/viewer-demo/dist/` 是正式在线 Demo 和文档比对页的部署产物
 - `packages/components/vue3/dist/` 是 Vue3 标准组件包构建产物；执行 `pnpm obfuscate` 后会对其中的 `.js` / `.mjs` 进行压缩混淆
 - `pnpm build` 会生成可独立部署的 Demo 静态站点产物
-- `docs/.vitepress/dist/` 是文档站静态产物
+- `apps/docs-site/out/` 是 Fumadocs / Next.js 文档站静态产物
 - `npm pack` 会生成可直接发布或分发的 npm 包 tarball
 
 如果只是准备 npm 包，可以直接执行:

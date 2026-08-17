@@ -106,8 +106,10 @@ body::after {
 .footer-brand img {
   width: 34px;
   height: 34px;
-  border-radius: 9px;
+  object-fit: contain;
+  border-radius: 0;
   box-shadow: none;
+  filter: drop-shadow(0 7px 12px rgba(18, 107, 75, 0.16));
 }
 
 .topbar-links {
@@ -1544,7 +1546,7 @@ body::after {
 }
 
 .footer-brand img {
-  background: rgba(255, 255, 255, 0.94);
+  background: transparent;
 }
 
 .support-copy h2 {

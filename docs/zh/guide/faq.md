@@ -1,8 +1,12 @@
-# 常见问题
+---
 
 > **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
 
 <!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+description: "快速排查 File Viewer 组件选型、Full 包资源、Worker/WASM 路径、格式支持、移动端布局、授权与部署问题。"
+---
+
+# 常见问题
 
 ## 不同生态应该安装哪个包
 
@@ -247,4 +251,4 @@ GitHub / Gitee 的 `flyfish-dev/file-viewer` 是开源总仓库，包含可直�
 
 ## 二开或商用需要注意什么
 
-项目使用 `Apache-2.0` 许可证。二开或商用时，请保留许可证、版权和来源说明，并注明项目来源为 Flyfish Viewer / `@flyfish-group/file-viewer3` 或 `@flyfish-group/file-viewer`。如果修复了通用问题或增强了通用能力，建议通过 issue / PR 贡献回来。
+项目使用 `Apache-2.0` 许可证。二开或商用时，请保留许可证、版权和来源说明，并注明项目来源为 File Viewer by Flyfish / `@flyfish-group/file-viewer3` 或 `@flyfish-group/file-viewer`。如果修复了通用问题或增强了通用能力，建议通过 issue / PR 贡献回来。

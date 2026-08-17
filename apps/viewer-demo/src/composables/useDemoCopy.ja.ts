@@ -1,6 +1,6 @@
 /** Japanese product-demo copy shared by desktop, mobile, dialogs and accessibility labels. */
 export const demoCopyJa = {
-  pageTitle: 'File Viewer オンラインプレビュー Vue 3',
+  pageTitle: 'File Viewer Demo — Office・PDF・CADをブラウザで表示',
   pureWeb: 'Pure Web',
   local: 'ローカル',
   link: 'リンク',

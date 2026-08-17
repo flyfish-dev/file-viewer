@@ -8,7 +8,7 @@
 </p>
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="Flyfish Viewer v2.2.9 中文格式样例库，展示分组、文件名与格式专属图标" width="1440" height="900" loading="lazy" />
+  <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="File Viewer by Flyfish v2.2.9 中文格式样例库，展示分组、文件名与格式专属图标" width="1440" height="900" loading="lazy" />
   <p class="doc-caption">Demo 把 25 条预览链路的代表样例按类型分组；当前文件所在分组默认展开，每个条目展示真实文件名、格式标签和主题协调的专属图标。</p>
 </div>
 
@@ -152,7 +152,7 @@
 - `osm-raster` 作为显式 opt-in preset 仅适合 demo 或低频访问；生产环境应遵守 OpenStreetMap 官方 tile policy，保留可替换 URL、缓存和 attribution。中国大陆生产环境更推荐把 OpenFreeMap / OpenMapTiles 栈自托管或镜像后再接入。
 - 坐标系会归一化到 WGS84：标准 GeoJSON 默认按 `EPSG:4326`，也会读取 GeoJSON `crs`、自动推断 Web Mercator，并支持通过 `options.geo.projection` 声明 `EPSG:3857`、`EPSG:4490`、`GCJ02`、`BD09` 或 proj4 字符串。
 - WebGL 或 MapLibre 初始化不可用时会回退 SVG 矢量预览，仍会展示要素数量、坐标范围和点线面结构。
-- 如果业务需要空间分析、编辑、拓扑校验或大量要素抽稀，仍建议在业务系统中接入专业 GIS 组件，并把 Flyfish Viewer 作为附件快速预览入口。
+- 如果业务需要空间分析、编辑、拓扑校验或大量要素抽稀，仍建议在业务系统中接入专业 GIS 组件，并把 File Viewer by Flyfish 作为附件快速预览入口。
 
 ### 3D 模型
 

@@ -180,6 +180,12 @@ const options = {
 
 Use `preset-lite` for lightweight attachments, `preset-engineering` for CAD / 3D / Typst / EDA / data assets, and `preset-all` for the full sample matrix or all-format admin workbenches. Add `preset:'auto'` or `autoPresets:true` when you also enable `scan:true`, so installed presets and source hints work together. `copyAssets:true` copies Worker, WASM, PDF fonts, CAD, Typst WASM/fonts, Archive, and Data assets into your deployment directory so private intranet deployments do not depend on public CDNs.
 
+<span id="react-legacy"></span>
+
+## React Legacy
+
+React 16.8 and 17 projects use `@file-viewer/react-legacy` or `@file-viewer/react-legacy-full`. They keep the same props, controller, event, renderer, and preset contracts as the current React packages while avoiding a React 18 runtime requirement. See the [React integration guide](/guide/quickstart-react) for the shared API and migration boundary.
+
 ## jQuery
 
 Use `@file-viewer/jquery` when a traditional admin system or legacy page already standardizes on jQuery-style plugins:

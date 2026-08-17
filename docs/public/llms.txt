@@ -23,6 +23,15 @@ File Viewer is a browser-native, offline-first, self-hosted file preview project
 - Docker: https://doc.file-viewer.app/guide/docker
 - FAQ: https://doc.file-viewer.app/guide/faq
 
+## Chinese Documentation
+
+- 中文文档首页: https://doc.file-viewer.app/zh/
+- 中文快速开始: https://doc.file-viewer.app/zh/guide/quickstart
+- 中文格式矩阵: https://doc.file-viewer.app/zh/guide/formats
+- 中文组件配置: https://doc.file-viewer.app/zh/guide/usage
+- 中文部署指南: https://doc.file-viewer.app/zh/guide/distribution
+- 中文更新日志: https://doc.file-viewer.app/zh/changelog
+
 ## Integration Paths
 
 Vanilla JavaScript, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and Full packages are documented. Light packages do not contain every renderer. Use selected renderers or presets for modular builds, or a Full package for the complete registered format set and matching local assets.

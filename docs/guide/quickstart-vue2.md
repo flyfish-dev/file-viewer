@@ -1,27 +1,20 @@
-# Vue2 集成
+# Vue 2 Integration
 
-<div class="doc-kicker">For Vue 2 Projects</div>
+<div class="doc-kicker">Vue 2.7 And Vue 2.6</div>
 
 <p class="doc-lead">
-  Vue2 已拆成 <code>@file-viewer/vue2.7</code> 和 <code>@file-viewer/vue2.6</code> 两条标准包线。
-  它们面向仍在 Vue2 的业务系统，格式能力、示例文件和 options / 事件语义与 Vue3 包保持一致。
+  Vue 2 projects can use native component packages without switching to an iframe-only integration.
 </p>
 
-> Vue 2 上游已经结束维护。File Viewer 会继续保留 Vue 2.6/2.7 兼容包，但新项目优先使用 Vue 3；安全敏感的存量系统还应单独评估宿主 Vue 2 的 [GHSA-5j4c-8p2g-v4jx](https://github.com/advisories/GHSA-5j4c-8p2g-v4jx)，因为上游没有可用的 Vue 2 修复版本。
+> Vue 2 is upstream end-of-life. File Viewer will keep its Vue 2.6/2.7 compatibility packages, but new applications should prefer Vue 3. Security-sensitive legacy applications should also assess the host framework's [GHSA-5j4c-8p2g-v4jx](https://github.com/advisories/GHSA-5j4c-8p2g-v4jx), because no patched Vue 2 release is available.
 
-## 安装
-
-```bash
-pnpm add @file-viewer/vue2.7 @file-viewer/preset-office
-```
-
-Vue2.6 项目请安装:
+## Vue 2.7
 
 ```bash
-pnpm add @file-viewer/vue2.6 @file-viewer/preset-office
+npm install @file-viewer/vue2.7 @file-viewer/preset-office
 ```
 
-只安装 `@file-viewer/vue2.7` 或 `@file-viewer/vue2.6` 是最轻组件入口；PDF、Office、CAD、Typst、压缩包等具体格式能力由 preset 或 renderer 提供。Webpack、Rspack、Rollup、Umi、传统多页应用等非 Vite 项目优先通过 `options.preset` 显式注入能力：
+Installing only `@file-viewer/vue2.7` gives you the lightest native Vue 2.7 component. Add presets or renderer packages for concrete PDF, Office, CAD, Typst, archive, and engineering formats. For Webpack, Rspack, Rollup, Umi, and non-Vite applications, pass the capability through `options.preset`:
 
 ```ts
 import officePreset from '@file-viewer/preset-office'
@@ -35,12 +28,12 @@ const viewerOptions = {
 }
 ```
 
-Vue2 默认使用 Shadow DOM，宿主全局 CSS、低代码 reset 和微前端样式不会破坏工具栏或正文。只有依赖深层 class 覆盖的旧项目才使用 `styleIsolation:'none'`；tokens 和 `::part()` 主题定制见 [样式隔离与主题定制](/zh/guide/style-isolation)。
+Vue 2 uses Shadow DOM by default so aggressive global CSS, low-code resets, and micro-frontend styles cannot break the viewer. Use `styleIsolation:'none'` only for legacy deep class overrides. See [Style Isolation And Customization](/guide/style-isolation) for tokens and `::part()` customization.
 
-Vite 项目可以额外加入插件，插件会自动发现已安装的 `@file-viewer/preset-*` 并省去手动 import preset。注意：只安装插件包不会让 Vite 自动运行，仍需要在 `vite.config.ts` 注册一次插件：
+Vite projects can add the plugin to avoid manual preset imports. Installing the package alone is not enough because Vite plugins must be registered once; after registration the plugin auto-discovers installed presets:
 
 ```bash
-pnpm add -D @file-viewer/vite-plugin
+npm install -D @file-viewer/vite-plugin
 ```
 
 ```ts
@@ -56,16 +49,63 @@ export default defineConfig({
 })
 ```
 
-需要完整格式矩阵时，把 `@file-viewer/preset-office` 换成 `@file-viewer/preset-all`，Vite 配置保持一致：
+```ts
+import Vue from 'vue'
+import FileViewer from '@file-viewer/vue2.7'
 
-```bash
-pnpm add @file-viewer/vue2.7 @file-viewer/preset-all
+Vue.use(FileViewer)
 ```
 
-也可以使用 full 包一步到位：Vue2.7 使用 `@file-viewer/vue2.7-full`，Vue2.6 使用 `@file-viewer/vue2.6-full`。full 包默认启用完整格式矩阵，组件、事件和 controller API 与标准包一致：
+```vue
+<template>
+  <div class="preview-shell">
+    <file-viewer
+      url="/files/report.pdf"
+      :options="viewerOptions"
+      @viewer-event="onViewerEvent"
+    />
+  </div>
+</template>
+
+<script>
+import officePreset from '@file-viewer/preset-office'
+
+export default {
+  data() {
+    return {
+      viewerOptions: {
+        preset: officePreset,
+        rendererMode: 'replace',
+        theme: 'light',
+        toolbar: { position: 'bottom-right' }
+      }
+    }
+  },
+  methods: {
+    onViewerEvent(event) {
+      console.log(event.type)
+    }
+  }
+}
+</script>
+```
+
+## Vue 2.6
 
 ```bash
-pnpm add @file-viewer/vue2.7-full
+npm install @file-viewer/vue2.6 @file-viewer/preset-office
+```
+
+Use the same component API as Vue 2.7. Keep your host container at a fixed or viewport-relative height. Switch `@file-viewer/preset-office` to `@file-viewer/preset-all` when heavy users need the full format matrix in one install:
+
+```bash
+npm install @file-viewer/vue2.6 @file-viewer/preset-all
+```
+
+Full packages are also available when you want the complete matrix by default: use `@file-viewer/vue2.7-full` for Vue 2.7 and `@file-viewer/vue2.6-full` for Vue 2.6.
+
+```bash
+npm install @file-viewer/vue2.7-full
 ```
 
 ```ts
@@ -75,19 +115,19 @@ import FileViewer from '@file-viewer/vue2.7-full'
 Vue.use(FileViewer)
 ```
 
-`@file-viewer/vue2.7-full` 和 `@file-viewer/vue2.6-full` 已内置 `preset-all`，不要重复安装或传入。Vite 使用上面的 `copyAssets:true` 后会在 dev/build 自动发布完整同版本资产；Vue CLI、Webpack 4、Rspack、Rollup 等非 Vite 项目运行 Full 包自带的同版本 CLI：
+`@file-viewer/vue2.7-full` and `@file-viewer/vue2.6-full` already include `preset-all`; do not install or pass it again. With the Vite configuration above, dev and build publish the complete matching assets automatically. Vue CLI, webpack 4, Rspack, Rollup, and other non-Vite projects run the Full package's included same-version CLI:
 
 ```bash
 npx --no-install file-viewer-copy-assets ./public/file-viewer
 ```
 
-如果是 Vue 2.6 项目，把组件包替换为 `@file-viewer/vue2.6` 或 `@file-viewer/vue2.6-full` 即可。需要更强自定义时，再配置 `formats`、`renderers`、`scan:true`、`inject:false` 或 `chunkStrategy:'renderer'`；常规项目保持 `fileViewerRenderers({ copyAssets:true })` 即可。
+Use `formats`, `renderers`, `scan:true`, `inject:false`, or `chunkStrategy:'renderer'` only for explicit registry control. Normal projects should keep `fileViewerRenderers({ copyAssets:true })` and let the plugin auto-activate installed presets.
 
 ## Vue 2.6 + Vue CLI 3 / webpack 4
 
-如果旧项目里“只要导入 `@file-viewer/preset-office` 就报错，注释掉就不报错”，通常不是 Vue2.6 组件失效，而是 `preset-office` 会把 PDF、Word、Excel、PPTX、OFD 等 renderer 依赖链一起纳入构建；Vue CLI 3 的 webpack 4 默认不转译 `node_modules`，也不理解部分 package `exports` 子路径和 `import.meta.url` worker 写法。
+If importing `@file-viewer/preset-office` breaks the build but commenting it out lets the app compile, the Vue 2.6 component is usually not the failing part. The office preset pulls PDF, Word, Excel, PPTX, and OFD renderer dependencies into the bundle; Vue CLI 3 / webpack 4 does not transpile `node_modules` by default and does not understand every package `exports` subpath or `import.meta.url` worker pattern.
 
-仓库提供了一个独立可运行示例，技术栈按客户常见后台项目抽取：`vue@2.6`、`@vue/cli-service@3.1`、webpack 4、Element UI、Ant Design Vue 1.x、`babel-polyfill` 和 `@file-viewer/preset-office`。
+The repository includes a standalone runnable demo based on this legacy stack:
 
 ```bash
 cd examples/vue2.6-cli3-office
@@ -95,13 +135,13 @@ npm install
 npm run serve
 ```
 
-Node 17+ 跑 webpack 4 时，如果遇到 OpenSSL/MD4 报错，可以临时加：
+On Node 17+, webpack 4 may need:
 
 ```bash
 NODE_OPTIONS=--openssl-legacy-provider npm run build
 ```
 
-客户项目里优先整份参考示例的 `vue.config.js`，至少需要搬这几类配置：
+Prefer copying the demo `vue.config.js` first, then trim it after the customer build is stable. The PDF.js pre-loader is required, not an optional optimization.
 
 ```js
 // vue.config.js
@@ -128,15 +168,43 @@ module.exports = {
       },
       extensions: ['.mjs', '.js', '.vue', '.json']
     }
+  },
+  chainWebpack(config) {
+    config.module
+      .rule('pdfjs-webpack4-runtime-isolation')
+      .test(/pdfjs-dist[\\/]legacy[\\/](build[\\/]pdf|web[\\/]pdf_viewer)\.mjs$/)
+      .enforce('pre')
+      .use('isolate-pdfjs-webpack-runtime')
+      .loader(resolveApp('build/rename-pdfjs-webpack-require.cjs'))
   }
 }
 ```
 
-`@file-viewer/docx` 的 alias 必须保留：webpack 4 默认优先选择 UMD `browser` 入口，该文件经过 Babel 转译后会丢失 CommonJS 导出，上传 DOCX 时表现为 `renderAsync is not a function`。示例还包含两个 webpack 4 兼容补丁：`build/rename-pdfjs-webpack-require.cjs` 会处理 PDF.js legacy `.mjs` 自带 webpack 包装代码，避免和宿主 webpack 4 注入的 `__webpack_require__` 同名冲突；`build/babel-transform-import-meta-url.cjs` 负责让 webpack 4 解析 PPTX worker 模块。`scripts/copy-file-viewer-assets.cjs` 会把 PDF/DOCX/PPTX/Excel 资产和 `@file-viewer/ppt@0.3.3` 的 ESM、Worker、帧缓存、WASM、CJK 字体、manifest、package metadata、LICENSE、NOTICE 九个文件复制到 `public/file-viewer/`。
+Use this complete implementation for `build/rename-pdfjs-webpack-require.cjs`:
 
-`npm run serve` 对应的 `.env.normalServe` 使用 `NODE_ENV=production`，是为了避开 Vue CLI 3.1 dev server 对 HMR 客户端的强注入；真实项目可以先用这个模式确认 `preset-office` 构建链可用，再决定是否保留热更新。
+```js
+module.exports = function isolatePdfjsWebpackRuntime(source) {
+  const normalizedPath = this.resourcePath.replace(/\\/g, '/')
+  const shouldPatch =
+    /\/pdfjs-dist\/legacy\/build\/pdf\.mjs$/.test(normalizedPath) ||
+    /\/pdfjs-dist\/legacy\/web\/pdf_viewer\.mjs$/.test(normalizedPath)
 
-业务代码里继续通过 `options.preset` 注入能力，同时把离线资产路径显式传进去：
+  if (!shouldPatch) {
+    return source
+  }
+
+  return source.replace(
+    /\b__webpack_(modules|module_cache|exports|require)__\b/g,
+    (_match, name) => `__pdfjs_webpack_${name}__`
+  )
+}
+```
+
+Renaming only `__webpack_require__` is not enough. PDF.js also declares `__webpack_exports__`, which is hoisted into webpack 4's outer module and shadows the host export object. The first PDF load commonly fails with `Cannot convert undefined or null to object`; selecting the file again then fails while reading `createFileViewerTranslator` from `undefined`. The loader above isolates all four runtime bindings: `modules`, `module_cache`, `exports`, and `require`.
+
+Keep the `@file-viewer/docx` alias too: webpack 4 otherwise prefers the UMD `browser` entry, whose CommonJS exports are lost after Babel transpilation and surface as `@file-viewer/docx did not expose a compatible renderAsync function` when a DOCX is uploaded. The other patch, `build/babel-transform-import-meta-url.cjs`, lets webpack 4 parse the PPTX worker module. The copy script publishes the complete nine-file `@file-viewer/ppt@0.3.3` runtime under `public/file-viewer/vendor/ppt/` together with the PPTX worker. The `serve` env files set `NODE_ENV=production` to avoid Vue CLI 3.1 injecting its HMR client into this legacy preview path.
+
+Then pass the preset and self-hosted asset URLs explicitly:
 
 ```js
 import officePreset from '@file-viewer/preset-office'
@@ -171,106 +239,24 @@ export const viewerOptions = {
 }
 ```
 
-这四个 `ppt*Url` 仅用于这个显式把资产托管在 `public/file-viewer/` 的 Vue CLI 3 兼容示例；复制脚本和 options 已经配套，业务侧不需要再手工拼路径。常规 Vite/full 包会自动发布并解析同一套运行时。
+`preset-office` covers PDF, Word, spreadsheets, presentations, OFD, and OpenDocument. It intentionally does not include images or media. Add those renderers explicitly when the application also previews `.jpg` or `.mp4`, or combine the office and lite presets:
 
-Vue CLI 3 / webpack 4 可以继续使用这条接入路径，但建议面向现代浏览器构建；如果项目仍强依赖 IE11 或旧版 `uglifyjs-webpack-plugin` 压缩全量 Office 依赖链，优先考虑升级压缩器、升级构建链，或改用 `@file-viewer/vue2.6-full` / Web Component IIFE 形态做边界隔离。
-
-## 注册插件
-
-```ts
-import Vue from 'vue'
-import App from './App.vue'
-import FileViewer from '@file-viewer/vue2.7'
-
-Vue.use(FileViewer)
-
-new Vue({
-  render: h => h(App)
-}).$mount('#app')
-```
-
-Vue2 入口会自动带上样式，不需要再额外 import CSS。
-
-## URL 预览
-
-```vue
-<template>
-  <div style="height: 100vh">
-    <file-viewer :url="url" :options="options" />
-  </div>
-</template>
-
-<script>
+```js
 import officePreset from '@file-viewer/preset-office'
+import { imageRenderer } from '@file-viewer/renderer-image'
+import { mediaRenderer } from '@file-viewer/renderer-media'
 
-export default {
-  data() {
-    return {
-      url: 'https://example.com/demo.pdf',
-      options: {
-        theme: 'light',
-        preset: officePreset,
-        rendererMode: 'replace',
-        toolbar: { position: 'bottom-right' },
-        watermark: { text: '内部预览', opacity: 0.14 },
-        archive: {
-          cache: true,
-          workerTimeoutMs: 30000
-        }
-      }
-    }
-  }
+export const viewerOptions = {
+  preset: officePreset,
+  renderers: [imageRenderer, mediaRenderer],
+  rendererMode: 'replace'
 }
-</script>
 ```
 
-## File 预览
+Those four `ppt*Url` values are only needed because this Vue CLI 3 compatibility example explicitly self-hosts assets from `public/file-viewer/`. The copy command and options file are already wired together; normal Vite/full-package installs publish and resolve the same packaged runtime automatically.
 
-```vue
-<template>
-  <div style="height: 100vh">
-    <input type="file" @change="onChange" />
-    <div style="height: calc(100vh - 40px)">
-      <file-viewer :file="file" />
-    </div>
-  </div>
-</template>
+Vue CLI 3 / webpack 4 can keep working for modern browsers. If a project still requires IE11-level output or an old `uglifyjs-webpack-plugin` pass over the full office dependency graph, prefer upgrading the minifier/build chain or isolating the viewer through `@file-viewer/vue2.6-full` or the Web Component IIFE package.
 
-<script>
-export default {
-  data() {
-    return {
-      file: undefined
-    }
-  },
-  methods: {
-    onChange(event) {
-      const value = event.target.files && event.target.files.item(0)
-      if (value) {
-        this.file = value
-      }
-    }
-  }
-}
-</script>
-```
+## Historical Package
 
-## 与其他生态版本保持一致
-
-Vue2.7 / Vue2.6 标准包共享同一套 core 接口和 renderer/preset 装配能力；完整矩阵可覆盖 Word、Excel、PPT、PDF、OFD、Typst、XMind 脑图、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、EPUB、UMD、Markdown、代码高亮、图片、音视频、字体、设计资产和结构化数据。差异主要在包名和 Vue 运行时版本:
-
-两条分支也共享同一套打印和缩放能力判断: `toolbar.print` / `toolbar.zoom` 只表示业务是否显示按钮，真实按钮会结合当前文件类型、渲染完成状态、导出适配器和缩放 provider 动态显隐。`toolbar.position` 支持 `auto`、`top`、`top-center`、`bottom-right`，默认 `auto`，PDF 会自动悬浮到右下角以避开自身导航栏；需要顶部水平居中时传 `top-center`。Word / PDF 会输出完整页面，不适合直接打印的表格、压缩包、邮件、EPUB、音视频、3D / 模型等链路会隐藏打印按钮；Excel 等虚拟表格不会被外层 CSS 强行缩放。`options.theme` 支持 `light`、`dark`、`system`，默认继续跟随系统；浅色业务系统建议显式传 `light`。
-
-| 版本 | npm 包 | 最新版本 | 注册方式 |
-| --- | --- | --- | --- |
-| Vue2.7 | `@file-viewer/vue2.7` | `latest` | `Vue.use(FileViewer)` |
-| Vue2.6 | `@file-viewer/vue2.6` | `latest` | `Vue.use(FileViewer)` |
-| Vue2.7 Full | `@file-viewer/vue2.7-full` | `latest` | 默认启用完整格式矩阵 |
-| Vue2.6 Full | `@file-viewer/vue2.6-full` | `latest` | 默认启用完整格式矩阵 |
-| Vue3 | `@file-viewer/vue3` | `latest` | `createApp(App).use(FileViewer)` |
-
-历史包名 `@flyfish-group/file-viewer` 仍同步维护，对应 Vue2.7 线；新项目建议优先使用标准包名。
-
-<div class="doc-note">
-  如果一个预览能力需要被多个不同技术栈系统复用，建议统一使用标准组件包线，让 Vanilla JS / Pure Web、Vue、React、jQuery 和 Svelte 共享同一套 core 能力和运行参数。完整矩阵见 <a href="/zh/guide/ecosystem">生态组件总览</a>。
-</div>
+`@flyfish-group/file-viewer` remains the compatibility line for Vue 2.7. New projects should prefer `@file-viewer/vue2.7` or `@file-viewer/vue2.6`.

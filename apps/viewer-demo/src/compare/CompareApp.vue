@@ -1058,8 +1058,8 @@ watch(compareLocale, (nextLocale, previousLocale) => {
 .brand img {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
-  box-shadow: 0 10px 24px rgba(22, 111, 73, 0.16);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 16px rgba(22, 111, 73, 0.18));
 }
 
 .brand strong,

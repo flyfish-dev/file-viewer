@@ -13,7 +13,7 @@ export type DemoCopy = Record<string, string>
 
 const demoCopyMap: Record<DemoLocale, DemoCopy> = {
   'zh-CN': {
-    pageTitle: 'File Viewer 在线预览器 Vue3',
+    pageTitle: 'File Viewer Demo - Office、PDF、CAD 在线预览',
     pureWeb: 'Pure Web',
     local: '本地',
     link: '链接',
@@ -227,7 +227,7 @@ const demoCopyMap: Record<DemoLocale, DemoCopy> = {
     copiedSnippet: '已复制'
   },
   'en-US': {
-    pageTitle: 'File Viewer Demo for Vue 3',
+    pageTitle: 'File Viewer Demo — Office, PDF & CAD in Your Browser',
     pureWeb: 'Pure Web',
     local: 'Local',
     link: 'URL',

@@ -3,7 +3,7 @@
 <div class="doc-kicker">Start From The Right Door</div>
 
 <p class="doc-lead">
-  Flyfish Viewer 官方文档同时承担组件主页、接入手册和开源分发说明。
+  File Viewer by Flyfish 官方文档同时承担组件主页、接入手册和开源分发说明。
   文档围绕真实交付路径组织: 先确认支持格式和 Demo 表现，再选择 Vanilla JS / Pure Web、Vue3、Vue2.7、Vue2.6、React、React Legacy、jQuery 或 Svelte 原生接入，最后了解安装、私有化部署和开源分发。
 </p>
 

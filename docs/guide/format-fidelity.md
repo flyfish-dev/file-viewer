@@ -7,7 +7,7 @@
 <div class="doc-kicker">Clear Capability Boundaries</div>
 
 <p class="doc-lead">
-  Flyfish Viewer documents what is fully rendered, what is structurally inspected, and which formats need specialist engines for perfect fidelity.
+  File Viewer by Flyfish documents what is fully rendered, what is structurally inspected, and which formats need specialist engines for perfect fidelity.
 </p>
 
 ## High-confidence Preview Lines

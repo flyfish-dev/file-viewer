@@ -1,7 +1,11 @@
 node_modules/
 **/dist/
-**/.vitepress/cache/
-**/.vitepress/dist/
+apps/docs-site/.next/
+apps/docs-site/.source/
+apps/docs-site/content/
+apps/docs-site/out/
+apps/docs-site/public/
+apps/docs-site/next-env.d.ts
 **/*.tsbuildinfo
 playwright-report/
 test-results/

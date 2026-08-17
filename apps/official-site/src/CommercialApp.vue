@@ -145,7 +145,7 @@ const decisionItems = computed(() =>
   <div class="commercial-page" :lang="isZh ? 'zh-CN' : 'en'">
     <header class="commercial-nav">
       <a class="commercial-brand" :href="homeUrl">
-        <img src="/logo.png" alt="" />
+        <img src="/brand-mark-96.png" alt="" />
         <span>File Viewer</span>
       </a>
       <div class="commercial-nav-actions">
@@ -345,7 +345,7 @@ const decisionItems = computed(() =>
     </main>
 
     <footer class="commercial-footer">
-      <a :href="homeUrl"><img src="/logo.png" alt="" /> File Viewer</a>
+      <a :href="homeUrl"><img src="/brand-mark-96.png" alt="" /> File Viewer</a>
       <span>© 2026 Flyfish Dev</span>
     </footer>
   </div>

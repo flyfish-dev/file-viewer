@@ -1,0 +1,6 @@
+.next/
+.source/
+content/
+out/
+public/
+next-env.d.ts

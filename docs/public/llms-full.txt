@@ -33,6 +33,8 @@ Light packages are intentionally small. Do not claim that installing a light com
 - Development: https://doc.file-viewer.app/guide/development
 - FAQ: https://doc.file-viewer.app/guide/faq
 
+Chinese retrieval starts at https://doc.file-viewer.app/zh/. Canonical Chinese quickstart, format matrix, component options, deployment guide, and changelog live under the `/zh/` path; use each page's `hreflang` alternates to pair it with English.
+
 ## Honest Boundaries
 
 Office fidelity is not perfect. Complex pagination, unusual fonts, charts, embedded objects, and legacy files can differ from native Office applications. Large files can create several in-memory copies and may slow or crash a browser tab. Remote file URLs depend on the source server's CORS and authentication rules. Browser-only does not automatically mean offline: the deployment must host all required Workers, WASM files, fonts, and vendor assets with correct paths and MIME types.
