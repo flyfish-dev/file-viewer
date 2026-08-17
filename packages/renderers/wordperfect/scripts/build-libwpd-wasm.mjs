@@ -57,7 +57,10 @@ const args = [
 
   execFileSync(process.env.EMXX || 'em++', args, { stdio: 'inherit' })
   copyFileSync(resolve(outputDir, 'libwpd.mjs'), resolve(packageDir, 'vendor/libwpd.mjs'))
-  console.log(`[renderer-wordperfect] Built checksum-pinned libwpd/librevenge WebAssembly in ${outputDir}`)
+  copyFileSync(resolve(outputDir, 'libwpd.wasm'), resolve(packageDir, 'vendor/libwpd.wasm'))
+  console.log(
+    `[renderer-wordperfect] Built checksum-pinned libwpd/librevenge WebAssembly and refreshed the vendored runtime in ${outputDir}`
+  )
 } finally {
   rmSync(workDir, { recursive: true, force: true })
 }
