@@ -1,0 +1,24 @@
+{
+  "license": "Apache-2.0",
+  "privacy": "Synthetic documents contain no customer or personal data.",
+  "fixtures": {
+    "format-matrix.dbf": {
+      "producer": "scripts/generate-office-format-fixtures.mjs",
+      "container": "dBASE III",
+      "sha256": "62b945dd7095630c51c4e1a7de8fb47adb449f97c025505472c9c866409d2c52",
+      "expected": { "records": 3, "visibleRecords": 2, "fields": 4, "deletedRecords": 1 }
+    },
+    "addin.xla": {
+      "producer": "styled-exceljs 0.21.1",
+      "container": "BIFF8 CFB add-in",
+      "sha256": "1b1edc8dad88921c58f24ba650e44b3e5a93000dfee3df97959abc0677c81501",
+      "expected": { "sheets": 1, "cells": 4 }
+    },
+    "addin.xlam": {
+      "producer": "styled-exceljs 0.21.1",
+      "container": "OOXML add-in",
+      "sha256": "ba8d7183d87dda218c9af41a97d6d8a78a33cb1ec65f7a533206ba3e353774f8",
+      "expected": { "sheets": 1, "cells": 4 }
+    }
+  }
+}

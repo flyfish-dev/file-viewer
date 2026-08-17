@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <description>
+    <title-info>
+      <genre>science</genre>
+      <author><first-name>File</first-name><last-name>Viewer</last-name></author>
+      <book-title>Offline Format Matrix</book-title>
+      <annotation><p>A synthetic public fixture for FictionBook parsing.</p></annotation>
+      <coverpage><image xlink:href="#cover.png"/></coverpage>
+      <lang>en</lang>
+    </title-info>
+  </description>
+  <body>
+    <section id="intro">
+      <title><p>Introduction</p></title>
+      <p>FB2 keeps chapters, metadata, notes and embedded resources in one XML document.</p>
+      <image xlink:href="#cover.png"/>
+      <section id="nested"><title><p>Nested section</p></title><p>Searchable nested text.</p></section>
+    </section>
+  </body>
+  <body name="notes">
+    <section id="note-1"><title><p>Note 1</p></title><p>A structured footnote.</p></section>
+  </body>
+  <binary id="cover.png" content-type="image/png">iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=</binary>
+</FictionBook>

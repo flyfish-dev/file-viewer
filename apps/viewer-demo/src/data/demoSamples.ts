@@ -21,7 +21,7 @@ export type DemoSampleGroup = {
 export const sampleGroupsZh: DemoSampleGroup[] = [
   {
     title: '文档',
-    description: 'Word / PDF / OFD / Typst',
+    description: 'Word / Apple Pages / Hangul / PDF / OFD / Typst',
     family: 'word',
     items: [
       { name: 'DOC', url: '/example/test.doc' },
@@ -29,6 +29,14 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
       { name: 'DOT 模板', url: '/example/template.dot' },
       { name: 'RTF', url: '/example/sample.rtf' },
       { name: 'ODT', url: '/example/document.odt' },
+      { name: 'Pages（Apple 15.3.1 原生高保真样例）', url: '/example/apple-pages-experimental.pages' },
+      { name: 'WordPerfect 5.0（Apache-2.0 真实样例）', url: '/example/wordperfect-wp50.wp' },
+      { name: 'WordPerfect 6.x（Apache-2.0 真实样例）', url: '/example/wordperfect-wp6.wpd' },
+      { name: 'HWP v5（Apache-2.0 真实表格样例）', url: '/example/hwplib-table.hwp' },
+      { name: 'HWP v5（Apache-2.0 真实图片样例）', url: '/example/hwplib-image.hwp' },
+      { name: 'HWPX（Apache-2.0 真实样式样例）', url: '/example/hwpxlib-sample1.hwpx' },
+      { name: 'HWPX（Apache-2.0 真实合并表格）', url: '/example/hwpxlib-simple-table.hwpx' },
+      { name: 'HWPX（Apache-2.0 真实图片样例）', url: '/example/hwpxlib-simple-picture.hwpx' },
       { name: 'PDF 技术说明', url: '/example/pdf.pdf' },
       { name: 'OFD', url: '/example/ofd.ofd' },
       { name: 'Typst', url: '/example/report.typ' }
@@ -36,17 +44,20 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
   },
   {
     title: '表格',
-    description: 'Excel / CSV / ODS',
+    description: 'Excel / Numbers / DBF / CSV / ODS',
     family: 'sheet',
     items: [
       { name: 'XLSX', url: '/example/excel.xlsx' },
       { name: 'XLSM', url: '/example/excel.xlsm' },
       { name: 'XLSB', url: '/example/excel.xlsb' },
       { name: 'XLS', url: '/example/excel.xls' },
+      { name: 'XLA Add-in', url: '/example/addin.xla' },
+      { name: 'XLAM Add-in', url: '/example/addin.xlam' },
+      { name: 'DBF', url: '/example/format-matrix.dbf' },
       { name: 'CSV', url: '/example/table.csv' },
       { name: 'ODS', url: '/example/excel.ods' },
       { name: 'FODS', url: '/example/excel.fods' },
-      { name: 'Numbers', url: '/example/excel.numbers' }
+      { name: 'Numbers（Apple 15.3.1 原生高保真样例）', url: '/example/excel.numbers' }
     ]
   },
   {
@@ -55,7 +66,9 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
     family: 'cad',
     items: [
       { name: 'PowerPoint 97–2003', url: '/example/office-demo.ppt' },
+      { name: 'POT 二进制模板', url: '/example/format-matrix-template.pot' },
       { name: 'NASA 月球战略 PPTX', url: '/example/ppt.pptx' },
+      { name: 'Keynote（Apple 15.3.1 原生高保真样例）', url: '/example/apple-keynote-experimental.key' },
       { name: 'ODP', url: '/example/slides.odp' },
       { name: 'DXF', url: '/example/drawing.dxf' },
       { name: 'DWG', url: '/example/sample.dwg' },
@@ -93,10 +106,11 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
   },
   {
     title: '电子书',
-    description: 'EPUB / UMD',
+    description: 'EPUB / FB2 / UMD',
     family: 'ebook',
     items: [
       { name: 'EPUB', url: '/example/book.epub' },
+      { name: 'FB2', url: '/example/format-matrix.fb2' },
       { name: 'UMD', url: '/example/book.umd' }
     ]
   },
@@ -231,12 +245,12 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
 // English presentation reuses the canonical group structure. Only labels and
 // selected fixtures differ, which prevents the two menus drifting over time.
 const englishGroupCopy: Array<Pick<DemoSampleGroup, 'title' | 'description'>> = [
-  { title: 'Documents', description: 'Word / PDF / OFD / Typst' },
-  { title: 'Spreadsheets', description: 'Excel / CSV / ODS' },
+  { title: 'Documents', description: 'Word / Apple Pages / Hangul / PDF / OFD / Typst' },
+  { title: 'Spreadsheets', description: 'Excel / Numbers / DBF / CSV / ODS' },
   { title: 'Slides & CAD', description: 'PPT / PPTX / CAD' },
   { title: 'Mindmaps & Diagrams', description: 'XMind / Mermaid / PlantUML / draw.io' },
   { title: '3D Models & Geospatial Data', description: 'GLTF / STEP / OBJ / STL / GeoJSON / KML / GPX' },
-  { title: 'Ebooks', description: 'EPUB / UMD' },
+  { title: 'Ebooks', description: 'EPUB / FB2 / UMD' },
   { title: 'Archives', description: 'ZIP / TAR.GZ / Encrypted' },
   { title: 'Email & EDA', description: 'EML / MSG / OLB / DRA / GDS / OASIS' },
   { title: 'Text', description: 'Markdown / TXT / Log' },
@@ -285,8 +299,21 @@ const englishSampleNameMap: Record<string, string> = {
   '/example/table.csv': 'CSV table',
   '/example/excel.ods': 'ODS spreadsheet',
   '/example/excel.fods': 'Flat ODS spreadsheet',
-  '/example/excel.numbers': 'Numbers workbook',
+  '/example/apple-pages-experimental.pages': 'Apple Pages 15.3.1 native high-fidelity fixture',
+  '/example/wordperfect-wp50.wp': 'WordPerfect 5.0 Apache-2.0 real fixture',
+  '/example/wordperfect-wp6.wpd': 'WordPerfect 6.x Apache-2.0 real fixture',
+  '/example/hwplib-table.hwp': 'HWP v5 Apache-2.0 real table fixture',
+  '/example/hwplib-image.hwp': 'HWP v5 Apache-2.0 real image fixture',
+  '/example/hwpxlib-sample1.hwpx': 'HWPX Apache-2.0 real styled-text fixture',
+  '/example/hwpxlib-simple-table.hwpx': 'HWPX Apache-2.0 real merged-table fixture',
+  '/example/hwpxlib-simple-picture.hwpx': 'HWPX Apache-2.0 real picture fixture',
+  '/example/addin.xla': 'XLA add-in workbook',
+  '/example/addin.xlam': 'XLAM add-in workbook',
+  '/example/format-matrix.dbf': 'dBASE table',
+  '/example/excel.numbers': 'Apple Numbers 15.3.1 native high-fidelity fixture',
   '/example/office-demo.ppt': 'PowerPoint 97–2003 sample',
+  '/example/format-matrix-template.pot': 'PowerPoint 97–2003 template',
+  '/example/apple-keynote-experimental.key': 'Apple Keynote 15.3.1 native high-fidelity fixture',
   '/example/en/sample-presentation.pptx': 'NASA lunar strategy PPTX',
   '/example/slides.odp': 'ODP presentation',
   '/example/drawing.dxf': 'DXF drawing',
@@ -300,6 +327,7 @@ const englishSampleNameMap: Record<string, string> = {
   '/example/flow.excalidraw': 'Excalidraw scene',
   '/example/process.drawio': 'draw.io process',
   '/example/book.epub': 'EPUB ebook',
+  '/example/format-matrix.fb2': 'FictionBook 2 ebook',
   '/example/book.umd': 'UMD ebook',
   '/example/en/archive.zip': 'ZIP archive with English samples',
   '/example/en/archive.tar.gz': 'TAR.GZ archive with English samples',

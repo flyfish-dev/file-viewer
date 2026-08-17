@@ -32,35 +32,42 @@ npm install @file-viewer/vue3-full
 
 ## 格式支持矩阵
 
-共享格式矩阵当前覆盖 25 条预览链路、208 个扩展名。完整能力通过 renderer / preset 按需装配，组件层只做生态适配，不互相嵌套。
+共享格式目录当前注册 221 个扩展名（221 个稳定、0 个实验），映射到 32 条预览链路。实验格式不计入稳定支持数量；完整能力通过 renderer / preset 按需装配。
 
-| 预览链路 | 分类 | 扩展名 | 能力 | 加载 |
-| --- | --- | --- | --- | --- |
-| Word OpenXML | office | `.docx`, `.docm`, `.dotx`, `.dotm` | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
-| Word Binary | office | `.doc`, `.dot` | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
-| PowerPoint 97–2003 | office | `.ppt` | 下载, 打印(适配器), HTML(适配器), 缩放(Provider) | 按需异步 |
-| PowerPoint OpenXML | office | `.pptx`, `.pptm`, `.potx`, `.potm`, `.ppsx`, `.ppsm` | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
-| Open Document | office | `.rtf`, `.odt`, `.odp` | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
-| Spreadsheet | office | `.xlsx`, `.xltx`, `.xlsm`, `.xlsb`, `.xls`, `.xlt`, `.xltm`, `.csv`, `.tsv`, `.ods`, `.fods`, `.numbers` | 下载, 缩放(Provider), 搜索 | 按需异步 |
-| PDF | document | `.pdf` | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索(Provider) | 按需异步 |
-| OFD | document | `.ofd` | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
-| Typst | document | `.typ`, `.typst` | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
-| Archive | archive | `.zip`, `.zipx`, `.7z`, `.rar`, `.tar`, `.gz`, `.gzip`, `.tgz`, `.bz2`, `.bzip2`, `.tbz`, `.tbz2`, `.xz`, `.txz`, `.lzma`, `.zst`, `.tzst`, `.cab`, `.ar`, `.cpio`, `.iso`, `.xar`, `.lha`, `.lzh`, `.jar`, `.war`, `.ear`, `.apk`, `.cbz`, `.cbr` | 下载, 搜索 | 按需异步 |
-| Email | email | `.eml`, `.msg`, `.mbox` | 下载, HTML, 搜索 | 按需异步 |
-| EDA | eda | `.olb`, `.dra`, `.gds`, `.oas`, `.oasis` | 下载, 打印, HTML, 搜索 | 按需异步 |
-| CAD | cad | `.dxf`, `.dwg`, `.dwf`, `.dwfx`, `.xps` | 下载, 打印, HTML, 缩放(Provider) | 按需异步 |
-| 3D Model | model | `.glb`, `.gltf`, `.obj`, `.stl`, `.ply`, `.fbx`, `.dae`, `.3ds`, `.3mf`, `.amf`, `.usd`, `.usda`, `.usdc`, `.usdz`, `.kmz`, `.step`, `.stp`, `.iges`, `.igs`, `.ifc`, `.3dm`, `.brep`, `.pcd`, `.wrl`, `.vrml`, `.xyz`, `.vtk`, `.vtp` | 下载, 缩放(Provider) | 按需异步 |
-| Geospatial | geo | `.geojson`, `.kml`, `.gpx`, `.shp` | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
-| Drawing | drawing | `.excalidraw`, `.drawio`, `.dio`, `.mermaid`, `.mmd`, `.plantuml`, `.puml` | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
-| Mind Map | mindmap | `.xmind` | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
-| EPUB | ebook | `.epub` | 下载, HTML, 搜索(Provider) | 按需异步 |
-| UMD | ebook | `.umd` | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
-| Image | image | `.gif`, `.jpg`, `.jpeg`, `.bmp`, `.tiff`, `.tif`, `.png`, `.svg`, `.webp`, `.avif`, `.ico`, `.heic`, `.heif`, `.jxl` | 下载, 打印, HTML, 缩放(Provider) | 按需异步 |
-| Markdown | markdown | `.md`, `.markdown` | 下载, 打印, HTML, 搜索 | 按需异步 |
-| Code and Text | code | `.txt`, `.json`, `.js`, `.mjs`, `.cjs`, `.css`, `.java`, `.py`, `.html`, `.htm`, `.jsx`, `.ts`, `.tsx`, `.xml`, `.log`, `.vue`, `.yaml`, `.yml`, `.ini`, `.sh`, `.bash`, `.sql`, `.go`, `.rs`, `.php`, `.c`, `.cpp`, `.cc`, `.h`, `.hpp`, `.cs`, `.diff`, `.patch`, `.bundle`, `.bdl`, `.jsonc`, `.json5`, `.ipynb`, `.toml`, `.proto`, `.hcl`, `.tex`, `.gv`, `.http`, `.react`, `.rb`, `.swift`, `.kt` | 下载, 打印, HTML, 搜索 | 按需异步 |
-| Video | media | `.mp4`, `.webm`, `.m3u8` | 下载 | 按需异步 |
-| Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | 下载 | 按需异步 |
-| Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | 下载, HTML, 搜索 | 按需异步 |
+| 预览链路 | 分类 | 扩展名 | 等级 / 状态 | 能力 | 加载 |
+| --- | --- | --- | --- | --- | --- |
+| Word OpenXML | office | `.docx`, `.docm`, `.dotx`, `.dotm` | high-fidelity / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| Word Binary | office | `.doc`, `.dot` | structured / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| PowerPoint 97–2003 | office | `.ppt`, `.pot` | structured / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider) | 按需异步 |
+| PowerPoint OpenXML | office | `.pptx`, `.pptm`, `.potx`, `.potm`, `.ppsx`, `.ppsm` | high-fidelity / stable | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
+| Open Document | office | `.rtf`, `.odt`, `.odp` | structured / stable | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
+| Spreadsheet | office | `.xlsx`, `.xltx`, `.xlsm`, `.xlsb`, `.xls`, `.xlt`, `.xla`, `.xlam`, `.xltm`, `.csv`, `.tsv`, `.ods`, `.fods` | structured / stable | 下载, 缩放(Provider), 搜索 | 按需异步 |
+| Apple Pages | office | `.pages` | high-fidelity / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| Apple Numbers | office | `.numbers` | high-fidelity / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| Apple Keynote | office | `.key` | high-fidelity / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| WordPerfect | office | `.wpd`, `.wp`, `.wp5`, `.wp6` | structured / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| dBASE Table | office | `.dbf` | structured / stable | 下载, 缩放(Provider), 搜索 | 按需异步 |
+| PDF | document | `.pdf` | high-fidelity / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索(Provider) | 按需异步 |
+| OFD | document | `.ofd` | structured / stable | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
+| Hancom Hangul | office | `.hwp`, `.hwpx` | structured / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| Typst | document | `.typ`, `.typst` | high-fidelity / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
+| Archive | archive | `.zip`, `.zipx`, `.7z`, `.rar`, `.tar`, `.gz`, `.gzip`, `.tgz`, `.bz2`, `.bzip2`, `.tbz`, `.tbz2`, `.xz`, `.txz`, `.lzma`, `.zst`, `.tzst`, `.cab`, `.ar`, `.cpio`, `.iso`, `.xar`, `.lha`, `.lzh`, `.jar`, `.war`, `.ear`, `.apk`, `.cbz`, `.cbr` | structured / stable | 下载, 搜索 | 按需异步 |
+| Email | email | `.eml`, `.msg`, `.mbox` | structured / stable | 下载, HTML, 搜索 | 按需异步 |
+| EDA | eda | `.olb`, `.dra`, `.gds`, `.oas`, `.oasis` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
+| CAD | cad | `.dxf`, `.dwg`, `.dwf`, `.dwfx`, `.xps` | high-fidelity / stable | 下载, 打印, HTML, 缩放(Provider) | 按需异步 |
+| 3D Model | model | `.glb`, `.gltf`, `.obj`, `.stl`, `.ply`, `.fbx`, `.dae`, `.3ds`, `.3mf`, `.amf`, `.usd`, `.usda`, `.usdc`, `.usdz`, `.kmz`, `.step`, `.stp`, `.iges`, `.igs`, `.ifc`, `.3dm`, `.brep`, `.pcd`, `.wrl`, `.vrml`, `.xyz`, `.vtk`, `.vtp` | structured / stable | 下载, 缩放(Provider) | 按需异步 |
+| Geospatial | geo | `.geojson`, `.kml`, `.gpx`, `.shp` | structured / stable | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
+| Drawing | drawing | `.excalidraw`, `.drawio`, `.dio`, `.mermaid`, `.mmd`, `.plantuml`, `.puml` | structured / stable | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
+| Mind Map | mindmap | `.xmind` | structured / stable | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
+| EPUB | ebook | `.epub` | high-fidelity / stable | 下载, HTML, 搜索(Provider) | 按需异步 |
+| FictionBook | ebook | `.fb2` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
+| UMD | ebook | `.umd` | structured / stable | 下载, 打印, HTML, 缩放(Provider), 搜索 | 按需异步 |
+| Image | image | `.gif`, `.jpg`, `.jpeg`, `.bmp`, `.tiff`, `.tif`, `.png`, `.svg`, `.webp`, `.avif`, `.ico`, `.heic`, `.heif`, `.jxl` | high-fidelity / stable | 下载, 打印, HTML, 缩放(Provider) | 按需异步 |
+| Markdown | markdown | `.md`, `.markdown` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
+| Code and Text | code | `.txt`, `.json`, `.js`, `.mjs`, `.cjs`, `.css`, `.java`, `.py`, `.html`, `.htm`, `.jsx`, `.ts`, `.tsx`, `.xml`, `.log`, `.vue`, `.yaml`, `.yml`, `.ini`, `.sh`, `.bash`, `.sql`, `.go`, `.rs`, `.php`, `.c`, `.cpp`, `.cc`, `.h`, `.hpp`, `.cs`, `.diff`, `.patch`, `.bundle`, `.bdl`, `.jsonc`, `.json5`, `.ipynb`, `.toml`, `.proto`, `.hcl`, `.tex`, `.gv`, `.http`, `.react`, `.rb`, `.swift`, `.kt` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
+| Video | media | `.mp4`, `.webm`, `.m3u8` | high-fidelity / stable | 下载 | 按需异步 |
+| Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | high-fidelity / stable | 下载 | 按需异步 |
+| Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | 下载, HTML, 搜索 | 按需异步 |
 
 ## Full 包快速开始
 
@@ -138,6 +145,9 @@ npx --no-install file-viewer-copy-assets ./public/file-viewer
 | `archive` | 配置压缩包 Worker/WASM、超时、缓存、包体限制和压缩包内单文件预览大小；旧 ZIP 中文文件名会自动按 GBK/GB18030 兼容解码。 |
 | `pdf` | 配置 PDF.js Worker、导航栏、目录、缩略图、旋转、流式读取、Range chunk 和凭据。 |
 | `docx` / `spreadsheet` | DOCX 由 @file-viewer/renderer-word 承接并使用自研 @file-viewer/docx，默认自动选择 Worker 或主线程解析，连续流式阅读和异步分批渲染，可按需显式开启视觉分页；表格由 @file-viewer/renderer-spreadsheet 承接，默认保真解析，大文件自动启用 Worker，表头拖拽调列宽可按需显式开启。 |
+| `iwork` | 配置 Pages / Numbers / Keynote 的模块 Worker、超时、ZIP/Snappy/IWA 安全上限与 Quick Look 降级策略；Apple 三类已通过 iWork ’09、2013+ 与当前版本真实样例的结构、浏览器和视觉 golden 门禁，按静态高保真 stable 提供。 |
+| `hangul` | 配置 HWP/HWPX 模块 Worker、超时、ZIP 解压/压缩率/条目数与 HWP 记录数安全上限；稳定能力为经过真实样例验证的静态结构化预览。 |
+| `wordPerfect` | 配置 WordPerfect Worker、内置 libwpd/librevenge WASM 地址与超时；WASM 失败时才降级为有界文本预览，正常路径使用真实样例验证的结构化引擎。 |
 | `presentation` | 演示文稿 renderer 保持两条隔离引擎：PowerPoint 97–2003 `.ppt` 使用包内 `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM，标准资产布局无需配置 URL；`pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` 仅用于自定义路径；`pptWorker` 与 `pptCache` 控制 Worker 和有界帧缓存。PPTX/OpenXML 使用 `@file-viewer/pptx` Worker，并可通过 `workerUrl` / `workerType` 覆盖。 |
 | `typst` / `data` / `cad` | 配置 Typst、SQLite、CAD/DWG/DXF/DWF 等 WASM、Worker、编码和渲染策略。 |
 | `hooks` / `beforeOperation` | 统一生命周期 hooks 和操作前置校验，可用于审计、权限、埋点和安全控制。 |

@@ -4,12 +4,15 @@ import type {
   FileViewerDataOptions,
   FileViewerDocxOptions,
   FileViewerDrawingOptions,
+  FileViewerIworkOptions,
+  FileViewerHangulOptions,
   FileViewerModelOptions,
   FileViewerOptions,
   FileViewerPdfOptions,
   FileViewerPresentationOptions,
   FileViewerSpreadsheetOptions,
   FileViewerTypstOptions,
+  FileViewerWordPerfectOptions,
 } from '../contracts/types';
 
 export const DEFAULT_FILE_VIEWER_ARCHIVE_WORKER_PATH = 'vendor/libarchive/worker-bundle.js';
@@ -26,6 +29,16 @@ export const DEFAULT_FILE_VIEWER_PPT_FRAME_CACHE_PATH = `${DEFAULT_FILE_VIEWER_P
 export const DEFAULT_FILE_VIEWER_PPT_WASM_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/ppt-native.wasm`;
 export const DEFAULT_FILE_VIEWER_PPT_FONT_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/ppt-font-cjk.otf`;
 export const DEFAULT_FILE_VIEWER_SPREADSHEET_WORKER_PATH = 'vendor/xlsx/sheet.worker.js';
+export const DEFAULT_FILE_VIEWER_IWORK_WORKER_PATH = 'vendor/iwork/iwork.worker.js';
+export const DEFAULT_FILE_VIEWER_IWORK_WORKER_PACKAGE_PATH = '@file-viewer/renderer-iwork/worker/iwork.worker.js';
+export const DEFAULT_FILE_VIEWER_HANGUL_WORKER_PATH = 'vendor/hangul/hangul.worker.js';
+export const DEFAULT_FILE_VIEWER_HANGUL_WORKER_PACKAGE_PATH = '@file-viewer/renderer-hangul/worker/hangul.worker.js';
+export const DEFAULT_FILE_VIEWER_WORDPERFECT_WORKER_PATH = 'vendor/wordperfect/wordperfect.worker.js';
+export const DEFAULT_FILE_VIEWER_WORDPERFECT_WORKER_PACKAGE_PATH = '@file-viewer/renderer-wordperfect/worker/wordperfect.worker.js';
+export const DEFAULT_FILE_VIEWER_WORDPERFECT_WASM_PATH = 'vendor/wordperfect/libwpd.wasm';
+export const DEFAULT_FILE_VIEWER_WORDPERFECT_WASM_PACKAGE_PATH = '@file-viewer/renderer-wordperfect/worker/libwpd.wasm';
+export const DEFAULT_FILE_VIEWER_WORDPERFECT_MODULE_PATH = 'vendor/wordperfect/libwpd.mjs';
+export const DEFAULT_FILE_VIEWER_WORDPERFECT_MODULE_PACKAGE_PATH = '@file-viewer/renderer-wordperfect/worker/libwpd.mjs';
 export const DEFAULT_FILE_VIEWER_PDF_WORKER_PATH = 'vendor/pdf/pdf.worker.mjs';
 export const DEFAULT_FILE_VIEWER_PDF_CMAP_PATH = 'vendor/pdf/cmaps/';
 export const DEFAULT_FILE_VIEWER_PDF_WASM_PATH = 'vendor/pdf/wasm/';
@@ -304,6 +317,10 @@ export type FileViewerRendererAssetOptionPath =
   | 'docx.workerJsZipUrl'
   | 'docx.workerUrl'
   | 'drawing.viewerScriptUrl'
+  | 'iwork.workerUrl'
+  | 'hangul.workerUrl'
+  | 'wordPerfect.workerUrl'
+  | 'wordPerfect.wasmUrl'
   | 'model.workerUrl'
   | 'model.runtimeUrl'
   | 'model.wasmUrl'
@@ -746,6 +763,75 @@ export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRe
       },
     ],
   },
+  ...(['apple-pages', 'apple-numbers', 'apple-keynote'] as const).map(rendererId => ({
+    rendererId,
+    assets: [
+      {
+        id: `${rendererId}-iwork-worker`,
+        rendererId,
+        kind: 'worker' as const,
+        target: 'public' as const,
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_IWORK_WORKER_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_IWORK_WORKER_PACKAGE_PATH,
+        optionPath: 'iwork.workerUrl' as const,
+        description: 'Module Worker for bounded ZIP, Snappy, IWA/Protobuf and iWork 09 XML/APXL parsing.',
+      },
+    ],
+  })),
+  {
+    rendererId: 'office-hangul',
+    assets: [
+      {
+        id: 'hangul-worker',
+        rendererId: 'office-hangul',
+        kind: 'worker',
+        target: 'public',
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_HANGUL_WORKER_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_HANGUL_WORKER_PACKAGE_PATH,
+        optionPath: 'hangul.workerUrl',
+        description: 'Module Worker for bounded HWP v5 CFB and HWPX ZIP/XML parsing.',
+      },
+    ],
+  },
+  {
+    rendererId: 'office-wordperfect',
+    assets: [
+      {
+        id: 'wordperfect-worker',
+        rendererId: 'office-wordperfect',
+        kind: 'worker',
+        target: 'public',
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_WORDPERFECT_WORKER_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_WORDPERFECT_WORKER_PACKAGE_PATH,
+        optionPath: 'wordPerfect.workerUrl',
+        description: 'Module Worker for bounded WordPerfect signature detection and parsing.',
+      },
+      {
+        id: 'wordperfect-libwpd-wasm',
+        rendererId: 'office-wordperfect',
+        kind: 'wasm',
+        target: 'public',
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_WORDPERFECT_WASM_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_WORDPERFECT_WASM_PACKAGE_PATH,
+        optionPath: 'wordPerfect.wasmUrl',
+        description: 'MPL-2.0 libwpd/librevenge WebAssembly parser lazy-loaded by the WordPerfect Worker.',
+      },
+      {
+        id: 'wordperfect-libwpd-module',
+        rendererId: 'office-wordperfect',
+        kind: 'script',
+        target: 'public',
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_WORDPERFECT_MODULE_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_WORDPERFECT_MODULE_PACKAGE_PATH,
+        description: 'Emscripten ES module loader for the MPL-2.0 libwpd/librevenge WebAssembly runtime.',
+      },
+    ],
+  },
   {
     rendererId: 'typst',
     assets: [
@@ -960,6 +1046,26 @@ export const resolveFileViewerSpreadsheetWorkerUrl = (
   });
 };
 
+export const resolveFileViewerIworkWorkerUrl = (
+  options?: Pick<FileViewerIworkOptions, 'workerUrl'> | null,
+  documentBaseUrl?: string
+) => resolveFileViewerAssetUrl(options?.workerUrl, DEFAULT_FILE_VIEWER_IWORK_WORKER_PATH, { documentBaseUrl });
+
+export const resolveFileViewerHangulWorkerUrl = (
+  options?: Pick<FileViewerHangulOptions, 'workerUrl'> | null,
+  documentBaseUrl?: string
+) => resolveFileViewerAssetUrl(options?.workerUrl, DEFAULT_FILE_VIEWER_HANGUL_WORKER_PATH, { documentBaseUrl });
+
+export const resolveFileViewerWordPerfectWorkerUrl = (
+  options?: Pick<FileViewerWordPerfectOptions, 'workerUrl'> | null,
+  documentBaseUrl?: string
+) => resolveFileViewerAssetUrl(options?.workerUrl, DEFAULT_FILE_VIEWER_WORDPERFECT_WORKER_PATH, { documentBaseUrl });
+
+export const resolveFileViewerWordPerfectWasmUrl = (
+  options?: Pick<FileViewerWordPerfectOptions, 'wasmUrl'> | null,
+  documentBaseUrl?: string
+) => resolveFileViewerAssetUrl(options?.wasmUrl, DEFAULT_FILE_VIEWER_WORDPERFECT_WASM_PATH, { documentBaseUrl });
+
 export const resolveFileViewerPresentationWorkerUrl = (
   options?: Pick<FileViewerPresentationOptions, 'workerUrl'> | null,
   documentBaseUrl?: string
@@ -1069,6 +1175,14 @@ const getRendererAssetOptionValue = (
       return options?.docx?.workerUrl;
     case 'drawing.viewerScriptUrl':
       return options?.drawing?.viewerScriptUrl;
+    case 'iwork.workerUrl':
+      return options?.iwork?.workerUrl;
+    case 'hangul.workerUrl':
+      return options?.hangul?.workerUrl;
+    case 'wordPerfect.workerUrl':
+      return options?.wordPerfect?.workerUrl;
+    case 'wordPerfect.wasmUrl':
+      return options?.wordPerfect?.wasmUrl;
     case 'model.workerUrl':
       return options?.model?.workerUrl;
     case 'model.runtimeUrl':

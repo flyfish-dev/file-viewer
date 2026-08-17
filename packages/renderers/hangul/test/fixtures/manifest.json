@@ -1,0 +1,37 @@
+{
+  "license": "Mixed: repository-authored synthetic fixtures and Apache-2.0 hwplib/hwpxlib regression fixtures",
+  "privacy": "Fixtures contain no customer or personal data.",
+  "sources": {
+    "synthetic": {
+      "origin": "File Viewer parser-contract generators",
+      "redistribution": "Repository test fixture"
+    },
+    "hwplib": {
+      "repository": "https://github.com/neolord0/hwplib",
+      "commit": "d9e073d6899d947f8f583492e00a5e1062381d7e",
+      "license": "Apache-2.0",
+      "licenseFile": "LICENSE.hwplib.txt",
+      "licenseSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "hwpxlib": {
+      "repository": "https://github.com/neolord0/hwpxlib",
+      "commit": "96ff157eb5973ba1bcf96c00c1b0993d61a718a0",
+      "license": "Apache-2.0",
+      "licenseFile": "LICENSE.hwplib.txt",
+      "licenseSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    }
+  },
+  "fixtures": {
+    "format-matrix.hwp": { "source": "synthetic", "sha256": "11e47978b296621fd76d883354cf5163070914860a5c3fd09c5c3fe4c9da5e0b", "container": "HWP v5 CFB", "expected": { "sections": 1, "text": "HWP v5 searchable paragraph", "media": 1 } },
+    "format-matrix.hwpx": { "source": "synthetic", "sha256": "64e1e411740b0c054bb5da78d7f37031ad42bc30d42dbba48dfe55368202adef", "container": "HWPX ZIP/XML", "expected": { "sections": 1, "text": "HWPX searchable paragraph", "tables": 1, "media": 1 } },
+    "hwplib-table.hwp": { "source": "hwplib", "sha256": "ed97e2136e53cbb09ab6362d5631f6f1e4f752a5e53f09e85e4bc9c19f9e6d35", "container": "HWP v5.0.3.4 CFB", "expected": { "sections": 1, "tables": 2, "tableRows": [3, 1] } },
+    "hwplib-image.hwp": { "source": "hwplib", "sha256": "c9d6726edce369955821a06d9a0f9b3887d733e9d99ee122b23299c6db4d2d92", "container": "HWP v5 CFB", "expected": { "media": 1 } },
+    "hwplib-header-footer.hwp": { "source": "hwplib", "sha256": "ac3a6139ff2e01295544b4483ac5b64a60f8fcd317a50bea5948e73e3e69070b", "container": "HWP v5 CFB", "expected": { "paragraphs": 42, "text": "aaa" } },
+    "hwpxlib-sample1.hwpx": { "source": "hwpxlib", "upstreamPath": "testFile/reader_writer/sample1.hwpx", "sha256": "516db143466d3bc43e6808d4d5dc9da63abf014ec637ef01594f27998a0bd6c2", "container": "HWPX ZIP/XML", "expected": { "sections": 1, "paragraphs": 2, "text": "우리는 수학 이다.더", "style": "italic red 10pt", "pagePx": [793.7067, 1122.5067] } },
+    "hwpxlib-header-footer.hwpx": { "source": "hwpxlib", "upstreamPath": "testFile/reader_writer/HeaderFooter.hwpx", "sha256": "0920b3b519d6bd316b83f549d14ebeb5f49ea5a10f2d7895da8186f2610aa671", "container": "HWPX ZIP/XML", "expected": { "headers": ["머리말 테스트"], "footers": ["꼬리말"] } },
+    "hwpxlib-multi-column.hwpx": { "source": "hwpxlib", "upstreamPath": "testFile/reader_writer/MultiColumn.hwpx", "sha256": "c5f0933d6d1fe0a2defd9be7ed3cb3839b16b7f2eabb85b1294f98a3a13badd3", "container": "HWPX ZIP/XML", "expected": { "paragraphs": 126, "text": "10" } },
+    "hwpxlib-simple-table.hwpx": { "source": "hwpxlib", "upstreamPath": "testFile/reader_writer/SimpleTable.hwpx", "sha256": "502d75c289813ce4b99648ecbc3cbe333bd8acd78e9f4b4b370566f308c1e6de", "container": "HWPX ZIP/XML", "expected": { "tables": 1, "tableRows": 3, "mergedCells": [[2, 2], [2, 1]] } },
+    "hwpxlib-simple-picture.hwpx": { "source": "hwpxlib", "upstreamPath": "testFile/reader_writer/SimplePicture.hwpx", "sha256": "7ed3bdf89986fd88fdbcd92eaeac3f852aa6984fb1f7ddf4dd4f582afe20084c", "container": "HWPX ZIP/XML", "expected": { "media": 1 } }
+  },
+  "promotion": "HWP v5 and HWPX now have pinned Apache-2.0 real-file parser evidence plus browser assertions for text, page geometry, inline styles, merged tables, headers, footers and images. The stable claim is structured static preview, not editor-equivalent chart/OLE/drawing fidelity."
+}

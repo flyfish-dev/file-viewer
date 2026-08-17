@@ -32,35 +32,42 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 ## Format Support Matrix
 
-The shared format matrix currently covers 25 preview pipelines and 208 file extensions. Full capability is assembled through renderer packages or presets, while component packages only adapt their own ecosystem without nesting through another framework implementation.
+The shared catalog registers 221 file extensions (221 stable and 0 experimental) across 32 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
 
-| Preview pipeline | Category | Extensions | Capabilities | Loading |
-| --- | --- | --- | --- | --- |
-| Word OpenXML | office | `.docx`, `.docm`, `.dotx`, `.dotm` | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
-| Word Binary | office | `.doc`, `.dot` | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
-| PowerPoint 97–2003 | office | `.ppt` | download, print(adapter), HTML export(adapter), zoom(provider) | lazy async |
-| PowerPoint OpenXML | office | `.pptx`, `.pptm`, `.potx`, `.potm`, `.ppsx`, `.ppsm` | download, print, HTML export, zoom(provider), search | lazy async |
-| Open Document | office | `.rtf`, `.odt`, `.odp` | download, print, HTML export, zoom(provider), search | lazy async |
-| Spreadsheet | office | `.xlsx`, `.xltx`, `.xlsm`, `.xlsb`, `.xls`, `.xlt`, `.xltm`, `.csv`, `.tsv`, `.ods`, `.fods`, `.numbers` | download, zoom(provider), search | lazy async |
-| PDF | document | `.pdf` | download, print(adapter), HTML export(adapter), zoom(provider), search(provider) | lazy async |
-| OFD | document | `.ofd` | download, print, HTML export, zoom(provider), search | lazy async |
-| Typst | document | `.typ`, `.typst` | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
-| Archive | archive | `.zip`, `.zipx`, `.7z`, `.rar`, `.tar`, `.gz`, `.gzip`, `.tgz`, `.bz2`, `.bzip2`, `.tbz`, `.tbz2`, `.xz`, `.txz`, `.lzma`, `.zst`, `.tzst`, `.cab`, `.ar`, `.cpio`, `.iso`, `.xar`, `.lha`, `.lzh`, `.jar`, `.war`, `.ear`, `.apk`, `.cbz`, `.cbr` | download, search | lazy async |
-| Email | email | `.eml`, `.msg`, `.mbox` | download, HTML export, search | lazy async |
-| EDA | eda | `.olb`, `.dra`, `.gds`, `.oas`, `.oasis` | download, print, HTML export, search | lazy async |
-| CAD | cad | `.dxf`, `.dwg`, `.dwf`, `.dwfx`, `.xps` | download, print, HTML export, zoom(provider) | lazy async |
-| 3D Model | model | `.glb`, `.gltf`, `.obj`, `.stl`, `.ply`, `.fbx`, `.dae`, `.3ds`, `.3mf`, `.amf`, `.usd`, `.usda`, `.usdc`, `.usdz`, `.kmz`, `.step`, `.stp`, `.iges`, `.igs`, `.ifc`, `.3dm`, `.brep`, `.pcd`, `.wrl`, `.vrml`, `.xyz`, `.vtk`, `.vtp` | download, zoom(provider) | lazy async |
-| Geospatial | geo | `.geojson`, `.kml`, `.gpx`, `.shp` | download, print, HTML export, zoom(provider), search | lazy async |
-| Drawing | drawing | `.excalidraw`, `.drawio`, `.dio`, `.mermaid`, `.mmd`, `.plantuml`, `.puml` | download, print, HTML export, zoom(provider), search | lazy async |
-| Mind Map | mindmap | `.xmind` | download, print, HTML export, zoom(provider), search | lazy async |
-| EPUB | ebook | `.epub` | download, HTML export, search(provider) | lazy async |
-| UMD | ebook | `.umd` | download, print, HTML export, zoom(provider), search | lazy async |
-| Image | image | `.gif`, `.jpg`, `.jpeg`, `.bmp`, `.tiff`, `.tif`, `.png`, `.svg`, `.webp`, `.avif`, `.ico`, `.heic`, `.heif`, `.jxl` | download, print, HTML export, zoom(provider) | lazy async |
-| Markdown | markdown | `.md`, `.markdown` | download, print, HTML export, search | lazy async |
-| Code and Text | code | `.txt`, `.json`, `.js`, `.mjs`, `.cjs`, `.css`, `.java`, `.py`, `.html`, `.htm`, `.jsx`, `.ts`, `.tsx`, `.xml`, `.log`, `.vue`, `.yaml`, `.yml`, `.ini`, `.sh`, `.bash`, `.sql`, `.go`, `.rs`, `.php`, `.c`, `.cpp`, `.cc`, `.h`, `.hpp`, `.cs`, `.diff`, `.patch`, `.bundle`, `.bdl`, `.jsonc`, `.json5`, `.ipynb`, `.toml`, `.proto`, `.hcl`, `.tex`, `.gv`, `.http`, `.react`, `.rb`, `.swift`, `.kt` | download, print, HTML export, search | lazy async |
-| Video | media | `.mp4`, `.webm`, `.m3u8` | download | lazy async |
-| Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | download | lazy async |
-| Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | download, HTML export, search | lazy async |
+| Preview pipeline | Category | Extensions | Level / status | Capabilities | Loading |
+| --- | --- | --- | --- | --- | --- |
+| Word OpenXML | office | `.docx`, `.docm`, `.dotx`, `.dotm` | high-fidelity / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| Word Binary | office | `.doc`, `.dot` | structured / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| PowerPoint 97–2003 | office | `.ppt`, `.pot` | structured / stable | download, print(adapter), HTML export(adapter), zoom(provider) | lazy async |
+| PowerPoint OpenXML | office | `.pptx`, `.pptm`, `.potx`, `.potm`, `.ppsx`, `.ppsm` | high-fidelity / stable | download, print, HTML export, zoom(provider), search | lazy async |
+| Open Document | office | `.rtf`, `.odt`, `.odp` | structured / stable | download, print, HTML export, zoom(provider), search | lazy async |
+| Spreadsheet | office | `.xlsx`, `.xltx`, `.xlsm`, `.xlsb`, `.xls`, `.xlt`, `.xla`, `.xlam`, `.xltm`, `.csv`, `.tsv`, `.ods`, `.fods` | structured / stable | download, zoom(provider), search | lazy async |
+| Apple Pages | office | `.pages` | high-fidelity / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| Apple Numbers | office | `.numbers` | high-fidelity / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| Apple Keynote | office | `.key` | high-fidelity / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| WordPerfect | office | `.wpd`, `.wp`, `.wp5`, `.wp6` | structured / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| dBASE Table | office | `.dbf` | structured / stable | download, zoom(provider), search | lazy async |
+| PDF | document | `.pdf` | high-fidelity / stable | download, print(adapter), HTML export(adapter), zoom(provider), search(provider) | lazy async |
+| OFD | document | `.ofd` | structured / stable | download, print, HTML export, zoom(provider), search | lazy async |
+| Hancom Hangul | office | `.hwp`, `.hwpx` | structured / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| Typst | document | `.typ`, `.typst` | high-fidelity / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
+| Archive | archive | `.zip`, `.zipx`, `.7z`, `.rar`, `.tar`, `.gz`, `.gzip`, `.tgz`, `.bz2`, `.bzip2`, `.tbz`, `.tbz2`, `.xz`, `.txz`, `.lzma`, `.zst`, `.tzst`, `.cab`, `.ar`, `.cpio`, `.iso`, `.xar`, `.lha`, `.lzh`, `.jar`, `.war`, `.ear`, `.apk`, `.cbz`, `.cbr` | structured / stable | download, search | lazy async |
+| Email | email | `.eml`, `.msg`, `.mbox` | structured / stable | download, HTML export, search | lazy async |
+| EDA | eda | `.olb`, `.dra`, `.gds`, `.oas`, `.oasis` | structured / stable | download, print, HTML export, search | lazy async |
+| CAD | cad | `.dxf`, `.dwg`, `.dwf`, `.dwfx`, `.xps` | high-fidelity / stable | download, print, HTML export, zoom(provider) | lazy async |
+| 3D Model | model | `.glb`, `.gltf`, `.obj`, `.stl`, `.ply`, `.fbx`, `.dae`, `.3ds`, `.3mf`, `.amf`, `.usd`, `.usda`, `.usdc`, `.usdz`, `.kmz`, `.step`, `.stp`, `.iges`, `.igs`, `.ifc`, `.3dm`, `.brep`, `.pcd`, `.wrl`, `.vrml`, `.xyz`, `.vtk`, `.vtp` | structured / stable | download, zoom(provider) | lazy async |
+| Geospatial | geo | `.geojson`, `.kml`, `.gpx`, `.shp` | structured / stable | download, print, HTML export, zoom(provider), search | lazy async |
+| Drawing | drawing | `.excalidraw`, `.drawio`, `.dio`, `.mermaid`, `.mmd`, `.plantuml`, `.puml` | structured / stable | download, print, HTML export, zoom(provider), search | lazy async |
+| Mind Map | mindmap | `.xmind` | structured / stable | download, print, HTML export, zoom(provider), search | lazy async |
+| EPUB | ebook | `.epub` | high-fidelity / stable | download, HTML export, search(provider) | lazy async |
+| FictionBook | ebook | `.fb2` | structured / stable | download, print, HTML export, search | lazy async |
+| UMD | ebook | `.umd` | structured / stable | download, print, HTML export, zoom(provider), search | lazy async |
+| Image | image | `.gif`, `.jpg`, `.jpeg`, `.bmp`, `.tiff`, `.tif`, `.png`, `.svg`, `.webp`, `.avif`, `.ico`, `.heic`, `.heif`, `.jxl` | high-fidelity / stable | download, print, HTML export, zoom(provider) | lazy async |
+| Markdown | markdown | `.md`, `.markdown` | structured / stable | download, print, HTML export, search | lazy async |
+| Code and Text | code | `.txt`, `.json`, `.js`, `.mjs`, `.cjs`, `.css`, `.java`, `.py`, `.html`, `.htm`, `.jsx`, `.ts`, `.tsx`, `.xml`, `.log`, `.vue`, `.yaml`, `.yml`, `.ini`, `.sh`, `.bash`, `.sql`, `.go`, `.rs`, `.php`, `.c`, `.cpp`, `.cc`, `.h`, `.hpp`, `.cs`, `.diff`, `.patch`, `.bundle`, `.bdl`, `.jsonc`, `.json5`, `.ipynb`, `.toml`, `.proto`, `.hcl`, `.tex`, `.gv`, `.http`, `.react`, `.rb`, `.swift`, `.kt` | structured / stable | download, print, HTML export, search | lazy async |
+| Video | media | `.mp4`, `.webm`, `.m3u8` | high-fidelity / stable | download | lazy async |
+| Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | high-fidelity / stable | download | lazy async |
+| Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | download, HTML export, search | lazy async |
 
 ## Full Package Quick Start
 
@@ -140,6 +147,9 @@ The table below lists the real props, event channel, and customization entry for
 | `archive` | Archive Worker/WASM URLs, timeout, cache, archive limits, nested entry preview limits, and legacy GBK/GB18030 ZIP filename decoding. |
 | `pdf` | PDF.js worker, navigation pane, outline, thumbnails, rotation, streaming, range chunk size, and credentials. |
 | `docx` / `spreadsheet` | DOCX is provided by @file-viewer/renderer-word and uses the self-maintained @file-viewer/docx engine with automatic worker/main-thread selection, continuous flow reading, and async rendering by default; visual pagination is opt-in. Spreadsheet is provided by @file-viewer/renderer-spreadsheet with fidelity-first parsing, automatic Worker use for large files, and opt-in header drag column resizing. |
+| `iwork` | Pages / Numbers / Keynote module Worker, timeout, ZIP/Snappy/IWA safety limits, and explicit Quick Look fallback policy. The three Apple formats are stable for static high-fidelity preview after structural, browser, and visual-golden gates across iWork ’09, 2013+, and current fixtures. |
+| `hangul` | HWP/HWPX module Worker, timeout, ZIP inflation/compression/entry limits, and HWP record limits. Stable support is a real-fixture-verified static structured preview. |
+| `wordPerfect` | WordPerfect Worker, bundled libwpd/librevenge WASM URL, and timeout. It falls back to bounded text only when WASM fails; the normal structured path is verified with redistributable real fixtures. |
 | `presentation` | The presentation renderer keeps two isolated engines: binary PowerPoint 97–2003 `.ppt` uses the packaged `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM runtime with zero-config standard asset routes; `pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` are custom-path overrides, while `pptWorker` and `pptCache` control its Worker and bounded frame cache. PPTX/OpenXML uses the `@file-viewer/pptx` Worker with optional `workerUrl` / `workerType` overrides. |
 | `typst` / `data` / `cad` | Typst, SQLite, CAD/DWG/DXF/DWF WASM, worker, encoding, and rendering strategy options. |
 | `hooks` / `beforeOperation` | Shared lifecycle hooks and operation preflight checks for audit, permission, telemetry, and safety controls. |

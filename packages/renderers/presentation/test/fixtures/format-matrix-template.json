@@ -1,0 +1,8 @@
+{
+  "license": "Apache-2.0",
+  "privacy": "Synthetic document contains no customer or personal data.",
+  "producer": "LibreOffice headless conversion from format-matrix-template.fodp",
+  "container": "PowerPoint 97-2003 binary template",
+  "sha256": "12dfd552e38ffe1a6b8b9d9ec2af83585e5ded679b61cc7c4f1cfa11d8af0282",
+  "expected": { "slides": 1, "text": ["File Viewer POT Template", "Static template fixture", "Macros are never executed"] }
+}

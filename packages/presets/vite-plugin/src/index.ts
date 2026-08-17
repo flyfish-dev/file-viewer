@@ -209,6 +209,7 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
       'ppt',
       'pptx',
       'pptm',
+      'pot',
       'potx',
       'potm',
       'ppsx',
@@ -229,9 +230,33 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     id: 'spreadsheet',
     packageName: '@file-viewer/renderer-spreadsheet',
     exportName: 'spreadsheetRenderer',
-    formats: ['spreadsheet', 'excel', 'xls', 'xlsx', 'xltx', 'xlsm', 'xlsb', 'xlt', 'xltm', 'csv', 'tsv', 'ods', 'fods', 'numbers'],
-    rendererIds: ['spreadsheet-openxml'],
+    formats: ['spreadsheet', 'excel', 'xls', 'xlsx', 'xltx', 'xlsm', 'xlsb', 'xlt', 'xla', 'xlam', 'xltm', 'csv', 'tsv', 'ods', 'fods', 'dbf'],
+    rendererIds: ['spreadsheet-openxml', 'spreadsheet-dbf'],
     chunkName: 'file-viewer-spreadsheet'
+  },
+  {
+    id: 'iwork',
+    packageName: '@file-viewer/renderer-iwork',
+    exportName: 'iworkRenderer',
+    formats: ['iwork', 'pages', 'numbers', 'key', 'keynote'],
+    rendererIds: ['apple-pages', 'apple-numbers', 'apple-keynote'],
+    chunkName: 'file-viewer-iwork'
+  },
+  {
+    id: 'wordperfect',
+    packageName: '@file-viewer/renderer-wordperfect',
+    exportName: 'wordPerfectRenderer',
+    formats: ['wordperfect', 'wpd', 'wp', 'wp5', 'wp6'],
+    rendererIds: ['office-wordperfect'],
+    chunkName: 'file-viewer-wordperfect'
+  },
+  {
+    id: 'hangul',
+    packageName: '@file-viewer/renderer-hangul',
+    exportName: 'hangulRenderer',
+    formats: ['hangul', 'hwp', 'hwpx'],
+    rendererIds: ['office-hangul'],
+    chunkName: 'file-viewer-hangul'
   },
   {
     id: 'drawing',
@@ -332,8 +357,8 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     id: 'ebook',
     packageName: '@file-viewer/renderer-epub',
     exportName: 'ebookRenderer',
-    formats: ['ebook', 'epub', 'umd'],
-    rendererIds: ['epub', 'umd'],
+    formats: ['ebook', 'epub', 'fb2', 'umd'],
+    rendererIds: ['epub', 'ebook-fb2', 'umd'],
     chunkName: 'file-viewer-ebook'
   },
   {
@@ -513,7 +538,7 @@ rendererModules.forEach((descriptor) => {
 const presetRendererIds: Record<FileViewerVitePreset, readonly string[]> = {
   all: rendererModules.map((descriptor) => descriptor.id),
   lite: ['text', 'image', 'media'],
-  office: ['pdf', 'word', 'spreadsheet', 'presentation', 'ofd'],
+  office: ['pdf', 'word', 'spreadsheet', 'presentation', 'ofd', 'iwork', 'wordperfect', 'hangul'],
   engineering: [
     'cad',
     'model',
@@ -585,6 +610,7 @@ const fileViewerOptimizationExcludedPackages = [
 const cjsInteropPackages = [
   '@file-viewer/docx',
   '@xmldom/xmldom',
+  'keynote-archives',
   'occt-import-js',
   'jszip'
 ] as const

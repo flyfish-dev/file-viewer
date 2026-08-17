@@ -8,6 +8,23 @@ export interface FileViewerRendererHandlerEntry<Handler> {
   handler: Handler;
 }
 
+/**
+ * Content-signature aware renderers can throw this shape when the filename
+ * extension points at the wrong container. The orchestration layer follows the
+ * redirect once, using the handler registered for the detected renderer id.
+ */
+export interface FileViewerRendererRedirectError extends Error {
+  actualRendererId: string;
+}
+
+export const resolveFileViewerRendererRedirectId = (error: unknown): string | undefined => {
+  if (!error || typeof error !== 'object' || !('actualRendererId' in error)) {
+    return undefined;
+  }
+  const rendererId = String((error as { actualRendererId?: unknown }).actualRendererId || '').trim();
+  return rendererId || undefined;
+};
+
 export interface CreateFileViewerRendererDispatcherOptions<Handler> {
   registry?: RendererRegistry;
   handlers: Iterable<FileViewerRendererHandlerEntry<Handler>>;

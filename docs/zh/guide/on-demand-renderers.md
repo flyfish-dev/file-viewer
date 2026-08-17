@@ -440,7 +440,7 @@ fileViewerRenderers({
 - [x] `FileViewerOptions.builtinRenderers` 支持 `all`、`lite`、`none`，为默认轻量化和显式全量装配提供稳定开关。
 - [x] wrapper README 和开源总仓 README 补齐 `renderers` / `rendererMode` / `builtinRenderers` 的按需装配示例，并由 `verify:ecosystem-readmes` 校验 `@file-viewer/vite-plugin`、`virtual:file-viewer-renderers` 和 `configuredFileViewerRenderers` 等关键接入口径。
 - [x] Vue3 原生组件渲染面板切换到同一套 renderer plugin/preset 装配链路，`options.renderers`、`rendererMode` 和 `builtinRenderers` 会在组件路径真实生效。
-- [x] `@file-viewer/preset-all` 能复现当前 208 个扩展名的完整能力。
+- [x] `@file-viewer/preset-all` 能复现当前 221 个已注册扩展名的完整能力，并保留 221 个稳定、0 个实验的证据边界。
 - [x] `pnpm audit:renderer-deps` 输出所有 core 直接依赖对应的目标 renderer package，不允许 unclassified。
 - [x] `pnpm verify:on-demand-boundaries` 守住按需加载边界：core 不依赖 renderer/preset/wrapper，标准组件包不依赖 renderer/preset，compat 包只 alias 到目标组件，`preset-lite` / `preset-office` / `preset-engineering` 只能聚合各自白名单 renderer，`preset-all` 才聚合完整 renderer。
 
@@ -542,7 +542,7 @@ pnpm audit:renderer-deps -- --json
 | XMind | `.xmind` 按 ZIP 容器读取，现代文件优先解析 `content.json`，经典文件解析 `content.xml`；Panzoom 交互由 `@file-viewer/renderer-mindmap` 维护。 | 继续补多结构布局、更多 marker 图标和复杂图片资源还原，交互回归覆盖 Pointer、真实鼠标、触摸和移动端双指缩放。 |
 | Archive | `@file-viewer/renderer-archive` 使用 `libarchive.js` Worker + WASM，Worker 不可用时降级 ZIP/TAR/GZIP。 | 保持 Worker 超时、IndexedDB 缓存和体积上限，不把压缩包依赖带回 core。 |
 | Email | `@file-viewer/renderer-email` 使用 `postal-mime` 和 `@kenjiuno/msgreader`，邮件附件复用统一嵌套预览。 | 增强 MSG 边界样例和附件安全策略。 |
-| EPUB/UMD | EPUB 使用 `@file-viewer/renderer-epub` 与按需加载的包内本地引擎；UMD 同样由 `@file-viewer/renderer-epub` 维护结构解析和 `pako` 解压。 | 电子书能力统一在 ebook renderer 中维护，core 保持零运行时依赖；v2.2.9 的 EPUB vendor 不从公网加载，也不向业务生产依赖树暴露内部 XML 解析器。 |
+| EPUB/UMD | EPUB 使用 `@file-viewer/renderer-epub` 与按需加载的包内本地引擎；UMD 同样由 `@file-viewer/renderer-epub` 维护结构解析和 `pako` 解压。 | 电子书能力统一在 ebook renderer 中维护，core 保持零运行时依赖；v2.3.0 的 EPUB vendor 不从公网加载，也不向业务生产依赖树暴露内部 XML 解析器。 |
 | OLB/DRA | `@file-viewer/renderer-eda` 当前基于 CFB 和二进制线索做安全结构树、实体候选、属性、字符串和诊断展示。 | OrCAD/Allegro 属于专业私有工程格式，完整几何/电气语义会像 PPTX 一样拆独立引擎长期维护，必要时引入自研 WASM。 |
 | GDS/OASIS | GDSII 已做记录级解析，小图输出 SVG，大元素集输出 WebGL canvas；OASIS 文本夹具可输出 SVG，真实二进制 OASIS 先做安全结构索引和诊断。 | OASIS 完整几何继续走独立 WASM/增量渲染路线，不进入 core 首屏链路。 |
 | DWF/DWFx/CAD | CAD 能力由 `@file-viewer/renderer-cad` 和 `@flyfish-dev/cad-viewer` 承接，WASM/Worker 资源通过资产 manifest 自托管。 | 随 cad-viewer 持续升级 DWF/DWFx、DWG/DXF 体验，core 只保留协议和资源发现。 |

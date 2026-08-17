@@ -31,7 +31,7 @@
   </div>
   <div class="doc-card">
     <h3>覆盖真实附件场景</h3>
-    <p>内置 208 个扩展名映射和 25 条预览链路，覆盖 Office、PDF、OFD、Typst、XMind 脑图、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、Mermaid、PlantUML、EPUB、UMD、Markdown、代码/文本、Git patch/bundle、图片、音视频、字体、PSD 图层资产和结构化数据。</p>
+    <p>唯一目录注册 221 个扩展名和 32 条预览链路，其中 221 个稳定、0 个实验；覆盖 Office、Apple 文稿、PDF/OFD、工程、归档、媒体、代码与数据格式。</p>
   </div>
   <div class="doc-card">
     <h3>模块化架构更专业</h3>
@@ -56,7 +56,7 @@
   </div>
   <div class="doc-card">
     <h3>确认格式边界</h3>
-    <p>支持格式页列出当前注册的 208 个扩展名、25 条渲染链路和真实业务里的适用边界。</p>
+    <p>支持格式页列出 221 个已注册扩展名、32 条渲染链路、稳定/实验等级和真实业务边界。</p>
   </div>
   <div class="doc-card">
     <h3>选择接入方式</h3>

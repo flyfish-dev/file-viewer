@@ -9,7 +9,7 @@
 - Source: https://github.com/flyfish-dev/file-viewer
 - npm scope: https://www.npmjs.com/search?q=%40file-viewer
 
-File Viewer is a browser-native, offline-first, self-hosted file preview project. The v2.2.9 release maps 208 extensions to 25 preview pipelines and publishes 54 File Viewer npm targets.
+File Viewer is a browser-native, offline-first, self-hosted file preview project. The current source matrix maps 221 registered extensions (221 stable, 0 experimental) to 32 preview pipelines and contains 57 File Viewer npm targets.
 
 ## Start Here
 

@@ -45,6 +45,7 @@ import {
   X,
   Zap
 } from '@lucide/vue'
+import { FORMAT_CATALOG_SUMMARY, OFFICE_FORMAT_GROUPS } from './formatCatalog.generated'
 
 type Locale = 'zh' | 'en'
 type SiteTheme = 'light' | 'dark'
@@ -132,6 +133,11 @@ const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
 const currentReleaseVersion = '2.2.9'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
+const registeredExtensionCount = FORMAT_CATALOG_SUMMARY.registeredExtensionCount
+const stableExtensionCount = FORMAT_CATALOG_SUMMARY.stableExtensionCount
+const experimentalExtensionCount = FORMAT_CATALOG_SUMMARY.experimentalExtensionCount
+const previewPipelineCount = FORMAT_CATALOG_SUMMARY.rendererCount
+const officeFormatExamples = OFFICE_FORMAT_GROUPS.flatMap(group => group.extensions)
 const githubSponsorsUrl = 'https://github.com/sponsors/wybaby168'
 const domesticSponsorUrl = 'https://dev.flyfish.group/sponsor?source=github'
 const whatsappContactUrl = 'https://wa.me/qr/DY3NG2HEGJFGL1'
@@ -169,20 +175,20 @@ const siteMetadata = {
     canonical: siteRootUrl,
     title: 'File Viewer - Office、PDF、CAD 浏览器文件预览',
     description:
-      '开源 File Viewer 在浏览器内预览 Office、PDF、CAD 等 208 个扩展名，无需服务端转码，支持离线与私有化部署。',
+      `开源 File Viewer 在浏览器内预览 Office、PDF、CAD 等 ${registeredExtensionCount} 个扩展名（${stableExtensionCount} 个稳定、${experimentalExtensionCount} 个实验），通过 ${previewPipelineCount} 条链路按需加载，无需服务端转码，支持离线与私有化部署。`,
     ogLocale: 'zh_CN',
     ogLocaleAlternate: 'en_US',
-    imageAlt: 'File Viewer v2.2.9 浏览器原生 DOCX 预览工作区'
+    imageAlt: 'File Viewer v2.3.0 浏览器原生 DOCX 预览工作区'
   },
   en: {
     lang: 'en',
     canonical: siteEnglishUrl,
     title: 'File Viewer for Office, PDF & CAD | Flyfish',
     description:
-      'Open-source browser file viewer for Office, PDF, CAD, archives, email, and 200+ formats. No conversion server. Self-hosted and offline-ready.',
+      `Open-source browser file viewer for Office, PDF, CAD, archives, email, and ${registeredExtensionCount} formats (${stableExtensionCount} stable, ${experimentalExtensionCount} experimental) across ${previewPipelineCount} lazy preview pipelines. No conversion server. Self-hosted and offline-ready.`,
     ogLocale: 'en_US',
     ogLocaleAlternate: 'zh_CN',
-    imageAlt: 'File Viewer v2.2.9 browser-native DOCX preview workspace'
+    imageAlt: 'File Viewer v2.3.0 browser-native DOCX preview workspace'
   }
 } satisfies Record<Locale, SiteMetadata>
 
@@ -339,16 +345,16 @@ const copy = {
       demo: '在线体验'
     },
     hero: {
-      eyebrow: 'v2.2.9 · 208 个扩展名 · 无需转码服务器',
+      eyebrow: `v2.3.0 源码目标 · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
       title: '文件预览，全部在浏览器完成。',
       subtitle:
         '为了预览一份内部 DOCX 就把它上传到服务器，糟透了。File Viewer 让 Office、PDF、CAD、压缩包、邮件等文件留在浏览器里，并且可以完整离线部署。',
       primary: '立即体验',
       secondary: '阅读文档',
       commercial: '了解商业版',
-      proof: ['54 个 npm 目标', '208 个文件扩展名', '25 条预览链路', 'Full 自托管资产契约']
+      proof: [`${stableExtensionCount} 个稳定扩展名`, `${experimentalExtensionCount} 个实验扩展名`, `${previewPipelineCount} 条预览链路`, 'Full 自托管资产契约']
     },
-    matrixTitle: '208 个扩展名，按 25 条真实预览链路组织。',
+    matrixTitle: `${registeredExtensionCount} 个已注册扩展名，按 ${previewPipelineCount} 条真实预览链路组织。`,
     matrixIntro:
       '这不是一个通用降级页面配一长串后缀。PDF/OFD、Word、Spreadsheet、二进制 PPT、PPTX、CAD、Archive、XMind 和 STEP 等格式会匹配独立 renderer；Worker、WASM、字体与 vendor 资产按需加载，Full 包可整套离线交付。',
     formatsTitle: '支持矩阵',
@@ -370,7 +376,7 @@ const copy = {
     commercialCta: '了解商业授权',
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
-    releaseTitle: 'v2.2.9 安全补丁：PPTX 与 Markdown 不受信任内容在进入 DOM 前统一净化。',
+    releaseTitle: 'v2.3.0 源码目标扩展 Office/iWork 矩阵；当前公开版本 v2.2.9 已包含 PPTX 与 Markdown 安全修复。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -385,7 +391,7 @@ const copy = {
       demo: 'Live Demo'
     },
     hero: {
-      eyebrow: 'v2.2.9 · 208 extensions · no conversion server',
+      eyebrow: `v2.3.0 source target · ${registeredExtensionCount} registered extensions · no conversion server`,
       title: 'Preview files entirely in the browser.',
       subtitle:
         'Uploading a private DOCX just to preview it is awful. File Viewer keeps Office, PDF, CAD, archives, email, and more in the browser, with every runtime asset ready for self-hosting.',
@@ -393,13 +399,13 @@ const copy = {
       secondary: 'Read the Docs',
       commercial: 'Commercial Edition',
       proof: [
-        '54 npm targets',
-        '208 file extensions',
-        '25 preview pipelines',
+        `${stableExtensionCount} stable extensions`,
+        `${experimentalExtensionCount} experimental extensions`,
+        `${previewPipelineCount} preview pipelines`,
         'Self-hosted Full assets'
       ]
     },
-    matrixTitle: '208 extensions. 25 real preview pipelines.',
+    matrixTitle: `${registeredExtensionCount} registered extensions. ${previewPipelineCount} real preview pipelines.`,
     matrixIntro:
       'This is not one generic fallback page with a long suffix list. PDF/OFD, Word, Spreadsheet, binary PPT, PPTX, CAD, Archive, XMind, STEP, and other families match dedicated renderers. Workers, WASM, fonts, and vendor assets load on demand, while Full packages deliver the complete offline payload.',
     formatsTitle: 'Format matrix',
@@ -423,7 +429,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v2.2.9 sanitizes untrusted PPTX and Markdown content before it reaches the DOM.',
+      'The v2.3.0 source target expands the Office/iWork matrix; the current v2.2.9 release includes the PPTX and Markdown security fixes.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -434,13 +440,13 @@ const metrics = computed<MetricItem[]>(() =>
     ? [
         {
           title: '文件扩展名',
-          value: '208',
-          detail: '由唯一格式注册表生成，官网、文档与发布物同源',
+          value: String(registeredExtensionCount),
+          detail: `${stableExtensionCount} 个稳定、${experimentalExtensionCount} 个实验；由唯一格式目录生成`,
           tone: 'green'
         },
         {
           title: '预览链路',
-          value: '25',
+          value: String(previewPipelineCount),
           detail: '匹配独立 renderer，Worker/WASM 只在需要时加载',
           tone: 'blue'
         },
@@ -452,22 +458,22 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm 发布目标',
-          value: '54',
-          detail: '48 个标准包与 6 个历史兼容 alias 同版本发布',
+          value: '57',
+          detail: '51 个标准包与 6 个历史兼容 alias 同版本发布',
           tone: 'amber'
         }
       ]
     : [
         {
           title: 'Extensions',
-          value: '208',
+          value: String(registeredExtensionCount),
           detail:
-            'Generated from one format registry shared by the site, docs, and release artifacts',
+            `${stableExtensionCount} stable and ${experimentalExtensionCount} experimental; generated from one catalog`,
           tone: 'green'
         },
         {
           title: 'Pipelines',
-          value: '25',
+          value: String(previewPipelineCount),
           detail: 'Dedicated renderer matches with lazy Worker and WASM loading',
           tone: 'blue'
         },
@@ -479,8 +485,8 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm targets',
-          value: '54',
-          detail: '48 standard packages and 6 historical aliases released together',
+          value: '57',
+          detail: '51 standard packages and 6 historical aliases released together',
           tone: 'amber'
         }
       ]
@@ -492,7 +498,7 @@ const formatGroups = computed<FormatGroup[]>(() =>
         {
           label: 'Office 与版式文档',
           count: 'Word / Excel / PPT / PDF / OFD / Typst',
-          examples: 'docx、doc、xlsx、xls、ppt、pptx、pdf、ofd、typ',
+          examples: officeFormatExamples.slice(0, 28).join('、'),
           icon: FileText,
           tone: 'emerald'
         },
@@ -523,7 +529,7 @@ const formatGroups = computed<FormatGroup[]>(() =>
         {
           label: 'Office and fixed-layout documents',
           count: 'Word / Excel / PPT / PDF / OFD / Typst',
-          examples: 'docx, doc, xlsx, xls, ppt, pptx, pdf, ofd, typ',
+          examples: officeFormatExamples.slice(0, 28).join(', '),
           icon: FileText,
           tone: 'emerald'
         },
@@ -1018,8 +1024,8 @@ const explorerPrimaryItems = computed<ExplorerItem[]>(() => [
     section: 'formats',
     label: isZh.value ? '查看支持格式' : 'Check format coverage',
     note: isZh.value
-      ? '208 个扩展名，匹配 25 条预览链路'
-      : '208 extensions across 25 preview pipelines',
+      ? `${registeredExtensionCount} 个已注册扩展名，匹配 ${previewPipelineCount} 条预览链路`
+      : `${registeredExtensionCount} registered extensions across ${previewPipelineCount} preview pipelines`,
     icon: FileText
   },
   {
@@ -2254,8 +2260,8 @@ onBeforeUnmount(() => {
                   :src="demoPreviewDesktopPath"
                   :alt="
                     isZh
-                      ? 'File Viewer v2.2.9 沉浸式 DOCX 预览界面'
-                      : 'File Viewer v2.2.9 immersive DOCX preview UI'
+                      ? 'File Viewer v2.3.0 沉浸式 DOCX 预览界面'
+                      : 'File Viewer v2.3.0 immersive DOCX preview UI'
                   "
                   width="1600"
                   height="900"

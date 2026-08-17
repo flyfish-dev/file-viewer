@@ -1,0 +1,133 @@
+{
+  "license": "Apache-2.0",
+  "privacy": "All project-generated documents contain no customer or personal data.",
+  "warning": "Synthetic parser-contract fixtures and native licensed fixtures do not by themselves promote iWork formats to stable support. Promotion still requires structural assertions and fixed-font visual-diff gates for every declared generation.",
+  "licensedCorpus": {
+    "source": "https://github.com/LibreOffice/libetonyek",
+    "commit": "37704aa6ac808fe7f7a14b4515503c3de3bc0dbf",
+    "license": "MPL-2.0",
+    "licenseFile": "LICENSE.libetonyek.txt",
+    "licenseSha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+  },
+  "fixtures": {
+    "pages/iwork-09.pages": { "sha256": "9b9f56c24ee5a9b01248a63f1be7b61d279f8ebb6954ae66cea66693d4d87020", "container": "iWork '09 index.xml", "expected": { "scenes": 1, "text": "iWork 09 Pages fixture" } },
+    "pages/iwork-2013-plus.pages": { "sha256": "7f2c5dd64ab98d02348090ba7df1866b4e6e3f471e9160ef38dbaff47cd4efa3", "container": "Snappy-framed IWA", "expected": { "minimumScenes": 1, "text": "Modern Pages fixture" } },
+    "pages/libetonyek-pages4-iwork09.pages": {
+      "sha256": "793d9ece44e30c646a6b0c1d19e1feb314f94c2850e5da6d159326cd17991b4f",
+      "source": "LibreOffice/libetonyek src/test/data/pages4-file.pages",
+      "license": "MPL-2.0",
+      "demoSample": "apple-pages-09-experimental.pages",
+      "container": "Pages 4 / iWork '09 index.xml",
+      "expected": { "pages": 1, "minimumTextBlocks": 1 },
+      "goldens": [
+        { "path": "../goldens/libetonyek-pages4-iwork09.pdf", "sha256": "c2d2e4de045158305d963612e9443018bc541d3a4f8b09482b2670d604708fc2" },
+        { "path": "../goldens/libetonyek-pages4-iwork09-1.png", "sha256": "59f6b22ea4c309aa27afa4282d4ec836029dd92ad8bfefcfe6ef7a08fc1888cb" }
+      ]
+    },
+    "pages/libetonyek-pages5-2015.pages": {
+      "sha256": "b5de90dfa78077c62e1c88ddaa188e412ffa9dd31558e2774715733f9d58dfe7",
+      "source": "LibreOffice/libetonyek src/test/data/pages5-file.pages",
+      "license": "MPL-2.0",
+      "demoSample": "apple-pages-2015-experimental.pages",
+      "container": "Pages 5 historical IWA",
+      "expected": { "pages": 1, "minimumTextBlocks": 1 },
+      "goldens": [
+        { "path": "../goldens/libetonyek-pages5-2015.pdf", "sha256": "839fae76a04f7e7534a8667345be5729f215f53c1cdbbe38e7a5495954d671fb" },
+        { "path": "../goldens/libetonyek-pages5-2015-1.png", "sha256": "fd33f7ba0ff6bcc4d1dfbeddba0f3524b90e9ff8f3f5a8b3593ae4846ff19b5a" }
+      ]
+    },
+    "pages/current-pages-15.3.1.pages": {
+      "sha256": "3fd0fdc77a0ab6a66af213e22bff826ccfdd66537c18dc9ff7515edb36c2bbc1",
+      "source": "Project-generated with Apple Pages 15.3.1 (7050.1.1)",
+      "license": "Apache-2.0",
+      "demoSample": "apple-pages-experimental.pages",
+      "container": "Current Apple IWA",
+      "expected": { "pages": 2, "tables": 1, "tableRows": 5, "shapes": 1, "charts": 1, "images": 1, "text": "PAGES-CURRENT-15-3-1" },
+      "goldens": [
+        { "path": "../goldens/current-pages-15.3.1.pdf", "sha256": "86798bb8c19d71d9f316e60c0cbcfe6a9e3360aaf0843659e535c693d55765b7" },
+        { "path": "../goldens/current-pages-15.3.1-1.png", "sha256": "ac934ed4c1e21e418d484cbedc9b3a3f23a9035dff7d4b82bfd6d5e3ad128fbb" },
+        { "path": "../goldens/current-pages-15.3.1-2.png", "sha256": "5b42c91c1000261ae985db88c148419d3eba2e210ab1149d0b341b57e1bcb16d" }
+      ]
+    },
+    "numbers/iwork-09.numbers": { "sha256": "cd2a84c08de1158a5b3a902bbd05b9b5253bc09a7cec7678bd2889ba55115507", "container": "iWork '09 index.xml", "expected": { "scenes": 1, "tableRows": 2 } },
+    "numbers/iwork-2013-plus.numbers": { "sha256": "4e54bb814a8ca001352ea49971f8c40f8b734bda63bc8b06e4e979e53bee2905", "container": "Snappy-framed IWA", "expected": { "minimumScenes": 1, "text": "Modern Numbers fixture" } },
+    "numbers/libetonyek-numbers2-iwork09.numbers": {
+      "sha256": "761c075a78724084f28cd54e099737ba1a71c34a0f3af7be677b5a1ae736de42",
+      "source": "LibreOffice/libetonyek src/test/data/numbers2-file.numbers",
+      "license": "MPL-2.0",
+      "demoSample": "apple-numbers-09-experimental.numbers",
+      "container": "Numbers 2 / iWork '09 index.xml",
+      "expected": { "sheets": 1, "minimumTables": 1 },
+      "goldens": [
+        { "path": "../goldens/libetonyek-numbers2-iwork09.pdf", "sha256": "ebb153fb08b45fb5b388ce3c466e2eb6ebf14e4a5a2681b0522cc83765cfd539" },
+        { "path": "../goldens/libetonyek-numbers2-iwork09-1.png", "sha256": "157c830bf8e25bf60a9df37ba9dc96b441923a974aebbbf76a41f22586de0b40" }
+      ]
+    },
+    "numbers/libetonyek-numbers3-2015.numbers": {
+      "sha256": "a37aeccdd6413e8aa74c68d6dcd173351494946ea85a07e759aaf16b9855f1ae",
+      "source": "LibreOffice/libetonyek src/test/data/numbers3-file.numbers",
+      "license": "MPL-2.0",
+      "demoSample": "apple-numbers-2015-experimental.numbers",
+      "container": "Numbers 3 historical IWA",
+      "expected": { "sheets": 1, "minimumTables": 1 },
+      "goldens": [
+        { "path": "../goldens/libetonyek-numbers3-2015.pdf", "sha256": "1fba18bc59475bbd968688bd2f1d9d965f44870a8fb20d56f20b750cf37f5e1a" },
+        { "path": "../goldens/libetonyek-numbers3-2015-1.png", "sha256": "a95aff948364748d56b9f4fc82ca2956d8a1c6d7dd9d4cdd91ad2612b24a6ef0" }
+      ]
+    },
+    "numbers/current-numbers-15.3.1.numbers": {
+      "sha256": "3674115d0b089b669db3317fd06864843b722ad7f586e914cf4d88c436dd8b4f",
+      "source": "Project-generated with Apple Numbers 15.3.1 (7050.1.1)",
+      "license": "Apache-2.0",
+      "demoSample": "excel.numbers",
+      "container": "Current Apple IWA",
+      "expected": { "sheets": 2, "tables": 2, "tableRows": [22, 10], "formulaCachedValue": "30", "charts": 1, "text": "NUMBERS-CURRENT-15-3-1" },
+      "goldens": [
+        { "path": "../goldens/current-numbers-15.3.1.pdf", "sha256": "d375feb91d6069fcbd82e2dda08ed000047f0282871efc933e8350a61ea0f4f7" },
+        { "path": "../goldens/current-numbers-15.3.1-1.png", "sha256": "bd588a32a9fb90d6e985a84d59683e1742cdab5e7cbcfadc98bf2eaaec0e45bc" },
+        { "path": "../goldens/current-numbers-15.3.1-2.png", "sha256": "b528ef16256a75eb5d9d4fea5965ef5e2177a53b6fc1449246fe42f3dc64cfd8" }
+      ]
+    },
+    "keynote/iwork-09.key": { "sha256": "694feb0177ea6b789616ffb6ba59ef60384221f43968b11d1b4018cda1313ad1", "container": "iWork '09 index.apxl", "expected": { "slides": 1, "notes": 1 } },
+    "keynote/iwork-2013-plus.key": { "sha256": "1b00b2041d9486ff599f785768dfe870ce7d6978fdd22ed7d7842dcb1c6c9c63", "container": "Snappy-framed IWA", "expected": { "minimumSlides": 1, "text": "Modern Keynote fixture" } },
+    "keynote/libetonyek-keynote5-iwork09.key": {
+      "sha256": "152d865897b4109c2d4925c66bd208d00b46d207ba46a95aebe6e8e78cab7a68",
+      "source": "LibreOffice/libetonyek src/test/data/keynote5-file.key",
+      "license": "MPL-2.0",
+      "demoSample": "apple-keynote-09-experimental.key",
+      "container": "Keynote 5 / iWork '09 index.apxl",
+      "expected": { "slides": 2, "minimumTextBlocks": 1 },
+      "goldens": [
+        { "path": "../goldens/libetonyek-keynote5-iwork09.pdf", "sha256": "caa902f71a05a929eb6b30f74118d8a9555e63c20cdcba023e4ded8291adc563" },
+        { "path": "../goldens/libetonyek-keynote5-iwork09-1.png", "sha256": "bcb35523f161d34c629fe3566b59d73743ebff53303a6ac060b26c491847cdf0" },
+        { "path": "../goldens/libetonyek-keynote5-iwork09-2.png", "sha256": "db681223bf55fac9a9cf32f74c4c0c06fa7183cd53b9660ddd573e6441d65c05" }
+      ]
+    },
+    "keynote/libetonyek-keynote6-2015.key": {
+      "sha256": "47d9cd0cf08b8c1157255d7d9299418b79adb2272e2b5966e6133deedd22441a",
+      "source": "LibreOffice/libetonyek src/test/data/keynote6-file.key",
+      "license": "MPL-2.0",
+      "demoSample": "apple-keynote-2015-experimental.key",
+      "container": "Keynote 6 historical IWA",
+      "expected": { "slides": 1, "minimumTextBlocks": 0, "blankSlide": true },
+      "goldens": [
+        { "path": "../goldens/libetonyek-keynote6-2015.pdf", "sha256": "854b7ef6f56b945a40b8b4a8bf9f2d594080648933adc575f95957e51d3dda57" },
+        { "path": "../goldens/libetonyek-keynote6-2015-1.png", "sha256": "d94f4ff8d2c16762c5ff8288e3bc34af68e569fcbd560bc51d4b11ed6b3e75da" }
+      ]
+    },
+    "keynote/current-keynote-15.3.1.key": {
+      "sha256": "d98417b7681529ebac83d08b105fb74698145509531600a37ae71e83332b9847",
+      "source": "Project-generated with Apple Keynote 15.3.1 (7050.1.1)",
+      "license": "Apache-2.0",
+      "demoSample": "apple-keynote-experimental.key",
+      "container": "Current Apple IWA",
+      "expected": { "slides": 2, "tables": 1, "tableRows": 3, "shapes": 1, "charts": 1, "images": 1, "notes": 1, "text": "KEYNOTE-CURRENT-15-3-1", "noteText": "KEYNOTE-NOTES-CURRENT-15-3-1" },
+      "goldens": [
+        { "path": "../goldens/current-keynote-15.3.1.pdf", "sha256": "c1f6a4b281944a30fb6ab86a5c180a41372a378e300dce686ef6898919d31ad1" },
+        { "path": "../goldens/current-keynote-15.3.1-1.png", "sha256": "2773b04b7c5792289fc937a58c309aeab9f9bee1ebc3f5ce59c52905ff3255a6" },
+        { "path": "../goldens/current-keynote-15.3.1-2.png", "sha256": "5238c973c231c0b288165d4740cb24253d1508743af808ec885b843fe26f35a8" }
+      ]
+    }
+  },
+  "missingPromotionEvidence": []
+}

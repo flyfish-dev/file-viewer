@@ -6,6 +6,7 @@
 import { DEFAULT_RENDERER_DEFINITIONS } from '../registry/formats';
 import { waitForFileViewerNextPaint } from '../output/export';
 import { createFileViewerRendererDispatcher } from './dispatcher';
+import { resolveFileViewerRendererRedirectId } from './dispatcher';
 import type { FileViewerRendererDispatcher } from './dispatcher';
 import { createRendererRegistry } from '../registry/registry';
 import { getExtension, normalizeFileExtension } from '../source';
@@ -50,7 +51,7 @@ export interface RenderFileViewerHandlerInput<
   Rendered = unknown,
   Target extends HTMLElement = HTMLElement,
 > {
-  dispatcher: Pick<FileViewerRendererDispatcher<FileRenderHandler<Rendered, Target>>, 'resolve'>;
+  dispatcher: Pick<FileViewerRendererDispatcher<FileRenderHandler<Rendered, Target>>, 'resolve' | 'handlersByRendererId'>;
   buffer: ArrayBuffer;
   target: Target;
   type?: string;
@@ -997,7 +998,31 @@ export const renderFileViewerHandler = async <
     return undefined;
   }
 
-  return handler(buffer, target, normalizedType, context);
+  try {
+    return await handler(buffer, target, normalizedType, context);
+  } catch (error) {
+    const redirectedRendererId = resolveFileViewerRendererRedirectId(error);
+    const redirectedHandler = redirectedRendererId
+      ? dispatcher.handlersByRendererId.get(redirectedRendererId)
+      : undefined;
+    if (!redirectedHandler || redirectedHandler === handler) {
+      throw error;
+    }
+    const redirectedType = DEFAULT_RENDERER_DEFINITIONS
+      .find(definition => definition.id === redirectedRendererId)
+      ?.extensions[0] || normalizedType;
+    context?.options?.onDiagnostic?.({
+      code: 'renderer-content-signature-redirect',
+      level: 'warning',
+      message: `File extension .${normalizedType} contains the ${redirectedRendererId} container and was routed as .${redirectedType}.`,
+      detail: {
+        declaredExtension: normalizedType,
+        detectedRendererId: redirectedRendererId,
+        routedExtension: redirectedType,
+      },
+    });
+    return await redirectedHandler(buffer, target, redirectedType, context);
+  }
 };
 
 export const createFileRenderHandlerLoader = <
@@ -1079,7 +1104,14 @@ export const createFileRenderHandlerRegistry = <
     return {
       ...definition,
       load: createFileRenderHandlerLoader({
-        handler,
+        handler: (buffer, target, type, context) => renderFileViewerHandler({
+          dispatcher,
+          buffer,
+          target,
+          type,
+          context,
+          throwOnMissingHandler: true,
+        }) as Promise<Rendered>,
         rendererId: definition.id,
         getTarget,
         createContext,

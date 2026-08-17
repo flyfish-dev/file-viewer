@@ -6,7 +6,6 @@ import {
 } from '@file-viewer/core';
 
 interface OpenDocumentPage {
-  title: string;
   blocks: string[];
 }
 
@@ -14,19 +13,14 @@ type OpenDocumentTranslator = ReturnType<typeof createFileViewerTranslator>;
 
 const openDocumentStyle = `
 .odf-viewer{min-height:100%;padding:28px;overflow:auto;background:var(--file-viewer-render-surface-background,#dfe5eb);box-sizing:border-box}
-.odf-shell{width:min(100%,980px);margin:0 auto}.odf-shell>header{margin-bottom:18px;padding:18px 22px;border-radius:8px;background:#fff;box-shadow:0 10px 26px rgba(15,23,42,.1);box-sizing:border-box}
-.odf-shell>header span{color:#0f766e;font-size:12px;font-weight:800}.odf-shell>header h2{margin:6px 0 0;color:#132235;font-size:24px}
+.odf-shell{width:min(100%,980px);margin:0 auto}
 .odf-page{min-height:360px;margin:0 auto 18px;padding:42px 48px;border-radius:4px;background:#fff;box-shadow:0 16px 38px rgba(15,23,42,.12);color:#1f2937;box-sizing:border-box}
-.odf-page h3{margin:0 0 20px;color:#334155;font-size:18px}.odf-page p{margin:0 0 12px;font-size:15px;line-height:1.85;white-space:pre-wrap}
+.odf-page p{margin:0 0 12px;font-size:15px;line-height:1.85;white-space:pre-wrap}
 .flyfish-rtf-viewer{min-height:100%;padding:28px;overflow:auto;background:var(--file-viewer-render-surface-background,#dfe5eb);color:#1f2937;box-sizing:border-box}
-.flyfish-rtf-header{width:min(100%,900px);margin:0 auto 18px;padding:18px 22px;border-radius:8px;background:#fff;box-shadow:0 10px 26px rgba(15,23,42,.1);box-sizing:border-box}
-.flyfish-rtf-header span{display:block;color:#0f766e;font-size:12px;font-weight:800}.flyfish-rtf-header strong{display:block;margin-top:6px;color:#132235;font-size:24px}
 .flyfish-rtf-paper{width:min(100%,900px);min-height:980px;margin:0 auto;padding:54px 62px;background:#fff;box-shadow:0 16px 38px rgba(15,23,42,.12);line-height:1.75;box-sizing:border-box}.flyfish-rtf-paper p{margin:0 0 12px}
 [data-viewer-theme='dark'] .odf-viewer,[data-viewer-theme='dark'] .flyfish-rtf-viewer{color-scheme:dark;background:var(--file-viewer-render-surface-background,#0d1117);color:#e6edf3}
-[data-viewer-theme='dark'] .odf-shell>header,[data-viewer-theme='dark'] .odf-page,[data-viewer-theme='dark'] .flyfish-rtf-header,[data-viewer-theme='dark'] .flyfish-rtf-paper{border:1px solid rgba(139,148,158,.24);background:#161b22;color:#e6edf3;box-shadow:0 18px 44px rgba(0,0,0,.34)}
-[data-viewer-theme='dark'] .odf-shell>header h2,[data-viewer-theme='dark'] .odf-page h3,[data-viewer-theme='dark'] .flyfish-rtf-header strong{color:#f0f6fc}
-[data-viewer-theme='dark'] .odf-shell>header span,[data-viewer-theme='dark'] .flyfish-rtf-header span{color:#6ee7b7}
-@media (prefers-color-scheme:dark){[data-viewer-theme='system'] .odf-viewer,[data-viewer-theme='system'] .flyfish-rtf-viewer{color-scheme:dark;background:var(--file-viewer-render-surface-background,#0d1117);color:#e6edf3}[data-viewer-theme='system'] .odf-shell>header,[data-viewer-theme='system'] .odf-page,[data-viewer-theme='system'] .flyfish-rtf-header,[data-viewer-theme='system'] .flyfish-rtf-paper{border:1px solid rgba(139,148,158,.24);background:#161b22;color:#e6edf3;box-shadow:0 18px 44px rgba(0,0,0,.34)}[data-viewer-theme='system'] .odf-shell>header h2,[data-viewer-theme='system'] .odf-page h3,[data-viewer-theme='system'] .flyfish-rtf-header strong{color:#f0f6fc}[data-viewer-theme='system'] .odf-shell>header span,[data-viewer-theme='system'] .flyfish-rtf-header span{color:#6ee7b7}}
+[data-viewer-theme='dark'] .odf-page,[data-viewer-theme='dark'] .flyfish-rtf-paper{border:1px solid rgba(139,148,158,.24);background:#161b22;color:#e6edf3;box-shadow:0 18px 44px rgba(0,0,0,.34)}
+@media (prefers-color-scheme:dark){[data-viewer-theme='system'] .odf-viewer,[data-viewer-theme='system'] .flyfish-rtf-viewer{color-scheme:dark;background:var(--file-viewer-render-surface-background,#0d1117);color:#e6edf3}[data-viewer-theme='system'] .odf-page,[data-viewer-theme='system'] .flyfish-rtf-paper{border:1px solid rgba(139,148,158,.24);background:#161b22;color:#e6edf3;box-shadow:0 18px 44px rgba(0,0,0,.34)}}
 @media (max-width:720px){.odf-viewer,.flyfish-rtf-viewer{padding:14px}.odf-page{padding:28px 24px}.flyfish-rtf-paper{padding:36px 28px}}
 `;
 
@@ -67,13 +61,12 @@ const parseOdf = async (
   }
   if (type === 'odp') {
     const slides = Array.from(doc.getElementsByTagName('draw:page'));
-    return slides.map((slide, index) => {
+    return slides.map(slide => {
       const blocks = Array.from(slide.getElementsByTagName('text:p'))
         .map(nodeText)
         .filter(Boolean);
       return {
-        title: t('word.page.fallback', { page: index + 1 }),
-        blocks: blocks.length ? blocks : [t('word.page.empty')],
+        blocks,
       };
     });
   }
@@ -81,23 +74,17 @@ const parseOdf = async (
     ...Array.from(doc.getElementsByTagName('text:h')).map(nodeText),
     ...Array.from(doc.getElementsByTagName('text:p')).map(nodeText),
   ].filter(Boolean);
-  return [{ title: t('word.body'), blocks: blocks.length ? blocks : [t('word.body.empty')] }];
+  return [{ blocks }];
 };
 
-const renderOdfPages = (type: string, title: string, pages: OpenDocumentPage[]) => {
+const renderOdfPages = (pages: OpenDocumentPage[]) => {
   const root = document.createElement('div');
   root.className = 'odf-viewer';
   const shell = document.createElement('section');
   shell.className = 'odf-shell';
-  const header = document.createElement('header');
-  appendText(header, 'span', type.toUpperCase());
-  appendText(header, 'h2', title);
-  shell.appendChild(header);
-
   pages.forEach(page => {
     const article = document.createElement('article');
     article.className = 'odf-page';
-    appendText(article, 'h3', page.title);
     page.blocks.forEach(block => appendText(article, 'p', block));
     shell.appendChild(article);
   });
@@ -114,25 +101,19 @@ const resolveRtfJs = async () => {
 const renderRtf = async (
   buffer: ArrayBuffer,
   target: HTMLDivElement,
-  t: OpenDocumentTranslator,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> => {
   const RTFJS = await resolveRtfJs();
   RTFJS.loggingEnabled?.(false);
   const doc = new RTFJS.Document(buffer, {});
-  const meta = doc.metadata?.() || {};
   const elements = await doc.render();
 
   const stage = document.createElement('div');
   stage.className = 'flyfish-rtf-viewer';
-  const header = document.createElement('div');
-  header.className = 'flyfish-rtf-header';
-  appendText(header, 'span', 'RTF');
-  appendText(header, 'strong', meta.title || t('word.title.rtf'));
   const paper = document.createElement('article');
   paper.className = 'flyfish-rtf-paper';
   elements.forEach((element: HTMLElement) => paper.appendChild(element));
-  stage.append(header, paper);
+  stage.appendChild(paper);
   target.replaceChildren(createStyle(), stage);
   context?.registerThumbnailAdapter?.({ getTarget: () => paper });
 
@@ -154,13 +135,10 @@ export default async function renderOpenDocument(
   const t = createFileViewerTranslator(context?.options);
   const normalizedType = (type || 'odt').toLowerCase();
   if (normalizedType === 'rtf') {
-    return renderRtf(buffer, target, t, context);
+    return renderRtf(buffer, target, context);
   }
   const pages = await parseOdf(buffer, normalizedType, t);
-  const title = normalizedType === 'odp'
-    ? t('word.title.openDocumentPresentation')
-    : t('word.title.openDocumentText');
-  target.replaceChildren(createStyle(), renderOdfPages(normalizedType, title, pages));
+  target.replaceChildren(createStyle(), renderOdfPages(pages));
   context?.registerThumbnailAdapter?.({
     getTarget: () => target.querySelector('.odf-page') || target
   });

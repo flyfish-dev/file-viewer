@@ -9,7 +9,7 @@ File Viewer by Flyfish 可以为业务系统快速补齐文件在线预览能力
 <div class="doc-grid">
   <div class="doc-card">
     <h3>多格式预览</h3>
-    <p>内置 208 个扩展名映射和 25 条预览链路，覆盖 Word、Excel、PowerPoint、PDF、OFD、Typst、XMind 脑图、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、Mermaid、PlantUML、EPUB、UMD、Markdown、图片、音视频、字体、PSD 图层资产、结构化数据以及代码/Git patch/bundle。</p>
+    <p>唯一目录注册 221 个扩展名和 32 条预览链路，其中 221 个稳定、0 个实验；实验项不会计入稳定支持数量。</p>
   </div>
   <div class="doc-card">
     <h3>纯前端渲染</h3>

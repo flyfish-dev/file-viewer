@@ -764,6 +764,57 @@ export interface FileViewerPresentationOptions {
   pptModuleUrl?: string | URL;
 }
 
+export type FileViewerIworkEmbeddedPreviewMode = 'never' | 'loading' | 'fallback';
+
+export interface FileViewerIworkOptions {
+  /** Self-hosted module Worker used for ZIP, Snappy, IWA/Protobuf and iWork '09 XML parsing. */
+  workerUrl?: string | URL;
+  /** Defaults to true. Disable only in environments without Worker support. */
+  useWorker?: boolean;
+  /** Maximum parse time before the Worker is terminated. Defaults to 60 seconds. */
+  workerTimeoutMs?: number;
+  /** Maximum total bytes produced while inflating the outer container and Index.zip. Defaults to 256 MiB. */
+  maxUncompressedBytes?: number;
+  /** Maximum accepted ZIP compression ratio for a single entry. Defaults to 200. */
+  maxCompressionRatio?: number;
+  /** Maximum decoded IWA archive/object count. Defaults to 250,000. */
+  maxObjects?: number;
+  /** Maximum decoded image pixels for one media resource. Defaults to 80 megapixels. */
+  maxImagePixels?: number;
+  /** Maximum normalized scene/object nesting depth. Defaults to 128. */
+  maxNestingDepth?: number;
+  /** Embedded Quick Look images are loading placeholders or explicit parse-failure fallbacks, never fidelity evidence. */
+  embeddedPreview?: FileViewerIworkEmbeddedPreviewMode;
+}
+
+export interface FileViewerWordPerfectOptions {
+  /** Self-hosted Worker that owns WordPerfect signature detection and parsing. */
+  workerUrl?: string | URL;
+  /** Self-hosted libwpd/librevenge WebAssembly module. */
+  wasmUrl?: string | URL;
+  /** Defaults to true. */
+  useWorker?: boolean;
+  /** Maximum parser time before the Worker is terminated. Defaults to 60 seconds. */
+  workerTimeoutMs?: number;
+}
+
+export interface FileViewerHangulOptions {
+  /** Self-hosted module Worker used for bounded HWP v5 CFB and HWPX ZIP/XML parsing. */
+  workerUrl?: string | URL;
+  /** Defaults to true. Disable only in environments without Worker support. */
+  useWorker?: boolean;
+  /** Maximum parser time before the Worker is terminated. Defaults to 60 seconds. */
+  workerTimeoutMs?: number;
+  /** Maximum total uncompressed HWPX entry bytes or individual HWP stream bytes. Defaults to 256 MiB. */
+  maxUncompressedBytes?: number;
+  /** Maximum accepted HWPX ZIP compression ratio for a single entry. Defaults to 200. */
+  maxCompressionRatio?: number;
+  /** Maximum HWPX ZIP entry count. Defaults to 25,000. */
+  maxEntries?: number;
+  /** Maximum HWP record count decoded across one stream. Defaults to 250,000. */
+  maxRecords?: number;
+}
+
 export type FileRenderExportMode = 'export' | 'print';
 
 export type FileViewerRenderPurpose = 'preview' | 'thumbnail';
@@ -1153,6 +1204,13 @@ export interface FileViewerUiOptions {
   surfaceBackground?: string;
 }
 
+export interface FileViewerDiagnostic {
+  code: string;
+  level: 'info' | 'warning' | 'error';
+  message: string;
+  detail?: Readonly<Record<string, unknown>>;
+}
+
 export interface FileViewerOptions {
   theme?: FileViewerThemeMode;
   /**
@@ -1246,6 +1304,11 @@ export interface FileViewerOptions {
   docx?: FileViewerDocxOptions;
   presentation?: FileViewerPresentationOptions;
   spreadsheet?: FileViewerSpreadsheetOptions;
+  iwork?: FileViewerIworkOptions;
+  wordPerfect?: FileViewerWordPerfectOptions;
+  hangul?: FileViewerHangulOptions;
+  /** Receives non-fatal routing, fallback, and capability diagnostics. */
+  onDiagnostic?: (diagnostic: FileViewerDiagnostic) => void;
   typst?: FileViewerTypstOptions;
   geo?: FileViewerGeoOptions;
   data?: FileViewerDataOptions;
@@ -1647,12 +1710,25 @@ export interface RendererCapability {
   search?: boolean | 'provider';
 }
 
+export type FileViewerFormatSupportLevel = 'high-fidelity' | 'structured' | 'basic' | 'experimental';
+export type FileViewerFormatStatus = 'stable' | 'experimental';
+
 export interface RendererDefinition {
   id: string;
   label: string;
   category: FileViewerRendererCategory;
   extensions: readonly string[];
   async?: boolean;
+  /** Product-level fidelity contract generated from ecosystem/format-catalog.json. */
+  supportLevel?: FileViewerFormatSupportLevel;
+  /** Experimental formats are routable but are excluded from stable support counts. */
+  status?: FileViewerFormatStatus;
+  /** Owning on-demand renderer package. */
+  packageName?: string;
+  /** Presets that assemble this renderer. */
+  presets?: readonly FileViewerRendererPresetName[];
+  containerVersions?: readonly string[];
+  knownLimits?: readonly string[];
   capabilities?: RendererCapability;
   load?: RendererLoader;
 }

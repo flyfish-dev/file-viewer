@@ -1,0 +1,26 @@
+{
+  "license": "Mixed: repository-authored synthetic contract fixture plus Apache-2.0, MPL-2.0 and CC0 real WordPerfect documents",
+  "privacy": "Fixtures are publicly redistributable upstream regression documents; no customer files are included.",
+  "sources": {
+    "synthetic": {
+      "origin": "File Viewer parser-contract generator",
+      "redistribution": "Repository test fixture"
+    },
+    "xbergWordPerfectCorpus": {
+      "repository": "https://github.com/xberg-io/test_documents",
+      "commit": "26fed917cf3946a6d08b5b2e9912cf1f3670d684",
+      "provenance": "wordperfect/PROVENANCE.md",
+      "licenses": ["Apache-2.0", "MPL-2.0", "CC0"],
+      "licenseFiles": ["LICENSE.Apache-2.0.txt", "LICENSE.MPL-2.0.txt"]
+    }
+  },
+  "fixtures": {
+    "format-matrix.wpd": { "source": "synthetic", "sha256": "7055b510e46cd25d4e2e4e9e0ad732c4c03e023aaf0385c0dcad0871ac2d4a83", "container": "WPC signature fixture", "expected": { "generation": "wp6", "text": "WordPerfect signature fixture" } },
+    "wp42.wp": { "source": "xbergWordPerfectCorpus", "upstream": "LibreOffice/core writerperfect/qa/unit/data/writer/libwpd/pass/WP4.wp", "upstreamRevision": "b5c8452", "license": "MPL-2.0", "sha256": "5209024eff85ad86d7405503cabe4682e0d36ce2cc20d5cd40f5165e52199927", "container": "WordPerfect 4.2 DOS", "expected": { "paragraphs": 6, "text": "Dit is een test" } },
+    "wp50.wp": { "source": "xbergWordPerfectCorpus", "upstream": "apache/tika testWordPerfect_5_0.wp", "upstreamRevision": "711be69", "license": "Apache-2.0", "sha256": "4cb383585f11af90a2f1c3f8e8f0244020e2008224effce981446577234273c1", "container": "WordPerfect 5.0", "expected": { "generation": "wp5", "paragraphs": 35, "text": "President" } },
+    "wp51.wp": { "source": "xbergWordPerfectCorpus", "upstream": "apache/tika testWordPerfect_5_1.wp", "upstreamRevision": "711be69", "license": "Apache-2.0", "sha256": "c5b3c18d2c1ba2c99c2fbb1aababcbee15b744f2539605927e589c3c7eeb6bdc", "container": "WordPerfect 5.1", "expected": { "generation": "wp5", "paragraphs": 28, "text": "Western Gulf of Alaska" } },
+    "wp6.wpd": { "source": "xbergWordPerfectCorpus", "upstream": "apache/tika testWordPerfect.wpd", "upstreamRevision": "711be69", "license": "Apache-2.0", "sha256": "45ec5771e60fc55c07f398ddec80e9463f3cd7b80bfadacf93743dcfcef866e7", "container": "WordPerfect 6.x", "expected": { "generation": "wp6", "paragraphs": 3, "text": "APPENDIX" } },
+    "corel_wp6.wpd": { "source": "xbergWordPerfectCorpus", "upstream": "ross-spencer/opf-format-corpus TOPOPREC.WPD", "upstreamRevision": "70d283c", "license": "CC0", "sha256": "3417815c24d7227a1dd3fc5b95cb3e84f895a1e608a58432cb5ffcaebb4cae90", "container": "Corel WordPerfect 6.x", "expected": { "paragraphs": 43, "tableRows": [4, 9, 14], "footers": 1, "notes": 1, "styles": ["bold", "italic", "superscript"] } }
+  },
+  "promotion": "The lazy libwpd/librevenge WebAssembly Worker is pinned and now passes redistributable real-file assertions across WP 4.2, 5.0, 5.1 and 6.x, including tables, inline styles, a footer and a footnote. Browser smoke uses the same genuine payloads; .wp5/.wp6 remain routing aliases rather than fabricated renamed fixtures."
+}

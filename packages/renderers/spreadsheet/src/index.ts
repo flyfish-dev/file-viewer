@@ -9,12 +9,16 @@ import {
 const spreadsheetDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
   definition => definition.id === 'spreadsheet-openxml'
 ) as RendererDefinition | undefined;
+const dbfDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
+  definition => definition.id === 'spreadsheet-dbf'
+) as RendererDefinition | undefined;
 
-if (!spreadsheetDefinition) {
+if (!spreadsheetDefinition || !dbfDefinition) {
   throw new Error('@file-viewer/renderer-spreadsheet could not locate the shared Spreadsheet format definition.');
 }
 
 export const spreadsheetRendererDefinition = spreadsheetDefinition;
+export const dbfRendererDefinition = dbfDefinition;
 
 export const renderFileViewerSpreadsheet: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = (
   buffer,
@@ -28,11 +32,11 @@ export const renderFileViewerSpreadsheet: FileRenderHandler<FileViewerRenderedIn
 export const spreadsheetRenderer: FileViewerRendererPlugin<FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>> = {
   id: 'file-viewer-renderer-spreadsheet',
   label: 'Flyfish File Viewer Spreadsheet renderer',
-  definitions: [spreadsheetRendererDefinition],
-  handlers: [{
-    rendererId: spreadsheetRendererDefinition.id,
+  definitions: [spreadsheetRendererDefinition, dbfRendererDefinition],
+  handlers: [spreadsheetRendererDefinition, dbfRendererDefinition].map(definition => ({
+    rendererId: definition.id,
     handler: renderFileViewerSpreadsheet,
-  }],
+  })),
 };
 
 export default spreadsheetRenderer;

@@ -3,22 +3,23 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  The current core declares 25 preview pipelines and 208 file extensions.
+  The canonical catalog registers 221 file extensions across 32 preview pipelines: 221 stable and 0 experimental.
   Renderers are loaded on demand, so opening a lightweight text file does not force the browser to load every heavy document engine.
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="File Viewer by Flyfish v2.2.9 English format sample library with grouped filenames and format-specific icons" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">The demo groups representative samples for all 25 preview pipelines. The active group opens by default, and each item carries its real filename, format label, and theme-aware file icon.</p>
+  <p class="doc-caption">The demo groups representative samples for all 32 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence.</p>
 </div>
 
 ## Main Preview Pipelines
 
 | Category | Examples |
 | --- | --- |
-| Word | `docx`, `docm`, `dotx`, `dotm`, legacy `doc`, `dot`, plus RTF and ODT paths |
-| Spreadsheets | `xlsx`, `xlsm`, `xlsb`, `xls`, `csv`, `tsv`, `ods`, `fods`, `numbers` |
-| Presentations | binary `ppt`; OpenXML `pptx`, `pptm`, `potx`, `potm`, `ppsx`, `ppsm`; OpenDocument `odp` |
+| Word | `docx`, `docm`, `dotx`, `dotm`, legacy `doc`, `dot`, RTF/ODT; structured stable `wpd`, `wp`, `wp5`, `wp6`, `hwp`, `hwpx` |
+| Spreadsheets | `xlsx`, `xlsm`, `xlsb`, `xls`, `xla`, `xlam`, `csv`, `tsv`, `ods`, `fods`, `dbf`; stable high-fidelity `numbers` |
+| Presentations | binary `ppt`, `pot`; OpenXML `pptx`, `pptm`, `potx`, `potm`, `ppsx`, `ppsm`; OpenDocument `odp`; stable high-fidelity `key` |
+| Apple documents | stable high-fidelity `pages`, `numbers`, and `key` with iWork '09 XML/APXL and modern Snappy/IWA parser paths |
 | Layout documents | `pdf`, `ofd`, `typ`, `typst` |
 | Archives | `zip`, `7z`, `rar`, `tar`, `gz`, `tgz`, `cab`, `iso`, `apk`, `cbz`, `cbr`, and more |
 | Email | `eml`, `msg`, `mbox` |
@@ -27,6 +28,17 @@
 | 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `ifc`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp` |
 | Text, code, and data | Markdown, source code, logs, JSON, YAML, TOML, SQL, IPYNB, SQLite, WASM, Parquet, Avro |
 | Media and assets | Images, SVG, HEIC, audio, video, HLS, fonts, PSD-style design assets |
+
+## Office and Apple evidence boundary
+
+- `xla`, `xlam`, `pot`, `dbf`, and `fb2` have real container fixtures, parser assertions, hashes, and Demo smoke cases. Macro and add-in code is never executed.
+- `pages`, `numbers`, and `key` include iWork '09 and modern IWA parser fixtures, bounded ZIP/Snappy/Protobuf parsing in a module Worker, a normalized static scene model, search/text layers, sheet/slide navigation, notes, and explicit encrypted-file detection.
+- `pages`, `numbers`, and `key` are **high-fidelity / stable**. The gate covers iWork '09, 2013+, and current Apple 15.3.1 native containers with exact structural assertions, real-browser smoke, and fixed-font visual goldens. Pages/Keynote use a 3% pixel-difference threshold and Numbers uses 5%; Quick Look images remain loading placeholders or explicit limited-preview fallbacks only.
+- Stable Apple support means static high fidelity: Keynote animations, transitions, and video are not executed; Numbers reads saved formula results instead of recalculating them; encrypted `iwpv2` files are detected and reported; missing fonts surface substitution information.
+- `wpd/wp/wp5/wp6` are **structured / stable**. A checksum-pinned MPL-2.0 libwpd/librevenge WebAssembly Worker extracts text, styles, tables, headers, footers, and notes from licensed genuine WP 4.2, 5.0, 5.1, and 6.x fixtures. Chromium, Firefox, and WebKit smoke the packaged Worker/WASM path; `wp5` and `wp6` remain routing aliases and renamed files do not count as fixture evidence. Macros are never executed, and bounded text is only a runtime fallback.
+- `hwp/hwpx` are **structured / stable** with redistributable Apache-2.0 HWP v5 and HWPX fixtures. The gate covers page geometry, inline styles, merged tables, headers, footers, notes, and embedded images in Chromium, Firefox, and WebKit. Encrypted, DRM, and distribution documents are detected and rejected explicitly; rare controls and producer-specific layout constructs remain documented limitations.
+
+The full machine-readable matrix, including containers, levels, status, and limits, is generated from `ecosystem/format-catalog.json` into [`docs/generated/format-catalog.md`](/generated/format-catalog).
 
 ## Engineering Renderer Notes
 

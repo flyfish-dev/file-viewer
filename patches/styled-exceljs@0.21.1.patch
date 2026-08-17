@@ -26,3 +26,15 @@ index 114fa2cd3caa8ca12ca3f1ae49b70c794549b121..c917519dc7ee80c3ca7976b4666135bb
 @@ -21573 +21574 @@ function parse_workbook(blob, options/*:ParseOpts*/)/*:Workbook*/ {
 -						if(!seencol) { seencol = true; find_mdw_colw(val.w/256); }
 +						if(!seencol) { seencol = true; MDW = DEF_MDW; find_mdw_colw(val.w/256); }
+@@ -26216,7 +26217,10 @@ var numbers_lut_new = function() {
+ function numbers_format_cell(cell, t, flags, ofmt, nfmt) {
+   var _a, _b, _c, _d;
+   var ctype = t & 255, ver = t >> 8;
+-  var fmt = ver >= 5 ? nfmt : ofmt;
++  // Older Numbers 3 documents can reference a cell format while omitting the
++  // corresponding legacy/new format table. Treat that as the default format
++  // instead of crashing while probing duration fields on `undefined`.
++  var fmt = (ver >= 5 ? nfmt : ofmt) || [];
+   dur:
+     if (flags & (ver > 4 ? 8 : 4) && cell.t == "n" && ctype == 7) {
+       var dstyle = ((_a = fmt[7]) == null ? void 0 : _a[0]) ? varint_to_i32(fmt[7][0].data) : -1;

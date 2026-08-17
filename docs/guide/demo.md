@@ -11,7 +11,7 @@ description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, c
 <div class="doc-kicker">Real Samples, Real Renderers</div>
 
 <p class="doc-lead">
-  The official demo is the fastest way to verify the 208-extension, 25-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading.
+  The official demo is the fastest way to verify the 221-extension, 32-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading.
 </p>
 
 <div class="doc-shot">
