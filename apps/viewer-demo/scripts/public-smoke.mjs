@@ -216,7 +216,7 @@ try {
   })
   if (
     japaneseUi.documentLocale !== 'ja-JP' ||
-    !japaneseUi.pageTitle.includes('オンラインプレビュー') ||
+    japaneseUi.pageTitle !== 'File Viewer Demo — Office・PDF・CADをブラウザで表示' ||
     japaneseUi.languageLabel !== '言語' ||
     !japaneseUi.japaneseActive ||
     !japaneseUi.localizedSample
