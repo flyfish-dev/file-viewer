@@ -6,7 +6,8 @@ import {
   prepareSpreadsheetReadInput,
   type SpreadsheetTextSource,
 } from './textEncoding.js';
-import type { SheetChartDefinition, SheetDefinition } from '../type.js';
+import type { SheetCellImage, SheetChartDefinition, SheetDefinition } from '../type.js';
+import { parseSpreadsheetCellImages } from './richDataParser.js';
 
 interface DrawingMarkerLike {
   row?: number;
@@ -30,6 +31,7 @@ export interface SpreadsheetParserContext {
   workbook: WorkBook | null;
   sheets: SheetDefinition[];
   charts: Record<string, SheetChartDefinition[]>;
+  cellImages: Record<string, SheetCellImage[]>;
 }
 
 export interface SpreadsheetWorkerRequest {
@@ -56,6 +58,7 @@ export const createSpreadsheetParserContext = (): SpreadsheetParserContext => ({
   workbook: null,
   sheets: [],
   charts: {},
+  cellImages: {},
 });
 
 const toErrorResponse = (
@@ -290,14 +293,21 @@ export const parseSpreadsheetWorkbook = async (
       : read(input.data, readOptions);
     const signature = data.byteLength >= 2 ? new DataView(data).getUint16(0, false) : 0;
     if (signature === 0x504b) {
-      try {
-        context.charts = await parseSpreadsheetCharts(data);
-      } catch (error) {
-        context.charts = {};
-        console.warn('[file-viewer] Spreadsheet chart parsing failed; continuing with cell content.', error);
-      }
+      const [charts, cellImages] = await Promise.all([
+        parseSpreadsheetCharts(data).catch((error) => {
+          console.warn('[file-viewer] Spreadsheet chart parsing failed; continuing with cell content.', error);
+          return {};
+        }),
+        parseSpreadsheetCellImages(data).catch((error) => {
+          console.warn('[file-viewer] Spreadsheet cell image parsing failed; continuing with cell content.', error);
+          return {};
+        }),
+      ]);
+      context.charts = charts;
+      context.cellImages = cellImages;
     } else {
       context.charts = {};
+      context.cellImages = {};
     }
     return parseSheets(context);
   } catch (error) {
@@ -335,6 +345,7 @@ export const parseSpreadsheetSheet = (
       totalRows: sheetMeta?.rowCount,
       totalCols: sheetMeta?.colCount,
       charts: context.charts[sheetName],
+      cellImages: context.cellImages[sheetName],
     });
     // Keep the first response backward-compatible; later virtual windows only need rows and cells.
     // Avoid recalculating auto-fit column widths for every 500-row request.

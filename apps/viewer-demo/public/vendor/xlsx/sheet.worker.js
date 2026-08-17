@@ -12499,7 +12499,7 @@ function jf(e, t) {
 		var i = X(t[r], !0);
 		i.hidden && (i.hidden = Z(i.hidden)), i.bestFit && (i.bestFit = Z(i.bestFit)), i.customWidth && (i.customWidth = Z(i.customWidth));
 		var a = parseInt(i.min, 10) - 1, o = parseInt(i.max, 10) - 1;
-		for (i.outlineLevel && (i.level = +i.outlineLevel || 0), delete i.min, delete i.max, i.width = +i.width, !n && i.width && (n = !0, Sc(i.width)), Cc(i); a <= o;) e[a++] = St(i);
+		for (i.outlineLevel && (i.level = +i.outlineLevel || 0), delete i.min, delete i.max, i.width = +i.width, !n && i.width && (n = !0, _c = mc, Sc(i.width)), Cc(i); a <= o;) e[a++] = St(i);
 	}
 }
 function Mf(e) {
@@ -12932,7 +12932,7 @@ function hp(e, t, n, r, i, a, o) {
 					width: e.w / 256,
 					hidden: !!(e.flags & 1),
 					level: e.level
-				}, N || (N = !0, Sc(e.w / 256)), Cc(j[e.e + 1]);
+				}, N || (N = !0, _c = mc, Sc(e.w / 256)), Cc(j[e.e + 1]);
 				break;
 			case 551:
 				e && (c["!legrel"] = e);
@@ -15284,7 +15284,7 @@ function Im(e, t) {
 						width: Y.w / 256,
 						level: Y.level || 0,
 						hidden: !!(Y.flags & 1)
-					}, Y.ixfe != null && S[Y.ixfe] && (ne[Y.e + 1].s = B(S[Y.ixfe], Y.ixfe)), G || (G = !0, Sc(Y.w / 256)), Cc(ne[Y.e + 1]);
+					}, Y.ixfe != null && S[Y.ixfe] && (ne[Y.e + 1].s = B(S[Y.ixfe], Y.ixfe)), G || (G = !0, _c = mc, Sc(Y.w / 256)), Cc(ne[Y.e + 1]);
 					break;
 				case 520:
 					var Ve = {};
@@ -20026,7 +20026,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 		return new e(t, n);
 	}
 	constructor(e, t) {
-		this._ws = e, this._startRow = Math.max(t.startRow || 0, 0), this._pageSize = Math.max(t.pageSize || 500, 1), this._totalRows = t.totalRows, this._totalCols = t.totalCols, this._charts = t.charts || [];
+		this._ws = e, this._startRow = Math.max(t.startRow || 0, 0), this._pageSize = Math.max(t.pageSize || 500, 1), this._totalRows = t.totalRows, this._totalCols = t.totalCols, this._charts = t.charts || [], this._cellImages = t.cellImages || [], this._cellImageKeys = new Set(this._cellImages.map((e) => J_(e.row, e.col)));
 		let { "!ref": n } = e;
 		this.range = Lg.decode_range(n || "A1");
 	}
@@ -20116,7 +20116,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	}
 	getImages() {
 		let e = this.ws["!drawings"], t = (e == null ? void 0 : e.images) || [];
-		if (!t.length) return;
+		if (!t.length && !this._cellImages.length) return;
 		let n = t.flatMap((e, t) => {
 			var n, r, i, a, o;
 			let s = e.anchor;
@@ -20133,8 +20133,17 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 				row: (c == null ? void 0 : c.row) || 0,
 				col: (c == null ? void 0 : c.col) || 0
 			}];
-		});
-		return n.length ? n : void 0;
+		}), r = this._cellImages.flatMap((e) => {
+			let t = Z_(this.getColWidths(), e.col, this.defaults.colWidth), n = Z_(this.getAllRowHeights(), e.row, this.defaults.rowHeight);
+			return t <= 0 || n <= 0 ? [] : [{
+				...e,
+				left: this.getAxisOffset(e.col, this.getColWidths(), this.defaults.colWidth),
+				top: this.getAxisOffset(e.row, this.getAllRowHeights(), this.defaults.rowHeight),
+				width: t,
+				height: n
+			}];
+		}), i = [...n, ...r];
+		return i.length ? i : void 0;
 	}
 	getCharts() {
 		let e = this._charts.map((e) => {
@@ -20175,7 +20184,7 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getData() {
 		let e = [], t = this.denseRows;
 		for (let n = this.startRow; n < this.endRow; n += 1) {
-			let r = t == null ? void 0 : t[n], i = r ? r.slice(0, this.totalCols).map((e) => Y_(e)) : Array.from({ length: this.totalCols }, (e, t) => Y_(this.getCellAt(n, t)));
+			let r = t == null ? void 0 : t[n], i = r ? r.slice(0, this.totalCols).map((e, t) => this._cellImageKeys.has(J_(n, t)) ? "" : Y_(e)) : Array.from({ length: this.totalCols }, (e, t) => this._cellImageKeys.has(J_(n, t)) ? "" : Y_(this.getCellAt(n, t)));
 			e.push(i);
 		}
 		return dv(e, this.totalCols);
@@ -20250,7 +20259,12 @@ var N_, P_ = 8.43, F_ = 15, I_ = "#202124", L_ = 9525, R_ = 480, z_ = 288, B_ = 
 	getColumnMeta(e, t) {
 		var n;
 		let r = e[t];
-		return $_(r) ? r : ((n = this.autoFitColumns) == null ? void 0 : n[t]) || r;
+		return $_(r) || this.hasAnchoredObjects ? r : ((n = this.autoFitColumns) == null ? void 0 : n[t]) || r;
+	}
+	get hasAnchoredObjects() {
+		var e;
+		let t = this.ws["!drawings"];
+		return !!(!(t == null || (e = t.images) == null) && e.length) || !!this._charts.length || !!this._cellImages.length;
 	}
 	getColWidths() {
 		let { colWidth: e } = this.defaults, { "!cols": t = [] } = this.ws, n = [];
@@ -27303,7 +27317,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 }, Bv = (e) => {
 	let t = e.lastIndexOf("/"), n = t >= 0 ? e.slice(0, t) : "", r = t >= 0 ? e.slice(t + 1) : e;
 	return `${n ? `${n}/` : ""}_rels/${r}.rels`;
-}, Vv = (e) => new Sv.DOMParser().parseFromString(e, "application/xml"), Hv = async (e, t) => {
+}, Vv = (e) => new Sv.DOMParser().parseFromString(e.replace(/^[\uFEFF\s]+/, ""), "application/xml"), Hv = async (e, t) => {
 	let n = e.file(t);
 	return n ? Vv(await n.async("text")) : null;
 }, Uv = async (e, t) => {
@@ -27482,7 +27496,165 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		data: n.text,
 		encoding: n.encoding
 	};
-}, dy = {
+}, dy = "xl/workbook.xml", fy = "[Content_Types].xml", py = "/worksheet", my = "/sheetmetadata", hy = "/rdrichvalue", gy = "/rdrichvaluestructure", _y = "/richvaluerel", vy = "http://www.wps.cn/officeDocument/2017/relationships/cellimage", yy = "XLRICHVALUE", by = "_localImage", xy = "LocalImageIdentifier", Sy = (e) => {
+	var t;
+	return (e == null || (t = e.textContent) == null ? void 0 : t.trim()) || "";
+}, Cy = (e, t) => jv(e).filter((e) => Av(e) === t), wy = (e, t) => Pv(e, t)[0], Ty = (e, t) => e.find((e) => e.type.toLowerCase().endsWith(t)), Ey = (e) => {
+	let t = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Map();
+	return e ? (Pv(e.documentElement, "Default").forEach((e) => {
+		let n = (e.getAttribute("Extension") || "").toLowerCase(), r = e.getAttribute("ContentType") || "";
+		n && r && t.set(n, r);
+	}), Pv(e.documentElement, "Override").forEach((e) => {
+		let t = (e.getAttribute("PartName") || "").replace(/^\//, ""), r = e.getAttribute("ContentType") || "";
+		t && r && n.set(t, r);
+	}), {
+		defaults: t,
+		overrides: n
+	}) : {
+		defaults: t,
+		overrides: n
+	};
+}, Dy = (e) => {
+	var t;
+	switch (((t = e.split(".").pop()) == null ? void 0 : t.toLowerCase()) || "") {
+		case "bmp": return "image/bmp";
+		case "gif": return "image/gif";
+		case "jpeg":
+		case "jpg": return "image/jpeg";
+		case "png": return "image/png";
+		case "svg": return "image/svg+xml";
+		case "webp": return "image/webp";
+		default: return "";
+	}
+}, Oy = (e, t) => {
+	var n;
+	let r = t.overrides.get(e);
+	if (r) return r;
+	let i = ((n = e.split(".").pop()) == null ? void 0 : n.toLowerCase()) || "";
+	return t.defaults.get(i) || Dy(e);
+}, ky = (e) => e ? Cy(e.documentElement, "s").map((e) => ({
+	type: e.getAttribute("t") || "",
+	keys: Cy(e, "k").map((e) => e.getAttribute("n") || "")
+})) : [], Ay = (e) => e ? Cy(e.documentElement, "rv").map((e) => ({
+	structureIndex: Number(e.getAttribute("s")),
+	values: Cy(e, "v").map((e) => Number(Sy(e)))
+})) : [], jy = (e) => e ? Cy(e.documentElement, "rel").map(Rv) : [], My = (e) => {
+	if (!e) return [];
+	let t = Cy(wy(e.documentElement, "metadataTypes"), "metadataType").findIndex((e) => e.getAttribute("name") === yy) + 1;
+	if (t <= 0) return [];
+	let n = Cy(Pv(e.documentElement, "futureMetadata").find((e) => e.getAttribute("name") === yy), "bk").map((e) => {
+		let t = wy(e, "rvb"), n = Number(t == null ? void 0 : t.getAttribute("i"));
+		return Number.isInteger(n) && n >= 0 ? n : void 0;
+	});
+	return Cy(wy(e.documentElement, "valueMetadata"), "bk").map((e) => {
+		let r = Cy(e, "rc").find((e) => Number(e.getAttribute("t")) === t), i = Number(r == null ? void 0 : r.getAttribute("v"));
+		return Number.isInteger(i) && i >= 0 ? n[i] : void 0;
+	});
+}, Ny = (e, t) => {
+	var n, r;
+	let i = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), a = e.match(RegExp(`(?:^|\\s)${i}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, "i"));
+	return (n = (r = a == null ? void 0 : a[1]) == null ? a == null ? void 0 : a[2] : r) == null ? "" : n;
+}, Py = (e) => {
+	let t = [];
+	for (let n of e.matchAll(/<(?:[A-Za-z_][\w.-]*:)?c\b[^>]*>/gi)) {
+		let e = n[0], r = Ny(e, "r"), i = Ny(e, "vm"), a = Number(i);
+		!r || !i || !Number.isInteger(a) || a < 0 || t.push({
+			ref: r,
+			metadataIndex: a > 0 ? a - 1 : 0
+		});
+	}
+	return t;
+}, Fy = (e) => e.replace(/&quot;/gi, "\"").replace(/&apos;/gi, "'").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&"), Iy = (e) => {
+	let t = [];
+	for (let i of e.matchAll(/<(?:[A-Za-z_][\w.-]*:)?c\b[^>]*>[\s\S]*?<\/(?:[A-Za-z_][\w.-]*:)?c\s*>/gi)) {
+		var n, r;
+		let e = i[0], a = Ny(e.slice(0, e.indexOf(">") + 1), "r"), o = e.match(/<(?:[A-Za-z_][\w.-]*:)?f\b[^>]*>([\s\S]*?)<\/(?:[A-Za-z_][\w.-]*:)?f\s*>/i), s = (r = Fy((o == null || (n = o[1]) == null ? void 0 : n.trim()) || "").match(/(?:_xlfn\.)?(?:_xlws\.)?DISPIMG\s*\(\s*["']([^"']+)["']/i)) == null ? void 0 : r[1];
+		a && s && t.push({
+			ref: a,
+			imageId: s
+		});
+	}
+	return t;
+}, Ly = (e) => e && (e.getAttribute("r:embed") || e.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed") || e.getAttribute("embed")) || "", Ry = async (e, t, n) => {
+	let r = /* @__PURE__ */ new Map();
+	if (!t) return r;
+	let [i, a] = await Promise.all([Hv(e, t.target), Uv(e, t.target)]);
+	return i && await Promise.all(Pv(i.documentElement, "cellImage").map(async (t) => {
+		let i = wy(t, "cNvPr"), o = (i == null ? void 0 : i.getAttribute("name")) || "", s = Wv(a, Ly(wy(t, "blip")));
+		if (!o || !s) return;
+		let c = Oy(s.target, n), l = e.file(s.target);
+		!l || !c.startsWith("image/") || r.set(o, {
+			id: o,
+			src: `data:${c};base64,${await l.async("base64")}`,
+			contentType: c
+		});
+	})), r;
+}, zy = async (e, t, n, r, i, a) => {
+	let o = /* @__PURE__ */ new Map();
+	return await Promise.all(n.map(async (n, s) => {
+		let c = t[n.structureIndex];
+		if (!c || c.type !== by) return;
+		let l = c.keys.findIndex((e) => e.endsWith(xy)), u = n.values[l];
+		if (l < 0 || !Number.isInteger(u) || u < 0) return;
+		let d = r[u], f = Wv(i, d);
+		if (!f) return;
+		let p = Oy(f.target, a), m = e.file(f.target);
+		if (!m || !p.startsWith("image/")) return;
+		let h = await m.async("base64");
+		o.set(s, {
+			id: f.id,
+			src: `data:${p};base64,${h}`,
+			contentType: p
+		});
+	})), o;
+}, By = async (e) => {
+	let t = await Cv.default.loadAsync(e), [n, r, i] = await Promise.all([
+		Hv(t, dy),
+		Uv(t, dy),
+		Hv(t, fy)
+	]), a = {};
+	if (!n) return a;
+	let o = Ty(r, my), s = Ty(r, hy), c = Ty(r, gy), l = Ty(r, _y), u = Ey(i), d = [], f = /* @__PURE__ */ new Map();
+	if (o && s && c && l) {
+		let [e, n, r, i, a] = await Promise.all([
+			Hv(t, o.target),
+			Hv(t, s.target),
+			Hv(t, c.target),
+			Hv(t, l.target),
+			Uv(t, l.target)
+		]);
+		d = My(e), f = await zy(t, ky(r), Ay(n), jy(i), a, u);
+	}
+	let p = await Ry(t, r.find((e) => e.type.toLowerCase() === vy.toLowerCase()), u);
+	if (!f.size && !p.size) return a;
+	for (let e of Pv(n.documentElement, "sheet")) {
+		let n = e.getAttribute("name") || "", i = Wv(r, Rv(e)), o = i != null && i.type.toLowerCase().endsWith(py) ? t.file(i.target) : null;
+		if (!n || !o) continue;
+		let s = await o.async("text"), c = /* @__PURE__ */ new Map();
+		Py(s).forEach(({ ref: e, metadataIndex: t }) => {
+			let n = d[t], r = n === void 0 ? void 0 : f.get(n);
+			r && c.set(e, r);
+		}), Iy(s).forEach(({ ref: e, imageId: t }) => {
+			let n = p.get(t);
+			n && !c.has(e) && c.set(e, n);
+		});
+		let l = Array.from(c).flatMap(([e, t]) => {
+			try {
+				let n = Lg.decode_cell(e);
+				return [{
+					...t,
+					id: `cell-image-${e}-${t.id}`,
+					row: n.r,
+					col: n.c
+				}];
+			} catch {
+				return [];
+			}
+		});
+		l.length && (a[n] = l);
+	}
+	return a;
+}, Vy = {
 	type: "array",
 	dense: !0,
 	cellDates: !0,
@@ -27490,17 +27662,18 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 	browserPixels: !0,
 	drawings: !0,
 	validateMerges: !0
-}, fy = () => ({
+}, Hy = () => ({
 	workbook: null,
 	sheets: [],
-	charts: {}
-}), py = (e, t = {}) => ({
+	charts: {},
+	cellImages: {}
+}), Uy = (e, t = {}) => ({
 	type: "parseError",
 	payload: {
 		...t,
 		message: e instanceof Error ? e.message : String(e)
 	}
-}), my = (e) => {
+}), Wy = (e) => {
 	var t;
 	return ((e == null || (t = e["!drawings"]) == null ? void 0 : t.images) || []).reduce((e, t) => {
 		var n, r, i, a, o, s;
@@ -27513,7 +27686,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		rowCount: 0,
 		colCount: 0
 	});
-}, hy = (e) => (e || []).reduce((e, t) => {
+}, Gy = (e) => (e || []).reduce((e, t) => {
 	var n, r, i, a, o, s;
 	let c = (n = t.ext) != null && n.height ? Math.ceil(t.ext.height / 9525 / 20) : 0, l = (r = t.ext) != null && r.width ? Math.ceil(t.ext.width / 9525 / 64) : 0, u = (i = (a = t.to) == null ? void 0 : a.row) == null ? t.from.row + c : i, d = (o = (s = t.to) == null ? void 0 : s.col) == null ? t.from.col + l : o;
 	return {
@@ -27523,7 +27696,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 }, {
 	rowCount: 0,
 	colCount: 0
-}), gy = 1e3, _y = 256, vy = 256, yy = 64, by = 4, xy = (e) => {
+}), Ky = 1e3, qy = 256, Jy = 256, Yy = 64, Xy = 4, Zy = (e) => {
 	let t = {
 		rowCount: 0,
 		colCount: 0
@@ -27545,7 +27718,7 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		t.rowCount = Math.max(t.rowCount, e.r + 1), t.colCount = Math.max(t.colCount, e.c + 1);
 	} catch {}
 	return t;
-}, Sy = (e) => ((e == null ? void 0 : e["!merges"]) || []).reduce((e, t) => {
+}, Qy = (e) => ((e == null ? void 0 : e["!merges"]) || []).reduce((e, t) => {
 	var n, r, i, a, o, s;
 	let c = Number((n = (r = t.e) == null ? void 0 : r.row) == null ? (i = t.e) == null ? void 0 : i.r : n), l = Number((a = (o = t.e) == null ? void 0 : o.col) == null ? (s = t.e) == null ? void 0 : s.c : a);
 	return {
@@ -27555,13 +27728,13 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 }, {
 	rowCount: 0,
 	colCount: 0
-}), Cy = (e, t, n, r) => t <= 0 ? Math.min(Math.max(e, 1), r) : e <= Math.max(t + n, t * by) ? Math.max(e, t) : t, wy = (e, t) => {
+}), $y = (e, t, n, r) => t <= 0 ? Math.min(Math.max(e, 1), r) : e <= Math.max(t + n, t * Xy) ? Math.max(e, t) : t, eb = (e, t) => {
 	let n = 0, r = 0, i = e == null ? void 0 : e["!ref"];
 	if (i) try {
 		let e = Lg.decode_range(i);
 		n = e.e.r + 1, r = e.e.c + 1;
 	} catch {}
-	let a = xy(e), o = Sy(e), s = my(e), c = hy(t), l = Math.max(a.rowCount, o.rowCount, s.rowCount, c.rowCount), u = Math.max(a.colCount, o.colCount, s.colCount, c.colCount), d = Cy(n, l, vy, gy), f = Cy(r, u, yy, _y);
+	let a = Zy(e), o = Qy(e), s = Wy(e), c = Gy(t), l = Math.max(a.rowCount, o.rowCount, s.rowCount, c.rowCount), u = Math.max(a.colCount, o.colCount, s.colCount, c.colCount), d = $y(n, l, Jy, Ky), f = $y(r, u, Yy, qy);
 	return {
 		rowCount: d,
 		colCount: f,
@@ -27571,14 +27744,14 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		observedColCount: u,
 		trimmed: d < n || f < r
 	};
-}, Ty = (e) => {
+}, tb = (e) => {
 	var t;
 	let n = e.workbook;
 	if (!(n != null && n.SheetNames)) return [];
 	let r = ((t = n.Workbook) == null ? void 0 : t.Sheets) || [];
 	return e.sheets = n.SheetNames.reduce((t, i, a) => {
 		var o;
-		let s = n.Sheets[i], c = wy(s, e.charts[i]);
+		let s = n.Sheets[i], c = eb(s, e.charts[i]);
 		return !(s != null && s["!ref"]) && !c.observedRowCount && !c.observedColCount ? t : (c.trimmed && console.warn(`[file-viewer] Ignored pathological worksheet dimensions for ${i}: ${c.declaredRowCount}x${c.declaredColCount} -> ${c.rowCount}x${c.colCount}.`), t.push({
 			id: t.length,
 			name: i,
@@ -27590,23 +27763,21 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 		type: "sheets",
 		payload: { sheets: e.sheets }
 	}];
-}, Ey = async (e, t, n = {}) => {
+}, nb = async (e, t, n = {}) => {
 	try {
 		let r = uy(t, n);
 		if (e.workbook = r.kind === "text" ? _g(r.data, {
-			...dy,
+			...Vy,
 			type: "string"
-		}) : _g(r.data, dy), (t.byteLength >= 2 ? new DataView(t).getUint16(0, !1) : 0) === 20555) try {
-			e.charts = await Qv(t);
-		} catch (t) {
-			e.charts = {}, console.warn("[file-viewer] Spreadsheet chart parsing failed; continuing with cell content.", t);
-		}
-		else e.charts = {};
-		return Ty(e);
+		}) : _g(r.data, Vy), (t.byteLength >= 2 ? new DataView(t).getUint16(0, !1) : 0) === 20555) {
+			let [n, r] = await Promise.all([Qv(t).catch((e) => (console.warn("[file-viewer] Spreadsheet chart parsing failed; continuing with cell content.", e), {})), By(t).catch((e) => (console.warn("[file-viewer] Spreadsheet cell image parsing failed; continuing with cell content.", e), {}))]);
+			e.charts = n, e.cellImages = r;
+		} else e.charts = {}, e.cellImages = {};
+		return tb(e);
 	} catch (e) {
-		return [py(e)];
+		return [Uy(e)];
 	}
-}, Dy = (e, t = {}) => {
+}, rb = (e, t = {}) => {
 	let { sheet: n, startRow: r = 0, pageSize: i = 500, sessionId: a = 0 } = t;
 	try {
 		var o;
@@ -27619,7 +27790,8 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 			pageSize: i,
 			totalRows: l == null ? void 0 : l.rowCount,
 			totalCols: l == null ? void 0 : l.colCount,
-			charts: e.charts[s]
+			charts: e.charts[s],
+			cellImages: e.cellImages[s]
 		}), d = u.toObject({ includeLayout: r === 0 }), f = r === 0 ? u.structure : void 0;
 		return [{
 			type: "parseSheet",
@@ -27633,31 +27805,31 @@ while (r === s[++i] && r === s[++i] && r === s[++i] && r === s[++i] && r === s[+
 			}
 		}];
 	} catch (e) {
-		return [py(e, {
+		return [Uy(e, {
 			sessionId: a,
 			startRow: r
 		})];
 	}
-}, Oy = (e, t) => {
+}, ib = (e, t) => {
 	switch (t.type) {
 		case "parseWorkbook":
 			var n, r, i, a;
-			return Ey(e, (n = t.payload) == null ? void 0 : n.workbook, {
+			return nb(e, (n = t.payload) == null ? void 0 : n.workbook, {
 				fileType: (r = t.payload) == null ? void 0 : r.fileType,
 				filename: (i = t.payload) == null ? void 0 : i.filename,
 				textEncoding: (a = t.payload) == null ? void 0 : a.textEncoding
 			});
-		case "parseSheet": return Dy(e, t.payload);
+		case "parseSheet": return rb(e, t.payload);
 		default: return [];
 	}
-}, ky = typeof self > "u" ? null : self;
-if (ky) {
-	let e = fy();
-	ky.onmessage = async (t) => {
-		(await Oy(e, t.data)).forEach((e) => {
-			ky.postMessage(e);
+}, ab = typeof self > "u" ? null : self;
+if (ab) {
+	let e = Hy();
+	ab.onmessage = async (t) => {
+		(await ib(e, t.data)).forEach((e) => {
+			ab.postMessage(e);
 		});
-	}, ky.onerror = (e) => {
+	}, ab.onerror = (e) => {
 		console.error(e);
 	};
 }

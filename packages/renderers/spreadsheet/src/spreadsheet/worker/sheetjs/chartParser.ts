@@ -53,18 +53,18 @@ const SCHEME_COLORS: Record<string, string> = {
   tx2: '#44546a'
 }
 
-type Relationship = {
+export type Relationship = {
   id: string
   target: string
   type: string
 }
 
-const localName = (node: XmlNode) => {
+export const localName = (node: XmlNode) => {
   const name = node.localName || node.nodeName
   return name.split(':').pop() || name
 }
 
-const childElements = (node: XmlNode | null | undefined): XmlElement[] => {
+export const childElements = (node: XmlNode | null | undefined): XmlElement[] => {
   if (!node) {
     return []
   }
@@ -79,7 +79,7 @@ const firstChildByLocal = (node: XmlNode | null | undefined, name: string) => {
   return childrenByLocal(node, name)[0]
 }
 
-const elementsByLocal = (node: XmlNode | null | undefined, name: string): XmlElement[] => {
+export const elementsByLocal = (node: XmlNode | null | undefined, name: string): XmlElement[] => {
   const result: XmlElement[] = []
   const visit = (current: XmlNode) => {
     childElements(current).forEach((child) => {
@@ -108,7 +108,7 @@ const textContent = (element: XmlElement | undefined) => {
   return element?.textContent?.trim() || ''
 }
 
-const relationshipId = (element: XmlElement | undefined) => {
+export const relationshipId = (element: XmlElement | undefined) => {
   if (!element) {
     return ''
   }
@@ -153,10 +153,16 @@ const relationshipPartPath = (sourcePart: string) => {
 }
 
 const parseXml = (xml: string) => {
-  return new DOMParser().parseFromString(xml, 'application/xml')
+  // Some valid Office producers prefix relationship parts with a UTF-8 BOM.
+  // XML declarations must otherwise be the first character, and xmldom reports
+  // the BOM as content outside the root element before aborting chart parsing.
+  return new DOMParser().parseFromString(
+    xml.replace(/^[\uFEFF\s]+/, ''),
+    'application/xml'
+  )
 }
 
-const loadXml = async (zip: JSZip, path: string) => {
+export const loadXml = async (zip: JSZip, path: string) => {
   const file = zip.file(path)
   if (!file) {
     return null
@@ -164,7 +170,7 @@ const loadXml = async (zip: JSZip, path: string) => {
   return parseXml(await file.async('text'))
 }
 
-const loadRelationships = async (zip: JSZip, sourcePart: string) => {
+export const loadRelationships = async (zip: JSZip, sourcePart: string) => {
   const document = await loadXml(zip, relationshipPartPath(sourcePart))
   if (!document) {
     return []
@@ -183,7 +189,7 @@ const loadRelationships = async (zip: JSZip, sourcePart: string) => {
   )
 }
 
-const relationById = (relationships: Relationship[], id: string) => {
+export const relationById = (relationships: Relationship[], id: string) => {
   return relationships.find((relationship) => relationship.id === id)
 }
 

@@ -17,6 +17,14 @@ export interface SheetImage {
   col: number;
 }
 
+export interface SheetCellImage {
+  id: string;
+  src: string;
+  contentType?: string;
+  row: number;
+  col: number;
+}
+
 export type SheetChartType = 'bar' | 'line' | 'area' | 'pie' | 'doughnut' | 'scatter' | 'radar';
 
 export interface SheetDrawingMarker {

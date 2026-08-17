@@ -15,6 +15,7 @@ import type {
   CellMerge,
   SheetChart,
   SheetChartDefinition,
+  SheetCellImage,
   SheetColumn,
   SheetImage,
   SheetModel,
@@ -104,6 +105,7 @@ interface SheetSliceOptions {
   totalRows?: number
   totalCols?: number
   charts?: SheetChartDefinition[]
+  cellImages?: SheetCellImage[]
 }
 
 interface SheetObjectOptions {
@@ -452,6 +454,10 @@ export default class SheetJsModel implements SheetModel {
 
   private readonly _charts: SheetChartDefinition[]
 
+  private readonly _cellImages: SheetCellImage[]
+
+  private readonly _cellImageKeys: Set<string>
+
   private static readonly defaults = defaults
 
   private _data: undefined | string[][]
@@ -485,6 +491,10 @@ export default class SheetJsModel implements SheetModel {
     this._totalRows = options.totalRows
     this._totalCols = options.totalCols
     this._charts = options.charts || []
+    this._cellImages = options.cellImages || []
+    this._cellImageKeys = new Set(
+      this._cellImages.map((image) => cellKey(image.row, image.col))
+    )
     const { '!ref': refs } = ws
     this.range = utils.decode_range(refs || 'A1')
   }
@@ -596,11 +606,11 @@ export default class SheetJsModel implements SheetModel {
   private getImages(): SheetImage[] | undefined {
     const drawings = (this.ws as WorkSheet & { '!drawings'?: { images?: DrawingImage[] } })['!drawings']
     const images = drawings?.images || []
-    if (!images.length) {
+    if (!images.length && !this._cellImages.length) {
       return undefined
     }
 
-    const result = images.flatMap((image, index): SheetImage[] => {
+    const drawingImages = images.flatMap((image, index): SheetImage[] => {
       const anchor = image.anchor
       if (!image.dataURI || !anchor) {
         return []
@@ -624,6 +634,23 @@ export default class SheetJsModel implements SheetModel {
         col: from?.col || 0
       }]
     })
+
+    const cellImages = this._cellImages.flatMap((image): SheetImage[] => {
+      const width = getVectorSize(this.getColWidths(), image.col, this.defaults.colWidth)
+      const height = getVectorSize(this.getAllRowHeights(), image.row, this.defaults.rowHeight)
+      if (width <= 0 || height <= 0) {
+        return []
+      }
+      return [{
+        ...image,
+        left: this.getAxisOffset(image.col, this.getColWidths(), this.defaults.colWidth),
+        top: this.getAxisOffset(image.row, this.getAllRowHeights(), this.defaults.rowHeight),
+        width,
+        height
+      }]
+    })
+
+    const result = [...drawingImages, ...cellImages]
 
     return result.length ? result : undefined
   }
@@ -683,8 +710,14 @@ export default class SheetJsModel implements SheetModel {
     for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex += 1) {
       const row = rows?.[rowIndex]
       const values = row
-        ? row.slice(0, this.totalCols).map(cell => formatCellValue(cell))
-        : Array.from({ length: this.totalCols }, (_, colIndex) => formatCellValue(this.getCellAt(rowIndex, colIndex)))
+        ? row.slice(0, this.totalCols).map((cell, colIndex) => (
+            this._cellImageKeys.has(cellKey(rowIndex, colIndex)) ? '' : formatCellValue(cell)
+          ))
+        : Array.from({ length: this.totalCols }, (_, colIndex) => (
+            this._cellImageKeys.has(cellKey(rowIndex, colIndex))
+              ? ''
+              : formatCellValue(this.getCellAt(rowIndex, colIndex))
+          ))
       result.push(values)
     }
     return fixMatrix(result, this.totalCols)
@@ -820,8 +853,20 @@ export default class SheetJsModel implements SheetModel {
       return sourceColumn
     }
 
+    // A drawing anchor is measured against the workbook's stored/default
+    // column geometry. Auto-fitting blank columns to 24px changes that
+    // coordinate system and makes two-cell images visibly smaller than Excel.
+    if (this.hasAnchoredObjects) {
+      return sourceColumn
+    }
+
     // 没有显式列宽时，再使用 styled-exceljs 的内容测量兜底，避免报表类标题污染原始宽度。
     return this.autoFitColumns?.[colIndex] || sourceColumn
+  }
+
+  private get hasAnchoredObjects() {
+    const drawings = (this.ws as WorkSheet & { '!drawings'?: { images?: DrawingImage[] } })['!drawings']
+    return !!drawings?.images?.length || !!this._charts.length || !!this._cellImages.length
   }
 
   private getColWidths() {

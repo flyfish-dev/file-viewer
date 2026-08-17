@@ -40,3 +40,6 @@ overrides:
   '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.2.9
   '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.2.9
   '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.2.9
+
+patchedDependencies:
+  styled-exceljs@0.21.1: patches/styled-exceljs@0.21.1.patch
