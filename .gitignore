@@ -9,6 +9,7 @@ apps/docs-site/next-env.d.ts
 **/*.tsbuildinfo
 playwright-report/
 test-results/
+output/
 artifacts/*.tgz
 artifacts/*.tar.gz
 packages/components/web/viewer/

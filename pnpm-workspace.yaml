@@ -31,6 +31,7 @@ overrides:
   dompurify: 3.4.13
   nanoid: 3.3.17
   postcss: 8.5.23
+  style-to-js: 1.1.21
   '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:2.2.9
   '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:2.2.9
   '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:2.2.9
