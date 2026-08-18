@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/thumbnail",
-  "version": "2.2.9",
+  "version": "2.3.0",
   "private": false,
   "type": "module",
   "description": "High-performance browser thumbnail generation for File Viewer.",
@@ -43,7 +43,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.2.9",
+    "@file-viewer/core": "workspace:2.3.0",
     "jszip": "^3.10.1",
     "modern-screenshot": "^4.7.0"
   },

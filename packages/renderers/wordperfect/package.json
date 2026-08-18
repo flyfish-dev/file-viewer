@@ -1,18 +1,18 @@
 {
-  "name": "@file-viewer/react-legacy",
+  "name": "@file-viewer/renderer-wordperfect",
   "version": "2.3.0",
   "private": false,
   "type": "module",
-  "description": "Standard React 16/17 legacy component package for File Viewer",
+  "description": "Signature-routed WordPerfect renderer plugin for File Viewer with a libwpd WASM integration boundary.",
   "keywords": [
     "file-viewer",
-    "document-preview",
-    "react",
-    "react-legacy",
-    "native-viewer",
-    "office-preview",
-    "document-viewer",
-    "file-preview",
+    "renderer",
+    "wordperfect",
+    "wpd",
+    "wp5",
+    "wp6",
+    "libwpd",
+    "wasm",
     "self-hosted"
   ],
   "publishConfig": {
@@ -25,12 +25,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flyfish-dev/file-viewer-react-legacy.git",
-    "directory": "packages/components/react-legacy"
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/renderers/wordperfect"
   },
-  "homepage": "https://doc.file-viewer.app/",
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
   "bugs": {
-    "url": "https://github.com/flyfish-dev/file-viewer-react-legacy/issues"
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },
   "funding": {
     "type": "individual",
@@ -45,26 +45,29 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./worker/wordperfect.worker.js": "./dist/wordperfect.worker.js",
+    "./worker/libwpd.mjs": "./dist/libwpd.mjs",
+    "./worker/libwpd.wasm": "./dist/libwpd.wasm",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "vendor/libwpd-src",
     "README.md",
-    "README.en.md"
+    "README.en.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json --force && node scripts/build-worker.mjs",
+    "build:wasm": "node scripts/build-libwpd-wasm.mjs",
     "type-check": "tsc -b tsconfig.json"
-  },
-  "peerDependencies": {
-    "react": ">=16.8 <18"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.3.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.0",
-    "react": "^17.0.2",
+    "esbuild": "^0.28.1",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

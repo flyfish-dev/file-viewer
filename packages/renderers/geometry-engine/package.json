@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/geometry-engine",
-  "version": "2.2.9",
+  "version": "2.3.0",
   "private": false,
   "type": "module",
   "description": "Framework-neutral geometry kernel boundary package for STEP, IGES, IFC, 3DM, and BREP preview routes in File Viewer.",

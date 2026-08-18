@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/flyfish-dev/file-viewer/releases/download/v2.2.9/release-matrix.schema.json",
+  "$id": "https://github.com/flyfish-dev/file-viewer/releases/download/v2.3.0/release-matrix.schema.json",
   "title": "Flyfish File Viewer ecosystem release matrix",
   "type": "object",
   "additionalProperties": false,
@@ -38,7 +38,9 @@
         "rendererDefinitions"
       ],
       "properties": {
-        "rootPackageHash": { "type": "string" },
+        "rootPackageHash": {
+          "type": "string"
+        },
         "releaseMatrixSchema": {
           "type": "string",
           "const": "ecosystem/release-matrix.schema.json"
@@ -53,11 +55,13 @@
         },
         "rendererDefinitions": {
           "type": "string",
-          "const": "packages/core/src/registry/formats.ts"
+          "const": "ecosystem/format-catalog.json"
         }
       }
     },
-    "version": { "type": "string" },
+    "version": {
+      "type": "string"
+    },
     "releasePolicy": {
       "type": "object",
       "additionalProperties": false,
@@ -69,10 +73,15 @@
         "standardPackagePresetPolicy"
       ],
       "properties": {
-        "defaultBlocking": { "type": "boolean", "const": true },
+        "defaultBlocking": {
+          "type": "boolean",
+          "const": true
+        },
         "nonBlockingChannels": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "externalRuntimeAssets": {
           "type": "string",
@@ -102,107 +111,194 @@
         "exhaustiveComponentRenderTargets"
       ],
       "properties": {
-        "packages": { "type": "integer" },
-        "componentTargets": { "type": "integer" },
-        "surfaces": { "type": "integer" },
-        "renderChains": { "type": "integer" },
-        "rendererIds": { "type": "integer" },
-        "uniqueExtensions": { "type": "integer" },
-        "wrapperFamilyTargets": { "type": "integer" },
-        "exhaustiveComponentRenderTargets": { "type": "integer" }
+        "packages": {
+          "type": "integer"
+        },
+        "componentTargets": {
+          "type": "integer"
+        },
+        "surfaces": {
+          "type": "integer"
+        },
+        "renderChains": {
+          "type": "integer"
+        },
+        "rendererIds": {
+          "type": "integer"
+        },
+        "uniqueExtensions": {
+          "type": "integer"
+        },
+        "wrapperFamilyTargets": {
+          "type": "integer"
+        },
+        "exhaustiveComponentRenderTargets": {
+          "type": "integer"
+        }
       }
     },
     "packageGroups": {
       "type": "object",
-      "additionalProperties": { "type": "integer" }
+      "additionalProperties": {
+        "type": "integer"
+      }
     },
     "releaseChannels": {
       "type": "array",
-      "items": { "$ref": "#/$defs/releaseChannel" }
+      "items": {
+        "$ref": "#/$defs/releaseChannel"
+      }
     },
     "productionTargets": {
       "type": "array",
-      "items": { "$ref": "#/$defs/productionTarget" }
+      "items": {
+        "$ref": "#/$defs/productionTarget"
+      }
     },
     "surfaces": {
       "type": "array",
-      "items": { "$ref": "#/$defs/surface" }
+      "items": {
+        "$ref": "#/$defs/surface"
+      }
     },
     "packages": {
       "type": "array",
-      "items": { "$ref": "#/$defs/package" }
+      "items": {
+        "$ref": "#/$defs/package"
+      }
     },
     "componentTargets": {
       "type": "array",
-      "items": { "$ref": "#/$defs/componentTarget" }
+      "items": {
+        "$ref": "#/$defs/componentTarget"
+      }
     },
     "renderChains": {
       "type": "array",
-      "items": { "$ref": "#/$defs/renderChain" }
+      "items": {
+        "$ref": "#/$defs/renderChain"
+      }
     },
     "wrapperFamilyTargets": {
       "type": "array",
-      "items": { "$ref": "#/$defs/wrapperFamilyTarget" }
+      "items": {
+        "$ref": "#/$defs/wrapperFamilyTarget"
+      }
     },
     "matrixTargets": {
       "type": "array",
-      "items": { "$ref": "#/$defs/matrixTarget" }
+      "items": {
+        "$ref": "#/$defs/matrixTarget"
+      }
     },
     "specialBrowserChecks": {
       "type": "array",
-      "items": { "$ref": "#/$defs/specialBrowserCheck" }
+      "items": {
+        "$ref": "#/$defs/specialBrowserCheck"
+      }
     },
     "assetFamilies": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     }
   },
   "$defs": {
     "stringArray": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "releaseArtifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["includeTarball"],
+      "required": [
+        "includeTarball"
+      ],
       "properties": {
-        "includeTarball": { "type": "boolean" },
-        "duplicateOf": { "type": "string" },
-        "reason": { "type": "string" }
+        "includeTarball": {
+          "type": "boolean"
+        },
+        "duplicateOf": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
       }
     },
     "releaseChannel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "blocking"],
+      "required": [
+        "id",
+        "label",
+        "blocking"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "label": { "type": "string" },
-        "blocking": { "type": "boolean" }
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "blocking": {
+          "type": "boolean"
+        }
       }
     },
     "productionTarget": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "url", "buildScript", "deployScript", "blocking"],
+      "required": [
+        "id",
+        "url",
+        "buildScript",
+        "deployScript",
+        "blocking"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "url": { "type": "string" },
-        "buildScript": { "type": "string" },
-        "deployScript": { "type": "string" },
-        "blocking": { "type": "boolean" }
+        "id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "buildScript": {
+          "type": "string"
+        },
+        "deployScript": {
+          "type": "string"
+        },
+        "blocking": {
+          "type": "boolean"
+        }
       }
     },
     "surface": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "appliesTo", "requiredEntryFormats"],
+      "required": [
+        "id",
+        "label",
+        "appliesTo",
+        "requiredEntryFormats"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "label": { "type": "string" },
-        "appliesTo": { "$ref": "#/$defs/stringArray" },
-        "requiredEntryFormats": { "$ref": "#/$defs/stringArray" }
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "appliesTo": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "requiredEntryFormats": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     },
     "package": {
@@ -227,28 +323,86 @@
         "entryFormats"
       ],
       "properties": {
-        "id": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
         "kind": {
           "type": "string",
-          "enum": ["core", "utility", "renderer", "preset", "compatibility", "standard-wrapper"]
+          "enum": [
+            "core",
+            "utility",
+            "renderer",
+            "preset",
+            "compatibility",
+            "standard-wrapper"
+          ]
         },
-        "packageName": { "type": "string" },
-        "version": { "type": "string" },
-        "packageDir": { "type": "string" },
-        "tarball": { "type": "string" },
-        "publicSource": { "type": "boolean" },
-        "releaseArtifact": { "$ref": "#/$defs/releaseArtifact" },
-        "targetPackage": { "type": ["string", "null"] },
-        "releaseVersion": { "type": ["string", "null"] },
-        "github": { "type": ["string", "null"] },
-        "gitee": { "type": ["string", "null"] },
-        "sourceRepository": { "type": ["string", "null"] },
+        "packageName": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "packageDir": {
+          "type": "string"
+        },
+        "tarball": {
+          "type": "string"
+        },
+        "publicSource": {
+          "type": "boolean"
+        },
+        "releaseArtifact": {
+          "$ref": "#/$defs/releaseArtifact"
+        },
+        "targetPackage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "releaseVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gitee": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceRepository": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "releaseGroup": {
           "type": "string",
-          "enum": ["core", "utility", "renderer", "preset", "compatibility", "component-standard", "component-full"]
+          "enum": [
+            "core",
+            "utility",
+            "renderer",
+            "preset",
+            "compatibility",
+            "component-standard",
+            "component-full"
+          ]
         },
-        "blocking": { "type": "boolean" },
-        "entryFormats": { "$ref": "#/$defs/stringArray" }
+        "blocking": {
+          "type": "boolean"
+        },
+        "entryFormats": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     },
     "componentTarget": {
@@ -268,26 +422,60 @@
         "historicalPackages"
       ],
       "properties": {
-        "id": { "type": "string" },
-        "packageName": { "type": "string" },
-        "packageDir": { "type": "string" },
-        "framework": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
+        "packageName": {
+          "type": "string"
+        },
+        "packageDir": {
+          "type": "string"
+        },
+        "framework": {
+          "type": "string"
+        },
         "family": {
           "type": "string",
-          "enum": ["web", "vue3", "vue2.7", "vue2.6", "react", "react-legacy", "jquery", "svelte"]
+          "enum": [
+            "web",
+            "vue3",
+            "vue2.7",
+            "vue2.6",
+            "react",
+            "react-legacy",
+            "jquery",
+            "svelte"
+          ]
         },
         "flavor": {
           "type": "string",
-          "enum": ["standard", "full"]
+          "enum": [
+            "standard",
+            "full"
+          ]
         },
-        "basePackage": { "type": ["string", "null"] },
-        "surfaces": { "$ref": "#/$defs/stringArray" },
+        "basePackage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "surfaces": {
+          "$ref": "#/$defs/stringArray"
+        },
         "presetPolicy": {
           "type": "string",
-          "enum": ["preset-all-by-default", "explicit-preset-all"]
+          "enum": [
+            "preset-all-by-default",
+            "explicit-preset-all"
+          ]
         },
-        "entryFormats": { "$ref": "#/$defs/stringArray" },
-        "historicalPackages": { "$ref": "#/$defs/stringArray" }
+        "entryFormats": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "historicalPackages": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     },
     "renderChain": {
@@ -303,25 +491,55 @@
         "assertions"
       ],
       "properties": {
-        "id": { "type": "string" },
-        "family": { "type": "string" },
-        "rendererId": { "type": "string" },
-        "extension": { "type": "string" },
-        "sample": { "type": "string" },
-        "smokeSurfaces": { "$ref": "#/$defs/stringArray" },
-        "assertions": { "$ref": "#/$defs/stringArray" }
+        "id": {
+          "type": "string"
+        },
+        "family": {
+          "type": "string"
+        },
+        "rendererId": {
+          "type": "string"
+        },
+        "extension": {
+          "type": "string"
+        },
+        "sample": {
+          "type": "string"
+        },
+        "smokeSurfaces": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "assertions": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     },
     "wrapperFamilyTarget": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["family", "rendererId", "extension", "sample", "assertions"],
+      "required": [
+        "family",
+        "rendererId",
+        "extension",
+        "sample",
+        "assertions"
+      ],
       "properties": {
-        "family": { "type": "string" },
-        "rendererId": { "type": "string" },
-        "extension": { "type": "string" },
-        "sample": { "type": "string" },
-        "assertions": { "$ref": "#/$defs/stringArray" }
+        "family": {
+          "type": "string"
+        },
+        "rendererId": {
+          "type": "string"
+        },
+        "extension": {
+          "type": "string"
+        },
+        "sample": {
+          "type": "string"
+        },
+        "assertions": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     },
     "matrixTarget": {
@@ -341,33 +559,67 @@
         "assertions"
       ],
       "properties": {
-        "id": { "type": "string" },
-        "componentId": { "type": "string" },
-        "packageName": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
+        "componentId": {
+          "type": "string"
+        },
+        "packageName": {
+          "type": "string"
+        },
         "componentFlavor": {
           "type": "string",
-          "enum": ["standard", "full"]
+          "enum": [
+            "standard",
+            "full"
+          ]
         },
         "presetPolicy": {
           "type": "string",
-          "enum": ["preset-all-by-default", "explicit-preset-all"]
+          "enum": [
+            "preset-all-by-default",
+            "explicit-preset-all"
+          ]
         },
-        "surfaces": { "$ref": "#/$defs/stringArray" },
-        "renderChainId": { "type": "string" },
-        "rendererId": { "type": "string" },
-        "extension": { "type": "string" },
-        "sample": { "type": "string" },
-        "assertions": { "$ref": "#/$defs/stringArray" }
+        "surfaces": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "renderChainId": {
+          "type": "string"
+        },
+        "rendererId": {
+          "type": "string"
+        },
+        "extension": {
+          "type": "string"
+        },
+        "sample": {
+          "type": "string"
+        },
+        "assertions": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     },
     "specialBrowserCheck": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "script", "covers"],
+      "required": [
+        "id",
+        "script",
+        "covers"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "script": { "type": "string" },
-        "covers": { "$ref": "#/$defs/stringArray" }
+        "id": {
+          "type": "string"
+        },
+        "script": {
+          "type": "string"
+        },
+        "covers": {
+          "$ref": "#/$defs/stringArray"
+        }
       }
     }
   }

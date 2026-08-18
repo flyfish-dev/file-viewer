@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <strong>v2.2.9 · 208 extensions across 25 preview pipelines · 54 npm targets.</strong> Heavy paths load only when the active format needs them.
+  <strong>v2.3.0 · 221 registered extensions (221 stable, 0 experimental) across 32 preview pipelines · 57 npm targets.</strong> Heavy paths load only when the active format needs them.
 </p>
 
 <p align="center">
@@ -38,7 +38,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v2.2.6-formats-en.gif" width="920" alt="File Viewer v2.2.9 English product demo showing rich DOCX, PPTX, DWG, and interactive 3D STEP previews in the immersive workspace"></a>
+  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v2.2.6-formats-en.gif" width="920" alt="File Viewer v2.3.0 English product demo showing rich DOCX, PPTX, DWG, and interactive 3D STEP previews in the immersive workspace"></a>
 </p>
 
 ## Why File Viewer
@@ -133,7 +133,7 @@ The default asset URL is `<deployment-base>/file-viewer/`. Without the complete 
 
 ## Choose By Scenario
 
-**54 npm targets, 208 extensions, and 25 preview pipelines** mean you can start with the file problem you have today instead of assembling a different viewer for every attachment type.
+**57 npm targets, 221 registered extensions, and 32 preview pipelines** mean you can start with the file problem you have today instead of assembling a different viewer for every attachment type.
 
 | Your product needs to preview | Formats you can look for immediately | Fastest path |
 | --- | --- | --- |
@@ -144,7 +144,7 @@ The default asset URL is `<deployment-base>/file-viewer/`. Without the complete 
 | Diagrams, design files and structured data | Draw.io, Excalidraw, Mermaid, PlantUML, XMind, PSD, SQLite, Parquet and more | [Full format matrix](https://doc.file-viewer.app/guide/formats) · [`preset-all`](#choose-the-right-package) |
 | Intranet or air-gapped deployment | Self-hosted JavaScript, Worker, WASM, fonts and vendor assets | [Offline guide](https://doc.file-viewer.app/guide/distribution) · [Docker](https://doc.file-viewer.app/guide/docker) |
 
-Looking for one exact suffix? Search the maintained [208-extension format matrix](https://doc.file-viewer.app/guide/formats), which records the renderer, support level and deployment requirements for each pipeline.
+Looking for one exact suffix? Search the maintained [221-extension format matrix](https://doc.file-viewer.app/guide/formats), which records the renderer, support level, evidence status, and deployment requirements for each pipeline.
 
 ## Choose the Right Package
 
@@ -169,7 +169,7 @@ See [on-demand renderers and presets](https://doc.file-viewer.app/guide/on-deman
 
 ## Capability at a Glance
 
-The v2.2.9 registry maps **208 file extensions** into **25 rendering pipelines**, distributed through **54 npm targets**. Presentation preview deliberately keeps two engine boundaries: PowerPoint 97–2003 `.ppt` uses the native-WASM `@file-viewer/ppt@0.3.3` engine, while PPTX/OpenXML uses the `@file-viewer/pptx` Worker engine. STEP/STP, IGES/IGS, and BREP use the packaged local OCCT Worker/WASM path instead of a conversion hint. EPUB uses a packaged lazy engine built against the pinned safe XML DOM implementation, so it adds no external runtime or CDN dependency. Other major groups include PDF; Word and spreadsheets with Office 365/WPS in-cell images, workbook drawings, and double-click previews; OFD; DWG/DXF/DWF/DWFX; archives; EML/MSG; Markdown and source code; Draw.io, Excalidraw, Mermaid and PlantUML; PSD and images; audio/video; ebooks; mind maps; 3D/geo/data/EDA formats; and Typst.
+The v2.3.0 registry maps **221 registered file extensions** into **32 rendering pipelines**, distributed through **57 npm targets**. All **221 extensions are stable** because each row passes its declared real-file evidence gates. Presentation preview deliberately keeps two engine boundaries: PowerPoint 97–2003 `.ppt`/`.pot` uses the native-WASM `@file-viewer/ppt@0.3.3` engine, while PPTX/OpenXML uses the `@file-viewer/pptx` Worker engine. Apple Pages, Numbers, and Keynote provide static high-fidelity preview across iWork '09, 2013+, and current fixtures; WordPerfect and Hangul provide stable structured preview backed by licensed genuine fixtures and Chromium, Firefox, and WebKit smoke. Spreadsheet preview retains Office 365/WPS in-cell images, workbook drawings, and double-click image previews from the latest main branch. Other major groups include PDF/OFD; Office and iWork; DWG/DXF/DWF/DWFX; archives; EML/MSG; EPUB/FB2; Markdown and source code; drawings; PSD and images; media; 3D/geo/data/EDA; and Typst.
 
 The exact implementation and support level varies by format. Use the maintained [format matrix](https://doc.file-viewer.app/guide/formats) as the source of truth rather than inferring support from an extension alone.
 

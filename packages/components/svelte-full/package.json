@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/svelte-full",
-  "version": "2.2.9",
+  "version": "2.3.0",
   "private": false,
   "type": "module",
   "description": "Full Svelte package with preset-all; Vite publishes deployment-base/file-viewer assets, and other bundlers use the included same-version copy CLI.",
@@ -84,9 +84,9 @@
     "svelte": ">=3.59 <6"
   },
   "dependencies": {
-    "@file-viewer/preset-all": "workspace:2.2.9",
-    "@file-viewer/svelte": "workspace:2.2.9",
-    "file-viewer-copy-assets": "workspace:2.2.9"
+    "@file-viewer/preset-all": "workspace:2.3.0",
+    "@file-viewer/svelte": "workspace:2.3.0",
+    "file-viewer-copy-assets": "workspace:2.3.0"
   },
   "devDependencies": {
     "svelte": "^5.46.0",

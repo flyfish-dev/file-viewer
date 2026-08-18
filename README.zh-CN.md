@@ -39,13 +39,13 @@
   <a href="https://linux.do"><img alt="Linux Do" src="https://img.shields.io/badge/Linux%20Do-community-1f2937" /></a>
   <a href="https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/flyfish-dev/file-viewer?color=0f766e" /></a>
   <a href="https://hub.docker.com/r/flyfishdev/file-viewer"><img alt="Docker" src="https://img.shields.io/badge/docker-flyfishdev%2Ffile--viewer-2496ed?logo=docker" /></a>
-  <img alt="Supported formats" src="https://img.shields.io/badge/formats-208-31a66f" />
+  <img alt="Supported formats" src="https://img.shields.io/badge/formats-221-31a66f" />
   <img alt="Modular architecture" src="https://img.shields.io/badge/architecture-modular%20renderers-278cff" />
-  <img alt="Ecosystem packages" src="https://img.shields.io/badge/npm%20targets-54-0f766e" />
+  <img alt="Ecosystem packages" src="https://img.shields.io/badge/npm%20targets-57-0f766e" />
 </p>
 
 <p align="center">
-  <a href="https://demo.file-viewer.app"><img src="docs/public/_media/file-viewer-demo-v2.2.6-desktop-zh.webp" width="1280" alt="File Viewer v2.2.9 浏览器原生 DOCX 预览工作区" /></a>
+  <a href="https://demo.file-viewer.app"><img src="docs/public/_media/file-viewer-demo-v2.2.6-desktop-zh.webp" width="1280" alt="File Viewer v2.3.0 浏览器原生 DOCX 预览工作区" /></a>
 </p>
 
 ---
@@ -59,14 +59,14 @@
 
 为了预览一份内部 DOCX 就把文件上传到第三方，既慢也不合适。File Viewer 把预览留在浏览器内，让企业后台、OA、知识库、工单、附件中心和工程资料库使用同一套 API，而不是继续拼接一堆互不一致的查看器。
 
-v2.2.9 当前内置 208 个扩展名映射和 25 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体和结构化数据共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
+v2.3.0 当前内置 221 个已注册扩展名（221 个稳定、0 个实验）和 32 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体和结构化数据共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
 
 新项目优先使用 `@file-viewer/*`；`@flyfish-group/*` 历史包继续同步维护。
 
 ## 亮点
 
 - **一个组件起步。** Vanilla JS / Web Component 优先，并提供 Vue、React、Svelte、jQuery 原生组件。
-- **矩阵可核验。** 208 个已注册扩展名映射到 25 条预览链路，覆盖办公、工程、设计、数据、音视频和代码附件。
+- **矩阵可核验。** 221 个已注册扩展名（221 个稳定、0 个实验）映射到 32 条预览链路，覆盖办公、工程、设计、数据、音视频和代码附件。
 - **部署不出网。** 浏览器内解析和渲染，支持离线网络、Docker、私有 CDN 和完整资源自托管。
 - **模块化。** 轻量组件、renderer、preset、full 包分层清晰，既能极简安装，也能一键全量。
 - **按需加载。** PDF、Office、CAD、Typst、压缩包、图纸、PSD、Mermaid 等重型能力只在命中格式时加载。
@@ -84,7 +84,7 @@ v2.2.9 当前内置 208 个扩展名映射和 25 条预览链路。Office、PDF�
 
 ## 在线效果
 
-![File Viewer v2.2.9 中文产品演示：在沉浸式工作台中预览特色 DOCX、PPTX、DWG 与可交互的三维 STEP 模型](docs/public/_media/file-viewer-demo-v2.2.6-formats-zh.gif)
+![File Viewer v2.3.0 中文产品演示：在沉浸式工作台中预览特色 DOCX、PPTX、DWG 与可交互的三维 STEP 模型](docs/public/_media/file-viewer-demo-v2.2.6-formats-zh.gif)
 
 打开 [demo.file-viewer.app](https://demo.file-viewer.app) 即可使用上图中的产品工作台：固定玻璃工具栏、点击文件名展开的样例库、本地最近打开记录、明暗主题、移动端单一“更多”入口，以及只让文档容器滚动的沉浸画布。内置样例覆盖 Word、Excel、二进制 PPT、PPTX、PDF/OFD、DWG、STEP、压缩包、邮件和其余已注册矩阵；也可以上传脱敏文件或粘贴 URL。
 
@@ -310,7 +310,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 
 ## 支持格式
 
-[`packages/core/src/registry/formats.ts`](packages/core/src/registry/formats.ts) 是唯一格式事实源：v2.2.9 注册 208 个不重复扩展名和 25 条预览链路。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
+[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：v2.3.0 注册 221 个不重复扩展名和 32 条预览链路，其中 221 个稳定、0 个实验。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
 
 | 类别           | 扩展名                                                                                                                                                                                                                                                                                                                         | 当前表现                                                                                                                                                                                                            | 适合场景                                    |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
@@ -334,7 +334,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 | draw.io        | `drawio`、`dio`                                                                                                                                                                                                                                                                                                                | 基于官方 diagrams.net `GraphViewer` 预览 mxGraphModel / mxfile                                                                                                                                                      | 流程图、架构图、业务泳道图                  |
 | Mermaid        | `mermaid`、`mmd`                                                                                                                                                                                                                                                                                                               | `@file-viewer/renderer-drawing` 按需加载官方 `mermaid`，输出主题适配 SVG，并通过 `@panzoom/panzoom` 支持拖动、缩放、重置和统一工具栏联动                                                                             | 架构图、流程图、状态图、序列图              |
 | PlantUML       | `plantuml`、`puml`                                                                                                                                                                                                                                                                                                             | 使用 `plantuml-encoder` 生成渲染 payload，支持配置自托管 PlantUML SVG 服务；预览层同样支持拖动、缩放和主题容器适配                                                                                                  | UML 时序图、组件图、部署图                  |
-| 电子书         | `epub`                                                                                                                                                                                                                                                                                                                         | `@file-viewer/renderer-epub` 按需加载随包交付的离线 EPUB 引擎，解析元数据、目录、章节并提供搜索与滚动阅读；v2.2.9 固定使用安全 XML DOM 实现，不增加外部运行时或 CDN 依赖                                          | 电子书、培训手册、长篇阅读材料              |
+| 电子书         | `epub`                                                                                                                                                                                                                                                                                                                         | `@file-viewer/renderer-epub` 按需加载随包交付的离线 EPUB 引擎，解析元数据、目录、章节并提供搜索与滚动阅读；v2.3.0 固定使用安全 XML DOM 实现，不增加外部运行时或 CDN 依赖                                          | 电子书、培训手册、长篇阅读材料              |
 | 电子书         | `umd`                                                                                                                                                                                                                                                                                                                          | 按 UMD 移动电子书结构解析元数据、目录和 zlib 压缩正文                                                                                                                                                               | 旧移动电子书、历史小说附件                  |
 | Markdown       | `md`、`markdown`                                                                                                                                                                                                                                                                                                               | `@file-viewer/renderer-text` 提供 Markdown 阅读样式和明暗主题；超大源码自动切换为有界虚拟文本渲染                                                                                                                   | README、知识文档、说明文档                  |
 | 图片           | `gif`、`jpg`、`jpeg`、`bmp`、`tiff`、`tif`、`png`、`svg`、`webp`、`avif`、`ico`、`heic`、`heif`、`jxl`                                                                                                                                                                                                                         | 原生图片浏览；HEIC/HEIF 命中时按需使用 `heic2any` 转换                                                                                                                                                              | 图片附件、设计稿、Logo、移动端照片          |
@@ -369,7 +369,7 @@ Preset 选择:
 
 ## 当前 npm 生态
 
-当前版本以 npm registry 的 `latest` dist-tag 为准，本仓库共发布 54 个 npm 目标: 48 个标准组件/完整 full 包/核心/renderer/preset/工程插件包 + 6 个历史兼容 alias；独立版本的 renderer 依赖不计入该数字。新项目建议优先使用 `@file-viewer/*` 标准包名；旧项目继续使用 `@flyfish-group/*` 或 `file-viewer3` 时也会拿到同版本能力。
+当前版本以 npm registry 的 `latest` dist-tag 为准，本仓库共发布 57 个 npm 目标: 51 个标准组件/完整 full 包/核心/renderer/preset/工程插件包 + 6 个历史兼容 alias；独立版本的 renderer 依赖不计入该数字。新项目建议优先使用 `@file-viewer/*` 标准包名；旧项目继续使用 `@flyfish-group/*` 或 `file-viewer3` 时也会拿到同版本能力。
 
 | 场景                                | 推荐 npm 包                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 历史兼容包                                                                                                                                               | 版本策略 | 说明                                                                                                                                                                    |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -478,7 +478,7 @@ GitHub Release 会同步提供完整下载项:
 <!-- FILE_VIEWER_PUBLIC_GENERATED:START -->
 ## 标准生态包与公开仓库
 
-下面内容由 `ecosystem/wrappers.json` 和 `packages/core/src/registry/formats.ts` 自动生成。开源总仓库同步 README 时会携带同一份索引，确保用户可以从任意入口找到标准 npm 包、历史兼容包、分散组件仓库和 release 下载物。
+下面内容由 `ecosystem/wrappers.json` 和 `ecosystem/format-catalog.json` 自动生成。开源总仓库同步 README 时会携带同一份索引，确保用户可以从任意入口找到标准 npm 包、历史兼容包、分散组件仓库和 release 下载物。
 
 核心底座包: `@file-viewer/core`。core 源码已公开，GitHub: https://github.com/flyfish-dev/file-viewer-core，Gitee: https://gitee.com/flyfish-dev/file-viewer-core。开源总仓库提供可运行的主 Demo 源码、core、标准组件包、兼容包、文档源码和 release 索引；官方 Demo iframe 交付包、完整 Demo、component demo、文档站和样例构建产物通过 GitHub Release 或 Cloudflare Pages 分发，避免普通 clone 被静态产物拖大。私有 Gitea `main` 是完整原始聚合仓，用于统一自动化、内部集成历史、打赏支持和优先技术支持，不等同于 GitHub 开源总仓库。
 
@@ -682,7 +682,7 @@ const options = {
 
 视图状态同步用于投屏、双端协同和恢复阅读进度。所有通过标准 renderer loader 挂载的格式都会获得通用 view-state provider，至少能记录 `renderer`、当前缩放和滚动位置；PDF、XMind、Geo、3D、CAD 等高交互路径会补充页码、导航、画布 pan、地图中心、相机视角或底层视图快照。初始化可传 `options.initialViewState`，运行中监听 `view-state-change`；Pure Web / Vue3 controller 可直接调用 `getViewState()` 和 `applyViewState(state, { source: "api", action: "restore" })`。
 
-生态当前维护 54 个 npm 发布目标（48 个标准包 + 6 个历史兼容包），共享格式矩阵声明 25 条预览链路、208 个扩展名。完整能力通过 renderer / preset 按需装配，格式说明见本文“支持格式”和官方文档: https://doc.file-viewer.app/guide/formats
+生态当前维护 57 个 npm 发布目标（51 个标准包 + 6 个历史兼容包）；格式目录声明 32 条预览链路、221 个扩展名（已注册），其中 221 个稳定、0 个实验。格式说明见官方文档: https://doc.file-viewer.app/guide/formats
 <!-- FILE_VIEWER_PUBLIC_GENERATED:END -->
 
 ## 支持项目与商业版

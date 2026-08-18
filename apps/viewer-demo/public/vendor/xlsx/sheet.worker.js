@@ -17938,7 +17938,7 @@ var Ih = function() {
 	};
 };
 function Lh(e, t, n, r, i) {
-	var a, o, s, c, l = t & 255, u = t >> 8, d = u >= 5 ? i : r;
+	var a, o, s, c, l = t & 255, u = t >> 8, d = (u >= 5 ? i : r) || [];
 	dur: if (n & (u > 4 ? 8 : 4) && e.t == "n" && l == 7) {
 		var f = (a = d[7]) != null && a[0] ? Ah(d[7][0].data) : -1;
 		if (f == -1) break dur;
