@@ -711,7 +711,7 @@ const options = {
 
 ### 视频和 HLS 怎么接
 
-`.mp4` 和 `.webm` 由 `@file-viewer/renderer-media` 使用浏览器原生 `<video>` 播放器。`.m3u8` 优先使用浏览器原生 HLS 能力，不支持时再按需加载 `hls.js`。如果传入本地上传的 M3U8 文件，清单里引用的 TS/MP4 分片必须是浏览器可访问的绝对或相对 URL，否则只能展示清单加载失败。
+`.mp4` 和 `.webm` 由 `@file-viewer/renderer-media` 优先使用浏览器原生 `<video>` 播放器。扩展名和容器名不等于视频编码：MP4 里的 MPEG-4 Part 2（`mp4v`）视频轨通常不能被 Chromium 原生解码，即使 AAC 音频仍能播放。遇到 MP4V Simple Profile 时，renderer 会按需加载一个独立 Worker 和 111,379 字节（gzip 34,410 字节）的 WASM 解码器，用 AAC 音轨校时并把 I420 画面绘制到 Canvas。解码器来自 AOSP PacketVideo，许可证为 Apache-2.0，不包含 FFmpeg、libav 或 LGPL/GPL/AGPL 源码。浏览器缺少 Worker、OffscreenCanvas 或 VideoFrame，或者文件超出当前解码范围时，会显示明确的兼容提示。`.m3u8` 优先使用浏览器原生 HLS 能力，不支持时再按需加载 `hls.js`。如果传入本地上传的 M3U8 文件，清单里引用的 TS/MP4 分片必须是浏览器可访问的绝对或相对 URL，否则只能展示清单加载失败。
 
 ### 字体、设计资产和数据文件怎么接
 

@@ -1,0 +1,18 @@
+{
+  "name": "Android Open Source Project PacketVideo MPEG-4 Part 2 decoder",
+  "upstream": "https://android.googlesource.com/platform/frameworks/av",
+  "commit": "e2f098935447ca4945946de5cb69db843fe3f003",
+  "path": "media/module/codecs/m4v_h263/dec",
+  "sourceTreeSha256": "27c52ee3c4fd11d6a0607be843cc123a995e38513e3d70b7db8b63ad5ffcfc9b",
+  "license": "Apache-2.0",
+  "emscriptenVersion": "6.0.6",
+  "toolchainLicense": "MIT OR NCSA",
+  "forbiddenLicenses": ["LGPL", "GPL", "AGPL"],
+  "artifacts": {
+    "loaderBytes": 7863,
+    "loaderSha256": "572a94bda1208f9e0778cfaa7dfbf34c9ca67ce91d46688d7469685616b1ba7c",
+    "wasmBytes": 111379,
+    "wasmGzipBytes": 34410,
+    "wasmSha256": "e0b84faa273940fbdfef05017bad8d64b6457ba6dcf5356383317c8f96f25073"
+  }
+}

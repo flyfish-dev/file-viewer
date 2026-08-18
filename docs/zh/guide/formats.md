@@ -199,7 +199,7 @@
 - 图片类支持 `gif`、`jpg`、`jpeg`、`bmp`、`tiff`、`tif`、`png`、`svg`、`webp`、`avif`、`ico`、`heic`、`heif`、`jxl`。当前由 `@file-viewer/renderer-image` 独立承接，普通图片走浏览器原生解码，HEIC / HEIF 只有命中格式时才会加载 `heic2any` 转换依赖，避免影响普通图片首屏。
 - `svg` 会作为图片来展示，很适合拿来放矢量图标、流程图和品牌素材。
 - 音频类由 `@file-viewer/renderer-media` 承接，支持 `mp3`、`mpeg`、`wav`、`ogg`、`oga`、`opus`、`m4a`、`aac`、`flac`、`weba`，使用浏览器原生播放器；`midi` / `mid` 命中时才加载 `@tonejs/midi`，展示轨道、时长、PPQ 和音符摘要。不同浏览器对编码格式的支持会有差异。
-- 视频同样由 `@file-viewer/renderer-media` 承接，支持 `mp4`、`webm` 和 `m3u8`。HLS 清单优先走浏览器原生能力，不支持时再按需加载 `hls.js`；本地上传的 `.m3u8` 如果引用了外部分片，需要保证分片 URL 对浏览器可访问。
+- 视频同样由 `@file-viewer/renderer-media` 承接，支持 `mp4`、`webm` 和 `m3u8`。MP4/WEBM 的实际解码能力取决于视频轨编码。Chromium 无法原生解码 MP4V Simple Profile 时，renderer 会按需加载 Apache-2.0 的 AOSP PacketVideo WASM，在 Worker 中解码并使用 AAC 音轨校时，不再出现有声音但画面全黑。WASM 为 111,379 字节（gzip 34,410 字节），实现不包含 FFmpeg、libav 或 LGPL/GPL/AGPL 源码。超出当前解码范围时会显示明确的兼容提示。HLS 清单优先走浏览器原生能力，不支持时再按需加载 `hls.js`；本地上传的 `.m3u8` 如果引用了外部分片，需要保证分片 URL 对浏览器可访问。
 
 ### 字体、设计资产与结构化数据
 

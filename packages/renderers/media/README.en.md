@@ -27,6 +27,9 @@ const options = {
 ## Features
 
 - MP4, WebM, and common audio formats use native browser `<video>` / `<audio>` controls first.
+- The renderer inspects MP4 video tracks before playback. If the browser rejects an MPEG-4 Part 2 (`mp4v`) Simple Profile track, it starts a dedicated Worker, uses the AAC track as the playback clock, and draws software-decoded I420 frames to a Canvas. This fixes the case where audio plays over a black frame.
+- The fallback uses the Apache-2.0 AOSP PacketVideo decoder. Its WASM file is 111,379 bytes, or 34,410 bytes with gzip, and loads only after native decoding fails. The implementation contains no FFmpeg, libav, or LGPL/GPL/AGPL source.
+- Files outside the decoder's current coverage, and browsers without Worker, OffscreenCanvas, or VideoFrame support, get a codec compatibility notice. H.264/AVC still uses less CPU and works in more browsers.
 - HLS `.m3u8` uses native playback when available and dynamically imports `hls.js` only as a fallback.
 - MIDI / MID dynamically imports `@tonejs/midi` only when opened, then renders name, duration, PPQ, tracks, and note summaries.
 - Unmount cleanup revokes object URLs, resets media elements, and destroys the HLS instance for long-lived business applications.
