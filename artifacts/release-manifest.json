@@ -1,9 +1,9 @@
 {
   "version": "2.3.0",
   "package": "@flyfish-group/file-viewer-workspace",
-  "generatedAt": "2026-08-18T09:44:32.481Z",
+  "generatedAt": "2026-08-19T02:01:46.268Z",
   "sourceBranch": "main",
-  "sourceCommit": "5ef283e6",
+  "sourceCommit": "fc263649",
   "corePackage": {
     "packageName": "@file-viewer/core",
     "description": "Framework-neutral modular TypeScript file preview core with format registry, renderer orchestration, lifecycle APIs, search, zoom, print, and export.",
