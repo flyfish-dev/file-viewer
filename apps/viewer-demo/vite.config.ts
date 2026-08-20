@@ -26,7 +26,6 @@ const demoWorkspaceSourceAliases = [
   ['@file-viewer/renderer-ofd', '../../packages/renderers/ofd/src/index.ts'],
   ['@file-viewer/renderer-pdf', '../../packages/renderers/pdf/src/index.ts'],
   ['@file-viewer/renderer-presentation', '../../packages/renderers/presentation/src/index.ts'],
-  ['@file-viewer/pptx', '../../packages/renderers/pptx/src/index.ts'],
   ['@file-viewer/renderer-spreadsheet', '../../packages/renderers/spreadsheet/src/index.ts'],
   ['@file-viewer/renderer-text', '../../packages/renderers/text/src/index.ts'],
   ['@file-viewer/renderer-typst', '../../packages/renderers/typst/src/index.ts'],
@@ -110,6 +109,13 @@ export default defineConfig(ctx => {
     alias['@file-viewer/core'] = fileURLToPath(new URL('../../packages/core/src/index.ts', import.meta.url))
     for (const [packageName, sourcePath] of demoWorkspaceSourceAliases) {
       alias[packageName] = fileURLToPath(new URL(sourcePath, import.meta.url))
+    }
+    if (ctx.command === 'serve') {
+      // slideshow-test.ts is an app-level development entry, so pnpm cannot
+      // resolve the renderer's transitive workspace dependency from there.
+      // Keep this source alias out of production builds: the published PPTX
+      // package owns its Worker URL and must preserve that package boundary.
+      alias['@file-viewer/pptx'] = fileURLToPath(new URL('../../packages/renderers/pptx/src/index.ts', import.meta.url))
     }
   }
   const config: UserConfigExport = {
