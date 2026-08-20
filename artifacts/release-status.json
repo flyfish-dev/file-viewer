@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-20T06:57:20.562Z",
+  "generatedAt": "2026-08-20T08:12:08.170Z",
   "version": "2.3.0",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -8,31 +8,31 @@
     "repository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "policy": "private-complete-original-workspace",
-    "authoritativeCommit": "6ada76a87c8f717cb7c231d3872a31a5c8495ada",
+    "authoritativeCommit": "",
     "localBranch": "main",
-    "localCommit": "6ada76a87c8f717cb7c231d3872a31a5c8495ada",
-    "inSync": true,
+    "localCommit": "8f19b1d07af36ec8ea5f9834cc269886ce2db470",
+    "inSync": false,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
     "branch": "main",
-    "commit": "6ada76a87c8f717cb7c231d3872a31a5c8495ada",
-    "shortCommit": "6ada76a8",
+    "commit": "8f19b1d07af36ec8ea5f9834cc269886ce2db470",
+    "shortCommit": "8f19b1d0",
     "dirty": false
   },
   "sourceRemote": {
     "url": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
-    "ok": true,
-    "hash": "6ada76a87c8f717cb7c231d3872a31a5c8495ada",
-    "error": ""
+    "ok": false,
+    "hash": "",
+    "error": "failed to get: -25293\nfatal: could not read Username for 'https://git.flyfish.dev': Device not configured"
   },
   "openSourceMain": {
     "github": {
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "bae1dd352170fefdc7e815ff8d8faff2f606d6bc",
+      "hash": "4ebd0f9726b0cf95e2f40da307aed8d8f095bf1e",
       "error": ""
     },
     "gitee": {
@@ -45,7 +45,7 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "4e87458e9a9adf31e86d93199a4b8cbd6464867f",
+    "referenceTree": "f5448b8e88a80e5e9f535444e82d59f7c35ab1b6",
     "giteeTree": "626fa3bd5f88414e3979ef548d5b748b01aa7402",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
@@ -385,10 +385,10 @@
     },
     {
       "packageName": "file-viewer-copy-assets",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/renderer-pdf",
@@ -427,10 +427,10 @@
     },
     {
       "packageName": "@file-viewer/renderer-spreadsheet",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/renderer-drawing",
@@ -581,10 +581,10 @@
     },
     {
       "packageName": "@file-viewer/preset-all",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/preset-lite",
@@ -595,10 +595,10 @@
     },
     {
       "packageName": "@file-viewer/preset-office",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/preset-engineering",
@@ -679,10 +679,10 @@
     },
     {
       "packageName": "@file-viewer/vue3-full",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/vue2.7",
@@ -693,10 +693,10 @@
     },
     {
       "packageName": "@file-viewer/vue2.7-full",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/vue2.6",
@@ -707,10 +707,10 @@
     },
     {
       "packageName": "@file-viewer/vue2.6-full",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/react",
@@ -721,10 +721,10 @@
     },
     {
       "packageName": "@file-viewer/react-full",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/react-legacy",
@@ -735,10 +735,10 @@
     },
     {
       "packageName": "@file-viewer/react-legacy-full",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/jquery",
@@ -749,10 +749,10 @@
     },
     {
       "packageName": "@file-viewer/jquery-full",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     },
     {
       "packageName": "@file-viewer/svelte",
@@ -763,31 +763,53 @@
     },
     {
       "packageName": "@file-viewer/svelte-full",
-      "expectedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
       "publishedVersion": "2.3.0",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.1"
     }
   ],
   "gaps": [
+    "source remote https://git.flyfish.dev/flyfish-group/file-viewer.git missing main",
     "GitHub Release v2.3.0 missing",
-    "@file-viewer/web-full npm 2.3.0 !== 2.3.1"
+    "file-viewer-copy-assets npm 2.3.0 !== 2.3.1",
+    "@file-viewer/renderer-spreadsheet npm 2.3.0 !== 2.3.1",
+    "@file-viewer/preset-all npm 2.3.0 !== 2.3.1",
+    "@file-viewer/preset-office npm 2.3.0 !== 2.3.1",
+    "@file-viewer/web-full npm 2.3.0 !== 2.3.1",
+    "@file-viewer/vue3-full npm 2.3.0 !== 2.3.1",
+    "@file-viewer/vue2.7-full npm 2.3.0 !== 2.3.1",
+    "@file-viewer/vue2.6-full npm 2.3.0 !== 2.3.1",
+    "@file-viewer/react-full npm 2.3.0 !== 2.3.1",
+    "@file-viewer/react-legacy-full npm 2.3.0 !== 2.3.1",
+    "@file-viewer/jquery-full npm 2.3.0 !== 2.3.1",
+    "@file-viewer/svelte-full npm 2.3.0 !== 2.3.1"
   ],
   "gapSummary": {
-    "total": 2,
-    "externalBlockers": 2,
+    "total": 14,
+    "externalBlockers": 14,
     "localActionable": 0,
     "byChannel": {
+      "source-remote": 1,
       "github-release": 1,
-      "npm": 1
+      "npm": 12
     },
     "externalBlockerChannels": [
       "github-release",
-      "npm"
+      "npm",
+      "source-remote"
     ],
     "localActionableChannels": []
   },
   "gapDetails": [
+    {
+      "id": "source-remote-source-remote-https-git.flyfish.dev-flyfish-group-file-viewer.git-missing-main",
+      "channel": "source-remote",
+      "scope": "private-gitea",
+      "externalBlocker": true,
+      "message": "source remote https://git.flyfish.dev/flyfish-group/file-viewer.git missing main",
+      "nextAction": "Restore the private Gitea source branch or push the expected release source."
+    },
     {
       "id": "github-release-github-release-v2.3.0-missing",
       "channel": "github-release",
@@ -797,11 +819,99 @@
       "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
     },
     {
+      "id": "npm-file-viewer-copy-assets-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "file-viewer-copy-assets npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-renderer-spreadsheet-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/renderer-spreadsheet npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-preset-all-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/preset-all npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-preset-office-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/preset-office npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
       "id": "npm-@file-viewer-web-full-npm-2.3.0-2.3.1",
       "channel": "npm",
       "scope": "package-registry",
       "externalBlocker": true,
       "message": "@file-viewer/web-full npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-vue3-full-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/vue3-full npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-vue2.7-full-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/vue2.7-full npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-vue2.6-full-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/vue2.6-full npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-react-full-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/react-full npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-react-legacy-full-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/react-legacy-full npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-jquery-full-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/jquery-full npm 2.3.0 !== 2.3.1",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    },
+    {
+      "id": "npm-@file-viewer-svelte-full-npm-2.3.0-2.3.1",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/svelte-full npm 2.3.0 !== 2.3.1",
       "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
     }
   ],
