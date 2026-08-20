@@ -79,6 +79,8 @@ assert(webDemo.includes("locale: '${state.locale}'"), 'Web demo integration snip
 const hello = read('apps/viewer-demo/src/components/HelloWorld.vue')
 assert(hello.includes("{ value: 'ja-JP', label: '日本語'"), 'Main demo Japanese locale option is missing')
 assert(hello.includes("class='viewer-locale-trigger'"), 'Main demo globe locale trigger is missing')
+assert(hello.includes("<Globe :size='21'"), 'Main demo locale trigger must use the latitude/longitude globe icon')
+assert(!hello.includes('<Globe2 '), 'Main demo locale trigger must not use the Earth landmass icon')
 assert(hello.includes("v-for='option in demoLocaleOptions'"), 'Main demo locale menu is not data-driven')
 assert(hello.includes('locale="${demoLocale.value}"'), 'Main demo integration snippet does not preserve the selected locale')
 const publicTypeScriptExample = read('apps/viewer-demo/public/example/en/code.ts')

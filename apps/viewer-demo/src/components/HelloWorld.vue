@@ -9,7 +9,7 @@ import {
   Download,
   FileSearch,
   FolderOpen,
-  Globe2,
+  Globe,
   History,
   Link2,
   MoreHorizontal,
@@ -1652,7 +1652,7 @@ function handleWindowResize() {
                 @keydown.down.prevent='openLocaleMenu("first")'
                 @keydown.up.prevent='openLocaleMenu("last")'
               >
-                <Globe2 :size='21' :stroke-width='2.05' aria-hidden='true' />
+                <Globe :size='21' :stroke-width='2.05' aria-hidden='true' />
               </button>
               <Transition name='viewer-locale-menu'>
                 <div
