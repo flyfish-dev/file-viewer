@@ -9,6 +9,7 @@ import {
   Download,
   FileSearch,
   FolderOpen,
+  Globe2,
   History,
   Link2,
   MoreHorizontal,
@@ -98,6 +99,10 @@ const recentPanelOpen = ref(!isMobileDemoViewport())
 const wasMobileViewport = ref(isMobileDemoViewport())
 const recentLocalReselectName = ref('')
 const recentLocalFiles = new Map<string, File>()
+const localeMenuOpen = ref(false)
+const localeSwitcherRef = ref<HTMLElement | null>(null)
+const localeTriggerButtonRef = ref<HTMLButtonElement | null>(null)
+const localeMenuRef = ref<HTMLElement | null>(null)
 
 const githubRepositoryUrl = 'https://github.com/flyfish-dev/file-viewer'
 // Preferences are browser-shell concerns. Keeping persistence and media-query
@@ -117,6 +122,22 @@ const officialSiteUrl = computed(() => (
   demoLocale.value === 'zh-CN' ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/'
 ))
 const { copy: demoCopy, getCopy: getDemoCopy } = useDemoCopy(demoLocale)
+const demoLocaleOptions: ReadonlyArray<{
+  value: DemoLocale
+  label: string
+  shortLabel: string
+}> = [
+  { value: 'zh-CN', label: '简体中文', shortLabel: '中' },
+  { value: 'en-US', label: 'English', shortLabel: 'EN' },
+  { value: 'ja-JP', label: '日本語', shortLabel: '日' },
+  { value: 'de-DE', label: 'Deutsch', shortLabel: 'DE' }
+]
+const activeDemoLocaleOption = computed(() => (
+  demoLocaleOptions.find(option => option.value === demoLocale.value) || demoLocaleOptions[0]
+))
+const localeTriggerTitle = computed(() => (
+  `${demoCopy.value.language}: ${activeDemoLocaleOption.value.label}`
+))
 const url = ref(demoFileHandoff.isEmbedRequest && !demoFileHandoff.initialUrl ? '' : DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value])
 const preview = ref('')
 
@@ -290,6 +311,7 @@ const {
     settingsPanelOpen.value ||
     desktopActionsOpen.value ||
     viewerSearchOpen.value ||
+    localeMenuOpen.value ||
     mobileControlsOpen.value ||
     mobileActionsOpen.value ||
     snippetDialogOpen.value
@@ -564,7 +586,7 @@ function closeSettingsPanel(returnFocus = false) {
   }
 }
 
-function closeDesktopTransientUi(except?: 'source' | 'settings' | 'search' | 'more') {
+function closeDesktopTransientUi(except?: 'source' | 'settings' | 'search' | 'more' | 'locale') {
   // Desktop surfaces are mutually exclusive. `except` lets the destination
   // remain open while every competing surface closes in the same tick.
   if (except !== 'source') {
@@ -578,6 +600,9 @@ function closeDesktopTransientUi(except?: 'source' | 'settings' | 'search' | 'mo
   }
   if (except !== 'search' && viewerSearchOpen.value) {
     void closeViewerSearch()
+  }
+  if (except !== 'locale') {
+    closeLocaleMenu()
   }
 }
 
@@ -968,6 +993,94 @@ function setDemoLocale(nextLocale: DemoLocale) {
   }
 }
 
+type LocaleMenuFocusTarget = 'active' | 'first' | 'last'
+
+function closeLocaleMenu(returnFocus = false) {
+  if (!localeMenuOpen.value) {
+    return
+  }
+  localeMenuOpen.value = false
+  if (returnFocus) {
+    void nextTick(() => localeTriggerButtonRef.value?.focus())
+  }
+}
+
+function focusLocaleMenuOption(target: LocaleMenuFocusTarget = 'active') {
+  const buttons = Array.from(
+    localeMenuRef.value?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') || []
+  )
+  if (!buttons.length) {
+    return
+  }
+  const nextButton = target === 'first'
+    ? buttons[0]
+    : target === 'last'
+      ? buttons[buttons.length - 1]
+      : buttons.find(button => button.dataset.locale === demoLocale.value) || buttons[0]
+  nextButton?.focus()
+}
+
+async function openLocaleMenu(focusTarget: LocaleMenuFocusTarget = 'active') {
+  if (localeMenuOpen.value) {
+    focusLocaleMenuOption(focusTarget)
+    return
+  }
+  closeDesktopTransientUi('locale')
+  mobileControlsOpen.value = false
+  mobileActionsOpen.value = false
+  recentPanelOpen.value = false
+  localeMenuOpen.value = true
+  await nextTick()
+  focusLocaleMenuOption(focusTarget)
+}
+
+function toggleLocaleMenu() {
+  if (localeMenuOpen.value) {
+    closeLocaleMenu(true)
+    return
+  }
+  void openLocaleMenu()
+}
+
+function selectDemoLocale(nextLocale: DemoLocale) {
+  setDemoLocale(nextLocale)
+  closeLocaleMenu(true)
+}
+
+function handleLocaleMenuKeydown(event: KeyboardEvent) {
+  const buttons = Array.from(
+    localeMenuRef.value?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') || []
+  )
+  if (!buttons.length) {
+    return
+  }
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    closeLocaleMenu(true)
+    return
+  }
+  const currentIndex = buttons.indexOf(document.activeElement as HTMLButtonElement)
+  let nextIndex: number | null = null
+  if (event.key === 'ArrowDown') nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % buttons.length
+  if (event.key === 'ArrowUp') nextIndex = currentIndex < 0 ? buttons.length - 1 : (currentIndex - 1 + buttons.length) % buttons.length
+  if (event.key === 'Home') nextIndex = 0
+  if (event.key === 'End') nextIndex = buttons.length - 1
+  if (nextIndex === null) {
+    return
+  }
+  event.preventDefault()
+  buttons[nextIndex]?.focus()
+}
+
+function handleLocaleSwitcherFocusOut() {
+  void nextTick(() => {
+    const activeElement = document.activeElement
+    if (activeElement instanceof Node && !localeSwitcherRef.value?.contains(activeElement)) {
+      localeMenuOpen.value = false
+    }
+  })
+}
+
 function handleFileCapsuleMotionPreferenceChange() {
   resetFileCapsuleMotion()
 }
@@ -1091,6 +1204,7 @@ function handleDocumentPointerDown(event: PointerEvent) {
     !settingsPanelOpen.value &&
     !desktopActionsOpen.value &&
     !viewerSearchOpen.value &&
+    !localeMenuOpen.value &&
     !mobileActionsOpen.value
   ) {
     return
@@ -1098,7 +1212,7 @@ function handleDocumentPointerDown(event: PointerEvent) {
   const target = event.target
   if (
     target instanceof Element &&
-    target.closest('.viewer-file-identity, .immersive-more-menu, .viewer-search-popover, .mobile-action-dock')
+    target.closest('.viewer-file-identity, .viewer-locale-switch, .immersive-more-menu, .viewer-search-popover, .mobile-action-dock')
   ) {
     return
   }
@@ -1114,6 +1228,7 @@ function handleDocumentPointerDown(event: PointerEvent) {
   closeDesktopSourcePanel()
   closeSettingsPanel()
   desktopActionsOpen.value = false
+  localeMenuOpen.value = false
   mobileActionsOpen.value = false
   if (viewerSearchOpen.value) {
     void closeViewerSearch()
@@ -1157,6 +1272,10 @@ function handleDocumentKeydown(event: KeyboardEvent) {
 
   if (event.key === 'Escape') {
     event.preventDefault()
+    if (localeMenuOpen.value) {
+      closeLocaleMenu(true)
+      return
+    }
     if (settingsPanelOpen.value) {
       closeSettingsPanel(true)
       return
@@ -1514,35 +1633,60 @@ function handleWindowResize() {
             >
               <img :src='githubMark' alt='' />
             </a>
-            <div class='locale-switch viewer-locale-switch' :aria-label='demoCopy.language'>
+            <div
+              ref='localeSwitcherRef'
+              class='viewer-locale-switch'
+              :class='{ open: localeMenuOpen }'
+              @focusout='handleLocaleSwitcherFocusOut'
+            >
               <button
+                ref='localeTriggerButtonRef'
                 type='button'
-                :class='{ active: demoLocale === "zh-CN" }'
-                @click='setDemoLocale("zh-CN")'
+                class='viewer-locale-trigger'
+                :title='localeTriggerTitle'
+                :aria-label='localeTriggerTitle'
+                aria-haspopup='menu'
+                aria-controls='viewer-locale-menu'
+                :aria-expanded='localeMenuOpen'
+                @click='toggleLocaleMenu'
+                @keydown.down.prevent='openLocaleMenu("first")'
+                @keydown.up.prevent='openLocaleMenu("last")'
               >
-                中
+                <Globe2 :size='21' :stroke-width='2.05' aria-hidden='true' />
               </button>
-              <button
-                type='button'
-                :class='{ active: demoLocale === "en-US" }'
-                @click='setDemoLocale("en-US")'
-              >
-                EN
-              </button>
-              <button
-                type='button'
-                :class='{ active: demoLocale === "ja-JP" }'
-                @click='setDemoLocale("ja-JP")'
-              >
-                日
-              </button>
-              <button
-                type='button'
-                :class='{ active: demoLocale === "de-DE" }'
-                @click='setDemoLocale("de-DE")'
-              >
-                DE
-              </button>
+              <Transition name='viewer-locale-menu'>
+                <div
+                  v-if='localeMenuOpen'
+                  id='viewer-locale-menu'
+                  ref='localeMenuRef'
+                  class='viewer-locale-menu'
+                  role='menu'
+                  :aria-label='demoCopy.language'
+                  @keydown='handleLocaleMenuKeydown'
+                >
+                  <button
+                    v-for='option in demoLocaleOptions'
+                    :key='option.value'
+                    type='button'
+                    role='menuitemradio'
+                    class='viewer-locale-option'
+                    :class='{ active: demoLocale === option.value }'
+                    :data-locale='option.value'
+                    :aria-checked='demoLocale === option.value'
+                    @click='selectDemoLocale(option.value)'
+                  >
+                    <span class='viewer-locale-option-short' aria-hidden='true'>{{ option.shortLabel }}</span>
+                    <span class='viewer-locale-option-name'>{{ option.label }}</span>
+                    <Check
+                      class='viewer-locale-option-check'
+                      :class='{ visible: demoLocale === option.value }'
+                      :size='16'
+                      :stroke-width='2.4'
+                      aria-hidden='true'
+                    />
+                  </button>
+                </div>
+              </Transition>
             </div>
           </div>
 

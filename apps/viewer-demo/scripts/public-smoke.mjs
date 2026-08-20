@@ -168,6 +168,21 @@ try {
     throw new Error(`Mobile sample picker layout failed: ${JSON.stringify(mobileLayout)}`)
   }
 
+  await page.keyboard.press('Escape')
+  await page.locator('.viewer-locale-trigger').click()
+  await page.locator('.viewer-locale-menu').waitFor({ state: 'visible', timeout })
+  const mobileLocaleMenu = await page.locator('.viewer-locale-menu').evaluate(element => {
+    const rect = element.getBoundingClientRect()
+    return {
+      optionCount: element.querySelectorAll('.viewer-locale-option').length,
+      insideViewport: rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1
+    }
+  })
+  if (mobileLocaleMenu.optionCount !== 4 || !mobileLocaleMenu.insideViewport) {
+    throw new Error(`Mobile locale menu layout failed: ${JSON.stringify(mobileLocaleMenu)}`)
+  }
+  await page.keyboard.press('Escape')
+
   await page.setViewportSize({ width: 1440, height: 800 })
   await page.goto(`${baseUrl}/?lang=en&url=/example/en/markdown.md&smoke=public-ci-markdown`, {
     waitUntil: 'domcontentloaded',
@@ -192,33 +207,57 @@ try {
     throw new Error('Native toolbar search did not clear document highlights.')
   }
 
-  await page.goto(`${baseUrl}/?lang=ja&smoke=public-ci-japanese`, {
+  await page.goto(`${baseUrl}/?lang=en&smoke=public-ci-locale-menu`, {
     waitUntil: 'domcontentloaded',
     timeout
   })
   await page.waitForSelector('.file-viewer .content:not(.hidden)', { timeout })
+
+  const localeCases = [
+    ['zh-CN', 'zh-CN'],
+    ['en-US', 'en-US'],
+    ['de-DE', 'de-DE'],
+    ['ja-JP', 'ja-JP']
+  ]
+  for (const [locale, documentLocale] of localeCases) {
+    await page.locator('.viewer-locale-trigger').click()
+    await page.locator('.viewer-locale-menu').waitFor({ state: 'visible', timeout })
+    const localeOptionCount = await page.locator('.viewer-locale-option').count()
+    if (localeOptionCount !== 4) {
+      throw new Error(`Expected four locale options, got ${localeOptionCount}.`)
+    }
+    await page.locator(`.viewer-locale-option[data-locale="${locale}"]`).click()
+    await page.waitForFunction(expected => document.documentElement.lang === expected, documentLocale)
+    await page.locator('.viewer-locale-menu').waitFor({ state: 'detached', timeout })
+  }
+
+  await page.locator('.viewer-locale-trigger').click()
+  await page.locator('.viewer-locale-menu').waitFor({ state: 'visible', timeout })
+  const japaneseActive = await page.locator('.viewer-locale-option[data-locale="ja-JP"]')
+    .getAttribute('aria-checked')
+  await page.locator('.viewer-locale-trigger').click()
+  if (japaneseActive !== 'true') {
+    throw new Error('Japanese locale option is not marked as selected.')
+  }
+
   await page.locator('.rail-nav-button--samples').click()
   await page.waitForSelector('.sample-picker.open .sample-menu', { timeout })
 
   const japaneseUi = await page.evaluate(() => {
     const localeGroup = document.querySelector('.viewer-locale-switch')
-    const japaneseButton = Array.from(localeGroup?.querySelectorAll('button') || [])
-      .find(button => button.textContent?.trim() === '日')
     const sampleNames = Array.from(document.querySelectorAll('.sample-menu .sample-card strong'))
       .map(element => element.textContent?.trim())
     return {
       documentLocale: document.documentElement.lang,
       pageTitle: document.title,
-      languageLabel: localeGroup?.getAttribute('aria-label'),
-      japaneseActive: japaneseButton?.classList.contains('active'),
+      triggerLabel: localeGroup?.querySelector('.viewer-locale-trigger')?.getAttribute('aria-label'),
       localizedSample: sampleNames.includes('DOCX リッチ文書')
     }
   })
   if (
     japaneseUi.documentLocale !== 'ja-JP' ||
     japaneseUi.pageTitle !== 'File Viewer Demo — Office・PDF・CADをブラウザで表示' ||
-    japaneseUi.languageLabel !== '言語' ||
-    !japaneseUi.japaneseActive ||
+    japaneseUi.triggerLabel !== '言語: 日本語' ||
     !japaneseUi.localizedSample
   ) {
     throw new Error(`Japanese demo UI failed: ${JSON.stringify(japaneseUi)}`)
@@ -229,7 +268,7 @@ try {
     throw new Error(`Browser console errors:\n${actionableErrors.join('\n')}`)
   }
 
-  console.log('[public-browser-smoke] English Markdown, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile picker verified.')
+  console.log('[public-browser-smoke] Four-language globe menu, English Markdown, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile layout verified.')
 } finally {
   await browser?.close()
   await new Promise(resolveClose => server.close(resolveClose))

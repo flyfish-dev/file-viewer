@@ -218,6 +218,8 @@
 .rail-nav-button:focus-visible,
 .viewer-copy:focus-visible,
 .viewer-github-link:focus-visible,
+.viewer-locale-trigger:focus-visible,
+.viewer-locale-option:focus-visible,
 .immersive-right-toolbar button:focus-visible,
 .viewer-status-dock button:focus-visible,
 .panel-body button:focus-visible,
@@ -762,7 +764,7 @@
   right: 34px;
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 10px;
 }
 
 .viewer-github-link {
@@ -800,36 +802,147 @@
 }
 
 .viewer-locale-switch {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+}
+
+.viewer-locale-trigger {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  padding: 4px;
+  justify-content: center;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.86);
-  border-radius: 23px;
-  background: rgba(255, 255, 255, 0.68);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.72);
+  color: #5f6d67;
   box-shadow: var(--demo-chrome-shadow);
   backdrop-filter: var(--demo-glass-blur);
-}
-
-.viewer-locale-switch button {
-  min-width: 39px;
-  height: 34px;
-  padding: 0 9px;
-  border: 0;
-  border-radius: 17px;
-  background: transparent;
-  color: #5f6d67;
-  font: inherit;
-  font-size: 11px;
-  font-weight: 720;
   cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
-.viewer-locale-switch button.active {
-  background: #4aaa72;
+.viewer-locale-trigger:hover,
+.viewer-locale-switch.open .viewer-locale-trigger {
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--demo-accent-strong);
+  box-shadow: 0 16px 38px rgba(34, 64, 54, 0.14);
+  transform: translateY(-1px);
+}
+
+.viewer-locale-trigger svg {
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.viewer-locale-switch.open .viewer-locale-trigger svg {
+  transform: rotate(18deg);
+}
+
+.viewer-locale-menu {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 190px;
+  display: grid;
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 22px 54px rgba(34, 64, 54, 0.18);
+  backdrop-filter: blur(20px) saturate(1.08);
+  transform-origin: top right;
+}
+
+.viewer-locale-option {
+  width: 100%;
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 8px 5px 6px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #44534d;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.viewer-locale-option:hover,
+.viewer-locale-option:focus-visible {
+  background: rgba(80, 179, 122, 0.1);
+  color: #21814e;
+}
+
+.viewer-locale-option:active {
+  transform: scale(0.985);
+}
+
+.viewer-locale-option-short {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(103, 124, 115, 0.1);
+  color: #64736d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.viewer-locale-option-name {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 720;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer-locale-option-check {
+  opacity: 0;
+  color: var(--demo-accent-strong);
+  transform: scale(0.65);
+  transition: opacity 140ms ease, transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.viewer-locale-option-check.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.viewer-locale-option.active .viewer-locale-option-short {
+  background: var(--demo-accent);
   color: #fff;
-  box-shadow: 0 7px 16px rgba(43, 143, 91, 0.22);
+  box-shadow: 0 7px 16px rgba(43, 143, 91, 0.2);
+}
+
+.viewer-locale-menu-enter-active,
+.viewer-locale-menu-leave-active {
+  transition:
+    opacity 150ms ease,
+    transform 190ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.viewer-locale-menu-enter-from,
+.viewer-locale-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-7px) scale(0.96);
 }
 
 .immersive-right-toolbar {
@@ -1674,7 +1787,8 @@
 .demo-shell[data-demo-theme='dark'] .rail-navigation,
 .demo-shell[data-demo-theme='dark'] .viewer-copy,
 .demo-shell[data-demo-theme='dark'] .viewer-github-link,
-.demo-shell[data-demo-theme='dark'] .viewer-locale-switch,
+.demo-shell[data-demo-theme='dark'] .viewer-locale-trigger,
+.demo-shell[data-demo-theme='dark'] .viewer-locale-menu,
 .demo-shell[data-demo-theme='dark'] .immersive-right-toolbar,
 .demo-shell[data-demo-theme='dark'] .viewer-status-dock,
 .demo-shell[data-demo-theme='dark'] .recent-history-fab,
@@ -1686,6 +1800,26 @@
   border-color: rgba(210, 233, 224, 0.1);
   background: rgba(20, 30, 35, 0.84);
   color: var(--demo-text);
+}
+
+.demo-shell[data-demo-theme='dark'] .viewer-locale-option {
+  color: #cedbd5;
+}
+
+.demo-shell[data-demo-theme='dark'] .viewer-locale-option:hover,
+.demo-shell[data-demo-theme='dark'] .viewer-locale-option:focus-visible {
+  background: rgba(72, 201, 137, 0.12);
+  color: var(--demo-accent-strong);
+}
+
+.demo-shell[data-demo-theme='dark'] .viewer-locale-option-short {
+  background: rgba(235, 246, 240, 0.08);
+  color: #afc0b8;
+}
+
+.demo-shell[data-demo-theme='dark'] .viewer-locale-option.active .viewer-locale-option-short {
+  background: var(--demo-accent);
+  color: #10241a;
 }
 
 .demo-shell[data-demo-theme='dark'] .rail-nav-button,
@@ -1854,10 +1988,6 @@
     gap: 10px;
   }
 
-  .viewer-locale-switch {
-    display: none;
-  }
-
   .viewer-toolbar {
     top: 100px;
   }
@@ -1949,9 +2079,24 @@
   }
 
   .rail-brand h1,
-  .rail-navigation,
-  .viewer-global-actions {
+  .rail-navigation {
     display: none;
+  }
+
+  .viewer-global-actions {
+    z-index: 63;
+    top: max(10px, env(safe-area-inset-top));
+    right: 11px;
+    display: flex;
+    gap: 0;
+  }
+
+  .viewer-github-link {
+    display: none;
+  }
+
+  .viewer-locale-menu {
+    width: min(190px, calc(100vw - 22px));
   }
 
   .demo-shell[data-file-capsule-state] .viewer-toolbar {
@@ -2489,6 +2634,11 @@
   .viewer-type,
   .viewer-file-chevron,
   .viewer-github-link,
+  .viewer-locale-trigger,
+  .viewer-locale-trigger svg,
+  .viewer-locale-option,
+  .viewer-locale-option-check,
+  .viewer-locale-menu,
   .immersive-right-toolbar button,
   .viewer-status-dock button,
   .control-panel,
