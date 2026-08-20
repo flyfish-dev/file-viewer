@@ -57,6 +57,8 @@ type EVirtTableInstance = {
     };
     scrollX?: number;
     scrollY?: number;
+    containerElement: HTMLElement;
+    isTarget(event: Event): boolean;
     selector?: {
       xArr: number[];
       yArr: number[];
@@ -116,6 +118,19 @@ const E_VIRT_TABLE_STYLE_MARKERS = [
 ] as const;
 const SPREADSHEET_STYLE_SCOPE = '.excel-wrapper[data-file-viewer-spreadsheet-root]';
 const E_VIRT_TABLE_ROTATE_KEYFRAME = 'file-viewer-e-virt-table-rotate';
+
+export const enableEVirtTableShadowEventTargeting = (
+  context: Pick<EVirtTableInstance['ctx'], 'containerElement' | 'isTarget'>
+) => {
+  const isNativeTarget = context.isTarget.bind(context);
+  context.isTarget = (event: Event) => {
+    if (isNativeTarget(event)) {
+      return true;
+    }
+    const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+    return path.includes(context.containerElement);
+  };
+};
 
 const spreadsheetStyle = `
 .excel-wrapper{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:var(--file-viewer-render-surface-background,#fff);color:#172033;font-family:Aptos,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
@@ -1430,6 +1445,7 @@ const renderFileViewerSpreadsheet = async (
         zoomScale: zoom,
       }),
     });
+    enableEVirtTableShadowEventTargeting(table.ctx);
     table.on('onScrollX', scheduleViewportLoad);
     table.on('onScrollY', scheduleViewportLoad);
     table.on('resize', scheduleViewportLoad);
