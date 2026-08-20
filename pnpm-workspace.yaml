@@ -56,6 +56,3 @@ patchedDependencies:
 auditConfig:
   ignoreGhsas:
     - GHSA-5j4c-8p2g-v4jx
-
-minimumReleaseAgeExclude:
-  - '@file-viewer/docx@0.3.27'

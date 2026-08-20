@@ -13,12 +13,15 @@ description: "查看 File Viewer 主线版本的功能更新、安全修复、�
 ## `v2.3.0` Office/iWork 扩展与真实文件修复 — 2026-08-20
 
 - 将 Pages、Numbers、Keynote、WordPerfect、Hangul、DBF、FB2、XLA/XLAM 与 POT 纳入稳定格式矩阵；当前唯一目录包含 221 个扩展名和 32 条预览链路。
-- 修复 Excel Office 365/WPS 单元格内嵌图片、工作簿绘图、文件原始列宽、Shadow DOM 列宽拖拽，并支持双击图片放大。
+- 完整发布 #174、#178、#179、#195、#198、#201—#204 对应修复；#200 因缺少原始 PPTX 继续保留。
+- 修复 Excel Office 365/WPS 单元格内嵌图片、工作簿绘图、文件原始列宽、Shadow DOM 列宽拖拽，并支持双击图片放大。#178 的源码与 Demo 曾在 v2.2.9 最终阶段出现，但 npm 2.2.9 不可变产物早于该修复，因此完整发布 milestone 标记为 v2.3.0。
 - DOCX 引擎升级到 `@file-viewer/docx@0.3.27`，修复复杂框架、分节、定位页面和锚定内容；Worker 缓存参数同步到实际运行时版本。
 - 加固 PPTX Worker 输出、Markdown 渲染、压缩包文件名解码、包依赖与离线 Worker/WASM 交付。
-- 源码和 GitHub Release 版本为 v2.3.0；由于 npm 版本不可覆盖，Office 与 Full 更正包使用 2.3.2 补丁线。
+- 源码和 GitHub Release 版本为 v2.3.0；npm 不可覆盖的更正包按实际版本使用 `@file-viewer/renderer-spreadsheet@2.3.1`、`@file-viewer/renderer-word@2.3.1`，以及 Office/Full/copy-assets 的 2.3.2 补丁线。
 
-## `v2.2.9` PPTX 与 Markdown 渲染安全补丁 — 2026-08-13
+## `v2.2.9` PPTX 与 Markdown 渲染安全补丁 — 2026-08-17
+
+npm 包于 2026-08-13 发布；GitHub Release 于 2026-08-17 完成最终归档。
 
 - PPTX Worker 产生的 HTML、SVG、内联样式与全局 CSS 在进入预览 DOM 前统一经过严格净化；外部媒体/矢量资源 URL、危险链接协议、事件属性、脚本、全局选择器和不安全 CSS 声明会被移除。
 - PPTX XML 中的超链接 tooltip、形状属性、颜色与字体字段获得入口级校验；正常本地片段、base64 图片、blob 媒体和生成类规则保持可用。
