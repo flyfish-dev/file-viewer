@@ -6,6 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const packageDir = resolve(scriptDir, '..')
 const workspaceRoot = resolve(packageDir, '../../..')
+const packageManifest = JSON.parse(await readFile(resolve(packageDir, 'package.json'), 'utf8'))
 const componentViewerDir = resolve(workspaceRoot, 'packages/components/web/viewer')
 const demoDistDir = resolve(workspaceRoot, 'apps/viewer-demo/dist')
 const demoPublicDir = resolve(workspaceRoot, 'apps/viewer-demo/public')
@@ -105,8 +106,8 @@ await writeFile(
 await writeFile(
   resolve(targetDir, 'flyfish-viewer-manifest.json'),
   `${JSON.stringify({
-    name: '@file-viewer/web',
-    version: JSON.parse(await readFile(resolve(workspaceRoot, 'package.json'), 'utf8')).version,
+    name: packageManifest.name,
+    version: packageManifest.version,
     kind: 'viewer-assets',
     assets: manifestFilename
   }, null, 2)}\n`,

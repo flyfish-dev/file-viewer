@@ -6,7 +6,6 @@ import {
   DEFAULT_FILE_VIEWER_CAD_WASM_PATH,
   DEFAULT_FILE_VIEWER_CAD_WORKER_PATH,
   DEFAULT_FILE_VIEWER_DATA_SQL_WASM_URL,
-  DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   DEFAULT_FILE_VIEWER_DOCX_WORKER_JSZIP_PATH,
   DEFAULT_FILE_VIEWER_DOCX_WORKER_PATH,
   DEFAULT_FILE_VIEWER_MODEL_RUNTIME_URL,
@@ -31,6 +30,8 @@ import {
   resolveFileViewerRuntimeAssetBaseUrl,
 } from '@file-viewer/core/assets';
 import type { FileViewerOptions } from '@file-viewer/core';
+
+const FULL_PACKAGE_DOCX_RUNTIME_VERSION = '0.3.27';
 
 export const DEFAULT_FULL_ASSET_BASE_PATH = 'file-viewer/';
 export const DEFAULT_FULL_ASSET_BASE_URL = '/file-viewer/';
@@ -81,7 +82,7 @@ function versionPptRuntimeAssetUrl(url: string) {
 
 function versionDocxRuntimeAssetUrl(url: string) {
   const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}file-viewer-docx=${encodeURIComponent(DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION)}`;
+  return `${url}${separator}file-viewer-docx=${encodeURIComponent(FULL_PACKAGE_DOCX_RUNTIME_VERSION)}`;
 }
 
 function versionCadRuntimeAssetUrl(url: string) {

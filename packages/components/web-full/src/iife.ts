@@ -1,6 +1,5 @@
 import {
   DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION,
-  DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   DEFAULT_RENDERER_DEFINITIONS,
   DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION,
   resolveFileViewerRuntimeAssetBaseUrl,
@@ -84,6 +83,7 @@ for (const definition of DEFAULT_RENDERER_DEFINITIONS) {
 }
 
 const DEFAULT_FULL_ASSET_BASE_URL = '/file-viewer/'
+const WEB_FULL_DOCX_RUNTIME_VERSION = '0.3.27'
 const webFullScriptPattern = /(?:@file-viewer\/web-full|flyfish-file-viewer-web-full)/
 const initialFullScriptUrl = detectCurrentScriptUrl()
 const initialFullRendererBaseUrl = resolveScriptBaseUrl(initialFullScriptUrl) || DEFAULT_FULL_ASSET_BASE_URL
@@ -149,7 +149,7 @@ function createFullAssetOptions(assetBaseUrl?: string | URL | null): ViewerOptio
     `${baseUrl}${path}?file-viewer-ppt=${encodeURIComponent(DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION)}`
   )
   const docxAssetUrl = (path: string) => (
-    `${baseUrl}${path}?file-viewer-docx=${encodeURIComponent(DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION)}`
+    `${baseUrl}${path}?file-viewer-docx=${encodeURIComponent(WEB_FULL_DOCX_RUNTIME_VERSION)}`
   )
   const cadAssetUrl = (path: string) => (
     `${baseUrl}${path}?file-viewer-cad=${encodeURIComponent(DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION)}`
