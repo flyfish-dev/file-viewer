@@ -45,6 +45,45 @@ const viewerQueryFallbackPlugin = (): Plugin => ({
   }
 })
 
+const pptBundledRuntimeAssetUrlPlugin = (): Plugin => ({
+  name: 'file-viewer-ppt-bundled-runtime-assets',
+  enforce: 'pre',
+  transform(code, id) {
+    const normalizedId = id.split('?', 1)[0]?.replace(/\\/g, '/') || ''
+    if (!normalizedId.endsWith('/@file-viewer/ppt/index.mjs')) {
+      return undefined
+    }
+
+    // Bundle the PPT JavaScript entry so generic static servers never need to
+    // serve a native ESM module with the correct MIME type. Point its default
+    // asset URLs at the one authoritative vendor/ppt tree instead of letting
+    // Vite emit a second hashed WASM/font/Worker copy.
+    const runtimeBase = "(typeof document === 'undefined' ? import.meta.url : document.baseURI)"
+    const replacements = [
+      [
+        "new URL('./ppt-native.wasm', import.meta.url)",
+        `new URL('vendor/ppt/ppt-native.wasm', ${runtimeBase})`
+      ],
+      [
+        'new URL(`./${MANIFEST.fontPack.file}`, import.meta.url)',
+        `new URL(\`vendor/ppt/\${MANIFEST.fontPack.file}\`, ${runtimeBase})`
+      ],
+      [
+        'new URL(`./${MANIFEST.workerFile}`, import.meta.url)',
+        `new URL(\`vendor/ppt/\${MANIFEST.workerFile}\`, ${runtimeBase})`
+      ]
+    ] as const
+    let transformed = code
+    for (const [source, target] of replacements) {
+      if (!transformed.includes(source)) {
+        throw new Error(`@file-viewer/ppt runtime asset expression changed: ${source}`)
+      }
+      transformed = transformed.replace(source, target)
+    }
+    return { code: transformed, map: null }
+  }
+})
+
 // https://vitejs.dev/config/
 export default defineConfig(ctx => {
   const alias: Record<string, string> = {
@@ -72,19 +111,10 @@ export default defineConfig(ctx => {
       alias[packageName] = fileURLToPath(new URL(sourcePath, import.meta.url))
     }
   }
-  if (ctx.command === 'build') {
-    // Production always points the presentation renderer at vendor/ppt. Alias
-    // only its unreachable npm fallback so the demo does not ship a second,
-    // hashed copy of the native WASM and CJK font.
-    alias['@file-viewer/ppt'] = fileURLToPath(new URL(
-      '../../packages/components/web-full/scripts/ppt-packaged-runtime-fallback.ts',
-      import.meta.url
-    ))
-  }
-
   const config: UserConfigExport = {
     plugins: [
       viewerQueryFallbackPlugin(),
+      ...(ctx.command === 'build' ? [pptBundledRuntimeAssetUrlPlugin()] : []),
       vue(),
       vueJsx(),
       createOfflineAssetSanitizerPlugin(
