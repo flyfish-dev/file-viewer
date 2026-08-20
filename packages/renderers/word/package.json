@@ -63,7 +63,7 @@
   "dependencies": {
     "@file-viewer/core": "workspace:2.3.0",
     "@file-viewer/doc": "workspace:2.3.0",
-    "@file-viewer/docx": "^0.3.26",
+    "@file-viewer/docx": "^0.3.27",
     "jszip": "^3.10.1",
     "rtf.js": "^3.0.9"
   },

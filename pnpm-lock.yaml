@@ -1487,8 +1487,8 @@ importers:
         specifier: workspace:2.3.0
         version: link:../doc
       '@file-viewer/docx':
-        specifier: ^0.3.26
-        version: 0.3.26
+        specifier: ^0.3.27
+        version: 0.3.27
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
@@ -2043,8 +2043,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@file-viewer/docx@0.3.26':
-    resolution: {integrity: sha512-O4VCOtLNm3QZLODhqhJMhPf+2wmWSdGzW7YmKzkUXHZGOo3CmfpeVzoRQXTQA7UQRuLpJankmYYWtR2Y7EYrZg==}
+  '@file-viewer/docx@0.3.27':
+    resolution: {integrity: sha512-l+jl3fwdWhGQNTQ3h0IRWUtMndAzXfEp/jPapnxtjSALLHOltZDZ8oOmyFFgByuZiOOiHyjpLKJ1aqhNxIFH3g==}
 
   '@file-viewer/ppt@0.3.3':
     resolution: {integrity: sha512-Px2OpBUWlp74Fyt6Vm+V8IU7+xOt1Zp9PWzWo7zUCdCr+I5YYCJ9v0Nt2kriYyrusbWm8E5ri+wNy6ZkR7v3qQ==}
@@ -6484,7 +6484,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@file-viewer/docx@0.3.26':
+  '@file-viewer/docx@0.3.27':
     dependencies:
       jszip: 3.10.1
 
