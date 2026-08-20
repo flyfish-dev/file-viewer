@@ -453,10 +453,10 @@ importers:
         specifier: workspace:2.3.0
         version: link:../jquery
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       file-viewer-copy-assets:
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../tools/copy-assets
       jquery:
         specifier: '>=3 <5'
@@ -488,13 +488,13 @@ importers:
   packages/components/react-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       '@file-viewer/react':
         specifier: workspace:2.3.0
         version: link:../react
       file-viewer-copy-assets:
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -526,13 +526,13 @@ importers:
   packages/components/react-legacy-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       '@file-viewer/react-legacy':
         specifier: workspace:2.3.0
         version: link:../react-legacy
       file-viewer-copy-assets:
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -561,13 +561,13 @@ importers:
   packages/components/svelte-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       '@file-viewer/svelte':
         specifier: workspace:2.3.0
         version: link:../svelte
       file-viewer-copy-assets:
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       svelte:
@@ -593,13 +593,13 @@ importers:
   packages/components/vue2.6-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       '@file-viewer/vue2.6':
         specifier: workspace:2.3.0
         version: link:../vue2.6
       file-viewer-copy-assets:
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -625,13 +625,13 @@ importers:
   packages/components/vue2.7-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       '@file-viewer/vue2.7':
         specifier: workspace:2.3.0
         version: link:../vue2.7
       file-viewer-copy-assets:
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -687,13 +687,13 @@ importers:
   packages/components/vue3-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       '@file-viewer/vue3':
         specifier: workspace:2.3.0
         version: link:../vue3
       file-viewer-copy-assets:
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -728,7 +728,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../core
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../presets/all
       '@file-viewer/renderer-3d':
         specifier: workspace:2.3.0
@@ -782,7 +782,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../renderers/presentation
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-text':
         specifier: workspace:2.3.0
@@ -876,7 +876,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../renderers/presentation
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-text':
         specifier: workspace:2.3.0
@@ -972,7 +972,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../renderers/presentation
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-word':
         specifier: workspace:2.3.0

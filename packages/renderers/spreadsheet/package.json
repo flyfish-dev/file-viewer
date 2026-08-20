@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-spreadsheet",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "private": false,
   "type": "module",
   "description": "Standalone spreadsheet renderer plugin for File Viewer powered by styled-exceljs and e-virt-table.",

@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.3.0",
-    "@file-viewer/preset-all": "workspace:2.3.0",
+    "@file-viewer/preset-all": "workspace:2.3.1",
     "@file-viewer/renderer-3d": "workspace:2.3.0",
     "@file-viewer/renderer-archive": "workspace:2.3.0",
     "@file-viewer/renderer-cad": "workspace:2.3.0",
@@ -81,7 +81,7 @@
     "@file-viewer/renderer-ofd": "workspace:2.3.0",
     "@file-viewer/renderer-pdf": "workspace:2.3.0",
     "@file-viewer/renderer-presentation": "workspace:2.3.0",
-    "@file-viewer/renderer-spreadsheet": "workspace:2.3.0",
+    "@file-viewer/renderer-spreadsheet": "workspace:2.3.1",
     "@file-viewer/renderer-text": "workspace:2.3.0",
     "@file-viewer/renderer-typst": "workspace:2.3.0",
     "@file-viewer/renderer-word": "workspace:2.3.0",
