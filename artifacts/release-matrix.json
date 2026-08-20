@@ -1170,15 +1170,15 @@
       "id": "web-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/web-full",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "packageDir": "packages/components/web-full",
-      "tarball": "file-viewer-web-full-2.3.0.tgz",
+      "tarball": "file-viewer-web-full-2.3.1.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": null,
+      "releaseVersion": "2.3.1",
       "github": "https://github.com/flyfish-dev/file-viewer-web-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-web-full",
       "sourceRepository": null,
