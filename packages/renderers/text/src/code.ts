@@ -1,7 +1,7 @@
 import {
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
-  readFileViewerText as readText,
+  decodeFileViewerTextBuffer,
   registerFileViewerZoomProvider,
   unregisterFileViewerZoomProvider,
   type FileRenderContext,
@@ -200,7 +200,7 @@ export default async function renderText(
     return renderGitBundle(buffer, target, extension, context)
   }
 
-  const text = await readText(buffer)
+  const text = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text
   const language = resolveLanguage(extension)
   const lineCount = lineCountOf(text)
   const showToolbar = context?.options?.text?.toolbar !== false

@@ -7,8 +7,9 @@ import type {
   FileViewerOptions,
 } from '../contracts/types';
 import { JA_JP_MESSAGES } from './messages.ja';
+import { DE_DE_MESSAGES } from './messages.de';
 
-export const FILE_VIEWER_SUPPORTED_LOCALES = ['zh-CN', 'en-US', 'ja-JP'] as const;
+export const FILE_VIEWER_SUPPORTED_LOCALES = ['zh-CN', 'en-US', 'ja-JP', 'de-DE'] as const;
 export type FileViewerResolvedLocale = typeof FILE_VIEWER_SUPPORTED_LOCALES[number];
 
 export interface ResolveFileViewerI18nInput {
@@ -930,6 +931,7 @@ export const FILE_VIEWER_BUILTIN_MESSAGES = Object.freeze({
   'zh-CN': ZH_CN_MESSAGES,
   'en-US': EN_US_MESSAGES,
   'ja-JP': JA_JP_MESSAGES,
+  'de-DE': DE_DE_MESSAGES,
 } satisfies Record<FileViewerResolvedLocale, Record<FileViewerMessageKey, string>>);
 
 const normalizeLocaleCandidate = (
@@ -944,6 +946,9 @@ const normalizeLocaleCandidate = (
   }
   if (normalized === 'ja' || normalized.startsWith('ja-')) {
     return 'ja-JP';
+  }
+  if (normalized === 'de' || normalized.startsWith('de-')) {
+    return 'de-DE';
   }
   if (normalized === 'en' || normalized.startsWith('en-')) {
     return 'en-US';

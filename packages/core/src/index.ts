@@ -821,10 +821,14 @@ export type {
 } from './rendering/handler';
 export {
   DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
+  createFileViewerTextDecoder,
+  decodeFileViewerTextBuffer,
   decodeFilename,
   getExtension,
   normalizeFileExtension,
   normalizeFilename,
+  isValidFileViewerUtf8,
+  resolveFileViewerTextEncoding,
   resolveFileViewerSourceFilename,
   normalizeSource,
   readFileViewerBuffer,
@@ -832,7 +836,13 @@ export {
   readFileViewerText,
   wrapFileViewerFileRef,
 } from './source';
-export type { FileViewerReadResult } from './source';
+export type {
+  DecodedFileViewerText,
+  FileViewerReadResult,
+  FileViewerTextEncoding,
+  ResolvedFileViewerTextEncoding,
+  ResolvedFileViewerTextSource,
+} from './source';
 export {
   DEFAULT_FILE_VIEWER_STATE_THEME,
   DEFAULT_FILE_VIEWER_UNSUPPORTED_DESCRIPTION,

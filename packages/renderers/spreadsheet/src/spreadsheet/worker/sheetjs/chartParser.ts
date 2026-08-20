@@ -5,6 +5,7 @@ import {
   type Node as XmlNode
 } from '@xmldom/xmldom'
 import JSZip from 'jszip'
+import type { WorkBook } from 'styled-exceljs'
 import type {
   SheetChartDefinition,
   SheetChartSeries,
@@ -205,26 +206,138 @@ const parseMarker = (element: XmlElement | undefined): SheetDrawingMarker | unde
   }
 }
 
-const parsePointValues = (element: XmlElement | undefined) => {
+type ChartCell = {
+  v?: unknown
+  w?: unknown
+}
+
+type ChartWorksheet = {
+  '!data'?: Array<Array<ChartCell | undefined> | undefined>
+  [address: string]: unknown
+}
+
+const columnIndex = (letters: string) => {
+  let result = 0
+  for (const letter of letters.toUpperCase()) {
+    result = result * 26 + letter.charCodeAt(0) - 64
+  }
+  return result - 1
+}
+
+const parseCellAddress = (address: string) => {
+  const match = /^\$?([A-Z]{1,3})\$?(\d+)$/i.exec(address.trim())
+  if (!match) {
+    return null
+  }
+  return {
+    col: columnIndex(match[1]),
+    row: Number(match[2]) - 1
+  }
+}
+
+const encodeCellAddress = (row: number, col: number) => {
+  let value = col + 1
+  let letters = ''
+  while (value > 0) {
+    const remainder = (value - 1) % 26
+    letters = String.fromCharCode(65 + remainder) + letters
+    value = Math.floor((value - 1) / 26)
+  }
+  return `${letters}${row + 1}`
+}
+
+const getWorksheetCell = (worksheet: ChartWorksheet, row: number, col: number) => {
+  return worksheet['!data']?.[row]?.[col]
+    || worksheet[encodeCellAddress(row, col)] as ChartCell | undefined
+}
+
+const parseFormulaRange = (formula: string) => {
+  const normalized = formula.trim().replace(/^=/, '')
+  const separator = normalized.lastIndexOf('!')
+  if (separator <= 0) {
+    return null
+  }
+
+  const sheetToken = normalized.slice(0, separator).trim()
+  const rangeToken = normalized.slice(separator + 1).trim()
+  if (!sheetToken || sheetToken.includes('[')) {
+    return null
+  }
+  const sheetName = sheetToken.startsWith("'") && sheetToken.endsWith("'")
+    ? sheetToken.slice(1, -1).replace(/''/g, "'")
+    : sheetToken
+  const [startToken, endToken = startToken] = rangeToken.split(':')
+  const start = parseCellAddress(startToken)
+  const end = parseCellAddress(endToken)
+  if (!sheetName || !start || !end) {
+    return null
+  }
+
+  return {
+    sheetName,
+    start: {
+      row: Math.min(start.row, end.row),
+      col: Math.min(start.col, end.col)
+    },
+    end: {
+      row: Math.max(start.row, end.row),
+      col: Math.max(start.col, end.col)
+    }
+  }
+}
+
+const resolveFormulaValues = (
+  formula: string,
+  workbook: WorkBook | null | undefined,
+  formatted: boolean
+) => {
+  const range = parseFormulaRange(formula)
+  const worksheet = range && workbook?.Sheets?.[range.sheetName] as ChartWorksheet | undefined
+  if (!range || !worksheet) {
+    return []
+  }
+
+  const values: string[] = []
+  for (let row = range.start.row; row <= range.end.row; row += 1) {
+    for (let col = range.start.col; col <= range.end.col; col += 1) {
+      const cell = getWorksheetCell(worksheet, row, col)
+      const value = formatted && cell?.w !== undefined ? cell.w : cell?.v
+      values.push(value === undefined || value === null ? '' : `${value}`)
+    }
+  }
+  return values
+}
+
+const parsePointValues = (
+  element: XmlElement | undefined,
+  workbook?: WorkBook | null,
+  formatted = true
+) => {
   if (!element) {
     return []
   }
 
-  return elementsByLocal(element, 'pt')
+  const cachedValues = elementsByLocal(element, 'pt')
     .map((point) => ({
       index: Number(point.getAttribute('idx')) || 0,
       value: textContent(firstChildByLocal(point, 'v')) || textContent(firstByLocal(point, 'v'))
     }))
     .sort((left, right) => left.index - right.index)
     .map((point) => point.value)
+  if (cachedValues.length) {
+    return cachedValues
+  }
+
+  const formula = textContent(firstByLocal(element, 'f'))
+  return formula ? resolveFormulaValues(formula, workbook, formatted) : []
 }
 
-const chartText = (element: XmlElement | undefined) => {
+const chartText = (element: XmlElement | undefined, workbook?: WorkBook | null) => {
   if (!element) {
     return ''
   }
 
-  const points = parsePointValues(element)
+  const points = parsePointValues(element, workbook)
   if (points.length) {
     return points.join(' ').trim()
   }
@@ -248,16 +361,16 @@ const parseSeriesColor = (series: XmlElement) => {
   return SCHEME_COLORS[scheme]
 }
 
-const parseSeries = (chartNode: XmlElement) => {
+const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
   return childrenByLocal(chartNode, 'ser').map((series, index): SheetChartSeries => {
     const tx = firstChildByLocal(series, 'tx')
     const category = firstChildByLocal(series, 'cat') || firstChildByLocal(series, 'xVal')
     const value = firstChildByLocal(series, 'val') || firstChildByLocal(series, 'yVal')
-    const categories = parsePointValues(category)
-    const values = parsePointValues(value).map(Number).filter(Number.isFinite)
+    const categories = parsePointValues(category, workbook)
+    const values = parsePointValues(value, workbook, false).map(Number).filter(Number.isFinite)
 
     return {
-      name: chartText(tx) || `Series ${index + 1}`,
+      name: chartText(tx, workbook) || `Series ${index + 1}`,
       categories: categories.length
         ? categories
         : values.map((_, valueIndex) => `${valueIndex + 1}`),
@@ -269,7 +382,7 @@ const parseSeries = (chartNode: XmlElement) => {
 
 type ParsedChart = Omit<SheetChartDefinition, 'id' | 'from' | 'to' | 'ext'>
 
-const parseChart = (document: XmlDocument): ParsedChart | null => {
+const parseChart = (document: XmlDocument, workbook?: WorkBook | null): ParsedChart | null => {
   const root = document.documentElement
   const chart = firstByLocal(root, 'chart')
   const plotArea = firstChildByLocal(chart, 'plotArea') || firstByLocal(chart, 'plotArea')
@@ -291,19 +404,20 @@ const parseChart = (document: XmlDocument): ParsedChart | null => {
 
   return {
     type: chartEntry.type,
-    title: chartText(firstChildByLocal(chart, 'title')) || undefined,
-    categoryAxisTitle: chartText(firstChildByLocal(categoryAxis, 'title')) || undefined,
-    valueAxisTitle: chartText(firstChildByLocal(valueAxis, 'title')) || undefined,
+    title: chartText(firstChildByLocal(chart, 'title'), workbook) || undefined,
+    categoryAxisTitle: chartText(firstChildByLocal(categoryAxis, 'title'), workbook) || undefined,
+    valueAxisTitle: chartText(firstChildByLocal(valueAxis, 'title'), workbook) || undefined,
     barDirection,
     grouping: firstChildByLocal(chartEntry.element, 'grouping')?.getAttribute('val') || undefined,
     legendPosition: legend ? LEGEND_POSITION_MAP[legendPositionValue] || 'bottom' : undefined,
-    series: parseSeries(chartEntry.element)
+    series: parseSeries(chartEntry.element, workbook)
   }
 }
 
 const parseDrawingCharts = async (
   zip: JSZip,
-  drawingPart: string
+  drawingPart: string,
+  workbook?: WorkBook | null
 ): Promise<SheetChartDefinition[]> => {
   const [document, relationships] = await Promise.all([
     loadXml(zip, drawingPart),
@@ -326,7 +440,7 @@ const parseDrawingCharts = async (
       }
 
       const chartDocument = await loadXml(zip, chartRelationship.target)
-      const chart = chartDocument ? parseChart(chartDocument) : null
+      const chart = chartDocument ? parseChart(chartDocument, workbook) : null
       if (!chart || !chart.series.length || chart.series.every((series) => !series.values.length)) {
         return null
       }
@@ -359,7 +473,7 @@ const parseDrawingCharts = async (
   return charts.filter((chart): chart is SheetChartDefinition => chart !== null)
 }
 
-export const parseSpreadsheetCharts = async (data: ArrayBuffer) => {
+export const parseSpreadsheetCharts = async (data: ArrayBuffer, workbook?: WorkBook | null) => {
   const zip = await JSZip.loadAsync(data)
   const workbookPart = 'xl/workbook.xml'
   const [workbookDocument, workbookRelationships] = await Promise.all([
@@ -390,7 +504,7 @@ export const parseSpreadsheetCharts = async (data: ArrayBuffer) => {
         .map((relationship) => relationship.target)
     ))
     const charts = (
-      await Promise.all(drawingParts.map((part) => parseDrawingCharts(zip, part)))
+      await Promise.all(drawingParts.map((part) => parseDrawingCharts(zip, part, workbook)))
     ).flat()
     if (charts.length) {
       result[name] = charts

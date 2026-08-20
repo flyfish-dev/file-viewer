@@ -487,3 +487,7 @@ The main demo opens at the Vite dev server URL. The zero-dependency iframe entry
 ### Japanese locale
 
 Use `locale: 'ja-JP'` to force Japanese. The default `auto` mode checks the complete `navigator.languages` preference list and selects Japanese for `ja`, `ja-JP`, and other Japanese language tags. Unsupported browser locales fall back to English.
+
+### German locale
+
+Use `locale: 'de-DE'` to force German. The default `auto` mode checks the complete `navigator.languages` preference list and selects German for `de`, `de-DE`, and other German language tags. Unsupported browser locales fall back to English.

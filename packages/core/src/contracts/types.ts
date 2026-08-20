@@ -9,7 +9,7 @@ export type FileViewerThemeMode = 'light' | 'dark' | 'system';
 
 export type FileViewerResolvedThemeMode = Exclude<FileViewerThemeMode, 'system'>;
 
-export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | (string & {});
+export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE' | (string & {});
 
 export type FileViewerStyleIsolation = 'auto' | 'shadow' | 'scoped' | 'none';
 
@@ -1171,6 +1171,11 @@ export interface FileViewerAiOptions {
 
 export interface FileViewerTextOptions {
   /**
+   * Source encoding. Defaults to `auto`: BOM and UTF-16 structure first,
+   * then strict UTF-8, with GB18030 (including GBK) as the final fallback.
+   */
+  encoding?: 'auto' | 'utf-8' | 'utf-16le' | 'utf-16be' | 'gbk' | 'gb18030';
+  /**
    * Shows the renderer-local source metadata toolbar (file type, indexing
    * status, and line count). Defaults to true. This does not control the
    * viewer-level operation toolbar.
@@ -1233,8 +1238,9 @@ export interface FileViewerOptions {
    */
   styleIsolation?: FileViewerStyleIsolation;
   /**
-   * Viewer UI language. `auto` follows the browser language, Chinese browsers
-   * resolve to `zh-CN`, and all other languages currently resolve to `en-US`.
+   * Viewer UI language. `auto` follows the browser language and resolves the
+   * built-in Chinese, English, Japanese, and German locales before falling
+   * back to `en-US`.
    */
   locale?: FileViewerLocale;
   /**

@@ -1536,6 +1536,13 @@ function handleWindowResize() {
               >
                 日
               </button>
+              <button
+                type='button'
+                :class='{ active: demoLocale === "de-DE" }'
+                @click='setDemoLocale("de-DE")'
+              >
+                DE
+              </button>
             </div>
           </div>
 

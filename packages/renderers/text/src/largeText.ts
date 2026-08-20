@@ -1,9 +1,11 @@
 import {
   DEFAULT_FILE_VIEWER_SEARCH_MAX_MATCHES,
+  createFileViewerTextDecoder,
   createEmptyFileViewerSearchState,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   normalizeFileViewerSearchOptions,
+  resolveFileViewerTextEncoding,
   registerFileViewerSearchProvider,
   registerFileViewerZoomProvider,
   unregisterFileViewerSearchProvider,
@@ -13,6 +15,7 @@ import {
   type FileViewerSearchMatch,
   type FileViewerSearchOptions,
   type FileViewerSearchState,
+  type ResolvedFileViewerTextEncoding,
   type FileViewerZoomState
 } from '@file-viewer/core'
 import { codeStyle } from './codeStyle.js'
@@ -30,6 +33,7 @@ const LARGE_TEXT_BASE_LINE_HEIGHT = 22.1
 interface LargeTextIndex {
   bytes: Uint8Array;
   checkpoints: number[];
+  encoding: ResolvedFileViewerTextEncoding;
   lineCount: number;
 }
 
@@ -85,6 +89,59 @@ const alignUtf8End = (bytes: Uint8Array, offset: number, limit: number) => {
   return nextOffset
 }
 
+const gb18030UnitLength = (bytes: Uint8Array, offset: number, limit: number) => {
+  const first = bytes[offset]
+  const second = bytes[offset + 1]
+  const third = bytes[offset + 2]
+  const fourth = bytes[offset + 3]
+  if (first === undefined || first <= 0x7f) {
+    return 1
+  }
+  if (first >= 0x81 && first <= 0xfe) {
+    if (
+      second !== undefined && second >= 0x30 && second <= 0x39 &&
+      third !== undefined && third >= 0x81 && third <= 0xfe &&
+      fourth !== undefined && fourth >= 0x30 && fourth <= 0x39 &&
+      offset + 4 <= limit
+    ) {
+      return 4
+    }
+    if (
+      second !== undefined &&
+      ((second >= 0x40 && second <= 0x7e) || (second >= 0x80 && second <= 0xfe)) &&
+      offset + 2 <= limit
+    ) {
+      return 2
+    }
+  }
+  return 1
+}
+
+const alignGb18030Boundary = (
+  bytes: Uint8Array,
+  knownBoundary: number,
+  requestedOffset: number,
+  limit: number
+) => {
+  let cursor = clamp(knownBoundary, 0, limit)
+  const requested = clamp(requestedOffset, cursor, limit)
+  while (cursor < requested) {
+    cursor = Math.min(limit, cursor + gb18030UnitLength(bytes, cursor, limit))
+  }
+  return cursor
+}
+
+const alignTextBoundary = (
+  index: Pick<LargeTextIndex, 'bytes' | 'encoding'>,
+  knownBoundary: number,
+  requestedOffset: number,
+  limit: number
+) => {
+  return index.encoding === 'gb18030'
+    ? alignGb18030Boundary(index.bytes, knownBoundary, requestedOffset, limit)
+    : alignUtf8End(index.bytes, requestedOffset, limit)
+}
+
 const isLineBreak = (bytes: Uint8Array, offset: number) => {
   const byte = bytes[offset]
   if (byte === 13) {
@@ -95,6 +152,7 @@ const isLineBreak = (bytes: Uint8Array, offset: number) => {
 
 const buildLargeTextIndex = async (
   bytes: Uint8Array,
+  encoding: ResolvedFileViewerTextEncoding,
   target: HTMLElement,
   onProgress: (progress: number) => void
 ): Promise<LargeTextIndex> => {
@@ -126,6 +184,7 @@ const buildLargeTextIndex = async (
   return {
     bytes,
     checkpoints,
+    encoding,
     lineCount: lineIndex + 1
   }
 }
@@ -204,10 +263,12 @@ const decodeLargeTextSegment = (
   const normalizedSegment = clamp(Math.trunc(segmentIndex), 0, segmentCount - 1)
   const rawStart = line.start + (normalizedSegment * segmentBytes)
   const rawEnd = Math.min(line.end, rawStart + segmentBytes)
-  const start = alignUtf8Start(index.bytes, rawStart, line.end)
-  const end = alignUtf8End(index.bytes, rawEnd, line.end)
+  const start = index.encoding === 'gb18030'
+    ? alignTextBoundary(index, line.start, rawStart, line.end)
+    : alignUtf8Start(index.bytes, rawStart, line.end)
+  const end = alignTextBoundary(index, start, rawEnd, line.end)
   return {
-    text: new TextDecoder('utf-8').decode(index.bytes.subarray(start, end)),
+    text: createFileViewerTextDecoder(index.encoding).decode(index.bytes.subarray(start, end)),
     segmentCount,
     segmentIndex: normalizedSegment
   }
@@ -239,7 +300,12 @@ export const shouldVirtualizeTextBuffer = (buffer: ArrayBuffer, context?: FileRe
   const threshold = Number.isFinite(configured)
     ? Math.max(0, Number(configured))
     : DEFAULT_LARGE_TEXT_THRESHOLD_BYTES
-  return buffer.byteLength > threshold
+  if (buffer.byteLength <= threshold) {
+    return false
+  }
+  const bytes = new Uint8Array(buffer)
+  const { encoding } = resolveFileViewerTextEncoding(bytes, context?.options?.text?.encoding)
+  return encoding !== 'utf-16le' && encoding !== 'utf-16be'
 }
 
 export const shouldVirtualizeMarkdownBuffer = (buffer: ArrayBuffer, context?: FileRenderContext) => {
@@ -247,7 +313,12 @@ export const shouldVirtualizeMarkdownBuffer = (buffer: ArrayBuffer, context?: Fi
   if (!Number.isFinite(configured)) {
     return false
   }
-  return buffer.byteLength > Math.max(0, Number(configured))
+  if (buffer.byteLength <= Math.max(0, Number(configured))) {
+    return false
+  }
+  const bytes = new Uint8Array(buffer)
+  const { encoding } = resolveFileViewerTextEncoding(bytes, context?.options?.text?.encoding)
+  return encoding !== 'utf-16le' && encoding !== 'utf-16be'
 }
 
 const largeTextStyle = `
@@ -277,7 +348,9 @@ export default async function renderLargeText(
 ): Promise<FileViewerRenderedInstance> {
   const t = createFileViewerTranslator(context?.options)
   const documentRef = target.ownerDocument
-  const bytes = new Uint8Array(buffer)
+  const sourceBytes = new Uint8Array(buffer)
+  const source = resolveFileViewerTextEncoding(sourceBytes, context?.options?.text?.encoding)
+  const bytes = sourceBytes.subarray(source.bomLength)
   const configuredSegmentBytes = context?.options?.text?.maxRenderedLineBytes
   const segmentBytes = Number.isFinite(configuredSegmentBytes)
     ? clamp(Math.trunc(Number(configuredSegmentBytes)), 1024, 256 * 1024)
@@ -309,6 +382,7 @@ export default async function renderLargeText(
   root.dataset.viewerSearchProvider = 'code-virtual'
   root.dataset.textToolbar = String(showToolbar)
   root.dataset.lineNumbers = String(showLineNumbers)
+  root.dataset.textEncoding = source.encoding
   const toolbar = documentRef.createElement('div')
   toolbar.className = 'code-toolbar'
   const extensionLabel = documentRef.createElement('span')
@@ -326,7 +400,7 @@ export default async function renderLargeText(
   target.replaceChildren(style, root)
   context?.onProgressiveRender?.()
 
-  const index = await buildLargeTextIndex(bytes, target, progress => {
+  const index = await buildLargeTextIndex(bytes, source.encoding, target, progress => {
     if (!disposed) {
       status.textContent = t('text.code.indexingLargeFile', { progress })
     }
@@ -574,14 +648,47 @@ export default async function renderLargeText(
     const maxMatches = Math.max(1, options.maxMatches || DEFAULT_FILE_VIEWER_SEARCH_MAX_MATCHES)
     const expression = createLargeTextSearchRegExp(query, options)
     const encoder = new TextEncoder()
-    const encodedQueryBytes = encoder.encode(query).byteLength
+    const encodedQueryBytes = index.encoding === 'gb18030'
+      ? query.length * 4
+      : encoder.encode(query).byteLength
     const overlap = clamp(encodedQueryBytes * 2, 256, 64 * 1024)
 
+    const advanceBytesForCharacters = (
+      start: number,
+      end: number,
+      characterCount: number
+    ) => {
+      if (index.encoding !== 'gb18030') {
+        const decoded = createFileViewerTextDecoder(index.encoding).decode(index.bytes.subarray(start, end))
+        return encoder.encode(decoded.slice(0, characterCount)).byteLength
+      }
+      let cursor = start
+      let characters = 0
+      while (cursor < end && characters < characterCount) {
+        const size = gb18030UnitLength(index.bytes, cursor, end)
+        characters += size === 4
+          ? createFileViewerTextDecoder('gb18030').decode(index.bytes.subarray(cursor, cursor + size)).length
+          : 1
+        cursor += size
+      }
+      return cursor - start
+    }
+
     for (let primaryStart = 0; primaryStart < index.bytes.byteLength && matches.length < maxMatches;) {
-      const primaryEnd = Math.min(index.bytes.byteLength, primaryStart + LARGE_TEXT_SEARCH_CHUNK_BYTES)
-      const decodeStart = alignUtf8Start(index.bytes, Math.max(0, primaryStart - overlap), index.bytes.byteLength)
-      const decodeEnd = alignUtf8End(index.bytes, Math.min(index.bytes.byteLength, primaryEnd + overlap), index.bytes.byteLength)
-      const text = new TextDecoder('utf-8').decode(index.bytes.subarray(decodeStart, decodeEnd))
+      const primaryEnd = alignTextBoundary(
+        index,
+        primaryStart,
+        Math.min(index.bytes.byteLength, primaryStart + LARGE_TEXT_SEARCH_CHUNK_BYTES),
+        index.bytes.byteLength
+      )
+      const decodeStart = primaryStart
+      const decodeEnd = alignTextBoundary(
+        index,
+        primaryStart,
+        Math.min(index.bytes.byteLength, primaryEnd + overlap),
+        index.bytes.byteLength
+      )
+      const text = createFileViewerTextDecoder(index.encoding).decode(index.bytes.subarray(decodeStart, decodeEnd))
       let lastCharacterOffset = 0
       let byteCursor = decodeStart
       expression.lastIndex = 0
@@ -592,9 +699,13 @@ export default async function renderLargeText(
           expression.lastIndex += 1
           continue
         }
-        byteCursor += encoder.encode(text.slice(lastCharacterOffset, match.index)).byteLength
+        byteCursor += advanceBytesForCharacters(
+          byteCursor,
+          decodeEnd,
+          match.index - lastCharacterOffset
+        )
         const matchByteOffset = byteCursor
-        byteCursor += encoder.encode(match[0]).byteLength
+        byteCursor += advanceBytesForCharacters(byteCursor, decodeEnd, match[0].length)
         lastCharacterOffset = match.index + match[0].length
         if (matchByteOffset < primaryStart || matchByteOffset >= primaryEnd) {
           continue

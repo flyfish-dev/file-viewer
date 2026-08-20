@@ -16,7 +16,8 @@ import type { DemoSampleGroup } from '@/data/demoSamples'
 export const DEFAULT_DEMO_URL_BY_LOCALE: Record<DemoLocale, string> = {
   'zh-CN': '/example/word.docx',
   'en-US': '/example/en/calibre-demo.docx',
-  'ja-JP': '/example/en/calibre-demo.docx'
+  'ja-JP': '/example/en/calibre-demo.docx',
+  'de-DE': '/example/en/calibre-demo.docx'
 }
 
 const extraUploadExtensions = [
@@ -119,7 +120,8 @@ export function useDemoSamples(options: UseDemoSamplesOptions) {
   const sampleGroupsByLocale = {
     'zh-CN': sampleGroupsZh,
     'en-US': sampleGroupsEn,
-    'ja-JP': sampleGroupsJa
+    'ja-JP': sampleGroupsJa,
+    'de-DE': sampleGroupsEn
   } satisfies Record<DemoLocale, DemoSampleGroup[]>
   const sampleGroups = computed(() => sampleGroupsByLocale[options.locale.value])
   const presetFiles = computed(() => sampleGroups.value.flatMap(group => group.items))

@@ -5,6 +5,19 @@ import type {
   NormalizedFileViewerSource,
 } from '../contracts/types';
 
+export {
+  createFileViewerTextDecoder,
+  decodeFileViewerTextBuffer,
+  isValidFileViewerUtf8,
+  resolveFileViewerTextEncoding,
+} from './textEncoding';
+export type {
+  DecodedFileViewerText,
+  FileViewerTextEncoding,
+  ResolvedFileViewerTextEncoding,
+  ResolvedFileViewerTextSource,
+} from './textEncoding';
+
 export type FileViewerReadResult = string | ArrayBuffer | undefined | null;
 
 export const DEFAULT_FILE_VIEWER_SOURCE_FILENAME = 'preview.bin';

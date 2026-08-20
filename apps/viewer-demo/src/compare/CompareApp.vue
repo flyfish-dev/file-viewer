@@ -21,7 +21,7 @@ import {
 } from './textDiff'
 
 type CompareSide = 'left' | 'right'
-type DemoLocale = 'zh-CN' | 'en-US' | 'ja-JP'
+type DemoLocale = 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE'
 
 interface CompareSample {
   label: string;
@@ -61,7 +61,7 @@ const resolveInitialDemoLocale = (): DemoLocale => {
 
 const compareLocale = ref<DemoLocale>(resolveInitialDemoLocale())
 
-const compareCopyMap: Record<DemoLocale, Record<string, string>> = {
+const compareCopyMapBase: Record<Exclude<DemoLocale, 'de-DE'>, Record<string, string>> = {
   'zh-CN': {
     backHome: '返回 File Viewer 主预览',
     pageTitle: 'File Viewer 文档比对',
@@ -232,6 +232,11 @@ const compareCopyMap: Record<DemoLocale, Record<string, string>> = {
   }
 }
 
+const compareCopyMap: Record<DemoLocale, Record<string, string>> = {
+  ...compareCopyMapBase,
+  'de-DE': compareCopyMapBase['en-US']
+}
+
 const compareCopy = computed(() => compareCopyMap[compareLocale.value])
 
 const formatCompareCopy = (key: string, params: Record<string, string | number> = {}) => {
@@ -241,7 +246,7 @@ const formatCompareCopy = (key: string, params: Record<string, string | number> 
   )
 }
 
-const samplesByLocale: Record<DemoLocale, CompareSample[]> = {
+const samplesByLocaleBase: Record<Exclude<DemoLocale, 'de-DE'>, CompareSample[]> = {
   'zh-CN': [
     { label: 'DOC 旧版合同', description: 'Word 97-2003 示例', url: '/example/test.doc' },
     { label: 'DOCX 中文长文档', description: '表格图示与正式页', url: '/example/word.docx' },
@@ -269,6 +274,11 @@ const samplesByLocale: Record<DemoLocale, CompareSample[]> = {
     { label: 'Typst ソース', description: 'ローカル Typst レンダリングサンプル', url: '/example/report.typ' },
     { label: 'Markdown 文書', description: '軽量リッチテキストレイアウト', url: '/example/en/markdown.md' }
   ]
+}
+
+const samplesByLocale: Record<DemoLocale, CompareSample[]> = {
+  ...samplesByLocaleBase,
+  'de-DE': samplesByLocaleBase['en-US']
 }
 
 const samples = computed(() => samplesByLocale[compareLocale.value])
@@ -772,6 +782,7 @@ watch(compareLocale, (nextLocale, previousLocale) => {
           <button class="locale-toggle" :class="{ active: compareLocale === 'zh-CN' }" type="button" @click="setCompareLocale('zh-CN')">中</button>
           <button class="locale-toggle" :class="{ active: compareLocale === 'en-US' }" type="button" @click="setCompareLocale('en-US')">EN</button>
           <button class="locale-toggle" :class="{ active: compareLocale === 'ja-JP' }" type="button" @click="setCompareLocale('ja-JP')">日</button>
+          <button class="locale-toggle" :class="{ active: compareLocale === 'de-DE' }" type="button" @click="setCompareLocale('de-DE')">DE</button>
         </div>
         <div class="line-locator" :aria-label="compareCopy.lineLocator">
           <input

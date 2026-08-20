@@ -273,11 +273,15 @@ export type {
 
 export {
   DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
+  createFileViewerTextDecoder,
+  decodeFileViewerTextBuffer,
   decodeFilename,
   getExtension,
   normalizeFileExtension,
   normalizeFilename,
   normalizeSource,
+  isValidFileViewerUtf8,
+  resolveFileViewerTextEncoding,
   readFileViewerBuffer,
   readFileViewerDataUrl,
   readFileViewerText,
@@ -285,7 +289,11 @@ export {
   wrapFileViewerFileRef,
 } from './source';
 export type {
+  DecodedFileViewerText,
   FileViewerReadResult,
+  FileViewerTextEncoding,
+  ResolvedFileViewerTextEncoding,
+  ResolvedFileViewerTextSource,
 } from './source';
 
 export {

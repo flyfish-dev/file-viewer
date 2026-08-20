@@ -3,7 +3,7 @@ import createDOMPurify from 'dompurify';
 import type { WindowLike } from 'dompurify';
 import {
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
-  readFileViewerText as readText,
+  decodeFileViewerTextBuffer,
   registerFileViewerZoomProvider,
   resolveFileViewerFitScale,
   unregisterFileViewerZoomProvider,
@@ -245,7 +245,7 @@ export default async function renderMarkdown(
   target: HTMLDivElement,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const text = await readText(buffer);
+  const text = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text;
   let zoom = 1;
   const zoomEmitter = createZoomChangeEmitter();
   const root = document.createElement('div');

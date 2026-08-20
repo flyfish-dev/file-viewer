@@ -3,7 +3,7 @@ type ViewerPreset = 'lite' | 'office' | 'engineering' | 'all'
 interface ViewerBootstrapOptions {
   container: HTMLElement
   src: string
-  locale?: 'auto' | 'zh-CN' | 'en-US' | 'ja-JP'
+  locale?: 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE'
   preset?: ViewerPreset
 }
 

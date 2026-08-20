@@ -18,7 +18,7 @@ const MAX_STREAMS = 200
 const MAX_STREAM_STRINGS = 24
 const MAX_PROPERTIES = 420
 
-export type EdaParserLocale = 'zh-CN' | 'en-US' | 'ja-JP'
+export type EdaParserLocale = 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE'
 
 type EdaParserTextKey =
   | 'oasisFixture'
@@ -104,6 +104,27 @@ const EDA_PARSER_TEXT: Record<EdaParserLocale, Record<EdaParserTextKey, string>>
     noOasis: '明確な OASIS レイアウト構造候補を検出できませんでした。完全な OASIS 幾何プレビューには専門ライブラリまたは専用 WASM/TS カーネルが必要です。このフロントエンドパッケージはヘッダー、文字列、プロパティ、バイナリ構造の手掛かりを安全に表示します。',
     maxStreams: '安全上の理由から、先頭 {count} 件の CFB 項目だけを表示します。完全な確認にはファイルをダウンロードして専門 EDA ツールで開いてください。',
     binaryFallback: '標準 CFB コンテナーではないため、安全なバイナリ文字列索引プレビューへ切り替えました。',
+  },
+  'de-DE': {
+    oasisFixture: 'Eine OASIS-Textstruktur wurde erkannt; Geometrievorschau und Strukturindex wurden im Browser verarbeitet. Vollständiges binäres SEMI OASIS verwendet weiterhin den sicheren Index- und den eigenen Kernel-Pfad.',
+    gdsLayout: 'Standardmäßige binäre GDSII-Layoutdatensätze wurden erkannt; Geometrievorschau und Strukturindex wurden im Browser verarbeitet.',
+    cfbContainer: 'Ein Microsoft-Compound-File-/OLE2-Container wurde erkannt; Verzeichnis und Datenströme wurden im Browser verarbeitet.',
+    binaryIndex: 'Die Datei wurde nicht als CFB-Container erkannt. Lesbare Informationen werden über einen sicheren Binärzeichenfolgenindex angezeigt.',
+    coverage: '{streams} Einträge, {strings} lesbare Zeichenfolgen und {entities} EDA-Strukturkandidaten wurden indiziert.',
+    layout: '{layout} verarbeitet: {structures} Strukturen und {elements} Geometrie-, Referenz- oder Textelemente. Ziehen Sie die Layoutvorschau, um sie zu prüfen.',
+    layoutOasisName: 'OASIS-Textstruktur',
+    layoutGdsName: 'GDSII-Layout',
+    titleOrcadSymbolLibrary: 'OrCAD-Capture-Symbolbibliothek',
+    titleOlbBinaryLibrary: 'Binäre OLB-Bibliothek',
+    titleOrcadDrawingLibrary: 'OrCAD-/Allegro-Zeichnungsbibliothek',
+    titleDraBinaryDrawing: 'Binäre DRA-Zeichnung',
+    titleLayoutStructure: '{type}-Layoutstruktur',
+    noSymbol: 'Es wurden keine eindeutigen Bauteilsymbole gefunden. Die Datei verwendet möglicherweise eine private Binärcodierung oder muss mit einem Fachwerkzeug als ASCII/XML exportiert werden.',
+    noFootprint: 'Es wurden keine eindeutigen Footprint-, Zeichnungs- oder Padstack-Kandidaten gefunden. Die Datei verwendet möglicherweise eine private binäre Datenbankcodierung.',
+    noGds: 'Es wurden keine eindeutigen GDSII-Layoutstrukturen gefunden. Die Datei ist möglicherweise kein standardmäßiges GDSII-Binärformat oder verwendet einen proprietären Container.',
+    noOasis: 'Es wurden keine eindeutigen OASIS-Layoutstrukturen gefunden. Für die vollständige OASIS-Geometrie ist üblicherweise eine Fachbibliothek oder ein eigener WASM/TS-Kernel erforderlich; dieses Frontend zeigt Header, Zeichenfolgen, Eigenschaften und binäre Hinweise sicher an.',
+    maxStreams: 'Nur die ersten {count} CFB-Einträge werden angezeigt. Laden Sie die vollständige Datei für die Prüfung in einem EDA-Fachwerkzeug herunter.',
+    binaryFallback: 'Die Datei ist kein standardmäßiger CFB-Container. Deshalb wird eine sichere Vorschau des Binärzeichenfolgenindex angezeigt.',
   },
 }
 

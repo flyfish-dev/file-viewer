@@ -55,6 +55,9 @@ const extensionLabel = (extension: string, i18n?: FileViewerI18nInput) => {
   if (locale === 'ja-JP') {
     return '現在のファイル';
   }
+  if (locale === 'de-DE') {
+    return 'aktuelle Datei';
+  }
   return 'current file';
 };
 
@@ -261,6 +264,8 @@ export const createFileViewerUnsupportedState = (
         ? `；如果需要极致裁剪，也可以只安装 ${installHint.rendererPackage}`
         : locale === 'ja-JP'
           ? `；厳密に最小構成へ絞る場合は ${installHint.rendererPackage} のみをインストールすることもできます`
+          : locale === 'de-DE'
+            ? `; für eine strikt minimale Konfiguration installieren Sie nur ${installHint.rendererPackage}`
           : `; for a strict custom cut, install only ${installHint.rendererPackage}`
       : '';
     return createFileViewerStateDescriptor({
@@ -366,9 +371,9 @@ export const formatFileViewerErrorMessage: FileViewerErrorMessageFormatter = (pr
   if (!detail) {
     return prefix;
   }
-  return resolveFileViewerLocale(i18n) === 'en-US'
-    ? `${prefix}: ${detail}`
-    : `${prefix}：${detail}`;
+  return resolveFileViewerLocale(i18n) === 'zh-CN' || resolveFileViewerLocale(i18n) === 'ja-JP'
+    ? `${prefix}：${detail}`
+    : `${prefix}: ${detail}`;
 };
 
 export const createFileViewerErrorState = (

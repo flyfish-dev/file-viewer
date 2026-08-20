@@ -100,13 +100,40 @@ const copy = {
     loading: '読み込み中',
     localFile: 'ローカルファイル',
     noFile: 'ファイルが選択されていません'
+  },
+  'de-DE': {
+    subtitle: 'Vollständige native Demo mit @file-viewer/web',
+    urlMode: 'URL',
+    fileMode: 'Lokal',
+    urlLabel: 'Datei-URL',
+    open: 'Vorschau',
+    chooseFile: 'Lokale Datei auswählen',
+    dropHint: 'Datei hierher ziehen oder zum Hochladen klicken',
+    quick: 'Schnellbeispiele',
+    samples: 'Beispieldateien',
+    collapse: 'Einklappen',
+    expand: 'Ausklappen',
+    snippet: 'Integrationscode',
+    copyCode: 'Kopieren',
+    copied: 'Kopiert',
+    search: 'Suchen',
+    searchPlaceholder: 'Dieses Dokument durchsuchen',
+    watermark: 'Wasserzeichen',
+    download: 'Herunterladen',
+    print: 'Drucken',
+    html: 'HTML',
+    ready: 'Bereit',
+    loading: 'Wird geladen',
+    localFile: 'Lokale Datei',
+    noFile: 'Keine Datei ausgewählt'
   }
 }
 
 const defaultUrlByLocale = {
   'zh-CN': '/example/word.docx',
   'en-US': '/example/en/calibre-demo.docx',
-  'ja-JP': '/example/en/calibre-demo.docx'
+  'ja-JP': '/example/en/calibre-demo.docx',
+  'de-DE': '/example/en/calibre-demo.docx'
 }
 
 const sampleGroups = [
@@ -479,6 +506,7 @@ const els = {
   localeZh: $('locale-zh'),
   localeEn: $('locale-en'),
   localeJa: $('locale-ja'),
+  localeDe: $('locale-de'),
   snippetToggle: $('snippet-toggle'),
   modeUrl: $('mode-url'),
   modeFile: $('mode-file'),
@@ -524,6 +552,7 @@ const normalizeLocale = value => {
   const normalized = String(value || '').trim().replaceAll('_', '-').toLowerCase()
   if (normalized === 'zh' || normalized.startsWith('zh-')) return 'zh-CN'
   if (normalized === 'ja' || normalized.startsWith('ja-')) return 'ja-JP'
+  if (normalized === 'de' || normalized.startsWith('de-')) return 'de-DE'
   if (normalized === 'en' || normalized.startsWith('en-')) return 'en-US'
   return null
 }
@@ -598,7 +627,7 @@ function itemForLocale(item) {
     const url = jaUrl || enUrl || zhUrl
     return { name: jaName || japaneseSampleNames[url] || enName || zhName, url }
   }
-  if (state.locale === 'en-US') {
+  if (state.locale === 'en-US' || state.locale === 'de-DE') {
     return { name: enName || zhName, url: enUrl || zhUrl }
   }
   return { name: zhName, url: zhUrl }
@@ -655,7 +684,7 @@ function viewerOptions() {
     locale: state.locale,
     watermark: state.watermark
       ? {
-          text: state.locale === 'zh-CN' ? '内部资料' : state.locale === 'ja-JP' ? '社内資料' : 'Internal',
+          text: state.locale === 'zh-CN' ? '内部资料' : state.locale === 'ja-JP' ? '社内資料' : state.locale === 'de-DE' ? 'Intern' : 'Internal',
           opacity: 0.16,
           rotate: -24,
           color: '#1f7a58'
@@ -749,7 +778,7 @@ const controller = mountViewer(document.getElementById('viewer'), {
     theme: 'light',
     locale: '${state.locale}',
     watermark: {
-      text: '${state.locale === 'zh-CN' ? '内部资料' : state.locale === 'ja-JP' ? '社内資料' : 'Internal'}',
+      text: '${state.locale === 'zh-CN' ? '内部资料' : state.locale === 'ja-JP' ? '社内資料' : state.locale === 'de-DE' ? 'Intern' : 'Internal'}',
       opacity: 0.16,
       rotate: -24,
       color: '#1f7a58'
@@ -768,6 +797,8 @@ function updateLabels() {
     ? 'File Viewer Web 原生 Demo'
     : state.locale === 'ja-JP'
       ? 'File Viewer Web ネイティブ Demo'
+      : state.locale === 'de-DE'
+        ? 'File Viewer Web – native Demo'
       : 'File Viewer Web Demo'
   els.subtitle.textContent = text('subtitle')
   els.modeUrl.textContent = text('urlMode')
@@ -792,6 +823,7 @@ function updateLabels() {
   els.localeZh.classList.toggle('active', state.locale === 'zh-CN')
   els.localeEn.classList.toggle('active', state.locale === 'en-US')
   els.localeJa.classList.toggle('active', state.locale === 'ja-JP')
+  els.localeDe.classList.toggle('active', state.locale === 'de-DE')
 }
 
 function updateSummary() {
@@ -983,6 +1015,7 @@ function wireEvents() {
   els.localeZh.addEventListener('click', () => setLocale('zh-CN'))
   els.localeEn.addEventListener('click', () => setLocale('en-US'))
   els.localeJa.addEventListener('click', () => setLocale('ja-JP'))
+  els.localeDe.addEventListener('click', () => setLocale('de-DE'))
   els.snippetToggle.addEventListener('click', () => {
     state.snippetOpen = !state.snippetOpen
     renderAll()

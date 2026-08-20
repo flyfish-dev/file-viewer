@@ -294,7 +294,7 @@ export const parseSpreadsheetWorkbook = async (
     const signature = data.byteLength >= 2 ? new DataView(data).getUint16(0, false) : 0;
     if (signature === 0x504b) {
       const [charts, cellImages] = await Promise.all([
-        parseSpreadsheetCharts(data).catch((error) => {
+        parseSpreadsheetCharts(data, context.workbook).catch((error) => {
           console.warn('[file-viewer] Spreadsheet chart parsing failed; continuing with cell content.', error);
           return {};
         }),

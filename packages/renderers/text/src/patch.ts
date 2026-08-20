@@ -1,6 +1,6 @@
 import {
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
-  readFileViewerText as readText,
+  decodeFileViewerTextBuffer,
   registerFileViewerZoomProvider,
   unregisterFileViewerZoomProvider,
   type FileRenderContext,
@@ -87,10 +87,10 @@ export default async function renderPatch(
   buffer: ArrayBuffer,
   target: HTMLDivElement,
   type = 'patch',
-  _context?: FileRenderContext
+  context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document
-  const text = await readText(buffer)
+  const text = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text
   let zoom = 1
   const zoomEmitter = createZoomChangeEmitter()
 
