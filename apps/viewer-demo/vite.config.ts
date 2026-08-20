@@ -26,6 +26,7 @@ const demoWorkspaceSourceAliases = [
   ['@file-viewer/renderer-ofd', '../../packages/renderers/ofd/src/index.ts'],
   ['@file-viewer/renderer-pdf', '../../packages/renderers/pdf/src/index.ts'],
   ['@file-viewer/renderer-presentation', '../../packages/renderers/presentation/src/index.ts'],
+  ['@file-viewer/pptx', '../../packages/renderers/pptx/src/index.ts'],
   ['@file-viewer/renderer-spreadsheet', '../../packages/renderers/spreadsheet/src/index.ts'],
   ['@file-viewer/renderer-text', '../../packages/renderers/text/src/index.ts'],
   ['@file-viewer/renderer-typst', '../../packages/renderers/typst/src/index.ts'],
@@ -114,7 +115,7 @@ export default defineConfig(ctx => {
   const config: UserConfigExport = {
     plugins: [
       viewerQueryFallbackPlugin(),
-      ...(ctx.command === 'build' ? [pptBundledRuntimeAssetUrlPlugin()] : []),
+      pptBundledRuntimeAssetUrlPlugin(),
       vue(),
       vueJsx(),
       createOfflineAssetSanitizerPlugin(
@@ -128,6 +129,13 @@ export default defineConfig(ctx => {
     },
     resolve: {
       alias
+    },
+    optimizeDeps: {
+      // Vite rewrites the package's dynamic default font URL into an overly
+      // broad import.meta.glob while prebundling. Keep the small JavaScript
+      // entry in the normal transform pipeline so the plugin above can point
+      // all three runtime assets at the single public/vendor/ppt tree.
+      exclude: ['@file-viewer/ppt']
     }
   }
   config.build = {
