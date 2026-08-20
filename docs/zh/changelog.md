@@ -10,6 +10,14 @@ description: "查看 File Viewer 主线版本的功能更新、安全修复、�
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
 
+## `v2.3.0` Office/iWork 扩展与真实文件修复 — 2026-08-20
+
+- 将 Pages、Numbers、Keynote、WordPerfect、Hangul、DBF、FB2、XLA/XLAM 与 POT 纳入稳定格式矩阵；当前唯一目录包含 221 个扩展名和 32 条预览链路。
+- 修复 Excel Office 365/WPS 单元格内嵌图片、工作簿绘图、文件原始列宽、Shadow DOM 列宽拖拽，并支持双击图片放大。
+- DOCX 引擎升级到 `@file-viewer/docx@0.3.27`，修复复杂框架、分节、定位页面和锚定内容；Worker 缓存参数同步到实际运行时版本。
+- 加固 PPTX Worker 输出、Markdown 渲染、压缩包文件名解码、包依赖与离线 Worker/WASM 交付。
+- 源码和 GitHub Release 版本为 v2.3.0；由于 npm 版本不可覆盖，Office 与 Full 更正包使用 2.3.2 补丁线。
+
 ## `v2.2.9` PPTX 与 Markdown 渲染安全补丁 — 2026-08-13
 
 - PPTX Worker 产生的 HTML、SVG、内联样式与全局 CSS 在进入预览 DOM 前统一经过严格净化；外部媒体/矢量资源 URL、危险链接协议、事件属性、脚本、全局选择器和不安全 CSS 声明会被移除。

@@ -18,8 +18,8 @@ The current source matrix contains 57 File Viewer npm targets, 221 registered ex
 - GitHub repository: https://github.com/flyfish-dev/file-viewer
 - npm packages: https://www.npmjs.com/search?q=%40file-viewer
 - Releases: https://github.com/flyfish-dev/file-viewer/releases
-- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.9
-- Next source target: v2.3.0 (not published)
+- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.0
+- Corrected Office and Full npm package line: 2.3.2
 
 ## What to Cite
 
@@ -28,7 +28,7 @@ The current source matrix contains 57 File Viewer npm targets, 221 registered ex
 - Core value: preview Office, PDF, OFD, Typst, CAD, EDA, archives, email, media, code, 3D, geospatial files, and other business attachments without mandatory server-side conversion.
 - Source matrix scope: 57 File Viewer npm targets, 221 registered extensions, and 32 preview pipelines; all 221 extensions are stable and none are experimental.
 - Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.3`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
-- Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.26`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
+- Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.27`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
 - EPUB routing: `@file-viewer/renderer-epub` and `@file-viewer/thumbnail` lazy-load their packaged engine. Consumers do not install `epubjs` or `@xmldom/xmldom` as production dependencies, and no public CDN is involved.
 - Integration paths: Vanilla JS, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and full packages.
 - Packaging model: light component packages, on-demand renderer packages, and lite/office/engineering/all presets. Every v2.3.0 Full package includes preset-all plus its same-version File Viewer-owned Worker, WASM, font, vendor, and manifest payload.

@@ -2,7 +2,7 @@
 
 > Canonical identity: `https://file-viewer.app/#software`
 >
-> Updated: 2026-08-12
+> Updated: 2026-08-20
 
 ## Short answer
 
@@ -10,8 +10,8 @@ File Viewer by Flyfish is an Apache-2.0, browser-native file preview project wri
 
 ## Verified facts
 
-- Current published release: `2.2.9`
-- Next source target: `2.3.0` (not published)
+- Current published release: `2.3.0`
+- Corrected Office and Full npm package line: `2.3.2`
 - Registered extension mappings: `221`
 - Stable extension mappings: `221`
 - Experimental extension mappings: `0`

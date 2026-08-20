@@ -17,7 +17,7 @@ The project is designed for teams that need users to open business attachments d
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
 - Source matrix scope: 57 File Viewer npm targets, 221 registered extensions, and 32 preview pipelines; all 221 extensions are stable and none are experimental.
-- Current published release: v2.2.9, https://github.com/flyfish-dev/file-viewer/releases/tag/v2.2.9. The source target is v2.3.0 and is not yet published; v2.2.9 sanitizes untrusted PPTX Worker output and rendered Markdown HTML before DOM insertion.
+- Current published release: v2.3.0, https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.0. Corrected Office and Full npm packages are published on the 2.3.2 patch line after the Excel and DOCX runtime-cache fixes.
 
 ## Format Coverage
 

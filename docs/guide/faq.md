@@ -30,11 +30,11 @@ Do not install another `preset-all` or asset copier version beside a full packag
 
 If a Worker or WASM still fails, inspect its URL: the response must be the real asset, not an SPA HTML fallback with status 200.
 
-## How can I verify the DOCX 0.3.26 fixes are active?
+## How can I verify the DOCX 0.3.27 fixes are active?
 
-The current Word renderer uses `@file-viewer/docx@0.3.26` in both the main thread and the offline Worker. This version fixes overlapping Japanese text and VML text boxes (#155), Apache POI `w:hMerge` table cells (#160), and displaced floating shapes in multi-section documents (#161).
+The current Word renderer uses `@file-viewer/docx@0.3.27` in both the main thread and the offline Worker. It includes the Japanese text, VML text box, Apache POI `w:hMerge`, and multi-section floating-shape fixes from 0.3.26, plus the complex frame, section, and positioned-page fixes verified for #202.
 
-After upgrading, redeploy the matching viewer assets and confirm the browser requests `vendor/docx/docx.worker.js?v=0.3.26` (possibly below your `file-viewer/` base) as JavaScript. Do not reuse a Worker from an older package version. If the old layout remains, purge the CDN or service-worker cache and reload the document.
+After upgrading, redeploy the matching viewer assets and confirm the browser requests `vendor/docx/docx.worker.js?file-viewer-docx=0.3.27` (possibly below your `file-viewer/` base) as JavaScript. Do not reuse a Worker from an older package version. If the old layout remains, purge the CDN or service-worker cache and reload the document.
 
 ## Why does a full package still say the libarchive Worker did not load?
 
