@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-21T07:31:03.794Z",
+  "generatedAt": "2026-08-21T07:40:01.719Z",
   "version": "2.3.0",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -8,23 +8,23 @@
     "repository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "policy": "private-complete-original-workspace",
-    "authoritativeCommit": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
+    "authoritativeCommit": "8a4b16ab6b93323cb014a158f4f808369a4ed962",
     "localBranch": "main",
-    "localCommit": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
+    "localCommit": "8a4b16ab6b93323cb014a158f4f808369a4ed962",
     "inSync": true,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
     "branch": "main",
-    "commit": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
-    "shortCommit": "7bbd1cc4",
+    "commit": "8a4b16ab6b93323cb014a158f4f808369a4ed962",
+    "shortCommit": "8a4b16ab",
     "dirty": false
   },
   "sourceRemote": {
     "url": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "ok": true,
-    "hash": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
+    "hash": "8a4b16ab6b93323cb014a158f4f808369a4ed962",
     "error": ""
   },
   "openSourceMain": {
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "2e3a0f201dbe4a4633099a6c3f4f7e778723507d",
+      "hash": "9fb173ed7163d24336d7f8847ae95b1efc5d7379",
       "error": ""
     },
     "gitee": {
@@ -45,7 +45,7 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "b8a6e528e11bf189968bcd92f90ab498714226b2",
+    "referenceTree": "3576fa8c9685507e962b332bc49500576079048b",
     "giteeTree": "f57c2f85e52a5d545894dcc4c6805b7ffdcb3561",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
@@ -68,7 +68,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-core",
         "branch": "main",
         "ok": true,
-        "hash": "bc225f84c09604764f7067c81ea06dc4a036ff60",
+        "hash": "5c8dcfec47bd801c36147791d8874f5b10a0cdac",
         "error": ""
       },
       "gitee": {
@@ -86,7 +86,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-web",
         "branch": "main",
         "ok": true,
-        "hash": "1d96baa99c08fcb4404733c3a06279bb0cdcce09",
+        "hash": "ef922fad6184441b8a320098800d0a4cdd6aafe7",
         "error": ""
       },
       "gitee": {
@@ -104,7 +104,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-web-full",
         "branch": "main",
         "ok": true,
-        "hash": "50d32a74091934b9f0056fe86729d8de36b6fe2c",
+        "hash": "b132742b6143f10b70078f5b78a2bcc069e70c41",
         "error": ""
       },
       "gitee": {
@@ -122,7 +122,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue3",
         "branch": "main",
         "ok": true,
-        "hash": "4edf9d75dd6b587118429fd1f8190120ff27ce45",
+        "hash": "d9bc94c56088693cff9317cde600056a9c1d7ece",
         "error": ""
       },
       "gitee": {
@@ -140,7 +140,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue3-full",
         "branch": "main",
         "ok": true,
-        "hash": "f490c38f76b087b0f00d9550c22900564bbfa219",
+        "hash": "00169973534497f46f0a7c9ffcd5104704b9607d",
         "error": ""
       },
       "gitee": {
@@ -158,7 +158,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.7",
         "branch": "main",
         "ok": true,
-        "hash": "90c947cb5499be88a2be1ecd3d2b41a08212c48c",
+        "hash": "8fdcfe5a6ddb72b175322352f0f04373672cc248",
         "error": ""
       },
       "gitee": {
@@ -176,7 +176,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.7-full",
         "branch": "main",
         "ok": true,
-        "hash": "60a864fcd35b9d6def677e345945447342abf720",
+        "hash": "e5bdd517b5d4de8cc25396b4214dd54477ba7f0f",
         "error": ""
       },
       "gitee": {
@@ -194,7 +194,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.6",
         "branch": "main",
         "ok": true,
-        "hash": "a3d6ee3408dcc80757eb520664d9f223f8ad83c0",
+        "hash": "7d275de1f33ef61cc430da097e7c78abb4a24e80",
         "error": ""
       },
       "gitee": {
@@ -212,7 +212,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.6-full",
         "branch": "main",
         "ok": true,
-        "hash": "2f3e8699cd11eaa9767c88069288b56407c842d1",
+        "hash": "55f15989b152efecb74319f404a7166f86a03bcd",
         "error": ""
       },
       "gitee": {
@@ -230,7 +230,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react",
         "branch": "main",
         "ok": true,
-        "hash": "88c66ef5a50c2335b609de2525b63fabdc5dc762",
+        "hash": "2375f455ba8e369308660113b0cdbc67bcb1192c",
         "error": ""
       },
       "gitee": {
@@ -248,7 +248,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-full",
         "branch": "main",
         "ok": true,
-        "hash": "1999d2db813bc046925be7562241ab0e454eb541",
+        "hash": "84c919ad7268ffc456da2d05bbf11ae0d13d38c4",
         "error": ""
       },
       "gitee": {
@@ -266,7 +266,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-legacy",
         "branch": "main",
         "ok": true,
-        "hash": "ce956d34652ca7a08f15c21f484339f8ae64f225",
+        "hash": "c6c7f4d34eb7fc763b662c561978832e2efd45f5",
         "error": ""
       },
       "gitee": {
@@ -284,7 +284,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-legacy-full",
         "branch": "main",
         "ok": true,
-        "hash": "bcce618ae467a89e369183ce6aba72dbf1b8d392",
+        "hash": "b1a0340cf5556b67384b8912e9c3e748d06d3ddd",
         "error": ""
       },
       "gitee": {
@@ -302,7 +302,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-jquery",
         "branch": "main",
         "ok": true,
-        "hash": "a1e67db099cededaacf0a88ed8723b33e0dd4837",
+        "hash": "e675d0aeacb9550f60031ebe84ebd4e4149d5227",
         "error": ""
       },
       "gitee": {
@@ -320,7 +320,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-jquery-full",
         "branch": "main",
         "ok": true,
-        "hash": "29217aaceef941dadfafeb3246a484eeaed20b4d",
+        "hash": "a9d89f1b9136f802a8f140bfe32365e217c87f72",
         "error": ""
       },
       "gitee": {
@@ -338,7 +338,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-svelte",
         "branch": "main",
         "ok": true,
-        "hash": "ba7e10c4b70c826bbbca96cde9223ce45db0064d",
+        "hash": "b66a70af368927a5a04ba837ebdb66416495ecfc",
         "error": ""
       },
       "gitee": {
@@ -356,7 +356,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-svelte-full",
         "branch": "main",
         "ok": true,
-        "hash": "5e7c9b0a54f3e6779a455bcfb5fe7875eeb2841e",
+        "hash": "ea71101437824eef106d3a5af5c96f13467b1061",
         "error": ""
       },
       "gitee": {
