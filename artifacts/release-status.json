@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-21T07:29:26.622Z",
+  "generatedAt": "2026-08-21T07:31:03.794Z",
   "version": "2.3.0",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -8,23 +8,23 @@
     "repository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "policy": "private-complete-original-workspace",
-    "authoritativeCommit": "230101fa1269b77bb537290139a81f14067bb606",
+    "authoritativeCommit": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
     "localBranch": "main",
-    "localCommit": "230101fa1269b77bb537290139a81f14067bb606",
+    "localCommit": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
     "inSync": true,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
     "branch": "main",
-    "commit": "230101fa1269b77bb537290139a81f14067bb606",
-    "shortCommit": "230101fa",
+    "commit": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
+    "shortCommit": "7bbd1cc4",
     "dirty": false
   },
   "sourceRemote": {
     "url": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "ok": true,
-    "hash": "230101fa1269b77bb537290139a81f14067bb606",
+    "hash": "7bbd1cc4906b59bb5166fe251c5d7764363d5ee5",
     "error": ""
   },
   "openSourceMain": {
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "12e747c5e22a7d0bfc3d42afefd7092c65c5a4fa",
+      "hash": "2e3a0f201dbe4a4633099a6c3f4f7e778723507d",
       "error": ""
     },
     "gitee": {
@@ -45,7 +45,7 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "d021fe06a46cccce361ca9bdeef5bfbc7c4ba4eb",
+    "referenceTree": "b8a6e528e11bf189968bcd92f90ab498714226b2",
     "giteeTree": "f57c2f85e52a5d545894dcc4c6805b7ffdcb3561",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
@@ -666,9 +666,9 @@
     {
       "packageName": "@file-viewer/web-full",
       "expectedVersion": "2.3.3",
-      "publishedVersion": "2.3.2",
-      "ok": false,
-      "error": "expected 2.3.3"
+      "publishedVersion": "2.3.3",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue3",
@@ -769,32 +769,17 @@
       "error": ""
     }
   ],
-  "gaps": [
-    "@file-viewer/web-full npm 2.3.2 !== 2.3.3"
-  ],
+  "gaps": [],
   "gapSummary": {
-    "total": 1,
-    "externalBlockers": 1,
+    "total": 0,
+    "externalBlockers": 0,
     "localActionable": 0,
-    "byChannel": {
-      "npm": 1
-    },
-    "externalBlockerChannels": [
-      "npm"
-    ],
+    "byChannel": {},
+    "externalBlockerChannels": [],
     "localActionableChannels": []
   },
-  "gapDetails": [
-    {
-      "id": "npm-@file-viewer-web-full-npm-2.3.2-2.3.3",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/web-full npm 2.3.2 !== 2.3.3",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    }
-  ],
+  "gapDetails": [],
   "nextActions": [
-    "Run `npm login` / passkey in an interactive terminal, then `pnpm release:ecosystem:publish`."
+    "Release channels are aligned. Keep this report attached to the GitHub Release for downstream verification."
   ]
 }
