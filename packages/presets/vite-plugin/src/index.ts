@@ -1533,6 +1533,27 @@ async function copyDirectoryIfPresent(
   return true
 }
 
+async function copyVersionedCadRuntimeDirectoryIfPresent(
+  from: string | null,
+  to: string,
+  runtimeVersion: string | null
+): Promise<AssetCopyResult['copied']> {
+  if (!from || !existsSync(from)) {
+    return false
+  }
+  if (!runtimeVersion || !/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(runtimeVersion)) {
+    throw new Error(
+      `[file-viewer:vite-plugin] Cannot publish CAD runtime assets with invalid version ${JSON.stringify(runtimeVersion)}.`
+    )
+  }
+  const copied = await copyDirectoryIfPresent(from, to)
+  if (!copied) {
+    return false
+  }
+  const versionedTarget = join(to, runtimeVersion)
+  return copyDirectoryIfPresent(from, versionedTarget)
+}
+
 async function copyPdfCjkFontAssets(
   from: string | null,
   to: string
@@ -1726,12 +1747,27 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
       : undefined
   )
 
-  const cadRoot = resolvePackageRoot('@flyfish-dev/cad-viewer', ['@file-viewer/renderer-cad'])
+  const cadDependencyAnchors = ['@file-viewer/renderer-cad'] as const
+  const cadRoot = resolvePackageRoot('@flyfish-dev/cad-viewer', cadDependencyAnchors)
+  const cadRuntimeVersion = assertOwnedPackageVersion(
+    '@flyfish-dev/cad-viewer',
+    cadRoot,
+    '@file-viewer/renderer-cad',
+    cadDependencyAnchors
+  )
   await push('cad', 'cad-wasm-directory', join(targetRoot, 'wasm/cad'), () =>
-    copyDirectoryIfPresent(
+    copyVersionedCadRuntimeDirectoryIfPresent(
       cadRoot ? join(cadRoot, 'dist/wasm') : null,
-      join(targetRoot, 'wasm/cad')
-    )
+      join(targetRoot, 'wasm/cad'),
+      cadRuntimeVersion
+    ),
+    undefined,
+    cadRoot
+      ? {
+          sourcePackage: '@flyfish-dev/cad-viewer',
+          sourceVersion: cadRuntimeVersion || undefined
+        }
+      : undefined
   )
 
   const modelDependencyAnchors = [

@@ -999,15 +999,15 @@
       "id": "preset-vite-plugin",
       "kind": "preset",
       "packageName": "@file-viewer/vite-plugin",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "packageDir": "packages/presets/vite-plugin",
-      "tarball": "file-viewer-vite-plugin-2.3.0.tgz",
+      "tarball": "file-viewer-vite-plugin-2.3.1.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": null,
+      "releaseVersion": "2.3.1",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
