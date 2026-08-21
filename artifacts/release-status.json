@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-21T08:03:07.560Z",
+  "generatedAt": "2026-08-21T08:12:41.117Z",
   "version": "2.3.0",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "26370c2fd1394dd0e384c473b125d34cdd2d3512",
+      "hash": "f96e43a642c5624ff5bfd3cd6b532abcc1021825",
       "error": ""
     },
     "gitee": {
@@ -45,7 +45,7 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "e0c39f8fc056de3a3ff5249cf0789930677fc77b",
+    "referenceTree": "7042bd955284d158eeb76a0bc59a6652570ce6f2",
     "giteeTree": "f57c2f85e52a5d545894dcc4c6805b7ffdcb3561",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
