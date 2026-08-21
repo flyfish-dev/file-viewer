@@ -263,12 +263,78 @@ try {
     throw new Error(`Japanese demo UI failed: ${JSON.stringify(japaneseUi)}`)
   }
 
+  await page.setViewportSize({ width: 1440, height: 800 })
+  await page.goto(`${baseUrl}/compare.html?lang=en&smoke=public-ci-compare-locale-menu`, {
+    waitUntil: 'domcontentloaded',
+    timeout
+  })
+  await page.waitForSelector('.compare-page', { timeout })
+  await page.locator('.compare-locale-trigger').click()
+  await page.locator('.compare-locale-menu').waitFor({ state: 'visible', timeout })
+
+  const compareLocaleMenu = await page.locator('.compare-locale-menu').evaluate(element => {
+    const rect = element.getBoundingClientRect()
+    const triggerIcon = document.querySelector('.compare-locale-trigger svg')
+    return {
+      optionCount: element.querySelectorAll('.compare-locale-option').length,
+      insideViewport: rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1,
+      usesGlobeIcon: triggerIcon?.classList.contains('lucide-globe') === true,
+      usesEarthIcon: triggerIcon?.classList.contains('lucide-earth') === true
+    }
+  })
+  if (
+    compareLocaleMenu.optionCount !== 4 ||
+    !compareLocaleMenu.insideViewport ||
+    !compareLocaleMenu.usesGlobeIcon ||
+    compareLocaleMenu.usesEarthIcon
+  ) {
+    throw new Error(`Compare locale menu contract failed: ${JSON.stringify(compareLocaleMenu)}`)
+  }
+
+  await page.locator('.compare-locale-option[data-locale="ja-JP"]').click()
+  await page.waitForFunction(() => document.documentElement.lang === 'ja-JP')
+  await page.locator('.compare-locale-menu').waitFor({ state: 'detached', timeout })
+  const compareTriggerLabel = await page.locator('.compare-locale-trigger').getAttribute('aria-label')
+  if (compareTriggerLabel !== '言語: 日本語') {
+    throw new Error(`Compare locale trigger label is not localized: ${compareTriggerLabel}`)
+  }
+
+  await page.locator('.compare-locale-trigger').focus()
+  await page.keyboard.press('ArrowDown')
+  await page.locator('.compare-locale-menu').waitFor({ state: 'visible', timeout })
+  await page.keyboard.press('Escape')
+  await page.locator('.compare-locale-menu').waitFor({ state: 'detached', timeout })
+  if (!(await page.locator('.compare-locale-trigger').evaluate(element => element === document.activeElement))) {
+    throw new Error('Compare locale menu did not restore trigger focus after Escape.')
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.locator('.compare-locale-trigger').click()
+  await page.locator('.compare-locale-menu').waitFor({ state: 'visible', timeout })
+  const compareMobileLocaleMenu = await page.locator('.compare-locale-menu').evaluate(element => {
+    const rect = element.getBoundingClientRect()
+    return {
+      optionCount: element.querySelectorAll('.compare-locale-option').length,
+      insideViewport: rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1,
+      documentWidth: document.documentElement.scrollWidth,
+      viewportWidth: innerWidth
+    }
+  })
+  if (
+    compareMobileLocaleMenu.optionCount !== 4 ||
+    !compareMobileLocaleMenu.insideViewport ||
+    compareMobileLocaleMenu.documentWidth > compareMobileLocaleMenu.viewportWidth + 2
+  ) {
+    throw new Error(`Mobile compare locale menu layout failed: ${JSON.stringify(compareMobileLocaleMenu)}`)
+  }
+  await page.keyboard.press('Escape')
+
   const actionableErrors = errors.filter(message => !/favicon|ResizeObserver loop/i.test(message))
   if (actionableErrors.length) {
     throw new Error(`Browser console errors:\n${actionableErrors.join('\n')}`)
   }
 
-  console.log('[public-browser-smoke] Four-language globe menu, English Markdown, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile layout verified.')
+  console.log('[public-browser-smoke] Main and compare four-language globe menus, English Markdown, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile layout verified.')
 } finally {
   await browser?.close()
   await new Promise(resolveClose => server.close(resolveClose))

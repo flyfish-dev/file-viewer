@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
-import { ChevronDown, ChevronUp, Search, X } from '@lucide/vue'
+import { Check, ChevronDown, ChevronUp, Globe, Search, X } from '@lucide/vue'
 import { FileViewer } from '@file-viewer/vue3'
 import { allRenderers } from '@file-viewer/preset-all'
 import { normalizeFileViewerLocale } from '@file-viewer/core'
@@ -238,6 +238,22 @@ const compareCopyMap: Record<DemoLocale, Record<string, string>> = {
 }
 
 const compareCopy = computed(() => compareCopyMap[compareLocale.value])
+const compareLocaleOptions: ReadonlyArray<{
+  value: DemoLocale
+  label: string
+  shortLabel: string
+}> = [
+  { value: 'zh-CN', label: '简体中文', shortLabel: '中' },
+  { value: 'en-US', label: 'English', shortLabel: 'EN' },
+  { value: 'ja-JP', label: '日本語', shortLabel: '日' },
+  { value: 'de-DE', label: 'Deutsch', shortLabel: 'DE' }
+]
+const activeCompareLocaleOption = computed(() => (
+  compareLocaleOptions.find(option => option.value === compareLocale.value) || compareLocaleOptions[0]
+))
+const compareLocaleTriggerTitle = computed(() => (
+  `${compareCopy.value.language}: ${activeCompareLocaleOption.value.label}`
+))
 
 const formatCompareCopy = (key: string, params: Record<string, string | number> = {}) => {
   return Object.entries(params).reduce(
@@ -300,6 +316,10 @@ const comparePdfToolbarHidden = ref(true)
 const compareSearchOpen = ref(false)
 const compareSearchQuery = ref('')
 const compareSearchInputRef = ref<HTMLInputElement | null>(null)
+const compareLocaleMenuOpen = ref(false)
+const compareLocaleSwitcherRef = ref<HTMLElement | null>(null)
+const compareLocaleTriggerRef = ref<HTMLButtonElement | null>(null)
+const compareLocaleMenuRef = ref<HTMLElement | null>(null)
 const compareLineTarget = ref('')
 const activeCompareSide = ref<CompareSide>('left')
 const leftViewerRef = ref<FileViewerPublicApi | null>(null)
@@ -710,6 +730,101 @@ const setCompareLocale = (nextLocale: DemoLocale) => {
   window.localStorage.setItem(DEMO_LOCALE_STORAGE_KEY, nextLocale)
 }
 
+type CompareLocaleMenuFocusTarget = 'active' | 'first' | 'last'
+
+const closeCompareLocaleMenu = (returnFocus = false) => {
+  if (!compareLocaleMenuOpen.value) {
+    return
+  }
+  compareLocaleMenuOpen.value = false
+  if (returnFocus) {
+    void nextTick(() => compareLocaleTriggerRef.value?.focus())
+  }
+}
+
+const focusCompareLocaleMenuOption = (target: CompareLocaleMenuFocusTarget = 'active') => {
+  const buttons = Array.from(
+    compareLocaleMenuRef.value?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') || []
+  )
+  if (!buttons.length) {
+    return
+  }
+  const nextButton = target === 'first'
+    ? buttons[0]
+    : target === 'last'
+      ? buttons[buttons.length - 1]
+      : buttons.find(button => button.dataset.locale === compareLocale.value) || buttons[0]
+  nextButton?.focus()
+}
+
+const openCompareLocaleMenu = async (focusTarget: CompareLocaleMenuFocusTarget = 'active') => {
+  if (compareLocaleMenuOpen.value) {
+    focusCompareLocaleMenuOption(focusTarget)
+    return
+  }
+  compareLocaleMenuOpen.value = true
+  await nextTick()
+  focusCompareLocaleMenuOption(focusTarget)
+}
+
+const toggleCompareLocaleMenu = () => {
+  if (compareLocaleMenuOpen.value) {
+    closeCompareLocaleMenu(true)
+    return
+  }
+  void openCompareLocaleMenu()
+}
+
+const selectCompareLocale = (nextLocale: DemoLocale) => {
+  setCompareLocale(nextLocale)
+  closeCompareLocaleMenu(true)
+}
+
+const handleCompareLocaleMenuKeydown = (event: KeyboardEvent) => {
+  const buttons = Array.from(
+    compareLocaleMenuRef.value?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') || []
+  )
+  if (!buttons.length) {
+    return
+  }
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    closeCompareLocaleMenu(true)
+    return
+  }
+  const currentIndex = buttons.indexOf(document.activeElement as HTMLButtonElement)
+  let nextIndex: number | null = null
+  if (event.key === 'ArrowDown') nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % buttons.length
+  if (event.key === 'ArrowUp') nextIndex = currentIndex < 0 ? buttons.length - 1 : (currentIndex - 1 + buttons.length) % buttons.length
+  if (event.key === 'Home') nextIndex = 0
+  if (event.key === 'End') nextIndex = buttons.length - 1
+  if (nextIndex === null) {
+    return
+  }
+  event.preventDefault()
+  buttons[nextIndex]?.focus()
+}
+
+const handleCompareLocaleSwitcherFocusOut = () => {
+  void nextTick(() => {
+    const activeElement = document.activeElement
+    if (activeElement instanceof Node && !compareLocaleSwitcherRef.value?.contains(activeElement)) {
+      compareLocaleMenuOpen.value = false
+    }
+  })
+}
+
+const handleCompareDocumentPointerDown = (event: PointerEvent) => {
+  if (!compareLocaleMenuOpen.value) {
+    return
+  }
+  const target = event.target
+  if (target instanceof Node && compareLocaleSwitcherRef.value?.contains(target)) {
+    return
+  }
+  closeCompareLocaleMenu()
+}
+
 const syncDocumentLocaleMeta = () => {
   document.documentElement.lang = compareLocale.value
   document.title = compareCopy.value.pageTitle
@@ -730,17 +845,26 @@ const handleDocumentKeydown = (event: KeyboardEvent) => {
     return
   }
 
-  if (event.key === 'Escape' && compareSearchOpen.value) {
-    void closeCompareSearch()
+  if (event.key === 'Escape') {
+    if (compareLocaleMenuOpen.value) {
+      event.preventDefault()
+      closeCompareLocaleMenu(true)
+      return
+    }
+    if (compareSearchOpen.value) {
+      void closeCompareSearch()
+    }
   }
 }
 
 onMounted(() => {
   syncDocumentLocaleMeta()
+  document.addEventListener('pointerdown', handleCompareDocumentPointerDown)
   document.addEventListener('keydown', handleDocumentKeydown)
 })
 
 onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleCompareDocumentPointerDown)
   document.removeEventListener('keydown', handleDocumentKeydown)
 })
 
@@ -778,11 +902,60 @@ watch(compareLocale, (nextLocale, previousLocale) => {
         <p>{{ compareCopy.subtitle }}</p>
       </div>
       <div class="header-actions">
-        <div class="locale-toggle-group" role="group" :aria-label="compareCopy.language">
-          <button class="locale-toggle" :class="{ active: compareLocale === 'zh-CN' }" type="button" @click="setCompareLocale('zh-CN')">中</button>
-          <button class="locale-toggle" :class="{ active: compareLocale === 'en-US' }" type="button" @click="setCompareLocale('en-US')">EN</button>
-          <button class="locale-toggle" :class="{ active: compareLocale === 'ja-JP' }" type="button" @click="setCompareLocale('ja-JP')">日</button>
-          <button class="locale-toggle" :class="{ active: compareLocale === 'de-DE' }" type="button" @click="setCompareLocale('de-DE')">DE</button>
+        <div
+          ref="compareLocaleSwitcherRef"
+          class="compare-locale-switch"
+          :class="{ open: compareLocaleMenuOpen }"
+          @focusout="handleCompareLocaleSwitcherFocusOut"
+        >
+          <button
+            ref="compareLocaleTriggerRef"
+            type="button"
+            class="compare-locale-trigger"
+            :title="compareLocaleTriggerTitle"
+            :aria-label="compareLocaleTriggerTitle"
+            aria-haspopup="menu"
+            aria-controls="compare-locale-menu"
+            :aria-expanded="compareLocaleMenuOpen"
+            @click="toggleCompareLocaleMenu"
+            @keydown.down.prevent="openCompareLocaleMenu('first')"
+            @keydown.up.prevent="openCompareLocaleMenu('last')"
+          >
+            <Globe :size="21" :stroke-width="2.05" aria-hidden="true" />
+          </button>
+          <Transition name="compare-locale-menu">
+            <div
+              v-if="compareLocaleMenuOpen"
+              id="compare-locale-menu"
+              ref="compareLocaleMenuRef"
+              class="compare-locale-menu"
+              role="menu"
+              :aria-label="compareCopy.language"
+              @keydown="handleCompareLocaleMenuKeydown"
+            >
+              <button
+                v-for="option in compareLocaleOptions"
+                :key="option.value"
+                type="button"
+                role="menuitemradio"
+                class="compare-locale-option"
+                :class="{ active: compareLocale === option.value }"
+                :data-locale="option.value"
+                :aria-checked="compareLocale === option.value"
+                @click="selectCompareLocale(option.value)"
+              >
+                <span class="compare-locale-option-short" aria-hidden="true">{{ option.shortLabel }}</span>
+                <span class="compare-locale-option-name">{{ option.label }}</span>
+                <Check
+                  class="compare-locale-option-check"
+                  :class="{ visible: compareLocale === option.value }"
+                  :size="16"
+                  :stroke-width="2.4"
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+          </Transition>
         </div>
         <div class="line-locator" :aria-label="compareCopy.lineLocator">
           <input
@@ -1126,12 +1299,6 @@ watch(compareLocale, (nextLocale, previousLocale) => {
   gap: 10px;
 }
 
-.locale-toggle-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
 .header-actions button,
 .sync-toggle,
 .line-locator {
@@ -1194,9 +1361,150 @@ watch(compareLocale, (nextLocale, previousLocale) => {
   color: #fff;
 }
 
-.locale-toggle.active {
-  background: #0b7480;
+.compare-locale-switch {
+  position: relative;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+}
+
+.header-actions .compare-locale-trigger {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  color: #5f6d67;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.header-actions .compare-locale-trigger:hover,
+.compare-locale-switch.open .compare-locale-trigger {
+  border-color: rgba(31, 152, 99, 0.28);
+  background: rgba(255, 255, 255, 0.98);
+  color: #14794e;
+  box-shadow: 0 14px 32px rgba(34, 64, 54, 0.13);
+  transform: translateY(-1px);
+}
+
+.compare-locale-trigger svg {
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.compare-locale-switch.open .compare-locale-trigger svg {
+  transform: rotate(18deg);
+}
+
+.compare-locale-menu {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 190px;
+  display: grid;
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 22px 54px rgba(34, 64, 54, 0.18);
+  backdrop-filter: blur(20px) saturate(1.08);
+  transform-origin: top left;
+}
+
+.header-actions .compare-locale-option {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  height: auto;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 8px 5px 6px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #44534d;
+  box-shadow: none;
+  text-align: left;
+  transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.header-actions .compare-locale-option:hover,
+.header-actions .compare-locale-option:focus-visible {
+  border-color: transparent;
+  background: rgba(80, 179, 122, 0.1);
+  color: #21814e;
+}
+
+.header-actions .compare-locale-option:active {
+  transform: scale(0.985);
+}
+
+.compare-locale-option-short {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(103, 124, 115, 0.1);
+  color: #64736d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.compare-locale-option-name {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 720;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compare-locale-option-check {
+  opacity: 0;
+  color: #14794e;
+  transform: scale(0.65);
+  transition: opacity 140ms ease, transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.compare-locale-option-check.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.compare-locale-option.active .compare-locale-option-short {
+  background: #1f9966;
   color: #fff;
+  box-shadow: 0 7px 16px rgba(43, 143, 91, 0.2);
+}
+
+.compare-locale-trigger:focus-visible,
+.compare-locale-option:focus-visible {
+  outline: 3px solid rgba(31, 153, 102, 0.25);
+  outline-offset: 2px;
+}
+
+.compare-locale-menu-enter-active,
+.compare-locale-menu-leave-active {
+  transition:
+    opacity 150ms ease,
+    transform 190ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.compare-locale-menu-enter-from,
+.compare-locale-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-7px) scale(0.96);
 }
 
 .sync-toggle input {
@@ -1716,6 +2024,18 @@ watch(compareLocale, (nextLocale, previousLocale) => {
     flex: 1;
   }
 
+  .compare-locale-switch {
+    flex: 0 0 40px;
+  }
+
+  .header-actions .compare-locale-trigger {
+    flex: none;
+  }
+
+  .compare-locale-menu {
+    width: min(190px, calc(100vw - 36px));
+  }
+
   .compare-search-popover {
     left: 18px;
     right: 18px;
@@ -1795,6 +2115,40 @@ watch(compareLocale, (nextLocale, previousLocale) => {
     color: #ecf5f8;
   }
 
+  .header-actions .compare-locale-trigger,
+  .compare-locale-menu {
+    border-color: rgba(210, 233, 224, 0.1);
+    background: rgba(20, 30, 35, 0.94);
+    color: #cedbd5;
+  }
+
+  .header-actions .compare-locale-trigger:hover,
+  .compare-locale-switch.open .compare-locale-trigger {
+    background: rgba(31, 46, 52, 0.98);
+    color: #61e5b4;
+  }
+
+  .header-actions .compare-locale-option {
+    background: transparent;
+    color: #cedbd5;
+  }
+
+  .header-actions .compare-locale-option:hover,
+  .header-actions .compare-locale-option:focus-visible {
+    background: rgba(72, 201, 137, 0.12);
+    color: #61e5b4;
+  }
+
+  .compare-locale-option-short {
+    background: rgba(235, 246, 240, 0.08);
+    color: #afc0b8;
+  }
+
+  .compare-locale-option.active .compare-locale-option-short {
+    background: #1f9966;
+    color: #10241a;
+  }
+
   .line-locator input {
     color: #ecf5f8;
   }
@@ -1864,6 +2218,16 @@ watch(compareLocale, (nextLocale, previousLocale) => {
   .text-diff-line-number {
     background: rgba(255, 255, 255, .025);
     color: #7f929f;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compare-locale-trigger,
+  .compare-locale-trigger svg,
+  .compare-locale-option,
+  .compare-locale-option-check,
+  .compare-locale-menu {
+    transition-duration: 0.01ms;
   }
 }
 </style>
