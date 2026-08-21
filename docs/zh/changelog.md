@@ -14,10 +14,10 @@ description: "查看 File Viewer 主线版本的功能更新、安全修复、�
 
 - 将 Pages、Numbers、Keynote、WordPerfect、Hangul、DBF、FB2、XLA/XLAM 与 POT 纳入稳定格式矩阵；当前唯一目录包含 221 个扩展名和 32 条预览链路。
 - 完整发布 #174、#178、#179、#195、#198、#201—#204 对应修复；#200 因缺少原始 PPTX 继续保留。
-- 修复 Excel Office 365/WPS 单元格内嵌图片、工作簿绘图、文件原始列宽、Shadow DOM 列宽拖拽，并支持双击图片放大。#178 的源码与 Demo 曾在 v2.2.9 最终阶段出现，但 npm 2.2.9 不可变产物早于该修复，因此完整发布 milestone 标记为 v2.3.0。
+- 修复 Excel Office 365/WPS 单元格内嵌图片、工作簿绘图、文件原始列宽、Shadow DOM 列宽拖拽，并支持双击图片放大；用户后续提供的 TIFF drawing 会按需在浏览器内解码，主线程、Worker 与大图预览使用同一路径。
 - DOCX 引擎升级到 `@file-viewer/docx@0.3.27`，修复复杂框架、分节、定位页面和锚定内容；Worker 缓存参数同步到实际运行时版本。
 - 加固 PPTX Worker 输出、Markdown 渲染、压缩包文件名解码、包依赖与离线 Worker/WASM 交付。
-- 源码和 GitHub Release 版本为 v2.3.0；npm 不可覆盖的更正包按实际版本使用 `@file-viewer/renderer-spreadsheet@2.3.1`、`@file-viewer/renderer-word@2.3.1`、`@file-viewer/vite-plugin@2.3.1`，以及 Office/Full/copy-assets 的 2.3.2 补丁线。Vite 插件 2.3.1 修复标准组件/preset 项目只复制扁平 CAD 资产、却请求 `wasm/cad/0.8.0/dwg-worker.js` 的问题。
+- 源码和 GitHub Release 版本为 v2.3.0；npm 不可覆盖的更正包按实际版本使用 `@file-viewer/renderer-spreadsheet@2.3.2`、`@file-viewer/renderer-iwork@2.3.1`、`@file-viewer/renderer-word@2.3.1`、`@file-viewer/vite-plugin@2.3.1`，以及 Office/Full/copy-assets 的 2.3.3 补丁线。TIFF drawing 元数据由 `styled-exceljs@0.21.2` 提供。
 
 ## `v2.2.9` PPTX 与 Markdown 渲染安全补丁 — 2026-08-17
 

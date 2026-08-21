@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-21T03:22:48.651Z",
+  "generatedAt": "2026-08-21T07:29:26.622Z",
   "version": "2.3.0",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -8,23 +8,23 @@
     "repository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "policy": "private-complete-original-workspace",
-    "authoritativeCommit": "e587d09cf6d763f432ee7779cbf3f6c4d95b5e7f",
+    "authoritativeCommit": "230101fa1269b77bb537290139a81f14067bb606",
     "localBranch": "main",
-    "localCommit": "e587d09cf6d763f432ee7779cbf3f6c4d95b5e7f",
+    "localCommit": "230101fa1269b77bb537290139a81f14067bb606",
     "inSync": true,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
     "branch": "main",
-    "commit": "e587d09cf6d763f432ee7779cbf3f6c4d95b5e7f",
-    "shortCommit": "e587d09c",
+    "commit": "230101fa1269b77bb537290139a81f14067bb606",
+    "shortCommit": "230101fa",
     "dirty": false
   },
   "sourceRemote": {
     "url": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "ok": true,
-    "hash": "e587d09cf6d763f432ee7779cbf3f6c4d95b5e7f",
+    "hash": "230101fa1269b77bb537290139a81f14067bb606",
     "error": ""
   },
   "openSourceMain": {
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "1dbe75b3b8223c7b0e6637fe415a834069937d8c",
+      "hash": "12e747c5e22a7d0bfc3d42afefd7092c65c5a4fa",
       "error": ""
     },
     "gitee": {
@@ -45,7 +45,7 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "0592308cbad9d83ffe925230fd863f0a235c29a4",
+    "referenceTree": "d021fe06a46cccce361ca9bdeef5bfbc7c4ba4eb",
     "giteeTree": "f57c2f85e52a5d545894dcc4c6805b7ffdcb3561",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
@@ -385,8 +385,8 @@
     },
     {
       "packageName": "file-viewer-copy-assets",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -427,8 +427,8 @@
     },
     {
       "packageName": "@file-viewer/renderer-spreadsheet",
-      "expectedVersion": "2.3.1",
-      "publishedVersion": "2.3.1",
+      "expectedVersion": "2.3.2",
+      "publishedVersion": "2.3.2",
       "ok": true,
       "error": ""
     },
@@ -441,8 +441,8 @@
     },
     {
       "packageName": "@file-viewer/renderer-iwork",
-      "expectedVersion": "2.3.0",
-      "publishedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
+      "publishedVersion": "2.3.1",
       "ok": true,
       "error": ""
     },
@@ -581,8 +581,8 @@
     },
     {
       "packageName": "@file-viewer/preset-all",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -595,8 +595,8 @@
     },
     {
       "packageName": "@file-viewer/preset-office",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -665,10 +665,10 @@
     },
     {
       "packageName": "@file-viewer/web-full",
-      "expectedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
       "publishedVersion": "2.3.2",
-      "ok": true,
-      "error": ""
+      "ok": false,
+      "error": "expected 2.3.3"
     },
     {
       "packageName": "@file-viewer/vue3",
@@ -679,8 +679,8 @@
     },
     {
       "packageName": "@file-viewer/vue3-full",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -693,8 +693,8 @@
     },
     {
       "packageName": "@file-viewer/vue2.7-full",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -707,8 +707,8 @@
     },
     {
       "packageName": "@file-viewer/vue2.6-full",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -721,8 +721,8 @@
     },
     {
       "packageName": "@file-viewer/react-full",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -735,8 +735,8 @@
     },
     {
       "packageName": "@file-viewer/react-legacy-full",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -749,8 +749,8 @@
     },
     {
       "packageName": "@file-viewer/jquery-full",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     },
@@ -763,23 +763,38 @@
     },
     {
       "packageName": "@file-viewer/svelte-full",
-      "expectedVersion": "2.3.2",
-      "publishedVersion": "2.3.2",
+      "expectedVersion": "2.3.3",
+      "publishedVersion": "2.3.3",
       "ok": true,
       "error": ""
     }
   ],
-  "gaps": [],
+  "gaps": [
+    "@file-viewer/web-full npm 2.3.2 !== 2.3.3"
+  ],
   "gapSummary": {
-    "total": 0,
-    "externalBlockers": 0,
+    "total": 1,
+    "externalBlockers": 1,
     "localActionable": 0,
-    "byChannel": {},
-    "externalBlockerChannels": [],
+    "byChannel": {
+      "npm": 1
+    },
+    "externalBlockerChannels": [
+      "npm"
+    ],
     "localActionableChannels": []
   },
-  "gapDetails": [],
+  "gapDetails": [
+    {
+      "id": "npm-@file-viewer-web-full-npm-2.3.2-2.3.3",
+      "channel": "npm",
+      "scope": "package-registry",
+      "externalBlocker": true,
+      "message": "@file-viewer/web-full npm 2.3.2 !== 2.3.3",
+      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
+    }
+  ],
   "nextActions": [
-    "Release channels are aligned. Keep this report attached to the GitHub Release for downstream verification."
+    "Run `npm login` / passkey in an interactive terminal, then `pnpm release:ecosystem:publish`."
   ]
 }

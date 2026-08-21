@@ -12,10 +12,10 @@ Released August 20, 2026.
 
 - Added stable Pages, Numbers, Keynote, WordPerfect, Hangul, DBF, FB2, XLA/XLAM, and POT routes to the generated 221-extension, 32-pipeline matrix.
 - Fully released the fixes tracked by #174, #178, #179, #195, #198, and #201-#204. #200 remains open because the original PPTX is still missing.
-- Fixed Excel Office 365 and WPS in-cell images, workbook drawings, saved column widths, Shadow DOM column resizing, and double-click image preview. The #178 source and Demo appeared during the final v2.2.9 phase, but its immutable npm 2.2.9 artifact predates the fix, so its complete release milestone is v2.3.0.
+- Fixed Excel Office 365 and WPS in-cell images, workbook drawings, saved column widths, Shadow DOM column resizing, and double-click image preview. A reporter-provided TIFF drawing is now decoded on demand in the browser across main-thread, Worker, and lightbox paths.
 - Updated the DOCX engine to `@file-viewer/docx@0.3.27` for complex frames, sections, positioned pages, and anchored content; the Worker cache key now matches the runtime.
 - Hardened PPTX Worker output, rendered Markdown, archive filename decoding, package dependencies, and offline Worker/WASM delivery.
-- The source and GitHub release are v2.3.0. Immutable npm corrections use `@file-viewer/renderer-spreadsheet@2.3.1`, `@file-viewer/renderer-word@2.3.1`, `@file-viewer/vite-plugin@2.3.1`, and the 2.3.2 Office/Full/copy-assets line. Vite plugin 2.3.1 fixes standard component/preset projects that copied only flat CAD assets while requesting `wasm/cad/0.8.0/dwg-worker.js`.
+- The source and GitHub release are v2.3.0. Immutable npm corrections use `@file-viewer/renderer-spreadsheet@2.3.2`, `@file-viewer/renderer-iwork@2.3.1`, `@file-viewer/renderer-word@2.3.1`, `@file-viewer/vite-plugin@2.3.1`, and the 2.3.3 Office/Full/copy-assets line. TIFF drawing metadata is supplied by `styled-exceljs@0.21.2`.
 
 ## v2.2.9 — PPTX and Markdown rendering security
 

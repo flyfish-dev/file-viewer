@@ -13,7 +13,7 @@ var c = Object.create, l = Object.defineProperty, u = Object.getOwnPropertyDescr
 	if (typeof require < "u") return require.apply(this, arguments);
 	throw Error("Calling `require` for \"" + e + "\" in an environment that doesn't expose the `require` function. See https://rolldown.rs/in-depth/bundling-cjs#require-external-modules for more details.");
 }), v = {};
-v.version = "0.21.1";
+v.version = "0.21.2";
 var y = 1200, b = 1252, x, S = [
 	874,
 	932,
@@ -18418,6 +18418,8 @@ function sg(e) {
 		case "svg": return "image/svg+xml";
 		case "jpg":
 		case "jpeg": return "image/jpeg";
+		case "tif":
+		case "tiff": return "image/tiff";
 		default: return "application/octet-stream";
 	}
 }
@@ -18426,8 +18428,8 @@ function cg(e, t, n, r, i, a, o) {
 		var s = dn(e["!drawel"].Target, r), c = Xi(s), l = Bl(on(n, s, !0), Zi(on(n, c, !0), s));
 		e["!drawings"] = l, a.drawings && l.images && l.images.length && l.images.forEach(function(e) {
 			if (!(!e || !e.target)) {
-				var t = dn(e.target, s), r = sn(n, t, !0);
-				r && (e.dataURI = "data:" + sg(t) + ";base64," + z(r)), e.path = t;
+				var t = dn(e.target, s), r = sn(n, t, !0), i = sg(t);
+				r && (e.dataURI = "data:" + i + ";base64," + z(r)), e.contentType = i, e.path = t;
 			}
 		}), a.charts && l.charts && l.charts.length && (e["!charts"] = [], l.charts.forEach(function(t) {
 			if (!(!t || !t.target)) {

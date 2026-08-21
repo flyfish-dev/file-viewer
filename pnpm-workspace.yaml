@@ -26,6 +26,10 @@ allowBuilds:
   esbuild: true
   fsevents: true
 
+minimumReleaseAgeExclude:
+  - '@file-viewer/docx@0.3.26 || 0.3.27'
+  - 'styled-exceljs@0.21.2'
+
 overrides:
   'epubjs>@xmldom/xmldom': 0.9.10
   'ansi-regex@>=4.0.0 <4.1.1': 4.1.1
@@ -49,9 +53,6 @@ overrides:
   '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.0
   '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.0
   '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.3.0
-
-patchedDependencies:
-  styled-exceljs@0.21.1: patches/styled-exceljs@0.21.1.patch
 
 auditConfig:
   ignoreGhsas:

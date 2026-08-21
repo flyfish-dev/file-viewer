@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-spreadsheet",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "private": false,
   "type": "module",
   "description": "Standalone spreadsheet renderer plugin for File Viewer powered by styled-exceljs and e-virt-table.",
@@ -67,7 +67,8 @@
     "dist",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json --force && node scripts/build-worker.mjs",
@@ -80,8 +81,9 @@
     "@xmldom/xmldom": "^0.9.10",
     "e-virt-table": "^1.3.26",
     "jszip": "^3.10.1",
-    "styled-exceljs": "0.21.1",
-    "tinycolor2": "^1.6.0"
+    "styled-exceljs": "0.21.2",
+    "tinycolor2": "^1.6.0",
+    "utif": "^3.1.0"
   },
   "devDependencies": {
     "@types/tinycolor2": "^1.4.6",

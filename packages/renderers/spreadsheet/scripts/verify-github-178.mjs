@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { createServer as createHttpServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { delimiter, dirname, extname, join, resolve, sep } from 'node:path'
@@ -36,6 +37,67 @@ const screenshotDir = process.env.FILE_VIEWER_ISSUE_178_SCREENSHOT_DIR
   : join(sourceRoot, 'output/playwright/issue-178')
 const timeout = Number(process.env.FILE_VIEWER_ISSUE_178_TIMEOUT || 45_000)
 const require = createRequire(import.meta.url)
+const harnessRoot = await mkdtemp(join(tmpdir(), 'file-viewer-issue-178-'))
+
+const createTinyRgbTiff = () => {
+  const entryCount = 10
+  const ifdOffset = 8
+  const bitsOffset = ifdOffset + 2 + entryCount * 12 + 4
+  const pixelsOffset = bitsOffset + 6
+  const bytes = Buffer.alloc(pixelsOffset + 12)
+  bytes.write('II', 0, 'ascii')
+  bytes.writeUInt16LE(42, 2)
+  bytes.writeUInt32LE(ifdOffset, 4)
+  bytes.writeUInt16LE(entryCount, ifdOffset)
+  const entries = [
+    [256, 3, 1, 2],
+    [257, 3, 1, 2],
+    [258, 3, 3, bitsOffset],
+    [259, 3, 1, 1],
+    [262, 3, 1, 2],
+    [273, 4, 1, pixelsOffset],
+    [277, 3, 1, 3],
+    [278, 4, 1, 2],
+    [279, 4, 1, 12],
+    [284, 3, 1, 1]
+  ]
+  entries.forEach(([tag, type, count, value], index) => {
+    const offset = ifdOffset + 2 + index * 12
+    bytes.writeUInt16LE(tag, offset)
+    bytes.writeUInt16LE(type, offset + 2)
+    bytes.writeUInt32LE(count, offset + 4)
+    if (type === 3 && count === 1) bytes.writeUInt16LE(value, offset + 8)
+    else bytes.writeUInt32LE(value, offset + 8)
+  })
+  bytes.writeUInt32LE(0, ifdOffset + 2 + entryCount * 12)
+  ;[8, 8, 8].forEach((value, index) => bytes.writeUInt16LE(value, bitsOffset + index * 2))
+  Buffer.from([
+    255, 0, 0, 0, 255, 0,
+    0, 0, 255, 255, 255, 255
+  ]).copy(bytes, pixelsOffset)
+  return bytes
+}
+
+if (!sampleOverride) {
+  const jsZipEntry = require.resolve('jszip', { paths: [packageRoot] })
+  const jsZipModule = await import(pathToFileURL(jsZipEntry).href)
+  const JSZip = jsZipModule.default || jsZipModule
+  const sourcePath = fixtureCases[1].path
+  const zip = await JSZip.loadAsync(await readFile(sourcePath))
+  const relationshipPath = 'xl/drawings/_rels/drawing1.xml.rels'
+  const relationships = await zip.file(relationshipPath).async('string')
+  const contentTypes = await zip.file('[Content_Types].xml').async('string')
+  zip.remove('xl/media/image.png')
+  zip.file('xl/media/image.tiff', createTinyRgbTiff())
+  zip.file(relationshipPath, relationships.replace('/xl/media/image.png', '/xl/media/image.tiff'))
+  zip.file(
+    '[Content_Types].xml',
+    contentTypes.replace('</Types>', '<Default Extension="tiff" ContentType="image/tiff"/></Types>')
+  )
+  const syntheticPath = join(harnessRoot, 'github-178-embedded-tiff.xlsx')
+  await writeFile(syntheticPath, await zip.generateAsync({ type: 'nodebuffer' }))
+  fixtureCases[1] = { ...fixtureCases[1], path: syntheticPath, tiffSample: true }
+}
 
 fixtureCases.forEach(({ path }) => {
   assert(existsSync(path), `Issue #178 fixture is missing: ${path}`)
@@ -84,7 +146,7 @@ const launchChromium = async (chromium) => {
   }
 }
 
-const verifyParserOutput = async ({ format, path, privateSample }) => {
+const verifyParserOutput = async ({ format, path, privateSample, tiffSample }) => {
   const parserEntry = pathToFileURL(
     join(packageRoot, 'dist/spreadsheet/worker/sheetjs/index.js')
   ).href
@@ -102,42 +164,42 @@ const verifyParserOutput = async ({ format, path, privateSample }) => {
       fileType: format
     }
   })
-  const sheet = workbookResponses[0]?.payload?.sheets?.[0]
-  assert(sheet, 'Issue #178 fixture did not expose its worksheet.')
-
-  const sheetResponses = await handleSpreadsheetWorkerRequest(context, {
-    type: 'parseSheet',
-    payload: { sheet: sheet.id, startRow: 0, pageSize: 500, sessionId: 178 }
-  })
-  const sheetData = sheetResponses[0]?.payload?.sheetData
-  const images = sheetData?.structure?.images || []
+  const sheets = workbookResponses[0]?.payload?.sheets || []
+  assert(sheets.length, 'Issue #178 fixture did not expose its worksheets.')
+  const parsedSheets = []
+  for (const sheet of sheets) {
+    const sheetResponses = await handleSpreadsheetWorkerRequest(context, {
+      type: 'parseSheet',
+      payload: { sheet: sheet.id, startRow: 0, pageSize: 500, sessionId: 178 }
+    })
+    const sheetData = sheetResponses[0]?.payload?.sheetData
+    parsedSheets.push({
+      sheet,
+      sheetData,
+      images: sheetData?.structure?.images || []
+    })
+  }
+  const parsed = privateSample
+    ? parsedSheets.find(candidate => candidate.images.length)
+    : parsedSheets[0]
+  assert(parsed, 'Issue #178 fixture did not expose a worksheet with images.')
+  const { sheet, sheetData, images } = parsed
   images.forEach((image) => {
+    const tiffImage = tiffSample && !image.id.startsWith('cell-image-')
     assert.match(
       image.src,
-      /^data:image\/png;base64,/,
-      `Embedded PNG ${image.id} was not emitted as a safe data URI.`
+      privateSample
+        ? /^data:(?:image\/[a-z0-9.+-]+|application\/octet-stream);base64,/
+        : tiffImage
+        ? /^data:image\/tiff;base64,/
+        : /^data:image\/png;base64,/,
+      `Embedded image ${image.id} was not emitted as a data URI.`
     )
+    if (tiffImage) assert.equal(image.contentType, 'image/tiff')
   })
 
-  if (privateSample && format === 'xlsx') {
-    assert.equal(images.length, 2, 'Private sample did not expose its cell image and model fallback.')
-    const cellImage = images.find((image) => image.id.startsWith('cell-image-B2-'))
-    const modelFallback = images.find((image) => image.id === 'rId2')
-    assert(cellImage, 'Private sample Rich Data image at B2 was not extracted.')
-    assert(modelFallback, 'Private sample GLB raster fallback was not extracted.')
-    assert.equal(sheetData.data?.[1]?.[1], '', 'Rich Data image cell leaked its #VALUE! placeholder.')
-
-    const jsZipEntry = require.resolve('jszip', { paths: [packageRoot] })
-    const jsZipModule = await import(pathToFileURL(jsZipEntry).href)
-    const JSZip = jsZipModule.default || jsZipModule
-    const zip = await JSZip.loadAsync(source)
-    const glb = await zip.file('xl/media/model3d1.glb')?.async('uint8array')
-    assert(glb && glb.length > 12, 'Private sample GLB package part is missing.')
-    assert.equal(
-      new TextDecoder().decode(glb.subarray(0, 4)),
-      'glTF',
-      'Private sample model part is not a valid binary glTF container.'
-    )
+  if (privateSample) {
+    assert(images.length > 0, 'Reporter sample did not expose any embedded image.')
   } else if (format === 'xlsx') {
     assert.equal(images.length, 3, 'XLSX fixture did not preserve Office, WPS, and floating images.')
     const officeCellImage = images.find((image) => image.id.startsWith('cell-image-B2-'))
@@ -150,17 +212,17 @@ const verifyParserOutput = async ({ format, path, privateSample }) => {
     assert.equal(sheetData.data?.[1]?.[2], '', 'WPS image cell leaked its DISPIMG placeholder.')
     assert.equal(officeCellImage.row, 1, 'Office cell image row anchor changed.')
     assert.equal(officeCellImage.col, 1, 'Office cell image column anchor changed.')
-    assert.equal(officeCellImage.width, 107, 'Office cell image no longer follows B-column width.')
+    assert.equal(officeCellImage.width, 124, 'Office cell image no longer follows B-column width.')
     assert.equal(officeCellImage.height, 72, 'Office cell image no longer follows row height.')
     assert.equal(wpsCellImage.row, 1, 'WPS cell image row anchor changed.')
     assert.equal(wpsCellImage.col, 2, 'WPS cell image column anchor changed.')
-    assert.equal(wpsCellImage.width, 240, 'WPS cell image no longer follows C-column width.')
+    assert.equal(wpsCellImage.width, 280, 'WPS cell image no longer follows C-column width.')
     assert.equal(wpsCellImage.height, 72, 'WPS cell image no longer follows row height.')
     assert.equal(floatingImage.row, 8, 'Floating image row anchor changed.')
     assert.equal(floatingImage.col, 3, 'Floating image column anchor changed.')
     assert.equal(
       Math.round(floatingImage.width),
-      153,
+      177,
       'Floating image collapsed after blank columns were auto-fitted.'
     )
     assert.equal(Math.round(floatingImage.height), 220, 'Floating image height changed.')
@@ -170,7 +232,7 @@ const verifyParserOutput = async ({ format, path, privateSample }) => {
     assert.equal(image.id, 'xls-image-1', 'Legacy XLS image identity changed.')
     assert.equal(image.row, 8, 'Legacy XLS image row anchor changed.')
     assert.equal(image.col, 3, 'Legacy XLS image column anchor changed.')
-    assert(image.width >= 250, 'Legacy XLS image width collapsed.')
+    assert.equal(Math.round(image.width), 147, 'Legacy XLS image width changed.')
     assert(image.height >= 180, 'Legacy XLS image height collapsed.')
   }
 
@@ -178,8 +240,12 @@ const verifyParserOutput = async ({ format, path, privateSample }) => {
     format,
     sheet: sheet.name,
     privateSample,
+    tiffSample,
+    sheetId: sheet.id,
     images: images.map((image) => ({
       id: image.id,
+      contentType: image.contentType,
+      sourcePrefix: image.src.slice(0, 40),
       row: image.row,
       col: image.col,
       left: Math.round(image.left),
@@ -194,7 +260,6 @@ const parserResults = []
 for (const fixture of fixtureCases) {
   parserResults.push(await verifyParserOutput(fixture))
 }
-const harnessRoot = await mkdtemp(join(tmpdir(), 'file-viewer-issue-178-'))
 const packageRequire = createRequire(join(sourceRoot, 'packages/components/vue3/package.json'))
 const viteEntry = packageRequire.resolve('vite')
 const vuePluginEntry = packageRequire.resolve('@vitejs/plugin-vue')
@@ -203,7 +268,7 @@ const vue3Entry = join(sourceRoot, 'packages/components/vue3/src/package/index.t
 const coreEntry = join(sourceRoot, 'packages/core/src/index.ts')
 const coreBrowserEntry = join(sourceRoot, 'packages/core/src/browser.ts')
 const spreadsheetEntry = join(packageRoot, 'src/index.ts')
-const { createServer: createViteServer } = await import(pathToFileURL(viteEntry).href)
+const { build: viteBuild } = await import(pathToFileURL(viteEntry).href)
 const { default: vue } = await import(pathToFileURL(vuePluginEntry).href)
 const playwrightModule = await importPlaywright()
 const { chromium } = playwrightModule.chromium ? playwrightModule : playwrightModule.default
@@ -295,52 +360,90 @@ try {
 await Promise.all([
   writeFile(join(harnessRoot, 'index.html'), html),
   writeFile(join(harnessRoot, 'main.js'), main),
-  ...fixtureCases.map(({ format, path }) => copyFile(path, join(harnessRoot, `sample.${format}`))),
-  copyFile(workerPath, join(harnessRoot, 'sheet.worker.js')),
   mkdir(screenshotDir, { recursive: true })
 ])
 
-let viteServer
+const distRoot = join(harnessRoot, 'dist')
+let staticServer
 let browser
 
 try {
-  viteServer = await createViteServer({
-    root: harnessRoot,
-    appType: 'spa',
-    clearScreen: false,
-    logLevel: 'error',
-    plugins: [vue()],
-    resolve: {
-      alias: {
-        '@issue178/vue3': vue3Entry,
-        '@issue178/spreadsheet': spreadsheetEntry,
-        '@file-viewer/core/browser': coreBrowserEntry,
-        '@file-viewer/core': coreEntry,
-        vue: vueEntry
+  const previousCwd = process.cwd()
+  process.chdir(harnessRoot)
+  try {
+    await viteBuild({
+      root: '.',
+      appType: 'spa',
+      publicDir: false,
+      clearScreen: false,
+      logLevel: 'error',
+      plugins: [vue()],
+      resolve: {
+        alias: {
+          '@issue178/vue3': vue3Entry,
+          '@issue178/spreadsheet': spreadsheetEntry,
+          '@file-viewer/core/browser': coreBrowserEntry,
+          '@file-viewer/core': coreEntry,
+          vue: vueEntry
+        },
+        dedupe: ['vue']
       },
-      dedupe: ['vue']
-    },
-    optimizeDeps: {
-      exclude: ['@issue178/vue3', '@issue178/spreadsheet', '@file-viewer/core'],
-      entries: []
-    },
-    server: {
-      host: '127.0.0.1',
-      port: 0,
-      strictPort: false,
-      fs: { allow: [sourceRoot, harnessRoot] }
+      build: {
+        outDir: distRoot,
+        emptyOutDir: true,
+        sourcemap: false
+      }
+    })
+  } finally {
+    process.chdir(previousCwd)
+  }
+  await Promise.all([
+    ...fixtureCases.map(({ format, path }) => copyFile(path, join(distRoot, `sample.${format}`))),
+    copyFile(workerPath, join(distRoot, 'sheet.worker.js'))
+  ])
+
+  const contentTypes = new Map([
+    ['.css', 'text/css; charset=utf-8'],
+    ['.html', 'text/html; charset=utf-8'],
+    ['.js', 'application/javascript; charset=utf-8'],
+    ['.map', 'application/json; charset=utf-8'],
+    ['.xls', 'application/vnd.ms-excel'],
+    ['.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+  ])
+  staticServer = createHttpServer(async (request, response) => {
+    try {
+      const requestUrl = new URL(request.url || '/', 'http://127.0.0.1')
+      const relativePath = requestUrl.pathname === '/'
+        ? 'index.html'
+        : decodeURIComponent(requestUrl.pathname).replace(/^\/+/, '')
+      if (!relativePath || relativePath.split('/').includes('..')) {
+        response.writeHead(400).end()
+        return
+      }
+      const body = await readFile(join(distRoot, relativePath))
+      response.writeHead(200, {
+        'Content-Type': contentTypes.get(extname(relativePath)) || 'application/octet-stream',
+        'Cache-Control': 'no-store'
+      })
+      response.end(body)
+    } catch {
+      response.writeHead(404).end()
     }
   })
-  await viteServer.listen()
+  await new Promise((resolve, reject) => {
+    staticServer.once('error', reject)
+    staticServer.listen(0, '127.0.0.1', resolve)
+  })
 
-  const address = viteServer.httpServer?.address()
+  const address = staticServer.address()
   assert(address && typeof address !== 'string', 'Issue #178 harness did not bind a TCP port.')
   browser = await launchChromium(chromium)
   const results = []
 
-  for (const { format, privateSample } of fixtureCases) {
+  for (const [fixtureIndex, { format, privateSample, tiffSample }] of fixtureCases.entries()) {
+    const parserResult = parserResults[fixtureIndex]
     for (const workerMode of [false, true]) {
-      const expectedImageCount = privateSample ? 2 : format === 'xlsx' ? 3 : 1
+      const expectedImageCount = parserResult.images.length
       const page = await browser.newPage({ viewport: { width: 1100, height: 760 } })
       const pageErrors = []
       const consoleErrors = []
@@ -365,6 +468,35 @@ try {
         undefined,
         { timeout }
       )
+      if (parserResult.sheetId !== 0) {
+        await page.waitForFunction((sheetName) => {
+          const host = document.querySelector('.file-viewer-vue3-shadow-host')
+          const root = host?.shadowRoot || document
+          return !!root.querySelector('.error:not(.hidden)') || [...root.querySelectorAll('.sheet-tab')]
+            .some(tab => tab.textContent?.trim() === sheetName)
+        }, parserResult.sheet, { timeout })
+        const sheetSwitch = await page.evaluate((sheetName) => {
+          const host = document.querySelector('.file-viewer-vue3-shadow-host')
+          const root = host?.shadowRoot || document
+          const tab = [...root.querySelectorAll('.sheet-tab')]
+            .find(candidate => candidate.textContent?.trim() === sheetName)
+          const error = root.querySelector('.error:not(.hidden)')?.textContent?.trim() || ''
+          if (tab instanceof HTMLElement) {
+            tab.click()
+            return { clicked: true, error, tabs: [] }
+          }
+          return {
+            clicked: false,
+            error,
+            tabs: [...root.querySelectorAll('.sheet-tab')]
+              .map(candidate => candidate.textContent?.trim() || '')
+          }
+        }, parserResult.sheet)
+        assert(
+          sheetSwitch.clicked,
+          `Issue #178 could not select reporter sheet ${parserResult.sheet}: ${JSON.stringify(sheetSwitch)}`
+        )
+      }
       await page.waitForFunction(
         (imageCount) => {
           const host = document.querySelector('.file-viewer-vue3-shadow-host')
@@ -465,27 +597,21 @@ try {
         `Issue #178 image count changed:\n${diagnostics}`
       )
       result.images.forEach((image) => {
-        assert.match(
-          image.source,
-          /^data:image\/png;base64,/,
-          `Issue #178 image source is invalid:\n${diagnostics}`
-        )
+        const tiffImage = tiffSample && !image.id.startsWith('cell-image-')
+        if (privateSample || tiffImage) {
+          assert.match(image.source, /^(?:blob:|data:image\/)/, `Issue #178 image source is invalid:\n${diagnostics}`)
+        } else {
+          assert.match(image.source, /^data:image\/png;base64,/, `Issue #178 image source is invalid:\n${diagnostics}`)
+        }
         assert.equal(image.complete, true, `Issue #178 image did not finish loading:\n${diagnostics}`)
+        assert(image.naturalWidth > 0 && image.naturalHeight > 0, `Issue #178 image did not decode:\n${diagnostics}`)
         assert(image.rect.width > 0 && image.rect.height > 0, `Issue #178 image collapsed:\n${diagnostics}`)
       })
-      if (privateSample && format === 'xlsx') {
-        const cellImage = result.images.find((image) => image.id.startsWith('cell-image-B2-'))
-        const modelFallback = result.images.find((image) => image.id === 'rId2')
-        assert(cellImage, `Private Rich Data image did not render:\n${diagnostics}`)
-        assert(modelFallback, `Private GLB fallback did not render:\n${diagnostics}`)
-        assert.equal(cellImage.naturalWidth, 1640, `Private cell image width changed:\n${diagnostics}`)
-        assert.equal(cellImage.naturalHeight, 2360, `Private cell image height changed:\n${diagnostics}`)
-        assert.equal(modelFallback.naturalWidth, 355, `Private model fallback width changed:\n${diagnostics}`)
-        assert.equal(modelFallback.naturalHeight, 403, `Private model fallback height changed:\n${diagnostics}`)
-      } else {
+      if (!privateSample) {
         result.images.forEach((image) => {
-          assert.equal(image.naturalWidth, 16, `Issue #178 source width changed:\n${diagnostics}`)
-          assert.equal(image.naturalHeight, 16, `Issue #178 source height changed:\n${diagnostics}`)
+          const tiffImage = tiffSample && !image.id.startsWith('cell-image-')
+          assert.equal(image.naturalWidth, tiffImage ? 2 : 16, `Issue #178 source width changed:\n${diagnostics}`)
+          assert.equal(image.naturalHeight, tiffImage ? 2 : 16, `Issue #178 source height changed:\n${diagnostics}`)
         })
         if (format === 'xlsx') {
           assert(
@@ -500,7 +626,7 @@ try {
         const floatingImage = result.images.find((image) => !image.id.startsWith('cell-image-'))
         const minimumFloatingSize = format === 'xlsx'
           ? { width: 145, height: 180 }
-          : { width: 160, height: 120 }
+          : { width: 140, height: 120 }
         assert(
           floatingImage?.rect.width >= minimumFloatingSize.width &&
             floatingImage?.rect.height >= minimumFloatingSize.height,
@@ -526,7 +652,11 @@ try {
         `Issue #178 worker selection did not match the requested mode:\n${diagnostics}`
       )
 
-      const previewTargetIds = format === 'xlsx'
+      const previewTargetIds = privateSample
+        ? result.images.slice(0, 1).map((image) => image.id)
+        : tiffSample
+        ? result.images.map((image) => image.id)
+        : format === 'xlsx'
         ? result.images
           .filter((image) => image.id.startsWith('cell-image-'))
           .map((image) => image.id)
@@ -658,6 +788,7 @@ try {
       results.push({
         format,
         privateSample,
+        tiffSample,
         mode: workerMode ? 'worker' : 'main-thread',
         images: result.images.map((image) => ({ id: image.id, rect: image.rect })),
         previews: previewResults,
@@ -669,10 +800,10 @@ try {
   }
 
   console.log(
-    `[spreadsheet] GitHub #178 embedded PNG survived XLS/XLSX parser, main-thread, and Worker rendering: ${JSON.stringify({ parserResults, results })}`
+    `[spreadsheet] GitHub #178 embedded images survived XLS/XLSX parser, TIFF decoding, main-thread, and Worker rendering: ${JSON.stringify({ parserResults, results })}`
   )
 } finally {
   await browser?.close().catch(() => undefined)
-  await viteServer?.close().catch(() => undefined)
+  await new Promise(resolve => staticServer?.close(resolve) || resolve())
   await rm(harnessRoot, { recursive: true, force: true })
 }

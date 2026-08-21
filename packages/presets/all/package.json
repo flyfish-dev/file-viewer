@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/preset-all",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "private": false,
   "type": "module",
   "description": "All renderer preset for File Viewer, preserving the full format matrix while renderer packages are split out.",
@@ -72,12 +72,12 @@
     "@file-viewer/renderer-ofd": "workspace:2.3.0",
     "@file-viewer/renderer-pdf": "workspace:2.3.0",
     "@file-viewer/renderer-presentation": "workspace:2.3.0",
-    "@file-viewer/renderer-spreadsheet": "workspace:2.3.1",
+    "@file-viewer/renderer-spreadsheet": "workspace:2.3.2",
     "@file-viewer/renderer-text": "workspace:2.3.0",
     "@file-viewer/renderer-typst": "workspace:2.3.0",
     "@file-viewer/renderer-word": "workspace:2.3.1",
     "@file-viewer/renderer-hangul": "workspace:2.3.0",
-    "@file-viewer/renderer-iwork": "workspace:2.3.0",
+    "@file-viewer/renderer-iwork": "workspace:2.3.1",
     "@file-viewer/renderer-wordperfect": "workspace:2.3.0"
   },
   "devDependencies": {

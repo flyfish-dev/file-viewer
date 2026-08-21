@@ -16,6 +16,7 @@ import {
   type FileViewerZoomState,
 } from '@file-viewer/core';
 import { renderSpreadsheetChart } from './spreadsheet/chartRenderer.js';
+import { createSpreadsheetImageSourceResolver } from './spreadsheet/imageSource.js';
 import type { SheetChart, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
 import {
   buildRows,
@@ -896,6 +897,7 @@ const renderFileViewerSpreadsheet = async (
   let lastScrollY = 0;
   let sheetSessionId = 0;
   let disposed = false;
+  const imageSourceResolver = createSpreadsheetImageSourceResolver(documentRef);
   let imageLightboxPreviousFocus: HTMLElement | null = null;
   let hasNotifiedFirstPaint = false;
   let hasAppliedDefaultInitialFit = false;
@@ -940,6 +942,11 @@ const renderFileViewerSpreadsheet = async (
       ? documentRef.activeElement
       : null;
     lightboxImage.src = image.src;
+    void imageSourceResolver.resolve(image).then((source) => {
+      if (!disposed && imageLightbox.dataset.imageId === image.id) {
+        lightboxImage.src = source;
+      }
+    });
     imageLightbox.dataset.imageId = image.id;
     imageLightbox.dataset.open = 'true';
     imageLightbox.setAttribute('aria-hidden', 'false');
@@ -1117,6 +1124,11 @@ const renderFileViewerSpreadsheet = async (
         height: `${scalePx(image.height)}px`,
       });
       element.dataset.imageIndex = `${index}`;
+      void imageSourceResolver.resolve(image).then((source) => {
+        if (!disposed && element.isConnected && element.src !== source) {
+          element.src = source;
+        }
+      });
       return element;
     });
     const chartElements = visibleCharts.map((chart) => {
@@ -2099,6 +2111,7 @@ const renderFileViewerSpreadsheet = async (
     $el: root,
     unmount() {
       disposed = true;
+      imageSourceResolver.dispose();
       closeImageLightbox();
       tableHostShell.removeEventListener('dblclick', handleImageDoubleClick, true);
       imageLightbox.removeEventListener('click', handleImageLightboxClick);

@@ -9,8 +9,8 @@
 ### Highlights
 
 - 完整发布 Keynote、二进制 PPT 模块加载、GBK 文本、CAD Worker、德语界面、复杂 DOCX、Excel 图表/列宽/列宽拖动等修复（#174/#179/#195/#198/#201/#202/#203/#204）。
-- Excel Office 365/WPS 单元格内嵌图片、浮动绘图和双击放大（#178）在本版完成全部发行渠道交付；其源码与 Demo 曾在 v2.2.9 最终阶段出现，但 npm 2.2.9 产物早于该修复，因此 Issue 的完整发布版本标记为 v2.3.0。
-- 源码与 GitHub Release 使用 v2.3.0；npm 不可覆盖的更正包按实际版本发布为 `@file-viewer/renderer-spreadsheet@2.3.1`、`@file-viewer/renderer-word@2.3.1`、`@file-viewer/vite-plugin@2.3.1`，以及 Office/Full/copy-assets 的 2.3.2 补丁线。Vite 插件 2.3.1 修复标准组件/preset 项目只复制扁平 CAD 资产、却请求 `wasm/cad/0.8.0/dwg-worker.js` 的问题。
+- Excel Office 365/WPS 单元格内嵌图片、浮动绘图和双击放大（#178）在本版完成全部发行渠道交付；用户后续样例中的 TIFF drawing 也会按需在浏览器内解码，主线程、Worker 与双击大图路径保持一致。
+- 源码与 GitHub Release 使用 v2.3.0；npm 不可覆盖的更正包按实际版本发布为 `@file-viewer/renderer-spreadsheet@2.3.2`、`@file-viewer/renderer-iwork@2.3.1`、`@file-viewer/renderer-word@2.3.1`、`@file-viewer/vite-plugin@2.3.1`，以及 Office/Full/copy-assets 的 2.3.3 补丁线。TIFF MIME 修复来自 `styled-exceljs@0.21.2`。
 
 ## File Viewer v2.2.9 — 2026-08-17
 
