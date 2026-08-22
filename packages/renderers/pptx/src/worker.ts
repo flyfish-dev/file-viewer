@@ -1,11 +1,22 @@
 import type { PptxWorkerFactoryOptions } from './types';
 
 const viteOptimizedWorkerPathPattern = /\/\.?vite\/deps\/worker\/pptx\.worker\.js$/;
+const viteSourceWorkerModulePattern = /\/src\/worker\.[cm]?[jt]s$/;
 const angularCachePath = '/.angular/cache/';
 const viteOptimizedPptxSourcePattern =
   /\/\/\s+(node_modules\/(?:\.pnpm\/[^\n]+?\/node_modules\/)?@file-viewer\/pptx\/dist\/worker\.js)\b/;
 
-const resolveBundledPptxWorkerUrl = () => new URL('./worker/pptx.worker.js', import.meta.url);
+const resolveBundledPptxWorkerUrl = () => {
+  const moduleUrl = new URL(import.meta.url);
+  // Workspace demos and source-linked consumer projects let Vite serve this
+  // TypeScript module directly from /@fs/.../src/worker.ts. The built Worker
+  // remains under dist/worker, so resolving ./worker from the source module
+  // points at a directory that does not exist.
+  if (viteSourceWorkerModulePattern.test(moduleUrl.pathname)) {
+    return new URL('../dist/worker/pptx.worker.js', moduleUrl);
+  }
+  return new URL('./worker/pptx.worker.js', import.meta.url);
+};
 
 const canResolveAbsolutePathFrom = (url: URL) => url.protocol !== 'data:' && url.protocol !== 'blob:';
 
