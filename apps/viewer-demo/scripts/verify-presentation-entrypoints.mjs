@@ -7,7 +7,6 @@ import { build } from 'vite'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const presentationPackagePath = join(root, 'packages/renderers/presentation/package.json')
-const pptxEntryPath = join(root, 'packages/renderers/presentation/dist/pptx.js')
 const vitePluginEntryPath = join(root, 'packages/presets/vite-plugin/dist/index.js')
 
 const presentationPackage = JSON.parse(await readFile(presentationPackagePath, 'utf8'))
@@ -37,11 +36,6 @@ try {
     root: fixtureRoot,
     logLevel: 'silent',
     plugins: [fileViewerRenderers({ formats: ['pptx'], autoPresets: false })],
-    resolve: {
-      alias: {
-        '@file-viewer/renderer-presentation/pptx': pptxEntryPath
-      }
-    },
     build: {
       manifest: true,
       outDir: 'dist'
