@@ -10,7 +10,8 @@
 
 - 完整发布 Keynote、二进制 PPT 模块加载、GBK 文本、CAD Worker、德语界面、复杂 DOCX、Excel 图表/列宽/列宽拖动等修复（#174/#179/#195/#198/#201/#202/#203/#204）。
 - Excel Office 365/WPS 单元格内嵌图片、浮动绘图和双击放大（#178）在本版完成全部发行渠道交付；用户后续样例中的 TIFF drawing 也会按需在浏览器内解码，主线程、Worker 与双击大图路径保持一致。
-- 源码与 GitHub Release 使用 v2.3.0；npm 不可覆盖的更正包按实际版本发布为 `@file-viewer/renderer-spreadsheet@2.3.2`、`@file-viewer/renderer-iwork@2.3.1`、`@file-viewer/renderer-word@2.3.1`、`@file-viewer/vite-plugin@2.3.1`，以及 Office/Full/copy-assets 的 2.3.3 补丁线。TIFF MIME 修复来自 `styled-exceljs@0.21.2`。
+- PPTX 按需构建不再打入仅供二进制 PPT 使用的 CJK 字体和原生 WASM；Vite 5–8 会按 `package.json#exports` 正确解析 `renderer-presentation/pptx` 子路径（#205）。
+- 源码与 GitHub Release 使用 v2.3.0；npm 不可覆盖的更正包按实际版本发布为 `@file-viewer/renderer-spreadsheet@2.3.2`、`@file-viewer/renderer-iwork@2.3.1`、`@file-viewer/renderer-word@2.3.1`、`@file-viewer/renderer-presentation@2.3.1`、`@file-viewer/vite-plugin@2.3.2`，以及 Office/Full/copy-assets 的 2.3.3 补丁线。TIFF MIME 修复来自 `styled-exceljs@0.21.2`。
 
 ## File Viewer v2.2.9 — 2026-08-17
 
