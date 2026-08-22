@@ -14,6 +14,28 @@ const options = {
 }
 ```
 
+When an application needs only one PowerPoint family, use a stable subpath so the other engine stays out of the production bundle:
+
+```ts
+import { pptRenderer } from '@file-viewer/renderer-presentation/ppt'
+import { pptxRenderer } from '@file-viewer/renderer-presentation/pptx'
+
+const pptxOnlyOptions = {
+  rendererMode: 'replace',
+  renderers: pptxRenderer,
+}
+```
+
+Vite can generate the same PPTX-only import:
+
+```ts
+import { fileViewerRenderers } from '@file-viewer/vite-plugin'
+
+fileViewerRenderers({ formats: ['pptx'] })
+```
+
+This configuration does not emit the classic `.ppt` CJK font or WASM in production. Keep using the root `presentationRenderer` when both families are required.
+
 You can compose it with other renderers:
 
 ```ts

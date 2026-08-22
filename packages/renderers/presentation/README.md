@@ -14,6 +14,28 @@ const options = {
 }
 ```
 
+只需要一种 PowerPoint 格式族时，使用稳定子路径避免另一条引擎进入生产 bundle：
+
+```ts
+import { pptRenderer } from '@file-viewer/renderer-presentation/ppt'
+import { pptxRenderer } from '@file-viewer/renderer-presentation/pptx'
+
+const pptxOnlyOptions = {
+  rendererMode: 'replace',
+  renderers: pptxRenderer,
+}
+```
+
+Vite 项目也可以让插件生成同一条 PPTX-only import：
+
+```ts
+import { fileViewerRenderers } from '@file-viewer/vite-plugin'
+
+fileViewerRenderers({ formats: ['pptx'] })
+```
+
+这种配置不会在生产产物中生成传统 `.ppt` 的 CJK 字体或 WASM；需要同时支持两种格式时继续使用根入口 `presentationRenderer`。
+
 也可以和其他 renderer 组合：
 
 ```ts

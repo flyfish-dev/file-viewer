@@ -204,19 +204,25 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     id: 'presentation',
     packageName: '@file-viewer/renderer-presentation',
     exportName: 'presentationRenderer',
-    formats: [
-      'presentation',
-      'ppt',
-      'pptx',
-      'pptm',
-      'pot',
-      'potx',
-      'potm',
-      'ppsx',
-      'ppsm'
-    ],
+    formats: ['presentation'],
     rendererIds: ['office-presentation-binary', 'office-presentation'],
     chunkName: 'file-viewer-presentation'
+  },
+  {
+    id: 'presentation-binary',
+    packageName: '@file-viewer/renderer-presentation/ppt',
+    exportName: 'pptRenderer',
+    formats: ['ppt', 'pot'],
+    rendererIds: ['office-presentation-binary'],
+    chunkName: 'file-viewer-presentation-ppt'
+  },
+  {
+    id: 'presentation-openxml',
+    packageName: '@file-viewer/renderer-presentation/pptx',
+    exportName: 'pptxRenderer',
+    formats: ['pptx', 'pptm', 'potx', 'potm', 'ppsx', 'ppsm'],
+    rendererIds: ['office-presentation'],
+    chunkName: 'file-viewer-presentation-pptx'
   },
   {
     id: 'word',
@@ -1367,10 +1373,40 @@ function resolvePackageEntry(packageName: string, anchorPackages: readonly strin
     return null
   }
   const packageRoot = dirname(packageJsonPath)
+  const anchorPackageJson = anchorPackages
+    .map((anchorPackage) => resolvePackageJson(anchorPackage))
+    .find(Boolean)
+  const requireFns = [
+    projectRequire(),
+    pluginRequire,
+    ...(anchorPackageJson ? [createRequire(anchorPackageJson)] : [])
+  ]
   try {
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
+      name?: string
       main?: string
       module?: string
+      exports?: Record<string, unknown>
+    }
+    const exportSubpath = packageJson.name && packageName.startsWith(`${packageJson.name}/`)
+      ? `.${packageName.slice(packageJson.name.length)}`
+      : null
+    if (exportSubpath) {
+      const exportedEntry = readPackageExportEntry(packageJson.exports?.[exportSubpath])
+      if (exportedEntry) {
+        const entry = resolve(packageRoot, exportedEntry)
+        if (existsSync(entry) && statSync(entry).isFile()) {
+          return entry
+        }
+      }
+      for (const requireFn of requireFns) {
+        try {
+          return requireFn.resolve(packageName)
+        } catch {
+          // Continue probing alternate anchors.
+        }
+      }
+      return null
     }
     const candidates = unique([
       packageJson.module,
@@ -1387,14 +1423,6 @@ function resolvePackageEntry(packageName: string, anchorPackages: readonly strin
     // Fall back to Node resolution below.
   }
 
-  const anchorPackageJson = anchorPackages
-    .map((anchorPackage) => resolvePackageJson(anchorPackage))
-    .find(Boolean)
-  const requireFns = [
-    projectRequire(),
-    pluginRequire,
-    ...(anchorPackageJson ? [createRequire(anchorPackageJson)] : [])
-  ]
   for (const requireFn of requireFns) {
     try {
       return requireFn.resolve(packageName)
