@@ -46,6 +46,16 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./ppt": {
+      "types": "./dist/ppt.d.ts",
+      "import": "./dist/ppt.js",
+      "default": "./dist/ppt.js"
+    },
+    "./pptx": {
+      "types": "./dist/pptx.d.ts",
+      "import": "./dist/pptx.js",
+      "default": "./dist/pptx.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

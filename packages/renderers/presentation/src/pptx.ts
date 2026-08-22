@@ -1,5 +1,6 @@
 import { PptxViewer, RECOMMENDED_ZIP_LIMITS } from '@file-viewer/pptx';
 import {
+  DEFAULT_RENDERER_DEFINITIONS,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter,
   getFileViewerShadowRootForNode,
@@ -13,9 +14,12 @@ import {
 } from '@file-viewer/core';
 import type {
   FileRenderContext,
+  FileRenderHandler,
   FileRenderExportAdapter,
   FileViewerRenderedInstance,
+  FileViewerRendererPlugin,
   FileViewerZoomState,
+  RendererDefinition,
 } from '@file-viewer/core';
 import type { PptxDiagnosticError } from '@file-viewer/pptx';
 
@@ -742,3 +746,26 @@ export default async function renderPptx(
     unmount: cleanup,
   };
 }
+
+const presentationDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
+  definition => definition.id === 'office-presentation'
+) as RendererDefinition | undefined;
+
+if (!presentationDefinition) {
+  throw new Error('@file-viewer/renderer-presentation/pptx could not locate the core PPTX renderer definition.');
+}
+
+export const presentationRendererDefinition = presentationDefinition;
+export const renderFileViewerPresentation = renderPptx as FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>;
+
+export const pptxRenderer: FileViewerRendererPlugin<FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>> = {
+  id: 'file-viewer-renderer-presentation-pptx',
+  label: 'Flyfish File Viewer PPTX renderer',
+  definitions: [presentationRendererDefinition],
+  handlers: [
+    {
+      rendererId: presentationRendererDefinition.id,
+      handler: renderFileViewerPresentation,
+    },
+  ],
+};

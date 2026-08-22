@@ -204,19 +204,25 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     id: 'presentation',
     packageName: '@file-viewer/renderer-presentation',
     exportName: 'presentationRenderer',
-    formats: [
-      'presentation',
-      'ppt',
-      'pptx',
-      'pptm',
-      'pot',
-      'potx',
-      'potm',
-      'ppsx',
-      'ppsm'
-    ],
+    formats: ['presentation'],
     rendererIds: ['office-presentation-binary', 'office-presentation'],
     chunkName: 'file-viewer-presentation'
+  },
+  {
+    id: 'presentation-binary',
+    packageName: '@file-viewer/renderer-presentation/ppt',
+    exportName: 'pptRenderer',
+    formats: ['ppt', 'pot'],
+    rendererIds: ['office-presentation-binary'],
+    chunkName: 'file-viewer-presentation-ppt'
+  },
+  {
+    id: 'presentation-openxml',
+    packageName: '@file-viewer/renderer-presentation/pptx',
+    exportName: 'pptxRenderer',
+    formats: ['pptx', 'pptm', 'potx', 'potm', 'ppsx', 'ppsm'],
+    rendererIds: ['office-presentation'],
+    chunkName: 'file-viewer-presentation-pptx'
   },
   {
     id: 'word',

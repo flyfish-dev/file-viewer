@@ -1,4 +1,5 @@
 import {
+  DEFAULT_RENDERER_DEFINITIONS,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter,
   normalizeFileViewerErrorMessage,
@@ -11,10 +12,13 @@ import {
 } from '@file-viewer/core';
 import type {
   FileRenderContext,
+  FileRenderHandler,
   FileRenderExportAdapter,
   FileViewerFitRequest,
   FileViewerRenderedInstance,
+  FileViewerRendererPlugin,
   FileViewerZoomState,
+  RendererDefinition,
 } from '@file-viewer/core';
 import type {
   LoadPptViewerOptions,
@@ -641,3 +645,26 @@ export default async function renderPpt(
     },
   };
 }
+
+const binaryPresentationDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
+  definition => definition.id === 'office-presentation-binary'
+) as RendererDefinition | undefined;
+
+if (!binaryPresentationDefinition) {
+  throw new Error('@file-viewer/renderer-presentation/ppt could not locate the core PPT renderer definition.');
+}
+
+export const binaryPresentationRendererDefinition = binaryPresentationDefinition;
+export const renderFileViewerBinaryPresentation = renderPpt as FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>;
+
+export const pptRenderer: FileViewerRendererPlugin<FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>> = {
+  id: 'file-viewer-renderer-presentation-ppt',
+  label: 'Flyfish File Viewer PPT renderer',
+  definitions: [binaryPresentationRendererDefinition],
+  handlers: [
+    {
+      rendererId: binaryPresentationRendererDefinition.id,
+      handler: renderFileViewerBinaryPresentation,
+    },
+  ],
+};
