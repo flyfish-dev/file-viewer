@@ -100,6 +100,8 @@ export default defineConfig({
 | `inject:false` | 关闭自动注入，改为手动导入 `virtual:file-viewer-renderers` 并传给 `options.renderers` |
 | `chunkStrategy:'renderer'` | 使用 renderer 级 chunk 命名，便于缓存和定位体积问题 |
 
+PPTX-only 项目可以直接从 `@file-viewer/renderer-presentation/pptx` 导入 `pptxRenderer`，或配置 `fileViewerRenderers({ formats: ['pptx'] })`。两条路径都不会把传统 `.ppt` 的 CJK 字体和 WASM 写入生产产物。只需要二进制 `.ppt` 时使用 `@file-viewer/renderer-presentation/ppt`；两种格式都需要时继续使用根入口 `presentationRenderer`。
+
 ## 2.1.0 推荐接入步骤
 
 ### 最小化引入：只要一个格式就只装一个 renderer

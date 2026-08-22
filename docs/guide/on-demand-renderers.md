@@ -68,6 +68,9 @@ Install a single renderer when a product needs the smallest possible capability 
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D models and lightweight geometry signatures |
 
 Binary PowerPoint and OpenXML PowerPoint share the presentation plugin but keep separate lazy engine boundaries. The packaged `.ppt` 0.3.3 runtime is zero-config in standard layouts; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
+
+Strict PPTX-only applications can import `pptxRenderer` from `@file-viewer/renderer-presentation/pptx`, or configure `fileViewerRenderers({ formats: ['pptx'] })`. Both paths exclude the classic `.ppt` font and WASM from the production output. The matching binary-only entry is `@file-viewer/renderer-presentation/ppt`.
+
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io, Excalidraw, Mermaid, PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON, KML, GPX, SHP |
