@@ -1,0 +1,12 @@
+[OK] encapsulated PDF CMS verifies and extracts byte-for-byte
+[OK] CAdES-BES fixture verifies and extracts byte-for-byte
+[OK] detached CMS verifies with the matching original
+[OK] detached CMS correctly rejects the altered original
+[OK] multi-signer CMS verifies and extracts content
+[OK] nested CMS verifies through both layers
+[OK] RFC 3161 response verifies against invoice.pdf
+[OK] standalone RFC 3161 token verifies against invoice.pdf
+[OK] RFC 3161 response correctly rejects altered content
+[OK] RFC 5544 embedded and external-content fixtures have matching message imprints
+
+All expected positive and negative checks passed.

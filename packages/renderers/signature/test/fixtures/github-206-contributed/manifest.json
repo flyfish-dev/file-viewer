@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/flyfish-dev/file-viewer/issues/206",
+  "generated_utc": "2026-08-22",
+  "contains_private_keys": false,
+  "trust_model": "synthetic untrusted test root",
+  "fixtures": [
+    {"path":"cms/invoice-encapsulated.pdf.p7m","format":"CMS SignedData","encoding":"DER","encapsulated":true,"signers":1,"nested_content":"originals/invoice.pdf","expected":"valid"},
+    {"path":"cms/invoice-cades-bes.pdf.p7m","format":"CAdES-BES SignedData","encoding":"DER","encapsulated":true,"signers":1,"signed_attribute":"signingCertificateV2","nested_content":"originals/invoice.pdf","expected":"valid"},
+    {"path":"cms/invoice-encapsulated.cmsc","format":"CMS SignedData","encoding":"DER","encapsulated":true,"signers":1,"byte_identical_to":"cms/invoice-encapsulated.pdf.p7m"},
+    {"path":"cms/invoice-detached.pdf.p7s","format":"CMS SignedData","encoding":"DER","encapsulated":false,"signers":1,"matching_original":"originals/invoice.pdf","nonmatching_original":"originals/invoice-tampered.pdf"},
+    {"path":"cms/xml-encapsulated-but-named.p7s","format":"CMS SignedData","encoding":"DER","encapsulated":true,"signers":1,"nested_content":"originals/sample.xml","note":"extension must not imply detached content"},
+    {"path":"cms/hello-multi-signer.p7m","format":"CMS SignedData","encoding":"DER","encapsulated":true,"signers":2,"algorithms":["RSA/SHA-384","ECDSA/SHA-384"],"nested_content":"originals/hello.txt"},
+    {"path":"cms/invoice-double-signed.p7m","format":"nested CMS SignedData","encoding":"DER","layers":2,"final_nested_content":"originals/invoice.pdf"},
+    {"path":"cms/invoice-encapsulated.pem.pkcs7","format":"CMS SignedData","encoding":"PEM","encapsulated":true,"signers":1},
+    {"path":"cms/certificate-chain.p7b","format":"PKCS#7 certificates-only","encoding":"DER","certificates":4,"crls":0},
+    {"path":"cms/certificate-chain-with-crl.p7c","format":"PKCS#7 certificates-only","encoding":"DER","certificates":4,"crls":1},
+    {"path":"cms/certificate-only-misnamed.p7m","format":"PKCS#7 certificates-only","encoding":"DER","note":"misleading extension"},
+    {"path":"timestamps/invoice-sha256.tsq","format":"RFC 3161 TimeStampReq","digest":"SHA-256","nonce":true,"cert_req":true,"data":"originals/invoice.pdf"},
+    {"path":"timestamps/invoice-sha256.tsr","format":"RFC 3161 TimeStampResp","status":"granted","token":true,"data":"originals/invoice.pdf"},
+    {"path":"timestamps/invoice-sha256.tst","format":"RFC 3161 TimeStampToken","digest":"SHA-256","data":"originals/invoice.pdf"},
+    {"path":"timestamps/hello-sha384-no-nonce.tsq","format":"RFC 3161 TimeStampReq","digest":"SHA-384","nonce":false,"cert_req":true,"data":"originals/hello.txt"},
+    {"path":"timestamps/hello-sha384-no-nonce.tsr","format":"RFC 3161 TimeStampResp","status":"granted","token":true,"data":"originals/hello.txt"},
+    {"path":"timestamps/hello-sha384-no-nonce.tst","format":"RFC 3161 TimeStampToken","digest":"SHA-384","data":"originals/hello.txt"},
+    {"path":"timestamps/invoice-embedded.tsd","format":"RFC 5544 TimeStampedData","content":"embedded PDF","hash_protected_metadata":false,"evidence":"RFC 3161 token + CRL"},
+    {"path":"timestamps/invoice-external-content.tsd","format":"RFC 5544 TimeStampedData","content":"external","data_uri":"https://example.invalid/file-viewer-issue-206/invoice.pdf","matching_original":"originals/invoice.pdf","auto_fetch_expected":false},
+    {"path":"timestamps/rejected-bad-alg.tsr","format":"RFC 3161 TimeStampResp","status":"rejection","failure":"badAlg","token":false},
+    {"path":"negative/truncated-signed-data.p7m","format":"malformed/truncated DER","expected":"parse error"},
+    {"path":"negative/plain-text-with-p7s-extension.p7s","format":"plain text","expected":"not CMS"}
+  ]
+}
