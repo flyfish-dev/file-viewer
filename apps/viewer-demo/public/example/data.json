@@ -1,6 +1,6 @@
 {
   "name": "file-viewer",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "environment": {
     "framework": "vue3",
     "viewerSite": "https://demo.file-viewer.app",

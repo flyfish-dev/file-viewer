@@ -6,7 +6,8 @@ File Viewer 运行在浏览器端，会处理用户选择或业务系统传入�
 
 如果你发现潜在安全问题，例如 XSS、任意脚本执行、敏感信息泄露、越权下载、危险 URL 处理或恶意文件导致的稳定性问题，请优先通过私下渠道联系维护者:
 
-- Email: wybaby168@gmail.com
+- [GitHub Private Vulnerability Reporting](https://github.com/flyfish-dev/file-viewer/security/advisories/new)
+- Email: admin@flyfish.dev
 
 请包含:
 

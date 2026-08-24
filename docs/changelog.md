@@ -6,6 +6,16 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## v2.3.1 — Legacy DOC rendering security
+
+Released August 24, 2026.
+
+- Encoded document-provided font names and generated attributes in the legacy DOC HTML API.
+- Blocked external DOC links by default. Internal bookmarks remain available; explicit opt-in permits only HTTP(S), email, telephone, and safe relative links.
+- Sanitized DOC markup again at the mount boundary with DOMPurify 3.4.13 and inserted renderer CSS through `textContent`.
+- Kept the sanitizer in the DOC lazy path. Its minified gzip size is 10,923 bytes and a 15 KiB release gate prevents unbounded growth.
+- Published `@file-viewer/doc@2.3.1`, `msdoc-viewer@0.2.2`, `@file-viewer/renderer-word@2.3.2`, and the 2.3.4 Office/Full/copy-assets patch line.
+
 ## v2.3.0 — Office/iWork coverage and verified file fixes
 
 Released August 20, 2026.

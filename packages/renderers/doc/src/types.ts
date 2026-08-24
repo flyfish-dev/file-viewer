@@ -676,6 +676,8 @@ export interface MsDocParseOptions {
 
 export interface MsDocRenderOptions {
   css?: string;
+  /** External links are blocked by default; internal document bookmarks remain active. */
+  externalLinkPolicy?: 'allow' | 'block';
 }
 
 export interface MsDocMeta {

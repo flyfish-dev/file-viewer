@@ -10,6 +10,14 @@ description: "查看 File Viewer 主线版本的功能更新、安全修复、�
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
 
+## `v2.3.1` 旧版 DOC 渲染安全补丁 — 2026-08-24
+
+- 旧版 DOC 直接 HTML API 会对文档提供的字体名和生成属性正确编码，避免文档内容突破样式或 HTML 属性边界。
+- DOC 外部链接改为默认阻断；内部书签保持可用，显式允许时也只接受 HTTP(S)、邮件、电话和安全相对地址。
+- 标准挂载路径在文档标记进入 DOM 前使用 DOMPurify 3.4.13 再次净化，renderer CSS 通过 `textContent` 注入。
+- 净化器只进入 DOC 懒加载路径；压缩后为 10,923 字节，并由 15 KiB 发布门禁约束后续增长。
+- 修复版本为 `@file-viewer/doc@2.3.1`、`msdoc-viewer@0.2.2`、`@file-viewer/renderer-word@2.3.2`，以及 Office/Full/copy-assets 的 2.3.4 补丁线。
+
 ## `v2.3.0` Office/iWork 扩展与真实文件修复 — 2026-08-20
 
 - 将 Pages、Numbers、Keynote、WordPerfect、Hangul、DBF、FB2、XLA/XLAM 与 POT 纳入稳定格式矩阵；当前唯一目录包含 221 个扩展名和 32 条预览链路。

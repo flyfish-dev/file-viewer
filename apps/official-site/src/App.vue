@@ -131,7 +131,7 @@ const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '2.3.0'
+const currentReleaseVersion = '2.3.1'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
 const registeredExtensionCount = FORMAT_CATALOG_SUMMARY.registeredExtensionCount
 const stableExtensionCount = FORMAT_CATALOG_SUMMARY.stableExtensionCount
@@ -178,7 +178,7 @@ const siteMetadata = {
       `开源 File Viewer 在浏览器内预览 Office、PDF、CAD 等 ${registeredExtensionCount} 个扩展名（${stableExtensionCount} 个稳定、${experimentalExtensionCount} 个实验），通过 ${previewPipelineCount} 条链路按需加载，无需服务端转码，支持离线与私有化部署。`,
     ogLocale: 'zh_CN',
     ogLocaleAlternate: 'en_US',
-    imageAlt: 'File Viewer v2.3.0 浏览器原生 DOCX 预览工作区'
+    imageAlt: 'File Viewer v2.3.1 浏览器原生 DOCX 预览工作区'
   },
   en: {
     lang: 'en',
@@ -188,7 +188,7 @@ const siteMetadata = {
       `Open-source browser file viewer for Office, PDF, CAD, archives, email, and ${registeredExtensionCount} formats (${stableExtensionCount} stable, ${experimentalExtensionCount} experimental) across ${previewPipelineCount} lazy preview pipelines. No conversion server. Self-hosted and offline-ready.`,
     ogLocale: 'en_US',
     ogLocaleAlternate: 'zh_CN',
-    imageAlt: 'File Viewer v2.3.0 browser-native DOCX preview workspace'
+    imageAlt: 'File Viewer v2.3.1 browser-native DOCX preview workspace'
   }
 } satisfies Record<Locale, SiteMetadata>
 
@@ -345,7 +345,7 @@ const copy = {
       demo: '在线体验'
     },
     hero: {
-      eyebrow: `v2.3.0 · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
+      eyebrow: `v2.3.1 · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
       title: '文件预览，全部在浏览器完成。',
       subtitle:
         '为了预览一份内部 DOCX 就把它上传到服务器，糟透了。File Viewer 让 Office、PDF、CAD、压缩包、邮件等文件留在浏览器里，并且可以完整离线部署。',
@@ -376,7 +376,7 @@ const copy = {
     commercialCta: '了解商业授权',
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
-    releaseTitle: 'v2.3.0 已发布：Office/iWork 能力扩展，并修复 Excel 内嵌图片、原始列宽与列宽拖拽等真实文件问题。',
+    releaseTitle: 'v2.3.1 已发布：加固旧版 DOC 的字体、链接和 DOM 挂载边界，建议所有 2.3.0 用户升级。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -391,7 +391,7 @@ const copy = {
       demo: 'Live Demo'
     },
     hero: {
-      eyebrow: `v2.3.0 · ${registeredExtensionCount} registered extensions · no conversion server`,
+      eyebrow: `v2.3.1 · ${registeredExtensionCount} registered extensions · no conversion server`,
       title: 'Preview files entirely in the browser.',
       subtitle:
         'Uploading a private DOCX just to preview it is awful. File Viewer keeps Office, PDF, CAD, archives, email, and more in the browser, with every runtime asset ready for self-hosting.',
@@ -429,7 +429,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v2.3.0 is released with a broader Office/iWork matrix and verified fixes for Excel in-cell images, saved column widths, and column resizing.',
+      'v2.3.1 hardens legacy DOC font, link, and DOM mounting boundaries. Users of 2.3.0 should upgrade.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -2260,8 +2260,8 @@ onBeforeUnmount(() => {
                   :src="demoPreviewDesktopPath"
                   :alt="
                     isZh
-                      ? 'File Viewer v2.3.0 沉浸式 DOCX 预览界面'
-                      : 'File Viewer v2.3.0 immersive DOCX preview UI'
+                      ? 'File Viewer v2.3.1 沉浸式 DOCX 预览界面'
+                      : 'File Viewer v2.3.1 immersive DOCX preview UI'
                   "
                   width="1600"
                   height="900"

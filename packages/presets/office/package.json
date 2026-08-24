@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/preset-office",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "private": false,
   "type": "module",
   "description": "Office renderer preset for File Viewer with PDF, Word, spreadsheet, presentation, OFD, and OpenDocument preview lines.",
@@ -64,7 +64,7 @@
     "@file-viewer/renderer-pdf": "workspace:2.3.0",
     "@file-viewer/renderer-presentation": "workspace:2.3.1",
     "@file-viewer/renderer-spreadsheet": "workspace:2.3.2",
-    "@file-viewer/renderer-word": "workspace:2.3.1",
+    "@file-viewer/renderer-word": "workspace:2.3.2",
     "@file-viewer/renderer-hangul": "workspace:2.3.0",
     "@file-viewer/renderer-iwork": "workspace:2.3.1",
     "@file-viewer/renderer-wordperfect": "workspace:2.3.0"

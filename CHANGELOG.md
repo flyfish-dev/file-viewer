@@ -2,6 +2,23 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.3.1 — 2026-08-24
+
+这是旧版 DOC 渲染链的安全补丁版本，格式矩阵和公开 API 保持不变。
+
+### Security
+
+- `@file-viewer/doc` 生成的字体、链接、图片与附件标记在直接 HTML API 边界完成编码和协议限制；外部链接默认阻断，内部书签继续可用，显式允许时也只接受 HTTP(S)、邮件、电话与安全相对地址。
+- 标准挂载路径在文档 HTML 进入 DOM 前使用 DOMPurify 3.4.13 做纵深净化，样式内容通过 `textContent` 注入；DOMPurify 仅进入 DOC 懒加载路径，压缩增量为 10,923 字节并受 15 KiB 硬门禁约束。
+- Chromium 安全回归覆盖直接 HTML 与标准挂载 API，验证混淆危险协议、恶意字体/属性、图片和附件均不会执行事件；正常书签、链接、图片、表格与分页保持可用。
+- 修复包为 `@file-viewer/doc@2.3.1`、`msdoc-viewer@0.2.2`、`@file-viewer/renderer-word@2.3.2`，以及 Office/Full/copy-assets 的 2.3.4 补丁线。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.3.4
+```
+
 ## File Viewer v2.3.0 — 2026-08-20
 
 这是 Office/iWork 格式扩展和真实问题文件集中修复版本。稳定能力矩阵扩展为 57 个 npm 目标、221 个扩展名和 32 条预览链路。
