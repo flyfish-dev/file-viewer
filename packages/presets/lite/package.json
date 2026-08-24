@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/preset-lite",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "private": false,
   "type": "module",
   "description": "Lite renderer preset for File Viewer with text, Markdown, code, image, audio, and video preview lines.",
@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.3.0",
-    "@file-viewer/renderer-image": "workspace:2.3.0",
+    "@file-viewer/renderer-image": "workspace:2.3.1",
     "@file-viewer/renderer-media": "workspace:2.3.0",
     "@file-viewer/renderer-text": "workspace:2.3.0"
   },

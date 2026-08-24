@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/preset-all",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "private": false,
   "type": "module",
   "description": "All renderer preset for File Viewer, preserving the full format matrix while renderer packages are split out.",
@@ -66,7 +66,7 @@
     "@file-viewer/renderer-eda": "workspace:2.3.0",
     "@file-viewer/renderer-email": "workspace:2.3.0",
     "@file-viewer/renderer-geo": "workspace:2.3.0",
-    "@file-viewer/renderer-image": "workspace:2.3.0",
+    "@file-viewer/renderer-image": "workspace:2.3.1",
     "@file-viewer/renderer-media": "workspace:2.3.0",
     "@file-viewer/renderer-mindmap": "workspace:2.3.0",
     "@file-viewer/renderer-ofd": "workspace:2.3.0",

@@ -39,6 +39,7 @@ description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, c
 | PDF | Page thumbnails, outline tree, floating toolbar, fit-to-width, search highlights, and side panel toggling |
 | Word | Stream-style document reading, correct text flow, printing without clipped first-page-only output |
 | Spreadsheet | Sheet tabs remain readable on desktop and mobile; optional column resize can be enabled |
+| Image | Open `multipage-ccitt-g4.tif` to verify two TIFF pages, group zoom/rotation/fit, page state, and double-click or keyboard lightbox access |
 | Archive | Nested entries preview through the same renderer registry, with safe metadata filtering, cache support, optional compact `ui.density:'compact'` spacing via `?density=compact`, and `archive.entryActions.download` checks for hiding nested entry downloads independently from the viewer-level original download |
 | Mobile | The filename stays centered, secondary controls collapse into one More action, only the document container scrolls, and heavy renderers remain lazy |
 

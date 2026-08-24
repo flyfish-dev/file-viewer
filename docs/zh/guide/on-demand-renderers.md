@@ -42,7 +42,7 @@
 
 ## 行业基线
 
-- 使用 ESM `import()` 做运行时拆分。Vite 8 生产构建可以通过 `build.rolldownOptions.output.codeSplitting` 控制拆分；兼容 Vite 7 / Rollup 生态时继续支持 `build.rollupOptions.output.manualChunks`。
+- 使用 ESM `import()` 做运行时拆分。插件读取业务项目实际安装的 Vite 主版本：Vite 5—7 写入 `build.rollupOptions.output.manualChunks`，Vite 8 写入 `build.rolldownOptions.output.codeSplitting.groups`。业务已有分组、优先级、输出数组和 `codeSplitting:false` 不会被覆盖。
 - 使用 `package.json#exports` 暴露稳定子路径。Node.js 官方文档建议显式定义导出入口，避免用户引用内部文件。
 - 使用 renderer 级 chunk 命名策略给 demo / 官网这类应用稳定命名大型渲染链路，便于缓存和排查首屏体积。
 - 使用 optional peer / peerDependenciesMeta 时只作为“插件提示”，不把重依赖放回 core；renderer package 自己声明真实依赖。

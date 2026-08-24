@@ -2,6 +2,24 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.3.2 — 2026-08-24
+
+这是 TIFF 多页预览与 Vite 8 Rolldown 分块兼容补丁，继续包含 v2.3.1 的全部安全修复。
+
+### Fixes
+
+- `@file-viewer/renderer-image@2.3.1` 在 TIFF 路径按需加载 MIT 许可的 UTIF.js，支持 CCITT Group 4、多页纵向展示、整组缩放/旋转/适宽、页码状态，以及双击和键盘大图查看（#208）。编码大小、页数、单页尺寸和累计解码像素均有硬限制，逐页转换后释放 RGBA 与 Object URL；PNG/JPEG/WEBP 等普通图片路径不加载 TIFF 解码器。
+- `@file-viewer/vite-plugin@2.3.3` 按项目实际 Vite 主版本选择配置：Vite 5—7 继续使用 Rollup `manualChunks`，Vite 8 使用 Rolldown `codeSplitting.groups`；用户已有分组、输出数组、优先级和 `codeSplitting:false` 均保持不变（#209）。
+- #178 的 Office 365/WPS 单元格内嵌图、浮动图片、TIFF drawing、Worker/主线程传输和双击放大再次通过原始样例回归，Excel 列宽拖拽能力保持启用。
+- 本版 npm 目标为 `@file-viewer/preset-lite@2.3.1`、`@file-viewer/preset-all@2.3.5`、`file-viewer-copy-assets` 2.3.5 和八个 Full 包的 2.3.5 补丁线。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.3.5
+pnpm add -D @file-viewer/vite-plugin@2.3.3
+```
+
 ## File Viewer v2.3.1 — 2026-08-24
 
 这是旧版 DOC 渲染链的安全补丁版本，格式矩阵和公开 API 保持不变。

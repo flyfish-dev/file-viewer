@@ -46,7 +46,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.file-viewer.app"><img src="docs/public/_media/file-viewer-demo-v2.2.6-desktop-zh.webp" width="1280" alt="File Viewer v2.3.1 浏览器原生 DOCX 预览工作区" /></a>
+  <a href="https://demo.file-viewer.app"><img src="docs/public/_media/file-viewer-demo-v2.2.6-desktop-zh.webp" width="1280" alt="File Viewer v2.3.2 浏览器原生 DOCX 预览工作区" /></a>
 </p>
 
 ---
@@ -60,7 +60,7 @@
 
 为了预览一份内部 DOCX 就把文件上传到第三方，既慢也不合适。File Viewer 把预览留在浏览器内，让企业后台、OA、知识库、工单、附件中心和工程资料库使用同一套 API，而不是继续拼接一堆互不一致的查看器。
 
-v2.3.1 当前内置 221 个已注册扩展名（221 个稳定、0 个实验）和 32 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体和结构化数据共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
+v2.3.2 当前内置 221 个已注册扩展名（221 个稳定、0 个实验）和 32 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体和结构化数据共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
 
 新项目优先使用 `@file-viewer/*`；`@flyfish-group/*` 历史包继续同步维护。
 
@@ -71,6 +71,8 @@ v2.3.1 当前内置 221 个已注册扩展名（221 个稳定、0 个实验）�
 - **部署不出网。** 浏览器内解析和渲染，支持离线网络、Docker、私有 CDN 和完整资源自托管。
 - **模块化。** 轻量组件、renderer、preset、full 包分层清晰，既能极简安装，也能一键全量。
 - **按需加载。** PDF、Office、CAD、Typst、压缩包、图纸、PSD、Mermaid 等重型能力只在命中格式时加载。
+- **有界多页 TIFF。** CCITT Group 4 TIFF 在独立懒加载边界逐页解码，并支持整组缩放、旋转、适宽、页码状态和大图查看。
+- **识别 Vite 版本。** Vite 5—7 继续使用 Rollup `manualChunks`；Vite 8 使用 Rolldown 分组，不覆盖业务已有分组和优先级。
 - **操作完整。** 搜索、高亮、缩放、打印、导出 HTML、下载、水印、主题、生命周期钩子和按钮前置校验都走统一 API。
 - **生态一致。** Core 聚焦底层能力，各框架组件只做原生封装，参数、事件和 controller 体验保持一致。
 
@@ -85,7 +87,7 @@ v2.3.1 当前内置 221 个已注册扩展名（221 个稳定、0 个实验）�
 
 ## 在线效果
 
-![File Viewer v2.3.1 中文产品演示：在沉浸式工作台中预览特色 DOCX、PPTX、DWG 与可交互的三维 STEP 模型](docs/public/_media/file-viewer-demo-v2.2.6-formats-zh.gif)
+![File Viewer v2.3.2 中文产品演示：在沉浸式工作台中预览特色 DOCX、PPTX、DWG 与可交互的三维 STEP 模型](docs/public/_media/file-viewer-demo-v2.2.6-formats-zh.gif)
 
 打开 [demo.file-viewer.app](https://demo.file-viewer.app) 即可使用上图中的产品工作台：固定玻璃工具栏、点击文件名展开的样例库、本地最近打开记录、明暗主题、移动端单一“更多”入口，以及只让文档容器滚动的沉浸画布。内置样例覆盖 Word、Excel、二进制 PPT、PPTX、PDF/OFD、DWG、STEP、压缩包、邮件和其余已注册矩阵；也可以上传脱敏文件或粘贴 URL。
 
@@ -311,7 +313,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 
 ## 支持格式
 
-[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：v2.3.1 注册 221 个不重复扩展名和 32 条预览链路，其中 221 个稳定、0 个实验。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
+[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：v2.3.2 注册 221 个不重复扩展名和 32 条预览链路，其中 221 个稳定、0 个实验。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
 
 | 类别           | 扩展名                                                                                                                                                                                                                                                                                                                         | 当前表现                                                                                                                                                                                                            | 适合场景                                    |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
@@ -335,10 +337,10 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 | draw.io        | `drawio`、`dio`                                                                                                                                                                                                                                                                                                                | 基于官方 diagrams.net `GraphViewer` 预览 mxGraphModel / mxfile                                                                                                                                                      | 流程图、架构图、业务泳道图                  |
 | Mermaid        | `mermaid`、`mmd`                                                                                                                                                                                                                                                                                                               | `@file-viewer/renderer-drawing` 按需加载官方 `mermaid`，输出主题适配 SVG，并通过 `@panzoom/panzoom` 支持拖动、缩放、重置和统一工具栏联动                                                                             | 架构图、流程图、状态图、序列图              |
 | PlantUML       | `plantuml`、`puml`                                                                                                                                                                                                                                                                                                             | 使用 `plantuml-encoder` 生成渲染 payload，支持配置自托管 PlantUML SVG 服务；预览层同样支持拖动、缩放和主题容器适配                                                                                                  | UML 时序图、组件图、部署图                  |
-| 电子书         | `epub`                                                                                                                                                                                                                                                                                                                         | `@file-viewer/renderer-epub` 按需加载随包交付的离线 EPUB 引擎，解析元数据、目录、章节并提供搜索与滚动阅读；v2.3.1 固定使用安全 XML DOM 实现，不增加外部运行时或 CDN 依赖                                          | 电子书、培训手册、长篇阅读材料              |
+| 电子书         | `epub`                                                                                                                                                                                                                                                                                                                         | `@file-viewer/renderer-epub` 按需加载随包交付的离线 EPUB 引擎，解析元数据、目录、章节并提供搜索与滚动阅读；v2.3.2 固定使用安全 XML DOM 实现，不增加外部运行时或 CDN 依赖                                          | 电子书、培训手册、长篇阅读材料              |
 | 电子书         | `umd`                                                                                                                                                                                                                                                                                                                          | 按 UMD 移动电子书结构解析元数据、目录和 zlib 压缩正文                                                                                                                                                               | 旧移动电子书、历史小说附件                  |
 | Markdown       | `md`、`markdown`                                                                                                                                                                                                                                                                                                               | `@file-viewer/renderer-text` 提供 Markdown 阅读样式和明暗主题；超大源码自动切换为有界虚拟文本渲染                                                                                                                   | README、知识文档、说明文档                  |
-| 图片           | `gif`、`jpg`、`jpeg`、`bmp`、`tiff`、`tif`、`png`、`svg`、`webp`、`avif`、`ico`、`heic`、`heif`、`jxl`                                                                                                                                                                                                                         | 原生图片浏览；HEIC/HEIF 命中时按需使用 `heic2any` 转换                                                                                                                                                              | 图片附件、设计稿、Logo、移动端照片          |
+| 图片           | `gif`、`jpg`、`jpeg`、`bmp`、`tiff`、`tif`、`png`、`svg`、`webp`、`avif`、`ico`、`heic`、`heif`、`jxl`                                                                                                                                                                                                                         | 原生图片浏览；TIFF 命中时按需进行有界多页 CCITT Group 4 解码；HEIC/HEIF 命中时按需使用 `heic2any` 转换                                                                                                            | 图片附件、设计稿、Logo、移动端照片          |
 | 代码/文本      | `txt`、`json`、`jsonc`、`json5`、`ipynb`、`yaml`、`yml`、`toml`、`ini`、`proto`、`hcl`、`tex`、`gv`、`http`、`js`、`mjs`、`cjs`、`jsx`、`ts`、`tsx`、`vue`、`react`、`css`、`html`、`htm`、`xml`、`log`、`java`、`py`、`go`、`rs`、`rb`、`swift`、`kt`、`php`、`c`、`cpp`、`cc`、`h`、`hpp`、`cs`、`sh`、`bash`、`sql`、`diff`、`patch`、`bundle`、`bdl` | 普通文件使用 `highlight.js`；超大文件改用稀疏行索引、有界虚拟行、全源搜索和超长单行分段浏览。普通体积的 patch 与 git bundle 仍按需启用增强视图                                               | 日志、配置、代码片段、接口响应、代码评审    |
 | 音频           | `mp3`、`mpeg`、`wav`、`ogg`、`oga`、`opus`、`m4a`、`aac`、`flac`、`weba`、`midi`、`mid`                                                                                                                                                                                                                                        | `@file-viewer/renderer-media` 使用浏览器原生音频播放；MIDI 命中时按需加载 `@tonejs/midi` 展示轨道结构                                                                                                               | 录音、播客、语音附件、音效素材、MIDI 文件   |
 | 视频           | `mp4`、`webm`、`m3u8`                                                                                                                                                                                                                                                                                                          | `@file-viewer/renderer-media` 使用浏览器原生视频播放；HLS 清单必要时按需加载 `hls.js`                                                                                                                               | 演示视频、录屏、HLS 流                      |

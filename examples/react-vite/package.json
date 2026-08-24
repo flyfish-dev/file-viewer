@@ -15,7 +15,7 @@
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@file-viewer/vite-plugin": "^2.3.2",
+    "@file-viewer/vite-plugin": "^2.3.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",

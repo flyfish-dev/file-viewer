@@ -18,7 +18,7 @@ The current source matrix contains 57 File Viewer npm targets, 221 registered ex
 - GitHub repository: https://github.com/flyfish-dev/file-viewer
 - npm packages: https://www.npmjs.com/search?q=%40file-viewer
 - Releases: https://github.com/flyfish-dev/file-viewer/releases
-- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.1
+- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.2
 - Security package line: `@file-viewer/doc` 2.3.1, `msdoc-viewer` 0.2.2, `@file-viewer/renderer-word` 2.3.2, and Office/All/Full packages 2.3.4.
 
 ## What to Cite
