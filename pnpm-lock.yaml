@@ -39,8 +39,8 @@ importers:
         specifier: ^1.61.1
         version: 1.62.0
       prettier:
-        specifier: ^3.8.3
-        version: 3.9.6
+        specifier: 3.8.3
+        version: 3.8.3
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -5293,8 +5293,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.9.6:
-    resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
+  prettier@3.8.3:
+    resolution: {integrity: sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -9826,7 +9826,7 @@ snapshots:
   prettier@2.8.8:
     optional: true
 
-  prettier@3.9.6: {}
+  prettier@3.8.3: {}
 
   process-nextick-args@2.0.1: {}
 

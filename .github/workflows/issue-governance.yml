@@ -1,0 +1,72 @@
+name: Issue Governance
+
+on:
+  issues:
+    types: [opened, edited, labeled, reopened]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: issue-governance-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  sample:
+    name: Validate bug sample evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout trusted governance rules
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+
+      - name: Validate sample evidence
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { validateIssueReport } = await import(
+              `${process.env.GITHUB_WORKSPACE}/.github/scripts/governance.mjs`
+            )
+            const issue = context.payload.issue
+            const result = validateIssueReport({
+              title: issue.title,
+              body: issue.body || '',
+              labels: issue.labels || []
+            })
+
+            if (!result.applicable) return
+
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const issue_number = issue.number
+            const label = 'status:needs-sample'
+
+            if (result.ok) {
+              if ((issue.labels || []).some(item => item.name === label)) {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number, name: label })
+              }
+              return
+            }
+
+            await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] })
+
+            const marker = '<!-- file-viewer-sample-required -->'
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100
+            })
+            if (!comments.some(comment => comment.body?.includes(marker))) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: `${marker}\nThanks for the report. A reproducible artifact is required for bugs: attach a public/sanitized sample, add a public minimal-reproduction link, or send the private sample to admin@flyfish.dev and record the date and filename in the issue. Screenshots are helpful, but they cannot replace the sample.`
+              })
+            }

@@ -1,37 +1,70 @@
 name: Feature request
-description: Suggest a file type, renderer capability, integration, or deployment improvement.
-title: "[feature]: "
+description: Propose a focused format, API, integration, deployment, or documentation improvement.
+title: '[feature]: '
 labels:
   - enhancement
 body:
-  - type: textarea
-    id: use-case
+  - type: markdown
     attributes:
-      label: Use case
-      description: Which product scenario needs this?
-    validations:
-      required: true
-  - type: textarea
-    id: proposal
-    attributes:
-      label: Proposal
-      description: Describe the desired behavior, API, renderer, or documentation change.
-    validations:
-      required: true
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives
-      description: What do you use today, and why is it not enough?
+      value: |
+        Keep one request focused on one user outcome. For a new file format, include a public specification,
+        a license-compatible implementation candidate, and at least one redistributable or privately shared sample.
+
   - type: dropdown
     id: area
     attributes:
       label: Area
       options:
-        - Office / PDF
-        - CAD / engineering
-        - Archive / email
-        - Framework integration
+        - Office / PDF / document rendering
+        - CAD / engineering / 3D
+        - Archive / email / ebook / media
+        - Framework component or public API
         - Worker / WASM / private deployment
-        - Documentation / Demo
+        - Demo / documentation / accessibility
         - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: User problem and use case
+      description: Who needs this, in which workflow, and what currently blocks them?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe observable behavior or API acceptance criteria, not only an implementation name.
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Samples, specifications, or references
+      description: For new formats, provide a legal sample/specification link or note private delivery to admin@flyfish.dev.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What do you use today, and why is it insufficient?
+
+  - type: textarea
+    id: licensing
+    attributes:
+      label: Dependency and license notes
+      description: If suggesting a library, include its license and browser/offline/Worker/WASM implications.
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Required confirmations
+      options:
+        - label: I searched existing issues and the roadmap for the same request.
+          required: true
+        - label: This request describes one focused user outcome.
+          required: true

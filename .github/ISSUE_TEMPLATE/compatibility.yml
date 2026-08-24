@@ -1,52 +1,121 @@
-name: Compatibility feedback
-description: Report a real file, browser, renderer, or private deployment compatibility issue.
-title: "[compatibility]: "
+name: File compatibility report
+description: Report a real file that renders incorrectly or cannot be opened. A sample is required.
+title: '[compatibility]: '
 labels:
-  - compatibility
+  - bug
 body:
-  - type: dropdown
-    id: format
+  - type: markdown
     attributes:
-      label: File type
+      value: |
+        Use this form for fidelity, producer-specific, and real-file compatibility failures.
+
+        **The exact or reduced file is required.** Attach a public/sanitized sample, provide a public
+        link, or send it privately to `admin@flyfish.dev`. Screenshots help compare output but cannot
+        identify the responsible XML, binary record, font, codec, or producer-specific structure.
+
+  - type: dropdown
+    id: family
+    attributes:
+      label: Format family
       options:
-        - Office / Word / Excel / PowerPoint
+        - Office / Word / Excel / PowerPoint / iWork
         - PDF / OFD / Typst
-        - CAD / DWG / DXF / DWF
+        - CAD / DWG / DXF / DWF / 3D
         - Archive / ZIP / RAR / 7Z / TAR
         - Email / EML / MSG / MBOX
-        - Image / media / code / data
+        - Image / media / ebook
+        - Drawing / mind map / EDA / data
         - Other
     validations:
       required: true
+
   - type: input
     id: extension
     attributes:
-      label: Extension
-      placeholder: docx, pptx, dwg, zip, eml
+      label: Exact extension and producing application
+      placeholder: xlsx from WPS 12.1, pptx from Microsoft 365, dwg from AutoCAD 2024
     validations:
       required: true
-  - type: textarea
-    id: behavior
+
+  - type: input
+    id: packages
     attributes:
-      label: What happened?
-      description: Describe the visible result, console errors, failed network resources, or fidelity issue.
+      label: Package names and exact versions
+      placeholder: '@file-viewer/react-full@2.3.3'
     validations:
       required: true
-  - type: textarea
-    id: environment
+
+  - type: dropdown
+    id: sample-sharing
     attributes:
-      label: Environment
-      description: Browser/version, OS, mobile WebView, framework, package names and versions.
-      placeholder: Chrome 126, Vue 3, @file-viewer/vue3-full 2.1.6, intranet deployment
+      label: Sample sharing method
+      options:
+        - Public or sanitized sample attached to this issue
+        - Public download link provided below
+        - Private sample sent to admin@flyfish.dev
     validations:
       required: true
-  - type: textarea
-    id: deployment
-    attributes:
-      label: Deployment details
-      description: Note whether Worker/WASM/fonts/vendor assets are self-hosted, and include relevant static paths or CSP notes.
+
   - type: textarea
     id: sample
     attributes:
       label: Sample file
-      description: Attach only public or sanitized files. If you cannot share the file, describe its origin and structure.
+      description: |
+        Add the public attachment/link. For private delivery, write
+        `Sent to admin@flyfish.dev on YYYY-MM-DD: filename.ext` and briefly identify the producer.
+      placeholder: 'Sent to admin@flyfish.dev on 2026-08-24: office365-smartart.pptx'
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Failure location inside the file
+      description: Identify the sheet, slide, page, archive entry, drawing/layout, timestamp, or object.
+      placeholder: Sheet 明细台账, cell F18; slide 7; page 12; archive entry docs/a.docx
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual rendering
+      description: Describe what File Viewer displays, including the first relevant error or failed asset.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Reference rendering
+      description: Identify the application/version used as reference and the measurable expected result.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser/version, OS, framework, deployment mode, base path, CSP, and self-hosted assets.
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual-evidence
+    attributes:
+      label: File Viewer and reference screenshots
+      description: Provide matched screenshots at comparable zoom when the difference is visual. Remove sensitive data.
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Required confirmations
+      options:
+        - label: I searched existing issues and did not find the same sample or producer-specific failure.
+          required: true
+        - label: I have already attached, linked, or privately sent the sample using the selected method.
+          required: true
+        - label: I did not create the evidence by only renaming a different file extension.
+          required: true
+        - label: Any public attachment is sanitized and safe to redistribute for regression testing.
+          required: true

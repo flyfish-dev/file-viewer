@@ -1,4 +1,4 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
   - name: Documentation
     url: https://doc.file-viewer.app
@@ -6,3 +6,9 @@ contact_links:
   - name: Live demo
     url: https://demo.file-viewer.app
     about: Try public samples or test a sanitized local file before opening an issue.
+  - name: Usage and deployment support
+    url: https://github.com/flyfish-dev/file-viewer/blob/main/SUPPORT.md
+    about: Check the support routes before filing a bug without a reproducible artifact.
+  - name: Private security report
+    url: https://github.com/flyfish-dev/file-viewer/security/advisories/new
+    about: Report vulnerabilities privately. Do not disclose exploitable details in a public issue.

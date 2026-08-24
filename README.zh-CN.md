@@ -20,7 +20,8 @@
   <a href="https://github.com/flyfish-dev/file-viewer/wiki">GitHub Wiki</a> ·
   <a href="https://github.com/sponsors/wybaby168">GitHub Sponsors</a> ·
   <a href="#快速开始">快速开始</a> ·
-  <a href="#支持格式">支持格式</a>
+  <a href="#支持格式">支持格式</a> ·
+  <a href="CONTRIBUTING.md">参与贡献</a>
 </p>
 
 <p align="center">
@@ -92,7 +93,7 @@ v2.3.0 当前内置 221 个已注册扩展名（221 个稳定、0 个实验）�
 
 这个项目还在持续打磨，尤其需要真实业务文件来验证兼容性。
 
-如果你手里有不涉密、可脱敏的 DOC / XLS / PPT / DWG / DWF / 压缩包 / 邮件样本，欢迎拿 [Demo](https://demo.file-viewer.app) 试一下。遇到样式不一致、打不开、内网部署路径问题或移动端异常，都可以通过 issue 反馈。
+如果文件渲染异常，请先在 [Demo](https://demo.file-viewer.app) 验证，再使用带标注说明的 [Bug 表单](https://github.com/flyfish-dev/file-viewer/issues/new?template=bug_report.yml) 或 [文件兼容性表单](https://github.com/flyfish-dev/file-viewer/issues/new?template=compatibility.yml)。所有 Bug 必须提供公开/脱敏样例、公开复现链接，或注明私有样例已发送到 `admin@flyfish.dev`；截图可以帮助对比，但不能替代样例。
 
 如果这个方向刚好对你有用，也欢迎收藏项目。比起单纯 Star，我更希望收到真实场景下的兼容性反馈。
 

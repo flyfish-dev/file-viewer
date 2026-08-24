@@ -38,6 +38,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify repository governance
+        run: pnpm verify:github-governance
+
       - name: Build source, components and demo
         run: pnpm build
 

@@ -42,11 +42,12 @@
     "verify:presentation-entrypoints": "pnpm --filter @file-viewer/core build && pnpm --filter @file-viewer/pptx build && pnpm --filter @file-viewer/renderer-presentation build && pnpm --filter @file-viewer/vite-plugin build && node apps/viewer-demo/scripts/verify-presentation-entrypoints.mjs",
     "verify:presentation-registry-cold": "node apps/viewer-demo/scripts/verify-presentation-registry-cold.mjs",
     "verify:browser-smoke": "node apps/viewer-demo/scripts/public-smoke.mjs",
-    "verify:pptx-slideshow": "npm exec --yes --package playwright -- node apps/viewer-demo/scripts/verify-pptx-slideshow.mjs"
+    "verify:pptx-slideshow": "npm exec --yes --package playwright -- node apps/viewer-demo/scripts/verify-pptx-slideshow.mjs",
+    "verify:github-governance": "node --test .github/scripts/governance.test.mjs && node .github/scripts/verify-community-standards.mjs && prettier --config .github/prettier-governance.json --check '.github/**/*.{md,yml,mjs,json}' CONTRIBUTING.md SUPPORT.md"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",
-    "prettier": "^3.8.3",
+    "prettier": "3.8.3",
     "playwright": "^1.61.1",
     "typescript": "^6.0.3"
   },

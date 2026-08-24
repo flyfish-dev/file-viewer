@@ -1,36 +1,150 @@
 name: Bug report
-description: Report a reproducible bug in File Viewer.
-title: "[bug]: "
+description: Report a reproducible File Viewer defect. A sample or runnable reproduction is required.
+title: '[bug]: '
 labels:
   - bug
 body:
-  - type: textarea
-    id: summary
+  - type: markdown
     attributes:
-      label: Summary
-      description: What broke, and what did you expect to happen?
+      value: |
+        Thank you for helping us reproduce the problem.
+
+        **A screenshot is useful evidence, but it cannot replace the affected file or a runnable reproduction.**
+        Provide a public/sanitized attachment, a public link, or send a private sample to
+        `admin@flyfish.dev` before submitting. Never upload confidential data to a public issue.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      description: Choose the closest ownership area. Maintainers will route it to the owning package.
+      options:
+        - File rendering or format fidelity
+        - Framework component or public API
+        - Worker / WASM / fonts / deployed assets
+        - Demo or interaction
+        - Performance or memory
+        - Packaging or bundler integration
+        - Other
     validations:
       required: true
+
+  - type: input
+    id: format
+    attributes:
+      label: File type and extension
+      description: Use N/A only when no file is involved.
+      placeholder: pptx (Microsoft 365), xlsx (WPS), PDF, or N/A
+    validations:
+      required: true
+
+  - type: input
+    id: packages
+    attributes:
+      label: Package names and exact versions
+      description: Include the component, preset, renderer, or full package that is actually installed.
+      placeholder: '@file-viewer/vue3-full@2.3.3, @file-viewer/renderer-spreadsheet@2.3.2'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sample-sharing
+    attributes:
+      label: Sample sharing method
+      description: Every bug report must use one of these three reproducible evidence paths.
+      options:
+        - Public or sanitized sample attached to this issue
+        - Public download or minimal reproduction link provided below
+        - Private sample sent to admin@flyfish.dev
+    validations:
+      required: true
+
+  - type: textarea
+    id: sample
+    attributes:
+      label: Sample or reproduction artifact
+      description: |
+        Paste the attachment/link and describe how it was produced. For a private sample, write
+        `Sent to admin@flyfish.dev on YYYY-MM-DD: filename.ext` so maintainers can match it without
+        exposing the file. A screenshot alone is not a sample.
+      placeholder: |
+        Public: https://example.com/reproduction/sample.pptx
+        Private: Sent to admin@flyfish.dev on 2026-08-24: sanitized-customer-layout.pptx
+    validations:
+      required: true
+
   - type: textarea
     id: reproduction
     attributes:
-      label: Reproduction
-      description: Provide a minimal reproduction, demo URL, or steps using demo.file-viewer.app.
+      label: Minimal reproduction steps
+      description: Start from a clean page, the official Demo, or a small repository and list exact actions.
       placeholder: |
-        1. Open ...
-        2. Select ...
-        3. See ...
+        1. Open https://demo.file-viewer.app with Chrome ...
+        2. Load the sample above ...
+        3. Open sheet/slide/page ...
+        4. Observe ...
     validations:
       required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Describe the visible result and the first relevant console or network failure.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: State the measurable result that would make the bug fixed.
+    validations:
+      required: true
+
   - type: textarea
     id: environment
     attributes:
       label: Environment
-      placeholder: Browser, OS, framework, package names and versions
+      description: Browser/version, OS, framework, bundler, deployment base path, CSP, and self-hosted assets.
+      placeholder: Chrome 140, macOS, Vue 3 + Vite 8, /file-viewer/ base path, self-hosted Worker/WASM
     validations:
       required: true
+
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Regression status
+      options:
+        - Worked in an earlier File Viewer version
+        - Has never worked in my environment
+        - Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual-evidence
+    attributes:
+      label: Screenshots or recordings
+      description: Add before/after or expected/actual evidence when the failure is visual. Remove sensitive data first.
+
   - type: textarea
     id: logs
     attributes:
-      label: Console or network errors
+      label: Console and network evidence
+      description: Include the first relevant error, failed URL/status/MIME, or a short stack trace. Redact tokens.
       render: text
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Required confirmations
+      options:
+        - label: I searched existing issues and did not find the same reproduction.
+          required: true
+        - label: I have already attached, linked, or privately sent the sample using the selected method.
+          required: true
+        - label: I understand that screenshots and renamed file extensions do not replace a real sample or runnable reproduction.
+          required: true
+        - label: Any public attachment is sanitized and safe to redistribute for regression testing.
+          required: true

@@ -246,6 +246,6 @@ pnpm verify:browser-smoke
 
 ## Contributing
 
-Compatibility reports, deployment feedback, focused fixes and sanitized regression samples are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before opening an issue or pull request.
+Compatibility reports, deployment feedback, focused fixes and sanitized regression samples are welcome. Every bug report must include a public/sanitized sample, a public reproduction link, or a dated note that the private sample was sent to `admin@flyfish.dev`; screenshots do not replace the sample. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before opening an issue or pull request.
 
 Apache-2.0 licensed. Community links, Wiki and acknowledgements are available in the [documentation](https://doc.file-viewer.app/) and repository sidebar.
