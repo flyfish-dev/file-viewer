@@ -1239,6 +1239,9 @@ importers:
       heic2any:
         specifier: ^0.0.4
         version: 0.0.4
+      utif:
+        specifier: ^3.1.0
+        version: 3.1.0
     devDependencies:
       typescript:
         specifier: ^6.0.3

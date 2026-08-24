@@ -2,6 +2,8 @@
 
 Standalone image renderer package for Flyfish File Viewer. It handles browser-side preview, lightbox viewing, and unified zoom for `png`, `jpg`, `webp`, `avif`, `gif`, `svg`, `tiff`, `ico`, `heic`, `heif`, `jxl`, and related image files.
 
+TIFF opens the MIT-licensed UTIF.js decoder only after the format is selected. It supports CCITT Group 4 and vertically stacked multipage previews with group zoom, rotation, fit-width behavior, page status, and double-click or keyboard lightbox access. Source bytes, page count, dimensions, per-page pixels, and cumulative decoded pixels are bounded; page RGBA buffers are released after progressive conversion. Native PNG/JPEG/WEBP paths do not load the TIFF decoder.
+
 ## Usage
 
 ```ts

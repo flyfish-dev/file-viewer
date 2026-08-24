@@ -107,6 +107,7 @@ PDF、DOCX、PPT、PPTX、CAD、OpenDocument、3D 模型、绘图、音视频、
 - `pic.bmp`: 验证 BMP 图片预览
 - `pic.tiff`: 验证 TIFF 图片预览
 - `pic.tif`: 验证 TIF 图片预览
+- `multipage-ccitt-g4.tif`: GitHub #208 的两页 CCITT Group 4 TIFF 回归样例
 - `vector.svg`: 验证 SVG 图片预览
 - `pic.webp`: 验证 WEBP 图片预览
 - `audio.mp3`: 使用 MDN CC0 音频验证 MP3 原生播放

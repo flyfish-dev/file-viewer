@@ -257,6 +257,11 @@ export default async function renderImage(
   type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const normalizedType = (type || '').trim().toLowerCase();
+  if (normalizedType === 'tif' || normalizedType === 'tiff') {
+    const { renderTiff } = await import('./tiff.js');
+    return renderTiff(buffer, target, context);
+  }
   const t = createFileViewerTranslator(context?.options);
   const documentRef = target.ownerDocument || document;
   const src = await resolveImageUrl(buffer, type);
@@ -306,7 +311,6 @@ export default async function renderImage(
   image.tabIndex = 0;
   image.setAttribute('role', 'button');
   image.setAttribute('aria-haspopup', 'dialog');
-  const normalizedType = (type || '').trim().toLowerCase();
   context?.registerThumbnailAdapter?.({
     capture: () => normalizedType === 'heic' || normalizedType === 'heif'
       ? null
