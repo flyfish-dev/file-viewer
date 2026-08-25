@@ -24,8 +24,8 @@ overrides:
   '@file-viewer/example-react-vite>@file-viewer/react': workspace:2.3.0
   '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.3.4
   '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:2.3.3
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.5
-  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.5
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.6
+  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.6
   '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.3.3
 
 importers:
@@ -340,7 +340,7 @@ importers:
   examples/vue3-vite:
     dependencies:
       '@file-viewer/vue3-full':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../packages/components/vue3-full
       vue:
         specifier: ^3.5.35
@@ -450,10 +450,10 @@ importers:
         specifier: workspace:2.3.0
         version: link:../jquery
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       file-viewer-copy-assets:
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
       jquery:
         specifier: '>=3 <5'
@@ -485,13 +485,13 @@ importers:
   packages/components/react-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/react':
         specifier: workspace:2.3.0
         version: link:../react
       file-viewer-copy-assets:
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -523,13 +523,13 @@ importers:
   packages/components/react-legacy-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/react-legacy':
         specifier: workspace:2.3.0
         version: link:../react-legacy
       file-viewer-copy-assets:
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -558,13 +558,13 @@ importers:
   packages/components/svelte-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/svelte':
         specifier: workspace:2.3.0
         version: link:../svelte
       file-viewer-copy-assets:
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       svelte:
@@ -590,13 +590,13 @@ importers:
   packages/components/vue2.6-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/vue2.6':
         specifier: workspace:2.3.0
         version: link:../vue2.6
       file-viewer-copy-assets:
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -622,13 +622,13 @@ importers:
   packages/components/vue2.7-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/vue2.7':
         specifier: workspace:2.3.0
         version: link:../vue2.7
       file-viewer-copy-assets:
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -684,13 +684,13 @@ importers:
   packages/components/vue3-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/vue3':
         specifier: workspace:2.3.0
         version: link:../vue3
       file-viewer-copy-assets:
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -725,7 +725,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../core
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.5
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/renderer-3d':
         specifier: workspace:2.3.0

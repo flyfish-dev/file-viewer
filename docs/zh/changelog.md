@@ -16,7 +16,7 @@ description: "查看 File Viewer 主线版本的功能更新、安全修复、�
 - 对编码大小、页数、单页尺寸、单页像素和累计解码像素设置硬限制；逐页转换会释放 RGBA 和 Object URL，普通 PNG/JPEG/WEBP 路径不加载 TIFF 解码器。
 - Vite 8 改用 Rolldown `codeSplitting.groups`，Vite 5—7 继续使用 Rollup `manualChunks`；用户分组、优先级、输出数组和 `codeSplitting:false` 保持不变（#209）。
 - 使用 #178 原始 Office 365/WPS 内嵌图片工作簿再次验证主线程、Worker、TIFF drawing 与大图查看路径，Excel 列宽拖拽能力没有被移除。
-- 实际发布版本为 `@file-viewer/renderer-image@2.3.1`、`@file-viewer/vite-plugin@2.3.3`、`@file-viewer/preset-lite@2.3.1`，以及 All/Full/copy-assets 的 2.3.5 补丁线；本版继续包含 v2.3.1 的全部安全修复。
+- 实际发布版本为 `@file-viewer/renderer-image@2.3.1`、`@file-viewer/vite-plugin@2.3.3`、`@file-viewer/preset-lite@2.3.1`，以及统一的 All/Full/copy-assets 2.3.6 补丁线；本版继续包含 v2.3.1 的全部安全修复。
 
 ## `v2.3.1` 旧版 DOC 渲染安全补丁 — 2026-08-24
 

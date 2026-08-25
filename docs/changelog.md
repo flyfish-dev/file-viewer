@@ -14,7 +14,7 @@ Released August 24, 2026.
 - Limited encoded bytes, page count, dimensions, per-page pixels, and cumulative decoded pixels; progressive page conversion releases RGBA data and Object URLs without changing native PNG/JPEG/WEBP loading.
 - Switched Vite 8 projects to Rolldown `codeSplitting.groups` while retaining Rollup `manualChunks` on Vite 5–7 and preserving user groups, priorities, array outputs, and disabled code splitting (#209).
 - Re-ran the original #178 Office 365/WPS in-cell-image workbook through main-thread, Worker, TIFF drawing, and lightbox paths without removing Excel column resizing.
-- Published `@file-viewer/renderer-image@2.3.1`, `@file-viewer/vite-plugin@2.3.3`, `@file-viewer/preset-lite@2.3.1`, and the 2.3.5 All/Full/copy-assets patch line. This release includes every v2.3.1 security correction.
+- Published `@file-viewer/renderer-image@2.3.1`, `@file-viewer/vite-plugin@2.3.3`, `@file-viewer/preset-lite@2.3.1`, and the unified 2.3.6 All/Full/copy-assets line. This release includes every v2.3.1 security correction.
 
 ## v2.3.1 — Legacy DOC rendering security
 

@@ -17,7 +17,7 @@ The project is designed for teams that need users to open business attachments d
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
 - Source matrix scope: 57 File Viewer npm targets, 221 registered extensions, and 32 preview pipelines; all 221 extensions are stable and none are experimental.
-- Current published release: v2.3.2, https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.2. The functional package line is `@file-viewer/renderer-image` 2.3.1, `@file-viewer/vite-plugin` 2.3.3, `@file-viewer/preset-lite` 2.3.1, and All/Full/copy-assets 2.3.5. It includes the v2.3.1 security package line: `@file-viewer/doc` 2.3.1, `msdoc-viewer` 0.2.2, and `@file-viewer/renderer-word` 2.3.2.
+- Current published release: v2.3.2, https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.2. The functional package line is `@file-viewer/renderer-image` 2.3.1, `@file-viewer/vite-plugin` 2.3.3, `@file-viewer/preset-lite` 2.3.1, and the unified All/Full/copy-assets line 2.3.6. It includes the v2.3.1 security package line: `@file-viewer/doc` 2.3.1, `msdoc-viewer` 0.2.2, and `@file-viewer/renderer-word` 2.3.2.
 
 ## Format Coverage
 

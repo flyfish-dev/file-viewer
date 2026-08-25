@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/web-full",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "private": false,
   "type": "module",
   "description": "Full Vanilla JS/Web Component package with preset-all; complete dist includes assets, while npm builds use deployment-base/file-viewer or the included copy CLI.",
@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.3.0",
-    "@file-viewer/preset-all": "workspace:2.3.5",
+    "@file-viewer/preset-all": "workspace:2.3.6",
     "@file-viewer/renderer-3d": "workspace:2.3.0",
     "@file-viewer/renderer-archive": "workspace:2.3.0",
     "@file-viewer/renderer-cad": "workspace:2.3.0",

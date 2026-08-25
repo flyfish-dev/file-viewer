@@ -50,8 +50,8 @@ overrides:
   '@file-viewer/example-react-vite>@file-viewer/react': workspace:2.3.0
   '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.3.4
   '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:2.3.3
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.5
-  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.5
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.6
+  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.6
   '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.3.3
 
 auditConfig:
