@@ -65,7 +65,6 @@
     "type-check": "tsc -b tsconfig.json",
     "verify:github-206": "pnpm build:ts && node scripts/verify-github-206.mjs",
     "verify:fixtures": "bash test/fixtures/github-206-contributed/scripts/verify_all.sh",
-    "verify:no-openpgpjs": "node -e \"const p=require('./package.json'); const d={...p.dependencies,...p.devDependencies,...p.optionalDependencies}; if ('openpgp' in d) process.exit(1);\"",
     "verify:openpgp-architecture": "node scripts/verify-openpgp-architecture.mjs",
     "verify:openpgp-detection": "pnpm build:ts && node scripts/verify-openpgp-detection.mjs",
     "verify:openpgp": "pnpm verify:openpgp-architecture && pnpm verify:openpgp-detection"

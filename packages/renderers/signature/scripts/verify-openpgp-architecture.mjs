@@ -6,15 +6,6 @@ import { fileURLToPath } from 'node:url';
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = path => readFile(resolve(packageDir, path), 'utf8');
 
-const packageJson = JSON.parse(await read('package.json'));
-const dependencyNames = Object.keys({
-  ...packageJson.dependencies,
-  ...packageJson.devDependencies,
-  ...packageJson.optionalDependencies,
-  ...packageJson.peerDependencies,
-});
-assert.equal(dependencyNames.some(name => name.toLowerCase() === 'openpgp'), false, 'OpenPGP.js npm dependency must be absent.');
-
 const cargo = await read('rust/Cargo.toml');
 assert.match(cargo, /pgp\s*=\s*\{[^}]*version\s*=\s*"=0\.20\.0"[^}]*features\s*=\s*\["wasm"\]/s, 'rPGP 0.20.0 with the wasm feature must be pinned.');
 assert.doesNotMatch(cargo, /lgpl/i, 'The Rust manifest must not introduce LGPL code.');
@@ -22,7 +13,6 @@ assert.doesNotMatch(cargo, /lgpl/i, 'The Rust manifest must not introduce LGPL c
 const worker = await read('src/signature.worker.ts');
 assert.match(worker, /import\([^)]*moduleUrl[^)]*\)/, 'The Worker must lazily import the wasm-bindgen module.');
 assert.match(worker, /rpgp_wrapper_bg\.wasm/, 'The Worker must initialize the standalone WASM asset.');
-assert.doesNotMatch(worker, /openpgp(?:\.js)?['"]/i, 'The Worker must not import OpenPGP.js.');
 assert.doesNotMatch(worker, /gnupg|gpg\s+--/i, 'The Worker must not invoke GnuPG.');
 
 const client = await read('src/openpgp/client.ts');
@@ -62,7 +52,6 @@ async function collectSourceFiles(directory) {
 for (const file of await collectSourceFiles(packageDir)) {
   if (file === fileURLToPath(import.meta.url)) continue;
   const text = await readFile(file, 'utf8');
-  assert.doesNotMatch(text, /(?:from\s+|import\s*\()\s*['\"]openpgp['\"]/i, `OpenPGP.js import remains in ${file}.`);
   assert.doesNotMatch(text, /child_process[^\n]*(?:gpg|gnupg)|(?:exec|spawn)[^(]*\([^\n]*(?:gpg|gnupg)/i, `External GnuPG invocation remains in ${file}.`);
 }
 

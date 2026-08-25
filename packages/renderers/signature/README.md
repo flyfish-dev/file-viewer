@@ -40,7 +40,7 @@ const options = {
 
 ## OpenPGP backend
 
-OpenPGP is implemented with rPGP (`pgp` crate `0.20.0`) compiled to WebAssembly. OpenPGP.js is not used and the renderer has no npm dependency named `openpgp`. No LGPL OpenPGP implementation, GnuPG executable, keyserver integration or server-side conversion is required.
+OpenPGP is implemented with rPGP (`pgp` crate `0.20.0`) compiled to WebAssembly. The renderer therefore uses the Rust rPGP backend directly; no additional JavaScript cryptography dependency, GnuPG executable, keyserver integration or server-side conversion is required.
 
 The loading path is deliberately lazy:
 
@@ -130,8 +130,8 @@ pnpm --filter @file-viewer/renderer-signature verify:fixtures
 pnpm --filter @file-viewer/renderer-signature verify:openpgp
 ```
 
-`verify:openpgp` checks the lazy Worker/WASM boundary, pinned rPGP configuration, absence of OpenPGP.js imports/dependencies, absence of GnuPG invocation, restricted wrapper API and TypeScript content-detection behavior. Runtime rPGP fixture tests require the WASM backend to be built first.
+`verify:openpgp` checks the lazy Worker/WASM boundary, pinned rPGP configuration, absence of GnuPG invocation, restricted wrapper API and TypeScript content-detection behavior. Runtime rPGP fixture tests require the WASM backend to be built first.
 
 ## Third-party licensing
 
-The Rust backend uses the permissively licensed rPGP `pgp` crate. See `THIRD_PARTY_NOTICES.md`. This renderer must not add or bundle LGPL OpenPGP code.
+The Rust backend uses the permissively licensed rPGP `pgp` crate. See `THIRD_PARTY_NOTICES.md`.
