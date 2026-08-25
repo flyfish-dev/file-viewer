@@ -9,7 +9,7 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "@file-viewer/preset-office": "^2.3.4",
+    "@file-viewer/preset-office": "^2.3.5",
     "@file-viewer/react": "^2.3.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"

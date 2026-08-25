@@ -40,6 +40,7 @@ overrides:
   dompurify: 3.4.13
   'immutable@5.1.6': 5.1.9
   'ini@<1.3.6': 1.3.8
+  mermaid: 11.16.1
   nanoid: 3.3.18
   postcss: 8.5.23
   style-to-js: 1.1.21
@@ -48,10 +49,10 @@ overrides:
   '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:2.3.1
   '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:2.3.3
   '@file-viewer/example-react-vite>@file-viewer/react': workspace:2.3.0
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.3.4
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.3.5
   '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:2.3.3
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.6
-  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.6
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.7
+  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.7
   '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.3.3
 
 auditConfig:
