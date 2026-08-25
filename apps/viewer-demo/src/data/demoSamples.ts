@@ -232,6 +232,7 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
       { name: 'BMP', url: '/example/pic.bmp' },
       { name: 'TIFF', url: '/example/pic.tiff' },
       { name: 'TIF', url: '/example/pic.tif' },
+      { name: 'TIFF（2 页 CCITT G4）', url: '/example/multipage-ccitt-g4.tif' },
       { name: 'SVG', url: '/example/vector.svg' },
       { name: 'WEBP', url: '/example/pic.webp' },
       { name: 'MP3', url: '/example/audio.mp3' },

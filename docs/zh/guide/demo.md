@@ -261,6 +261,7 @@ pnpm --filter @flyfish-group/file-viewer-component-demo preview
 | `pic.bmp` | 验证 BMP 图片预览 | `bmp` |
 | `pic.tiff` | 验证 TIFF 图片预览 | `tiff` |
 | `pic.tif` | 验证 TIF 图片预览 | `tif` |
+| `multipage-ccitt-g4.tif` | 验证两页 CCITT Group 4 TIFF、整组缩放/旋转/适宽、页码状态和大图查看 | `tif` |
 | `vector.svg` | 验证 SVG 图片预览 | `svg` |
 | `pic.webp` | 验证 WEBP 图片预览 | `webp` |
 | `audio.mp3` | 使用 MDN CC0 音频验证 MP3 原生播放 | `mp3` |

@@ -16,6 +16,7 @@ const pptxWorkerPath = join(root, 'packages/renderers/pptx/dist/worker/pptx.work
 const sourceAliases = [
   ['@security/markdown', 'packages/renderers/text/src/markdown.ts'],
   ['@security/pptx', 'packages/renderers/pptx/src/viewer.ts'],
+  ['@security/doc', 'packages/renderers/doc/src/index.ts'],
   ['@file-viewer/core/assets', 'packages/core/src/assets.ts'],
   ['@file-viewer/core', 'packages/core/src/index.ts']
 ].map(([find, relativePath]) => ({ find, replacement: join(root, relativePath) }))
@@ -67,10 +68,102 @@ const launchChromium = async (chromium) => {
 const harnessMain = String.raw`
 import renderMarkdown from '@security/markdown'
 import { PptxViewer } from '@security/pptx'
+import { mountMsDoc, renderMsDoc, sanitizeMsDocLinkHref } from '@security/doc'
 
 const pixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 const fence = String.fromCharCode(96).repeat(3)
-window.__rendererSentinel = { markdown: 0, pptx: 0 }
+window.__rendererSentinel = { markdown: 0, pptx: 0, doc: 0 }
+
+const maliciousFont = 'Safe Font" onmouseover="window.__rendererSentinel.doc += 1'
+const docParagraph = (href, text) => ({
+  type: 'paragraph',
+  text,
+  rawProperties: [],
+  styleId: 0,
+  styleName: 'Normal',
+  paraProps: [],
+  paraState: {},
+  tableProps: [],
+  tableState: {},
+  segments: [],
+  inlines: [{
+    type: 'text',
+    text,
+    href,
+    style: { fontFamily: maliciousFont, underline: 0 },
+  }],
+})
+const docParsed = {
+  blocks: [
+    docParagraph('javascript:window.__rendererSentinel.doc += 10', 'unsafe'),
+    docParagraph('JaVa\nScRiPt:window.__rendererSentinel.doc += 20', 'obfuscated unsafe'),
+    docParagraph('vbscript:window.__rendererSentinel.doc += 30', 'vbscript unsafe'),
+    docParagraph('data:text/html,<script>window.__rendererSentinel.doc += 40</script>', 'data unsafe'),
+    docParagraph('file:///tmp/unsafe', 'file unsafe'),
+    docParagraph('blob:https://example.com/unsafe', 'blob unsafe'),
+    docParagraph('//example.com/protocol-relative', 'protocol relative unsafe'),
+    docParagraph('/relative/doc', 'safe root relative'),
+    docParagraph('./relative/doc', 'safe current relative'),
+    docParagraph('../relative/doc', 'safe parent relative'),
+    docParagraph('relative/doc', 'safe plain relative'),
+    docParagraph('https://example.com/doc', 'safe external'),
+    docParagraph('http://example.com/doc', 'safe http'),
+    docParagraph('mailto:security@example.com', 'safe email'),
+    docParagraph('tel:+12025550123', 'safe phone'),
+    docParagraph('#bookmark', 'safe bookmark'),
+    {
+      ...docParagraph(null, 'safe media'),
+      inlines: [
+        {
+          type: 'image',
+          href: 'javascript:window.__rendererSentinel.doc += 50',
+          asset: { name: 'image', mimeType: 'image/gif', dataUrl: pixel, sourceUrl: pixel },
+          style: {},
+        },
+        {
+          type: 'attachment',
+          href: 'data:text/html,unsafe',
+          asset: {
+            name: 'report" onmouseover="window.__rendererSentinel.doc += 60',
+            mimeType: 'application/octet-stream',
+            dataUrl: 'data:application/octet-stream;base64,AA==',
+          },
+          style: {},
+        },
+        {
+          type: 'attachment',
+          href: null,
+          asset: {
+            name: 'unsafe-download.html',
+            mimeType: 'text/html',
+            dataUrl: 'data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==',
+          },
+          style: {},
+        },
+      ],
+    },
+    {
+      type: 'attachments',
+      items: [
+        { name: 'safe.bin', mimeType: 'application/octet-stream', dataUrl: 'data:application/octet-stream;base64,AA==' },
+        { name: 'unsafe.svg', mimeType: 'image/svg+xml', dataUrl: 'data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9ImFsZXJ0KDEpIi8+' },
+        { name: 'unsafe-link', mimeType: 'application/octet-stream', dataUrl: 'javascript:window.__rendererSentinel.doc += 70' },
+      ],
+    },
+  ],
+  warnings: [],
+  assets: [],
+  meta: {},
+}
+const docBlocked = renderMsDoc(docParsed)
+const docAllowed = renderMsDoc(docParsed, { externalLinkPolicy: 'allow' })
+const docDirectTemplate = document.createElement('template')
+docDirectTemplate.innerHTML = docAllowed.html
+const docTarget = document.querySelector('#doc')
+mountMsDoc(docTarget, {
+  ...docAllowed,
+  html: docAllowed.html + '<img id="doc-event" src="' + pixel + '" onload="window.__rendererSentinel.doc += 100">',
+})
 
 const markdown = [
   '# Safe Markdown heading',
@@ -215,6 +308,26 @@ const inspectPptx = root => {
 
 window.__rendererSanitizationResult = {
   sentinel: { ...window.__rendererSentinel },
+  doc: {
+    blockedExternal: docBlocked.html.includes('https://example.com/doc'),
+    allowedExternal: docAllowed.html.includes('href="https://example.com/doc"'),
+    dangerousDirectAttributes: docDirectTemplate.content.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
+    unsafeDirectHrefs: Array.from(docDirectTemplate.content.querySelectorAll('a[href]'))
+      .map(link => link.getAttribute('href'))
+      .filter(href => /^(?:javascript|vbscript|file|blob):/i.test(href || '') || /^data:(?:text\/html|image\/svg\+xml|application\/(?:javascript|xhtml\+xml|xml))/i.test(href || '') || String(href).startsWith('//')),
+    directSafeHrefs: Array.from(docDirectTemplate.content.querySelectorAll('a.msdoc-link[href]'))
+      .map(link => link.getAttribute('href'))
+      .filter(Boolean),
+    safeDownloadHrefs: Array.from(docDirectTemplate.content.querySelectorAll('a.msdoc-attachment[href]'))
+      .map(link => link.getAttribute('href'))
+      .filter(Boolean),
+    injectedAttribute: docTarget.querySelector('[onmouseover],[onload],[onerror],[onclick]') !== null,
+    unsafeMountedHref: docTarget.querySelector('a[href^="javascript:"]')?.getAttribute('href') ?? null,
+    safeMountedHref: docTarget.querySelector('a[href="https://example.com/doc"]')?.getAttribute('href') ?? null,
+    bookmarkHref: docTarget.querySelector('a[href="#bookmark"]')?.getAttribute('href') ?? null,
+    sanitizedJavascript: sanitizeMsDocLinkHref('java\nscript:alert(1)', 'allow'),
+    sanitizedProtocolRelative: sanitizeMsDocLinkHref('//example.com/path', 'allow'),
+  },
   markdown: {
     heading: markdownTarget.querySelector('h1')?.textContent || '',
     tables: markdownTarget.querySelectorAll('table').length,
@@ -433,6 +546,7 @@ try {
   </head>
   <body>
     <div id="markdown"></div>
+    <div id="doc"></div>
     <div id="pptx-regular"></div>
     <div id="pptx-windowed"></div>
     <script type="module" src="/main.js"></script>
@@ -485,7 +599,7 @@ try {
   await page.waitForFunction(() => Boolean(window.__rendererSanitizationResult), null, { timeout })
   const result = await page.evaluate(() => window.__rendererSanitizationResult)
 
-  assert.deepEqual(result.sentinel, { markdown: 0, pptx: 0 })
+  assert.deepEqual(result.sentinel, { markdown: 0, pptx: 0, doc: 0 })
   assert.equal(dialogs, 0)
   assert.deepEqual(unsafeCssRequests, [])
   assert.deepEqual(failures, [])
@@ -504,6 +618,30 @@ try {
   assert.equal(result.markdown.safeHref, 'https://example.com/docs')
   assert.equal(result.markdown.safeTarget, '_blank')
   assert.match(result.markdown.safeRel, /noopener/)
+  assert.equal(result.doc.blockedExternal, false)
+  assert.equal(result.doc.allowedExternal, true)
+  assert.equal(result.doc.dangerousDirectAttributes, 0)
+  assert.deepEqual(result.doc.unsafeDirectHrefs, [])
+  assert.ok(result.doc.safeDownloadHrefs.includes('data:application/octet-stream;base64,AA=='))
+  for (const href of [
+    '/relative/doc',
+    './relative/doc',
+    '../relative/doc',
+    'relative/doc',
+    'https://example.com/doc',
+    'http://example.com/doc',
+    'mailto:security@example.com',
+    'tel:+12025550123',
+    '#bookmark',
+  ]) {
+    assert.ok(result.doc.directSafeHrefs.includes(href), `Expected safe DOC href ${href}.`)
+  }
+  assert.equal(result.doc.injectedAttribute, false)
+  assert.equal(result.doc.unsafeMountedHref, null)
+  assert.equal(result.doc.safeMountedHref, 'https://example.com/doc')
+  assert.equal(result.doc.bookmarkHref, '#bookmark')
+  assert.equal(result.doc.sanitizedJavascript, null)
+  assert.equal(result.doc.sanitizedProtocolRelative, null)
 
   for (const state of [result.pptxRegular, result.pptxWindowed]) {
     assert.equal(state.slides, 1)
@@ -531,7 +669,7 @@ try {
   }
 
   await page.evaluate(() => window.__rendererSanitizationCleanup?.())
-  console.log('[renderer-sanitization] Markdown and PPTX markup passed browser isolation checks.')
+  console.log('[renderer-sanitization] DOC, Markdown, and PPTX markup passed browser isolation checks.')
 } finally {
   await browser?.close()
   await viteServer?.close()

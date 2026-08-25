@@ -1016,6 +1016,46 @@ function hasManualChunks(config: UserConfig) {
 
 type FileViewerManualChunksFunction = (id: string, meta?: unknown) => string | void
 
+interface FileViewerCodeSplittingGroup {
+  name: string | ((id: string, context?: unknown) => string | null | undefined)
+  test?: string | RegExp | ((id: string) => boolean | undefined | void)
+  priority?: number
+  [key: string]: unknown
+}
+
+interface FileViewerCodeSplittingOptions {
+  groups?: FileViewerCodeSplittingGroup[]
+  [key: string]: unknown
+}
+
+interface FileViewerRolldownOutput {
+  codeSplitting?: boolean | FileViewerCodeSplittingOptions
+  [key: string]: unknown
+}
+
+interface FileViewerRolldownOptions {
+  output?: FileViewerRolldownOutput | FileViewerRolldownOutput[]
+  [key: string]: unknown
+}
+
+function resolveProjectViteMajor(projectRoot: string) {
+  const requireFns = [
+    createRequire(resolve(projectRoot, 'package.json')),
+    pluginRequire
+  ]
+  for (const requireFn of requireFns) {
+    try {
+      const packageJsonPath = requireFn.resolve('vite/package.json')
+      const version = String((JSON.parse(readFileSync(packageJsonPath, 'utf8')) as { version?: string }).version || '')
+      const major = Number.parseInt(version.split('.')[0] || '', 10)
+      if (Number.isInteger(major) && major > 0) return major
+    } catch {
+      // Try the plugin's own Vite installation when the project does not expose one.
+    }
+  }
+  return 7
+}
+
 function getManualChunksFunction(config: UserConfig): FileViewerManualChunksFunction | null {
   const output = config.build?.rollupOptions?.output
   if (Array.isArray(output)) {
@@ -1070,6 +1110,84 @@ function createStableInteropManualChunks(
   manualChunks: FileViewerManualChunksFunction
 ): FileViewerManualChunksFunction {
   return (id, meta) => getStableInteropChunkName(id) || manualChunks(id, meta)
+}
+
+function createRolldownCodeSplittingGroups(
+  selection: RendererSelection,
+  autoPresetIds: readonly FileViewerVitePreset[],
+  options: FileViewerRenderersPluginOptions
+): FileViewerCodeSplittingGroup[] {
+  const groups: FileViewerCodeSplittingGroup[] = []
+  if (options.stabilizeInteropChunks !== false) {
+    groups.push({
+      name: 'vendor-codemirror',
+      test: (id: string) => getStableInteropChunkName(id) === 'vendor-codemirror',
+      priority: -10
+    })
+  }
+  if ((options.chunkStrategy || 'renderer') !== 'none') {
+    const resolveChunkName = createManualChunks(selection, autoPresetIds)
+    groups.push({
+      name: (id: string) => resolveChunkName(id) || null,
+      priority: -20
+    })
+  }
+  return groups
+}
+
+function mergeRolldownCodeSplittingOutput(
+  output: FileViewerRolldownOutput | undefined,
+  pluginGroups: readonly FileViewerCodeSplittingGroup[]
+): FileViewerRolldownOutput {
+  const current = output || {}
+  if (current.codeSplitting === false || !pluginGroups.length) return current
+  const codeSplitting = current.codeSplitting && typeof current.codeSplitting === 'object'
+    ? current.codeSplitting
+    : {}
+  const existingGroups = Array.isArray(codeSplitting.groups) ? codeSplitting.groups : []
+  const existingNames = new Set(existingGroups
+    .map(group => typeof group.name === 'string' ? group.name : null)
+    .filter((name): name is string => Boolean(name)))
+  const groups = [
+    ...existingGroups,
+    ...pluginGroups.filter(group => typeof group.name !== 'string' || !existingNames.has(group.name))
+  ]
+  return {
+    ...current,
+    codeSplitting: {
+      ...codeSplitting,
+      groups
+    }
+  }
+}
+
+function createVite8ChunkConfig(
+  userConfig: UserConfig,
+  selection: RendererSelection,
+  autoPresetIds: readonly FileViewerVitePreset[],
+  options: FileViewerRenderersPluginOptions
+): UserConfig {
+  const build = userConfig.build as (UserConfig['build'] & { rolldownOptions?: FileViewerRolldownOptions }) | undefined
+  const rolldownOptions = build?.rolldownOptions || {}
+  const groups = createRolldownCodeSplittingGroups(selection, autoPresetIds, options)
+  const currentOutput = rolldownOptions.output as FileViewerRolldownOutput | FileViewerRolldownOutput[] | undefined
+  if (
+    !groups.length ||
+    (!Array.isArray(currentOutput) && currentOutput?.codeSplitting === false)
+  ) {
+    return {}
+  }
+  const output = Array.isArray(currentOutput)
+    ? currentOutput.map(item => mergeRolldownCodeSplittingOutput(item, groups))
+    : mergeRolldownCodeSplittingOutput(currentOutput, groups)
+  return {
+    build: {
+      rolldownOptions: {
+        ...rolldownOptions,
+        output
+      }
+    }
+  } as UserConfig
 }
 
 function createOptimizeDepsExclude(config: UserConfig) {
@@ -2549,6 +2667,12 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
             ...normalizeViteAlias(userConfig.resolve?.alias),
             ...createFileViewerResolveAliases(resolvedDependencyAnchorPackages)
           ]
+        }
+      }
+      if (resolveProjectViteMajor(projectRoot) >= 8) {
+        return {
+          ...nextConfig,
+          ...createVite8ChunkConfig(userConfig, selection, autoPresetIds, options)
         }
       }
       if (manualChunksFunction && options.stabilizeInteropChunks !== false) {

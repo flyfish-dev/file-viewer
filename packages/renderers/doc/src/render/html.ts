@@ -38,11 +38,57 @@ const COLOR_INDEX_MAP: Record<number, string> = {
   16: '#c0c0c0',
 };
 
+type ExternalLinkPolicy = NonNullable<MsDocRenderOptions['externalLinkPolicy']>;
+
+interface RenderContext {
+  externalLinkPolicy: ExternalLinkPolicy;
+}
+
 function styleObjectToCss(style: CssStyleObject): string {
   return Object.entries(style)
     .filter(([, value]) => value != null && value !== '')
-    .map(([key, value]) => `${key}:${value}`)
+    .map(([key, value]) => `${key}:${escapeHtml(value)}`)
     .join(';');
+}
+
+function quoteCssString(value: unknown): string {
+  const escaped = String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/[\n\r\f]/g, ' ')
+    .replace(/[\u0000-\u001f\u007f-\u009f]/g, ' ');
+  return `'${escaped}'`;
+}
+
+/**
+ * Normalizes a document-provided hyperlink before it reaches generated HTML.
+ * Internal bookmarks always remain available. External navigation is opt-in
+ * and is still restricted to browser-safe schemes and relative paths.
+ */
+export function sanitizeMsDocLinkHref(
+  href: string | undefined | null,
+  policy: ExternalLinkPolicy = 'block',
+): string | null {
+  const value = String(href ?? '')
+    .replace(/[\u0000-\u0020\u007f-\u009f]/g, '')
+    .trim();
+  if (!value) return null;
+  if (value.startsWith('#')) return value;
+  if (policy !== 'allow') return null;
+  if (/^(?:https?:|mailto:|tel:)/i.test(value)) return value;
+  if (value.startsWith('//') || value.startsWith('\\')) return null;
+  if (/^(?:\/|\.\/|\.\.\/)/.test(value) && !value.startsWith('//') && !value.startsWith('\\\\')) {
+    return value;
+  }
+  if (!/^[a-z][a-z\d+.-]*:/i.test(value) && !value.startsWith('\\')) return value;
+  return null;
+}
+
+function renderLink(content: string, href: string | null): string {
+  if (!href) return content;
+  const escapedHref = escapeHtml(href);
+  if (href.startsWith('#')) return `<a class="msdoc-link" href="${escapedHref}">${content}</a>`;
+  return `<a class="msdoc-link" href="${escapedHref}" target="_blank" rel="noreferrer noopener">${content}</a>`;
 }
 
 function borderToCss(border: BorderSpec | undefined | null): string | null {
@@ -167,7 +213,7 @@ function inlineStyleToCss(styleState: CharState): CssStyleObject {
   if (styleState.strike || styleState.doubleStrike) style['text-decoration-line'] = `${style['text-decoration-line'] ? `${style['text-decoration-line']} ` : ''}line-through`;
   Object.assign(style, buildUnderlineStyle(styleState.underline));
   if (styleState.fontSizeHalfPoints) style['font-size'] = `${styleState.fontSizeHalfPoints / 2}pt`;
-  if (styleState.fontFamily) style['font-family'] = `'${String(styleState.fontFamily).replace(/'/g, "\\'")}', sans-serif`;
+  if (styleState.fontFamily) style['font-family'] = `${quoteCssString(styleState.fontFamily)},sans-serif`;
   if (styleState.colorIndex && COLOR_INDEX_MAP[styleState.colorIndex]) style.color = COLOR_INDEX_MAP[styleState.colorIndex];
   const highlightIndex = typeof styleState.highlight === 'number' ? styleState.highlight : styleState.highlight?.index;
   if (highlightIndex && HIGHLIGHT_COLORS[highlightIndex as keyof typeof HIGHLIGHT_COLORS]) {
@@ -190,16 +236,13 @@ function inlineStyleToCss(styleState: CharState): CssStyleObject {
   return style;
 }
 
-function renderTextNode(node: TextInlineNode): string {
+function renderTextNode(node: TextInlineNode, context: RenderContext): string {
   const content = escapeHtml(node.text);
   const inlineStyle = inlineStyleToCss(node.style);
   inlineStyle['white-space'] = 'break-spaces';
   const style = styleObjectToCss(inlineStyle);
   const inner = `<span${style ? ` style="${style}"` : ''}>${content}</span>`;
-  if (node.href) {
-    return `<a class="msdoc-link" href="${escapeHtml(node.href)}" target="_blank" rel="noreferrer noopener">${inner}</a>`;
-  }
-  return inner;
+  return renderLink(inner, sanitizeMsDocLinkHref(node.href, context.externalLinkPolicy));
 }
 
 function inlineImageDisplaySizePx(asset: ImageAsset): { widthPx?: number; heightPx?: number } {
@@ -226,14 +269,28 @@ function sanitizeImageSource(src: string | undefined | null): string | null {
   return null;
 }
 
-function sanitizeAssetHref(href: string | undefined | null): string | null {
-  const value = String(href || '').trim();
+function sanitizeDownloadHref(href: string | undefined | null): string | null {
+  const value = String(href ?? '').trim();
   if (!value) return null;
-  if (/^(?:data:|blob:|https?:)/i.test(value)) return value;
+  const dataUrl = /^data:([^;,]+);base64,([a-z\d+/=\s]+)$/i.exec(value);
+  if (!dataUrl) return null;
+  const mimeType = dataUrl[1].trim().toLowerCase();
+  if (/^(?:text\/(?:html|javascript)|application\/(?:javascript|xhtml\+xml|xml)|image\/svg\+xml)$/.test(mimeType)) {
+    return null;
+  }
+  if (mimeType.endsWith('+xml')) return null;
+  return value;
+}
+
+function sanitizeAssetHref(href: string | undefined | null, context: RenderContext): string | null {
+  const downloadHref = sanitizeDownloadHref(href);
+  if (downloadHref) return downloadHref;
+  const value = sanitizeMsDocLinkHref(href, context.externalLinkPolicy);
+  if (value && !value.startsWith('#')) return value;
   return null;
 }
 
-function renderImageNode(node: Extract<InlineNode, { type: 'image' }>): string {
+function renderImageNode(node: Extract<InlineNode, { type: 'image' }>, context: RenderContext): string {
   const src = sanitizeImageSource(node.asset.sourceUrl) || sanitizeImageSource(node.asset.dataUrl);
   const baseStyle = inlineStyleToCss(node.style);
   const displaySize = inlineImageDisplaySizePx(node.asset);
@@ -247,48 +304,43 @@ function renderImageNode(node: Extract<InlineNode, { type: 'image' }>): string {
   }
 
   if (!src || node.asset.displayable === false) {
-    const fallbackHref = sanitizeAssetHref(node.asset.dataUrl) || sanitizeAssetHref(node.asset.sourceUrl);
+    const fallbackHref = sanitizeAssetHref(node.asset.dataUrl, context) || sanitizeAssetHref(node.asset.sourceUrl, context);
     const label = escapeHtml(String(node.asset.meta?.linkedPath || node.asset.mime || 'image'));
     const inner = fallbackHref
       ? `<a class="msdoc-attachment msdoc-image-fallback" href="${escapeHtml(fallbackHref)}" target="_blank" rel="noreferrer noopener">🖼 ${label}</a>`
       : `<span class="msdoc-image-fallback">🖼 ${label}</span>`;
-    if (node.href) {
-      return `<a class="msdoc-link" href="${escapeHtml(node.href)}" target="_blank" rel="noreferrer noopener">${inner}</a>`;
-    }
-    return inner;
+    return renderLink(inner, sanitizeMsDocLinkHref(node.href, context.externalLinkPolicy));
   }
 
   const img = `<img class="msdoc-image" src="${escapeHtml(src)}" alt="" style="${styleObjectToCss(baseStyle)}">`;
-  if (node.href) {
-    return `<a class="msdoc-link" href="${escapeHtml(node.href)}" target="_blank" rel="noreferrer noopener">${img}</a>`;
-  }
-  return img;
+  return renderLink(img, sanitizeMsDocLinkHref(node.href, context.externalLinkPolicy));
 }
 
-function renderAttachmentNode(node: Extract<InlineNode, { type: 'attachment' }>): string {
+function renderAttachmentNode(node: Extract<InlineNode, { type: 'attachment' }>, context: RenderContext): string {
   const label = escapeHtml(node.asset.name || 'embedded-file');
-  const inner = `<a class="msdoc-attachment" href="${escapeHtml(node.asset.dataUrl)}" download="${label}">📎 ${label}</a>`;
-  if (node.href) {
-    return `<a class="msdoc-link" href="${escapeHtml(node.href)}" target="_blank" rel="noreferrer noopener">${inner}</a>`;
-  }
-  return inner;
+  const downloadHref = sanitizeDownloadHref(node.asset.dataUrl);
+  const inner = downloadHref
+    ? `<a class="msdoc-attachment" href="${escapeHtml(downloadHref)}" download="${label}">📎 ${label}</a>`
+    : `<span class="msdoc-attachment">📎 ${label}</span>`;
+  const href = sanitizeMsDocLinkHref(node.href, context.externalLinkPolicy);
+  return href ? `<span class="msdoc-inline-group">${inner}${renderLink('↗', href)}</span>` : inner;
 }
 
-function renderInlineNodes(nodes: InlineNode[]): string {
+function renderInlineNodes(nodes: InlineNode[], context: RenderContext): string {
   return nodes.map((node) => {
-    if (node.type === 'text') return renderTextNode(node);
-    if (node.type === 'image') return renderImageNode(node);
-    if (node.type === 'attachment') return renderAttachmentNode(node);
+    if (node.type === 'text') return renderTextNode(node, context);
+    if (node.type === 'image') return renderImageNode(node, context);
+    if (node.type === 'attachment') return renderAttachmentNode(node, context);
     if (node.type === 'lineBreak') return '<br>';
     if (node.type === 'pageBreak') return '<span class="msdoc-page-break"></span>';
     return '';
   }).join('');
 }
 
-function renderParagraphBlock(block: ParagraphBlock, options: { inline?: boolean } = {}): string {
+function renderParagraphBlock(block: ParagraphBlock, context: RenderContext, options: { inline?: boolean } = {}): string {
   const tag = options.inline ? 'div' : 'p';
   const style = styleObjectToCss(paragraphStyleToCss(block.paraState));
-  const body = renderInlineNodes(block.inlines || []);
+  const body = renderInlineNodes(block.inlines || [], context);
   const empty = body || '<br>';
   const classNames = ['msdoc-paragraph'];
   if (block.styleName) classNames.push(`msdoc-style-${slugify(block.styleName)}`);
@@ -353,7 +405,7 @@ function tableStyle(block: TableBlock): CssStyleObject {
   return style;
 }
 
-function renderTableBlock(block: TableBlock): string {
+function renderTableBlock(block: TableBlock, context: RenderContext): string {
   const rows = block.rows.map((row) => {
     const rowHeight = row.state?.rowHeight ? twipsToPx(Math.abs(row.state.rowHeight)) : null;
     const rowStyle = rowHeight ? ` style="height:${rowHeight}px"` : '';
@@ -364,7 +416,7 @@ function renderTableBlock(block: TableBlock): string {
         if ((cell.colspan ?? 1) > 1) attrs.push(` colspan="${cell.colspan}"`);
         if ((cell.rowspan ?? 1) > 1) attrs.push(` rowspan="${cell.rowspan}"`);
         const style = styleObjectToCss(cellStyle(cell));
-        const body = cell.paragraphs.map((paragraph) => renderParagraphBlock(paragraph, { inline: true })).join('');
+        const body = cell.paragraphs.map((paragraph) => renderParagraphBlock(paragraph, context, { inline: true })).join('');
         return `<td class="msdoc-cell"${attrs.join('')}${style ? ` style="${style}"` : ''}>${body || '<div class="msdoc-paragraph"><br></div>'}</td>`;
       })
       .join('');
@@ -375,7 +427,14 @@ function renderTableBlock(block: TableBlock): string {
 }
 
 function renderAttachmentsBlock(block: AttachmentsBlock): string {
-  const items = block.items.map((item: AttachmentAsset) => `<li><a class="msdoc-attachment" href="${escapeHtml(item.dataUrl)}" download="${escapeHtml(item.name || 'embedded-file')}">📎 ${escapeHtml(item.name || 'embedded-file')}</a></li>`).join('');
+  const items = block.items.map((item: AttachmentAsset) => {
+    const label = escapeHtml(item.name || 'embedded-file');
+    const downloadHref = sanitizeDownloadHref(item.dataUrl);
+    const content = downloadHref
+      ? `<a class="msdoc-attachment" href="${escapeHtml(downloadHref)}" download="${label}">📎 ${label}</a>`
+      : `<span class="msdoc-attachment">📎 ${label}</span>`;
+    return `<li>${content}</li>`;
+  }).join('');
   return `<section class="msdoc-attachments"><div class="msdoc-attachments-title">Embedded attachments</div><ul>${items}</ul></section>`;
 }
 
@@ -405,9 +464,12 @@ export function defaultMsDocCss(): string {
  */
 export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOptions = {}): MsDocRenderResult {
   const css = options.css ?? defaultMsDocCss();
+  const context: RenderContext = {
+    externalLinkPolicy: options.externalLinkPolicy ?? 'block',
+  };
   const html = parsed.blocks.map((block) => {
-    if (block.type === 'paragraph') return renderParagraphBlock(block);
-    if (block.type === 'table') return renderTableBlock(block);
+    if (block.type === 'paragraph') return renderParagraphBlock(block, context);
+    if (block.type === 'table') return renderTableBlock(block, context);
     if (block.type === 'attachments') return renderAttachmentsBlock(block);
     return '';
   }).join('');

@@ -109,6 +109,15 @@ const resolveImageUrl = async (buffer: ArrayBuffer, type?: string) => {
   return readBlobDataUrl(new Blob([buffer], { type: getImageBlobType(normalizedType) }));
 };
 
+export const hasTiffSignature = (buffer: ArrayBuffer) => {
+  if (buffer.byteLength < 4) return false;
+  const bytes = new Uint8Array(buffer, 0, 4);
+  return (
+    (bytes[0] === 0x49 && bytes[1] === 0x49 && bytes[2] === 0x2a && bytes[3] === 0x00) ||
+    (bytes[0] === 0x4d && bytes[1] === 0x4d && bytes[2] === 0x00 && bytes[3] === 0x2a)
+  );
+};
+
 const waitForImageReady = async (image: HTMLImageElement) => {
   if (image.complete) {
     if (image.naturalWidth > 0 && image.naturalHeight > 0) return;
@@ -257,6 +266,11 @@ export default async function renderImage(
   type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const normalizedType = (type || '').trim().toLowerCase();
+  if ((normalizedType === 'tif' || normalizedType === 'tiff') && hasTiffSignature(buffer)) {
+    const { renderTiff } = await import('./tiff.js');
+    return renderTiff(buffer, target, context);
+  }
   const t = createFileViewerTranslator(context?.options);
   const documentRef = target.ownerDocument || document;
   const src = await resolveImageUrl(buffer, type);
@@ -306,7 +320,6 @@ export default async function renderImage(
   image.tabIndex = 0;
   image.setAttribute('role', 'button');
   image.setAttribute('aria-haspopup', 'dialog');
-  const normalizedType = (type || '').trim().toLowerCase();
   context?.registerThumbnailAdapter?.({
     capture: () => normalizedType === 'heic' || normalizedType === 'heif'
       ? null

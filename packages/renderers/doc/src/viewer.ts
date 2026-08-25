@@ -1,3 +1,5 @@
+import createDOMPurify from 'dompurify';
+import type { WindowLike } from 'dompurify';
 import { parseMsDoc } from './msdoc/parser.js';
 import { renderMsDoc } from './render/html.js';
 import type {
@@ -27,9 +29,27 @@ async function normalizeInput(input: ViewerInput): Promise<ArrayBuffer> {
   throw new TypeError('Unsupported input type');
 }
 
+export function sanitizeMsDocHtml(html: string, targetWindow: Window): DocumentFragment {
+  const purifier = createDOMPurify(targetWindow as unknown as WindowLike);
+  return purifier.sanitize(html, {
+    RETURN_DOM_FRAGMENT: true,
+    USE_PROFILES: { html: true },
+    FORBID_TAGS: ['base', 'embed', 'form', 'iframe', 'object', 'script', 'style', 'template'],
+    FORBID_ATTR: ['action', 'formaction', 'srcdoc'],
+  }) as unknown as DocumentFragment;
+}
+
 export function mountMsDoc(container: HTMLElement, rendered: MsDocRenderResult): HTMLElement {
   if (!container) throw new Error('A container element is required');
-  container.innerHTML = `<style data-msdoc>${rendered.css}</style><div class="msdoc-root">${rendered.html}</div>`;
+  const targetWindow = container.ownerDocument.defaultView;
+  if (!targetWindow) throw new Error('The container must belong to a browser document');
+  const style = container.ownerDocument.createElement('style');
+  style.dataset.msdoc = '';
+  style.textContent = rendered.css;
+  const root = container.ownerDocument.createElement('div');
+  root.className = 'msdoc-root';
+  root.append(sanitizeMsDocHtml(rendered.html, targetWindow));
+  container.replaceChildren(style, root);
   return container;
 }
 

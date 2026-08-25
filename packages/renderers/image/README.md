@@ -2,6 +2,8 @@
 
 Flyfish File Viewer 的独立图片 renderer 包。它负责 `png`、`jpg`、`webp`、`avif`、`gif`、`svg`、`tiff`、`ico`、`heic`、`heif`、`jxl` 等图片类文件的浏览器端预览、灯箱查看和统一缩放。
 
+TIFF 会在命中格式后按需加载 MIT 许可的 UTIF.js，支持 CCITT Group 4 和多页纵向预览，并提供整组缩放、旋转、适宽、页码状态与双击/键盘放大。解码前会限制源文件大小、页数、单页尺寸和累计像素，逐页转换后立即释放 RGBA 缓冲；普通 PNG/JPEG/WEBP 等路径不加载 TIFF 解码器。
+
 ## 使用
 
 ```ts

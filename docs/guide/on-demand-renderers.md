@@ -44,6 +44,8 @@ export default defineConfig({
 })
 ```
 
+The plugin reads the Vite major installed by the application. Vite 5–7 receive `build.rollupOptions.output.manualChunks`; Vite 8 receives `build.rolldownOptions.output.codeSplitting.groups`. Existing application groups, priorities, array outputs, and `codeSplitting:false` are preserved, so the plugin adds only its stable CodeMirror and renderer groups.
+
 ## Presets
 
 | Preset | Best for |

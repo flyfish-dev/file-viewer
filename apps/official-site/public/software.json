@@ -10,7 +10,7 @@
     "Flyfish Viewer"
   ],
   "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 57 npm targets, 221 registered extensions (221 stable, 0 experimental), and 32 preview pipelines.",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "codeRepository": "https://github.com/flyfish-dev/file-viewer",
   "issueTracker": "https://github.com/flyfish-dev/file-viewer/issues",
   "license": "https://spdx.org/licenses/Apache-2.0",
@@ -20,7 +20,7 @@
   ],
   "runtimePlatform": "Web Browser",
   "applicationCategory": "DeveloperApplication",
-  "downloadUrl": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.0",
+  "downloadUrl": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.2",
   "softwareRequirements": "A modern web browser; self-hosted Worker, WASM, font, and vendor assets for offline deployments",
   "author": {
     "@type": "Person",

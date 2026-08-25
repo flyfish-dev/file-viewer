@@ -2,6 +2,41 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.3.2 — 2026-08-24
+
+这是 TIFF 多页预览与 Vite 8 Rolldown 分块兼容补丁，继续包含 v2.3.1 的全部安全修复。
+
+### Fixes
+
+- `@file-viewer/renderer-image@2.3.1` 在 TIFF 路径按需加载 MIT 许可的 UTIF.js，支持 CCITT Group 4、多页纵向展示、整组缩放/旋转/适宽、页码状态，以及双击和键盘大图查看（#208）。编码大小、页数、单页尺寸和累计解码像素均有硬限制，逐页转换后释放 RGBA 与 Object URL；PNG/JPEG/WEBP 等普通图片路径不加载 TIFF 解码器。
+- `@file-viewer/vite-plugin@2.3.3` 按项目实际 Vite 主版本选择配置：Vite 5—7 继续使用 Rollup `manualChunks`，Vite 8 使用 Rolldown `codeSplitting.groups`；用户已有分组、输出数组、优先级和 `codeSplitting:false` 均保持不变（#209）。
+- #178 的 Office 365/WPS 单元格内嵌图、浮动图片、TIFF drawing、Worker/主线程传输和双击放大再次通过原始样例回归，Excel 列宽拖拽能力保持启用。
+- 本版 npm 目标为 `@file-viewer/preset-lite@2.3.1`，以及 `@file-viewer/preset-all`、`file-viewer-copy-assets` 和八个 Full 包统一的 2.3.6 补丁线。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.3.6
+pnpm add -D @file-viewer/vite-plugin@2.3.3
+```
+
+## File Viewer v2.3.1 — 2026-08-24
+
+这是旧版 DOC 渲染链的安全补丁版本，格式矩阵和公开 API 保持不变。
+
+### Security
+
+- `@file-viewer/doc` 生成的字体、链接、图片与附件标记在直接 HTML API 边界完成编码和协议限制；外部链接默认阻断，内部书签继续可用，显式允许时也只接受 HTTP(S)、邮件、电话与安全相对地址。
+- 标准挂载路径在文档 HTML 进入 DOM 前使用 DOMPurify 3.4.13 做纵深净化，样式内容通过 `textContent` 注入；DOMPurify 仅进入 DOC 懒加载路径，压缩增量为 10,923 字节并受 15 KiB 硬门禁约束。
+- Chromium 安全回归覆盖直接 HTML 与标准挂载 API，验证混淆危险协议、恶意字体/属性、图片和附件均不会执行事件；正常书签、链接、图片、表格与分页保持可用。
+- 修复包为 `@file-viewer/doc@2.3.1`、`msdoc-viewer@0.2.2`、`@file-viewer/renderer-word@2.3.2`，以及 Office/Full/copy-assets 的 2.3.4 补丁线。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.3.4
+```
+
 ## File Viewer v2.3.0 — 2026-08-20
 
 这是 Office/iWork 格式扩展和真实问题文件集中修复版本。稳定能力矩阵扩展为 57 个 npm 目标、221 个扩展名和 32 条预览链路。

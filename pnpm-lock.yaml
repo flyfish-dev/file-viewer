@@ -19,14 +19,14 @@ overrides:
   style-to-js: 1.1.21
   undici@6.26.0: 6.28.0
   '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:2.3.0
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:2.3.0
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:2.3.0
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:2.3.1
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:2.3.3
   '@file-viewer/example-react-vite>@file-viewer/react': workspace:2.3.0
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.3.0
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:2.3.0
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.0
-  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.0
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.3.0
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:2.3.4
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:2.3.3
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:2.3.6
+  '@file-viewer/example-vue3-vite>@file-viewer/preset-all': workspace:2.3.6
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:2.3.3
 
 importers:
 
@@ -287,7 +287,7 @@ importers:
   examples/react-vite:
     dependencies:
       '@file-viewer/preset-office':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.4
         version: link:../../packages/presets/office
       '@file-viewer/react':
         specifier: workspace:2.3.0
@@ -300,7 +300,7 @@ importers:
         version: 19.2.8(react@19.2.8)
     devDependencies:
       '@file-viewer/vite-plugin':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.3
         version: link:../../packages/presets/vite-plugin
       '@types/react':
         specifier: ^19.2.17
@@ -321,14 +321,14 @@ importers:
   examples/vanilla-vite:
     dependencies:
       '@file-viewer/preset-lite':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../packages/presets/lite
       '@file-viewer/web':
         specifier: workspace:2.3.0
         version: link:../../packages/components/web
     devDependencies:
       '@file-viewer/vite-plugin':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.3
         version: link:../../packages/presets/vite-plugin
       typescript:
         specifier: ^6.0.3
@@ -340,14 +340,14 @@ importers:
   examples/vue3-vite:
     dependencies:
       '@file-viewer/vue3-full':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.6
         version: link:../../packages/components/vue3-full
       vue:
         specifier: ^3.5.35
         version: 3.5.40(typescript@6.0.3)
     devDependencies:
       '@file-viewer/vite-plugin':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.3
         version: link:../../packages/presets/vite-plugin
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
@@ -365,7 +365,7 @@ importers:
   packages/compat/msdoc-viewer:
     dependencies:
       '@file-viewer/doc':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../renderers/doc
     devDependencies:
       typescript:
@@ -450,10 +450,10 @@ importers:
         specifier: workspace:2.3.0
         version: link:../jquery
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       file-viewer-copy-assets:
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
       jquery:
         specifier: '>=3 <5'
@@ -485,13 +485,13 @@ importers:
   packages/components/react-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/react':
         specifier: workspace:2.3.0
         version: link:../react
       file-viewer-copy-assets:
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -523,13 +523,13 @@ importers:
   packages/components/react-legacy-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/react-legacy':
         specifier: workspace:2.3.0
         version: link:../react-legacy
       file-viewer-copy-assets:
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -558,13 +558,13 @@ importers:
   packages/components/svelte-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/svelte':
         specifier: workspace:2.3.0
         version: link:../svelte
       file-viewer-copy-assets:
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       svelte:
@@ -590,13 +590,13 @@ importers:
   packages/components/vue2.6-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/vue2.6':
         specifier: workspace:2.3.0
         version: link:../vue2.6
       file-viewer-copy-assets:
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -622,13 +622,13 @@ importers:
   packages/components/vue2.7-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/vue2.7':
         specifier: workspace:2.3.0
         version: link:../vue2.7
       file-viewer-copy-assets:
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -684,13 +684,13 @@ importers:
   packages/components/vue3-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/vue3':
         specifier: workspace:2.3.0
         version: link:../vue3
       file-viewer-copy-assets:
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -725,7 +725,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../core
       '@file-viewer/preset-all':
-        specifier: workspace:2.3.3
+        specifier: workspace:2.3.6
         version: link:../../presets/all
       '@file-viewer/renderer-3d':
         specifier: workspace:2.3.0
@@ -758,7 +758,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../renderers/hangul
       '@file-viewer/renderer-image':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../renderers/image
       '@file-viewer/renderer-iwork':
         specifier: workspace:2.3.1
@@ -791,7 +791,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../renderers/typst
       '@file-viewer/renderer-word':
-        specifier: workspace:2.3.1
+        specifier: workspace:2.3.2
         version: link:../../renderers/word
       '@file-viewer/renderer-wordperfect':
         specifier: workspace:2.3.0
@@ -855,7 +855,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../renderers/hangul
       '@file-viewer/renderer-image':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../renderers/image
       '@file-viewer/renderer-iwork':
         specifier: workspace:2.3.1
@@ -888,7 +888,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../renderers/typst
       '@file-viewer/renderer-word':
-        specifier: workspace:2.3.1
+        specifier: workspace:2.3.2
         version: link:../../renderers/word
       '@file-viewer/renderer-wordperfect':
         specifier: workspace:2.3.0
@@ -941,7 +941,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../core
       '@file-viewer/renderer-image':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../../renderers/image
       '@file-viewer/renderer-media':
         specifier: workspace:2.3.0
@@ -978,7 +978,7 @@ importers:
         specifier: workspace:2.3.2
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-word':
-        specifier: workspace:2.3.1
+        specifier: workspace:2.3.2
         version: link:../../renderers/word
       '@file-viewer/renderer-wordperfect':
         specifier: workspace:2.3.0
@@ -1071,6 +1071,10 @@ importers:
         version: 6.0.3
 
   packages/renderers/doc:
+    dependencies:
+      dompurify:
+        specifier: 3.4.13
+        version: 3.4.13
     devDependencies:
       typescript:
         specifier: ^6.0.3
@@ -1241,6 +1245,9 @@ importers:
       heic2any:
         specifier: ^0.0.4
         version: 0.0.4
+      utif:
+        specifier: ^3.1.0
+        version: 3.1.0
     devDependencies:
       typescript:
         specifier: ^6.0.3
@@ -1500,7 +1507,7 @@ importers:
         specifier: workspace:2.3.0
         version: link:../../core
       '@file-viewer/doc':
-        specifier: workspace:2.3.0
+        specifier: workspace:2.3.1
         version: link:../doc
       '@file-viewer/docx':
         specifier: ^0.3.27

@@ -1,4 +1,4 @@
-import { defaultMsDocCss, parseMsDocToHtml } from '@file-viewer/doc'
+import { defaultMsDocCss, parseMsDocToHtml, sanitizeMsDocHtml } from '@file-viewer/doc'
 
 import {
   applyPrintPageSize,
@@ -424,11 +424,21 @@ function makeMsDocResponsive(target: HTMLDivElement) {
 export default async function render(buffer: ArrayBuffer, target: HTMLDivElement, context?: FileRenderContext): Promise<AppWrapper> {
   const rendered = await parseMsDocToHtml(buffer, {
     renderOptions: {
-      css: `${defaultMsDocCss()}\n${WORD_PAGE_CSS}`
+      css: `${defaultMsDocCss()}\n${WORD_PAGE_CSS}`,
+      externalLinkPolicy: context?.options?.docx?.externalLinkPolicy ?? 'block'
     }
   })
 
-  target.innerHTML = `<style data-msdoc>${rendered.css}</style>${wrapAsWordPages(rendered.html)}`
+  const targetWindow = target.ownerDocument.defaultView
+  if (!targetWindow) {
+    throw new Error('The DOC target must belong to a browser document')
+  }
+  const style = target.ownerDocument.createElement('style')
+  style.dataset.msdoc = ''
+  style.textContent = rendered.css
+  const content = target.ownerDocument.createElement('div')
+  content.append(sanitizeMsDocHtml(wrapAsWordPages(rendered.html), targetWindow))
+  target.replaceChildren(style, ...Array.from(content.childNodes))
   const disposeResponsive = makeMsDocResponsive(target)
   context?.registerExportAdapter?.({
     includeDocumentStyles: false,
