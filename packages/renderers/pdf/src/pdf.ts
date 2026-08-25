@@ -1000,7 +1000,11 @@ export default async function renderPdf(
     try {
       const response = await fetcher(workerUrl, {
         method: 'GET',
-        cache: 'no-cache',
+        // A successful range probe must never seed the HTTP cache for the
+        // subsequent module Worker request. Some static servers correctly
+        // return 206 here, and Chromium can otherwise reuse that partial body
+        // as the Worker module, which fails with "Invalid or unexpected token".
+        cache: 'no-store',
         headers: {
           Range: `bytes=0-${PDF_WORKER_VERSION_PROBE_BYTES - 1}`,
         },

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-25T01:39:47.448Z",
+  "generatedAt": "2026-08-25T07:18:27.204Z",
   "version": "2.3.2",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -8,23 +8,23 @@
     "repository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "policy": "private-complete-original-workspace",
-    "authoritativeCommit": "2f4a7dafbe2fa8d20a791a166b98581663fa0ae3",
+    "authoritativeCommit": "2221caddbbb6c9a23af14e1ec872ff9c769bbce8",
     "localBranch": "main",
-    "localCommit": "2f4a7dafbe2fa8d20a791a166b98581663fa0ae3",
+    "localCommit": "2221caddbbb6c9a23af14e1ec872ff9c769bbce8",
     "inSync": true,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
     "branch": "main",
-    "commit": "2f4a7dafbe2fa8d20a791a166b98581663fa0ae3",
-    "shortCommit": "2f4a7daf",
+    "commit": "2221caddbbb6c9a23af14e1ec872ff9c769bbce8",
+    "shortCommit": "2221cadd",
     "dirty": false
   },
   "sourceRemote": {
     "url": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "ok": true,
-    "hash": "2f4a7dafbe2fa8d20a791a166b98581663fa0ae3",
+    "hash": "2221caddbbb6c9a23af14e1ec872ff9c769bbce8",
     "error": ""
   },
   "openSourceMain": {
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "58c8e70bb30c402cee16477b8142927817234a36",
+      "hash": "8d78a122c3ac6453d15a74b89c8e29988487f5bf",
       "error": ""
     },
     "gitee": {
@@ -45,20 +45,20 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "975842dfaac53f35725f210cdfd5e5d55b4ac143",
+    "referenceTree": "1682ba4747f0f3537830f62425f1070c73d053dd",
     "giteeTree": "7f13b7419673ae4bb39251b6eadd29c5fc219223",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
   },
   "githubRelease": {
-    "ok": false,
+    "ok": true,
     "tag": "v2.3.2",
-    "url": "",
-    "assetCount": 0,
-    "hasManifest": false,
-    "hasStatus": false,
-    "hasSchema": false,
-    "error": "release not found"
+    "url": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.2",
+    "assetCount": 66,
+    "hasManifest": true,
+    "hasStatus": true,
+    "hasSchema": true,
+    "error": ""
   },
   "componentRepositories": [
     {
@@ -68,7 +68,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-core",
         "branch": "main",
         "ok": true,
-        "hash": "9a68a7f9fd4670912aa7bcd5d5d46ff41dd8dcb1",
+        "hash": "a6fe5279c9a23bf8b4d6ccdc4f3c2e367161356b",
         "error": ""
       },
       "gitee": {
@@ -86,7 +86,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-web",
         "branch": "main",
         "ok": true,
-        "hash": "ffaee0e759bce96b1ba59e48469d96d0f33c5ac8",
+        "hash": "27a27efdcc7b88e36128d7978b0dfe729c1bc99b",
         "error": ""
       },
       "gitee": {
@@ -104,7 +104,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-web-full",
         "branch": "main",
         "ok": true,
-        "hash": "e99c56113b42b3d72905c7de1414428c75f9ac33",
+        "hash": "cdcfd2510d2fa19366f1ea617c651b9b09213d8a",
         "error": ""
       },
       "gitee": {
@@ -122,7 +122,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue3",
         "branch": "main",
         "ok": true,
-        "hash": "77699d4848188e34d43b8af3f7850c9525720383",
+        "hash": "940d76d507c5da9a0b7126065eca21474408c6b1",
         "error": ""
       },
       "gitee": {
@@ -140,7 +140,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue3-full",
         "branch": "main",
         "ok": true,
-        "hash": "169f791e7d2a5e02772d52a3ad1695103d06f49d",
+        "hash": "231d894e7c8cb0122292a2f3cfe4bbde0cfeefe7",
         "error": ""
       },
       "gitee": {
@@ -158,7 +158,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.7",
         "branch": "main",
         "ok": true,
-        "hash": "b6111ffbaed1c39da4137611b90e9a69d753a99e",
+        "hash": "b01c63904ee5f2194ce5b5530adff0fdfeb59604",
         "error": ""
       },
       "gitee": {
@@ -176,7 +176,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.7-full",
         "branch": "main",
         "ok": true,
-        "hash": "0fe50a4b20f28ca7e39457f0d11c03c6546e56b1",
+        "hash": "8cd8d75d577686ccaa577b605477870fabac4a8f",
         "error": ""
       },
       "gitee": {
@@ -194,7 +194,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.6",
         "branch": "main",
         "ok": true,
-        "hash": "eb9aed994a3980ffb74f7b1ec521ac5c1ddd5e84",
+        "hash": "b28f5499c9754231824210f370c8950e94f7c5f0",
         "error": ""
       },
       "gitee": {
@@ -212,7 +212,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.6-full",
         "branch": "main",
         "ok": true,
-        "hash": "6546f45072b2c3e6803985c3921ca8f5e0b4b64c",
+        "hash": "3b708206a1747bcb0bc26539087b3604e32fb398",
         "error": ""
       },
       "gitee": {
@@ -230,7 +230,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react",
         "branch": "main",
         "ok": true,
-        "hash": "bc813c1d8dc0a36eff07b8af89bf166f3f61a1c6",
+        "hash": "5b8ae2733d1c85df855e06d21010c89d2fff0b40",
         "error": ""
       },
       "gitee": {
@@ -248,7 +248,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-full",
         "branch": "main",
         "ok": true,
-        "hash": "a03148c4b0b667a843c55b49ab0091726255a030",
+        "hash": "04f23616d4757fce6f355111d02717cfee25f7f1",
         "error": ""
       },
       "gitee": {
@@ -266,7 +266,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-legacy",
         "branch": "main",
         "ok": true,
-        "hash": "ddd7faa5431c2af0dcc9f9b309062c750964f6e3",
+        "hash": "bbae012c6546a03975643878994b67528eb6b4c8",
         "error": ""
       },
       "gitee": {
@@ -284,7 +284,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-legacy-full",
         "branch": "main",
         "ok": true,
-        "hash": "0d2b3383899d8c287956454ecb9fe67230af1a8f",
+        "hash": "e74b3857af7c88a99bd10c302f873efcc8b30e46",
         "error": ""
       },
       "gitee": {
@@ -302,7 +302,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-jquery",
         "branch": "main",
         "ok": true,
-        "hash": "20d2f31e16ff51c0b1ae555f44a984e29745f763",
+        "hash": "890235cbdc865f7c4cb9cc6e4f11325d4a74c0d9",
         "error": ""
       },
       "gitee": {
@@ -320,7 +320,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-jquery-full",
         "branch": "main",
         "ok": true,
-        "hash": "b6891412010b935c2059c76bec679b5f5aee7191",
+        "hash": "b099cf81c176625ab65bd67a239fbc6b2e0feb29",
         "error": ""
       },
       "gitee": {
@@ -338,7 +338,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-svelte",
         "branch": "main",
         "ok": true,
-        "hash": "96d91de276d19f2f25ffc819903ddca3a5e95cb8",
+        "hash": "01f0055c2a08df2a301f1b02722025c08a136715",
         "error": ""
       },
       "gitee": {
@@ -356,7 +356,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-svelte-full",
         "branch": "main",
         "ok": true,
-        "hash": "eb76a376362b37a355d41f2ad01c97847f2908e9",
+        "hash": "5500260164426c9f373c0535d40e30105cf9208b",
         "error": ""
       },
       "gitee": {
@@ -385,15 +385,15 @@
     },
     {
       "packageName": "file-viewer-copy-assets",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-pdf",
-      "expectedVersion": "2.3.0",
-      "publishedVersion": "2.3.0",
+      "expectedVersion": "2.3.1",
+      "publishedVersion": "2.3.1",
       "ok": true,
       "error": ""
     },
@@ -581,10 +581,10 @@
     },
     {
       "packageName": "@file-viewer/preset-all",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/preset-lite",
@@ -595,8 +595,8 @@
     },
     {
       "packageName": "@file-viewer/preset-office",
-      "expectedVersion": "2.3.4",
-      "publishedVersion": "2.3.4",
+      "expectedVersion": "2.3.5",
+      "publishedVersion": "2.3.5",
       "ok": true,
       "error": ""
     },
@@ -665,10 +665,10 @@
     },
     {
       "packageName": "@file-viewer/web-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.4",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue3",
@@ -679,10 +679,10 @@
     },
     {
       "packageName": "@file-viewer/vue3-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue2.7",
@@ -693,10 +693,10 @@
     },
     {
       "packageName": "@file-viewer/vue2.7-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue2.6",
@@ -707,10 +707,10 @@
     },
     {
       "packageName": "@file-viewer/vue2.6-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/react",
@@ -721,10 +721,10 @@
     },
     {
       "packageName": "@file-viewer/react-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/react-legacy",
@@ -735,10 +735,10 @@
     },
     {
       "packageName": "@file-viewer/react-legacy-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/jquery",
@@ -749,10 +749,10 @@
     },
     {
       "packageName": "@file-viewer/jquery-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/svelte",
@@ -763,131 +763,23 @@
     },
     {
       "packageName": "@file-viewer/svelte-full",
-      "expectedVersion": "2.3.6",
-      "publishedVersion": "2.3.5",
-      "ok": false,
-      "error": "expected 2.3.6"
+      "expectedVersion": "2.3.7",
+      "publishedVersion": "2.3.7",
+      "ok": true,
+      "error": ""
     }
   ],
-  "gaps": [
-    "GitHub Release v2.3.2 missing",
-    "file-viewer-copy-assets npm 2.3.5 !== 2.3.6",
-    "@file-viewer/preset-all npm 2.3.5 !== 2.3.6",
-    "@file-viewer/web-full npm 2.3.4 !== 2.3.6",
-    "@file-viewer/vue3-full npm 2.3.5 !== 2.3.6",
-    "@file-viewer/vue2.7-full npm 2.3.5 !== 2.3.6",
-    "@file-viewer/vue2.6-full npm 2.3.5 !== 2.3.6",
-    "@file-viewer/react-full npm 2.3.5 !== 2.3.6",
-    "@file-viewer/react-legacy-full npm 2.3.5 !== 2.3.6",
-    "@file-viewer/jquery-full npm 2.3.5 !== 2.3.6",
-    "@file-viewer/svelte-full npm 2.3.5 !== 2.3.6"
-  ],
+  "gaps": [],
   "gapSummary": {
-    "total": 11,
-    "externalBlockers": 11,
+    "total": 0,
+    "externalBlockers": 0,
     "localActionable": 0,
-    "byChannel": {
-      "github-release": 1,
-      "npm": 10
-    },
-    "externalBlockerChannels": [
-      "github-release",
-      "npm"
-    ],
+    "byChannel": {},
+    "externalBlockerChannels": [],
     "localActionableChannels": []
   },
-  "gapDetails": [
-    {
-      "id": "github-release-github-release-v2.3.2-missing",
-      "channel": "github-release",
-      "scope": "release-assets",
-      "externalBlocker": true,
-      "message": "GitHub Release v2.3.2 missing",
-      "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
-    },
-    {
-      "id": "npm-file-viewer-copy-assets-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "file-viewer-copy-assets npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-preset-all-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/preset-all npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-web-full-npm-2.3.4-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/web-full npm 2.3.4 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue3-full-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue3-full npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue2.7-full-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue2.7-full npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue2.6-full-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue2.6-full npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-react-full-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/react-full npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-react-legacy-full-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/react-legacy-full npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-jquery-full-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/jquery-full npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-svelte-full-npm-2.3.5-2.3.6",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/svelte-full npm 2.3.5 !== 2.3.6",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    }
-  ],
+  "gapDetails": [],
   "nextActions": [
-    "Run `npm login` / passkey in an interactive terminal, then `pnpm release:ecosystem:publish`.",
-    "Create or update the GitHub Release assets, then rerun `pnpm release:public`."
+    "Release channels are aligned. Keep this report attached to the GitHub Release for downstream verification."
   ]
 }
