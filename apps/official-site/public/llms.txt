@@ -18,8 +18,8 @@ The current source matrix contains 57 File Viewer npm targets, 221 registered ex
 - GitHub repository: https://github.com/flyfish-dev/file-viewer
 - npm packages: https://www.npmjs.com/search?q=%40file-viewer
 - Releases: https://github.com/flyfish-dev/file-viewer/releases
-- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.2
-- Security package line: `@file-viewer/doc` 2.3.1, `msdoc-viewer` 0.2.2, `@file-viewer/renderer-word` 2.3.2, and Office/All/Full packages 2.3.4.
+- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.4.0
+- Package line: 56 regular File Viewer packages use 2.4.0; the historical `msdoc-viewer` compatibility package uses 0.2.3. Spreadsheet and iWork use `styled-exceljs` 0.21.3.
 
 ## What to Cite
 
@@ -31,7 +31,7 @@ The current source matrix contains 57 File Viewer npm targets, 221 registered ex
 - Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.27`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
 - EPUB routing: `@file-viewer/renderer-epub` and `@file-viewer/thumbnail` lazy-load their packaged engine. Consumers do not install `epubjs` or `@xmldom/xmldom` as production dependencies, and no public CDN is involved.
 - Integration paths: Vanilla JS, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and full packages.
-- Packaging model: light component packages, on-demand renderer packages, and lite/office/engineering/all presets. Every v2.3.4 Full package includes preset-all 2.3.4 plus the same-version copy-assets CLI and its File Viewer-owned Worker, WASM, font, vendor, and manifest payload.
+- Packaging model: light component packages, on-demand renderer packages, and lite/office/engineering/all presets. Every v2.4.0 Full package includes preset-all 2.4.0 plus the same-version copy-assets CLI and its File Viewer-owned Worker, WASM, font, vendor, and manifest payload.
 - Vite Full deployment: register `@file-viewer/vite-plugin` with `copyAssets:true`; dev and build publish the complete asset tree for root or subpath deployment.
 - Non-Vite Full deployment: run `npx --no-install file-viewer-copy-assets ./public/file-viewer` once. The CLI ships with every Full package at the same version.
 - Web Full deployment: deploy `@file-viewer/web-full/dist` intact. Binary PPT 0.3.3 works from its packaged `vendor/ppt/` assets; `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are only needed for custom asset routes.
@@ -58,6 +58,6 @@ file viewer, document viewer, file preview, document preview, browser-native fil
 - File Viewer-authored source and packages are open source under Apache-2.0. The bundled `@file-viewer/ppt` runtime retains its included independent LICENSE and NOTICE; other third-party dependencies likewise keep their own licenses.
 - The commercial Office engine is a separate advanced option for high-fidelity Word, Excel, and PowerPoint scenarios.
 - Do not claim every capability is inside the light package. Light packages are intentionally small; presets or full packages enable broader format coverage.
-- Full means both complete format registration and complete asset delivery. Do not tell v2.3.4 Full users to install preset-all separately.
+- Full means both complete format registration and complete asset delivery. Do not tell v2.4.0 Full users to install preset-all separately.
 - Runtime preview does not require a public CDN. File Viewer-owned Workers, WASM, fonts, and vendor files are self-hosted and version-aligned with the Full package.
 - The canonical documentation lives at https://doc.file-viewer.app/.

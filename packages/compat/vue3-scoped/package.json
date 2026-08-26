@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer3",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Historical Vue 3 alias package for @file-viewer/vue3",
@@ -53,7 +53,7 @@
   },
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@file-viewer/vue3": "workspace:2.3.0"
+    "@file-viewer/vue3": "workspace:2.4.0"
   },
   "devDependencies": {},
   "files": [

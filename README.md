@@ -34,7 +34,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v2.2.6-formats-en.gif" width="920" alt="File Viewer v2.3.2 English product demo showing rich DOCX, PPTX, DWG, and interactive 3D STEP previews in the immersive workspace"></a>
+  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v2.2.6-formats-en.gif" width="920" alt="File Viewer v2.4.0 English product demo showing rich DOCX, PPTX, DWG, and interactive 3D STEP previews in the immersive workspace"></a>
 </p>
 
 ## Why File Viewer
@@ -165,7 +165,7 @@ See [on-demand renderers and presets](https://doc.file-viewer.app/guide/on-deman
 
 ## Capability at a Glance
 
-The v2.3.2 registry maps 221 registered extensions (221 stable, 0 experimental) across 32 preview pipelines, distributed through **57 npm targets**. Presentation preview deliberately keeps two engine boundaries: PowerPoint 97–2003 `.ppt`/`.pot` uses the native-WASM `@file-viewer/ppt@0.3.3` engine, while PPTX/OpenXML uses the `@file-viewer/pptx` Worker engine. Apple Pages, Numbers, and Keynote provide static high-fidelity preview across iWork '09, 2013+, and current fixtures; WordPerfect and Hangul provide stable structured preview backed by licensed genuine fixtures and Chromium, Firefox, and WebKit smoke. Spreadsheet preview retains Office 365/WPS in-cell images, workbook drawings, and double-click image previews from the latest main branch. Multipage CCITT Group 4 TIFF uses a bounded TIFF-only lazy decoder, and the Vite plugin selects Rollup or Rolldown chunk configuration from the installed Vite major without replacing application-owned groups. Other major groups include PDF/OFD; Office and iWork; DWG/DXF/DWF/DWFX; archives; EML/MSG; EPUB/FB2; Markdown and source code; drawings; PSD and images; media; 3D/geo/data/EDA; and Typst.
+The v2.4.0 registry maps 221 registered extensions (221 stable, 0 experimental) across 32 preview pipelines, distributed through **57 npm targets**. Presentation preview deliberately keeps two engine boundaries: PowerPoint 97–2003 `.ppt`/`.pot` uses the native-WASM `@file-viewer/ppt@0.3.3` engine, while PPTX/OpenXML uses the `@file-viewer/pptx` Worker engine. Apple Pages, Numbers, and Keynote provide static high-fidelity preview across iWork '09, 2013+, and current fixtures; WordPerfect and Hangul provide stable structured preview backed by licensed genuine fixtures and Chromium, Firefox, and WebKit smoke. Spreadsheet preview retains Office 365/WPS in-cell images, workbook drawings, and double-click image previews from the latest main branch. Multipage CCITT Group 4 TIFF uses a bounded TIFF-only lazy decoder, and the Vite plugin selects Rollup or Rolldown chunk configuration from the installed Vite major without replacing application-owned groups. Other major groups include PDF/OFD; Office and iWork; DWG/DXF/DWF/DWFX; archives; EML/MSG; EPUB/FB2; Markdown and source code; drawings; PSD and images; media; 3D/geo/data/EDA; and Typst.
 
 The exact implementation and support level varies by format. Use the maintained [format matrix](https://doc.file-viewer.app/guide/formats) as the source of truth rather than inferring support from an extension alone.
 

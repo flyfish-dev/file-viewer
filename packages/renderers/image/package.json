@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-image",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Standalone image renderer plugin for File Viewer with native image preview, bounded multipage TIFF and HEIC/HEIF conversion, lightbox, and unified zoom support.",
@@ -60,7 +60,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.3.0",
+    "@file-viewer/core": "workspace:2.4.0",
     "heic2any": "^0.0.4",
     "utif": "^3.1.0"
   },

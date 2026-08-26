@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-wordperfect",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Signature-routed WordPerfect renderer plugin for File Viewer with a libwpd WASM integration boundary.",
@@ -64,7 +64,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.3.0"
+    "@file-viewer/core": "workspace:2.4.0"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",

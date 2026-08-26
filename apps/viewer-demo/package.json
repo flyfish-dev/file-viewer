@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-demo",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,9 +10,9 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.3.0",
-    "@file-viewer/preset-all": "workspace:2.3.0",
-    "@file-viewer/vue3": "workspace:2.3.0",
+    "@file-viewer/core": "workspace:2.4.0",
+    "@file-viewer/preset-all": "workspace:2.4.0",
+    "@file-viewer/vue3": "workspace:2.4.0",
     "@lucide/vue": "^1.17.0",
     "diff": "^9.0.0",
     "qs": "^6.15.2",

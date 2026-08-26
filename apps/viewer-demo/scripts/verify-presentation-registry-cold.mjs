@@ -6,8 +6,8 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 const registry = process.env.FILE_VIEWER_NPM_REGISTRY || 'https://registry.npmjs.org/'
-const rendererVersion = process.env.FILE_VIEWER_PRESENTATION_VERSION || '2.3.1'
-const pluginVersion = process.env.FILE_VIEWER_VITE_PLUGIN_VERSION || '2.3.2'
+const rendererVersion = process.env.FILE_VIEWER_PRESENTATION_VERSION || '2.4.0'
+const pluginVersion = process.env.FILE_VIEWER_VITE_PLUGIN_VERSION || '2.4.0'
 const fixtureRoot = await realpath(await mkdtemp(join(await realpath(tmpdir()), 'file-viewer-pptx-registry-')))
 
 function run(command, args) {
