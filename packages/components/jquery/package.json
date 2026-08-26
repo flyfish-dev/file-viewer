@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/jquery",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Standard jQuery component package for File Viewer",
@@ -59,7 +59,7 @@
     "jquery": ">=3 <5"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.3.0"
+    "@file-viewer/core": "workspace:2.4.0"
   },
   "devDependencies": {
     "@types/jquery": "^4.0.1",

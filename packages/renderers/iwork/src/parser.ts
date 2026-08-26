@@ -563,7 +563,10 @@ const isUsefulString = (value: string) => {
   const cleaned = cleanText(value);
   if (cleaned.length < 2 || cleaned.length > 2000) return false;
   if (/^[\d.\-_/]+$/.test(cleaned)) return false;
-  const printable = Array.from(cleaned).filter(character => !/[\u0000-\u001f\u007f]/.test(character)).length;
+  const printable = Array.from(cleaned).filter(character => {
+    const code = character.charCodeAt(0);
+    return code > 0x1f && code !== 0x7f;
+  }).length;
   return printable / cleaned.length > 0.92 && /[\p{L}\p{N}]/u.test(cleaned);
 };
 
@@ -897,7 +900,7 @@ const modernCellValue = (bytes: Uint8Array, strings: Map<number, string>) => {
   if (fields & 1) { decimal = decimal128(bytes, offset); offset += 16; }
   if (fields & 2 && offset + 8 <= bytes.length) { number = view.getFloat64(offset, true); offset += 8; }
   if (fields & 4) offset += 8;
-  if (fields & 8 && offset + 4 <= bytes.length) { stringIndex = view.getUint32(offset, true); offset += 4; }
+  if (fields & 8 && offset + 4 <= bytes.length) stringIndex = view.getUint32(offset, true);
   const type = bytes[1];
   if (type === 3) return strings.get(stringIndex) || '';
   if (type === 2 || type === 10) return Number.isFinite(decimal) ? String(decimal) : '';

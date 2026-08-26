@@ -2,8 +2,6 @@ import fs from 'node:fs'
 
 const repositoryRoot = new URL('../../../', import.meta.url)
 const read = file => fs.readFileSync(new URL(file, repositoryRoot), 'utf8')
-const extractKeys = source => [...source.matchAll(/^\s*(?:['"]([^'"]+)['"]|([A-Za-z_$][\w$]*))\s*:/gm)]
-  .map(match => match[1] || match[2])
 const extractValues = source => new Map([
   ...source.matchAll(/^\s*(?:['"]([^'"]+)['"]|([A-Za-z_$][\w$]*))\s*:\s*(['"])(.*?)\3,?$/gm)
 ].map(match => [match[1] || match[2], match[4]]))
@@ -52,8 +50,8 @@ for (const file of [
   'packages/renderers/presentation/src/pptx.ts',
   'packages/renderers/geometry-engine/src/index.ts',
   'apps/viewer-demo/src/composables/useDemoCopy.ts',
+  'apps/viewer-demo/src/composables/useDemoLocaleSwitcher.ts',
   'apps/viewer-demo/src/composables/useDemoSamples.ts',
-  'apps/viewer-demo/src/components/HelloWorld.vue',
   'apps/viewer-demo/src/compare/CompareApp.vue',
   'apps/web-demo/src/main.js',
   'apps/web-demo/index.html',
@@ -62,5 +60,9 @@ for (const file of [
   assert(read(file).includes('de-DE') || read(file).includes('locale-de'), `${file} is missing German locale coverage`)
 }
 
+assert(
+  read('apps/viewer-demo/src/components/HelloWorld.vue').includes('useDemoLocaleSwitcher('),
+  'Main demo locale switcher is not wired'
+)
 assert(read('docs/guide/quickstart.md').includes('### German locale'), 'Quickstart is missing the German locale section')
 console.log('German i18n verification passed')

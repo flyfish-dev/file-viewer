@@ -21,7 +21,7 @@ for (const expected of ['北京', '求职意向', '教育背景', '实习经历'
   }
 }
 
-if (/\u0008/.test(visibleText) || rendered.html.includes('\u0008')) {
+if (visibleText.includes('\u0008') || rendered.html.includes('\u0008')) {
   throw new Error('Legacy text-box placeholder characters leaked into the rendered document')
 }
 

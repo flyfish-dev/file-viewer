@@ -6,6 +6,15 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## v2.4.0 — Unified versions and frozen release candidates
+
+Released August 25, 2026.
+
+- Unified the root, GitHub Release, and 56 regular npm packages at 2.4.0. The historical `msdoc-viewer` compatibility package uses 0.2.3.
+- Updated the Spreadsheet and iWork paths to `styled-exceljs@0.21.3`, including prototype-safe worksheet maps, bounded XML/tag handling, and safe serialization of document-provided HTML, CSS, links, images, and attributes.
+- Re-ran the #178 Office 365/WPS in-cell image, floating drawing, TIFF, Worker transfer, double-click lightbox, and optional column-resizing regressions. Version unification does not remove Excel column resizing.
+- Stable publishing now promotes the exact tarballs that passed the full build, cold-install, and npm dry-run rehearsal. A receipt pins the source commit, package set, byte sizes, and SHA-512 hashes; the publish command never rebuilds them.
+
 ## v2.3.2 — Multipage TIFF and Vite 8 chunking
 
 Released August 24, 2026.

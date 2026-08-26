@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-ofd",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Standalone OFD renderer plugin for File Viewer powered by DLTech21/ofd.js.",
@@ -62,7 +62,7 @@
     "verify:github-177": "pnpm --filter @file-viewer/core build && pnpm exec tsc -b tsconfig.json --force && node scripts/verify-github-177.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.3.0",
+    "@file-viewer/core": "workspace:2.4.0",
     "jszip": "^3.10.1"
   },
   "devDependencies": {

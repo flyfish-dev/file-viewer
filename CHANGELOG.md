@@ -2,6 +2,28 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v2.4.0 — 2026-08-25
+
+这是统一版本、安全加固与稳定发布流程版本。v2.3.0—v2.3.2 的 Office、TIFF、Vite 8 与 DOC 安全修复全部包含在本版中。
+
+### Security and reliability
+
+- Spreadsheet 与 iWork 渲染链升级到 `styled-exceljs@0.21.3`：工作表名称映射使用无原型字典，XML 标签扫描和富文本/公式处理保持有界，并继续对文档生成的 HTML、CSS、链接、图片与属性执行安全序列化。
+- #178 的 Office 365/WPS 单元格内嵌图、浮动图、TIFF drawing、Worker 传输、双击放大和可选列宽拖拽纳入同一回归边界；本次版本统一没有移除 Excel 列宽调整能力。
+- 继续包含旧版 DOC、PPTX Worker、Markdown、压缩包文件名和离线 Worker/WASM 交付的既有安全门禁。
+
+### Release
+
+- 根版本、GitHub Release 与 56 个常规 npm 包统一为 `2.4.0`；历史兼容包 `msdoc-viewer` 使用独立的 `0.2.3` 版本。
+- 稳定发布改为先完整构建、打包、冷安装和 `npm publish --dry-run`，再记录每个 tarball 的大小与 SHA-512。正式发布只接受同一提交生成的冻结产物，不再在发布命令中重建或因预演失败增加稳定版本号。
+
+### Upgrade
+
+```bash
+pnpm add @file-viewer/vue3-full@2.4.0
+pnpm add -D @file-viewer/vite-plugin@2.4.0
+```
+
 ## File Viewer v2.3.2 — 2026-08-24
 
 这是 TIFF 多页预览与 Vite 8 Rolldown 分块兼容补丁，继续包含 v2.3.1 的全部安全修复。

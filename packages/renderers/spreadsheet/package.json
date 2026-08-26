@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-spreadsheet",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Standalone spreadsheet renderer plugin for File Viewer powered by styled-exceljs and e-virt-table.",
@@ -77,11 +77,11 @@
     "verify:github-178": "pnpm --filter @file-viewer/core build && pnpm build && npm exec --yes --package playwright -- node scripts/verify-github-178.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.3.0",
+    "@file-viewer/core": "workspace:2.4.0",
     "@xmldom/xmldom": "^0.9.10",
     "e-virt-table": "^1.3.26",
     "jszip": "^3.10.1",
-    "styled-exceljs": "0.21.2",
+    "styled-exceljs": "0.21.3",
     "tinycolor2": "^1.6.0",
     "utif": "^3.1.0"
   },

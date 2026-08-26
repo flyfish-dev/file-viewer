@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vite-plugin",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Vite plugin for File Viewer on-demand renderer assembly, chunk planning, and offline asset deployment.",

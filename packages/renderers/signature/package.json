@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-signature",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": false,
   "type": "module",
   "description": "Optional browser-local CMS, PKCS#7, CAdES, timestamp and OpenPGP renderer for File Viewer.",
@@ -70,7 +70,7 @@
     "verify:openpgp": "pnpm verify:openpgp-architecture && pnpm verify:openpgp-detection"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.3.0"
+    "@file-viewer/core": "workspace:2.4.0"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
