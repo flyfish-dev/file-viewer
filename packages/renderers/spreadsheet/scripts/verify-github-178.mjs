@@ -278,6 +278,7 @@ const html = `<!doctype html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
     <title>Issue 178 spreadsheet images</title>
     <style>
       html, body, #app, .file-preview-page { width: 100%; height: 100%; margin: 0; }

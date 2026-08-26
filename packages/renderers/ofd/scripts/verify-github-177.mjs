@@ -1,10 +1,5 @@
-import { readFile } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { DOMParser, parseHTML } from 'linkedom'
 import JsZip from 'jszip'
-
-const packageDir = dirname(dirname(fileURLToPath(import.meta.url)))
 
 const buildMultiPageOfd = async () => {
   const zip = new JsZip()
@@ -40,6 +35,8 @@ if (typeof globalThis.btoa !== 'function') {
 
 let scrolledFrame = null
 window.HTMLElement.prototype.scrollIntoView = function scrollIntoView() {
+  // The harness records the exact frame selected by renderer navigation.
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   scrolledFrame = this
 }
 window.HTMLElement.prototype.getBoundingClientRect = function getBoundingClientRect() {

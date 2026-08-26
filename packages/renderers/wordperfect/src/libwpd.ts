@@ -113,7 +113,8 @@ const decodeStructuredDocument = (wire: Uint8Array, source: Uint8Array): WordPer
   };
   const style = (name: WordPerfectRun['styles'][number], enabled: boolean) => {
     styles = new Set(styles);
-    enabled ? styles.add(name) : styles.delete(name);
+    if (enabled) styles.add(name);
+    else styles.delete(name);
   };
 
   for (let index = 0; index < eventCount; index += 1) {

@@ -184,7 +184,10 @@ export const createFileViewerTextDecoder = (encoding: ResolvedFileViewerTextEnco
     return new TextDecoder(encoding);
   } catch (error) {
     if (encoding === 'gb18030' && error instanceof RangeError) {
-      throw new Error('This browser does not provide GB18030 text decoding. Use a current browser or select UTF-8 explicitly.');
+      throw Object.assign(
+        new Error('This browser does not provide GB18030 text decoding. Use a current browser or select UTF-8 explicitly.'),
+        { cause: error }
+      );
     }
     throw error;
   }

@@ -35,6 +35,7 @@ import { useDemoCopy } from '@/composables/useDemoCopy'
 import { useDemoFileCapsuleMotion } from '@/composables/useDemoFileCapsuleMotion'
 import { useDemoFileTypes } from '@/composables/useDemoFileTypes'
 import { useDemoFloatingPanels } from '@/composables/useDemoFloatingPanels'
+import { useDemoLocaleSwitcher } from '@/composables/useDemoLocaleSwitcher'
 import { useDemoPreferences } from '@/composables/useDemoPreferences'
 import { useDemoRecentFiles } from '@/composables/useDemoRecentFiles'
 import {
@@ -99,11 +100,6 @@ const recentPanelOpen = ref(!isMobileDemoViewport())
 const wasMobileViewport = ref(isMobileDemoViewport())
 const recentLocalReselectName = ref('')
 const recentLocalFiles = new Map<string, File>()
-const localeMenuOpen = ref(false)
-const localeSwitcherRef = ref<HTMLElement | null>(null)
-const localeTriggerButtonRef = ref<HTMLButtonElement | null>(null)
-const localeMenuRef = ref<HTMLElement | null>(null)
-
 const githubRepositoryUrl = 'https://github.com/flyfish-dev/file-viewer'
 // Preferences are browser-shell concerns. Keeping persistence and media-query
 // subscriptions outside this component lets the page focus on UI orchestration.
@@ -118,26 +114,22 @@ const {
 } = useDemoPreferences({
   onSystemThemeChange: () => syncDemoDocumentChrome()
 })
-const officialSiteUrl = computed(() => (
-  demoLocale.value === 'zh-CN' ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/'
-))
+const officialSiteUrl = computed(() => demoLocale.value === 'zh-CN' ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/')
 const { copy: demoCopy, getCopy: getDemoCopy } = useDemoCopy(demoLocale)
-const demoLocaleOptions: ReadonlyArray<{
-  value: DemoLocale
-  label: string
-  shortLabel: string
-}> = [
-  { value: 'zh-CN', label: '简体中文', shortLabel: '中' },
-  { value: 'en-US', label: 'English', shortLabel: 'EN' },
-  { value: 'ja-JP', label: '日本語', shortLabel: '日' },
-  { value: 'de-DE', label: 'Deutsch', shortLabel: 'DE' }
-]
-const activeDemoLocaleOption = computed(() => (
-  demoLocaleOptions.find(option => option.value === demoLocale.value) || demoLocaleOptions[0]
-))
-const localeTriggerTitle = computed(() => (
-  `${demoCopy.value.language}: ${activeDemoLocaleOption.value.label}`
-))
+const {
+  localeOptions: demoLocaleOptions, menuOpen: localeMenuOpen,
+  switcherRef: localeSwitcherRef, triggerButtonRef: localeTriggerButtonRef,
+  menuRef: localeMenuRef, triggerTitle: localeTriggerTitle,
+  closeMenu: closeLocaleMenu, openMenu: openLocaleMenu, toggleMenu: toggleLocaleMenu,
+  selectLocale: selectDemoLocale, handleMenuKeydown: handleLocaleMenuKeydown, handleFocusOut: handleLocaleSwitcherFocusOut
+} = useDemoLocaleSwitcher({
+  locale: demoLocale, getLanguageLabel: () => demoCopy.value.language,
+  beforeOpen: () => {
+    closeDesktopTransientUi('locale')
+    mobileControlsOpen.value = mobileActionsOpen.value = recentPanelOpen.value = false
+  },
+  onSelect: setDemoLocale
+})
 const url = ref(demoFileHandoff.isEmbedRequest && !demoFileHandoff.initialUrl ? '' : DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value])
 const preview = ref('')
 
@@ -991,94 +983,6 @@ function setDemoLocale(nextLocale: DemoLocale) {
     url.value = nextDefaultUrl
     openUrlPreview(nextDefaultUrl)
   }
-}
-
-type LocaleMenuFocusTarget = 'active' | 'first' | 'last'
-
-function closeLocaleMenu(returnFocus = false) {
-  if (!localeMenuOpen.value) {
-    return
-  }
-  localeMenuOpen.value = false
-  if (returnFocus) {
-    void nextTick(() => localeTriggerButtonRef.value?.focus())
-  }
-}
-
-function focusLocaleMenuOption(target: LocaleMenuFocusTarget = 'active') {
-  const buttons = Array.from(
-    localeMenuRef.value?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') || []
-  )
-  if (!buttons.length) {
-    return
-  }
-  const nextButton = target === 'first'
-    ? buttons[0]
-    : target === 'last'
-      ? buttons[buttons.length - 1]
-      : buttons.find(button => button.dataset.locale === demoLocale.value) || buttons[0]
-  nextButton?.focus()
-}
-
-async function openLocaleMenu(focusTarget: LocaleMenuFocusTarget = 'active') {
-  if (localeMenuOpen.value) {
-    focusLocaleMenuOption(focusTarget)
-    return
-  }
-  closeDesktopTransientUi('locale')
-  mobileControlsOpen.value = false
-  mobileActionsOpen.value = false
-  recentPanelOpen.value = false
-  localeMenuOpen.value = true
-  await nextTick()
-  focusLocaleMenuOption(focusTarget)
-}
-
-function toggleLocaleMenu() {
-  if (localeMenuOpen.value) {
-    closeLocaleMenu(true)
-    return
-  }
-  void openLocaleMenu()
-}
-
-function selectDemoLocale(nextLocale: DemoLocale) {
-  setDemoLocale(nextLocale)
-  closeLocaleMenu(true)
-}
-
-function handleLocaleMenuKeydown(event: KeyboardEvent) {
-  const buttons = Array.from(
-    localeMenuRef.value?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') || []
-  )
-  if (!buttons.length) {
-    return
-  }
-  if (event.key === 'Escape') {
-    event.preventDefault()
-    closeLocaleMenu(true)
-    return
-  }
-  const currentIndex = buttons.indexOf(document.activeElement as HTMLButtonElement)
-  let nextIndex: number | null = null
-  if (event.key === 'ArrowDown') nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % buttons.length
-  if (event.key === 'ArrowUp') nextIndex = currentIndex < 0 ? buttons.length - 1 : (currentIndex - 1 + buttons.length) % buttons.length
-  if (event.key === 'Home') nextIndex = 0
-  if (event.key === 'End') nextIndex = buttons.length - 1
-  if (nextIndex === null) {
-    return
-  }
-  event.preventDefault()
-  buttons[nextIndex]?.focus()
-}
-
-function handleLocaleSwitcherFocusOut() {
-  void nextTick(() => {
-    const activeElement = document.activeElement
-    if (activeElement instanceof Node && !localeSwitcherRef.value?.contains(activeElement)) {
-      localeMenuOpen.value = false
-    }
-  })
 }
 
 function handleFileCapsuleMotionPreferenceChange() {
