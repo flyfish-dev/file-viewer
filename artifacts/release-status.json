@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-26T01:54:18.241Z",
+  "generatedAt": "2026-08-26T03:20:52.486Z",
   "version": "2.4.0",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -8,10 +8,10 @@
     "repository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "policy": "private-complete-original-workspace",
-    "authoritativeCommit": "",
+    "authoritativeCommit": "bb3d7866559882b0da84084f6c999e4797d01671",
     "localBranch": "main",
     "localCommit": "bb3d7866559882b0da84084f6c999e4797d01671",
-    "inSync": false,
+    "inSync": true,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
@@ -23,16 +23,16 @@
   "sourceRemote": {
     "url": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
-    "ok": false,
-    "hash": "",
-    "error": "fatal: could not read Username for 'https://git.flyfish.dev': Device not configured"
+    "ok": true,
+    "hash": "bb3d7866559882b0da84084f6c999e4797d01671",
+    "error": ""
   },
   "openSourceMain": {
     "github": {
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "30c1a3b22c4204a4ff9861efccd1704808aaa800",
+      "hash": "938b0d30b8b89b5bccb2ec6c13d1144e8dfb1185",
       "error": ""
     },
     "gitee": {
@@ -45,20 +45,20 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "3f0a08497ceb2b35bec5adfa4dbac7ea183103cb",
+    "referenceTree": "3acfddf1216d04c85e9e9f39d2601d28f2979f5f",
     "giteeTree": "7f13b7419673ae4bb39251b6eadd29c5fc219223",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
   },
   "githubRelease": {
-    "ok": false,
+    "ok": true,
     "tag": "v2.4.0",
-    "url": "",
-    "assetCount": 0,
-    "hasManifest": false,
-    "hasStatus": false,
-    "hasSchema": false,
-    "error": "release not found"
+    "url": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.4.0",
+    "assetCount": 66,
+    "hasManifest": true,
+    "hasStatus": true,
+    "hasSchema": true,
+    "error": ""
   },
   "componentRepositories": [
     {
@@ -769,43 +769,17 @@
       "error": ""
     }
   ],
-  "gaps": [
-    "source remote https://git.flyfish.dev/flyfish-group/file-viewer.git missing main",
-    "GitHub Release v2.4.0 missing"
-  ],
+  "gaps": [],
   "gapSummary": {
-    "total": 2,
-    "externalBlockers": 2,
+    "total": 0,
+    "externalBlockers": 0,
     "localActionable": 0,
-    "byChannel": {
-      "source-remote": 1,
-      "github-release": 1
-    },
-    "externalBlockerChannels": [
-      "github-release",
-      "source-remote"
-    ],
+    "byChannel": {},
+    "externalBlockerChannels": [],
     "localActionableChannels": []
   },
-  "gapDetails": [
-    {
-      "id": "source-remote-source-remote-https-git.flyfish.dev-flyfish-group-file-viewer.git-missing-main",
-      "channel": "source-remote",
-      "scope": "private-gitea",
-      "externalBlocker": true,
-      "message": "source remote https://git.flyfish.dev/flyfish-group/file-viewer.git missing main",
-      "nextAction": "Restore the private Gitea source branch or push the expected release source."
-    },
-    {
-      "id": "github-release-github-release-v2.4.0-missing",
-      "channel": "github-release",
-      "scope": "release-assets",
-      "externalBlocker": true,
-      "message": "GitHub Release v2.4.0 missing",
-      "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
-    }
-  ],
+  "gapDetails": [],
   "nextActions": [
-    "Create or update the GitHub Release assets, then rerun `pnpm release:public`."
+    "Release channels are aligned. Keep this report attached to the GitHub Release for downstream verification."
   ]
 }
