@@ -4,21 +4,21 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - ".github/workflows/rendition-dss-validation.yml"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - "packages/components/*-full/package.json"
-      - "packages/presets/all/**"
-      - "packages/renderers/signature/**"
+      - '.github/workflows/rendition-dss-validation.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'packages/components/*-full/package.json'
+      - 'packages/presets/all/**'
+      - 'packages/renderers/signature/**'
   push:
     branches: [main]
     paths:
-      - ".github/workflows/rendition-dss-validation.yml"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - "packages/components/*-full/package.json"
-      - "packages/presets/all/**"
-      - "packages/renderers/signature/**"
+      - '.github/workflows/rendition-dss-validation.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'packages/components/*-full/package.json'
+      - 'packages/presets/all/**'
+      - 'packages/renderers/signature/**'
   workflow_dispatch:
 
 permissions:
@@ -48,14 +48,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24.19.0"
+          node-version: '24.19.0'
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          python-version: "3.12.12"
+          python-version: '3.12.12'
 
       - name: Set up Rust
         shell: bash
