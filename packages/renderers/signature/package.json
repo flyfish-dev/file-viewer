@@ -65,11 +65,12 @@
     "type-check": "tsc -b tsconfig.json",
     "verify:github-206": "pnpm build:ts && node scripts/verify-github-206.mjs",
     "verify:fixtures": "node scripts/verify-fixture-checksums.mjs && bash test/fixtures/github-206-contributed/scripts/verify_all.sh",
+    "verify:browser": "pnpm build:ts && npm exec --yes --package=playwright@1.61.1 -- node scripts/verify-browser.mjs",
     "verify:optional-boundary": "node scripts/verify-optional-boundary.mjs",
     "verify:openpgp-architecture": "node scripts/verify-openpgp-architecture.mjs",
     "verify:openpgp-detection": "pnpm build:ts && node scripts/verify-openpgp-detection.mjs",
     "verify:openpgp": "pnpm verify:openpgp-architecture && pnpm verify:openpgp-detection",
-    "verify": "pnpm verify:optional-boundary && pnpm verify:fixtures && pnpm verify:github-206 && pnpm verify:openpgp"
+    "verify": "pnpm verify:optional-boundary && pnpm verify:fixtures && pnpm verify:github-206 && pnpm verify:openpgp && pnpm verify:browser"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:2.4.0"
