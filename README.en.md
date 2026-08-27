@@ -193,6 +193,16 @@ If File Viewer saves your team time, [sponsor the maintenance](https://github.co
 - [WeChat / Alipay](https://dev.flyfish.group/sponsor?source=github): one-time support for domestic users.
 - [Enterprise support](https://dev.flyfish.group/shop): private deployment, custom file compatibility or work that needs a committed response time.
 
+### Thanks to Our Sponsors
+
+Thank you for supporting the compatibility work, documentation, and releases that keep File Viewer moving forward.
+
+<p align="center">
+  <a href="https://github.com/p4535992" title="@p4535992 on GitHub">
+    <img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="GitHub sponsor @p4535992" />
+  </a>
+</p>
+
 ## Architecture
 
 ```text
