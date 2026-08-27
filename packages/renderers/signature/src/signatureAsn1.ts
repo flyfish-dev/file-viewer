@@ -858,6 +858,12 @@ const parseCmsContentInfo = (bytes: Uint8Array, root: Asn1Node): CmsRecord => {
 
 const subtleCrypto = () => globalThis.crypto?.subtle;
 
+const webCryptoBuffer = (bytes: Uint8Array): ArrayBuffer => {
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return copy.buffer;
+};
+
 const digestNameForOid = (oid?: string): AlgorithmIdentifier | undefined => {
   if (oid === OID.sha1) return 'SHA-1';
   if (oid === OID.sha256) return 'SHA-256';
@@ -872,7 +878,7 @@ const digestBytes = async (oid: string | undefined, bytes: Uint8Array) => {
   if (!subtle || !algorithm) {
     return undefined;
   }
-  return new Uint8Array(await subtle.digest(algorithm, bytes));
+  return new Uint8Array(await subtle.digest(algorithm, webCryptoBuffer(bytes)));
 };
 
 const pssSaltLength = (bytes: Uint8Array, algorithmNode: Asn1Node | undefined, hashOid?: string) => {
@@ -991,24 +997,24 @@ const verifySigner = async (
     ) {
       assertBounds(hash, `Unsupported RSA digest algorithm ${hashOid || 'unknown'}.`);
       const algorithm: RsaHashedImportParams = { name: 'RSASSA-PKCS1-v1_5', hash };
-      const key = await subtle.importKey('spki', certificate.spki, algorithm, false, ['verify']);
+      const key = await subtle.importKey('spki', webCryptoBuffer(certificate.spki), algorithm, false, ['verify']);
       summary.cryptographicSignatureValid = await subtle.verify(
         { name: 'RSASSA-PKCS1-v1_5' },
         key,
-        signer.signature,
-        signedInput
+        webCryptoBuffer(signer.signature),
+        webCryptoBuffer(signedInput)
       );
       return;
     }
     if (signatureOid === OID.rsaPss) {
       assertBounds(hash, `Unsupported RSA-PSS digest algorithm ${hashOid || 'unknown'}.`);
       const algorithm: RsaHashedImportParams = { name: 'RSA-PSS', hash };
-      const key = await subtle.importKey('spki', certificate.spki, algorithm, false, ['verify']);
+      const key = await subtle.importKey('spki', webCryptoBuffer(certificate.spki), algorithm, false, ['verify']);
       summary.cryptographicSignatureValid = await subtle.verify(
         { name: 'RSA-PSS', saltLength: pssSaltLength(bytes, signer.signatureAlgorithmNode, hashOid) },
         key,
-        signer.signature,
-        signedInput
+        webCryptoBuffer(signer.signature),
+        webCryptoBuffer(signedInput)
       );
       return;
     }
@@ -1022,7 +1028,7 @@ const verifySigner = async (
       assertBounds(certificate.publicKeyCurveName, 'Unsupported or missing EC named curve.');
       const key = await subtle.importKey(
         'spki',
-        certificate.spki,
+        webCryptoBuffer(certificate.spki),
         { name: 'ECDSA', namedCurve: certificate.publicKeyCurveName },
         false,
         ['verify']
@@ -1035,14 +1041,14 @@ const verifySigner = async (
       summary.cryptographicSignatureValid = await subtle.verify(
         { name: 'ECDSA', hash },
         key,
-        ecdsaDerToRaw(signer.signature, coordinateLength),
-        signedInput
+        webCryptoBuffer(ecdsaDerToRaw(signer.signature, coordinateLength)),
+        webCryptoBuffer(signedInput)
       );
       return;
     }
     if (certificate.publicKeyAlgorithmOid === OID.ed25519 || signatureOid === OID.ed25519) {
-      const key = await subtle.importKey('spki', certificate.spki, { name: 'Ed25519' }, false, ['verify']);
-      summary.cryptographicSignatureValid = await subtle.verify('Ed25519', key, signer.signature, signedInput);
+      const key = await subtle.importKey('spki', webCryptoBuffer(certificate.spki), { name: 'Ed25519' }, false, ['verify']);
+      summary.cryptographicSignatureValid = await subtle.verify('Ed25519', key, webCryptoBuffer(signer.signature), webCryptoBuffer(signedInput));
       return;
     }
     summary.verificationError = `Unsupported signature algorithm ${signatureOid || 'unknown'}.`;
@@ -1058,7 +1064,7 @@ const enrichCertificateFingerprints = async (certificates: CertificateRecord[], 
   }
   await Promise.all(certificates.map(async certificate => {
     try {
-      const digest = new Uint8Array(await subtle.digest('SHA-256', fullBytes(bytes, certificate.node)));
+      const digest = new Uint8Array(await subtle.digest('SHA-256', webCryptoBuffer(fullBytes(bytes, certificate.node))));
       certificate.summary.fingerprintSha256 = bytesToHex(digest, ':');
     } catch {
       // Fingerprints are presentation metadata; parsing remains useful without one.

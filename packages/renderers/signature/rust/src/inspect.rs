@@ -17,7 +17,7 @@ fn key_summary(key: &SignedPublicKey, kind: &str, limits: &ParseLimits) -> KeySu
         fingerprint: Some(subkey.fingerprint().to_string()),
         key_id: Some(subkey.legacy_key_id().to_string()),
         algorithm: Some(format!("{:?}", subkey.algorithm())),
-        created_at: Some(subkey.created_at().to_string()),
+        created_at: Some(subkey.created_at().as_secs().to_string()),
     }).collect();
     KeySummary {
         kind: kind.to_owned(),
@@ -25,7 +25,7 @@ fn key_summary(key: &SignedPublicKey, kind: &str, limits: &ParseLimits) -> KeySu
         fingerprint: Some(key.fingerprint().to_string()),
         key_id: Some(key.legacy_key_id().to_string()),
         algorithm: Some(format!("{:?}", key.algorithm())),
-        created_at: Some(key.created_at().to_string()),
+        created_at: Some(key.created_at().as_secs().to_string()),
         user_ids,
         subkeys,
     }
@@ -113,7 +113,7 @@ pub fn inspect(input: &[u8], limits: &ParseLimits, include_literal: bool) -> Res
             Some(LiteralData {
                 filename: header
                     .as_ref()
-                    .map(|value| value.file_name().to_owned())
+                    .map(|value| String::from_utf8_lossy(value.file_name().as_ref()).into_owned())
                     .filter(|value| !value.is_empty()),
                 format: None,
                 media_type: None,
