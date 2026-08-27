@@ -1,0 +1,8 @@
+SPDX-License-Identifier: CC0-1.0
+
+These files were generated from synthetic content solely as interoperability
+and parser fixtures. They contain no third-party documents and no production
+credentials. To the extent legally possible, the fixture author has waived
+all copyright and related rights under CC0 1.0 Universal.
+
+The certificates are test-only and untrusted. No private keys are included.

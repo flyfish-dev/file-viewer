@@ -699,16 +699,6 @@ Flyfish Viewer 会持续保持 Apache-2.0 开源。GitHub Sponsors 适合一次�
 - 商业版 Demo: [office.flyfish.dev](https://office.flyfish.dev/)
 - 飞鱼开源工作室: [flyfish.dev](https://flyfish.dev/)
 
-### 感谢以下赞助者
-
-感谢你对 File Viewer 兼容性修复、文档完善和持续发布工作的支持。
-
-<p align="center">
-  <a href="https://github.com/p4535992" title="在 GitHub 查看 @p4535992">
-    <img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="GitHub 赞助者 @p4535992" />
-  </a>
-</p>
-
 | 微信赞赏码                                                                       | 支付宝收款码                                                                | 微信公众号二维码                                                                                     | 用户交流群                                                                                           |
 | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | <img src="docs/_media/support/wechat-reward.jpg" width="150" alt="微信赞赏码" /> | <img src="docs/_media/support/alipay.jpg" width="150" alt="支付宝收款码" /> | <img src="docs/_media/support/wechat-mp.png" width="150" alt="飞鱼开源 WorkShop 微信公众号二维码" /> | <img src="docs/_media/support/invite.webp" width="150" alt="File Viewer 用户交流群二维码" /> |

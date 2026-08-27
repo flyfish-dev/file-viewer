@@ -779,6 +779,9 @@ importers:
       '@file-viewer/renderer-presentation':
         specifier: workspace:2.4.0
         version: link:../../renderers/presentation
+      '@file-viewer/renderer-signature':
+        specifier: workspace:2.4.0
+        version: link:../../renderers/signature
       '@file-viewer/renderer-spreadsheet':
         specifier: workspace:2.4.0
         version: link:../../renderers/spreadsheet
@@ -873,6 +876,9 @@ importers:
       '@file-viewer/renderer-presentation':
         specifier: workspace:2.4.0
         version: link:../../renderers/presentation
+      '@file-viewer/renderer-signature':
+        specifier: workspace:2.4.0
+        version: link:../../renderers/signature
       '@file-viewer/renderer-spreadsheet':
         specifier: workspace:2.4.0
         version: link:../../renderers/spreadsheet
@@ -1400,6 +1406,16 @@ importers:
       '@file-viewer/pptx':
         specifier: workspace:2.4.0
         version: link:../pptx
+    devDependencies:
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
+  packages/renderers/signature:
+    dependencies:
+      '@file-viewer/core':
+        specifier: workspace:2.4.0
+        version: link:../../core
     devDependencies:
       typescript:
         specifier: ^6.0.3

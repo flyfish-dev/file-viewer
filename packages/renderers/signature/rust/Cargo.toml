@@ -1,0 +1,15 @@
+[package]
+name = "file-viewer-rpgp-wrapper"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "Apache-2.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+pgp = { version = "=0.20.0", default-features = false, features = ["wasm"] }
+serde = { version = "1", features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+wasm-bindgen = "0.2"
