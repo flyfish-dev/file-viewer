@@ -21,6 +21,7 @@
 | Presentations | binary `ppt`, `pot`; OpenXML `pptx`, `pptm`, `potx`, `potm`, `ppsx`, `ppsm`; OpenDocument `odp`; stable high-fidelity `key` |
 | Apple documents | stable high-fidelity `pages`, `numbers`, and `key` with iWork '09 XML/APXL and modern Snappy/IWA parser paths |
 | Layout documents | `pdf`, `ofd`, `typ`, `typst` |
+| Digital signatures (explicit opt-in, experimental) | `p7m`, `p7s`, `p7b`, `p7c`, `pkcs7`, `cms`, `cmsc`, `tsq`, `tsr`, `tst`, `tsd`, `asc`, `sig`, `pgp`, `gpg` through `@file-viewer/renderer-signature`; not included in `preset-all` or `*-full` packages |
 | Archives | `zip`, `7z`, `rar`, `tar`, `gz`, `tgz`, `cab`, `iso`, `apk`, `cbz`, `cbr`, and more |
 | Email | `eml`, `msg`, `mbox` |
 | Diagrams and mind maps | `xmind`, `drawio`, `dio`, `excalidraw`, `mermaid`, `mmd`, `plantuml`, `puml` |
@@ -39,6 +40,8 @@
 - `hwp/hwpx` are **structured / stable** with redistributable Apache-2.0 HWP v5 and HWPX fixtures. The gate covers page geometry, inline styles, merged tables, headers, footers, notes, and embedded images in Chromium, Firefox, and WebKit. Encrypted, DRM, and distribution documents are detected and rejected explicitly; rare controls and producer-specific layout constructs remain documented limitations.
 
 The full machine-readable matrix, including containers, levels, status, and limits, is generated from `ecosystem/format-catalog.json` into [`docs/generated/format-catalog.md`](/generated/format-catalog).
+
+The signature row is an additional experimental, package-owned definition and is not counted in the 221-extension default catalog above. It must be installed and registered explicitly. Parsing or a valid cryptographic result does not establish certificate trust, policy compliance, qualified-signature status, identity assurance, or legal validity.
 
 ## Engineering Renderer Notes
 

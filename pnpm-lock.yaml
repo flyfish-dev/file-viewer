@@ -1405,6 +1405,16 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
+  packages/renderers/signature:
+    dependencies:
+      '@file-viewer/core':
+        specifier: workspace:2.4.0
+        version: link:../../core
+    devDependencies:
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   packages/renderers/spreadsheet:
     dependencies:
       '@file-viewer/core':

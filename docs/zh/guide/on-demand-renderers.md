@@ -238,6 +238,7 @@ const options = {
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG、DXF、DWF、DWFx、XPS |
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D 模型和轻量几何签名 |
+| `@file-viewer/renderer-signature` | `signatureRenderer` | 显式按需、实验性的 CMS/CAdES、时间戳与公开 OpenPGP 检查；不进入 `preset-all` 和任何 `*-full` 包 |
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io、Excalidraw、Mermaid、PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON、KML、GPX、SHP |
@@ -252,6 +253,8 @@ const options = {
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB、DRA、GDS、OAS/OASIS |
 
 `@file-viewer/ppt`、`@file-viewer/pptx`、`@file-viewer/geometry-engine`、`@file-viewer/eda-layout` 和 `@file-viewer/eda-orcad` 是 renderer 内部引擎包；常规业务预览优先使用上表 renderer 或 preset。
+
+需要签名容器能力时，应直接安装 `@file-viewer/renderer-signature` 并把 `signatureRenderer` 传给 `options.renderers`。它的可选 Rust/WASM 工具链和密码学边界不会被带入既有 Full 安装。
 
 `preset: 'auto'` 会发现项目中已安装的 preset 包；当 `preset-all` 存在时会优先使用它，避免重复导入其它 preset。
 

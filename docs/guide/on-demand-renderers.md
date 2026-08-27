@@ -68,6 +68,7 @@ Install a single renderer when a product needs the smallest possible capability 
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG, DXF, DWF, DWFx, XPS |
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D models and lightweight geometry signatures |
+| `@file-viewer/renderer-signature` | `signatureRenderer` | Explicit opt-in, experimental CMS/CAdES, timestamp, and public OpenPGP inspection; excluded from `preset-all` and `*-full` packages |
 
 Binary PowerPoint and OpenXML PowerPoint share the presentation plugin but keep separate lazy engine boundaries. The packaged `.ppt` 0.3.3 runtime is zero-config in standard layouts; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
 
@@ -87,6 +88,8 @@ Strict PPTX-only applications can import `pptxRenderer` from `@file-viewer/rende
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB, DRA, GDS, OAS/OASIS |
 
 Engine packages such as `@file-viewer/pptx`, `@file-viewer/geometry-engine`, `@file-viewer/eda-layout`, and `@file-viewer/eda-orcad` are maintained for renderer internals and advanced reuse. Normal viewer integrations should use the renderer or preset package above.
+
+Install `@file-viewer/renderer-signature` directly and pass `signatureRenderer` in `options.renderers`. Its optional Rust/WASM toolchain and cryptographic scope are deliberately not pulled into existing Full installs.
 
 ## Automatic Preset Assembly
 
