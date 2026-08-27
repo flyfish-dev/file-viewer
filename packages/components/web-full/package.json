@@ -81,7 +81,6 @@
     "@file-viewer/renderer-ofd": "workspace:2.4.0",
     "@file-viewer/renderer-pdf": "workspace:2.4.0",
     "@file-viewer/renderer-presentation": "workspace:2.4.0",
-    "@file-viewer/renderer-signature": "workspace:2.4.0",
     "@file-viewer/renderer-spreadsheet": "workspace:2.4.0",
     "@file-viewer/renderer-text": "workspace:2.4.0",
     "@file-viewer/renderer-typst": "workspace:2.4.0",

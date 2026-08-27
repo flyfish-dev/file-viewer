@@ -56,6 +56,7 @@
 | OpenDocument 演示文稿 | `odp` | OpenDocument 兼容预览 | 读取每页幻灯片的文本和页面结构 | 跨平台导出的演示文稿 |
 | PDF | `pdf` | `pdfjs-dist` | 浏览器端 PDF 渲染，同源 URL 默认渐进读取，服务端支持 Range 时自动分片加载，支持缩放工具栏、页侧边栏/目录树侧边栏切换、宽度自适应、完整打印和导出 HTML | 合同、票据、版式稳定文件 |
 | OFD | `ofd` | `@file-viewer/renderer-ofd` + `DLTech21/ofd.js` 源码 | 使用浏览器端 OFD 解析和页面渲染，vendor 随包离线分发，避开 npm dist 授权 wasm 分支 | 电子发票、公文、国产版式归档材料 |
+| 数字签名与时间戳（显式按需、实验性） | `p7m`、`p7s`、`p7b`、`p7c`、`pkcs7`、`cms`、`cmsc`、`tsq`、`tsr`、`tst`、`tsd`、`asc`、`sig`、`pgp`、`gpg` | `@file-viewer/renderer-signature` + 浏览器 Web Crypto + 可选 rPGP Worker/WASM | 本地检查 CMS/PKCS#7、部分 CAdES、RFC 3161/5544 与公开 OpenPGP 材料；不默认进入 `preset-all` 或任何 `*-full` 包；解析或密码学结果不等于证书信任、政策合规或法律效力 | 签名附件与时间戳容器初筛 |
 | Typst | `typ`、`typst` | `@myriaddreamin/typst.ts` 浏览器 WASM 编译 | 直接读取 Typst 源文档并输出按页 SVG，支持完整预览、打印和导出 HTML；compiler / renderer WASM 与默认字体仅命中 Typst 时按需加载 | 技术报告、论文草稿、工程文档模板 |
 | 压缩包 | `zip`、`zipx`、`7z`、`rar`、`tar`、`gz`、`gzip`、`tgz`、`bz2`、`bzip2`、`tbz`、`tbz2`、`xz`、`txz`、`lzma`、`zst`、`cab`、`ar`、`cpio`、`iso`、`xar`、`lha`、`lzh`、`jar`、`war`、`ear`、`apk`、`cbz`、`cbr` | `@file-viewer/renderer-archive` + `libarchive.js` WASM Worker | 先读取目录，点击文件后按需解压；内部文件继续复用统一预览器，并支持 IndexedDB 缓存、GBK/GB18030 旧 ZIP 中文文件名、体积上限和 ZIP/TAR/GZIP 兼容降级 | 归档附件、批量交付包、压缩包内文档快速查看 |
 | 邮件 | `eml`、`msg`、`mbox` | `@file-viewer/renderer-email` + `postal-mime` / `@kenjiuno/msgreader` | 展示头信息、HTML/文本正文、附件列表；MBOX 会解析首封邮件并标注识别数量；附件可下载，也可继续在线预览 | 邮件归档、客服工单、客户来信附件 |

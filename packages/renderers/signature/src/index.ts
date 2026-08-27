@@ -14,7 +14,7 @@ export const signatureRendererDefinition: RendererDefinition = {
   supportLevel: 'experimental',
   status: 'experimental',
   packageName: '@file-viewer/renderer-signature',
-  presets: ['all'],
+  presets: [],
   knownLimits: [
     'Phase one supports CMS/PKCS#7, selected CAdES attributes, RFC 3161, and RFC 5544 TimeStampedData.',
     'Certificate trust, policy compliance, qualified status, and legal validity are not established.',

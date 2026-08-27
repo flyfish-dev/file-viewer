@@ -36,7 +36,7 @@ const options = {
 };
 ```
 
-`@file-viewer/preset-all` includes this renderer explicitly, but `@file-viewer/core` does not import it.
+This package is an explicit opt-in. It is not a dependency of `@file-viewer/preset-all`, any `*-full` package, or `@file-viewer/core`.
 
 ## OpenPGP backend
 

@@ -89,7 +89,7 @@ pub fn inspect(input: &[u8], limits: &ParseLimits, include_literal: bool) -> Res
         });
     }
 
-    if let Ok((mut message, _headers)) = Message::from_reader(Cursor::new(input.to_vec())) {
+    if let Ok((message, _headers)) = Message::from_reader(Cursor::new(input.to_vec())) {
         let encrypted = message.is_encrypted();
         let compressed = message.is_compressed();
         let signed = message.is_signed() || message.is_one_pass_signed();

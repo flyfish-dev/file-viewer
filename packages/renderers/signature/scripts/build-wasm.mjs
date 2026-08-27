@@ -26,8 +26,7 @@ await mkdir(outDir, { recursive: true });
 try {
   await access(resolve(rustDir, 'Cargo.lock'));
 } catch {
-  console.warn('[renderer-signature] Cargo.lock is missing; generating it before the locked build.');
-  run('cargo', ['generate-lockfile']);
+  throw new Error('[renderer-signature] rust/Cargo.lock is required for a reproducible WASM build.');
 }
 run('cargo', ['build', '--release', '--locked', '--target', 'wasm32-unknown-unknown']);
 run('wasm-bindgen', [wasmInput, '--target', 'web', '--out-dir', outDir, '--out-name', 'rpgp_wrapper']);

@@ -24,7 +24,6 @@ import { modelRenderer } from '@file-viewer/renderer-3d';
 import { ofdRenderer } from '@file-viewer/renderer-ofd';
 import { pdfRenderer } from '@file-viewer/renderer-pdf';
 import { presentationRenderer } from '@file-viewer/renderer-presentation';
-import { signatureRenderer } from '@file-viewer/renderer-signature';
 import { spreadsheetRenderer } from '@file-viewer/renderer-spreadsheet';
 import { textRenderer } from '@file-viewer/renderer-text';
 import { typstRenderer } from '@file-viewer/renderer-typst';
@@ -62,7 +61,7 @@ export const fileViewerAllRendererPlugin: FileViewerRendererPlugin<BrowserRender
 export const allRenderers: FileViewerRendererPreset<BrowserRendererHandler> = {
   id: 'file-viewer-preset-all',
   label: 'Flyfish File Viewer full renderer preset',
-  renderers: [wordRenderer, wordPerfectRenderer, hangulRenderer, iworkRenderer, pdfRenderer, ofdRenderer, presentationRenderer, spreadsheetRenderer, signatureRenderer, cadRenderer, typstRenderer, drawingRenderer, modelRenderer, archiveRenderer, emailRenderer, ebookRenderer, textRenderer, imageRenderer, mediaRenderer, mindmapRenderer, geoRenderer, dataRenderer, edaRenderer, fileViewerAllRendererPlugin],
+  renderers: [wordRenderer, wordPerfectRenderer, hangulRenderer, iworkRenderer, pdfRenderer, ofdRenderer, presentationRenderer, spreadsheetRenderer, cadRenderer, typstRenderer, drawingRenderer, modelRenderer, archiveRenderer, emailRenderer, ebookRenderer, textRenderer, imageRenderer, mediaRenderer, mindmapRenderer, geoRenderer, dataRenderer, edaRenderer, fileViewerAllRendererPlugin],
 };
 
 export const fileViewerPresetAll = allRenderers;

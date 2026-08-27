@@ -17,7 +17,7 @@
     "build:pptx": "pnpm --filter @file-viewer/pptx build",
     "build:doc": "pnpm --filter @file-viewer/doc build",
     "build:core": "pnpm --filter @file-viewer/core build",
-    "build:renderers": "pnpm --filter './packages/renderers/**' build",
+    "build:renderers": "pnpm --filter './packages/renderers/**' --filter '!@file-viewer/renderer-signature' build",
     "build:presets": "pnpm --filter './packages/presets/**' build",
     "build:thumbnail": "pnpm --filter @file-viewer/thumbnail build",
     "build:components": "pnpm --filter './packages/components/**' build",

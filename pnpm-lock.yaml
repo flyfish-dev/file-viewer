@@ -779,9 +779,6 @@ importers:
       '@file-viewer/renderer-presentation':
         specifier: workspace:2.4.0
         version: link:../../renderers/presentation
-      '@file-viewer/renderer-signature':
-        specifier: workspace:2.4.0
-        version: link:../../renderers/signature
       '@file-viewer/renderer-spreadsheet':
         specifier: workspace:2.4.0
         version: link:../../renderers/spreadsheet
@@ -876,9 +873,6 @@ importers:
       '@file-viewer/renderer-presentation':
         specifier: workspace:2.4.0
         version: link:../../renderers/presentation
-      '@file-viewer/renderer-signature':
-        specifier: workspace:2.4.0
-        version: link:../../renderers/signature
       '@file-viewer/renderer-spreadsheet':
         specifier: workspace:2.4.0
         version: link:../../renderers/spreadsheet

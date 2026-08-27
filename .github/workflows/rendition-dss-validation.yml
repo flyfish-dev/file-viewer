@@ -1,71 +1,80 @@
 name: Rendition DSS validation
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/rendition-dss-validation.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'packages/components/*-full/package.json'
+      - 'packages/presets/all/**'
+      - 'packages/renderers/signature/**'
   push:
     branches: [main]
+    paths:
+      - '.github/workflows/rendition-dss-validation.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'packages/components/*-full/package.json'
+      - 'packages/presets/all/**'
+      - 'packages/renderers/signature/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: rendition-dss-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
 
     steps:
       - name: Checkout cloneable source
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: true
-
-      - name: Materialize validated fixes on main when needed
-        if: github.ref == 'refs/heads/main'
-        shell: bash
-        run: |
-          if grep -q "const webCryptoBuffer" packages/renderers/signature/src/signatureAsn1.ts; then
-            echo 'Validated fixes are already materialized in main.'
-            exit 0
-          fi
-
-          python3 patches/apply_candidate.py .
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add \
-            packages/renderers/signature/src/signatureAsn1.ts \
-            packages/renderers/signature/rust/src/inspect.rs \
-            packages/renderers/signature/test/fixtures/github-206-contributed/originals/hello.txt
-          git commit -m 'fix(signature): materialize validated renderer fixes'
-          git push origin HEAD:main
+          persist-credentials: false
 
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 11.0.9
           run_install: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '22'
+          node-version: '24.19.0'
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          python-version: '3.12'
+          python-version: '3.12.12'
 
       - name: Set up Rust
         shell: bash
         run: |
-          rustup toolchain install stable --profile minimal
-          rustup default stable
+          rustup toolchain install 1.88.0 --profile minimal
+          rustup default 1.88.0
           rustup target add wasm32-unknown-unknown
-          cargo install wasm-bindgen-cli --locked
+          cargo install wasm-bindgen-cli --version 0.2.127 --locked
 
       - name: Install Python fixture dependency
-        run: python -m pip install asn1crypto
+        shell: bash
+        run: |
+          python3 -m venv /tmp/file-viewer-signature-venv
+          echo '/tmp/file-viewer-signature-venv/bin' >> "$GITHUB_PATH"
+          /tmp/file-viewer-signature-venv/bin/python -m pip install \
+            --disable-pip-version-check \
+            --only-binary=:all: \
+            --require-hashes \
+            'asn1crypto==1.5.1 --hash=sha256:db4e40728b728508912cbb3d44f19ce188f218e9eba635821bb4b68564f8fd67'
 
       - name: Toolchain versions
         shell: bash
@@ -90,6 +99,11 @@ jobs:
         id: signature_typecheck
         continue-on-error: true
         run: pnpm --filter @file-viewer/renderer-signature type-check
+
+      - name: Verify signature renderer opt-in boundary
+        id: optional_boundary
+        continue-on-error: true
+        run: pnpm --filter @file-viewer/renderer-signature verify:optional-boundary
 
       - name: Issue 206 CMS and timestamp verification
         id: github206
@@ -117,7 +131,7 @@ jobs:
         shell: bash
         working-directory: packages/renderers/signature/rust
         run: |
-          if [ ! -f Cargo.lock ]; then cargo generate-lockfile; fi
+          test -s Cargo.lock
           cargo build --release --locked --target wasm32-unknown-unknown
           wasm-bindgen target/wasm32-unknown-unknown/release/file_viewer_rpgp_wrapper.wasm \
             --target web \
@@ -160,6 +174,7 @@ jobs:
         env:
           CORE_BUILD: ${{ steps.core_build.outcome }}
           SIGNATURE_TYPECHECK: ${{ steps.signature_typecheck.outcome }}
+          OPTIONAL_BOUNDARY: ${{ steps.optional_boundary.outcome }}
           GITHUB206: ${{ steps.github206.outcome }}
           FIXTURES: ${{ steps.fixtures.outcome }}
           OPENPGP_ARCH: ${{ steps.openpgp_arch.outcome }}
@@ -170,6 +185,9 @@ jobs:
           GOVERNANCE: ${{ steps.governance.outcome }}
           OFFLINE_ASSETS: ${{ steps.offline_assets.outcome }}
           OFFLINE_AVAILABLE: ${{ steps.offline_assets.outputs.available }}
+          VALIDATED_REPOSITORY: ${{ github.repository }}
+          VALIDATED_REF: ${{ github.ref_name }}
+          VALIDATED_SHA: ${{ github.sha }}
         run: |
           if [ "$OFFLINE_AVAILABLE" = 'true' ]; then
             OFFLINE_DISPLAY="$OFFLINE_ASSETS"
@@ -180,15 +198,17 @@ jobs:
           {
             echo '## Rendition DSS validation — cloneable main'
             echo
-            echo '- Repository: `p4535992/file-viewer-rendition-dss-ci`'
-            echo '- Branch: `main`'
+            echo "- Repository: \`$VALIDATED_REPOSITORY\`"
+            echo "- Ref: \`$VALIDATED_REF\`"
+            echo "- Commit: \`$VALIDATED_SHA\`"
             echo '- Validated fixes are stored directly in the source tree; no runtime patch is required.'
-            echo '- Runner: `ubuntu-latest`'
+            echo '- Runner: `ubuntu-24.04`'
             echo
             echo '| Check | Outcome |'
             echo '| --- | --- |'
             echo "| Core build | $CORE_BUILD |"
             echo "| Signature type-check | $SIGNATURE_TYPECHECK |"
+            echo "| Opt-in dependency boundary | $OPTIONAL_BOUNDARY |"
             echo "| Issue #206 verification | $GITHUB206 |"
             echo "| Fixture verification | $FIXTURES |"
             echo "| OpenPGP architecture | $OPENPGP_ARCH |"
@@ -204,6 +224,7 @@ jobs:
           for value in \
             "$CORE_BUILD" \
             "$SIGNATURE_TYPECHECK" \
+            "$OPTIONAL_BOUNDARY" \
             "$GITHUB206" \
             "$FIXTURES" \
             "$OPENPGP_ARCH" \
