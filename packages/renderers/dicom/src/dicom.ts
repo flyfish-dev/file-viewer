@@ -41,6 +41,7 @@ const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 10;
 const MAX_CODEC_WORKERS = 4;
 const CODEC_WORKER_NAME = 'dicomImageLoader';
+type DicomWindowSource = 'auto' | 'dicom' | 'user';
 let dicomLoaderInitialized = false;
 let renderingEngineSerial = 0;
 
@@ -230,11 +231,16 @@ export default async function renderDicom(
   const documentRef = target.ownerDocument;
   const copy = resolveCopy(context);
   const root = createElement(documentRef, 'div', 'dicom-viewer');
+  const hasDicomWindow = inspected.windowWidth !== null && inspected.windowCenter !== null;
   Object.assign(root.dataset, {
     status: 'loading', renderer: 'dicom', rows: String(inspected.rows), columns: String(inspected.columns),
-    frameCount: String(inspected.frameCount), currentFrame: '1', windowWidth: String(inspected.windowWidth),
-    windowCenter: String(inspected.windowCenter), panX: '0', panY: '0', rotation: '0',
+    frameCount: String(inspected.frameCount), currentFrame: '1', windowSource: hasDicomWindow ? 'dicom' : 'auto',
+    panX: '0', panY: '0', rotation: '0',
   });
+  if (hasDicomWindow) {
+    root.dataset.windowWidth = String(inspected.windowWidth);
+    root.dataset.windowCenter = String(inspected.windowCenter);
+  }
 
   const toolbar = createElement(documentRef, 'div', 'dicom-toolbar');
   const navigation = createElement(documentRef, 'div', 'dicom-tool-group');
@@ -256,13 +262,14 @@ export default async function renderDicom(
   widthLabel.title = copy.windowWidth;
   const widthInput = createElement(documentRef, 'input');
   widthInput.type = 'number'; widthInput.min = '1'; widthInput.step = '1';
-  widthInput.value = String(Math.round(inspected.windowWidth));
+  widthInput.value = inspected.windowWidth === null ? '' : String(Math.round(inspected.windowWidth));
   widthInput.setAttribute('aria-label', copy.windowWidth);
   widthLabel.append(widthInput);
   const centerLabel = createElement(documentRef, 'label', undefined, 'WC');
   centerLabel.title = copy.windowCenter;
   const centerInput = createElement(documentRef, 'input');
-  centerInput.type = 'number'; centerInput.step = '1'; centerInput.value = String(Math.round(inspected.windowCenter));
+  centerInput.type = 'number'; centerInput.step = '1';
+  centerInput.value = inspected.windowCenter === null ? '' : String(Math.round(inspected.windowCenter));
   centerInput.setAttribute('aria-label', copy.windowCenter);
   centerLabel.append(centerInput);
   windowControls.append(widthLabel, centerLabel);
@@ -287,8 +294,9 @@ export default async function renderDicom(
   let destroyed = false;
   let currentFrame = 0;
   let frameQueue: Promise<void> = Promise.resolve();
-  let currentWindowWidth = inspected.windowWidth;
-  let currentWindowCenter = inspected.windowCenter;
+  let currentWindowWidth: number | null = inspected.windowWidth;
+  let currentWindowCenter: number | null = inspected.windowCenter;
+  let currentWindowSource: DicomWindowSource = hasDicomWindow ? 'dicom' : 'auto';
   let currentRotation = 0;
   let resizeObserver: ResizeObserver | null = null;
   let pointerId: number | null = null;
@@ -363,6 +371,38 @@ export default async function renderDicom(
     previousButton.disabled = currentFrame <= 0;
     nextButton.disabled = currentFrame >= inspected.frameCount - 1;
   };
+  const syncWindowUi = (width: number, center: number, source: DicomWindowSource) => {
+    currentWindowWidth = width;
+    currentWindowCenter = center;
+    currentWindowSource = source;
+    widthInput.value = String(Math.round(width * 1000) / 1000);
+    centerInput.value = String(Math.round(center * 1000) / 1000);
+    root.dataset.windowWidth = String(width);
+    root.dataset.windowCenter = String(center);
+    root.dataset.windowSource = source;
+  };
+  const syncWindowFromViewport = () => {
+    if (!viewport) return false;
+    let lower = finiteNumber(viewport.getProperties().voiRange?.lower, Number.NaN);
+    let upper = finiteNumber(viewport.getProperties().voiRange?.upper, Number.NaN);
+    if (!Number.isFinite(lower) || !Number.isFinite(upper) || upper <= lower) {
+      const image = viewport.getCornerstoneImage() as unknown as {
+        intercept?: unknown;
+        maxPixelValue?: unknown;
+        minPixelValue?: unknown;
+        slope?: unknown;
+      };
+      const slope = finiteNumber(image.slope, 1);
+      const intercept = finiteNumber(image.intercept, 0);
+      const first = finiteNumber(image.minPixelValue, Number.NaN) * slope + intercept;
+      const second = finiteNumber(image.maxPixelValue, Number.NaN) * slope + intercept;
+      lower = Math.min(first, second);
+      upper = Math.max(first, second);
+    }
+    if (!Number.isFinite(lower) || !Number.isFinite(upper) || upper <= lower) return false;
+    syncWindowUi(upper - lower, (upper + lower) / 2, 'auto');
+    return true;
+  };
   const setFrame = (frame: number, source: FileViewerViewStateChangeSource = 'user') => {
     const requested = clamp(Math.round(frame), 0, inspected.frameCount - 1);
     frameQueue = frameQueue.then(async () => {
@@ -370,6 +410,7 @@ export default async function renderDicom(
       await viewport.setImageIdIndex(requested);
       if (destroyed) return;
       currentFrame = requested;
+      if (currentWindowSource === 'auto') syncWindowFromViewport();
       syncFrameUi();
       viewport.render();
       emitViewState('page-change', source);
@@ -378,12 +419,10 @@ export default async function renderDicom(
   };
   const applyWindow = () => {
     if (!viewport) return;
-    const width = Math.max(1, finiteNumber(widthInput.value, currentWindowWidth));
-    const center = finiteNumber(centerInput.value, currentWindowCenter);
-    currentWindowWidth = width; currentWindowCenter = center;
-    widthInput.value = String(Math.round(width * 1000) / 1000);
-    centerInput.value = String(Math.round(center * 1000) / 1000);
-    root.dataset.windowWidth = String(width); root.dataset.windowCenter = String(center);
+    const width = Math.max(1, finiteNumber(widthInput.value, currentWindowWidth ?? Number.NaN));
+    const center = finiteNumber(centerInput.value, currentWindowCenter ?? Number.NaN);
+    if (!Number.isFinite(width) || !Number.isFinite(center)) return;
+    syncWindowUi(width, center, 'user');
     viewport.setProperties({ voiRange: { lower: center - width / 2, upper: center + width / 2 } });
     viewport.render();
     emitViewState('window-change', 'user');
@@ -424,7 +463,14 @@ export default async function renderDicom(
     viewport = renderingEngine.getViewport<StackViewport>(viewportId);
     await viewport.setStack(imageIds, 0);
     if (destroyed || context?.signal?.aborted) throw context?.signal?.reason || new DOMException('DICOM render aborted.', 'AbortError');
-    viewport.setProperties({ voiRange: { lower: currentWindowCenter - currentWindowWidth / 2, upper: currentWindowCenter + currentWindowWidth / 2 } });
+    if (hasDicomWindow) {
+      const width = inspected.windowWidth as number;
+      const center = inspected.windowCenter as number;
+      syncWindowUi(width, center, 'dicom');
+      viewport.setProperties({ voiRange: { lower: center - width / 2, upper: center + width / 2 } });
+    } else if (!syncWindowFromViewport()) {
+      throw new Error('Unable to determine a visible DICOM window from the decoded pixels.');
+    }
     viewport.resetCamera({ resetPan: true, resetZoom: true, resetToCenter: true });
     viewport.render();
 

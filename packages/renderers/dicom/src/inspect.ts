@@ -30,8 +30,8 @@ export interface InspectedDicomPart10 {
   rows: number;
   samplesPerPixel: number;
   transferSyntax: string;
-  windowCenter: number;
-  windowWidth: number;
+  windowCenter: number | null;
+  windowWidth: number | null;
   /** @internal Part 10 bytes normalized for the image loader when required. */
   loaderBuffer: ArrayBuffer;
 }
@@ -196,6 +196,10 @@ export const inspectDicomPart10 = (
     throw new Error(`DICOM Bits Allocated value ${bitsAllocated} is not supported.`);
   }
 
+  const windowCenter = finiteNumber(dataSet.floatString('x00281050', 0), Number.NaN);
+  const windowWidth = finiteNumber(dataSet.floatString('x00281051', 0), Number.NaN);
+  const hasValidWindow = Number.isFinite(windowCenter) && Number.isFinite(windowWidth) && windowWidth > 0;
+
   return {
     bitsAllocated,
     columns,
@@ -205,8 +209,11 @@ export const inspectDicomPart10 = (
     rows,
     samplesPerPixel,
     transferSyntax,
-    windowCenter: finiteNumber(dataSet.floatString('x00281050', 0), (2 ** bitsAllocated) / 2),
-    windowWidth: Math.max(1, finiteNumber(dataSet.floatString('x00281051', 0), 2 ** bitsAllocated)),
+    // Window Center/Width are optional DICOM attributes. Keep their absence
+    // explicit so the renderer can use Cornerstone's pixel/rescale-aware VOI
+    // instead of inventing a raw unsigned range (which makes signed CT black).
+    windowCenter: hasValidWindow ? windowCenter : null,
+    windowWidth: hasValidWindow ? windowWidth : null,
     // ISO_IR 196 was the original UTF-8 defined term from DICOM CP-107;
     // normalize the loader-only copy to the current ISO_IR 192 spelling so
     // dcmjs does not reject otherwise valid pixel data and UTF-8 metadata.
