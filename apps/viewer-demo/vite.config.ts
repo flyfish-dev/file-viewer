@@ -106,9 +106,12 @@ export default defineConfig(ctx => {
     exactPackageAlias('react/jsx-runtime', require.resolve('react/jsx-runtime')),
     exactPackageAlias('react', require.resolve('react')),
     exactPackageAlias('react-dom', require.resolve('react-dom')),
-    exactPackageAlias('stream', require.resolve('stream-browserify')),
-    exactPackageAlias('zlib', require.resolve('browserify-zlib'))
+    exactPackageAlias('stream', require.resolve('stream-browserify'))
   ]
+
+  // Do not alias Node's zlib globally. dicom-parser receives a deterministic
+  // pako inflater, while browserify-zlib eagerly imports Node util and crashes
+  // Vite dev sessions before a local DICOM can mount.
 
   if (ctx.mode !== 'lib') {
     alias.push(

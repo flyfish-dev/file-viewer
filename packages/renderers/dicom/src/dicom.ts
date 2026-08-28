@@ -411,7 +411,7 @@ export default async function renderDicom(
   try {
     ensureDicomRuntime(options?.maxWebWorkers);
     const fileName = context?.filename?.trim() || 'preview.dcm';
-    baseImageId = wadouri.fileManager.add(new File([buffer], fileName, { type: 'application/dicom' }));
+    baseImageId = wadouri.fileManager.add(new File([inspected.loaderBuffer], fileName, { type: 'application/dicom' }));
     imageIds = makeImageIds(baseImageId, inspected.frameCount);
     root.dataset.dicomImageId = baseImageId;
     const renderingEngineId = `file-viewer-dicom-engine-${Date.now()}-${++renderingEngineSerial}`;

@@ -74,9 +74,11 @@
     "@cornerstonejs/dicom-image-loader": "5.8.2",
     "@cornerstonejs/metadata": "5.8.2",
     "@file-viewer/core": "workspace:3.0.0",
-    "dicom-parser": "1.8.21"
+    "dicom-parser": "1.8.21",
+    "pako": "2.1.0"
   },
   "devDependencies": {
+    "@types/pako": "^2.0.4",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

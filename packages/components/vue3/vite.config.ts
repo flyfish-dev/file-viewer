@@ -11,8 +11,7 @@ export default defineConfig(ctx => {
     '@': fileURLToPath(new URL('./src', import.meta.url)),
     events: 'events',
     path: 'path-browserify',
-    stream: 'stream-browserify',
-    zlib: 'browserify-zlib'
+    stream: 'stream-browserify'
   }
 
   if (ctx.mode !== 'lib') {

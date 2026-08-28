@@ -33,7 +33,7 @@ export const dicomRendererDefinition: RendererDefinition = {
   packageName: '@file-viewer/renderer-dicom',
   presets: [],
   knownLimits: [
-    'This MVP is tested with Implicit/Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless Part 10 files; other transfer syntaxes and DICOMweb are not included.',
+    'This MVP is tested with Implicit/Explicit/Deflated Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless Part 10 files; other transfer syntaxes and DICOMweb are not included.',
     'The MVP renders one single-frame or multi-frame local file as a stack; series assembly, PACS/DICOMweb, MPR, and diagnostic use are not included.',
   ],
   capabilities: {

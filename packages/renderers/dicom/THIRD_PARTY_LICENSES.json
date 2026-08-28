@@ -1104,7 +1104,7 @@
       "name": "pako",
       "version": "2.1.0",
       "license": "(MIT AND Zlib)",
-      "direct": false,
+      "direct": true,
       "optional": false,
       "firstParty": false,
       "author": "",

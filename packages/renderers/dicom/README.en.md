@@ -14,7 +14,7 @@ const viewer = createViewer(container, {
 })
 ```
 
-The first scope accepts Implicit/Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless Part 10 files covered by Chromium, Firefox, and WebKit regression (single-frame or multi-frame). It provides stack navigation, window width/center, zoom, pan, left/right 90° rotation, fit-to-view, and unified File Viewer view-state restoration. Other transfer syntaxes, PACS/DICOMweb, multi-file series assembly, annotations, MPR, segmentation, hanging protocols, and diagnostic use are outside this package.
+The first scope accepts Implicit/Explicit/Deflated Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless Part 10 files covered by Chromium, Firefox, and WebKit regression (single-frame or multi-frame). It provides stack navigation, window width/center, zoom, pan, left/right 90° rotation, fit-to-view, and unified File Viewer view-state restoration. Other transfer syntaxes, PACS/DICOMweb, multi-file series assembly, annotations, MPR, segmentation, hanging protocols, and diagnostic use are outside this package.
 
 The package initializes codec workers only after a DICOM file is selected. Defaults are limited to a 64 MiB source, 256 frames, 16 million decoded samples per frame, and 48 million decoded samples in total; applications can configure lower limits. Destroying the viewer removes only that instance's file-manager entry, viewport, rendering engine, listeners, metadata, and image cache. Cornerstone owns the shared worker pool, so destroying a File Viewer instance never terminates a host-owned worker.
 
