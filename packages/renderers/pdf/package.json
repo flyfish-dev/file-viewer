@@ -77,7 +77,7 @@
     }
   },
   "devDependencies": {
-    "@fontsource-variable/noto-sans-sc": "5.2.10",
+    "@fontsource-variable/noto-sans-sc": "5.3.0",
     "pdf-lib": "1.17.1",
     "pdfjs-dist": "5.4.624",
     "typescript": "^6.0.3"

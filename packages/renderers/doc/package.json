@@ -71,7 +71,7 @@
     "verify:github-192": "pnpm build && node scripts/verify-github-192.mjs"
   },
   "dependencies": {
-    "dompurify": "^3.4.13"
+    "dompurify": "^3.4.14"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

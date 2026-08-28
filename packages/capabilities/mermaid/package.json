@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@file-viewer/renderer-text": "workspace:3.0.0",
-    "mermaid": "^11.16.1"
+    "mermaid": "^11.17.1"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

@@ -63,10 +63,10 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.0",
     "@file-viewer/geometry-engine": "workspace:3.0.0",
-    "three": "^0.184.0"
+    "three": "^0.185.1"
   },
   "devDependencies": {
-    "@types/three": "^0.184.1",
+    "@types/three": "^0.185.4",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"
