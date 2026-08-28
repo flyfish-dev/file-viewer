@@ -118,6 +118,8 @@ npx file-viewer-cli install --yes
 
 Heavy capabilities stay explicit in `standard`. The generated module imports only the fixed profile and selected additions, and runtime code still loads the matching renderer only after its format is opened.
 
+Every selected capability is registered in the same generated File Viewer configuration. DICOM, signed containers, Office files, PDF, and the rest use the same component, source input, lifecycle, and toolbar; the CLI never creates a second viewer page or a format-specific application entry.
+
 ### DICOM boundary
 
 `dicom` installs the optional local DICOM Part 10 renderer. It supports one local single-frame or multi-frame file, with bounded decoding and frame navigation. It does **not** provide multi-file series assembly, PACS/DICOMweb, MPR, segmentation, diagnostic interpretation, or an embedded OHIF application.

@@ -73,8 +73,8 @@ Install a single renderer when a product needs the smallest possible capability 
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG, DXF, DWF, DWFx, XPS |
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D models and lightweight geometry signatures |
-| `@file-viewer/renderer-dicom` | `dicomRenderer` | Explicit opt-in local DICOM Part 10 single-file and multi-frame preview |
-| `@file-viewer/renderer-signature` | `signatureRenderer` | Explicit opt-in CMS/CAdES, timestamp, ASiC, evidence-record, JWS, and public OpenPGP inspection |
+| `@file-viewer/renderer-dicom` | `dicomRenderer` | Selected local DICOM Part 10 single-file and multi-frame preview in the standard Viewer entry |
+| `@file-viewer/renderer-signature` | `signatureRenderer` | Selected CMS/CAdES, timestamp, ASiC, evidence-record, JWS, and public OpenPGP inspection in the standard Viewer entry |
 
 Binary PowerPoint and OpenXML PowerPoint now have separate npm renderer packages. The compatibility aggregate keeps the existing root and subpath APIs. The packaged `.ppt` 0.3.3 runtime is zero-config in layouts that explicitly install it; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
 

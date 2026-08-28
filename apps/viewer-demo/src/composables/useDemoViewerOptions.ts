@@ -3,6 +3,8 @@ import {
   DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION
 } from '@file-viewer/core'
 import { allRenderers } from '@file-viewer/preset-all'
+import { dicomRenderer } from '@file-viewer/renderer-dicom'
+import { signatureRenderer } from '@file-viewer/renderer-signature'
 import { normalizeDemoDensity } from '@/composables/useDemoPreferences'
 import { createDemoModelOptions } from '@/composables/useDemoViewerSettings'
 import type { DemoLocale } from '@/composables/useDemoCopy'
@@ -35,6 +37,14 @@ export type UseDemoViewerOptionsInput = {
 const pptRuntimeAssetUrl = (path: string) => (
   `${path}?file-viewer-ppt=${encodeURIComponent(DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION)}`
 )
+
+// Renderer handlers use their concrete DOM targets internally. The public
+// options surface intentionally erases that implementation detail.
+const unifiedDemoRenderers = [
+  allRenderers,
+  dicomRenderer,
+  signatureRenderer
+] as unknown as NonNullable<FileViewerOptions['renderers']>
 
 /**
  * Compose the public viewer options from three clearly ordered sources:
@@ -89,7 +99,10 @@ export function useDemoViewerOptions(input: UseDemoViewerOptionsInput) {
     const options = { ...(runtime as Record<string, unknown>) } as FileViewerOptions
 
     // Renderers and locale are safe defaults. Explicit integration values win.
-    options.renderers = runtime.renderers ?? allRenderers
+    // The product Demo is the unified showcase. Specialist renderers are
+    // registered here while their heavy implementations remain format-lazy;
+    // published presets and full packages keep their compatibility boundary.
+    options.renderers = runtime.renderers ?? unifiedDemoRenderers
     if (!options.locale && !options.i18n?.locale) {
       options.locale = input.locale.value
     }

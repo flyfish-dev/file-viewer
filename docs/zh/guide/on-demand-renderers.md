@@ -241,8 +241,8 @@ const options = {
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG、DXF、DWF、DWFx、XPS |
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D 模型和轻量几何签名 |
-| `@file-viewer/renderer-dicom` | `dicomRenderer` | 显式按需安装的本地 DICOM Part 10 单文件与多帧预览 |
-| `@file-viewer/renderer-signature` | `signatureRenderer` | 显式按需安装的 CMS/CAdES、时间戳、ASiC、证据记录、JWS 与公开 OpenPGP 检查 |
+| `@file-viewer/renderer-dicom` | `dicomRenderer` | 在标准 Viewer 入口中选择启用的本地 DICOM Part 10 单文件与多帧预览 |
+| `@file-viewer/renderer-signature` | `signatureRenderer` | 在标准 Viewer 入口中选择启用的 CMS/CAdES、时间戳、ASiC、证据记录、JWS 与公开 OpenPGP 检查 |
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io、Excalidraw、Mermaid、PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON、KML、GPX、SHP |

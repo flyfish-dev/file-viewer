@@ -50,6 +50,8 @@ PDF、DOCX、PPT、PPTX、CAD、OpenDocument、3D 模型、绘图、音视频、
 - `archive.tar.gz`: 验证 TAR.GZ 压缩包兼容入口和内部文件预览
 - `sample.eml`: 验证 EML 头信息、HTML/文本正文、附件下载和附件预览
 - `sample.msg`: 使用 msgreader 上游公开样例验证 Outlook MSG 解析
+- `ct-small.dcm`: 使用 pydicom 公开的真实 CT DICOM 文件验证医疗影像解码、缩放、旋转和窗宽/窗位
+- `signature-invoice-cades-bes.pdf.p7m`: 使用 Issue #206 贡献的 CC0-1.0 CAdES-BES 样例验证数字签名结构预览
 - `sample.mbox`: 验证 MBOX 归档识别和首封邮件预览
 - `sample.olb`: 使用项目内生成的 CFB 元件库夹具验证 OLB 结构树、元件属性和字符串预览
 - `sample.dra`: 使用项目内生成的 CFB 封装图纸夹具验证 DRA 图纸、封装、Padstack 和属性预览
@@ -154,6 +156,8 @@ PDF、DOCX、PPT、PPTX、CAD、OpenDocument、3D 模型、绘图、音视频、
 | `en/archive.zip` / `en/archive.tar.gz` | 项目内打包的英文 DOCX、PDF、PPTX、XLSX、Markdown、文本、日志、CSV、JSON、代码、GeoJSON 和 glTF 示例集合；语言中立的二进制 PPT 保持为归档外共享样例 | 随内部文件来源 |
 | `sample.eml` | 项目内生成的标准 MIME 邮件 fixture | Apache-2.0 |
 | `sample.msg` | `HiraokaHyperTools/msgreader` 的 `test/A memo.msg` | MIT |
+| `ct-small.dcm` | pydicom `CT_small.dcm` pinned at `f5eeee05a99cd296350dd87fa6267cc5fa8a81fb` | MIT |
+| `signature-invoice-cades-bes.pdf.p7m` | Issue #206 贡献的公开合成身份 CAdES-BES fixture | CC0-1.0 |
 | `sample.olb` / `sample.dra` | 项目内生成的 CFB EDA fixture | Apache-2.0 |
 | `report.typ` | 项目内编写的 Typst 多页文档 fixture | Apache-2.0 |
 | `audio.mp3` | MDN interactive examples 的 `t-rex-roar.mp3` | CC0 |

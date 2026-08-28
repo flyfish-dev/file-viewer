@@ -40,6 +40,8 @@
 | `en/archive.zip` / `en/archive.tar.gz` | Project-packaged English DOCX, PDF, PPTX, XLSX, Markdown, text, log, CSV, JSON, TypeScript, JavaScript, GeoJSON and glTF sample set; the language-neutral binary PPT remains a shared fixture outside the archives | See bundled file sources | English archive directory, lazy extraction, cache and nested preview smoke tests |
 | `sample.eml` | Project-generated MIME email fixture | Apache-2.0 | EML headers, text/html body, attachment download and attachment preview smoke tests |
 | `sample.msg` | `https://github.com/HiraokaHyperTools/msgreader/blob/master/test/A%20memo.msg` | MIT | Outlook MSG parsing smoke test through @kenjiuno/msgreader |
+| `ct-small.dcm` | `https://github.com/pydicom/pydicom/blob/f5eeee05a99cd296350dd87fa6267cc5fa8a81fb/src/pydicom/data/test_files/CT_small.dcm` | MIT (pydicom repository) | Public real CT DICOM image for same-page medical-image rendering; SHA-256 `3dd31e5cc835b3f2cdd46c9da1982f59251e78518fefa8163d914631c66437d6` |
+| `signature-invoice-cades-bes.pdf.p7m` | `packages/renderers/signature/test/fixtures/github-206-contributed/cms/invoice-cades-bes.pdf.p7m` | CC0-1.0 | Public synthetic-identity CAdES-BES SignedData fixture with no private key; SHA-256 `747e55a36957af196d38eee2ae7c6d7a966404bcb33714e68523d122916c9fa8` |
 | `sample.mbox` | Project-generated MBOX email archive fixture | Apache-2.0 | MBOX message detection and first-message preview smoke tests |
 | `sample.olb` / `sample.dra` / `layout.gds` / `layout.oas` / `layout.oasis` | Project-generated EDA / layout fixtures | Apache-2.0 | OLB/DRA structure tree plus GDSII/OASIS readable-string, layer, cell, entity and diagnostic smoke tests |
 | `design.psd` | Project-generated layered PSD fixture using `ag-psd` | Apache-2.0 | PSD layer list, visibility toggles, canvas redraw and zoom smoke tests |
@@ -83,6 +85,8 @@
 - `en/archive.zip` 与 `en/archive.tar.gz` 由英文 DOCX、PDF、PPTX、XLSX、Markdown、文本、日志、CSV、JSON、TypeScript、JavaScript、GeoJSON 和 glTF 示例打包，用于英文环境下验证压缩包目录、按需解压、缓存和内部文件继续预览。
 - `sample.eml` 是标准 MIME fixture，用于验证 EML 头信息、HTML/文本正文和附件链路。
 - `sample.msg` 来自 `HiraokaHyperTools/msgreader` 测试样例，用于验证 Outlook MSG 解析。
+- `ct-small.dcm` 是固定到 pydicom commit `f5eeee05a99cd296350dd87fa6267cc5fa8a81fb` 的公开真实 CT DICOM 样例；Demo 只在用户选择该文件时加载 DICOM 解码链路。
+- `signature-invoice-cades-bes.pdf.p7m` 来自 Issue #206 贡献的 CC0-1.0 公开回归集，所有身份均为合成且不含私钥，用于在统一 Demo 预览区检查 CAdES-BES 结构。
 - `sample.mbox` 是项目内生成的邮件归档 fixture，用于验证 MBOX 归档识别和首封邮件预览。
 - `sample.olb` 与 `sample.dra` 是项目内生成的 CFB 夹具，用于验证 OLB / DRA 结构树、对象候选、属性和可读字符串索引；`layout.gds`、`layout.oas` 和 `layout.oasis` 用于验证 GDSII / OASIS 版图结构退化预览、实体候选和诊断信息。
 - `document.odt`、`excel.ods` 和 `slides.odp` 均来自 The Document Foundation Wiki 的真实公开 OpenDocument 文件，用于验证 ODT 正文、ODS 工作表和 ODP 幻灯片包结构读取；`excel.fods` 是标准 Flat ODS XML 夹具，用于验证平面 OpenDocument 表格入口。

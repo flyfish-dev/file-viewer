@@ -31,7 +31,8 @@ const extraUploadExtensions = [
   'xz', 'txz', 'lzma', 'zst', 'tzst', 'cab', 'ar', 'cpio', 'iso', 'xar', 'lha', 'lzh',
   'jar', 'war', 'ear', 'apk', 'cbz', 'cbr', 'eml', 'msg', 'mbox', 'olb', 'dra', 'gds', 'oas', 'oasis', 'xmind', 'typst',
   'mermaid', 'mmd', 'plantuml', 'puml', 'patch', 'bundle', 'bdl',
-  'ttf', 'otf', 'woff', 'woff2', 'psd', 'ai', 'eps', 'parquet', 'avro', 'webarchive'
+  'ttf', 'otf', 'woff', 'woff2', 'psd', 'ai', 'eps', 'parquet', 'avro', 'webarchive',
+  'dcm', 'dicom', 'p7m', 'p7s', 'p7b', 'p7c', 'cms', 'jws', 'jwt', 'asc', 'gpg', 'pgp', 'sig'
 ]
 
 // The file picker covers both visible samples and supported formats that do not

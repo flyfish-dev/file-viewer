@@ -221,6 +221,15 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
     ]
   },
   {
+    title: '医疗影像与数字签名',
+    description: 'DICOM / CMS / CAdES',
+    family: 'signature',
+    items: [
+      { name: 'DICOM 真实 CT 影像（pydicom 公开样例）', url: '/example/ct-small.dcm' },
+      { name: 'CAdES-BES 数字签名 P7M', url: '/example/signature-invoice-cades-bes.pdf.p7m' }
+    ]
+  },
+  {
     title: '媒体',
     description: 'Image / Audio / Video',
     family: 'image',
@@ -258,6 +267,7 @@ const englishGroupCopy: Array<Pick<DemoSampleGroup, 'title' | 'description'>> = 
   { title: 'Frontend & Data', description: 'JS / TS / Vue / Data' },
   { title: 'Backend & System', description: 'Shell / SQL / C / Go' },
   { title: 'Assets & Data', description: 'SQLite / WASM / PSD / ICO' },
+  { title: 'Medical Images & Digital Signatures', description: 'DICOM / CMS / CAdES' },
   { title: 'Media', description: 'Image / Audio / Video' }
 ]
 
@@ -363,7 +373,9 @@ const englishSampleNameMap: Record<string, string> = {
   '/example/sample.sqlite': 'SQLite database',
   '/example/module.wasm': 'WASM module',
   '/example/design.psd': 'PSD layers',
-  '/example/icon.ico': 'ICO image'
+  '/example/icon.ico': 'ICO image',
+  '/example/ct-small.dcm': 'DICOM real CT image (public pydicom sample)',
+  '/example/signature-invoice-cades-bes.pdf.p7m': 'CAdES-BES digital signature P7M'
 }
 
 export const sampleGroupsEn: DemoSampleGroup[] = sampleGroupsZh.map((group, index) => ({
@@ -392,6 +404,7 @@ const japaneseGroupCopy: Array<Pick<DemoSampleGroup, 'title' | 'description'>> =
   { title: 'フロントエンドとデータ', description: 'Web ソース、設定、Notebook' },
   { title: 'バックエンドとシステム', description: 'Shell、SQL、コンパイル言語' },
   { title: 'アセットとデータ', description: 'データベース、WASM、デザインアセット' },
+  { title: '医療画像と電子署名', description: 'DICOM / CMS / CAdES' },
   { title: 'メディア', description: '画像、音声、動画' }
 ]
 
@@ -445,7 +458,9 @@ const japaneseSampleNameMap: Record<string, string> = {
   '/example/sample.sqlite': 'SQLite データベース',
   '/example/module.wasm': 'WASM モジュール',
   '/example/design.psd': 'PSD レイヤー',
-  '/example/icon.ico': 'ICO 画像'
+  '/example/icon.ico': 'ICO 画像',
+  '/example/ct-small.dcm': 'DICOM 実 CT 画像（pydicom 公開サンプル）',
+  '/example/signature-invoice-cades-bes.pdf.p7m': 'CAdES-BES 電子署名 P7M'
 }
 
 export const sampleGroupsJa: DemoSampleGroup[] = sampleGroupsZh.map((group, index) => ({

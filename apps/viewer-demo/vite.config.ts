@@ -163,7 +163,6 @@ export default defineConfig(ctx => {
         main: fileURLToPath(new URL('index.html', import.meta.url)),
         compare: fileURLToPath(new URL('compare.html', import.meta.url)),
         iframe: fileURLToPath(new URL('iframe.html', import.meta.url)),
-        'opt-in': fileURLToPath(new URL('opt-in.html', import.meta.url)),
         'slideshow-test': fileURLToPath(new URL('slideshow-test.html', import.meta.url))
       }
     },

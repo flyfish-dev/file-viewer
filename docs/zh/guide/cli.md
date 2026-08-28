@@ -118,6 +118,8 @@ npx file-viewer-cli install --yes
 
 `standard` 中的重型能力始终需要显式选择。生成模块只 import 固定 profile 与额外能力；运行时仍然只在打开对应格式后才加载 renderer。
 
+所有已选能力都会注册到同一份 File Viewer 生成配置中。DICOM、签名容器、Office、PDF 等格式共用同一个组件、文件入口、生命周期和工具栏；CLI 不会再创建第二套预览页面或按格式分裂业务入口。
+
 ### DICOM 边界
 
 `dicom` 安装可选的本地 DICOM Part 10 renderer，只支持单个本地单帧或多帧文件，包含有界解码和帧切换。它**不提供**多文件序列组装、PACS/DICOMweb、MPR、分割、诊断解读，也不嵌入整套 OHIF 应用。
