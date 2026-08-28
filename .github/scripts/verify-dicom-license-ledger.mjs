@@ -191,7 +191,14 @@ function visit(node, nameHint, state) {
   assert(name && version, `Dependency tree entry is missing name/version: ${JSON.stringify(node)}`)
   const key = `${name}@${version}`
   const fallback = knownPlatformOptionalPackages.get(key)
-  const declaredLicense = packageJson ? normalizeLicense(packageJson) : fallback?.license || ''
+  const installedLicense = packageJson ? normalizeLicense(packageJson) : ''
+  if (fallback && installedLicense) {
+    assert(
+      installedLicense === fallback.license,
+      `${key} platform metadata license drifted from ${fallback.license}`
+    )
+  }
+  const declaredLicense = fallback?.license || installedLicense
   const selection = licenseSelections.get(name)
   if (selection) {
     assert(
@@ -225,11 +232,11 @@ function visit(node, nameHint, state) {
     direct: Boolean(state.direct || previous?.direct),
     optional: previous ? Boolean(previous.optional && state.optional) : Boolean(state.optional),
     firstParty: name.startsWith('@file-viewer/'),
-    author: normalizeAuthor(packageJson?.author) || fallback?.author || '',
+    author: fallback?.author || normalizeAuthor(packageJson?.author) || '',
     repository:
+      fallback?.repository ||
       repositoryOverrides.get(name) ||
       normalizeRepository(packageJson?.repository) ||
-      fallback?.repository ||
       '',
     licenseFiles: previous?.licenseFiles?.length
       ? previous.licenseFiles
