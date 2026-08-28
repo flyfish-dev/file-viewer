@@ -252,7 +252,9 @@ async function getPresentationSlideOrder(zip, fallbackSlides) {
 let slideWidth = 0;
 let slideHeight = 0;
 let processFullTheme = true;
-const styleTable = {};
+// Worker-generated CSS is keyed by declaration text. Keep it detached from
+// Object.prototype so inherited or user-controlled keys cannot become rules.
+const styleTable = Object.create(null);
 let tableStyles = {};
 
 let settings = {};
@@ -1144,7 +1146,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
       result += svgBgImg;
     } else if (clrFillType == "PATTERN_FILL") {
       var styleText = fillColor;
-      if (styleText in styleTable) {
+      if (Object.prototype.hasOwnProperty.call(styleTable, styleText)) {
         styleText += "do-nothing: " + svgCssName + ";";
       }
       styleTable[styleText] = {
@@ -1228,7 +1230,7 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
       //css:
       var svg_css_shadow = "filter:drop-shadow(" + hx + "px " + vx + "px " + blurRad + "px #" + chdwClrNode + ");";
 
-      if (svg_css_shadow in styleTable) {
+      if (Object.prototype.hasOwnProperty.call(styleTable, svg_css_shadow)) {
         svg_css_shadow += "do-nothing: " + svgCssName + ";";
       }
 
@@ -8933,7 +8935,7 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
     }
     var cssName = "";
 
-    if (styleText in styleTable) {
+    if (Object.prototype.hasOwnProperty.call(styleTable, styleText)) {
       cssName = styleTable[styleText]["name"];
     } else {
       cssName = "_css_" + (Object.keys(styleTable).length + 1);
@@ -9832,7 +9834,7 @@ async function genSpanElement(node, rIndex, pNode, textBodyNode, pFontStyle, sli
 
   var cssName = "";
 
-  if (styleText in styleTable) {
+  if (Object.prototype.hasOwnProperty.call(styleTable, styleText)) {
     cssName = styleTable[styleText]["name"];
   } else {
     cssName = "_css_" + (Object.keys(styleTable).length + 1);
@@ -9963,12 +9965,16 @@ function getPregraphMargn(pNode, idx, type, isBullate, warpObj){
 export function genGlobalCSS() {
   var cssText = "";
   //console.log("styleTable: ", styleTable)
-  for (var key in styleTable) {
+  for (var key of Object.keys(styleTable)) {
+    var styleRecord = styleTable[key];
+    if (!styleRecord || typeof styleRecord["name"] !== "string" || typeof styleRecord["text"] !== "string") {
+      continue;
+    }
     var tagname = "";
     //ADD suffix
-    cssText += tagname + " ." + styleTable[key]["name"] +
-      ((styleTable[key]["suffix"]) ? styleTable[key]["suffix"] : "") +
-      "{" + styleTable[key]["text"] + "}\n"; //section > div
+    cssText += tagname + " ." + styleRecord["name"] +
+      ((styleRecord["suffix"]) ? styleRecord["suffix"] : "") +
+      "{" + styleRecord["text"] + "}\n"; //section > div
   }
   return cssText;
 }
@@ -10512,7 +10518,7 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
   }
   var cssName = "";
   if (celFillColor !== undefined && celFillColor != "") {
-    if (celFillColor in styleTable) {
+    if (Object.prototype.hasOwnProperty.call(styleTable, celFillColor)) {
       cssName = styleTable[celFillColor]["name"];
     } else {
       cssName = "_tbl_cell_css_" + (Object.keys(styleTable).length + 1);
@@ -13947,35 +13953,42 @@ function getTextByPathList(node, path) {
  * @param {string Array} path
  * @param {string} value
  */
-function setTextByPathList(node, path, value) {
+export function setTextByPathList(node, path, value) {
 
   if (path.constructor !== Array) {
     throw Error("Error of path type! path is not array.");
   }
 
-  if (node === undefined) {
+  if (node === undefined || node === null || typeof node !== "object") {
     return undefined;
   }
 
-  Object.prototype.set = function (parts, value) {
-    //var parts = prop.split('.');
-    var obj = this;
-    var lent = parts.length;
-    for (var i = 0; i < lent; i++) {
-      var p = parts[i];
-      if (obj[p] === undefined) {
-        if (i == lent - 1) {
-          obj[p] = value;
-        } else {
-          obj[p] = {};
-        }
-      }
-      obj = obj[p];
+  var obj = node;
+  for (var i = 0; i < path.length; i++) {
+    var p = path[i];
+    if (i === path.length - 1) {
+      Object.defineProperty(obj, p, {
+        value: value,
+        writable: true,
+        enumerable: true,
+        configurable: true
+      });
+      return value;
     }
-    return obj;
-  }
 
-  node.set(path, value)
+    var next = Object.prototype.hasOwnProperty.call(obj, p) ? obj[p] : undefined;
+    if (next === null || typeof next !== "object") {
+      next = Object.create(null);
+      Object.defineProperty(obj, p, {
+        value: next,
+        writable: true,
+        enumerable: true,
+        configurable: true
+      });
+    }
+    obj = next;
+  }
+  return obj;
 }
 
 /**
