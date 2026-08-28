@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "rtf",
+  "packageName": "@file-viewer/capability-rtf",
+  "enhancesPackage": "@file-viewer/renderer-word",
+  "activation": { "kind": "side-effect-import", "import": "@file-viewer/capability-rtf", "export": "enableFileViewerRtf" },
+  "rendererIds": ["open-document"],
+  "formats": ["rtf"],
+  "assets": { "rendererIds": [] },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive", "notices": [{ "packageName": "rtf.js", "spdx": "MIT" }] },
+  "weight": "standard",
+  "profiles": ["all"]
+}

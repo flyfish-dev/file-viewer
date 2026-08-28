@@ -1,0 +1,141 @@
+:root {
+  color: #172033;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  background: #eef4f8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% -5%, rgba(59, 130, 246, 0.2), transparent 30%),
+    radial-gradient(circle at 91% 4%, rgba(16, 185, 129, 0.17), transparent 28%), #eef4f8;
+}
+
+.react-email-shell {
+  width: min(1720px, 100%);
+  margin: 0 auto;
+  padding: 14px;
+}
+
+.react-email-toolbar {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(51, 65, 85, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 14px 40px rgba(30, 64, 95, 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.react-email-toolbar h1,
+.react-email-toolbar p,
+.react-email-case h2 {
+  margin: 0;
+}
+
+.react-email-toolbar h1 {
+  font-size: 19px;
+}
+
+.react-email-toolbar p {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.react-email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.react-email-actions button,
+.react-email-actions a {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 8px;
+  padding: 0 11px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  cursor: pointer;
+  font: 700 12px/1 inherit;
+  text-decoration: none;
+}
+
+.react-email-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.react-email-case {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  height: 700px;
+  overflow: hidden;
+  border: 1px solid rgba(51, 65, 85, 0.12);
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 18px 50px rgba(30, 64, 95, 0.09);
+}
+
+.react-email-case h2 {
+  padding: 9px 11px;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.1);
+  font-size: 13px;
+}
+
+.react-email-viewer {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.react-email-empty {
+  display: grid;
+  min-height: 520px;
+  place-items: center;
+  color: #64748b;
+  font-weight: 700;
+}
+
+@media (max-width: 980px) {
+  .react-email-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .react-email-grid {
+    grid-template-columns: 1fr;
+  }
+}

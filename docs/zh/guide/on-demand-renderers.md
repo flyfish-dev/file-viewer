@@ -11,6 +11,8 @@
   2.x 的目标是把 core 收敛为轻量、框架无关、纯 TypeScript 的预览底座，把重渲染链路拆成可组合、可自动装配、可独立发布的 renderer package。
 </p>
 
+新增的 v3 `standard` profile、CLI 计划、真实闭包预算和 full 切换阻塞项见 [V3 模块化配置](/zh/guide/v3-modular-profiles)。
+
 ## 设计目标
 
 | 目标       | 要求                                                                                                                           |
@@ -55,9 +57,10 @@
 | `@file-viewer/vue3`、`@file-viewer/react`、`@file-viewer/svelte` 等 | 生产可用标准组件                                                                                           | 只依赖 core 和自身生态依赖；通过 props/options 接收 `preset` / `renderers`                     |
 | `@file-viewer/renderer-*`                                           | 单条或一组强相关渲染链路                                                                                   | 自己声明真实重依赖、worker、wasm、vendor assets 和 smoke 样本                             |
 | `@file-viewer/preset-lite`                                          | 文本、Markdown、图片、音视频基础预览                                                                       | 聚合 `renderer-text`、`renderer-image`、`renderer-media`，适合常见轻附件场景               |
+| `@file-viewer/preset-standard`                                      | 常用 Office/PDF/OFD/压缩包/邮件/文本/媒体基线                                                              | 不默认包含专业工程、iWork、DICOM、数字签名容器、旧 PPT 等重能力                           |
 | `@file-viewer/preset-office`                                        | Word、Spreadsheet、PPT、PDF、OFD 均由独立 renderer 承接                                                   | 聚合文档链路，避免业务手写多个 Office renderer import                                    |
 | `@file-viewer/preset-engineering`                                   | CAD、3D、XMind、Draw.io、Excalidraw、Geo、Typst、Archive、EDA 和 Data 结构预览                            | 聚合工程附件链路；仍比 `preset-all` 更窄                                                  |
-| `@file-viewer/preset-all`                                           | 完整能力聚合包                                                                                             | 需要全格式时一行安装，demo 和全量发行版使用                                               |
+| `@file-viewer/preset-all`                                           | 已发布兼容 renderer 集合                                                                                   | 既有 demo 和全量发行版保持兼容；后续专业能力仍显式安装                                    |
 | `@file-viewer/vite-plugin`                                          | 自动生成 renderer virtual module、复制 assets、设置 manual chunks                                          | 让业务项目按配置自动装配，不需要手写大量 import                                           |
 
 ## 用户最佳体验路径
@@ -100,7 +103,7 @@ export default defineConfig({
 | `inject:false` | 关闭自动注入，改为手动导入 `virtual:file-viewer-renderers` 并传给 `options.renderers` |
 | `chunkStrategy:'renderer'` | 使用 renderer 级 chunk 命名，便于缓存和定位体积问题 |
 
-PPTX-only 项目可以直接从 `@file-viewer/renderer-presentation/pptx` 导入 `pptxRenderer`，或配置 `fileViewerRenderers({ formats: ['pptx'] })`。两条路径都不会把传统 `.ppt` 的 CJK 字体和 WASM 写入生产产物。只需要二进制 `.ppt` 时使用 `@file-viewer/renderer-presentation/ppt`；两种格式都需要时继续使用根入口 `presentationRenderer`。
+PPTX-only 项目应直接从 `@file-viewer/renderer-pptx` 导入 `pptxRenderer`，或配置 `fileViewerRenderers({ formats: ['pptx'] })`。两条路径都不会把传统 `.ppt` 包、CJK 字体和 WASM 带入安装及生产闭包；原 `@file-viewer/renderer-presentation/pptx` 子路径继续兼容。只需要二进制 `.ppt` 时显式安装 `@file-viewer/renderer-ppt`；两种格式都需要时继续使用根入口 `presentationRenderer`。
 
 ## 2.1.0 推荐接入步骤
 
@@ -238,7 +241,8 @@ const options = {
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG、DXF、DWF、DWFx、XPS |
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D 模型和轻量几何签名 |
-| `@file-viewer/renderer-signature` | `signatureRenderer` | 显式按需、实验性的 CMS/CAdES、时间戳与公开 OpenPGP 检查；不进入 `preset-all` 和任何 `*-full` 包 |
+| `@file-viewer/renderer-dicom` | `dicomRenderer` | 显式按需安装的本地 DICOM Part 10 单文件与多帧预览 |
+| `@file-viewer/renderer-signature` | `signatureRenderer` | 显式按需安装的 CMS/CAdES、时间戳、ASiC、证据记录、JWS 与公开 OpenPGP 检查 |
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io、Excalidraw、Mermaid、PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON、KML、GPX、SHP |
@@ -253,8 +257,6 @@ const options = {
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB、DRA、GDS、OAS/OASIS |
 
 `@file-viewer/ppt`、`@file-viewer/pptx`、`@file-viewer/geometry-engine`、`@file-viewer/eda-layout` 和 `@file-viewer/eda-orcad` 是 renderer 内部引擎包；常规业务预览优先使用上表 renderer 或 preset。
-
-需要签名容器能力时，应直接安装 `@file-viewer/renderer-signature` 并把 `signatureRenderer` 传给 `options.renderers`。它的可选 Rust/WASM 工具链和密码学边界不会被带入既有 Full 安装。
 
 `preset: 'auto'` 会发现项目中已安装的 preset 包；当 `preset-all` 存在时会优先使用它，避免重复导入其它 preset。
 
@@ -445,7 +447,7 @@ fileViewerRenderers({
 - [x] `FileViewerOptions.builtinRenderers` 支持 `all`、`lite`、`none`，为默认轻量化和显式全量装配提供稳定开关。
 - [x] wrapper README 和开源总仓 README 补齐 `renderers` / `rendererMode` / `builtinRenderers` 的按需装配示例，并由 `verify:ecosystem-readmes` 校验 `@file-viewer/vite-plugin`、`virtual:file-viewer-renderers` 和 `configuredFileViewerRenderers` 等关键接入口径。
 - [x] Vue3 原生组件渲染面板切换到同一套 renderer plugin/preset 装配链路，`options.renderers`、`rendererMode` 和 `builtinRenderers` 会在组件路径真实生效。
-- [x] `@file-viewer/preset-all` 能复现当前 221 个已注册扩展名的完整能力，并保留 221 个稳定、0 个实验的证据边界。
+- [x] `@file-viewer/preset-all` 保持既有 221 个稳定扩展名的兼容能力；DICOM 的 2 个和数字签名/证据容器的 21 个实验扩展名属于通用显式按需能力，不会静默进入既有 preset/full 依赖闭包。
 - [x] `pnpm audit:renderer-deps` 输出所有 core 直接依赖对应的目标 renderer package，不允许 unclassified。
 - [x] `pnpm verify:on-demand-boundaries` 守住按需加载边界：core 不依赖 renderer/preset/wrapper，标准组件包不依赖 renderer/preset，compat 包只 alias 到目标组件，`preset-lite` / `preset-office` / `preset-engineering` 只能聚合各自白名单 renderer，`preset-all` 才聚合完整 renderer。
 

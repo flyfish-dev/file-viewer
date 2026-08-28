@@ -101,7 +101,7 @@ Node 17+ 跑 webpack 4 时，如果遇到 OpenSSL/MD4 报错，可以临时加�
 NODE_OPTIONS=--openssl-legacy-provider npm run build
 ```
 
-客户项目里优先整份参考示例的 `vue.config.js`，至少需要搬这几类配置。PDF.js 的 pre-loader 不是可省略项：
+客户项目里优先整份参考示例的 `vue.config.js`，至少需要搬这几类配置。当前 `@file-viewer/renderer-pdf` 发布包已经在构建时隔离内封 PDF.js 的 webpack runtime，消费项目不应再为 renderer 内部的 `dist/vendor/pdfjs` 路径增加 loader：
 
 ```js
 // vue.config.js
@@ -128,39 +128,11 @@ module.exports = {
       },
       extensions: ['.mjs', '.js', '.vue', '.json']
     }
-  },
-  chainWebpack(config) {
-    config.module
-      .rule('pdfjs-webpack4-runtime-isolation')
-      .test(/pdfjs-dist[\\/]legacy[\\/](build[\\/]pdf|web[\\/]pdf_viewer)\.mjs$/)
-      .enforce('pre')
-      .use('isolate-pdfjs-webpack-runtime')
-      .loader(resolveApp('build/rename-pdfjs-webpack-require.cjs'))
   }
 }
 ```
 
-`build/rename-pdfjs-webpack-require.cjs` 必须使用完整 runtime 隔离实现：
-
-```js
-module.exports = function isolatePdfjsWebpackRuntime(source) {
-  const normalizedPath = this.resourcePath.replace(/\\/g, '/')
-  const shouldPatch =
-    /\/pdfjs-dist\/legacy\/build\/pdf\.mjs$/.test(normalizedPath) ||
-    /\/pdfjs-dist\/legacy\/web\/pdf_viewer\.mjs$/.test(normalizedPath)
-
-  if (!shouldPatch) {
-    return source
-  }
-
-  return source.replace(
-    /\b__webpack_(modules|module_cache|exports|require)__\b/g,
-    (_match, name) => `__pdfjs_webpack_${name}__`
-  )
-}
-```
-
-只替换 `__webpack_require__` 不够。PDF.js 内部的 `__webpack_exports__` 会在 webpack 4 外层模块中被提升并遮蔽宿主导出：首次打开 PDF 常表现为 `Cannot convert undefined or null to object`，再次选择同一文件则会进一步表现为从 `undefined` 读取 `createFileViewerTranslator`。上面的 loader 同时隔离 `modules`、`module_cache`、`exports`、`require` 四个标识。
+renderer 构建会在发布 tarball 前同时隔离 PDF.js 的 `modules`、`module_cache`、`exports`、`require` 四个内部标识，并在 `dist/vendor/pdfjs/provenance.json` 记录源文件哈希、变换次数和产物哈希，避免 PDF.js 内部 webpack bootstrap 遮蔽 webpack 4 宿主导出。如果业务代码另外直接导入 `pdfjs-dist` 源模块，那部分仍由业务构建配置负责；File Viewer 示例只把该包作为复制静态资产时的构建期来源。
 
 `@file-viewer/docx` 的 alias 也必须保留：webpack 4 默认优先选择 UMD `browser` 入口，该文件经过 Babel 转译后会丢失 CommonJS 导出，上传 DOCX 时表现为 `@file-viewer/docx did not expose a compatible renderAsync function`。另一个补丁 `build/babel-transform-import-meta-url.cjs` 负责让 webpack 4 解析 PPTX worker 模块。`scripts/copy-file-viewer-assets.cjs` 会把 PDF/DOCX/PPTX/Excel 资产和 `@file-viewer/ppt@0.3.3` 的 ESM、Worker、帧缓存、WASM、CJK 字体、manifest、package metadata、LICENSE、NOTICE 九个文件复制到 `public/file-viewer/`。
 

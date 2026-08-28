@@ -31,7 +31,7 @@ import {
 } from '@file-viewer/core/assets';
 import type { FileViewerOptions } from '@file-viewer/core';
 
-const FULL_PACKAGE_DOCX_RUNTIME_VERSION = '0.3.27';
+const FULL_PACKAGE_DOCX_RUNTIME_VERSION = '0.3.28';
 
 export const DEFAULT_FULL_ASSET_BASE_PATH = 'file-viewer/';
 export const DEFAULT_FULL_ASSET_BASE_URL = '/file-viewer/';

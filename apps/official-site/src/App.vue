@@ -131,13 +131,13 @@ const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '2.4.0'
+const currentReleaseVersion = '3.0.0'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
 const registeredExtensionCount = FORMAT_CATALOG_SUMMARY.registeredExtensionCount
 const stableExtensionCount = FORMAT_CATALOG_SUMMARY.stableExtensionCount
 const experimentalExtensionCount = FORMAT_CATALOG_SUMMARY.experimentalExtensionCount
 const previewPipelineCount = FORMAT_CATALOG_SUMMARY.rendererCount
-const officeFormatExamples = OFFICE_FORMAT_GROUPS.flatMap(group => group.extensions)
+const officeFormatExamples = OFFICE_FORMAT_GROUPS.flatMap((group) => group.extensions)
 const githubSponsorsUrl = 'https://github.com/sponsors/wybaby168'
 const domesticSponsorUrl = 'https://dev.flyfish.group/sponsor?source=github'
 const whatsappContactUrl = 'https://wa.me/qr/DY3NG2HEGJFGL1'
@@ -174,21 +174,19 @@ const siteMetadata = {
     lang: 'zh-CN',
     canonical: siteRootUrl,
     title: 'File Viewer - Office、PDF、CAD 浏览器文件预览',
-    description:
-      `开源 File Viewer 在浏览器内预览 Office、PDF、CAD 等 ${registeredExtensionCount} 个扩展名（${stableExtensionCount} 个稳定、${experimentalExtensionCount} 个实验），通过 ${previewPipelineCount} 条链路按需加载，无需服务端转码，支持离线与私有化部署。`,
+    description: `开源 File Viewer 在浏览器内预览 Office、PDF、CAD 等 ${registeredExtensionCount} 个扩展名（${stableExtensionCount} 个稳定、${experimentalExtensionCount} 个实验），通过 ${previewPipelineCount} 条链路按需加载，无需服务端转码，支持离线与私有化部署。`,
     ogLocale: 'zh_CN',
     ogLocaleAlternate: 'en_US',
-    imageAlt: 'File Viewer v2.4.0 浏览器原生 DOCX 预览工作区'
+    imageAlt: `File Viewer v${currentReleaseVersion} 浏览器原生 DOCX 预览工作区`
   },
   en: {
     lang: 'en',
     canonical: siteEnglishUrl,
     title: 'File Viewer for Office, PDF & CAD | Flyfish',
-    description:
-      `Open-source browser file viewer for Office, PDF, CAD, archives, email, and ${registeredExtensionCount} formats (${stableExtensionCount} stable, ${experimentalExtensionCount} experimental) across ${previewPipelineCount} lazy preview pipelines. No conversion server. Self-hosted and offline-ready.`,
+    description: `Open-source browser file viewer for Office, PDF, CAD, archives, email, and ${registeredExtensionCount} formats (${stableExtensionCount} stable, ${experimentalExtensionCount} experimental) across ${previewPipelineCount} lazy preview pipelines. No conversion server. Self-hosted and offline-ready.`,
     ogLocale: 'en_US',
     ogLocaleAlternate: 'zh_CN',
-    imageAlt: 'File Viewer v2.4.0 browser-native DOCX preview workspace'
+    imageAlt: `File Viewer v${currentReleaseVersion} browser-native DOCX preview workspace`
   }
 } satisfies Record<Locale, SiteMetadata>
 
@@ -273,6 +271,7 @@ const localizedDemoUrl = computed(() => resolveLocalizedDemoUrl(demoUrl))
 const localizedCompareUrl = computed(() => resolveLocalizedDemoUrl(compareUrl))
 const localizedDocsUrl = computed(() => resolveLocalizedDocsUrl())
 const localizedDocsQuickstartUrl = computed(() => resolveLocalizedDocsUrl('guide/quickstart'))
+const cliPageUrl = computed(() => (isZh.value ? '/cli/' : '/en/cli/'))
 const commercialPageUrl = computed(() => (isZh.value ? '/commercial/' : '/en/commercial/'))
 
 function formatStarCount(count: number) {
@@ -345,14 +344,19 @@ const copy = {
       demo: '在线体验'
     },
     hero: {
-      eyebrow: `v2.4.0 · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
+      eyebrow: `v${currentReleaseVersion} · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
       title: '文件预览，全部在浏览器完成。',
       subtitle:
         '为了预览一份内部 DOCX 就把它上传到服务器，糟透了。File Viewer 让 Office、PDF、CAD、压缩包、邮件等文件留在浏览器里，并且可以完整离线部署。',
       primary: '立即体验',
       secondary: '阅读文档',
       commercial: '了解商业版',
-      proof: [`${stableExtensionCount} 个稳定扩展名`, `${experimentalExtensionCount} 个实验扩展名`, `${previewPipelineCount} 条预览链路`, 'Full 自托管资产契约']
+      proof: [
+        `${stableExtensionCount} 个稳定扩展名`,
+        `${experimentalExtensionCount} 个实验扩展名`,
+        `${previewPipelineCount} 条预览链路`,
+        'Full 自托管资产契约'
+      ]
     },
     matrixTitle: `${registeredExtensionCount} 个已注册扩展名，按 ${previewPipelineCount} 条真实预览链路组织。`,
     matrixIntro:
@@ -376,7 +380,8 @@ const copy = {
     commercialCta: '了解商业授权',
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
-    releaseTitle: 'v2.4.0 已发布：57 个 npm 目标统一版本，Spreadsheet 安全加固，并保留内嵌图、TIFF、大图查看和列宽拖拽。',
+    releaseTitle:
+      'v3.0.0 已发布：84 个 npm 目标、全功能 CLI、向下兼容的 Full 契约，以及按需安装的 DICOM 与数字签名能力。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -391,7 +396,7 @@ const copy = {
       demo: 'Live Demo'
     },
     hero: {
-      eyebrow: `v2.4.0 · ${registeredExtensionCount} registered extensions · no conversion server`,
+      eyebrow: `v${currentReleaseVersion} · ${registeredExtensionCount} registered extensions · no conversion server`,
       title: 'Preview files entirely in the browser.',
       subtitle:
         'Uploading a private DOCX just to preview it is awful. File Viewer keeps Office, PDF, CAD, archives, email, and more in the browser, with every runtime asset ready for self-hosting.',
@@ -429,7 +434,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v2.4.0 unifies 57 npm targets, hardens Spreadsheet parsing, and retains in-cell images, TIFF, the image lightbox, and column resizing.',
+      'v3.0.0 ships 84 npm targets, the project CLI, unchanged Full compatibility contracts, and opt-in DICOM and digital-signature capabilities.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -458,8 +463,8 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm 发布目标',
-          value: '57',
-          detail: '51 个标准包与 6 个历史兼容 alias 同版本发布',
+          value: '84',
+          detail: '76 个标准包、7 个同版本 alias，msdoc-viewer 独立版本',
           tone: 'amber'
         }
       ]
@@ -467,8 +472,7 @@ const metrics = computed<MetricItem[]>(() =>
         {
           title: 'Extensions',
           value: String(registeredExtensionCount),
-          detail:
-            `${stableExtensionCount} stable and ${experimentalExtensionCount} experimental; generated from one catalog`,
+          detail: `${stableExtensionCount} stable and ${experimentalExtensionCount} experimental; generated from one catalog`,
           tone: 'green'
         },
         {
@@ -485,8 +489,9 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm targets',
-          value: '57',
-          detail: '51 standard packages and 6 historical aliases released together',
+          value: '84',
+          detail:
+            '76 standard packages, 7 same-line aliases, and independently versioned msdoc-viewer',
           tone: 'amber'
         }
       ]
@@ -674,9 +679,34 @@ function highlightSnippet(code: string, language: HighlightLanguage) {
 
 const quickStartItems = computed<QuickStartItem[]>(() => [
   {
+    label: 'File Viewer CLI',
+    packageName: '@file-viewer/cli',
+    install: 'npm create file-viewer@latest my-viewer',
+    title: isZh.value
+      ? '选择框架与格式，直接生成或接入'
+      : 'Choose a framework and formats, then create or integrate',
+    summary: isZh.value
+      ? 'CLI 支持脚手架、已有项目自动检测、按需能力、完整 copy-assets 兼容，以及私有源和离线 tgz 准备。'
+      : 'The CLI covers scaffolding, existing-project detection, selected capabilities, complete copy-assets compatibility, private registries, and offline tgz preparation.',
+    language: 'Shell',
+    highlightLanguage: 'bash',
+    href: cliPageUrl.value,
+    tone: 'green',
+    icon: PackageCheck,
+    code: `npm create file-viewer@latest my-viewer
+
+# Or integrate the project containing package.json.
+cd existing-app
+npx file-viewer-cli add .
+
+# Review exact packages and assets before applying.
+npx file-viewer-cli plan --profile standard --json
+npx file-viewer-cli verify --json`
+  },
+  {
     label: isZh.value ? 'Vanilla JS Full' : 'Vanilla JS Full',
     packageName: '@file-viewer/web-full',
-    install: 'npm install @file-viewer/web-full@2.4.0',
+    install: `npm install @file-viewer/web-full@${currentReleaseVersion}`,
     title: isZh.value
       ? '完整部署 dist，零 copy 直接预览'
       : 'Deploy the complete dist with zero copy steps',
@@ -1040,6 +1070,12 @@ const explorerPrimaryItems = computed<ExplorerItem[]>(() => [
 ])
 
 const explorerResourceItems = computed<ExplorerItem[]>(() => [
+  {
+    href: cliPageUrl.value,
+    label: 'File Viewer CLI',
+    note: isZh.value ? '创建、接入与离线准备' : 'Create, integrate, and prepare offline',
+    icon: PackageCheck
+  },
   {
     href: localizedDocsQuickstartUrl.value,
     label: isZh.value ? '文档' : 'Docs',
@@ -1868,6 +1904,7 @@ onBeforeUnmount(() => {
         >
           {{ isZh ? '快速接入' : 'Integrate' }}
         </a>
+        <a :href="cliPageUrl">CLI</a>
         <a :href="commercialPageUrl">
           {{ isZh ? '商业版' : 'Commercial' }}
         </a>
@@ -2260,8 +2297,8 @@ onBeforeUnmount(() => {
                   :src="demoPreviewDesktopPath"
                   :alt="
                     isZh
-                      ? 'File Viewer v2.4.0 沉浸式 DOCX 预览界面'
-                      : 'File Viewer v2.4.0 immersive DOCX preview UI'
+                      ? `File Viewer v${currentReleaseVersion} 沉浸式 DOCX 预览界面`
+                      : `File Viewer v${currentReleaseVersion} immersive DOCX preview UI`
                   "
                   width="1600"
                   height="900"

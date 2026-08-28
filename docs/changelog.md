@@ -6,6 +6,22 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## v3.0.0 — Modular CLI, opt-in specialist formats, and security gates
+
+Released August 27, 2026.
+
+- Added `@file-viewer/cli`, `file-viewer-cli`, and `create-file-viewer` for new projects and existing `package.json` applications. It detects frameworks and build systems, selects framework versions, formats, presets, and assets, and supports npm, pnpm, Yarn, Bun, credential-free private registries, and integrity-checked offline tgz preparation.
+- Made `standard` the recommended common-format profile without changing the eight published Full contracts. Existing `*-full` packages keep their `preset-all` format matrix, APIs, and same-version offline assets. Explicit CLI `full` selection adds later specialist capabilities after showing their size, runtime, and license boundaries.
+- Kept DICOM and digital-signature containers out of unchanged Full dependencies. The optional DICOM renderer covers bounded local single-file, single-frame, and multi-frame preview for uncompressed, JPEG Lossless, JPEG-LS, and JPEG 2000 Lossless fixtures; it is not a diagnostic, PACS/DICOMweb, or multi-file-series viewer (#210).
+- Added an optional signature and evidence-container renderer for bounded CMS/CAdES, RFC 3161/5544, ASiC-S/E, RFC 4998, JWS, and public OpenPGP material. It uses a permissively licensed rPGP Worker/WASM path, contains no LGPL source, and reports parsing, digest/signature checks, trust, and legal validity as separate concepts (#206).
+- Fixed the reporter's five-slide PPTX layout sample, including DrawingML table bounds and insets, horizontal SmartArt text, complex shape geometry, and the PPTX Worker in Chromium, Firefox, and WebKit (#200).
+- Restored the reporter's Excel table theme, header, and alternating-row styles, and kept resized column widths across sheet switches. Invalid merge metadata and stable Office width handling received matching regressions (#211/#203).
+- Added nested email-attachment preview across React, React Full, React Legacy, and React Legacy Full, with malicious filename, buffer replacement, unmount, Worker, and Object URL cleanup coverage (#212).
+- Re-ran the #178 Office 365/WPS in-cell image, floating drawing, TIFF, Worker transfer, double-click lightbox, and optional column-resizing suite.
+- Hardened document-generated HTML/DOM boundaries for DOC, RTF, PPTX, Markdown, Mermaid, Drawing, PlantUML, and Typst. External links remain blocked by default; CSP and Trusted Types gates pass in Chromium, Firefox, and WebKit.
+- Froze 84 npm targets: 83 mainline packages use 3.0.0, while the historical `msdoc-viewer` compatibility package uses 0.2.4. The external maintained engines are pinned to `@file-viewer/docx@0.3.28` and `styled-exceljs@0.21.4`.
+- The release promotes only the exact tarballs produced by the frozen commit after builds, tests, security gates, cold installs, browser matrices, and `npm publish --dry-run`. Publishing does not rebuild or invent another stable version.
+
 ## v2.4.0 — Unified versions and frozen release candidates
 
 Released August 25, 2026.

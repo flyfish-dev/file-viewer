@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "midi",
+  "packageName": "@file-viewer/capability-midi",
+  "enhancesPackage": "@file-viewer/renderer-media",
+  "activation": { "kind": "side-effect-import", "import": "@file-viewer/capability-midi", "export": "enableFileViewerMidi" },
+  "rendererIds": ["audio"],
+  "formats": ["midi", "mid"],
+  "assets": { "rendererIds": [] },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive", "notices": [{ "packageName": "@tonejs/midi", "spdx": "MIT" }] },
+  "weight": "standard",
+  "profiles": ["all"]
+}

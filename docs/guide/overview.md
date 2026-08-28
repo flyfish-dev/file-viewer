@@ -10,7 +10,7 @@
 
 File Viewer by Flyfish lets users preview business attachments without downloading every file or sending private documents to a conversion backend. It covers Office documents, PDF/OFD, Typst, CAD, EDA, archives, email, diagrams, mind maps, 3D, media, code, and structured data through lazy renderer packages.
 
-The canonical catalog declares **221 registered extensions** across **32 preview pipelines**: **221 stable** and **0 experimental**.
+The canonical catalog declares **244 registered extensions** across **34 preview pipelines**: **221 stable** and **23 experimental**.
 
 ## Architecture
 

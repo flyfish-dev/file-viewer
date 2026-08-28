@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "pdf-identity-font-repair",
+  "packageName": "@file-viewer/capability-pdf-identity-repair",
+  "enhancesPackage": "@file-viewer/renderer-pdf",
+  "activation": {
+    "kind": "side-effect-import",
+    "import": "@file-viewer/capability-pdf-identity-repair",
+    "export": "enableFileViewerPdfIdentityFontRepair"
+  },
+  "rendererIds": ["pdf"],
+  "formats": [],
+  "assets": { "rendererIds": [] },
+  "license": {
+    "spdx": "Apache-2.0",
+    "policy": "permissive",
+    "notices": [{ "packageName": "pdf-lib", "spdx": "MIT" }]
+  },
+  "weight": "standard",
+  "profiles": ["standard", "all"]
+}

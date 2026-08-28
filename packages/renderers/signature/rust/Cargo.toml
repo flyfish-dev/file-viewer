@@ -13,3 +13,10 @@ pgp = { version = "=0.20.0", default-features = false, features = ["wasm"] }
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
 wasm-bindgen = "0.2"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "z"
+panic = "abort"
+strip = true

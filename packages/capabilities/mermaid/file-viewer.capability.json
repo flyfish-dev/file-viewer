@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "mermaid-markdown",
+  "packageName": "@file-viewer/capability-mermaid",
+  "enhancesPackage": "@file-viewer/renderer-text",
+  "activation": { "kind": "side-effect-import", "import": "@file-viewer/capability-mermaid", "export": "enableFileViewerMermaid" },
+  "rendererIds": ["markdown"],
+  "formats": [],
+  "assets": { "rendererIds": [] },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive", "notices": [{ "packageName": "mermaid", "spdx": "MIT" }] },
+  "weight": "heavy",
+  "profiles": ["all"]
+}

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/web",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
   "description": "Standard pure web component package for File Viewer",
@@ -53,26 +53,19 @@
       "import": "./dist/node.js",
       "default": "./dist/node.js"
     },
-    "./viewer/*": "./viewer/*",
     "./package.json": "./package.json"
-  },
-  "bin": {
-    "file-viewer-copy-assets": "./scripts/copy-assets.mjs"
   },
   "files": [
     "dist",
-    "scripts/copy-assets.mjs",
-    "viewer",
     "README.md",
     "README.en.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node scripts/build-iife.mjs",
-    "postinstall": "node ./scripts/copy-assets.mjs --postinstall",
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0"
+    "@file-viewer/core": "workspace:3.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.8.0",

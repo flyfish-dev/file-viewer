@@ -1,0 +1,87 @@
+{
+  "name": "@file-viewer/preset-standard",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Stable common-format File Viewer preset with modern Office, PDF/OFD, text, image, media, archive, and email support without specialist or legacy-heavy capabilities.",
+  "keywords": [
+    "file-viewer",
+    "renderer-preset",
+    "standard-profile",
+    "document-preview",
+    "on-demand-renderer",
+    "self-hosted"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Yu Wang",
+    "email": "admin@flyfish.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/presets/standard"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/v3-modular-profiles",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./enhancements": {
+      "types": "./dist/enhancements.d.ts",
+      "import": "./dist/enhancements.js",
+      "default": "./dist/enhancements.js"
+    },
+    "./profile": "./file-viewer.profile.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "file-viewer.profile.json",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/assets-standard": "workspace:3.0.0",
+    "@file-viewer/capability-pdf-identity-repair": "workspace:3.0.0",
+    "@file-viewer/capability-pptx-charts": "workspace:3.0.0",
+    "@file-viewer/core": "workspace:3.0.0",
+    "@file-viewer/renderer-archive": "workspace:3.0.0",
+    "@file-viewer/renderer-email": "workspace:3.0.0",
+    "@file-viewer/renderer-image": "workspace:3.0.0",
+    "@file-viewer/renderer-media": "workspace:3.0.0",
+    "@file-viewer/renderer-ofd": "workspace:3.0.0",
+    "@file-viewer/renderer-pdf": "workspace:3.0.0",
+    "@file-viewer/renderer-pptx": "workspace:3.0.0",
+    "@file-viewer/renderer-spreadsheet": "workspace:3.0.0",
+    "@file-viewer/renderer-text": "workspace:3.0.0",
+    "@file-viewer/renderer-word": "workspace:3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "profileManifest": "./file-viewer.profile.json"
+  },
+  "license": "Apache-2.0"
+}

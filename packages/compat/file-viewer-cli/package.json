@@ -1,0 +1,45 @@
+{
+  "name": "file-viewer-cli",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Friendly npx entry for the exact-version File Viewer project CLI.",
+  "bin": {
+    "file-viewer-cli": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "fileViewer": {
+    "executableOnly": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/compat/file-viewer-cli/dist/cli.js && node --test test/*.test.mjs",
+    "type-check": "tsc -p tsconfig.json",
+    "test": "node --test test/*.test.mjs",
+    "prepack": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/compat/file-viewer-cli/dist/cli.js"
+  },
+  "dependencies": {
+    "@file-viewer/cli": "workspace:3.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "homepage": "https://file-viewer.app/en/cli/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/compat/file-viewer-cli"
+  },
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0"
+}

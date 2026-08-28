@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "drawing",
+  "packageName": "@file-viewer/assets-drawing",
+  "copyGroups": [
+    "drawing"
+  ],
+  "receiptFilename": "file-viewer-assets-drawing.receipt.json"
+}

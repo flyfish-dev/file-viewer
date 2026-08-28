@@ -1,0 +1,94 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "dicom",
+  "packageName": "@file-viewer/renderer-dicom",
+  "activation": {
+    "kind": "renderer-export",
+    "import": "@file-viewer/renderer-dicom",
+    "export": "dicomRenderer"
+  },
+  "rendererIds": [
+    "dicom"
+  ],
+  "formats": [
+    "dcm",
+    "dicom"
+  ],
+  "assets": {
+    "rendererIds": []
+  },
+  "license": {
+    "spdx": "Apache-2.0",
+    "policy": "permissive",
+    "notices": [
+      {
+        "packageName": "@cornerstonejs/core",
+        "spdx": "MIT",
+        "notice": "Pinned at 5.8.2; full closure and packaged license filenames are recorded in THIRD_PARTY_LICENSES.json."
+      },
+      {
+        "packageName": "@cornerstonejs/dicom-image-loader",
+        "spdx": "MIT",
+        "notice": "Pinned at 5.8.2. JavaScript codec wrapper terms and the separately tracked native libraries statically linked into their WebAssembly are recorded in THIRD_PARTY_LICENSES.json."
+      },
+      {
+        "packageName": "CharLS native codec",
+        "spdx": "BSD-3-Clause",
+        "notice": "Source 38d95d00671f4cddfa61f3f51eaf81b8bac34543; linked target charls; exact license is packaged under third-party/native-codecs/charls."
+      },
+      {
+        "packageName": "libjpeg-turbo native codec",
+        "spdx": "IJG AND BSD-3-Clause AND Zlib",
+        "notice": "Source dc4a93fab38b42d29b89a533409e012570180e28; linked target turbojpeg-static. This software is based in part on the work of the Independent JPEG Group. LICENSE.md and README.ijg are packaged unmodified."
+      },
+      {
+        "packageName": "OpenJPEG native codec",
+        "spdx": "BSD-2-Clause",
+        "notice": "Source 2d606701e8b7aa83f657d113c3367508e99bd12b; linked target openjp2; exact license is packaged under third-party/native-codecs/openjpeg."
+      },
+      {
+        "packageName": "OpenJPH native codec",
+        "spdx": "BSD-2-Clause",
+        "notice": "Source e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6; linked target openjphsimd; exact license is packaged under third-party/native-codecs/openjph."
+      },
+      {
+        "packageName": "@cornerstonejs/metadata",
+        "spdx": "MIT",
+        "notice": "Pinned at 5.8.2; used for owner-specific DICOM metadata cleanup."
+      },
+      {
+        "packageName": "dicom-parser",
+        "spdx": "MIT",
+        "notice": "Pinned at 1.8.21; used for bounded Part 10 header inspection before runtime initialization."
+      },
+      {
+        "packageName": "@kitware/vtk.js",
+        "spdx": "BSD-3-Clause",
+        "notice": "Transitive Cornerstone runtime dependency pinned at 36.4.1."
+      },
+      {
+        "packageName": "caniuse-lite",
+        "spdx": "CC-BY-4.0",
+        "notice": "Version 1.0.30001810 data by Ben Briggs and contributors; source https://github.com/browserslist/caniuse-lite; unmodified by this renderer."
+      },
+      {
+        "packageName": "pako",
+        "spdx": "(MIT AND Zlib)",
+        "notice": "Versions 1.0.11 and 2.1.0 contain zlib-derived code by Jean-loup Gailly and Mark Adler."
+      },
+      {
+        "packageName": "argparse",
+        "spdx": "Python-2.0",
+        "notice": "Version 2.0.1 retains the Python Software Foundation license in its installed LICENSE file."
+      },
+      {
+        "packageName": "spark-md5",
+        "spdx": "(WTFPL OR MIT)",
+        "notice": "Version 3.0.2 retains its upstream license file."
+      }
+    ]
+  },
+  "weight": "heavy",
+  "profiles": []
+}

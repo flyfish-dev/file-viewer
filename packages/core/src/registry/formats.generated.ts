@@ -17,6 +17,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-word",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -48,6 +49,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-word",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -76,7 +78,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "async": true,
     "supportLevel": "structured",
     "status": "stable",
-    "packageName": "@file-viewer/renderer-presentation",
+    "packageName": "@file-viewer/renderer-ppt",
     "presets": [
       "office",
       "all"
@@ -111,8 +113,9 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "async": true,
     "supportLevel": "high-fidelity",
     "status": "stable",
-    "packageName": "@file-viewer/renderer-presentation",
+    "packageName": "@file-viewer/renderer-pptx",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -145,6 +148,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-word",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -185,6 +189,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-spreadsheet",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -347,6 +352,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-spreadsheet",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -377,6 +383,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-pdf",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -404,6 +411,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-ofd",
     "presets": [
+      "standard",
       "office",
       "all"
     ],
@@ -520,6 +528,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-archive",
     "presets": [
+      "standard",
       "all"
     ],
     "containerVersions": [
@@ -548,6 +557,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "status": "stable",
     "packageName": "@file-viewer/renderer-email",
     "presets": [
+      "standard",
       "all"
     ],
     "containerVersions": [
@@ -888,6 +898,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "packageName": "@file-viewer/renderer-image",
     "presets": [
       "lite",
+      "standard",
       "all"
     ],
     "containerVersions": [
@@ -900,6 +911,90 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
       "print": true,
       "exportHtml": true,
       "zoom": "provider",
+      "search": false
+    }
+  },
+  {
+    "id": "dicom",
+    "label": "DICOM",
+    "category": "medical-image",
+    "extensions": [
+      "dcm",
+      "dicom"
+    ],
+    "async": true,
+    "supportLevel": "basic",
+    "status": "experimental",
+    "packageName": "@file-viewer/renderer-dicom",
+    "presets": [],
+    "containerVersions": [
+      "DICOM Part 10"
+    ],
+    "knownLimits": [
+      "Local single-file and multi-frame viewing only; series assembly, PACS/DICOMweb, MPR, segmentation, measurement tools, and diagnostic-use claims are not included",
+      "Tested transfer syntaxes are Implicit/Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless"
+    ],
+    "capabilities": {
+      "download": true,
+      "print": false,
+      "exportHtml": false,
+      "zoom": "provider",
+      "search": false
+    }
+  },
+  {
+    "id": "signature",
+    "label": "Digital signatures and evidence containers",
+    "category": "cryptographic-container",
+    "extensions": [
+      "p7m",
+      "p7s",
+      "p7c",
+      "p7b",
+      "pkcs7",
+      "cms",
+      "cmsc",
+      "tsd",
+      "tst",
+      "tsq",
+      "tsr",
+      "asics",
+      "scs",
+      "asice",
+      "sce",
+      "ers",
+      "asc",
+      "sig",
+      "pgp",
+      "gpg",
+      "jws"
+    ],
+    "async": true,
+    "supportLevel": "structured",
+    "status": "experimental",
+    "packageName": "@file-viewer/renderer-signature",
+    "presets": [],
+    "containerVersions": [
+      "CMS/PKCS#7",
+      "CAdES attributes",
+      "RFC 3161",
+      "RFC 5544",
+      "ASiC-S/E",
+      "RFC 4998",
+      "RFC 7515",
+      "OpenPGP RFC 9580"
+    ],
+    "knownLimits": [
+      "Opt-in renderer; it is not added to the published preset-all/full compatibility closure",
+      "Cryptographic checks are reported separately from certificate/key trust, policy, qualified-signature status and legal validity",
+      "ASiC XML references and RFC 4998 renewal chains are structurally inspected; full XAdES and archival-policy validation are not claimed",
+      "OpenPGP private-key operations and automatic decryption are intentionally excluded"
+    ],
+    "capabilities": {
+      "download": true,
+      "print": false,
+      "exportHtml": false,
+      "zoom": false,
       "search": false
     }
   },
@@ -917,6 +1012,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "packageName": "@file-viewer/renderer-text",
     "presets": [
       "lite",
+      "standard",
       "all"
     ],
     "containerVersions": [
@@ -991,6 +1087,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "packageName": "@file-viewer/renderer-text",
     "presets": [
       "lite",
+      "standard",
       "all"
     ],
     "containerVersions": [
@@ -1022,6 +1119,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "packageName": "@file-viewer/renderer-media",
     "presets": [
       "lite",
+      "standard",
       "all"
     ],
     "containerVersions": [
@@ -1062,6 +1160,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "packageName": "@file-viewer/renderer-media",
     "presets": [
       "lite",
+      "standard",
       "all"
     ],
     "containerVersions": [

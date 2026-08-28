@@ -1,12 +1,12 @@
 import {
   IconArrowRight,
-  IconBolt,
   IconBraces,
   IconCloudLock,
   IconFileSearch,
   IconLayersLinked,
   IconServerOff,
   IconStack2,
+  IconTerminal2,
 } from '@tabler/icons-react';
 import { DocsPage } from 'fumadocs-ui/layouts/docs/page';
 import { localePath } from '@/lib/shared';
@@ -16,10 +16,10 @@ export function DocsHome({ locale }: { locale: 'en' | 'zh' }) {
   const chinese = locale === 'zh';
   const routes = [
     {
-      icon: IconBolt,
-      title: chinese ? '5 分钟跑通' : 'Run it in 5 minutes',
-      text: chinese ? '从最短可运行示例开始，再逐步增加格式能力。' : 'Start with the shortest working example, then add format capabilities.',
-      href: localePath(locale, 'guide/quickstart'),
+      icon: IconTerminal2,
+      title: chinese ? '使用 CLI 创建或接入' : 'Create or integrate with the CLI',
+      text: chinese ? '选择框架、版本与格式，或检测现有项目后生成可审阅计划。' : 'Choose frameworks, versions, and formats, or inspect an existing project before applying a reviewable plan.',
+      href: localePath(locale, 'guide/cli'),
     },
     {
       icon: IconBraces,
@@ -94,8 +94,8 @@ export function DocsHome({ locale }: { locale: 'en' | 'zh' }) {
         </section>
 
         <dl className="fv-home-facts">
-          <div><dt>208</dt><dd>{chinese ? '个已注册扩展名' : 'registered extensions'}</dd></div>
-          <div><dt>25</dt><dd>{chinese ? '条预览链路' : 'preview pipelines'}</dd></div>
+          <div><dt>244</dt><dd>{chinese ? '个已注册扩展名' : 'registered extensions'}</dd></div>
+          <div><dt>34</dt><dd>{chinese ? '条预览链路' : 'preview pipelines'}</dd></div>
           <div><dt>100%</dt><dd>{chinese ? '运行时资源可自托管' : 'self-hostable runtime'}</dd></div>
         </dl>
 

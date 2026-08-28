@@ -3,13 +3,13 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  The canonical catalog registers 221 file extensions across 32 preview pipelines: 221 stable and 0 experimental.
+  The canonical catalog registers 244 file extensions across 34 preview pipelines: 221 stable and 23 experimental.
   Renderers are loaded on demand, so opening a lightweight text file does not force the browser to load every heavy document engine.
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="File Viewer by Flyfish v2.3.0 English format sample library with grouped filenames and format-specific icons" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">The demo groups representative samples for all 32 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence.</p>
+  <p class="doc-caption">The demo groups representative samples for all 34 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence. Experimental rows keep their limits visible.</p>
 </div>
 
 ## Main Preview Pipelines
@@ -21,9 +21,10 @@
 | Presentations | binary `ppt`, `pot`; OpenXML `pptx`, `pptm`, `potx`, `potm`, `ppsx`, `ppsm`; OpenDocument `odp`; stable high-fidelity `key` |
 | Apple documents | stable high-fidelity `pages`, `numbers`, and `key` with iWork '09 XML/APXL and modern Snappy/IWA parser paths |
 | Layout documents | `pdf`, `ofd`, `typ`, `typst` |
-| Digital signatures (explicit opt-in, experimental) | `p7m`, `p7s`, `p7b`, `p7c`, `pkcs7`, `cms`, `cmsc`, `tsq`, `tsr`, `tst`, `tsd`, `asc`, `sig`, `pgp`, `gpg` through `@file-viewer/renderer-signature`; not included in `preset-all` or `*-full` packages |
 | Archives | `zip`, `7z`, `rar`, `tar`, `gz`, `tgz`, `cab`, `iso`, `apk`, `cbz`, `cbr`, and more |
 | Email | `eml`, `msg`, `mbox` |
+| Medical images (explicit opt-in) | `dcm`, `dicom` through `@file-viewer/renderer-dicom`; one bounded local Part 10 file, including multi-frame navigation |
+| Digital signatures (explicit opt-in) | `p7m`, `p7s`, `p7b`, `p7c`, `pkcs7`, `cms`, `cmsc`, `tsq`, `tsr`, `tst`, `tsd`, `asics`, `scs`, `asice`, `sce`, `ers`, `asc`, `sig`, `pgp`, `gpg`, `jws` through `@file-viewer/renderer-signature` |
 | Diagrams and mind maps | `xmind`, `drawio`, `dio`, `excalidraw`, `mermaid`, `mmd`, `plantuml`, `puml` |
 | CAD and engineering | `dwg`, `dxf`, `dwf`, `dwfx`, `xps`, plus EDA files such as `gds`, `oas`, `oasis`, `olb`, `dra` |
 | 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `ifc`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp` |
@@ -40,8 +41,6 @@
 - `hwp/hwpx` are **structured / stable** with redistributable Apache-2.0 HWP v5 and HWPX fixtures. The gate covers page geometry, inline styles, merged tables, headers, footers, notes, and embedded images in Chromium, Firefox, and WebKit. Encrypted, DRM, and distribution documents are detected and rejected explicitly; rare controls and producer-specific layout constructs remain documented limitations.
 
 The full machine-readable matrix, including containers, levels, status, and limits, is generated from `ecosystem/format-catalog.json` into [`docs/generated/format-catalog.md`](/generated/format-catalog).
-
-The signature row is an additional experimental, package-owned definition and is not counted in the 221-extension default catalog above. It must be installed and registered explicitly. Parsing or a valid cryptographic result does not establish certificate trust, policy compliance, qualified-signature status, identity assurance, or legal validity.
 
 ## Engineering Renderer Notes
 

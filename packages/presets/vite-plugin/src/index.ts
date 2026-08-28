@@ -1,10 +1,10 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
-import { copyFile, cp, mkdir, readFile, realpath, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, cp, lstat, mkdir, readFile, readdir, realpath, rm, stat, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import type { Alias, AliasOptions, Plugin, ResolvedConfig, UserConfig } from 'vite'
 
-export type FileViewerVitePreset = 'all' | 'lite' | 'office' | 'engineering'
+export type FileViewerVitePreset = 'all' | 'lite' | 'standard' | 'office' | 'engineering'
 export type FileViewerVitePresetMode = FileViewerVitePreset | 'auto'
 export type FileViewerMissingRendererMode = 'error' | 'warn' | 'ignore'
 export type FileViewerChunkStrategy = 'renderer' | 'none'
@@ -117,6 +117,7 @@ interface RendererModuleDescriptor {
   formats: readonly string[]
   rendererIds: readonly string[]
   chunkName: string
+  includeInPresetAll?: boolean
 }
 
 interface PresetModuleDescriptor {
@@ -161,7 +162,10 @@ const isPresentationRendererImporter = (importer?: string) => {
   return (
     normalized.includes('/@file-viewer/renderer-presentation/') ||
     normalized.includes('/@file-viewer+renderer-presentation@') ||
-    normalized.includes('/packages/renderers/presentation/')
+    normalized.includes('/packages/renderers/presentation/') ||
+    normalized.includes('/@file-viewer/renderer-ppt/') ||
+    normalized.includes('/@file-viewer+renderer-ppt@') ||
+    normalized.includes('/packages/renderers/presentation-ppt/')
   )
 }
 const pluginRequire = createRequire(import.meta.url)
@@ -210,7 +214,7 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
   },
   {
     id: 'presentation-binary',
-    packageName: '@file-viewer/renderer-presentation/ppt',
+    packageName: '@file-viewer/renderer-ppt',
     exportName: 'pptRenderer',
     formats: ['ppt', 'pot'],
     rendererIds: ['office-presentation-binary'],
@@ -218,7 +222,7 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
   },
   {
     id: 'presentation-openxml',
-    packageName: '@file-viewer/renderer-presentation/pptx',
+    packageName: '@file-viewer/renderer-pptx',
     exportName: 'pptxRenderer',
     formats: ['pptx', 'pptm', 'potx', 'potm', 'ppsx', 'ppsm'],
     rendererIds: ['office-presentation'],
@@ -455,6 +459,46 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     chunkName: 'file-viewer-image'
   },
   {
+    id: 'dicom',
+    packageName: '@file-viewer/renderer-dicom',
+    exportName: 'dicomRenderer',
+    formats: ['dicom', 'dcm'],
+    rendererIds: ['dicom'],
+    chunkName: 'file-viewer-dicom',
+    includeInPresetAll: false
+  },
+  {
+    id: 'signature',
+    packageName: '@file-viewer/renderer-signature',
+    exportName: 'signatureRenderer',
+    formats: [
+      'p7m',
+      'p7s',
+      'p7c',
+      'p7b',
+      'pkcs7',
+      'cms',
+      'cmsc',
+      'tsd',
+      'tst',
+      'tsq',
+      'tsr',
+      'asics',
+      'scs',
+      'asice',
+      'sce',
+      'ers',
+      'asc',
+      'sig',
+      'pgp',
+      'gpg',
+      'jws'
+    ],
+    rendererIds: ['signature'],
+    chunkName: 'file-viewer-signature',
+    includeInPresetAll: false
+  },
+  {
     id: 'media',
     packageName: '@file-viewer/renderer-media',
     exportName: 'mediaRenderer',
@@ -542,8 +586,22 @@ rendererModules.forEach((descriptor) => {
 })
 
 const presetRendererIds: Record<FileViewerVitePreset, readonly string[]> = {
-  all: rendererModules.map((descriptor) => descriptor.id),
+  all: rendererModules
+    .filter((descriptor) => descriptor.includeInPresetAll !== false)
+    .map((descriptor) => descriptor.id),
   lite: ['text', 'image', 'media'],
+  standard: [
+    'word',
+    'pdf',
+    'ofd',
+    'presentation-openxml',
+    'spreadsheet',
+    'archive',
+    'email',
+    'text',
+    'image',
+    'media'
+  ],
   office: ['pdf', 'word', 'spreadsheet', 'presentation', 'ofd', 'iwork', 'wordperfect', 'hangul'],
   engineering: [
     'cad',
@@ -572,6 +630,13 @@ const presetModules: Record<FileViewerVitePreset, PresetModuleDescriptor> = {
     exportName: 'liteRenderers',
     rendererIds: presetRendererIds.lite,
     chunkName: 'file-viewer-preset-lite'
+  },
+  standard: {
+    id: 'standard',
+    packageName: '@file-viewer/preset-standard',
+    exportName: 'standardRenderers',
+    rendererIds: presetRendererIds.standard,
+    chunkName: 'file-viewer-preset-standard'
   },
   office: {
     id: 'office',
@@ -618,7 +683,8 @@ const cjsInteropPackages = [
   '@xmldom/xmldom',
   'keynote-archives',
   'occt-import-js',
-  'jszip'
+  'jszip',
+  'pdf-lib'
 ] as const
 
 const defaultScanRoots = ['src', 'app', 'pages', 'components']
@@ -1423,6 +1489,24 @@ function collectDependencyAnchorPackages(
   ])
   return unique([
     ...collectSelectedPackages(selection, autoPresetIds),
+    ...presetIds.flatMap((presetId) => {
+      const packageJsonPath = resolvePackageJson(presetModules[presetId].packageName)
+      if (!packageJsonPath) {
+        return []
+      }
+      try {
+        const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
+          dependencies?: Record<string, string>
+          optionalDependencies?: Record<string, string>
+        }
+        return Object.keys({
+          ...(packageJson.dependencies || {}),
+          ...(packageJson.optionalDependencies || {})
+        }).filter(packageName => packageName.startsWith('@file-viewer/capability-'))
+      } catch {
+        return []
+      }
+    }),
     ...presetIds.flatMap((presetId) =>
       presetModules[presetId].rendererIds
         .map((rendererId) => descriptorsById.get(rendererId)?.packageName)
@@ -1806,7 +1890,10 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     copyPdfCjkFontAssets(pdfCjkFontRoot, join(targetRoot, 'vendor/pdf/fonts'))
   )
 
-  const pptxRoot = resolvePackageRoot('@file-viewer/pptx', ['@file-viewer/renderer-presentation'])
+  const pptxRoot = resolvePackageRoot('@file-viewer/pptx', [
+    '@file-viewer/renderer-pptx',
+    '@file-viewer/renderer-presentation'
+  ])
   await push(
     'office-presentation',
     'pptx-worker',
@@ -1818,7 +1905,10 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
       )
   )
 
-  const pptRoot = resolvePackageRoot('@file-viewer/ppt', ['@file-viewer/renderer-presentation'])
+  const pptRoot = resolvePackageRoot('@file-viewer/ppt', [
+    '@file-viewer/renderer-ppt',
+    '@file-viewer/renderer-presentation'
+  ])
   const pptVersion = readPackageVersion(pptRoot)
   const pptSource = pptRoot
     ? { sourcePackage: '@file-viewer/ppt', sourceVersion: pptVersion || undefined }
@@ -2070,6 +2160,166 @@ interface BundledFullAssetManifest {
   [key: string]: unknown
 }
 
+interface InstalledCapabilityAssetSource {
+  packageName: string
+  packageRoot: string
+  packageVersion: string
+  payloadRoot: string
+  manifest: BundledFullAssetManifest & {
+    packageName?: string
+    packageVersion?: string
+  }
+}
+
+const independentlyOwnedAssetRendererIds = new Map<string, string>([
+  ['archive', '@file-viewer/assets-standard'],
+  ['pdf', '@file-viewer/assets-standard'],
+  ['office-word-openxml', '@file-viewer/assets-standard'],
+  ['office-presentation', '@file-viewer/assets-standard'],
+  ['spreadsheet-openxml', '@file-viewer/assets-standard'],
+  ['cad', '@file-viewer/assets-cad'],
+  ['typst', '@file-viewer/assets-typst'],
+  ['model', '@file-viewer/assets-model'],
+  ['apple-pages', '@file-viewer/assets-iwork'],
+  ['apple-numbers', '@file-viewer/assets-iwork'],
+  ['apple-keynote', '@file-viewer/assets-iwork'],
+  ['office-presentation-binary', '@file-viewer/assets-ppt'],
+  ['office-hangul', '@file-viewer/assets-hangul'],
+  ['office-wordperfect', '@file-viewer/assets-wordperfect'],
+  ['data-asset', '@file-viewer/assets-data']
+])
+
+function resolveInstalledCapabilityAssetSources(
+  installedAssetPackages: readonly string[],
+  anchorPackages: readonly string[]
+) {
+  return installedAssetPackages.map((packageName): InstalledCapabilityAssetSource => {
+    if (packageName === 'file-viewer-copy-assets') {
+      throw new Error('[file-viewer:vite-plugin] The v2 aggregate asset carrier is forbidden in a v3 capability plan.')
+    }
+    const packageRoot = resolvePackageRoot(packageName, anchorPackages)
+    if (!packageRoot) throw new Error(`[file-viewer:vite-plugin] Could not resolve installed asset owner ${packageName}.`)
+    const packageVersion = readPackageVersion(packageRoot)
+    if (!packageVersion) throw new Error(`[file-viewer:vite-plugin] Could not read ${packageName} version.`)
+    const payloadRoot = join(packageRoot, 'viewer')
+    const manifestPath = [
+      join(payloadRoot, 'file-viewer-asset-pack.json'),
+      join(payloadRoot, 'flyfish-viewer-assets.json')
+    ].find(candidate => existsSync(candidate) && statSync(candidate).isFile())
+    if (!manifestPath) throw new Error(`[file-viewer:vite-plugin] ${packageName} has no staged capability asset manifest.`)
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as InstalledCapabilityAssetSource['manifest']
+    if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.rendererAssetManifests) ||
+        manifest.packageName !== packageName || manifest.packageVersion !== packageVersion) {
+      throw new Error(`[file-viewer:vite-plugin] ${packageName}@${packageVersion} has an invalid or stale asset manifest.`)
+    }
+    return { packageName, packageRoot, packageVersion, payloadRoot, manifest }
+  })
+}
+
+async function copyAssetPathWithoutConflicts(sourceRoot: string, targetRoot: string, relativePath: string) {
+  const normalized = relativePath.replace(/\\/g, '/').replace(/^\/+/, '')
+  const source = resolve(sourceRoot, ...normalized.split('/'))
+  const destination = resolve(targetRoot, ...normalized.split('/'))
+  if (!isPathWithin(sourceRoot, source) || !isPathWithin(targetRoot, destination)) {
+    throw new Error(`[file-viewer:vite-plugin] Asset path escapes its package or output root: ${relativePath}.`)
+  }
+  const sourceInfo = await lstat(source)
+  if (sourceInfo.isSymbolicLink()) throw new Error(`[file-viewer:vite-plugin] Asset source is a symbolic link: ${source}.`)
+  if (sourceInfo.isDirectory()) {
+    await mkdir(destination, { recursive: true })
+    for (const entry of await readdir(source, { withFileTypes: true })) {
+      if (entry.isSymbolicLink()) throw new Error(`[file-viewer:vite-plugin] Asset source is a symbolic link: ${join(source, entry.name)}.`)
+      await copyAssetPathWithoutConflicts(sourceRoot, targetRoot, `${normalized}/${entry.name}`)
+    }
+    return
+  }
+  if (!sourceInfo.isFile()) throw new Error(`[file-viewer:vite-plugin] Asset source is not a regular file: ${source}.`)
+  await mkdir(dirname(destination), { recursive: true })
+  if (existsSync(destination)) {
+    const destinationInfo = await lstat(destination)
+    if (destinationInfo.isSymbolicLink() || !destinationInfo.isFile()) {
+      throw new Error(`[file-viewer:vite-plugin] Refusing unsafe asset destination ${destination}.`)
+    }
+    const [sourceContent, destinationContent] = await Promise.all([readFile(source), readFile(destination)])
+    if (!sourceContent.equals(destinationContent)) {
+      throw new Error(`[file-viewer:vite-plugin] Asset owners conflict at ${normalized}.`)
+    }
+    return
+  }
+  await copyFile(source, destination)
+}
+
+async function copyInstalledCapabilityAssetPacks(
+  targetRoot: string,
+  rendererIds: readonly string[],
+  installedAssetPackages: readonly string[],
+  anchorPackages: readonly string[]
+) {
+  const selected = new Set(rendererIds)
+  const sources = resolveInstalledCapabilityAssetSources(installedAssetPackages, anchorPackages)
+  const rendererOwners = new Map<string, { packageName: string; manifest: Record<string, unknown> }>()
+  const results: AssetCopyResult[] = []
+  await mkdir(targetRoot, { recursive: true })
+  for (const source of sources) {
+    for (const rendererManifest of source.manifest.rendererAssetManifests || []) {
+      if (!selected.has(rendererManifest.rendererId)) continue
+      const existing = rendererOwners.get(rendererManifest.rendererId)
+      if (existing) {
+        throw new Error(
+          `[file-viewer:vite-plugin] Renderer asset group ${rendererManifest.rendererId} is owned by both ` +
+          `${existing.packageName} and ${source.packageName}.`
+        )
+      }
+      rendererOwners.set(rendererManifest.rendererId, {
+        packageName: source.packageName,
+        manifest: rendererManifest as unknown as Record<string, unknown>
+      })
+      for (const asset of rendererManifest.assets || []) {
+        if (asset.target !== 'public' || !asset.defaultPath) continue
+        const destination = resolve(targetRoot, ...asset.defaultPath.replace(/\\/g, '/').replace(/^\/+/, '').split('/'))
+        try {
+          await copyAssetPathWithoutConflicts(source.payloadRoot, targetRoot, asset.defaultPath)
+          results.push({
+            rendererId: asset.rendererId,
+            id: asset.id,
+            to: destination,
+            copied: true,
+            required: asset.required,
+            sourcePackage: source.packageName,
+            sourceVersion: source.packageVersion
+          })
+        } catch (error) {
+          results.push({
+            rendererId: asset.rendererId,
+            id: asset.id,
+            to: destination,
+            copied: false,
+            required: asset.required,
+            reason: (error as Error).message,
+            sourcePackage: source.packageName,
+            sourceVersion: source.packageVersion
+          })
+        }
+      }
+    }
+  }
+  const manifests = [...rendererOwners]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([, value]) => value.manifest)
+  await writeFile(join(targetRoot, 'flyfish-viewer-assets.json'), `${JSON.stringify({
+    schemaVersion: 1,
+    generatedBy: '@file-viewer/vite-plugin',
+    rendererAssetManifests: manifests
+  }, null, 2)}\n`)
+  await writeFile(join(targetRoot, 'flyfish-viewer-manifest.json'), `${JSON.stringify({
+    schemaVersion: 1,
+    kind: 'file-viewer-capability-assets',
+    owners: sources.map(source => ({ packageName: source.packageName, packageVersion: source.packageVersion }))
+      .sort((left, right) => left.packageName.localeCompare(right.packageName))
+  }, null, 2)}\n`)
+  return { results, rendererIds: [...rendererOwners.keys()].sort() }
+}
+
 function matchesBundledAssetKind(kind: string, info: { isDirectory(): boolean; isFile(): boolean }) {
   return kind === 'directory' || kind === 'wasm-directory'
     ? info.isDirectory()
@@ -2283,6 +2533,29 @@ async function copyRendererAssets(
       return bundledResults
     }
   }
+  if (target.installedAssetPackages.length) {
+    const bundled = await copyInstalledCapabilityAssetPacks(
+      target.targetRoot,
+      rendererIds,
+      target.installedAssetPackages,
+      target.installedFullPackages
+    )
+    const covered = new Set(bundled.rendererIds)
+    for (const rendererId of rendererIds) {
+      const requiredOwner = independentlyOwnedAssetRendererIds.get(rendererId)
+      if (requiredOwner && !covered.has(rendererId)) {
+        bundled.results.push({
+          rendererId,
+          id: 'missing-independent-asset-owner',
+          to: target.targetRoot,
+          copied: false,
+          required: true,
+          reason: `install ${requiredOwner} for this capability`
+        })
+      }
+    }
+    return bundled.results
+  }
   const results = await copyKnownRendererAssets(target.targetRoot, rendererIds)
   if (target.installedFullPackages.length) {
     results.push({
@@ -2318,6 +2591,7 @@ export interface FileViewerCopyAssetsTarget {
   targetRoot: string
   baseDir: string
   installedFullPackages: string[]
+  installedAssetPackages: string[]
 }
 
 function findNearestProjectPackageJson(projectRoot: string) {
@@ -2359,6 +2633,28 @@ function resolveInstalledFullPackages(projectRoot: string) {
         declaredPackages.has(packageName) &&
         Boolean(tryResolvePackageJson(packageName, projectPackageRequire))
     )
+  } catch {
+    return []
+  }
+}
+
+function resolveInstalledAssetPackages(projectRoot: string) {
+  const packageJsonPath = findNearestProjectPackageJson(projectRoot)
+  if (!packageJsonPath) return []
+  try {
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
+      dependencies?: Record<string, string>
+      devDependencies?: Record<string, string>
+      optionalDependencies?: Record<string, string>
+    }
+    const declared = unique([
+      ...Object.keys(packageJson.dependencies || {}),
+      ...Object.keys(packageJson.devDependencies || {}),
+      ...Object.keys(packageJson.optionalDependencies || {})
+    ]).filter(packageName => packageName.startsWith('@file-viewer/assets-'))
+    const require = createRequire(packageJsonPath)
+    const resolved = declared.filter(packageName => Boolean(tryResolvePackageJson(packageName, require)))
+    return unique(resolved).sort()
   } catch {
     return []
   }
@@ -2432,6 +2728,7 @@ export function resolveFileViewerCopyAssetsTarget(
   const projectRoot = resolve(config.projectRoot || process.cwd())
   const options = copyOptions(value)
   const installedFullPackages = resolveInstalledFullPackages(projectRoot)
+  const installedAssetPackages = resolveInstalledAssetPackages(projectRoot)
   const baseDir = normalizeCopyAssetsBaseDir(
     typeof options.baseDir === 'string'
       ? options.baseDir
@@ -2457,7 +2754,8 @@ export function resolveFileViewerCopyAssetsTarget(
     outputRoot,
     targetRoot,
     baseDir,
-    installedFullPackages: [...installedFullPackages]
+    installedFullPackages: [...installedFullPackages],
+    installedAssetPackages
   }
 }
 

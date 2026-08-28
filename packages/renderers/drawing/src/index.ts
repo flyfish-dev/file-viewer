@@ -6,6 +6,12 @@ import {
   type RendererDefinition,
 } from '@file-viewer/core';
 
+export {
+  disableFileViewerDrawioOfficialViewer,
+  enableFileViewerDrawioOfficialViewer,
+  isFileViewerDrawioOfficialViewerEnabled,
+} from './optionalCapabilities.js';
+
 const drawingDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
   definition => definition.id === 'drawing'
 ) as RendererDefinition | undefined;

@@ -83,7 +83,7 @@ for (const definition of DEFAULT_RENDERER_DEFINITIONS) {
 }
 
 const DEFAULT_FULL_ASSET_BASE_URL = '/file-viewer/'
-const WEB_FULL_DOCX_RUNTIME_VERSION = '0.3.27'
+const WEB_FULL_DOCX_RUNTIME_VERSION = '0.3.28'
 const webFullScriptPattern = /(?:@file-viewer\/web-full|flyfish-file-viewer-web-full)/
 const initialFullScriptUrl = detectCurrentScriptUrl()
 const initialFullRendererBaseUrl = resolveScriptBaseUrl(initialFullScriptUrl) || DEFAULT_FULL_ASSET_BASE_URL

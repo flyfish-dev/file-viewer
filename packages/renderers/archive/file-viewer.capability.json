@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "archive",
+  "packageName": "@file-viewer/renderer-archive",
+  "rendererIds": ["archive"],
+  "formats": ["zip", "zipx", "7z", "rar", "tar", "gz", "gzip", "tgz", "bz2", "bzip2", "tbz", "tbz2", "xz", "txz", "lzma", "zst", "tzst", "cab", "ar", "cpio", "iso", "xar", "lha", "lzh", "jar", "war", "ear", "apk", "cbz", "cbr"],
+  "assets": {
+    "rendererIds": ["archive"],
+    "packageName": "@file-viewer/assets-standard",
+    "bin": "file-viewer-assets-standard",
+    "apiExport": "installFileViewerStandardAssets",
+    "target": "public/file-viewer",
+    "copyGroups": ["archive"],
+    "copyMode": "profile-pack",
+    "receiptFilename": "file-viewer-assets-standard.receipt.json",
+    "notice": "Self-hosted libarchive Worker and WASM."
+  },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive" },
+  "weight": "standard",
+  "profiles": ["standard", "engineering", "all"]
+}

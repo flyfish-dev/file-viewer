@@ -1,0 +1,42 @@
+{
+  "$schema": "../../../ecosystem/profile-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "standard",
+  "packageName": "@file-viewer/preset-standard",
+  "stability": "frozen",
+  "assetPackageName": "@file-viewer/assets-standard",
+  "capabilityPackages": [
+    "@file-viewer/capability-pdf-identity-repair",
+    "@file-viewer/capability-pptx-charts",
+    "@file-viewer/renderer-word",
+    "@file-viewer/renderer-pdf",
+    "@file-viewer/renderer-ofd",
+    "@file-viewer/renderer-pptx",
+    "@file-viewer/renderer-spreadsheet",
+    "@file-viewer/renderer-archive",
+    "@file-viewer/renderer-email",
+    "@file-viewer/renderer-text",
+    "@file-viewer/renderer-image",
+    "@file-viewer/renderer-media"
+  ],
+  "excludedCapabilities": [
+    "iwork",
+    "dicom",
+    "cad",
+    "3d",
+    "eda",
+    "geo",
+    "typst",
+    "drawio",
+    "wordperfect",
+    "hangul",
+    "legacy-ppt"
+  ],
+  "migration": {
+    "policy": "layered",
+    "legacyFullFrozen": true,
+    "cliDefaultProfile": "standard",
+    "fullDefaultReady": false,
+    "blockers": []
+  }
+}

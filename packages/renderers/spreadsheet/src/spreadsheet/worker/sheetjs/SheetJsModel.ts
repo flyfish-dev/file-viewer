@@ -384,11 +384,23 @@ const mergeStyle = (...styles: Array<CellStyle | Record<string, any> | undefined
   return Object.keys(result).length ? result : undefined
 }
 
+const resolveTableCellStyle = (
+  worksheet: WorkSheet,
+  rowIndex: number,
+  colIndex: number,
+  baseStyle?: CellStyle | Record<string, any>
+) => {
+  const resolver = (utils as any).resolve_table_cell_style
+  return typeof resolver === 'function'
+    ? resolver(worksheet, rowIndex, colIndex, baseStyle)
+    : baseStyle
+}
+
 const getCellStyle = (cellStyle?: Record<string, any>) => {
   const style: Record<string, string> = {}
   const fill = cellStyle?.fill || {}
-  const fillColor = normalizeColor(cellStyle?.fgColor || fill.fgColor || cellStyle?.bgColor || fill.bgColor)
-  const patternType = cellStyle?.patternType || fill.patternType
+  const fillColor = normalizeColor(fill.fgColor || cellStyle?.fgColor || fill.bgColor || cellStyle?.bgColor)
+  const patternType = fill.patternType || cellStyle?.patternType
   if (fillColor && patternType !== 'none') {
     style.backgroundColor = fillColor
   }
@@ -733,7 +745,8 @@ export default class SheetJsModel implements SheetModel {
     for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex += 1) {
       for (let colIndex = 0; colIndex < this.totalCols; colIndex += 1) {
         const cell = this.getCellAt(rowIndex, colIndex)
-        const rawStyle = mergeStyle(cols[colIndex]?.s, rows[rowIndex]?.s, cell?.s as CellStyle | undefined)
+        const inheritedStyle = mergeStyle(cols[colIndex]?.s, rows[rowIndex]?.s, cell?.s as CellStyle | undefined)
+        const rawStyle = resolveTableCellStyle(this.ws, rowIndex, colIndex, inheritedStyle)
         const className = alignToClassName(rawStyle?.alignment)
         const style = getCellStyle(rawStyle)
         if (!className && !style) {

@@ -21,6 +21,8 @@ export type DemoFileIconFamily =
   | 'archive'
   | 'email'
   | 'eda'
+  | 'medical'
+  | 'signature'
   | 'text'
   | 'code'
   | 'image'
@@ -43,12 +45,7 @@ export interface DemoFileTypesApi {
   getFileIconMeta: (target: string) => DemoFileIconMeta
 }
 
-export const COMPOUND_ARCHIVE_EXTENSIONS = [
-  'tar.gz',
-  'tar.bz2',
-  'tar.xz',
-  'tar.zst'
-] as const
+export const COMPOUND_ARCHIVE_EXTENSIONS = ['tar.gz', 'tar.bz2', 'tar.xz', 'tar.zst'] as const
 
 // Explicit metadata is reserved for formats that need a recognizable product
 // family or branded icon. Core extensions absent here still receive a fallback.
@@ -182,6 +179,29 @@ const explicitFileIconMeta = {
   eml: { icon: 'EML', family: 'email' },
   msg: { icon: 'MSG', family: 'email' },
   mbox: { icon: 'MBOX', family: 'email' },
+  dcm: { icon: 'DCM', family: 'medical' },
+  dicom: { icon: 'DICOM', family: 'medical' },
+  p7m: { icon: 'P7M', family: 'signature' },
+  p7s: { icon: 'P7S', family: 'signature' },
+  p7c: { icon: 'P7C', family: 'signature' },
+  p7b: { icon: 'P7B', family: 'signature' },
+  pkcs7: { icon: 'PKCS7', family: 'signature' },
+  cms: { icon: 'CMS', family: 'signature' },
+  cmsc: { icon: 'CMS', family: 'signature' },
+  tsd: { icon: 'TSD', family: 'signature' },
+  tst: { icon: 'TST', family: 'signature' },
+  tsq: { icon: 'TSQ', family: 'signature' },
+  tsr: { icon: 'TSR', family: 'signature' },
+  asics: { icon: 'ASiC', family: 'signature' },
+  scs: { icon: 'ASiC', family: 'signature' },
+  asice: { icon: 'ASiC', family: 'signature' },
+  sce: { icon: 'ASiC', family: 'signature' },
+  ers: { icon: 'ERS', family: 'signature' },
+  asc: { icon: 'ASC', family: 'signature' },
+  sig: { icon: 'SIG', family: 'signature' },
+  pgp: { icon: 'PGP', family: 'signature' },
+  gpg: { icon: 'GPG', family: 'signature' },
+  jws: { icon: 'JWS', family: 'signature' },
   olb: { icon: 'OLB', family: 'eda' },
   dra: { icon: 'DRA', family: 'eda' },
   gds: { icon: 'GDS', family: 'eda' },
@@ -365,8 +385,8 @@ const genericIconMeta = (extension = ''): DemoFileIconMeta => ({
 const coreFileIconMeta = DEFAULT_SUPPORTED_EXTENSIONS.reduce<Record<string, DemoFileIconMeta>>(
   (result, extension) => {
     const normalizedExtension = extension.toLowerCase()
-    result[normalizedExtension] = explicitFileIconMetaWithBrands[normalizedExtension]
-      ?? genericIconMeta(normalizedExtension)
+    result[normalizedExtension] =
+      explicitFileIconMetaWithBrands[normalizedExtension] ?? genericIconMeta(normalizedExtension)
     return result
   },
   {}

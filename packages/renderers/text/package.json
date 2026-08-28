@@ -1,9 +1,9 @@
 {
   "name": "@file-viewer/renderer-text",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
-  "description": "Standalone code, text, Markdown, patch diff, and Git bundle renderer plugin for File Viewer.",
+  "description": "Standalone code, text, and Markdown renderer for File Viewer; Mermaid, patch diff, and Git bundle tools are explicit opt-in capabilities.",
   "keywords": [
     "file-viewer",
     "renderer",
@@ -52,25 +52,30 @@
   },
   "files": [
     "dist",
+    "file-viewer.capability.json",
     "README.md",
     "README.en.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && node --test test/*.test.mjs",
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0",
-    "diff2html": "^3.4.56",
+    "@file-viewer/core": "workspace:3.0.0",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
-    "mermaid": "^11.16.1",
-    "pako": "^2.1.0",
     "dompurify": "^3.4.13"
   },
   "devDependencies": {
+    "diff2html": "^3.4.56",
+    "mermaid": "^11.16.1",
+    "pako": "^2.1.0",
+    "jsdom": "^27.4.0",
     "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
   },
   "license": "Apache-2.0"
 }

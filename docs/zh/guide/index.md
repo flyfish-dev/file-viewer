@@ -31,7 +31,7 @@
   </div>
   <div class="doc-card">
     <h3>覆盖真实附件场景</h3>
-    <p>唯一目录注册 221 个扩展名和 32 条预览链路，其中 221 个稳定、0 个实验；覆盖 Office、Apple 文稿、PDF/OFD、工程、归档、媒体、代码与数据格式。</p>
+    <p>唯一目录注册 244 个扩展名和 34 条预览链路，其中 221 个稳定、23 个实验；覆盖 Office、Apple 文稿、PDF/OFD、工程、归档、媒体、代码、数据、可选 DICOM 与数字签名格式。</p>
   </div>
   <div class="doc-card">
     <h3>模块化架构更专业</h3>
@@ -56,7 +56,7 @@
   </div>
   <div class="doc-card">
     <h3>确认格式边界</h3>
-    <p>支持格式页列出 221 个已注册扩展名、32 条渲染链路、稳定/实验等级和真实业务边界。</p>
+    <p>支持格式页列出 244 个已注册扩展名、34 条渲染链路、稳定/实验等级和真实业务边界。</p>
   </div>
   <div class="doc-card">
     <h3>选择接入方式</h3>
@@ -92,7 +92,7 @@ Full 包已内置 `preset-all`，业务代码不需要再次安装或传入 pres
 - CAD 使用 `@flyfish-dev/cad-viewer`，支持 DWG / DXF / DWF / DWFx / XPS；DWG 通过 Worker + LibreDWG WASM 按需解析，DWF/DWFx/XPS 通过 native renderer 渲染，避免阻塞主线程。
 - 地理数据支持 GeoJSON、KML、GPX 和 SHP，按需转为 GeoJSON 后做 CRS 归一化，并用离线 MapLibre 矢量地图叠加边界、轨迹和点位。
 - 3D 模型走 `@file-viewer/renderer-3d` + Three.js loaders，支持 GLTF/GLB、OBJ、STL、PLY、FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ、PCD、VRML/WRL、XYZ、VTK/VTP 等常见浏览器渲染格式。
-- Excalidraw 默认使用 `roughjs` 只读 SVG，运行环境提供官方 ESM 模块时会优先尝试官方导出；draw.io 默认走随 viewer assets 分发的官方 diagrams.net 离线 viewer，Mermaid 走官方 `mermaid` SVG 渲染，PlantUML 默认离线源码预览，也可配置自托管 SVG 服务；这些绘图链路都支持拖拽平移和统一缩放。
+- Excalidraw 默认使用 `roughjs` 只读 SVG，运行环境提供官方 ESM 模块时会优先尝试官方导出；draw.io 默认走不执行文档 HTML 的内置 SVG 预览，显式设置 `options.drawing.preferOfficial = true` 才在受限沙箱中加载单独分发的 diagrams.net 离线 viewer；Mermaid 走官方 `mermaid` SVG 渲染，PlantUML 默认离线源码预览，也可配置自托管 SVG 服务；这些绘图链路都支持拖拽平移和统一缩放。
 - EPUB 按需加载包内固化的本地引擎并提供目录和滚动阅读，UMD 解析目录和压缩正文，音频使用浏览器原生播放器打开，MIDI 展示轨道和时长信息，HLS 视频按需加载 `hls.js`。
 - 代码和文本由 `@file-viewer/renderer-text` 使用 `highlight.js` 轻量高亮，覆盖 JSONC、JSON5、Notebook、TOML、Proto、HCL、TeX、Graphviz、HTTP、Ruby、Swift、Kotlin 等常见工程文本；patch 会进入左右比对视图，git bundle 会展示 refs、历史记录、文件树和可读文件内容；HTML 会按源码展示。
 - 字体、PSD、AI/EPS、SQLite、WASM、Parquet、Avro 和 WebArchive 走 `@file-viewer/renderer-data` 独立资产/数据预览链路，优先展示结构摘要、字体样张、图层或数据预览，不执行不可信内容。

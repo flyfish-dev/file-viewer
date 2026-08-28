@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "iwork",
+  "packageName": "@file-viewer/assets-iwork",
+  "copyGroups": [
+    "apple-pages",
+    "apple-numbers",
+    "apple-keynote"
+  ],
+  "receiptFilename": "file-viewer-assets-iwork.receipt.json"
+}

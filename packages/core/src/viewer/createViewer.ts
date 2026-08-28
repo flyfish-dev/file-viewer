@@ -62,6 +62,7 @@ import { normalizeSource } from '../source';
 import { buildFileViewerWatermarkInlineStyle } from '../features/watermark';
 import { createFileViewerUnsupportedState } from './state';
 import type {
+  FileRenderContext,
   FileRenderExportAdapter,
   FileRenderThumbnailAdapter,
   FileRenderHandler,
@@ -80,6 +81,7 @@ import type {
   FileViewerOptions,
   FileViewerPrintOptions,
   FileViewerRenderPurpose,
+  FileViewerRenderedInstance,
   FileViewerRendererPluginInput,
   FileViewerSource,
   FileViewerViewState,
@@ -459,6 +461,52 @@ export const createViewer = (
     });
   };
 
+  const renderNestedBuffer: NonNullable<FileRenderContext['renderNestedBuffer']> = async (
+    buffer,
+    type,
+    target,
+    context
+  ): Promise<FileViewerRenderedInstance | undefined> => {
+    const inheritedOptions = context?.options || options;
+    const nestedViewer = createViewer(target, {
+      registry,
+      options: {
+        ...inheritedOptions,
+        // The parent already resolved its renderer assembly into `registry`.
+        // Reuse that exact registry without reinstalling presets or mutating a
+        // shared registry while an attachment is open.
+        autoRenderers: false,
+        rendererMode: 'extend',
+        renderers: undefined,
+        preset: undefined,
+        presets: undefined,
+      },
+      signal: context?.signal,
+      renderPurpose: context?.renderPurpose || createOptions.renderPurpose || 'preview',
+    });
+
+    try {
+      await nestedViewer.load({
+        buffer,
+        filename: context?.filename || `attachment.${type || 'bin'}`,
+        type,
+      }, {
+        signal: context?.signal,
+      });
+      if (context?.signal?.aborted) {
+        await nestedViewer.destroy('replace');
+        return undefined;
+      }
+      return {
+        $el: target,
+        destroy: () => nestedViewer.destroy('component-unmount'),
+      };
+    } catch (error) {
+      await nestedViewer.destroy('replace');
+      throw error;
+    }
+  };
+
   const buildCurrentLifecycleContext = () => {
     const source = currentSource || normalizeSource({});
     return buildFileViewerLifecycleContextFromNormalizedSource({
@@ -670,6 +718,7 @@ export const createViewer = (
           },
           renderContext: {
             renderPurpose: createOptions.renderPurpose || 'preview',
+            renderNestedBuffer,
           },
         });
       } catch (error) {

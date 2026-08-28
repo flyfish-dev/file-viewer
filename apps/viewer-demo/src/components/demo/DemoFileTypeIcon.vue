@@ -16,6 +16,8 @@ import {
   Mail,
   Presentation,
   Shapes,
+  Signature,
+  Stethoscope,
   Table2,
   Video
 } from '@lucide/vue'
@@ -57,6 +59,8 @@ const FAMILY_ICONS: Readonly<Record<DemoFileIconFamily, Component>> = Object.fre
   archive: Archive,
   email: Mail,
   eda: CircuitBoard,
+  medical: Stethoscope,
+  signature: Signature,
   text: FileText,
   code: Braces,
   image: FileImage,

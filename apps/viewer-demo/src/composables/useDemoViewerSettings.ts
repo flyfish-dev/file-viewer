@@ -274,7 +274,7 @@ export const createDefaultViewerSettings = (
   modelLinearDeflectionType: 'bounding_box_ratio',
   modelLinearDeflection: 0.001,
   modelAngularDeflection: 0.5,
-  drawingPreferOfficial: true,
+  drawingPreferOfficial: false,
   ...overrides
 })
 

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vue2.7",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
   "description": "Standard Vue 2.7 component package for File Viewer",
@@ -60,7 +60,7 @@
     "vue": ">=2.7 <3"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0"
+    "@file-viewer/core": "workspace:3.0.0"
   },
   "devDependencies": {
     "typescript": "^6.0.3",

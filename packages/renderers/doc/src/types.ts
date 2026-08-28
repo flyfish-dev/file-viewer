@@ -678,6 +678,8 @@ export interface MsDocRenderOptions {
   css?: string;
   /** External links are blocked by default; internal document bookmarks remain active. */
   externalLinkPolicy?: 'allow' | 'block';
+  /** Linked image resources are blocked by default; embedded data/blob images remain available. */
+  externalResourcePolicy?: 'allow' | 'block';
 }
 
 export interface MsDocMeta {

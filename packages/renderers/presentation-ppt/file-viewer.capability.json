@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "legacy-ppt",
+  "packageName": "@file-viewer/renderer-ppt",
+  "rendererIds": ["office-presentation-binary"],
+  "formats": ["ppt", "pot"],
+  "assets": {
+    "rendererIds": ["office-presentation-binary"],
+    "packageName": "@file-viewer/assets-ppt",
+    "installerPackageName": "@file-viewer/assets-ppt",
+    "bin": "file-viewer-assets-ppt",
+    "apiExport": "installFileViewerCapabilityAssetPack",
+    "target": "public/file-viewer",
+    "copyGroups": ["office-presentation-binary"],
+    "copyMode": "capability-pack",
+    "receiptFilename": "file-viewer-assets-ppt.receipt.json",
+    "notice": "Legacy PPT Worker/WASM runtime with the existing watermark and license boundary."
+  },
+  "license": { "spdx": "Apache-2.0", "policy": "separately-licensed" },
+  "weight": "heavy",
+  "profiles": ["office", "all"]
+}

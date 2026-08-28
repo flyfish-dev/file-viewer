@@ -9,6 +9,11 @@ import {
   getInverseCenteredShapeTransform,
   getTrapezoidPoints
 } from './geometry.js';
+import {
+  DRAWINGML_SINGLE_LINE_HEIGHT,
+  resolveDrawingMlTableCellInsets,
+  resolveDrawingMlTextRotation
+} from './layout.js';
 
 const UTIF = UTIFModule.default || UTIFModule;
 
@@ -1029,16 +1034,23 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
   var rotate = angleToDegrees(getTextByPathList(slideXfrmNode, [ "attrs", "rot" ]));
 
   //console.log("genShape rotate: " + rotate);
-  var txtRotate;
+  var bodyPrAttrs = getTextByPathList(node, [ "p:txBody", "a:bodyPr", "attrs" ]) || {};
+  var bodyRotation = angleToDegrees(bodyPrAttrs["rot"]);
+  var textTransformRotation;
   var txtXframeNode = getTextByPathList(node, [ "p:txXfrm" ]);
   if (txtXframeNode !== undefined) {
     var txtXframeRot = getTextByPathList(txtXframeNode, [ "attrs", "rot" ]);
     if (txtXframeRot !== undefined) {
-      txtRotate = angleToDegrees(txtXframeRot) + 90;
+      textTransformRotation = angleToDegrees(txtXframeRot);
     }
-  } else {
-    txtRotate = rotate;
   }
+  var txtRotate = resolveDrawingMlTextRotation({
+    shapeRotation: rotate,
+    textTransformRotation: textTransformRotation,
+    bodyRotation: bodyRotation,
+    direction: bodyPrAttrs["vert"],
+    upright: getTransformBool(bodyPrAttrs["upright"])
+  });
   //////////////////////////////////////////////////
   if (shapType !== undefined || custShapType !== undefined /*&& slideXfrmNode !== undefined*/) {
     var off = getTextByPathList(slideXfrmNode, [ "a:off", "attrs" ]) || { x: 0, y: 0 };
@@ -8910,7 +8922,10 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
     if (marginsVer != "") {
       styleText = marginsVer;
     }
-    if (type == "body" || type == "obj" || type == "shape") {
+    if (styleText.indexOf("line-height:") === -1) {
+      styleText += "line-height: " + DRAWINGML_SINGLE_LINE_HEIGHT + ";";
+    }
+    if (tbl_col_width !== undefined || type == "body" || type == "obj" || type == "shape") {
       styleText += "font-size: 0px;";
       //styleText += "line-height: 0;";
       styleText += "font-weight: 100;";
@@ -9006,7 +9021,14 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
       }
     }
     var prg_width = ((prg_width_px !== undefined && !isNaN(prg_width_px)) ? ("width:" + prg_width_px) + "px;" : "width:inherit;");
-    text += "<div style='height: 100%;direction: initial;overflow-wrap:normal;word-wrap:normal;word-break:normal;" + prg_width + margin + "' >";
+    var paragraphContentHeight = tbl_col_width !== undefined
+      ? "height:auto;min-height:0;max-height:100%;"
+      : "height:100%;";
+    var paragraphLineHeightMatch = /(?:^|;)line-height:\s*([^;]+)/.exec(styleText);
+    var paragraphLineHeight = paragraphLineHeightMatch !== null
+      ? paragraphLineHeightMatch[1]
+      : DRAWINGML_SINGLE_LINE_HEIGHT;
+    text += "<div style='" + paragraphContentHeight + "line-height:" + paragraphLineHeight + ";direction: initial;overflow-wrap:normal;word-wrap:normal;word-break:normal;" + prg_width + margin + "' >";
     text += prgrph_text;
     text += "</div>";
     text += "</div>";
@@ -10022,7 +10044,7 @@ async function genTable(node, warpObj, groupContext) {
     tbl_bgcolor = "background-color: #" + tbl_bgcolor + ";";
   }
   ////////////////////////////////////////////////////////////////////////////////////////////
-  var tableHtml = "<table " + tblDir + " style='border-collapse: collapse;" +
+  var tableHtml = "<table " + tblDir + " style='border-collapse:collapse;table-layout:fixed;box-sizing:border-box;overflow:hidden;" +
     getPosition(xfrmNode, node, undefined, undefined, "group", groupContext) +
     getSize(xfrmNode, undefined, undefined, groupContext) +
     " z-index: " + order + ";" +
@@ -10033,6 +10055,10 @@ async function genTable(node, warpObj, groupContext) {
   if (trNodes.constructor !== Array) {
     trNodes = [ trNodes ];
   }
+  var tableRowHeights = trNodes.map(function (rowNode) {
+    var height = parseInt(getTextByPathList(rowNode, [ "attrs", "h" ]));
+    return Number.isFinite(height) && height > 0 ? height * slideFactor : 0;
+  });
   //if (trNodes.constructor === Array) {
   //multi rows
   var totalrowSpan = 0;
@@ -10041,7 +10067,7 @@ async function genTable(node, warpObj, groupContext) {
     //////////////rows Style ////////////Amir
     var rowHeightParam = trNodes[i]["attrs"]["h"];
     var rowHeight = 0;
-    var rowsStyl = "";
+    var rowsStyl = "box-sizing:border-box;overflow:hidden;";
     if (rowHeightParam !== undefined) {
       rowHeight = parseInt(rowHeightParam) * slideFactor;
       rowsStyl += "height:" + rowHeight + "px;";
@@ -10266,7 +10292,7 @@ async function genTable(node, warpObj, groupContext) {
               }
             }
 
-            var cellParmAry = await getTableCellParams(tcNodes[j], getColsGrid, i, j, thisTblStyle, a_sorce, warpObj)
+            var cellParmAry = await getTableCellParams(tcNodes[j], getColsGrid, i, j, thisTblStyle, a_sorce, warpObj, tableRowHeights)
             var text = cellParmAry[0];
             var colStyl = cellParmAry[1];
             var cssName = cellParmAry[2];
@@ -10322,7 +10348,7 @@ async function genTable(node, warpObj, groupContext) {
         }
 
 
-        var cellParmAry = await getTableCellParams(tcNodes, getColsGrid, i, undefined, thisTblStyle, a_sorce, warpObj)
+        var cellParmAry = await getTableCellParams(tcNodes, getColsGrid, i, undefined, thisTblStyle, a_sorce, warpObj, tableRowHeights)
         var text = cellParmAry[0];
         var colStyl = cellParmAry[1];
         var cssName = cellParmAry[2];
@@ -10343,7 +10369,7 @@ async function genTable(node, warpObj, groupContext) {
   return tableHtml;
 }
 
-async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTblStyle, cellSource, warpObj) {
+async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTblStyle, cellSource, warpObj, tableRowHeights) {
   //thisTblStyle["a:band1V"] => thisTblStyle[cellSource]
   //text, cell-width, cell-borders,
   //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj);//tableStyles
@@ -10351,7 +10377,10 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
   var colSpan = getTextByPathList(tcNodes, [ "attrs", "gridSpan" ]);
   var vMerge = getTextByPathList(tcNodes, [ "attrs", "vMerge" ]);
   var hMerge = getTextByPathList(tcNodes, [ "attrs", "hMerge" ]);
-  var colStyl = "word-wrap: break-word;";
+  var cellInsets = resolveDrawingMlTableCellInsets(
+    getTextByPathList(tcNodes, [ "a:tcPr", "attrs" ]) || {}
+  );
+  var colStyl = "box-sizing:border-box;min-width:0;overflow:hidden;word-wrap:break-word;padding:0;";
   var colWidth;
   var celFillColor = "";
   var col_borders = "";
@@ -10376,6 +10405,23 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
 
 
   var text = await genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj, total_col_width);//tableStyles
+  var rowSpanCount = Number.isFinite(parseInt(rowSpan)) && parseInt(rowSpan) > 1
+    ? parseInt(rowSpan)
+    : 1;
+  var cellHeight = Array.isArray(tableRowHeights)
+    ? tableRowHeights.slice(row_idx, row_idx + rowSpanCount).reduce(function (total, height) {
+      return total + height;
+    }, 0)
+    : 0;
+  var cellHeightStyle = cellHeight > 0
+    ? "height:" + cellHeight + "px;min-height:0;max-height:" + cellHeight + "px;"
+    : "";
+  text = "<div class='pptx-table-cell-content' style='box-sizing:border-box;overflow:hidden;line-height:" + DRAWINGML_SINGLE_LINE_HEIGHT + ";" +
+    cellHeightStyle + "padding:" + cellInsets.top + "px " + cellInsets.right + "px " +
+    cellInsets.bottom + "px " + cellInsets.left + "px;'>" + text + "</div>";
+  if (cellHeight > 0) {
+    colStyl += "height:" + cellHeight + "px;";
+  }
 
   if (total_col_width != 0 /*&& row_idx == 0*/) {
     colWidth = parseInt(total_col_width) * slideFactor;

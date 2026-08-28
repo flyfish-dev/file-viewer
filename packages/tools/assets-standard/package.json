@@ -1,0 +1,56 @@
+{
+  "name": "@file-viewer/assets-standard",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Versioned self-hosted Worker, WASM, font, and vendor assets for the frozen File Viewer standard profile.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./cli": "./dist/cli.js",
+    "./viewer/*": "./viewer/*",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "file-viewer-assets-standard": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "viewer",
+    "README.md",
+    "README.en.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/assets-standard/dist/cli.js && node --test test/*.test.mjs",
+    "stage-assets": "node scripts/stage-assets.mjs",
+    "prepack": "pnpm stage-assets && tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/assets-standard/dist/cli.js",
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@file-viewer/asset-installer": "workspace:3.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/tools/assets-standard"
+  },
+  "license": "Apache-2.0"
+}

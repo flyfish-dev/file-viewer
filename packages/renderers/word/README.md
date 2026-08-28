@@ -1,6 +1,6 @@
 # @file-viewer/renderer-word
 
-Flyfish File Viewer 的独立 Word / 兼容文档 renderer 包。它承接 DOCX/DOCM/DOTX/DOTM、旧版 DOC/DOT、RTF、ODT/ODP 等文档预览链路，让 `@file-viewer/core` 不再直接安装 Word 解析与渲染依赖。
+Flyfish File Viewer 的 Word / OpenDocument renderer 包。standard/full 默认承接 DOCX/DOCM/DOTX/DOTM、旧版 DOC/DOT 与 ODT/ODP；RTF 由 `@file-viewer/capability-rtf` 显式启用。
 
 ## 用法
 
@@ -33,7 +33,7 @@ const options = {
 
 - DOCX / DOCM / DOTX / DOTM 使用自研 `@file-viewer/docx`，默认 Worker 解析、连续流式阅读、目录字段缓存、异步分批渲染，并跟随 viewer 主题启用暗黑文档面。
 - DOC / DOT 使用 `@file-viewer/doc`，并套用 Word 风格纸张阅读面、缩放、打印和 HTML 导出适配。
-- RTF 使用 `rtf.js`，ODT / ODP 读取 OpenDocument 包内 `content.xml` 做安全结构预览。
+- 安装 RTF capability 后才使用 `rtf.js`；未安装时会显示精确 CLI 启用命令。ODT / ODP 读取 OpenDocument 包内 `content.xml` 做安全结构预览。
 - 继续复用 core 的统一搜索、缩放、打印、导出、生命周期和操作能力。
 
 ## 离线资产
@@ -55,6 +55,10 @@ const options = {
 ```
 
 DOCX 暗黑渲染默认由 `options.theme` 决定：`dark` 开启、`light` 关闭、`system` 跟随浏览器系统主题。需要业务固定效果时可传 `options.docx.darkMode: true / false`。
+
+DOC、DOCX 与 RTF 的外部链接及 HTTP(S) 图片关系默认阻断。只有显式设置 `options.docx.externalLinkPolicy: 'allow'` 和 `options.docx.externalResourcePolicy: 'allow'` 才会启用；链接仍只接受 HTTP(S)、`mailto:`、`tel:` 和安全相对地址，未知协议与协议相对地址始终拒绝。内嵌图片、内部书签以及本地 `data:`/`blob:` 图片资源不受影响。
+
+标准 renderer 会在挂载前净化 `rtf.js` 产生的 DOM。自定义 RTF 集成若直接消费 HTML，应先调用 `sanitizeFileViewerRtfHtml(document, markup, options)`；该边界与标准挂载使用同一链接策略和 DOMPurify 配置。严格 Trusted Types CSP 需允许 `file-viewer-document-sanitizer` 策略名。
 
 ## 迁移说明
 

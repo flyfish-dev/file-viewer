@@ -6,6 +6,8 @@
   The 2.1.0 architecture lets teams choose minimal renderer imports, product-shaped presets, or the complete official demo capability set.
 </p>
 
+The additive v3 `standard` profile, CLI plan, measured closure budget, and full-cutover blockers are documented in [V3 Modular Profiles](/guide/v3-modular-profiles).
+
 ## Minimal Import
 
 For a PDF-only Vue 3 product:
@@ -51,9 +53,10 @@ The plugin reads the Vite major installed by the application. Vite 5–7 receive
 | Preset | Best for |
 | --- | --- |
 | `@file-viewer/preset-lite` | Text, code, Markdown, image, audio, and video attachments |
+| `@file-viewer/preset-standard` | Common Office/PDF/OFD/archive/email/text/media formats without specialist or legacy-heavy capabilities |
 | `@file-viewer/preset-office` | PDF, Word, spreadsheet, presentation, OFD, and OpenDocument workflows |
 | `@file-viewer/preset-engineering` | CAD, EDA, Typst, archives, email, data, 3D, geo, drawing, and mind maps |
-| `@file-viewer/preset-all` | Admin workbenches and demos that need every official renderer |
+| `@file-viewer/preset-all` | Admin workbenches that need the published compatibility renderer set; later specialist capabilities remain explicit |
 
 ## Renderer Package Reference
 
@@ -64,15 +67,18 @@ Install a single renderer when a product needs the smallest possible capability 
 | `@file-viewer/renderer-pdf` | `pdfRenderer` | PDF |
 | `@file-viewer/renderer-word` | `wordRenderer` | DOCX, DOC, DOT, RTF, ODT |
 | `@file-viewer/renderer-spreadsheet` | `spreadsheetRenderer` | Excel, OpenDocument spreadsheet, CSV-like tables |
-| `@file-viewer/renderer-presentation` | `presentationRenderer` | Binary `.ppt` through `@file-viewer/ppt`; OpenXML presentations through `@file-viewer/pptx` |
+| `@file-viewer/renderer-pptx` | `pptxRenderer` | Modern OpenXML PowerPoint without the legacy PPT runtime |
+| `@file-viewer/renderer-ppt` | `pptRenderer` | Optional legacy binary `.ppt` / `.pot` runtime |
+| `@file-viewer/renderer-presentation` | `presentationRenderer` | Compatibility aggregate for both PowerPoint families |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG, DXF, DWF, DWFx, XPS |
 | `@file-viewer/renderer-3d` | `modelRenderer` | 3D models and lightweight geometry signatures |
-| `@file-viewer/renderer-signature` | `signatureRenderer` | Explicit opt-in, experimental CMS/CAdES, timestamp, and public OpenPGP inspection; excluded from `preset-all` and `*-full` packages |
+| `@file-viewer/renderer-dicom` | `dicomRenderer` | Explicit opt-in local DICOM Part 10 single-file and multi-frame preview |
+| `@file-viewer/renderer-signature` | `signatureRenderer` | Explicit opt-in CMS/CAdES, timestamp, ASiC, evidence-record, JWS, and public OpenPGP inspection |
 
-Binary PowerPoint and OpenXML PowerPoint share the presentation plugin but keep separate lazy engine boundaries. The packaged `.ppt` 0.3.3 runtime is zero-config in standard layouts; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
+Binary PowerPoint and OpenXML PowerPoint now have separate npm renderer packages. The compatibility aggregate keeps the existing root and subpath APIs. The packaged `.ppt` 0.3.3 runtime is zero-config in layouts that explicitly install it; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
 
-Strict PPTX-only applications can import `pptxRenderer` from `@file-viewer/renderer-presentation/pptx`, or configure `fileViewerRenderers({ formats: ['pptx'] })`. Both paths exclude the classic `.ppt` font and WASM from the production output. The matching binary-only entry is `@file-viewer/renderer-presentation/ppt`.
+Strict PPTX-only applications should import `pptxRenderer` from `@file-viewer/renderer-pptx`, or configure `fileViewerRenderers({ formats: ['pptx'] })`. Both paths exclude the classic `.ppt` package, font, and WASM from the install and production closure. Existing `@file-viewer/renderer-presentation/pptx` imports remain compatible. The binary-only package is `@file-viewer/renderer-ppt`.
 
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io, Excalidraw, Mermaid, PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
@@ -88,8 +94,6 @@ Strict PPTX-only applications can import `pptxRenderer` from `@file-viewer/rende
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB, DRA, GDS, OAS/OASIS |
 
 Engine packages such as `@file-viewer/pptx`, `@file-viewer/geometry-engine`, `@file-viewer/eda-layout`, and `@file-viewer/eda-orcad` are maintained for renderer internals and advanced reuse. Normal viewer integrations should use the renderer or preset package above.
-
-Install `@file-viewer/renderer-signature` directly and pass `signatureRenderer` in `options.renderers`. Its optional Rust/WASM toolchain and cryptographic scope are deliberately not pulled into existing Full installs.
 
 ## Automatic Preset Assembly
 

@@ -44,6 +44,10 @@ pub struct SignatureSummary {
     pub expires_at: Option<String>,
     pub issuer_key_ids: Vec<String>,
     pub issuer_fingerprints: Vec<String>,
+    pub cryptographic_valid: Option<bool>,
+    pub verification_key_fingerprint: Option<String>,
+    pub verification_key_id: Option<String>,
+    pub verification_error: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -65,6 +69,8 @@ pub struct InspectionResult {
     pub packet_count: usize,
     pub encrypted: bool,
     pub integrity_protected: Option<bool>,
+    pub symmetric_algorithm: Option<String>,
+    pub aead_mode: Option<String>,
     pub compressed: bool,
     pub keys: Vec<KeySummary>,
     pub signatures: Vec<SignatureSummary>,

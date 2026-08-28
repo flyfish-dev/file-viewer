@@ -41,11 +41,11 @@ description: "快速排查 File Viewer 组件选型、Full 包资源、Worker/WA
 
 不要单独安装另一个版本的 `preset-all` 或复制工具，否则容易出现 API、Worker 和 WASM 版本不一致。
 
-## 如何确认 DOCX 0.3.27 修复已经生效
+## 如何确认 DOCX 0.3.28 修复已经生效
 
-当前 Word renderer 的主线程和离线 Worker 均使用 `@file-viewer/docx@0.3.27`。它包含 0.3.26 的日文文字、VML 文本框、Apache POI `w:hMerge` 与多分节浮动图形修复，并补充了 #202 复杂文档所需的框架、分节和定位页面修复。
+当前 Word renderer 的主线程和离线 Worker 均使用 `@file-viewer/docx@0.3.28`。它包含日文文字、VML 文本框、Apache POI `w:hMerge`、多分节浮动图形、复杂框架和定位页面修复，并默认阻断文档中的外部资源。
 
-升级后需要重新发布同版本 viewer assets，并在浏览器网络面板确认 `vendor/docx/docx.worker.js?file-viewer-docx=0.3.27`（可能位于自定义 `file-viewer/` 基址下）真实返回 JavaScript。不要混用旧版本 Worker；如果仍看到旧布局，请清理 CDN 或 Service Worker 缓存后重新加载文档。
+升级后需要重新发布同版本 viewer assets，并在浏览器网络面板确认 `vendor/docx/docx.worker.js?file-viewer-docx=0.3.28`（可能位于自定义 `file-viewer/` 基址下）真实返回 JavaScript。不要混用旧版本 Worker；如果仍看到旧布局，请清理 CDN 或 Service Worker 缓存后重新加载文档。
 
 ## npm 11 安装时报 `Cannot read properties of null (reading 'matches')`
 
@@ -162,7 +162,7 @@ const file = new File([blobOrBuffer], 'report.xlsx')
 
 ## Excalidraw 和 draw.io 是怎么预览的
 
-`.excalidraw` 默认走 `roughjs` 只读 SVG 预览，运行环境已提供官方 `@excalidraw/excalidraw` ESM 模块时会优先尝试 `exportToSvg`；`.drawio` / `.dio` 默认使用随 viewer assets 分发的官方 diagrams.net `GraphViewer` 离线预览。项目会在加载 `vendor/drawio/viewer-static.min.js` 前，把 styles、shapes、stencils、img、mxgraph 和 math 路径全部指向本地 `vendor/drawio/`，不会访问 diagrams.net 公网脚本或公共 CDN。官方 viewer 加载失败、超时，或显式设置 `options.drawing.preferOfficial = false` 时，才会回退到内置 SVG 安全预览。
+`.excalidraw` 默认走 `roughjs` 只读 SVG 预览，运行环境已提供官方 `@excalidraw/excalidraw` ESM 模块时会优先尝试 `exportToSvg`；`.drawio` / `.dio` 默认走不执行文档 HTML 的内置 SVG 安全预览。只有显式设置 `options.drawing.preferOfficial = true` 时才在无 same-origin 权限、带严格 CSP 的 iframe 中加载单独分发的 diagrams.net `GraphViewer`；该能力的 styles、shapes、stencils、img、mxgraph 和 math 路径全部指向同源本地资源，不访问公共 CDN，加载失败或超时仍会回退到内置 SVG。
 
 diagrams.net 官方仓库没有维护最新 npm viewer 包；官方文档推荐的离线集成方式就是复制仓库里的 `viewer-static.min.js` 自托管。项目内置的是官方 `v30.2.5` release 的 viewer 文件和配套资源，不使用已经滞后的第三方 `drawio-offline` 包。
 

@@ -5,9 +5,9 @@ import {
   readFileViewerText,
   resolveFileViewerDrawioViewerScriptUrl,
   resolveFileViewerRuntimeAssetBaseUrl,
-  waitForFileViewerNextPaint,
   unregisterFileViewerZoomProvider,
 } from '@file-viewer/core';
+import { isFileViewerDrawioOfficialViewerEnabled } from './optionalCapabilities.js';
 import type {
   FileRenderContext,
   FileViewerDrawingOptions,
@@ -15,15 +15,6 @@ import type {
   FileViewerZoomState,
 } from '@file-viewer/core';
 import type { DiagramController } from './diagram.js';
-
-declare global {
-  interface Window {
-    GraphViewer?: {
-      createViewerForElement: (element: HTMLElement, callback?: (viewer: unknown) => void) => unknown;
-      processElements: (className?: string) => void;
-    };
-  }
-}
 
 type DrawingStatus = 'loading' | 'ready' | 'error';
 type DrawingKind = 'excalidraw' | 'drawio' | 'mermaid' | 'plantuml';
@@ -34,8 +25,6 @@ type DrawingTranslator = ReturnType<typeof createFileViewerTranslator>;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const EXCALIDRAW_OFFICIAL_TIMEOUT = 6000;
 const DRAWIO_OFFICIAL_TIMEOUT = 6000;
-
-const diagramsViewerPromises = new WeakMap<Document, Map<string, Promise<void>>>();
 
 const drawingStyle = `
 .drawing-viewer{display:flex;height:100%;min-height:360px;flex-direction:column;background:#edf2f7;color:#172033}
@@ -51,7 +40,7 @@ const drawingStyle = `
 .drawing-scroll{height:100%;overflow:auto;padding:22px}
 .drawing-canvas{width:100%;min-height:420px;transition:transform .18s ease,zoom .18s ease}
 .drawing-canvas .drawing-svg,.drawing-canvas svg{display:block;max-width:100%;height:auto;margin:0 auto;border-radius:10px;background:#fff;box-shadow:0 18px 42px rgba(15,23,42,.12)}
-.drawing-canvas .drawing-mxgraph{min-height:420px;overflow:hidden;border-radius:10px;background:#fff;box-shadow:0 18px 42px rgba(15,23,42,.12)}
+.drawing-canvas .drawing-mxgraph{display:block;width:100%;min-height:420px;overflow:hidden;border:0;border-radius:10px;background:#fff;box-shadow:0 18px 42px rgba(15,23,42,.12)}
 .drawing-diagram-shell{display:flex;min-height:100%;align-items:center;justify-content:center;overflow:hidden;border-radius:10px;background:linear-gradient(135deg,#f8fafc,#eef6f4);box-shadow:0 18px 42px rgba(15,23,42,.12)}
 .drawing-diagram-pan{display:inline-flex;min-width:240px;min-height:180px;align-items:center;justify-content:center;padding:32px;cursor:grab;touch-action:none}
 .drawing-diagram-pan:active{cursor:grabbing}
@@ -138,97 +127,107 @@ const resolveDirectoryUrl = (url: string) => {
   }
 };
 
-const configureOfflineDiagramsViewerAssets = (documentRef: Document, scriptUrl: string) => {
-  const ownerWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : undefined);
-  if (!ownerWindow) {
-    return;
-  }
+const escapeHtmlAttribute = (value: string) => value
+  .replace(/&/g, '&amp;')
+  .replace(/"/g, '&quot;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
 
-  const viewerWindow = ownerWindow as unknown as Window & Record<string, unknown>;
-  const baseUrl = resolveDirectoryUrl(scriptUrl);
-  const setDefault = (key: string, value: unknown) => {
-    if (viewerWindow[key] === undefined || viewerWindow[key] === '') {
-      viewerWindow[key] = value;
-    }
+const createDrawioSandboxNonce = (ownerWindow: Window) => {
+  const bytes = new Uint8Array(18);
+  ownerWindow.crypto.getRandomValues(bytes);
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+};
+
+const resolveSafeDrawioViewerScript = (documentRef: Document, scriptUrl: string) => {
+  const resolved = new URL(scriptUrl, documentRef.baseURI);
+  const documentUrl = new URL(documentRef.baseURI);
+  if (!/^https?:$/.test(resolved.protocol) || resolved.origin !== documentUrl.origin) {
+    throw new Error('The diagrams.net viewer script must use a same-origin HTTP(S) URL.');
+  }
+  return resolved;
+};
+
+const buildDrawioSandboxDocument = (
+  xml: string,
+  scriptUrl: URL,
+  nonce: string,
+  channel: string
+) => {
+  const baseUrl = resolveDirectoryUrl(scriptUrl.href);
+  const assetRoot = baseUrl.replace(/\/$/, '');
+  const runtimeConfig = {
+    PROXY_URL: `${baseUrl}proxy`,
+    STYLE_PATH: `${baseUrl}styles`,
+    SHAPES_PATH: `${baseUrl}shapes`,
+    STENCIL_PATH: `${baseUrl}stencils`,
+    DRAW_MATH_URL: `${baseUrl}math4/es5`,
+    GRAPH_IMAGE_PATH: `${baseUrl}img`,
+    mxImageBasePath: `${baseUrl}mxgraph/images`,
+    mxBasePath: `${baseUrl}mxgraph/`,
+    mxLoadStylesheets: false,
+    DRAWIO_BASE_URL: assetRoot,
+    DRAWIO_LIGHTBOX_URL: assetRoot,
+    DRAWIO_SERVER_URL: baseUrl,
+    DRAWIO_VIEWER_URL: scriptUrl.href,
+    DRAWIO_LOG_URL: '',
+    EXPORT_URL: `${baseUrl}export`,
+    PLANT_URL: `${baseUrl}plant`,
+    VSS_CONVERT_URL: `${baseUrl}VsdConverter/api/converter`,
+    DRAWIO_GITLAB_URL: baseUrl,
+    DRAWIO_GITHUB_URL: baseUrl,
+    DRAWIO_GITHUB_API_URL: baseUrl,
+    RT_WEBSOCKET_URL: `${baseUrl}rt`,
+    NOTIFICATIONS_URL: `${baseUrl}notifications`,
   };
-
-  // viewer-static.min.js still contains public diagrams.net defaults. Setting
-  // these before the script executes keeps every secondary asset on the same
-  // self-hosted directory as the viewer script.
-  setDefault('PROXY_URL', `${baseUrl}proxy`);
-  setDefault('STYLE_PATH', `${baseUrl}styles`);
-  setDefault('SHAPES_PATH', `${baseUrl}shapes`);
-  setDefault('STENCIL_PATH', `${baseUrl}stencils`);
-  setDefault('DRAW_MATH_URL', `${baseUrl}math4/es5`);
-  setDefault('GRAPH_IMAGE_PATH', `${baseUrl}img`);
-  setDefault('mxImageBasePath', `${baseUrl}mxgraph/images`);
-  setDefault('mxBasePath', `${baseUrl}mxgraph/`);
-  setDefault('mxLoadStylesheets', false);
-  setDefault('DRAWIO_BASE_URL', baseUrl.replace(/\/$/, ''));
-  setDefault('DRAWIO_LIGHTBOX_URL', baseUrl.replace(/\/$/, ''));
-  setDefault('DRAWIO_SERVER_URL', baseUrl);
-  setDefault('DRAWIO_VIEWER_URL', `${baseUrl}viewer-static.min.js`);
-  setDefault('DRAWIO_LOG_URL', '');
-  setDefault('EXPORT_URL', `${baseUrl}export`);
-  setDefault('PLANT_URL', `${baseUrl}plant`);
-  setDefault('VSS_CONVERT_URL', `${baseUrl}VsdConverter/api/converter`);
-  setDefault('DRAWIO_GITLAB_URL', baseUrl);
-  setDefault('DRAWIO_GITHUB_URL', baseUrl);
-  setDefault('DRAWIO_GITHUB_API_URL', baseUrl);
-  setDefault('RT_WEBSOCKET_URL', `${baseUrl}rt`);
-  setDefault('NOTIFICATIONS_URL', `${baseUrl}notifications`);
-};
-
-const getDiagramsViewerPromiseMap = (documentRef: Document) => {
-  let promiseMap = diagramsViewerPromises.get(documentRef);
-  if (!promiseMap) {
-    promiseMap = new Map<string, Promise<void>>();
-    diagramsViewerPromises.set(documentRef, promiseMap);
-  }
-  return promiseMap;
-};
-
-const deleteDiagramsViewerPromise = (documentRef: Document, scriptUrl: string) => {
-  const promiseMap = diagramsViewerPromises.get(documentRef);
-  promiseMap?.delete(scriptUrl);
-  if (promiseMap && promiseMap.size === 0) {
-    diagramsViewerPromises.delete(documentRef);
-  }
-};
-
-const loadDiagramsViewer = (documentRef: Document, scriptUrl: string, t: DrawingTranslator) => {
-  const ownerWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : undefined);
-  if (ownerWindow?.GraphViewer) {
-    return Promise.resolve();
-  }
-
-  configureOfflineDiagramsViewerAssets(documentRef, scriptUrl);
-
-  const promiseMap = getDiagramsViewerPromiseMap(documentRef);
-  const existingPromise = promiseMap.get(scriptUrl);
-  if (existingPromise) {
-    return existingPromise;
-  }
-
-  const nextPromise = new Promise<void>((resolve, reject) => {
-    const existed = Array.from(documentRef.querySelectorAll<HTMLScriptElement>('script[src]'))
-      .find(script => script.src === scriptUrl);
-    if (existed) {
-      existed.addEventListener('load', () => resolve(), { once: true });
-      existed.addEventListener('error', () => reject(new Error(t('drawing.error.viewerLoadFailed'))), { once: true });
-      return;
-    }
-
-    const script = documentRef.createElement('script');
-    script.src = scriptUrl;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(t('drawing.error.viewerLoadFailed')));
-    documentRef.head.appendChild(script);
-  });
-
-  promiseMap.set(scriptUrl, nextPromise);
-  return nextPromise;
+  const graphConfig = {
+    xml,
+    toolbar: 'zoom layers lightbox',
+    nav: true,
+    resize: true,
+    'auto-fit': true,
+    'auto-crop': true,
+    'auto-origin': true,
+    'allow-zoom-in': true,
+    'allow-zoom-out': true,
+    border: 16,
+    highlight: '#0f766e',
+  };
+  const csp = [
+    "default-src 'none'",
+    `script-src 'nonce-${nonce}' ${baseUrl}`,
+    `style-src 'unsafe-inline' ${baseUrl}`,
+    `img-src data: blob: ${baseUrl}`,
+    `font-src data: ${baseUrl}`,
+    "media-src data: blob:",
+    "connect-src 'none'",
+    "object-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'",
+  ].join('; ');
+  const bootstrap = `
+    Object.assign(window, ${JSON.stringify(runtimeConfig)});
+    window.__fileViewerDrawioSentinel = 0;
+    window.onDrawioViewerLoad = function () {
+      try {
+        GraphViewer.createViewerForElement(document.getElementById('graph'));
+        parent.postMessage({ fileViewerDrawio: ${JSON.stringify(channel)}, ok: true }, '*');
+      } catch (error) {
+        parent.postMessage({ fileViewerDrawio: ${JSON.stringify(channel)}, ok: false, message: String(error && error.message || error) }, '*');
+      }
+    };
+  `;
+  return `<!doctype html>
+<html><head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="${escapeHtmlAttribute(csp)}">
+  <meta name="referrer" content="no-referrer">
+  <style>html,body{margin:0;min-height:100%;background:#fff}#graph{max-width:100%;min-height:420px;border:1px solid transparent}</style>
+  <script nonce="${nonce}">${bootstrap}</script>
+</head><body>
+  <div id="graph" class="mxgraph" data-mxgraph="${escapeHtmlAttribute(JSON.stringify(graphConfig))}"></div>
+  <script src="${escapeHtmlAttribute(scriptUrl.href)}"></script>
+</body></html>`;
 };
 
 const runWithTimeout = async <T>(task: Promise<T>, timeout: number, message: string) => {
@@ -635,18 +634,188 @@ const parseDrawioGeometry = (cell: Element) => {
   };
 };
 
-const normalizeDrawioText = (documentRef: Document, value: string | null) => {
+const decodeDrawioEntities = (documentRef: Document, value: string) => {
+  const Parser = documentRef.defaultView?.DOMParser || globalThis.DOMParser;
+  if (!Parser) {
+    return value;
+  }
+  // Escaping every literal '<' means document input can only become a text
+  // node in this inert parser. Named and numeric HTML entities still decode
+  // according to the browser's complete entity table.
+  const parsed = new Parser().parseFromString(value.replace(/</g, '&lt;'), 'text/html');
+  return parsed.documentElement.textContent || '';
+};
+
+const stripDrawioMarkup = (value: string) => {
+  let output = '';
+  let cursor = 0;
+  while (cursor < value.length) {
+    if (value[cursor] !== '<') {
+      output += value[cursor];
+      cursor += 1;
+      continue;
+    }
+
+    let quote = '';
+    let end = cursor + 1;
+    for (; end < value.length; end += 1) {
+      const character = value[end]!;
+      if (quote) {
+        if (character === quote) {
+          quote = '';
+        }
+        continue;
+      }
+      if (character === '"' || character === "'") {
+        quote = character;
+        continue;
+      }
+      if (character === '>') {
+        break;
+      }
+    }
+    if (end >= value.length) {
+      output += '<';
+      cursor += 1;
+      continue;
+    }
+
+    const tag = value.slice(cursor + 1, end).trim().toLowerCase();
+    if (/^\/?br(?:\s|\/|$)/.test(tag)) {
+      output += '\n';
+    }
+    cursor = end + 1;
+  }
+  return output;
+};
+
+export const normalizeDrawioText = (documentRef: Document, value: string | null) => {
   if (!value) {
     return '';
   }
-  const helper = documentRef.createElement('textarea');
-  helper.innerHTML = value;
-  return helper.value
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
+  return stripDrawioMarkup(decodeDrawioEntities(documentRef, value))
     .replace(/\u00a0/g, ' ')
     .replace(/[ \t]+/g, ' ')
     .trim();
+};
+
+const DRAWIO_FORBIDDEN_ELEMENTS = new Set([
+  'script',
+  'style',
+  'foreignobject',
+  'iframe',
+  'object',
+  'embed',
+  'form',
+  'link',
+]);
+const DRAWIO_RESOURCE_ATTRIBUTES = new Set([
+  'href',
+  'xlink:href',
+  'url',
+  'link',
+  'image',
+  'icon',
+  'src',
+  'srcset',
+]);
+
+const isControlCharacter = (character: string) => {
+  const codePoint = character.charCodeAt(0);
+  return codePoint <= 0x1f || (codePoint >= 0x7f && codePoint <= 0x9f);
+};
+
+const stripControlCharacters = (value: string, replacement = '') => {
+  let normalized = '';
+  for (const character of value) {
+    normalized += isControlCharacter(character) ? replacement : character;
+  }
+  return normalized;
+};
+
+const containsDrawioActiveResource = (value: string) => {
+  const canonical = stripControlCharacters(value)
+    .replace(/\s+/g, '')
+    .toLowerCase();
+  return /(?:javascript|vbscript|data|file|blob|https?):|(?:^|[=("'])\/\/|\\\\/.test(canonical);
+};
+
+const sanitizeOfficialDrawioStyle = (value: string) => {
+  const safeEntries: string[] = [];
+  for (const [rawKey, rawValue] of parseDrawioStyle(value)) {
+    const key = rawKey.trim();
+    const styleValue = rawValue.trim();
+    if (!/^[A-Za-z][A-Za-z0-9_.-]*$/.test(key)) continue;
+    if (/(?:html|image|icon|link|href|url)/i.test(key)) continue;
+    if (containsDrawioActiveResource(styleValue)) continue;
+    if ([...styleValue].some(isControlCharacter) || /[<>"'`\\]/.test(styleValue) || /url\s*\(/i.test(styleValue)) continue;
+    safeEntries.push(`${key}=${styleValue}`);
+  }
+  safeEntries.push('html=0');
+  return `${safeEntries.join(';')};`;
+};
+
+const sanitizeOfficialDrawioText = (documentRef: Document, value: string) => {
+  return normalizeDrawioText(documentRef, value)
+    .replace(/[<>&"'`]/g, ' ')
+    .split('')
+    .map(character => isControlCharacter(character) ? ' ' : character)
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
+/**
+ * diagrams.net is a large third-party runtime. Its same-document renderer may
+ * interpret cell labels and style resource keys as HTML or URLs, so sanitize
+ * the direct mxGraphModel before it reaches that runtime. Compressed/opaque
+ * models fail closed here and use the inert fallback instead.
+ */
+export const sanitizeOfficialDrawioXml = (
+  documentRef: Document,
+  value: string,
+  invalidMessage = 'This Draw.io file has no safely renderable mxGraphModel.'
+) => {
+  if (/<!\s*(?:doctype|entity)\b/i.test(value)) throw new Error(invalidMessage);
+  const Parser = documentRef.defaultView?.DOMParser || globalThis.DOMParser;
+  const Serializer = documentRef.defaultView?.XMLSerializer || globalThis.XMLSerializer;
+  if (!Parser || !Serializer) throw new Error(invalidMessage);
+  const parsed = new Parser().parseFromString(value, 'application/xml');
+  if (parsed.querySelector('parsererror') || !parsed.querySelector('mxGraphModel')) {
+    throw new Error(invalidMessage);
+  }
+
+  for (const element of Array.from(parsed.querySelectorAll('*'))) {
+    const localName = element.localName.toLowerCase();
+    if (DRAWIO_FORBIDDEN_ELEMENTS.has(localName)) {
+      element.remove();
+      continue;
+    }
+    for (const attribute of Array.from(element.attributes)) {
+      const name = attribute.name.toLowerCase();
+      if (name.startsWith('on') || DRAWIO_RESOURCE_ATTRIBUTES.has(name)) {
+        element.removeAttribute(attribute.name);
+        continue;
+      }
+      if (name === 'style') {
+        element.setAttribute(attribute.name, sanitizeOfficialDrawioStyle(attribute.value));
+        continue;
+      }
+      if (name === 'value' || name === 'label' || name === 'tooltip' || name === 'title') {
+        element.setAttribute(attribute.name, sanitizeOfficialDrawioText(documentRef, attribute.value));
+        continue;
+      }
+      if (containsDrawioActiveResource(attribute.value)) {
+        element.removeAttribute(attribute.name);
+        continue;
+      }
+      const normalized = stripControlCharacters(attribute.value)
+        .replace(/[<>&"'`]/g, '')
+        .trim();
+      element.setAttribute(attribute.name, normalized);
+    }
+  }
+  return new Serializer().serializeToString(parsed);
 };
 
 const appendDrawioWrappedText = (
@@ -902,30 +1071,42 @@ const renderOfficialDrawio = async (
   t: DrawingTranslator
 ) => {
   const ownerWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : undefined);
-  await loadDiagramsViewer(documentRef, scriptUrl, t);
-  await waitForFileViewerNextPaint(ownerWindow);
-
-  const host = createElement(documentRef, 'div', 'mxgraph drawing-mxgraph');
-  host.setAttribute('data-mxgraph', JSON.stringify({
-    xml: text,
-    toolbar: 'zoom layers lightbox',
-    nav: true,
-    resize: true,
-    'auto-fit': true,
-    'auto-crop': true,
-    'auto-origin': true,
-    'allow-zoom-in': true,
-    'allow-zoom-out': true,
-    border: 16,
-    highlight: '#0f766e',
-  }));
-  target.appendChild(host);
-
-  if (!ownerWindow?.GraphViewer) {
+  if (!ownerWindow) {
     throw new Error(t('drawing.error.viewerInitFailed'));
   }
+  const resolvedScriptUrl = resolveSafeDrawioViewerScript(documentRef, scriptUrl);
+  const sanitizedText = sanitizeOfficialDrawioXml(documentRef, text, t('drawing.error.drawioNoModel'));
+  const nonce = createDrawioSandboxNonce(ownerWindow);
+  const channel = `file-viewer-drawio-${nonce}`;
+  const frame = createElement(documentRef, 'iframe', 'drawing-mxgraph');
+  frame.title = 'diagrams.net preview';
+  frame.referrerPolicy = 'no-referrer';
+  frame.sandbox.add('allow-scripts');
+  frame.srcdoc = buildDrawioSandboxDocument(sanitizedText, resolvedScriptUrl, nonce, channel);
 
-  ownerWindow.GraphViewer.createViewerForElement(host);
+  await new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => fail(t('drawing.error.drawioTimeout')), DRAWIO_OFFICIAL_TIMEOUT);
+    const cleanup = () => {
+      ownerWindow.removeEventListener('message', onMessage);
+      clearTimeout(timer);
+    };
+    const fail = (message: string) => {
+      cleanup();
+      reject(new Error(message));
+    };
+    const onMessage = (event: MessageEvent) => {
+      if (event.source !== frame.contentWindow || event.data?.fileViewerDrawio !== channel) return;
+      if (event.data?.ok === true) {
+        cleanup();
+        resolve();
+      } else {
+        fail(event.data?.message || t('drawing.error.viewerInitFailed'));
+      }
+    };
+    ownerWindow.addEventListener('message', onMessage);
+    frame.addEventListener('error', () => fail(t('drawing.error.viewerLoadFailed')), { once: true });
+    target.appendChild(frame);
+  });
   markRendered(target, 'official');
 };
 
@@ -936,21 +1117,17 @@ const renderDrawio = async (
   options: FileViewerDrawingOptions | undefined,
   t: DrawingTranslator
 ) => {
-  if (options?.preferOfficial === false) {
+  const preferOfficial = options?.preferOfficial ?? isFileViewerDrawioOfficialViewerEnabled();
+  if (!preferOfficial) {
     renderDrawioFallback(documentRef, text, target, t);
     return;
   }
   const scriptUrl = resolveDrawingViewerScriptUrl(options, documentRef);
 
   try {
-    await runWithTimeout(
-      renderOfficialDrawio(documentRef, text, target, scriptUrl, t),
-      DRAWIO_OFFICIAL_TIMEOUT,
-      t('drawing.error.drawioTimeout')
-    );
+    await renderOfficialDrawio(documentRef, text, target, scriptUrl, t);
   } catch (error) {
     console.warn(error);
-    deleteDiagramsViewerPromise(documentRef, scriptUrl);
     delete target.dataset.drawingRendered;
     target.replaceChildren();
     renderDrawioFallback(documentRef, text, target, t);

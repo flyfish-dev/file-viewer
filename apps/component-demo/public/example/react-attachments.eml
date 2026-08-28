@@ -1,0 +1,29 @@
+From: File Viewer Smoke <viewer@example.invalid>
+To: Integration Test <test@example.invalid>
+Subject: React EML attachment lifecycle fixture
+Date: Thu, 27 Aug 2026 09:00:00 +0800
+MIME-Version: 1.0
+Message-ID: <react-email-smoke-initial@example.invalid>
+Content-Type: multipart/mixed; boundary="file-viewer-react-email"
+
+--file-viewer-react-email
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+
+Fixed synthetic fixture for the four React component packages.
+
+--file-viewer-react-email
+Content-Type: application/pdf; name="contract.pdf"
+Content-Disposition: attachment; filename="contract.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCAzMDAgMTgwXSAvUmVzb3VyY2VzIDw8IC9Gb250IDw8IC9GMSA0IDAgUiA+PiA+PiAvQ29udGVudHMgNSAwIFIgPj4KZW5kb2JqCjQgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhID4+CmVuZG9iago1IDAgb2JqCjw8IC9MZW5ndGggNTggPj4Kc3RyZWFtCkJUIC9GMSAxOCBUZiAzNiAxMDAgVGQgKFNhZmUgUERGIGF0dGFjaG1lbnQpIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMDAwNTggMDAwMDAgbiAKMDAwMDAwMDExNSAwMDAwMCBuIAowMDAwMDAwMjQxIDAwMDAwIG4gCjAwMDAwMDAzMTEgMDAwMDAgbiAKdHJhaWxlcgo8PCAvU2l6ZSA2IC9Sb290IDEgMCBSID4+CnN0YXJ0eHJlZgo0MTEKJSVFT0YK
+
+--file-viewer-react-email
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: attachment; filename*=UTF-8''evil%22%3E%3Cimg%20src%3Dx%20onerror%3DglobalThis.__reactEmailInjected%3D1%3E.txt
+Content-Transfer-Encoding: base64
+
+c2FmZSB0ZXh0IGF0dGFjaG1lbnQgZm9yIHRoZSBSZWFjdCBwcm9kdWN0aW9uIHNtb2tl
+
+--file-viewer-react-email--

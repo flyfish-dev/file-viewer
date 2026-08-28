@@ -1,9 +1,9 @@
 {
   "name": "@file-viewer/renderer-media",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
-  "description": "Standalone audio and video renderer plugin for File Viewer with native media playback, HLS fallback, MIDI parsing, and offline-friendly lazy loading.",
+  "description": "Standalone native audio and video renderer for File Viewer; HLS fallback and MIDI inspection are explicit opt-in capabilities.",
   "keywords": [
     "file-viewer",
     "renderer",
@@ -50,6 +50,7 @@
   },
   "files": [
     "dist",
+    "file-viewer.capability.json",
     "README.md",
     "README.en.md",
     "LICENSE"
@@ -59,16 +60,19 @@
     "type-check": "tsc -b tsconfig.json",
     "build:mp4v-decoder": "node scripts/build-mp4v-decoder.mjs",
     "verify:mp4v-boundary": "node scripts/verify-mp4v-boundary.mjs",
-    "verify:mp4v-demo-dist": "npm exec --yes --package playwright -- node scripts/verify-mp4v-demo-dist.mjs",
-    "verify:mp4v-black-screen": "pnpm build && pnpm verify:mp4v-boundary && npm exec --yes --package playwright -- node scripts/verify-mp4v-black-screen.mjs"
+    "verify:mp4v-demo-dist": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-mp4v-demo-dist.mjs",
+    "verify:mp4v-black-screen": "pnpm build && pnpm verify:mp4v-boundary && npm exec --yes --package playwright@1.61.1 -- node scripts/verify-mp4v-black-screen.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0",
-    "@tonejs/midi": "^2.0.28",
-    "hls.js": "^1.6.16"
+    "@file-viewer/core": "workspace:3.0.0"
   },
   "devDependencies": {
+    "@tonejs/midi": "^2.0.28",
+    "hls.js": "^1.6.16",
     "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
   },
   "license": "Apache-2.0"
 }

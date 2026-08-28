@@ -51,7 +51,126 @@ const readOptions = {
   cellStyles: true,
   browserPixels: true,
   drawings: true,
-  validateMerges: true,
+};
+
+interface SpreadsheetMergePoint {
+  r?: number;
+  c?: number;
+}
+
+interface SpreadsheetMergeRange {
+  s?: SpreadsheetMergePoint;
+  e?: SpreadsheetMergePoint;
+}
+
+interface SpreadsheetMergeError {
+  code?: string;
+  index?: number;
+}
+
+interface WorksheetWithMergeDiagnostics {
+  '!ref'?: string;
+  '!merges'?: SpreadsheetMergeRange[];
+  '!mergeErrors'?: SpreadsheetMergeError[];
+}
+
+const isMergeValidationError = (error: unknown): error is Error & { code: string } => (
+  error instanceof Error
+  && typeof (error as Error & { code?: unknown }).code === 'string'
+  && /^E_MERGE_/.test((error as Error & { code: string }).code)
+);
+
+const sanitizeToleratedMerges = (workbook: WorkBook) => {
+  for (const name of workbook.SheetNames || []) {
+    const worksheet = workbook.Sheets[name] as WorksheetWithMergeDiagnostics | undefined;
+    const merges = worksheet?.['!merges'];
+    const errors = worksheet?.['!mergeErrors'];
+    if (!worksheet || !merges?.length || !errors?.length) continue;
+
+    let worksheetRange: ReturnType<typeof utils.decode_range> | undefined;
+    try {
+      worksheetRange = worksheet['!ref'] ? utils.decode_range(worksheet['!ref']) : undefined;
+    } catch {
+      worksheetRange = undefined;
+    }
+
+    const errorsByIndex = new Map<number, Set<string>>();
+    for (const error of errors) {
+      const index = error.index;
+      if (!Number.isInteger(index) || typeof index !== 'number' || typeof error.code !== 'string') continue;
+      const codes = errorsByIndex.get(index) || new Set<string>();
+      codes.add(error.code);
+      errorsByIndex.set(index, codes);
+    }
+
+    worksheet['!merges'] = merges.flatMap((merge, index) => {
+      const codes = errorsByIndex.get(index);
+      const startRow = Number(merge.s?.r);
+      const startCol = Number(merge.s?.c);
+      let endRow = Number(merge.e?.r);
+      let endCol = Number(merge.e?.c);
+      if (
+        !Number.isInteger(startRow)
+        || !Number.isInteger(startCol)
+        || !Number.isInteger(endRow)
+        || !Number.isInteger(endCol)
+        || startRow < 0
+        || startCol < 0
+        || endRow < startRow
+        || endCol < startCol
+        || codes?.has('E_MERGE_RANGE')
+        || codes?.has('E_MERGE_DUP')
+        || codes?.has('E_MERGE_OVERLAP')
+      ) {
+        return [];
+      }
+
+      if (codes?.has('E_MERGE_BOUNDS')) {
+        if (
+          !worksheetRange
+          || startRow < worksheetRange.s.r
+          || startCol < worksheetRange.s.c
+          || startRow > worksheetRange.e.r
+          || startCol > worksheetRange.e.c
+        ) {
+          return [];
+        }
+        endRow = Math.min(endRow, worksheetRange.e.r);
+        endCol = Math.min(endCol, worksheetRange.e.c);
+      }
+
+      return [{
+        ...merge,
+        s: { ...merge.s, r: startRow, c: startCol },
+        e: { ...merge.e, r: endRow, c: endCol },
+      }];
+    });
+  }
+};
+
+const readPreparedWorkbook = (
+  input: ReturnType<typeof prepareSpreadsheetReadInput>,
+  validateMerges: boolean
+) => (
+  input.kind === 'text'
+    ? read(input.data, { ...readOptions, type: 'string', validateMerges })
+    : read(input.data, { ...readOptions, validateMerges })
+);
+
+const readWorkbookWithMergeRecovery = (
+  input: ReturnType<typeof prepareSpreadsheetReadInput>
+) => {
+  try {
+    return readPreparedWorkbook(input, true);
+  } catch (error) {
+    if (!isMergeValidationError(error)) throw error;
+    const workbook = readPreparedWorkbook(input, false);
+    sanitizeToleratedMerges(workbook);
+    console.warn(
+      `[file-viewer] Recovered a workbook with invalid merge metadata: ${error.message}`
+    );
+    return workbook;
+  }
 };
 
 export const createSpreadsheetParserContext = (): SpreadsheetParserContext => ({
@@ -288,9 +407,7 @@ export const parseSpreadsheetWorkbook = async (
 ): Promise<SpreadsheetWorkerResponse[]> => {
   try {
     const input = prepareSpreadsheetReadInput(data, source);
-    context.workbook = input.kind === 'text'
-      ? read(input.data, { ...readOptions, type: 'string' })
-      : read(input.data, readOptions);
+    context.workbook = readWorkbookWithMergeRecovery(input);
     const signature = data.byteLength >= 2 ? new DataView(data).getUint16(0, false) : 0;
     if (signature === 0x504b) {
       const [charts, cellImages] = await Promise.all([

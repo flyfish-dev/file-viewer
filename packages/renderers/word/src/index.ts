@@ -6,6 +6,26 @@ import {
   type RendererDefinition,
 } from '@file-viewer/core';
 
+export {
+  getFileViewerRtfLoader,
+  registerFileViewerRtfLoader,
+} from './optionalCapabilities.js';
+export type {
+  FileViewerRtfLoader,
+  FileViewerRtfModule,
+} from './optionalCapabilities.js';
+export {
+  createFileViewerRtfHyperlinkContainer,
+  isSafeFileViewerRtfHyperlink,
+  sanitizeFileViewerRtfElement,
+  sanitizeFileViewerRtfHtml,
+  sanitizeFileViewerRtfHyperlink,
+} from './sanitizeRtf.js';
+export type {
+  FileViewerRtfExternalPolicy,
+  FileViewerRtfSanitizeOptions,
+} from './sanitizeRtf.js';
+
 const wordRendererIds = [
   'office-word-openxml',
   'office-word-binary',

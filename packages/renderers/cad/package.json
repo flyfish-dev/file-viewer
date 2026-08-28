@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-cad",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
   "description": "Standalone CAD renderer plugin for File Viewer powered by @flyfish-dev/cad-viewer.",
@@ -60,8 +60,8 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0",
-    "@flyfish-dev/cad-viewer": "^0.8.0"
+    "@file-viewer/core": "workspace:3.0.0",
+    "@flyfish-dev/cad-viewer": "0.8.0"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

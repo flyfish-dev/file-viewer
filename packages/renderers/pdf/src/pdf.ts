@@ -76,6 +76,8 @@ import {
   type PdfJsWorkerGlobal,
 } from './pdfWorkerGlobal.js';
 import { readPdfJsWorkerVersion } from './pdfWorkerVersion.js';
+import { getFileViewerPdfIdentityFontRepair } from './optionalCapabilities.js';
+import { isExpectedPdfJsDestroyConsoleError } from './pdfConsoleLifecycle.js';
 
 export const DEFAULT_FILE_VIEWER_PDF_WORKER_URL =
   DEFAULT_FILE_VIEWER_PDF_WORKER_PATH;
@@ -273,24 +275,7 @@ const waitForPaint = (view?: Window | null) => new Promise<void>(resolve => {
   globalThis.setTimeout(resolve, 0);
 });
 
-const readErrorLikeMessage = (value: unknown) => {
-  if (value instanceof Error) {
-    return value.message;
-  }
-  if (value && typeof value === 'object' && 'message' in value) {
-    return String((value as { message?: unknown }).message || '');
-  }
-  return String(value || '');
-};
-
-const isPdfJsDestroyedTransportPageInitError = (args: unknown[]) => {
-  const [message, reason] = args;
-  return typeof message === 'string' &&
-    /^Unable to get page \d+ to initialize viewer$/.test(message) &&
-    readErrorLikeMessage(reason).includes('Transport destroyed');
-};
-
-const suppressPdfJsDestroyedTransportPageInitErrors = (view: Window) => {
+const suppressPdfJsDestroyLifecycleErrors = (view: Window) => {
   const consoleRef = (
     (view as Window & { console?: ConsoleLike }).console ||
     globalThis.console
@@ -305,7 +290,7 @@ const suppressPdfJsDestroyedTransportPageInitErrors = (view: Window) => {
     suppression = {
       originalError,
       patchedError: (...args: unknown[]) => {
-        if (isPdfJsDestroyedTransportPageInitError(args)) {
+        if (isExpectedPdfJsDestroyConsoleError(args)) {
           return;
         }
         return originalError.apply(consoleRef, args);
@@ -1948,7 +1933,7 @@ export default async function renderPdf(
     if (!resource) {
       return;
     }
-    const restorePdfJsConsoleErrors = suppressPdfJsDestroyedTransportPageInitErrors(targetWindow);
+    const restorePdfJsConsoleErrors = suppressPdfJsDestroyLifecycleErrors(targetWindow);
     try {
       await resource.loadingTask.destroy();
     } catch (error) {
@@ -2296,12 +2281,17 @@ export default async function renderPdf(
           firstPageTextContent,
           fontName => malformedFontFamilies.get(fontName) || ''
         );
-        if (candidateFamilies.length) {
+        const identityFontRepair = getFileViewerPdfIdentityFontRepair();
+        if (candidateFamilies.length && !identityFontRepair) {
+          console.warn(
+            '[file-viewer] This PDF needs the optional Identity-font repair capability. Run `npx file-viewer-cli add pdf-identity-font-repair --write`, then `npx file-viewer-cli install --yes`.'
+          );
+        }
+        if (candidateFamilies.length && identityFontRepair) {
           let replacementResource: PdfResource | null = null;
           try {
             const sourceBytes = await pdfDocument.getData();
-            const { repairMalformedIdentityCjkFonts } = await import('./pdfIdentityFontRepair.js');
-            const repaired = await repairMalformedIdentityCjkFonts(sourceBytes, candidateFamilies);
+            const repaired = await identityFontRepair(sourceBytes, candidateFamilies);
             if (repaired.repairedFonts > 0) {
               const previousResource = resource;
               replacementResource = await createLoadingResource({ data: repaired.bytes });
@@ -2495,6 +2485,11 @@ export default async function renderPdf(
       context?.registerExportAdapter?.(null);
       context?.registerThumbnailAdapter?.(null);
       const resource = pdfContext.resource;
+      (pdfContext.viewer as unknown as { setDocument: (document: null) => void } | null)
+        ?.setDocument(null);
+      (pdfContext.linkService as unknown as {
+        setDocument: (document: null, baseUrl?: null) => void;
+      } | null)?.setDocument(null, null);
       pdfContext.viewer = null;
       pdfContext.linkService = null;
       pdfContext.eventBus = null;

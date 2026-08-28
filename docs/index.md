@@ -1,5 +1,5 @@
 ---
-description: "Build browser-native file preview with clear package choices, 221 registered extensions, 32 preview pipelines, and fully self-hosted runtime assets."
+description: "Build browser-native file preview with clear package choices, 244 registered extensions across 34 preview pipelines, and fully self-hosted runtime assets."
 ---
 
 # File Viewer Documentation

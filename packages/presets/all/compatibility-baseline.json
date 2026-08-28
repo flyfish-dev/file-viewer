@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "release": "2.4.0",
+  "policy": "legacy-compatible-frozen",
+  "publishedMinimum": {
+    "source": "https://registry.npmjs.org/@file-viewer/preset-all/2.4.0",
+    "dependencyNames": [
+      "@file-viewer/core",
+      "@file-viewer/renderer-3d",
+      "@file-viewer/renderer-archive",
+      "@file-viewer/renderer-cad",
+      "@file-viewer/renderer-data",
+      "@file-viewer/renderer-drawing",
+      "@file-viewer/renderer-eda",
+      "@file-viewer/renderer-email",
+      "@file-viewer/renderer-epub",
+      "@file-viewer/renderer-geo",
+      "@file-viewer/renderer-hangul",
+      "@file-viewer/renderer-image",
+      "@file-viewer/renderer-iwork",
+      "@file-viewer/renderer-media",
+      "@file-viewer/renderer-mindmap",
+      "@file-viewer/renderer-ofd",
+      "@file-viewer/renderer-pdf",
+      "@file-viewer/renderer-presentation",
+      "@file-viewer/renderer-spreadsheet",
+      "@file-viewer/renderer-text",
+      "@file-viewer/renderer-typst",
+      "@file-viewer/renderer-word",
+      "@file-viewer/renderer-wordperfect"
+    ],
+    "dependencyNamesSha256": "a315332cb259b58e4ed1f857e846f95edf40aa8e390780ec58578aa89e8e6e34"
+  },
+  "publishedFullPackages": {
+    "@file-viewer/web-full": {
+      "dependencyNames": [
+        "@file-viewer/core",
+        "@file-viewer/preset-all",
+        "@file-viewer/renderer-3d",
+        "@file-viewer/renderer-archive",
+        "@file-viewer/renderer-cad",
+        "@file-viewer/renderer-data",
+        "@file-viewer/renderer-drawing",
+        "@file-viewer/renderer-eda",
+        "@file-viewer/renderer-email",
+        "@file-viewer/renderer-epub",
+        "@file-viewer/renderer-geo",
+        "@file-viewer/renderer-hangul",
+        "@file-viewer/renderer-image",
+        "@file-viewer/renderer-iwork",
+        "@file-viewer/renderer-media",
+        "@file-viewer/renderer-mindmap",
+        "@file-viewer/renderer-ofd",
+        "@file-viewer/renderer-pdf",
+        "@file-viewer/renderer-presentation",
+        "@file-viewer/renderer-spreadsheet",
+        "@file-viewer/renderer-text",
+        "@file-viewer/renderer-typst",
+        "@file-viewer/renderer-word",
+        "@file-viewer/renderer-wordperfect",
+        "@file-viewer/web"
+      ],
+      "dependencyNamesSha256": "789cf75beb362936dfd2bf72674bd9ddd2658df8ae465db3170b21bd750b7d00"
+    },
+    "@file-viewer/vue3-full": {
+      "dependencyNames": [
+        "@file-viewer/preset-all",
+        "@file-viewer/vue3",
+        "file-viewer-copy-assets"
+      ],
+      "dependencyNamesSha256": "18dc26b3953de6fd6ac31d9749f81ef859430f8986dd3dad91fce4e0bb9c4708"
+    },
+    "@file-viewer/vue2.7-full": {
+      "dependencyNames": [
+        "@file-viewer/preset-all",
+        "@file-viewer/vue2.7",
+        "file-viewer-copy-assets"
+      ],
+      "dependencyNamesSha256": "a633b46a022fe4c86008b1493f1ee7d3d1ce1d0f9b95e51f9d343cd19eaa9e60"
+    },
+    "@file-viewer/vue2.6-full": {
+      "dependencyNames": [
+        "@file-viewer/preset-all",
+        "@file-viewer/vue2.6",
+        "file-viewer-copy-assets"
+      ],
+      "dependencyNamesSha256": "9784d4cdbbed358dd652a44f17f6e9fdf60ba96cc83f64adc3effe4b27aca082"
+    },
+    "@file-viewer/react-full": {
+      "dependencyNames": [
+        "@file-viewer/preset-all",
+        "@file-viewer/react",
+        "file-viewer-copy-assets"
+      ],
+      "dependencyNamesSha256": "5f56c62c6df4fc2ca36d04390fa4e5ec04bbc56b018234f87b2064969c20f019"
+    },
+    "@file-viewer/react-legacy-full": {
+      "dependencyNames": [
+        "@file-viewer/preset-all",
+        "@file-viewer/react-legacy",
+        "file-viewer-copy-assets"
+      ],
+      "dependencyNamesSha256": "8ad871fb4d0568d161015e2f6c98abb178649b210874844b9ed0bf9fe8e1be60"
+    },
+    "@file-viewer/svelte-full": {
+      "dependencyNames": [
+        "@file-viewer/preset-all",
+        "@file-viewer/svelte",
+        "file-viewer-copy-assets"
+      ],
+      "dependencyNamesSha256": "3a541e2f4aeb0849ed339c8445dc2ecf0b7e20d5e822c6a0125aba3c32eed796"
+    },
+    "@file-viewer/jquery-full": {
+      "dependencyNames": [
+        "@file-viewer/jquery",
+        "@file-viewer/preset-all",
+        "file-viewer-copy-assets"
+      ],
+      "dependencyNamesSha256": "8762b2a3815ee3366dd3ec0278964755f52847aab55a0cf7ea0cf9379acd11a3"
+    }
+  },
+  "candidateContract": {
+    "rendererIds": {
+      "count": 32,
+      "sha256": "a36f27bf2a067bcfdbf11b8924a77ab80cd72e1771952a318f0858396a26166e"
+    },
+    "extensions": {
+      "count": 221,
+      "sha256": "2b680324cac2841c521fe2eb06b1f346dda6a1c5bba30754125250b0ce7cbea7"
+    },
+    "rendererPackages": {
+      "count": 23,
+      "sha256": "3037937b38a521012f4e52df54623dbde98c5a5b8bf88cf3dc27b5e6cfbd7541"
+    },
+    "presetDependencies": {
+      "count": 33,
+      "sha256": "8d4fe2fa37624b3533d00c7289dd89b99af18b9394179566bbe4bc490d34c2ed"
+    }
+  },
+  "excludedFutureCapabilities": ["dicom", "signature"]
+}

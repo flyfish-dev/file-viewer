@@ -1,6 +1,6 @@
 # @file-viewer/vue3-full
 
-完整格式能力的 Vue 3 集成包，已内置 `@file-viewer/preset-all`，无需重复安装 preset。要覆盖所有 Worker / WASM 格式，请按下方“Full 包快速开始”发布 `<部署基址>/file-viewer/` 运行时资源。
+Vue 3 Full 一站式集成包，保持 v2.4 已发布 Full 能力矩阵和默认资产复制行为，包括 iWork、CAD、3D、EDA、Geo、Typst、Drawing、Hangul、WordPerfect 与旧版 PPT。DICOM 及以后新增的重型格式不会自动进入历史 Full 闭包，需要通过 `@file-viewer/cli` 显式添加。
 
 ```bash
 npm install @file-viewer/vue3-full
@@ -13,7 +13,7 @@ npm install @file-viewer/vue3-full
 
 | 框架 | 标准 npm 包 | 入口格式 | GitHub | Gitee | 兼容历史包 |
 | --- | --- | --- | --- | --- | --- |
-| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, 类型声明, script 标签 IIFE, Worker/WASM viewer 资源, 复制静态资源 CLI | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
+| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, 类型声明, script 标签 IIFE | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
 | Vanilla JS / Pure Web Full | `@file-viewer/web-full` | ESM, 类型声明, script 标签 IIFE | [file-viewer-web-full](https://github.com/flyfish-dev/file-viewer-web-full) | [file-viewer-web-full](https://gitee.com/flyfish-dev/file-viewer-web-full) | 无 |
 | Vue 3 | `@file-viewer/vue3` | ESM, 类型声明 | [file-viewer-vue3](https://github.com/flyfish-dev/file-viewer-vue3) | [file-viewer-vue3](https://gitee.com/flyfish-dev/file-viewer-vue3) | `@flyfish-group/file-viewer3`, `file-viewer3` |
 | Vue 3 Full | `@file-viewer/vue3-full` | ESM, 类型声明 | [file-viewer-vue3-full](https://github.com/flyfish-dev/file-viewer-vue3-full) | [file-viewer-vue3-full](https://gitee.com/flyfish-dev/file-viewer-vue3-full) | 无 |
@@ -32,7 +32,7 @@ npm install @file-viewer/vue3-full
 
 ## 格式支持矩阵
 
-共享格式目录当前注册 221 个扩展名（221 个稳定、0 个实验），映射到 32 条预览链路。实验格式不计入稳定支持数量；完整能力通过 renderer / preset 按需装配。
+历史兼容 Full 默认注册 221 个扩展名（221 个稳定、0 个实验），映射到 32 条预览链路，与 v2.4 已发布能力一致。当前总目录为 244 个扩展名、34 条预览链路；DICOM 等新增重型格式必须通过 CLI 显式添加，不会自动扩张旧 Full。
 
 | 预览链路 | 分类 | 扩展名 | 等级 / 状态 | 能力 | 加载 |
 | --- | --- | --- | --- | --- | --- |
@@ -69,15 +69,21 @@ npm install @file-viewer/vue3-full
 | Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | high-fidelity / stable | 下载 | 按需异步 |
 | Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | 下载, HTML, 搜索 | 按需异步 |
 
-## Full 包快速开始
+## 兼容 Full 包快速开始
 
-`@file-viewer/vue3-full` 已内置 `@file-viewer/preset-all` 并默认启用完整 renderer 矩阵。不要再安装或传入 `preset-office`、`preset-all` 或单独 renderer。
+`@file-viewer/vue3-full` 继续内置 `@file-viewer/preset-all`，保持 v2.4 已发布的 221 个扩展名、32 条预览链路及默认资产复制行为。现有 iWork、CAD、3D、EDA、Geo、Typst、Drawing、WordPerfect、Hangul、旧版 PPT、RTF、Mermaid、HLS/MIDI 和高级文本能力不会被移除。DICOM 及以后新增的重型格式不自动进入历史 Full。
 
-从 2.1.30 起，使用同一资产交付契约的 8 个官方 Full 包是：`@file-viewer/web-full`、`@file-viewer/vue3-full`、`@file-viewer/vue2.7-full`、`@file-viewer/vue2.6-full`、`@file-viewer/react-full`、`@file-viewer/react-legacy-full`、`@file-viewer/jquery-full`、`@file-viewer/svelte-full`；2.2.0 的完整资产新增可独立版本化的二进制 PPT 运行时。
+保持同一历史 Full 契约的 8 个官方包是：`@file-viewer/web-full`、`@file-viewer/vue3-full`、`@file-viewer/vue2.7-full`、`@file-viewer/vue2.6-full`、`@file-viewer/react-full`、`@file-viewer/react-legacy-full`、`@file-viewer/jquery-full`、`@file-viewer/svelte-full`。新项目如果不需要完整矩阵，应优先通过 `@file-viewer/cli` 选择 standard、lite、office、engineering 或自定义能力；已有 Full 用户无需改变原安装方式。
 
-Full 包内置完整 renderer 矩阵和版本对齐的 Worker、WASM、字体、vendor 资产，其中 `vendor/ppt/` 包含二进制 PPT 0.3.3 的 ESM、Worker、WASM、CJK 字体与帧缓存模块。Vite 会自动把包内资产发布到业务站点；其它构建工具使用随包提供的同版本 CLI 自托管这些资产。默认无需配置 PPT 运行时 URL；`pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` 只用于非标准资源路径覆盖。
+Full 包继续携带并代理版本对齐的兼容 copy-assets 实现，默认复制历史完整资产集合；`--renderers <csv>` 仍可缩小复制范围。DICOM 等新能力使用独立 renderer/asset owner，所有运行时资源仍可离线、自托管。
 
-### Vite：自动发布完整资源
+```bash
+npx --no-install file-viewer-copy-assets ./public/file-viewer
+npx file-viewer-cli add dcm --write       # 示例：为既有 Full 项目显式添加 DICOM
+npx file-viewer-cli install --yes         # 安装新增能力、复制资产并生成注册模块
+```
+
+### Vite：发布已安装能力的资源
 
 ```bash
 npm i -D @file-viewer/vite-plugin
@@ -91,11 +97,11 @@ export default {
 }
 ```
 
-插件会识别已安装的 full 包，并在开发与生产构建中把同版本完整资源发布到部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）；业务代码无需再次注入 preset。
+插件会识别历史 Full 与另外安装的 capability asset owner，在开发与生产构建中发布对应资源到部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。
 
 ### Webpack / Rspack / Rollup / Vue CLI / Umi
 
-运行随 full 包安装的同版本 CLI，并把输出目录作为部署基址下的 `file-viewer/` 静态发布：
+运行随 Full 包安装的同版本兼容 CLI，默认复制历史完整资产集合，并把输出目录作为部署基址下的 `file-viewer/` 静态发布：
 
 ```bash
 npx --no-install file-viewer-copy-assets ./public/file-viewer
@@ -145,11 +151,11 @@ npx --no-install file-viewer-copy-assets ./public/file-viewer
 | `archive` | 配置压缩包 Worker/WASM、超时、缓存、包体限制和压缩包内单文件预览大小；旧 ZIP 中文文件名会自动按 GBK/GB18030 兼容解码。 |
 | `pdf` | 配置 PDF.js Worker、导航栏、目录、缩略图、旋转、流式读取、Range chunk 和凭据。 |
 | `docx` / `spreadsheet` | DOCX 由 @file-viewer/renderer-word 承接并使用自研 @file-viewer/docx，默认自动选择 Worker 或主线程解析，连续流式阅读和异步分批渲染，可按需显式开启视觉分页；表格由 @file-viewer/renderer-spreadsheet 承接，默认保真解析，大文件自动启用 Worker，表头拖拽调列宽可按需显式开启。 |
-| `iwork` | 配置 Pages / Numbers / Keynote 的模块 Worker、超时、ZIP/Snappy/IWA 安全上限与 Quick Look 降级策略；Apple 三类已通过 iWork ’09、2013+ 与当前版本真实样例的结构、浏览器和视觉 golden 门禁，按静态高保真 stable 提供。 |
-| `hangul` | 配置 HWP/HWPX 模块 Worker、超时、ZIP 解压/压缩率/条目数与 HWP 记录数安全上限；稳定能力为经过真实样例验证的静态结构化预览。 |
-| `wordPerfect` | 配置 WordPerfect Worker、内置 libwpd/librevenge WASM 地址与超时；WASM 失败时才降级为有界文本预览，正常路径使用真实样例验证的结构化引擎。 |
-| `presentation` | 演示文稿 renderer 保持两条隔离引擎：PowerPoint 97–2003 `.ppt` 使用包内 `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM，标准资产布局无需配置 URL；`pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` 仅用于自定义路径；`pptWorker` 与 `pptCache` 控制 Worker 和有界帧缓存。PPTX/OpenXML 使用 `@file-viewer/pptx` Worker，并可通过 `workerUrl` / `workerType` 覆盖。 |
-| `typst` / `data` / `cad` | 配置 Typst、SQLite、CAD/DWG/DXF/DWF 等 WASM、Worker、编码和渲染策略。 |
+| `iwork` | 显式安装 iWork capability 后，配置 Pages / Numbers / Keynote 的模块 Worker、超时、ZIP/Snappy/IWA 安全上限与 Quick Look 降级策略；它不属于 standard/full 默认闭包。 |
+| `hangul` | 显式安装 Hangul capability 后，配置 HWP/HWPX 模块 Worker、超时、ZIP 解压/压缩率/条目数与 HWP 记录数安全上限；它不属于 standard/full 默认闭包。 |
+| `wordPerfect` | 显式安装 WordPerfect capability 后，配置 Worker、libwpd/librevenge WASM 地址与超时；它不属于 standard/full 默认闭包。 |
+| `presentation` | standard/full 默认只装配 PPTX/OpenXML 的 `@file-viewer/pptx` Worker，可通过 `workerUrl` / `workerType` 覆盖。PowerPoint 97–2003 `.ppt` 是独立重型 capability，需用 `file-viewer add ppt --write` 显式安装其 Worker/WASM 和资产。 |
+| `typst` / `data` / `cad` | 显式安装相应 capability 后，配置 Typst、SQLite、CAD/DWG/DXF/DWF 等 WASM、Worker、编码和渲染策略；这些能力不属于 standard/full 默认闭包。 |
 | `hooks` / `beforeOperation` | 统一生命周期 hooks 和操作前置校验，可用于审计、权限、埋点和安全控制。 |
 
 ## 样式隔离与主题定制
@@ -257,17 +263,17 @@ const options = {
 
 | 资源 | 说明 |
 | --- | --- |
-| 通用 viewer assets | 所有 `*-full` 包都提供与自身同版本的 `file-viewer-copy-assets` CLI，用于把 Worker、WASM、字体和 vendor 资源复制到业务静态目录并生成完整性清单；`web-full` 的完整 `dist/` 还会直接携带这些资源。 |
-| CAD / DWG / DXF / DWF | 按需配置 `options.cad.wasmPath`、`workerUrl`、`dwfWasmUrl`、`dxfEncoding`，支持自托管和内网部署。 |
-| PDF / DOCX / Excel / PPT / PPTX | 按需配置 `options.pdf.workerUrl`、`options.pdf.cMapUrl`、`options.pdf.wasmUrl`、`options.pdf.standardFontDataUrl`、`options.pdf.cjkFontFallbackPath`、`options.pdf.identityFontRepair`、`options.docx.workerUrl`、`options.docx.workerJsZipUrl`、`options.spreadsheet.workerUrl`、`options.presentation.workerUrl` / `workerType`；PDF 默认探测真实静态 Worker，不可用时懒加载包内 handler 兜底，未嵌入的中文字体默认按页加载本地 Noto Sans SC 分片回退，缺失 ToUnicode 的异常 Identity CJK 字体会在检测到乱码后尝试内存修复；DOCX 默认自动选择 Worker 或主线程解析，Electron `file://` 等本地不安全协议会自动回退；Excel 默认 `worker: auto`，大文件达到 `workerAutoThreshold` 自动启用 Worker，CSV / TSV 自动识别 UTF-8、GBK 与 GB18030，也可用 `options.spreadsheet.textEncoding` 显式覆盖，列宽拖拽可通过 `options.spreadsheet.resizableColumns` 显式开启；`.ppt` 从 `vendor/ppt/` 按需加载 `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM 和有界帧缓存，标准布局无需配置，`pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` 仅覆盖自定义路径；PPTX 按需创建另一条模块 Worker，两条引擎严格隔离。 |
-| Typst / SQLite / Archive | 按需配置 Typst compiler/renderer WASM、`data.sqlWasmUrl`、`archive.workerUrl` / `archive.wasmUrl`；Typst 仅使用本地 WASM 真实渲染，不访问公共 CDN；Archive 兼容 GBK/GB18030 旧 ZIP 中文文件名，RAR、7z 和加密压缩包仍需要 libarchive Worker/WASM。 |
-| Drawing | Draw.io 默认使用随 viewer assets 分发的官方 diagrams.net 离线 viewer；路径特殊时可通过 `options.drawing.viewerScriptUrl` 覆盖，`preferOfficial:false` 才切到内置 SVG 兜底。 |
-| 离线部署 | 运行时不依赖公共 CDN 或第三方在线资源；所有 `*-full` 包默认使用部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 使用 `copyAssets:true` 自动发布，其他构建工具运行 `npx --no-install file-viewer-copy-assets ./public/file-viewer`；资源放在其它位置时调用 `setDefaultFullAssetBaseUrl()`。 |
-| 部署原则 | 默认只在命中特定格式时异步加载对应依赖；没有命中的格式不会拉取重型 Worker、WASM 或解析库。 |
+| Full 兼容资产 | 历史 `*-full` 包默认通过兼容 copy-assets 实现复制 v2.4 已发布的完整资源集合；DICOM 与以后新增的重型格式使用独立 owner。事务收据继续记录包版本、逐文件 SHA-256 和 owner。 |
+| 专用资产 owner | CAD、Typst、iWork、3D、Data、Drawing、Hangul、WordPerfect 和旧版 PPT 各自使用独立 `@file-viewer/assets-*` 包。`@file-viewer/cli add <format> --write` 只选择该能力及其资产，不下载旁系格式。历史 `*-full` 包继续通过兼容 copy-assets 命令默认复制原有完整资产集合。 |
+| PDF / DOCX / Excel / PPTX | standard 支持自托管 PDF.js Worker/字体、DOCX Worker、Spreadsheet Worker 与 PPTX Worker。PPTX 图表和 PDF Identity-font repair 属于正确性能力，已明确纳入 standard；不会静默省略图表或字体修复。 |
+| Archive / Email / 原生媒体 | Archive 的 libarchive Worker/WASM 属于 standard 资产；Email、常见图片和浏览器原生音视频按需加载代码。HLS、MIDI、RTF、Mermaid、patch/git bundle 是显式 capability，不会因 npm peer 自动安装。 |
+| Draw.io | 安全自研 Drawing fallback 随 renderer 提供；diagrams.net official viewer 是独立 `drawio-official` 重型 capability，不进入新项目的 standard 默认闭包。历史 `*-full` 包的已发布能力边界保持兼容。 |
+| 离线部署 | 运行时不依赖公共 CDN。Vite `copyAssets:true` 按已安装 asset owner 发布；其它构建工具运行 `file-viewer install --yes` 或 `file-viewer assets --write`。所有 owner 事务性合并为稳定运行时 manifest，安装顺序不影响结果。 |
+| 部署原则 | 新格式默认 opt-in，不会自动扩张已发布的 `*-full` 包。只有命中特定格式时才加载对应 Worker、WASM 或解析库；新项目优先使用 standard 或按需 capability，历史 full 集成继续保留原能力矩阵。 |
 
 ### Full 包默认资产根
 
-`@file-viewer/vue3-full` 默认把 PDF、DOCX、PPT、PPTX、Excel、CAD、Typst、Draw.io、SQLite 和 Archive 资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。运行随包安装的同版本 `file-viewer-copy-assets` 并发布其产物后，不需要逐项手写资源 URL。
+`@file-viewer/vue3-full` 保持 v2.4 已发布 Full 能力兼容，默认把历史完整资产集合指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`），包括旧版 PPT、CAD、Typst、Drawing、SQLite/iWork 等既有能力。本包继续依赖并代理同版本 `file-viewer-copy-assets`；运行该命令并发布产物后，不需要逐项手写资源 URL。 DICOM 与以后新增的重型格式不会自动进入该闭包，需通过新 CLI 显式选择。
 
 ```ts
 import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
@@ -275,7 +281,7 @@ import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
 setDefaultFullAssetBaseUrl('/static/file-viewer/')
 ```
 
-显式传入的 `options.archive.*`、`options.pdf.*`、`options.typst.*` 等仍然会覆盖默认值。
+显式传入的 `options.archive.*`、`options.pdf.*` 等仍然会覆盖默认值；`file-viewer-copy-assets --renderers <csv>` 可缩小旧 Full 的复制范围，运行 `file-viewer list` 可查看新增的 opt-in capability、许可证和资产包。
 
 ## 质量门禁
 

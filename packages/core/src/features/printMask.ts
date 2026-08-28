@@ -6,6 +6,21 @@ import type {
 
 const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
+const normalizeMaskColor = (value: unknown) => {
+  if (typeof value !== 'string') {
+    return '#000000';
+  }
+  const color = value.trim();
+  if (
+    /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(color) ||
+    /^[a-z]{1,32}$/i.test(color) ||
+    /^(?:rgb|rgba|hsl|hsla)\([0-9.,%+\- /]+\)$/i.test(color)
+  ) {
+    return color;
+  }
+  return '#000000';
+};
+
 export const normalizeFileViewerPrintMaskRegion = (
   region: Partial<FileViewerPrintMaskRegion> | null | undefined
 ): FileViewerPrintMaskRegion | null => {
@@ -99,7 +114,7 @@ export const normalizeFileViewerPrintMaskOptions = (
   return {
     ...(regions.length ? { regions } : {}),
     ...(stamps.length ? { stamps } : {}),
-    color: mask.color || '#000000',
+    color: normalizeMaskColor(mask.color),
   };
 };
 
@@ -138,6 +153,107 @@ export const FILE_VIEWER_PRINT_MASK_STYLE = `
   [data-viewer-print-page-index]{position:relative!important;isolation:isolate;}
 `;
 
+const isAsciiWhitespace = (value: string) => (
+  value === ' ' || value === '\t' || value === '\n' || value === '\r' || value === '\f'
+);
+
+const isAsciiLetter = (value: string) => {
+  const code = value.charCodeAt(0);
+  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
+};
+
+const findOpeningTagEnd = (html: string, start: number) => {
+  let quote = '';
+  for (let index = start + 1; index < html.length; index += 1) {
+    const char = html[index];
+    if (quote) {
+      if (char === quote) {
+        quote = '';
+      }
+      continue;
+    }
+    if (char === '"' || char === "'") {
+      quote = char;
+    } else if (char === '>') {
+      return index;
+    }
+  }
+  return -1;
+};
+
+const parseNonNegativeInteger = (value: string) => {
+  if (!value) {
+    return null;
+  }
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index);
+    if (code < 48 || code > 57) {
+      return null;
+    }
+  }
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? parsed : null;
+};
+
+const readPrintPageIndex = (html: string, start: number, end: number) => {
+  let cursor = start + 1;
+  while (cursor < end && !isAsciiWhitespace(html[cursor]) && html[cursor] !== '/' && html[cursor] !== '>') {
+    cursor += 1;
+  }
+
+  while (cursor < end) {
+    while (cursor < end && isAsciiWhitespace(html[cursor])) {
+      cursor += 1;
+    }
+    if (cursor >= end || html[cursor] === '/' || html[cursor] === '>') {
+      return null;
+    }
+
+    const nameStart = cursor;
+    while (
+      cursor < end &&
+      !isAsciiWhitespace(html[cursor]) &&
+      html[cursor] !== '=' &&
+      html[cursor] !== '/' &&
+      html[cursor] !== '>'
+    ) {
+      cursor += 1;
+    }
+    const name = html.slice(nameStart, cursor).toLowerCase();
+    while (cursor < end && isAsciiWhitespace(html[cursor])) {
+      cursor += 1;
+    }
+    if (html[cursor] !== '=') {
+      continue;
+    }
+    cursor += 1;
+    while (cursor < end && isAsciiWhitespace(html[cursor])) {
+      cursor += 1;
+    }
+    const quote = html[cursor];
+    if (quote !== '"' && quote !== "'") {
+      while (cursor < end && !isAsciiWhitespace(html[cursor]) && html[cursor] !== '>') {
+        cursor += 1;
+      }
+      continue;
+    }
+    cursor += 1;
+    const valueStart = cursor;
+    while (cursor < end && html[cursor] !== quote) {
+      cursor += 1;
+    }
+    if (cursor >= end) {
+      return null;
+    }
+    const value = html.slice(valueStart, cursor);
+    cursor += 1;
+    if (name === 'data-viewer-print-page-index') {
+      return parseNonNegativeInteger(value);
+    }
+  }
+  return null;
+};
+
 export const applyFileViewerPagePrintMasksToHtml = (
   contentHtml: string,
   mask?: FileViewerPrintMaskOptions | null
@@ -168,19 +284,41 @@ export const applyFileViewerPagePrintMasksToHtml = (
     return contentHtml;
   }
 
-  return contentHtml.replace(
-    /(<[A-Za-z][^>]*\sdata-viewer-print-page-index=(['"])(\d+)\2[^>]*>)/g,
-    (match, openingTag: string, _quote: string, rawPageIndex: string) => {
-      const pageRegions = regionsByPage.get(Number(rawPageIndex));
-      const pageStamps = stampsByPage.get(Number(rawPageIndex));
-      if (!pageRegions?.length && !pageStamps?.length) {
-        return match;
-      }
-      return `${openingTag}${buildFileViewerPrintMaskOverlayHtml({
-        regions: pageRegions || [],
-        stamps: pageStamps || [],
-        color: normalized.color,
-      }, true)}`;
+  const chunks: string[] = [];
+  let copiedThrough = 0;
+  let cursor = 0;
+  while (cursor < contentHtml.length) {
+    const start = contentHtml.indexOf('<', cursor);
+    if (start < 0) {
+      break;
     }
-  );
+    if (!isAsciiLetter(contentHtml[start + 1] || '')) {
+      cursor = start + 1;
+      continue;
+    }
+    const end = findOpeningTagEnd(contentHtml, start);
+    if (end < 0) {
+      break;
+    }
+    const pageIndex = readPrintPageIndex(contentHtml, start, end);
+    const pageRegions = pageIndex === null ? undefined : regionsByPage.get(pageIndex);
+    const pageStamps = pageIndex === null ? undefined : stampsByPage.get(pageIndex);
+    if (pageRegions?.length || pageStamps?.length) {
+      chunks.push(
+        contentHtml.slice(copiedThrough, end + 1),
+        buildFileViewerPrintMaskOverlayHtml({
+          regions: pageRegions || [],
+          stamps: pageStamps || [],
+          color: normalized.color,
+        }, true)
+      );
+      copiedThrough = end + 1;
+    }
+    cursor = end + 1;
+  }
+  if (!chunks.length) {
+    return contentHtml;
+  }
+  chunks.push(contentHtml.slice(copiedThrough));
+  return chunks.join('');
 };

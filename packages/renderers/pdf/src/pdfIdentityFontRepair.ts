@@ -9,6 +9,7 @@ import {
   PDFRawStream,
   PDFString,
 } from 'pdf-lib';
+import { normalizePdfIdentityFontFamily } from './pdfIdentityFontName.js';
 
 const MAX_REPAIR_SOURCE_BYTES = 64 * 1024 * 1024;
 const MAX_TTF_TABLES = 256;
@@ -102,15 +103,7 @@ const readTag = (bytes: Uint8Array, offset: number) => {
 };
 
 const normalizeFontFamily = (value: string) => {
-  const withoutSubset = value.replace(/^[A-Z]{6}\+/i, '');
-  const withoutStyle = withoutSubset.replace(
-    /(?:[\s,_-]+)(?:bold|regular|italic|oblique|medium|semibold|demibold|light|black|thin)(?:mt)?(?:[\s,_-].*)?$/i,
-    ''
-  );
-  const normalized = withoutStyle
-    .normalize('NFKC')
-    .toLowerCase()
-    .replace(/[\s,_-]+/g, '');
+  const normalized = normalizePdfIdentityFontFamily(value);
   return CJK_FONT_FAMILY_ALIASES[normalized] || normalized;
 };
 

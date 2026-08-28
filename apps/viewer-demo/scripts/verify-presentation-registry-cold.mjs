@@ -6,9 +6,14 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 const registry = process.env.FILE_VIEWER_NPM_REGISTRY || 'https://registry.npmjs.org/'
-const rendererVersion = process.env.FILE_VIEWER_PRESENTATION_VERSION || '2.4.0'
-const pluginVersion = process.env.FILE_VIEWER_VITE_PLUGIN_VERSION || '2.4.0'
-const fixtureRoot = await realpath(await mkdtemp(join(await realpath(tmpdir()), 'file-viewer-pptx-registry-')))
+const currentReleaseVersion = JSON.parse(
+  await readFile(new URL('../../../package.json', import.meta.url), 'utf8')
+).version
+const rendererVersion = process.env.FILE_VIEWER_PRESENTATION_VERSION || currentReleaseVersion
+const pluginVersion = process.env.FILE_VIEWER_VITE_PLUGIN_VERSION || currentReleaseVersion
+const fixtureRoot = await realpath(
+  await mkdtemp(join(await realpath(tmpdir()), 'file-viewer-pptx-registry-'))
+)
 
 function run(command, args) {
   const result = spawnSync(command, args, {
@@ -46,7 +51,10 @@ try {
       2
     )}\n`
   )
-  await writeFile(join(fixtureRoot, 'index.html'), '<script type="module" src="/src.js"></script>\n')
+  await writeFile(
+    join(fixtureRoot, 'index.html'),
+    '<script type="module" src="/src.js"></script>\n'
+  )
   await writeFile(
     join(fixtureRoot, 'src.js'),
     "import { pptxRenderer } from '@file-viewer/renderer-presentation/pptx';\nconsole.log(pptxRenderer.id);\n"
@@ -59,7 +67,10 @@ try {
   run('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'])
 
   const presentationPackage = JSON.parse(
-    await readFile(join(fixtureRoot, 'node_modules/@file-viewer/renderer-presentation/package.json'), 'utf8')
+    await readFile(
+      join(fixtureRoot, 'node_modules/@file-viewer/renderer-presentation/package.json'),
+      'utf8'
+    )
   )
   assert.equal(presentationPackage.version, rendererVersion)
   assert.equal(presentationPackage.exports['./ppt']?.import, './dist/ppt.js')
@@ -70,7 +81,7 @@ try {
   ).href
   const { resolveFileViewerRendererSelection } = await import(pluginEntry)
   const selection = resolveFileViewerRendererSelection({ formats: ['pptx'] })
-  assert.deepEqual(selection.packages, ['@file-viewer/renderer-presentation/pptx'])
+  assert.deepEqual(selection.packages, ['@file-viewer/renderer-pptx'])
   assert.deepEqual(selection.rendererIds, ['office-presentation'])
 
   run('npm', ['run', 'build'])
@@ -87,10 +98,16 @@ try {
   const legacyPptAssets = outputFiles.filter((file) =>
     /(?:ppt-font-cjk|ppt-native|file-viewer-presentation-ppt\b)/i.test(file)
   )
-  assert.deepEqual(legacyPptAssets, [], `Registry-cold PPTX build emitted PPT assets: ${legacyPptAssets}`)
+  assert.deepEqual(
+    legacyPptAssets,
+    [],
+    `Registry-cold PPTX build emitted PPT assets: ${legacyPptAssets}`
+  )
 
   const legacyPptReferences = outputRecords.filter(({ file, body }) =>
-    /(?:ppt-font-cjk|ppt-native\.wasm|Flyfish PPT Viewer)/i.test(`${file}\n${body.toString('utf8')}`)
+    /(?:ppt-font-cjk|ppt-native\.wasm|Flyfish PPT Viewer)/i.test(
+      `${file}\n${body.toString('utf8')}`
+    )
   )
   assert.deepEqual(
     legacyPptReferences.map(({ file }) => file),

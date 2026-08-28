@@ -1,0 +1,119 @@
+:root {
+  color: #e5edf7;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  background: #07101f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 8% 0, rgba(37, 99, 235, 0.24), transparent 32%),
+    radial-gradient(circle at 94% 8%, rgba(16, 185, 129, 0.2), transparent 28%), #07101f;
+}
+
+.opt-in-shell {
+  display: grid;
+  grid-template-rows: auto minmax(480px, 1fr) auto;
+  gap: 14px;
+  width: min(1440px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.opt-in-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.86);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.opt-in-header h1,
+.opt-in-header p {
+  margin: 0;
+}
+
+.opt-in-kicker {
+  color: #60a5fa;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.opt-in-header h1 {
+  margin-top: 4px;
+  font-size: clamp(20px, 3vw, 30px);
+}
+
+#opt-in-description {
+  margin-top: 5px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.opt-in-header a {
+  flex: 0 0 auto;
+  padding: 9px 12px;
+  border: 1px solid rgba(96, 165, 250, 0.32);
+  border-radius: 9px;
+  color: #bfdbfe;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.opt-in-viewer {
+  min-width: 0;
+  min-height: 480px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.3);
+}
+
+.opt-in-error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.42);
+  border-radius: 10px;
+  background: rgba(127, 29, 29, 0.4);
+  color: #fecaca;
+}
+
+@media (max-width: 720px) {
+  .opt-in-shell {
+    padding: 10px;
+  }
+
+  .opt-in-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

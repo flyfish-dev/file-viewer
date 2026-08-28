@@ -7,7 +7,10 @@ import {
   type FileViewerRenderedInstance,
   type FileViewerZoomState
 } from '@file-viewer/core'
-import { Inflate } from 'pako'
+import { getFileViewerPakoLoader } from './optionalCapabilities.js'
+
+type InflateConstructor = typeof import('pako').Inflate
+let Inflate: InflateConstructor | null = null
 
 type BundleRef = { oid: string; name: string }
 type BundlePrerequisite = { oid: string; subject: string }
@@ -221,6 +224,7 @@ const readOfsDeltaBase = (bytes: Uint8Array, start: number) => {
 }
 
 const inflateObject = (bytes: Uint8Array, start: number) => {
+  if (!Inflate) throw new Error('Git bundle support is opt-in. Run `npx file-viewer-cli add text-tools --write`, then `npx file-viewer-cli install --yes`.')
   const inflator = new Inflate()
   let offset = start
   while (!inflator.ended && offset < bytes.length) {
@@ -604,6 +608,11 @@ export default async function renderGitBundle(
   type = 'bundle',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const loadPako = getFileViewerPakoLoader()
+  if (!loadPako) {
+    throw new Error('Git bundle support is opt-in. Run `npx file-viewer-cli add text-tools --write`, then `npx file-viewer-cli install --yes`.')
+  }
+  ;({ Inflate } = await loadPako())
   const documentRef = target.ownerDocument || document
   const t = createFileViewerTranslator(context?.options)
   const model = await parseBundleModel(buffer, t)

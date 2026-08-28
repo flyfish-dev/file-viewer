@@ -29,6 +29,14 @@ import { textRenderer } from '@file-viewer/renderer-text';
 import { typstRenderer } from '@file-viewer/renderer-typst';
 import { wordRenderer } from '@file-viewer/renderer-word';
 import { wordPerfectRenderer } from '@file-viewer/renderer-wordperfect';
+import '@file-viewer/capability-pdf-identity-repair';
+import '@file-viewer/capability-pptx-charts';
+import '@file-viewer/capability-mermaid';
+import '@file-viewer/capability-midi';
+import '@file-viewer/capability-rtf';
+import '@file-viewer/capability-streaming-media';
+import '@file-viewer/capability-text-tools';
+import '@file-viewer/capability-drawio-official';
 
 export {
   DEFAULT_FULL_ASSET_BASE_PATH,

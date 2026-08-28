@@ -2,6 +2,38 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v3.0.0 — 2026-08-27
+
+这是模块化安装、全功能 CLI、专业格式按需加载和全仓安全加固的主版本。已发布 Full 包的格式、API 和离线资源契约保持向下兼容；DICOM 和数字签名等后续重型能力仍为显式按需安装。
+
+### CLI and package model
+
+- 新增完整的 `@file-viewer/cli` / `file-viewer-cli` / `create-file-viewer`：可创建新项目，也可在已有 `package.json` 项目中检测框架和构建工具后安装；支持选择框架版本、格式、preset、资源、npm/pnpm/Yarn/Bun、私有 registry 与完整性校验的离线 tgz。
+- `standard` 是新项目的常用格式默认方案。八个历史 `*-full` 包继续交付已发布的 `preset-all` 兼容矩阵和同版本 Worker/WASM/字体/vendor 资源；CLI 显式选择 `full` 时才会在此基础上加入后续专业能力并展示体积与许可边界。
+- 原 `file-viewer-copy-assets` 命令、八个 Full 包的同版本委托、`web-full/dist` 零复制部署、Vite 自动资源发布和自定义资源前缀全部保留。
+
+### Formats and issue fixes
+
+- #200 的原始 PPTX 样例已纳入五页布局回归，覆盖 DrawingML 表格边界与内边距、SmartArt 水平文字、复杂形状和 PPTX Worker，并通过 Chromium、Firefox 与 WebKit。
+- #206 提供显式按需的数字签名与证据容器 renderer，使用许可宽松的 rPGP Worker/WASM，并将解析、摘要/签名检查、信任和法律效力分开呈现；不包含 LGPL 源码。
+- #210 提供显式按需的本地 DICOM Part 10 单文件预览，覆盖未压缩、JPEG Lossless、JPEG-LS 和 JPEG 2000 Lossless 的单帧/多帧边界；不宣称诊断、PACS/DICOMweb 或多文件序列能力。
+- #211 还原报告样例的 Excel 表格主题、表头和交替行样式，列宽拖拽会在切换 sheet 后保留；#203 的异常合并信息和 Office 列宽回归同步加固。
+- #212 在 React、React Full、React Legacy 和 React Legacy Full 中支持邮件附件嵌套预览，并验证恶意附件名、缓冲区替换、卸载和 Worker/Object URL 清理。
+- #178 的 Office 365/WPS 单元格内嵌图、浮动图、TIFF、Worker 传输、双击放大和可选列宽拖拽继续作为闭合回归。
+
+### Security and release
+
+- DOC/RTF/PPTX/Markdown/Mermaid/Drawing/PlantUML/Typst 的文档内容到 HTML/DOM 边界统一编码、协议限制与二次净化；外链默认阻断，CSP/Trusted Types 在三浏览器验证。
+- 源码矩阵为 84 个 npm 目标：83 个主线包使用 `3.0.0`，历史兼容包 `msdoc-viewer` 使用 `0.2.4`；外部自研引擎固定为 `@file-viewer/docx@0.3.28` 与 `styled-exceljs@0.21.4`。
+- 正式发布只提升同一冻结提交生成并完成构建、测试、安全门禁、冷安装、真实浏览器和 `npm publish --dry-run` 的原始 tarball；发布阶段不重建、不临时增加稳定版本号。
+
+### Upgrade
+
+```bash
+npm create file-viewer@3.0.0 my-viewer
+pnpm add @file-viewer/vue3-full@3.0.0
+```
+
 ## File Viewer v2.4.0 — 2026-08-25
 
 这是统一版本、安全加固与稳定发布流程版本。v2.3.0—v2.3.2 的 Office、TIFF、Vite 8 与 DOC 安全修复全部包含在本版中。

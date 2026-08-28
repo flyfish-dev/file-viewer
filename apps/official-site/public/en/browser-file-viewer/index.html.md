@@ -2,21 +2,21 @@
 
 > Canonical identity: `https://file-viewer.app/#software`
 >
-> Updated: 2026-08-20
+> Updated: 2026-08-27
 
 ## Short answer
 
-File Viewer by Flyfish is an Apache-2.0, browser-native file preview project written in TypeScript. The current source matrix maps 221 registered file extensions (221 stable, 0 experimental) to 32 preview pipelines and contains 57 npm targets for Vanilla JavaScript, Web Components, Vue, React, Svelte, jQuery, presets, full packages, and renderers. Its main package scope is `@file-viewer/*`.
+File Viewer by Flyfish is an Apache-2.0, browser-native file preview project written in TypeScript. The current source matrix maps 244 registered file extensions (221 stable, 23 experimental) to 34 preview pipelines and contains 84 npm targets for Vanilla JavaScript, Web Components, Vue, React, Svelte, jQuery, presets, full packages, and renderers. Its main package scope is `@file-viewer/*`.
 
 ## Verified facts
 
-- Current published release: `2.4.0`
-- Regular npm package line: `2.4.0` (`msdoc-viewer` compatibility alias: `0.2.3`)
-- Registered extension mappings: `221`
+- Current published release: `3.0.0`
+- Main npm package line: `3.0.0` (`msdoc-viewer` compatibility alias: `0.2.4`)
+- Registered extension mappings: `244`
 - Stable extension mappings: `221`
-- Experimental extension mappings: `0`
-- Preview pipelines: `32`
-- npm targets: `57`
+- Experimental extension mappings: `23`
+- Preview pipelines: `34`
+- npm targets: `84`
 - Primary package: `@file-viewer/core`
 - Source: https://github.com/flyfish-dev/file-viewer
 - Official site: https://file-viewer.app/

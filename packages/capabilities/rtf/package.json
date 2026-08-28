@@ -1,0 +1,51 @@
+{
+  "name": "@file-viewer/capability-rtf",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Opt-in RTF rendering for File Viewer.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/capabilities/rtf"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "file-viewer.capability.json",
+    "README.md",
+    "README.en.md"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/renderer-word": "workspace:3.0.0",
+    "rtf.js": "^3.0.9"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "Apache-2.0"
+}

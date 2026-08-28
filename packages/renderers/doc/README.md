@@ -109,6 +109,9 @@ document.getElementById('app')!.innerHTML = `
 `;
 ```
 
+外部链接和关联图片默认阻断。确需访问可信外部资源时，应分别显式设置
+`externalLinkPolicy: 'allow'` 和 `externalResourcePolicy: 'allow'`；内嵌图片及书签不受影响。
+
 ### 2）使用内置 Viewer
 
 ```ts

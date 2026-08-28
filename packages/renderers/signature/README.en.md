@@ -1,137 +1,87 @@
 # @file-viewer/renderer-signature
 
-Optional, browser-local renderer for cryptographic signatures and timestamp containers. It keeps CMS/CAdES/RFC 3161/RFC 5544 support in TypeScript/Web Crypto and adds OpenPGP inspection through an optional rPGP WebAssembly backend.
+Optional, browser-local renderer for digital signatures, timestamps, evidence containers, and OpenPGP. It covers CMS/PKCS#7, selected CAdES attributes, RFC 3161, RFC 5544, ASiC, RFC 4998, JWS/JAdES metadata, and OpenPGP, then delegates safely extracted documents back to File Viewer's nested-renderer pipeline.
 
 ## Supported formats
 
-- CMS / PKCS#7 / CAdES-adjacent containers: `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`
-- RFC 3161 timestamp requests, responses and tokens: `.tsq`, `.tsr`, `.tst`
-- RFC 5544 `TimeStampedData`: `.tsd`
-- OpenPGP routing and inspection: `.asc`, `.sig`, `.pgp`, `.gpg`
+- CMS / PKCS#7: `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`
+- Timestamps: RFC 3161 `.tsq`, `.tsr`, `.tst`; RFC 5544 `.tsd`
+- Associated containers: ASiC-S / ASiC-E `.asics`, `.scs`, `.asice`, `.sce`
+- Archival evidence: RFC 4998 `.ers`
+- JSON Web Signature: compact, flattened JSON, and general JSON `.jws`
+- OpenPGP: `.asc`, `.sig`, `.pgp`, `.gpg`
 
-The renderer uses content detection as well as extensions. An `.asc` file can therefore be classified as a message, detached signature, cleartext-signed message, public key or private key instead of being treated as a single fixed format.
+After the signature renderer is explicitly selected, it uses both the extension and the file contents. It does not take over the existing PDF, XML, JSON, EML, or MSG routes. ASiC documents, encapsulated CMS content, JWS payloads, and safely extracted OpenPGP literal data can continue through `renderNestedBuffer`. External `dataUri`, `jku`, `x5u`, OCSP, CRL, AIA, TSA, keyserver, and WKD URLs are never fetched automatically.
 
-ASiC, ERS, PAdES, XMLDSig/XAdES and JWS/JAdES remain outside the current implementation.
-
-## Optional registration
+## Opt-in registration
 
 ```ts
-import { signatureRenderer } from '@file-viewer/renderer-signature';
+import { signatureRenderer } from '@file-viewer/renderer-signature'
 
 const options = {
   rendererMode: 'replace',
-  renderers: [signatureRenderer],
-};
+  renderers: [signatureRenderer]
+}
 ```
 
-To preview extracted PDF or literal data, compose the signature renderer with the relevant optional renderer:
+Register the relevant PDF, XML, image, or Office renderer as well when extracted documents should be previewed. This package is not added to the frozen legacy `preset-all` or historical `*-full` dependency matrix, so existing upgrades do not unexpectedly download cryptographic WASM. A new project created with the File Viewer CLI's `full` selection installs every renderer from the catalog, including `signature`; users can also select it alone.
+
+## Host inputs
+
+`options.signature` accepts:
+
+- `originalContent` / `originalFilename` for detached CMS, timestamps, ERS, or JWS;
+- `openPgpPublicKeys` for detached, cleartext, and unencrypted embedded OpenPGP signature verification;
+- `jwsVerificationKeys` for asymmetric public JWKs;
+- `openPgpLimits` / `containerLimits`, bounded by non-disableable absolute ceilings;
+- `workerFactory` for strict Trusted Types/CSP applications.
+
+Strict Trusted Types example:
 
 ```ts
-import { pdfRenderer } from '@file-viewer/renderer-pdf';
-import { signatureRenderer } from '@file-viewer/renderer-signature';
+const policy = trustedTypes.createPolicy('file-viewer-workers', {
+  createScriptURL: (value) => value
+})
 
-const options = {
-  rendererMode: 'replace',
-  renderers: [signatureRenderer, pdfRenderer],
-};
+const signature = {
+  workerFactory(kind: 'openpgp' | 'container') {
+    const url =
+      kind === 'openpgp'
+        ? new URL('/file-viewer-assets/signature.worker.js', window.location.origin)
+        : new URL('/file-viewer-assets/container.worker.js', window.location.origin)
+    return new Worker(policy.createScriptURL(url.href), { type: 'module' })
+  }
+}
 ```
 
-This package is an explicit opt-in. It is not a dependency of `@file-viewer/preset-all`, any `*-full` package, or `@file-viewer/core`.
+The policy must accept only application-resolved, fixed package URLs. Never pass document-derived strings to `createScriptURL`.
 
-## OpenPGP backend
+## OpenPGP and size boundary
 
-OpenPGP is implemented with rPGP (`pgp` crate `0.20.0`) compiled to WebAssembly. The renderer therefore uses the Rust rPGP backend directly; no additional JavaScript cryptography dependency, GnuPG executable, keyserver integration or server-side conversion is required.
+The OpenPGP backend uses permissively licensed rPGP `0.20.0` inside a dedicated, lazy Worker/WASM path. It does not use OpenPGP.js, GnuPG, or LGPL source. The narrow public boundary supports classification, bounded metadata inspection, and multi-signature verification for detached, cleartext, and unencrypted embedded/compressed messages; it does not expose rPGP internals or secret key material.
 
-The loading path is deliberately lazy:
+The optimized artifact has hard release gates of 1,600,000 B raw / 450,000 B Brotli for WASM and 1,800,000 B for the npm tarball. The verifier performs two byte-for-byte reproducibility builds. Default limits are 32 MiB input, 16 MiB extracted output, 4,096 packets, 16 nesting levels, 128 user IDs, 128 subkeys, and 256 signatures.
 
-```text
-File Viewer starts
-→ no rPGP Worker or WASM is loaded
-→ an OpenPGP file is routed to renderer-signature
-→ ./openpgp/client.js is dynamically imported
-→ signature.worker.js is created
-→ the Worker dynamically imports rpgp_wrapper.js
-→ rpgp_wrapper_bg.wasm is initialized inside the Worker
-```
+Direct ASN.1 calls to `inspectSignatureContainer` and `inspectEvidenceRecord` also bound input, original content, node and nesting counts, algorithms, certificates, CRLs, signers, attributes, extracted bytes, timestamp chains, and hash-tree nodes. Per-call `options.limits` can only lower these absolute ceilings.
 
-The Rust wrapper intentionally exposes only three operations:
+Encrypted messages report only recipient identifiers, integrity protection, and algorithms visible in the container. Automatic decryption, signing, key generation, private-key unlocking, system-keyring import, and online key discovery are intentionally unavailable.
 
-```text
-classify_openpgp
-inspect_openpgp
-verify_detached_signature
-```
+## Validation boundary
 
-It does not expose the low-level rPGP object model to JavaScript.
+Successful parsing is not signature verification. A valid cryptographic signature does not establish certificate or key trust, identity, policy compliance, qualified-signature status, or legal validity. The UI separates structural parsing, content-digest checks, cryptographic verification, and checks that were not performed.
 
-### OpenPGP scope
+ASiC input is checked before inflation for central/local-header consistency, data-range overlap, unsafe paths, duplicates, symlinks, encryption, ZIP64, unsupported compression, CRC, compression ratio, entry size, and aggregate output. RFC 4998 verifies only relationships that can be established from the supplied data and does not claim complete archival-policy validation. XAdES/XMLDSig inside ASiC is bounded structural/reference inspection, and JAdES is metadata only. PAdES, S/MIME, PGP/MIME, and full XML canonicalization or XMLDSig/XAdES/JAdES profile validation remain outside this renderer because they require host integration with their existing PDF, XML, and message renderers.
 
-The current backend supports classification and bounded inspection of armored or binary OpenPGP messages, detached signatures, public keys, private-key blocks and unencrypted literal-data messages. Detached signatures can be verified with host/user-supplied public keys. Safely bounded unencrypted literal data can be passed to File Viewer's nested renderer mechanism.
-
-Encrypted messages are inspection-only. Compressed messages are not recursively expanded unless a future implementation can enforce strict decompressed-output limits. Private-key blocks expose only public metadata derived from the key; secret MPIs, private scalars, passphrases and session keys are never returned to TypeScript.
-
-Signing, key generation, private-key unlocking and message decryption are intentionally not exposed in this phase.
-
-Host applications may supply public keys with `options.signature.openPgpPublicKeys`. Detached original content continues to use `options.signature.originalContent`.
-
-## Default OpenPGP resource limits
-
-The browser client applies conservative defaults before sending work to WASM:
-
-| Limit | Default |
-| --- | ---: |
-| input | 32 MiB |
-| extracted output | 16 MiB |
-| packet count | 4096 |
-| nesting depth | 16 |
-| user IDs | 128 |
-| subkeys | 128 |
-| signatures | 256 |
-
-They can be overridden with `options.signature.openPgpLimits`. The Rust boundary revalidates input size and bounds returned literal data. No untrusted input is intentionally processed on the main UI thread beyond lightweight routing hints.
-
-## CMS and timestamp behavior
-
-The existing browser-local CMS/timestamp implementation can inspect CMS `SignedData`, certificate-only containers and CRLs, parse DER and CMS PEM, recognize CAdES `signingCertificateV2`, verify supported RSA/ECDSA signatures using Web Crypto, compare detached `messageDigest` values, inspect RFC 3161 requests/responses/tokens, and inspect RFC 5544 `TimeStampedData` with embedded or external content.
-
-External RFC 5544 `dataUri` values are displayed as untrusted metadata and are never fetched automatically.
-
-## Security and validation boundary
-
-Successful parsing is not signature verification. Successful cryptographic verification is not certificate/key trust, policy compliance, identity assurance, qualified-signature status or legal validity. The issue #206 CMS/timestamp fixture CA is synthetic and deliberately untrusted.
-
-The OpenPGP Worker never persists keys or file contents, never performs automatic network lookup and can be terminated through the renderer client cleanup path. The first rPGP phase avoids private-key cryptographic operations; this also avoids depending on private-key RSA operations for which upstream RustCrypto/rPGP documentation requires additional side-channel consideration.
-
-## Building the rPGP WASM backend
-
-A Rust toolchain is required only when building the optional OpenPGP backend:
+## Build and verification
 
 ```bash
 rustup target add wasm32-unknown-unknown
-cargo install wasm-bindgen-cli
-pnpm --filter @file-viewer/renderer-signature build:wasm
+cargo install wasm-bindgen-cli --version 0.2.127 --locked
+pnpm --filter @file-viewer/renderer-signature build
+pnpm --filter @file-viewer/renderer-signature verify
+pnpm verify:issue-206-signature
 ```
 
-`wasm-opt` is optional; when installed, the build script applies `-Oz`. The script generates `rust/Cargo.lock` if it does not exist, then performs a locked release build and reports raw and Brotli WASM size.
+The release gate pins `wasm-bindgen-cli 0.2.127` and runs `wasm-opt -Oz --all-features`. Browser acceptance covers Chromium, Firefox, WebKit, strict CSP/Trusted Types, hostile DOM payloads, path traversal, compression bombs, zero external requests, and Worker cleanup after unmount.
 
-The regular TypeScript type-check does not require Rust:
-
-```bash
-pnpm --filter @file-viewer/renderer-signature type-check
-```
-
-## Verification
-
-The repository contains the contributed non-secret CMS/timestamp fixture corpus under `test/fixtures/github-206-contributed`.
-
-```bash
-pnpm --filter @file-viewer/renderer-signature verify:github-206
-pnpm --filter @file-viewer/renderer-signature verify:fixtures
-pnpm --filter @file-viewer/renderer-signature verify:openpgp
-```
-
-`verify:openpgp` checks the lazy Worker/WASM boundary, pinned rPGP configuration, absence of GnuPG invocation, restricted wrapper API and TypeScript content-detection behavior. Runtime rPGP fixture tests require the WASM backend to be built first.
-
-## Third-party licensing
-
-The Rust backend uses the permissively licensed rPGP `pgp` crate. See `THIRD_PARTY_NOTICES.md`.
+See `THIRD_PARTY_LICENSES.json` for the exact runtime closure, selected license branches, and license texts. `THIRD_PARTY_NOTICES.md` provides the short summary.

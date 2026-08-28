@@ -7,7 +7,8 @@ import {
   type FileViewerRenderedInstance,
   type FileViewerZoomState
 } from '@file-viewer/core'
-import { html as diffToHtml } from 'diff2html'
+import { getFileViewerDiffToHtml } from './optionalCapabilities.js'
+import { sanitizeFileViewerRichHtml } from './sanitizeHtml.js'
 
 const patchStyle = `
 .patch-viewer{min-height:100%;--patch-bg:#f6f8fa;--patch-surface:#fff;--patch-border:rgba(31,35,40,.12);--patch-text:#24292f;--patch-muted:#57606a;--patch-add:#dafbe1;--patch-del:#ffebe9;--patch-info:#ddf4ff;--patch-font-size:13px;background:var(--patch-bg);color:var(--patch-text);box-sizing:border-box}
@@ -70,19 +71,6 @@ const countFiles = (text: string) => {
   return text.match(/^---\s+/gm)?.length || 1
 }
 
-const escapeHtml = (value: string) => {
-  return value.replace(/[&<>"']/g, char => {
-    const entities: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }
-    return entities[char]
-  })
-}
-
 export default async function renderPatch(
   buffer: ArrayBuffer,
   target: HTMLDivElement,
@@ -104,15 +92,20 @@ export default async function renderPatch(
   const body = createElement(documentRef, 'div', 'patch-body')
 
   try {
-    body.innerHTML = diffToHtml(text, {
+    const diffToHtml = getFileViewerDiffToHtml()
+    if (!diffToHtml) {
+      throw new Error('Patch side-by-side rendering is opt-in. Run `npx file-viewer-cli add text-tools --write`, then `npx file-viewer-cli install --yes`.')
+    }
+    const rendered = diffToHtml(text, {
       drawFileList: true,
       matching: 'lines',
       outputFormat: 'side-by-side',
       renderNothingWhenEmpty: false
     })
+    body.replaceChildren(sanitizeFileViewerRichHtml(documentRef, rendered, { allowSvg: true }))
   } catch {
     const fallback = createElement(documentRef, 'pre', 'patch-fallback')
-    fallback.innerHTML = escapeHtml(text)
+    fallback.textContent = text
     body.replaceChildren(fallback)
   }
 

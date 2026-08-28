@@ -1,9 +1,10 @@
 {
   "name": "@file-viewer/renderer-signature",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
-  "description": "Optional browser-local CMS, PKCS#7, CAdES, timestamp and OpenPGP renderer for File Viewer.",
+  "sideEffects": false,
+  "description": "Opt-in browser-local CMS, CAdES, timestamp, ASiC, evidence-record, JWS and OpenPGP renderer for File Viewer.",
   "keywords": [
     "file-viewer",
     "renderer",
@@ -13,6 +14,9 @@
     "cades",
     "rfc3161",
     "timestamp",
+    "asic",
+    "evidence-record",
+    "jws",
     "document-preview",
     "self-hosted",
     "openpgp",
@@ -37,6 +41,13 @@
   "bugs": {
     "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "fileViewer": {
+    "capabilityManifest": "file-viewer.capability.json"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -47,7 +58,14 @@
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json",
+    "./capability": "./file-viewer.capability.json",
+    "./inspect": {
+      "types": "./dist/inspect.d.ts",
+      "import": "./dist/inspect.js",
+      "default": "./dist/inspect.js"
+    },
     "./worker/signature.worker.js": "./dist/signature.worker.js",
+    "./worker/container.worker.js": "./dist/container.worker.js",
     "./wasm/rpgp_wrapper.js": "./dist/rpgp-wasm/rpgp_wrapper.js",
     "./wasm/rpgp_wrapper_bg.wasm": "./dist/rpgp-wasm/rpgp_wrapper_bg.wasm"
   },
@@ -55,8 +73,10 @@
     "dist",
     "README.md",
     "README.en.md",
+    "file-viewer.capability.json",
     "LICENSE",
-    "THIRD_PARTY_NOTICES.md"
+    "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_LICENSES.json"
   ],
   "scripts": {
     "build:ts": "tsc -b tsconfig.json --force",
@@ -64,16 +84,20 @@
     "build": "pnpm build:ts && pnpm build:wasm",
     "type-check": "tsc -b tsconfig.json",
     "verify:github-206": "pnpm build:ts && node scripts/verify-github-206.mjs",
-    "verify:fixtures": "node scripts/verify-fixture-checksums.mjs && bash test/fixtures/github-206-contributed/scripts/verify_all.sh",
-    "verify:browser": "pnpm build:ts && npm exec --yes --package=playwright@1.61.1 -- node scripts/verify-browser.mjs",
-    "verify:optional-boundary": "node scripts/verify-optional-boundary.mjs",
+    "verify:fixtures": "bash test/fixtures/github-206-contributed/scripts/verify_all.sh",
     "verify:openpgp-architecture": "node scripts/verify-openpgp-architecture.mjs",
     "verify:openpgp-detection": "pnpm build:ts && node scripts/verify-openpgp-detection.mjs",
-    "verify:openpgp": "pnpm verify:openpgp-architecture && pnpm verify:openpgp-detection",
-    "verify": "pnpm verify:optional-boundary && pnpm verify:fixtures && pnpm verify:github-206 && pnpm verify:openpgp && pnpm verify:browser"
+    "verify:openpgp-runtime": "node scripts/verify-openpgp-runtime.mjs",
+    "verify:structured": "pnpm build:ts && node scripts/verify-structured-formats.mjs",
+    "generate:licenses": "node scripts/generate-license-ledger.mjs",
+    "verify:licenses": "node scripts/generate-license-ledger.mjs --check",
+    "verify:artifacts": "node scripts/verify-artifacts.mjs",
+    "verify:openpgp": "pnpm build:wasm && pnpm verify:openpgp-architecture && pnpm verify:openpgp-detection && pnpm verify:openpgp-runtime",
+    "verify": "pnpm verify:licenses && pnpm verify:fixtures && pnpm verify:github-206 && pnpm verify:structured && pnpm verify:openpgp && pnpm verify:artifacts"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0"
+    "@file-viewer/core": "workspace:3.0.0",
+    "jszip": "3.10.1"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

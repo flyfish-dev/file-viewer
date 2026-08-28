@@ -1,0 +1,1919 @@
+{
+  "schemaVersion": 1,
+  "core": {
+    "packageName": "@file-viewer/core",
+    "version": "3.0.0"
+  },
+  "frameworks": {
+    "web": {
+      "packageName": "@file-viewer/web",
+      "version": "3.0.0"
+    },
+    "vue3": {
+      "packageName": "@file-viewer/vue3",
+      "version": "3.0.0"
+    },
+    "vue2.7": {
+      "packageName": "@file-viewer/vue2.7",
+      "version": "3.0.0"
+    },
+    "vue2.6": {
+      "packageName": "@file-viewer/vue2.6",
+      "version": "3.0.0"
+    },
+    "react": {
+      "packageName": "@file-viewer/react",
+      "version": "3.0.0"
+    },
+    "react-legacy": {
+      "packageName": "@file-viewer/react-legacy",
+      "version": "3.0.0"
+    },
+    "svelte": {
+      "packageName": "@file-viewer/svelte",
+      "version": "3.0.0"
+    },
+    "jquery": {
+      "packageName": "@file-viewer/jquery",
+      "version": "3.0.0"
+    }
+  },
+  "frameworkOverrides": {
+    "full": {
+      "web": {
+        "packageName": "@file-viewer/web-full",
+        "version": "3.0.0"
+      },
+      "vue3": {
+        "packageName": "@file-viewer/vue3-full",
+        "version": "3.0.0"
+      },
+      "vue2.7": {
+        "packageName": "@file-viewer/vue2.7-full",
+        "version": "3.0.0"
+      },
+      "vue2.6": {
+        "packageName": "@file-viewer/vue2.6-full",
+        "version": "3.0.0"
+      },
+      "react": {
+        "packageName": "@file-viewer/react-full",
+        "version": "3.0.0"
+      },
+      "react-legacy": {
+        "packageName": "@file-viewer/react-legacy-full",
+        "version": "3.0.0"
+      },
+      "svelte": {
+        "packageName": "@file-viewer/svelte-full",
+        "version": "3.0.0"
+      },
+      "jquery": {
+        "packageName": "@file-viewer/jquery-full",
+        "version": "3.0.0"
+      }
+    }
+  },
+  "frameworkTemplates": {
+    "web": {
+      "defaultVersion": "browser",
+      "runtimeDependencies": {},
+      "viteVersion": "8.0.16",
+      "validatedVersions": {
+        "browser": {
+          "runtimeDependencies": {},
+          "viteVersion": "8.0.16"
+        }
+      }
+    },
+    "vue3": {
+      "defaultVersion": "3.5.35",
+      "runtimeDependencies": {
+        "vue": "3.5.35"
+      },
+      "viteVersion": "8.0.16",
+      "validatedVersions": {
+        "3.5.35": {
+          "runtimeDependencies": {
+            "vue": "3.5.35"
+          },
+          "viteVersion": "8.0.16"
+        }
+      }
+    },
+    "vue2.7": {
+      "defaultVersion": "2.7.16",
+      "runtimeDependencies": {
+        "vue": "2.7.16"
+      },
+      "viteVersion": "7.1.7",
+      "validatedVersions": {
+        "2.7.16": {
+          "runtimeDependencies": {
+            "vue": "2.7.16"
+          },
+          "viteVersion": "7.1.7"
+        }
+      }
+    },
+    "vue2.6": {
+      "defaultVersion": "2.6.14",
+      "runtimeDependencies": {
+        "vue": "2.6.14"
+      },
+      "viteVersion": "6.1.6",
+      "validatedVersions": {
+        "2.6.14": {
+          "runtimeDependencies": {
+            "vue": "2.6.14"
+          },
+          "viteVersion": "6.1.6"
+        }
+      }
+    },
+    "react": {
+      "defaultVersion": "19.2.7",
+      "runtimeDependencies": {
+        "react": "19.2.7",
+        "react-dom": "19.2.7"
+      },
+      "viteVersion": "8.0.16",
+      "validatedVersions": {
+        "18.3.1": {
+          "runtimeDependencies": {
+            "react": "18.3.1",
+            "react-dom": "18.3.1"
+          },
+          "viteVersion": "8.0.16",
+          "templateVariant": "react-modern"
+        },
+        "19.2.7": {
+          "runtimeDependencies": {
+            "react": "19.2.7",
+            "react-dom": "19.2.7"
+          },
+          "viteVersion": "8.0.16",
+          "templateVariant": "react-modern"
+        }
+      }
+    },
+    "react-legacy": {
+      "defaultVersion": "17.0.2",
+      "runtimeDependencies": {
+        "react": "17.0.2",
+        "react-dom": "17.0.2"
+      },
+      "viteVersion": "7.1.7",
+      "validatedVersions": {
+        "17.0.2": {
+          "runtimeDependencies": {
+            "react": "17.0.2",
+            "react-dom": "17.0.2"
+          },
+          "viteVersion": "7.1.7",
+          "templateVariant": "react-legacy"
+        }
+      }
+    },
+    "svelte": {
+      "defaultVersion": "5.56.3",
+      "runtimeDependencies": {
+        "svelte": "5.56.3"
+      },
+      "viteVersion": "8.0.16",
+      "validatedVersions": {
+        "3.59.2": {
+          "runtimeDependencies": {
+            "svelte": "3.59.2"
+          },
+          "viteVersion": "4.5.14",
+          "vitePluginSvelteVersion": "2.5.3",
+          "templateVariant": "svelte-classic"
+        },
+        "4.2.20": {
+          "runtimeDependencies": {
+            "svelte": "4.2.20"
+          },
+          "viteVersion": "5.4.21",
+          "vitePluginSvelteVersion": "3.1.2",
+          "templateVariant": "svelte-classic"
+        },
+        "5.56.3": {
+          "runtimeDependencies": {
+            "svelte": "5.56.3"
+          },
+          "viteVersion": "8.0.16",
+          "vitePluginSvelteVersion": "7.0.0",
+          "templateVariant": "svelte-modern"
+        }
+      }
+    },
+    "jquery": {
+      "defaultVersion": "3.7.1",
+      "runtimeDependencies": {
+        "jquery": "3.7.1"
+      },
+      "viteVersion": "8.0.16",
+      "validatedVersions": {
+        "3.7.1": {
+          "runtimeDependencies": {
+            "jquery": "3.7.1"
+          },
+          "viteVersion": "8.0.16"
+        }
+      }
+    }
+  },
+  "profiles": [
+    {
+      "id": "all",
+      "packageName": "@file-viewer/preset-all",
+      "version": "3.0.0",
+      "capabilityPackages": [
+        "@file-viewer/renderer-word",
+        "@file-viewer/renderer-ppt",
+        "@file-viewer/renderer-pptx",
+        "@file-viewer/renderer-spreadsheet",
+        "@file-viewer/renderer-iwork",
+        "@file-viewer/renderer-wordperfect",
+        "@file-viewer/renderer-pdf",
+        "@file-viewer/renderer-ofd",
+        "@file-viewer/renderer-hangul",
+        "@file-viewer/renderer-typst",
+        "@file-viewer/renderer-archive",
+        "@file-viewer/renderer-email",
+        "@file-viewer/renderer-eda",
+        "@file-viewer/renderer-cad",
+        "@file-viewer/renderer-3d",
+        "@file-viewer/renderer-geo",
+        "@file-viewer/renderer-drawing",
+        "@file-viewer/renderer-mindmap",
+        "@file-viewer/renderer-epub",
+        "@file-viewer/renderer-image",
+        "@file-viewer/renderer-text",
+        "@file-viewer/renderer-media",
+        "@file-viewer/renderer-data",
+        "@file-viewer/capability-pdf-identity-repair",
+        "@file-viewer/capability-pptx-charts",
+        "@file-viewer/capability-mermaid",
+        "@file-viewer/capability-midi",
+        "@file-viewer/capability-rtf",
+        "@file-viewer/capability-streaming-media",
+        "@file-viewer/capability-text-tools",
+        "@file-viewer/capability-drawio-official"
+      ]
+    },
+    {
+      "id": "lite",
+      "packageName": "@file-viewer/preset-lite",
+      "version": "3.0.0",
+      "capabilityPackages": [
+        "@file-viewer/renderer-image",
+        "@file-viewer/renderer-text",
+        "@file-viewer/renderer-media"
+      ]
+    },
+    {
+      "id": "standard",
+      "packageName": "@file-viewer/preset-standard",
+      "version": "3.0.0",
+      "capabilityPackages": [
+        "@file-viewer/capability-pdf-identity-repair",
+        "@file-viewer/capability-pptx-charts",
+        "@file-viewer/renderer-word",
+        "@file-viewer/renderer-pdf",
+        "@file-viewer/renderer-ofd",
+        "@file-viewer/renderer-pptx",
+        "@file-viewer/renderer-spreadsheet",
+        "@file-viewer/renderer-archive",
+        "@file-viewer/renderer-email",
+        "@file-viewer/renderer-text",
+        "@file-viewer/renderer-image",
+        "@file-viewer/renderer-media"
+      ],
+      "assetPackageName": "@file-viewer/assets-standard",
+      "profileManifestSha256": "aa60cba3fc4bb663516fc3be23881aeb3bfaf7039aa4fad9687bc21f8687caec",
+      "estimates": {
+        "packedClosureBytes": 30408704,
+        "unpackedClosureBytes": 101711872,
+        "staticAssetBytes": 24117248
+      }
+    },
+    {
+      "id": "office",
+      "packageName": "@file-viewer/preset-office",
+      "version": "3.0.0",
+      "capabilityPackages": [
+        "@file-viewer/renderer-word",
+        "@file-viewer/renderer-ppt",
+        "@file-viewer/renderer-pptx",
+        "@file-viewer/renderer-spreadsheet",
+        "@file-viewer/renderer-iwork",
+        "@file-viewer/renderer-wordperfect",
+        "@file-viewer/renderer-pdf",
+        "@file-viewer/renderer-ofd",
+        "@file-viewer/renderer-hangul"
+      ]
+    },
+    {
+      "id": "engineering",
+      "packageName": "@file-viewer/preset-engineering",
+      "version": "3.0.0",
+      "capabilityPackages": [
+        "@file-viewer/renderer-eda",
+        "@file-viewer/renderer-cad",
+        "@file-viewer/renderer-3d",
+        "@file-viewer/renderer-geo",
+        "@file-viewer/renderer-archive"
+      ]
+    }
+  ],
+  "legacyFull": {
+    "release": "2.4.0",
+    "policy": "legacy-compatible-frozen",
+    "baselineSha256": "76e444bfe7ecb2b0689729934d40c7ed741ed4ceff5f7a85e055128709372904",
+    "excludedFutureCapabilities": [
+      "dicom",
+      "signature"
+    ],
+    "referenceColdInstall": {
+      "measuredAt": "2026-08-26",
+      "packageCountRange": [
+        274,
+        299
+      ],
+      "packedBytesRange": [
+        254803968,
+        326107136
+      ],
+      "unpackedBytesRange": [
+        800063488,
+        1004535808
+      ],
+      "registry": "https://registry.npmjs.org/"
+    }
+  },
+  "capabilities": [
+    {
+      "schemaVersion": 1,
+      "id": "model",
+      "packageName": "@file-viewer/renderer-3d",
+      "rendererIds": [
+        "model"
+      ],
+      "formats": [
+        "glb",
+        "gltf",
+        "obj",
+        "stl",
+        "ply",
+        "fbx",
+        "dae",
+        "3ds",
+        "3mf",
+        "amf",
+        "usd",
+        "usda",
+        "usdc",
+        "usdz",
+        "kmz",
+        "step",
+        "stp",
+        "iges",
+        "igs",
+        "ifc",
+        "3dm",
+        "brep",
+        "pcd",
+        "wrl",
+        "vrml",
+        "xyz",
+        "vtk",
+        "vtp"
+      ],
+      "assets": {
+        "rendererIds": [
+          "model"
+        ],
+        "packageName": "@file-viewer/assets-model",
+        "installerPackageName": "@file-viewer/assets-model",
+        "bin": "file-viewer-assets-model",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "model"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-model.receipt.json",
+        "notice": "Independent model capability asset pack.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "engineering",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-3d",
+        "export": "modelRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "archive",
+      "packageName": "@file-viewer/renderer-archive",
+      "rendererIds": [
+        "archive"
+      ],
+      "formats": [
+        "zip",
+        "zipx",
+        "7z",
+        "rar",
+        "tar",
+        "gz",
+        "gzip",
+        "tgz",
+        "bz2",
+        "bzip2",
+        "tbz",
+        "tbz2",
+        "xz",
+        "txz",
+        "lzma",
+        "zst",
+        "tzst",
+        "cab",
+        "ar",
+        "cpio",
+        "iso",
+        "xar",
+        "lha",
+        "lzh",
+        "jar",
+        "war",
+        "ear",
+        "apk",
+        "cbz",
+        "cbr"
+      ],
+      "assets": {
+        "rendererIds": [
+          "archive"
+        ],
+        "packageName": "@file-viewer/assets-standard",
+        "bin": "file-viewer-assets-standard",
+        "apiExport": "installFileViewerStandardAssets",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "archive"
+        ],
+        "copyMode": "profile-pack",
+        "receiptFilename": "file-viewer-assets-standard.receipt.json",
+        "notice": "Self-hosted libarchive Worker and WASM.",
+        "packageVersion": "3.0.0",
+        "installerPackageName": "@file-viewer/assets-standard",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "engineering",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-archive",
+        "export": "archiveRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "cad",
+      "packageName": "@file-viewer/renderer-cad",
+      "rendererIds": [
+        "cad"
+      ],
+      "formats": [
+        "dxf",
+        "dwg",
+        "dwf",
+        "dwfx",
+        "xps"
+      ],
+      "assets": {
+        "rendererIds": [
+          "cad"
+        ],
+        "packageName": "@file-viewer/assets-cad",
+        "installerPackageName": "@file-viewer/assets-cad",
+        "bin": "file-viewer-assets-cad",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "cad"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-cad.receipt.json",
+        "notice": "Independent cad capability asset pack.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "engineering",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-cad",
+        "export": "cadRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "data-asset",
+      "packageName": "@file-viewer/renderer-data",
+      "rendererIds": [
+        "data-asset"
+      ],
+      "formats": [
+        "ttf",
+        "otf",
+        "woff",
+        "woff2",
+        "psd",
+        "ai",
+        "eps",
+        "sqlite",
+        "wasm",
+        "parquet",
+        "avro",
+        "webarchive"
+      ],
+      "assets": {
+        "rendererIds": [
+          "data-asset"
+        ],
+        "packageName": "@file-viewer/assets-data",
+        "installerPackageName": "@file-viewer/assets-data",
+        "bin": "file-viewer-assets-data",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "data-asset"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-data.receipt.json",
+        "notice": "Independent data capability asset pack.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-data",
+        "export": "dataRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "dicom",
+      "packageName": "@file-viewer/renderer-dicom",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-dicom",
+        "export": "dicomRenderer"
+      },
+      "rendererIds": [
+        "dicom"
+      ],
+      "formats": [
+        "dcm",
+        "dicom"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "@cornerstonejs/core",
+            "spdx": "MIT",
+            "notice": "Pinned at 5.8.2; full closure and packaged license filenames are recorded in THIRD_PARTY_LICENSES.json."
+          },
+          {
+            "packageName": "@cornerstonejs/dicom-image-loader",
+            "spdx": "MIT",
+            "notice": "Pinned at 5.8.2. JavaScript codec wrapper terms and the separately tracked native libraries statically linked into their WebAssembly are recorded in THIRD_PARTY_LICENSES.json."
+          },
+          {
+            "packageName": "CharLS native codec",
+            "spdx": "BSD-3-Clause",
+            "notice": "Source 38d95d00671f4cddfa61f3f51eaf81b8bac34543; linked target charls; exact license is packaged under third-party/native-codecs/charls."
+          },
+          {
+            "packageName": "libjpeg-turbo native codec",
+            "spdx": "IJG AND BSD-3-Clause AND Zlib",
+            "notice": "Source dc4a93fab38b42d29b89a533409e012570180e28; linked target turbojpeg-static. This software is based in part on the work of the Independent JPEG Group. LICENSE.md and README.ijg are packaged unmodified."
+          },
+          {
+            "packageName": "OpenJPEG native codec",
+            "spdx": "BSD-2-Clause",
+            "notice": "Source 2d606701e8b7aa83f657d113c3367508e99bd12b; linked target openjp2; exact license is packaged under third-party/native-codecs/openjpeg."
+          },
+          {
+            "packageName": "OpenJPH native codec",
+            "spdx": "BSD-2-Clause",
+            "notice": "Source e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6; linked target openjphsimd; exact license is packaged under third-party/native-codecs/openjph."
+          },
+          {
+            "packageName": "@cornerstonejs/metadata",
+            "spdx": "MIT",
+            "notice": "Pinned at 5.8.2; used for owner-specific DICOM metadata cleanup."
+          },
+          {
+            "packageName": "dicom-parser",
+            "spdx": "MIT",
+            "notice": "Pinned at 1.8.21; used for bounded Part 10 header inspection before runtime initialization."
+          },
+          {
+            "packageName": "@kitware/vtk.js",
+            "spdx": "BSD-3-Clause",
+            "notice": "Transitive Cornerstone runtime dependency pinned at 36.4.1."
+          },
+          {
+            "packageName": "caniuse-lite",
+            "spdx": "CC-BY-4.0",
+            "notice": "Version 1.0.30001810 data by Ben Briggs and contributors; source https://github.com/browserslist/caniuse-lite; unmodified by this renderer."
+          },
+          {
+            "packageName": "pako",
+            "spdx": "(MIT AND Zlib)",
+            "notice": "Versions 1.0.11 and 2.1.0 contain zlib-derived code by Jean-loup Gailly and Mark Adler."
+          },
+          {
+            "packageName": "argparse",
+            "spdx": "Python-2.0",
+            "notice": "Version 2.0.1 retains the Python Software Foundation license in its installed LICENSE file."
+          },
+          {
+            "packageName": "spark-md5",
+            "spdx": "(WTFPL OR MIT)",
+            "notice": "Version 3.0.2 retains its upstream license file."
+          }
+        ]
+      },
+      "weight": "heavy",
+      "profiles": [],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "drawing",
+      "packageName": "@file-viewer/renderer-drawing",
+      "rendererIds": [
+        "drawing"
+      ],
+      "formats": [
+        "excalidraw",
+        "drawio",
+        "dio",
+        "mermaid",
+        "mmd",
+        "plantuml",
+        "puml"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-drawing",
+        "export": "drawingRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "eda",
+      "packageName": "@file-viewer/renderer-eda",
+      "rendererIds": [
+        "eda"
+      ],
+      "formats": [
+        "olb",
+        "dra",
+        "gds",
+        "oas",
+        "oasis"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "engineering",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-eda",
+        "export": "edaRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "email",
+      "packageName": "@file-viewer/renderer-email",
+      "rendererIds": [
+        "email"
+      ],
+      "formats": [
+        "eml",
+        "msg",
+        "mbox"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "light",
+      "profiles": [
+        "standard",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-email",
+        "export": "emailRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "epub",
+      "packageName": "@file-viewer/renderer-epub",
+      "rendererIds": [
+        "epub",
+        "ebook-fb2",
+        "umd"
+      ],
+      "formats": [
+        "epub",
+        "fb2",
+        "umd"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-epub",
+        "export": "ebookRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "geo",
+      "packageName": "@file-viewer/renderer-geo",
+      "rendererIds": [
+        "geo"
+      ],
+      "formats": [
+        "geojson",
+        "kml",
+        "gpx",
+        "shp"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "engineering",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-geo",
+        "export": "geoRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "office-hangul",
+      "packageName": "@file-viewer/renderer-hangul",
+      "rendererIds": [
+        "office-hangul"
+      ],
+      "formats": [
+        "hwp",
+        "hwpx"
+      ],
+      "assets": {
+        "rendererIds": [
+          "office-hangul"
+        ],
+        "packageName": "@file-viewer/assets-hangul",
+        "installerPackageName": "@file-viewer/assets-hangul",
+        "bin": "file-viewer-assets-hangul",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "office-hangul"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-hangul.receipt.json",
+        "notice": "Independent hangul capability asset pack.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-hangul",
+        "export": "hangulRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "image",
+      "packageName": "@file-viewer/renderer-image",
+      "rendererIds": [
+        "image"
+      ],
+      "formats": [
+        "gif",
+        "jpg",
+        "jpeg",
+        "bmp",
+        "tiff",
+        "tif",
+        "png",
+        "svg",
+        "webp",
+        "avif",
+        "ico",
+        "heic",
+        "heif",
+        "jxl"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "lite",
+        "standard",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-image",
+        "export": "imageRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "iwork",
+      "packageName": "@file-viewer/renderer-iwork",
+      "rendererIds": [
+        "apple-pages",
+        "apple-numbers",
+        "apple-keynote"
+      ],
+      "formats": [
+        "pages",
+        "numbers",
+        "key"
+      ],
+      "assets": {
+        "rendererIds": [
+          "apple-keynote",
+          "apple-numbers",
+          "apple-pages"
+        ],
+        "packageName": "@file-viewer/assets-iwork",
+        "installerPackageName": "@file-viewer/assets-iwork",
+        "bin": "file-viewer-assets-iwork",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "apple-keynote",
+          "apple-numbers",
+          "apple-pages"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-iwork.receipt.json",
+        "notice": "Independent iwork capability asset pack.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-iwork",
+        "export": "iworkRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "media",
+      "packageName": "@file-viewer/renderer-media",
+      "rendererIds": [
+        "video",
+        "audio"
+      ],
+      "formats": [
+        "mp4",
+        "webm",
+        "mp3",
+        "mpeg",
+        "wav",
+        "ogg",
+        "oga",
+        "opus",
+        "m4a",
+        "aac",
+        "flac",
+        "weba"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "lite",
+        "standard",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-media",
+        "export": "mediaRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "mindmap",
+      "packageName": "@file-viewer/renderer-mindmap",
+      "rendererIds": [
+        "mindmap"
+      ],
+      "formats": [
+        "xmind"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-mindmap",
+        "export": "mindmapRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "ofd",
+      "packageName": "@file-viewer/renderer-ofd",
+      "rendererIds": [
+        "ofd"
+      ],
+      "formats": [
+        "ofd"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-ofd",
+        "export": "ofdRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "pdf",
+      "packageName": "@file-viewer/renderer-pdf",
+      "rendererIds": [
+        "pdf"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "assets": {
+        "rendererIds": [
+          "pdf"
+        ],
+        "packageName": "@file-viewer/assets-standard",
+        "bin": "file-viewer-assets-standard",
+        "apiExport": "installFileViewerStandardAssets",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "pdf"
+        ],
+        "copyMode": "profile-pack",
+        "receiptFilename": "file-viewer-assets-standard.receipt.json",
+        "notice": "PDF.js Worker, CMaps, WASM, standard fonts, and CJK fallback fonts.",
+        "packageVersion": "3.0.0",
+        "installerPackageName": "@file-viewer/assets-standard",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "pdfjs-dist",
+            "spdx": "Apache-2.0"
+          },
+          {
+            "packageName": "@fontsource-variable/noto-sans-sc",
+            "spdx": "OFL-1.1"
+          }
+        ]
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-pdf",
+        "export": "pdfRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "legacy-ppt",
+      "packageName": "@file-viewer/renderer-ppt",
+      "rendererIds": [
+        "office-presentation-binary"
+      ],
+      "formats": [
+        "ppt",
+        "pot"
+      ],
+      "assets": {
+        "rendererIds": [
+          "office-presentation-binary"
+        ],
+        "packageName": "@file-viewer/assets-ppt",
+        "installerPackageName": "@file-viewer/assets-ppt",
+        "bin": "file-viewer-assets-ppt",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "office-presentation-binary"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-ppt.receipt.json",
+        "notice": "Legacy PPT Worker/WASM runtime with the existing watermark and license boundary.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "separately-licensed"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-ppt",
+        "export": "pptRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "presentation-openxml",
+      "packageName": "@file-viewer/renderer-pptx",
+      "rendererIds": [
+        "office-presentation"
+      ],
+      "formats": [
+        "pptx",
+        "pptm",
+        "potx",
+        "potm",
+        "ppsx",
+        "ppsm"
+      ],
+      "assets": {
+        "rendererIds": [
+          "office-presentation"
+        ],
+        "packageName": "@file-viewer/assets-standard",
+        "bin": "file-viewer-assets-standard",
+        "apiExport": "installFileViewerStandardAssets",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "office-presentation"
+        ],
+        "copyMode": "profile-pack",
+        "receiptFilename": "file-viewer-assets-standard.receipt.json",
+        "notice": "Native PPTX parsing Worker.",
+        "packageVersion": "3.0.0",
+        "installerPackageName": "@file-viewer/assets-standard",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-pptx",
+        "export": "pptxRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "signature",
+      "packageName": "@file-viewer/renderer-signature",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-signature",
+        "export": "signatureRenderer"
+      },
+      "rendererIds": [
+        "signature"
+      ],
+      "formats": [
+        "p7m",
+        "p7s",
+        "p7c",
+        "p7b",
+        "pkcs7",
+        "cms",
+        "cmsc",
+        "tsd",
+        "tst",
+        "tsq",
+        "tsr",
+        "asics",
+        "scs",
+        "asice",
+        "sce",
+        "ers",
+        "asc",
+        "sig",
+        "pgp",
+        "gpg",
+        "jws"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "rPGP / pgp",
+            "spdx": "MIT OR Apache-2.0",
+            "notice": "Pinned at 0.20.0 and compiled to a lazy Web Worker/WASM module; exact transitive versions are locked in rust/Cargo.lock."
+          },
+          {
+            "packageName": "JSZip",
+            "spdx": "MIT OR GPL-3.0-or-later",
+            "notice": "Pinned at 3.10.1 and used under its MIT license after a bounded ZIP central-directory preflight."
+          }
+        ]
+      },
+      "weight": "heavy",
+      "profiles": [],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "spreadsheet",
+      "packageName": "@file-viewer/renderer-spreadsheet",
+      "rendererIds": [
+        "spreadsheet-openxml",
+        "spreadsheet-dbf"
+      ],
+      "formats": [
+        "xlsx",
+        "xltx",
+        "xlsm",
+        "xlsb",
+        "xls",
+        "xlt",
+        "xla",
+        "xlam",
+        "xltm",
+        "csv",
+        "tsv",
+        "ods",
+        "fods",
+        "dbf"
+      ],
+      "assets": {
+        "rendererIds": [
+          "spreadsheet-openxml"
+        ],
+        "packageName": "@file-viewer/assets-standard",
+        "bin": "file-viewer-assets-standard",
+        "apiExport": "installFileViewerStandardAssets",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "spreadsheet-openxml"
+        ],
+        "copyMode": "profile-pack",
+        "receiptFilename": "file-viewer-assets-standard.receipt.json",
+        "notice": "Spreadsheet parsing Worker.",
+        "packageVersion": "3.0.0",
+        "installerPackageName": "@file-viewer/assets-standard",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-spreadsheet",
+        "export": "spreadsheetRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "text",
+      "packageName": "@file-viewer/renderer-text",
+      "rendererIds": [
+        "markdown",
+        "code"
+      ],
+      "formats": [
+        "md",
+        "markdown",
+        "txt",
+        "json",
+        "js",
+        "mjs",
+        "cjs",
+        "css",
+        "java",
+        "py",
+        "html",
+        "htm",
+        "jsx",
+        "ts",
+        "tsx",
+        "xml",
+        "log",
+        "vue",
+        "yaml",
+        "yml",
+        "ini",
+        "sh",
+        "bash",
+        "sql",
+        "go",
+        "rs",
+        "php",
+        "c",
+        "cpp",
+        "cc",
+        "h",
+        "hpp",
+        "cs",
+        "jsonc",
+        "json5",
+        "ipynb",
+        "toml",
+        "proto",
+        "hcl",
+        "tex",
+        "gv",
+        "http",
+        "react",
+        "rb",
+        "swift",
+        "kt"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "lite",
+        "standard",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-text",
+        "export": "textRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "typst",
+      "packageName": "@file-viewer/renderer-typst",
+      "rendererIds": [
+        "typst"
+      ],
+      "formats": [
+        "typ",
+        "typst"
+      ],
+      "assets": {
+        "rendererIds": [
+          "typst"
+        ],
+        "packageName": "@file-viewer/assets-typst",
+        "installerPackageName": "@file-viewer/assets-typst",
+        "bin": "file-viewer-assets-typst",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "typst"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-typst.receipt.json",
+        "notice": "Independent typst capability asset pack.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-typst",
+        "export": "typstRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "word",
+      "packageName": "@file-viewer/renderer-word",
+      "rendererIds": [
+        "office-word-openxml",
+        "office-word-binary",
+        "open-document"
+      ],
+      "formats": [
+        "docx",
+        "docm",
+        "dotx",
+        "dotm",
+        "doc",
+        "dot",
+        "odt",
+        "odp"
+      ],
+      "assets": {
+        "rendererIds": [
+          "office-word-openxml"
+        ],
+        "packageName": "@file-viewer/assets-standard",
+        "bin": "file-viewer-assets-standard",
+        "apiExport": "installFileViewerStandardAssets",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "office-word-openxml"
+        ],
+        "copyMode": "profile-pack",
+        "receiptFilename": "file-viewer-assets-standard.receipt.json",
+        "notice": "DOCX Worker and its offline ZIP runtime.",
+        "packageVersion": "3.0.0",
+        "installerPackageName": "@file-viewer/assets-standard",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive"
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-word",
+        "export": "wordRenderer"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "office-wordperfect",
+      "packageName": "@file-viewer/renderer-wordperfect",
+      "rendererIds": [
+        "office-wordperfect"
+      ],
+      "formats": [
+        "wpd",
+        "wp",
+        "wp5",
+        "wp6"
+      ],
+      "assets": {
+        "rendererIds": [
+          "office-wordperfect"
+        ],
+        "packageName": "@file-viewer/assets-wordperfect",
+        "installerPackageName": "@file-viewer/assets-wordperfect",
+        "bin": "file-viewer-assets-wordperfect",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "office-wordperfect"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-wordperfect.receipt.json",
+        "notice": "Independent wordperfect capability asset pack.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required"
+      },
+      "weight": "heavy",
+      "profiles": [
+        "office",
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-wordperfect",
+        "export": "wordPerfectRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "pdf-identity-font-repair",
+      "packageName": "@file-viewer/capability-pdf-identity-repair",
+      "enhancesPackage": "@file-viewer/renderer-pdf",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-pdf-identity-repair",
+        "export": "enableFileViewerPdfIdentityFontRepair"
+      },
+      "rendererIds": [
+        "pdf"
+      ],
+      "formats": [],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "pdf-lib",
+            "spdx": "MIT"
+          }
+        ]
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "all"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "pptx-charts",
+      "packageName": "@file-viewer/capability-pptx-charts",
+      "enhancesPackage": "@file-viewer/renderer-pptx",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-pptx-charts",
+        "export": "enableFileViewerPptxCharts"
+      },
+      "rendererIds": [
+        "office-presentation"
+      ],
+      "formats": [],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "billboard.js",
+            "spdx": "MIT"
+          },
+          {
+            "packageName": "d3-format",
+            "spdx": "ISC"
+          }
+        ]
+      },
+      "weight": "standard",
+      "profiles": [
+        "standard",
+        "all"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "mermaid-markdown",
+      "packageName": "@file-viewer/capability-mermaid",
+      "enhancesPackage": "@file-viewer/renderer-text",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-mermaid",
+        "export": "enableFileViewerMermaid"
+      },
+      "rendererIds": [
+        "markdown"
+      ],
+      "formats": [],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "mermaid",
+            "spdx": "MIT"
+          }
+        ]
+      },
+      "weight": "heavy",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "midi",
+      "packageName": "@file-viewer/capability-midi",
+      "enhancesPackage": "@file-viewer/renderer-media",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-midi",
+        "export": "enableFileViewerMidi"
+      },
+      "rendererIds": [
+        "audio"
+      ],
+      "formats": [
+        "midi",
+        "mid"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "@tonejs/midi",
+            "spdx": "MIT"
+          }
+        ]
+      },
+      "weight": "standard",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "rtf",
+      "packageName": "@file-viewer/capability-rtf",
+      "enhancesPackage": "@file-viewer/renderer-word",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-rtf",
+        "export": "enableFileViewerRtf"
+      },
+      "rendererIds": [
+        "open-document"
+      ],
+      "formats": [
+        "rtf"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "rtf.js",
+            "spdx": "MIT"
+          }
+        ]
+      },
+      "weight": "standard",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "streaming-media",
+      "packageName": "@file-viewer/capability-streaming-media",
+      "enhancesPackage": "@file-viewer/renderer-media",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-streaming-media",
+        "export": "enableFileViewerStreamingMedia"
+      },
+      "rendererIds": [
+        "video"
+      ],
+      "formats": [
+        "m3u8"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "hls.js",
+            "spdx": "Apache-2.0"
+          }
+        ]
+      },
+      "weight": "standard",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "text-tools",
+      "packageName": "@file-viewer/capability-text-tools",
+      "enhancesPackage": "@file-viewer/renderer-text",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-text-tools",
+        "export": "enableFileViewerTextTools"
+      },
+      "rendererIds": [
+        "code"
+      ],
+      "formats": [
+        "diff",
+        "patch",
+        "bundle",
+        "bdl"
+      ],
+      "assets": {
+        "rendererIds": []
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "diff2html",
+            "spdx": "MIT"
+          },
+          {
+            "packageName": "pako",
+            "spdx": "MIT"
+          }
+        ]
+      },
+      "weight": "standard",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "drawio-official",
+      "packageName": "@file-viewer/capability-drawio-official",
+      "enhancesPackage": "@file-viewer/renderer-drawing",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-drawio-official",
+        "export": "enableFileViewerDrawioOfficialViewer"
+      },
+      "rendererIds": [
+        "drawing"
+      ],
+      "formats": [
+        "drawio",
+        "dio"
+      ],
+      "assets": {
+        "rendererIds": [
+          "drawing"
+        ],
+        "packageName": "@file-viewer/assets-drawing",
+        "installerPackageName": "@file-viewer/assets-drawing",
+        "bin": "file-viewer-assets-drawing",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "drawing"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-drawing.receipt.json",
+        "notice": "Large official diagrams.net runtime; the safe local SVG fallback remains the default without this capability.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required",
+        "notices": [
+          {
+            "packageName": "diagrams.net",
+            "spdx": "Apache-2.0"
+          }
+        ]
+      },
+      "weight": "heavy",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0"
+    }
+  ],
+  "assetTool": {
+    "packageName": "@file-viewer/assets-standard",
+    "version": "3.0.0"
+  }
+}

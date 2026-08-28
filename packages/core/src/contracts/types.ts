@@ -527,6 +527,8 @@ export type FileViewerRendererCategory =
   | 'mindmap'
   | 'ebook'
   | 'image'
+  | 'medical-image'
+  | 'cryptographic-container'
   | 'markdown'
   | 'code'
   | 'media'
@@ -721,8 +723,10 @@ export interface FileViewerDocxOptions {
   updatePageReferences?: boolean;
   hideWebHiddenContent?: boolean;
   ignoreLastRenderedPageBreak?: boolean;
-  /** External DOCX links are blocked by default; internal bookmark links remain active. */
+  /** External DOC/DOCX/RTF links are blocked by default; internal bookmark links remain active. */
   externalLinkPolicy?: 'allow' | 'block';
+  /** Linked DOC/DOCX/RTF image resources are blocked by default; embedded images remain available. */
+  externalResourcePolicy?: 'allow' | 'block';
   /** Overrides automatic DOCX dark rendering derived from the viewer theme. */
   darkMode?: boolean;
 }
@@ -1070,14 +1074,16 @@ export interface FileViewerDrawingOptions {
   /**
    * Self-hosted diagrams.net viewer script.
    *
-   * The default points to the viewer asset copied under
-   * `vendor/drawio/viewer-static.min.js`, so Draw.io uses the official viewer
-   * offline without reaching public diagrams.net hosts.
+   * The default points to the optional viewer asset copied under
+   * `vendor/drawio/viewer-static.min.js`. It is only requested when
+   * `preferOfficial` is explicitly enabled and never reaches public
+   * diagrams.net hosts.
    */
   viewerScriptUrl?: string;
   /**
-   * Defaults to true. Set to false only when a deployment prefers the small
-   * built-in SVG fallback over the official diagrams.net viewer runtime.
+   * Defaults to false so untrusted diagrams use the inert built-in SVG path.
+   * Set to true only to opt into the separately delivered diagrams.net viewer
+   * runtime. It runs in a no-same-origin iframe with a restrictive CSP.
    */
   preferOfficial?: boolean;
   /**
@@ -1139,7 +1145,7 @@ export interface FileViewerCadOptions {
 
 export type FileViewerRendererMode = 'extend' | 'replace';
 export type FileViewerBuiltinRendererPreset = 'all' | 'lite' | 'none';
-export type FileViewerRendererPresetName = 'all' | 'lite' | 'office' | 'engineering';
+export type FileViewerRendererPresetName = 'all' | 'lite' | 'standard' | 'office' | 'engineering';
 
 export interface FileViewerAutoRendererOptions {
   /**

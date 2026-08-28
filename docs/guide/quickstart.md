@@ -11,9 +11,9 @@
 
 | Step | Decision | Fast answer |
 | --- | --- | --- |
-| 1 | Pick the component package | Use standard packages such as `@file-viewer/web`, `@file-viewer/vue3`, or `@file-viewer/react` for the lightest entry; full packages include the complete renderer matrix. |
-| 2 | Pick the capability layer | Standard packages receive `preset-lite`, `preset-office`, `preset-engineering`, or `preset-all` through options; full packages enable the complete matrix by default. |
-| 3 | Publish runtime assets | Full packages use `copyAssets:true` with Vite; other build tools run `npx --no-install file-viewer-copy-assets ./public/file-viewer` so every Worker/WASM format is available. |
+| 1 | Pick the component package | Use standard packages such as `@file-viewer/web`, `@file-viewer/vue3`, or `@file-viewer/react` for the lightest entry; Full packages preserve the published compatibility matrix, while later specialist renderers remain explicit. |
+| 2 | Pick the capability layer | Standard packages receive `preset-lite`, `preset-office`, `preset-engineering`, or `preset-all` through options; Full packages enable the published compatibility matrix, while later specialist renderers remain explicit additions. |
+| 3 | Publish runtime assets | Full packages use `copyAssets:true` with Vite; other build tools run `npx --no-install file-viewer-copy-assets ./public/file-viewer` so every selected capability has its matching Worker/WASM assets. |
 | 4 | Pass the source and options | Use `url="/files/demo.pdf"` or a real `File`; standard packages pass a preset through `options`, while full packages can start with theme, toolbar, watermark, and business options only. |
 | 5 | Confirm style isolation | Every standard component defaults to Shadow DOM. Customize with tokens / `::part()` and use `options.styleIsolation:'none'` only for legacy deep overrides. |
 

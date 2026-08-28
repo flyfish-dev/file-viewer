@@ -39,9 +39,11 @@ const COLOR_INDEX_MAP: Record<number, string> = {
 };
 
 type ExternalLinkPolicy = NonNullable<MsDocRenderOptions['externalLinkPolicy']>;
+type ExternalResourcePolicy = NonNullable<MsDocRenderOptions['externalResourcePolicy']>;
 
 interface RenderContext {
   externalLinkPolicy: ExternalLinkPolicy;
+  externalResourcePolicy: ExternalResourcePolicy;
 }
 
 function styleObjectToCss(style: CssStyleObject): string {
@@ -76,11 +78,11 @@ export function sanitizeMsDocLinkHref(
   if (value.startsWith('#')) return value;
   if (policy !== 'allow') return null;
   if (/^(?:https?:|mailto:|tel:)/i.test(value)) return value;
-  if (value.startsWith('//') || value.startsWith('\\')) return null;
-  if (/^(?:\/|\.\/|\.\.\/)/.test(value) && !value.startsWith('//') && !value.startsWith('\\\\')) {
+  if (value.startsWith('//') || value.includes('\\')) return null;
+  if (/^(?:\/|\.\/|\.\.\/)/.test(value) && !value.startsWith('//')) {
     return value;
   }
-  if (!/^[a-z][a-z\d+.-]*:/i.test(value) && !value.startsWith('\\')) return value;
+  if (!/^[a-z][a-z\d+.-]*:/i.test(value)) return value;
   return null;
 }
 
@@ -261,11 +263,54 @@ function applyInlineImageDisplaySize(style: CssStyleObject, asset: ImageAsset): 
   if (heightPx) style.height = `${heightPx}px`;
 }
 
-function sanitizeImageSource(src: string | undefined | null): string | null {
-  const value = String(src || '').trim();
+const SAFE_RASTER_IMAGE_DATA_URL =
+  /^data:image\/(?:avif|bmp|gif|jpeg|png|webp|x-icon);base64,[a-z\d+/=]+$/i;
+
+function decodeBase64Text(value: string): string | null {
+  try {
+    const bufferCtor = (globalThis as {
+      Buffer?: { from(value: string, encoding: string): { toString(encoding: string): string } };
+    }).Buffer;
+    if (bufferCtor) return bufferCtor.from(value, 'base64').toString('utf8');
+    if (typeof atob !== 'function') return null;
+    const binary = atob(value);
+    const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  } catch {
+    return null;
+  }
+}
+
+function isSafeSvgImageDataUrl(value: string): boolean {
+  const match = /^data:image\/svg\+xml;base64,([a-z\d+/=]+)$/i.exec(value);
+  if (!match || match[1].length > 8 * 1024 * 1024) return false;
+  const svg = decodeBase64Text(match[1]);
+  if (!svg || !/^\s*<svg(?:\s|>)/i.test(svg)) return false;
+  if (/<\/?(?:script|style|foreignObject|iframe|object|embed|form|link)\b/i.test(svg)) return false;
+  if (/<!\s*(?:doctype|entity)\b/i.test(svg) || /\son[a-z\d_-]+\s*=/i.test(svg)) return false;
+  if (svg.includes('\\') || svg.includes('/*') || /@import\b/i.test(svg)) return false;
+  if (/url\s*\(\s*(?!["']?#[A-Za-z0-9_.:-]+["']?\s*\))/i.test(svg)) return false;
+  for (const resource of svg.matchAll(/\s(?:href|xlink:href|src)\s*=\s*(["'])([\s\S]*?)\1/gi)) {
+    const target = String(resource[2] || '').replace(/[\u0000-\u0020\u007f-\u009f]/g, '');
+    if (!/^#[A-Za-z0-9_.:-]+$/.test(target) && !SAFE_RASTER_IMAGE_DATA_URL.test(target)) return false;
+  }
+  return true;
+}
+
+function sanitizeImageSource(
+  src: string | undefined | null,
+  policy: ExternalResourcePolicy,
+  allowGeneratedVector = false,
+): string | null {
+  const value = String(src || '').replace(/[\u0000-\u0020\u007f-\u009f]/g, '').trim();
   if (!value) return null;
-  if (/^data:image\//i.test(value)) return value;
-  if (/^(?:https?:|blob:)/i.test(value)) return value;
+  if (SAFE_RASTER_IMAGE_DATA_URL.test(value)) return value;
+  if (allowGeneratedVector && isSafeSvgImageDataUrl(value)) return value;
+  if (/^blob:/i.test(value)) return value;
+  if (policy !== 'allow') return null;
+  if (/^https?:/i.test(value)) return value;
+  if (value.startsWith('//') || value.startsWith('\\')) return null;
+  if (!/^[a-z][a-z\d+.-]*:/i.test(value) && !value.startsWith('\\')) return value;
   return null;
 }
 
@@ -291,7 +336,16 @@ function sanitizeAssetHref(href: string | undefined | null, context: RenderConte
 }
 
 function renderImageNode(node: Extract<InlineNode, { type: 'image' }>, context: RenderContext): string {
-  const src = sanitizeImageSource(node.asset.sourceUrl) || sanitizeImageSource(node.asset.dataUrl);
+  const allowGeneratedVector = node.asset.meta?.vectorConverted === true;
+  const src = sanitizeImageSource(
+    node.asset.sourceUrl,
+    context.externalResourcePolicy,
+    allowGeneratedVector,
+  ) || sanitizeImageSource(
+    node.asset.dataUrl,
+    context.externalResourcePolicy,
+    allowGeneratedVector,
+  );
   const baseStyle = inlineStyleToCss(node.style);
   const displaySize = inlineImageDisplaySizePx(node.asset);
   if (displaySize.widthPx || displaySize.heightPx) {
@@ -466,6 +520,7 @@ export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOption
   const css = options.css ?? defaultMsDocCss();
   const context: RenderContext = {
     externalLinkPolicy: options.externalLinkPolicy ?? 'block',
+    externalResourcePolicy: options.externalResourcePolicy ?? 'block',
   };
   const html = parsed.blocks.map((block) => {
     if (block.type === 'paragraph') return renderParagraphBlock(block, context);

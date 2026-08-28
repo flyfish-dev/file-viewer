@@ -51,3 +51,5 @@ When no explicit PDF asset URL is configured, the renderer first uses the public
 ## Migration Note
 
 PDF rendering has moved out of `@file-viewer/core` into this package, and `pdfjs-dist` is now declared only by `@file-viewer/renderer-pdf`. Installing core or a standard component package no longer pulls PDF.js; explicitly assemble this renderer when PDF preview is needed, or use `@file-viewer/preset-all`.
+
+The published renderer stages its Apache-2.0 PDF.js runtime under `dist/vendor/pdfjs` and isolates PDF.js' internal webpack bootstrap before packing. `provenance.json` records each upstream source hash, transform count, and staged output hash, so webpack 4 consumers do not need a loader for renderer-internal paths.

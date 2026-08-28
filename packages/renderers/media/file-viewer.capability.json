@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "media",
+  "packageName": "@file-viewer/renderer-media",
+  "rendererIds": ["video", "audio"],
+  "formats": ["mp4", "webm", "mp3", "mpeg", "wav", "ogg", "oga", "opus", "m4a", "aac", "flac", "weba"],
+  "assets": { "rendererIds": [] },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive" },
+  "weight": "standard",
+  "profiles": ["lite", "standard", "all"]
+}

@@ -58,7 +58,8 @@ export function slugify(text: unknown): string {
   return String(text ?? '')
     .toLowerCase()
     .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'item';
+    .replace(/^-/, '')
+    .replace(/-$/, '') || 'item';
 }
 
 export function shallowEqual<T extends Record<string, unknown>>(a: T | null | undefined, b: T | null | undefined): boolean {

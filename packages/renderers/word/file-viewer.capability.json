@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "word",
+  "packageName": "@file-viewer/renderer-word",
+  "rendererIds": ["office-word-openxml", "office-word-binary", "open-document"],
+  "formats": ["docx", "docm", "dotx", "dotm", "doc", "dot", "odt", "odp"],
+  "assets": {
+    "rendererIds": ["office-word-openxml"],
+    "packageName": "@file-viewer/assets-standard",
+    "bin": "file-viewer-assets-standard",
+    "apiExport": "installFileViewerStandardAssets",
+    "target": "public/file-viewer",
+    "copyGroups": ["office-word-openxml"],
+    "copyMode": "profile-pack",
+    "receiptFilename": "file-viewer-assets-standard.receipt.json",
+    "notice": "DOCX Worker and its offline ZIP runtime."
+  },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive" },
+  "weight": "standard",
+  "profiles": ["standard", "office", "all"]
+}

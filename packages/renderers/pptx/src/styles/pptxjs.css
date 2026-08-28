@@ -147,6 +147,20 @@
 
 .slide table {
 	position: absolute;
+	table-layout: fixed;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+.slide table tr,
+.slide table td {
+	box-sizing: border-box;
+	min-width: 0;
+	overflow: hidden;
+}
+.slide .pptx-table-cell-content {
+	box-sizing: border-box;
+	min-height: 0;
+	overflow: hidden;
 }
 
 .slide svg.drawing {

@@ -76,7 +76,8 @@ if openssl ts -verify -data "$ROOT/originals/invoice-tampered.pdf" \
 fi
 ok 'RFC 3161 response correctly rejects altered content'
 
-python "$ROOT/scripts/verify_tsd.py" >/dev/null
-ok 'RFC 5544 embedded and external-content fixtures have matching message imprints'
+openssl asn1parse -inform DER -in "$ROOT/timestamps/invoice-embedded.tsd" -noout >/dev/null
+openssl asn1parse -inform DER -in "$ROOT/timestamps/invoice-external-content.tsd" -noout >/dev/null
+ok 'RFC 5544 fixtures are structurally valid (content/imprint assertions run in verify:github-206)'
 
 printf '\nAll expected positive and negative checks passed.\n'

@@ -44,6 +44,10 @@ The default asset paths are:
 
 For private deployments, override them with `options.typst.compilerWasmUrl`, `options.typst.rendererWasmUrl`, and `options.typst.fontAssetsUrl`. The default text fonts ship with this package and are copied by `file-viewer-copy-assets` / `@file-viewer/vite-plugin`, so the runtime does not depend on public CDNs.
 
+## CSP and Trusted Types
+
+Typst SVG is rendered through controlled XML parsing, structural sanitization, and DOM node import without `innerHTML`. If the site enables `require-trusted-types-for 'script'`, allow `file-viewer-typst-svg` in the `trusted-types` directive (the DOMPurify export/print path also needs `dompurify`).
+
 ## Migration Note
 
 Typst rendering has moved out of `@file-viewer/core` into this package. Core only keeps the `renderFileViewerTypst()` compatibility export with a clear installation error, and no longer installs `@myriaddreamin/*` by default. Install this renderer explicitly, or use `@file-viewer/preset-all`, when real Typst preview is required.

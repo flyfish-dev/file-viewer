@@ -4,6 +4,11 @@ import {
   type FileRenderContext,
   type FileViewerRenderedInstance,
 } from '@file-viewer/core';
+import { getFileViewerRtfLoader } from './optionalCapabilities.js';
+import {
+  createFileViewerRtfHyperlinkContainer,
+  sanitizeFileViewerRtfElement,
+} from './sanitizeRtf.js';
 
 interface OpenDocumentPage {
   blocks: string[];
@@ -24,8 +29,8 @@ const openDocumentStyle = `
 @media (max-width:720px){.odf-viewer,.flyfish-rtf-viewer{padding:14px}.odf-page{padding:28px 24px}.flyfish-rtf-paper{padding:36px 28px}}
 `;
 
-const createStyle = () => {
-  const style = document.createElement('style');
+const createStyle = (documentRef: Document = document) => {
+  const style = documentRef.createElement('style');
   style.textContent = openDocumentStyle;
   return style;
 };
@@ -94,7 +99,11 @@ const renderOdfPages = (pages: OpenDocumentPage[]) => {
 };
 
 const resolveRtfJs = async () => {
-  const rtfModule = await import('rtf.js/dist/RTFJS.bundle.js');
+  const loadRtf = getFileViewerRtfLoader();
+  if (!loadRtf) {
+    throw new Error('RTF support is opt-in. Run `npx file-viewer-cli add rtf --write`, then `npx file-viewer-cli install --yes`.');
+  }
+  const rtfModule = await loadRtf();
   return rtfModule.RTFJS || rtfModule.default || rtfModule;
 };
 
@@ -104,17 +113,26 @@ const renderRtf = async (
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> => {
   const RTFJS = await resolveRtfJs();
+  const documentRef = target.ownerDocument || document;
+  const externalLinkPolicy = context?.options?.docx?.externalLinkPolicy ?? 'block';
+  const externalResourcePolicy = context?.options?.docx?.externalResourcePolicy ?? 'block';
   RTFJS.loggingEnabled?.(false);
-  const doc = new RTFJS.Document(buffer, {});
+  const doc = new RTFJS.Document(buffer, {
+    onHyperlink: (create: () => HTMLElement, hyperlink: { url: () => string }) =>
+      createFileViewerRtfHyperlinkContainer(documentRef, create, hyperlink, externalLinkPolicy),
+  });
   const elements = await doc.render();
 
-  const stage = document.createElement('div');
+  const stage = documentRef.createElement('div');
   stage.className = 'flyfish-rtf-viewer';
-  const paper = document.createElement('article');
+  const paper = documentRef.createElement('article');
   paper.className = 'flyfish-rtf-paper';
-  elements.forEach((element: HTMLElement) => paper.appendChild(element));
+  elements.forEach((element: HTMLElement) => paper.append(sanitizeFileViewerRtfElement(documentRef, element, {
+    externalLinkPolicy,
+    externalResourcePolicy,
+  })));
   stage.appendChild(paper);
-  target.replaceChildren(createStyle(), stage);
+  target.replaceChildren(createStyle(documentRef), stage);
   context?.registerThumbnailAdapter?.({ getTarget: () => paper });
 
   return {

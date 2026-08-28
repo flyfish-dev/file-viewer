@@ -28,7 +28,9 @@ const legacyPptxCss = `
 .slide div.down-center{justify-content:flex-end;align-items:center}
 .slide div.down-right{justify-content:flex-end;align-items:flex-end}
 .slide li.slide{margin:10px 0;font-size:18px}
-.slide table{position:absolute}
+.slide table{position:absolute;table-layout:fixed;box-sizing:border-box;overflow:hidden}
+.slide table tr,.slide table td{box-sizing:border-box;min-width:0;overflow:hidden}
+.slide .pptx-table-cell-content{box-sizing:border-box;min-height:0;overflow:hidden}
 .slide svg.drawing{position:absolute;overflow:visible}
 `;
 

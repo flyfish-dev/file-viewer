@@ -14,13 +14,16 @@ const help = `file-viewer-copy-assets ${packageJson.version}
 Copy Flyfish File Viewer Worker, WASM, font, and vendor assets into a self-hosted web project.
 
 Usage:
-  npx --yes file-viewer-copy-assets@${packageJson.version} [target-directory] [--no-clean]
+  npx --yes file-viewer-copy-assets@${packageJson.version} [target-directory] [--renderers <csv>] [--clean --confirm]
 
 Arguments:
   target-directory  Output directory (default: ./public/file-viewer)
 
 Options:
-  --no-clean        Keep existing files in the target directory
+  --clean --confirm Replace the dedicated target directory instead of merging
+  --no-clean        Deprecated safe alias for the default merge mode
+  --renderers <csv> Copy only assets for the selected renderer ids
+  --json            Emit one machine-readable JSON object
   -h, --help        Show this help
   -v, --version     Print the CLI version
 
@@ -41,13 +44,19 @@ try {
     process.exit(0)
   }
   if (isTruthy(process.env.FILE_VIEWER_SKIP_ASSET_COPY)) {
-    console.log('[file-viewer-copy-assets] skipped by FILE_VIEWER_SKIP_ASSET_COPY')
+    if (parsed.json) {
+      console.log(JSON.stringify({ mode: 'skipped', reason: 'FILE_VIEWER_SKIP_ASSET_COPY' }))
+    } else {
+      console.log('[file-viewer-copy-assets] skipped by FILE_VIEWER_SKIP_ASSET_COPY')
+    }
     process.exit(0)
   }
 
   const result = await copyFileViewerAssets({
     targetDir: parsed.targetDir,
-    clean: parsed.clean
+    clean: parsed.clean,
+    confirmClean: parsed.confirmClean,
+    rendererIds: parsed.rendererIds
   })
   if (result.validation.missingOptional.length) {
     console.warn(
@@ -56,8 +65,12 @@ try {
         .join(', ')}`
     )
   }
-  console.log(`[file-viewer-copy-assets] copied assets to ${result.targetDir}`)
-  console.log(`[file-viewer-copy-assets] wrote manifest ${result.assetManifestPath}`)
+  if (parsed.json) {
+    console.log(JSON.stringify({ ...result, mode: 'copy' }))
+  } else {
+    console.log(`[file-viewer-copy-assets] copied assets to ${result.targetDir}`)
+    console.log(`[file-viewer-copy-assets] wrote manifest ${result.assetManifestPath}`)
+  }
 } catch (reason) {
   const message = reason instanceof Error ? reason.message : String(reason)
   console.error(`[file-viewer-copy-assets] ${message}`)

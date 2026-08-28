@@ -66,9 +66,26 @@ const viewer = createViewer(document.querySelector('#viewer')!, {
 await viewer.load({ url: '/files/report.pdf' })
 ```
 
+HTML document builders live in the opt-in export entry so ordinary previews do
+not download the sanitizer. The viewer's `exportHtml()` and `print()` methods
+load this entry only when invoked. For v3, migrate direct builder imports from
+the package root to the explicit subpath:
+
+```ts
+import {
+  buildExportHtmlDocument,
+  buildFileViewerRenderedHtmlDocument
+} from '@file-viewer/core/export'
+```
+
+The deprecated Vue 3 template re-exports are asynchronous in v3 to preserve
+this lazy boundary, so legacy calls must use `await buildExportHtmlDocument(...)`
+or `await collectDocumentStyles()`. Direct imports from the `export` subpath
+keep their documented return types.
+
 `options.styleIsolation` accepts `auto`, `shadow`, `scoped`, or `none`. Use `shadow` when a custom host or framework wrapper needs a ShadowRoot-backed render surface. Core passes the resolved `surface` to renderer `load(context)`, so custom renderers should inject styles into `context.surface.shadowRoot` or the renderer container instead of `document.head`, and should mount overlays inside the same isolated surface when possible.
 
-The root `@file-viewer/core` entry remains the complete compatibility entry for existing integrations. New component packages should prefer the narrowest explicit entry point they need: `headless` for contracts and build-time helpers, `browser` for real browser preview.
+The root `@file-viewer/core` entry remains the normal browser-compatible entry. New component packages should prefer the narrowest explicit entry point they need: `headless` for contracts and build-time helpers, `browser` for real browser preview, and `export` for sanitized standalone HTML documents.
 
 ```ts
 import {

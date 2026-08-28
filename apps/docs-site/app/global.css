@@ -1633,7 +1633,7 @@ html:not(.dark) [data-docs-body] [style*="--shiki-light:#6A737D"] {
   }
 
   .fv-site-nav > a:first-child,
-  .fv-site-nav > a:nth-child(4) {
+  .fv-site-nav > a:nth-child(5) {
     display: none;
   }
 }

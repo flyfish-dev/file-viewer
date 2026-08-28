@@ -2,7 +2,7 @@
 
 import { FullSearchTrigger } from 'fumadocs-ui/layouts/shared/slots/search-trigger';
 import { ThemeSwitch } from 'fumadocs-ui/layouts/shared/slots/theme-switch';
-import { IconChevronDown, IconRocket } from '@tabler/icons-react';
+import { IconChevronDown, IconRocket, IconTerminal2 } from '@tabler/icons-react';
 import { usePathname } from 'next/navigation';
 import { Brand } from './brand';
 import { GitHubStarsLink } from './github-stars-link';
@@ -11,14 +11,16 @@ import { localePath, site } from '@/lib/shared';
 
 export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
   const chinese = locale === 'zh';
-  const pathname = usePathname();
+  const pathname = usePathname() ?? localePath(locale);
   const quickstartPath = localePath(locale, 'guide/quickstart');
+  const cliPath = localePath(locale, 'guide/cli');
   const ecosystemPath = localePath(locale, 'guide/ecosystem');
   const formatsPath = localePath(locale, 'guide/formats');
   const quickstartActive = pathname.startsWith(quickstartPath);
+  const cliActive = pathname === cliPath;
   const ecosystemActive = pathname === ecosystemPath || pathname === localePath(locale, 'guide/on-demand-renderers');
   const formatsActive = pathname === formatsPath || pathname === localePath(locale, 'guide/format-fidelity');
-  const docsActive = !quickstartActive && !ecosystemActive && !formatsActive;
+  const docsActive = !quickstartActive && !cliActive && !ecosystemActive && !formatsActive;
   const resourceGroups = chinese
     ? [
         {
@@ -33,6 +35,7 @@ export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
           label: '组件包',
           links: [
             ['npm Core', 'https://www.npmjs.com/package/@file-viewer/core'],
+            ['npm CLI', 'https://www.npmjs.com/package/@file-viewer/cli'],
             ['npm Web Component', 'https://www.npmjs.com/package/@file-viewer/web'],
             ['npm Vue 3', 'https://www.npmjs.com/package/@file-viewer/vue3'],
             ['npm React', 'https://www.npmjs.com/package/@file-viewer/react'],
@@ -64,6 +67,7 @@ export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
           label: 'Packages',
           links: [
             ['npm Core', 'https://www.npmjs.com/package/@file-viewer/core'],
+            ['npm CLI', 'https://www.npmjs.com/package/@file-viewer/cli'],
             ['npm Web Component', 'https://www.npmjs.com/package/@file-viewer/web'],
             ['npm Vue 3', 'https://www.npmjs.com/package/@file-viewer/vue3'],
             ['npm React', 'https://www.npmjs.com/package/@file-viewer/react'],
@@ -90,6 +94,7 @@ export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
         <nav className="fv-site-nav" aria-label={chinese ? '主导航' : 'Primary navigation'}>
           <a className={docsActive ? 'is-active' : undefined} href={localePath(locale)}>{chinese ? '文档' : 'Docs'}</a>
           <a className={quickstartActive ? 'is-active' : undefined} href={quickstartPath}><IconRocket size={15} stroke={1.9} aria-hidden="true" />{chinese ? '快速开始' : 'Quickstart'}</a>
+          <a className={cliActive ? 'is-active' : undefined} href={cliPath}><IconTerminal2 size={15} stroke={1.9} aria-hidden="true" />CLI</a>
           <a className={ecosystemActive ? 'is-active' : undefined} href={ecosystemPath}>{chinese ? '生态接入' : 'Ecosystem'}</a>
           <a className={formatsActive ? 'is-active' : undefined} href={formatsPath}>{chinese ? '支持格式' : 'Formats'}</a>
           <details className="fv-resources-menu">

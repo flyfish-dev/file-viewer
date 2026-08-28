@@ -1,0 +1,56 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "signature",
+  "packageName": "@file-viewer/renderer-signature",
+  "activation": {
+    "kind": "renderer-export",
+    "import": "@file-viewer/renderer-signature",
+    "export": "signatureRenderer"
+  },
+  "rendererIds": ["signature"],
+  "formats": [
+    "p7m",
+    "p7s",
+    "p7c",
+    "p7b",
+    "pkcs7",
+    "cms",
+    "cmsc",
+    "tsd",
+    "tst",
+    "tsq",
+    "tsr",
+    "asics",
+    "scs",
+    "asice",
+    "sce",
+    "ers",
+    "asc",
+    "sig",
+    "pgp",
+    "gpg",
+    "jws"
+  ],
+  "assets": {
+    "rendererIds": []
+  },
+  "license": {
+    "spdx": "Apache-2.0",
+    "policy": "permissive",
+    "notices": [
+      {
+        "packageName": "rPGP / pgp",
+        "spdx": "MIT OR Apache-2.0",
+        "notice": "Pinned at 0.20.0 and compiled to a lazy Web Worker/WASM module; exact transitive versions are locked in rust/Cargo.lock."
+      },
+      {
+        "packageName": "JSZip",
+        "spdx": "MIT OR GPL-3.0-or-later",
+        "notice": "Pinned at 3.10.1 and used under its MIT license after a bounded ZIP central-directory preflight."
+      }
+    ]
+  },
+  "weight": "heavy",
+  "profiles": []
+}

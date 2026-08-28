@@ -20,9 +20,9 @@ const {
 const pptSelection = resolveFileViewerRendererSelection({ formats: ['ppt'] })
 const pptxSelection = resolveFileViewerRendererSelection({ formats: ['pptx'] })
 
-assert.deepEqual(pptSelection.packages, ['@file-viewer/renderer-presentation/ppt'])
+assert.deepEqual(pptSelection.packages, ['@file-viewer/renderer-ppt'])
 assert.deepEqual(pptSelection.rendererIds, ['office-presentation-binary'])
-assert.deepEqual(pptxSelection.packages, ['@file-viewer/renderer-presentation/pptx'])
+assert.deepEqual(pptxSelection.packages, ['@file-viewer/renderer-pptx'])
 assert.deepEqual(pptxSelection.rendererIds, ['office-presentation'])
 
 const fixtureRoot = await realpath(

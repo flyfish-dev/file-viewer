@@ -7,6 +7,22 @@ import {
   type RendererDefinition,
 } from '@file-viewer/core';
 
+export {
+  getFileViewerMermaidLoader,
+  getFileViewerDiffToHtml,
+  getFileViewerPakoLoader,
+  registerFileViewerDiffToHtml,
+  registerFileViewerMermaidLoader,
+  registerFileViewerPakoLoader,
+} from './optionalCapabilities.js';
+export type {
+  FileViewerMermaidLoader,
+  FileViewerMermaidModule,
+  FileViewerDiffToHtml,
+  FileViewerPakoModule,
+} from './optionalCapabilities.js';
+export { sanitizeFileViewerRichHtml } from './sanitizeHtml.js';
+
 const textRendererIds = ['code', 'markdown'] as const;
 
 const textDefinitions = DEFAULT_RENDERER_DEFINITIONS.filter(definition =>

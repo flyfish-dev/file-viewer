@@ -17,7 +17,7 @@ NODE_OPTIONS=--openssl-legacy-provider npm run build
 ## 集成要点
 
 - `src/fileViewerOptions.js` 使用 `preset-office` 组装 PDF、Word、Excel、PowerPoint、OFD，再通过 `options.renderers` 补充 CAD、3D、图片和视频；`rendererMode: 'replace'`、`builtinRenderers: 'none'`、`autoRenderers: false` 保证依赖边界可审计。
-- `vue.config.js` 处理 webpack 4 对 package exports、`.mjs`、`import.meta.url`、PDF.js 内部 webpack 包装和 `three/addons/*` 的兼容问题。PDF.js 补丁必须隔离 `modules`、`module_cache`、`exports`、`require` 四个 runtime 标识；只改 `__webpack_require__` 会在首次 PDF 初始化失败，重选文件后表现为 `createFileViewerTranslator` 来自 `undefined`。
+- `vue.config.js` 处理 webpack 4 对 package exports、`.mjs`、`import.meta.url` 和 `three/addons/*` 的兼容问题。`@file-viewer/renderer-pdf` 发布产物已经在构建阶段隔离 PDF.js 的 `modules`、`module_cache`、`exports`、`require` 四个内部 runtime 标识，旧项目不需要再匹配 renderer 私有路径打补丁。
 - `@file-viewer/docx$` alias 必须固定到 `dist/docx-preview.mjs`；否则 webpack 4 可能选择 UMD browser 入口，上传 DOCX 时会报 `did not expose a compatible renderAsync function`。
 - `scripts/copy-file-viewer-assets.cjs` 将 PDF、DOCX、Excel、PPT/PPTX、CAD 和 OCCT 3D 的 Worker、WASM、字体及许可证复制到 `public/file-viewer/`，可用于内网静态部署。
 - Excel 使用已经打包为单文件的 `dist/worker/sheet.worker.js`；不能直接发布仍含裸模块 import 的内部 `spreadsheet/worker/sheetjs` 源目录。

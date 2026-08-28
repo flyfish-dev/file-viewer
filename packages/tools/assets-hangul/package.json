@@ -1,0 +1,45 @@
+{
+  "name": "@file-viewer/assets-hangul",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Independent self-hosted Hangul HWP/HWPX Worker runtime for opt-in File Viewer integration.",
+  "exports": {
+    "./asset-pack": "./viewer/file-viewer-asset-pack.json",
+    "./viewer/*": "./viewer/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "viewer",
+    "file-viewer.asset-pack.json",
+    "README.md",
+    "README.en.md"
+  ],
+  "bin": {
+    "file-viewer-assets-hangul": "./bin/install.mjs"
+  },
+  "dependencies": {
+    "@file-viewer/asset-installer": "workspace:3.0.0"
+  },
+  "scripts": {
+    "stage-assets": "node ../../../scripts/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-hangul",
+    "prepack": "pnpm stage-assets"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/tools/assets-hangul"
+  },
+  "fileViewer": {
+    "assetPackManifest": "./file-viewer.asset-pack.json"
+  },
+  "license": "Apache-2.0"
+}

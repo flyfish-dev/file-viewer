@@ -8,7 +8,7 @@
 
 <p class="doc-lead">
   一个好用的 Demo，不只是“给别人看看”，也是团队内部确认能力边界、联调文件样本和复现问题的最快入口。
-  当前能力矩阵包含 221 个已注册扩展名（221 个稳定、0 个实验）和 32 条预览链路；Demo 为每条链路提供可重复验证的代表样例，实验样例不会冒充稳定支持证据。
+  当前能力矩阵包含 244 个已注册扩展名（221 个稳定、23 个实验）和 34 条预览链路；Demo 为每条链路提供可重复验证的代表样例，实验样例不会冒充稳定支持证据。
 </p>
 
 ## 四个验证入口
@@ -282,7 +282,7 @@ pnpm --filter @flyfish-group/file-viewer-component-demo preview
 
 3D 模型示例覆盖 glTF、OBJ、STL、PLY 四条最常用的浏览器模型入口；FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ、PCD、VRML/WRL、XYZ、VTK/VTP 等扩展名也已经注册到 `@file-viewer/renderer-3d`。STEP / STP、IGES / IGS 和 BREP 已通过 `@file-viewer/geometry-engine` 在本地 OCCT Worker/WASM 中三角化并交给 Three.js 渲染；`model.step` 会强制验证真实网格、适配视图和统一缩放，不能退回转换提示。IFC 与 3DM 当前仍只展示签名识别和独立 `web-ifc` / `rhino3dm` 接入说明。XMind 样例用于验证多 sheet 脑图、目录、标签、备注、链接、Panzoom 画布拖拽平移、移动端双指缩放、适配画布、搜索、缩放和导出链路。
 
-Excalidraw 默认使用 `roughjs` 生成只读 SVG，运行环境提供官方 Excalidraw ESM 模块时会优先尝试 `restore` 与 `exportToSvg`；draw.io / diagrams.net 文件默认使用随 viewer assets 分发的官方 `GraphViewer` 离线预览，styles、shapes、stencils、img、mxgraph 和 math 资源都来自本地 `vendor/drawio/`。如果官方 viewer 加载异常，会自动回退内置 SVG 预览；内网路径特殊时可通过 `options.drawing.viewerScriptUrl` 指定自托管脚本。
+Excalidraw 默认使用 `roughjs` 生成只读 SVG，运行环境提供官方 Excalidraw ESM 模块时会优先尝试 `restore` 与 `exportToSvg`；draw.io / diagrams.net 文件默认使用不执行文档 HTML 的内置 SVG 预览。只有显式设置 `options.drawing.preferOfficial = true` 时才在无 same-origin 权限、带严格 CSP 的 iframe 中加载单独分发的官方 `GraphViewer`；其 styles、shapes、stencils、img、mxgraph 和 math 资源来自本地 `vendor/drawio/`，加载异常会回退内置 SVG。内网路径特殊时可通过 `options.drawing.viewerScriptUrl` 指定同源自托管脚本。
 
 Demo 默认保持 `comfortable` 密度，避免首次打开就进入紧凑版；需要验证效率型外壳、工具栏、压缩包目录、嵌套预览头部、小按钮和搜索输入时，可在 URL 上追加 `?density=compact` 显式切换。压缩包样例用于验证 `libarchive.js` Worker、目录读取、按需解压、IndexedDB 缓存和内部文件继续预览。接入方可以用同一组样例把 `options.archive.entryActions.download` 设为 `false` 或回调，确认内部文件预览栏的下载按钮隐藏，而顶层 viewer 下载原始压缩包的动作仍然可独立控制。邮件样例用于验证 EML / MSG / MBOX 的头信息、正文切换、附件下载和附件预览。地理数据样例用于验证 GeoJSON/KML/GPX 到 MapLibre 矢量叠加层、CRS 归一化和 SVG fallback 的链路；在线 Demo 默认启用 OpenFreeMap 公开底图，私有化或内网接入仍可把 `options.geo.basemap` / `options.geo.tileUrl` 改成离线、自托管或镜像地址。OLB / DRA 样例用于验证 EDA 文件结构树、对象候选、属性、诊断和可读字符串索引；GDS 样例用于验证标准 GDSII 记录解析和 SVG 版图预览；OAS / OASIS 样例用于验证可读 OASIS 文本夹具 SVG 版图与真实二进制 OASIS 的安全结构诊断边界。SQLite、WASM 和 ICO 样例用于验证资产/数据预览链路不会影响普通文档首屏。
 

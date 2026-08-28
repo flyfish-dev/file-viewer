@@ -1,0 +1,25 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "pptx-charts",
+  "packageName": "@file-viewer/capability-pptx-charts",
+  "enhancesPackage": "@file-viewer/renderer-pptx",
+  "activation": {
+    "kind": "side-effect-import",
+    "import": "@file-viewer/capability-pptx-charts",
+    "export": "enableFileViewerPptxCharts"
+  },
+  "rendererIds": ["office-presentation"],
+  "formats": [],
+  "assets": { "rendererIds": [] },
+  "license": {
+    "spdx": "Apache-2.0",
+    "policy": "permissive",
+    "notices": [
+      { "packageName": "billboard.js", "spdx": "MIT" },
+      { "packageName": "d3-format", "spdx": "ISC" }
+    ]
+  },
+  "weight": "standard",
+  "profiles": ["standard", "all"]
+}

@@ -6,6 +6,13 @@ import {
   type RendererDefinition,
 } from '@file-viewer/core';
 
+export {
+  getFileViewerPdfIdentityFontRepair,
+  registerFileViewerPdfIdentityFontRepair,
+} from './optionalCapabilities.js';
+export type { FileViewerPdfIdentityFontRepair } from './optionalCapabilities.js';
+export type { PdfIdentityFontRepairResult } from './pdfIdentityFontRepair.js';
+
 const pdfDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
   definition => definition.id === 'pdf'
 ) as RendererDefinition | undefined;

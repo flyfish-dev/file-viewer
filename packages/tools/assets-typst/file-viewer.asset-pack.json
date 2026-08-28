@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "typst",
+  "packageName": "@file-viewer/assets-typst",
+  "copyGroups": [
+    "typst"
+  ],
+  "receiptFilename": "file-viewer-assets-typst.receipt.json"
+}

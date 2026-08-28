@@ -3,18 +3,18 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  唯一格式目录当前注册 <strong>221 个扩展名</strong>，覆盖 <strong>32 条预览链路</strong>：其中 <strong>221 个稳定</strong>、<strong>0 个实验</strong>。
+  唯一格式目录当前注册 <strong>244 个扩展名</strong>，覆盖 <strong>34 条预览链路</strong>：其中 <strong>221 个稳定</strong>、<strong>23 个实验</strong>。
   这一页不是“计划支持什么”，而是以当前代码里已经注册好的渲染器为准，告诉你项目现在到底能处理哪些格式、分别走哪条渲染链路，以及在真实业务里应该怎么选。
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="File Viewer by Flyfish v2.3.0 中文格式样例库，展示分组、文件名与格式专属图标" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">Demo 把 32 条预览链路的代表样例按类型分组；稳定格式必须有可再分发的真实文件 fixture 与浏览器断言，合成或改后缀样例不计入证据。</p>
+  <p class="doc-caption">Demo 把 34 条预览链路的代表样例按类型分组；稳定格式必须有可再分发的真实文件 fixture 与浏览器断言，合成或改后缀样例不计入证据；实验项必须持续展示限制。</p>
 </div>
 
 <div class="doc-grid">
   <div class="doc-card">
-    <h3>221 个已注册扩展名</h3>
+    <h3>244 个已注册扩展名</h3>
     <p>覆盖 Office、PDF、OFD、Typst、XMind、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、Mermaid、PlantUML、EPUB、UMD、Markdown、图片、音视频、代码/文本、Git patch/bundle、字体、PSD 图层资产和结构化数据等常见附件类型。</p>
   </div>
   <div class="doc-card">
@@ -56,17 +56,18 @@
 | OpenDocument 演示文稿 | `odp` | OpenDocument 兼容预览 | 读取每页幻灯片的文本和页面结构 | 跨平台导出的演示文稿 |
 | PDF | `pdf` | `pdfjs-dist` | 浏览器端 PDF 渲染，同源 URL 默认渐进读取，服务端支持 Range 时自动分片加载，支持缩放工具栏、页侧边栏/目录树侧边栏切换、宽度自适应、完整打印和导出 HTML | 合同、票据、版式稳定文件 |
 | OFD | `ofd` | `@file-viewer/renderer-ofd` + `DLTech21/ofd.js` 源码 | 使用浏览器端 OFD 解析和页面渲染，vendor 随包离线分发，避开 npm dist 授权 wasm 分支 | 电子发票、公文、国产版式归档材料 |
-| 数字签名与时间戳（显式按需、实验性） | `p7m`、`p7s`、`p7b`、`p7c`、`pkcs7`、`cms`、`cmsc`、`tsq`、`tsr`、`tst`、`tsd`、`asc`、`sig`、`pgp`、`gpg` | `@file-viewer/renderer-signature` + 浏览器 Web Crypto + 可选 rPGP Worker/WASM | 本地检查 CMS/PKCS#7、部分 CAdES、RFC 3161/5544 与公开 OpenPGP 材料；不默认进入 `preset-all` 或任何 `*-full` 包；解析或密码学结果不等于证书信任、政策合规或法律效力 | 签名附件与时间戳容器初筛 |
 | Typst | `typ`、`typst` | `@myriaddreamin/typst.ts` 浏览器 WASM 编译 | 直接读取 Typst 源文档并输出按页 SVG，支持完整预览、打印和导出 HTML；compiler / renderer WASM 与默认字体仅命中 Typst 时按需加载 | 技术报告、论文草稿、工程文档模板 |
 | 压缩包 | `zip`、`zipx`、`7z`、`rar`、`tar`、`gz`、`gzip`、`tgz`、`bz2`、`bzip2`、`tbz`、`tbz2`、`xz`、`txz`、`lzma`、`zst`、`cab`、`ar`、`cpio`、`iso`、`xar`、`lha`、`lzh`、`jar`、`war`、`ear`、`apk`、`cbz`、`cbr` | `@file-viewer/renderer-archive` + `libarchive.js` WASM Worker | 先读取目录，点击文件后按需解压；内部文件继续复用统一预览器，并支持 IndexedDB 缓存、GBK/GB18030 旧 ZIP 中文文件名、体积上限和 ZIP/TAR/GZIP 兼容降级 | 归档附件、批量交付包、压缩包内文档快速查看 |
 | 邮件 | `eml`、`msg`、`mbox` | `@file-viewer/renderer-email` + `postal-mime` / `@kenjiuno/msgreader` | 展示头信息、HTML/文本正文、附件列表；MBOX 会解析首封邮件并标注识别数量；附件可下载，也可继续在线预览 | 邮件归档、客服工单、客户来信附件 |
+| 医疗影像（显式按需） | `dcm`、`dicom` | `@file-viewer/renderer-dicom` + 本地 Cornerstone 解码链 | 仅处理一个有界本地 DICOM Part 10 文件，支持单帧/多帧、缩放、旋转和窗宽窗位；不包含 PACS/DICOMweb、序列组装、MPR、分割或诊断用途声明 | 非诊断性的医疗附件快速审阅 |
+| 数字签名与证据容器（显式按需） | `p7m`、`p7s`、`p7b`、`p7c`、`pkcs7`、`cms`、`cmsc`、`tsq`、`tsr`、`tst`、`tsd`、`asics`、`scs`、`asice`、`sce`、`ers`、`asc`、`sig`、`pgp`、`gpg`、`jws` | `@file-viewer/renderer-signature` + 有界 Worker/WASM | 本地检查 CMS/CAdES、RFC 3161/5544、ASiC、RFC 4998、JWS 与公开 OpenPGP 材料；密码学结果不等于证书信任、政策合规或法律效力，不接收私钥和自动解密 | 签名附件、时间戳与证据容器初筛 |
 | EDA | `olb`、`dra`、`gds`、`oas`、`oasis` | `@file-viewer/renderer-eda` + `cfb` 容器解析 + GDSII/OASIS 版图解析 + WebGL 批次 | 独立 EDA renderer 优先解析 OrCAD / Allegro 常见 CFB 容器；标准 GDSII 会读取 structure、boundary、path、text、reference 并生成 SVG 版图预览，元素较多时自动切到 WebGL canvas；OAS/OASIS 可读文本版图夹具会生成 SVG 预览，真实 SEMI 二进制 OASIS 当前做安全结构索引、可读字符串、实体候选和诊断；完整 OLB/DRA/OASIS 可视化路线见 [格式完整度](/zh/guide/format-fidelity) | 元件库、封装图纸、芯片版图文件初筛 |
 | CAD | `dwg`、`dxf`、`dwf`、`dwfx`、`xps` | `@flyfish-dev/cad-viewer` | DWG 通过 Worker + LibreDWG WASM 解析；DXF 使用 JS parser；DWF/DWFx/XPS 使用 native `dwf-viewer` 渲染 W2D/W3D/XPS 图形，并支持 WebGL / WASM fallback | 工程图纸、二维 CAD 附件、AutoCAD 归档文件 |
 | 地理数据 | `geojson`、`kml`、`gpx`、`shp` | `@file-viewer/renderer-geo` + GeoJSON 标准化 + CRS 归一化 + MapLibre 矢量叠加层 | GeoJSON 直接读取，KML/GPX 使用 `@tmcw/togeojson` 转换，SHP 使用 `shpjs`；默认离线空底图，可通过 `options.geo.tileUrl` / `options.geo.basemap` 启用公网、内网或离线自托管瓦片；支持 Web Mercator 推断、`options.geo.projection` 和 SVG fallback | 地理附件、轨迹、边界、点位和轻量 GIS 数据 |
 | 3D 模型 | `glb`、`gltf`、`obj`、`stl`、`ply`、`fbx`、`dae`、`3ds`、`3mf`、`amf`、`usd`、`usda`、`usdc`、`usdz`、`kmz`、`pcd`、`wrl`、`vrml`、`xyz`、`vtk`、`vtp`、`step`、`stp`、`iges`、`igs`、`brep`、`ifc`、`3dm` | `@file-viewer/renderer-3d` + Three.js loaders + `@file-viewer/geometry-engine` / `occt-import-js` | WebGL 交互预览，支持轨道控制、适配视图、网格/坐标轴、线框、自动旋转和统一缩放；STEP/STP、IGES/IGS、BREP 在本地 OCCT Worker/WASM 中解析，IFC/3DM 当前提供签名识别和接入提示 | 设计模型、点云、三维资产、工程模型 |
 | XMind 脑图 | `xmind` | `@file-viewer/renderer-mindmap` + `@ljheee/xmind-parser` + `@panzoom/panzoom` | 支持 XMind 8 XML 与 XMind 2020+ JSON 包结构，展示多 sheet、节点树、标签、备注、超链接、标记、图片、目录侧栏，并通过成熟 Panzoom 画布提供拖拽平移、移动端双指缩放、Ctrl/Command 滚轮锚点缩放、键盘平移、统一 toolbar 状态同步、适配画布、搜索、打印和 HTML 导出 | 脑图、规划图、知识结构、会议纪要 |
 | Excalidraw | `excalidraw` | `@file-viewer/renderer-drawing` + `roughjs` | 独立绘图 renderer 默认输出稳定只读 SVG；运行环境已提供官方 `@excalidraw/excalidraw` ESM 模块时会优先尝试 `restore` + `exportToSvg`，不可用时使用 rough.js 安全兜底 | 白板草图、产品沟通图、流程草稿 |
-| draw.io | `drawio`、`dio` | `@file-viewer/renderer-drawing` + 官方 diagrams.net `GraphViewer` 离线预览 | 独立绘图 renderer 默认加载随 viewer assets 分发的 `vendor/drawio/viewer-static.min.js`，并把 styles、shapes、stencils、img、mxgraph、math 都固定到本地目录；失败时回退安全 SVG | 流程图、架构图、业务泳道图 |
+| draw.io | `drawio`、`dio` | `@file-viewer/renderer-drawing` 内置 SVG；官方 diagrams.net `GraphViewer` 为显式可选能力 | 默认不执行文档 HTML；设置 `options.drawing.preferOfficial = true` 后，单独分发的 `vendor/drawio/viewer-static.min.js` 在受限 iframe 中按需加载，资源固定到本地目录，失败时回退安全 SVG | 流程图、架构图、业务泳道图 |
 | Mermaid | `mermaid`、`mmd` | `@file-viewer/renderer-drawing` + 官方 `mermaid` | 命中 Mermaid 时才按需加载官方渲染器，输出主题适配 SVG，并使用 `@panzoom/panzoom` 支持拖动、Ctrl/Command 滚轮缩放、统一缩放工具栏和重置 | 架构图、流程图、状态图、序列图 |
 | PlantUML | `plantuml`、`puml` | `@file-viewer/renderer-drawing` + 离线 SVG 源码预览 + 可自托管 PlantUML SVG 服务 | 默认不访问外网并显示源码预览；需要完整图形时可通过 `options.drawing.plantumlServerUrl` 指向内网 PlantUML SVG 服务；预览层支持拖动、缩放和主题容器适配 | UML 时序图、组件图、部署图 |
 | 电子书 | `epub` | `@file-viewer/renderer-epub` + 包内固化的 EPUB 本地引擎 | 解析 EPUB 包、目录和章节资源，使用滚动阅读避免超宽分页白板；引擎按需加载且不访问运行时 CDN | 电子书、培训手册、长篇阅读材料 |
@@ -178,8 +179,8 @@
 ### 绘图文件
 
 - `excalidraw` 使用 `@file-viewer/renderer-drawing` 输出只读 SVG；默认走 `roughjs` 稳定兜底，运行环境已提供官方 `@excalidraw/excalidraw` ESM 模块时会优先尝试 `restore` 与 `exportToSvg`。
-- `drawio` 和 `dio` 默认使用官方 diagrams.net `GraphViewer` 离线预览，`viewer-static.min.js` 与 styles、shapes、stencils、img、mxgraph、math 资源随 viewer assets 分发到 `vendor/drawio/`。
-- 如果你的静态目录前缀特殊，可以通过 `options.drawing.viewerScriptUrl` 指定自托管 `viewer-static.min.js` 地址；组件会根据该脚本目录推导同级离线资源目录。官方 viewer 加载失败或超时时仍会回退到本地 SVG；确实希望使用轻量兜底时，可设置 `options.drawing.preferOfficial = false`。
+- `drawio` 和 `dio` 默认使用内置 SVG 安全预览，不执行图文件生成的 HTML，也不会加载 diagrams.net 重型资源。
+- 只有显式设置 `options.drawing.preferOfficial = true` 时才在无 same-origin 权限、带严格 CSP 的 iframe 中启用单独分发的 diagrams.net `GraphViewer`；静态目录前缀特殊时可通过 `viewerScriptUrl` 指定同源 HTTP(S) 自托管脚本。官方 viewer 加载失败或超时时仍会回退到本地 SVG。
 
 ### 电子书
 
@@ -219,7 +220,7 @@
 - 你在做品牌、示意图或视觉素材展示：`png`、`svg`、`webp` 这类图片格式会比转成文档更省心。
 - 你要预览 CAD：优先提供 `dwg`、`dxf`、`dwf` 或 `dwfx`；DWG 和 DWF native renderer 会按需加载 Worker/WASM，私有化部署时请确认 viewer assets 中的 `wasm/cad/` 资源可访问。
 - 你要预览 3D 模型：优先沉淀 `glb` / `gltf`，历史模型可用 OBJ、STL、PLY、FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ 等格式接入；STEP/STP、IGES/IGS、BREP 可以直接走本地 OCCT 预览，IFC、3DM 当前建议先转换或接入对应专业内核。
-- 你要预览绘图文件：Excalidraw 和 draw.io 都保留源格式入口，前者走官方恢复与导出 SVG，后者默认走官方 diagrams.net 离线 viewer 并在异常时回退内置 SVG。
+- 你要预览绘图文件：Excalidraw 和 draw.io 都保留源格式入口，前者走官方恢复与导出 SVG，后者默认走内置 SVG；只有显式设置 `preferOfficial = true` 才在受限 iframe 中按需加载 diagrams.net 离线 viewer，异常时回退内置 SVG。
 - 你要预览电子书或音视频：EPUB / UMD 优先保留源文件，音频优先选择浏览器兼容最稳定的 MP3 / OGG，视频优先选择 MP4 / WEBM；需要流媒体体验时可以提供 M3U8。
 
 ## 不支持的格式会怎样

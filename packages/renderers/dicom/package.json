@@ -1,0 +1,83 @@
+{
+  "name": "@file-viewer/renderer-dicom",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "sideEffects": false,
+  "description": "Opt-in local DICOM Part 10 renderer plugin for File Viewer, powered by modular Cornerstone3D packages.",
+  "keywords": [
+    "file-viewer",
+    "renderer",
+    "dicom",
+    "medical-imaging",
+    "cornerstone",
+    "document-preview",
+    "self-hosted"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Yu Wang",
+    "email": "admin@flyfish.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/renderers/dicom"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "fileViewer": {
+    "capabilityManifest": "file-viewer.capability.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./inspect": {
+      "types": "./dist/inspect.d.ts",
+      "import": "./dist/inspect.js",
+      "default": "./dist/inspect.js"
+    },
+    "./capability": "./file-viewer.capability.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "README.en.md",
+    "file-viewer.capability.json",
+    "THIRD_PARTY_NOTICES.md",
+    "THIRD_PARTY_LICENSES.json",
+    "third-party/native-codecs",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@cornerstonejs/core": "5.8.2",
+    "@cornerstonejs/dicom-image-loader": "5.8.2",
+    "@cornerstonejs/metadata": "5.8.2",
+    "@file-viewer/core": "workspace:3.0.0",
+    "dicom-parser": "1.8.21"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "license": "Apache-2.0"
+}

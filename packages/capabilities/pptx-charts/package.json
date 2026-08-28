@@ -1,0 +1,50 @@
+{
+  "name": "@file-viewer/capability-pptx-charts",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Opt-in chart runtime for the File Viewer native PPTX renderer.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "file-viewer.capability.json",
+    "README.md",
+    "README.en.md"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/pptx": "workspace:3.0.0",
+    "billboard.js": "^3.17.2",
+    "d3-format": "^3.1.2"
+  },
+  "devDependencies": {
+    "@types/d3-format": "^3.0.4",
+    "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/capabilities/pptx-charts"
+  },
+  "license": "Apache-2.0"
+}

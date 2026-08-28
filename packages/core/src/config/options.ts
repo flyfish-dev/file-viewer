@@ -11,6 +11,8 @@ import type {
 type JsonPrimitive = string | number | boolean | null;
 type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
 
+const UNSAFE_JSON_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
 export type FileViewerSerializableToolbarOptions = Omit<
   FileViewerToolbarOptions,
   'beforeOperation' | 'beforeDownload' | 'beforePrint' | 'beforeExportHtml'
@@ -65,15 +67,20 @@ const sanitizeJsonValue = (value: unknown): JsonValue | undefined => {
     return undefined;
   }
 
-  const output: Record<string, JsonValue> = {};
+  const outputEntries: Array<[string, JsonValue]> = [];
   Object.entries(value).forEach(([key, nextValue]) => {
+    if (UNSAFE_JSON_KEYS.has(key)) {
+      return;
+    }
     const sanitized = sanitizeJsonValue(nextValue);
     if (sanitized !== undefined) {
-      output[key] = sanitized;
+      outputEntries.push([key, sanitized]);
     }
   });
 
-  return Object.keys(output).length ? output : undefined;
+  return outputEntries.length
+    ? Object.fromEntries(outputEntries) as Record<string, JsonValue>
+    : undefined;
 };
 
 const stripExecutionOnlyOptions = (value: Record<string, unknown>) => {

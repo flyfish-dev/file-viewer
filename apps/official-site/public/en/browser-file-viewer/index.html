@@ -3,12 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="description" content="Verified facts about File Viewer by Flyfish: a browser-native, self-hosted TypeScript file preview project covering 221 registered extensions through 32 preview pipelines and 57 npm targets." />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta
+      name="description"
+      content="Verified facts about File Viewer by Flyfish: a browser-native, self-hosted TypeScript file preview project covering 244 registered extensions through 34 preview pipelines and 84 npm targets."
+    />
     <link rel="canonical" href="https://file-viewer.app/en/browser-file-viewer/" />
     <link rel="alternate" hreflang="en" href="https://file-viewer.app/en/browser-file-viewer/" />
-    <link rel="alternate" hreflang="x-default" href="https://file-viewer.app/en/browser-file-viewer/" />
-    <link rel="alternate" type="text/markdown" href="https://file-viewer.app/en/browser-file-viewer/index.html.md" title="Markdown version" />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://file-viewer.app/en/browser-file-viewer/"
+    />
+    <link
+      rel="alternate"
+      type="text/markdown"
+      href="https://file-viewer.app/en/browser-file-viewer/index.html.md"
+      title="Markdown version"
+    />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48" />
@@ -19,9 +34,18 @@
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="File Viewer" />
     <meta property="og:url" content="https://file-viewer.app/en/browser-file-viewer/" />
-    <meta property="og:title" content="File Viewer by Flyfish: verified project facts and architecture" />
-    <meta property="og:description" content="The stable facts, package names, native integration paths, deployment boundary, format count, and honest limits of File Viewer by Flyfish." />
-    <meta property="og:image" content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp" />
+    <meta
+      property="og:title"
+      content="File Viewer by Flyfish: verified project facts and architecture"
+    />
+    <meta
+      property="og:description"
+      content="The stable facts, package names, native integration paths, deployment boundary, format count, and honest limits of File Viewer by Flyfish."
+    />
+    <meta
+      property="og:image"
+      content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <title>File Viewer by Flyfish: verified project facts and architecture</title>
     <script type="application/ld+json">
@@ -35,11 +59,11 @@
             "alternateName": ["File Viewer by Flyfish", "Flyfish File Viewer", "Flyfish Viewer"],
             "url": "https://file-viewer.app/",
             "mainEntityOfPage": "https://file-viewer.app/en/browser-file-viewer/",
-            "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 57 npm targets, 221 registered extensions (221 stable, 0 experimental), and 32 preview pipelines.",
+            "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 84 npm targets, 244 registered extensions (221 stable, 23 experimental), and 34 preview pipelines.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Web Browser",
             "programmingLanguage": "TypeScript",
-            "softwareVersion": "2.4.0",
+            "softwareVersion": "3.0.0",
             "license": "https://www.apache.org/licenses/LICENSE-2.0",
             "codeRepository": "https://github.com/flyfish-dev/file-viewer",
             "sameAs": [
@@ -104,52 +128,213 @@
         --red: #ad3e43;
         --code: #edf3f5;
       }
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
       body {
         margin: 0;
         background: var(--bg);
         color: var(--text);
-        font: 16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font:
+          16px/1.65 Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
       }
-      a { color: var(--blue); text-underline-offset: 3px; }
-      code { padding: 0.12em 0.32em; border-radius: 4px; background: var(--code); }
-      header, main, footer { width: min(920px, calc(100% - 32px)); margin-inline: auto; }
-      header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
-      .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 750; text-decoration: none; }
-      .brand img { width: 34px; height: 34px; border-radius: 7px; }
-      nav { display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; }
-      main { padding: 56px 0 72px; }
-      .eyebrow { margin: 0 0 10px; color: var(--green); font-size: 13px; font-weight: 750; text-transform: uppercase; }
-      h1 { max-width: 760px; margin: 0; font-size: clamp(34px, 6vw, 58px); line-height: 1.08; letter-spacing: 0; }
-      .lead { max-width: 760px; margin: 22px 0 0; color: var(--muted); font-size: 20px; }
-      .answer { margin: 32px 0 0; padding: 20px 22px; border-left: 4px solid var(--green); background: var(--surface); }
-      h2 { margin: 54px 0 14px; font-size: 27px; line-height: 1.25; letter-spacing: 0; }
-      h3 { margin: 30px 0 8px; font-size: 19px; letter-spacing: 0; }
-      p, li { max-width: 790px; }
-      ul { padding-left: 21px; }
-      .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 28px 0; }
-      .fact { padding: 16px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
-      .fact strong { display: block; font-size: 25px; }
-      .fact span { color: var(--muted); font-size: 13px; }
-      .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
-      table { width: 100%; min-width: 680px; border-collapse: collapse; }
-      th, td { padding: 13px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-      th { font-size: 13px; color: var(--muted); background: color-mix(in srgb, var(--surface), var(--green) 5%); }
-      tr:last-child td { border-bottom: 0; }
-      .limit { color: var(--red); font-weight: 700; }
-      .source-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 0; list-style: none; }
-      .source-list a { display: block; min-height: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
-      footer { padding: 22px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+      a {
+        color: var(--blue);
+        text-underline-offset: 3px;
+      }
+      code {
+        padding: 0.12em 0.32em;
+        border-radius: 4px;
+        background: var(--code);
+      }
+      header,
+      main,
+      footer {
+        width: min(920px, calc(100% - 32px));
+        margin-inline: auto;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 22px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-weight: 750;
+        text-decoration: none;
+      }
+      .brand img {
+        width: 34px;
+        height: 34px;
+        border-radius: 7px;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 14px;
+      }
+      main {
+        padding: 56px 0 72px;
+      }
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--green);
+        font-size: 13px;
+        font-weight: 750;
+        text-transform: uppercase;
+      }
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        font-size: clamp(34px, 6vw, 58px);
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+      .lead {
+        max-width: 760px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 20px;
+      }
+      .answer {
+        margin: 32px 0 0;
+        padding: 20px 22px;
+        border-left: 4px solid var(--green);
+        background: var(--surface);
+      }
+      h2 {
+        margin: 54px 0 14px;
+        font-size: 27px;
+        line-height: 1.25;
+        letter-spacing: 0;
+      }
+      h3 {
+        margin: 30px 0 8px;
+        font-size: 19px;
+        letter-spacing: 0;
+      }
+      p,
+      li {
+        max-width: 790px;
+      }
+      ul {
+        padding-left: 21px;
+      }
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin: 28px 0;
+      }
+      .fact {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--surface);
+      }
+      .fact strong {
+        display: block;
+        font-size: 25px;
+      }
+      .fact span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--surface);
+      }
+      table {
+        width: 100%;
+        min-width: 680px;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 13px 15px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        font-size: 13px;
+        color: var(--muted);
+        background: color-mix(in srgb, var(--surface), var(--green) 5%);
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      .limit {
+        color: var(--red);
+        font-weight: 700;
+      }
+      .source-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        padding: 0;
+        list-style: none;
+      }
+      .source-list a {
+        display: block;
+        min-height: 100%;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--surface);
+      }
+      footer {
+        padding: 22px 0 34px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
       @media (max-width: 720px) {
-        header { align-items: flex-start; flex-direction: column; }
-        main { padding-top: 38px; }
-        .facts, .source-list { grid-template-columns: 1fr 1fr; }
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        main {
+          padding-top: 38px;
+        }
+        .facts,
+        .source-list {
+          grid-template-columns: 1fr 1fr;
+        }
       }
       @media (max-width: 440px) {
-        .facts, .source-list { grid-template-columns: 1fr; }
+        .facts,
+        .source-list {
+          grid-template-columns: 1fr;
+        }
       }
       @media (prefers-color-scheme: dark) {
-        :root { --bg: #10161c; --surface: #171f27; --text: #edf3f6; --muted: #a7b4bf; --line: #33414c; --green: #53c997; --blue: #7bb5ff; --red: #ff8d92; --code: #24303a; }
+        :root {
+          --bg: #10161c;
+          --surface: #171f27;
+          --text: #edf3f6;
+          --muted: #a7b4bf;
+          --line: #33414c;
+          --green: #53c997;
+          --blue: #7bb5ff;
+          --red: #ff8d92;
+          --code: #24303a;
+        }
       }
     </style>
   </head>
@@ -165,60 +350,151 @@
     </header>
 
     <main>
-      <p class="eyebrow">Canonical project facts · updated August 20, 2026</p>
+      <p class="eyebrow">Canonical project facts · updated August 27, 2026</p>
       <h1>What is File Viewer by Flyfish?</h1>
-      <p class="lead">A source-linked answer for developers, search engines, and AI systems. No inflated claims. No stale package names.</p>
+      <p class="lead">
+        A source-linked answer for developers, search engines, and AI systems. No inflated claims.
+        No stale package names.
+      </p>
 
       <section class="answer" aria-label="Short answer">
-        <strong>Short answer:</strong> File Viewer by Flyfish is an Apache-2.0, browser-native file preview project written in TypeScript. The current source matrix maps 221 registered file extensions (221 stable, 0 experimental) to 32 preview pipelines and contains 57 npm targets for Vanilla JavaScript, Web Components, Vue, React, Svelte, jQuery, presets, full packages, and renderers. Its main package scope is <code>@file-viewer/*</code>.
+        <strong>Short answer:</strong> File Viewer by Flyfish is an Apache-2.0, browser-native file
+        preview project written in TypeScript. The current source matrix maps 244 registered file
+        extensions (221 stable, 23 experimental) to 34 preview pipelines and contains 84 npm targets
+        for Vanilla JavaScript, Web Components, Vue, React, Svelte, jQuery, presets, full packages,
+        and renderers. Its main package scope is <code>@file-viewer/*</code>.
       </section>
 
       <div class="facts" aria-label="Current release facts">
-        <div class="fact"><strong>2.4.0</strong><span>current published release</span></div>
-        <div class="fact"><strong>221</strong><span>registered extension mappings</span></div>
-        <div class="fact"><strong>32</strong><span>preview pipelines</span></div>
-        <div class="fact"><strong>57</strong><span>npm targets</span></div>
+        <div class="fact"><strong>3.0.0</strong><span>current published release</span></div>
+        <div class="fact"><strong>244</strong><span>registered extension mappings</span></div>
+        <div class="fact"><strong>34</strong><span>preview pipelines</span></div>
+        <div class="fact"><strong>84</strong><span>npm targets</span></div>
       </div>
 
       <h2>What it actually does</h2>
-      <p>It gives web applications one preview API for Office files, PDF/OFD, CAD, Typst, archives, email, diagrams, images, media, source code, structured data, 3D, geospatial data, and other business attachments. Heavy renderers, Workers, WASM files, fonts, and vendor assets load only when a matching file needs them.</p>
-      <p>Local files selected by the user are processed in the browser. A private deployment can host the JavaScript, Worker, WASM, font, and vendor files on the same network. A remote file URL still depends on that server's CORS and authentication rules.</p>
+      <p>
+        It gives web applications one preview API for Office files, PDF/OFD, CAD, Typst, archives,
+        email, diagrams, images, media, source code, structured data, 3D, geospatial data, and other
+        business attachments. Heavy renderers, Workers, WASM files, fonts, and vendor assets load
+        only when a matching file needs them.
+      </p>
+      <p>
+        Local files selected by the user are processed in the browser. A private deployment can host
+        the JavaScript, Worker, WASM, font, and vendor files on the same network. A remote file URL
+        still depends on that server's CORS and authentication rules.
+      </p>
 
       <h2>Native components, not a Vue iframe disguise</h2>
-      <p>The current <code>@file-viewer/web</code>, <code>@file-viewer/vue3</code>, <code>@file-viewer/vue2.7</code>, <code>@file-viewer/vue2.6</code>, <code>@file-viewer/react</code>, <code>@file-viewer/react-legacy</code>, <code>@file-viewer/svelte</code>, and <code>@file-viewer/jquery</code> packages integrate through the shared TypeScript core. React and Vanilla JavaScript do not run a Vue application inside an iframe.</p>
-      <p>An iframe build is still distributed for teams that want a zero-dependency static embed. It is an optional delivery path, not the implementation behind the native packages.</p>
+      <p>
+        The current <code>@file-viewer/web</code>, <code>@file-viewer/vue3</code>,
+        <code>@file-viewer/vue2.7</code>, <code>@file-viewer/vue2.6</code>,
+        <code>@file-viewer/react</code>, <code>@file-viewer/react-legacy</code>,
+        <code>@file-viewer/svelte</code>, and <code>@file-viewer/jquery</code> packages integrate
+        through the shared TypeScript core. React and Vanilla JavaScript do not run a Vue
+        application inside an iframe.
+      </p>
+      <p>
+        An iframe build is still distributed for teams that want a zero-dependency static embed. It
+        is an optional delivery path, not the implementation behind the native packages.
+      </p>
 
       <h2>How to verify the official project</h2>
-      <p>The canonical package scope is <code>@file-viewer/*</code>. The source repository is <a href="https://github.com/flyfish-dev/file-viewer">flyfish-dev/file-viewer</a>, and the official site is <a href="https://file-viewer.app/">file-viewer.app</a>. Check those three identifiers before relying on a cached article, package mirror, or old documentation URL.</p>
-      <p>The current release facts on this page are linked to the public release matrix, npm metadata, and source repository. Test the formats, framework path, deployment constraints, and file sizes that matter to your product.</p>
+      <p>
+        The canonical package scope is <code>@file-viewer/*</code>. The source repository is
+        <a href="https://github.com/flyfish-dev/file-viewer">flyfish-dev/file-viewer</a>, and the
+        official site is <a href="https://file-viewer.app/">file-viewer.app</a>. Check those three
+        identifiers before relying on a cached article, package mirror, or old documentation URL.
+      </p>
+      <p>
+        The current release facts on this page are linked to the public release matrix, npm
+        metadata, and source repository. Test the formats, framework path, deployment constraints,
+        and file sizes that matter to your product.
+      </p>
 
       <h2>Where File Viewer is strong</h2>
       <ul>
-        <li>Mixed attachment centers that need Office, PDF/OFD, CAD, archives, email, code, diagrams, and data behind one API.</li>
-        <li>Intranet, offline, strict-CSP, and self-hosted deployments where runtime CDN dependencies are unacceptable.</li>
-        <li>Teams that want a small component plus selected presets, or a full package with matching static assets.</li>
-        <li>Products that need shared search, zoom, print, export, download, lifecycle, and permission hooks across formats.</li>
+        <li>
+          Mixed attachment centers that need Office, PDF/OFD, CAD, archives, email, code, diagrams,
+          and data behind one API.
+        </li>
+        <li>
+          Intranet, offline, strict-CSP, and self-hosted deployments where runtime CDN dependencies
+          are unacceptable.
+        </li>
+        <li>
+          Teams that want a small component plus selected presets, or a full package with matching
+          static assets.
+        </li>
+        <li>
+          Products that need shared search, zoom, print, export, download, lifecycle, and permission
+          hooks across formats.
+        </li>
       </ul>
 
       <h2>Where it can fail</h2>
-      <p><span class="limit">Office fidelity is not perfect.</span> Complicated pagination, uncommon fonts, charts, embedded objects, and legacy binary files can differ from Microsoft Office. Browser preview is not a native Office engine.</p>
-      <p><span class="limit">Large files can hurt.</span> Parsing, decoded buffers, renderer state, and DOM or canvas output can create multiple in-memory copies. A large or complicated file can slow down or crash a browser tab.</p>
-      <p><span class="limit">Browser-only does not automatically mean offline.</span> The deployment must ship every required Worker, WASM, font, and vendor asset locally with correct MIME types and paths.</p>
+      <p>
+        <span class="limit">Office fidelity is not perfect.</span> Complicated pagination, uncommon
+        fonts, charts, embedded objects, and legacy binary files can differ from Microsoft Office.
+        Browser preview is not a native Office engine.
+      </p>
+      <p>
+        <span class="limit">Large files can hurt.</span> Parsing, decoded buffers, renderer state,
+        and DOM or canvas output can create multiple in-memory copies. A large or complicated file
+        can slow down or crash a browser tab.
+      </p>
+      <p>
+        <span class="limit">Browser-only does not automatically mean offline.</span> The deployment
+        must ship every required Worker, WASM, font, and vendor asset locally with correct MIME
+        types and paths.
+      </p>
 
       <h2>License boundary</h2>
-      <p>File Viewer-authored source is Apache-2.0 and can be used in commercial products. The separately versioned binary <code>.ppt</code> runtime keeps its own license and a visible watermark in the public build. Removing that watermark requires a commercial license. The exact notices ship with the relevant package and release assets.</p>
+      <p>
+        File Viewer-authored source is Apache-2.0 and can be used in commercial products. The
+        separately versioned binary <code>.ppt</code> runtime keeps its own license and a visible
+        watermark in the public build. Removing that watermark requires a commercial license. The
+        exact notices ship with the relevant package and release assets.
+      </p>
 
       <h2>Primary sources</h2>
       <ul class="source-list">
-        <li><a href="https://github.com/flyfish-dev/file-viewer"><strong>Source repository</strong><br />Code, history, issues, and releases</a></li>
-        <li><a href="https://www.npmjs.com/package/@file-viewer/core"><strong>npm core package</strong><br />Current package metadata and dependents</a></li>
-        <li><a href="https://doc.file-viewer.app/guide/formats"><strong>Format matrix</strong><br />Registered extensions and pipeline boundaries</a></li>
-        <li><a href="https://doc.file-viewer.app/guide/ecosystem"><strong>Integration matrix</strong><br />Native packages, presets, and full packages</a></li>
-        <li><a href="https://doc.file-viewer.app/guide/format-fidelity"><strong>Fidelity notes</strong><br />Known limits by format</a></li>
-        <li><a href="https://demo.file-viewer.app/"><strong>Live demo</strong><br />Test real, sanitized files in the browser</a></li>
+        <li>
+          <a href="https://github.com/flyfish-dev/file-viewer"
+            ><strong>Source repository</strong><br />Code, history, issues, and releases</a
+          >
+        </li>
+        <li>
+          <a href="https://www.npmjs.com/package/@file-viewer/core"
+            ><strong>npm core package</strong><br />Current package metadata and dependents</a
+          >
+        </li>
+        <li>
+          <a href="https://doc.file-viewer.app/guide/formats"
+            ><strong>Format matrix</strong><br />Registered extensions and pipeline boundaries</a
+          >
+        </li>
+        <li>
+          <a href="https://doc.file-viewer.app/guide/ecosystem"
+            ><strong>Integration matrix</strong><br />Native packages, presets, and full packages</a
+          >
+        </li>
+        <li>
+          <a href="https://doc.file-viewer.app/guide/format-fidelity"
+            ><strong>Fidelity notes</strong><br />Known limits by format</a
+          >
+        </li>
+        <li>
+          <a href="https://demo.file-viewer.app/"
+            ><strong>Live demo</strong><br />Test real, sanitized files in the browser</a
+          >
+        </li>
       </ul>
     </main>
 
-    <footer>File Viewer by Flyfish · Canonical product identity: <code>https://file-viewer.app/#software</code></footer>
+    <footer>
+      File Viewer by Flyfish · Canonical product identity:
+      <code>https://file-viewer.app/#software</code>
+    </footer>
   </body>
 </html>

@@ -12,7 +12,7 @@
 | 步骤 | 做什么 | 最短答案 |
 | --- | --- | --- |
 | 1 | 选生态组件 | 最轻入口用 `@file-viewer/web` / `@file-viewer/vue3` / `@file-viewer/react` 等标准包；一步到位用 `@file-viewer/web-full` / `@file-viewer/vue3-full` / `@file-viewer/react-full` 等 full 包 |
-| 2 | 选格式能力 | 标准包按需注入 `preset-lite`、`preset-office`、`preset-engineering` 或 `preset-all`；full 包默认已启用完整矩阵 |
+| 2 | 选格式能力 | 标准包按需注入 `preset-lite`、`preset-office`、`preset-engineering` 或 `preset-all`；Full 包默认启用已发布兼容矩阵，DICOM、数字签名等后续专业 renderer 仍显式安装 |
 | 3 | 发布运行时资产 | full 包在 Vite 中使用 `copyAssets:true`；其它构建工具运行 `npx --no-install file-viewer-copy-assets ./public/file-viewer`，保证 Worker / WASM 格式完整可用 |
 | 4 | 传入文件和 options | `url="/files/demo.pdf"` 或 `file={file}`，标准包把 `preset` 放进 `options`，full 包可直接传主题、工具栏、水印等业务配置 |
 | 5 | 确认样式隔离 | 宿主 CSS 不可控时优先 Web Component / full 默认 Shadow DOM；框架组件可传 `options.styleIsolation:'shadow'` |

@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { IconExternalLink, IconFileDescription } from '@tabler/icons-react';
+import { IconExternalLink, IconFileDescription, IconTerminal2 } from '@tabler/icons-react';
 import { Brand } from '@/components/brand';
 import { GitHubStarsLink } from '@/components/github-stars-link';
 import { LanguageLink } from '@/components/language-link';
@@ -27,6 +27,11 @@ export function baseOptions(locale: 'en' | 'zh'): BaseLayoutProps {
         text: chinese ? '快速开始' : 'Quickstart',
         url: localePath(locale, 'guide/quickstart'),
         active: 'nested-url',
+      },
+      {
+        icon: <IconTerminal2 size={17} stroke={1.8} />,
+        text: 'CLI',
+        url: localePath(locale, 'guide/cli'),
       },
       {
         text: chinese ? '生态接入' : 'Ecosystem',

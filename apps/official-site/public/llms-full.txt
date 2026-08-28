@@ -11,13 +11,15 @@ The project is designed for teams that need users to open business attachments d
 - Product name: File Viewer
 - Official site: https://file-viewer.app/
 - Documentation: https://doc.file-viewer.app/
+- CLI home: https://file-viewer.app/en/cli/
+- CLI guide: https://doc.file-viewer.app/guide/cli
 - Live demo: https://demo.file-viewer.app/
 - GitHub repository: https://github.com/flyfish-dev/file-viewer
 - License: File Viewer-authored source and packages are Apache-2.0; the bundled `@file-viewer/ppt` runtime retains its included independent LICENSE and NOTICE, as do other third-party dependencies.
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
-- Source matrix scope: 57 File Viewer npm targets, 221 registered extensions, and 32 preview pipelines; all 221 extensions are stable and none are experimental.
-- Current published release: v2.4.0, https://github.com/flyfish-dev/file-viewer/releases/tag/v2.4.0. All 56 regular File Viewer packages use 2.4.0; the historical `msdoc-viewer` compatibility package uses 0.2.3. Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.3 release.
+- Source matrix scope: 84 File Viewer npm targets, 244 registered extensions, and 34 preview pipelines; 221 extensions are stable and 23 DICOM/signature mappings are experimental.
+- Current published release: v3.0.0, https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0. 83 mainline File Viewer packages use 3.0.0; the historical `msdoc-viewer` compatibility package uses 0.2.4. Word uses `@file-viewer/docx` 0.3.28; Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.4 release.
 
 ## Format Coverage
 
@@ -28,18 +30,19 @@ The format matrix covers Office documents, fixed-layout documents, engineering a
 - Archives and communication files: zip, 7z, rar, tar, eml, msg, mbox, epub.
 - Code, data, media, and geo: markdown, JSON, TypeScript, Python, patch/diff, git bundle, SQLite, Parquet, video, audio, GeoJSON, KML.
 
-The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/office/engineering/all presets. Every v2.4.0 Full package already includes preset-all 2.4.0 and must not be documented as requiring a separate preset install or `options.preset`.
+The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/standard/office/engineering/all presets. Every v3.0.0 Full package preserves the published preset-all compatibility matrix and must not be documented as requiring a separate preset install or `options.preset`. Later specialist DICOM and signature renderers remain explicit additions; the CLI's `full` profile adds them only after showing their size, runtime, and license boundaries.
 
 PowerPoint has two strict rendering routes. Binary `.ppt` files use the independently versioned `@file-viewer/ppt@0.3.3` runtime. Demo, Full, copy-assets, and CDN/IIFE distributions include its verified public ESM/Worker/WASM/CJK-font files under `vendor/ppt/`. Open XML `.pptx` files use the separate `@file-viewer/pptx` Worker engine. Documentation and examples should not collapse these into one renderer.
 
 ## Integration Model
 
-1. Lightest setup: install a standard ecosystem component such as `@file-viewer/web` or `@file-viewer/vue3`.
-2. Manual assembly: install a component package and one or more presets, then pass the preset through `options.preset`.
-3. Vite Full: install the framework Full package plus `@file-viewer/vite-plugin`, then register `fileViewerRenderers({ copyAssets: true })`. Vite dev and build publish the File Viewer-owned asset tree under the deployment base, including root and subpath deployments.
-4. Non-Vite Full: install the framework Full package, then run `npx --no-install file-viewer-copy-assets ./public/file-viewer` once. Every Full package exposes this same-version CLI.
-5. Web Full: deploy `@file-viewer/web-full/dist` intact. Its File Viewer-owned preset-all renderers, Workers, WASM, fonts, vendor files, and integrity manifest need no copy step.
-6. CDN/IIFE: script-tag usage is supported, while heavy renderers and assets stay lazy-loaded. For offline or private hosting, deploy the complete web-full `dist/`; binary PPT 0.3.3 then works from packaged `vendor/ppt/` assets without URL configuration. `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are advanced overrides for custom routes.
+1. CLI scaffold or integration: run `npm create file-viewer@latest` for a new project or `file-viewer add` from an existing package.json project. The CLI selects frameworks, validated versions, profiles, formats, static assets, and private/offline acquisition without changing existing Full contracts.
+2. Lightest setup: install a standard ecosystem component such as `@file-viewer/web` or `@file-viewer/vue3`.
+3. Manual assembly: install a component package and one or more presets, then pass the preset through `options.preset`.
+4. Vite Full: install the framework Full package plus `@file-viewer/vite-plugin`, then register `fileViewerRenderers({ copyAssets: true })`. Vite dev and build publish the File Viewer-owned asset tree under the deployment base, including root and subpath deployments.
+5. Non-Vite Full: install the framework Full package, then run `npx --no-install file-viewer-copy-assets ./public/file-viewer` once. Every Full package exposes this same-version CLI, and `file-viewer copy-assets` provides a unified compatible entry.
+6. Web Full: deploy `@file-viewer/web-full/dist` intact. Its File Viewer-owned preset-all renderers, Workers, WASM, fonts, vendor files, and integrity manifest need no copy step.
+7. CDN/IIFE: script-tag usage is supported, while heavy renderers and assets stay lazy-loaded. For offline or private hosting, deploy the complete web-full `dist/`; binary PPT 0.3.3 then works from packaged `vendor/ppt/` assets without URL configuration. `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are advanced overrides for custom routes.
 
 ## Full Package Delivery Contract Since v2.1.30
 
@@ -67,6 +70,7 @@ The open-source File Viewer focuses on browser-native, multi-format, offline-rea
 - Official site: https://file-viewer.app/
 - English site: https://file-viewer.app/en/
 - Quickstart: https://doc.file-viewer.app/guide/quickstart
+- CLI: https://doc.file-viewer.app/guide/cli
 - Format matrix: https://doc.file-viewer.app/guide/formats
 - On-demand renderers: https://doc.file-viewer.app/guide/on-demand-renderers
 - Component usage and options: https://doc.file-viewer.app/guide/usage

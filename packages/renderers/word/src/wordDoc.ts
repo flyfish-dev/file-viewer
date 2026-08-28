@@ -425,7 +425,8 @@ export default async function render(buffer: ArrayBuffer, target: HTMLDivElement
   const rendered = await parseMsDocToHtml(buffer, {
     renderOptions: {
       css: `${defaultMsDocCss()}\n${WORD_PAGE_CSS}`,
-      externalLinkPolicy: context?.options?.docx?.externalLinkPolicy ?? 'block'
+      externalLinkPolicy: context?.options?.docx?.externalLinkPolicy ?? 'block',
+      externalResourcePolicy: context?.options?.docx?.externalResourcePolicy ?? 'block'
     }
   })
 
@@ -456,7 +457,7 @@ export default async function render(buffer: ArrayBuffer, target: HTMLDivElement
       context?.registerExportAdapter?.(null)
       context?.registerThumbnailAdapter?.(null)
       disposeResponsive()
-      target.innerHTML = ''
+      target.replaceChildren()
     }
   }
 }

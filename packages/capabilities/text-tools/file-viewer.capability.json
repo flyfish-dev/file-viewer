@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "text-tools",
+  "packageName": "@file-viewer/capability-text-tools",
+  "enhancesPackage": "@file-viewer/renderer-text",
+  "activation": { "kind": "side-effect-import", "import": "@file-viewer/capability-text-tools", "export": "enableFileViewerTextTools" },
+  "rendererIds": ["code"],
+  "formats": ["diff", "patch", "bundle", "bdl"],
+  "assets": { "rendererIds": [] },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive", "notices": [{ "packageName": "diff2html", "spdx": "MIT" }, { "packageName": "pako", "spdx": "MIT" }] },
+  "weight": "standard",
+  "profiles": ["all"]
+}

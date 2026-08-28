@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "cad",
+  "packageName": "@file-viewer/assets-cad",
+  "copyGroups": [
+    "cad"
+  ],
+  "receiptFilename": "file-viewer-assets-cad.receipt.json"
+}

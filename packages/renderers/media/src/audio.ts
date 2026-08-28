@@ -3,6 +3,7 @@ import {
   type FileRenderContext,
   type FileViewerRenderedInstance
 } from '@file-viewer/core'
+import { getFileViewerMidiLoader } from './optionalCapabilities.js'
 
 const AUDIO_MIME_MAP: Record<string, string> = {
   aac: 'audio/aac',
@@ -255,7 +256,11 @@ const renderMidiElement = (
 
   void (async () => {
     try {
-      const { Midi } = await import('@tonejs/midi')
+      const loadMidi = getFileViewerMidiLoader()
+      if (!loadMidi) {
+        throw new Error('MIDI support is opt-in. Run `npx file-viewer-cli add midi --write`, then `npx file-viewer-cli install --yes`.')
+      }
+      const { Midi } = await loadMidi()
       const midi = new Midi(buffer)
       if (disposed) {
         return

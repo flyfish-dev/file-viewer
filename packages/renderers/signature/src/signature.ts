@@ -3,43 +3,58 @@ import {
   normalizeFileViewerUiDensity,
   type FileRenderContext,
   type FileViewerOptions,
-  type FileViewerRenderedInstance,
-} from '@file-viewer/core';
+  type FileViewerRenderedInstance
+} from '@file-viewer/core'
 import {
+  inspectEvidenceRecord,
   inspectSignatureContainer,
+  type EvidenceRecordInspection,
   type SignatureCertificateSummary,
   type SignatureInspection,
   type SignatureSignerSummary,
-  type TimestampInfoSummary,
-} from './signatureAsn1.js';
-import { isProbablyOpenPgp } from './openpgp/formatDetection.js';
-import type { OpenPgpWorkerClient as OpenPgpWorkerClientType } from './openpgp/client.js';
+  type TimestampInfoSummary
+} from './signatureAsn1.js'
+import { isProbablyOpenPgp } from './openpgp/formatDetection.js'
+import type { OpenPgpWorkerClient as OpenPgpWorkerClientType } from './openpgp/client.js'
 import type {
   OpenPgpInspectionResult,
   OpenPgpVerificationResult,
-  SignatureParseLimits,
-} from './openpgp/types.js';
+  SignatureParseLimits
+} from './openpgp/types.js'
+import { SignatureContainerWorkerClient } from './structured/containerClient.js'
+import {
+  normalizeSignatureContainerLimits,
+  type SignatureContainerLimits
+} from './structured/limits.js'
+import { inspectJws, isProbablyJws } from './structured/jws.js'
+import type { AsicInspection, JwsInspection, JwsVerificationKey } from './structured/types.js'
 
-const DEFAULT_MAX_CONTAINER_SIZE = 64 * 1024 * 1024;
-const DEFAULT_MAX_NESTED_PREVIEW_SIZE = 32 * 1024 * 1024;
+const DEFAULT_MAX_CONTAINER_SIZE = 64 * 1024 * 1024
+const DEFAULT_MAX_NESTED_PREVIEW_SIZE = 32 * 1024 * 1024
 
 export interface FileViewerSignatureOptions {
   /** Original content used for detached CMS signatures and RFC 3161 imprint comparison. */
-  originalContent?: ArrayBuffer | Blob;
-  originalFilename?: string;
+  originalContent?: ArrayBuffer | Blob
+  originalFilename?: string
   /** Maximum cryptographic container size parsed in memory. Defaults to 64 MiB. */
-  maxContainerSize?: number;
+  maxContainerSize?: number
   /** Maximum extracted or supplied original size sent to a nested renderer. Defaults to 32 MiB. */
-  maxNestedPreviewSize?: number;
-  /** Public OpenPGP keys used only for detached-signature verification. Secret keys are not accepted for verification. */
-  openPgpPublicKeys?: Array<ArrayBuffer | Blob>;
+  maxNestedPreviewSize?: number
+  /** Public keys for detached, cleartext, and unencrypted embedded OpenPGP verification. Secret keys are not accepted. */
+  openPgpPublicKeys?: Array<ArrayBuffer | Blob>
   /** Conservative parser/resource limits forwarded to the rPGP WebAssembly wrapper. */
-  openPgpLimits?: Partial<SignatureParseLimits>;
+  openPgpLimits?: Partial<SignatureParseLimits>
+  /** Bounded ASiC/JWS resource limits. Absolute hostile-input ceilings cannot be disabled. */
+  containerLimits?: Partial<SignatureContainerLimits>
+  /** Host-provided public verification keys for JWS. Private and symmetric JWKs are rejected. */
+  jwsVerificationKeys?: JwsVerificationKey[]
+  /** Trusted-Types/CSP-aware Worker factory for the optional parser Workers. */
+  workerFactory?: (kind: 'openpgp' | 'container') => Worker
 }
 
 type SignatureFileViewerOptions = FileViewerOptions & {
-  signature?: FileViewerSignatureOptions;
-};
+  signature?: FileViewerSignatureOptions
+}
 
 const signatureStyle = `
 .signature-shell{box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;overflow:auto;background:#edf2f7;color:#172033;font-family:Aptos,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
@@ -63,7 +78,7 @@ const signatureStyle = `
 [data-viewer-theme='dark'] .signature-shell{background:#111827;color:#e5edf7}[data-viewer-theme='dark'] .signature-header,[data-viewer-theme='dark'] .signature-card{background:#182233;border-color:rgba(255,255,255,.08)}[data-viewer-theme='dark'] .signature-item,[data-viewer-theme='dark'] .signature-preview-target{background:#101827;border-color:rgba(255,255,255,.08)}[data-viewer-theme='dark'] .signature-title p,[data-viewer-theme='dark'] .signature-card p,[data-viewer-theme='dark'] .signature-grid dt,[data-viewer-theme='dark'] .signature-item-head span,[data-viewer-theme='dark'] .signature-original-state,[data-viewer-theme='dark'] .signature-preview-empty{color:#9eabc0}
 @media(max-width:860px){.signature-content{grid-template-columns:1fr}.signature-header{position:relative}.signature-preview-target{height:520px}}
 @keyframes signature-spin{to{transform:rotate(360deg)}}
-`;
+`
 
 const createElement = <K extends keyof HTMLElementTagNameMap>(
   documentRef: Document,
@@ -71,36 +86,35 @@ const createElement = <K extends keyof HTMLElementTagNameMap>(
   className?: string,
   text?: string
 ) => {
-  const element = documentRef.createElement(tag);
-  if (className) element.className = className;
-  if (text !== undefined) element.textContent = text;
-  return element;
-};
+  const element = documentRef.createElement(tag)
+  if (className) element.className = className
+  if (text !== undefined) element.textContent = text
+  return element
+}
 
 const formatBytes = (value: number) => {
-  if (value < 1024) return `${value} B`;
-  if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KiB`;
-  return `${(value / (1024 * 1024)).toFixed(1)} MiB`;
-};
+  if (value < 1024) return `${value} B`
+  if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KiB`
+  return `${(value / (1024 * 1024)).toFixed(1)} MiB`
+}
 
-const valueOrDash = (value: unknown) => value === undefined || value === null || value === ''
-  ? '—'
-  : String(value);
+const valueOrDash = (value: unknown) =>
+  value === undefined || value === null || value === '' ? '—' : String(value)
 
 const appendDefinitionList = (
   documentRef: Document,
   parent: HTMLElement,
   rows: Array<[string, unknown]>
 ) => {
-  const list = createElement(documentRef, 'dl', 'signature-grid');
+  const list = createElement(documentRef, 'dl', 'signature-grid')
   rows.forEach(([label, value]) => {
     list.append(
       createElement(documentRef, 'dt', undefined, label),
       createElement(documentRef, 'dd', undefined, valueOrDash(value))
-    );
-  });
-  parent.append(list);
-};
+    )
+  })
+  parent.append(list)
+}
 
 const statusBadge = (
   documentRef: Document,
@@ -108,31 +122,38 @@ const statusBadge = (
   value: boolean | undefined,
   pendingLabel: string
 ) => {
-  const state = value === true ? 'valid' : value === false ? 'invalid' : 'pending';
-  const text = value === true ? `${label}: valid` : value === false ? `${label}: invalid` : `${label}: ${pendingLabel}`;
-  const element = createElement(documentRef, 'span', 'signature-status', text);
-  element.dataset.state = state;
-  return element;
-};
+  const state = value === true ? 'valid' : value === false ? 'invalid' : 'pending'
+  const text =
+    value === true
+      ? `${label}: valid`
+      : value === false
+        ? `${label}: invalid`
+        : `${label}: ${pendingLabel}`
+  const element = createElement(documentRef, 'span', 'signature-status', text)
+  element.dataset.state = state
+  return element
+}
 
-const renderSigner = (
-  documentRef: Document,
-  signer: SignatureSignerSummary
-) => {
-  const item = createElement(documentRef, 'article', 'signature-item');
-  const head = createElement(documentRef, 'div', 'signature-item-head');
+const renderSigner = (documentRef: Document, signer: SignatureSignerSummary) => {
+  const item = createElement(documentRef, 'article', 'signature-item')
+  const head = createElement(documentRef, 'div', 'signature-item-head')
   head.append(
     createElement(documentRef, 'strong', undefined, `Signer ${signer.index + 1}`),
-    createElement(documentRef, 'span', undefined, signer.certificateIndex === undefined
-      ? 'certificate not matched'
-      : `certificate ${signer.certificateIndex + 1}`)
-  );
-  const statuses = createElement(documentRef, 'div', 'signature-status-list');
+    createElement(
+      documentRef,
+      'span',
+      undefined,
+      signer.certificateIndex === undefined
+        ? 'certificate not matched'
+        : `certificate ${signer.certificateIndex + 1}`
+    )
+  )
+  const statuses = createElement(documentRef, 'div', 'signature-status-list')
   statuses.append(
     statusBadge(documentRef, 'Signature', signer.cryptographicSignatureValid, 'not verified'),
     statusBadge(documentRef, 'Content digest', signer.digestMatches, 'original required')
-  );
-  item.append(head, statuses);
+  )
+  item.append(head, statuses)
   appendDefinitionList(documentRef, item, [
     ['Signer identifier', signer.sid],
     ['Digest algorithm', signer.digestAlgorithm],
@@ -142,22 +163,19 @@ const renderSigner = (
     ['Signed message digest', signer.messageDigest],
     ['CAdES signingCertificateV2', signer.signingCertificateV2 ? 'Present' : 'Not detected'],
     ['Signature timestamp tokens', signer.signatureTimestampTokens],
-    ['Verification note', signer.verificationError],
-  ]);
-  return item;
-};
+    ['Verification note', signer.verificationError]
+  ])
+  return item
+}
 
-const renderCertificate = (
-  documentRef: Document,
-  certificate: SignatureCertificateSummary
-) => {
-  const item = createElement(documentRef, 'article', 'signature-item');
-  const head = createElement(documentRef, 'div', 'signature-item-head');
+const renderCertificate = (documentRef: Document, certificate: SignatureCertificateSummary) => {
+  const item = createElement(documentRef, 'article', 'signature-item')
+  const head = createElement(documentRef, 'div', 'signature-item-head')
   head.append(
     createElement(documentRef, 'strong', undefined, `Certificate ${certificate.index + 1}`),
     createElement(documentRef, 'span', undefined, `X.509 v${certificate.version || '?'}`)
-  );
-  item.append(head);
+  )
+  item.append(head)
   appendDefinitionList(documentRef, item, [
     ['Subject', certificate.subject],
     ['Issuer', certificate.issuer],
@@ -168,25 +186,24 @@ const renderCertificate = (
     ['Public key curve', certificate.publicKeyCurveOid],
     ['Certificate signature', certificate.signatureAlgorithm],
     ['Subject key identifier', certificate.subjectKeyIdentifier],
-    ['SHA-256 fingerprint', certificate.fingerprintSha256],
-  ]);
-  return item;
-};
+    ['SHA-256 fingerprint', certificate.fingerprintSha256]
+  ])
+  return item
+}
 
-const renderTimestamp = (
-  documentRef: Document,
-  timestamp: TimestampInfoSummary
-) => {
-  const card = createElement(documentRef, 'section', 'signature-card');
-  card.append(createElement(documentRef, 'h3', undefined, 'RFC 3161 timestamp'));
-  const statuses = createElement(documentRef, 'div', 'signature-status-list');
-  statuses.append(statusBadge(
-    documentRef,
-    'Message imprint',
-    timestamp.messageImprintMatchesOriginal,
-    'original required'
-  ));
-  card.append(statuses);
+const renderTimestamp = (documentRef: Document, timestamp: TimestampInfoSummary) => {
+  const card = createElement(documentRef, 'section', 'signature-card')
+  card.append(createElement(documentRef, 'h3', undefined, 'RFC 3161 timestamp'))
+  const statuses = createElement(documentRef, 'div', 'signature-status-list')
+  statuses.append(
+    statusBadge(
+      documentRef,
+      'Message imprint',
+      timestamp.messageImprintMatchesOriginal,
+      'original required'
+    )
+  )
+  card.append(statuses)
   appendDefinitionList(documentRef, card, [
     ['Version', timestamp.version],
     ['Policy OID', timestamp.policyOid],
@@ -195,47 +212,57 @@ const renderTimestamp = (
     ['Message imprint algorithm', timestamp.messageImprintAlgorithm],
     ['Message imprint', timestamp.messageImprint],
     ['Nonce', timestamp.nonce],
-    ['TSA certificate requested', timestamp.certReq === undefined ? undefined : timestamp.certReq ? 'Yes' : 'No'],
+    [
+      'TSA certificate requested',
+      timestamp.certReq === undefined ? undefined : timestamp.certReq ? 'Yes' : 'No'
+    ],
     ['Ordering', timestamp.ordering],
-    ['Accuracy', timestamp.accuracy
-      ? [
-          timestamp.accuracy.seconds === undefined ? '' : `${timestamp.accuracy.seconds}s`,
-          timestamp.accuracy.millis === undefined ? '' : `${timestamp.accuracy.millis}ms`,
-          timestamp.accuracy.micros === undefined ? '' : `${timestamp.accuracy.micros}µs`,
-        ].filter(Boolean).join(' ')
-      : undefined],
-    ['Timestamp authority', timestamp.tsa],
-  ]);
-  return card;
-};
+    [
+      'Accuracy',
+      timestamp.accuracy
+        ? [
+            timestamp.accuracy.seconds === undefined ? '' : `${timestamp.accuracy.seconds}s`,
+            timestamp.accuracy.millis === undefined ? '' : `${timestamp.accuracy.millis}ms`,
+            timestamp.accuracy.micros === undefined ? '' : `${timestamp.accuracy.micros}µs`
+          ]
+            .filter(Boolean)
+            .join(' ')
+        : undefined
+    ],
+    ['Timestamp authority', timestamp.tsa]
+  ])
+  return card
+}
 
 const getFilenameExtension = (filename: string) => {
-  const basename = filename.split(/[\\/]/).pop() || filename;
-  const dot = basename.lastIndexOf('.');
-  return dot > 0 && dot < basename.length - 1 ? basename.slice(dot + 1).toLowerCase() : '';
-};
+  const basename = filename.split(/[\\/]/).pop() || filename
+  const dot = basename.lastIndexOf('.')
+  return dot > 0 && dot < basename.length - 1 ? basename.slice(dot + 1).toLowerCase() : ''
+}
 
-const stripContainerExtension = (filename: string) => filename.replace(
-  /\.(?:p7m|p7s|p7b|p7c|pkcs7|cms|cmsc|tst|tsq|tsr|tsd)$/i,
-  ''
-);
+const stripContainerExtension = (filename: string) =>
+  filename.replace(/\.(?:p7m|p7s|p7b|p7c|pkcs7|cms|cmsc|tst|tsq|tsr|tsd)$/i, '')
 
 const sniffNestedExtension = (bytes: Uint8Array) => {
-  const head = bytes.subarray(0, Math.min(bytes.byteLength, 512));
-  const ascii = String.fromCharCode(...head);
-  if (ascii.startsWith('%PDF-')) return 'pdf';
-  if (head[0] === 0x89 && ascii.slice(1, 4) === 'PNG') return 'png';
-  if (head[0] === 0xff && head[1] === 0xd8) return 'jpg';
-  if (ascii.startsWith('GIF87a') || ascii.startsWith('GIF89a')) return 'gif';
-  if (ascii.startsWith('PK\u0003\u0004')) return 'zip';
-  const text = new TextDecoder('utf-8', { fatal: false }).decode(head).trimStart();
-  if (text.startsWith('<?xml') || text.startsWith('<')) return 'xml';
-  if (text.startsWith('{') || text.startsWith('[')) return 'json';
-  const printable = head.length === 0 || Array.from(head).filter(value => (
-    value === 9 || value === 10 || value === 13 || (value >= 32 && value < 127)
-  )).length / head.length > 0.92;
-  return printable ? 'txt' : 'bin';
-};
+  const head = bytes.subarray(0, Math.min(bytes.byteLength, 512))
+  const ascii = String.fromCharCode(...head)
+  if (ascii.startsWith('%PDF-')) return 'pdf'
+  if (head[0] === 0x89 && ascii.slice(1, 4) === 'PNG') return 'png'
+  if (head[0] === 0xff && head[1] === 0xd8) return 'jpg'
+  if (ascii.startsWith('GIF87a') || ascii.startsWith('GIF89a')) return 'gif'
+  if (ascii.startsWith('PK\u0003\u0004')) return 'zip'
+  const text = new TextDecoder('utf-8', { fatal: false }).decode(head).trimStart()
+  if (text.startsWith('<?xml') || text.startsWith('<')) return 'xml'
+  if (text.startsWith('{') || text.startsWith('[')) return 'json'
+  const printable =
+    head.length === 0 ||
+    Array.from(head).filter(
+      (value) => value === 9 || value === 10 || value === 13 || (value >= 32 && value < 127)
+    ).length /
+      head.length >
+      0.92
+  return printable ? 'txt' : 'bin'
+}
 
 const resolveNestedIdentity = (
   inspection: SignatureInspection,
@@ -246,59 +273,130 @@ const resolveNestedIdentity = (
   if (preferOriginal && originalFilename) {
     return {
       filename: originalFilename,
-      extension: getFilenameExtension(originalFilename) || 'bin',
-    };
+      extension: getFilenameExtension(originalFilename) || 'bin'
+    }
   }
-  const stripped = stripContainerExtension(sourceFilename);
-  const extension = getFilenameExtension(stripped) || (
-    inspection.embeddedContent ? sniffNestedExtension(inspection.embeddedContent) : 'bin'
-  );
-  const filename = getFilenameExtension(stripped)
-    ? stripped
-    : `signed-content.${extension}`;
-  return { filename, extension };
-};
+  const stripped = stripContainerExtension(sourceFilename)
+  const extension =
+    getFilenameExtension(stripped) ||
+    (inspection.embeddedContent ? sniffNestedExtension(inspection.embeddedContent) : 'bin')
+  const filename = getFilenameExtension(stripped) ? stripped : `signed-content.${extension}`
+  return { filename, extension }
+}
 
-const readConfiguredOriginal = async (options?: FileViewerSignatureOptions) => {
+const readBoundedBlob = async (blob: Blob, limit: number, label: string) => {
+  if (blob.size > limit) throw new Error(`${label} exceeds the ${formatBytes(limit)} limit.`)
+  const result = await blob.arrayBuffer()
+  if (result.byteLength > limit)
+    throw new Error(`${label} exceeds the ${formatBytes(limit)} limit.`)
+  return result
+}
+
+const readConfiguredOriginal = async (
+  options: FileViewerSignatureOptions | undefined,
+  limit: number
+) => {
   if (!options?.originalContent) {
-    return undefined;
+    return undefined
   }
   if (options.originalContent instanceof ArrayBuffer) {
-    return options.originalContent;
+    if (options.originalContent.byteLength > limit)
+      throw new Error(`Original content exceeds the ${formatBytes(limit)} limit.`)
+    return options.originalContent
   }
-  return options.originalContent.arrayBuffer();
-};
+  return readBoundedBlob(options.originalContent, limit, 'Original content')
+}
 
-const readConfiguredOpenPgpKeys = async (options?: FileViewerSignatureOptions) => Promise.all(
-  (options?.openPgpPublicKeys || []).map(key => key instanceof ArrayBuffer ? key : key.arrayBuffer())
-);
+const readConfiguredOpenPgpKeys = async (
+  options: FileViewerSignatureOptions | undefined,
+  limit: number
+) => {
+  const keys = options?.openPgpPublicKeys || []
+  if (keys.length > 64) throw new Error('At most 64 OpenPGP verification keys may be supplied.')
+  const result = await Promise.all(
+    keys.map((key) => {
+      if (key instanceof ArrayBuffer) {
+        if (key.byteLength > limit)
+          throw new Error(`OpenPGP verification key exceeds the ${formatBytes(limit)} limit.`)
+        return key
+      }
+      return readBoundedBlob(key, limit, 'OpenPGP verification key')
+    })
+  )
+  const aggregate = result.reduce((sum, value) => sum + value.byteLength, 0)
+  if (aggregate > limit)
+    throw new Error(`OpenPGP verification keys exceed the aggregate ${formatBytes(limit)} limit.`)
+  return result
+}
 
 const renderOpenPgpKey = (documentRef: Document, key: OpenPgpInspectionResult['keys'][number]) => {
-  const item = createElement(documentRef, 'article', 'signature-item');
-  const head = createElement(documentRef, 'div', 'signature-item-head');
+  const item = createElement(documentRef, 'article', 'signature-item')
+  const head = createElement(documentRef, 'div', 'signature-item-head')
   head.append(
-    createElement(documentRef, 'strong', undefined, `${key.kind === 'private' ? 'Private-key block' : 'Public key'}`),
+    createElement(
+      documentRef,
+      'strong',
+      undefined,
+      `${key.kind === 'private' ? 'Private-key block' : 'Public key'}`
+    ),
     createElement(documentRef, 'span', undefined, key.keyId || 'key id unavailable')
-  );
-  item.append(head);
+  )
+  item.append(head)
   appendDefinitionList(documentRef, item, [
     ['Fingerprint', key.fingerprint],
     ['Version', key.version],
     ['Algorithm', key.algorithm],
     ['Created', key.createdAt],
     ['User IDs', key.userIds.join('; ')],
-    ['Subkeys', key.subkeys.length],
-  ]);
+    ['Subkeys', key.subkeys.length]
+  ])
   if (key.kind === 'private') {
-    item.append(createElement(
-      documentRef,
-      'div',
-      'signature-warning',
-      'Only public metadata is exposed. Secret MPIs, private scalars and passphrases never cross the WASM boundary.'
-    ));
+    item.append(
+      createElement(
+        documentRef,
+        'div',
+        'signature-warning',
+        'Only public metadata is exposed. Secret MPIs, private scalars and passphrases never cross the WASM boundary.'
+      )
+    )
   }
-  return item;
-};
+  return item
+}
+
+const renderOpenPgpSignature = (
+  documentRef: Document,
+  signature: OpenPgpInspectionResult['signatures'][number],
+  index: number
+) => {
+  const item = createElement(documentRef, 'article', 'signature-item')
+  const head = createElement(documentRef, 'div', 'signature-item-head')
+  head.append(
+    createElement(documentRef, 'strong', undefined, `Signature ${index + 1}`),
+    createElement(documentRef, 'span', undefined, signature.signatureType || 'OpenPGP')
+  )
+  const statuses = createElement(documentRef, 'div', 'signature-status-list')
+  statuses.append(
+    statusBadge(
+      documentRef,
+      'Cryptographic signature',
+      signature.cryptographicValid,
+      'public key or original required'
+    )
+  )
+  item.append(head, statuses)
+  appendDefinitionList(documentRef, item, [
+    ['Hash algorithm', signature.hashAlgorithm],
+    ['Public-key algorithm', signature.publicKeyAlgorithm],
+    ['Created', signature.createdAt],
+    ['Expires', signature.expiresAt],
+    ['Issuer key IDs', signature.issuerKeyIds.join(', ')],
+    ['Issuer fingerprints', signature.issuerFingerprints.join(', ')],
+    ['Verification key fingerprint', signature.verificationKeyFingerprint],
+    ['Verification key ID', signature.verificationKeyId],
+    ['Verification note', signature.verificationError]
+  ])
+  return item
+}
 
 export default async function renderSignature(
   buffer: ArrayBuffer,
@@ -306,291 +404,976 @@ export default async function renderSignature(
   type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const documentRef = target.ownerDocument;
-  const options = (context?.options as SignatureFileViewerOptions | undefined)?.signature;
-  const filename = context?.filename || `signature.${type || 'p7m'}`;
-  const maxContainerSize = options?.maxContainerSize || DEFAULT_MAX_CONTAINER_SIZE;
-  const maxNestedPreviewSize = options?.maxNestedPreviewSize || DEFAULT_MAX_NESTED_PREVIEW_SIZE;
+  const documentRef = target.ownerDocument
+  const options = (context?.options as SignatureFileViewerOptions | undefined)?.signature
+  const filename = context?.filename || `signature.${type || 'p7m'}`
+  const requestedMaxContainer =
+    typeof options?.maxContainerSize === 'number' &&
+    Number.isSafeInteger(options.maxContainerSize) &&
+    options.maxContainerSize > 0
+      ? options.maxContainerSize
+      : DEFAULT_MAX_CONTAINER_SIZE
+  const containerLimits = normalizeSignatureContainerLimits({
+    ...options?.containerLimits,
+    maxContainerBytes: requestedMaxContainer
+  })
+  const maxContainerSize = containerLimits.maxContainerBytes
+  const requestedNestedPreviewSize =
+    typeof options?.maxNestedPreviewSize === 'number' &&
+    Number.isSafeInteger(options.maxNestedPreviewSize) &&
+    options.maxNestedPreviewSize > 0
+      ? options.maxNestedPreviewSize
+      : DEFAULT_MAX_NESTED_PREVIEW_SIZE
+  const maxNestedPreviewSize = Math.min(requestedNestedPreviewSize, containerLimits.maxEntryBytes)
   if (buffer.byteLength > maxContainerSize) {
-    throw new Error(`The cryptographic container (${formatBytes(buffer.byteLength)}) exceeds the ${formatBytes(maxContainerSize)} parsing limit.`);
+    throw new Error(
+      `The cryptographic container (${formatBytes(buffer.byteLength)}) exceeds the ${formatBytes(maxContainerSize)} parsing limit.`
+    )
   }
 
-  const style = createElement(documentRef, 'style');
-  style.textContent = signatureStyle;
-  const root = createElement(documentRef, 'section', 'signature-shell');
-  root.dataset.viewerDensity = normalizeFileViewerUiDensity(context?.options?.ui?.density);
-  target.replaceChildren(style, root);
+  const style = createElement(documentRef, 'style')
+  style.textContent = signatureStyle
+  const root = createElement(documentRef, 'section', 'signature-shell')
+  root.dataset.viewerDensity = normalizeFileViewerUiDensity(context?.options?.ui?.density)
+  target.replaceChildren(style, root)
 
-  let originalContent = await readConfiguredOriginal(options);
-  let originalFilename = options?.originalFilename;
-  let openPgpPublicKeys = await readConfiguredOpenPgpKeys(options);
-  let openPgpClient: OpenPgpWorkerClientType | undefined;
-  let nestedRendered: FileViewerRenderedInstance | undefined;
-  let disposed = false;
-  let renderSequence = 0;
+  let originalContent = await readConfiguredOriginal(options, maxNestedPreviewSize)
+  let originalFilename = options?.originalFilename
+  let openPgpPublicKeys = await readConfiguredOpenPgpKeys(
+    options,
+    Math.min(maxNestedPreviewSize, 8 * 1024 * 1024)
+  )
+  let jwsVerificationKeys = [...(options?.jwsVerificationKeys || [])]
+  let openPgpClient: OpenPgpWorkerClientType | undefined
+  let containerClient: SignatureContainerWorkerClient | undefined
+  let nestedRendered: FileViewerRenderedInstance | undefined
+  let disposed = false
+  let renderSequence = 0
 
   const clearNested = async () => {
-    await disposeFileViewerRendered(nestedRendered);
-    nestedRendered = undefined;
-  };
+    await disposeFileViewerRendered(nestedRendered)
+    nestedRendered = undefined
+  }
 
   const renderInspection = async () => {
-    const sequence = ++renderSequence;
-    await clearNested();
-    root.replaceChildren(createElement(documentRef, 'div', 'signature-loading'));
-    const loading = root.firstElementChild as HTMLElement;
+    const sequence = ++renderSequence
+    await clearNested()
+    root.replaceChildren(createElement(documentRef, 'div', 'signature-loading'))
+    const loading = root.firstElementChild as HTMLElement
     loading.append(
       createElement(documentRef, 'span', 'signature-spinner'),
-      createElement(documentRef, 'span', undefined, 'Inspecting signature and timestamp structures locally…')
-    );
+      createElement(
+        documentRef,
+        'span',
+        undefined,
+        'Inspecting signature and timestamp structures locally…'
+      )
+    )
 
     try {
-      const sourceBytes = new Uint8Array(buffer);
+      const sourceBytes = new Uint8Array(buffer)
+      const extension = getFilenameExtension(filename) || (type || '').toLowerCase()
+      if (['asics', 'scs', 'asice', 'sce'].includes(extension)) {
+        containerClient ||= new SignatureContainerWorkerClient(
+          options?.workerFactory ? () => options.workerFactory!('container') : undefined
+        )
+        const inspection = await containerClient.inspectAsic(buffer, containerLimits)
+        if (disposed || sequence !== renderSequence) return
+
+        const signatureResults: Array<{ name: string; result: string; document?: string }> = []
+        for (const member of inspection.signatures) {
+          let result = 'Parsed metadata only'
+          let document: string | undefined
+          try {
+            if (member.kind === 'cades' && member.data) {
+              const candidates = member.referencedDocuments.length
+                ? inspection.documents.filter((candidate) =>
+                    member.referencedDocuments.includes(candidate.name)
+                  )
+                : inspection.documents.length === 1
+                  ? inspection.documents
+                  : []
+              let cms = await inspectSignatureContainer(member.data, {
+                sourceFilename: member.name
+              })
+              if (cms.detached && candidates.length) {
+                for (const candidate of candidates.slice(0, 16)) {
+                  if (!candidate.data) continue
+                  const checked = await inspectSignatureContainer(member.data, {
+                    sourceFilename: member.name,
+                    originalContent: candidate.data
+                  })
+                  if (
+                    checked.signers.some(
+                      (signer) =>
+                        signer.digestMatches === true && signer.cryptographicSignatureValid === true
+                    )
+                  ) {
+                    cms = checked
+                    document = candidate.name
+                    break
+                  }
+                  cms = checked
+                }
+              }
+              const checked = cms.signers.filter(
+                (signer) => signer.cryptographicSignatureValid !== undefined
+              )
+              result = checked.length
+                ? checked.every((signer) => signer.cryptographicSignatureValid === true)
+                  ? 'Cryptographic signature valid'
+                  : 'Cryptographic signature invalid'
+                : cms.detached
+                  ? 'Original document mapping required'
+                  : 'Signature not checked'
+            } else if (member.kind === 'timestamp' && member.data) {
+              const timestamp = await inspectSignatureContainer(member.data, {
+                sourceFilename: member.name
+              })
+              result = timestamp.timestamp ? 'Timestamp structure parsed' : timestamp.detectedFormat
+            } else if (member.kind === 'evidence-record' && member.data) {
+              const evidence = await inspectEvidenceRecord(member.data)
+              result = `${evidence.archiveTimestamps.length} archive timestamp(s) parsed`
+            } else if (member.kind === 'jws' && member.data) {
+              const jws = await inspectJws(member.data, {
+                verificationKeys: jwsVerificationKeys,
+                limits: containerLimits
+              })
+              result = jws.signatures.some((item) => item.cryptographicValid === false)
+                ? 'JWS signature invalid'
+                : jws.signatures.length &&
+                    jws.signatures.every((item) => item.cryptographicValid === true)
+                  ? 'JWS signatures valid'
+                  : 'JWS parsed; verification key or payload required'
+            } else if (member.kind === 'xades-or-xml') {
+              result = member.referencedDocuments.length
+                ? `XML signature metadata references ${member.referencedDocuments.length} document(s)`
+                : 'XML signature metadata parsed; canonicalization not verified'
+            }
+          } catch (error) {
+            result = `Inspection failed: ${error instanceof Error ? error.message : String(error)}`
+          }
+          signatureResults.push({ name: member.name, result, document })
+        }
+
+        root.replaceChildren()
+        const header = createElement(documentRef, 'header', 'signature-header')
+        const title = createElement(documentRef, 'div', 'signature-title')
+        title.append(
+          createElement(documentRef, 'small', undefined, 'ASSOCIATED SIGNATURE CONTAINER'),
+          createElement(documentRef, 'h2', undefined, filename),
+          createElement(documentRef, 'p', undefined, `${inspection.kind} · ${inspection.mediaType}`)
+        )
+        header.append(
+          title,
+          createElement(documentRef, 'span', 'signature-phase', 'OPT-IN · BOUNDED ZIP WORKER')
+        )
+        const content = createElement(documentRef, 'div', 'signature-content')
+        const sidebar = createElement(documentRef, 'aside', 'signature-sidebar')
+        const main = createElement(documentRef, 'main', 'signature-main')
+        const summary = createElement(documentRef, 'section', 'signature-card')
+        summary.append(createElement(documentRef, 'h3', undefined, 'ASiC package'))
+        appendDefinitionList(documentRef, summary, [
+          ['Type', inspection.kind],
+          ['Source size', formatBytes(inspection.sourceSize)],
+          ['Entries', inspection.entryCount],
+          ['Inflated total', formatBytes(inspection.totalUncompressedBytes)],
+          ['Documents', inspection.documents.length],
+          ['Signature/evidence members', inspection.signatures.length]
+        ])
+        sidebar.append(summary)
+        const boundaries = createElement(documentRef, 'section', 'signature-card')
+        boundaries.append(
+          createElement(documentRef, 'h3', undefined, 'Security and validation boundaries')
+        )
+        inspection.warnings.forEach((warning) =>
+          boundaries.append(createElement(documentRef, 'div', 'signature-warning', warning))
+        )
+        sidebar.append(boundaries)
+
+        if (signatureResults.length) {
+          const signatureCard = createElement(documentRef, 'section', 'signature-card')
+          signatureCard.append(
+            createElement(documentRef, 'h3', undefined, 'Signatures and evidence')
+          )
+          signatureResults.forEach((item) => {
+            const row = createElement(documentRef, 'article', 'signature-item')
+            row.append(createElement(documentRef, 'strong', undefined, item.name))
+            appendDefinitionList(documentRef, row, [
+              ['Result', item.result],
+              ['Matched document', item.document]
+            ])
+            signatureCard.append(row)
+          })
+          main.append(signatureCard)
+        }
+
+        const previewCard = createElement(
+          documentRef,
+          'section',
+          'signature-card signature-preview'
+        )
+        const previewHead = createElement(documentRef, 'div', 'signature-preview-head')
+        const previewTitle = createElement(
+          documentRef,
+          'strong',
+          undefined,
+          'Contained document preview'
+        )
+        const previewStatus = createElement(documentRef, 'span', 'signature-status')
+        const previewTarget = createElement(
+          documentRef,
+          'div',
+          'signature-preview-target'
+        ) as HTMLDivElement
+        previewHead.append(previewTitle, previewStatus)
+        previewCard.append(previewHead, previewTarget)
+        const chooser = createElement(documentRef, 'section', 'signature-card')
+        chooser.append(createElement(documentRef, 'h3', undefined, 'Contained documents'))
+        const chooserList = createElement(documentRef, 'div', 'signature-status-list')
+        chooser.append(chooserList)
+        sidebar.append(chooser)
+        main.append(previewCard)
+        content.append(sidebar, main)
+        root.append(header, content)
+
+        const openDocument = async (member: AsicInspection['documents'][number]) => {
+          const selection = ++renderSequence
+          await clearNested()
+          if (disposed || selection !== renderSequence) return
+          previewTarget.replaceChildren()
+          previewTitle.textContent = `Contained document · ${member.name}`
+          previewStatus.textContent = formatBytes(member.uncompressedSize)
+          if (!member.data || member.data.byteLength > maxNestedPreviewSize) {
+            previewTarget.append(
+              createElement(
+                documentRef,
+                'div',
+                'signature-preview-empty',
+                'This contained document exceeds the configured nested-preview boundary.'
+              )
+            )
+            return
+          }
+          const nestedExtension =
+            getFilenameExtension(member.name) || sniffNestedExtension(member.data)
+          if (!context?.renderNestedBuffer || nestedExtension === 'bin') {
+            previewTarget.append(
+              createElement(
+                documentRef,
+                'div',
+                'signature-preview-empty',
+                'No compatible nested renderer is installed for this contained document.'
+              )
+            )
+            return
+          }
+          nestedRendered = await context.renderNestedBuffer(
+            member.data.buffer.slice(
+              member.data.byteOffset,
+              member.data.byteOffset + member.data.byteLength
+            ) as ArrayBuffer,
+            nestedExtension,
+            previewTarget,
+            { ...context, filename: member.name, url: undefined, streamUrl: undefined }
+          )
+        }
+        inspection.documents.forEach((member, index) => {
+          const button = createElement(
+            documentRef,
+            'button',
+            'signature-status',
+            member.name
+          ) as HTMLButtonElement
+          button.type = 'button'
+          button.addEventListener('click', () => {
+            void openDocument(member)
+          })
+          chooserList.append(button)
+          if (index === 0) void openDocument(member)
+        })
+        if (!inspection.documents.length) {
+          previewTarget.append(
+            createElement(
+              documentRef,
+              'div',
+              'signature-preview-empty',
+              'No contained document was found.'
+            )
+          )
+        }
+        return
+      }
+
+      if (extension === 'ers') {
+        const inspection: EvidenceRecordInspection = await inspectEvidenceRecord(buffer, {
+          originalContent
+        })
+        if (disposed || sequence !== renderSequence) return
+        root.replaceChildren()
+        const header = createElement(documentRef, 'header', 'signature-header')
+        const title = createElement(documentRef, 'div', 'signature-title')
+        title.append(
+          createElement(documentRef, 'small', undefined, 'ARCHIVAL EVIDENCE'),
+          createElement(documentRef, 'h2', undefined, filename),
+          createElement(documentRef, 'p', undefined, inspection.detectedFormat)
+        )
+        header.append(
+          title,
+          createElement(documentRef, 'span', 'signature-phase', 'RFC 4998 · STRUCTURAL + BOUNDED')
+        )
+        const content = createElement(documentRef, 'div', 'signature-content')
+        const sidebar = createElement(documentRef, 'aside', 'signature-sidebar')
+        const main = createElement(documentRef, 'main', 'signature-main')
+        const summary = createElement(documentRef, 'section', 'signature-card')
+        summary.append(createElement(documentRef, 'h3', undefined, 'Evidence record'))
+        appendDefinitionList(documentRef, summary, [
+          ['Version', inspection.version],
+          ['Digest algorithms', inspection.digestAlgorithms.join(', ')],
+          ['Archive timestamp chains', inspection.archiveTimestampChains],
+          ['Archive timestamps', inspection.archiveTimestamps.length],
+          ['Original supplied', inspection.originalContentSupplied ? 'Yes' : 'No'],
+          [
+            'First evidence digest',
+            inspection.originalEvidenceMatches === undefined
+              ? 'Not checked'
+              : inspection.originalEvidenceMatches
+                ? 'Matches'
+                : 'Does not match'
+          ],
+          ['Full archival validation', 'Not performed']
+        ])
+        sidebar.append(summary)
+        const boundaries = createElement(documentRef, 'section', 'signature-card')
+        boundaries.append(createElement(documentRef, 'h3', undefined, 'Validation boundaries'))
+        inspection.warnings.forEach((warning) =>
+          boundaries.append(createElement(documentRef, 'div', 'signature-warning', warning))
+        )
+        sidebar.append(boundaries)
+        const originalCard = createElement(documentRef, 'section', 'signature-card')
+        originalCard.append(
+          createElement(documentRef, 'h3', undefined, 'Protected original content')
+        )
+        const input = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement
+        input.type = 'file'
+        input.setAttribute('aria-label', 'Choose EvidenceRecord protected content')
+        input.addEventListener('change', () => {
+          const file = input.files?.[0]
+          if (!file) return
+          void readBoundedBlob(file, maxNestedPreviewSize, 'EvidenceRecord protected content').then(
+            (next) => {
+              originalContent = next
+              originalFilename = file.name
+              return renderInspection()
+            }
+          )
+        })
+        originalCard.append(input)
+        sidebar.append(originalCard)
+        const timestamps = createElement(documentRef, 'section', 'signature-card')
+        timestamps.append(createElement(documentRef, 'h3', undefined, 'Archive timestamps'))
+        inspection.archiveTimestamps.forEach((timestamp) => {
+          const item = createElement(documentRef, 'article', 'signature-item')
+          item.append(
+            createElement(
+              documentRef,
+              'strong',
+              undefined,
+              `Chain ${timestamp.chainIndex + 1} · timestamp ${timestamp.index + 1}`
+            )
+          )
+          appendDefinitionList(documentRef, item, [
+            ['Digest algorithm', timestamp.digestAlgorithm],
+            ['Reduced hash-tree nodes', timestamp.reducedHashTreeNodes],
+            ['Generation time', timestamp.timestamp?.generationTime],
+            ['Timestamp signatures', timestamp.timestampSignerCount],
+            [
+              'Timestamp signature check',
+              timestamp.timestampSignaturesValid === undefined
+                ? 'Not checked'
+                : timestamp.timestampSignaturesValid
+                  ? 'Valid'
+                  : 'Invalid'
+            ],
+            [
+              'Evidence digest vs original',
+              timestamp.evidenceDigestMatchesOriginal === undefined
+                ? 'Not checked'
+                : timestamp.evidenceDigestMatchesOriginal
+                  ? 'Matches'
+                  : 'Does not match'
+            ]
+          ])
+          timestamps.append(item)
+        })
+        main.append(timestamps)
+        content.append(sidebar, main)
+        root.append(header, content)
+        return
+      }
+
+      if (isProbablyJws(sourceBytes, filename)) {
+        const inspection: JwsInspection = await inspectJws(buffer, {
+          detachedPayload: originalContent,
+          verificationKeys: jwsVerificationKeys,
+          limits: containerLimits
+        })
+        if (disposed || sequence !== renderSequence) return
+        root.replaceChildren()
+        const header = createElement(documentRef, 'header', 'signature-header')
+        const title = createElement(documentRef, 'div', 'signature-title')
+        title.append(
+          createElement(documentRef, 'small', undefined, 'JSON WEB SIGNATURE'),
+          createElement(documentRef, 'h2', undefined, filename),
+          createElement(
+            documentRef,
+            'p',
+            undefined,
+            `${inspection.serialization} · ${inspection.signatures.length} signature(s)`
+          )
+        )
+        header.append(
+          title,
+          createElement(documentRef, 'span', 'signature-phase', 'RFC 7515 · PUBLIC-KEY VERIFY')
+        )
+        const content = createElement(documentRef, 'div', 'signature-content')
+        const sidebar = createElement(documentRef, 'aside', 'signature-sidebar')
+        const main = createElement(documentRef, 'main', 'signature-main')
+        const summary = createElement(documentRef, 'section', 'signature-card')
+        summary.append(createElement(documentRef, 'h3', undefined, 'JWS summary'))
+        appendDefinitionList(documentRef, summary, [
+          ['Serialization', inspection.serialization],
+          ['Detached payload', inspection.detached ? 'Yes' : 'No'],
+          ['Base64url payload', inspection.payloadEncoded ? 'Yes' : 'No'],
+          [
+            'Payload size',
+            inspection.payload ? formatBytes(inspection.payload.byteLength) : 'Not supplied'
+          ],
+          ['Signatures', inspection.signatures.length],
+          ['Verification keys', jwsVerificationKeys.length]
+        ])
+        sidebar.append(summary)
+        const boundaries = createElement(documentRef, 'section', 'signature-card')
+        boundaries.append(
+          createElement(documentRef, 'h3', undefined, 'Security and trust boundary')
+        )
+        inspection.warnings.forEach((warning) =>
+          boundaries.append(createElement(documentRef, 'div', 'signature-warning', warning))
+        )
+        sidebar.append(boundaries)
+        if (inspection.detached) {
+          const originalCard = createElement(documentRef, 'section', 'signature-card')
+          originalCard.append(createElement(documentRef, 'h3', undefined, 'Detached payload'))
+          const input = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement
+          input.type = 'file'
+          input.addEventListener('change', () => {
+            const file = input.files?.[0]
+            if (!file) return
+            void readBoundedBlob(file, maxNestedPreviewSize, 'JWS detached payload').then(
+              (next) => {
+                originalContent = next
+                originalFilename = file.name
+                return renderInspection()
+              }
+            )
+          })
+          originalCard.append(input)
+          sidebar.append(originalCard)
+        }
+        const keyCard = createElement(documentRef, 'section', 'signature-card')
+        keyCard.append(createElement(documentRef, 'h3', undefined, 'Public JWK verification keys'))
+        const keyInput = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement
+        keyInput.type = 'file'
+        keyInput.multiple = true
+        keyInput.accept = '.jwk,.json,application/json'
+        keyInput.addEventListener('change', () => {
+          const files = Array.from(keyInput.files || []).slice(0, 64)
+          void Promise.all(
+            files.map((file) => readBoundedBlob(file, 1024 * 1024, 'JWK file'))
+          ).then((values) => {
+            const keys: JwsVerificationKey[] = []
+            for (const value of values) {
+              const parsed = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(value)) as
+                | JsonWebKey
+                | { keys?: JsonWebKey[] }
+              const candidates =
+                'keys' in parsed && Array.isArray(parsed.keys)
+                  ? parsed.keys
+                  : [parsed as JsonWebKey]
+              for (const key of candidates) {
+                if (!key || typeof key !== 'object' || 'd' in key || 'k' in key)
+                  throw new Error('Only public asymmetric JWKs are accepted.')
+                keys.push({ key, kid: (key as JsonWebKey & { kid?: string }).kid })
+              }
+            }
+            jwsVerificationKeys = keys.slice(0, 64)
+            return renderInspection()
+          })
+        })
+        keyCard.append(keyInput)
+        sidebar.append(keyCard)
+        const signatures = createElement(documentRef, 'section', 'signature-card')
+        signatures.append(createElement(documentRef, 'h3', undefined, 'Signatures'))
+        inspection.signatures.forEach((signature) => {
+          const item = createElement(documentRef, 'article', 'signature-item')
+          item.append(
+            createElement(documentRef, 'strong', undefined, `Signature ${signature.index + 1}`)
+          )
+          const status = createElement(documentRef, 'div', 'signature-status-list')
+          status.append(
+            statusBadge(
+              documentRef,
+              'Cryptographic signature',
+              signature.cryptographicValid,
+              inspection.detached && !inspection.payload
+                ? 'payload required'
+                : 'public key required'
+            )
+          )
+          item.append(status)
+          appendDefinitionList(documentRef, item, [
+            ['Algorithm', signature.algorithm],
+            ['Key ID', signature.keyId],
+            ['Signature bytes', signature.signatureBytes],
+            ['JAdES-related properties', signature.jadesProperties.join(', ')],
+            ['Verification note', signature.verificationError],
+            ['Protected header', JSON.stringify(signature.protectedHeader)],
+            ['Unprotected header', JSON.stringify(signature.unprotectedHeader)]
+          ])
+          signatures.append(item)
+        })
+        main.append(signatures)
+        const previewCard = createElement(
+          documentRef,
+          'section',
+          'signature-card signature-preview'
+        )
+        const previewTarget = createElement(
+          documentRef,
+          'div',
+          'signature-preview-target'
+        ) as HTMLDivElement
+        const sniffedPayloadExtension = inspection.payload
+          ? sniffNestedExtension(inspection.payload)
+          : 'bin'
+        const payloadExtension = originalFilename
+          ? getFilenameExtension(originalFilename) || sniffedPayloadExtension
+          : sniffedPayloadExtension
+        const payloadName = originalFilename || `jws-payload.${payloadExtension}`
+        const previewHead = createElement(documentRef, 'div', 'signature-preview-head')
+        previewHead.append(
+          createElement(documentRef, 'strong', undefined, `Payload preview · ${payloadName}`),
+          createElement(
+            documentRef,
+            'span',
+            'signature-status',
+            inspection.payload ? formatBytes(inspection.payload.byteLength) : 'payload unavailable'
+          )
+        )
+        previewCard.append(previewHead, previewTarget)
+        main.append(previewCard)
+        content.append(sidebar, main)
+        root.append(header, content)
+        if (
+          inspection.payload &&
+          inspection.payload.byteLength <= maxNestedPreviewSize &&
+          context?.renderNestedBuffer &&
+          payloadExtension !== 'bin'
+        ) {
+          nestedRendered = await context.renderNestedBuffer(
+            inspection.payload.buffer.slice(
+              inspection.payload.byteOffset,
+              inspection.payload.byteOffset + inspection.payload.byteLength
+            ) as ArrayBuffer,
+            payloadExtension,
+            previewTarget,
+            { ...context, filename: payloadName, url: undefined, streamUrl: undefined }
+          )
+        } else {
+          previewTarget.append(
+            createElement(
+              documentRef,
+              'div',
+              'signature-preview-empty',
+              inspection.payload
+                ? 'No compatible nested renderer is installed for this payload.'
+                : 'Supply the detached payload to preview and verify it.'
+            )
+          )
+        }
+        return
+      }
+
       if (isProbablyOpenPgp(sourceBytes, filename, type)) {
-        const { OpenPgpWorkerClient } = await import('./openpgp/client.js');
-        openPgpClient ||= new OpenPgpWorkerClient();
-        const inspection = await openPgpClient.inspect(buffer, options?.openPgpLimits);
-        let verification: OpenPgpVerificationResult | undefined;
-        if (inspection.classification === 'detached-signature' && originalContent && openPgpPublicKeys.length) {
+        const { OpenPgpWorkerClient } = await import('./openpgp/client.js')
+        openPgpClient ||= new OpenPgpWorkerClient(
+          options?.workerFactory ? () => options.workerFactory!('openpgp') : undefined
+        )
+        const inspection = await openPgpClient.inspect(
+          buffer,
+          options?.openPgpLimits,
+          openPgpPublicKeys
+        )
+        let verification: OpenPgpVerificationResult | undefined
+        if (
+          inspection.classification === 'detached-signature' &&
+          originalContent &&
+          openPgpPublicKeys.length
+        ) {
           verification = await openPgpClient.verifyDetached(
             originalContent,
             buffer,
             openPgpPublicKeys,
             options?.openPgpLimits
-          );
+          )
         }
-        if (disposed || sequence !== renderSequence) return;
+        if (disposed || sequence !== renderSequence) return
 
-        root.replaceChildren();
-        const header = createElement(documentRef, 'header', 'signature-header');
-        const title = createElement(documentRef, 'div', 'signature-title');
+        root.replaceChildren()
+        const header = createElement(documentRef, 'header', 'signature-header')
+        const title = createElement(documentRef, 'div', 'signature-title')
         title.append(
           createElement(documentRef, 'small', undefined, 'OPENPGP · rPGP / WASM'),
           createElement(documentRef, 'h2', undefined, filename),
           createElement(documentRef, 'p', undefined, inspection.classification)
-        );
-        header.append(title, createElement(documentRef, 'span', 'signature-phase', 'OPTIONAL · LAZY WORKER / WASM'));
+        )
+        header.append(
+          title,
+          createElement(documentRef, 'span', 'signature-phase', 'OPTIONAL · LAZY WORKER / WASM')
+        )
 
-        const content = createElement(documentRef, 'div', 'signature-content');
-        const sidebar = createElement(documentRef, 'aside', 'signature-sidebar');
-        const main = createElement(documentRef, 'main', 'signature-main');
+        const content = createElement(documentRef, 'div', 'signature-content')
+        const sidebar = createElement(documentRef, 'aside', 'signature-sidebar')
+        const main = createElement(documentRef, 'main', 'signature-main')
 
-        const summary = createElement(documentRef, 'section', 'signature-card');
-        summary.append(createElement(documentRef, 'h3', undefined, 'OpenPGP summary'));
+        const summary = createElement(documentRef, 'section', 'signature-card')
+        summary.append(createElement(documentRef, 'h3', undefined, 'OpenPGP summary'))
         appendDefinitionList(documentRef, summary, [
           ['Classification', inspection.classification],
           ['ASCII armored', inspection.armored ? 'Yes' : 'No'],
           ['Armor type', inspection.armorType],
           ['Encrypted', inspection.encrypted ? 'Yes' : 'No'],
+          [
+            'Integrity protected',
+            inspection.integrityProtected === undefined
+              ? undefined
+              : inspection.integrityProtected
+                ? 'Yes'
+                : 'No'
+          ],
+          ['Symmetric algorithm', inspection.symmetricAlgorithm],
+          ['AEAD mode', inspection.aeadMode],
+          ['Recipients', inspection.recipients.join(', ')],
           ['Compressed', inspection.compressed ? 'Yes' : 'No'],
           ['Packet count', inspection.packetCount],
           ['Packet types', inspection.packetTypes.join(', ')],
           ['Keys', inspection.keys.length],
-          ['Signatures', inspection.signatures.length],
-        ]);
-        summary.append(createElement(
-          documentRef,
-          'div',
-          'signature-openpgp-note',
-          'OpenPGP parsing runs browser-local inside a dedicated Worker backed by rPGP WebAssembly. OpenPGP.js and GnuPG are not used.'
-        ));
-        sidebar.append(summary);
+          ['Signatures', inspection.signatures.length]
+        ])
+        summary.append(
+          createElement(
+            documentRef,
+            'div',
+            'signature-openpgp-note',
+            'OpenPGP parsing runs browser-local inside a dedicated Worker backed by rPGP WebAssembly. OpenPGP.js and GnuPG are not used.'
+          )
+        )
+        sidebar.append(summary)
 
-        const warnings = createElement(documentRef, 'section', 'signature-card');
-        warnings.append(createElement(documentRef, 'h3', undefined, 'Security boundaries'));
-        [
+        const warnings = createElement(documentRef, 'section', 'signature-card')
+        warnings.append(createElement(documentRef, 'h3', undefined, 'Security boundaries'))
+        ;[
           ...inspection.warnings,
           'Parsing does not imply signature verification, key trust, identity trust, or legal validity.',
-          'Private-key decryption, signing, key generation and message decryption are intentionally disabled in this phase.',
-        ].forEach(warning => warnings.append(createElement(documentRef, 'div', 'signature-warning', warning)));
-        sidebar.append(warnings);
+          'Private-key decryption, signing, key generation and message decryption are intentionally excluded from this inspection boundary.'
+        ].forEach((warning) =>
+          warnings.append(createElement(documentRef, 'div', 'signature-warning', warning))
+        )
+        sidebar.append(warnings)
 
         if (inspection.classification === 'detached-signature') {
-          const verifyCard = createElement(documentRef, 'section', 'signature-card');
-          verifyCard.append(createElement(documentRef, 'h3', undefined, 'Detached signature verification'));
-          const statusList = createElement(documentRef, 'div', 'signature-status-list');
-          statusList.append(statusBadge(
-            documentRef,
-            'Cryptographic signature',
-            verification?.valid,
-            originalContent ? (openPgpPublicKeys.length ? 'not verified' : 'public key required') : 'original required'
-          ));
-          verifyCard.append(statusList);
+          const verifyCard = createElement(documentRef, 'section', 'signature-card')
+          verifyCard.append(
+            createElement(documentRef, 'h3', undefined, 'Detached signature verification')
+          )
+          const statusList = createElement(documentRef, 'div', 'signature-status-list')
+          statusList.append(
+            statusBadge(
+              documentRef,
+              'Cryptographic signature',
+              verification?.valid,
+              originalContent
+                ? openPgpPublicKeys.length
+                  ? 'not verified'
+                  : 'public key required'
+                : 'original required'
+            )
+          )
+          verifyCard.append(statusList)
           appendDefinitionList(documentRef, verifyCard, [
             ['Result', verification?.status],
             ['Key fingerprint', verification?.keyFingerprint],
             ['Key ID', verification?.keyId],
-            ['Verification note', verification?.error],
-          ]);
+            ['Verification note', verification?.error]
+          ])
 
-          const originalBox = createElement(documentRef, 'div', 'signature-original');
-          const originalInput = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement;
-          originalInput.type = 'file';
-          originalInput.setAttribute('aria-label', 'Choose original OpenPGP signed content');
+          const originalBox = createElement(documentRef, 'div', 'signature-original')
+          const originalInput = createElement(
+            documentRef,
+            'input',
+            'signature-file'
+          ) as HTMLInputElement
+          originalInput.type = 'file'
+          originalInput.setAttribute('aria-label', 'Choose original OpenPGP signed content')
+          const originalInputState = createElement(
+            documentRef,
+            'div',
+            'signature-original-state',
+            originalContent
+              ? `${originalFilename || 'Host-provided original'} · ${formatBytes(originalContent.byteLength)}`
+              : 'Original content is required.'
+          )
           originalInput.addEventListener('change', () => {
-            const file = originalInput.files?.[0];
-            if (!file) return;
-            void file.arrayBuffer().then(next => {
-              originalContent = next;
-              originalFilename = file.name;
-              return renderInspection();
-            });
-          });
-          originalBox.append(originalInput, createElement(
-            documentRef,
-            'div',
-            'signature-original-state',
-            originalContent ? `${originalFilename || 'Host-provided original'} · ${formatBytes(originalContent.byteLength)}` : 'Original content is required.'
-          ));
+            const file = originalInput.files?.[0]
+            if (!file) return
+            void readBoundedBlob(file, maxNestedPreviewSize, 'OpenPGP original content')
+              .then((next) => {
+                originalContent = next
+                originalFilename = file.name
+                return renderInspection()
+              })
+              .catch((error) => {
+                originalInputState.textContent =
+                  error instanceof Error ? error.message : String(error)
+              })
+          })
+          originalBox.append(originalInput, originalInputState)
 
-          const keyBox = createElement(documentRef, 'div', 'signature-key-input');
-          const keyInput = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement;
-          keyInput.type = 'file';
-          keyInput.multiple = true;
-          keyInput.setAttribute('aria-label', 'Choose OpenPGP public verification keys');
-          keyInput.addEventListener('change', () => {
-            const files = Array.from(keyInput.files || []);
-            void Promise.all(files.map(file => file.arrayBuffer())).then(keys => {
-              openPgpPublicKeys = keys;
-              return renderInspection();
-            });
-          });
-          keyBox.append(keyInput, createElement(
+          const keyBox = createElement(documentRef, 'div', 'signature-key-input')
+          const keyInput = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement
+          keyInput.type = 'file'
+          keyInput.multiple = true
+          keyInput.setAttribute('aria-label', 'Choose OpenPGP public verification keys')
+          const keyInputState = createElement(
             documentRef,
             'div',
             'signature-original-state',
-            openPgpPublicKeys.length ? `${openPgpPublicKeys.length} verification key file(s) supplied.` : 'Supply one or more public keys; no keyring lookup is performed.'
-          ));
-          verifyCard.append(originalBox, keyBox);
-          sidebar.append(verifyCard);
+            openPgpPublicKeys.length
+              ? `${openPgpPublicKeys.length} verification key file(s) supplied.`
+              : 'Supply one or more public keys; no keyring lookup is performed.'
+          )
+          keyInput.addEventListener('change', () => {
+            const files = Array.from(keyInput.files || []).slice(0, 64)
+            void Promise.all(
+              files.map((file) => readBoundedBlob(file, 8 * 1024 * 1024, 'OpenPGP public key'))
+            )
+              .then((keys) => {
+                const aggregate = keys.reduce((sum, value) => sum + value.byteLength, 0)
+                if (aggregate > 32 * 1024 * 1024)
+                  throw new Error('OpenPGP public keys exceed the 32 MiB aggregate boundary.')
+                openPgpPublicKeys = keys
+                return renderInspection()
+              })
+              .catch((error) => {
+                keyInputState.textContent = error instanceof Error ? error.message : String(error)
+              })
+          })
+          keyBox.append(keyInput, keyInputState)
+          verifyCard.append(originalBox, keyBox)
+          sidebar.append(verifyCard)
         }
 
         if (inspection.keys.length) {
-          const keysCard = createElement(documentRef, 'section', 'signature-card');
-          keysCard.append(createElement(documentRef, 'h3', undefined, 'Key metadata'));
-          inspection.keys.forEach(key => keysCard.append(renderOpenPgpKey(documentRef, key)));
-          main.append(keysCard);
+          const keysCard = createElement(documentRef, 'section', 'signature-card')
+          keysCard.append(createElement(documentRef, 'h3', undefined, 'Key metadata'))
+          inspection.keys.forEach((key) => keysCard.append(renderOpenPgpKey(documentRef, key)))
+          main.append(keysCard)
         }
 
-        const previewCard = createElement(documentRef, 'section', 'signature-card signature-preview');
-        const previewHead = createElement(documentRef, 'div', 'signature-preview-head');
-        const previewTarget = createElement(documentRef, 'div', 'signature-preview-target') as HTMLDivElement;
-        const literal = inspection.literalData;
-        const literalBytes = literal?.data;
-        const literalFilename = literal?.filename || 'openpgp-literal-data.bin';
-        const literalExtension = getFilenameExtension(literalFilename) || (literalBytes ? sniffNestedExtension(literalBytes) : 'bin');
+        if (inspection.signatures.length) {
+          const signaturesCard = createElement(documentRef, 'section', 'signature-card')
+          signaturesCard.append(createElement(documentRef, 'h3', undefined, 'Signature metadata'))
+          inspection.signatures.forEach((signature, index) =>
+            signaturesCard.append(renderOpenPgpSignature(documentRef, signature, index))
+          )
+          main.append(signaturesCard)
+        }
+
+        const previewCard = createElement(
+          documentRef,
+          'section',
+          'signature-card signature-preview'
+        )
+        const previewHead = createElement(documentRef, 'div', 'signature-preview-head')
+        const previewTarget = createElement(
+          documentRef,
+          'div',
+          'signature-preview-target'
+        ) as HTMLDivElement
+        const literal = inspection.literalData
+        const literalBytes = literal?.data
+        const literalFilename = literal?.filename || 'openpgp-literal-data.bin'
+        const literalExtension =
+          getFilenameExtension(literalFilename) ||
+          (literalBytes ? sniffNestedExtension(literalBytes) : 'bin')
         previewHead.append(
-          createElement(documentRef, 'strong', undefined, `Literal-data preview · ${literalFilename}`),
-          createElement(documentRef, 'span', 'signature-status', literalBytes ? formatBytes(literalBytes.byteLength) : 'not extracted')
-        );
-        previewCard.append(previewHead, previewTarget);
-        main.append(previewCard);
-        if (!literalBytes) {
-          previewTarget.append(createElement(
+          createElement(
             documentRef,
-            'div',
-            'signature-preview-empty',
-            inspection.encrypted
-              ? 'Encrypted OpenPGP data is inspection-only in this phase.'
-              : inspection.compressed
-                ? 'Compressed OpenPGP data is not recursively decompressed unless a bounded path is implemented.'
-                : 'No safely extractable literal data is available.'
-          ));
+            'strong',
+            undefined,
+            `Literal-data preview · ${literalFilename}`
+          ),
+          createElement(
+            documentRef,
+            'span',
+            'signature-status',
+            literalBytes ? formatBytes(literalBytes.byteLength) : 'not extracted'
+          )
+        )
+        previewCard.append(previewHead, previewTarget)
+        main.append(previewCard)
+        if (!literalBytes) {
+          previewTarget.append(
+            createElement(
+              documentRef,
+              'div',
+              'signature-preview-empty',
+              inspection.encrypted
+                ? 'Encrypted OpenPGP data is inspection-only; automatic decryption is not exposed.'
+                : inspection.compressed
+                  ? 'Compressed OpenPGP data did not expose literal content within the configured nesting and output limits.'
+                  : 'No safely extractable literal data is available.'
+            )
+          )
         } else if (literalBytes.byteLength > maxNestedPreviewSize) {
-          previewTarget.append(createElement(documentRef, 'div', 'signature-preview-empty', 'Extracted literal data exceeds the nested-preview limit.'));
+          previewTarget.append(
+            createElement(
+              documentRef,
+              'div',
+              'signature-preview-empty',
+              'Extracted literal data exceeds the nested-preview limit.'
+            )
+          )
         } else if (!context?.renderNestedBuffer || literalExtension === 'bin') {
-          previewTarget.append(createElement(documentRef, 'div', 'signature-preview-empty', 'Literal data was extracted, but no compatible nested renderer is available.'));
+          previewTarget.append(
+            createElement(
+              documentRef,
+              'div',
+              'signature-preview-empty',
+              'Literal data was extracted, but no compatible nested renderer is available.'
+            )
+          )
         } else {
           nestedRendered = await context.renderNestedBuffer(
-            literalBytes.buffer.slice(literalBytes.byteOffset, literalBytes.byteOffset + literalBytes.byteLength) as ArrayBuffer,
+            literalBytes.buffer.slice(
+              literalBytes.byteOffset,
+              literalBytes.byteOffset + literalBytes.byteLength
+            ) as ArrayBuffer,
             literalExtension,
             previewTarget,
             { ...context, filename: literalFilename, url: undefined, streamUrl: undefined }
-          );
+          )
         }
 
-        content.append(sidebar, main);
-        root.append(header, content);
-        return;
+        content.append(sidebar, main)
+        root.append(header, content)
+        return
       }
 
       const inspection = await inspectSignatureContainer(buffer, {
         sourceFilename: filename,
         extensionHint: type,
-        originalContent,
-      });
+        originalContent
+      })
       if (disposed || sequence !== renderSequence) {
-        return;
+        return
       }
-      root.replaceChildren();
-      const header = createElement(documentRef, 'header', 'signature-header');
-      const title = createElement(documentRef, 'div', 'signature-title');
+      root.replaceChildren()
+      const header = createElement(documentRef, 'header', 'signature-header')
+      const title = createElement(documentRef, 'div', 'signature-title')
       title.append(
         createElement(documentRef, 'small', undefined, 'CRYPTOGRAPHIC CONTAINER'),
         createElement(documentRef, 'h2', undefined, filename),
         createElement(documentRef, 'p', undefined, inspection.detectedFormat)
-      );
-      header.append(title, createElement(documentRef, 'span', 'signature-phase', 'PHASE 1 · CMS / RFC 3161 / RFC 5544'));
+      )
+      header.append(
+        title,
+        createElement(documentRef, 'span', 'signature-phase', 'CMS · RFC 3161 · RFC 5544 · BOUNDED')
+      )
 
-      const content = createElement(documentRef, 'div', 'signature-content');
-      const sidebar = createElement(documentRef, 'aside', 'signature-sidebar');
-      const main = createElement(documentRef, 'main', 'signature-main');
+      const content = createElement(documentRef, 'div', 'signature-content')
+      const sidebar = createElement(documentRef, 'aside', 'signature-sidebar')
+      const main = createElement(documentRef, 'main', 'signature-main')
 
-      const summary = createElement(documentRef, 'section', 'signature-card');
-      summary.append(createElement(documentRef, 'h3', undefined, 'Container summary'));
+      const summary = createElement(documentRef, 'section', 'signature-card')
+      summary.append(createElement(documentRef, 'h3', undefined, 'Container summary'))
       appendDefinitionList(documentRef, summary, [
         ['Detected format', inspection.detectedFormat],
         ['Size', formatBytes(inspection.sourceSize)],
         ['CMS content type', inspection.contentType],
         ['Signed content type', inspection.signedContentType],
         ['Digest algorithms', inspection.digestAlgorithms.join(', ')],
-        ['Encapsulated content', inspection.embeddedContent ? formatBytes(inspection.embeddedContent.byteLength) : 'No'],
+        [
+          'Encapsulated content',
+          inspection.embeddedContent ? formatBytes(inspection.embeddedContent.byteLength) : 'No'
+        ],
         ['Detached', inspection.detached ? 'Yes' : 'No'],
         ['Signers', inspection.signers.length],
         ['Certificates', inspection.certificates.length],
-        ['CRLs', inspection.crlCount],
-      ]);
-      sidebar.append(summary);
+        ['CRLs', inspection.crlCount]
+      ])
+      sidebar.append(summary)
 
-      const boundaries = createElement(documentRef, 'section', 'signature-card');
-      boundaries.append(createElement(documentRef, 'h3', undefined, 'Validation boundaries'));
-      inspection.warnings.forEach(warning => boundaries.append(
-        createElement(documentRef, 'div', 'signature-warning', warning)
-      ));
-      sidebar.append(boundaries);
+      const boundaries = createElement(documentRef, 'section', 'signature-card')
+      boundaries.append(createElement(documentRef, 'h3', undefined, 'Validation boundaries'))
+      inspection.warnings.forEach((warning) =>
+        boundaries.append(createElement(documentRef, 'div', 'signature-warning', warning))
+      )
+      sidebar.append(boundaries)
 
       if (inspection.timestampResponse) {
-        const response = createElement(documentRef, 'section', 'signature-card');
-        response.append(createElement(documentRef, 'h3', undefined, 'Timestamp response'));
+        const response = createElement(documentRef, 'section', 'signature-card')
+        response.append(createElement(documentRef, 'h3', undefined, 'Timestamp response'))
         appendDefinitionList(documentRef, response, [
           ['Status', inspection.timestampResponse.statusLabel],
           ['Status code', inspection.timestampResponse.status],
           ['Status text', inspection.timestampResponse.statusText.join('; ')],
-          ['Failure info', inspection.timestampResponse.failureInfo],
-        ]);
-        sidebar.append(response);
+          ['Failure info', inspection.timestampResponse.failureInfo]
+        ])
+        sidebar.append(response)
       }
 
       if (inspection.timestampedData) {
-        const tsd = createElement(documentRef, 'section', 'signature-card');
-        tsd.append(createElement(documentRef, 'h3', undefined, 'RFC 5544 TimeStampedData'));
+        const tsd = createElement(documentRef, 'section', 'signature-card')
+        tsd.append(createElement(documentRef, 'h3', undefined, 'RFC 5544 TimeStampedData'))
         appendDefinitionList(documentRef, tsd, [
           ['Data URI', inspection.timestampedData.dataUri],
           ['Filename', inspection.timestampedData.filename],
           ['Media type', inspection.timestampedData.mediaType],
-          ['Metadata hash protected', inspection.timestampedData.hashProtected === undefined ? undefined : inspection.timestampedData.hashProtected ? 'Yes' : 'No'],
-          ['Temporal evidence entries', inspection.timestampedData.temporalEvidenceEntries],
-        ]);
-        sidebar.append(tsd);
+          [
+            'Metadata hash protected',
+            inspection.timestampedData.hashProtected === undefined
+              ? undefined
+              : inspection.timestampedData.hashProtected
+                ? 'Yes'
+                : 'No'
+          ],
+          ['Temporal evidence entries', inspection.timestampedData.temporalEvidenceEntries]
+        ])
+        sidebar.append(tsd)
       }
 
-      if (inspection.requiresOriginalContent || inspection.timestamp?.messageImprint || inspection.kind === 'timestamped-data') {
-        const originalCard = createElement(documentRef, 'section', 'signature-card');
-        originalCard.append(createElement(documentRef, 'h3', undefined, 'Original content'));
-        const originalBox = createElement(documentRef, 'div', 'signature-original');
-        const input = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement;
-        input.type = 'file';
-        input.setAttribute('aria-label', 'Choose original content');
+      if (
+        inspection.requiresOriginalContent ||
+        inspection.timestamp?.messageImprint ||
+        inspection.kind === 'timestamped-data'
+      ) {
+        const originalCard = createElement(documentRef, 'section', 'signature-card')
+        originalCard.append(createElement(documentRef, 'h3', undefined, 'Original content'))
+        const originalBox = createElement(documentRef, 'div', 'signature-original')
+        const input = createElement(documentRef, 'input', 'signature-file') as HTMLInputElement
+        input.type = 'file'
+        input.setAttribute('aria-label', 'Choose original content')
         const originalState = createElement(
           documentRef,
           'div',
@@ -598,94 +1381,121 @@ export default async function renderSignature(
           originalContent
             ? `${originalFilename || 'Host-provided content'} · ${formatBytes(originalContent.byteLength)}`
             : 'Choose the original file to compare its digest locally.'
-        );
+        )
         input.addEventListener('change', () => {
-          const file = input.files?.[0];
-          if (!file) return;
-          void file.arrayBuffer().then(nextBuffer => {
-            originalContent = nextBuffer;
-            originalFilename = file.name;
-            return renderInspection();
-          }).catch(error => {
-            originalState.textContent = error instanceof Error ? error.message : String(error);
-          });
-        });
-        originalBox.append(input, originalState);
-        originalCard.append(originalBox);
-        sidebar.append(originalCard);
+          const file = input.files?.[0]
+          if (!file) return
+          void readBoundedBlob(file, maxNestedPreviewSize, 'Original content')
+            .then((nextBuffer) => {
+              originalContent = nextBuffer
+              originalFilename = file.name
+              return renderInspection()
+            })
+            .catch((error) => {
+              originalState.textContent = error instanceof Error ? error.message : String(error)
+            })
+        })
+        originalBox.append(input, originalState)
+        originalCard.append(originalBox)
+        sidebar.append(originalCard)
       }
 
       if (inspection.signers.length) {
-        const signers = createElement(documentRef, 'section', 'signature-card');
-        signers.append(createElement(documentRef, 'h3', undefined, 'Signers'));
-        inspection.signers.forEach(signer => signers.append(renderSigner(documentRef, signer)));
-        main.append(signers);
+        const signers = createElement(documentRef, 'section', 'signature-card')
+        signers.append(createElement(documentRef, 'h3', undefined, 'Signers'))
+        inspection.signers.forEach((signer) => signers.append(renderSigner(documentRef, signer)))
+        main.append(signers)
       }
 
       if (inspection.timestamp) {
-        main.append(renderTimestamp(documentRef, inspection.timestamp));
+        main.append(renderTimestamp(documentRef, inspection.timestamp))
       }
 
       if (inspection.certificates.length) {
-        const certificates = createElement(documentRef, 'section', 'signature-card');
-        certificates.append(createElement(documentRef, 'h3', undefined, 'Included certificates'));
-        inspection.certificates.forEach(certificate => certificates.append(renderCertificate(documentRef, certificate)));
-        main.append(certificates);
+        const certificates = createElement(documentRef, 'section', 'signature-card')
+        certificates.append(createElement(documentRef, 'h3', undefined, 'Included certificates'))
+        inspection.certificates.forEach((certificate) =>
+          certificates.append(renderCertificate(documentRef, certificate))
+        )
+        main.append(certificates)
       }
 
-      const previewCard = createElement(documentRef, 'section', 'signature-card signature-preview');
-      const previewHead = createElement(documentRef, 'div', 'signature-preview-head');
-      const previewTarget = createElement(documentRef, 'div', 'signature-preview-target') as HTMLDivElement;
-      const timestampContainer = inspection.kind === 'timestamp-request' ||
+      const previewCard = createElement(documentRef, 'section', 'signature-card signature-preview')
+      const previewHead = createElement(documentRef, 'div', 'signature-preview-head')
+      const previewTarget = createElement(
+        documentRef,
+        'div',
+        'signature-preview-target'
+      ) as HTMLDivElement
+      const timestampContainer =
+        inspection.kind === 'timestamp-request' ||
         inspection.kind === 'timestamp-response' ||
         inspection.kind === 'timestamp-token' ||
-        inspection.kind === 'timestamped-data';
-      const previewUsesOriginal = Boolean(originalContent && (inspection.detached || timestampContainer));
-      const previewSource = previewUsesOriginal ? originalContent : inspection.embeddedContent;
+        inspection.kind === 'timestamped-data'
+      const previewUsesOriginal = Boolean(
+        originalContent && (inspection.detached || timestampContainer)
+      )
+      const previewSource = previewUsesOriginal ? originalContent : inspection.embeddedContent
       const previewBytes = previewSource
         ? previewSource instanceof Uint8Array
           ? previewSource
           : new Uint8Array(previewSource)
-        : undefined;
-      const identity = inspection.kind === 'timestamped-data' && inspection.timestampedData?.filename && !previewUsesOriginal
-        ? {
-            filename: inspection.timestampedData.filename,
-            extension: getFilenameExtension(inspection.timestampedData.filename) || sniffNestedExtension(previewBytes || new Uint8Array()),
-          }
-        : resolveNestedIdentity(inspection, filename, originalFilename, previewUsesOriginal);
+        : undefined
+      const identity =
+        inspection.kind === 'timestamped-data' &&
+        inspection.timestampedData?.filename &&
+        !previewUsesOriginal
+          ? {
+              filename: inspection.timestampedData.filename,
+              extension:
+                getFilenameExtension(inspection.timestampedData.filename) ||
+                sniffNestedExtension(previewBytes || new Uint8Array())
+            }
+          : resolveNestedIdentity(inspection, filename, originalFilename, previewUsesOriginal)
       previewHead.append(
         createElement(documentRef, 'strong', undefined, `Document preview · ${identity.filename}`),
-        createElement(documentRef, 'span', 'signature-status', previewBytes ? formatBytes(previewBytes.byteLength) : 'content unavailable')
-      );
-      previewCard.append(previewHead, previewTarget);
-      main.append(previewCard);
+        createElement(
+          documentRef,
+          'span',
+          'signature-status',
+          previewBytes ? formatBytes(previewBytes.byteLength) : 'content unavailable'
+        )
+      )
+      previewCard.append(previewHead, previewTarget)
+      main.append(previewCard)
 
-      content.append(sidebar, main);
-      root.append(header, content);
+      content.append(sidebar, main)
+      root.append(header, content)
 
       if (!previewBytes) {
-        previewTarget.append(createElement(
-          documentRef,
-          'div',
-          'signature-preview-empty',
-          inspection.requiresOriginalContent
-            ? 'Supply the original content to compare its digest or timestamp message imprint and open it through the nested renderer.'
-            : 'The container does not include previewable document content.'
-        ));
+        previewTarget.append(
+          createElement(
+            documentRef,
+            'div',
+            'signature-preview-empty',
+            inspection.requiresOriginalContent
+              ? 'Supply the original content to compare its digest or timestamp message imprint and open it through the nested renderer.'
+              : 'The container does not include previewable document content.'
+          )
+        )
       } else if (previewBytes.byteLength > maxNestedPreviewSize) {
-        previewTarget.append(createElement(
-          documentRef,
-          'div',
-          'signature-preview-empty',
-          `Nested preview is disabled because ${formatBytes(previewBytes.byteLength)} exceeds the ${formatBytes(maxNestedPreviewSize)} limit.`
-        ));
+        previewTarget.append(
+          createElement(
+            documentRef,
+            'div',
+            'signature-preview-empty',
+            `Nested preview is disabled because ${formatBytes(previewBytes.byteLength)} exceeds the ${formatBytes(maxNestedPreviewSize)} limit.`
+          )
+        )
       } else if (!context?.renderNestedBuffer || identity.extension === 'bin') {
-        previewTarget.append(createElement(
-          documentRef,
-          'div',
-          'signature-preview-empty',
-          'The content was extracted and verified, but no compatible nested renderer is available for this file type.'
-        ));
+        previewTarget.append(
+          createElement(
+            documentRef,
+            'div',
+            'signature-preview-empty',
+            'The content was extracted, but no compatible nested renderer is available for this file type.'
+          )
+        )
       } else {
         nestedRendered = await context.renderNestedBuffer(
           previewBytes.buffer.slice(
@@ -698,34 +1508,38 @@ export default async function renderSignature(
             ...context,
             filename: identity.filename,
             url: undefined,
-            streamUrl: undefined,
+            streamUrl: undefined
           }
-        );
+        )
       }
     } catch (error) {
       if (disposed || sequence !== renderSequence) {
-        return;
+        return
       }
-      root.replaceChildren(createElement(
-        documentRef,
-        'div',
-        'signature-error',
-        error instanceof Error ? error.message : String(error)
-      ));
+      root.replaceChildren(
+        createElement(
+          documentRef,
+          'div',
+          'signature-error',
+          error instanceof Error ? error.message : String(error)
+        )
+      )
     }
-  };
+  }
 
-  await renderInspection();
+  await renderInspection()
 
   return {
     $el: root,
     async unmount() {
-      disposed = true;
-      renderSequence += 1;
-      openPgpClient?.dispose();
-      openPgpClient = undefined;
-      await clearNested();
-      target.replaceChildren();
-    },
-  };
+      disposed = true
+      renderSequence += 1
+      openPgpClient?.dispose()
+      openPgpClient = undefined
+      containerClient?.dispose()
+      containerClient = undefined
+      await clearNested()
+      target.replaceChildren()
+    }
+  }
 }

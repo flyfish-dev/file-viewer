@@ -172,7 +172,7 @@ OpenDocument 样例不再使用临时生成的 ODT/ODS/ODP 占位文件。`docum
 
 `model.gltf`、`model.obj`、`model.stl` 和 `model.ply` 用于验证 Three.js 轻量模型链路；`model.step` 必须经本地 `wasm/model/` 下的 OCCT Worker、runtime 和 WASM 生成真实网格，并继续验证视图适配、线框/网格/坐标轴和全局统一缩放。运行时同时分发 OCCT 与 `occt-import-js` 的许可证文件。
 
-`flow.excalidraw` 与 `process.drawio` 用于验证绘图类文本格式。Excalidraw 默认使用 rough.js 输出只读 SVG，并在运行环境提供官方 ESM 模块时优先尝试 `restore` 与 `exportToSvg`；draw.io 使用官方 diagrams.net `GraphViewer`，组件本身只做按需加载、容器挂载和错误提示。
+`flow.excalidraw` 与 `process.drawio` 用于验证绘图类文本格式。Excalidraw 默认使用 rough.js 输出只读 SVG，并在运行环境提供官方 ESM 模块时优先尝试 `restore` 与 `exportToSvg`；draw.io 默认使用不执行文档 HTML 的内置 SVG，只有显式启用 `preferOfficial` 时才在受限 iframe 中按需加载单独分发的 diagrams.net `GraphViewer`。
 
 `audio.mp3` 与 `audio.ogg` 用于验证浏览器原生音频播放能力；`melody.mid` 用于验证 MIDI 元数据解析；`book.epub` 用于验证 `epubjs` 的目录、章节资源和滚动阅读能力；`book.umd` 用于验证早期移动电子书的文件头、元数据、章节偏移、章节标题和 zlib 正文段。
 

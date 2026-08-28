@@ -1,2 +1,4 @@
-* -text
-originals/hello*.txt whitespace=cr-at-eol
+originals/hello.txt binary
+originals/hello-tampered.txt binary
+originals/*.pdf binary
+reports/*.txt binary

@@ -1,12 +1,14 @@
 import { marked } from 'marked';
 import createDOMPurify from 'dompurify';
-import type { WindowLike } from 'dompurify';
+import type { DOMPurify, WindowLike } from 'dompurify';
 import {
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
+  assertFileViewerMermaidSourceHasNoExternalResources,
   decodeFileViewerTextBuffer,
   registerFileViewerZoomProvider,
   resolveFileViewerFitScale,
   unregisterFileViewerZoomProvider,
+  sanitizeFileViewerSvgResources,
   type FileRenderContext,
   type FileViewerFitRequest,
   type FileViewerFitResult,
@@ -14,31 +16,22 @@ import {
   type FileViewerThemeMode,
   type FileViewerZoomState,
 } from '@file-viewer/core';
+import { getFileViewerMermaidLoader } from './optionalCapabilities.js';
+import { sanitizeFileViewerRichHtml } from './sanitizeHtml.js';
 
-const createSafeTextFragment = (documentRef: Document, value: string) => {
-  const fragment = documentRef.createDocumentFragment();
-  fragment.append(documentRef.createTextNode(value));
-  return fragment;
-};
+const sanitizeMarkdownHtml = sanitizeFileViewerRichHtml;
 
-const sanitizeMarkdownHtml = (documentRef: Document, html: string) => {
+const purifierByDocument = new WeakMap<Document, DOMPurify>();
+
+const getMarkdownPurifier = (documentRef: Document) => {
+  const cached = purifierByDocument.get(documentRef);
+  if (cached) return cached;
   const windowRef = documentRef.defaultView;
-  if (!windowRef) {
-    return createSafeTextFragment(documentRef, html);
-  }
-
+  if (!windowRef) return null;
   const purifier = createDOMPurify(windowRef as unknown as WindowLike);
-  if (!purifier.isSupported) {
-    return createSafeTextFragment(documentRef, html);
-  }
-
-  return purifier.sanitize(html, {
-    RETURN_DOM_FRAGMENT: true,
-    USE_PROFILES: { html: true },
-    ADD_ATTR: ['target'],
-    FORBID_TAGS: ['style', 'iframe', 'object', 'embed', 'form'],
-    FORBID_ATTR: ['style', 'srcdoc'],
-  });
+  if (!purifier.isSupported) return null;
+  purifierByDocument.set(documentRef, purifier);
+  return purifier;
 };
 
 const hardenMarkdownLinks = (root: ParentNode) => {
@@ -138,24 +131,23 @@ const isDarkTheme = (documentRef: Document, theme?: FileViewerThemeMode) => {
   return Boolean(documentRef.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches);
 };
 
-const sanitizeMermaidSvg = (documentRef: Document, svg: string) => {
-  const Parser = documentRef.defaultView?.DOMParser || DOMParser;
-  const parsed = new Parser().parseFromString(svg, 'image/svg+xml');
-  const parseError = parsed.querySelector('parsererror');
-  if (parseError) {
-    throw new Error(parseError.textContent || 'Unable to parse the Mermaid SVG.');
+export const sanitizeMermaidSvg = (documentRef: Document, svg: string) => {
+  const purifier = getMarkdownPurifier(documentRef);
+  if (!purifier) {
+    throw new Error('Unable to initialize the Mermaid SVG sanitizer.');
   }
-  parsed.querySelectorAll('script,iframe,object,embed').forEach(node => node.remove());
-  parsed.querySelectorAll('*').forEach(node => {
-    for (const attribute of Array.from(node.attributes)) {
-      if (/^on/i.test(attribute.name)) {
-        node.removeAttribute(attribute.name);
-      } else if (/^(?:href|xlink:href|src)$/i.test(attribute.name) && /^\s*javascript:/i.test(attribute.value)) {
-        node.removeAttribute(attribute.name);
-      }
-    }
+  const fragment = purifier.sanitize(svg, {
+    RETURN_DOM_FRAGMENT: true,
+    USE_PROFILES: { html: true, svg: true, svgFilters: true },
+    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form'],
+    FORBID_ATTR: ['srcdoc'],
   });
-  return documentRef.importNode(parsed.documentElement, true) as unknown as SVGSVGElement;
+  const root = fragment.querySelector('svg');
+  if (!root) {
+    throw new Error('Unable to parse the Mermaid SVG.');
+  }
+  sanitizeFileViewerSvgResources(fragment);
+  return documentRef.importNode(root, true) as unknown as SVGSVGElement;
 };
 
 const renderMermaidSvg = async (
@@ -164,12 +156,18 @@ const renderMermaidSvg = async (
   theme?: FileViewerThemeMode
 ) => {
   const render = async () => {
-    const mermaidModule = await import('mermaid');
+    assertFileViewerMermaidSourceHasNoExternalResources(source);
+    const loadMermaid = getFileViewerMermaidLoader();
+    if (!loadMermaid) {
+      throw new Error('Mermaid support is opt-in. Run `npx file-viewer-cli add mermaid-markdown --write`, then `npx file-viewer-cli install --yes`.');
+    }
+    const mermaidModule = await loadMermaid();
     const mermaid = mermaidModule.default;
     const id = `file-viewer-markdown-mermaid-${Date.now()}-${mermaidRenderSequence += 1}`;
     mermaid.initialize({
       startOnLoad: false,
       securityLevel: 'strict',
+      htmlLabels: false,
       theme: isDarkTheme(documentRef, theme) ? 'dark' : 'default',
     });
     const rendered = await mermaid.render(id, source);
@@ -211,7 +209,9 @@ const renderEmbeddedMermaid = async (
       const message = documentRef.createElement('p');
       message.className = 'markdown-mermaid-error';
       message.setAttribute('role', 'alert');
-      message.textContent = 'Mermaid diagram could not be rendered. The source is shown above.';
+      message.textContent = error instanceof Error && error.message.includes('npx file-viewer-cli')
+        ? error.message
+        : 'Mermaid diagram could not be rendered. The source is shown above.';
       pre.after(message);
       console.warn('[file-viewer] Unable to render embedded Mermaid diagram.', error);
     }

@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-import 'file-viewer-copy-assets/cli'
+await import('file-viewer-copy-assets/cli')

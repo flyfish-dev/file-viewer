@@ -2,9 +2,11 @@ import { charPropsToState, paraPropsToState } from './properties.js';
 import type { MsDocParseResult, ParagraphBlock } from '../types.js';
 
 const HTML_PREFIX_RE = /^(?:<!doctype\s+html\b|<html\b|<body\b)/i;
-const BLOCK_RE = /<(div|p|h[1-6]|li|pre|blockquote|tr)\b([^>]*)>([\s\S]*?)<\/\1\s*>/gi;
-const UNSAFE_CONTENT_RE =
-  /<(script|style|noscript|iframe|object|embed|svg)\b[^>]*>[\s\S]*?<\/\1\s*>/gi;
+const HTML_BREAK_TAGS = new Set(['br']);
+const HTML_PARAGRAPH_TAGS = new Set(['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'pre', 'blockquote', 'tr']);
+const HTML_BLOCK_TAGS = new Set(['div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'pre', 'blockquote', 'tr', 'table']);
+const HTML_CELL_TAGS = new Set(['td', 'th']);
+const HTML_SKIPPED_CONTENT_TAGS = new Set(['script', 'style', 'noscript', 'iframe', 'object', 'embed', 'svg']);
 
 interface HtmlParagraphSource {
   text: string;
@@ -75,17 +77,94 @@ function decodeEntities(value: string): string {
   });
 }
 
+function findHtmlTagEnd(value: string, start: number): number {
+  let quote = '';
+  for (let index = start + 1; index < value.length; index += 1) {
+    const character = value[index] || '';
+    if (quote) {
+      if (character === quote) quote = '';
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === '>') {
+      return index;
+    }
+  }
+  return -1;
+}
+
+function readHtmlTag(value: string, start: number, end: number) {
+  let cursor = start + 1;
+  while (cursor < end && /\s/.test(value[cursor] || '')) cursor += 1;
+  const closing = value[cursor] === '/';
+  if (closing) cursor += 1;
+  while (cursor < end && /\s/.test(value[cursor] || '')) cursor += 1;
+  const nameStart = cursor;
+  while (cursor < end && /[A-Za-z0-9]/.test(value[cursor] || '')) cursor += 1;
+  return {
+    closing,
+    name: value.slice(nameStart, cursor).toLowerCase(),
+    attributes: closing ? '' : value.slice(cursor, end),
+    selfClosing: !closing && /\/\s*$/.test(value.slice(cursor, end)),
+  };
+}
+
+function skipHtmlElementContent(value: string, lowerValue: string, tagName: string, start: number): number {
+  const closingPrefix = `</${tagName}`;
+  let cursor = start;
+  while (cursor < value.length) {
+    const closingStart = lowerValue.indexOf(closingPrefix, cursor);
+    if (closingStart < 0) return value.length;
+    const boundary = lowerValue[closingStart + closingPrefix.length] || '';
+    if (boundary && !/[\s>]/.test(boundary)) {
+      cursor = closingStart + closingPrefix.length;
+      continue;
+    }
+    const closingEnd = findHtmlTagEnd(value, closingStart);
+    return closingEnd < 0 ? value.length : closingEnd + 1;
+  }
+  return value.length;
+}
+
+function htmlFragmentToText(fragment: string): string {
+  const chunks: string[] = [];
+  const lowerFragment = fragment.toLowerCase();
+  let cursor = 0;
+  while (cursor < fragment.length) {
+    const tagStart = fragment.indexOf('<', cursor);
+    if (tagStart < 0) {
+      chunks.push(fragment.slice(cursor));
+      break;
+    }
+    chunks.push(fragment.slice(cursor, tagStart));
+    if (fragment.startsWith('<!--', tagStart)) {
+      const commentEnd = fragment.indexOf('-->', tagStart + 4);
+      cursor = commentEnd < 0 ? fragment.length : commentEnd + 3;
+      continue;
+    }
+    const tagEnd = findHtmlTagEnd(fragment, tagStart);
+    if (tagEnd < 0) {
+      chunks.push(fragment.slice(tagStart));
+      break;
+    }
+    const tag = readHtmlTag(fragment, tagStart, tagEnd);
+    if (!tag.closing && HTML_SKIPPED_CONTENT_TAGS.has(tag.name)) {
+      cursor = skipHtmlElementContent(fragment, lowerFragment, tag.name, tagEnd + 1);
+      continue;
+    }
+    if (HTML_BREAK_TAGS.has(tag.name) || (tag.closing && HTML_BLOCK_TAGS.has(tag.name))) {
+      chunks.push('\n');
+    } else if (HTML_CELL_TAGS.has(tag.name)) {
+      chunks.push('\t');
+    }
+    cursor = tagEnd + 1;
+  }
+  return chunks.join('').replace(/\u0000/g, '');
+}
+
 function fragmentToText(fragment: string): string {
-  return decodeEntities(
-    fragment
-      .replace(UNSAFE_CONTENT_RE, '')
-      .replace(/<!--[\s\S]*?-->/g, '')
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<\/(?:div|p|h[1-6]|li|pre|blockquote|tr|table)>/gi, '\n')
-      .replace(/<\/?(?:td|th)\b[^>]*>/gi, '\t')
-      .replace(/<[^>]+>/g, '')
-      .replace(/\u0000/g, ''),
-  )
+  return decodeEntities(htmlFragmentToText(fragment))
     .replace(/\r\n?/g, '\n')
     .replace(/[\t\f\v ]+/g, ' ')
     .replace(/ *\n */g, '\n')
@@ -93,17 +172,68 @@ function fragmentToText(fragment: string): string {
 }
 
 function extractParagraphs(html: string): HtmlParagraphSource[] {
-  const safe = html.replace(UNSAFE_CONTENT_RE, '').replace(/<!--[\s\S]*?-->/g, '');
   const paragraphs: HtmlParagraphSource[] = [];
-  for (const match of safe.matchAll(BLOCK_RE)) {
-    const content = match[3] || '';
+  const lowerHtml = html.toLowerCase();
+  let active: {
+    attributes: string;
+    contentStart: number;
+    name: string;
+    sameNameDepth: number;
+  } | null = null;
+  let cursor = 0;
+
+  const appendParagraph = (attributes: string, content: string) => {
     const text = fragmentToText(content);
-    if (!text) continue;
-    paragraphs.push({ text, attributes: match[2] || '', content });
+    if (text) paragraphs.push({ text, attributes, content });
+  };
+
+  while (cursor < html.length) {
+    const tagStart = html.indexOf('<', cursor);
+    if (tagStart < 0) break;
+    if (html.startsWith('<!--', tagStart)) {
+      const commentEnd = html.indexOf('-->', tagStart + 4);
+      cursor = commentEnd < 0 ? html.length : commentEnd + 3;
+      continue;
+    }
+    const tagEnd = findHtmlTagEnd(html, tagStart);
+    if (tagEnd < 0) break;
+    const tag = readHtmlTag(html, tagStart, tagEnd);
+    if (!tag.closing && HTML_SKIPPED_CONTENT_TAGS.has(tag.name)) {
+      cursor = skipHtmlElementContent(html, lowerHtml, tag.name, tagEnd + 1);
+      continue;
+    }
+    if (HTML_PARAGRAPH_TAGS.has(tag.name) && !tag.selfClosing) {
+      if (!tag.closing) {
+        if (!active) {
+          active = {
+            attributes: tag.attributes,
+            contentStart: tagEnd + 1,
+            name: tag.name,
+            sameNameDepth: 0,
+          };
+        } else if (active.name === tag.name) {
+          active.sameNameDepth += 1;
+        }
+      } else if (active?.name === tag.name) {
+        if (active.sameNameDepth > 0) {
+          active.sameNameDepth -= 1;
+        } else {
+          appendParagraph(active.attributes, html.slice(active.contentStart, tagStart));
+          active = null;
+        }
+      }
+    }
+    cursor = tagEnd + 1;
+  }
+
+  // Malformed HTML saved by old Word versions is common. Preserve its visible
+  // tail as a paragraph without restarting a regex search at every opening tag.
+  if (active) {
+    appendParagraph(active.attributes, html.slice(active.contentStart));
   }
   if (paragraphs.length) return paragraphs;
-  const text = fragmentToText(safe);
-  return text ? [{ text, attributes: '', content: safe }] : [];
+  const text = fragmentToText(html);
+  return text ? [{ text, attributes: '', content: html }] : [];
 }
 
 function readStyle(attributes: string): string {

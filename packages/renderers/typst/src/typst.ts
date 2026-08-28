@@ -19,6 +19,7 @@ import {
   type PrintPageSize,
   unregisterFileViewerZoomProvider,
 } from '@file-viewer/core';
+import { sanitizeTypstSvgDocument } from './sanitize.js';
 
 declare global {
   interface Window {
@@ -38,10 +39,62 @@ interface TypstEngineAssetCandidate {
   preflight: boolean;
 }
 
-interface TypstRenderedPage extends PrintPageSize {
+export interface TypstRenderedPage extends PrintPageSize {
   index: number;
   svg: string;
+  svgNode: Element;
 }
+
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+const XMLNS_NAMESPACE = 'http://www.w3.org/2000/xmlns/';
+const TYPST_TRUSTED_TYPES_POLICY_NAME = 'file-viewer-typst-svg';
+
+interface TypstTrustedHtmlPolicy {
+  createHTML(value: string): unknown;
+}
+
+interface TypstTrustedTypesFactory {
+  createPolicy(name: string, rules: { createHTML(value: string): string }): TypstTrustedHtmlPolicy;
+}
+
+const typstTrustedTypesPolicies = new WeakMap<object, TypstTrustedHtmlPolicy>();
+
+const assertTypstSvgIsSafeForInertParsing = (value: string) => {
+  if (
+    /<!\s*(?:doctype|entity)\b|<\?|<\s*\/?\s*(?:script|iframe|object|embed|form|base|link|meta)\b|\s(?:on[a-z0-9_-]+|srcdoc)\s*=/i.test(
+      value,
+    )
+  ) {
+    throw new TypeError('Typst SVG contains executable markup and was rejected before parsing.');
+  }
+  return value;
+};
+
+const createTypstSvgParserInput = (value: string, documentRef?: Document) => {
+  const windowRef = documentRef?.defaultView || (typeof window !== 'undefined' ? window : null);
+  const trustedTypes = (windowRef as unknown as { trustedTypes?: TypstTrustedTypesFactory } | null)
+    ?.trustedTypes;
+  if (!trustedTypes) {
+    return value;
+  }
+  let policy = typstTrustedTypesPolicies.get(trustedTypes as object);
+  if (!policy) {
+    try {
+      policy = trustedTypes.createPolicy(TYPST_TRUSTED_TYPES_POLICY_NAME, {
+        createHTML: assertTypstSvgIsSafeForInertParsing,
+      });
+      typstTrustedTypesPolicies.set(trustedTypes as object, policy);
+    } catch (error) {
+      const detail = error instanceof Error ? ` ${error.message}` : '';
+      const policyError = new Error(
+        `Trusted Types must allow the ${TYPST_TRUSTED_TYPES_POLICY_NAME} policy for Typst SVG parsing.${detail}`,
+      );
+      (policyError as Error & { cause?: unknown }).cause = error;
+      throw policyError;
+    }
+  }
+  return policy.createHTML(value);
+};
 
 const typstStyle = `
 .typst-viewer{min-height:100%;overflow:auto;background:var(--file-viewer-render-surface-background,#eef1f4);color:#172033}
@@ -255,37 +308,34 @@ const readNumberAttribute = (element: Element, name: string) => {
   return Number.isFinite(value) && value > 0 ? value : 0;
 };
 
-const removeUnsafeSvgContent = (root: Document | Element) => {
-  root.querySelectorAll('script').forEach(script => script.remove());
-  root.querySelectorAll('*').forEach(element => {
-    Array.from(element.attributes).forEach(attribute => {
-      const name = attribute.name.toLowerCase();
-      const value = attribute.value.trim().toLowerCase();
-      if (name.startsWith('on') || value.startsWith('javascript:')) {
-        element.removeAttribute(attribute.name);
-      }
-    });
-  });
-};
-
 const serializeNode = (node: Node) => {
   return new XMLSerializer().serializeToString(node);
 };
 
-const parseTypstSvgPages = (svgText: string, svgParseFailedMessage: string): TypstRenderedPage[] => {
-  const parser = new DOMParser();
-  const documentSvg = parser.parseFromString(svgText, 'image/svg+xml');
+export const parseTypstSvgPages = (
+  svgText: string,
+  svgParseFailedMessage: string,
+  documentRef?: Document,
+): TypstRenderedPage[] => {
+  const Parser = documentRef?.defaultView?.DOMParser || DOMParser;
+  const parser = new Parser();
+  const documentSvg = parser.parseFromString(
+    createTypstSvgParserInput(svgText, documentRef) as string,
+    'image/svg+xml',
+  );
   const parseError = documentSvg.querySelector('parsererror');
   if (parseError) {
     throw new Error(parseError.textContent || svgParseFailedMessage);
   }
 
-  removeUnsafeSvgContent(documentSvg);
+  sanitizeTypstSvgDocument(documentSvg);
   const root = documentSvg.documentElement;
+  if (root.namespaceURI !== SVG_NAMESPACE || root.localName.toLowerCase() !== 'svg') {
+    throw new Error(svgParseFailedMessage);
+  }
   const sharedNodes = Array.from(root.children)
     .filter(child => ['style', 'defs'].includes(child.tagName.toLowerCase()))
-    .map(serializeNode)
-    .join('');
+    .map(child => child.cloneNode(true));
   const pageGroups = Array.from(root.querySelectorAll('g.typst-page'));
   const fallbackWidth = readNumberAttribute(root, 'data-width') ||
     readNumberAttribute(root, 'width') ||
@@ -299,7 +349,8 @@ const parseTypstSvgPages = (svgText: string, svgParseFailedMessage: string): Typ
       index: 1,
       width: fallbackWidth,
       height: fallbackHeight,
-      svg: svgText,
+      svg: serializeNode(root),
+      svgNode: root,
     }];
   }
 
@@ -308,20 +359,34 @@ const parseTypstSvgPages = (svgText: string, svgParseFailedMessage: string): Typ
     const pageHeight = readNumberAttribute(group, 'data-page-height') || fallbackHeight;
     const pageClone = group.cloneNode(true) as Element;
     pageClone.setAttribute('transform', 'translate(0, 0)');
-    const pageSvg = [
-      `<svg style="overflow:visible;" class="typst-doc" viewBox="0 0 ${pageWidth} ${pageHeight}" width="${pageWidth}" height="${pageHeight}" data-width="${pageWidth}" data-height="${pageHeight}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:h5="http://www.w3.org/1999/xhtml">`,
-      sharedNodes,
-      serializeNode(pageClone),
-      '</svg>',
-    ].join('');
+    const pageSvg = documentSvg.createElementNS(SVG_NAMESPACE, 'svg');
+    pageSvg.setAttribute('style', 'overflow:visible;');
+    pageSvg.setAttribute('class', 'typst-doc');
+    pageSvg.setAttribute('viewBox', `0 0 ${pageWidth} ${pageHeight}`);
+    pageSvg.setAttribute('width', String(pageWidth));
+    pageSvg.setAttribute('height', String(pageHeight));
+    pageSvg.setAttribute('data-width', String(pageWidth));
+    pageSvg.setAttribute('data-height', String(pageHeight));
+    pageSvg.setAttributeNS(XMLNS_NAMESPACE, 'xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    pageSvg.setAttributeNS(XMLNS_NAMESPACE, 'xmlns:h5', 'http://www.w3.org/1999/xhtml');
+    pageSvg.append(...sharedNodes.map(node => node.cloneNode(true)), pageClone);
+    sanitizeTypstSvgDocument(pageSvg);
 
     return {
       index: index + 1,
       width: pageWidth,
       height: pageHeight,
-      svg: pageSvg,
+      svg: serializeNode(pageSvg),
+      svgNode: pageSvg,
     };
   });
+};
+
+export const importTypstSvgPageNode = (
+  documentRef: Document,
+  page: Pick<TypstRenderedPage, 'svgNode'>,
+) => {
+  return documentRef.importNode(page.svgNode, true);
 };
 
 const formatTypstError = (error: unknown) => {
@@ -606,7 +671,7 @@ export default async function renderTypst(
       const shell = createElement(documentRef, 'section', 'typst-page-shell');
       shell.setAttribute('aria-label', `Page ${page.index}`);
       const content = createElement(documentRef, 'div', 'typst-page-content');
-      content.innerHTML = page.svg;
+      content.replaceChildren(importTypstSvgPageNode(documentRef, page));
       shell.append(content);
       pageShells.set(page.index, shell);
       pagesRoot.append(shell);
@@ -689,7 +754,7 @@ export default async function renderTypst(
         return;
       }
 
-      pages = parseTypstSvgPages(svg, t('typst.error.svgParseFailed'));
+      pages = parseTypstSvgPages(svg, t('typst.error.svgParseFailed'), documentRef);
       state = 'ready';
       syncUi();
       registerExportAdapter();

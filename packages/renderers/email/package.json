@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-email",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
   "description": "Standalone email renderer plugin for File Viewer with EML, MSG, MBOX, attachments, and nested previews.",
@@ -50,6 +50,7 @@
   },
   "files": [
     "dist",
+    "file-viewer.capability.json",
     "README.md",
     "README.en.md",
     "LICENSE"
@@ -59,12 +60,16 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0",
+    "@file-viewer/core": "workspace:3.0.0",
     "@kenjiuno/msgreader": "^1.28.0",
+    "buffer": "^6.0.3",
     "postal-mime": "^2.7.4"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
   },
   "license": "Apache-2.0"
 }

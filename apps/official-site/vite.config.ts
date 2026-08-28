@@ -25,6 +25,8 @@ export default defineConfig({
       input: {
         main: resolveSiteFile('./index.html'),
         en: resolveSiteFile('./en/index.html'),
+        cli: resolveSiteFile('./cli/index.html'),
+        cliEn: resolveSiteFile('./en/cli/index.html'),
         commercial: resolveSiteFile('./commercial/index.html'),
         commercialEn: resolveSiteFile('./en/commercial/index.html')
       }

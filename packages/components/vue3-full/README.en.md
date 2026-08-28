@@ -1,6 +1,6 @@
 # @file-viewer/vue3-full
 
-Full-format Vue 3 package with `@file-viewer/preset-all` built in; do not install another preset. Follow “Full Package Quick Start” below to publish the `<deployment-base>/file-viewer/` runtime assets required by every Worker/WASM format.
+A one-step Vue 3 Full integration that preserves the published v2.4 Full capability matrix and default asset-copy behavior, including iWork, CAD, 3D, EDA, Geo, Typst, Drawing, Hangul, WordPerfect, and legacy PPT. DICOM and future heavy formats do not enter the historical Full closure automatically and require explicit selection through `@file-viewer/cli`.
 
 ```bash
 npm install @file-viewer/vue3-full
@@ -13,7 +13,7 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 | Framework | Standard npm package | Entrypoints | GitHub | Gitee | Historical aliases |
 | --- | --- | --- | --- | --- | --- |
-| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, type declarations, script tag IIFE, worker/WASM viewer assets, asset copy CLI | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
+| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, type declarations, script tag IIFE | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
 | Vanilla JS / Pure Web Full | `@file-viewer/web-full` | ESM, type declarations, script tag IIFE | [file-viewer-web-full](https://github.com/flyfish-dev/file-viewer-web-full) | [file-viewer-web-full](https://gitee.com/flyfish-dev/file-viewer-web-full) | none |
 | Vue 3 | `@file-viewer/vue3` | ESM, type declarations | [file-viewer-vue3](https://github.com/flyfish-dev/file-viewer-vue3) | [file-viewer-vue3](https://gitee.com/flyfish-dev/file-viewer-vue3) | `@flyfish-group/file-viewer3`, `file-viewer3` |
 | Vue 3 Full | `@file-viewer/vue3-full` | ESM, type declarations | [file-viewer-vue3-full](https://github.com/flyfish-dev/file-viewer-vue3-full) | [file-viewer-vue3-full](https://gitee.com/flyfish-dev/file-viewer-vue3-full) | none |
@@ -32,7 +32,7 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 ## Format Support Matrix
 
-The shared catalog registers 221 file extensions (221 stable and 0 experimental) across 32 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
+The legacy-compatible Full default registers 221 file extensions (221 stable and 0 experimental) across 32 preview pipelines, matching the published v2.4 capability contract. The current catalog has 244 file extensions and 34 preview pipelines; DICOM and other new heavy formats require explicit CLI selection and never expand an existing Full package automatically.
 
 | Preview pipeline | Category | Extensions | Level / status | Capabilities | Loading |
 | --- | --- | --- | --- | --- | --- |
@@ -69,15 +69,21 @@ The shared catalog registers 221 file extensions (221 stable and 0 experimental)
 | Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | high-fidelity / stable | download | lazy async |
 | Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | download, HTML export, search | lazy async |
 
-## Full Package Quick Start
+## Compatible Full Package Quick Start
 
-`@file-viewer/vue3-full` already includes `@file-viewer/preset-all` and enables the complete renderer matrix by default. Do not install or pass `preset-office`, `preset-all`, or individual renderers again.
+`@file-viewer/vue3-full` continues to include `@file-viewer/preset-all` and preserves the published v2.4 contract of 221 extensions, 32 preview pipelines, and the default asset-copy behavior. Existing iWork, CAD, 3D, EDA, Geo, Typst, Drawing, WordPerfect, Hangul, legacy PPT, RTF, Mermaid, HLS/MIDI, and advanced text support is not removed. DICOM and future heavy formats do not enter this historical Full closure automatically.
 
-Since 2.1.30, the eight official Full packages using this asset-delivery contract are: `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, `@file-viewer/svelte-full`. Version 2.2.0 added the independently versioned binary-PPT runtime to the complete asset payload.
+The eight packages that retain this historical Full contract are: `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, `@file-viewer/svelte-full`. New projects that do not need the complete matrix should use `@file-viewer/cli` to select standard, lite, office, engineering, or custom capabilities. Existing Full users do not need to change their installation path.
 
-Full packages include the complete renderer matrix and version-aligned Worker, WASM, font, and vendor assets. `vendor/ppt/` contains the binary-PPT 0.3.3 ESM, Worker, WASM, CJK font, and frame-cache modules. Vite publishes the packaged assets automatically; other build tools use the included same-version CLI. PPT runtime URLs need no configuration by default; `pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are advanced overrides for non-standard routes.
+A Full package keeps the version-aligned compatible copy-assets implementation and copies the historical complete asset set by default; `--renderers <csv>` can still narrow it. New capabilities such as DICOM use independent renderer and asset owners. All runtime resources remain offline and self-hostable.
 
-### Vite: Deploy Complete Assets Automatically
+```bash
+npx --no-install file-viewer-copy-assets ./public/file-viewer
+npx file-viewer-cli add dcm --write       # example: add DICOM to an existing Full project
+npx file-viewer-cli install --yes         # install the new capability, copy assets, and generate the module
+```
+
+### Vite: Deploy Installed Capability Assets
 
 ```bash
 npm i -D @file-viewer/vite-plugin
@@ -91,11 +97,11 @@ export default {
 }
 ```
 
-The plugin recognizes the installed full package and publishes its same-version runtime assets under `file-viewer/` at the deployment base in development and production builds (`/file-viewer/` for a root deployment). Application code does not inject another preset.
+The plugin recognizes the historical Full package and any separately installed capability asset owners, then publishes their resources under `file-viewer/` at the deployment base (`/file-viewer/` for a root deployment).
 
 ### Webpack / Rspack / Rollup / Vue CLI / Umi
 
-Run the same-version CLI installed with the full package and serve its output as `file-viewer/` under the deployment base:
+Run the same-version compatible CLI installed with the Full package to copy the historical complete asset set by default, then serve its output as `file-viewer/` under the deployment base:
 
 ```bash
 npx --no-install file-viewer-copy-assets ./public/file-viewer
@@ -145,11 +151,11 @@ The table below lists the real props, event channel, and customization entry for
 | `archive` | Archive Worker/WASM URLs, timeout, cache, archive limits, nested entry preview limits, and legacy GBK/GB18030 ZIP filename decoding. |
 | `pdf` | PDF.js worker, navigation pane, outline, thumbnails, rotation, streaming, range chunk size, and credentials. |
 | `docx` / `spreadsheet` | DOCX is provided by @file-viewer/renderer-word and uses the self-maintained @file-viewer/docx engine with automatic worker/main-thread selection, continuous flow reading, and async rendering by default; visual pagination is opt-in. Spreadsheet is provided by @file-viewer/renderer-spreadsheet with fidelity-first parsing, automatic Worker use for large files, and opt-in header drag column resizing. |
-| `iwork` | Pages / Numbers / Keynote module Worker, timeout, ZIP/Snappy/IWA safety limits, and explicit Quick Look fallback policy. The three Apple formats are stable for static high-fidelity preview after structural, browser, and visual-golden gates across iWork ’09, 2013+, and current fixtures. |
-| `hangul` | HWP/HWPX module Worker, timeout, ZIP inflation/compression/entry limits, and HWP record limits. Stable support is a real-fixture-verified static structured preview. |
-| `wordPerfect` | WordPerfect Worker, bundled libwpd/librevenge WASM URL, and timeout. It falls back to bounded text only when WASM fails; the normal structured path is verified with redistributable real fixtures. |
-| `presentation` | The presentation renderer keeps two isolated engines: binary PowerPoint 97–2003 `.ppt` uses the packaged `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM runtime with zero-config standard asset routes; `pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` are custom-path overrides, while `pptWorker` and `pptCache` control its Worker and bounded frame cache. PPTX/OpenXML uses the `@file-viewer/pptx` Worker with optional `workerUrl` / `workerType` overrides. |
-| `typst` / `data` / `cad` | Typst, SQLite, CAD/DWG/DXF/DWF WASM, worker, encoding, and rendering strategy options. |
+| `iwork` | After explicitly installing the iWork capability, configure its Pages / Numbers / Keynote module Worker, timeout, ZIP/Snappy/IWA safety limits, and Quick Look fallback policy. It is not in the standard/full default closure. |
+| `hangul` | After explicitly installing the Hangul capability, configure its HWP/HWPX module Worker, timeout, ZIP limits, and HWP record limits. It is not in the standard/full default closure. |
+| `wordPerfect` | After explicitly installing the WordPerfect capability, configure its Worker, libwpd/librevenge WASM URL, and timeout. It is not in the standard/full default closure. |
+| `presentation` | The standard/full default includes only the PPTX/OpenXML `@file-viewer/pptx` Worker, with optional `workerUrl` / `workerType` overrides. Binary PowerPoint 97–2003 `.ppt` is a separate heavy capability; run `file-viewer add ppt --write` to install its Worker/WASM and assets explicitly. |
+| `typst` / `data` / `cad` | After explicitly installing the matching capability, configure Typst, SQLite, or CAD/DWG/DXF/DWF WASM, worker, encoding, and rendering options. These capabilities are not in the standard/full default closure. |
 | `hooks` / `beforeOperation` | Shared lifecycle hooks and operation preflight checks for audit, permission, telemetry, and safety controls. |
 
 ## Style Isolation And Theme Customization
@@ -257,17 +263,17 @@ View-state sync is designed for projection systems, remote-control displays, sid
 
 | Asset | Description |
 | --- | --- |
-| Shared viewer assets | Every `*-full` package exposes a `file-viewer-copy-assets` CLI at the package version. It copies workers, WASM, fonts, and vendor files into the application static directory and writes an integrity manifest. The complete `web-full` `dist/` also carries that payload directly. |
-| CAD / DWG / DXF / DWF | Configure `options.cad.wasmPath`, `workerUrl`, `dwfWasmUrl`, and `dxfEncoding` for self-hosted or intranet deployment. |
-| PDF / DOCX / Excel / PPT / PPTX | Configure `options.pdf.workerUrl`, `options.pdf.cMapUrl`, `options.pdf.wasmUrl`, `options.pdf.standardFontDataUrl`, `options.pdf.cjkFontFallbackPath`, `options.pdf.identityFontRepair`, `options.docx.workerUrl`, `options.docx.workerJsZipUrl`, `options.spreadsheet.workerUrl`, and `options.presentation.workerUrl` / `workerType`; PDF probes the real static worker first and lazy-loads the packaged handler when unavailable, unembedded CJK fonts fall back to self-hosted Noto Sans SC shards loaded per page, and malformed Identity CJK fonts without ToUnicode are repaired in memory after corrupted text is detected; DOCX chooses worker or main-thread parsing automatically, Electron `file://` and other unsafe local protocols fall back without user configuration; Excel defaults to `worker: auto`, enabling Worker automatically for files at or above `workerAutoThreshold`; CSV / TSV detects UTF-8, GBK, and GB18030 automatically and accepts `options.spreadsheet.textEncoding` as an explicit override; header drag column resizing is controlled by `options.spreadsheet.resizableColumns`; `.ppt` lazy-loads the packaged `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM runtime with bounded frame caching from `vendor/ppt/` without standard-layout configuration; `pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` only override custom routes. PPTX creates its separate module Worker on demand. |
-| Typst / SQLite / Archive | Configure Typst compiler/renderer WASM, `data.sqlWasmUrl`, and `archive.workerUrl` / `archive.wasmUrl` as needed; Typst renders through local WASM only and never falls back to a public CDN; Archive decodes legacy GBK/GB18030 ZIP entry names, while RAR, 7z, and encrypted archives still require the libarchive Worker/WASM assets. |
-| Drawing | Draw.io uses the official diagrams.net offline viewer shipped with viewer assets by default; override `options.drawing.viewerScriptUrl` for custom paths, or set `preferOfficial:false` for the built-in SVG fallback. |
-| Offline deployment | Runtime preview code does not depend on public CDN or third-party online assets. Every `*-full` package uses `file-viewer/` under the deployment base (`/file-viewer/` at the origin root). Vite publishes assets with `copyAssets:true`; other build tools run `npx --no-install file-viewer-copy-assets ./public/file-viewer`. Call `setDefaultFullAssetBaseUrl()` when assets live elsewhere. |
-| Deployment principle | Heavy workers, WASM files, and parser libraries stay lazy-loaded and are only requested when the active file type needs them. |
+| Compatible Full assets | Historical `*-full` packages use the compatible copy-assets implementation to copy the complete resource set published in v2.4 by default. DICOM and future heavy formats use independent owners. Transaction receipts continue to record package versions, per-file SHA-256 values, and ownership. |
+| Specialist asset owners | CAD, Typst, iWork, 3D, Data, Drawing, Hangul, WordPerfect, and legacy PPT each use an independent `@file-viewer/assets-*` package. `@file-viewer/cli add <format> --write` selects only that capability and its assets. Historical `*-full` packages keep their compatible copy-assets command, which copies the existing complete asset set by default. |
+| PDF / DOCX / Excel / PPTX | Standard self-hosts the PDF.js worker/fonts, DOCX worker, spreadsheet worker, and PPTX worker. PPTX charts and PDF Identity-font repair are explicit standard correctness capabilities, so charts and font repair are never silently omitted. |
+| Archive / email / native media | The archive libarchive Worker/WASM is in standard assets. Email, common images, and browser-native media use lazy-loaded code. HLS, MIDI, RTF, Mermaid, patch, and git bundle remain explicit capabilities and are not auto-installed as npm peers. |
+| Draw.io | The safe project-maintained Drawing fallback ships with its renderer. The official diagrams.net viewer is a separate heavy `drawio-official` capability and is not in the standard profile for new projects. The published capability boundary of historical `*-full` packages remains compatible. |
+| Offline deployment | Runtime code does not use public CDNs. Vite `copyAssets:true` publishes installed asset owners; other tools use `file-viewer install --yes` or `file-viewer assets --write`. Owners merge transactionally into one deterministic runtime manifest independent of install order. |
+| Deployment principle | New formats are opt-in by default and never expand an already published `*-full` package automatically. Specialist workers, WASM, and parsers load only when their format is used. New projects should prefer standard or selected capabilities; historical full integrations retain their existing matrix. |
 
 ### Full Package Default Asset Base
 
-`@file-viewer/vue3-full` points PDF, DOCX, PPT, PPTX, Excel, CAD, Typst, Draw.io, SQLite, and Archive assets to `file-viewer/` under the deployment base by default (`/file-viewer/` at the origin root). After running the same-version `file-viewer-copy-assets` installed with the package and serving its output, individual asset URLs do not need to be configured.
+`@file-viewer/vue3-full` preserves the published v2.4 Full capability contract and points its historical complete asset set to `file-viewer/` under the deployment base by default (`/file-viewer/` at the origin root). That includes existing legacy PPT, CAD, Typst, Drawing, SQLite/iWork, and similar capabilities. This package continues to depend on and proxy the same-version `file-viewer-copy-assets`. Run it and serve its output instead of configuring individual asset URLs. DICOM and future heavy formats do not enter this closure automatically and require explicit selection in the new CLI.
 
 ```ts
 import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
@@ -275,7 +281,7 @@ import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
 setDefaultFullAssetBaseUrl('/static/file-viewer/')
 ```
 
-Explicit `options.archive.*`, `options.pdf.*`, `options.typst.*`, and similar asset overrides still take precedence.
+Explicit `options.archive.*` and `options.pdf.*` asset overrides still take precedence. Use `file-viewer-copy-assets --renderers <csv>` to narrow the legacy Full copy set, and run `file-viewer list` to inspect new opt-in capabilities, licenses, and asset packages.
 
 ## Quality Gates
 

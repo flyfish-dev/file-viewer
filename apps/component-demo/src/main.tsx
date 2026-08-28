@@ -72,6 +72,9 @@ function App() {
           <a href="/svelte-action.html" target="_blank" rel="noreferrer">
             Svelte
           </a>
+          <a href="/react-email.html" target="_blank" rel="noreferrer">
+            React EML
+          </a>
         </nav>
       </header>
 

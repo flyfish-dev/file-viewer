@@ -1,0 +1,21 @@
+From: File Viewer Smoke <viewer@example.invalid>
+To: Integration Test <test@example.invalid>
+Subject: React EML replacement fixture
+Date: Thu, 27 Aug 2026 09:05:00 +0800
+MIME-Version: 1.0
+Message-ID: <react-email-smoke-replacement@example.invalid>
+Content-Type: multipart/mixed; boundary="file-viewer-react-email-replacement"
+
+--file-viewer-react-email-replacement
+Content-Type: text/plain; charset="UTF-8"
+
+Replacement fixture proves update and nested-renderer teardown.
+
+--file-viewer-react-email-replacement
+Content-Type: text/plain; charset="UTF-8"; name="replacement.txt"
+Content-Disposition: attachment; filename="replacement.txt"
+Content-Transfer-Encoding: base64
+
+cmVwbGFjZW1lbnQgYXR0YWNobWVudA==
+
+--file-viewer-react-email-replacement--

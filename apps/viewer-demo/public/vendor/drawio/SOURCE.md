@@ -1,5 +1,4 @@
-Draw.io / diagrams.net offline viewer assets
-============================================
+# Draw.io / diagrams.net offline viewer assets
 
 Source: https://github.com/jgraph/drawio
 Version: v30.2.5
@@ -20,3 +19,8 @@ Included paths from `src/main/webapp`:
 The viewer script contains public diagrams.net defaults for secondary assets.
 File Viewer sets those globals before loading the script so enterprise and
 offline deployments resolve every viewer asset from local `vendor/drawio/`.
+
+The upstream file also contains diagrams.net's public Dropbox OAuth client
+identifier. It is not a Dropbox access token or client secret. Secret scanning
+therefore allowlists only the `dropbox-api-token` rule on this exact pinned file
+and its deterministic tracked copies; every other rule and path remains active.

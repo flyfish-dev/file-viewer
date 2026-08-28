@@ -258,7 +258,7 @@ npx --no-install file-viewer-copy-assets ./public/file-viewer
 npx --yes file-viewer-copy-assets ./public/file-viewer
 ```
 
-入口构建或非 Vite npm 项目只运行与当前安装方式匹配的一条命令；完整 `web-full/dist/` 已包含同一份资产。复制命令会写入 `flyfish-viewer-assets.json`，并校验 PDF、archive、DOCX、Excel、PPTX、Draw.io、CAD、Typst、SQLite 等 worker/WASM/字体/vendor 静态资源是否齐全。预览运行时不会默认访问公共 CDN 或第三方在线资源；部署路径特殊时，可以在 `options.pdf.workerUrl`、`options.pdf.cMapUrl`、`options.pdf.wasmUrl`、`options.pdf.standardFontDataUrl`、`options.presentation.workerUrl`、`options.drawing.viewerScriptUrl`、`options.archive.workerUrl`、`options.archive.wasmUrl`、`options.docx.workerUrl`、`options.docx.workerJsZipUrl`、`options.spreadsheet.workerUrl`、`options.typst.compilerWasmUrl`、`options.typst.rendererWasmUrl`、`options.typst.fontAssetsUrl`、`options.data.sqlWasmUrl` 等参数中指定自托管地址。Draw.io 默认使用随 viewer assets 分发的官方 diagrams.net 离线 viewer，并在官方 viewer 不可用时回退内置 SVG。
+入口构建或非 Vite npm 项目只运行与当前安装方式匹配的一条命令；完整 `web-full/dist/` 已包含同一份资产。复制命令会写入 `flyfish-viewer-assets.json`，并校验 PDF、archive、DOCX、Excel、PPTX、Draw.io、CAD、Typst、SQLite 等 worker/WASM/字体/vendor 静态资源是否齐全。预览运行时不会默认访问公共 CDN 或第三方在线资源；部署路径特殊时，可以在 `options.pdf.workerUrl`、`options.pdf.cMapUrl`、`options.pdf.wasmUrl`、`options.pdf.standardFontDataUrl`、`options.presentation.workerUrl`、`options.drawing.viewerScriptUrl`、`options.archive.workerUrl`、`options.archive.wasmUrl`、`options.docx.workerUrl`、`options.docx.workerJsZipUrl`、`options.spreadsheet.workerUrl`、`options.typst.compilerWasmUrl`、`options.typst.rendererWasmUrl`、`options.typst.fontAssetsUrl`、`options.data.sqlWasmUrl` 等参数中指定自托管地址。Draw.io 默认使用内置 SVG 安全预览；只有显式设置 `options.drawing.preferOfficial = true` 时才在受限 iframe 中加载单独分发的 diagrams.net 离线 viewer，`viewerScriptUrl` 必须是同源 HTTP(S) 地址。
 
 ## API
 

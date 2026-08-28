@@ -1,10 +1,14 @@
 # File Viewer issue #206 - non-secret CMS and timestamp fixtures
 
-This package is intended for the first implementation phase requested in
+This fixture set covers the CMS and timestamp acceptance area requested in
 `flyfish-dev/file-viewer#206`: CMS/PKCS#7/CAdES-adjacent container inspection
 and RFC 3161 / RFC 5544 timestamp inspection. Every document and identity is
 synthetic. The root CA is intentionally untrusted, and no private key is
 included.
+
+`originals/hello.txt` and `originals/hello-tampered.txt` intentionally retain
+the CRLF bytes used when the CMS and timestamp fixtures were signed. Their
+directory-level `.gitattributes` entries disable checkout line-ending changes.
 
 ## Best first fixtures
 

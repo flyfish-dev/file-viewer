@@ -1,0 +1,70 @@
+{
+  "name": "@file-viewer/renderer-ppt",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Optional standalone renderer for legacy binary PowerPoint PPT and POT files.",
+  "keywords": [
+    "file-viewer",
+    "renderer",
+    "ppt",
+    "presentation",
+    "document-preview",
+    "powerpoint",
+    "self-hosted"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Yu Wang",
+    "email": "admin@flyfish.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/renderers/presentation-ppt"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "file-viewer.capability.json",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/core": "workspace:3.0.0",
+    "@file-viewer/ppt": "0.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
+  },
+  "license": "Apache-2.0"
+}

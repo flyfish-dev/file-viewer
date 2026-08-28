@@ -1,10 +1,12 @@
 import {
   createFileViewerTranslator,
+  assertFileViewerMermaidSourceHasNoExternalResources,
   type FileViewerDrawingOptions,
   type FileViewerOptions,
   type FileViewerThemeMode
 } from '@file-viewer/core'
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom'
+import { sanitizeDrawingSvg } from './sanitize.js'
 
 export type DiagramKind = 'mermaid' | 'plantuml'
 
@@ -63,40 +65,24 @@ const normalizePlantumlServer = (documentRef: Document, value: string) => {
   }
 }
 
-const sanitizeSvg = (documentRef: Document, svg: string, t: DiagramTranslator) => {
-  const parsed = new DOMParser().parseFromString(svg, 'image/svg+xml')
-  const parseError = parsed.querySelector('parsererror')
-  if (parseError) {
-    throw new Error(parseError.textContent || t('drawing.error.svgParseFailed'))
-  }
-  parsed.querySelectorAll('script,iframe,object,embed').forEach(node => node.remove())
-  parsed.querySelectorAll('*').forEach(node => {
-    for (const attribute of Array.from(node.attributes)) {
-      if (/^on/i.test(attribute.name)) {
-        node.removeAttribute(attribute.name)
-      }
-    }
-  })
-  const svgNode = parsed.documentElement
-  return documentRef.importNode(svgNode, true) as unknown as SVGSVGElement
-}
-
 const renderMermaidSvg = async (
   documentRef: Document,
   text: string,
   theme: FileViewerThemeMode | undefined,
   t: DiagramTranslator
 ) => {
+  assertFileViewerMermaidSourceHasNoExternalResources(text)
   const mermaidModule = await import('mermaid')
   const mermaid = mermaidModule.default
   const id = `file-viewer-mermaid-${Date.now()}-${Math.random().toString(36).slice(2)}`
   mermaid.initialize({
     startOnLoad: false,
     securityLevel: 'strict',
+    htmlLabels: false,
     theme: isDarkTheme(documentRef, theme) ? 'dark' : 'default'
   })
   const rendered = await mermaid.render(id, text)
-  return sanitizeSvg(documentRef, rendered.svg, t)
+  return sanitizeDrawingSvg(documentRef, rendered.svg, t('drawing.error.svgParseFailed'))
 }
 
 const appendSvgText = (
@@ -218,7 +204,7 @@ const renderPlantumlSvg = async (
     if (!response.ok) {
       throw new Error(t('drawing.error.plantumlRenderFailed', { status: response.status }))
     }
-    return sanitizeSvg(documentRef, await response.text(), t)
+    return sanitizeDrawingSvg(documentRef, await response.text(), t('drawing.error.svgParseFailed'))
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw error

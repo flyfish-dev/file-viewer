@@ -1,0 +1,29 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "pdf",
+  "packageName": "@file-viewer/renderer-pdf",
+  "rendererIds": ["pdf"],
+  "formats": ["pdf"],
+  "assets": {
+    "rendererIds": ["pdf"],
+    "packageName": "@file-viewer/assets-standard",
+    "bin": "file-viewer-assets-standard",
+    "apiExport": "installFileViewerStandardAssets",
+    "target": "public/file-viewer",
+    "copyGroups": ["pdf"],
+    "copyMode": "profile-pack",
+    "receiptFilename": "file-viewer-assets-standard.receipt.json",
+    "notice": "PDF.js Worker, CMaps, WASM, standard fonts, and CJK fallback fonts."
+  },
+  "license": {
+    "spdx": "Apache-2.0",
+    "policy": "permissive",
+    "notices": [
+      { "packageName": "pdfjs-dist", "spdx": "Apache-2.0" },
+      { "packageName": "@fontsource-variable/noto-sans-sc", "spdx": "OFL-1.1" }
+    ]
+  },
+  "weight": "standard",
+  "profiles": ["standard", "office", "all"]
+}

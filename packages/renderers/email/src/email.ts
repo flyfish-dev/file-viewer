@@ -349,6 +349,9 @@ export default async function renderEmail(
   const darkMode = resolveFileViewerColorScheme(context?.options?.theme, systemDark) === 'dark';
   const cleanups: Array<() => void> = [];
   let nestedRendered: FileViewerRenderedInstance | undefined;
+  let attachmentPreviewVersion = 0;
+  let attachmentAbortController: AbortController | undefined;
+  let disposed = false;
   let overlay: HTMLDivElement | null = null;
   let errorElement: HTMLDivElement | null = null;
 
@@ -500,6 +503,16 @@ export default async function renderEmail(
     };
 
     const previewAttachment = async (attachment: EmailAttachmentView) => {
+      const previewVersion = ++attachmentPreviewVersion;
+      attachmentAbortController?.abort();
+      const previewAbortController = new AbortController();
+      attachmentAbortController = previewAbortController;
+      const abortFromParent = () => previewAbortController.abort(context?.signal?.reason);
+      if (context?.signal?.aborted) {
+        abortFromParent();
+      } else {
+        context?.signal?.addEventListener('abort', abortFromParent, { once: true });
+      }
       activeAttachment = attachment;
       syncAttachmentState();
       attachmentPreview.hidden = false;
@@ -513,19 +526,34 @@ export default async function renderEmail(
         attachmentTarget.append(child);
         const extension = getAttachmentExtension(attachment.name);
         if (context?.renderNestedBuffer) {
-          nestedRendered = await context.renderNestedBuffer(attachmentBuffer, extension, child, {
+          const nextRendered = await context.renderNestedBuffer(attachmentBuffer, extension, child, {
             ...context,
             filename: attachment.name,
             options: context.options,
+            signal: previewAbortController.signal,
           });
+          if (disposed || previewVersion !== attachmentPreviewVersion || previewAbortController.signal.aborted) {
+            await disposeFileViewerRendered(nextRendered);
+            return;
+          }
+          nestedRendered = nextRendered;
         } else {
           child.append(createElement('div', undefined, t('email.attachments.nestedUnavailable', { name: attachment.name })));
         }
       } catch (nextError) {
+        if (disposed || previewVersion !== attachmentPreviewVersion || previewAbortController.signal.aborted) {
+          return;
+        }
         console.error(nextError);
         showError(nextError instanceof Error ? nextError.message : String(nextError));
       } finally {
-        hideLoading();
+        context?.signal?.removeEventListener('abort', abortFromParent);
+        if (attachmentAbortController === previewAbortController) {
+          attachmentAbortController = undefined;
+        }
+        if (!disposed && previewVersion === attachmentPreviewVersion) {
+          hideLoading();
+        }
       }
     };
 
@@ -571,6 +599,10 @@ export default async function renderEmail(
   return {
     $el: root,
     async unmount() {
+      disposed = true;
+      attachmentPreviewVersion += 1;
+      attachmentAbortController?.abort();
+      attachmentAbortController = undefined;
       await clearAttachmentPreview();
       cleanups.splice(0).forEach(cleanup => cleanup());
       objectUrls.forEach(url => URL.revokeObjectURL(url));

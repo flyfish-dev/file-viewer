@@ -1,0 +1,79 @@
+{
+  "name": "@file-viewer/cli",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Create or integrate a File Viewer project with framework detection, selectable formats, offline packages, and self-hosted assets.",
+  "keywords": [
+    "file-viewer",
+    "cli",
+    "preset",
+    "capability",
+    "vite",
+    "document-preview"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Yu Wang",
+    "email": "admin@flyfish.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/tools/cli"
+  },
+  "homepage": "https://file-viewer.app/en/cli/",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "bin": {
+    "file-viewer": "./dist/cli.js",
+    "file-viewer-copy-assets": "./dist/copy-assets.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./catalog": "./catalog/catalog.json",
+    "./cli": "./dist/cli.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "catalog",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "stage-catalog": "node scripts/stage-catalog.mjs",
+    "verify-catalog": "node scripts/stage-catalog.mjs --check",
+    "build": "node scripts/stage-catalog.mjs && tsc -b tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/cli/dist/cli.js packages/tools/cli/dist/copy-assets.js && node --test test/*.test.mjs",
+    "type-check": "tsc -b tsconfig.json",
+    "prepack": "node scripts/stage-catalog.mjs && tsc -b tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/cli/dist/cli.js packages/tools/cli/dist/copy-assets.js"
+  },
+  "dependencies": {
+    "@file-viewer/asset-installer": "workspace:3.0.0"
+  },
+  "devDependencies": {
+    "@file-viewer/assets-standard": "workspace:3.0.0",
+    "@types/node": "^25.9.2",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0"
+}

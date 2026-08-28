@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "ppt",
+  "packageName": "@file-viewer/assets-ppt",
+  "copyGroups": [
+    "office-presentation-binary"
+  ],
+  "receiptFilename": "file-viewer-assets-ppt.receipt.json"
+}

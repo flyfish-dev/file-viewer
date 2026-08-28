@@ -40,9 +40,9 @@
   <a href="https://linux.do"><img alt="Linux Do" src="https://img.shields.io/badge/Linux%20Do-community-1f2937" /></a>
   <a href="https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/flyfish-dev/file-viewer?color=0f766e" /></a>
   <a href="https://hub.docker.com/r/flyfishdev/file-viewer"><img alt="Docker" src="https://img.shields.io/badge/docker-flyfishdev%2Ffile--viewer-2496ed?logo=docker" /></a>
-  <img alt="Supported formats" src="https://img.shields.io/badge/formats-221-31a66f" />
+  <img alt="Supported formats" src="https://img.shields.io/badge/formats-244-31a66f" />
   <img alt="Modular architecture" src="https://img.shields.io/badge/architecture-modular%20renderers-278cff" />
-  <img alt="Ecosystem packages" src="https://img.shields.io/badge/npm%20targets-57-0f766e" />
+  <img alt="Ecosystem packages" src="https://img.shields.io/badge/npm%20targets-84-0f766e" />
 </p>
 
 <p align="center">
@@ -60,14 +60,14 @@
 
 为了预览一份内部 DOCX 就把文件上传到第三方，既慢也不合适。File Viewer 把预览留在浏览器内，让企业后台、OA、知识库、工单、附件中心和工程资料库使用同一套 API，而不是继续拼接一堆互不一致的查看器。
 
-v2.3.2 当前内置 221 个已注册扩展名（221 个稳定、0 个实验）和 32 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体和结构化数据共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
+当前内置 244 个已注册扩展名（221 个稳定、23 个实验）和 34 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体、结构化数据、DICOM 和数字签名容器共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
 
 新项目优先使用 `@file-viewer/*`；`@flyfish-group/*` 历史包继续同步维护。
 
 ## 亮点
 
 - **一个组件起步。** Vanilla JS / Web Component 优先，并提供 Vue、React、Svelte、jQuery 原生组件。
-- **矩阵可核验。** 221 个已注册扩展名（221 个稳定、0 个实验）映射到 32 条预览链路，覆盖办公、工程、设计、数据、音视频和代码附件。
+- **矩阵可核验。** 244 个已注册扩展名（221 个稳定、23 个显式按需实验项）映射到 34 条预览链路，覆盖办公、工程、设计、数据、音视频、代码、DICOM 和数字签名附件。
 - **部署不出网。** 浏览器内解析和渲染，支持离线网络、Docker、私有 CDN 和完整资源自托管。
 - **模块化。** 轻量组件、renderer、preset、full 包分层清晰，既能极简安装，也能一键全量。
 - **按需加载。** PDF、Office、CAD、Typst、压缩包、图纸、PSD、Mermaid 等重型能力只在命中格式时加载。
@@ -313,7 +313,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 
 ## 支持格式
 
-[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：v2.3.2 注册 221 个不重复扩展名和 32 条预览链路，其中 221 个稳定、0 个实验。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
+[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：当前源码注册 244 个不重复扩展名和 34 条预览链路，其中 221 个稳定、23 个实验。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
 
 | 类别           | 扩展名                                                                                                                                                                                                                                                                                                                         | 当前表现                                                                                                                                                                                                            | 适合场景                                    |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
@@ -372,7 +372,7 @@ Preset 选择:
 
 ## 当前 npm 生态
 
-当前版本以 npm registry 的 `latest` dist-tag 为准，本仓库共发布 57 个 npm 目标: 51 个标准组件/完整 full 包/核心/renderer/preset/工程插件包 + 6 个历史兼容 alias；独立版本的 renderer 依赖不计入该数字。新项目建议优先使用 `@file-viewer/*` 标准包名；旧项目继续使用 `@flyfish-group/*` 或 `file-viewer3` 时也会拿到同版本能力。
+当前版本以 npm registry 的 `latest` dist-tag 为准，本仓库共发布 84 个 npm 目标：76 个标准组件/完整 full 包/核心/renderer/preset/工程插件包 + 8 个历史兼容 alias；独立版本的 renderer 依赖不计入该数字。新项目建议优先使用 `@file-viewer/*` 标准包名；旧项目继续使用 `@flyfish-group/*` 或 `file-viewer3` 时也会拿到同版本能力。
 
 | 场景                                | 推荐 npm 包                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 历史兼容包                                                                                                                                               | 版本策略 | 说明                                                                                                                                                                    |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -487,7 +487,7 @@ GitHub Release 会同步提供完整下载项:
 
 | 框架 | 标准 npm 包 | 入口格式 | GitHub | Gitee | 兼容历史包 |
 | --- | --- | --- | --- | --- | --- |
-| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, 类型声明, script 标签 IIFE, Worker/WASM viewer 资源, 复制静态资源 CLI | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
+| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, 类型声明, script 标签 IIFE | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
 | Vanilla JS / Pure Web Full | `@file-viewer/web-full` | ESM, 类型声明, script 标签 IIFE | [file-viewer-web-full](https://github.com/flyfish-dev/file-viewer-web-full) | [file-viewer-web-full](https://gitee.com/flyfish-dev/file-viewer-web-full) | 无 |
 | Vue 3 | `@file-viewer/vue3` | ESM, 类型声明 | [file-viewer-vue3](https://github.com/flyfish-dev/file-viewer-vue3) | [file-viewer-vue3](https://gitee.com/flyfish-dev/file-viewer-vue3) | `@flyfish-group/file-viewer3`, `file-viewer3` |
 | Vue 3 Full | `@file-viewer/vue3-full` | ESM, 类型声明 | [file-viewer-vue3-full](https://github.com/flyfish-dev/file-viewer-vue3-full) | [file-viewer-vue3-full](https://gitee.com/flyfish-dev/file-viewer-vue3-full) | 无 |
@@ -685,7 +685,7 @@ const options = {
 
 视图状态同步用于投屏、双端协同和恢复阅读进度。所有通过标准 renderer loader 挂载的格式都会获得通用 view-state provider，至少能记录 `renderer`、当前缩放和滚动位置；PDF、XMind、Geo、3D、CAD 等高交互路径会补充页码、导航、画布 pan、地图中心、相机视角或底层视图快照。初始化可传 `options.initialViewState`，运行中监听 `view-state-change`；Pure Web / Vue3 controller 可直接调用 `getViewState()` 和 `applyViewState(state, { source: "api", action: "restore" })`。
 
-生态当前维护 57 个 npm 发布目标（51 个标准包 + 6 个历史兼容包）；格式目录声明 32 条预览链路、221 个扩展名（已注册），其中 221 个稳定、0 个实验。格式说明见官方文档: https://doc.file-viewer.app/guide/formats
+生态当前维护 84 个 npm 发布目标（76 个标准包 + 8 个历史兼容包）；格式目录声明 34 条预览链路、244 个扩展名（已注册），其中 221 个稳定、23 个实验。格式说明见官方文档: https://doc.file-viewer.app/guide/formats
 <!-- FILE_VIEWER_PUBLIC_GENERATED:END -->
 
 ## 支持项目与商业版

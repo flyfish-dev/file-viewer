@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vue2.6-full",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
   "description": "Full Vue 2.6 package with preset-all; Vite publishes deployment-base/file-viewer assets, and other bundlers use the included same-version copy CLI.",
@@ -65,9 +65,9 @@
     "vue": ">=2.6 <2.7"
   },
   "dependencies": {
-    "@file-viewer/preset-all": "workspace:2.4.0",
-    "@file-viewer/vue2.6": "workspace:2.4.0",
-    "file-viewer-copy-assets": "workspace:2.4.0"
+    "@file-viewer/preset-all": "workspace:3.0.0",
+    "@file-viewer/vue2.6": "workspace:3.0.0",
+    "file-viewer-copy-assets": "workspace:3.0.0"
   },
   "devDependencies": {
     "typescript": "^6.0.3",

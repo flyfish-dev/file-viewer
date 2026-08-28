@@ -7,6 +7,14 @@ import {
   type RendererDefinition,
 } from '@file-viewer/core';
 
+export {
+  getFileViewerHlsLoader,
+  getFileViewerMidiLoader,
+  registerFileViewerHlsLoader,
+  registerFileViewerMidiLoader,
+} from './optionalCapabilities.js';
+export type { FileViewerOptionalModuleLoader } from './optionalCapabilities.js';
+
 const mediaRendererIds = ['audio', 'video'] as const;
 
 const mediaDefinitions = DEFAULT_RENDERER_DEFINITIONS.filter(definition =>

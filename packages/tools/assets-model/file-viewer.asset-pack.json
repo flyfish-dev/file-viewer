@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "model",
+  "packageName": "@file-viewer/assets-model",
+  "copyGroups": [
+    "model"
+  ],
+  "receiptFilename": "file-viewer-assets-model.receipt.json"
+}

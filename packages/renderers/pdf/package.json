@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-pdf",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
   "description": "Standalone PDF renderer plugin for File Viewer powered by PDF.js.",
@@ -45,26 +45,45 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./identity-font-repair": {
+      "types": "./dist/pdfIdentityFontRepair.d.ts",
+      "import": "./dist/pdfIdentityFontRepair.js",
+      "default": "./dist/pdfIdentityFontRepair.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "file-viewer.capability.json",
     "README.md",
     "README.en.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "build": "tsc -b tsconfig.json && node scripts/stage-pdfjs-runtime.mjs",
+    "type-check": "tsc -b tsconfig.json",
+    "verify:pdfjs-runtime": "node scripts/stage-pdfjs-runtime.mjs --check",
+    "prepack": "node scripts/stage-pdfjs-runtime.mjs --check"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0",
-    "@fontsource-variable/noto-sans-sc": "5.2.10",
-    "pdf-lib": "1.17.1",
-    "pdfjs-dist": "5.4.624"
+    "@file-viewer/core": "workspace:3.0.0"
+  },
+  "peerDependencies": {
+    "pdf-lib": "1.17.1"
+  },
+  "peerDependenciesMeta": {
+    "pdf-lib": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@fontsource-variable/noto-sans-sc": "5.2.10",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "5.4.624",
     "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
   },
   "license": "Apache-2.0"
 }

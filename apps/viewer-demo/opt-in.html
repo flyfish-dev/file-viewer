@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1220" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>File Viewer — Opt-in renderer smoke</title>
+  </head>
+  <body data-opt-in-status="booting">
+    <main class="opt-in-shell">
+      <header class="opt-in-header">
+        <div>
+          <p class="opt-in-kicker">Explicit renderer boundary</p>
+          <h1 id="opt-in-title">Loading opt-in renderer…</h1>
+          <p id="opt-in-description">
+            The selected renderer and its fixed synthetic fixture load only on this page.
+          </p>
+        </div>
+        <a href="./index.html">Back to the main demo</a>
+      </header>
+      <section
+        id="opt-in-viewer"
+        class="opt-in-viewer"
+        aria-label="Opt-in renderer preview"
+      ></section>
+      <p id="opt-in-error" class="opt-in-error" role="alert" hidden></p>
+    </main>
+    <script type="module" src="/src/opt-in.ts"></script>
+  </body>
+</html>

@@ -128,6 +128,8 @@ Every renderer below can be passed through `options.renderers`:
 | `@file-viewer/renderer-data` | `dataRenderer` | PSD, fonts, SQLite, Parquet, Avro, WASM, WebArchive, AI/EPS summaries |
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB, DRA, GDS, OAS/OASIS |
 
+EML and MSG attachments open through the same resolved renderer registry as the parent viewer. React, React Legacy, Vanilla JS, and Web Component integrations do not need a framework-specific nested-preview bridge. With a lightweight component, include the preset or renderer for each attachment type you want to preview (for example, the PDF renderer for PDF attachments); Full packages already include the complete standard registry. Attachment filenames are rendered as text, not HTML.
+
 `@file-viewer/eda-layout`, `@file-viewer/eda-orcad`, `@file-viewer/geometry-engine`, and `@file-viewer/pptx` are reusable engine packages behind renderers. Advanced teams can use them directly, while normal viewer integrations should install the matching renderer or preset.
 
 ## Assembly Decisions
@@ -171,7 +173,7 @@ Every renderer below can be passed through `options.renderers`:
 | `cad.renderer` | `auto`, `webgl`, or `canvas2d`; default is `auto`. |
 | `cad.workerTimeoutMs` | DWG parsing timeout; `0` disables the limit. |
 | `typst.compilerWasmUrl`, `typst.rendererWasmUrl`, `typst.fontAssetsUrl` | Self-host Typst compiler / renderer WASM and bundled fonts. |
-| `drawing.viewerScriptUrl` | Self-host diagrams.net / draw.io viewer script; the renderer falls back to safe SVG output when the official viewer cannot load. |
+| `drawing.viewerScriptUrl` | Same-origin self-hosted diagrams.net / draw.io viewer script used only when `drawing.preferOfficial` is explicitly enabled. The optional runtime is isolated in a no-same-origin iframe with restrictive CSP and falls back to safe SVG output when it cannot load. |
 | `data.sqlWasmUrl` | Self-host SQLite WASM for `.sqlite` previews. |
 
 ## Operation Guard

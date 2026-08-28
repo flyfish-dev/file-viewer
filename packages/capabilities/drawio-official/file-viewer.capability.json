@@ -1,0 +1,25 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "drawio-official",
+  "packageName": "@file-viewer/capability-drawio-official",
+  "enhancesPackage": "@file-viewer/renderer-drawing",
+  "activation": { "kind": "side-effect-import", "import": "@file-viewer/capability-drawio-official", "export": "enableFileViewerDrawioOfficialViewer" },
+  "rendererIds": ["drawing"],
+  "formats": ["drawio", "dio"],
+  "assets": {
+    "rendererIds": ["drawing"],
+    "packageName": "@file-viewer/assets-drawing",
+    "installerPackageName": "@file-viewer/assets-drawing",
+    "bin": "file-viewer-assets-drawing",
+    "apiExport": "installFileViewerCapabilityAssetPack",
+    "target": "public/file-viewer",
+    "copyGroups": ["drawing"],
+    "copyMode": "capability-pack",
+    "receiptFilename": "file-viewer-assets-drawing.receipt.json",
+    "notice": "Large official diagrams.net runtime; the safe local SVG fallback remains the default without this capability."
+  },
+  "license": { "spdx": "Apache-2.0", "policy": "review-required", "notices": [{ "packageName": "diagrams.net", "spdx": "Apache-2.0" }] },
+  "weight": "heavy",
+  "profiles": ["all"]
+}

@@ -18,7 +18,13 @@ const generatedDir = join(packageDir, '.generated-iife-renderers')
 
 const rendererBuilds = [
   { key: 'word', packageName: '@file-viewer/renderer-word', exportName: 'wordRenderer', globalName: 'FlyfishFileViewerWebFullRendererWord' },
-  { key: 'pdf', packageName: '@file-viewer/renderer-pdf', exportName: 'pdfRenderer', globalName: 'FlyfishFileViewerWebFullRendererPdf' },
+  {
+    key: 'pdf',
+    packageName: '@file-viewer/renderer-pdf',
+    exportName: 'pdfRenderer',
+    globalName: 'FlyfishFileViewerWebFullRendererPdf',
+    sideEffectImports: ['@file-viewer/capability-pdf-identity-repair']
+  },
   { key: 'ofd', packageName: '@file-viewer/renderer-ofd', exportName: 'ofdRenderer', globalName: 'FlyfishFileViewerWebFullRendererOfd' },
   { key: 'presentation', packageName: '@file-viewer/renderer-presentation', exportName: 'presentationRenderer', globalName: 'FlyfishFileViewerWebFullRendererPresentation' },
   { key: 'spreadsheet', packageName: '@file-viewer/renderer-spreadsheet', exportName: 'spreadsheetRenderer', globalName: 'FlyfishFileViewerWebFullRendererSpreadsheet' },
@@ -91,7 +97,11 @@ await mkdir(generatedDir, { recursive: true })
 
 for (const renderer of rendererBuilds) {
   const rendererEntry = join(generatedDir, `${renderer.key}.ts`)
+  const sideEffectImports = (renderer.sideEffectImports || [])
+    .map(packageName => `import '${packageName}'`)
+    .join('\n')
   await writeFile(rendererEntry, `
+${sideEffectImports}
 import { ${renderer.exportName} as renderer } from '${renderer.packageName}'
 
 const host = globalThis

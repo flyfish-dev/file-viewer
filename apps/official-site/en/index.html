@@ -21,7 +21,7 @@
     />
     <meta
       name="description"
-      content="File Viewer by Flyfish is a browser-native, offline-first preview component. It routes 221 registered extensions (221 stable, 0 experimental) through 32 lazy preview pipelines and ships 57 npm targets."
+      content="File Viewer by Flyfish is a browser-native, offline-first preview component. It routes 244 registered extensions (221 stable, 23 experimental) through 34 lazy preview pipelines and ships 84 npm targets."
     />
     <meta
       name="keywords"
@@ -39,10 +39,30 @@
     <link rel="apple-touch-icon" type="image/png" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-readable project overview" />
-    <link rel="alternate" type="text/plain" href="/llms-full.txt" title="Extended LLM-readable project facts" />
-    <link rel="alternate" type="text/markdown" href="/en/browser-file-viewer/index.html.md" title="Verified File Viewer facts" />
-    <link rel="alternate" type="application/json" href="/software.json" title="Machine-readable software metadata" />
+    <link
+      rel="alternate"
+      type="text/plain"
+      href="/llms.txt"
+      title="LLM-readable project overview"
+    />
+    <link
+      rel="alternate"
+      type="text/plain"
+      href="/llms-full.txt"
+      title="Extended LLM-readable project facts"
+    />
+    <link
+      rel="alternate"
+      type="text/markdown"
+      href="/en/browser-file-viewer/index.html.md"
+      title="Verified File Viewer facts"
+    />
+    <link
+      rel="alternate"
+      type="application/json"
+      href="/software.json"
+      title="Machine-readable software metadata"
+    />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="File Viewer" />
     <meta property="og:locale" content="en_US" />
@@ -51,21 +71,33 @@
     <meta property="og:title" content="File Viewer for Office, PDF & CAD | Flyfish" />
     <meta
       property="og:description"
-      content="221 registered extensions route through 32 dedicated preview pipelines; all 221 are stable. Workers, WASM, fonts, and vendor assets load on demand."
+      content="244 registered extensions route through 34 dedicated preview pipelines: 221 stable and 23 experimental. Workers, WASM, fonts, and vendor assets load on demand."
     />
-    <meta property="og:image" content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp" />
-    <meta property="og:image:secure_url" content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp" />
+    <meta
+      property="og:image"
+      content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp"
+    />
+    <meta
+      property="og:image:secure_url"
+      content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp"
+    />
     <meta property="og:image:type" content="image/webp" />
     <meta property="og:image:width" content="1600" />
     <meta property="og:image:height" content="900" />
-    <meta property="og:image:alt" content="File Viewer v2.4.0 browser-native DOCX preview workspace" />
+    <meta
+      property="og:image:alt"
+      content="File Viewer v3.0.0 browser-native DOCX preview workspace"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="File Viewer for Office, PDF & CAD | Flyfish" />
     <meta
       name="twitter:description"
-      content="The source tree covers 57 npm targets, 221 registered extensions, and 32 preview pipelines; all 221 extensions are stable and none are experimental."
+      content="The source tree covers 84 npm targets, 244 registered extensions, and 34 preview pipelines; 221 extensions are stable and 23 are experimental."
     />
-    <meta name="twitter:image" content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp" />
+    <meta
+      name="twitter:image"
+      content="https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp"
+    />
     <title>File Viewer for Office, PDF &amp; CAD | Flyfish</title>
     <script type="application/ld+json">
       {
@@ -100,7 +132,7 @@
             "url": "https://file-viewer.app/",
             "mainEntityOfPage": "https://file-viewer.app/en/browser-file-viewer/",
             "image": "https://file-viewer.app/file-viewer-demo-v2.2.6-desktop-en.webp",
-            "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 57 npm targets, 221 registered extensions, and 32 preview pipelines.",
+            "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 84 npm targets, 244 registered extensions, and 34 preview pipelines.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Web Browser",
             "runtimePlatform": "Web Browser",
@@ -117,8 +149,8 @@
               "https://stackshare.io/file-viewer",
               "https://hub.docker.com/r/flyfishdev/file-viewer"
             ],
-            "softwareVersion": "2.4.0",
-            "releaseNotes": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.4.0",
+            "softwareVersion": "3.0.0",
+            "releaseNotes": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0",
             "featureList": [
               "Browser-native file preview without server-side conversion",
               "Standard components for Vue, React, Web Component, Svelte, jQuery, and Vanilla JavaScript",
@@ -212,14 +244,15 @@
       <section>
         <h1>File Viewer for Office, PDF and CAD</h1>
         <p>
-          File Viewer is an offline-first, self-hosted file preview component ecosystem for business systems.
-          It supports Office, PDF, OFD, Typst, XMind, CAD, EDA, archives, email, media, code, 3D, geospatial files, and more
-          through 57 npm targets, 221 registered extensions, and 32 preview pipelines; all 221 extensions are stable and none are experimental.
+          File Viewer is an offline-first, self-hosted file preview component ecosystem for business
+          systems. It supports Office, PDF, OFD, Typst, XMind, CAD, EDA, archives, email, media,
+          code, 3D, geospatial files, and more through 84 npm targets, 244 registered extensions,
+          and 34 preview pipelines; 221 extensions are stable and 23 are experimental.
         </p>
         <p>
-          Binary PPT and PPTX use isolated browser-native paths.
-          The Full asset contract continues from 2.1.30. Vite publishes packaged assets with
-          copyAssets:true; non-Vite builds run the included CLI once; complete web-full dist needs no copy step.
+          Binary PPT and PPTX use isolated browser-native paths. The Full asset contract continues
+          from 2.1.30. Vite publishes packaged assets with copyAssets:true; non-Vite builds run the
+          included CLI once; complete web-full dist needs no copy step.
         </p>
         <p>
           Key links:
@@ -227,11 +260,18 @@
           <a href="https://doc.file-viewer.app/">Documentation</a>,
           <a href="https://github.com/flyfish-dev/file-viewer">GitHub repository</a>,
           <a href="https://www.npmjs.com/search?q=%40file-viewer">npm packages</a>,
-          <a href="https://github.com/flyfish-dev/file-viewer/releases/tag/v2.4.0">v2.4.0 Release</a>.
+          <a href="https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0">v3.0.0 Release</a
+          >.
         </p>
         <div
           aria-label="File Viewer directory badges"
-          style="display:grid;grid-template-columns:minmax(0,280fr) minmax(0,204fr);align-items:center;gap:12px;max-width:496px"
+          style="
+            display: grid;
+            grid-template-columns: minmax(0, 280fr) minmax(0, 204fr);
+            align-items: center;
+            gap: 12px;
+            max-width: 496px;
+          "
         >
           <a href="https://kittylaunch.com/p/file-viewer" target="_blank" rel="noopener">
             <img
@@ -240,7 +280,7 @@
               height="68"
               alt="File Viewer on KittyLaunch"
               data-kittylaunch-badge="1"
-              style="display:block;width:100%;height:auto"
+              style="display: block; width: 100%; height: auto"
             />
           </a>
           <a href="https://www.saashub.com/fileviewer-app" target="_blank" rel="noopener">
@@ -250,7 +290,7 @@
               height="100"
               alt="FileViewer.app is approved on SaaSHub"
               data-saashub-badge="1"
-              style="display:block;width:100%;height:auto"
+              style="display: block; width: 100%; height: auto"
             />
           </a>
         </div>

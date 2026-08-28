@@ -649,7 +649,7 @@ async function useLocal(blob: Blob) {
 
 `.zip`、`.7z`、`.rar`、`.tar`、`.gz`、`.xz`、`.cab`、`.iso`、`.jar`、`.apk`、`.cbz`、`.cbr` 等压缩包会使用 `libarchive.js` Worker 读取目录。内部文件在点击后按需解压，并继续交给对应格式预览器。`archive.entryActions.download` 可以隐藏内部文件预览栏里的单文件下载按钮，或用回调按 `entry.path`、`entry.extension`、`entry.size` 等信息做权限判断；顶层 viewer 工具栏里的原始压缩包下载仍由 `toolbar` / `beforeOperation` 控制。私有化部署一般不需要手动配置 `archive.workerUrl`；如果静态目录或资源前缀特殊，可把 `worker-bundle.js` 与同目录的 `libarchive.wasm` 发布出来后配置 `options.archive.workerUrl`。当手机 WebView、本地临时服务器、MIME 或 CSP 导致 Worker 初始化失败时，组件会自动切换到 ZIP/TAR/GZIP 兼容模式，避免停留在 loading。
 
-`.eml` 使用 `postal-mime`，`.msg` 使用 `@kenjiuno/msgreader`。邮件正文会在隔离沙箱文档中展示，附件可以下载，也可以继续在线预览。
+`.eml` 使用 `postal-mime`，`.msg` 使用 `@kenjiuno/msgreader`。邮件正文会在隔离沙箱文档中展示，附件可以下载，也可以继续在线预览。React、React Legacy、Vanilla JS 和 Web Component 会复用父预览器已经解析好的 renderer registry，不需要再写框架专用的嵌套预览桥接。使用轻量组件时，需要为希望在线预览的附件类型安装并注入相应 preset 或 renderer（例如 PDF 附件需要 PDF renderer）；Full 包已包含完整的标准 registry，无需额外配置。附件文件名始终按文本显示，不作为 HTML 解析。
 
 `.olb` 与 `.dra` 使用 `@file-viewer/renderer-eda` + `cfb` 做 OrCAD / Allegro 常见复合文档结构预览。标准 `.gds` 会读取 GDSII 记录流，提取库名、structure、boundary、path、文本和引用，并生成可滚动 SVG 版图预览；项目内可读 `.oas` / `.oasis` 文本夹具会输出 SVG 版图，真实 SEMI 二进制 OASIS 当前做安全结构索引、可读字符串和诊断信息。EDA 链路适合附件初筛和内容确认，不替代专业 EDA 软件里的封装编辑、版图编辑、DRC/LVS、规则校核和电气验证；完整 OASIS / Cadence 几何预览后续更适合拆成独立 WASM 按需包持续维护。
 
@@ -699,7 +699,7 @@ const options = {
 
 坐标系默认归一化到 WGS84。标准 GeoJSON 按 `EPSG:4326` 读取；带 `crs` 的 GeoJSON 会按声明转换；未声明但坐标超出经纬度范围时会自动推断 Web Mercator；业务系统也可以通过 `options.geo.projection` 显式指定 `EPSG:3857`、`EPSG:4490`、`GCJ02`、`BD09` 或 proj4 字符串。WebGL 不可用时会回退 SVG 矢量预览。海量要素抽稀或空间分析仍建议在业务 GIS 模块中处理。
 
-`.excalidraw` 默认使用 `roughjs` 生成只读 SVG 预览，运行环境提供官方 `@excalidraw/excalidraw` ESM 模块时会优先尝试 `exportToSvg`；`.drawio` / `.dio` 默认使用随 viewer assets 分发的官方 diagrams.net `GraphViewer` 离线预览。静态路径特殊时可通过 `options.drawing.viewerScriptUrl` 指定自托管 `viewer-static.min.js`，组件会把同目录下的 styles、shapes、stencils、img、mxgraph 和 math 资源用于离线渲染；官方 viewer 异常时会回退内置 SVG。
+`.excalidraw` 默认使用 `roughjs` 生成只读 SVG 预览，运行环境提供官方 `@excalidraw/excalidraw` ESM 模块时会优先尝试 `exportToSvg`；`.drawio` / `.dio` 默认使用不执行文档 HTML 的内置 SVG 预览。显式设置 `options.drawing.preferOfficial = true` 后，组件才在受限 iframe 中加载单独分发的 diagrams.net `GraphViewer`；静态路径特殊时可通过 `options.drawing.viewerScriptUrl` 指定同源自托管 `viewer-static.min.js`，同目录下的 styles、shapes、stencils、img、mxgraph 和 math 用于离线渲染，异常时回退内置 SVG。
 
 `.epub` 会按需加载包内固化的本地阅读引擎，解析电子书包、目录和章节资源，并在浏览器内提供只读滚动阅读；运行时不访问第三方 CDN。阅读器会默认打开第一个正文章节，避免停留在封面或空白包装页。
 

@@ -4,6 +4,7 @@ import {
   type FileViewerRenderedInstance
 } from '@file-viewer/core'
 import type Hls from 'hls.js'
+import { getFileViewerHlsLoader } from './optionalCapabilities.js'
 import {
   extractMp4vSoftwareTrack,
   inspectMp4VideoTrack,
@@ -200,7 +201,11 @@ export default async function renderVideo(
         await waitForVideoMetadata(video, context?.signal)
         return
       }
-      const { default: HlsConstructor } = await import('hls.js')
+      const loadHls = getFileViewerHlsLoader()
+      if (!loadHls) {
+        throw new Error('HLS fallback support is opt-in. Run `npx file-viewer-cli add streaming-media --write`, then `npx file-viewer-cli install --yes`.')
+      }
+      const { default: HlsConstructor } = await loadHls()
       if (disposed) {
         return
       }

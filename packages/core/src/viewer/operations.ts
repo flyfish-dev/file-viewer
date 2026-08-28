@@ -1,5 +1,4 @@
 import {
-  buildFileViewerRenderedHtmlDocument,
   triggerFileViewerBlobDownload,
   triggerFileViewerUrlDownload,
   waitForFileViewerPrintWindowReady,
@@ -241,6 +240,7 @@ const buildRenderedHtmlDocumentFromOperation = async (
     throw new Error(translateFileViewerMessage(i18n, 'error.noExportContent'));
   }
 
+  const { buildFileViewerRenderedHtmlDocument } = await import('../export');
   return buildFileViewerRenderedHtmlDocument({
     source,
     mode,
@@ -252,6 +252,88 @@ const buildRenderedHtmlDocumentFromOperation = async (
     watermarkInlineStyle,
     mask: mode === 'print' ? mask : null,
   });
+};
+
+const buildRenderedDomDocumentFromOperation = async ({
+  source,
+  title,
+  filename,
+  adapter = null,
+  watermarkInlineStyle,
+  mask = null,
+  i18n,
+}: BuildRenderedHtmlDocumentFromOperationInput) => {
+  if (!source) {
+    throw new Error(translateFileViewerMessage(i18n, 'error.noExportContent'));
+  }
+
+  const { buildFileViewerRenderedDomDocument } = await import('../export');
+  return buildFileViewerRenderedDomDocument({
+    source,
+    mode: 'print',
+    title: resolveFileViewerOperationFilename({
+      filename: title || filename,
+      fallback: DEFAULT_FILE_VIEWER_PREVIEW_TITLE,
+    }),
+    adapter,
+    watermarkInlineStyle,
+    mask,
+  });
+};
+
+export const replaceFileViewerPrintDocument = (
+  targetDocument: Document,
+  sanitizedRoot: HTMLHtmlElement,
+) => {
+  const importedRoot = targetDocument.importNode(sanitizedRoot, true);
+  const currentRoot = targetDocument.documentElement;
+  if (currentRoot) {
+    currentRoot.replaceWith(importedRoot);
+  } else {
+    targetDocument.append(importedRoot);
+  }
+  if (!targetDocument.doctype) {
+    targetDocument.insertBefore(
+      targetDocument.implementation.createDocumentType('html', '', ''),
+      importedRoot,
+    );
+  }
+};
+
+const FILE_VIEWER_PRINT_STANDARDS_DOCUMENT =
+  '<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body></body></html>';
+
+const ensureFileViewerPrintStandardsMode = async (targetWindow: Window) => {
+  if (targetWindow.document.compatMode === 'CSS1Compat') {
+    return;
+  }
+
+  const targetGlobal = targetWindow as Window & typeof globalThis;
+  const objectUrl = targetGlobal.URL.createObjectURL(
+    new targetGlobal.Blob([FILE_VIEWER_PRINT_STANDARDS_DOCUMENT], {
+      type: 'text/html;charset=utf-8',
+    }),
+  );
+  try {
+    await new Promise<void>((resolve, reject) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        globalThis.clearTimeout(timeoutId);
+        if (targetWindow.document.compatMode === 'CSS1Compat') {
+          resolve();
+        } else {
+          reject(new Error('Unable to initialize the print window in standards mode.'));
+        }
+      };
+      const timeoutId = globalThis.setTimeout(finish, 1500);
+      targetWindow.addEventListener('load', finish, { once: true });
+      targetWindow.location.replace(objectUrl);
+    });
+  } finally {
+    targetGlobal.URL.revokeObjectURL(objectUrl);
+  }
 };
 
 export const executeFileViewerDownloadOperation = async ({
@@ -366,7 +448,7 @@ export const executeFileViewerPrintOperation = async ({
     return false;
   }
 
-  const html = await buildRenderedHtmlDocumentFromOperation('print', { ...input, i18n });
+  const printableRoot = await buildRenderedDomDocumentFromOperation({ ...input, i18n });
   const targetWindow = printWindow ||
     openWindow?.() ||
     (typeof window !== 'undefined' ? window.open('', '_blank') : null);
@@ -375,9 +457,8 @@ export const executeFileViewerPrintOperation = async ({
     throw new Error(translateFileViewerMessage(i18n, 'error.printWindowBlocked'));
   }
 
-  targetWindow.document.open();
-  targetWindow.document.write(html);
-  targetWindow.document.close();
+  await ensureFileViewerPrintStandardsMode(targetWindow);
+  replaceFileViewerPrintDocument(targetWindow.document, printableRoot);
   targetWindow.focus();
   await waitForFileViewerPrintWindowReady(targetWindow);
 

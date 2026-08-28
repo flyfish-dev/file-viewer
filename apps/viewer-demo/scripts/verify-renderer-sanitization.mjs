@@ -15,9 +15,15 @@ const pptxWorkerPath = join(root, 'packages/renderers/pptx/dist/worker/pptx.work
 
 const sourceAliases = [
   ['@security/markdown', 'packages/renderers/text/src/markdown.ts'],
+  ['@security/mermaid-capability', 'packages/capabilities/mermaid/src/index.ts'],
+  ['@security/typst-sanitize', 'packages/renderers/typst/src/sanitize.ts'],
+  ['@security/drawing', 'packages/renderers/drawing/src/drawing.ts'],
+  ['@security/diagram', 'packages/renderers/drawing/src/diagram.ts'],
   ['@security/pptx', 'packages/renderers/pptx/src/viewer.ts'],
   ['@security/doc', 'packages/renderers/doc/src/index.ts'],
   ['@file-viewer/core/assets', 'packages/core/src/assets.ts'],
+  ['@file-viewer/core/export', 'packages/core/src/export.ts'],
+  ['@file-viewer/renderer-text', 'packages/renderers/text/src/index.ts'],
   ['@file-viewer/core', 'packages/core/src/index.ts']
 ].map(([find, relativePath]) => ({ find, replacement: join(root, relativePath) }))
 
@@ -67,12 +73,17 @@ const launchChromium = async (chromium) => {
 
 const harnessMain = String.raw`
 import renderMarkdown from '@security/markdown'
+import '@security/mermaid-capability'
+import { sanitizeTypstSvgDocument } from '@security/typst-sanitize'
+import renderDrawing from '@security/drawing'
+import { renderDiagram } from '@security/diagram'
 import { PptxViewer } from '@security/pptx'
 import { mountMsDoc, renderMsDoc, sanitizeMsDocLinkHref } from '@security/doc'
+import { buildExportHtmlDocument, buildFileViewerRenderedHtmlDocument } from '@file-viewer/core/export'
 
 const pixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 const fence = String.fromCharCode(96).repeat(3)
-window.__rendererSentinel = { markdown: 0, pptx: 0, doc: 0 }
+window.__rendererSentinel = { markdown: 0, pptx: 0, doc: 0, export: 0, typst: 0, drawing: 0 }
 
 const maliciousFont = 'Safe Font" onmouseover="window.__rendererSentinel.doc += 1'
 const docParagraph = (href, text) => ({
@@ -121,6 +132,17 @@ const docParsed = {
           style: {},
         },
         {
+          type: 'image',
+          href: null,
+          asset: {
+            name: 'linked-image',
+            mimeType: 'image/png',
+            dataUrl: '',
+            sourceUrl: 'https://security.invalid/doc-linked.png',
+          },
+          style: {},
+        },
+        {
           type: 'attachment',
           href: 'data:text/html,unsafe',
           asset: {
@@ -157,13 +179,156 @@ const docParsed = {
 }
 const docBlocked = renderMsDoc(docParsed)
 const docAllowed = renderMsDoc(docParsed, { externalLinkPolicy: 'allow' })
+const docResourcesAllowed = renderMsDoc(docParsed, {
+  externalLinkPolicy: 'allow',
+  externalResourcePolicy: 'allow',
+})
 const docDirectTemplate = document.createElement('template')
 docDirectTemplate.innerHTML = docAllowed.html
+const docResourceTemplate = document.createElement('template')
+docResourceTemplate.innerHTML = docResourcesAllowed.html
 const docTarget = document.querySelector('#doc')
 mountMsDoc(docTarget, {
   ...docAllowed,
   html: docAllowed.html + '<img id="doc-event" src="' + pixel + '" onload="window.__rendererSentinel.doc += 100">',
 })
+
+const collectedExportStyle = document.createElement('style')
+collectedExportStyle.textContent = '#export-safe{color:rgb(10, 20, 30)}</style><script>parent.__rendererSentinel.export += 1</script>'
+document.head.append(collectedExportStyle)
+const exportContent = [
+  '<article id="export-safe" onclick="parent.__rendererSentinel.export += 10">safe export',
+  '<a id="export-unsafe-link" href="java&#10;script:parent.__rendererSentinel.export += 20">unsafe</a>',
+  '<a id="export-safe-link" href="https://example.com/export" target="_blank">safe link</a>',
+  '<img id="export-remote-image" src="https://security.invalid/export.png" srcset="https://security.invalid/export-2x.png 2x">',
+  '<video id="export-remote-video" src="https://security.invalid/export.mp4" poster="https://security.invalid/export-poster.png"><source src="https://security.invalid/export-source.mp4"></video>',
+  '<svg><image id="export-remote-svg" href="https://security.invalid/export.svg"></image><use id="export-remote-use" href="https://security.invalid/sprite.svg#icon"></use></svg>',
+  '<svg viewBox="0 0 10 10"><circle id="export-safe-svg" cx="5" cy="5" r="4"></circle></svg>',
+  '<math><mi id="export-safe-math">x</mi></math>',
+  '<script>parent.__rendererSentinel.export += 100</script>',
+  '</article>',
+].join('')
+const directExportHtml = buildExportHtmlDocument({
+  contentHtml: exportContent,
+  includeDocumentStyles: true,
+  printStyle: '#export-safe{font-weight:700}</style><script>parent.__rendererSentinel.export += 1000</script>',
+  title: 'safe export',
+  watermarkInlineStyle: 'opacity:.2" onmouseover="parent.__rendererSentinel.export += 10000',
+  documentRef: document,
+})
+const adapterSource = document.createElement('div')
+const adapterExportHtml = await buildFileViewerRenderedHtmlDocument({
+  source: adapterSource,
+  title: 'adapter export',
+  adapter: {
+    includeDocumentStyles: false,
+    printStyle: '</style><img src="' + pixel + '" onload="parent.__rendererSentinel.export += 100000">',
+    toHtml: () => '<section id="adapter-export-safe"><img src="' + pixel + '" onload="parent.__rendererSentinel.export += 1000000"><p>adapter safe</p></section>',
+  },
+  watermarkInlineStyle: '"></div><script>parent.__rendererSentinel.export += 10000000</script>',
+})
+const mountExportDocument = html => new Promise(resolve => {
+  const frame = document.createElement('iframe')
+  frame.addEventListener('load', () => resolve(frame), { once: true })
+  frame.srcdoc = html
+  document.querySelector('#exports').append(frame)
+})
+const [directExportFrame, adapterExportFrame] = await Promise.all([
+  mountExportDocument(directExportHtml),
+  mountExportDocument(adapterExportHtml),
+])
+const directExportDocument = directExportFrame.contentDocument
+const adapterExportDocument = adapterExportFrame.contentDocument
+
+const typstParsed = new DOMParser().parseFromString([
+  '<svg xmlns="http://www.w3.org/2000/svg" onload="window.__rendererSentinel.typst += 1">',
+  '<script>window.__rendererSentinel.typst += 10</script>',
+  '<defs><linearGradient id="typst-gradient"></linearGradient></defs>',
+  '<a id="typst-unsafe" href="java&#10;script:window.__rendererSentinel.typst += 100"><text>unsafe</text></a>',
+  '<a id="typst-canonical" href="docs/sa&#10;fe"><text>safe</text></a>',
+  '<circle id="typst-safe-shape" cx="5" cy="5" r="4" style="fill:url(#typst-gradient)" onclick="window.__rendererSentinel.typst += 1000"></circle>',
+  '<rect id="typst-unsafe-style" style="fill:url(https://security.invalid/typst.svg#x)"></rect>',
+  '</svg>',
+].join(''), 'image/svg+xml')
+sanitizeTypstSvgDocument(typstParsed)
+const typstTarget = document.querySelector('#typst')
+typstTarget.append(document.importNode(typstParsed.documentElement, true))
+
+const plantumlTarget = document.querySelector('#plantuml')
+const maliciousPlantumlSvg = [
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" onload="window.__rendererSentinel.drawing += 1">',
+  '<script>window.__rendererSentinel.drawing += 10</script>',
+  '<foreignObject><img xmlns="http://www.w3.org/1999/xhtml" src="https://security.invalid/foreign.png" onerror="window.__rendererSentinel.drawing += 100"></foreignObject>',
+  '<a id="drawing-unsafe-link" href="java&#10;script:window.__rendererSentinel.drawing += 1000"><text>unsafe</text></a>',
+  '<image id="drawing-external-image" href="https://security.invalid/image.svg"></image>',
+  '<style id="drawing-unsafe-style">.x{fill:url(https://security.invalid/style.svg#x)}</style>',
+  '<defs><linearGradient id="drawing-safe-gradient"></linearGradient></defs>',
+  '<circle id="drawing-safe-circle" cx="5" cy="5" r="4" fill="url(#drawing-safe-gradient)"></circle>',
+  '</svg>',
+].join('')
+const originalFetch = window.fetch.bind(window)
+window.fetch = async input => String(input).startsWith('https://plantuml.test/')
+  ? new Response(maliciousPlantumlSvg, { status: 200, headers: { 'content-type': 'image/svg+xml' } })
+  : originalFetch(input)
+const plantumlController = await renderDiagram({
+  documentRef: document,
+  text: '@startuml\nAlice -> Bob\n@enduml',
+  target: plantumlTarget,
+  kind: 'plantuml',
+  options: { plantumlServerUrl: 'https://plantuml.test/svg/' },
+  viewerOptions: {},
+})
+window.fetch = originalFetch
+
+let blockedMermaidImage = false
+try {
+  await renderDiagram({
+    documentRef: document,
+    text: 'graph TD\nA@{ shape: image, img: "https://security.invalid/mermaid-direct.png" }',
+    target: document.querySelector('#mermaid-unsafe'),
+    kind: 'mermaid',
+    viewerOptions: {},
+  })
+} catch {
+  blockedMermaidImage = true
+}
+
+const drawioTarget = document.querySelector('#drawio')
+const maliciousDrawio = [
+  '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/>',
+  '<mxCell id="2" parent="1" vertex="1" style="rounded=1;html=1;image=https://security.invalid/drawio.png;"',
+  ' value="&lt;img src=&quot;https://security.invalid/drawio-label.png&quot; onerror=&quot;window.__rendererSentinel.drawing += 10000&quot;&gt;safe label">',
+  '<mxGeometry x="0" y="0" width="120" height="60" as="geometry"/></mxCell>',
+  '</root></mxGraphModel>',
+].join('')
+const drawioInstance = await renderDrawing(
+  new TextEncoder().encode(maliciousDrawio).buffer,
+  drawioTarget,
+  'drawio',
+  { options: {} },
+)
+for (let attempt = 0; attempt < 100 && !drawioTarget.querySelector('[data-drawing-rendered]'); attempt += 1) {
+  await new Promise(resolve => setTimeout(resolve, 10))
+}
+
+const drawioOfficialTarget = document.querySelector('#drawio-official')
+const maliciousOfficialDrawio = [
+  '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/>',
+  '<mxCell id="2" parent="1" vertex="1" style="rounded=1;html=1;image=https://security.invalid/official-style.png;"',
+  ' value="&lt;a href=&quot;javascript:window.__fileViewerDrawioSentinel += 100&quot;&gt;unsafe link&lt;/a&gt;',
+  '&lt;img src=&quot;https://security.invalid/official-label.png&quot; onerror=&quot;window.__fileViewerDrawioSentinel += 1&quot;&gt;safe official label">',
+  '<mxGeometry x="0" y="0" width="160" height="70" as="geometry"/></mxCell>',
+  '</root></mxGraphModel>',
+].join('')
+const drawioOfficialInstance = await renderDrawing(
+  new TextEncoder().encode(maliciousOfficialDrawio).buffer,
+  drawioOfficialTarget,
+  'drawio',
+  { options: { drawing: { preferOfficial: true, viewerScriptUrl: __DRAWIO_VENDOR_URL__ } } },
+)
+for (let attempt = 0; attempt < 300 && !drawioOfficialTarget.querySelector('[data-drawing-rendered]'); attempt += 1) {
+  await new Promise(resolve => setTimeout(resolve, 20))
+}
 
 const markdown = [
   '# Safe Markdown heading',
@@ -189,6 +354,11 @@ const markdown = [
   fence + 'mermaid',
   'graph TD',
   '  A --> B',
+  fence,
+  '',
+  fence + 'mermaid',
+  'graph TD',
+  '  A@{ shape: image, img: "https://security.invalid/mermaid-markdown.png" }',
   fence,
 ].join('\n')
 
@@ -311,6 +481,8 @@ window.__rendererSanitizationResult = {
   doc: {
     blockedExternal: docBlocked.html.includes('https://example.com/doc'),
     allowedExternal: docAllowed.html.includes('href="https://example.com/doc"'),
+    blockedExternalResource: !docDirectTemplate.content.querySelector('img[src*="security.invalid/doc-linked.png"]'),
+    allowedExternalResource: Boolean(docResourceTemplate.content.querySelector('img[src*="security.invalid/doc-linked.png"]')),
     dangerousDirectAttributes: docDirectTemplate.content.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
     unsafeDirectHrefs: Array.from(docDirectTemplate.content.querySelectorAll('a[href]'))
       .map(link => link.getAttribute('href'))
@@ -328,11 +500,61 @@ window.__rendererSanitizationResult = {
     sanitizedJavascript: sanitizeMsDocLinkHref('java\nscript:alert(1)', 'allow'),
     sanitizedProtocolRelative: sanitizeMsDocLinkHref('//example.com/path', 'allow'),
   },
+  export: {
+    dangerousDirectAttributes: directExportDocument.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
+    scripts: directExportDocument.querySelectorAll('script').length,
+    unsafeHref: directExportDocument.querySelector('#export-unsafe-link')?.getAttribute('href') ?? null,
+    safeHref: directExportDocument.querySelector('#export-safe-link')?.getAttribute('href') ?? null,
+    safeRel: directExportDocument.querySelector('#export-safe-link')?.getAttribute('rel') ?? null,
+    remoteResources: directExportDocument.querySelectorAll([
+      '#export-remote-image[src]',
+      '#export-remote-image[srcset]',
+      '#export-remote-video[src]',
+      '#export-remote-video[poster]',
+      '#export-remote-video source[src]',
+      '#export-remote-svg[href]',
+      '#export-remote-use[href]',
+    ].join(',')).length,
+    svg: directExportDocument.querySelectorAll('#export-safe-svg').length,
+    math: directExportDocument.querySelectorAll('#export-safe-math').length,
+    color: getComputedStyle(directExportDocument.querySelector('#export-safe')).color,
+    fontWeight: getComputedStyle(directExportDocument.querySelector('#export-safe')).fontWeight,
+    meta: directExportDocument.querySelectorAll('meta[charset],meta[name="viewport"]').length,
+    adapterText: adapterExportDocument.querySelector('#adapter-export-safe p')?.textContent ?? null,
+    adapterDangerousAttributes: adapterExportDocument.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
+    adapterScripts: adapterExportDocument.querySelectorAll('script').length,
+    stylesheetLinks: directExportDocument.querySelectorAll('link[rel="stylesheet"]').length,
+  },
+  typst: {
+    scripts: typstTarget.querySelectorAll('script').length,
+    dangerousAttributes: typstTarget.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
+    unsafeHref: typstTarget.querySelector('#typst-unsafe')?.getAttribute('href') ?? null,
+    canonicalHref: typstTarget.querySelector('#typst-canonical')?.getAttribute('href') ?? null,
+    shape: typstTarget.querySelectorAll('#typst-safe-shape').length,
+    safeStyle: typstTarget.querySelector('#typst-safe-shape')?.getAttribute('style') ?? null,
+    unsafeStyle: typstTarget.querySelector('#typst-unsafe-style')?.getAttribute('style') ?? null,
+  },
+  drawing: {
+    drawioMode: drawioTarget.querySelector('[data-drawing-rendered]')?.getAttribute('data-drawing-rendered') ?? null,
+    drawioDangerousAttributes: drawioTarget.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
+    drawioText: drawioTarget.textContent ?? '',
+    plantumlScripts: plantumlTarget.querySelectorAll('script,foreignObject').length,
+    plantumlDangerousAttributes: plantumlTarget.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
+    plantumlUnsafeHref: plantumlTarget.querySelector('#drawing-unsafe-link')?.getAttribute('href') ?? null,
+    plantumlExternalImage: plantumlTarget.querySelector('#drawing-external-image')?.getAttribute('href') ?? null,
+    plantumlUnsafeStyle: plantumlTarget.querySelector('#drawing-unsafe-style')?.textContent ?? null,
+    plantumlSafeFill: plantumlTarget.querySelector('#drawing-safe-circle')?.getAttribute('fill') ?? null,
+    drawioOfficialMode: drawioOfficialTarget.querySelector('[data-drawing-rendered]')?.getAttribute('data-drawing-rendered') ?? null,
+    drawioOfficialFrames: drawioOfficialTarget.querySelectorAll('iframe.drawing-mxgraph').length,
+    drawioOfficialSandbox: drawioOfficialTarget.querySelector('iframe.drawing-mxgraph')?.getAttribute('sandbox') ?? '',
+    blockedMermaidImage,
+  },
   markdown: {
     heading: markdownTarget.querySelector('h1')?.textContent || '',
     tables: markdownTarget.querySelectorAll('table').length,
     code: markdownTarget.querySelectorAll('pre > code').length,
     mermaid: markdownTarget.querySelectorAll('.markdown-mermaid svg').length,
+    mermaidErrors: markdownTarget.querySelectorAll('.markdown-mermaid-source-error').length,
     dangerousAttributes: markdownTarget.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
     scripts: markdownTarget.querySelectorAll('script').length,
     frames: markdownTarget.querySelectorAll('iframe').length,
@@ -352,6 +574,9 @@ window.__rendererSanitizationResult = {
 window.__rendererSanitizationCleanup = () => {
   markdownInstance.unmount()
   pptxInstances.forEach(instance => instance?.destroy())
+  plantumlController.destroy()
+  drawioInstance.unmount()
+  drawioOfficialInstance.unmount()
 }
 `
 
@@ -530,11 +755,19 @@ const verifyPptxWorkerHyperlinks = async () => {
 const harnessRoot = await mkdtemp(join(tmpdir(), 'file-viewer-renderer-sanitization-'))
 let viteServer
 let browser
+let exportStylesheetRequests = 0
 
 try {
   await verifyVendorHyperlinks(harnessRoot)
   await verifyPptxWorkerHyperlinks()
-  await writeFile(join(harnessRoot, 'main.js'), harnessMain)
+  // The optional Drawing asset source is the complete vendored tree. The
+  // historical web bundle intentionally omits MathJax files and is not a valid
+  // security harness for the opt-in official Draw.io renderer.
+  const drawioVendorUrl = `/@fs/${join(root, 'third_party/drawio/viewer-static.min.js')}`
+  await writeFile(
+    join(harnessRoot, 'main.js'),
+    harnessMain.replace('__DRAWIO_VENDOR_URL__', JSON.stringify(drawioVendorUrl))
+  )
   await writeFile(
     join(harnessRoot, 'index.html'),
     `<!doctype html>
@@ -542,11 +775,18 @@ try {
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/security-export.css">
     <title>Renderer sanitization verification</title>
   </head>
   <body>
     <div id="markdown"></div>
     <div id="doc"></div>
+    <div id="exports"></div>
+    <div id="typst"></div>
+    <div id="plantuml"></div>
+    <div id="mermaid-unsafe"></div>
+    <div id="drawio"></div>
+    <div id="drawio-official"></div>
     <div id="pptx-regular"></div>
     <div id="pptx-windowed"></div>
     <script type="module" src="/main.js"></script>
@@ -562,6 +802,20 @@ try {
     logLevel: 'error',
     define: { global: 'globalThis' },
     resolve: { alias: sourceAliases },
+    plugins: [{
+      name: 'file-viewer-export-stylesheet-sentinel',
+      configureServer(server) {
+        server.middlewares.use((request, response, next) => {
+          const pathname = new URL(request.url || '/', 'http://127.0.0.1').pathname
+          if (pathname !== '/security-export.css') return next()
+          exportStylesheetRequests += 1
+          response.statusCode = 200
+          response.setHeader('content-type', 'text/css; charset=utf-8')
+          response.setHeader('cache-control', 'no-store')
+          response.end('#export-safe{outline-color:rgb(1,2,3)}')
+        })
+      }
+    }],
     server: {
       host: '127.0.0.1',
       port: 0,
@@ -578,10 +832,17 @@ try {
   browser = await launchChromium(chromium)
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
   const failures = []
+  const cspBlocks = []
   const unsafeCssRequests = []
   let dialogs = 0
   page.on('console', (message) => {
-    if (message.type() === 'error') failures.push(`console: ${message.text()}`)
+    if (message.type() !== 'error') return
+    if (/content security policy|violates the following content security policy directive/i.test(message.text())) {
+      cspBlocks.push(message.text())
+    } else {
+      const location = message.location()
+      failures.push(`console: ${message.text()}${location.url ? ` (${location.url})` : ''}`)
+    }
   })
   page.on('pageerror', (error) => failures.push(`page: ${error.message}`))
   page.on('request', (request) => {
@@ -598,16 +859,38 @@ try {
   })
   await page.waitForFunction(() => Boolean(window.__rendererSanitizationResult), null, { timeout })
   const result = await page.evaluate(() => window.__rendererSanitizationResult)
+  await page.waitForTimeout(100)
+  const officialFrameHandle = await page.locator('iframe.drawing-mxgraph').elementHandle()
+  assert(officialFrameHandle, 'The official Draw.io sandbox iframe was not mounted.')
+  const officialFrame = await officialFrameHandle.contentFrame()
+  assert(officialFrame, 'The official Draw.io sandbox iframe was not available.')
+  const officialFrameState = await officialFrame.evaluate(() => ({
+    sentinel: window.__fileViewerDrawioSentinel,
+    dangerousAttributes: document.querySelectorAll('[onload],[onerror],[onmouseover],[onclick]').length,
+    externalImages: Array.from(document.querySelectorAll('img'))
+      .map(image => image.getAttribute('src'))
+      .filter(source => String(source).includes('security.invalid')),
+  }))
+  const officialUnsafeLink = officialFrame.locator('a[href^="javascript:"]')
+  if (await officialUnsafeLink.count()) {
+    await officialUnsafeLink.first().click({ force: true })
+    await page.waitForTimeout(50)
+  }
+  const officialSentinelAfterClick = await officialFrame.evaluate(() => window.__fileViewerDrawioSentinel)
 
-  assert.deepEqual(result.sentinel, { markdown: 0, pptx: 0, doc: 0 })
+  assert.deepEqual(result.sentinel, { markdown: 0, pptx: 0, doc: 0, export: 0, typst: 0, drawing: 0 })
   assert.equal(dialogs, 0)
   assert.deepEqual(unsafeCssRequests, [])
+  assert.equal(exportStylesheetRequests, 1, 'Standalone export must inline or drop the mounted stylesheet without a second request.')
   assert.deepEqual(failures, [])
+  assert.equal(officialFrameState.sentinel, 0)
+  assert.equal(officialSentinelAfterClick, 0)
   assert.equal(result.bodyDisplay, 'block')
   assert.equal(result.markdown.heading, 'Safe Markdown heading')
   assert.equal(result.markdown.tables, 1)
   assert.ok(result.markdown.code >= 1)
   assert.equal(result.markdown.mermaid, 1)
+  assert.equal(result.markdown.mermaidErrors, 1)
   assert.equal(result.markdown.dangerousAttributes, 0)
   assert.equal(result.markdown.scripts, 0)
   assert.equal(result.markdown.frames, 0)
@@ -620,6 +903,8 @@ try {
   assert.match(result.markdown.safeRel, /noopener/)
   assert.equal(result.doc.blockedExternal, false)
   assert.equal(result.doc.allowedExternal, true)
+  assert.equal(result.doc.blockedExternalResource, true)
+  assert.equal(result.doc.allowedExternalResource, true)
   assert.equal(result.doc.dangerousDirectAttributes, 0)
   assert.deepEqual(result.doc.unsafeDirectHrefs, [])
   assert.ok(result.doc.safeDownloadHrefs.includes('data:application/octet-stream;base64,AA=='))
@@ -642,6 +927,42 @@ try {
   assert.equal(result.doc.bookmarkHref, '#bookmark')
   assert.equal(result.doc.sanitizedJavascript, null)
   assert.equal(result.doc.sanitizedProtocolRelative, null)
+  assert.equal(result.export.dangerousDirectAttributes, 0)
+  assert.equal(result.export.scripts, 0)
+  assert.equal(result.export.unsafeHref, null)
+  assert.equal(result.export.safeHref, 'https://example.com/export')
+  assert.match(result.export.safeRel, /noopener/)
+  assert.equal(result.export.remoteResources, 0)
+  assert.equal(result.export.svg, 1)
+  assert.equal(result.export.math, 1)
+  assert.equal(result.export.color, 'rgb(10, 20, 30)')
+  assert.equal(result.export.fontWeight, '700')
+  assert.equal(result.export.meta, 2)
+  assert.equal(result.export.adapterText, 'adapter safe')
+  assert.equal(result.export.adapterDangerousAttributes, 0)
+  assert.equal(result.export.adapterScripts, 0)
+  assert.equal(result.export.stylesheetLinks, 0)
+  assert.equal(result.typst.scripts, 0)
+  assert.equal(result.typst.dangerousAttributes, 0)
+  assert.equal(result.typst.unsafeHref, null)
+  assert.equal(result.typst.canonicalHref, 'docs/safe')
+  assert.equal(result.typst.shape, 1)
+  assert.equal(result.typst.safeStyle, 'fill:url(#typst-gradient)')
+  assert.equal(result.typst.unsafeStyle, null)
+  assert.equal(result.drawing.drawioMode, 'rough')
+  assert.equal(result.drawing.drawioDangerousAttributes, 0)
+  assert.match(result.drawing.drawioText, /safe label/)
+  assert.equal(result.drawing.plantumlScripts, 0)
+  assert.equal(result.drawing.plantumlDangerousAttributes, 0)
+  assert.equal(result.drawing.plantumlUnsafeHref, null)
+  assert.equal(result.drawing.plantumlExternalImage, null)
+  assert.doesNotMatch(result.drawing.plantumlUnsafeStyle || '', /security\.invalid/)
+  assert.equal(result.drawing.plantumlSafeFill, 'url(#drawing-safe-gradient)')
+  assert.equal(result.drawing.drawioOfficialMode, 'official')
+  assert.equal(result.drawing.drawioOfficialFrames, 1)
+  assert.match(result.drawing.drawioOfficialSandbox, /allow-scripts/)
+  assert.doesNotMatch(result.drawing.drawioOfficialSandbox, /allow-same-origin/)
+  assert.equal(result.drawing.blockedMermaidImage, true)
 
   for (const state of [result.pptxRegular, result.pptxWindowed]) {
     assert.equal(state.slides, 1)
@@ -669,7 +990,7 @@ try {
   }
 
   await page.evaluate(() => window.__rendererSanitizationCleanup?.())
-  console.log('[renderer-sanitization] DOC, Markdown, and PPTX markup passed browser isolation checks.')
+  console.log('[renderer-sanitization] DOC, export/print, Markdown/Mermaid, Drawing/PlantUML, Typst SVG, and PPTX markup passed browser isolation checks.')
 } finally {
   await browser?.close()
   await viteServer?.close()

@@ -1,0 +1,51 @@
+{
+  "name": "@file-viewer/capability-streaming-media",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Opt-in HLS fallback for File Viewer media playback.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/capabilities/streaming-media"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "file-viewer.capability.json",
+    "README.md",
+    "README.en.md"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/renderer-media": "workspace:3.0.0",
+    "hls.js": "^1.6.16"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "Apache-2.0"
+}

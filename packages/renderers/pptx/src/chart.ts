@@ -11,6 +11,21 @@ type BillboardChart = {
   destroy?: () => void;
 };
 
+export type PptxChartLibraries = {
+  billboard: any;
+  d3Format: typeof import('d3-format');
+};
+
+export type PptxChartLibraryLoader = () => Promise<PptxChartLibraries>;
+
+let chartLibraryLoader: PptxChartLibraryLoader | null = null;
+
+export const registerPptxChartLibraryLoader = (
+  loader: PptxChartLibraryLoader | null
+) => {
+  chartLibraryLoader = loader;
+};
+
 export type PptxPostProcessingHandle = {
   destroy: () => void;
 };
@@ -175,25 +190,25 @@ const applyTextFitScale = (block: HTMLElement, scale: number) => {
   });
 };
 
-const hasTextOverflow = (block: HTMLElement) =>
+const hasTextOverflow = (block: HTMLElement, fitWidth = true) =>
   block.scrollHeight > block.clientHeight + TEXT_FIT_TOLERANCE ||
-  block.scrollWidth > block.clientWidth + TEXT_FIT_TOLERANCE;
+  (fitWidth && block.scrollWidth > block.clientWidth + TEXT_FIT_TOLERANCE);
 
-const fitOverflowingTextBlock = (block: HTMLElement) => {
+const fitOverflowingTextBlock = (block: HTMLElement, fitWidth = true) => {
   if (!block.querySelector('.text-block') || block.clientWidth <= 0 || block.clientHeight <= 0) {
     return;
   }
 
   let scale = Number(block.dataset.pptxTextFitScale) || 1;
-  if (!hasTextOverflow(block)) {
+  if (!hasTextOverflow(block, fitWidth)) {
     return;
   }
 
-  for (let pass = 0; pass < TEXT_FIT_MAX_PASSES && hasTextOverflow(block); pass += 1) {
+  for (let pass = 0; pass < TEXT_FIT_MAX_PASSES && hasTextOverflow(block, fitWidth); pass += 1) {
     const heightRatio = block.scrollHeight > 0
       ? Math.min(1, block.clientHeight / block.scrollHeight)
       : 1;
-    const widthRatio = block.scrollWidth > 0
+    const widthRatio = fitWidth && block.scrollWidth > 0
       ? Math.min(1, block.clientWidth / block.scrollWidth)
       : 1;
     const ratio = Math.min(heightRatio, widthRatio, 0.98);
@@ -207,7 +222,7 @@ const fitOverflowingTextBlock = (block: HTMLElement) => {
 
     applyTextFitScale(block, scale);
 
-    if (scale <= TEXT_FIT_MIN_SCALE && hasTextOverflow(block)) {
+    if (scale <= TEXT_FIT_MIN_SCALE && hasTextOverflow(block, fitWidth)) {
       break;
     }
   }
@@ -216,7 +231,10 @@ const fitOverflowingTextBlock = (block: HTMLElement) => {
 const fitOverflowingTextBlocks = (root: ParentNode) => {
   root
     .querySelectorAll<HTMLElement>('.slide div.content, .slide div.content-rtl')
-    .forEach(fitOverflowingTextBlock);
+    .forEach(block => fitOverflowingTextBlock(block));
+  root
+    .querySelectorAll<HTMLElement>('.slide .pptx-table-cell-content')
+    .forEach(block => fitOverflowingTextBlock(block, false));
 };
 
 const renderChart = async (message: ChartMessage, root: ParentNode) => {
@@ -230,8 +248,18 @@ const renderChart = async (message: ChartMessage, root: ParentNode) => {
     return;
   }
 
-  const billboard = await import('billboard.js') as any;
-  const d3Format = await import('d3-format');
+  if (!chartLibraryLoader) {
+    chartTarget.dataset.fileViewerMissingCapability = 'pptx-charts';
+    chartTarget.setAttribute(
+      'title',
+      'PPTX chart rendering requires @file-viewer/capability-pptx-charts. Run `npx file-viewer-cli add pptx-charts --write`, then `npx file-viewer-cli install --yes`.'
+    );
+    console.warn(
+      '[file-viewer] PPTX chart rendering requires @file-viewer/capability-pptx-charts. Run `npx file-viewer-cli add pptx-charts --write`, then `npx file-viewer-cli install --yes`.'
+    );
+    return;
+  }
+  const { billboard, d3Format } = await chartLibraryLoader();
   const bb = billboard.default || billboard;
   const { area, bar, line, pie, scatter } = billboard;
   const chart: Record<string, any> = {

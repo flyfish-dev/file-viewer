@@ -3,12 +3,26 @@
 > **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
 
 <!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-description: "查看 File Viewer 主线版本的功能更新、安全修复、性能优化、验证证据与各发行渠道同步记录。"
+description: '查看 File Viewer 主线版本的功能更新、安全修复、性能优化、验证证据与各发行渠道同步记录。'
 ---
 
 # 更新日志
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
+
+## `v3.0.0` 模块化 CLI、专业格式按需安装与安全门禁 — 2026-08-27
+
+- 新增 `@file-viewer/cli`、`file-viewer-cli` 和 `create-file-viewer`，既可创建新项目，也可在已有 `package.json` 工程中检测框架与构建工具后安装；支持选择框架版本、格式、preset、资源、npm/pnpm/Yarn/Bun、不含凭据的私有 registry 与完整性校验的离线 tgz。
+- `standard` 成为常用格式的推荐方案，但不改变八个已发布 Full 包。`*-full` 继续交付原 `preset-all` 格式矩阵、API 和同版本离线资源；CLI 显式选择 `full` 时才在此基础上加入后续专业能力，并提前展示体积、运行时和许可边界。
+- DICOM 和数字签名容器不进入未改动的 Full 依赖。可选 DICOM renderer 支持有界的本地单文件、单帧/多帧预览，覆盖未压缩、JPEG Lossless、JPEG-LS 和 JPEG 2000 Lossless；不声称诊断、PACS/DICOMweb 或多文件序列能力（#210）。
+- 可选签名与证据容器 renderer 有界检查 CMS/CAdES、RFC 3161/5544、ASiC-S/E、RFC 4998、JWS 和公开 OpenPGP 材料。它使用许可宽松的 rPGP Worker/WASM，不包含 LGPL 源码，并分开报告解析、摘要/签名检查、信任和法律效力（#206）。
+- 修复 #200 报告者提供的五页 PPTX 布局样例，覆盖 DrawingML 表格边界/内边距、SmartArt 水平文字、复杂形状和 PPTX Worker，并通过 Chromium、Firefox 与 WebKit。
+- 还原 #211 报告样例的 Excel 表格主题、表头和交替行样式，列宽拖拽在切换 sheet 后继续保留；同时增加 #203 异常合并信息和稳定 Office 列宽回归。
+- React、React Full、React Legacy 和 React Legacy Full 支持邮件附件嵌套预览，并覆盖恶意附件名、缓冲区替换、卸载、Worker 和 Object URL 清理（#212）。
+- 重新执行 #178 的 Office 365/WPS 单元格内嵌图、浮动图、TIFF、Worker 传输、双击大图和可选列宽拖拽回归。
+- DOC、RTF、PPTX、Markdown、Mermaid、Drawing、PlantUML 和 Typst 的文档内容到 HTML/DOM 边界统一加固；外链默认阻断，CSP 与 Trusted Types 在 Chromium、Firefox 和 WebKit 通过。
+- 冻结 84 个 npm 目标：83 个主线包使用 `3.0.0`，历史兼容包 `msdoc-viewer` 使用 `0.2.4`；外部自研引擎固定为 `@file-viewer/docx@0.3.28` 和 `styled-exceljs@0.21.4`。
+- 正式发布只提升冻结提交在构建、测试、安全门禁、冷安装、浏览器矩阵和 `npm publish --dry-run` 中通过的原始 tarball；发布阶段不重建、不临时增加稳定版本。
 
 ## `v2.4.0` 统一版本与冻结候选发布 — 2026-08-25
 

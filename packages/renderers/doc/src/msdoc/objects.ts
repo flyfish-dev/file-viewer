@@ -83,6 +83,14 @@ function isPrintableAnsi(bytes: Uint8Array): boolean {
   return true;
 }
 
+export function trimTrailingNullCharacters(value: string): string {
+  let end = value.length;
+  while (end > 0 && value.charCodeAt(end - 1) === 0) {
+    end -= 1;
+  }
+  return end === value.length ? value : value.slice(0, end);
+}
+
 function isProbablyPicturePath(value: string): boolean {
   const normalized = value.trim();
   if (!normalized) return false;
@@ -238,7 +246,7 @@ function readOptionalPictureName(pictureChunk: Uint8Array, picf: PicfHeader): Pi
   if (!length || offset + 1 + length > pictureChunk.length) return null;
   const raw = pictureChunk.subarray(offset + 1, offset + 1 + length);
   if (!isPrintableAnsi(raw)) return null;
-  const value = new TextDecoder('windows-1252').decode(raw).replace(/\0+$/g, '');
+  const value = trimTrailingNullCharacters(new TextDecoder('windows-1252').decode(raw));
   if (!isProbablyPicturePath(value)) {
     if (picf.mm !== MM_SHAPEFILE) return null;
   }
@@ -339,7 +347,11 @@ function extractEmbeddedBlipFromFbse(bytes: Uint8Array, offset: number, header: 
   const candidate = extractBlipPayload(bytes, embeddedBlipOffset, embeddedHeader);
   if (!candidate) return null;
   const fbseName = cbName > 0 && nameOffset + cbName <= payloadEnd
-    ? new TextDecoder('utf-16le').decode(bytes.subarray(nameOffset, nameOffset + Math.max(0, cbName - 2))).replace(/\0+$/g, '')
+    ? trimTrailingNullCharacters(
+        new TextDecoder('utf-16le').decode(
+          bytes.subarray(nameOffset, nameOffset + Math.max(0, cbName - 2)),
+        ),
+      )
     : '';
   return {
     ...candidate,

@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "streaming-media",
+  "packageName": "@file-viewer/capability-streaming-media",
+  "enhancesPackage": "@file-viewer/renderer-media",
+  "activation": { "kind": "side-effect-import", "import": "@file-viewer/capability-streaming-media", "export": "enableFileViewerStreamingMedia" },
+  "rendererIds": ["video"],
+  "formats": ["m3u8"],
+  "assets": { "rendererIds": [] },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive", "notices": [{ "packageName": "hls.js", "spdx": "Apache-2.0" }] },
+  "weight": "standard",
+  "profiles": ["all"]
+}

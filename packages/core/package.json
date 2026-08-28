@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/core",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
   "description": "Framework-neutral modular TypeScript core for File Viewer renderer orchestration, lifecycle APIs, search, zoom, print, and export",
@@ -62,6 +62,11 @@
       "import": "./dist/browser.js",
       "default": "./dist/browser.js"
     },
+    "./export": {
+      "types": "./dist/export.d.ts",
+      "import": "./dist/export.js",
+      "default": "./dist/export.js"
+    },
     "./print-mask": {
       "types": "./dist/print-mask.d.ts",
       "import": "./dist/print-mask.js",
@@ -87,6 +92,9 @@
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -b tsconfig.json --force && node scripts/fix-core-esm-extensions.mjs",
     "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "dompurify": "3.4.13"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "spreadsheet",
+  "packageName": "@file-viewer/renderer-spreadsheet",
+  "rendererIds": ["spreadsheet-openxml", "spreadsheet-dbf"],
+  "formats": ["xlsx", "xltx", "xlsm", "xlsb", "xls", "xlt", "xla", "xlam", "xltm", "csv", "tsv", "ods", "fods", "dbf"],
+  "assets": {
+    "rendererIds": ["spreadsheet-openxml"],
+    "packageName": "@file-viewer/assets-standard",
+    "bin": "file-viewer-assets-standard",
+    "apiExport": "installFileViewerStandardAssets",
+    "target": "public/file-viewer",
+    "copyGroups": ["spreadsheet-openxml"],
+    "copyMode": "profile-pack",
+    "receiptFilename": "file-viewer-assets-standard.receipt.json",
+    "notice": "Spreadsheet parsing Worker."
+  },
+  "license": { "spdx": "Apache-2.0", "policy": "permissive" },
+  "weight": "standard",
+  "profiles": ["standard", "office", "all"]
+}

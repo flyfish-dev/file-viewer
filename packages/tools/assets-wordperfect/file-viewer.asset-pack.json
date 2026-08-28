@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "wordperfect",
+  "packageName": "@file-viewer/assets-wordperfect",
+  "copyGroups": [
+    "office-wordperfect"
+  ],
+  "receiptFilename": "file-viewer-assets-wordperfect.receipt.json"
+}

@@ -1,0 +1,1382 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": {
+    "packageName": "@file-viewer/renderer-dicom",
+    "packageVersion": "3.0.0",
+    "packageManager": "pnpm",
+    "command": "pnpm --filter @file-viewer/renderer-dicom list --prod --depth Infinity --json"
+  },
+  "policy": {
+    "allowedSpdxExpressions": [
+      "(MIT AND Zlib)",
+      "(WTFPL OR MIT)",
+      "Apache-2.0",
+      "BSD-3-Clause",
+      "CC-BY-4.0",
+      "ISC",
+      "MIT",
+      "Python-2.0"
+    ],
+    "licenseSelections": {
+      "dompurify": {
+        "declaredLicense": "(MPL-2.0 OR Apache-2.0)",
+        "selectedLicense": "Apache-2.0",
+        "licenseFile": "LICENSE",
+        "note": "File Viewer elects DOMPurify's Apache-2.0 option; the installed LICENSE file is the complete Apache-2.0 text."
+      }
+    },
+    "closureIncludesPlatformOptionalDependencies": true
+  },
+  "nativeCodecBuild": {
+    "cornerstoneCodecsGitHead": "8634194b68ab43bde8f35fcc466a36d91ac700b4",
+    "note": "The npm wrapper license describes JavaScript glue; these entries describe native libraries statically linked into the shipped WebAssembly codecs.",
+    "components": [
+      {
+        "name": "CharLS",
+        "wrapperPackage": "@cornerstonejs/codec-charls@1.2.5",
+        "repository": "https://github.com/cornerstonejs/charls",
+        "sourceSha": "38d95d00671f4cddfa61f3f51eaf81b8bac34543",
+        "license": "BSD-3-Clause",
+        "linkedTarget": "charls",
+        "files": [
+          {
+            "path": "third-party/native-codecs/charls/LICENSE.md",
+            "sha256": "e293ccc327ee42f4e723e73aac39b23ffc40655cc6f8baec5c046f2e7d093695"
+          }
+        ]
+      },
+      {
+        "name": "libjpeg-turbo",
+        "wrapperPackage": "@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4",
+        "repository": "https://github.com/cornerstonejs/libjpeg-turbo",
+        "sourceSha": "dc4a93fab38b42d29b89a533409e012570180e28",
+        "license": "IJG AND BSD-3-Clause AND Zlib",
+        "linkedTarget": "turbojpeg-static",
+        "files": [
+          {
+            "path": "third-party/native-codecs/libjpeg-turbo/LICENSE.md",
+            "sha256": "ee1eaf194d5924b6360af8a6ba6a4e1554037091f7505943300cdeec65f1aebb"
+          },
+          {
+            "path": "third-party/native-codecs/libjpeg-turbo/README.ijg",
+            "sha256": "4b7b9f8c03bb8d60270dfd12684e70ab21e4abfd27e73905cd1a7c4cae6f5cdb"
+          }
+        ]
+      },
+      {
+        "name": "OpenJPEG",
+        "wrapperPackage": "@cornerstonejs/codec-openjpeg@1.3.2",
+        "repository": "https://github.com/cornerstonejs/openjpeg",
+        "sourceSha": "2d606701e8b7aa83f657d113c3367508e99bd12b",
+        "license": "BSD-2-Clause",
+        "linkedTarget": "openjp2",
+        "files": [
+          {
+            "path": "third-party/native-codecs/openjpeg/LICENSE",
+            "sha256": "a6af136f3e15038a666b61f376612a07d9a4e48cb7c01adbf3e33b3f14ab49b6"
+          }
+        ]
+      },
+      {
+        "name": "OpenJPH",
+        "wrapperPackage": "@cornerstonejs/codec-openjph@2.4.9",
+        "repository": "https://github.com/cornerstonejs/OpenJPH",
+        "sourceSha": "e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6",
+        "license": "BSD-2-Clause",
+        "linkedTarget": "openjphsimd",
+        "files": [
+          {
+            "path": "third-party/native-codecs/openjph/LICENSE",
+            "sha256": "5ddf5177863dfc9ab65fa129d587db651241f00e21ed2427b218bea997591f98"
+          }
+        ]
+      }
+    ]
+  },
+  "packages": [
+    {
+      "name": "@babel/runtime-corejs3",
+      "version": "7.29.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "The Babel Team (https://babel.dev/team)",
+      "repository": "https://github.com/babel/babel",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/calculate-suv",
+      "version": "1.0.3",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/calculate-suv",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/codec-charls",
+      "version": "1.2.5",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Chris Hafey <chafey@gmail.com>",
+      "repository": "https://github.com/chafey/charls-js",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/codec-libjpeg-turbo-8bit",
+      "version": "1.2.4",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/codecs",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/codec-openjpeg",
+      "version": "1.3.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/codecs",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/codec-openjph",
+      "version": "2.4.9",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "CornerstoneJS (original Chris Hafey)",
+      "repository": "https://github.com/cornerstonejs/codecs",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/core",
+      "version": "5.8.2",
+      "license": "MIT",
+      "direct": true,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/dicom-image-loader",
+      "version": "5.8.2",
+      "license": "MIT",
+      "direct": true,
+      "optional": false,
+      "firstParty": false,
+      "author": "@cornerstonejs (previously Chris Hafey)",
+      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/metadata",
+      "version": "5.8.2",
+      "license": "MIT",
+      "direct": true,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/utils",
+      "version": "5.8.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@file-viewer/core",
+      "version": "3.0.0",
+      "license": "Apache-2.0",
+      "direct": true,
+      "optional": false,
+      "firstParty": true,
+      "author": "Yu Wang <admin@flyfish.dev>",
+      "repository": "https://github.com/flyfish-dev/file-viewer-core",
+      "licenseFiles": [],
+      "noticeFiles": []
+    },
+    {
+      "name": "@file-viewer/renderer-dicom",
+      "version": "3.0.0",
+      "license": "Apache-2.0",
+      "direct": false,
+      "optional": false,
+      "firstParty": true,
+      "author": "Yu Wang <admin@flyfish.dev>",
+      "repository": "https://github.com/flyfish-dev/file-viewer",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@kitware/vtk.js",
+      "version": "36.4.1",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/Kitware/vtk-js",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@msgpack/msgpack",
+      "version": "2.8.0",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "The MessagePack community",
+      "repository": "https://github.com/msgpack/msgpack-javascript",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@oozcitak/dom",
+      "version": "2.0.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Ozgur Ozcitak <oozcitak@gmail.com>",
+      "repository": "https://github.com/oozcitak/dom",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@oozcitak/infra",
+      "version": "2.0.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Ozgur Ozcitak <oozcitak@gmail.com>",
+      "repository": "https://github.com/oozcitak/infra",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@oozcitak/url",
+      "version": "3.0.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Ozgur Ozcitak <oozcitak@gmail.com>",
+      "repository": "https://github.com/oozcitak/url",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@oozcitak/util",
+      "version": "10.0.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Ozgur Ozcitak <oozcitak@gmail.com>",
+      "repository": "https://github.com/oozcitak/util",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@rollup/rollup-linux-x64-gnu",
+      "version": "4.13.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": true,
+      "firstParty": false,
+      "author": "Rollup contributors",
+      "repository": "https://github.com/rollup/rollup",
+      "licenseFiles": [],
+      "noticeFiles": []
+    },
+    {
+      "name": "@types/trusted-types",
+      "version": "2.0.7",
+      "license": "MIT",
+      "direct": false,
+      "optional": true,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "@types/webxr",
+      "version": "0.5.5",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "adm-zip",
+      "version": "0.6.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Nasca Iacob <adm-zip@pm.me> (https://github.com/cthackers)",
+      "repository": "https://github.com/cthackers/adm-zip",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "argparse",
+      "version": "2.0.1",
+      "license": "Python-2.0",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/nodeca/argparse",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "autoprefixer",
+      "version": "10.5.4",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Andrey Sitnik <andrey@sitnik.es>",
+      "repository": "https://github.com/postcss/autoprefixer",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "balanced-match",
+      "version": "1.0.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Julian Gruber <mail@juliangruber.com> http://juliangruber.com",
+      "repository": "https://github.com/juliangruber/balanced-match",
+      "licenseFiles": [
+        "LICENSE.md"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "baseline-browser-mapping",
+      "version": "2.11.19",
+      "license": "Apache-2.0",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/web-platform-dx/baseline-browser-mapping",
+      "licenseFiles": [
+        "LICENSE.txt"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "brace-expansion",
+      "version": "1.1.18",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Julian Gruber <mail@juliangruber.com> http://juliangruber.com",
+      "repository": "https://github.com/juliangruber/brace-expansion",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "browserslist",
+      "version": "4.28.8",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Andrey Sitnik <andrey@sitnik.es>",
+      "repository": "https://github.com/browserslist/browserslist",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "caniuse-lite",
+      "version": "1.0.30001810",
+      "license": "CC-BY-4.0",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Ben Briggs <beneb.info@gmail.com> http://beneb.info",
+      "repository": "https://github.com/browserslist/caniuse-lite",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "comlink",
+      "version": "4.4.2",
+      "license": "Apache-2.0",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Surma <surma@google.com>",
+      "repository": "https://github.com/GoogleChromeLabs/comlink",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "commander",
+      "version": "9.2.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "TJ Holowaychuk <tj@vision-media.ca>",
+      "repository": "https://github.com/tj/commander.js",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "concat-map",
+      "version": "0.0.1",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "James Halliday <mail@substack.net> http://substack.net",
+      "repository": "https://github.com/substack/node-concat-map",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "core-js-pure",
+      "version": "3.50.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Denis Pushkarev <zloirock@zloirock.ru> http://zloirock.ru",
+      "repository": "https://github.com/zloirock/core-js",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "d3-array",
+      "version": "3.2.4",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock http://bost.ocks.org/mike",
+      "repository": "https://github.com/d3/d3-array",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "d3-color",
+      "version": "3.1.0",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock http://bost.ocks.org/mike",
+      "repository": "https://github.com/d3/d3-color",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "d3-format",
+      "version": "3.1.2",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock http://bost.ocks.org/mike",
+      "repository": "https://github.com/d3/d3-format",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "d3-interpolate",
+      "version": "3.0.1",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock http://bost.ocks.org/mike",
+      "repository": "https://github.com/d3/d3-interpolate",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "d3-scale",
+      "version": "4.0.2",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock https://bost.ocks.org/mike",
+      "repository": "https://github.com/d3/d3-scale",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "d3-time",
+      "version": "3.1.0",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock http://bost.ocks.org/mike",
+      "repository": "https://github.com/d3/d3-time",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "d3-time-format",
+      "version": "4.1.0",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock http://bost.ocks.org/mike",
+      "repository": "https://github.com/d3/d3-time-format",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "dcmjs",
+      "version": "0.52.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Steve Pieper",
+      "repository": "https://github.com/dcmjs-org/dcmjs",
+      "licenseFiles": [
+        "License.txt"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "dicom-parser",
+      "version": "1.8.21",
+      "license": "MIT",
+      "direct": true,
+      "optional": false,
+      "firstParty": false,
+      "author": "Chris Hafey",
+      "repository": "https://github.com/cornerstonejs/dicomParser",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "dompurify",
+      "version": "3.4.13",
+      "license": "Apache-2.0",
+      "declaredLicense": "(MPL-2.0 OR Apache-2.0)",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (https://cure53.de/)",
+      "repository": "https://github.com/cure53/DOMPurify",
+      "licenseFiles": [
+        "LICENSE",
+        "LICENSE-MPL"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "electron-to-chromium",
+      "version": "1.5.414",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Kilian Valkhof",
+      "repository": "https://github.com/Kilian/electron-to-chromium",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "es-errors",
+      "version": "1.3.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Jordan Harband <ljharb@gmail.com>",
+      "repository": "https://github.com/ljharb/es-errors",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "escalade",
+      "version": "3.2.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Luke Edwards <luke.edwards05@gmail.com> https://lukeed.com",
+      "repository": "https://github.com/lukeed/escalade",
+      "licenseFiles": [
+        "license"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "fast-deep-equal",
+      "version": "3.1.3",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Evgeny Poberezkin",
+      "repository": "https://github.com/epoberezkin/fast-deep-equal",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "fflate",
+      "version": "0.7.3",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Arjun Barrett <arjunbarrett@gmail.com>",
+      "repository": "https://github.com/101arrowz/fflate",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "fraction.js",
+      "version": "5.3.4",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Robert Eisele <robert@raw.org> https://raw.org/",
+      "repository": "https://github.com/rawify/Fraction.js",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "fs.realpath",
+      "version": "1.0.0",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+      "repository": "https://github.com/isaacs/fs.realpath",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "function-bind",
+      "version": "1.1.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Raynos <raynos2@gmail.com>",
+      "repository": "https://github.com/Raynos/function-bind",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "gl-matrix",
+      "version": "3.4.3",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/toji/gl-matrix",
+      "licenseFiles": [
+        "LICENSE.md"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "gl-matrix",
+      "version": "3.4.4",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/toji/gl-matrix",
+      "licenseFiles": [
+        "LICENSE.md"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "glob",
+      "version": "7.2.0",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+      "repository": "https://github.com/isaacs/node-glob",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "hasown",
+      "version": "2.0.4",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Jordan Harband <ljharb@gmail.com>",
+      "repository": "https://github.com/inspect-js/hasOwn",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "inflight",
+      "version": "1.0.6",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+      "repository": "https://github.com/npm/inflight",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "inherits",
+      "version": "2.0.4",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/isaacs/inherits",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "internmap",
+      "version": "2.0.3",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mike Bostock https://bost.ocks.org/mike",
+      "repository": "https://github.com/mbostock/internmap",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "interpret",
+      "version": "1.4.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Gulp Team <team@gulpjs.com> (http://gulpjs.com/)",
+      "repository": "https://github.com/gulpjs/interpret",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "iota-array",
+      "version": "1.0.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mikola Lysenko",
+      "repository": "https://github.com/mikolalysenko/iota-array",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "is-buffer",
+      "version": "1.1.6",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Feross Aboukhadijeh <feross@feross.org> http://feross.org/",
+      "repository": "https://github.com/feross/is-buffer",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "is-core-module",
+      "version": "2.16.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Jordan Harband <ljharb@gmail.com>",
+      "repository": "https://github.com/inspect-js/is-core-module",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "jpeg-lossless-decoder-js",
+      "version": "2.1.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/rii-mango/JPEGLosslessDecoderJS",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "js-yaml",
+      "version": "4.3.1",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Vladimir Zapparov <dervus.grim@gmail.com>",
+      "repository": "https://github.com/nodeca/js-yaml",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "lodash.clonedeep",
+      "version": "4.5.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+      "repository": "https://github.com/lodash/lodash",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "loglevel",
+      "version": "1.9.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Tim Perry <pimterry@gmail.com> http://tim-perry.co.uk",
+      "repository": "https://github.com/pimterry/loglevel",
+      "licenseFiles": [
+        "LICENSE-MIT"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "minimatch",
+      "version": "3.1.5",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me)",
+      "repository": "https://github.com/isaacs/minimatch",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "nanoid",
+      "version": "3.3.18",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Andrey Sitnik <andrey@sitnik.ru>",
+      "repository": "https://github.com/ai/nanoid",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "ndarray",
+      "version": "1.0.19",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Mikola Lysenko",
+      "repository": "https://github.com/mikolalysenko/ndarray",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "node-releases",
+      "version": "2.0.53",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Sergey Rubanov <chi187@gmail.com>",
+      "repository": "https://github.com/chicoxyzzy/node-releases",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "once",
+      "version": "1.4.0",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+      "repository": "https://github.com/isaacs/once",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "pako",
+      "version": "1.0.11",
+      "license": "(MIT AND Zlib)",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/nodeca/pako",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "pako",
+      "version": "2.1.0",
+      "license": "(MIT AND Zlib)",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/nodeca/pako",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "path-is-absolute",
+      "version": "1.0.1",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Sindre Sorhus <sindresorhus@gmail.com> sindresorhus.com",
+      "repository": "https://github.com/sindresorhus/path-is-absolute",
+      "licenseFiles": [
+        "license"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "path-parse",
+      "version": "1.0.7",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Javier Blanco <http://jbgutierrez.info>",
+      "repository": "https://github.com/jbgutierrez/path-parse",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "picocolors",
+      "version": "1.1.1",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Alexey Raspopov",
+      "repository": "https://github.com/alexeyraspopov/picocolors",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "postcss",
+      "version": "8.5.23",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Andrey Sitnik <andrey@sitnik.es>",
+      "repository": "https://github.com/postcss/postcss",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "postcss-value-parser",
+      "version": "4.2.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Bogdan Chadkin <trysound@yandex.ru>",
+      "repository": "https://github.com/TrySound/postcss-value-parser",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "rechoir",
+      "version": "0.6.2",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Tyler Kellen http://goingslowly.com/",
+      "repository": "https://github.com/tkellen/node-rechoir",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "resolve",
+      "version": "1.22.12",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "James Halliday <mail@substack.net> http://substack.net",
+      "repository": "https://github.com/browserify/resolve",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "seedrandom",
+      "version": "3.0.5",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "David Bau",
+      "repository": "https://github.com/davidbau/seedrandom",
+      "licenseFiles": [],
+      "noticeFiles": []
+    },
+    {
+      "name": "shelljs",
+      "version": "0.8.5",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/shelljs/shelljs",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "source-map-js",
+      "version": "1.2.1",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Valentin 7rulnik Semirulnik <v7rulnik@gmail.com>",
+      "repository": "https://github.com/7rulnik/source-map-js",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "spark-md5",
+      "version": "3.0.2",
+      "license": "(WTFPL OR MIT)",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "André Cruz <andremiguelcruz@msn.com>",
+      "repository": "https://github.com/satazor/js-spark-md5",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "supports-preserve-symlinks-flag",
+      "version": "1.0.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Jordan Harband <ljharb@gmail.com>",
+      "repository": "https://github.com/inspect-js/node-supports-preserve-symlinks-flag",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "update-browserslist-db",
+      "version": "1.3.1",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Andrey Sitnik <andrey@sitnik.es>",
+      "repository": "https://github.com/browserslist/update-db",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "utif",
+      "version": "3.1.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "photopea (https://github.com/photopea)",
+      "repository": "https://github.com/photopea/UTIF.js",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "uuid",
+      "version": "11.1.1",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/uuidjs/uuid",
+      "licenseFiles": [
+        "LICENSE.md"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "webworker-promise",
+      "version": "0.5.0",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "kwolfy <kwolfy11@gmail.com>",
+      "repository": "https://github.com/kwolfy/webworker-promise",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "wrappy",
+      "version": "1.0.2",
+      "license": "ISC",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+      "repository": "https://github.com/npm/wrappy",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "wslink",
+      "version": "2.5.0",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Kitware",
+      "repository": "https://github.com/kitware/wslink",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "xmlbuilder2",
+      "version": "4.0.3",
+      "license": "MIT",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Ozgur Ozcitak <oozcitak@gmail.com>",
+      "repository": "https://github.com/oozcitak/xmlbuilder2",
+      "licenseFiles": [
+        "LICENSE.txt"
+      ],
+      "noticeFiles": []
+    }
+  ]
+}

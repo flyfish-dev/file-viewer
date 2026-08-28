@@ -94,13 +94,62 @@
     <script>
       (function () {
         var params = new URLSearchParams(window.location.search)
-        var sampleUrl = params.get('url') || '/example/word.docx'
-        var sampleName = decodeURIComponent(sampleUrl.split(/[?#]/)[0].split('/').pop() || 'word.docx')
-        window.__fileViewerPresentationOptions = params.get('pptModuleUrl') ? {
-          pptModuleUrl: params.get('pptModuleUrl'),
-          pptWasmUrl: params.get('pptWasmUrl') || undefined,
-          pptFontUrl: params.get('pptFontUrl') || undefined,
-          pptWorkerUrl: params.get('pptWorkerUrl') || undefined,
+        function hasUrlControlCharacters(value) {
+          for (var index = 0; index < value.length; index += 1) {
+            var code = value.charCodeAt(index)
+            if (code <= 0x1f || code === 0x7f) {
+              return true
+            }
+          }
+          return false
+        }
+        function fileSourceUrl(value, fallback) {
+          var candidate = value || fallback
+          if (hasUrlControlCharacters(candidate)) {
+            return fallback
+          }
+          try {
+            var resolved = new URL(candidate, window.location.href)
+            if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') {
+              return fallback
+            }
+            return resolved.origin === window.location.origin
+              ? resolved.pathname + resolved.search + resolved.hash
+              : resolved.href
+          } catch (_) {
+            return fallback
+          }
+        }
+        function sameOriginUrl(value, fallback) {
+          var candidate = value || fallback
+          if (hasUrlControlCharacters(candidate)) {
+            return fallback
+          }
+          try {
+            var resolved = new URL(candidate, window.location.href)
+            if (resolved.origin !== window.location.origin ||
+                (resolved.protocol !== 'http:' && resolved.protocol !== 'https:')) {
+              return fallback
+            }
+            return resolved.pathname + resolved.search + resolved.hash
+          } catch (_) {
+            return fallback
+          }
+        }
+        var sampleUrl = fileSourceUrl(params.get('url'), '/example/word.docx')
+        var encodedSampleName = sampleUrl.split(/[?#]/)[0].split('/').pop() || 'word.docx'
+        var sampleName
+        try {
+          sampleName = decodeURIComponent(encodedSampleName)
+        } catch (_) {
+          sampleName = 'word.docx'
+        }
+        var pptModuleUrl = params.get('pptModuleUrl')
+        window.__fileViewerPresentationOptions = pptModuleUrl ? {
+          pptModuleUrl: sameOriginUrl(pptModuleUrl, '/file-viewer/vendor/ppt/index.mjs'),
+          pptWasmUrl: params.get('pptWasmUrl') ? sameOriginUrl(params.get('pptWasmUrl'), '/file-viewer/vendor/ppt/ppt.wasm') : undefined,
+          pptFontUrl: params.get('pptFontUrl') ? sameOriginUrl(params.get('pptFontUrl'), '/file-viewer/vendor/ppt/fonts') : undefined,
+          pptWorkerUrl: params.get('pptWorkerUrl') ? sameOriginUrl(params.get('pptWorkerUrl'), '/file-viewer/vendor/ppt/ppt.worker.js') : undefined,
           pptVirtualize: params.get('pptVirtualize') !== 'false'
         } : undefined
         var host = document.getElementById('viewer')

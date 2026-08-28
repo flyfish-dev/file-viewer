@@ -1,9 +1,9 @@
 {
   "name": "@file-viewer/renderer-word",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "private": false,
   "type": "module",
-  "description": "Standalone Word and compatible document renderer plugin for File Viewer powered by @file-viewer/docx, @file-viewer/doc, and RTF/ODF parsing.",
+  "description": "Standalone DOCX, DOC, and OpenDocument renderer for File Viewer; RTF parsing is an explicit opt-in capability.",
   "keywords": [
     "file-viewer",
     "renderer",
@@ -52,23 +52,29 @@
   },
   "files": [
     "dist",
+    "file-viewer.capability.json",
     "README.md",
     "README.en.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "build": "tsc -b tsconfig.json && node --test test/*.test.mjs",
+    "type-check": "tsc -b tsconfig.json",
+    "verify:rtf-security": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-rtf-link-policy.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:2.4.0",
-    "@file-viewer/doc": "workspace:2.4.0",
-    "@file-viewer/docx": "^0.3.27",
-    "jszip": "^3.10.1",
-    "rtf.js": "^3.0.9"
+    "@file-viewer/core": "workspace:3.0.0",
+    "@file-viewer/doc": "workspace:3.0.0",
+    "@file-viewer/docx": "0.3.28",
+    "jszip": "^3.10.1"
   },
   "devDependencies": {
+    "rtf.js": "^3.0.9",
+    "jsdom": "^27.4.0",
     "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
   },
   "license": "Apache-2.0"
 }

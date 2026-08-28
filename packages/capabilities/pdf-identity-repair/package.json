@@ -1,0 +1,48 @@
+{
+  "name": "@file-viewer/capability-pdf-identity-repair",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Opt-in malformed Identity CJK font repair for the File Viewer PDF renderer.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "file-viewer.capability.json",
+    "README.md",
+    "README.en.md"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/renderer-pdf": "workspace:3.0.0",
+    "pdf-lib": "1.17.1"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/capabilities/pdf-identity-repair"
+  },
+  "license": "Apache-2.0"
+}

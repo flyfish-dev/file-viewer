@@ -2,10 +2,10 @@
 
 # 自动生成的格式目录
 
-- 已注册扩展名：**221**
+- 已注册扩展名：**244**
 - 稳定扩展名：**221**
-- 实验扩展名：**0**
-- 预览链路：**32**
+- 实验扩展名：**23**
+- 预览链路：**34**
 
 | Renderer ID | 名称 | 扩展名 | 能力等级 | 状态 | 容器 | 已知限制 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -36,6 +36,8 @@
 | `ebook-fb2` | FictionBook | `.fb2` | structured | stable | FictionBook 2 XML | External network resources are not loaded |
 | `umd` | UMD | `.umd` | structured | stable | UMD | - |
 | `image` | Image | `.gif`, `.jpg`, `.jpeg`, `.bmp`, `.tiff`, `.tif`, `.png`, `.svg`, `.webp`, `.avif`, `.ico`, `.heic`, `.heif`, `.jxl` | high-fidelity | stable | Raster<br>SVG | - |
+| `dicom` | DICOM | `.dcm`, `.dicom` | basic | experimental | DICOM Part 10 | Local single-file and multi-frame viewing only; series assembly, PACS/DICOMweb, MPR, segmentation, measurement tools, and diagnostic-use claims are not included<br>Tested transfer syntaxes are Implicit/Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless |
+| `signature` | Digital signatures and evidence containers | `.p7m`, `.p7s`, `.p7c`, `.p7b`, `.pkcs7`, `.cms`, `.cmsc`, `.tsd`, `.tst`, `.tsq`, `.tsr`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.asc`, `.sig`, `.pgp`, `.gpg`, `.jws` | structured | experimental | CMS/PKCS#7<br>CAdES attributes<br>RFC 3161<br>RFC 5544<br>ASiC-S/E<br>RFC 4998<br>RFC 7515<br>OpenPGP RFC 9580 | Opt-in renderer; it is not added to the published preset-all/full compatibility closure<br>Cryptographic checks are reported separately from certificate/key trust, policy, qualified-signature status and legal validity<br>ASiC XML references and RFC 4998 renewal chains are structurally inspected; full XAdES and archival-policy validation are not claimed<br>OpenPGP private-key operations and automatic decryption are intentionally excluded |
 | `markdown` | Markdown | `.md`, `.markdown` | structured | stable | CommonMark/GFM | - |
 | `code` | Code and Text | `.txt`, `.json`, `.js`, `.mjs`, `.cjs`, `.css`, `.java`, `.py`, `.html`, `.htm`, `.jsx`, `.ts`, `.tsx`, `.xml`, `.log`, `.vue`, `.yaml`, `.yml`, `.ini`, `.sh`, `.bash`, `.sql`, `.go`, `.rs`, `.php`, `.c`, `.cpp`, `.cc`, `.h`, `.hpp`, `.cs`, `.diff`, `.patch`, `.bundle`, `.bdl`, `.jsonc`, `.json5`, `.ipynb`, `.toml`, `.proto`, `.hcl`, `.tex`, `.gv`, `.http`, `.react`, `.rb`, `.swift`, `.kt` | structured | stable | Plain text<br>source code<br>Git bundle | - |
 | `video` | Video | `.mp4`, `.webm`, `.m3u8` | high-fidelity | stable | Browser media | Codec support follows the browser |

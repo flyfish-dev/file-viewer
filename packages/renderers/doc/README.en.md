@@ -21,6 +21,10 @@ const rendered = renderMsDoc(parsed)
 container.innerHTML = `<style>${rendered.css}</style><div class="msdoc-root">${rendered.html}</div>`
 ```
 
+External links and linked images are blocked by default. Trusted integrations
+can opt in separately with `externalLinkPolicy: 'allow'` and
+`externalResourcePolicy: 'allow'`; embedded images and bookmarks keep working.
+
 The package also exports `parseMsDocToHtml`, `mountMsDoc`, `createMsDocViewer`, and `MsDocWorkerClient`.
 
 ## Scope

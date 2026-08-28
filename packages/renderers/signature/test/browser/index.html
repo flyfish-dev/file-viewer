@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; require-trusted-types-for 'script'; trusted-types file-viewer-test"
+    />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Issue 206 signature renderer verification</title>
+  </head>
+  <body>
+    <main id="target"></main>
+    <script type="module" src="./main.mjs"></script>
+  </body>
+</html>

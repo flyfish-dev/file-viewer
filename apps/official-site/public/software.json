@@ -4,23 +4,16 @@
   "@type": "SoftwareSourceCode",
   "@id": "https://file-viewer.app/#software",
   "name": "File Viewer",
-  "alternateName": [
-    "File Viewer by Flyfish",
-    "Flyfish File Viewer",
-    "Flyfish Viewer"
-  ],
-  "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 57 npm targets, 221 registered extensions (221 stable, 0 experimental), and 32 preview pipelines.",
-  "version": "2.4.0",
+  "alternateName": ["File Viewer by Flyfish", "Flyfish File Viewer", "Flyfish Viewer"],
+  "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 84 npm targets, 244 registered extensions (221 stable, 23 experimental), and 34 preview pipelines.",
+  "version": "3.0.0",
   "codeRepository": "https://github.com/flyfish-dev/file-viewer",
   "issueTracker": "https://github.com/flyfish-dev/file-viewer/issues",
   "license": "https://spdx.org/licenses/Apache-2.0",
-  "programmingLanguage": [
-    "TypeScript",
-    "JavaScript"
-  ],
+  "programmingLanguage": ["TypeScript", "JavaScript"],
   "runtimePlatform": "Web Browser",
   "applicationCategory": "DeveloperApplication",
-  "downloadUrl": "https://github.com/flyfish-dev/file-viewer/releases/tag/v2.4.0",
+  "downloadUrl": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0",
   "softwareRequirements": "A modern web browser; self-hosted Worker, WASM, font, and vendor assets for offline deployments",
   "author": {
     "@type": "Person",

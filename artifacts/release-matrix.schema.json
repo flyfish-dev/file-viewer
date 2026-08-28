@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/flyfish-dev/file-viewer/releases/download/v2.4.0/release-matrix.schema.json",
+  "$id": "https://github.com/flyfish-dev/file-viewer/releases/download/v3.0.0/release-matrix.schema.json",
   "title": "Flyfish File Viewer ecosystem release matrix",
   "type": "object",
   "additionalProperties": false,
@@ -226,6 +226,11 @@
         },
         "reason": {
           "type": "string"
+        },
+        "tarballBaseName": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "maxLength": 214
         }
       }
     },
@@ -487,6 +492,8 @@
         "rendererId",
         "extension",
         "sample",
+        "sampleRoot",
+        "gate",
         "smokeSurfaces",
         "assertions"
       ],
@@ -505,6 +512,19 @@
         },
         "sample": {
           "type": "string"
+        },
+        "sampleRoot": {
+          "type": "string",
+          "enum": [
+            "demo",
+            "source"
+          ]
+        },
+        "gate": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "smokeSurfaces": {
           "$ref": "#/$defs/stringArray"
@@ -556,6 +576,8 @@
         "rendererId",
         "extension",
         "sample",
+        "sampleRoot",
+        "gate",
         "assertions"
       ],
       "properties": {
@@ -596,6 +618,19 @@
         },
         "sample": {
           "type": "string"
+        },
+        "sampleRoot": {
+          "type": "string",
+          "enum": [
+            "demo",
+            "source"
+          ]
+        },
+        "gate": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "assertions": {
           "$ref": "#/$defs/stringArray"

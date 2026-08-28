@@ -229,9 +229,6 @@ export {
   unregisterFileViewerZoomProvider,
 } from './features/document/dom';
 export {
-  buildFileViewerRenderedHtmlDocument,
-  buildExportHtmlDocument,
-  collectDocumentStyles,
   prepareFileViewerRenderedContentForSnapshot,
   inlineFileViewerBlobUrlsInHtml,
   replaceFileViewerCanvasWithImages,
@@ -248,6 +245,11 @@ export {
   formatCssPixels,
   getElementPrintPageSize,
 } from './output/printLayout';
+export {
+  assertFileViewerMermaidSourceHasNoExternalResources,
+  sanitizeFileViewerSvgCss,
+  sanitizeFileViewerSvgResources,
+} from './security/svgResources';
 export type {
   ApplyPrintPageSizeOptions,
   BuildPrintPageStyleOptions,
@@ -1081,7 +1083,7 @@ export type { CreateViewerOptions } from './viewer/createViewer';
 export type {
   BuildExportHtmlDocumentOptions,
   BuildFileViewerRenderedHtmlDocumentOptions,
-} from './output/export';
+} from './exportDocument';
 export type {
   CreateFileViewerWorkerControllerOptions,
   FileViewerWorkerContext,

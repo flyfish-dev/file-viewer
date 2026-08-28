@@ -65,6 +65,14 @@ export const DEMO_FILE_ICON_PALETTES = Object.freeze({
     light: { surface: '#EEF8F9', border: '#BEDFE2', accent: '#0A6976', label: '#0A6976' },
     dark: { surface: '#173037', border: '#31575E', accent: '#78C9D1', label: '#A3DCE1' }
   },
+  medical: {
+    light: { surface: '#EEF8F8', border: '#BFDEDE', accent: '#0B6970', label: '#0B6970' },
+    dark: { surface: '#173033', border: '#31575A', accent: '#79CDD0', label: '#A6E1E3' }
+  },
+  signature: {
+    light: { surface: '#F5F3FC', border: '#D6CCEC', accent: '#5B35A8', label: '#5B35A8' },
+    dark: { surface: '#27243A', border: '#4E476B', accent: '#BFAAF0', label: '#D6CAF5' }
+  },
   text: {
     light: { surface: '#F6F7EE', border: '#D7DAB9', accent: '#5D681D', label: '#5D681D' },
     dark: { surface: '#292F21', border: '#4E5838', accent: '#BCCB89', label: '#D1DBAB' }

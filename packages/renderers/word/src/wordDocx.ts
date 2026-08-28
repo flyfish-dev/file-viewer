@@ -35,7 +35,7 @@ const DOCX_WORKER_UNSAFE_PROTOCOLS = new Set(['file:', 'about:', 'data:'])
 const DOCX_MIN_SCALE = 0.24
 const DOCX_MAX_SCALE = 3
 const DOCX_ZOOM_STEP = 0.15
-const DOCX_VENDOR_ASSET_VERSION = '0.3.27'
+const DOCX_VENDOR_ASSET_VERSION = '0.3.28'
 const ZIP_SIGNATURE_PK = 0x504b
 const WORDPROCESSINGML_NAMESPACE = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 const OFFICE_RELATIONSHIP_NAMESPACE =
@@ -69,8 +69,10 @@ type DocxLibraryImport = DocxLibrary & {
 
 type DocxRenderAsync = typeof renderAsync
 type DocxExternalLinkPolicy = NonNullable<FileViewerDocxOptions['externalLinkPolicy']>
+type DocxExternalResourcePolicy = NonNullable<FileViewerDocxOptions['externalResourcePolicy']>
 type DocxRenderOptions = Partial<Options> & {
   externalLinkPolicy: DocxExternalLinkPolicy
+  externalResourcePolicy: DocxExternalResourcePolicy
 }
 
 // Modern bundlers expose the ESM named exports, while some legacy webpack
@@ -127,7 +129,7 @@ export const renderDocxWithHeaderFooterFallback = async (
       throw error
     }
 
-    target.innerHTML = ''
+    target.replaceChildren()
     await render(buffer, target, undefined, {
       ...options,
       renderHeaders: false,
@@ -419,11 +421,13 @@ export const createDocxOptions = (
   }
 
   const externalLinkPolicy = docxOptions?.externalLinkPolicy ?? 'block'
+  const externalResourcePolicy = docxOptions?.externalResourcePolicy ?? 'block'
   const options: DocxRenderOptions = {
     useWorker,
     breakPages: usePagedLayout,
     ignoreLastRenderedPageBreak: docxOptions?.ignoreLastRenderedPageBreak ?? !usePagedLayout,
     externalLinkPolicy,
+    externalResourcePolicy,
     darkMode,
     progress: event => {
       if (event.phase === 'render' || event.phase === 'layout' || event.phase === 'done') {
@@ -869,7 +873,7 @@ function prepareDocxCloneForExport(target: HTMLDivElement) {
  */
 export default async function(buffer: ArrayBuffer, target: HTMLDivElement, context?: FileRenderContext): Promise<AppWrapper> {
   assertValidDocxPackage(buffer, context)
-  target.innerHTML = ''
+  target.replaceChildren()
 
   let hasNotifiedProgressiveRender = false
   const notifyProgressiveRender = () => {
@@ -926,7 +930,7 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
       delete target.dataset.docxDarkMode
       delete target.dataset.docxHeaderFooterFallback
       delete target.dataset.docxPageBackground
-      target.innerHTML = ''
+      target.replaceChildren()
     }
   }
 }

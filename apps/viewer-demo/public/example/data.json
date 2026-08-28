@@ -1,19 +1,34 @@
 {
   "name": "file-viewer",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "environment": {
     "framework": "vue3",
     "viewerSite": "https://demo.file-viewer.app",
     "docs": "https://doc.file-viewer.app"
   },
   "packages": {
-    "vue3": "@file-viewer/vue3@2.4.0",
-    "vue2": "@file-viewer/vue2.7@2.4.0"
+    "vue3": "@file-viewer/vue3@3.0.0",
+    "vue2": "@file-viewer/vue2.7@3.0.0"
   },
   "features": [
     {
       "group": "document",
-      "extensions": ["doc", "docx", "docm", "dot", "dotx", "dotm", "rtf", "odt", "ppt", "pptx", "pdf", "ofd", "typ", "typst"],
+      "extensions": [
+        "doc",
+        "docx",
+        "docm",
+        "dot",
+        "dotx",
+        "dotm",
+        "rtf",
+        "odt",
+        "ppt",
+        "pptx",
+        "pdf",
+        "ofd",
+        "typ",
+        "typst"
+      ],
       "lazyLoaded": true,
       "defaultScale": "fit-width",
       "presentationRoutes": {
@@ -23,12 +38,59 @@
     },
     {
       "group": "drawing",
-      "extensions": ["dxf", "dwg", "dwf", "dwfx", "xps", "geojson", "kml", "gpx", "shp", "excalidraw", "drawio", "dio"],
-      "notes": ["CAD uses @flyfish-dev/cad-viewer", "DWG uses Worker + LibreDWG WASM", "DWF/DWFx/XPS use native dwf-viewer", "Excalidraw uses a roughjs SVG fallback", "draw.io uses diagrams.net GraphViewer"]
+      "extensions": [
+        "dxf",
+        "dwg",
+        "dwf",
+        "dwfx",
+        "xps",
+        "geojson",
+        "kml",
+        "gpx",
+        "shp",
+        "excalidraw",
+        "drawio",
+        "dio"
+      ],
+      "notes": [
+        "CAD uses @flyfish-dev/cad-viewer",
+        "DWG uses Worker + LibreDWG WASM",
+        "DWF/DWFx/XPS use native dwf-viewer",
+        "Excalidraw uses a roughjs SVG fallback",
+        "draw.io uses diagrams.net GraphViewer"
+      ]
     },
     {
       "group": "model",
-      "extensions": ["glb", "gltf", "obj", "stl", "ply", "fbx", "dae", "3ds", "3mf", "amf", "usd", "usda", "usdc", "usdz", "kmz", "pcd", "wrl", "vrml", "xyz", "vtk", "vtp", "step", "stp", "iges", "igs", "ifc", "3dm"],
+      "extensions": [
+        "glb",
+        "gltf",
+        "obj",
+        "stl",
+        "ply",
+        "fbx",
+        "dae",
+        "3ds",
+        "3mf",
+        "amf",
+        "usd",
+        "usda",
+        "usdc",
+        "usdz",
+        "kmz",
+        "pcd",
+        "wrl",
+        "vrml",
+        "xyz",
+        "vtk",
+        "vtp",
+        "step",
+        "stp",
+        "iges",
+        "igs",
+        "ifc",
+        "3dm"
+      ],
       "renderer": "three.js",
       "lazyLoaded": true
     },
@@ -40,13 +102,47 @@
     },
     {
       "group": "source",
-      "extensions": ["js", "ts", "tsx", "vue", "react", "json", "jsonc", "json5", "ipynb", "yaml", "toml", "proto", "hcl", "tex", "gv", "http", "sql", "rb", "swift", "kt"],
+      "extensions": [
+        "js",
+        "ts",
+        "tsx",
+        "vue",
+        "react",
+        "json",
+        "jsonc",
+        "json5",
+        "ipynb",
+        "yaml",
+        "toml",
+        "proto",
+        "hcl",
+        "tex",
+        "gv",
+        "http",
+        "sql",
+        "rb",
+        "swift",
+        "kt"
+      ],
       "renderer": "highlight.js",
       "executeHtml": false
     },
     {
       "group": "asset-data",
-      "extensions": ["ttf", "otf", "woff", "woff2", "psd", "ai", "eps", "sqlite", "wasm", "parquet", "avro", "webarchive"],
+      "extensions": [
+        "ttf",
+        "otf",
+        "woff",
+        "woff2",
+        "psd",
+        "ai",
+        "eps",
+        "sqlite",
+        "wasm",
+        "parquet",
+        "avro",
+        "webarchive"
+      ],
       "renderer": "native-or-structured-parser",
       "lazyLoaded": true
     }
