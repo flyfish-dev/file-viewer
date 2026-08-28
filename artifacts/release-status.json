@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-28T02:41:03.534Z",
+  "generatedAt": "2026-08-28T04:49:57.867Z",
   "version": "3.0.0",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -10,14 +10,14 @@
     "policy": "private-complete-original-workspace",
     "authoritativeCommit": "245b625e44cdd8e0e4478b90335583e0ca7a59ef",
     "localBranch": "main",
-    "localCommit": "245b625e44cdd8e0e4478b90335583e0ca7a59ef",
-    "inSync": true,
+    "localCommit": "8ce86d480533c2d772ba0a73724aa19cb6029f44",
+    "inSync": false,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
     "branch": "main",
-    "commit": "245b625e44cdd8e0e4478b90335583e0ca7a59ef",
-    "shortCommit": "245b625e",
+    "commit": "8ce86d480533c2d772ba0a73724aa19cb6029f44",
+    "shortCommit": "8ce86d480",
     "dirty": false
   },
   "sourceRemote": {
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "17f6c19417cf87826d1e51c3d4e2162d10f96515",
+      "hash": "f50754c71813fe1fd114772cdd34f64a04eeaa70",
       "error": ""
     },
     "gitee": {
@@ -45,7 +45,7 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "eda59cf36f7d6560497198d634164a356cd58172",
+    "referenceTree": "1bb2a2adf14cb327bd8888aed2a23ff8fb7bf1b4",
     "giteeTree": "7f13b7419673ae4bb39251b6eadd29c5fc219223",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
@@ -959,21 +959,33 @@
     }
   ],
   "gaps": [
+    "local HEAD 8ce86d480 does not match origin/main 245b625e44cd",
     "GitHub Release v3.0.0 missing"
   ],
   "gapSummary": {
-    "total": 1,
+    "total": 2,
     "externalBlockers": 1,
-    "localActionable": 0,
+    "localActionable": 1,
     "byChannel": {
+      "source-worktree": 1,
       "github-release": 1
     },
     "externalBlockerChannels": [
       "github-release"
     ],
-    "localActionableChannels": []
+    "localActionableChannels": [
+      "source-worktree"
+    ]
   },
   "gapDetails": [
+    {
+      "id": "source-worktree-local-head-8ce86d480-does-not-match-origin-main-245b625e44cd",
+      "channel": "source-worktree",
+      "scope": "local",
+      "externalBlocker": false,
+      "message": "local HEAD 8ce86d480 does not match origin/main 245b625e44cd",
+      "nextAction": "Commit or clean the local source worktree, then rerun the release audit."
+    },
     {
       "id": "github-release-github-release-v3.0.0-missing",
       "channel": "github-release",
@@ -984,6 +996,7 @@
     }
   ],
   "nextActions": [
-    "Create or update the GitHub Release assets, then rerun `pnpm release:public`."
+    "Create or update the GitHub Release assets, then rerun `pnpm release:public`.",
+    "Commit and push the local source/public repository changes, then regenerate the release status report."
   ]
 }

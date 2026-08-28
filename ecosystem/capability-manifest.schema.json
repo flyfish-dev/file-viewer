@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://file-viewer.app/schemas/capability-manifest.schema.json",
+  "title": "File Viewer renderer capability manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "packageName",
+    "rendererIds",
+    "formats",
+    "assets",
+    "license",
+    "weight",
+    "profiles"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "packageName": { "type": "string", "pattern": "^@file-viewer/(?:renderer|capability)-[a-z0-9-]+$" },
+    "enhancesPackage": { "type": "string", "pattern": "^@file-viewer/renderer-[a-z0-9-]+$" },
+    "activation": {
+      "type": "object",
+      "required": ["kind", "import"],
+      "properties": {
+        "kind": { "enum": ["renderer-export", "side-effect-import", "loader-registration"] },
+        "import": { "type": "string", "minLength": 1 },
+        "export": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "rendererIds": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "formats": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+$" },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "assets": {
+      "type": "object",
+      "required": ["rendererIds"],
+      "properties": {
+        "rendererIds": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "uniqueItems": true
+        },
+        "packageName": { "type": "string", "minLength": 1 },
+        "installerPackageName": { "type": "string", "minLength": 1 },
+        "bin": { "type": "string", "minLength": 1 },
+        "apiExport": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "copyGroups": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "uniqueItems": true
+        },
+        "copyMode": { "enum": ["profile-pack", "capability-pack", "renderer-groups"] },
+        "receiptFilename": { "type": "string", "pattern": "^[a-z0-9.-]+\\.json$" },
+        "notice": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "license": {
+      "type": "object",
+      "required": ["spdx", "policy"],
+      "properties": {
+        "spdx": { "type": "string", "minLength": 1 },
+        "policy": { "enum": ["permissive", "separately-licensed", "review-required"] },
+        "notices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["packageName", "spdx"],
+            "properties": {
+              "packageName": { "type": "string", "minLength": 1 },
+              "spdx": { "type": "string", "minLength": 1 },
+              "notice": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "weight": { "enum": ["light", "standard", "heavy"] },
+    "profiles": {
+      "type": "array",
+      "items": { "enum": ["lite", "standard", "office", "engineering", "all"] },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false
+}

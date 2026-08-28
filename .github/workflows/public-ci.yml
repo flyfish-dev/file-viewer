@@ -69,6 +69,8 @@ jobs:
 
       - name: Verify untrusted renderer markup sanitization
         run: pnpm verify:renderer-sanitization
+        env:
+          FILE_VIEWER_RTF_BROWSERS: chromium
 
       - name: Browser smoke
         run: pnpm verify:browser-smoke

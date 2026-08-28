@@ -57,9 +57,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/copy-assets/dist/cli.js && pnpm test",
+    "build": "tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/copy-assets/dist/cli.js && pnpm test",
     "stage-assets": "node scripts/stage-assets.mjs",
-    "prepack": "pnpm stage-assets && tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/copy-assets/dist/cli.js",
+    "prepack": "pnpm stage-assets && tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/copy-assets/dist/cli.js",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "test": "node --test test/*.test.mjs"
   },

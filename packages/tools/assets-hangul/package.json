@@ -23,7 +23,7 @@
     "@file-viewer/asset-installer": "workspace:3.0.0"
   },
   "scripts": {
-    "stage-assets": "node ../../../scripts/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-hangul",
+    "stage-assets": "node ../../build-support/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-hangul",
     "prepack": "pnpm stage-assets"
   },
   "engines": {

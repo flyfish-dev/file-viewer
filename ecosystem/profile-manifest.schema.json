@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://file-viewer.app/schemas/profile-manifest.schema.json",
+  "title": "File Viewer profile manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "packageName",
+    "stability",
+    "assetPackageName",
+    "capabilityPackages",
+    "excludedCapabilities"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "packageName": { "type": "string", "pattern": "^@file-viewer/preset-[a-z0-9-]+$" },
+    "stability": { "enum": ["experimental", "frozen"] },
+    "assetPackageName": { "type": "string", "pattern": "^@file-viewer/assets-[a-z0-9-]+$" },
+    "capabilityPackages": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^@file-viewer/(?:renderer|capability)-[a-z0-9-]+$" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "excludedCapabilities": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+      "uniqueItems": true
+    },
+    "migration": {
+      "type": "object",
+      "required": ["policy", "legacyFullFrozen", "cliDefaultProfile", "fullDefaultReady", "blockers"],
+      "properties": {
+        "policy": { "const": "layered" },
+        "legacyFullFrozen": { "const": true },
+        "cliDefaultProfile": { "const": "standard" },
+        "fullDefaultReady": { "type": "boolean" },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "packageName", "cutoverMaxPackedBytes", "reason"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+              "packageName": { "type": "string", "minLength": 1 },
+              "cutoverMaxPackedBytes": { "type": "integer", "minimum": 1 },
+              "reason": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

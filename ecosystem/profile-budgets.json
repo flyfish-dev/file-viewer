@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "profiles": {
+    "standard": {
+      "packageName": "@file-viewer/preset-standard",
+      "frameworkPackage": "@file-viewer/web",
+      "maxPackageCount": 98,
+      "maxPackedClosureBytes": 30408704,
+      "maxUnpackedClosureBytes": 101711872,
+      "maxStaticAssetBytes": 24117248,
+      "forbiddenPackages": [
+        "@file-viewer/ppt",
+        "@file-viewer/renderer-3d",
+        "@file-viewer/renderer-cad",
+        "@file-viewer/renderer-dicom",
+        "@file-viewer/renderer-signature",
+        "@file-viewer/renderer-drawing",
+        "@file-viewer/renderer-eda",
+        "@file-viewer/renderer-geo",
+        "@file-viewer/renderer-hangul",
+        "@file-viewer/renderer-iwork",
+        "@file-viewer/renderer-ppt",
+        "@file-viewer/renderer-presentation",
+        "@file-viewer/renderer-typst",
+        "@file-viewer/renderer-wordperfect"
+      ],
+      "forbiddenPackagePatterns": [
+        "(?:^|[-/])dicom(?:$|[-/])",
+        "(?:^|[-/])ohif(?:$|[-/])",
+        "(?:^|[-/])cornerstone(?:$|[-/])"
+      ]
+    }
+  },
+  "standardQuickstartBudgets": {
+    "web": {
+      "maxPackageCount": 99,
+      "maxPackedClosureBytes": 35651584,
+      "maxUnpackedClosureBytes": 118489088,
+      "maxStaticAssetBytes": 24117248
+    },
+    "vue3": {
+      "maxPackageCount": 127,
+      "maxPackedClosureBytes": 37748736,
+      "maxUnpackedClosureBytes": 147849216,
+      "maxStaticAssetBytes": 24117248
+    },
+    "vue2.7": {
+      "maxPackageCount": 114,
+      "maxPackedClosureBytes": 36700160,
+      "maxUnpackedClosureBytes": 131072000,
+      "maxStaticAssetBytes": 24117248
+    },
+    "vue2.6": {
+      "maxPackageCount": 101,
+      "maxPackedClosureBytes": 32505856,
+      "maxUnpackedClosureBytes": 106954752,
+      "maxStaticAssetBytes": 24117248
+    },
+    "react": {
+      "maxPackageCount": 101,
+      "maxPackedClosureBytes": 31457280,
+      "maxUnpackedClosureBytes": 103809024,
+      "maxStaticAssetBytes": 24117248
+    },
+    "react-legacy": {
+      "maxPackageCount": 104,
+      "maxPackedClosureBytes": 31457280,
+      "maxUnpackedClosureBytes": 103809024,
+      "maxStaticAssetBytes": 24117248
+    },
+    "svelte": {
+      "maxPackageCount": 121,
+      "maxPackedClosureBytes": 32505856,
+      "maxUnpackedClosureBytes": 110100480,
+      "maxStaticAssetBytes": 24117248
+    },
+    "jquery": {
+      "maxPackageCount": 101,
+      "maxPackedClosureBytes": 32505856,
+      "maxUnpackedClosureBytes": 106954752,
+      "maxStaticAssetBytes": 24117248
+    }
+  },
+  "legacyFullReference": {
+    "source": "https://registry.npmjs.org/",
+    "version": "2.4.0",
+    "manager": "npm",
+    "managerVersion": "11.17.0",
+    "node": "v24.19.0",
+    "measuredAt": "2026-08-26",
+    "packages": {
+      "@file-viewer/web-full": {
+        "packageCount": 274,
+        "packedClosureBytes": 310928143,
+        "unpackedClosureBytes": 957831702,
+        "staticAssetBytes": 448964222
+      },
+      "@file-viewer/vue3-full": {
+        "packageCount": 299,
+        "packedClosureBytes": 248191084,
+        "unpackedClosureBytes": 799795813,
+        "staticAssetBytes": 283909230
+      },
+      "@file-viewer/vue2.7-full": {
+        "packageCount": 288,
+        "packedClosureBytes": 247911563,
+        "unpackedClosureBytes": 785380869,
+        "staticAssetBytes": 283909230
+      },
+      "@file-viewer/vue2.6-full": {
+        "packageCount": 276,
+        "packedClosureBytes": 243481684,
+        "unpackedClosureBytes": 764651576,
+        "staticAssetBytes": 283909230
+      },
+      "@file-viewer/react-full": {
+        "packageCount": 278,
+        "packedClosureBytes": 243943007,
+        "unpackedClosureBytes": 769246740,
+        "staticAssetBytes": 283909230
+      },
+      "@file-viewer/react-legacy-full": {
+        "packageCount": 281,
+        "packedClosureBytes": 243484176,
+        "unpackedClosureBytes": 765093629,
+        "staticAssetBytes": 283909230
+      },
+      "@file-viewer/svelte-full": {
+        "packageCount": 294,
+        "packedClosureBytes": 243833193,
+        "unpackedClosureBytes": 766800123,
+        "staticAssetBytes": 283909230
+      },
+      "@file-viewer/jquery-full": {
+        "packageCount": 276,
+        "packedClosureBytes": 243036925,
+        "unpackedClosureBytes": 762923185,
+        "staticAssetBytes": 283909230
+      }
+    }
+  },
+  "legacyFullPackageBudgets": {
+    "@file-viewer/web-full": {
+      "maxPackageCount": 320,
+      "maxPackedClosureBytes": 400000000,
+      "maxUnpackedClosureBytes": 1200000000,
+      "maxStaticAssetBytes": 570000000
+    },
+    "@file-viewer/vue3-full": {
+      "maxPackageCount": 345,
+      "maxPackedClosureBytes": 320000000,
+      "maxUnpackedClosureBytes": 1050000000,
+      "maxStaticAssetBytes": 370000000
+    },
+    "@file-viewer/vue2.7-full": {
+      "maxPackageCount": 335,
+      "maxPackedClosureBytes": 320000000,
+      "maxUnpackedClosureBytes": 1030000000,
+      "maxStaticAssetBytes": 370000000
+    },
+    "@file-viewer/vue2.6-full": {
+      "maxPackageCount": 325,
+      "maxPackedClosureBytes": 315000000,
+      "maxUnpackedClosureBytes": 1000000000,
+      "maxStaticAssetBytes": 370000000
+    },
+    "@file-viewer/react-full": {
+      "maxPackageCount": 325,
+      "maxPackedClosureBytes": 315000000,
+      "maxUnpackedClosureBytes": 1010000000,
+      "maxStaticAssetBytes": 370000000
+    },
+    "@file-viewer/react-legacy-full": {
+      "maxPackageCount": 330,
+      "maxPackedClosureBytes": 315000000,
+      "maxUnpackedClosureBytes": 1010000000,
+      "maxStaticAssetBytes": 370000000
+    },
+    "@file-viewer/svelte-full": {
+      "maxPackageCount": 340,
+      "maxPackedClosureBytes": 315000000,
+      "maxUnpackedClosureBytes": 1010000000,
+      "maxStaticAssetBytes": 370000000
+    },
+    "@file-viewer/jquery-full": {
+      "maxPackageCount": 325,
+      "maxPackedClosureBytes": 315000000,
+      "maxUnpackedClosureBytes": 1000000000,
+      "maxStaticAssetBytes": 370000000
+    }
+  },
+  "standardEntryChunkBudgets": {
+    "web": {
+      "maxEntryBytes": 923023,
+      "maxEntryGzipBytes": 331656,
+      "maxJsChunkCount": 73
+    },
+    "vue3": {
+      "maxEntryBytes": 1308313,
+      "maxEntryGzipBytes": 442332,
+      "maxJsChunkCount": 81
+    },
+    "react": {
+      "maxEntryBytes": 922000,
+      "maxEntryGzipBytes": 330070,
+      "maxJsChunkCount": 73
+    }
+  }
+}

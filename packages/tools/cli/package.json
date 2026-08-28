@@ -60,9 +60,9 @@
   "scripts": {
     "stage-catalog": "node scripts/stage-catalog.mjs",
     "verify-catalog": "node scripts/stage-catalog.mjs --check",
-    "build": "node scripts/stage-catalog.mjs && tsc -b tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/cli/dist/cli.js packages/tools/cli/dist/copy-assets.js && node --test test/*.test.mjs",
+    "build": "node scripts/stage-catalog.mjs && tsc -b tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/cli/dist/cli.js packages/tools/cli/dist/copy-assets.js && node --test test/*.test.mjs",
     "type-check": "tsc -b tsconfig.json",
-    "prepack": "node scripts/stage-catalog.mjs && tsc -b tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/cli/dist/cli.js packages/tools/cli/dist/copy-assets.js"
+    "prepack": "node scripts/stage-catalog.mjs && tsc -b tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/cli/dist/cli.js packages/tools/cli/dist/copy-assets.js"
   },
   "dependencies": {
     "@file-viewer/asset-installer": "workspace:3.0.0"

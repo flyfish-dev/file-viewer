@@ -27,9 +27,9 @@
     "README.en.md"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/assets-standard/dist/cli.js && node --test test/*.test.mjs",
+    "build": "pnpm stage-assets && tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/assets-standard/dist/cli.js && node --test test/*.test.mjs",
     "stage-assets": "node scripts/stage-assets.mjs",
-    "prepack": "pnpm stage-assets && tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/assets-standard/dist/cli.js",
+    "prepack": "pnpm stage-assets && tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/assets-standard/dist/cli.js",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "test": "node --test test/*.test.mjs"
   },

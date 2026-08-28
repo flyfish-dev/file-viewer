@@ -1,0 +1,1192 @@
+{
+  "schemaVersion": 1,
+  "organization": "flyfish-dev",
+  "sourceBranch": "main",
+  "corePackage": {
+    "packageName": "@file-viewer/core",
+    "description": "Framework-neutral modular TypeScript file preview core with format registry, renderer orchestration, lifecycle APIs, search, zoom, print, and export.",
+    "visibility": "public-source",
+    "repository": "file-viewer-core",
+    "sourceRepository": "https://github.com/flyfish-dev/file-viewer-core",
+    "github": "https://github.com/flyfish-dev/file-viewer-core",
+    "gitee": "https://gitee.com/flyfish-dev/file-viewer-core",
+    "aggregateRepository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
+    "corePolicy": "framework-neutral-low-level-core-only",
+    "note": "Core source is public. The private Gitea repository remains the complete aggregate workspace with release automation, integration history, and priority support for sponsors.",
+    "releaseVersion": "3.0.0"
+  },
+  "utilityPackages": [
+    {
+      "id": "asset-installer",
+      "packageName": "@file-viewer/asset-installer",
+      "releaseVersion": "3.0.0",
+      "description": "Transactional installer shared by independently shipped capability asset packs.",
+      "packageDir": "packages/tools/asset-installer",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-cad",
+      "packageName": "@file-viewer/assets-cad",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in cad capability asset pack.",
+      "packageDir": "packages/tools/assets-cad",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-typst",
+      "packageName": "@file-viewer/assets-typst",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in typst capability asset pack.",
+      "packageDir": "packages/tools/assets-typst",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-model",
+      "packageName": "@file-viewer/assets-model",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in model capability asset pack.",
+      "packageDir": "packages/tools/assets-model",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-drawing",
+      "packageName": "@file-viewer/assets-drawing",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in drawing capability asset pack.",
+      "packageDir": "packages/tools/assets-drawing",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-iwork",
+      "packageName": "@file-viewer/assets-iwork",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in iwork capability asset pack.",
+      "packageDir": "packages/tools/assets-iwork",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-ppt",
+      "packageName": "@file-viewer/assets-ppt",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in ppt capability asset pack.",
+      "packageDir": "packages/tools/assets-ppt",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-hangul",
+      "packageName": "@file-viewer/assets-hangul",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in hangul capability asset pack.",
+      "packageDir": "packages/tools/assets-hangul",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-wordperfect",
+      "packageName": "@file-viewer/assets-wordperfect",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in wordperfect capability asset pack.",
+      "packageDir": "packages/tools/assets-wordperfect",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-data",
+      "packageName": "@file-viewer/assets-data",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in data capability asset pack.",
+      "packageDir": "packages/tools/assets-data",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "thumbnail",
+      "packageName": "@file-viewer/thumbnail",
+      "description": "Browser thumbnail generation with embedded preview extraction, renderer-native capture, bounded concurrency, cancellation, and streaming results.",
+      "packageDir": "packages/thumbnail",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "copy-assets-cli",
+      "packageName": "file-viewer-copy-assets",
+      "releaseVersion": "3.0.0",
+      "description": "Official npx CLI for copying File Viewer Worker, WASM, font, and vendor assets into self-hosted web projects.",
+      "packageDir": "packages/tools/copy-assets",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-standard",
+      "packageName": "@file-viewer/assets-standard",
+      "releaseVersion": "3.0.0",
+      "description": "Frozen self-hosted asset payload for the standard profile without specialist or legacy-heavy resources.",
+      "packageDir": "packages/tools/assets-standard",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "integration-cli",
+      "packageName": "@file-viewer/cli",
+      "releaseVersion": "3.0.0",
+      "description": "Lightweight planner, installer, asset manager, doctor, and verifier for modular File Viewer profile integration.",
+      "packageDir": "packages/tools/cli",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "historicalPackages": [
+        "create-file-viewer",
+        "file-viewer-cli"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "capability-pdf-identity-repair",
+      "packageName": "@file-viewer/capability-pdf-identity-repair",
+      "releaseVersion": "3.0.0",
+      "description": "Explicit PDF Identity CJK font repair capability backed by pdf-lib.",
+      "packageDir": "packages/capabilities/pdf-identity-repair",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-pptx-charts",
+      "packageName": "@file-viewer/capability-pptx-charts",
+      "releaseVersion": "3.0.0",
+      "description": "Explicit PPTX chart runtime capability backed by Billboard and D3.",
+      "packageDir": "packages/capabilities/pptx-charts",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-mermaid",
+      "packageName": "@file-viewer/capability-mermaid",
+      "releaseVersion": "3.0.0",
+      "description": "Opt-in Mermaid diagrams embedded in Markdown previews.",
+      "packageDir": "packages/capabilities/mermaid",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-midi",
+      "packageName": "@file-viewer/capability-midi",
+      "releaseVersion": "3.0.0",
+      "description": "Opt-in MIDI inspection for the media renderer.",
+      "packageDir": "packages/capabilities/midi",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-rtf",
+      "packageName": "@file-viewer/capability-rtf",
+      "releaseVersion": "3.0.0",
+      "description": "Opt-in RTF rendering for the Word renderer.",
+      "packageDir": "packages/capabilities/rtf",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-streaming-media",
+      "packageName": "@file-viewer/capability-streaming-media",
+      "releaseVersion": "3.0.0",
+      "description": "Opt-in HLS fallback for the media renderer.",
+      "packageDir": "packages/capabilities/streaming-media",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-text-tools",
+      "packageName": "@file-viewer/capability-text-tools",
+      "releaseVersion": "3.0.0",
+      "description": "Opt-in side-by-side patch rendering and Git bundle inspection.",
+      "packageDir": "packages/capabilities/text-tools",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-drawio-official",
+      "packageName": "@file-viewer/capability-drawio-official",
+      "releaseVersion": "3.0.0",
+      "description": "Explicit opt-in for the large official diagrams.net same-page viewer runtime.",
+      "packageDir": "packages/capabilities/drawio-official",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    }
+  ],
+  "renderers": [
+    {
+      "id": "pdf",
+      "packageName": "@file-viewer/renderer-pdf",
+      "description": "Standalone PDF renderer plugin for File Viewer with PDF.js page rendering, navigation, search, zoom, print, export, worker, CMap, WASM, and font asset support.",
+      "packageDir": "packages/renderers/pdf",
+      "repository": "file-viewer-renderer-pdf",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "ofd",
+      "packageName": "@file-viewer/renderer-ofd",
+      "description": "Standalone OFD renderer plugin for File Viewer with DLTech21/ofd.js parsing, page rendering, zoom, print, export, and offline vendor support.",
+      "packageDir": "packages/renderers/ofd",
+      "repository": "file-viewer-renderer-ofd",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types",
+        "vendor"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "presentation",
+      "packageName": "@file-viewer/renderer-presentation",
+      "releaseVersion": "3.0.0",
+      "description": "Standalone presentation renderer plugin for File Viewer with binary PPT native-WASM and PPTX Worker paths, progressive rendering, zoom, print, and export support.",
+      "packageDir": "packages/renderers/presentation",
+      "repository": "file-viewer-renderer-presentation",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "presentation-pptx",
+      "packageName": "@file-viewer/renderer-pptx",
+      "releaseVersion": "3.0.0",
+      "description": "Standalone modern OpenXML PowerPoint renderer without the legacy binary-PPT runtime or static assets.",
+      "packageDir": "packages/renderers/presentation-pptx",
+      "repository": "file-viewer-renderer-pptx",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "presentation-ppt",
+      "packageName": "@file-viewer/renderer-ppt",
+      "releaseVersion": "3.0.0",
+      "description": "Optional legacy binary-PPT renderer with its separately licensed runtime, Worker, WASM, and font asset line.",
+      "packageDir": "packages/renderers/presentation-ppt",
+      "repository": "file-viewer-renderer-ppt",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "doc",
+      "packageName": "@file-viewer/doc",
+      "description": "Browser-native legacy MS-DOC parser and HTML renderer extracted from the public msdoc-viewer 0.2.0 line, maintained as the docjs source package.",
+      "packageDir": "packages/renderers/doc",
+      "repository": "docjs",
+      "github": "https://github.com/flyfish-dev/docjs",
+      "gitee": "https://gitee.com/flyfish-dev/docjs",
+      "entryFormats": [
+        "esm",
+        "types",
+        "worker"
+      ],
+      "historicalPackages": [
+        "msdoc-viewer"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "word",
+      "packageName": "@file-viewer/renderer-word",
+      "releaseVersion": "3.0.0",
+      "description": "Standalone Word and compatible document renderer plugin for File Viewer with @file-viewer/docx, @file-viewer/doc, RTF, ODT, worker assets, zoom, print, and export support.",
+      "packageDir": "packages/renderers/word",
+      "repository": "file-viewer-renderer-word",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "spreadsheet",
+      "packageName": "@file-viewer/renderer-spreadsheet",
+      "releaseVersion": "3.0.0",
+      "description": "Standalone spreadsheet renderer plugin for File Viewer with styled-exceljs parsing, e-virt-table virtual rendering, Office/WPS embedded images, on-demand TIFF decoding, optional worker assets, sheet tabs, zoom, and resizable columns.",
+      "packageDir": "packages/renderers/spreadsheet",
+      "repository": "file-viewer-renderer-spreadsheet",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types",
+        "worker"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "drawing",
+      "packageName": "@file-viewer/renderer-drawing",
+      "description": "Standalone Draw.io and Excalidraw renderer plugin for File Viewer with official Excalidraw SVG export, diagrams.net offline viewer support, zoom, print, and HTML export.",
+      "packageDir": "packages/renderers/drawing",
+      "repository": "file-viewer-renderer-drawing",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "iwork",
+      "packageName": "@file-viewer/renderer-iwork",
+      "releaseVersion": "3.0.0",
+      "description": "Offline Apple Pages, Numbers and Keynote renderer with modern Snappy/IWA and iWork 09 XML/APXL parser paths, module Worker isolation, static scenes, saved formula values, notes, and explicit encrypted-file detection.",
+      "packageDir": "packages/renderers/iwork",
+      "repository": "file-viewer-renderer-iwork",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types",
+        "worker"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "wordperfect",
+      "packageName": "@file-viewer/renderer-wordperfect",
+      "description": "Signature-routed WordPerfect WPD/WP/WP5/WP6 renderer with a bounded fallback and an explicit libwpd/librevenge WASM licensing boundary.",
+      "packageDir": "packages/renderers/wordperfect",
+      "repository": "file-viewer-renderer-wordperfect",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "hangul",
+      "packageName": "@file-viewer/renderer-hangul",
+      "description": "Offline HWP v5 CFB and HWPX ZIP/XML renderer with sections, text, tables, BinData, and explicit encrypted/distribution-document detection.",
+      "packageDir": "packages/renderers/hangul",
+      "repository": "file-viewer-renderer-hangul",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "model",
+      "packageName": "@file-viewer/renderer-3d",
+      "description": "Standalone 3D model renderer plugin for File Viewer with Three.js loaders, WebGL preview, orbit controls, fit-to-view, grid, axes, wireframe, and auto-rotate support.",
+      "packageDir": "packages/renderers/3d",
+      "repository": "file-viewer-renderer-3d",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "mindmap",
+      "packageName": "@file-viewer/renderer-mindmap",
+      "description": "Standalone XMind and mind map renderer plugin for File Viewer with modern/classic XMind parsing, draggable canvas, zoom, sheet navigation, and node outline support.",
+      "packageDir": "packages/renderers/mindmap",
+      "repository": "file-viewer-renderer-mindmap",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "cad",
+      "packageName": "@file-viewer/renderer-cad",
+      "description": "Standalone CAD renderer plugin for File Viewer with DWG, DXF, DWF, DWFx, XPS, worker/WASM assets, layer controls, zoom, and native DWF rendering support.",
+      "packageDir": "packages/renderers/cad",
+      "repository": "file-viewer-renderer-cad",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "typst",
+      "packageName": "@file-viewer/renderer-typst",
+      "description": "Standalone Typst renderer plugin for File Viewer with browser WASM compilation, paged SVG rendering, zoom, print, export, timeout, and offline WASM asset support.",
+      "packageDir": "packages/renderers/typst",
+      "repository": "file-viewer-renderer-typst",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "archive",
+      "packageName": "@file-viewer/renderer-archive",
+      "description": "Standalone archive renderer plugin for File Viewer with libarchive worker, ZIP/TAR/GZIP fallback, IndexedDB caching, nested document previews, memory limits, and offline WASM assets.",
+      "packageDir": "packages/renderers/archive",
+      "repository": "file-viewer-renderer-archive",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "email",
+      "packageName": "@file-viewer/renderer-email",
+      "description": "Standalone email renderer plugin for File Viewer with EML, MSG, MBOX, HTML/text/header views, attachments, download, and nested attachment previews.",
+      "packageDir": "packages/renderers/email",
+      "repository": "file-viewer-renderer-email",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "ebook",
+      "packageName": "@file-viewer/renderer-epub",
+      "description": "Standalone EPUB, FictionBook 2 and UMD reader renderer plugin with table-of-contents navigation, metadata, footnotes, embedded resources, and offline preview support.",
+      "packageDir": "packages/renderers/ebook",
+      "repository": "file-viewer-renderer-epub",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "text",
+      "packageName": "@file-viewer/renderer-text",
+      "description": "Standalone code, text, and Markdown renderer plugin for File Viewer with highlight.js language chunks, safe source rendering, Markdown reading surfaces, and unified zoom support.",
+      "packageDir": "packages/renderers/text",
+      "repository": "file-viewer-renderer-text",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "image",
+      "packageName": "@file-viewer/renderer-image",
+      "description": "Standalone image renderer plugin for File Viewer with native image decoding, HEIC/HEIF conversion, lightbox preview, and unified zoom support.",
+      "packageDir": "packages/renderers/image",
+      "repository": "file-viewer-renderer-image",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "dicom",
+      "packageName": "@file-viewer/renderer-dicom",
+      "description": "Opt-in local DICOM Part 10 renderer plugin for File Viewer with bounded single-file and multi-frame viewing, local codecs, and no DICOMweb runtime dependency.",
+      "packageDir": "packages/renderers/dicom",
+      "repository": "file-viewer-renderer-dicom",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "signature",
+      "packageName": "@file-viewer/renderer-signature",
+      "description": "Opt-in browser-local renderer for bounded CMS/CAdES, RFC 3161/5544, ASiC, RFC 4998 evidence records, JWS and rPGP Worker/WASM inspection.",
+      "packageDir": "packages/renderers/signature",
+      "repository": "file-viewer-renderer-signature",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "media",
+      "packageName": "@file-viewer/renderer-media",
+      "description": "Standalone audio and video renderer plugin for File Viewer with native media playback, HLS fallback, MIDI parsing, and offline-friendly lazy loading.",
+      "packageDir": "packages/renderers/media",
+      "repository": "file-viewer-renderer-media",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "geo",
+      "packageName": "@file-viewer/renderer-geo",
+      "description": "Standalone geospatial renderer plugin for File Viewer with GeoJSON, KML, GPX, and SHP parsing, CRS normalization, offline MapLibre overlay rendering, SVG fallback, and lazy format-specific dependencies.",
+      "packageDir": "packages/renderers/geo",
+      "repository": "file-viewer-renderer-geo",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "data",
+      "packageName": "@file-viewer/renderer-data",
+      "description": "Standalone data asset renderer plugin for File Viewer with PSD, SQLite, Parquet, Avro, WASM, font, AI/EPS, and WebArchive previews plus SQL.js WASM asset support.",
+      "packageDir": "packages/renderers/data",
+      "repository": "file-viewer-renderer-data",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "eda-layout",
+      "packageName": "@file-viewer/eda-layout",
+      "description": "Framework-neutral EDA layout engine package with GDSII record parsing, WebGL draw-batch primitives, and OASIS WASM/WebGL upgrade boundaries.",
+      "packageDir": "packages/renderers/eda-layout",
+      "repository": "eda-layout",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "eda-orcad",
+      "packageName": "@file-viewer/eda-orcad",
+      "description": "Framework-neutral OrCAD and Allegro binary inspection engine package with CFB detection, safe string extraction, and WASM parser upgrade boundaries.",
+      "packageDir": "packages/renderers/eda-orcad",
+      "repository": "eda-orcad",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "geometry-engine",
+      "packageName": "@file-viewer/geometry-engine",
+      "description": "Framework-neutral geometry kernel boundary package for STEP, IGES, IFC, 3DM, and BREP route detection without bundling OpenCascade, web-ifc, or rhino3dm into core.",
+      "packageDir": "packages/renderers/geometry-engine",
+      "repository": "geometry-engine",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "eda",
+      "packageName": "@file-viewer/renderer-eda",
+      "description": "Standalone EDA renderer plugin for File Viewer with OLB, DRA, GDSII, and OASIS structure previews plus SVG/WebGL layout preview for standard GDSII.",
+      "packageDir": "packages/renderers/eda",
+      "repository": "file-viewer-renderer-eda",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "pptx",
+      "packageName": "@file-viewer/pptx",
+      "description": "Native PPTX preview engine for File Viewer with worker-based PowerPoint parsing, slide rendering, themes, media, and charts.",
+      "packageDir": "packages/renderers/pptx",
+      "repository": "pptxjs",
+      "github": "https://github.com/flyfish-dev/pptxjs",
+      "gitee": "https://gitee.com/flyfish-dev/pptxjs",
+      "entryFormats": [
+        "esm",
+        "types",
+        "worker"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    }
+  ],
+  "presets": [
+    {
+      "id": "all",
+      "packageName": "@file-viewer/preset-all",
+      "releaseVersion": "3.0.0",
+      "description": "Full renderer preset for Flyfish File Viewer, preserving the frozen common-format matrix while heavy renderers are split into standalone packages.",
+      "packageDir": "packages/presets/all",
+      "repository": "file-viewer-preset-all",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "lite",
+      "packageName": "@file-viewer/preset-lite",
+      "description": "Lite renderer preset for Flyfish File Viewer with text, Markdown, code, image, audio, and video preview lines.",
+      "packageDir": "packages/presets/lite",
+      "repository": "file-viewer-preset-lite",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "standard",
+      "packageName": "@file-viewer/preset-standard",
+      "releaseVersion": "3.0.0",
+      "description": "Stable common-format preset for File Viewer v3 without specialist engineering, iWork, DICOM, legacy-PPT, or other heavyweight capability lines.",
+      "packageDir": "packages/presets/standard",
+      "repository": "file-viewer-preset-standard",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types",
+        "profile-manifest"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "office",
+      "packageName": "@file-viewer/preset-office",
+      "releaseVersion": "3.0.0",
+      "description": "Office renderer preset for Flyfish File Viewer with PDF, Word, spreadsheet/DBF, presentation, Apple iWork, WordPerfect, Hangul, OFD, and OpenDocument preview lines.",
+      "packageDir": "packages/presets/office",
+      "repository": "file-viewer-preset-office",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true
+    },
+    {
+      "id": "engineering",
+      "packageName": "@file-viewer/preset-engineering",
+      "description": "Engineering renderer preset for Flyfish File Viewer with CAD, 3D, drawing, mind map, geospatial, Typst, EDA, archive, and data asset preview lines.",
+      "packageDir": "packages/presets/engineering",
+      "repository": "file-viewer-preset-engineering",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "vite-plugin",
+      "packageName": "@file-viewer/vite-plugin",
+      "releaseVersion": "3.0.0",
+      "description": "Vite plugin for File Viewer on-demand renderer assembly, virtual renderer modules, renderer chunk planning, and offline worker/WASM asset deployment.",
+      "packageDir": "packages/presets/vite-plugin",
+      "repository": "file-viewer-vite-plugin",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true
+    }
+  ],
+  "compatibilityPackages": [
+    {
+      "id": "vue3-compat-scoped",
+      "packageName": "@flyfish-group/file-viewer3",
+      "targetPackage": "@file-viewer/vue3",
+      "packageDir": "packages/compat/vue3-scoped",
+      "publicSource": false,
+      "releaseArtifact": {
+        "includeTarball": true
+      },
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "vue3-compat-unscoped",
+      "packageName": "file-viewer3",
+      "targetPackage": "@file-viewer/vue3",
+      "packageDir": "packages/compat/vue3-unscoped",
+      "publicSource": false,
+      "releaseArtifact": {
+        "includeTarball": false,
+        "duplicateOf": "@flyfish-group/file-viewer3",
+        "reason": "The open-source main repository keeps one Vue 3 compatibility tarball to avoid duplicate package bodies; the unscoped alias is still published to npm."
+      },
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "vue27-compat-scoped",
+      "packageName": "@flyfish-group/file-viewer",
+      "targetPackage": "@file-viewer/vue2.7",
+      "packageDir": "packages/compat/vue2.7",
+      "publicSource": false,
+      "releaseArtifact": {
+        "includeTarball": true
+      },
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "web-compat",
+      "packageName": "@flyfish-group/file-viewer-web",
+      "targetPackage": "@file-viewer/web",
+      "packageDir": "packages/compat/web",
+      "publicSource": false,
+      "releaseArtifact": {
+        "includeTarball": true
+      },
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "react-compat",
+      "packageName": "@flyfish-group/file-viewer-react",
+      "targetPackage": "@file-viewer/react",
+      "packageDir": "packages/compat/react",
+      "publicSource": false,
+      "releaseArtifact": {
+        "includeTarball": true
+      },
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "msdoc-viewer-compat",
+      "packageName": "msdoc-viewer",
+      "targetPackage": "@file-viewer/doc",
+      "packageDir": "packages/compat/msdoc-viewer",
+      "publicSource": true,
+      "releaseVersion": "0.2.4",
+      "releaseArtifact": {
+        "includeTarball": true
+      }
+    },
+    {
+      "id": "create-file-viewer",
+      "packageName": "create-file-viewer",
+      "targetPackage": "@file-viewer/cli",
+      "packageDir": "packages/compat/create-file-viewer",
+      "publicSource": true,
+      "releaseVersion": "3.0.0",
+      "releaseArtifact": {
+        "includeTarball": true
+      }
+    },
+    {
+      "id": "file-viewer-cli",
+      "packageName": "file-viewer-cli",
+      "targetPackage": "@file-viewer/cli",
+      "packageDir": "packages/compat/file-viewer-cli",
+      "publicSource": true,
+      "releaseVersion": "3.0.0",
+      "releaseArtifact": {
+        "includeTarball": true,
+        "tarballBaseName": "file-viewer-cli-carrier"
+      }
+    }
+  ],
+  "wrappers": [
+    {
+      "id": "web",
+      "framework": "Vanilla JS / Pure Web",
+      "packageName": "@file-viewer/web",
+      "description": "Framework-free modular File Viewer package with Custom Element, ESM APIs, and a script-tag IIFE.",
+      "packageDir": "packages/components/web",
+      "repository": "file-viewer-web",
+      "github": "https://github.com/flyfish-dev/file-viewer-web",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-web",
+      "entryFormats": [
+        "esm",
+        "types",
+        "iife"
+      ],
+      "historicalPackages": [
+        "@flyfish-group/file-viewer-web"
+      ],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "web-full",
+      "framework": "Vanilla JS / Pure Web Full",
+      "packageName": "@file-viewer/web-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full Vanilla JS and Web Component package with frozen standard profile enabled by default for CDN, script-tag, Custom Element, and imperative mounting.",
+      "packageDir": "packages/components/web-full",
+      "repository": "file-viewer-web-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-web-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-web-full",
+      "entryFormats": [
+        "esm",
+        "types",
+        "iife"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/web"
+    },
+    {
+      "id": "vue3",
+      "framework": "Vue 3",
+      "packageName": "@file-viewer/vue3",
+      "description": "Production-ready Vue 3 file viewer component powered by @file-viewer/core, with toolbar, search, zoom, watermark, print, and export support.",
+      "packageDir": "packages/components/vue3",
+      "repository": "file-viewer-vue3",
+      "github": "https://github.com/flyfish-dev/file-viewer-vue3",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue3",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [
+        "@flyfish-group/file-viewer3",
+        "file-viewer3"
+      ],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "vue3-full",
+      "framework": "Vue 3 Full",
+      "packageName": "@file-viewer/vue3-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full Vue 3 component package with frozen standard profile enabled by default for one-component, one-line complete preview integration.",
+      "packageDir": "packages/components/vue3-full",
+      "repository": "file-viewer-vue3-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-vue3-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue3-full",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/vue3"
+    },
+    {
+      "id": "vue2.7",
+      "framework": "Vue 2.7",
+      "packageName": "@file-viewer/vue2.7",
+      "description": "Production-ready Vue 2.7 file viewer component powered by @file-viewer/core for teams maintaining modern Vue 2 applications.",
+      "packageDir": "packages/components/vue2.7",
+      "repository": "file-viewer-vue2.7",
+      "github": "https://github.com/flyfish-dev/file-viewer-vue2.7",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.7",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [
+        "@flyfish-group/file-viewer"
+      ],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "vue2.7-full",
+      "framework": "Vue 2.7 Full",
+      "packageName": "@file-viewer/vue2.7-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full Vue 2.7 component package with frozen standard profile enabled by default for common-format preview coverage in modern Vue 2 projects.",
+      "packageDir": "packages/components/vue2.7-full",
+      "repository": "file-viewer-vue2.7-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-vue2.7-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.7-full",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/vue2.7"
+    },
+    {
+      "id": "vue2.6",
+      "framework": "Vue 2.6",
+      "packageName": "@file-viewer/vue2.6",
+      "description": "Production-ready Vue 2.6 file viewer component powered by @file-viewer/core for legacy Vue applications.",
+      "packageDir": "packages/components/vue2.6",
+      "repository": "file-viewer-vue2.6",
+      "github": "https://github.com/flyfish-dev/file-viewer-vue2.6",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.6",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "vue2.6-full",
+      "framework": "Vue 2.6 Full",
+      "packageName": "@file-viewer/vue2.6-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full Vue 2.6 component package with frozen standard profile enabled by default for legacy Vue applications that need the frozen common-format matrix.",
+      "packageDir": "packages/components/vue2.6-full",
+      "repository": "file-viewer-vue2.6-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-vue2.6-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.6-full",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/vue2.6"
+    },
+    {
+      "id": "react",
+      "framework": "React 18/19",
+      "packageName": "@file-viewer/react",
+      "description": "Production-ready React file viewer component powered by @file-viewer/core, with hooks, document actions, search, zoom, print, and export.",
+      "packageDir": "packages/components/react",
+      "repository": "file-viewer-react",
+      "github": "https://github.com/flyfish-dev/file-viewer-react",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-react",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [
+        "@flyfish-group/file-viewer-react"
+      ],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "react-full",
+      "framework": "React 18/19 Full",
+      "packageName": "@file-viewer/react-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full React component package with frozen standard profile enabled by default while preserving the standard React handle and hook experience.",
+      "packageDir": "packages/components/react-full",
+      "repository": "file-viewer-react-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-react-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-react-full",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/react"
+    },
+    {
+      "id": "react-legacy",
+      "framework": "React 16.8/17",
+      "packageName": "@file-viewer/react-legacy",
+      "description": "Production-ready React 16.8/17 file viewer component powered by @file-viewer/core for long-lived React applications.",
+      "packageDir": "packages/components/react-legacy",
+      "repository": "file-viewer-react-legacy",
+      "github": "https://github.com/flyfish-dev/file-viewer-react-legacy",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-react-legacy",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "react-legacy-full",
+      "framework": "React 16.8/17 Full",
+      "packageName": "@file-viewer/react-legacy-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full React 16.8/17 component package with frozen standard profile enabled by default for long-lived React applications.",
+      "packageDir": "packages/components/react-legacy-full",
+      "repository": "file-viewer-react-legacy-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-react-legacy-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-react-legacy-full",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/react-legacy"
+    },
+    {
+      "id": "jquery",
+      "framework": "jQuery",
+      "packageName": "@file-viewer/jquery",
+      "description": "jQuery file viewer plugin powered by @file-viewer/core for legacy and mixed frontend stacks.",
+      "packageDir": "packages/components/jquery",
+      "repository": "file-viewer-jquery",
+      "github": "https://github.com/flyfish-dev/file-viewer-jquery",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-jquery",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "jquery-full",
+      "framework": "jQuery Full",
+      "packageName": "@file-viewer/jquery-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full jQuery plugin package with frozen standard profile enabled by default for legacy and mixed frontend stacks.",
+      "packageDir": "packages/components/jquery-full",
+      "repository": "file-viewer-jquery-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-jquery-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-jquery-full",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/jquery"
+    },
+    {
+      "id": "svelte",
+      "framework": "Svelte",
+      "packageName": "@file-viewer/svelte",
+      "description": "Production-ready Svelte file viewer component powered by @file-viewer/core with the same viewer options and document actions.",
+      "packageDir": "packages/components/svelte",
+      "repository": "file-viewer-svelte",
+      "github": "https://github.com/flyfish-dev/file-viewer-svelte",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-svelte",
+      "entryFormats": [
+        "svelte-component",
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "svelte-full",
+      "framework": "Svelte Full",
+      "packageName": "@file-viewer/svelte-full",
+      "releaseVersion": "3.0.0",
+      "description": "Full Svelte component and action package with frozen standard profile enabled by default and the same viewer actions as the standard package.",
+      "packageDir": "packages/components/svelte-full",
+      "repository": "file-viewer-svelte-full",
+      "github": "https://github.com/flyfish-dev/file-viewer-svelte-full",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer-svelte-full",
+      "entryFormats": [
+        "svelte-component",
+        "esm",
+        "types"
+      ],
+      "historicalPackages": [],
+      "flavor": "full",
+      "basePackage": "@file-viewer/svelte"
+    }
+  ]
+}

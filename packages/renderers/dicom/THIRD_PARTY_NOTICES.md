@@ -31,7 +31,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### (MIT AND Zlib)
 
-- `pako@1.0.11` — https://github.com/nodeca/pako
+- `pako@1.0.5` — https://github.com/nodeca/pako
 - `pako@2.1.0` — https://github.com/nodeca/pako
 
 ### (WTFPL OR MIT)
@@ -66,7 +66,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `d3-scale@4.0.2` — https://github.com/d3/d3-scale
 - `d3-time@3.1.0` — https://github.com/d3/d3-time
 - `d3-time-format@4.1.0` — https://github.com/d3/d3-time-format
-- `electron-to-chromium@1.5.414` — https://github.com/Kilian/electron-to-chromium
+- `electron-to-chromium@1.5.413` — https://github.com/Kilian/electron-to-chromium
 - `fs.realpath@1.0.0` — https://github.com/isaacs/fs.realpath
 - `glob@7.2.0` — https://github.com/isaacs/node-glob
 - `inflight@1.0.6` — https://github.com/npm/inflight
@@ -119,7 +119,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `is-buffer@1.1.6` — https://github.com/feross/is-buffer
 - `is-core-module@2.16.2` — https://github.com/inspect-js/is-core-module
 - `jpeg-lossless-decoder-js@2.1.2` — https://github.com/rii-mango/JPEGLosslessDecoderJS
-- `js-yaml@4.3.1` — https://github.com/nodeca/js-yaml
+- `js-yaml@4.3.2` — https://github.com/nodeca/js-yaml
 - `lodash.clonedeep@4.5.0` — https://github.com/lodash/lodash
 - `loglevel@1.9.2` — https://github.com/pimterry/loglevel
 - `nanoid@3.3.18` — https://github.com/ai/nanoid

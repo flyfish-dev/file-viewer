@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  adm-zip@<0.6.0: 0.6.0
   epubjs>@xmldom/xmldom: 0.9.10
   ansi-regex@>=4.0.0 <4.1.1: 4.1.1
   '@babel/core@7.29.0': 7.29.7
@@ -19,6 +20,7 @@ overrides:
   postcss: 8.5.23
   style-to-js: 1.1.21
   undici@6.26.0: 6.28.0
+  uuid@<11.1.1: 11.1.1
   '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.0.0
   '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.0.0
   '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.0.0
@@ -3876,9 +3878,9 @@ packages:
     resolution: {integrity: sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A==}
     engines: {node: '>=0.8'}
 
-  adm-zip@0.5.17:
-    resolution: {integrity: sha512-+Ut8d9LLqwEvHHJl1+PIHqoyDxFgVN847JTVM3Izi3xHDWPE4UtzzXysMZQs64DMcrJfBeS/uoEP4AD3HQHnQQ==}
-    engines: {node: '>=12.0'}
+  adm-zip@0.6.0:
+    resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
+    engines: {node: '>=14.0'}
 
   ag-psd@30.2.0:
     resolution: {integrity: sha512-tSAWfNzLl5brFqKEer7egxASZ1a0LwHnReM/D5VVpvrgdwdsa8OVfCQpysK7tGaOuE2tPEqp3mAuH7aIvPhcig==}
@@ -6453,12 +6455,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@14.0.2:
-    resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
-    hasBin: true
-
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+  uuid@11.1.1:
+    resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
     hasBin: true
 
   vary@1.1.2:
@@ -7006,7 +7004,7 @@ snapshots:
       dicom-parser: 1.8.21
       jpeg-lossless-decoder-js: 2.1.2
       pako: 2.1.0
-      uuid: 9.0.1
+      uuid: 11.1.1
 
   '@cornerstonejs/metadata@5.8.2':
     dependencies:
@@ -8426,7 +8424,7 @@ snapshots:
 
   adler-32@1.3.1: {}
 
-  adm-zip@0.5.17: {}
+  adm-zip@0.6.0: {}
 
   ag-psd@30.2.0:
     dependencies:
@@ -8943,7 +8941,7 @@ snapshots:
   dcmjs@0.52.0:
     dependencies:
       '@babel/runtime-corejs3': 7.29.2
-      adm-zip: 0.5.17
+      adm-zip: 0.6.0
       gl-matrix: 3.4.4
       lodash.clonedeep: 4.5.0
       loglevel: 1.9.2
@@ -10168,7 +10166,7 @@ snapshots:
       roughjs: 4.6.6
       stylis: 4.4.0
       ts-dedent: 2.3.0
-      uuid: 14.0.2
+      uuid: 11.1.1
 
   meshoptimizer@1.1.1: {}
 
@@ -11450,9 +11448,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@14.0.2: {}
-
-  uuid@9.0.1: {}
+  uuid@11.1.1: {}
 
   vary@1.1.2: {}
 

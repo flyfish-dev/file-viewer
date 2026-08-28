@@ -17,11 +17,11 @@
     "executableOnly": true
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/compat/create-file-viewer/dist/cli.js && node --test test/*.test.mjs",
+    "build": "tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/compat/create-file-viewer/dist/cli.js && node --test test/*.test.mjs",
     "type-check": "tsc -p tsconfig.json",
     "test": "node --test test/*.test.mjs",
     "verify:e2e": "node test/verify-bootstrap-e2e.mjs",
-    "prepack": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/compat/create-file-viewer/dist/cli.js"
+    "prepack": "tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/compat/create-file-viewer/dist/cli.js"
   },
   "dependencies": {
     "@file-viewer/cli": "workspace:3.0.0"

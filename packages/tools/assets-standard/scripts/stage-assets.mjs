@@ -6,7 +6,11 @@ import { fileURLToPath } from 'node:url'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const sourceRoot = resolve(packageDir, '../../..')
-const sourceDir = resolve(sourceRoot, 'packages/components/web/viewer')
+const webViewerDir = resolve(sourceRoot, 'packages/components/web/viewer')
+const copyAssetsViewerDir = resolve(sourceRoot, 'packages/tools/copy-assets/viewer')
+const sourceDir = existsSync(resolve(webViewerDir, 'flyfish-viewer-assets.json'))
+  ? webViewerDir
+  : copyAssetsViewerDir
 const targetDir = resolve(packageDir, 'viewer')
 const manifestFilename = 'flyfish-viewer-assets.json'
 const profileContent = await readFile(

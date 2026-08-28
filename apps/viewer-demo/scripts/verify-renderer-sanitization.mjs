@@ -763,7 +763,7 @@ try {
   // The optional Drawing asset source is the complete vendored tree. The
   // historical web bundle intentionally omits MathJax files and is not a valid
   // security harness for the opt-in official Draw.io renderer.
-  const drawioVendorUrl = `/@fs/${join(root, 'third_party/drawio/viewer-static.min.js')}`
+  const drawioVendorUrl = `/@fs/${join(root, 'apps/viewer-demo/public/vendor/drawio/viewer-static.min.js')}`
   await writeFile(
     join(harnessRoot, 'main.js'),
     harnessMain.replace('__DRAWIO_VENDOR_URL__', JSON.stringify(drawioVendorUrl))

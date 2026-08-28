@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -11,7 +12,9 @@ const readJson = async path => JSON.parse(await readFile(path, 'utf8'))
 const formatCatalog = await readJson(join(sourceRoot, 'ecosystem/format-catalog.json'))
 const profileBudgets = await readJson(join(sourceRoot, 'ecosystem/profile-budgets.json'))
 const wrappers = await readJson(join(sourceRoot, 'ecosystem/wrappers.json'))
-const assetManifest = await readJson(join(sourceRoot, 'packages/components/web/viewer/flyfish-viewer-assets.json'))
+const webViewerManifest = join(sourceRoot, 'packages/components/web/viewer/flyfish-viewer-assets.json')
+const copyAssetsManifest = join(sourceRoot, 'packages/tools/copy-assets/viewer/flyfish-viewer-assets.json')
+const assetManifest = await readJson(existsSync(webViewerManifest) ? webViewerManifest : copyAssetsManifest)
 const assetRendererIds = new Set(assetManifest.rendererAssetManifests.map(entry => entry.rendererId))
 const packageEntries = [
   ...(wrappers.renderers || []),

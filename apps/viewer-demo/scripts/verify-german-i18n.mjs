@@ -47,7 +47,7 @@ for (const file of [
   'packages/core/src/viewer/state.ts',
   'packages/renderers/eda/src/eda.ts',
   'packages/renderers/eda/src/edaParser.ts',
-  'packages/renderers/presentation/src/pptx.ts',
+  'packages/renderers/presentation-pptx/src/index.ts',
   'packages/renderers/geometry-engine/src/index.ts',
   'apps/viewer-demo/src/composables/useDemoCopy.ts',
   'apps/viewer-demo/src/composables/useDemoLocaleSwitcher.ts',

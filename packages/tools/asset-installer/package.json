@@ -23,7 +23,7 @@
     "README.en.md"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node ../../../scripts/ensure-node-bin.mjs packages/tools/asset-installer/dist/cli.js",
+    "build": "tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/asset-installer/dist/cli.js",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "test": "node --test test/*.test.mjs"
   },

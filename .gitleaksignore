@@ -1,0 +1,46 @@
+# Exact historical fingerprints for reviewed generated third-party artifacts.
+# New findings in the same paths or rules remain blocking because the commit is
+# part of every fingerprint.
+245d80dc0893b8263efbae97de69e4b2a4c95be1:dist/components/ImageViewer.js:generic-api-key:1
+34cc3765dcc064ed8342d346e9a269a037c828d6:dist/components/chunk-5ZQYHXKU.js:generic-api-key:1
+34cc3765dcc064ed8342d346e9a269a037c828d6:dist/components/use.js:generic-api-key:1
+395078f2d7958ad5ff77ee06337c6e6e2af0d858:dist/components/ofd.js:generic-api-key:1
+3fdb67fb9489b2cbc32a7b8708cd8cb6f41ce7cd:dist/index.umd.js:gcp-api-key:5034
+3fdb67fb9489b2cbc32a7b8708cd8cb6f41ce7cd:dist/index.umd.js:generic-api-key:4892
+3fdb67fb9489b2cbc32a7b8708cd8cb6f41ce7cd:dist/index.umd.js:generic-api-key:4974
+467aedbc603412ada25d49c0779cac1fa45ab0ba:demo/assets/chunk-ZUYEQ4TG-DaQMhOk1.js:gcp-api-key:1
+467aedbc603412ada25d49c0779cac1fa45ab0ba:demo/assets/chunk-ZUYEQ4TG-DaQMhOk1.js:generic-api-key:1
+467aedbc603412ada25d49c0779cac1fa45ab0ba:dist/index.umd.js:gcp-api-key:790
+5309dd94e9c374b8826e08c27edbeb3a9b5ee6c6:dist/components/objectSpread2.js:generic-api-key:1
+551325abc55d3778865d2cdf041f89fd4f9679ed:dist/index.umd.js:gcp-api-key:5029
+551325abc55d3778865d2cdf041f89fd4f9679ed:dist/index.umd.js:generic-api-key:4887
+551325abc55d3778865d2cdf041f89fd4f9679ed:dist/index.umd.js:generic-api-key:4969
+613da2a6511436358b1054ea0963f59afde5c0cd:dist/index.umd.js:gcp-api-key:5034
+613da2a6511436358b1054ea0963f59afde5c0cd:dist/index.umd.js:generic-api-key:4892
+613da2a6511436358b1054ea0963f59afde5c0cd:dist/index.umd.js:generic-api-key:4974
+6abcde55ca0d3f310851ad5ac111726402867f66:packages/web/viewer/assets/chunk-ZUYEQ4TG-DaQMhOk1.js:gcp-api-key:1
+6abcde55ca0d3f310851ad5ac111726402867f66:packages/web/viewer/assets/chunk-ZUYEQ4TG-DaQMhOk1.js:generic-api-key:1
+7e046100327d68ed360dcb2ed83e533ade5fd4ef:adapter-demo/file-viewer/assets/chunk-ZUYEQ4TG-D5ZmrcSz.js:generic-api-key:1
+7e046100327d68ed360dcb2ed83e533ade5fd4ef:adapter-demo/vendor/file-viewer/assets/chunk-ZUYEQ4TG-D5ZmrcSz.js:generic-api-key:1
+7e046100327d68ed360dcb2ed83e533ade5fd4ef:demo/assets/chunk-ZUYEQ4TG-D5ZmrcSz.js:generic-api-key:1
+969c3134605a25bf2a6e214a00a097700e02d2da:adapter-demo/file-viewer/assets/chunk-ZUYEQ4TG-DaQMhOk1.js:gcp-api-key:1
+969c3134605a25bf2a6e214a00a097700e02d2da:adapter-demo/file-viewer/assets/chunk-ZUYEQ4TG-DaQMhOk1.js:generic-api-key:1
+98d7fe35cf502b4715ca49f7ea09b556bf76befd:component-demo/assets/chunk-ZUYEQ4TG-BzFOpW--.js:generic-api-key:1
+98d7fe35cf502b4715ca49f7ea09b556bf76befd:demo/assets/chunk-ZUYEQ4TG-BzFOpW--.js:generic-api-key:1
+b5ca1c6763de5b12f29fdb35b8ec1551b7184527:demo/assets/chunk-ZUYEQ4TG-D5ZmrcSz.js:generic-api-key:1
+b738dfbf90fd555e12629c0be7602e2d0c13a8c3:adapter-demo/file-viewer/assets/chunk-ZUYEQ4TG-BzFOpW--.js:generic-api-key:1
+b738dfbf90fd555e12629c0be7602e2d0c13a8c3:adapter-demo/vendor/file-viewer/assets/chunk-ZUYEQ4TG-BzFOpW--.js:generic-api-key:1
+b738dfbf90fd555e12629c0be7602e2d0c13a8c3:demo/assets/chunk-ZUYEQ4TG-BzFOpW--.js:generic-api-key:1
+b911bc7c560a35e52909719ae69139cc20718b61:dist/components/MarkdownViewer.js:generic-api-key:1
+c7f513bc3fa0fa14f9d30c2d9baf8ce66e309045:dist/index.umd.js:gcp-api-key:790
+c7f513bc3fa0fa14f9d30c2d9baf8ce66e309045:dist/index.umd.js:generic-api-key:8853
+c7f513bc3fa0fa14f9d30c2d9baf8ce66e309045:dist/index.umd.js:generic-api-key:8935
+d4fa66d42470c06bfb6e38d75435ddc4f46dedc4:dist/components/PdfView.js:generic-api-key:1
+deb90cab99c3f9706ea599671058a4aa4e65f14a:dist/components/core.js:generic-api-key:1
+deb90cab99c3f9706ea599671058a4aa4e65f14a:dist/components/erDiagram-TEJ5UH35.js:generic-api-key:1
+e060ce0212f2e83e609f57e9ca7c9795b72a381d:dist/index.umd.js:gcp-api-key:5034
+e060ce0212f2e83e609f57e9ca7c9795b72a381d:dist/index.umd.js:generic-api-key:4892
+e060ce0212f2e83e609f57e9ca7c9795b72a381d:dist/index.umd.js:generic-api-key:4974
+ffdff515e2aa1e9b572f30624e9cddf6811428ad:dist/index.umd.js:gcp-api-key:5034
+ffdff515e2aa1e9b572f30624e9cddf6811428ad:dist/index.umd.js:generic-api-key:4892
+ffdff515e2aa1e9b572f30624e9cddf6811428ad:dist/index.umd.js:generic-api-key:4974

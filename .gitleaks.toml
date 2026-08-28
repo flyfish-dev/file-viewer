@@ -1,0 +1,47 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Pinned diagrams.net public Dropbox OAuth client identifier in the exact upstream viewer and deterministic copies"
+targetRules = ["dropbox-api-token"]
+paths = [
+  '''^third_party/drawio/viewer-static\.min\.js$''',
+  '''^apps/viewer-demo/public/vendor/drawio/viewer-static\.min\.js$''',
+  '''^apps/component-demo/public/file-viewer/vendor/drawio/viewer-static\.min\.js$''',
+  '''^packages/components/web/viewer/vendor/drawio/viewer-static\.min\.js$''',
+  '''^packages/compat/web/viewer/vendor/drawio/viewer-static\.min\.js$''',
+  '''^apps/component-demo/public/vendor/drawio/viewer-static\.min\.js$''',
+  '''^apps/component-demo/public/vendor/file-viewer/vendor/drawio/viewer-static\.min\.js$''',
+  '''^component-demo/file-viewer/vendor/drawio/viewer-static\.min\.js$''',
+  '''^component-demo/vendor/drawio/viewer-static\.min\.js$''',
+  '''^component-demo/vendor/file-viewer/vendor/drawio/viewer-static\.min\.js$''',
+  '''^demo/vendor/drawio/viewer-static\.min\.js$''',
+]
+
+[[allowlists]]
+description = "Historical generated Excalidraw bundles containing the upstream public Firebase web client configuration, not a service-account credential"
+targetRules = ["gcp-api-key"]
+paths = [
+  '''^apps/component-demo/public/vendor/file-viewer-web/flyfish-file-viewer-web\.iife\.js$''',
+  '''^component-demo/vendor/file-viewer-web/flyfish-file-viewer-web\.iife\.js$''',
+  '''^(?:adapter-demo/(?:file-viewer|vendor/file-viewer)|component-demo|demo)/assets/chunk-ZUYEQ4TG-(?:BzFOpW--|D5ZmrcSz)\.js$''',
+]
+
+[[allowlists]]
+description = "Historical generated third-party viewer artifacts whose parser and symbol tables trigger the generic API-key heuristic"
+targetRules = ["generic-api-key"]
+paths = [
+  '''^(?:adapter-demo/(?:file-viewer|vendor/file-viewer)|component-demo|demo)/assets/VRMLLoader-[A-Za-z0-9_-]+\.js$''',
+  '''^packages/web/viewer/assets/VRMLLoader-[A-Za-z0-9_-]+\.js$''',
+  '''^(?:apps/component-demo/public|component-demo)/vendor/file-viewer-web/flyfish-file-viewer-web\.iife\.js$''',
+  '''^dist/index\.mjs$''',
+  '''^dist/assets/model-[A-Za-z0-9_-]+\.js$''',
+  '''^dist/components/(?:3MFLoader|PLYLoader|VRMLLoader|XlsxTable|c4Diagram-[A-Za-z0-9_-]+|chunk-O5CBEL6O|cose-bilkent-[A-Za-z0-9_-]+|cytoscape\.esm|dagre-[A-Za-z0-9_-]+|diagram-[A-Za-z0-9_-]+|dist3|katex|lt-[A-Za-z0-9_-]+|mermaid-parser\.core|postal-mime|prod|sql|src2|three\.module|vennDiagram-[A-Za-z0-9_-]+|wasm-pack-shim)\.js$''',
+]
+
+[[allowlists]]
+description = "Historical generated Mermaid parser chunk where a twitter.com grammar token matches the Twitter-key heuristic"
+targetRules = ["twitter-api-key"]
+paths = [
+  '''^dist/components/chunk-K2UTITRG\.js$''',
+]

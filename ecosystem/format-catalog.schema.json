@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://file-viewer.app/schemas/format-catalog.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "supportLevels", "renderers"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "supportLevels": {
+      "type": "array",
+      "const": ["high-fidelity", "structured", "basic", "experimental"]
+    },
+    "renderers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "category", "packageName", "preset", "extensions", "supportLevel", "status", "containerVersions", "knownLimits", "capabilities"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "label": { "type": "string", "minLength": 1 },
+          "category": { "type": "string", "minLength": 1 },
+          "packageName": { "type": "string", "pattern": "^@file-viewer/" },
+          "preset": { "type": "array", "items": { "enum": ["lite", "standard", "office", "engineering", "all"] }, "uniqueItems": true },
+          "extensions": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+$" }, "minItems": 1, "uniqueItems": true },
+          "supportLevel": { "enum": ["high-fidelity", "structured", "basic", "experimental"] },
+          "status": { "enum": ["stable", "experimental"] },
+          "containerVersions": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "knownLimits": { "type": "array", "items": { "type": "string" } },
+          "capabilities": { "type": "object" },
+          "evidence": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

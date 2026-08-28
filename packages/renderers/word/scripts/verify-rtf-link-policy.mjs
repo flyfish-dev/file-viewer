@@ -9,6 +9,15 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const root = resolve(packageRoot, '../../..')
 const require = createRequire(import.meta.url)
+const supportedBrowserNames = new Set(['chromium', 'firefox', 'webkit'])
+const browserNames = (process.env.FILE_VIEWER_RTF_BROWSERS || 'chromium,firefox,webkit')
+  .split(',')
+  .map((name) => name.trim())
+  .filter(Boolean)
+assert(browserNames.length > 0, 'FILE_VIEWER_RTF_BROWSERS must select at least one browser')
+for (const name of browserNames) {
+  assert(supportedBrowserNames.has(name), `Unsupported RTF security browser: ${name}`)
+}
 const demoRequire = createRequire(join(root, 'apps/viewer-demo/package.json'))
 const wordRequire = createRequire(join(packageRoot, 'package.json'))
 const timeout = Number(process.env.RTF_SECURITY_TIMEOUT || 90000)
@@ -330,7 +339,7 @@ try {
 
   const playwrightModule = await importPlaywright()
   const playwright = playwrightModule.chromium ? playwrightModule : playwrightModule.default
-  for (const name of ['chromium', 'firefox', 'webkit']) {
+  for (const name of browserNames) {
     const browser = await launchBrowser(name, playwright[name])
     try {
       for (const pageName of ['strict', 'docx']) {

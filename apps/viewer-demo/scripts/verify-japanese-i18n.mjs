@@ -61,7 +61,7 @@ for (const file of [
   'apps/web-demo/src/main.js',
   'packages/renderers/eda/src/eda.ts',
   'packages/renderers/eda/src/edaParser.ts',
-  'packages/renderers/presentation/src/pptx.ts',
+  'packages/renderers/presentation-pptx/src/index.ts',
   'packages/renderers/geometry-engine/src/index.ts'
 ]) {
   const fileSource = read(file)
