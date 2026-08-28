@@ -257,8 +257,12 @@ function packageFilesForSelection(packagePath, filename) {
 }
 visit(roots[0], roots[0].name, { direct: false, root: true, optional: false })
 
+function compareAscii(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0
+}
+
 const sortedPackages = [...packages.values()].sort(
-  (left, right) => left.name.localeCompare(right.name) || left.version.localeCompare(right.version)
+  (left, right) => compareAscii(left.name, right.name) || compareAscii(left.version, right.version)
 )
 assert(
   sortedPackages.some((entry) => entry.name === '@rollup/rollup-linux-x64-gnu' && entry.optional),
