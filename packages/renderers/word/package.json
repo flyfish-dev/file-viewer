@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "rtf.js": "^3.0.9",
-    "jsdom": "^27.4.0",
+    "jsdom": "^30.0.1",
     "typescript": "^6.0.3"
   },
   "fileViewer": {
