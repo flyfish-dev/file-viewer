@@ -69,7 +69,7 @@
   "devDependencies": {
     "@tonejs/midi": "^2.0.28",
     "hls.js": "^1.6.16",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "fileViewer": {
     "capabilityManifest": "./file-viewer.capability.json"

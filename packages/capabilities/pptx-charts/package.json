@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/d3-format": "^3.0.4",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "fileViewer": {
     "capabilityManifest": "./file-viewer.capability.json"

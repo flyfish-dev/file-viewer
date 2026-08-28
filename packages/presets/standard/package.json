@@ -78,7 +78,7 @@
     "@file-viewer/renderer-word": "workspace:3.0.0"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "fileViewer": {
     "profileManifest": "./file-viewer.profile.json"

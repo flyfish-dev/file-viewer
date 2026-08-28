@@ -70,7 +70,7 @@
   "devDependencies": {
     "@file-viewer/assets-standard": "workspace:3.0.0",
     "@types/node": "^25.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=20"

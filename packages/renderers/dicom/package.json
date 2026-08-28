@@ -77,7 +77,7 @@
     "dicom-parser": "1.8.21"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "license": "Apache-2.0"
 }

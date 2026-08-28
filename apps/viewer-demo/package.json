@@ -34,7 +34,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "stream-browserify": "^3.0.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vite": "^8.0.16",
     "vue-tsc": "^3.3.4"
   }

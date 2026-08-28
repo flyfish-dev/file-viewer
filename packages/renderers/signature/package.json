@@ -100,7 +100,7 @@
     "jszip": "3.10.1"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "license": "Apache-2.0"
 }

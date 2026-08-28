@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "linkedom": "^0.18.12",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "fileViewer": {
     "capabilityManifest": "./file-viewer.capability.json"

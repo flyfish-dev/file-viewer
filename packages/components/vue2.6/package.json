@@ -63,7 +63,7 @@
     "@file-viewer/core": "workspace:3.0.0"
   },
   "devDependencies": {
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vue": "2.6.14"
   },
   "license": "Apache-2.0"

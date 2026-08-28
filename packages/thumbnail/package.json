@@ -52,7 +52,7 @@
     "epubjs": "0.3.93",
     "esbuild": "^0.28.1",
     "happy-dom": "^20.8.4",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "3.2.7"
   },
   "license": "Apache-2.0"

@@ -64,7 +64,7 @@
     "@myriaddreamin/typst.ts": "0.7.0"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "license": "Apache-2.0"
 }

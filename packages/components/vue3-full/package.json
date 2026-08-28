@@ -70,7 +70,7 @@
     "file-viewer-copy-assets": "workspace:3.0.0"
   },
   "devDependencies": {
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vue": "^3.5.35"
   },
   "license": "Apache-2.0"

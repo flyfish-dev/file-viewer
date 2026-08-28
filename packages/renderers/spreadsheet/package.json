@@ -89,7 +89,7 @@
   "devDependencies": {
     "@types/tinycolor2": "^1.4.6",
     "esbuild": "^0.28.2",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "fileViewer": {
     "capabilityManifest": "./file-viewer.capability.json"
