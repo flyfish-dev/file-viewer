@@ -444,8 +444,8 @@ importers:
         specifier: workspace:3.0.0
         version: link:../../renderers/pptx
       billboard.js:
-        specifier: ^3.17.2
-        version: 3.18.0
+        specifier: ^4.0.3
+        version: 4.0.3
       d3-format:
         specifier: ^3.1.2
         version: 3.1.2
@@ -1642,8 +1642,8 @@ importers:
         specifier: ^25.9.2
         version: 25.9.5
       billboard.js:
-        specifier: ^3.17.2
-        version: 3.18.0
+        specifier: ^4.0.3
+        version: 4.0.3
       d3-format:
         specifier: ^3.1.2
         version: 3.1.2
@@ -3788,6 +3788,7 @@ packages:
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@yuku-analyzer/binding-android-arm64@0.8.7':
     resolution: {integrity: sha512-pzJ++UMCZEV4s6SP3Ryvj+snWP8s7aTXFkSXRyeBF4RSALftPzfqYssHdGOmOH2QnRAtyOhhg64tdjeSGJvYRg==}
@@ -3977,8 +3978,8 @@ packages:
   bidi-js@1.0.3:
     resolution: {integrity: sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==}
 
-  billboard.js@3.18.0:
-    resolution: {integrity: sha512-aci69MLwOX0HfdmQHk+v/iA7L4R+wG53hW9VwhkYzMOyqemWLjscf229XsQRrTau9EJSVyOHnr/rpVukoqppXw==}
+  billboard.js@4.0.3:
+    resolution: {integrity: sha512-1D0Bq/begO+A7SYdDZDmUmvjg937YXAV8Er4u0wnwRb72qpwKmgXTZhhUy0Z/MnMI1sd+Q9Q8/B1fq8kTlyvAQ==}
 
   boolbase@2.0.0:
     resolution: {integrity: sha512-DkVaaQHymRhpYEYo9x1oo7Q7B0Y6KJUsjm3c9eTyFDby4MHLBTwZ6ZDWBel5zrYxj1WsZgC5oLpiz+93MluXeA==}
@@ -8507,15 +8508,13 @@ snapshots:
     dependencies:
       require-from-string: 2.0.2
 
-  billboard.js@3.18.0:
+  billboard.js@4.0.3:
     dependencies:
       '@types/d3-selection': 3.0.11
       '@types/d3-transition': 3.0.9
       d3-axis: 3.0.0
       d3-brush: 3.0.0
       d3-drag: 3.0.0
-      d3-dsv: 3.0.1
-      d3-ease: 3.0.1
       d3-hierarchy: 3.1.2
       d3-interpolate: 3.0.1
       d3-scale: 4.0.2
