@@ -63,7 +63,7 @@
     "@file-viewer/core": "workspace:3.0.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.0",
+    "@types/react": "^19.2.18",
     "react": "^17.0.2",
     "typescript": "^6.0.3"
   },
