@@ -108,7 +108,7 @@ importers:
         specifier: npm:react@17.0.2
         version: react@17.0.2
       vue:
-        specifier: ^3.5.35
+        specifier: ^3.5.41
         version: 3.5.41(typescript@6.0.3)
     devDependencies:
       '@types/jquery':
@@ -200,7 +200,7 @@ importers:
         specifier: ^11.11.1
         version: 11.12.0
       vue:
-        specifier: ^3.5.35
+        specifier: ^3.5.41
         version: 3.5.41(typescript@6.0.3)
     devDependencies:
       '@vitejs/plugin-vue':
@@ -249,7 +249,7 @@ importers:
         specifier: ^6.15.2
         version: 6.15.3
       vue:
-        specifier: ^3.5.35
+        specifier: ^3.5.41
         version: 3.5.41(typescript@6.0.3)
     devDependencies:
       '@types/node':
@@ -373,7 +373,7 @@ importers:
         specifier: workspace:3.0.0
         version: link:../../packages/components/vue3-full
       vue:
-        specifier: ^3.5.35
+        specifier: ^3.5.41
         version: 3.5.41(typescript@6.0.3)
     devDependencies:
       '@file-viewer/vite-plugin':
@@ -739,8 +739,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: 2.6.14
-        version: 2.6.14
+        specifier: 3.5.41
+        version: 3.5.41(typescript@6.0.3)
 
   packages/components/vue2.6-full:
     dependencies:
@@ -758,8 +758,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^2.6.14
-        version: 2.6.14
+        specifier: ^3.5.41
+        version: 3.5.41(typescript@6.0.3)
 
   packages/components/vue2.7:
     dependencies:
@@ -771,8 +771,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^2.7.16
-        version: 2.7.16
+        specifier: ^3.5.41
+        version: 3.5.41(typescript@6.0.3)
 
   packages/components/vue2.7-full:
     dependencies:
@@ -790,8 +790,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^2.7.16
-        version: 2.7.16
+        specifier: ^3.5.41
+        version: 3.5.41(typescript@6.0.3)
 
   packages/components/vue3:
     dependencies:
@@ -802,7 +802,7 @@ importers:
         specifier: ^1.17.0
         version: 1.34.0(vue@3.5.41(typescript@6.0.3))
       vue:
-        specifier: ^3.5.35
+        specifier: ^3.5.41
         version: 3.5.41(typescript@6.0.3)
     devDependencies:
       '@types/node':
@@ -852,7 +852,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^3.5.35
+        specifier: ^3.5.41
         version: 3.5.41(typescript@6.0.3)
 
   packages/components/web:
@@ -3820,6 +3820,7 @@ packages:
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@yuku-analyzer/binding-android-arm64@0.8.7':
     resolution: {integrity: sha512-pzJ++UMCZEV4s6SP3Ryvj+snWP8s7aTXFkSXRyeBF4RSALftPzfqYssHdGOmOH2QnRAtyOhhg64tdjeSGJvYRg==}
@@ -4554,10 +4555,6 @@ packages:
   enhanced-resolve@5.24.5:
     resolution: {integrity: sha512-L1l8TNvomm6UVW5B253AGxQagSQr+vGwhMlrrfRS2qmhx46AMpMVJKQYLvWYbysTMY8VoicOvzHzoHMbyzB+4A==}
     engines: {node: '>=10.13.0'}
-
-  entities@4.2.0:
-    resolution: {integrity: sha512-wEJa03bJgqEwPnkUqYdgmcfUXfm6+4hePQhntIvRy/1/+C4dFuhYHsgKBRjbQ6OWBh42P+VhAoCDO77DUh0e/Q==}
-    engines: {node: '>=0.12'}
 
   entities@4.3.0:
     resolution: {integrity: sha512-/iP1rZrSEJ0DTlPiX+jbzlA3eVkY/e8L8SozroF395fIqE3TYF/Nz7YOMAawta+vLmyJ/hkGNNPcSbMADCCXbg==}
@@ -6701,10 +6698,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
-
-  vue@2.6.14:
-    resolution: {integrity: sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==}
-    deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
 
   vue@2.7.16:
     resolution: {integrity: sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==}
@@ -9135,7 +9128,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
       domhandler: 5.0.3
-      entities: 4.2.0
+      entities: 4.3.0
 
   dom-serializer@3.1.1:
     dependencies:
@@ -9203,8 +9196,6 @@ snapshots:
     dependencies:
       graceful-fs: 4.2.11
       tapable: 2.3.3
-
-  entities@4.2.0: {}
 
   entities@4.3.0: {}
 
@@ -11771,8 +11762,6 @@ snapshots:
       '@volar/typescript': 2.4.28
       '@vue/language-core': 3.3.11
       typescript: 6.0.3
-
-  vue@2.6.14: {}
 
   vue@2.7.16:
     dependencies:
