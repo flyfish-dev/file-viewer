@@ -1,12 +1,39 @@
 <script setup lang='ts'>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type Component } from 'vue'
 import {
+  Archive,
+  AudioLines,
+  Binary,
+  BookOpenText,
+  Box,
+  BrainCircuit,
+  CircuitBoard,
   ChevronDown,
   ChevronUp,
+  Database,
+  DraftingCompass,
+  File,
+  FileCode2,
+  FileImage,
+  FileText,
+  GitBranch,
+  Globe2,
+  HardDrive,
+  Mail,
+  MapPinned,
   Moon,
+  NotebookTabs,
+  Palette,
+  Presentation,
   RotateCcw,
+  ScanLine,
   Search as SearchIcon,
+  Shapes,
+  ShieldCheck,
   Sun,
+  Table2,
+  Type,
+  Video,
   X,
   ZoomIn,
   ZoomOut
@@ -43,6 +70,10 @@ import { useViewerViewState } from './hooks/useViewerViewState'
 import { useViewerWatermark } from './hooks/useViewerWatermark'
 import { useViewerZoom } from './hooks/useViewerZoom'
 import { resolveViewerReadinessPresentation } from './hooks/viewerReadinessPresentation'
+import {
+  resolveFileViewerLoadingVisual,
+  type FileViewerLoadingVisualFamily
+} from './loadingVisual'
 import type { FileViewerToolbarSlotProps } from '../../common/type'
 
 const props = defineProps<FileViewerProps>()
@@ -166,12 +197,51 @@ const {
   resetLoading
 } = useLoading(currentExtend, () => effectiveOptions.value)
 
+const LOADING_ICONS: Readonly<Record<FileViewerLoadingVisualFamily, Component>> = Object.freeze({
+  word: FileText,
+  sheet: Table2,
+  slide: Presentation,
+  pdf: FileText,
+  layout: FileText,
+  archive: Archive,
+  email: Mail,
+  eda: CircuitBoard,
+  cad: DraftingCompass,
+  model: Box,
+  geo: MapPinned,
+  drawing: Shapes,
+  mindmap: BrainCircuit,
+  ebook: BookOpenText,
+  image: FileImage,
+  medical: ScanLine,
+  security: ShieldCheck,
+  text: FileText,
+  code: FileCode2,
+  repository: GitBranch,
+  notebook: NotebookTabs,
+  web: Globe2,
+  video: Video,
+  audio: AudioLines,
+  font: Type,
+  design: Palette,
+  data: Database,
+  binary: Binary,
+  generic: HardDrive
+})
+
+const loadingVisual = computed(() => resolveFileViewerLoadingVisual(currentExtend.value))
+const loadingIcon = computed<Component>(() => LOADING_ICONS[loadingVisual.value.family])
+
 const viewerRootStyle = computed(() => {
   const background = normalizeFileViewerRenderSurfaceBackground(
     effectiveOptions.value?.ui?.surfaceBackground
   )
   return {
     ...loadingVars.value,
+    '--viewer-accent': loadingVisual.value.accent,
+    '--viewer-accent-secondary': loadingVisual.value.accentSecondary,
+    '--viewer-soft': loadingVisual.value.soft,
+    '--viewer-glow': loadingVisual.value.glow,
     ...(background
       ? { [FILE_VIEWER_RENDER_SURFACE_BACKGROUND_PROPERTY]: background }
       : {})
@@ -834,14 +904,26 @@ useViewerPreviewLifecycle({
         <div v-if='watermarkStyle' class='viewer-watermark' part='watermark' :style='watermarkStyle' />
 
         <div v-if='readinessPresentation.loadingStateVisible' class='state-panel loading-panel' part='state-panel loading-state'>
-          <div class='loading-card' part='state-card'>
-            <div class='loading-icon'>{{ loadingTheme.badge }}</div>
+          <div class='loading-card' part='state-card' :data-loading-family='loadingVisual.family'>
+            <div class='loading-visual' aria-hidden='true'>
+              <span class='loading-aura' />
+              <span class='loading-orbit'>
+                <i />
+                <i />
+              </span>
+              <div class='loading-icon'>
+                <File class='loading-icon__sheet' :stroke-width='1.25' />
+                <component :is='loadingIcon' class='loading-icon__glyph' :stroke-width='1.85' />
+                <span class='loading-icon__extension'>{{ loadingVisual.extensionLabel }}</span>
+                <span class='loading-icon__scan' />
+              </div>
+            </div>
             <div class='loading-copy'>
               <span class='loading-kicker'>{{ loadingTheme.label }}</span>
               <strong>{{ message }}</strong>
               <p>{{ loadingTheme.hint }}</p>
+              <span class='loading-progress' aria-hidden='true'><i /></span>
             </div>
-            <span class='loading-ring' />
           </div>
         </div>
 
@@ -1262,52 +1344,183 @@ useViewerPreviewLifecycle({
 
 .loading-card,
 .error-card {
-  width: min(100%, 460px);
+  width: min(100%, 500px);
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 22px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid var(--file-viewer-border, rgba(19, 36, 55, 0.06));
-  box-shadow: 0 18px 42px rgba(15, 31, 47, 0.12);
+  gap: 26px;
+  padding: 26px 28px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--file-viewer-border, rgba(32, 52, 72, 0.09));
+  box-shadow:
+    0 28px 70px rgba(15, 31, 47, 0.13),
+    0 2px 8px rgba(15, 31, 47, 0.05);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  backdrop-filter: blur(22px) saturate(1.15);
+}
+
+.loading-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.loading-card::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0 20% auto;
+  height: 2px;
+  border-radius: 0 0 999px 999px;
+  background: linear-gradient(90deg, transparent, var(--viewer-accent), var(--viewer-accent-secondary), transparent);
+  box-shadow: 0 2px 14px var(--viewer-glow);
+  content: '';
+}
+
+.loading-card::after {
+  position: absolute;
+  z-index: -1;
+  width: 180px;
+  height: 180px;
+  top: -92px;
+  left: -76px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--viewer-glow), transparent 68%);
+  filter: blur(7px);
+  opacity: 0.62;
+  content: '';
+}
+
+.loading-visual {
+  position: relative;
+  flex: 0 0 108px;
+  width: 108px;
+  height: 108px;
+  display: grid;
+  place-items: center;
+}
+
+.loading-aura {
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--viewer-soft) 0 34%, transparent 70%);
+  box-shadow: 0 0 28px var(--viewer-glow);
+  animation: viewer-loading-aura 2.8s ease-in-out infinite;
+}
+
+.loading-orbit {
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed color-mix(in srgb, var(--viewer-accent) 32%, transparent);
+  border-radius: 50%;
+  animation: viewer-loading-orbit 9s linear infinite;
+}
+
+.loading-orbit i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--viewer-accent-secondary);
+  box-shadow: 0 0 10px var(--viewer-glow);
+}
+
+.loading-orbit i:first-child {
+  top: 8px;
+  right: 14px;
+}
+
+.loading-orbit i:last-child {
+  bottom: 12px;
+  left: 9px;
+  width: 5px;
+  height: 5px;
 }
 
 .loading-icon {
-  flex-shrink: 0;
-  min-width: 70px;
-  height: 70px;
-  padding: 0 12px;
+  position: relative;
+  isolation: isolate;
+  width: 72px;
+  height: 82px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
-  background: linear-gradient(135deg, var(--viewer-accent) 0%, var(--viewer-accent) 100%);
-  color: #ffffff;
-  font-size: 22px;
+  color: var(--viewer-accent);
+  filter: drop-shadow(0 12px 18px var(--viewer-glow));
+  animation: viewer-loading-float 2.8s ease-in-out infinite;
+}
+
+.loading-icon__sheet {
+  position: absolute;
+  inset: 0;
+  width: 72px;
+  height: 82px;
+  color: color-mix(in srgb, var(--viewer-accent) 43%, transparent);
+  fill: color-mix(in srgb, var(--viewer-accent) 6%, white);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.loading-icon__glyph {
+  position: absolute;
+  top: 19px;
+  width: 30px;
+  height: 30px;
+  color: var(--viewer-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.loading-icon__extension {
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+  left: 10px;
+  overflow: hidden;
+  color: var(--viewer-accent);
+  font-size: 9.5px;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  box-shadow: 0 14px 30px rgba(17, 28, 40, 0.14);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loading-icon__scan {
+  position: absolute;
+  z-index: 3;
+  right: 10px;
+  left: 10px;
+  top: 15px;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--viewer-accent-secondary), transparent);
+  box-shadow: 0 0 8px var(--viewer-glow);
+  opacity: 0;
+  animation: viewer-loading-scan 2.25s ease-in-out infinite;
 }
 
 .loading-copy {
   min-width: 0;
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .loading-kicker {
   display: block;
   color: var(--viewer-accent);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.105em;
   text-transform: uppercase;
 }
 
 .loading-copy strong,
 .error-card strong {
   display: block;
-  margin-top: 4px;
+  margin-top: 6px;
   color: var(--file-viewer-text, #16283b);
   font-size: 20px;
   line-height: 1.2;
@@ -1320,14 +1533,24 @@ useViewerPreviewLifecycle({
   line-height: 1.6;
 }
 
-.loading-ring {
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
+.loading-progress {
+  position: relative;
+  display: block;
+  height: 3px;
+  margin-top: 16px;
+  overflow: hidden;
   border-radius: 999px;
-  border: 3px solid var(--viewer-soft);
-  border-top-color: var(--viewer-accent);
-  animation: viewer-spin 0.9s linear infinite;
+  background: var(--viewer-soft);
+}
+
+.loading-progress i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 46%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--viewer-accent), var(--viewer-accent-secondary), transparent);
+  box-shadow: 0 0 12px var(--viewer-glow);
+  animation: viewer-loading-progress 1.85s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .error-card {
@@ -1389,6 +1612,10 @@ useViewerPreviewLifecycle({
   color: #eff7fb;
 }
 
+.file-viewer[data-viewer-theme='dark'] .loading-icon__sheet {
+  fill: color-mix(in srgb, var(--viewer-accent) 10%, #17212a);
+}
+
 .file-viewer[data-viewer-theme='dark'] .loading-copy p,
 .file-viewer[data-viewer-theme='dark'] .error-card p {
   color: #9eb0bf;
@@ -1398,12 +1625,102 @@ useViewerPreviewLifecycle({
   color: #ff9c91;
 }
 
-@keyframes viewer-spin {
-  from {
-    transform: rotate(0deg);
-  }
+@keyframes viewer-loading-orbit {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes viewer-loading-float {
+  0%,
+  100% {
+    transform: translateY(2px) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(1deg);
+  }
+}
+
+@keyframes viewer-loading-aura {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes viewer-loading-scan {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  18% {
+    opacity: 0.95;
+  }
+  72% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(47px);
+  }
+}
+
+@keyframes viewer-loading-progress {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(315%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-aura,
+  .loading-orbit,
+  .loading-icon,
+  .loading-icon__scan,
+  .loading-progress i {
+    animation: none;
+  }
+
+  .loading-icon__scan {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .state-panel {
+    padding: 16px;
+  }
+
+  .loading-card {
+    gap: 17px;
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .loading-visual {
+    flex-basis: 88px;
+    width: 88px;
+    height: 96px;
+  }
+
+  .loading-orbit {
+    inset: 4px 0;
+  }
+
+  .loading-copy strong {
+    font-size: 17px;
+  }
+
+  .loading-copy p {
+    font-size: 13px;
+    line-height: 1.5;
   }
 }
 
@@ -1462,6 +1779,10 @@ useViewerPreviewLifecycle({
   .file-viewer[data-viewer-theme='system'] .loading-copy strong,
   .file-viewer[data-viewer-theme='system'] .error-card strong {
     color: #eff7fb;
+  }
+
+  .file-viewer[data-viewer-theme='system'] .loading-icon__sheet {
+    fill: color-mix(in srgb, var(--viewer-accent) 10%, #17212a);
   }
 
   .file-viewer[data-viewer-theme='system'] .loading-copy p,
