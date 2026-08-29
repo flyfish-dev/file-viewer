@@ -58,6 +58,39 @@ The plugin reads the Vite major installed by the application. Vite 5–7 receive
 | `@file-viewer/preset-engineering` | CAD, EDA, Typst, archives, email, data, 3D, geo, drawing, and mind maps |
 | `@file-viewer/preset-all` | Admin workbenches that need the published compatibility renderer set; later specialist capabilities remain explicit |
 
+## Optional Specialist Renderers
+
+DICOM and digital-signature inspection are intentionally **opt-in** specialist capabilities. They are not installed automatically by the historical `@file-viewer/*-full` packages or by the frozen `@file-viewer/preset-all` compatibility matrix. This keeps upgrades from unexpectedly adding large medical-imaging or cryptographic dependencies.
+
+| Optional renderer | Formats | Direct npm install | CLI selection | What the viewer shows |
+| --- | --- | --- | --- | --- |
+| **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`, `.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | Local DICOM Part 10 single-frame and multi-frame images with frame navigation, window width/center, zoom, pan, 90° rotation, fit-to-view, and basic image metadata. It is a preview aid, not a diagnostic workstation. |
+| **Digital signatures** (`@file-viewer/renderer-signature`) | `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`, `.tsq`, `.tsr`, `.tst`, `.tsd`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.jws`, `.asc`, `.sig`, `.pgp`, `.gpg` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | Browser-local inspection of CMS/PKCS#7 and selected CAdES data, timestamps, ASiC containers, evidence records, JWS, and OpenPGP. It can show signers, certificates, algorithms, digest/signature verification results, timestamps, and safely extracted embedded documents. |
+
+After changing a CLI-managed project, install the selected capability packages and regenerate the integration:
+
+```bash
+npx file-viewer-cli install --yes
+```
+
+For a direct npm integration, explicitly register only the specialist renderers the application needs. Use `rendererMode:'extend'` when adding them to an existing Full/preset baseline so the already configured renderers remain available:
+
+```ts
+import { dicomRenderer } from '@file-viewer/renderer-dicom'
+import { signatureRenderer } from '@file-viewer/renderer-signature'
+
+const options = {
+  rendererMode: 'extend',
+  renderers: [dicomRenderer, signatureRenderer]
+}
+```
+
+For example, a DICOM-only addition needs only `@file-viewer/renderer-dicom` and `dicomRenderer`; a signature-only addition needs only `@file-viewer/renderer-signature` and `signatureRenderer`.
+
+> Installing an `@file-viewer/*-full` package directly is not the same as selecting the CLI `full` profile. The historical Full packages keep their published compatibility closure and do not silently gain later specialist renderers. The CLI `full` profile intentionally combines the matching historical Full package with the later opt-in capabilities in the current CLI catalog.
+
+For signature containers that contain an embedded PDF, XML, image, Office document, or another supported file, keep the corresponding normal renderer available as well so the safely extracted payload can continue through the nested-renderer pipeline. Signature parsing or cryptographic verification does not by itself establish certificate/key trust, qualified-signature status, policy compliance, or legal validity.
+
 ## Renderer Package Reference
 
 Install a single renderer when a product needs the smallest possible capability set:
@@ -129,7 +162,7 @@ fileViewerRenderers({
 
 The default experience is intentionally zero-config: if the plugin receives no explicit `preset`, `formats`, or `renderers`, or only receives `copyAssets:true`, it auto-discovers installed `@file-viewer/preset-*` packages. `preset-all` takes precedence when present; otherwise installed `lite`, `office`, and `engineering` presets are composed.
 
-Install `@file-viewer/preset-all` when a heavy user wants the fastest full-capability setup:
+Install `@file-viewer/preset-all` when a heavy user wants the fastest compatibility-matrix setup. Later specialist capabilities such as DICOM and digital signatures remain explicit:
 
 ```bash
 npm install @file-viewer/vue3 @file-viewer/preset-all
