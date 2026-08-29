@@ -67,13 +67,47 @@ DICOM and digital-signature inspection are intentionally **opt-in** specialist c
 | **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`, `.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | Local DICOM Part 10 single-frame and multi-frame images with frame navigation, window width/center, zoom, pan, 90° rotation, fit-to-view, and basic image metadata. It is a preview aid, not a diagnostic workstation. |
 | **Digital signatures** (`@file-viewer/renderer-signature`) | `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`, `.tsq`, `.tsr`, `.tst`, `.tsd`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.jws`, `.asc`, `.sig`, `.pgp`, `.gpg` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | Browser-local inspection of CMS/PKCS#7 and selected CAdES data, timestamps, ASiC containers, evidence records, JWS, and OpenPGP. It can show signers, certificates, algorithms, digest/signature verification results, timestamps, and safely extracted embedded documents. |
 
-After changing a CLI-managed project, install the selected capability packages and regenerate the integration:
+### I already use a Full package. How do I enable an optional renderer?
+
+The same rule applies to every historical Full package: `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, and `@file-viewer/svelte-full`.
+
+**Keep your existing Full package installed.** Do not replace it and do not switch away from the Full integration. Install only the optional renderer you need, then add it with `rendererMode:'extend'` so the existing Full renderer set remains available.
+
+#### Add DICOM
 
 ```bash
-npx file-viewer-cli install --yes
+npm install @file-viewer/renderer-dicom
 ```
 
-For a direct npm integration, explicitly register only the specialist renderers the application needs. Use `rendererMode:'extend'` when adding them to an existing Full/preset baseline so the already configured renderers remain available:
+```ts
+import { dicomRenderer } from '@file-viewer/renderer-dicom'
+
+const options = {
+  rendererMode: 'extend',
+  renderers: [dicomRenderer]
+}
+```
+
+#### Add digital-signature formats
+
+```bash
+npm install @file-viewer/renderer-signature
+```
+
+```ts
+import { signatureRenderer } from '@file-viewer/renderer-signature'
+
+const options = {
+  rendererMode: 'extend',
+  renderers: [signatureRenderer]
+}
+```
+
+#### Add both optional renderers
+
+```bash
+npm install @file-viewer/renderer-dicom @file-viewer/renderer-signature
+```
 
 ```ts
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
@@ -85,9 +119,28 @@ const options = {
 }
 ```
 
-For example, a DICOM-only addition needs only `@file-viewer/renderer-dicom` and `dicomRenderer`; a signature-only addition needs only `@file-viewer/renderer-signature` and `signatureRenderer`.
+`rendererMode:'extend'` is important in these examples: it keeps the renderer baseline already provided by the Full package and appends the selected specialist renderer. Do not change an existing Full integration to a DICOM-only or signature-only `replace` configuration unless you intentionally want to remove the other Full capabilities.
+
+If the project is managed with the File Viewer CLI, select the optional capability and then run the install step:
+
+```bash
+# DICOM
+npx file-viewer-cli config add dicom --write
+
+# Digital signatures
+npx file-viewer-cli config add p7m --write
+
+# Install the selected capability packages and regenerate the integration
+npx file-viewer-cli install --yes
+```
 
 > Installing an `@file-viewer/*-full` package directly is not the same as selecting the CLI `full` profile. The historical Full packages keep their published compatibility closure and do not silently gain later specialist renderers. The CLI `full` profile intentionally combines the matching historical Full package with the later opt-in capabilities in the current CLI catalog.
+
+### Using a prebuilt `web-full` browser bundle?
+
+The downloadable/prebuilt `web-full` IIFE bundle preserves the historical Full renderer set. DICOM and digital-signature renderers are **not embedded** in that prebuilt bundle.
+
+If you need these specialist capabilities, use File Viewer from a package-manager project and install the optional renderer package as shown above, or use the File Viewer CLI to generate the integration. Simply downloading the historical `web-full` browser bundle does not enable DICOM or digital-signature formats, and copying an optional renderer package next to the bundle is not a substitute for registering it in the integration.
 
 For signature containers that contain an embedded PDF, XML, image, Office document, or another supported file, keep the corresponding normal renderer available as well so the safely extracted payload can continue through the nested-renderer pipeline. Signature parsing or cryptographic verification does not by itself establish certificate/key trust, qualified-signature status, policy compliance, or legal validity.
 
