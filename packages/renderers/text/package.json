@@ -65,11 +65,11 @@
     "@file-viewer/core": "workspace:3.0.0",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
-    "dompurify": "^3.4.13"
+    "dompurify": "^3.4.14"
   },
   "devDependencies": {
     "diff2html": "^3.4.56",
-    "mermaid": "^11.16.1",
+    "mermaid": "^11.17.2",
     "pako": "^2.1.0",
     "jsdom": "^27.4.0",
     "typescript": "^6.0.3"

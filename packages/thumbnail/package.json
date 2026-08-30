@@ -48,10 +48,10 @@
     "modern-screenshot": "^4.7.0"
   },
   "devDependencies": {
-    "@xmldom/xmldom": "0.9.10",
+    "@xmldom/xmldom": "0.9.12",
     "epubjs": "0.3.93",
     "esbuild": "^0.28.1",
-    "happy-dom": "^20.8.4",
+    "happy-dom": "^20.11.12",
     "typescript": "^6.0.3",
     "vitest": "3.2.7"
   },
