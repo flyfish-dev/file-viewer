@@ -63,6 +63,55 @@
 | `@file-viewer/preset-all`                                           | 已发布兼容 renderer 集合                                                                                   | 既有 demo 和全量发行版保持兼容；后续专业能力仍显式安装                                    |
 | `@file-viewer/vite-plugin`                                          | 自动生成 renderer virtual module、复制 assets、设置 manual chunks                                          | 让业务项目按配置自动装配，不需要手写大量 import                                           |
 
+## 可选专业 renderer
+
+DICOM 与数字签名检查是显式可选能力，不属于八个已发布 `@file-viewer/*-full` 包或 `@file-viewer/preset-all` 的依赖。这样普通升级不会额外引入医学影像或密码学重依赖，也不会改变 Full 包已经发布的能力边界。
+
+| 可选 renderer | 格式 | 直接安装 | CLI 选择 | 能力边界 |
+| --- | --- | --- | --- | --- |
+| **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`、`.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | 预览一个本地 DICOM Part 10 文件，支持多帧导航、窗宽/窗位、缩放、拖动、旋转、适配视图和基础元数据；不负责 study 组装、PACS/DICOMweb、MPR、分割或诊断。 |
+| **数字签名** (`@file-viewer/renderer-signature`) | `.p7m`、`.p7s`、`.p7c`、`.p7b`、`.pkcs7`、`.cms`、`.cmsc`、`.tsd`、`.tst`、`.tsq`、`.tsr`、`.asics`、`.scs`、`.asice`、`.sce`、`.ers`、`.asc`、`.sig`、`.pgp`、`.gpg`、`.jws` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | 在浏览器本地做有界容器检查，并分开报告解析、摘要、签名和时间戳结果。 |
+
+### 已经使用 Full 包时
+
+这条规则适用于 `@file-viewer/web-full`、`@file-viewer/vue3-full`、`@file-viewer/vue2.7-full`、`@file-viewer/vue2.6-full`、`@file-viewer/react-full`、`@file-viewer/react-legacy-full`、`@file-viewer/jquery-full` 和 `@file-viewer/svelte-full`。
+
+保留现有 Full 包，只安装业务真正需要的专业 renderer。下面示例同时启用两个当前可选能力；只需要其中一个时，删除另一项安装、import 和数组成员即可：
+
+```bash
+npm install @file-viewer/renderer-dicom @file-viewer/renderer-signature
+```
+
+```ts
+import { dicomRenderer } from '@file-viewer/renderer-dicom'
+import { signatureRenderer } from '@file-viewer/renderer-signature'
+
+const options = {
+  rendererMode: 'extend',
+  renderers: [dicomRenderer, signatureRenderer]
+}
+```
+
+`rendererMode: 'extend'` 会保留 Full 包提供的 preset，再追加上述 renderer。只有明确希望显式配置成为完整 renderer 集合时，才使用 `replace`。
+
+CLI 管理的项目执行一个或两个需要的 `config add`，再安装生成的方案：
+
+```bash
+# DICOM
+npx file-viewer-cli config add dicom --write
+
+# 数字签名容器
+npx file-viewer-cli config add p7m --write
+
+npx file-viewer-cli install --yes
+```
+
+直接安装 Full 包与选择 CLI `full` profile 是两个有意区分的入口：Full 包保持已发布的 `preset-all` 兼容基线；CLI `full` 保留对应 Full 包，并在展示体积与许可证边界后加入当前显式可选能力。
+
+预构建 `web-full` IIFE 只包含已发布的 Full renderer 集合，不内置 DICOM 与数字签名 renderer。需要这些能力时，应使用包管理项目或 CLI 生成集成；把可选包复制到 IIFE 旁边并不会完成注册。
+
+数字签名 renderer 可以把安全提取出的 PDF、XML、图片、Office 等内容交回普通嵌套预览链路，因此需要同时保留对应 renderer。密码学验证结果不等于证书或密钥可信，也不能判定合格签名、政策合规或法律效力。
+
 ## 用户最佳体验路径
 
 | 场景                            | 推荐方式                                                  | 安装体验                        | 打包体验                                 |

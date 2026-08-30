@@ -60,92 +60,60 @@ The plugin reads the Vite major installed by the application. Vite 5–7 receive
 
 ## Optional Specialist Renderers
 
-Some specialist capabilities are intentionally **opt-in**. Optional renderers are not installed automatically by the historical `@file-viewer/*-full` packages or by the frozen `@file-viewer/preset-all` compatibility matrix. This keeps existing upgrades stable and prevents large or specialized dependencies from being added unless an application explicitly asks for them.
-
-The table below lists the currently published optional specialist renderers:
+DICOM and digital-signature inspection are explicit opt-ins. They are not dependencies of the eight published `@file-viewer/*-full` packages or `@file-viewer/preset-all`. This preserves the published Full contract and avoids adding medical-imaging or cryptographic dependencies during an ordinary upgrade.
 
 | Optional renderer | Formats | Direct npm install | CLI selection | What the viewer shows |
 | --- | --- | --- | --- | --- |
-| **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`, `.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | Local DICOM Part 10 single-frame and multi-frame images with frame navigation, window width/center, zoom, pan, 90° rotation, fit-to-view, and basic image metadata. It is a preview aid, not a diagnostic workstation. |
-| **Digital signatures** (`@file-viewer/renderer-signature`) | `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`, `.tsq`, `.tsr`, `.tst`, `.tsd`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.jws`, `.asc`, `.sig`, `.pgp`, `.gpg` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | Browser-local inspection of CMS/PKCS#7 and selected CAdES data, timestamps, ASiC containers, evidence records, JWS, and OpenPGP. It can show signers, certificates, algorithms, digest/signature verification results, timestamps, and safely extracted embedded documents. |
+| **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`, `.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | One local DICOM Part 10 file, including multi-frame navigation, window width/center, zoom, pan, rotation, fit-to-view, and basic metadata. It does not assemble studies or provide PACS/DICOMweb, MPR, segmentation, or diagnosis. |
+| **Digital signatures** (`@file-viewer/renderer-signature`) | `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`, `.tsq`, `.tsr`, `.tst`, `.tsd`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.jws`, `.asc`, `.sig`, `.pgp`, `.gpg` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | Bounded browser-local inspection of CMS/PKCS#7, selected CAdES data, timestamps, ASiC containers, evidence records, JWS, and public OpenPGP inputs. Parsing, digest, signature, and timestamp results are reported separately. |
 
 ### I already use a Full package. How do I enable an optional renderer?
 
-The same rule applies to every historical Full package: `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, and `@file-viewer/svelte-full`.
+The same rule applies to `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, and `@file-viewer/svelte-full`.
 
-**Keep your existing Full package installed.** An optional renderer is an addition to the existing Full integration, not a replacement for it.
-
-For any optional renderer, use the package name and renderer export shown by its documentation or by the table above.
-
-#### Generic npm pattern
-
-The following is a template. Replace the placeholders with the real package and export names for the optional renderer you want to add:
+Keep the Full package installed, then add only the specialist renderer the application needs. The following example enables both published opt-ins; remove either package, import, and array entry when only one is needed:
 
 ```bash
-npm install <renderer-package>
+npm install @file-viewer/renderer-dicom @file-viewer/renderer-signature
 ```
-
-```ts
-import { <rendererExport> } from '<renderer-package>'
-
-const options = {
-  rendererMode: 'extend',
-  renderers: [<rendererExport>]
-}
-```
-
-`rendererMode:'extend'` is important when adding an optional renderer to an existing Full installation: it keeps the renderer baseline already supplied by the Full package and appends the new capability. Use `replace` only when you intentionally want the explicitly configured renderers to become the complete renderer set.
-
-If you need more than one optional renderer, install each required package and append each renderer export to the same `renderers` array.
-
-#### Real example: add DICOM to an existing Full package
-
-Install the optional DICOM renderer:
-
-```bash
-npm install @file-viewer/renderer-dicom
-```
-
-Register it without removing the Full renderer baseline:
 
 ```ts
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
+import { signatureRenderer } from '@file-viewer/renderer-signature'
 
 const options = {
   rendererMode: 'extend',
-  renderers: [dicomRenderer]
+  renderers: [dicomRenderer, signatureRenderer]
 }
 ```
 
-The same pattern applies to other optional renderers: install the renderer package, import its renderer export, and append it with `rendererMode:'extend'`.
+`rendererMode: 'extend'` keeps the preset supplied by the Full package and appends these renderers. Use `replace` only when the explicitly configured renderers should become the complete set.
 
-#### Generic CLI pattern
+#### CLI-managed projects
 
-For a CLI-managed project, add the capability or one of its supported format tokens, then run the install step:
-
-```bash
-npx file-viewer-cli config add <capability-or-format> --write
-npx file-viewer-cli install --yes
-```
-
-For example, DICOM can be added with:
+Run one or both relevant `config add` commands, then install the resulting plan:
 
 ```bash
+# DICOM
 npx file-viewer-cli config add dicom --write
+
+# Digital-signature containers
+npx file-viewer-cli config add p7m --write
+
 npx file-viewer-cli install --yes
 ```
 
-The table above provides a working CLI selection for each currently documented optional renderer. `file-viewer-cli list` can also be used to inspect the capability catalog before changing a project.
+Use `npx file-viewer-cli list` to inspect the current catalog before changing a project.
 
-> Installing an `@file-viewer/*-full` package directly is not the same as selecting the CLI `full` profile. The historical Full packages keep their published compatibility closure and do not silently gain later specialist renderers. The CLI `full` profile intentionally combines the matching historical Full package with the later opt-in capabilities in the current CLI catalog.
+> Directly installing a Full package and selecting the CLI `full` profile are intentionally different. A Full package keeps the published `preset-all` compatibility baseline. The CLI `full` profile keeps that package and adds the current explicit opt-ins after presenting their weight and license boundaries.
 
 ### Using a prebuilt `web-full` browser bundle?
 
-The downloadable/prebuilt `web-full` IIFE bundle preserves the historical Full renderer set. Later optional specialist renderers are **not embedded automatically** in that prebuilt bundle.
+The downloadable `web-full` IIFE bundle contains the published Full renderer set. DICOM and digital-signature renderers are not embedded in that bundle.
 
-If you need an optional renderer that is not part of the historical bundle, use File Viewer from a package-manager project and install/register that renderer as shown above, or use the File Viewer CLI to generate the integration. Simply copying an optional renderer package next to the prebuilt bundle is not a substitute for registering it in the integration.
+Use a package-manager project or the File Viewer CLI when the integration needs an optional renderer. Copying a renderer package next to the prebuilt bundle does not register it.
 
-Some optional renderers can also delegate extracted or nested content to normal File Viewer renderers. Keep any required supporting renderer available when you want that nested preview. For example, the digital-signature renderer can pass safely extracted PDF, XML, image, Office, or other supported content back through the nested-renderer pipeline.
+The digital-signature renderer can pass safely extracted PDF, XML, image, Office, or other supported content back through the nested-renderer pipeline, so keep the matching normal renderer available when that preview is required. Cryptographic verification does not establish certificate or key trust, qualified-signature status, policy compliance, or legal validity.
 
 ## Renderer Package Reference
 
@@ -218,7 +186,7 @@ fileViewerRenderers({
 
 The default experience is intentionally zero-config: if the plugin receives no explicit `preset`, `formats`, or `renderers`, or only receives `copyAssets:true`, it auto-discovers installed `@file-viewer/preset-*` packages. `preset-all` takes precedence when present; otherwise installed `lite`, `office`, and `engineering` presets are composed.
 
-Install `@file-viewer/preset-all` when a heavy user wants the fastest compatibility-matrix setup. Later specialist capabilities such as DICOM and digital signatures remain explicit:
+Install `@file-viewer/preset-all` when an application needs the published compatibility baseline. DICOM and digital signatures remain explicit:
 
 ```bash
 npm install @file-viewer/vue3 @file-viewer/preset-all
