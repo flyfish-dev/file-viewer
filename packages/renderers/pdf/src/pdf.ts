@@ -1040,7 +1040,7 @@ export default async function renderPdf(
     }
     const shouldUseRealWorker = !!targetWindow?.Worker && (
       workerProbe.status === 'compatible' ||
-      (hasExplicitWorkerUrl && workerProbe.status !== 'incompatible')
+      (hasExplicitWorkerUrl && workerProbe.status === 'unknown')
     );
 
     if (shouldUseRealWorker) {

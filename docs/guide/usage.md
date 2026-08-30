@@ -248,6 +248,8 @@ Toolbar buttons should call viewer operations rather than wrapping rendered cont
 
 The initial zoom label is not assumed to be `100%`. Renderers report the actual scale after first-screen fit, image natural-size loading, PDF / Word layout, container resize, or any internal reflow. Built-in toolbars and `getOperationAvailability()` use the same state to keep `zoomIn`, `zoomOut`, and `zoomReset` accurate. Custom toolbars should sync from `zoom-change` or `getZoomState()` instead of caching their own default percentage.
 
+The percentage baseline follows the renderer's coordinate system. For Word/DOCX, `100%` is the document page's natural CSS size, so `120%` means the layout width multiplied by `1.2`, not the current fit-width result enlarged by another 20%; a mobile fit can therefore start below `100%`. CAD has no useful cross-file CSS physical size, so its `100%` is the most recent fitted camera view and later buttons, wheel input, or pinch gestures report a ratio relative to that view. Do not convert percentages across formats into a paper-scale measurement.
+
 ## View State Sync
 
 `initialViewState`, `view-state-change`, `getViewState()`, and `applyViewState()` are designed for projection systems, remote-control displays, side-by-side comparison, and reading-position restore. Every standard renderer path registers a view-state provider. Renderers without a dedicated provider use the generic DOM provider, which records the renderer id, current zoom, and scroll ratios. PDF adds page, page count, rotation, and navigation state. XMind adds sheet index, panX, panY, and zoom. Geo adds map center, zoom, bearing, and pitch. 3D adds camera position, target, and display options. CAD reports the view snapshot exposed by the underlying CAD viewer.

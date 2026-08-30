@@ -53,6 +53,8 @@ const CAD_WORKER_TIMEOUT = 120000;
 const CAD_DEFAULT_FIT_PADDING = 0.92;
 const CAD_BOUNDS_EPSILON = 1e-9;
 const CAD_BEST_FIT_OUTLIER_RATIO = 8;
+const CAD_NATIVE_MIN_ZOOM_RATIO = 0.05;
+const CAD_NATIVE_MAX_ZOOM_RATIO = 64;
 
 const cadStyle = `
 .cad-shell{display:flex;height:100%;min-height:100%;flex-direction:column;background:#f5f7fb;color:#142335}
@@ -279,7 +281,132 @@ type CadFitMatrix = {
 type CadRendererViewAdapter = {
   fitScale?: number;
   getBounds?: () => CadBounds;
+  panByScreenDelta?: (dx: number, dy: number) => void;
   setViewState?: (view: ViewState) => void;
+  zoom?: (factor: number, anchor?: CadPoint2D) => void;
+};
+
+type CadPinchSnapshot = {
+  center: CadPoint2D;
+  distance: number;
+};
+
+type CadPinchZoomInput = {
+  center: CadPoint2D;
+  deltaX: number;
+  deltaY: number;
+  factor: number;
+};
+
+const getCadPinchSnapshot = (points: Map<number, CadPoint2D>): CadPinchSnapshot | null => {
+  const [first, second] = Array.from(points.values());
+  if (!first || !second) {
+    return null;
+  }
+  return {
+    center: {
+      x: (first.x + second.x) / 2,
+      y: (first.y + second.y) / 2,
+    },
+    distance: Math.hypot(second.x - first.x, second.y - first.y),
+  };
+};
+
+/**
+ * The bundled CAD engines currently treat every touch pointer as the same
+ * drag. Coordinate two touch pointers before their target listeners run so a
+ * pinch becomes one anchored zoom operation instead of two competing pans.
+ */
+const registerCadPinchZoom = (
+  surface: HTMLElement,
+  onStart: () => void,
+  onZoom: (input: CadPinchZoomInput) => void
+) => {
+  const points = new Map<number, CadPoint2D>();
+  let previous: CadPinchSnapshot | null = null;
+  let suppressDragUntilRelease = false;
+
+  const suppressPointerEvent = (event: PointerEvent) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+
+  const handlePointerDown = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch') {
+      return;
+    }
+    points.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    try {
+      surface.setPointerCapture(event.pointerId);
+    } catch {
+      // Synthetic browser harness events may not create an active pointer.
+    }
+    if (points.size < 2) {
+      return;
+    }
+
+    suppressDragUntilRelease = true;
+    previous = getCadPinchSnapshot(points);
+    onStart();
+    suppressPointerEvent(event);
+  };
+
+  const handlePointerMove = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || !points.has(event.pointerId)) {
+      return;
+    }
+    points.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (!suppressDragUntilRelease) {
+      return;
+    }
+
+    if (points.size >= 2) {
+      const current = getCadPinchSnapshot(points);
+      if (previous && current && previous.distance > 0 && current.distance > 0) {
+        onZoom({
+          center: current.center,
+          deltaX: current.center.x - previous.center.x,
+          deltaY: current.center.y - previous.center.y,
+          factor: Math.min(2, Math.max(0.5, current.distance / previous.distance)),
+        });
+      }
+      previous = current;
+    }
+    suppressPointerEvent(event);
+  };
+
+  const handlePointerEnd = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || !points.has(event.pointerId)) {
+      return;
+    }
+    points.delete(event.pointerId);
+    previous = points.size >= 2 ? getCadPinchSnapshot(points) : null;
+    if (points.size === 0) {
+      suppressDragUntilRelease = false;
+    }
+    try {
+      if (surface.hasPointerCapture(event.pointerId)) {
+        surface.releasePointerCapture(event.pointerId);
+      }
+    } catch {
+      // The underlying engine may already have released this pointer.
+    }
+    // Do not stop pointerup/cancel: the engine must clear the single-pointer
+    // drag that began before the second finger started the pinch.
+  };
+
+  surface.addEventListener('pointerdown', handlePointerDown, { capture: true });
+  surface.addEventListener('pointermove', handlePointerMove, { capture: true });
+  surface.addEventListener('pointerup', handlePointerEnd, { capture: true });
+  surface.addEventListener('pointercancel', handlePointerEnd, { capture: true });
+
+  return () => {
+    surface.removeEventListener('pointerdown', handlePointerDown, { capture: true });
+    surface.removeEventListener('pointermove', handlePointerMove, { capture: true });
+    surface.removeEventListener('pointerup', handlePointerEnd, { capture: true });
+    surface.removeEventListener('pointercancel', handlePointerEnd, { capture: true });
+    points.clear();
+  };
 };
 
 const createEmptyCadBounds = (): CadBounds => ({
@@ -674,7 +801,10 @@ export default async function renderCad(
   let viewer: CadViewerInstance | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let abortController: AbortController | null = null;
+  let disposeCadPinch: (() => void) | null = null;
+  let disposeNativeInteractions: (() => void) | null = null;
   let fitViewActive = true;
+  let nativeZoomRatio = 1;
   let disposed = false;
 
   const style = createStyle();
@@ -743,6 +873,9 @@ export default async function renderCad(
   const getWarnings = () => loadResult?.warnings || loadResult?.document.warnings || [];
 
   const getZoomPercent = () => {
+    if (viewer?.isNativeRendererActive?.()) {
+      return Math.round(nativeZoomRatio * 100);
+    }
     const zoom = viewState?.zoomPercent ?? viewer?.getZoomPercent?.() ?? 100;
     return Number.isFinite(zoom) ? Math.round(zoom) : 100;
   };
@@ -788,6 +921,101 @@ export default async function renderCad(
       cadViewStateEmitter.emit(createFileViewerViewStateChange(state, { action, source }));
     }
     return state;
+  };
+
+  const clampNativeZoomRatio = (ratio: number) => {
+    return Math.min(CAD_NATIVE_MAX_ZOOM_RATIO, Math.max(CAD_NATIVE_MIN_ZOOM_RATIO, ratio));
+  };
+
+  const notifyNativeZoomChange = (action: FileViewerViewStateChangeAction) => {
+    cadZoomEmitter.emit();
+    syncState();
+    emitCadViewStateChange(action, 'user');
+  };
+
+  const bindNativeCadInteractions = () => {
+    disposeNativeInteractions?.();
+    disposeNativeInteractions = null;
+    const surface = nativeHost.querySelector<HTMLCanvasElement>('.dwfv-overlay-canvas');
+    if (!surface) {
+      return;
+    }
+
+    let notificationQueued = false;
+    const queueNativeZoomChange = (action: FileViewerViewStateChangeAction) => {
+      if (notificationQueued) {
+        return;
+      }
+      notificationQueued = true;
+      queueMicrotask(() => {
+        notificationQueued = false;
+        if (!disposed && viewer?.isNativeRendererActive?.()) {
+          notifyNativeZoomChange(action);
+        }
+      });
+    };
+    const applyNativeZoomFactor = (factor: number, action: FileViewerViewStateChangeAction) => {
+      if (!Number.isFinite(factor) || factor <= 0) {
+        return;
+      }
+      nativeZoomRatio = clampNativeZoomRatio(nativeZoomRatio * factor);
+      queueNativeZoomChange(action);
+    };
+
+    const handleNativeClick = (event: Event) => {
+      const eventTarget = event.target;
+      const button = eventTarget instanceof Element ? eventTarget.closest('button') : null;
+      if (!button || !nativeHost.contains(button)) {
+        return;
+      }
+      const label = (button.textContent || '').trim();
+      if (label === '+') {
+        applyNativeZoomFactor(1.25, 'zoom-in');
+      } else if (label === '-' || label === '−') {
+        applyNativeZoomFactor(0.8, 'zoom-out');
+      } else if (/适应|fit|reset/i.test(label)) {
+        nativeZoomRatio = 1;
+        queueNativeZoomChange('zoom-reset');
+      }
+    };
+    const handleNativeWheel = (event: WheelEvent) => {
+      const rect = surface.getBoundingClientRect();
+      const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? event.deltaY * 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? event.deltaY * Math.max(1, rect.height)
+          : event.deltaY;
+      applyNativeZoomFactor(Math.exp(-delta * 0.0015), 'cad-view-change');
+    };
+    const handleNativePageChange = (event: Event) => {
+      if (event.target instanceof HTMLSelectElement && nativeHost.contains(event.target)) {
+        nativeZoomRatio = 1;
+        queueNativeZoomChange('zoom-reset');
+      }
+    };
+    const disposePinch = registerCadPinchZoom(surface, () => {
+      fitViewActive = false;
+    }, ({ center, factor }) => {
+      const deltaY = -Math.log(factor) / 0.0015;
+      surface.dispatchEvent(new WheelEvent('wheel', {
+        bubbles: true,
+        cancelable: true,
+        clientX: center.x,
+        clientY: center.y,
+        deltaMode: WheelEvent.DOM_DELTA_PIXEL,
+        deltaY,
+      }));
+    });
+
+    nativeHost.addEventListener('click', handleNativeClick);
+    nativeHost.addEventListener('change', handleNativePageChange);
+    surface.addEventListener('wheel', handleNativeWheel);
+    disposeNativeInteractions = () => {
+      disposePinch();
+      nativeHost.removeEventListener('click', handleNativeClick);
+      nativeHost.removeEventListener('change', handleNativePageChange);
+      surface.removeEventListener('wheel', handleNativeWheel);
+    };
   };
 
   const syncInspector = () => {
@@ -884,6 +1112,7 @@ export default async function renderCad(
       return false;
     }
     if (viewer.isNativeRendererActive?.()) {
+      nativeZoomRatio = 1;
       viewer.fit();
       return true;
     }
@@ -1080,6 +1309,19 @@ export default async function renderCad(
       },
     });
 
+    disposeCadPinch?.();
+    const renderer = nextViewer.renderer as unknown as CadRendererViewAdapter;
+    disposeCadPinch = registerCadPinchZoom(nextViewer.canvas, () => {
+      fitViewActive = false;
+    }, ({ center, deltaX, deltaY, factor }) => {
+      const rect = nextViewer.canvas.getBoundingClientRect();
+      renderer.panByScreenDelta?.(deltaX, deltaY);
+      renderer.zoom?.(factor, {
+        x: center.x - rect.left,
+        y: center.y - rect.top,
+      });
+    });
+
     if (options.preloadDwg !== false && normalizedType === 'dwg') {
       void nextViewer.preloadDwg({ wasmPath, workerUrl }).catch(() => {
         // 预热失败不阻断真实加载，loadBuffer 会返回完整错误上下文。
@@ -1098,6 +1340,9 @@ export default async function renderCad(
     viewState = null;
     layers = [];
     fitViewActive = true;
+    nativeZoomRatio = 1;
+    disposeNativeInteractions?.();
+    disposeNativeInteractions = null;
     syncUi();
 
     abortController?.abort();
@@ -1122,6 +1367,9 @@ export default async function renderCad(
       loadResult = restoreLoadResultSourceName(result);
       layers = collectLayers(result);
       status = 'ready';
+      if (viewer.isNativeRendererActive?.()) {
+        bindNativeCadInteractions();
+      }
       syncUi();
       queueMicrotask(() => {
         applyCadFit();
@@ -1167,6 +1415,10 @@ export default async function renderCad(
       unregisterFileViewerZoomProvider(shell);
       abortController?.abort();
       abortController = null;
+      disposeCadPinch?.();
+      disposeCadPinch = null;
+      disposeNativeInteractions?.();
+      disposeNativeInteractions = null;
       resizeObserver?.disconnect();
       resizeObserver = null;
       viewer?.destroy();

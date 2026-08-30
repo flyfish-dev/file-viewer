@@ -404,6 +404,8 @@ const options = {
 
 未显式传 `options.fit` 时，首屏继续沿用各 renderer 的历史默认策略，因此 PDF 仍默认适配宽度，图片仍默认 scale-down，表格和代码保持可读优先。传入 `fit` 后，core 会统一编排 renderer 自己的 zoom / view provider，不在宿主外层套 CSS `transform`。PDF、Word/DOCX、图片等 renderer 会在页面加载、显式 fit、图片 natural size 读取、容器 resize 或内部重排完成后重新上报真实 `scale` / `label`；内置工具栏和 `getOperationAvailability()` 会同步更新 `zoomIn`、`zoomOut`、`zoomReset` 是否可用。自定义工具栏不要把首屏状态写死成 `100%`，应以 `zoom-change`、`fit-change` 或 `getZoomState()` 的值为准。
 
+比例的基准由 renderer 的坐标系决定。Word/DOCX 的 `100%` 是文档页面的原始 CSS 尺寸，`120%` 表示页面布局宽度乘以 `1.2`，不是“当前适宽结果再放大 20%”；所以移动端首屏适宽可能低于 `100%`。CAD 没有可通用解释的 CSS 物理原尺寸，它的 `100%` 表示最近一次“适配”相机视图，后续按钮、滚轮或双指缩放显示相对该视图的倍率。业务不要把不同格式的百分比换算成纸张物理比例。
+
 自定义工具栏不要在预览器外层套 `transform: scale()`。这会破坏虚拟表格、canvas、PDF 文本层或 CAD 交互坐标。请通过组件 ref 调用标准缩放 API：
 
 ```ts

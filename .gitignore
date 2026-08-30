@@ -17,8 +17,7 @@ packages/compat/web/viewer/
 apps/component-demo/public/file-viewer/
 apps/component-demo/public/example/markdown.md
 apps/component-demo/public/example/pic.png
-!apps/viewer-demo/public/vendor/drawio/math4/es5/output/
-!apps/viewer-demo/public/vendor/drawio/math4/es5/output/*.js
+apps/viewer-demo/public/vendor/drawio/math4/es5/output/
 examples/*/public/flyfish-viewer-assets.json
 examples/*/public/vendor/
 examples/*/public/wasm/

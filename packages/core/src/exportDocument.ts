@@ -502,7 +502,9 @@ const EXPORT_DOCUMENT_STYLE = `
   .viewer-export-content .pdf-wrapper,
   .viewer-export-content .docx-fit-viewer,
   .viewer-export-content .docx-wrapper,
+  .viewer-export-content .docx-canvas-wrapper,
   .viewer-export-content .msdoc-stage,
+  .viewer-export-content .msdoc-paged-view,
   .viewer-export-content .code-viewer,
   .viewer-export-content .markdown-viewer,
   .viewer-export-content .email-shell,
@@ -530,6 +532,11 @@ const EXPORT_DOCUMENT_STYLE = `
     padding: 0 !important;
     background: transparent !important;
   }
+  .viewer-export-content .docx-canvas-wrapper {
+    display: block !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
   .viewer-export-content .docx-print-document {
     display: block !important;
     width: fit-content !important;
@@ -551,6 +558,28 @@ const EXPORT_DOCUMENT_STYLE = `
     break-after: page;
     page-break-after: always;
   }
+  .viewer-export-content .docx-canvas-sheet {
+    position: relative !important;
+    contain: none !important;
+    width: var(--viewer-print-page-width, 794px) !important;
+    height: var(--viewer-print-page-height, 1123px) !important;
+    min-height: var(--viewer-print-page-height, 1123px) !important;
+    max-width: 100% !important;
+    margin: 0 auto 18px !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-after: page;
+    page-break-after: always;
+  }
+  .viewer-export-content .docx-canvas-sheet > img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: fill;
+  }
   .viewer-export-content .msdoc-page {
     position: relative !important;
     width: var(--viewer-print-page-width, 794px) !important;
@@ -563,6 +592,7 @@ const EXPORT_DOCUMENT_STYLE = `
     page-break-after: always;
   }
   .viewer-export-content .docx-page-frame:last-child,
+  .viewer-export-content .docx-canvas-sheet:last-child,
   .viewer-export-content .msdoc-page:last-child {
     break-after: auto;
     page-break-after: auto;
@@ -583,6 +613,12 @@ const EXPORT_DOCUMENT_STYLE = `
   }
   .viewer-export-content .msdoc-stage {
     display: block !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+  .viewer-export-content .msdoc-paged-view {
+    display: block !important;
+    gap: 0 !important;
     padding: 0 !important;
     background: transparent !important;
   }
@@ -732,6 +768,16 @@ const EXPORT_DOCUMENT_STYLE = `
       max-width: none !important;
       margin: 0 !important;
       overflow: hidden !important;
+    }
+    .viewer-export-content .docx-canvas-sheet {
+      contain: none !important;
+      width: var(--viewer-print-page-width, 794px) !important;
+      height: var(--viewer-print-page-height, 1123px) !important;
+      min-height: var(--viewer-print-page-height, 1123px) !important;
+      max-width: none !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      box-shadow: none !important;
     }
     .viewer-export-content .msdoc-page {
       width: var(--viewer-print-page-width, 794px) !important;

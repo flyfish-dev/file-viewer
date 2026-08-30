@@ -14,9 +14,11 @@ import {
   formatCssPixels,
   getElementPrintPageSize,
   normalizeFileViewerTheme,
+  replaceFileViewerCanvasWithImages,
   registerFileViewerZoomProvider,
   resolveFileViewerFitScale,
   unregisterFileViewerZoomProvider,
+  waitForFileViewerNextPaint,
   type FileRenderContext,
   type FileViewerFitRequest,
   type FileViewerFitResult,
@@ -788,6 +790,10 @@ function isDocxFlowFrame(frame: HTMLElement | undefined) {
   return !!frame?.classList.contains('docx-flow-frame')
 }
 
+function isDocxCanvasSheet(frame: HTMLElement | undefined) {
+  return !!frame?.classList.contains('docx-canvas-sheet')
+}
+
 function getDocxFramePrintSize(frame: HTMLElement | undefined) {
   const page = frame ? getDocxPageElement(frame) : null
   if (!page) {
@@ -806,6 +812,17 @@ function getDocxFramePrintSize(frame: HTMLElement | undefined) {
 }
 
 function normalizeDocxPageForPrint(frame: HTMLElement, pageSize: PrintPageSize) {
+  if (isDocxCanvasSheet(frame)) {
+    applyPrintPageSize(frame, pageSize)
+    frame.dataset.viewerPrintPageIndex ||= '0'
+    frame.classList.remove('docx-canvas-sheet-pending', 'docx-canvas-sheet-virtualized')
+    frame.style.position = 'relative'
+    frame.style.contain = 'none'
+    frame.style.margin = '0 auto 18px'
+    frame.style.boxShadow = 'none'
+    return
+  }
+
   const flowLayout = isDocxFlowFrame(frame)
   const pageWidth = formatCssPixels(pageSize.width)
   const pageHeight = formatCssPixels(pageSize.height)
@@ -833,11 +850,15 @@ function normalizeDocxPageForPrint(frame: HTMLElement, pageSize: PrintPageSize) 
 }
 
 function buildDocxPrintStyle(target: HTMLDivElement) {
-  const firstFrame = target.querySelector<HTMLElement>('.docx-page-frame, .docx-flow-frame')
+  const firstFrame = target.querySelector<HTMLElement>(
+    '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
+  )
   const pageSize = getDocxFramePrintSize(firstFrame || undefined)
-  const selector = firstFrame?.classList.contains('docx-flow-frame')
-    ? '.viewer-export-content .docx-flow-frame'
-    : '.viewer-export-content .docx-page-frame'
+  const selector = isDocxCanvasSheet(firstFrame || undefined)
+    ? '.viewer-export-content .docx-canvas-sheet'
+    : firstFrame?.classList.contains('docx-flow-frame')
+      ? '.viewer-export-content .docx-flow-frame'
+      : '.viewer-export-content .docx-page-frame'
 
   return buildPrintPageStyle({
     selector,
@@ -849,23 +870,48 @@ function buildDocxPrintStyle(target: HTMLDivElement) {
   })
 }
 
-function prepareDocxCloneForExport(target: HTMLDivElement) {
-  const liveFrames = Array.from(target.querySelectorAll<HTMLElement>('.docx-page-frame, .docx-flow-frame'))
-  const clone = target.cloneNode(true) as HTMLElement
-  const printDocument = target.ownerDocument.createElement('div')
-  printDocument.className = 'docx-print-document'
-  const scopedStyles = Array.from(clone.querySelectorAll('style'))
-    .filter(style => !style.textContent?.includes('.docx-fit-viewer'))
-    .map(style => style.outerHTML)
-    .join('')
+type DocxCanvasRuntimeWindow = Window & {
+  __docxCanvasMaterializeAllPages?: (reason?: string) => Promise<unknown> | unknown
+}
 
-  clone.querySelectorAll<HTMLElement>('.docx-page-frame, .docx-flow-frame').forEach((frame, index) => {
-    frame.dataset.viewerPrintPageIndex = String(index)
-    normalizeDocxPageForPrint(frame, getDocxFramePrintSize(liveFrames[index]))
-    printDocument.appendChild(frame.cloneNode(true))
-  })
+async function prepareDocxCloneForExport(target: HTMLDivElement) {
+  const view = getTargetWindow(target) as DocxCanvasRuntimeWindow | undefined
+  const usesVirtualCanvas = !!target.querySelector('.docx-canvas-sheet')
+  const materializeAllPages = view?.__docxCanvasMaterializeAllPages
+  let materializedForSnapshot = false
 
-  return printDocument.childElementCount ? `${scopedStyles}${printDocument.outerHTML}` : clone.innerHTML
+  if (usesVirtualCanvas && typeof materializeAllPages === 'function') {
+    await materializeAllPages.call(view, 'file-viewer-print-snapshot')
+    await waitForFileViewerNextPaint(view)
+    materializedForSnapshot = true
+  }
+
+  try {
+    const selector = '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
+    const liveFrames = Array.from(target.querySelectorAll<HTMLElement>(selector))
+    const clone = target.cloneNode(true) as HTMLElement
+    replaceFileViewerCanvasWithImages(target, clone)
+    const printDocument = target.ownerDocument.createElement('div')
+    printDocument.className = 'docx-print-document'
+    const scopedStyles = Array.from(clone.querySelectorAll('style'))
+      .filter(style => !style.textContent?.includes('.docx-fit-viewer'))
+      .map(style => style.outerHTML)
+      .join('')
+
+    clone.querySelectorAll<HTMLElement>(selector).forEach((frame, index) => {
+      frame.dataset.viewerPrintPageIndex = String(index)
+      normalizeDocxPageForPrint(frame, getDocxFramePrintSize(liveFrames[index]))
+      printDocument.appendChild(frame.cloneNode(true))
+    })
+
+    return printDocument.childElementCount ? `${scopedStyles}${printDocument.outerHTML}` : clone.innerHTML
+  } finally {
+    if (materializedForSnapshot && view) {
+      const afterPrint = target.ownerDocument.createEvent('Event')
+      afterPrint.initEvent('afterprint', false, false)
+      view.dispatchEvent(afterPrint)
+    }
+  }
 }
 
 /**
@@ -905,7 +951,7 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
   context?.registerExportAdapter?.({
     includeDocumentStyles: false,
     getPrintMaskPages: () => Array.from(
-      target.querySelectorAll<HTMLElement>('.docx-page-frame, .docx-flow-frame')
+      target.querySelectorAll<HTMLElement>('.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet')
     ),
     beforeSnapshot: () => {
       const view = getTargetWindow(target)
@@ -917,7 +963,9 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
     toHtml: () => prepareDocxCloneForExport(target)
   })
   context?.registerThumbnailAdapter?.({
-    getTarget: () => target.querySelector('.docx-page-frame, .docx-flow-frame') || target
+    getTarget: () => target.querySelector(
+      '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
+    ) || target
   })
 
   return {

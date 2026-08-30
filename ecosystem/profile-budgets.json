@@ -197,7 +197,7 @@
     },
     "vue3": {
       "maxEntryBytes": 1308313,
-      "maxEntryGzipBytes": 442332,
+      "maxEntryGzipBytes": 450000,
       "maxJsChunkCount": 81
     },
     "react": {

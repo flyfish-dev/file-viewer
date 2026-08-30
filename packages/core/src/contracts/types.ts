@@ -880,6 +880,8 @@ export interface FileRenderContext {
   filename?: string;
   url?: string;
   streamUrl?: string;
+  /** Original browser File retained for renderers that support Blob-backed random access. */
+  sourceFile?: File;
   signal?: AbortSignal;
   options?: FileViewerOptions;
   surface?: RenderSurface;

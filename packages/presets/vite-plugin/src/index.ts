@@ -681,6 +681,7 @@ const fileViewerOptimizationExcludedPackages = [
 const cjsInteropPackages = [
   '@file-viewer/docx',
   '@xmldom/xmldom',
+  'diff2html',
   'keynote-archives',
   'occt-import-js',
   'jszip',
@@ -1302,6 +1303,9 @@ function createManualChunks(
 
   return (id: string) => {
     const normalized = id.replace(/\\/g, '/')
+    if (normalized.endsWith('/dist/vendor/pdfjs/legacy/build/pdf.worker.mjs')) {
+      return undefined
+    }
     for (const [packageName, chunkName] of packageToChunk) {
       if (
         normalized.includes(`/node_modules/${packageName}/`) ||
@@ -1830,12 +1834,46 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     })
   }
 
-  const pdfRoot = resolvePackageRoot('pdfjs-dist', ['@file-viewer/renderer-pdf'])
-  const pdfVersion = assertOwnedPackageVersion(
-    'pdfjs-dist',
-    pdfRoot,
-    '@file-viewer/renderer-pdf'
+  const rendererPdfRoot = resolvePackageRoot('@file-viewer/renderer-pdf')
+  const stagedPdfRoot = rendererPdfRoot
+    ? join(rendererPdfRoot, 'dist/vendor/pdfjs')
+    : null
+  const stagedPdfProvenancePath = stagedPdfRoot
+    ? join(stagedPdfRoot, 'provenance.json')
+    : null
+  let stagedPdfVersion: string | null = null
+  if (stagedPdfProvenancePath && existsSync(stagedPdfProvenancePath)) {
+    try {
+      const provenance = JSON.parse(readFileSync(stagedPdfProvenancePath, 'utf8')) as {
+        packageName?: string
+        version?: string
+      }
+      if (provenance.packageName === 'pdfjs-dist' && provenance.version) {
+        stagedPdfVersion = provenance.version
+      }
+    } catch {
+      stagedPdfVersion = null
+    }
+  }
+  const hasStagedPdfAssets = Boolean(
+    stagedPdfRoot &&
+    stagedPdfVersion &&
+    existsSync(join(stagedPdfRoot, 'legacy/build/pdf.worker.mjs')) &&
+    existsSync(join(stagedPdfRoot, 'cmaps')) &&
+    existsSync(join(stagedPdfRoot, 'wasm')) &&
+    existsSync(join(stagedPdfRoot, 'standard_fonts'))
   )
+  const dependencyPdfRoot = hasStagedPdfAssets
+    ? null
+    : resolvePackageRoot('pdfjs-dist', ['@file-viewer/renderer-pdf'])
+  const pdfRoot = hasStagedPdfAssets ? stagedPdfRoot : dependencyPdfRoot
+  const pdfVersion = hasStagedPdfAssets
+    ? stagedPdfVersion
+    : assertOwnedPackageVersion(
+        'pdfjs-dist',
+        dependencyPdfRoot,
+        '@file-viewer/renderer-pdf'
+      )
   const pdfSource = pdfRoot
     ? { sourcePackage: 'pdfjs-dist', sourceVersion: pdfVersion || undefined }
     : undefined
@@ -1883,12 +1921,29 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     undefined,
     pdfSource
   )
-  const pdfCjkFontRoot = resolvePackageRoot('@fontsource-variable/noto-sans-sc', [
+  const stagedPdfCjkFontRoot = rendererPdfRoot
+    ? join(rendererPdfRoot, 'dist/vendor/noto-sans-sc')
+    : null
+  const standardAssetsRoot = resolvePackageRoot('@file-viewer/assets-standard')
+  const standardPdfCjkFontRoot = standardAssetsRoot
+    ? join(standardAssetsRoot, 'viewer/vendor/pdf/fonts')
+    : null
+  const dependencyPdfCjkFontRoot = resolvePackageRoot('@fontsource-variable/noto-sans-sc', [
     '@file-viewer/renderer-pdf'
   ])
-  await push('pdf', 'pdf-cjk-font-fallback', join(targetRoot, 'vendor/pdf/fonts'), () =>
-    copyPdfCjkFontAssets(pdfCjkFontRoot, join(targetRoot, 'vendor/pdf/fonts'))
-  )
+  const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
+  await push('pdf', 'pdf-cjk-font-fallback', pdfCjkFontTarget, async () => {
+    if (
+      standardPdfCjkFontRoot &&
+      existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
+    ) {
+      return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
+    }
+    if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
+      return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
+    }
+    return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
+  })
 
   const pptxRoot = resolvePackageRoot('@file-viewer/pptx', [
     '@file-viewer/renderer-pptx',

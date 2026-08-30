@@ -98,7 +98,17 @@ export const buildPrintPageStyle = ({
       html, body {
         width: ${pageWidth};
         min-width: ${pageWidth};
+        margin: 0 !important;
+        padding: 0 !important;
+        min-height: 0 !important;
         background: #ffffff !important;
+      }
+      .viewer-export-shell,
+      .viewer-export-content {
+        width: ${pageWidth} !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
       ${selector} {
         width: ${pageWidth}!important;

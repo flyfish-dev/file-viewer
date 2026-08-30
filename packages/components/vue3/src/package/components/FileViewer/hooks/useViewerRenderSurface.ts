@@ -129,6 +129,7 @@ export const useViewerRenderSurface = ({
     onRefreshViewStateProvider: refreshViewStateProvider,
     render: async ({
       buffer: nextBuffer,
+      file: sourceFile,
       type,
       target,
       filename,
@@ -142,6 +143,7 @@ export const useViewerRenderSurface = ({
         filename,
         url: nextSourceUrl,
         streamUrl: nextStreamUrl,
+        sourceFile,
         options: getOptions(),
         registerExportAdapter,
         onProgressiveRender,
