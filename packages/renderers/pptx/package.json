@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@types/d3-format": "^3.0.4",
-    "@types/node": "^25.9.2",
+    "@types/node": "^26.4.0",
     "billboard.js": "^3.17.2",
     "d3-format": "^3.1.2",
     "esbuild": "^0.28.2",
