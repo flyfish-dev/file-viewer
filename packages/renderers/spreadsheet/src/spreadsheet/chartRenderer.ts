@@ -1,4 +1,5 @@
 import type { SheetChart, SheetChartSeries } from './worker/type.js'
+import { extremaPointIndexes } from './chartSampling.js'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 const DEFAULT_COLORS = ['#4472c4', '#ed7d31', '#70ad47', '#ffc000', '#5b9bd5', '#a5a5a5']
@@ -97,37 +98,6 @@ const showsSeriesMarker = (chart: SheetChart, series: SheetChartSeries) => {
   }
   const scatterStyle = (chart.scatterStyle || 'lineMarker').toLowerCase()
   return scatterStyle === 'marker' || scatterStyle.endsWith('marker')
-}
-
-const linePointIndexes = (values: number[], maxPoints: number) => {
-  if (values.length <= maxPoints) {
-    return values.map((_, index) => index)
-  }
-
-  const bucketCount = Math.max(1, Math.floor((maxPoints - 2) / 2))
-  const bucketSize = (values.length - 2) / bucketCount
-  const result = [0]
-  for (let bucket = 0; bucket < bucketCount; bucket += 1) {
-    const start = Math.max(1, Math.floor(1 + bucket * bucketSize))
-    const end = Math.min(values.length - 1, Math.ceil(1 + (bucket + 1) * bucketSize))
-    let minIndex = start
-    let maxIndex = start
-    for (let index = start + 1; index < end; index += 1) {
-      if (values[index] < values[minIndex]) {
-        minIndex = index
-      }
-      if (values[index] > values[maxIndex]) {
-        maxIndex = index
-      }
-    }
-    if (minIndex <= maxIndex) {
-      result.push(minIndex, maxIndex)
-    } else {
-      result.push(maxIndex, minIndex)
-    }
-  }
-  result.push(values.length - 1)
-  return Array.from(new Set(result))
 }
 
 const categoryLabelIndexes = (count: number, plotWidth: number) => {
@@ -242,14 +212,25 @@ const drawSeriesMarker = (
 
 const categoryLabels = (chart: SheetChart) => {
   const labels = chart.series.find((series) => series.categories.length)?.categories || []
-  const valueCount = Math.max(0, ...chart.series.map((series) => series.values.length))
+  const valueCount = chart.series.reduce(
+    (count, series) => Math.max(count, series.values.length),
+    0
+  )
   return labels.length ? labels : Array.from({ length: valueCount }, (_, index) => `${index + 1}`)
 }
 
 const valueDomain = (chart: SheetChart) => {
-  const values = chart.series.flatMap((series) => series.values).filter(Number.isFinite)
-  const min = Math.min(0, ...values)
-  const max = Math.max(0, ...values)
+  let min = 0
+  let max = 0
+  chart.series.forEach((series) => {
+    series.values.forEach((value) => {
+      if (!Number.isFinite(value)) {
+        return
+      }
+      min = Math.min(min, value)
+      max = Math.max(max, value)
+    })
+  })
   if (min === max) {
     return { min: 0, max: Math.max(1, max), span: Math.max(1, max) }
   }
@@ -320,21 +301,27 @@ const drawCategoryLabels = (
   if (!categories.length) {
     return
   }
+  const categorySeries = chart.series.find((series) => series.categories.length)
+  const sourcePointCount = Math.max(
+    categorySeries?.sourcePointCount || categories.length,
+    categories.length
+  )
   const step = plot.width / categories.length
   categoryLabelIndexes(categories.length, plot.width).forEach((index) => {
     const category = categories[index]
     const maxLength = categories.length > 8 ? 8 : 14
     const label = category.length > maxLength ? `${category.slice(0, maxLength - 1)}…` : category
+    const sourceIndex = categorySeries?.sourcePointIndexes?.[index] ?? index
     const x =
       pointAxis && categories.length > 1
-        ? plot.left + (index / (categories.length - 1)) * plot.width
+        ? plot.left + (sourceIndex / Math.max(sourcePointCount - 1, 1)) * plot.width
         : plot.left + (index + 0.5) * step
     const labelElement = svgText(documentRef, label, x, plot.bottom + 17, {
       anchor: 'middle',
       size: 10
     })
     labelElement.classList.add('excel-chart-category-label')
-    labelElement.dataset.categoryIndex = `${index}`
+    labelElement.dataset.categoryIndex = `${sourceIndex}`
     svg.appendChild(labelElement)
   })
 }
@@ -349,7 +336,7 @@ const drawColumnChart = (
   const categories = categoryLabels(chart)
   const categoryCount = Math.max(
     categories.length,
-    ...chart.series.map((series) => series.values.length),
+    chart.series.reduce((count, series) => Math.max(count, series.values.length), 0),
     1
   )
   const groupWidth = plot.width / categoryCount
@@ -390,7 +377,7 @@ const drawHorizontalBarChart = (
   const categories = categoryLabels(chart)
   const categoryCount = Math.max(
     categories.length,
-    ...chart.series.map((series) => series.values.length),
+    chart.series.reduce((count, series) => Math.max(count, series.values.length), 0),
     1
   )
   const groupHeight = plot.height / categoryCount
@@ -448,19 +435,26 @@ const drawLineChart = (
   fillArea: boolean
 ) => {
   const domain = valueDomain(chart)
-  const count = Math.max(...chart.series.map((series) => series.values.length), 1)
+  const count = Math.max(
+    chart.series.reduce(
+      (pointCount, series) => Math.max(pointCount, series.sourcePointCount || series.values.length),
+      0
+    ),
+    1
+  )
   const step = count > 1 ? plot.width / (count - 1) : plot.width
 
   drawValueGrid(documentRef, svg, plot, domain)
   chart.series.forEach((series, seriesIndex) => {
-    const pointIndexes = linePointIndexes(
+    const pointIndexes = extremaPointIndexes(
       series.values,
       Math.max(64, Math.floor(plot.width * MAX_LINE_POINTS_PER_PIXEL))
     )
     const points = pointIndexes.map((index) => {
       const value = series.values[index]
+      const sourceIndex = series.sourcePointIndexes?.[index] ?? index
       return {
-        x: plot.left + (count > 1 ? index * step : plot.width / 2),
+        x: plot.left + (count > 1 ? sourceIndex * step : plot.width / 2),
         y: plot.bottom - ((value - domain.min) / domain.span) * plot.height
       }
     })
@@ -485,7 +479,8 @@ const drawLineChart = (
       svg.appendChild(
         svgElement(documentRef, 'path', {
           class: 'excel-chart-series-line',
-          'data-source-point-count': series.values.length,
+          'data-source-point-count': series.sourcePointCount || series.values.length,
+          'data-transferred-point-count': series.values.length,
           'data-rendered-point-count': points.length,
           d: pathData,
           fill: 'none',

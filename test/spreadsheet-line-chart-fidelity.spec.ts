@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { JSDOM } from 'jsdom'
 import { describe, expect, it } from 'vitest'
 import { renderSpreadsheetChart } from '../packages/renderers/spreadsheet/src/spreadsheet/chartRenderer'
+import { MAX_TRANSFERRED_LINE_CHART_POINTS } from '../packages/renderers/spreadsheet/src/spreadsheet/chartSampling'
 import { parseSpreadsheetCharts } from '../packages/renderers/spreadsheet/src/spreadsheet/worker/sheetjs/chartParser'
 import type { SheetChart } from '../packages/renderers/spreadsheet/src/spreadsheet/worker/type'
 
@@ -22,7 +23,17 @@ const { read: readSpreadsheet } = spreadsheetRequire('styled-exceljs') as {
   ) => NonNullable<Parameters<typeof parseSpreadsheetCharts>[1]>
 }
 
-const createLineChartFixture = async () => {
+const createLineChartFixture = async (count = 3) => {
+  const fixtureValues = count === 3
+    ? [46, 64, 24]
+    : Array.from({ length: count }, (_, index) => 60 + Math.round(Math.sin(index / 20) * 30))
+  const categoryPoints = Array.from(
+    { length: count },
+    (_, index) => `<pt idx="${index}"><v>${index + 1}</v></pt>`
+  ).join('')
+  const valuePoints = fixtureValues.map(
+    (value, index) => `<pt idx="${index}"><v>${value}</v></pt>`
+  ).join('')
   const zip = new JSZip()
   zip.file(
     'xl/workbook.xml',
@@ -87,10 +98,10 @@ const createLineChartFixture = async () => {
         </a:ln></spPr>
         <marker><symbol val="none"/></marker>
         <cat><numRef><numCache>
-          <pt idx="0"><v>1</v></pt><pt idx="1"><v>2</v></pt><pt idx="2"><v>3</v></pt>
+          ${categoryPoints}
         </numCache></numRef></cat>
         <val><numRef><numCache>
-          <pt idx="0"><v>46</v></pt><pt idx="1"><v>64</v></pt><pt idx="2"><v>24</v></pt>
+          ${valuePoints}
         </numCache></numRef></val>
       </ser></lineChart><catAx/><valAx/></plotArea><legend><legendPos val="r"/></legend></chart>
     </chartSpace>`
@@ -129,7 +140,7 @@ describe('spreadsheet line-chart fidelity', () => {
   })
 
   it('renders a large marker-free line as a bounded SVG path with sampled labels', () => {
-    const count = 10_000
+    const count = 225_000
     const element = render({
       id: 'large-line',
       type: 'line',
@@ -155,14 +166,45 @@ describe('spreadsheet line-chart fidelity', () => {
 
     const path = element.querySelector('.excel-chart-series-line')
     expect(path?.getAttribute('data-source-point-count')).toBe(`${count}`)
-    expect(Number(path?.getAttribute('data-rendered-point-count'))).toBeLessThanOrEqual(834)
+    expect(path?.getAttribute('data-transferred-point-count')).toBe(`${count}`)
+    expect(Number(path?.getAttribute('data-rendered-point-count'))).toBeLessThanOrEqual(900)
     expect(Number(path?.getAttribute('stroke-width'))).toBeCloseTo(4800 / 9525, 6)
     expect(element.querySelectorAll('.excel-chart-marker')).toHaveLength(0)
     const labels = element.querySelectorAll('.excel-chart-category-label')
     expect(labels.length).toBeGreaterThan(2)
     expect(labels.length).toBeLessThanOrEqual(15)
     expect(labels[0]?.textContent).toBe('1')
-    expect(labels[labels.length - 1]?.textContent).toBe('10000')
+    expect(labels[labels.length - 1]?.textContent).toBe(`${count}`)
+  })
+
+  it('compacts very large line-chart payloads before they cross the worker boundary', async () => {
+    const count = 20_000
+    const charts = await parseSpreadsheetCharts(await createLineChartFixture(count))
+    const series = charts.Data?.[0]?.series[0]
+
+    expect(series?.sourcePointCount).toBe(count)
+    expect(series?.values.length).toBeLessThanOrEqual(MAX_TRANSFERRED_LINE_CHART_POINTS)
+    expect(series?.categories).toHaveLength(series?.values.length || 0)
+    expect(series?.sourcePointIndexes).toHaveLength(series?.values.length || 0)
+    expect(series?.sourcePointIndexes?.[0]).toBe(0)
+    expect(series?.sourcePointIndexes?.at(-1)).toBe(count - 1)
+    expect(series?.categories[0]).toBe('1')
+    expect(series?.categories.at(-1)).toBe(`${count}`)
+
+    const element = render({
+      ...charts.Data[0],
+      left: 0,
+      top: 0,
+      width: 600,
+      height: 360,
+      row: 1,
+      col: 5
+    })
+    const path = element.querySelector('.excel-chart-series-line')
+    expect(path?.getAttribute('data-source-point-count')).toBe(`${count}`)
+    expect(Number(path?.getAttribute('data-transferred-point-count'))).toBeLessThanOrEqual(
+      MAX_TRANSFERRED_LINE_CHART_POINTS
+    )
   })
 
   it('keeps marker-only scatter charts visually distinct from line charts', () => {
@@ -216,6 +258,9 @@ describe('spreadsheet line-chart fidelity', () => {
         expect(chart.series[0]?.marker).toEqual({ symbol: 'none', size: undefined })
         expect(chart.series[0]?.lineWidth).toBeCloseTo(4800 / 9525, 6)
       })
+      const region3 = charts.region_3?.[0]?.series[0]
+      expect(region3?.sourcePointCount).toBe(225_000)
+      expect(region3?.values.length).toBeLessThanOrEqual(MAX_TRANSFERRED_LINE_CHART_POINTS)
     }
   )
 })

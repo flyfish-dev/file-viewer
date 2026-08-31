@@ -38,6 +38,8 @@ export interface SheetChartSeries {
   name: string;
   categories: string[];
   values: number[];
+  sourcePointCount?: number;
+  sourcePointIndexes?: number[];
   color?: string;
   lineWidth?: number;
   lineDash?: string;

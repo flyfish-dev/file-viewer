@@ -12,6 +12,10 @@ import type {
   SheetChartType,
   SheetDrawingMarker
 } from '../type.js'
+import {
+  extremaPointIndexes,
+  MAX_TRANSFERRED_LINE_CHART_POINTS
+} from '../../chartSampling.js'
 
 const CHART_RELATIONSHIP_SUFFIX = '/chart'
 const DRAWING_RELATIONSHIP_SUFFIX = '/drawing'
@@ -389,6 +393,12 @@ const parseSeriesMarker = (series: XmlElement): SheetChartSeries['marker'] => {
 }
 
 const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
+  const chartType = CHART_TYPE_MAP[localName(chartNode)]
+  const compactLineSeries = chartType === 'line'
+    || chartType === 'area'
+    || chartType === 'scatter'
+    || chartType === 'radar'
+
   return childrenByLocal(chartNode, 'ser').map((series, index): SheetChartSeries => {
     const tx = firstChildByLocal(series, 'tx')
     const category = firstChildByLocal(series, 'cat') || firstChildByLocal(series, 'xVal')
@@ -396,7 +406,7 @@ const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
     const categories = parsePointValues(category, workbook)
     const values = parsePointValues(value, workbook, false).map(Number).filter(Number.isFinite)
 
-    return {
+    const result: SheetChartSeries = {
       name: chartText(tx, workbook) || `Series ${index + 1}`,
       categories: categories.length
         ? categories
@@ -405,6 +415,21 @@ const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
       color: parseSeriesColor(series),
       ...parseSeriesLine(series),
       marker: parseSeriesMarker(series)
+    }
+
+    if (!compactLineSeries || values.length <= MAX_TRANSFERRED_LINE_CHART_POINTS) {
+      return result
+    }
+
+    const sourcePointIndexes = extremaPointIndexes(values, MAX_TRANSFERRED_LINE_CHART_POINTS)
+    return {
+      ...result,
+      categories: sourcePointIndexes.map((sourceIndex) => (
+        result.categories[sourceIndex] ?? `${sourceIndex + 1}`
+      )),
+      values: sourcePointIndexes.map((sourceIndex) => values[sourceIndex]),
+      sourcePointCount: values.length,
+      sourcePointIndexes
     }
   })
 }
