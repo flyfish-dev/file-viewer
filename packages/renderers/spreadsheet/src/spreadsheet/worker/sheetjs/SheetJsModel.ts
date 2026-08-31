@@ -686,6 +686,7 @@ export default class SheetJsModel implements SheetModel {
         valueAxisTitle: chart.valueAxisTitle,
         barDirection: chart.barDirection,
         grouping: chart.grouping,
+        scatterStyle: chart.scatterStyle,
         legendPosition: chart.legendPosition,
         series: chart.series,
         left: Math.max(0, left),

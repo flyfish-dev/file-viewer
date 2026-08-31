@@ -16,6 +16,7 @@ import type {
 const CHART_RELATIONSHIP_SUFFIX = '/chart'
 const DRAWING_RELATIONSHIP_SUFFIX = '/drawing'
 const WORKSHEET_RELATIONSHIP_SUFFIX = '/worksheet'
+const EMUS_PER_CSS_PIXEL = 9525
 
 const CHART_TYPE_MAP: Record<string, SheetChartType> = {
   areaChart: 'area',
@@ -361,6 +362,32 @@ const parseSeriesColor = (series: XmlElement) => {
   return SCHEME_COLORS[scheme]
 }
 
+const parseSeriesLine = (series: XmlElement) => {
+  const shape = firstChildByLocal(series, 'spPr')
+  const line = firstChildByLocal(shape, 'ln')
+  const widthEmus = Number(line?.getAttribute('w'))
+  return {
+    lineWidth:
+      Number.isFinite(widthEmus) && widthEmus > 0 ? widthEmus / EMUS_PER_CSS_PIXEL : undefined,
+    lineDash: firstChildByLocal(line, 'prstDash')?.getAttribute('val') || undefined,
+    lineVisible: line ? !firstChildByLocal(line, 'noFill') : undefined
+  }
+}
+
+const parseSeriesMarker = (series: XmlElement): SheetChartSeries['marker'] => {
+  const marker = firstChildByLocal(series, 'marker')
+  if (!marker) {
+    return undefined
+  }
+
+  const symbol = firstChildByLocal(marker, 'symbol')?.getAttribute('val') || 'auto'
+  const sizeValue = Number(firstChildByLocal(marker, 'size')?.getAttribute('val'))
+  return {
+    symbol,
+    size: Number.isFinite(sizeValue) && sizeValue > 0 ? sizeValue : undefined
+  }
+}
+
 const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
   return childrenByLocal(chartNode, 'ser').map((series, index): SheetChartSeries => {
     const tx = firstChildByLocal(series, 'tx')
@@ -375,7 +402,9 @@ const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
         ? categories
         : values.map((_, valueIndex) => `${valueIndex + 1}`),
       values,
-      color: parseSeriesColor(series)
+      color: parseSeriesColor(series),
+      ...parseSeriesLine(series),
+      marker: parseSeriesMarker(series)
     }
   })
 }
@@ -409,6 +438,8 @@ const parseChart = (document: XmlDocument, workbook?: WorkBook | null): ParsedCh
     valueAxisTitle: chartText(firstChildByLocal(valueAxis, 'title'), workbook) || undefined,
     barDirection,
     grouping: firstChildByLocal(chartEntry.element, 'grouping')?.getAttribute('val') || undefined,
+    scatterStyle:
+      firstChildByLocal(chartEntry.element, 'scatterStyle')?.getAttribute('val') || undefined,
     legendPosition: legend ? LEGEND_POSITION_MAP[legendPositionValue] || 'bottom' : undefined,
     series: parseSeries(chartEntry.element, workbook)
   }

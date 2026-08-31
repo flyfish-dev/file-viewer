@@ -39,6 +39,13 @@ export interface SheetChartSeries {
   categories: string[];
   values: number[];
   color?: string;
+  lineWidth?: number;
+  lineDash?: string;
+  lineVisible?: boolean;
+  marker?: {
+    symbol: string;
+    size?: number;
+  };
 }
 
 export interface SheetChartDefinition {
@@ -49,6 +56,7 @@ export interface SheetChartDefinition {
   valueAxisTitle?: string;
   barDirection?: 'column' | 'bar';
   grouping?: string;
+  scatterStyle?: string;
   legendPosition?: 'top' | 'right' | 'bottom' | 'left';
   series: SheetChartSeries[];
   from: SheetDrawingMarker;
