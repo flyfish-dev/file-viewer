@@ -12,6 +12,7 @@ import {
 import {
   DRAWINGML_SINGLE_LINE_HEIGHT,
   resolveDrawingMlTableCellInsets,
+  resolveDrawingMlTableGridWidth,
   resolveDrawingMlTextRotation
 } from './layout.js';
 
@@ -10049,10 +10050,21 @@ async function genTable(node, warpObj, groupContext) {
   if (tbl_bgcolor !== "") {
     tbl_bgcolor = "background-color: #" + tbl_bgcolor + ";";
   }
+  var tableGridColumns = asArray(getColsGrid);
+  var tableGridWidth = resolveDrawingMlTableGridWidth(tableGridColumns.map(function (column) {
+    return getTextByPathList(column, [ "attrs", "w" ]);
+  }));
+  var tableSize = "";
+  if (tableGridWidth !== undefined) {
+    tableSize = "width:" + mapGroupSizeToPx(tableGridWidth, "x", groupContext) + "px;";
+  } else {
+    // Malformed tables without a usable grid retain the old graphicFrame fallback.
+    tableSize = getSize(xfrmNode, undefined, undefined, groupContext);
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////
   var tableHtml = "<table " + tblDir + " style='border-collapse:collapse;table-layout:fixed;box-sizing:border-box;overflow:hidden;" +
     getPosition(xfrmNode, node, undefined, undefined, "group", groupContext) +
-    getSize(xfrmNode, undefined, undefined, groupContext) +
+    tableSize +
     " z-index: " + order + ";" +
     tbl_borders + ";" +
     tbl_bgcolor + "'>";
@@ -10063,7 +10075,7 @@ async function genTable(node, warpObj, groupContext) {
   }
   var tableRowHeights = trNodes.map(function (rowNode) {
     var height = parseInt(getTextByPathList(rowNode, [ "attrs", "h" ]));
-    return Number.isFinite(height) && height > 0 ? height * slideFactor : 0;
+    return Number.isFinite(height) && height > 0 ? mapGroupSizeToPx(height, "y", groupContext) : 0;
   });
   //if (trNodes.constructor === Array) {
   //multi rows
@@ -10075,7 +10087,7 @@ async function genTable(node, warpObj, groupContext) {
     var rowHeight = 0;
     var rowsStyl = "box-sizing:border-box;overflow:hidden;";
     if (rowHeightParam !== undefined) {
-      rowHeight = parseInt(rowHeightParam) * slideFactor;
+      rowHeight = mapGroupSizeToPx(rowHeightParam, "y", groupContext);
       rowsStyl += "height:" + rowHeight + "px;";
     }
     var fillColor = "";
@@ -10298,7 +10310,7 @@ async function genTable(node, warpObj, groupContext) {
               }
             }
 
-            var cellParmAry = await getTableCellParams(tcNodes[j], getColsGrid, i, j, thisTblStyle, a_sorce, warpObj, tableRowHeights)
+            var cellParmAry = await getTableCellParams(tcNodes[j], getColsGrid, i, j, thisTblStyle, a_sorce, warpObj, tableRowHeights, groupContext)
             var text = cellParmAry[0];
             var colStyl = cellParmAry[1];
             var cssName = cellParmAry[2];
@@ -10354,7 +10366,7 @@ async function genTable(node, warpObj, groupContext) {
         }
 
 
-        var cellParmAry = await getTableCellParams(tcNodes, getColsGrid, i, undefined, thisTblStyle, a_sorce, warpObj, tableRowHeights)
+        var cellParmAry = await getTableCellParams(tcNodes, getColsGrid, i, undefined, thisTblStyle, a_sorce, warpObj, tableRowHeights, groupContext)
         var text = cellParmAry[0];
         var colStyl = cellParmAry[1];
         var cssName = cellParmAry[2];
@@ -10375,7 +10387,7 @@ async function genTable(node, warpObj, groupContext) {
   return tableHtml;
 }
 
-async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTblStyle, cellSource, warpObj, tableRowHeights) {
+async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTblStyle, cellSource, warpObj, tableRowHeights, groupContext) {
   //thisTblStyle["a:band1V"] => thisTblStyle[cellSource]
   //text, cell-width, cell-borders,
   //var text = genTextBody(tcNodes["a:txBody"], tcNodes, undefined, undefined, undefined, undefined, warpObj);//tableStyles
@@ -10430,7 +10442,7 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
   }
 
   if (total_col_width != 0 /*&& row_idx == 0*/) {
-    colWidth = parseInt(total_col_width) * slideFactor;
+    colWidth = mapGroupSizeToPx(total_col_width, "x", groupContext);
     colStyl += "width:" + colWidth + "px;";
   }
 

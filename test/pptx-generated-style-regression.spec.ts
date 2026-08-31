@@ -3,6 +3,14 @@ import {
   genGlobalCSS,
   setTextByPathList,
 } from '../packages/renderers/pptx/src/engine/support/vendor'
+import { resolveDrawingMlTableGridWidth } from '../packages/renderers/pptx/src/engine/support/layout'
+
+describe('PPTX DrawingML table geometry', () => {
+  it('uses the column grid instead of a stale graphic-frame extent', () => {
+    expect(resolveDrawingMlTableGridWidth([666750, '1688465', 632460])).toBe(2_987_675)
+    expect(resolveDrawingMlTableGridWidth([666750, 'invalid'])).toBeUndefined()
+  })
+})
 
 describe('PPTX generated style registry', () => {
   it('caches nested resources without extending Object.prototype', () => {

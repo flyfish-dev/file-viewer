@@ -17,6 +17,8 @@ export type DrawingMlTableCellInsetAttributes = Partial<Record<
   string | number
 >>
 
+export type DrawingMlTableGridColumn = string | number | undefined | null
+
 const resolveInset = (value: string | number | undefined, fallback: number) => {
   if (value === undefined || value === null || value === '') {
     return fallback
@@ -34,6 +36,27 @@ export const resolveDrawingMlTableCellInsets = (
   bottom: resolveInset(attributes.marB, DRAWINGML_TABLE_CELL_DEFAULT_INSETS.bottom),
   left: resolveInset(attributes.marL, DRAWINGML_TABLE_CELL_DEFAULT_INSETS.left),
 })
+
+/**
+ * DrawingML defines a table's width as the sum of its grid-column widths.
+ * The enclosing graphicFrame extent can be stale after a table is resized.
+ */
+export const resolveDrawingMlTableGridWidth = (
+  columns: DrawingMlTableGridColumn[] = [],
+) => {
+  if (columns.length === 0) {
+    return undefined
+  }
+  let width = 0
+  for (const column of columns) {
+    const numeric = Number(column)
+    if (!Number.isFinite(numeric) || numeric <= 0) {
+      return undefined
+    }
+    width += numeric
+  }
+  return width > 0 ? width : undefined
+}
 
 export type DrawingMlTextDirection =
   | 'horz'
