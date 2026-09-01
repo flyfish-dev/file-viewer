@@ -1,13 +1,119 @@
 name: Issue 235 workspace bootstrap
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - feature/issue-235-workspace-bootstrap
+    paths:
+      - .github/workflows/issue-235-workspace-bootstrap.yml
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: issue-235-workspace-bootstrap
+  cancel-in-progress: true
 
 jobs:
-  disabled:
+  validate-and-publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - run: echo "Use the next bootstrap commit to validate Issue 235."
+      - name: Check out patch payload
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feature/issue-235-workspace-bootstrap
+          path: payload
+          persist-credentials: false
+
+      - name: Check out current main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: work
+          fetch-depth: 0
+
+      - name: Reconstruct and verify implementation patch
+        run: |
+          cat payload/.github/issue-235/patch.b64.* | base64 --decode > /tmp/issue235.patch.gz
+          echo "cd0d5a599b82cac361bfd01b5353e2eade1ed45421fbdac3e0e4403798509d73  /tmp/issue235.patch.gz" | sha256sum --check --strict
+          gzip --decompress --stdout /tmp/issue235.patch.gz > /tmp/issue235.patch
+          cd work
+          git apply --index --binary /tmp/issue235.patch
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 11.0.9
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: work/pnpm-lock.yaml
+
+      - name: Install dependencies and update the lockfile
+        working-directory: work
+        run: |
+          pnpm install --no-frozen-lockfile
+          git add pnpm-lock.yaml
+
+      - name: Verify the exact change set
+        working-directory: work
+        run: |
+          cat > /tmp/issue235-expected-files <<'EOF'
+          CHANGELOG.md
+          README.zh-CN.md
+          docs/changelog.md
+          docs/guide/usage.md
+          docs/zh/changelog.md
+          docs/zh/guide/usage.md
+          packages/core/src/contracts/types.ts
+          packages/core/src/i18n/messages.de.ts
+          packages/core/src/i18n/messages.ja.ts
+          packages/core/src/i18n/messages.ts
+          packages/renderers/text/README.en.md
+          packages/renderers/text/README.md
+          packages/renderers/text/package.json
+          packages/renderers/text/src/code.ts
+          packages/renderers/text/src/codeStyle.ts
+          packages/renderers/text/src/largeText.ts
+          packages/renderers/text/src/prettyPrint.ts
+          packages/renderers/text/test/fixtures/issue-235-long-line.txt
+          packages/renderers/text/test/fixtures/issue-235-minified.html
+          packages/renderers/text/test/fixtures/issue-235-minified.json
+          packages/renderers/text/test/fixtures/issue-235-minified.xml
+          packages/renderers/text/test/fixtures/issue-235-mixed-content.xml
+          packages/renderers/text/test/fixtures/issue-235-readable-preview.svg
+          packages/renderers/text/test/fixtures/issue-235-visual-harness.html
+          packages/renderers/text/test/prettyPrint.test.mjs
+          packages/renderers/text/test/readablePreview.test.mjs
+          pnpm-lock.yaml
+          EOF
+          git diff --cached --name-only | sort > /tmp/issue235-actual-files
+          sort /tmp/issue235-expected-files -o /tmp/issue235-expected-files
+          diff -u /tmp/issue235-expected-files /tmp/issue235-actual-files
+          git diff --cached --check
+
+      - name: Verify governance and focused builds
+        working-directory: work
+        run: |
+          pnpm verify:github-governance
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/renderer-text build
+          pnpm docs:build
+
+      - name: Commit and push the feature branch
+        working-directory: work
+        env:
+          TARGET_BRANCH: feature/issue-235-readable-text-previews
+        run: |
+          git config user.name "Brownie Woom"
+          git config user.email "161313394+brownie-cake@users.noreply.github.com"
+          git commit -m "feat(text): add readable preview modes" -m "Add opt-in line wrapping and bounded Prettier formatting while preserving original source bytes. Cover regular and virtualized rendering, safe fallbacks, structured formats, documentation, and Issue 235 regression fixtures."
+          git fetch origin "$TARGET_BRANCH"
+          git merge-base --is-ancestor "origin/$TARGET_BRANCH" HEAD
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
+          echo "Published $(git rev-parse HEAD) to $TARGET_BRANCH"
