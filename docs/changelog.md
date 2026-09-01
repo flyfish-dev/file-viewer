@@ -10,6 +10,7 @@
 
 Released August 27, 2026.
 
+- Added opt-in readable text previews (#235): logical-line wrapping works in regular and bounded virtual views, while structured files can use lazily loaded Prettier parser chunks with an explicit formatted-preview badge and original-source switch. The formatting byte limit is independent from large-text rendering, and original download bytes remain authoritative.
 - Added `@file-viewer/cli`, `file-viewer-cli`, and `create-file-viewer` for new projects and existing `package.json` applications. It detects frameworks and build systems, selects framework versions, formats, presets, and assets, and supports npm, pnpm, Yarn, Bun, credential-free private registries, and integrity-checked offline tgz preparation.
 - Made `standard` the recommended common-format profile without changing the eight published Full contracts. Existing `*-full` packages keep their `preset-all` format matrix, APIs, and same-version offline assets. Explicit CLI `full` selection adds later specialist capabilities after showing their size, runtime, and license boundaries.
 - Kept DICOM and digital-signature containers out of unchanged Full dependencies. The optional DICOM renderer covers bounded local single-file, single-frame, and multi-frame preview for uncompressed, JPEG Lossless, JPEG-LS, and JPEG 2000 Lossless fixtures; it is not a diagnostic, PACS/DICOMweb, or multi-file-series viewer (#210).

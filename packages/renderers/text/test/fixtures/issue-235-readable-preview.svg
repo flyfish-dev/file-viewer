@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Issue 235 readable text preview comparison</title>
+  <desc id="desc">A side-by-side regression fixture comparing the default source-preserving preview with the opt-in formatted and wrapped preview.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#eef2ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#0f172a" flood-opacity=".12"/>
+    </filter>
+    <clipPath id="beforeClip"><rect x="78" y="224" width="602" height="470" rx="0"/></clipPath>
+    <clipPath id="afterClip"><rect x="760" y="224" width="602" height="470" rx="0"/></clipPath>
+  </defs>
+  <rect width="1440" height="900" fill="url(#bg)"/>
+  <text x="72" y="72" fill="#0f172a" font-family="Inter,system-ui,sans-serif" font-size="30" font-weight="700">Readable text previews · Issue #235</text>
+  <text x="72" y="108" fill="#475569" font-family="Inter,system-ui,sans-serif" font-size="17">Both modes preserve the original input bytes and downloaded file.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="60" y="150" width="638" height="610" rx="18" fill="#ffffff" stroke="#dbe3ef"/>
+    <rect x="742" y="150" width="638" height="610" rx="18" fill="#ffffff" stroke="#dbe3ef"/>
+  </g>
+
+  <circle cx="86" cy="181" r="6" fill="#ef4444"/><circle cx="106" cy="181" r="6" fill="#f59e0b"/><circle cx="126" cy="181" r="6" fill="#22c55e"/>
+  <text x="158" y="187" fill="#334155" font-family="Inter,system-ui,sans-serif" font-size="16" font-weight="650">Default · exact source layout</text>
+  <circle cx="768" cy="181" r="6" fill="#ef4444"/><circle cx="788" cy="181" r="6" fill="#f59e0b"/><circle cx="808" cy="181" r="6" fill="#22c55e"/>
+  <text x="840" y="187" fill="#334155" font-family="Inter,system-ui,sans-serif" font-size="16" font-weight="650">Readable · formatted + wrapped</text>
+
+  <rect x="78" y="210" width="602" height="52" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="98" y="242" fill="#475569" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="700">JSON</text>
+  <text x="646" y="242" text-anchor="end" fill="#64748b" font-family="Inter,system-ui,sans-serif" font-size="13">1 line</text>
+
+  <rect x="760" y="210" width="602" height="52" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="780" y="242" fill="#475569" font-family="Inter,system-ui,sans-serif" font-size="13" font-weight="700">JSON</text>
+  <rect x="1017" y="222" width="112" height="28" rx="14" fill="#ecfdf5" stroke="#86efac"/>
+  <text x="1073" y="241" text-anchor="middle" fill="#15803d" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="700">FORMATTED</text>
+  <rect x="1142" y="222" width="198" height="28" rx="7" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="1241" y="241" text-anchor="middle" fill="#334155" font-family="Inter,system-ui,sans-serif" font-size="12" font-weight="650">Show original source</text>
+
+  <rect x="78" y="262" width="602" height="432" fill="#0f172a"/>
+  <g clip-path="url(#beforeClip)" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14">
+    <rect x="78" y="262" width="48" height="432" fill="#111827"/>
+    <text x="112" y="300" text-anchor="end" fill="#64748b">1</text>
+    <text x="144" y="300" fill="#cbd5e1">{</text>
+    <text x="155" y="300" fill="#7dd3fc">&quot;user&quot;</text><text x="209" y="300" fill="#cbd5e1">:{</text>
+    <text x="227" y="300" fill="#7dd3fc">&quot;id&quot;</text><text x="260" y="300" fill="#cbd5e1">:</text><text x="270" y="300" fill="#fbbf24">1</text><text x="279" y="300" fill="#cbd5e1">,</text>
+    <text x="290" y="300" fill="#7dd3fc">&quot;name&quot;</text><text x="342" y="300" fill="#cbd5e1">:</text><text x="352" y="300" fill="#86efac">&quot;Example&quot;</text><text x="430" y="300" fill="#cbd5e1">,</text>
+    <text x="441" y="300" fill="#7dd3fc">&quot;roles&quot;</text><text x="501" y="300" fill="#cbd5e1">:[</text><text x="518" y="300" fill="#86efac">&quot;reader&quot;</text><text x="585" y="300" fill="#cbd5e1">,</text><text x="596" y="300" fill="#86efac">&quot;editor&quot;</text><text x="664" y="300" fill="#cbd5e1">]},</text>
+    <text x="692" y="300" fill="#7dd3fc">&quot;active&quot;</text><text x="756" y="300" fill="#cbd5e1">:</text><text x="766" y="300" fill="#c4b5fd">true</text><text x="800" y="300" fill="#cbd5e1">}</text>
+  </g>
+  <rect x="102" y="654" width="548" height="8" rx="4" fill="#334155"/>
+  <rect x="102" y="654" width="178" height="8" rx="4" fill="#94a3b8"/>
+  <text x="98" y="724" fill="#64748b" font-family="Inter,system-ui,sans-serif" font-size="13">Horizontal scrolling remains the backward-compatible default.</text>
+
+  <rect x="760" y="262" width="602" height="432" fill="#0f172a"/>
+  <g clip-path="url(#afterClip)" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14">
+    <rect x="760" y="262" width="48" height="432" fill="#111827"/>
+    <g fill="#64748b" text-anchor="end">
+      <text x="794" y="296">1</text><text x="794" y="322">2</text><text x="794" y="348">3</text><text x="794" y="374">4</text>
+      <text x="794" y="400">5</text><text x="794" y="426">6</text><text x="794" y="452">7</text><text x="794" y="478">8</text>
+      <text x="794" y="504">9</text><text x="794" y="530">10</text><text x="794" y="556">11</text><text x="794" y="582">12</text>
+    </g>
+    <g fill="#cbd5e1">
+      <text x="826" y="296">{</text>
+      <text x="846" y="322"><tspan fill="#7dd3fc">&quot;user&quot;</tspan>: {</text>
+      <text x="866" y="348"><tspan fill="#7dd3fc">&quot;id&quot;</tspan>: <tspan fill="#fbbf24">1</tspan>,</text>
+      <text x="866" y="374"><tspan fill="#7dd3fc">&quot;name&quot;</tspan>: <tspan fill="#86efac">&quot;Example&quot;</tspan>,</text>
+      <text x="866" y="400"><tspan fill="#7dd3fc">&quot;roles&quot;</tspan>: [</text>
+      <text x="886" y="426"><tspan fill="#86efac">&quot;reader&quot;</tspan>,</text>
+      <text x="886" y="452"><tspan fill="#86efac">&quot;editor&quot;</tspan></text>
+      <text x="866" y="478">]</text>
+      <text x="846" y="504">},</text>
+      <text x="846" y="530"><tspan fill="#7dd3fc">&quot;active&quot;</tspan>: <tspan fill="#c4b5fd">true</tspan></text>
+      <text x="826" y="556">}</text>
+      <text x="826" y="608" fill="#94a3b8">// long logical lines wrap visually without changing source</text>
+      <text x="826" y="634" fill="#94a3b8">// continuation rows remain associated with one line number</text>
+    </g>
+  </g>
+  <text x="780" y="724" fill="#64748b" font-family="Inter,system-ui,sans-serif" font-size="13">Formatting is display-only, bounded, reversible, and safely escaped.</text>
+
+  <g font-family="Inter,system-ui,sans-serif" font-size="14">
+    <rect x="72" y="804" width="240" height="38" rx="19" fill="#e0e7ff"/><text x="192" y="828" text-anchor="middle" fill="#4338ca" font-weight="700">wrapLongLines: true</text>
+    <rect x="328" y="804" width="206" height="38" rx="19" fill="#dcfce7"/><text x="431" y="828" text-anchor="middle" fill="#15803d" font-weight="700">prettyPrint: true</text>
+    <rect x="550" y="804" width="354" height="38" rx="19" fill="#f1f5f9"/><text x="727" y="828" text-anchor="middle" fill="#334155" font-weight="650">prettyPrintMaxBytes: 512 KiB</text>
+    <text x="1368" y="828" text-anchor="end" fill="#64748b">Regression fixture · 1440 × 900</text>
+  </g>
+</svg>

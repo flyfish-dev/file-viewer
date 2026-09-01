@@ -295,6 +295,9 @@ export type FileViewerMessageKey =
   | 'drawing.toolbar.fitWidth'
   | 'drawing.state.loading'
   | 'text.code.loadingHighlight'
+  | 'text.code.formattedPreview'
+  | 'text.code.showOriginal'
+  | 'text.code.showFormatted'
   | 'text.code.indexingLargeFile'
   | 'text.code.virtualized'
   | 'text.code.firstSegment'
@@ -1195,6 +1198,21 @@ export interface FileViewerTextOptions {
    * historical visible gutter when this option is omitted; pass false to hide it.
    */
   lineNumbers?: boolean;
+  /**
+   * Visually wraps long logical lines without inserting source newlines. Defaults to false.
+   * Wrapped continuation rows remain associated with their original line number.
+   */
+  wrapLongLines?: boolean;
+  /**
+   * Formats supported structured text with lazily loaded Prettier plugins for display only.
+   * Defaults to false; malformed, unsupported, or oversized inputs keep their original source.
+   */
+  prettyPrint?: boolean;
+  /**
+   * Maximum decoded UTF-8 source bytes eligible for Prettier. Defaults to the effective
+   * `virtualizeAboveBytes` value, or 512 KiB when that option is omitted.
+   */
+  prettyPrintMaxBytes?: number;
   /** Switches text and code to bounded virtual rendering above this byte size. Defaults to 512 KiB. */
   virtualizeAboveBytes?: number;
   /**
