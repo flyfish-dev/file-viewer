@@ -11,7 +11,7 @@
   "dependencies": {
     "@lucide/vue": "^1.17.0",
     "highlight.js": "^11.11.1",
-    "vue": "^3.5.35"
+    "vue": "^3.5.42"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.7",
