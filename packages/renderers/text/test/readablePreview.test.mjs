@@ -140,8 +140,9 @@ test('formatted HTML remains inert escaped source and never creates executable n
     assert.equal(harness.dom.window.__issue235, 0)
     assert.equal(harness.target.querySelector('.code-area script'), null)
     assert.equal(harness.target.querySelector('.code-area img'), null)
-    assert.match(harness.target.querySelector('code').textContent, /<script>/)
-    assert.match(harness.target.querySelector('code').textContent, /onerror=/)
+    const renderedSource = harness.target.querySelector('code')?.textContent ?? ''
+    assert.equal(renderedSource.includes('<script>'), true)
+    assert.equal(renderedSource.includes('onerror='), true)
     await rendered.unmount()
   } finally {
     harness.restore()
