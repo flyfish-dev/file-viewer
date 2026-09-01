@@ -2,6 +2,13 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## Unreleased
+
+### CLI reliability and interaction
+
+- 新建项目的交互式格式选择改为预先列出 renderer/格式族并显示勾选状态；当前 profile 已包含的能力保持启用，额外能力支持编号、范围、全选和清空，不再要求手写扩展名。
+- Vite 8 脚手架声明并在 `dev`/`build` 前校验 Node `^20.19.0 || >=22.12.0`，旧运行时会获得明确迁移提示；Web Component 事件从元素所属 document realm 创建，并为缺失全局 `CustomEvent` 的 DOM 环境保留兼容回退。
+
 ## File Viewer v3.0.0 — 2026-08-27
 
 这是模块化安装、全功能 CLI、专业格式按需加载和全仓安全加固的主版本。已发布 Full 包的格式、API 和离线资源契约保持向下兼容；DICOM 和数字签名等后续重型能力仍为显式按需安装。

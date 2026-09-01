@@ -1,6 +1,7 @@
 import {
   fileViewerCoreRendererRegistry,
 } from '@file-viewer/core';
+import { createFileViewerCustomEvent } from './custom-event.js';
 import {
   mountViewer as mountCoreViewer,
   type FileRef,
@@ -708,11 +709,7 @@ export class FileViewerElement extends ElementBase implements ViewerControllerHa
   }
 
   private dispatchTypedEvent<Detail>(name: string, detail: Detail): void {
-    this.dispatchEvent(new CustomEvent(name, {
-      bubbles: true,
-      composed: true,
-      detail,
-    }));
+    this.dispatchEvent(createFileViewerCustomEvent(this, name, detail));
   }
 }
 

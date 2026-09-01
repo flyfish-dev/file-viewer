@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="720" viewBox="0 0 1240 720" role="img" aria-labelledby="title desc">
+  <title id="title">File Viewer CLI capability selector</title>
+  <desc id="desc">Terminal preview of the interactive checkbox-style file format family selector.</desc>
+  <rect width="1240" height="720" rx="28" fill="#0b1020"/>
+  <rect x="32" y="32" width="1176" height="656" rx="20" fill="#111827" stroke="#26334d"/>
+  <circle cx="72" cy="72" r="8" fill="#fb7185"/>
+  <circle cx="100" cy="72" r="8" fill="#fbbf24"/>
+  <circle cx="128" cy="72" r="8" fill="#34d399"/>
+  <text x="620" y="79" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">file-viewer create</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="22">
+    <text x="72" y="132" fill="#e2e8f0">文件格式族:</text>
+    <text x="72" y="184" fill="#86efac">[✓]  1. PDF</text>
+    <text x="398" y="184" fill="#cbd5e1">.pdf</text>
+    <text x="850" y="184" fill="#64748b">(方案内置)</text>
+    <text x="72" y="228" fill="#86efac">[✓]  2. Office Word OpenXML</text>
+    <text x="398" y="228" fill="#cbd5e1">.docx .dotx .docm</text>
+    <text x="850" y="228" fill="#64748b">(方案内置)</text>
+    <text x="72" y="272" fill="#e2e8f0">[ ]  3. CAD</text>
+    <text x="398" y="272" fill="#cbd5e1">.dwg .dxf .dwf</text>
+    <text x="850" y="272" fill="#fbbf24">(重型)</text>
+    <text x="72" y="316" fill="#60a5fa">[x]  4. DICOM</text>
+    <text x="398" y="316" fill="#cbd5e1">.dcm .dicom</text>
+    <text x="850" y="316" fill="#fbbf24">(重型)</text>
+    <text x="72" y="360" fill="#e2e8f0">[ ]  5. Archive</text>
+    <text x="398" y="360" fill="#cbd5e1">.zip .rar .7z +4</text>
+    <text x="72" y="422" fill="#94a3b8">已启用 3/5 项，其中 2 项由当前方案提供</text>
+    <text x="72" y="484" fill="#cbd5e1">输入编号/范围切换（如 2,5-7）；a=全选，n=清空额外项，</text>
+    <text x="72" y="524" fill="#cbd5e1">b=返回，0=取消，回车=确认：</text>
+    <text x="706" y="524" fill="#60a5fa">3,5</text>
+    <rect x="762" y="501" width="13" height="27" fill="#e2e8f0"/>
+    <text x="72" y="600" fill="#64748b">方案内能力预先勾选并保持启用；额外格式可按编号或范围切换。</text>
+  </g>
+</svg>

@@ -1360,6 +1360,22 @@ function selectQuickstartSample(
   }
 }
 
+const quickstartNodeEngine = '^20.19.0 || >=22.12.0'
+const quickstartNodeGuard = `const [major, minor] = process.versions.node.split('.').map(Number)
+const supported =
+  (major === 20 && minor >= 19) ||
+  (major === 22 && minor >= 12) ||
+  major > 22
+if (!supported) {
+  console.error(
+    'File Viewer quickstart uses Vite 8 and requires Node ${quickstartNodeEngine}; current ' +
+      process.version +
+      '. Upgrade Node, remove node_modules, and reinstall dependencies.'
+  )
+  process.exit(1)
+}
+`
+
 export async function scaffoldFileViewerQuickstart(
   projectRoot: string,
   input: Partial<FileViewerProjectConfig>,
@@ -1431,7 +1447,11 @@ export async function scaffoldFileViewerQuickstart(
           ...(config.packageManager && config.packageManagerVersion
             ? { packageManager: `${config.packageManager}@${config.packageManagerVersion}` }
             : {}),
-          scripts: { dev: 'vite', build: 'vite build' },
+          scripts: {
+            dev: 'node ./scripts/check-node.mjs && vite',
+            build: 'node ./scripts/check-node.mjs && vite build'
+          },
+          engines: { node: quickstartNodeEngine },
           dependencies: selectedTemplate.runtimeDependencies,
           devDependencies
         },
@@ -1439,6 +1459,7 @@ export async function scaffoldFileViewerQuickstart(
         2
       )}\n`
     ],
+    ['scripts/check-node.mjs', quickstartNodeGuard],
     [
       'index.html',
       '<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>File Viewer</title></head><body style="margin:0"><div id="app" style="height:100vh"></div><script type="module" src="/src/main.mjs"></script></body></html>\n'

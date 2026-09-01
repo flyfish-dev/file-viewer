@@ -6,6 +6,11 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## Unreleased — CLI reliability and interaction
+
+- Replaced free-form format/capability entry in the interactive create/add wizard with checkbox-style renderer and format-family rows. Capabilities included by the selected profile are visibly preselected and retained, while optional rows support individual numbers, ranges, select-all, and clear-extra commands.
+- Generated Vite 8 projects now declare and preflight Node `^20.19.0 || >=22.12.0` before `dev` or `build`, producing an actionable upgrade message on unsupported runtimes. Web Component events are created from the element's owning document realm with a compatibility fallback when global `CustomEvent` is unavailable.
+
 ## v3.0.0 — Modular CLI, opt-in specialist formats, and security gates
 
 Released August 27, 2026.

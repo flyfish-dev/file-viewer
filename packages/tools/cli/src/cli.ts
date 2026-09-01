@@ -27,6 +27,7 @@ import {
   createFileViewerRegistryEnvironment,
   detectYarnGeneration
 } from './carrier-command.js'
+import { promptFileViewerCapabilitySelection } from './interactive-selection.js'
 import {
   DEFAULT_FILE_VIEWER_CONFIG,
   createFileViewerInstallPlan,
@@ -52,6 +53,7 @@ import {
   resolveFileViewerOfflinePackages
 } from './index.js'
 import type {
+  FileViewerCliCatalog,
   FileViewerCliLocale,
   FileViewerFramework,
   FileViewerInstallSource,
@@ -1470,13 +1472,8 @@ async function promptQuickstart(
       'jquery'
     ] as const
     const profiles = ['standard', 'lite', 'office', 'engineering', 'all', 'full', 'custom'] as const
-    const fullCatalog = JSON.parse(
-      await readFile(new URL('../catalog/catalog.json', import.meta.url), 'utf8')
-    ) as {
-      frameworkTemplates: Record<
-        string,
-        { defaultVersion: string; validatedVersions: Record<string, unknown> }
-      >
+    const fullCatalog = (await loadFileViewerCliCatalog()) as FileViewerCliCatalog & {
+      frameworkTemplates: NonNullable<FileViewerCliCatalog['frameworkTemplates']>
     }
     let framework = args.framework ?? inspection?.framework ?? 'web'
     let profile = args.profile ?? inspection?.detectedProfile ?? 'standard'
@@ -1596,23 +1593,28 @@ async function promptQuickstart(
         }
         packageManagerVersion = value
       } else if (step === 6) {
-        const value = await askText(messages[args.locale].formats, formats)
+        const value = await promptFileViewerCapabilitySelection({
+          catalog: fullCatalog,
+          profile,
+          locale: args.locale,
+          formats: formats ? [formats] : [],
+          capabilities: capabilities ? [capabilities] : [],
+          question: (prompt) => io.question(prompt),
+          write: (output) => process.stdout.write(output)
+        })
         if (value === null) {
-          step -= 1
+          step = packageManager === 'yarn' ? 5 : 4
           continue
         }
-        formats = value === '-' ? '' : value
+        formats = value.formats.join(',')
+        capabilities = value.capabilities.join(',')
       } else if (step === 7) {
-        const value = await askText(messages[args.locale].capabilities, capabilities)
-        if (value === null) {
-          step -= 1
-          continue
-        }
-        capabilities = value === '-' ? '' : value
+        step += 1
+        continue
       } else if (step === 8) {
         const value = await askText(messages[args.locale].assetTarget, assetTarget, false)
         if (value === null) {
-          step -= 1
+          step = 6
           continue
         }
         assetTarget = value
