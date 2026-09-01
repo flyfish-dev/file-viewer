@@ -1,3 +1,4 @@
+# Payload chunks verified against local Git blob hashes.
 name: Issue 235 workspace bootstrap
 
 on:
