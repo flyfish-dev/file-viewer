@@ -1,0 +1,27 @@
+name: Issue 235 CodeQL inspection
+
+on:
+  push:
+    branches:
+      - feature/issue-235-workspace-bootstrap
+    paths:
+      - .github/workflows/issue-235-codeql-inspect.yml
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch CodeQL annotation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/flyfish-dev/file-viewer/check-runs/99891686659/annotations?per_page=100" \
+            | tee /tmp/codeql-annotations.json
