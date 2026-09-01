@@ -55,6 +55,7 @@ jobs:
 
       - name: Run focused renderer verification
         run: |
+          pnpm --filter @file-viewer/core build
           pnpm --filter @file-viewer/renderer-text build
           pnpm verify:github-governance
 
