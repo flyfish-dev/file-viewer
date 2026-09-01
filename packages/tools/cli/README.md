@@ -22,7 +22,9 @@ npx file-viewer-cli@latest add .
 
 `file-viewer-cli` 是便于 `npx` 自动选择命令的单 bin 入口，并严格依赖同版本的本 scoped 包。项目已经安装 `@file-viewer/cli` 时，直接运行 `file-viewer add .`。
 
-向导可选择框架及其已校验版本、File Viewer 版本、profile、格式、包管理器和资源目录。支持 Vanilla/Web Component、Vue 3、Vue 2.7、Vue 2.6、React、React Legacy、Svelte 和 jQuery。
+向导可选择框架及其已校验版本、File Viewer 版本、profile、格式、包管理器和资源目录。交互模式会按 renderer/格式族列出复选项，profile 已包含的能力预先打勾并保持启用；额外能力可用单个编号或范围切换，无需手写扩展名。支持 Vanilla/Web Component、Vue 3、Vue 2.7、Vue 2.6、React、React Legacy、Svelte 和 jQuery。
+
+新建项目使用 Vite 8。生成的 `package.json` 会声明 Node `^20.19.0 || >=22.12.0`，并在 `dev`/`build` 前执行版本检查；不兼容环境会直接给出升级和重新安装依赖的操作提示，而不是以间接的 `CustomEvent` 异常失败。
 
 ```bash
 npx file-viewer-cli create my-viewer \

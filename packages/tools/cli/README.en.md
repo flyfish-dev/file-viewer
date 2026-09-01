@@ -22,7 +22,9 @@ npx file-viewer-cli@latest add .
 
 `file-viewer-cli` is the single-bin `npx` carrier and pins this scoped package at the same version. If `@file-viewer/cli` is already installed locally, run `file-viewer add .` instead.
 
-The wizard selects a framework and validated version, File Viewer release, profile, formats, package manager, and asset directory. It supports Vanilla/Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, and jQuery.
+The wizard selects a framework and validated version, File Viewer release, profile, formats, package manager, and asset directory. Interactive runs present checkbox-style renderer/format-family rows, preselect and retain everything supplied by the chosen profile, and let users toggle optional capabilities by number or range instead of typing extensions. It supports Vanilla/Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, and jQuery.
+
+New projects use Vite 8. The generated `package.json` declares Node `^20.19.0 || >=22.12.0`, and `dev`/`build` run a version preflight. Unsupported runtimes therefore fail with an actionable upgrade-and-reinstall message instead of an indirect `CustomEvent` exception.
 
 ```bash
 npx file-viewer-cli create my-viewer \

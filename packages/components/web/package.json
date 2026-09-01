@@ -61,7 +61,8 @@
     "README.en.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json && node scripts/build-iife.mjs",
+    "build": "tsc -b tsconfig.json && node scripts/build-iife.mjs && node --test test/*.test.mjs",
+    "test": "node --test test/*.test.mjs",
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
