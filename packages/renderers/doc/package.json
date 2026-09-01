@@ -68,7 +68,8 @@
     "verify:github-34": "pnpm build && node scripts/verify-github-34.mjs",
     "verify:github-87": "pnpm build && node scripts/verify-github-87.mjs",
     "verify:github-171": "pnpm build && node scripts/verify-github-171.mjs",
-    "verify:github-192": "pnpm build && node scripts/verify-github-192.mjs"
+    "verify:github-192": "pnpm build && node scripts/verify-github-192.mjs",
+    "verify:github-236": "pnpm build && node scripts/verify-github-236.mjs"
   },
   "dependencies": {
     "dompurify": "^3.4.13"
