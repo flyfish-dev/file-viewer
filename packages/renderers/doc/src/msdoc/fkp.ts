@@ -191,7 +191,8 @@ export function readPapxProperties(wordBytes: Uint8Array, offset: number | null 
     bodySize = reader.u8(offset + 1) * 2;
     bodyStart = offset + 2;
   } else {
-    bodySize = cb - 1;
+    // PapxInFkp.cb counts 2-byte words; the payload occupies (2 * cb) - 1 bytes.
+    bodySize = cb * 2 - 1;
     bodyStart = offset + 1;
   }
   if (bodySize < 2 || !reader.ensure(bodyStart, Math.max(2, bodySize))) {
