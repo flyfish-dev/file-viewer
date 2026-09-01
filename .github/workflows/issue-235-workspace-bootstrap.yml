@@ -1,0 +1,26 @@
+name: Issue 235 workspace bootstrap
+
+on:
+  push:
+    branches:
+      - feature/issue-235-workspace-bootstrap
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Create source snapshot
+        run: tar --exclude=.git -czf /tmp/file-viewer-source.tgz .
+
+      - name: Upload source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-235-source
+          path: /tmp/file-viewer-source.tgz
+          retention-days: 1
