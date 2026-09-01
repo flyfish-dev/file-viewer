@@ -17,7 +17,7 @@ import {
 } from '@file-viewer/core';
 import { renderSpreadsheetChart } from './spreadsheet/chartRenderer.js';
 import { createSpreadsheetImageSourceResolver } from './spreadsheet/imageSource.js';
-import type { SheetChart, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
+import type { SheetCellMetadata, SheetChart, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
 import {
   buildRows,
   clampWindowStart,
@@ -1797,7 +1797,7 @@ const renderFileViewerSpreadsheet = async (
     Object.entries(ws.cell || {}).forEach(([key, value]) => {
       const [row, col] = key.split('-').map(Number);
       const absoluteKey = displayCellKey(meta.startRow + row, col + 1);
-      const style = normalizeCellStyle(value as { className?: string; style: any });
+      const style = normalizeCellStyle(value as SheetCellMetadata);
       if (!style) {
         return;
       }

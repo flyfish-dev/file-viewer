@@ -1,3 +1,21 @@
+export interface SheetRichTextRun {
+  text: string;
+  fontFamily?: string;
+  fontSize?: number;
+  color?: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strike?: boolean;
+  verticalAlign?: 'sub' | 'super';
+}
+
+export interface SheetCellMetadata {
+  className?: string;
+  style: Record<string, string>;
+  richText?: SheetRichTextRun[];
+}
+
 export interface CellMerge {
   row: number;
   col: number;
@@ -115,7 +133,7 @@ export interface SheetWindow {
 export interface SheetModel {
   get defaults(): any;
   get data(): string[][];
-  get cell(): Record<string, unknown>;
+  get cell(): Record<string, SheetCellMetadata>;
   get merge(): CellMerge[];
   get rowHeights(): number | number[];
   get colWidths(): number | number[];

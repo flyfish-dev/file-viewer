@@ -16,6 +16,7 @@ import type {
   SheetChart,
   SheetChartDefinition,
   SheetCellImage,
+  SheetCellMetadata,
   SheetColumn,
   SheetImage,
   SheetModel,
@@ -23,6 +24,7 @@ import type {
   SheetWindow
 } from '../type.js'
 import { getTintColor, indexedColors } from './color.js'
+import { parseCellRichText, richTextToPlainText } from './richText.js'
 
 const EXCEL_DEFAULT_COLUMN_WIDTH = 8.43
 const EXCEL_DEFAULT_ROW_HEIGHT_PT = 15
@@ -120,11 +122,6 @@ type SheetRowMeta = RowInfo & {
   s?: CellStyle | any
 }
 
-type SheetCellMeta = {
-  className?: string
-  style: Record<string, string>
-}
-
 const cellKey = (row: number, col: number) => {
   return `${row}-${col}`
 }
@@ -132,6 +129,10 @@ const cellKey = (row: number, col: number) => {
 const formatCellValue = (cell?: CellObject) => {
   if (!cell) {
     return ''
+  }
+  const richText = parseCellRichText(cell)
+  if (richText?.length) {
+    return richTextToPlainText(richText)
   }
   if (cell.w !== undefined && cell.w !== null) {
     return `${cell.w}`
@@ -474,7 +475,7 @@ export default class SheetJsModel implements SheetModel {
 
   private _data: undefined | string[][]
 
-  private _cell: undefined | Record<string, SheetCellMeta>
+  private _cell: undefined | Record<string, SheetCellMetadata>
 
   private _merge: undefined | Array<CellMerge>
 
@@ -737,7 +738,7 @@ export default class SheetJsModel implements SheetModel {
   }
 
   private getCell() {
-    const result: Record<string, SheetCellMeta> = {}
+    const result: Record<string, SheetCellMetadata> = {}
     const { '!cols': cols = [], '!rows': rows = [] } = this.ws as WorkSheet & {
       '!cols'?: SheetColumnMeta[],
       '!rows'?: SheetRowMeta[]
@@ -750,12 +751,14 @@ export default class SheetJsModel implements SheetModel {
         const rawStyle = resolveTableCellStyle(this.ws, rowIndex, colIndex, inheritedStyle)
         const className = alignToClassName(rawStyle?.alignment)
         const style = getCellStyle(rawStyle)
-        if (!className && !style) {
+        const richText = parseCellRichText(cell)
+        if (!className && !style && !richText?.length) {
           continue
         }
         result[cellKey(rowIndex - this.startRow, colIndex)] = {
           ...(className ? { className } : {}),
-          style: style || {}
+          style: style || {},
+          ...(richText?.length ? { richText } : {})
         }
       }
     }

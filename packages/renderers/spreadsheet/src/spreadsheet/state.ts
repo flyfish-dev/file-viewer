@@ -1,5 +1,5 @@
 import type { Align, Column, VerticalAlign } from 'e-virt-table'
-import type { CellMerge } from './worker/type.js'
+import type { CellMerge, SheetRichTextRun } from './worker/type.js'
 
 export const WINDOW_SIZE = 500
 export const PREFETCH_AHEAD = 3
@@ -40,6 +40,7 @@ export interface CellBorderCache {
 }
 
 export interface CellStyleCache {
+  richText?: SheetRichTextRun[]
   backgroundColor?: string
   color?: string
   font?: string

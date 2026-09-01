@@ -8,7 +8,7 @@ import type {
   VerticalAlign
 } from 'e-virt-table'
 import tinycolor from 'tinycolor2'
-import type { SheetModel } from './worker/type.js'
+import type { SheetCellMetadata, SheetModel, SheetRichTextRun } from './worker/type.js'
 import {
   displayCellKey,
   getDataKey,
@@ -120,6 +120,17 @@ const scaleBorder = (border: CellBorderCache | undefined, zoomScale: number) => 
   }
 }
 
+const scaleRichText = (runs: SheetRichTextRun[] | undefined, zoomScale: number) => {
+  if (!runs?.length) {
+    return undefined
+  }
+  const normalizedScale = normalizeZoomScale(zoomScale)
+  return runs.map(run => ({
+    ...run,
+    ...(run.fontSize ? { fontSize: run.fontSize * normalizedScale } : {})
+  }))
+}
+
 const scaleCellStyle = (style: CellStyleCache | undefined, zoomScale: number) => {
   if (!style) {
     return undefined
@@ -127,6 +138,7 @@ const scaleCellStyle = (style: CellStyleCache | undefined, zoomScale: number) =>
   return {
     ...style,
     font: scaleFont(style.font, zoomScale),
+    richText: scaleRichText(style.richText, zoomScale),
     borderTop: scaleBorder(style.borderTop, zoomScale),
     borderRight: scaleBorder(style.borderRight, zoomScale),
     borderBottom: scaleBorder(style.borderBottom, zoomScale),
@@ -156,7 +168,43 @@ const cloneColumns = (columns: Column[]): Column[] => {
   }))
 }
 
-const buildFont = (style: Record<string, any>) => {
+const CSS_GENERIC_FONT_FAMILIES = new Set([
+  'caption',
+  'cursive',
+  'emoji',
+  'fangsong',
+  'fantasy',
+  'icon',
+  'math',
+  'menu',
+  'message-box',
+  'monospace',
+  'sans-serif',
+  'serif',
+  'small-caption',
+  'status-bar',
+  'system-ui',
+  'ui-monospace',
+  'ui-rounded',
+  'ui-sans-serif',
+  'ui-serif'
+])
+
+const normalizeFontFamily = (value: unknown) => {
+  const family = typeof value === 'string' ? value.trim() : ''
+  if (!family) {
+    return TABLE_FONT_FAMILY
+  }
+  if (family.includes(',') || CSS_GENERIC_FONT_FAMILIES.has(family.toLowerCase())) {
+    return family
+  }
+  if ((family.startsWith('"') && family.endsWith('"')) || (family.startsWith("'") && family.endsWith("'"))) {
+    return family
+  }
+  return `"${family.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+}
+
+export const buildFont = (style: Record<string, any>) => {
   if (typeof style.font === 'string' && style.font.trim()) {
     return style.font
   }
@@ -190,7 +238,7 @@ const buildFont = (style: Record<string, any>) => {
     style.fontStyle || 'normal',
     normalizedWeight,
     `${Number.parseInt(style.fontSize, 10) || TABLE_FONT_SIZE}px`,
-    style.fontFamily || TABLE_FONT_FAMILY
+    normalizeFontFamily(style.fontFamily)
   ].join(' ')
 }
 
@@ -452,6 +500,9 @@ const hasTextLayout = (style?: CellStyleCache) => {
 }
 
 const shouldRenderTextInOverlay = (style: CellStyleCache | undefined, column?: Column) => {
+  if (style?.richText?.length) {
+    return true
+  }
   if (!hasTextLayout(style)) {
     return false
   }
@@ -831,14 +882,13 @@ const createBorderLine = (
   return line
 }
 
-const createTextLayer = (
+export const createTextLayer = (
   documentRef: Document,
   value: unknown,
   style: CellStyleCache,
   padding: number
 ) => {
   const text = documentRef.createElement('span')
-  text.textContent = getTextValue(value)
 
   Object.assign(text.style, {
     position: 'relative',
@@ -861,6 +911,53 @@ const createTextLayer = (
     transform: style.shrinkToFit ? 'scale(0.92)' : 'none',
     transformOrigin: `${style.horizontalAlign || 'left'} center`
   } satisfies Partial<CSSStyleDeclaration>)
+
+  if (style.richText?.length) {
+    const content = documentRef.createElement('span')
+    content.dataset.fileViewerRichText = 'true'
+    Object.assign(content.style, {
+      display: 'inline-block',
+      maxWidth: '100%',
+      minWidth: '0',
+      whiteSpace: 'inherit',
+      wordBreak: 'inherit'
+    } satisfies Partial<CSSStyleDeclaration>)
+
+    style.richText.forEach((run) => {
+      const segment = documentRef.createElement('span')
+      segment.textContent = run.text
+      segment.dataset.fileViewerRichTextRun = 'true'
+      if (run.fontFamily) {
+        segment.style.fontFamily = run.fontFamily
+      }
+      if (run.fontSize) {
+        segment.style.fontSize = `${run.fontSize}px`
+      }
+      if (run.color) {
+        segment.style.color = run.color
+      }
+      if (run.bold) {
+        segment.style.fontWeight = 'bold'
+      }
+      if (run.italic) {
+        segment.style.fontStyle = 'italic'
+      }
+      const decorations = [
+        run.underline ? 'underline' : '',
+        run.strike ? 'line-through' : ''
+      ].filter(Boolean)
+      if (decorations.length) {
+        segment.style.textDecoration = decorations.join(' ')
+      }
+      if (run.verticalAlign) {
+        segment.style.verticalAlign = run.verticalAlign
+      }
+      content.appendChild(segment)
+    })
+    text.appendChild(content)
+  } else {
+    text.textContent = getTextValue(value)
+  }
 
   return text
 }
@@ -921,8 +1018,40 @@ const renderCellOverlay = (
   cellEl.appendChild(fragment)
 }
 
+const normalizeRichTextRuns = (value: unknown): SheetRichTextRun[] | undefined => {
+  if (!Array.isArray(value)) {
+    return undefined
+  }
+  const runs = value.flatMap((candidate): SheetRichTextRun[] => {
+    if (!candidate || typeof candidate !== 'object') {
+      return []
+    }
+    const run = candidate as Partial<SheetRichTextRun>
+    if (typeof run.text !== 'string' || !run.text) {
+      return []
+    }
+    const fontSize = typeof run.fontSize === 'number' && Number.isFinite(run.fontSize) && run.fontSize > 0
+      ? run.fontSize
+      : undefined
+    return [{
+      text: run.text,
+      ...(typeof run.fontFamily === 'string' && run.fontFamily ? { fontFamily: run.fontFamily } : {}),
+      ...(fontSize ? { fontSize } : {}),
+      ...(typeof run.color === 'string' && run.color ? { color: run.color } : {}),
+      ...(run.bold ? { bold: true } : {}),
+      ...(run.italic ? { italic: true } : {}),
+      ...(run.underline ? { underline: true } : {}),
+      ...(run.strike ? { strike: true } : {}),
+      ...(run.verticalAlign === 'sub' || run.verticalAlign === 'super'
+        ? { verticalAlign: run.verticalAlign }
+        : {})
+    }]
+  })
+  return runs.length ? runs : undefined
+}
+
 export const normalizeCellStyle = (
-  meta: { className?: string, style: any } | undefined
+  meta: SheetCellMetadata | undefined
 ) => {
   if (!meta) {
     return undefined
@@ -930,6 +1059,10 @@ export const normalizeCellStyle = (
 
   const style = meta.style || {}
   const nextStyle: CellStyleCache = {}
+  const richText = normalizeRichTextRuns(meta.richText)
+  if (richText) {
+    nextStyle.richText = richText
+  }
 
   if (style.backgroundColor) {
     nextStyle.backgroundColor = style.backgroundColor
@@ -979,7 +1112,7 @@ export const normalizeCellStyle = (
     nextStyle.shrinkToFit = true
   }
 
-  if (!nextStyle.backgroundColor && !nextStyle.color && !nextStyle.font && !hasBorder(nextStyle) && !hasTextLayout(nextStyle)) {
+  if (!nextStyle.richText?.length && !nextStyle.backgroundColor && !nextStyle.color && !nextStyle.font && !hasBorder(nextStyle) && !hasTextLayout(nextStyle)) {
     return undefined
   }
 
