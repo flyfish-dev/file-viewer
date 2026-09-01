@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Issue 235 readable text preview</title>
+<style>
+  *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#eef2f7;color:#172033}
+  body{padding:42px}.page{max-width:1360px;margin:auto}.eyebrow{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#0969da}.title{margin:8px 0 6px;font-size:32px;letter-spacing:-.035em}.subtitle{margin:0 0 24px;color:#57606a;font-size:15px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.panel{overflow:hidden;border:1px solid rgba(31,35,40,.14);border-radius:16px;background:#fff;box-shadow:0 12px 34px rgba(31,35,40,.08)}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(31,35,40,.1)}.panel-title{font-size:15px;font-weight:750}.option{font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:#57606a;background:#f6f8fa;border-radius:6px;padding:6px 8px}
+  .code-viewer{height:430px;--code-bg:#f6f8fa;--code-toolbar-bg:rgba(255,255,255,.94);--code-border:rgba(31,35,40,.12);--code-text:#24292f;--code-muted:#57606a;--code-keyword:#cf222e;--code-title:#8250df;--code-string:#0a3069;--code-number:#0550ae;--code-attr:#953800;--code-accent:#0969da;--code-accent-border:rgba(9,105,218,.28);--code-accent-soft:rgba(9,105,218,.1);background:var(--code-bg);color:var(--code-text)}
+  .code-toolbar{display:flex;height:42px;align-items:center;justify-content:space-between;gap:16px;padding:0 16px;border-bottom:1px solid var(--code-border);background:var(--code-toolbar-bg)}.code-toolbar span,.code-toolbar strong{color:var(--code-muted);font-size:12px;font-weight:700}.code-toolbar-meta{display:inline-flex;align-items:center;gap:10px}.code-format-status{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border:1px solid var(--code-accent-border);border-radius:999px;background:var(--code-accent-soft);color:var(--code-accent)!important;font-size:11px!important}.code-format-toggle{min-height:26px;padding:0 9px;border:1px solid var(--code-border);border-radius:6px;background:var(--code-bg);color:var(--code-text);font-weight:650;font-size:11px}
+  pre{margin:0;height:388px;padding:18px 0 28px;overflow:auto;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}.nowrap{display:grid;grid-template-columns:max-content max-content;min-width:min-content}.gutter{position:sticky;left:0;display:block;min-width:4ch;padding:0 12px 0 16px;border-right:1px solid var(--code-border);background:var(--code-bg);color:var(--code-muted);text-align:right;white-space:pre;user-select:none}.nowrap code{display:block;padding:0 20px;white-space:pre}.source-line{display:grid;width:100%;grid-template-columns:max-content minmax(0,1fr);min-height:1.7em}.line-number{display:block;min-width:4ch;padding:0 12px 0 16px;border-right:1px solid var(--code-border);color:var(--code-muted);text-align:right;user-select:none}.line-content{display:block;min-width:0;padding:0 20px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}.key{color:var(--code-attr)}.str{color:var(--code-string)}.num{color:var(--code-number)}.lit{color:var(--code-keyword)}
+  .scroll-hint{position:absolute;right:64px;top:345px;padding:6px 9px;border-radius:999px;background:#fff;border:1px solid rgba(31,35,40,.12);box-shadow:0 4px 12px rgba(31,35,40,.1);font-size:11px;font-weight:750;color:#cf222e}.panel:first-child{position:relative}.foot{display:flex;gap:10px;align-items:center;margin-top:18px;color:#57606a;font-size:13px}.dot{width:8px;height:8px;border-radius:50%;background:#1a7f37}.sep{color:#afb8c1}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="eyebrow">File Viewer · Issue #235</div>
+  <h1 class="title">Optional readable text previews</h1>
+  <p class="subtitle">The default remains byte-faithful. Hosts can opt into visual wrapping and a clearly labelled, reversible formatted representation.</p>
+  <div class="grid">
+    <section class="panel">
+      <div class="panel-head"><div class="panel-title">Default behavior</div><div class="option">wrapLongLines: false · prettyPrint: false</div></div>
+      <div class="code-viewer">
+        <div class="code-toolbar"><span>JSON</span><strong>2 lines</strong></div>
+        <pre class="nowrap"><span class="gutter">1\n2</span><code>{<span class="key">"user"</span>:{<span class="key">"id"</span>:<span class="num">1</span>,<span class="key">"name"</span>:<span class="str">"Example"</span>,<span class="key">"roles"</span>:[<span class="str">"reader"</span>,<span class="str">"editor"</span>]},<span class="key">"active"</span>:<span class="lit">true</span>,<span class="key">"message"</span>:<span class="str">"A deliberately long logical line remains exact and requires horizontal inspection when readability options are disabled."</span>}\nrequest-id=235-0001 component=text-renderer event=preview metadata=source-preserving</code></pre>
+      </div>
+      <div class="scroll-hint">horizontal scrolling</div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><div class="panel-title">Readable representation</div><div class="option">wrapLongLines: true · prettyPrint: true</div></div>
+      <div class="code-viewer">
+        <div class="code-toolbar"><span>JSON</span><div class="code-toolbar-meta"><span class="code-format-status">Formatted preview</span><button class="code-format-toggle">Show original source</button><strong>13 lines</strong></div></div>
+        <pre>
+<span class="source-line"><span class="line-number">1</span><span class="line-content">{</span></span><span class="source-line"><span class="line-number">2</span><span class="line-content">  <span class="key">"user"</span>: {</span></span><span class="source-line"><span class="line-number">3</span><span class="line-content">    <span class="key">"id"</span>: <span class="num">1</span>,</span></span><span class="source-line"><span class="line-number">4</span><span class="line-content">    <span class="key">"name"</span>: <span class="str">"Example"</span>,</span></span><span class="source-line"><span class="line-number">5</span><span class="line-content">    <span class="key">"roles"</span>: [<span class="str">"reader"</span>, <span class="str">"editor"</span>]</span></span><span class="source-line"><span class="line-number">6</span><span class="line-content">  },</span></span><span class="source-line"><span class="line-number">7</span><span class="line-content">  <span class="key">"active"</span>: <span class="lit">true</span>,</span></span><span class="source-line"><span class="line-number">8</span><span class="line-content">  <span class="key">"message"</span>: <span class="str">"A deliberately long logical line now wraps to the available preview width while remaining one logical source line."</span></span><span class="source-line"><span class="line-number">9</span><span class="line-content">}</span></span><span class="source-line"><span class="line-number">10</span><span class="line-content"></span></span><span class="source-line"><span class="line-number">11</span><span class="line-content">request-id=235-0001 component=text-renderer event=preview metadata=readable-representation-without-mutating-original-download-bytes</span></span>
+        </pre>
+      </div>
+    </section>
+  </div>
+  <div class="foot"><span class="dot"></span><strong>Opt-in and reversible</strong><span class="sep">·</span><span>Malformed, unsupported, or oversized input falls back to the original renderer path.</span></div>
+</div>
+</body>
+</html>

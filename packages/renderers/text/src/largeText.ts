@@ -29,6 +29,7 @@ const LARGE_TEXT_INDEX_YIELD_BYTES = 4 * 1024 * 1024
 const LARGE_TEXT_SEARCH_CHUNK_BYTES = 256 * 1024
 const LARGE_TEXT_MAX_SCROLL_HEIGHT = 8_000_000
 const LARGE_TEXT_BASE_LINE_HEIGHT = 22.1
+const LARGE_TEXT_MEASUREMENT_BLOCK_LINES = 256
 
 interface LargeTextIndex {
   bytes: Uint8Array;
@@ -324,8 +325,6 @@ export const shouldVirtualizeMarkdownBuffer = (buffer: ArrayBuffer, context?: Fi
 const largeTextStyle = `
 .code-viewer--virtual{height:100%;min-height:240px;display:flex;flex-direction:column;overflow:hidden}
 .code-viewer--virtual .code-toolbar{flex:0 0 42px}
-.code-toolbar-meta{display:inline-flex;min-width:0;align-items:center;justify-content:flex-end;gap:10px;white-space:nowrap}
-.code-toolbar-meta span{overflow:hidden;text-overflow:ellipsis}
 .code-virtual-scroll{position:relative;flex:1 1 auto;min-width:0;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;contain:strict;background:var(--code-bg)}
 .code-virtual-spacer{position:relative;min-width:100%}
 .code-virtual-window{position:absolute;top:0;left:0;min-width:100%;will-change:transform}
@@ -338,6 +337,12 @@ const largeTextStyle = `
 .code-line-segments button{width:22px;height:18px;padding:0;border:1px solid var(--code-border);border-radius:4px;background:var(--code-bg);color:var(--code-muted);font:700 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;cursor:pointer}
 .code-line-segments button:disabled{cursor:not-allowed;opacity:.4}
 .code-line-segments span{min-width:64px;color:var(--code-muted);font-size:11px;line-height:1;text-align:center}
+.code-viewer--virtual.code-viewer--wrap-lines .code-virtual-scroll{overflow-x:hidden}
+.code-viewer--virtual.code-viewer--wrap-lines .code-virtual-spacer,.code-viewer--virtual.code-viewer--wrap-lines .code-virtual-window{width:100%;min-width:0}
+.code-viewer--virtual.code-viewer--wrap-lines .code-virtual-line{width:100%;height:auto;min-height:var(--code-line-height,22.1px);min-width:0;align-items:flex-start;white-space:normal;contain:layout paint style}
+.code-viewer--virtual.code-viewer--wrap-lines .code-virtual-number{align-self:stretch}
+.code-viewer--virtual.code-viewer--wrap-lines .code-line-segments{flex:0 0 auto;align-self:stretch;height:auto}
+.code-viewer--virtual.code-viewer--wrap-lines .code-virtual-content{display:block;min-width:0;flex:1 1 auto;padding:0 18px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 `
 
 export default async function renderLargeText(
@@ -363,9 +368,11 @@ export default async function renderLargeText(
   // Undefined preserves the large-text renderer's pre-option behavior. An
   // explicit boolean has the same meaning in both regular and virtual views.
   const showLineNumbers = context?.options?.text?.lineNumbers !== false
+  const wrapLongLines = context?.options?.text?.wrapLongLines === true
   let disposed = false
   let zoom = 1
   let scheduledFrame = 0
+  let measurementFrame = 0
   let lastWindowStart = -1
   let activeLine = -1
   let searchGeneration = 0
@@ -375,13 +382,17 @@ export default async function renderLargeText(
   const style = documentRef.createElement('style')
   style.textContent = `${codeStyle}\n${largeTextStyle}`
   const root = documentRef.createElement('div')
-  root.className = showLineNumbers
-    ? 'code-viewer code-viewer--virtual code-viewer--line-numbers'
-    : 'code-viewer code-viewer--virtual'
+  root.className = [
+    'code-viewer',
+    'code-viewer--virtual',
+    showLineNumbers ? 'code-viewer--line-numbers' : '',
+    wrapLongLines ? 'code-viewer--wrap-lines' : ''
+  ].filter(Boolean).join(' ')
   root.dataset.viewerZoomProvider = 'code'
   root.dataset.viewerSearchProvider = 'code-virtual'
   root.dataset.textToolbar = String(showToolbar)
   root.dataset.lineNumbers = String(showLineNumbers)
+  root.dataset.wrapLongLines = String(wrapLongLines)
   root.dataset.textEncoding = source.encoding
   const toolbar = documentRef.createElement('div')
   toolbar.className = 'code-toolbar'
@@ -429,15 +440,56 @@ export default async function renderLargeText(
 
   const getLineHeight = () => LARGE_TEXT_BASE_LINE_HEIGHT * zoom
   const getViewportHeight = () => Math.max(240, viewport.clientHeight || 600)
+  const measuredLineHeights = new Map<number, number>()
+  const measuredLineHeightsByBlock = new Map<number, Map<number, number>>()
+  const heightCorrectionTree = new Float64Array(
+    Math.ceil(index.lineCount / LARGE_TEXT_MEASUREMENT_BLOCK_LINES) + 1
+  )
+
+  const updateHeightCorrection = (blockIndex: number, delta: number) => {
+    for (let treeIndex = blockIndex + 1; treeIndex < heightCorrectionTree.length; treeIndex += treeIndex & -treeIndex) {
+      heightCorrectionTree[treeIndex] += delta
+    }
+  }
+
+  const getHeightCorrectionBeforeBlock = (blockIndex: number) => {
+    let correction = 0
+    for (let treeIndex = blockIndex; treeIndex > 0; treeIndex -= treeIndex & -treeIndex) {
+      correction += heightCorrectionTree[treeIndex]
+    }
+    return correction
+  }
+
+  const getOffsetForLine = (requestedLine: number) => {
+    const lineIndex = clamp(Math.trunc(requestedLine), 0, index.lineCount)
+    if (!wrapLongLines || lineIndex === 0) {
+      return lineIndex * getLineHeight()
+    }
+
+    const blockIndex = Math.floor(lineIndex / LARGE_TEXT_MEASUREMENT_BLOCK_LINES)
+    let correction = getHeightCorrectionBeforeBlock(blockIndex)
+    const blockMeasurements = measuredLineHeightsByBlock.get(blockIndex)
+    if (blockMeasurements) {
+      for (const [measuredLine, height] of blockMeasurements) {
+        if (measuredLine >= lineIndex) {
+          continue
+        }
+        correction += height - getLineHeight()
+      }
+    }
+    return (lineIndex * getLineHeight()) + correction
+  }
+
+  const getTotalContentHeight = () => getOffsetForLine(index.lineCount)
   const getWindowLineCount = () => Math.min(
     index.lineCount,
     Math.ceil(getViewportHeight() / getLineHeight()) + (overscan * 2) + 2
   )
   const getSpacerHeight = () => Math.min(
     LARGE_TEXT_MAX_SCROLL_HEIGHT,
-    Math.max(getViewportHeight(), index.lineCount * getLineHeight())
+    Math.max(getViewportHeight(), getTotalContentHeight())
   )
-  const usesCappedScrollHeight = () => index.lineCount * getLineHeight() > LARGE_TEXT_MAX_SCROLL_HEIGHT
+  const usesCappedScrollHeight = () => getTotalContentHeight() > LARGE_TEXT_MAX_SCROLL_HEIGHT
 
   const updateSpacerHeight = () => {
     root.style.setProperty('--code-font-size', `${13 * zoom}px`)
@@ -445,9 +497,26 @@ export default async function renderLargeText(
     spacer.style.height = `${getSpacerHeight()}px`
   }
 
+  const getLineAtOffset = (requestedOffset: number) => {
+    const offset = clamp(requestedOffset, 0, Math.max(0, getTotalContentHeight() - 1))
+    let low = 0
+    let high = Math.max(0, index.lineCount - 1)
+    while (low < high) {
+      const middle = Math.ceil((low + high) / 2)
+      if (getOffsetForLine(middle) <= offset) {
+        low = middle
+      } else {
+        high = middle - 1
+      }
+    }
+    return low
+  }
+
   const getFirstVisibleLine = () => {
     if (!usesCappedScrollHeight()) {
-      return clamp(Math.floor(viewport.scrollTop / getLineHeight()), 0, index.lineCount - 1)
+      return wrapLongLines
+        ? getLineAtOffset(viewport.scrollTop)
+        : clamp(Math.floor(viewport.scrollTop / getLineHeight()), 0, index.lineCount - 1)
     }
     const maxScrollTop = Math.max(1, getSpacerHeight() - getViewportHeight())
     return clamp(
@@ -459,11 +528,88 @@ export default async function renderLargeText(
 
   const getWindowOffset = (startLine: number, renderedLineCount: number) => {
     if (!usesCappedScrollHeight()) {
-      return startLine * getLineHeight()
+      return getOffsetForLine(startLine)
     }
     const maxStart = Math.max(1, index.lineCount - renderedLineCount)
     const maxOffset = Math.max(0, getSpacerHeight() - (renderedLineCount * getLineHeight()))
     return (startLine / maxStart) * maxOffset
+  }
+
+  const setMeasuredLineHeight = (lineIndex: number, measuredHeight: number) => {
+    const nextHeight = Math.max(getLineHeight(), measuredHeight)
+    const previousHeight = measuredLineHeights.get(lineIndex) ?? getLineHeight()
+    if (Math.abs(nextHeight - previousHeight) < 0.5) {
+      return false
+    }
+
+    const blockIndex = Math.floor(lineIndex / LARGE_TEXT_MEASUREMENT_BLOCK_LINES)
+    measuredLineHeights.set(lineIndex, nextHeight)
+    let blockMeasurements = measuredLineHeightsByBlock.get(blockIndex)
+    if (!blockMeasurements) {
+      blockMeasurements = new Map<number, number>()
+      measuredLineHeightsByBlock.set(blockIndex, blockMeasurements)
+    }
+    blockMeasurements.set(lineIndex, nextHeight)
+    updateHeightCorrection(blockIndex, nextHeight - previousHeight)
+    return true
+  }
+
+  const clearMeasuredLineHeights = () => {
+    measuredLineHeights.clear()
+    measuredLineHeightsByBlock.clear()
+    heightCorrectionTree.fill(0)
+  }
+
+  const scheduleWrappedMeasurement = (startLine: number, renderedLineCount: number) => {
+    if (!wrapLongLines || disposed || renderedLineCount === 0) {
+      return
+    }
+    const view = getWindow(target)
+    if (measurementFrame && view?.cancelAnimationFrame) {
+      view.cancelAnimationFrame(measurementFrame)
+    } else if (measurementFrame) {
+      view?.clearTimeout?.(measurementFrame)
+    }
+
+    const measure = () => {
+      measurementFrame = 0
+      if (disposed) {
+        return
+      }
+      const anchorLine = getFirstVisibleLine()
+      const anchorOffset = usesCappedScrollHeight()
+        ? 0
+        : viewport.scrollTop - getOffsetForLine(anchorLine)
+      let changed = false
+      const rows = Array.from(windowElement.querySelectorAll<HTMLElement>('.code-virtual-line'))
+      for (const row of rows) {
+        const lineIndex = Number(row.dataset.line) - 1
+        if (!Number.isInteger(lineIndex) || lineIndex < 0) {
+          continue
+        }
+        const measuredHeight = row.getBoundingClientRect().height || row.offsetHeight || 0
+        if (measuredHeight) {
+          changed = setMeasuredLineHeight(lineIndex, measuredHeight) || changed
+        }
+      }
+      if (!changed) {
+        return
+      }
+
+      updateSpacerHeight()
+      if (!usesCappedScrollHeight()) {
+        viewport.scrollTop = getOffsetForLine(anchorLine) + anchorOffset
+      }
+      windowElement.style.transform = `translateY(${getWindowOffset(startLine, renderedLineCount)}px)`
+      lastWindowStart = -1
+      scheduleRender()
+    }
+
+    if (view?.requestAnimationFrame) {
+      measurementFrame = view.requestAnimationFrame(measure)
+    } else {
+      measurementFrame = Number(view?.setTimeout?.(measure, 0) ?? setTimeout(measure, 0))
+    }
   }
 
   const appendHighlightedContent = (
@@ -507,6 +653,7 @@ export default async function renderLargeText(
       const row = documentRef.createElement('div')
       row.className = 'code-virtual-line'
       row.dataset.line = String(line.lineIndex + 1)
+      row.dataset.logicalLine = String(line.lineIndex + 1)
       if (line.lineIndex === activeLine) {
         row.classList.add('code-virtual-line--match')
       }
@@ -570,6 +717,7 @@ export default async function renderLargeText(
 
     windowElement.replaceChildren(fragment)
     windowElement.style.transform = `translateY(${getWindowOffset(startLine, lines.length)}px)`
+    scheduleWrappedMeasurement(startLine, lines.length)
   }
 
   const scheduleRender = () => {
@@ -601,7 +749,7 @@ export default async function renderLargeText(
         ? (lineIndex / (index.lineCount - 1)) * maxScrollTop
         : 0
     } else {
-      viewport.scrollTop = lineIndex * getLineHeight()
+      viewport.scrollTop = getOffsetForLine(lineIndex)
     }
     lastWindowStart = -1
     renderWindow(true)
@@ -752,6 +900,9 @@ export default async function renderLargeText(
   const setZoom = (scale: number) => {
     const firstVisibleLine = getFirstVisibleLine()
     zoom = clampZoom(scale)
+    if (wrapLongLines) {
+      clearMeasuredLineHeights()
+    }
     updateSpacerHeight()
     scrollToLine(firstVisibleLine)
     zoomEmitter.emit()
@@ -803,6 +954,13 @@ export default async function renderLargeText(
   const ResizeObserverCtor = getWindow(target)?.ResizeObserver
   const resizeObserver = ResizeObserverCtor
     ? new ResizeObserverCtor(() => {
+        if (wrapLongLines) {
+          const firstVisibleLine = getFirstVisibleLine()
+          clearMeasuredLineHeights()
+          updateSpacerHeight()
+          scrollToLine(firstVisibleLine)
+          return
+        }
         updateSpacerHeight()
         renderWindow(true)
       })
@@ -822,6 +980,11 @@ export default async function renderLargeText(
         view.cancelAnimationFrame(scheduledFrame)
       } else if (scheduledFrame) {
         view?.clearTimeout?.(scheduledFrame)
+      }
+      if (measurementFrame && view?.cancelAnimationFrame) {
+        view.cancelAnimationFrame(measurementFrame)
+      } else if (measurementFrame) {
+        view?.clearTimeout?.(measurementFrame)
       }
       resizeObserver?.disconnect()
       viewport.removeEventListener('scroll', scheduleRender)

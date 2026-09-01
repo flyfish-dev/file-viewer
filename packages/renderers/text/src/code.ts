@@ -11,6 +11,12 @@ import {
 import type { HLJSApi, LanguageFn } from 'highlight.js'
 import { codeStyle } from './codeStyle.js'
 import renderLargeText, { shouldVirtualizeTextBuffer } from './largeText.js'
+import {
+  formatFileViewerTextForDisplay,
+  resolveFileViewerPrettyPrintMaxBytes,
+  supportsFileViewerPrettyPrint,
+  type FileViewerPrettyPrintResult
+} from './prettyPrint.js'
 
 const languageMap: Record<string, string> = {
   bash: 'bash',
@@ -26,6 +32,8 @@ const languageMap: Record<string, string> = {
   bdl: 'plaintext',
   gv: 'plaintext',
   go: 'go',
+  graphql: 'graphql',
+  gql: 'graphql',
   h: 'cpp',
   hcl: 'plaintext',
   hpp: 'cpp',
@@ -72,6 +80,7 @@ const languageLoaders: Record<string, () => Promise<{ default: LanguageFn }>> = 
   css: () => import('highlight.js/lib/languages/css'),
   diff: () => import('highlight.js/lib/languages/diff'),
   go: () => import('highlight.js/lib/languages/go'),
+  graphql: () => import('highlight.js/lib/languages/graphql'),
   http: () => import('highlight.js/lib/languages/http'),
   ini: () => import('highlight.js/lib/languages/ini'),
   java: () => import('highlight.js/lib/languages/java'),
@@ -96,11 +105,12 @@ let highlighterPromise: Promise<HLJSApi> | null = null
 const registeredLanguages = new Set<string>()
 
 const createElement = <TagName extends keyof HTMLElementTagNameMap>(
+  documentRef: Document,
   tagName: TagName,
   className?: string,
   text?: string
 ) => {
-  const element = document.createElement(tagName)
+  const element = documentRef.createElement(tagName)
   if (className) {
     element.className = className
   }
@@ -110,8 +120,8 @@ const createElement = <TagName extends keyof HTMLElementTagNameMap>(
   return element
 }
 
-const createStyle = () => {
-  const style = document.createElement('style')
+const createStyle = (documentRef: Document) => {
+  const style = documentRef.createElement('style')
   style.textContent = codeStyle
   return style
 }
@@ -166,14 +176,129 @@ const createLineNumberText = (lineCount: number) => {
   return Array.from({ length: lineCount }, (_, index) => String(index + 1)).join('\n')
 }
 
+interface WrappedSourceLine {
+  row: HTMLSpanElement;
+  content: HTMLSpanElement;
+}
+
+const createWrappedSourceLine = (documentRef: Document, lineNumber: number): WrappedSourceLine => {
+  const row = createElement(documentRef, 'span', 'code-source-line')
+  row.dataset.line = String(lineNumber)
+  const number = createElement(documentRef, 'span', 'code-source-line-number', String(lineNumber))
+  number.setAttribute('aria-hidden', 'true')
+  const content = createElement(documentRef, 'span', 'code-source-line-content')
+  row.append(number, content)
+  return { row, content }
+}
+
+/**
+ * Splits trusted highlight.js markup into logical source-line wrappers while
+ * recreating active token spans after every newline. This keeps multiline
+ * comments and strings highlighted without coupling visual wrapping to source
+ * line numbers.
+ */
+const mountWrappedHighlightedLines = (
+  code: HTMLElement,
+  highlightedHtml: string,
+  expectedLineCount: number
+) => {
+  const documentRef = code.ownerDocument
+  const staging = createElement(documentRef, 'span')
+  staging.innerHTML = highlightedHtml
+  const lines: WrappedSourceLine[] = [createWrappedSourceLine(documentRef, 1)]
+  let lineIndex = 0
+  const activeElements: Element[] = []
+  let activeClones: Element[] = []
+
+  const currentContent = () => lines[lineIndex].content
+  const currentParent = () => activeClones[activeClones.length - 1] ?? currentContent()
+
+  const continueOnNextLine = () => {
+    lineIndex += 1
+    lines.push(createWrappedSourceLine(documentRef, lineIndex + 1))
+    let parent: Element = currentContent()
+    activeClones = activeElements.map(element => {
+      const clone = element.cloneNode(false) as Element
+      parent.append(clone)
+      parent = clone
+      return clone
+    })
+  }
+
+  const visit = (node: Node) => {
+    if (node.nodeType === 3) {
+      const parts = (node.textContent ?? '').split(/\r\n|\r|\n/)
+      parts.forEach((part, index) => {
+        if (part) {
+          currentParent().append(documentRef.createTextNode(part))
+        }
+        if (index < parts.length - 1) {
+          continueOnNextLine()
+        }
+      })
+      return
+    }
+    if (node.nodeType !== 1) {
+      return
+    }
+
+    const element = node as Element
+    const clone = element.cloneNode(false) as Element
+    currentParent().append(clone)
+    activeElements.push(element)
+    activeClones.push(clone)
+    Array.from(element.childNodes).forEach(visit)
+    activeElements.pop()
+    activeClones.pop()
+  }
+
+  Array.from(staging.childNodes).forEach(visit)
+  while (lines.length < expectedLineCount) {
+    lines.push(createWrappedSourceLine(documentRef, lines.length + 1))
+  }
+  code.replaceChildren(...lines.map(line => line.row))
+}
+
+const mountCodeMarkup = (
+  pre: HTMLPreElement,
+  code: HTMLElement,
+  highlightedHtml: string,
+  lineCount: number,
+  showLineNumbers: boolean,
+  wrapLongLines: boolean
+) => {
+  code.replaceChildren()
+  if (showLineNumbers && wrapLongLines) {
+    pre.className = 'code-area code-area--wrapped-line-numbers'
+    pre.replaceChildren(code)
+    mountWrappedHighlightedLines(code, highlightedHtml, lineCount)
+    return
+  }
+
+  pre.className = showLineNumbers ? 'code-area code-area--line-numbers' : 'code-area'
+  if (showLineNumbers) {
+    const gutter = createElement(pre.ownerDocument, 'span', 'code-line-numbers', createLineNumberText(lineCount))
+    gutter.setAttribute('aria-hidden', 'true')
+    pre.replaceChildren(gutter, code)
+  } else {
+    pre.replaceChildren(code)
+  }
+  code.innerHTML = highlightedHtml
+}
+
+const canPossiblyFitDecodedPrettyPrintLimit = (buffer: ArrayBuffer, maxBytes: number) => {
+  // UTF-16 ASCII is the widest supported source encoding relative to its
+  // decoded UTF-8 representation. This fast guard avoids decoding enormous
+  // structured files that cannot possibly fit the configured decoded limit.
+  return buffer.byteLength <= (maxBytes * 2) + 4
+}
+
 /**
  * Framework-neutral text/code renderer.
  *
- * highlight.js core and language definitions are loaded lazily by format. HTML
- * and XML are highlighted as escaped source text, never executed as real DOM.
- * @param buffer 文本二进制内容
- * @param target 目标
- * @param type 文件扩展名，用于选择 highlight.js 语言
+ * highlight.js core, Prettier standalone, and parser definitions are loaded
+ * lazily by format. HTML and XML are always mounted as escaped source text and
+ * never executed as real DOM.
  */
 export default async function renderText(
   buffer: ArrayBuffer,
@@ -184,7 +309,26 @@ export default async function renderText(
   const t = createFileViewerTranslator(context?.options)
   const extension = type || 'txt'
   const normalizedExtension = extension.trim().toLowerCase()
+  const textOptions = context?.options?.text
+
+  let sourceText: string | undefined
+  let prettyPrintResult: FileViewerPrettyPrintResult | undefined
   if (
+    textOptions?.prettyPrint === true &&
+    supportsFileViewerPrettyPrint(normalizedExtension) &&
+    canPossiblyFitDecodedPrettyPrintLimit(buffer, resolveFileViewerPrettyPrintMaxBytes(textOptions))
+  ) {
+    sourceText = decodeFileViewerTextBuffer(buffer, textOptions.encoding).text
+    prettyPrintResult = await formatFileViewerTextForDisplay(
+      sourceText,
+      normalizedExtension,
+      textOptions,
+      context?.signal
+    )
+  }
+
+  if (
+    !prettyPrintResult?.formatted &&
     normalizedExtension !== 'bundle' &&
     normalizedExtension !== 'bdl' &&
     shouldVirtualizeTextBuffer(buffer, context)
@@ -200,63 +344,103 @@ export default async function renderText(
     return renderGitBundle(buffer, target, extension, context)
   }
 
-  const text = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text
+  const originalText = sourceText ?? decodeFileViewerTextBuffer(buffer, textOptions?.encoding).text
+  const formattedText = prettyPrintResult?.formatted ? prettyPrintResult.text : null
   const language = resolveLanguage(extension)
-  const lineCount = lineCountOf(text)
-  const showToolbar = context?.options?.text?.toolbar !== false
-  const showLineNumbers = context?.options?.text?.lineNumbers === true
+  const showToolbar = textOptions?.toolbar !== false
+  const showLineNumbers = textOptions?.lineNumbers === true
+  const wrapLongLines = textOptions?.wrapLongLines === true
+  const documentRef = target.ownerDocument
   let disposed = false
   let zoom = 1
+  let showingFormatted = formattedText !== null
+  let renderGeneration = 0
   const zoomEmitter = createZoomChangeEmitter()
-  const root = createElement('div', 'code-viewer')
+  const root = createElement(
+    documentRef,
+    'div',
+    wrapLongLines ? 'code-viewer code-viewer--wrap-lines' : 'code-viewer'
+  )
   root.dataset.viewerZoomProvider = 'code'
   root.dataset.textToolbar = String(showToolbar)
   root.dataset.lineNumbers = String(showLineNumbers)
-  const toolbar = createElement('div', 'code-toolbar')
-  toolbar.append(
-    createElement('span', '', extension.toUpperCase()),
-    createElement('strong', '', `${lineCount} lines`)
-  )
+  root.dataset.wrapLongLines = String(wrapLongLines)
+  root.dataset.prettyPrint = prettyPrintResult?.reason ?? 'disabled'
 
-  const pre = createElement('pre', showLineNumbers ? 'code-area code-area--line-numbers' : 'code-area')
-  const code = createElement('code', `hljs language-${language}`)
-  code.innerHTML = language === 'plaintext'
-    ? escapeHtml(text)
-    : t('text.code.loadingHighlight')
-  if (showLineNumbers) {
-    const gutter = createElement('span', 'code-line-numbers', createLineNumberText(lineCount))
-    gutter.setAttribute('aria-hidden', 'true')
-    pre.append(gutter)
-  }
+  const toolbar = createElement(documentRef, 'div', 'code-toolbar')
+  const extensionLabel = createElement(documentRef, 'span', '', extension.toUpperCase())
+  const toolbarMeta = createElement(documentRef, 'div', 'code-toolbar-meta')
+  const representationStatus = createElement(documentRef, 'span', 'code-format-status')
+  const representationToggle = createElement(documentRef, 'button', 'code-format-toggle')
+  representationToggle.type = 'button'
+  const lineSummary = createElement(documentRef, 'strong')
+  toolbarMeta.append(representationStatus, representationToggle, lineSummary)
+  toolbar.append(extensionLabel, toolbarMeta)
+
+  const pre = createElement(documentRef, 'pre', 'code-area')
+  const code = createElement(documentRef, 'code', `hljs language-${language}`)
   pre.append(code)
   if (showToolbar) {
     root.append(toolbar)
   }
   root.append(pre)
   root.style.setProperty('--code-font-size', `${13 * zoom}px`)
-  target.replaceChildren(createStyle(), root)
+  target.replaceChildren(createStyle(documentRef), root)
 
-  const updateHighlighted = async () => {
+  const currentText = () => showingFormatted && formattedText !== null ? formattedText : originalText
+
+  const syncRepresentationControls = (lineCount: number) => {
+    const formatted = showingFormatted && formattedText !== null
+    root.dataset.textRepresentation = formatted ? 'formatted' : 'source'
+    lineSummary.textContent = `${lineCount} lines`
+    representationStatus.hidden = !formatted
+    representationStatus.textContent = formatted ? t('text.code.formattedPreview') : ''
+    representationToggle.hidden = formattedText === null
+    representationToggle.textContent = formatted
+      ? t('text.code.showOriginal')
+      : t('text.code.showFormatted')
+    representationToggle.setAttribute('aria-pressed', String(formatted))
+  }
+
+  const renderCurrentRepresentation = async () => {
+    const generation = renderGeneration + 1
+    renderGeneration = generation
+    const text = currentText()
+    const lineCount = lineCountOf(text)
+    syncRepresentationControls(lineCount)
+
     if (language === 'plaintext') {
+      mountCodeMarkup(pre, code, escapeHtml(text), lineCount, showLineNumbers, wrapLongLines)
       return
     }
+
+    code.textContent = t('text.code.loadingHighlight')
     try {
       const hljs = await loadHighlighter()
       const hasLanguage = await registerLanguageOnce(hljs, language)
-      if (disposed) {
+      if (disposed || generation !== renderGeneration) {
         return
       }
-      code.innerHTML = hasLanguage
+      const highlighted = hasLanguage
         ? hljs.highlight(text, { language, ignoreIllegals: true }).value
         : escapeHtml(text)
+      mountCodeMarkup(pre, code, highlighted, lineCount, showLineNumbers, wrapLongLines)
     } catch {
-      if (!disposed) {
-        code.innerHTML = escapeHtml(text)
+      if (!disposed && generation === renderGeneration) {
+        mountCodeMarkup(pre, code, escapeHtml(text), lineCount, showLineNumbers, wrapLongLines)
       }
     }
   }
 
-  void updateHighlighted()
+  const toggleRepresentation = () => {
+    if (formattedText === null) {
+      return
+    }
+    showingFormatted = !showingFormatted
+    void renderCurrentRepresentation()
+  }
+  representationToggle.addEventListener('click', toggleRepresentation)
+  await renderCurrentRepresentation()
 
   const getZoomState = (): FileViewerZoomState => ({
     scale: zoom,
@@ -288,6 +472,8 @@ export default async function renderText(
     $el: target,
     unmount() {
       disposed = true
+      renderGeneration += 1
+      representationToggle.removeEventListener('click', toggleRepresentation)
       unregisterFileViewerZoomProvider(root)
       target.replaceChildren()
     }
