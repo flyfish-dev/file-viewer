@@ -72,7 +72,7 @@
   "devDependencies": {
     "diff2html": "^3.4.56",
     "mermaid": "^11.16.1",
-    "pako": "^2.1.0",
+    "pako": "^3.0.1",
     "jsdom": "^27.4.0",
     "typescript": "^6.0.3"
   },

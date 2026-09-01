@@ -70,12 +70,12 @@
     "@xmldom/xmldom": "^0.9.10",
     "jszip": "^3.10.1",
     "keynote-archives": "2.0.1",
-    "pako": "^2.1.0",
+    "pako": "^3.0.1",
     "styled-exceljs": "0.21.4",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@types/pako": "^2.0.4",
+    "@types/pako": "^3.0.0",
     "esbuild": "^0.28.1",
     "typescript": "^6.0.3"
   },

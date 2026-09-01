@@ -492,12 +492,12 @@ importers:
         specifier: ^3.4.56
         version: 3.4.56
       pako:
-        specifier: ^2.1.0
-        version: 2.2.0
+        specifier: ^3.0.1
+        version: 3.0.1
     devDependencies:
       '@types/pako':
-        specifier: ^2.0.4
-        version: 2.0.4
+        specifier: ^3.0.0
+        version: 3.0.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1320,12 +1320,12 @@ importers:
         specifier: 1.8.21
         version: 1.8.21
       pako:
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 3.0.1
+        version: 3.0.1
     devDependencies:
       '@types/pako':
-        specifier: ^2.0.4
-        version: 2.0.4
+        specifier: ^3.0.0
+        version: 3.0.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1371,12 +1371,12 @@ importers:
         specifier: workspace:3.0.0
         version: link:../../core
       pako:
-        specifier: ^2.1.0
-        version: 2.2.0
+        specifier: ^3.0.1
+        version: 3.0.1
     devDependencies:
       '@types/pako':
-        specifier: ^2.0.4
-        version: 2.0.4
+        specifier: ^3.0.0
+        version: 3.0.0
       '@xmldom/xmldom':
         specifier: 0.9.10
         version: 0.9.10
@@ -1490,12 +1490,12 @@ importers:
         specifier: ^3.10.1
         version: 3.10.1
       pako:
-        specifier: ^2.1.0
-        version: 2.2.0
+        specifier: ^3.0.1
+        version: 3.0.1
     devDependencies:
       '@types/pako':
-        specifier: ^2.0.4
-        version: 2.0.4
+        specifier: ^3.0.0
+        version: 3.0.0
       esbuild:
         specifier: ^0.28.1
         version: 0.28.2
@@ -1534,8 +1534,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1
       pako:
-        specifier: ^2.1.0
-        version: 2.2.0
+        specifier: ^3.0.1
+        version: 3.0.1
       styled-exceljs:
         specifier: 0.21.4
         version: 0.21.4
@@ -1544,8 +1544,8 @@ importers:
         version: 2.8.1
     devDependencies:
       '@types/pako':
-        specifier: ^2.0.4
-        version: 2.0.4
+        specifier: ^3.0.0
+        version: 3.0.0
       esbuild:
         specifier: ^0.28.1
         version: 0.28.2
@@ -1780,8 +1780,8 @@ importers:
         specifier: 11.16.1
         version: 11.16.1
       pako:
-        specifier: ^2.1.0
-        version: 2.2.0
+        specifier: ^3.0.1
+        version: 3.0.1
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3615,8 +3615,9 @@ packages:
   '@types/node@26.3.0':
     resolution: {integrity: sha512-L3fgrnchriRC2ExBflb8j4uZZURHZfQsmQeyVzhjcHW4kkwVyo8/0h1B2MVzMTrYUJYu6G7EWs14hW/L9putqw==}
 
-  '@types/pako@2.0.4':
-    resolution: {integrity: sha512-VWDCbrLeVXJM9fihYodcLiIv0ku+AlOa/TQ1SvYOaBuyrSKgEcro95LJyIsJ4vSo6BXIxOKxiJAat04CmST9Fw==}
+  '@types/pako@3.0.0':
+    resolution: {integrity: sha512-MtIzg1Ul1GxhHZLq6oSKvWQENKqmfK1fdaW+SDcPJe7+YcJVo6AbmkW0BvGFH6+559+hEuCwdXZZe8F85lBPkA==}
+    deprecated: This is a stub types definition. pako provides its own type definitions, so you do not need this installed.
 
   '@types/prop-types@15.7.15':
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
@@ -3837,6 +3838,7 @@ packages:
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@yuku-analyzer/binding-android-arm64@0.8.7':
     resolution: {integrity: sha512-pzJ++UMCZEV4s6SP3Ryvj+snWP8s7aTXFkSXRyeBF4RSALftPzfqYssHdGOmOH2QnRAtyOhhg64tdjeSGJvYRg==}
@@ -5775,17 +5777,14 @@ packages:
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
-  pako@1.0.2:
-    resolution: {integrity: sha512-qCaDHl8pk5JSbz5k1Bi5zTZf430DUuV13pmcFEHHan4fW++WIwm2HXUirpzfciBRyFUN+eeZW11bfIM/Y4Zeog==}
-
-  pako@1.0.5:
-    resolution: {integrity: sha512-umumrxStF9I4G8OZlhzEgTlwktjp4bofYq7E0mfH/IM7fctJ1pzLBhVrhNmP86hA1b3RNP5gAzxJJ4mjj0Up6Q==}
-
   pako@2.1.0:
     resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
 
   pako@2.2.0:
     resolution: {integrity: sha512-zJq6RP/5q+TO2OpFV3FHzlPnFjmkb7Nc99a5SNjJE+uu/PkpChs+NIZSSzbBoD+6kjiISXjfYdwj1ZRQ81dz/w==}
+
+  pako@3.0.1:
+    resolution: {integrity: sha512-GupotUUI0mlhugKjUs4bjOwLt3nrehy9Ys2dxC0GtgVef5cnKggkDMmf2bq2poCCuVXopWPmqsc9VDT2iJUy+w==}
 
   parse-entities@4.0.2:
     resolution: {integrity: sha512-GG2AQYWoLgL877gQIKeRPGO1xF9+eG1ujIb5soS5gPvLQ1y2o8FL90w2QWNdf9I361Mpp7726c+lj3U0qK1uGw==}
@@ -8241,7 +8240,9 @@ snapshots:
     dependencies:
       undici-types: 8.3.0
 
-  '@types/pako@2.0.4': {}
+  '@types/pako@3.0.0':
+    dependencies:
+      pako: 3.0.1
 
   '@types/prop-types@15.7.15': {}
 
@@ -9901,7 +9902,7 @@ snapshots:
   jszip@3.10.1:
     dependencies:
       lie: 3.3.0
-      pako: 1.0.2
+      pako: 1.0.11
       readable-stream: 2.3.8
       setimmediate: 1.0.5
 
@@ -10743,13 +10744,11 @@ snapshots:
 
   pako@1.0.11: {}
 
-  pako@1.0.2: {}
-
-  pako@1.0.5: {}
-
   pako@2.1.0: {}
 
   pako@2.2.0: {}
+
+  pako@3.0.1: {}
 
   parse-entities@4.0.2:
     dependencies:
@@ -11617,7 +11616,7 @@ snapshots:
 
   utif@3.1.0:
     dependencies:
-      pako: 1.0.5
+      pako: 1.0.11
 
   util-deprecate@1.0.2: {}
 

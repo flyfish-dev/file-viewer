@@ -59,11 +59,11 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.0",
-    "pako": "^2.1.0"
+    "pako": "^3.0.1"
   },
   "devDependencies": {
     "@xmldom/xmldom": "0.9.10",
-    "@types/pako": "^2.0.4",
+    "@types/pako": "^3.0.0",
     "epubjs": "0.3.93",
     "esbuild": "^0.28.1",
     "typescript": "^6.0.3"
