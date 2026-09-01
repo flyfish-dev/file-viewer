@@ -48,11 +48,15 @@ jobs:
           from pathlib import Path
           path = Path('packages/renderers/text/test/prettyPrint.test.mjs')
           source = path.read_text()
-          old = '  assert.match(json.text, /\\n    "roles": \\[/)\n'
-          new = '  assert.match(json.text, /"roles": \\["reader", "editor"\\]/)\n  assert.ok(json.text.split("\\n").length >= 4)\n'
-          if source.count(old) != 1:
-              raise SystemExit(f'expected one nested JSON assertion, found {source.count(old)}')
-          path.write_text(source.replace(old, new))
+          replacements = {
+              '  assert.match(json.text, /\\n    "roles": \\[/)\n': '  assert.match(json.text, /"roles": \\["reader", "editor"\\]/)\n  assert.ok(json.text.split("\\n").length >= 4)\n',
+              '  assert.match(jsonc.text, /\\n/)\n': '  assert.match(jsonc.text, /\\/\\* keep \\*\\//)\n',
+          }
+          for old, new in replacements.items():
+              if source.count(old) != 1:
+                  raise SystemExit(f'expected one assertion to replace, found {source.count(old)}: {old!r}')
+              source = source.replace(old, new)
+          path.write_text(source)
           PY
           git add packages/renderers/text/src/prettyPrint.ts packages/renderers/text/test/prettyPrint.test.mjs
 
