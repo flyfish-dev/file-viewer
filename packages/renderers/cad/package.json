@@ -19,7 +19,7 @@
   ],
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org"
   },
   "author": {
     "name": "Yu Wang",
@@ -57,7 +57,8 @@
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:color-mode": "node scripts/verify-color-mode.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.0",
