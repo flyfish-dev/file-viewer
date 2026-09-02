@@ -65,7 +65,7 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.0",
     "@ssabrojs/hwpxjs": "0.4.0",
-    "@xmldom/xmldom": "^0.9.10",
+    "@xmldom/xmldom": "^0.9.12",
     "cfb": "^1.2.2",
     "jszip": "^3.10.1",
     "pako": "^2.1.0"

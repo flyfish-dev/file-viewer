@@ -1378,8 +1378,8 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
       '@xmldom/xmldom':
-        specifier: 0.9.10
-        version: 0.9.10
+        specifier: 0.9.12
+        version: 0.9.12
       epubjs:
         specifier: 0.3.93
         version: 0.3.93
@@ -1481,8 +1481,8 @@ importers:
         specifier: 0.4.0
         version: 0.4.0
       '@xmldom/xmldom':
-        specifier: ^0.9.10
-        version: 0.9.10
+        specifier: ^0.9.12
+        version: 0.9.12
       cfb:
         specifier: ^1.2.2
         version: 1.2.2
@@ -1525,8 +1525,8 @@ importers:
         specifier: workspace:3.0.0
         version: link:../../core
       '@xmldom/xmldom':
-        specifier: ^0.9.10
-        version: 0.9.10
+        specifier: ^0.9.12
+        version: 0.9.12
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
@@ -1721,8 +1721,8 @@ importers:
         specifier: workspace:3.0.0
         version: link:../../core
       '@xmldom/xmldom':
-        specifier: ^0.9.10
-        version: 0.9.10
+        specifier: ^0.9.12
+        version: 0.9.12
       e-virt-table:
         specifier: 1.3.26
         version: 1.3.26
@@ -1856,8 +1856,8 @@ importers:
         version: 4.7.0
     devDependencies:
       '@xmldom/xmldom':
-        specifier: 0.9.10
-        version: 0.9.10
+        specifier: 0.9.12
+        version: 0.9.12
       epubjs:
         specifier: 0.3.93
         version: 0.3.93
@@ -3836,6 +3836,11 @@ packages:
 
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
+    engines: {node: '>=14.6'}
+    deprecated: this version has critical issues, please update to the latest version
+
+  '@xmldom/xmldom@0.9.12':
+    resolution: {integrity: sha512-5AXjrcMClTryPe9LgZrygpB1lj7s0S9E0+W+AHaVKAVyHanafK86iPSvG5xHVSp/jC+VH1UXu0TAEmY279xH7A==}
     engines: {node: '>=14.6'}
 
   '@yuku-analyzer/binding-android-arm64@0.8.7':
@@ -7508,7 +7513,7 @@ snapshots:
 
   '@ljheee/xmind-parser@1.1.3':
     dependencies:
-      '@xmldom/xmldom': 0.9.10
+      '@xmldom/xmldom': 0.9.12
 
   '@lucide/vue@1.34.0(vue@3.5.41(typescript@6.0.3))':
     dependencies:
@@ -8534,6 +8539,8 @@ snapshots:
       chevrotain: 7.1.1
 
   '@xmldom/xmldom@0.9.10': {}
+
+  '@xmldom/xmldom@0.9.12': {}
 
   '@yuku-analyzer/binding-android-arm64@0.8.7':
     optional: true

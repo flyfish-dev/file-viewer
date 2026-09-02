@@ -62,7 +62,7 @@
     "pako": "^2.1.0"
   },
   "devDependencies": {
-    "@xmldom/xmldom": "0.9.10",
+    "@xmldom/xmldom": "0.9.12",
     "@types/pako": "^2.0.4",
     "epubjs": "0.3.93",
     "esbuild": "^0.28.1",

@@ -67,7 +67,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.0",
-    "@xmldom/xmldom": "^0.9.10",
+    "@xmldom/xmldom": "^0.9.12",
     "jszip": "^3.10.1",
     "keynote-archives": "2.0.1",
     "pako": "^2.1.0",
