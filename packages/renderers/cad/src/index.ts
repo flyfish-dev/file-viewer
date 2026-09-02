@@ -6,6 +6,14 @@ import {
   type RendererDefinition,
 } from '@file-viewer/core';
 
+export {
+  applyCadViewerColorMode,
+  normalizeFileViewerCadColorMode,
+  resolveFileViewerCadMonochromeColor,
+  supportsCadViewerColorMode,
+} from './colorMode';
+export type { CadViewerColorModeAdapter } from './colorMode';
+
 const cadDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
   definition => definition.id === 'cad'
 ) as RendererDefinition | undefined;
