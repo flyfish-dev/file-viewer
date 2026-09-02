@@ -10,9 +10,19 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
 
-## `v3.0.0` 模块化 CLI、专业格式按需安装与安全门禁 — 2026-08-27
+## 未发布
+
+### 可读文本预览
 
 - 新增可选的可读文本预览（#235）：普通与有界虚拟文本按逻辑行换行；结构化文本按格式懒加载 Prettier parser，以徽标和切换按钮区分格式化显示副本与原始源码。格式化阈值独立于大文本渲染，下载始终保留原始字节。
+
+### CLI 可靠性与交互
+
+- 新建项目的交互式格式选择改为预先列出 renderer/格式族并显示勾选状态；当前 profile 已包含的能力保持启用，额外能力支持编号、范围、全选和清空，不再要求手写扩展名。
+- Vite 8 脚手架声明并在 `dev`/`build` 前校验 Node `^20.19.0 || >=22.12.0`，旧运行时会获得明确迁移提示；Web Component 事件从元素所属 document realm 创建，并为缺失全局 `CustomEvent` 的 DOM 环境保留兼容回退。
+
+## `v3.0.0` 模块化 CLI、专业格式按需安装与安全门禁 — 2026-08-27
+
 - 新增 `@file-viewer/cli`、`file-viewer-cli` 和 `create-file-viewer`，既可创建新项目，也可在已有 `package.json` 工程中检测框架与构建工具后安装；支持选择框架版本、格式、preset、资源、npm/pnpm/Yarn/Bun、不含凭据的私有 registry 与完整性校验的离线 tgz。
 - `standard` 成为常用格式的推荐方案，但不改变八个已发布 Full 包。`*-full` 继续交付原 `preset-all` 格式矩阵、API 和同版本离线资源；CLI 显式选择 `full` 时才在此基础上加入后续专业能力，并提前展示体积、运行时和许可边界。
 - DICOM 和数字签名容器不进入未改动的 Full 依赖。可选 DICOM renderer 支持有界的本地单文件、单帧/多帧预览，覆盖未压缩、JPEG Lossless、JPEG-LS 和 JPEG 2000 Lossless；不声称诊断、PACS/DICOMweb 或多文件序列能力（#210）。

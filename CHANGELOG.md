@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+### 可读文本预览
+
+- 新增可选的可读文本预览（#235）：`text.wrapLongLines` 在普通与虚拟文本路径按逻辑行换行，`text.prettyPrint` 按格式动态加载 Prettier parser 并提供原始源码切换，`prettyPrintMaxBytes` 仅约束格式化且默认继承大文本阈值；任何超限、异常或不支持输入均无错误回退，下载仍使用原始字节。
+
 ### CLI reliability and interaction
 
 - 新建项目的交互式格式选择改为预先列出 renderer/格式族并显示勾选状态；当前 profile 已包含的能力保持启用，额外能力支持编号、范围、全选和清空，不再要求手写扩展名。
@@ -21,7 +25,6 @@
 
 ### Formats and issue fixes
 
-- 新增可选的可读文本预览（#235）：`text.wrapLongLines` 在普通与虚拟文本路径按逻辑行换行，`text.prettyPrint` 按格式动态加载 Prettier parser 并提供原始源码切换，`prettyPrintMaxBytes` 仅约束格式化且默认继承大文本阈值；任何超限、异常或不支持输入均无错误回退，下载仍使用原始字节。
 - #200 的原始 PPTX 样例已纳入五页布局回归，覆盖 DrawingML 表格边界与内边距、SmartArt 水平文字、复杂形状和 PPTX Worker，并通过 Chromium、Firefox 与 WebKit。
 - #206 提供显式按需的数字签名与证据容器 renderer，使用许可宽松的 rPGP Worker/WASM，并将解析、摘要/签名检查、信任和法律效力分开呈现；不包含 LGPL 源码。
 - #210 提供显式按需的本地 DICOM Part 10 单文件预览，覆盖未压缩、JPEG Lossless、JPEG-LS 和 JPEG 2000 Lossless 的单帧/多帧边界；不宣称诊断、PACS/DICOMweb 或多文件序列能力。
