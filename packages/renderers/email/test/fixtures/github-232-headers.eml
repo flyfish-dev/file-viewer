@@ -1,0 +1,29 @@
+From: =?GB2312?B?vL62yLGose3S0beiy80gLSCyxs7xsr8=?= <finance@example.com>
+From: forged@example.org
+To: Alice <alice@example.com>,
+ "Bob" <bob@example.com>
+Cc: carol@example.com
+Bcc: dave@example.com
+Reply-To: replies@example.com
+Subject: =?GB2312?B?vL62yLGose3S0beiy80gLSCyxs7xsr8=?=
+Date: Tue, 01 Sep 2026 10:00:00 +0800
+Message-ID: <first-1234@example.com>
+Message-ID: <second-5678@example.com>
+Received: from mail-a.example.com (unknown [10.0.0.7])
+	by mail-b.example.com (Postfix) with ESMTP id 4Q2Z1F
+	for <alice@example.com>; Tue, 1 Sep 2026 09:59:58 +0800 (CST)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="fv232"
+
+--fv232
+Content-Type: text/plain; charset="gb_2312-80"
+Content-Transfer-Encoding: base64
+
+uPfOu82sysKjugoKtdrI/by+tsixqLHt0tHJ+rPJo6zH67LpytW4vbz+oaMKsaix7b/avrbS1LLGzvHPtc2zzqrXvKGjCgrN9bmk
+--fv232
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="q3-report.txt"
+Content-Transfer-Encoding: base64
+
+aGVsbG8=
+--fv232--
