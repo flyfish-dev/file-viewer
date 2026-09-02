@@ -40,6 +40,7 @@ const options = {
 - `options.text.wrapLongLines: true` 仅改变布局，不向源码插入换行。普通预览会按逻辑行维护行号，超大文本仍使用有界虚拟窗口并按可用宽度换行。
 - `options.text.prettyPrint: true` 会在支持的结构化文本上按需加载 Prettier 与对应 parser，仅格式化显示副本；工具栏会标明“格式化预览”，并可切回原始源码。JSON/JSONC/JSON5、JavaScript/TypeScript、HTML/Vue、CSS、YAML、Markdown、GraphQL 和 XML 共用同一路径。
 - `prettyPrintMaxBytes` 只限制 Prettier，默认继承 `virtualizeAboveBytes`（未配置时为 512 KiB）。超限、语法错误或不支持的格式直接回退原始源码，之后仍由普通或虚拟文本 renderer 决定展示方式。XML 使用保守的 whitespace-preserving 模式；检测到混合内容或 `xml:space="preserve"` 时直接保留原文。
+- 历史 `*-full` 包的 script 标签 IIFE 资源不打包 Prettier，该路径下 `prettyPrint` 无错误回退到原始源码；需要格式化预览时使用 ESM 集成（标准组件包或 `@file-viewer/preset-*`）。
 - 安装 text-tools capability 后，`patch` 使用 `diff2html` 渲染左右比对视图，`bundle` / `bdl` 才启用 Git bundle 结构检查。
 - 安装 Mermaid capability 后，Markdown 内嵌 Mermaid 图才会渲染；未安装时保留源码并显示精确 CLI 启用命令。
 - HTML / XML / Vue 等文件按源码方式转义展示，不执行脚本。

@@ -11,6 +11,26 @@ const packageManifest = JSON.parse(await readFile(resolve(packageDir, 'package.j
 const entry = join(packageDir, 'src', 'global.ts')
 const excalidrawStub = resolve(packageDir, '..', 'web', 'scripts', 'excalidraw-iife-stub.ts')
 const pptPackagedRuntimeFallback = resolve(packageDir, 'scripts', 'ppt-packaged-runtime-fallback.ts')
+const prettierIifeStub = resolve(packageDir, 'scripts', 'prettier-iife-stub.ts')
+// The frozen full contract must not carry megabytes of Prettier parser code inside a
+// script-tag bundle, and Prettier's ESM build uses `import.meta.resolve`, which the
+// published-package bundler-compatibility gate rejects. Aliasing every Prettier entry
+// point keeps the lazy chunk out of the shipped IIFE, so `text.prettyPrint` fails closed
+// and previews the original source exactly like an unsupported or oversized file.
+const prettierIifeAliases = Object.fromEntries(
+  [
+    'prettier/standalone',
+    'prettier/plugins/babel',
+    'prettier/plugins/estree',
+    'prettier/plugins/typescript',
+    'prettier/plugins/postcss',
+    'prettier/plugins/html',
+    'prettier/plugins/markdown',
+    'prettier/plugins/yaml',
+    'prettier/plugins/graphql',
+    '@prettier/plugin-xml'
+  ].map((specifier) => [specifier, prettierIifeStub])
+)
 const outDir = join(packageDir, 'dist')
 const fileName = 'flyfish-file-viewer-web-full.iife.js'
 const rendererOutDir = join(outDir, 'renderers')
@@ -68,7 +88,8 @@ await build({
   resolve: {
     alias: {
       // Keep the CDN full bundle usable without React peer dependencies.
-      '@excalidraw/excalidraw': excalidrawStub
+      '@excalidraw/excalidraw': excalidrawStub,
+      ...prettierIifeAliases
     },
     dedupe: ['@file-viewer/core']
   },
@@ -123,7 +144,8 @@ bucket[renderer.id] = renderer
     resolve: {
       alias: {
         '@excalidraw/excalidraw': excalidrawStub,
-        '@file-viewer/ppt': pptPackagedRuntimeFallback
+        '@file-viewer/ppt': pptPackagedRuntimeFallback,
+        ...prettierIifeAliases
       },
       dedupe: ['@file-viewer/core']
     },
