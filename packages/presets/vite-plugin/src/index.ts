@@ -1879,11 +1879,11 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
       rendererId,
       id,
       to,
-     copied,
-     reason: copied ? undefined : reason || 'source asset not found',
+      copied,
+      reason: copied ? undefined : reason || 'source asset not found',
       required,
-     ...source,
-   })
+      ...source,
+    })
   }
 
   const rendererPdfRoot = resolvePackageRoot('@file-viewer/renderer-pdf')
@@ -1983,9 +1983,10 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
   const dependencyPdfCjkFontRoot = resolvePackageRoot('@fontsource-variable/noto-sans-sc', [
     '@file-viewer/renderer-pdf'
   ])
- const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
-  // The CJK fallback font ships only in independently owned asset packs; when no
-  // source is installed, skip it with an actionable hint instead of failing builds.
+  const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
+  // @file-viewer/renderer-pdf carries the CJK fallback font as a runtime dependency, so
+  // any installed pdf capability resolves it. The profile pack and staged pack stay as
+  // earlier sources; when nothing is installed the build warns instead of failing.
   const pdfCjkFontSourceAvailable =
     Boolean(
       standardPdfCjkFontRoot && existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
@@ -1997,20 +1998,20 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     'pdf-cjk-font-fallback',
     pdfCjkFontTarget,
     async () => {
-   if (
-     standardPdfCjkFontRoot &&
-     existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
-   ) {
-     return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
-   }
-   if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
-     return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
-   }
-   return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
+      if (
+        standardPdfCjkFontRoot &&
+        existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
+      ) {
+        return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
+      }
+      if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
+        return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
+      }
+      return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
     },
     pdfCjkFontSourceAvailable
       ? undefined
-      : `install ${independentlyOwnedAssetRendererIds.get('pdf')} for this capability`,
+      : `reinstall @file-viewer/renderer-pdf or install ${independentlyOwnedAssetRendererIds.get('pdf')}`,
     undefined,
     pdfCjkFontSourceAvailable ? undefined : false
   )
@@ -2865,15 +2866,15 @@ async function copyRendererAssets(
     for (const rendererId of rendererIds) {
       const requiredOwner = independentlyOwnedAssetRendererIds.get(rendererId)
       if (requiredOwner && !covered.has(rendererId)) {
-       bundled.results.push({
-         rendererId,
-         id: 'missing-independent-asset-owner',
-         to: target.targetRoot,
-         copied: false,
+        bundled.results.push({
+          rendererId,
+          id: 'missing-independent-asset-owner',
+          to: target.targetRoot,
+          copied: false,
           // Specialist offline payloads stay opt-in; warn instead of failing the build.
           required: false,
-         reason: `install ${requiredOwner} for this capability`
-       })
+          reason: `install ${requiredOwner} for this capability`
+        })
       }
     }
     return bundled.results
