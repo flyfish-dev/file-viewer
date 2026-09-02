@@ -51,7 +51,6 @@ const lazyRendererLines = [
   { key: 'drawing', label: 'Drawing renderer', scriptName: 'drawing.iife.js', rendererIds: ['drawing'] },
   { key: 'model', label: '3D model renderer', scriptName: 'model.iife.js', rendererIds: ['model'] },
   { key: 'archive', label: 'Archive renderer', scriptName: 'archive.iife.js', rendererIds: ['archive'] },
-  { key: 'chm', label: 'CHM renderer', scriptName: 'chm.iife.js', rendererIds: ['chm'] },
   { key: 'email', label: 'Email renderer', scriptName: 'email.iife.js', rendererIds: ['email'] },
   { key: 'ebook', label: 'Ebook renderer', scriptName: 'ebook.iife.js', rendererIds: ['epub', 'ebook-fb2', 'umd'] },
   { key: 'text', label: 'Text renderer', scriptName: 'text.iife.js', rendererIds: ['code', 'markdown'] },
@@ -159,11 +158,6 @@ function createFullAssetOptions(assetBaseUrl?: string | URL | null): ViewerOptio
     archive: {
       workerUrl: `${baseUrl}vendor/libarchive/worker-bundle.js`,
       wasmUrl: `${baseUrl}vendor/libarchive/libarchive.wasm`
-    },
-    chm: {
-      workerUrl: `${baseUrl}vendor/chm/chm.worker.js`,
-      wasmModuleUrl: `${baseUrl}vendor/chm/chm_wasm.js`,
-      wasmUrl: `${baseUrl}vendor/chm/chm_wasm_bg.wasm`
     },
     cad: {
       wasmPath: `${baseUrl}wasm/cad/${DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION}/`,
@@ -401,7 +395,6 @@ export function withFullViewerOptions(
     rendererMode,
     autoRenderers: rest.autoRenderers ?? true,
     archive: mergeNestedOptions(assetOptions.archive, rest.archive),
-    chm: mergeNestedOptions(assetOptions.chm, rest.chm),
     cad: mergeNestedOptions(assetOptions.cad, rest.cad),
     data: mergeNestedOptions(assetOptions.data, rest.data),
     docx: mergeNestedOptions(assetOptions.docx, rest.docx),
