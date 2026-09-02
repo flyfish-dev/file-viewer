@@ -356,6 +356,14 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     chunkName: 'file-viewer-archive'
   },
   {
+    id: 'chm',
+    packageName: '@file-viewer/renderer-chm',
+    exportName: 'chmRenderer',
+    formats: ['chm'],
+    rendererIds: ['chm'],
+    chunkName: 'file-viewer-chm'
+  },
+  {
     id: 'email',
     packageName: '@file-viewer/renderer-email',
     exportName: 'emailRenderer',
@@ -1860,7 +1868,8 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     to: string,
     copyAction: () => Promise<boolean>,
     reason?: string,
-    source?: Pick<AssetCopyResult, 'sourcePackage' | 'sourceVersion'>
+    source?: Pick<AssetCopyResult, 'sourcePackage' | 'sourceVersion'>,
+    required?: boolean
   ) => {
     if (!selected.has(rendererId)) {
       return
@@ -1870,10 +1879,11 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
       rendererId,
       id,
       to,
-      copied,
-      reason: copied ? undefined : reason || 'source asset not found',
-      ...source,
-    })
+     copied,
+     reason: copied ? undefined : reason || 'source asset not found',
+      required,
+     ...source,
+   })
   }
 
   const rendererPdfRoot = resolvePackageRoot('@file-viewer/renderer-pdf')
@@ -1973,19 +1983,37 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
   const dependencyPdfCjkFontRoot = resolvePackageRoot('@fontsource-variable/noto-sans-sc', [
     '@file-viewer/renderer-pdf'
   ])
-  const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
-  await push('pdf', 'pdf-cjk-font-fallback', pdfCjkFontTarget, async () => {
-    if (
-      standardPdfCjkFontRoot &&
-      existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
-    ) {
-      return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
-    }
-    if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
-      return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
-    }
-    return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
-  })
+ const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
+  // The CJK fallback font ships only in independently owned asset packs; when no
+  // source is installed, skip it with an actionable hint instead of failing builds.
+  const pdfCjkFontSourceAvailable =
+    Boolean(
+      standardPdfCjkFontRoot && existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
+    ) ||
+    Boolean(stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) ||
+    Boolean(dependencyPdfCjkFontRoot)
+  await push(
+    'pdf',
+    'pdf-cjk-font-fallback',
+    pdfCjkFontTarget,
+    async () => {
+   if (
+     standardPdfCjkFontRoot &&
+     existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
+   ) {
+     return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
+   }
+   if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
+     return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
+   }
+   return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
+    },
+    pdfCjkFontSourceAvailable
+      ? undefined
+      : `install ${independentlyOwnedAssetRendererIds.get('pdf')} for this capability`,
+    undefined,
+    pdfCjkFontSourceAvailable ? undefined : false
+  )
 
   const pptxRoot = resolvePackageRoot('@file-viewer/pptx', [
     '@file-viewer/renderer-pptx',
@@ -2209,6 +2237,32 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
         join(targetRoot, 'vendor/libarchive/libarchive.wasm')
       )
   )
+
+  const chmRoot = resolvePackageRoot('@file-viewer/renderer-chm', ['@file-viewer/renderer-chm'])
+  const chmSource = chmRoot
+    ? { sourcePackage: '@file-viewer/renderer-chm', sourceVersion: readPackageVersion(chmRoot) || undefined }
+    : undefined
+  for (const [id, sourceName, targetName] of [
+    ['chm-worker', 'dist/chm.worker.js', 'chm.worker.js'],
+    ['chm-wasm-module', 'dist/chm_wasm.js', 'chm_wasm.js'],
+    ['chm-wasm', 'dist/chm_wasm_bg.wasm', 'chm_wasm_bg.wasm'],
+    ['chm-license', 'LICENSE', 'LICENSE'],
+    ['chm-third-party-notices', 'THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md'],
+    ['chm-rust-notice', 'rust/NOTICE.md', 'RUST_NOTICE.md'],
+    ['chm-rust-third-party-licenses', 'rust/THIRD_PARTY_LICENSES.md', 'RUST_THIRD_PARTY_LICENSES.md']
+  ] as const) {
+    await push(
+      'chm',
+      id,
+      join(targetRoot, `vendor/chm/${targetName}`),
+      () => copyFileIfPresent(
+        chmRoot ? join(chmRoot, sourceName) : null,
+        join(targetRoot, `vendor/chm/${targetName}`)
+      ),
+      undefined,
+      chmSource
+    )
+  }
 
   const sqlJsRoot = resolvePackageRoot('sql.js', ['@file-viewer/renderer-data'])
   const designRendererRoot = resolvePackageRoot('@file-viewer/renderer-design')
@@ -2439,6 +2493,7 @@ interface InstalledCapabilityAssetSource {
 
 const independentlyOwnedAssetRendererIds = new Map<string, string>([
   ['archive', '@file-viewer/assets-standard'],
+  ['chm', '@file-viewer/assets-chm'],
   ['pdf', '@file-viewer/assets-standard'],
   ['office-word-openxml', '@file-viewer/assets-standard'],
   ['office-presentation', '@file-viewer/assets-standard'],
@@ -2810,14 +2865,15 @@ async function copyRendererAssets(
     for (const rendererId of rendererIds) {
       const requiredOwner = independentlyOwnedAssetRendererIds.get(rendererId)
       if (requiredOwner && !covered.has(rendererId)) {
-        bundled.results.push({
-          rendererId,
-          id: 'missing-independent-asset-owner',
-          to: target.targetRoot,
-          copied: false,
-          required: true,
-          reason: `install ${requiredOwner} for this capability`
-        })
+       bundled.results.push({
+         rendererId,
+         id: 'missing-independent-asset-owner',
+         to: target.targetRoot,
+         copied: false,
+          // Specialist offline payloads stay opt-in; warn instead of failing the build.
+          required: false,
+         reason: `install ${requiredOwner} for this capability`
+       })
       }
     }
     return bundled.results
@@ -3119,30 +3175,41 @@ function collectAssetRendererIds(
   ])
 }
 
+const defaultRequiredAssetRendererIds: readonly string[] = [
+  'pdf',
+  'office-word-openxml',
+  'office-presentation-binary',
+  'office-presentation',
+  'archive',
+  'cad',
+  'typst'
+]
+
+function isRequiredAssetResult(result: AssetCopyResult): boolean {
+  return result.required ?? defaultRequiredAssetRendererIds.includes(result.rendererId)
+}
+
 function reportAssetCopy(
   results: readonly AssetCopyResult[],
   targetRoot: string,
   mode: FileViewerMissingRendererMode
 ) {
-  const failedRequired = results.filter(
-    (result) => !result.copied && (
-      result.required ?? [
-        'pdf',
-        'office-word-openxml',
-        'office-presentation-binary',
-        'office-presentation',
-        'archive',
-        'cad',
-        'typst'
-      ].includes(result.rendererId)
-    )
-  )
+  const failedRequired = results.filter((result) => !result.copied && isRequiredAssetResult(result))
+  const missingOptional = results.filter((result) => !result.copied && !isRequiredAssetResult(result))
   if (!results.length) {
     return
   }
   const summary = `[file-viewer:vite-plugin] Copied ${results.filter((result) => result.copied).length}/${results.length} renderer assets to ${targetRoot}`
+  console.log(summary)
+  if (missingOptional.length) {
+    const optionalDetails = missingOptional
+      .map((result) => `  - ${result.rendererId}:${result.id} -> ${result.to} (${result.reason || 'source asset not found'})`)
+      .join('\n')
+    console.warn(
+      `[file-viewer:vite-plugin] Skipped optional offline assets; install the owning package to self-host them:\n${optionalDetails}`
+    )
+  }
   if (!failedRequired.length || mode === 'ignore') {
-    console.log(summary)
     return
   }
   const details = failedRequired
