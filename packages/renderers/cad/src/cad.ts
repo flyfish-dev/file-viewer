@@ -45,6 +45,7 @@ import {
   applyCadViewerColorMode,
   normalizeFileViewerCadColorMode,
   resolveFileViewerCadMonochromeColor,
+  resolveCadViewerSourceDocument,
   supportsCadViewerColorMode,
 } from './colorMode';
 
@@ -1074,7 +1075,7 @@ export default async function renderCad(
       }
       button.append(color, createElement('span', undefined, layer.name));
       button.addEventListener('click', () => {
-        const document = viewer?.getDocument();
+        const document = resolveCadViewerSourceDocument(viewer) as CadDocument | undefined;
         if (!document) {
           return;
         }

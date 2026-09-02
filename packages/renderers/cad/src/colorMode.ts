@@ -19,6 +19,15 @@ export function supportsCadViewerColorMode(value: unknown): value is CadViewerCo
   return Boolean(value && typeof (value as CadViewerColorModeAdapter).setColorMode === 'function');
 }
 
+
+export function resolveCadViewerSourceDocument(viewer: unknown): unknown {
+  const candidate = viewer as {
+    getSourceDocument?: () => unknown;
+    getDocument?: () => unknown;
+  } | null | undefined;
+  return candidate?.getSourceDocument?.() ?? candidate?.getDocument?.();
+}
+
 export function applyCadViewerColorMode(
   viewer: unknown,
   mode: FileViewerCadColorMode,
