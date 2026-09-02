@@ -44,7 +44,21 @@ run('wasm-bindgen', [
 
 const wasmOutput = resolve(outDir, 'rpgp_wrapper_bg.wasm')
 try {
-  execFileSync('wasm-opt', ['-Oz', '--all-features', wasmOutput, '-o', wasmOutput], {
+  execFileSync('wasm-opt', [
+    '-Oz',
+    // Only the post-MVP features rustc emits for wasm32-unknown-unknown.
+    // --all-features rewrites the module with WasmGC encodings that Node 18
+    // and older browsers cannot parse.
+    '--enable-bulk-memory',
+    '--enable-sign-ext',
+    '--enable-nontrapping-float-to-int',
+    '--enable-mutable-globals',
+    '--enable-reference-types',
+    '--enable-multivalue',
+    wasmOutput,
+    '-o',
+    wasmOutput
+  ], {
     stdio: 'inherit'
   })
 } catch (error) {
