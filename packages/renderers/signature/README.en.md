@@ -60,7 +60,7 @@ The policy must accept only application-resolved, fixed package URLs. Never pass
 
 The OpenPGP backend uses permissively licensed rPGP `0.20.0` inside a dedicated, lazy Worker/WASM path. It does not use OpenPGP.js, GnuPG, or LGPL source. The narrow public boundary supports classification, bounded metadata inspection, and multi-signature verification for detached, cleartext, and unencrypted embedded/compressed messages; it does not expose rPGP internals or secret key material.
 
-The optimized artifact has hard release gates of 1,600,000 B raw / 450,000 B Brotli for WASM and 1,800,000 B for the npm tarball. The verifier performs two byte-for-byte reproducibility builds. Default limits are 32 MiB input, 16 MiB extracted output, 4,096 packets, 16 nesting levels, 128 user IDs, 128 subkeys, and 256 signatures.
+The optimized artifact has hard release gates of 1,900,000 B raw / 450,000 B Brotli for WASM and 1,800,000 B for the npm tarball. The raw budget reflects a WasmGC-free build so engines without GC (Node 18, older browsers) can parse the module. The verifier performs two byte-for-byte reproducibility builds. Default limits are 32 MiB input, 16 MiB extracted output, 4,096 packets, 16 nesting levels, 128 user IDs, 128 subkeys, and 256 signatures.
 
 Direct ASN.1 calls to `inspectSignatureContainer` and `inspectEvidenceRecord` also bound input, original content, node and nesting counts, algorithms, certificates, CRLs, signers, attributes, extracted bytes, timestamp chains, and hash-tree nodes. Per-call `options.limits` can only lower these absolute ceilings.
 

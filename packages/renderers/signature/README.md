@@ -62,7 +62,7 @@ const signature = {
 
 OpenPGP 后端使用 MIT/Apache-2.0 的 rPGP `0.20.0`，在专用 Worker 中懒加载 WASM；不使用 OpenPGP.js、GnuPG 或 LGPL 源码。公开 API 只暴露分类、受限元数据检查，以及分离、cleartext、未加密内嵌/压缩消息的多签名验证，不暴露 rPGP 底层对象或私钥材料。
 
-当前优化产物的硬门禁为：WASM 不超过 1,600,000 B raw / 450,000 B Brotli，npm tarball 不超过 1,800,000 B。构建会做两次字节级可复现校验。默认解析上限为 32 MiB 输入、16 MiB 提取输出、4096 个包、16 层嵌套、128 个 user ID、128 个子密钥和 256 个签名。
+当前优化产物的硬门禁为：WASM 不超过 1,900,000 B raw / 450,000 B Brotli，npm tarball 不超过 1,800,000 B。raw 预算对应不启用 WasmGC 的兼容性构建，保证 Node 18 与无 GC 的浏览器可解析。构建会做两次字节级可复现校验。默认解析上限为 32 MiB 输入、16 MiB 提取输出、4096 个包、16 层嵌套、128 个 user ID、128 个子密钥和 256 个签名。
 
 直接调用 ASN.1 API 时，`inspectSignatureContainer` 和 `inspectEvidenceRecord` 还会限制输入、原文、节点、嵌套、摘要算法、证书、CRL、签名人、属性、提取内容、时间证据链和 hash-tree 数量；`options.limits` 只能调低，不能突破绝对上限。
 
