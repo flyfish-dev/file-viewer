@@ -121,20 +121,20 @@
   },
   "candidateContract": {
     "rendererIds": {
-      "count": 32,
-      "sha256": "a36f27bf2a067bcfdbf11b8924a77ab80cd72e1771952a318f0858396a26166e"
+      "count": 33,
+      "sha256": "9502f726f33cf3ecfa614f0966b524a9e9651bc9cc83f84d277decf7d0e337ef"
     },
     "extensions": {
-      "count": 221,
-      "sha256": "2b680324cac2841c521fe2eb06b1f346dda6a1c5bba30754125250b0ce7cbea7"
+      "count": 222,
+      "sha256": "66e8a00f5a25454e4a8e193ee411ef9bda1782cf6123ea042d115098301d79ee"
     },
     "rendererPackages": {
-      "count": 23,
-      "sha256": "3037937b38a521012f4e52df54623dbde98c5a5b8bf88cf3dc27b5e6cfbd7541"
+      "count": 24,
+      "sha256": "f006cfe07225cf6c03e25aacc2a2e41795c808f7e7137f22385ac8fc9a3e52b3"
     },
     "presetDependencies": {
-      "count": 33,
-      "sha256": "8d4fe2fa37624b3533d00c7289dd89b99af18b9394179566bbe4bc490d34c2ed"
+      "count": 34,
+      "sha256": "b7c3a8588d4a4f0eaf2bd9bcaf64dceeb66474c0756f049a6cd0246f7fc0dbb4"
     }
   },
   "excludedFutureCapabilities": ["dicom", "signature"]

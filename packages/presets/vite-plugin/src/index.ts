@@ -356,6 +356,14 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     chunkName: 'file-viewer-archive'
   },
   {
+    id: 'chm',
+    packageName: '@file-viewer/renderer-chm',
+    exportName: 'chmRenderer',
+    formats: ['chm'],
+    rendererIds: ['chm'],
+    chunkName: 'file-viewer-chm'
+  },
+  {
     id: 'email',
     packageName: '@file-viewer/renderer-email',
     exportName: 'emailRenderer',
@@ -2168,6 +2176,32 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
       )
   )
 
+  const chmRoot = resolvePackageRoot('@file-viewer/renderer-chm', ['@file-viewer/renderer-chm'])
+  const chmSource = chmRoot
+    ? { sourcePackage: '@file-viewer/renderer-chm', sourceVersion: readPackageVersion(chmRoot) || undefined }
+    : undefined
+  for (const [id, sourceName, targetName] of [
+    ['chm-worker', 'dist/chm.worker.js', 'chm.worker.js'],
+    ['chm-wasm-module', 'dist/chm_wasm.js', 'chm_wasm.js'],
+    ['chm-wasm', 'dist/chm_wasm_bg.wasm', 'chm_wasm_bg.wasm'],
+    ['chm-license', 'LICENSE', 'LICENSE'],
+    ['chm-third-party-notices', 'THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md'],
+    ['chm-rust-notice', 'rust/NOTICE.md', 'RUST_NOTICE.md'],
+    ['chm-rust-third-party-licenses', 'rust/THIRD_PARTY_LICENSES.md', 'RUST_THIRD_PARTY_LICENSES.md']
+  ] as const) {
+    await push(
+      'chm',
+      id,
+      join(targetRoot, `vendor/chm/${targetName}`),
+      () => copyFileIfPresent(
+        chmRoot ? join(chmRoot, sourceName) : null,
+        join(targetRoot, `vendor/chm/${targetName}`)
+      ),
+      undefined,
+      chmSource
+    )
+  }
+
   const sqlJsRoot = resolvePackageRoot('sql.js', ['@file-viewer/renderer-data'])
   await push(
     'data-asset',
@@ -2228,6 +2262,7 @@ interface InstalledCapabilityAssetSource {
 
 const independentlyOwnedAssetRendererIds = new Map<string, string>([
   ['archive', '@file-viewer/assets-standard'],
+  ['chm', '@file-viewer/assets-chm'],
   ['pdf', '@file-viewer/assets-standard'],
   ['office-word-openxml', '@file-viewer/assets-standard'],
   ['office-presentation', '@file-viewer/assets-standard'],

@@ -56,7 +56,7 @@ The plugin reads the Vite major installed by the application. Vite 5–7 receive
 | `@file-viewer/preset-standard` | Common Office/PDF/OFD/archive/email/text/media formats without specialist or legacy-heavy capabilities |
 | `@file-viewer/preset-office` | PDF, Word, spreadsheet, presentation, OFD, and OpenDocument workflows |
 | `@file-viewer/preset-engineering` | CAD, EDA, Typst, archives, email, data, 3D, geo, drawing, and mind maps |
-| `@file-viewer/preset-all` | Admin workbenches that need the published compatibility renderer set; later specialist capabilities remain explicit |
+| `@file-viewer/preset-all` | Admin workbenches that need the published compatibility renderer set, including CHM; later specialist capabilities remain explicit |
 
 ## Optional Specialist Renderers
 
@@ -142,6 +142,7 @@ Strict PPTX-only applications should import `pptxRenderer` from `@file-viewer/re
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON, KML, GPX, SHP |
 | `@file-viewer/renderer-typst` | `typstRenderer` | Typst source rendered through local WASM assets |
 | `@file-viewer/renderer-archive` | `archiveRenderer` | Archives and nested file preview |
+| `@file-viewer/renderer-chm` | `chmRenderer` | CHM contents, index, search, internal links, and local Rust/WASM topic extraction |
 | `@file-viewer/renderer-email` | `emailRenderer` | EML, MSG, MBOX |
 | `@file-viewer/renderer-epub` | `ebookRenderer` | EPUB, UMD |
 | `@file-viewer/renderer-text` | `textRenderer` | Markdown, highlighted code, patch, git bundle |
@@ -151,6 +152,33 @@ Strict PPTX-only applications should import `pptxRenderer` from `@file-viewer/re
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB, DRA, GDS, OAS/OASIS |
 
 Engine packages such as `@file-viewer/pptx`, `@file-viewer/geometry-engine`, `@file-viewer/eda-layout`, and `@file-viewer/eda-orcad` are maintained for renderer internals and advanced reuse. Normal viewer integrations should use the renderer or preset package above.
+
+### CHM with a self-hosted Rust/WASM Worker
+
+Install the standalone renderer when an application only needs Compiled HTML Help:
+
+```bash
+npm install @file-viewer/vue3 @file-viewer/renderer-chm
+```
+
+```ts
+import { chmRenderer } from '@file-viewer/renderer-chm'
+
+const options = {
+  rendererMode: 'replace',
+  renderers: [chmRenderer]
+}
+```
+
+Vite projects can instead select `formats: ['chm']` with `copyAssets:true`. `preset-all` and the Full packages already include the renderer, but the deployment must still publish these version-matched files under `file-viewer/vendor/chm/`:
+
+- `chm.worker.js`
+- `chm_wasm.js`
+- `chm_wasm_bg.wasm`
+
+The Vite plugin and the same-version asset copy CLI publish that directory automatically. A custom asset layout can override it with `options.chm.workerUrl`, `options.chm.wasmModuleUrl`, and `options.chm.wasmUrl`; do not point production deployments at a public CDN.
+
+The archive is parsed locally in a dedicated Worker. Topic HTML is sanitized before display and rendered in an iframe sandbox without `allow-scripts`; a restrictive CSP also disables scripts, plugins, forms, base-URL rewriting, and automatically loaded remote active content. Internal `ms-its:` / `mk:@MSITStore` links and packaged resources are resolved back into the current CHM instead of receiving network access. This is a read-only documentation viewer, not an ActiveX-compatible HTML Help runtime.
 
 ## Automatic Preset Assembly
 
@@ -208,7 +236,7 @@ fileViewerRenderers({
 
 | Customization | Purpose |
 | --- | --- |
-| `copyAssets:true` | Copies matched Worker, WASM, font, PDF/CAD/Typst/Archive/Data, and vendor assets |
+| `copyAssets:true` | Copies matched Worker, WASM, font, PDF/CAD/Typst/Archive/CHM/Data, and vendor assets, including the three files under `vendor/chm/` |
 | `preset:'auto'` / `autoPresets:true` | Keeps installed preset auto-discovery active together with `scan:true` |
 | `formats` / `renderers` | Adds a few formats outside a preset, or builds a strict single-renderer bundle |
 | `scan:true` | Collects format hints from `fileViewerFormats`, `data-file-viewer-formats`, `accept`, and similar source hints |
@@ -244,4 +272,11 @@ If a file extension is in the supported matrix but its renderer has not been ass
 
 ## Asset Rules
 
-Use `copyAssets:true` or `npx --yes file-viewer-copy-assets ./public/file-viewer` for standard-package offline deployments. Full packages include the matching CLI and use `npx --no-install file-viewer-copy-assets ./public/file-viewer`. Worker, WASM, font, PDF, CAD, Typst, Archive, Data, and Draw.io assets should be served from your own domain.
+Use `copyAssets:true` or `npx --yes file-viewer-copy-assets ./public/file-viewer` for standard-package offline deployments. Full packages include the matching CLI and use `npx --no-install file-viewer-copy-assets ./public/file-viewer`. Worker, WASM, font, PDF, CAD, Typst, Archive, CHM, Data, and Draw.io assets should be served from your own domain. A CHM deployment is complete only when `vendor/chm/chm.worker.js`, `vendor/chm/chm_wasm.js`, and `vendor/chm/chm_wasm_bg.wasm` are available with JavaScript and WebAssembly MIME types.
+
+## CHM Completion Checklist
+
+- [x] `@file-viewer/renderer-chm` is available as a standalone renderer and is included by `preset-all` / Full packages.
+- [x] The Rust/WASM parser runs in a dedicated Worker, and standard asset tooling self-hosts the Worker, JavaScript bridge, and WASM binary under `vendor/chm/`.
+- [x] Contents, keyword index, text search, internal navigation, and packaged resources stay within the current archive.
+- [x] Topic documents are sanitized, scripts remain disabled by sandbox and CSP, and remote active content is not loaded automatically.

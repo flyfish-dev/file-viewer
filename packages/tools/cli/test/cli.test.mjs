@@ -2566,6 +2566,7 @@ test('custom profile has no implicit asset owner and all profile plans each decl
   )
   assert.deepEqual(all.assetPackages, [
     '@file-viewer/assets-cad',
+    '@file-viewer/assets-chm',
     '@file-viewer/assets-data',
     '@file-viewer/assets-drawing',
     '@file-viewer/assets-hangul',
@@ -2576,7 +2577,7 @@ test('custom profile has no implicit asset owner and all profile plans each decl
     '@file-viewer/assets-typst',
     '@file-viewer/assets-wordperfect'
   ])
-  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 10)
+  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 11)
   assert.equal(all.packages.includes('file-viewer-copy-assets'), false)
 })
 

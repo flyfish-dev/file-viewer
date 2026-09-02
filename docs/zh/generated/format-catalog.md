@@ -2,10 +2,10 @@
 
 # 自动生成的格式目录
 
-- 已注册扩展名：**244**
-- 稳定扩展名：**221**
+- 已注册扩展名：**245**
+- 稳定扩展名：**222**
 - 实验扩展名：**23**
-- 预览链路：**34**
+- 预览链路：**35**
 
 | Renderer ID | 名称 | 扩展名 | 能力等级 | 状态 | 容器 | 已知限制 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -25,6 +25,7 @@
 | `office-hangul` | Hancom Hangul | `.hwp`, `.hwpx` | structured | stable | HWP v5 CFB<br>HWPX ZIP/XML | Encrypted, DRM-protected and distribution documents are detected but not decrypted<br>Charts, OLE objects and advanced drawing effects remain limited in the static structured preview<br>HWP v5 pagination is approximated when the binary producer omits usable page geometry |
 | `typst` | Typst | `.typ`, `.typst` | high-fidelity | stable | Typst source | - |
 | `archive` | Archive | `.zip`, `.zipx`, `.7z`, `.rar`, `.tar`, `.gz`, `.gzip`, `.tgz`, `.bz2`, `.bzip2`, `.tbz`, `.tbz2`, `.xz`, `.txz`, `.lzma`, `.zst`, `.tzst`, `.cab`, `.ar`, `.cpio`, `.iso`, `.xar`, `.lha`, `.lzh`, `.jar`, `.war`, `.ear`, `.apk`, `.cbz`, `.cbr` | structured | stable | libarchive-supported containers | - |
+| `chm` | Compiled HTML Help | `.chm` | structured | stable | Microsoft HTML Help ITSF v2/v3<br>LZX MSCompressed and uncompressed content | ActiveX, Shortcut/WinHelp commands, scripts and external network resources are intentionally blocked<br>Merged help collections require each referenced CHM file to be opened separately |
 | `email` | Email | `.eml`, `.msg`, `.mbox` | structured | stable | MIME<br>Outlook MSG<br>mbox | - |
 | `eda` | EDA | `.olb`, `.dra`, `.gds`, `.oas`, `.oasis` | structured | stable | OrCAD<br>GDSII<br>OASIS | - |
 | `cad` | CAD | `.dxf`, `.dwg`, `.dwf`, `.dwfx`, `.xps` | high-fidelity | stable | DWG<br>DXF<br>DWF<br>DWFX/XPS | - |

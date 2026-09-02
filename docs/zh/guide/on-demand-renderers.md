@@ -1,9 +1,5 @@
 # 按需渲染架构
 
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 <div class="doc-kicker">On-demand Renderer Architecture</div>
 
 <p class="doc-lead">
@@ -60,7 +56,7 @@
 | `@file-viewer/preset-standard`                                      | 常用 Office/PDF/OFD/压缩包/邮件/文本/媒体基线                                                              | 不默认包含专业工程、iWork、DICOM、数字签名容器、旧 PPT 等重能力                           |
 | `@file-viewer/preset-office`                                        | Word、Spreadsheet、PPT、PDF、OFD 均由独立 renderer 承接                                                   | 聚合文档链路，避免业务手写多个 Office renderer import                                    |
 | `@file-viewer/preset-engineering`                                   | CAD、3D、XMind、Draw.io、Excalidraw、Geo、Typst、Archive、EDA 和 Data 结构预览                            | 聚合工程附件链路；仍比 `preset-all` 更窄                                                  |
-| `@file-viewer/preset-all`                                           | 已发布兼容 renderer 集合                                                                                   | 既有 demo 和全量发行版保持兼容；后续专业能力仍显式安装                                    |
+| `@file-viewer/preset-all`                                           | 已发布兼容 renderer 集合，包含 CHM                                                                         | 既有 demo 和全量发行版保持兼容；后续专业能力仍显式安装                                    |
 | `@file-viewer/vite-plugin`                                          | 自动生成 renderer virtual module、复制 assets、设置 manual chunks                                          | 让业务项目按配置自动装配，不需要手写大量 import                                           |
 
 ## 可选专业 renderer
@@ -119,6 +115,7 @@ npx file-viewer-cli install --yes
 | 只预览常见轻量附件              | 安装组件包 + `@file-viewer/preset-lite` 或 text/image/media 单 renderer | 最快，依赖最少                  | 主包只包含轻量 renderer                  |
 | 只需要 PDF/Word/Excel/PPT/OFD   | 安装组件包 + `@file-viewer/preset-office`，极致裁剪时再按 renderer 安装 | Office 依赖按文档 preset 聚合   | 只会产生文档相关异步 chunk               |
 | CAD/3D/Typst/Archive 等专项能力 | 安装组件包 + `@file-viewer/preset-engineering` 或对应单 renderer | 工程链路按产品形态聚合          | worker/wasm 跟随 renderer asset manifest |
+| CHM 帮助文档                    | 安装组件包 + `@file-viewer/renderer-chm`，全格式平台可直接使用 `preset-all` | 单格式安装或完整 preset 均可用 | Rust/WASM Worker 资产自托管到 `vendor/chm/` |
 | 企业内网全格式平台              | 安装组件包 + `@file-viewer/preset-all` + asset copy CLI   | 一次性完整安装                  | chunk 按 renderer 拆分，避免首屏全部执行 |
 | 大型业务前端希望自动化          | `@file-viewer/vite-plugin` 自动发现已安装 preset，必要时配置 `formats` / `scan` | 由插件提示缺失 renderer         | 自动生成 virtual module 和部署 manifest  |
 
@@ -145,7 +142,7 @@ export default defineConfig({
 
 | 定制项 | 作用 |
 | --- | --- |
-| `copyAssets:true` | 复制命中的 Worker、WASM、字体、PDF/CAD/Typst/Archive/Data 等离线资源 |
+| `copyAssets:true` | 复制命中的 Worker、WASM、字体、PDF/CAD/Typst/Archive/CHM/Data 等离线资源；CHM 三个运行时文件写入 `vendor/chm/` |
 | `preset:'auto'` / `autoPresets:true` | 与 `scan:true` 同时使用时，继续保留“按已安装 preset 自动激活能力” |
 | `formats` / `renderers` | 在 preset 外补充少数格式，或完全使用单 renderer 精确裁剪 |
 | `scan:true` | 从源码中的 `fileViewerFormats`、`data-file-viewer-formats`、`accept` 等 hint 收集格式 |
@@ -236,7 +233,7 @@ export default defineConfig({
 })
 ```
 
-常见轻附件使用 `preset-lite`，CAD / 3D / Typst / EDA / 数据资产等工程附件使用 `preset-engineering`，完整样例矩阵或全格式后台使用 `preset-all`。插件无参或只传 `copyAssets:true` 时会自动发现已安装 preset；`copyAssets:true` 会把 Worker、WASM、PDF 字体、CAD、Typst WASM/字体、Archive、Data 等离线资源复制到部署目录，避免企业内网环境依赖公共 CDN。
+常见轻附件使用 `preset-lite`，CAD / 3D / Typst / EDA / 数据资产等工程附件使用 `preset-engineering`，完整样例矩阵或全格式后台使用 `preset-all`。插件无参或只传 `copyAssets:true` 时会自动发现已安装 preset；`copyAssets:true` 会把 Worker、WASM、PDF 字体、CAD、Typst WASM/字体、Archive、CHM、Data 等离线资源复制到部署目录，其中 CHM 运行时位于 `vendor/chm/`，避免企业内网环境依赖公共 CDN。
 
 全量一键安装:
 
@@ -297,6 +294,7 @@ const options = {
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON、KML、GPX、SHP |
 | `@file-viewer/renderer-typst` | `typstRenderer` | Typst 源文件本地 WASM 预览 |
 | `@file-viewer/renderer-archive` | `archiveRenderer` | 压缩包和内部文件预览 |
+| `@file-viewer/renderer-chm` | `chmRenderer` | CHM 目录、索引、搜索、内部链接与本地 Rust/WASM 正文读取 |
 | `@file-viewer/renderer-email` | `emailRenderer` | EML、MSG、MBOX |
 | `@file-viewer/renderer-epub` | `ebookRenderer` | EPUB、UMD |
 | `@file-viewer/renderer-text` | `textRenderer` | Markdown、代码高亮、patch、git bundle |
@@ -308,6 +306,33 @@ const options = {
 `@file-viewer/ppt`、`@file-viewer/pptx`、`@file-viewer/geometry-engine`、`@file-viewer/eda-layout` 和 `@file-viewer/eda-orcad` 是 renderer 内部引擎包；常规业务预览优先使用上表 renderer 或 preset。
 
 `preset: 'auto'` 会发现项目中已安装的 preset 包；当 `preset-all` 存在时会优先使用它，避免重复导入其它 preset。
+
+### CHM：自托管 Rust/WASM Worker
+
+只需要 CHM 时直接安装独立 renderer：
+
+```bash
+npm i @file-viewer/vue3 @file-viewer/renderer-chm
+```
+
+```ts
+import { chmRenderer } from '@file-viewer/renderer-chm'
+
+const options = {
+  rendererMode: 'replace',
+  renderers: [chmRenderer]
+}
+```
+
+Vite 项目也可以配置 `formats: ['chm']` 和 `copyAssets:true`。`preset-all` 与 Full 包已经包含该 renderer，但部署时仍必须把以下同版本文件自托管到 `file-viewer/vendor/chm/`：
+
+- `chm.worker.js`
+- `chm_wasm.js`
+- `chm_wasm_bg.wasm`
+
+Vite 插件或同版本 asset copy CLI 会自动发布该目录。非标准部署路径可通过 `options.chm.workerUrl`、`options.chm.wasmModuleUrl` 和 `options.chm.wasmUrl` 覆盖；生产环境不应指向公共 CDN。
+
+CHM 在独立 Worker 中本地解析。主题 HTML 会先清洗，再放入不含 `allow-scripts` 的 iframe sandbox；严格 CSP 同时禁用脚本、插件、表单、base URL 重写和自动加载的外网活动资源。`ms-its:` / `mk:@MSITStore` 内部链接及图片、样式等包内资源只解析回当前 CHM。该能力是只读帮助文档阅读器，不模拟 ActiveX HTML Help 运行环境。
 
 ## 缺失 renderer 的友好提示
 
@@ -465,7 +490,7 @@ fileViewerRenderers({
 | ------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Phase 1 | core 插件协议、wrapper 传参、preset-all 兼容层、资产 manifest v2、迁移校验脚本 | `@file-viewer/core`、所有组件包                                                                                                                                                                                                                                                     |
 | Phase 2 | PDF、Word/DOCX/DOC/ODT/RTF、Excel、PPT、OFD、Typst、CAD、Archive               | `@file-viewer/renderer-pdf`、`@file-viewer/renderer-word`、`@file-viewer/renderer-spreadsheet`、`@file-viewer/renderer-presentation`、`@file-viewer/renderer-ofd`、`@file-viewer/renderer-typst`、`@file-viewer/renderer-cad`、`@file-viewer/renderer-archive`                      |
-| Phase 3 | XMind、Geo、Draw.io/Excalidraw/Mermaid/PlantUML、3D、Email、EPUB、Code/Markdown/Patch/Git Bundle、Media、Image   | `@file-viewer/renderer-mindmap`、`@file-viewer/renderer-geo`、`@file-viewer/renderer-drawing`、`@file-viewer/renderer-3d`、`@file-viewer/renderer-email`、`@file-viewer/renderer-epub`、`@file-viewer/renderer-text`、`@file-viewer/renderer-media`、`@file-viewer/renderer-image` |
+| Phase 3 | XMind、Geo、Draw.io/Excalidraw/Mermaid/PlantUML、3D、Email、EPUB、CHM、Code/Markdown/Patch/Git Bundle、Media、Image   | `@file-viewer/renderer-mindmap`、`@file-viewer/renderer-geo`、`@file-viewer/renderer-drawing`、`@file-viewer/renderer-3d`、`@file-viewer/renderer-email`、`@file-viewer/renderer-epub`、`@file-viewer/renderer-chm`、`@file-viewer/renderer-text`、`@file-viewer/renderer-media`、`@file-viewer/renderer-image` |
 | Phase 4 | EDA、GDSII/OASIS、OrCAD/Allegro、复杂数据资产                                  | `@file-viewer/renderer-eda`、`@file-viewer/eda-layout`、`@file-viewer/eda-orcad`、`@file-viewer/renderer-data`                                                                                                                                                                      |
 | Phase 5 | Vite 插件、自动 sample smoke matrix、安装体积预算、release pipeline 分发       | `@file-viewer/vite-plugin`、release scripts                                                                                                                                                                                                                                         |
 
@@ -482,6 +507,7 @@ fileViewerRenderers({
 | XMind                       | 解析现代 `content.json` 和经典 `content.xml`，渲染层使用 `@panzoom/panzoom` 提供可拖拽、移动端双指缩放、定位的只读画布；官方 XMind TS/SVG viewer 可作为后续高保真对照，但不直接引入不可控交互。 | core 已移除 XMind 兼容入口和 `@ljheee/xmind-parser` 直接依赖，`@file-viewer/renderer-mindmap` 单独维护 XMind/FreeMind/OPML 等思维导图体验。 |
 | GeoJSON / KML / GPX / SHP   | GeoJSON 直接读取，KML/GPX 转 GeoJSON，SHP 走 Shapefile 到 GeoJSON，CRS 归一化后用离线 MapLibre 矢量地图渲染叠加层，WebGL 不可用时回退 SVG。 | core 已移除 geo 兼容入口和 `@tmcw/togeojson` / `shpjs` / `maplibre-gl` / `proj4` 直接依赖，`@file-viewer/renderer-geo` 单独维护地理数据预览体验。 |
 | Archive                     | 优先 `libarchive.js` Worker + WASM，覆盖 RAR/7z/TAR/ZIP 等多格式；Worker 不可用时降级 ZIP/TAR/GZIP，内部文件点击后再按需解压和嵌套预览。                      | `@file-viewer/renderer-archive` 独立维护 worker/wasm、缓存、内存上限和移动端 fallback。                  |
+| CHM                         | `@file-viewer/renderer-chm` 在独立 Worker 中运行本地 Rust/WASM 解析器，读取 ITSF/ITSP、LZX、目录、索引、主题和包内资源。 | 三个运行时资产自托管于 `vendor/chm/`；主题 HTML 经清洗后进入无脚本 sandbox，并由 CSP 阻断插件、表单和外网活动资源。 |
 | EDA / 工程二进制            | `@file-viewer/renderer-eda` 先承接 OLB/DRA/GDSII/OASIS 的结构预览；标准 GDSII 用纯 TS 解析 records，小图生成 SVG 快速版图，大元素集使用 `@file-viewer/eda-layout` 的 WebGL typed-array 批次和 canvas 渲染；OASIS 文本夹具可生成 SVG，真实二进制 OASIS 与 Cadence 专有二进制先做安全索引和诊断。 | OASIS 后续适合引入 KLayout / dump_oas_gds2 路线的 WASM 或 WebGL 增量渲染；Cadence DRA/OLB/DSN 高保真预览以后续 OpenAllegroParser/OpenOrCadParser WASM 化为主。 |
 
 调研结论是：能用成熟官方或事实标准开源链路的格式不手搓；规格复杂、二进制重、需要长期迭代的能力，应该像 PPTX 一样拆成独立内核和独立 renderer 包持续维护。
@@ -496,7 +522,7 @@ fileViewerRenderers({
 - [x] `FileViewerOptions.builtinRenderers` 支持 `all`、`lite`、`none`，为默认轻量化和显式全量装配提供稳定开关。
 - [x] wrapper README 和开源总仓 README 补齐 `renderers` / `rendererMode` / `builtinRenderers` 的按需装配示例，并由 `verify:ecosystem-readmes` 校验 `@file-viewer/vite-plugin`、`virtual:file-viewer-renderers` 和 `configuredFileViewerRenderers` 等关键接入口径。
 - [x] Vue3 原生组件渲染面板切换到同一套 renderer plugin/preset 装配链路，`options.renderers`、`rendererMode` 和 `builtinRenderers` 会在组件路径真实生效。
-- [x] `@file-viewer/preset-all` 保持既有 221 个稳定扩展名的兼容能力；DICOM 的 2 个和数字签名/证据容器的 21 个实验扩展名属于通用显式按需能力，不会静默进入既有 preset/full 依赖闭包。
+- [x] `@file-viewer/preset-all` 保留既有能力并加入 CHM，共 222 个稳定扩展名；DICOM 的 2 个和数字签名/证据容器的 21 个实验扩展名属于通用显式按需能力，不会静默进入既有 preset/full 依赖闭包。
 - [x] `pnpm audit:renderer-deps` 输出所有 core 直接依赖对应的目标 renderer package，不允许 unclassified。
 - [x] `pnpm verify:on-demand-boundaries` 守住按需加载边界：core 不依赖 renderer/preset/wrapper，标准组件包不依赖 renderer/preset，compat 包只 alias 到目标组件，`preset-lite` / `preset-office` / `preset-engineering` 只能聚合各自白名单 renderer，`preset-all` 才聚合完整 renderer。
 
@@ -513,6 +539,8 @@ fileViewerRenderers({
 - [x] 建立 `@file-viewer/renderer-typst` 独立包，并让 `@file-viewer/preset-all` 优先聚合该包的 Typst renderer。
 - [x] `@file-viewer/core` 已移除 Typst 兼容入口和 `@myriaddreamin/*` 直接依赖，Typst 真实 WASM 预览统一通过 `@file-viewer/renderer-typst` 或 preset 装配；compiler / renderer WASM 资产路径仍由 core manifest 统一发现。
 - [x] 建立 `@file-viewer/renderer-archive` 独立包，并让 `@file-viewer/preset-all` 优先聚合该包的 archive renderer。
+- [x] 建立 `@file-viewer/renderer-chm` 独立包，并让 `@file-viewer/preset-all` 与 Full 包聚合 CHM renderer；目录、索引、搜索、内部链接和包内资源均在浏览器本地处理。
+- [x] CHM 使用独立 Rust/WASM Worker；标准资产工具把 `chm.worker.js`、`chm_wasm.js` 与 `chm_wasm_bg.wasm` 自托管到 `vendor/chm/`，主题文档保持无脚本 sandbox/CSP 边界。
 - [x] 建立 `@file-viewer/renderer-email` 独立包，并让 `@file-viewer/preset-all` 优先聚合该包的 EML / MSG / MBOX renderer。
 - [x] 建立 `@file-viewer/renderer-epub` 独立包，并让 `@file-viewer/preset-all` 优先聚合该包的 EPUB / UMD renderer。
 - [x] `@file-viewer/core` 已移除 archive 兼容入口和 `libarchive.js` 直接依赖，压缩包完整能力统一通过 `@file-viewer/renderer-archive` 或 preset 装配；UMD 已迁移到 `@file-viewer/renderer-epub`，不再让 core 保留 `pako`。
@@ -547,11 +575,11 @@ fileViewerRenderers({
 
 ### Phase 3：体验与自动化
 
-- [x] `@file-viewer/vite-plugin` 能按 `formats` 自动生成 `virtual:file-viewer-renderers`，已覆盖 Word、Spreadsheet、PDF、OFD、Presentation、CAD、Drawing、3D、Typst、Archive、Email、EPUB、Text、Image、Media、XMind、Geo、Data 和 EDA；未知格式会给出明确缺失提示。
+- [x] `@file-viewer/vite-plugin` 能按 `formats` 自动生成 `virtual:file-viewer-renderers`，已覆盖 Word、Spreadsheet、PDF、OFD、Presentation、CAD、Drawing、3D、Typst、Archive、CHM、Email、EPUB、Text、Image、Media、XMind、Geo、Data 和 EDA；未知格式会给出明确缺失提示。
 - [x] `@file-viewer/vite-plugin` 支持 `scan: true` 源码 hint 自动发现：`fileViewerFormats` / `fileViewerRenderers` / `data-file-viewer-formats` / `accept` 会合并进 renderer 选择，开发和构建阶段都能生成相同 virtual module。
 - [x] `@file-viewer/vite-plugin` 的扩展映射覆盖 `@file-viewer/core` 中所有已拆 renderer 的完整扩展列表，`.zipx`、`.cbz`、`.tiff`、`.mjs`、`.gv`、`.mpeg` 等真实业务后缀不会因为插件手写表漂移而漏装；`verify:vite-plugin-format-coverage` 会对照 core 格式矩阵逐项校验。
 - [x] `@file-viewer/vite-plugin` 支持 `preset: 'lite' | 'office' | 'engineering' | 'all'`，会导入对应 `@file-viewer/preset-*` 包；同时声明 `formats` 时只补充 preset 外的额外 renderer，适配 pnpm 严格依赖模型。
-- [x] 插件能复制已拆 renderer 中需要自托管的 PDF/CAD/Typst/Archive/Data worker、wasm 和 vendor assets，并输出 `flyfish-viewer-assets.json` 部署 manifest；OFD vendor 随 `@file-viewer/renderer-ofd` npm 包离线分发，3D 与 EDA renderer 当前无额外外部资产，Office 等待对应 renderer 拆包后补入。
+- [x] 插件能复制已拆 renderer 中需要自托管的 PDF/CAD/Typst/Archive/CHM/Data Worker、WASM 和 vendor assets，并输出 `flyfish-viewer-assets.json` 部署 manifest；CHM 三资产位于 `vendor/chm/`，OFD vendor 随 `@file-viewer/renderer-ofd` npm 包离线分发，3D 与 EDA renderer 当前无额外外部资产。
 - [x] demo 构建 chunk 按 renderer 命名，PDF/Office/CAD/Typst/3D 等不会进入首屏主包；`verify:bundle-budget` 会检查主 Demo、文档比对入口和异步 renderer chunk。
 - [x] 每个标准组件的文档都提供“快速可运行接入”和“按需 renderer”两种接入方式；生成器会同步到 Vanilla JS / Pure Web、Vue 3、Vue 2.7、Vue 2.6、React、React Legacy、jQuery 和 Svelte 的中英文 README。
 - [x] 增加独立安装 smoke：`verify:renderer-standalone-smoke` 会在临时目录安装本地 tarball 版 `@file-viewer/core`、`@file-viewer/vite-plugin`、全部独立 renderer plugin 以及本地依赖闭包，验证每个 renderer 可注册、处理器可挂载，并逐个确认 Vite virtual module 只导入当前选择的 renderer 包。
@@ -584,7 +612,7 @@ pnpm audit:renderer-deps -- --json
 截至当前工作区，`@file-viewer/core` 仍直接声明 1 个运行时依赖：
 
 - Phase 2 已无依赖留在 core；Presentation、Word、Spreadsheet、PDF、OFD、Typst、Archive 和 CAD 均通过独立 renderer 或 preset 装配。
-- Phase 3 已无重型体验链路依赖留在 core；XMind、Geo、HEIC、Drawing、3D、Email、Ebook、Text 和 Media 均通过独立 renderer 或 preset 装配。
+- Phase 3 已无重型体验链路依赖留在 core；XMind、Geo、HEIC、Drawing、3D、Email、Ebook、CHM、Text 和 Media 均通过独立 renderer 或 preset 装配。
 - Phase 4 已无依赖留在 core；Data Asset 与 EDA 已分别由 `@file-viewer/renderer-data`、`@file-viewer/renderer-eda` 独立承接，复杂数据和工程二进制的后续内核演进不再污染默认安装面。
 
 这说明 renderer 包、分层 preset 和 `preset-all` 已经具备完整重链路拆包基础。短期先保留 `preset-all` 兼容完整能力，常见业务优先使用 `preset-lite`、`preset-office`、`preset-engineering`，长期验收标准是继续补齐 renderer tarball / smoke / release 自动化，并让组件包默认安装始终不拉取 PDF、Office、CAD、Typst、Archive、3D 等重依赖。
@@ -597,6 +625,7 @@ pnpm audit:renderer-deps -- --json
 | --- | --- | --- |
 | XMind | `.xmind` 按 ZIP 容器读取，现代文件优先解析 `content.json`，经典文件解析 `content.xml`；Panzoom 交互由 `@file-viewer/renderer-mindmap` 维护。 | 继续补多结构布局、更多 marker 图标和复杂图片资源还原，交互回归覆盖 Pointer、真实鼠标、触摸和移动端双指缩放。 |
 | Archive | `@file-viewer/renderer-archive` 使用 `libarchive.js` Worker + WASM，Worker 不可用时降级 ZIP/TAR/GZIP。 | 保持 Worker 超时、IndexedDB 缓存和体积上限，不把压缩包依赖带回 core。 |
+| CHM | `@file-viewer/renderer-chm` 使用自托管 Rust/WASM Worker 解析目录、索引、LZX 主题和包内资源。 | 保持 `vendor/chm/` 离线资产、解压预算与无脚本 sandbox/CSP；不实现 ActiveX 或任意脚本执行。 |
 | Email | `@file-viewer/renderer-email` 使用 `postal-mime` 和 `@kenjiuno/msgreader`，邮件附件复用统一嵌套预览。 | 增强 MSG 边界样例和附件安全策略。 |
 | EPUB/UMD | EPUB 使用 `@file-viewer/renderer-epub` 与按需加载的包内本地引擎；UMD 同样由 `@file-viewer/renderer-epub` 维护结构解析和 `pako` 解压。 | 电子书能力统一在 ebook renderer 中维护，core 保持零运行时依赖；v2.3.0 的 EPUB vendor 不从公网加载，也不向业务生产依赖树暴露内部 XML 解析器。 |
 | OLB/DRA | `@file-viewer/renderer-eda` 当前基于 CFB 和二进制线索做安全结构树、实体候选、属性、字符串和诊断展示。 | OrCAD/Allegro 属于专业私有工程格式，完整几何/电气语义会像 PPTX 一样拆独立引擎长期维护，必要时引入自研 WASM。 |

@@ -36,6 +36,7 @@ const rendererBuilds = [
   { key: 'drawing', packageName: '@file-viewer/renderer-drawing', exportName: 'drawingRenderer', globalName: 'FlyfishFileViewerWebFullRendererDrawing' },
   { key: 'model', packageName: '@file-viewer/renderer-3d', exportName: 'modelRenderer', globalName: 'FlyfishFileViewerWebFullRendererModel' },
   { key: 'archive', packageName: '@file-viewer/renderer-archive', exportName: 'archiveRenderer', globalName: 'FlyfishFileViewerWebFullRendererArchive' },
+  { key: 'chm', packageName: '@file-viewer/renderer-chm', exportName: 'chmRenderer', globalName: 'FlyfishFileViewerWebFullRendererChm' },
   { key: 'email', packageName: '@file-viewer/renderer-email', exportName: 'emailRenderer', globalName: 'FlyfishFileViewerWebFullRendererEmail' },
   { key: 'ebook', packageName: '@file-viewer/renderer-epub', exportName: 'ebookRenderer', globalName: 'FlyfishFileViewerWebFullRendererEbook' },
   { key: 'text', packageName: '@file-viewer/renderer-text', exportName: 'textRenderer', globalName: 'FlyfishFileViewerWebFullRendererText' },

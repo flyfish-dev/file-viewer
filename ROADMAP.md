@@ -5,7 +5,7 @@ File Viewer 的长期方向不是做“全能文件预览神器”，而是成�
 ## 当前重点
 
 - README、Demo、文档和 Release 统一突出“内网 / 私有化 / 无服务端转码”的定位。
-- 持续守住 244 个已注册扩展名（221 个稳定、23 个实验）、34 个渲染器标识、84 个 npm 发布目标和 816 个组件渲染目标的公开口径一致性；所有数字均由格式目录与 release matrix 生成。
+- 持续守住 245 个已注册扩展名（222 个稳定、23 个实验）、35 个渲染器标识、86 个 npm 发布目标和 848 个组件渲染目标的公开口径一致性；所有数字均由格式目录与 release matrix 生成。
 - 发布链路默认校验离线运行时资源，libarchive、DOCX、CAD、Typst、PDF、Draw.io 等 Worker/WASM/vendor 资产必须本地化随包或随 viewer assets 分发。
 - 官方 Demo 构建产物提供 release 级 iframe 交付包，客户可直接下载、私有化部署并通过 `iframe.html?embed=1&url=...` 或 `postMessage(Blob)` 集成。
 - 强化真实业务文件的兼容性反馈闭环，尤其是 Office、PDF、CAD、压缩包、邮件和移动端 WebView。

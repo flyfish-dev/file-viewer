@@ -107,6 +107,16 @@
       "publicSource": true
     },
     {
+      "id": "assets-chm",
+      "packageName": "@file-viewer/assets-chm",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in CHM Worker and Rust/WASM asset pack.",
+      "packageDir": "packages/tools/assets-chm",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
       "id": "assets-data",
       "packageName": "@file-viewer/assets-data",
       "releaseVersion": "3.0.0",
@@ -495,6 +505,21 @@
       "description": "Standalone archive renderer plugin for File Viewer with libarchive worker, ZIP/TAR/GZIP fallback, IndexedDB caching, nested document previews, memory limits, and offline WASM assets.",
       "packageDir": "packages/renderers/archive",
       "repository": "file-viewer-renderer-archive",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
+      "id": "chm",
+      "packageName": "@file-viewer/renderer-chm",
+      "description": "Standalone browser-native CHM renderer for File Viewer with a Rust/WASM ITSF and LZX parser, table-of-contents navigation, local search, sandboxed HTML topics, and offline worker/WASM assets.",
+      "packageDir": "packages/renderers/chm",
+      "repository": "file-viewer-renderer-chm",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "entryFormats": [

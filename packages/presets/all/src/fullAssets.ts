@@ -1,6 +1,9 @@
 import {
   DEFAULT_FILE_VIEWER_ARCHIVE_WASM_PATH,
   DEFAULT_FILE_VIEWER_ARCHIVE_WORKER_PATH,
+  DEFAULT_FILE_VIEWER_CHM_WASM_MODULE_PATH,
+  DEFAULT_FILE_VIEWER_CHM_WASM_PATH,
+  DEFAULT_FILE_VIEWER_CHM_WORKER_PATH,
   DEFAULT_FILE_VIEWER_CAD_DWF_WASM_PATH,
   DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION,
   DEFAULT_FILE_VIEWER_CAD_WASM_PATH,
@@ -105,6 +108,11 @@ export function createFullAssetOptions(
       workerUrl: assetUrl(DEFAULT_FILE_VIEWER_ARCHIVE_WORKER_PATH),
       wasmUrl: assetUrl(DEFAULT_FILE_VIEWER_ARCHIVE_WASM_PATH),
     },
+    chm: {
+      workerUrl: assetUrl(DEFAULT_FILE_VIEWER_CHM_WORKER_PATH),
+      wasmModuleUrl: assetUrl(DEFAULT_FILE_VIEWER_CHM_WASM_MODULE_PATH),
+      wasmUrl: assetUrl(DEFAULT_FILE_VIEWER_CHM_WASM_PATH),
+    },
     cad: {
       wasmPath: assetUrl(DEFAULT_FILE_VIEWER_CAD_WASM_PATH),
       workerUrl: versionCadRuntimeAssetUrl(assetUrl(DEFAULT_FILE_VIEWER_CAD_WORKER_PATH)),
@@ -197,6 +205,7 @@ export function mergeFullAssetOptions(
   return {
     ...options,
     archive: mergeNestedOptions(assetOptions.archive, options.archive),
+    chm: mergeNestedOptions(assetOptions.chm, options.chm),
     cad: mergeNestedOptions(assetOptions.cad, options.cad),
     data: mergeNestedOptions(assetOptions.data, options.data),
     docx: mergeNestedOptions(assetOptions.docx, options.docx),

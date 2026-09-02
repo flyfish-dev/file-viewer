@@ -68,6 +68,7 @@
     "@file-viewer/preset-all": "workspace:3.0.0",
     "@file-viewer/renderer-3d": "workspace:3.0.0",
     "@file-viewer/renderer-archive": "workspace:3.0.0",
+    "@file-viewer/renderer-chm": "workspace:3.0.0",
     "@file-viewer/renderer-cad": "workspace:3.0.0",
     "@file-viewer/renderer-data": "workspace:3.0.0",
     "@file-viewer/renderer-drawing": "workspace:3.0.0",

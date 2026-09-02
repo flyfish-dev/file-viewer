@@ -142,6 +142,7 @@ const explicitFileIconMeta = {
   epub: { icon: 'EPUB', family: 'ebook' },
   fb2: { icon: 'FB2', family: 'ebook' },
   umd: { icon: 'UMD', family: 'ebook' },
+  chm: { icon: 'CHM', family: 'ebook' },
   zip: { icon: 'ZIP', family: 'archive' },
   zipx: { icon: 'ZIP', family: 'archive' },
   '7z': { icon: '7Z', family: 'archive' },

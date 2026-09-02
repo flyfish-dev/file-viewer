@@ -1,0 +1,29 @@
+[package]
+name = "file-viewer-chm-wasm"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.87"
+publish = false
+license = "Apache-2.0"
+description = "Memory-safe, browser-native CHM reader for File Viewer"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+encoding_rs = "0.8.35"
+js-sys = "0.3.77"
+serde = { version = "1", features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+thiserror = "2.0.20"
+wasm-bindgen = "0.2.127"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "z"
+panic = "abort"
+strip = true
+
+[lints.rust]
+unsafe_code = "forbid"

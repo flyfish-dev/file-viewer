@@ -18,10 +18,8 @@
   <a href="https://demo.file-viewer.app">在线 Demo</a> ·
   <a href="https://doc.file-viewer.app">文档</a> ·
   <a href="https://github.com/flyfish-dev/file-viewer/wiki">GitHub Wiki</a> ·
-  <a href="https://github.com/sponsors/wybaby168">GitHub Sponsors</a> ·
   <a href="#快速开始">快速开始</a> ·
-  <a href="#支持格式">支持格式</a> ·
-  <a href="CONTRIBUTING.md">参与贡献</a>
+  <a href="#支持格式">支持格式</a>
 </p>
 
 <p align="center">
@@ -32,7 +30,6 @@
   <a href="https://www.npmjs.com/package/@file-viewer/core"><img alt="npm core" src="https://img.shields.io/npm/v/@file-viewer/core?label=core&color=31a66f" /></a>
   <a href="https://www.npmjs.com/package/@file-viewer/vue3"><img alt="npm vue3" src="https://img.shields.io/npm/v/@file-viewer/vue3?label=vue3&color=278cff" /></a>
   <a href="https://github.com/flyfish-dev/file-viewer"><img alt="GitHub stars" src="https://img.shields.io/github/stars/flyfish-dev/file-viewer?style=flat&logo=github&color=111827" /></a>
-  <a href="https://github.com/sponsors/wybaby168"><img alt="GitHub Sponsors" src="https://img.shields.io/badge/GitHub-Sponsor-ea4aaa?logo=githubsponsors&logoColor=white" /></a>
   <a href="https://github.com/flyfish-dev/file-viewer/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/flyfish-dev/file-viewer?label=release&color=35c8c0" /></a>
   <a href="https://doc.file-viewer.app"><img alt="Documentation" src="https://img.shields.io/badge/docs-doc.file--viewer.app-278cff" /></a>
   <a href="https://github.com/flyfish-dev/file-viewer/wiki"><img alt="GitHub Wiki" src="https://img.shields.io/badge/wiki-GitHub%20Wiki-111827?logo=github" /></a>
@@ -40,9 +37,9 @@
   <a href="https://linux.do"><img alt="Linux Do" src="https://img.shields.io/badge/Linux%20Do-community-1f2937" /></a>
   <a href="https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/flyfish-dev/file-viewer?color=0f766e" /></a>
   <a href="https://hub.docker.com/r/flyfishdev/file-viewer"><img alt="Docker" src="https://img.shields.io/badge/docker-flyfishdev%2Ffile--viewer-2496ed?logo=docker" /></a>
-  <img alt="Supported formats" src="https://img.shields.io/badge/formats-244-31a66f" />
+  <img alt="Supported formats" src="https://img.shields.io/badge/formats-245-31a66f" />
   <img alt="Modular architecture" src="https://img.shields.io/badge/architecture-modular%20renderers-278cff" />
-  <img alt="Ecosystem packages" src="https://img.shields.io/badge/npm%20targets-84-0f766e" />
+  <img alt="Ecosystem packages" src="https://img.shields.io/badge/npm%20targets-86-0f766e" />
 </p>
 
 <p align="center">
@@ -51,23 +48,18 @@
 
 ---
 
-> **公开仓说明：** 本中文长文档保留完整技术背景；其中 release、deploy、sync、完整 verify 等命令仅供完整私有维护者工作区使用。公开 checkout 请以默认英文 README 的七条命令为准。
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
-
 ## 项目定位
 
 为了预览一份内部 DOCX 就把文件上传到第三方，既慢也不合适。File Viewer 把预览留在浏览器内，让企业后台、OA、知识库、工单、附件中心和工程资料库使用同一套 API，而不是继续拼接一堆互不一致的查看器。
 
-当前内置 244 个已注册扩展名（221 个稳定、23 个实验）和 34 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体、结构化数据、DICOM 和数字签名容器共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
+当前内置 245 个已注册扩展名（222 个稳定、23 个实验）和 35 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、PSD、字体、结构化数据、DICOM 和数字签名容器共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
 
 新项目优先使用 `@file-viewer/*`；`@flyfish-group/*` 历史包继续同步维护。
 
 ## 亮点
 
 - **一个组件起步。** Vanilla JS / Web Component 优先，并提供 Vue、React、Svelte、jQuery 原生组件。
-- **矩阵可核验。** 244 个已注册扩展名（221 个稳定、23 个显式按需实验项）映射到 34 条预览链路，覆盖办公、工程、设计、数据、音视频、代码、DICOM 和数字签名附件。
+- **矩阵可核验。** 245 个已注册扩展名（222 个稳定、23 个显式按需实验项）映射到 35 条预览链路，覆盖办公、工程、设计、数据、音视频、代码、DICOM 和数字签名附件。
 - **部署不出网。** 浏览器内解析和渲染，支持离线网络、Docker、私有 CDN 和完整资源自托管。
 - **模块化。** 轻量组件、renderer、preset、full 包分层清晰，既能极简安装，也能一键全量。
 - **按需加载。** PDF、Office、CAD、Typst、压缩包、图纸、PSD、Mermaid 等重型能力只在命中格式时加载。
@@ -95,7 +87,7 @@
 
 这个项目还在持续打磨，尤其需要真实业务文件来验证兼容性。
 
-如果文件渲染异常，请先在 [Demo](https://demo.file-viewer.app) 验证，再使用带标注说明的 [Bug 表单](https://github.com/flyfish-dev/file-viewer/issues/new?template=bug_report.yml) 或 [文件兼容性表单](https://github.com/flyfish-dev/file-viewer/issues/new?template=compatibility.yml)。所有 Bug 必须提供公开/脱敏样例、公开复现链接，或注明私有样例已发送到 `admin@flyfish.dev`；截图可以帮助对比，但不能替代样例。
+如果你手里有不涉密、可脱敏的 DOC / XLS / PPT / DWG / DWF / 压缩包 / 邮件样本，欢迎拿 [Demo](https://demo.file-viewer.app) 试一下。遇到样式不一致、打不开、内网部署路径问题或移动端异常，都可以通过 issue 反馈。
 
 如果这个方向刚好对你有用，也欢迎收藏项目。比起单纯 Star，我更希望收到真实场景下的兼容性反馈。
 
@@ -140,7 +132,7 @@
 ></flyfish-file-viewer>
 ```
 
-`web-full` 的 CDN IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@0.3.3` ESM、Worker、WASM、CJK 字体与帧缓存模块，并与其它版本对齐的资产一起交付。二进制 `.ppt` 默认无需配置运行时 URL；`pptModuleUrl`、`pptWorkerUrl`、`pptWasmUrl` 和 `pptFontUrl` 只用于非标准资产路径覆盖。
+`web-full` 的 CDN IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包、CHM 等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@0.3.3` ESM、Worker、WASM、CJK 字体与帧缓存模块，`vendor/chm/` 包含 CHM Rust/WASM Worker，并与其它版本对齐的资产一起交付。二进制 `.ppt` 和 CHM 默认无需配置运行时 URL；格式专用 URL 选项只用于非标准资产路径覆盖。
 
 ### Vanilla JS
 
@@ -236,7 +228,7 @@ $('#viewer').fileViewer({ url: '/files/report.pdf' })
 
 ### full 包运行时资产
 
-所有 full 包默认把 Archive、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 自动发布包内资产或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@0.3.3` 运行时位于 `vendor/ppt/`，并保留自身 LICENSE 与 NOTICE。
+所有 full 包默认把 Archive、CHM、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 自动发布包内资产或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@0.3.3` 运行时位于 `vendor/ppt/`，CHM Worker、JavaScript bridge 与 Rust/WASM 文件位于 `vendor/chm/`，并保留各自 LICENSE 与 NOTICE。
 
 ```ts
 import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
@@ -291,7 +283,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 ## 架构
 
 - `@file-viewer/core`: 格式识别、资源加载、renderer 协议、生命周期、搜索、缩放、打印、导出和 controller API。
-- `@file-viewer/renderer-*`: PDF、Word、PPT/PPTX、CAD、Typst、Archive、Drawing、Data、EDA 等独立渲染能力。
+- `@file-viewer/renderer-*`: PDF、Word、PPT/PPTX、CAD、Typst、Archive、CHM、Drawing、Data、EDA 等独立渲染能力。
 - `@file-viewer/preset-*`: `lite`、`office`、`engineering`、`all` 四类能力组合。
 - `@file-viewer/web|vue3|vue2.7|vue2.6|react|react-legacy|svelte|jquery`: 各生态的原生组件。
 - `@file-viewer/*-full`: 组件 + `preset-all`；完整支持还需把同版本运行时资源发布到 `<部署基址>/file-viewer/`，适合全格式附件中心。
@@ -307,13 +299,11 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 | Release 下载 | [github.com/flyfish-dev/file-viewer/releases](https://github.com/flyfish-dev/file-viewer/releases) |
 | Docker 镜像 | `flyfishdev/file-viewer:latest` |
 | Linux Do 友链 | [linux.do](https://linux.do) |
-| GitHub Sponsors | [github.com/sponsors/wybaby168](https://github.com/sponsors/wybaby168) |
-| 微信 / 支付宝赞赏 | [dev.flyfish.group/sponsor?source=github](https://dev.flyfish.group/sponsor?source=github) |
-| 企业技术支持 | [dev.flyfish.group/shop](https://dev.flyfish.group/shop) |
+| 打赏与优先支持 | [dev.flyfish.group/sponsor?source=github](https://dev.flyfish.group/sponsor?source=github) |
 
 ## 支持格式
 
-[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：当前源码注册 244 个不重复扩展名和 34 条预览链路，其中 221 个稳定、23 个实验。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
+[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：当前源码注册 245 个不重复扩展名和 35 条预览链路，其中 222 个稳定、23 个实验。下表按用户可理解的文件家族分组，并完整列出所有已注册扩展名。
 
 | 类别           | 扩展名                                                                                                                                                                                                                                                                                                                         | 当前表现                                                                                                                                                                                                            | 适合场景                                    |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
@@ -327,6 +317,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 | OFD            | `ofd`                                                                                                                                                                                                                                                                                                                          | 基于 `DLTech21/ofd.js` 仓库源码在线预览国产版式文档，避开 npm dist 授权 wasm 分支                                                                                                                                   | 电子发票、公文、归档材料                    |
 | Typst          | `typ`、`typst`                                                                                                                                                                                                                                                                                                                 | 直接读取 Typst 源文件，按需加载 `@myriaddreamin/typst.ts` 浏览器 WASM 编译器、SVG 渲染器和本地字体资产；支持完整预览、打印和导出 HTML                                                                                          | 技术报告、论文草稿、工程文档模板            |
 | 压缩包         | `zip`、`zipx`、`7z`、`rar`、`tar`、`gz`、`gzip`、`tgz`、`bz2`、`bzip2`、`tbz`、`tbz2`、`xz`、`txz`、`lzma`、`zst`、`tzst`、`cab`、`ar`、`cpio`、`iso`、`xar`、`lha`、`lzh`、`jar`、`war`、`ear`、`apk`、`cbz`、`cbr`                                                                                                           | `@file-viewer/renderer-archive` 基于 `libarchive.js` WASM Worker 读取目录，点击后按需解压内部文件并复用统一预览器；CBZ/CBR 自动提供自然页序、翻页、键盘和触摸阅读体验；支持 IndexedDB 缓存、GBK/GB18030 旧 ZIP 中文文件名、ZIP/TAR/GZIP 兼容降级和体积上限                         | 归档附件、漫画书、批量交付包、压缩包内文档快速查看  |
+| CHM 帮助文档   | `chm`                                                                                                                                                                                                                                                                                                                          | `@file-viewer/renderer-chm` 在自托管 Rust/WASM Worker 中解析 ITSF/ITSP 目录与 LZX 内容，提供目录、索引、正文搜索、内部链接和按需资源；主题 HTML 在禁用脚本的 sandbox iframe 中显示，并由严格 CSP 阻断插件、表单和外网活动内容 | 离线帮助文档、旧版 SDK 与软件手册            |
 | 邮件           | `eml`、`msg`、`mbox`                                                                                                                                                                                                                                                                                                           | `@file-viewer/renderer-email` 独立承接邮件链路；EML/MBOX 使用 `postal-mime`，MSG 使用 `@kenjiuno/msgreader`，支持头信息、HTML/文本正文、附件下载与附件预览                                                          | 邮件归档、工单邮件、客户来信附件            |
 | EDA            | `olb`、`dra`、`gds`、`oas`、`oasis`                                                                                                                                                                                                                                                                                            | `@file-viewer/renderer-eda` 独立承接；使用 `cfb` 解析 OrCAD/Allegro 常见 CFB 容器；标准 GDSII 会读取 structure、boundary、path、text、reference，小图输出 SVG，大元素集自动切到 WebGL canvas；OAS/OASIS 可读文本版图夹具会输出 SVG 预览，真实 SEMI 二进制 OASIS 先做安全结构索引、可读字符串、实体候选和诊断，不虚标专业电气/几何校核 | 元件库、封装图纸、芯片版图附件初筛          |
 | CAD            | `dwg`、`dxf`、`dwf`、`dwfx`、`xps`                                                                                                                                                                                                                                                                                             | 基于 `@flyfish-dev/cad-viewer` 预览图纸；DWG 通过 Worker + LibreDWG WASM 解析，DXF 使用 JS parser，DWF/DWFx/XPS 使用 native `dwf-viewer` 渲染 W2D/W3D/XPS 图形                                                      | 工程图纸、二维 CAD 附件、AutoCAD 归档文件   |
@@ -372,7 +363,7 @@ Preset 选择:
 
 ## 当前 npm 生态
 
-当前版本以 npm registry 的 `latest` dist-tag 为准，本仓库共发布 84 个 npm 目标：76 个标准组件/完整 full 包/核心/renderer/preset/工程插件包 + 8 个历史兼容 alias；独立版本的 renderer 依赖不计入该数字。新项目建议优先使用 `@file-viewer/*` 标准包名；旧项目继续使用 `@flyfish-group/*` 或 `file-viewer3` 时也会拿到同版本能力。
+当前版本以 npm registry 的 `latest` dist-tag 为准，本仓库共发布 86 个 npm 目标：78 个标准组件/完整 full 包/核心/renderer/preset/工程插件包 + 8 个历史兼容 alias；独立版本的 renderer 依赖不计入该数字。新项目建议优先使用 `@file-viewer/*` 标准包名；旧项目继续使用 `@flyfish-group/*` 或 `file-viewer3` 时也会拿到同版本能力。
 
 | 场景                                | 推荐 npm 包                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 历史兼容包                                                                                                                                               | 版本策略 | 说明                                                                                                                                                                    |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -399,8 +390,9 @@ Preset 选择:
 | React 16.8/17                       | [`@file-viewer/react-legacy`](https://www.npmjs.com/package/@file-viewer/react-legacy)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 无                                                                                                                                                       | `latest` | 面向旧 React 项目的兼容组件包                                                                                                                                           |
 | jQuery                              | [`@file-viewer/jquery`](https://www.npmjs.com/package/@file-viewer/jquery)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 无                                                                                                                                                       | `latest` | jQuery 插件式接入，适合传统后台系统                                                                                                                                     |
 | Svelte                              | [`@file-viewer/svelte`](https://www.npmjs.com/package/@file-viewer/svelte)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 无                                                                                                                                                       | `latest` | Svelte 组件、action 和类型入口                                                                                                                                          |
+| CHM renderer                       | [`@file-viewer/renderer-chm`](https://www.npmjs.com/package/@file-viewer/renderer-chm)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 无                                                                                                                                                       | `latest` | 浏览器本地 CHM 阅读器，使用 Rust/WASM Worker，提供目录、索引、搜索和无脚本 sandbox 主题阅读                                                                                  |
 
-生态边界很清楚: `@file-viewer/core` 只负责底层预览能力和 API；各标准组件包只依赖 core 和自己的框架依赖，不嵌套其他框架实现；历史兼容包只负责旧包名继续可用，不建议新项目优先选择。
+独立 renderer 集合已包含 `@file-viewer/renderer-chm`，只需要 CHM 的业务无需安装完整 preset。生态边界很清楚: `@file-viewer/core` 只负责底层预览能力和 API；各标准组件包只依赖 core 和自己的框架依赖，不嵌套其他框架实现；历史兼容包只负责旧包名继续可用，不建议新项目优先选择。
 
 文件列表需要批量生成缩略图时，可安装独立的 `@file-viewer/thumbnail`。它会先复用 EPUB 封面、OOXML/OpenDocument/3MF 缩略图、XMind 预览图、Numbers Quick Look 图片等包内资源，再回退到浏览器 renderer、固定并发 viewer 池和可选的原生 thumbnail adapter，默认输出 `320 × 240` WebP；`generateBatch()` 保持输入顺序，`generateStream()` 支持边生成边上传。该包不会把截图或压缩包依赖加入 core，也不会持久化源文件或结果。
 
@@ -603,7 +595,7 @@ const options = {
 - 想要最小包体时，可以不用 preset，直接安装 `@file-viewer/renderer-pdf`、`@file-viewer/renderer-word` 等单个 renderer，并通过 `options.renderers` 手动注入。
 - `fileViewerRenderers()` 或 `fileViewerRenderers({ copyAssets:true })` 会免配置自动发现已安装 preset；如果同时开启 `scan:true`，请使用 `preset:'auto'` 或 `autoPresets:true` 保留 preset 自动发现。
 - `scan:true` 会识别 `fileViewerFormats`、`data-file-viewer-formats` 和上传控件 `accept`，调试与打包时自动选择 renderer。
-- `copyAssets:true` 会复制 PDF/CAD/Typst/Archive/Data 等 worker、WASM 和 vendor 资源，满足离线和企业内网部署；压缩包目录会优先使用 `vendor/libarchive/worker-bundle.js` / `libarchive.wasm`，Worker 不可用时只对 ZIP/TAR/GZIP 进入兼容路径。
+- `copyAssets:true` 会复制 PDF/CAD/Typst/Archive/CHM/Data 等 Worker、WASM 和 vendor 资源，满足离线和企业内网部署；CHM 使用自托管的 `vendor/chm/chm.worker.js`、`chm_wasm.js` 与 `chm_wasm_bg.wasm`，压缩包目录优先使用 `vendor/libarchive/worker-bundle.js` / `libarchive.wasm`，Worker 不可用时只对 ZIP/TAR/GZIP 进入兼容路径。
 - `builtinRenderers` 仍可用于高级基线控制或历史兼容；普通快速接入只需要 `preset` / `renderers` 与 `rendererMode`。
 - 如果打开的是支持矩阵内但未装配的格式，预览器会提示应安装的 preset / renderer；只有真正不在矩阵中的扩展名才提示不支持。
 - `@file-viewer/preset-all` 提供完整 renderer 矩阵；Worker、WASM、字体和 vendor 资源仍需通过 Vite 插件或 `file-viewer-copy-assets` 发布。`*-full` 包已内置该 preset，不要重复安装。
@@ -685,16 +677,14 @@ const options = {
 
 视图状态同步用于投屏、双端协同和恢复阅读进度。所有通过标准 renderer loader 挂载的格式都会获得通用 view-state provider，至少能记录 `renderer`、当前缩放和滚动位置；PDF、XMind、Geo、3D、CAD 等高交互路径会补充页码、导航、画布 pan、地图中心、相机视角或底层视图快照。初始化可传 `options.initialViewState`，运行中监听 `view-state-change`；Pure Web / Vue3 controller 可直接调用 `getViewState()` 和 `applyViewState(state, { source: "api", action: "restore" })`。
 
-生态当前维护 84 个 npm 发布目标（76 个标准包 + 8 个历史兼容包）；格式目录声明 34 条预览链路、244 个扩展名（已注册），其中 221 个稳定、23 个实验。格式说明见官方文档: https://doc.file-viewer.app/guide/formats
+生态当前维护 86 个 npm 发布目标（78 个标准包 + 8 个历史兼容包）；格式目录声明 35 条预览链路、245 个扩展名（已注册），其中 222 个稳定、23 个实验。格式说明见官方文档: https://doc.file-viewer.app/guide/formats
 <!-- FILE_VIEWER_PUBLIC_GENERATED:END -->
 
 ## 支持项目与商业版
 
-Flyfish Viewer 会持续保持 Apache-2.0 开源。GitHub Sponsors 适合一次性或持续赞助，国内用户也可通过微信或支付宝请我们喝杯柠檬水。赞助用于开源维护，不影响开源功能；私有化交付、定制适配或需要明确响应时间的需求，请使用企业技术支持入口。
+本仓库编写的 File Viewer 源码与软件包会持续保持 Apache-2.0 开源；完整发行物中随附的 `@file-viewer/ppt` 运行时保留自身独立 LICENSE 与 NOTICE，不被 Apache-2.0 重新许可，其他依赖也继续适用各自包内许可证。开源版适合通用 Web 预览、内网部署、业务附件中心和轻量级集成；如果你需要更高还原度、更极致性能、私有化交付、定制适配或优先技术支持，可以通过下面入口请我们喝杯柠檬水，也可以了解商业版原生文档引擎。
 
-- GitHub Sponsors: [github.com/sponsors/wybaby168](https://github.com/sponsors/wybaby168)
-- 微信 / 支付宝赞赏: [dev.flyfish.group/sponsor?source=github](https://dev.flyfish.group/sponsor?source=github)
-- 企业技术支持: [dev.flyfish.group/shop](https://dev.flyfish.group/shop)
+- 打赏与优先支持: [dev.flyfish.group/sponsor?source=github](https://dev.flyfish.group/sponsor?source=github)
 - 商业版介绍: [product.flyfish.group](https://product.flyfish.group/)
 - 商业版 Demo: [office.flyfish.dev](https://office.flyfish.dev/)
 - 飞鱼开源工作室: [flyfish.dev](https://flyfish.dev/)
@@ -854,7 +844,7 @@ npm publish --access public
 
 如果 npm 账号启用了 MFA，请使用交互式终端完成浏览器确认后再等待发布结果。
 
-开源总仓库会提交 core、Demo、标准组件包、兼容包和文档源码；完整 Demo、component demo、文档静态站和样例构建产物改由 GitHub Release 或 Cloudflare Pages 分发，避免普通 clone 被大体积静态产物拖慢。为避免 Gitee 因历史二进制膨胀超过 1GB，同步 Gitee 时会使用最新源码快照的干净历史。私有 Gitea 仍作为完整聚合仓，保留统一发布脚本和内部集成历史。需要支持开源维护的用户可使用 [GitHub Sponsors](https://github.com/sponsors/wybaby168) 或 [微信 / 支付宝](https://dev.flyfish.group/sponsor?source=github)；需要私有化、定制或明确响应时间时，请使用 [企业技术支持](https://dev.flyfish.group/shop)。
+开源总仓库会提交 core、Demo、标准组件包、兼容包和文档源码；完整 Demo、component demo、文档静态站和样例构建产物改由 GitHub Release 或 Cloudflare Pages 分发，避免普通 clone 被大体积静态产物拖慢。为避免 Gitee 因历史二进制膨胀超过 1GB，同步 Gitee 时会使用最新源码快照的干净历史。私有 Gitea 仍作为完整聚合仓，保留统一发布脚本、内部集成历史和优先技术支持；需要支持项目或获得优先协助的用户，可以前往 [https://dev.flyfish.group/sponsor?source=github](https://dev.flyfish.group/sponsor?source=github)，请我们喝杯柠檬水。
 
 ## 文档导航
 

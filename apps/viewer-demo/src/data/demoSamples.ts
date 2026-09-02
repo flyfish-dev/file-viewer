@@ -106,12 +106,13 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
   },
   {
     title: '电子书',
-    description: 'EPUB / FB2 / UMD',
+    description: 'EPUB / FB2 / UMD / CHM',
     family: 'ebook',
     items: [
       { name: 'EPUB', url: '/example/book.epub' },
       { name: 'FB2', url: '/example/format-matrix.fb2' },
-      { name: 'UMD', url: '/example/book.umd' }
+      { name: 'UMD', url: '/example/book.umd' },
+      { name: 'CHM（PuTTY 官方手册）', url: '/example/putty-0.85.chm' }
     ]
   },
   {
@@ -260,7 +261,7 @@ const englishGroupCopy: Array<Pick<DemoSampleGroup, 'title' | 'description'>> = 
   { title: 'Slides & CAD', description: 'PPT / PPTX / CAD' },
   { title: 'Mindmaps & Diagrams', description: 'XMind / Mermaid / PlantUML / draw.io' },
   { title: '3D Models & Geospatial Data', description: 'GLTF / STEP / OBJ / STL / GeoJSON / KML / GPX' },
-  { title: 'Ebooks', description: 'EPUB / FB2 / UMD' },
+  { title: 'Ebooks', description: 'EPUB / FB2 / UMD / CHM' },
   { title: 'Archives', description: 'ZIP / TAR.GZ / Encrypted' },
   { title: 'Email & EDA', description: 'EML / MSG / OLB / DRA / GDS / OASIS' },
   { title: 'Text', description: 'Markdown / TXT / Log' },
@@ -340,6 +341,7 @@ const englishSampleNameMap: Record<string, string> = {
   '/example/book.epub': 'EPUB ebook',
   '/example/format-matrix.fb2': 'FictionBook 2 ebook',
   '/example/book.umd': 'UMD ebook',
+  '/example/putty-0.85.chm': 'CHM (official PuTTY manual)',
   '/example/en/archive.zip': 'ZIP archive with English samples',
   '/example/en/archive.tar.gz': 'TAR.GZ archive with English samples',
   '/example/encrypted.zip': 'Encrypted ZIP (password: flyfish)',
@@ -397,7 +399,7 @@ const japaneseGroupCopy: Array<Pick<DemoSampleGroup, 'title' | 'description'>> =
   { title: 'プレゼンテーションと CAD', description: 'PowerPoint と工学図面' },
   { title: 'マインドマップと図表', description: 'XMind、Mermaid、PlantUML、draw.io' },
   { title: '3D モデルと地理空間データ', description: 'メッシュ、CAD カーネル、GeoJSON' },
-  { title: '電子書籍', description: 'EPUB と UMD' },
+  { title: '電子書籍', description: 'EPUB / FB2 / UMD / CHM' },
   { title: '圧縮ファイル', description: 'ZIP、TAR.GZ、暗号化ファイル' },
   { title: 'メールと EDA', description: 'メール、OrCAD、IC レイアウト' },
   { title: 'テキスト', description: 'Markdown、テキスト、ログ' },
@@ -433,6 +435,7 @@ const japaneseSampleNameMap: Record<string, string> = {
   '/example/process.drawio': 'draw.io プロセス図',
   '/example/book.epub': 'EPUB 電子書籍',
   '/example/book.umd': 'UMD 電子書籍',
+  '/example/putty-0.85.chm': 'CHM（PuTTY 公式マニュアル）',
   '/example/en/archive.zip': '日本語 UI 用 ZIP サンプル',
   '/example/en/archive.tar.gz': 'TAR.GZ サンプル',
   '/example/encrypted.zip': '暗号化 ZIP（パスワード：flyfish）',

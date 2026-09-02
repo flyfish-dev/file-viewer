@@ -1,8 +1,4 @@
 ---
-
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
 description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, comparison, toolbar, and offline-asset behavior in the official demo."
 ---
 
@@ -11,7 +7,7 @@ description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, c
 <div class="doc-kicker">Real Samples, Real Renderers</div>
 
 <p class="doc-lead">
-  The official demo is the fastest way to verify the 244-extension, 34-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading. The 221 stable and 23 experimental mappings stay visibly distinguished.
+  The official demo is the fastest way to verify the 245-extension, 35-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading. The 222 stable and 23 experimental mappings stay visibly distinguished.
 </p>
 
 <div class="doc-shot">

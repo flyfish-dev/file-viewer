@@ -241,6 +241,7 @@
         "@file-viewer/renderer-hangul",
         "@file-viewer/renderer-typst",
         "@file-viewer/renderer-archive",
+        "@file-viewer/renderer-chm",
         "@file-viewer/renderer-email",
         "@file-viewer/renderer-eda",
         "@file-viewer/renderer-cad",
@@ -331,7 +332,7 @@
   "legacyFull": {
     "release": "2.4.0",
     "policy": "legacy-compatible-frozen",
-    "baselineSha256": "76e444bfe7ecb2b0689729934d40c7ed741ed4ceff5f7a85e055128709372904",
+    "baselineSha256": "af78c36eb867f798af34198d2da673eed9c3bc59d464b3bccb48f138e0e512e3",
     "excludedFutureCapabilities": [
       "dicom",
       "signature"
@@ -546,6 +547,62 @@
         "kind": "renderer-export",
         "import": "@file-viewer/renderer-cad",
         "export": "cadRenderer"
+      }
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
+      "id": "chm",
+      "packageName": "@file-viewer/renderer-chm",
+      "rendererIds": [
+        "chm"
+      ],
+      "formats": [
+        "chm"
+      ],
+      "assets": {
+        "rendererIds": [
+          "chm"
+        ],
+        "packageName": "@file-viewer/assets-chm",
+        "installerPackageName": "@file-viewer/assets-chm",
+        "bin": "file-viewer-assets-chm",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "chm"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-chm.receipt.json",
+        "notice": "Self-hosted CHM module Worker and Rust/WebAssembly parser runtime.",
+        "packageVersion": "3.0.0",
+        "installerPackageVersion": "3.0.0"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "permissive",
+        "notices": [
+          {
+            "packageName": "RustChm",
+            "spdx": "MIT",
+            "notice": "Permissively licensed CHM parser reference; exact source provenance is recorded in THIRD_PARTY_NOTICES.md and rust/NOTICE.md."
+          },
+          {
+            "packageName": "FastChm",
+            "spdx": "MIT",
+            "notice": "Permissively licensed CHM and LZX reference; exact source provenance is recorded in THIRD_PARTY_NOTICES.md and rust/NOTICE.md."
+          }
+        ]
+      },
+      "weight": "heavy",
+      "profiles": [
+        "all"
+      ],
+      "version": "3.0.0",
+      "activation": {
+        "kind": "renderer-export",
+        "import": "@file-viewer/renderer-chm",
+        "export": "chmRenderer"
       }
     },
     {

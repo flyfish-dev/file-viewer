@@ -45,6 +45,9 @@ jobs:
           rustup target add wasm32-unknown-unknown
           cargo install wasm-bindgen-cli --version 0.2.127 --locked
 
+      - name: Test the CHM Rust parser
+        run: cargo test --manifest-path packages/renderers/chm/rust/Cargo.toml --locked
+
       - name: Verify repository governance
         run: pnpm verify:github-governance
 
@@ -71,6 +74,11 @@ jobs:
 
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
+
+      - name: Verify the CHM Rust/WASM renderer in Chromium
+        run: pnpm verify:chm-renderer
+        env:
+          CHM_SMOKE_BROWSERS: chromium
 
       - name: Verify Vue 3 toolbar in Chromium
         run: pnpm verify:vue3-toolbar-browser

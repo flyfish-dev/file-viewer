@@ -619,6 +619,31 @@ export interface FileViewerArchiveOptions {
   ) => string | null | undefined | Promise<string | null | undefined>;
 }
 
+export interface FileViewerChmOptions {
+  /** Self-hosted module Worker that owns all untrusted CHM parsing and decompression. */
+  workerUrl?: string | URL;
+  /** Self-hosted wasm-bindgen JavaScript module loaded by the CHM Worker. */
+  wasmModuleUrl?: string | URL;
+  /** Self-hosted Rust WebAssembly binary loaded by the CHM Worker. */
+  wasmUrl?: string | URL;
+  /** Maximum time for an individual Worker request. Defaults to 60 seconds. */
+  workerTimeoutMs?: number;
+  /** Maximum accepted CHM input size. Defaults to 320 MiB. */
+  maxArchiveBytes?: number;
+  /** Maximum number of virtual files accepted from one CHM. Defaults to 50,000. */
+  maxEntries?: number;
+  /** Maximum uncompressed size of one virtual file. Defaults to 32 MiB. */
+  maxEntryBytes?: number;
+  /** Maximum total unique decoded content exposed by the parser. Defaults to 512 MiB. */
+  maxTotalDecompressedBytes?: number;
+  /** Maximum HTML topic size. Defaults to 16 MiB. */
+  maxHtmlBytes?: number;
+  /** Maximum topic count scanned by the built-in search. Defaults to 10,000. */
+  maxSearchTopics?: number;
+  /** Maximum built-in search result count. Defaults to 200. */
+  maxSearchResults?: number;
+}
+
 export type FileViewerArchivePasswordRequestReason =
   | 'encrypted'
   | 'invalid-password'
@@ -1344,6 +1369,7 @@ export interface FileViewerOptions {
    */
   initialViewState?: FileViewerViewState;
   archive?: FileViewerArchiveOptions;
+  chm?: FileViewerChmOptions;
   pdf?: FileViewerPdfOptions;
   docx?: FileViewerDocxOptions;
   presentation?: FileViewerPresentationOptions;
