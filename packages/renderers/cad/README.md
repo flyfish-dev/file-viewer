@@ -49,3 +49,17 @@ const options = {
 ## 迁移说明
 
 CAD 预览已经从 `@file-viewer/core` 中彻底移出，core 只保留资产 manifest、类型和兼容错误提示，不再默认安装 `@flyfish-dev/cad-viewer`。完整 CAD 能力请安装本包并传入 `renderers`，或直接使用 `@file-viewer/preset-all`。
+
+## 黑白出图模式
+
+    `cad.colorMode` 可设为 `source` 或 `monochrome`。黑白模式通过 CAD 引擎的实体颜色策略实现，不使用 CSS 滤镜，因此 Canvas、WebGL、文字覆盖层及原生 DWF 渲染可保持一致，同时保留透明度、线型、线宽和源文件数据。
+
+    ```ts
+    {
+      cad: {
+        colorMode: 'monochrome',
+        monochromeColor: '#000000',
+        showColorModeToggle: true,
+      },
+    }
+    ```

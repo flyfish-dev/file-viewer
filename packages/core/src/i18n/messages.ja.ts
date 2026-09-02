@@ -349,6 +349,8 @@ export const JA_JP_MESSAGES: Record<FileViewerMessageKey, string> = {
   'cad.toolbar.fit': '全体表示',
   'cad.toolbar.zoomOut': '縮小',
   'cad.toolbar.zoomIn': '拡大',
+  'cad.toolbar.colorSource': '元の色',
+  'cad.toolbar.monochrome': 'モノクロ',
   'cad.layers.title': 'レイヤー',
   'cad.layers.count': '{count} 件',
   'cad.layers.merged': '{name}（同名レイヤー {count} 件を統合）',

@@ -357,6 +357,8 @@ export type FileViewerMessageKey =
   | 'cad.toolbar.fit'
   | 'cad.toolbar.zoomOut'
   | 'cad.toolbar.zoomIn'
+  | 'cad.toolbar.colorSource'
+  | 'cad.toolbar.monochrome'
   | 'cad.layers.title'
   | 'cad.layers.count'
   | 'cad.layers.merged'
@@ -1108,6 +1110,7 @@ export interface FileViewerDrawingOptions {
 
 export type FileViewerCadRenderer = 'auto' | 'webgl' | 'canvas2d';
 export type FileViewerCadDwfLineWeightMode = 'adaptive' | 'physical' | 'hairline';
+export type FileViewerCadColorMode = 'source' | 'monochrome';
 export type FileViewerCadFitMode = 'best' | 'native';
 
 export interface FileViewerCadOptions {
@@ -1118,6 +1121,12 @@ export interface FileViewerCadOptions {
   useWorker?: boolean;
   workerTimeoutMs?: number;
   renderer?: FileViewerCadRenderer;
+  /** Initial CAD color policy. `monochrome` applies one plot color without mutating source data. */
+  colorMode?: FileViewerCadColorMode;
+  /** CSS color used by monochrome mode. Defaults to the CAD foreground color. */
+  monochromeColor?: string;
+  /** Shows the CAD toolbar color-mode toggle. Defaults to true. */
+  showColorModeToggle?: boolean;
   preferDwgWasm?: boolean;
   includePaperSpace?: boolean;
   maxInsertDepth?: number;

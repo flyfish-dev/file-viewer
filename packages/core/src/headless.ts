@@ -450,6 +450,7 @@ export type {
   FileViewerArchiveOptions,
   FileViewerApplyViewStateOptions,
   FileViewerBeforeOperation,
+  FileViewerCadColorMode,
   FileViewerCadDwfLineWeightMode,
   FileViewerCadOptions,
   FileViewerCadRenderer,

@@ -348,6 +348,8 @@ export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
   "cad.toolbar.fit": "Fit",
   "cad.toolbar.zoomOut": "Herauszoomen",
   "cad.toolbar.zoomIn": "Vergrößern",
+  "cad.toolbar.colorSource": "Originalfarben",
+  "cad.toolbar.monochrome": "Monochrom",
   "cad.layers.title": "Schichten",
   "cad.layers.count": "{count} Artikel",
   "cad.layers.merged": "{name} ({count} zusammengeführte Ebenen)",

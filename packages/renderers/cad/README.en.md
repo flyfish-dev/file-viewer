@@ -49,3 +49,17 @@ For private deployments, override them with `options.cad.wasmPath`, `options.cad
 ## Migration Note
 
 CAD preview has moved completely out of `@file-viewer/core`. Core now only keeps the asset manifest, shared types, and a compatibility error message, and it no longer installs `@flyfish-dev/cad-viewer` by default. Install this package and pass it through `renderers`, or use `@file-viewer/preset-all` for the complete CAD experience.
+
+## Monochrome plot mode
+
+    Set `cad.colorMode` to `source` or `monochrome`. Monochrome rendering uses the CAD engine's entity-color policy rather than a CSS filter, keeping Canvas, WebGL, text overlays and native DWF output consistent while preserving alpha, line types, line weights and source data.
+
+    ```ts
+    {
+      cad: {
+        colorMode: 'monochrome',
+        monochromeColor: '#000000',
+        showColorModeToggle: true,
+      },
+    }
+    ```
