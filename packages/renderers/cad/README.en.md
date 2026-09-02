@@ -52,14 +52,14 @@ CAD preview has moved completely out of `@file-viewer/core`. Core now only keeps
 
 ## Monochrome plot mode
 
-    Set `cad.colorMode` to `source` or `monochrome`. Monochrome rendering uses the CAD engine's entity-color policy rather than a CSS filter, keeping Canvas, WebGL, text overlays and native DWF output consistent while preserving alpha, line types, line weights and source data.
+Set `cad.colorMode` to `source` or `monochrome`. Monochrome rendering uses the CAD engine's entity-color policy rather than a CSS filter, keeping Canvas, WebGL, text overlays and native DWF output consistent while preserving alpha, line types, line weights and source data.
 
-    ```ts
-    {
-      cad: {
-        colorMode: 'monochrome',
-        monochromeColor: '#000000',
-        showColorModeToggle: true,
-      },
-    }
-    ```
+```ts
+{
+  cad: {
+    colorMode: 'monochrome',
+    monochromeColor: '#000000',
+    showColorModeToggle: true,
+  },
+}
+```
