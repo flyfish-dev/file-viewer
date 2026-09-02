@@ -1659,9 +1659,10 @@ spawn $env(FILE_VIEWER_TEST_NODE) $env(FILE_VIEWER_TEST_CLI) add $env(FILE_VIEWE
 expect {
   -re {Choose a number[^\\r\\n]*: $} { send "\\r"; exp_continue }
   -re {\\([^\\r\\n]*b=back[^\\r\\n]*\\): $} { send "\\r"; exp_continue }
+  -re {Enter=confirm: $} { send "\\r"; exp_continue }
   -re {\\(y/N\\) $} { send "\\r"; exp_continue }
   eof
-  timeout { exit 124 }
+  timeout { catch { exec kill [exp_pid] }; exit 124 }
 }
 catch wait result
 exit [lindex $result 3]
