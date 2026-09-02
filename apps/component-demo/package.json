@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "prepare-viewer": "node scripts/sync-viewer-assets.mjs",
-    "dev": "pnpm prepare-viewer && vite --host 127.0.0.1",
-    "build": "pnpm prepare-viewer && tsc -b tsconfig.json && vite build",
+    "dev": "pnpm --dir ../.. build:components && pnpm prepare-viewer && vite --host 127.0.0.1",
+    "build": "pnpm --dir ../.. build:components && pnpm prepare-viewer && tsc -b tsconfig.json && vite build && vite build --config vite.react-email.config.ts",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
@@ -28,13 +28,13 @@
     "react-dom": "^19.2.7",
     "react-dom17": "npm:react-dom@17.0.2",
     "react17": "npm:react@17.0.2",
-    "vue": "^3.5.35"
+    "vue": "^3.5.42"
   },
   "devDependencies": {
     "@types/jquery": "^4.0.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.2.2"
   }
 }

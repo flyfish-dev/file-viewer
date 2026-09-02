@@ -680,7 +680,7 @@
     },
     {
       "name": "dompurify",
-      "version": "3.4.13",
+      "version": "3.4.14",
       "license": "Apache-2.0",
       "declaredLicense": "(MPL-2.0 OR Apache-2.0)",
       "direct": false,
@@ -696,7 +696,7 @@
     },
     {
       "name": "electron-to-chromium",
-      "version": "1.5.413",
+      "version": "1.5.414",
       "license": "ISC",
       "direct": false,
       "optional": false,
@@ -976,7 +976,7 @@
     },
     {
       "name": "js-yaml",
-      "version": "4.3.2",
+      "version": "4.3.1",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -1088,7 +1088,7 @@
     },
     {
       "name": "pako",
-      "version": "1.0.5",
+      "version": "1.0.11",
       "license": "(MIT AND Zlib)",
       "direct": false,
       "optional": false,

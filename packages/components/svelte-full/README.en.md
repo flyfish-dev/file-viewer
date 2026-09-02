@@ -47,7 +47,7 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 ## Format Support Matrix
 
-The Full default registers 222 stable extensions across 33 preview pipelines: it retains the published v2.4 capabilities and adds browser-native CHM. The current catalog has 245 file extensions across 35 preview pipelines; experimental heavy formats such as DICOM and digital-signature containers still require explicit CLI selection.
+The legacy-compatible Full default registers 221 file extensions (221 stable and 0 experimental) across 32 preview pipelines, matching the published v2.4 capability contract. The current catalog has 265 file extensions and 44 preview pipelines; DICOM and other new heavy formats require explicit CLI selection and never expand an existing Full package automatically.
 
 | Preview pipeline | Category | Extensions | Level / status | Capabilities | Loading |
 | --- | --- | --- | --- | --- | --- |
@@ -86,7 +86,7 @@ The Full default registers 222 stable extensions across 33 preview pipelines: it
 
 ## Compatible Full Package Quick Start
 
-`@file-viewer/svelte-full` continues to include `@file-viewer/preset-all`, retains the published v2.4 capabilities, and adds CHM for a total of 222 stable extensions across 33 preview pipelines with the same asset-copy behavior. Existing iWork, CAD, 3D, EDA, Geo, Typst, Drawing, WordPerfect, Hangul, legacy PPT, RTF, Mermaid, HLS/MIDI, and advanced text support is not removed. Experimental heavy formats such as DICOM and digital-signature containers do not enter Full automatically.
+`@file-viewer/svelte-full` continues to include `@file-viewer/preset-all` and preserves the published v2.4 contract of 221 extensions, 32 preview pipelines, and the default asset-copy behavior. Existing iWork, CAD, 3D, EDA, Geo, Typst, Drawing, WordPerfect, Hangul, legacy PPT, RTF, Mermaid, HLS/MIDI, and advanced text support is not removed. DICOM and future heavy formats do not enter this historical Full closure automatically.
 
 The eight packages that retain this historical Full contract are: `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, `@file-viewer/svelte-full`. New projects that do not need the complete matrix should use `@file-viewer/cli` to select standard, lite, office, engineering, or custom capabilities. Existing Full users do not need to change their installation path.
 

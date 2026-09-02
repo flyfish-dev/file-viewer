@@ -83,7 +83,7 @@
     "@file-viewer/core": "workspace:3.0.0"
   },
   "devDependencies": {
-    "svelte": "^5.46.0",
+    "svelte": "^5.57.0",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

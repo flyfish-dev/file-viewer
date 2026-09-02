@@ -22,7 +22,7 @@ pnpm install
 | `pnpm build-only` | Build the main demo |
 | `pnpm docs:build` | Build documentation |
 | `pnpm site:build` | Build the official site |
-| `pnpm verify:format-support` | Verify 245 registered extensions (222 stable, 23 experimental) and 35 renderer pipelines stay documented |
+| `pnpm verify:format-support` | Verify 265 registered extensions (223 stable, 42 experimental) and 44 renderer pipelines stay documented |
 | `pnpm verify:renderer-assets` | Verify runtime assets are included in renderer packages and web builds |
 | `pnpm verify:browser-smoke` | Run demo and component browser smoke tests |
 

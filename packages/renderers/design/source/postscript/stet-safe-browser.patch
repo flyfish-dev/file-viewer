@@ -1,0 +1,576 @@
+diff --git a/crates/stet-ops/src/misc_ops.rs b/crates/stet-ops/src/misc_ops.rs
+index 06912fb..0d6a45e 100644
+--- a/crates/stet-ops/src/misc_ops.rs
++++ b/crates/stet-ops/src/misc_ops.rs
+@@ -466,8 +466,16 @@ pub fn op_loadbinaryfontfile(ctx: &mut Context) -> Result<(), PsError> {
+     ctx.o_stack.pop()?; // font name (unused — the font file declares its own name)
+ 
+     let path_str = String::from_utf8_lossy(&path_bytes);
+-    let path = std::path::Path::new(path_str.as_ref());
+-    let ok = stet_core::system_font_loader::load_binary_font(ctx, path);
++    // WASM resources live in FileStore's virtual filesystem rather than the
++    // host filesystem.  Prefer those bytes and construct the Type 42 font
++    // directly; native builds retain the existing on-disk fallback.
++    let embedded = ctx.files.get_embedded_file(path_str.as_ref());
++    let ok = if let Some(data) = embedded {
++        stet_core::system_font_loader::load_ttf_from_data(ctx, data)
++    } else {
++        let path = std::path::Path::new(path_str.as_ref());
++        stet_core::system_font_loader::load_binary_font(ctx, path)
++    };
+     ctx.o_stack.push(PsObject::bool(ok))?;
+     Ok(())
+ }
+diff --git a/crates/stet-pdf-reader/src/content/font.rs b/crates/stet-pdf-reader/src/content/font.rs
+index 3238fbd..68dbcb4 100644
+--- a/crates/stet-pdf-reader/src/content/font.rs
++++ b/crates/stet-pdf-reader/src/content/font.rs
+@@ -1706,135 +1706,10 @@ fn load_cjk_fallback_font(ordering: &[u8], base_font: &str) -> Result<Vec<u8>, P
+     )))
+ }
+ 
+-/// Embedded Type 1 substitute fonts (URW families).
+-/// Compiled into the binary so the PDF reader works from any directory.
+-const EMBEDDED_FONTS: &[(&str, &[u8])] = &[
+-    // NimbusRoman (Times)
+-    (
+-        "NimbusRoman-Regular",
+-        include_bytes!("../../fonts/NimbusRoman-Regular.t1"),
+-    ),
+-    (
+-        "NimbusRoman-Bold",
+-        include_bytes!("../../fonts/NimbusRoman-Bold.t1"),
+-    ),
+-    (
+-        "NimbusRoman-Italic",
+-        include_bytes!("../../fonts/NimbusRoman-Italic.t1"),
+-    ),
+-    (
+-        "NimbusRoman-BoldItalic",
+-        include_bytes!("../../fonts/NimbusRoman-BoldItalic.t1"),
+-    ),
+-    // NimbusSans (Helvetica/Arial)
+-    (
+-        "NimbusSans-Regular",
+-        include_bytes!("../../fonts/NimbusSans-Regular.t1"),
+-    ),
+-    (
+-        "NimbusSans-Bold",
+-        include_bytes!("../../fonts/NimbusSans-Bold.t1"),
+-    ),
+-    (
+-        "NimbusSans-Italic",
+-        include_bytes!("../../fonts/NimbusSans-Italic.t1"),
+-    ),
+-    (
+-        "NimbusSans-BoldItalic",
+-        include_bytes!("../../fonts/NimbusSans-BoldItalic.t1"),
+-    ),
+-    // NimbusSansNarrow (Helvetica Narrow)
+-    (
+-        "NimbusSansNarrow-Regular",
+-        include_bytes!("../../fonts/NimbusSansNarrow-Regular.t1"),
+-    ),
+-    (
+-        "NimbusSansNarrow-Bold",
+-        include_bytes!("../../fonts/NimbusSansNarrow-Bold.t1"),
+-    ),
+-    (
+-        "NimbusSansNarrow-Oblique",
+-        include_bytes!("../../fonts/NimbusSansNarrow-Oblique.t1"),
+-    ),
+-    (
+-        "NimbusSansNarrow-BoldOblique",
+-        include_bytes!("../../fonts/NimbusSansNarrow-BoldOblique.t1"),
+-    ),
+-    // NimbusMonoPS (Courier)
+-    (
+-        "NimbusMonoPS-Regular",
+-        include_bytes!("../../fonts/NimbusMonoPS-Regular.t1"),
+-    ),
+-    (
+-        "NimbusMonoPS-Bold",
+-        include_bytes!("../../fonts/NimbusMonoPS-Bold.t1"),
+-    ),
+-    (
+-        "NimbusMonoPS-Italic",
+-        include_bytes!("../../fonts/NimbusMonoPS-Italic.t1"),
+-    ),
+-    (
+-        "NimbusMonoPS-BoldItalic",
+-        include_bytes!("../../fonts/NimbusMonoPS-BoldItalic.t1"),
+-    ),
+-    // P052 (Palatino)
+-    ("P052-Roman", include_bytes!("../../fonts/P052-Roman.t1")),
+-    ("P052-Bold", include_bytes!("../../fonts/P052-Bold.t1")),
+-    ("P052-Italic", include_bytes!("../../fonts/P052-Italic.t1")),
+-    (
+-        "P052-BoldItalic",
+-        include_bytes!("../../fonts/P052-BoldItalic.t1"),
+-    ),
+-    // C059 (New Century Schoolbook)
+-    ("C059-Roman", include_bytes!("../../fonts/C059-Roman.t1")),
+-    ("C059-Bold", include_bytes!("../../fonts/C059-Bold.t1")),
+-    ("C059-Italic", include_bytes!("../../fonts/C059-Italic.t1")),
+-    ("C059-BdIta", include_bytes!("../../fonts/C059-BdIta.t1")),
+-    // URWBookman (Bookman)
+-    (
+-        "URWBookman-Light",
+-        include_bytes!("../../fonts/URWBookman-Light.t1"),
+-    ),
+-    (
+-        "URWBookman-Demi",
+-        include_bytes!("../../fonts/URWBookman-Demi.t1"),
+-    ),
+-    (
+-        "URWBookman-LightItalic",
+-        include_bytes!("../../fonts/URWBookman-LightItalic.t1"),
+-    ),
+-    (
+-        "URWBookman-DemiItalic",
+-        include_bytes!("../../fonts/URWBookman-DemiItalic.t1"),
+-    ),
+-    // URWGothic (AvantGarde)
+-    (
+-        "URWGothic-Book",
+-        include_bytes!("../../fonts/URWGothic-Book.t1"),
+-    ),
+-    (
+-        "URWGothic-Demi",
+-        include_bytes!("../../fonts/URWGothic-Demi.t1"),
+-    ),
+-    (
+-        "URWGothic-BookOblique",
+-        include_bytes!("../../fonts/URWGothic-BookOblique.t1"),
+-    ),
+-    (
+-        "URWGothic-DemiOblique",
+-        include_bytes!("../../fonts/URWGothic-DemiOblique.t1"),
+-    ),
+-    // Symbol fonts
+-    (
+-        "StandardSymbolsPS",
+-        include_bytes!("../../fonts/StandardSymbolsPS.t1"),
+-    ),
+-    ("D050000L", include_bytes!("../../fonts/D050000L.t1")),
+-    (
+-        "Z003-MediumItalic",
+-        include_bytes!("../../fonts/Z003-MediumItalic.t1"),
+-    ),
+-];
++/// This browser build does not embed the upstream URW Type 1 substitutes.
++/// PostScript uses the OFL resources registered by `stet-wasm`; PDF files with
++/// unembedded fonts must provide an explicitly licensed font provider.
++const EMBEDDED_FONTS: &[(&str, &[u8])] = &[];
+ 
+ /// Look up an embedded Type 1 substitute font by name.
+ fn embedded_font(name: &str) -> Option<Vec<u8>> {
+diff --git a/crates/stet-wasm/src/embedded_resources.rs b/crates/stet-wasm/src/embedded_resources.rs
+index 4870a5c..c6a9e99 100644
+--- a/crates/stet-wasm/src/embedded_resources.rs
++++ b/crates/stet-wasm/src/embedded_resources.rs
+@@ -37,59 +37,26 @@ const FONT_SET_INIT_PS: &[u8] = include_bytes!("../../stet/resources/ProcSet/Fon
+ const IDENTITY_H_PS: &[u8] = include_bytes!("../../stet/resources/CMap/Identity-H.ps");
+ const IDENTITY_V_PS: &[u8] = include_bytes!("../../stet/resources/CMap/Identity-V.ps");
+ 
+-// Fonts — Core 13 families (17 font files covering the standard PostScript fonts)
+-const NIMBUS_ROMAN_REGULAR: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusRoman-Regular.t1");
+-const NIMBUS_ROMAN_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/NimbusRoman-Bold.t1");
+-const NIMBUS_ROMAN_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/NimbusRoman-Italic.t1");
+-const NIMBUS_ROMAN_BOLD_ITALIC: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusRoman-BoldItalic.t1");
+-const NIMBUS_SANS_REGULAR: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusSans-Regular.t1");
+-const NIMBUS_SANS_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/NimbusSans-Bold.t1");
+-const NIMBUS_SANS_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/NimbusSans-Italic.t1");
+-const NIMBUS_SANS_BOLD_ITALIC: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusSans-BoldItalic.t1");
+-const NIMBUS_MONO_REGULAR: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusMonoPS-Regular.t1");
+-const NIMBUS_MONO_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/NimbusMonoPS-Bold.t1");
+-const NIMBUS_MONO_ITALIC: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusMonoPS-Italic.t1");
+-const NIMBUS_MONO_BOLD_ITALIC: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusMonoPS-BoldItalic.t1");
+-const STANDARD_SYMBOLS: &[u8] = include_bytes!("../../stet/resources/Font/StandardSymbolsPS.t1");
+-const DINGBATS: &[u8] = include_bytes!("../../stet/resources/Font/D050000L.t1");
+-const NIMBUS_SANS_NARROW_REGULAR: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusSansNarrow-Regular.t1");
+-const NIMBUS_SANS_NARROW_BOLD: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusSansNarrow-Bold.t1");
+-const NIMBUS_SANS_NARROW_OBLIQUE: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusSansNarrow-Oblique.t1");
+-const NIMBUS_SANS_NARROW_BOLD_OBLIQUE: &[u8] =
+-    include_bytes!("../../stet/resources/Font/NimbusSansNarrow-BoldOblique.t1");
+-
+-// Extended fonts
+-const P052_ROMAN: &[u8] = include_bytes!("../../stet/resources/Font/P052-Roman.t1");
+-const P052_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/P052-Bold.t1");
+-const P052_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/P052-Italic.t1");
+-const P052_BOLD_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/P052-BoldItalic.t1");
+-const C059_ROMAN: &[u8] = include_bytes!("../../stet/resources/Font/C059-Roman.t1");
+-const C059_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/C059-Bold.t1");
+-const C059_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/C059-Italic.t1");
+-const C059_BD_ITA: &[u8] = include_bytes!("../../stet/resources/Font/C059-BdIta.t1");
+-const URW_BOOKMAN_LIGHT: &[u8] = include_bytes!("../../stet/resources/Font/URWBookman-Light.t1");
+-const URW_BOOKMAN_DEMI: &[u8] = include_bytes!("../../stet/resources/Font/URWBookman-Demi.t1");
+-const URW_BOOKMAN_LIGHT_ITALIC: &[u8] =
+-    include_bytes!("../../stet/resources/Font/URWBookman-LightItalic.t1");
+-const URW_BOOKMAN_DEMI_ITALIC: &[u8] =
+-    include_bytes!("../../stet/resources/Font/URWBookman-DemiItalic.t1");
+-const URW_GOTHIC_BOOK: &[u8] = include_bytes!("../../stet/resources/Font/URWGothic-Book.t1");
+-const URW_GOTHIC_DEMI: &[u8] = include_bytes!("../../stet/resources/Font/URWGothic-Demi.t1");
+-const URW_GOTHIC_BOOK_OBLIQUE: &[u8] =
+-    include_bytes!("../../stet/resources/Font/URWGothic-BookOblique.t1");
+-const URW_GOTHIC_DEMI_OBLIQUE: &[u8] =
+-    include_bytes!("../../stet/resources/Font/URWGothic-DemiOblique.t1");
+-const Z003_MEDIUM_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/Z003-MediumItalic.t1");
++// Fonts — licence-safe browser build.  These files are distributed under the
++// SIL Open Font License 1.1 and intentionally replace the upstream URW Base35
++// resources, whose distribution terms are not accepted by this build.
++const CARLITO_REGULAR: &[u8] = include_bytes!("../../stet/resources/Font/Carlito-Regular.ttf");
++const CARLITO_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/Carlito-Bold.ttf");
++const CARLITO_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/Carlito-Italic.ttf");
++const CARLITO_BOLD_ITALIC: &[u8] =
++    include_bytes!("../../stet/resources/Font/Carlito-BoldItalic.ttf");
++const TINOS_REGULAR: &[u8] = include_bytes!("../../stet/resources/Font/Tinos-Regular.ttf");
++const TINOS_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/Tinos-Bold.ttf");
++const TINOS_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/Tinos-Italic.ttf");
++const TINOS_BOLD_ITALIC: &[u8] =
++    include_bytes!("../../stet/resources/Font/Tinos-BoldItalic.ttf");
++const COUSINE_REGULAR: &[u8] = include_bytes!("../../stet/resources/Font/Cousine-Regular.ttf");
++const COUSINE_BOLD: &[u8] = include_bytes!("../../stet/resources/Font/Cousine-Bold.ttf");
++const COUSINE_ITALIC: &[u8] = include_bytes!("../../stet/resources/Font/Cousine-Italic.ttf");
++const COUSINE_BOLD_ITALIC: &[u8] =
++    include_bytes!("../../stet/resources/Font/Cousine-BoldItalic.ttf");
++const NOTO_SANS_SYMBOLS_2: &[u8] =
++    include_bytes!("../../stet/resources/Font/NotoSansSymbols2-Regular.ttf");
+ 
+ /// Register all embedded resource files into the FileStore's virtual filesystem.
+ ///
+@@ -114,64 +81,20 @@ pub fn register_embedded_resources(files: &mut FileStore) {
+         // CMap
+         ("CMap/Identity-H.ps", IDENTITY_H_PS),
+         ("CMap/Identity-V.ps", IDENTITY_V_PS),
+-        // Core fonts
+-        ("Font/NimbusRoman-Regular.t1", NIMBUS_ROMAN_REGULAR),
+-        ("Font/NimbusRoman-Bold.t1", NIMBUS_ROMAN_BOLD),
+-        ("Font/NimbusRoman-Italic.t1", NIMBUS_ROMAN_ITALIC),
+-        ("Font/NimbusRoman-BoldItalic.t1", NIMBUS_ROMAN_BOLD_ITALIC),
+-        ("Font/NimbusSans-Regular.t1", NIMBUS_SANS_REGULAR),
+-        ("Font/NimbusSans-Bold.t1", NIMBUS_SANS_BOLD),
+-        ("Font/NimbusSans-Italic.t1", NIMBUS_SANS_ITALIC),
+-        ("Font/NimbusSans-BoldItalic.t1", NIMBUS_SANS_BOLD_ITALIC),
+-        ("Font/NimbusMonoPS-Regular.t1", NIMBUS_MONO_REGULAR),
+-        ("Font/NimbusMonoPS-Bold.t1", NIMBUS_MONO_BOLD),
+-        ("Font/NimbusMonoPS-Italic.t1", NIMBUS_MONO_ITALIC),
+-        (
+-            "Font/NimbusMonoPS-BoldItalic.t1",
+-            NIMBUS_MONO_BOLD_ITALIC,
+-        ),
+-        ("Font/StandardSymbolsPS.t1", STANDARD_SYMBOLS),
+-        ("Font/D050000L.t1", DINGBATS),
+-        (
+-            "Font/NimbusSansNarrow-Regular.t1",
+-            NIMBUS_SANS_NARROW_REGULAR,
+-        ),
+-        (
+-            "Font/NimbusSansNarrow-Bold.t1",
+-            NIMBUS_SANS_NARROW_BOLD,
+-        ),
+-        (
+-            "Font/NimbusSansNarrow-Oblique.t1",
+-            NIMBUS_SANS_NARROW_OBLIQUE,
+-        ),
+-        (
+-            "Font/NimbusSansNarrow-BoldOblique.t1",
+-            NIMBUS_SANS_NARROW_BOLD_OBLIQUE,
+-        ),
+-        // Extended fonts
+-        ("Font/P052-Roman.t1", P052_ROMAN),
+-        ("Font/P052-Bold.t1", P052_BOLD),
+-        ("Font/P052-Italic.t1", P052_ITALIC),
+-        ("Font/P052-BoldItalic.t1", P052_BOLD_ITALIC),
+-        ("Font/C059-Roman.t1", C059_ROMAN),
+-        ("Font/C059-Bold.t1", C059_BOLD),
+-        ("Font/C059-Italic.t1", C059_ITALIC),
+-        ("Font/C059-BdIta.t1", C059_BD_ITA),
+-        ("Font/URWBookman-Light.t1", URW_BOOKMAN_LIGHT),
+-        ("Font/URWBookman-Demi.t1", URW_BOOKMAN_DEMI),
+-        ("Font/URWBookman-LightItalic.t1", URW_BOOKMAN_LIGHT_ITALIC),
+-        ("Font/URWBookman-DemiItalic.t1", URW_BOOKMAN_DEMI_ITALIC),
+-        ("Font/URWGothic-Book.t1", URW_GOTHIC_BOOK),
+-        ("Font/URWGothic-Demi.t1", URW_GOTHIC_DEMI),
+-        (
+-            "Font/URWGothic-BookOblique.t1",
+-            URW_GOTHIC_BOOK_OBLIQUE,
+-        ),
+-        (
+-            "Font/URWGothic-DemiOblique.t1",
+-            URW_GOTHIC_DEMI_OBLIQUE,
+-        ),
+-        ("Font/Z003-MediumItalic.t1", Z003_MEDIUM_ITALIC),
++        // OFL fonts
++        ("Font/Carlito-Regular.ttf", CARLITO_REGULAR),
++        ("Font/Carlito-Bold.ttf", CARLITO_BOLD),
++        ("Font/Carlito-Italic.ttf", CARLITO_ITALIC),
++        ("Font/Carlito-BoldItalic.ttf", CARLITO_BOLD_ITALIC),
++        ("Font/Tinos-Regular.ttf", TINOS_REGULAR),
++        ("Font/Tinos-Bold.ttf", TINOS_BOLD),
++        ("Font/Tinos-Italic.ttf", TINOS_ITALIC),
++        ("Font/Tinos-BoldItalic.ttf", TINOS_BOLD_ITALIC),
++        ("Font/Cousine-Regular.ttf", COUSINE_REGULAR),
++        ("Font/Cousine-Bold.ttf", COUSINE_BOLD),
++        ("Font/Cousine-Italic.ttf", COUSINE_ITALIC),
++        ("Font/Cousine-BoldItalic.ttf", COUSINE_BOLD_ITALIC),
++        ("Font/NotoSansSymbols2-Regular.ttf", NOTO_SANS_SYMBOLS_2),
+     ];
+ 
+     for &(path, data) in entries {
+@@ -184,44 +107,22 @@ pub fn register_embedded_resources(files: &mut FileStore) {
+ 
+ /// Build a font provider for the PDF reader from embedded font data.
+ ///
+-/// Maps URW font file names (e.g. "NimbusSans-Regular") to raw .t1 bytes.
++/// Maps the licence-safe substitute font names to their raw OpenType bytes.
+ pub fn build_font_provider() -> FontProvider {
+     let font_entries: &[(&str, &[u8])] = &[
+-        ("NimbusRoman-Regular", NIMBUS_ROMAN_REGULAR),
+-        ("NimbusRoman-Bold", NIMBUS_ROMAN_BOLD),
+-        ("NimbusRoman-Italic", NIMBUS_ROMAN_ITALIC),
+-        ("NimbusRoman-BoldItalic", NIMBUS_ROMAN_BOLD_ITALIC),
+-        ("NimbusSans-Regular", NIMBUS_SANS_REGULAR),
+-        ("NimbusSans-Bold", NIMBUS_SANS_BOLD),
+-        ("NimbusSans-Italic", NIMBUS_SANS_ITALIC),
+-        ("NimbusSans-BoldItalic", NIMBUS_SANS_BOLD_ITALIC),
+-        ("NimbusMonoPS-Regular", NIMBUS_MONO_REGULAR),
+-        ("NimbusMonoPS-Bold", NIMBUS_MONO_BOLD),
+-        ("NimbusMonoPS-Italic", NIMBUS_MONO_ITALIC),
+-        ("NimbusMonoPS-BoldItalic", NIMBUS_MONO_BOLD_ITALIC),
+-        ("StandardSymbolsPS", STANDARD_SYMBOLS),
+-        ("D050000L", DINGBATS),
+-        ("NimbusSansNarrow-Regular", NIMBUS_SANS_NARROW_REGULAR),
+-        ("NimbusSansNarrow-Bold", NIMBUS_SANS_NARROW_BOLD),
+-        ("NimbusSansNarrow-Oblique", NIMBUS_SANS_NARROW_OBLIQUE),
+-        ("NimbusSansNarrow-BoldOblique", NIMBUS_SANS_NARROW_BOLD_OBLIQUE),
+-        ("P052-Roman", P052_ROMAN),
+-        ("P052-Bold", P052_BOLD),
+-        ("P052-Italic", P052_ITALIC),
+-        ("P052-BoldItalic", P052_BOLD_ITALIC),
+-        ("C059-Roman", C059_ROMAN),
+-        ("C059-Bold", C059_BOLD),
+-        ("C059-Italic", C059_ITALIC),
+-        ("C059-BdIta", C059_BD_ITA),
+-        ("URWBookman-Light", URW_BOOKMAN_LIGHT),
+-        ("URWBookman-Demi", URW_BOOKMAN_DEMI),
+-        ("URWBookman-LightItalic", URW_BOOKMAN_LIGHT_ITALIC),
+-        ("URWBookman-DemiItalic", URW_BOOKMAN_DEMI_ITALIC),
+-        ("URWGothic-Book", URW_GOTHIC_BOOK),
+-        ("URWGothic-Demi", URW_GOTHIC_DEMI),
+-        ("URWGothic-BookOblique", URW_GOTHIC_BOOK_OBLIQUE),
+-        ("URWGothic-DemiOblique", URW_GOTHIC_DEMI_OBLIQUE),
+-        ("Z003-MediumItalic", Z003_MEDIUM_ITALIC),
++        ("Carlito-Regular", CARLITO_REGULAR),
++        ("Carlito-Bold", CARLITO_BOLD),
++        ("Carlito-Italic", CARLITO_ITALIC),
++        ("Carlito-BoldItalic", CARLITO_BOLD_ITALIC),
++        ("Tinos-Regular", TINOS_REGULAR),
++        ("Tinos-Bold", TINOS_BOLD),
++        ("Tinos-Italic", TINOS_ITALIC),
++        ("Tinos-BoldItalic", TINOS_BOLD_ITALIC),
++        ("Cousine-Regular", COUSINE_REGULAR),
++        ("Cousine-Bold", COUSINE_BOLD),
++        ("Cousine-Italic", COUSINE_ITALIC),
++        ("Cousine-BoldItalic", COUSINE_BOLD_ITALIC),
++        ("NotoSansSymbols2-Regular", NOTO_SANS_SYMBOLS_2),
+     ];
+     let map: HashMap<String, &'static [u8]> = font_entries
+         .iter()
+diff --git a/crates/stet-wasm/src/lib.rs b/crates/stet-wasm/src/lib.rs
+index 1df3255..f7e952b 100644
+--- a/crates/stet-wasm/src/lib.rs
++++ b/crates/stet-wasm/src/lib.rs
+@@ -27,8 +27,10 @@ use stet_render::{ImageCache, PreparedDisplayList, SkiaDevice};
+ 
+ use memory_sink::{NullSinkFactory, PageData, set_sink_callback};
+ 
+-/// Embedded GhostScript default CMYK ICC profile for CMYK→sRGB conversion.
+-const DEFAULT_CMYK_ICC: &[u8] = include_bytes!("default_cmyk.icc");
++/// No default CMYK ICC profile is embedded in the licence-safe browser build.
++/// DeviceCMYK content therefore uses stet's documented PLRM formula fallback;
++/// an embedded document OutputIntent can still be used by the PDF path.
++const DEFAULT_CMYK_ICC: &[u8] = &[];
+ 
+ /// Page metadata stored alongside display lists for viewport rendering.
+ struct PageInfo {
+@@ -115,6 +117,10 @@ pub struct Page {
+     rgba: Vec<u8>,
+ }
+ 
++const DEFAULT_BROWSER_VM_LIMIT: usize = 256 * 1024 * 1024;
++const MIN_BROWSER_VM_LIMIT: usize = 16 * 1024 * 1024;
++const MAX_BROWSER_VM_LIMIT: usize = 512 * 1024 * 1024;
++
+ #[wasm_bindgen]
+ impl Page {
+     /// Page width in pixels.
+@@ -166,6 +172,7 @@ pub fn create_interpreter() -> Interpreter {
+ 
+     log("stet: creating context...");
+     let mut ctx = Context::new();
++    ctx.max_local_vm = DEFAULT_BROWSER_VM_LIMIT;
+ 
+     log("stet: wiring exec_sync...");
+     ctx.exec_sync_fn = Some(stet_engine::eval::exec_sync);
+@@ -180,8 +187,7 @@ pub fn create_interpreter() -> Interpreter {
+     ctx.font_resource_path = Some("Font".to_string());
+     ctx.stdout = Box::new(NullWriter);
+ 
+-    log("stet: loading embedded CMYK ICC profile...");
+-    ctx.icc_cache.load_cmyk_profile_bytes(DEFAULT_CMYK_ICC);
++    log("stet: using PLRM DeviceCMYK fallback (no bundled ICC profile)...");
+     let cmyk_bytes: Arc<Vec<u8>> = Arc::new(DEFAULT_CMYK_ICC.to_vec());
+ 
+     let cmyk_for_factory = cmyk_bytes.clone();
+@@ -212,6 +218,18 @@ pub fn create_interpreter() -> Interpreter {
+     }
+ }
+ 
++/// Apply browser safety limits before interpreting an untrusted program.
++///
++/// The VM cap counts both local and global PostScript allocations. The owning
++/// browser Worker remains the hard wall-clock boundary: `std::time::Instant`
++/// is unavailable on `wasm32-unknown-unknown`, so the UI client terminates the
++/// Worker when its budget expires.
++#[wasm_bindgen]
++pub fn configure_limits(interp: &mut Interpreter, max_vm_bytes: u32) {
++    interp.ctx.max_local_vm = (max_vm_bytes as usize)
++        .clamp(MIN_BROWSER_VM_LIMIT, MAX_BROWSER_VM_LIMIT);
++}
++
+ /// Register a JS callback for streaming render events.
+ ///
+ /// The callback receives (event, arg1, arg2, arg3, data):
+diff --git a/crates/stet/resources/Init/fontmapping.ps b/crates/stet/resources/Init/fontmapping.ps
+index b7d8583..e6d2456 100644
+--- a/crates/stet/resources/Init/fontmapping.ps
++++ b/crates/stet/resources/Init/fontmapping.ps
+@@ -1,62 +1,65 @@
+ %!PS-Adobe-3.0
+-%%Title: Adobe Standard Font Substitution Mappings
++%%Title: Adobe Standard Font Substitution Mappings (OFL-only build)
+ %%Creator: stet Font System
+ %%EndComments
+ 
+ currentglobal true setglobal
+ 
+-% Adobe Standard Font -> URW Font Substitution Mappings
++% Adobe Standard Font -> SIL OFL substitute mappings.
++% This build deliberately excludes the upstream URW Base35 files.  Carlito,
++% Tinos and Cousine cover the standard sans/serif/mono families while
++% NotoSansSymbols2 provides a bounded symbol fallback.
+ /FontSubstitutions <<
+-    % Times family (Serif) -> Nimbus Roman
+-    /Times-Roman /NimbusRoman-Regular
+-    /Times-Bold /NimbusRoman-Bold
+-    /Times-Italic /NimbusRoman-Italic
+-    /Times-BoldItalic /NimbusRoman-BoldItalic
+-    
+-    % Helvetica family (Sans-serif) -> Nimbus Sans
+-    /Helvetica /NimbusSans-Regular
+-    /Helvetica-Bold /NimbusSans-Bold
+-    /Helvetica-Oblique /NimbusSans-Italic
+-    /Helvetica-BoldOblique /NimbusSans-BoldItalic
+-    
+-    % Helvetica Narrow -> Nimbus Sans Narrow
+-    /Helvetica-Narrow /NimbusSansNarrow-Regular
+-    /Helvetica-Narrow-Bold /NimbusSansNarrow-Bold
+-    /Helvetica-Narrow-Oblique /NimbusSansNarrow-Oblique
+-    /Helvetica-Narrow-BoldOblique /NimbusSansNarrow-BoldOblique
+-    
+-    % Courier family (Monospace) -> Nimbus Mono PS
+-    /Courier /NimbusMonoPS-Regular
+-    /Courier-Bold /NimbusMonoPS-Bold
+-    /Courier-Oblique /NimbusMonoPS-Italic
+-    /Courier-BoldOblique /NimbusMonoPS-BoldItalic
++    % Times family (Serif) -> Tinos
++    /Times-Roman /Tinos-Regular
++    /Times-Bold /Tinos-Bold
++    /Times-Italic /Tinos-Italic
++    /Times-BoldItalic /Tinos-BoldItalic
++    
++    % Helvetica family (Sans-serif) -> Carlito
++    /Helvetica /Carlito-Regular
++    /Helvetica-Bold /Carlito-Bold
++    /Helvetica-Oblique /Carlito-Italic
++    /Helvetica-BoldOblique /Carlito-BoldItalic
++    
++    % No narrow face is bundled; use the closest available sans face.
++    /Helvetica-Narrow /Carlito-Regular
++    /Helvetica-Narrow-Bold /Carlito-Bold
++    /Helvetica-Narrow-Oblique /Carlito-Italic
++    /Helvetica-Narrow-BoldOblique /Carlito-BoldItalic
++    
++    % Courier family (Monospace) -> Cousine
++    /Courier /Cousine-Regular
++    /Courier-Bold /Cousine-Bold
++    /Courier-Oblique /Cousine-Italic
++    /Courier-BoldOblique /Cousine-BoldItalic
+     
+     % Symbol fonts
+-    /Symbol /StandardSymbolsPS
+-    /ZapfDingbats /D050000L
+-    
+-    % Additional Adobe Standard fonts -> URW equivalents
+-    /Palatino-Roman /P052-Roman
+-    /Palatino-Bold /P052-Bold
+-    /Palatino-Italic /P052-Italic
+-    /Palatino-BoldItalic /P052-BoldItalic
+-    
+-    /NewCenturySchlbk-Roman /C059-Roman
+-    /NewCenturySchlbk-Bold /C059-Bold
+-    /NewCenturySchlbk-Italic /C059-Italic
+-    /NewCenturySchlbk-BoldItalic /C059-BdIta
+-    
+-    /Bookman-Light /URWBookman-Light
+-    /Bookman-LightItalic /URWBookman-LightItalic
+-    /Bookman-Demi /URWBookman-Demi
+-    /Bookman-DemiItalic /URWBookman-DemiItalic
+-    
+-    /AvantGarde-Book /URWGothic-Book
+-    /AvantGarde-BookOblique /URWGothic-BookOblique
+-    /AvantGarde-Demi /URWGothic-Demi
+-    /AvantGarde-DemiOblique /URWGothic-DemiOblique
+-    
+-    /ZapfChancery-MediumItalic /Z003-MediumItalic
++    /Symbol /NotoSansSymbols2-Regular
++    /ZapfDingbats /NotoSansSymbols2-Regular
++    
++    % Additional Adobe Standard fonts -> the closest OFL family.
++    /Palatino-Roman /Tinos-Regular
++    /Palatino-Bold /Tinos-Bold
++    /Palatino-Italic /Tinos-Italic
++    /Palatino-BoldItalic /Tinos-BoldItalic
++    
++    /NewCenturySchlbk-Roman /Tinos-Regular
++    /NewCenturySchlbk-Bold /Tinos-Bold
++    /NewCenturySchlbk-Italic /Tinos-Italic
++    /NewCenturySchlbk-BoldItalic /Tinos-BoldItalic
++    
++    /Bookman-Light /Tinos-Regular
++    /Bookman-LightItalic /Tinos-Italic
++    /Bookman-Demi /Tinos-Bold
++    /Bookman-DemiItalic /Tinos-BoldItalic
++    
++    /AvantGarde-Book /Carlito-Regular
++    /AvantGarde-BookOblique /Carlito-Italic
++    /AvantGarde-Demi /Carlito-Bold
++    /AvantGarde-DemiOblique /Carlito-BoldItalic
++    
++    /ZapfChancery-MediumItalic /Tinos-Italic
+ >> def
+ 
+-setglobal
+\ No newline at end of file
++setglobal

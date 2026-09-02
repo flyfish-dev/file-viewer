@@ -3,13 +3,13 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  The canonical catalog registers 245 file extensions across 35 preview pipelines: 222 stable and 23 experimental.
+  The canonical catalog registers 265 file extensions across 44 preview pipelines: 223 stable and 42 experimental.
   Renderers are loaded on demand, so opening a lightweight text file does not force the browser to load every heavy document engine.
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="File Viewer by Flyfish v2.3.0 English format sample library with grouped filenames and format-specific icons" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">The demo groups representative samples for all 35 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence. Experimental rows keep their limits visible.</p>
+  <p class="doc-caption">The demo groups representative samples for all 44 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence. Experimental rows keep their limits visible.</p>
 </div>
 
 ## Main Preview Pipelines
@@ -29,7 +29,8 @@
 | CAD and engineering | `dwg`, `dxf`, `dwf`, `dwfx`, `xps`, plus EDA files such as `gds`, `oas`, `oasis`, `olb`, `dra` |
 | 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `ifc`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp` |
 | Text, code, and data | Markdown, source code, logs, JSON, YAML, TOML, SQL, IPYNB, SQLite, WASM, Parquet, Avro |
-| Media and assets | Images, SVG, HEIC, audio, video, HLS, fonts, PSD-style design assets |
+| Adobe design files (explicit opt-in) | `psd`, `psb`, `pdd`, `psdt`, `ai`, `ait`, `eps`, `ps`, `idml`, `icml`, `idms`, `inx`, `xd`, `indd`, `indt`, `fla`, `xfl`, `ase`, `aco`, `abr`, `csh`, `pat`, `grd`, `asl` through `@file-viewer/renderer-design` |
+| Media and assets | Images, SVG, HEIC, audio, video, HLS, and fonts |
 
 ## Office and Apple evidence boundary
 
@@ -44,6 +45,7 @@ The full machine-readable matrix, including containers, levels, status, and limi
 
 ## Engineering Renderer Notes
 
+- Adobe creative files use the explicit `@file-viewer/renderer-design` package. Local module Workers and WASM keep parsing off the main thread and make the path fully self-hostable. Fidelity follows the evidence available in each format: saved PSD/PSB composites and supported layer pixels; a verified PDF-compatible Illustrator surface by default; native AI/AIT PGF/private-source artboards, layers, paths, and bounded Canvas rendering through `illustrator-pgf`; IDML pages; structured InDesign exchange/modern XFL; embedded XD/INDD previews; deterministic resource previews; and experimental PostScript output. Unknown native Illustrator operators remain visible in fidelity diagnostics instead of being discarded, and unsupported gradients, complex text, images, plugins, effects, masks, blending, overprint, and color-management semantics are not claimed as complete reconstruction.
 - Word preview uses `@file-viewer/renderer-word`. The package lazy-loads the self-maintained DOCX engine, `msdoc-viewer`, and RTF/OpenDocument helpers only for DOCX/DOC/RTF/ODT files, so core-only and lightweight component installs do not pull Word engines by default.
 - Spreadsheet preview uses `@file-viewer/renderer-spreadsheet` with `styled-exceljs` and `e-virt-table`. It preserves Office 365 and WPS in-cell images alongside workbook drawing images; double-clicking a rendered image opens a full-size preview that can be dismissed with Escape, the backdrop, or the close button.
 - Presentation preview uses `@file-viewer/renderer-presentation` with two isolated engines. Binary PowerPoint 97–2003 `.ppt` lazy-loads the packaged `@file-viewer/ppt@0.3.3` Worker/OffscreenCanvas/WASM engine and bounded frame cache; OpenXML files lazy-load `@file-viewer/pptx` and its separate Worker. Standard Demo, Vite/full, copy-assets, and CDN/IIFE layouts need no PPT runtime URL configuration; use `options.presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` only for custom `.ppt` asset layouts and `workerUrl` / `workerType` for PPTX.

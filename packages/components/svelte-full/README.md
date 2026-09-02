@@ -47,7 +47,7 @@ import type { ViewerController } from '@file-viewer/svelte-full/controller'
 
 ## 格式支持矩阵
 
-Full 默认注册 222 个稳定扩展名，映射到 33 条预览链路：保留 v2.4 已发布能力，并新增浏览器原生 CHM。当前总目录为 245 个扩展名、35 条预览链路；DICOM 与数字签名等实验重型格式仍需通过 CLI 显式添加。
+历史兼容 Full 默认注册 221 个扩展名（221 个稳定、0 个实验），映射到 32 条预览链路，与 v2.4 已发布能力一致。当前总目录为 265 个扩展名、44 条预览链路；DICOM 等新增重型格式必须通过 CLI 显式添加，不会自动扩张旧 Full。
 
 | 预览链路 | 分类 | 扩展名 | 等级 / 状态 | 能力 | 加载 |
 | --- | --- | --- | --- | --- | --- |
@@ -86,7 +86,7 @@ Full 默认注册 222 个稳定扩展名，映射到 33 条预览链路：保留
 
 ## 兼容 Full 包快速开始
 
-`@file-viewer/svelte-full` 继续内置 `@file-viewer/preset-all`，保留 v2.4 已发布能力并加入 CHM，共注册 222 个稳定扩展名、33 条预览链路及默认资产复制行为。现有 iWork、CAD、3D、EDA、Geo、Typst、Drawing、WordPerfect、Hangul、旧版 PPT、RTF、Mermaid、HLS/MIDI 和高级文本能力不会被移除。DICOM 与数字签名等实验重型格式不自动进入 Full。
+`@file-viewer/svelte-full` 继续内置 `@file-viewer/preset-all`，保持 v2.4 已发布的 221 个扩展名、32 条预览链路及默认资产复制行为。现有 iWork、CAD、3D、EDA、Geo、Typst、Drawing、WordPerfect、Hangul、旧版 PPT、RTF、Mermaid、HLS/MIDI 和高级文本能力不会被移除。DICOM 及以后新增的重型格式不自动进入历史 Full。
 
 保持同一历史 Full 契约的 8 个官方包是：`@file-viewer/web-full`、`@file-viewer/vue3-full`、`@file-viewer/vue2.7-full`、`@file-viewer/vue2.6-full`、`@file-viewer/react-full`、`@file-viewer/react-legacy-full`、`@file-viewer/jquery-full`、`@file-viewer/svelte-full`。新项目如果不需要完整矩阵，应优先通过 `@file-viewer/cli` 选择 standard、lite、office、engineering 或自定义能力；已有 Full 用户无需改变原安装方式。
 

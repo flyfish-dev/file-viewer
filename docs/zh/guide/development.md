@@ -29,7 +29,7 @@ pnpm install
 | `pnpm verify:browser-smoke` | 构建主 Demo 和 组件 Demo，并统一跑主 Demo、文档比对、React/Web/Vue3/jQuery/Svelte 和 script tag IIFE 浏览器 smoke |
 | `pnpm verify:branch-roles` | 校验 `origin` 私有 Gitea 聚合仓、main/v2/v3 分支职责、core 公开策略、标准组件包公开仓库和公开仓库策略 |
 | `pnpm verify:core-api` | 校验 `@file-viewer/core` 根入口、`@file-viewer/core/headless` 契约入口、`@file-viewer/core/browser` 浏览器渲染入口、实例方法、framework-neutral 类型、ESM/声明产物元数据和纯 TS 源码边界 |
-| `pnpm verify:format-support` | 校验格式目录保持 245 个注册扩展名、222 个稳定、23 个实验、35 条预览链路、无重复扩展名归属，并确认生成表、README / 文档站 / 组件 README 口径一致 |
+| `pnpm verify:format-support` | 校验格式目录保持 265 个注册扩展名、223 个稳定、42 个实验、44 条预览链路、无重复扩展名归属，并确认生成表、README / 文档站 / 组件 README 口径一致 |
 | `pnpm verify:ecosystem-readmes` | 校验根 README / README.zh-CN.md / README.en.md 的公开生态索引、官方文档/Demo、GitHub/Gitee 组件仓库、入口格式、历史兼容包、core 公开仓和格式数量口径 |
 | `pnpm verify:compatibility-api` | 校验历史兼容包的运行门面边界: React 兼容包转发到标准 React 组件包，纯 Web 兼容包转发到标准 web 组件包，scoped Vue3 根包只保留 core 类型门面、登记过的 alias 和受控公共类型出口，`file-viewer3` 保持薄 alias |
 | `pnpm verify:compatibility-readmes` | 校验历史兼容包 README / README.en.md 明确推荐迁移到对应 `@file-viewer/*` 标准包名 |

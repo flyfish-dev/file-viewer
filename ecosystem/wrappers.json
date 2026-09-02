@@ -107,21 +107,21 @@
       "publicSource": true
     },
     {
-      "id": "assets-chm",
-      "packageName": "@file-viewer/assets-chm",
-      "releaseVersion": "3.0.0",
-      "description": "Independent opt-in CHM Worker and Rust/WASM asset pack.",
-      "packageDir": "packages/tools/assets-chm",
-      "github": "https://github.com/flyfish-dev/file-viewer",
-      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
-      "publicSource": true
-    },
-    {
       "id": "assets-data",
       "packageName": "@file-viewer/assets-data",
       "releaseVersion": "3.0.0",
       "description": "Independent opt-in data capability asset pack.",
       "packageDir": "packages/tools/assets-data",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "assets-design",
+      "packageName": "@file-viewer/assets-design",
+      "releaseVersion": "3.0.0",
+      "description": "Independent opt-in Adobe design capability asset pack.",
+      "packageDir": "packages/tools/assets-design",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "publicSource": true
@@ -515,21 +515,6 @@
       "releaseVersion": "3.0.0"
     },
     {
-      "id": "chm",
-      "packageName": "@file-viewer/renderer-chm",
-      "description": "Standalone browser-native CHM renderer for File Viewer with a Rust/WASM ITSF and LZX parser, table-of-contents navigation, local search, sandboxed HTML topics, and offline worker/WASM assets.",
-      "packageDir": "packages/renderers/chm",
-      "repository": "file-viewer-renderer-chm",
-      "github": "https://github.com/flyfish-dev/file-viewer",
-      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
-      "entryFormats": [
-        "esm",
-        "types"
-      ],
-      "publicSource": true,
-      "releaseVersion": "3.0.0"
-    },
-    {
       "id": "email",
       "packageName": "@file-viewer/renderer-email",
       "description": "Standalone email renderer plugin for File Viewer with EML, MSG, MBOX, HTML/text/header views, attachments, download, and nested attachment previews.",
@@ -650,9 +635,24 @@
       "releaseVersion": "3.0.0"
     },
     {
+      "id": "design",
+      "packageName": "@file-viewer/renderer-design",
+      "description": "Offline-first Adobe design renderer with bounded Worker/WASM parsing for Photoshop documents and presets, PDF-compatible Illustrator, InDesign exchange and embedded previews, modern Animate XFL, ASE/ACO palettes, and PostScript.",
+      "packageDir": "packages/renderers/design",
+      "repository": "file-viewer-renderer-design",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "entryFormats": [
+        "esm",
+        "types"
+      ],
+      "publicSource": true,
+      "releaseVersion": "3.0.0"
+    },
+    {
       "id": "data",
       "packageName": "@file-viewer/renderer-data",
-      "description": "Standalone data asset renderer plugin for File Viewer with PSD, SQLite, Parquet, Avro, WASM, font, AI/EPS, and WebArchive previews plus SQL.js WASM asset support.",
+      "description": "Standalone data asset renderer plugin for File Viewer with SQLite, Parquet, Avro, WASM, font, and WebArchive previews plus SQL.js WASM asset support.",
       "packageDir": "packages/renderers/data",
       "repository": "file-viewer-renderer-data",
       "github": "https://github.com/flyfish-dev/file-viewer",

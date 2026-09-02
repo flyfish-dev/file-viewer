@@ -4,20 +4,19 @@ File Viewer by Flyfish is a TypeScript file preview project for browser, offline
 
 ## Current Release Facts
 
-- Version: 2.3.0
-- Current published version: 2.3.0
-- Corrected Office and Full npm package line: 2.3.2
-- Source matrix npm targets: 57
-- Registered extension mappings: 244 (221 stable, 23 experimental)
-- Preview pipelines: 33
+- Version: 3.0.0
+- Current published version: 3.0.0
+- Source matrix npm targets: 86
+- Registered extension mappings: 265 (223 stable, 42 experimental)
+- Preview pipelines: 44
 - License: File Viewer-authored source and packages use Apache-2.0. Bundled third-party engines retain their own notices.
 - Stable facts: https://file-viewer.app/en/browser-file-viewer/
 - Machine metadata: https://file-viewer.app/software.json
-- Current release: https://github.com/flyfish-dev/file-viewer/releases/tag/v2.3.0
+- Current release: https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0
 
 ## Package Model
 
-The framework-neutral TypeScript core owns common registration, lifecycle, operation hooks, search, output, and asset resolution. Renderer packages own format-specific parsing and rendering. Presets group renderers. Native component packages expose the shared core to Vanilla JavaScript, Web Component, Vue, React, Svelte, and jQuery. Full packages include the complete registered format set and same-version File Viewer-owned static assets.
+The framework-neutral TypeScript core owns common registration, lifecycle, operation hooks, search, output, and asset resolution. Renderer packages own format-specific parsing and rendering. Presets group renderers. Native component packages expose the shared core to Vanilla JavaScript, Web Component, Vue, React, Svelte, and jQuery. Full packages preserve the published `preset-all` compatibility matrix and include its same-version File Viewer-owned static assets. Adobe design, DICOM, and signature renderers remain explicit additions.
 
 Light packages are intentionally small. Do not claim that installing a light component enables every format. For Vite Full deployment, use `@file-viewer/vite-plugin` with `copyAssets: true`. For non-Vite Full deployment, run `npx --no-install file-viewer-copy-assets ./public/file-viewer`. For Web Full deployment, host `@file-viewer/web-full/dist` intact.
 

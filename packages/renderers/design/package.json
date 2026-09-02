@@ -1,0 +1,126 @@
+{
+  "name": "@file-viewer/renderer-design",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Offline-first Adobe design renderer for Photoshop, native PGF and PDF-compatible Illustrator, InDesign, XD, modern XFL-based Animate FLA, and bounded design-resource previews.",
+  "keywords": [
+    "file-viewer",
+    "renderer",
+    "photoshop",
+    "psd",
+    "psb",
+    "pdd",
+    "psdt",
+    "illustrator",
+    "idml",
+    "icml",
+    "idms",
+    "inx",
+    "indd",
+    "xd",
+    "ase",
+    "aco",
+    "abr",
+    "csh",
+    "pat",
+    "grd",
+    "asl",
+    "eps",
+    "postscript",
+    "animate",
+    "fla",
+    "xfl",
+    "wasm",
+    "worker",
+    "offline",
+    "document-preview"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Yu Wang",
+    "email": "admin@flyfish.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/renderers/design"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./worker/photoshop.worker.js": "./dist/photoshop.worker.js",
+    "./worker/illustrator-pgf.worker.js": "./dist/illustrator-pgf.worker.js",
+    "./worker/idml.worker.js": "./dist/idml.worker.js",
+    "./worker/adobe-container.worker.js": "./dist/adobe-container.worker.js",
+    "./worker/adobe-resource.worker.js": "./dist/adobe-resource.worker.js",
+    "./worker/postscript.worker.js": "./dist/postscript.worker.js",
+    "./wasm/postscript.wasm": "./runtime/postscript/stet_wasm_bg.wasm",
+    "./licenses/MPL-2.0.txt": "./LICENSES/MPL-2.0.txt",
+    "./licenses/Stet-Apache-2.0.txt": "./LICENSES/Stet-Apache-2.0.txt",
+    "./licenses/Stet-MIT.txt": "./LICENSES/Stet-MIT.txt",
+    "./licenses/Carlito-OFL-1.1.txt": "./LICENSES/Carlito-OFL-1.1.txt",
+    "./licenses/Tinos-OFL-1.1.txt": "./LICENSES/Tinos-OFL-1.1.txt",
+    "./licenses/Cousine-OFL-1.1.txt": "./LICENSES/Cousine-OFL-1.1.txt",
+    "./licenses/NotoSansSymbols2-OFL-1.1.txt": "./LICENSES/NotoSansSymbols2-OFL-1.1.txt",
+    "./licenses/xmldom-MIT.txt": "./LICENSES/xmldom-MIT.txt",
+    "./licenses/saxes-ISC.txt": "./LICENSES/saxes-ISC.txt",
+    "./licenses/ag-psd-MIT.txt": "./LICENSES/ag-psd-MIT.txt",
+    "./licenses/webtoon-psd-MIT.txt": "./LICENSES/webtoon-psd-MIT.txt",
+    "./licenses/base64-js-MIT.txt": "./LICENSES/base64-js-MIT.txt",
+    "./licenses/pako-MIT.txt": "./LICENSES/pako-MIT.txt",
+    "./licenses/xmlchars-MIT.txt": "./LICENSES/xmlchars-MIT.txt",
+    "./licenses/illustrator-pgf-MIT.txt": "./LICENSES/illustrator-pgf-MIT.txt",
+    "./licenses/fzstd-MIT.txt": "./LICENSES/fzstd-MIT.txt",
+    "./third-party-notices": "./THIRD_PARTY_NOTICES.md",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "runtime",
+    "source/postscript",
+    "README.md",
+    "README.en.md",
+    "POSTSCRIPT-WASM.md",
+    "LICENSE",
+    "LICENSES",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json --force && node scripts/build-worker.mjs",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/core": "workspace:3.0.0",
+    "@file-viewer/renderer-data": "workspace:3.0.0",
+    "@paged-media/introspect-wasm": "0.62.0",
+    "@webtoon/psd": "0.4.0",
+    "@xmldom/xmldom": "0.9.12",
+    "ag-psd": "31.0.2",
+    "fzstd": "0.1.1",
+    "illustrator-pgf": "0.1.0",
+    "saxes": "6.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "typescript": "^6.0.3"
+  },
+  "license": "Apache-2.0"
+}

@@ -168,6 +168,8 @@ test('explicit full preserves the published preset-all and aggregate asset contr
       '@file-viewer/renderer-dicom',
       '@file-viewer/renderer-signature'
     ])
+    assert.equal(plan.packages.includes('@file-viewer/renderer-design'), false)
+    assert.equal(plan.packages.includes('@file-viewer/assets-design'), false)
     assert.equal(plan.heavyCapabilities.includes('dicom'), true)
     assert.equal(plan.heavyCapabilities.includes('signature'), true)
     assert.equal(plan.heavyCapabilities.includes('cad'), true)
@@ -203,6 +205,7 @@ test('explicit full preserves the published preset-all and aggregate asset contr
     generated.content,
     /signatureRenderer as fileViewerRenderer1.*@file-viewer\/renderer-signature/
   )
+  assert.doesNotMatch(generated.content, /@file-viewer\/renderer-design/)
 
   const baselineSelection = await createFileViewerInstallPlan(
     { framework: 'web', profile: 'full', formats: ['dwg'] },
@@ -221,6 +224,38 @@ test('explicit full preserves the published preset-all and aggregate asset contr
     formats: ['dwg']
   })
   assert.doesNotMatch(baselineGenerated.content, /cadRenderer/)
+
+  for (const format of ['pat', 'psd']) {
+    const designSelection = await createFileViewerInstallPlan(
+      { framework: 'web', profile: 'full', formats: [format] },
+      { packageManager: 'npm' }
+    )
+    assert.equal(designSelection.packages.includes('@file-viewer/renderer-design'), true)
+    assert.equal(designSelection.packages.includes('@file-viewer/assets-design'), true)
+    assert.equal(designSelection.capabilityPackages.includes('@file-viewer/renderer-design'), true)
+    assert.equal(designSelection.heavyCapabilities.includes('design'), true)
+    assert.deepEqual(designSelection.assetPackages, [
+      '@file-viewer/web-full',
+      '@file-viewer/assets-design'
+    ])
+    assert.equal(
+      designSelection.steps.some(
+        (step) => step.assetOwner?.packageName === '@file-viewer/assets-design'
+      ),
+      true
+    )
+
+    const designGenerated = await generateFileViewerIntegrationModule(process.cwd(), {
+      framework: 'web',
+      profile: 'full',
+      formats: [format]
+    })
+    assert.equal(designGenerated.selectedCapabilities.includes('design'), true)
+    assert.match(
+      designGenerated.content,
+      /import \{ designRenderer as fileViewerRenderer\d+ \} from ["']@file-viewer\/renderer-design["']/
+    )
+  }
 })
 
 test('Yarn Classic and Berry use generation-correct install settings and scaffolds', async () => {
@@ -2566,7 +2601,6 @@ test('custom profile has no implicit asset owner and all profile plans each decl
   )
   assert.deepEqual(all.assetPackages, [
     '@file-viewer/assets-cad',
-    '@file-viewer/assets-chm',
     '@file-viewer/assets-data',
     '@file-viewer/assets-drawing',
     '@file-viewer/assets-hangul',
@@ -2577,7 +2611,7 @@ test('custom profile has no implicit asset owner and all profile plans each decl
     '@file-viewer/assets-typst',
     '@file-viewer/assets-wordperfect'
   ])
-  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 11)
+  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 10)
   assert.equal(all.packages.includes('file-viewer-copy-assets'), false)
 })
 

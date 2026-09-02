@@ -52,6 +52,7 @@ const getAutoRendererBucket = (): FileViewerAutoRendererBucket => {
 const normalizeDefinition = (definition: RendererDefinition): RendererDefinition => ({
   ...definition,
   extensions: definition.extensions.map(normalizeFileExtension),
+  enhancesExtensions: definition.enhancesExtensions?.map(normalizeFileExtension),
 });
 
 export const createRendererRegistry = (
@@ -121,6 +122,182 @@ export interface InstallFileViewerRendererPluginsOptions<Handler = unknown> {
   plugins: Iterable<FileViewerRendererPlugin<Handler>>;
   registerHandler?: (registration: FileViewerRendererHandlerRegistration<Handler>) => void;
 }
+
+interface RendererEnhancementClaim {
+  enhancerId: string;
+  ownerId: string;
+  extension: string;
+}
+
+interface RendererDefinitionInstallPlan {
+  definitions: RendererDefinition[];
+}
+
+const collectRendererEnhancementClaims = (
+  registry: RendererRegistry,
+  definitions: readonly RendererDefinition[]
+) => {
+  const normalizedDefinitions = definitions.map(normalizeDefinition);
+  const incomingDefinitionsById = new Map<string, RendererDefinition>();
+  normalizedDefinitions.forEach(definition => {
+    incomingDefinitionsById.set(definition.id, definition);
+  });
+
+  const claimsByOwnerAndExtension = new Map<string, RendererEnhancementClaim>();
+  for (const definition of registry.list().map(normalizeDefinition)) {
+    const ownerId = definition.enhancesRendererId;
+    if (!ownerId || !definition.enhancesExtensions?.length) {
+      continue;
+    }
+    const ownedExtensions = new Set(definition.extensions);
+    definition.enhancesExtensions.forEach(extension => {
+      if (
+        ownedExtensions.has(extension) &&
+        registry.getByExtension(extension)?.id === definition.id
+      ) {
+        claimsByOwnerAndExtension.set(`${ownerId}\u0000${extension}`, {
+          enhancerId: definition.id,
+          ownerId,
+          extension,
+        });
+      }
+    });
+  }
+
+  for (const definition of normalizedDefinitions) {
+    const declaresOwner = definition.enhancesRendererId !== undefined;
+    const declaresExtensions = definition.enhancesExtensions !== undefined;
+    if (declaresOwner !== declaresExtensions) {
+      throw new Error(
+        `Renderer "${definition.id}" enhancement must declare both enhancesRendererId and enhancesExtensions.`
+      );
+    }
+    if (!declaresOwner || !declaresExtensions) {
+      continue;
+    }
+
+    const ownerId = definition.enhancesRendererId?.trim() || '';
+    const enhancedExtensions = definition.enhancesExtensions || [];
+    if (!ownerId) {
+      throw new Error(`Renderer "${definition.id}" enhancement owner must not be empty.`);
+    }
+    if (!enhancedExtensions.length) {
+      throw new Error(`Renderer "${definition.id}" enhancement extensions must not be empty.`);
+    }
+    if (ownerId === definition.id) {
+      throw new Error(`Renderer "${definition.id}" cannot enhance its own definition.`);
+    }
+
+    const directlyOwnedExtensions = new Set(definition.extensions);
+    for (const extension of enhancedExtensions) {
+      if (!extension) {
+        throw new Error(`Renderer "${definition.id}" enhancement extension must not be empty.`);
+      }
+      if (directlyOwnedExtensions.has(extension)) {
+        throw new Error(
+          `Renderer "${definition.id}" must not own and enhance extension "${extension}" simultaneously.`
+        );
+      }
+
+      const key = `${ownerId}\u0000${extension}`;
+      const existing = claimsByOwnerAndExtension.get(key);
+      if (existing && existing.enhancerId !== definition.id) {
+        throw new Error(
+          `Renderer enhancement collision: extension "${extension}" from "${ownerId}" is claimed by both "${existing.enhancerId}" and "${definition.id}".`
+        );
+      }
+      claimsByOwnerAndExtension.set(key, {
+        enhancerId: definition.id,
+        ownerId,
+        extension,
+      });
+    }
+  }
+
+  for (const claim of claimsByOwnerAndExtension.values()) {
+    const owner = incomingDefinitionsById.get(claim.ownerId) || registry.getById(claim.ownerId);
+    if (!owner) {
+      throw new Error(
+        `Renderer "${claim.enhancerId}" enhances unknown renderer "${claim.ownerId}".`
+      );
+    }
+
+    const ownerExtensions = new Set(owner.extensions.map(normalizeFileExtension));
+    const installedExtensionOwner = registry.getByExtension(claim.extension);
+    const alreadyInstalled = installedExtensionOwner?.id === claim.enhancerId;
+    if (!ownerExtensions.has(claim.extension) && !alreadyInstalled) {
+      throw new Error(
+        `Renderer "${claim.enhancerId}" cannot enhance extension "${claim.extension}" because renderer "${claim.ownerId}" does not own it.`
+      );
+    }
+  }
+
+  return {
+    claims: Array.from(claimsByOwnerAndExtension.values()),
+    normalizedDefinitions,
+  };
+};
+
+const createRendererDefinitionInstallPlan = (
+  registry: RendererRegistry,
+  definitions: readonly RendererDefinition[]
+): RendererDefinitionInstallPlan => {
+  const { claims, normalizedDefinitions } = collectRendererEnhancementClaims(registry, definitions);
+  const claimedExtensionsByOwnerId = new Map<string, Set<string>>();
+  claims.forEach(claim => {
+    const extensions = claimedExtensionsByOwnerId.get(claim.ownerId) || new Set<string>();
+    extensions.add(claim.extension);
+    claimedExtensionsByOwnerId.set(claim.ownerId, extensions);
+  });
+
+  const applyClaims = (definition: RendererDefinition) => {
+    const normalized = normalizeDefinition(definition);
+    const extensions = new Set(normalized.extensions);
+    normalized.enhancesExtensions?.forEach(extension => extensions.add(extension));
+    claimedExtensionsByOwnerId.get(normalized.id)?.forEach(extension => extensions.delete(extension));
+    return {
+      ...normalized,
+      extensions: Array.from(extensions),
+    } satisfies RendererDefinition;
+  };
+
+  const incomingDefinitionIds = new Set(normalizedDefinitions.map(definition => definition.id));
+  const existingOwnerDefinitions = Array.from(claimedExtensionsByOwnerId.keys())
+    .filter(ownerId => !incomingDefinitionIds.has(ownerId))
+    .map(ownerId => registry.getById(ownerId))
+    .filter((definition): definition is RendererDefinition => !!definition)
+    .map(applyClaims);
+  const regularDefinitions = normalizedDefinitions
+    .filter(definition => definition.enhancesRendererId === undefined)
+    .map(applyClaims);
+  const enhancerDefinitions = normalizedDefinitions
+    .filter(definition => definition.enhancesRendererId !== undefined)
+    .map(applyClaims);
+  const plannedDefinitions = [
+    ...existingOwnerDefinitions,
+    ...regularDefinitions,
+    ...enhancerDefinitions,
+  ];
+
+  // Validate the complete ownership transition before mutating the caller's registry.
+  const validationRegistry = createRendererRegistry(registry.list());
+  plannedDefinitions.forEach(definition => validationRegistry.register(definition));
+
+  return { definitions: plannedDefinitions };
+};
+
+const createEnhancementAwareInstallRegistry = (registry: RendererRegistry): RendererRegistry => ({
+  register(definition) {
+    const plan = createRendererDefinitionInstallPlan(registry, [definition]);
+    plan.definitions.forEach(plannedDefinition => registry.register(plannedDefinition));
+  },
+  unregister: id => registry.unregister(id),
+  getById: id => registry.getById(id),
+  getByExtension: extension => registry.getByExtension(extension),
+  hasExtension: extension => registry.hasExtension(extension),
+  list: () => registry.list(),
+  listExtensions: () => registry.listExtensions(),
+});
 
 const isRendererPreset = <Handler>(
   input: FileViewerRendererPluginInput<Handler>
@@ -279,16 +456,18 @@ export const installFileViewerRendererPlugins = async <Handler = unknown>({
   plugins,
   registerHandler,
 }: InstallFileViewerRendererPluginsOptions<Handler>) => {
-  for (const plugin of plugins) {
-    plugin.definitions?.forEach(definition => {
-      registry.register(definition);
-    });
+  const pluginList = Array.from(plugins);
+  const definitions = pluginList.flatMap(plugin => [...(plugin.definitions || [])]);
+  const plan = createRendererDefinitionInstallPlan(registry, definitions);
+  plan.definitions.forEach(definition => registry.register(definition));
+  const installRegistry = createEnhancementAwareInstallRegistry(registry);
 
+  for (const plugin of pluginList) {
     plugin.handlers?.forEach(registration => {
       registerHandler?.(registration);
     });
 
-    await plugin.install?.({ registry, registerHandler });
+    await plugin.install?.({ registry: installRegistry, registerHandler });
   }
 
   return registry;

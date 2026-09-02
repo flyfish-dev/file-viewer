@@ -68,7 +68,6 @@
     "@file-viewer/preset-all": "workspace:3.0.0",
     "@file-viewer/renderer-3d": "workspace:3.0.0",
     "@file-viewer/renderer-archive": "workspace:3.0.0",
-    "@file-viewer/renderer-chm": "workspace:3.0.0",
     "@file-viewer/renderer-cad": "workspace:3.0.0",
     "@file-viewer/renderer-data": "workspace:3.0.0",
     "@file-viewer/renderer-drawing": "workspace:3.0.0",
@@ -93,10 +92,10 @@
   },
   "devDependencies": {
     "@file-viewer/capability-pdf-identity-repair": "workspace:3.0.0",
-    "@types/node": "^25.8.0",
+    "@types/node": "^26.4.0",
     "esbuild": "^0.28.2",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.2.2"
   },
   "license": "Apache-2.0"
 }

@@ -3,18 +3,18 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  唯一格式目录当前注册 <strong>245 个扩展名</strong>，覆盖 <strong>35 条预览链路</strong>：其中 <strong>222 个稳定</strong>、<strong>23 个实验</strong>。
+  唯一格式目录当前注册 <strong>265 个扩展名</strong>，覆盖 <strong>44 条预览链路</strong>：其中 <strong>223 个稳定</strong>、<strong>42 个实验</strong>。
   这一页不是“计划支持什么”，而是以当前代码里已经注册好的渲染器为准，告诉你项目现在到底能处理哪些格式、分别走哪条渲染链路，以及在真实业务里应该怎么选。
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="File Viewer by Flyfish v2.3.0 中文格式样例库，展示分组、文件名与格式专属图标" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">Demo 把 35 条预览链路的代表样例按类型分组；稳定格式必须有可再分发的真实文件 fixture 与浏览器断言，合成或改后缀样例不计入证据；实验项必须持续展示限制。</p>
+  <p class="doc-caption">Demo 把 44 条预览链路的代表样例按类型分组；稳定格式必须有可再分发的真实文件 fixture 与浏览器断言，合成或改后缀样例不计入证据；实验项必须持续展示限制。</p>
 </div>
 
 <div class="doc-grid">
   <div class="doc-card">
-    <h3>245 个已注册扩展名</h3>
+    <h3>265 个已注册扩展名</h3>
     <p>覆盖 Office、PDF、OFD、Typst、XMind、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、Mermaid、PlantUML、EPUB、UMD、Markdown、图片、音视频、代码/文本、Git patch/bundle、字体、PSD 图层资产和结构化数据等常见附件类型。</p>
   </div>
   <div class="doc-card">
@@ -77,7 +77,8 @@
 | 代码/文本 | `txt`、`json`、`jsonc`、`json5`、`ipynb`、`js`、`mjs`、`cjs`、`css`、`java`、`py`、`html`、`htm`、`jsx`、`ts`、`tsx`、`xml`、`log`、`vue`、`yaml`、`yml`、`toml`、`ini`、`proto`、`hcl`、`tex`、`gv`、`http`、`sh`、`bash`、`sql`、`go`、`rs`、`rb`、`swift`、`kt`、`react`、`php`、`c`、`cpp`、`cc`、`h`、`hpp`、`cs`、`diff`、`patch`、`bundle`、`bdl` | `@file-viewer/renderer-text` + `highlight.js` / `diff2html` / Git bundle parser | 普通源码按需高亮；patch 使用左右比对视图；git bundle 解析 bundle header、refs、commit 历史、文件树、可读 blob 和常规 OFS_DELTA / REF_DELTA；超大包或依赖外部 prerequisite 的包会给出边界提示 | 配置文件、日志、代码片段、代码评审、Git 交付包 |
 | 音频 | `mp3`、`mpeg`、`wav`、`ogg`、`oga`、`opus`、`m4a`、`aac`、`flac`、`weba`、`midi`、`mid` | `@file-viewer/renderer-media` + 浏览器原生 `<audio>` / `@tonejs/midi` | 常见音频使用原生控件播放，MIDI 命中时按需展示轨道、时长、PPQ 和音符摘要 | 录音、播客、语音附件、音效素材、MIDI 文件 |
 | 视频 | `mp4`、`webm`、`m3u8` | `@file-viewer/renderer-media` + 浏览器原生 `<video>` / `hls.js` | MP4/WEBM 原生播放，HLS 清单优先用浏览器能力，必要时按需加载 `hls.js` | 演示视频、录屏材料、HLS 流 |
-| 字体/设计/数据 | `ttf`、`otf`、`woff`、`woff2`、`psd`、`ai`、`eps`、`sqlite`、`wasm`、`parquet`、`avro`、`webarchive` | `@file-viewer/renderer-data` | 字体用 FontFace 展示样张，PSD 使用 `ag-psd` 解析画布和图层，支持图层选择显隐、重绘和统一缩放；AI/PDF-backed 文件交给 PDF 或安全摘要，SQLite/Parquet/Avro/WASM/WebArchive 展示结构和少量样例数据；SQLite WASM 可通过 `options.data.sqlWasmUrl` 指向私有化地址 | 字体、设计资产、本地数据库、列式数据、二进制包和 Web 归档 |
+| Adobe 设计文件（显式按需） | `psd`、`psb`、`pdd`、`psdt`、`ai`、`ait`、`eps`、`ps`、`idml`、`icml`、`idms`、`inx`、`xd`、`indd`、`indt`、`fla`、`xfl`、`ase`、`aco`、`abr`、`csh`、`pat`、`grd`、`asl` | `@file-viewer/renderer-design` + 本地 Worker/WASM | PSD/PSB 保存像素与可安全解码图层；Illustrator 默认使用高还原 PDF-compatible 表面，并可切换 `illustrator-pgf` 原生 PGF 画板、图层与路径 Canvas；IDML 页面、InDesign exchange/XD/INDD/现代 XFL 有界结构和预览、色板、Photoshop 资源与 PostScript；未知原生操作符和降级边界会明确展示 | 设计审阅、素材库、离线创意文件收件 |
+| 字体/结构化数据 | `ttf`、`otf`、`woff`、`woff2`、`sqlite`、`wasm`、`parquet`、`avro`、`webarchive` | `@file-viewer/renderer-data` | FontFace 样张、SQLite 表结构和少量行、Parquet/Avro 元数据与样例、WASM 导入导出和 WebArchive 安全摘要；SQLite WASM 可通过 `options.data.sqlWasmUrl` 指向私有化地址 | 字体、本地数据库、列式数据、二进制包和 Web 归档 |
 
 ## 按类型看体验和边界
 
@@ -203,12 +204,17 @@
 - 音频类由 `@file-viewer/renderer-media` 承接，支持 `mp3`、`mpeg`、`wav`、`ogg`、`oga`、`opus`、`m4a`、`aac`、`flac`、`weba`，使用浏览器原生播放器；`midi` / `mid` 命中时才加载 `@tonejs/midi`，展示轨道、时长、PPQ 和音符摘要。不同浏览器对编码格式的支持会有差异。
 - 视频同样由 `@file-viewer/renderer-media` 承接，支持 `mp4`、`webm` 和 `m3u8`。MP4/WEBM 的实际解码能力取决于视频轨编码。Chromium 无法原生解码 MP4V Simple Profile 时，renderer 会按需加载 Apache-2.0 的 AOSP PacketVideo WASM，在 Worker 中解码并使用 AAC 音轨校时，不再出现有声音但画面全黑。WASM 为 111,379 字节（gzip 34,410 字节），实现不包含 FFmpeg、libav 或 LGPL/GPL/AGPL 源码。超出当前解码范围时会显示明确的兼容提示。HLS 清单优先走浏览器原生能力，不支持时再按需加载 `hls.js`；本地上传的 `.m3u8` 如果引用了外部分片，需要保证分片 URL 对浏览器可访问。
 
-### 字体、设计资产与结构化数据
+### Adobe 设计文件
+
+- `@file-viewer/renderer-design` 是显式按需包，Worker/WASM、字体和 vendor 文件全部可在自己的网络内托管。PSD/PSB、Illustrator、IDML/ICML/IDMS/INX、XD/INDD、FLA/XFL、色板、Photoshop 资源和 PostScript 由对应子 renderer 解析；缩放、搜索、打印、HTML 导出等操作仅在该 renderer 实际注册相应 adapter 时出现，不作为全 Adobe 家族的共同承诺。
+- 高还原度以文件内真实证据为准：优先保存 composite/PDF/嵌入预览，能安全解析时再叠加图层、页面、故事、时间轴和资源结构。AI/AIT 已支持原生 PGF/private-source 的画板、图层和路径预览，但未知操作符及尚未完整实现的渐变、复杂文字、图片、插件、效果、蒙版、混合、叠印和色彩管理会保留诊断，不冒充 Illustrator 完整编辑图；INDD 私有排版数据库、XD AGC 场景、旧二进制 FLA 与完整 Photoshop 图层效果栅格化同样保持明确边界。
+- 现代 ZIP/XFL Animate 文件支持舞台、时间轴、图层、关键帧、符号和受限首帧；普通单 XML XFL 可读，未压缩文件夹需要目录输入能力，旧二进制 FLA 明确拒绝。
+
+### 字体与结构化数据
 
 - 字体类 `ttf`、`otf`、`woff`、`woff2` 使用浏览器 FontFace API 临时加载并展示样张，不把字体注册到全局业务页面。
-- `psd` 使用 `ag-psd` 解析画布、图层和基础尺寸；`ai` 如果是 PDF-backed 文件会交给 PDF 链路，否则展示安全摘要；`eps` 按 PostScript 文本摘要展示，不执行脚本或渲染不可信指令。
 - `sqlite` 使用 `@file-viewer/renderer-data` 按需加载 `sql.js` 打开本地数据库并展示表结构和少量行数据，默认使用 viewer assets 中的 `wasm/data/sql-wasm.wasm`，也可以通过 `options.data.sqlWasmUrl` 或全局 `window.__FLYFISH_DATA_SQL_WASM_URL__` 指向私有化资源；`parquet` 使用 `hyparquet` 读取元数据和预览行；`avro` 使用 `avsc` 读取 schema 和样例对象；`wasm` 只读取模块导入导出信息；`webarchive` 做安全文本摘要。
-- 这些格式默认定位是“附件快速审阅”，不会替代数据库客户端、设计软件或专业二进制分析工具。超大数据文件建议通过业务层先做分页、抽样或服务端索引。
+- 这些格式默认定位是“附件快速审阅”，不会替代数据库客户端或专业二进制分析工具。超大数据文件建议通过业务层先做分页、抽样或服务端索引。
 
 ## 真实业务里怎么选
 

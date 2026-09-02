@@ -69,10 +69,10 @@
     "@file-viewer/core": "workspace:3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^25.8.0",
+    "@types/node": "^26.4.0",
     "esbuild": "^0.28.2",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.2.2"
   },
   "license": "Apache-2.0"
 }

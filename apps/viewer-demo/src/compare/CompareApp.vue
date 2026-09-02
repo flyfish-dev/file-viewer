@@ -4,6 +4,7 @@ import type { ComponentPublicInstance } from 'vue'
 import { Check, ChevronDown, ChevronUp, Globe, Search, X } from '@lucide/vue'
 import { FileViewer } from '@file-viewer/vue3'
 import { allRenderers } from '@file-viewer/preset-all'
+import { designRenderer } from '@file-viewer/renderer-design'
 import { normalizeFileViewerLocale } from '@file-viewer/core'
 import type {
   FileViewerFileRef as FileRef,
@@ -355,8 +356,10 @@ const activeSearchState = computed(() => {
   return activeCompareSide.value === 'left' ? leftSearchState.value : rightSearchState.value
 })
 
+const compareRenderers = [allRenderers, designRenderer] as unknown as NonNullable<FileViewerOptions['renderers']>
+
 const viewerOptions = computed<FileViewerOptions>(() => ({
-  renderers: allRenderers,
+  renderers: compareRenderers,
   toolbar: false,
   archive: {
     cache: true

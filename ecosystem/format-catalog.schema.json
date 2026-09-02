@@ -21,6 +21,8 @@
           "packageName": { "type": "string", "pattern": "^@file-viewer/" },
           "preset": { "type": "array", "items": { "enum": ["lite", "standard", "office", "engineering", "all"] }, "uniqueItems": true },
           "extensions": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+$" }, "minItems": 1, "uniqueItems": true },
+          "enhancesRendererId": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "enhancesExtensions": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+$" }, "minItems": 1, "uniqueItems": true },
           "supportLevel": { "enum": ["high-fidelity", "structured", "basic", "experimental"] },
           "status": { "enum": ["stable", "experimental"] },
           "containerVersions": { "type": "array", "items": { "type": "string" }, "minItems": 1 },

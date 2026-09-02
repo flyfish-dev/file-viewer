@@ -106,7 +106,7 @@
 
 - [x] XMind 使用 `@panzoom/panzoom` 支持 Pointer / 鼠标 / 触摸拖拽平移、从节点卡片起手拖拽、移动端双指缩放、Ctrl/Command 滚轮锚点缩放、键盘方向键平移、双击适配视图、容器 resize 自适应和用户交互后视角保留。
 - [x] 继续保持 Draw.io、Typst WASM/字体、CAD、archive、PDF worker/WASM/vendor 静态资源全部自托管，不依赖公共 CDN。
-- [x] 使用 `pnpm verify:format-support` 校验 245 个注册扩展名（222 个稳定、23 个实验）和 35 条 renderer pipeline 口径一致。
+- [x] 使用 `pnpm verify:format-support` 校验 265 个注册扩展名（223 个稳定、42 个实验）和 44 条 renderer pipeline 口径一致。
 - [x] 在 smoke matrix 中把 XMind `pan` 和真实鼠标拖拽列为显式断言，防止只校验打开成功而漏掉画布交互。
 - [ ] 为 XMind 增加真实复杂样本，覆盖多 sheet、标签、备注、图片、链接、折叠节点和大脑图拖拽回归。
 - [ ] 为 GDSII 增加真实公开版图样本，验证层过滤、实例引用、文本和大文件性能。

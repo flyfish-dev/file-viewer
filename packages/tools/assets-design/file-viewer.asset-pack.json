@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "design",
+  "packageName": "@file-viewer/assets-design",
+  "copyGroups": ["adobe-animate-xfl-design", "adobe-palette-design", "adobe-xd-design", "illustrator-pdf-design", "indesign-exchange-design", "indesign-idml-design", "indesign-native-design", "photoshop-design", "photoshop-resource-design", "postscript-design"],
+  "receiptFilename": "file-viewer-assets-design.receipt.json"
+}

@@ -175,6 +175,9 @@ export const createFileViewerZoomChangeEmitter = () => {
         listeners.delete(listener);
       };
     },
+    clear() {
+      listeners.clear();
+    },
   };
 };
 

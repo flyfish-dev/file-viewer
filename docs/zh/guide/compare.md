@@ -8,7 +8,7 @@ File Viewer 的定位是企业后台、内网和私有化场景里的纯前端�
 
 | 维度 | 免费 File Viewer 组件 | 商业版 / file-viewer-pro 路线 |
 | --- | --- | --- |
-| 文件格式 | 245 个已注册扩展名（222 个稳定、23 个实验）、35 条预览链路，覆盖 PDF/OFD、Office/iWork、CAD、Typst、压缩包、邮件、电子书、绘图、媒体、3D、数据资产、可选本地 DICOM 与数字签名容器；常用能力通过 preset 启用，DICOM 和签名格式保持显式选择 | 重点增强 Word、Excel、PowerPoint 深水区，可替换 `preset-office` 中的 Word / Spreadsheet / Presentation 能力；PDF、OFD、CAD、Archive 等其它格式继续由开源 renderer 承接 |
+| 文件格式 | 265 个已注册扩展名（223 个稳定、42 个实验）、44 条预览链路，覆盖 PDF/OFD、Office/iWork、CAD、Typst、压缩包、邮件、电子书、绘图、媒体、3D、数据资产、Adobe 设计文件、可选本地 DICOM 与数字签名容器；常用能力通过 preset 启用，Adobe 设计、DICOM 和签名格式保持显式选择 | 重点增强 Word、Excel、PowerPoint 深水区，可替换 `preset-office` 中的 Word / Spreadsheet / Presentation 能力；PDF、OFD、CAD、Archive 等其它格式继续由开源 renderer 承接 |
 | 还原度 | 目标是可读、可搜索、可打印、可嵌入业务系统；DOCX 当前偏流式阅读，Excel/PPTX 覆盖常见业务预览，不承诺原生 Office 逐像素一致 | 自研原生文档引擎面向分页、字体、表格、图形、页眉页脚、批注修订和复杂演示布局，适合合同、报告、档案和正式交付预览 |
 | 性能 | 轻 core + renderer 按需加载，Worker/WASM 懒加载，适合大多数附件中心和在线预览；极端大文件需要结合真实样本做回归 | 针对大文档、大表格和复杂 PPT 做 Worker 解析、分页/分块渲染、虚拟滚动、缓存和内存调优，优先保障主线程流畅 |
 | 授权与支持 | Apache-2.0 开源，可用于商业项目；社区 issue、打赏和优先支持可协助定位，但上线验收与兼容性风险由项目自行把控 | 商业授权、私有交付、优先技术支持、样本回归和定制兼容路线，适合需要明确责任边界、交付周期和企业支持的场景 |

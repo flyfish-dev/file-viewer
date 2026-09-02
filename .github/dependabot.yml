@@ -21,6 +21,19 @@ updates:
           - patch
     commit-message:
       prefix: chore(deps)
+    ignore:
+      - dependency-name: vue
+        update-types:
+          - version-update:semver-major
+      - dependency-name: pako
+        update-types:
+          - version-update:semver-major
+      - dependency-name: '@types/pako'
+        update-types:
+          - version-update:semver-major
+      - dependency-name: postal-mime
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /

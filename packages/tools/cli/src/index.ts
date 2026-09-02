@@ -283,11 +283,33 @@ function capabilityForToken(
     (capability) => capability.rendererIds.includes(token) || capability.formats.includes(token)
   )
   if (matches.length > 1) {
+    const explicitOptIns = matches.filter((capability) => capability.profiles.length === 0)
+    if (explicitOptIns.length === 1) return explicitOptIns[0]
     throw new Error(
       `"${token}" matches multiple capabilities: ${matches.map((item) => item.id).join(', ')}.`
     )
   }
   return matches[0] ?? null
+}
+
+const isLegacyFullCapability = (capability: FileViewerCapabilityCatalogEntry) =>
+  capability.profiles.includes('all')
+
+function selectFullExtraCapabilities(
+  catalog: FileViewerCliCatalog,
+  explicitlySelectedCapabilities: FileViewerCapabilityCatalogEntry[]
+) {
+  const defaultOptInIds = new Set(catalog.legacyFull?.excludedFutureCapabilities ?? [])
+  return [
+    ...new Map(
+      [
+        ...catalog.capabilities.filter((capability) => defaultOptInIds.has(capability.id)),
+        ...explicitlySelectedCapabilities.filter(
+          (capability) => !isLegacyFullCapability(capability)
+        )
+      ].map((capability) => [capability.packageName, capability])
+    ).values()
+  ]
 }
 
 export function detectPackageManager(projectRoot: string): PackageManager {
@@ -751,18 +773,7 @@ export async function createFileViewerInstallPlan(
   })
   const selectedCapabilities =
     config.profile === 'full'
-      ? [
-          ...new Map(
-            [
-              ...catalog.capabilities.filter((capability) =>
-                (catalog.legacyFull?.excludedFutureCapabilities ?? []).includes(capability.id)
-              ),
-              ...explicitlySelectedCapabilities.filter((capability) =>
-                (catalog.legacyFull?.excludedFutureCapabilities ?? []).includes(capability.id)
-              )
-            ].map((capability) => [capability.packageName, capability])
-          ).values()
-        ]
+      ? selectFullExtraCapabilities(catalog, explicitlySelectedCapabilities)
       : explicitlySelectedCapabilities
   const profilePackages = new Set(profile?.capabilityPackages ?? [])
   const capabilityPackages = [
@@ -791,10 +802,7 @@ export async function createFileViewerInstallPlan(
   ]
   const legacyFullCapabilities =
     config.profile === 'full'
-      ? catalog.capabilities.filter(
-          (capability) =>
-            !(catalog.legacyFull?.excludedFutureCapabilities ?? []).includes(capability.id)
-        )
+      ? catalog.capabilities.filter(isLegacyFullCapability)
       : []
   const reportingCapabilities = [
     ...new Map(
@@ -974,7 +982,12 @@ export async function createFileViewerInstallPlan(
     ),
     assetPackages:
       config.profile === 'full'
-        ? [config.framework === 'web' ? frameworkEntry.packageName : 'file-viewer-copy-assets']
+        ? [
+            ...new Set([
+              config.framework === 'web' ? frameworkEntry.packageName : 'file-viewer-copy-assets',
+              ...assetPackages
+            ])
+          ]
         : assetPackages,
     assetRendererIds,
     missingAssetRendererIds: [...new Set(missingAssetRendererIds)].sort(),
@@ -1666,14 +1679,7 @@ export async function generateFileViewerIntegrationModule(
   })
   const selectedSource =
     config.profile === 'full'
-      ? [
-          ...catalog.capabilities.filter((capability) =>
-            (catalog.legacyFull?.excludedFutureCapabilities ?? []).includes(capability.id)
-          ),
-          ...explicit.filter((capability) =>
-            (catalog.legacyFull?.excludedFutureCapabilities ?? []).includes(capability.id)
-          )
-        ]
+      ? selectFullExtraCapabilities(catalog, explicit)
       : explicit
   const selected = [
     ...new Map(selectedSource.map((capability) => [capability.packageName, capability])).values()
@@ -1800,8 +1806,7 @@ export async function updateFileViewerProjectSelection(
   const values = new Set(config![field])
   const providedByProfile = Boolean(
     profile?.capabilityPackages.includes(capability.packageName) ||
-    (config!.profile === 'full' &&
-      !(catalog.legacyFull?.excludedFutureCapabilities ?? []).includes(capability.id))
+    (config!.profile === 'full' && isLegacyFullCapability(capability))
   )
   if (action === 'remove' && !values.has(token) && providedByProfile) {
     throw new Error(

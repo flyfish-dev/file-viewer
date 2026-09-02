@@ -6,9 +6,9 @@ export const site = {
   demoUrl: 'https://demo.file-viewer.app',
   githubUrl: 'https://github.com/flyfish-dev/file-viewer',
   description:
-    'Integrate File Viewer in browser applications with offline-first packages, on-demand renderers, self-hosting, and 244 registered file extensions.',
+    'Integrate File Viewer in browser applications with offline-first packages, on-demand renderers, self-hosting, and 265 registered file extensions.',
   descriptionZh:
-    '在浏览器应用中集成 File Viewer，覆盖离线优先组件、按需渲染器、私有部署与 244 个已注册文件扩展名。',
+    '在浏览器应用中集成 File Viewer，覆盖离线优先组件、按需渲染器、私有部署与 265 个已注册文件扩展名。',
 } as const;
 
 export function localePath(locale: 'en' | 'zh', path = '') {

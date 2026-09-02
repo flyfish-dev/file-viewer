@@ -9,7 +9,7 @@
 - Source: https://github.com/flyfish-dev/file-viewer
 - npm scope: https://www.npmjs.com/search?q=%40file-viewer
 
-File Viewer is a browser-native, offline-first, self-hosted file preview project. The current source matrix maps 244 registered extensions (221 stable, 23 experimental) to 34 preview pipelines and contains 84 File Viewer npm targets.
+File Viewer is a browser-native, offline-first, self-hosted file preview project. The current source matrix maps 265 registered extensions (223 stable, 42 experimental) to 44 preview pipelines and contains 86 File Viewer npm targets.
 
 ## Start Here
 
@@ -34,7 +34,7 @@ File Viewer is a browser-native, offline-first, self-hosted file preview project
 
 ## Integration Paths
 
-Vanilla JavaScript, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and Full packages are documented. Light packages do not contain every renderer. Use selected renderers or presets for modular builds, or a Full package for the complete registered format set and matching local assets.
+Vanilla JavaScript, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and Full packages are documented. Light packages do not contain every renderer. Use selected renderers or presets for modular builds, or a Full package for the frozen `preset-all` compatibility baseline and matching local assets. Adobe design, DICOM, and digital-signature/evidence renderers remain explicit opt-ins.
 
 ## Retrieval Notes
 
