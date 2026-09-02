@@ -9,6 +9,7 @@ import {
 export {
   applyCadViewerColorMode,
   normalizeFileViewerCadColorMode,
+  resolveCadViewerSourceDocument,
   resolveFileViewerCadMonochromeColor,
   supportsCadViewerColorMode,
 } from './colorMode';
