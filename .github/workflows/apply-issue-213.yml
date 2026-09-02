@@ -1,0 +1,203 @@
+name: Apply issue 213 CAD integration
+
+on:
+  push:
+    branches: [feature/issue-213-monochrome-cad]
+
+permissions:
+  contents: write
+
+jobs:
+  codemod:
+    if: ${{ !contains(github.event.head_commit.message, '[issue-213-applied]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/issue-213-monochrome-cad
+      - name: Apply deterministic source changes
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text(encoding='utf-8')
+              if new in text:
+                  return
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f'{path}: expected one match, found {count}: {old[:80]!r}')
+              file.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          def append_once(path: str, marker: str, content: str) -> None:
+              file = Path(path)
+              text = file.read_text(encoding='utf-8')
+              if marker in text:
+                  return
+              file.write_text(text.rstrip() + '\n\n' + content.strip() + '\n', encoding='utf-8')
+
+          # Core public contracts and localized toolbar labels.
+          replace_once(
+              'packages/core/src/contracts/types.ts',
+              "  | 'cad.toolbar.zoomIn'\n  | 'cad.layers.title'",
+              "  | 'cad.toolbar.zoomIn'\n  | 'cad.toolbar.colorSource'\n  | 'cad.toolbar.monochrome'\n  | 'cad.layers.title'",
+          )
+          replace_once(
+              'packages/core/src/contracts/types.ts',
+              "export type FileViewerCadRenderer = 'auto' | 'webgl' | 'canvas2d';\nexport type FileViewerCadDwfLineWeightMode = 'adaptive' | 'physical' | 'hairline';\nexport type FileViewerCadFitMode = 'best' | 'native';",
+              "export type FileViewerCadRenderer = 'auto' | 'webgl' | 'canvas2d';\nexport type FileViewerCadDwfLineWeightMode = 'adaptive' | 'physical' | 'hairline';\nexport type FileViewerCadColorMode = 'source' | 'monochrome';\nexport type FileViewerCadFitMode = 'best' | 'native';",
+          )
+          replace_once(
+              'packages/core/src/contracts/types.ts',
+              "  renderer?: FileViewerCadRenderer;\n  preferDwgWasm?: boolean;",
+              "  renderer?: FileViewerCadRenderer;\n  /** Initial CAD color policy. `monochrome` applies one plot color without mutating source data. */\n  colorMode?: FileViewerCadColorMode;\n  /** CSS color used by monochrome mode. Defaults to the CAD foreground color. */\n  monochromeColor?: string;\n  /** Shows the CAD toolbar color-mode toggle. Defaults to true. */\n  showColorModeToggle?: boolean;\n  preferDwgWasm?: boolean;",
+          )
+
+          replace_once(
+              'packages/core/src/i18n/messages.ts',
+              "  'cad.toolbar.zoomOut': '缩小',\n  'cad.toolbar.zoomIn': '放大',\n  'cad.layers.title': '图层',",
+              "  'cad.toolbar.zoomOut': '缩小',\n  'cad.toolbar.zoomIn': '放大',\n  'cad.toolbar.colorSource': '彩色',\n  'cad.toolbar.monochrome': '黑白',\n  'cad.layers.title': '图层',",
+          )
+          replace_once(
+              'packages/core/src/i18n/messages.ts',
+              "  'cad.toolbar.zoomOut': 'Zoom out',\n  'cad.toolbar.zoomIn': 'Zoom in',\n  'cad.layers.title': 'Layers',",
+              "  'cad.toolbar.zoomOut': 'Zoom out',\n  'cad.toolbar.zoomIn': 'Zoom in',\n  'cad.toolbar.colorSource': 'Source colors',\n  'cad.toolbar.monochrome': 'Monochrome',\n  'cad.layers.title': 'Layers',",
+          )
+          replace_once(
+              'packages/core/src/i18n/messages.ja.ts',
+              "  'cad.toolbar.zoomOut': '縮小',\n  'cad.toolbar.zoomIn': '拡大',\n  'cad.layers.title': 'レイヤー',",
+              "  'cad.toolbar.zoomOut': '縮小',\n  'cad.toolbar.zoomIn': '拡大',\n  'cad.toolbar.colorSource': '元の色',\n  'cad.toolbar.monochrome': 'モノクロ',\n  'cad.layers.title': 'レイヤー',",
+          )
+          replace_once(
+              'packages/core/src/i18n/messages.de.ts',
+              '  "cad.toolbar.zoomOut": "Herauszoomen",\n  "cad.toolbar.zoomIn": "Vergrößern",\n  "cad.layers.title": "Schichten",',
+              '  "cad.toolbar.zoomOut": "Herauszoomen",\n  "cad.toolbar.zoomIn": "Vergrößern",\n  "cad.toolbar.colorSource": "Originalfarben",\n  "cad.toolbar.monochrome": "Monochrom",\n  "cad.layers.title": "Schichten",',
+          )
+
+          for path in [
+              'packages/core/src/index.ts',
+              'packages/core/src/headless.ts',
+              'packages/components/vue3/src/package/index.ts',
+          ]:
+              replace_once(
+                  path,
+                  '  FileViewerCadDwfLineWeightMode,\n  FileViewerCadOptions,',
+                  '  FileViewerCadColorMode,\n  FileViewerCadDwfLineWeightMode,\n  FileViewerCadOptions,',
+              )
+
+          replace_once(
+              'packages/components/vue3/src/package/common/type.ts',
+              '  FileViewerCadDwfLineWeightMode as CoreFileViewerCadDwfLineWeightMode,\n  FileViewerCadOptions as CoreFileViewerCadOptions,',
+              '  FileViewerCadColorMode as CoreFileViewerCadColorMode,\n  FileViewerCadDwfLineWeightMode as CoreFileViewerCadDwfLineWeightMode,\n  FileViewerCadOptions as CoreFileViewerCadOptions,',
+          )
+          replace_once(
+              'packages/components/vue3/src/package/common/type.ts',
+              'export type FileViewerCadRenderer = CoreFileViewerCadRenderer;\nexport type FileViewerCadDwfLineWeightMode = CoreFileViewerCadDwfLineWeightMode;',
+              'export type FileViewerCadRenderer = CoreFileViewerCadRenderer;\nexport type FileViewerCadColorMode = CoreFileViewerCadColorMode;\nexport type FileViewerCadDwfLineWeightMode = CoreFileViewerCadDwfLineWeightMode;',
+          )
+
+          cad = 'packages/renderers/cad/src/cad.ts'
+          replace_once(
+              cad,
+              '  type FileViewerCadOptions,\n  type FileViewerFitRequest,',
+              '  type FileViewerCadColorMode,\n  type FileViewerCadOptions,\n  type FileViewerFitRequest,',
+          )
+          replace_once(
+              cad,
+              "} from '@file-viewer/core';\n\ntype CadStatus = 'loading' | 'ready' | 'error';",
+              "} from '@file-viewer/core';\nimport {\n  applyCadViewerColorMode,\n  normalizeFileViewerCadColorMode,\n  resolveFileViewerCadMonochromeColor,\n  supportsCadViewerColorMode,\n} from './colorMode';\n\ntype CadStatus = 'loading' | 'ready' | 'error';",
+          )
+          replace_once(
+              cad,
+              ".cad-tools button:hover{background:rgba(31,150,110,.14);color:#0f8f62}\n.cad-zoom,.cad-meta span{color:#64748b;font-size:12px;font-weight:800;letter-spacing:0}",
+              ".cad-tools button:hover{background:rgba(31,150,110,.14);color:#0f8f62}\n.cad-tools button.cad-color-mode{min-width:52px;padding:0 10px;font-size:12px}\n.cad-tools button.cad-color-mode[aria-pressed='true']{background:#0f172a;color:#fff}\n.cad-tools button.cad-color-mode:disabled{cursor:not-allowed;opacity:.46}\n.cad-zoom,.cad-meta span{color:#64748b;font-size:12px;font-weight:800;letter-spacing:0}",
+          )
+          replace_once(
+              cad,
+              "  const t = createFileViewerTranslator(context?.options);\n  const locale = resolveFileViewerLocale(context?.options);\n  let status: CadStatus = 'loading';",
+              "  const t = createFileViewerTranslator(context?.options);\n  const locale = resolveFileViewerLocale(context?.options);\n  const monochromeColor = resolveFileViewerCadMonochromeColor(options.monochromeColor);\n  let colorMode = normalizeFileViewerCadColorMode(options.colorMode);\n  let status: CadStatus = 'loading';",
+          )
+          replace_once(
+              cad,
+              "  const zoomText = createElement('span', 'cad-zoom', '100%');\n  const zoomInButton = createElement('button', undefined, '+') as HTMLButtonElement;\n  const meta = createElement('div', 'cad-meta');",
+              "  const zoomText = createElement('span', 'cad-zoom', '100%');\n  const zoomInButton = createElement('button', undefined, '+') as HTMLButtonElement;\n  const colorModeButton = createElement('button', 'cad-color-mode') as HTMLButtonElement;\n  colorModeButton.hidden = options.showColorModeToggle === false;\n  const meta = createElement('div', 'cad-meta');",
+          )
+          replace_once(
+              cad,
+              "  [fitButton, zoomOutButton, zoomInButton].forEach(button => {\n    button.type = 'button';\n  });\n  fitButton.title = t('cad.toolbar.fit');\n  zoomOutButton.title = t('cad.toolbar.zoomOut');\n  zoomInButton.title = t('cad.toolbar.zoomIn');\n  tools.append(fitButton, zoomOutButton, zoomText, zoomInButton);",
+              "  [fitButton, zoomOutButton, zoomInButton, colorModeButton].forEach(button => {\n    button.type = 'button';\n  });\n  fitButton.title = t('cad.toolbar.fit');\n  zoomOutButton.title = t('cad.toolbar.zoomOut');\n  zoomInButton.title = t('cad.toolbar.zoomIn');\n  tools.append(fitButton, zoomOutButton, zoomText, zoomInButton, colorModeButton);",
+          )
+          replace_once(
+              cad,
+              "      backend: renderStats?.backend,\n      layerCount: layers.length,",
+              "      backend: renderStats?.backend,\n      colorMode,\n      monochromeColor: colorMode === 'monochrome' ? monochromeColor : undefined,\n      layerCount: layers.length,",
+          )
+          replace_once(
+              cad,
+              "      const color = createElement('span', 'cad-layer-color');\n      if (typeof layer.color === 'string') {\n        color.style.background = layer.color;\n      }",
+              "      const color = createElement('span', 'cad-layer-color');\n      if (colorMode === 'monochrome') {\n        color.style.background = monochromeColor;\n      } else if (typeof layer.color === 'string') {\n        color.style.background = layer.color;\n      }",
+          )
+          replace_once(
+              cad,
+              "  const syncState = () => {\n    zoomText.textContent = `${getZoomPercent()}%`;\n    backendMeta.textContent = (renderStats?.backend || 'auto').toUpperCase();",
+              "  const syncState = () => {\n    zoomText.textContent = `${getZoomPercent()}%`;\n    backendMeta.textContent = (renderStats?.backend || 'auto').toUpperCase();\n    const colorModeSupported = supportsCadViewerColorMode(viewer);\n    colorModeButton.disabled = status !== 'ready' || !colorModeSupported;\n    colorModeButton.setAttribute('aria-pressed', String(colorMode === 'monochrome'));\n    colorModeButton.textContent = t(colorMode === 'monochrome'\n      ? 'cad.toolbar.monochrome'\n      : 'cad.toolbar.colorSource');\n    colorModeButton.title = t(colorMode === 'monochrome'\n      ? 'cad.toolbar.colorSource'\n      : 'cad.toolbar.monochrome');",
+          )
+          replace_once(
+              cad,
+              "  fitButton.addEventListener('click', () => fitToView());\n  zoomInButton.addEventListener('click', zoomIn);\n  zoomOutButton.addEventListener('click', zoomOut);",
+              "  fitButton.addEventListener('click', () => fitToView());\n  zoomInButton.addEventListener('click', zoomIn);\n  zoomOutButton.addEventListener('click', zoomOut);\n  colorModeButton.addEventListener('click', () => {\n    const previousMode = colorMode;\n    colorMode = colorMode === 'monochrome' ? 'source' : 'monochrome';\n    if (!applyCadViewerColorMode(viewer, colorMode, monochromeColor)) {\n      colorMode = previousMode;\n      syncState();\n      return;\n    }\n    syncUi();\n    emitCadViewStateChange('cad-view-change', 'user');\n  });",
+          )
+          replace_once(
+              cad,
+              "      dwfMinTextCssPx: options.dwfMinTextCssPx,\n      dwfMinFilledAreaCssPx: options.dwfMinFilledAreaCssPx,\n      autoFit: true,",
+              "      dwfMinTextCssPx: options.dwfMinTextCssPx,\n      dwfMinFilledAreaCssPx: options.dwfMinFilledAreaCssPx,\n      ...({ colorMode, monochromeColor } as Record<string, unknown>),\n      autoFit: true,",
+          )
+
+          append_once(
+              'packages/renderers/cad/README.md',
+              '## 黑白出图模式',
+              '''
+              ## 黑白出图模式
+
+              `cad.colorMode` 可设为 `source` 或 `monochrome`。黑白模式通过 CAD 引擎的实体颜色策略实现，不使用 CSS 滤镜，因此 Canvas、WebGL、文字覆盖层及原生 DWF 渲染可保持一致，同时保留透明度、线型、线宽和源文件数据。
+
+              ```ts
+              {
+                cad: {
+                  colorMode: 'monochrome',
+                  monochromeColor: '#000000',
+                  showColorModeToggle: true,
+                },
+              }
+              ```
+              ''',
+          )
+          append_once(
+              'packages/renderers/cad/README.en.md',
+              '## Monochrome plot mode',
+              '''
+              ## Monochrome plot mode
+
+              Set `cad.colorMode` to `source` or `monochrome`. Monochrome rendering uses the CAD engine's entity-color policy rather than a CSS filter, keeping Canvas, WebGL, text overlays and native DWF output consistent while preserving alpha, line types, line weights and source data.
+
+              ```ts
+              {
+                cad: {
+                  colorMode: 'monochrome',
+                  monochromeColor: '#000000',
+                  showColorModeToggle: true,
+                },
+              }
+              ```
+              ''',
+          )
+          PY
+
+          rm .github/workflows/apply-issue-213.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "feat: integrate monochrome CAD mode [issue-213-applied]"
+          git push origin HEAD:feature/issue-213-monochrome-cad
