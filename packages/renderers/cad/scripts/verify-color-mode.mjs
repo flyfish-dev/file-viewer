@@ -12,7 +12,7 @@ assert.equal(normalizeFileViewerCadColorMode('monochrome'), 'monochrome');
 assert.equal(normalizeFileViewerCadColorMode('source'), 'source');
 assert.equal(normalizeFileViewerCadColorMode('unexpected'), 'source');
 assert.equal(resolveFileViewerCadMonochromeColor('  #101820  '), '#101820');
-assert.equal(resolveFileViewerCadMonochromeColor(undefined), '#0f172a');
+assert.equal(resolveFileViewerCadMonochromeColor(undefined), '#000000');
 
 const calls = [];
 const viewer = {
