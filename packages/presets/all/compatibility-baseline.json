@@ -133,9 +133,12 @@
       "sha256": "f006cfe07225cf6c03e25aacc2a2e41795c808f7e7137f22385ac8fc9a3e52b3"
     },
     "presetDependencies": {
-      "count": 34,
-      "sha256": "b7c3a8588d4a4f0eaf2bd9bcaf64dceeb66474c0756f049a6cd0246f7fc0dbb4"
+      "count": 35,
+      "sha256": "f1b53ba1052b7a80a042c7b9181409f79b0fdddf9bc619cd4221fa4a7e88cf36"
     }
   },
-  "excludedFutureCapabilities": ["dicom", "signature"]
+  "excludedFutureCapabilities": [
+    "dicom",
+    "signature"
+  ]
 }

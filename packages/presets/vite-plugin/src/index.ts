@@ -1984,9 +1984,10 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     '@file-viewer/renderer-pdf'
   ])
   const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
-  // @file-viewer/renderer-pdf carries the CJK fallback font as a runtime dependency, so
-  // any installed pdf capability resolves it. The profile pack and staged pack stay as
-  // earlier sources; when nothing is installed the build warns instead of failing.
+  // The standard profile pack owns the CJK fallback font; presets that activate the pdf
+  // renderer without that pack declare the font package directly. renderer-pdf must not
+  // vendor a second copy, so when no source is installed the build warns instead of
+  // failing and PDF rendering keeps using embedded fonts.
   const pdfCjkFontSourceAvailable =
     Boolean(
       standardPdfCjkFontRoot && existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
@@ -2011,7 +2012,7 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     },
     pdfCjkFontSourceAvailable
       ? undefined
-      : `reinstall @file-viewer/renderer-pdf or install ${independentlyOwnedAssetRendererIds.get('pdf')}`,
+      : `install ${independentlyOwnedAssetRendererIds.get('pdf')} or @fontsource-variable/noto-sans-sc`,
     undefined,
     pdfCjkFontSourceAvailable ? undefined : false
   )

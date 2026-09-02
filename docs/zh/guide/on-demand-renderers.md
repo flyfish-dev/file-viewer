@@ -197,7 +197,7 @@ export default defineConfig({
 })
 ```
 
-`copyAssets` 会复制已安装包能提供的离线资产。PDF 的 CJK 回退字体是 `@file-viewer/renderer-pdf` 的运行时依赖，只要启用 pdf 能力的 profile 都会自带并可离线自托管；`@file-viewer/assets-standard` 会在标准 profile 包里再提供同一份字体。两者都缺失时构建仍然成功，插件只警告该字体被跳过，PDF 渲染回退到内嵌字体。
+`copyAssets` 会复制已安装包能提供的离线资产。PDF 的 CJK 回退字体归 `@file-viewer/assets-standard` 所有，`@file-viewer/preset-standard` 会一并安装它；`@file-viewer/preset-office` 和 `@file-viewer/preset-all` 则直接声明 `@fontsource-variable/noto-sans-sc`，因此启用 pdf 能力的 profile 都能离线自托管该字体。缺少字体来源时构建仍然成功，插件只警告该字体被跳过，PDF 渲染回退到内嵌字体。
 
 插件默认 `inject:true`，会把生成的 renderer 模块注入 Vite HTML 入口，组件通过 `autoRenderers` 自动获得能力。常规业务代码无需再手动传 `renderers`。
 

@@ -66,8 +66,7 @@
     "prepack": "node scripts/stage-pdfjs-runtime.mjs --check"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0",
-    "@fontsource-variable/noto-sans-sc": "5.3.0"
+    "@file-viewer/core": "workspace:3.0.0"
   },
   "peerDependencies": {
     "pdf-lib": "1.17.1"
@@ -78,6 +77,7 @@
     }
   },
   "devDependencies": {
+    "@fontsource-variable/noto-sans-sc": "5.3.0",
     "pdf-lib": "1.17.1",
     "pdfjs-dist": "5.4.624",
     "typescript": "^6.0.3"
