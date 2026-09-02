@@ -1,0 +1,65 @@
+name: Apply issue 213 source-document fix
+
+on:
+  push:
+    branches: [feature/issue-213-monochrome-cad]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[source-document-fix-applied]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/issue-213-monochrome-cad
+      - name: Apply deterministic fix
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          helper = Path('packages/renderers/cad/src/colorMode.ts')
+          text = helper.read_text(encoding='utf-8')
+          marker = 'export function resolveCadViewerSourceDocument'
+          if marker not in text:
+              insertion = '''
+
+          export function resolveCadViewerSourceDocument(viewer: unknown): unknown {
+            const candidate = viewer as {
+              getSourceDocument?: () => unknown;
+              getDocument?: () => unknown;
+            } | null | undefined;
+            return candidate?.getSourceDocument?.() ?? candidate?.getDocument?.();
+          }
+          '''
+              anchor = '\nexport function applyCadViewerColorMode('
+              if text.count(anchor) != 1:
+                  raise RuntimeError('Unable to locate color-mode helper insertion point')
+              helper.write_text(text.replace(anchor, insertion + anchor, 1), encoding='utf-8')
+
+          cad = Path('packages/renderers/cad/src/cad.ts')
+          text = cad.read_text(encoding='utf-8')
+          old_import = '  resolveFileViewerCadMonochromeColor,\n  supportsCadViewerColorMode,'
+          new_import = '  resolveFileViewerCadMonochromeColor,\n  resolveCadViewerSourceDocument,\n  supportsCadViewerColorMode,'
+          if new_import not in text:
+              if text.count(old_import) != 1:
+                  raise RuntimeError('Unable to locate CAD color-mode import list')
+              text = text.replace(old_import, new_import, 1)
+          old = '        const document = viewer?.getDocument();'
+          new = '        const document = resolveCadViewerSourceDocument(viewer) as CadDocument | undefined;'
+          if new not in text:
+              if text.count(old) != 1:
+                  raise RuntimeError(f'Expected one layer source-document lookup, found {text.count(old)}')
+              text = text.replace(old, new, 1)
+          cad.write_text(text, encoding='utf-8')
+          PY
+
+          rm .github/workflows/apply-issue-213-source-document-fix.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "fix: preserve parser-owned CAD source on layer toggles [source-document-fix-applied]"
+          git push origin HEAD:feature/issue-213-monochrome-cad
