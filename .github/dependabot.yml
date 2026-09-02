@@ -31,9 +31,8 @@ updates:
       - dependency-name: '@types/pako'
         update-types:
           - version-update:semver-major
-      - dependency-name: postal-mime
-        update-types:
-          - version-update:semver-major
+      # pako 3 changes Inflate err/msg semantics used by the DICOM deflated-study
+      # path and needs a licence ledger refresh, so its majors stay deferred.
 
   - package-ecosystem: github-actions
     directory: /
