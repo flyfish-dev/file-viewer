@@ -10,7 +10,7 @@ export function normalizeFileViewerCadColorMode(value: unknown): FileViewerCadCo
   return value === 'monochrome' ? 'monochrome' : 'source';
 }
 
-export function resolveFileViewerCadMonochromeColor(value: unknown, fallback = '#0f172a'): string {
+export function resolveFileViewerCadMonochromeColor(value: unknown, fallback = '#000000'): string {
   if (typeof value === 'string' && value.trim()) return value.trim();
   return fallback;
 }
@@ -18,7 +18,6 @@ export function resolveFileViewerCadMonochromeColor(value: unknown, fallback = '
 export function supportsCadViewerColorMode(value: unknown): value is CadViewerColorModeAdapter {
   return Boolean(value && typeof (value as CadViewerColorModeAdapter).setColorMode === 'function');
 }
-
 
 export function resolveCadViewerSourceDocument(viewer: unknown): unknown {
   const candidate = viewer as {
