@@ -51,6 +51,9 @@ jobs:
       - name: Build source, components and demo
         run: pnpm build
 
+      - name: Verify CAD color mode integration
+        run: pnpm --filter @file-viewer/renderer-cad verify:color-mode
+
       - name: Verify PPTX generated styles
         run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts
 
