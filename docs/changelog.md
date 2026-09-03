@@ -17,6 +17,24 @@
 - Replaced free-form format/capability entry in the interactive create/add wizard with checkbox-style renderer and format-family rows. Capabilities included by the selected profile are visibly preselected and retained, while optional rows support individual numbers, ranges, select-all, and clear-extra commands.
 - Generated Vite 8 projects now declare and preflight Node `^20.19.0 || >=22.12.0` before `dev` or `build`, producing an actionable upgrade message on unsupported runtimes. Web Component events are created from the element's owning document realm with a compatibility fallback when global `CustomEvent` is unavailable.
 
+### New format renderers
+
+- Added `@file-viewer/renderer-chm`: offline in-browser CHM help reading with a Rust/WASM unpacker and a sandboxed reader for table of contents, articles, and images. Nothing leaves the browser.
+- Added `@file-viewer/renderer-design`: offline Adobe design preview covering PSD/PSB layers, Illustrator native PGF and PDF-compatible surfaces, IDML/ICML/INX, INDD/XD, modern XFL animation, and swatch, brush, and resource files. It ships as an explicit opt-in package whose Worker, WASM, and font assets can be self-hosted.
+
+### PDF
+
+- Fixed the blank Chinese glyphs reported in #242: the CJK fallback font now ships with the PDF renderer and reaches the on-demand profiles that were missing it, and profile font ownership is gated so the asset cannot silently disappear again.
+
+### Email
+
+- Raised the EML parsing baseline to postal-mime `3.0.0` (#232): parts without a declared charset fall back to the header encoding, folded RFC 5322 headers unfold completely, repeated headers resolve first-wins, and `to`/`cc`/`bcc` keep their original order.
+
+### Ecosystem package installation
+
+- `@file-viewer/vue3` no longer installs the host framework: `vue` moved to `peerDependencies: ">=3.3 <4"`, matching the Vue 2.6, Vue 2.7, React, React Legacy, Svelte, and jQuery packages, and the build-time icon library moved to devDependencies so the only runtime dependency is `@file-viewer/core`. Applications pinned to a Vue version outside the old `^3.5.35` range previously received a second Vue copy and crashed on mount with `Cannot read properties of null (reading 'refs')`.
+- Added a host runtime contract gate: ecosystem components may only install File Viewer packages at runtime, must declare their host framework as a peer, and must keep the three Vue release lines disjoint. A cold-install check now compares resolved host framework paths immediately after install and fails with the duplicated copies listed instead of surfacing as a browser timeout.
+
 ## v3.0.0 — Modular CLI, opt-in specialist formats, and security gates
 
 Released August 27, 2026.
