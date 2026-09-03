@@ -5,7 +5,7 @@
   "@id": "https://file-viewer.app/#software",
   "name": "File Viewer",
   "alternateName": ["File Viewer by Flyfish", "Flyfish File Viewer", "Flyfish Viewer"],
-  "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 86 npm targets, 265 registered extensions (223 stable, 42 experimental), and 44 preview pipelines.",
+  "description": "Browser-native, offline-first, self-hosted multi-format file preview components with 88 npm targets, 266 registered extensions (224 stable, 42 experimental), and 45 preview pipelines.",
   "version": "3.0.0",
   "codeRepository": "https://github.com/flyfish-dev/file-viewer",
   "issueTracker": "https://github.com/flyfish-dev/file-viewer/issues",

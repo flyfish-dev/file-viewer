@@ -1,5 +1,9 @@
 # 发布与开源分发
 
+> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
+
+<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+
 <div class="doc-kicker">Release For Users</div>
 
 <p class="doc-lead">
@@ -270,7 +274,7 @@ pnpm release:ecosystem:publish:dry-run
 pnpm release:ecosystem:publish
 ```
 
-`release:ecosystem:pack` 会先构建 core、独立 renderer、preset、PPTX 原生引擎、标准组件包和历史兼容包，再统一打包本仓库当前 86 个 npm 目标。`@file-viewer/ppt` 作为独立版本依赖解析；其公开运行时由 Full/copy-assets/CDN 产物交付。发布前请确认 tarball 中包含必要的 viewer assets、`dist/*`、README / README.en.md，且没有 `.DS_Store`。
+`release:ecosystem:pack` 会先构建 core、独立 renderer、preset、PPTX 原生引擎、标准组件包和历史兼容包，再统一打包本仓库当前 88 个 npm 目标。`@file-viewer/ppt` 作为独立版本依赖解析；其公开运行时由 Full/copy-assets/CDN 产物交付。发布前请确认 tarball 中包含必要的 viewer assets、`dist/*`、README / README.en.md，且没有 `.DS_Store`。
 
 开源总仓库使用私有 Gitea `main` 完整聚合仓生成，发布前执行:
 

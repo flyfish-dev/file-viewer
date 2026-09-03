@@ -6,7 +6,7 @@
   New integrations should prefer the standard <code>@file-viewer/*</code> packages.
   Historical <code>@flyfish-group/*</code> names remain available for existing users.
   Each package line keeps the host framework native while presets and renderers make format capability and install boundaries explicit.
-  The current source tree maintains 86 npm targets over one 265-extension, 44-pipeline capability matrix: 223 extensions are stable and 42 are experimental.
+  The current source tree maintains 88 npm targets over one 266-extension, 45-pipeline capability matrix: 224 extensions are stable and 42 are experimental.
 </p>
 
 ## Recommended Packages
