@@ -35,7 +35,7 @@ const comparisonRows = computed(() =>
         {
           dimension: '产品定位',
           icon: Boxes,
-          open: '浏览器原生、多格式、离线优先的开源预览组件。覆盖 265 个已注册扩展名与 44 条独立预览链路，其中 223 个稳定、42 个实验。',
+          open: '浏览器原生、多格式、离线优先的开源预览组件。覆盖 266 个已注册扩展名与 45 条独立预览链路，其中 224 个稳定、42 个实验。',
           commercial:
             '面向严肃 Office 场景的原生文档引擎，重点解决 Word、Excel、PowerPoint 的高还原与企业交付。'
         },
@@ -71,7 +71,7 @@ const comparisonRows = computed(() =>
         {
           dimension: 'Product role',
           icon: Boxes,
-          open: 'A browser-native, multi-format, offline-first open-source viewer covering 265 registered extensions across 44 preview pipelines: 223 stable and 42 experimental.',
+          open: 'A browser-native, multi-format, offline-first open-source viewer covering 266 registered extensions across 45 preview pipelines: 224 stable and 42 experimental.',
           commercial:
             'A native document engine for serious Office workflows, focused on Word, Excel, and PowerPoint fidelity and enterprise delivery.'
         },

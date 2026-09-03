@@ -18,7 +18,7 @@ The project is designed for teams that need users to open business attachments d
 - License: File Viewer-authored source and packages are Apache-2.0; the bundled `@file-viewer/ppt` runtime retains its included independent LICENSE and NOTICE, as do other third-party dependencies.
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
-- Source matrix scope: 86 File Viewer npm targets, 265 registered extensions, and 44 preview pipelines; 223 extensions are stable and 42 are experimental. The experimental set contains 23 DICOM/signature mappings and 19 explicit opt-in Adobe design mappings.
+- Source matrix scope: 86 File Viewer npm targets, 266 registered extensions, and 45 preview pipelines; 224 extensions are stable and 42 are experimental. The experimental set contains 23 DICOM/signature mappings and 19 explicit opt-in Adobe design mappings.
 - Current published release: v3.0.0, https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0. 83 mainline File Viewer packages use 3.0.0; the historical `msdoc-viewer` compatibility package uses 0.2.4. Word uses `@file-viewer/docx` 0.3.28; Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.4 release.
 
 ## Format Coverage

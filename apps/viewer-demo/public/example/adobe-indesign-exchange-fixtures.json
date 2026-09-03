@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "fixtures": [
+    {
+      "path": "indesign-story.icml",
+      "format": "icml",
+      "source": "https://raw.githubusercontent.com/jgm/pandoc/fa0dfdf0e146ff5ec97e46dedb3492ebd3a35808/test/writer.icml",
+      "license": "GPL-2.0-or-later; see licenses/pandoc-GPL-2.0-or-later.md",
+      "bytes": 147296,
+      "sha256": "9a250a6f73c1ee7a2929d6c27a9c5eca00757b9fcefd6ebe473a7c58c23dfcfd",
+      "expected": {
+        "rootElement": "Document",
+        "snippetType": "InCopyInterchange",
+        "minimumStories": 1,
+        "minimumTextCharacters": 100
+      }
+    },
+    {
+      "path": "indesign-layout-fragment.idms",
+      "format": "idms",
+      "source": "Project-generated from the Adobe IDML companion-format grammar; no external artwork.",
+      "license": "Apache-2.0 project fixture",
+      "bytes": 4713,
+      "sha256": "f1c63e6b10a198f5d0ce7a4f817e4d2f660a0e5d40014e24e3517df512cdb925",
+      "expected": {
+        "rootElement": "Document",
+        "snippetType": "PageItem",
+        "stories": 1,
+        "items": 4,
+        "colors": 3
+      }
+    },
+    {
+      "path": "indesign-grid-legacy.inx",
+      "format": "inx",
+      "source": "https://raw.githubusercontent.com/nathansmith/960-Grid-System/863977584b66722b390149ed2b39d810f1e4e4c6/templates/indesign/cs3/960_grid_12_col.inx",
+      "license": "MIT election from upstream MIT/GPL dual license; see licenses/960-grid-MIT.txt",
+      "bytes": 66480,
+      "sha256": "3ad213e8a9be30d95fd6b5b01a061ece23c658650b710afa1d1cac2b770e15ad",
+      "expected": {
+        "rootElement": "docu",
+        "minimumItems": 12,
+        "minimumColors": 10
+      }
+    }
+  ]
+}

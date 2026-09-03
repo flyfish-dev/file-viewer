@@ -1,6 +1,7 @@
 import type {
   FileViewerArchiveOptions,
   FileViewerCadOptions,
+  FileViewerChmOptions,
   FileViewerDataOptions,
   FileViewerDesignOptions,
   FileViewerDocxOptions,
@@ -18,6 +19,12 @@ import type {
 
 export const DEFAULT_FILE_VIEWER_ARCHIVE_WORKER_PATH = 'vendor/libarchive/worker-bundle.js';
 export const DEFAULT_FILE_VIEWER_ARCHIVE_WASM_PATH = 'vendor/libarchive/libarchive.wasm';
+export const DEFAULT_FILE_VIEWER_CHM_WORKER_PATH = 'vendor/chm/chm.worker.js';
+export const DEFAULT_FILE_VIEWER_CHM_WORKER_PACKAGE_PATH = '@file-viewer/renderer-chm/worker/chm.worker.js';
+export const DEFAULT_FILE_VIEWER_CHM_WASM_MODULE_PATH = 'vendor/chm/chm_wasm.js';
+export const DEFAULT_FILE_VIEWER_CHM_WASM_MODULE_PACKAGE_PATH = '@file-viewer/renderer-chm/wasm/chm_wasm.js';
+export const DEFAULT_FILE_VIEWER_CHM_WASM_PATH = 'vendor/chm/chm_wasm_bg.wasm';
+export const DEFAULT_FILE_VIEWER_CHM_WASM_PACKAGE_PATH = '@file-viewer/renderer-chm/wasm/chm_wasm_bg.wasm';
 export const DEFAULT_FILE_VIEWER_DOCX_WORKER_PATH = 'vendor/docx/docx.worker.js';
 export const DEFAULT_FILE_VIEWER_DOCX_WORKER_JSZIP_PATH = 'vendor/docx/jszip.min.js';
 export const DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '0.3.26';
@@ -361,6 +368,9 @@ export type FileViewerRendererAssetTarget = 'public' | 'bundled' | 'external';
 export type FileViewerRendererAssetOptionPath =
   | 'archive.workerUrl'
   | 'archive.wasmUrl'
+  | 'chm.workerUrl'
+  | 'chm.wasmModuleUrl'
+  | 'chm.wasmUrl'
   | 'cad.wasmPath'
   | 'cad.workerUrl'
   | 'cad.dwfWasmUrl'
@@ -531,6 +541,44 @@ const createPhotoshopWorkerLicenseAssets = (
 };
 
 export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRendererAssetManifest[] = [
+  {
+    rendererId: 'chm',
+    assets: [
+      {
+        id: 'chm-worker',
+        rendererId: 'chm',
+        kind: 'worker',
+        target: 'public',
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_CHM_WORKER_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_CHM_WORKER_PACKAGE_PATH,
+        optionPath: 'chm.workerUrl',
+        description: 'Module Worker that isolates Rust/WASM CHM parsing, LZX decompression, search and virtual-file access.',
+      },
+      {
+        id: 'chm-wasm-module',
+        rendererId: 'chm',
+        kind: 'script',
+        target: 'public',
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_CHM_WASM_MODULE_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_CHM_WASM_MODULE_PACKAGE_PATH,
+        optionPath: 'chm.wasmModuleUrl',
+        description: 'wasm-bindgen ES module loader for the browser-local Rust CHM engine.',
+      },
+      {
+        id: 'chm-wasm',
+        rendererId: 'chm',
+        kind: 'wasm',
+        target: 'public',
+        required: true,
+        defaultPath: DEFAULT_FILE_VIEWER_CHM_WASM_PATH,
+        packagePath: DEFAULT_FILE_VIEWER_CHM_WASM_PACKAGE_PATH,
+        optionPath: 'chm.wasmUrl',
+        description: 'Rust WebAssembly engine for bounded ITSF/ITSP parsing and LZX decompression.',
+      },
+    ],
+  },
   {
     rendererId: 'model',
     assets: [
@@ -1513,6 +1561,21 @@ export const resolveFileViewerWordPerfectWasmUrl = (
   documentBaseUrl?: string
 ) => resolveFileViewerAssetUrl(options?.wasmUrl, DEFAULT_FILE_VIEWER_WORDPERFECT_WASM_PATH, { documentBaseUrl });
 
+export const resolveFileViewerChmWorkerUrl = (
+  options?: Pick<FileViewerChmOptions, 'workerUrl'> | null,
+  documentBaseUrl?: string
+) => resolveFileViewerAssetUrl(options?.workerUrl, DEFAULT_FILE_VIEWER_CHM_WORKER_PATH, { documentBaseUrl });
+
+export const resolveFileViewerChmWasmModuleUrl = (
+  options?: Pick<FileViewerChmOptions, 'wasmModuleUrl'> | null,
+  documentBaseUrl?: string
+) => resolveFileViewerAssetUrl(options?.wasmModuleUrl, DEFAULT_FILE_VIEWER_CHM_WASM_MODULE_PATH, { documentBaseUrl });
+
+export const resolveFileViewerChmWasmUrl = (
+  options?: Pick<FileViewerChmOptions, 'wasmUrl'> | null,
+  documentBaseUrl?: string
+) => resolveFileViewerAssetUrl(options?.wasmUrl, DEFAULT_FILE_VIEWER_CHM_WASM_PATH, { documentBaseUrl });
+
 export const resolveFileViewerPresentationWorkerUrl = (
   options?: Pick<FileViewerPresentationOptions, 'workerUrl'> | null,
   documentBaseUrl?: string
@@ -1668,6 +1731,12 @@ const getRendererAssetOptionValue = (
       return options?.archive?.workerUrl;
     case 'archive.wasmUrl':
       return options?.archive?.wasmUrl;
+    case 'chm.workerUrl':
+      return options?.chm?.workerUrl;
+    case 'chm.wasmModuleUrl':
+      return options?.chm?.wasmModuleUrl;
+    case 'chm.wasmUrl':
+      return options?.chm?.wasmUrl;
     case 'cad.wasmPath':
       return options?.cad?.wasmPath;
     case 'cad.workerUrl':

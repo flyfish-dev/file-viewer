@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-08-31",
+  "source": "project-generated:scripts/fetch-adobe-preset-fixtures.mjs",
+  "license": "Apache-2.0",
+  "fixtures": [
+    {
+      "file": "photoshop-patterns.pat",
+      "format": "pat",
+      "expected": {
+        "version": "1",
+        "patterns": 2,
+        "names": [
+          "File Viewer Checker",
+          "File Viewer Gray RLE"
+        ],
+        "firstRgba": [
+          245,
+          158,
+          11,
+          255
+        ]
+      },
+      "bytes": 675,
+      "sha256": "0a1044c92ec8e9275a4174bc0da5293c444b4f5e967cc7b6560b31c59c85b2f0"
+    },
+    {
+      "file": "photoshop-gradients.grd",
+      "format": "grd",
+      "expected": {
+        "version": "5",
+        "gradients": 2,
+        "names": [
+          "Sunset Glass",
+          "Bounded Noise"
+        ],
+        "folder": "File Viewer Presets"
+      },
+      "bytes": 1513,
+      "sha256": "a8578ad3219c575f81ed707a04d23009b483049d2f321d977db2fa6276275a31"
+    },
+    {
+      "file": "photoshop-layer-styles.asl",
+      "format": "asl",
+      "expected": {
+        "version": "2",
+        "styles": 2,
+        "patterns": 1,
+        "names": [
+          "Neon Card",
+          "Quiet Overlay"
+        ],
+        "effects": [
+          "drop-shadow",
+          "gradient-overlay",
+          "pattern-overlay"
+        ]
+      },
+      "bytes": 1716,
+      "sha256": "4f1a0a96cb788cc739af2eee30972b807b717db5491b05b33ac314dc30ae1523"
+    }
+  ]
+}

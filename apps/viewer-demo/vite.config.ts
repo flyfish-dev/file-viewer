@@ -18,6 +18,7 @@ const demoWorkspaceSourceAliases = [
   ['@file-viewer/preset-all', '../../packages/presets/all/src/index.ts'],
   ['@file-viewer/renderer-3d', '../../packages/renderers/3d/src/index.ts'],
   ['@file-viewer/renderer-archive', '../../packages/renderers/archive/src/index.ts'],
+  ['@file-viewer/renderer-chm', '../../packages/renderers/chm/src/index.ts'],
   ['@file-viewer/renderer-cad', '../../packages/renderers/cad/src/index.ts'],
   ['@file-viewer/renderer-data', '../../packages/renderers/data/src/index.ts'],
   ['@file-viewer/renderer-design', '../../packages/renderers/design/src/index.ts'],

@@ -3,13 +3,13 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  The canonical catalog registers 265 file extensions across 44 preview pipelines: 223 stable and 42 experimental.
+  The canonical catalog registers 266 file extensions across 45 preview pipelines: 224 stable and 42 experimental.
   Renderers are loaded on demand, so opening a lightweight text file does not force the browser to load every heavy document engine.
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="File Viewer by Flyfish v2.3.0 English format sample library with grouped filenames and format-specific icons" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">The demo groups representative samples for all 44 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence. Experimental rows keep their limits visible.</p>
+  <p class="doc-caption">The demo groups representative samples for all 45 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence. Experimental rows keep their limits visible.</p>
 </div>
 
 ## Main Preview Pipelines

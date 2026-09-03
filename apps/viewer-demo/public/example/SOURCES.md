@@ -73,6 +73,7 @@
 | `audio.mp3` | `https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3` | CC0 | Small MP3 sample for native audio playback smoke tests |
 | `audio.ogg` | `https://commons.wikimedia.org/wiki/File:Example.ogg` | CC BY-SA 3.0 | OGG Vorbis sample for native audio playback smoke tests |
 | `book.epub` | `https://www.gutenberg.org/ebooks/928.epub3.images` | Public domain in the USA | EPUB sample for epubjs table-of-contents and paginated reading smoke tests |
+| `putty-0.85.chm` | PuTTY 0.85 official release documentation, fixed URL `https://the.earth.li/~sgtatham/putty/0.85/putty.chm`; upstream checksum ledger `https://the.earth.li/~sgtatham/putty/0.85/sha256sums` | MIT; copyright 1997-2026 Simon Tatham and PuTTY contributors; notice preserved in `licenses/putty-0.85-LICENSE.txt` | Real compressed ITSF v3 / LZX CHM for directory, contents tree, topic, internal-asset, search, Worker/WASM and security-boundary smoke tests; SHA-256 `f78d1ac29073ee935b55590eb826d31a2aa360b0fe9d43dd2ca4489b554248b5` |
 
 运行时说明:
 
@@ -110,6 +111,7 @@
 - `audio.mp3` 与 `audio.ogg` 只用于验证浏览器原生音频播放能力；不同浏览器对编码的支持存在差异。
 - `melody.mid` 是最小 MIDI fixture，用于验证 `@tonejs/midi` 只在 MIDI 命中时按需加载并展示轨道、时长和音符摘要。
 - `book.epub` 来自 Project Gutenberg，运行时由 `epubjs` 解析 EPUB 包、目录和章节资源。
+- `putty-0.85.chm` 来自 PuTTY 官方 0.85 固定版本下载地址，校验值与同版本官方 `sha256sums` 一致。样例包含真实 ITSF v3 目录和 LZX 压缩内容，用于验证浏览器本地 Rust/WASM 解压、目录/主题/资源读取和无外部网络依赖；它不是可执行文件，渲染器仍必须移除脚本、ActiveX/Object、事件属性和危险 URL，并拒绝越界内部路径。
 - `book.umd` 由项目内生成，覆盖 UMD 文件头、元数据、章节偏移、章节标题和 zlib 压缩正文段。
 - `report.typ` 由项目内编写，覆盖 Typst 标题、表格、公式、代码块、多页输出、页面尺寸和打印/HTML 导出，线上 Demo 会直接读取源文件并通过浏览器端 WASM 编译预览。
 - `archive.zip` 与 `archive.tar.gz` 由本目录中的 PDF、DOCX、Markdown、TypeScript 和 JSON 示例打包，用于验证 `libarchive.js` Worker、按需解压、IndexedDB 缓存和内部文件继续预览；其中 DOCX 同步使用当前公开中文 Word 样例。

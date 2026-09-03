@@ -242,6 +242,22 @@
       "capabilities": { "download": true, "print": false, "exportHtml": false, "zoom": false, "search": true }
     },
     {
+      "id": "chm",
+      "label": "Compiled HTML Help",
+      "category": "ebook",
+      "packageName": "@file-viewer/renderer-chm",
+      "preset": ["all"],
+      "extensions": ["chm"],
+      "supportLevel": "structured",
+      "status": "stable",
+      "containerVersions": ["Microsoft HTML Help ITSF v2/v3", "LZX MSCompressed and uncompressed content"],
+      "knownLimits": ["ActiveX, Shortcut/WinHelp commands, scripts and external network resources are intentionally blocked", "Merged help collections require each referenced CHM file to be opened separately"],
+      "capabilities": { "download": true, "print": "adapter", "exportHtml": "adapter", "zoom": false, "search": true },
+      "evidence": {
+        "chm": { "fixture": "apps/viewer-demo/public/example/putty-0.85.chm", "sha256": "f78d1ac29073ee935b55590eb826d31a2aa360b0fe9d43dd2ca4489b554248b5", "assertions": ["itsf-v3", "pmgl-pmgi-directory", "lzx-decompression", "table-of-contents", "topic-navigation", "resource-rewrite", "search", "sandboxed-html", "browser-worker-wasm"], "required": true }
+      }
+    },
+    {
       "id": "email",
       "label": "Email",
       "category": "email",

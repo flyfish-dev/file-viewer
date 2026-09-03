@@ -9,6 +9,7 @@ import {
 } from '@file-viewer/core';
 import { archiveRenderer } from '@file-viewer/renderer-archive';
 import { cadRenderer } from '@file-viewer/renderer-cad';
+import { chmRenderer } from '@file-viewer/renderer-chm';
 import { dataRenderer } from '@file-viewer/renderer-data';
 import { drawingRenderer } from '@file-viewer/renderer-drawing';
 import { ebookRenderer } from '@file-viewer/renderer-epub';
@@ -57,7 +58,7 @@ const allRendererHandlers = coreBrowserRendererHandlers as readonly {
   handler: BrowserRendererHandler;
 }[];
 
-const extractedRendererIds = ['adobe-palette-design', 'adobe-xd-design', 'apple-keynote', 'apple-numbers', 'apple-pages', 'archive', 'audio', 'cad', 'code', 'data-asset', 'drawing', 'ebook-fb2', 'eda', 'email', 'epub', 'geo', 'illustrator-pdf-design', 'image', 'indesign-idml-design', 'indesign-native-design', 'markdown', 'mindmap', 'model', 'ofd', 'office-hangul', 'office-presentation', 'office-presentation-binary', 'office-word-binary', 'office-word-openxml', 'office-wordperfect', 'open-document', 'pdf', 'photoshop-design', 'photoshop-resource-design', 'postscript-design', 'spreadsheet-dbf', 'spreadsheet-openxml', 'typst', 'umd', 'video'] as const;
+const extractedRendererIds = ['adobe-palette-design', 'adobe-xd-design', 'apple-keynote', 'apple-numbers', 'apple-pages', 'archive', 'audio', 'cad', 'chm', 'code', 'data-asset', 'drawing', 'ebook-fb2', 'eda', 'email', 'epub', 'geo', 'illustrator-pdf-design', 'image', 'indesign-idml-design', 'indesign-native-design', 'markdown', 'mindmap', 'model', 'ofd', 'office-hangul', 'office-presentation', 'office-presentation-binary', 'office-word-binary', 'office-word-openxml', 'office-wordperfect', 'open-document', 'pdf', 'photoshop-design', 'photoshop-resource-design', 'postscript-design', 'spreadsheet-dbf', 'spreadsheet-openxml', 'typst', 'umd', 'video'] as const;
 
 export const fileViewerAllRendererPlugin: FileViewerRendererPlugin<BrowserRendererHandler> = {
   id: 'file-viewer-all-renderers',
@@ -69,7 +70,7 @@ export const fileViewerAllRendererPlugin: FileViewerRendererPlugin<BrowserRender
 export const allRenderers: FileViewerRendererPreset<BrowserRendererHandler> = {
   id: 'file-viewer-preset-all',
   label: 'Flyfish File Viewer full renderer preset',
-  renderers: [wordRenderer, wordPerfectRenderer, hangulRenderer, iworkRenderer, pdfRenderer, ofdRenderer, presentationRenderer, spreadsheetRenderer, cadRenderer, typstRenderer, drawingRenderer, modelRenderer, archiveRenderer, emailRenderer, ebookRenderer, textRenderer, imageRenderer, mediaRenderer, mindmapRenderer, geoRenderer, dataRenderer, edaRenderer, fileViewerAllRendererPlugin],
+  renderers: [wordRenderer, wordPerfectRenderer, hangulRenderer, iworkRenderer, pdfRenderer, ofdRenderer, presentationRenderer, spreadsheetRenderer, cadRenderer, typstRenderer, drawingRenderer, modelRenderer, archiveRenderer, chmRenderer, emailRenderer, ebookRenderer, textRenderer, imageRenderer, mediaRenderer, mindmapRenderer, geoRenderer, dataRenderer, edaRenderer, fileViewerAllRendererPlugin],
 };
 
 export const fileViewerPresetAll = allRenderers;

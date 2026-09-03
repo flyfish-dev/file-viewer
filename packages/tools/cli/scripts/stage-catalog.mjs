@@ -98,6 +98,7 @@ const assetPackByRendererId = new Map(Object.entries({
   'office-presentation-binary': 'ppt',
   'office-hangul': 'hangul',
   'office-wordperfect': 'wordperfect',
+  chm: 'chm',
   'data-asset': 'data',
   'adobe-animate-xfl-design': 'design',
   'adobe-palette-design': 'design',

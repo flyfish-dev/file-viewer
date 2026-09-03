@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-08-31",
+  "fixtures": [
+    {
+      "file": "photoshop-brushes.abr",
+      "format": "abr",
+      "sourceUrl": "https://raw.githubusercontent.com/SethRobinson/Patchy/b2e38ae8085d51f9715509640ae4236e28c90626/test-fixtures/abr/myer-settlement-brushes.abr",
+      "sourceCommit": "b2e38ae8085d51f9715509640ae4236e28c90626",
+      "sha256": "4cb12679582ee908ed8f546d7b45071a2de48fb9af194e649a227f259838f1d6",
+      "bytes": 901268,
+      "license": "CC0-1.0",
+      "licenseFile": "licenses/photoshop-brushes.CC0-NOTICE.txt",
+      "expected": {
+        "version": "6.2",
+        "brushes": 148,
+        "samples": 148,
+        "patterns": 0,
+        "previewPixels": 1546025
+      }
+    },
+    {
+      "file": "photoshop-shapes.csh",
+      "format": "csh",
+      "sourceUrl": "project-generated:scripts/fetch-adobe-brush-fixtures.mjs",
+      "sha256": "51f9983ae326e774903f0463e26326e0bc3ec7c2ba0b7841589320a8b3993195",
+      "bytes": 1060,
+      "license": "CC0-1.0",
+      "licenseFile": "licenses/photoshop-shapes.CC0.txt",
+      "expected": {
+        "version": "2",
+        "shapes": 3,
+        "paths": 4,
+        "names": [
+          "File Viewer Star",
+          "File Viewer Heart",
+          "File Viewer Ring"
+        ]
+      }
+    }
+  ]
+}

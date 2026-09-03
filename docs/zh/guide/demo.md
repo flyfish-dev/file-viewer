@@ -1,10 +1,14 @@
 # Demo 说明
 
+> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
+
+<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+
 <div class="doc-kicker">See It Before You Ship It</div>
 
 <p class="doc-lead">
   一个好用的 Demo，不只是“给别人看看”，也是团队内部确认能力边界、联调文件样本和复现问题的最快入口。
-  当前能力矩阵包含 265 个已注册扩展名（223 个稳定、42 个实验）和 44 条预览链路；Demo 为每条链路提供可重复验证的代表样例，实验样例不会冒充稳定支持证据。
+  当前能力矩阵包含 266 个已注册扩展名（224 个稳定、42 个实验）和 45 条预览链路；Demo 为每条链路提供可重复验证的代表样例，实验样例不会冒充稳定支持证据。
 </p>
 
 ## 四个验证入口

@@ -175,6 +175,15 @@ export const rendererModularizationLines = [
     dependencies: ['libarchive.js', 'jszip']
   },
   {
+    id: 'chm',
+    group: 'archiveEmailEbook',
+    targetPackage: '@file-viewer/renderer-chm',
+    phase: 3,
+    status: 'extracted',
+    renderers: ['chm'],
+    dependencies: []
+  },
+  {
     id: 'email',
     group: 'archiveEmailEbook',
     targetPackage: '@file-viewer/renderer-email',
@@ -241,6 +250,15 @@ export const rendererModularizationLines = [
     status: 'extracted',
     renderers: ['signature'],
     dependencies: ['jszip']
+  },
+  {
+    id: 'design-asset',
+    group: 'mediaAndData',
+    targetPackage: '@file-viewer/renderer-design',
+    phase: 5,
+    status: 'extracted',
+    renderers: ['photoshop-design', 'illustrator-pdf-design', 'postscript-design', 'adobe-palette-design', 'photoshop-resource-design', 'indesign-idml-design', 'indesign-exchange-design', 'adobe-animate-xfl-design', 'adobe-xd-design', 'indesign-native-design'],
+    dependencies: ['@file-viewer/renderer-data', 'ag-psd', '@webtoon/psd', '@paged-media/introspect-wasm', '@xmldom/xmldom', 'saxes']
   },
   {
     id: 'data-asset',

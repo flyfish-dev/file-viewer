@@ -66,7 +66,7 @@ jobs:
       - name: Type-check
         run: pnpm type-check
 
-      - name: Test thumbnail package
+      - name: Run the issue regression gates
         run: pnpm test
 
       - name: Build documentation

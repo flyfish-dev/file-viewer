@@ -544,6 +544,36 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     }
   },
   {
+    "id": "chm",
+    "label": "Compiled HTML Help",
+    "category": "ebook",
+    "extensions": [
+      "chm"
+    ],
+    "async": true,
+    "supportLevel": "structured",
+    "status": "stable",
+    "packageName": "@file-viewer/renderer-chm",
+    "presets": [
+      "all"
+    ],
+    "containerVersions": [
+      "Microsoft HTML Help ITSF v2/v3",
+      "LZX MSCompressed and uncompressed content"
+    ],
+    "knownLimits": [
+      "ActiveX, Shortcut/WinHelp commands, scripts and external network resources are intentionally blocked",
+      "Merged help collections require each referenced CHM file to be opened separately"
+    ],
+    "capabilities": {
+      "download": true,
+      "print": "adapter",
+      "exportHtml": "adapter",
+      "zoom": false,
+      "search": true
+    }
+  },
+  {
     "id": "email",
     "label": "Email",
     "category": "email",

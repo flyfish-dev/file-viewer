@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "fixtures": [
+    {
+      "localFile": "adobe-palette.ase",
+      "sourceRepository": "https://github.com/stuartcarroll/SprayPaintSwatches",
+      "sourceCommit": "82303decd5500e4344448f53012ca52687d8809a",
+      "upstreamPath": "montana_white.ase",
+      "license": "CC0-1.0",
+      "licenseFile": "licenses/spray-paint-swatches-CC0-1.0.txt",
+      "size": 944,
+      "sha256": "e7ae14114b567cbb79b70c77a6b67551c2c562263178029ed0bcace89117a8a8",
+      "version": "1.0",
+      "colors": 24,
+      "groups": 1,
+      "unknownBlocks": 0,
+      "trailingBytes": 0
+    },
+    {
+      "localFile": "adobe-colors.aco",
+      "sourceRepository": "https://github.com/kdybicz/adobe-color-swatch",
+      "sourceCommit": "dc5970040418a01c80829d728f0ac8aa2360f609",
+      "upstreamPath": "examples/utf.aco",
+      "license": "MIT",
+      "licenseFile": "licenses/adobe-color-swatch-MIT.txt",
+      "size": 451,
+      "sha256": "526c41f24c788690354d9a0e1df1e0605187f33a142b94b8e6543e5571267158",
+      "version": "2",
+      "colors": 3,
+      "groups": 0,
+      "unknownBlocks": 0,
+      "trailingBytes": 321
+    }
+  ]
+}
