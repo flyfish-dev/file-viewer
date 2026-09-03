@@ -1652,8 +1652,12 @@ test(
         })
       )
       const cli = new URL('../dist/cli.js', import.meta.url)
+      // `eof` needs an explicit action: without it Tcl reads the next word as
+      // that action, the switch loses its timeout arm, and a wizard that stops
+      // matching leaves expect blocked in `wait` forever while the harness pipe
+      // stays open, so even the spawnSync timeout cannot unblock the runner.
       const expectProgram = `
-set timeout 20
+set timeout 12
 log_user 1
 spawn $env(FILE_VIEWER_TEST_NODE) $env(FILE_VIEWER_TEST_CLI) add $env(FILE_VIEWER_TEST_ROOT) --json
 expect {
@@ -1661,8 +1665,8 @@ expect {
   -re {\\([^\\r\\n]*b=back[^\\r\\n]*\\): $} { send "\\r"; exp_continue }
   -re {Enter=confirm: $} { send "\\r"; exp_continue }
   -re {\\(y/N\\) $} { send "\\r"; exp_continue }
-  eof
-  timeout { catch { exec kill [exp_pid] }; exit 124 }
+  eof {}
+  timeout { catch { exec pkill -P [exp_pid] }; catch { exec kill [exp_pid] }; catch { wait }; exit 124 }
 }
 catch wait result
 exit [lindex $result 3]
@@ -1679,7 +1683,13 @@ exit [lindex $result 3]
           FILE_VIEWER_TEST_ROOT: root
         }
       })
-      assert.equal(interactive.status, 0, interactive.stderr)
+      assert.equal(
+        interactive.status,
+        0,
+        `expect exited ${interactive.status} (124 means the wizard stopped matching the ` +
+          `prompt patterns below); stderr: ${(interactive.stderr || '').trim()}\nlast output:\n` +
+          `${(interactive.stdout || '').split('\n').slice(-14).join('\n')}`
+      )
       assert.match(interactive.stdout, /"profile"\s*:\s*"full"/)
       assert.match(interactive.stdout, /"packageManager"\s*:\s*"pnpm"/)
       assert.equal(existsSync(join(root, 'file-viewer.config.json')), false)
@@ -2602,6 +2612,7 @@ test('custom profile has no implicit asset owner and all profile plans each decl
   )
   assert.deepEqual(all.assetPackages, [
     '@file-viewer/assets-cad',
+    '@file-viewer/assets-chm',
     '@file-viewer/assets-data',
     '@file-viewer/assets-drawing',
     '@file-viewer/assets-hangul',
@@ -2612,7 +2623,7 @@ test('custom profile has no implicit asset owner and all profile plans each decl
     '@file-viewer/assets-typst',
     '@file-viewer/assets-wordperfect'
   ])
-  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 10)
+  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 11)
   assert.equal(all.packages.includes('file-viewer-copy-assets'), false)
 })
 
