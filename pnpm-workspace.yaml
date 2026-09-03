@@ -62,4 +62,12 @@ overrides:
 
 auditConfig:
   ignoreGhsas:
+    # ReDoS (low severity) in the `vue` template compiler's parseHTML regex, affecting
+    # >=2.0.0-alpha.1 <3.0.0-alpha.0. GitHub reports the first patched version as 3.0.0-alpha.0:
+    # upstream Vue 2 is end-of-life, so no Vue 2 fix will ever land, and the only in-repo
+    # "fix" would be deleting the Vue 2.6/2.7 line this advisory is filed against - which
+    # exists for applications that cannot move to Vue 3. `vue` is a peer dependency there, so
+    # the flagged package is the host application's own Vue, not a shipped File Viewer runtime
+    # dependency. docs/guide/quickstart-vue2.md points security-sensitive users at this
+    # advisory. Re-check the ignore if Vue 2 ever ships a patch or the line is retired.
     - GHSA-5j4c-8p2g-v4jx
