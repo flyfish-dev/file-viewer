@@ -6,7 +6,7 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
-## Unreleased
+## v3.0.1 — Host peer frameworks, PDF CJK fallback, and EML header correctness
 
 ### Readable text previews
 
@@ -34,6 +34,10 @@
 
 - `@file-viewer/vue3` no longer installs the host framework: `vue` moved to `peerDependencies: ">=3.3 <4"`, matching the Vue 2.6, Vue 2.7, React, React Legacy, Svelte, and jQuery packages, and the build-time icon library moved to devDependencies so the only runtime dependency is `@file-viewer/core`. Applications pinned to a Vue version outside the old `^3.5.35` range previously received a second Vue copy and crashed on mount with `Cannot read properties of null (reading 'refs')`.
 - Added a host runtime contract gate: ecosystem components may only install File Viewer packages at runtime, must declare their host framework as a peer, and must keep the three Vue release lines disjoint. A cold-install check now compares resolved host framework paths immediately after install and fails with the duplicated copies listed instead of surfacing as a browser timeout.
+
+### Dependency security
+
+- The XMind parsing path no longer resolves `@xmldom/xmldom` 0.9.10, whose six advisories are reachable from `DOMParser.parseFromString` while previewing an untrusted file; a dependency override keeps the whole graph on 0.9.12, and the public boundary check verifies the override really lands (#246).
 
 ## v3.0.0 — Modular CLI, opt-in specialist formats, and security gates
 

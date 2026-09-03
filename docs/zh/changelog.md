@@ -10,7 +10,7 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
 
-## 未发布
+## `v3.0.1` 宿主框架 peer 依赖、PDF 中文兜底字体与 EML 头部修正 — 2026-09-03
 
 ### 可读文本预览
 
@@ -38,6 +38,10 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 
 - `@file-viewer/vue3` 不再把宿主框架 `vue` 作为运行时依赖安装，改为 `peerDependencies: ">=3.3 <4"`，与 Vue 2.6/2.7、React、Svelte、jQuery 组件保持一致；构建期图标库同步移入 devDependencies，直接运行时依赖只剩 `@file-viewer/core`。这修复了应用锁定的 Vue 版本与组件自带版本不一致时安装出两份 Vue 实例、组件挂载抛 `Cannot read properties of null (reading 'refs')` 并留下空白页面的问题。
 - 新增宿主运行时契约门禁：生态组件的可安装依赖只允许 File Viewer 自身包，宿主框架必须且只能声明为 peer，且三条 Vue 版本线互不重叠；冷安装校验在安装完成后立即比对宿主框架的解析路径，出现重复副本时直接失败并给出可读原因。
+
+### 依赖安全
+
+- XMind 解析路径不再解析 `@xmldom/xmldom` 0.9.10：该版本带有 6 项安全公告，且均可由预览不可信文件时的 `DOMParser.parseFromString` 触发；依赖覆盖将整张依赖图锁定到 0.9.12，开源边界校验会持续确认该覆盖确实生效（#246）。
 
 ## `v3.0.0` 模块化 CLI、专业格式按需安装与安全门禁 — 2026-08-27
 
