@@ -57,6 +57,9 @@ jobs:
       - name: Verify PPTX generated styles
         run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts
 
+      - name: Verify the component host runtime contract
+        run: pnpm exec vitest run test/component-host-runtime-contract.spec.ts
+
       - name: Type-check
         run: pnpm type-check
 
