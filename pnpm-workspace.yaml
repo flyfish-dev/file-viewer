@@ -35,6 +35,9 @@ minimumReleaseAgeExclude:
 overrides:
   'adm-zip@<0.6.0': 0.6.0
   'epubjs>@xmldom/xmldom': 0.9.12
+  # issue #246: @xmldom/xmldom <0.9.12 has six GHSA advisories and the XMind
+  # parser reaches it through an open range, so keep the security release pinned.
+  '@ljheee/xmind-parser>@xmldom/xmldom': 0.9.12
   'ansi-regex@>=4.0.0 <4.1.1': 4.1.1
   '@babel/core@7.29.0': 7.29.7
   'brace-expansion@1.1.14': 1.1.18
