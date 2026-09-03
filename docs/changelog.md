@@ -24,7 +24,7 @@
 
 ### PDF
 
-- Fixed the 3.0 packaging failure reported in #242 (Vite 8 + pnpm 11 + Node 22): the CJK fallback font was a runtime dependency of `@file-viewer/renderer-pdf`, so it only resolved inside the renderer's own `node_modules`, an installed app had no font source to copy, and `copyAssets` aborted `vite build` on a missing required asset (2.4 had no such check, which is why rolling back looked like the fix). `preset-office`, `preset-all` and `preset-standard` now own the font source, the renderer declares none, and a genuinely missing optional asset is a warning instead of a build failure; Chinese PDFs also stop degrading into blank glyphs when a font is absent. The #242 and profile gates keep that ownership from drifting back.
+- Fixed the 3.0 packaging failure reported in #242 (Vite 8 + pnpm 11 + Node 22): `@file-viewer/vite-plugin` has treated pdf assets as required since 2.4, and 2.4 passed because `@fontsource-variable/noto-sans-sc` was then a runtime dependency of `@file-viewer/renderer-pdf`. 3.0.0 moved that font to devDependencies, so an installed app had no font source to copy and the missing required asset aborted `vite build`, which made rolling back to 2.4 look like the fix. In 3.0.1 the presets that activate the pdf renderer own the font source (`preset-office` and `preset-all` declare the font package, `preset-standard` takes it from `@file-viewer/assets-standard`), the published `@file-viewer/renderer-pdf` tarball carries no font copy, and when no font source resolves the asset is optional, so the build logs a warning instead of failing and PDF rendering keeps relying on the fonts embedded in each document. The #242 and profile gates keep that ownership and optionality from drifting back.
 
 ### Email
 

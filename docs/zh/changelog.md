@@ -28,7 +28,7 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 
 ### PDF
 
-- 修复 #242 报告的 3.0 打包失败（Vite 8 + pnpm 11 + Node 22）：CJK 回退字体此前是 `@file-viewer/renderer-pdf` 的运行时依赖，只解析到 renderer 自己的 `node_modules`，安装后的应用拿不到字体来源，`copyAssets` 因必需资产缺失直接中断 `vite build`（2.4 没有该校验，回退版本因此看起来像修复）。3.0.1 把字体来源上移到启用 PDF renderer 的 `preset-office`、`preset-all`、`preset-standard`，renderer 自身不再声明字体，真正缺失的可选资产改为警告而不再失败；中文 PDF 也不再因缺字体退化为空白方块。该资产归属由 #242 门禁与 profile 门禁持续校验。
+- 修复 #242 报告的 3.0 打包失败（Vite 8 + pnpm 11 + Node 22）：`@file-viewer/vite-plugin` 从 2.4 起就把 PDF 资产列为必需，2.4 之所以能通过，是因为 `@fontsource-variable/noto-sans-sc` 当时是 `@file-viewer/renderer-pdf` 的运行时依赖；3.0.0 把该字体降级为 devDependency，安装后的应用解析不到任何字体来源，必需资产缺失直接中断 `vite build`，因此回退 2.4 看起来像修复。3.0.1 把字体来源上移到启用 PDF renderer 的 preset：`preset-office`、`preset-all` 直接声明字体包，`preset-standard` 由 `@file-viewer/assets-standard` 提供；`@file-viewer/renderer-pdf@3.0.1` 的发布包内不再携带任何字体副本（tarball 已核对），而在确实没有字体来源时该资产改为可选，构建输出警告而不是失败，PDF 继续依赖文档内嵌字体。该资产归属与可选性由 #242 门禁与 profile 门禁持续校验。
 
 ### 邮件
 
