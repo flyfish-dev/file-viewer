@@ -56,7 +56,8 @@
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:github-242": "node scripts/verify-github-242.mjs"
   },
   "peerDependencies": {
     "vite": ">=5 <9"

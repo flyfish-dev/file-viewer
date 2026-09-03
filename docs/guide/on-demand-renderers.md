@@ -46,7 +46,7 @@ export default defineConfig({
 })
 ```
 
-`copyAssets` copies the offline payload that the installed packages provide. The PDF CJK fallback font is owned by `@file-viewer/assets-standard`, which `@file-viewer/preset-standard` installs; `@file-viewer/preset-office` and `@file-viewer/preset-all` declare `@fontsource-variable/noto-sans-sc` instead, so every profile that activates the pdf renderer self-hosts the font. When no source is installed the build still succeeds and the plugin only warns that the font was skipped, leaving PDF rendering to embedded fonts.
+`copyAssets` copies the offline payload that the installed packages provide. The PDF CJK fallback font is owned by `@file-viewer/assets-standard`, which `@file-viewer/preset-standard` installs; `@file-viewer/preset-office` and `@file-viewer/preset-all` declare `@fontsource-variable/noto-sans-sc` instead, so every profile that activates the pdf renderer self-hosts the font. When no source is installed the build still succeeds and the plugin only warns that the font was skipped, leaving PDF rendering to embedded fonts. `pnpm test:pdf-cjk-font-github-242` keeps this contract as a regression gate: every preset that activates the pdf renderer declares a font source, `@file-viewer/renderer-pdf` declares none itself, and the asset stays optional.
 
 The plugin reads the Vite major installed by the application. Vite 5–7 receive `build.rollupOptions.output.manualChunks`; Vite 8 receives `build.rolldownOptions.output.codeSplitting.groups`. Existing application groups, priorities, array outputs, and `codeSplitting:false` are preserved, so the plugin adds only its stable CodeMirror and renderer groups.
 
