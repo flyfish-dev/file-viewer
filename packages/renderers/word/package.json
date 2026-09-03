@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-word",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Standalone DOCX, DOC, and OpenDocument renderer for File Viewer; RTF parsing is an explicit opt-in capability.",
@@ -63,8 +63,8 @@
     "verify:rtf-security": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-rtf-link-policy.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0",
-    "@file-viewer/doc": "workspace:3.0.0",
+    "@file-viewer/core": "workspace:3.0.1",
+    "@file-viewer/doc": "workspace:3.0.1",
     "@file-viewer/docx": "0.3.28",
     "jszip": "^3.10.1"
   },

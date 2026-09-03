@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-presentation",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Standalone PowerPoint renderer for binary PPT and OpenXML PPTX presentation formats.",
@@ -69,9 +69,9 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0",
-    "@file-viewer/renderer-ppt": "workspace:3.0.0",
-    "@file-viewer/renderer-pptx": "workspace:3.0.0"
+    "@file-viewer/core": "workspace:3.0.1",
+    "@file-viewer/renderer-ppt": "workspace:3.0.1",
+    "@file-viewer/renderer-pptx": "workspace:3.0.1"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

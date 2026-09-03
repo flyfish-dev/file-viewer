@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-chm",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "sideEffects": false,
@@ -82,7 +82,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0"
+    "@file-viewer/core": "workspace:3.0.1"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",

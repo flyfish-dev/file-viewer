@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-drawio-official",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Explicit opt-in for the large official diagrams.net viewer runtime.",
@@ -34,7 +34,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/renderer-drawing": "workspace:3.0.0"
+    "@file-viewer/renderer-drawing": "workspace:3.0.1"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vue3",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "packageManager": "pnpm@11.0.9",
@@ -58,7 +58,7 @@
   },
   "types": "dist/src/package/index.d.ts",
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0"
+    "@file-viewer/core": "workspace:3.0.1"
   },
   "peerDependencies": {
     "vue": ">=3.3 <4"

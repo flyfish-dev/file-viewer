@@ -1,13 +1,12 @@
 packages:
-  - .
   - packages/core
   - packages/thumbnail
-  - packages/renderers/*
   - packages/capabilities/*
+  - packages/renderers/*
   - packages/presets/*
   - packages/tools/*
-  - packages/compat/*
   - packages/components/*
+  - packages/compat/*
   - apps/*
   - examples/vanilla-vite
   - examples/react-vite
@@ -21,12 +20,13 @@ peerDependencyRules:
 
 allowBuilds:
   '@parcel/watcher': true
+  ant-design-vue: true
   canvas: true
   core-js: true
   core-js-pure: true
   es5-ext: true
   esbuild: true
-  workerd: true
+  fsevents: true
 
 minimumReleaseAgeExclude:
   - '@file-viewer/docx@0.3.28'
@@ -48,18 +48,15 @@ overrides:
   postcss: 8.5.23
   'undici@6.26.0': 6.28.0
   'uuid@<11.1.1': 11.1.1
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.0.0
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.0.0
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.0.0
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.0.0
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.0.0
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.0.0
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.0.0
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.0.0
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.0.1
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.0.1
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.0.1
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.0.1
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.0.1
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.0.1
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.0.1
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.0.1
 
 auditConfig:
   ignoreGhsas:
     - GHSA-5j4c-8p2g-v4jx
-
-patchedDependencies:
-  illustrator-pgf@0.1.0: patches/illustrator-pgf@0.1.0.patch

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/pptx",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Native PPTX renderer extracted from File Viewer",

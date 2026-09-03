@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/assets-chm",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Independent self-hosted CHM Worker and Rust/WASM runtime for opt-in File Viewer integration.",
@@ -20,20 +20,31 @@
     "RUST_NOTICE.md",
     "RUST_THIRD_PARTY_LICENSES.md"
   ],
-  "bin": { "file-viewer-assets-chm": "./bin/install.mjs" },
-  "dependencies": { "@file-viewer/asset-installer": "workspace:3.0.0" },
+  "bin": {
+    "file-viewer-assets-chm": "./bin/install.mjs"
+  },
+  "dependencies": {
+    "@file-viewer/asset-installer": "workspace:3.0.1"
+  },
   "scripts": {
     "stage-assets": "node scripts/stage-assets.mjs",
     "verify": "pnpm stage-assets && node scripts/verify-assets.mjs",
     "prepack": "pnpm stage-assets"
   },
-  "engines": { "node": ">=20" },
-  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/tools/assets-chm"
   },
-  "fileViewer": { "assetPackManifest": "./file-viewer.asset-pack.json" },
+  "fileViewer": {
+    "assetPackManifest": "./file-viewer.asset-pack.json"
+  },
   "license": "Apache-2.0"
 }

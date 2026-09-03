@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-react",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Private-deploy React component for File Viewer",
@@ -59,7 +59,7 @@
     "react": ">=17 <20"
   },
   "dependencies": {
-    "@file-viewer/react": "workspace:3.0.0"
+    "@file-viewer/react": "workspace:3.0.1"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

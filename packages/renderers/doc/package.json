@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/doc",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Browser-native legacy MS-DOC (.doc) parser and HTML renderer extracted from the public msdoc-viewer 0.2.0 line.",

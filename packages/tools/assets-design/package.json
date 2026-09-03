@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/assets-design",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Independent self-hosted Worker and WebAssembly runtime for Adobe design previews.",
@@ -9,20 +9,38 @@
     "./viewer/*": "./viewer/*",
     "./package.json": "./package.json"
   },
-  "files": ["bin", "viewer", "file-viewer.asset-pack.json", "README.md", "README.en.md", "LICENSE"],
-  "bin": { "file-viewer-assets-design": "./bin/install.mjs" },
-  "dependencies": { "@file-viewer/asset-installer": "workspace:3.0.0" },
+  "files": [
+    "bin",
+    "viewer",
+    "file-viewer.asset-pack.json",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "file-viewer-assets-design": "./bin/install.mjs"
+  },
+  "dependencies": {
+    "@file-viewer/asset-installer": "workspace:3.0.1"
+  },
   "scripts": {
     "stage-assets": "node ../../build-support/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-design",
     "prepack": "pnpm stage-assets"
   },
-  "engines": { "node": ">=20" },
-  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/tools/assets-design"
   },
-  "fileViewer": { "assetPackManifest": "./file-viewer.asset-pack.json" },
+  "fileViewer": {
+    "assetPackManifest": "./file-viewer.asset-pack.json"
+  },
   "license": "Apache-2.0"
 }

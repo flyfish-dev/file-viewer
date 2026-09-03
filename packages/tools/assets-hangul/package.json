@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/assets-hangul",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Independent self-hosted Hangul HWP/HWPX Worker runtime for opt-in File Viewer integration.",
@@ -20,7 +20,7 @@
     "file-viewer-assets-hangul": "./bin/install.mjs"
   },
   "dependencies": {
-    "@file-viewer/asset-installer": "workspace:3.0.0"
+    "@file-viewer/asset-installer": "workspace:3.0.1"
   },
   "scripts": {
     "stage-assets": "node ../../build-support/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-hangul",
