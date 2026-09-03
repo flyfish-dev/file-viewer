@@ -62,7 +62,7 @@
     "@file-viewer/core": "workspace:3.0.1",
     "@tmcw/togeojson": "^7.1.2",
     "maplibre-gl": "^5.24.0",
-    "proj4": "^2.20.9",
+    "proj4": "^2.22.0",
     "shpjs": "^6.2.0"
   },
   "devDependencies": {

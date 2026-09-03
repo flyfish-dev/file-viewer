@@ -75,7 +75,7 @@
     "@cornerstonejs/metadata": "5.8.2",
     "@file-viewer/core": "workspace:3.0.1",
     "dicom-parser": "1.8.21",
-    "pako": "2.1.0"
+    "pako": "2.2.0"
   },
   "devDependencies": {
     "@types/pako": "^2.0.4",

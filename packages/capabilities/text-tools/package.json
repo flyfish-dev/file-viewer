@@ -36,7 +36,7 @@
   "dependencies": {
     "@file-viewer/renderer-text": "workspace:3.0.1",
     "diff2html": "^3.4.56",
-    "pako": "^2.1.0"
+    "pako": "^2.2.0"
   },
   "devDependencies": {
     "@types/pako": "^2.0.4",

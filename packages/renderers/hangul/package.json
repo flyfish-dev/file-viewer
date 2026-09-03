@@ -68,7 +68,7 @@
     "@xmldom/xmldom": "^0.9.12",
     "cfb": "^1.2.2",
     "jszip": "^3.10.1",
-    "pako": "^2.1.0"
+    "pako": "^2.2.0"
   },
   "devDependencies": {
     "@types/pako": "^2.0.4",

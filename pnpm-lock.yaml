@@ -194,7 +194,7 @@ importers:
     dependencies:
       '@lucide/vue':
         specifier: ^1.37.0
-        version: 1.39.0(vue@3.5.42(typescript@6.0.3))
+        version: 1.38.0(vue@3.5.42(typescript@6.0.3))
       highlight.js:
         specifier: ^11.11.1
         version: 11.12.0
@@ -243,13 +243,13 @@ importers:
         version: link:../../packages/components/web
       '@lucide/vue':
         specifier: ^1.37.0
-        version: 1.39.0(vue@3.5.42(typescript@6.0.3))
+        version: 1.38.0(vue@3.5.42(typescript@6.0.3))
       diff:
         specifier: ^9.0.0
         version: 9.0.0
       qs:
-        specifier: ^6.15.2
-        version: 6.15.3
+        specifier: ^6.16.0
+        version: 6.16.0
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -494,7 +494,7 @@ importers:
         specifier: ^3.4.56
         version: 3.4.56
       pako:
-        specifier: ^2.1.0
+        specifier: ^2.2.0
         version: 2.2.0
     devDependencies:
       '@types/pako':
@@ -800,7 +800,7 @@ importers:
     devDependencies:
       '@lucide/vue':
         specifier: ^1.37.0
-        version: 1.39.0(vue@3.5.42(typescript@6.0.3))
+        version: 1.38.0(vue@3.5.42(typescript@6.0.3))
       '@types/node':
         specifier: ^26.4.0
         version: 26.4.1
@@ -1381,8 +1381,8 @@ importers:
         specifier: 1.8.21
         version: 1.8.21
       pako:
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 2.2.0
+        version: 2.2.0
     devDependencies:
       '@types/pako':
         specifier: ^2.0.4
@@ -1432,7 +1432,7 @@ importers:
         specifier: workspace:3.0.1
         version: link:../../core
       pako:
-        specifier: ^2.1.0
+        specifier: ^2.2.0
         version: 2.2.0
     devDependencies:
       '@types/pako':
@@ -1513,8 +1513,8 @@ importers:
         specifier: ^5.24.0
         version: 5.24.0
       proj4:
-        specifier: ^2.20.9
-        version: 2.21.0
+        specifier: ^2.22.0
+        version: 2.22.0
       shpjs:
         specifier: ^6.2.0
         version: 6.2.0
@@ -1551,7 +1551,7 @@ importers:
         specifier: ^3.10.1
         version: 3.10.1
       pako:
-        specifier: ^2.1.0
+        specifier: ^2.2.0
         version: 2.2.0
     devDependencies:
       '@types/pako':
@@ -1595,7 +1595,7 @@ importers:
         specifier: 2.0.1
         version: 2.0.1
       pako:
-        specifier: ^2.1.0
+        specifier: ^2.2.0
         version: 2.2.0
       styled-exceljs:
         specifier: 0.21.4
@@ -1817,7 +1817,7 @@ importers:
         version: link:../../core
       '@prettier/plugin-xml':
         specifier: 3.4.2
-        version: 3.4.2(prettier@3.8.3)
+        version: 3.4.2(prettier@3.9.6)
       dompurify:
         specifier: 3.4.14
         version: 3.4.14
@@ -1828,8 +1828,8 @@ importers:
         specifier: ^18.0.5
         version: 18.0.11
       prettier:
-        specifier: 3.8.3
-        version: 3.8.3
+        specifier: 3.9.6
+        version: 3.9.6
     devDependencies:
       diff2html:
         specifier: ^3.4.56
@@ -1841,7 +1841,7 @@ importers:
         specifier: 11.17.2
         version: 11.17.2
       pako:
-        specifier: ^2.1.0
+        specifier: ^2.2.0
         version: 2.2.0
       typescript:
         specifier: ^6.0.3
@@ -2782,8 +2782,8 @@ packages:
     resolution: {integrity: sha512-cAfbd8ANkOmyHgE3FZrCJwdyQv8ty0woMC6toSUvgo6Cm2crS3ibS+YKrTPDbDhjP6cJoVsoboRNdCWeDL5xMg==}
     engines: {node: '>=14.8.0'}
 
-  '@lucide/vue@1.39.0':
-    resolution: {integrity: sha512-dKqoDT4lAY200w+hrzavxw9qqzw1SVuO5ZHBA+F75UgBJD4yNfDk6VuvFr8N09EeSJqVLU+IQ3mCxbV/Zfex/A==}
+  '@lucide/vue@1.38.0':
+    resolution: {integrity: sha512-65f+77mbqXaBwi3I33JujaUpyOMvQfBc5sNmKS5NEc7PRbV/cDkuCcWSu/hrp0sEPhv8MDPDUdOVCtag06iDGg==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -5874,12 +5874,6 @@ packages:
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
-  pako@1.0.2:
-    resolution: {integrity: sha512-qCaDHl8pk5JSbz5k1Bi5zTZf430DUuV13pmcFEHHan4fW++WIwm2HXUirpzfciBRyFUN+eeZW11bfIM/Y4Zeog==}
-
-  pako@1.0.5:
-    resolution: {integrity: sha512-umumrxStF9I4G8OZlhzEgTlwktjp4bofYq7E0mfH/IM7fctJ1pzLBhVrhNmP86hA1b3RNP5gAzxJJ4mjj0Up6Q==}
-
   pako@2.1.0:
     resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
 
@@ -6000,11 +5994,6 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.8.3:
-    resolution: {integrity: sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw==}
-    engines: {node: '>=14'}
-    hasBin: true
-
   prettier@3.9.6:
     resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
     engines: {node: '>=14'}
@@ -6013,8 +6002,8 @@ packages:
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
-  proj4@2.21.0:
-    resolution: {integrity: sha512-33HfDftqw8kY+Cl1dcL16SJuqTSzYxmz4re7Nmhk+fs1/N1fFrAkkF579msQTR/4fLeJVSNne8/gpoCz0fk1uw==}
+  proj4@2.22.0:
+    resolution: {integrity: sha512-MVvH09QrYm3A235rcX39WDiCKanrBiblu28l0KYIn/B2DofmYhvP/LLS43kE66jNDfx/P1l/nah3JmsAq8UgbQ==}
     peerDependencies:
       geotiff: '*'
     peerDependenciesMeta:
@@ -6031,8 +6020,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  qs@6.15.3:
-    resolution: {integrity: sha512-O9gl3zCl5h5blw1KGUzQKhA5oUXSl8rwUIM5o0S3nCXMliSvy5Dzx7/DJcI+SwgICv+IneSZwhBh1oSyEHA71A==}
+  qs@6.16.0:
+    resolution: {integrity: sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==}
     engines: {node: '>=0.6'}
 
   quansync@0.2.11:
@@ -7604,7 +7593,7 @@ snapshots:
     dependencies:
       '@xmldom/xmldom': 0.9.12
 
-  '@lucide/vue@1.39.0(vue@3.5.42(typescript@6.0.3))':
+  '@lucide/vue@1.38.0(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       vue: 3.5.42(typescript@6.0.3)
 
@@ -7867,10 +7856,10 @@ snapshots:
     dependencies:
       pako: 1.0.11
 
-  '@prettier/plugin-xml@3.4.2(prettier@3.8.3)':
+  '@prettier/plugin-xml@3.4.2(prettier@3.9.6)':
     dependencies:
       '@xml-tools/parser': 1.0.11
-      prettier: 3.8.3
+      prettier: 3.9.6
 
   '@profoundlogic/hogan@3.0.4':
     dependencies:
@@ -10045,7 +10034,7 @@ snapshots:
   jszip@3.10.1:
     dependencies:
       lie: 3.3.0
-      pako: 1.0.2
+      pako: 1.0.11
       readable-stream: 2.3.8
       setimmediate: 1.0.5
 
@@ -10888,10 +10877,6 @@ snapshots:
 
   pako@1.0.11: {}
 
-  pako@1.0.2: {}
-
-  pako@1.0.5: {}
-
   pako@2.1.0: {}
 
   pako@2.2.0: {}
@@ -11006,13 +10991,11 @@ snapshots:
   prettier@2.8.8:
     optional: true
 
-  prettier@3.8.3: {}
-
   prettier@3.9.6: {}
 
   process-nextick-args@2.0.1: {}
 
-  proj4@2.21.0:
+  proj4@2.22.0:
     dependencies:
       mgrs: 1.0.0
       wkt-parser: 1.5.6
@@ -11023,7 +11006,7 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  qs@6.15.3:
+  qs@6.16.0:
     dependencies:
       es-define-property: 1.0.1
       side-channel: 1.1.1
@@ -11431,7 +11414,7 @@ snapshots:
     dependencies:
       but-unzip: 0.1.10
       parsedbf: 2.0.0
-      proj4: 2.21.0
+      proj4: 2.22.0
     transitivePeerDependencies:
       - geotiff
 
@@ -11763,7 +11746,7 @@ snapshots:
 
   utif@3.1.0:
     dependencies:
-      pako: 1.0.5
+      pako: 1.0.11
 
   util-deprecate@1.0.2: {}
 
