@@ -25,6 +25,7 @@
   },
   "scripts": {
     "stage-assets": "node ../../build-support/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-design",
+    "verify": "pnpm stage-assets && node scripts/verify-assets.mjs",
     "prepack": "pnpm stage-assets"
   },
   "engines": {

@@ -60,6 +60,9 @@ jobs:
       - name: Verify the component host runtime contract
         run: pnpm exec vitest run test/component-host-runtime-contract.spec.ts
 
+      - name: Verify the Adobe design asset pack
+        run: pnpm --filter @file-viewer/assets-design verify
+
       - name: Type-check
         run: pnpm type-check
 
