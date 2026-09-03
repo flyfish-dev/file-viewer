@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Issue #242: a project that installed 3.0.0 could not finish `vite build`.
 //
-// `@file-viewer/renderer-pdf` carried the CJK fallback font as its own runtime dependency, so
-// the font landed in the renderer's private node_modules and no preset offered a source the
-// plugin could resolve from the installed app. `copyAssets` then reported `pdf-cjk-font-fallback`
-// as a missing required asset and failed the build; 2.4 had no such check, which is why rolling
-// the version back looked like the fix.
+// `@fontsource-variable/noto-sans-sc` was a runtime dependency of `@file-viewer/renderer-pdf`
+// in 2.4, and that is how an installed app resolved a font source, so the required-asset check that
+// vite-plugin has applied to pdf assets since 2.4 passed. 3.0.0 moved the font to devDependencies,
+// leaving no source for `pdf-cjk-font-fallback` in an installed app, and `copyAssets` then aborted
+// `vite build` on that missing required asset, which is why rolling the version back looked like the fix.
 //
 // 3.0.1 moved font ownership onto the presets that activate the pdf renderer, and made the asset
 // optional so a genuinely missing font is a warning instead of a build failure. These are the
