@@ -24,7 +24,7 @@
 
 ### PDF
 
-- Fixed the blank Chinese glyphs reported in #242: the CJK fallback font now ships with the PDF renderer and reaches the on-demand profiles that were missing it, and profile font ownership is gated so the asset cannot silently disappear again.
+- Fixed the 3.0 packaging failure reported in #242 (Vite 8 + pnpm 11 + Node 22): the CJK fallback font was a runtime dependency of `@file-viewer/renderer-pdf`, so it only resolved inside the renderer's own `node_modules`, an installed app had no font source to copy, and `copyAssets` aborted `vite build` on a missing required asset (2.4 had no such check, which is why rolling back looked like the fix). `preset-office`, `preset-all` and `preset-standard` now own the font source, the renderer declares none, and a genuinely missing optional asset is a warning instead of a build failure; Chinese PDFs also stop degrading into blank glyphs when a font is absent. The #242 and profile gates keep that ownership from drifting back.
 
 ### Email
 

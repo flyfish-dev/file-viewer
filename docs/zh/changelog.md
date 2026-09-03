@@ -28,7 +28,7 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 
 ### PDF
 
-- 修复 #242 报告的中文 PDF 空白字形：CJK 回退字体改为随 PDF renderer 交付，并进入此前缺失该资产的按需 profile；缺失字体不再退化为空白方块，字体资产归属由 profile 门禁持续校验。
+- 修复 #242 报告的 3.0 打包失败（Vite 8 + pnpm 11 + Node 22）：CJK 回退字体此前是 `@file-viewer/renderer-pdf` 的运行时依赖，只解析到 renderer 自己的 `node_modules`，安装后的应用拿不到字体来源，`copyAssets` 因必需资产缺失直接中断 `vite build`（2.4 没有该校验，回退版本因此看起来像修复）。3.0.1 把字体来源上移到启用 PDF renderer 的 `preset-office`、`preset-all`、`preset-standard`，renderer 自身不再声明字体，真正缺失的可选资产改为警告而不再失败；中文 PDF 也不再因缺字体退化为空白方块。该资产归属由 #242 门禁与 profile 门禁持续校验。
 
 ### 邮件
 

@@ -22,6 +22,8 @@ updates:
     commit-message:
       prefix: chore(deps)
     ignore:
+      # The Vue 2.6/2.7 components exist for hosts that cannot move to Vue 3, so a
+      # `vue` major here would rewrite those packages instead of refreshing a pin.
       - dependency-name: vue
         update-types:
           - version-update:semver-major
