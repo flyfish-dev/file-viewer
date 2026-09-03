@@ -1652,19 +1652,23 @@ test(
         })
       )
       const cli = new URL('../dist/cli.js', import.meta.url)
-      // `eof` needs an explicit action: without it Tcl reads the next word as
-      // that action, the switch loses its timeout arm, and a wizard that stops
-      // matching leaves expect blocked in `wait` forever while the harness pipe
-      // stays open, so even the spawnSync timeout cannot unblock the runner.
+      // Two shapes this script has to survive. `eof` needs an explicit action:
+      // without it Tcl reads the next word as that action, the switch loses its
+      // timeout arm, and an unanswered prompt leaves expect blocked in `wait`
+      // while the spawned CLI keeps the harness pipe open, so not even the
+      // spawnSync timeout can unblock the runner. And the prompt patterns must
+      // not anchor at end-of-line: on a real terminal readline appends a cursor
+      // move after the prompt (`\x1b[41G`), so a `$` match only ever works when
+      // stdout has no width and silently hangs everywhere else.
       const expectProgram = `
 set timeout 12
 log_user 1
 spawn $env(FILE_VIEWER_TEST_NODE) $env(FILE_VIEWER_TEST_CLI) add $env(FILE_VIEWER_TEST_ROOT) --json
 expect {
-  -re {Choose a number[^\\r\\n]*: $} { send "\\r"; exp_continue }
-  -re {\\([^\\r\\n]*b=back[^\\r\\n]*\\): $} { send "\\r"; exp_continue }
-  -re {Enter=confirm: $} { send "\\r"; exp_continue }
-  -re {\\(y/N\\) $} { send "\\r"; exp_continue }
+  -re {Choose a number \\(0=cancel[^)]*\\) \\[\\d*\\]: } { send "\\r"; exp_continue }
+  -re {Asset target \\[[^ \\]]*\\] \\(0=cancel[^)]*\\): } { send "\\r"; exp_continue }
+  -re {Enter=confirm: } { send "\\r"; exp_continue }
+  -re {\\(y/N\\) } { send "\\r"; exp_continue }
   eof {}
   timeout { catch { exec pkill -P [exp_pid] }; catch { exec kill [exp_pid] }; catch { wait }; exit 124 }
 }
