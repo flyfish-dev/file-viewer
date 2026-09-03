@@ -58,11 +58,13 @@
   },
   "types": "dist/src/package/index.d.ts",
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0",
-    "@lucide/vue": "^1.37.0",
-    "vue": "^3.5.42"
+    "@file-viewer/core": "workspace:3.0.0"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3 <4"
   },
   "devDependencies": {
+    "@lucide/vue": "^1.37.0",
     "@types/node": "^26.4.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
@@ -72,6 +74,7 @@
     "typescript": "^6.0.3",
     "vite": "8.2.2",
     "vite-plugin-dts": "5.0.3",
+    "vue": "3.5.42",
     "vue-tsc": "^3.3.4"
   },
   "files": [
