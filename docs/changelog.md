@@ -34,6 +34,7 @@
 
 - `@file-viewer/vue3` no longer installs the host framework: `vue` moved to `peerDependencies: ">=3.3 <4"`, matching the Vue 2.6, Vue 2.7, React, React Legacy, Svelte, and jQuery packages, and the build-time icon library moved to devDependencies so the only runtime dependency is `@file-viewer/core`. Applications pinned to a Vue version outside the old `^3.5.35` range previously received a second Vue copy and crashed on mount with `Cannot read properties of null (reading 'refs')`.
 - Added a host runtime contract gate: ecosystem components may only install File Viewer packages at runtime, must declare their host framework as a peer, and must keep the three Vue release lines disjoint. A cold-install check now compares resolved host framework paths immediately after install and fails with the duplicated copies listed instead of surfacing as a browser timeout.
+- The `msdoc-viewer` compatibility alias moved to `0.2.5` so it follows the 3.0.1 `@file-viewer/doc` line: the alias ships the Word renderer version it resolves to, and a frozen alias could no longer be published twice. This release freezes 88 npm targets: 87 mainline packages on `3.0.1` and the `msdoc-viewer` alias on `0.2.5`.
 
 ### Dependency security
 

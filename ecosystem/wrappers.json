@@ -923,7 +923,7 @@
       "targetPackage": "@file-viewer/doc",
       "packageDir": "packages/compat/msdoc-viewer",
       "publicSource": true,
-      "releaseVersion": "0.2.4",
+      "releaseVersion": "0.2.5",
       "releaseArtifact": {
         "includeTarball": true
       }

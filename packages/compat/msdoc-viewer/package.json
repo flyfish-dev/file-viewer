@@ -1,6 +1,6 @@
 {
   "name": "msdoc-viewer",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": false,
   "type": "module",
   "description": "Historical compatibility alias for @file-viewer/doc.",
