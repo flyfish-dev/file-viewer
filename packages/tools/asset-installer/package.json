@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/asset-installer",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Small transactional installer shared by independently shipped File Viewer capability asset packs.",

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/preset-standard",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Stable common-format File Viewer preset with modern Office, PDF/OFD, text, image, media, archive, and email support without specialist or legacy-heavy capabilities.",
@@ -62,20 +62,20 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/assets-standard": "workspace:3.0.1",
-    "@file-viewer/capability-pdf-identity-repair": "workspace:3.0.1",
-    "@file-viewer/capability-pptx-charts": "workspace:3.0.1",
-    "@file-viewer/core": "workspace:3.0.1",
-    "@file-viewer/renderer-archive": "workspace:3.0.1",
-    "@file-viewer/renderer-email": "workspace:3.0.1",
-    "@file-viewer/renderer-image": "workspace:3.0.1",
-    "@file-viewer/renderer-media": "workspace:3.0.1",
-    "@file-viewer/renderer-ofd": "workspace:3.0.1",
-    "@file-viewer/renderer-pdf": "workspace:3.0.1",
-    "@file-viewer/renderer-pptx": "workspace:3.0.1",
-    "@file-viewer/renderer-spreadsheet": "workspace:3.0.1",
-    "@file-viewer/renderer-text": "workspace:3.0.1",
-    "@file-viewer/renderer-word": "workspace:3.0.1"
+    "@file-viewer/assets-standard": "workspace:3.0.2",
+    "@file-viewer/capability-pdf-identity-repair": "workspace:3.0.2",
+    "@file-viewer/capability-pptx-charts": "workspace:3.0.2",
+    "@file-viewer/core": "workspace:3.0.2",
+    "@file-viewer/renderer-archive": "workspace:3.0.2",
+    "@file-viewer/renderer-email": "workspace:3.0.2",
+    "@file-viewer/renderer-image": "workspace:3.0.2",
+    "@file-viewer/renderer-media": "workspace:3.0.2",
+    "@file-viewer/renderer-ofd": "workspace:3.0.2",
+    "@file-viewer/renderer-pdf": "workspace:3.0.2",
+    "@file-viewer/renderer-pptx": "workspace:3.0.2",
+    "@file-viewer/renderer-spreadsheet": "workspace:3.0.2",
+    "@file-viewer/renderer-text": "workspace:3.0.2",
+    "@file-viewer/renderer-word": "workspace:3.0.2"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

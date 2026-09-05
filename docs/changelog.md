@@ -6,6 +6,26 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## v3.0.2 — Corrected patch release for spreadsheet search, DOCX shapes, and CAD monochrome output
+
+This release supersedes 3.0.1. npm does not allow replacing packages that already have dependents, so the published 3.0.1 line cannot be completely retracted; affected 3.0.1 packages are deprecated after 3.0.2 is published.
+
+### Issue fixes and regression coverage
+
+- Fixed #247: spreadsheet search now searches parsed workbook cells outside the current virtual window, loads the target window, and jumps to the matching cell. The real `apps/viewer-demo/public/example/excel.xls` sample passes the browser regression.
+- Fixed #250 by upgrading `@file-viewer/docx` to `0.3.29`, which corrects page-relative positioning for floating shapes. The reporter's `test.docx` was rendered locally with the shape content in the expected positions.
+- Completed #213/#245: the CAD monochrome policy is preserved from DWF through the CAD renderer and HTML/Print output without mutating source data. The real DWF regression passes.
+- Re-ran the #242 Vite/PDF CJK asset boundary, the #232 `postal-mime@3.0.0` EML parser cases, and the Vue 2.6 CLI 3 Office sample. Vue 2 remains in the release gate.
+
+### Safe dependency updates
+
+- Adopted the safe Dependabot subset: `pako@2.2.0`, `proj4@2.22.0`, `vite-plugin-dts@5.1.0`, `cnfast@0.2.0`, and `prettier@3.9.6`.
+- pako 3 remains deferred because DICOM `Inflate` error/message semantics are consumed by `packages/renderers/dicom/src/inspect.ts`. Next 16.3.4 remains excluded because its `sharp-libvips` dependency fails the repository's LGPL license gate.
+
+### Release composition
+
+The frozen release contains 88 npm targets from one commit: 87 mainline packages at `3.0.2` and the historical `msdoc-viewer` alias at `0.2.5`. External engines remain `@file-viewer/docx@0.3.29` and `styled-exceljs@0.21.4`.
+
 ## v3.0.1 — Host peer frameworks, PDF CJK fallback, and EML header correctness
 
 ### Readable text previews

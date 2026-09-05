@@ -1,6 +1,6 @@
 {
   "name": "file-viewer-cli",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Friendly npx entry for the exact-version File Viewer project CLI.",
@@ -23,7 +23,7 @@
     "prepack": "tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/compat/file-viewer-cli/dist/cli.js"
   },
   "dependencies": {
-    "@file-viewer/cli": "workspace:3.0.1"
+    "@file-viewer/cli": "workspace:3.0.2"
   },
   "publishConfig": {
     "access": "public",

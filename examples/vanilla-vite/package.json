@@ -9,11 +9,11 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "@file-viewer/preset-lite": "^3.0.1",
-    "@file-viewer/web": "^3.0.1"
+    "@file-viewer/preset-lite": "^3.0.2",
+    "@file-viewer/web": "^3.0.2"
   },
   "devDependencies": {
-    "@file-viewer/vite-plugin": "^3.0.1",
+    "@file-viewer/vite-plugin": "^3.0.2",
     "typescript": "^6.0.3",
     "vite": "^8.2.2"
   }

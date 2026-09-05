@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/assets-standard",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Versioned self-hosted Worker, WASM, font, and vendor assets for the frozen File Viewer standard profile.",
@@ -38,7 +38,7 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@file-viewer/asset-installer": "workspace:3.0.1"
+    "@file-viewer/asset-installer": "workspace:3.0.2"
   },
   "engines": {
     "node": ">=20"

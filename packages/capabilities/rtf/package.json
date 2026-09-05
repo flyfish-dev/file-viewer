@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-rtf",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Opt-in RTF rendering for File Viewer.",
@@ -34,7 +34,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/renderer-word": "workspace:3.0.1",
+    "@file-viewer/renderer-word": "workspace:3.0.2",
     "rtf.js": "^3.0.9"
   },
   "devDependencies": {

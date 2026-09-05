@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vue3",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "packageManager": "pnpm@11.0.9",
@@ -58,7 +58,7 @@
   },
   "types": "dist/src/package/index.d.ts",
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.1"
+    "@file-viewer/core": "workspace:3.0.2"
   },
   "peerDependencies": {
     "vue": ">=3.3 <4"
@@ -73,7 +73,7 @@
     "sass": "^1.100.0",
     "typescript": "^6.0.3",
     "vite": "8.2.2",
-    "vite-plugin-dts": "5.0.3",
+    "vite-plugin-dts": "5.1.0",
     "vue": "3.5.42",
     "vue-tsc": "^3.3.4"
   },

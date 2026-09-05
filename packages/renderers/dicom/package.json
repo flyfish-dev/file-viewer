@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-dicom",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "sideEffects": false,
@@ -73,9 +73,9 @@
     "@cornerstonejs/core": "5.8.2",
     "@cornerstonejs/dicom-image-loader": "5.8.2",
     "@cornerstonejs/metadata": "5.8.2",
-    "@file-viewer/core": "workspace:3.0.1",
+    "@file-viewer/core": "workspace:3.0.2",
     "dicom-parser": "1.8.21",
-    "pako": "2.1.0"
+    "pako": "2.2.0"
   },
   "devDependencies": {
     "@types/pako": "^2.0.4",

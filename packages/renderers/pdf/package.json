@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-pdf",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Standalone PDF renderer plugin for File Viewer powered by PDF.js.",
@@ -66,7 +66,7 @@
     "prepack": "node scripts/stage-pdfjs-runtime.mjs --check"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.1"
+    "@file-viewer/core": "workspace:3.0.2"
   },
   "peerDependencies": {
     "pdf-lib": "1.17.1"

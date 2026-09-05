@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-midi",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Opt-in MIDI inspection for File Viewer.",
@@ -34,7 +34,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/renderer-media": "workspace:3.0.1",
+    "@file-viewer/renderer-media": "workspace:3.0.2",
     "@tonejs/midi": "^2.0.28"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-demo",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,13 +10,13 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.1",
-    "@file-viewer/preset-all": "workspace:3.0.1",
-    "@file-viewer/renderer-design": "workspace:3.0.1",
-    "@file-viewer/renderer-dicom": "workspace:3.0.1",
-    "@file-viewer/renderer-signature": "workspace:3.0.1",
-    "@file-viewer/web": "workspace:3.0.1",
-    "@file-viewer/vue3": "workspace:3.0.1",
+    "@file-viewer/core": "workspace:3.0.2",
+    "@file-viewer/preset-all": "workspace:3.0.2",
+    "@file-viewer/renderer-design": "workspace:3.0.2",
+    "@file-viewer/renderer-dicom": "workspace:3.0.2",
+    "@file-viewer/renderer-signature": "workspace:3.0.2",
+    "@file-viewer/web": "workspace:3.0.2",
+    "@file-viewer/vue3": "workspace:3.0.2",
     "@lucide/vue": "^1.37.0",
     "diff": "^9.0.0",
     "qs": "^6.16.0",

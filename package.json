@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-open-source",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.0.9",

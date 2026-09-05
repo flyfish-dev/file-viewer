@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "generatedFrom": {
     "packageName": "@file-viewer/renderer-dicom",
-    "packageVersion": "3.0.1",
+    "packageVersion": "3.0.2",
     "packageManager": "pnpm",
     "command": "pnpm --filter @file-viewer/renderer-dicom list --prod --depth Infinity --json"
   },
@@ -236,7 +236,7 @@
     },
     {
       "name": "@file-viewer/core",
-      "version": "3.0.1",
+      "version": "3.0.2",
       "license": "Apache-2.0",
       "direct": true,
       "optional": false,
@@ -248,7 +248,7 @@
     },
     {
       "name": "@file-viewer/renderer-dicom",
-      "version": "3.0.1",
+      "version": "3.0.2",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,

@@ -344,6 +344,11 @@ const ledgerText = `${JSON.stringify(ledger, null, 2)}\n`
 
 const thirdPartyPackages = sortedPackages.filter((entry) => !entry.firstParty)
 const grouped = Map.groupBy(thirdPartyPackages, (entry) => entry.license)
+const packageVersionList = (name) => {
+  const entries = sortedPackages.filter((entry) => entry.name === name)
+  assert(entries.length > 0, `Expected ${name} in the DICOM production closure`)
+  return entries.map((entry) => `\`${entry.name}@${entry.version}\``).join(', ')
+}
 const noticeLines = [
   '# Third-party notices',
   '',
@@ -354,10 +359,10 @@ const noticeLines = [
   '## Required attribution',
   '',
   '- `caniuse-lite@1.0.30001810` data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as `caniuse-lite/LICENSE` in the installed dependency.',
-  '- `pako@1.0.11` and `pako@2.1.0` contain zlib-derived code by Jean-loup Gailly and Mark Adler under `(MIT AND Zlib)`; their installed source retains the zlib notices and license terms.',
+  `${packageVersionList('pako')} contain zlib-derived code by Jean-loup Gailly and Mark Adler under \`(MIT AND Zlib)\`; their installed source retains the zlib notices and license terms.`,
   '- `spark-md5@3.0.2` is available under `(WTFPL OR MIT)` as declared by the package. Its installed package retains the upstream license file.',
   '- `argparse@2.0.1` is licensed under Python-2.0 and retains the complete Python Software Foundation license in its installed `LICENSE` file.',
-  '- `dompurify@3.4.13` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.',
+  `${packageVersionList('dompurify')} is dual-licensed as \`(MPL-2.0 OR Apache-2.0)\`. File Viewer elects Apache-2.0, and the installed \`LICENSE\` file retains the complete Apache-2.0 text.`,
   '',
   '### Native libraries statically linked into codec WebAssembly',
   '',

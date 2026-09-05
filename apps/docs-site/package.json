@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-docs",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,7 @@
   "dependencies": {
     "@fumadocs/language": "0.2.4",
     "@tabler/icons-react": "3.46.0",
-    "cnfast": "^0.1.0",
+    "cnfast": "^0.2.0",
     "flexsearch": "0.8.212",
     "fumadocs-core": "16.15.4",
     "fumadocs-mdx": "15.4.0",

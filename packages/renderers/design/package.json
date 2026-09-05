@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-design",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Offline-first Adobe design renderer for Photoshop, native PGF and PDF-compatible Illustrator, InDesign, XD, modern XFL-based Animate FLA, and bounded design-resource previews.",
@@ -108,8 +108,8 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.1",
-    "@file-viewer/renderer-data": "workspace:3.0.1",
+    "@file-viewer/core": "workspace:3.0.2",
+    "@file-viewer/renderer-data": "workspace:3.0.2",
     "@paged-media/introspect-wasm": "0.62.0",
     "@webtoon/psd": "0.4.0",
     "@xmldom/xmldom": "0.9.12",

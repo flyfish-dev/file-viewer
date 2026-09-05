@@ -13,8 +13,8 @@ pnpm exec file-viewer-copy-assets ./public/file-viewer
 When using a standard package, explicitly install the matching CLI. For standalone execution, use an explicitly versioned `npx` command:
 
 ```bash
-npm install -D file-viewer-copy-assets@3.0.1
-npx --yes file-viewer-copy-assets@3.0.1 ./public/file-viewer
+npm install -D file-viewer-copy-assets@3.0.2
+npx --yes file-viewer-copy-assets@3.0.2 ./public/file-viewer
 ```
 
 The CLI carries a version-matched asset payload, copies Worker, WASM, font, PDF, CAD, Typst, Archive, Draw.io, and Office vendor assets, and writes a `flyfish-viewer-assets.json` integrity manifest. Installing it or running `--version` does not modify the project; only the copy command writes to the selected target. Runtime assets remain self-hosted with no public CDN dependency.
@@ -35,7 +35,7 @@ pnpm exec file-viewer-copy-assets
 pnpm exec file-viewer-copy-assets ./public/file-viewer --no-clean
 
 # With no local dependency, pin the standalone CLI version explicitly
-pnpm dlx file-viewer-copy-assets@3.0.1 ./public/file-viewer
+pnpm dlx file-viewer-copy-assets@3.0.2 ./public/file-viewer
 ```
 
 Automation can append `--json`; stdout then contains exactly one machine-readable result object. Existing calls keep the original two-line text output.

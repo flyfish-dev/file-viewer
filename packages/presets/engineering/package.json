@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/preset-engineering",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Engineering renderer preset for File Viewer with CAD, 3D, drawing, mind map, geospatial, Typst, EDA, archive, and data asset preview lines.",
@@ -59,16 +59,16 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.1",
-    "@file-viewer/renderer-3d": "workspace:3.0.1",
-    "@file-viewer/renderer-archive": "workspace:3.0.1",
-    "@file-viewer/renderer-cad": "workspace:3.0.1",
-    "@file-viewer/renderer-data": "workspace:3.0.1",
-    "@file-viewer/renderer-drawing": "workspace:3.0.1",
-    "@file-viewer/renderer-eda": "workspace:3.0.1",
-    "@file-viewer/renderer-geo": "workspace:3.0.1",
-    "@file-viewer/renderer-mindmap": "workspace:3.0.1",
-    "@file-viewer/renderer-typst": "workspace:3.0.1"
+    "@file-viewer/core": "workspace:3.0.2",
+    "@file-viewer/renderer-3d": "workspace:3.0.2",
+    "@file-viewer/renderer-archive": "workspace:3.0.2",
+    "@file-viewer/renderer-cad": "workspace:3.0.2",
+    "@file-viewer/renderer-data": "workspace:3.0.2",
+    "@file-viewer/renderer-drawing": "workspace:3.0.2",
+    "@file-viewer/renderer-eda": "workspace:3.0.2",
+    "@file-viewer/renderer-geo": "workspace:3.0.2",
+    "@file-viewer/renderer-mindmap": "workspace:3.0.2",
+    "@file-viewer/renderer-typst": "workspace:3.0.2"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

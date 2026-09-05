@@ -2,6 +2,26 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
+## File Viewer v3.0.2 — 2026-09-06
+
+这是 3.0.1 的修正版。3.0.1 已被本版取代；由于 npm 已有下游依赖，不能覆盖或完整撤回已发布的 3.0.1，发布后会将可变更的 3.0.1 包标记为 deprecated。
+
+### Issue fixes and regression coverage
+
+- 修复 #247：Spreadsheet 搜索不再局限于当前虚拟渲染窗口；搜索工作簿中的真实单元格后会切换 sheet、加载对应窗口并跳转到匹配项。`apps/viewer-demo/public/example/excel.xls` 已通过浏览器回归。
+- 修复 #250：升级 `@file-viewer/docx` 到 `0.3.29`，修正页面相对定位的浮动 shape；报告者提供的 `test.docx` 已在本地浏览器渲染验证。
+- 完成 #213/#245：CAD 单色策略贯穿 DWF 到 CAD renderer、HTML 和 Print 输出，不修改原始文件数据；真实 DWF 回归通过。
+- 重新验证 #242 的 Vite/PDF CJK 字体边界、#232 的 `postal-mime@3.0.0` EML 正确性和 Vue 2.6 CLI 3 Office 样例；Vue 2 样例仍在发布门禁内。
+
+### Safe dependency updates
+
+- 采用 Dependabot 安全子集：`pako@2.2.0`、`proj4@2.22.0`、`vite-plugin-dts@5.1.0`、`cnfast@0.2.0` 和 `prettier@3.9.6`。
+- 不采用 pako 3：DICOM `Inflate` 的 `err`/`msg` 语义仍由 `packages/renderers/dicom/src/inspect.ts` 依赖；Next 16.3.4 因引入 LGPL `sharp-libvips` 未通过许可证门禁。
+
+### Release composition
+
+88 个 npm 目标冻结在同一提交：87 个主线包为 `3.0.2`，历史 `msdoc-viewer` 别名保持 `0.2.5`；外部引擎保持 `@file-viewer/docx@0.3.29` 和 `styled-exceljs@0.21.4`。
+
 ## File Viewer v3.0.1 — 2026-09-03
 
 ### 可读文本预览

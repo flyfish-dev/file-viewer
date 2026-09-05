@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-epub",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "type": "module",
   "description": "Standalone EPUB, FictionBook 2 and UMD reader renderer plugin for File Viewer.",
@@ -58,8 +58,8 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.1",
-    "pako": "^2.1.0"
+    "@file-viewer/core": "workspace:3.0.2",
+    "pako": "^2.2.0"
   },
   "devDependencies": {
     "@xmldom/xmldom": "0.9.12",

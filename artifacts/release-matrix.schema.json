@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/flyfish-dev/file-viewer/releases/download/v3.0.1/release-matrix.schema.json",
+  "$id": "https://github.com/flyfish-dev/file-viewer/releases/download/v3.0.2/release-matrix.schema.json",
   "title": "Flyfish File Viewer ecosystem release matrix",
   "type": "object",
   "additionalProperties": false,
