@@ -502,6 +502,7 @@ export type {
   FileViewerChmOptions,
   FileViewerApplyViewStateOptions,
   FileViewerBeforeOperation,
+  FileViewerCadColorMode,
   FileViewerCadDwfLineWeightMode,
   FileViewerCadOptions,
   FileViewerCadRenderer,

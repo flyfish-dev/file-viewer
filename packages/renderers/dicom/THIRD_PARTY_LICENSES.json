@@ -470,7 +470,7 @@
     },
     {
       "name": "browserslist",
-      "version": "4.28.8",
+      "version": "4.28.7",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -680,7 +680,7 @@
     },
     {
       "name": "dompurify",
-      "version": "3.4.13",
+      "version": "3.4.14",
       "license": "Apache-2.0",
       "declaredLicense": "(MPL-2.0 OR Apache-2.0)",
       "direct": false,
@@ -752,7 +752,7 @@
     },
     {
       "name": "fflate",
-      "version": "0.7.3",
+      "version": "0.7.5",
       "license": "MIT",
       "direct": false,
       "optional": false,

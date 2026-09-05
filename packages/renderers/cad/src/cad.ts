@@ -31,6 +31,7 @@ import {
   unregisterFileViewerZoomProvider,
   type FileViewerApplyViewStateOptions,
   type FileRenderContext,
+  type FileViewerCadColorMode,
   type FileViewerCadOptions,
   type FileViewerFitRequest,
   type FileViewerFitResult,
@@ -40,6 +41,13 @@ import {
   type FileViewerViewStateChangeSource,
   type FileViewerZoomState,
 } from '@file-viewer/core';
+import {
+  applyCadViewerColorMode,
+  normalizeFileViewerCadColorMode,
+  resolveFileViewerCadMonochromeColor,
+  resolveCadViewerSourceDocument,
+  supportsCadViewerColorMode,
+} from './colorMode';
 
 type CadStatus = 'loading' | 'ready' | 'error';
 
@@ -63,6 +71,9 @@ const cadStyle = `
 .cad-tools,.cad-meta{display:flex;align-items:center;gap:8px}
 .cad-tools button{min-width:34px;min-height:30px;border:0;border-radius:8px;background:rgba(15,23,42,.06);color:#25344c;cursor:pointer;font-weight:800;letter-spacing:0;transition:background-color .18s ease,color .18s ease}
 .cad-tools button:hover{background:rgba(31,150,110,.14);color:#0f8f62}
+.cad-tools button.cad-color-mode{min-width:52px;padding:0 10px;font-size:12px}
+.cad-tools button.cad-color-mode[aria-pressed='true']{background:#0f172a;color:#fff}
+.cad-tools button.cad-color-mode:disabled{cursor:not-allowed;opacity:.46}
 .cad-zoom,.cad-meta span{color:#64748b;font-size:12px;font-weight:800;letter-spacing:0}
 .cad-meta span{border-radius:999px;padding:5px 9px;background:rgba(15,23,42,.06)}
 .cad-body{display:grid;min-height:0;flex:1;grid-template-columns:minmax(176px,236px) minmax(0,1fr) minmax(142px,176px);background:#eef2f7}
@@ -791,6 +802,8 @@ export default async function renderCad(
   const options: FileViewerCadOptions = context?.options?.cad || {};
   const t = createFileViewerTranslator(context?.options);
   const locale = resolveFileViewerLocale(context?.options);
+  const monochromeColor = resolveFileViewerCadMonochromeColor(options.monochromeColor);
+  let colorMode = normalizeFileViewerCadColorMode(options.colorMode);
   let status: CadStatus = 'loading';
   let progressMessage = t('cad.state.loadingViewer');
   let errorMessage = '';
@@ -817,16 +830,18 @@ export default async function renderCad(
   const zoomOutButton = createElement('button', undefined, '-') as HTMLButtonElement;
   const zoomText = createElement('span', 'cad-zoom', '100%');
   const zoomInButton = createElement('button', undefined, '+') as HTMLButtonElement;
+  const colorModeButton = createElement('button', 'cad-color-mode') as HTMLButtonElement;
+  colorModeButton.hidden = options.showColorModeToggle === false;
   const meta = createElement('div', 'cad-meta');
   const typeMeta = createElement('span', undefined, normalizedType.toUpperCase());
   const backendMeta = createElement('span', undefined, 'AUTO');
-  [fitButton, zoomOutButton, zoomInButton].forEach(button => {
+  [fitButton, zoomOutButton, zoomInButton, colorModeButton].forEach(button => {
     button.type = 'button';
   });
   fitButton.title = t('cad.toolbar.fit');
   zoomOutButton.title = t('cad.toolbar.zoomOut');
   zoomInButton.title = t('cad.toolbar.zoomIn');
-  tools.append(fitButton, zoomOutButton, zoomText, zoomInButton);
+  tools.append(fitButton, zoomOutButton, zoomText, zoomInButton, colorModeButton);
   meta.append(typeMeta, backendMeta);
   toolbar.append(tools, meta);
 
@@ -905,6 +920,8 @@ export default async function renderCad(
       status,
       view: viewState ? { ...viewState } : null,
       backend: renderStats?.backend,
+      colorMode,
+      monochromeColor: colorMode === 'monochrome' ? monochromeColor : undefined,
       layerCount: layers.length,
       visibleLayers: layers
         .filter(layer => layer.isVisible !== false && !layer.isFrozen)
@@ -1051,12 +1068,14 @@ export default async function renderCad(
         : layer.name;
       button.setAttribute('aria-pressed', String(layerVisible));
       const color = createElement('span', 'cad-layer-color');
-      if (typeof layer.color === 'string') {
+      if (colorMode === 'monochrome') {
+        color.style.background = monochromeColor;
+      } else if (typeof layer.color === 'string') {
         color.style.background = layer.color;
       }
       button.append(color, createElement('span', undefined, layer.name));
       button.addEventListener('click', () => {
-        const document = viewer?.getDocument();
+        const document = resolveCadViewerSourceDocument(viewer) as CadDocument | undefined;
         if (!document) {
           return;
         }
@@ -1085,6 +1104,15 @@ export default async function renderCad(
   const syncState = () => {
     zoomText.textContent = `${getZoomPercent()}%`;
     backendMeta.textContent = (renderStats?.backend || 'auto').toUpperCase();
+    const colorModeSupported = supportsCadViewerColorMode(viewer);
+    colorModeButton.disabled = status !== 'ready' || !colorModeSupported;
+    colorModeButton.setAttribute('aria-pressed', String(colorMode === 'monochrome'));
+    colorModeButton.textContent = t(colorMode === 'monochrome'
+      ? 'cad.toolbar.monochrome'
+      : 'cad.toolbar.colorSource');
+    colorModeButton.title = t(colorMode === 'monochrome'
+      ? 'cad.toolbar.colorSource'
+      : 'cad.toolbar.monochrome');
     state.hidden = status === 'ready';
     state.classList.toggle('error', status === 'error');
     if (status === 'loading') {
@@ -1240,6 +1268,17 @@ export default async function renderCad(
   fitButton.addEventListener('click', () => fitToView());
   zoomInButton.addEventListener('click', zoomIn);
   zoomOutButton.addEventListener('click', zoomOut);
+  colorModeButton.addEventListener('click', () => {
+    const previousMode = colorMode;
+    colorMode = colorMode === 'monochrome' ? 'source' : 'monochrome';
+    if (!applyCadViewerColorMode(viewer, colorMode, monochromeColor)) {
+      colorMode = previousMode;
+      syncState();
+      return;
+    }
+    syncUi();
+    emitCadViewStateChange('cad-view-change', 'user');
+  });
 
   const createViewer = () => {
     const { wasmPath, workerUrl, dwfWasmUrl } = resolveFileViewerCadAssetUrls(
@@ -1284,6 +1323,7 @@ export default async function renderCad(
       dwfMaxOverviewStrokeCssPx: options.dwfMaxOverviewStrokeCssPx,
       dwfMinTextCssPx: options.dwfMinTextCssPx,
       dwfMinFilledAreaCssPx: options.dwfMinFilledAreaCssPx,
+      ...({ colorMode, monochromeColor } as Record<string, unknown>),
       autoFit: true,
       canvasOptions,
       onLoadProgress: updateProgress,

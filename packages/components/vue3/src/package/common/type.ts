@@ -2,6 +2,7 @@ import type {
   FileViewerAiOptions as CoreFileViewerAiOptions,
   FileViewerArchiveOptions as CoreFileViewerArchiveOptions,
   FileViewerBeforeOperation as CoreFileViewerBeforeOperation,
+  FileViewerCadColorMode as CoreFileViewerCadColorMode,
   FileViewerCadDwfLineWeightMode as CoreFileViewerCadDwfLineWeightMode,
   FileViewerCadOptions as CoreFileViewerCadOptions,
   FileViewerCadRenderer as CoreFileViewerCadRenderer,
@@ -110,6 +111,7 @@ export type FileViewerSpreadsheetOptions = CoreFileViewerSpreadsheetOptions;
 export type FileViewerTypstOptions = CoreFileViewerTypstOptions;
 
 export type FileViewerCadRenderer = CoreFileViewerCadRenderer;
+export type FileViewerCadColorMode = CoreFileViewerCadColorMode;
 export type FileViewerCadDwfLineWeightMode = CoreFileViewerCadDwfLineWeightMode;
 
 /**

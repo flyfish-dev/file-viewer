@@ -42,7 +42,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 - `baseline-browser-mapping@2.11.19` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
-- `dompurify@3.4.13` — https://github.com/cure53/DOMPurify
+- `dompurify@3.4.14` — https://github.com/cure53/DOMPurify
 
 ### BSD-3-Clause
 
@@ -99,7 +99,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `autoprefixer@10.5.4` — https://github.com/postcss/autoprefixer
 - `balanced-match@1.0.0` — https://github.com/juliangruber/balanced-match
 - `brace-expansion@1.1.18` — https://github.com/juliangruber/brace-expansion
-- `browserslist@4.28.8` — https://github.com/browserslist/browserslist
+- `browserslist@4.28.7` — https://github.com/browserslist/browserslist
 - `commander@9.2.0` — https://github.com/tj/commander.js
 - `concat-map@0.0.1` — https://github.com/substack/node-concat-map
 - `core-js-pure@3.50.0` — https://github.com/zloirock/core-js
@@ -108,7 +108,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `es-errors@1.3.0` — https://github.com/ljharb/es-errors
 - `escalade@3.2.0` — https://github.com/lukeed/escalade
 - `fast-deep-equal@3.1.3` — https://github.com/epoberezkin/fast-deep-equal
-- `fflate@0.7.3` — https://github.com/101arrowz/fflate
+- `fflate@0.7.5` — https://github.com/101arrowz/fflate
 - `fraction.js@5.3.4` — https://github.com/rawify/Fraction.js
 - `function-bind@1.1.2` — https://github.com/Raynos/function-bind
 - `gl-matrix@3.4.3` — https://github.com/toji/gl-matrix
