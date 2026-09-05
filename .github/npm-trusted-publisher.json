@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "provider": "github-actions",
+  "registry": "https://registry.npmjs.org/",
+  "organization": "flyfish-dev",
+  "repository": "file-viewer",
+  "workflow": ".github/workflows/npm-publish.yml",
+  "environment": null,
+  "oidcPermission": "id-token: write",
+  "publishMode": "immutable-release-assets",
+  "configurationNote": "Add this same GitHub Actions publisher to every package in npm-release-manifest.json on npmjs.com."
+}

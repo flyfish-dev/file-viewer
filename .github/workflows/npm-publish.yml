@@ -1,0 +1,64 @@
+name: Publish npm release assets
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Published GitHub Release tag to publish
+        required: true
+        type: string
+      dry_run:
+        description: Validate and pack without publishing to npm
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish-${{ github.event.release.tag_name || inputs.release_tag }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.release.prerelease == false && github.event.release.draft == false)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out release publisher
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Download the immutable Release assets
+        env:
+          FILE_VIEWER_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -n "$FILE_VIEWER_RELEASE_TAG"
+          mkdir -p "$RUNNER_TEMP/file-viewer-release"
+          gh release download "$FILE_VIEWER_RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern '*.tgz' \
+            --pattern 'npm-release-manifest.json' \
+            --dir "$RUNNER_TEMP/file-viewer-release" \
+            --clobber
+
+      - name: Publish the verified package set with npm trusted publishing
+        env:
+          FILE_VIEWER_RELEASE_ASSETS_DIR: ${{ runner.temp }}/file-viewer-release
+          FILE_VIEWER_RELEASE_DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          FILE_VIEWER_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+        run: node .github/scripts/publish-release-assets.mjs
