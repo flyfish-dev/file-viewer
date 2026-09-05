@@ -1,6 +1,6 @@
 {
   "version": "3.0.2",
-  "generatedAt": "2026-09-05T22:15:48.456Z",
+  "generatedAt": "2026-09-05T23:20:38.060Z",
   "packageCount": 88,
   "packages": [
     {
@@ -328,7 +328,7 @@
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
       "tarballSize": 71809905,
-      "sha256": "1c7328384f664b6127e8877cffb44203d4444a1128967c4b49835df3cadbb050",
+      "sha256": "2a165cd5be1b0e7b2533c397ef96b7c932b09b4e03406160be15b64d2c8fff2a",
       "entrypointCount": 4,
       "assetCount": 2922,
       "fileCount": 2926
@@ -1560,8 +1560,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer-vue3",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue3",
       "sourceRepository": null,
-      "tarballSize": 199256,
-      "sha256": "c68133fcd0ce8b7080679354ff4e261a7d4fda5c266afa6cf68ad9f4452c78bb",
+      "tarballSize": 198061,
+      "sha256": "fc07f8318d0b4fc1db0cca2ed85e095ded45406b4704d843e2784cb7ef18365f",
       "entrypointCount": 5,
       "assetCount": 42,
       "fileCount": 46
