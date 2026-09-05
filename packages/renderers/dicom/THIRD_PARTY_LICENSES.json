@@ -1104,6 +1104,20 @@
       "name": "pako",
       "version": "2.1.0",
       "license": "(MIT AND Zlib)",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/nodeca/pako",
+      "licenseFiles": [
+        "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "pako",
+      "version": "2.2.0",
+      "license": "(MIT AND Zlib)",
       "direct": true,
       "optional": false,
       "firstParty": false,

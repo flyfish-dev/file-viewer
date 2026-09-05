@@ -1,0 +1,55 @@
+{
+  "name": "@file-viewer/ppt",
+  "version": "0.3.3",
+  "description": "Professional native WebAssembly canvas viewer for PowerPoint 97-2003 (.ppt) files.",
+  "type": "module",
+  "main": "./index.mjs",
+  "module": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "default": "./index.mjs"
+    },
+    "./manifest.json": "./manifest.json",
+    "./ppt-native.wasm": "./ppt-native.wasm",
+    "./ppt-font-cjk.otf": "./ppt-font-cjk.otf",
+    "./worker.mjs": "./worker.mjs",
+    "./LICENSE": "./LICENSE"
+  },
+  "files": [
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "index.d.ts",
+    "index.mjs",
+    "manifest.json",
+    "ppt-native.wasm",
+    "ppt-font-cjk.otf",
+    "worker.mjs",
+    "frame-cache.mjs"
+  ],
+  "sideEffects": false,
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "ppt",
+    "powerpoint",
+    "viewer",
+    "preview",
+    "canvas",
+    "wasm",
+    "document"
+  ],
+  "homepage": "https://officejs-doc.pages.dev",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/office-preview-js/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

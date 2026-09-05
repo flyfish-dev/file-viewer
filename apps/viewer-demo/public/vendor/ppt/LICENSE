@@ -1,0 +1,122 @@
+Flyfish Public Watermarked Runtime License for @file-viewer/ppt
+Version 2.0, July 2026
+License policy identifier: flyfish-public-watermarked-binary-license-v2
+
+Copyright (c) 2026 Flyfish. All rights reserved except as expressly granted in this License.
+
+IMPORTANT: This is a proprietary runtime license, not an open-source license.
+By downloading, installing, copying, accessing, or using the Public Runtime,
+You accept this License. If You do not accept it, do not use the Public Runtime.
+
+1. Definitions
+
+“Flyfish” means the copyright owner and licensor.
+
+“Public Runtime” means the official, unmodified @file-viewer/ppt public npm
+package and its required JavaScript, Worker, WebAssembly, font, declaration,
+manifest, documentation, notice, and Flyfish Viewer watermark files.
+
+“You” means any individual or organization using or distributing the Public
+Runtime under this License.
+
+“Integrated Product” means an application, website, service, library, demo,
+deployment bundle, or other product in which the Public Runtime is included as
+a functional dependency for PowerPoint preview rather than offered as a
+standalone substitute for @file-viewer/ppt.
+
+2. Public watermarked grant
+
+Subject to this License, Flyfish grants You a worldwide, royalty-free,
+non-exclusive, non-transferable license to:
+
+- download, install, copy, and execute the Public Runtime for any lawful
+  personal, organizational, educational, government, nonprofit, internal,
+  commercial, production, SaaS, hosted, customer-facing, or professional use;
+- integrate and deploy the Public Runtime in an Integrated Product;
+- bundle or copy the unmodified Public Runtime through npm, package managers,
+  build tools, private registries, static asset directories, Docker images,
+  offline installers, demos, Full packages, CDN/IIFE distributions,
+  copy-assets workflows, and GitHub Release artifacts;
+- host, mirror, and redistribute the unmodified Public Runtime when reasonably
+  required to install, operate, deploy, or distribute an Integrated Product;
+  and
+- charge for an Integrated Product or service that includes the Public Runtime.
+
+No paid license is required for these uses while the required Flyfish Viewer
+watermark remains visible, complete, unobstructed, and unmodified in every
+rendered slide and preview.
+
+Routine technical bundling, tree-shaking, compression, content hashing, and
+minification are permitted when they do not change runtime behavior, bypass
+integrity checks, remove notices, or alter the required watermark.
+
+3. Watermark-free commercial authorization
+
+A separate written commercial authorization is required only to remove,
+replace, hide, crop, cover, weaken, restyle, or otherwise alter the required
+Flyfish Viewer watermark, or to receive a separately built watermark-free
+runtime or source delivery. Commercial authorization applies only to the
+entities, deployments, features, origins, term, and other scope stated in that
+agreement.
+
+Authorization information: https://dev.flyfish.group/shop
+
+4. Restrictions
+
+Except to the limited extent mandatory law permits despite these restrictions,
+You may not, and may not enable another person to:
+
+- sell, rent, sublicense, rebrand, rename, or publish the Public Runtime as a
+  standalone or competing package, download, API, hosted conversion service,
+  or product that substitutes for the official @file-viewer/ppt package;
+- represent the Public Runtime as Your own engine, as open source, or as
+  licensed under Apache-2.0, MIT, BSD, GPL, or another open-source license;
+- modify, translate, patch, adapt, or create derivative works from the Public
+  Runtime except for the routine integration transformations expressly allowed
+  in Section 2;
+- reverse engineer, decrypt, decompile, disassemble, extract, dump, recover, or
+  attempt to derive source code, keys, protected modules, algorithms, or
+  non-public interfaces;
+- bypass, forge, replace, disable, or interfere with a policy gate, integrity
+  check, encryption measure, feature restriction, watermark control, or other
+  technical protection;
+- remove, hide, crop, cover, restyle, obscure, weaken, or interfere with the
+  required Flyfish Viewer watermark without separate written authorization; or
+- remove or alter copyright, license, attribution, provenance, trademark, or
+  third-party notices.
+
+An exact official package mirror, cache, backup, or static copy used to install
+or deploy an Integrated Product is not prohibited standalone redistribution.
+
+5. Proprietary and open-source boundary
+
+This License applies only to the Public Runtime. It does not grant source code,
+source-delivery, patent, trademark, or open-source rights. Apache-2.0 terms that
+may apply to File Viewer or to a separately identified source delivery do not
+extend to @file-viewer/ppt, its WebAssembly runtime, or Flyfish trademarks.
+
+Third-party components identified in the NOTICE remain subject to their own
+licenses. Those notices do not expand the grant for Flyfish proprietary code.
+
+6. Ownership and trademark
+
+Flyfish and its licensors retain all title and intellectual-property rights in
+the Public Runtime. The narrow permission to display the unmodified Flyfish
+Viewer watermark does not grant any other trademark or endorsement right.
+
+7. Termination
+
+This License terminates automatically if You materially violate it. Your rights
+are reinstated when You cure the violation within 30 days after discovery,
+unless Flyfish has notified You of a repeated or intentional violation.
+
+8. Disclaimer and limitation of liability
+
+THE PUBLIC RUNTIME IS PROVIDED “AS IS”, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND. TO THE MAXIMUM EXTENT PERMITTED BY LAW, FLYFISH IS NOT LIABLE FOR INDIRECT,
+INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES ARISING FROM ITS USE.
+
+9. Entire license
+
+This License is the complete public grant for the Public Runtime. A separate
+written agreement controls only where it expressly grants additional rights.
