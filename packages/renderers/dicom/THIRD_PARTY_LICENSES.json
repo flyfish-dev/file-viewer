@@ -470,7 +470,7 @@
     },
     {
       "name": "browserslist",
-      "version": "4.28.8",
+      "version": "4.28.7",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -752,7 +752,7 @@
     },
     {
       "name": "fflate",
-      "version": "0.7.3",
+      "version": "0.7.5",
       "license": "MIT",
       "direct": false,
       "optional": false,
