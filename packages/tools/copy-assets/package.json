@@ -1,6 +1,6 @@
 {
   "name": "file-viewer-copy-assets",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Official npx CLI for copying File Viewer Worker, WASM, font, and vendor assets into self-hosted web projects.",
@@ -64,7 +64,7 @@
     "test": "node --test test/*.test.mjs"
   },
   "devDependencies": {
-    "@types/node": "^25.8.0",
+    "@types/node": "^26.4.0",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

@@ -1355,6 +1355,7 @@
   }
 
   .viewport :deep(.file-viewer) {
+    --file-viewer-mobile-overlay-bottom: 70px;
     border-radius: 0;
     box-shadow: none;
   }

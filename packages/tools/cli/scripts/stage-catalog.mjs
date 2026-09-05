@@ -16,6 +16,10 @@ const webViewerManifest = join(sourceRoot, 'packages/components/web/viewer/flyfi
 const copyAssetsManifest = join(sourceRoot, 'packages/tools/copy-assets/viewer/flyfish-viewer-assets.json')
 const assetManifest = await readJson(existsSync(webViewerManifest) ? webViewerManifest : copyAssetsManifest)
 const assetRendererIds = new Set(assetManifest.rendererAssetManifests.map(entry => entry.rendererId))
+const supportedFormatsFor = row => [
+  ...row.extensions,
+  ...(row.enhancesExtensions || []),
+]
 const packageEntries = [
   ...(wrappers.renderers || []),
   ...(wrappers.utilityPackages || []).filter(entry => entry.packageName.startsWith('@file-viewer/capability-')),
@@ -73,6 +77,7 @@ const heavyPackages = new Set([
   '@file-viewer/renderer-cad',
   '@file-viewer/renderer-dicom',
   '@file-viewer/renderer-signature',
+  '@file-viewer/renderer-design',
   '@file-viewer/renderer-drawing',
   '@file-viewer/renderer-eda',
   '@file-viewer/renderer-geo',
@@ -93,7 +98,18 @@ const assetPackByRendererId = new Map(Object.entries({
   'office-presentation-binary': 'ppt',
   'office-hangul': 'hangul',
   'office-wordperfect': 'wordperfect',
-  'data-asset': 'data'
+  chm: 'chm',
+  'data-asset': 'data',
+  'adobe-animate-xfl-design': 'design',
+  'adobe-palette-design': 'design',
+  'adobe-xd-design': 'design',
+  'illustrator-pdf-design': 'design',
+  'indesign-exchange-design': 'design',
+  'indesign-native-design': 'design',
+  'photoshop-design': 'design',
+  'photoshop-resource-design': 'design',
+  'indesign-idml-design': 'design',
+  'postscript-design': 'design'
 }))
 
 const rowsByPackage = new Map()
@@ -114,7 +130,7 @@ for (const [packageName, rows] of [...rowsByPackage].sort(([left], [right]) => l
     if (manifest.packageName !== packageName) {
       throw new Error(`${packageName} capability manifest declares ${manifest.packageName}`)
     }
-    const catalogFormats = new Set(rows.flatMap(row => row.extensions))
+    const catalogFormats = new Set(rows.flatMap(supportedFormatsFor))
     const unknownFormats = manifest.formats.filter(format => !catalogFormats.has(format))
     if (unknownFormats.length) throw new Error(`${packageName} capability has unknown formats: ${unknownFormats.join(', ')}`)
     capabilities.push(await enrichCapability(manifest, packageJson))
@@ -131,7 +147,7 @@ for (const [packageName, rows] of [...rowsByPackage].sort(([left], [right]) => l
     id: rows.length === 1 ? rows[0].id : packageName.replace(/^@file-viewer\/renderer-/, ''),
     packageName,
     rendererIds: [...new Set(rows.map(row => row.id))],
-    formats: [...new Set(rows.flatMap(row => row.extensions))],
+    formats: [...new Set(rows.flatMap(supportedFormatsFor))],
     assets: ownedRendererIds.length ? {
       rendererIds: ownedRendererIds,
       packageName: `@file-viewer/assets-${assetPackId}`,

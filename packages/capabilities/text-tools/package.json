@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-text-tools",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Opt-in patch comparison and Git bundle inspection for File Viewer.",
@@ -34,7 +34,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/renderer-text": "workspace:3.0.0",
+    "@file-viewer/renderer-text": "workspace:3.0.1",
     "diff2html": "^3.4.56",
     "pako": "^2.1.0"
   },

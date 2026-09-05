@@ -1,0 +1,23 @@
+myer-settlement-brushes.abr
+
+"Myer Settlement Brushes" v1.0 by K. M. Alexander (kmalexander.com).
+Photoshop brush set (ABR version 6, subversion 2), 140+ sampled brushes.
+Downloaded 2026-07-03 from:
+https://kmalexander.com/wp-content/uploads/2025/02/myer-settlement-brushes.zip
+
+License: Creative Commons CC0 "No Rights Reserved" (public domain dedication).
+https://creativecommons.org/share-your-work/public-domain/cc0/
+The author distributes these brushes free for any use, commercial included,
+with no attribution required. Committed here as a regression fixture for
+Patchy's ABR brush importer.
+
+
+photoshop-dynamics.abr
+photoshop-dual-brush.abr
+
+Self-authored fixtures exported from Adobe Photoshop 2026 (ABR version 6,
+subversion 2) on 2026-07-04 for Patchy's brush-dynamics importer. Each holds
+one small sampled brush drawn for this purpose ("Patchy Dynamics Probe Dyn" /
+"Patchy Dual Probe") with known Shape Dynamics / Scattering / Transfer values;
+the dual-brush file additionally enables Dual Brush to exercise the
+unsupported-feature warning. No third-party content.

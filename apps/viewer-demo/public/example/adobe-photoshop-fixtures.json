@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "source": "project-generated",
+  "license": "Apache-2.0",
+  "generator": "scripts/fetch-adobe-photoshop-fixtures.mjs",
+  "fixtures": [
+    {
+      "localFile": "photoshop-grayscale.psb",
+      "size": 124,
+      "sha256": "2f5351b2fbbf6bfbb119421798984996af7d34107bd18a4e211e01c34d2e79cc",
+      "version": 2,
+      "width": 4,
+      "height": 1,
+      "channels": 1,
+      "depth": 8,
+      "colorMode": 1,
+      "compositeCompression": "raw",
+      "compositeGrayscale": [32, 64, 128, 192],
+      "layers": [
+        {
+          "name": "L",
+          "width": 4,
+          "height": 1,
+          "grayscale": [17, 51, 102, 153]
+        }
+      ],
+      "expectation": "Minimal PSB v2 fixture with a four-pixel stored grayscale composite and one read-only layer tree entry."
+    },
+    {
+      "localFile": "photoshop-template.psdt",
+      "sourceFile": "design.psd",
+      "size": 116440,
+      "sha256": "2522e98a06d550e015f99032ceb9baac77d7fc7c1763f57cbe31fe04069cd7d6",
+      "version": 1,
+      "width": 420,
+      "height": 280,
+      "channels": 3,
+      "depth": 8,
+      "colorMode": 3,
+      "declaredExtension": "psdt",
+      "expectation": "Project-generated layered PSD v1 bytes exposed through Photoshop's PSDT template extension; routing must validate 8BPS rather than trust the suffix."
+    },
+    {
+      "localFile": "photodeluxe-document.pdd",
+      "sourceFile": "design.psd",
+      "size": 116440,
+      "sha256": "2522e98a06d550e015f99032ceb9baac77d7fc7c1763f57cbe31fe04069cd7d6",
+      "version": 1,
+      "width": 420,
+      "height": 280,
+      "channels": 3,
+      "depth": 8,
+      "colorMode": 3,
+      "declaredExtension": "pdd",
+      "expectation": "Project-generated layered PSD v1 bytes exposed through the legacy PhotoDeluxe PDD extension; non-8BPS PDD collisions must fail closed."
+    }
+  ]
+}

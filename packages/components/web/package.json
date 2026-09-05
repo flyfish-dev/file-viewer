@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/web",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Standard pure web component package for File Viewer",
@@ -66,13 +66,13 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0"
+    "@file-viewer/core": "workspace:3.0.1"
   },
   "devDependencies": {
-    "@types/node": "^25.8.0",
+    "@types/node": "^26.4.0",
     "esbuild": "^0.28.2",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.2.2"
   },
   "license": "Apache-2.0"
 }

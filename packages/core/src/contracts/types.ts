@@ -3,15 +3,15 @@
 // Keep this layer declarative: no DOM reads, renderer imports, or async loading
 // should be introduced here. Higher layers depend on these contracts, never the
 // other way around.
-export type FileViewerSourceKind = 'file' | 'url' | 'buffer' | 'empty';
+export type FileViewerSourceKind = 'file' | 'url' | 'buffer' | 'empty'
 
-export type FileViewerThemeMode = 'light' | 'dark' | 'system';
+export type FileViewerThemeMode = 'light' | 'dark' | 'system'
 
-export type FileViewerResolvedThemeMode = Exclude<FileViewerThemeMode, 'system'>;
+export type FileViewerResolvedThemeMode = Exclude<FileViewerThemeMode, 'system'>
 
-export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE' | (string & {});
+export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE' | (string & {})
 
-export type FileViewerStyleIsolation = 'auto' | 'shadow' | 'scoped' | 'none';
+export type FileViewerStyleIsolation = 'auto' | 'shadow' | 'scoped' | 'none'
 
 export type FileViewerMessageKey =
   | 'toolbar.zoomGroup'
@@ -467,26 +467,28 @@ export type FileViewerMessageKey =
   | 'loading.video.label'
   | 'loading.video.hint'
   | 'loading.audio.label'
-  | 'loading.audio.hint';
+  | 'loading.audio.hint'
 
-export type FileViewerMessageParams = Record<string, string | number | boolean | null | undefined>;
+export type FileViewerMessageParams = Record<string, string | number | boolean | null | undefined>
 
 export type FileViewerMessageResolver = (
   key: FileViewerMessageKey,
   params: FileViewerMessageParams,
   locale: FileViewerLocale
-) => string | undefined;
+) => string | undefined
 
-export type FileViewerMessages = Partial<Record<FileViewerMessageKey, string>> | FileViewerMessageResolver;
+export type FileViewerMessages =
+  | Partial<Record<FileViewerMessageKey, string>>
+  | FileViewerMessageResolver
 
 export interface FileViewerI18nOptions {
-  locale?: FileViewerLocale;
-  messages?: FileViewerMessages;
+  locale?: FileViewerLocale
+  messages?: FileViewerMessages
 }
 
-export type FileViewerFileRef = File | Blob | ArrayBuffer;
+export type FileViewerFileRef = File | Blob | ArrayBuffer
 
-export type FileViewerToolbarPosition = 'auto' | 'top' | 'top-center' | 'bottom-right';
+export type FileViewerToolbarPosition = 'auto' | 'top' | 'top-center' | 'bottom-right'
 
 export type FileViewerFitMode =
   | 'auto'
@@ -495,29 +497,58 @@ export type FileViewerFitMode =
   | 'width'
   | 'height'
   | 'actual'
-  | 'scale-down';
+  | 'scale-down'
 
-export type FileViewerFitResize = 'until-interaction' | 'always' | 'initial';
+export type FileViewerFitResize = 'until-interaction' | 'always' | 'initial'
 
 export interface FileViewerFitOptions {
-  mode?: FileViewerFitMode;
-  resize?: FileViewerFitResize;
-  padding?: number;
-  minScale?: number;
-  maxScale?: number;
+  mode?: FileViewerFitMode
+  resize?: FileViewerFitResize
+  padding?: number
+  minScale?: number
+  maxScale?: number
 }
 
-export type FileViewerLifecyclePhase = 'load-start' | 'load-complete' | 'unload-start' | 'unload-complete';
+export type FileViewerLifecyclePhase =
+  | 'load-start'
+  | 'load-complete'
+  | 'unload-start'
+  | 'unload-complete'
 
-export type FileViewerOperationType = 'download' | 'print' | 'export-html' | 'zoom-in' | 'zoom-out' | 'zoom-reset';
+export type FileViewerOperationType =
+  | 'download'
+  | 'print'
+  | 'export-html'
+  | 'zoom-in'
+  | 'zoom-out'
+  | 'zoom-reset'
 
-export type FileViewerToolbarItem = 'search' | 'zoom' | 'download' | 'print' | 'exportHtml' | 'export-html' | 'theme';
+export type FileViewerToolbarItem =
+  | 'search'
+  | 'zoom'
+  | 'download'
+  | 'print'
+  | 'exportHtml'
+  | 'export-html'
+  | 'theme'
 
-export type FileViewerResolvedToolbarItem = 'search' | 'zoom' | 'download' | 'print' | 'exportHtml' | 'theme';
+export type FileViewerResolvedToolbarItem =
+  | 'search'
+  | 'zoom'
+  | 'download'
+  | 'print'
+  | 'exportHtml'
+  | 'theme'
 
-export type FileViewerToolbarActionMap = Partial<Record<FileViewerOperationType, boolean>>;
+export type FileViewerToolbarActionMap = Partial<Record<FileViewerOperationType, boolean>>
 
-export type FileViewerRenderStateKind = 'idle' | 'loading' | 'ready' | 'empty' | 'unsupported' | 'error';
+export type FileViewerRenderStateKind =
+  | 'idle'
+  | 'loading'
+  | 'ready'
+  | 'empty'
+  | 'unsupported'
+  | 'error'
 
 export type FileViewerRendererCategory =
   | 'office'
@@ -538,386 +569,412 @@ export type FileViewerRendererCategory =
   | 'code'
   | 'media'
   | 'asset'
-  | 'fallback';
+  | 'fallback'
 
 export interface FileViewerWatermarkOptions {
-  enabled?: boolean;
-  text?: string;
-  image?: string;
-  opacity?: number;
-  rotate?: number;
-  gapX?: number;
-  gapY?: number;
-  width?: number;
-  height?: number;
-  fontSize?: number;
-  color?: string;
-  fontFamily?: string;
+  enabled?: boolean
+  text?: string
+  image?: string
+  opacity?: number
+  rotate?: number
+  gapX?: number
+  gapY?: number
+  width?: number
+  height?: number
+  fontSize?: number
+  color?: string
+  fontFamily?: string
 }
 
 export interface FileViewerToolbarOptions {
-  download?: boolean;
-  print?: boolean;
-  exportHtml?: boolean;
-  zoom?: boolean;
-  search?: boolean;
+  download?: boolean
+  print?: boolean
+  exportHtml?: boolean
+  zoom?: boolean
+  search?: boolean
   /** Shows a manual light/dark mode toggle without changing the host page theme. */
-  theme?: boolean;
+  theme?: boolean
   /** Built-in toolbar group order. Missing entries keep their default relative order. */
-  order?: FileViewerToolbarItem[];
+  order?: FileViewerToolbarItem[]
   /** Controls which built-in toolbar actions are displayed without disabling controller APIs. */
-  items?: FileViewerToolbarActionMap;
+  items?: FileViewerToolbarActionMap
   /** Hard operation permission map. False values block both built-in toolbar and public API calls. */
-  permissions?: FileViewerToolbarActionMap;
-  position?: FileViewerToolbarPosition;
-  beforeOperation?: FileViewerBeforeOperation;
-  beforeDownload?: FileViewerBeforeOperation;
-  beforePrint?: FileViewerBeforeOperation;
-  beforeExportHtml?: FileViewerBeforeOperation;
+  permissions?: FileViewerToolbarActionMap
+  position?: FileViewerToolbarPosition
+  beforeOperation?: FileViewerBeforeOperation
+  beforeDownload?: FileViewerBeforeOperation
+  beforePrint?: FileViewerBeforeOperation
+  beforeExportHtml?: FileViewerBeforeOperation
 }
 
 export interface FileViewerArchiveEntryActionContext {
-  path: string;
-  name: string;
-  extension: string;
-  size: number;
-  lastModified?: number;
-  depth: number;
-  previewable: boolean;
+  path: string
+  name: string
+  extension: string
+  size: number
+  lastModified?: number
+  depth: number
+  previewable: boolean
 }
 
 export type FileViewerArchiveEntryActionPolicy =
   | boolean
-  | ((entry: FileViewerArchiveEntryActionContext) => boolean);
+  | ((entry: FileViewerArchiveEntryActionContext) => boolean)
 
 export interface FileViewerArchiveEntryActionsOptions {
   /**
    * Controls the download button for files opened from inside an archive.
    * The viewer-level original-file download remains controlled by toolbar options.
    */
-  download?: FileViewerArchiveEntryActionPolicy;
+  download?: FileViewerArchiveEntryActionPolicy
 }
 
 export interface FileViewerArchiveOptions {
-  workerUrl?: string;
-  wasmUrl?: string;
-  workerTimeoutMs?: number;
-  cache?: boolean;
-  maxArchiveSize?: number;
-  maxEntryPreviewSize?: number;
-  entryActions?: FileViewerArchiveEntryActionsOptions;
+  workerUrl?: string
+  wasmUrl?: string
+  workerTimeoutMs?: number
+  cache?: boolean
+  maxArchiveSize?: number
+  maxEntryPreviewSize?: number
+  entryActions?: FileViewerArchiveEntryActionsOptions
   /**
    * Optional archive password. It is used for the first encrypted archive
    * attempt; if it is wrong, the built-in password dialog or requestPassword
    * callback can still ask the user for a replacement.
    */
-  password?: string;
+  password?: string
   /**
    * Custom password request hook for encrypted archives. Return a string to
    * continue, or null/undefined to cancel and surface a friendly error.
    */
   requestPassword?: (
     context: FileViewerArchivePasswordRequestContext
-  ) => string | null | undefined | Promise<string | null | undefined>;
+  ) => string | null | undefined | Promise<string | null | undefined>
+}
+
+export interface FileViewerChmOptions {
+  /** Self-hosted module Worker that owns all untrusted CHM parsing and decompression. */
+  workerUrl?: string | URL;
+  /** Self-hosted wasm-bindgen JavaScript module loaded by the CHM Worker. */
+  wasmModuleUrl?: string | URL;
+  /** Self-hosted Rust WebAssembly binary loaded by the CHM Worker. */
+  wasmUrl?: string | URL;
+  /** Maximum time for an individual Worker request. Defaults to 60 seconds. */
+  workerTimeoutMs?: number;
+  /** Maximum accepted CHM input size. Defaults to 320 MiB. */
+  maxArchiveBytes?: number;
+  /** Maximum number of virtual files accepted from one CHM. Defaults to 50,000. */
+  maxEntries?: number;
+  /** Maximum uncompressed size of one virtual file. Defaults to 32 MiB. */
+  maxEntryBytes?: number;
+  /** Maximum total unique decoded content exposed by the parser. Defaults to 512 MiB. */
+  maxTotalDecompressedBytes?: number;
+  /** Maximum HTML topic size. Defaults to 16 MiB. */
+  maxHtmlBytes?: number;
+  /** Maximum topic count scanned by the built-in search. Defaults to 10,000. */
+  maxSearchTopics?: number;
+  /** Maximum built-in search result count. Defaults to 200. */
+  maxSearchResults?: number;
 }
 
 export type FileViewerArchivePasswordRequestReason =
   | 'encrypted'
   | 'invalid-password'
   | 'read-failed'
-  | 'extract-failed';
+  | 'extract-failed'
 
 export interface FileViewerArchivePasswordRequestContext {
-  filename: string;
-  entryName?: string;
-  attempt: number;
-  reason: FileViewerArchivePasswordRequestReason;
-  error?: unknown;
+  filename: string
+  entryName?: string
+  attempt: number
+  reason: FileViewerArchivePasswordRequestReason
+  error?: unknown
 }
 
 export interface FileViewerPdfOptions {
-  toolbar?: boolean;
-  navigation?: boolean;
-  defaultNavigationVisible?: boolean;
-  thumbnails?: boolean;
-  rotation?: number;
+  toolbar?: boolean
+  navigation?: boolean
+  defaultNavigationVisible?: boolean
+  thumbnails?: boolean
+  rotation?: number
   /**
    * Highlights and focuses one or more PDF regions after the document loads.
    * Use `pixel` with `sourceWidth` / `sourceHeight` for OCR coordinates, or
    * `pdf-point` for native PDF coordinates. Page numbers are one-based.
    */
-  bbox?: FileViewerPdfBoundingBox | readonly FileViewerPdfBoundingBox[];
+  bbox?: FileViewerPdfBoundingBox | readonly FileViewerPdfBoundingBox[]
   /**
    * Initial PDF view position. Prefer the top-level `initialViewState` when the
    * same state should be passed through framework-neutral viewer APIs.
    */
-  initialViewState?: FileViewerViewState;
-  streaming?: boolean | 'same-origin';
-  rangeChunkSize?: number;
-  withCredentials?: boolean;
+  initialViewState?: FileViewerViewState
+  streaming?: boolean | 'same-origin'
+  rangeChunkSize?: number
+  withCredentials?: boolean
   /**
    * Base URL for the self-hosted PDF worker, cMaps, WASM, standard fonts, and
    * CJK fallback fonts. Useful for SPA routes whose document URL is deeper
    * than the deployment public path, for example `/workspace/c/`.
    */
-  assetBaseUrl?: string | URL;
-  workerUrl?: string;
-  cMapUrl?: string;
-  wasmUrl?: string;
-  standardFontDataUrl?: string;
+  assetBaseUrl?: string | URL
+  workerUrl?: string
+  cMapUrl?: string
+  wasmUrl?: string
+  standardFontDataUrl?: string
   /**
    * Enables the self-hosted CJK fallback used when a PDF references a font
    * such as Microsoft YaHei without embedding the font data. Defaults to true.
    */
-  cjkFontFallback?: boolean;
+  cjkFontFallback?: boolean
   /**
    * Repairs malformed Identity-H/V CJK fonts that omit ToUnicode when the PDF
    * also embeds a usable same-family TrueType cmap. Defaults to true. The
    * repair is applied only to the in-memory preview and never changes the
    * original file used by download operations.
    */
-  identityFontRepair?: boolean;
+  identityFontRepair?: boolean
   /**
    * Directory containing `noto-sans-sc.css`, its `files/` font shards, and
    * the bundled font license. The path is resolved against the document base.
    */
-  cjkFontFallbackPath?: string;
+  cjkFontFallbackPath?: string
 }
 
-export type FileViewerPdfBoundingBoxUnit = 'ratio' | 'percent' | 'pixel' | 'pdf-point';
+export type FileViewerPdfBoundingBoxUnit = 'ratio' | 'percent' | 'pixel' | 'pdf-point'
 
-export type FileViewerPdfBoundingBoxOrigin = 'top-left' | 'bottom-left';
+export type FileViewerPdfBoundingBoxOrigin = 'top-left' | 'bottom-left'
 
 export interface FileViewerPdfBoundingBox {
-  id?: string;
+  id?: string
   /** One-based PDF page number. Defaults to the current page, then page 1. */
-  page?: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  page?: number
+  x: number
+  y: number
+  width: number
+  height: number
   /** Defaults to `pdf-point`. */
-  unit?: FileViewerPdfBoundingBoxUnit;
+  unit?: FileViewerPdfBoundingBoxUnit
   /** Defaults to `bottom-left` for PDF points and `top-left` otherwise. */
-  origin?: FileViewerPdfBoundingBoxOrigin;
+  origin?: FileViewerPdfBoundingBoxOrigin
   /** Required when `unit` is `pixel`; this is the OCR/source image width. */
-  sourceWidth?: number;
+  sourceWidth?: number
   /** Required when `unit` is `pixel`; this is the OCR/source image height. */
-  sourceHeight?: number;
+  sourceHeight?: number
   /** CSS color used for the outline and translucent fill. */
-  color?: string;
+  color?: string
   /** Optional accessible description for the highlighted region. */
-  label?: string;
+  label?: string
 }
 
 export interface FileViewerDocxOptions {
-  worker?: boolean;
-  workerUrl?: string;
-  workerJsZipUrl?: string;
-  progressive?: boolean;
+  worker?: boolean
+  workerUrl?: string
+  workerJsZipUrl?: string
+  progressive?: boolean
   /** 默认 false，使用连续流式阅读；设为 true 时才启用 DOCX 页式预览。 */
-  visualPagination?: boolean;
-  workerTimeout?: number;
-  renderPageBatchSize?: number;
-  renderYieldEveryMs?: number;
-  strictWordCompatibility?: boolean;
-  paginationTolerance?: number;
-  maxDynamicPaginationPasses?: number;
-  awaitLayout?: boolean;
-  preserveComplexFieldResults?: boolean;
-  updatePageReferences?: boolean;
-  hideWebHiddenContent?: boolean;
-  ignoreLastRenderedPageBreak?: boolean;
+  visualPagination?: boolean
+  workerTimeout?: number
+  renderPageBatchSize?: number
+  renderYieldEveryMs?: number
+  strictWordCompatibility?: boolean
+  paginationTolerance?: number
+  maxDynamicPaginationPasses?: number
+  awaitLayout?: boolean
+  preserveComplexFieldResults?: boolean
+  updatePageReferences?: boolean
+  hideWebHiddenContent?: boolean
+  ignoreLastRenderedPageBreak?: boolean
   /** External DOC/DOCX/RTF links are blocked by default; internal bookmark links remain active. */
-  externalLinkPolicy?: 'allow' | 'block';
+  externalLinkPolicy?: 'allow' | 'block'
   /** Linked DOC/DOCX/RTF image resources are blocked by default; embedded images remain available. */
-  externalResourcePolicy?: 'allow' | 'block';
+  externalResourcePolicy?: 'allow' | 'block'
   /** Overrides automatic DOCX dark rendering derived from the viewer theme. */
-  darkMode?: boolean;
+  darkMode?: boolean
 }
 
 export interface FileViewerSpreadsheetOptions {
-  worker?: boolean | 'auto';
-  workerUrl?: string;
+  worker?: boolean | 'auto'
+  workerUrl?: string
   /** `worker: 'auto'` 时，大于该字节数的表格自动使用静态 Worker，默认 1MB。 */
-  workerAutoThreshold?: number;
+  workerAutoThreshold?: number
   /**
    * CSV / TSV 文本编码。默认 `auto`：优先 UTF-8 BOM 和严格 UTF-8，
    * 否则使用浏览器内置 GB18030 解码器（同时覆盖 GBK）。
    */
-  textEncoding?: 'auto' | 'utf-8' | 'gbk' | 'gb18030';
+  textEncoding?: 'auto' | 'utf-8' | 'gbk' | 'gb18030'
   /** 允许用户在 Excel / CSV / ODS 预览中拖拽表头边界调整列宽，默认关闭以保持历史行为。 */
-  resizableColumns?: boolean;
+  resizableColumns?: boolean
   /** 允许用户在 Excel / CSV / ODS 预览中拖拽行头边界调整行高，默认关闭以保持历史行为。 */
-  resizableRows?: boolean;
+  resizableRows?: boolean
 }
 
 export interface FileViewerPresentationOptions {
   /** PPTX/OpenXML Worker URL. This is independent from the binary-PPT Worker. */
-  workerUrl?: string | URL;
-  workerType?: WorkerType;
+  workerUrl?: string | URL
+  workerType?: WorkerType
   /** Optional self-hosted native WASM URL used only by the PowerPoint 97–2003 renderer. */
-  pptWasmUrl?: string | URL;
+  pptWasmUrl?: string | URL
   /** Optional self-hosted CJK font-pack URL used only by the PowerPoint 97–2003 renderer. */
-  pptFontUrl?: string | URL;
+  pptFontUrl?: string | URL
   /** Optional module Worker URL used only by the PowerPoint 97–2003 renderer. */
-  pptWorkerUrl?: string | URL;
+  pptWorkerUrl?: string | URL
   /** Selects the binary-PPT Worker path. Defaults to `auto`. */
-  pptWorker?: boolean | 'auto';
+  pptWorker?: boolean | 'auto'
   /** Controls the binary-PPT bounded IndexedDB frame cache. */
-  pptCache?: false | {
-    enabled?: boolean;
-    dbName?: string;
-    maxBytes?: number;
-    maxEntries?: number;
-    maxEntryBytes?: number;
-  };
+  pptCache?:
+    | false
+    | {
+        enabled?: boolean
+        dbName?: string
+        maxBytes?: number
+        maxEntries?: number
+        maxEntryBytes?: number
+      }
   /** Render and retain only binary-PPT slides near the viewport. Defaults to true. */
-  pptVirtualize?: boolean;
+  pptVirtualize?: boolean
   /** IntersectionObserver overscan for binary-PPT virtualization. Defaults to `150% 0px`. */
-  pptVirtualRootMargin?: string;
+  pptVirtualRootMargin?: string
   /** Delay before an offscreen binary-PPT canvas is cached and released. Defaults to 1200ms. */
-  pptReleaseDelayMs?: number;
+  pptReleaseDelayMs?: number
   /**
    * Optional ESM entry override for `@file-viewer/ppt`.
    * Full packages and the CDN/IIFE distribution provide a packaged default.
    */
-  pptModuleUrl?: string | URL;
+  pptModuleUrl?: string | URL
 }
 
-export type FileViewerIworkEmbeddedPreviewMode = 'never' | 'loading' | 'fallback';
+export type FileViewerIworkEmbeddedPreviewMode = 'never' | 'loading' | 'fallback'
 
 export interface FileViewerIworkOptions {
   /** Self-hosted module Worker used for ZIP, Snappy, IWA/Protobuf and iWork '09 XML parsing. */
-  workerUrl?: string | URL;
+  workerUrl?: string | URL
   /** Defaults to true. Disable only in environments without Worker support. */
-  useWorker?: boolean;
+  useWorker?: boolean
   /** Maximum parse time before the Worker is terminated. Defaults to 60 seconds. */
-  workerTimeoutMs?: number;
+  workerTimeoutMs?: number
   /** Maximum total bytes produced while inflating the outer container and Index.zip. Defaults to 256 MiB. */
-  maxUncompressedBytes?: number;
+  maxUncompressedBytes?: number
   /** Maximum accepted ZIP compression ratio for a single entry. Defaults to 200. */
-  maxCompressionRatio?: number;
+  maxCompressionRatio?: number
   /** Maximum decoded IWA archive/object count. Defaults to 250,000. */
-  maxObjects?: number;
+  maxObjects?: number
   /** Maximum decoded image pixels for one media resource. Defaults to 80 megapixels. */
-  maxImagePixels?: number;
+  maxImagePixels?: number
   /** Maximum normalized scene/object nesting depth. Defaults to 128. */
-  maxNestingDepth?: number;
+  maxNestingDepth?: number
   /** Embedded Quick Look images are loading placeholders or explicit parse-failure fallbacks, never fidelity evidence. */
-  embeddedPreview?: FileViewerIworkEmbeddedPreviewMode;
+  embeddedPreview?: FileViewerIworkEmbeddedPreviewMode
 }
 
 export interface FileViewerWordPerfectOptions {
   /** Self-hosted Worker that owns WordPerfect signature detection and parsing. */
-  workerUrl?: string | URL;
+  workerUrl?: string | URL
   /** Self-hosted libwpd/librevenge WebAssembly module. */
-  wasmUrl?: string | URL;
+  wasmUrl?: string | URL
   /** Defaults to true. */
-  useWorker?: boolean;
+  useWorker?: boolean
   /** Maximum parser time before the Worker is terminated. Defaults to 60 seconds. */
-  workerTimeoutMs?: number;
+  workerTimeoutMs?: number
 }
 
 export interface FileViewerHangulOptions {
   /** Self-hosted module Worker used for bounded HWP v5 CFB and HWPX ZIP/XML parsing. */
-  workerUrl?: string | URL;
+  workerUrl?: string | URL
   /** Defaults to true. Disable only in environments without Worker support. */
-  useWorker?: boolean;
+  useWorker?: boolean
   /** Maximum parser time before the Worker is terminated. Defaults to 60 seconds. */
-  workerTimeoutMs?: number;
+  workerTimeoutMs?: number
   /** Maximum total uncompressed HWPX entry bytes or individual HWP stream bytes. Defaults to 256 MiB. */
-  maxUncompressedBytes?: number;
+  maxUncompressedBytes?: number
   /** Maximum accepted HWPX ZIP compression ratio for a single entry. Defaults to 200. */
-  maxCompressionRatio?: number;
+  maxCompressionRatio?: number
   /** Maximum HWPX ZIP entry count. Defaults to 25,000. */
-  maxEntries?: number;
+  maxEntries?: number
   /** Maximum HWP record count decoded across one stream. Defaults to 250,000. */
-  maxRecords?: number;
+  maxRecords?: number
 }
 
-export type FileRenderExportMode = 'export' | 'print';
+export type FileRenderExportMode = 'export' | 'print'
 
-export type FileViewerRenderPurpose = 'preview' | 'thumbnail';
+export type FileViewerRenderPurpose = 'preview' | 'thumbnail'
 
-export type FileViewerThumbnailFormat = 'webp' | 'jpeg' | 'png';
+export type FileViewerThumbnailFormat = 'webp' | 'jpeg' | 'png'
 
-export type FileViewerThumbnailFit = 'contain' | 'cover';
+export type FileViewerThumbnailFit = 'contain' | 'cover'
 
 export interface FileViewerThumbnailCaptureOptions {
-  width: number;
-  height: number;
-  format: FileViewerThumbnailFormat;
-  quality: number;
-  fit: FileViewerThumbnailFit;
-  background: string;
-  signal?: AbortSignal;
+  width: number
+  height: number
+  format: FileViewerThumbnailFormat
+  quality: number
+  fit: FileViewerThumbnailFit
+  background: string
+  signal?: AbortSignal
 }
 
 export interface FileRenderThumbnailAdapter {
   /** Prepare lazy content immediately before capture. */
-  beforeCapture?: (options: FileViewerThumbnailCaptureOptions) => void | Promise<void>;
+  beforeCapture?: (options: FileViewerThumbnailCaptureOptions) => void | Promise<void>
   /** Identifies a capture result that comes from packaged metadata rather than rendered content. */
-  captureSource?: 'embedded' | 'rendered';
+  captureSource?: 'embedded' | 'rendered'
   /** A renderer-native fast path. Returning null delegates to the DOM fallback. */
-  capture?: (options: FileViewerThumbnailCaptureOptions) => Blob | null | Promise<Blob | null>;
+  capture?: (options: FileViewerThumbnailCaptureOptions) => Blob | null | Promise<Blob | null>
   /** The first page/slide/sheet/cover element used by the DOM fallback. */
-  getTarget?: (options: FileViewerThumbnailCaptureOptions) => Element | null | Promise<Element | null>;
+  getTarget?: (
+    options: FileViewerThumbnailCaptureOptions
+  ) => Element | null | Promise<Element | null>
 }
 
 export interface FileRenderExportOptions {
-  mode: FileRenderExportMode;
-  title: string;
+  mode: FileRenderExportMode
+  title: string
 }
 
 export interface FileRenderExportAdapter {
-  print?: boolean;
-  exportHtml?: boolean;
-  includeDocumentStyles?: boolean;
-  beforeSnapshot?: () => Promise<void> | void;
+  print?: boolean
+  exportHtml?: boolean
+  includeDocumentStyles?: boolean
+  beforeSnapshot?: () => Promise<void> | void
   /** Live page surfaces used by the interactive print-mask designer. */
-  getPrintMaskPages?: () => readonly HTMLElement[];
-  printStyle?: string | ((options: FileRenderExportOptions) => Promise<string> | string);
-  toHtml?: (options: FileRenderExportOptions) => Promise<string> | string;
+  getPrintMaskPages?: () => readonly HTMLElement[]
+  printStyle?: string | ((options: FileRenderExportOptions) => Promise<string> | string)
+  toHtml?: (options: FileRenderExportOptions) => Promise<string> | string
 }
 
 export interface FileRenderContext {
-  filename?: string;
-  url?: string;
-  streamUrl?: string;
+  filename?: string
+  url?: string
+  streamUrl?: string
   /** Original browser File retained for renderers that support Blob-backed random access. */
-  sourceFile?: File;
-  signal?: AbortSignal;
-  options?: FileViewerOptions;
-  surface?: RenderSurface;
-  registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void;
-  registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void;
-  renderPurpose?: FileViewerRenderPurpose;
-  onProgressiveRender?: () => void;
+  sourceFile?: File
+  signal?: AbortSignal
+  options?: FileViewerOptions
+  surface?: RenderSurface
+  registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void
+  registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void
+  renderPurpose?: FileViewerRenderPurpose
+  onProgressiveRender?: () => void
   renderNestedBuffer?: (
     buffer: ArrayBuffer,
     type: string,
     target: HTMLDivElement,
     context?: FileRenderContext
-  ) => Promise<FileViewerRenderedInstance | undefined>;
+  ) => Promise<FileViewerRenderedInstance | undefined>
 }
 
-export type FileRenderHandler<
-  Rendered = unknown,
-  Target extends HTMLElement = HTMLElement,
-> = (
+export type FileRenderHandler<Rendered = unknown, Target extends HTMLElement = HTMLElement> = (
   buffer: ArrayBuffer,
   target: Target,
   type?: string,
   context?: FileRenderContext
-) => Promise<Rendered>;
+) => Promise<Rendered>
 
 export interface FileRenderHandlerComposite<
   Rendered = unknown,
-  Target extends HTMLElement = HTMLElement,
+  Target extends HTMLElement = HTMLElement
 > {
-  accepts: Array<string>;
-  handler: FileRenderHandler<Rendered, Target>;
+  accepts: Array<string>
+  handler: FileRenderHandler<Rendered, Target>
 }
 
 /**
@@ -929,51 +986,248 @@ export interface FileRenderHandlerComposite<
  */
 export type FileViewerRenderedInstance =
   | {
-      $el?: Node;
-      unmount: () => void | Promise<void>;
+      $el?: Node
+      unmount: () => void | Promise<void>
     }
   | {
-      $el?: Node;
-      $destroy: () => void | Promise<void>;
+      $el?: Node
+      $destroy: () => void | Promise<void>
     }
   | {
-      $el?: Node;
-      destroy: () => void | Promise<void>;
-    };
+      $el?: Node
+      destroy: () => void | Promise<void>
+    }
 
 export interface FileViewerTypstOptions {
-  compilerWasmUrl?: string;
-  rendererWasmUrl?: string;
-  fontAssetsUrl?: string;
-  renderTimeoutMs?: number;
+  compilerWasmUrl?: string
+  rendererWasmUrl?: string
+  fontAssetsUrl?: string
+  renderTimeoutMs?: number
 }
 
-export type FileViewerModelLinearUnit =
-  | 'millimeter'
-  | 'centimeter'
-  | 'meter'
-  | 'inch'
-  | 'foot';
+export type FileViewerModelLinearUnit = 'millimeter' | 'centimeter' | 'meter' | 'inch' | 'foot'
 
 export interface FileViewerModelOptions {
   /** Self-hosted worker that keeps STEP/IGES/BREP tessellation off the UI thread. */
-  workerUrl?: string;
+  workerUrl?: string
   /** Self-hosted occt-import-js runtime loaded by the classic worker. */
-  runtimeUrl?: string;
+  runtimeUrl?: string
   /** Self-hosted OpenCascade WebAssembly module used by the model renderer. */
-  wasmUrl?: string;
+  wasmUrl?: string
   /** Disable only when Worker is unavailable or a host deliberately accepts main-thread parsing. */
-  useWorker?: boolean;
+  useWorker?: boolean
   /** Maximum time allowed for geometry-kernel initialization and tessellation. Defaults to 120 seconds. */
-  workerTimeoutMs?: number;
-  linearUnit?: FileViewerModelLinearUnit;
-  linearDeflectionType?: 'bounding_box_ratio' | 'absolute_value';
-  linearDeflection?: number;
-  angularDeflection?: number;
+  workerTimeoutMs?: number
+  linearUnit?: FileViewerModelLinearUnit
+  linearDeflectionType?: 'bounding_box_ratio' | 'absolute_value'
+  linearDeflection?: number
+  angularDeflection?: number
 }
 
 export interface FileViewerDataOptions {
-  sqlWasmUrl?: string;
+  sqlWasmUrl?: string
+}
+
+export type FileViewerIllustratorMode = 'auto' | 'pdf' | 'native'
+
+/** Resource budgets forwarded to the standalone illustrator-pgf Worker. */
+export interface FileViewerIllustratorLimits {
+  maxFileBytes: number
+  maxDecodedBytes: number
+  maxPdfObjects: number
+  maxPrivateBlocks: number
+  maxTokens: number
+  maxStatements: number
+  maxNodes: number
+  maxPathPoints: number
+  maxNesting: number
+  maxStringBytes: number
+  maxSingleRasterPixels: number
+  maxTotalRasterBytes: number
+  maxWorkerTimeMs: number
+  maxRenderPixels: number
+  maxCacheBytes: number
+}
+
+export interface FileViewerIllustratorFontReference {
+  postScriptName: string
+  family?: string
+  style?: string
+  subset?: boolean
+}
+
+export interface FileViewerIllustratorResourceReference {
+  id: string
+  kind: string
+  path?: string
+  uri?: string
+  sha256?: string
+}
+
+export interface FileViewerIllustratorFontResolver {
+  resolve(
+    reference: FileViewerIllustratorFontReference,
+    signal: AbortSignal
+  ): Promise<ArrayBuffer | FontFace | null>
+}
+
+export interface FileViewerIllustratorResourceResolver {
+  resolve(
+    reference: FileViewerIllustratorResourceReference,
+    signal: AbortSignal
+  ): Promise<ArrayBuffer | null>
+}
+
+export interface FileViewerDesignOptions {
+  /** Illustrator routing: PDF-compatible surface, native PGF scene, or safe automatic fallback. */
+  illustratorMode?: FileViewerIllustratorMode
+  /** Self-hosted module Worker that runs the standalone illustrator-pgf parser and renderer. */
+  illustratorWorkerUrl?: string | URL
+  /** Resource budgets forwarded to illustrator-pgf. Defaults to the SDK's bounded limits. */
+  illustratorLimits?: Partial<FileViewerIllustratorLimits>
+  /** Optional host font resolver used only by the native Illustrator session. */
+  illustratorFontResolver?: FileViewerIllustratorFontResolver
+  /** Optional host linked/embedded resource resolver used only by the native Illustrator session. */
+  illustratorResourceResolver?: FileViewerIllustratorResourceResolver
+  /** Self-hosted module Worker used for heavy Adobe document parsing and pixel synthesis. */
+  workerUrl?: string | URL
+  /** Self-hosted module Worker used for bounded FLA/XFL, XD, INDD/INDT, ICML/IDMS/INX, ASE, and ACO parsing. */
+  containerWorkerUrl?: string | URL
+  /** Self-hosted module Worker used for ABR/CSH/PAT/GRD/ASL resource parsing. */
+  adobeResourceWorkerUrl?: string | URL
+  /** Self-hosted module Worker that runs the bounded EPS/PostScript interpreter. */
+  postscriptWorkerUrl?: string | URL
+  /** Self-hosted, license-safe Stet WebAssembly binary used only inside the PostScript Worker. */
+  postscriptWasmUrl?: string | URL
+  /** Defaults to true. Disable only when Worker is unavailable. */
+  useWorker?: boolean
+  /** Maximum parser time before the Worker is terminated. Defaults to 60 seconds. */
+  workerTimeoutMs?: number
+  /** Base EPS/PostScript rasterization density. Defaults to 96 DPI. */
+  postscriptRenderDpi?: number
+  /** Maximum pages produced by one EPS/PostScript program. Defaults to 100. */
+  postscriptMaxPages?: number
+  /** Maximum source width or height reported by a PostScript page. Defaults to 100,000 units. */
+  postscriptMaxSourceDimension?: number
+  /** Maximum PostScript virtual-machine allocation. Defaults to 256 MiB. */
+  postscriptMaxVmBytes?: number
+  /** Maximum PostScript print working set across visible, cached, transient, and print RGBA canvases. Defaults to 128 MiB. */
+  postscriptMaxPrintBytes?: number
+  /** Self-hosted module Worker used by the high-fidelity IDML page renderer. */
+  idmlWorkerUrl?: string | URL
+  /** Self-hosted @paged-media/introspect-wasm binary used only inside the IDML Worker. */
+  idmlWasmUrl?: string | URL
+  /** Base rasterization density for IDML pages. Defaults to 96 DPI. */
+  idmlRenderDpi?: number
+  /** Maximum IDML ZIP entry count. Defaults to 20,000. */
+  idmlMaxEntries?: number
+  /** Maximum total expanded bytes declared by an IDML package. Defaults to 512 MiB. */
+  idmlMaxExpandedBytes?: number
+  /** Maximum IDML page count exposed by the renderer. Defaults to 500. */
+  idmlMaxPages?: number
+  /** Maximum frame count exposed by the IDML page tree. Defaults to 100,000. */
+  idmlMaxFrames?: number
+  /** Maximum IDML print working set across visible, cached, transient, and print RGBA canvases. Defaults to 128 MiB. */
+  idmlMaxPrintBytes?: number
+  /** Maximum structured result returned for ICML/IDMS/INX parsing. Defaults to 24 MiB and is hard-capped at 64 MiB. */
+  indesignExchangeMaxResultBytes?: number
+  /** Maximum geometry points retained for one ICML/IDMS/INX page item. Defaults to 4,096 and is hard-capped at 16,384. */
+  indesignExchangeMaxPointsPerItem?: number
+  /** Maximum DOM/SVG nodes materialized for one active ICML/IDMS/INX panel. Defaults to 8,000 and is hard-capped at 20,000. */
+  indesignExchangeMaxDomNodesPerPanel?: number
+  /** Maximum accepted Photoshop source size. Defaults to 128 MiB. */
+  maxFileBytes?: number
+  /** Maximum document canvas area. Defaults to 16 megapixels. */
+  maxCanvasPixels?: number
+  /** Maximum width or height accepted for a browser canvas. Defaults to 16,384 pixels. */
+  maxCanvasDimension?: number
+  /** Maximum decoded layer count. Defaults to 2,000. */
+  maxLayers?: number
+  /** Maximum group nesting depth. Defaults to 64. */
+  maxNestingDepth?: number
+  /** Maximum area decoded for one interactive layer. Defaults to 16 megapixels. */
+  maxLayerPixels?: number
+  /** Maximum transferred RGBA bytes for one result. Defaults to 128 MiB. */
+  maxDecodedBytes?: number
+  /** Maximum retained interactive layer canvas bytes. Defaults to 64 MiB. */
+  maxLayerCacheBytes?: number
+  /** Maximum colors, brushes, shapes, pages, or other resource records. Defaults to 4,096. */
+  maxResourceItems?: number
+  /** Maximum UTF-16 code units accepted for one resource name. Defaults to 4,096. */
+  maxResourceNameCodeUnits?: number
+  /** Maximum total pixels decoded for one resource preview collection. Defaults to 16 megapixels. */
+  maxResourcePreviewPixels?: number
+  /** Safety and inventory limits for XD UCF/ZIP containers and saved raster previews. */
+  xd?: {
+    maxFileBytes?: number
+    maxEntries?: number
+    maxCentralDirectoryBytes?: number
+    maxEntryNameBytes?: number
+    maxPathDepth?: number
+    maxEntryCompressedBytes?: number
+    maxEntryUncompressedBytes?: number
+    maxTotalUncompressedBytes?: number
+    maxCompressionRatio?: number
+    maxManifestBytes?: number
+    maxStructureFileBytes?: number
+    maxStructureTotalBytes?: number
+    maxStructureFiles?: number
+    maxJsonNodes?: number
+    maxJsonDepth?: number
+    maxJsonStringBytes?: number
+    maxPreviewCandidates?: number
+    maxPreviewBytes?: number
+    maxPreviewTotalBytes?: number
+    maxPreviewDimension?: number
+    maxPreviewPixels?: number
+    maxReportedResources?: number
+    maxReportedArtboards?: number
+  }
+  /** Safety and bounded first-frame reconstruction limits for modern ZIP/XFL-based Animate FLA files. */
+  fla?: {
+    maxFileBytes?: number
+    maxEntries?: number
+    maxCentralDirectoryBytes?: number
+    maxEntryNameBytes?: number
+    maxPathDepth?: number
+    maxEntryCompressedBytes?: number
+    maxEntryUncompressedBytes?: number
+    maxTotalUncompressedBytes?: number
+    maxCompressionRatio?: number
+    maxXmlFileBytes?: number
+    maxXmlTotalBytes?: number
+    maxXmlFiles?: number
+    maxXmlNodes?: number
+    maxXmlDepth?: number
+    maxXmlAttributes?: number
+    maxXmlTextBytes?: number
+    maxAttributeBytes?: number
+    maxTimelines?: number
+    maxLayers?: number
+    maxFrames?: number
+    maxSymbols?: number
+    maxReportedResources?: number
+    maxPreviewElements?: number
+    maxPreviewPathCommands?: number
+    maxPreviewSvgBytes?: number
+    maxPreviewAssetBytes?: number
+    maxPreviewAssetTotalBytes?: number
+    maxPreviewDimension?: number
+    maxPreviewPixels?: number
+    maxSymbolDepth?: number
+  }
+  /** Safety limits for native INDD/INDT master-page, contiguous-object, XMP, and thumbnail reads. */
+  inDesign?: {
+    maxFileBytes?: number
+    maxDatabasePages?: number
+    maxContiguousObjects?: number
+    maxObjectBytes?: number
+    maxXmpBytes?: number
+    maxPreviewCandidates?: number
+    maxPreviewBytes?: number
+    maxPreviewDimension?: number
+    maxPreviewPixels?: number
+  }
 }
 
 export type FileViewerGeoBasemapPreset =
@@ -988,9 +1242,9 @@ export type FileViewerGeoBasemapPreset =
   | 'osm-raster'
   | 'tianditu-vector'
   | 'tianditu-imagery'
-  | 'tianditu-terrain';
+  | 'tianditu-terrain'
 
-export type FileViewerTiandituMapStyle = 'vector' | 'imagery' | 'terrain';
+export type FileViewerTiandituMapStyle = 'vector' | 'imagery' | 'terrain'
 
 export interface FileViewerGeoBasemapOptions {
   /**
@@ -999,36 +1253,36 @@ export interface FileViewerGeoBasemapOptions {
    * `tianditu` builds the official base and annotation raster layers from the
    * caller-provided Tianditu token.
    */
-  type?: 'raster' | 'vector-style' | 'tianditu';
+  type?: 'raster' | 'vector-style' | 'tianditu'
   /**
    * Raster XYZ/TMS tile template, for example `/tiles/{z}/{x}/{y}.png`.
    */
-  tileUrl?: string | string[];
+  tileUrl?: string | string[]
   /**
    * MapLibre style JSON URL. Can point to a public source, an intranet mirror,
    * or an offline static file distributed with the viewer.
    */
-  styleUrl?: string;
+  styleUrl?: string
   /**
    * Inline MapLibre style object for fully offline deployments.
    */
-  style?: Record<string, unknown>;
+  style?: Record<string, unknown>
   /**
    * Human-readable label shown in the geo preview details panel.
    */
-  label?: string;
-  attribution?: string;
-  tileSize?: number;
-  minZoom?: number;
-  maxZoom?: number;
-  scheme?: 'xyz' | 'tms';
-  rasterOpacity?: number;
+  label?: string
+  attribution?: string
+  tileSize?: number
+  minZoom?: number
+  maxZoom?: number
+  scheme?: 'xyz' | 'tms'
+  rasterOpacity?: number
   /** Tianditu API token. Required when `type` is `tianditu`. */
-  token?: string;
+  token?: string
   /** Tianditu map family. Defaults to `vector`. */
-  mapStyle?: FileViewerTiandituMapStyle;
+  mapStyle?: FileViewerTiandituMapStyle
   /** Include the matching Tianditu annotation layer. Defaults to true. */
-  labels?: boolean;
+  labels?: boolean
 }
 
 export interface FileViewerGeoOptions {
@@ -1039,13 +1293,13 @@ export interface FileViewerGeoOptions {
    * Accepts values such as `EPSG:4326`, `EPSG:3857`, `CRS:84`, `GCJ02`,
    * `BD09`, or a proj4 definition string.
    */
-  projection?: string;
+  projection?: string
   /**
    * Convenience raster tile URL. The renderer stays offline by default; setting
    * this property opts into a raster basemap without requiring a full MapLibre
    * style. Use `basemap` when you need a named preset or vector style URL.
    */
-  tileUrl?: string | string[];
+  tileUrl?: string | string[]
   /**
    * Basemap configuration. Defaults to an offline empty MapLibre style.
    *
@@ -1054,27 +1308,27 @@ export interface FileViewerGeoOptions {
    * tiles for light usage or demos. Production systems should prefer a
    * self-hosted or intranet style/tile URL.
    */
-  basemap?: false | FileViewerGeoBasemapPreset | FileViewerGeoBasemapOptions;
+  basemap?: false | FileViewerGeoBasemapPreset | FileViewerGeoBasemapOptions
   /**
    * Tianditu API token used by the `tianditu-*` presets. The viewer never
    * supplies or persists a token; obtain one for the deployment's own domain.
    */
-  tiandituToken?: string;
+  tiandituToken?: string
   /**
    * Defaults to true. When no CRS is declared and coordinates exceed longitude
    * or latitude ranges, the geo renderer treats Web Mercator-sized values as
    * EPSG:3857 before rendering.
    */
-  inferProjection?: boolean;
+  inferProjection?: boolean
   /**
    * Defaults to true. Disable only for environments without reliable WebGL,
    * where the SVG fallback is preferred.
    */
-  preferMapEngine?: boolean;
+  preferMapEngine?: boolean
   /**
    * Padding in CSS pixels when fitting the dataset bounds in the map viewport.
    */
-  fitPadding?: number;
+  fitPadding?: number
 }
 
 export interface FileViewerDrawingOptions {
@@ -1086,13 +1340,13 @@ export interface FileViewerDrawingOptions {
    * `preferOfficial` is explicitly enabled and never reaches public
    * diagrams.net hosts.
    */
-  viewerScriptUrl?: string;
+  viewerScriptUrl?: string
   /**
    * Defaults to false so untrusted diagrams use the inert built-in SVG path.
    * Set to true only to opt into the separately delivered diagrams.net viewer
    * runtime. It runs in a no-same-origin iframe with a restrictive CSP.
    */
-  preferOfficial?: boolean;
+  preferOfficial?: boolean
   /**
    * PlantUML SVG endpoint. When omitted, the renderer stays fully offline and
    * shows an SVG source preview. When provided, the renderer appends the
@@ -1101,65 +1355,65 @@ export interface FileViewerDrawingOptions {
    *
    * Example: `/plantuml/svg/`.
    */
-  plantumlServerUrl?: string;
+  plantumlServerUrl?: string
   /**
    * Request timeout for server-rendered PlantUML SVG.
    */
-  plantumlTimeoutMs?: number;
+  plantumlTimeoutMs?: number
 }
 
-export type FileViewerCadRenderer = 'auto' | 'webgl' | 'canvas2d';
-export type FileViewerCadDwfLineWeightMode = 'adaptive' | 'physical' | 'hairline';
-export type FileViewerCadColorMode = 'source' | 'monochrome';
-export type FileViewerCadFitMode = 'best' | 'native';
+export type FileViewerCadRenderer = 'auto' | 'webgl' | 'canvas2d'
+export type FileViewerCadDwfLineWeightMode = 'adaptive' | 'physical' | 'hairline'
+export type FileViewerCadColorMode = 'source' | 'monochrome'
+export type FileViewerCadFitMode = 'best' | 'native'
 
 export interface FileViewerCadOptions {
-  wasmPath?: string;
-  workerUrl?: string | URL;
-  dwfWasmUrl?: string;
-  dxfEncoding?: string;
-  useWorker?: boolean;
-  workerTimeoutMs?: number;
-  renderer?: FileViewerCadRenderer;
+  wasmPath?: string
+  workerUrl?: string | URL
+  dwfWasmUrl?: string
+  dxfEncoding?: string
+  useWorker?: boolean
+  workerTimeoutMs?: number
+  renderer?: FileViewerCadRenderer
   /** Initial CAD color policy. `monochrome` applies one plot color without mutating source data. */
-  colorMode?: FileViewerCadColorMode;
+  colorMode?: FileViewerCadColorMode
   /** CSS color used by monochrome mode. Defaults to the CAD foreground color. */
-  monochromeColor?: string;
+  monochromeColor?: string
   /** Shows the CAD toolbar color-mode toggle. Defaults to true. */
-  showColorModeToggle?: boolean;
-  preferDwgWasm?: boolean;
-  includePaperSpace?: boolean;
-  maxInsertDepth?: number;
-  keepRaw?: boolean;
-  preloadDwg?: boolean;
+  showColorModeToggle?: boolean
+  preferDwgWasm?: boolean
+  includePaperSpace?: boolean
+  maxInsertDepth?: number
+  keepRaw?: boolean
+  preloadDwg?: boolean
   /**
    * `best` fits the first view to visible drawing geometry and ignores common
    * CAD outliers such as paper-space frames or far-away markers. `native`
    * preserves the raw bounds reported by the underlying CAD renderer.
    */
-  fitMode?: FileViewerCadFitMode;
+  fitMode?: FileViewerCadFitMode
   /**
    * Fraction of the CAD viewport used by fit-to-view. Defaults to 0.92.
    */
-  fitPadding?: number;
-  dwfPreferWebgl?: boolean;
-  dwfPreferWasm?: boolean;
-  dwfBackground?: string;
-  dwfMaxDevicePixelRatio?: number;
-  dwfMaxCanvasPixels?: number;
-  dwfMaxGpuCacheBytes?: number;
-  dwfMaxCachedScenes?: number;
-  dwfLineWeightMode?: FileViewerCadDwfLineWeightMode;
-  dwfMinStrokeCssPx?: number;
-  dwfMaxOverviewStrokeCssPx?: number;
-  dwfMinTextCssPx?: number;
-  dwfMinFilledAreaCssPx?: number;
-  canvasOptions?: Record<string, unknown>;
+  fitPadding?: number
+  dwfPreferWebgl?: boolean
+  dwfPreferWasm?: boolean
+  dwfBackground?: string
+  dwfMaxDevicePixelRatio?: number
+  dwfMaxCanvasPixels?: number
+  dwfMaxGpuCacheBytes?: number
+  dwfMaxCachedScenes?: number
+  dwfLineWeightMode?: FileViewerCadDwfLineWeightMode
+  dwfMinStrokeCssPx?: number
+  dwfMaxOverviewStrokeCssPx?: number
+  dwfMinTextCssPx?: number
+  dwfMinFilledAreaCssPx?: number
+  canvasOptions?: Record<string, unknown>
 }
 
-export type FileViewerRendererMode = 'extend' | 'replace';
-export type FileViewerBuiltinRendererPreset = 'all' | 'lite' | 'none';
-export type FileViewerRendererPresetName = 'all' | 'lite' | 'standard' | 'office' | 'engineering';
+export type FileViewerRendererMode = 'extend' | 'replace'
+export type FileViewerBuiltinRendererPreset = 'all' | 'lite' | 'none'
+export type FileViewerRendererPresetName = 'all' | 'lite' | 'standard' | 'office' | 'engineering'
 
 export interface FileViewerAutoRendererOptions {
   /**
@@ -1168,25 +1422,25 @@ export interface FileViewerAutoRendererOptions {
    * Defaults to true in `extend` mode and false in `replace` mode so applications
    * can keep a strict hand-picked renderer registry when needed.
    */
-  enabled?: boolean;
+  enabled?: boolean
 }
 
 export interface FileViewerSearchOptions {
-  enabled?: boolean;
-  caseSensitive?: boolean;
-  wholeWord?: boolean;
-  maxMatches?: number;
-  debounce?: number;
-  className?: string;
-  activeClassName?: string;
+  enabled?: boolean
+  caseSensitive?: boolean
+  wholeWord?: boolean
+  maxMatches?: number
+  debounce?: number
+  className?: string
+  activeClassName?: string
 }
 
 export interface FileViewerAiOptions {
-  enabled?: boolean;
-  collectText?: boolean;
-  maxTextLength?: number;
-  chunkSize?: number;
-  chunkOverlap?: number;
+  enabled?: boolean
+  collectText?: boolean
+  maxTextLength?: number
+  chunkSize?: number
+  chunkOverlap?: number
 }
 
 export interface FileViewerTextOptions {
@@ -1194,56 +1448,56 @@ export interface FileViewerTextOptions {
    * Source encoding. Defaults to `auto`: BOM and UTF-16 structure first,
    * then strict UTF-8, with GB18030 (including GBK) as the final fallback.
    */
-  encoding?: 'auto' | 'utf-8' | 'utf-16le' | 'utf-16be' | 'gbk' | 'gb18030';
+  encoding?: 'auto' | 'utf-8' | 'utf-16le' | 'utf-16be' | 'gbk' | 'gb18030'
   /**
    * Shows the renderer-local source metadata toolbar (file type, indexing
    * status, and line count). Defaults to true. This does not control the
    * viewer-level operation toolbar.
    */
-  toolbar?: boolean;
+  toolbar?: boolean
   /**
    * Shows a non-selectable, screen-reader-hidden line-number gutter for code and text.
    * Defaults to false for regular files. The virtual large-text view keeps its
    * historical visible gutter when this option is omitted; pass false to hide it.
    */
-  lineNumbers?: boolean;
+  lineNumbers?: boolean
   /**
    * Visually wraps long logical lines without inserting source newlines. Defaults to false.
    * Wrapped continuation rows remain associated with their original line number.
    */
-  wrapLongLines?: boolean;
+  wrapLongLines?: boolean
   /**
    * Formats supported structured text with lazily loaded Prettier plugins for display only.
    * Defaults to false; malformed, unsupported, or oversized inputs keep their original source.
    */
-  prettyPrint?: boolean;
+  prettyPrint?: boolean
   /**
    * Maximum decoded UTF-8 source bytes eligible for Prettier. Defaults to the effective
    * `virtualizeAboveBytes` value, or 512 KiB when that option is omitted.
    */
-  prettyPrintMaxBytes?: number;
+  prettyPrintMaxBytes?: number
   /** Switches text and code to bounded virtual rendering above this byte size. Defaults to 512 KiB. */
-  virtualizeAboveBytes?: number;
+  virtualizeAboveBytes?: number
   /**
    * Opts Markdown into source-mode virtual rendering above this byte size.
    * Markdown stays in its rendered reading view by default; set this only when
    * an application prefers bounded source inspection for exceptionally large files.
    */
-  markdownVirtualizeAboveBytes?: number;
+  markdownVirtualizeAboveBytes?: number
   /** Maximum source bytes mounted for one very long logical line at a time. Defaults to 16 KiB. */
-  maxRenderedLineBytes?: number;
+  maxRenderedLineBytes?: number
   /** Extra logical lines mounted above and below the visible viewport. Defaults to 12. */
-  virtualOverscanLines?: number;
+  virtualOverscanLines?: number
 }
 
-export type FileViewerUiDensity = 'comfortable' | 'compact';
+export type FileViewerUiDensity = 'comfortable' | 'compact'
 
 export interface FileViewerUiOptions {
   /**
    * Controls spacing density for viewer chrome such as toolbars, headers,
    * archive lists, badges, search inputs, and compact action clusters.
    */
-  density?: FileViewerUiDensity;
+  density?: FileViewerUiDensity
   /**
    * Overrides the workspace behind rendered pages, slides, and other preview
    * content. Pass any valid CSS background value (for example `transparent`)
@@ -1253,37 +1507,37 @@ export interface FileViewerUiOptions {
    * This does not change document pages, slide canvases, spreadsheet cells, or
    * other file-authored backgrounds.
    */
-  surfaceBackground?: string;
+  surfaceBackground?: string
 }
 
 export interface FileViewerDiagnostic {
-  code: string;
-  level: 'info' | 'warning' | 'error';
-  message: string;
-  detail?: Readonly<Record<string, unknown>>;
+  code: string
+  level: 'info' | 'warning' | 'error'
+  message: string
+  detail?: Readonly<Record<string, unknown>>
 }
 
 export interface FileViewerOptions {
-  theme?: FileViewerThemeMode;
+  theme?: FileViewerThemeMode
   /**
    * Controls how aggressively the viewer protects its DOM and CSS from the
    * host page. Standard component packages resolve `auto` to Shadow DOM so
    * host resets cannot break the toolbar or rendered content. Use `none`
    * explicitly only for legacy integrations that require deep class overrides.
    */
-  styleIsolation?: FileViewerStyleIsolation;
+  styleIsolation?: FileViewerStyleIsolation
   /**
    * Viewer UI language. `auto` follows the browser language and resolves the
    * built-in Chinese, English, Japanese, and German locales before falling
    * back to `en-US`.
    */
-  locale?: FileViewerLocale;
+  locale?: FileViewerLocale
   /**
    * Optional custom copy for built-in viewer UI. Use `i18n.messages` when you
    * also want to keep locale and messages grouped together.
    */
-  messages?: FileViewerMessages;
-  i18n?: FileViewerI18nOptions;
+  messages?: FileViewerMessages
+  i18n?: FileViewerI18nOptions
   /**
    * Controls how explicit renderer packages or presets are merged into this
    * viewer instance.
@@ -1292,7 +1546,7 @@ export interface FileViewerOptions {
    * renderers. `replace` mode starts from an empty registry, so `preset` or
    * `renderers` fully define the active capability set.
    */
-  rendererMode?: FileViewerRendererMode;
+  rendererMode?: FileViewerRendererMode
   /**
    * Advanced baseline switch for built-in browser renderers.
    *
@@ -1302,13 +1556,13 @@ export interface FileViewerOptions {
    * keeps only low-cost web-native previewers, and `none` starts from an empty
    * built-in baseline while still allowing explicit renderer assembly.
    */
-  builtinRenderers?: FileViewerBuiltinRendererPreset;
+  builtinRenderers?: FileViewerBuiltinRendererPreset
   /**
    * Enables renderer presets that were auto-registered by `@file-viewer/vite-plugin`
    * or by explicitly importing a preset package. Set to false when a product wants
    * total manual control through `renderers`.
    */
-  autoRenderers?: boolean | FileViewerAutoRendererOptions;
+  autoRenderers?: boolean | FileViewerAutoRendererOptions
   /**
    * Product-shaped renderer preset or preset list installed into this viewer
    * instance.
@@ -1325,24 +1579,24 @@ export interface FileViewerOptions {
    * already been registered by a preset side-effect import or by
    * `@file-viewer/vite-plugin`.
    */
-  preset?: FileViewerRendererPresetInput;
+  preset?: FileViewerRendererPresetInput
   /**
    * @deprecated Use `preset: [officePreset, engineeringPreset]` instead. This
    * alias is kept only for compatibility with early 2.x integration drafts.
    */
-  presets?: FileViewerRendererPresetInput;
-  renderers?: FileViewerRendererPluginInput;
-  watermark?: boolean | FileViewerWatermarkOptions;
-  ui?: FileViewerUiOptions;
-  toolbar?: boolean | FileViewerToolbarOptions;
-  search?: boolean | FileViewerSearchOptions;
-  ai?: boolean | FileViewerAiOptions;
-  text?: FileViewerTextOptions;
+  presets?: FileViewerRendererPresetInput
+  renderers?: FileViewerRendererPluginInput
+  watermark?: boolean | FileViewerWatermarkOptions
+  ui?: FileViewerUiOptions
+  toolbar?: boolean | FileViewerToolbarOptions
+  search?: boolean | FileViewerSearchOptions
+  ai?: boolean | FileViewerAiOptions
+  text?: FileViewerTextOptions
   /**
    * Explicit content fitting strategy. When omitted, each renderer keeps its
    * historical first-screen behavior for backward compatibility.
    */
-  fit?: FileViewerFitMode | FileViewerFitOptions;
+  fit?: FileViewerFitMode | FileViewerFitOptions
   /**
    * Initial renderer view position used after the document becomes ready.
    *
@@ -1351,160 +1605,159 @@ export interface FileViewerOptions {
    * provider; high-interaction renderers such as PDF, XMind, Geo, 3D, and CAD
    * add page, navigation, canvas, map, camera, or native view details.
    */
-  initialViewState?: FileViewerViewState;
-  archive?: FileViewerArchiveOptions;
-  pdf?: FileViewerPdfOptions;
-  docx?: FileViewerDocxOptions;
-  presentation?: FileViewerPresentationOptions;
-  spreadsheet?: FileViewerSpreadsheetOptions;
-  iwork?: FileViewerIworkOptions;
-  wordPerfect?: FileViewerWordPerfectOptions;
-  hangul?: FileViewerHangulOptions;
+  initialViewState?: FileViewerViewState
+  archive?: FileViewerArchiveOptions
+  chm?: FileViewerChmOptions
+  pdf?: FileViewerPdfOptions
+  docx?: FileViewerDocxOptions
+  presentation?: FileViewerPresentationOptions
+  spreadsheet?: FileViewerSpreadsheetOptions
+  iwork?: FileViewerIworkOptions
+  wordPerfect?: FileViewerWordPerfectOptions
+  hangul?: FileViewerHangulOptions
   /** Receives non-fatal routing, fallback, and capability diagnostics. */
-  onDiagnostic?: (diagnostic: FileViewerDiagnostic) => void;
-  typst?: FileViewerTypstOptions;
-  geo?: FileViewerGeoOptions;
-  data?: FileViewerDataOptions;
-  drawing?: FileViewerDrawingOptions;
-  cad?: FileViewerCadOptions;
-  model?: FileViewerModelOptions;
-  hooks?: FileViewerLifecycleHooks;
-  beforeOperation?: FileViewerBeforeOperation;
+  onDiagnostic?: (diagnostic: FileViewerDiagnostic) => void
+  typst?: FileViewerTypstOptions
+  geo?: FileViewerGeoOptions
+  data?: FileViewerDataOptions
+  design?: FileViewerDesignOptions
+  drawing?: FileViewerDrawingOptions
+  cad?: FileViewerCadOptions
+  model?: FileViewerModelOptions
+  hooks?: FileViewerLifecycleHooks
+  beforeOperation?: FileViewerBeforeOperation
 }
 
 export interface FileViewerLifecycleContext {
-  phase: FileViewerLifecyclePhase;
-  type: string;
-  filename: string;
-  source: FileViewerSourceKind;
-  url?: string;
-  file?: File;
-  size?: number;
-  version: number;
-  timestamp: number;
-  duration?: number;
-  reason?: 'replace' | 'reset' | 'component-unmount';
+  phase: FileViewerLifecyclePhase
+  type: string
+  filename: string
+  source: FileViewerSourceKind
+  url?: string
+  file?: File
+  size?: number
+  version: number
+  timestamp: number
+  duration?: number
+  reason?: 'replace' | 'reset' | 'component-unmount'
 }
 
 export interface FileViewerLifecycleHooks {
-  onLoadStart?: (context: FileViewerLifecycleContext) => void | Promise<void>;
-  onLoadComplete?: (context: FileViewerLifecycleContext) => void | Promise<void>;
-  onUnloadStart?: (context: FileViewerLifecycleContext) => void | Promise<void>;
-  onUnloadComplete?: (context: FileViewerLifecycleContext) => void | Promise<void>;
+  onLoadStart?: (context: FileViewerLifecycleContext) => void | Promise<void>
+  onLoadComplete?: (context: FileViewerLifecycleContext) => void | Promise<void>
+  onUnloadStart?: (context: FileViewerLifecycleContext) => void | Promise<void>
+  onUnloadComplete?: (context: FileViewerLifecycleContext) => void | Promise<void>
 }
 
 export interface FileViewerOperationContext extends Omit<FileViewerLifecycleContext, 'phase'> {
-  operation: FileViewerOperationType;
-  label: string;
+  operation: FileViewerOperationType
+  label: string
 }
 
 export type FileViewerBeforeOperation = (
   context: FileViewerOperationContext
-) => boolean | void | Promise<boolean | void>;
+) => boolean | void | Promise<boolean | void>
 
 export interface FileViewerOperationAvailability {
-  download: boolean;
-  print: boolean;
-  exportHtml: boolean;
-  zoom: boolean;
-  zoomIn: boolean;
-  zoomOut: boolean;
-  zoomReset: boolean;
+  download: boolean
+  print: boolean
+  exportHtml: boolean
+  zoom: boolean
+  zoomIn: boolean
+  zoomOut: boolean
+  zoomReset: boolean
 }
 
 export interface FileViewerStateTheme {
-  accent: string;
-  badge: string;
-  hint: string;
-  label: string;
-  soft: string;
+  accent: string
+  badge: string
+  hint: string
+  label: string
+  soft: string
 }
 
 export interface FileViewerStateDescriptor {
-  state: FileViewerRenderStateKind;
-  extension: string;
-  title: string;
-  message: string;
-  description?: string;
-  theme: FileViewerStateTheme;
-  recoverable: boolean;
+  state: FileViewerRenderStateKind
+  extension: string
+  title: string
+  message: string
+  description?: string
+  theme: FileViewerStateTheme
+  recoverable: boolean
 }
 
 export interface FileViewerZoomState {
-  scale: number;
-  label: string;
-  canZoomIn: boolean;
-  canZoomOut: boolean;
-  canReset: boolean;
-  minScale?: number;
-  maxScale?: number;
+  scale: number
+  label: string
+  canZoomIn: boolean
+  canZoomOut: boolean
+  canReset: boolean
+  minScale?: number
+  maxScale?: number
 }
 
-export interface FileViewerFitRequest extends Required<Pick<FileViewerFitOptions, 'mode' | 'resize' | 'padding'>> {
-  minScale?: number;
-  maxScale?: number;
-  source: FileViewerViewStateChangeSource;
-  reason: 'initial' | 'resize' | 'api' | 'retry';
-  viewportWidth: number;
-  viewportHeight: number;
-  container?: HTMLElement | null;
+export interface FileViewerFitRequest extends Required<
+  Pick<FileViewerFitOptions, 'mode' | 'resize' | 'padding'>
+> {
+  minScale?: number
+  maxScale?: number
+  source: FileViewerViewStateChangeSource
+  reason: 'initial' | 'resize' | 'api' | 'retry'
+  viewportWidth: number
+  viewportHeight: number
+  container?: HTMLElement | null
 }
 
 export interface FileViewerFitResult {
-  applied: boolean;
-  mode: FileViewerFitMode;
-  resize: FileViewerFitResize;
-  scale?: number;
-  source?: FileViewerViewStateChangeSource;
-  reason?: string;
-  provider?: 'view-state' | 'zoom' | 'none' | (string & {});
-  state?: FileViewerViewState;
+  applied: boolean
+  mode: FileViewerFitMode
+  resize: FileViewerFitResize
+  scale?: number
+  source?: FileViewerViewStateChangeSource
+  reason?: string
+  provider?: 'view-state' | 'zoom' | 'none' | (string & {})
+  state?: FileViewerViewState
 }
 
 export interface FileViewerZoomProvider {
-  zoomIn: () => FileViewerZoomState | Promise<FileViewerZoomState>;
-  zoomOut: () => FileViewerZoomState | Promise<FileViewerZoomState>;
-  resetZoom: () => FileViewerZoomState | Promise<FileViewerZoomState>;
-  setZoom?: (scale: number) => FileViewerZoomState | Promise<FileViewerZoomState>;
-  fit?: (request: FileViewerFitRequest) => FileViewerFitResult | Promise<FileViewerFitResult>;
-  getState: () => FileViewerZoomState;
-  subscribe?: (listener: () => void) => () => void;
+  zoomIn: () => FileViewerZoomState | Promise<FileViewerZoomState>
+  zoomOut: () => FileViewerZoomState | Promise<FileViewerZoomState>
+  resetZoom: () => FileViewerZoomState | Promise<FileViewerZoomState>
+  setZoom?: (scale: number) => FileViewerZoomState | Promise<FileViewerZoomState>
+  fit?: (request: FileViewerFitRequest) => FileViewerFitResult | Promise<FileViewerFitResult>
+  getState: () => FileViewerZoomState
+  subscribe?: (listener: () => void) => () => void
 }
 
 export interface FileViewerViewScrollState {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-  clientWidth: number;
-  clientHeight: number;
-  topRatio: number;
-  leftRatio: number;
+  top: number
+  left: number
+  width: number
+  height: number
+  clientWidth: number
+  clientHeight: number
+  topRatio: number
+  leftRatio: number
 }
 
 export interface FileViewerNavigationState {
-  visible?: boolean;
-  mode?: string;
+  visible?: boolean
+  mode?: string
 }
 
 export interface FileViewerViewState {
-  renderer?: string;
-  page?: number;
-  pageCount?: number;
-  scale?: number;
-  zoom?: FileViewerZoomState;
-  rotation?: number;
-  scroll?: Partial<FileViewerViewScrollState>;
-  navigation?: FileViewerNavigationState;
-  extra?: Record<string, unknown>;
+  renderer?: string
+  page?: number
+  pageCount?: number
+  scale?: number
+  zoom?: FileViewerZoomState
+  rotation?: number
+  scroll?: Partial<FileViewerViewScrollState>
+  navigation?: FileViewerNavigationState
+  extra?: Record<string, unknown>
 }
 
-export type FileViewerViewStateChangeSource =
-  | 'initial'
-  | 'api'
-  | 'user'
-  | 'viewer'
-  | (string & {});
+export type FileViewerViewStateChangeSource = 'initial' | 'api' | 'user' | 'viewer' | (string & {})
 
 export type FileViewerViewStateChangeAction =
   | 'init'
@@ -1524,301 +1777,313 @@ export type FileViewerViewStateChangeAction =
   | 'scroll'
   | 'navigation-toggle'
   | 'navigation-mode-change'
-  | (string & {});
+  | (string & {})
 
 export interface FileViewerViewStateChange {
-  state: FileViewerViewState;
-  action: FileViewerViewStateChangeAction;
-  source: FileViewerViewStateChangeSource;
-  timestamp: number;
+  state: FileViewerViewState
+  action: FileViewerViewStateChangeAction
+  source: FileViewerViewStateChangeSource
+  timestamp: number
 }
 
 export interface FileViewerApplyViewStateOptions {
-  notify?: boolean;
-  action?: FileViewerViewStateChangeAction;
-  source?: FileViewerViewStateChangeSource;
+  notify?: boolean
+  action?: FileViewerViewStateChangeAction
+  source?: FileViewerViewStateChangeSource
 }
 
 export interface FileViewerViewStateProvider {
-  getState: () => FileViewerViewState;
+  getState: () => FileViewerViewState
   applyState?: (
     state: FileViewerViewState,
     options?: FileViewerApplyViewStateOptions
-  ) => FileViewerViewState | Promise<FileViewerViewState>;
-  fit?: (request: FileViewerFitRequest) => FileViewerFitResult | Promise<FileViewerFitResult>;
-  subscribe?: (listener: (change: FileViewerViewStateChange) => void) => () => void;
+  ) => FileViewerViewState | Promise<FileViewerViewState>
+  fit?: (request: FileViewerFitRequest) => FileViewerFitResult | Promise<FileViewerFitResult>
+  subscribe?: (listener: (change: FileViewerViewStateChange) => void) => () => void
 }
 
 export interface FileViewerSearchMatch {
-  id: string;
-  index: number;
-  text: string;
-  anchor: FileViewerDocumentAnchor | null;
-  line?: number;
-  page?: number;
+  id: string
+  index: number
+  text: string
+  anchor: FileViewerDocumentAnchor | null
+  line?: number
+  page?: number
 }
 
 export interface FileViewerSearchState {
-  query: string;
-  total: number;
-  currentIndex: number;
-  current: FileViewerSearchMatch | null;
-  matches: FileViewerSearchMatch[];
+  query: string
+  total: number
+  currentIndex: number
+  current: FileViewerSearchMatch | null
+  matches: FileViewerSearchMatch[]
 }
 
 export interface FileViewerSearchProvider {
-  search: (query: string, options?: FileViewerSearchOptions) => FileViewerSearchState | Promise<FileViewerSearchState>;
-  next?: () => FileViewerSearchState | Promise<FileViewerSearchState>;
-  previous?: () => FileViewerSearchState | Promise<FileViewerSearchState>;
-  clear?: () => FileViewerSearchState | Promise<FileViewerSearchState>;
-  getState?: () => FileViewerSearchState;
+  search: (
+    query: string,
+    options?: FileViewerSearchOptions
+  ) => FileViewerSearchState | Promise<FileViewerSearchState>
+  next?: () => FileViewerSearchState | Promise<FileViewerSearchState>
+  previous?: () => FileViewerSearchState | Promise<FileViewerSearchState>
+  clear?: () => FileViewerSearchState | Promise<FileViewerSearchState>
+  getState?: () => FileViewerSearchState
 }
 
 export interface FileViewerDocumentAnchor {
-  id: string;
-  index: number;
-  line: number;
-  type: 'page' | 'line' | 'block';
-  label: string;
-  text: string;
-  page?: number;
-  top: number;
-  left: number;
-  width: number;
-  height: number;
+  id: string
+  index: number
+  line: number
+  type: 'page' | 'line' | 'block'
+  label: string
+  text: string
+  page?: number
+  top: number
+  left: number
+  width: number
+  height: number
 }
 
 export interface FileViewerDocumentChunk {
-  id: string;
-  text: string;
-  anchor: FileViewerDocumentAnchor;
-  startLine: number;
-  endLine: number;
+  id: string
+  text: string
+  anchor: FileViewerDocumentAnchor
+  startLine: number
+  endLine: number
 }
 
 export interface FileViewerComponentProps {
-  file?: FileViewerFileRef;
-  url?: string;
-  name?: string;
-  filename?: string;
-  type?: string;
-  size?: number;
-  options?: FileViewerOptions;
+  file?: FileViewerFileRef
+  url?: string
+  name?: string
+  filename?: string
+  type?: string
+  size?: number
+  options?: FileViewerOptions
 }
 
 export interface FileViewerComponentEventMap {
-  'load-start': FileViewerLifecycleContext;
-  'load-complete': FileViewerLifecycleContext;
-  'unload-start': FileViewerLifecycleContext;
-  'unload-complete': FileViewerLifecycleContext;
-  'operation-before': FileViewerOperationContext;
-  'operation-cancel': FileViewerOperationContext;
-  'operation-availability-change': FileViewerOperationAvailability;
-  'search-change': FileViewerSearchState;
-  'location-change': FileViewerDocumentAnchor | null;
-  'zoom-change': FileViewerZoomState;
-  'view-state-change': FileViewerViewStateChange;
-  'fit-change': FileViewerFitResult;
-  'theme-change': FileViewerResolvedThemeMode;
+  'load-start': FileViewerLifecycleContext
+  'load-complete': FileViewerLifecycleContext
+  'unload-start': FileViewerLifecycleContext
+  'unload-complete': FileViewerLifecycleContext
+  'operation-before': FileViewerOperationContext
+  'operation-cancel': FileViewerOperationContext
+  'operation-availability-change': FileViewerOperationAvailability
+  'search-change': FileViewerSearchState
+  'location-change': FileViewerDocumentAnchor | null
+  'zoom-change': FileViewerZoomState
+  'view-state-change': FileViewerViewStateChange
+  'fit-change': FileViewerFitResult
+  'theme-change': FileViewerResolvedThemeMode
 }
 
-export type FileViewerEventType = keyof FileViewerComponentEventMap;
+export type FileViewerEventType = keyof FileViewerComponentEventMap
 
 export type FileViewerEvent = {
   [EventType in FileViewerEventType]: {
-    type: EventType;
-    payload: FileViewerComponentEventMap[EventType];
-  };
-}[FileViewerEventType];
+    type: EventType
+    payload: FileViewerComponentEventMap[EventType]
+  }
+}[FileViewerEventType]
 
-export type FileViewerEventHandler = (event: FileViewerEvent) => void;
+export type FileViewerEventHandler = (event: FileViewerEvent) => void
 
 export interface FileViewerComponentEmits {
-  (event: 'load-start', context: FileViewerComponentEventMap['load-start']): void;
-  (event: 'load-complete', context: FileViewerComponentEventMap['load-complete']): void;
-  (event: 'unload-start', context: FileViewerComponentEventMap['unload-start']): void;
-  (event: 'unload-complete', context: FileViewerComponentEventMap['unload-complete']): void;
-  (event: 'operation-before', context: FileViewerComponentEventMap['operation-before']): void;
-  (event: 'operation-cancel', context: FileViewerComponentEventMap['operation-cancel']): void;
-  (event: 'operation-availability-change', availability: FileViewerComponentEventMap['operation-availability-change']): void;
-  (event: 'search-change', state: FileViewerComponentEventMap['search-change']): void;
-  (event: 'location-change', anchor: FileViewerComponentEventMap['location-change']): void;
-  (event: 'zoom-change', state: FileViewerComponentEventMap['zoom-change']): void;
-  (event: 'view-state-change', change: FileViewerComponentEventMap['view-state-change']): void;
-  (event: 'fit-change', result: FileViewerComponentEventMap['fit-change']): void;
-  (event: 'theme-change', theme: FileViewerComponentEventMap['theme-change']): void;
+  (event: 'load-start', context: FileViewerComponentEventMap['load-start']): void
+  (event: 'load-complete', context: FileViewerComponentEventMap['load-complete']): void
+  (event: 'unload-start', context: FileViewerComponentEventMap['unload-start']): void
+  (event: 'unload-complete', context: FileViewerComponentEventMap['unload-complete']): void
+  (event: 'operation-before', context: FileViewerComponentEventMap['operation-before']): void
+  (event: 'operation-cancel', context: FileViewerComponentEventMap['operation-cancel']): void
+  (
+    event: 'operation-availability-change',
+    availability: FileViewerComponentEventMap['operation-availability-change']
+  ): void
+  (event: 'search-change', state: FileViewerComponentEventMap['search-change']): void
+  (event: 'location-change', anchor: FileViewerComponentEventMap['location-change']): void
+  (event: 'zoom-change', state: FileViewerComponentEventMap['zoom-change']): void
+  (event: 'view-state-change', change: FileViewerComponentEventMap['view-state-change']): void
+  (event: 'fit-change', result: FileViewerComponentEventMap['fit-change']): void
+  (event: 'theme-change', theme: FileViewerComponentEventMap['theme-change']): void
 }
 
 export interface FileViewerPublicApi {
-  destroy(): void;
-  downloadOriginalFile(): Promise<void>;
-  printRenderedHtml(options?: FileViewerPrintOptions): Promise<void>;
-  printWithMask(options?: FileViewerPrintOptions): Promise<void>;
-  exportRenderedHtml(): Promise<void>;
-  zoomIn(): Promise<FileViewerZoomState>;
-  zoomOut(): Promise<FileViewerZoomState>;
-  resetZoom(): Promise<FileViewerZoomState>;
-  fitToView(fit?: FileViewerFitMode | FileViewerFitOptions): Promise<FileViewerFitResult>;
-  getZoomState(): FileViewerZoomState;
-  getViewState(): FileViewerViewState | null;
+  destroy(): void
+  downloadOriginalFile(): Promise<void>
+  printRenderedHtml(options?: FileViewerPrintOptions): Promise<void>
+  printWithMask(options?: FileViewerPrintOptions): Promise<void>
+  exportRenderedHtml(): Promise<void>
+  zoomIn(): Promise<FileViewerZoomState>
+  zoomOut(): Promise<FileViewerZoomState>
+  resetZoom(): Promise<FileViewerZoomState>
+  fitToView(fit?: FileViewerFitMode | FileViewerFitOptions): Promise<FileViewerFitResult>
+  getZoomState(): FileViewerZoomState
+  getViewState(): FileViewerViewState | null
   applyViewState(
     state: FileViewerViewState,
     options?: FileViewerApplyViewStateOptions
-  ): Promise<FileViewerViewState | null>;
-  getOperationAvailability(): FileViewerOperationAvailability;
-  getScrollContainer(): HTMLElement | null;
-  searchDocument(query: string): Promise<FileViewerSearchState>;
-  clearDocumentSearch(): Promise<FileViewerSearchState>;
-  nextSearchResult(): Promise<FileViewerSearchState>;
-  previousSearchResult(): Promise<FileViewerSearchState>;
-  getSearchState(): FileViewerSearchState;
-  collectDocumentAnchors(): Promise<FileViewerDocumentAnchor[]>;
-  scrollToAnchor(anchor: FileViewerDocumentAnchor | string): Promise<boolean>;
-  scrollToLine(line: number): Promise<boolean>;
-  getDocumentTextChunks(): FileViewerDocumentChunk[];
+  ): Promise<FileViewerViewState | null>
+  getOperationAvailability(): FileViewerOperationAvailability
+  getScrollContainer(): HTMLElement | null
+  searchDocument(query: string): Promise<FileViewerSearchState>
+  clearDocumentSearch(): Promise<FileViewerSearchState>
+  nextSearchResult(): Promise<FileViewerSearchState>
+  previousSearchResult(): Promise<FileViewerSearchState>
+  getSearchState(): FileViewerSearchState
+  collectDocumentAnchors(): Promise<FileViewerDocumentAnchor[]>
+  scrollToAnchor(anchor: FileViewerDocumentAnchor | string): Promise<boolean>
+  scrollToLine(line: number): Promise<boolean>
+  getDocumentTextChunks(): FileViewerDocumentChunk[]
 }
 
 export interface FileViewerDownloadOptions {
-  filename?: string;
+  filename?: string
 }
 
 export interface FileViewerExportHtmlOptions {
-  download?: boolean;
-  filename?: string;
-  title?: string;
-  watermarkInlineStyle?: string;
+  download?: boolean
+  filename?: string
+  title?: string
+  watermarkInlineStyle?: string
 }
 
 /** Normalized print-mask rectangle in percent of the rendered content box. */
 export interface FileViewerPrintMaskRegion {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
+  left: number
+  top: number
+  width: number
+  height: number
   /** Zero-based rendered page index. Omitted regions retain legacy whole-document coordinates. */
-  pageIndex?: number;
+  pageIndex?: number
 }
 
 /** Page-aware image placed above rendered content for printing, such as a seal or signature. */
 export interface FileViewerPrintStamp extends FileViewerPrintMaskRegion {
   /** Image URL. Uploaded stamps are converted to a local data URL by the designer. */
-  src: string;
+  src: string
   /** Image opacity from 0 to 1. Defaults to 1. */
-  opacity?: number;
+  opacity?: number
   /** Clockwise rotation in degrees. Defaults to 0. */
-  rotate?: number;
-  alt?: string;
+  rotate?: number
+  alt?: string
 }
 
 export interface FileViewerPrintMaskOptions {
   /** Solid black cover blocks, matching common OFD/business redaction UX. */
-  regions?: FileViewerPrintMaskRegion[];
+  regions?: FileViewerPrintMaskRegion[]
   /** Image overlays, including locally uploaded seals and signatures. */
-  stamps?: FileViewerPrintStamp[];
+  stamps?: FileViewerPrintStamp[]
   /** Fill color for print masks. Defaults to opaque black. */
-  color?: string;
+  color?: string
 }
 
 export interface FileViewerPrintOptions {
-  autoPrint?: boolean;
-  openWindow?: () => Window | null;
-  printWindow?: Window | null;
-  title?: string;
-  watermarkInlineStyle?: string;
+  autoPrint?: boolean
+  openWindow?: () => Window | null
+  printWindow?: Window | null
+  title?: string
+  watermarkInlineStyle?: string
   /** Optional print-time cover masks applied above content and below watermark. */
-  mask?: FileViewerPrintMaskOptions | null;
+  mask?: FileViewerPrintMaskOptions | null
 }
 
 export interface FileViewerSource {
-  url?: string;
-  file?: File | Blob;
-  buffer?: ArrayBuffer;
-  filename?: string;
-  type?: string;
-  size?: number;
+  url?: string
+  file?: File | Blob
+  buffer?: ArrayBuffer
+  filename?: string
+  type?: string
+  size?: number
 }
 
 export interface NormalizedFileViewerSource {
-  kind: FileViewerSourceKind;
-  filename: string;
-  extension: string;
-  url?: string;
-  file?: File | Blob;
-  buffer?: ArrayBuffer;
-  size?: number;
+  kind: FileViewerSourceKind
+  filename: string
+  extension: string
+  url?: string
+  file?: File | Blob
+  buffer?: ArrayBuffer
+  size?: number
 }
 
 export interface RenderSurface {
-  host?: HTMLElement;
-  container: HTMLElement;
-  shadowRoot?: ShadowRoot;
-  styleIsolation?: Exclude<FileViewerStyleIsolation, 'auto'>;
+  host?: HTMLElement
+  container: HTMLElement
+  shadowRoot?: ShadowRoot
+  styleIsolation?: Exclude<FileViewerStyleIsolation, 'auto'>
 }
 
 export interface RendererCapability {
-  download?: boolean;
-  print?: boolean | 'adapter';
-  exportHtml?: boolean | 'adapter';
-  zoom?: boolean | 'provider';
-  search?: boolean | 'provider';
+  download?: boolean
+  print?: boolean | 'adapter'
+  exportHtml?: boolean | 'adapter'
+  zoom?: boolean | 'provider'
+  search?: boolean | 'provider'
 }
 
-export type FileViewerFormatSupportLevel = 'high-fidelity' | 'structured' | 'basic' | 'experimental';
-export type FileViewerFormatStatus = 'stable' | 'experimental';
+export type FileViewerFormatSupportLevel = 'high-fidelity' | 'structured' | 'basic' | 'experimental'
+export type FileViewerFormatStatus = 'stable' | 'experimental'
 
 export interface RendererDefinition {
-  id: string;
-  label: string;
-  category: FileViewerRendererCategory;
-  extensions: readonly string[];
-  async?: boolean;
+  id: string
+  label: string
+  category: FileViewerRendererCategory
+  extensions: readonly string[]
+  async?: boolean
   /** Product-level fidelity contract generated from ecosystem/format-catalog.json. */
-  supportLevel?: FileViewerFormatSupportLevel;
+  supportLevel?: FileViewerFormatSupportLevel
   /** Experimental formats are routable but are excluded from stable support counts. */
-  status?: FileViewerFormatStatus;
+  status?: FileViewerFormatStatus
   /** Owning on-demand renderer package. */
-  packageName?: string;
+  packageName?: string
   /** Presets that assemble this renderer. */
-  presets?: readonly FileViewerRendererPresetName[];
-  containerVersions?: readonly string[];
-  knownLimits?: readonly string[];
-  capabilities?: RendererCapability;
-  load?: RendererLoader;
+  presets?: readonly FileViewerRendererPresetName[]
+  /** Existing renderer whose fallback extensions this specialist replaces when installed. */
+  enhancesRendererId?: string
+  /** Extensions transferred from enhancesRendererId to this specialist when installed. */
+  enhancesExtensions?: readonly string[]
+  containerVersions?: readonly string[]
+  knownLimits?: readonly string[]
+  capabilities?: RendererCapability
+  load?: RendererLoader
 }
 
-export type RendererPlugin = RendererDefinition;
+export type RendererPlugin = RendererDefinition
 
-export type ViewerLifecycleContext = FileViewerLifecycleContext;
+export type ViewerLifecycleContext = FileViewerLifecycleContext
 
-export type ViewerOperationContext = FileViewerOperationContext;
+export type ViewerOperationContext = FileViewerOperationContext
 
-export type ViewerCapabilityState = FileViewerOperationAvailability;
+export type ViewerCapabilityState = FileViewerOperationAvailability
 
 export interface RendererLoadContext {
-  source: NormalizedFileViewerSource;
-  surface: RenderSurface;
-  options: FileViewerOptions;
-  signal?: AbortSignal;
-  registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void;
-  registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void;
-  renderContext?: FileRenderContext;
+  source: NormalizedFileViewerSource
+  surface: RenderSurface
+  options: FileViewerOptions
+  signal?: AbortSignal
+  registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void
+  registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void
+  renderContext?: FileRenderContext
 }
 
 export interface RendererSession {
-  destroy?: () => void | Promise<void>;
-  getAvailability?: () => Partial<FileViewerOperationAvailability>;
+  destroy?: () => void | Promise<void>
+  getAvailability?: () => Partial<FileViewerOperationAvailability>
 }
 
-export type RendererLoader = (context: RendererLoadContext) => RendererSession | Promise<RendererSession>;
+export type RendererLoader = (
+  context: RendererLoadContext
+) => RendererSession | Promise<RendererSession>
 
 export interface RendererRegistry {
-  register(definition: RendererDefinition): void;
-  unregister(id: string): boolean;
-  getById(id: string): RendererDefinition | undefined;
-  getByExtension(extension: string): RendererDefinition | undefined;
-  hasExtension(extension: string): boolean;
-  list(): RendererDefinition[];
-  listExtensions(): string[];
+  register(definition: RendererDefinition): void
+  unregister(id: string): boolean
+  getById(id: string): RendererDefinition | undefined
+  getByExtension(extension: string): RendererDefinition | undefined
+  hasExtension(extension: string): boolean
+  list(): RendererDefinition[]
+  listExtensions(): string[]
 }
 
 export type FileViewerRendererPluginAssetKind =
@@ -1828,98 +2093,100 @@ export type FileViewerRendererPluginAssetKind =
   | 'style'
   | 'font'
   | 'vendor'
-  | 'data';
+  | 'data'
 
 export interface FileViewerRendererPluginAssetEntry {
-  id: string;
-  kind: FileViewerRendererPluginAssetKind;
-  source: string;
-  optional?: boolean;
+  id: string
+  kind: FileViewerRendererPluginAssetKind
+  source: string
+  optional?: boolean
 }
 
 export interface FileViewerRendererPluginAssetManifest {
-  packageName: string;
-  rendererId: string;
-  assets: readonly FileViewerRendererPluginAssetEntry[];
+  packageName: string
+  rendererId: string
+  assets: readonly FileViewerRendererPluginAssetEntry[]
 }
 
 export interface FileViewerRendererHandlerRegistration<Handler = FileRenderHandler> {
-  rendererId: string;
-  handler: Handler;
+  rendererId: string
+  handler: Handler
 }
 
 export interface FileViewerRendererInstallContext<Handler = FileRenderHandler> {
-  registry: RendererRegistry;
-  registerHandler?: (registration: FileViewerRendererHandlerRegistration<Handler>) => void;
+  registry: RendererRegistry
+  registerHandler?: (registration: FileViewerRendererHandlerRegistration<Handler>) => void
 }
 
 export interface FileViewerRendererPlugin<Handler = FileRenderHandler> {
-  id: string;
-  label?: string;
-  definitions?: readonly RendererDefinition[];
-  handlers?: readonly FileViewerRendererHandlerRegistration<Handler>[];
-  assets?: readonly FileViewerRendererPluginAssetManifest[];
-  install?: (context: FileViewerRendererInstallContext<Handler>) => void | Promise<void>;
+  id: string
+  label?: string
+  definitions?: readonly RendererDefinition[]
+  handlers?: readonly FileViewerRendererHandlerRegistration<Handler>[]
+  assets?: readonly FileViewerRendererPluginAssetManifest[]
+  install?: (context: FileViewerRendererInstallContext<Handler>) => void | Promise<void>
 }
 
 export interface FileViewerRendererPreset<Handler = FileRenderHandler> {
-  id: string;
-  label?: string;
-  renderers: readonly FileViewerRendererPlugin<Handler>[];
+  id: string
+  label?: string
+  renderers: readonly FileViewerRendererPlugin<Handler>[]
 }
 
 export type FileViewerRendererPluginInput<Handler = FileRenderHandler> =
   | FileViewerRendererPlugin<Handler>
   | FileViewerRendererPreset<Handler>
-  | readonly FileViewerRendererPluginInput<Handler>[];
+  | readonly FileViewerRendererPluginInput<Handler>[]
 
 export type FileViewerRendererPresetInput<Handler = FileRenderHandler> =
   | FileViewerRendererPresetName
   | FileViewerRendererPluginInput<Handler>
-  | readonly FileViewerRendererPresetInput<Handler>[];
+  | readonly FileViewerRendererPresetInput<Handler>[]
 
 export interface FileViewerLoadOptions {
-  signal?: AbortSignal;
+  signal?: AbortSignal
 }
 
 export interface FileViewerInstance {
-  readonly container: HTMLElement;
+  readonly container: HTMLElement
   /** Installs configured renderer plugins without loading a document. */
-  prepare?(): Promise<void>;
-  load(source: FileViewerSource, options?: FileViewerLoadOptions): Promise<RendererSession | null>;
-  unload?(reason?: FileViewerLifecycleContext['reason']): Promise<void>;
-  destroy(reason?: FileViewerLifecycleContext['reason']): Promise<void>;
-  updateOptions(options: Partial<FileViewerOptions>): void;
-  getCapabilities(extension?: string): FileViewerOperationAvailability;
-  getRenderer(extension?: string): RendererDefinition | undefined;
-  getSource(): NormalizedFileViewerSource | null;
-  registerExportAdapter(adapter: FileRenderExportAdapter | null): void;
-  getExportAdapter(): FileRenderExportAdapter | null;
-  registerThumbnailAdapter?(adapter: FileRenderThumbnailAdapter | null): void;
-  getThumbnailAdapter?(): FileRenderThumbnailAdapter | null;
-  download(options?: FileViewerDownloadOptions): Promise<void>;
-  exportHtml(options?: FileViewerExportHtmlOptions): Promise<string>;
-  print(options?: FileViewerPrintOptions): Promise<void>;
+  prepare?(): Promise<void>
+  load(source: FileViewerSource, options?: FileViewerLoadOptions): Promise<RendererSession | null>
+  unload?(reason?: FileViewerLifecycleContext['reason']): Promise<void>
+  destroy(reason?: FileViewerLifecycleContext['reason']): Promise<void>
+  updateOptions(options: Partial<FileViewerOptions>): void
+  getCapabilities(extension?: string): FileViewerOperationAvailability
+  getRenderer(extension?: string): RendererDefinition | undefined
+  getSource(): NormalizedFileViewerSource | null
+  registerExportAdapter(adapter: FileRenderExportAdapter | null): void
+  getExportAdapter(): FileRenderExportAdapter | null
+  registerThumbnailAdapter?(adapter: FileRenderThumbnailAdapter | null): void
+  getThumbnailAdapter?(): FileRenderThumbnailAdapter | null
+  download(options?: FileViewerDownloadOptions): Promise<void>
+  exportHtml(options?: FileViewerExportHtmlOptions): Promise<string>
+  print(options?: FileViewerPrintOptions): Promise<void>
   /** Open the async print-mask designer, then print with the chosen covers. */
-  printWithMask(options?: FileViewerPrintOptions): Promise<void>;
-  zoomIn(): Promise<FileViewerZoomState>;
-  zoomOut(): Promise<FileViewerZoomState>;
-  resetZoom(): Promise<FileViewerZoomState>;
-  fitToView(fit?: FileViewerFitMode | FileViewerFitOptions): Promise<FileViewerFitResult>;
-  getZoomState(): FileViewerZoomState;
-  getViewState(): FileViewerViewState | null;
+  printWithMask(options?: FileViewerPrintOptions): Promise<void>
+  zoomIn(): Promise<FileViewerZoomState>
+  zoomOut(): Promise<FileViewerZoomState>
+  resetZoom(): Promise<FileViewerZoomState>
+  fitToView(fit?: FileViewerFitMode | FileViewerFitOptions): Promise<FileViewerFitResult>
+  getZoomState(): FileViewerZoomState
+  getViewState(): FileViewerViewState | null
   applyViewState(
     state: FileViewerViewState,
     options?: FileViewerApplyViewStateOptions
-  ): Promise<FileViewerViewState | null>;
-  search(query: string): Promise<FileViewerSearchState>;
-  nextSearchResult(): Promise<FileViewerSearchState>;
-  previousSearchResult(): Promise<FileViewerSearchState>;
-  clearSearch(): Promise<FileViewerSearchState>;
-  getSearchState(): FileViewerSearchState;
-  collectDocumentAnchors(): Promise<FileViewerDocumentAnchor[]>;
-  getCurrentDocumentAnchor(): FileViewerDocumentAnchor | null;
-  scrollToDocumentAnchor(anchor: FileViewerDocumentAnchor | string | number | null | undefined): boolean;
-  scrollToLine(line: number): Promise<boolean>;
-  getDocumentTextChunks(options?: boolean | FileViewerAiOptions): FileViewerDocumentChunk[];
+  ): Promise<FileViewerViewState | null>
+  search(query: string): Promise<FileViewerSearchState>
+  nextSearchResult(): Promise<FileViewerSearchState>
+  previousSearchResult(): Promise<FileViewerSearchState>
+  clearSearch(): Promise<FileViewerSearchState>
+  getSearchState(): FileViewerSearchState
+  collectDocumentAnchors(): Promise<FileViewerDocumentAnchor[]>
+  getCurrentDocumentAnchor(): FileViewerDocumentAnchor | null
+  scrollToDocumentAnchor(
+    anchor: FileViewerDocumentAnchor | string | number | null | undefined
+  ): boolean
+  scrollToLine(line: number): Promise<boolean>
+  getDocumentTextChunks(options?: boolean | FileViewerAiOptions): FileViewerDocumentChunk[]
 }

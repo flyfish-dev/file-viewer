@@ -356,6 +356,14 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     chunkName: 'file-viewer-archive'
   },
   {
+    id: 'chm',
+    packageName: '@file-viewer/renderer-chm',
+    exportName: 'chmRenderer',
+    formats: ['chm'],
+    rendererIds: ['chm'],
+    chunkName: 'file-viewer-chm'
+  },
+  {
     id: 'email',
     packageName: '@file-viewer/renderer-email',
     exportName: 'emailRenderer',
@@ -543,6 +551,51 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     chunkName: 'file-viewer-geo'
   },
   {
+    id: 'design',
+    packageName: '@file-viewer/renderer-design',
+    exportName: 'designRenderer',
+    includeInPresetAll: false,
+    formats: [
+      'design',
+      'photoshop-design',
+      'illustrator-pdf-design',
+      'postscript-design',
+      'adobe-palette-design',
+      'photoshop-resource-design',
+      'indesign-idml-design',
+      'indesign-exchange-design',
+      'adobe-animate-xfl-design',
+      'adobe-xd-design',
+      'indesign-native-design',
+      'psd',
+      'psb',
+      'pdd',
+      'psdt',
+      'ai',
+      'ait',
+      'eps',
+      'ps',
+      'ase',
+      'aco',
+      'abr',
+      'csh',
+      'pat',
+      'grd',
+      'asl',
+      'idml',
+      'icml',
+      'idms',
+      'inx',
+      'fla',
+      'xfl',
+      'xd',
+      'indd',
+      'indt'
+    ],
+    rendererIds: ['photoshop-design', 'illustrator-pdf-design', 'postscript-design', 'adobe-palette-design', 'photoshop-resource-design', 'indesign-idml-design', 'indesign-exchange-design', 'adobe-animate-xfl-design', 'adobe-xd-design', 'indesign-native-design'],
+    chunkName: 'file-viewer-design'
+  },
+  {
     id: 'data',
     packageName: '@file-viewer/renderer-data',
     exportName: 'dataRenderer',
@@ -554,9 +607,6 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
       'sqlite3',
       'parquet',
       'avro',
-      'psd',
-      'ai',
-      'eps',
       'webarchive',
       'wasm',
       'ttf',
@@ -1818,7 +1868,8 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     to: string,
     copyAction: () => Promise<boolean>,
     reason?: string,
-    source?: Pick<AssetCopyResult, 'sourcePackage' | 'sourceVersion'>
+    source?: Pick<AssetCopyResult, 'sourcePackage' | 'sourceVersion'>,
+    required?: boolean
   ) => {
     if (!selected.has(rendererId)) {
       return
@@ -1830,6 +1881,7 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
       to,
       copied,
       reason: copied ? undefined : reason || 'source asset not found',
+      required,
       ...source,
     })
   }
@@ -1932,18 +1984,38 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     '@file-viewer/renderer-pdf'
   ])
   const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
-  await push('pdf', 'pdf-cjk-font-fallback', pdfCjkFontTarget, async () => {
-    if (
-      standardPdfCjkFontRoot &&
-      existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
-    ) {
-      return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
-    }
-    if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
-      return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
-    }
-    return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
-  })
+  // The standard profile pack owns the CJK fallback font; presets that activate the pdf
+  // renderer without that pack declare the font package directly. renderer-pdf must not
+  // vendor a second copy, so when no source is installed the build warns instead of
+  // failing and PDF rendering keeps using embedded fonts.
+  const pdfCjkFontSourceAvailable =
+    Boolean(
+      standardPdfCjkFontRoot && existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
+    ) ||
+    Boolean(stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) ||
+    Boolean(dependencyPdfCjkFontRoot)
+  await push(
+    'pdf',
+    'pdf-cjk-font-fallback',
+    pdfCjkFontTarget,
+    async () => {
+      if (
+        standardPdfCjkFontRoot &&
+        existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
+      ) {
+        return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
+      }
+      if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
+        return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
+      }
+      return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
+    },
+    pdfCjkFontSourceAvailable
+      ? undefined
+      : `install ${independentlyOwnedAssetRendererIds.get('pdf')} or @fontsource-variable/noto-sans-sc`,
+    undefined,
+    pdfCjkFontSourceAvailable ? undefined : false
+  )
 
   const pptxRoot = resolvePackageRoot('@file-viewer/pptx', [
     '@file-viewer/renderer-pptx',
@@ -2168,7 +2240,202 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
       )
   )
 
+  const chmRoot = resolvePackageRoot('@file-viewer/renderer-chm', ['@file-viewer/renderer-chm'])
+  const chmSource = chmRoot
+    ? { sourcePackage: '@file-viewer/renderer-chm', sourceVersion: readPackageVersion(chmRoot) || undefined }
+    : undefined
+  for (const [id, sourceName, targetName] of [
+    ['chm-worker', 'dist/chm.worker.js', 'chm.worker.js'],
+    ['chm-wasm-module', 'dist/chm_wasm.js', 'chm_wasm.js'],
+    ['chm-wasm', 'dist/chm_wasm_bg.wasm', 'chm_wasm_bg.wasm'],
+    ['chm-license', 'LICENSE', 'LICENSE'],
+    ['chm-third-party-notices', 'THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md'],
+    ['chm-rust-notice', 'rust/NOTICE.md', 'RUST_NOTICE.md'],
+    ['chm-rust-third-party-licenses', 'rust/THIRD_PARTY_LICENSES.md', 'RUST_THIRD_PARTY_LICENSES.md']
+  ] as const) {
+    await push(
+      'chm',
+      id,
+      join(targetRoot, `vendor/chm/${targetName}`),
+      () => copyFileIfPresent(
+        chmRoot ? join(chmRoot, sourceName) : null,
+        join(targetRoot, `vendor/chm/${targetName}`)
+      ),
+      undefined,
+      chmSource
+    )
+  }
+
   const sqlJsRoot = resolvePackageRoot('sql.js', ['@file-viewer/renderer-data'])
+  const designRendererRoot = resolvePackageRoot('@file-viewer/renderer-design')
+  const introspectWasmRoot = resolvePackageRoot('@paged-media/introspect-wasm', [
+    '@file-viewer/renderer-design'
+  ])
+  const introspectWasmVersion = assertOwnedPackageVersion(
+    '@paged-media/introspect-wasm',
+    introspectWasmRoot,
+    '@file-viewer/renderer-design'
+  )
+  const introspectWasmSource = introspectWasmRoot
+    ? {
+        sourcePackage: '@paged-media/introspect-wasm',
+        sourceVersion: introspectWasmVersion || undefined
+      }
+    : undefined
+  await push(
+    'illustrator-pdf-design',
+    'illustrator-pgf-worker',
+    join(targetRoot, 'vendor/design/illustrator-pgf.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/illustrator-pgf.worker.js') : null,
+        join(targetRoot, 'vendor/design/illustrator-pgf.worker.js')
+      )
+  )
+  await push(
+    'photoshop-design',
+    'photoshop-design-worker',
+    join(targetRoot, 'vendor/design/photoshop.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/photoshop.worker.js') : null,
+        join(targetRoot, 'vendor/design/photoshop.worker.js')
+      )
+  )
+  await push(
+    'photoshop-resource-design',
+    'photoshop-resource-worker',
+    join(targetRoot, 'vendor/design/adobe-resource.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/adobe-resource.worker.js') : null,
+        join(targetRoot, 'vendor/design/adobe-resource.worker.js')
+      )
+  )
+  await push(
+    'adobe-palette-design',
+    'adobe-palette-container-worker',
+    join(targetRoot, 'vendor/design/adobe-container.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/adobe-container.worker.js') : null,
+        join(targetRoot, 'vendor/design/adobe-container.worker.js')
+      )
+  )
+  await push(
+    'indesign-exchange-design',
+    'indesign-exchange-container-worker',
+    join(targetRoot, 'vendor/design/adobe-container.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/adobe-container.worker.js') : null,
+        join(targetRoot, 'vendor/design/adobe-container.worker.js')
+      )
+  )
+  await push(
+    'adobe-animate-xfl-design',
+    'adobe-animate-xfl-container-worker',
+    join(targetRoot, 'vendor/design/adobe-container.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/adobe-container.worker.js') : null,
+        join(targetRoot, 'vendor/design/adobe-container.worker.js')
+      )
+  )
+  await push(
+    'adobe-xd-design',
+    'adobe-xd-container-worker',
+    join(targetRoot, 'vendor/design/adobe-container.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/adobe-container.worker.js') : null,
+        join(targetRoot, 'vendor/design/adobe-container.worker.js')
+      )
+  )
+  await push(
+    'indesign-native-design',
+    'indesign-native-container-worker',
+    join(targetRoot, 'vendor/design/adobe-container.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/adobe-container.worker.js') : null,
+        join(targetRoot, 'vendor/design/adobe-container.worker.js')
+      )
+  )
+  await push(
+    'postscript-design',
+    'postscript-design-worker',
+    join(targetRoot, 'vendor/design/postscript.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/postscript.worker.js') : null,
+        join(targetRoot, 'vendor/design/postscript.worker.js')
+      )
+  )
+  await push(
+    'postscript-design',
+    'postscript-design-wasm',
+    join(targetRoot, 'vendor/design/stet_wasm_bg.wasm'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'runtime/postscript/stet_wasm_bg.wasm') : null,
+        join(targetRoot, 'vendor/design/stet_wasm_bg.wasm')
+      )
+  )
+  const postscriptLicenses = [
+    ['postscript-design-license-stet-apache', 'Stet-Apache-2.0.txt', 'LICENSE.stet-Apache-2.0.txt'],
+    ['postscript-design-license-stet-mit', 'Stet-MIT.txt', 'LICENSE.stet-MIT.txt'],
+    ['postscript-design-license-carlito-ofl', 'Carlito-OFL-1.1.txt', 'LICENSE.Carlito-OFL-1.1.txt'],
+    ['postscript-design-license-tinos-ofl', 'Tinos-OFL-1.1.txt', 'LICENSE.Tinos-OFL-1.1.txt'],
+    ['postscript-design-license-cousine-ofl', 'Cousine-OFL-1.1.txt', 'LICENSE.Cousine-OFL-1.1.txt'],
+    ['postscript-design-license-noto-symbols-ofl', 'NotoSansSymbols2-OFL-1.1.txt', 'LICENSE.NotoSansSymbols2-OFL-1.1.txt']
+  ] as const
+  for (const [assetId, sourceName, targetName] of postscriptLicenses) {
+    await push(
+      'postscript-design',
+      assetId,
+      join(targetRoot, 'vendor/design', targetName),
+      () =>
+        copyFileIfPresent(
+          designRendererRoot ? join(designRendererRoot, 'LICENSES', sourceName) : null,
+          join(targetRoot, 'vendor/design', targetName)
+        )
+    )
+  }
+  await push(
+    'indesign-idml-design',
+    'indesign-idml-worker',
+    join(targetRoot, 'vendor/design/idml.worker.js'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'dist/idml.worker.js') : null,
+        join(targetRoot, 'vendor/design/idml.worker.js')
+      )
+  )
+  await push(
+    'indesign-idml-design',
+    'indesign-idml-wasm',
+    join(targetRoot, 'vendor/design/paged_introspect_wasm_bg.wasm'),
+    () =>
+      copyFileIfPresent(
+        introspectWasmRoot
+          ? join(introspectWasmRoot, 'paged_introspect_wasm_bg.wasm')
+          : null,
+        join(targetRoot, 'vendor/design/paged_introspect_wasm_bg.wasm')
+      ),
+    undefined,
+    introspectWasmSource
+  )
+  await push(
+    'indesign-idml-design',
+    'indesign-idml-license',
+    join(targetRoot, 'vendor/design/LICENSE.introspect-wasm-MPL-2.0.txt'),
+    () =>
+      copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'LICENSES/MPL-2.0.txt') : null,
+        join(targetRoot, 'vendor/design/LICENSE.introspect-wasm-MPL-2.0.txt')
+      )
+  )
   await push(
     'data-asset',
     'data-sql-wasm',
@@ -2228,6 +2495,7 @@ interface InstalledCapabilityAssetSource {
 
 const independentlyOwnedAssetRendererIds = new Map<string, string>([
   ['archive', '@file-viewer/assets-standard'],
+  ['chm', '@file-viewer/assets-chm'],
   ['pdf', '@file-viewer/assets-standard'],
   ['office-word-openxml', '@file-viewer/assets-standard'],
   ['office-presentation', '@file-viewer/assets-standard'],
@@ -2604,7 +2872,8 @@ async function copyRendererAssets(
           id: 'missing-independent-asset-owner',
           to: target.targetRoot,
           copied: false,
-          required: true,
+          // Specialist offline payloads stay opt-in; warn instead of failing the build.
+          required: false,
           reason: `install ${requiredOwner} for this capability`
         })
       }
@@ -2908,30 +3177,41 @@ function collectAssetRendererIds(
   ])
 }
 
+const defaultRequiredAssetRendererIds: readonly string[] = [
+  'pdf',
+  'office-word-openxml',
+  'office-presentation-binary',
+  'office-presentation',
+  'archive',
+  'cad',
+  'typst'
+]
+
+function isRequiredAssetResult(result: AssetCopyResult): boolean {
+  return result.required ?? defaultRequiredAssetRendererIds.includes(result.rendererId)
+}
+
 function reportAssetCopy(
   results: readonly AssetCopyResult[],
   targetRoot: string,
   mode: FileViewerMissingRendererMode
 ) {
-  const failedRequired = results.filter(
-    (result) => !result.copied && (
-      result.required ?? [
-        'pdf',
-        'office-word-openxml',
-        'office-presentation-binary',
-        'office-presentation',
-        'archive',
-        'cad',
-        'typst'
-      ].includes(result.rendererId)
-    )
-  )
+  const failedRequired = results.filter((result) => !result.copied && isRequiredAssetResult(result))
+  const missingOptional = results.filter((result) => !result.copied && !isRequiredAssetResult(result))
   if (!results.length) {
     return
   }
   const summary = `[file-viewer:vite-plugin] Copied ${results.filter((result) => result.copied).length}/${results.length} renderer assets to ${targetRoot}`
+  console.log(summary)
+  if (missingOptional.length) {
+    const optionalDetails = missingOptional
+      .map((result) => `  - ${result.rendererId}:${result.id} -> ${result.to} (${result.reason || 'source asset not found'})`)
+      .join('\n')
+    console.warn(
+      `[file-viewer:vite-plugin] Skipped optional offline assets; install the owning package to self-host them:\n${optionalDetails}`
+    )
+  }
   if (!failedRequired.length || mode === 'ignore') {
-    console.log(summary)
     return
   }
   const details = failedRequired

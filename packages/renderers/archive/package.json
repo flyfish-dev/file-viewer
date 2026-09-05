@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-archive",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Standalone archive renderer plugin for File Viewer with libarchive worker, ZIP/TAR fallback, IndexedDB cache, and nested previews.",
@@ -63,7 +63,7 @@
     "verify:github-148": "pnpm build && node scripts/verify-github-148.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0",
+    "@file-viewer/core": "workspace:3.0.1",
     "jszip": "^3.10.1",
     "libarchive.js": "^2.0.2"
   },

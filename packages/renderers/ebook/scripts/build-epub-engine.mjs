@@ -5,7 +5,7 @@ import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 
 const EPUBJS_VERSION = '0.3.93';
-const XMLDOM_VERSION = '0.9.10';
+const XMLDOM_VERSION = '0.9.12';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);

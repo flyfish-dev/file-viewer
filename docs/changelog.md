@@ -6,16 +6,44 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
-## Unreleased — CLI reliability and interaction
+## v3.0.1 — Host peer frameworks, PDF CJK fallback, and EML header correctness
+
+### Readable text previews
+
+- Added opt-in readable text previews (#235): logical-line wrapping works in regular and bounded virtual views, while structured files can use lazily loaded Prettier parser chunks with an explicit formatted-preview badge and original-source switch. The formatting byte limit is independent from large-text rendering, and original download bytes remain authoritative.
+
+### CLI reliability and interaction
 
 - Replaced free-form format/capability entry in the interactive create/add wizard with checkbox-style renderer and format-family rows. Capabilities included by the selected profile are visibly preselected and retained, while optional rows support individual numbers, ranges, select-all, and clear-extra commands.
 - Generated Vite 8 projects now declare and preflight Node `^20.19.0 || >=22.12.0` before `dev` or `build`, producing an actionable upgrade message on unsupported runtimes. Web Component events are created from the element's owning document realm with a compatibility fallback when global `CustomEvent` is unavailable.
+
+### New format renderers
+
+- Added `@file-viewer/renderer-chm`: offline in-browser CHM help reading with a Rust/WASM unpacker and a sandboxed reader for table of contents, articles, and images. Nothing leaves the browser.
+- Added `@file-viewer/renderer-design`: offline Adobe design preview covering PSD/PSB layers, Illustrator native PGF and PDF-compatible surfaces, IDML/ICML/INX, INDD/XD, modern XFL animation, and swatch, brush, and resource files. It ships as an explicit opt-in package whose Worker, WASM, and font assets can be self-hosted.
+
+### PDF
+
+- Fixed the 3.0 packaging failure reported in #242 (Vite 8 + pnpm 11 + Node 22): `@file-viewer/vite-plugin` has treated pdf assets as required since 2.4, and 2.4 passed because `@fontsource-variable/noto-sans-sc` was then a runtime dependency of `@file-viewer/renderer-pdf`. 3.0.0 moved that font to devDependencies, so an installed app had no font source to copy and the missing required asset aborted `vite build`, which made rolling back to 2.4 look like the fix. In 3.0.1 the presets that activate the pdf renderer own the font source (`preset-office` and `preset-all` declare the font package, `preset-standard` takes it from `@file-viewer/assets-standard`), the published `@file-viewer/renderer-pdf` tarball carries no font copy, and when no font source resolves the asset is optional, so the build logs a warning instead of failing and PDF rendering keeps relying on the fonts embedded in each document. The #242 and profile gates keep that ownership and optionality from drifting back.
+
+### Email
+
+- Raised the EML parsing baseline to postal-mime `3.0.0` (#232): parts without a declared charset fall back to the header encoding, folded RFC 5322 headers unfold completely, repeated headers resolve first-wins, and `to`/`cc`/`bcc` keep their original order.
+
+### Ecosystem package installation
+
+- `@file-viewer/vue3` no longer installs the host framework: `vue` moved to `peerDependencies: ">=3.3 <4"`, matching the Vue 2.6, Vue 2.7, React, React Legacy, Svelte, and jQuery packages, and the build-time icon library moved to devDependencies so the only runtime dependency is `@file-viewer/core`. Applications pinned to a Vue version outside the old `^3.5.35` range previously received a second Vue copy and crashed on mount with `Cannot read properties of null (reading 'refs')`.
+- Added a host runtime contract gate: ecosystem components may only install File Viewer packages at runtime, must declare their host framework as a peer, and must keep the three Vue release lines disjoint. A cold-install check now compares resolved host framework paths immediately after install and fails with the duplicated copies listed instead of surfacing as a browser timeout.
+- The `msdoc-viewer` compatibility alias moved to `0.2.5` so it follows the 3.0.1 `@file-viewer/doc` line: the alias ships the Word renderer version it resolves to, and a frozen alias could no longer be published twice. This release freezes 88 npm targets: 87 mainline packages on `3.0.1` and the `msdoc-viewer` alias on `0.2.5`.
+
+### Dependency security
+
+- The XMind parsing path no longer resolves `@xmldom/xmldom` 0.9.10, whose six advisories are reachable from `DOMParser.parseFromString` while previewing an untrusted file; a dependency override keeps the whole graph on 0.9.12, and the public boundary check verifies the override really lands (#246).
 
 ## v3.0.0 — Modular CLI, opt-in specialist formats, and security gates
 
 Released August 27, 2026.
 
-- Added opt-in readable text previews (#235): logical-line wrapping works in regular and bounded virtual views, while structured files can use lazily loaded Prettier parser chunks with an explicit formatted-preview badge and original-source switch. The formatting byte limit is independent from large-text rendering, and original download bytes remain authoritative.
 - Added `@file-viewer/cli`, `file-viewer-cli`, and `create-file-viewer` for new projects and existing `package.json` applications. It detects frameworks and build systems, selects framework versions, formats, presets, and assets, and supports npm, pnpm, Yarn, Bun, credential-free private registries, and integrity-checked offline tgz preparation.
 - Made `standard` the recommended common-format profile without changing the eight published Full contracts. Existing `*-full` packages keep their `preset-all` format matrix, APIs, and same-version offline assets. Explicit CLI `full` selection adds later specialist capabilities after showing their size, runtime, and license boundaries.
 - Kept DICOM and digital-signature containers out of unchanged Full dependencies. The optional DICOM renderer covers bounded local single-file, single-frame, and multi-frame preview for uncompressed, JPEG Lossless, JPEG-LS, and JPEG 2000 Lossless fixtures; it is not a diagnostic, PACS/DICOMweb, or multi-file-series viewer (#210).

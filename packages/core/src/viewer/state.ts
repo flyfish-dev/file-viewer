@@ -72,6 +72,7 @@ const rendererPackageById: Record<string, string> = {
   ofd: '@file-viewer/renderer-ofd',
   typst: '@file-viewer/renderer-typst',
   archive: '@file-viewer/renderer-archive',
+  chm: '@file-viewer/renderer-chm',
   email: '@file-viewer/renderer-email',
   eda: '@file-viewer/renderer-eda',
   cad: '@file-viewer/renderer-cad',

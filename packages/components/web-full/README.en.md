@@ -32,7 +32,7 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 ## Format Support Matrix
 
-The legacy-compatible Full default registers 221 file extensions (221 stable and 0 experimental) across 32 preview pipelines, matching the published v2.4 capability contract. The current catalog has 244 file extensions and 34 preview pipelines; DICOM and other new heavy formats require explicit CLI selection and never expand an existing Full package automatically.
+The legacy-compatible Full default registers 221 file extensions (221 stable and 0 experimental) across 32 preview pipelines, matching the published v2.4 capability contract. The current catalog has 266 file extensions and 45 preview pipelines; DICOM and other new heavy formats require explicit CLI selection and never expand an existing Full package automatically.
 
 | Preview pipeline | Category | Extensions | Level / status | Capabilities | Loading |
 | --- | --- | --- | --- | --- | --- |

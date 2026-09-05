@@ -5,9 +5,9 @@
       "packageName": "@file-viewer/preset-standard",
       "frameworkPackage": "@file-viewer/web",
       "maxPackageCount": 98,
-      "maxPackedClosureBytes": 30408704,
-      "maxUnpackedClosureBytes": 101711872,
-      "maxStaticAssetBytes": 24117248,
+      "maxPackedClosureBytes": 31457280,
+      "maxUnpackedClosureBytes": 104857600,
+      "maxStaticAssetBytes": 25165824,
       "forbiddenPackages": [
         "@file-viewer/ppt",
         "@file-viewer/renderer-3d",
@@ -36,49 +36,49 @@
       "maxPackageCount": 99,
       "maxPackedClosureBytes": 35651584,
       "maxUnpackedClosureBytes": 118489088,
-      "maxStaticAssetBytes": 24117248
+      "maxStaticAssetBytes": 25165824
     },
     "vue3": {
-      "maxPackageCount": 127,
-      "maxPackedClosureBytes": 37748736,
-      "maxUnpackedClosureBytes": 147849216,
-      "maxStaticAssetBytes": 24117248
+      "maxPackageCount": 132,
+      "maxPackedClosureBytes": 39845888,
+      "maxUnpackedClosureBytes": 155189248,
+      "maxStaticAssetBytes": 25165824
     },
     "vue2.7": {
       "maxPackageCount": 114,
       "maxPackedClosureBytes": 36700160,
       "maxUnpackedClosureBytes": 131072000,
-      "maxStaticAssetBytes": 24117248
+      "maxStaticAssetBytes": 25165824
     },
     "vue2.6": {
       "maxPackageCount": 101,
       "maxPackedClosureBytes": 32505856,
       "maxUnpackedClosureBytes": 106954752,
-      "maxStaticAssetBytes": 24117248
+      "maxStaticAssetBytes": 25165824
     },
     "react": {
       "maxPackageCount": 101,
-      "maxPackedClosureBytes": 31457280,
-      "maxUnpackedClosureBytes": 103809024,
-      "maxStaticAssetBytes": 24117248
+      "maxPackedClosureBytes": 33554432,
+      "maxUnpackedClosureBytes": 113246208,
+      "maxStaticAssetBytes": 25165824
     },
     "react-legacy": {
       "maxPackageCount": 104,
-      "maxPackedClosureBytes": 31457280,
-      "maxUnpackedClosureBytes": 103809024,
-      "maxStaticAssetBytes": 24117248
+      "maxPackedClosureBytes": 32505856,
+      "maxUnpackedClosureBytes": 109051904,
+      "maxStaticAssetBytes": 25165824
     },
     "svelte": {
       "maxPackageCount": 121,
       "maxPackedClosureBytes": 32505856,
       "maxUnpackedClosureBytes": 110100480,
-      "maxStaticAssetBytes": 24117248
+      "maxStaticAssetBytes": 25165824
     },
     "jquery": {
       "maxPackageCount": 101,
       "maxPackedClosureBytes": 32505856,
       "maxUnpackedClosureBytes": 106954752,
-      "maxStaticAssetBytes": 24117248
+      "maxStaticAssetBytes": 25165824
     }
   },
   "legacyFullReference": {
@@ -191,19 +191,19 @@
   },
   "standardEntryChunkBudgets": {
     "web": {
-      "maxEntryBytes": 923023,
-      "maxEntryGzipBytes": 331656,
-      "maxJsChunkCount": 73
+      "maxEntryBytes": 960000,
+      "maxEntryGzipBytes": 340000,
+      "maxJsChunkCount": 78
     },
     "vue3": {
-      "maxEntryBytes": 1308313,
-      "maxEntryGzipBytes": 450000,
-      "maxJsChunkCount": 81
+      "maxEntryBytes": 1350000,
+      "maxEntryGzipBytes": 465000,
+      "maxJsChunkCount": 86
     },
     "react": {
-      "maxEntryBytes": 922000,
-      "maxEntryGzipBytes": 330070,
-      "maxJsChunkCount": 73
+      "maxEntryBytes": 955000,
+      "maxEntryGzipBytes": 338000,
+      "maxJsChunkCount": 78
     }
   }
 }

@@ -1,0 +1,92 @@
+{
+  "name": "@file-viewer/renderer-chm",
+  "version": "3.0.1",
+  "private": false,
+  "type": "module",
+  "sideEffects": false,
+  "description": "Browser-native offline CHM renderer for File Viewer with a sandboxed reader and Rust/WASM parser.",
+  "keywords": [
+    "file-viewer",
+    "renderer",
+    "chm",
+    "html-help",
+    "lzx",
+    "wasm",
+    "web-worker",
+    "offline",
+    "self-hosted"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Yu Wang",
+    "email": "admin@flyfish.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/renderers/chm"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./security": {
+      "types": "./dist/security.d.ts",
+      "import": "./dist/security.js",
+      "default": "./dist/security.js"
+    },
+    "./worker/chm.worker.js": "./dist/chm.worker.js",
+    "./wasm/chm_wasm.js": "./dist/chm_wasm.js",
+    "./wasm/chm_wasm_bg.wasm": "./dist/chm_wasm_bg.wasm",
+    "./capability": "./file-viewer.capability.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "rust/Cargo.toml",
+    "rust/Cargo.lock",
+    "rust/LICENSE",
+    "rust/NOTICE.md",
+    "rust/THIRD_PARTY_LICENSES.md",
+    "rust/src",
+    "file-viewer.capability.json",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "build:ts": "tsc -b tsconfig.json --force",
+    "build:wasm": "node scripts/build-wasm.mjs",
+    "build:worker": "node scripts/build-worker.mjs",
+    "build": "pnpm build:ts && pnpm build:wasm && pnpm build:worker",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/core": "workspace:3.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "typescript": "^6.0.3"
+  },
+  "license": "Apache-2.0"
+}

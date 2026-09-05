@@ -1,0 +1,321 @@
+diff --git a/dist/src/ast.js b/dist/src/ast.js
+index d758a682f7cbbac84360ddc830efd359f7160daf..4f6c89500e4818828c8715e3092e3229630ab995 100644
+--- a/dist/src/ast.js
++++ b/dist/src/ast.js
+@@ -31,6 +31,7 @@ class AstParser {
+         let index = 0;
+         let pending = [];
+         let pendingStart = -1;
++        let illustratorGradientData = false;
+         while (index < this.tokens.length) {
+             this.budget.checkpoint('parse');
+             const token = this.tokens[index];
+@@ -60,11 +61,25 @@ class AstParser {
+                     kind: 'operator', operator, operands: pending, span: spanFor(this.tokens, start, index + 1), tokenRange: [start, index + 1], raw: this.raw(start, index + 1),
+                 };
+                 this.addStatement(statement);
++                if (operator === 'Bd')
++                    illustratorGradientData = true;
++                else if (operator === 'BD')
++                    illustratorGradientData = false;
+                 pending = [];
+                 pendingStart = -1;
+                 index++;
+                 continue;
+             }
++            // Illustrator gradient resources use PostScript's executable `[` mark
++            // without a matching `]`; the terminating BD operator consumes all marks.
++            // Outside a Bd/BD resource block, `[` keeps its ordinary array meaning.
++            if (token.kind === 'array-start' && illustratorGradientData) {
++                if (pendingStart < 0)
++                    pendingStart = index;
++                pending.push({ kind: 'name', value: '[', literal: false, span: token.span, tokenIndex: index });
++                index++;
++                continue;
++            }
+             const parsed = this.parseValue(index, 0);
+             if (pendingStart < 0)
+                 pendingStart = index;
+diff --git a/dist/src/container.js b/dist/src/container.js
+index 44456d3eec23f3542b64c08d945c9d0ec37c85eb..96106288547200e19a9d6817227c987a273069e0 100644
+--- a/dist/src/container.js
++++ b/dist/src/container.js
+@@ -64,24 +64,69 @@ function markerLineEnd(bytes, start) {
+     }
+     return -1;
+ }
+-function parseCompressionMarker(bytes) {
+-    const prefix = latin1Decode(bytes.subarray(0, Math.min(bytes.length, 256)));
+-    if (/^%!PS-Adobe(?:-|\s)/u.test(prefix))
+-        return { compression: 'none', payloadOffset: 0 };
+-    for (const [expression, compression] of [
+-        [/^%AI(?:12|13|14|15|16|17|18|19|20|21|22|23)_CompressedData\b/u, 'deflate'],
+-        [/^%AI24_ZStandard_Data\b/u, 'zstd'],
+-    ]) {
+-        const match = expression.exec(prefix);
+-        if (match !== null) {
+-            const end = markerLineEnd(bytes, match.index + match[0].length);
++function parseCompressionMarker(bytes, candidateOffsets = [0]) {
++    const matches = [];
++    for (const candidateOffset of candidateOffsets) {
++        if (!Number.isSafeInteger(candidateOffset) || candidateOffset < 0 || candidateOffset >= bytes.length)
++            continue;
++        const prefix = latin1Decode(bytes.subarray(candidateOffset, Math.min(bytes.length, candidateOffset + 256)));
++        if (/^%!PS-Adobe(?:-|\s)/u.test(prefix)) {
++            matches.push({ compression: 'none', markerOffset: candidateOffset, payloadOffset: candidateOffset });
++            continue;
++        }
++        for (const [expression, compression] of [
++            [/^%AI(?:12|13|14|15|16|17|18|19|20|21|22|23)_CompressedData/u, 'deflate'],
++            [/^%AI24_ZStandard_Data/u, 'zstd'],
++        ]) {
++            const match = expression.exec(prefix);
++            if (match === null)
++                continue;
++            const markerOffset = candidateOffset + match.index;
++            const markerEnd = markerOffset + match[0].length;
++            const firstPayloadByte = bytes[markerEnd];
++            if (firstPayloadByte === 0x0a) {
++                matches.push({ compression, markerOffset, payloadOffset: markerEnd + 1, marker: match[0] });
++                continue;
++            }
++            if (firstPayloadByte === 0x0d) {
++                matches.push({
++                    compression,
++                    markerOffset,
++                    payloadOffset: bytes[markerEnd + 1] === 0x0a ? markerEnd + 2 : markerEnd + 1,
++                    marker: match[0],
++                });
++                continue;
++            }
++            const adjacentDeflate = compression === 'deflate' && firstPayloadByte === 0x78;
++            const adjacentZstd = compression === 'zstd' &&
++                firstPayloadByte === 0x28 && bytes[markerEnd + 1] === 0xb5 &&
++                bytes[markerEnd + 2] === 0x2f && bytes[markerEnd + 3] === 0xfd;
++            if (adjacentDeflate || adjacentZstd) {
++                matches.push({ compression, markerOffset, payloadOffset: markerEnd, marker: match[0] });
++                continue;
++            }
++            const end = markerLineEnd(bytes, markerEnd);
+             if (end < 0)
+-                throw new IllustratorError('AI_PRIVATE_MARKER_TRUNCATED', 'decode', `${match[0]} marker has no line ending.`);
+-            return { compression, payloadOffset: end, marker: match[0] };
++                throw new IllustratorError('AI_PRIVATE_MARKER_TRUNCATED', 'decode', `${match[0]} marker has neither a line ending nor a recognized adjacent codec header.`);
++            throw new IllustratorError('AI_PRIVATE_MARKER_INVALID', 'decode', `${match[0]} marker is followed by unexpected text before its payload.`);
+         }
+     }
++    if (matches.length > 1) {
++        throw new IllustratorError('AI_PRIVATE_MARKER_AMBIGUOUS', 'decode', 'Multiple private-source payload markers were found at Illustrator block boundaries.');
++    }
++    if (matches.length === 1)
++        return matches[0];
+     throw new IllustratorError('AI_PRIVATE_MARKER_UNKNOWN', 'decode', 'Illustrator private source has no recognized PostScript, deflate, or zstd marker.');
+ }
++function privateBlockOffsets(blocks) {
++    const offsets = [];
++    let offset = 0;
++    for (const block of blocks) {
++        offsets.push(offset);
++        offset += block.decodedBytes ?? 0;
++    }
++    return offsets;
++}
+ function validateDecodedSource(bytes, strictTermination) {
+     const diagnostics = [];
+     const source = latin1Decode(bytes);
+@@ -283,7 +328,11 @@ async function analyzePdf(bytes, options, codecs) {
+         const extracted = await extractPackedSource(pdf, descriptor, limits, options.signal);
+         packed = extracted.packed;
+         blocks = extracted.blocks;
+-        compression = parseCompressionMarker(packed).compression;
++        const marker = parseCompressionMarker(packed, privateBlockOffsets(blocks));
++        compression = marker.compression;
++        if (marker.markerOffset > 0) {
++            diagnostics.push(diagnostic('AI_PRIVATE_PREFIX_BLOCKS_SKIPPED', 'info', 'decode', `Skipped ${marker.markerOffset} bytes of alternate private preview data before the native revisable-source payload.`, { details: { prefixBytes: marker.markerOffset } }));
++        }
+     }
+     const kind = descriptor !== undefined ? 'pdf-private' : illustratorEvidence ? 'pdf-surface-only' : 'unknown';
+     const fingerprint = sourceFingerprint(rawSource, kind, pdf.version, options.mime, creator);
+@@ -390,7 +439,7 @@ export async function decodeIllustratorPrivateSource(input, options = {}, runtim
+     if (analysis.descriptor === undefined || analysis.packed === undefined)
+         throw new IllustratorError('AI_PRIVATE_SOURCE_MISSING', 'container', 'Illustrator PDF contains no recoverable native private source.');
+     budget.checkpoint('decode');
+-    const marker = parseCompressionMarker(analysis.packed);
++    const marker = parseCompressionMarker(analysis.packed, privateBlockOffsets(analysis.blocks));
+     const payload = analysis.packed.subarray(marker.payloadOffset);
+     let decoded;
+     if (marker.compression === 'none')
+diff --git a/dist/src/lexer.js b/dist/src/lexer.js
+index b03e83eddae2123aee1c4ea2c5ec2d08531a638c..209a044168e6fd8d07e5766c5bd29ab1d0d46934 100644
+--- a/dist/src/lexer.js
++++ b/dist/src/lexer.js
+@@ -79,6 +79,21 @@ function classifyWord(raw) {
+         return { kind: 'null', value: null };
+     return { kind: 'word', value: raw };
+ }
++function findEndDataMarker(source, start, maximumBytes, markerText = '%%EndData') {
++    const maximum = Math.min(source.length, start + maximumBytes + 1);
++    let offset = start;
++    while (offset < maximum) {
++        const marker = source.indexOf(markerText, offset);
++        if (marker < 0 || marker >= maximum)
++            return -1;
++        const next = source.charCodeAt(marker + markerText.length);
++        const lineEnd = next === 0x0a || next === 0x0d || Number.isNaN(next);
++        if (lineEnd)
++            return marker;
++        offset = marker + 1;
++    }
++    return -1;
++}
+ export function lexIllustratorSource(input, options = {}) {
+     const source = sourceText(input);
+     const limits = resolveLimits(options.limits);
+@@ -120,9 +135,11 @@ export function lexIllustratorSource(input, options = {}) {
+             const raw = source.slice(start, offset);
+             const pseudo = /^%_(?!%)/u.test(raw) || /^%AI\d*_/u.test(raw);
+             push(pseudo ? 'pseudo-comment' : 'comment', start, offset, raw.slice(1));
+-            const binary = /^%%BeginBinary\s*:\s*(\d+)/iu.exec(raw) ?? /^%%BeginData\s*:\s*(\d+)\s+(?:Binary|Bytes?)/iu.exec(raw);
++            const beginBinary = /^%%BeginBinary\s*:\s*(\d+)/iu.exec(raw);
++            const beginData = /^(%_)?%%BeginData\s*:\s*(\d+)(?:\s+.*)?$/iu.exec(raw);
++            const binary = beginBinary ?? beginData;
+             if (binary !== null) {
+-                const count = Number(binary[1]);
++                const count = Number(beginData?.[2] ?? binary[1]);
+                 if (!Number.isSafeInteger(count) || count < 0 || count > limits.maxStringBytes)
+                     throw new IllustratorError('AI_BINARY_LIMIT', 'lex', `Binary resource declaration exceeds ${limits.maxStringBytes} bytes.`);
+                 // The required line ending remains a lossless whitespace token before the binary token.
+@@ -138,7 +155,22 @@ export function lexIllustratorSource(input, options = {}) {
+                     push('whitespace', offset, lineEnd);
+                     offset = lineEnd;
+                 }
+-                pendingBinaryBytes = count;
++                if (beginData !== null) {
++                    const endMarker = findEndDataMarker(source, offset, limits.maxStringBytes, beginData[1] === '%_' ? '%_%%EndData' : '%%EndData');
++                    if (endMarker < 0) {
++                        const end = Math.min(source.length, offset + limits.maxStringBytes);
++                        diagnostics.push(diagnostic('AI_BINARY_ENDDATA_MISSING', 'error', 'lex', '%%BeginData has no %%EndData terminator within the binary resource limit.', { sourceSpan: locator.span(start, end) }));
++                        push('binary', offset, end, latin1Encode(source.slice(offset, end)));
++                        offset = end;
++                    }
++                    else {
++                        push('binary', offset, endMarker, latin1Encode(source.slice(offset, endMarker)));
++                        offset = endMarker;
++                    }
++                }
++                else {
++                    pendingBinaryBytes = count;
++                }
+             }
+             continue;
+         }
+diff --git a/dist/src/semantic.js b/dist/src/semantic.js
+index 8f4112f098d71e140f9cb4ff0e59bd4ab639f711..6147bba3e40cc841b583310d8844657573ea1b7f 100644
+--- a/dist/src/semantic.js
++++ b/dist/src/semantic.js
+@@ -407,9 +407,13 @@ class SceneBuilder {
+     concatTransform(matrix) { this.state.transform = multiplyMatrix(this.state.transform, matrix); }
+     setTransform(matrix) { this.state.transform = cloneMatrix(matrix); }
+     beginLayer(operands, span, statementIndex) {
+-        const values = operands.slice(-10).map(numberValue);
+-        const valid = values.length === 10 && values.every((value) => value !== undefined);
+-        const flags = valid ? values : [1, 1, 1, 1, 0, 0, 0, 79, 128, 255];
++        const extended = operands.slice(-14).map(numberValue);
++        const compact = operands.slice(-10).map(numberValue);
++        const extendedValid = extended.length === 14 && extended.every((value) => value !== undefined);
++        const compactValid = compact.length === 10 && compact.every((value) => value !== undefined);
++        const valid = extendedValid || compactValid;
++        const flags = extendedValid ? extended : compactValid ? compact : [1, 1, 1, 1, 0, 0, 0, 79, 128, 255];
++        const colorOffset = extendedValid ? 8 : 7;
+         if (!valid)
+             this.diagnostics.push(diagnostic('AI_LAYER_FLAGS_INVALID', 'warning', 'lower', 'Layer flags were incomplete; safe defaults were used.', { sourceSpan: span }));
+         const appearance = emptyAppearance();
+@@ -417,7 +421,7 @@ class SceneBuilder {
+             ...this.nodeBase(span, appearance, 'high', [statementIndex]),
+             type: 'Layer', children: [], preview: flags[1] !== 0,
+             visible: flags[0] !== 0, locked: flags[2] === 0, printable: flags[3] !== 0,
+-            color: { kind: 'rgb', red: clamp(flags[7] / 255), green: clamp(flags[8] / 255), blue: clamp(flags[9] / 255), alpha: 1 },
++            color: { kind: 'rgb', red: clamp(flags[colorOffset] / 255), green: clamp(flags[colorOffset + 1] / 255), blue: clamp(flags[colorOffset + 2] / 255), alpha: 1 },
+         };
+         node.layerId = node.id;
+         this.addNode(node);
+@@ -652,6 +656,22 @@ function setSpotColor(target) {
+         context.builder.colorMode = 'cmyk';
+     };
+ }
++function setIllustratorCustomColor(target) {
++    return (context) => {
++        const name = [...context.operands].reverse().map(stringValue).find((value) => value !== undefined) ?? 'Unnamed Ink';
++        const numeric = context.operands.map(numberValue).filter((value) => value !== undefined);
++        const tint = clamp(numeric.at(-1) ?? 1);
++        // AI5+ RGB documents retain both a four-channel CMYK fallback and the
++        // authored RGB alternate before the custom-color name.
++        const alternate = numeric.length >= 7
++            ? { kind: 'rgb', red: clamp(numeric[4]), green: clamp(numeric[5]), blue: clamp(numeric[6]), alpha: 1 }
++            : numeric.length >= 4
++                ? { kind: 'cmyk', cyan: clamp(numeric[0]), magenta: clamp(numeric[1]), yellow: clamp(numeric[2]), black: clamp(numeric[3]), alpha: 1 }
++                : clonePaint(context.builder.state[target]);
++        context.builder.state[target] = { kind: 'spot', name, tint, alternate, alpha: 1 };
++        context.builder.colorMode = alternate.kind === 'rgb' ? 'rgb' : 'cmyk';
++    };
++}
+ export function createDefaultOperatorRegistry() {
+     const registry = new IllustratorOperatorRegistry();
+     register(registry, 'm', ['number', 'number'], (context) => { const v = requireNumbers(context, 2); if (v)
+@@ -660,9 +680,11 @@ export function createDefaultOperatorRegistry() {
+     register(registry, 'l', ['number', 'number'], (context) => { const v = requireNumbers(context, 2); if (v)
+         context.builder.lineTo({ x: v[0], y: v[1] }, context.statement.span, context.statementIndex); }, { stateReads: ['path'], stateWrites: ['path'], fixtureId: 'path-line' });
+     register(registry, 'lineto', ['number', 'number'], registry.resolve('l').handler, { stateReads: ['path'], stateWrites: ['path'], fixtureId: 'path-lineto' });
++    register(registry, 'L', ['number', 'number'], registry.resolve('l').handler, { family: 'ai5', stateReads: ['path'], stateWrites: ['path'], fixtureId: 'path-line-ai' });
+     register(registry, 'c', ['number', 'number', 'number', 'number', 'number', 'number'], (context) => { const v = requireNumbers(context, 6); if (v)
+         context.builder.cubicTo({ x: v[0], y: v[1] }, { x: v[2], y: v[3] }, { x: v[4], y: v[5] }, context.statement.span, context.statementIndex); }, { stateReads: ['path'], stateWrites: ['path'], fixtureId: 'path-cubic' });
+     register(registry, 'curveto', ['number', 'number', 'number', 'number', 'number', 'number'], registry.resolve('c').handler, { stateReads: ['path'], stateWrites: ['path'], fixtureId: 'path-curveto' });
++    register(registry, 'C', ['number', 'number', 'number', 'number', 'number', 'number'], registry.resolve('c').handler, { family: 'ai5', stateReads: ['path'], stateWrites: ['path'], fixtureId: 'path-cubic-ai' });
+     register(registry, 'v', ['number', 'number', 'number', 'number'], (context) => { const v = requireNumbers(context, 4); if (v) {
+         const current = context.builder.currentPoint();
+         context.builder.cubicTo(current, { x: v[0], y: v[1] }, { x: v[2], y: v[3] }, context.statement.span, context.statementIndex);
+@@ -680,6 +702,14 @@ export function createDefaultOperatorRegistry() {
+         ['b', true, true, 'nonzero', true], ['b*', true, true, 'evenodd', true],
+     ])
+         register(registry, operator, [], paintHandler(fill, stroke, rule, close), { stateReads: ['path', 'paint'], stateWrites: ['path'], fixtureId: `path-paint-${operator}` });
++    register(registry, '*', ['string'], (context) => {
++        const operation = tailString(context.operands);
++        const dynamic = operation === undefined ? undefined : registry.resolve(operation);
++        if (dynamic !== undefined && ['n', 'N', 'S', 's', 'f', 'F', 'B', 'b', 'f*', 'B*', 'b*'].includes(operation))
++            dynamic.handler(context);
++        else
++            context.builder.handleUnknownOperator(context.statement, context.statementIndex);
++    }, { family: 'ai5', stateReads: ['path', 'paint'], stateWrites: ['path'], fixtureId: 'path-paint-indirect' });
+     register(registry, 'W', [], ({ builder }) => builder.markClip('nonzero'), { stateReads: ['path'], stateWrites: ['clipping'], fixtureId: 'clip-nonzero' });
+     register(registry, 'W*', [], ({ builder }) => builder.markClip('evenodd'), { stateReads: ['path'], stateWrites: ['clipping'], fixtureId: 'clip-evenodd' });
+     register(registry, 'clip', [], ({ builder }) => builder.markClip('nonzero'), { stateReads: ['path'], stateWrites: ['clipping'], fixtureId: 'clip-ps' });
+@@ -717,6 +747,8 @@ export function createDefaultOperatorRegistry() {
+         register(registry, operator, Array(kind === 'gray' ? 1 : kind === 'rgb' ? 3 : 4).fill('number'), setProcessColor(target, kind), { stateWrites: [target, 'color-mode'], fixtureId: `paint-${operator}` });
+     register(registry, 'x', ['any'], setSpotColor('fill'), { family: 'ai3', variadic: true, stateWrites: ['fill', 'color-mode'], fidelity: 'partial', fixtureId: 'paint-custom-fill' });
+     register(registry, 'X', ['any'], setSpotColor('stroke'), { family: 'ai3', variadic: true, stateWrites: ['stroke', 'color-mode'], fidelity: 'partial', fixtureId: 'paint-custom-stroke' });
++    register(registry, 'Xk', ['any'], setIllustratorCustomColor('fill'), { family: 'ai5', variadic: true, stateWrites: ['fill', 'color-mode'], fidelity: 'partial', fixtureId: 'paint-custom-fill-ai5' });
++    register(registry, 'XK', ['any'], setIllustratorCustomColor('stroke'), { family: 'ai5', variadic: true, stateWrites: ['stroke', 'color-mode'], fidelity: 'partial', fixtureId: 'paint-custom-stroke-ai5' });
+     register(registry, 'w', ['number'], (context) => { const v = requireNumbers(context, 1); if (v && v[0] >= 0)
+         context.builder.state.lineWidth = v[0]; }, { stateWrites: ['stroke'], fixtureId: 'stroke-width' });
+     register(registry, 'setlinewidth', ['number'], registry.resolve('w').handler, { stateWrites: ['stroke'], fixtureId: 'stroke-width-ps' });
+@@ -779,6 +811,11 @@ export function createDefaultOperatorRegistry() {
+         context.builder.state.strokeOpacity = clamp(v[0]); }, { family: 'ai9', stateWrites: ['opacity'], fidelity: 'partial', fixtureId: 'opacity-stroke' });
+     register(registry, 'setopacityalpha', ['number'], (context) => { const v = requireNumbers(context, 1); if (v)
+         context.builder.state.opacity = clamp(v[0]); }, { family: 'ai9', stateWrites: ['opacity'], fidelity: 'partial', fixtureId: 'opacity-object' });
++    register(registry, 'Xy', ['any'], (context) => {
++        const values = context.operands.map(numberValue).filter((value) => value !== undefined);
++        if (values.length >= 2)
++            context.builder.state.opacity = clamp(values[1]);
++    }, { family: 'ai9', variadic: true, stateWrites: ['opacity', 'blend'], fidelity: 'partial', fixtureId: 'opacity-object-ai' });
+     register(registry, 'BM', ['name'], ({ builder, operands }) => { builder.state.blendMode = stringValue(operands.at(-1)) ?? 'normal'; }, { family: 'ai9', stateWrites: ['blend'], fidelity: 'partial', fixtureId: 'blend-mode' });
+     register(registry, 'op', ['boolean'], ({ builder, operands }) => { const value = operands.at(-1); if (value?.kind === 'boolean')
+         builder.state.overprintFill = value.value; }, { stateWrites: ['overprint'], fidelity: 'partial', fixtureId: 'overprint-fill' });
+@@ -789,7 +826,7 @@ export function createDefaultOperatorRegistry() {
+         builder.state = { transform: cloneMatrix(), fill: BLACK_PAINT, stroke: NONE_PAINT, lineWidth: 1, lineCap: 'butt', lineJoin: 'miter', miterLimit: 10, dashArray: [], dashOffset: 0, fillOpacity: 1, strokeOpacity: 1, opacity: 1, blendMode: 'normal', overprintFill: false, overprintStroke: false, fillRule: 'nonzero' };
+     }, { stateWrites: ['graphics-state'], produces: 'none', fixtureId: 'graphics-init' });
+     const harmless = [
+-        'def', 'bind', 'begin', 'end', 'dict', 'array', 'string', 'dup', 'exch', 'pop', 'put', 'get', 'load', 'where', 'if', 'ifelse', 'for', 'repeat', 'loop', 'exit', 'currentdict', 'readonly', 'executeonly', 'cvx', 'cvlit', 'save', 'restore', 'setpagedevice', 'showpage', 'findfont', 'scalefont', 'setfont', 'mark', 'cleartomark', 'count', 'index', 'roll', 'copy', 'known', 'maxlength', 'currentfile', 'readstring', 'readhexstring', 'flushfile', 'setflat', 'sethalftone', 'setscreen', 'settransfer', 'setcolortransfer', 'setcolorspace', 'setcolor', 'setrenderingintent', 'ri', 'ddef', 'xput', 'npop', 'Adobe_Illustrator_AI5', 'Adobe_Illustrator_AI8', 'terminate', 'exec', 'currentpoint', 'charpath', 'stringwidth', 'widthshow', 'ashow', 'awidthshow', 'kshow', 'rmoveto', 'rlineto', 'rcurveto',
++        'def', 'bind', 'begin', 'end', 'dict', 'array', 'string', 'dup', 'exch', 'pop', 'put', 'get', 'load', 'where', 'if', 'ifelse', 'for', 'repeat', 'loop', 'exit', 'currentdict', 'readonly', 'executeonly', 'cvx', 'cvlit', 'save', 'restore', 'setpagedevice', 'showpage', 'findfont', 'scalefont', 'setfont', 'mark', 'cleartomark', 'count', 'index', 'roll', 'copy', 'known', 'maxlength', 'currentfile', 'readstring', 'readhexstring', 'flushfile', 'setflat', 'sethalftone', 'setscreen', 'settransfer', 'setcolortransfer', 'setcolorspace', 'setcolor', 'setrenderingintent', 'ri', 'ddef', 'xput', 'npop', 'Adobe_Illustrator_AI5', 'Adobe_Illustrator_AI8', 'terminate', 'exec', 'currentpoint', 'charpath', 'stringwidth', 'widthshow', 'ashow', 'awidthshow', 'kshow', 'rmoveto', 'rlineto', 'rcurveto', ',', ':', ';',
+     ];
+     for (const operator of harmless)
+         if (registry.resolve(operator) === undefined)

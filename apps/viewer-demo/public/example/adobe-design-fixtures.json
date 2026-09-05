@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "https://github.com/jonjardine/bootstrap-3-grids",
+  "sourceCommit": "9b3134fd1a80ec90e174a3826691d062d483baa3",
+  "license": "CC0-1.0",
+  "licenseFile": "licenses/bootstrap-3-grids-CC0-1.0.txt",
+  "fixtures": [
+    {
+      "localFile": "illustrator-grid.ai",
+      "upstreamPath": "Boostrap 3 Grids.ai",
+      "size": 402941,
+      "sha256": "af0f68462ff032c81309744f6ddc5c06f032949074f59464763bf8bf14517084",
+      "pdfVersion": "1.5",
+      "pdfPages": 4,
+      "optionalContentGroups": 5,
+      "nativeArtboards": ["xs (480px)", "sm (750px)", "md (970px)", "lg (1170px)"],
+      "nativeLayers": ["Container Zones", "Padding Zones", "Page Margins", "Containers Grid", "Padding Grid"],
+      "nativeNodes": 336,
+      "nativePaths": 254,
+      "nativeSvgPaths": 106,
+      "nativeFidelity": "structure-only",
+      "nativeUnsupportedFeatures": ["ai11-text-document", "binary-resource", "gradient-definition", "nested-compound-path", "unknown-visible-operator"],
+      "expectation": "PDF-compatible Illustrator file with four PDF pages plus a deflate native private source with four artboards and five layers."
+    },
+    {
+      "localFile": "illustrator-template.ait",
+      "upstreamPath": "Boostrap 3 Grids.ait",
+      "size": 355011,
+      "sha256": "cc1d77d26167b2aced5c192ef07c94f21d12e4732e1ea014c75bf43fafc83956",
+      "pdfVersion": "1.5",
+      "pdfPages": 1,
+      "optionalContentGroups": 0,
+      "nativeArtboards": ["xs (480px)", "sm (750px)", "md (970px)", "lg (1170px)"],
+      "nativeLayers": ["Container Zones", "Padding Zones", "Page Margins", "Containers Grid", "Padding Grid"],
+      "nativeNodes": 336,
+      "nativePaths": 254,
+      "nativeSvgPaths": 106,
+      "nativeFidelity": "structure-only",
+      "nativeUnsupportedFeatures": ["ai11-text-document", "binary-resource", "gradient-definition", "nested-compound-path", "unknown-visible-operator"],
+      "expectation": "Illustrator template whose PDF surface is one page while its deflate native private source retains four artboards and five layers."
+    }
+  ]
+}

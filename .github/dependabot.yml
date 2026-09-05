@@ -21,6 +21,20 @@ updates:
           - patch
     commit-message:
       prefix: chore(deps)
+    ignore:
+      # The Vue 2.6/2.7 components exist for hosts that cannot move to Vue 3, so a
+      # `vue` major here would rewrite those packages instead of refreshing a pin.
+      - dependency-name: vue
+        update-types:
+          - version-update:semver-major
+      - dependency-name: pako
+        update-types:
+          - version-update:semver-major
+      - dependency-name: '@types/pako'
+        update-types:
+          - version-update:semver-major
+      # pako 3 changes Inflate err/msg semantics used by the DICOM deflated-study
+      # path and needs a licence ledger refresh, so its majors stay deferred.
 
   - package-ecosystem: github-actions
     directory: /

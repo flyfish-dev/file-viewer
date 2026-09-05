@@ -168,6 +168,8 @@ test('explicit full preserves the published preset-all and aggregate asset contr
       '@file-viewer/renderer-dicom',
       '@file-viewer/renderer-signature'
     ])
+    assert.equal(plan.packages.includes('@file-viewer/renderer-design'), false)
+    assert.equal(plan.packages.includes('@file-viewer/assets-design'), false)
     assert.equal(plan.heavyCapabilities.includes('dicom'), true)
     assert.equal(plan.heavyCapabilities.includes('signature'), true)
     assert.equal(plan.heavyCapabilities.includes('cad'), true)
@@ -203,6 +205,7 @@ test('explicit full preserves the published preset-all and aggregate asset contr
     generated.content,
     /signatureRenderer as fileViewerRenderer1.*@file-viewer\/renderer-signature/
   )
+  assert.doesNotMatch(generated.content, /@file-viewer\/renderer-design/)
 
   const baselineSelection = await createFileViewerInstallPlan(
     { framework: 'web', profile: 'full', formats: ['dwg'] },
@@ -221,6 +224,38 @@ test('explicit full preserves the published preset-all and aggregate asset contr
     formats: ['dwg']
   })
   assert.doesNotMatch(baselineGenerated.content, /cadRenderer/)
+
+  for (const format of ['pat', 'psd']) {
+    const designSelection = await createFileViewerInstallPlan(
+      { framework: 'web', profile: 'full', formats: [format] },
+      { packageManager: 'npm' }
+    )
+    assert.equal(designSelection.packages.includes('@file-viewer/renderer-design'), true)
+    assert.equal(designSelection.packages.includes('@file-viewer/assets-design'), true)
+    assert.equal(designSelection.capabilityPackages.includes('@file-viewer/renderer-design'), true)
+    assert.equal(designSelection.heavyCapabilities.includes('design'), true)
+    assert.deepEqual(designSelection.assetPackages, [
+      '@file-viewer/web-full',
+      '@file-viewer/assets-design'
+    ])
+    assert.equal(
+      designSelection.steps.some(
+        (step) => step.assetOwner?.packageName === '@file-viewer/assets-design'
+      ),
+      true
+    )
+
+    const designGenerated = await generateFileViewerIntegrationModule(process.cwd(), {
+      framework: 'web',
+      profile: 'full',
+      formats: [format]
+    })
+    assert.equal(designGenerated.selectedCapabilities.includes('design'), true)
+    assert.match(
+      designGenerated.content,
+      /import \{ designRenderer as fileViewerRenderer\d+ \} from ["']@file-viewer\/renderer-design["']/
+    )
+  }
 })
 
 test('Yarn Classic and Berry use generation-correct install settings and scaffolds', async () => {
@@ -1617,16 +1652,25 @@ test(
         })
       )
       const cli = new URL('../dist/cli.js', import.meta.url)
+      // Two shapes this script has to survive. `eof` needs an explicit action:
+      // without it Tcl reads the next word as that action, the switch loses its
+      // timeout arm, and an unanswered prompt leaves expect blocked in `wait`
+      // while the spawned CLI keeps the harness pipe open, so not even the
+      // spawnSync timeout can unblock the runner. And the prompt patterns must
+      // not anchor at end-of-line: on a real terminal readline appends a cursor
+      // move after the prompt (`\x1b[41G`), so a `$` match only ever works when
+      // stdout has no width and silently hangs everywhere else.
       const expectProgram = `
-set timeout 20
+set timeout 12
 log_user 1
 spawn $env(FILE_VIEWER_TEST_NODE) $env(FILE_VIEWER_TEST_CLI) add $env(FILE_VIEWER_TEST_ROOT) --json
 expect {
-  -re {Choose a number[^\\r\\n]*: $} { send "\\r"; exp_continue }
-  -re {\\([^\\r\\n]*b=back[^\\r\\n]*\\): $} { send "\\r"; exp_continue }
-  -re {\\(y/N\\) $} { send "\\r"; exp_continue }
-  eof
-  timeout { exit 124 }
+  -re {Choose a number \\(0=cancel[^)]*\\) \\[\\d*\\]: } { send "\\r"; exp_continue }
+  -re {Asset target \\[[^ \\]]*\\] \\(0=cancel[^)]*\\): } { send "\\r"; exp_continue }
+  -re {Enter=confirm: } { send "\\r"; exp_continue }
+  -re {\\(y/N\\) } { send "\\r"; exp_continue }
+  eof {}
+  timeout { catch { exec pkill -P [exp_pid] }; catch { exec kill [exp_pid] }; catch { wait }; exit 124 }
 }
 catch wait result
 exit [lindex $result 3]
@@ -1643,7 +1687,13 @@ exit [lindex $result 3]
           FILE_VIEWER_TEST_ROOT: root
         }
       })
-      assert.equal(interactive.status, 0, interactive.stderr)
+      assert.equal(
+        interactive.status,
+        0,
+        `expect exited ${interactive.status} (124 means the wizard stopped matching the ` +
+          `prompt patterns below); stderr: ${(interactive.stderr || '').trim()}\nlast output:\n` +
+          `${(interactive.stdout || '').split('\n').slice(-14).join('\n')}`
+      )
       assert.match(interactive.stdout, /"profile"\s*:\s*"full"/)
       assert.match(interactive.stdout, /"packageManager"\s*:\s*"pnpm"/)
       assert.equal(existsSync(join(root, 'file-viewer.config.json')), false)
@@ -2566,6 +2616,7 @@ test('custom profile has no implicit asset owner and all profile plans each decl
   )
   assert.deepEqual(all.assetPackages, [
     '@file-viewer/assets-cad',
+    '@file-viewer/assets-chm',
     '@file-viewer/assets-data',
     '@file-viewer/assets-drawing',
     '@file-viewer/assets-hangul',
@@ -2576,7 +2627,7 @@ test('custom profile has no implicit asset owner and all profile plans each decl
     '@file-viewer/assets-typst',
     '@file-viewer/assets-wordperfect'
   ])
-  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 10)
+  assert.equal(all.steps.filter((step) => step.kind === 'assets').length, 11)
   assert.equal(all.packages.includes('file-viewer-copy-assets'), false)
 })
 

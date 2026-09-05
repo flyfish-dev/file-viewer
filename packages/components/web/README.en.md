@@ -98,7 +98,7 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 ## Format Support Matrix
 
-The shared catalog registers 244 file extensions (221 stable and 23 experimental) across 34 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
+The shared catalog registers 266 file extensions (224 stable and 42 experimental) across 45 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
 
 | Preview pipeline | Category | Extensions | Level / status | Capabilities | Loading |
 | --- | --- | --- | --- | --- | --- |
@@ -118,6 +118,7 @@ The shared catalog registers 244 file extensions (221 stable and 23 experimental
 | Hancom Hangul | office | `.hwp`, `.hwpx` | structured / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
 | Typst | document | `.typ`, `.typst` | high-fidelity / stable | download, print(adapter), HTML export(adapter), zoom(provider), search | lazy async |
 | Archive | archive | `.zip`, `.zipx`, `.7z`, `.rar`, `.tar`, `.gz`, `.gzip`, `.tgz`, `.bz2`, `.bzip2`, `.tbz`, `.tbz2`, `.xz`, `.txz`, `.lzma`, `.zst`, `.tzst`, `.cab`, `.ar`, `.cpio`, `.iso`, `.xar`, `.lha`, `.lzh`, `.jar`, `.war`, `.ear`, `.apk`, `.cbz`, `.cbr` | structured / stable | download, search | lazy async |
+| Compiled HTML Help | ebook | `.chm` | structured / stable | download, print(adapter), HTML export(adapter), search | lazy async |
 | Email | email | `.eml`, `.msg`, `.mbox` | structured / stable | download, HTML export, search | lazy async |
 | EDA | eda | `.olb`, `.dra`, `.gds`, `.oas`, `.oasis` | structured / stable | download, print, HTML export, search | lazy async |
 | CAD | cad | `.dxf`, `.dwg`, `.dwf`, `.dwfx`, `.xps` | high-fidelity / stable | download, print, HTML export, zoom(provider) | lazy async |
@@ -135,6 +136,16 @@ The shared catalog registers 244 file extensions (221 stable and 23 experimental
 | Code and Text | code | `.txt`, `.json`, `.js`, `.mjs`, `.cjs`, `.css`, `.java`, `.py`, `.html`, `.htm`, `.jsx`, `.ts`, `.tsx`, `.xml`, `.log`, `.vue`, `.yaml`, `.yml`, `.ini`, `.sh`, `.bash`, `.sql`, `.go`, `.rs`, `.php`, `.c`, `.cpp`, `.cc`, `.h`, `.hpp`, `.cs`, `.diff`, `.patch`, `.bundle`, `.bdl`, `.jsonc`, `.json5`, `.ipynb`, `.toml`, `.proto`, `.hcl`, `.tex`, `.gv`, `.http`, `.react`, `.rb`, `.swift`, `.kt` | structured / stable | download, print, HTML export, search | lazy async |
 | Video | media | `.mp4`, `.webm`, `.m3u8` | high-fidelity / stable | download | lazy async |
 | Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | high-fidelity / stable | download | lazy async |
+| Adobe Photoshop | asset | `.psb`, `.pdd`, `.psdt`, `.psd` (enhances `data-asset`) | experimental / experimental | download, print, zoom | lazy async |
+| Adobe Illustrator AI/AIT | asset | `.ait`, `.ai` (enhances `data-asset`) | experimental / experimental | download, print, zoom, search | lazy async |
+| Adobe InDesign IDML | asset | `.idml` | experimental / experimental | download, print, zoom | lazy async |
+| Adobe InCopy and InDesign Exchange | asset | `.icml`, `.idms`, `.inx` | structured / experimental | download, print, HTML export, search | lazy async |
+| Adobe Animate XFL | asset | `.fla`, `.xfl` | structured / experimental | download | lazy async |
+| Adobe XD Package | asset | `.xd` | structured / experimental | download | lazy async |
+| Adobe InDesign Native | asset | `.indd`, `.indt` | structured / experimental | download | lazy async |
+| Adobe EPS and PostScript | asset | `.ps`, `.eps` (enhances `data-asset`) | experimental / experimental | download, print, zoom | lazy async |
+| Adobe Color Palettes | asset | `.ase`, `.aco` | structured / stable | download, print, HTML export, search | lazy async |
+| Adobe Photoshop Resources and Presets | asset | `.abr`, `.csh`, `.pat`, `.grd`, `.asl` | structured / experimental | download, print, search | lazy async |
 | Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | download, HTML export, search | lazy async |
 
 ## Engineering-Grade On-Demand Renderer Assembly

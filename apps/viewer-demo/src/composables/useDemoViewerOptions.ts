@@ -3,6 +3,7 @@ import {
   DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION
 } from '@file-viewer/core'
 import { allRenderers } from '@file-viewer/preset-all'
+import { designRenderer } from '@file-viewer/renderer-design'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
 import { signatureRenderer } from '@file-viewer/renderer-signature'
 import { normalizeDemoDensity } from '@/composables/useDemoPreferences'
@@ -42,6 +43,7 @@ const pptRuntimeAssetUrl = (path: string) => (
 // options surface intentionally erases that implementation detail.
 const unifiedDemoRenderers = [
   allRenderers,
+  designRenderer,
   dicomRenderer,
   signatureRenderer
 ] as unknown as NonNullable<FileViewerOptions['renderers']>

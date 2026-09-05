@@ -242,6 +242,22 @@
       "capabilities": { "download": true, "print": false, "exportHtml": false, "zoom": false, "search": true }
     },
     {
+      "id": "chm",
+      "label": "Compiled HTML Help",
+      "category": "ebook",
+      "packageName": "@file-viewer/renderer-chm",
+      "preset": ["all"],
+      "extensions": ["chm"],
+      "supportLevel": "structured",
+      "status": "stable",
+      "containerVersions": ["Microsoft HTML Help ITSF v2/v3", "LZX MSCompressed and uncompressed content"],
+      "knownLimits": ["ActiveX, Shortcut/WinHelp commands, scripts and external network resources are intentionally blocked", "Merged help collections require each referenced CHM file to be opened separately"],
+      "capabilities": { "download": true, "print": "adapter", "exportHtml": "adapter", "zoom": false, "search": true },
+      "evidence": {
+        "chm": { "fixture": "apps/viewer-demo/public/example/putty-0.85.chm", "sha256": "f78d1ac29073ee935b55590eb826d31a2aa360b0fe9d43dd2ca4489b554248b5", "assertions": ["itsf-v3", "pmgl-pmgi-directory", "lzx-decompression", "table-of-contents", "topic-navigation", "resource-rewrite", "search", "sandboxed-html", "browser-worker-wasm"], "required": true }
+      }
+    },
+    {
       "id": "email",
       "label": "Email",
       "category": "email",
@@ -472,6 +488,195 @@
       "containerVersions": ["Browser media", "MIDI"],
       "knownLimits": ["Codec support follows the browser"],
       "capabilities": { "download": true, "print": false, "exportHtml": false, "zoom": false, "search": false }
+    },
+    {
+      "id": "photoshop-design",
+      "label": "Adobe Photoshop",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["psb", "pdd", "psdt"],
+      "enhancesRendererId": "data-asset",
+      "enhancesExtensions": ["psd"],
+      "supportLevel": "experimental",
+      "status": "experimental",
+      "containerVersions": ["PSD v1", "PSB v2"],
+      "knownLimits": [
+        "Pixel rendering is enabled only for 8-bit RGB and grayscale documents; unsupported color modes and bit depths are rejected instead of decoded incorrectly",
+        "The untouched merged composite is the fidelity reference and must have been saved with Maximize Compatibility using Raw or PackBits RLE compression; ZIP composites are rejected",
+        "Auxiliary channels are accepted only when PSD layer-info declares one merged-transparency channel; PSB currently requires exactly the base RGB or grayscale channels",
+        "Embedded ICC profiles are detected but not color-converted yet, so profiled color is not reference-verified",
+        "The PSD/PSB container version is taken from the 8BPS header; a mismatched filename extension is diagnosed and never used as the format authority",
+        "Legacy PhotoDeluxe PDD and Photoshop template PSDT inputs are accepted only when the bytes validate as a PSD v1 8BPS container; unrelated files sharing those extensions are rejected",
+        "PSD layer visibility is interactive only for flat normal-blend 100%-opacity documents without masks, effects, clipping, adjustments, groups, or resource-limit violations",
+        "PSB currently exposes the saved composite and a read-only layer tree; interactive PSB layer recomposition is not claimed, and PSB files containing ZIP-compressed layer channels are rejected"
+      ],
+      "capabilities": { "download": true, "print": true, "exportHtml": false, "zoom": true, "search": false }
+    },
+    {
+      "id": "illustrator-pdf-design",
+      "label": "Adobe Illustrator AI/AIT",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["ait"],
+      "enhancesRendererId": "data-asset",
+      "enhancesExtensions": ["ai"],
+      "supportLevel": "experimental",
+      "status": "experimental",
+      "containerVersions": ["Illustrator PDF-compatible AI/AIT", "Illustrator native PGF/private source"],
+      "knownLimits": [
+        "Automatic mode prefers the verified PDF-compatible surface for the highest saved appearance fidelity, while Native PGF mode parses the editable private source in a dedicated bounded Worker and exposes native artboards and layer visibility",
+        "A PDF header alone is insufficient: the renderer also requires Illustrator-origin XMP, MIME, creator, or AIPrivateData evidence so an ordinary renamed PDF is not advertised as an Illustrator document",
+        "The packaged browser Worker decodes uncompressed, deflate, and Illustrator 24 zstd private source entirely offline; zstd output is streamed through the same decoded-byte ceiling and unsupported long-distance frames fail explicitly",
+        "Native PGF rendering currently preserves and reports unknown operators but does not claim complete Illustrator gradients, text shaping, placed or embedded images, plugins, effects, masks, blending, overprint, spot-color management, or font substitution fidelity",
+        "The PDF renderer is required only for the saved PDF surface; native-only AI/AIT can open without it, and PDF pages or optional-content groups are not presented as native artboards or layers"
+      ],
+      "capabilities": { "download": true, "print": true, "exportHtml": false, "zoom": true, "search": true }
+    },
+    {
+      "id": "indesign-idml-design",
+      "label": "Adobe InDesign IDML",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["idml"],
+      "supportLevel": "experimental",
+      "status": "experimental",
+      "containerVersions": ["IDML package", "@paged-media/introspect-wasm 0.62.0"],
+      "knownLimits": [
+        "Pages are rendered locally by the CPU WASM engine in a module Worker; the browser never uploads the IDML package",
+        "ZIP64, encrypted, multi-disk, overlapping, unsafe-path, unsupported-compression, and configured expansion-limit packages are rejected before the WASM engine opens them",
+        "The current engine page tree lists TextFrame and Rectangle objects only even though other supported objects may still appear in rendered page pixels",
+        "Each page render rebuilds the upstream document internally; interactive requests are latest-wins, preview is lazy, and print-all is bounded by the configured total RGBA working-set limit"
+      ],
+      "capabilities": { "download": true, "print": true, "exportHtml": false, "zoom": true, "search": false }
+    },
+    {
+      "id": "indesign-exchange-design",
+      "label": "Adobe InCopy and InDesign Exchange",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["icml", "idms", "inx"],
+      "supportLevel": "structured",
+      "status": "experimental",
+      "containerVersions": ["ICML InCopyInterchange", "IDMS PageItem", "legacy INX"],
+      "knownLimits": [
+        "ICML is rendered as styled story content because the format does not carry a complete document page layout",
+        "IDMS page-item paths, transforms, colors, stories, styles, layers, and linked-resource metadata are parsed in a terminable Worker and shown as a bounded layout-fragment preview; it is not advertised as a complete INDD page",
+        "Legacy INX abbreviated records have no maintained browser layout engine; common page items and geometry are visualized while every unmapped element name remains visible in the structure inventory",
+        "UTF-8, signature, DTD/entity, source size, node, depth, attribute, text, story, item, point, style, and color limits are enforced; linked resource paths are never fetched"
+      ],
+      "capabilities": { "download": true, "print": true, "exportHtml": true, "zoom": false, "search": true }
+    },
+    {
+      "id": "adobe-animate-xfl-design",
+      "label": "Adobe Animate XFL",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["fla", "xfl"],
+      "supportLevel": "structured",
+      "status": "experimental",
+      "containerVersions": ["Modern compressed XFL-based FLA (CS5+)", "single DOMDocument XML XFL"],
+      "knownLimits": [
+        "Modern ZIP/XFL-based FLA is parsed in a terminable Worker; legacy binary FLA (Flash CS4 and earlier) is explicitly rejected",
+        "The bounded first-frame preview reconstructs solid shapes, static text, nested symbols, and direct PNG/JPEG instances; masks, filters, tweens, ActionScript, audio/video playback, and proprietary bitmap .dat payloads remain structure-only",
+        "A standard uncompressed .xfl is only a marker beside DOMDocument.xml, LIBRARY, and media folders; a single browser File object cannot access those siblings, so it must be packaged as FLA or supplied through a future folder/multi-file API",
+        "ZIP64, encryption, multi-disk archives, overlapping records, unsafe or ambiguous paths, CRC failures, unsupported compression, DTD/entity XML, external XML stylesheets, and configured size/node/depth/ratio limits are rejected"
+      ],
+      "capabilities": { "download": true, "print": false, "exportHtml": false, "zoom": false, "search": false }
+    },
+    {
+      "id": "adobe-xd-design",
+      "label": "Adobe XD Package",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["xd"],
+      "supportLevel": "structured",
+      "status": "experimental",
+      "containerVersions": ["XD UCF package", "AGC JSON inventory"],
+      "knownLimits": [
+        "A terminable module Worker shows the highest-resolution structurally referenced embedded PNG/JPEG rendition and a bounded manifest, artboard, layer, and resource inventory",
+        "Native AGC vector scene reconstruction is not implemented; files without a saved preview remain structure-only",
+        "ZIP64, encrypted, multi-disk, overlapping, unsafe-path, CRC-invalid, unsupported-compression, and configured expansion-limit packages are rejected"
+      ],
+      "capabilities": { "download": true, "print": false, "exportHtml": false, "zoom": false, "search": false }
+    },
+    {
+      "id": "indesign-native-design",
+      "label": "Adobe InDesign Native",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["indd", "indt"],
+      "supportLevel": "structured",
+      "status": "experimental",
+      "containerVersions": ["InDesign 2+ native database", "INDD", "INDT"],
+      "knownLimits": [
+        "A terminable module Worker shows a JPEG/PNG preview only when it is embedded in a structurally verified contiguous XMP object",
+        "The proprietary native layout database is not reconstructed; files without a saved XMP thumbnail remain metadata- or structure-only and should be exported to IDML for full page rendering",
+        "The reader follows declared master-page and object boundaries and never scans arbitrary binary bytes for coincidental image signatures; legacy InDesign 1.x is rejected"
+      ],
+      "capabilities": { "download": true, "print": false, "exportHtml": false, "zoom": false, "search": false }
+    },
+    {
+      "id": "postscript-design",
+      "label": "Adobe EPS and PostScript",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["ps"],
+      "enhancesRendererId": "data-asset",
+      "enhancesExtensions": ["eps"],
+      "supportLevel": "experimental",
+      "status": "experimental",
+      "containerVersions": ["EPSF/DSC PostScript", "Adobe PostScript programs"],
+      "knownLimits": [
+        "Stet WASM renders pages in a terminable Worker with latest-wins interactive requests and bounded source size, VM memory, page count, dimensions, pixels, DPI, total print working set, and retained canvas cache",
+        "The distributed runtime excludes upstream URW Base35 and Ghostscript CMYK ICC assets; Carlito, Tinos, Cousine, and Noto Sans Symbols 2 OFL substitutes plus the PLRM DeviceCMYK formula fallback can differ in metrics and color from Adobe applications",
+        "This experimental path is not claimed to implement every Adobe PostScript Level 3 operator, font technology, color-management workflow, or printer device"
+      ],
+      "capabilities": { "download": true, "print": true, "exportHtml": false, "zoom": true, "search": false }
+    },
+    {
+      "id": "adobe-palette-design",
+      "label": "Adobe Color Palettes",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["ase", "aco"],
+      "supportLevel": "structured",
+      "status": "stable",
+      "containerVersions": ["ASE 1.x", "ACO v1/v2"],
+      "knownLimits": [
+        "ASE RGB, CMYK, Gray, and CIELAB colors and ACO RGB, HSB, CMYK, CIELAB, and Gray colors are parsed with strict bounds in a terminable module Worker",
+        "Browser swatches convert CIELAB D50 and device CMYK to approximate sRGB; original model values remain visible for reference",
+        "Unknown ASE blocks and bounded ACO trailing application data are skipped and reported rather than executed"
+      ],
+      "capabilities": { "download": true, "print": true, "exportHtml": true, "zoom": false, "search": true }
+    },
+    {
+      "id": "photoshop-resource-design",
+      "label": "Adobe Photoshop Resources and Presets",
+      "category": "asset",
+      "packageName": "@file-viewer/renderer-design",
+      "preset": [],
+      "extensions": ["abr", "csh", "pat", "grd", "asl"],
+      "supportLevel": "structured",
+      "status": "experimental",
+      "containerVersions": ["Photoshop ABR 6.x", "Photoshop CSH v2", "PAT v1", "GRD v5", "ASL v2", "ag-psd 31.0.2"],
+      "knownLimits": [
+        "ABR previews decode saved brush-tip alpha, embedded patterns, and bounded preset metadata; they do not simulate Photoshop's stroke engine, dynamics, or paint blending",
+        "CSH previews reconstruct bounded Bezier path geometry; subtract, intersect, and exclude composition is exposed as metadata rather than claimed as Photoshop-equivalent raster output",
+        "PAT previews decode bounded RGB, grayscale, indexed-color, alpha, Raw, and PackBits pattern tiles; unsupported image modes and compression variants fail closed",
+        "GRD previews render saved solid color stops and deterministic bounded noise samples from v5 descriptors; they do not claim Photoshop's complete interpolation and color-management pipeline",
+        "ASL previews expose bounded layer-effect descriptors, blend metadata, and embedded pattern thumbnails as a structure view; they do not rasterize Photoshop's full effect stack",
+        "Legacy ABR variants before 6.x and unknown CSH container versions are rejected instead of being scanned heuristically"
+      ],
+      "capabilities": { "download": true, "print": true, "exportHtml": false, "zoom": false, "search": true }
     },
     {
       "id": "data-asset",

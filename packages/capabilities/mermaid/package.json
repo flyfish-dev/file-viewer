@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-mermaid",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Opt-in Mermaid rendering for Markdown in File Viewer.",
@@ -34,8 +34,8 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/renderer-text": "workspace:3.0.0",
-    "mermaid": "^11.16.1"
+    "@file-viewer/renderer-text": "workspace:3.0.1",
+    "mermaid": "^11.17.2"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

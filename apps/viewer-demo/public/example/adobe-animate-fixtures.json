@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-08-31T00:00:00.000Z",
+  "generator": "scripts/generate-adobe-animate-fixtures.mjs",
+  "fixtures": [
+    {
+      "file": "animate-modern-xfl.fla",
+      "kind": "modern-compressed-xfl-fla",
+      "bytes": 2213,
+      "sha256": "0fb47bf0d64260d713a4be99f6ae70babf41edbe7f2aec426d7399509c33eb3b",
+      "license": "Apache-2.0 (project-authored deterministic structure; no external artwork)",
+      "expected": {
+        "container": "compressed-xfl",
+        "stage": {
+          "width": 480,
+          "height": 270,
+          "frameRate": 24
+        },
+        "timelines": 1,
+        "layers": 4,
+        "frames": 48,
+        "symbols": 1,
+        "bitmapResources": 1,
+        "previewElements": 5
+      }
+    },
+    {
+      "file": "animate-uncompressed-folder.xfl",
+      "kind": "uncompressed-xfl-folder-marker",
+      "bytes": 9,
+      "sha256": "29ac2e403620428ee4130686b456aefb0cc6d45e3be6e9c3191af906c1301f38",
+      "license": "Apache-2.0 (project-authored marker fixture)",
+      "expectedError": "single browser File object cannot read sibling files"
+    }
+  ]
+}

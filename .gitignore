@@ -1,3 +1,4 @@
+/apps/chrome-extension/
 node_modules/
 **/dist/
 apps/docs-site/.next/

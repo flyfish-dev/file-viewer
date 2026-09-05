@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-docs",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,14 +11,14 @@
     "type-check": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@fumadocs/language": "0.2.2",
+    "@fumadocs/language": "0.2.4",
     "@tabler/icons-react": "3.46.0",
     "cnfast": "^0.1.0",
     "flexsearch": "0.8.212",
-    "fumadocs-core": "16.14.4",
-    "fumadocs-mdx": "15.2.3",
+    "fumadocs-core": "16.15.4",
+    "fumadocs-mdx": "15.4.0",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.14.4",
-    "next": "16.3.0",
+    "next": "16.3.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -26,7 +26,7 @@
     "@tailwindcss/postcss": "^4.3.3",
     "@types/flexsearch": "^0.7.42",
     "@types/mdx": "^2.0.14",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "postcss": "^8.5.26",

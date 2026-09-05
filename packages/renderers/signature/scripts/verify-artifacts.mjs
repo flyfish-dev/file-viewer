@@ -17,9 +17,13 @@ const readArtifacts = async () => ({
 })
 
 const first = await readArtifacts()
+// The raw budget reflects the compatibility-safe build: wasm-opt must stay
+// scoped to rustc's post-MVP features (no WasmGC) so Node 18 and browsers
+// without GC can parse the module. The shipped Brotli payload below stays
+// within its own budget.
 assert(
-  first.wasm.byteLength <= 1_600_000,
-  `rPGP WASM raw size ${first.wasm.byteLength} exceeds the 1,600,000-byte opt-in budget.`
+  first.wasm.byteLength <= 1_900_000,
+  `rPGP WASM raw size ${first.wasm.byteLength} exceeds the 1,900,000-byte opt-in budget.`
 )
 const brotli = brotliCompressSync(first.wasm, {
   params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 11 }

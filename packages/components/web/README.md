@@ -98,7 +98,7 @@ npx --yes file-viewer-copy-assets ./public/file-viewer
 
 ## 格式支持矩阵
 
-共享格式目录当前注册 244 个扩展名（221 个稳定、23 个实验），映射到 34 条预览链路。实验格式不计入稳定支持数量；完整能力通过 renderer / preset 按需装配。
+共享格式目录当前注册 266 个扩展名（224 个稳定、42 个实验），映射到 45 条预览链路。实验格式不计入稳定支持数量；完整能力通过 renderer / preset 按需装配。
 
 | 预览链路 | 分类 | 扩展名 | 等级 / 状态 | 能力 | 加载 |
 | --- | --- | --- | --- | --- | --- |
@@ -118,6 +118,7 @@ npx --yes file-viewer-copy-assets ./public/file-viewer
 | Hancom Hangul | office | `.hwp`, `.hwpx` | structured / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
 | Typst | document | `.typ`, `.typst` | high-fidelity / stable | 下载, 打印(适配器), HTML(适配器), 缩放(Provider), 搜索 | 按需异步 |
 | Archive | archive | `.zip`, `.zipx`, `.7z`, `.rar`, `.tar`, `.gz`, `.gzip`, `.tgz`, `.bz2`, `.bzip2`, `.tbz`, `.tbz2`, `.xz`, `.txz`, `.lzma`, `.zst`, `.tzst`, `.cab`, `.ar`, `.cpio`, `.iso`, `.xar`, `.lha`, `.lzh`, `.jar`, `.war`, `.ear`, `.apk`, `.cbz`, `.cbr` | structured / stable | 下载, 搜索 | 按需异步 |
+| Compiled HTML Help | ebook | `.chm` | structured / stable | 下载, 打印(适配器), HTML(适配器), 搜索 | 按需异步 |
 | Email | email | `.eml`, `.msg`, `.mbox` | structured / stable | 下载, HTML, 搜索 | 按需异步 |
 | EDA | eda | `.olb`, `.dra`, `.gds`, `.oas`, `.oasis` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
 | CAD | cad | `.dxf`, `.dwg`, `.dwf`, `.dwfx`, `.xps` | high-fidelity / stable | 下载, 打印, HTML, 缩放(Provider) | 按需异步 |
@@ -135,6 +136,16 @@ npx --yes file-viewer-copy-assets ./public/file-viewer
 | Code and Text | code | `.txt`, `.json`, `.js`, `.mjs`, `.cjs`, `.css`, `.java`, `.py`, `.html`, `.htm`, `.jsx`, `.ts`, `.tsx`, `.xml`, `.log`, `.vue`, `.yaml`, `.yml`, `.ini`, `.sh`, `.bash`, `.sql`, `.go`, `.rs`, `.php`, `.c`, `.cpp`, `.cc`, `.h`, `.hpp`, `.cs`, `.diff`, `.patch`, `.bundle`, `.bdl`, `.jsonc`, `.json5`, `.ipynb`, `.toml`, `.proto`, `.hcl`, `.tex`, `.gv`, `.http`, `.react`, `.rb`, `.swift`, `.kt` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
 | Video | media | `.mp4`, `.webm`, `.m3u8` | high-fidelity / stable | 下载 | 按需异步 |
 | Audio | media | `.mp3`, `.mpeg`, `.wav`, `.ogg`, `.oga`, `.opus`, `.m4a`, `.aac`, `.flac`, `.weba`, `.midi`, `.mid` | high-fidelity / stable | 下载 | 按需异步 |
+| Adobe Photoshop | asset | `.psb`, `.pdd`, `.psdt`, `.psd`（增强 `data-asset`） | experimental / experimental | 下载, 打印, 缩放 | 按需异步 |
+| Adobe Illustrator AI/AIT | asset | `.ait`, `.ai`（增强 `data-asset`） | experimental / experimental | 下载, 打印, 缩放, 搜索 | 按需异步 |
+| Adobe InDesign IDML | asset | `.idml` | experimental / experimental | 下载, 打印, 缩放 | 按需异步 |
+| Adobe InCopy and InDesign Exchange | asset | `.icml`, `.idms`, `.inx` | structured / experimental | 下载, 打印, HTML, 搜索 | 按需异步 |
+| Adobe Animate XFL | asset | `.fla`, `.xfl` | structured / experimental | 下载 | 按需异步 |
+| Adobe XD Package | asset | `.xd` | structured / experimental | 下载 | 按需异步 |
+| Adobe InDesign Native | asset | `.indd`, `.indt` | structured / experimental | 下载 | 按需异步 |
+| Adobe EPS and PostScript | asset | `.ps`, `.eps`（增强 `data-asset`） | experimental / experimental | 下载, 打印, 缩放 | 按需异步 |
+| Adobe Color Palettes | asset | `.ase`, `.aco` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
+| Adobe Photoshop Resources and Presets | asset | `.abr`, `.csh`, `.pat`, `.grd`, `.asl` | structured / experimental | 下载, 打印, 搜索 | 按需异步 |
 | Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | 下载, HTML, 搜索 | 按需异步 |
 
 ## 工程级按需 renderer 装配

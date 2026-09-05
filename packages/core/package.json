@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/core",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Framework-neutral modular TypeScript core for File Viewer renderer orchestration, lifecycle APIs, search, zoom, print, and export",
@@ -94,7 +94,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "dompurify": "3.4.13"
+    "dompurify": "3.4.14"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

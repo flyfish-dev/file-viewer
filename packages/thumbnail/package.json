@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/thumbnail",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "High-performance browser thumbnail generation for File Viewer.",
@@ -43,15 +43,15 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0",
+    "@file-viewer/core": "workspace:3.0.1",
     "jszip": "^3.10.1",
     "modern-screenshot": "^4.7.0"
   },
   "devDependencies": {
-    "@xmldom/xmldom": "0.9.10",
+    "@xmldom/xmldom": "0.9.12",
     "epubjs": "0.3.93",
     "esbuild": "^0.28.1",
-    "happy-dom": "^20.8.4",
+    "happy-dom": "^20.11.15",
     "typescript": "^6.0.3",
     "vitest": "3.2.7"
   },

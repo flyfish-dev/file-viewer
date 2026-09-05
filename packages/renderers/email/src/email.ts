@@ -25,7 +25,7 @@ interface EmailAttachmentView {
   load(): Promise<ArrayBuffer>;
 }
 
-interface ParsedEmailView {
+export interface ParsedEmailView {
   kind: EmailKind;
   subject: string;
   from: EmailAddress[];
@@ -172,7 +172,9 @@ const createPostalAttachments = (
   })).then(() => attachments);
 };
 
-const parseEml = async (
+// Exported for the package-local #232 regression gate (verify-github-232.mjs); it
+// stays out of the public exports map, so the shipped API surface is unchanged.
+export const parseEml = async (
   buffer: ArrayBuffer,
   filename: string,
   objectUrls: string[],

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/asset-installer",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
   "type": "module",
   "description": "Small transactional installer shared by independently shipped File Viewer capability asset packs.",
@@ -28,7 +28,7 @@
     "test": "node --test test/*.test.mjs"
   },
   "devDependencies": {
-    "@types/node": "^25.9.2",
+    "@types/node": "^26.4.0",
     "typescript": "^6.0.3"
   },
   "engines": {

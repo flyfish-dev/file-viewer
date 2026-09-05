@@ -2,12 +2,39 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
-## Unreleased
+## File Viewer v3.0.1 — 2026-09-03
+
+### 可读文本预览
+
+- 新增可选的可读文本预览（#235）：`text.wrapLongLines` 在普通与虚拟文本路径按逻辑行换行，`text.prettyPrint` 按格式动态加载 Prettier parser 并提供原始源码切换，`prettyPrintMaxBytes` 仅约束格式化且默认继承大文本阈值；任何超限、异常或不支持输入均无错误回退，下载仍使用原始字节。
 
 ### CLI reliability and interaction
 
 - 新建项目的交互式格式选择改为预先列出 renderer/格式族并显示勾选状态；当前 profile 已包含的能力保持启用，额外能力支持编号、范围、全选和清空，不再要求手写扩展名。
 - Vite 8 脚手架声明并在 `dev`/`build` 前校验 Node `^20.19.0 || >=22.12.0`，旧运行时会获得明确迁移提示；Web Component 事件从元素所属 document realm 创建，并为缺失全局 `CustomEvent` 的 DOM 环境保留兼容回退。
+
+### 新增格式渲染器
+
+- 新增 `@file-viewer/renderer-chm`：CHM 帮助文档在浏览器内离线解析，Rust/WASM 解包配合沙箱阅读器还原目录、正文与图片，不上传任何文件内容。
+- 新增 `@file-viewer/renderer-design`：Adobe 设计文件离线预览，覆盖 PSD/PSB 图层、Illustrator 原生 PGF 与 PDF 兼容表面、IDML/ICML/INX、INDD/XD、现代 XFL 动画与色板、画笔等资源文件；作为显式按需包交付，Worker、WASM 与字体全部可自托管。
+
+### PDF
+
+- 修复 #242 报告的 3.0 打包失败（Vite 8 + pnpm 11 + Node 22）：`@file-viewer/vite-plugin` 从 2.4 起就把 PDF 资产列为必需，2.4 之所以能通过，是因为 `@fontsource-variable/noto-sans-sc` 当时是 `@file-viewer/renderer-pdf` 的运行时依赖；3.0.0 把该字体降级为 devDependency，安装后的应用解析不到任何字体来源，必需资产缺失直接中断 `vite build`，因此回退 2.4 看起来像修复。3.0.1 把字体来源上移到启用 PDF renderer 的 preset：`preset-office`、`preset-all` 直接声明字体包，`preset-standard` 由 `@file-viewer/assets-standard` 提供；`@file-viewer/renderer-pdf@3.0.1` 的发布包内不再携带任何字体副本（tarball 已核对），而在确实没有字体来源时该资产改为可选，构建输出警告而不是失败，PDF 继续依赖文档内嵌字体。该资产归属与可选性由 #242 门禁与 profile 门禁持续校验。
+
+### 邮件
+
+- EML 解析基线升级到 postal-mime `3.0.0`（#232）：未声明字符集的部件按邮件头编码正确回退，折叠的 RFC 5322 头部完整展开，重复头部按首个生效，`to`/`cc`/`bcc` 保持原始顺序。
+
+### 生态组件安装
+
+- `@file-viewer/vue3` 不再把宿主框架 `vue` 作为运行时依赖安装，改为 `peerDependencies: ">=3.3 <4"`，与 Vue 2.6/2.7、React、Svelte、jQuery 组件保持一致；构建期图标库同步移入 devDependencies，直接运行时依赖只剩 `@file-viewer/core`。这修复了应用锁定的 Vue 版本与组件自带版本不一致时安装出两份 Vue 实例、组件挂载抛 `Cannot read properties of null (reading 'refs')` 并留下空白页面的问题。
+- 新增宿主运行时契约门禁：生态组件的可安装依赖只允许 File Viewer 自身包，宿主框架必须且只能声明为 peer，且三条 Vue 版本线互不重叠；冷安装校验在安装完成后立即比对宿主框架的解析路径，出现重复副本时直接失败并给出可读原因。
+- `msdoc-viewer` 历史兼容别名升到 `0.2.5` 以跟随 3.0.1 的 `@file-viewer/doc`：该别名按解析到的 Word renderer 版本发布，同一冻结版本无法二次发布。本次发布冻结 88 个 npm 目标：87 个主线包为 `3.0.1`，`msdoc-viewer` 别名为 `0.2.5`。
+
+### 依赖安全
+
+- XMind 解析路径不再解析 `@xmldom/xmldom` 0.9.10：该版本带有 6 项安全公告，且均可由 `DOMParser.parseFromString` 在解析不可信文件时触发；依赖覆盖将整张依赖图锁定到 0.9.12，开源边界与安装门禁会持续校验该覆盖确实生效（#246）。
 
 ## File Viewer v3.0.0 — 2026-08-27
 
@@ -21,7 +48,6 @@
 
 ### Formats and issue fixes
 
-- 新增可选的可读文本预览（#235）：`text.wrapLongLines` 在普通与虚拟文本路径按逻辑行换行，`text.prettyPrint` 按格式动态加载 Prettier parser 并提供原始源码切换，`prettyPrintMaxBytes` 仅约束格式化且默认继承大文本阈值；任何超限、异常或不支持输入均无错误回退，下载仍使用原始字节。
 - #200 的原始 PPTX 样例已纳入五页布局回归，覆盖 DrawingML 表格边界与内边距、SmartArt 水平文字、复杂形状和 PPTX Worker，并通过 Chromium、Firefox 与 WebKit。
 - #206 提供显式按需的数字签名与证据容器 renderer，使用许可宽松的 rPGP Worker/WASM，并将解析、摘要/签名检查、信任和法律效力分开呈现；不包含 LGPL 源码。
 - #210 提供显式按需的本地 DICOM Part 10 单文件预览，覆盖未压缩、JPEG Lossless、JPEG-LS 和 JPEG 2000 Lossless 的单帧/多帧边界；不宣称诊断、PACS/DICOMweb 或多文件序列能力。

@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-demo",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,19 +10,20 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.0",
-    "@file-viewer/preset-all": "workspace:3.0.0",
-    "@file-viewer/renderer-dicom": "workspace:3.0.0",
-    "@file-viewer/renderer-signature": "workspace:3.0.0",
-    "@file-viewer/web": "workspace:3.0.0",
-    "@file-viewer/vue3": "workspace:3.0.0",
-    "@lucide/vue": "^1.17.0",
+    "@file-viewer/core": "workspace:3.0.1",
+    "@file-viewer/preset-all": "workspace:3.0.1",
+    "@file-viewer/renderer-design": "workspace:3.0.1",
+    "@file-viewer/renderer-dicom": "workspace:3.0.1",
+    "@file-viewer/renderer-signature": "workspace:3.0.1",
+    "@file-viewer/web": "workspace:3.0.1",
+    "@file-viewer/vue3": "workspace:3.0.1",
+    "@lucide/vue": "^1.37.0",
     "diff": "^9.0.0",
     "qs": "^6.15.2",
-    "vue": "^3.5.35"
+    "vue": "^3.5.42"
   },
   "devDependencies": {
-    "@types/node": "^25.9.2",
+    "@types/node": "^26.4.0",
     "@types/qs": "^6.15.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
@@ -34,7 +35,7 @@
     "react-dom": "^19.2.7",
     "stream-browserify": "^3.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16",
+    "vite": "^8.2.2",
     "vue-tsc": "^3.3.4"
   }
 }

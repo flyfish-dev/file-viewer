@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?aid style="50" type="snippet" readerVersion="6.0" featureSet="257" product="20.3(73)" ?>
+<?aid SnippetType="PageItem"?>
+<Document DOMVersion="20.3" Self="d">
+  <Color Self="Color/Coral" Model="Process" Space="RGB" ColorValue="239 91 104" Name="Coral"/>
+  <Color Self="Color/Ink" Model="Process" Space="RGB" ColorValue="27 42 65" Name="Ink"/>
+  <Color Self="Color/Paper" Model="Process" Space="CMYK" ColorValue="0 0 0 0" Name="Paper"/>
+  <RootCharacterStyleGroup Self="CharacterStyleGroup/root">
+    <CharacterStyle Self="$ID/NormalCharacterStyle" Name="Default"/>
+    <CharacterStyle Self="CharacterStyle/Bold" Name="Bold" FontStyle="Bold"/>
+  </RootCharacterStyleGroup>
+  <RootParagraphStyleGroup Self="ParagraphStyleGroup/root">
+    <ParagraphStyle Self="$ID/NormalParagraphStyle" Name="Normal" SpaceAfter="8"/>
+    <ParagraphStyle Self="ParagraphStyle/Heading" Name="Heading" PointSize="24" SpaceAfter="12"/>
+  </RootParagraphStyleGroup>
+  <Layer Self="Layer/Design" Name="Design" Visible="true"/>
+  <Story Self="Story/Intro" StoryTitle="Browser-native Adobe preview">
+    <ParagraphStyleRange AppliedParagraphStyle="ParagraphStyle/Heading">
+      <CharacterStyleRange AppliedCharacterStyle="CharacterStyle/Bold" AppliedFont="Inter" PointSize="24" FillColor="Color/Ink">
+        <Content>Design files, kept local</Content>
+      </CharacterStyleRange>
+    </ParagraphStyleRange>
+    <ParagraphStyleRange AppliedParagraphStyle="$ID/NormalParagraphStyle">
+      <CharacterStyleRange AppliedCharacterStyle="$ID/NormalCharacterStyle" AppliedFont="Inter" PointSize="12" FillColor="Color/Ink">
+        <Content>This IDMS fixture carries a reusable layout fragment, styled story, colors, layer, and verified page-item geometry.</Content>
+      </CharacterStyleRange>
+    </ParagraphStyleRange>
+  </Story>
+  <Spread Self="Spread/Main">
+    <Rectangle Self="Rectangle/Background" Name="Background" ItemLayer="Layer/Design" FillColor="Color/Paper" StrokeColor="Color/Ink" StrokeWeight="1" ItemTransform="1 0 0 1 0 0">
+      <Properties><PathGeometry><GeometryPathType PathOpen="false"><PathPointArray>
+        <PathPointType Anchor="0 0" LeftDirection="0 0" RightDirection="0 0"/>
+        <PathPointType Anchor="480 0" LeftDirection="480 0" RightDirection="480 0"/>
+        <PathPointType Anchor="480 320" LeftDirection="480 320" RightDirection="480 320"/>
+        <PathPointType Anchor="0 320" LeftDirection="0 320" RightDirection="0 320"/>
+      </PathPointArray></GeometryPathType></PathGeometry></Properties>
+    </Rectangle>
+    <Rectangle Self="Rectangle/Accent" Name="Accent panel" ItemLayer="Layer/Design" FillColor="Color/Coral" StrokeColor="Color/Coral" StrokeWeight="0" ItemTransform="1 0 0 1 0 0">
+      <Properties><PathGeometry><GeometryPathType PathOpen="false"><PathPointArray>
+        <PathPointType Anchor="24 24" LeftDirection="24 24" RightDirection="24 24"/>
+        <PathPointType Anchor="456 24" LeftDirection="456 24" RightDirection="456 24"/>
+        <PathPointType Anchor="456 96" LeftDirection="456 96" RightDirection="456 96"/>
+        <PathPointType Anchor="24 96" LeftDirection="24 96" RightDirection="24 96"/>
+      </PathPointArray></GeometryPathType></PathGeometry></Properties>
+    </Rectangle>
+    <TextFrame Self="TextFrame/Intro" Name="Intro copy" ItemLayer="Layer/Design" ParentStory="Story/Intro" FillColor="Color/Paper" StrokeColor="Color/Ink" StrokeWeight="1" ItemTransform="1 0 0 1 0 0">
+      <Properties><PathGeometry><GeometryPathType PathOpen="false"><PathPointArray>
+        <PathPointType Anchor="48 124" LeftDirection="48 124" RightDirection="48 124"/>
+        <PathPointType Anchor="432 124" LeftDirection="432 124" RightDirection="432 124"/>
+        <PathPointType Anchor="432 280" LeftDirection="432 280" RightDirection="432 280"/>
+        <PathPointType Anchor="48 280" LeftDirection="48 280" RightDirection="48 280"/>
+      </PathPointArray></GeometryPathType></PathGeometry></Properties>
+    </TextFrame>
+    <Oval Self="Oval/Marker" Name="Marker" ItemLayer="Layer/Design" FillColor="Color/Ink" StrokeColor="Color/Ink" StrokeWeight="0" ItemTransform="1 0 0 1 0 0">
+      <Properties><PathGeometry><GeometryPathType PathOpen="false"><PathPointArray>
+        <PathPointType Anchor="408 52" LeftDirection="408 52" RightDirection="408 52"/>
+        <PathPointType Anchor="432 52" LeftDirection="432 52" RightDirection="432 52"/>
+        <PathPointType Anchor="432 76" LeftDirection="432 76" RightDirection="432 76"/>
+        <PathPointType Anchor="408 76" LeftDirection="408 76" RightDirection="408 76"/>
+      </PathPointArray></GeometryPathType></PathGeometry></Properties>
+    </Oval>
+  </Spread>
+</Document>

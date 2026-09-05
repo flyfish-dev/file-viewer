@@ -18,7 +18,7 @@ The project is designed for teams that need users to open business attachments d
 - License: File Viewer-authored source and packages are Apache-2.0; the bundled `@file-viewer/ppt` runtime retains its included independent LICENSE and NOTICE, as do other third-party dependencies.
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
-- Source matrix scope: 84 File Viewer npm targets, 244 registered extensions, and 34 preview pipelines; 221 extensions are stable and 23 DICOM/signature mappings are experimental.
+- Source matrix scope: 86 File Viewer npm targets, 266 registered extensions, and 45 preview pipelines; 224 extensions are stable and 42 are experimental. The experimental set contains 23 DICOM/signature mappings and 19 explicit opt-in Adobe design mappings.
 - Current published release: v3.0.0, https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0. 83 mainline File Viewer packages use 3.0.0; the historical `msdoc-viewer` compatibility package uses 0.2.4. Word uses `@file-viewer/docx` 0.3.28; Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.4 release.
 
 ## Format Coverage
@@ -30,7 +30,7 @@ The format matrix covers Office documents, fixed-layout documents, engineering a
 - Archives and communication files: zip, 7z, rar, tar, eml, msg, mbox, epub.
 - Code, data, media, and geo: markdown, JSON, TypeScript, Python, patch/diff, git bundle, SQLite, Parquet, video, audio, GeoJSON, KML.
 
-The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/standard/office/engineering/all presets. Every v3.0.0 Full package preserves the published preset-all compatibility matrix and must not be documented as requiring a separate preset install or `options.preset`. Later specialist DICOM and signature renderers remain explicit additions; the CLI's `full` profile adds them only after showing their size, runtime, and license boundaries.
+The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/standard/office/engineering/all presets. Every v3.0.0 Full package preserves the published preset-all compatibility matrix and must not be documented as requiring a separate preset install or `options.preset`. Adobe design, DICOM, and signature renderers remain explicit additions. The CLI's `full` profile defaults to the established DICOM/signature additions after showing their size, runtime, and license boundaries; Adobe design is included only when its formats or capability are explicitly selected.
 
 PowerPoint has two strict rendering routes. Binary `.ppt` files use the independently versioned `@file-viewer/ppt@0.3.3` runtime. Demo, Full, copy-assets, and CDN/IIFE distributions include its verified public ESM/Worker/WASM/CJK-font files under `vendor/ppt/`. Open XML `.pptx` files use the separate `@file-viewer/pptx` Worker engine. Documentation and examples should not collapse these into one renderer.
 
@@ -48,7 +48,7 @@ PowerPoint has two strict rendering routes. Binary `.ppt` files use the independ
 
 - Framework Full packages: `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/svelte-full`, and `@file-viewer/jquery-full`.
 - Framework-neutral Full package: `@file-viewer/web-full` for Vanilla JavaScript, Web Component, and IIFE deployment.
-- Capability: every Full package includes `@file-viewer/preset-all` and registers the complete supported format set by default.
+- Capability: every Full package includes `@file-viewer/preset-all` and registers the frozen 221-extension, 32-pipeline compatibility baseline by default. Adobe design, DICOM, and digital-signature/evidence renderers remain explicit additions.
 - Assets: Workers, WASM modules, fonts, vendor scripts, renderer chunks, and integrity metadata remain version-aligned. Binary PPT has one authoritative `vendor/ppt/` runtime tree; build gates reject duplicate hashed WASM/font copies.
 - Offline boundary: runtime preview does not depend on a public CDN or third-party online asset fallback.
 - Custom static prefixes remain supported; the default asset root is `file-viewer/` under the deployment base.

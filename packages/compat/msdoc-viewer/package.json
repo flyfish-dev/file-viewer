@@ -1,6 +1,6 @@
 {
   "name": "msdoc-viewer",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": false,
   "type": "module",
   "description": "Historical compatibility alias for @file-viewer/doc.",
@@ -64,7 +64,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/doc": "workspace:3.0.0"
+    "@file-viewer/doc": "workspace:3.0.1"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
