@@ -115,6 +115,12 @@
       "description": "Release index for ecosystem packages, repositories, source policy and public artifacts."
     },
     {
+      "name": "npm-release-manifest.json",
+      "role": "npm-release-manifest",
+      "required": true,
+      "description": "Immutable npm package and tarball manifest consumed by the trusted publishing workflow."
+    },
+    {
       "name": "release-status.json",
       "role": "release-status",
       "required": true,
