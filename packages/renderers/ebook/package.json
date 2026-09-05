@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.1",
-    "pako": "^2.1.0"
+    "pako": "^2.2.0"
   },
   "devDependencies": {
     "@xmldom/xmldom": "0.9.12",
