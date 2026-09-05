@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 
+import cadRenderer from '../dist/index.js';
+
 import {
   applyCadViewerColorMode,
   normalizeFileViewerCadColorMode,
@@ -7,6 +9,9 @@ import {
   resolveFileViewerCadMonochromeColor,
   supportsCadViewerColorMode,
 } from '../dist/colorMode.js';
+
+assert.equal(cadRenderer.id, 'file-viewer-renderer-cad');
+assert.ok(cadRenderer.definitions.some(definition => definition.id === 'cad'));
 
 assert.equal(normalizeFileViewerCadColorMode('monochrome'), 'monochrome');
 assert.equal(normalizeFileViewerCadColorMode('source'), 'source');

@@ -1,6 +1,6 @@
-import type { WorkBook } from 'styled-exceljs';
+import type { CellObject, WorkBook, WorkSheet } from 'styled-exceljs';
 import { read, utils } from 'styled-exceljs';
-import SheetJsModel from './SheetJsModel.js';
+import SheetJsModel, { formatCellValue } from './SheetJsModel.js';
 import { parseSpreadsheetCharts } from './chartParser.js';
 import {
   prepareSpreadsheetReadInput,
@@ -42,6 +42,21 @@ export interface SpreadsheetWorkerRequest {
 export interface SpreadsheetWorkerResponse {
   type: string;
   payload?: Record<string, any>;
+}
+
+export interface SpreadsheetSearchOptions {
+  caseSensitive?: boolean;
+  wholeWord?: boolean;
+  maxMatches?: number;
+}
+
+export interface SpreadsheetSearchMatch {
+  sheet: number;
+  sheetName: string;
+  row: number;
+  col: number;
+  text: string;
+  matchText: string;
 }
 
 const readOptions = {
@@ -485,6 +500,121 @@ export const parseSpreadsheetSheet = (
   }
 };
 
+const escapeSearchRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const createSpreadsheetSearchRegExp = (query: string, options: SpreadsheetSearchOptions) => {
+  const source = options.wholeWord
+    ? `\\b${escapeSearchRegExp(query)}\\b`
+    : escapeSearchRegExp(query);
+  return new RegExp(source, options.caseSensitive ? 'g' : 'gi');
+};
+
+type DenseWorksheet = Array<Array<CellObject | undefined> | undefined>;
+
+const visitWorksheetCells = (
+  worksheet: WorkSheet,
+  visit: (cell: CellObject, row: number, col: number) => boolean
+) => {
+  const candidate = worksheet as WorkSheet & { '!data'?: DenseWorksheet };
+  const rows = Array.isArray(worksheet)
+    ? worksheet as unknown as DenseWorksheet
+    : candidate['!data'];
+
+  if (rows) {
+    for (const rowKey of Object.keys(rows)) {
+      const row = rows[Number(rowKey)];
+      const rowIndex = Number(rowKey);
+      if (!Number.isInteger(rowIndex) || rowIndex < 0 || !Array.isArray(row)) {
+        continue;
+      }
+      for (const colKey of Object.keys(row)) {
+        const colIndex = Number(colKey);
+        const cell = row[colIndex];
+        if (!Number.isInteger(colIndex) || colIndex < 0 || !cell) {
+          continue;
+        }
+        if (!visit(cell, rowIndex, colIndex)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  for (const key of Object.keys(worksheet)) {
+    if (key.startsWith('!') || !/^[A-Z]+[1-9][0-9]*$/i.test(key)) {
+      continue;
+    }
+    const cell = worksheet[key] as CellObject | undefined;
+    if (!cell) {
+      continue;
+    }
+    let position;
+    try {
+      position = utils.decode_cell(key);
+    } catch {
+      continue;
+    }
+    if (!visit(cell, position.r, position.c)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const searchSpreadsheetWorkbook = (
+  context: SpreadsheetParserContext,
+  query: string,
+  options: SpreadsheetSearchOptions = {}
+): SpreadsheetSearchMatch[] => {
+  const normalizedQuery = query.replace(/\s+/g, ' ').trim();
+  if (!normalizedQuery || !context.workbook?.Sheets) {
+    return [];
+  }
+
+  const maxMatches = Math.max(1, Math.floor(options.maxMatches || 1000));
+  const expression = createSpreadsheetSearchRegExp(normalizedQuery, options);
+  const matches: SpreadsheetSearchMatch[] = [];
+
+  for (const sheet of context.sheets) {
+    const worksheet = context.workbook.Sheets[sheet.name] as WorkSheet | undefined;
+    if (!worksheet) {
+      continue;
+    }
+
+    const completed = visitWorksheetCells(worksheet, (cell, row, col) => {
+      const text = formatCellValue(cell);
+      if (!text) {
+        return true;
+      }
+
+      expression.lastIndex = 0;
+      let match: RegExpExecArray | null;
+      while ((match = expression.exec(text)) && matches.length < maxMatches) {
+        if (!match[0]) {
+          expression.lastIndex += 1;
+          continue;
+        }
+        matches.push({
+          sheet: sheet.id,
+          sheetName: sheet.name,
+          row,
+          col,
+          text,
+          matchText: match[0],
+        });
+      }
+      return matches.length < maxMatches;
+    });
+
+    if (!completed || matches.length >= maxMatches) {
+      break;
+    }
+  }
+
+  return matches;
+};
+
 export const handleSpreadsheetWorkerRequest = (
   context: SpreadsheetParserContext,
   request: SpreadsheetWorkerRequest
@@ -498,6 +628,15 @@ export const handleSpreadsheetWorkerRequest = (
       });
     case 'parseSheet':
       return parseSpreadsheetSheet(context, request.payload);
+    case 'searchWorkbook':
+      return [{
+        type: 'searchWorkbook',
+        payload: {
+          requestId: request.payload?.requestId,
+          query: request.payload?.query || '',
+          matches: searchSpreadsheetWorkbook(context, request.payload?.query || '', request.payload),
+        },
+      }];
     default:
       return [];
   }

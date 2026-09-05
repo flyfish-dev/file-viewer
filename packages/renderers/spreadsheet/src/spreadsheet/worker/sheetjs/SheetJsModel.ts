@@ -126,7 +126,7 @@ const cellKey = (row: number, col: number) => {
   return `${row}-${col}`
 }
 
-const formatCellValue = (cell?: CellObject) => {
+export const formatCellValue = (cell?: CellObject) => {
   if (!cell) {
     return ''
   }

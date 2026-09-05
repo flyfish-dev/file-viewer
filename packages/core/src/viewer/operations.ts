@@ -444,11 +444,13 @@ export const executeFileViewerPrintOperation = async ({
     throw new Error(translateFileViewerMessage(i18n, 'error.printUnavailable'));
   }
 
-  if (!await runBeforeOperation(beforeOperation, 'print')) {
+  const beforeResult = beforeOperation ? beforeOperation('print') : true;
+  if (beforeResult === false) {
     return false;
   }
 
-  const printableRoot = await buildRenderedDomDocumentFromOperation({ ...input, i18n });
+  // Preserve the browser's transient user activation while the snapshot is built.
+  const ownsPrintWindow = !printWindow;
   const targetWindow = printWindow ||
     openWindow?.() ||
     (typeof window !== 'undefined' ? window.open('', '_blank') : null);
@@ -457,16 +459,32 @@ export const executeFileViewerPrintOperation = async ({
     throw new Error(translateFileViewerMessage(i18n, 'error.printWindowBlocked'));
   }
 
-  await ensureFileViewerPrintStandardsMode(targetWindow);
-  replaceFileViewerPrintDocument(targetWindow.document, printableRoot);
-  targetWindow.focus();
-  await waitForFileViewerPrintWindowReady(targetWindow);
+  try {
+    if (!await beforeResult) {
+      if (ownsPrintWindow) {
+        targetWindow.close();
+      }
+      return false;
+    }
 
-  if (autoPrint !== false) {
-    targetWindow.print();
+    const printableRoot = await buildRenderedDomDocumentFromOperation({ ...input, i18n });
+
+    await ensureFileViewerPrintStandardsMode(targetWindow);
+    replaceFileViewerPrintDocument(targetWindow.document, printableRoot);
+    targetWindow.focus();
+    await waitForFileViewerPrintWindowReady(targetWindow);
+
+    if (autoPrint !== false) {
+      targetWindow.print();
+    }
+
+    return true;
+  } catch (error) {
+    if (ownsPrintWindow) {
+      targetWindow.close();
+    }
+    throw error;
   }
-
-  return true;
 };
 
 const handleFileViewerOperationActionError = (

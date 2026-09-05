@@ -278,7 +278,7 @@ pnpm --filter @flyfish-group/file-viewer-component-demo preview
 
 ## 完整覆盖与绘图说明
 
-上面的清单已经覆盖当前注册的主要样例扩展名。CAD 链路使用 `@flyfish-dev/cad-viewer` 0.8.0，支持 DWG / DXF / DWF / DWFx / XPS，并增强了 DWG 文字、宽多段线、复杂线型以及外部 SHX 引用识别。0.8.0 底层引擎新增 BOM 提取与 CSV/JSON 导出接口，强化 DWG/DXF 元数据边界，并把 LibreDWG WASM 升级到 0.7.9，修复复杂线型 STYLE 引用为空时合法图纸无法加载的问题；DWG 会按需加载 viewer assets 中 `wasm/cad/` 下的 Worker 和 LibreDWG WASM，DWF/DWFx/XPS 会按需加载 native renderer 与 `dwfv-render.wasm`。
+上面的清单已经覆盖当前注册的主要样例扩展名。CAD 链路使用 `@flyfish-dev/cad-viewer` 0.8.1，支持 DWG / DXF / DWF / DWFx / XPS，并增强了 DWG 文字、宽多段线、复杂线型以及外部 SHX 引用识别。0.8.0 底层引擎新增 BOM 提取与 CSV/JSON 导出接口，强化 DWG/DXF 元数据边界，并把 LibreDWG WASM 升级到 0.7.9，修复复杂线型 STYLE 引用为空时合法图纸无法加载的问题；DWG 会按需加载 viewer assets 中 `wasm/cad/` 下的 Worker 和 LibreDWG WASM，DWF/DWFx/XPS 会按需加载 native renderer 与 `dwfv-render.wasm`。
 
 3D 模型示例覆盖 glTF、OBJ、STL、PLY 四条最常用的浏览器模型入口；FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ、PCD、VRML/WRL、XYZ、VTK/VTP 等扩展名也已经注册到 `@file-viewer/renderer-3d`。STEP / STP、IGES / IGS 和 BREP 已通过 `@file-viewer/geometry-engine` 在本地 OCCT Worker/WASM 中三角化并交给 Three.js 渲染；`model.step` 会强制验证真实网格、适配视图和统一缩放，不能退回转换提示。IFC 与 3DM 当前仍只展示签名识别和独立 `web-ifc` / `rhino3dm` 接入说明。XMind 样例用于验证多 sheet 脑图、目录、标签、备注、链接、Panzoom 画布拖拽平移、移动端双指缩放、适配画布、搜索、缩放和导出链路。
 

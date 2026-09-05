@@ -54,7 +54,8 @@ export const DEFAULT_FILE_VIEWER_PDF_STANDARD_FONT_PATH = 'vendor/pdf/standard_f
 export const DEFAULT_FILE_VIEWER_PDF_CJK_FONT_FALLBACK_PATH = 'vendor/pdf/fonts/';
 export const DEFAULT_FILE_VIEWER_DRAWIO_VIEWER_SCRIPT_PATH = 'vendor/drawio/viewer-static.min.js';
 export const DEFAULT_FILE_VIEWER_DRAWIO_ASSET_PATH = 'vendor/drawio/';
-export const DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION = '0.8.0';
+export const DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION = '0.8.1';
+export const COMPATIBILITY_FILE_VIEWER_CAD_RUNTIME_VERSION = '0.8.0';
 export const DEFAULT_FILE_VIEWER_CAD_WASM_PATH =
   `wasm/cad/${DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION}/`;
 export const DEFAULT_FILE_VIEWER_CAD_WORKER_PATH =
@@ -790,6 +791,51 @@ export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRe
         required: true,
         defaultPath: DEFAULT_FILE_VIEWER_CAD_LIBREDWG_WASM_PATH,
         description: 'LibreDWG WebAssembly runtime loaded by the CAD DWG worker for offline parsing.',
+      },
+      {
+        id: 'cad-compat-0-8-0-wasm-directory',
+        rendererId: 'cad',
+        kind: 'wasm-directory',
+        target: 'public',
+        required: true,
+        defaultPath: `wasm/cad/${COMPATIBILITY_FILE_VIEWER_CAD_RUNTIME_VERSION}/`,
+        description: 'Legacy @flyfish-dev/cad-viewer 0.8.0 directory kept for full-package path compatibility.',
+      },
+      {
+        id: 'cad-compat-0-8-0-dwg-worker',
+        rendererId: 'cad',
+        kind: 'worker',
+        target: 'public',
+        required: true,
+        defaultPath: `wasm/cad/${COMPATIBILITY_FILE_VIEWER_CAD_RUNTIME_VERSION}/dwg-worker.js`,
+        description: 'Legacy CAD 0.8.0 DWG worker kept for full-package path compatibility.',
+      },
+      {
+        id: 'cad-compat-0-8-0-dwf-wasm',
+        rendererId: 'cad',
+        kind: 'wasm',
+        target: 'public',
+        required: true,
+        defaultPath: `wasm/cad/${COMPATIBILITY_FILE_VIEWER_CAD_RUNTIME_VERSION}/dwfv-render.wasm`,
+        description: 'Legacy CAD 0.8.0 DWF runtime kept for full-package path compatibility.',
+      },
+      {
+        id: 'cad-compat-0-8-0-libredwg-script',
+        rendererId: 'cad',
+        kind: 'script',
+        target: 'public',
+        required: true,
+        defaultPath: `wasm/cad/${COMPATIBILITY_FILE_VIEWER_CAD_RUNTIME_VERSION}/libredwg-web.js`,
+        description: 'Legacy CAD 0.8.0 LibreDWG script kept for full-package path compatibility.',
+      },
+      {
+        id: 'cad-compat-0-8-0-libredwg-wasm',
+        rendererId: 'cad',
+        kind: 'wasm',
+        target: 'public',
+        required: true,
+        defaultPath: `wasm/cad/${COMPATIBILITY_FILE_VIEWER_CAD_RUNTIME_VERSION}/libredwg-web.wasm`,
+        description: 'Legacy CAD 0.8.0 LibreDWG WebAssembly runtime kept for full-package path compatibility.',
       },
       {
         id: 'cad-legacy-dwg-worker',

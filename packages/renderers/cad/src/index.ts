@@ -12,8 +12,8 @@ export {
   resolveCadViewerSourceDocument,
   resolveFileViewerCadMonochromeColor,
   supportsCadViewerColorMode,
-} from './colorMode';
-export type { CadViewerColorModeAdapter } from './colorMode';
+} from './colorMode.js';
+export type { CadViewerColorModeAdapter } from './colorMode.js';
 
 const cadDefinition = DEFAULT_RENDERER_DEFINITIONS.find(
   definition => definition.id === 'cad'

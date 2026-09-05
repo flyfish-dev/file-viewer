@@ -47,7 +47,7 @@ import {
   resolveFileViewerCadMonochromeColor,
   resolveCadViewerSourceDocument,
   supportsCadViewerColorMode,
-} from './colorMode';
+} from './colorMode.js';
 
 type CadStatus = 'loading' | 'ready' | 'error';
 

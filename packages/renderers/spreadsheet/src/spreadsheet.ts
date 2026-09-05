@@ -2,16 +2,24 @@ import {
   createFileViewerWorkerController,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
+  createEmptyFileViewerSearchState,
+  registerFileViewerSearchProvider,
   registerFileViewerZoomProvider,
   resolveFileViewerColorScheme,
   resolveFileViewerFitScale,
   resolveFileViewerRuntimeAssetBaseUrl,
   resolveFileViewerSpreadsheetWorkerUrl,
+  unregisterFileViewerSearchProvider,
   unregisterFileViewerZoomProvider,
   type FileRenderContext,
+  type FileViewerDocumentAnchor,
   type FileViewerFitRequest,
   type FileViewerFitResult,
   type FileViewerRenderedInstance as AppWrapper,
+  type FileViewerSearchMatch,
+  type FileViewerSearchOptions,
+  type FileViewerSearchProvider,
+  type FileViewerSearchState,
   type FileViewerWorkerFactory,
   type FileViewerZoomState,
 } from '@file-viewer/core';
@@ -108,6 +116,29 @@ type EVirtTableGlobal = typeof globalThis & {
 type WorkerConstructor = new (scriptURL: string | URL, options?: WorkerOptions) => Worker;
 
 type SpreadsheetMessageListener = EventListenerOrEventListenerObject | null;
+
+type SpreadsheetSearchMatchPayload = {
+  sheet: number;
+  sheetName: string;
+  row: number;
+  col: number;
+  text: string;
+  matchText: string;
+};
+
+type SpreadsheetSearchAnchor = FileViewerDocumentAnchor & {
+  spreadsheet: {
+    sheetId: number;
+    row: number;
+    col: number;
+  };
+};
+
+type SpreadsheetSearchTarget = {
+  sheetId: number;
+  row: number;
+  col: number;
+};
 
 const EXCEL_IMAGE_SCROLLBAR_GUARD = 18;
 const DEFAULT_SPREADSHEET_WORKER_AUTO_THRESHOLD = 1 * 1024 * 1024;
@@ -778,6 +809,7 @@ const renderFileViewerSpreadsheet = async (
   root.className = 'excel-wrapper';
   root.dataset.fileViewerSpreadsheetRoot = 'true';
   root.dataset.spreadsheetTheme = darkMode ? 'dark' : 'light';
+  root.dataset.viewerSearchProvider = 'spreadsheet';
   root.dataset.viewerZoomProvider = 'xlsx';
 
   const loading = documentRef.createElement('div');
@@ -901,6 +933,16 @@ const renderFileViewerSpreadsheet = async (
   let imageLightboxPreviousFocus: HTMLElement | null = null;
   let hasNotifiedFirstPaint = false;
   let hasAppliedDefaultInitialFit = false;
+  let searchState: FileViewerSearchState = createEmptyFileViewerSearchState();
+  let searchMatches: FileViewerSearchMatch[] = [];
+  let searchOptions: FileViewerSearchOptions = {};
+  let searchRequestSequence = 0;
+  let latestSearchRequest = 0;
+  let pendingSearchJump: SpreadsheetSearchTarget | null = null;
+  let resolveWorkbookReady: (() => void) | null = null;
+  const workbookReady = new Promise<void>(resolve => {
+    resolveWorkbookReady = resolve;
+  });
   const resizableColumns = context?.options?.spreadsheet?.resizableColumns === true;
   const resizableRows = context?.options?.spreadsheet?.resizableRows === true;
 
@@ -908,6 +950,10 @@ const renderFileViewerSpreadsheet = async (
     createSpreadsheetWorkerFactory(target, buffer.byteLength, context),
     { logErrors: false }
   );
+  const pendingSearchRequests = new Map<number, {
+    resolve: (matches: SpreadsheetSearchMatchPayload[]) => void;
+    reject: (error: unknown) => void;
+  }>();
 
   const getActiveSheet = () => sheets.find(sheet => sheet.id === sheetIndex);
   const getSheetTabs = () => {
@@ -915,6 +961,55 @@ const renderFileViewerSpreadsheet = async (
     return visible.length ? visible : sheets;
   };
   const getActiveSheetId = () => sheetIndex ?? sheets[0]?.id;
+  const getColumnLabel = (column: number) => {
+    let value = Math.max(0, column) + 1;
+    let label = '';
+    while (value > 0) {
+      const remainder = (value - 1) % 26;
+      label = String.fromCharCode(65 + remainder) + label;
+      value = Math.floor((value - 1) / 26);
+    }
+    return label;
+  };
+  const createSpreadsheetSearchAnchor = (
+    match: SpreadsheetSearchMatchPayload,
+    index: number
+  ): SpreadsheetSearchAnchor => ({
+    id: `spreadsheet-cell-${match.sheet}-${match.row}-${match.col}`,
+    index,
+    line: match.row + 1,
+    type: 'block',
+    label: `${match.sheetName}!${getColumnLabel(match.col)}${match.row + 1}`,
+    text: match.text,
+    top: match.row * sheetDefaults.rowHeight,
+    left: match.col * sheetDefaults.colWidth,
+    width: sheetDefaults.colWidth,
+    height: sheetDefaults.rowHeight,
+    spreadsheet: {
+      sheetId: match.sheet,
+      row: match.row,
+      col: match.col,
+    },
+  });
+
+  const setSearchState = (
+    query: string,
+    matches: FileViewerSearchMatch[],
+    currentIndex = matches.length ? 0 : -1
+  ) => {
+    const normalizedIndex = matches.length
+      ? ((currentIndex % matches.length) + matches.length) % matches.length
+      : -1;
+    searchMatches = matches;
+    searchState = {
+      query,
+      total: matches.length,
+      currentIndex: normalizedIndex,
+      current: normalizedIndex >= 0 ? matches[normalizedIndex] : null,
+      matches,
+    };
+    return searchState;
+  };
   const getHostHeight = () => tableHost.clientHeight || 0;
   const showBlockingLoading = () => !errorMessage && !hasInitialWindow && (loadingState || sheetInitializing);
   const showStreamingLoading = () => !showBlockingLoading() &&
@@ -1191,6 +1286,21 @@ const renderFileViewerSpreadsheet = async (
     setLoading(true);
     controller.emit(type, payload);
   };
+
+  const requestWorkbookSearch = (
+    query: string,
+    options: FileViewerSearchOptions
+  ) => new Promise<SpreadsheetSearchMatchPayload[]>((resolve, reject) => {
+    const requestId = ++searchRequestSequence;
+    pendingSearchRequests.set(requestId, { resolve, reject });
+    controller.emit('searchWorkbook', {
+      requestId,
+      query,
+      caseSensitive: options.caseSensitive === true,
+      wholeWord: options.wholeWord === true,
+      maxMatches: options.maxMatches,
+    });
+  });
 
   const applyRowHeight = (row: VirtualSheetState['rows'][number], baseHeight: number) => {
     row.__baseHeight = baseHeight;
@@ -1908,6 +2018,9 @@ const renderFileViewerSpreadsheet = async (
       scheduleStableFirstPaintRefresh();
     }
 
+    requestPendingSearchWindow();
+    flushPendingSearchJump();
+
     const start = viewportRange.start || meta.startRow;
     const end = Math.max(viewportRange.end, meta.endRow - 1, meta.startRow);
     ensureViewportWindows(start, end);
@@ -1994,6 +2107,76 @@ const renderFileViewerSpreadsheet = async (
     requestWindow(0, false);
   };
 
+  const getSearchRowTop = (rowIndex: number) => {
+    let top = scalePx(HEADER_HEIGHT);
+    for (let index = 0; index < rowIndex; index += 1) {
+      const height = virtualState.rowHeightCache.get(index) ?? virtualState.defaults.rowHeight;
+      top += scaleRowHeight(height);
+    }
+    return top;
+  };
+
+  function flushPendingSearchJump() {
+    const pending = pendingSearchJump;
+    if (
+      !pending ||
+      pending.sheetId !== getActiveSheetId() ||
+      !virtualState.loadedWindows.has(clampWindowStart(pending.row, virtualState.totalRows)) ||
+      !table
+    ) {
+      return;
+    }
+
+    pendingSearchJump = null;
+    requestAnimationFrame(() => {
+      if (disposed || !table) {
+        return;
+      }
+      const targetTop = Math.max(
+        0,
+        getSearchRowTop(pending.row) - Math.max(0, (tableHost.clientHeight || 0) * 0.35)
+      );
+      table.scrollTo(0, targetTop);
+      table.draw();
+      syncImageViewport();
+      scheduleViewportLoad();
+    });
+  }
+
+  function requestPendingSearchWindow() {
+    const pending = pendingSearchJump;
+    if (!pending || pending.sheetId !== getActiveSheetId() || !virtualState.totalRows) {
+      return;
+    }
+    const windowStart = clampWindowStart(pending.row, virtualState.totalRows);
+    if (virtualState.loadedWindows.has(windowStart)) {
+      flushPendingSearchJump();
+      return;
+    }
+    requestWindow(windowStart, false);
+  }
+
+  function jumpToSpreadsheetSearchMatch(match: FileViewerSearchMatch | null) {
+    const spreadsheet = (match?.anchor as SpreadsheetSearchAnchor | null)?.spreadsheet;
+    if (!spreadsheet) {
+      return;
+    }
+
+    pendingSearchJump = spreadsheet;
+    if (spreadsheet.sheetId !== getActiveSheetId()) {
+      cacheCurrentSheetState();
+      sheetIndex = spreadsheet.sheetId;
+      renderChrome();
+      startSheetSession();
+      scrollActiveSheetIntoView();
+      const view = getTargetWindow(target);
+      view?.queueMicrotask?.(requestPendingSearchWindow);
+      return;
+    }
+
+    requestPendingSearchWindow();
+  }
+
   function handleSheet(index: number) {
     if (sheetIndex === index) {
       scrollActiveSheetIntoView();
@@ -2006,6 +2189,83 @@ const renderFileViewerSpreadsheet = async (
     scrollActiveSheetIntoView();
   }
 
+  controller.onWorkerEvent('searchWorkbook', ({ requestId, matches }: {
+    requestId?: number;
+    matches?: SpreadsheetSearchMatchPayload[];
+  }) => {
+    if (typeof requestId !== 'number') {
+      return;
+    }
+    const pending = pendingSearchRequests.get(requestId);
+    if (!pending) {
+      return;
+    }
+    pendingSearchRequests.delete(requestId);
+    pending.resolve(Array.isArray(matches) ? matches : []);
+  });
+
+  const searchProvider: FileViewerSearchProvider = {
+    async search(query, options = {}) {
+      const normalizedQuery = query.replace(/\s+/g, ' ').trim();
+      searchOptions = options;
+      const requestNumber = ++latestSearchRequest;
+      if (!normalizedQuery) {
+        pendingSearchJump = null;
+        return setSearchState('', []);
+      }
+
+      await workbookReady;
+      const matches = await requestWorkbookSearch(normalizedQuery, searchOptions);
+      if (requestNumber !== latestSearchRequest || disposed) {
+        return searchState;
+      }
+
+      const nextMatches = matches.map((match, index) => ({
+        id: `spreadsheet-search-${match.sheet}-${match.row}-${match.col}-${index}`,
+        index,
+        text: match.matchText,
+        anchor: createSpreadsheetSearchAnchor(match, index),
+        line: match.row + 1,
+      }));
+      const nextState = setSearchState(normalizedQuery, nextMatches);
+      jumpToSpreadsheetSearchMatch(nextState.current);
+      return nextState;
+    },
+    next() {
+      if (!searchMatches.length) {
+        return searchState;
+      }
+      const nextState = setSearchState(
+        searchState.query,
+        searchMatches,
+        searchState.currentIndex + 1
+      );
+      jumpToSpreadsheetSearchMatch(nextState.current);
+      return nextState;
+    },
+    previous() {
+      if (!searchMatches.length) {
+        return searchState;
+      }
+      const nextState = setSearchState(
+        searchState.query,
+        searchMatches,
+        searchState.currentIndex - 1
+      );
+      jumpToSpreadsheetSearchMatch(nextState.current);
+      return nextState;
+    },
+    clear() {
+      latestSearchRequest += 1;
+      pendingSearchJump = null;
+      return setSearchState('', []);
+    },
+    getState() {
+      return searchState;
+    },
+  };
+  registerFileViewerSearchProvider(root, searchProvider);
+
   const emitParseWorkbook = () => {
     emitWorker('parseWorkbook', {
       workbook: buffer,
@@ -2017,6 +2277,8 @@ const renderFileViewerSpreadsheet = async (
 
   controller.onWorkerEvent('sheets', ({ sheets: list }: { sheets: SheetDefinition[] }) => {
     sheets = list;
+    resolveWorkbookReady?.();
+    resolveWorkbookReady = null;
     const firstSheet = list.find((sheet: SheetDefinition) => !sheet.hidden) || list[0];
     if (firstSheet) {
       sheetIndex = firstSheet.id;
@@ -2038,6 +2300,8 @@ const renderFileViewerSpreadsheet = async (
   });
 
   controller.onWorkerEvent('parseError', ({ sessionId, startRow, message }) => {
+    resolveWorkbookReady?.();
+    resolveWorkbookReady = null;
     if (sessionId && sessionId !== sheetSessionId) {
       return;
     }
@@ -2126,6 +2390,14 @@ const renderFileViewerSpreadsheet = async (
       clearScheduledLayoutRefresh();
       resizeObserver?.disconnect();
       resizeObserver = null;
+      pendingSearchJump = null;
+      pendingSearchRequests.forEach(({ reject }) => {
+        reject(new Error('Spreadsheet renderer was unmounted before search completed.'));
+      });
+      pendingSearchRequests.clear();
+      resolveWorkbookReady?.();
+      resolveWorkbookReady = null;
+      unregisterFileViewerSearchProvider(root);
       unregisterFileViewerZoomProvider(root);
       controller.destroy();
       table?.destroy();

@@ -1288,8 +1288,8 @@ importers:
         specifier: workspace:3.0.1
         version: link:../../core
       '@flyfish-dev/cad-viewer':
-        specifier: 0.8.0
-        version: 0.8.0(three@0.185.1)
+        specifier: 0.8.1
+        version: 0.8.1(three@0.185.1)
     devDependencies:
       typescript:
         specifier: ^6.0.3
@@ -1879,8 +1879,8 @@ importers:
         specifier: workspace:3.0.1
         version: link:../doc
       '@file-viewer/docx':
-        specifier: 0.3.28
-        version: 0.3.28
+        specifier: 0.3.29
+        version: 0.3.29
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
@@ -2477,8 +2477,8 @@ packages:
       '@noble/hashes':
         optional: true
 
-  '@file-viewer/docx@0.3.28':
-    resolution: {integrity: sha512-EKi7TnQpHGkZX285ACHwLeu7pGKRSO4TXmIBQ0BNSLtBJRf0IoffLEut981qGgyvLfuXvJLoi6JoCh2xB6qMQA==}
+  '@file-viewer/docx@0.3.29':
+    resolution: {integrity: sha512-hQaTmK+F1XzaIv4vSrSju2MMGUh09GrfAwt0hT10/8h7UIoQUX9c3eX3bXFMigLtnB0R6lEYbM5eq5k8kQf9Ug==}
 
   '@file-viewer/ppt@0.3.3':
     resolution: {integrity: sha512-Px2OpBUWlp74Fyt6Vm+V8IU7+xOt1Zp9PWzWo7zUCdCr+I5YYCJ9v0Nt2kriYyrusbWm8E5ri+wNy6ZkR7v3qQ==}
@@ -2499,8 +2499,8 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@flyfish-dev/cad-viewer@0.8.0':
-    resolution: {integrity: sha512-oBhcDZ93UlkPPCCtaki3Nskfv6amE+4MnD/sTosE+e9Wv8vX/c2Z7V9aiInIDeI49YFfj6nqS1pj6zNgchkOxw==}
+  '@flyfish-dev/cad-viewer@0.8.1':
+    resolution: {integrity: sha512-jdUqHZVdQzgAgX2N8iakkUIKyHMfrUVjk4P1WrUYijzXj6g3s1YcFKTr9K847JuA3JYNmjRaHjIhD/MIJifGLQ==}
     engines: {node: '>=20.19.0'}
 
   '@fontsource-variable/noto-sans-sc@5.3.0':
@@ -4630,8 +4630,8 @@ packages:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
 
-  dwf-viewer@0.6.5:
-    resolution: {integrity: sha512-tHKxQGKpWyTAcNxuvnn2er8nmoOLAMK7IqY8evz9gwzg4ow7qv3eThNFjfyQCWJnE+YISVCEl13p6wI2iGUYSg==}
+  dwf-viewer@0.6.6:
+    resolution: {integrity: sha512-57s87tfU4CXf+CpGGcvAKxz6rcxtpQ5cGcVR4RqW5X5Q+4fgoeGJLO/F6EKK7taeILOZDOJO8MMH6oeYGMI9tA==}
     engines: {node: '>=18'}
     peerDependencies:
       three: '>=0.150.0'
@@ -7355,7 +7355,7 @@ snapshots:
 
   '@exodus/bytes@1.15.1': {}
 
-  '@file-viewer/docx@0.3.28':
+  '@file-viewer/docx@0.3.29':
     dependencies:
       jszip: 3.10.1
 
@@ -7378,11 +7378,11 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@flyfish-dev/cad-viewer@0.8.0(three@0.185.1)':
+  '@flyfish-dev/cad-viewer@0.8.1(three@0.185.1)':
     dependencies:
       '@mlightcad/libredwg-web': 0.7.9
       '@mlightcad/shx-parser': 1.4.5
-      dwf-viewer: 0.6.5(three@0.185.1)
+      dwf-viewer: 0.6.6(three@0.185.1)
       dxf-parser: 1.1.2
     transitivePeerDependencies:
       - three
@@ -9346,7 +9346,7 @@ snapshots:
       es-errors: 1.3.0
       gopd: 1.2.0
 
-  dwf-viewer@0.6.5(three@0.185.1):
+  dwf-viewer@0.6.6(three@0.185.1):
     optionalDependencies:
       three: 0.185.1
 

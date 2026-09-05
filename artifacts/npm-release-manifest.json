@@ -1,6 +1,6 @@
 {
   "version": "3.0.1",
-  "generatedAt": "2026-09-03T18:28:41.605Z",
+  "generatedAt": "2026-09-05T12:24:29.312Z",
   "packageCount": 88,
   "packages": [
     {
@@ -19,8 +19,8 @@
       "github": null,
       "gitee": null,
       "sourceRepository": "https://github.com/flyfish-dev/file-viewer-core",
-      "tarballSize": 236265,
-      "sha256": "f0b6d2f220a541feda94e2eaa5f44f390329413ec47cdc61c6e8a723ca644380",
+      "tarballSize": 236781,
+      "sha256": "1c7f524ef94f7b28367ed71b667836c663e3360462638c58b239967652407920",
       "entrypointCount": 13,
       "assetCount": 102,
       "fileCount": 114
@@ -63,11 +63,11 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 4732364,
-      "sha256": "322f491e5dcac6a59a7ec03faea0c3d622600fe3a3fb475a807340212dce8653",
+      "tarballSize": 7093323,
+      "sha256": "d6f8cb49c069254a46b6d6d6afb527443805f8db456b7ea370d6e84ee4d72607",
       "entrypointCount": 3,
-      "assetCount": 9,
-      "fileCount": 15
+      "assetCount": 13,
+      "fileCount": 19
     },
     {
       "id": "assets-typst",
@@ -327,11 +327,11 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 69446692,
-      "sha256": "8e84511766ec353dac30848053bce2b4d35714e14427a8ed64333ed5df6b1aa8",
+      "tarballSize": 71809872,
+      "sha256": "27b04f2caad262be8e7bd0dfc41c068a4fa50f08ef337fdd4fc92441bf98f18d",
       "entrypointCount": 4,
-      "assetCount": 2918,
-      "fileCount": 2922
+      "assetCount": 2922,
+      "fileCount": 2926
     },
     {
       "id": "assets-standard",
@@ -349,8 +349,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 7739472,
-      "sha256": "15300f4bd9ef3ae9fc77ade1b68aac45205597a6477e238d11f0e554b3f293d1",
+      "tarballSize": 7740551,
+      "sha256": "316e09f903c627a7c557654df856faf57dfbd3f766fff58610c7fdd850fb5620",
       "entrypointCount": 4,
       "assetCount": 311,
       "fileCount": 314
@@ -503,8 +503,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 26120,
-      "sha256": "52887630cead660febfba02f0037a0a2f07bdbeac4b31dc938198a844c372a55",
+      "tarballSize": 26118,
+      "sha256": "6c822f6832d3e06cf0b82b0d991594fa179525156819a9f6f1f269031f8f6b26",
       "entrypointCount": 3,
       "assetCount": 14,
       "fileCount": 19
@@ -547,8 +547,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 344669,
-      "sha256": "e4adecd6b6e2e2532a7ce43af20eeff99f07be8d71c350d2d15d9002339fb9a7",
+      "tarballSize": 347810,
+      "sha256": "226ad17fde071e916842a8765776139bd043d04ca0ef4dd7219a82a75ed452e2",
       "entrypointCount": 8,
       "assetCount": 37,
       "fileCount": 43
@@ -701,11 +701,11 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 20073,
-      "sha256": "3b5eae8f6d034e0af632ac4445796d7e5a641857e34ecbaaeb62cd07df996014",
+      "tarballSize": 21417,
+      "sha256": "ed9694a51820792febe5910fa57b7697df493668d0ebb13f009f6875bba97a53",
       "entrypointCount": 3,
-      "assetCount": 4,
-      "fileCount": 8
+      "assetCount": 6,
+      "fileCount": 10
     },
     {
       "id": "renderer-typst",
@@ -921,8 +921,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 35816,
-      "sha256": "f7d6475ad31666074d0d08807cd7b075c63fb24e8a50f70c08ed24e2ba6a77b8",
+      "tarballSize": 35818,
+      "sha256": "e84aa160d283f55d28421c19071919c4d99390e6bd5c106c1cc643665ee1b8df",
       "entrypointCount": 6,
       "assetCount": 8,
       "fileCount": 20
@@ -1494,8 +1494,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer-web",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-web",
       "sourceRepository": null,
-      "tarballSize": 253972,
-      "sha256": "8fd62f03d785ee9905f2252252b4d4a17e1f5c38df6eb7e70c98f4ad9457fbd7",
+      "tarballSize": 254285,
+      "sha256": "c7db8ca1753fd9f6e1ce9abaf2fb0e8bd5502cbba9b5eaba8c1dd37e5d7f9a61",
       "entrypointCount": 5,
       "assetCount": 14,
       "fileCount": 18
@@ -1516,11 +1516,11 @@
       "github": null,
       "gitee": null,
       "sourceRepository": null,
-      "tarballSize": 69666661,
-      "sha256": "f10e35d6ae79ef6c0092b52746be87e9254664081b50806fc4f88f3d90ff6828",
+      "tarballSize": 72034355,
+      "sha256": "67eef87ea9590c1353e8b944548bf263e243b488bd9d2c14874a2df1d51fd3f9",
       "entrypointCount": 6,
-      "assetCount": 2926,
-      "fileCount": 2930
+      "assetCount": 2930,
+      "fileCount": 2934
     },
     {
       "id": "web-full",
@@ -1538,11 +1538,11 @@
       "github": "https://github.com/flyfish-dev/file-viewer-web-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-web-full",
       "sourceRepository": null,
-      "tarballSize": 76561214,
-      "sha256": "ee13063ce58aba70e34d2f5e8b64c126d72a4dbb9e951a725c1884beb2796c33",
+      "tarballSize": 78934974,
+      "sha256": "795644c60775755a349314fef4ddecdd9f5da331773299988d28238f684ea807",
       "entrypointCount": 4,
-      "assetCount": 2951,
-      "fileCount": 2955
+      "assetCount": 2955,
+      "fileCount": 2959
     },
     {
       "id": "vue3",
@@ -1560,8 +1560,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer-vue3",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue3",
       "sourceRepository": null,
-      "tarballSize": 198532,
-      "sha256": "24bc74fe639c5a686e2b7a015f8b7d5d2f30fb78c46e402eed87a2b170b01e5d",
+      "tarballSize": 199111,
+      "sha256": "5f3e6c5a90cd5c9aa4d8e0ccccdba81d8e07806ba471f9e16717b493f54b6ca6",
       "entrypointCount": 5,
       "assetCount": 42,
       "fileCount": 46

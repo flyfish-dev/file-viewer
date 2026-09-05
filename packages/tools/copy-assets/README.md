@@ -13,8 +13,8 @@ pnpm exec file-viewer-copy-assets ./public/file-viewer
 单独使用标准包时先显式安装同版本 CLI；需要独立执行时，也可以使用带明确版本的 `npx` 入口：
 
 ```bash
-npm install -D file-viewer-copy-assets@3.0.0
-npx --yes file-viewer-copy-assets@3.0.0 ./public/file-viewer
+npm install -D file-viewer-copy-assets@3.0.1
+npx --yes file-viewer-copy-assets@3.0.1 ./public/file-viewer
 ```
 
 CLI 自带与当前版本严格匹配的资源载荷，会将 Worker、WASM、字体、PDF、CAD、Typst、Archive、Draw.io 和 Office vendor 资源复制到目标目录，并生成 `flyfish-viewer-assets.json` 完整性清单。安装或执行 `--version` 不会修改项目目录；只有执行复制命令时才会写入指定目标。运行时资源全部自托管，不依赖公共 CDN。
@@ -35,7 +35,7 @@ pnpm exec file-viewer-copy-assets
 pnpm exec file-viewer-copy-assets ./public/file-viewer --no-clean
 
 # 未安装本地依赖时，显式锁定独立 CLI 版本
-pnpm dlx file-viewer-copy-assets@3.0.0 ./public/file-viewer
+pnpm dlx file-viewer-copy-assets@3.0.1 ./public/file-viewer
 ```
 
 自动化脚本可追加 `--json`，标准输出只包含一个机器可读结果对象；普通调用仍保留原有两行文本提示。
