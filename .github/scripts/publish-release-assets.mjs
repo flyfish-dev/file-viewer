@@ -11,6 +11,17 @@ const registry = 'https://registry.npmjs.org/'
 const visibilityAttempts = Number(process.env.FILE_VIEWER_PUBLISH_VISIBILITY_ATTEMPTS || 30)
 const visibilityDelayMs = Number(process.env.FILE_VIEWER_PUBLISH_VISIBILITY_DELAY_MS || 10_000)
 
+function normalizeRepositoryUrl(value) {
+  return String(value || '')
+    .replace(/^git\+/, '')
+    .replace(/\.git$/, '')
+}
+
+const trustedRepositoryUrl = normalizeRepositoryUrl(
+  process.env.FILE_VIEWER_TRUSTED_REPOSITORY ||
+    (process.env.GITHUB_REPOSITORY ? `https://github.com/${process.env.GITHUB_REPOSITORY}` : '')
+)
+
 if (!assetsDirValue) {
   throw new Error('FILE_VIEWER_RELEASE_ASSETS_DIR must name a release asset directory')
 }
@@ -31,6 +42,9 @@ if (!Number.isInteger(visibilityDelayMs) || visibilityDelayMs <= 0) {
 }
 if (!dryRun && process.env.GITHUB_ACTIONS !== 'true') {
   throw new Error('Non-dry-run npm publishing is restricted to GitHub Actions trusted publishing')
+}
+if (!trustedRepositoryUrl) {
+  throw new Error('FILE_VIEWER_TRUSTED_REPOSITORY or GITHUB_REPOSITORY is required')
 }
 
 const run = (command, args, options = {}) => {
@@ -136,6 +150,14 @@ for (const entry of manifest.packages) {
     const packageJson = readPackageJsonFromTarball(tarball)
     if (packageJson.name !== packageName || packageJson.version !== version) {
       throw new Error(`${tarballName} metadata does not match ${packageName}@${version}`)
+    }
+    if (
+      packageJson.repository?.type !== 'git' ||
+      normalizeRepositoryUrl(packageJson.repository?.url) !== trustedRepositoryUrl
+    ) {
+      throw new Error(
+        `${tarballName} repository.url must point to ${trustedRepositoryUrl} for npm trusted publishing`
+      )
     }
   }
 

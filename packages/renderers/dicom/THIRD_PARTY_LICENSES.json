@@ -242,7 +242,7 @@
       "optional": false,
       "firstParty": true,
       "author": "Yu Wang <admin@flyfish.dev>",
-      "repository": "https://github.com/flyfish-dev/file-viewer-core",
+      "repository": "https://github.com/flyfish-dev/file-viewer",
       "licenseFiles": [],
       "noticeFiles": []
     },

@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "organization": "flyfish-dev",
   "sourceBranch": "main",
+  "npmRepository": "https://github.com/flyfish-dev/file-viewer",
   "corePackage": {
     "packageName": "@file-viewer/core",
     "description": "Framework-neutral modular TypeScript file preview core with format registry, renderer orchestration, lifecycle APIs, search, zoom, print, and export.",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-05T23:44:21.957Z",
+  "generatedAt": "2026-09-06T01:18:43.127Z",
   "version": "3.0.2",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -8,23 +8,23 @@
     "repository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "policy": "private-complete-original-workspace",
-    "authoritativeCommit": "8e019f8efa2d24e94d42c44d532a6622bac4d6dc",
+    "authoritativeCommit": "5126c16f72edb9fd577f618b9500c5bd7a9b0f13",
     "localBranch": "main",
-    "localCommit": "8e019f8efa2d24e94d42c44d532a6622bac4d6dc",
+    "localCommit": "5126c16f72edb9fd577f618b9500c5bd7a9b0f13",
     "inSync": true,
     "note": "Private Gitea main is the complete original aggregate workspace. The local checkout branch is only the execution context and can be transitional during branch cutover."
   },
   "local": {
     "branch": "main",
-    "commit": "8e019f8efa2d24e94d42c44d532a6622bac4d6dc",
-    "shortCommit": "8e019f8ef",
+    "commit": "5126c16f72edb9fd577f618b9500c5bd7a9b0f13",
+    "shortCommit": "5126c16f7",
     "dirty": false
   },
   "sourceRemote": {
     "url": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "branch": "main",
     "ok": true,
-    "hash": "8e019f8efa2d24e94d42c44d532a6622bac4d6dc",
+    "hash": "5126c16f72edb9fd577f618b9500c5bd7a9b0f13",
     "error": ""
   },
   "openSourceMain": {
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "3af2e1e3c6b7f67cd9f7879ac2906b360159ab2b",
+      "hash": "d10f9d50d97d0664c4441e0ba74008888ad89ef6",
       "error": ""
     },
     "gitee": {
@@ -45,20 +45,20 @@
     "inSync": false,
     "syncMode": "stale",
     "treeChecked": true,
-    "referenceTree": "c2b5fc9c05f7c9f727ec178879dd8e20d2da9c28",
+    "referenceTree": "53369e73050ecaf8698be2df4f9f22bc1cfcea2c",
     "giteeTree": "7f13b7419673ae4bb39251b6eadd29c5fc219223",
     "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
   },
   "githubRelease": {
-    "ok": false,
+    "ok": true,
     "tag": "v3.0.2",
-    "url": "",
-    "assetCount": 0,
-    "hasManifest": false,
-    "hasStatus": false,
-    "hasSchema": false,
-    "error": "release not found"
+    "url": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.2",
+    "assetCount": 98,
+    "hasManifest": true,
+    "hasStatus": true,
+    "hasSchema": true,
+    "error": ""
   },
   "componentRepositories": [
     {
@@ -987,7 +987,6 @@
     }
   ],
   "gaps": [
-    "GitHub Release v3.0.2 missing",
     "@file-viewer/core npm 3.0.1 !== 3.0.2",
     "@file-viewer/asset-installer npm 3.0.1 !== 3.0.2",
     "@file-viewer/assets-cad npm 3.0.1 !== 3.0.2",
@@ -1077,28 +1076,18 @@
     "@file-viewer/svelte-full npm 3.0.1 !== 3.0.2"
   ],
   "gapSummary": {
-    "total": 88,
-    "externalBlockers": 88,
+    "total": 87,
+    "externalBlockers": 87,
     "localActionable": 0,
     "byChannel": {
-      "github-release": 1,
       "npm": 87
     },
     "externalBlockerChannels": [
-      "github-release",
       "npm"
     ],
     "localActionableChannels": []
   },
   "gapDetails": [
-    {
-      "id": "github-release-github-release-v3.0.2-missing",
-      "channel": "github-release",
-      "scope": "release-assets",
-      "externalBlocker": true,
-      "message": "GitHub Release v3.0.2 missing",
-      "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
-    },
     {
       "id": "npm-@file-viewer-core-npm-3.0.1-3.0.2",
       "channel": "npm",
@@ -1797,7 +1786,6 @@
     }
   ],
   "nextActions": [
-    "Run `npm login` / passkey in an interactive terminal, then `pnpm release:ecosystem:publish`.",
-    "Create or update the GitHub Release assets, then rerun `pnpm release:public`."
+    "Run `npm login` / passkey in an interactive terminal, then `pnpm release:ecosystem:publish`."
   ]
 }

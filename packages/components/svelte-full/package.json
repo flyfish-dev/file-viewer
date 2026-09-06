@@ -31,12 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flyfish-dev/file-viewer-svelte-full.git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/components/svelte-full"
   },
   "homepage": "https://doc.file-viewer.app/",
   "bugs": {
-    "url": "https://github.com/flyfish-dev/file-viewer-svelte-full/issues"
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },
   "funding": {
     "type": "individual",

@@ -26,12 +26,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flyfish-dev/file-viewer-web-full.git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/components/web-full"
   },
   "homepage": "https://doc.file-viewer.app/",
   "bugs": {
-    "url": "https://github.com/flyfish-dev/file-viewer-web-full/issues"
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },
   "funding": {
     "type": "individual",

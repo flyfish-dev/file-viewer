@@ -27,11 +27,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flyfish-dev/file-viewer-core.git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/core"
   },
   "bugs": {
-    "url": "https://github.com/flyfish-dev/file-viewer-core/issues"
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },
   "funding": {
     "type": "individual",
