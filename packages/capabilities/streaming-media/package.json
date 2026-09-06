@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@file-viewer/renderer-media": "workspace:3.0.2",
-    "hls.js": "^1.6.16"
+    "hls.js": "^1.7.2"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

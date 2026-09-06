@@ -9,7 +9,7 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "@lucide/vue": "^1.37.0",
+    "@lucide/vue": "^1.40.0",
     "highlight.js": "^11.11.1",
     "vue": "^3.5.42"
   },

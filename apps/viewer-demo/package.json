@@ -17,7 +17,7 @@
     "@file-viewer/renderer-signature": "workspace:3.0.2",
     "@file-viewer/web": "workspace:3.0.2",
     "@file-viewer/vue3": "workspace:3.0.2",
-    "@lucide/vue": "^1.37.0",
+    "@lucide/vue": "^1.40.0",
     "diff": "^9.0.0",
     "qs": "^6.16.0",
     "vue": "^3.5.42"
