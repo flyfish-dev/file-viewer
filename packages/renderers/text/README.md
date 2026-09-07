@@ -43,7 +43,8 @@ const options = {
 - 历史 `*-full` 包的 script 标签 IIFE 资源不打包 Prettier，该路径下 `prettyPrint` 无错误回退到原始源码；需要格式化预览时使用 ESM 集成（标准组件包或 `@file-viewer/preset-*`）。
 - 安装 text-tools capability 后，`patch` 使用 `diff2html` 渲染左右比对视图，`bundle` / `bdl` 才启用 Git bundle 结构检查。
 - 安装 Mermaid capability 后，Markdown 内嵌 Mermaid 图才会渲染；未安装时保留源码并显示精确 CLI 启用命令。
-- HTML / XML / Vue 等文件按源码方式转义展示，不执行脚本。
+- HTML / HTM 默认显示静态页面，提供页面与源码切换；`options.text.htmlView: 'source'` 可默认查看原始源码。页面保留内联 CSS 和内嵌图片，通过净化、CSP 和独立沙箱阻止脚本、表单、外链跳转和外部资源请求，不用于运行完整网站。
+- XML / Vue 等仍按源码转义展示。HTML 源码视图继续支持高亮、格式化和大文本虚拟化。
 - Markdown 使用 `marked` 输出只读阅读面，并保留明暗主题、表格滚动和统一缩放 provider。
 - Markdown 不再因为通用大文本阈值自动退化成源码；如业务必须限制超大 Markdown，可单独设置 `options.text.markdownVirtualizeAboveBytes`。
 - 不绑定任何在线服务或公共 CDN，适合内网日志、配置、代码片段、README 和知识库附件预览。

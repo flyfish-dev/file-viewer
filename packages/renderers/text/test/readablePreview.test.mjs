@@ -134,7 +134,7 @@ test('formatted HTML remains inert escaped source and never creates executable n
   harness.dom.window.__issue235 = 0
   try {
     const rendered = await renderFileViewerCode(toBuffer(source), harness.target, 'html', {
-      options: { text: { prettyPrint: true } }
+      options: { text: { prettyPrint: true, htmlView: 'source' } }
     })
 
     assert.equal(harness.dom.window.__issue235, 0)

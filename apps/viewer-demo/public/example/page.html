@@ -3,31 +3,34 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Safe HTML Preview</title>
+    <title>Static HTML Report</title>
+    <style>
+      :root { color-scheme: light; font-family: Georgia, serif; color: #173f3c; background: #eef4f0; }
+      body { margin: 0; padding: clamp(16px, 5vw, 48px); }
+      main { max-width: 720px; margin: auto; padding: clamp(20px, 4vw, 40px); background: white; border-top: 6px solid #18776b; }
+      h1 { font-size: clamp(28px, 6vw, 42px); }
+      p, li { line-height: 1.7; }
+      section { border-top: 1px solid #d6e3dc; margin-top: 24px; }
+      code { background: #eef4f0; padding: 2px 5px; }
+    </style>
   </head>
   <body>
-    <main class="preview-layout" data-renderer="highlight.js">
+    <main class="preview-layout">
       <header>
-        <p>Rendered as highlighted source code, not executed as DOM.</p>
-        <h1>File Viewer Sample</h1>
+        <p>LOCAL DOCUMENT / HTML</p>
+        <h1>Static HTML Report</h1>
+        <p>This page keeps its inline styles without running JavaScript or loading remote assets.</p>
+        <p>Use the viewer's <strong>HTML source</strong> button to inspect the original markup, then switch back to <strong>Page preview</strong>.</p>
       </header>
 
       <section aria-labelledby="formats-title">
-        <h2 id="formats-title">Supported sample formats</h2>
+        <h2 id="formats-title">What this sample verifies</h2>
         <ul>
-          <li><strong>Document:</strong> DOCX, PDF, OFD</li>
-          <li><strong>Drawing:</strong> DXF with DWG compatibility notice</li>
-          <li><strong>Code:</strong> JS, TS, JSX, TSX, Vue, YAML, SQL</li>
+          <li>Headings, lists, inline CSS, and responsive document layout.</li>
+          <li>Original source remains unchanged when switching views.</li>
+          <li>Scripts, forms, external navigation, and remote resources stay blocked.</li>
         </ul>
       </section>
-
-      <template id="preview-card-template">
-        <article class="preview-card">
-          <h3></h3>
-          <p></p>
-          <button type="button">Open</button>
-        </article>
-      </template>
     </main>
   </body>
 </html>
