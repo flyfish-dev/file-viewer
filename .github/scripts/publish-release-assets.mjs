@@ -132,9 +132,7 @@ const waitForExactVersion = async (packageName, version) => {
       await new Promise((resolveDelay) => setTimeout(resolveDelay, visibilityDelayMs))
     }
   }
-  const visibilityWindowSeconds = Math.round(
-    ((visibilityAttempts - 1) * visibilityDelayMs) / 1000
-  )
+  const visibilityWindowSeconds = Math.round(((visibilityAttempts - 1) * visibilityDelayMs) / 1000)
   throw new Error(
     `npm did not expose ${packageName}@${version} after ${visibilityAttempts} checks ` +
       `over approximately ${visibilityWindowSeconds} seconds`
