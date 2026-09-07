@@ -578,7 +578,9 @@ export const mountViewer = (
       // customer's ShadowRoot. Reusing the ancestor would let that component's
       // resets override the toolbar and would make our :host rules mutate the
       // customer's outer custom element.
-      renderRoot = container.attachShadow({ mode: 'open', delegatesFocus: true });
+      // Delegated focus makes Safari taps on renderer controls focus the first
+      // toolbar input instead, triggering keyboard zoom and viewport scrolling.
+      renderRoot = container.attachShadow({ mode: 'open' });
       ownedViewerShadowRoots.set(container, renderRoot);
     } catch {
       // Some HTMLElement subclasses cannot host Shadow DOM, and a closed root
@@ -595,7 +597,7 @@ export const mountViewer = (
     existingHostShadowRoot.appendChild(mountBoundary);
     if (shouldUseShadowRoot && typeof mountBoundary.attachShadow === 'function') {
       try {
-        renderRoot = mountBoundary.attachShadow({ mode: 'open', delegatesFocus: true });
+        renderRoot = mountBoundary.attachShadow({ mode: 'open' });
       } catch {
         renderRoot = mountBoundary;
       }

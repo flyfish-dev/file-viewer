@@ -544,7 +544,7 @@ export class FileViewerElement extends ElementBase implements ViewerControllerHa
       isolation !== 'scoped' &&
       typeof this.attachShadow === 'function'
     ) {
-      return this.attachShadow({ mode: 'open', delegatesFocus: true });
+      return this.attachShadow({ mode: 'open' });
     }
     return this;
   }
