@@ -9,8 +9,8 @@
 //
 // 3.0.1 moved font ownership onto the presets that activate the pdf renderer, and made the asset
 // optional so a genuinely missing font is a warning instead of a build failure. These are the
-// three structural contracts that must stay true. The behavioural copyAssets path is covered by
-// the deeper private gate scripts/verify-vite-plugin-auto-scan.mjs.
+// structural contracts that must stay true. verify-github-242-copy.mjs also runs the
+// production copyAssets hook with no workspace fallback, in public CI and private checks.
 import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
