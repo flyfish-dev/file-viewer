@@ -202,7 +202,7 @@ try {
           await page.screenshot({ path: resolve(output, `${name}-failure.png`) })
           console.error(
             await page.locator('.excel-wrapper').evaluate((root) => ({
-              inDocument: !!document.querySelector('.excel-wrapper'),
+              inDocument: root.isConnected,
               count: document.querySelector('.viewer-search-summary')?.textContent,
               viewport: root
                 .querySelector('.e-virt-table-container')
@@ -256,17 +256,21 @@ try {
     [181, 1],
     [189, 0]
   ])
-  await openFixture('virtual.xlsx', createVirtualWorkbook())
-  await checkSearch(
-    'issue-247-virtual-xlsx',
-    'REMOTE_NEEDLE',
-    [
-      [2107, 120],
-      [2200, 2],
-      [2515, 120]
-    ],
-    ['First', 'First', 'Second']
-  )
+  const virtualWorkbook = createVirtualWorkbook()
+  // Repeat fresh document loads to exercise searches racing the first table draw.
+  for (let run = 1; run <= 3; run++) {
+    await openFixture('virtual.xlsx', virtualWorkbook)
+    await checkSearch(
+      `issue-247-virtual-xlsx-${run}`,
+      'REMOTE_NEEDLE',
+      [
+        [2107, 120],
+        [2200, 2],
+        [2515, 120]
+      ],
+      ['First', 'First', 'Second']
+    )
+  }
 
   const docx = await readFile(
     resolve(root, 'apps/viewer-demo/test/fixtures/issue-250/page-anchors.docx')

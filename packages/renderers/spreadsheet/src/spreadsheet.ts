@@ -48,6 +48,7 @@ import {
   createTableConfig,
   detectIndexOffset,
   getDisplayColumns,
+  getSearchColumnLeft,
   getRowHeight,
   HEADER_HEIGHT,
   INDEX_COLUMN_WIDTH,
@@ -85,7 +86,6 @@ type EVirtTableInstance = {
   draw(): void;
   doLayout(): void;
   scrollTo(x: number, y: number): void;
-  scrollToColkey(key: string): void;
   destroy(): void;
 };
 
@@ -2154,8 +2154,16 @@ const renderFileViewerSpreadsheet = async (
         0,
         getSearchRowTop(pending.row) - Math.max(0, (tableHost.clientHeight || 0) * 0.35)
       );
-      table.scrollTo(table.ctx.scrollX || 0, targetTop);
-      table.scrollToColkey(virtualState.dataKeys[pending.col] || getDataKey(pending.col));
+      // The vendor's rendered header index can still be empty before its first
+      // draw. Source column geometry is ready as soon as the window is loaded.
+      const columnLeft = getSearchColumnLeft(
+        getDisplayColumns(virtualState.columns, zoom),
+        virtualState.dataKeys[pending.col] || getDataKey(pending.col)
+      );
+      const targetLeft = columnLeft === undefined
+        ? table.ctx.scrollX || 0
+        : Math.max(0, columnLeft - tableHost.clientWidth / 2);
+      table.scrollTo(targetLeft, targetTop);
       table.draw();
       syncImageViewport();
       scheduleViewportLoad();
@@ -2177,11 +2185,11 @@ const renderFileViewerSpreadsheet = async (
 
   function jumpToSpreadsheetSearchMatch(match: FileViewerSearchMatch | null) {
     const spreadsheet = (match?.anchor as SpreadsheetSearchAnchor | null)?.spreadsheet;
+    pendingSearchJump = spreadsheet || null;
     if (!spreadsheet) {
       return;
     }
 
-    pendingSearchJump = spreadsheet;
     if (spreadsheet.sheetId !== getActiveSheetId()) {
       cacheCurrentSheetState();
       sheetIndex = spreadsheet.sheetId;

@@ -442,6 +442,24 @@ export const getDisplayColumns = (columns: Column[], zoomScale = 1) => {
   return columns.map(column => scaleColumn(column, normalizedScale))
 }
 
+export const getSearchColumnLeft = (columns: Column[], key: string): number | undefined => {
+  let left = 0
+  const visit = (list: Column[]): number | undefined => {
+    for (const column of list) {
+      if (column.hide) continue
+      if (column.children?.length) {
+        const childLeft = visit(column.children)
+        if (childLeft !== undefined) return childLeft
+      } else {
+        if (`${column.key}` === key) return left
+        left += Number(column.width) || 0
+      }
+    }
+    return undefined
+  }
+  return visit(columns)
+}
+
 const toBorderWidth = (value: unknown) => {
   if (typeof value === 'number' && Number.isFinite(value)) {
     return Math.max(value, 0)
