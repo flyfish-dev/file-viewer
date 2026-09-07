@@ -8,6 +8,7 @@ import {
   registerFileViewerZoomProvider,
   resolveFileViewerLocale,
   resolveFileViewerPresentationWorkerUrl,
+  resolveFileViewerCopiedAssetUrl,
   resolveFileViewerRuntimeAssetBaseUrl,
   waitForFileViewerNextPaint,
   unregisterFileViewerZoomProvider,
@@ -620,20 +621,20 @@ export default async function renderPptx(
       if (context?.signal?.aborted) {
         throw context.signal.reason || new DOMException('PPTX rendering aborted.', 'AbortError');
       }
+      // Angular does not emit workers referenced by dependency JavaScript.
+      // Prefer the CLI's verified copied asset; retain the package fallback on
+      // source/dev servers. Explicit URLs remain authoritative.
+      const workerUrl = presentationOptions?.workerUrl
+        ? resolveFileViewerPresentationWorkerUrl(presentationOptions, resolveFileViewerRuntimeAssetBaseUrl(documentRef))
+        : await resolveFileViewerCopiedAssetUrl(documentRef, 'office-presentation', 'pptx-worker', context?.signal);
+      if (context?.signal?.aborted) {
+        throw context.signal.reason || new DOMException('PPTX rendering aborted.', 'AbortError');
+      }
       const nextViewer = await PptxViewer.open(buffer, surface, {
         styleRoot: resolvePptxStyleRoot(surface, context),
         fitMode: 'contain',
         zoomPercent,
-        // Keep the PPTX package's own worker fallback when the host did not
-        // configure a self-hosted worker. Resolving the generic default here
-        // would point Vite development at /vendor/pptx/pptx.worker.js, where
-        // the SPA fallback is HTML rather than worker JavaScript.
-        workerUrl: presentationOptions?.workerUrl
-          ? resolveFileViewerPresentationWorkerUrl(
-              presentationOptions,
-              resolveFileViewerRuntimeAssetBaseUrl(documentRef)
-            )
-          : undefined,
+        workerUrl,
         workerType: presentationOptions?.workerType,
         zipLimits: RECOMMENDED_ZIP_LIMITS,
         lazySlides: true,

@@ -41,17 +41,10 @@
         -moz-osx-font-smoothing: grayscale;
       }
 
-      body {
-        min-height: 100vh;
-      }
-
-      #app {
-        min-height: 100vh;
-      }
-
       /* Vue 挂载前的首屏骨架，避免大文件预览器资源加载期间出现空白或黑屏。 */
       .app-boot-screen {
         min-height: 100vh;
+        min-height: 100dvh;
         display: grid;
         place-items: center;
         padding: 32px;

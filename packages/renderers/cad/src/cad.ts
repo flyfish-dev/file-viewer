@@ -23,6 +23,8 @@ import {
   createFileViewerViewStateChangeEmitter,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter,
+  createFileViewerCanvasImageBlob,
+  isFileViewerSnapshotDownloadPermitted,
   registerFileViewerViewStateProvider,
   registerFileViewerZoomProvider,
   resolveFileViewerLocale,
@@ -48,7 +50,7 @@ import {
   resolveCadViewerSourceDocument,
   supportsCadViewerColorMode,
 } from './colorMode.js';
-import { createFileViewerCadExportAdapter, type CadCanvasCaptureAdapter } from './export.js';
+import { captureFileViewerCadCanvas, createFileViewerCadExportAdapter, type CadCanvasCaptureAdapter } from './export.js';
 
 type CadStatus = 'loading' | 'ready' | 'error';
 
@@ -66,10 +68,16 @@ const CAD_NATIVE_MIN_ZOOM_RATIO = 0.05;
 const CAD_NATIVE_MAX_ZOOM_RATIO = 64;
 
 const cadStyle = `
-.cad-shell{display:flex;height:100%;min-height:100%;flex-direction:column;background:#f5f7fb;color:#142335}
+.cad-shell{display:flex;height:100%;min-height:100%;flex-direction:column;background:#f5f7fb;color:#142335;container-type:inline-size;container-name:file-viewer-cad}
 .cad-shell *{box-sizing:border-box}
-.cad-toolbar{display:flex;min-height:48px;align-items:center;justify-content:space-between;gap:16px;padding:0 14px;border-bottom:1px solid rgba(15,23,42,.08);background:#fff}
+.cad-toolbar{display:flex;flex-shrink:0;min-height:48px;align-items:center;justify-content:space-between;gap:16px;padding:0 14px;border-bottom:1px solid rgba(15,23,42,.08);background:#fff}
 .cad-tools,.cad-meta{display:flex;align-items:center;gap:8px}
+.cad-tools{flex-wrap:wrap;padding:6px 0}
+.cad-tools button.cad-export-image{min-width:44px;min-height:40px;padding:0 10px;white-space:nowrap}
+.cad-tools button[hidden]{display:none}
+.cad-tools button:disabled{cursor:not-allowed;opacity:.46}
+.cad-export-error{margin:0;padding:6px 14px;background:#fff4ed;color:#b42318;font-size:12px}
+.cad-export-error[hidden]{display:none}
 .cad-tools button{min-width:34px;min-height:30px;border:0;border-radius:8px;background:rgba(15,23,42,.06);color:#25344c;cursor:pointer;font-weight:800;letter-spacing:0;transition:background-color .18s ease,color .18s ease}
 .cad-tools button:hover{background:rgba(31,150,110,.14);color:#0f8f62}
 .cad-tools button.cad-color-mode{min-width:52px;padding:0 10px;font-size:12px}
@@ -155,7 +163,8 @@ const cadStyle = `
 [data-viewer-theme='dark'] .cad-canvas-wrap{background:linear-gradient(90deg,rgba(148,163,184,.08) 1px,transparent 1px),linear-gradient(180deg,rgba(148,163,184,.08) 1px,transparent 1px),#090d14;background-size:28px 28px}
 [data-viewer-theme='dark'] .cad-state{background:rgba(15,23,42,.92);color:#cbd5e1;box-shadow:0 18px 44px rgba(0,0,0,.34)}
 @media (prefers-color-scheme:dark){[data-viewer-theme='system'] .cad-shell{background:#111827;color:#e5edf6}[data-viewer-theme='system'] .cad-body{background:#0d1117}[data-viewer-theme='system'] .cad-toolbar,[data-viewer-theme='system'] .cad-layers,[data-viewer-theme='system'] .cad-inspector{border-color:rgba(139,148,158,.2);background:#111827;color:#e5edf6}[data-viewer-theme='system'] .cad-layers-head{border-color:rgba(139,148,158,.2);background:rgba(17,24,39,.96);color:#f8fafc}[data-viewer-theme='system'] .cad-tools button,[data-viewer-theme='system'] .cad-meta span,[data-viewer-theme='system'] .cad-inspector dl div{background:#1f2937;color:#cbd5e1}[data-viewer-theme='system'] .cad-layers button,[data-viewer-theme='system'] .cad-inspector strong,[data-viewer-theme='system'] .cad-inspector dd{color:#e5edf6}[data-viewer-theme='system'] .cad-layers button:hover{background:#1f2937}[data-viewer-theme='system'] .cad-zoom,[data-viewer-theme='system'] .cad-meta span,[data-viewer-theme='system'] .cad-inspector dt,[data-viewer-theme='system'] .cad-layers-head span{color:#94a3b8}[data-viewer-theme='system'] .cad-canvas-wrap{background:linear-gradient(90deg,rgba(148,163,184,.08) 1px,transparent 1px),linear-gradient(180deg,rgba(148,163,184,.08) 1px,transparent 1px),#090d14;background-size:28px 28px}[data-viewer-theme='system'] .cad-state{background:rgba(15,23,42,.92);color:#cbd5e1;box-shadow:0 18px 44px rgba(0,0,0,.34)}}
-@media (max-width:860px){.cad-body,.cad-body.without-layers{grid-template-columns:minmax(0,1fr)}.cad-layers,.cad-inspector{display:none}}
+@media (max-width:860px){.cad-body,.cad-body.without-layers{grid-template-columns:minmax(0,1fr)}.cad-layers,.cad-inspector,.cad-meta{display:none}.cad-tools{flex:1}.cad-tools button{min-width:44px;min-height:40px}}
+@container file-viewer-cad (max-width:600px){.cad-meta{display:none}.cad-tools{flex:1}.cad-tools button{min-width:44px;min-height:40px}}
 `;
 
 const createStyle = () => {
@@ -820,6 +829,7 @@ export default async function renderCad(
   let fitViewActive = true;
   let nativeZoomRatio = 1;
   let disposed = false;
+  let exportingImage = false;
 
   const style = createStyle();
   const shell = createElement('div', 'cad-shell');
@@ -843,8 +853,44 @@ export default async function renderCad(
   zoomOutButton.title = t('cad.toolbar.zoomOut');
   zoomInButton.title = t('cad.toolbar.zoomIn');
   tools.append(fitButton, zoomOutButton, zoomText, zoomInButton, colorModeButton);
+  const imageButtons = (['png', 'jpeg'] as const).map(format => {
+    const button = createElement('button', `cad-export-image cad-export-${format}`, format.toUpperCase()) as HTMLButtonElement;
+    button.type = 'button';
+    button.title = t('cad.toolbar.exportImage', { format: format.toUpperCase() });
+    button.setAttribute('aria-label', button.title);
+    button.hidden = !context?.requestSnapshotDownload || options.showImageExport === false ||
+      !isFileViewerSnapshotDownloadPermitted(context?.options);
+    button.addEventListener('click', async () => {
+      if (disposed || status !== 'ready' || exportingImage) return;
+      exportingImage = true;
+      exportError.hidden = true;
+      syncState();
+      try {
+        await context?.requestSnapshotDownload?.(async watermark => {
+          const snapshot = await captureFileViewerCadCanvas(() => viewer as CadCanvasCaptureAdapter | null);
+          const blob = await createFileViewerCanvasImageBlob(snapshot, format, watermark, snapshot.width / stage.clientWidth);
+          const name = buildFileName().replace(/\.[^.]+$/, '') || 'drawing';
+          return { blob, filename: `${name}.${format === 'jpeg' ? 'jpg' : 'png'}` };
+        });
+      } catch (error) {
+        if (!disposed) {
+          exportError.textContent = t('cad.error.exportFailed', { message: error instanceof Error ? error.message : String(error) });
+          exportError.hidden = false;
+          console.error(error);
+        }
+      } finally {
+        exportingImage = false;
+        if (!disposed) syncState();
+      }
+    });
+    tools.append(button);
+    return button;
+  });
   meta.append(typeMeta, backendMeta);
   toolbar.append(tools, meta);
+  const exportError = createElement('p', 'cad-export-error');
+  exportError.setAttribute('role', 'alert');
+  exportError.hidden = true;
 
   const body = createElement('div', 'cad-body without-layers');
   const layersPanel = createElement('aside', 'cad-layers');
@@ -870,7 +916,7 @@ export default async function renderCad(
   inspector.append(inspectorTitle, inspectorList, warningText);
 
   body.append(layersPanel, canvasWrap, inspector);
-  shell.append(toolbar, body);
+  shell.append(toolbar, exportError, body);
   target.replaceChildren(style, shell);
 
   const buildFileName = () => {
@@ -1103,6 +1149,10 @@ export default async function renderCad(
   };
 
   const syncState = () => {
+    imageButtons.forEach(button => {
+      button.disabled = status !== 'ready' || exportingImage || !viewer ||
+        typeof (viewer as CadCanvasCaptureAdapter).captureCanvas !== 'function';
+    });
     zoomText.textContent = `${getZoomPercent()}%`;
     backendMeta.textContent = (renderStats?.backend || 'auto').toUpperCase();
     const colorModeSupported = supportsCadViewerColorMode(viewer);

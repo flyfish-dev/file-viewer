@@ -4,6 +4,14 @@ export interface CadCanvasCaptureAdapter {
   captureCanvas?: () => Promise<HTMLCanvasElement>;
 }
 
+export async function captureFileViewerCadCanvas(getViewer: () => CadCanvasCaptureAdapter | null) {
+  const viewer = getViewer();
+  if (!viewer?.captureCanvas) throw new Error('The CAD engine does not support canvas snapshots.');
+  const snapshot = await viewer.captureCanvas();
+  if (getViewer() !== viewer) throw new Error('The CAD document changed during export.');
+  return snapshot;
+}
+
 export function createFileViewerCadExportAdapter(
   getViewer: () => CadCanvasCaptureAdapter | null,
   filename = 'CAD drawing',
@@ -13,10 +21,7 @@ export function createFileViewerCadExportAdapter(
     includeDocumentStyles: false,
     getPrintMaskPages: getPage ? () => [getPage()] : undefined,
     async toHtml() {
-      const viewer = getViewer();
-      if (!viewer?.captureCanvas) throw new Error('The CAD engine does not support canvas snapshots.');
-      const snapshot = await viewer.captureCanvas();
-      if (getViewer() !== viewer) throw new Error('The CAD document changed during export.');
+      const snapshot = await captureFileViewerCadCanvas(getViewer);
       const image = snapshot.ownerDocument.createElement('img');
       image.src = snapshot.toDataURL('image/png');
       image.alt = filename;
