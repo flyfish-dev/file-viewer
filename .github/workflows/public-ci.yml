@@ -17,7 +17,7 @@ jobs:
   verify:
     name: Install, type-check, test, build and smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
@@ -69,6 +69,9 @@ jobs:
       - name: Run the issue regression gates
         run: pnpm test
 
+      - name: Verify bounded metadata parsing and Illustrator namespace hints
+        run: pnpm exec vitest run test/metadata-input-safety.spec.ts test/chm-renderer.spec.ts
+
       - name: Build documentation
         run: pnpm docs:build
 
@@ -81,8 +84,20 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Verify reopened spreadsheet and DOCX regressions
+      - name: Verify HTML, revisions, spreadsheet search and DOCX cover regressions
         run: node apps/viewer-demo/scripts/verify-closed-issue-regressions.mjs
+
+      - name: Verify column dragging, sheet and zoom persistence, and the disabled option
+        run: node apps/viewer-demo/scripts/verify-spreadsheet-resize.mjs
+
+      - name: Verify CAD source, monochrome and actual exported pixels
+        run: node apps/viewer-demo/scripts/verify-cad-view-modes.mjs
+
+      - name: Verify legacy XLS MiniFAT in main thread and Worker
+        run: node apps/viewer-demo/scripts/verify-cfb-mini-fat.mjs
+
+      - name: Cold-install Vue CLI and React full tarballs without bundler workarounds
+        run: node apps/component-demo/scripts/verify-packed-issue-closure.mjs
 
       - name: Verify the CHM Rust/WASM renderer in Chromium
         run: pnpm verify:chm-renderer

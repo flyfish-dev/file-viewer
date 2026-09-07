@@ -1,0 +1,26 @@
+{
+  "name": "file-viewer-reported-consumer",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@file-viewer/core": "3.0.2",
+    "@file-viewer/vue3": "3.0.2",
+    "@file-viewer/preset-office": "3.0.2",
+    "@file-viewer/react-full": "3.0.2",
+    "file-viewer-copy-assets": "3.0.2",
+    "element-plus": "2.14.5",
+    "vue": "3.5.21",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "5.0.8",
+    "@vue/cli-plugin-typescript": "5.0.8",
+    "@vue/compiler-sfc": "3.5.21",
+    "typescript": "5.9.3",
+    "ts-loader": "9.5.4"
+  }
+}

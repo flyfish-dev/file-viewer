@@ -76,6 +76,12 @@ async function createLongFlowDocx() {
   return zip.generateAsync({ type: 'nodebuffer' })
 }
 
+async function createRevisionDocx() {
+  const zip = await JSZip.loadAsync(await createLongFlowDocx())
+  zip.file('word/document.xml', `<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Tracked: </w:t></w:r><w:del w:id="1" w:author="Regression" w:date="2026-09-07T00:00:00Z"><w:r><w:delText>OLD_VALUE</w:delText></w:r></w:del><w:ins w:id="2" w:author="Regression" w:date="2026-09-07T00:00:00Z"><w:r><w:t>NEW_VALUE</w:t></w:r></w:ins></w:p><w:p><w:r><w:t>Unchanged: OLD_VALUE</w:t></w:r></w:p><w:sectPr><w:pgSz w:w="11907" w:h="16839"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>`)
+  return zip.generateAsync({ type: 'nodebuffer' })
+}
+
 const mime = {
   '.html': 'text/html',
   '.css': 'text/css',
@@ -146,6 +152,107 @@ try {
       timeout
     })
   }
+
+  async function uploadFixture(name, bytes, width = 1280) {
+    await page.setViewportSize({ width: 1280, height: 820 })
+    await page.goto(origin, { waitUntil: 'domcontentloaded', timeout })
+    await page.locator('.viewer-file-identity').hover()
+    await page.locator('.rail-nav-button--upload:not([aria-hidden="true"])').click()
+    await page.locator('.desktop-upload-dropzone input[type=file]').setInputFiles({
+      name,
+      mimeType: 'application/octet-stream',
+      buffer: bytes
+    })
+    await page.setViewportSize({ width, height: 820 })
+  }
+
+  async function checkRevisions(name, rootSelector, deleted, inserted) {
+    const surface = page.locator(rootSelector).first()
+    await surface.locator('del').first().waitFor({ state: 'visible', timeout })
+    const marks = await surface.evaluate(root => [...root.querySelectorAll('ins,del')].map(el => ({
+      tag: el.tagName,
+      text: el.textContent,
+      decoration: getComputedStyle(el).textDecorationLine,
+      visible: el.getBoundingClientRect().width > 0 && getComputedStyle(el).display !== 'none'
+    })))
+    assert.equal(marks.filter(m => m.tag === 'DEL').map(m => m.text).join(''), deleted)
+    assert.equal(marks.filter(m => m.tag === 'INS').map(m => m.text).join(''), inserted)
+    for (const mark of marks) {
+      assert.ok(mark.visible)
+      assert.ok(mark.decoration.includes(mark.tag === 'DEL' ? 'line-through' : 'underline'))
+    }
+    await page.screenshot({ path: resolve(output, `${name}.png`) })
+    evidence.cases.push({ name, input: 'native-file-upload', marks, passed: true })
+    console.log(`[closed-issues] ${name}: visible insertion/deletion marks passed`)
+  }
+
+  const htmlSource = '<!doctype html><html><head><style>h1{color:rgb(12, 80, 140)}body{padding:16px}</style><meta http-equiv="refresh" content="0;url=https://file-viewer-regression.invalid/redirect"></head><body><h1>Offline HTML preview</h1><p>Original source stays unchanged.</p><script>parent.__htmlPreviewExecuted=true</script><img src="https://file-viewer-regression.invalid/image" onerror="parent.__htmlPreviewExecuted=true"><a href="https://file-viewer-regression.invalid/link">External link</a><iframe src="https://file-viewer-regression.invalid/frame"></iframe></body></html>'
+  const htmlRequests = []
+  const recordHtmlRequest = request => {
+    if (request.url().includes('file-viewer-regression.invalid')) htmlRequests.push(request.url())
+  }
+  page.on('request', recordHtmlRequest)
+  await uploadFixture('preview.html', Buffer.from(htmlSource))
+  const htmlFrame = page.frameLocator('.html-preview-frame')
+  await htmlFrame.getByText('Offline HTML preview', { exact: true }).waitFor({ state: 'visible', timeout })
+  assert.equal(await htmlFrame.locator('h1').evaluate(el => getComputedStyle(el).color), 'rgb(12, 80, 140)')
+  assert.equal(await page.locator('.html-preview-frame').getAttribute('sandbox'), '')
+  assert.equal(await page.locator('.html-preview-frame').evaluate(frame => frame.contentDocument), null)
+  await page.locator('button[data-html-view="source"]').click()
+  await page.locator('.html-source-view .code-area code').waitFor({ state: 'visible', timeout })
+  await page.waitForFunction(({ element, source }) => element.textContent === source, {
+    element: await page.locator('.html-source-view .code-area code').elementHandle(), source: htmlSource,
+  }, { timeout })
+  assert.equal(await page.locator('.html-source-view .code-area code').textContent(), htmlSource)
+  await page.locator('button[data-html-view="preview"]').click()
+  await htmlFrame.getByText('External link', { exact: true }).click()
+  await page.setViewportSize({ width: 390, height: 844 })
+  for (const view of ['source', 'preview']) {
+    const button = page.locator(`button[data-html-view="${view}"]`)
+    await button.click()
+    const box = await button.boundingBox()
+    assert.ok(box && box.x >= 0 && box.x + box.width <= 390 && box.height >= 44, 'HTML mobile control is outside the viewport or too small')
+  }
+  assert.equal(await page.evaluate(() => window.__htmlPreviewExecuted), undefined)
+  assert.deepEqual(htmlRequests, [], 'HTML preview requested external resources')
+  await page.screenshot({ path: resolve(output, 'issue-256-html-preview.png') })
+  page.off('request', recordHtmlRequest)
+  evidence.cases.push({ name: 'issue-256-html-preview', input: 'native-file-upload', sourceRoundTrip: true, externalRequests: htmlRequests, passed: true })
+  console.log('[closed-issues] issue-256: styled static HTML, exact source toggle, opaque sandbox and no external requests passed')
+  await page.setViewportSize({ width: 1280, height: 900 })
+
+  const revisedDoc = await readFile(resolve(root, 'packages/renderers/doc/test/fixtures/github-255-revisions.doc'))
+  assert.equal(sha256(revisedDoc), '762969dde787960b8e33e65ac11b5c85247c648329e69f560dd7554633cc706f')
+  await uploadFixture('github-255-revisions.doc', revisedDoc)
+  await checkRevisions('issue-255-doc-upload', '.msdoc-root', '2222', '\u6d4b\u8bd5\u4fee\u8ba2')
+  await uploadFixture('revisions.docx', await createRevisionDocx())
+  await checkRevisions('docx-revisions-upload', 'section.docx', 'OLD_VALUE', 'NEW_VALUE')
+  for (const mode of ['final', 'original', 'all']) {
+    await page.locator('[data-viewer-action="more"]').click()
+    await page.locator('[data-viewer-action="settings"]').click()
+    await page.locator('#viewer-settings-tab-formats').click()
+    await page.locator('.settings-panel select').first().selectOption('word')
+    await page.getByTestId('docx-review-mode').selectOption(mode)
+    await page.locator('.settings-apply').click()
+    await page.waitForFunction(expected => {
+      const find = root => {
+        const section = root.querySelector('section.docx')
+        if (section) return section
+        for (const element of root.querySelectorAll('*')) {
+          if (element.shadowRoot) { const found = find(element.shadowRoot); if (found) return found }
+        }
+      }
+      const section = find(document)
+      if (!section) return false
+      const first = section.querySelector('p')?.innerText
+      return first?.trim() === `Tracked: ${expected}` && section.innerText.includes('Unchanged: OLD_VALUE')
+    }, mode === 'final' ? 'NEW_VALUE' : mode === 'original' ? 'OLD_VALUE' : 'OLD_VALUENEW_VALUE', { timeout }).catch(async error => {
+      console.error('Review settings', mode, await page.locator('section.docx').evaluateAll(elements => elements.map(el => ({ text: el.textContent, paragraphs: [...el.querySelectorAll('p')].map(p => p.textContent) }))))
+      throw error
+    })
+  }
+  evidence.cases.push({ name: 'demo-word-review-settings', sameFile: true, modes: ['final', 'original', 'all'], passed: true })
+  console.log('[closed-issues] Demo Word settings refresh all/final/original without reselecting the file')
 
   async function checkSearch(name, query, cells, sheetNames) {
     await page.locator('.e-virt-table-container').waitFor({ state: 'visible', timeout })
@@ -256,6 +363,10 @@ try {
     [181, 1],
     [189, 0]
   ])
+  await uploadFixture('excel.xls', sample)
+  await checkSearch('issue-247-xls-upload', '湖北三宁化工股份有限公司', [
+    [176, 1], [181, 1], [189, 0]
+  ])
   const virtualWorkbook = createVirtualWorkbook()
   // Repeat fresh document loads to exercise searches racing the first table draw.
   for (let run = 1; run <= 3; run++) {
@@ -276,8 +387,7 @@ try {
     resolve(root, 'apps/viewer-demo/test/fixtures/issue-250/page-anchors.docx')
   )
   for (const width of [1280, 390]) {
-    await page.setViewportSize({ width, height: 820 })
-    await openFixture('page-anchors.docx', docx)
+    await uploadFixture('page-anchors.docx', docx, width)
     await page
       .locator('[aria-label="CoverBorderOuter"]')
       .last()
@@ -329,6 +439,7 @@ try {
     evidence.cases.push({
       name: `issue-250-${width}`,
       fixtureSha256: sha256(docx),
+      input: 'native-file-upload',
       geometry,
       passed: true
     })
