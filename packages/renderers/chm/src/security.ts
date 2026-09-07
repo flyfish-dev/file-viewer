@@ -236,9 +236,59 @@ const sniffHtmlEncoding = (bytes: Uint8Array) => {
     const value = prefix[index];
     ascii += value >= 0x20 && value <= 0x7e ? String.fromCharCode(value) : ' ';
   }
-  const match = ascii.match(/<meta\b[^>]*\bcharset\s*=\s*["']?\s*([^\s"'/>;]+)/i)
-    || ascii.match(/<meta\b[^>]*\bcontent\s*=\s*["'][^"']*charset\s*=\s*([^\s"'/>;]+)/i);
-  return normalizeEncoding(match?.[1]);
+  // Walk the bounded prefix once; overlapping whitespace regexes can backtrack.
+  let position = 0;
+  while (position < ascii.length) {
+    const open = ascii.indexOf('<', position);
+    if (open < 0) break;
+    if (ascii.startsWith('<!--', open)) {
+      const end = ascii.indexOf('-->', open + 4);
+      position = end < 0 ? ascii.length : end + 3;
+      continue;
+    }
+    let cursor = open + 1;
+    const nameStart = cursor;
+    while (isHtmlNameCharacter(ascii[cursor])) cursor += 1;
+    const name = ascii.slice(nameStart, cursor).toLowerCase();
+    const end = scanHtmlTagEnd(ascii, cursor);
+    position = name === 'script' || name === 'style'
+      ? skipHtmlRawTextElement(ascii, end, name)
+      : end;
+    if (name !== 'meta') continue;
+    const attributes = new Map<string, string>();
+    while (cursor < end && ascii[cursor] !== '>') {
+      if (!isHtmlNameCharacter(ascii[cursor])) { cursor += 1; continue; }
+      const start = cursor;
+      while (isHtmlNameCharacter(ascii[cursor])) cursor += 1;
+      const attribute = ascii.slice(start, cursor).toLowerCase();
+      while (isAsciiWhitespace(ascii[cursor])) cursor += 1;
+      if (ascii[cursor] !== '=') continue;
+      cursor += 1;
+      while (isAsciiWhitespace(ascii[cursor])) cursor += 1;
+      const quote = ascii[cursor] === '"' || ascii[cursor] === "'" ? ascii[cursor++] : '';
+      const valueStart = cursor;
+      if (quote) {
+        while (cursor < end && ascii[cursor] !== quote) cursor += 1;
+      } else {
+        while (cursor < end && !isAsciiWhitespace(ascii[cursor]) && ascii[cursor] !== '>') cursor += 1;
+      }
+      if (!attributes.has(attribute)) attributes.set(attribute, ascii.slice(valueStart, cursor));
+      if (quote && ascii[cursor] === quote) cursor += 1;
+    }
+    let encoding = attributes.get('charset');
+    if (!encoding) {
+      for (const parameter of (attributes.get('content') || '').split(';')) {
+        const equals = parameter.indexOf('=');
+        if (equals >= 0 && parameter.slice(0, equals).trim().toLowerCase() === 'charset') {
+          encoding = parameter.slice(equals + 1);
+          break;
+        }
+      }
+    }
+    const token = encoding?.trim().match(/^[^\s"'/>;]+/)?.[0];
+    if (token) return normalizeEncoding(token);
+  }
+  return '';
 };
 
 const decodeWith = (bytes: Uint8Array, encoding: string) => {

@@ -4,6 +4,16 @@ const startsWithAscii = (buffer: ArrayBuffer, value: string) => {
   return value.split('').every((character, index) => bytes[index] === character.charCodeAt(0))
 }
 
+const hasIllustratorNamespace = (source: string) => {
+  for (const attribute of source.matchAll(/(?:^|[\s<])xmlns(?::[a-z_][a-z0-9_.-]*)?\s*=\s*["']/g)) {
+    const start = attribute.index! + attribute[0].length
+    const end = source.indexOf(attribute[0].charAt(attribute[0].length - 1), start)
+    if (end < start || end - start > 256) continue
+    if (source.slice(start, end) === 'http://ns.adobe.com/illustrator/') return true
+  }
+  return false
+}
+
 export const inspectIllustratorPdfSurface = (buffer: ArrayBuffer) => {
   const pdfHeader = startsWithAscii(buffer, '%PDF-')
   if (!pdfHeader) {
@@ -15,7 +25,8 @@ export const inspectIllustratorPdfSurface = (buffer: ArrayBuffer) => {
     probe.includes('saved without pdf content') ||
     probe.includes('create pdf compatible file') && probe.includes('illustrator') && probe.includes('without pdf')
   const illustratorEvidence =
-    probe.includes('http://ns.adobe.com/illustrator/') ||
+    // This is a local format hint, never a network URL allowlist.
+    hasIllustratorNamespace(probe) ||
     probe.includes('/aiprivatedata') ||
     probe.includes('application/vnd.adobe.illustrator') ||
     probe.includes('adobe illustrator')
