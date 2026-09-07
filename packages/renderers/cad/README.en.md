@@ -66,8 +66,10 @@ Source mode defaults to a dark background; monochrome defaults to black lines on
 }
 ```
 
-### Print and offline HTML
+### Images, print and offline HTML
 
 Select the color mode, then use Print or HTML in the shared toolbar. Output redraws and captures the current view, including WebGL lines and text overlays, without layer panels or controls. HTML embeds a PNG instead of a temporary blob URL. The print window supports the browser's Save as PDF and retains File Viewer permission checks, watermarks and masks.
 
-This is a raster snapshot of the current camera view / current DWF page, not a vector conversion or batch export of every sheet. Use Fit first to include the full drawing. Original-file download never changes the input bytes. There are no separate PNG / JPEG download buttons.
+PNG and JPEG buttons download the same rendered view, including configured text or image watermarks. Both `toolbar.permissions.download` and `toolbar.permissions['export-html']` must allow the operation. The owning viewer runs its normal `beforeOperation`, toolbar `beforeOperation` and `beforeDownload` hooks before capture; cancellation or a document/permission change prevents the download. Use `cad.showImageExport: false` to hide these renderer-local buttons. A missing watermark fails explicitly without breaking the live preview. Print masks apply to Print, not to image downloads.
+
+This is a raster snapshot of the current camera view / current DWF page, not a vector conversion or batch export of every sheet. Use Fit first to include the full drawing. Original-file download never changes the input bytes.

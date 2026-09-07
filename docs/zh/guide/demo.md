@@ -147,6 +147,7 @@ pnpm verify:closed-issue-regressions
 pnpm verify:issue-245-cad-output
 pnpm verify:issue-227-cfb
 pnpm verify:issue-204-resize
+pnpm verify:mobile-toolbar
 # 对已构建的候选 tarball 冷安装，再执行实际浏览器回归。
 PACKED_ISSUE_PACKAGE_DIR=/absolute/path/to/candidate-tarballs pnpm verify:issue-consumer
 # 使用已经启动的 Xcode iPhone Simulator，在 Safari 中真实点击。
@@ -157,7 +158,9 @@ HTML 可直接从样例库选择 `page.html`，切换静态页面与原始源码
 
 样例库提供 `word-revisions.doc` 和 `word-cover.docx`，与 issue 中获准再分发的原附件字节一致。在“更多 → 设置 → 格式 → Word”中切换“DOC / DOCX 文本修订”并应用，即可对比三种模式；文本格式设置中也可以选择 HTML 初始视图，不需要修改业务代码。
 
-CAD 可选择 `drawing.dxf`、`samples/apache/blocks_and_tables.dwf` 或 `samples/autodesk/house.dwfx`，对比深色背景原色、白纸黑线，再导出 HTML、打印到 PDF。验收实际输出像素，不只看模式按钮文字。输出的是当前视图，需要整图时先点击“适配”。
+CAD 可选择 `drawing.dxf`、`samples/apache/blocks_and_tables.dwf` 或 `samples/autodesk/house.dwfx`，对比深色背景原色、白纸黑线，再从 CAD 工具栏下载 PNG/JPEG、导出 HTML、打印到 PDF。验收实际输出像素，不只看模式按钮文字。输出的是当前视图 / 当前 DWF 页，需要整图时先点击“适配”。图片下载保留文本或图片水印，并遵守下载/导出权限；水印资源不可读时明确失败，不生成无水印图片。
+
+手机或窄弹窗中的原生组件工具栏保留“搜索、缩放、更多”紧凑入口，搜索框和输出操作按需展开。320px、390px 下控件不得重叠，桌面窄弹窗按自身宽度适配；宽容器保留内联搜索框。iPhone 还要实际输入搜索、关闭键盘并再次翻页，确认整个宿主页面没有停在 Safari 状态栏下方。首屏骨架的 `100vh` 最小高度不能残留在挂载后的应用根节点。
 
 “最近打开”默认收起，点击历史按钮才展开，避免遮挡 sheet 标签。表格回归通过真实鼠标拖动列边界，检查切换 sheet、缩放到 110% 后再次拖拽、恢复缩放后的列宽，并验证关闭“可调整列宽”后拖动不再生效。
 

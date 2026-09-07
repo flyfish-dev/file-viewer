@@ -303,6 +303,37 @@ viewer.options = {
 }
 ```
 
+## Angular 子路径部署
+
+在 `ngAfterViewInit` 中使用上述 Web API，并在 `ngOnDestroy` 调用
+`controller.destroy()`。Angular application builder 不会自动输出依赖包
+JavaScript 引用的 Worker。轻量包接入时，将与组件同版本的
+`file-viewer-copy-assets` 安装为开发依赖；full 包已自带该 CLI。
+在 `ng build` 前复制已安装的资源：
+
+```bash
+npx file-viewer-copy-assets public/file-viewer
+```
+
+保留生成的 `flyfish-viewer-assets.json`，并在已有构建配置中包含 `public`
+目录。例如部署在 `/ui/` 时：
+
+```json
+{
+  "baseHref": "/ui/",
+  "assets": [{ "glob": "**/*", "input": "public", "output": "/" }]
+}
+```
+
+PPTX 会识别清单并使用应用子路径下的
+`/ui/file-viewer/vendor/pptx/pptx.worker.js`，不需要 `deployUrl`、优化器排除、
+业务 alias 或自定义 Worker factory。显式 `presentation.workerUrl` 仍优先；
+开发环境没有复制清单时保留包内 Worker 解析路径。
+
+完整示例位于 `apps/component-demo/test/angular-pptx`。其回归通过冷安装、
+真实 `ng serve` 和生产构建检查幻灯片内容及 Worker MIME，不以记录 URL
+的假 Worker 代替实际运行。
+
 ## 常见问题
 
 | 现象 | 处理方式 |

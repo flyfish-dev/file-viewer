@@ -105,6 +105,7 @@ pnpm verify:closed-issue-regressions
 pnpm verify:issue-245-cad-output
 pnpm verify:issue-227-cfb
 pnpm verify:issue-204-resize
+pnpm verify:mobile-toolbar
 # Cold consumer of already-built package tarballs, with the browser assertions.
 PACKED_ISSUE_PACKAGE_DIR=/absolute/path/to/candidate-tarballs pnpm verify:issue-consumer
 # Actual mobile Safari taps in an already-booted Xcode iPhone Simulator.
@@ -115,7 +116,9 @@ For HTML, open `page.html` from the sample library and switch between the styled
 
 The sample library includes `word-revisions.doc` and `word-cover.docx`, copied byte-for-byte from the redistribution-approved reports. In **More > Settings > Formats > Word**, change **DOC / DOCX text revisions**, then apply. The text-format settings also expose the initial HTML view. No application-code edit is needed to compare the modes.
 
-For CAD, open `drawing.dxf`, `samples/apache/blocks_and_tables.dwf`, or `samples/autodesk/house.dwfx`. Compare dark-background source mode with black-on-white monochrome, export HTML, and print to PDF. Check the output pixels, not just the mode label. Output captures the current view; select Fit before exporting the full drawing.
+For CAD, open `drawing.dxf`, `samples/apache/blocks_and_tables.dwf`, or `samples/autodesk/house.dwfx`. Compare dark-background source mode with black-on-white monochrome, download PNG/JPEG from the CAD toolbar, export HTML, and print to PDF. Check the output pixels, not just the mode label. Output captures the current view/current DWF page; select Fit before exporting the full drawing. Image downloads retain configured text/image watermarks and respect download/export permissions; an unreadable watermark fails explicitly instead of producing an unmarked image.
+
+In a phone-sized host or narrow dialog, the native component toolbar keeps a compact row with Search, zoom and More. Search opens a separate panel; More reveals output actions. Controls must not overlap at 320px or 390px, and a narrow desktop dialog must use its own width rather than the browser width. Wide hosts keep the inline search field. On iPhone, enter a search, close the keyboard, and tap Next again: the host must not stay scrolled beneath Safari's status area. The boot skeleton must not impose `100vh` minimums on the mounted application.
 
 Recent history stays collapsed until requested, so it does not cover worksheet tabs. The column-resize check uses real pointer dragging, switches sheets, zooms in/out, and disables resizing through Demo settings; a changed cursor alone is not a pass.
 

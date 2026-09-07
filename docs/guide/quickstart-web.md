@@ -118,6 +118,40 @@ Use `formats`, `renderers`, `scan:true`, `inject:false`, or `chunkStrategy:'rend
 
 ## Imperative Mount
 
+### Angular With A Deployment Subpath
+
+Use the same Web API from `ngAfterViewInit`, and call `controller.destroy()` in
+`ngOnDestroy`. Angular's application builder does not emit Worker files referenced
+by dependency JavaScript. With light packages, install `file-viewer-copy-assets`
+as a development dependency at the same version as the viewer packages. Full
+packages already include this CLI. Copy the installed resources before `ng build`:
+
+```bash
+npx file-viewer-copy-assets public/file-viewer
+```
+
+Keep the generated `flyfish-viewer-assets.json` with those files. Include the
+`public` directory in the build's existing asset configuration, for example:
+
+```json
+{
+  "baseHref": "/ui/",
+  "assets": [{ "glob": "**/*", "input": "public", "output": "/" }]
+}
+```
+
+PPTX discovers its copied Worker relative to the application base, including
+`/ui/file-viewer/vendor/pptx/pptx.worker.js`; no `deployUrl`, optimizer exclusion,
+application alias or custom Worker factory is needed. An explicit
+`presentation.workerUrl` still takes precedence. `ng serve` without a copied
+manifest keeps the package's development Worker resolution.
+
+The maintained example is `apps/component-demo/test/angular-pptx`. Its browser
+regression cold-installs packages and checks real slides and Worker MIME in
+development and production; it does not replace Worker with a recorder.
+
+### Mount And Clean Up
+
 ```ts
 import { mountViewer } from '@file-viewer/web'
 import officePreset from '@file-viewer/preset-office'
