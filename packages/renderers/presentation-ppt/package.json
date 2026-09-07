@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.2",
-    "@file-viewer/ppt": "0.3.3"
+    "@file-viewer/ppt": "0.3.4"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

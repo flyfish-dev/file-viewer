@@ -10,7 +10,12 @@ declare module 'sql.js' {
   export default initSqlJs;
 }
 
-declare module 'avsc/etc/browser/avsc.js' {
+declare module '*vendor/avsc.cjs' {
   const avsc: any;
   export = avsc;
+}
+
+declare module 'ag-psd/dist/bundle.js' {
+  const api: typeof import('ag-psd');
+  export = api;
 }

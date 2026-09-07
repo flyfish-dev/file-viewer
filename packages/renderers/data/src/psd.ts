@@ -161,7 +161,8 @@ export default async function renderPsdAsset(
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document
   const t = createFileViewerTranslator(context?.options)
-  const { readPsd } = await import('ag-psd')
+  const imported = await import('ag-psd/dist/bundle.js')
+  const { readPsd } = imported.default || imported
   const psd = readPsd(buffer, { useImageData: true })
   const compositeCanvas = toCanvas(documentRef, (psd as any).canvas || (psd as any).imageData)
   const layerTree = buildLayerTree(documentRef, (psd as any).children)

@@ -53,7 +53,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && node scripts/build-browser.mjs",
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
@@ -63,6 +63,7 @@
     "jszip": "^3.10.1"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

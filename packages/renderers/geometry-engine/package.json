@@ -58,10 +58,12 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && node scripts/build-browser.mjs",
     "type-check": "tsc -b tsconfig.json"
   },
   "devDependencies": {
+    "browserify": "17.0.1",
+    "esbuild": "0.28.2",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0",
