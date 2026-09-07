@@ -54,6 +54,8 @@ CAD 预览已经从 `@file-viewer/core` 中彻底移出，core 只保留资产 m
 
 `cad.colorMode` 可设为 `source` 或 `monochrome`。黑白模式通过 CAD 引擎的实体颜色策略实现，不使用 CSS 滤镜，因此 Canvas、WebGL、文字覆盖层及原生 DWF 渲染可保持一致，同时保留透明度、线型、线宽和源文件数据。
 
+默认原色模式使用深色背景，黑白模式使用白纸黑线。自适应对比度会提高与背景过近的线条和文字的可见性；要求严格显示源颜色时可设 `cad.canvasOptions.contrastMode: 'preserve'`。显式设置的 `cad.canvasOptions.background` / `cad.dwfBackground` 不会被模式切换覆盖。
+
 ```ts
 {
   cad: {
@@ -63,3 +65,9 @@ CAD 预览已经从 `@file-viewer/core` 中彻底移出，core 只保留资产 m
   },
 }
 ```
+
+### 打印与离线 HTML
+
+先选择原色或黑白模式，再使用统一工具栏的“打印”或“HTML”。输出会重新绘制并立即捕获当前视图，包含 WebGL 线条和文字覆盖层，不含图层面板或工具栏。HTML 内嵌 PNG，不依赖临时 blob 地址；打印窗口可使用浏览器的“另存为 PDF”，并保留 File Viewer 的权限检查、水印和遮罩。
+
+这里输出的是当前相机视图 / 当前 DWF 页的栅格快照，不是整个 CAD 文件的矢量转换，也不会自动批量打印其他图纸页。需要完整图纸时先点击“适配”。原文件下载始终保持输入字节不变；当前没有独立的 PNG / JPEG 下载按钮。

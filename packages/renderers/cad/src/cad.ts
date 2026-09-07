@@ -10,7 +10,6 @@ import {
   type CadPoint2D,
   type CadViewer as CadViewerInstance,
   type CadViewerLoadResult,
-  type CanvasViewerOptions,
   type RenderStats,
   type ViewState,
   type ViewChangeEvent,
@@ -45,9 +44,11 @@ import {
   applyCadViewerColorMode,
   normalizeFileViewerCadColorMode,
   resolveFileViewerCadMonochromeColor,
+  resolveFileViewerCadCanvasOptions,
   resolveCadViewerSourceDocument,
   supportsCadViewerColorMode,
 } from './colorMode.js';
+import { createFileViewerCadExportAdapter, type CadCanvasCaptureAdapter } from './export.js';
 
 type CadStatus = 'loading' | 'ready' | 'error';
 
@@ -1271,7 +1272,7 @@ export default async function renderCad(
   colorModeButton.addEventListener('click', () => {
     const previousMode = colorMode;
     colorMode = colorMode === 'monochrome' ? 'source' : 'monochrome';
-    if (!applyCadViewerColorMode(viewer, colorMode, monochromeColor)) {
+    if (!applyCadViewerColorMode(viewer, colorMode, monochromeColor, options)) {
       colorMode = previousMode;
       syncState();
       return;
@@ -1285,17 +1286,7 @@ export default async function renderCad(
       options,
       getCadDocumentBaseUrl(target)
     );
-    const canvasOptions = {
-      background: '#f8fafc',
-      foreground: '#0f172a',
-      contrastMode: 'adaptive',
-      minColorContrast: 2.4,
-      showPageBounds: true,
-      showUnsupportedMarkers: true,
-      enableSpatialIndex: true,
-      maxVisibleTextLabels: 2400,
-      ...(options.canvasOptions || {}),
-    } as CanvasViewerOptions;
+    const canvasOptions = resolveFileViewerCadCanvasOptions(options, colorMode);
 
     const nextViewer = new CadViewer({
       container: stage,
@@ -1313,7 +1304,7 @@ export default async function renderCad(
       keepRaw: options.keepRaw ?? false,
       dwfPreferWebgl: options.dwfPreferWebgl ?? true,
       dwfPreferWasm: options.dwfPreferWasm ?? true,
-      dwfBackground: options.dwfBackground || '#f8fafc',
+      dwfBackground: options.dwfBackground,
       dwfMaxDevicePixelRatio: options.dwfMaxDevicePixelRatio,
       dwfMaxCanvasPixels: options.dwfMaxCanvasPixels,
       dwfMaxGpuCacheBytes: options.dwfMaxGpuCacheBytes,
@@ -1445,12 +1436,18 @@ export default async function renderCad(
   }
 
   syncUi();
+  context?.registerExportAdapter?.(createFileViewerCadExportAdapter(
+    () => viewer as (CadViewerInstance & CadCanvasCaptureAdapter) | null,
+    context.filename,
+    () => stage.querySelector<HTMLElement>('.dwfv-stage') || stage
+  ));
   void loadCad();
 
   return {
     $el: shell,
     unmount() {
       disposed = true;
+      context?.registerExportAdapter?.(null);
       unregisterFileViewerViewStateProvider(shell);
       unregisterFileViewerZoomProvider(shell);
       abortController?.abort();
