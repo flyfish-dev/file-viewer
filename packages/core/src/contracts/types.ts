@@ -40,6 +40,8 @@ export type FileViewerMessageKey =
   | 'toolbar.searchPrevious'
   | 'toolbar.searchNext'
   | 'toolbar.searchClear'
+  | 'toolbar.searchClose'
+  | 'toolbar.more'
   | 'toolbar.theme'
   | 'toolbar.themeToLight'
   | 'toolbar.themeToDark'
@@ -362,6 +364,7 @@ export type FileViewerMessageKey =
   | 'cad.toolbar.zoomIn'
   | 'cad.toolbar.colorSource'
   | 'cad.toolbar.monochrome'
+  | 'cad.toolbar.exportImage'
   | 'cad.layers.title'
   | 'cad.layers.count'
   | 'cad.layers.merged'
@@ -373,6 +376,7 @@ export type FileViewerMessageKey =
   | 'cad.state.loadingViewer'
   | 'cad.state.parsing'
   | 'cad.error.parseFailed'
+  | 'cad.error.exportFailed'
   | 'image.alt'
   | 'image.toolbar.rotation'
   | 'image.toolbar.rotateLeft'
@@ -958,6 +962,10 @@ export interface FileRenderContext {
   registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void
   registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void
   renderPurpose?: FileViewerRenderPurpose
+  /** Derived-image download, guarded by the owning viewer's permissions, hooks and request version. */
+  requestSnapshotDownload?: (
+    create: (watermark: FileViewerOptions['watermark']) => Promise<{ blob: Blob; filename: string }>
+  ) => Promise<boolean>
   onProgressiveRender?: () => void
   renderNestedBuffer?: (
     buffer: ArrayBuffer,
@@ -1386,6 +1394,8 @@ export interface FileViewerCadOptions {
   monochromeColor?: string
   /** Shows the CAD toolbar color-mode toggle. Defaults to true. */
   showColorModeToggle?: boolean
+  /** Show native PNG/JPEG snapshot downloads. Download/export permissions still apply. */
+  showImageExport?: boolean
   preferDwgWasm?: boolean
   includePaperSpace?: boolean
   maxInsertDepth?: number
