@@ -96,7 +96,7 @@ const immersiveMode = ref(demoFileHandoff.isImmersiveRequest)
 const filename = ref('')
 const file = ref<FileRef | undefined>()
 const isMobileDemoViewport = () => window.matchMedia?.('(max-width: 720px)').matches ?? false
-const recentPanelOpen = ref(!isMobileDemoViewport())
+const recentPanelOpen = ref(false)
 const wasMobileViewport = ref(isMobileDemoViewport())
 const recentLocalReselectName = ref('')
 const recentLocalFiles = new Map<string, File>()

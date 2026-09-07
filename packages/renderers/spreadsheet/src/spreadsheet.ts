@@ -1757,8 +1757,13 @@ const renderFileViewerSpreadsheet = async (
       sheetStateCache.set(activeSheetId, virtualState);
     }
 
-    clearTableResizableHeaderCache();
-    syncTableLayout();
+    // e-virt-table writes its pixel-width cache after emitting the resize event.
+    // Clear it after that write so our unscaled, per-sheet widths remain authoritative.
+    queueMicrotask(() => {
+      if (disposed || !table) return;
+      clearTableResizableHeaderCache();
+      syncTableLayout();
+    });
   }
 
   function handleRowResizeChange(event: ResizeRowChangeEvent) {
