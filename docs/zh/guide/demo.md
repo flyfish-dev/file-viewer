@@ -136,6 +136,35 @@ pnpm verify:demo-output
 
 ## Word 页面效果
 
+### 问题回归与版本核对
+
+使用 issue 中相同字节的原始附件验证，不用相似样本代替。当前回归覆盖 XLS 不可见区域搜索、DOC / DOCX 文本修订、DOCX 页相对封面边框，以及桌面和窄屏下的实际上传。独立 Vue CLI / React full 测试项目还会通过真实可调整大小的 Element Plus 抽屉验证冷安装包，不添加源码 alias 或业务侧 Node polyfill。
+
+```sh
+# 构建本地 Demo，检查原附件上传、搜索、封面和 HTML 两种视图。
+pnpm verify:closed-issue-regressions
+# 对已构建 Demo 验证 CAD 实际输出像素，以及 XLS 主线程 / Worker 解析。
+pnpm verify:issue-245-cad-output
+pnpm verify:issue-227-cfb
+pnpm verify:issue-204-resize
+# 对已构建的候选 tarball 冷安装，再执行实际浏览器回归。
+PACKED_ISSUE_PACKAGE_DIR=/absolute/path/to/candidate-tarballs pnpm verify:issue-consumer
+# 使用已经启动的 Xcode iPhone Simulator，在 Safari 中真实点击。
+CLOSED_ISSUE_DEMO_URL=http://127.0.0.1:4179 pnpm verify:issue-243-ios
+```
+
+HTML 可直接从样例库选择 `page.html`，切换静态页面与原始源码。DOC / DOCX 使用 `docx.reviewMode: 'all' | 'final' | 'original'` 查看全部文本修订、定稿或修订前原稿；它不会接受或拒绝原文件中的修订，相同文字的未修改副本也不能被标为修订。
+
+样例库提供 `word-revisions.doc` 和 `word-cover.docx`，与 issue 中获准再分发的原附件字节一致。在“更多 → 设置 → 格式 → Word”中切换“DOC / DOCX 文本修订”并应用，即可对比三种模式；文本格式设置中也可以选择 HTML 初始视图，不需要修改业务代码。
+
+CAD 可选择 `drawing.dxf`、`samples/apache/blocks_and_tables.dwf` 或 `samples/autodesk/house.dwfx`，对比深色背景原色、白纸黑线，再导出 HTML、打印到 PDF。验收实际输出像素，不只看模式按钮文字。输出的是当前视图，需要整图时先点击“适配”。
+
+“最近打开”默认收起，点击历史按钮才展开，避免遮挡 sheet 标签。表格回归通过真实鼠标拖动列边界，检查切换 sheet、缩放到 110% 后再次拖拽、恢复缩放后的列宽，并验证关闭“可调整列宽”后拖动不再生效。
+
+MiniFAT 回归使用“未使用但指针无效”的合成旧版 XLS，实际上传后分别经过主线程和 Worker，搜索首行及末行。它不是 #227 的私有原附件，不能代替原文件验收；必需数据流损坏时仍须明确报错，不能静默丢弃单元格。原文件仅需在本地私下验证，不应把敏感内容公开提交。
+
+上线后必须将 `CLOSED_ISSUE_DEMO_URL` 改为 `https://demo.file-viewer.app` 重跑，并核对 `build-info.json` 的源码提交和干净构建标识。iPhone 的“上一页 / 下一页”必须使正文真正移动到目标页，按钮始终可点击；只变化页码不算通过。本地测试成功或 npm 上传成功，都不能证明正式 Demo 已更新。
+
 Word 示例被单独拿出来说明，因为它已经不只是“能打开”，而是具备明确的沉浸式阅读面。`.doc` 和 `.docx` 都会保持页面居中和宽度自适应；DOCX 的页面之外背景可在“沉浸透明 / 格式默认”之间切换，文档本身按主题使用协调的浅色纸张或深色文档面。顶部和右侧工具组固定不动，滚动只发生在文档容器内，因此长文档向上滚动时不会被空白顶栏截断。
 
 ## Vanilla JS / React 组件 Demo

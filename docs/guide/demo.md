@@ -94,6 +94,35 @@ The Vite dev server serves the main demo. Open `/compare.html` on the same host 
 
 ## Production Smoke
 
+### Reported-Issue Checks
+
+Use the same uploaded bytes as the report, not just a similar sample. The regression suite covers hidden XLS search matches, DOC/DOCX text revisions, and page-relative DOCX cover borders on desktop and narrow screens. It also opens real files inside a resizable Element Plus drawer from cold-installed Vue CLI and React full tarballs, without aliases or application-specific Node polyfills.
+
+```sh
+# Source-built Demo, including native file upload and HTML page/source switching.
+pnpm verify:closed-issue-regressions
+# Against the already-built Demo: CAD pixels/print and XLS main-thread/Worker paths.
+pnpm verify:issue-245-cad-output
+pnpm verify:issue-227-cfb
+pnpm verify:issue-204-resize
+# Cold consumer of already-built package tarballs, with the browser assertions.
+PACKED_ISSUE_PACKAGE_DIR=/absolute/path/to/candidate-tarballs pnpm verify:issue-consumer
+# Actual mobile Safari taps in an already-booted Xcode iPhone Simulator.
+CLOSED_ISSUE_DEMO_URL=http://127.0.0.1:4179 pnpm verify:issue-243-ios
+```
+
+For HTML, open `page.html` from the sample library and switch between the styled static page and the original source. For DOC/DOCX revisions, use `docx.reviewMode: 'all'`, `'final'`, or `'original'`; this changes the preview, not the source file. A revised paragraph must show genuine deletion/insertion records, without marking unchanged copies of the same text.
+
+The sample library includes `word-revisions.doc` and `word-cover.docx`, copied byte-for-byte from the redistribution-approved reports. In **More > Settings > Formats > Word**, change **DOC / DOCX text revisions**, then apply. The text-format settings also expose the initial HTML view. No application-code edit is needed to compare the modes.
+
+For CAD, open `drawing.dxf`, `samples/apache/blocks_and_tables.dwf`, or `samples/autodesk/house.dwfx`. Compare dark-background source mode with black-on-white monochrome, export HTML, and print to PDF. Check the output pixels, not just the mode label. Output captures the current view; select Fit before exporting the full drawing.
+
+Recent history stays collapsed until requested, so it does not cover worksheet tabs. The column-resize check uses real pointer dragging, switches sheets, zooms in/out, and disables resizing through Demo settings; a changed cursor alone is not a pass.
+
+The MiniFAT check uses a synthetic legacy XLS with an unused invalid MiniFAT pointer, then exercises main-thread and actual Worker parsing through file upload and last-row search. It is not the private #227 attachment. Do not mark that original report verified until the same file is tested privately; damaged required streams must fail clearly rather than silently dropping cells.
+
+After deployment, repeat the Demo checks against `https://demo.file-viewer.app` using `CLOSED_ISSUE_DEMO_URL`. Check `build-info.json` for the expected clean source commit. On iPhone, verify that the visible PDF content moves on Next/Previous and the controls remain reachable; a changed page counter alone is not a pass. Local results and an npm upload are not evidence that the production Demo has been updated.
+
 The repository keeps browser smoke scripts for the demo and component packages:
 
 ```bash
