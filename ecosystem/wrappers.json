@@ -879,9 +879,7 @@
       "packageDir": "packages/compat/vue3-unscoped",
       "publicSource": false,
       "releaseArtifact": {
-        "includeTarball": false,
-        "duplicateOf": "@flyfish-group/file-viewer3",
-        "reason": "The open-source main repository keeps one Vue 3 compatibility tarball to avoid duplicate package bodies; the unscoped alias is still published to npm."
+        "includeTarball": true
       },
       "releaseVersion": "3.0.2"
     },
