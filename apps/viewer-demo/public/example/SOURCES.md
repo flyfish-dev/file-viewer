@@ -4,6 +4,9 @@
 
 | Local file | Source | License | Purpose |
 | --- | --- | --- | --- |
+| `page.html` | Project-authored static report | Apache-2.0 | HTML page/source switching, inline styles, responsive layout, and offline sandbox behavior |
+| `word-revisions.doc` | [Issue #255](https://github.com/flyfish-dev/file-viewer/issues/255), original public `111.doc` attachment | Reporter confirmed sanitized redistribution for regression testing | Original DOC insertion/deletion records; SHA256 `762969dde787960b8e33e65ac11b5c85247c648329e69f560dd7554633cc706f` |
+| `word-cover.docx` | [Issue #250](https://github.com/flyfish-dev/file-viewer/issues/250), unchanged `test/fixtures/issue-250/page-anchors.docx` | Reporter confirmed sanitized redistribution for regression testing | Page-relative cover-border geometry; SHA256 `d9e59a52a9f2bcb3e42142b4abb0f80410a7d62d142f4c0515f004806cd38dff` |
 | `drawing.dxf` | `https://github.com/mozman/ezdxf/blob/master/examples_dxf/wipeout_door.dxf` | MIT | Real DXF CAD drawing for pan, zoom and layer smoke tests |
 | `word.docx` | `https://www.basel.int/Portals/4/download.aspx?d=UNEP-CHW.15-6-Add.5-Rev.1.Chinese.docx` | Public Basel Convention document, source attribution required | Rich Chinese DOCX preview with headings, long-form text, tables, drawings, responsive white paper and print/export smoke tests |
 | `en/calibre-demo.docx` | `https://calibre-ebook.com/downloads/demos/demo.docx` | calibre public demo document by Kovid Goyal / calibre project | Rich English DOCX preview with typography, headings, lists, tables and conversion-oriented Word features |

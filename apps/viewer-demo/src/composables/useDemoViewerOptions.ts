@@ -191,6 +191,7 @@ export function useDemoViewerOptions(input: UseDemoViewerOptionsInput) {
       }
       options.docx = {
         ...runtime.docx,
+        reviewMode: settings.docxReviewMode,
         progressive: settings.docxProgressive,
         visualPagination: settings.docxVisualPagination,
         strictWordCompatibility: settings.docxStrictWordCompatibility,
@@ -200,6 +201,7 @@ export function useDemoViewerOptions(input: UseDemoViewerOptionsInput) {
       }
       options.text = {
         ...runtime.text,
+        htmlView: settings.textHtmlView,
         toolbar: settings.textToolbar,
         lineNumbers: settings.textLineNumbers,
         virtualizeAboveBytes: settings.textVirtualizeAboveKb * 1024,
