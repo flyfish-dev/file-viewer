@@ -63,6 +63,8 @@ export function charPropsToState(properties: DecodedProperty[]): CharState {
         }
         break;
       case 'bold':
+      case 'revisionDeleted':
+      case 'revisionInserted':
       case 'italic':
       case 'strike':
       case 'hidden':

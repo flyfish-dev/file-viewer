@@ -426,6 +426,7 @@ export const createDocxOptions = (
   const externalResourcePolicy = docxOptions?.externalResourcePolicy ?? 'block'
   const options: DocxRenderOptions = {
     useWorker,
+    reviewMode: docxOptions?.reviewMode ?? 'all',
     // Authored page breaks define separate anchor coordinate spaces even in
     // flow mode. Only measured/fixed-height pagination remains opt-in.
     breakPages: true,
@@ -494,6 +495,8 @@ const isTargetHTMLElement = (value: unknown, target: HTMLDivElement): value is H
 }
 
 const DOCX_RESPONSIVE_CSS = `
+/* This component has no review balloon rail, so keep all-markup deletions readable inline. */
+.docx-fit-viewer [data-docx-review-enabled="true"][data-docx-review-mode="all"] del[data-docx-change-kind]{display:inline!important;width:auto!important;max-width:none!important;height:auto!important;overflow:visible!important;line-height:inherit!important;color:var(--docx-review-color,#c2410c);text-decoration:line-through;text-decoration-color:var(--docx-review-color,#c2410c)}
 .docx-fit-viewer {
   box-sizing: border-box;
   height: 100%;

@@ -297,6 +297,9 @@ export type FileViewerMessageKey =
   | 'text.code.loadingHighlight'
   | 'text.code.formattedPreview'
   | 'text.code.showOriginal'
+  | 'text.html.preview'
+  | 'text.html.source'
+  | 'text.html.safePreview'
   | 'text.code.showFormatted'
   | 'text.code.indexingLargeFile'
   | 'text.code.virtualized'
@@ -767,6 +770,8 @@ export interface FileViewerPdfBoundingBox {
 }
 
 export interface FileViewerDocxOptions {
+  /** DOC/DOCX 默认保留插入和删除修订；final 显示定稿，original 显示修订前原稿。 */
+  reviewMode?: 'all' | 'final' | 'original'
   worker?: boolean
   workerUrl?: string
   workerJsZipUrl?: string
@@ -1377,7 +1382,7 @@ export interface FileViewerCadOptions {
   renderer?: FileViewerCadRenderer
   /** Initial CAD color policy. `monochrome` applies one plot color without mutating source data. */
   colorMode?: FileViewerCadColorMode
-  /** CSS color used by monochrome mode. Defaults to the CAD foreground color. */
+  /** CSS color used by monochrome mode. Defaults to black (#000000). */
   monochromeColor?: string
   /** Shows the CAD toolbar color-mode toggle. Defaults to true. */
   showColorModeToggle?: boolean
@@ -1398,6 +1403,7 @@ export interface FileViewerCadOptions {
   fitPadding?: number
   dwfPreferWebgl?: boolean
   dwfPreferWasm?: boolean
+  /** Explicit DWF background override; otherwise follows the current color mode. */
   dwfBackground?: string
   dwfMaxDevicePixelRatio?: number
   dwfMaxCanvasPixels?: number
@@ -1408,6 +1414,7 @@ export interface FileViewerCadOptions {
   dwfMaxOverviewStrokeCssPx?: number
   dwfMinTextCssPx?: number
   dwfMinFilledAreaCssPx?: number
+  /** Default background is dark for source colors and white for monochrome. Explicit colors are retained. */
   canvasOptions?: Record<string, unknown>
 }
 
@@ -1444,6 +1451,8 @@ export interface FileViewerAiOptions {
 }
 
 export interface FileViewerTextOptions {
+  /** Initial HTML/HTM view. Preview is static, sandboxed, and offline; defaults to preview. */
+  htmlView?: 'preview' | 'source'
   /**
    * Source encoding. Defaults to `auto`: BOM and UTF-16 structure first,
    * then strict UTF-8, with GB18030 (including GBK) as the final fallback.

@@ -507,6 +507,8 @@ export function decodeSprm(sprm: number, operandBytes: Uint8Array): DecodedPrope
   const bytes = operandBytes;
   const raw = sprm;
   switch (sprm) {
+    case SprmCodes.sprmCFRMarkDel: return setMeta('char', 'revisionDeleted', boolValue(bytes), raw, bytes);
+    case SprmCodes.sprmCFRMark: return setMeta('char', 'revisionInserted', boolValue(bytes), raw, bytes);
     case SprmCodes.sprmCPicLocation: return setMeta('char', 'pictureOffset', u32(bytes, 0) >>> 0, raw, bytes);
     case SprmCodes.sprmCFData: return setMeta('char', 'data', boolValue(bytes), raw, bytes);
     case SprmCodes.sprmCFOle2: return setMeta('char', 'ole2', boolValue(bytes), raw, bytes);

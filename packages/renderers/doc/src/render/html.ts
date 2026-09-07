@@ -42,6 +42,7 @@ type ExternalLinkPolicy = NonNullable<MsDocRenderOptions['externalLinkPolicy']>;
 type ExternalResourcePolicy = NonNullable<MsDocRenderOptions['externalResourcePolicy']>;
 
 interface RenderContext {
+  reviewMode: NonNullable<MsDocRenderOptions['reviewMode']>;
   externalLinkPolicy: ExternalLinkPolicy;
   externalResourcePolicy: ExternalResourcePolicy;
 }
@@ -239,11 +240,22 @@ function inlineStyleToCss(styleState: CharState): CssStyleObject {
 }
 
 function renderTextNode(node: TextInlineNode, context: RenderContext): string {
+  if (context.reviewMode === 'final' && node.style.revisionDeleted) return '';
+  if (context.reviewMode === 'original' && node.style.revisionInserted) return '';
   const content = escapeHtml(node.text);
   const inlineStyle = inlineStyleToCss(node.style);
   inlineStyle['white-space'] = 'break-spaces';
+  const revision = context.reviewMode === 'all'
+    ? node.style.revisionDeleted ? 'delete' : node.style.revisionInserted ? 'insert' : null
+    : null;
+  if (revision) {
+    inlineStyle.color = '#c62828';
+    inlineStyle['text-decoration-line'] = revision === 'delete' ? 'line-through' : 'underline';
+  }
   const style = styleObjectToCss(inlineStyle);
-  const inner = `<span${style ? ` style="${style}"` : ''}>${content}</span>`;
+  const tag = revision === 'delete' ? 'del' : revision === 'insert' ? 'ins' : 'span';
+  const change = revision ? ` data-msdoc-change="${revision}"` : '';
+  const inner = `<${tag}${change}${style ? ` style="${style}"` : ''}>${content}</${tag}>`;
   return renderLink(inner, sanitizeMsDocLinkHref(node.href, context.externalLinkPolicy));
 }
 
@@ -519,6 +531,7 @@ export function defaultMsDocCss(): string {
 export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOptions = {}): MsDocRenderResult {
   const css = options.css ?? defaultMsDocCss();
   const context: RenderContext = {
+    reviewMode: options.reviewMode ?? 'all',
     externalLinkPolicy: options.externalLinkPolicy ?? 'block',
     externalResourcePolicy: options.externalResourcePolicy ?? 'block',
   };

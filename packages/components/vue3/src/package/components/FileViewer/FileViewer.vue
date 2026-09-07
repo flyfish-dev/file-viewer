@@ -630,6 +630,7 @@ useViewerPreviewLifecycle({
   getUrl: () => props.url,
   getSourceFilename: () => props.filename || props.name,
   refreshPreview,
+  getRenderOptions: () => [effectiveOptions.value?.docx, effectiveOptions.value?.text],
   cancelPreview,
   clearRenderedContent,
   resetLoading,

@@ -424,6 +424,7 @@ function makeMsDocResponsive(target: HTMLDivElement) {
 export default async function render(buffer: ArrayBuffer, target: HTMLDivElement, context?: FileRenderContext): Promise<AppWrapper> {
   const rendered = await parseMsDocToHtml(buffer, {
     renderOptions: {
+      reviewMode: context?.options?.docx?.reviewMode ?? 'all',
       css: `${defaultMsDocCss()}\n${WORD_PAGE_CSS}`,
       externalLinkPolicy: context?.options?.docx?.externalLinkPolicy ?? 'block',
       externalResourcePolicy: context?.options?.docx?.externalResourcePolicy ?? 'block'

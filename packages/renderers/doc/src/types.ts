@@ -263,6 +263,8 @@ export interface SymbolInfo {
 }
 
 export interface CharState {
+  revisionDeleted?: boolean;
+  revisionInserted?: boolean;
   bold: boolean;
   italic: boolean;
   strike: boolean;
@@ -676,6 +678,8 @@ export interface MsDocParseOptions {
 
 export interface MsDocRenderOptions {
   css?: string;
+  /** Preserve insertion/deletion marks by default; explicitly select final or original text. */
+  reviewMode?: 'all' | 'final' | 'original';
   /** External links are blocked by default; internal document bookmarks remain active. */
   externalLinkPolicy?: 'allow' | 'block';
   /** Linked image resources are blocked by default; embedded data/blob images remain available. */

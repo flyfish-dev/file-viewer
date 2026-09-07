@@ -36,6 +36,15 @@ Use `@file-viewer/preset-all` when you want the same complete matrix as the offi
 - With the RTF capability installed, RTF uses `rtf.js`; without it the viewer shows the exact CLI enablement command. ODT / ODP read `content.xml` from OpenDocument packages for safe structure previews.
 - The renderer reuses core search, zoom, print, export, lifecycle, and operation APIs.
 
+## Text Revisions
+
+`options.docx.reviewMode` applies to DOC and DOCX: `all` (default) shows actual
+insertions underlined and deletions struck through; `final` shows revised text,
+and `original` shows text before those edits. Changing this option updates the
+current preview without replacing the file. It does not accept/reject revisions
+or rewrite the original bytes. Text revisions are not a claim of complete
+Word review-history, formatting-change, or move-tracking support.
+
 ## Offline Assets
 
 DOCX Worker defaults to viewer assets:
