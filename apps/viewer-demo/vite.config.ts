@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module'
+import { execFileSync } from 'node:child_process'
 import { fileURLToPath, URL } from 'node:url'
 
 import type { Alias, Plugin, UserConfigExport } from 'vite'
@@ -8,6 +9,31 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import { createOfflineAssetSanitizerPlugin } from '../../packages/components/web-full/scripts/offline-asset-sanitize.mjs'
 
 const require = createRequire(import.meta.url)
+
+const demoBuildInfoPlugin = (): Plugin => ({
+  name: 'file-viewer-demo-build-info',
+  generateBundle() {
+    const sourceRoot = fileURLToPath(new URL('../..', import.meta.url))
+    let sourceCommit: string | null = null
+    let sourceDirty: boolean | null = null
+    try {
+      sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: sourceRoot, encoding: 'utf8' }).trim()
+      sourceDirty = execFileSync('git', ['status', '--porcelain'], { cwd: sourceRoot, encoding: 'utf8' }).trim().length > 0
+    } catch {
+      // Source archives can be built without Git metadata. Do not invent a revision.
+    }
+    this.emitFile({
+      type: 'asset',
+      fileName: 'build-info.json',
+      source: JSON.stringify({
+        version: require('../../package.json').version,
+        sourceCommit,
+        sourceDirty,
+        builtAt: new Date().toISOString()
+      }, null, 2) + '\n'
+    })
+  }
+})
 
 const exactPackageAlias = (packageName: string, replacement: string): Alias => ({
   find: new RegExp(`^${packageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`),
@@ -135,6 +161,7 @@ export default defineConfig(ctx => {
   const config: UserConfigExport = {
     plugins: [
       viewerQueryFallbackPlugin(),
+      demoBuildInfoPlugin(),
       pptBundledRuntimeAssetUrlPlugin(),
       vue(),
       vueJsx(),

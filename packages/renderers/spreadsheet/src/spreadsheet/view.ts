@@ -64,6 +64,7 @@ interface TableConfigOptions {
   resizableColumns?: boolean
   resizableRows?: boolean
   copySelection?: (params: SpreadsheetCopyParams) => void
+  searchCell?: (row: number, col: number) => 'active' | 'match' | undefined
   sheetDefaults: SheetDefaults
   virtualState: VirtualSheetState
   zoomScale?: number
@@ -1125,6 +1126,7 @@ export const createTableConfig = ({
   resizableColumns = false,
   resizableRows = false,
   copySelection,
+  searchCell,
   sheetDefaults,
   virtualState,
   zoomScale = 1
@@ -1174,7 +1176,9 @@ export const createTableConfig = ({
       return loadingStyle
     }
 
-    return scaleCellStyle(virtualState.cellCache.get(getCellCacheKey(rowIndex, colIndex, column)), normalizedScale)
+    const style = scaleCellStyle(virtualState.cellCache.get(getCellCacheKey(rowIndex, colIndex, column)), normalizedScale)
+    const match = searchCell?.(rowIndex, getDataColumnIndex(column, colIndex))
+    return match ? { ...style, backgroundColor: match === 'active' ? '#ffbf47' : '#fff1a8', color: '#202124' } : style
   }
 
   const renderMethod = ({
@@ -1200,38 +1204,41 @@ export const createTableConfig = ({
       return undefined
     }
 
-      const style = scaleCellStyle(virtualState.cellCache.get(cellKey), normalizedScale)
-      const dataColIndex = getDataColumnIndex(column, colIndex)
-      const measureDocument = typeof document === 'undefined' ? undefined : document
-      const overflowLayout = getExcelOverflowLayout(
-        virtualState,
-        currentRow,
+    const style = scaleCellStyle(virtualState.cellCache.get(cellKey), normalizedScale)
+    const dataColIndex = getDataColumnIndex(column, colIndex)
+    const measureDocument = typeof document === 'undefined' ? undefined : document
+    const overflowLayout = getExcelOverflowLayout(
+      virtualState,
+      currentRow,
       rowIndex,
       dataColIndex,
       column,
-        style,
-        value,
+      style,
+      value,
+      normalizedScale,
+      measureDocument
+    )
+    const mirror = !hasRenderableValue(value)
+      ? getLeftOverflowMirror(
+        virtualState,
+        currentRow,
+        rowIndex,
+        dataColIndex,
         normalizedScale,
         measureDocument
       )
-      const mirror = !hasRenderableValue(value)
-        ? getLeftOverflowMirror(
-          virtualState,
-          currentRow,
-          rowIndex,
-          dataColIndex,
-          normalizedScale,
-          measureDocument
-        )
-        : undefined
-      const renderText = shouldRenderTextInOverlay(style, column) || !!overflowLayout || !!mirror
-      if (!hasBorder(style) && !renderText) {
-        return undefined
-      }
+      : undefined
+    const match = searchCell?.(rowIndex, dataColIndex)
+    const renderText = shouldRenderTextInOverlay(style, column) || !!overflowLayout || !!mirror || !!match
+    if (!hasBorder(style) && !renderText) {
+      return undefined
+    }
 
     return ((cellEl: HTMLDivElement) => {
       const baseStyle: CellStyleCache = {
         ...(style || {}),
+        font: style?.font || getBodyFont(normalizedScale),
+        color: match ? '#202124' : style?.color,
         horizontalAlign: style?.horizontalAlign || column?.align,
         verticalAlign: style?.verticalAlign || column?.verticalAlign
       }
@@ -1247,6 +1254,17 @@ export const createTableConfig = ({
         mirror?.overflowLayout || overflowLayout,
         normalizedScale
       )
+      cellEl.style.boxShadow = match === 'active' ? 'inset 0 0 0 2px #9a5700' : ''
+      if (match) {
+        cellEl.dataset.spreadsheetSearch = match
+        cellEl.dataset.spreadsheetRow = `${rowIndex}`
+        cellEl.dataset.spreadsheetCol = `${dataColIndex}`
+        cellEl.style.background = match === 'active' ? '#ffbf47' : '#fff1a8'
+      } else {
+        delete cellEl.dataset.spreadsheetSearch
+        delete cellEl.dataset.spreadsheetRow
+        delete cellEl.dataset.spreadsheetCol
+      }
     }) as unknown as string
   }
 
@@ -1302,6 +1320,9 @@ export const createTableConfig = ({
     RESIZE_ROW_LINE_COLOR: EXCEL_GREEN,
     RESIZE_ROW_MIN_HEIGHT: scaleNumber(RESIZABLE_ROW_MIN_HEIGHT, normalizedScale),
     ENABLE_KEYBOARD: true,
+    // The table finder only indexes loaded rows and competes with the viewer's
+    // workbook-wide search shortcut. Keep one search owner for all integrations.
+    ENABLE_FINDER: false,
     ENABLE_COPY: true,
     BEFORE_COPY_METHOD: copySelection
       ? (params) => {
@@ -1351,7 +1372,7 @@ export const createTableConfig = ({
           measureDocument
         )
         : undefined
-      if (shouldRenderTextInOverlay(style, column) || overflowLayout || mirror) {
+      if (shouldRenderTextInOverlay(style, column) || overflowLayout || mirror || searchCell?.(rowIndex, dataColIndex)) {
         return ''
       }
       if (value === null || value === undefined) {

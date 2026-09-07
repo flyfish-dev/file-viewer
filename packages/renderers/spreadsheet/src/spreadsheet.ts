@@ -34,6 +34,7 @@ import {
   DEFAULT_SHEET_DEFAULTS,
   displayCellKey,
   getDataKey,
+  getWindowStart,
   INDEX_COLUMN_KEY,
   markWindowState,
   ROW_STATE_FIELD,
@@ -84,6 +85,7 @@ type EVirtTableInstance = {
   draw(): void;
   doLayout(): void;
   scrollTo(x: number, y: number): void;
+  scrollToColkey(key: string): void;
   destroy(): void;
 };
 
@@ -935,6 +937,7 @@ const renderFileViewerSpreadsheet = async (
   let hasAppliedDefaultInitialFit = false;
   let searchState: FileViewerSearchState = createEmptyFileViewerSearchState();
   let searchMatches: FileViewerSearchMatch[] = [];
+  let searchCells = new Set<string>();
   let searchOptions: FileViewerSearchOptions = {};
   let searchRequestSequence = 0;
   let latestSearchRequest = 0;
@@ -1001,6 +1004,10 @@ const renderFileViewerSpreadsheet = async (
       ? ((currentIndex % matches.length) + matches.length) % matches.length
       : -1;
     searchMatches = matches;
+    searchCells = new Set(matches.map(match => {
+      const cell = (match.anchor as SpreadsheetSearchAnchor | null)?.spreadsheet;
+      return cell ? `${cell.sheetId}:${cell.row}:${cell.col}` : '';
+    }));
     searchState = {
       query,
       total: matches.length,
@@ -1008,7 +1015,15 @@ const renderFileViewerSpreadsheet = async (
       current: normalizedIndex >= 0 ? matches[normalizedIndex] : null,
       matches,
     };
+    table?.draw();
     return searchState;
+  };
+  const getSearchCell = (row: number, col: number): 'active' | 'match' | undefined => {
+    if (!searchCells.has(`${getActiveSheetId()}:${row}:${col}`)) return undefined;
+    const current = (searchState.current?.anchor as SpreadsheetSearchAnchor | null)?.spreadsheet;
+    return current?.sheetId === getActiveSheetId() && current.row === row && current.col === col
+      ? 'active'
+      : 'match';
   };
   const getHostHeight = () => tableHost.clientHeight || 0;
   const showBlockingLoading = () => !errorMessage && !hasInitialWindow && (loadingState || sheetInitializing);
@@ -1498,6 +1513,7 @@ const renderFileViewerSpreadsheet = async (
       resizableColumns,
       resizableRows,
       copySelection: copySpreadsheetSelection,
+      searchCell: getSearchCell,
       sheetDefaults,
       virtualState,
       zoomScale: zoom,
@@ -1562,6 +1578,7 @@ const renderFileViewerSpreadsheet = async (
         resizableColumns,
         resizableRows,
         copySelection: copySpreadsheetSelection,
+        searchCell: getSearchCell,
         sheetDefaults,
         virtualState,
         zoomScale: zoom,
@@ -1590,6 +1607,7 @@ const renderFileViewerSpreadsheet = async (
         resizableColumns,
         resizableRows,
         copySelection: copySpreadsheetSelection,
+        searchCell: getSearchCell,
         sheetDefaults,
         virtualState,
         zoomScale: zoom,
@@ -2121,22 +2139,23 @@ const renderFileViewerSpreadsheet = async (
     if (
       !pending ||
       pending.sheetId !== getActiveSheetId() ||
-      !virtualState.loadedWindows.has(clampWindowStart(pending.row, virtualState.totalRows)) ||
+      !virtualState.loadedWindows.has(getWindowStart(pending.row, virtualState.totalRows)) ||
       !table
     ) {
       return;
     }
 
-    pendingSearchJump = null;
     requestAnimationFrame(() => {
-      if (disposed || !table) {
+      if (disposed || !table || pendingSearchJump !== pending || pending.sheetId !== getActiveSheetId()) {
         return;
       }
+      pendingSearchJump = null;
       const targetTop = Math.max(
         0,
         getSearchRowTop(pending.row) - Math.max(0, (tableHost.clientHeight || 0) * 0.35)
       );
-      table.scrollTo(0, targetTop);
+      table.scrollTo(table.ctx.scrollX || 0, targetTop);
+      table.scrollToColkey(virtualState.dataKeys[pending.col] || getDataKey(pending.col));
       table.draw();
       syncImageViewport();
       scheduleViewportLoad();
@@ -2148,7 +2167,7 @@ const renderFileViewerSpreadsheet = async (
     if (!pending || pending.sheetId !== getActiveSheetId() || !virtualState.totalRows) {
       return;
     }
-    const windowStart = clampWindowStart(pending.row, virtualState.totalRows);
+    const windowStart = getWindowStart(pending.row, virtualState.totalRows);
     if (virtualState.loadedWindows.has(windowStart)) {
       flushPendingSearchJump();
       return;

@@ -81,6 +81,9 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Verify reopened spreadsheet and DOCX regressions
+        run: node apps/viewer-demo/scripts/verify-closed-issue-regressions.mjs
+
       - name: Verify the CHM Rust/WASM renderer in Chromium
         run: pnpm verify:chm-renderer
         env:

@@ -156,7 +156,7 @@ EML and MSG attachments open through the same resolved renderer registry as the 
 | `docx.workerUrl` / `docx.workerJsZipUrl` | Self-host DOCX worker and JSZip assets. |
 | `docx.workerTimeout` | Worker startup timeout. The default is 5000ms so unsupported paths, MIME, CSP, or WebView environments fall back quickly. |
 | `docx.progressive` | Lets the renderer yield between batches to improve first content and scroll responsiveness on large documents. |
-| `docx.visualPagination` | Optional page-like preview. Default DOCX rendering is continuous flow to avoid breaking complex tables and directories. |
+| `docx.visualPagination` | Optional fixed-height, measured pagination. Continuous flow is the default; it preserves author-inserted page breaks and section boundaries, but does not automatically split long tables or paragraphs. |
 | `spreadsheet.worker` | Spreadsheet worker mode. The default `auto` keeps small files on the main-thread compatibility path and automatically tries the worker once file size reaches `spreadsheet.workerAutoThreshold`; explicit `true` / `false` values still take precedence. |
 | `spreadsheet.workerAutoThreshold` / `spreadsheet.workerUrl` | Large-file threshold for `worker: 'auto'` in bytes, default 1MB, plus the self-hosted Excel/XLSX worker URL. |
 | `spreadsheet.textEncoding` | CSV / TSV encoding override: `auto` (default), `utf-8`, `gbk`, or `gb18030`. Auto mode validates UTF-8 first and otherwise uses the browser GB18030 decoder. |

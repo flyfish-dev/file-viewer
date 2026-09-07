@@ -249,7 +249,7 @@ const options = {
 | `docx.workerJsZipUrl` | 自定义 DOCX Worker 内加载的 JSZip 地址，默认尝试当前部署 base 下的 `vendor/docx/jszip.min.js` |
 | `docx.darkMode` | 是否强制 DOCX 使用暗黑渲染。默认不传，由 `options.theme` 决定：`dark` 开启、`light` 关闭、`system` 跟随浏览器系统主题 |
 | `docx.progressive` | 是否启用异步分批渲染，默认按批次让出主线程，提升大文档首屏和滚动响应 |
-| `docx.visualPagination` | 是否启用页式预览和预览层兜底分页，默认 `false`。默认 DOCX 使用连续流式阅读，避免复杂目录、表格和长段落被分页拆坏；只有业务明确需要页式效果时再设为 `true` |
+| `docx.visualPagination` | 是否启用固定页高和预览层测量分页，默认 `false`。默认流式阅读保留作者插入的分页符和分节边界，但不按页高自动拆分长表格、目录或段落；需要自动分页时再设为 `true` |
 | `docx.workerTimeout` | DOCX Worker 超时时间，默认 5000ms，静态资源路径、MIME、CSP 或 WebView 不兼容时会更快回退 |
 | `spreadsheet.worker` | 是否启用表格静态 Worker。默认 `auto`：文件体积达到 `spreadsheet.workerAutoThreshold` 时自动尝试 Worker，小文件继续主线程兼容路径；显式设为 `true` / `false` 时按业务配置执行 |
 | `spreadsheet.workerAutoThreshold` | `worker: 'auto'` 时的大文件阈值，单位字节，默认 1MB。需要更激进优化可调低；WebView、CSP 或静态资源不稳定环境可调高或设 `worker: false` |

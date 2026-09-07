@@ -426,7 +426,10 @@ export const createDocxOptions = (
   const externalResourcePolicy = docxOptions?.externalResourcePolicy ?? 'block'
   const options: DocxRenderOptions = {
     useWorker,
-    breakPages: usePagedLayout,
+    // Authored page breaks define separate anchor coordinate spaces even in
+    // flow mode. Only measured/fixed-height pagination remains opt-in.
+    breakPages: true,
+    fixedPageHeight: usePagedLayout,
     ignoreLastRenderedPageBreak: docxOptions?.ignoreLastRenderedPageBreak ?? !usePagedLayout,
     externalLinkPolicy,
     externalResourcePolicy,
