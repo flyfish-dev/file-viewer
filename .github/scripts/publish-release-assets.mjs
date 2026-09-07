@@ -8,7 +8,7 @@ const assetsDirValue = process.env.FILE_VIEWER_RELEASE_ASSETS_DIR || ''
 const releaseTag = process.env.FILE_VIEWER_RELEASE_TAG || ''
 const dryRun = process.env.FILE_VIEWER_RELEASE_DRY_RUN === 'true'
 const registry = 'https://registry.npmjs.org/'
-const visibilityAttempts = Number(process.env.FILE_VIEWER_PUBLISH_VISIBILITY_ATTEMPTS || 30)
+const visibilityAttempts = Number(process.env.FILE_VIEWER_PUBLISH_VISIBILITY_ATTEMPTS || 90)
 const visibilityDelayMs = Number(process.env.FILE_VIEWER_PUBLISH_VISIBILITY_DELAY_MS || 10_000)
 
 function normalizeRepositoryUrl(value) {
@@ -74,7 +74,16 @@ const readPackageJsonFromTarball = (path) => {
 const registryVersion = (packageName) => {
   const result = spawnSync(
     'npm',
-    ['view', `${packageName}@*`, 'version', '--json', '--registry', registry],
+    [
+      'view',
+      `${packageName}@*`,
+      'version',
+      '--json',
+      '--registry',
+      registry,
+      '--prefer-online',
+      '--fetch-retries=0'
+    ],
     {
       encoding: 'utf8',
       stdio: 'pipe'
@@ -94,7 +103,16 @@ const registryVersion = (packageName) => {
 const hasExactVersion = (packageName, version) => {
   const result = spawnSync(
     'npm',
-    ['view', `${packageName}@${version}`, 'version', '--json', '--registry', registry],
+    [
+      'view',
+      `${packageName}@${version}`,
+      'version',
+      '--json',
+      '--registry',
+      registry,
+      '--prefer-online',
+      '--fetch-retries=0'
+    ],
     { encoding: 'utf8', stdio: 'pipe' }
   )
   if (result.status === 0) {
@@ -114,7 +132,32 @@ const waitForExactVersion = async (packageName, version) => {
       await new Promise((resolveDelay) => setTimeout(resolveDelay, visibilityDelayMs))
     }
   }
-  throw new Error(`npm did not expose ${packageName}@${version} after ${visibilityAttempts} checks`)
+  const visibilityWindowSeconds = Math.round(
+    ((visibilityAttempts - 1) * visibilityDelayMs) / 1000
+  )
+  throw new Error(
+    `npm did not expose ${packageName}@${version} after ${visibilityAttempts} checks ` +
+      `over approximately ${visibilityWindowSeconds} seconds`
+  )
+}
+
+const publishPackage = (publishArgs, packageName, version) => {
+  const result = spawnSync('npm', publishArgs, {
+    encoding: 'utf8',
+    stdio: ['inherit', 'pipe', 'pipe']
+  })
+  if (result.stdout) process.stdout.write(result.stdout)
+  if (result.stderr) process.stderr.write(result.stderr)
+  if (result.status === 0) return false
+
+  const failure = `${result.stderr || ''}\n${result.stdout || ''}`
+  if (/E409|EPUBLISHCONFLICT|cannot publish over existing version/i.test(failure)) {
+    console.log(
+      `[npm-trusted-publish] npm reported an existing ${packageName}@${version}; verifying it`
+    )
+    return true
+  }
+  throw new Error(`Command failed: npm ${publishArgs.join(' ')}\n${failure}`)
 }
 
 if (!existsSync(assetsDir)) {
@@ -189,10 +232,10 @@ for (const entry of manifest.packages) {
     publishArgs.push('--provenance')
   }
   console.log(`[npm-trusted-publish] ${dryRun ? 'dry-run' : 'publish'} ${packageName}@${version}`)
-  run('npm', publishArgs, { inherit: true })
+  const alreadyPublished = publishPackage(publishArgs, packageName, version)
   if (dryRun) continue
   await waitForExactVersion(packageName, version)
-  published += 1
+  if (!alreadyPublished) published += 1
 }
 
 const existing = await registryVersion('@file-viewer/core')

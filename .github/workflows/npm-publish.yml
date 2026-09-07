@@ -61,4 +61,6 @@ jobs:
           FILE_VIEWER_RELEASE_ASSETS_DIR: ${{ runner.temp }}/file-viewer-release
           FILE_VIEWER_RELEASE_DRY_RUN: ${{ inputs.dry_run || 'false' }}
           FILE_VIEWER_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+          FILE_VIEWER_PUBLISH_VISIBILITY_ATTEMPTS: '90'
+          FILE_VIEWER_PUBLISH_VISIBILITY_DELAY_MS: '10000'
         run: node .github/scripts/publish-release-assets.mjs
