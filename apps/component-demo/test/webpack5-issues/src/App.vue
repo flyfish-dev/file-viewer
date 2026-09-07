@@ -12,6 +12,11 @@
         <option>original</option>
       </select>
       <label><input id="react" type="checkbox" v-model="reactMode" />React full</label>
+      <label
+        ><input id="deny-download" type="checkbox" v-model="denyDownload" />Cancel downloads</label
+      >
+      <output id="operations">{{ operations.join(',') }}</output>
+      <output id="load-state">{{ loadState }}</output>
       <input id="query" v-model="query" placeholder="Search document" />
       <button id="search" @click="search('searchDocument')">Search</button>
       <button id="next-match" @click="search('nextSearchResult')">Next match</button>
@@ -32,6 +37,8 @@
         ref="viewer"
         :file="file"
         :options="options"
+        @load-start="loadState = 'loading'"
+        @load-complete="loadState = 'ready'"
         style="height: 100%; width: 100%"
       />
     </ElDrawer>
@@ -40,8 +47,10 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, watchEffect } from 'vue'
 import type { FileViewerPublicApi } from '@file-viewer/core'
+import type { FileViewerOperationContext } from '@file-viewer/core'
 import { FileViewer } from '@file-viewer/vue3'
 import officePreset from '@file-viewer/preset-office'
+import { cadRenderer } from '@file-viewer/renderer-cad'
 import { ElDrawer } from 'element-plus'
 import 'element-plus/dist/index.css'
 import React from 'react'
@@ -57,14 +66,22 @@ const reactViewer = React.createRef<FileViewerHandle>()
 const reactRoot = shallowRef<ReturnType<typeof createRoot>>()
 const query = ref('')
 const matches = ref('')
+const denyDownload = ref(false)
+const operations = ref<string[]>([])
+const loadState = ref('idle')
 const options = computed(
   () =>
     ({
       ...(!reactMode.value ? { preset: officePreset } : {}),
+      renderers: cadRenderer,
       rendererMode: 'replace',
       theme: 'light',
       styleIsolation: 'shadow',
       toolbar: false,
+      beforeOperation: (context: FileViewerOperationContext) => {
+        operations.value.push(context.operation)
+        return !(context.operation === 'download' && denyDownload.value)
+      },
       docx: { reviewMode: reviewMode.value }
     }) as const
 )
@@ -83,6 +100,10 @@ watchEffect(() => {
       ref: reactViewer,
       file: file.value,
       options: options.value,
+      onEvent: (event) => {
+        if (event.type === 'load-start') loadState.value = 'loading'
+        if (event.type === 'load-complete') loadState.value = 'ready'
+      },
       style: { height: '100%' }
     })
   )

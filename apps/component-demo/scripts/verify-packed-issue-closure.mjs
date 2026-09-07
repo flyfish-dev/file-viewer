@@ -21,6 +21,8 @@ if (!process.env.PACKED_ISSUE_PACKAGE_DIR) {
       '--filter',
       '@file-viewer/vue3...',
       '--filter',
+      '@file-viewer/web...',
+      '--filter',
       '@file-viewer/react-full...',
       '--filter',
       '@file-viewer/preset-office...',
@@ -41,5 +43,14 @@ execFileSync(
     cwd: root,
     stdio: 'inherit',
     env: { ...process.env, PACKED_ISSUE_CONSUMER_DIR: project }
+  }
+)
+execFileSync(
+  process.execPath,
+  [resolve(root, 'apps/component-demo/scripts/verify-angular-pptx-consumer.mjs')],
+  {
+    cwd: root,
+    stdio: 'inherit',
+    env: { ...process.env, PACKED_ISSUE_PACKAGE_DIR: packages }
   }
 )

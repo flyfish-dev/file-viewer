@@ -38,6 +38,42 @@ final class PDFNavigationTests: XCTestCase {
         assertPage("1", safari: safari, previous: previous, next: next)
         XCTAssertFalse(previous.isEnabled)
         capture(safari, "page-1-after-return")
+        verifyCompactToolbar(safari, next: next)
+    }
+
+    private func verifyCompactToolbar(_ safari: XCUIApplication, next: XCUIElement) {
+        let navigationY = next.frame.minY
+        let more = safari.buttons.matching(NSPredicate(format: "label == '更多操作' OR label == 'More actions'")).firstMatch
+        XCTAssertTrue(more.waitForExistence(timeout: 10))
+        XCTAssertTrue(more.isHittable)
+        XCTAssertGreaterThanOrEqual(more.frame.height, 40)
+        more.tap()
+        let download = safari.buttons.matching(NSPredicate(format: "label == '下载' OR label == 'Download'")).firstMatch
+        let html = safari.buttons["HTML"].firstMatch
+        XCTAssertTrue(download.waitForExistence(timeout: 10))
+        XCTAssertTrue(download.isHittable)
+        XCTAssertTrue(html.isHittable)
+        XCTAssertGreaterThanOrEqual(download.frame.height, 40)
+        XCTAssertFalse(download.frame.intersects(html.frame), "Output controls must not overlap")
+        capture(safari, "toolbar-expanded")
+        more.tap()
+
+        let search = safari.buttons.matching(NSPredicate(format: "label == '搜索' OR label == 'Search'")).firstMatch
+        search.tap()
+        let input = safari.searchFields.matching(NSPredicate(format: "label == '搜索文档' OR label == 'Search document'")).firstMatch
+        XCTAssertTrue(input.waitForExistence(timeout: 10))
+        XCTAssertTrue(input.isHittable)
+        XCTAssertGreaterThanOrEqual(input.frame.height, 40)
+        input.typeText("PDF\n")
+        capture(safari, "toolbar-search")
+        let close = safari.buttons.matching(NSPredicate(format: "label == '收起搜索' OR label == 'Close search'")).firstMatch
+        XCTAssertTrue(close.isHittable)
+        close.tap()
+        XCTAssertTrue(next.isHittable, "Closing search must restore reachable PDF navigation")
+        XCTAssertEqual(next.frame.minY, navigationY, accuracy: 2, "The keyboard must not leave the entire host page scrolled")
+        next.tap()
+        XCTAssertTrue(next.isHittable, "Page navigation must still work after searching")
+        capture(safari, "toolbar-restored")
     }
 
     private func assertPage(_ number: String, safari: XCUIApplication, previous: XCUIElement, next: XCUIElement) {
@@ -67,4 +103,3 @@ final class PDFNavigationTests: XCTestCase {
         add(attachment)
     }
 }
-

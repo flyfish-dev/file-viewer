@@ -90,6 +90,9 @@ jobs:
       - name: Verify column dragging, sheet and zoom persistence, and the disabled option
         run: node apps/viewer-demo/scripts/verify-spreadsheet-resize.mjs
 
+      - name: Verify native mobile toolbar and narrow-host search layout
+        run: node apps/viewer-demo/scripts/verify-mobile-toolbar.mjs
+
       - name: Verify CAD source, monochrome and actual exported pixels
         run: node apps/viewer-demo/scripts/verify-cad-view-modes.mjs
 

@@ -134,6 +134,7 @@ try {
       'docx-revisions',
       'docx-cover',
       'xls',
+      'cad',
       ...(framework === 'react' ? ['psd', 'avro', 'step', 'xmind', 'ppt'] : [])
     ]) {
       const name = `${framework}-${kind}`
@@ -163,6 +164,7 @@ try {
             'apps/viewer-demo/test/fixtures/issue-250/page-anchors.docx'
           ),
           xls: sample('excel.xls'),
+          cad: sample('drawing.dxf'),
           psd: sample('design.psd'),
           step: sample('model.step'),
           xmind: sample('mindmap.xmind'),
@@ -180,15 +182,13 @@ try {
         if (kind === 'doc' || kind === 'docx-revisions') {
           const surface = page.locator(kind === 'doc' ? '.msdoc-root' : 'section.docx').first()
           await surface.locator('del').first().waitFor({ state: 'visible' })
-          const marks = await surface
-            .locator('ins,del')
-            .evaluateAll((es) =>
-              es.map((e) => ({
-                tag: e.tagName,
-                text: e.textContent,
-                decoration: getComputedStyle(e).textDecorationLine
-              }))
-            )
+          const marks = await surface.locator('ins,del').evaluateAll((es) =>
+            es.map((e) => ({
+              tag: e.tagName,
+              text: e.textContent,
+              decoration: getComputedStyle(e).textDecorationLine
+            }))
+          )
           assert.equal(
             marks
               .filter((m) => m.tag === 'DEL')
@@ -235,42 +235,59 @@ try {
             (n) => n >= 3,
             'authored page breaks'
           )
-          details = await page.locator('section.docx').evaluateAll((pages) =>
-            pages.map((page) => {
-              const rect = page.getBoundingClientRect(),
-                scale = rect.width / page.offsetWidth
-              return {
-                text: page.innerText,
-                shapes: [...page.querySelectorAll('[aria-label="CoverBorderOuter"]')].map(
-                  (shape) => {
-                    const box = shape.getBoundingClientRect()
-                    return {
-                      x: (box.left - rect.left) / scale,
-                      y: (box.top - rect.top) / scale,
-                      height: box.height / scale,
-                      inside: box.left >= rect.left - 1 && box.right <= rect.right + 1
+          const readCover = () =>
+            page.locator('section.docx').evaluateAll((pages) =>
+              pages.map((page) => {
+                const rect = page.getBoundingClientRect(),
+                  scale = rect.width / page.offsetWidth
+                return {
+                  text: page.innerText,
+                  shapes: [...page.querySelectorAll('[aria-label="CoverBorderOuter"]')].map(
+                    (shape) => {
+                      const box = shape.getBoundingClientRect()
+                      return {
+                        x: (box.left - rect.left) / scale,
+                        y: (box.top - rect.top) / scale,
+                        height: box.height / scale,
+                        inside: box.left >= rect.left - 1 && box.right <= rect.right + 1
+                      }
                     }
-                  }
-                )
-              }
-            })
-          )
-          for (const [index, height] of [
-            [0, 170.05],
-            [1, 283.46]
-          ]) {
-            assert.equal(details[index].shapes.length, 1, 'Cover borders overlap')
-            const s = details[index].shapes[0]
-            assert.ok(
-              s.inside &&
-                Math.abs(s.x - (141.7 * 4) / 3) < 1 &&
-                Math.abs(s.y - (255.05 * 4) / 3) < 1 &&
-                Math.abs(s.height - (height * 4) / 3) < 1,
-              JSON.stringify(s)
+                  )
+                }
+              })
             )
+          const progressive = {
+            phase: await page.locator('#load-state').innerText(),
+            pages: await readCover()
           }
-          assert.doesNotMatch(details[0].text, /THỦ TRƯỞNG/)
-          assert.match(details[1].text, /THỦ TRƯỞNG/)
+          // DOCX inserts progressive content before finishing its layout pass.
+          // Assert authored geometry at the public load-complete boundary, not
+          // merely when the first SVG becomes visible.
+          await page
+            .locator('#load-state')
+            .filter({ hasText: /^ready$/ })
+            .waitFor()
+          details = await readCover()
+          console.log(JSON.stringify({ name, progressive, completed: details }))
+          const assertCover = (pages) => {
+            for (const [index, height] of [
+              [0, 170.05],
+              [1, 283.46]
+            ]) {
+              assert.equal(pages[index].shapes.length, 1, 'Cover borders overlap')
+              const s = pages[index].shapes[0]
+              assert.ok(
+                s.inside &&
+                  Math.abs(s.x - (141.7 * 4) / 3) < 1 &&
+                  Math.abs(s.y - (255.05 * 4) / 3) < 1 &&
+                  Math.abs(s.height - (height * 4) / 3) < 1,
+                JSON.stringify(s)
+              )
+            }
+            assert.doesNotMatch(pages[0].text, /THỦ TRƯỞNG/)
+            assert.match(pages[1].text, /THỦ TRƯỞNG/)
+          }
+          assertCover(details)
           for (const delta of [-160, 260]) {
             const handle = await page.locator('.el-drawer__dragger').boundingBox()
             assert.ok(handle, 'Missing actual Element Plus resize handle')
@@ -278,19 +295,27 @@ try {
             await page.mouse.down()
             await page.mouse.move(handle.x + delta, handle.y + handle.height / 2, { steps: 12 })
             await page.mouse.up()
-            await poll(() => page.locator('section.docx').evaluateAll(pages => {
-              return pages.slice(0, 2).every((page, index) => {
-                const paper = page.getBoundingClientRect()
-                const scale = paper.width / page.offsetWidth
-                const shapes = page.querySelectorAll('[aria-label="CoverBorderOuter"]')
-                if (shapes.length !== 1) return false
-                const shape = shapes[0].getBoundingClientRect()
-                return shape.left >= paper.left - 1 && shape.right <= paper.right + 1 &&
-                  Math.abs((shape.left - paper.left) / scale - 141.7 * 4 / 3) < 1 &&
-                  Math.abs((shape.top - paper.top) / scale - 255.05 * 4 / 3) < 1 &&
-                  Math.abs(shape.height / scale - [170.05, 283.46][index] * 4 / 3) < 1
-              })
-            }), valid => valid, `${name}/actual-drawer-resize`)
+            await poll(
+              () =>
+                page.locator('section.docx').evaluateAll((pages) => {
+                  return pages.slice(0, 2).every((page, index) => {
+                    const paper = page.getBoundingClientRect()
+                    const scale = paper.width / page.offsetWidth
+                    const shapes = page.querySelectorAll('[aria-label="CoverBorderOuter"]')
+                    if (shapes.length !== 1) return false
+                    const shape = shapes[0].getBoundingClientRect()
+                    return (
+                      shape.left >= paper.left - 1 &&
+                      shape.right <= paper.right + 1 &&
+                      Math.abs((shape.left - paper.left) / scale - (141.7 * 4) / 3) < 1 &&
+                      Math.abs((shape.top - paper.top) / scale - (255.05 * 4) / 3) < 1 &&
+                      Math.abs(shape.height / scale - ([170.05, 283.46][index] * 4) / 3) < 1
+                    )
+                  })
+                }),
+              (valid) => valid,
+              `${name}/actual-drawer-resize`
+            )
           }
           for (let i = 0; i < 3; i++) {
             await page.locator('.el-drawer__close-btn').click()
@@ -300,6 +325,11 @@ try {
               .locator('[aria-label="CoverBorderOuter"]')
               .last()
               .waitFor({ state: 'visible' })
+            await page
+              .locator('#load-state')
+              .filter({ hasText: /^ready$/ })
+              .waitFor()
+            assertCover(await readCover())
           }
         } else if (kind === 'xls') {
           await page.locator('.e-virt-table-container').waitFor({ state: 'visible' })
@@ -339,6 +369,60 @@ try {
             )
             details.push({ currentIndex: state.currentIndex, ...hit })
           }
+        } else if (kind === 'cad') {
+          await page.locator('.cad-color-mode:not([disabled])').waitFor({ state: 'visible' })
+          await page.locator('.cad-color-mode').click()
+          const downloads = []
+          page.on('download', (download) => downloads.push(download.suggestedFilename()))
+          await page.locator('#deny-download').check()
+          await page.locator('.cad-export-png').click()
+          await poll(
+            () => page.locator('#operations').innerText(),
+            (text) => text.includes('download'),
+            'owning component download hook'
+          )
+          assert.deepEqual(downloads, [], 'The component cancellation hook was bypassed')
+          await page.locator('#deny-download').uncheck()
+          details = []
+          for (const format of ['png', 'jpeg']) {
+            const downloading = page.waitForEvent('download')
+            await page.locator(`.cad-export-${format}`).click()
+            const download = await downloading
+            const file = resolve(out, `${name}.${format === 'png' ? 'png' : 'jpg'}`)
+            await download.saveAs(file)
+            const bytes = await readFile(file)
+            const pixels = await page.evaluate(async (base64) => {
+              const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
+              const bitmap = await createImageBitmap(new Blob([bytes]))
+              const canvas = document.createElement('canvas')
+              canvas.width = bitmap.width
+              canvas.height = bitmap.height
+              const context = canvas.getContext('2d')
+              context.drawImage(bitmap, 0, 0)
+              bitmap.close()
+              const data = context.getImageData(0, 0, canvas.width, canvas.height).data
+              let black = 0,
+                white = 0,
+                colored = 0
+              for (let i = 0; i < data.length; i += 4) {
+                const r = data[i],
+                  g = data[i + 1],
+                  b = data[i + 2]
+                if (Math.max(r, g, b) < 30) black++
+                if (Math.min(r, g, b) > 248) white++
+                if (Math.max(r, g, b) - Math.min(r, g, b) > 35) colored++
+              }
+              return { black, white, colored, total: canvas.width * canvas.height }
+            }, bytes.toString('base64'))
+            assert.ok(
+              pixels.black > 100 &&
+                pixels.white > pixels.total * 0.6 &&
+                pixels.colored < pixels.total * 0.001,
+              'The cold consumer downloaded blank or non-monochrome pixels'
+            )
+            details.push({ format, bytes: bytes.length, pixels })
+          }
+          assert.equal(downloads.length, 2)
         } else if (kind === 'psd') {
           await page.locator('.psd-viewer canvas').waitFor({ state: 'visible' })
           details = await page.locator('.psd-viewer canvas').evaluate((c) => ({
