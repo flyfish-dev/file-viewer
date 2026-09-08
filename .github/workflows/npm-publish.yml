@@ -34,6 +34,7 @@ jobs:
       - name: Check out release publisher
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.release.tag_name || inputs.release_tag }}
           persist-credentials: false
 
       - name: Set up Node.js
@@ -41,6 +42,9 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+
+      - name: Verify publisher failure and resume behavior
+        run: node --test .github/scripts/npm-release-batch.test.mjs .github/scripts/publish-release-assets.test.mjs
 
       - name: Download the immutable Release assets
         env:
@@ -63,4 +67,14 @@ jobs:
           FILE_VIEWER_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
           FILE_VIEWER_PUBLISH_VISIBILITY_ATTEMPTS: '90'
           FILE_VIEWER_PUBLISH_VISIBILITY_DELAY_MS: '10000'
+          FILE_VIEWER_PUBLISH_CONCURRENCY: '3'
+          FILE_VIEWER_REGISTRY_CONCURRENCY: '6'
         run: node .github/scripts/publish-release-assets.mjs
+
+      - name: Retain per-package publish evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: npm-publish-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/file-viewer-release/npm-publish-report.json
+          if-no-files-found: warn
