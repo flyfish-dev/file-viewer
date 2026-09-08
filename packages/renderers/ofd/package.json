@@ -67,6 +67,7 @@
     "jszip": "^3.10.1"
   },
   "devDependencies": {
+    "@xmldom/xmldom": "0.9.12",
     "linkedom": "^0.18.12",
     "typescript": "^6.0.3"
   },

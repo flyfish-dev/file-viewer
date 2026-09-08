@@ -46,6 +46,10 @@ const buildMinimalPageBlockOfd = async () => {
     </ofd:Layer>
   </ofd:Content>
 </ofd:Page>`)
+  // Keep the tracked fixture byte-stable across repeated regression runs.
+  for (const entry of Object.values(zip.files)) {
+    entry.date = new Date('2026-07-09T06:50:10.000Z')
+  }
   return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
 }
 

@@ -311,6 +311,9 @@ let FONT_FAMILY = {
 };
 
 export const getFontFamily = function (font) {
+    if (typeof font !== 'string' || !font.trim()) {
+        return 'sans-serif';
+    }
     if (FONT_FAMILY[font.toLowerCase()]) {
         font = FONT_FAMILY[font.toLowerCase()];
     }

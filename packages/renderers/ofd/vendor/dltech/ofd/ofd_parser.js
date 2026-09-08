@@ -43,6 +43,12 @@ const appendChildValue = function (target, key, value) {
     target[key] = value;
 }
 
+const xmlElementName = function (element) {
+    return element.namespaceURI === 'http://www.ofdspec.org/2016'
+        ? `ofd:${element.localName}`
+        : element.nodeName;
+}
+
 const parseXmlElement = function (element, options, order) {
     const attrPrefix = options.attributeNamePrefix ?? '@_';
     const result = {};
@@ -64,7 +70,7 @@ const parseXmlElement = function (element, options, order) {
             if (parsedChild && typeof parsedChild === 'object' && pfIndex !== undefined) {
                 parsedChild.pfIndex = pfIndex;
             }
-            appendChildValue(result, child.nodeName, parsedChild);
+            appendChildValue(result, xmlElementName(child), parsedChild);
             continue;
         }
         if (child.nodeType === 3 || child.nodeType === 4) {
@@ -103,7 +109,7 @@ const parseXmlToJson = function (xmlData, options = {}) {
         return {};
     }
     return {
-        [root.nodeName]: parseXmlElement(root, options, { next: 0 })
+        [xmlElementName(root)]: parseXmlElement(root, options, { next: 0 })
     };
 }
 
@@ -159,18 +165,13 @@ const joinZipPath = function (...parts) {
 }
 
 const startsWithZipRoot = function (path, root) {
-    const normalizedPath = normalizeZipPath(path);
-    const normalizedRoot = normalizeZipPath(root);
+    const normalizedPath = normalizeZipPath(path).toLowerCase();
+    const normalizedRoot = normalizeZipPath(root).toLowerCase();
     return normalizedPath === normalizedRoot || normalizedPath.startsWith(`${normalizedRoot}/`);
 }
 
 const getZipEntry = function (zip, candidates) {
     const paths = asArray(candidates).map(normalizeZipPath).filter(Boolean);
-    for (const path of paths) {
-        if (zip.files[path]) {
-            return zip.files[path];
-        }
-    }
     let lowerMap = zipEntryMapCache.get(zip);
     if (!lowerMap) {
         lowerMap = new Map();
@@ -180,7 +181,7 @@ const getZipEntry = function (zip, candidates) {
         zipEntryMapCache.set(zip, lowerMap);
     }
     for (const path of paths) {
-        const entry = lowerMap.get(path.toLowerCase());
+        const entry = zip.files[path] || lowerMap.get(path.toLowerCase());
         if (entry) {
             return entry;
         }
@@ -190,15 +191,22 @@ const getZipEntry = function (zip, candidates) {
 
 const resolveDocumentPath = function (path, doc) {
     const normalizedPath = normalizeZipPath(path);
-    if (!normalizedPath || startsWithZipRoot(normalizedPath, doc)) {
+    if (!normalizedPath || !doc || /^[\\/]/.test(String(path).trim()) || startsWithZipRoot(normalizedPath, doc)) {
         return normalizedPath;
     }
-    return joinZipPath(doc, normalizedPath);
+    return joinZipPath(doc, path);
 }
 
-const resolveResourceCandidates = function (file, baseLoc, doc) {
+const resolveResourceCandidates = function (file, baseLoc, doc, resourcePath) {
     const mediaFile = normalizeZipPath(file);
     const base = normalizeZipPath(baseLoc);
+    const rawFile = String(file || '').replace(/\\/g, '/').trim();
+    const rawBase = String(baseLoc || '').replace(/\\/g, '/').trim();
+    const resourceDirectory = normalizeZipPath(resourcePath).split('/').slice(0, -1).join('/');
+    const resourceBase = rawBase.startsWith('/') ? normalizeZipPath(rawBase) : joinZipPath(resourceDirectory, rawBase);
+    // Resolve relative components before normalizing '..'. Declared locations
+    // outrank compatibility fallbacks, including their case-insensitive matches.
+    const declaredPath = rawFile.startsWith('/') ? mediaFile : joinZipPath(resourceBase, rawFile);
     const candidates = [mediaFile];
 
     if (base && !startsWithZipRoot(mediaFile, base)) {
@@ -213,7 +221,7 @@ const resolveResourceCandidates = function (file, baseLoc, doc) {
         }
     }
 
-    return [...new Set(docCandidates.filter(Boolean))];
+    return [...new Set([declaredPath, ...docCandidates].filter(Boolean))];
 }
 
 const getImageMime = function (format) {
@@ -295,7 +303,7 @@ const sealImageMime = function (type) {
 export const doGetDocRoot = async function (zip, docbody) {
     let docRoot = docbody['ofd:DocRoot'];
     docRoot = normalizeZipPath(replaceFirstSlash(docRoot));
-    const doc = docRoot.split('/')[0];
+    const doc = docRoot.split('/').slice(0, -1).join('/');
     const signatures = docbody['ofd:Signatures'];
     const stampAnnot = await getSignature(zip, signatures, doc);
     let stampAnnotArray = {};
@@ -422,7 +430,7 @@ export const getDocumentRes = async function ([zip, doc, Document, stampAnnot, a
             const documentResObj = data['json']['ofd:Res'];
             fontResObj = await getFont(documentResObj);
             drawParamResObj = await getDrawParam(documentResObj);
-            multiMediaResObj = await getMultiMediaRes(zip, documentResObj, doc);
+            multiMediaResObj = await getMultiMediaRes(zip, documentResObj, doc, documentResPath);
         }
     }
     return [zip, doc, Document, stampAnnot, annotationObjs, fontResObj, drawParamResObj, multiMediaResObj];
@@ -439,7 +447,7 @@ export const getPublicRes = async function ([zip, doc, Document, stampAnnot, ann
             fontResObj = Object.assign(fontResObj, fontObj);
             let drawParamObj = await getDrawParam(publicResObj);
             drawParamResObj = Object.assign(drawParamResObj, drawParamObj);
-            let multiMediaObj = await getMultiMediaRes(zip, publicResObj, doc);
+            let multiMediaObj = await getMultiMediaRes(zip, publicResObj, doc, publicResPath);
             multiMediaResObj = Object.assign(multiMediaResObj, multiMediaObj);
         }
     }
@@ -529,14 +537,14 @@ const getDrawParam = async function (res) {
     return drawParamResObj;
 }
 
-const getMultiMediaRes = async function (zip, res, doc) {
+const getMultiMediaRes = async function (zip, res, doc, resourcePath) {
     const multiMedias = res['ofd:MultiMedias'];
     let multiMediaResObj = {};
     if (multiMedias) {
         let array = collectGroupedItems(multiMedias, 'ofd:MultiMedia');
         for (const item of array) {
             if (item && item['ofd:MediaFile']) {
-                const candidates = resolveResourceCandidates(item['ofd:MediaFile'], res['@_BaseLoc'], doc);
+                const candidates = resolveResourceCandidates(item['ofd:MediaFile'], res['@_BaseLoc'], doc, resourcePath);
                 const file = getZipEntry(zip, candidates) ? candidates : null;
                 const type = item['@_Type'] ? item['@_Type'].toLowerCase() : '';
                 if (type === 'image') {
@@ -663,44 +671,32 @@ const getSealDocumentObj = function (stampAnnot) {
 }
 
 const getJsonFromXmlContent = async function (zip, xmlName) {
-    return new Promise((resolve, reject) => {
-        const entry = getZipEntry(zip, xmlName);
-        if (!entry) {
-            reject(new Error(`OFD XML resource not found: ${normalizeZipPath(xmlName)}`));
-            return;
-        }
-        entry.async('string').then(function (content) {
-            ensureBrowserGlobal();
-            let ops = {
-                attributeNamePrefix: "@_",
-                ignoreAttributes: false,
-                parseNodeValue: false,
-                trimValues: false
-            };
-            let jsonObj = parseXmlToJson(content, ops);
-            let result = {'xml': content, 'json': jsonObj};
-            resolve(result);
-        }, function error(e) {
-            reject(e);
-        })
-    });
+    const entry = getZipEntry(zip, xmlName);
+    if (!entry) {
+        throw new Error(`OFD XML resource not found: ${normalizeZipPath(xmlName)}`);
+    }
+    const content = await entry.async('string');
+    ensureBrowserGlobal();
+    try {
+        const json = parseXmlToJson(content, {
+            attributeNamePrefix: "@_",
+            ignoreAttributes: false,
+            parseNodeValue: false,
+            trimValues: false
+        });
+        return {xml: content, json};
+    } catch (error) {
+        throw new Error(`OFD XML parse failed (${normalizeZipPath(xmlName)}): ${error.message}`);
+    }
 }
 
 const parseJbig2ImageFromZip = async function (zip, name) {
-    return new Promise((resolve, reject) => {
-        const entry = getZipEntry(zip, name);
-        if (!entry) {
-            resolve(null);
-            return;
-        }
-        entry.async('uint8array').then(function (bytes) {
-            let jbig2 = new Jbig2Image();
-            const img = jbig2.parse(bytes);
-            resolve({img, width: jbig2.width, height: jbig2.height, format: 'gbig2'});
-        }, function error(e) {
-            reject(e);
-        })
-    });
+    const entry = getZipEntry(zip, name);
+    if (!entry) return null;
+    const bytes = await entry.async('uint8array');
+    const jbig2 = new Jbig2Image();
+    const img = jbig2.parse(bytes);
+    return {img, width: jbig2.width, height: jbig2.height, format: 'gbig2'};
 }
 
 const parseOtherImageFromZip = async function (zip, name, mime = 'image/png') {
