@@ -6,6 +6,19 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## v3.0.3 - Word revisions, browser integration, and mobile PDF fixes
+
+- DOC preserves insertion/deletion records, paragraph marks and soft breaks. Word review modes switch without selecting the file again. Correct DOC line-spacing units and font slots restore the supplied sales contract without inventing revision marks.
+- Resized spreadsheet columns now scale and survive sheet changes. Offscreen search covers real XLS input, distant columns and merged cells. CFB recovery skips only unused broken MiniFAT chains; required workbook data is still validated.
+- iPhone Safari PDF navigation recovers after search and keyboard dismissal. Canceled PDF startup no longer leaves an unhandled Worker rejection.
+- Vue CLI/Webpack, Angular and nested Vite integrations use the correct browser entries and local PPTX Workers. Explicit asset paths retain priority. New AMD entries support RequireJS without changing the host's `define` or relying on a CDN.
+- HTML offers static preview and exact source views without running scripts or external requests. OFD resolves declared resources and namespaces and rejects invalid required pages without hanging. CAD adds permission-aware, watermarked PNG/JPEG view downloads and corrects DXF LINE and DWF/DWFx contrast.
+- PDF runtime patches carry verifiable source hashes; CHM, Adobe and Illustrator security fixes are reflected in distributed Workers. Independent component source builds include their required inputs, and publication resumes by dependency layer with integrity checks.
+
+The mainline target is `3.0.3` for 87 packages; `msdoc-viewer` advances to `0.2.6`. Upstream engines are DOCX `0.3.30`, styled-exceljs `0.21.5`, CAD `0.8.2` and DWF `0.6.7`. Vue 2.6/2.7 and existing Full capabilities remain supported; pako 3 stays deferred. This patch also includes the HTML views, AMD entry and CAD image-download features.
+
+The private XLS from #227, the deletion-revision file behind the #236 screenshot and the historical #57 OFD remain unavailable. Constructed fixtures and the supplied contract do not establish those originals as fixed.
+
 ## v3.0.2 — Corrected patch release for spreadsheet search, DOCX shapes, and CAD monochrome output
 
 This release supersedes 3.0.1. npm does not allow replacing packages that already have dependents, so the published 3.0.1 line cannot be completely retracted; affected 3.0.1 packages are deprecated after 3.0.2 is published.
