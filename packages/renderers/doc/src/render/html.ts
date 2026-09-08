@@ -394,6 +394,7 @@ function renderAttachmentNode(node: Extract<InlineNode, { type: 'attachment' }>,
 
 function renderInlineNodes(nodes: InlineNode[], context: RenderContext): string {
   return nodes.map((node) => {
+    if (hiddenRevision(node.style, context)) return '';
     if (node.type === 'text') return renderTextNode(node, context);
     if (node.type === 'image') return renderImageNode(node, context);
     if (node.type === 'attachment') return renderAttachmentNode(node, context);
@@ -401,6 +402,33 @@ function renderInlineNodes(nodes: InlineNode[], context: RenderContext): string 
     if (node.type === 'pageBreak') return '<span class="msdoc-page-break"></span>';
     return '';
   }).join('');
+}
+
+function hiddenRevision(
+  revision: ParagraphBlock['paragraphMark'],
+  context: RenderContext,
+): boolean {
+  return !!((context.reviewMode === 'final' && revision?.revisionDeleted)
+    || (context.reviewMode === 'original' && revision?.revisionInserted));
+}
+
+function reviewParagraphs(paragraphs: ParagraphBlock[], context: RenderContext): ParagraphBlock[] {
+  const result: ParagraphBlock[] = [];
+  for (const paragraph of paragraphs) {
+    const previous = result[result.length - 1];
+    if (previous && previous.storyKind === paragraph.storyKind
+      && hiddenRevision(previous.paragraphMark, context)) {
+      // The surviving paragraph mark owns the merged paragraph's formatting.
+      result[result.length - 1] = {
+        ...paragraph,
+        inlines: [...previous.inlines, ...paragraph.inlines],
+        text: previous.text + paragraph.text,
+      };
+    } else {
+      result.push(paragraph);
+    }
+  }
+  return result;
 }
 
 function renderParagraphBlock(block: ParagraphBlock, context: RenderContext, options: { inline?: boolean } = {}): string {
@@ -482,7 +510,8 @@ function renderTableBlock(block: TableBlock, context: RenderContext): string {
         if ((cell.colspan ?? 1) > 1) attrs.push(` colspan="${cell.colspan}"`);
         if ((cell.rowspan ?? 1) > 1) attrs.push(` rowspan="${cell.rowspan}"`);
         const style = styleObjectToCss(cellStyle(cell));
-        const body = cell.paragraphs.map((paragraph) => renderParagraphBlock(paragraph, context, { inline: true })).join('');
+        const body = reviewParagraphs(cell.paragraphs, context)
+          .map((paragraph) => renderParagraphBlock(paragraph, context, { inline: true })).join('');
         return `<td class="msdoc-cell"${attrs.join('')}${style ? ` style="${style}"` : ''}>${body || '<div class="msdoc-paragraph"><br></div>'}</td>`;
       })
       .join('');
@@ -535,12 +564,23 @@ export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOption
     externalLinkPolicy: options.externalLinkPolicy ?? 'block',
     externalResourcePolicy: options.externalResourcePolicy ?? 'block',
   };
-  const html = parsed.blocks.map((block) => {
-    if (block.type === 'paragraph') return renderParagraphBlock(block, context);
-    if (block.type === 'table') return renderTableBlock(block, context);
-    if (block.type === 'attachments') return renderAttachmentsBlock(block);
-    return '';
-  }).join('');
+  const parts: string[] = [];
+  let paragraphs: ParagraphBlock[] = [];
+  const flushParagraphs = () => {
+    parts.push(...reviewParagraphs(paragraphs, context).map(block => renderParagraphBlock(block, context)));
+    paragraphs = [];
+  };
+  for (const block of parsed.blocks) {
+    if (block.type === 'paragraph') {
+      paragraphs.push(block);
+      continue;
+    }
+    flushParagraphs();
+    if (block.type === 'table') parts.push(renderTableBlock(block, context));
+    if (block.type === 'attachments') parts.push(renderAttachmentsBlock(block));
+  }
+  flushParagraphs();
+  const html = parts.join('');
   return {
     html,
     css,

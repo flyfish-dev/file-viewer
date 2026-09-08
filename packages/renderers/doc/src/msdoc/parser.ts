@@ -293,11 +293,11 @@ function buildInlineNodes(segments: CharSegment[], resolveAsset: (charState: Cha
       }
 
       if (ch === DOC_CONTROL.hardLineBreak) {
-        emitInline(fieldStack, output, { type: 'lineBreak' });
+        emitInline(fieldStack, output, { type: 'lineBreak', style: segment.state });
         continue;
       }
       if (ch === DOC_CONTROL.pageBreak) {
-        emitInline(fieldStack, output, { type: 'pageBreak' });
+        emitInline(fieldStack, output, { type: 'pageBreak', style: segment.state });
         continue;
       }
       if (ch === DOC_CONTROL.picture) {
@@ -415,12 +415,29 @@ function buildParagraphModel(
     range.storyKind === 'textbox' || range.storyKind === 'header-textbox',
   );
   const inlines = buildInlineNodes(segments, resolveAsset);
+  // The terminator has its own CHPX run and is not part of paragraphText.
+  const markState = range.terminator === DOC_CONTROL.paragraph
+    ? buildCharSegments(
+      { ...range, cpStart: range.cpEnd - 1 },
+      range.terminator,
+      chpxRuns,
+      styles,
+      baseCharProps,
+      resolveFont,
+      { index: chpxCursor.index },
+    )[0]?.state
+    : undefined;
 
   return {
     id: uniqueId('para'),
     cpStart: range.cpStart,
     cpEnd: range.cpEnd,
     terminator: range.terminator || '',
+    paragraphMark: markState && {
+      revisionDeleted: markState.revisionDeleted,
+      revisionInserted: markState.revisionInserted,
+    },
+    storyKind: range.storyKind,
     text: paragraphText,
     rawProperties: range.properties || [],
     styleId: paraStyleId,
@@ -573,6 +590,8 @@ function paragraphToBlock(paragraph: ParagraphModel): ParagraphBlock {
     paraState: paragraph.paraState,
     inlines: paragraph.inlines,
     text: paragraph.text,
+    paragraphMark: paragraph.paragraphMark,
+    storyKind: paragraph.storyKind,
   };
 }
 

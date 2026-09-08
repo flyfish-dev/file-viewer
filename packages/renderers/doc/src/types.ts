@@ -602,10 +602,12 @@ export interface AttachmentInlineNode {
 
 export interface LineBreakInlineNode {
   type: 'lineBreak';
+  style?: CharState;
 }
 
 export interface PageBreakInlineNode {
   type: 'pageBreak';
+  style?: CharState;
 }
 
 export type InlineNode = TextInlineNode | ImageInlineNode | AttachmentInlineNode | LineBreakInlineNode | PageBreakInlineNode;
@@ -618,6 +620,8 @@ export interface ParagraphBlock {
   paraState: ParaState;
   inlines: InlineNode[];
   text: string;
+  paragraphMark?: Pick<CharState, 'revisionDeleted' | 'revisionInserted'>;
+  storyKind?: string;
 }
 
 export interface TableCellBlock {
@@ -659,6 +663,8 @@ export interface ParagraphModel {
   cpStart: number;
   cpEnd: number;
   terminator: string;
+  paragraphMark?: Pick<CharState, 'revisionDeleted' | 'revisionInserted'>;
+  storyKind?: string;
   text: string;
   rawProperties: DecodedProperty[];
   styleId: number;
