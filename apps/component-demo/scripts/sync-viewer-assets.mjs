@@ -2,6 +2,7 @@ import { cp, mkdir, readdir, rm } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 
 const demoDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const repoDir = resolve(demoDir, '../..')
@@ -13,10 +14,10 @@ const sourceDir = existsSync(resolve(legacySourceDir, 'flyfish-viewer-assets.jso
 const targetDir = resolve(demoDir, 'public/file-viewer')
 const helperSourceDir = resolve(repoDir, 'packages/components/web/dist')
 const helperTargetDir = targetDir
-const helperFiles = ['flyfish-file-viewer-web.iife.js']
+const helperFiles = ['flyfish-file-viewer-web.iife.js', 'flyfish-file-viewer-web.amd.js']
 const fullHelperSourceDir = resolve(repoDir, 'packages/components/web-full/dist')
 const fullHelperTargetDir = targetDir
-const fullHelperFiles = ['flyfish-file-viewer-web-full.iife.js']
+const fullHelperFiles = ['flyfish-file-viewer-web-full.iife.js', 'flyfish-file-viewer-web-full.amd.js']
 const legacyAssetRoots = [
   resolve(demoDir, 'public/vendor/file-viewer'),
   resolve(demoDir, 'public/vendor/file-viewer-web'),
@@ -95,10 +96,21 @@ await cp(
 await removeMacMetadata(fullHelperTargetDir)
 console.log(`[file-viewer-demo] web full helper and renderer bundles copied to ${fullHelperTargetDir}`)
 
+const requireJsDir = dirname(createRequire(import.meta.url).resolve('requirejs/package.json'))
+const requireJsTarget = resolve(demoDir, 'public/requirejs')
+await mkdir(requireJsTarget, { recursive: true })
+await cp(resolve(requireJsDir, 'require.js'), resolve(requireJsTarget, 'require.js'))
+// The npm package keeps only a license URL in its header. Retain the full
+// upstream 2.3.7 license alongside the locally deployed loader.
+await cp(resolve(demoDir, 'licenses/requirejs-2.3.7.txt'), resolve(requireJsTarget, 'LICENSE'))
+
 await mkdir(exampleTargetDir, { recursive: true })
 await cp(resolve(exampleSourceDir, 'word.docx'), resolve(exampleTargetDir, 'word.docx'))
+for (const name of ['pdf.pdf', 'ppt.pptx', 'word-wps-contract.doc']) {
+  await cp(resolve(exampleSourceDir, name), resolve(exampleTargetDir, name))
+}
 await cp(resolve(exampleSourceDir, 'excel.xlsx'), resolve(exampleTargetDir, 'excel.xlsx'))
 await cp(resolve(exampleSourceDir, 'office-demo.ppt'), resolve(exampleTargetDir, 'office-demo.ppt'))
 await cp(resolve(exampleSourceDir, 'pic.png'), resolve(exampleTargetDir, 'pic.png'))
 await cp(resolve(exampleSourceDir, 'en/markdown.md'), resolve(exampleTargetDir, 'markdown.md'))
-console.log(`[file-viewer-demo] docx/xlsx/ppt/png/markdown examples copied to ${exampleTargetDir}`)
+console.log(`[file-viewer-demo] pdf/doc/docx/xlsx/ppt/pptx/png/markdown examples copied to ${exampleTargetDir}`)

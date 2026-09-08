@@ -6,6 +6,20 @@ Vanilla JS / Pure Web Full 一站式集成包，保持 v2.4 已发布 Full 能�
 npm install @file-viewer/web-full
 ```
 
+## RequireJS
+
+从 3.0.3 起可直接加载 `dist/flyfish-file-viewer-web-full.amd.js`。完整部署 `dist/`，
+保留同级 `renderers/`、`vendor/`、`wasm/`，不需要 shim 或覆盖宿主 `define`。
+
+```js
+require.config({ paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' } })
+require(['viewer'], viewer => {
+  viewer.mountViewer(document.getElementById('viewer'), { url: '/files/report.pdf' })
+})
+```
+
+[完整接入示例](https://doc.file-viewer.app/zh/guide/quickstart-web#requirejsamd)。
+
 <!-- FILE_VIEWER_GENERATED:START -->
 ## 生态包矩阵
 
@@ -13,8 +27,8 @@ npm install @file-viewer/web-full
 
 | 框架 | 标准 npm 包 | 入口格式 | GitHub | Gitee | 兼容历史包 |
 | --- | --- | --- | --- | --- | --- |
-| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, 类型声明, script 标签 IIFE | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
-| Vanilla JS / Pure Web Full | `@file-viewer/web-full` | ESM, 类型声明, script 标签 IIFE | [file-viewer-web-full](https://github.com/flyfish-dev/file-viewer-web-full) | [file-viewer-web-full](https://gitee.com/flyfish-dev/file-viewer-web-full) | 无 |
+| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, 类型声明, script 标签 IIFE, RequireJS AMD | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
+| Vanilla JS / Pure Web Full | `@file-viewer/web-full` | ESM, 类型声明, script 标签 IIFE, RequireJS AMD | [file-viewer-web-full](https://github.com/flyfish-dev/file-viewer-web-full) | [file-viewer-web-full](https://gitee.com/flyfish-dev/file-viewer-web-full) | 无 |
 | Vue 3 | `@file-viewer/vue3` | ESM, 类型声明 | [file-viewer-vue3](https://github.com/flyfish-dev/file-viewer-vue3) | [file-viewer-vue3](https://gitee.com/flyfish-dev/file-viewer-vue3) | `@flyfish-group/file-viewer3`, `file-viewer3` |
 | Vue 3 Full | `@file-viewer/vue3-full` | ESM, 类型声明 | [file-viewer-vue3-full](https://github.com/flyfish-dev/file-viewer-vue3-full) | [file-viewer-vue3-full](https://gitee.com/flyfish-dev/file-viewer-vue3-full) | 无 |
 | Vue 2.7 | `@file-viewer/vue2.7` | ESM, 类型声明 | [file-viewer-vue2.7](https://github.com/flyfish-dev/file-viewer-vue2.7) | [file-viewer-vue2.7](https://gitee.com/flyfish-dev/file-viewer-vue2.7) | `@flyfish-group/file-viewer` |

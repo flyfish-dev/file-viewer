@@ -51,6 +51,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./amd": "./dist/flyfish-file-viewer-web-full.amd.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -61,7 +62,8 @@
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node scripts/build-iife.mjs && node scripts/build-copy-assets.mjs",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:github-258": "npm exec --yes --package playwright@1.61.1 --package requirejs@2.3.7 -- node scripts/verify-github-258.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.2",

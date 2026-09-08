@@ -48,6 +48,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./amd": "./dist/flyfish-file-viewer-web.amd.js",
     "./node": {
       "types": "./dist/node.d.ts",
       "import": "./dist/node.js",

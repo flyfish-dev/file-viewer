@@ -28,6 +28,35 @@ The historical package name remains synchronized for compatibility:
 npm install @flyfish-group/file-viewer-web
 ```
 
+## RequireJS (AMD)
+
+From 3.0.3, Web and Web Full include a separate `.amd.js` entry. Deploy the complete
+`@file-viewer/web-full/dist/` directory to your own `/file-viewer/` path, alongside
+your locally hosted RequireJS. No bundler, `shim`, remote CDN, or global `define`
+override is needed:
+
+```html
+<div id="viewer" style="height:720px"></div>
+<script src="/vendor/require.js"></script>
+<script>
+  require.config({
+    paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' }
+  });
+  require(['viewer'], function (viewer) {
+    viewer.mountViewer(document.getElementById('viewer'), {
+      url: '/files/report.pdf',
+      options: { theme: 'light' }
+    });
+  });
+</script>
+```
+
+Leave `.js` off RequireJS `paths`. Module aliases are your choice. Keep `renderers/`,
+`vendor/`, and `wasm/` next to the entry: they load lazily from that directory, also
+under a deployment subpath. The light `flyfish-file-viewer-web.amd.js` exports the
+same shell API but does not include Full renderers. Existing `.iife.js` script-tag
+and ESM entries are unchanged; do not load an IIFE as an AMD module.
+
 ## Web Component
 
 ```html

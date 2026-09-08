@@ -191,6 +191,33 @@ defineFileViewerElement()
 
 不要把 `dist/index.js` 复制到 public 后直接用浏览器加载。该入口保留了包依赖关系，面向构建工具和包管理器；无构建工具页面请使用下面的 IIFE 全局包。
 
+## RequireJS（AMD）
+
+从 3.0.3 起，Web 和 Web Full 提供独立 `.amd.js` 入口。把
+`@file-viewer/web-full/dist/` 完整部署到自己的 `/file-viewer/`，RequireJS
+同样从本地加载，不需要 bundler、`shim`、公网 CDN，也不要临时覆盖全局 `define`：
+
+```html
+<div id="viewer" style="height:720px"></div>
+<script src="/vendor/require.js"></script>
+<script>
+  require.config({
+    paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' }
+  });
+  require(['viewer'], function (viewer) {
+    viewer.mountViewer(document.getElementById('viewer'), {
+      url: '/files/report.pdf',
+      options: { theme: 'light' }
+    });
+  });
+</script>
+```
+
+RequireJS 的 `paths` 不写末尾 `.js`，模块别名可自行选择。`renderers/`、`vendor/`
+和 `wasm/` 保持在入口同级目录，按格式懒加载，部署到子路径时也从该目录解析。
+轻量 `flyfish-file-viewer-web.amd.js` 只提供同样的组件壳 API，不自动包含 Full 渲染器。
+原 `.iife.js` script 标签和 ESM 接入保持不变，不要把 IIFE 当作 AMD 模块加载。
+
 ## 通过普通 script 引入
 
 IIFE 包会暴露 `window.FlyfishFileViewerWeb`:

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
 import { sanitizeOfflineViewerAssetTree } from './offline-asset-sanitize.mjs'
 import { verifyPptRuntimeDistributionRoot } from './ppt-runtime-integrity.mjs'
+import { isolateAmd, writeAmdEntry } from '../../web/scripts/amd-entry.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const packageManifest = JSON.parse(await readFile(resolve(packageDir, 'package.json'), 'utf8'))
@@ -106,12 +107,15 @@ await build({
     },
     rollupOptions: {
       output: {
+        ...isolateAmd,
         exports: 'named',
         extend: true
       }
     }
   }
 })
+
+await writeAmdEntry(join(outDir, fileName), 'FlyfishFileViewerWebFull')
 
 await rm(generatedDir, { recursive: true, force: true })
 await mkdir(generatedDir, { recursive: true })
@@ -163,6 +167,7 @@ bucket[renderer.id] = renderer
       },
       rollupOptions: {
         output: {
+          ...isolateAmd,
           exports: 'none',
           extend: true
         }

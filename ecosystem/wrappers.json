@@ -956,7 +956,7 @@
       "id": "web",
       "framework": "Vanilla JS / Pure Web",
       "packageName": "@file-viewer/web",
-      "description": "Framework-free modular File Viewer package with Custom Element, ESM APIs, and a script-tag IIFE.",
+      "description": "Framework-free modular File Viewer package with Custom Element, ESM APIs, script-tag IIFE, and RequireJS AMD entry.",
       "packageDir": "packages/components/web",
       "repository": "file-viewer-web",
       "github": "https://github.com/flyfish-dev/file-viewer-web",
@@ -964,7 +964,8 @@
       "entryFormats": [
         "esm",
         "types",
-        "iife"
+        "iife",
+        "amd"
       ],
       "historicalPackages": [
         "@flyfish-group/file-viewer-web"
@@ -984,7 +985,8 @@
       "entryFormats": [
         "esm",
         "types",
-        "iife"
+        "iife",
+        "amd"
       ],
       "historicalPackages": [],
       "flavor": "full",
