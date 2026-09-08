@@ -7,8 +7,10 @@ import assert from 'node:assert/strict'
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const rendererRequire = createRequire(resolve(packageDir, '../../renderers/design/package.json'))
 const designRoot = 'vendor/design'
 const wasmMagic = [0, 97, 115, 109]
 
@@ -60,6 +62,11 @@ for (const asset of assets) {
   const info = await stat(file).catch(() => null)
   assert(info && info.isFile() && info.size > 0, `${asset.defaultPath} is missing from the pack payload (asset ${asset.id})`)
   const bytes = await readFile(file)
+  assert(asset.packagePath, `${asset.id} has no declared package source`)
+  assert(
+    bytes.equals(await readFile(rendererRequire.resolve(asset.packagePath))),
+    `${asset.defaultPath} is stale; rebuild the renderer, sync viewer assets, and stage assets-design`
+  )
   if (asset.kind === 'wasm') {
     assert.deepEqual(
       [...bytes.subarray(0, wasmMagic.length)],
