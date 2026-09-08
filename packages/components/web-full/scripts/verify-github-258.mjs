@@ -1,20 +1,31 @@
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
+import { existsSync } from 'node:fs'
 import { readFile, mkdir, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, extname, delimiter, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { requireJsCases } from './requirejs-cases.mjs'
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..')
+const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const workspaceRoot = resolve(packageDir, '../../..')
+const inWorkspace = packageDir === resolve(workspaceRoot, 'packages/components/web-full') &&
+  existsSync(resolve(workspaceRoot, 'pnpm-workspace.yaml'))
+const root = inWorkspace ? workspaceRoot : packageDir
 const require = createRequire(import.meta.url)
 const modulePaths = (process.env.PATH || '').split(delimiter)
   .filter(entry => entry.endsWith(`${sep}node_modules${sep}.bin`)).map(entry => resolve(entry, '..'))
 const playwright = await import(pathToFileURL(require.resolve('playwright', { paths: [root, ...modulePaths] })).href)
 const { chromium, webkit } = playwright.default || playwright
 const requireJs = process.env.REQUIREJS_SCRIPT || require.resolve('requirejs/require.js', { paths: [resolve(root, 'apps/component-demo'), root, ...modulePaths] })
-const output = resolve(root, 'output/requirejs-github-258')
-const fullDist = resolve(process.env.REQUIREJS_FULL_DIST || resolve(root, 'packages/components/web-full/dist'))
-const lightDist = resolve(process.env.REQUIREJS_LIGHT_DIST || resolve(root, 'packages/components/web/dist'))
+const output = resolve(root, process.env.REQUIREJS_OUTPUT_DIR || 'output/requirejs-github-258')
+const fullDist = resolve(process.env.REQUIREJS_FULL_DIST || resolve(packageDir, 'dist'))
+const lightDist = resolve(process.env.REQUIREJS_LIGHT_DIST || (inWorkspace
+  ? resolve(packageDir, '../web/dist')
+  : resolve(dirname(require.resolve('@file-viewer/web/package.json')), 'dist')))
+const sampleDir = inWorkspace ? resolve(root, 'apps/viewer-demo/public/example') : resolve(root, 'test/requirejs-samples')
+const demoSourceDir = inWorkspace ? resolve(root, 'apps/component-demo/public') : resolve(root, 'test/requirejs-demo')
+const requireJsLicense = inWorkspace ? resolve(root, 'apps/component-demo/licenses/requirejs-2.3.7.txt') : resolve(demoSourceDir, 'requirejs/LICENSE')
 const demoDir = process.env.REQUIREJS_DEMO_DIR ? resolve(root, process.env.REQUIREJS_DEMO_DIR) : null
 const suffix = process.env.REQUIREJS_ENTRY_SUFFIX || 'amd'
 const mime = { '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.css': 'text/css', '.svg': 'image/svg+xml' }
@@ -34,7 +45,7 @@ const server = createServer(async (request, response) => {
   const path = decodeURIComponent(new URL(request.url, 'http://localhost').pathname)
   if (path === '/tenant/app/requirejs.html') {
     response.setHeader('Content-Type', 'text/html')
-    response.end(await readFile(resolve(demoDir || resolve(root, 'apps/component-demo/public'), 'requirejs.html')))
+    response.end(await readFile(resolve(demoDir || demoSourceDir, 'requirejs.html')))
     return
   }
   if (path === '/tenant/app/' || path === '/') { response.setHeader('Content-Type', 'text/html'); response.end(html); return }
@@ -42,13 +53,13 @@ const server = createServer(async (request, response) => {
   const mounts = [
     ['/tenant/app/viewer/', fullDist],
     ['/tenant/app/file-viewer/', demoDir ? resolve(demoDir, 'file-viewer') : fullDist],
-    ['/tenant/app/example/', demoDir ? resolve(demoDir, 'example') : resolve(root, 'apps/viewer-demo/public/example')],
+    ['/tenant/app/example/', demoDir ? resolve(demoDir, 'example') : sampleDir],
     ...(demoDir ? [['/tenant/app/requirejs/', resolve(demoDir, 'requirejs')]] : []),
     ['/tenant/app/light/', lightDist],
-    ['/files/', resolve(root, 'apps/viewer-demo/public/example')]
+    ['/files/', sampleDir]
   ]
   let file = path === '/require.js' || path === '/tenant/app/requirejs/require.js' ? requireJs : null
-  if (!demoDir && path === '/tenant/app/requirejs/LICENSE') file = resolve(root, 'apps/component-demo/licenses/requirejs-2.3.7.txt')
+  if (!demoDir && path === '/tenant/app/requirejs/LICENSE') file = requireJsLicense
   for (const [prefix, directory] of mounts) {
     if (!path.startsWith(prefix)) continue
     const candidate = resolve(directory, path.slice(prefix.length))
@@ -81,13 +92,7 @@ try {
       await page.evaluate(() => window.loadViewer())
       assert.equal(await page.evaluate(() => window.api.getDefaultFullAssetBaseUrl()), `${origin}/tenant/app/viewer/`)
       assert.equal(await page.evaluate(() => define === window.originalDefine), true)
-      const cases = [
-        ['pdf.pdf', '.pdf-shell canvas'],
-        ['word.docx', 'section.docx'],
-        ['ppt.pptx', '.slide'],
-        ['excel.xlsx', '.e-virt-table-container'],
-        ['word-wps-contract.doc', '.msdoc-root']
-      ]
+      const cases = requireJsCases
       for (const [sample, selector] of cases) {
         await page.evaluate(async sample => {
           window.viewerController?.destroy()
@@ -113,7 +118,7 @@ try {
       await page.goto(`${origin}/tenant/app/requirejs.html`)
       const license = await page.request.get(`${origin}/tenant/app/requirejs/LICENSE`)
       assert.equal(license.status(), 200)
-      assert.equal(await license.text(), await readFile(resolve(root, 'apps/component-demo/licenses/requirejs-2.3.7.txt'), 'utf8'))
+      assert.equal(await license.text(), await readFile(requireJsLicense, 'utf8'))
       for (const [sample, selector] of cases) {
         await page.locator('#sample:not([disabled])').waitFor()
         await page.locator('#sample').selectOption(sample)
