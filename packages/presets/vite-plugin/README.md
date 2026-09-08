@@ -147,6 +147,13 @@ export const fileViewerFormats = ['pdf', 'docx', 'xlsx']
 
 如果用户打开的是支持矩阵内的格式，但项目没有安装或装配对应 renderer，core 会显示“需要装配预览能力”，并提示推荐安装的 preset / renderer 包，例如 `.pdf` 会引导安装 `@file-viewer/preset-office` 或 `@file-viewer/renderer-pdf`。只有真正不在支持矩阵中的扩展名才显示“不支持在线预览”。
 
+## 嵌套 Vite 项目
+
+从 3.0.3 起，子目录只有项目元数据或 Vite 插件声明时，会沿祖先 `package.json`
+查找实际可解析的 Full 依赖。子项目明确声明轻量组件或 preset 时保留其根目录资产布局，
+不会继承父项目的 Full 布局。`copyAssets.baseDir` 仍具有最高优先级；`publicDir`
+和 `build.outDir` 均相对于 Vite root，不相对于依赖所在目录。
+
 ## 当前边界
 
 当前插件会为已经拆出的 renderer 包生成导入：Word、Spreadsheet、PDF、OFD、Presentation、CAD、Draw.io/Excalidraw/Mermaid/PlantUML、3D、Data、EDA、Typst、压缩包、邮件、EPUB、代码/Markdown/Patch/Git Bundle、图片、媒体、XMind 和 Geo。可以通过 `formats` 显式声明，也可以通过 `scan: true` 从源码 hint 自动发现；`.zipx`、`.cbz`、`.tiff`、`.mjs`、`.gv`、`.patch`、`.bundle`、`.mermaid`、`.puml`、`.mpeg` 等 core 支持的扩展也会映射到对应 renderer。开启 `copyAssets:true` 时会识别已安装能力；full 包把匹配资源复制到开发 `publicDir/file-viewer/` 与构建 `outDir/file-viewer/`，标准包/preset 维持根目录行为，包括 Typst compiler / renderer WASM 与默认字体目录。`preset: 'auto' | 'lite' | 'office' | 'engineering' | 'all'` 会导入对应 `@file-viewer/preset-*` 包；如果同时声明 `formats`，插件会在 preset 之外补充额外 renderer。

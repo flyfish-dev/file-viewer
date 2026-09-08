@@ -57,7 +57,9 @@
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "type-check": "tsc -b tsconfig.json",
-    "verify:github-242": "pnpm build && node scripts/verify-github-242.mjs && node scripts/verify-github-242-copy.mjs"
+    "verify:github-242": "pnpm build && node scripts/verify-github-242.mjs && node scripts/verify-github-242-copy.mjs",
+    "verify:github-257": "pnpm build && node scripts/verify-github-257.mjs",
+    "verify:github-257-browser": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-github-257-browser.mjs"
   },
   "peerDependencies": {
     "vite": ">=5 <9"
