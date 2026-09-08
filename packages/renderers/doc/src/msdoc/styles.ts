@@ -194,9 +194,11 @@ export function parseStyles(tableBytes: Uint8Array, fibRgFcLcb: FibRgFcLcb): Sty
   const stshiOffset = 2;
   const cstd = reader.u16(stshiOffset + 0);
   const cbSTDBaseInFile = reader.u16(stshiOffset + 2);
-  const ftcAsci = reader.u16(stshiOffset + 10);
-  const ftcFE = reader.u16(stshiOffset + 12);
-  const ftcOther = reader.u16(stshiOffset + 14);
+  const fontAt = (offset: number) => cbStshi >= offset + 2 && bytes.length >= stshiOffset + offset + 2
+    ? reader.i16(stshiOffset + offset) : -1;
+  const ftcAsci = fontAt(12);
+  const ftcFE = fontAt(14);
+  const ftcOther = fontAt(16);
   const header = { cbStshi, cstd, cbSTDBaseInFile, ftcAsci, ftcFE, ftcOther };
 
   let offset = 2 + cbStshi;

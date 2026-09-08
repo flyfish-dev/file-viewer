@@ -1,6 +1,7 @@
 import { escapeHtml, slugify, twipsToPx } from '../core/utils.js';
 import { HIGHLIGHT_COLORS } from '../msdoc/constants.js';
 import { cssTextAlign, cssUnderline, cssVerticalAlign } from '../msdoc/properties.js';
+import { textFontRuns } from './fonts.js';
 import type {
   AttachmentAsset,
   AttachmentsBlock,
@@ -178,8 +179,13 @@ function paragraphStyleToCss(paraState: ParagraphBlock['paraState']): CssStyleOb
   if (marginRight) style['margin-right'] = `${marginRight}px`;
   if (textIndent) style['text-indent'] = `${textIndent}px`;
   if (paraState.lineSpacing) {
-    const lineHeight = Math.abs(paraState.lineSpacing) / 240;
-    if (lineHeight) style['line-height'] = String(Math.max(1, lineHeight));
+    if (paraState.lineSpacingRule === 'exact' || paraState.lineSpacingRule === 'atLeast') {
+      style['line-height'] = `${twipsToPx(Math.abs(paraState.lineSpacing))}px`;
+    } else {
+      const multiple = Math.abs(paraState.lineSpacing) / 240;
+      // A font's single line includes its metrics and leading, not just a 1em box.
+      style['line-height'] = multiple === 1 ? 'normal' : String(multiple);
+    }
   }
   if (paraState.keepLines) style['break-inside'] = 'avoid';
   if (paraState.keepNext) style['break-after'] = 'avoid';
@@ -242,7 +248,12 @@ function inlineStyleToCss(styleState: CharState): CssStyleObject {
 function renderTextNode(node: TextInlineNode, context: RenderContext): string {
   if (context.reviewMode === 'final' && node.style.revisionDeleted) return '';
   if (context.reviewMode === 'original' && node.style.revisionInserted) return '';
-  const content = escapeHtml(node.text);
+  const content = textFontRuns(node.text, node.style).map(run => {
+    const text = escapeHtml(run.text);
+    if (!run.fontFamily || run.fontFamily === node.style.fontFamily) return text;
+    const font = styleObjectToCss({ 'font-family': `${quoteCssString(run.fontFamily)},sans-serif` });
+    return `<span style="${font}">${text}</span>`;
+  }).join('');
   const inlineStyle = inlineStyleToCss(node.style);
   inlineStyle['white-space'] = 'break-spaces';
   const revision = context.reviewMode === 'all'
@@ -437,6 +448,7 @@ function renderParagraphBlock(block: ParagraphBlock, context: RenderContext, opt
   const body = renderInlineNodes(block.inlines || [], context);
   const empty = body || '<br>';
   const classNames = ['msdoc-paragraph'];
+  if (block.paraState.lineSpacingRule === 'atLeast') classNames.push('msdoc-line-at-least');
   if (block.styleName) classNames.push(`msdoc-style-${slugify(block.styleName)}`);
   return `<${tag} class="${classNames.join(' ')}"${style ? ` style="${style}"` : ''}>${empty}</${tag}>`;
 }
@@ -538,6 +550,7 @@ export function defaultMsDocCss(): string {
 .msdoc-root{box-sizing:border-box;max-width:100%;padding:24px;background:#fff;color:#111;font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .msdoc-root *{box-sizing:border-box}
 .msdoc-paragraph{margin:0 0 8px;white-space:normal;word-break:break-word;overflow-wrap:anywhere}
+.msdoc-line-at-least span,.msdoc-line-at-least ins,.msdoc-line-at-least del{line-height:normal}
 .msdoc-paragraph:last-child{margin-bottom:0}
 .msdoc-table{margin:12px 0;border-collapse:collapse;border-spacing:0;max-width:100%}
 .msdoc-cell{padding:6px 8px;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}

@@ -535,10 +535,10 @@ export function decodeSprm(sprm: number, operandBytes: Uint8Array): DecodedPrope
     case SprmCodes.sprmCHpsBi: return setMeta('char', 'fontSizeHalfPoints', u16(bytes, 0), raw, bytes);
     case SprmCodes.sprmCHpsPos: return setMeta('char', 'positionHalfPoints', i16(bytes, 0), raw, bytes);
     case SprmCodes.sprmCSymbol: return setMeta('char', 'symbol', { font: u16(bytes, 0), charCode: u16(bytes, 2) }, raw, bytes);
-    case SprmCodes.sprmCRgFtc0:
-    case SprmCodes.sprmCRgFtc1:
-    case SprmCodes.sprmCRgFtc2:
-    case SprmCodes.sprmCFtcBi: return setMeta('char', 'fontFamilyId', u16(bytes, 0), raw, bytes);
+    case SprmCodes.sprmCRgFtc0: return setMeta('char', 'fontFamilyId', u16(bytes, 0), raw, bytes);
+    case SprmCodes.sprmCRgFtc1: return setMeta('char', 'fontFamilyEastAsiaId', u16(bytes, 0), raw, bytes);
+    case SprmCodes.sprmCRgFtc2: return setMeta('char', 'fontFamilyOtherId', u16(bytes, 0), raw, bytes);
+    case SprmCodes.sprmCFtcBi: return setMeta('char', 'fontFamilyBiId', u16(bytes, 0), raw, bytes);
     case SprmCodes.sprmCCharScale: return setMeta('char', 'scale', u16(bytes, 0), raw, bytes);
     case SprmCodes.sprmCFDStrike: return setMeta('char', 'doubleStrike', boolValue(bytes), raw, bytes);
     case SprmCodes.sprmCFImprint: return setMeta('char', 'imprint', boolValue(bytes), raw, bytes);

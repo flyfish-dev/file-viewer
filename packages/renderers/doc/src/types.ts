@@ -272,6 +272,12 @@ export interface CharState {
   fontSizeHalfPoints?: number;
   fontFamilyId?: number;
   fontFamily?: string;
+  fontFamilyEastAsiaId?: number;
+  fontFamilyEastAsia?: string;
+  fontFamilyOtherId?: number;
+  fontFamilyOther?: string;
+  fontFamilyBiId?: number;
+  fontFamilyBi?: string;
   colorIndex?: number;
   highlight?: HighlightInfo | number;
   spacing: number;
@@ -314,6 +320,7 @@ export interface ParaState {
   spacingBefore: number;
   spacingAfter: number;
   lineSpacing: number;
+  lineSpacingRule?: 'auto' | 'atLeast' | 'exact';
   leftIndent: number;
   rightIndent: number;
   firstLineIndent: number;
