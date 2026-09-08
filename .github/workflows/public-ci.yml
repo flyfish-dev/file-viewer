@@ -54,8 +54,8 @@ jobs:
       - name: Build source, components and demo
         run: pnpm build
 
-      - name: Verify PPTX generated styles
-        run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts
+      - name: Verify PPTX generated styles and Worker resolution
+        run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts test/pptx-worker-resolution.spec.ts
 
       - name: Verify the component host runtime contract
         run: pnpm exec vitest run test/component-host-runtime-contract.spec.ts

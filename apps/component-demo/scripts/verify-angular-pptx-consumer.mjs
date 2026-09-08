@@ -135,14 +135,7 @@ async function verify(mode, port) {
     )
   }
   assert.ok(
-    !responses.some(
-      (response) =>
-        response.status >= 400 &&
-        !(
-          mode === 'development-package-worker' &&
-          response.url.endsWith('/flyfish-viewer-assets.json')
-        )
-    ),
+    !responses.some((response) => response.status >= 400),
     `${mode}: application returned failed resource responses`
   )
   await page.screenshot({ path: resolve(output, `${mode}.png`) })

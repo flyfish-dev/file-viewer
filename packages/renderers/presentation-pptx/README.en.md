@@ -7,3 +7,5 @@ import { pptxRenderer } from '@file-viewer/renderer-pptx'
 ```
 
 Install `@file-viewer/renderer-ppt` explicitly for legacy `.ppt`, or keep using the compatibility aggregate `@file-viewer/renderer-presentation` when both are required.
+
+Worker resolution first honors `presentation.workerUrl` or a configured shared asset base, then uses an emitted or directly served package asset, then checks the standard asset-copy manifest before retaining the package default. Normal Vite/Webpack builds do not probe absent optional manifests. Angular builds that omit dependency Workers can still use the standard asset-copy command without application aliases.

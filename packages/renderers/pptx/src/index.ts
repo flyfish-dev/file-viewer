@@ -1,7 +1,7 @@
 export { PptxViewer } from './viewer';
 export { PptxPresentation } from './presentation';
 export type { PptxPresentationLabels, PptxPresentationState } from './presentation';
-export { createPptxWorker } from './worker';
+export { createPptxWorker, resolvePptxPackageWorkerUrl } from './worker';
 export { registerPptxChartLibraryLoader } from './chart';
 export type { PptxChartLibraries, PptxChartLibraryLoader } from './chart';
 export {

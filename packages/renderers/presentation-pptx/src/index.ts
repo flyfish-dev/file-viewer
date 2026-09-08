@@ -1,9 +1,10 @@
-import { PptxViewer, RECOMMENDED_ZIP_LIMITS } from '@file-viewer/pptx';
+import { PptxViewer, RECOMMENDED_ZIP_LIMITS, resolvePptxPackageWorkerUrl } from '@file-viewer/pptx';
 import {
   DEFAULT_RENDERER_DEFINITIONS,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter,
   getFileViewerShadowRootForNode,
+  getDefaultFileViewerAssetBaseUrl,
   normalizeFileViewerErrorMessage,
   registerFileViewerZoomProvider,
   resolveFileViewerLocale,
@@ -621,12 +622,13 @@ export default async function renderPptx(
       if (context?.signal?.aborted) {
         throw context.signal.reason || new DOMException('PPTX rendering aborted.', 'AbortError');
       }
-      // Angular does not emit workers referenced by dependency JavaScript.
-      // Prefer the CLI's verified copied asset; retain the package fallback on
-      // source/dev servers. Explicit URLs remain authoritative.
-      const workerUrl = presentationOptions?.workerUrl
+      // Use a package-emitted Worker without probing unrelated manifest URLs.
+      // Angular production still needs the CLI's verified copy when its builder
+      // leaves dependency-relative Worker references untouched.
+      const workerUrl = presentationOptions?.workerUrl || getDefaultFileViewerAssetBaseUrl()
         ? resolveFileViewerPresentationWorkerUrl(presentationOptions, resolveFileViewerRuntimeAssetBaseUrl(documentRef))
-        : await resolveFileViewerCopiedAssetUrl(documentRef, 'office-presentation', 'pptx-worker', context?.signal);
+        : resolvePptxPackageWorkerUrl() ||
+          await resolveFileViewerCopiedAssetUrl(documentRef, 'office-presentation', 'pptx-worker', context?.signal);
       if (context?.signal?.aborted) {
         throw context.signal.reason || new DOMException('PPTX rendering aborted.', 'AbortError');
       }

@@ -1,4 +1,5 @@
 import type { PptxWorkerFactoryOptions } from './types';
+import { isResolvedPptxWorkerLocation } from './worker-location';
 
 const viteOptimizedWorkerPathPattern = /\/\.?vite\/deps\/worker\/pptx\.worker\.js$/;
 const viteSourceWorkerModulePattern = /\/src\/worker\.[cm]?[jt]s$/;
@@ -91,6 +92,23 @@ const resolveDefaultPptxWorkerUrl = () => {
       || resolveViteDevPptxWorkerUrl(defaultPptxWorkerUrl);
   }
   return defaultPptxWorkerUrl;
+};
+
+/** A package-owned asset needs no speculative requests to a copied-asset manifest. */
+export const resolvePptxPackageWorkerUrl = (): string | undefined => {
+  try {
+    const moduleUrl = new URL(import.meta.url);
+    const workerUrl = resolveBundledPptxWorkerUrl();
+    if (isResolvedPptxWorkerLocation(moduleUrl, workerUrl)) return workerUrl.href;
+    if (viteOptimizedWorkerPathPattern.test(workerUrl.pathname)) {
+      const optimizedUrl = resolveViteOptimizedPptxWorkerUrl(workerUrl);
+      return optimizedUrl ? String(optimizedUrl) : undefined;
+    }
+  } catch {
+    // An inlined module without a resolvable package base can still use the
+    // host's standard copied assets or an explicitly configured Worker URL.
+  }
+  return undefined;
 };
 
 export const createPptxWorker = (options: PptxWorkerFactoryOptions = {}) => {

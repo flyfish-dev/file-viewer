@@ -9,6 +9,8 @@ Flyfish File Viewer 的原生 PPTX 渲染引擎包，从历史稳定实现中独
 - 保留历史原生解析链路中的主题、图片、形状、表格、文本和基础图表处理。
 - 支持 `fitMode`、`zoomPercent`、自定义 Worker URL / Worker factory，方便内网、离线和 CSP 场景。
 
+`resolvePptxPackageWorkerUrl()` 可供集成层识别打包器已输出或包目录直接提供的 Worker URL。未识别时返回 `undefined`，不代表文件不存在；集成层仍可使用自己的资产复制策略或显式 Worker 配置。
+
 ## 使用
 
 ```ts
