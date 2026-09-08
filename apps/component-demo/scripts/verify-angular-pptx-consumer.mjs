@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import { createReadStream, existsSync, statSync } from 'node:fs'
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { delimiter, dirname, extname, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { buildPackedIssueConsumer } from './build-packed-issue-consumer.mjs'
+import { verifyAngularDevelopmentAssetModes } from './lib/angular-asset-modes.mjs'
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const project = process.env.PACKED_ANGULAR_CONSUMER_DIR
@@ -72,7 +73,11 @@ async function verify(mode, port) {
   const workers = [],
     errors = [],
     responses = [],
-    failures = []
+    failures = [],
+    navigations = []
+  page.on('framenavigated', (frame) => {
+    if (frame === page.mainFrame()) navigations.push(frame.url())
+  })
   page.on('worker', (worker) => workers.push(worker.url()))
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('response', (response) =>
@@ -92,6 +97,7 @@ async function verify(mode, port) {
     errors,
     responses,
     failures,
+    navigations,
     passed: false
   }
   report.cases.push(result)
@@ -120,6 +126,7 @@ async function verify(mode, port) {
     0,
     `${mode}: slide parsing/rendering failed`
   )
+  assert.equal(navigations.length, 1, `${mode}: the document reloaded during verification`)
   assert.ok(workers.length > 0, `${mode}: PPTX silently fell back to main-thread parsing`)
   assert.deepEqual(errors, [], `${mode}: browser runtime errors`)
   assert.deepEqual(failures, [], `${mode}: failed application/Worker requests`)
@@ -143,7 +150,7 @@ async function verify(mode, port) {
   await page.close()
 }
 
-try {
+async function startDev() {
   const probe = createServer()
   const port = await bind(probe)
   await new Promise((done) => probe.close(done))
@@ -179,14 +186,27 @@ try {
     assert.ok(Date.now() < deadline, `ng serve did not start: ${devLog}`)
     await new Promise((done) => setTimeout(done, 200))
   }
-  await verify('development', port)
-  const manifest = resolve(project, 'public/file-viewer/flyfish-viewer-assets.json')
-  await rename(manifest, `${manifest}.held`)
-  try {
-    await verify('development-package-worker', port)
-  } finally {
-    await rename(`${manifest}.held`, manifest)
+  return port
+}
+
+async function stopDev() {
+  if (!dev) return
+  const child = dev
+  dev = undefined
+  if (child.exitCode === null && child.signalCode === null) {
+    const exited = new Promise((done) => child.once('exit', done))
+    child.kill('SIGTERM')
+    await exited
   }
+}
+
+try {
+  await verifyAngularDevelopmentAssetModes({
+    start: startDev,
+    stop: stopDev,
+    verify,
+    manifest: resolve(project, 'public/file-viewer/flyfish-viewer-assets.json')
+  })
 
   const root = resolve(project, 'dist/browser')
   server = createServer((request, response) => {
@@ -219,8 +239,7 @@ try {
   if (page && !page.isClosed()) await page.screenshot({ path: resolve(output, 'failure.png') })
   throw error
 } finally {
-  dev?.kill('SIGTERM')
-  if (dev && dev.exitCode === null) await new Promise((done) => dev.once('exit', done))
+  await stopDev()
   await browser.close()
   if (server) await new Promise((done) => server.close(done))
   await writeFile(resolve(output, 'ng-serve.log'), devLog)

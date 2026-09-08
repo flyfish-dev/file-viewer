@@ -112,6 +112,9 @@ jobs:
       - name: Verify legacy XLS MiniFAT in main thread and Worker
         run: node apps/viewer-demo/scripts/verify-cfb-mini-fat.mjs
 
+      - name: Verify cold-consumer fixture isolation
+        run: pnpm exec vitest run test/angular-asset-modes.spec.ts
+
       - name: Cold-install Vue CLI and React full tarballs without bundler workarounds
         run: node apps/component-demo/scripts/verify-packed-issue-closure.mjs
 
