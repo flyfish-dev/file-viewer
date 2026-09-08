@@ -29,7 +29,8 @@ text. The reference DOC files additionally test binary parsing equivalence.
 
 The fixtures reproduce the missing deletion-mark behavior reported in #236
 and extend #255 to paragraph and break revisions. They do not establish the
-contents of #236's unavailable attachment. Format-only revisions, tracked
+contents of #236's screenshot. Its September 8 reattachment is byte-identical
+to the original WPS table fixture and Word reports zero revisions. Format-only revisions, tracked
 table structure, moves, and comments are not covered by these fixtures.
 
 The initial automation attempt could not pass Word's file-access dialog;

@@ -8,6 +8,7 @@ import { delimiter, dirname, extname, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { verifyNativeWordRevisions } from './verify-native-word-revisions.mjs'
 import { verifyOfdResourcePaths } from './verify-ofd-resource-paths.mjs'
+import { verifySalesContract } from './verify-sales-contract.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const dist = resolve(root, 'apps/viewer-demo/dist')
@@ -257,6 +258,7 @@ try {
   console.log('[closed-issues] Demo Word settings refresh all/final/original without reselecting the file')
 
   await verifyNativeWordRevisions({ page, origin, output: resolve(output, 'native-word'), evidence })
+  await verifySalesContract({ page, origin, output: resolve(output, 'sales-contract'), evidence })
   await verifyOfdResourcePaths({ page, origin, output: resolve(output, 'ofd-resources'), evidence })
 
   async function checkSearch(name, query, cells, sheetNames) {
