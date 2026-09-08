@@ -26,6 +26,7 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
     items: [
       { name: 'DOC', url: '/example/test.doc' },
       { name: 'DOC 文本修订', url: '/example/word-revisions.doc' },
+      { name: 'WPS 销售合同 DOC', url: '/example/word-wps-contract.doc' },
       { name: 'Word 原生修订 DOC', url: '/example/word-native-revisions.doc' },
       { name: 'Word 原生修订 DOCX', url: '/example/word-native-revisions.docx' },
       { name: 'OFD 嵌套资源', url: '/example/ofd-resource-paths.ofd' },
@@ -333,6 +334,7 @@ const englishSampleUrlMap: Record<string, string> = {
 const englishSampleNameMap: Record<string, string> = {
   '/example/test.doc': 'DOC legacy document',
   '/example/word-revisions.doc': 'DOC tracked text changes',
+  '/example/word-wps-contract.doc': 'WPS sales contract (DOC)',
   '/example/word-native-revisions.doc': 'Native Word revisions (DOC)',
   '/example/word-native-revisions.docx': 'Native Word revisions (DOCX)',
   '/example/ofd-resource-paths.ofd': 'OFD nested resource references',
@@ -476,6 +478,7 @@ const japaneseGroupCopy: Array<Pick<DemoSampleGroup, 'title' | 'description'>> =
 const japaneseSampleNameMap: Record<string, string> = {
   '/example/test.doc': 'DOC 旧形式文書',
   '/example/word-revisions.doc': 'DOC テキストの変更履歴',
+  '/example/word-wps-contract.doc': 'WPS 売買契約書 (DOC)',
   '/example/word-native-revisions.doc': 'Word 作成の変更履歴 (DOC)',
   '/example/word-native-revisions.docx': 'Word 作成の変更履歴 (DOCX)',
   '/example/ofd-resource-paths.ofd': 'OFD ネストしたリソース参照',
