@@ -21,4 +21,3 @@ schemes:
         PDFNavigationTests: [test]
     test:
       targets: [PDFNavigationTests]
-
