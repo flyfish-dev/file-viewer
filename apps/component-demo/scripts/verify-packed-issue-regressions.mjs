@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { delimiter, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createServer } from 'node:http'
@@ -6,6 +7,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { extname, resolve, sep } from 'node:path'
+import { pixelPng } from '../../../packages/renderers/ofd/test/fixtures/resource-path-fixture.mjs'
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 assert.ok(
@@ -127,11 +129,43 @@ async function avroFixture() {
   }
 }
 const sample = (name) => resolve(source, 'apps/viewer-demo/public/example', name)
+const nativeFixtures = resolve(source, 'packages/renderers/doc/test/fixtures/native-revisions')
+const nativeOracle = JSON.parse(
+  await readFile(resolve(nativeFixtures, 'native-oracle.json'), 'utf8')
+)
+const nativeSnapshot = (surface) =>
+  surface.evaluate((root) => {
+    const text = (node) => {
+      if (node.nodeType === 3) return node.textContent
+      if (node.nodeType !== 1 || getComputedStyle(node).display === 'none') return ''
+      if (node.dataset.docxTab === 'true') return '\t'
+      if (node.localName === 'br') return '\n'
+      return [...node.childNodes].map(text).join('')
+    }
+    const paragraphs = [...root.querySelectorAll('p')].filter((p) => !p.closest('td'))
+    return {
+      paragraphs: paragraphs.map((p) => (text(p) === '\n' ? '' : text(p))),
+      cells: [...root.querySelectorAll('td')].map(text),
+      strayInline: root.querySelectorAll('article > span, article > ins, article > del').length,
+      unchangedMarks: paragraphs
+        .find((p) => p.textContent.startsWith('Case repeated:'))
+        ?.querySelectorAll('ins,del').length,
+      marks: [...root.querySelectorAll('ins,del')].map((node) => ({
+        tag: node.localName,
+        visible:
+          getComputedStyle(node).display !== 'none' && node.getBoundingClientRect().width > 0,
+        decoration: getComputedStyle(node).textDecorationLine
+      }))
+    }
+  })
 try {
   for (const framework of ['vue', 'react']) {
     for (const kind of [
       'doc',
       'docx-revisions',
+      'doc-native',
+      'docx-native',
+      'ofd-resources',
       'docx-cover',
       'xls',
       'cad',
@@ -159,6 +193,9 @@ try {
         if (framework === 'react') await page.locator('#react').check()
         const files = {
           doc: resolve(source, 'packages/renderers/doc/test/fixtures/github-255-revisions.doc'),
+          'doc-native': resolve(nativeFixtures, 'native-revisions.doc'),
+          'docx-native': resolve(nativeFixtures, 'native-revisions.docx'),
+          'ofd-resources': sample('ofd-resource-paths.ofd'),
           'docx-cover': resolve(
             source,
             'apps/viewer-demo/test/fixtures/issue-250/page-anchors.docx'
@@ -228,6 +265,59 @@ try {
             )
           }
           details = { marks, modes: ['all', 'final', 'original'] }
+        } else if (kind === 'doc-native' || kind === 'docx-native') {
+          const extension = kind === 'doc-native' ? 'doc' : 'docx'
+          const filename = `native-revisions.${extension}`
+          const sha256 = createHash('sha256')
+            .update(await readFile(files[kind]))
+            .digest('hex')
+          assert.equal(sha256, nativeOracle.files.find((file) => file.filename === filename).sha256)
+          const surface = page.locator(extension === 'doc' ? '.msdoc-root' : 'section.docx').first()
+          await surface.waitFor({ state: 'visible' })
+          const states = []
+          for (const mode of ['all', 'final', 'original', 'all']) {
+            await page.locator('#review').selectOption(mode)
+            const state = await poll(
+              () => nativeSnapshot(surface),
+              (value) =>
+                mode === 'all'
+                  ? value.marks.some((mark) => mark.tag === 'del' && mark.visible) &&
+                    value.marks.some((mark) => mark.tag === 'ins' && mark.visible)
+                  : JSON.stringify(value.paragraphs) ===
+                    JSON.stringify(nativeOracle.references[mode].paragraphs),
+              `${name}/${mode}`
+            )
+            assert.equal(state.strayInline, 0)
+            assert.equal(state.unchangedMarks, 0)
+            if (mode === 'all') {
+              state.marks.forEach((mark) =>
+                assert.ok(
+                  mark.visible &&
+                    mark.decoration.includes(mark.tag === 'del' ? 'line-through' : 'underline')
+                )
+              )
+            } else assert.deepEqual(state.cells, nativeOracle.references[mode].cells)
+            states.push({ mode, paragraphs: state.paragraphs, cells: state.cells })
+          }
+          details = { filename, sha256, producer: nativeOracle.producer, sameFile: true, states }
+        } else if (kind === 'ofd-resources') {
+          const frame = page.locator('.ofd-page-frame').first()
+          await frame
+            .getByText('Invoice resource reference', { exact: true })
+            .waitFor({ state: 'visible' })
+          const image = frame.locator('img').first()
+          assert.equal(
+            await image.getAttribute('src'),
+            `data:image/png;base64,${pixelPng.toString('base64')}`
+          )
+          await image.evaluate((image) => image.decode())
+          assert.equal(await image.evaluate((image) => image.naturalWidth), 1)
+          details = {
+            nestedDocument: true,
+            namespacePrefix: true,
+            caseInsensitivePaths: true,
+            imageDecoded: true
+          }
         } else if (kind === 'docx-cover') {
           await page.locator('[aria-label="CoverBorderOuter"]').last().waitFor({ state: 'visible' })
           await poll(

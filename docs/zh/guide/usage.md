@@ -576,6 +576,7 @@ Vanilla JS / Pure Web、React、jQuery 和 Svelte 接入时，搜索和定位仍
       progressive: true,
       // DOC/DOCX 默认保留文字修订：插入显示下划线，删除显示删除线。
       // final 显示修订后的正文；original 显示修订前的正文，不修改原文件。
+      // 包含制表符、软换行和段落标记；移除段落标记只合并同一文本流/单元格。
       reviewMode: 'all',
       // 默认跟随 options.theme；业务需要固定效果时可显式传 true / false。
       // darkMode: true,

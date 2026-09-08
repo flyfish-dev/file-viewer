@@ -6,6 +6,8 @@ import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { delimiter, dirname, extname, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { verifyNativeWordRevisions } from './verify-native-word-revisions.mjs'
+import { verifyOfdResourcePaths } from './verify-ofd-resource-paths.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const dist = resolve(root, 'apps/viewer-demo/dist')
@@ -229,7 +231,7 @@ try {
   await checkRevisions('docx-revisions-upload', 'section.docx', 'OLD_VALUE', 'NEW_VALUE')
   for (const mode of ['final', 'original', 'all']) {
     await page.locator('[data-viewer-action="more"]').click()
-    await page.locator('[data-viewer-action="settings"]').click()
+    await page.locator('[data-viewer-action="settings"]:visible').click()
     await page.locator('#viewer-settings-tab-formats').click()
     await page.locator('.settings-panel select').first().selectOption('word')
     await page.getByTestId('docx-review-mode').selectOption(mode)
@@ -253,6 +255,9 @@ try {
   }
   evidence.cases.push({ name: 'demo-word-review-settings', sameFile: true, modes: ['final', 'original', 'all'], passed: true })
   console.log('[closed-issues] Demo Word settings refresh all/final/original without reselecting the file')
+
+  await verifyNativeWordRevisions({ page, origin, output: resolve(output, 'native-word'), evidence })
+  await verifyOfdResourcePaths({ page, origin, output: resolve(output, 'ofd-resources'), evidence })
 
   async function checkSearch(name, query, cells, sheetNames) {
     await page.locator('.e-virt-table-container').waitFor({ state: 'visible', timeout })

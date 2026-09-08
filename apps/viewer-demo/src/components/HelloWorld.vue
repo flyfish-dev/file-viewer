@@ -1959,7 +1959,7 @@ function handleWindowResize() {
                 <Code2 :size='18' :stroke-width='2.25' aria-hidden='true' />
                 <span>{{ demoCopy.integration }}</span>
               </button>
-              <button type='button' @click='toggleSettingsPanel'>
+              <button type='button' data-viewer-action='settings' @click='toggleSettingsPanel'>
                 <Settings2 :size='18' :stroke-width='2.25' aria-hidden='true' />
                 <span>{{ demoCopy.fullSettings }}</span>
               </button>

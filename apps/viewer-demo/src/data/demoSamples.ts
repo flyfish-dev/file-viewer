@@ -26,6 +26,9 @@ export const sampleGroupsZh: DemoSampleGroup[] = [
     items: [
       { name: 'DOC', url: '/example/test.doc' },
       { name: 'DOC 文本修订', url: '/example/word-revisions.doc' },
+      { name: 'Word 原生修订 DOC', url: '/example/word-native-revisions.doc' },
+      { name: 'Word 原生修订 DOCX', url: '/example/word-native-revisions.docx' },
+      { name: 'OFD 嵌套资源', url: '/example/ofd-resource-paths.ofd' },
       { name: 'DOCX 封面边框', url: '/example/word-cover.docx' },
       { name: 'DOCX 中文长文档', url: '/example/word.docx' },
       { name: 'DOT 模板', url: '/example/template.dot' },
@@ -330,6 +333,9 @@ const englishSampleUrlMap: Record<string, string> = {
 const englishSampleNameMap: Record<string, string> = {
   '/example/test.doc': 'DOC legacy document',
   '/example/word-revisions.doc': 'DOC tracked text changes',
+  '/example/word-native-revisions.doc': 'Native Word revisions (DOC)',
+  '/example/word-native-revisions.docx': 'Native Word revisions (DOCX)',
+  '/example/ofd-resource-paths.ofd': 'OFD nested resource references',
   '/example/word-cover.docx': 'DOCX page-relative cover borders',
   '/example/en/calibre-demo.docx': 'DOCX rich English document',
   '/example/template.dot': 'DOT template',
@@ -470,6 +476,9 @@ const japaneseGroupCopy: Array<Pick<DemoSampleGroup, 'title' | 'description'>> =
 const japaneseSampleNameMap: Record<string, string> = {
   '/example/test.doc': 'DOC 旧形式文書',
   '/example/word-revisions.doc': 'DOC テキストの変更履歴',
+  '/example/word-native-revisions.doc': 'Word 作成の変更履歴 (DOC)',
+  '/example/word-native-revisions.docx': 'Word 作成の変更履歴 (DOCX)',
+  '/example/ofd-resource-paths.ofd': 'OFD ネストしたリソース参照',
   '/example/word-cover.docx': 'DOCX 表紙のページ相対枠',
   '/example/en/calibre-demo.docx': 'DOCX リッチ文書',
   '/example/template.dot': 'DOT テンプレート',

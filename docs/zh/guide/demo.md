@@ -158,6 +158,10 @@ HTML 可直接从样例库选择 `page.html`，切换静态页面与原始源码
 
 样例库提供 `word-revisions.doc` 和 `word-cover.docx`，与 issue 中获准再分发的原附件字节一致。在“更多 → 设置 → 格式 → Word”中切换“DOC / DOCX 文本修订”并应用，即可对比三种模式；文本格式设置中也可以选择 HTML 初始视图，不需要修改业务代码。
 
+`word-native-revisions.doc` 和 `word-native-revisions.docx` 由 Microsoft Word for Mac 开启修订后实际编辑、另存，覆盖公司名称替换、未修改的重复文字、混合粗体、制表符、软换行、段落合并／拆分和表格单元格替换。定稿模式中 `Case join: JOINED` 应在同一段，被删除的软换行不再占一行；原稿模式应恢复原来的两段，并撤销插入的分段。回归样例同时保留 Word“全部接受／全部拒绝”后另存的参考文件和 SHA-256。这些是构造样例，不冒充 #236 未提供的私有原件，也不代表已经覆盖所有格式、批注、移动或表格结构修订。
+
+OFD 样例 `ofd-resource-paths.ofd` 同时使用嵌套文档、替代命名空间前缀和大小写不同的 ZIP 路径。应显示 `Invoice resource reference` 和黑色方块图片。专项测试另外覆盖资源 XML 自身目录、`BaseLoc`、`../`、URI 编码、同名资源优先级及缺失非必需资源。缺少图片或字体目录时保留可读正文；缺少必需页面、损坏 XML 或无效 JBIG2 时必须结束加载并报错，不能空白假成功。样例不等于 #57 尚未提供的原件。
+
 CAD 可选择 `drawing.dxf`、`samples/apache/blocks_and_tables.dwf` 或 `samples/autodesk/house.dwfx`，对比深色背景原色、白纸黑线，再从 CAD 工具栏下载 PNG/JPEG、导出 HTML、打印到 PDF。验收实际输出像素，不只看模式按钮文字。输出的是当前视图 / 当前 DWF 页，需要整图时先点击“适配”。图片下载保留文本或图片水印，并遵守下载/导出权限；水印资源不可读时明确失败，不生成无水印图片。
 
 手机或窄弹窗中的原生组件工具栏保留“搜索、缩放、更多”紧凑入口，搜索框和输出操作按需展开。320px、390px 下控件不得重叠，桌面窄弹窗按自身宽度适配；宽容器保留内联搜索框。iPhone 还要实际输入搜索、关闭键盘并再次翻页，确认整个宿主页面没有停在 Safari 状态栏下方。首屏骨架的 `100vh` 最小高度不能残留在挂载后的应用根节点。
@@ -211,6 +215,7 @@ pnpm --filter @flyfish-group/file-viewer-component-demo preview
 | `slides.odp` | The Document Foundation 公开 ODP 文件，验证 OpenDocument 演示文稿页面结构和文本预览 | `odp` |
 | `pdf.pdf` | 项目方提供的 13 页真实技术说明 PDF，验证多页阅读、缩放工具栏、页面/目录导航窗格、完整打印和 HTML 导出 | `pdf` |
 | `ofd.ofd` | 验证 OFD 在线预览 | `ofd` |
+| `ofd-resource-paths.ofd` | 构造的嵌套路径、XML 命名空间和大小写组合回归，验证正文和图片解析 | `ofd` |
 | `report.typ` | 验证 Typst 源文件直接读取、浏览器 WASM 编译、按页 SVG 预览、打印和 HTML 导出 | `typ` |
 | `drawing.dxf` | 使用公开 DXF 样例验证 CAD 图纸预览、平移、缩放、图层和 WebGL/Canvas fallback | `dxf` |
 | `sample.dwg` | 使用 Autodesk 官方 DWG 样例验证 Worker + LibreDWG WASM 几何解析、块、表格和 CAD 视图适配 | `dwg` |
