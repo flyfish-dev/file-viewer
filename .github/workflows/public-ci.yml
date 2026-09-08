@@ -84,6 +84,11 @@ jobs:
       - name: Install Chromium and WebKit
         run: pnpm exec playwright install --with-deps chromium webkit
 
+      - name: Verify PDF Worker cancellation
+        run: |
+          pnpm exec vitest run test/pdf-worker-lifecycle.spec.ts test/pdf-runtime-provenance.spec.ts
+          pnpm --filter @file-viewer/renderer-pdf verify:worker-lifecycle
+
       - name: Verify actual RequireJS entries and lazy renderers
         run: pnpm --filter @file-viewer/web-full verify:github-258
         env:

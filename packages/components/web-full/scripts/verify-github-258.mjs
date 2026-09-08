@@ -82,7 +82,8 @@ try {
     const page = await browser.newPage()
     const errors = []
     const requests = []
-    page.on('pageerror', e => errors.push(e.message))
+    let phase = 'module-load'
+    page.on('pageerror', e => errors.push({ phase, message: e.message, stack: e.stack }))
     page.on('response', r => {
       if (/\.(?:m?js|wasm)(?:\?|$)/.test(r.url())) requests.push({ url: r.url(), status: r.status(), mime: r.headers()['content-type'] })
     })
@@ -94,6 +95,7 @@ try {
       assert.equal(await page.evaluate(() => define === window.originalDefine), true)
       const cases = requireJsCases
       for (const [sample, selector] of cases) {
+        phase = `mount:${sample}`
         await page.evaluate(async sample => {
           window.viewerController?.destroy()
           window.viewerController = window.api.mountViewer(document.getElementById('viewer'))
@@ -107,6 +109,7 @@ try {
         reports.push({ engine, sample, passed: true })
       }
       for (const renderer of ['word', 'pdf', 'ofd', 'presentation', 'spreadsheet', 'iwork', 'wordperfect', 'hangul', 'cad', 'typst', 'drawing', 'model', 'archive', 'email', 'ebook', 'text', 'image', 'media', 'mindmap', 'geo', 'data', 'eda']) {
+        phase = `preload:${renderer}`
         await page.evaluate(renderer => window.api.preloadFullRenderer(renderer).then(() => true), renderer)
         assert.equal(await page.evaluate(renderer => new Promise((resolve, reject) => amdRequire(['after-' + renderer], resolve, reject)), renderer), 'host-module-ok')
       }
@@ -115,11 +118,13 @@ try {
         requirejs.config({ context: 'another-consumer', paths: { arbitraryName: '/tenant/app/viewer/flyfish-file-viewer-web-full.amd' } })(['arbitraryName'], value => resolve(typeof value?.mountViewer), reject)
       }))
       assert.equal(alternate, 'function')
+      phase = 'demo-load'
       await page.goto(`${origin}/tenant/app/requirejs.html`)
       const license = await page.request.get(`${origin}/tenant/app/requirejs/LICENSE`)
       assert.equal(license.status(), 200)
       assert.equal(await license.text(), await readFile(requireJsLicense, 'utf8'))
       for (const [sample, selector] of cases) {
+        phase = `demo:${sample}`
         await page.locator('#sample:not([disabled])').waitFor()
         await page.locator('#sample').selectOption(sample)
         await page.waitForFunction(sample => document.getElementById('status').textContent === 'Ready: ' + sample, sample, { timeout: 45000 })
@@ -133,9 +138,11 @@ try {
         assert.match(request.mime, request.url.split('?')[0].endsWith('.wasm') ? /application\/wasm/ : /javascript/, request.url)
       }
       await page.screenshot({ path: resolve(output, `${engine}.png`) })
-      await writeFile(resolve(output, `${engine}.json`), JSON.stringify({ requests, errors, cases: reports.filter(r => r.engine === engine) }, null, 2))
       console.log(`[issue-258] ${engine}: real RequireJS, five rendered formats plus actual Demo picker, 22 lazy renderer registrations, two contexts, light/full APIs and local Workers passed`)
-    } finally { await browser.close() }
+    } finally {
+      await writeFile(resolve(output, `${engine}.json`), JSON.stringify({ requests, errors, cases: reports.filter(r => r.engine === engine) }, null, 2))
+      await browser.close()
+    }
   }
 } finally {
   server.closeAllConnections()
