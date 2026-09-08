@@ -97,12 +97,30 @@ export async function verifySalesContract({ page, origin, output, evidence }) {
     if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click()
     const group = page.locator('.sample-group[data-family="word"] .sample-group-header')
     if (await group.getAttribute('aria-expanded') === 'false') await group.click()
-    const response = page.waitForResponse(response => new URL(response.url()).pathname === '/example/word-wps-contract.doc')
-    await page.locator('.sample-card').filter({ hasText: 'word-wps-contract.doc' }).click()
-    assert.equal(createHash('sha256').update(await (await response).body()).digest('hex'), hash)
-    await page.locator('.msdoc-root').getByText('60.7', { exact: true }).waitFor({ timeout: 60_000 })
+    // Chromium can expose an empty DevTools body after a chunked fetch is consumed as Blob.
+    // Hash the real server response before forwarding it, without substituting fixture bytes.
+    const requests = []
+    const sampleUrl = `${origin}/example/word-wps-contract.doc`
+    const observeSample = async route => {
+      if (route.request().method() !== 'GET') return route.continue()
+      const response = await route.fetch()
+      requests.push({ status: response.status(), sha256: createHash('sha256').update(await response.body()).digest('hex') })
+      await route.fulfill({ response })
+    }
+    await page.route(sampleUrl, observeSample)
+    try {
+      await page.locator('.sample-card').filter({ hasText: 'word-wps-contract.doc' }).click()
+      await page.locator('.msdoc-root').getByText('60.7', { exact: true }).waitFor({ timeout: 60_000 })
+      assert(requests.length > 0, 'the sample click must load the deployed file')
+      for (const request of requests) {
+        assert.equal(request.status, 200)
+        assert.equal(request.sha256, hash)
+      }
+    } finally {
+      await page.unroute(sampleUrl, observeSample)
+    }
     const name = `issue-236-sample-${locale}`
     await page.screenshot({ path: resolve(output, `${name}.png`) })
-    evidence.cases.push({ name, input: 'visible-sample-picker', sha256: hash, passed: true })
+    evidence.cases.push({ name, input: 'visible-sample-picker', sha256: hash, requests, passed: true })
   }
 }
