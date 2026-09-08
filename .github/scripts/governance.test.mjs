@@ -158,6 +158,53 @@ https://github.com/user-attachments/files/12345/sample.pptx
   assert.deepEqual(result.errors, [])
 })
 
+const inlineIntegrationReport = `
+### Affected area
+Worker / WASM / fonts / deployed assets
+### File type and extension
+N/A
+### Package names and exact versions
+@file-viewer/vite-plugin@3.0.2, @file-viewer/vue3-full@3.0.2
+### Sample sharing method
+Inline configuration and commands (no file involved)
+### Sample or reproduction artifact
+none
+### Minimal reproduction steps
+1. Add \`fileViewerRenderers({ copyAssets: true })\` in vite.config.ts.
+2. Run pnpm start from a nested Vite project.
+3. The Worker is copied to public/vendor instead of public/file-viewer/vendor.
+### Actual behavior
+Worker request returns text/html from the SPA fallback.
+### Expected behavior
+The copied Worker should return JavaScript at its configured URL.
+`
+
+test('accepts complete inline config reproduction without demanding a document', () => {
+  for (const body of [
+    inlineIntegrationReport,
+    inlineIntegrationReport.replace(
+      'Inline configuration and commands (no file involved)',
+      'Public or sanitized sample attached to this issue'
+    )
+  ]) {
+    assert.deepEqual(validateIssueReport({ title: '[bug]: asset copy path', body }).errors, [])
+  }
+})
+
+test('inline exception does not admit file fidelity reports or incomplete setup', () => {
+  for (const body of [
+    inlineIntegrationReport.replace('\nN/A\n', '\npptx\n'),
+    inlineIntegrationReport.replace(
+      'Worker / WASM / fonts / deployed assets',
+      'File rendering or format fidelity'
+    ),
+    inlineIntegrationReport.replaceAll('@3.0.2', '@latest'),
+    inlineIntegrationReport.replace('pnpm start', 'open the browser'),
+    inlineIntegrationReport.replace('`fileViewerRenderers({ copyAssets: true })`', 'the plugin')
+  ])
+    assert.equal(validateIssueReport({ title: '[bug]: asset copy path', body }).ok, false)
+})
+
 test('accepts a dated private sample receipt in a bug form', () => {
   const result = validateIssueReport({
     title: '[compatibility]: private WPS workbook',

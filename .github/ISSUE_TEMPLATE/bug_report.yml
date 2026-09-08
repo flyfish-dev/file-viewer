@@ -11,7 +11,9 @@ body:
 
         **A screenshot is useful evidence, but it cannot replace the affected file or a runnable reproduction.**
         Provide a public/sanitized attachment, a public link, or send a private sample to
-        `admin@flyfish.dev` before submitting. Never upload confidential data to a public issue.
+        `admin@flyfish.dev` before submitting. For configuration-only bugs with no file involved,
+        include exact package versions, configuration and runnable commands inline.
+        Never upload confidential data to a public issue.
 
   - type: dropdown
     id: area
@@ -51,11 +53,12 @@ body:
     id: sample-sharing
     attributes:
       label: Sample sharing method
-      description: Every bug report must use one of these three reproducible evidence paths.
+      description: Choose a file/repository or a complete inline integration reproduction.
       options:
         - Public or sanitized sample attached to this issue
         - Public download or minimal reproduction link provided below
         - Private sample sent to admin@flyfish.dev
+        - Inline configuration and commands (no file involved)
     validations:
       required: true
 
@@ -66,7 +69,9 @@ body:
       description: |
         Paste the attachment/link and describe how it was produced. For a private sample, write
         `Sent to admin@flyfish.dev on YYYY-MM-DD: filename.ext` so maintainers can match it without
-        exposing the file. A screenshot alone is not a sample.
+        exposing the file. For a no-file integration bug, paste the configuration and commands
+        in the reproduction steps and write "Inline reproduction below" here.
+        A screenshot alone is not a sample.
       placeholder: |
         Public: https://example.com/reproduction/sample.pptx
         Private: Sent to admin@flyfish.dev on 2026-08-24: sanitized-customer-layout.pptx
@@ -142,7 +147,7 @@ body:
       options:
         - label: I searched existing issues and did not find the same reproduction.
           required: true
-        - label: I have already attached, linked, or privately sent the sample using the selected method.
+        - label: I have provided the sample, repository, private receipt, or complete no-file inline reproduction using the selected method.
           required: true
         - label: I understand that screenshots and renamed file extensions do not replace a real sample or runnable reproduction.
           required: true

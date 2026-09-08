@@ -67,6 +67,6 @@ jobs:
                 owner,
                 repo,
                 issue_number,
-                body: `${marker}\nThanks for the report. A reproducible artifact is required for bugs: attach a public/sanitized sample, add a public minimal-reproduction link, or send the private sample to admin@flyfish.dev and record the date and filename in the issue. Screenshots are helpful, but they cannot replace the sample.`
+                body: `${marker}\nPlease add a sample or minimal reproduction. For configuration-only bugs with no file involved, exact package versions, configuration, commands and actual/expected behavior can be included inline. For rendering bugs, attach a sanitized file or send it to admin@flyfish.dev and record the date and filename. Screenshots alone do not reproduce a file failure.`
               })
             }

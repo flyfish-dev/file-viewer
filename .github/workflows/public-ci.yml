@@ -81,8 +81,16 @@ jobs:
       - name: Verify Vue 3 toolbar contracts
         run: node apps/component-demo/scripts/verify-vue3-toolbar.mjs
 
-      - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Install Chromium and WebKit
+        run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Verify actual RequireJS entries and lazy renderers
+        run: pnpm --filter @file-viewer/web-full verify:github-258
+        env:
+          REQUIREJS_DEMO_DIR: apps/component-demo/dist
+
+      - name: Verify cold Vite 6 and 8 nested-root Worker assets
+        run: pnpm --filter @file-viewer/vite-plugin verify:github-257-browser
 
       - name: Verify HTML, revisions, spreadsheet search and DOCX cover regressions
         run: node apps/viewer-demo/scripts/verify-closed-issue-regressions.mjs
