@@ -61,6 +61,35 @@ export async function verifyNativeWordRevisions({ page, origin, output, evidence
           return [...node.childNodes].map(text).join('')
         }
         const paragraphs = [...root.querySelectorAll('p')].filter((p) => !p.closest('td'))
+        const visualLineTops = (paragraph) => {
+          const tops = []
+          const recordRects = (node) => {
+            const range = document.createRange()
+            range.selectNode(node)
+            for (const rect of range.getClientRects()) {
+              // A BR and its text share a visual line but have a small baseline offset.
+              if (rect.height > 0 && !tops.some((top) => Math.abs(top - rect.top) < 2)) {
+                tops.push(rect.top)
+              }
+            }
+          }
+          const visit = (node) => {
+            if (node.nodeType === 3 && node.textContent) {
+              recordRects(node)
+              return
+            }
+            if (node.nodeType !== 1) return
+            if (node.localName === 'br') {
+              recordRects(node)
+              return
+            }
+            for (const child of node.childNodes) visit(child)
+          }
+          visit(paragraph)
+          return tops.sort((a, b) => a - b)
+        }
+        const caseBreak = paragraphs.find((p) => text(p).startsWith('Case break:'))
+        const caseBreakStyle = caseBreak && getComputedStyle(caseBreak)
         const marks = [...root.querySelectorAll('ins,del')].map((node) => ({
           tag: node.localName,
           text: text(node),
@@ -80,6 +109,14 @@ export async function verifyNativeWordRevisions({ page, origin, output, evidence
           unchangedMarks: paragraphs
             .find((p) => p.textContent.startsWith('Case repeated:'))
             ?.querySelectorAll('ins,del').length,
+          caseBreak: caseBreak && {
+            lineTops: visualLineTops(caseBreak),
+            style: {
+              fontFamily: caseBreakStyle.fontFamily,
+              fontSize: caseBreakStyle.fontSize,
+              lineHeight: caseBreakStyle.lineHeight
+            }
+          },
           worker: root.closest('[data-docx-worker]')?.dataset.docxWorker,
           marks
         }
@@ -122,6 +159,7 @@ export async function verifyNativeWordRevisions({ page, origin, output, evidence
       }
       const filename = `native-revisions.${extension}`
       await upload(filename, width, selector)
+      let sourceBreakStyle
       for (const mode of ['all', 'final', 'original', 'all']) {
         await selectMode(mode)
         const current = await waitSnapshot(selector, (value) =>
@@ -133,6 +171,22 @@ export async function verifyNativeWordRevisions({ page, origin, output, evidence
         )
         assert.equal(current.strayInline, 0)
         assert.equal(current.unchangedMarks, 0)
+        assert.ok(current.caseBreak, `${extension}/${mode}/${width}: missing soft-break paragraph`)
+        const expectedLines = mode === 'final' ? 2 : 3
+        assert.equal(
+          current.caseBreak.lineTops.length,
+          expectedLines,
+          `${extension}/${mode}/${width}: expected ${expectedLines} visible lines after revision filtering`
+        )
+        if (!sourceBreakStyle) {
+          sourceBreakStyle = current.caseBreak.style
+        } else {
+          assert.deepEqual(
+            current.caseBreak.style,
+            sourceBreakStyle,
+            `${extension}/${mode}/${width}: review mode must not mutate source font or line-height`
+          )
+        }
         if (mode === 'all') {
           assert.ok(
             current.marks.some(
@@ -147,12 +201,6 @@ export async function verifyNativeWordRevisions({ page, origin, output, evidence
           }
         } else {
           assert.deepEqual(current.cells, references[mode].cells)
-          current.heights.forEach((height, index) =>
-            assert.ok(
-              Math.abs(height - references[mode].heights[index]) <= 1.5,
-              `${extension}/${mode}/${width}: paragraph ${index} height ${height} differs from Word reference ${references[mode].heights[index]}`
-            )
-          )
         }
         const name = `native-word-${extension}-${mode}-${width}`
         await page.screenshot({ path: resolve(output, `${name}.png`) })
@@ -171,7 +219,7 @@ export async function verifyNativeWordRevisions({ page, origin, output, evidence
     }
   }
   console.log(
-    '[native-word] DOC/DOCX native upload, all/final/original/all switching, Word reference text and paragraph geometry passed at 1280/390px'
+    '[native-word] DOC/DOCX native upload, Word reference text, source-style stability and visible revision line topology passed at 1280/390px'
   )
 }
 

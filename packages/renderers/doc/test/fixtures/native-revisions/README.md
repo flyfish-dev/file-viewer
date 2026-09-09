@@ -27,6 +27,14 @@ The manifest pins each file's size and SHA-256, native producer, reference
 paragraphs, and coverage. File Viewer is not used to generate the expected
 text. The reference DOC files additionally test binary parsing equivalence.
 
+## Layout oracle
+
+Accepting or rejecting changes and saving in Word can rewrite document-wide
+theme, default-font, and compatibility metadata. The independent Word copies
+therefore establish text and table semantics, not cross-file pixel geometry.
+Browser regression checks instead verify visible line topology and preserve the
+original file's computed font and line-height while switching review modes.
+
 The fixtures reproduce the missing deletion-mark behavior reported in #236
 and extend #255 to paragraph and break revisions. They do not establish the
 contents of #236's screenshot. Its September 8 reattachment is byte-identical
