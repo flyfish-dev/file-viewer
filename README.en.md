@@ -277,4 +277,12 @@ pnpm verify:browser-smoke
 
 Compatibility reports, deployment feedback, focused fixes and sanitized regression samples are welcome. Every bug report must include a public/sanitized sample, a public reproduction link, or a dated note that the private sample was sent to `admin@flyfish.dev`; screenshots do not replace the sample. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before opening an issue or pull request.
 
-Apache-2.0 licensed. Community links, Wiki and acknowledgements are available in the [documentation](https://doc.file-viewer.app/) and repository sidebar.
+## CAD License Notice
+
+The DWG/DWF/DWFX capability loads `@flyfish-dev/cad-viewer@0.8.2` and its `dwf-viewer@0.6.7` runtime dependency. Those CAD runtime components are **AGPL-3.0-only**. They are not covered by the Apache-2.0 license that applies to the rest of File Viewer source; using, redistributing, or modifying this CAD capability requires complying with AGPL-3.0.
+
+`dwf-viewer` is an internally authorized Flyfish product-line dependency. That authorization permits File Viewer to reference it internally; it does not grant external recipients a proprietary license or change the AGPL-3.0-only terms for this CAD capability.
+
+This release does not include the separately licensed commercial `dwg-viewer` product. Commercial DWG requirements may be directed to that product when appropriate, rather than represented as part of this AGPL capability.
+
+Except for the disclosed CAD runtime boundary above, File Viewer source is Apache-2.0 licensed. Community links, Wiki and acknowledgements are available in the [documentation](https://doc.file-viewer.app/) and repository sidebar.
