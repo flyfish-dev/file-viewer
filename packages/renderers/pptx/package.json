@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/pptx",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "private": false,
   "type": "module",
   "description": "Native PPTX renderer extracted from File Viewer",
@@ -66,8 +66,8 @@
   },
   "dependencies": {
     "dingbat-to-unicode": "^1.0.1",
-    "dompurify": "^3.4.14",
-    "jszip": "^3.10.1",
+    "dompurify": "3.4.15",
+    "jszip": "3.10.2",
     "tinycolor2": "^1.6.0",
     "utif": "^3.1.0"
   },

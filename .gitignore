@@ -16,8 +16,14 @@ artifacts/*.tar.gz
 packages/components/web/viewer/
 packages/compat/web/viewer/
 apps/component-demo/public/file-viewer/
-apps/component-demo/public/example/markdown.md
+apps/component-demo/public/example/word.docx
+apps/component-demo/public/example/pdf.pdf
+apps/component-demo/public/example/ppt.pptx
+apps/component-demo/public/example/word-wps-contract.doc
+apps/component-demo/public/example/excel.xlsx
+apps/component-demo/public/example/office-demo.ppt
 apps/component-demo/public/example/pic.png
+apps/component-demo/public/example/markdown.md
 apps/viewer-demo/public/vendor/drawio/math4/es5/output/
 examples/*/public/flyfish-viewer-assets.json
 examples/*/public/vendor/
