@@ -73,8 +73,13 @@ jobs:
 
       - name: Retain per-package publish evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: npm-publish-report-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/file-viewer-release/npm-publish-report.json
-          if-no-files-found: warn
+        run: |
+          report="$RUNNER_TEMP/file-viewer-release/npm-publish-report.json"
+          if [ -f "$report" ]; then
+            cat "$report"
+            printf '%s\n' '### Per-package publication evidence' '```json' >> "$GITHUB_STEP_SUMMARY"
+            cat "$report" >> "$GITHUB_STEP_SUMMARY"
+            printf '\n%s\n' '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'No package report was produced; inspect the failed preceding step.'
+          fi
