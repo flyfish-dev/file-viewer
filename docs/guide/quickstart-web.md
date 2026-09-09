@@ -156,7 +156,7 @@ as a development dependency at the same version as the viewer packages. Full
 packages already include this CLI. Copy the installed resources before `ng build`:
 
 ```bash
-npx file-viewer-copy-assets public/file-viewer
+npx --yes file-viewer-copy-assets public/file-viewer
 ```
 
 Keep the generated `flyfish-viewer-assets.json` with those files. Include the

@@ -339,7 +339,7 @@ JavaScript 引用的 Worker。轻量包接入时，将与组件同版本的
 在 `ng build` 前复制已安装的资源：
 
 ```bash
-npx file-viewer-copy-assets public/file-viewer
+npx --yes file-viewer-copy-assets public/file-viewer
 ```
 
 保留生成的 `flyfish-viewer-assets.json`，并在已有构建配置中包含 `public`
