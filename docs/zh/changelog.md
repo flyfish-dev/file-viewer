@@ -12,6 +12,7 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 
 ## `v3.0.3` Word 修订、浏览器集成与移动端 PDF 修复 - 2026-09-09
 
+- MapLibre 6.4.1 修复地图署名 HTML 连续危险属性的清洗绕过；离线 Worker 内置，地图销毁重建后仍能加载。同步更新 js-yaml、sharp 和 Vitest 安全版本，以实际所需 polyfill 替代未使用的 Browserify 工具链。
 - 标准预览固定使用 JSZip 3.10.2，修复跨 JavaScript 上下文的二进制类型识别，并保持构建与冷安装版本一致。
 - core 与各渲染器统一固定 DOMPurify 3.4.15，纳入 XML 消毒安全加固并避免冷安装重复引入多个版本，体积预算不变。
 - Demo 顶部按钮悬停不再改变文档顶部留白或 CAD 导出尺寸。

@@ -17,7 +17,7 @@ const result = await build({
   format: 'cjs',
   target: 'es2018',
   define: { process: 'undefined' },
-  alias: { path: require('browserify/lib/builtins').path },
+  alias: { path: require.resolve('path-browserify') },
   metafile: true,
   legalComments: 'eof',
   outfile: fileURLToPath(new URL('occt.cjs', output))

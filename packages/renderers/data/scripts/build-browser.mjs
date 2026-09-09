@@ -7,9 +7,18 @@ import { writeBundleNotices } from '../../../build-support/bundle-notices.mjs'
 const require = createRequire(import.meta.url)
 const output = new URL('../dist/vendor/', import.meta.url)
 await mkdir(output, { recursive: true })
-const builtins = require('browserify/lib/builtins')
-const browserRequire = createRequire(require.resolve('browserify'))
-// avsc's documented browser entry expects streams, Buffer and zlib from Browserify.
+// Resolve only the shims avsc uses, without installing Browserify's unused crypto toolchain.
+const builtins = {
+  buffer: require.resolve('buffer/'),
+  stream: require.resolve('stream-browserify'),
+  util: require.resolve('util/'),
+  zlib: require.resolve('browserify-zlib'),
+  path: require.resolve('path-browserify'),
+  events: require.resolve('events/'),
+  assert: require.resolve('assert/'),
+  string_decoder: require.resolve('string_decoder/'),
+}
+// avsc's documented browser entry expects streams, Buffer and zlib.
 // Bundle these here, never ask downstream Webpack/Vite users for Node polyfills.
 const result = await build({
   entryPoints: [require.resolve('avsc/etc/browser/avsc.js')],
@@ -23,7 +32,7 @@ const result = await build({
         (name) => [name, builtins[name]]
       )
     ),
-    'process/browser': browserRequire.resolve('process/browser')
+    'process/browser': require.resolve('process/browser')
   },
   inject: [fileURLToPath(new URL('browser-globals.js', import.meta.url))],
   define: { global: 'globalThis' },

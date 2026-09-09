@@ -19,7 +19,8 @@ import {
   type FileViewerViewStateChangeAction,
   type FileViewerViewStateChangeSource,
 } from '@file-viewer/core';
-import type { Map as MapLibreMap } from 'maplibre-gl';
+import type { Map as MapLibreMap, ErrorEvent as MapLibreErrorEvent } from 'maplibre-gl';
+import { configureMapLibreWorker } from './maplibre-worker.js';
 
 type Position = [number, number, ...number[]];
 type Geometry =
@@ -1070,9 +1071,9 @@ const waitForMapLoad = (map: MapLibreMap) => {
       cleanup();
       resolve();
     };
-    const onError = (event: { error?: Error }) => {
+    const onError = (event: MapLibreErrorEvent) => {
       cleanup();
-      reject((event as { error?: Error }).error || new Error('MapLibre failed to load'));
+      reject(event.error || new Error('MapLibre failed to load'));
     };
     const timeout = window.setTimeout(() => {
       cleanup();
@@ -1108,6 +1109,7 @@ const mountMapLibre = async (
   t: FileViewerTranslator
 ) => {
   const maplibre = await import('maplibre-gl');
+  configureMapLibreWorker(maplibre);
   let activeBasemap = basemap;
   let map = createMapLibreMap(maplibre, host, activeBasemap);
   map.addControl(new maplibre.NavigationControl({ showCompass: false, visualizePitch: false }), 'top-right');

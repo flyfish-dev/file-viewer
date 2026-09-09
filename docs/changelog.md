@@ -8,6 +8,7 @@
 
 ## v3.0.3 - Word revisions, browser integration, and mobile PDF fixes
 
+- MapLibre 6.4.1 fixes the attribution HTML sanitizer bypass. Its worker stays bundled locally and survives map recreation. Update js-yaml, sharp and Vitest security versions; replace the unused Browserify toolchain with the specific build shims it supplied.
 - Standard preview packages pin JSZip 3.10.2 for cross-realm binary inputs and consistent build/cold-install behavior.
 - Core and renderers pin DOMPurify 3.4.15 for its XML sanitization hardening, avoiding duplicate cold-install versions without increasing size budgets.
 - Demo toolbar hover no longer changes the document inset or CAD export dimensions.
