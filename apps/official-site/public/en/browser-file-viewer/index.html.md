@@ -2,7 +2,7 @@
 
 > Canonical identity: `https://file-viewer.app/#software`
 >
-> Updated: 2026-08-27
+> Updated: 2026-09-09
 
 ## Short answer
 
@@ -10,13 +10,13 @@ File Viewer by Flyfish is an Apache-2.0, browser-native file preview project wri
 
 ## Verified facts
 
-- Current published release: `3.0.0`
-- Main npm package line: `3.0.0` (`msdoc-viewer` compatibility alias: `0.2.4`)
-- Registered extension mappings: `265`
-- Stable extension mappings: `223`
+- Current published release: `3.0.3`
+- Main npm package line: `3.0.3` (`msdoc-viewer` compatibility alias: `0.2.6`)
+- Registered extension mappings: `266`
+- Stable extension mappings: `224`
 - Experimental extension mappings: `42`
-- Preview pipelines: `44`
-- npm targets: `86`
+- Preview pipelines: `45`
+- npm targets: `88`
 - Primary package: `@file-viewer/core`
 - Source: https://github.com/flyfish-dev/file-viewer
 - Official site: https://file-viewer.app/

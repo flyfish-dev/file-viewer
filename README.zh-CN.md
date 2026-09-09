@@ -140,7 +140,7 @@
 ></flyfish-file-viewer>
 ```
 
-`web-full` 的 CDN IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包、CHM 等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@0.3.3` ESM、Worker、WASM、CJK 字体与帧缓存模块，`vendor/chm/` 包含 CHM Rust/WASM Worker，并与其它版本对齐的资产一起交付。二进制 `.ppt` 和 CHM 默认无需配置运行时 URL；格式专用 URL 选项只用于非标准资产路径覆盖。
+`web-full` 的 CDN IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包、CHM 等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@0.3.4` ESM、Worker、WASM、CJK 字体与帧缓存模块，`vendor/chm/` 包含 CHM Rust/WASM Worker，并与其它版本对齐的资产一起交付。二进制 `.ppt` 和 CHM 默认无需配置运行时 URL；格式专用 URL 选项只用于非标准资产路径覆盖。
 
 ### Vanilla JS
 
@@ -236,7 +236,7 @@ $('#viewer').fileViewer({ url: '/files/report.pdf' })
 
 ### full 包运行时资产
 
-所有 full 包默认把 Archive、CHM、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 自动发布包内资产或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@0.3.3` 运行时位于 `vendor/ppt/`，CHM Worker、JavaScript bridge 与 Rust/WASM 文件位于 `vendor/chm/`，并保留各自 LICENSE 与 NOTICE。
+所有 full 包默认把 Archive、CHM、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 自动发布包内资产或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@0.3.4` 运行时位于 `vendor/ppt/`，CHM Worker、JavaScript bridge 与 Rust/WASM 文件位于 `vendor/chm/`，并保留各自 LICENSE 与 NOTICE。
 
 ```ts
 import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
@@ -441,7 +441,7 @@ npm install ./artifacts/flyfish-group-file-viewer-web-*.tgz
 npm install ./artifacts/flyfish-group-file-viewer-react-*.tgz
 ```
 
-Core、PPTX 原生引擎、Vanilla JS / Pure Web、Vue3、Vue2、React、React legacy、jQuery、Svelte 和历史兼容 tarball 都会随开源总仓库一起生成。二进制 PPT 使用独立版本的 `@file-viewer/ppt@0.3.3`；Demo、full 资产包与 CDN/IIFE 会交付其匹配的公开运行时文件。`file-viewer3` 非 scoped 兼容包仍会同步发布到 npm，但它和 `@flyfish-group/file-viewer3` 包体重复，开源总仓库不再重复存储该 tarball。非 Vite full 项目使用随包安装的同版本 CLI 发布完整资源：`npx --no-install file-viewer-copy-assets ./public/file-viewer`；`web-full` 完整部署其 `dist/` 也可直接使用。
+Core、PPTX 原生引擎、Vanilla JS / Pure Web、Vue3、Vue2、React、React legacy、jQuery、Svelte 和历史兼容 tarball 都会随开源总仓库一起生成。二进制 PPT 使用独立版本的 `@file-viewer/ppt@0.3.4`；Demo、full 资产包与 CDN/IIFE 会交付其匹配的公开运行时文件。`file-viewer3` 非 scoped 兼容包仍会同步发布到 npm，但它和 `@flyfish-group/file-viewer3` 包体重复，开源总仓库不再重复存储该 tarball。非 Vite full 项目使用随包安装的同版本 CLI 发布完整资源：`npx --no-install file-viewer-copy-assets ./public/file-viewer`；`web-full` 完整部署其 `dist/` 也可直接使用。
 
 GitHub Release 会同步提供完整下载项:
 

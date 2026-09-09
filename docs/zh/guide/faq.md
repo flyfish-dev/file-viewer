@@ -41,11 +41,11 @@ description: "快速排查 File Viewer 组件选型、Full 包资源、Worker/WA
 
 不要单独安装另一个版本的 `preset-all` 或复制工具，否则容易出现 API、Worker 和 WASM 版本不一致。
 
-## 如何确认 DOCX 0.3.28 修复已经生效
+## 如何确认 DOCX 0.3.31 修复已经生效
 
-当前 Word renderer 的主线程和离线 Worker 均使用 `@file-viewer/docx@0.3.28`。它包含日文文字、VML 文本框、Apache POI `w:hMerge`、多分节浮动图形、复杂框架和定位页面修复，并默认阻断文档中的外部资源。
+当前 Word renderer 的主线程和离线 Worker 均使用 `@file-viewer/docx@0.3.31`。它包含日文文字、VML 文本框、Apache POI `w:hMerge`、多分节浮动图形、复杂框架、定位页面、修订、段落标记和软换行修复，并默认阻断文档中的外部资源。
 
-升级后需要重新发布同版本 viewer assets，并在浏览器网络面板确认 `vendor/docx/docx.worker.js?file-viewer-docx=0.3.28`（可能位于自定义 `file-viewer/` 基址下）真实返回 JavaScript。不要混用旧版本 Worker；如果仍看到旧布局，请清理 CDN 或 Service Worker 缓存后重新加载文档。
+升级后需要重新发布同版本 viewer assets，并在浏览器网络面板确认 `vendor/docx/docx.worker.js?file-viewer-docx=0.3.31`（可能位于自定义 `file-viewer/` 基址下）真实返回 JavaScript。不要混用旧版本 Worker；如果仍看到旧布局，请清理 CDN 或 Service Worker 缓存后重新加载文档。
 
 ## npm 11 安装时报 `Cannot read properties of null (reading 'matches')`
 
