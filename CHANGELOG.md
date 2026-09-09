@@ -2,7 +2,7 @@
 
 完整对外更新日志见 [docs/changelog.md](docs/changelog.md)。
 
-## File Viewer v3.0.3 - 2026-09-08
+## File Viewer v3.0.3 - 2026-09-09
 
 ### Word、表格与移动端
 
@@ -12,6 +12,7 @@
 
 ### 集成与输出
 
+- 标准预览使用固定的 JSZip 3.10.2，修复不同 JavaScript 上下文之间传递二进制内容的类型识别，避免浮动依赖导致构建与冷安装结果不一致。
 - core 与各渲染器统一固定 DOMPurify 3.4.15，纳入 XML 消毒安全加固并避免冷安装重复引入多个版本，体积预算保持不变。
 - Demo 顶部按钮的悬停位移不再改变文档留白，避免 CAD 模式切换和导出图像出现一像素高度漂移。
 - 修复 Vue CLI/Webpack 浏览器入口、Angular PPTX Worker 和嵌套 Vite 项目的资产根路径；显式资源配置保持优先，已输出 Worker 的构建不再探测不存在的清单。新增独立 RequireJS AMD 入口，保留宿主模块隔离与本地懒加载资源。

@@ -8,6 +8,7 @@
 
 ## v3.0.3 - Word revisions, browser integration, and mobile PDF fixes
 
+- Standard preview packages pin JSZip 3.10.2 for cross-realm binary inputs and consistent build/cold-install behavior.
 - Core and renderers pin DOMPurify 3.4.15 for its XML sanitization hardening, avoiding duplicate cold-install versions without increasing size budgets.
 - Demo toolbar hover no longer changes the document inset or CAD export dimensions.
 - DOC preserves insertion/deletion records, paragraph marks and soft breaks. Word review modes switch without selecting the file again. Correct DOC line-spacing units and font slots restore the supplied sales contract without inventing revision marks.
