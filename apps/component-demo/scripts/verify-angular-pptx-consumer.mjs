@@ -58,7 +58,8 @@ const report = {
 let dev,
   server,
   page,
-  devLog = ''
+  devLog = '',
+  devLogs = []
 
 async function bind(server) {
   await new Promise((done, reject) => {
@@ -151,6 +152,9 @@ async function verify(mode, port) {
 }
 
 async function startDev() {
+  // Each development mode starts a fresh Angular server. A prior server's
+  // completion line cannot prove that this server has compiled its bundle.
+  devLog = ''
   const probe = createServer()
   const port = await bind(probe)
   await new Promise((done) => probe.close(done))
@@ -170,18 +174,25 @@ async function startDev() {
       stdio: ['ignore', 'pipe', 'pipe']
     }
   )
-  dev.stdout.on('data', (bytes) => {
-    devLog += bytes
-  })
-  dev.stderr.on('data', (bytes) => {
-    devLog += bytes
-  })
+  const appendDevLog = (bytes) => {
+    const text = bytes.toString()
+    devLog += text
+    devLogs.push(text)
+  }
+  dev.stdout.on('data', appendDevLog)
+  dev.stderr.on('data', appendDevLog)
   const deadline = Date.now() + 120_000
   while (true) {
     assert.equal(dev.exitCode, null, `ng serve exited: ${devLog}`)
+    assert.ok(
+      !devLog.includes('Application bundle generation failed.'),
+      `ng serve failed to compile: ${devLog}`
+    )
     try {
-      if ((await fetch(`http://127.0.0.1:${port}/ui/`, { signal: AbortSignal.timeout(1000) })).ok)
-        break
+      const response = await fetch(`http://127.0.0.1:${port}/ui/`, {
+        signal: AbortSignal.timeout(1000)
+      })
+      if (response.ok && devLog.includes('Application bundle generation complete.')) break
     } catch {}
     assert.ok(Date.now() < deadline, `ng serve did not start: ${devLog}`)
     await new Promise((done) => setTimeout(done, 200))
@@ -242,7 +253,7 @@ try {
   await stopDev()
   await browser.close()
   if (server) await new Promise((done) => server.close(done))
-  await writeFile(resolve(output, 'ng-serve.log'), devLog)
+  await writeFile(resolve(output, 'ng-serve.log'), devLogs.join(''))
   await writeFile(resolve(output, 'report.json'), JSON.stringify(report, null, 2) + '\n')
 }
 console.log(`Angular 22 ng serve and production /ui/ PPTX Worker passed: ${output}`)
