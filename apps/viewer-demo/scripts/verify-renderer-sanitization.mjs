@@ -23,6 +23,7 @@ const sourceAliases = [
   ['@security/doc', 'packages/renderers/doc/src/index.ts'],
   ['@security/maplibre', 'packages/renderers/geo/node_modules/maplibre-gl/dist/maplibre-gl.mjs'],
   ['@security/map-worker', 'packages/renderers/geo/src/maplibre-worker.ts'],
+  ['@security/geo', 'packages/renderers/geo/src/geo.ts'],
   ['@file-viewer/core/assets', 'packages/core/src/assets.ts'],
   ['@file-viewer/core/export', 'packages/core/src/export.ts'],
   ['@file-viewer/renderer-text', 'packages/renderers/text/src/index.ts'],
@@ -83,6 +84,7 @@ import { PptxViewer } from '@security/pptx'
 import { mountMsDoc, renderMsDoc, sanitizeMsDocLinkHref } from '@security/doc'
 import * as maplibre from '@security/maplibre'
 import { configureMapLibreWorker } from '@security/map-worker'
+import renderGeo from '@security/geo'
 import { buildExportHtmlDocument, buildFileViewerRenderedHtmlDocument } from '@file-viewer/core/export'
 
 const pixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
@@ -111,6 +113,18 @@ const mapAttributionResult = {
 }
 attribution.onRemove()
 const mapWorkerResult = []
+const geoHost = document.createElement('div')
+geoHost.style.cssText = 'width:640px;height:540px'
+document.body.append(geoHost)
+const geoInstance = await renderGeo(new TextEncoder().encode(JSON.stringify({
+  type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [0, 0] } }]
+})).buffer, geoHost, 'geojson')
+const mapControlGlyphs = ['zoom-in', 'zoom-out'].map(name => {
+  const icon = geoHost.querySelector('.maplibregl-ctrl-' + name + ' .maplibregl-ctrl-icon')
+  return icon ? getComputedStyle(icon, '::before').content : null
+})
+geoInstance.unmount()
+geoHost.remove()
 for (let round = 0; round < 2; round += 1) {
   configureMapLibreWorker(maplibre)
   const host = document.createElement('div')
@@ -527,6 +541,7 @@ const inspectPptx = root => {
 }
 
 window.__rendererSanitizationResult = {
+  mapControlGlyphs,
   mapWorker: mapWorkerResult,
   mapAttribution: mapAttributionResult,
   sentinel: { ...window.__rendererSentinel },
@@ -934,6 +949,7 @@ try {
     sentinel: 0, dangerousAttributes: 0, unsafeLinks: 0, safeHref: 'https://example.com/license'
   }, 'MapLibre attribution must remove adjacent dangerous attributes without removing safe credit links')
   assert.deepEqual(result.mapWorker, [true, true], 'Offline workers must render after map creation and recreation')
+  assert.deepEqual(result.mapControlGlyphs, ['"+"', '"-"'], 'Map zoom controls must retain visible icons')
   assert.deepEqual(result.sentinel, { markdown: 0, pptx: 0, doc: 0, export: 0, typst: 0, drawing: 0 })
   assert.equal(dialogs, 0)
   assert.deepEqual(unsafeCssRequests, [])

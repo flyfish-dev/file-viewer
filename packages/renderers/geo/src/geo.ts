@@ -133,7 +133,7 @@ const geoStyle = `
 .geo-viewer .maplibregl-ctrl{display:flex;overflow:hidden;border:1px solid rgba(15,23,42,.12);border-radius:8px;background:#fff;box-shadow:0 10px 24px rgba(15,23,42,.12)}
 .geo-viewer .maplibregl-ctrl button{display:block;width:30px;height:30px;border:0;border-bottom:1px solid rgba(15,23,42,.08);background:#fff;color:#132235;cursor:pointer;font-size:0}
 .geo-viewer .maplibregl-ctrl button:last-child{border-bottom:0}.geo-viewer .maplibregl-ctrl button:hover{background:#f1f5f9}
-.geo-viewer .maplibregl-ctrl-icon.maplibregl-ctrl-zoom-in::before{content:'+';font-size:18px;font-weight:800}.geo-viewer .maplibregl-ctrl-icon.maplibregl-ctrl-zoom-out::before{content:'-';font-size:20px;font-weight:800}
+.geo-viewer .maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon::before{content:'+';font-size:18px;font-weight:800}.geo-viewer .maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon::before{content:'-';font-size:20px;font-weight:800}
 .geo-viewer .maplibregl-ctrl-compass{display:none!important}
 .geo-viewer .maplibregl-ctrl-bottom-right{position:absolute;right:8px;bottom:8px;pointer-events:auto}
 .geo-viewer .maplibregl-ctrl-attrib{display:block;max-width:min(460px,calc(100vw - 40px));border-radius:6px;padding:3px 7px;background:rgba(255,255,255,.9);box-shadow:0 8px 20px rgba(15,23,42,.12);color:#334155;font-size:11px;line-height:1.45}

@@ -19,6 +19,16 @@ final class PDFNavigationTests: XCTestCase {
         let chapter = safari.staticTexts["技术定位"].firstMatch
         XCTAssertTrue(next.waitForExistence(timeout: 30))
         XCTAssertTrue(cover.waitForExistence(timeout: 30))
+        // Safari may restore this document's reading position from the preceding run.
+        // Establish page 1 through the real controls before asserting the 1 -> 2 transition.
+        capture(safari, "initial-restored-position")
+        for _ in 0..<13 {
+            if !previous.isEnabled { break }
+            previous.tap()
+        }
+        XCTAssertFalse(previous.isEnabled, "The regression must start on the first page")
+        waitForVisibleHeading(cover)
+        assertPage("1", safari: safari, previous: previous, next: next)
         let initialContentsY = contents.frame.minY
         capture(safari, "page-1")
         next.tap()
