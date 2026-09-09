@@ -13,9 +13,12 @@ class App implements AfterViewInit, OnDestroy {
   private viewer?: ViewerController
 
   ngAfterViewInit() {
+    const presentation = new URLSearchParams(location.search).has('explicit-worker')
+      ? { workerUrl: new URL('file-viewer/vendor/pptx/pptx.worker.js', document.baseURI).href }
+      : undefined
     this.viewer = mountViewer(this.host.nativeElement, {
       url: new URL('sample.pptx', document.baseURI).href,
-      options: { preset: officePreset, locale: 'en-US' }
+      options: { preset: officePreset, locale: 'en-US', presentation }
     })
   }
 

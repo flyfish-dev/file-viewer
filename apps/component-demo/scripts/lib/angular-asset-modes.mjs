@@ -16,7 +16,7 @@ export async function verifyAngularDevelopmentAssetModes({ start, stop, verify, 
   const held = `${manifest}.held`
   await rename(manifest, held)
   try {
-    await run('development-package-worker')
+    await run('development-explicit-worker')
   } finally {
     await rename(held, manifest)
   }

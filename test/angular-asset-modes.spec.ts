@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest'
 import { verifyAngularDevelopmentAssetModes } from '../apps/component-demo/scripts/lib/angular-asset-modes.mjs'
 
 describe('Angular asset fixture server isolation', () => {
-  it.each(['none', 'development', 'development-package-worker', 'second-start'])(
+  it.each(['none', 'development', 'development-explicit-worker', 'second-start'])(
     'stops before fixture changes and restores the manifest after %s',
     async (failure) => {
       const directory = await mkdtemp(join(tmpdir(), 'file-viewer-angular-assets-'))
@@ -47,7 +47,7 @@ describe('Angular asset fixture server isolation', () => {
           'start:true', 'development', 'stop',
           ...(failure === 'development' ? [] : [
             'start:false',
-            ...(failure === 'second-start' ? [] : ['development-package-worker']),
+            ...(failure === 'second-start' ? [] : ['development-explicit-worker']),
             'stop'
           ])
         ])

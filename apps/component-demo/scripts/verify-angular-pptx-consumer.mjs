@@ -93,7 +93,7 @@ async function verify(mode, port) {
   )
   const result = {
     mode,
-    url: `http://127.0.0.1:${port}/ui/`,
+    url: `http://127.0.0.1:${port}/ui/${mode === 'development-explicit-worker' ? '?explicit-worker' : ''}`,
     workers,
     errors,
     responses,
@@ -140,6 +140,14 @@ async function verify(mode, port) {
     assert.ok(
       response && response.status === 200 && /javascript/.test(response.mime),
       `${mode}: Worker did not load executable JavaScript: ${url}`
+    )
+  }
+  if (mode === 'development-explicit-worker') {
+    assert.ok(
+      workers.every((url) =>
+        new URL(url).pathname.endsWith('/file-viewer/vendor/pptx/pptx.worker.js')
+      ),
+      `${mode}: the documented explicit Worker URL was not used`
     )
   }
   assert.ok(
