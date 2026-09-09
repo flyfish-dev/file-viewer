@@ -15,6 +15,12 @@ const browserContext: Record<string, unknown> = {
 runInNewContext(readFileSync(require.resolve('jszip/dist/jszip.js'), 'utf8'), browserContext)
 const browserZip = browserContext.JSZip as typeof JSZip
 
+it('shares the reviewed ZIP version with the DOCX engine', () => {
+  const wordRequire = createRequire(new URL('../packages/renderers/word/package.json', import.meta.url))
+  const engineRequire = createRequire(wordRequire.resolve('@file-viewer/docx'))
+  expect(engineRequire('jszip/package.json').version).toBe(require('jszip/package.json').version)
+})
+
 describe.each([
   ['Node', JSZip],
   ['browser bundle', browserZip]
