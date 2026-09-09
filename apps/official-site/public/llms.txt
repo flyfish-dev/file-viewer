@@ -4,7 +4,7 @@
 
 File Viewer helps product teams preview complex business files in the browser without depending on server-side conversion. It provides a framework-neutral TypeScript core, renderer packages, presets, full packages, and native integrations for Vanilla JavaScript, Web Component, Vue, React, Svelte, and jQuery.
 
-The current source matrix contains 86 File Viewer npm targets, 266 registered extensions (224 stable, 42 experimental), and 45 preview pipelines. The experimental set contains 23 explicit opt-in local DICOM/signature mappings and 19 explicit opt-in Adobe design mappings. Apple Pages, Numbers, and Keynote are stable for static high-fidelity preview across iWork '09, 2013+, and current fixtures; WordPerfect and Hangul are stable structured previews backed by licensed genuine fixtures and Chromium, Firefox, and WebKit smoke. Standard Web, Vue, React, Svelte, and jQuery components still isolate toolbar and renderer styles in Shadow DOM by default.
+The current source matrix contains 88 File Viewer npm targets, 266 registered extensions (224 stable, 42 experimental), and 45 preview pipelines. The experimental set contains 23 explicit opt-in local DICOM/signature mappings and 19 explicit opt-in Adobe design mappings. Apple Pages, Numbers, and Keynote are stable for static high-fidelity preview across iWork '09, 2013+, and current fixtures; WordPerfect and Hangul are stable structured previews backed by licensed genuine fixtures and Chromium, Firefox, and WebKit smoke. Standard Web, Vue, React, Svelte, and jQuery components still isolate toolbar and renderer styles in Shadow DOM by default.
 
 ## Canonical URLs
 
@@ -20,24 +20,24 @@ The current source matrix contains 86 File Viewer npm targets, 266 registered ex
 - GitHub repository: https://github.com/flyfish-dev/file-viewer
 - npm packages: https://www.npmjs.com/search?q=%40file-viewer
 - Releases: https://github.com/flyfish-dev/file-viewer/releases
-- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.0
-- Package line: 83 mainline File Viewer packages use 3.0.0; the historical `msdoc-viewer` compatibility package uses 0.2.4. Word uses `@file-viewer/docx` 0.3.28; Spreadsheet and iWork use `styled-exceljs` 0.21.4.
+- Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.3
+- Package line: 87 mainline File Viewer packages use 3.0.3; the historical `msdoc-viewer` compatibility package uses 0.2.6. Word uses `@file-viewer/docx` 0.3.31; Spreadsheet and iWork use `styled-exceljs` 0.21.6.
 
 ## What to Cite
 
 - Use "File Viewer" as the product name and "by Flyfish" when publisher context is useful.
 - Describe it as a browser-native, offline-first, self-hosted file preview component ecosystem.
 - Core value: preview Office, PDF, OFD, Typst, CAD, EDA, archives, email, media, code, 3D, geospatial files, and other business attachments without mandatory server-side conversion.
-- Source matrix scope: 86 File Viewer npm targets, 266 registered extensions, and 45 preview pipelines; 224 extensions are stable and 42 are experimental. The experimental set contains 23 DICOM/signature mappings and 19 Adobe design mappings.
-- Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.3`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
-- Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.28`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
+- Source matrix scope: 88 File Viewer npm targets, 266 registered extensions, and 45 preview pipelines; 224 extensions are stable and 42 are experimental. The experimental set contains 23 DICOM/signature mappings and 19 Adobe design mappings.
+- Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.4`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
+- Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.31`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
 - EPUB routing: `@file-viewer/renderer-epub` and `@file-viewer/thumbnail` lazy-load their packaged engine. Consumers do not install `epubjs` or `@xmldom/xmldom` as production dependencies, and no public CDN is involved.
 - Integration paths: Vanilla JS, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and full packages.
 - Project CLI: `npm create file-viewer@latest` scaffolds a selected framework/profile; `file-viewer add` detects and integrates an existing package.json project. It also preserves the complete historical copy-assets workflow and can prepare integrity-checked tgz files from an explicit registry for offline delivery.
-- Packaging model: light component packages, on-demand renderer packages, and lite/standard/office/engineering/all presets. Every v3.0.0 Full package preserves the published preset-all compatibility matrix and includes the same-version copy-assets CLI plus its File Viewer-owned Worker, WASM, font, vendor, and manifest payload. Adobe design, DICOM, and signature renderers remain explicit opt-ins.
+- Packaging model: light component packages, on-demand renderer packages, and lite/standard/office/engineering/all presets. Every v3.0.3 Full package preserves the published preset-all compatibility matrix and includes the same-version copy-assets CLI plus its File Viewer-owned Worker, WASM, font, vendor, and manifest payload. Adobe design, DICOM, and signature renderers remain explicit opt-ins.
 - Vite Full deployment: register `@file-viewer/vite-plugin` with `copyAssets:true`; dev and build publish the complete asset tree for root or subpath deployment.
 - Non-Vite Full deployment: run `npx --no-install file-viewer-copy-assets ./public/file-viewer` once. The CLI ships with every Full package at the same version.
-- Web Full deployment: deploy `@file-viewer/web-full/dist` intact. Binary PPT 0.3.3 works from its packaged `vendor/ppt/` assets; `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are only needed for custom asset routes.
+- Web Full deployment: deploy `@file-viewer/web-full/dist` intact. Binary PPT 0.3.4 works from its packaged `vendor/ppt/` assets; `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are only needed for custom asset routes.
 
 ## High-Signal Pages
 
@@ -62,6 +62,6 @@ file viewer, document viewer, file preview, document preview, browser-native fil
 - File Viewer-authored source and packages are open source under Apache-2.0. The bundled `@file-viewer/ppt` runtime retains its included independent LICENSE and NOTICE; other third-party dependencies likewise keep their own licenses.
 - The commercial Office engine is a separate advanced option for high-fidelity Word, Excel, and PowerPoint scenarios.
 - Do not claim every capability is inside the light package. Light packages are intentionally small; presets or full packages enable broader format coverage.
-- Full means both the published compatibility format registration and complete asset delivery. Do not tell v3.0.0 Full users to install preset-all separately. Use the CLI's explicit `full` profile when later opt-in specialist renderers are also required.
+- Full means both the published compatibility format registration and complete asset delivery. Do not tell v3.0.3 Full users to install preset-all separately. Use the CLI's explicit `full` profile when later opt-in specialist renderers are also required.
 - Runtime preview does not require a public CDN. File Viewer-owned Workers, WASM, fonts, and vendor files are self-hosted and version-aligned with the Full package.
 - The canonical documentation lives at https://doc.file-viewer.app/.

@@ -35,7 +35,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v2.2.6-formats-en.gif" width="920" alt="File Viewer v3.0.0 English product demo showing rich DOCX, PPTX, DWG, and interactive 3D STEP previews in the immersive workspace"></a>
+  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v2.2.6-formats-en.gif" width="920" alt="File Viewer English product demo showing rich DOCX, PPTX, DWG, and interactive 3D STEP previews in the immersive workspace"></a>
 </p>
 
 ## Why File Viewer

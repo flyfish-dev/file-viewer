@@ -131,7 +131,7 @@ const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '3.0.0'
+const currentReleaseVersion = '3.0.3'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
 const registeredExtensionCount = FORMAT_CATALOG_SUMMARY.registeredExtensionCount
 const stableExtensionCount = FORMAT_CATALOG_SUMMARY.stableExtensionCount
@@ -381,7 +381,7 @@ const copy = {
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
     releaseTitle:
-      'v3.0.0 已发布：84 个 npm 目标、全功能 CLI、向下兼容的 Full 契约，以及按需安装的 DICOM 与数字签名能力。',
+      'v3.0.3 已发布：88 个 npm 目标、Word 修订与 DOC 排版修复、浏览器集成与 iPhone PDF 导航回归；Vue 2 和既有 Full 契约保持兼容。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -434,7 +434,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v3.0.0 ships 84 npm targets, the project CLI, unchanged Full compatibility contracts, and opt-in DICOM and digital-signature capabilities.',
+      'v3.0.3 ships 88 npm targets, Word revision and DOC typography fixes, browser integration updates, and the iPhone PDF navigation regression; Vue 2 and existing Full contracts remain compatible.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
