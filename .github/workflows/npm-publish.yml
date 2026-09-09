@@ -34,7 +34,8 @@ jobs:
       - name: Check out release publisher
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.release.tag_name || inputs.release_tag }}
+          # A recovery dispatch needs the reviewed publisher revision; the tag can predate its fix.
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.release.tag_name }}
           persist-credentials: false
 
       - name: Set up Node.js
