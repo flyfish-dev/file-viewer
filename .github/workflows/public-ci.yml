@@ -107,7 +107,9 @@ jobs:
         run: node apps/viewer-demo/scripts/verify-mobile-toolbar.mjs
 
       - name: Verify CAD source, monochrome and actual exported pixels
-        run: node apps/viewer-demo/scripts/verify-cad-view-modes.mjs
+        run: |
+          pnpm exec vitest run test/demo-file-capsule-motion.spec.ts
+          node apps/viewer-demo/scripts/verify-cad-view-modes.mjs
 
       - name: Verify legacy XLS MiniFAT in main thread and Worker
         run: node apps/viewer-demo/scripts/verify-cfb-mini-fat.mjs

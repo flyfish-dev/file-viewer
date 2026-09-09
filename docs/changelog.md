@@ -8,6 +8,7 @@
 
 ## v3.0.3 - Word revisions, browser integration, and mobile PDF fixes
 
+- Demo toolbar hover no longer changes the document inset or CAD export dimensions.
 - DOC preserves insertion/deletion records, paragraph marks and soft breaks. Word review modes switch without selecting the file again. Correct DOC line-spacing units and font slots restore the supplied sales contract without inventing revision marks.
 - Resized spreadsheet columns now scale and survive sheet changes. Offscreen search covers real XLS input, distant columns and merged cells. CFB recovery skips only unused broken MiniFAT chains; required workbook data is still validated.
 - iPhone Safari PDF navigation recovers after search and keyboard dismissal. Canceled PDF startup no longer leaves an unhandled Worker rejection.

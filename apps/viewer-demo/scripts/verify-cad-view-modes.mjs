@@ -82,6 +82,18 @@ async function snapshot(name) {
     const rect = element.getBoundingClientRect(), css = getComputedStyle(element)
     return { selector, top: rect.top, width: rect.width, height: rect.height, flex: css.flex, minHeight: css.minHeight }
   }))
+  if (process.env.CAD_GEOMETRY_TRACE === '1') {
+    console.log('geometry-trace', name, await page.locator('.cad-shell').evaluate(shell => {
+      const ancestors = []
+      for (let element = shell; element; element = element.parentElement || element.getRootNode().host) {
+        const rect = element.getBoundingClientRect(), css = getComputedStyle(element)
+        ancestors.push({ tag: element.tagName, className: element.className,
+          top: rect.top, height: rect.height, scrollTop: element.scrollTop,
+          transform: css.transform, padding: css.padding, border: css.borderWidth })
+      }
+      return { scrollY, innerHeight, active: document.activeElement?.tagName, ancestors }
+    }))
+  }
   await writeFile(resolve(output, `${name}.png`), data)
   const visual = await pixels(data)
   const downloading = page.waitForEvent('download')

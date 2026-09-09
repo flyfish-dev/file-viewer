@@ -11,6 +11,21 @@ export const DEMO_FILE_CAPSULE_MOTION = Object.freeze({
 
 type CapsuleBounds = Pick<DOMRect, 'top' | 'right' | 'bottom' | 'left' | 'width' | 'height'>
 
+export function resolveDemoFileCapsuleMergeBounds(
+  bounds: CapsuleBounds,
+  configuredWidth: number,
+  translation = { x: 0, y: 0 }
+): CapsuleBounds {
+  const width = Number.isFinite(configuredWidth) && configuredWidth > 0
+    ? configuredWidth
+    : bounds.width
+  // Hover translation is visual only and must not change the document inset.
+  const left = bounds.left - translation.x - (width - bounds.width) / 2
+  const top = bounds.top - translation.y
+  return { top, right: left + width, bottom: top + bounds.height,
+    left, width, height: bounds.height }
+}
+
 export interface UseDemoFileCapsuleMotionOptions {
   enabled: () => boolean
   canMerge: () => boolean

@@ -12,6 +12,7 @@
 
 ### 集成与输出
 
+- Demo 顶部按钮的悬停位移不再改变文档留白，避免 CAD 模式切换和导出图像出现一像素高度漂移。
 - 修复 Vue CLI/Webpack 浏览器入口、Angular PPTX Worker 和嵌套 Vite 项目的资产根路径；显式资源配置保持优先，已输出 Worker 的构建不再探测不存在的清单。新增独立 RequireJS AMD 入口，保留宿主模块隔离与本地懒加载资源。
 - HTML 增加静态预览和原始源码切换，预览不执行脚本或外部请求。OFD 修复规范资源路径、命名空间和异常后的 Promise 结束；CAD 修复 DXF LINE、DWF/DWFx 对比度，并提供遵守权限、钩子和水印的 PNG/JPEG 当前视图下载。
 - PDF 补丁与许可来源随包校验；CHM、Adobe 和 Illustrator 的安全修复同步到规范 Worker。组件独立源码导出包含真实构建输入；发布工具按依赖层批量推进，续跑只跳过完整性一致的包。

@@ -32,7 +32,7 @@ import DemoFileTypeIcon from '@/components/demo/DemoFileTypeIcon.vue'
 import DemoRecentFiles from '@/components/demo/DemoRecentFiles.vue'
 import DemoViewerSettingsPanel from '@/components/demo/DemoViewerSettingsPanel.vue'
 import { useDemoCopy } from '@/composables/useDemoCopy'
-import { useDemoFileCapsuleMotion } from '@/composables/useDemoFileCapsuleMotion'
+import { resolveDemoFileCapsuleMergeBounds, useDemoFileCapsuleMotion } from '@/composables/useDemoFileCapsuleMotion'
 import { useDemoFileTypes } from '@/composables/useDemoFileTypes'
 import { useDemoFloatingPanels } from '@/composables/useDemoFloatingPanels'
 import { useDemoLocaleSwitcher } from '@/composables/useDemoLocaleSwitcher'
@@ -263,24 +263,18 @@ const resolveFileCapsuleMergeTarget = () => {
   const trigger = uploadTriggerButtonRef.value
   if (!trigger) return null
   const bounds = trigger.getBoundingClientRect()
+  const style = window.getComputedStyle(trigger)
   const configuredWidth = Number.parseFloat(
-    window.getComputedStyle(trigger).getPropertyValue('--demo-file-capsule-merged-width')
+    style.getPropertyValue('--demo-file-capsule-merged-width')
   )
-  const width = Number.isFinite(configuredWidth) && configuredWidth > 0
-    ? configuredWidth
-    : bounds.width
   // The navigation stays centered while its first slot grows. Compensating by
   // half the width delta gives the file capsule its exact resting rect before
   // the capsule morph starts, avoiding a final lateral jump.
-  const left = bounds.left - (width - bounds.width) / 2
-  return {
-    top: bounds.top,
-    right: left + width,
-    bottom: bounds.bottom,
-    left,
-    width,
-    height: bounds.height
-  }
+  const transform = style.transform === 'none' ? null : new DOMMatrixReadOnly(style.transform)
+  return resolveDemoFileCapsuleMergeBounds(bounds, configuredWidth, {
+    x: transform?.m41 || 0,
+    y: transform?.m42 || 0
+  })
 }
 const {
   state: fileCapsuleState,
