@@ -100,12 +100,12 @@ const pptBundledRuntimeAssetUrlPlugin = (): Plugin => ({
         `new URL('vendor/ppt/ppt-native.wasm', ${runtimeBase})`
       ],
       [
-        'new URL(`./${MANIFEST.fontPack.file}`, import.meta.url)',
-        `new URL(\`vendor/ppt/\${MANIFEST.fontPack.file}\`, ${runtimeBase})`
+        "new URL('./ppt-font-cjk.otf', import.meta.url)",
+        `new URL('vendor/ppt/ppt-font-cjk.otf', ${runtimeBase})`
       ],
       [
-        'new URL(`./${MANIFEST.workerFile}`, import.meta.url)',
-        `new URL(\`vendor/ppt/\${MANIFEST.workerFile}\`, ${runtimeBase})`
+        "new URL('./worker.mjs', import.meta.url)",
+        `new URL('vendor/ppt/worker.mjs', ${runtimeBase})`
       ]
     ] as const
     let transformed = code

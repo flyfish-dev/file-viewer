@@ -17,7 +17,7 @@ jobs:
   verify:
     name: Install, type-check, test, build and smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
@@ -54,8 +54,8 @@ jobs:
       - name: Build source, components and demo
         run: pnpm build
 
-      - name: Verify PPTX generated styles
-        run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts
+      - name: Verify PPTX generated styles and Worker resolution
+        run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts test/pptx-worker-resolution.spec.ts
 
       - name: Verify the component host runtime contract
         run: pnpm exec vitest run test/component-host-runtime-contract.spec.ts
@@ -69,6 +69,9 @@ jobs:
       - name: Run the issue regression gates
         run: pnpm test
 
+      - name: Verify bounded metadata parsing and Illustrator namespace hints
+        run: pnpm exec vitest run test/metadata-input-safety.spec.ts test/chm-renderer.spec.ts
+
       - name: Build documentation
         run: pnpm docs:build
 
@@ -78,11 +81,53 @@ jobs:
       - name: Verify Vue 3 toolbar contracts
         run: node apps/component-demo/scripts/verify-vue3-toolbar.mjs
 
-      - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Install Chromium and WebKit
+        run: pnpm exec playwright install --with-deps chromium webkit
 
-      - name: Verify reopened spreadsheet and DOCX regressions
+      - name: Verify PDF Worker cancellation
+        run: |
+          pnpm exec vitest run test/pdf-worker-lifecycle.spec.ts test/pdf-runtime-provenance.spec.ts
+          pnpm --filter @file-viewer/renderer-pdf verify:worker-lifecycle
+
+      - name: Verify actual RequireJS entries and lazy renderers
+        run: pnpm --filter @file-viewer/web-full verify:github-258
+        env:
+          REQUIREJS_DEMO_DIR: apps/component-demo/dist
+
+      - name: Verify cold Vite 6 and 8 nested-root Worker assets
+        run: pnpm --filter @file-viewer/vite-plugin verify:github-257-browser
+
+      - name: Verify HTML, revisions, spreadsheet search and DOCX cover regressions
         run: node apps/viewer-demo/scripts/verify-closed-issue-regressions.mjs
+
+      - name: Verify column dragging, sheet and zoom persistence, and the disabled option
+        run: node apps/viewer-demo/scripts/verify-spreadsheet-resize.mjs
+
+      - name: Verify native mobile toolbar and narrow-host search layout
+        run: node apps/viewer-demo/scripts/verify-mobile-toolbar.mjs
+
+      - name: Verify CAD source, monochrome and actual exported pixels
+        run: |
+          pnpm exec vitest run test/demo-file-capsule-motion.spec.ts
+          node apps/viewer-demo/scripts/verify-cad-view-modes.mjs
+
+      - name: Verify legacy XLS MiniFAT in main thread and Worker
+        run: node apps/viewer-demo/scripts/verify-cfb-mini-fat.mjs
+
+      - name: Verify cold-consumer fixture isolation
+        run: pnpm exec vitest run test/angular-asset-modes.spec.ts test/zip-cross-realm.spec.ts
+
+      - name: Cold-install Vue CLI and React full tarballs without bundler workarounds
+        run: node apps/component-demo/scripts/verify-packed-issue-closure.mjs
+
+      - name: Upload packed-consumer failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: packed-issue-consumer-evidence
+          path: output/packed-issue-consumer/*/angular-regression-evidence
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Verify the CHM Rust/WASM renderer in Chromium
         run: pnpm verify:chm-renderer

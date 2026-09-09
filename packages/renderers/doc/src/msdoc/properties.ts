@@ -63,6 +63,8 @@ export function charPropsToState(properties: DecodedProperty[]): CharState {
         }
         break;
       case 'bold':
+      case 'revisionDeleted':
+      case 'revisionInserted':
       case 'italic':
       case 'strike':
       case 'hidden':
@@ -104,6 +106,7 @@ export function paraPropsToState(properties: DecodedProperty[]): ParaState {
     spacingBefore: 0,
     spacingAfter: 0,
     lineSpacing: 0,
+    lineSpacingRule: 'auto',
     leftIndent: 0,
     rightIndent: 0,
     firstLineIndent: 0,
@@ -136,7 +139,18 @@ export function paraPropsToState(properties: DecodedProperty[]): ParaState {
       case 'alignment': state.alignment = (prop.value as number | undefined) ?? 0; break;
       case 'spacingBefore': state.spacingBefore = (prop.value as number | undefined) || 0; break;
       case 'spacingAfter': state.spacingAfter = (prop.value as number | undefined) || 0; break;
-      case 'lineSpacing': state.lineSpacing = (prop.value as number | undefined) || 0; break;
+      case 'lineSpacing': {
+        state.lineSpacing = (prop.value as number | undefined) || 0;
+        // LSPD's second short distinguishes 1/240-line multiples from signed twips.
+        const bytes = prop.operandBytes;
+        const absolute = bytes && bytes.length >= 4
+          ? bytes[2] === 0 && bytes[3] === 0
+          : state.lineSpacing < 0;
+        state.lineSpacingRule = absolute
+          ? state.lineSpacing < 0 ? 'exact' : 'atLeast'
+          : 'auto';
+        break;
+      }
       case 'leftIndent': state.leftIndent = (prop.value as number | undefined) || 0; break;
       case 'rightIndent': state.rightIndent = (prop.value as number | undefined) || 0; break;
       case 'firstLineIndent': state.firstLineIndent = (prop.value as number | undefined) || 0; break;

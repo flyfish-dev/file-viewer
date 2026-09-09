@@ -1,6 +1,7 @@
 import { escapeHtml, slugify, twipsToPx } from '../core/utils.js';
 import { HIGHLIGHT_COLORS } from '../msdoc/constants.js';
 import { cssTextAlign, cssUnderline, cssVerticalAlign } from '../msdoc/properties.js';
+import { textFontRuns } from './fonts.js';
 import type {
   AttachmentAsset,
   AttachmentsBlock,
@@ -42,6 +43,7 @@ type ExternalLinkPolicy = NonNullable<MsDocRenderOptions['externalLinkPolicy']>;
 type ExternalResourcePolicy = NonNullable<MsDocRenderOptions['externalResourcePolicy']>;
 
 interface RenderContext {
+  reviewMode: NonNullable<MsDocRenderOptions['reviewMode']>;
   externalLinkPolicy: ExternalLinkPolicy;
   externalResourcePolicy: ExternalResourcePolicy;
 }
@@ -177,8 +179,13 @@ function paragraphStyleToCss(paraState: ParagraphBlock['paraState']): CssStyleOb
   if (marginRight) style['margin-right'] = `${marginRight}px`;
   if (textIndent) style['text-indent'] = `${textIndent}px`;
   if (paraState.lineSpacing) {
-    const lineHeight = Math.abs(paraState.lineSpacing) / 240;
-    if (lineHeight) style['line-height'] = String(Math.max(1, lineHeight));
+    if (paraState.lineSpacingRule === 'exact' || paraState.lineSpacingRule === 'atLeast') {
+      style['line-height'] = `${twipsToPx(Math.abs(paraState.lineSpacing))}px`;
+    } else {
+      const multiple = Math.abs(paraState.lineSpacing) / 240;
+      // A font's single line includes its metrics and leading, not just a 1em box.
+      style['line-height'] = multiple === 1 ? 'normal' : String(multiple);
+    }
   }
   if (paraState.keepLines) style['break-inside'] = 'avoid';
   if (paraState.keepNext) style['break-after'] = 'avoid';
@@ -239,11 +246,27 @@ function inlineStyleToCss(styleState: CharState): CssStyleObject {
 }
 
 function renderTextNode(node: TextInlineNode, context: RenderContext): string {
-  const content = escapeHtml(node.text);
+  if (context.reviewMode === 'final' && node.style.revisionDeleted) return '';
+  if (context.reviewMode === 'original' && node.style.revisionInserted) return '';
+  const content = textFontRuns(node.text, node.style).map(run => {
+    const text = escapeHtml(run.text);
+    if (!run.fontFamily || run.fontFamily === node.style.fontFamily) return text;
+    const font = styleObjectToCss({ 'font-family': `${quoteCssString(run.fontFamily)},sans-serif` });
+    return `<span style="${font}">${text}</span>`;
+  }).join('');
   const inlineStyle = inlineStyleToCss(node.style);
   inlineStyle['white-space'] = 'break-spaces';
+  const revision = context.reviewMode === 'all'
+    ? node.style.revisionDeleted ? 'delete' : node.style.revisionInserted ? 'insert' : null
+    : null;
+  if (revision) {
+    inlineStyle.color = '#c62828';
+    inlineStyle['text-decoration-line'] = revision === 'delete' ? 'line-through' : 'underline';
+  }
   const style = styleObjectToCss(inlineStyle);
-  const inner = `<span${style ? ` style="${style}"` : ''}>${content}</span>`;
+  const tag = revision === 'delete' ? 'del' : revision === 'insert' ? 'ins' : 'span';
+  const change = revision ? ` data-msdoc-change="${revision}"` : '';
+  const inner = `<${tag}${change}${style ? ` style="${style}"` : ''}>${content}</${tag}>`;
   return renderLink(inner, sanitizeMsDocLinkHref(node.href, context.externalLinkPolicy));
 }
 
@@ -382,6 +405,7 @@ function renderAttachmentNode(node: Extract<InlineNode, { type: 'attachment' }>,
 
 function renderInlineNodes(nodes: InlineNode[], context: RenderContext): string {
   return nodes.map((node) => {
+    if (hiddenRevision(node.style, context)) return '';
     if (node.type === 'text') return renderTextNode(node, context);
     if (node.type === 'image') return renderImageNode(node, context);
     if (node.type === 'attachment') return renderAttachmentNode(node, context);
@@ -391,12 +415,40 @@ function renderInlineNodes(nodes: InlineNode[], context: RenderContext): string 
   }).join('');
 }
 
+function hiddenRevision(
+  revision: ParagraphBlock['paragraphMark'],
+  context: RenderContext,
+): boolean {
+  return !!((context.reviewMode === 'final' && revision?.revisionDeleted)
+    || (context.reviewMode === 'original' && revision?.revisionInserted));
+}
+
+function reviewParagraphs(paragraphs: ParagraphBlock[], context: RenderContext): ParagraphBlock[] {
+  const result: ParagraphBlock[] = [];
+  for (const paragraph of paragraphs) {
+    const previous = result[result.length - 1];
+    if (previous && previous.storyKind === paragraph.storyKind
+      && hiddenRevision(previous.paragraphMark, context)) {
+      // The surviving paragraph mark owns the merged paragraph's formatting.
+      result[result.length - 1] = {
+        ...paragraph,
+        inlines: [...previous.inlines, ...paragraph.inlines],
+        text: previous.text + paragraph.text,
+      };
+    } else {
+      result.push(paragraph);
+    }
+  }
+  return result;
+}
+
 function renderParagraphBlock(block: ParagraphBlock, context: RenderContext, options: { inline?: boolean } = {}): string {
   const tag = options.inline ? 'div' : 'p';
   const style = styleObjectToCss(paragraphStyleToCss(block.paraState));
   const body = renderInlineNodes(block.inlines || [], context);
   const empty = body || '<br>';
   const classNames = ['msdoc-paragraph'];
+  if (block.paraState.lineSpacingRule === 'atLeast') classNames.push('msdoc-line-at-least');
   if (block.styleName) classNames.push(`msdoc-style-${slugify(block.styleName)}`);
   return `<${tag} class="${classNames.join(' ')}"${style ? ` style="${style}"` : ''}>${empty}</${tag}>`;
 }
@@ -470,7 +522,8 @@ function renderTableBlock(block: TableBlock, context: RenderContext): string {
         if ((cell.colspan ?? 1) > 1) attrs.push(` colspan="${cell.colspan}"`);
         if ((cell.rowspan ?? 1) > 1) attrs.push(` rowspan="${cell.rowspan}"`);
         const style = styleObjectToCss(cellStyle(cell));
-        const body = cell.paragraphs.map((paragraph) => renderParagraphBlock(paragraph, context, { inline: true })).join('');
+        const body = reviewParagraphs(cell.paragraphs, context)
+          .map((paragraph) => renderParagraphBlock(paragraph, context, { inline: true })).join('');
         return `<td class="msdoc-cell"${attrs.join('')}${style ? ` style="${style}"` : ''}>${body || '<div class="msdoc-paragraph"><br></div>'}</td>`;
       })
       .join('');
@@ -497,6 +550,7 @@ export function defaultMsDocCss(): string {
 .msdoc-root{box-sizing:border-box;max-width:100%;padding:24px;background:#fff;color:#111;font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .msdoc-root *{box-sizing:border-box}
 .msdoc-paragraph{margin:0 0 8px;white-space:normal;word-break:break-word;overflow-wrap:anywhere}
+.msdoc-line-at-least span,.msdoc-line-at-least ins,.msdoc-line-at-least del{line-height:normal}
 .msdoc-paragraph:last-child{margin-bottom:0}
 .msdoc-table{margin:12px 0;border-collapse:collapse;border-spacing:0;max-width:100%}
 .msdoc-cell{padding:6px 8px;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
@@ -519,15 +573,27 @@ export function defaultMsDocCss(): string {
 export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOptions = {}): MsDocRenderResult {
   const css = options.css ?? defaultMsDocCss();
   const context: RenderContext = {
+    reviewMode: options.reviewMode ?? 'all',
     externalLinkPolicy: options.externalLinkPolicy ?? 'block',
     externalResourcePolicy: options.externalResourcePolicy ?? 'block',
   };
-  const html = parsed.blocks.map((block) => {
-    if (block.type === 'paragraph') return renderParagraphBlock(block, context);
-    if (block.type === 'table') return renderTableBlock(block, context);
-    if (block.type === 'attachments') return renderAttachmentsBlock(block);
-    return '';
-  }).join('');
+  const parts: string[] = [];
+  let paragraphs: ParagraphBlock[] = [];
+  const flushParagraphs = () => {
+    parts.push(...reviewParagraphs(paragraphs, context).map(block => renderParagraphBlock(block, context)));
+    paragraphs = [];
+  };
+  for (const block of parsed.blocks) {
+    if (block.type === 'paragraph') {
+      paragraphs.push(block);
+      continue;
+    }
+    flushParagraphs();
+    if (block.type === 'table') parts.push(renderTableBlock(block, context));
+    if (block.type === 'attachments') parts.push(renderAttachmentsBlock(block));
+  }
+  flushParagraphs();
+  const html = parts.join('');
   return {
     html,
     css,

@@ -144,7 +144,7 @@ const validateOcctResult = (value: unknown, format: GeometryOcctFormat): Geometr
 const getOcctRuntime = (wasmUrl: string) => {
   let promise = occtRuntimePromises.get(wasmUrl);
   if (!promise) {
-    promise = import('occt-import-js')
+    promise = import('../dist/vendor/occt.cjs')
       .then(module => module.default({
         locateFile(path) {
           return path.endsWith('.wasm') ? wasmUrl : path;

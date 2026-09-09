@@ -1,6 +1,7 @@
 import type { DocxProgressEvent, Options, renderAsync } from '@file-viewer/docx'
 import JSZip from 'jszip'
 import {
+  DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   resolveFileViewerDocxWorkerJsZipUrl,
   resolveFileViewerDocxWorkerUrl,
   resolveFileViewerRuntimeAssetBaseUrl,
@@ -37,7 +38,6 @@ const DOCX_WORKER_UNSAFE_PROTOCOLS = new Set(['file:', 'about:', 'data:'])
 const DOCX_MIN_SCALE = 0.24
 const DOCX_MAX_SCALE = 3
 const DOCX_ZOOM_STEP = 0.15
-const DOCX_VENDOR_ASSET_VERSION = '0.3.28'
 const ZIP_SIGNATURE_PK = 0x504b
 const WORDPROCESSINGML_NAMESPACE = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 const OFFICE_RELATIONSHIP_NAMESPACE =
@@ -374,11 +374,11 @@ const appendDocxVendorAssetVersion = (url: string | undefined, explicitUrl: bool
   if (/[?&]file-viewer-docx=[^&#]*/.test(url)) {
     return url.replace(
       /([?&])file-viewer-docx=[^&#]*/,
-      `$1file-viewer-docx=${DOCX_VENDOR_ASSET_VERSION}`
+      `$1file-viewer-docx=${DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION}`
     )
   }
 
-  return `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${DOCX_VENDOR_ASSET_VERSION}`
+  return `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION}`
 }
 
 export const applyDocxExternalLinkPolicy = (
@@ -426,6 +426,7 @@ export const createDocxOptions = (
   const externalResourcePolicy = docxOptions?.externalResourcePolicy ?? 'block'
   const options: DocxRenderOptions = {
     useWorker,
+    reviewMode: docxOptions?.reviewMode ?? 'all',
     // Authored page breaks define separate anchor coordinate spaces even in
     // flow mode. Only measured/fixed-height pagination remains opt-in.
     breakPages: true,
@@ -494,6 +495,8 @@ const isTargetHTMLElement = (value: unknown, target: HTMLDivElement): value is H
 }
 
 const DOCX_RESPONSIVE_CSS = `
+/* This component has no review balloon rail, so keep all-markup deletions readable inline. */
+.docx-fit-viewer [data-docx-review-enabled="true"][data-docx-review-mode="all"] del[data-docx-change-kind]{display:inline!important;width:auto!important;max-width:none!important;height:auto!important;overflow:visible!important;line-height:inherit!important;color:var(--docx-review-color,#c2410c);text-decoration:line-through;text-decoration-color:var(--docx-review-color,#c2410c)}
 .docx-fit-viewer {
   box-sizing: border-box;
   height: 100%;

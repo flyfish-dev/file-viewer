@@ -1,0 +1,111 @@
+{
+  "producer": "Microsoft Word for Mac",
+  "version": "16.112.2",
+  "authoring": "Native Word UI: Track Changes, Find and Replace, Save As DOCX and Word 97-2004 DOC. Accept All and Reject All were run in Word on separate copies.",
+  "referenceReader": "officecli view text and query revision on the Word-saved DOCX references",
+  "content": "Maintainer-created synthetic content; no customer document data.",
+  "revisionCount": 18,
+  "revisionKinds": {
+    "ins": 7,
+    "del": 9,
+    "paraMarkDel": 1,
+    "paraMarkIns": 1
+  },
+  "coverage": [
+    "CJK replacement",
+    "unchanged repeated CJK",
+    "mixed bold runs inside deletion",
+    "deleted tab",
+    "deleted soft break",
+    "deleted paragraph mark",
+    "inserted paragraph mark",
+    "table cell text revisions"
+  ],
+  "exclusions": [
+    "format-only revisions",
+    "tracked row/column changes",
+    "moves",
+    "comments",
+    "the unavailable private attachment from issue 236"
+  ],
+  "references": {
+    "final": {
+      "paragraphs": [
+        "Word revision regression",
+        "Case CJK: 甲方：星河技术集团",
+        "Case repeated: 星河有限公司",
+        "Case formatted: DELTA EPSILON",
+        "Case tab: LEFT\tRIGHT",
+        "Case break: TOP\nBOTTOM",
+        "Case join: JOINED",
+        "Case split: LEFT_SPLIT",
+        "RIGHT_SPLIT",
+        "Case formatting: STYLE_BEFORE",
+        ""
+      ],
+      "cells": [
+        "Item",
+        "Value",
+        "Contract",
+        "NEW_AMOUNT",
+        "Unchanged",
+        "NEW_AMOUNT"
+      ]
+    },
+    "original": {
+      "paragraphs": [
+        "Word revision regression",
+        "Case CJK: 甲方：星河有限公司",
+        "Case repeated: 星河有限公司",
+        "Case formatted: ALPHA BETA GAMMA",
+        "Case tab: LEFT\tREMOVE_TAB\tRIGHT",
+        "Case break: TOP\nREMOVE_BREAK\nBOTTOM",
+        "Case join: FIRST",
+        "SECOND",
+        "Case split: LEFT_SPLIT RIGHT_SPLIT",
+        "Case formatting: STYLE_BEFORE",
+        ""
+      ],
+      "cells": [
+        "Item",
+        "Value",
+        "Contract",
+        "OLD_AMOUNT",
+        "Unchanged",
+        "OLD_AMOUNT"
+      ]
+    }
+  },
+  "files": [
+    {
+      "filename": "native-revisions.doc",
+      "bytes": 27136,
+      "sha256": "39407c42438ad03f80510c550296efd20ec7e8c251b01caaec491963b8680c76"
+    },
+    {
+      "filename": "native-revisions.docx",
+      "bytes": 13772,
+      "sha256": "9c2537fbb46b505bda631c7d2c9b231d23028b2a7c82cfd14fd287429ec1b1f3"
+    },
+    {
+      "filename": "native-revisions-final.doc",
+      "bytes": 27136,
+      "sha256": "6b8732c97432bb0ab9d91bddb07700dc5e9c61289ee408aa676fd27f78546e18"
+    },
+    {
+      "filename": "native-revisions-final.docx",
+      "bytes": 12835,
+      "sha256": "92791951f0c4a4561d302810ca3327732ef62b525d991501a8d8dad346fcd6ea"
+    },
+    {
+      "filename": "native-revisions-original.doc",
+      "bytes": 28160,
+      "sha256": "9c4555c6d6c258fda9ec31a33d7da602175566a63deb204055fcb8c15d7205e7"
+    },
+    {
+      "filename": "native-revisions-original.docx",
+      "bytes": 14120,
+      "sha256": "ad3bcfbf26e01999d1d99df53d01b0bc7e50042d7e773980fab5b0fee87404aa"
+    }
+  ]
+}

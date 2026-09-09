@@ -3,6 +3,7 @@ import { mkdir } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
+import { isolateAmd, writeAmdEntry } from './amd-entry.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const entry = join(packageDir, 'src', 'global.ts')
@@ -46,11 +47,14 @@ await build({
     },
     rollupOptions: {
       output: {
+        ...isolateAmd,
         exports: 'named',
         extend: true
       }
     }
   }
 })
+
+await writeAmdEntry(join(outDir, fileName), 'FlyfishFileViewerWeb')
 
 console.log(`[web-iife] Built ${join(outDir, fileName)}`)

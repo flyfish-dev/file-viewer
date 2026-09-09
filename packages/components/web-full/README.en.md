@@ -6,6 +6,21 @@ A one-step Vanilla JS / Pure Web Full integration that preserves the published v
 npm install @file-viewer/web-full
 ```
 
+## RequireJS
+
+From 3.0.3, load `dist/flyfish-file-viewer-web-full.amd.js` as an AMD module.
+Deploy the complete `dist/` with its `renderers/`, `vendor/`, and `wasm/` directories.
+No shim or host `define` override is needed.
+
+```js
+require.config({ paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' } })
+require(['viewer'], viewer => {
+  viewer.mountViewer(document.getElementById('viewer'), { url: '/files/report.pdf' })
+})
+```
+
+[Full integration example](https://doc.file-viewer.app/guide/quickstart-web#requirejs-amd).
+
 <!-- FILE_VIEWER_GENERATED:START -->
 ## Ecosystem Matrix
 
@@ -13,8 +28,8 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 | Framework | Standard npm package | Entrypoints | GitHub | Gitee | Historical aliases |
 | --- | --- | --- | --- | --- | --- |
-| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, type declarations, script tag IIFE | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
-| Vanilla JS / Pure Web Full | `@file-viewer/web-full` | ESM, type declarations, script tag IIFE | [file-viewer-web-full](https://github.com/flyfish-dev/file-viewer-web-full) | [file-viewer-web-full](https://gitee.com/flyfish-dev/file-viewer-web-full) | none |
+| Vanilla JS / Pure Web | `@file-viewer/web` | ESM, type declarations, script tag IIFE, RequireJS AMD | [file-viewer-web](https://github.com/flyfish-dev/file-viewer-web) | [file-viewer-web](https://gitee.com/flyfish-dev/file-viewer-web) | `@flyfish-group/file-viewer-web` |
+| Vanilla JS / Pure Web Full | `@file-viewer/web-full` | ESM, type declarations, script tag IIFE, RequireJS AMD | [file-viewer-web-full](https://github.com/flyfish-dev/file-viewer-web-full) | [file-viewer-web-full](https://gitee.com/flyfish-dev/file-viewer-web-full) | none |
 | Vue 3 | `@file-viewer/vue3` | ESM, type declarations | [file-viewer-vue3](https://github.com/flyfish-dev/file-viewer-vue3) | [file-viewer-vue3](https://gitee.com/flyfish-dev/file-viewer-vue3) | `@flyfish-group/file-viewer3`, `file-viewer3` |
 | Vue 3 Full | `@file-viewer/vue3-full` | ESM, type declarations | [file-viewer-vue3-full](https://github.com/flyfish-dev/file-viewer-vue3-full) | [file-viewer-vue3-full](https://gitee.com/flyfish-dev/file-viewer-vue3-full) | none |
 | Vue 2.7 | `@file-viewer/vue2.7` | ESM, type declarations | [file-viewer-vue2.7](https://github.com/flyfish-dev/file-viewer-vue2.7) | [file-viewer-vue2.7](https://gitee.com/flyfish-dev/file-viewer-vue2.7) | `@flyfish-group/file-viewer` |

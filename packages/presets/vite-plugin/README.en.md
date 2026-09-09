@@ -147,6 +147,13 @@ This is useful when upload accept lists, sample matrices, or attachment allow-li
 
 When a file extension is in the supported matrix but the current project has not assembled its renderer, core now shows an install-oriented “renderer assembly required” state with the recommended preset / renderer package. For example, `.pdf` points to `@file-viewer/preset-office` or `@file-viewer/renderer-pdf`. Only truly unknown extensions show an unsupported-format state.
 
+## Nested Vite Projects
+
+From 3.0.3, a nested metadata-only project can use a resolvable Full dependency
+declared in an ancestor `package.json`. A nearer light component or preset keeps
+its own root asset layout. Explicit `copyAssets.baseDir` still takes precedence;
+`publicDir` and `build.outDir` stay relative to the Vite root, not the dependency owner.
+
 ## Current Boundary
 
 The plugin currently generates imports for extracted renderer packages: Word, Spreadsheet, PDF, OFD, Presentation, CAD, Draw.io/Excalidraw/Mermaid/PlantUML, 3D, Data, EDA, Typst, archives, email, EPUB, code/Markdown/Patch/Git Bundle, image, media, XMind, and Geo. Declare them explicitly with `formats`, or let `scan: true` discover source hints automatically; core-supported extensions such as `.zipx`, `.cbz`, `.tiff`, `.mjs`, `.gv`, `.patch`, `.bundle`, `.mermaid`, `.puml`, and `.mpeg` also resolve to their renderer packages. With `copyAssets:true`, the plugin detects installed capability packages. Full packages copy matching assets into dev `publicDir/file-viewer/` and production `outDir/file-viewer/`; standard packages/presets keep the existing root placement, including the Typst compiler / renderer WASM files and default fonts. `preset: 'auto' | 'lite' | 'office' | 'engineering' | 'all'` imports matching `@file-viewer/preset-*` packages; when `formats` are also present, the plugin adds extra renderers outside the preset.

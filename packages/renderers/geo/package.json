@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-geo",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "private": false,
   "type": "module",
   "description": "Standalone geospatial renderer plugin for File Viewer with GeoJSON, KML, GPX, SHP parsing, CRS normalization, MapLibre overlay rendering, SVG fallback, and offline-friendly lazy loading.",
@@ -55,17 +55,18 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "node scripts/build-worker.mjs && tsc -b tsconfig.json",
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.2",
+    "@file-viewer/core": "workspace:3.0.3",
     "@tmcw/togeojson": "^7.1.2",
-    "maplibre-gl": "^5.24.0",
+    "maplibre-gl": "6.4.1",
     "proj4": "^2.22.0",
     "shpjs": "^6.2.0"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"

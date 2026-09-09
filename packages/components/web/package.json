@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/web",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "private": false,
   "type": "module",
   "description": "Standard pure web component package for File Viewer",
@@ -48,6 +48,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./amd": "./dist/flyfish-file-viewer-web.amd.js",
     "./node": {
       "types": "./dist/node.d.ts",
       "import": "./dist/node.js",
@@ -66,7 +67,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.2"
+    "@file-viewer/core": "workspace:3.0.3"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",

@@ -263,6 +263,8 @@ export interface SymbolInfo {
 }
 
 export interface CharState {
+  revisionDeleted?: boolean;
+  revisionInserted?: boolean;
   bold: boolean;
   italic: boolean;
   strike: boolean;
@@ -270,6 +272,12 @@ export interface CharState {
   fontSizeHalfPoints?: number;
   fontFamilyId?: number;
   fontFamily?: string;
+  fontFamilyEastAsiaId?: number;
+  fontFamilyEastAsia?: string;
+  fontFamilyOtherId?: number;
+  fontFamilyOther?: string;
+  fontFamilyBiId?: number;
+  fontFamilyBi?: string;
   colorIndex?: number;
   highlight?: HighlightInfo | number;
   spacing: number;
@@ -312,6 +320,7 @@ export interface ParaState {
   spacingBefore: number;
   spacingAfter: number;
   lineSpacing: number;
+  lineSpacingRule?: 'auto' | 'atLeast' | 'exact';
   leftIndent: number;
   rightIndent: number;
   firstLineIndent: number;
@@ -600,10 +609,12 @@ export interface AttachmentInlineNode {
 
 export interface LineBreakInlineNode {
   type: 'lineBreak';
+  style?: CharState;
 }
 
 export interface PageBreakInlineNode {
   type: 'pageBreak';
+  style?: CharState;
 }
 
 export type InlineNode = TextInlineNode | ImageInlineNode | AttachmentInlineNode | LineBreakInlineNode | PageBreakInlineNode;
@@ -616,6 +627,8 @@ export interface ParagraphBlock {
   paraState: ParaState;
   inlines: InlineNode[];
   text: string;
+  paragraphMark?: Pick<CharState, 'revisionDeleted' | 'revisionInserted'>;
+  storyKind?: string;
 }
 
 export interface TableCellBlock {
@@ -657,6 +670,8 @@ export interface ParagraphModel {
   cpStart: number;
   cpEnd: number;
   terminator: string;
+  paragraphMark?: Pick<CharState, 'revisionDeleted' | 'revisionInserted'>;
+  storyKind?: string;
   text: string;
   rawProperties: DecodedProperty[];
   styleId: number;
@@ -676,6 +691,8 @@ export interface MsDocParseOptions {
 
 export interface MsDocRenderOptions {
   css?: string;
+  /** Preserve insertion/deletion marks by default; explicitly select final or original text. */
+  reviewMode?: 'all' | 'final' | 'original';
   /** External links are blocked by default; internal document bookmarks remain active. */
   externalLinkPolicy?: 'allow' | 'block';
   /** Linked image resources are blocked by default; embedded data/blob images remain available. */

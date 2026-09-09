@@ -2934,32 +2934,45 @@ function findNearestProjectPackageJson(projectRoot: string) {
 }
 
 function resolveInstalledFullPackages(projectRoot: string) {
-  const packageJsonPath = findNearestProjectPackageJson(projectRoot)
-  if (!packageJsonPath) {
-    return []
-  }
+  let packageJsonPath = findNearestProjectPackageJson(projectRoot)
+  const lightPackages = fileViewerFullPackages.map(packageName => packageName.replace(/-full$/, ''))
+  const projectPackageRequire = createRequire(join(resolve(projectRoot), 'package.json'))
   try {
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
-      dependencies?: Record<string, string>
-      devDependencies?: Record<string, string>
-      optionalDependencies?: Record<string, string>
-      peerDependencies?: Record<string, string>
+    while (packageJsonPath) {
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
+        dependencies?: Record<string, string>
+        devDependencies?: Record<string, string>
+        optionalDependencies?: Record<string, string>
+        peerDependencies?: Record<string, string>
+      }
+      const declaredPackages = new Set([
+        ...Object.keys(packageJson.dependencies || {}),
+        ...Object.keys(packageJson.devDependencies || {}),
+        ...Object.keys(packageJson.optionalDependencies || {}),
+        ...Object.keys(packageJson.peerDependencies || {})
+      ])
+      const declaresRuntime = [...declaredPackages].some(packageName =>
+        fileViewerFullPackages.some(fullPackage => fullPackage === packageName) ||
+        lightPackages.includes(packageName) ||
+        packageName.startsWith('@file-viewer/preset-') ||
+        packageName.startsWith('@file-viewer/renderer-')
+      )
+      if (declaresRuntime) {
+        return fileViewerFullPackages.filter(
+          packageName => declaredPackages.has(packageName) &&
+            Boolean(tryResolvePackageJson(packageName, projectPackageRequire))
+        )
+      }
+      // Vite roots can contain a metadata-only package.json while runtime
+      // dependencies live in an ancestor. A nearer light runtime is a boundary.
+      const directory = dirname(packageJsonPath)
+      const parent = dirname(directory)
+      packageJsonPath = parent === directory ? null : findNearestProjectPackageJson(parent)
     }
-    const declaredPackages = new Set([
-      ...Object.keys(packageJson.dependencies || {}),
-      ...Object.keys(packageJson.devDependencies || {}),
-      ...Object.keys(packageJson.optionalDependencies || {}),
-      ...Object.keys(packageJson.peerDependencies || {})
-    ])
-    const projectPackageRequire = createRequire(packageJsonPath)
-    return fileViewerFullPackages.filter(
-      (packageName) =>
-        declaredPackages.has(packageName) &&
-        Boolean(tryResolvePackageJson(packageName, projectPackageRequire))
-    )
   } catch {
     return []
   }
+  return []
 }
 
 function resolveInstalledAssetPackages(projectRoot: string) {
@@ -3275,7 +3288,10 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
       const projectRoot = resolve(process.cwd(), userConfig.root || '.')
       refreshSelection(projectRoot)
       refreshFullAssetRuntime(projectRoot, userConfig.base)
-      const dependencyAnchorPackages = collectDependencyAnchorPackages(selection, autoPresetIds)
+      const dependencyAnchorPackages = collectDependencyAnchorPackages(
+        selection,
+        installedFullPackages.length ? unique([...autoPresetIds, 'all' as const]) : autoPresetIds
+      )
       const resolvedDependencyAnchorPackages = runtimeAssetBase
         ? unique([
             ...dependencyAnchorPackages,
@@ -3476,7 +3492,7 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
       return []
     },
     async closeBundle() {
-      if (!options.copyAssets || copyOptions(options.copyAssets).mode === 'dev') {
+      if (resolvedConfig?.command === 'serve' || !options.copyAssets || copyOptions(options.copyAssets).mode === 'dev') {
         return
       }
       const copyTarget = resolveFileViewerCopyAssetsTarget('build', options.copyAssets, {

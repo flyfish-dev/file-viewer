@@ -3,7 +3,7 @@
   "product": "Flyfish PPT Viewer",
   "format": "PowerPoint 97-2003 (.ppt)",
   "packageName": "@file-viewer/ppt",
-  "packageVersion": "0.3.3",
+  "packageVersion": "0.3.4",
   "engine": "flyfish-classic-ppt-native-engine",
   "engineBuild": "d2b522ef23b5c08a",
   "id": "FV-PPT-PUBLIC-WATERMARKED-V2",

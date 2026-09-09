@@ -3,6 +3,7 @@ import {
   createFileViewerRenderReadinessTarget,
   createFileViewerRenderSurfaceActionHandlers,
   createFileViewerRenderSurfaceStateTarget,
+  createFileViewerSnapshotDownload,
 } from '@file-viewer/core'
 import type {
   FileRenderExportAdapter,
@@ -15,6 +16,7 @@ import { renderNestedBuffer } from '../../../vendors/nestedRender'
 interface UseViewerRenderSurfaceOptions {
   output: Ref<HTMLDivElement | null>;
   getOptions: () => FileViewerOptions | undefined;
+  beforeDownload: () => Promise<boolean>;
   isCurrentRequest: (version: number) => boolean;
   notifyActiveUnloadStart: (
     reason?: FileViewerLifecycleContext['reason']
@@ -48,6 +50,7 @@ interface UseViewerRenderSurfaceOptions {
 export const useViewerRenderSurface = ({
   output,
   getOptions,
+  beforeDownload,
   isCurrentRequest,
   notifyActiveUnloadStart,
   notifyActiveUnloadComplete,
@@ -145,6 +148,11 @@ export const useViewerRenderSurface = ({
         streamUrl: nextStreamUrl,
         sourceFile,
         options: getOptions(),
+        requestSnapshotDownload: createFileViewerSnapshotDownload({
+          getOptions,
+          beforeDownload,
+          isCurrent: () => isCurrentRequest(version),
+        }),
         registerExportAdapter,
         onProgressiveRender,
         renderNestedBuffer: async (nestedBuffer, nestedType, nestedTarget, nestedContext) => {

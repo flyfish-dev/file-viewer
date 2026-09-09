@@ -293,11 +293,11 @@ function buildInlineNodes(segments: CharSegment[], resolveAsset: (charState: Cha
       }
 
       if (ch === DOC_CONTROL.hardLineBreak) {
-        emitInline(fieldStack, output, { type: 'lineBreak' });
+        emitInline(fieldStack, output, { type: 'lineBreak', style: segment.state });
         continue;
       }
       if (ch === DOC_CONTROL.pageBreak) {
-        emitInline(fieldStack, output, { type: 'pageBreak' });
+        emitInline(fieldStack, output, { type: 'pageBreak', style: segment.state });
         continue;
       }
       if (ch === DOC_CONTROL.picture) {
@@ -324,6 +324,26 @@ function buildInlineNodes(segments: CharSegment[], resolveAsset: (charState: Cha
   }
 
   return output;
+}
+
+function resolveCharacterFonts(
+  state: CharState,
+  resolveFont: (id: number | undefined) => FontInfo | null,
+  defaults: StyleCollection['header'],
+): void {
+  for (const [id, name, fallback] of [
+    ['fontFamilyId', 'fontFamily', defaults?.ftcAsci],
+    ['fontFamilyEastAsiaId', 'fontFamilyEastAsia', defaults?.ftcFE],
+    ['fontFamilyOtherId', 'fontFamilyOther', defaults?.ftcOther],
+    ['fontFamilyBiId', 'fontFamilyBi', undefined],
+  ] as const) {
+    const index = state[id] ?? fallback;
+    const font = resolveFont(index);
+    if (font) {
+      state[id] = index;
+      state[name] = font.name || font.altName || undefined;
+    }
+  }
 }
 
 function buildCharSegments(
@@ -356,8 +376,7 @@ function buildCharSegments(
     const finalProps = mergePropertyArrays(baseCharProps, charStyleProps, directProps);
     const state = charPropsToState(finalProps);
     if (forceReadableColors && state.colorIndex === 8) state.colorIndex = 1;
-    const font = resolveFont(state.fontFamilyId);
-    if (font) state.fontFamily = font.name || font.altName || undefined;
+    resolveCharacterFonts(state, resolveFont, styles.header);
     const localStart = cpStart - range.cpStart;
     const localEnd = cpEnd - range.cpStart;
     const text = paragraphText.slice(localStart, localEnd);
@@ -374,8 +393,7 @@ function buildCharSegments(
   if (!segments.length && paragraphText) {
     const state = charPropsToState(baseCharProps);
     if (forceReadableColors && state.colorIndex === 8) state.colorIndex = 1;
-    const font = resolveFont(state.fontFamilyId);
-    if (font) state.fontFamily = font.name || font.altName || undefined;
+    resolveCharacterFonts(state, resolveFont, styles.header);
     segments.push({ cpStart: range.cpStart, cpEnd: range.cpEnd, text: paragraphText, state });
   }
 
@@ -415,12 +433,29 @@ function buildParagraphModel(
     range.storyKind === 'textbox' || range.storyKind === 'header-textbox',
   );
   const inlines = buildInlineNodes(segments, resolveAsset);
+  // The terminator has its own CHPX run and is not part of paragraphText.
+  const markState = range.terminator === DOC_CONTROL.paragraph
+    ? buildCharSegments(
+      { ...range, cpStart: range.cpEnd - 1 },
+      range.terminator,
+      chpxRuns,
+      styles,
+      baseCharProps,
+      resolveFont,
+      { index: chpxCursor.index },
+    )[0]?.state
+    : undefined;
 
   return {
     id: uniqueId('para'),
     cpStart: range.cpStart,
     cpEnd: range.cpEnd,
     terminator: range.terminator || '',
+    paragraphMark: markState && {
+      revisionDeleted: markState.revisionDeleted,
+      revisionInserted: markState.revisionInserted,
+    },
+    storyKind: range.storyKind,
     text: paragraphText,
     rawProperties: range.properties || [],
     styleId: paraStyleId,
@@ -573,6 +608,8 @@ function paragraphToBlock(paragraph: ParagraphModel): ParagraphBlock {
     paraState: paragraph.paraState,
     inlines: paragraph.inlines,
     text: paragraph.text,
+    paragraphMark: paragraph.paragraphMark,
+    storyKind: paragraph.storyKind,
   };
 }
 

@@ -29,11 +29,15 @@ allowBuilds:
   fsevents: true
 
 minimumReleaseAgeExclude:
-  - '@file-viewer/docx@0.3.29'
-  - 'styled-exceljs@0.21.4'
+  - '@file-viewer/docx@0.3.31'
+  - 'styled-exceljs@0.21.6'
 
 overrides:
   'adm-zip@<0.6.0': 0.6.0
+  'acorn@>=7.0.0 <7.1.1': 7.4.1
+  'js-yaml@>=4.0.0 <4.3.2': 4.3.2
+  'sharp@<0.35.4': 0.35.4
+  vitest: 4.1.11
   'epubjs>@xmldom/xmldom': 0.9.12
   # issue #246: @xmldom/xmldom <0.9.12 has six GHSA advisories and the XMind
   # parser reaches it through an open range, so keep the security release pinned.
@@ -44,7 +48,8 @@ overrides:
   'brace-expansion@1.1.14': 1.1.18
   'brace-expansion@2.1.1': 2.1.4
   'brace-expansion@5.0.6': 5.0.9
-  dompurify: 3.4.14
+  dompurify: 3.4.15
+  '@file-viewer/docx>jszip': 3.10.2
   'immutable@5.1.6': 5.1.9
   'ini@<1.3.6': 1.3.8
   mermaid: 11.17.2
@@ -57,17 +62,22 @@ overrides:
   # @kitware/vtk.js@36.4.1 pins the vulnerable fflate 0.7.3 release. Keep
   # the same API line while consuming the patched 0.7.5 security release.
   '@kitware/vtk.js>fflate': 0.7.5
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.0.2
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.0.2
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.0.2
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.0.2
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.0.2
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.0.2
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.0.2
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.0.2
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.0.3
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.0.3
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.0.3
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.0.3
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.0.3
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.0.3
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.0.3
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.0.3
 
 auditConfig:
   ignoreGhsas:
+    # No patched adm-zip is published. Its destination-symlink extraction API is not
+    # imported or called by dcmjs 0.52.0's shipped entries. The security and release
+    # gates verify that version, all exports and the sole lockfile consumer.
+    # Remove this exception when a patched release exists; any consumer drift fails.
+    - GHSA-vwc7-r8mq-g2x9
     # ReDoS (low severity) in the `vue` template compiler's parseHTML regex, affecting
     # >=2.0.0-alpha.1 <3.0.0-alpha.0. GitHub reports the first patched version as 3.0.0-alpha.0:
     # upstream Vue 2 is end-of-life, so no Vue 2 fix will ever land, and the only in-repo
@@ -77,3 +87,7 @@ auditConfig:
     # dependency. docs/guide/quickstart-vue2.md points security-sensitive users at this
     # advisory. Re-check the ignore if Vue 2 ever ships a patch or the line is retired.
     - GHSA-5j4c-8p2g-v4jx
+
+patchedDependencies:
+  illustrator-pgf@0.1.0: patches/illustrator-pgf@0.1.0.patch
+  pdfjs-dist@5.4.624: patches/pdfjs-dist@5.4.624.patch

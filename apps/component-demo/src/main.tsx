@@ -63,6 +63,9 @@ function App() {
           <a href="/manual-iife.html" target="_blank" rel="noreferrer">
             Script tag
           </a>
+          <a href="/requirejs.html" target="_blank" rel="noreferrer">
+            RequireJS
+          </a>
           <a href="/jquery.html" target="_blank" rel="noreferrer">
             jQuery
           </a>

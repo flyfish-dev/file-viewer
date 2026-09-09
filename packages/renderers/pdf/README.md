@@ -52,4 +52,6 @@ const options = {
 
 PDF 渲染已经从 `@file-viewer/core` 移入本包，`pdfjs-dist` 只由 `@file-viewer/renderer-pdf` 声明。只安装 core 或标准组件包时不会再拉取 PDF.js；需要 PDF 预览时请显式装配本 renderer，或使用 `@file-viewer/preset-all`。
 
-发布产物会把 Apache-2.0 的 PDF.js runtime 内封到 `dist/vendor/pdfjs`，并在打包前隔离 PDF.js 内部 webpack bootstrap。`provenance.json` 会记录每个上游源文件哈希、变换次数和产物哈希，因此 webpack 4 消费项目不需要再为 renderer 内部路径配置 loader。
+发布产物会把 Apache-2.0 的 PDF.js runtime 内封到 `dist/vendor/pdfjs`，并在打包前隔离 PDF.js 内部 webpack bootstrap。`provenance.json` 会记录应用声明补丁后的源文件哈希、变换次数和产物哈希，因此 webpack 4 消费项目不需要再为 renderer 内部路径配置 loader。
+
+内封运行时还包含 PDF.js 5.4.624 的文档初始化取消补丁，避免快速切换文件时主线程降级路径产生未处理的 Promise 异常；正常解析和密码错误仍会报告。补丁原文保留在 `dist/vendor/pdfjs/patches/`，其哈希记入 `provenance.json`。`pnpm verify:worker-lifecycle` 使用 Chromium/WebKit 分别验证真实 Worker 和主线程降级路径的取消、后续渲染及损坏文件报错。

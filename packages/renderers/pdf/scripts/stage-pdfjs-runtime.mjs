@@ -5,8 +5,15 @@ import { fileURLToPath } from 'node:url'
 import {
   isolatePdfJsWebpackRuntime,
   pdfJsRuntimeIsolationTransform,
-  pdfJsRuntimeModificationNotice,
 } from './pdfjs-runtime-transform.mjs'
+import {
+  pdfJsAssetDirectories,
+  pdfJsProvenanceSchemaVersion,
+  pdfJsRuntimePaths,
+  pdfJsRuntimeVersion,
+  pdfJsSourcePatchPath,
+  verifyPdfJsRuntimeProvenance,
+} from './pdfjs-runtime-provenance.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const pdfJsRoot = resolve(packageDir, 'node_modules/pdfjs-dist')
@@ -14,15 +21,13 @@ const vendorRoot = resolve(packageDir, 'dist/vendor/pdfjs')
 const legacyFontVendorRoot = resolve(packageDir, 'dist/vendor/noto-sans-sc')
 const provenancePath = resolve(vendorRoot, 'provenance.json')
 const outputPath = resolve(packageDir, 'dist/pdf.js')
-const expectedVersion = '5.4.624'
+const expectedVersion = pdfJsRuntimeVersion
 const checkOnly = process.argv.includes('--check')
+const patchSource = resolve(packageDir, '../../..', pdfJsSourcePatchPath)
+const patchTarget = pdfJsSourcePatchPath
 
-const runtimeFiles = [
-  ['legacy/build/pdf.mjs', 'legacy/build/pdf.mjs'],
-  ['legacy/build/pdf.worker.mjs', 'legacy/build/pdf.worker.mjs'],
-  ['legacy/web/pdf_viewer.mjs', 'legacy/web/pdf_viewer.mjs'],
-]
-const assetDirectories = ['cmaps', 'wasm', 'standard_fonts']
+const runtimeFiles = pdfJsRuntimePaths.map(path => [path, path])
+const assetDirectories = pdfJsAssetDirectories
 const requiredAssetFiles = [
   'cmaps/UniGB-UCS2-H.bcmap',
   'cmaps/Adobe-GB1-UCS2.bcmap',
@@ -36,6 +41,8 @@ const sha256 = value => createHash('sha256').update(value).digest('hex')
 const readBuffer = path => readFile(path)
 const exists = async path => access(path).then(() => true, () => false)
 const packageJson = JSON.parse(await readFile(resolve(pdfJsRoot, 'package.json'), 'utf8'))
+const patchBytes = await readBuffer(patchSource)
+const sourcePatches = [{ path: patchTarget, sha256: sha256(patchBytes), size: patchBytes.byteLength }]
 if (packageJson.version !== expectedVersion) {
   throw new Error(`PDF.js runtime version drifted: expected ${expectedVersion}, found ${packageJson.version}`)
 }
@@ -54,48 +61,7 @@ const assertOutputImports = async () => {
 }
 
 const verify = async () => {
-  const provenance = JSON.parse(await readFile(provenancePath, 'utf8'))
-  if (provenance.schemaVersion !== 3 || provenance.runtimeTransform !== pdfJsRuntimeIsolationTransform) {
-    throw new Error('PDF.js provenance is missing the webpack 4 runtime isolation transform.')
-  }
-  if (provenance.packageName !== 'pdfjs-dist' || provenance.version !== expectedVersion) {
-    throw new Error('PDF.js provenance package/version does not match the pinned runtime.')
-  }
-  if (JSON.stringify(provenance.assetDirectories) !== JSON.stringify(assetDirectories)) {
-    throw new Error('PDF.js staged asset provenance does not match the pinned offline payload.')
-  }
-  if (!Array.isArray(provenance.runtimeFiles) || provenance.runtimeFiles.length !== runtimeFiles.length) {
-    throw new Error('PDF.js provenance must cover the three staged browser runtime files.')
-  }
-  for (const [, target] of runtimeFiles) {
-    const record = provenance.runtimeFiles.find(entry => entry.path === target)
-    if (!record) throw new Error(`PDF.js provenance is missing ${target}`)
-    const content = await readBuffer(resolve(vendorRoot, target))
-    const source = await readBuffer(resolve(pdfJsRoot, target))
-    if (
-      record.sourceSha256 !== sha256(source) ||
-      record.sourceSize !== source.byteLength ||
-      !Number.isInteger(record.runtimeBindingReplacements) ||
-      record.runtimeBindingReplacements < 1 ||
-      record.sha256 !== sha256(content) ||
-      record.size !== content.byteLength
-    ) {
-      throw new Error(`PDF.js staged runtime hash mismatch: ${target}`)
-    }
-    if (/\b__webpack_(modules|module_cache|exports|require)__\b/.test(content.toString('utf8'))) {
-      throw new Error(`PDF.js staged runtime was not isolated for webpack 4: ${target}`)
-    }
-    if (!content.toString('utf8').startsWith(pdfJsRuntimeModificationNotice)) {
-      throw new Error(`PDF.js staged runtime is missing its modification notice: ${target}`)
-    }
-  }
-  for (const record of [provenance.license, provenance.notice]) {
-    if (!record?.path || !record.sha256) throw new Error('PDF.js provenance is missing license or notice metadata.')
-    const content = await readBuffer(resolve(vendorRoot, record.path))
-    if (record.sha256 !== sha256(content) || record.size !== content.byteLength) {
-      throw new Error(`PDF.js staged notice hash mismatch: ${record.path}`)
-    }
-  }
+  await verifyPdfJsRuntimeProvenance(vendorRoot, { sourceRoot: pdfJsRoot, patchFile: patchSource })
   for (const path of requiredAssetFiles) {
     if (!await exists(resolve(vendorRoot, path))) {
       throw new Error(`PDF.js staged asset is missing: ${path}`)
@@ -114,15 +80,18 @@ if (checkOnly) {
   await mkdir(vendorRoot, { recursive: true })
   await rm(legacyFontVendorRoot, { recursive: true, force: true })
   const provenance = {
-    schemaVersion: 3,
+    schemaVersion: pdfJsProvenanceSchemaVersion,
     packageName: 'pdfjs-dist',
     version: expectedVersion,
     sourceRepository: 'https://github.com/mozilla/pdf.js',
     licenseSpdx: 'Apache-2.0',
     runtimeTransform: pdfJsRuntimeIsolationTransform,
+    sourcePatches,
     runtimeFiles: [],
     assetDirectories,
   }
+  await mkdir(resolve(vendorRoot, 'patches'), { recursive: true })
+  await cp(patchSource, resolve(vendorRoot, patchTarget))
 
   for (const [source, target] of runtimeFiles) {
     const targetPath = resolve(vendorRoot, target)

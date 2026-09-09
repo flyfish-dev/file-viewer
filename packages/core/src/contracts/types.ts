@@ -40,6 +40,8 @@ export type FileViewerMessageKey =
   | 'toolbar.searchPrevious'
   | 'toolbar.searchNext'
   | 'toolbar.searchClear'
+  | 'toolbar.searchClose'
+  | 'toolbar.more'
   | 'toolbar.theme'
   | 'toolbar.themeToLight'
   | 'toolbar.themeToDark'
@@ -297,6 +299,9 @@ export type FileViewerMessageKey =
   | 'text.code.loadingHighlight'
   | 'text.code.formattedPreview'
   | 'text.code.showOriginal'
+  | 'text.html.preview'
+  | 'text.html.source'
+  | 'text.html.safePreview'
   | 'text.code.showFormatted'
   | 'text.code.indexingLargeFile'
   | 'text.code.virtualized'
@@ -359,6 +364,7 @@ export type FileViewerMessageKey =
   | 'cad.toolbar.zoomIn'
   | 'cad.toolbar.colorSource'
   | 'cad.toolbar.monochrome'
+  | 'cad.toolbar.exportImage'
   | 'cad.layers.title'
   | 'cad.layers.count'
   | 'cad.layers.merged'
@@ -370,6 +376,7 @@ export type FileViewerMessageKey =
   | 'cad.state.loadingViewer'
   | 'cad.state.parsing'
   | 'cad.error.parseFailed'
+  | 'cad.error.exportFailed'
   | 'image.alt'
   | 'image.toolbar.rotation'
   | 'image.toolbar.rotateLeft'
@@ -767,6 +774,8 @@ export interface FileViewerPdfBoundingBox {
 }
 
 export interface FileViewerDocxOptions {
+  /** DOC/DOCX 默认保留插入和删除修订；final 显示定稿，original 显示修订前原稿。 */
+  reviewMode?: 'all' | 'final' | 'original'
   worker?: boolean
   workerUrl?: string
   workerJsZipUrl?: string
@@ -953,6 +962,10 @@ export interface FileRenderContext {
   registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void
   registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void
   renderPurpose?: FileViewerRenderPurpose
+  /** Derived-image download, guarded by the owning viewer's permissions, hooks and request version. */
+  requestSnapshotDownload?: (
+    create: (watermark: FileViewerOptions['watermark']) => Promise<{ blob: Blob; filename: string }>
+  ) => Promise<boolean>
   onProgressiveRender?: () => void
   renderNestedBuffer?: (
     buffer: ArrayBuffer,
@@ -1377,10 +1390,12 @@ export interface FileViewerCadOptions {
   renderer?: FileViewerCadRenderer
   /** Initial CAD color policy. `monochrome` applies one plot color without mutating source data. */
   colorMode?: FileViewerCadColorMode
-  /** CSS color used by monochrome mode. Defaults to the CAD foreground color. */
+  /** CSS color used by monochrome mode. Defaults to black (#000000). */
   monochromeColor?: string
   /** Shows the CAD toolbar color-mode toggle. Defaults to true. */
   showColorModeToggle?: boolean
+  /** Show native PNG/JPEG snapshot downloads. Download/export permissions still apply. */
+  showImageExport?: boolean
   preferDwgWasm?: boolean
   includePaperSpace?: boolean
   maxInsertDepth?: number
@@ -1398,6 +1413,7 @@ export interface FileViewerCadOptions {
   fitPadding?: number
   dwfPreferWebgl?: boolean
   dwfPreferWasm?: boolean
+  /** Explicit DWF background override; otherwise follows the current color mode. */
   dwfBackground?: string
   dwfMaxDevicePixelRatio?: number
   dwfMaxCanvasPixels?: number
@@ -1408,6 +1424,7 @@ export interface FileViewerCadOptions {
   dwfMaxOverviewStrokeCssPx?: number
   dwfMinTextCssPx?: number
   dwfMinFilledAreaCssPx?: number
+  /** Default background is dark for source colors and white for monochrome. Explicit colors are retained. */
   canvasOptions?: Record<string, unknown>
 }
 
@@ -1444,6 +1461,8 @@ export interface FileViewerAiOptions {
 }
 
 export interface FileViewerTextOptions {
+  /** Initial HTML/HTM view. Preview is static, sandboxed, and offline; defaults to preview. */
+  htmlView?: 'preview' | 'source'
   /**
    * Source encoding. Defaults to `auto`: BOM and UTF-16 structure first,
    * then strict UTF-8, with GB18030 (including GBK) as the final fallback.

@@ -60,6 +60,7 @@ import { createFileViewerCoreRendererRegistry } from '../renderers/index';
 import { createFileViewerRequestScope } from '../source/loading';
 import { normalizeSource } from '../source';
 import { buildFileViewerWatermarkInlineStyle } from '../features/watermark';
+import { createFileViewerSnapshotDownload } from '../output/snapshotDownload';
 import { createFileViewerUnsupportedState } from './state';
 import type {
   FileRenderContext,
@@ -719,6 +720,11 @@ export const createViewer = (
           renderContext: {
             renderPurpose: createOptions.renderPurpose || 'preview',
             renderNestedBuffer,
+            requestSnapshotDownload: createFileViewerSnapshotDownload({
+              getOptions: () => options,
+              isCurrent: () => requestScope.isCurrentRequest(version),
+              beforeDownload: () => runBeforeViewerOperation('download'),
+            }),
           },
         });
       } catch (error) {

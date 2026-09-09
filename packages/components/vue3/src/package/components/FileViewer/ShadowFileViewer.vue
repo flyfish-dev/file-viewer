@@ -192,7 +192,7 @@ const mountShadowShell = () => {
     return
   }
 
-  const root = host.shadowRoot || host.attachShadow({ mode: 'open', delegatesFocus: true })
+  const root = host.shadowRoot || host.attachShadow({ mode: 'open' })
   root.replaceChildren()
   root.appendChild(createShadowResetStyle(host.ownerDocument))
   appendComponentStyleLink(root)

@@ -269,6 +269,38 @@ export function validateIssueReport({ title, body, labels = [] }) {
       sharingMethod
     )
 
+  const inlineMethod = /inline configuration and commands/i.test(sharingMethod)
+  const steps = sections.get('minimal reproduction steps') || ''
+  const fileType = sections.get('file type and extension') || ''
+  const area = sections.get('affected area') || ''
+  const packages = sections.get('package names and exact versions') || ''
+  const inlineReproduction =
+    /^n\/?a\s*$/i.test(fileType.trim()) &&
+    /^(?:packaging or bundler integration|worker \/ wasm \/ fonts \/ deployed assets|framework component or public api)$/i.test(
+      area.trim()
+    ) &&
+    /@file-viewer\/[\w.-]+@\d+\.\d+\.\d+/.test(packages) &&
+    isMeaningful(steps, 60) &&
+    /`[^`]*[({=][^`]*`/.test(steps) &&
+    /\b(?:pnpm|npm|yarn|bun)\s+(?:run\s+)?(?:install|start|dev|build|exec)\b/.test(steps) &&
+    isMeaningful(sections.get('actual behavior')) &&
+    isMeaningful(sections.get('expected behavior'))
+
+  // Configuration-only failures can be reproduced without a document. This
+  // exception does not waive original samples for format or rendering defects.
+  if (inlineReproduction && (inlineMethod || publicMethod)) {
+    return { applicable: true, ok: true, errors: [] }
+  }
+  if (inlineMethod) {
+    return {
+      applicable: true,
+      ok: false,
+      errors: [
+        'Inline integration reports need N/A file type, exact package versions, configuration/code, commands, and actual/expected behavior. File rendering defects still require a sample.'
+      ]
+    }
+  }
+
   if (!privateMethod && !publicMethod) {
     errors.push('Choose a supported sample sharing method in the bug form.')
   }

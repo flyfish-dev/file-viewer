@@ -66846,15 +66846,21 @@ class WorkerMessageHandler {
       };
       return pdfManagerCapability.promise;
     }
+    // File Viewer modification: canceled initialization must not reject detached
+    // startup promises or send messages through an already destroyed handler.
     function setupDoc(data) {
       function onSuccess(doc) {
-        ensureNotTerminated();
+        if (terminated) {
+          return;
+        }
         handler.send("GetDoc", {
           pdfInfo: doc
         });
       }
       function onFailure(ex) {
-        ensureNotTerminated();
+        if (terminated) {
+          return;
+        }
         if (ex instanceof PasswordException) {
           const task = new WorkerTask(`PasswordException: response ${ex.code}`);
           startWorkerTask(task);
@@ -66862,43 +66868,67 @@ class WorkerMessageHandler {
             password
           }) {
             finishWorkerTask(task);
+            if (terminated) {
+              return;
+            }
             pdfManager.updatePassword(password);
             pdfManagerReady();
           }).catch(function () {
             finishWorkerTask(task);
+            if (terminated) {
+              return;
+            }
             handler.send("DocException", ex);
           });
         } else {
           handler.send("DocException", wrapReason(ex));
         }
       }
-      function pdfManagerReady() {
-        ensureNotTerminated();
-        loadDocument(false).then(onSuccess, function (reason) {
-          ensureNotTerminated();
-          if (!(reason instanceof XRefParseException)) {
-            onFailure(reason);
-            return;
+      async function pdfManagerReady() {
+        if (terminated) {
+          return;
+        }
+        try {
+          let doc;
+          try {
+            doc = await loadDocument(false);
+          } catch (reason) {
+            if (terminated) {
+              return;
+            }
+            if (!(reason instanceof XRefParseException)) {
+              throw reason;
+            }
+            await pdfManager.requestLoadedStream();
+            if (terminated) {
+              return;
+            }
+            doc = await loadDocument(true);
           }
-          pdfManager.requestLoadedStream().then(function () {
-            ensureNotTerminated();
-            loadDocument(true).then(onSuccess, onFailure);
-          });
-        });
+          onSuccess(doc);
+        } catch (reason) {
+          onFailure(reason);
+        }
       }
-      ensureNotTerminated();
+      if (terminated) {
+        return;
+      }
       getPdfManager(data).then(function (newPdfManager) {
         if (terminated) {
           newPdfManager.terminate(new AbortException("Worker was terminated."));
-          throw new Error("Worker was terminated");
+          return;
         }
         pdfManager = newPdfManager;
         pdfManager.requestLoadedStream(true).then(stream => {
+          if (terminated) {
+            return;
+          }
           handler.send("DataLoaded", {
             length: stream.bytes.byteLength
           });
-        });
-      }).then(pdfManagerReady, onFailure);
+        }, onFailure);
+        return pdfManagerReady();
+      }).catch(onFailure);
     }
     handler.on("GetPage", function (data) {
       return pdfManager.getPage(data.pageIndex).then(function (page) {

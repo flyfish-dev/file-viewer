@@ -290,6 +290,8 @@ export {
   waitForFileViewerNextPaint,
   waitForFileViewerPrintWindowReady,
 } from './output/export';
+export { createFileViewerCanvasImageBlob } from './output/canvasImage';
+export { createFileViewerSnapshotDownload, isFileViewerSnapshotDownloadPermitted } from './output/snapshotDownload';
 export {
   applyPrintPageSize,
   buildPrintPageStyle,
@@ -1288,3 +1290,4 @@ export type {
   ViewerLifecycleContext,
   ViewerOperationContext,
 } from './contracts/types';
+export { resolveFileViewerCopiedAssetUrl } from './platform/copiedAssets';

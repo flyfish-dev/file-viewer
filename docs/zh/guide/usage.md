@@ -256,9 +256,10 @@ const options = {
 | `spreadsheet.workerUrl` | 自定义 Excel/XLSX Worker 地址，默认尝试当前部署 base 下的 `vendor/xlsx/sheet.worker.js` |
 | `spreadsheet.textEncoding` | CSV / TSV 文本编码，默认 `auto`：优先 UTF-8 BOM 和严格 UTF-8，否则使用浏览器 GB18030 解码（同时覆盖 GBK）；也可显式指定 `utf-8`、`gbk` 或 `gb18030` |
 | `spreadsheet.resizableColumns` | 是否允许用户在 Excel / CSV / ODS 等表格预览中拖拽表头边界调整列宽，默认 `false` 以保持历史兼容；Demo 默认开启，便于查看被截断的长文本 |
-| `presentation.workerUrl` | 自定义 `@file-viewer/pptx` Worker 地址。默认由 `@file-viewer/renderer-presentation` 按需创建模块 Worker；内网静态目录、严格 CSP 或自托管 CDN 改写资源路径时可显式传入绝对 URL |
+| `presentation.workerUrl` | 自定义 `@file-viewer/pptx` Worker 地址，显式配置优先。未配置时识别应用资产基址下的标准复制清单，再保留包内开发环境回退；Angular 子路径部署参见 [Web 接入](/zh/guide/quickstart-web) |
+| `cad.showImageExport` | 是否显示 CAD 渲染器内的 PNG/JPEG 按钮，默认 `true`。隐藏它们不影响共享工具栏的原文件下载；操作仍同时受下载和 HTML 导出权限约束 |
 | `presentation.workerType` | PPTX Worker 类型，通常保持默认 `module`；只有旧 WebView、特殊 CSP 或构建系统要求 classic Worker 时再覆盖 |
-| `presentation.pptModuleUrl` / `presentation.pptWorkerUrl` / `presentation.pptWasmUrl` / `presentation.pptFontUrl` | PowerPoint 97–2003 `.ppt` 0.3.3 的 ESM、Worker、WASM 和 CJK 字体高级路径覆盖；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局无需配置 |
+| `presentation.pptModuleUrl` / `presentation.pptWorkerUrl` / `presentation.pptWasmUrl` / `presentation.pptFontUrl` | PowerPoint 97–2003 `.ppt` 0.3.4 的 ESM、Worker、WASM 和 CJK 字体高级路径覆盖；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局无需配置 |
 | `presentation.pptWorker` / `presentation.pptCache` | 控制二进制 PPT 的 Worker 模式和有界 IndexedDB 帧缓存；默认均自动启用可用能力 |
 | `pdf.streaming` | PDF URL 渐进读取策略，默认 `same-origin`；设为 `true` 时跨域也尝试 URL 直连读取，设为 `false` 时完全回到 Blob 下载后预览 |
 | `pdf.toolbar` | 是否显示 PDF 渲染器自己的页码、缩放和旋转工具栏。独立预览建议显示；左右文档比对等紧凑场景可设为 `false`，让 PDF 与其他格式的正文区域对齐 |
@@ -573,6 +574,10 @@ Vanilla JS / Pure Web、React、jQuery 和 Svelte 接入时，搜索和定位仍
       workerJsZipUrl: '/file-viewer/vendor/docx/jszip.min.js',
       // 默认启用异步分批渲染，提升大文档可读性和响应速度。
       progressive: true,
+      // DOC/DOCX 默认保留文字修订：插入显示下划线，删除显示删除线。
+      // final 显示修订后的正文；original 显示修订前的正文，不修改原文件。
+      // 包含制表符、软换行和段落标记；移除段落标记只合并同一文本流/单元格。
+      reviewMode: 'all',
       // 默认跟随 options.theme；业务需要固定效果时可显式传 true / false。
       // darkMode: true,
       // 默认 false，使用连续流式阅读；只有明确需要页式预览时再开启。
@@ -599,6 +604,7 @@ Vanilla JS / Pure Web、React、jQuery 和 Svelte 接入时，搜索和定位仍
 - Word 打印和导出会清理预览阶段的缩放、绝对定位、滚动容器和 Demo 全局布局样式，把 `.docx` / `.doc` 还原成完整白色文档内容，避免只打印当前视口或第一页。
 - 图片、Markdown、代码、PPTX、OFD、CAD、绘图、XMind、UMD、OLB/DRA/GDS/OASIS 等可以稳定克隆当前渲染结果的格式会保留打印按钮；Excel 当前使用 `styled-exceljs` + `e-virt-table` 虚拟渲染，完整工作表不会一次性存在于 DOM 中，因此表格、压缩包、邮件、EPUB、音视频、3D / 模型等更适合交互查看或原文件下载的格式会隐藏打印按钮。
 - 导出 HTML 会尽量克隆当前渲染结果，并把 canvas 转成图片，保证图纸、绘图、文档和代码在离线 HTML 中仍有可读内容。
+- CAD 会先重新绘制，再捕获当前相机视图 / 当前原生 DWF 页，合成 WebGL 线条和文字覆盖层。原色默认深色背景和自适应对比度，黑白模式默认白纸黑线，显式背景配置优先。原生 PNG/JPEG 下载保留文本/图片水印，经过所属组件的下载钩子，并同时要求下载与 HTML 导出权限；`cad.showImageExport: false` 可隐藏按钮。HTML 内嵌 PNG，打印可另存为 PDF；需要整图时先点击“适配”。这不是多图纸矢量 PDF 转换器。
 - DOCX 等预览链路若使用会话级 `blob:` 图片地址，导出/打印时会自动内联为 `data:` URL，避免下载后的 HTML 或打印窗口出现图片空白。
 - 水印会同时参与预览、打印和 HTML 导出。文字水印适合内部资料、审批流和归档场景；图片水印适合品牌 Logo 或业务系统标识。
 
@@ -721,4 +727,4 @@ const options = {
 
 ### `html` 会被当网页渲染吗
 
-不会。`html` 在当前版本属于代码/文本类型，会按源码内容高亮显示，而不是作为真正网页执行。这一层策略更安全，也更适合做代码、模板和片段查看。
+支持「页面预览」和「HTML 源码」切换，默认显示页面。传入 `options.text.htmlView: 'source'` 可以默认查看源码。页面预览保留内联样式和内嵌图片，在独立沙箱中展示静态内容，不执行脚本、提交表单、跳转外链或加载外部资源；它不是用于运行完整网站的浏览器。源码视图保留原文并支持现有的高亮、格式化和大文本虚拟化。

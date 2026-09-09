@@ -9,6 +9,8 @@ Native PPTX rendering engine extracted from Flyfish File Viewer. It is maintaine
 - Preserves the latest native Flyfish rendering path for themes, images, shapes, tables, text, and basic charts.
 - Supports `fitMode`, `zoomPercent`, custom Worker URLs, and Worker factories for private deployment and strict CSP environments.
 
+`resolvePptxPackageWorkerUrl()` lets integrations identify an emitted or directly served package Worker URL. It returns `undefined` when the location is not recognized, not as proof that a file is missing; integrations can then use their asset-copy strategy or explicit Worker configuration.
+
 ## Usage
 
 ```ts

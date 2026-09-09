@@ -36,6 +36,10 @@ const options = {
 - 安装 RTF capability 后才使用 `rtf.js`；未安装时会显示精确 CLI 启用命令。ODT / ODP 读取 OpenDocument 包内 `content.xml` 做安全结构预览。
 - 继续复用 core 的统一搜索、缩放、打印、导出、生命周期和操作能力。
 
+## 文本修订
+
+`options.docx.reviewMode` 同时适用于 DOC 和 DOCX：`all`（默认）用下划线显示实际插入、用删除线显示实际删除；`final` 显示定稿，`original` 显示修订前文字。同一组件修改该参数后会更新预览，不需要重新选择文件，也不会接受、拒绝修订或重写原始文件。文本修订支持不等于完整支持 Word 审阅历史、格式修订或移动记录。
+
 ## 离线资产
 
 DOCX Worker 默认读取 viewer assets 下的：

@@ -311,6 +311,14 @@ const handleTabKeydown = (event: KeyboardEvent) => {
 
         <section v-else-if='activeFormatSection === "word"' class='settings-section'>
           <header><strong>{{ copy.wordFormat }}</strong></header>
+          <label class='settings-control-row'>
+            <span>{{ copy.reviewMode }}</span>
+            <select v-model='settings.docxReviewMode' data-testid='docx-review-mode'>
+              <option value='all'>{{ copy.reviewAll }}</option>
+              <option value='final'>{{ copy.reviewFinal }}</option>
+              <option value='original'>{{ copy.reviewOriginal }}</option>
+            </select>
+          </label>
           <button v-for='item in [
             ["docxProgressive", copy.progressiveRendering],
             ["docxVisualPagination", copy.visualPagination],
@@ -338,6 +346,13 @@ const handleTabKeydown = (event: KeyboardEvent) => {
 
         <section v-else-if='activeFormatSection === "text"' class='settings-section'>
           <header><strong>{{ copy.textFormat }}</strong></header>
+          <label class='settings-control-row'>
+            <span>{{ copy.htmlInitialView }}</span>
+            <select v-model='settings.textHtmlView' data-testid='html-initial-view'>
+              <option value='preview'>{{ copy.htmlPreview }}</option>
+              <option value='source'>{{ copy.htmlSource }}</option>
+            </select>
+          </label>
           <button type='button' class='settings-toggle-row' :aria-pressed='settings.textToolbar' @click='settings.textToolbar = !settings.textToolbar'><span>{{ copy.textToolbar }}</span><span class='settings-toggle-indicator' :class='{ active: settings.textToolbar }' aria-hidden='true'><i /></span></button>
           <button type='button' class='settings-toggle-row' :aria-pressed='settings.textLineNumbers' @click='settings.textLineNumbers = !settings.textLineNumbers'><span>{{ copy.lineNumbers }}</span><span class='settings-toggle-indicator' :class='{ active: settings.textLineNumbers }' aria-hidden='true'><i /></span></button>
           <label class='settings-control-row'><span>{{ copy.virtualizeThreshold }}</span><span class='settings-unit-input'><input v-model.number='settings.textVirtualizeAboveKb' type='number' min='64' max='8192' step='64' /><i>KB</i></span></label>

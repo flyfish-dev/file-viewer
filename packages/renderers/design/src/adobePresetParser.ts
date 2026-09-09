@@ -102,7 +102,10 @@ const readPascal = (
   if (length > limits.maxResourceNameCodeUnits) {
     throw new Error(`${label} exceeds the ${limits.maxResourceNameCodeUnits}-byte safety limit.`)
   }
-  return reader.ascii(length, end, label).replace(/\0+$/u, '')
+  const value = reader.ascii(length, end, label)
+  let contentEnd = value.length
+  while (contentEnd > 0 && value.charCodeAt(contentEnd - 1) === 0) contentEnd -= 1
+  return value.slice(0, contentEnd)
 }
 
 const decodePackBits = (

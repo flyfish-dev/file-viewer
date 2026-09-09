@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-text",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "private": false,
   "type": "module",
   "description": "Standalone code, text, and Markdown renderer for File Viewer; Mermaid, patch diff, and Git bundle tools are explicit opt-in capabilities.",
@@ -62,9 +62,9 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.0.2",
+    "@file-viewer/core": "workspace:3.0.3",
     "@prettier/plugin-xml": "3.4.2",
-    "dompurify": "^3.4.14",
+    "dompurify": "3.4.15",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
     "prettier": "3.9.6"

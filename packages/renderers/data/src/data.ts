@@ -215,7 +215,8 @@ const renderParquet = async (buffer: ArrayBuffer, t: DataTranslator): Promise<Da
 };
 
 const renderAvro = async (buffer: ArrayBuffer, t: DataTranslator): Promise<DataPreview> => {
-  const avro = await import('avsc/etc/browser/avsc.js');
+  const imported = await import('../dist/vendor/avsc.cjs');
+  const avro = imported.default || imported;
   const decoder = (avro as any).createBlobDecoder(new Blob([buffer]));
   const rows: Array<Record<string, unknown>> = [];
   let schema = '';

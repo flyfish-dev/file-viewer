@@ -28,6 +28,35 @@ The historical package name remains synchronized for compatibility:
 npm install @flyfish-group/file-viewer-web
 ```
 
+## RequireJS (AMD)
+
+From 3.0.3, Web and Web Full include a separate `.amd.js` entry. Deploy the complete
+`@file-viewer/web-full/dist/` directory to your own `/file-viewer/` path, alongside
+your locally hosted RequireJS. No bundler, `shim`, remote CDN, or global `define`
+override is needed:
+
+```html
+<div id="viewer" style="height:720px"></div>
+<script src="/vendor/require.js"></script>
+<script>
+  require.config({
+    paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' }
+  });
+  require(['viewer'], function (viewer) {
+    viewer.mountViewer(document.getElementById('viewer'), {
+      url: '/files/report.pdf',
+      options: { theme: 'light' }
+    });
+  });
+</script>
+```
+
+Leave `.js` off RequireJS `paths`. Module aliases are your choice. Keep `renderers/`,
+`vendor/`, and `wasm/` next to the entry: they load lazily from that directory, also
+under a deployment subpath. The light `flyfish-file-viewer-web.amd.js` exports the
+same shell API but does not include Full renderers. Existing `.iife.js` script-tag
+and ESM entries are unchanged; do not load an IIFE as an AMD module.
+
 ## Web Component
 
 ```html
@@ -117,6 +146,40 @@ npm install @file-viewer/web @file-viewer/preset-all
 Use `formats`, `renderers`, `scan:true`, `inject:false`, or `chunkStrategy:'renderer'` only when the product needs exact registry control. The default path stays `fileViewerRenderers({ copyAssets:true })`, with installed presets auto-activated by the plugin.
 
 ## Imperative Mount
+
+### Angular With A Deployment Subpath
+
+Use the same Web API from `ngAfterViewInit`, and call `controller.destroy()` in
+`ngOnDestroy`. Angular's application builder does not emit Worker files referenced
+by dependency JavaScript. With light packages, install `file-viewer-copy-assets`
+as a development dependency at the same version as the viewer packages. Full
+packages already include this CLI. Copy the installed resources before `ng build`:
+
+```bash
+npx --yes file-viewer-copy-assets public/file-viewer
+```
+
+Keep the generated `flyfish-viewer-assets.json` with those files. Include the
+`public` directory in the build's existing asset configuration, for example:
+
+```json
+{
+  "baseHref": "/ui/",
+  "assets": [{ "glob": "**/*", "input": "public", "output": "/" }]
+}
+```
+
+PPTX discovers its copied Worker relative to the application base, including
+`/ui/file-viewer/vendor/pptx/pptx.worker.js`; no `deployUrl`, optimizer exclusion,
+application alias or custom Worker factory is needed. An explicit
+`presentation.workerUrl` still takes precedence. `ng serve` without a copied
+manifest keeps the package's development Worker resolution.
+
+The maintained example is `apps/component-demo/test/angular-pptx`. Its browser
+regression cold-installs packages and checks real slides and Worker MIME in
+development and production; it does not replace Worker with a recorder.
+
+### Mount And Clean Up
 
 ```ts
 import { mountViewer } from '@file-viewer/web'

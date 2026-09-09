@@ -191,6 +191,33 @@ defineFileViewerElement()
 
 不要把 `dist/index.js` 复制到 public 后直接用浏览器加载。该入口保留了包依赖关系，面向构建工具和包管理器；无构建工具页面请使用下面的 IIFE 全局包。
 
+## RequireJS（AMD）
+
+从 3.0.3 起，Web 和 Web Full 提供独立 `.amd.js` 入口。把
+`@file-viewer/web-full/dist/` 完整部署到自己的 `/file-viewer/`，RequireJS
+同样从本地加载，不需要 bundler、`shim`、公网 CDN，也不要临时覆盖全局 `define`：
+
+```html
+<div id="viewer" style="height:720px"></div>
+<script src="/vendor/require.js"></script>
+<script>
+  require.config({
+    paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' }
+  });
+  require(['viewer'], function (viewer) {
+    viewer.mountViewer(document.getElementById('viewer'), {
+      url: '/files/report.pdf',
+      options: { theme: 'light' }
+    });
+  });
+</script>
+```
+
+RequireJS 的 `paths` 不写末尾 `.js`，模块别名可自行选择。`renderers/`、`vendor/`
+和 `wasm/` 保持在入口同级目录，按格式懒加载，部署到子路径时也从该目录解析。
+轻量 `flyfish-file-viewer-web.amd.js` 只提供同样的组件壳 API，不自动包含 Full 渲染器。
+原 `.iife.js` script 标签和 ESM 接入保持不变，不要把 IIFE 当作 AMD 模块加载。
+
 ## 通过普通 script 引入
 
 IIFE 包会暴露 `window.FlyfishFileViewerWeb`:
@@ -302,6 +329,37 @@ viewer.options = {
   }
 }
 ```
+
+## Angular 子路径部署
+
+在 `ngAfterViewInit` 中使用上述 Web API，并在 `ngOnDestroy` 调用
+`controller.destroy()`。Angular application builder 不会自动输出依赖包
+JavaScript 引用的 Worker。轻量包接入时，将与组件同版本的
+`file-viewer-copy-assets` 安装为开发依赖；full 包已自带该 CLI。
+在 `ng build` 前复制已安装的资源：
+
+```bash
+npx --yes file-viewer-copy-assets public/file-viewer
+```
+
+保留生成的 `flyfish-viewer-assets.json`，并在已有构建配置中包含 `public`
+目录。例如部署在 `/ui/` 时：
+
+```json
+{
+  "baseHref": "/ui/",
+  "assets": [{ "glob": "**/*", "input": "public", "output": "/" }]
+}
+```
+
+PPTX 会识别清单并使用应用子路径下的
+`/ui/file-viewer/vendor/pptx/pptx.worker.js`，不需要 `deployUrl`、优化器排除、
+业务 alias 或自定义 Worker factory。显式 `presentation.workerUrl` 仍优先；
+开发环境没有复制清单时保留包内 Worker 解析路径。
+
+完整示例位于 `apps/component-demo/test/angular-pptx`。其回归通过冷安装、
+真实 `ng serve` 和生产构建检查幻灯片内容及 Worker MIME，不以记录 URL
+的假 Worker 代替实际运行。
 
 ## 常见问题
 

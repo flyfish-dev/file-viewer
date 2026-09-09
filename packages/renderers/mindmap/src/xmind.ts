@@ -3,7 +3,7 @@ import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import {
   parseXmind8Xml,
   parseXmind2020Json,
-} from '@ljheee/xmind-parser';
+} from '../dist/vendor/xmind.js';
 import {
   createFileViewerTranslator,
   createFileViewerViewStateChange,

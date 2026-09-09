@@ -89,6 +89,7 @@ export type DemoViewerSettings = {
   archiveMaxSizeMb: number
   archiveMaxEntryPreviewMb: number
   textToolbar: boolean
+  textHtmlView: 'preview' | 'source'
   textLineNumbers: boolean
   textVirtualizeAboveKb: number
   textMarkdownVirtualizeAboveKb: number
@@ -107,6 +108,7 @@ export type DemoViewerSettings = {
   pdfCjkFontFallback: boolean
   pdfIdentityFontRepair: boolean
   docxProgressive: boolean
+  docxReviewMode: 'all' | 'final' | 'original'
   docxVisualPagination: boolean
   docxStrictWordCompatibility: boolean
   docxAwaitLayout: boolean
@@ -234,6 +236,7 @@ export const createDefaultViewerSettings = (
   archiveMaxSizeMb: 512,
   archiveMaxEntryPreviewMb: 64,
   textToolbar: true,
+  textHtmlView: 'preview',
   textLineNumbers: false,
   textVirtualizeAboveKb: 512,
   textMarkdownVirtualizeAboveKb: 0,
@@ -252,6 +255,7 @@ export const createDefaultViewerSettings = (
   pdfCjkFontFallback: true,
   pdfIdentityFontRepair: true,
   docxProgressive: true,
+  docxReviewMode: 'all',
   docxVisualPagination: false,
   docxStrictWordCompatibility: false,
   docxAwaitLayout: true,
@@ -293,6 +297,7 @@ export const DEMO_RENDERER_REFRESH_SETTING_KEYS = [
   'archiveMaxSizeMb',
   'archiveMaxEntryPreviewMb',
   'textToolbar',
+  'textHtmlView',
   'textLineNumbers',
   'textVirtualizeAboveKb',
   'textMarkdownVirtualizeAboveKb',
@@ -311,6 +316,7 @@ export const DEMO_RENDERER_REFRESH_SETTING_KEYS = [
   'pdfCjkFontFallback',
   'pdfIdentityFontRepair',
   'docxProgressive',
+  'docxReviewMode',
   'docxVisualPagination',
   'docxStrictWordCompatibility',
   'docxAwaitLayout',

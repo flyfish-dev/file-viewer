@@ -43,7 +43,8 @@ const options = {
 - The legacy `*-full` script-tag IIFE assets do not bundle Prettier, so `prettyPrint` falls back to the original source there. Use the ESM integration (standard component packages or `@file-viewer/preset-*`) for formatted previews.
 - With the text-tools capability installed, `patch` uses `diff2html` for side-by-side review and `bundle` / `bdl` enables Git bundle inspection.
 - With the Mermaid capability installed, fenced Mermaid blocks render as diagrams. Without it, the source stays visible with the exact CLI enablement command.
-- HTML, XML, Vue, and similar files are escaped and shown as source, never executed.
+- HTML/HTM opens a static page preview with a source-view toggle. `options.text.htmlView: 'source'` starts with the original source. Inline CSS and embedded images are preserved; scripts, forms, external navigation, and external resource requests are blocked by sanitization, CSP, and an opaque sandbox. This is not a website runtime.
+- XML, Vue, and similar files remain escaped source previews. HTML source supports the same highlighting, formatting, and large-text virtualization options.
 - Markdown uses `marked` for a read-only reading surface with dark/light theme support, table scrolling, and a unified zoom provider.
 - Markdown no longer falls back to source because of the general large-text threshold. Set `options.text.markdownVirtualizeAboveBytes` only when an application must bound exceptionally large Markdown files.
 - Does not depend on any online service or public CDN, making it suitable for intranet logs, configs, snippets, README files, and knowledge-base attachments.

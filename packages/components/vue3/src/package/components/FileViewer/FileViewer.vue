@@ -22,6 +22,7 @@ import {
   Mail,
   MapPinned,
   Moon,
+  MoreHorizontal,
   NotebookTabs,
   Palette,
   Presentation,
@@ -86,6 +87,43 @@ const slots = defineSlots<{
 }>()
 
 const filename = ref('')
+const viewerRoot = ref<HTMLElement | null>(null)
+const compactToolbar = ref(false)
+const toolbarActionsExpanded = ref(false)
+const toolbarSearchExpanded = ref(false)
+const toolbarSearchInput = ref<HTMLInputElement | null>(null)
+let toolbarResizeObserver: ResizeObserver | undefined
+// A narrow desktop dialog needs the same layout as a phone-sized host.
+const updateToolbarLayout = () => {
+  compactToolbar.value = (viewerRoot.value?.clientWidth || 0) <= 760
+}
+onMounted(() => {
+  updateToolbarLayout()
+  if (typeof ResizeObserver === 'function' && viewerRoot.value) {
+    toolbarResizeObserver = new ResizeObserver(updateToolbarLayout)
+    toolbarResizeObserver.observe(viewerRoot.value)
+  }
+  viewerRoot.value?.ownerDocument.defaultView?.addEventListener('resize', updateToolbarLayout)
+})
+onBeforeUnmount(() => {
+  toolbarResizeObserver?.disconnect()
+  viewerRoot.value?.ownerDocument.defaultView?.removeEventListener('resize', updateToolbarLayout)
+})
+const toggleToolbarSearch = async () => {
+  toolbarSearchExpanded.value = !toolbarSearchExpanded.value
+  if (toolbarSearchExpanded.value) {
+    await nextTick()
+    toolbarSearchInput.value?.focus()
+  }
+}
+const setToolbarSearchInput = (element: unknown) => {
+  toolbarSearchInput.value = element as HTMLInputElement | null
+}
+const closeToolbarSearch = () => {
+  toolbarSearchInput.value?.blur()
+  toolbarSearchExpanded.value = false
+  viewerRoot.value?.querySelector<HTMLButtonElement>('[part~="search-toggle-button"]')?.focus({ preventScroll: true })
+}
 const output = ref<HTMLDivElement | null>(null)
 const currentFile = ref<File | null>(null)
 const currentBuffer = ref<ArrayBuffer | null>(null)
@@ -137,6 +175,8 @@ const viewerLabels = computed(() => {
     searchPrevious: t('toolbar.searchPrevious'),
     searchNext: t('toolbar.searchNext'),
     searchClear: t('toolbar.searchClear'),
+    searchClose: t('toolbar.searchClose'),
+    more: t('toolbar.more'),
     themeToLight: t('toolbar.themeToLight'),
     themeToDark: t('toolbar.themeToDark')
   }
@@ -363,6 +403,7 @@ const {
 } = useViewerRenderSurface({
   output,
   getOptions: () => effectiveOptions.value,
+  beforeDownload: () => runBeforeOperation('download'),
   isCurrentRequest,
   notifyActiveUnloadStart,
   notifyActiveUnloadComplete,
@@ -630,6 +671,7 @@ useViewerPreviewLifecycle({
   getUrl: () => props.url,
   getSourceFilename: () => props.filename || props.name,
   refreshPreview,
+  getRenderOptions: () => [effectiveOptions.value?.docx, effectiveOptions.value?.text],
   cancelPreview,
   clearRenderedContent,
   resetLoading,
@@ -641,6 +683,7 @@ useViewerPreviewLifecycle({
 
 <template>
   <div
+    ref='viewerRoot'
     class='file-viewer'
     part='shell'
     :data-viewer-theme='viewerTheme'
@@ -652,7 +695,7 @@ useViewerPreviewLifecycle({
         v-if='showToolbar'
         class='viewer-actions'
         part='toolbar'
-        :class='{ "viewer-actions--floating": toolbarPosition === "bottom-right" }'
+        :class='{ "viewer-actions--floating": toolbarPosition === "bottom-right", "viewer-actions--compact": compactToolbar, "viewer-actions--expanded": toolbarActionsExpanded }'
         :data-toolbar-position='toolbarPosition'
       >
         <div
@@ -669,15 +712,31 @@ useViewerPreviewLifecycle({
           />
         </div>
         <template v-for='toolbarItem in toolbarOrder' :key='toolbarItem'>
+          <template v-if='toolbarItem === "search" && visibleToolbar.search'>
+          <button
+            v-if='compactToolbar'
+            type='button'
+            class='viewer-icon-button'
+            part='button search-toggle-button'
+            :title='viewerLabels.search'
+            :aria-label='viewerLabels.search'
+            :aria-expanded='toolbarSearchExpanded'
+            :disabled='searchToolbarDisabled'
+            @click='toggleToolbarSearch'
+          >
+            <SearchIcon :size='17' :stroke-width='2.4' />
+          </button>
           <div
-            v-if='toolbarItem === "search" && visibleToolbar.search'
+            v-show='!compactToolbar || toolbarSearchExpanded'
             class='viewer-actions-group viewer-search-actions'
+            :class='{ "viewer-search-actions--popover": compactToolbar }'
             part='toolbar-group search-group'
             role='search'
             :aria-label='viewerLabels.search'
           >
             <form class='viewer-search-form' @submit.prevent='runToolbarSearch'>
               <input
+                :ref='setToolbarSearchInput'
                 v-model='toolbarSearchQuery'
                 class='viewer-search-input'
                 part='search-input'
@@ -696,6 +755,17 @@ useViewerPreviewLifecycle({
                 :aria-label='viewerLabels.search'
               >
                 <SearchIcon :size='14' :stroke-width='2.4' />
+              </button>
+              <button
+                v-if='compactToolbar'
+                type='button'
+                class='viewer-icon-button'
+                part='button search-close-button'
+                :aria-label='viewerLabels.searchClose'
+                :title='viewerLabels.searchClose'
+                @click='closeToolbarSearch'
+              >
+                <X :size='17' :stroke-width='2.4' />
               </button>
             </form>
             <span
@@ -740,6 +810,7 @@ useViewerPreviewLifecycle({
               <X :size='14' :stroke-width='2.4' />
             </button>
           </div>
+          </template>
           <div
             v-else-if='toolbarItem === "zoom" && visibleToolbar.zoom'
             class='viewer-actions-group viewer-zoom-actions'
@@ -806,6 +877,7 @@ useViewerPreviewLifecycle({
           <button
             v-else-if='toolbarItem === "download" && visibleToolbar.download'
             type='button'
+            class='viewer-secondary-action'
             part='button download-button'
             :disabled='toolbarDisabled'
             :title='viewerLabels.downloadTitle'
@@ -815,7 +887,7 @@ useViewerPreviewLifecycle({
           </button>
           <div
             v-else-if='toolbarItem === "print" && visibleToolbar.print'
-            class='viewer-print-menu'
+            class='viewer-print-menu viewer-secondary-action'
             part='print-menu'
             :data-open='printMenuOpen ? "true" : "false"'
             @focusout='event => {
@@ -863,6 +935,7 @@ useViewerPreviewLifecycle({
           <button
             v-else-if='toolbarItem === "exportHtml" && visibleToolbar.exportHtml'
             type='button'
+            class='viewer-secondary-action'
             part='button export-button'
             :disabled='toolbarDisabled'
             :title='viewerLabels.exportHtmlTitle'
@@ -873,7 +946,7 @@ useViewerPreviewLifecycle({
           <button
             v-else-if='toolbarItem === "theme" && visibleToolbar.theme'
             type='button'
-            class='viewer-icon-button viewer-theme-button'
+            class='viewer-icon-button viewer-theme-button viewer-secondary-action'
             part='button theme-button'
             :title='themeButtonTitle'
             :aria-label='themeButtonTitle'
@@ -885,6 +958,18 @@ useViewerPreviewLifecycle({
             <Moon v-else :size='15' :stroke-width='2.3' />
           </button>
         </template>
+        <button
+          v-if='compactToolbar && (visibleToolbar.download || visibleToolbar.print || visibleToolbar.exportHtml || visibleToolbar.theme)'
+          type='button'
+          class='viewer-icon-button'
+          part='button more-button'
+          :title='viewerLabels.more'
+          :aria-label='viewerLabels.more'
+          :aria-expanded='toolbarActionsExpanded'
+          @click='toolbarActionsExpanded = !toolbarActionsExpanded'
+        >
+          <MoreHorizontal :size='18' :stroke-width='2.4' />
+        </button>
         <div
           v-if='slots["toolbar-end"]'
           class='viewer-toolbar-slot viewer-toolbar-slot--end'
@@ -1795,27 +1880,88 @@ useViewerPreviewLifecycle({
   }
 }
 
-@media (max-width: 767px) {
-  .viewer-actions--floating {
+.viewer-actions--compact {
+  box-sizing: border-box;
+  max-width: calc(100% - 20px);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 20px;
+}
+
+.viewer-actions--compact.viewer-actions--floating {
     right: calc(10px + env(safe-area-inset-right, 0px));
     bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     max-width: calc(100% - 20px);
-    gap: 4px;
-    padding: 5px;
     overflow: visible;
-  }
+}
 
-  .viewer-actions--floating .viewer-print-menu-panel {
+.viewer-actions--compact .viewer-print-menu-panel {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
     min-width: min(148px, calc(100vw - 32px));
-  }
+}
 
-  .viewer-actions--floating button {
-    min-width: 40px;
-    height: 30px;
-    padding: 0 9px;
-  }
+.viewer-actions--compact button,
+.viewer-actions--compact .viewer-actions-group {
+  flex-shrink: 0;
+}
+
+.viewer-actions--compact button {
+  min-width: 44px;
+  height: 44px;
+  padding: 0 9px;
+  white-space: nowrap;
+}
+
+.viewer-actions--compact .viewer-icon-button {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+}
+
+.viewer-actions--compact .viewer-zoom-meter {
+  height: 44px;
+}
+
+.viewer-actions--compact:not(.viewer-actions--expanded) .viewer-secondary-action,
+.viewer-actions--compact [part~='zoom-reset-button'] {
+  display: none;
+}
+
+.viewer-actions--compact .viewer-search-actions--popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(3, 44px);
+  gap: 4px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 6px;
+  border-radius: 16px;
+  background: inherit;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.18);
+}
+
+.viewer-actions--compact.viewer-actions--floating .viewer-search-actions--popover {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+
+.viewer-actions--compact .viewer-search-form {
+  grid-column: 1 / -1;
+}
+
+.viewer-actions--compact .viewer-search-input {
+  flex: 1;
+  min-width: 0;
+  width: 0;
+  height: 44px;
+  font-size: 16px;
 }
 </style>

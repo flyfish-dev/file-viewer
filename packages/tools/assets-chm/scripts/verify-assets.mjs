@@ -28,6 +28,12 @@ for (const [source, target] of notices) {
 for (const filename of ['chm.worker.js', 'chm_wasm.js', 'chm_wasm_bg.wasm']) {
   const info = await stat(resolve(packageDir, 'viewer/vendor/chm', filename))
   assert(info.isFile() && info.size > 0, `${filename} is missing from the assets-chm payload`)
+  assert(
+    (await readFile(resolve(packageDir, 'viewer/vendor/chm', filename))).equals(
+      await readFile(resolve(rendererDir, 'dist', filename))
+    ),
+    `${filename} is stale; rebuild the renderer, sync viewer assets, and stage assets-chm`
+  )
 }
 const wasm = await readFile(resolve(packageDir, 'viewer/vendor/chm/chm_wasm_bg.wasm'))
 assert.deepEqual([...wasm.subarray(0, 4)], [0, 97, 115, 109], 'assets-chm payload is not WebAssembly')

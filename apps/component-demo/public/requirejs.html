@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>File Viewer / RequireJS</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #17334a; background: #eef3f8; font-family: Aptos, 'Segoe UI', sans-serif; }
+    header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 20px; border-bottom: 1px solid #cbd6df; background: #fff; }
+    h1 { font-size: 16px; margin: 0 auto 0 0; }
+    select { min-height: 40px; padding: 0 10px; font: inherit; }
+    #status { font-size: 13px; }
+    #viewer { height: calc(100dvh - 80px); min-height: 360px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>File Viewer / RequireJS</h1>
+    <label>Sample <select id="sample" disabled>
+      <option value="pdf.pdf">PDF</option>
+      <option value="word.docx">DOCX</option>
+      <option value="ppt.pptx">PPTX</option>
+      <option value="excel.xlsx">XLSX</option>
+      <option value="word-wps-contract.doc">DOC</option>
+    </select></label>
+    <output id="status" role="status">Loading AMD module</output>
+  </header>
+  <div id="viewer"></div>
+  <script src="./requirejs/require.js"></script>
+  <script>
+    var statusNode = document.getElementById('status');
+    var picker = document.getElementById('sample');
+    var deploymentBase = new URL('./', location.href);
+    require.config({
+      paths: { viewer: new URL('file-viewer/flyfish-file-viewer-web-full.amd', deploymentBase).href }
+    });
+    require(['viewer'], function (api) {
+      var controller = api.mountViewer(document.getElementById('viewer'));
+      async function load() {
+        picker.disabled = true;
+        statusNode.textContent = 'Loading ' + picker.value;
+        try {
+          await controller.load({
+            url: new URL('example/' + picker.value, deploymentBase).href,
+            name: picker.value,
+            options: { theme: 'light' }
+          });
+          statusNode.textContent = 'Ready: ' + picker.value;
+        } catch (error) {
+          statusNode.textContent = String(error.message || error);
+        } finally { picker.disabled = false; }
+      }
+      picker.addEventListener('change', load);
+      load();
+    }, function (error) {
+      statusNode.textContent = String(error.message || error);
+    });
+  </script>
+</body>
+</html>

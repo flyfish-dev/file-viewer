@@ -94,6 +94,42 @@ The Vite dev server serves the main demo. Open `/compare.html` on the same host 
 
 ## Production Smoke
 
+### Reported-Issue Checks
+
+Use the same uploaded bytes as the report, not just a similar sample. The regression suite covers hidden XLS search matches, DOC/DOCX text revisions, and page-relative DOCX cover borders on desktop and narrow screens. It also opens real files inside a resizable Element Plus drawer from cold-installed Vue CLI and React full tarballs, without aliases or application-specific Node polyfills.
+
+```sh
+# Source-built Demo, including native file upload and HTML page/source switching.
+pnpm verify:closed-issue-regressions
+# Against the already-built Demo: CAD pixels/print and XLS main-thread/Worker paths.
+pnpm verify:issue-245-cad-output
+pnpm verify:issue-227-cfb
+pnpm verify:issue-204-resize
+pnpm verify:mobile-toolbar
+# Cold consumer of already-built package tarballs, with the browser assertions.
+PACKED_ISSUE_PACKAGE_DIR=/absolute/path/to/candidate-tarballs pnpm verify:issue-consumer
+# Actual mobile Safari taps in an already-booted Xcode iPhone Simulator.
+CLOSED_ISSUE_DEMO_URL=http://127.0.0.1:4179 pnpm verify:issue-243-ios
+```
+
+For HTML, open `page.html` from the sample library and switch between the styled static page and the original source. For DOC/DOCX revisions, use `docx.reviewMode: 'all'`, `'final'`, or `'original'`; this changes the preview, not the source file. A revised paragraph must show genuine deletion/insertion records, without marking unchanged copies of the same text.
+
+The sample library includes `word-revisions.doc` and `word-cover.docx`, copied byte-for-byte from the redistribution-approved reports. In **More > Settings > Formats > Word**, change **DOC / DOCX text revisions**, then apply. The text-format settings also expose the initial HTML view. No application-code edit is needed to compare the modes.
+
+`word-native-revisions.doc` and `word-native-revisions.docx` were created in Microsoft Word for Mac with Track Changes enabled. They cover company-name replacements, unchanged repeated text, mixed bold runs, tabs, soft line breaks, paragraph merges/splits, and table-cell replacements. In `final` mode, `Case join: JOINED` is one paragraph and the deleted soft break is gone. In `original` mode, the original two paragraphs return and the inserted split is removed. The regression fixtures include Word's separately saved Accept All and Reject All reference files and their SHA-256 hashes. These are synthetic samples, not the missing private attachment from #236; they do not claim coverage of all formatting, comment, move, or table-structure revisions.
+
+For OFD, open `ofd-resource-paths.ofd`. It combines a nested document, an alternate XML namespace prefix, and case differences in ZIP paths. Expect `Invoice resource reference` and a black square image. The regression suite also checks resource-XML directories, `BaseLoc`, parent paths, URI encoding, resource priority, and missing nonessential resources. Missing images or font catalogs must not discard readable text; missing required pages, malformed XML, and invalid JBIG2 must finish loading with an error, not a blank success. This constructed sample is not the unavailable original from #57.
+
+For CAD, open `drawing.dxf`, `samples/apache/blocks_and_tables.dwf`, or `samples/autodesk/house.dwfx`. Compare dark-background source mode with black-on-white monochrome, download PNG/JPEG from the CAD toolbar, export HTML, and print to PDF. Check the output pixels, not just the mode label. Output captures the current view/current DWF page; select Fit before exporting the full drawing. Image downloads retain configured text/image watermarks and respect download/export permissions; an unreadable watermark fails explicitly instead of producing an unmarked image.
+
+In a phone-sized host or narrow dialog, the native component toolbar keeps a compact row with Search, zoom and More. Search opens a separate panel; More reveals output actions. Controls must not overlap at 320px or 390px, and a narrow desktop dialog must use its own width rather than the browser width. Wide hosts keep the inline search field. On iPhone, enter a search, close the keyboard, and tap Next again: the host must not stay scrolled beneath Safari's status area. The boot skeleton must not impose `100vh` minimums on the mounted application.
+
+Recent history stays collapsed until requested, so it does not cover worksheet tabs. The column-resize check uses real pointer dragging, switches sheets, zooms in/out, and disables resizing through Demo settings; a changed cursor alone is not a pass.
+
+The MiniFAT check uses a synthetic legacy XLS with an unused invalid MiniFAT pointer, then exercises main-thread and actual Worker parsing through file upload and last-row search. It is not the private #227 attachment. Do not mark that original report verified until the same file is tested privately; damaged required streams must fail clearly rather than silently dropping cells.
+
+After deployment, repeat the Demo checks against `https://demo.file-viewer.app` using `CLOSED_ISSUE_DEMO_URL`. Check `build-info.json` for the expected clean source commit. On iPhone, verify that the visible PDF content moves on Next/Previous and the controls remain reachable; a changed page counter alone is not a pass. Local results and an npm upload are not evidence that the production Demo has been updated.
+
 The repository keeps browser smoke scripts for the demo and component packages:
 
 ```bash

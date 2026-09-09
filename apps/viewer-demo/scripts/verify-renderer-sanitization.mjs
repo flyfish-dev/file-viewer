@@ -21,6 +21,9 @@ const sourceAliases = [
   ['@security/diagram', 'packages/renderers/drawing/src/diagram.ts'],
   ['@security/pptx', 'packages/renderers/pptx/src/viewer.ts'],
   ['@security/doc', 'packages/renderers/doc/src/index.ts'],
+  ['@security/maplibre', 'packages/renderers/geo/node_modules/maplibre-gl/dist/maplibre-gl.mjs'],
+  ['@security/map-worker', 'packages/renderers/geo/src/maplibre-worker.ts'],
+  ['@security/geo', 'packages/renderers/geo/src/geo.ts'],
   ['@file-viewer/core/assets', 'packages/core/src/assets.ts'],
   ['@file-viewer/core/export', 'packages/core/src/export.ts'],
   ['@file-viewer/renderer-text', 'packages/renderers/text/src/index.ts'],
@@ -79,11 +82,72 @@ import renderDrawing from '@security/drawing'
 import { renderDiagram } from '@security/diagram'
 import { PptxViewer } from '@security/pptx'
 import { mountMsDoc, renderMsDoc, sanitizeMsDocLinkHref } from '@security/doc'
+import * as maplibre from '@security/maplibre'
+import { configureMapLibreWorker } from '@security/map-worker'
+import renderGeo from '@security/geo'
 import { buildExportHtmlDocument, buildFileViewerRenderedHtmlDocument } from '@file-viewer/core/export'
 
 const pixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
 const fence = String.fromCharCode(96).repeat(3)
 window.__rendererSentinel = { markdown: 0, pptx: 0, doc: 0, export: 0, typst: 0, drawing: 0 }
+window.__mapAttributionSentinel = 0
+// Exercise the shipped control, not a duplicate implementation of its sanitizer.
+const attribution = new maplibre.AttributionControl({ compact: false, customAttribution:
+  '<details open onload="0" ontoggle="window.__mapAttributionSentinel += 1">map attribution</details>' +
+  '<a href="javascript:window.__mapAttributionSentinel += 10" onclick="window.__mapAttributionSentinel += 100">unsafe</a>' +
+  '<a id="map-safe-attribution" href="https://example.com/license">safe attribution</a>'
+})
+const attributionHost = attribution.onAdd({
+  style: { stylesheet: {}, tileManagers: {} },
+  _getUIString: () => 'Attribution',
+  getCanvasContainer: () => document.body,
+  on() {}, off() {},
+})
+document.body.append(attributionHost)
+await new Promise(resolve => setTimeout(resolve, 100))
+const mapAttributionResult = {
+  sentinel: window.__mapAttributionSentinel,
+  dangerousAttributes: attributionHost.querySelectorAll('[onload],[ontoggle],[onclick]').length,
+  unsafeLinks: attributionHost.querySelectorAll('a[href^="javascript:"]').length,
+  safeHref: attributionHost.querySelector('#map-safe-attribution')?.getAttribute('href'),
+}
+attribution.onRemove()
+const mapWorkerResult = []
+const geoHost = document.createElement('div')
+geoHost.style.cssText = 'width:640px;height:540px'
+document.body.append(geoHost)
+const geoInstance = await renderGeo(new TextEncoder().encode(JSON.stringify({
+  type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [0, 0] } }]
+})).buffer, geoHost, 'geojson')
+const mapControlGlyphs = ['zoom-in', 'zoom-out'].map(name => {
+  const icon = geoHost.querySelector('.maplibregl-ctrl-' + name + ' .maplibregl-ctrl-icon')
+  return icon ? getComputedStyle(icon, '::before').content : null
+})
+geoInstance.unmount()
+geoHost.remove()
+for (let round = 0; round < 2; round += 1) {
+  configureMapLibreWorker(maplibre)
+  const host = document.createElement('div')
+  host.style.cssText = 'width:400px;height:300px'
+  document.body.append(host)
+  const map = new maplibre.Map({ container: host, center: [0, 0], zoom: 2, attributionControl: false,
+    style: { version: 8, sources: { point: { type: 'geojson', data: {
+      type: 'FeatureCollection', features: [{ type: 'Feature', properties: { label: 'offline worker' },
+        geometry: { type: 'Point', coordinates: [0, 0] } }]
+    } } }, layers: [{ id: 'point', type: 'circle', source: 'point', paint: { 'circle-radius': 12 } }] }
+  })
+  try {
+    await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('Offline MapLibre worker timed out')), 10000)
+      map.once('idle', () => { clearTimeout(timer); resolve() })
+      map.once('error', event => { clearTimeout(timer); reject(event.error) })
+    })
+    mapWorkerResult.push(map.queryRenderedFeatures({ layers: ['point'] }).some(feature => feature.properties.label === 'offline worker'))
+  } finally {
+    map.remove()
+    host.remove()
+  }
+}
 
 const maliciousFont = 'Safe Font" onmouseover="window.__rendererSentinel.doc += 1'
 const docParagraph = (href, text) => ({
@@ -477,6 +541,9 @@ const inspectPptx = root => {
 }
 
 window.__rendererSanitizationResult = {
+  mapControlGlyphs,
+  mapWorker: mapWorkerResult,
+  mapAttribution: mapAttributionResult,
   sentinel: { ...window.__rendererSentinel },
   doc: {
     blockedExternal: docBlocked.html.includes('https://example.com/doc'),
@@ -878,6 +945,11 @@ try {
   }
   const officialSentinelAfterClick = await officialFrame.evaluate(() => window.__fileViewerDrawioSentinel)
 
+  assert.deepEqual(result.mapAttribution, {
+    sentinel: 0, dangerousAttributes: 0, unsafeLinks: 0, safeHref: 'https://example.com/license'
+  }, 'MapLibre attribution must remove adjacent dangerous attributes without removing safe credit links')
+  assert.deepEqual(result.mapWorker, [true, true], 'Offline workers must render after map creation and recreation')
+  assert.deepEqual(result.mapControlGlyphs, ['"+"', '"-"'], 'Map zoom controls must retain visible icons')
   assert.deepEqual(result.sentinel, { markdown: 0, pptx: 0, doc: 0, export: 0, typst: 0, drawing: 0 })
   assert.equal(dialogs, 0)
   assert.deepEqual(unsafeCssRequests, [])
@@ -990,7 +1062,7 @@ try {
   }
 
   await page.evaluate(() => window.__rendererSanitizationCleanup?.())
-  console.log('[renderer-sanitization] DOC, export/print, Markdown/Mermaid, Drawing/PlantUML, Typst SVG, and PPTX markup passed browser isolation checks.')
+  console.log('[renderer-sanitization] MapLibre attribution/worker recreation, DOC, export/print, Markdown/Mermaid, Drawing/PlantUML, Typst SVG, and PPTX passed browser isolation checks.')
 } finally {
   await browser?.close()
   await viteServer?.close()

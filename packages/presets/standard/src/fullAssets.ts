@@ -3,6 +3,7 @@ import {
   DEFAULT_FILE_VIEWER_ARCHIVE_WORKER_PATH,
   DEFAULT_FILE_VIEWER_DOCX_WORKER_JSZIP_PATH,
   DEFAULT_FILE_VIEWER_DOCX_WORKER_PATH,
+  DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   DEFAULT_FILE_VIEWER_PDF_CJK_FONT_FALLBACK_PATH,
   DEFAULT_FILE_VIEWER_PDF_CMAP_PATH,
   DEFAULT_FILE_VIEWER_PDF_STANDARD_FONT_PATH,
@@ -14,7 +15,6 @@ import {
 } from '@file-viewer/core/assets';
 import type { FileViewerOptions } from '@file-viewer/core';
 
-const STANDARD_PACKAGE_DOCX_RUNTIME_VERSION = '0.3.28';
 export const DEFAULT_FULL_ASSET_BASE_PATH = 'file-viewer/';
 export const DEFAULT_FULL_ASSET_BASE_URL = '/file-viewer/';
 const automaticAssetBaseUrl = Symbol('automatic-file-viewer-standard-asset-base');
@@ -38,7 +38,7 @@ export function resolveDefaultFullAssetBaseUrl(documentRef?: Document | null) {
 
 const joinAssetUrl = (baseUrl: string, path: string) => `${baseUrl}${path.replace(/^\/+/, '')}`;
 const versionDocxUrl = (url: string) =>
-  `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${encodeURIComponent(STANDARD_PACKAGE_DOCX_RUNTIME_VERSION)}`;
+  `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${encodeURIComponent(DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION)}`;
 
 export function createFullAssetOptions(assetBaseUrl?: string | URL | null): FileViewerOptions {
   const baseUrl = normalizeFullAssetBaseUrl(assetBaseUrl);

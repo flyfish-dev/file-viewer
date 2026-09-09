@@ -32,3 +32,8 @@ File Viewer 运行在浏览器端，会处理用户选择或业务系统传入�
 `@file-viewer/vue2.6` 和 `@file-viewer/vue2.7` 是面向存量系统的兼容组件，Vue 仅作为 peer dependency，不会打包进 File Viewer 产物。仓库内的 Vue 2 兼容测试只使用 runtime-only build 和受信任的静态 SFC，不调用 `Vue.compile`，也不接受用户可控的 Vue 模板字符串。
 
 Vue 2 已终止上游维护。新项目应优先使用 `@file-viewer/vue3`；必须继续使用 Vue 2 的宿主系统，不应在运行时编译不可信模板。
+## Dependency Audit Boundaries
+
+The audit includes development dependencies and runs against the official npm registry before release builds. Vue 2 remains an explicitly documented compatibility exception.
+
+`GHSA-vwc7-r8mq-g2x9` affects `adm-zip` filesystem extraction through pre-existing destination symlinks. No patched npm version was available on 2026-09-09. The installed `dcmjs@0.52.0` declares this dependency but neither runtime entry nor its dictionary export imports or invokes it. `.github/scripts/verify-dependency-exceptions.mjs` checks those exports, the exact dcmjs version and the sole lockfile consumer before the audit. A new consumer, export or version fails this check and requires review. This is an unreachable dependency exception in File Viewer, not a claim that adm-zip itself is fixed. Remove the exception when a patched version is published.

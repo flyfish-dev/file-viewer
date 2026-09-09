@@ -40,7 +40,9 @@ export const renderFileViewerCode: FileRenderHandler<FileViewerRenderedInstance,
   target,
   type,
   context?: FileRenderContext
-) => import('./code.js').then(({ default: renderCode }) => renderCode(buffer, target, type, context));
+) => /^(?:html|htm)$/i.test(type || '')
+  ? import('./html.js').then(({ default: renderHtml }) => renderHtml(buffer, target, type, context))
+  : import('./code.js').then(({ default: renderCode }) => renderCode(buffer, target, type, context));
 
 export const renderFileViewerMarkdown: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = (
   buffer,

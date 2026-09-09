@@ -1,0 +1,23 @@
+name: FileViewerIOSRegressions
+options:
+  deploymentTarget:
+    iOS: '18.0'
+settings:
+  CODE_SIGNING_ALLOWED: NO
+  GENERATE_INFOPLIST_FILE: YES
+  SWIFT_VERSION: '5.0'
+targets:
+  PDFNavigationTests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [Tests]
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: dev.flyfish.fileviewer.regressiontests
+      TARGETED_DEVICE_FAMILY: '1'
+schemes:
+  PDFNavigation:
+    build:
+      targets:
+        PDFNavigationTests: [test]
+    test:
+      targets: [PDFNavigationTests]
