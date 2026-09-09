@@ -15,7 +15,7 @@
 - HTML offers static preview and exact source views without running scripts or external requests. OFD resolves declared resources and namespaces and rejects invalid required pages without hanging. CAD adds permission-aware, watermarked PNG/JPEG view downloads and corrects DXF LINE and DWF/DWFx contrast.
 - PDF runtime patches carry verifiable source hashes; CHM, Adobe and Illustrator security fixes are reflected in distributed Workers. Independent component source builds include their required inputs, and publication resumes by dependency layer with integrity checks.
 
-The mainline target is `3.0.3` for 87 packages; `msdoc-viewer` advances to `0.2.6`. Upstream engines are DOCX `0.3.30`, styled-exceljs `0.21.5`, CAD `0.8.2` and DWF `0.6.7`. Vue 2.6/2.7 and existing Full capabilities remain supported; pako 3 stays deferred. This patch also includes the HTML views, AMD entry and CAD image-download features.
+The mainline target is `3.0.3` for 87 packages; `msdoc-viewer` advances to `0.2.6`. Upstream engines are DOCX `0.3.31`, styled-exceljs `0.21.6`, CAD `0.8.2` and DWF `0.6.7`. Vue 2.6/2.7 and existing Full capabilities remain supported; pako 3 stays deferred. This patch also includes the HTML views, AMD entry and CAD image-download features.
 
 The private XLS from #227, the deletion-revision file behind the #236 screenshot and the historical #57 OFD remain unavailable. Constructed fixtures and the supplied contract do not establish those originals as fixed.
 

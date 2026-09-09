@@ -19,7 +19,7 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 - HTML 提供静态预览和原始源码切换，不执行脚本或外部请求。OFD 正确处理声明的资源路径和命名空间，必需页面错误不再挂起。CAD 修复 DXF LINE、DWF/DWFx 对比度，PNG/JPEG 当前视图下载遵守权限、钩子和水印。
 - PDF 补丁携带可验证的来源哈希；CHM、Adobe 和 Illustrator 安全修复同步至分发 Worker。独立组件源码构建补齐输入，发布按依赖层批量推进，并按完整性校验安全续跑。
 
-87 个主线包对齐 `3.0.3`，`msdoc-viewer` 升至 `0.2.6`。上游引擎为 DOCX `0.3.30`、styled-exceljs `0.21.5`、CAD `0.8.2` 和 DWF `0.6.7`。Vue 2.6/2.7 和既有 Full 能力不变，pako 3 继续暂缓。本 patch 同时包含 HTML 视图、AMD 入口和 CAD 图片下载等新增能力。
+87 个主线包对齐 `3.0.3`，`msdoc-viewer` 升至 `0.2.6`。上游引擎为 DOCX `0.3.31`、styled-exceljs `0.21.6`、CAD `0.8.2` 和 DWF `0.6.7`。Vue 2.6/2.7 和既有 Full 能力不变，pako 3 继续暂缓。本 patch 同时包含 HTML 视图、AMD 入口和 CAD 图片下载等新增能力。
 
 #227 私有 XLS、#236 删除修订截图对应的文件及历史 #57 OFD 仍缺少原件；构造样本和已提供合同不能替代对应原件的验收。
 

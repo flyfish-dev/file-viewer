@@ -1,6 +1,7 @@
 import type { DocxProgressEvent, Options, renderAsync } from '@file-viewer/docx'
 import JSZip from 'jszip'
 import {
+  DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   resolveFileViewerDocxWorkerJsZipUrl,
   resolveFileViewerDocxWorkerUrl,
   resolveFileViewerRuntimeAssetBaseUrl,
@@ -37,7 +38,6 @@ const DOCX_WORKER_UNSAFE_PROTOCOLS = new Set(['file:', 'about:', 'data:'])
 const DOCX_MIN_SCALE = 0.24
 const DOCX_MAX_SCALE = 3
 const DOCX_ZOOM_STEP = 0.15
-const DOCX_VENDOR_ASSET_VERSION = '0.3.30'
 const ZIP_SIGNATURE_PK = 0x504b
 const WORDPROCESSINGML_NAMESPACE = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 const OFFICE_RELATIONSHIP_NAMESPACE =
@@ -374,11 +374,11 @@ const appendDocxVendorAssetVersion = (url: string | undefined, explicitUrl: bool
   if (/[?&]file-viewer-docx=[^&#]*/.test(url)) {
     return url.replace(
       /([?&])file-viewer-docx=[^&#]*/,
-      `$1file-viewer-docx=${DOCX_VENDOR_ASSET_VERSION}`
+      `$1file-viewer-docx=${DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION}`
     )
   }
 
-  return `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${DOCX_VENDOR_ASSET_VERSION}`
+  return `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION}`
 }
 
 export const applyDocxExternalLinkPolicy = (
