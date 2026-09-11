@@ -69,6 +69,9 @@ jobs:
       - name: Run the issue regression gates
         run: pnpm test
 
+      - name: Verify optional IFC entry ownership and installed CLI execution
+        run: pnpm --filter @file-viewer/renderer-3d verify:ifc
+
       - name: Verify bounded metadata parsing and Illustrator namespace hints
         run: pnpm exec vitest run test/metadata-input-safety.spec.ts test/chm-renderer.spec.ts
 
@@ -83,6 +86,11 @@ jobs:
 
       - name: Install Chromium and WebKit
         run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Verify official IFC4 and IFC4.3 rendering, picking and Worker cleanup
+        run: |
+          node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
+          pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples
 
       - name: Verify PDF Worker cancellation
         run: |
