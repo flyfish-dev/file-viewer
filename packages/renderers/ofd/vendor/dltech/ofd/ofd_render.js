@@ -470,8 +470,9 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
     for (const textCodePoint of textCodePointList) {
         if (textCodePoint && !isNaN(textCodePoint.x)) {
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', textCodePoint.x);
-            text.setAttribute('y', textCodePoint.y);
+            text.setAttribute('x', textCodePoint.xPositions?.join(' ') || textCodePoint.x);
+            text.setAttribute('y', textCodePoint.yPositions?.join(' ') || textCodePoint.y);
+            text.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
             text.textContent = textCodePoint.text;
             if (ctm) {
                 const ctms = parseCtm(ctm);
@@ -484,7 +485,7 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
             const textFillColor = defaultFillColor || defaultStrokeColor || 'rgb(0, 0, 0)';
             text.setAttribute('fill', textFillColor);
             text.setAttribute('fill-opacity', defaultFillOpacity);
-            text.setAttribute('style', `font-weight: ${weight};font-size:${size}px;font-family: ${getFontFamily(fontResObj[font])};color:${textFillColor};`)
+            text.setAttribute('style', `white-space:pre;font-weight: ${weight};font-size:${size}px;font-family: ${getFontFamily(fontResObj[font])};color:${textFillColor};`)
             svg.appendChild(text);
         }
 

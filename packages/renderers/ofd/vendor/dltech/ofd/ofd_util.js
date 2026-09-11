@@ -142,98 +142,54 @@ export const converterDpi = function (width) {
     return millimetersToPixel(width, Scale * 25.4);
 }
 
-export const deltaFormatter = function (delta) {
-    if (delta.indexOf("g") === -1) {
-        let floatList = [];
-        for (let f of delta.split(' ')) {
-            floatList.push(parseFloat(f));
+export const deltaFormatter = function (delta, maxValues = 100000) {
+    const tokens = String(delta ?? '').trim().split(/\s+/);
+    const values = [];
+    const limit = Math.max(0, Math.min(100000, maxValues));
+    for (let i = 0; i < tokens.length && values.length < limit; i++) {
+        let count = 1;
+        if (tokens[i] === 'g') {
+            count = Number(tokens[++i]);
+            i++;
+            if (!Number.isSafeInteger(count) || count < 0) break;
         }
-        return floatList;
-    } else {
-        const array = delta.split(' ');
-        let gFlag = false;
-        let gProcessing = false;
-        let gItemCount = 0;
-        let floatList = [];
-        for (const s of array) {
-            if ('g' === s) {
-                gFlag = true;
-            } else {
-                if (!s || s.trim().length == 0) {
-                    continue;
-                }
-                if (gFlag) {
-                    gItemCount = parseInt(s);
-                    gProcessing = true;
-                    gFlag = false;
-                } else if (gProcessing) {
-                    for (let j = 0; j < gItemCount; j++) {
-                        floatList.push(parseFloat(s));
-                    }
-                    gProcessing = false;
-                } else {
-                    floatList.push(parseFloat(s));
-                }
-            }
-        }
-        return floatList;
+        const value = Number(tokens[i]);
+        if (!tokens[i] || !Number.isFinite(value)) break;
+        count = Math.min(count, limit - values.length);
+        for (let j = 0; j < count; j++) values.push(value);
     }
+    return values;
 }
 
 export const calTextPoint = function (textCodes) {
-    let x = 0;
-    let y = 0;
-    let textCodePointList = [];
-    if (!textCodes) {
-        return textCodePointList;
-    }
-    for (let textCode of textCodes) {
-        if (!textCode) {
-            continue
-        }
-        x = parseFloat(textCode['@_X']);
-        y = parseFloat(textCode['@_Y']);
-
-        if (isNaN(x)) {
-            x = 0;
-        }
-        if (isNaN(y)) {
-            y = 0;
-        }
-
-        let deltaXList = [];
-        let deltaYList = [];
-        if (textCode['@_DeltaX'] && textCode['@_DeltaX'].length > 0) {
-            deltaXList = deltaFormatter(textCode['@_DeltaX']);
-        }
-        if (textCode['@_DeltaY'] && textCode['@_DeltaY'].length > 0) {
-            deltaYList = deltaFormatter(textCode['@_DeltaY']);
-        }
-        let textStr = textCode['#text'];
-        if (textStr) {
-            textStr += '';
-            textStr = decodeOfdText(textStr);
-            for (let i = 0; i < textStr.length; i++) {
-                if (i > 0 && deltaXList.length > 0) {
-                    x += deltaXList[(i - 1)];
-                }
-                if (i > 0 && deltaYList.length > 0) {
-                    y += deltaYList[(i - 1)];
-                }
-                let text = textStr.substring(i, i + 1);
-                let filterPointY = textCodePointList.filter((textCodePoint) => {
-                    return textCodePoint.y == converterDpi(y)
-                });
-                if (filterPointY && filterPointY.length) { // Y坐标相同，无需再创建text标签
-                    filterPointY[0].text += text;
-                } else {
-                    let textCodePoint = { 'x': converterDpi(x), 'y': converterDpi(y), 'text': text };
-                    textCodePointList.push(textCodePoint);
-                }
+    const runs = [];
+    for (const code of textCodes || []) {
+        if (code == null) continue;
+        const value = typeof code === 'string' ? code : code['#text'];
+        if (value == null || value === '') continue;
+        const text = decodeOfdText(String(value));
+        const count = Array.from(text).length;
+        const finite = value => Number.isFinite(Number.parseFloat(value)) ? Number.parseFloat(value) : 0;
+        const x = finite(code['@_X']);
+        const y = finite(code['@_Y']);
+        const positions = (start, delta) => {
+            const list = [converterDpi(start)];
+            for (const offset of deltaFormatter(delta, count - 1)) {
+                start += offset;
+                list.push(converterDpi(start));
             }
-        }
+            return list;
+        };
+        // One SVG text run per TextCode preserves shaping and avoids one DOM
+        // node per glyph. Position lists honor explicit advances (including
+        // spaces); omitted advances retain the browser's natural text advance.
+        runs.push({
+            x: converterDpi(x), y: converterDpi(y), text,
+            xPositions: positions(x, code['@_DeltaX']),
+            yPositions: positions(y, code['@_DeltaY']),
+        });
     }
-    return textCodePointList;
+    return runs;
 }
 
 export const replaceFirstSlash = function (str) {
