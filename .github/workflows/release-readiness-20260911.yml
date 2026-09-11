@@ -1,0 +1,56 @@
+name: Release readiness preparation
+on:
+  push:
+    branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/release-readiness-20260911.yml]
+permissions:
+  contents: read
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: fix/word-ofd-sample-layout-266
+          fetch-depth: 0
+      - name: Merge current main without losing either regression gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          if ! git merge origin/main --no-commit --no-ff; then
+            test "$(git diff --name-only --diff-filter=U)" = package.json
+            git show HEAD:package.json > /tmp/ours.json
+            git show origin/main:package.json > /tmp/theirs.json
+            node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const ours=JSON.parse(fs.readFileSync('/tmp/ours.json'));
+          const theirs=JSON.parse(fs.readFileSync('/tmp/theirs.json'));
+          const result={...theirs,scripts:{...theirs.scripts,...ours.scripts}};
+          const gates=[...new Set([...theirs.scripts.test.split(' && '),...ours.scripts.test.split(' && ')])];
+          result.scripts.test=gates.join(' && ');
+          fs.writeFileSync('package.json',JSON.stringify(result,null,2)+'\n');
+          JS
+            git add package.json
+          fi
+          if ! git diff --cached --quiet; then git diff --cached --check; git commit -m 'merge: retain both PPTX and Word/OFD regression gates'; fi
+          git push origin HEAD:refs/heads/fix/word-ofd-sample-layout-266
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Export exact public source and local test runtime
+        run: |
+          mkdir -p /tmp/release-baseline
+          git rev-parse HEAD > /tmp/release-baseline/commit.txt
+          git archive --format=tar HEAD | gzip > /tmp/release-baseline/source.tar.gz
+          cp "$(which node)" /tmp/release-baseline/node
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-integrated-baseline
+          path: /tmp/release-baseline
+          retention-days: 1
