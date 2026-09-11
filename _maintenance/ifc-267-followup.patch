@@ -1,0 +1,30 @@
+diff --git a/packages/renderers/3d/scripts/verify-ifc-browser.mjs b/packages/renderers/3d/scripts/verify-ifc-browser.mjs
+index 6af36a3..1ef7024 100644
+--- a/packages/renderers/3d/scripts/verify-ifc-browser.mjs
++++ b/packages/renderers/3d/scripts/verify-ifc-browser.mjs
+@@ -49,7 +49,7 @@ const built = await build({
+   logLevel: "silent",
+ });
+ const entry = Object.entries(built.metafile.outputs).find(([, value]) =>
+-  value.entryPoint?.endsWith("/dist/ifc.js"),
++  value.entryPoint && resolve(value.entryPoint) === resolve(here, "../dist/ifc.js"),
+ );
+ assert.ok(entry);
+ assert.ok(entry[1].bytes < 10_000, `Entry not lazy: ${entry[1].bytes}`);
+@@ -192,7 +192,7 @@ try {
+             y = r.top + r.height * fy;
+           const hit = await model.raycast({
+             camera: world.camera.three,
+-            mouse: { x, y },
++            mouse: world.renderer.getSize().clone().set(x, y),
+             dom: canvas,
+           });
+           if (hit) return { x, y, localId: hit.localId };
+@@ -207,6 +207,7 @@ try {
+         String(id),
+       hit.localId,
+     );
++    await page.waitForFunction(() => extension.world.renderer.three.info.render.triangles > 0);
+     const drawn = await page.evaluate(() => ({
+       calls: extension.world.renderer.three.info.render.calls,
+       triangles: extension.world.renderer.three.info.render.triangles,
