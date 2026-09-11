@@ -22,6 +22,10 @@ blob:`, WASM execution via `script-src 'wasm-unsafe-eval'`, and the usual local 
 style and data/blob-image permissions of the host. Neither COOP/COEP nor a threaded
 WASM build is required for the default single import Worker.
 
+Model identifiers use Three.js's non-security UUID utility, not the secure-context-only
+`crypto.randomUUID()` API. The browser regression removes that API before loading both
+official models and still verifies selection, properties and complete Worker cleanup.
+
 ```ts
 import { modelRenderer } from '@file-viewer/renderer-3d'
 import { createIfcRenderer } from '@file-viewer/renderer-3d/ifc'
