@@ -1,0 +1,35 @@
+name: Inspect qualified IFC push
+on:
+  push:
+    branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/inspect-ifc-push-result.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Extract only the final commit and push diagnostics
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ifc-push-diagnostic
+          gh api repos/flyfish-dev/file-viewer/actions/jobs/103340605429/logs > /tmp/qualified.log
+          python3 - <<'PY'
+          from pathlib import Path
+          lines=Path('/tmp/qualified.log').read_text(encoding='utf-8-sig').splitlines()
+          starts=[i for i,line in enumerate(lines) if 'mkdir -p docs/regressions/issue-267' in line]
+          start=starts[-1] if starts else max(0,len(lines)-180)
+          selected=lines[start:start+120]
+          text='\n'.join(line[:2000] for line in selected)
+          Path('/tmp/ifc-push-diagnostic/push.log').write_text(text)
+          print(text)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: qualified-ifc-push-diagnostic
+          path: /tmp/ifc-push-diagnostic
+          retention-days: 1
