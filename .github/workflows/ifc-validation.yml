@@ -1,0 +1,294 @@
+name: IFC Validation
+
+on:
+  push:
+    branches: [feature/ifc-web-ifc]
+    paths:
+      - '.github/workflows/ifc-validation.yml'
+      - '.github/scripts/renderer-dependency-plan.mjs'
+      - 'ecosystem/wrappers.json'
+      - 'packages/core/src/output/**'
+      - 'packages/renderers/geometry-engine/**'
+      - 'packages/renderers/3d/**'
+      - 'packages/capabilities/ifc/**'
+      - 'packages/tools/assets-ifc/**'
+      - 'packages/tools/assets-model/**'
+      - 'packages/presets/engineering/**'
+      - 'packages/presets/all/**'
+      - 'test/ifc-optional-capability.spec.ts'
+      - 'test/fixtures/ifc/**'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ifc-validation-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Optional IFC capability, assets and browser smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 11.0.9
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build IFC integration boundary
+        shell: bash
+        run: |
+          mkdir -p output/ifc-validation
+          set -o pipefail
+          {
+            pnpm build:core
+            pnpm --filter @file-viewer/geometry-engine build
+            pnpm --filter @file-viewer/renderer-3d build
+            pnpm --filter @file-viewer/capability-ifc build
+            pnpm --filter @file-viewer/renderer-3d type-check
+            pnpm --filter @file-viewer/capability-ifc type-check
+          } 2>&1 | tee output/ifc-validation/build.log
+
+      - name: Stage and verify self-hosted IFC assets
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm --filter @file-viewer/assets-ifc verify 2>&1 | tee output/ifc-validation/stage-assets.log
+
+      - name: Verify staged web-ifc and Fragments capability assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          root='packages/tools/assets-ifc/viewer/wasm/model'
+          test -s "$root/web-ifc-api.js"
+          test -s "$root/web-ifc.wasm"
+          test -s "$root/web-ifc-mt.wasm"
+          test -s "$root/LICENSE.web-ifc-MPL-2.0.md"
+          test -s "$root/fragments-worker.mjs"
+          test -s "$root/LICENSE.thatopen-fragments-MIT.txt"
+          grep -q 'Mozilla Public License' "$root/LICENSE.web-ifc-MPL-2.0.md"
+          grep -q 'MIT License' "$root/LICENSE.thatopen-fragments-MIT.txt"
+          node -e "const m=require('./packages/tools/assets-ifc/viewer/file-viewer-asset-pack.json'); const ids=new Set(m.rendererAssetManifests.find(x=>x.rendererId==='model').assets.map(x=>x.id)); for (const id of ['model-web-ifc-api','model-web-ifc-wasm','model-web-ifc-mt-wasm','model-web-ifc-license','model-thatopen-fragments-worker','model-thatopen-fragments-license']) if(!ids.has(id)) throw new Error('missing '+id)"
+
+      - name: Audit renderer dependency boundaries
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm audit:renderer-deps 2>&1 | tee output/ifc-validation/dependency-audit.log
+
+      - name: Verify IFC optional-package, routing and pass-through contract
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm exec vitest run test/ifc-optional-capability.spec.ts 2>&1 | tee output/ifc-validation/contract-test.log
+
+      - name: Prepare browser smoke page from committed fixtures
+        shell: bash
+        run: |
+          mkdir -p output/ifc-smoke/wasm/model
+          cp test/fixtures/ifc/Building-Architecture.ifc output/ifc-smoke/
+          cp test/fixtures/ifc/Building-Structural.ifc output/ifc-smoke/
+          cp packages/tools/assets-ifc/viewer/wasm/model/web-ifc-api.js output/ifc-smoke/wasm/model/
+          cp packages/tools/assets-ifc/viewer/wasm/model/web-ifc.wasm output/ifc-smoke/wasm/model/
+          cp packages/tools/assets-ifc/viewer/wasm/model/web-ifc-mt.wasm output/ifc-smoke/wasm/model/
+          cp packages/tools/assets-ifc/viewer/wasm/model/fragments-worker.mjs output/ifc-smoke/wasm/model/
+          cat > output/ifc-smoke/index.html <<'EOF'
+          <!doctype html>
+          <html>
+            <head><meta charset="utf-8"><title>IFC smoke</title></head>
+            <body style="margin:0"><div id="app" style="width:1100px;height:760px"></div><script type="module" src="/output/ifc-smoke/main.js"></script></body>
+          </html>
+          EOF
+          cat > output/ifc-smoke/main.js <<'EOF'
+          window.__ifcSmoke = { done: false, ok: false, phase: 'boot', results: [] }
+          window.__ifcThatOpenBridge = null
+
+          const withTimeout = (promise, label, timeoutMs = 60_000) => Promise.race([
+            promise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error(`${label} timed out after ${timeoutMs}ms`)), timeoutMs)),
+          ])
+
+          try {
+            window.__ifcSmoke.phase = 'load-capability'
+            await import('/packages/capabilities/ifc/dist/index.js')
+            const { renderFileViewerModel } = await import('/packages/renderers/3d/dist/index.js')
+            const target = document.querySelector('#app')
+
+            const runFixture = async (filename, backend, extraIfc = {}) => {
+              const label = `${filename}:${backend}`
+              window.__ifcSmoke.phase = label
+              const response = await fetch(`/output/ifc-smoke/${filename}`)
+              if (!response.ok) throw new Error(`${filename} HTTP ${response.status}`)
+              const session = await withTimeout(
+                renderFileViewerModel(await response.arrayBuffer(), target, 'ifc', {
+                  filename,
+                  options: {
+                    ifc: {
+                      backend,
+                      forceSingleThread: true,
+                      apiUrl: '/output/ifc-smoke/wasm/model/web-ifc-api.js',
+                      wasmUrl: '/output/ifc-smoke/wasm/model/web-ifc.wasm',
+                      wasmMtUrl: '/output/ifc-smoke/wasm/model/web-ifc-mt.wasm',
+                      ...extraIfc,
+                    },
+                  },
+                }),
+                label,
+              )
+              const root = target.querySelector('[data-model-format="ifc"]')
+              const result = {
+                filename,
+                requestedBackend: backend,
+                backend: root?.dataset.ifcBackend || '',
+                largeModel: root?.dataset.ifcLargeModel || '',
+                ok: root?.dataset.modelStatus === 'ready',
+                schema: root?.dataset.ifcSchema || '',
+                elements: Number(root?.dataset.ifcElementCount || 0),
+                meshes: Number(root?.dataset.modelMeshCount || 0),
+                canvas: root?.querySelectorAll('canvas').length || 0,
+                state: root?.dataset.modelStatus,
+              }
+              session?.unmount?.()
+              return result
+            }
+
+            const results = []
+            for (const filename of ['Building-Architecture.ifc', 'Building-Structural.ifc']) {
+              results.push(await runFixture(filename, 'web-ifc'))
+            }
+
+            results.push(await runFixture('Building-Architecture.ifc', 'auto', {
+              performance: {
+                largeModelThresholdBytes: 1,
+                preferFragmentsForLargeModels: true,
+              },
+              thatOpen: {
+                workerUrl: '/output/ifc-smoke/wasm/model/fragments-worker.mjs',
+                fragments: {
+                  maxUpdateRate: 73,
+                },
+                configure({ fragments, loader, model }) {
+                  window.__ifcThatOpenBridge = {
+                    runtimeReady: Boolean(fragments && loader && model),
+                    maxUpdateRate: fragments?.core?.settings?.maxUpdateRate,
+                  }
+                },
+              },
+            }))
+
+            window.__ifcSmoke = {
+              done: true,
+              ok: true,
+              phase: 'done',
+              results,
+              bridge: window.__ifcThatOpenBridge,
+            }
+          } catch (error) {
+            window.__ifcSmoke = {
+              done: true,
+              ok: false,
+              phase: window.__ifcSmoke?.phase || 'unknown',
+              error: error?.stack || String(error),
+              results: window.__ifcSmoke?.results || [],
+              bridge: window.__ifcThatOpenBridge,
+            }
+          }
+          EOF
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Browser smoke with direct web-ifc and That Open Fragments
+        shell: bash
+        run: |
+          pnpm --filter @flyfish-group/file-viewer-demo exec vite ../.. --host 127.0.0.1 --port 4173 >output/ifc-smoke/vite.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid || true' EXIT
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:4173/output/ifc-smoke/ >/dev/null; then break; fi
+            sleep 1
+          done
+          set -o pipefail
+          node --input-type=module <<'EOF' 2>&1 | tee output/ifc-validation/browser-smoke.log
+          import { chromium } from 'playwright'
+          const browser = await chromium.launch({ headless: true })
+          const page = await browser.newPage()
+          const consoleErrors = []
+          page.on('console', message => {
+            if (message.type() === 'error') consoleErrors.push(message.text())
+          })
+          await page.goto('http://127.0.0.1:4173/output/ifc-smoke/', { waitUntil: 'networkidle' })
+          await page.waitForFunction(() => window.__ifcSmoke?.done === true, null, { timeout: 180000 })
+          const smoke = await page.evaluate(() => window.__ifcSmoke)
+          console.log(JSON.stringify({ smoke, consoleErrors }, null, 2))
+          if (!smoke?.ok) throw new Error(`[${smoke?.phase || 'unknown'}] ${smoke?.error || 'IFC smoke did not complete'}`)
+          if (!Array.isArray(smoke.results) || smoke.results.length !== 3) throw new Error('Expected three IFC backend results')
+          for (const result of smoke.results) {
+            if (!result.ok || result.state !== 'ready') throw new Error(`${result.filename}:${result.requestedBackend} did not become ready`)
+            if (!result.schema) throw new Error(`${result.filename}:${result.requestedBackend} did not report an IFC schema`)
+            if (result.canvas !== 1) throw new Error(`${result.filename}:${result.requestedBackend} expected one canvas, got ${result.canvas}`)
+          }
+          for (const result of smoke.results.slice(0, 2)) {
+            if (result.backend !== 'web-ifc') throw new Error(`${result.filename} did not use the direct web-ifc backend`)
+            if (!(result.elements > 0)) throw new Error(`${result.filename} indexed no IFC elements`)
+            if (!(result.meshes > 0)) throw new Error(`${result.filename} rendered no IFC meshes`)
+          }
+          const fragments = smoke.results[2]
+          if (fragments.backend !== 'thatopen') throw new Error(`Large-model auto route used ${fragments.backend || 'no backend'} instead of thatopen`)
+          if (fragments.largeModel !== 'true') throw new Error('Large-model auto route did not mark the IFC as large')
+          if (!smoke.bridge?.runtimeReady) throw new Error('That Open raw runtime configure hook did not receive the expected objects')
+          if (smoke.bridge?.maxUpdateRate !== 73) throw new Error(`Fragments pass-through was not applied: ${smoke.bridge?.maxUpdateRate}`)
+          if (consoleErrors.length) throw new Error(`Browser console errors: ${consoleErrors.join(' | ')}`)
+          await browser.close()
+          EOF
+
+      - name: Set up Flyfish full-build Rust/WASM prerequisites
+        shell: bash
+        run: |
+          rustup target add wasm32-unknown-unknown
+          if ! command -v wasm-bindgen >/dev/null 2>&1 || [[ "$(wasm-bindgen --version)" != *"0.2.127"* ]]; then
+            cargo install wasm-bindgen-cli --version 0.2.127 --locked
+          fi
+          cargo test --manifest-path packages/renderers/chm/rust/Cargo.toml --locked
+
+      - name: Run Flyfish source gates in public-CI order
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            pnpm verify:github-governance
+            pnpm build
+            pnpm type-check
+            pnpm test
+          } 2>&1 | tee output/ifc-validation/flyfish-gates.log
+
+      - name: Upload IFC validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ifc-validation-${{ github.run_id }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            output/ifc-validation
+            output/ifc-smoke/vite.log

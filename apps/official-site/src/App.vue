@@ -381,7 +381,7 @@ const copy = {
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
     releaseTitle:
-      'v3.0.3 已发布：88 个 npm 目标、Word 修订与 DOC 排版修复、浏览器集成与 iPhone PDF 导航回归；Vue 2 和既有 Full 契约保持兼容。',
+      'v3.0.3 已发布：90 个 npm 目标、Word 修订与 DOC 排版修复、浏览器集成与 iPhone PDF 导航回归；Vue 2 和既有 Full 契约保持兼容。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -434,7 +434,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v3.0.3 ships 88 npm targets, Word revision and DOC typography fixes, browser integration updates, and the iPhone PDF navigation regression; Vue 2 and existing Full contracts remain compatible.',
+      'v3.0.3 ships 90 npm targets, Word revision and DOC typography fixes, browser integration updates, and the iPhone PDF navigation regression; Vue 2 and existing Full contracts remain compatible.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -463,7 +463,7 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm 发布目标',
-          value: '84',
+          value: '90',
           detail: '76 个标准包、7 个同版本 alias，msdoc-viewer 独立版本',
           tone: 'amber'
         }
@@ -489,7 +489,7 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm targets',
-          value: '84',
+          value: '90',
           detail:
             '76 standard packages, 7 same-line aliases, and independently versioned msdoc-viewer',
           tone: 'amber'

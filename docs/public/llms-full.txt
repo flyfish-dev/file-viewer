@@ -6,7 +6,7 @@ File Viewer by Flyfish is a TypeScript file preview project for browser, offline
 
 - Version: 3.0.3
 - Current published version: 3.0.3
-- Source matrix npm targets: 88
+- Source matrix npm targets: 90
 - Registered extension mappings: 266 (224 stable, 42 experimental)
 - Preview pipelines: 45
 - License: File Viewer-authored source and packages use Apache-2.0. Bundled third-party engines retain their own notices.

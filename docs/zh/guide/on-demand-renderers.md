@@ -65,12 +65,13 @@
 
 ## 可选专业 renderer
 
-Adobe 设计、DICOM 与数字签名检查都是显式可选能力，不属于八个已发布 `@file-viewer/*-full` 包或冻结的 `@file-viewer/preset-all` 兼容基线。这样普通升级不会额外引入专业 Worker/WASM、医学影像或密码学重依赖，也不会改变 Full 包已经发布的能力边界。
+Adobe 设计、DICOM、数字签名检查与 IFC / BIM 都是显式可选能力，不属于八个已发布 `@file-viewer/*-full` 包或冻结的 `@file-viewer/preset-all` 兼容基线。这样普通升级不会额外引入专业 Worker/WASM、医学影像或密码学重依赖，也不会改变 Full 包已经发布的能力边界。
 
 | 可选 renderer | 格式 | 直接安装 | CLI 选择 | 能力边界 |
 | --- | --- | --- | --- | --- |
 | **Adobe 设计** (`@file-viewer/renderer-design`) | `.psd`、`.psb`、`.pdd`、`.psdt`、`.ai`、`.ait`、`.eps`、`.ps`、`.idml`、`.icml`、`.idms`、`.inx`、`.xd`、`.indd`、`.indt`、`.fla`、`.xfl`、`.ase`、`.aco`、`.abr`、`.csh`、`.pat`、`.grd`、`.asl` | `npm install @file-viewer/renderer-design` | `npx file-viewer-cli config add psd --write` | 在浏览器本地通过 Worker/WASM 预览 Photoshop 保存像素与受支持图层；Illustrator 高还原 PDF-compatible 表面以及可切换的 `illustrator-pgf` 原生 PGF 画板、图层、路径；IDML/exchange 结构、XD/INDD 嵌入预览、现代 XFL、色板、Photoshop 资源和 PostScript；未知操作符与原生语义边界会明确显示。 |
 | **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`、`.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | 预览一个本地 DICOM Part 10 文件，支持多帧导航、窗宽/窗位、缩放、拖动、旋转、适配视图和基础元数据；不负责 study 组装、PACS/DICOMweb、MPR、分割或诊断。 |
+| **IFC / BIM** (`@file-viewer/capability-ifc`) | `.ifc` | `npm install @file-viewer/capability-ifc @file-viewer/assets-ifc` | `npx file-viewer-cli config add ifc --write` | 浏览器本地 `web-ifc` 解析、旋转/平移/缩放、适配模型、元素选择、`Name` / `GlobalId` 与属性集/工程量集检查；不包含 BIM 编辑、碰撞、BCF、工程量计算、剖切或测量。 |
 | **数字签名** (`@file-viewer/renderer-signature`) | `.p7m`、`.p7s`、`.p7c`、`.p7b`、`.pkcs7`、`.cms`、`.cmsc`、`.tsd`、`.tst`、`.tsq`、`.tsr`、`.asics`、`.scs`、`.asice`、`.sce`、`.ers`、`.asc`、`.sig`、`.pgp`、`.gpg`、`.jws` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | 在浏览器本地做有界容器检查，并分开报告解析、摘要、签名和时间戳结果。 |
 
 ### 已经使用 Full 包时
@@ -80,13 +81,14 @@ Adobe 设计、DICOM 与数字签名检查都是显式可选能力，不属于�
 保留现有 Full 包，只安装业务真正需要的专业 renderer。下面示例同时启用三个当前可选能力；不需要某项时，删除对应安装、import 和数组成员即可：
 
 ```bash
-npm install @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature
+npm install @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature @file-viewer/capability-ifc @file-viewer/assets-ifc
 ```
 
 ```ts
 import { designRenderer } from '@file-viewer/renderer-design'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
 import { signatureRenderer } from '@file-viewer/renderer-signature'
+import '@file-viewer/capability-ifc'
 
 const options = {
   rendererMode: 'extend',
@@ -113,7 +115,7 @@ npx file-viewer-cli install --yes
 
 直接安装 Full 包与选择 CLI `full` profile 是两个有意区分的入口：Full 包保持已发布的 `preset-all` 兼容基线；CLI `full` 保留对应 Full 包，默认只追加既有 DICOM/签名能力。Adobe 设计只有在 `config add`、`--formats` 或 `--capabilities` 明确选择后才加入，并先展示体积与许可证边界。
 
-预构建 `web-full` IIFE 只包含已发布的 Full renderer 集合，不内置 Adobe 设计、DICOM 与数字签名 renderer。需要这些能力时，应使用包管理项目或 CLI 生成集成；把可选包复制到 IIFE 旁边并不会完成注册。
+预构建 `web-full` IIFE 只包含已发布的 Full renderer 集合，不内置 Adobe 设计、DICOM、数字签名 renderer 或 IFC capability/runtime。需要这些能力时，应使用包管理项目或 CLI 生成集成；把可选包复制到 IIFE 旁边并不会完成注册。
 
 数字签名 renderer 可以把安全提取出的 PDF、XML、图片、Office 等内容交回普通嵌套预览链路，因此需要同时保留对应 renderer。密码学验证结果不等于证书或密钥可信，也不能判定合格签名、政策合规或法律效力。
 
@@ -297,7 +299,7 @@ const options = {
 | `@file-viewer/renderer-presentation` | `presentationRenderer` | 二进制 `.ppt` 使用 `@file-viewer/ppt`；OpenXML 演示文稿使用 `@file-viewer/pptx` |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG、DXF、DWF、DWFx、XPS |
-| `@file-viewer/renderer-3d` | `modelRenderer` | 3D 模型和轻量几何签名 |
+| `@file-viewer/renderer-3d` | `modelRenderer` | 通用 3D、OCCT 工程网格以及显式 IFC capability 钩子 |
 | `@file-viewer/renderer-design` | `designRenderer` | PSD/PSB/PDD/PSDT、AI/AIT、EPS/PS、IDML/ICML/IDMS/INX、XD、INDD/INDT、现代 FLA/XFL、ASE/ACO 与 ABR/CSH/PAT/GRD/ASL |
 | `@file-viewer/renderer-dicom` | `dicomRenderer` | 在标准 Viewer 入口中选择启用的本地 DICOM Part 10 单文件与多帧预览 |
 | `@file-viewer/renderer-signature` | `signatureRenderer` | 在标准 Viewer 入口中选择启用的 CMS/CAdES、时间戳、ASiC、证据记录、JWS 与公开 OpenPGP 检查 |

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "id": "ifc",
+  "packageName": "@file-viewer/assets-ifc",
+  "copyGroups": ["model"],
+  "receiptFilename": "file-viewer-assets-ifc.receipt.json"
+}

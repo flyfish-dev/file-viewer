@@ -88,7 +88,7 @@ if (!result.previewable) {
 | `text` | Set `toolbar: false` to hide the renderer-local metadata bar and `lineNumbers: true` for a copy-safe gutter. `wrapLongLines: true` visually wraps logical lines without changing source bytes and also applies to the bounded large-text view. `prettyPrint: true` lazily formats supported structured text for display with Prettier; a badge and toolbar switch distinguish the formatted representation from the original source. `prettyPrintMaxBytes` limits only formatting and defaults to the effective `virtualizeAboveBytes` value (512 KiB when omitted). Oversized, malformed, or unsupported input falls back without error, after which the existing regular/virtual renderer remains authoritative. Markdown stays rendered by default; use `markdownVirtualizeAboveBytes` only for exceptionally large source inspection. The legacy `*-full` script-tag IIFE assets do not bundle Prettier, so `prettyPrint` falls back to the original source there. |
 | `ai` | Text chunk collection for vectorization, source tracing, source-aware highlighting, and audit workflows. It does not call a cloud model by itself. |
 | `archive` | Safe extraction limits, IndexedDB cache behavior, worker timeout, nested preview, and self-hosted libarchive paths. |
-| `pdf`, `docx`, `spreadsheet`, `cad`, `typst`, `drawing`, `data` | Renderer-specific asset URLs and behavior knobs. |
+| `pdf`, `docx`, `spreadsheet`, `cad`, `typst`, `drawing`, `data`, `ifc` | Renderer-specific asset URLs and behavior knobs. |
 | `cad.showImageExport` | Show the renderer-local PNG/JPEG buttons, default `true`. Hiding them does not change the shared original-file download button; download and HTML-export permission gates still apply. |
 | `presentation.workerUrl` | Optional explicit PPTX Worker URL. Otherwise the renderer discovers the standard copied asset manifest under the application asset base, then retains the package's development fallback. See [Angular integration](/guide/quickstart-web). |
 | `hooks` | Load start, load complete, unload start, unload complete, errors, and renderer context callbacks. |
@@ -115,7 +115,7 @@ Every renderer below can be passed through `options.renderers`:
 | `@file-viewer/renderer-presentation` | `presentationRenderer` | Binary PPT through `@file-viewer/ppt`; PPTX/PPTM/POTX/POTM/PPSX/PPSM through `@file-viewer/pptx`; both load on demand |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG, DXF, DWF, DWFx, XPS |
-| `@file-viewer/renderer-3d` | `modelRenderer` | GLB, GLTF, OBJ, STL, PLY, FBX, DAE, USD; local OCCT preview for STEP/STP, IGES/IGS, and BREP; signature and integration guidance for IFC/3DM |
+| `@file-viewer/renderer-3d` | `modelRenderer` | General 3D / OCCT; IFC additionally requires `@file-viewer/capability-ifc` and `@file-viewer/assets-ifc` |
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io, Excalidraw, Mermaid, PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON, KML, GPX, SHP |

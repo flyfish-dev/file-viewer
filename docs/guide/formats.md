@@ -25,9 +25,10 @@
 | Email | `eml`, `msg`, `mbox` |
 | Medical images (explicit opt-in) | `dcm`, `dicom` through `@file-viewer/renderer-dicom`; one bounded local Part 10 file, including multi-frame navigation |
 | Digital signatures (explicit opt-in) | `p7m`, `p7s`, `p7b`, `p7c`, `pkcs7`, `cms`, `cmsc`, `tsq`, `tsr`, `tst`, `tsd`, `asics`, `scs`, `asice`, `sce`, `ers`, `asc`, `sig`, `pgp`, `gpg`, `jws` through `@file-viewer/renderer-signature` |
+| IFC / BIM (explicit opt-in) | `.ifc` through `@file-viewer/capability-ifc` over `@file-viewer/renderer-3d`; browser-local `web-ifc`, self-hosted API/WASM, orbit/pan/zoom, fit, element selection and property-set inspection |
 | Diagrams and mind maps | `xmind`, `drawio`, `dio`, `excalidraw`, `mermaid`, `mmd`, `plantuml`, `puml` |
 | CAD and engineering | `dwg`, `dxf`, `dwf`, `dwfx`, `xps`, plus EDA files such as `gds`, `oas`, `oasis`, `olb`, `dra` |
-| 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `ifc`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp` |
+| 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp` |
 | Text, code, and data | Markdown, source code, logs, JSON, YAML, TOML, SQL, IPYNB, SQLite, WASM, Parquet, Avro |
 | Adobe design files (explicit opt-in) | `psd`, `psb`, `pdd`, `psdt`, `ai`, `ait`, `eps`, `ps`, `idml`, `icml`, `idms`, `inx`, `xd`, `indd`, `indt`, `fla`, `xfl`, `ase`, `aco`, `abr`, `csh`, `pat`, `grd`, `asl` through `@file-viewer/renderer-design` |
 | Media and assets | Images, SVG, HEIC, audio, video, HLS, and fonts |
@@ -58,7 +59,7 @@ The full machine-readable matrix, including containers, levels, status, and limi
 - CAD uses `@file-viewer/renderer-cad` and `@flyfish-dev/cad-viewer`; DWG, DWF, and DWFx assets remain self-hostable for offline deployments.
 - Archives use `@file-viewer/renderer-archive` with `libarchive.js` Worker + WASM first, then ZIP/TAR/GZIP compatibility fallback when the Worker cannot start. Legacy ZIP files without the UTF-8 filename flag are decoded with GBK/GB18030 detection so Chinese entry names remain readable in the compatibility path.
 - Media uses `@file-viewer/renderer-media` and native browser decoders first. When Chromium rejects an MPEG-4 Part 2 (`mp4v`) Simple Profile track, the renderer loads a dedicated Worker and the Apache-2.0 AOSP PacketVideo decoder. It uses the AAC track as the playback clock and draws decoded I420 frames to a Canvas. The WASM file is 111,379 bytes, or 34,410 bytes with gzip, and loads only after native decoding fails. The implementation contains no FFmpeg, libav, or LGPL/GPL/AGPL source. Files outside the decoder's current coverage get an explicit compatibility notice.
-- STEP, IGES, IFC, 3DM, and BREP use the `@file-viewer/renderer-3d` entry plus the lightweight `@file-viewer/geometry-engine` route package for signature detection and accurate conversion guidance. Full visual decoding still belongs in dedicated OpenCascade / web-ifc / rhino3dm WASM paths, not in core or default component installs.
+- STEP / STP, IGES / IGS, and BREP use `@file-viewer/renderer-3d` plus the local OCCT Worker/WASM path. IFC/BIM is an explicit `@file-viewer/capability-ifc` enhancement with self-hosted `@file-viewer/assets-ifc`; 3DM still needs a dedicated `rhino3dm` renderer.
 
 ## Binary PPT Engine License Boundary
 

@@ -47,6 +47,10 @@
 | GDSII | `@file-viewer/eda-layout` 提供 GDSII record parser 和 WebGL draw batch，`@file-viewer/renderer-eda` 读取 library、structure、boundary、path、text、sref/aref 和坐标边界，小图输出 SVG，大元素集输出 WebGL canvas | 当前可作为 GDSII 版图快速预览；层控制、层级实例展开和 tile 增量加载继续在 `@file-viewer/eda-layout` 中演进 |
 | STEP / STP、IGES / IGS、BREP | `@file-viewer/geometry-engine` 在一次性 Worker 中加载本地 `occt-import-js` runtime 与 OpenCascade WASM，完成三角化后由 `@file-viewer/renderer-3d` 构建 Three.js 装配层级和网格 | 已具备浏览器本地完整网格预览、轨道控制、适配视图和统一缩放；Worker、runtime、WASM 与许可证文件随 viewer assets 离线分发 |
 
+### IFC / BIM 显式按需能力
+
+`@file-viewer/capability-ifc` 作为 `@file-viewer/renderer-3d` 的显式扩展，使用自托管 `web-ifc@0.0.77` 在浏览器本地解析原始 IFC，构建 Three.js BIM 场景，并提供旋转/平移/缩放、适配、元素选择、实体类型、`Name`、`GlobalId` 与属性集/工程量集检查。`web-ifc` 与 WASM 只存在于 `@file-viewer/assets-ifc`，不会进入普通 Engineering / Full 默认依赖闭包。
+
 ## 当前只能作为结构预览的格式
 
 | 格式 | 现状 | 后续完整方案 |
@@ -54,7 +58,7 @@
 | OLB | `@file-viewer/eda-orcad` 提供 CFB/OLE2 检测、文本采样、字符串抽取和十六进制预览，`@file-viewer/renderer-eda` 负责结构树、属性和元件候选展示 | 参考 OpenOrCadParser 的 C++ 解析路线，后续通过 Emscripten/WASM 或逐步 TS 移植补齐符号图形 |
 | DRA | `@file-viewer/eda-orcad` 提供二进制检查基础能力，`@file-viewer/renderer-eda` 展示封装/padstack/图形候选和可读属性 | DRA/PSM/PAD 属于 Allegro 私有数据库生态，应先积累真实样本，再在独立 engine 包中维护 OrCAD/Allegro parser |
 | OAS/OASIS | `@file-viewer/eda-layout` 当前能解析项目内 OASIS 可读文本夹具并输出 SVG 预览；真实 SEMI 二进制 OASIS 仍做 header 检测、完整渲染边界声明、安全二进制索引、可读字符串、结构候选和诊断 | OASIS 需要低层 record parser、重复结构展开、压缩块处理和版图实例渲染，继续在 `@file-viewer/eda-layout` 内演进 |
-| IFC / 3DM | `@file-viewer/renderer-3d` 保留入口，`@file-viewer/geometry-engine` 负责签名识别和明确的接入说明，当前不虚标为成功预览 | IFC 后续接入 `web-ifc` / That Open Fragments，3DM 后续接入 `rhino3dm` / Three.js loader，并继续在独立几何包内演进 |
+| 3DM | 当前仍提供签名识别和接入边界；完整可视预览需要独立 `rhino3dm` renderer | 继续作为独立专业内核维护 |
 
 ## 当前落地策略
 
@@ -64,7 +68,7 @@
 | OLB / DRA / PSM | Cadence 格式没有稳定官方 Web SDK；公开可用路线主要是 OpenOrCadParser / OpenAllegroParser 这类 C++ 解析器，后续可以 Emscripten/WASM 化或按样本逐步 TS 移植 | 当前只声明为结构预览，不虚标完整图形；底层能力已拆到 `@file-viewer/eda-orcad`，后续像 PPTX 一样长期维护 |
 | GDSII / OASIS | GDSII 已可按 record parser 生成 SVG/WebGL；OASIS 是 SEMI 二进制版图格式，支持压缩块、重复结构和更复杂索引，完整渲染更适合参考 KLayout/KWeb 或自研 WebGL/WASM pipeline | GDSII 当前提供 SVG 快速预览和大元素集 WebGL canvas；OASIS 可读文本夹具已可生成 SVG，真实二进制 OASIS 继续结构索引，底层能力已拆到 `@file-viewer/eda-layout`，后续做 WASM/增量渲染 |
 | STEP / STP、IGES / IGS、BREP | OpenCascade / OCCT WASM 在浏览器内解析 B-Rep 并输出 Three.js 可用网格 | `@file-viewer/geometry-engine` 已接入本地 OCCT Worker、runtime 和 WASM；`@file-viewer/renderer-3d` 保留装配层级、实例、法线和面颜色，并注册统一缩放 provider；重型内核不进入 core 默认路径 |
-| IFC / 3DM | IFC 走 `web-ifc` / That Open 生态，3DM 走 `rhino3dm` + Three.js Rhino3dmLoader | 当前只维护格式签名和接入提示，后续在独立几何包中实现，不影响已经落地的 OCCT 预览链路 |
+| 3DM | 当前仍提供签名识别和接入边界；完整可视预览需要独立 `rhino3dm` renderer | 继续作为独立专业内核维护 |
 | Draw.io / Excalidraw / Mermaid / PlantUML | Draw.io 最佳链路是自托管 diagrams.net offline viewer；Excalidraw 默认使用 rough.js 只读 SVG，运行环境提供官方 ESM 模块时尝试官方 restore/export；Mermaid 使用官方 SVG renderer；PlantUML 默认离线预览源码，可选接入自托管 SVG 服务 | 已拆成 `@file-viewer/renderer-drawing` 独立维护，继续离线 vendor 分发；PlantUML 完整图形渲染推荐企业内网自托管服务端点 |
 | Presentation / PPT / PPTX | 二进制 PPT 与 OOXML 演示文稿都适合独立 engine + renderer 双层维护，避免 core 被解析器、主题和媒体链路拖重 | `@file-viewer/renderer-presentation` 暴露标准 renderer 插件，`.ppt` 使用独立版本且保留包内许可证的 `@file-viewer/ppt@0.3.4`，OpenXML 文件使用 `@file-viewer/pptx` Worker；Full/CDN 分别交付两条链路的匹配资产 |
 | GeoJSON / KML / GPX / SHP | KML/GPX 有稳定 toGeoJSON 转换路线，Shapefile 可用纯 JS 解析到 GeoJSON，MapLibre 可承接离线矢量叠加层 | 已拆 `@file-viewer/renderer-geo` 并从 core 直接依赖中移除转换和地图库；当前补齐 CRS 归一化、MapLibre 叠加层、SVG fallback 和解析 harness，后续继续补海量要素抽稀和真实公开样本 |

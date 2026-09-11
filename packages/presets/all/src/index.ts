@@ -39,6 +39,14 @@ import '@file-viewer/capability-streaming-media';
 import '@file-viewer/capability-text-tools';
 import '@file-viewer/capability-drawio-official';
 
+export type {
+  FileViewerIfcConfigureContext,
+  FileViewerIfcElementInfo,
+  FileViewerIfcOptions,
+  FileViewerIfcProperty,
+  FileViewerIfcPropertySet,
+} from '@file-viewer/renderer-3d';
+
 export {
   DEFAULT_FULL_ASSET_BASE_PATH,
   DEFAULT_FULL_ASSET_BASE_URL,

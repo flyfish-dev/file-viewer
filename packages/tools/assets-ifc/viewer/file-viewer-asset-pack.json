@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "packageName": "@file-viewer/assets-ifc",
+  "packageVersion": "3.0.3",
+  "copyGroups": [
+    "model"
+  ],
+  "receiptFilename": "file-viewer-assets-ifc.receipt.json",
+  "rendererAssetManifests": [
+    {
+      "rendererId": "model",
+      "assets": [
+        {
+          "id": "model-web-ifc-api",
+          "rendererId": "model",
+          "kind": "script",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/web-ifc-api.js",
+          "packagePath": "web-ifc/web-ifc-api.js",
+          "optionPath": "ifc.apiUrl",
+          "description": "Pinned web-ifc 0.0.77 browser ESM API for the optional IFC/BIM capability."
+        },
+        {
+          "id": "model-web-ifc-wasm",
+          "rendererId": "model",
+          "kind": "wasm",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/web-ifc.wasm",
+          "packagePath": "web-ifc/web-ifc.wasm",
+          "optionPath": "ifc.wasmUrl",
+          "description": "Pinned web-ifc 0.0.77 single-thread WebAssembly parser and geometry engine."
+        },
+        {
+          "id": "model-web-ifc-mt-wasm",
+          "rendererId": "model",
+          "kind": "wasm",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/web-ifc-mt.wasm",
+          "packagePath": "web-ifc/web-ifc-mt.wasm",
+          "optionPath": "ifc.wasmMtUrl",
+          "description": "Pinned web-ifc 0.0.77 multi-thread WebAssembly parser and geometry engine."
+        },
+        {
+          "id": "model-web-ifc-license",
+          "rendererId": "model",
+          "kind": "license",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/LICENSE.web-ifc-MPL-2.0.md",
+          "packagePath": "web-ifc/LICENSE.md",
+          "description": "Mozilla Public License 2.0 text distributed with web-ifc 0.0.77."
+        },
+        {
+          "id": "model-thatopen-fragments-worker",
+          "rendererId": "model",
+          "kind": "worker",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/fragments-worker.mjs",
+          "packagePath": "@thatopen/fragments/dist/Worker/worker.mjs",
+          "optionPath": "ifc.thatOpen.workerUrl",
+          "description": "Pinned @thatopen/fragments 3.4.7 module worker for large IFC culling, LOD and model operations."
+        },
+        {
+          "id": "model-thatopen-fragments-license",
+          "rendererId": "model",
+          "kind": "license",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/LICENSE.thatopen-fragments-MIT.txt",
+          "packagePath": "@thatopen/fragments (MIT license notice)",
+          "description": "MIT license notice for @thatopen/fragments 3.4.7 and its redistributed worker."
+        }
+      ]
+    }
+  ]
+}

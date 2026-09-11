@@ -1931,6 +1931,56 @@
     {
       "$schema": "../../../ecosystem/capability-manifest.schema.json",
       "schemaVersion": 1,
+      "id": "ifc",
+      "packageName": "@file-viewer/capability-ifc",
+      "enhancesPackage": "@file-viewer/renderer-3d",
+      "activation": {
+        "kind": "side-effect-import",
+        "import": "@file-viewer/capability-ifc",
+        "export": "enableFileViewerIfc"
+      },
+      "rendererIds": [
+        "model"
+      ],
+      "formats": [
+        "ifc"
+      ],
+      "assets": {
+        "rendererIds": [
+          "model"
+        ],
+        "packageName": "@file-viewer/assets-ifc",
+        "installerPackageName": "@file-viewer/assets-ifc",
+        "bin": "file-viewer-assets-ifc",
+        "apiExport": "installFileViewerCapabilityAssetPack",
+        "target": "public/file-viewer",
+        "copyGroups": [
+          "model"
+        ],
+        "copyMode": "capability-pack",
+        "receiptFilename": "file-viewer-assets-ifc.receipt.json",
+        "notice": "Self-hosted web-ifc browser ESM/WASM runtime and MPL-2.0 notice for optional IFC/BIM preview.",
+        "packageVersion": "3.0.3",
+        "installerPackageVersion": "3.0.3"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "policy": "review-required",
+        "notices": [
+          {
+            "packageName": "web-ifc",
+            "spdx": "MPL-2.0",
+            "notice": "Pinned at 0.0.77; the browser ESM API, single/multi-thread WASM files, and MPL-2.0 license are redistributed by @file-viewer/assets-ifc."
+          }
+        ]
+      },
+      "weight": "heavy",
+      "profiles": [],
+      "version": "3.0.3"
+    },
+    {
+      "$schema": "../../../ecosystem/capability-manifest.schema.json",
+      "schemaVersion": 1,
       "id": "streaming-media",
       "packageName": "@file-viewer/capability-streaming-media",
       "enhancesPackage": "@file-viewer/renderer-media",

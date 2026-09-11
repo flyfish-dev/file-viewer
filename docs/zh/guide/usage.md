@@ -304,7 +304,7 @@ const options = {
 | `@file-viewer/renderer-presentation` | `presentationRenderer` | 二进制 PPT 按需使用 `@file-viewer/ppt`；PPTX/PPTM/POTX/POTM/PPSX/PPSM 按需使用 `@file-viewer/pptx` |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG/DXF/DWF/DWFx/XPS 等 CAD |
-| `@file-viewer/renderer-3d` | `modelRenderer` | GLB/GLTF/OBJ/STL/PLY/FBX/DAE/USD 等模型；STEP/STP、IGES/IGS、BREP 本地 OCCT 预览；IFC/3DM 几何签名与接入提示 |
+| `@file-viewer/renderer-3d` | `modelRenderer` | 通用 3D / OCCT；IFC 需要额外导入 `@file-viewer/capability-ifc` 并部署 `@file-viewer/assets-ifc` |
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io、Excalidraw、Mermaid、PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON、KML、GPX、SHP |

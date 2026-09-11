@@ -3,7 +3,7 @@
   "version": "3.0.3",
   "private": false,
   "type": "module",
-  "description": "Independent self-hosted 3D model OCCT Worker/WASM runtime for opt-in File Viewer integration.",
+  "description": "Independent self-hosted OCCT Worker/WebAssembly assets for the opt-in File Viewer 3D model renderer.",
   "exports": {
     "./asset-pack": "./viewer/file-viewer-asset-pack.json",
     "./viewer/*": "./viewer/*",
@@ -23,7 +23,7 @@
     "@file-viewer/asset-installer": "workspace:3.0.3"
   },
   "scripts": {
-    "stage-assets": "node ../../build-support/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-model",
+    "stage-assets": "pnpm --filter file-viewer-copy-assets stage-assets && node ../../build-support/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-model",
     "prepack": "pnpm stage-assets"
   },
   "engines": {

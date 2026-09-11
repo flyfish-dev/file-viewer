@@ -58,6 +58,16 @@
       "publicSource": true
     },
     {
+      "id": "assets-ifc",
+      "packageName": "@file-viewer/assets-ifc",
+      "releaseVersion": "3.0.3",
+      "description": "Independent opt-in web-ifc browser API/WASM asset pack for IFC/BIM preview.",
+      "packageDir": "packages/tools/assets-ifc",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
       "id": "assets-drawing",
       "packageName": "@file-viewer/assets-drawing",
       "releaseVersion": "3.0.3",
@@ -227,6 +237,16 @@
       "releaseVersion": "3.0.3",
       "description": "Opt-in RTF rendering for the Word renderer.",
       "packageDir": "packages/capabilities/rtf",
+      "github": "https://github.com/flyfish-dev/file-viewer",
+      "gitee": "https://gitee.com/flyfish-dev/file-viewer",
+      "publicSource": true
+    },
+    {
+      "id": "capability-ifc",
+      "packageName": "@file-viewer/capability-ifc",
+      "releaseVersion": "3.0.3",
+      "description": "Explicit opt-in IFC/BIM preview capability for the 3D renderer.",
+      "packageDir": "packages/capabilities/ifc",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "publicSource": true

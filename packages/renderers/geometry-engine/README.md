@@ -1,6 +1,6 @@
 # @file-viewer/geometry-engine
 
-Flyfish File Viewer 的无 UI、框架无关几何内核包。它已经提供浏览器原生的 STEP / STP、IGES / IGS 和 BREP 解析：文件在本地 OCCT Worker 中完成三角化，不需要上传或服务端转换。IFC 和 Rhino 3DM 目前只提供格式识别与准确的能力提示，尚未接入完整几何渲染。
+Flyfish File Viewer 的无 UI、框架无关几何内核包。它提供浏览器原生 STEP / STP、IGES / IGS 和 BREP 解析：文件在本地 OCCT Worker 中完成三角化，不需要上传或服务端转换。IFC 的签名识别仍保留在这里用于路由，但完整 IFC / BIM 可视预览由显式可选的 `@file-viewer/capability-ifc` 在 `@file-viewer/renderer-3d` 上提供。Rhino 3DM 仍只提供签名识别和能力提示。
 
 ```ts
 import { importOcctGeometryFile } from '@file-viewer/geometry-engine'
@@ -22,7 +22,7 @@ const result = await importOcctGeometryFile(buffer, 'step', {
 
 ## 离线资产
 
-运行时不访问 CDN。部署时需要把下列文件放到同一套静态资源中：
+运行时不访问 CDN。部署 STEP / IGES / BREP 时需要：
 
 - `wasm/model/occt-worker.js`
 - `wasm/model/occt-import-js.js`
@@ -30,15 +30,16 @@ const result = await importOcctGeometryFile(buffer, 'step', {
 - `wasm/model/LICENSE.occt.txt`
 - `wasm/model/LICENSE.occt-import-js.txt`
 
-`@file-viewer/vite-plugin`、full 包和仓库构建脚本会复制这些资产。直接集成本包时，需要自行托管并传入 `workerUrl`、`runtimeUrl` 和 `wasmUrl`。应用部署在子路径、资源域名或受控网关下时，请传入最终可访问的绝对 URL 或带前缀 URL，不要依赖站点根路径。
+这些 OCCT 文件由 `@file-viewer/assets-model` 负责。IFC 使用单独的 `@file-viewer/assets-ifc`，因此 MPL-2.0 `web-ifc` API/WASM 只有明确选择 IFC capability 时才会安装。
 
-严格 CSP 至少应允许资产来源出现在 `worker-src`、`script-src` 和用于获取 WASM 的 `connect-src` 中；部分浏览器还要求 `script-src 'wasm-unsafe-eval'` 才能编译 WebAssembly。Worker 使用本地 `importScripts()` 加载 runtime，因此不要只放行 WASM 而漏掉 runtime 脚本。
+严格 CSP 至少应允许资产来源出现在 `worker-src`、`script-src` 和用于获取 WASM 的 `connect-src` 中；部分浏览器还要求 `script-src 'wasm-unsafe-eval'` 才能编译 WebAssembly。
 
 ## 能力边界
 
 - `inspectGeometryKernelFile()` 仍可只读取文件前缀，识别 STEP / IGES / IFC / 3DM / BREP 常见签名。
 - STEP / STP、IGES / IGS 和 BREP 走 `occt-import-js` / OpenCascade，已经具备完整网格预览路径。
-- IFC 仍需要独立的 `web-ifc` / That Open 集成；3DM 仍需要 McNeel `rhino3dm` 集成。当前不会把它们伪装成已支持预览。
+- IFC 可视预览位于 `@file-viewer/capability-ifc` + `@file-viewer/assets-ifc`，不属于本几何内核或默认 preset 依赖闭包。
+- 3DM 仍需要 McNeel `rhino3dm` 独立链路，当前不会把它伪装成完整预览。
 - OCCT 与 `occt-import-js` 的许可证文件必须随离线资产一起分发。
 
-把重型几何能力留在独立包中，可以让 `@file-viewer/core` 保持轻量，同时隔离 Worker、WASM、许可证和真实工程样本回归边界。
+把重型几何能力按 capability 分离，可以让 `@file-viewer/core` 保持轻量，同时独立维护 Worker、WASM、许可证和真实工程样本回归边界。

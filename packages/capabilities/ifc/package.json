@@ -1,0 +1,51 @@
+{
+  "name": "@file-viewer/capability-ifc",
+  "version": "3.0.3",
+  "private": false,
+  "type": "module",
+  "description": "Explicit opt-in IFC/BIM preview capability for @file-viewer/renderer-3d with web-ifc and That Open Components/Fragments backends.",
+  "keywords": ["file-viewer", "ifc", "bim", "web-ifc", "thatopen", "fragments", "3d", "self-hosted"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/capabilities/ifc"
+  },
+  "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
+  "bugs": { "url": "https://github.com/flyfish-dev/file-viewer/issues" },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./capability": "./file-viewer.capability.json",
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "file-viewer.capability.json", "README.md", "README.en.md"],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "type-check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@file-viewer/core": "workspace:3.0.3",
+    "@file-viewer/renderer-3d": "workspace:3.0.3",
+    "@thatopen/components": "3.4.8",
+    "@thatopen/fragments": "3.4.7",
+    "three": "^0.185.1",
+    "web-ifc": "0.0.77"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.0",
+    "typescript": "^6.0.3"
+  },
+  "fileViewer": {
+    "capabilityManifest": "./file-viewer.capability.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "Apache-2.0"
+}

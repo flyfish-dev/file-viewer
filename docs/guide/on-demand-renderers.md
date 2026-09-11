@@ -62,12 +62,13 @@ The plugin reads the Vite major installed by the application. Vite 5–7 receive
 
 ## Optional Specialist Renderers
 
-Adobe design, DICOM, and digital-signature inspection are explicit opt-ins. They are not dependencies of the eight published `@file-viewer/*-full` packages or the frozen `@file-viewer/preset-all` compatibility baseline. This preserves the published Full contract and prevents specialist Worker/WASM, medical-imaging, or cryptographic dependencies from appearing during an ordinary upgrade.
+Adobe design, DICOM, digital-signature inspection, and IFC/BIM are explicit opt-ins. They are not dependencies of the eight published `@file-viewer/*-full` packages or the frozen `@file-viewer/preset-all` compatibility baseline. This preserves the published Full contract and prevents specialist Worker/WASM, medical-imaging, or cryptographic dependencies from appearing during an ordinary upgrade.
 
 | Optional renderer | Formats | Direct npm install | CLI selection | What the viewer shows |
 | --- | --- | --- | --- | --- |
 | **Adobe design** (`@file-viewer/renderer-design`) | `.psd`, `.psb`, `.pdd`, `.psdt`, `.ai`, `.ait`, `.eps`, `.ps`, `.idml`, `.icml`, `.idms`, `.inx`, `.xd`, `.indd`, `.indt`, `.fla`, `.xfl`, `.ase`, `.aco`, `.abr`, `.csh`, `.pat`, `.grd`, `.asl` | `npm install @file-viewer/renderer-design` | `npx file-viewer-cli config add psd --write` | Browser-local Worker/WASM previews for saved Photoshop pixels and supported layers; verified PDF-compatible Illustrator plus switchable native PGF artboards/layers/paths through `illustrator-pgf`; IDML and exchange structures; embedded XD/INDD previews; modern XFL; palettes; Photoshop resources; and PostScript. Unsupported native operators and fidelity limits remain explicit. |
 | **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`, `.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | One local DICOM Part 10 file, including multi-frame navigation, window width/center, zoom, pan, rotation, fit-to-view, and basic metadata. It does not assemble studies or provide PACS/DICOMweb, MPR, segmentation, or diagnosis. |
+| **IFC / BIM** (`@file-viewer/capability-ifc`) | `.ifc` | `npm install @file-viewer/capability-ifc @file-viewer/assets-ifc` | `npx file-viewer-cli config add ifc --write` | Browser-local `web-ifc` parsing, orbit/pan/zoom, fit, element selection, `Name` / `GlobalId` and property/quantity-set inspection. No authoring, clash, BCF, takeoff, sectioning, or measurement. |
 | **Digital signatures** (`@file-viewer/renderer-signature`) | `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`, `.tsq`, `.tsr`, `.tst`, `.tsd`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.jws`, `.asc`, `.sig`, `.pgp`, `.gpg` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | Bounded browser-local inspection of CMS/PKCS#7, selected CAdES data, timestamps, ASiC containers, evidence records, JWS, and public OpenPGP inputs. Parsing, digest, signature, and timestamp results are reported separately. |
 
 ### I already use a Full package. How do I enable an optional renderer?
@@ -77,13 +78,14 @@ The same rule applies to `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@fi
 Keep the Full package installed, then add only the specialist renderer the application needs. The following example enables all three current opt-ins; remove any package, import, and array entry that the application does not need:
 
 ```bash
-npm install @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature
+npm install @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature @file-viewer/capability-ifc @file-viewer/assets-ifc
 ```
 
 ```ts
 import { designRenderer } from '@file-viewer/renderer-design'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
 import { signatureRenderer } from '@file-viewer/renderer-signature'
+import '@file-viewer/capability-ifc'
 
 const options = {
   rendererMode: 'extend',
@@ -116,7 +118,7 @@ Use `npx file-viewer-cli list` to inspect the current catalog before changing a 
 
 ### Using a prebuilt `web-full` browser bundle?
 
-The downloadable `web-full` IIFE bundle contains the published Full renderer set. Adobe design, DICOM, and digital-signature renderers are not embedded in that bundle.
+The downloadable `web-full` IIFE bundle contains the published Full renderer set. Adobe design, DICOM, digital-signature, and IFC capability/runtime packages are not embedded in that bundle.
 
 Use a package-manager project or the File Viewer CLI when the integration needs an optional renderer. Copying a renderer package next to the prebuilt bundle does not register it.
 
@@ -136,7 +138,7 @@ Install a single renderer when a product needs the smallest possible capability 
 | `@file-viewer/renderer-presentation` | `presentationRenderer` | Compatibility aggregate for both PowerPoint families |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG, DXF, DWF, DWFx, XPS |
-| `@file-viewer/renderer-3d` | `modelRenderer` | 3D models and lightweight geometry signatures |
+| `@file-viewer/renderer-3d` | `modelRenderer` | General 3D models, OCCT engineering meshes, and the explicit IFC capability hook |
 | `@file-viewer/renderer-design` | `designRenderer` | PSD/PSB/PDD/PSDT, AI/AIT, EPS/PS, IDML/ICML/IDMS/INX, XD, INDD/INDT, modern FLA/XFL, ASE/ACO, and ABR/CSH/PAT/GRD/ASL |
 | `@file-viewer/renderer-dicom` | `dicomRenderer` | Selected local DICOM Part 10 single-file and multi-frame preview in the standard Viewer entry |
 | `@file-viewer/renderer-signature` | `signatureRenderer` | Selected CMS/CAdES, timestamp, ASiC, evidence-record, JWS, and public OpenPGP inspection in the standard Viewer entry |
@@ -222,7 +224,7 @@ fileViewerRenderers({
 
 The default experience is intentionally zero-config: if the plugin receives no explicit `preset`, `formats`, or `renderers`, or only receives `copyAssets:true`, it auto-discovers installed `@file-viewer/preset-*` packages. `preset-all` takes precedence when present; otherwise installed `lite`, `office`, and `engineering` presets are composed.
 
-Install `@file-viewer/preset-all` when an application needs the published compatibility baseline. Adobe design, DICOM, and digital signatures remain explicit:
+Install `@file-viewer/preset-all` when an application needs the published compatibility baseline. Adobe design, DICOM, digital signatures, and IFC/BIM remain explicit:
 
 ```bash
 npm install @file-viewer/vue3 @file-viewer/preset-all

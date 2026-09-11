@@ -1,0 +1,39 @@
+{
+  "name": "@file-viewer/assets-ifc",
+  "version": "3.0.3",
+  "private": false,
+  "type": "module",
+  "description": "Independent self-hosted web-ifc and That Open Fragments worker assets for the optional File Viewer IFC/BIM capability.",
+  "exports": {
+    "./asset-pack": "./viewer/file-viewer-asset-pack.json",
+    "./viewer/*": "./viewer/*",
+    "./package.json": "./package.json"
+  },
+  "files": ["bin", "viewer", "file-viewer.asset-pack.json", "README.md", "README.en.md", "THIRD_PARTY_NOTICES.md"],
+  "bin": {
+    "file-viewer-assets-ifc": "./bin/install.mjs"
+  },
+  "dependencies": {
+    "@file-viewer/asset-installer": "workspace:3.0.3"
+  },
+  "devDependencies": {
+    "@thatopen/fragments": "3.4.7",
+    "web-ifc": "0.0.77"
+  },
+  "scripts": {
+    "stage-assets": "node scripts/stage-assets.mjs",
+    "verify": "pnpm stage-assets && node scripts/verify-assets.mjs",
+    "prepack": "pnpm stage-assets"
+  },
+  "engines": { "node": ">=20" },
+  "publishConfig": { "access": "public", "registry": "https://registry.npmjs.org/" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/tools/assets-ifc"
+  },
+  "fileViewer": {
+    "assetPackManifest": "./file-viewer.asset-pack.json"
+  },
+  "license": "Apache-2.0"
+}

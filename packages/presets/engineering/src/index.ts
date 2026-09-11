@@ -14,6 +14,14 @@ import { mindmapRenderer } from '@file-viewer/renderer-mindmap';
 import { modelRenderer } from '@file-viewer/renderer-3d';
 import { typstRenderer } from '@file-viewer/renderer-typst';
 
+export type {
+  FileViewerIfcConfigureContext,
+  FileViewerIfcElementInfo,
+  FileViewerIfcOptions,
+  FileViewerIfcProperty,
+  FileViewerIfcPropertySet,
+} from '@file-viewer/renderer-3d';
+
 type BrowserRendererHandler = FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>;
 
 export const engineeringRenderers: FileViewerRendererPreset<BrowserRendererHandler> = {

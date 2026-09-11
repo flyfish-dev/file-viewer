@@ -1,0 +1,49 @@
+{
+  "$schema": "../../../ecosystem/capability-manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "ifc",
+  "packageName": "@file-viewer/capability-ifc",
+  "enhancesPackage": "@file-viewer/renderer-3d",
+  "activation": {
+    "kind": "side-effect-import",
+    "import": "@file-viewer/capability-ifc",
+    "export": "enableFileViewerIfc"
+  },
+  "rendererIds": ["model"],
+  "formats": ["ifc"],
+  "assets": {
+    "rendererIds": ["model"],
+    "packageName": "@file-viewer/assets-ifc",
+    "installerPackageName": "@file-viewer/assets-ifc",
+    "bin": "file-viewer-assets-ifc",
+    "apiExport": "installFileViewerCapabilityAssetPack",
+    "target": "public/file-viewer",
+    "copyGroups": ["model"],
+    "copyMode": "capability-pack",
+    "receiptFilename": "file-viewer-assets-ifc.receipt.json",
+    "notice": "Self-hosted web-ifc ESM/WASM plus the matching That Open Fragments worker and license notices for optional IFC/BIM preview."
+  },
+  "license": {
+    "spdx": "Apache-2.0",
+    "policy": "review-required",
+    "notices": [
+      {
+        "packageName": "web-ifc",
+        "spdx": "MPL-2.0",
+        "notice": "Pinned at 0.0.77; the browser ESM API, single/multi-thread WASM files, and MPL-2.0 license are redistributed by @file-viewer/assets-ifc."
+      },
+      {
+        "packageName": "@thatopen/components",
+        "spdx": "MIT",
+        "notice": "Pinned at 3.4.8 as an optional runtime dependency of @file-viewer/capability-ifc; Flyfish exposes opaque pass-through configuration and raw runtime hooks instead of mirroring its API."
+      },
+      {
+        "packageName": "@thatopen/fragments",
+        "spdx": "MIT",
+        "notice": "Pinned at 3.4.7; the optional capability uses the Fragments large-model engine and @file-viewer/assets-ifc redistributes the matching self-hosted module worker with an MIT notice."
+      }
+    ]
+  },
+  "weight": "heavy",
+  "profiles": []
+}
