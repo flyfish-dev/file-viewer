@@ -14,6 +14,7 @@ jobs:
     timeout-minutes: 25
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -23,11 +24,26 @@ jobs:
         with:
           path: source
           ref: 161d81379a8de7e2edf17a87e3f24eb0f3dc063f
+      - name: Retain the previous qualified push diagnostics
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ifc-evidence
+          gh api --allow-escape-sequences repos/flyfish-dev/file-viewer/actions/jobs/103340605429/logs > /tmp/previous-ifc.log
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          text=re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', Path('/tmp/previous-ifc.log').read_text(encoding='utf-8-sig'))
+          lines=text.splitlines()
+          selected=[line for line in lines if any(term in line.lower() for term in ['error]', 'remote:', 'rejected', 'permission', 'refusing', 'workflow scope', 'failed to push', 'fatal:', 'non-fast-forward'])]
+          Path('/tmp/ifc-evidence/previous-push-diagnostic.log').write_text('\n'.join(selected))
+          print('\n'.join(selected))
+          PY
       - name: Validate and apply the reviewed patches
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/ifc-evidence
           python3 <<'PY'
           import base64,gzip,hashlib
           from pathlib import Path
@@ -41,6 +57,10 @@ jobs:
           git apply --index --check /tmp/ifc.patch
           git apply --index /tmp/ifc.patch
           git apply --index ../payload/_maintenance/ifc-267-followup.patch
+          # Update the reviewed CI file through the connected maintainer after
+          # this job: an Actions token cannot write workflow files.
+          cp .github/workflows/public-ci.yml /tmp/ifc-evidence/public-ci-qualified.yml
+          git restore --source=HEAD --staged --worktree .github/workflows/public-ci.yml
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
@@ -75,6 +95,24 @@ jobs:
           result=$?
           tail -n 100 /tmp/ifc-evidence/browser.log
           exit "$result"
+      - name: Check the actual packed subpath and asset command
+        working-directory: source
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ifc-packs
+          pnpm --filter @file-viewer/core pack --pack-destination /tmp/ifc-packs
+          pnpm --filter @file-viewer/geometry-engine pack --pack-destination /tmp/ifc-packs
+          pnpm --filter @file-viewer/renderer-3d pack --pack-destination /tmp/ifc-packs
+          mkdir -p /tmp/ifc-cold
+          cd /tmp/ifc-cold
+          printf '{"private":true,"type":"module","overrides":{"@thatopen/components":{"jszip":"3.10.2"}}}\n' > package.json
+          npm install --ignore-scripts /tmp/ifc-packs/*.tgz @thatopen/components@3.4.8 @thatopen/fragments@3.4.7 web-ifc@0.0.77 esbuild@0.28.2
+          node --input-type=module -e "import{createIfcRenderer}from'@file-viewer/renderer-3d/ifc';if(typeof createIfcRenderer!=='function')throw new Error('missing IFC export');console.log('Packed optional IFC export resolves')"
+          ./node_modules/.bin/file-viewer-ifc-assets public/file-viewer/vendor/ifc
+          test -s public/file-viewer/vendor/ifc/web-ifc.wasm
+          test -s public/file-viewer/vendor/ifc/ifc-import.worker.js
+          test -s public/file-viewer/vendor/ifc/fragments.worker.mjs
+          cp public/file-viewer/vendor/ifc/manifest.json /tmp/ifc-evidence/cold-assets-manifest.json
       - name: Push the qualified optional feature without merging or publishing
         working-directory: source
         run: |
@@ -86,7 +124,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'feat(ifc): add optional local BIM viewer with owned Worker lifecycle' -m 'Refs #267. Includes pinned official IFC4/4.3 browser gates, selection, properties, extension cleanup and self-hosted Worker/WASM assets. Ordinary model and Office entries are unchanged.'
-          git push origin HEAD:refs/heads/release/readiness-20260911
+          git push origin HEAD:refs/heads/release/readiness-20260911 2>&1 | tee /tmp/ifc-evidence/push.log
           git rev-parse HEAD > /tmp/ifc-evidence/commit.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
