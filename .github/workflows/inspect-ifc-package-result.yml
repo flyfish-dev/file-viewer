@@ -1,0 +1,38 @@
+name: Inspect IFC package qualification
+on:
+  push:
+    branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/inspect-ifc-package-result.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Retain the actual cold-package result without unrelated install logs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ifc-diagnostic
+          gh api --allow-escape-sequences repos/flyfish-dev/file-viewer/actions/jobs/103343461036/logs > /tmp/qualified.log
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          text=re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', Path('/tmp/qualified.log').read_text(encoding='utf-8-sig'))
+          lines=text.splitlines()
+          matches=[i for i,line in enumerate(lines) if 'mkdir -p /tmp/ifc-packs' in line]
+          start=matches[-1] if matches else max(0,len(lines)-200)
+          end=next((i for i in range(start,len(lines)) if 'Process completed with exit code' in lines[i]),len(lines)-1)
+          selected=lines[max(start,end-160):end+1]
+          result='\n'.join(line[:2000] for line in selected)
+          Path('/tmp/ifc-diagnostic/cold-package.log').write_text(result)
+          print(result)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ifc-cold-package-diagnostic
+          path: /tmp/ifc-diagnostic
+          retention-days: 1
