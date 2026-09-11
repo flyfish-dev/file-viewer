@@ -55,7 +55,7 @@
     "test:vite-copy-assets-github-257": "pnpm --filter @file-viewer/vite-plugin verify:github-257",
     "test:word-revisions-github-255": "pnpm exec vitest run test/word-revisions.spec.ts test/word-native-revisions.spec.ts test/vue3-render-options.spec.ts",
     "test:thumbnail": "pnpm --filter @file-viewer/thumbnail test",
-    "test": "pnpm verify:public-release-facts && pnpm test:i18n && pnpm test:thumbnail && pnpm test:archive-github-101 && pnpm test:archive-github-148 && pnpm test:cad-output-github-245 && pnpm test:doc-github-171 && pnpm test:doc-github-192 && pnpm test:doc-github-236 && pnpm test:doc-github-34 && pnpm test:doc-github-87 && pnpm test:email-github-232 && pnpm test:html-preview-github-256 && pnpm test:ofd-github-177 && pnpm test:ofd-github-94 && pnpm test:ofd-resources-github-57 && pnpm test:pdf-cjk-font-github-242 && pnpm test:pptx-assets-github-140 && pnpm test:pptx-github-176 && pnpm test:pptx-github-268 && pnpm test:requirejs-github-258 && pnpm test:shadow-focus-github-243 && pnpm test:spreadsheet-github-175 && pnpm test:spreadsheet-github-178 && pnpm test:spreadsheet-github-234 && pnpm test:vite-copy-assets-github-257 && pnpm test:word-revisions-github-255 && pnpm test:word-github-266 && pnpm test:ofd-github-266",
+    "test": "pnpm verify:public-release-facts && pnpm test:i18n && pnpm test:thumbnail && pnpm test:archive-github-101 && pnpm test:archive-github-148 && pnpm test:cad-output-github-245 && pnpm test:doc-github-171 && pnpm test:doc-github-192 && pnpm test:doc-github-236 && pnpm test:doc-github-34 && pnpm test:doc-github-87 && pnpm test:email-github-232 && pnpm test:html-preview-github-256 && pnpm test:ofd-github-177 && pnpm test:ofd-github-94 && pnpm test:ofd-resources-github-57 && pnpm test:pdf-cjk-font-github-242 && pnpm test:pptx-assets-github-140 && pnpm test:pptx-github-176 && pnpm test:pptx-github-268 && pnpm test:requirejs-github-258 && pnpm test:shadow-focus-github-243 && pnpm test:spreadsheet-github-175 && pnpm test:spreadsheet-github-178 && pnpm test:spreadsheet-github-234 && pnpm test:vite-copy-assets-github-257 && pnpm test:word-revisions-github-255 && pnpm test:word-github-266 && pnpm test:ofd-github-266 && pnpm test:ofd-signatures",
     "type-check:components": "pnpm --filter @file-viewer/web type-check && pnpm --filter @file-viewer/react type-check && pnpm --filter @file-viewer/react-legacy type-check && pnpm --filter @file-viewer/vue3 type-check && pnpm --filter @file-viewer/vue2.7 type-check && pnpm --filter @file-viewer/vue2.6 type-check && pnpm --filter @file-viewer/jquery type-check && pnpm --filter @file-viewer/svelte type-check",
     "type-check:tools": "pnpm --filter './packages/tools/**' type-check",
     "docs:dev": "pnpm --filter @flyfish-group/file-viewer-docs dev",
@@ -85,7 +85,11 @@
     "test:pptx-github-268": "pnpm --filter @file-viewer/pptx verify:github-268",
     "test:word-github-266": "pnpm --filter @file-viewer/core build && pnpm --filter @file-viewer/doc build && pnpm --filter @file-viewer/renderer-word build",
     "test:ofd-github-266": "pnpm --filter @file-viewer/renderer-ofd verify:github-266",
-    "verify:github-266-browser": "node apps/viewer-demo/scripts/verify-issue-266-samples.mjs"
+    "verify:github-266-browser": "node apps/viewer-demo/scripts/verify-issue-266-samples.mjs",
+    "test:ofd-signatures": "node packages/renderers/ofd/scripts/verify-signature-containers.mjs",
+    "verify:docx-upstream": "node .github/scripts/verify-docx-upstream.mjs",
+    "release:prepare-docx": "node .github/scripts/prepare-docx-upstream.mjs",
+    "release:verify": "pnpm verify:docx-upstream && pnpm build && pnpm type-check && pnpm test"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",

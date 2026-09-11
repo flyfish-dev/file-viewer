@@ -654,6 +654,7 @@ const getSignatureData = async function (zip, signature, signatureID) {
         'signedInfo': {
             'signatureID': signatureID,
             'VerifyRet': sealObj.verifyRet,
+            'VerificationStatus': sealObj.verificationStatus || 'not-verified',
             'Provider': signedInfoNode['ofd:Provider'],
             'SignatureMethod': signedInfoNode['ofd:SignatureMethod'],
             'SignatureDateTime': signedInfoNode['ofd:SignatureDateTime'],
