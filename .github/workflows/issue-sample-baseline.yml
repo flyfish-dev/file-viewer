@@ -29,6 +29,16 @@ jobs:
           cd source
           git apply --index --check /tmp/issue-266.patch
           git apply --index /tmp/issue-266.patch
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const path = 'package.json';
+          const text = fs.readFileSync(path, 'utf8');
+          const before = '"test:word-github-266": "pnpm --filter @file-viewer/core build && pnpm --filter @file-viewer/renderer-word build"';
+          const after = '"test:word-github-266": "pnpm --filter @file-viewer/core build && pnpm --filter @file-viewer/doc build && pnpm --filter @file-viewer/renderer-word build"';
+          if (!text.includes(before)) throw new Error('Unexpected regression script');
+          fs.writeFileSync(path, text.replace(before, after));
+          JS
+          git add package.json
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
         with:
           version: 11.0.9
@@ -72,7 +82,7 @@ jobs:
           git diff --cached --stat
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'fix(word,ofd): preserve XML DOC containers and authored text and anchor positions' -m 'Refs #266. Verify all four original public samples and repeatable zoom behavior. Diagonal borders and the existing invoice signature warning are separately documented.'
+          git commit -m 'fix(word): preserve document containers and authored Word/OFD positions' -m 'Refs #266. Verify all four original public samples and repeatable zoom behavior. Diagonal borders and the existing invoice signature warning are separately documented.'
           git push origin HEAD:refs/heads/fix/word-ofd-sample-layout-266
           git rev-parse HEAD > /tmp/issue-266-evidence/commit.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
