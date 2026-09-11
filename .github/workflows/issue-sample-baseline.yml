@@ -12,28 +12,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  baseline:
+  dependencies:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - name: Collect public issue fixtures and the exact source baseline
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/issue-baseline/samples
-          curl --fail --location --retry 2 --max-time 120 https://github.com/user-attachments/files/32040630/default.zip -o /tmp/issue-baseline/samples/issue-266.zip
-          curl --fail --location --retry 2 --max-time 120 https://github.com/user-attachments/files/32082894/default.pptx -o /tmp/issue-baseline/samples/issue-268.pptx
-          git rev-parse HEAD > /tmp/issue-baseline/commit.txt
-          git archive --format=tar HEAD | gzip > /tmp/issue-baseline/source.tar.gz
-          sha256sum /tmp/issue-baseline/samples/* > /tmp/issue-baseline/sample-sha256.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: issue-sample-source-baseline
-          path: /tmp/issue-baseline
-          retention-days: 7
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
         with:
           version: 11.0.9
@@ -42,15 +27,15 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - name: Install only the relevant renderer test dependencies
-        run: pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/pptx... --filter @file-viewer/doc... --filter @file-viewer/renderer-ofd...
-      - name: Bundle the installed local-test dependencies
+      - name: Install relevant consumers and their test dependencies
+        run: pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/pptx... --filter @file-viewer/renderer-word... --filter @file-viewer/renderer-ofd... --filter @file-viewer/renderer-presentation...
+      - name: Bundle installed test dependencies
         shell: bash
         run: |
           set -euo pipefail
-          find . -name node_modules -type d -prune -print0 | tar --null -T - -czf /tmp/issue-test-dependencies.tar.gz
+          find . -name node_modules -type d -prune -print0 | tar --null -T - -czf /tmp/issue-consumer-dependencies.tar.gz
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: issue-test-dependencies
-          path: /tmp/issue-test-dependencies.tar.gz
+          name: issue-consumer-dependencies
+          path: /tmp/issue-consumer-dependencies.tar.gz
           retention-days: 7
