@@ -1,0 +1,95 @@
+name: Qualify release readiness
+on:
+  push:
+    branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/qualify-release-readiness-20260911.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: payload
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: b2008f6ad9df36bfc5bae56f25cd7a9a4d1d8d29
+          path: source
+      - name: Apply the reviewed patch and add the candidate-only browser assertion
+        run: |
+          set -euo pipefail
+          base64 --decode payload/_maintenance/release-readiness-20260911.b64 | gzip --decompress > /tmp/readiness.patch
+          echo 'e86a1eb9a929aad267ad165ea8ca2462ab24310522b2cf3c04f24bebcaa440ad  /tmp/readiness.patch' | sha256sum --check
+          cd source
+          git apply --index /tmp/readiness.patch
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('apps/viewer-demo/scripts/verify-issue-266-samples.mjs');s=p.read_text()
+          old="        assert.equal(await page.locator('table').count(), 4)"
+          assert s.count(old)==1
+          p.write_text(s.replace(old,old+"\n        if (process.argv.includes('--require-diagonals')) assert.equal(await page.locator('[data-docx-diagonal=\"tl2br\"]').count(), 1, 'Packed upstream diagonal fix must reach the actual Word renderer')"))
+          PY
+          git add apps/viewer-demo/scripts/verify-issue-266-samples.mjs
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Build and run the focused regression gates
+        working-directory: source
+        run: |
+          set -euo pipefail
+          pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/pptx... --filter @file-viewer/renderer-word... --filter @file-viewer/renderer-ofd...
+          pnpm verify:github-governance
+          pnpm verify:public-release-facts
+          pnpm test:word-github-266
+          pnpm test:ofd-github-266
+          pnpm test:ofd-signatures
+          pnpm --filter @file-viewer/pptx build
+          pnpm --filter @file-viewer/pptx verify:github-268
+          pnpm --filter @file-viewer/renderer-ofd build
+          pnpm --filter @file-viewer/renderer-ofd verify:render-fidelity
+          pnpm exec playwright install --with-deps chromium
+      - name: Verify every original file with no warning allowlist
+        working-directory: source
+        env:
+          ISSUE_EVIDENCE_DIR: /tmp/readiness-evidence
+          OFD_SIGNATURE_SAMPLE_ZIP: /tmp/issue-266.zip
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 2 https://github.com/user-attachments/files/32040630/default.zip -o /tmp/issue-266.zip
+          curl --fail --location --retry 2 https://github.com/user-attachments/files/32082894/default.pptx -o /tmp/issue-268.pptx
+          pnpm test:ofd-signatures
+          node apps/viewer-demo/scripts/verify-issue-266-samples.mjs /tmp/issue-266.zip
+          node packages/renderers/pptx/scripts/verify-github-268-browser.mjs /tmp/issue-268.pptx
+      - name: Ensure old published engines are rejected by the release gate
+        working-directory: source
+        run: |
+          set -euo pipefail
+          if pnpm verify:docx-upstream > /tmp/old-upstream.log 2>&1; then
+            echo 'Expected the existing 0.3.31 engine to fail the new behavioral gate'; exit 1
+          fi
+          grep -F 'lacks the upstream diagonal-border fix' /tmp/old-upstream.log
+      - name: Push the qualified source changes without merging or publishing
+        working-directory: source
+        run: |
+          set -euo pipefail
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(ofd): distinguish digital signatures and qualify upstream release integration' -m 'Refs #266. Preserve existing SES appearance, never claim cryptographic verification, and gate the next release on actual installed DOCX behavior.'
+          git push origin HEAD:refs/heads/release/readiness-20260911
+          git rev-parse HEAD > /tmp/readiness-evidence/commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: release-readiness-evidence
+          path: /tmp/readiness-evidence
+          retention-days: 7
