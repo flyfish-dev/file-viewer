@@ -1,0 +1,80 @@
+diff --git a/packages/renderers/3d/bin/copy-ifc-assets.mjs b/packages/renderers/3d/bin/copy-ifc-assets.mjs
+index bfdfd78..b565104 100755
+--- a/packages/renderers/3d/bin/copy-ifc-assets.mjs
++++ b/packages/renderers/3d/bin/copy-ifc-assets.mjs
+@@ -1,7 +1,8 @@
+ #!/usr/bin/env node
+ import { createRequire } from "node:module";
++import { realpathSync } from "node:fs";
+ import { dirname, resolve, join } from "node:path";
+-import { fileURLToPath, pathToFileURL } from "node:url";
++import { fileURLToPath } from "node:url";
+ import {
+   mkdir,
+   copyFile,
+@@ -151,10 +152,18 @@ export async function copyIfcAssets(destination) {
+     await rm(stage, { recursive: true, force: true });
+   }
+ }
+-if (
+-  process.argv[1] &&
+-  import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+-) {
++function isEntryPoint() {
++  try {
++    // npm/pnpm execute bin entries through a symlink; import.meta.url points
++    // at the real module. Do not silently skip the installed CLI in that case.
++    return Boolean(process.argv[1]) &&
++      realpathSync(process.argv[1]) === fileURLToPath(import.meta.url);
++  } catch {
++    // Importing this helper from eval/another program is not CLI execution.
++    return false;
++  }
++}
++if (isEntryPoint()) {
+   if (process.argv.includes("--help")) {
+     console.log("Usage: file-viewer-ifc-assets [destination-directory]");
+     process.exit(0);
+diff --git a/packages/renderers/3d/scripts/verify-ifc-entry.mjs b/packages/renderers/3d/scripts/verify-ifc-entry.mjs
+index 98a8367..6b58fe7 100644
+--- a/packages/renderers/3d/scripts/verify-ifc-entry.mjs
++++ b/packages/renderers/3d/scripts/verify-ifc-entry.mjs
+@@ -1,5 +1,9 @@
+ import assert from "node:assert/strict";
+-import { readFile } from "node:fs/promises";
++import { readFile, mkdtemp, symlink, rm } from "node:fs/promises";
++import { spawnSync } from "node:child_process";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { fileURLToPath } from "node:url";
+ import {
+   createRendererRegistry,
+   installFileViewerRendererPlugins,
+@@ -44,3 +48,27 @@ assert.equal(pkg.exports["./ifc"].import, "./dist/ifc.js");
+ console.log(
+   "IFC enhancement ownership, optional dependencies and lazy entry passed.",
+ );
++
++const cli = fileURLToPath(new URL("../bin/copy-ifc-assets.mjs", import.meta.url));
++const temp = await mkdtemp(join(tmpdir(), "file-viewer-ifc-cli-"));
++try {
++  const alias = join(temp, "file-viewer-ifc-assets");
++  await symlink(cli, alias);
++  for (const command of [cli, alias]) {
++    const help = spawnSync(process.execPath, [command, "--help"], { encoding: "utf8" });
++    assert.equal(help.status, 0, help.stderr);
++    assert.match(help.stdout, /Usage: file-viewer-ifc-assets/);
++    const invalid = spawnSync(process.execPath, [command, "--unknown"], { encoding: "utf8" });
++    assert.equal(invalid.status, 1);
++    assert.match(invalid.stderr, /Expected one destination directory/);
++  }
++  const moduleUrl = new URL("../bin/copy-ifc-assets.mjs", import.meta.url).href;
++  const imported = spawnSync(process.execPath, ["--input-type=module", "-e",
++    `import {copyIfcAssets} from ${JSON.stringify(moduleUrl)}; if (typeof copyIfcAssets !== 'function') process.exit(1)`,
++    join(temp, "nonexistent-entry")], { encoding: "utf8" });
++  assert.equal(imported.status, 0, imported.stderr);
++  assert.equal(imported.stdout, "");
++} finally {
++  await rm(temp, { recursive: true, force: true });
++}
++console.log("Installed CLI symlink execution and side-effect-free helper import passed.");
