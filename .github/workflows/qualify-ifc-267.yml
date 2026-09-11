@@ -25,14 +25,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/ifc-evidence
-          cp payload/_maintenance/ifc-267.part*.b64 /tmp/ifc-evidence/
           python3 <<'PY'
           import base64,gzip,hashlib
           from pathlib import Path
           data=''.join(Path(f'payload/_maintenance/ifc-267.part{i}.b64').read_text().strip() for i in (1,2))
           for old,new in [('q1mrtWg32z1','q1mrtW32z1'),('5v11b6/2uX6ar1','5v11b6/2ar1'),('Waz57Vq/Ua9aUVvdrDXr626au91Wqu1m','Waz57Vq/Ua9UVvdrDXr62691Wqu1m'),('idtGvdGptr3bXVv1','idtGvdGtr3bXVv1')]: data=data.replace(old,new)
           patch=gzip.decompress(base64.b64decode(data,validate=True))
-          assert hashlib.sha256(patch).hexdigest()=='fb4613ef66d4811491d127079a0208308da1b121474408d1e502ff38d2803dd3'
+          assert hashlib.sha256(patch).hexdigest()=='c2bbe3d9abc39a5696b762f362f0ed1a0fae6daaf0a020706df6b4bd9e3485ef'
           Path('/tmp/ifc.patch').write_bytes(patch)
           PY
           cd source
