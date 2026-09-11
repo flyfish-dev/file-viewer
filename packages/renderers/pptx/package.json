@@ -62,7 +62,9 @@
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -b tsconfig.json --force && node scripts/build-worker.mjs && node scripts/copy-assets.mjs && node scripts/fix-esm-extensions.mjs",
     "type-check": "tsc -b tsconfig.json",
-    "verify:github-176": "node scripts/verify-github-176.mjs"
+    "verify:github-176": "node scripts/verify-github-176.mjs",
+    "verify:github-268": "node scripts/verify-github-268.mjs",
+    "verify:github-268-browser": "node scripts/verify-github-268-browser.mjs"
   },
   "dependencies": {
     "dingbat-to-unicode": "^1.0.1",
