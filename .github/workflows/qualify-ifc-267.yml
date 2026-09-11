@@ -5,6 +5,9 @@ on:
     paths: [.github/workflows/qualify-ifc-267.yml]
 permissions:
   contents: read
+concurrency:
+  group: qualify-ifc-267
+  cancel-in-progress: true
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -20,7 +23,7 @@ jobs:
         with:
           path: source
           ref: 161d81379a8de7e2edf17a87e3f24eb0f3dc063f
-      - name: Validate the transferred patch before applying it
+      - name: Validate and apply the reviewed patches
         shell: bash
         run: |
           set -euo pipefail
@@ -37,6 +40,7 @@ jobs:
           cd source
           git apply --index --check /tmp/ifc.patch
           git apply --index /tmp/ifc.patch
+          git apply --index ../payload/_maintenance/ifc-267-followup.patch
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
@@ -66,7 +70,11 @@ jobs:
         run: |
           set -euo pipefail
           node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
-          pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples
+          set +e
+          pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/ifc-evidence/browser.log 2>&1
+          result=$?
+          tail -n 100 /tmp/ifc-evidence/browser.log
+          exit "$result"
       - name: Push the qualified optional feature without merging or publishing
         working-directory: source
         run: |
