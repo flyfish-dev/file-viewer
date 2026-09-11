@@ -78,7 +78,10 @@ const parseXmlElement = function (element, options, order) {
         }
     }
 
-    const text = textParts.join('').trim();
+    // TextCode whitespace consumes explicitly positioned glyph slots. Trimming
+    // it moves right-aligned dates and also shifts their DeltaX indices.
+    const rawText = textParts.join('');
+    const text = xmlElementName(element) === 'ofd:TextCode' ? rawText : rawText.trim();
     if (text) {
         if (Object.keys(result).length === 0) {
             return text;

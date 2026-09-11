@@ -1,5 +1,6 @@
 import type { DocxProgressEvent, Options, renderAsync } from '@file-viewer/docx'
 import JSZip from 'jszip'
+import { correctDocxMixedAnchorOrigins } from './docxAnchors.js'
 import {
   DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   resolveFileViewerDocxWorkerJsZipUrl,
@@ -627,6 +628,7 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
       }
 
       page.style.transform = 'translateX(-50%)'
+      correctDocxMixedAnchorOrigins(page)
 
       const pageWidth = page.offsetWidth
       const contentHeight = pagedLayout
