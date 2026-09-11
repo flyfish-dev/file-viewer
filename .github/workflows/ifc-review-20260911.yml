@@ -19,9 +19,20 @@ jobs:
           npm install --prefix /tmp/ifc-review/engine --ignore-scripts --save-exact @thatopen/components@3.4.8 @thatopen/fragments@3.4.7 web-ifc@0.0.77 three@0.185.1 @types/three@0.185.4 esbuild@0.28.2
           git clone --depth=1 https://github.com/buildingSMART/Certification-datasets.git /tmp/ifc-datasets
           git -C /tmp/ifc-datasets rev-parse HEAD > /tmp/ifc-review/samples/revision.txt
-          cp '/tmp/ifc-datasets/IFC 4.0.2.1 (IFC4 ADD2 TC1)/Simple-Scene/Building-Architecture.ifc' /tmp/ifc-review/samples/ifc4.ifc
-          cp '/tmp/ifc-datasets/IFC 4.3.2.0 (IFC4.3 ADD2)/Simple-Scene/Building-Architecture.ifc' /tmp/ifc-review/samples/ifc43.ifc
-          cp /tmp/ifc-datasets/LICENSE* /tmp/ifc-review/samples/
+          python3 <<'PY'
+          from pathlib import Path
+          import shutil, hashlib, json
+          root=Path('/tmp/ifc-datasets'); out=Path('/tmp/ifc-review/samples'); report=[]
+          for prefix, name in [('IFC 4.0.2.1', 'ifc4.ifc'), ('IFC 4.3.2.0', 'ifc43.ifc')]:
+              found=[p for p in root.rglob('Building-Architecture.ifc') if p.relative_to(root).parts[0].startswith(prefix) and p.parent.name == 'Simple-Scene']
+              assert len(found)==1, (prefix, found)
+              shutil.copyfile(found[0],out/name)
+              report.append({'path':str(found[0].relative_to(root)), 'file':name, 'sha256':hashlib.sha256(found[0].read_bytes()).hexdigest()})
+          licenses=list(root.glob('LICENSE*'))+list(root.glob('License*'))
+          assert licenses, 'dataset license missing'
+          for p in licenses: shutil.copyfile(p,out/p.name)
+          (out/'sources.json').write_text(json.dumps(report,indent=2))
+          PY
           tar -C /tmp -czf /tmp/ifc-review.tar.gz ifc-review
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
