@@ -1,0 +1,89 @@
+name: Qualify IFC model ID compatibility
+on:
+  push:
+    branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/qualify-ifc-model-id.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: b582483cc02dbd2279746549d204173521914379
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 11.0.9
+          run_install: false
+      - name: Install and build the exact previously qualified source
+        run: |
+          set -euo pipefail
+          pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/renderer-3d...
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/geometry-engine build
+          pnpm --filter @file-viewer/renderer-3d build
+          pnpm exec playwright install --with-deps chromium
+          node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
+      - name: Reproduce the missing-API failure before changing the runtime
+        env:
+          IFC_EVIDENCE_DIR: /tmp/ifc-id-before
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('packages/renderers/3d/scripts/verify-ifc-browser.mjs'); s=p.read_text()
+          old='  await page.addInitScript(() => {\n    const Original = window.Worker;'
+          assert s.count(old)==1
+          new='  await page.addInitScript(() => {\n    // Intranet HTTP hosts may not expose this secure-context-only API.\n    Object.defineProperty(window.crypto, "randomUUID", { value: undefined, configurable: true });\n    const Original = window.Worker;'
+          s=s.replace(old,new)
+          old='  await page.waitForFunction(() => window.entryReady);'
+          assert s.count(old)==1
+          s=s.replace(old,old+'\n  assert.equal(await page.evaluate(() => typeof crypto.randomUUID), "undefined");')
+          p.write_text(s)
+          PY
+          if pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/ifc-id-before.log 2>&1; then
+            echo 'Expected baseline missing-API reproduction'; exit 1
+          fi
+          grep -F 'crypto.randomUUID is not a function' /tmp/ifc-id-before.log
+      - name: Use the existing Three.js UUID utility for non-security model identifiers
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('packages/renderers/3d/src/ifcRuntime.ts');s=p.read_text()
+          old='const id = `ifc-${crypto.randomUUID()}`;'
+          assert s.count(old)==1
+          p.write_text(s.replace(old,'// Model identifiers are not security tokens; do not require a secure context.\n  const id = `ifc-${THREE.MathUtils.generateUUID()}`;'))
+          PY
+          pnpm --filter @file-viewer/renderer-3d build
+          pnpm --filter @file-viewer/renderer-3d verify:ifc
+      - name: Verify both original models, selection and cleanup with the API absent
+        env:
+          IFC_EVIDENCE_DIR: /tmp/ifc-id-after
+        run: pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples
+      - name: Push only the qualified runtime and regression changes
+        run: |
+          set -euo pipefail
+          git diff --check
+          git add packages/renderers/3d/src/ifcRuntime.ts packages/renderers/3d/scripts/verify-ifc-browser.mjs
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(ifc): avoid secure-context-only model ID generation' -m 'Refs #267. Reproduce failure with crypto.randomUUID absent, then verify official IFC4/4.3 models, actual picking, properties and complete Worker cleanup.'
+          git push origin HEAD:refs/heads/release/readiness-20260911
+          git rev-parse HEAD > /tmp/ifc-id-after/commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: ifc-model-id-compatibility
+          path: |
+            /tmp/ifc-id-before.log
+            /tmp/ifc-id-before/report.json
+            /tmp/ifc-id-after/report.json
+            /tmp/ifc-id-after/commit.txt
+          retention-days: 7
