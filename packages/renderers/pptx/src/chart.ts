@@ -3,6 +3,7 @@ type ChartMessage = {
   data?: {
     chartID?: string;
     chartType?: string;
+    barDirection?: string;
     chartData?: any;
   };
 };
@@ -272,7 +273,7 @@ const renderChart = async (message: ChartMessage, root: ParentNode) => {
     x: {
       tick: {
         format(index: number) {
-          return chartData[0]?.xlabels?.[index] || index;
+          return chartData[0]?.xlabels?.[index] ?? index;
         },
       },
     },
@@ -296,11 +297,12 @@ const renderChart = async (message: ChartMessage, root: ParentNode) => {
           type: bar(),
         },
         axis: {
+          rotated: payload.barDirection === 'bar',
           x: {
             tick: {
               multiline: true,
               format(index: number) {
-                return chartData[0]?.xlabels?.[index] || index;
+                return chartData[0]?.xlabels?.[index] ?? index;
               },
             },
           },
