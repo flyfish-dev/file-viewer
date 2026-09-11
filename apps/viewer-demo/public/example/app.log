@@ -1,0 +1,16 @@
+2026-07-17T10:00:00+08:00 INFO  viewer boot version=2.2.4 framework=vue3 formats=208 pipelines=25
+2026-05-19T10:00:01+08:00 INFO  sample-picker open groups=7 default=document
+2026-05-19T10:00:02+08:00 INFO  preview start file=/example/word.docx source=url
+2026-05-19T10:00:03+08:00 INFO  renderer loaded name=word chunk=docx-preview elapsed=86ms
+2026-05-19T10:00:04+08:00 INFO  preview ready pages=3 scale=fit-width
+2026-05-19T10:01:10+08:00 INFO  preview start file=/example/code.ts source=url
+2026-05-19T10:01:10+08:00 INFO  renderer loaded name=code chunk=highlight.js language=typescript
+2026-05-19T10:01:11+08:00 WARN  remote-url cors-check status=skipped reason=local-sample
+2026-06-12T10:02:20+08:00 INFO  preview start file=/example/sample.dwg source=url
+2026-06-12T10:02:21+08:00 INFO  renderer loaded name=cad chunk=@flyfish-dev/cad-viewer worker=libredwg wasm=true
+2026-06-12T10:02:22+08:00 INFO  preview ready file=/example/samples/apache/blocks_and_tables.dwf renderer=dwf-viewer canvases=4
+2026-06-17T10:02:40+08:00 INFO  preview ready file=/example/map.geojson renderer=geo features=4
+2026-06-17T10:02:55+08:00 INFO  preview ready file=/example/sample.sqlite renderer=data tables=1
+2026-06-17T10:03:10+08:00 INFO  preview ready file=/example/melody.mid renderer=midi tracks=1
+2026-05-19T10:03:00+08:00 ERROR pdf-load requestId=qa-42 message="network aborted by new preview"
+2026-05-19T10:03:01+08:00 INFO  request ignored requestId=qa-42 reason=stale-render-version
