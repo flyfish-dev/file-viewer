@@ -18,6 +18,17 @@ This preparation does not publish either package, create a release, or change is
 
 `pnpm verify:docx-upstream` deliberately fails against an old engine that does not render direct cell diagonals. A successful source build is not a substitute for this consumer check. Keeping the currently published dependency until step 2 allows ordinary frozen-lockfile installs to work before the new upstream exists.
 
+## Packed upstream integration
+
+The actual merged upstream source `6dbe15e347459f3707116d531fc9064f2d4c2a95`
+was built and packed, then installed into a disposable checkout of File Viewer
+`161d81379a8de7e2edf17a87e3f24eb0f3dc063f`. The old public package fails the
+behavioral gate; the candidate tarball passes. Original #266 samples passed
+through the actual Word renderer with `--require-diagonals`, four stamp anchor
+positions and no OFD warnings. The source dependency and lockfile were not changed
+by this test. Private upstream CI run: `34620182131` (successful).
+This is pre-publication candidate evidence, not proof of a future npm artifact.
+
 ## Reproduction evidence
 
 Supply the original public issue #266 ZIP (SHA-256 `57345ed8469bfae8ccb066abb726a551d0c322f5af7527828771035551cff4cb`) and issue #268 PPTX (SHA-256 `4b0dfef0400a6194f86c3deb1234fdf84828f696f2f3915fe940cbb43f5ed30c`). Scripts do not download or upload documents.
@@ -35,6 +46,6 @@ The patched #266 gate now requires zero console warnings, not an allowlist for t
 - #227: the original sensitive XLS is not available in the public issue. The existing MiniFAT regression is synthetic, not the original report.
 - #248: the inline component lacks the attachment and the `downloadAttach` implementation. Existing cold Vue CLI/package regression coverage does not prove that private request/response path.
 - #269: the screenshot does not include the CAD file or font resources needed for reproduction.
-- #267: optional IFC visualization is a separate feature request; it must not be marked complete merely because signature detection exists.
+- #267: the optional IFC entry is documented in `packages/renderers/3d/IFC.md`; its official-model browser gate must pass before the optional feature is qualified. The frozen default Full/Office profiles are unchanged.
 
 No issue is closed automatically by these changes.
