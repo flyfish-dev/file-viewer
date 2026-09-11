@@ -3,22 +3,35 @@ name: Issue sample regression baseline
 on:
   push:
     branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/issue-sample-baseline.yml]
 
 permissions:
   contents: read
 
-concurrency:
-  group: issue-sample-baseline-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  dependencies:
+  pptx-fix:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          path: payload
           persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 8a219b750e6a1cca3938625043b1189baa4c3e4c
+          path: source
+      - name: Apply only the checksum-pinned reviewed patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed 's/Wfumhy5eW7V/Wfumhy5lpyeW7V/' payload/_maintenance/issue-268.patch.gz.b64 | base64 --decode | gzip --decompress > /tmp/issue-268.patch
+          echo '3640f2a795c98123e4bb069a300a05e71480d736f7a3687d40d5ea4bd104a3dd  /tmp/issue-268.patch' | sha256sum --check
+          cd source
+          git apply --index --check /tmp/issue-268.patch
+          git apply --index /tmp/issue-268.patch
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
         with:
           version: 11.0.9
@@ -26,16 +39,62 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
-          cache: pnpm
-      - name: Install relevant consumers and their test dependencies
-        run: pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/pptx... --filter @file-viewer/renderer-word... --filter @file-viewer/renderer-ofd... --filter @file-viewer/renderer-presentation...
-      - name: Bundle installed test dependencies
-        shell: bash
+      - name: Install and build relevant packages
+        working-directory: source
+        run: |
+          pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/pptx...
+          pnpm --filter @file-viewer/pptx build
+          pnpm --filter @file-viewer/pptx verify:github-268
+          pnpm --filter @file-viewer/pptx verify:github-176
+          pnpm exec playwright install --with-deps chromium
+      - name: Reproduce the original PPTX on baseline and patched code
+        working-directory: source
+        env:
+          ISSUE_EVIDENCE_DIR: /tmp/issue-268-evidence
         run: |
           set -euo pipefail
-          find . -name node_modules -type d -prune -print0 | tar --null -T - -czf /tmp/issue-consumer-dependencies.tar.gz
+          curl --fail --location --retry 2 --max-time 120 https://github.com/user-attachments/files/32082894/default.pptx -o /tmp/issue-268.pptx
+          for file in packages/renderers/pptx/src/chart.ts packages/renderers/pptx/src/engine/support/vendor.js; do
+            git show HEAD:"$file" > "$file"
+          done
+          node packages/renderers/pptx/scripts/verify-github-268-browser.mjs /tmp/issue-268.pptx --baseline
+          git restore --worktree packages/renderers/pptx/src/chart.ts packages/renderers/pptx/src/engine/support/vendor.js
+          node packages/renderers/pptx/scripts/verify-github-268-browser.mjs /tmp/issue-268.pptx
+      - name: Commit and push the verified fix to a new review branch
+        working-directory: source
+        run: |
+          set -euo pipefail
+          mkdir -p docs/regressions/issue-268
+          cp /tmp/issue-268-evidence/{before,after}-slide-{3,6}.png docs/regressions/issue-268/
+          git add docs/regressions/issue-268
+          git diff --cached --check
+          git diff --cached --stat
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(pptx): render literal chart data and horizontal bars' -m 'Refs #268. Includes original-file browser reproduction and focused regression coverage.'
+          git push origin HEAD:refs/heads/fix/pptx-inline-chart-data-268
+          git rev-parse HEAD > /tmp/issue-268-evidence/commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: issue-268-regression-evidence
+          path: /tmp/issue-268-evidence
+          retention-days: 14
+  docx-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: flyfish-dev/docxjs
+          persist-credentials: false
+      - name: Collect current public renderer source for the remaining diagonal-border investigation
+        run: |
+          mkdir -p /tmp/docx-source
+          git rev-parse HEAD > /tmp/docx-source/commit.txt
+          git archive --format=tar HEAD | gzip > /tmp/docx-source/source.tar.gz
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: issue-consumer-dependencies
-          path: /tmp/issue-consumer-dependencies.tar.gz
+          name: issue-266-docx-source
+          path: /tmp/docx-source
           retention-days: 7
