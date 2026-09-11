@@ -1,0 +1,87 @@
+name: Finalize qualified release readiness
+on:
+  push:
+    branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/finalize-qualified-readiness.yml]
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+concurrency:
+  group: finalize-qualified-readiness
+  cancel-in-progress: false
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Require the exact reviewed head and all current checks before merging
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 <<'PY'
+          import os, json, time, urllib.request, urllib.error, base64
+          from pathlib import Path
+          repo='flyfish-dev/file-viewer'
+          root='https://api.github.com/repos/'+repo
+          def api(path, method='GET', body=None):
+              req=urllib.request.Request(root+path, method=method,
+                  data=None if body is None else json.dumps(body).encode(),
+                  headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                           'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
+              with urllib.request.urlopen(req, timeout=45) as r: return json.load(r)
+          report={'pr':276,'published':False,'issueCommentsPosted':False}
+          try:
+              pr=api('/pulls/276');head=pr['head']['sha']
+              assert pr['head']['ref']=='release/readiness-20260911'
+              assert pr['base']['ref']=='main'
+              assert head.startswith('b582cb7'), 'Reviewed head changed; require a fresh review'
+              assert pr['state']=='open' and not pr['draft'], 'PR is not open and ready'
+              report['head']=head
+              needed={312018702:'Public CI',344274236:'Security'}
+              for attempt in range(66):
+                  current=api('/pulls/276')
+                  assert current['head']['sha']==head, 'Head changed during qualification'
+                  assert current['state']=='open', 'PR changed state during qualification'
+                  runs=api('/actions/runs?head_sha='+head+'&event=pull_request&per_page=100')['workflow_runs']
+                  selected={}
+                  for ident,name in needed.items():
+                      choices=[r for r in runs if r['workflow_id']==ident and r['head_sha']==head]
+                      if choices: selected[name]=max(choices,key=lambda r:r['id'])
+                  report['checks']={name:{'id':r['id'],'status':r['status'],'conclusion':r['conclusion'],'url':r['html_url']} for name,r in selected.items()}
+                  print(json.dumps(report['checks']),flush=True)
+                  failed=[name for name,r in selected.items() if r['status']=='completed' and r['conclusion']!='success']
+                  assert not failed, 'Qualification failed: '+', '.join(failed)
+                  if len(selected)==len(needed) and all(r['status']=='completed' and r['conclusion']=='success' for r in selected.values()): break
+                  time.sleep(20)
+              else: raise RuntimeError('Timed out waiting for exact-head CI; PR was not merged')
+              current=api('/pulls/276')
+              assert current['head']['sha']==head and current['state']=='open'
+              assert current['base']['sha']=='b2008f6ad9df36bfc5bae56f25cd7a9a4d1d8d29', 'Base moved; require updated qualification'
+              merge=api('/pulls/276/merge','PUT',{
+                  'sha':head,'merge_method':'squash',
+                  'commit_title':'feat(ifc): finalize sample regressions and release readiness (#276)',
+                  'commit_message':'Refs #266, #267, #268. Qualified original samples, packed upstream, optional IFC cold install and exact-head Public CI/Security. No npm publication.'})
+              assert merge.get('merged') is True, merge
+              report['merge']=merge
+              report['headTree']=api('/git/commits/'+head)['tree']['sha']
+              report['mainTree']=api('/git/commits/'+merge['sha'])['tree']['sha']
+              assert report['headTree']==report['mainTree'], 'Merged tree differs from the qualified source'
+              report['result']='success'
+              content=base64.b64encode((json.dumps(report,indent=2)+'\n').encode()).decode()
+              api('/contents/_maintenance/readiness-gate-result.json','PUT',{
+                  'message':'test: record exact-head release qualification and merged tree',
+                  'branch':'maintenance/sample-regressions-20260911','content':content})
+          except Exception as error:
+              report['result']='failure';report['error']=str(error)
+              raise
+          finally:
+              Path('/tmp/readiness-gate-result.json').write_text(json.dumps(report,indent=2))
+              print(json.dumps(report,indent=2),flush=True)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: final-release-readiness-gate
+          path: /tmp/readiness-gate-result.json
+          retention-days: 7
