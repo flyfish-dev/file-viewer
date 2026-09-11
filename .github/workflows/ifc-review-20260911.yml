@@ -1,0 +1,30 @@
+name: Optional IFC review inputs
+on:
+  push:
+    branches: [maintenance/sample-regressions-20260911]
+    paths: [.github/workflows/ifc-review-20260911.yml]
+permissions:
+  contents: read
+jobs:
+  inputs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - run: |
+          set -euo pipefail
+          mkdir -p /tmp/ifc-review/engine /tmp/ifc-review/samples
+          npm install --prefix /tmp/ifc-review/engine --ignore-scripts --save-exact @thatopen/components@3.4.8 @thatopen/fragments@3.4.7 web-ifc@0.0.77 three@0.185.1 @types/three@0.185.4 esbuild@0.28.2
+          git clone --depth=1 https://github.com/buildingSMART/Certification-datasets.git /tmp/ifc-datasets
+          git -C /tmp/ifc-datasets rev-parse HEAD > /tmp/ifc-review/samples/revision.txt
+          cp '/tmp/ifc-datasets/IFC 4.0.2.1 (IFC4 ADD2 TC1)/Simple-Scene/Building-Architecture.ifc' /tmp/ifc-review/samples/ifc4.ifc
+          cp '/tmp/ifc-datasets/IFC 4.3.2.0 (IFC4.3 ADD2)/Simple-Scene/Building-Architecture.ifc' /tmp/ifc-review/samples/ifc43.ifc
+          cp /tmp/ifc-datasets/LICENSE* /tmp/ifc-review/samples/
+          tar -C /tmp -czf /tmp/ifc-review.tar.gz ifc-review
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: optional-ifc-inputs
+          path: /tmp/ifc-review.tar.gz
+          retention-days: 1
