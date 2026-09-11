@@ -11,17 +11,6 @@
       "rendererId": "model",
       "assets": [
         {
-          "id": "model-web-ifc-api",
-          "rendererId": "model",
-          "kind": "script",
-          "target": "public",
-          "required": true,
-          "defaultPath": "wasm/model/web-ifc-api.js",
-          "packagePath": "web-ifc/web-ifc-api.js",
-          "optionPath": "ifc.apiUrl",
-          "description": "Pinned web-ifc 0.0.77 browser ESM API for the optional IFC/BIM capability."
-        },
-        {
           "id": "model-web-ifc-wasm",
           "rendererId": "model",
           "kind": "wasm",
@@ -62,7 +51,7 @@
           "defaultPath": "wasm/model/fragments-worker.mjs",
           "packagePath": "@thatopen/fragments/dist/Worker/worker.mjs",
           "optionPath": "ifc.thatOpen.workerUrl",
-          "description": "Pinned @thatopen/fragments 3.4.7 module worker for large IFC culling, LOD and model operations."
+          "description": "Pinned @thatopen/fragments 3.4.7 module worker for IFC culling, LOD and model operations."
         },
         {
           "id": "model-thatopen-fragments-license",

@@ -1,10 +1,6 @@
-export const DEFAULT_FILE_VIEWER_IFC_API_PATH = 'wasm/model/web-ifc-api.js';
-export const DEFAULT_FILE_VIEWER_IFC_WASM_PATH = 'wasm/model/web-ifc.wasm';
-export const DEFAULT_FILE_VIEWER_IFC_MT_WASM_PATH = 'wasm/model/web-ifc-mt.wasm';
+export const DEFAULT_FILE_VIEWER_IFC_WASM_PATH = 'wasm/model/';
 export const DEFAULT_FILE_VIEWER_IFC_FRAGMENTS_WORKER_PATH = 'wasm/model/fragments-worker.mjs';
 export const DEFAULT_FILE_VIEWER_IFC_LARGE_MODEL_THRESHOLD_BYTES = 16 * 1024 * 1024;
-
-export type FileViewerIfcBackend = 'auto' | 'web-ifc' | 'thatopen';
 
 export interface FileViewerIfcProperty {
   name: string;
@@ -26,10 +22,7 @@ export interface FileViewerIfcElementInfo {
 
 /**
  * Deliberately untyped pass-through object.
- *
- * Flyfish does not rename, validate or version individual keys. The object is
- * handed to the corresponding That Open API so applications can use new
- * library options without waiting for a File Viewer release.
+ * Flyfish does not rename, validate or version individual keys.
  */
 export interface FileViewerIfcOpaqueConfig {
   [key: string]: unknown;
@@ -45,6 +38,8 @@ export interface FileViewerIfcThatOpenRuntimeContext {
   readonly world: unknown;
   readonly fragments: unknown;
   readonly loader: unknown;
+  /** The web-ifc IfcAPI instance owned by That Open's IfcLoader. */
+  readonly webIfc: unknown;
   readonly importer?: unknown;
   readonly model?: unknown;
 }
@@ -52,19 +47,13 @@ export interface FileViewerIfcThatOpenRuntimeContext {
 export interface FileViewerIfcThatOpenOptions {
   /** Self-hosted @thatopen/fragments worker. No public-CDN fallback is used by Flyfish. */
   workerUrl?: string | URL;
-  /**
-   * Opaque 1:1 pass-through to `@thatopen/components` `IfcLoader.setup(...)`.
-   * Flyfish applies offline-safe defaults first, then forwards this exact object.
-   */
+  /** Opaque 1:1 pass-through to @thatopen/components IfcLoader.setup(...). */
   components?: FileViewerIfcOpaqueConfig;
-  /**
-   * Opaque 1:1 pass-through applied to `FragmentsManager.core.settings`.
-   * Unknown/future keys are copied without Flyfish maintaining a mirror schema.
-   */
+  /** Opaque 1:1 pass-through applied to FragmentsManager.core.settings. */
   fragments?: FileViewerIfcOpaqueConfig;
-  /** Opaque 1:1 pass-through to the Fragments IFC importer `process(...)` options. */
+  /** Opaque 1:1 pass-through to the Fragments IFC importer process options. */
   importer?: FileViewerIfcOpaqueConfig;
-  /** Imperative escape hatch executed synchronously before the IFC importer starts processing. */
+  /** Imperative escape hatch executed synchronously before IFC importer processing. */
   configureImporter?: (context: FileViewerIfcThatOpenRuntimeContext & { readonly importer: unknown }) => void;
   /** Raw runtime hook executed once the That Open model is ready. */
   configure?: (context: FileViewerIfcThatOpenRuntimeContext) => void | Promise<void>;
@@ -72,31 +61,21 @@ export interface FileViewerIfcThatOpenOptions {
 
 export interface FileViewerIfcPerformanceOptions {
   /**
-   * Files at or above this size are considered large. Defaults to 16 MiB.
-   * In `backend: 'auto'`, large files prefer the That Open Fragments backend.
+   * Files at or above this size are classified as large. Defaults to 16 MiB.
+   * Classification only changes expensive UI/statistics behavior; all IFC files use That Open + Fragments.
    */
   largeModelThresholdBytes?: number;
-  /** Optional hard source-file ceiling. Files above it fail before allocating parser state. */
+  /** Optional hard source-file ceiling. Files above it fail before allocating parser/runtime state. */
   maxSourceBytes?: number;
-  /** Disable automatic Fragments routing for large files while retaining `backend: 'auto'`. */
-  preferFragmentsForLargeModels?: boolean;
 }
 
-/**
- * Stable extension surface for advanced IFC integrations.
- *
- * Raw engine objects intentionally remain `unknown` so File Viewer does not
- * freeze third-party library types into the public core contract.
- */
+/** Stable Flyfish extension surface. Raw That Open objects remain available under `thatOpen`. */
 export interface FileViewerIfcConfigureContext {
-  readonly backend: Exclude<FileViewerIfcBackend, 'auto'>;
   readonly fileSizeBytes: number;
   readonly largeModel: boolean;
-  readonly api: unknown;
-  readonly modelID: number;
   readonly model: unknown;
   readonly schema?: string;
-  readonly thatOpen?: FileViewerIfcThatOpenRuntimeContext;
+  readonly thatOpen: FileViewerIfcThatOpenRuntimeContext;
   getElementInfo: (expressID: number) => Promise<FileViewerIfcElementInfo>;
   selectElement: (expressID: number | null) => Promise<FileViewerIfcElementInfo | null>;
   clearSelection: () => void;
@@ -104,32 +83,18 @@ export interface FileViewerIfcConfigureContext {
 }
 
 export interface FileViewerIfcOptions {
-  /** Engine selection. `auto` keeps small IFCs on web-ifc and routes large/configured models through That Open Fragments. */
-  backend?: FileViewerIfcBackend;
-  /** Large-file routing and optional hard safety limits. */
+  /** Large-file classification and optional hard safety limits. Rendering always uses That Open + Fragments. */
   performance?: FileViewerIfcPerformanceOptions;
   /** Opaque That Open Components / Fragments bridge plus raw runtime hooks. */
   thatOpen?: FileViewerIfcThatOpenOptions;
-  /** Self-hosted browser ESM build of web-ifc (`web-ifc-api.js`). */
-  apiUrl?: string | URL;
-  /** Self-hosted single-thread web-ifc WebAssembly binary. */
-  wasmUrl?: string | URL;
-  /** Self-hosted multi-thread web-ifc WebAssembly binary used in cross-origin-isolated pages. */
-  wasmMtUrl?: string | URL;
-  /** Force web-ifc to use its single-thread runtime even when cross-origin isolation is available. */
-  forceSingleThread?: boolean;
   /** Fit the camera after opening the model. Defaults to true. */
   fitToModel?: boolean;
   /** Enable click/tap BIM element selection. Defaults to true. */
   enableSelection?: boolean;
   /** Show the built-in IFC entity/property inspector. Defaults to true. */
   showProperties?: boolean;
-  /** Circle tessellation passed to web-ifc. Defaults to web-ifc's normal value. */
-  circleSegments?: number;
-  /** Optional web-ifc memory ceiling in bytes. */
-  memoryLimitBytes?: number;
   /** Maximum property rows rendered by the built-in inspector. Defaults to 250. */
   maxProperties?: number;
-  /** Advanced hook invoked once the selected IFC backend has mounted and is ready. */
+  /** Advanced stable Flyfish hook invoked once the That Open model has mounted and is ready. */
   configure?: (context: FileViewerIfcConfigureContext) => void | Promise<void>;
 }

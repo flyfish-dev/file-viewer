@@ -40,15 +40,6 @@ const fragmentsWorkerPackagePath = relative(fragmentsPackageDir, fragmentsWorker
 
 const assets = [
   {
-    id: 'model-web-ifc-api',
-    sourcePath: resolve(webIfcDir, 'web-ifc-api.js'),
-    filename: 'web-ifc-api.js',
-    kind: 'script',
-    optionPath: 'ifc.apiUrl',
-    packagePath: 'web-ifc/web-ifc-api.js',
-    description: 'Pinned web-ifc 0.0.77 browser ESM API for the optional IFC/BIM capability.',
-  },
-  {
     id: 'model-web-ifc-wasm',
     sourcePath: resolve(webIfcDir, 'web-ifc.wasm'),
     filename: 'web-ifc.wasm',
@@ -81,7 +72,7 @@ const assets = [
     kind: 'worker',
     optionPath: 'ifc.thatOpen.workerUrl',
     packagePath: `@thatopen/fragments/${fragmentsWorkerPackagePath}`,
-    description: 'Pinned @thatopen/fragments 3.4.7 module worker for large IFC culling, LOD and model operations.',
+    description: 'Pinned @thatopen/fragments 3.4.7 module worker for IFC culling, LOD and model operations.',
   },
 ]
 

@@ -148,7 +148,7 @@ export default async function renderThatOpenIfc(
   const doc = target.ownerDocument;
   const win = doc.defaultView || window;
   const assetBase = resolveFileViewerRuntimeAssetBaseUrl(doc);
-  const wasmUrl = resolveAssetUrl(options?.wasmUrl, DEFAULT_FILE_VIEWER_IFC_WASM_PATH, assetBase);
+  const wasmDirectory = resolveAssetUrl(undefined, DEFAULT_FILE_VIEWER_IFC_WASM_PATH, assetBase);
   const workerUrl = resolveAssetUrl(
     options?.thatOpen?.workerUrl,
     DEFAULT_FILE_VIEWER_IFC_FRAGMENTS_WORKER_PATH,
@@ -177,7 +177,7 @@ export default async function renderThatOpenIfc(
   clearButton.disabled = true;
   clearButton.hidden = !enableSelection;
   actions.append(fitButton, clearButton);
-  const meta = element(doc, 'div', 'ifc-thatopen-meta', largeModel ? 'IFC · Fragments LOD · loading…' : 'IFC · That Open · loading…');
+  const meta = element(doc, 'div', 'ifc-thatopen-meta', largeModel ? 'IFC · Fragments · large model · loading…' : 'IFC · Fragments · loading…');
   toolbar.append(actions, meta);
   const stage = element(doc, 'div', 'ifc-thatopen-stage');
   const state = element(doc, 'div', 'ifc-thatopen-state', t('model.state.loading'));
@@ -475,18 +475,10 @@ export default async function renderThatOpenIfc(
     getControls()?.addEventListener?.('rest', onCameraRest);
 
     loader = components.get((OBC as any).IfcLoader);
-    const wasmDirectory = new URL('./', wasmUrl).href;
-    const webIfcSettings: Record<string, unknown> = { COORDINATE_TO_ORIGIN: true };
-    if (Number.isFinite(options?.circleSegments)) {
-      webIfcSettings.CIRCLE_SEGMENTS = Math.max(3, Math.floor(Number(options?.circleSegments)));
-    }
-    if (Number.isFinite(options?.memoryLimitBytes)) {
-      webIfcSettings.MEMORY_LIMIT = Math.max(64 * 1024 * 1024, Math.floor(Number(options?.memoryLimitBytes)));
-    }
     await loader.setup({
       autoSetWasm: false,
       wasm: { path: wasmDirectory, absolute: true },
-      webIfc: webIfcSettings,
+      webIfc: { COORDINATE_TO_ORIGIN: true },
     });
     if (options?.thatOpen?.components) {
       // Intentionally forward the user's object unchanged: no Flyfish key mapping.
@@ -504,6 +496,7 @@ export default async function renderThatOpenIfc(
           world,
           fragments,
           loader,
+          webIfc: loader?.webIfc,
           importer: value,
         });
       },
@@ -520,6 +513,7 @@ export default async function renderThatOpenIfc(
       world,
       fragments,
       loader,
+      webIfc: loader?.webIfc,
       importer,
       model,
     };
@@ -571,11 +565,8 @@ export default async function renderThatOpenIfc(
     zoomEmitter.emit();
 
     const configureContext: FileViewerIfcConfigureContext = {
-      backend: 'thatopen',
       fileSizeBytes: buffer.byteLength,
       largeModel,
-      api: loader,
-      modelID: -1,
       model,
       schema,
       thatOpen: runtime,

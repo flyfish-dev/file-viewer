@@ -3,15 +3,26 @@
   "version": "3.0.3",
   "private": false,
   "type": "module",
-  "description": "Explicit opt-in IFC/BIM preview capability for @file-viewer/renderer-3d with web-ifc and That Open Components/Fragments backends.",
-  "keywords": ["file-viewer", "ifc", "bim", "web-ifc", "thatopen", "fragments", "3d", "self-hosted"],
+  "description": "Explicit opt-in IFC/BIM preview capability for @file-viewer/renderer-3d using That Open Components/Fragments with web-ifc as the underlying parser.",
+  "keywords": [
+    "file-viewer",
+    "ifc",
+    "bim",
+    "web-ifc",
+    "thatopen",
+    "fragments",
+    "3d",
+    "self-hosted"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/capabilities/ifc"
   },
   "homepage": "https://doc.file-viewer.app/guide/on-demand-renderers",
-  "bugs": { "url": "https://github.com/flyfish-dev/file-viewer/issues" },
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -23,7 +34,12 @@
     "./capability": "./file-viewer.capability.json",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "file-viewer.capability.json", "README.md", "README.en.md"],
+  "files": [
+    "dist",
+    "file-viewer.capability.json",
+    "README.md",
+    "README.en.md"
+  ],
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "type-check": "tsc -b tsconfig.json"

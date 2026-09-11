@@ -3,7 +3,7 @@
 <div class="doc-kicker">Local BIM Preview, Explicitly Opted In</div>
 
 <p class="doc-lead">
-  IFC is a specialist capability layered over the normal 3D renderer. It stays outside Engineering / Full default dependency closures, parses original IFC bytes in the browser, and can switch between a direct web-ifc renderer and a worker-backed That Open Fragments path.
+IFC is an optional specialist capability layered over the normal 3D renderer. Every IFC file uses the same That Open Components + Fragments pipeline, with web-ifc as the underlying IFC parser/WASM engine. The capability stays outside Engineering / Full default dependency closures and uses only self-hosted runtime assets.
 </p>
 
 ## Install
@@ -22,33 +22,25 @@ const options = {
 }
 ```
 
-The capability is not activated by `@file-viewer/preset-engineering`, `@file-viewer/preset-all`, or the Full compatibility packages. CLI-managed applications can opt in with:
+CLI-managed applications can opt in with `npx file-viewer-cli config add ifc --write` followed by `npx file-viewer-cli install --yes`. There is no public-CDN fallback.
 
-```bash
-npx file-viewer-cli config add ifc --write
-npx file-viewer-cli install --yes
+## One IFC pipeline
+
+```text
+Flyfish File Viewer
+        ↓
+@file-viewer/capability-ifc
+        ↓
+That Open Components / IfcLoader
+        ↓
+web-ifc parser + WASM
+        ↓
+That Open Fragments + worker
+        ↓
+interactive BIM viewer
 ```
 
-The matching `@file-viewer/assets-ifc` payload must be self-hosted under the normal File Viewer asset root. File Viewer does not fall back to a public CDN.
-
-## Backend selection
-
-```ts
-const options = {
-  ifc: {
-    backend: 'auto', // 'auto' | 'web-ifc' | 'thatopen'
-  },
-}
-```
-
-`auto` is designed for the normal product path:
-
-- smaller IFC files use the direct `web-ifc` + Three.js adapter;
-- files at or above 16 MiB prefer That Open Components + Fragments;
-- providing `ifc.thatOpen` also selects the That Open path in `auto` mode, because the caller explicitly requested That Open configuration;
-- `web-ifc` and `thatopen` can be forced when an application needs deterministic backend selection.
-
-The threshold is a routing heuristic, not a promise that every file below it is cheap or every file above it is expensive. Applications can tune it from observed production models.
+There is no public backend selector. Small and large IFC files use the same pipeline, so selection, properties, cleanup and rendering semantics do not diverge by file size.
 
 ## Large IFC files
 
@@ -57,115 +49,55 @@ const options = {
   ifc: {
     performance: {
       largeModelThresholdBytes: 24 * 1024 * 1024,
-      preferFragmentsForLargeModels: true,
-      // Optional product/security policy; there is no hard default ceiling.
-      maxSourceBytes: 750 * 1024 * 1024,
+      maxSourceBytes: 750 * 1024 * 1024, // optional application policy
     },
   },
 }
 ```
 
-The That Open path is used for large models because Fragments is worker-backed and maintains its own culling / LOD representation. File Viewer deliberately avoids eagerly enumerating all geometry element IDs for large files merely to display a count; element data stays demand-driven and the property panel loads the selected element only.
-
-This improves responsiveness and memory behavior, but it cannot make source parsing free: the browser still receives the original IFC bytes and conversion to Fragments still needs CPU and memory. `maxSourceBytes` exists so deployments with known device limits can reject a source before parser state is allocated.
+`largeModelThresholdBytes` classifies a model for performance policy only; it does not switch rendering engines. Fragments/worker/culling are used for every IFC. For models classified as large, File Viewer avoids eager element enumeration purely for toolbar statistics. Properties remain demand-driven. `maxSourceBytes` is an optional pre-initialization safety ceiling.
 
 ## Extensibility contract
 
-The stable Flyfish layer should remain small: `backend`, fit, selection, properties, asset URLs, performance policy, and `configure(context)`.
-
-That Open changes more quickly than the File Viewer public API. Mirroring every That Open field would force File Viewer to rename and release options every time Components or Fragments changes. Instead, the capability provides an explicit opaque bridge.
-
-### Components pass-through
-
-`ifc.thatOpen.components` is forwarded as the object passed to `@thatopen/components` `IfcLoader.setup(...)` after File Viewer applies its offline-safe self-hosted defaults.
+Flyfish keeps the stable surface small and provides an opaque That Open bridge rather than mirroring third-party option schemas.
 
 ```ts
 const options = {
   ifc: {
-    backend: 'thatopen',
     thatOpen: {
       components: {
-        autoSetWasm: false,
-        webIfc: {
-          CIRCLE_SEGMENTS: 7,
-        },
+        // forwarded unchanged to IfcLoader.setup(...)
+        webIfc: { CIRCLE_SEGMENTS: 7 },
       },
-    },
-  },
-}
-```
-
-File Viewer does not translate individual keys in this object. Unsupported keys therefore follow the behavior of the pinned That Open version rather than a separate Flyfish compatibility layer.
-
-### Fragments pass-through
-
-`ifc.thatOpen.fragments` is copied directly to `FragmentsManager.core.settings`.
-
-```ts
-const options = {
-  ifc: {
-    thatOpen: {
       fragments: {
+        // copied unchanged to FragmentsManager.core.settings
         maxUpdateRate: 73,
       },
-    },
-  },
-}
-```
-
-This is intentionally an open dictionary so new Fragments settings can be used before File Viewer publishes a matching typed field.
-
-### Importer pass-through
-
-`ifc.thatOpen.importer` is passed through to the Fragments IFC importer processing options.
-
-```ts
-const options = {
-  ifc: {
-    thatOpen: {
       importer: {
-        // Current @thatopen/fragments IfcImporter processing options go here.
+        // forwarded unchanged to Fragments IFC importer processing options
+      },
+      configureImporter({ importer, loader, webIfc }) {
+        // raw imperative escape hatch before importer processing
+      },
+      async configure({ components, world, fragments, loader, webIfc, importer, model, modules }) {
+        // raw That Open runtime objects; no Flyfish wrapper is inserted
       },
     },
-  },
-}
-```
-
-### Imperative escape hatches
-
-Not every library API is JSON-shaped. For that reason, the capability also exposes raw runtime objects without wrapping their methods:
-
-```ts
-const options = {
-  ifc: {
-    thatOpen: {
-      configureImporter({ importer, modules, components, fragments, loader, world }) {
-        // Called before importer processing starts.
-      },
-      async configure({ modules, components, fragments, loader, importer, world, model }) {
-        // Called after the Fragments model is ready.
-      },
-    },
-
     async configure(context) {
-      // Stable Flyfish-level context for either backend.
-      console.log(context.backend, context.fileSizeBytes, context.largeModel)
-
-      // Present only for the That Open backend.
-      console.log(context.thatOpen)
+      console.log(context.fileSizeBytes, context.largeModel)
+      console.log(context.thatOpen.webIfc)
     },
   },
 }
 ```
 
-The raw objects are typed as `unknown` at the Flyfish boundary on purpose. Advanced applications should cast them to the exact `@thatopen/components` / `@thatopen/fragments` types they install. This avoids freezing third-party implementation types into the core File Viewer contract.
+The pass-through objects are deliberately open dictionaries (`[key: string]: unknown`). Advanced applications can cast raw objects to the exact pinned That Open types they install.
 
-## Self-hosted assets
+## Self-hosted assets and licenses
 
-`@file-viewer/assets-ifc` pins and stages:
+`@file-viewer/assets-ifc` stages:
 
 ```text
-web-ifc-api.js
 web-ifc.wasm
 web-ifc-mt.wasm
 fragments-worker.mjs
@@ -173,21 +105,10 @@ LICENSE.web-ifc-MPL-2.0.md
 LICENSE.thatopen-fragments-MIT.txt
 ```
 
-Custom paths can be supplied with `ifc.apiUrl`, `ifc.wasmUrl`, `ifc.wasmMtUrl`, and `ifc.thatOpen.workerUrl`.
+`web-ifc@0.0.77` is MPL-2.0. `@thatopen/components@3.4.8` and `@thatopen/fragments@3.4.7` are MIT. The Flyfish capability wrapper remains Apache-2.0.
 
-## Supported viewer scope
+## Scope and regression coverage
 
-The capability is focused on review and inspection:
+The capability provides local IFC opening, orbit/pan/zoom, fit-to-model, element picking, identity/Name/GlobalId/property inspection, cleanup and advanced raw customization. BIM authoring/editing, clash detection, BCF, takeoff, sectioning and measurement remain out of scope.
 
-- browser-local IFC opening;
-- orbit / pan / zoom and fit-to-model;
-- element picking;
-- entity identity, `Name`, `GlobalId`, and bounded property inspection;
-- lifecycle cleanup and abort handling;
-- backend-specific advanced customization through the bridge above.
-
-BIM authoring/editing, clash detection, BCF workflows, quantity takeoff, sectioning, and measurement remain outside the initial capability.
-
-## Regression coverage
-
-`test/fixtures/ifc/` contains two unchanged buildingSMART IFC4 Simple-Scene files with their CC BY 4.0 attribution/license and SHA-256 checksums. `test/ifc-optional-capability.spec.ts` guards the optional dependency boundary, license notices, backend routing, hard source-size guard, and the opaque pass-through contract. The permanent IFC validation workflow also opens real committed fixtures in Chromium using the self-hosted assets and exercises both the direct and That Open paths.
+The repository commits two buildingSMART IFC4 fixtures with CC BY 4.0 attribution. The permanent IFC validation workflow renders small and forced-large cases through the same That Open/Fragments stack in Chromium and runs the full Flyfish build/type-check/test gates.

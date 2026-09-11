@@ -33,7 +33,6 @@ import '@file-viewer/capability-ifc'
 
 const options = {
   ifc: {
-    backend: 'auto',
     fitToModel: true,
     enableSelection: true,
     showProperties: true,
@@ -76,51 +75,9 @@ Large Fragments models avoid eager full-element counting and keep culling / LOD 
 
 ### IFC feature boundary
 
-The optional IFC adapter provides:
+IFC is an explicit optional capability. Once enabled, **all** IFC files use That Open Components + Fragments, while web-ifc remains the parser/WASM engine underneath `IfcLoader`. There is no size-dependent backend switch. `largeModelThresholdBytes` only changes performance policy (for example, suppressing eager statistics); `maxSourceBytes` is an optional hard application guard. Advanced consumers can pass opaque `thatOpen.components`, `thatOpen.fragments`, and `thatOpen.importer` objects and use raw runtime hooks. See `docs/guide/ifc.md`.
 
-- original `.ifc` parsing locally in the browser, without a remote conversion service;
-- orbit, pan, zoom, fit-to-model, and responsive WebGL rendering;
-- element picking and basic IFC identity/property inspection;
-- direct web-ifc and That Open Fragments backends;
-- lifecycle cleanup and abort handling;
-- a stable Flyfish `ifc.configure(context)` extension point;
-- an opaque That Open escape hatch for advanced consumers.
-
-```ts
-const options = {
-  ifc: {
-    async configure(context) {
-      const info = await context.getElementInfo(42)
-      console.log(context.backend, context.largeModel, context.schema, info.globalId)
-      await context.selectElement(42)
-      context.fitToModel()
-    },
-  },
-}
-```
-
-For That Open-specific configuration, File Viewer intentionally does not mirror every third-party key. `ifc.thatOpen.components` is forwarded to `IfcLoader.setup(...)`, `ifc.thatOpen.fragments` is copied to `FragmentsManager.core.settings`, and `ifc.thatOpen.importer` is forwarded to importer processing options. Raw `configureImporter(...)` and `configure(...)` hooks expose the actual That Open runtime objects without a Flyfish wrapper.
-
-See the dedicated [IFC / BIM guide](https://doc.file-viewer.app/guide/ifc) for the complete pass-through contract and large-model strategy.
-
-BIM authoring/editing, clash detection, BCF, takeoff, sectioning, and measurements remain out of scope.
-
-### Self-hosted IFC runtime
-
-`@file-viewer/assets-ifc` stages the pinned browser runtime required by both IFC backends:
-
-```text
-web-ifc-api.js                    -> wasm/model/web-ifc-api.js
-web-ifc.wasm                      -> wasm/model/web-ifc.wasm
-web-ifc-mt.wasm                   -> wasm/model/web-ifc-mt.wasm
-fragments-worker.mjs              -> wasm/model/fragments-worker.mjs
-LICENSE.web-ifc-MPL-2.0.md        -> wasm/model/LICENSE.web-ifc-MPL-2.0.md
-LICENSE.thatopen-fragments-MIT.txt -> wasm/model/LICENSE.thatopen-fragments-MIT.txt
-```
-
-There is no public-CDN fallback. Override `ifc.apiUrl`, `ifc.wasmUrl`, `ifc.wasmMtUrl`, or `ifc.thatOpen.workerUrl` only when using another self-hosted asset layout.
-
-`web-ifc@0.0.77` is MPL-2.0. `@thatopen/components@3.4.8` and `@thatopen/fragments@3.4.7` are MIT-licensed. The File Viewer renderer/capability wrappers remain Apache-2.0.
+Self-hosted IFC assets are `web-ifc.wasm`, `web-ifc-mt.wasm`, `fragments-worker.mjs`, and their MPL-2.0/MIT notices.
 
 ## Other 3D assets
 

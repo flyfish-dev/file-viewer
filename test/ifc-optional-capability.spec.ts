@@ -47,18 +47,13 @@ describe('optional IFC capability boundary', () => {
       id: 'ifc',
       packageName: '@file-viewer/capability-ifc',
       enhancesPackage: '@file-viewer/renderer-3d',
-      activation: {
-        kind: 'side-effect-import',
-        import: '@file-viewer/capability-ifc',
-        export: 'enableFileViewerIfc',
-      },
+      activation: { kind: 'side-effect-import', import: '@file-viewer/capability-ifc', export: 'enableFileViewerIfc' },
       rendererIds: ['model'],
       formats: ['ifc'],
       weight: 'heavy',
       profiles: [],
     })
     expect(manifest.assets.packageName).toBe('@file-viewer/assets-ifc')
-    expect(manifest.assets.copyMode).toBe('capability-pack')
     expect(manifest.license.notices).toEqual(expect.arrayContaining([
       expect.objectContaining({ packageName: 'web-ifc', spdx: 'MPL-2.0' }),
       expect.objectContaining({ packageName: '@thatopen/components', spdx: 'MIT' }),
@@ -66,7 +61,7 @@ describe('optional IFC capability boundary', () => {
     ]))
   })
 
-  it('requires explicit runtime activation and registers a lazy specialist handler', async () => {
+  it('requires explicit runtime activation and registers one lazy That Open handler', async () => {
     registerFileViewerIfcCapability(false)
     expect(isFileViewerIfcCapabilityEnabled()).toBe(false)
     registerFileViewerIfcCapability(true)
@@ -76,69 +71,45 @@ describe('optional IFC capability boundary', () => {
     const capabilitySource = await readFile(resolve(root, 'packages/capabilities/ifc/src/index.ts'), 'utf8')
     const rendererSource = await readFile(resolve(root, 'packages/renderers/3d/src/index.ts'), 'utf8')
     expect(capabilitySource).toContain("import('./thatOpenBackend.js')")
-    expect(capabilitySource).toContain('registerFileViewerIfcCapability((buffer, target, type, context)')
     expect(rendererSource).toContain('IFC support is opt-in')
-    expect(rendererSource).toContain('isFileViewerIfcCapabilityEnabled()')
+    expect(rendererSource).not.toContain("import('./ifc.js')")
+    expect(rendererSource).not.toContain('requestedBackend')
   })
 
-  it('routes configured large IFCs to the specialist backend without initializing the direct renderer', async () => {
-    const specialist = vi.fn(async () => ({
-      $el: {} as HTMLDivElement,
-      unmount: () => undefined,
-    }))
+  it('routes both small and large IFC files through the same capability handler', async () => {
+    const specialist = vi.fn(async () => ({ $el: {} as HTMLDivElement, unmount: () => undefined }))
     registerFileViewerIfcCapability(specialist)
 
-    await renderFileViewerModel(
-      new ArrayBuffer(2),
-      {} as HTMLDivElement,
-      'ifc',
-      {
-        options: {
-          ifc: {
-            performance: {
-              largeModelThresholdBytes: 1,
-            },
-          },
-        },
-      } as never
-    )
+    await renderFileViewerModel(new ArrayBuffer(2), {} as HTMLDivElement, 'ifc', {
+      options: { ifc: { performance: { largeModelThresholdBytes: 1024 } } },
+    } as never)
+    await renderFileViewerModel(new ArrayBuffer(2), {} as HTMLDivElement, 'ifc', {
+      options: { ifc: { performance: { largeModelThresholdBytes: 1 } } },
+    } as never)
 
-    expect(specialist).toHaveBeenCalledTimes(1)
+    expect(specialist).toHaveBeenCalledTimes(2)
   })
 
-  it('enforces an application hard source-size limit before invoking any IFC backend', async () => {
-    const specialist = vi.fn(async () => ({
-      $el: {} as HTMLDivElement,
-      unmount: () => undefined,
-    }))
+  it('enforces an application hard source-size limit before invoking the IFC capability', async () => {
+    const specialist = vi.fn(async () => ({ $el: {} as HTMLDivElement, unmount: () => undefined }))
     registerFileViewerIfcCapability(specialist)
 
-    await expect(renderFileViewerModel(
-      new ArrayBuffer(4),
-      {} as HTMLDivElement,
-      'ifc',
-      {
-        options: {
-          ifc: {
-            backend: 'thatopen',
-            performance: {
-              maxSourceBytes: 3,
-            },
-          },
-        },
-      } as never
-    )).rejects.toThrow('maxSourceBytes')
+    await expect(renderFileViewerModel(new ArrayBuffer(4), {} as HTMLDivElement, 'ifc', {
+      options: { ifc: { performance: { maxSourceBytes: 3 } } },
+    } as never)).rejects.toThrow('maxSourceBytes')
     expect(specialist).not.toHaveBeenCalled()
   })
 
-  it('keeps the That Open compatibility bridge opaque instead of mirroring keys', async () => {
+  it('keeps the That Open compatibility bridge opaque and exposes the underlying web-ifc instance', async () => {
     const typesSource = await readFile(resolve(root, 'packages/renderers/3d/src/ifcTypes.ts'), 'utf8')
     const backendSource = await readFile(resolve(root, 'packages/capabilities/ifc/src/thatOpenBackend.ts'), 'utf8')
     expect(typesSource).toContain('export interface FileViewerIfcOpaqueConfig')
     expect(typesSource).toContain('[key: string]: unknown')
+    expect(typesSource).not.toContain('FileViewerIfcBackend')
     expect(backendSource).toContain('await loader.setup(options.thatOpen.components)')
     expect(backendSource).toContain('Object.assign(fragments.core.settings, options.thatOpen.fragments)')
     expect(backendSource).toContain('processData: options.thatOpen.importer')
+    expect(backendSource).toContain('webIfc: loader?.webIfc')
   })
 
   it('ships attributed open-license IFC fixtures', async () => {

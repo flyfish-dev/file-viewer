@@ -33,7 +33,6 @@ import '@file-viewer/capability-ifc'
 
 const options = {
   ifc: {
-    backend: 'auto',
     fitToModel: true,
     enableSelection: true,
     showProperties: true,

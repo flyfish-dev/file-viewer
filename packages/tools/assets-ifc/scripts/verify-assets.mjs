@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url'
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const root = resolve(packageDir, 'viewer/wasm/model')
 const required = [
-  'web-ifc-api.js',
   'web-ifc.wasm',
   'web-ifc-mt.wasm',
   'LICENSE.web-ifc-MPL-2.0.md',
@@ -22,7 +21,6 @@ const group = manifest.rendererAssetManifests.find(entry => entry.rendererId ===
 if (!group) throw new Error('IFC asset pack is missing the model renderer group')
 const ids = new Set(group.assets.map(asset => asset.id))
 for (const id of [
-  'model-web-ifc-api',
   'model-web-ifc-wasm',
   'model-web-ifc-mt-wasm',
   'model-web-ifc-license',
@@ -32,8 +30,6 @@ for (const id of [
   if (!ids.has(id)) throw new Error(`IFC asset pack is missing ${id}`)
 }
 
-const api = await readFile(resolve(root, 'web-ifc-api.js'), 'utf8')
-if (!api.includes('IfcAPI')) throw new Error('Staged web-ifc browser API does not expose the expected IfcAPI symbol')
 const webIfcLicense = await readFile(resolve(root, 'LICENSE.web-ifc-MPL-2.0.md'), 'utf8')
 if (!webIfcLicense.includes('Mozilla Public License')) throw new Error('Staged web-ifc license is not MPL-2.0 text')
 const fragmentsLicense = await readFile(resolve(root, 'LICENSE.thatopen-fragments-MIT.txt'), 'utf8')

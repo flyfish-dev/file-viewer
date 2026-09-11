@@ -57,8 +57,7 @@ const options = {
   ifc: {
     performance: {
       largeModelThresholdBytes: 24 * 1024 * 1024,
-      preferFragmentsForLargeModels: true,
-      // 可选产品/安全策略；File Viewer 默认没有固定硬上限。
+            // 可选产品/安全策略；File Viewer 默认没有固定硬上限。
       maxSourceBytes: 750 * 1024 * 1024,
     },
   },
@@ -82,8 +81,7 @@ That Open 的更新频率高于 File Viewer 公共 API。如果把每个 That Op
 ```ts
 const options = {
   ifc: {
-    backend: 'thatopen',
-    thatOpen: {
+        thatOpen: {
       components: {
         autoSetWasm: false,
         webIfc: {
@@ -149,7 +147,7 @@ const options = {
 
     async configure(context) {
       // 两个 backend 共用的稳定 Flyfish context
-      console.log(context.backend, context.fileSizeBytes, context.largeModel)
+      console.log(context.fileSizeBytes, context.largeModel)
       // 仅 That Open backend 存在
       console.log(context.thatOpen)
     },
@@ -164,7 +162,6 @@ Flyfish 边界故意把 raw runtime 对象类型保持为 `unknown`。高级业�
 `@file-viewer/assets-ifc` 固定并发布：
 
 ```text
-web-ifc-api.js
 web-ifc.wasm
 web-ifc-mt.wasm
 fragments-worker.mjs

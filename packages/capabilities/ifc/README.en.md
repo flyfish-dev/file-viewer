@@ -21,30 +21,11 @@ const options = {
 }
 ```
 
-Publish the matching `@file-viewer/assets-ifc` files under the normal File Viewer asset root. The pack contains the pinned `web-ifc` browser ESM/WASM runtime and the matching self-hosted That Open Fragments worker. You can override `ifc.apiUrl`, `ifc.wasmUrl`, `ifc.wasmMtUrl`, and `ifc.thatOpen.workerUrl`; File Viewer has no public-CDN fallback.
+Publish the matching `@file-viewer/assets-ifc` files under the normal File Viewer asset root. The pack contains the pinned `web-ifc` WASM binaries and the matching self-hosted That Open Fragments worker. Advanced custom `IfcLoader.setup(...)` values can be supplied through `ifc.thatOpen.components`; `ifc.thatOpen.workerUrl` overrides the worker path. File Viewer has no public-CDN fallback.
 
-## Backend and large IFC strategy
+## One That Open pipeline and large IFC strategy
 
-`ifc.backend` accepts `auto`, `web-ifc`, or `thatopen`.
-
-- `auto` is the default. Small IFCs keep the direct `web-ifc` + Three.js path. Files at or above `ifc.performance.largeModelThresholdBytes` (16 MiB by default) prefer the worker-backed That Open Fragments path.
-- `web-ifc` always uses the direct renderer. This is useful for deterministic compatibility or applications that do not want the Fragments engine for a particular model.
-- `thatopen` always uses That Open Components + Fragments.
-
-For large files, the Fragments path keeps rendering/culling/LOD work in the dedicated Fragments worker and avoids eagerly enumerating all element IDs just to populate the toolbar. Properties are still requested on selection. `ifc.performance.maxSourceBytes` is an optional hard source-file guard; File Viewer does not impose a hard default size ceiling.
-
-```ts
-const options = {
-  ifc: {
-    backend: 'auto',
-    performance: {
-      largeModelThresholdBytes: 24 * 1024 * 1024,
-      // maxSourceBytes: 750 * 1024 * 1024, // optional application policy
-      preferFragmentsForLargeModels: true,
-    },
-  },
-}
-```
+All IFC files use That Open Components + Fragments. `web-ifc` remains the parser/WASM engine owned by `IfcLoader`; it is not exposed as a second Flyfish rendering backend. `ifc.performance.largeModelThresholdBytes` only changes large-model policy such as avoiding eager toolbar statistics, while `maxSourceBytes` is an optional pre-initialization ceiling.
 
 ## Extensibility: opaque That Open bridge
 
@@ -53,7 +34,6 @@ File Viewer intentionally does **not** mirror every That Open option into a Flyf
 ```ts
 const options = {
   ifc: {
-    backend: 'thatopen',
     thatOpen: {
       // 1:1 object forwarded to @thatopen/components IfcLoader.setup(...)
       components: {
@@ -84,9 +64,9 @@ const options = {
       },
     },
 
-    // Stable Flyfish-level hook, independent of the selected backend.
+    // Stable Flyfish-level hook.
     async configure(context) {
-      console.log(context.backend, context.largeModel, context.thatOpen)
+      console.log(context.largeModel, context.thatOpen.webIfc)
     },
   },
 }
@@ -98,6 +78,6 @@ The capability provides browser-local IFC parsing, orbit/pan/zoom, fit-to-model,
 
 ## Regression fixtures
 
-The repository commits two buildingSMART IFC4 Simple-Scene fixtures under `test/fixtures/ifc/`: `Building-Architecture.ifc` and `Building-Structural.ifc`. Their upstream CC BY 4.0 license, attribution, source path, and SHA-256 checksums are committed beside the files. The permanent IFC validation workflow renders both fixtures in Chromium from the self-hosted runtime; it also forces the That Open backend so the Fragments path is exercised rather than only type-checked.
+The repository commits two buildingSMART IFC4 Simple-Scene fixtures under `test/fixtures/ifc/`: `Building-Architecture.ifc` and `Building-Structural.ifc`. Their upstream CC BY 4.0 license, attribution, source path, and SHA-256 checksums are committed beside the files. The permanent IFC validation workflow renders both fixtures in Chromium from the self-hosted runtime; it exercises both normal and forced-large classifications through the same That Open/Fragments runtime.
 
 `web-ifc@0.0.77` is MPL-2.0. `@thatopen/components@3.4.8` and `@thatopen/fragments@3.4.7` are MIT-licensed. The separate asset pack preserves the runtime notices for the files it redistributes; the File Viewer capability wrapper remains Apache-2.0.
