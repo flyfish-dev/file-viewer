@@ -136,7 +136,8 @@ export async function renderIfc(
   let selectionId = 0;
   let selectionQueue: Promise<unknown> = Promise.resolve();
   let updatePending = false;
-  const id = `ifc-${crypto.randomUUID()}`;
+  // Model identifiers are not security tokens; do not require a secure context.
+  const id = `ifc-${THREE.MathUtils.generateUUID()}`;
   let timeout: ReturnType<typeof setTimeout> | undefined;
   let removeCanvasEvents = () => {};
   let removeControlEvents = () => {};

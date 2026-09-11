@@ -127,6 +127,8 @@ try {
     requests.push({ method: req.method(), url: req.url() }),
   );
   await page.addInitScript(() => {
+    // Intranet HTTP hosts may not expose this secure-context-only API.
+    Object.defineProperty(window.crypto, "randomUUID", { value: undefined, configurable: true });
     const Original = window.Worker;
     window.workerCounts = { created: 0, active: 0 };
     window.Worker = class extends Original {
@@ -147,6 +149,7 @@ try {
   });
   await page.goto(origin);
   await page.waitForFunction(() => window.entryReady);
+  assert.equal(await page.evaluate(() => typeof crypto.randomUUID), "undefined");
   assert.equal(await page.evaluate(() => workerCounts.created), 0);
   assert.ok(
     !requests.some(
