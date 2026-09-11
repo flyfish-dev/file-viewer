@@ -13,7 +13,7 @@ concurrency:
 jobs:
   gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - name: Require the exact reviewed head and all current checks before merging
         env:
@@ -22,24 +22,25 @@ jobs:
           python3 <<'PY'
           import os, json, time, urllib.request, urllib.error, base64
           from pathlib import Path
-          repo='flyfish-dev/file-viewer'
-          root='https://api.github.com/repos/'+repo
+          root='https://api.github.com/repos/flyfish-dev/file-viewer'
+          expected='78f8e5a8fbe9bd16e48e63c11492f15e8a99ec28'
           def api(path, method='GET', body=None):
               req=urllib.request.Request(root+path, method=method,
                   data=None if body is None else json.dumps(body).encode(),
                   headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],
                            'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
               with urllib.request.urlopen(req, timeout=45) as r: return json.load(r)
-          report={'pr':276,'published':False,'issueCommentsPosted':False}
+          report={'pr':276,'published':False,'issueCommentsPosted':False,
+                  'awaitingUpstreamPublication':True,'requiresDependencyPreparation':True}
           try:
               pr=api('/pulls/276');head=pr['head']['sha']
               assert pr['head']['ref']=='release/readiness-20260911'
               assert pr['base']['ref']=='main'
-              assert head.startswith('b582cb7'), 'Reviewed head changed; require a fresh review'
+              assert head==expected, 'Reviewed head changed; require a fresh review'
               assert pr['state']=='open' and not pr['draft'], 'PR is not open and ready'
               report['head']=head
               needed={312018702:'Public CI',344274236:'Security'}
-              for attempt in range(66):
+              for attempt in range(120):
                   current=api('/pulls/276')
                   assert current['head']['sha']==head, 'Head changed during qualification'
                   assert current['state']=='open', 'PR changed state during qualification'
@@ -61,7 +62,7 @@ jobs:
               merge=api('/pulls/276/merge','PUT',{
                   'sha':head,'merge_method':'squash',
                   'commit_title':'feat(ifc): finalize sample regressions and release readiness (#276)',
-                  'commit_message':'Refs #266, #267, #268. Qualified original samples, packed upstream, optional IFC cold install and exact-head Public CI/Security. No npm publication.'})
+                  'commit_message':'Refs #266, #267, #268. Qualified original samples, packed upstream, optional IFC cold install, missing-API compatibility and exact-head Public CI/Security. No npm publication.'})
               assert merge.get('merged') is True, merge
               report['merge']=merge
               report['headTree']=api('/git/commits/'+head)['tree']['sha']
@@ -69,9 +70,15 @@ jobs:
               assert report['headTree']==report['mainTree'], 'Merged tree differs from the qualified source'
               report['result']='success'
               content=base64.b64encode((json.dumps(report,indent=2)+'\n').encode()).decode()
-              api('/contents/_maintenance/readiness-gate-result.json','PUT',{
-                  'message':'test: record exact-head release qualification and merged tree',
-                  'branch':'maintenance/sample-regressions-20260911','content':content})
+              body={'message':'test: record exact-head release qualification and merged tree',
+                    'branch':'maintenance/sample-regressions-20260911','content':content}
+              path='/contents/_maintenance/readiness-gate-result.json'
+              try:
+                  existing=api(path+'?ref=maintenance%2Fsample-regressions-20260911')
+                  body['sha']=existing['sha']
+              except urllib.error.HTTPError as error:
+                  if error.code!=404: raise
+              api(path,'PUT',body)
           except Exception as error:
               report['result']='failure';report['error']=str(error)
               raise
