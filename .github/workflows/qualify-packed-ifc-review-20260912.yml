@@ -1,0 +1,84 @@
+name: Qualify packed IFC review
+on:
+  push:
+    branches: [maintenance/pr-review-20260912]
+    paths: [.github/workflows/qualify-packed-ifc-review-20260912.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 5fbbf5bb575c94fc7c15ce4698ae9f5ebfc46026
+          persist-credentials: false
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Build and pack the exact reviewed source
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/packed-ifc-evidence /tmp/ifc-packs /tmp/ifc-cold/tests
+          git rev-parse HEAD > /tmp/packed-ifc-evidence/source-sha.txt
+          pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/renderer-3d...
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/geometry-engine build
+          pnpm --filter @file-viewer/renderer-3d build
+          pnpm --filter @file-viewer/core pack --pack-destination /tmp/ifc-packs
+          pnpm --filter @file-viewer/geometry-engine pack --pack-destination /tmp/ifc-packs
+          pnpm --filter @file-viewer/renderer-3d pack --pack-destination /tmp/ifc-packs
+          sha256sum /tmp/ifc-packs/*.tgz > /tmp/packed-ifc-evidence/package-sha256.txt
+          node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
+          pnpm exec playwright install --with-deps chromium
+      - name: Cold install actual packages and run the installed asset command
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('playwright/package.json').version")
+          printf '{"private":true,"type":"module"}\n' > /tmp/ifc-cold/package.json
+          cd /tmp/ifc-cold
+          npm install --ignore-scripts --no-audit --no-fund /tmp/ifc-packs/*.tgz @thatopen/components@3.4.8 @thatopen/fragments@3.4.7 web-ifc@0.0.77 esbuild@0.28.2 playwright@"$version" > /tmp/packed-ifc-evidence/install.log 2>&1
+          node --input-type=module -e "import{createIfcRenderer}from'@file-viewer/renderer-3d/ifc';if(typeof createIfcRenderer!=='function')throw new Error('Missing packed IFC export');console.log('Packed optional export resolves')"
+          ./node_modules/.bin/file-viewer-ifc-assets public/file-viewer/vendor/ifc > /tmp/packed-ifc-evidence/cli.log
+          test -s public/file-viewer/vendor/ifc/web-ifc.wasm
+          test -s public/file-viewer/vendor/ifc/ifc-import.worker.js
+          test -s public/file-viewer/vendor/ifc/fragments.worker.mjs
+          cp public/file-viewer/vendor/ifc/manifest.json /tmp/packed-ifc-evidence/asset-manifest.json
+          cp node_modules/@file-viewer/renderer-3d/dist/ifc.d.ts /tmp/packed-ifc-evidence/ifc.d.ts
+      - name: Reuse unchanged assertions against installed distribution and Worker bytes
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          source=Path('packages/renderers/3d/scripts')
+          target=Path('/tmp/ifc-cold/tests')
+          text=(source/'verify-ifc-browser.mjs').read_text()
+          replacements={
+            '"../bin/copy-ifc-assets.mjs"':'"../node_modules/@file-viewer/renderer-3d/bin/copy-ifc-assets.mjs"',
+            'resolve(here, "../../../..")':'resolve(here, "..")',
+            'resolve(here, "../dist/ifc.js")':'resolve(root, "node_modules/@file-viewer/renderer-3d/dist/ifc.js")'
+          }
+          for old,new in replacements.items():
+              assert old in text, old
+              text=text.replace(old,new)
+          (target/'verify-ifc-browser.mjs').write_text(text)
+          text=(source/'ifc-settings.test.mjs').read_text()
+          assert '"../dist/ifcSettings.js"' in text
+          (target/'ifc-settings.test.mjs').write_text(text.replace('"../dist/ifcSettings.js"','"../node_modules/@file-viewer/renderer-3d/dist/ifcSettings.js"'))
+          PY
+          cd /tmp/ifc-cold
+          node --test tests/ifc-settings.test.mjs > /tmp/packed-ifc-evidence/settings-tests.log 2>&1
+          IFC_EVIDENCE_DIR=/tmp/packed-ifc-evidence/browser timeout 300s node tests/verify-ifc-browser.mjs /tmp/ifc-samples > /tmp/packed-ifc-evidence/browser.log 2>&1 || { tail -n 100 /tmp/packed-ifc-evidence/browser.log; exit 1; }
+          tail -n 20 /tmp/packed-ifc-evidence/browser.log
+          echo 'Cold-installed advanced IFC export, declarations, CLI, actual import settings, original scenes and lifecycle passed.'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: packed-ifc-review-evidence-20260912
+          path: /tmp/packed-ifc-evidence
+          retention-days: 7
