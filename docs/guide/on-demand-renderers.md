@@ -288,3 +288,11 @@ Use `copyAssets:true` or `npx --yes file-viewer-copy-assets ./public/file-viewer
 - [x] The Rust/WASM parser runs in a dedicated Worker, and standard asset tooling self-hosts the Worker, JavaScript bridge, and WASM binary under `vendor/chm/`.
 - [x] Contents, keyword index, text search, internal navigation, and packaged resources stay within the current archive.
 - [x] Topic documents are sanitized, scripts remain disabled by sandbox and CSP, and remote active content is not loaded automatically.
+
+## Optional IFC BIM viewer
+
+The explicit `@file-viewer/renderer-3d/ifc` entry enhances only IFC files with
+local That Open / Web-IFC visualization, selection, properties and a configuration
+hook. Existing Full/Office entry points remain unchanged. Install the optional
+peers and self-host their matching Worker/WASM assets with `file-viewer-ifc-assets`.
+The exact setup and licensing notes are in the package's [IFC guide](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/IFC.md).

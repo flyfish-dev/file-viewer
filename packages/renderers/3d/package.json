@@ -48,17 +48,27 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./ifc": {
+      "types": "./dist/ifc.d.ts",
+      "import": "./dist/ifc.js",
+      "default": "./dist/ifc.js"
+    }
   },
   "files": [
     "dist",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "bin",
+    "IFC.md",
+    "licenses"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:ifc": "node scripts/verify-ifc-entry.mjs",
+    "verify:ifc-browser": "node scripts/verify-ifc-browser.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.3",
@@ -67,7 +77,34 @@
   },
   "devDependencies": {
     "@types/three": "^0.185.4",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "@thatopen/components": "3.4.8",
+    "@thatopen/fragments": "3.4.7",
+    "web-ifc": "0.0.77",
+    "esbuild": "^0.28.2"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "bin": {
+    "file-viewer-ifc-assets": "./bin/copy-ifc-assets.mjs"
+  },
+  "peerDependencies": {
+    "@thatopen/components": "3.4.8",
+    "@thatopen/fragments": "3.4.7",
+    "web-ifc": "0.0.77",
+    "esbuild": "^0.28.2"
+  },
+  "peerDependenciesMeta": {
+    "@thatopen/components": {
+      "optional": true
+    },
+    "@thatopen/fragments": {
+      "optional": true
+    },
+    "web-ifc": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    }
+  }
 }

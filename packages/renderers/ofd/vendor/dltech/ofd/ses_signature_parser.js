@@ -33,6 +33,38 @@ const HexApi = unwrapDefault(Hex);
 const Base64Api = unwrapDefault(Base64);
 const ASN1Api = unwrapDefault(ASN1);
 
+// SignedData is not an SES seal. In particular, tax invoices use the GM/T
+// ContentInfo OID and draw their visible stamp as an ordinary page resource.
+const signedDataOids = new Set(['1.2.840.113549.1.7.2', '1.2.156.10197.6.1.4.2.2']);
+const universal = (node, number) => node?.tag?.tagClass === 0 && node.tag.tagNumber === number;
+const parseSignedData = function (node) {
+    if (!universal(node?.sub?.[0], 6)) return null;
+    const oidNode = node.sub[0];
+    const start = oidNode.stream.pos + oidNode.header;
+    const oid = oidNode.stream.parseOID(start, start + oidNode.length).split('\n', 1)[0];
+    if (!signedDataOids.has(oid)) throw new Error('Unsupported signature ContentInfo type');
+    const wrapper = node.sub[1];
+    const signed = wrapper?.sub?.[0];
+    if (!universal(node, 16) || node.sub.length !== 2 ||
+        wrapper?.tag?.tagClass !== 2 || wrapper.tag.tagNumber !== 0 ||
+        !wrapper.tag.tagConstructed || wrapper.sub.length !== 1 ||
+        !universal(signed, 16) || signed.sub.length < 4 ||
+        !universal(signed.sub[0], 2) || !universal(signed.sub[1], 17) ||
+        !universal(signed.sub[2], 16) || !universal(signed.sub[2]?.sub?.[0], 6) ||
+        !universal(signed.sub.at(-1), 17)) {
+        throw new Error('Malformed SignedData structure');
+    }
+    return {
+        type: 'signed-data',
+        verificationStatus: 'not-verified',
+        verifyRet: null,
+        SES_Signature: {
+            format: 'signed-data', contentType: oid, displayOnly: true,
+            verificationStatus: 'not-verified',
+        },
+    };
+};
+
 export const parseSesSignature = async function (zip, name, getEntry) {
     const entry = typeof getEntry === 'function' ? getEntry(zip, name) : zip.files[name];
     if (!entry) {
@@ -60,7 +92,10 @@ const decodeText = function (val) {
 const decode = function (der, offset) {
     offset = offset || 0;
     try {
-        const SES_Signature = decodeSES_Signature(der, offset);
+        const root = ASN1Api.decode(der, offset);
+        const signedData = parseSignedData(root);
+        if (signedData) return signedData;
+        const SES_Signature = decodeSES_Signature(root);
         const picture = SES_Signature?.toSign?.eseal?.esealInfo?.picture;
         if (!picture?.data?.byte?.length) {
             return {};
@@ -73,12 +108,15 @@ const decode = function (der, offset) {
             SES_Signature: {
                 realVersion: SES_Signature.realVersion,
                 displayOnly: true,
+                verificationStatus: 'not-verified',
                 pictureType: type,
                 pictureWidth: picture.width,
                 pictureHeight: picture.height,
                 sealName: SES_Signature.toSign?.eseal?.esealInfo?.property?.name,
             },
-            verifyRet: true,
+            // Displaying an image is not cryptographic signature verification.
+            verifyRet: null,
+            verificationStatus: 'not-verified',
         };
     } catch (e) {
         console.warn('[ofd] decode SES signature failed', e);
@@ -122,9 +160,7 @@ const parseTimeNode = function (node, utc) {
     return decodeUTCTime(raw);
 };
 
-const decodeSES_Signature = function (der, offset) {
-    offset = offset || 0;
-    const asn1 = ASN1Api.decode(der, offset);
+const decodeSES_Signature = function (asn1) {
     let SES_Signature;
     try {
         // V1

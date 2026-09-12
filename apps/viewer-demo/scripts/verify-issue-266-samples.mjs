@@ -87,6 +87,7 @@ try {
         assert.equal(row.failure, undefined)
         assert.equal(row.pages, 13)
         assert.equal(await page.locator('table').count(), 4)
+        if (process.argv.includes('--require-diagonals')) assert.equal(await page.locator('[data-docx-diagonal="tl2br"]').count(), 1, 'Packed upstream diagonal fix must reach the actual Word renderer')
         row.borders = await page.locator('table').first().locator('td').first().evaluate(cell =>
           ['Top', 'Right', 'Bottom', 'Left'].map(side => getComputedStyle(cell)[`border${side}Width`]))
         assert.ok(row.borders.every(width => Number.parseFloat(width) > 0), 'Existing ordinary cell borders must be preserved')
@@ -133,9 +134,9 @@ try {
       row.errors = errors; row.warnings = warnings; row.networkRequests = requests
       assert.deepEqual(errors, [])
       assert.deepEqual(requests, [], 'In-memory document rendering must not make HTTP requests')
-      // This invoice already has an unsupported SES signature envelope. Keep the
-      // warning visible in the report rather than presenting it as a new success.
-      assert.ok(warnings.every(warning => format === 'ofd' && row.pages === 1 && warning.includes('unsupported SES signature structure')), warnings.join('\n'))
+      // Only the unchanged baseline misclassifies the invoice SignedData as SES.
+      if (baseline) assert.ok(warnings.every(warning => format === 'ofd' && row.pages === 1 && warning.includes('unsupported SES signature structure')), warnings.join('\n'))
+      else assert.deepEqual(warnings, [], 'Patched samples must render without signature warnings')
       console.log(`[issue-266] ${stage} ${format}: ${row.pages ?? 'expected failure'} pages; ${file.name}`)
     } finally { await page.close() }
   }
