@@ -1,0 +1,86 @@
+name: Qualify dependency review cohort
+on:
+  push:
+    branches: [maintenance/pr-review-20260912]
+    paths: [.github/workflows/qualify-dependency-cohort-20260912.yml]
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: maintenance/integration-review-20260912
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Resolve one actually published Angular framework and tooling cohort
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cohort-evidence
+          python3 <<'PY'
+          import json,re,urllib.request,urllib.parse
+          from pathlib import Path
+          path=Path('apps/component-demo/test/angular-pptx/package.json')
+          manifest=json.loads(path.read_text())
+          names=[n for section in ('dependencies','devDependencies') for n in manifest[section] if n.startswith('@angular/')]
+          registries={}
+          for name in names:
+              with urllib.request.urlopen('https://registry.npmjs.org/'+urllib.parse.quote(name,safe=''),timeout=45) as r:registries[name]=json.load(r)
+          candidates=set.intersection(*[{v for v in r['versions'] if re.fullmatch(r'22\.1\.\d+',v)} for r in registries.values()])
+          assert candidates, 'No mutually published Angular 22.1 cohort'
+          version=max(candidates,key=lambda v:tuple(map(int,v.split('.'))))
+          report={'angularVersion':version,'packages':{n:{'version':version,'peers':r['versions'][version].get('peerDependencies',{}),'integrity':r['versions'][version]['dist']['integrity']} for n,r in registries.items()}}
+          for section in ('dependencies','devDependencies'):
+              for name in names:
+                  if name in manifest[section]:manifest[section][name]=version
+          path.write_text(json.dumps(manifest,indent=2)+'\n')
+          path=Path('packages/thumbnail/package.json');thumb=json.loads(path.read_text())
+          thumb['devDependencies']['vitest']='4.1.11';path.write_text(json.dumps(thumb,indent=2)+'\n')
+          Path('/tmp/cohort-evidence/versions.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Generate and verify the real frozen workspace lock
+        run: |
+          set -euo pipefail
+          pnpm install --lockfile-only --ignore-scripts
+          pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/thumbnail...
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/thumbnail build
+          pnpm --filter @file-viewer/thumbnail test
+          pnpm verify:github-governance
+          pnpm verify:public-release-facts
+      - name: Check clean Angular installation and compilation with aligned peers
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/angular-cohort
+          cp -R apps/component-demo/test/angular-pptx/. /tmp/angular-cohort/
+          cd /tmp/angular-cohort
+          npm install --ignore-scripts --no-audit --no-fund > /tmp/cohort-evidence/angular-install.log 2>&1
+          npm ls @angular/common @angular/compiler @angular/core @angular/platform-browser @angular/build @angular/cli @angular/compiler-cli > /tmp/cohort-evidence/angular-tree.txt
+          npx ng build > /tmp/cohort-evidence/angular-build.log 2>&1
+      - name: Push qualified manifest and lock changes without publishing
+        run: |
+          set -euo pipefail
+          git add apps/component-demo/test/angular-pptx/package.json packages/thumbnail/package.json pnpm-lock.yaml
+          git diff --cached --check
+          git diff --cached > /tmp/cohort-evidence/qualified.patch
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(deps): align Angular framework and tools; synchronize thumbnail Vitest' -m 'Combines the intent of #270, #271, #274 and #261 without merging divergent dependency trees. No runtime API changes or publication.'
+          git push origin HEAD:refs/heads/maintenance/integration-review-20260912
+          git rev-parse HEAD > /tmp/cohort-evidence/commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: dependency-cohort-evidence-20260912
+          path: /tmp/cohort-evidence
+          retention-days: 7
