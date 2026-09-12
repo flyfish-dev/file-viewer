@@ -8,14 +8,14 @@ permissions:
 jobs:
   qualify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           path: payload
-          ref: ad824eb738d8e71eea3d685bed570183798acc97
+          ref: 89907224aa0d066cd7a2994e883d76eec49bd0ea
           persist-credentials: false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -34,6 +34,7 @@ jobs:
           set -euo pipefail
           mkdir -p /tmp/integration-evidence
           python3 ../payload/_review/assemble-integration.py
+          python3 ../payload/_review/lifecycle-followup.py
           pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/renderer-3d...
           pnpm exec prettier --config .github/prettier-governance.json --write .github/dependabot.yml .github/scripts/dependency-cohort.test.mjs
           pnpm exec prettier --write packages/renderers/3d/src/ifcSettings.ts packages/renderers/3d/src/ifc.ts packages/renderers/3d/src/ifcRuntime.ts packages/renderers/3d/src/ifc-import.worker.ts packages/renderers/3d/scripts/ifc-settings.test.mjs packages/renderers/3d/scripts/verify-ifc-browser.mjs
@@ -44,25 +45,27 @@ jobs:
           pnpm --filter @file-viewer/renderer-3d build
           pnpm --filter @file-viewer/renderer-3d verify:ifc
           pnpm exec playwright install --with-deps chromium
-      - name: Verify real Worker settings, original models, picking and late-hook cleanup
+      - name: Verify real Worker settings, original models, picking and failure cleanup
         working-directory: source
         env:
           IFC_EVIDENCE_DIR: /tmp/integration-evidence/browser
         run: |
           set -euo pipefail
           node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
-          pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/integration-evidence/browser.log 2>&1 || { tail -n 80 /tmp/integration-evidence/browser.log; exit 1; }
+          timeout 300s pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/integration-evidence/browser.log 2>&1 || { tail -n 80 /tmp/integration-evidence/browser.log; exit 1; }
           tail -n 20 /tmp/integration-evidence/browser.log
       - name: Push only qualified production changes and regression evidence
         working-directory: source
         run: |
           set -euo pipefail
-          git add .github/dependabot.yml .github/scripts/dependency-cohort.test.mjs docs/maintenance/pr-issue-review-20260912.md packages/renderers/3d
+          mkdir -p docs/regressions/issue-267/advanced
+          cp /tmp/integration-evidence/browser/report.json docs/regressions/issue-267/advanced/report.json
+          git add .github/dependabot.yml .github/scripts/dependency-cohort.test.mjs docs/maintenance/pr-issue-review-20260912.md docs/regressions/issue-267/advanced/report.json packages/renderers/3d
           git diff --cached --check
           git diff --cached > /tmp/integration-evidence/qualified.patch
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'feat(ifc): integrate bounded advanced settings and pre-model lifecycle hook' -m 'Preserves the advanced configuration direction from p4535992 in #275 on the #276 owned-worker implementation. Includes original-model Worker behavior, cancellation and cleanup tests, coordinated dependency guards and complete issue triage. No package publication.'
+          git commit -m 'feat(ifc): integrate bounded advanced settings and pre-model lifecycle hook' -m 'Preserves the advanced configuration direction from p4535992 in #275 on the #276 owned-worker implementation. Includes original-model Worker behavior, pre-load cancellation and cleanup-failure tests, coordinated dependency guards and complete issue triage. No package publication.'
           git push origin HEAD:refs/heads/maintenance/integration-review-20260912
           git rev-parse HEAD > /tmp/integration-evidence/commit.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
