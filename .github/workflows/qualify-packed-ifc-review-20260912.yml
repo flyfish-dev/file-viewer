@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: 5fbbf5bb575c94fc7c15ce4698ae9f5ebfc46026
+          ref: 5a37e3b2132cd1afdfda8a9f9605cc51f44ade87
           persist-credentials: false
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
         with:
@@ -75,7 +75,7 @@ jobs:
           node --test tests/ifc-settings.test.mjs > /tmp/packed-ifc-evidence/settings-tests.log 2>&1
           IFC_EVIDENCE_DIR=/tmp/packed-ifc-evidence/browser timeout 300s node tests/verify-ifc-browser.mjs /tmp/ifc-samples > /tmp/packed-ifc-evidence/browser.log 2>&1 || { tail -n 100 /tmp/packed-ifc-evidence/browser.log; exit 1; }
           tail -n 20 /tmp/packed-ifc-evidence/browser.log
-          echo 'Cold-installed advanced IFC export, declarations, CLI, actual import settings, original scenes and lifecycle passed.'
+          echo 'Cold-installed advanced IFC export, declarations, CLI, actual import settings, original scenes and reentrant lifecycle passed.'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
