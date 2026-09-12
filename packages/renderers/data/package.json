@@ -70,7 +70,7 @@
   "devDependencies": {
     "assert": "1.5.1",
     "browserify-zlib": "0.2.0",
-    "buffer": "5.2.1",
+    "buffer": "6.0.3",
     "events": "3.3.0",
     "path-browserify": "1.0.1",
     "process": "0.11.10",
