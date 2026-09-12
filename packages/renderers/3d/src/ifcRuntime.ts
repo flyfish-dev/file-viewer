@@ -1,3 +1,8 @@
+import {
+  applyIfcSettings,
+  copyIfcImporterSettings,
+  copyIfcSettings,
+} from "./ifcSettings.js";
 import * as THREE from "three";
 import * as OBC from "@thatopen/components";
 import * as FRAGS from "@thatopen/fragments";
@@ -41,6 +46,11 @@ export async function renderIfc(
     throw new Error("IFC input exceeds the configured size limit");
   if (!Number.isFinite(timeoutMs) || timeoutMs < 1)
     throw new Error("Invalid IFC load timeout");
+  const importerSettings = copyIfcImporterSettings(options.thatOpen?.importer);
+  const fragmentsSettings = copyIfcSettings(
+    options.thatOpen?.fragments?.settings,
+    "IFC Fragments settings",
+  );
   const header = new TextDecoder().decode(buffer.slice(0, 65536));
   if (
     !/^\s*ISO-10303-21\s*;/i.test(header.replace(/^\uFEFF/, "")) ||
@@ -131,7 +141,7 @@ export async function renderIfc(
     | OBC.SimpleWorld<OBC.SimpleScene, OBC.SimpleCamera, OBC.SimpleRenderer>
     | undefined;
   let model: FRAGS.FragmentsModel | undefined;
-  let extensionCleanup: void | (() => void);
+  const extensionCleanups: Array<() => void> = [];
   let ready = false;
   let selectionId = 0;
   let selectionQueue: Promise<unknown> = Promise.resolve();
@@ -179,19 +189,30 @@ export async function renderIfc(
     components = undefined;
     const currentFragments = fragments;
     fragments = undefined;
-    const cleanup = extensionCleanup;
-    extensionCleanup = undefined;
+    const cleanups = extensionCleanups.splice(0).reverse();
     root.remove();
     style.remove();
     disposePromise = (async () => {
       try {
-        cleanup?.();
+        const errors: unknown[] = [];
+        for (const cleanup of cleanups) {
+          try {
+            cleanup();
+          } catch (error) {
+            errors.push(error);
+          }
+        }
+        if (errors.length)
+          throw new AggregateError(errors, "IFC extension cleanup failed");
       } finally {
         // Stop the frame loop before releasing worker-owned model geometry.
         if (currentComponents) currentComponents.enabled = false;
         try {
           if (currentFragments) {
-            currentFragments.abort(id);
+            // abort() routes through the upstream connection and creates a Worker
+            // for an unknown model ID. Before load(), there is nothing to abort.
+            if (currentFragments.models.list.has(id))
+              currentFragments.abort(id);
             await currentFragments.dispose();
           }
         } finally {
@@ -324,6 +345,26 @@ export async function renderIfc(
     selectionQueue = next;
     return next;
   };
+  const configureExtension = async (
+    hook: () => void | (() => void) | Promise<void | (() => void)>,
+  ) => {
+    ensureLive();
+    const pending = Promise.resolve()
+      .then(() => {
+        ensureLive();
+        return hook();
+      })
+      .then((cleanup) => {
+        if (cleanup !== undefined && typeof cleanup !== "function")
+          throw new TypeError(
+            "IFC extension hook must return a cleanup function or undefined",
+          );
+        if (disposed) cleanup?.();
+        else if (cleanup) extensionCleanups.push(cleanup);
+      });
+    await withCancellation(pending);
+    ensureLive();
+  };
   fitButton.addEventListener("click", () => {
     void fitToModel().catch(showError);
   });
@@ -358,9 +399,10 @@ export async function renderIfc(
       importWorker.onmessageerror = () =>
         reject(new Error("Invalid IFC worker response"));
       const copy = buffer.slice(0);
-      importWorker.postMessage({ bytes: copy, wasmPath: assetBase.href }, [
-        copy,
-      ]);
+      importWorker.postMessage(
+        { bytes: copy, wasmPath: assetBase.href, importerSettings },
+        [copy],
+      );
     });
     timeout = setTimeout(() => {
       controller.abort(new Error("IFC loading timed out"));
@@ -390,6 +432,17 @@ export async function renderIfc(
       new URL("fragments.worker.mjs", assetBase).href,
       { maxWorkers: 2 },
     );
+    applyIfcSettings(fragments.settings, fragmentsSettings);
+    if (options.configureRuntime) {
+      await configureExtension(() =>
+        options.configureRuntime!({
+          components: components!,
+          fragments: fragments!,
+          world: world!,
+          signal: controller.signal,
+        }),
+      );
+    }
     model = await withCancellation(fragments.load(bytes, { modelId: id }));
     ensureLive();
     model.useCamera(world.camera.three);
@@ -442,24 +495,16 @@ export async function renderIfc(
       canvas.removeEventListener("pointerup", up);
     };
     if (options.configure) {
-      const pending = Promise.resolve(
-        options.configure({
-          components,
-          fragments,
-          world,
-          model,
+      await configureExtension(() =>
+        options.configure!({
+          components: components!,
+          fragments: fragments!,
+          world: world!,
+          model: model!,
           signal: controller.signal,
           select,
         }),
       );
-      void pending
-        .then((cleanup) => {
-          if (disposed) cleanup?.();
-          else extensionCleanup = cleanup;
-        })
-        .catch(showError);
-      await withCancellation(pending);
-      ensureLive();
     }
     clearTimeout(timeout);
     root.dataset.ifcStatus = "ready";

@@ -22,7 +22,24 @@ export interface IfcExtensionContext {
   signal: AbortSignal;
   select: (localId: number | null) => Promise<IfcSelection | null>;
 }
+/** Advanced runtime objects are adapter-owned; return cleanup only for host resources. */
+export type IfcRuntimeContext = Pick<
+  IfcExtensionContext,
+  "components" | "fragments" | "world" | "signal"
+>;
+export interface IfcThatOpenOptions {
+  /** Public IfcImporter data fields; no executable methods, WASM or Worker overrides. */
+  importer?: Readonly<Record<string, unknown>>;
+  /** Public FragmentsModels.settings fields, not constructor/Worker ownership. */
+  fragments?: { settings?: Readonly<Record<string, unknown>> };
+}
 export interface IfcViewerOptions {
+  /** Optional pre-import data settings; defaults are unchanged when omitted. */
+  thatOpen?: IfcThatOpenOptions;
+  /** Runs after runtime creation, before model loading. Return host-resource cleanup. */
+  configureRuntime?: (
+    context: IfcRuntimeContext,
+  ) => void | (() => void) | Promise<void | (() => void)>;
   /** Directory installed by file-viewer-ifc-assets. Defaults to /file-viewer/vendor/ifc/. */
   assetBaseUrl?: string | URL;
   fitToModel?: boolean;

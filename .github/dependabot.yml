@@ -36,6 +36,32 @@ updates:
       # pako 3 changes Inflate err/msg semantics used by the DICOM deflated-study
       # path and needs a licence ledger refresh, so its majors stay deferred.
 
+  # The cold consumer is outside the workspace. Framework and compiler peers
+  # must move together rather than producing individually incompatible PRs.
+  - package-ecosystem: npm
+    directory: /apps/component-demo/test/angular-pptx
+    schedule:
+      interval: weekly
+      day: monday
+      time: '03:10'
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 3
+    groups:
+      angular-version-cohort:
+        applies-to: version-updates
+        patterns:
+          - '@angular/*'
+      angular-security-cohort:
+        applies-to: security-updates
+        patterns:
+          - '@angular/*'
+    commit-message:
+      prefix: chore(deps)
+    ignore:
+      - dependency-name: '@angular/*'
+        update-types:
+          - version-update:semver-major
+
   - package-ecosystem: github-actions
     directory: /
     schedule:

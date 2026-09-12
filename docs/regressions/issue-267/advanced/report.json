@@ -1,0 +1,262 @@
+{
+  "entryBytes": 633,
+  "cases": [
+    {
+      "name": "ifc4.ifc",
+      "count": 13,
+      "first": 319,
+      "selected": {
+        "localId": 319,
+        "name": "sand bedding",
+        "globalId": "3_4VN63S96DfWiJjgG8j1C",
+        "entityType": "IFCBUILDINGELEMENTPROXY"
+      },
+      "picked": 201,
+      "drawn": {
+        "calls": 7,
+        "triangles": 1143
+      },
+      "milliseconds": 1448,
+      "workers": {
+        "created": 2,
+        "active": 0
+      }
+    },
+    {
+      "name": "ifc43.ifc",
+      "count": 13,
+      "first": 335,
+      "selected": {
+        "localId": 335,
+        "name": "origin",
+        "globalId": "2F44QMqSH3TOkM$SZoqCBe",
+        "entityType": "IFCBUILDINGELEMENTPROXY"
+      },
+      "picked": 201,
+      "drawn": {
+        "calls": 8,
+        "triangles": 1143
+      },
+      "milliseconds": 930,
+      "workers": {
+        "created": 4,
+        "active": 0
+      }
+    }
+  ],
+  "advanced": {
+    "count": 13,
+    "name": "",
+    "rate": 80,
+    "runtimeHadModels": 0,
+    "order": [
+      "model",
+      "runtime"
+    ],
+    "cleanupCount": 1
+  },
+  "invalidSettings": true,
+  "unknownSettings": true,
+  "lateRuntimeCleanup": {
+    "aborted": true,
+    "cleanups": 1
+  },
+  "badFragments": true,
+  "throwingCleanup": {
+    "rejected": true,
+    "order": [
+      "model",
+      "runtime"
+    ]
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/app/ifc.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/app/chunk-WOT6VMZA.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/app/ifcRuntime-4RG2XHEC.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc43.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "inputLimit": true,
+  "abort": true
+}

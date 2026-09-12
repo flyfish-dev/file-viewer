@@ -1,9 +1,16 @@
+import { applyIfcSettings, copyIfcImporterSettings } from "./ifcSettings.js";
 import { IfcImporter } from "@thatopen/fragments";
 
 // Compiled into a self-hosted module Worker by the optional asset installer.
 const scope = globalThis as unknown as {
   onmessage:
-    | ((event: MessageEvent<{ bytes: ArrayBuffer; wasmPath: string }>) => void)
+    | ((
+        event: MessageEvent<{
+          bytes: ArrayBuffer;
+          wasmPath: string;
+          importerSettings?: Record<string, unknown>;
+        }>,
+      ) => void)
     | null;
   postMessage(message: unknown, transfer?: Transferable[]): void;
 };
@@ -17,6 +24,7 @@ scope.onmessage = async ({ data }) => {
     importer.webIfcSettings = { COORDINATE_TO_ORIGIN: true };
     importer.includeUniqueAttributes = true;
     importer.includeRelationNames = true;
+    applyIfcSettings(importer, copyIfcImporterSettings(data.importerSettings));
     const result = await importer.process({
       bytes: new Uint8Array(data.bytes),
       progressCallback: (progress) =>
