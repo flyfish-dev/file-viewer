@@ -1,0 +1,118 @@
+name: Qualify reentrant IFC teardown
+on:
+  push:
+    branches: [maintenance/pr-review-20260912]
+    paths: [.github/workflows/qualify-ifc-reentrant-teardown-20260912.yml]
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 5fbbf5bb575c94fc7c15ce4698ae9f5ebfc46026
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Add the real reentrant abort and extension-cleanup regression
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/reentrant-ifc-evidence
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('packages/renderers/3d/scripts/verify-ifc-browser.mjs');s=p.read_text()
+          needle='  // Input limit is enforced before another worker or transferable copy is allocated.'
+          assert s.count(needle)==1
+          s=s.replace(needle,'''  const reentrant=await page.evaluate(async()=>{
+            window.abortDisposal=null;window.cleanupDisposal=null;
+            await openIfc("ifc4.ifc",{
+              configureRuntime({signal}){
+                signal.addEventListener("abort",()=>{window.abortDisposal=instance.unmount();},{once:true});
+                return()=>{window.cleanupDisposal=instance.unmount();};
+              }
+            });
+            const pending=instance.unmount();
+            await pending;
+            const result={abortSame:abortDisposal===pending,cleanupSame:cleanupDisposal===pending,activeWorkers:workerCounts.active,cleanupCount};
+            // Drain any wrongly detached cleanup promises before asserting the result.
+            await Promise.allSettled([abortDisposal,cleanupDisposal]);
+            return result;
+          });
+          assert.deepEqual(reentrant,{abortSame:true,cleanupSame:true,activeWorkers:0,cleanupCount:1},"Reentrant teardown must share one settled cleanup promise");
+          assert.equal(await page.locator("canvas").count(),0);
+          report.reentrant=reentrant;
+          '''+needle)
+          p.write_text(s)
+          PY
+          pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/renderer-3d...
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/geometry-engine build
+          pnpm --filter @file-viewer/renderer-3d build
+          node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
+          pnpm exec playwright install --with-deps chromium
+      - name: Require the baseline to fail on the new promise-identity assertion
+        run: |
+          set -euo pipefail
+          set +e
+          IFC_EVIDENCE_DIR=/tmp/reentrant-ifc-evidence/before timeout 300s pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/reentrant-ifc-evidence/before.log 2>&1
+          result=$?
+          set -e
+          test "$result" -ne 0
+          grep -q 'Reentrant teardown must share one settled cleanup promise' /tmp/reentrant-ifc-evidence/before.log
+          tail -n 40 /tmp/reentrant-ifc-evidence/before.log
+      - name: Publish the stable cleanup promise before notifying abort listeners
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          p=Path('packages/renderers/3d/src/ifcRuntime.ts');s=p.read_text()
+          start=s.index('  const unmount = (): Promise<void> => {')
+          end=s.index('  const onAbort =',start)
+          old=s[start:end]
+          new=old.replace('    disposed = true;', '''    // Assign before abort/cleanup callbacks can reenter unmount(). Every caller
+              // must await the same complete resource teardown, not an early promise.
+              let finish!: () => void;
+              let fail!: (error: unknown) => void;
+              disposePromise = new Promise<void>((resolve,reject)=>{finish=resolve;fail=reject;});
+              void (async()=>{
+              disposed = true;''',1)
+          assert new.count('    disposePromise = (async () => {')==1
+          new=new.replace('    disposePromise = (async () => {','',1)
+          assert new.count('    })();')==1
+          new=new.replace('    })();','    })().then(finish,fail);',1)
+          assert new!=old
+          p.write_text(s[:start]+new+s[end:])
+          PY
+          pnpm exec prettier --write packages/renderers/3d/src/ifcRuntime.ts packages/renderers/3d/scripts/verify-ifc-browser.mjs
+          pnpm --filter @file-viewer/renderer-3d build
+          pnpm --filter @file-viewer/renderer-3d verify:ifc
+          IFC_EVIDENCE_DIR=/tmp/reentrant-ifc-evidence/after timeout 300s pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/reentrant-ifc-evidence/after.log 2>&1 || { tail -n 100 /tmp/reentrant-ifc-evidence/after.log; exit 1; }
+          tail -n 20 /tmp/reentrant-ifc-evidence/after.log
+          pnpm verify:github-governance
+          pnpm verify:public-release-facts
+      - name: Push only the qualified reentrancy fix and actual browser evidence
+        run: |
+          set -euo pipefail
+          cp /tmp/reentrant-ifc-evidence/after/report.json docs/regressions/issue-267/advanced/report.json
+          git add packages/renderers/3d/src/ifcRuntime.ts packages/renderers/3d/scripts/verify-ifc-browser.mjs docs/regressions/issue-267/advanced/report.json
+          git diff --cached --check
+          git diff --cached > /tmp/reentrant-ifc-evidence/qualified.patch
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(ifc): share one teardown promise across reentrant callbacks' -m 'Proves failure before repair and passes real-browser abort-listener and extension-cleanup reentrancy with zero Workers on resolution. No publication.'
+          git push origin HEAD:refs/heads/maintenance/integration-review-20260912
+          git rev-parse HEAD > /tmp/reentrant-ifc-evidence/commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: reentrant-ifc-teardown-evidence-20260912
+          path: /tmp/reentrant-ifc-evidence
+          retention-days: 7
