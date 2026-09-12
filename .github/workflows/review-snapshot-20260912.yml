@@ -1,0 +1,84 @@
+name: PR and issue review snapshot
+on:
+  push:
+    branches: [maintenance/pr-review-20260912]
+    paths: [.github/workflows/review-snapshot-20260912.yml]
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Collect current source deltas and paginated discussion evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/review-inputs
+          python3 <<'PY'
+          import os,json,subprocess,urllib.request,urllib.parse
+          from pathlib import Path
+          out=Path('/tmp/review-inputs')
+          def get(url):
+              headers={'Accept':'application/vnd.github+json','User-Agent':'file-viewer-maintenance-review'}
+              if url.startswith('https://api.github.com/'):
+                  headers['Authorization']='Bearer '+os.environ['GH_TOKEN']
+              with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=45) as r:return json.load(r)
+          def pages(url):
+              data=[]
+              for page in range(1,31):
+                  x=get(url+('&' if '?' in url else '?')+'per_page=100&page='+str(page))
+                  assert isinstance(x,list), url
+                  data.extend(x)
+                  if len(x)<100:return data
+              raise RuntimeError('Pagination bound exceeded: '+url)
+          def save(name,data): (out/name).write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+          def git(*args):return subprocess.check_output(['git',*args])
+          main=git('rev-parse','HEAD').decode().strip()
+          save('source.json',{'main':main,'baseline':'16557eb6d3289c9e0971e63f241b64e07632b055'})
+          (out/'baseline-to-main.patch').write_bytes(git('diff','--binary','16557eb6d3289c9e0971e63f241b64e07632b055',main))
+          summary=[]
+          for repo in ['flyfish-dev/file-viewer','flyfish-dev/docxjs','flyfish-dev/styled-exceljs','flyfish-dev/cad-viewer']:
+              root='https://api.github.com/repos/'+repo
+              name=repo.split('/')[1]
+              try:
+                  meta=get(root);items=pages(root+'/issues?state=all&sort=updated&direction=desc')
+                  save(name+'-repository.json',meta);save(name+'-all-items.json',items)
+                  opened=[i for i in items if i['state']=='open']
+                  for item in opened:
+                      n=item['number'];prefix=name+'-'+str(n)
+                      save(prefix+'-comments.json',pages(root+'/issues/'+str(n)+'/comments'))
+                      row={'repository':repo,'number':n,'title':item['title'],'kind':'pr' if 'pull_request' in item else 'issue','updated':item['updated_at']}
+                      if 'pull_request' in item:
+                          pr=get(root+'/pulls/'+str(n));save(prefix+'-pr.json',pr)
+                          save(prefix+'-reviews.json',pages(root+'/pulls/'+str(n)+'/reviews'))
+                          save(prefix+'-review-comments.json',pages(root+'/pulls/'+str(n)+'/comments'))
+                          save(prefix+'-checks.json',get(root+'/commits/'+pr['head']['sha']+'/check-runs?per_page=100'))
+                          save(prefix+'-statuses.json',get(root+'/commits/'+pr['head']['sha']+'/status'))
+                          row.update({'head':pr['head']['sha'],'base':pr['base']['sha'],'draft':pr['draft'],'mergeable':pr['mergeable']})
+                          if repo=='flyfish-dev/file-viewer':
+                              git('fetch','--no-tags','origin','refs/pull/'+str(n)+'/head:refs/remotes/origin/review-'+str(n))
+                              (out/(prefix+'.patch')).write_bytes(git('diff','--binary',main,pr['head']['sha']))
+                      summary.append(row)
+              except Exception as e:
+                  save(name+'-error.json',{'error':str(e)});print(name,str(e),flush=True)
+          save('summary.json',summary)
+          for pkg in ['@file-viewer/docx','@file-viewer/core']:
+              data=get('https://registry.npmjs.org/'+urllib.parse.quote(pkg,safe=''))
+              save(pkg.split('/')[-1]+'-registry.json',{'dist-tags':data['dist-tags'],'latest':data['versions'][data['dist-tags']['latest']]})
+          print(json.dumps({'main':main,'open':summary},ensure_ascii=False,indent=2),flush=True)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: repository-review-inputs-20260912
+          path: /tmp/review-inputs
+          retention-days: 7
+          if-no-files-found: error
