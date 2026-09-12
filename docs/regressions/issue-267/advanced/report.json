@@ -16,7 +16,7 @@
         "calls": 7,
         "triangles": 1143
       },
-      "milliseconds": 1448,
+      "milliseconds": 1451,
       "workers": {
         "created": 2,
         "active": 0
@@ -34,7 +34,7 @@
       },
       "picked": 201,
       "drawn": {
-        "calls": 8,
+        "calls": 7,
         "triangles": 1143
       },
       "milliseconds": 930,
@@ -69,190 +69,220 @@
       "runtime"
     ]
   },
+  "reentrant": {
+    "abortSame": true,
+    "cleanupSame": true,
+    "activeWorkers": 0,
+    "cleanupCount": 1
+  },
   "requests": [
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/"
+      "url": "http://127.0.0.1:38625/"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/app/ifc.js"
+      "url": "http://127.0.0.1:38625/app/ifc.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/app/chunk-WOT6VMZA.js"
+      "url": "http://127.0.0.1:38625/app/chunk-WOT6VMZA.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/app/ifcRuntime-4RG2XHEC.js"
+      "url": "http://127.0.0.1:38625/app/ifcRuntime-EKX5OYQW.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+      "url": "http://127.0.0.1:38625/assets/fragments.worker.mjs"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc43.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc43.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+      "url": "http://127.0.0.1:38625/assets/fragments.worker.mjs"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+      "url": "http://127.0.0.1:38625/assets/fragments.worker.mjs"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/web-ifc.wasm"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/fragments.worker.mjs"
+      "url": "http://127.0.0.1:38625/assets/fragments.worker.mjs"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/sample/ifc4.ifc"
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     },
     {
       "method": "GET",
-      "url": "http://127.0.0.1:45013/assets/ifc-import.worker.js"
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:38625/assets/web-ifc.wasm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:38625/assets/fragments.worker.mjs"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:38625/sample/ifc4.ifc"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:38625/assets/ifc-import.worker.js"
     }
   ],
   "errors": [],

@@ -404,6 +404,42 @@ try {
   assert.equal(await page.locator("canvas").count(), 0);
   report.badFragments = badFragments;
   report.throwingCleanup = throwingCleanup;
+  const reentrant = await page.evaluate(async () => {
+    window.abortDisposal = null;
+    window.cleanupDisposal = null;
+    await openIfc("ifc4.ifc", {
+      configureRuntime({ signal }) {
+        signal.addEventListener(
+          "abort",
+          () => {
+            window.abortDisposal = instance.unmount();
+          },
+          { once: true },
+        );
+        return () => {
+          window.cleanupDisposal = instance.unmount();
+        };
+      },
+    });
+    const pending = instance.unmount();
+    await pending;
+    const result = {
+      abortSame: abortDisposal === pending,
+      cleanupSame: cleanupDisposal === pending,
+      activeWorkers: workerCounts.active,
+      cleanupCount,
+    };
+    // Drain any wrongly detached cleanup promises before asserting the result.
+    await Promise.allSettled([abortDisposal, cleanupDisposal]);
+    return result;
+  });
+  assert.deepEqual(
+    reentrant,
+    { abortSame: true, cleanupSame: true, activeWorkers: 0, cleanupCount: 1 },
+    "Reentrant teardown must share one settled cleanup promise",
+  );
+  assert.equal(await page.locator("canvas").count(), 0);
+  report.reentrant = reentrant;
   // Input limit is enforced before another worker or transferable copy is allocated.
   const limit = await page.evaluate(async () => {
     const n = workerCounts.created;

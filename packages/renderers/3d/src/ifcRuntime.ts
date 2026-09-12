@@ -175,24 +175,33 @@ export async function renderIfc(
   };
   const unmount = (): Promise<void> => {
     if (disposePromise) return disposePromise;
-    disposed = true;
-    ready = false;
-    selectionId++;
-    if (!controller.signal.aborted) controller.abort(abortError());
-    clearTimeout(timeout);
-    importWorker?.terminate();
-    importWorker = undefined;
-    context?.signal?.removeEventListener("abort", onAbort);
-    removeCanvasEvents();
-    removeControlEvents();
-    const currentComponents = components;
-    components = undefined;
-    const currentFragments = fragments;
-    fragments = undefined;
-    const cleanups = extensionCleanups.splice(0).reverse();
-    root.remove();
-    style.remove();
-    disposePromise = (async () => {
+    // Assign before abort/cleanup callbacks can reenter unmount(). Every caller
+    // must await the same complete resource teardown, not an early promise.
+    let finish!: () => void;
+    let fail!: (error: unknown) => void;
+    disposePromise = new Promise<void>((resolve, reject) => {
+      finish = resolve;
+      fail = reject;
+    });
+    void (async () => {
+      disposed = true;
+      ready = false;
+      selectionId++;
+      if (!controller.signal.aborted) controller.abort(abortError());
+      clearTimeout(timeout);
+      importWorker?.terminate();
+      importWorker = undefined;
+      context?.signal?.removeEventListener("abort", onAbort);
+      removeCanvasEvents();
+      removeControlEvents();
+      const currentComponents = components;
+      components = undefined;
+      const currentFragments = fragments;
+      fragments = undefined;
+      const cleanups = extensionCleanups.splice(0).reverse();
+      root.remove();
+      style.remove();
+
       try {
         const errors: unknown[] = [];
         for (const cleanup of cleanups) {
@@ -219,7 +228,7 @@ export async function renderIfc(
           currentComponents?.dispose();
         }
       }
-    })();
+    })().then(finish, fail);
     return disposePromise;
   };
   const onAbort = () => {
