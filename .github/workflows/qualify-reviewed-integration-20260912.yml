@@ -1,0 +1,73 @@
+name: Qualify reviewed integration
+on:
+  push:
+    branches: [maintenance/pr-review-20260912]
+    paths: [.github/workflows/qualify-reviewed-integration-20260912.yml]
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: payload
+          ref: ad824eb738d8e71eea3d685bed570183798acc97
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: source
+          ref: 54c9a249510a7dbd86c02a5e86c4cf2185d7785d
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Apply reviewed edits and verify source, metadata and optional entry
+        working-directory: source
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/integration-evidence
+          python3 ../payload/_review/assemble-integration.py
+          pnpm install --frozen-lockfile --filter @flyfish-group/file-viewer-open-source --filter @file-viewer/renderer-3d...
+          pnpm exec prettier --config .github/prettier-governance.json --write .github/dependabot.yml .github/scripts/dependency-cohort.test.mjs
+          pnpm exec prettier --write packages/renderers/3d/src/ifcSettings.ts packages/renderers/3d/src/ifc.ts packages/renderers/3d/src/ifcRuntime.ts packages/renderers/3d/src/ifc-import.worker.ts packages/renderers/3d/scripts/ifc-settings.test.mjs packages/renderers/3d/scripts/verify-ifc-browser.mjs
+          pnpm verify:github-governance
+          pnpm verify:public-release-facts
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/geometry-engine build
+          pnpm --filter @file-viewer/renderer-3d build
+          pnpm --filter @file-viewer/renderer-3d verify:ifc
+          pnpm exec playwright install --with-deps chromium
+      - name: Verify real Worker settings, original models, picking and late-hook cleanup
+        working-directory: source
+        env:
+          IFC_EVIDENCE_DIR: /tmp/integration-evidence/browser
+        run: |
+          set -euo pipefail
+          node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
+          pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/integration-evidence/browser.log 2>&1 || { tail -n 80 /tmp/integration-evidence/browser.log; exit 1; }
+          tail -n 20 /tmp/integration-evidence/browser.log
+      - name: Push only qualified production changes and regression evidence
+        working-directory: source
+        run: |
+          set -euo pipefail
+          git add .github/dependabot.yml .github/scripts/dependency-cohort.test.mjs docs/maintenance/pr-issue-review-20260912.md packages/renderers/3d
+          git diff --cached --check
+          git diff --cached > /tmp/integration-evidence/qualified.patch
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(ifc): integrate bounded advanced settings and pre-model lifecycle hook' -m 'Preserves the advanced configuration direction from p4535992 in #275 on the #276 owned-worker implementation. Includes original-model Worker behavior, cancellation and cleanup tests, coordinated dependency guards and complete issue triage. No package publication.'
+          git push origin HEAD:refs/heads/maintenance/integration-review-20260912
+          git rev-parse HEAD > /tmp/integration-evidence/commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: reviewed-integration-evidence-20260912
+          path: /tmp/integration-evidence
+          retention-days: 7
