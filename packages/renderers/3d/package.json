@@ -67,7 +67,7 @@
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "type-check": "tsc -b tsconfig.json",
-    "verify:ifc": "node scripts/verify-ifc-entry.mjs",
+    "verify:ifc": "node scripts/verify-ifc-entry.mjs && node --test scripts/ifc-settings.test.mjs",
     "verify:ifc-browser": "node scripts/verify-ifc-browser.mjs"
   },
   "dependencies": {

@@ -48,8 +48,10 @@ const built = await build({
   minify: true,
   logLevel: "silent",
 });
-const entry = Object.entries(built.metafile.outputs).find(([, value]) =>
-  value.entryPoint && resolve(value.entryPoint) === resolve(here, "../dist/ifc.js"),
+const entry = Object.entries(built.metafile.outputs).find(
+  ([, value]) =>
+    value.entryPoint &&
+    resolve(value.entryPoint) === resolve(here, "../dist/ifc.js"),
 );
 assert.ok(entry);
 assert.ok(entry[1].bytes < 10_000, `Entry not lazy: ${entry[1].bytes}`);
@@ -59,7 +61,7 @@ window.openIfc = async (name, options={}) => {
   window.controller=new AbortController(); window.selections=[]; window.cleanupCount=0;
   const bytes=await (await fetch('/sample/'+name)).arrayBuffer();
   window.instance=await renderFileViewerIfc(bytes,document.getElementById('viewer'),{signal:controller.signal,options:{locale:'en-US'}},{assetBaseUrl:'/assets/',...options,
-    onSelectionChange:value=>window.selections.push(value),configure:context=>{window.extension=context;return()=>{window.cleanupCount++}}});
+    onSelectionChange:value=>window.selections.push(value),configure:async context=>{window.extension=context;const cleanup=await options.configure?.(context);return()=>{try{cleanup?.()}finally{window.cleanupCount++}}}});
   return {count:Number(instance.$el.dataset.ifcElementCount),first:Number(instance.$el.dataset.ifcFirstElement)};
 }; window.entryReady=true;
 </script>`;
@@ -128,7 +130,10 @@ try {
   );
   await page.addInitScript(() => {
     // Intranet HTTP hosts may not expose this secure-context-only API.
-    Object.defineProperty(window.crypto, "randomUUID", { value: undefined, configurable: true });
+    Object.defineProperty(window.crypto, "randomUUID", {
+      value: undefined,
+      configurable: true,
+    });
     const Original = window.Worker;
     window.workerCounts = { created: 0, active: 0 };
     window.Worker = class extends Original {
@@ -149,7 +154,10 @@ try {
   });
   await page.goto(origin);
   await page.waitForFunction(() => window.entryReady);
-  assert.equal(await page.evaluate(() => typeof crypto.randomUUID), "undefined");
+  assert.equal(
+    await page.evaluate(() => typeof crypto.randomUUID),
+    "undefined",
+  );
   assert.equal(await page.evaluate(() => workerCounts.created), 0);
   assert.ok(
     !requests.some(
@@ -210,7 +218,9 @@ try {
         String(id),
       hit.localId,
     );
-    await page.waitForFunction(() => extension.world.renderer.three.info.render.triangles > 0);
+    await page.waitForFunction(
+      () => extension.world.renderer.three.info.render.triangles > 0,
+    );
     const drawn = await page.evaluate(() => ({
       calls: extension.world.renderer.three.info.render.calls,
       triangles: extension.world.renderer.three.info.render.triangles,
@@ -236,6 +246,200 @@ try {
     });
     console.log("Passed", name, JSON.stringify(report.cases.at(-1)));
   }
+  // Prove non-default importer settings cross the real Worker boundary.
+  const advanced = await page.evaluate(async () => {
+    window.hookOrder = [];
+    let runtimeHadModels;
+    const loaded = await openIfc("ifc4.ifc", {
+      thatOpen: {
+        importer: {
+          attributesToExclude: new Set([
+            "Representation",
+            "ObjectPlacement",
+            "CompositionType",
+            "OwnerHistory",
+            "Name",
+          ]),
+          webIfcSettings: { COORDINATE_TO_ORIGIN: true, CIRCLE_SEGMENTS: 24 },
+        },
+        fragments: { settings: { maxUpdateRate: 80 } },
+      },
+      configureRuntime({ fragments, signal }) {
+        runtimeHadModels = fragments.models.list.size;
+        if (signal.aborted) throw new Error("Unexpected aborted runtime hook");
+        return () => hookOrder.push("runtime");
+      },
+      configure() {
+        return () => hookOrder.push("model");
+      },
+    });
+    const selected = await instance.select(loaded.first),
+      rate = extension.fragments.settings.maxUpdateRate;
+    await instance.unmount();
+    await instance.unmount();
+    return {
+      count: loaded.count,
+      name: selected.name,
+      rate,
+      runtimeHadModels,
+      order: hookOrder,
+      cleanupCount,
+    };
+  });
+  assert.equal(advanced.count, 13);
+  assert.equal(
+    advanced.name,
+    "",
+    "Importer exclusion did not affect the real parsed model",
+  );
+  assert.equal(advanced.rate, 80);
+  assert.equal(advanced.runtimeHadModels, 0);
+  assert.deepEqual(advanced.order, ["model", "runtime"]);
+  assert.equal(advanced.cleanupCount, 1);
+  await page.waitForFunction(() => workerCounts.active === 0);
+  report.advanced = advanced;
+  const invalidSettings = await page.evaluate(async () => {
+    const created = workerCounts.created;
+    for (const importer of [
+      { wasm: { path: "https://invalid.invalid/" } },
+      { callback() {} },
+      JSON.parse('{"__proto__":{}}'),
+    ]) {
+      try {
+        await openIfc("ifc4.ifc", { thatOpen: { importer } });
+        return false;
+      } catch {}
+      if (workerCounts.created !== created) return false;
+    }
+    return true;
+  });
+  assert.ok(
+    invalidSettings,
+    "Invalid settings must fail before Worker allocation",
+  );
+  const unknown = await page.evaluate(async () => {
+    try {
+      await openIfc("ifc4.ifc", {
+        thatOpen: { importer: { typoOption: true } },
+      });
+      return false;
+    } catch (error) {
+      return /Unknown or non-data/.test(error.message);
+    }
+  });
+  assert.ok(unknown);
+  await page.waitForFunction(() => workerCounts.active === 0);
+  const late = await page.evaluate(async () => {
+    window.runtimeEntered = false;
+    window.lateCleanup = 0;
+    const pending = openIfc("ifc4.ifc", {
+      configureRuntime() {
+        runtimeEntered = true;
+        return new Promise((resolve) => {
+          window.finishRuntime = resolve;
+        });
+      },
+    }).then(
+      () => false,
+      (error) => error.name === "AbortError",
+    );
+    const deadline = Date.now() + 20000;
+    while (!runtimeEntered) {
+      if (Date.now() > deadline)
+        throw new Error("Runtime hook was not reached");
+      await new Promise((resolve) => setTimeout(resolve, 1));
+    }
+    controller.abort();
+    const aborted = await pending;
+    finishRuntime(() => {
+      lateCleanup++;
+    });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    return { aborted, cleanups: lateCleanup };
+  });
+  assert.deepEqual(late, { aborted: true, cleanups: 1 });
+  await page.waitForFunction(() => workerCounts.active === 0);
+  assert.equal(await page.locator("canvas").count(), 0);
+  report.invalidSettings = invalidSettings;
+  report.unknownSettings = unknown;
+  report.lateRuntimeCleanup = late;
+  const badFragments = await page.evaluate(async () => {
+    try {
+      await openIfc("ifc4.ifc", {
+        thatOpen: { fragments: { settings: { typoOption: true } } },
+      });
+      return false;
+    } catch (error) {
+      return /Unknown or non-data/.test(error.message);
+    }
+  });
+  assert.ok(badFragments);
+  await page.waitForFunction(() => workerCounts.active === 0);
+  const throwingCleanup = await page.evaluate(async () => {
+    window.cleanupOrder = [];
+    await openIfc("ifc4.ifc", {
+      configureRuntime() {
+        return () => cleanupOrder.push("runtime");
+      },
+      configure() {
+        return () => {
+          cleanupOrder.push("model");
+          throw new Error("Expected host cleanup failure");
+        };
+      },
+    });
+    let rejected = false;
+    try {
+      await instance.unmount();
+    } catch (error) {
+      rejected = error instanceof AggregateError;
+    }
+    return { rejected, order: cleanupOrder };
+  });
+  assert.deepEqual(throwingCleanup, {
+    rejected: true,
+    order: ["model", "runtime"],
+  });
+  await page.waitForFunction(() => workerCounts.active === 0);
+  assert.equal(await page.locator("canvas").count(), 0);
+  report.badFragments = badFragments;
+  report.throwingCleanup = throwingCleanup;
+  const reentrant = await page.evaluate(async () => {
+    window.abortDisposal = null;
+    window.cleanupDisposal = null;
+    await openIfc("ifc4.ifc", {
+      configureRuntime({ signal }) {
+        signal.addEventListener(
+          "abort",
+          () => {
+            window.abortDisposal = instance.unmount();
+          },
+          { once: true },
+        );
+        return () => {
+          window.cleanupDisposal = instance.unmount();
+        };
+      },
+    });
+    const pending = instance.unmount();
+    await pending;
+    const result = {
+      abortSame: abortDisposal === pending,
+      cleanupSame: cleanupDisposal === pending,
+      activeWorkers: workerCounts.active,
+      cleanupCount,
+    };
+    // Drain any wrongly detached cleanup promises before asserting the result.
+    await Promise.allSettled([abortDisposal, cleanupDisposal]);
+    return result;
+  });
+  assert.deepEqual(
+    reentrant,
+    { abortSame: true, cleanupSame: true, activeWorkers: 0, cleanupCount: 1 },
+    "Reentrant teardown must share one settled cleanup promise",
+  );
+  assert.equal(await page.locator("canvas").count(), 0);
+  report.reentrant = reentrant;
   // Input limit is enforced before another worker or transferable copy is allocated.
   const limit = await page.evaluate(async () => {
     const n = workerCounts.created;

@@ -63,6 +63,58 @@ const ifc = createIfcRenderer({
 })
 ```
 
+### Pre-import settings and pre-model runtime hook
+
+This data-only bridge incorporates the advanced configuration direction proposed
+by @p4535992 in PR #275, on the owned-Worker architecture from PR #276. It does not
+add the draft's duplicate runtime or separate capability/assets packages.
+
+```ts
+createIfcRenderer({
+  thatOpen: {
+    importer: {
+      webIfcSettings: { COORDINATE_TO_ORIGIN: true, CIRCLE_SEGMENTS: 24 },
+      geometryProcessSettings: { threshold: 3000 },
+      includeMaterialProperties: true
+    },
+    fragments: { settings: { maxUpdateRate: 80 } }
+  },
+  configureRuntime({ components, fragments, world, signal }) {
+    // Actual adapter-owned objects, before fragments.load() creates the model.
+    // Configure Components/camera/scene here, not through private-field assignment.
+    const handler = () => { /* application-specific integration */ }
+    window.addEventListener('bim-settings', handler, { signal })
+    return () => window.removeEventListener('bim-settings', handler)
+  },
+  configure({ model }) {
+    // Existing post-load hook remains available.
+  }
+})
+```
+
+`thatOpen.importer` accepts existing public data fields on the installed
+`IfcImporter`; `thatOpen.fragments.settings` accepts public writable fields on
+`FragmentsModels.settings`. These are advanced, upstream-version-coupled APIs,
+not a normalization of every That Open release. Omitted fields preserve defaults.
+Nested Loader/geometry bags are merged; native Sets/Maps replace contents while
+retaining library-owned collection instances. Use native `Set` for
+`attributesToExclude` and native `Map` for `relations`.
+
+Settings are copied before Worker allocation or copying file bytes. Only plain
+data, finite numbers, arrays and native Sets/Maps are accepted, limited to 2,048
+nodes, eight nesting levels and 65,536 cumulative string/key characters. Functions,
+accessors, class instances, cycles, prototype/private keys and custom collection
+properties are rejected. WASM locations, executable methods and Worker ownership
+remain adapter-controlled. Unknown top-level fields fail rather than being ignored.
+The Worker validates settings again before parsing. These shape/size guards do
+not replace upstream documentation for valid option values; configuration is
+trusted application code, never document-supplied executable metadata.
+
+Both hooks may be asynchronous and return synchronous cleanup. Cleanup runs once
+in reverse registration order, including late completion after cancellation. A
+failing cleanup does not prevent other hooks or Workers/WebGL from being disposed.
+Never dispose adapter-owned objects or replace their Worker/lifecycle methods.
+
 The adapter owns and disposes these objects. Do not dispose them in the hook.
 Return cleanup for your own resources. A late async hook is cleaned up after
 cancellation. The explicit `renderFileViewerIfc` API also returns `select(id|null)`,
