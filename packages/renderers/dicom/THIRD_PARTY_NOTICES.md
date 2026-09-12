@@ -41,7 +41,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### Apache-2.0
 
-- `baseline-browser-mapping@2.11.19` — https://github.com/web-platform-dx/baseline-browser-mapping
+- `baseline-browser-mapping@2.11.22` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
 - `dompurify@3.4.15` — https://github.com/cure53/DOMPurify
 

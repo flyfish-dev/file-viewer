@@ -18,8 +18,8 @@
     "tslib": "2.8.1"
   },
   "devDependencies": {
-    "@angular/build": "22.1.6",
-    "@angular/cli": "22.1.6",
+    "@angular/build": "22.1.7",
+    "@angular/cli": "22.1.7",
     "@angular/compiler-cli": "22.1.6",
     "typescript": "6.0.3"
   }

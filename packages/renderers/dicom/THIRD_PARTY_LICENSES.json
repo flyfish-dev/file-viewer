@@ -442,7 +442,7 @@
     },
     {
       "name": "baseline-browser-mapping",
-      "version": "2.11.19",
+      "version": "2.11.22",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,

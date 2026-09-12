@@ -93,9 +93,9 @@
     "test:ifc-entry": "pnpm --filter @file-viewer/renderer-3d verify:ifc"
   },
   "devDependencies": {
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.5.0",
     "prettier": "3.9.6",
-    "playwright": "^1.61.1",
+    "playwright": "^1.63.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8",
     "jsdom": "^27.4.0",

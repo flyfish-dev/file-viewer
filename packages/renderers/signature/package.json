@@ -97,7 +97,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.3",
-    "jszip": "3.10.1"
+    "jszip": "3.10.2"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
