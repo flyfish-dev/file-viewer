@@ -73,7 +73,7 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.0.3",
     "@file-viewer/geometry-engine": "workspace:3.0.3",
-    "three": "^0.185.1"
+    "three": "^0.186.0"
   },
   "devDependencies": {
     "@types/three": "^0.185.4",
