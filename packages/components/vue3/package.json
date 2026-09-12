@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@lucide/vue": "^1.43.0",
-    "@types/node": "^26.5.0",
+    "@types/node": "^26.5.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
     "@vue/language-core": "^3.3.4",
