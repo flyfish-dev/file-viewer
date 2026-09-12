@@ -97,7 +97,7 @@
     "prettier": "3.9.6",
     "playwright": "^1.61.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.8",
+    "vitest": "^5.0.0",
     "jsdom": "^27.4.0",
     "jszip": "3.10.2",
     "linkedom": "^0.18.12",
