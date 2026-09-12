@@ -25,7 +25,8 @@ const project = process.env.PACKED_ANGULAR_CONSUMER_DIR
 const output = resolve(project, 'angular-regression-evidence')
 await mkdir(output, { recursive: true })
 const require = createRequire(import.meta.url)
-const JSZip = createRequire(resolve(project, 'package.json'))('jszip')
+const consumerRequire = createRequire(resolve(project, 'package.json'))
+const JSZip = consumerRequire('jszip')
 const archive = await JSZip.loadAsync(await readFile(resolve(project, 'public/sample.pptx')))
 const presentation = await archive.file('ppt/presentation.xml').async('string')
 const expectedSlides = (presentation.match(/<p:sldId\b/g) || []).length
@@ -49,7 +50,11 @@ const browser = await (playwright.chromium || playwright.default.chromium).launc
 })
 const report = {
   project,
-  angular: '22.0.7',
+  angular: consumerRequire('@angular/core/package.json').version,
+  tooling: {
+    build: consumerRequire('@angular/build/package.json').version,
+    cli: consumerRequire('@angular/cli/package.json').version
+  },
   baseHref: '/ui/',
   expectedSlides,
   cases: [],
