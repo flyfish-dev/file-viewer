@@ -32,9 +32,9 @@ If a Worker or WASM still fails, inspect its URL: the response must be the real 
 
 ## How can I verify the DOCX 0.3.31 fixes are active?
 
-The current Word renderer uses `@file-viewer/docx@0.3.31` in both the main thread and the offline Worker. It includes the Japanese text, VML text box, Apache POI `w:hMerge`, multi-section floating-shape, complex frame, section, positioned-page, revision, paragraph-mark, and soft-break fixes, and blocks external document resources by default.
+The current Word renderer uses `@file-viewer/docx@0.3.32` in both the main thread and the offline Worker. It includes the Japanese text, VML text box, Apache POI `w:hMerge`, multi-section floating-shape, complex frame, section, positioned-page, revision, paragraph-mark, and soft-break fixes, and blocks external document resources by default.
 
-After upgrading, redeploy the matching viewer assets and confirm the browser requests `vendor/docx/docx.worker.js?file-viewer-docx=0.3.31` (possibly below your `file-viewer/` base) as JavaScript. Do not reuse a Worker from an older package version. If the old layout remains, purge the CDN or service-worker cache and reload the document.
+After upgrading, redeploy the matching viewer assets and confirm the browser requests `vendor/docx/docx.worker.js?file-viewer-docx=0.3.32` (possibly below your `file-viewer/` base) as JavaScript. Do not reuse a Worker from an older package version. If the old layout remains, purge the CDN or service-worker cache and reload the document.
 
 ## Why does a full package still say the libarchive Worker did not load?
 

@@ -78,6 +78,28 @@ describe('@file-viewer/renderer-presentation regressions', () => {
     expect(message).toContain('Hint: Confirm that the response is the original .pptx binary')
   })
 
+  it('uses the viewer locale for a known Worker recovery hint', () => {
+    const message = resolvePptxPreviewErrorMessage(
+      {
+        name: 'PptxDiagnosticError',
+        code: 'PPTX_WORKER_FAILED',
+        stage: 'start-worker',
+        message: 'PPTX Worker 启动失败。',
+        detail: 'PPTX Worker URL is unavailable. Run file-viewer-copy-assets or provide workerUrl.',
+        hint: '请检查 presentation.workerUrl、Worker 文件是否 200 返回、MIME/CSP/跨域策略是否允许加载。'
+      },
+      'Failed to parse PPTX',
+      {
+        options: {
+          locale: 'en-US'
+        }
+      } as any
+    )
+
+    expect(message).toContain('Hint: Check presentation.workerUrl, the Worker file path, MIME type, CSP, and cross-origin policy.')
+    expect(message).not.toContain('请检查 presentation.workerUrl')
+  })
+
   it('classifies legacy raw zip errors into actionable PPTX diagnostics', () => {
     const message = resolvePptxPreviewErrorMessage(
       new Error("Can't find end of central directory : is this a zip file ?"),

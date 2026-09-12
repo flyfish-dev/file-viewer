@@ -1041,6 +1041,20 @@ export interface FileViewerDataOptions {
   sqlWasmUrl?: string
 }
 
+/** Limits for the explicit, read-only binary inspector renderer. */
+export interface FileViewerBinaryInspectorOptions {
+  /** Whole-input ceiling before the renderer copies bytes into its Worker. Defaults to 16 MiB. */
+  maxFileBytes?: number
+  /** Maximum time allowed for one structure-template pass. Defaults to 5 seconds. */
+  maxParseMilliseconds?: number
+  /** Maximum structure nodes returned from the Worker. Defaults to 512. */
+  maxStructureNodes?: number
+  /** Maximum structure-tree nesting depth. Defaults to 16. */
+  maxStructureDepth?: number
+  /** Maximum decoded string bytes in one displayed field. Defaults to 4 KiB. */
+  maxStringBytes?: number
+}
+
 export type FileViewerIllustratorMode = 'auto' | 'pdf' | 'native'
 
 /** Resource budgets forwarded to the standalone illustrator-pgf Worker. */
@@ -1639,6 +1653,7 @@ export interface FileViewerOptions {
   typst?: FileViewerTypstOptions
   geo?: FileViewerGeoOptions
   data?: FileViewerDataOptions
+  binary?: FileViewerBinaryInspectorOptions
   design?: FileViewerDesignOptions
   drawing?: FileViewerDrawingOptions
   cad?: FileViewerCadOptions

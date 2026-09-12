@@ -8,7 +8,7 @@ vi.mock('vue', async (importOriginal) => ({
 }))
 
 describe('Vue document render options', () => {
-  it('rerenders once for source/options replacement and for a nested review-mode change', async () => {
+  it('rerenders for semantic render-option changes, not equivalent option objects', async () => {
     const scope = effectScope()
     const props = reactive({ file: 'contract.docx', docx: { reviewMode: 'all' } })
     const refreshPreview = vi.fn()
@@ -26,6 +26,9 @@ describe('Vue document render options', () => {
         stopViewStateObserver: vi.fn()
       })
     )
+    expect(refreshPreview).toHaveBeenCalledTimes(1)
+    props.docx = { reviewMode: 'all' }
+    await nextTick()
     expect(refreshPreview).toHaveBeenCalledTimes(1)
     props.docx.reviewMode = 'final'
     await nextTick()

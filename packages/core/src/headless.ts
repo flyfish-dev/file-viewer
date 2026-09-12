@@ -460,7 +460,9 @@ export type {
 export {
   DEFAULT_FILE_VIEWER_STATE_THEME,
   DEFAULT_FILE_VIEWER_UNSUPPORTED_DESCRIPTION,
+  FILE_VIEWER_ERROR_MESSAGE,
   FILE_VIEWER_PREVIEW_MESSAGES,
+  attachFileViewerErrorMessage,
   createFileViewerEmptyState,
   createFileViewerErrorState,
   createFileViewerPreviewLoadingState,
@@ -470,6 +472,7 @@ export {
   normalizeFileViewerErrorMessage,
 } from './viewer/state';
 export type {
+  FileViewerErrorMessageCarrier,
   FileViewerErrorMessageFormatter,
 } from './viewer/state';
 

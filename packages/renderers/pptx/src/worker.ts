@@ -19,15 +19,6 @@ const resolveBundledPptxWorkerUrl = () => {
   return new URL('./worker/pptx.worker.js', import.meta.url);
 };
 
-const canResolveAbsolutePathFrom = (url: URL) => url.protocol !== 'data:' && url.protocol !== 'blob:';
-
-const resolveViteDevPptxWorkerUrl = (baseUrl: URL) => new URL(
-  '/node_modules/@file-viewer/pptx/dist/worker/pptx.worker.js',
-  canResolveAbsolutePathFrom(baseUrl)
-    ? baseUrl
-    : new URL(typeof location !== 'undefined' ? location.href : 'file:///')
-);
-
 const resolveAngularVitePptxWorkerUrl = (baseUrl: URL, workerPath: string) => {
   const cacheIndex = baseUrl.pathname.indexOf(angularCachePath);
   if (cacheIndex < 0) {
@@ -79,23 +70,7 @@ const resolveViteOptimizedPptxWorkerUrl = (defaultPptxWorkerUrl: URL) => {
   }
 };
 
-const resolveDefaultPptxWorkerUrl = () => {
-  const defaultPptxWorkerUrl = resolveBundledPptxWorkerUrl();
-  if (!canResolveAbsolutePathFrom(defaultPptxWorkerUrl)) {
-    return defaultPptxWorkerUrl;
-  }
-  // Vite dep optimization rewrites import.meta.url into vite/deps, away from
-  // this package's worker file. Angular's application builder uses the same
-  // optimizer under .angular/cache and prefixes its @fs URL with baseHref.
-  if (viteOptimizedWorkerPathPattern.test(defaultPptxWorkerUrl.pathname)) {
-    return resolveViteOptimizedPptxWorkerUrl(defaultPptxWorkerUrl)
-      || resolveViteDevPptxWorkerUrl(defaultPptxWorkerUrl);
-  }
-  return defaultPptxWorkerUrl;
-};
-
-/** A package-owned asset needs no speculative requests to a copied-asset manifest. */
-export const resolvePptxPackageWorkerUrl = (): string | undefined => {
+const resolvePptxWorkerUrl = (allowDependencyRelativeUrl: boolean): string | undefined => {
   try {
     const moduleUrl = new URL(import.meta.url);
     const workerUrl = resolveBundledPptxWorkerUrl();
@@ -104,11 +79,19 @@ export const resolvePptxPackageWorkerUrl = (): string | undefined => {
       const optimizedUrl = resolveViteOptimizedPptxWorkerUrl(workerUrl);
       return optimizedUrl ? String(optimizedUrl) : undefined;
     }
+    // An untouched dependency-relative URL points below the application bundle,
+    // not this package. Renderers with copied-asset discovery must not select it.
+    return allowDependencyRelativeUrl ? workerUrl.href : undefined;
   } catch {
     // An inlined module without a resolvable package base can still use the
     // host's standard copied assets or an explicitly configured Worker URL.
   }
   return undefined;
+};
+
+/** Returns only a Worker URL that the active bundler has emitted or serves directly. */
+export const resolvePptxPackageWorkerUrl = (): string | undefined => {
+  return resolvePptxWorkerUrl(false);
 };
 
 export const createPptxWorker = (options: PptxWorkerFactoryOptions = {}) => {
@@ -122,7 +105,12 @@ export const createPptxWorker = (options: PptxWorkerFactoryOptions = {}) => {
     });
   }
 
-  return new Worker(resolveDefaultPptxWorkerUrl(), {
-    type: 'module',
-  });
+  // Direct PptxViewer users have no renderer-level copied-asset discovery.
+  const workerUrl = resolvePptxWorkerUrl(true)
+  if (!workerUrl) {
+    throw new Error(
+      'PPTX Worker URL is unavailable. Run file-viewer-copy-assets or provide workerUrl.'
+    )
+  }
+  return new Worker(workerUrl, { type: 'module' })
 };

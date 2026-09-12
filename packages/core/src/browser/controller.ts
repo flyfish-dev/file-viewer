@@ -238,6 +238,112 @@ const toViewerSourceInput = (options: ViewerMountOptions = {}): ViewerSourceInpu
   size: options.size,
 });
 
+// These options feed renderer selection or rendering itself. Viewer chrome,
+// fitting, watermark, and operation callbacks update in place instead.
+const RENDER_AFFECTING_VIEWER_OPTION_KEYS: readonly (keyof ViewerOptions)[] = [
+  'theme',
+  'rendererMode',
+  'builtinRenderers',
+  'autoRenderers',
+  'preset',
+  'presets',
+  'renderers',
+  'text',
+  'archive',
+  'chm',
+  'pdf',
+  'docx',
+  'presentation',
+  'spreadsheet',
+  'iwork',
+  'wordPerfect',
+  'hangul',
+  'typst',
+  'geo',
+  'data',
+  'binary',
+  'design',
+  'drawing',
+  'cad',
+  'model',
+];
+
+const isPlainViewerOptionRecord = (value: object) => {
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+};
+
+const areSameViewerOptionValues = (
+  current: unknown,
+  next: unknown,
+  pairs = new WeakMap<object, object>()
+): boolean => {
+  if (Object.is(current, next)) {
+    return true;
+  }
+  if (
+    current === null ||
+    next === null ||
+    typeof current !== 'object' ||
+    typeof next !== 'object'
+  ) {
+    return false;
+  }
+
+  const existingPair = pairs.get(current);
+  if (existingPair) {
+    return existingPair === next;
+  }
+  pairs.set(current, next);
+
+  if (Array.isArray(current) || Array.isArray(next)) {
+    return Array.isArray(current) &&
+      Array.isArray(next) &&
+      current.length === next.length &&
+      current.every((value, index) => areSameViewerOptionValues(value, next[index], pairs));
+  }
+  if (!isPlainViewerOptionRecord(current) || !isPlainViewerOptionRecord(next)) {
+    return false;
+  }
+
+  const currentKeys = Object.keys(current).sort();
+  const nextKeys = Object.keys(next).sort();
+  return currentKeys.length === nextKeys.length &&
+    currentKeys.every((key, index) => {
+      return key === nextKeys[index] &&
+        areSameViewerOptionValues(
+          (current as Record<string, unknown>)[key],
+          (next as Record<string, unknown>)[key],
+          pairs
+        );
+    });
+};
+
+const hasViewerRenderingOptionsChanged = (
+  current: ViewerOptions | undefined,
+  next: ViewerOptions | undefined
+) => {
+  return RENDER_AFFECTING_VIEWER_OPTION_KEYS.some(key => {
+    return !areSameViewerOptionValues(current?.[key], next?.[key]);
+  });
+};
+
+const isSameViewerSource = (
+  current: ViewerSourceInput | null,
+  next: ViewerSourceInput | null
+) => {
+  if (!current || !next) {
+    return current === next;
+  }
+  return current.url === next.url &&
+    current.file === next.file &&
+    current.buffer === next.buffer &&
+    current.filename === next.filename &&
+    current.name === next.name &&
+    current.type === next.type &&
+    Object.is(current.size, next.size);
+};
+
 const canUseFetch = () => typeof fetch === 'function';
 
 const defaultFetchFile: ViewerFetchFile = async ({ url, signal }) => {
@@ -1119,7 +1225,10 @@ export const mountViewer = (
   };
 
   if (currentSource) {
-    void loadSource(currentSource);
+    // The initial declarative source has no caller awaiting it. State changes
+    // and the visible error surface remain authoritative without a global
+    // unhandled-rejection event for an expected rendering failure.
+    void loadSource(currentSource).catch(() => undefined);
   }
 
   controller = {
@@ -1135,15 +1244,36 @@ export const mountViewer = (
     },
     async update(nextOptions = {}) {
       if (disposed) return;
+      const nextViewerOptions = nextOptions.options ?? currentOptions.options;
+      const renderingOptionsChanged = hasViewerRenderingOptionsChanged(
+        currentOptions.options,
+        nextViewerOptions
+      );
       currentOptions = {
         ...currentOptions,
         ...nextOptions,
-        options: nextOptions.options ?? currentOptions.options,
+        options: nextViewerOptions,
       };
+      const nextSource = hasSource(currentOptions)
+        ? toViewerSourceInput(currentOptions)
+        : null;
+      const sameSource = isSameViewerSource(currentSource, nextSource);
+      const previousViewState = sameSource && renderingOptionsChanged
+        ? instance.getViewState()
+        : null;
       instance.updateOptions(currentOptions.options || {});
       renderToolbar();
-      if (hasSource(currentOptions)) {
-        await loadSource(toViewerSourceInput(currentOptions));
+      if (sameSource && !renderingOptionsChanged) {
+        return;
+      }
+      if (nextSource) {
+        const session = await loadSource(nextSource);
+        if (session && previousViewState) {
+          await instance.applyViewState(previousViewState, {
+            action: 'restore',
+            source: 'api',
+          });
+        }
       } else {
         currentSource = null;
         await instance.load({ filename: DEFAULT_FILE_VIEWER_SOURCE_FILENAME });

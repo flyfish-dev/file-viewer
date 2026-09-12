@@ -256,7 +256,7 @@ const options = {
 | `spreadsheet.workerUrl` | 自定义 Excel/XLSX Worker 地址，默认尝试当前部署 base 下的 `vendor/xlsx/sheet.worker.js` |
 | `spreadsheet.textEncoding` | CSV / TSV 文本编码，默认 `auto`：优先 UTF-8 BOM 和严格 UTF-8，否则使用浏览器 GB18030 解码（同时覆盖 GBK）；也可显式指定 `utf-8`、`gbk` 或 `gb18030` |
 | `spreadsheet.resizableColumns` | 是否允许用户在 Excel / CSV / ODS 等表格预览中拖拽表头边界调整列宽，默认 `false` 以保持历史兼容；Demo 默认开启，便于查看被截断的长文本 |
-| `presentation.workerUrl` | 自定义 `@file-viewer/pptx` Worker 地址，显式配置优先。未配置时识别应用资产基址下的标准复制清单，再保留包内开发环境回退；Angular 子路径部署参见 [Web 接入](/zh/guide/quickstart-web) |
+| `presentation.workerUrl` | 自定义 `@file-viewer/pptx` Worker 地址，显式配置优先。未配置时先识别打包器已输出或应用资产基址下的标准复制清单；未知路径不会猜测应用相对 URL。Angular 子路径部署应使用标准 `file-viewer-copy-assets`，参见 [Web 接入](/zh/guide/quickstart-web) |
 | `cad.showImageExport` | 是否显示 CAD 渲染器内的 PNG/JPEG 按钮，默认 `true`。隐藏它们不影响共享工具栏的原文件下载；操作仍同时受下载和 HTML 导出权限约束 |
 | `presentation.workerType` | PPTX Worker 类型，通常保持默认 `module`；只有旧 WebView、特殊 CSP 或构建系统要求 classic Worker 时再覆盖 |
 | `presentation.pptModuleUrl` / `presentation.pptWorkerUrl` / `presentation.pptWasmUrl` / `presentation.pptFontUrl` | PowerPoint 97–2003 `.ppt` 0.3.4 的 ESM、Worker、WASM 和 CJK 字体高级路径覆盖；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局无需配置 |
@@ -282,6 +282,7 @@ const options = {
 | `model.workerUrl` / `model.runtimeUrl` / `model.wasmUrl` | STEP/STP、IGES/IGS、BREP 的本地 OCCT 资源地址，默认依次使用 `wasm/model/occt-worker.js`、`wasm/model/occt-import-js.js`、`wasm/model/occt-import-js.wasm`；子路径、独立资产域名或严格 CSP 部署时可传最终绝对 URL |
 | `model.useWorker` / `model.workerTimeoutMs` | OCCT 默认在一次性 Worker 中解析，超时默认 120000ms。只有 Worker 确实不可用时才建议设 `useWorker: false`，否则大模型解析会占用主线程 |
 | `model.linearUnit` / `model.linearDeflectionType` / `model.linearDeflection` / `model.angularDeflection` | 控制 OCCT 导入单位和三角化精度；没有明确业务要求时保留内核默认值，避免过细网格放大解析时间和内存占用 |
+| `binary.maxFileBytes` / `binary.maxParseMilliseconds` / `binary.maxStructureNodes` / `binary.maxStructureDepth` / `binary.maxStringBytes` | 限制显式二进制检查器的 Worker 输入、解析时间、结构树复杂度与解码字符串。默认分别是 16 MiB、5 秒、512 个节点、16 层和 4 KiB。 |
 
 ## preset 与 renderer 装配矩阵
 
@@ -292,7 +293,7 @@ const options = {
 | `@file-viewer/preset-lite` | `renderer-text`、`renderer-image`、`renderer-media` | Markdown、代码、文本、图片、音频、视频、HLS、HEIC | 工单、IM、轻附件、移动端首屏优先 |
 | `@file-viewer/preset-office` | `renderer-pdf`、`renderer-word`、`renderer-spreadsheet`、`renderer-presentation`、`renderer-ofd` | PDF、DOC/DOCX/DOT、RTF、ODT、XLS/XLSX/ODS、PPT/PPTX、OFD | OA、合同、知识库、审批、档案 |
 | `@file-viewer/preset-engineering` | `renderer-cad`、`renderer-3d`、`renderer-drawing`、`renderer-mindmap`、`renderer-geo`、`renderer-typst`、`renderer-archive`、`renderer-data`、`renderer-eda` | DWG/DXF/DWF、3D、draw.io、Excalidraw、Mermaid、PlantUML、XMind、GeoJSON/KML/GPX/SHP、Typst、压缩包、PSD/SQLite/Parquet、OLB/DRA/GDS/OASIS | 工程图纸、研发附件、设计资产、压缩包归档 |
-| `@file-viewer/preset-all` | 上述全部 renderer，并保留 core 原生低成本链路 | 官方 Demo 完整格式矩阵 | 全格式附件中心、验收环境、演示站 |
+| `@file-viewer/preset-all` | 已发布的标准 renderer 集合，并保留 core 原生低成本链路 | 标准格式矩阵 | 不需要显式专业能力的附件中心、验收环境、演示站 |
 
 单 renderer 适合极小集成。每个 renderer 都可以直接传入 `options.renderers`：
 
@@ -316,7 +317,10 @@ const options = {
 | `@file-viewer/renderer-image` | `imageRenderer` | 图片、HEIC/HEIF 等图片链路 |
 | `@file-viewer/renderer-media` | `mediaRenderer` | 音频、视频、HLS、MIDI 摘要 |
 | `@file-viewer/renderer-data` | `dataRenderer` | PSD、字体、SQLite、Parquet、Avro、WASM、WebArchive、AI/EPS 摘要 |
+| `@file-viewer/renderer-binary` | `binaryRenderer` | 显式 `.bin`、`.hex`、ELF、PE/COFF、Mach-O、Java class 字节检查；没有 MIME 通配，也不覆盖专用路由 |
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB、DRA、GDS、OAS/OASIS |
+
+`@file-viewer/renderer-binary` 有意不属于 `preset-all`、任何 Full 包或 Vue 2 依赖闭包。二进制专用界面可用 `rendererMode: 'replace'` 注册它；与业务 preset 组合时使用 `extend`。它的模块 Worker 默认限制为 16 MiB、5 秒、512 个节点、16 层和单个解码字符串 4 KiB；未匹配结构时展示原始字节，不会声明 `application/octet-stream`。
 
 `@file-viewer/eda-layout`、`@file-viewer/eda-orcad`、`@file-viewer/geometry-engine` 和 `@file-viewer/pptx` 是 renderer 内部可复用引擎包。它们可以单独用于高级二开，但常规预览集成应优先安装对应 renderer 或 preset。
 

@@ -1,5 +1,9 @@
 # Dependency review and release handoff — 2026-09-12
 
+> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
+
+<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+
 This follow-up reviews the six dependency PRs opened after the merged #278.
 The earlier IFC/issue review remains in `pr-issue-review-20260912.md`. No npm
 publication, package version bump, release tag or issue closure is performed.
@@ -72,17 +76,18 @@ no speculative fix or acceptance claim is made. #266/#268 have the earlier sampl
 fixes, #267 has the optional IFC implementation, and #277 remains a separate optional
 read-only binary-inspector proposal. No issue reply was posted by this review.
 
-`docxjs#10` and File Viewer #272/#273/#276/#278 are merged. The registry still exposed
-`@file-viewer/docx@0.3.31` at this review, so source integration is distinct from
-publishing a package with the upstream diagonal-border fix. After the maintainer
-publishes the reviewed upstream version:
+`docxjs#10` and File Viewer #272/#273/#276/#278 are merged. At the time of this
+review the registry still exposed `@file-viewer/docx@0.3.31`, so source integration
+was distinct from publishing a package with the upstream diagonal-border fix. The
+reviewed `@file-viewer/docx@0.3.32` is now public and immutable; adopt that exact
+version with:
 
 ```sh
 pnpm release:prepare-docx <exact-published-version>
-pnpm release:verify
+pnpm verify:github-266-browser /path/to/issue-266.zip --require-diagonals
 git diff --check
 ```
 
+The preparation command runs the installed-engine and public-release-fact checks.
 Review and commit the synchronized dependency, lockfile and Worker metadata before
-publishing File Viewer. Do not bypass the installed-engine behavioral gate or claim
-that a future upstream package is already available.
+publishing File Viewer. Do not bypass the original-file behavioral gate.

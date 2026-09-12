@@ -29,10 +29,4 @@ for (const [source, target] of notices) {
   ])
 }
 
-// Renderer output is canonical after a fresh build; the Web viewer snapshot
-// may have been produced with a different optional wasm-opt installation.
-for (const filename of ['chm.worker.js', 'chm_wasm.js', 'chm_wasm_bg.wasm']) {
-  await copyFile(resolve(rendererDir, 'dist', filename), resolve(vendorDir, filename))
-}
-
 console.log(`[assets-chm] staged ${notices.length} required license documents with the Worker/WASM payload`)

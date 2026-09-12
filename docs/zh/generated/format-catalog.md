@@ -2,10 +2,10 @@
 
 # 自动生成的格式目录
 
-- 已注册扩展名：**266**
+- 已注册扩展名：**273**
 - 稳定扩展名：**224**
-- 实验扩展名：**42**
-- 预览链路：**45**
+- 实验扩展名：**49**
+- 预览链路：**46**
 
 | Renderer ID | 名称 | 扩展名 | 能力等级 | 状态 | 容器 | 已知限制 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -54,3 +54,4 @@
 | `adobe-palette-design` | Adobe Color Palettes | `.ase`, `.aco` | structured | stable | ASE 1.x<br>ACO v1/v2 | ASE RGB, CMYK, Gray, and CIELAB colors and ACO RGB, HSB, CMYK, CIELAB, and Gray colors are parsed with strict bounds in a terminable module Worker<br>Browser swatches convert CIELAB D50 and device CMYK to approximate sRGB; original model values remain visible for reference<br>Unknown ASE blocks and bounded ACO trailing application data are skipped and reported rather than executed |
 | `photoshop-resource-design` | Adobe Photoshop Resources and Presets | `.abr`, `.csh`, `.pat`, `.grd`, `.asl` | structured | experimental | Photoshop ABR 6.x<br>Photoshop CSH v2<br>PAT v1<br>GRD v5<br>ASL v2<br>ag-psd 31.0.2 | ABR previews decode saved brush-tip alpha, embedded patterns, and bounded preset metadata; they do not simulate Photoshop's stroke engine, dynamics, or paint blending<br>CSH previews reconstruct bounded Bezier path geometry; subtract, intersect, and exclude composition is exposed as metadata rather than claimed as Photoshop-equivalent raster output<br>PAT previews decode bounded RGB, grayscale, indexed-color, alpha, Raw, and PackBits pattern tiles; unsupported image modes and compression variants fail closed<br>GRD previews render saved solid color stops and deterministic bounded noise samples from v5 descriptors; they do not claim Photoshop's complete interpolation and color-management pipeline<br>ASL previews expose bounded layer-effect descriptors, blend metadata, and embedded pattern thumbnails as a structure view; they do not rasterize Photoshop's full effect stack<br>Legacy ABR variants before 6.x and unknown CSH container versions are rejected instead of being scanned heuristically |
 | `data-asset` | Data Asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured | stable | Font<br>design<br>database<br>binary data | - |
+| `binary-inspector` | Binary Inspector | `.bin`, `.hex`, `.elf`, `.exe`, `.dll`, `.class`, `.macho` | structured | experimental | Raw bytes<br>ELF<br>PE/COFF<br>Mach-O<br>PNG<br>ZIP<br>WebAssembly<br>Java class | The package is explicit opt-in and never claims application/octet-stream or extensions owned by dedicated renderers<br>Only a reviewed built-in template catalog is parsed in a terminable module Worker; user-authored templates, dynamic imports, editing, and patching are out of scope<br>Whole inputs, parse time, structure nodes, nesting, and decoded string bytes are capped before data reaches the DOM; large files are rejected instead of partially scanning arbitrary pages |

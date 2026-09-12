@@ -78,6 +78,7 @@ describe('@file-viewer/renderer-presentation lifecycle', () => {
     FakeWorker.instances = []
     FakeWorker.constructorError = null
     resolvePackageWorker.mockReset()
+    resolvePackageWorker.mockReturnValue('https://example.test/ui/assets/pptx.worker-hash.js')
     resetDefaultFileViewerAssetBaseUrl()
     // Resource discovery is tested separately; lifecycle units must not depend
     // on a real service (or proxy) bound to the fake document's localhost URL.
@@ -115,6 +116,46 @@ describe('@file-viewer/renderer-presentation lifecycle', () => {
     rendered.unmount()
   })
 
+  it('uses the copied Worker when an application bundle leaves the package path unresolved', async () => {
+    const target = createTarget()
+    resolvePackageWorker.mockReturnValue(undefined)
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({
+      schemaVersion: 1,
+      packageName: 'file-viewer-copy-assets',
+      validation: {
+        assets: [{
+          id: 'pptx-worker',
+          rendererId: 'office-presentation',
+          exists: true,
+          relativePath: 'vendor/pptx/pptx.worker.js',
+        }],
+      },
+    }), { headers: { 'content-type': 'application/json' } })))
+
+    const renderPromise = renderPptx(new ArrayBuffer(16), target, 'pptx')
+    await vi.waitFor(() => expect(FakeWorker.instances).toHaveLength(1))
+    expect(FakeWorker.instances[0]!.url).toBe(
+      'http://localhost/file-viewer/vendor/pptx/pptx.worker.js'
+    )
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost/file-viewer/flyfish-viewer-assets.json',
+      expect.objectContaining({ credentials: 'same-origin' })
+    )
+    FakeWorker.instances[0]!.emitMessage({ type: 'Done', charts: null })
+    const rendered = await renderPromise
+    rendered.unmount()
+  })
+
+  it('reports copied-asset setup instead of guessing a Worker path when discovery fails', async () => {
+    const target = createTarget()
+    resolvePackageWorker.mockReturnValue(undefined)
+
+    await expect(renderPptx(new ArrayBuffer(16), target, 'pptx')).rejects.toThrow(
+      'file-viewer-copy-assets'
+    )
+    expect(FakeWorker.instances).toHaveLength(0)
+  })
+
   it('keeps an explicitly configured shared asset root ahead of the package asset', async () => {
     const target = createTarget()
     setDefaultFileViewerAssetBaseUrl('https://example.test/private/file-viewer/')
@@ -132,6 +173,7 @@ describe('@file-viewer/renderer-presentation lifecycle', () => {
   it('cancels during copied-asset discovery without starting a stale Worker', async () => {
     const target = createTarget()
     const controller = new AbortController()
+    resolvePackageWorker.mockReturnValue(undefined)
     vi.stubGlobal('fetch', vi.fn((_url, { signal }) => new Promise((_resolve, reject) => {
       signal.addEventListener('abort', () => reject(signal.reason), { once: true })
     })))

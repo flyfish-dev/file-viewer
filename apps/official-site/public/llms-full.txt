@@ -18,8 +18,8 @@ The project is designed for teams that need users to open business attachments d
 - License: File Viewer-authored source and packages are Apache-2.0; the bundled `@file-viewer/ppt` runtime retains its included independent LICENSE and NOTICE, as do other third-party dependencies.
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
-- Source matrix scope: 88 File Viewer npm targets, 266 registered extensions, and 45 preview pipelines; 224 extensions are stable and 42 are experimental. The experimental set contains 23 DICOM/signature mappings and 19 explicit opt-in Adobe design mappings.
-- Current published release: v3.0.3, https://github.com/flyfish-dev/file-viewer/releases/tag/v3.0.3. 87 mainline File Viewer packages use 3.0.3; the historical `msdoc-viewer` compatibility package uses 0.2.6. Word uses `@file-viewer/docx` 0.3.31; Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.6 release.
+- Source matrix scope: 89 File Viewer npm targets, 273 registered extensions, and 46 preview pipelines; 224 extensions are stable and 49 are experimental. The experimental set contains 23 DICOM/signature mappings, 19 explicit opt-in Adobe design mappings, and 7 explicit binary-inspector mappings.
+- Current published release: v3.1.0, https://github.com/flyfish-dev/file-viewer/releases/tag/v3.1.0. 88 mainline File Viewer packages use 3.1.0; the historical `msdoc-viewer` compatibility package uses 0.2.7. Word uses `@file-viewer/docx` 0.3.32; Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.6 release.
 
 ## Format Coverage
 
@@ -30,7 +30,7 @@ The format matrix covers Office documents, fixed-layout documents, engineering a
 - Archives and communication files: zip, 7z, rar, tar, eml, msg, mbox, epub.
 - Code, data, media, and geo: markdown, JSON, TypeScript, Python, patch/diff, git bundle, SQLite, Parquet, video, audio, GeoJSON, KML.
 
-The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/standard/office/engineering/all presets. Every v3.0.3 Full package preserves the published preset-all compatibility matrix and must not be documented as requiring a separate preset install or `options.preset`. Adobe design, DICOM, and signature renderers remain explicit additions. The CLI's `full` profile defaults to the established DICOM/signature additions after showing their size, runtime, and license boundaries; Adobe design is included only when its formats or capability are explicitly selected.
+The light component packages are intentionally small and should not be described as containing every renderer. Broader coverage is enabled through renderer packages or lite/standard/office/engineering/all presets. Every v3.1.0 Full package preserves the published preset-all compatibility matrix and must not be documented as requiring a separate preset install or `options.preset`. Adobe design, DICOM, and signature renderers remain explicit additions. The CLI's `full` profile defaults to the established DICOM/signature additions after showing their size, runtime, and license boundaries; Adobe design is included only when its formats or capability are explicitly selected.
 
 PowerPoint has two strict rendering routes. Binary `.ppt` files use the independently versioned `@file-viewer/ppt@0.3.4` runtime. Demo, Full, copy-assets, and CDN/IIFE distributions include its verified public ESM/Worker/WASM/CJK-font files under `vendor/ppt/`. Open XML `.pptx` files use the separate `@file-viewer/pptx` Worker engine. Documentation and examples should not collapse these into one renderer.
 

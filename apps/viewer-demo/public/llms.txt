@@ -9,4 +9,4 @@
 - Source: https://github.com/flyfish-dev/file-viewer
 - npm core: https://www.npmjs.com/package/@file-viewer/core
 
-The current source registry maps 266 registered extensions (224 stable, 42 experimental) to 45 preview pipelines. Local files selected in the demo stay in the browser. Remote URL behavior depends on the source server's CORS policy.
+The current source registry maps 273 registered extensions (224 stable, 49 experimental) to 46 preview pipelines. Local files selected in the demo stay in the browser. Remote URL behavior depends on the source server's CORS policy.

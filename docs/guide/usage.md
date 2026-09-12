@@ -88,7 +88,7 @@ if (!result.previewable) {
 | `text` | Set `toolbar: false` to hide the renderer-local metadata bar and `lineNumbers: true` for a copy-safe gutter. `wrapLongLines: true` visually wraps logical lines without changing source bytes and also applies to the bounded large-text view. `prettyPrint: true` lazily formats supported structured text for display with Prettier; a badge and toolbar switch distinguish the formatted representation from the original source. `prettyPrintMaxBytes` limits only formatting and defaults to the effective `virtualizeAboveBytes` value (512 KiB when omitted). Oversized, malformed, or unsupported input falls back without error, after which the existing regular/virtual renderer remains authoritative. Markdown stays rendered by default; use `markdownVirtualizeAboveBytes` only for exceptionally large source inspection. The legacy `*-full` script-tag IIFE assets do not bundle Prettier, so `prettyPrint` falls back to the original source there. |
 | `ai` | Text chunk collection for vectorization, source tracing, source-aware highlighting, and audit workflows. It does not call a cloud model by itself. |
 | `archive` | Safe extraction limits, IndexedDB cache behavior, worker timeout, nested preview, and self-hosted libarchive paths. |
-| `pdf`, `docx`, `spreadsheet`, `cad`, `typst`, `drawing`, `data` | Renderer-specific asset URLs and behavior knobs. |
+| `pdf`, `docx`, `spreadsheet`, `cad`, `typst`, `drawing`, `data`, `binary` | Renderer-specific asset URLs and behavior knobs. |
 | `cad.showImageExport` | Show the renderer-local PNG/JPEG buttons, default `true`. Hiding them does not change the shared original-file download button; download and HTML-export permission gates still apply. |
 | `presentation.workerUrl` | Optional explicit PPTX Worker URL. Otherwise the renderer discovers the standard copied asset manifest under the application asset base, then retains the package's development fallback. See [Angular integration](/guide/quickstart-web). |
 | `hooks` | Load start, load complete, unload start, unload complete, errors, and renderer context callbacks. |
@@ -103,7 +103,7 @@ Presets are product-shaped capability bundles. Individual renderers are exact, m
 | `@file-viewer/preset-lite` | `renderer-text`, `renderer-image`, `renderer-media` | Markdown, code, text, image, audio, video, HLS, HEIC | Lightweight attachments, tickets, chat, mobile-first surfaces |
 | `@file-viewer/preset-office` | `renderer-pdf`, `renderer-word`, `renderer-spreadsheet`, `renderer-presentation`, `renderer-ofd` | PDF, DOC/DOCX/DOT, RTF, ODT, XLS/XLSX/ODS, PPT/PPTX, OFD | OA, approvals, knowledge bases, contracts, archive portals |
 | `@file-viewer/preset-engineering` | `renderer-cad`, `renderer-3d`, `renderer-drawing`, `renderer-mindmap`, `renderer-geo`, `renderer-typst`, `renderer-archive`, `renderer-data`, `renderer-eda` | DWG/DXF/DWF, 3D, draw.io, Excalidraw, Mermaid, PlantUML, XMind, GeoJSON/KML/GPX/SHP, Typst, archives, PSD/SQLite/Parquet, OLB/DRA/GDS/OASIS | Engineering drawings, R&D attachments, design assets, technical archives |
-| `@file-viewer/preset-all` | Every official renderer plus low-cost core browser routes | Full official demo matrix | All-format attachment centers, demos, validation environments |
+| `@file-viewer/preset-all` | Published standard renderer set plus low-cost core browser routes | Full standard matrix | Attachment centers, demos, validation environments that do not need an explicit specialist |
 
 Every renderer below can be passed through `options.renderers`:
 
@@ -127,9 +127,12 @@ Every renderer below can be passed through `options.renderers`:
 | `@file-viewer/renderer-image` | `imageRenderer` | Images, HEIC / HEIF where supported by the renderer |
 | `@file-viewer/renderer-media` | `mediaRenderer` | Audio, video, HLS, MIDI summaries |
 | `@file-viewer/renderer-data` | `dataRenderer` | PSD, fonts, SQLite, Parquet, Avro, WASM, WebArchive, AI/EPS summaries |
+| `@file-viewer/renderer-binary` | `binaryRenderer` | Explicit `.bin`, `.hex`, ELF, PE/COFF, Mach-O, and Java class byte inspection; no MIME wildcard or specialist-route override |
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB, DRA, GDS, OAS/OASIS |
 
 EML and MSG attachments open through the same resolved renderer registry as the parent viewer. React, React Legacy, Vanilla JS, and Web Component integrations do not need a framework-specific nested-preview bridge. With a lightweight component, include the preset or renderer for each attachment type you want to preview (for example, the PDF renderer for PDF attachments); Full packages already include the complete standard registry. Attachment filenames are rendered as text, not HTML.
+
+`@file-viewer/renderer-binary` is intentionally separate from `preset-all` and every Full/Vue 2 closure. Register it with `rendererMode: 'replace'` for a binary-only surface or `extend` alongside a focused preset. Its bounded module Worker defaults to 16 MiB, 5 seconds, 512 nodes, 16 levels, and 4 KiB decoded strings; a raw byte view is the fallback rather than an `application/octet-stream` claim.
 
 `@file-viewer/eda-layout`, `@file-viewer/eda-orcad`, `@file-viewer/geometry-engine`, and `@file-viewer/pptx` are reusable engine packages behind renderers. Advanced teams can use them directly, while normal viewer integrations should install the matching renderer or preset.
 
@@ -178,6 +181,7 @@ EML and MSG attachments open through the same resolved renderer registry as the 
 | `typst.compilerWasmUrl`, `typst.rendererWasmUrl`, `typst.fontAssetsUrl` | Self-host Typst compiler / renderer WASM and bundled fonts. |
 | `drawing.viewerScriptUrl` | Same-origin self-hosted diagrams.net / draw.io viewer script used only when `drawing.preferOfficial` is explicitly enabled. The optional runtime is isolated in a no-same-origin iframe with restrictive CSP and falls back to safe SVG output when it cannot load. |
 | `data.sqlWasmUrl` | Self-host SQLite WASM for `.sqlite` previews. |
+| `binary.maxFileBytes` / `binary.maxParseMilliseconds` / `binary.maxStructureNodes` / `binary.maxStructureDepth` / `binary.maxStringBytes` | Bound the explicit binary-inspector Worker input, parse time, tree complexity, and decoded strings. Defaults are 16 MiB, 5 seconds, 512 nodes, 16 levels, and 4 KiB. |
 
 ## Operation Guard
 

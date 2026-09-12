@@ -85,7 +85,7 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 ## Format Support Matrix
 
-The shared catalog registers 266 file extensions (224 stable and 42 experimental) across 45 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
+The shared catalog registers 273 file extensions (224 stable and 49 experimental) across 46 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
 
 | Preview pipeline | Category | Extensions | Level / status | Capabilities | Loading |
 | --- | --- | --- | --- | --- | --- |
@@ -134,6 +134,7 @@ The shared catalog registers 266 file extensions (224 stable and 42 experimental
 | Adobe Color Palettes | asset | `.ase`, `.aco` | structured / stable | download, print, HTML export, search | lazy async |
 | Adobe Photoshop Resources and Presets | asset | `.abr`, `.csh`, `.pat`, `.grd`, `.asl` | structured / experimental | download, print, search | lazy async |
 | Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | download, HTML export, search | lazy async |
+| Binary Inspector | asset | `.bin`, `.hex`, `.elf`, `.exe`, `.dll`, `.class`, `.macho` | structured / experimental | download | lazy async |
 
 ## Engineering-Grade On-Demand Renderer Assembly
 

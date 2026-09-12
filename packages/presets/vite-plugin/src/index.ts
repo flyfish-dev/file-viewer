@@ -618,6 +618,15 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     chunkName: 'file-viewer-data'
   },
   {
+    id: 'binary',
+    packageName: '@file-viewer/renderer-binary',
+    exportName: 'binaryRenderer',
+    formats: ['binary', 'binary-inspector', 'bin', 'hex', 'elf', 'exe', 'dll', 'class', 'macho'],
+    rendererIds: ['binary-inspector'],
+    chunkName: 'file-viewer-binary',
+    includeInPresetAll: false
+  },
+  {
     id: 'eda',
     packageName: '@file-viewer/renderer-eda',
     exportName: 'edaRenderer',

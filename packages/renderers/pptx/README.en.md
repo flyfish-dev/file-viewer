@@ -11,6 +11,8 @@ Native PPTX rendering engine extracted from Flyfish File Viewer. It is maintaine
 
 `resolvePptxPackageWorkerUrl()` lets integrations identify an emitted or directly served package Worker URL. It returns `undefined` when the location is not recognized, not as proof that a file is missing; integrations can then use their asset-copy strategy or explicit Worker configuration.
 
+When `PptxViewer` is used directly, Vite or Webpack can serve a recognized package Worker; an unrecognized build never guesses an application-relative path. Angular, IIFE, offline static directories, and strict CSP deployments should use `file-viewer-copy-assets` or an explicit `workerUrl` so the final static origin serves the Worker reliably.
+
 ## Usage
 
 ```ts

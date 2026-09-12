@@ -13,7 +13,6 @@ import {
   Cloud,
   Cpu,
   Download,
-  FileArchive,
   FileCode2,
   FileSpreadsheet,
   FileText,
@@ -30,6 +29,8 @@ import {
   MonitorPlay,
   Newspaper,
   PackageCheck,
+  Pause,
+  Play,
   PanelTop,
   Radar,
   Rocket,
@@ -45,7 +46,9 @@ import {
   X,
   Zap
 } from '@lucide/vue'
-import { FORMAT_CATALOG_SUMMARY, OFFICE_FORMAT_GROUPS } from './formatCatalog.generated'
+import { FORMAT_CATALOG_SUMMARY } from './formatCatalog.generated'
+import FormatExperience from './components/FormatExperience.vue'
+import ProductResources from './components/ProductResources.vue'
 
 type Locale = 'zh' | 'en'
 type SiteTheme = 'light' | 'dark'
@@ -70,14 +73,6 @@ type MetricItem = {
   title: string
   value: string
   detail: string
-  tone: string
-}
-
-type FormatGroup = {
-  label: string
-  count: string
-  examples: string
-  icon: Component
   tone: string
 }
 
@@ -131,13 +126,12 @@ const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '3.0.3'
+const currentReleaseVersion = '3.1.0'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
 const registeredExtensionCount = FORMAT_CATALOG_SUMMARY.registeredExtensionCount
 const stableExtensionCount = FORMAT_CATALOG_SUMMARY.stableExtensionCount
 const experimentalExtensionCount = FORMAT_CATALOG_SUMMARY.experimentalExtensionCount
 const previewPipelineCount = FORMAT_CATALOG_SUMMARY.rendererCount
-const officeFormatExamples = OFFICE_FORMAT_GROUPS.flatMap((group) => group.extensions)
 const githubSponsorsUrl = 'https://github.com/sponsors/wybaby168'
 const domesticSponsorUrl = 'https://dev.flyfish.group/sponsor?source=github'
 const whatsappContactUrl = 'https://wa.me/qr/DY3NG2HEGJFGL1'
@@ -197,12 +191,13 @@ hljs.registerLanguage('xml', xml)
 
 const locale = ref<Locale>('en')
 const siteTheme = ref<SiteTheme>('light')
+const heroMotionPaused = ref(false)
+const heroMotionVisible = ref(true)
 const siteMain = ref<HTMLElement | null>(null)
 const topbar = ref<HTMLElement | null>(null)
 const flatNav = ref<HTMLElement | null>(null)
 const demoReveal = ref<HTMLElement | null>(null)
 const quickStartSection = ref<HTMLElement | null>(null)
-const quickStartTrack = ref<HTMLElement | null>(null)
 const supportDialogPanel = ref<HTMLElement | null>(null)
 const supportDialogCloseButton = ref<HTMLButtonElement | null>(null)
 const supportDialogSponsorTriggerButton = ref<HTMLButtonElement | null>(null)
@@ -347,7 +342,7 @@ const copy = {
       eyebrow: `v${currentReleaseVersion} · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
       title: '文件预览，全部在浏览器完成。',
       subtitle:
-        '为了预览一份内部 DOCX 就把它上传到服务器，糟透了。File Viewer 让 Office、PDF、CAD、压缩包、邮件等文件留在浏览器里，并且可以完整离线部署。',
+        'Office、PDF、CAD、压缩包与更多文件，一个组件即可预览。浏览器原生、离线优先，让文件留在你的环境里，让体验融入你的产品。',
       primary: '立即体验',
       secondary: '阅读文档',
       commercial: '了解商业版',
@@ -381,7 +376,7 @@ const copy = {
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
     releaseTitle:
-      'v3.0.3 已发布：88 个 npm 目标、Word 修订与 DOC 排版修复、浏览器集成与 iPhone PDF 导航回归；Vue 2 和既有 Full 契约保持兼容。',
+      'v3.1.0 已发布：89 个 npm 目标、Word 对角线边框修复、PPTX 图表与 Worker 资源回归；Vue 2 和既有 Full 契约保持兼容。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -399,7 +394,7 @@ const copy = {
       eyebrow: `v${currentReleaseVersion} · ${registeredExtensionCount} registered extensions · no conversion server`,
       title: 'Preview files entirely in the browser.',
       subtitle:
-        'Uploading a private DOCX just to preview it is awful. File Viewer keeps Office, PDF, CAD, archives, email, and more in the browser, with every runtime asset ready for self-hosting.',
+        'Office, PDF, CAD, archives and more, in one preview component. Browser-native and offline-first. Your files stay in your environment, and the experience fits your product.',
       primary: 'Try the Demo',
       secondary: 'Read the Docs',
       commercial: 'Commercial Edition',
@@ -434,7 +429,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v3.0.3 ships 88 npm targets, Word revision and DOC typography fixes, browser integration updates, and the iPhone PDF navigation regression; Vue 2 and existing Full contracts remain compatible.',
+      'v3.1.0 ships 89 npm targets, Word diagonal-border repair, PPTX chart and Worker-asset regressions; Vue 2 and existing Full contracts remain compatible.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -493,72 +488,6 @@ const metrics = computed<MetricItem[]>(() =>
           detail:
             '76 standard packages, 7 same-line aliases, and independently versioned msdoc-viewer',
           tone: 'amber'
-        }
-      ]
-)
-
-const formatGroups = computed<FormatGroup[]>(() =>
-  isZh.value
-    ? [
-        {
-          label: 'Office 与版式文档',
-          count: 'Word / Excel / PPT / PDF / OFD / Typst',
-          examples: officeFormatExamples.slice(0, 28).join('、'),
-          icon: FileText,
-          tone: 'emerald'
-        },
-        {
-          label: '工程与设计资产',
-          count: 'CAD / EDA / 3D / Mind Maps',
-          examples:
-            'dwg、dxf、dwf、dwfx、olb、dra、gds、oas、oasis、xmind、step、stl、excalidraw、drawio',
-          icon: Layers3,
-          tone: 'cyan'
-        },
-        {
-          label: '归档与沟通文件',
-          count: 'Archives / Email / Ebooks',
-          examples: 'zip、7z、rar、tar、eml、msg、mbox、epub、umd',
-          icon: FileArchive,
-          tone: 'orange'
-        },
-        {
-          label: '代码、数据与媒体',
-          count: 'Code / Data / Media / Geo',
-          examples: 'md、json、ts、py、sqlite、parquet、mp4、mp3、geojson、kml',
-          icon: FileCode2,
-          tone: 'indigo'
-        }
-      ]
-    : [
-        {
-          label: 'Office and fixed-layout documents',
-          count: 'Word / Excel / PPT / PDF / OFD / Typst',
-          examples: officeFormatExamples.slice(0, 28).join(', '),
-          icon: FileText,
-          tone: 'emerald'
-        },
-        {
-          label: 'Engineering and design assets',
-          count: 'CAD / EDA / 3D / Mind maps',
-          examples:
-            'dwg, dxf, dwf, dwfx, olb, dra, gds, oas, oasis, xmind, step, stl, excalidraw, drawio',
-          icon: Layers3,
-          tone: 'cyan'
-        },
-        {
-          label: 'Archives and communication files',
-          count: 'Archives / Email / Ebooks',
-          examples: 'zip, 7z, rar, tar, eml, msg, mbox, epub, umd',
-          icon: FileArchive,
-          tone: 'orange'
-        },
-        {
-          label: 'Code, data, media, and geo',
-          count: 'Code / Data / Media / Geo',
-          examples: 'md, json, ts, py, sqlite, parquet, mp4, mp3, geojson, kml',
-          icon: FileCode2,
-          tone: 'indigo'
         }
       ]
 )
@@ -853,7 +782,7 @@ export function Preview() {
     theme: 'light',
     toolbar: { position: 'bottom-right', zoom: true }
   }
-${'<\\/script>'}
+${'</' + 'script>'}
 
 <FileViewer
   url="/files/deck.pptx"
@@ -1112,8 +1041,6 @@ const explorerResourceItems = computed<ExplorerItem[]>(() => [
   }
 ])
 
-const featuredQuickStartItems = computed(() => quickStartItems.value.slice(0, 5))
-
 const activeFlatNavId = computed<NavAnchorId>(() => {
   if (activeSectionId.value === 'formats') return 'formats'
   if (activeSectionId.value === 'ecosystem' || activeSectionId.value === 'solutions') {
@@ -1239,46 +1166,12 @@ function toggleLocale() {
 
 function selectQuickStart(index: number) {
   activeQuickStartIndex.value = index
-  const track = quickStartTrack.value
-  const target = track?.children.item(index) as HTMLElement | null
-  if (!track || !target) return
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  track.scrollTo({
-    left: target.offsetLeft - track.offsetLeft,
-    behavior: reduceMotion ? 'auto' : 'smooth'
-  })
 }
 
-let quickStartScrollFrame = 0
 let pageScrollFrame = 0
 
-function syncQuickStartFromScroll() {
-  const track = quickStartTrack.value
-  if (!track) return
-
-  window.cancelAnimationFrame(quickStartScrollFrame)
-  quickStartScrollFrame = window.requestAnimationFrame(() => {
-    const panels = Array.from(track.children) as HTMLElement[]
-    const trackCenter = track.scrollLeft + track.clientWidth / 2
-    let nextIndex = activeQuickStartIndex.value
-    let nearestDistance = Number.POSITIVE_INFINITY
-
-    panels.forEach((panel, index) => {
-      const panelCenter = panel.offsetLeft + panel.offsetWidth / 2
-      const distance = Math.abs(panelCenter - trackCenter)
-      if (distance < nearestDistance) {
-        nearestDistance = distance
-        nextIndex = index
-      }
-    })
-
-    activeQuickStartIndex.value = nextIndex
-  })
-}
-
 function handleQuickStartKeydown(event: KeyboardEvent, index: number) {
-  const lastIndex = featuredQuickStartItems.value.length - 1
+  const lastIndex = quickStartItems.value.length - 1
   if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
     event.preventDefault()
     selectQuickStart(Math.max(0, index - 1))
@@ -1291,6 +1184,11 @@ function handleQuickStartKeydown(event: KeyboardEvent, index: number) {
   } else if (event.key === 'End') {
     event.preventDefault()
     selectQuickStart(lastIndex)
+  }
+  if (event.defaultPrevented) {
+    siteMain.value
+      ?.querySelector<HTMLButtonElement>(`#quickstart-tab-${activeQuickStartIndex.value}`)
+      ?.focus()
   }
 }
 
@@ -1683,6 +1581,7 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 }
 
 let demoRevealObserver: IntersectionObserver | undefined
+let heroMotionObserver: IntersectionObserver | undefined
 let quickStartObserver: IntersectionObserver | undefined
 let siteRevealObserver: IntersectionObserver | undefined
 let topbarResizeObserver: ResizeObserver | undefined
@@ -1695,7 +1594,11 @@ function setupSiteRevealMotion() {
   const revealGroups = [
     '.section-heading',
     '.metric-card',
-    '.format-card',
+    '.format-experience-heading',
+    '.format-family',
+    '.resources-heading',
+    '.resource-card',
+    '.delivery-panel',
     '.demo-reveal-copy > *',
     '.scenario-card',
     '.ecosystem-copy > :not(.quickstart-tabs)',
@@ -1806,6 +1709,11 @@ onMounted(async () => {
   updatePageNavStateNow()
   syncFlatNavHighlight()
   setupSiteRevealMotion()
+  heroMotionObserver = new IntersectionObserver(([entry]) => {
+    heroMotionVisible.value = Boolean(entry?.isIntersecting)
+  })
+  const heroSection = siteMain.value?.querySelector('#top')
+  if (heroSection) heroMotionObserver.observe(heroSection)
   if (window.location.hash === '#ecosystem') {
     quickStartSectionActive.value = true
   }
@@ -1850,12 +1758,12 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleGlobalKeydown)
   window.removeEventListener('pointerdown', clearHeroPreviewOutside)
   demoRevealObserver?.disconnect()
+  heroMotionObserver?.disconnect()
   quickStartObserver?.disconnect()
   siteRevealObserver?.disconnect()
   topbarResizeObserver?.disconnect()
   clearHeroPreviewTransitionTimer()
   clearFrameUnmountTimers()
-  window.cancelAnimationFrame(quickStartScrollFrame)
   window.cancelAnimationFrame(pageScrollFrame)
 })
 </script>
@@ -1912,6 +1820,7 @@ onBeforeUnmount(() => {
       <button
         class="nav-explorer-toggle"
         type="button"
+        :aria-label="isZh ? '探索产品' : 'Explore products'"
         aria-controls="primary-navigation"
         :aria-expanded="navExplorerOpen"
         @click="navExplorerOpen = !navExplorerOpen"
@@ -2020,7 +1929,11 @@ onBeforeUnmount(() => {
       </div>
     </nav>
 
-    <section id="top" class="hero-section">
+    <section
+      id="top"
+      class="hero-section"
+      :class="{ 'hero-motion-paused': heroMotionPaused || !heroMotionVisible }"
+    >
       <div class="hero-copy">
         <p class="eyebrow">
           <Sparkles :size="17" />
@@ -2029,13 +1942,13 @@ onBeforeUnmount(() => {
         <h1>
           <template v-if="isZh">
             <span class="hero-title-line">File Viewer.</span>
-            <span class="hero-title-line">Office、PDF 与 CAD。</span>
-            <span class="hero-title-line hero-title-accent">全部在浏览器预览。</span>
+            <span class="hero-title-line">文件世界，</span>
+            <span class="hero-title-line hero-title-accent">一屏打开。</span>
           </template>
           <template v-else>
             <span class="hero-title-line">File Viewer.</span>
-            <span class="hero-title-line">Office, PDF & CAD.</span>
-            <span class="hero-title-line hero-title-accent">Entirely in your browser.</span>
+            <span class="hero-title-line">Every file.</span>
+            <span class="hero-title-line hero-title-accent">Within reach.</span>
           </template>
         </h1>
         <p class="hero-subtitle">{{ currentCopy.hero.subtitle }}</p>
@@ -2067,6 +1980,12 @@ onBeforeUnmount(() => {
             : 'Real browser previews for Word, CAD, spreadsheets, and presentations'
         "
       >
+        <div class="hero-stage-heading">
+          <span class="hero-stage-dot" /><span>{{
+            isZh ? '你的文件，原生呈现' : 'Your files. Natively rendered.'
+          }}</span
+          ><span class="hero-stage-index">01 — 04</span>
+        </div>
         <div class="hero-orbit-stack">
           <div
             class="hero-preview-item hero-preview-word"
@@ -2224,9 +2143,28 @@ onBeforeUnmount(() => {
           @pointerenter="handleHeroPreviewShieldPointerEnter"
           @pointerleave="handleHeroPreviewShieldPointerLeave"
         />
-        <div class="hero-orbit-status" aria-hidden="true">
+        <div class="hero-orbit-status">
           <span><LockKeyhole :size="14" />{{ isZh ? '浏览器本地渲染' : 'Browser-local' }}</span>
-          <span><Zap :size="14" />{{ isZh ? 'CSS 3D 合成' : 'CSS 3D compositing' }}</span>
+          <span class="hero-interaction-hint">{{
+            isZh ? '悬停置顶 · 真实预览' : 'Hover to lift · real previews'
+          }}</span>
+          <button
+            type="button"
+            class="hero-motion-toggle"
+            :aria-pressed="heroMotionPaused"
+            :aria-label="
+              heroMotionPaused
+                ? isZh
+                  ? '播放首屏动效'
+                  : 'Play hero motion'
+                : isZh
+                  ? '暂停首屏动效'
+                  : 'Pause hero motion'
+            "
+            @click="heroMotionPaused = !heroMotionPaused"
+          >
+            <Play v-if="heroMotionPaused" :size="14" /><Pause v-else :size="14" />
+          </button>
         </div>
       </div>
     </section>
@@ -2324,36 +2262,11 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <section
-      id="formats"
-      class="band band-light format-index-section"
-      aria-labelledby="formats-title"
-    >
-      <div class="section-heading">
-        <div>
-          <p class="section-kicker">Coverage matrix</p>
-          <h2 id="formats-title">{{ currentCopy.matrixTitle }}</h2>
-        </div>
-        <p>{{ currentCopy.matrixIntro }}</p>
-      </div>
-      <div class="format-grid" :aria-label="currentCopy.formatsTitle">
-        <article
-          v-for="(group, index) in formatGroups"
-          :key="group.label"
-          class="format-card"
-          :class="`accent-${group.tone}`"
-        >
-          <span class="format-index">{{ String(index + 1).padStart(2, '0') }}</span>
-          <span class="format-icon" aria-hidden="true">
-            <component :is="group.icon" :size="18" :stroke-width="1.9" />
-          </span>
-          <h3>{{ group.label }}</h3>
-          <strong>{{ group.count }}</strong>
-          <p>{{ group.examples }}</p>
-          <ArrowRight class="format-arrow" :size="18" aria-hidden="true" />
-        </article>
-      </div>
-    </section>
+    <FormatExperience
+      :is-zh="isZh"
+      :docs-url="resolveLocalizedDocsUrl('guide/formats')"
+      :demo-url="localizedDemoUrl"
+    />
 
     <div class="workflow-grid">
       <section id="solutions" class="band scenario-section" aria-labelledby="solutions-title">
@@ -2388,7 +2301,7 @@ onBeforeUnmount(() => {
           <p>{{ currentCopy.ecosystemIntro }}</p>
           <div class="quickstart-tabs" role="tablist" aria-label="Ecosystem quick start examples">
             <button
-              v-for="(item, index) in featuredQuickStartItems"
+              v-for="(item, index) in quickStartItems"
               :id="`quickstart-tab-${index}`"
               :key="item.packageName"
               class="quickstart-tab"
@@ -2428,15 +2341,10 @@ onBeforeUnmount(() => {
             </a>
           </div>
 
-          <div
-            ref="quickStartTrack"
-            class="quickstart-track"
-            tabindex="0"
-            aria-live="polite"
-            @scroll.passive="syncQuickStartFromScroll"
-          >
+          <div class="quickstart-track" tabindex="0" aria-live="polite">
             <article
-              v-for="(item, index) in featuredQuickStartItems"
+              v-for="(item, index) in quickStartItems"
+              v-show="index === activeQuickStartIndex"
               :id="`quickstart-panel-${index}`"
               :key="item.packageName"
               class="code-panel quickstart-panel"
@@ -2463,7 +2371,7 @@ onBeforeUnmount(() => {
             <span>{{ activeQuickStart.summary }}</span>
             <div class="quickstart-dots" aria-label="Quick start slides">
               <button
-                v-for="(item, index) in featuredQuickStartItems"
+                v-for="(item, index) in quickStartItems"
                 :key="`dot-${item.packageName}`"
                 type="button"
                 :class="{ 'is-active': index === activeQuickStartIndex }"
@@ -2519,6 +2427,15 @@ onBeforeUnmount(() => {
         </article>
       </div>
     </section>
+
+    <ProductResources
+      :is-zh="isZh"
+      :docs-url="docsUrl"
+      :cli-url="cliPageUrl"
+      :commercial-url="commercialPageUrl"
+      :releases-url="releasesUrl"
+      :github-url="githubUrl"
+    />
 
     <footer id="support" class="support-footer">
       <div class="support-copy">

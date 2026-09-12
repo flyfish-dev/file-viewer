@@ -20,6 +20,46 @@ export type FileViewerErrorMessageFormatter = (
   i18n?: FileViewerI18nInput
 ) => string;
 
+/**
+ * Renderers can attach a localized, user-safe explanation without replacing
+ * the original error object that hosts use for diagnostics and recovery.
+ */
+export const FILE_VIEWER_ERROR_MESSAGE = 'fileViewerErrorMessage' as const;
+
+export interface FileViewerErrorMessageCarrier {
+  [FILE_VIEWER_ERROR_MESSAGE]?: string;
+}
+
+export const attachFileViewerErrorMessage = (error: unknown, message: string): unknown => {
+  const normalizedMessage = message.trim();
+  if (!normalizedMessage) {
+    return error;
+  }
+
+  if (error && typeof error === 'object') {
+    try {
+      Object.defineProperty(error, FILE_VIEWER_ERROR_MESSAGE, {
+        configurable: true,
+        value: normalizedMessage,
+      });
+      return error;
+    } catch {
+      // Frozen cross-realm errors retain their original value as the cause below.
+    }
+  }
+
+  const presented = new Error(normalizedMessage);
+  Object.defineProperty(presented, FILE_VIEWER_ERROR_MESSAGE, {
+    configurable: true,
+    value: normalizedMessage,
+  });
+  Object.defineProperty(presented, 'cause', {
+    configurable: true,
+    value: error,
+  });
+  return presented;
+};
+
 export const FILE_VIEWER_PREVIEW_MESSAGES = Object.freeze({
   downloading: '正在下载文件资源...',
   streamingPdf: '正在建立 PDF 流式预览...',
@@ -340,6 +380,12 @@ export const normalizeFileViewerErrorMessage = (
   error: unknown,
   i18n?: FileViewerI18nInput
 ): string => {
+  if (error && typeof error === 'object') {
+    const presentedMessage = readFileViewerErrorProperty(error, FILE_VIEWER_ERROR_MESSAGE);
+    if (typeof presentedMessage === 'string' && presentedMessage.trim()) {
+      return resolveKnownFileViewerErrorMessage(presentedMessage, i18n);
+    }
+  }
   if (error instanceof Error) {
     return resolveKnownFileViewerErrorMessage(error.message, i18n);
   }

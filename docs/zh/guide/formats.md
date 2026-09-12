@@ -3,18 +3,18 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  唯一格式目录当前注册 <strong>266 个扩展名</strong>，覆盖 <strong>45 条预览链路</strong>：其中 <strong>224 个稳定</strong>、<strong>42 个实验</strong>。
+  唯一格式目录当前注册 <strong>273 个扩展名</strong>，覆盖 <strong>46 条预览链路</strong>：其中 <strong>224 个稳定</strong>、<strong>49 个实验</strong>。
   这一页不是“计划支持什么”，而是以当前代码里已经注册好的渲染器为准，告诉你项目现在到底能处理哪些格式、分别走哪条渲染链路，以及在真实业务里应该怎么选。
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-zh.webp" alt="File Viewer by Flyfish v2.3.0 中文格式样例库，展示分组、文件名与格式专属图标" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">Demo 把 45 条预览链路的代表样例按类型分组；稳定格式必须有可再分发的真实文件 fixture 与浏览器断言，合成或改后缀样例不计入证据；实验项必须持续展示限制。</p>
+  <p class="doc-caption">Demo 把 46 条预览链路的代表样例按类型分组；稳定格式必须有可再分发的真实文件 fixture 与浏览器断言，合成或改后缀样例不计入证据；实验项必须持续展示限制。</p>
 </div>
 
 <div class="doc-grid">
   <div class="doc-card">
-    <h3>266 个已注册扩展名</h3>
+    <h3>273 个已注册扩展名</h3>
     <p>覆盖 Office、PDF、OFD、Typst、XMind、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、Mermaid、PlantUML、EPUB、UMD、Markdown、图片、音视频、代码/文本、Git patch/bundle、字体、PSD 图层资产和结构化数据等常见附件类型。</p>
   </div>
   <div class="doc-card">
@@ -38,6 +38,7 @@
 - `pages`、`numbers`、`key` 已升级为 **high-fidelity / stable**：门禁覆盖 iWork ’09、2013+ 与当前 Apple 15.3.1 原生容器，结构断言、真实浏览器 smoke 和固定字体视觉 golden 均通过。Pages/Keynote 像素差阈值为 3%，Numbers 为 5%；Quick Look 图片仍只用于加载占位或明确的有限预览降级。
 - Apple stable 的边界是静态高保真：Keynote 不执行动画、转场和视频播放，Numbers 不重新计算公式而读取文件保存的结果，加密 `iwpv2` 只检测并明确提示，缺失字体会显示替换信息。
 - `wpd/wp/wp5/wp6` 已升级为 **structured / stable**：按校验和固定的 MPL-2.0 libwpd/librevenge WASM Worker 已通过许可明确的 WP 4.2、5.0、5.1、6.x 真实 fixture，覆盖文本、样式、表格、页眉页脚与注释，并通过 Chromium、Firefox、WebKit 浏览器 smoke。`wp5/wp6` 仅为内容签名路由别名，不以改后缀文件冒充证据；宏永不执行，有界文本只在 WASM 不可用时降级。
+- 二进制检查器属于实验性显式能力，只注册 7 个二进制扩展名，在可终止模块 Worker 中解析受审核的头部目录，未匹配时展示原始字节。PNG、ZIP、WASM、`application/octet-stream`、编辑和用户自定义模板均不在它的路由契约内。
 - `hwp/hwpx` 已升级为 **structured / stable**：可再分发的 Apache-2.0 HWP v5 与 HWPX fixture 覆盖页面几何、内联样式、合并表格、页眉页脚、注释和内嵌图片，并通过 Chromium、Firefox、WebKit。加密、DRM、发行文档会明确拒绝，罕见控件与生产者私有版式仍是已知限制。
 
 完整机器可读矩阵由 `ecosystem/format-catalog.json` 生成到 [`docs/generated/format-catalog.md`](/generated/format-catalog)。

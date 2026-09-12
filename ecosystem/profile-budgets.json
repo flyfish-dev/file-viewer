@@ -191,18 +191,18 @@
   },
   "standardEntryChunkBudgets": {
     "web": {
-      "maxEntryBytes": 960000,
-      "maxEntryGzipBytes": 340000,
+      "maxEntryBytes": 995000,
+      "maxEntryGzipBytes": 350000,
       "maxJsChunkCount": 78
     },
     "vue3": {
-      "maxEntryBytes": 1350000,
-      "maxEntryGzipBytes": 465000,
+      "maxEntryBytes": 1395000,
+      "maxEntryGzipBytes": 470000,
       "maxJsChunkCount": 86
     },
     "react": {
-      "maxEntryBytes": 955000,
-      "maxEntryGzipBytes": 338000,
+      "maxEntryBytes": 985000,
+      "maxEntryGzipBytes": 350000,
       "maxJsChunkCount": 78
     }
   }

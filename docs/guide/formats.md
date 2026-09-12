@@ -3,13 +3,13 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  The canonical catalog registers 266 file extensions across 45 preview pipelines: 224 stable and 42 experimental.
+  The canonical catalog registers 273 file extensions across 46 preview pipelines: 224 stable and 49 experimental.
   Renderers are loaded on demand, so opening a lightweight text file does not force the browser to load every heavy document engine.
 </p>
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="File Viewer by Flyfish v2.3.0 English format sample library with grouped filenames and format-specific icons" width="1440" height="900" loading="lazy" />
-  <p class="doc-caption">The demo groups representative samples for all 45 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence. Experimental rows keep their limits visible.</p>
+  <p class="doc-caption">The demo groups representative samples for all 46 preview pipelines. Stable rows require redistributable real-file fixtures and browser assertions; synthetic or renamed fixtures never count as evidence. Experimental rows keep their limits visible.</p>
 </div>
 
 ## Main Preview Pipelines
@@ -25,6 +25,7 @@
 | Email | `eml`, `msg`, `mbox` |
 | Medical images (explicit opt-in) | `dcm`, `dicom` through `@file-viewer/renderer-dicom`; one bounded local Part 10 file, including multi-frame navigation |
 | Digital signatures (explicit opt-in) | `p7m`, `p7s`, `p7b`, `p7c`, `pkcs7`, `cms`, `cmsc`, `tsq`, `tsr`, `tst`, `tsd`, `asics`, `scs`, `asice`, `sce`, `ers`, `asc`, `sig`, `pgp`, `gpg`, `jws` through `@file-viewer/renderer-signature` |
+| Binary inspection (explicit opt-in) | `bin`, `hex`, `elf`, `exe`, `dll`, `class`, `macho` through `@file-viewer/renderer-binary`; a bounded, read-only byte inspector with no MIME wildcard or specialist-route override |
 | Diagrams and mind maps | `xmind`, `drawio`, `dio`, `excalidraw`, `mermaid`, `mmd`, `plantuml`, `puml` |
 | CAD and engineering | `dwg`, `dxf`, `dwf`, `dwfx`, `xps`, plus EDA files such as `gds`, `oas`, `oasis`, `olb`, `dra` |
 | 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `ifc`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp` |
@@ -39,6 +40,7 @@
 - `pages`, `numbers`, and `key` are **high-fidelity / stable**. The gate covers iWork '09, 2013+, and current Apple 15.3.1 native containers with exact structural assertions, real-browser smoke, and fixed-font visual goldens. Pages/Keynote use a 3% pixel-difference threshold and Numbers uses 5%; Quick Look images remain loading placeholders or explicit limited-preview fallbacks only.
 - Stable Apple support means static high fidelity: Keynote animations, transitions, and video are not executed; Numbers reads saved formula results instead of recalculating them; encrypted `iwpv2` files are detected and reported; missing fonts surface substitution information.
 - `wpd/wp/wp5/wp6` are **structured / stable**. A checksum-pinned MPL-2.0 libwpd/librevenge WebAssembly Worker extracts text, styles, tables, headers, footers, and notes from licensed genuine WP 4.2, 5.0, 5.1, and 6.x fixtures. Chromium, Firefox, and WebKit smoke the packaged Worker/WASM path; `wp5` and `wp6` remain routing aliases and renamed files do not count as fixture evidence. Macros are never executed, and bounded text is only a runtime fallback.
+- The binary inspector is experimental and explicit. It owns only seven binary-oriented extensions, parses a reviewed header catalog in a terminable module Worker, and shows raw bytes when no template matches. PNG, ZIP, WASM, `application/octet-stream`, editing, and user-authored templates are intentionally outside its routing contract.
 - `hwp/hwpx` are **structured / stable** with redistributable Apache-2.0 HWP v5 and HWPX fixtures. The gate covers page geometry, inline styles, merged tables, headers, footers, notes, and embedded images in Chromium, Firefox, and WebKit. Encrypted, DRM, and distribution documents are detected and rejected explicitly; rare controls and producer-specific layout constructs remain documented limitations.
 
 The full machine-readable matrix, including containers, levels, status, and limits, is generated from `ecosystem/format-catalog.json` into [`docs/generated/format-catalog.md`](/generated/format-catalog).
