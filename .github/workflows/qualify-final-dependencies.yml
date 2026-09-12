@@ -1,0 +1,138 @@
+name: Qualify final dependency integration
+on:
+  push:
+    branches: [maintenance/final-audit-20260912]
+    paths: [.github/workflows/qualify-final-dependencies.yml]
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: payload
+          ref: fe6143dd9c51476c7a5027e3a0cdd60c00b2e796
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: source
+          ref: e75de6ad3d0a0c4a7593308c68467578415ea6e1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Combine only the reviewed dependency deltas
+        working-directory: source
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/final-dependency-evidence
+          git fetch --no-tags origin cddb45232ababd6760f25ba1aee2a8f461b90600 7a035bfe415c51ce78809734f66445b19d132664
+          python3 <<'PY'
+          import subprocess,json
+          from pathlib import Path
+          base='e75de6ad3d0a0c4a7593308c68467578415ea6e1'
+          for head in ['cddb45232ababd6760f25ba1aee2a8f461b90600','7a035bfe415c51ce78809734f66445b19d132664']:
+              paths=subprocess.check_output(['git','diff','--name-only',base,head]).decode().splitlines()
+              assert paths and all(p.endswith('package.json') or p=='pnpm-lock.yaml' for p in paths),paths
+              patch=subprocess.check_output(['git','diff','--binary',base,head])
+              subprocess.run(['git','apply','--index','-'],input=patch,check=True)
+          p=Path('packages/renderers/data/package.json');data=json.loads(p.read_text())
+          assert data['devDependencies']['buffer']=='5.2.1'
+          assert data['devDependencies']['assert']=='1.5.1'
+          data['devDependencies'].update({'buffer':'6.0.3','assert':'2.1.0'})
+          data['scripts']['verify:avro-browser']='node scripts/verify-avro-browser.mjs'
+          p.write_text(json.dumps(data,indent=2)+'\n')
+          PY
+          cp ../payload/_review/verify-avro-browser.mjs packages/renderers/data/scripts/verify-avro-browser.mjs
+          set +e
+          node --test .github/scripts/dependency-cohort.test.mjs > /tmp/final-dependency-evidence/angular-guard-before.log 2>&1
+          result=$?
+          set -e
+          test "$result" -ne 0
+          grep -q 'Angular framework and tooling must use one exact cohort' /tmp/final-dependency-evidence/angular-guard-before.log
+          cp ../payload/_review/dependency-cohort.test.mjs .github/scripts/dependency-cohort.test.mjs
+      - name: Freeze and inspect real dependencies and license metadata
+        working-directory: source
+        run: |
+          set -euo pipefail
+          pnpm install --lockfile-only --ignore-scripts
+          pnpm install --frozen-lockfile
+          pnpm exec prettier --config .github/prettier-governance.json --write .github/scripts/dependency-cohort.test.mjs
+          node .github/scripts/verify-dependency-exceptions.mjs
+          pnpm audit --registry=https://registry.npmjs.org --audit-level=low > /tmp/final-dependency-evidence/audit.log 2>&1
+          pnpm verify:dicom-license-ledger --write
+          pnpm verify:dicom-license-ledger
+          pnpm --filter @file-viewer/renderer-signature verify:licenses
+          pnpm audit:renderer-deps
+          pnpm verify:github-governance
+          pnpm verify:public-release-facts
+          git diff -- packages/renderers/dicom/THIRD_PARTY_LICENSES.json packages/renderers/dicom/THIRD_PARTY_NOTICES.md > /tmp/final-dependency-evidence/license-ledger.patch
+      - name: Build affected packages and verify the complete IFC lifecycle
+        working-directory: source
+        run: |
+          set -euo pipefail
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/geometry-engine build
+          pnpm --filter @file-viewer/renderer-3d build
+          pnpm --filter @file-viewer/renderer-data build
+          pnpm --filter @file-viewer/thumbnail build
+          pnpm --filter @file-viewer/thumbnail test
+          pnpm --filter @file-viewer/renderer-3d verify:ifc
+          pnpm exec playwright install --with-deps chromium
+          node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
+          IFC_EVIDENCE_DIR=/tmp/final-dependency-evidence/ifc timeout 300s pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples > /tmp/final-dependency-evidence/ifc.log 2>&1 || { tail -n 60 /tmp/final-dependency-evidence/ifc.log; exit 1; }
+          AVRO_EVIDENCE_DIR=/tmp/final-dependency-evidence/avro timeout 90s pnpm --filter @file-viewer/renderer-data verify:avro-browser > /tmp/final-dependency-evidence/avro.log 2>&1 || { cat /tmp/final-dependency-evidence/avro.log; exit 1; }
+      - name: Check published Angular peers in a clean compiler installation
+        working-directory: source
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/angular-final
+          cp -R apps/component-demo/test/angular-pptx/. /tmp/angular-final/
+          cd /tmp/angular-final
+          npm install --ignore-scripts --no-audit --no-fund > /tmp/final-dependency-evidence/angular-install.log 2>&1
+          npm ls @angular/common @angular/compiler @angular/core @angular/platform-browser @angular/build @angular/cli @angular/compiler-cli > /tmp/final-dependency-evidence/angular-peers.txt
+          npx ng build > /tmp/final-dependency-evidence/angular-build.log 2>&1
+      - name: Record final issue status without commenting or closing issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 <<'PY'
+          import json,os,urllib.request
+          from pathlib import Path
+          rows=[]
+          for n in [227,248,266,267,268,269,277]:
+              base=f'https://api.github.com/repos/flyfish-dev/file-viewer/issues/{n}'
+              def get(url):
+                  req=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+                  with urllib.request.urlopen(req,timeout=45) as r:return json.load(r)
+              issue=get(base);comments=get(base+'/comments?per_page=100')
+              rows.append({'number':n,'state':issue['state'],'title':issue['title'],'updated_at':issue['updated_at'],'comments':[{k:c[k] for k in ['id','body','updated_at']} for c in comments]})
+          Path('/tmp/final-dependency-evidence/issues.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2)+'\n')
+          PY
+      - name: Push only the validated source integration for full PR checks
+        working-directory: source
+        run: |
+          set -euo pipefail
+          git add .github/scripts/dependency-cohort.test.mjs packages/renderers/data/package.json packages/renderers/data/scripts/verify-avro-browser.mjs packages/renderers/dicom/THIRD_PARTY_LICENSES.json packages/renderers/dicom/THIRD_PARTY_NOTICES.md pnpm-lock.yaml
+          git diff --cached --check
+          git diff --cached --stat
+          git diff --cached > /tmp/final-dependency-evidence/qualified.patch
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(deps): integrate reviewed updates with accurate peer and license gates' -m 'Refs #280, #282, #283, #284. Preserve Vitest 4 until a separately validated major migration. Test actual browser Avro and IFC output; regenerate DICOM license metadata without changing acceptance rules. No package publication.'
+          git push origin HEAD:refs/heads/maintenance/reviewed-dependencies-20260912
+          git rev-parse HEAD > /tmp/final-dependency-evidence/commit.txt
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: final-dependency-qualification
+          path: /tmp/final-dependency-evidence
+          retention-days: 7
+          if-no-files-found: error
