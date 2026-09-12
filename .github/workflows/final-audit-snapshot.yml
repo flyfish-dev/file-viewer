@@ -1,0 +1,73 @@
+name: Final maintenance audit snapshot
+on:
+  push:
+    branches: [maintenance/final-audit-20260912]
+    paths: [.github/workflows/final-audit-snapshot.yml]
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: e75de6ad3d0a0c4a7593308c68467578415ea6e1
+          persist-credentials: false
+      - name: Collect bounded current review evidence and source text
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 <<'PY'
+          import os,json,urllib.request,urllib.parse,subprocess,tarfile
+          from pathlib import Path
+          out=Path('/tmp/final-audit');out.mkdir()
+          api='https://api.github.com/repos/flyfish-dev/file-viewer'
+          def get(url):
+              headers={'User-Agent':'file-viewer-maintenance-review','Accept':'application/vnd.github+json'}
+              if url.startswith('https://api.github.com/'):headers['Authorization']='Bearer '+os.environ['GH_TOKEN']
+              with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=45) as r:return json.load(r)
+          def pages(url):
+              items=[]
+              for page in range(1,31):
+                  result=get(url+('&' if '?' in url else '?')+'per_page=100&page='+str(page));items.extend(result)
+                  if len(result)<100:return items
+              raise RuntimeError('Pagination exceeded')
+          def save(name,data):(out/name).write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+          items=pages(api+'/issues?state=open');save('open-items.json',items)
+          summary=[]
+          for item in items:
+              n=item['number'];save(f'{n}-comments.json',pages(api+f'/issues/{n}/comments'))
+              if 'pull_request' not in item:continue
+              pr=get(api+f'/pulls/{n}');save(f'{n}-pr.json',pr)
+              changed=pages(api+f'/pulls/{n}/files');save(f'{n}-files.json',changed)
+              runs=get(api+'/actions/runs?head_sha='+pr['head']['sha']+'&per_page=100')['workflow_runs'];save(f'{n}-runs.json',runs)
+              save(f'{n}-reviews.json',pages(api+f'/pulls/{n}/reviews'))
+              summary.append({'number':n,'title':pr['title'],'head':pr['head']['sha'],'branch':pr['head']['ref'],'files':[f['filename'] for f in changed],'checks':[{'name':r['name'],'id':r['id'],'status':r['status'],'result':r['conclusion']} for r in runs]})
+          save('summary.json',summary)
+          save('main-runs.json',get(api+'/actions/runs?branch=main&per_page=20'))
+          old=[]
+          for n in [261,270,271,274,275,276,278]:
+              pr=get(api+f'/pulls/{n}');old.append({k:pr[k] for k in ['number','state','merged','merge_commit_sha','title','updated_at']})
+          save('previous-pr-statuses.json',old)
+          registries={}
+          for name in ['@file-viewer/docx','@angular/core','@angular/common','@angular/compiler','@angular/compiler-cli','@angular/platform-browser','@angular/build','@angular/cli','vitest','@thatopen/components','@thatopen/fragments']:
+              r=get('https://registry.npmjs.org/'+urllib.parse.quote(name,safe=''))
+              wanted={r['dist-tags']['latest'],'22.1.6','22.1.7','4.1.11','5.0.0','3.4.8','3.4.7'}
+              registries[name]={'dist-tags':r['dist-tags'],'versions':{v:r['versions'][v] for v in wanted if v in r['versions']}}
+          save('registries.json',registries)
+          tracked=subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
+          with tarfile.open(out/'source-text.tar.gz','w:gz') as archive:
+              for file in tracked:
+                  p=Path(file)
+                  if p.is_file() and p.suffix in ['.ts','.tsx','.mjs','.cjs','.js','.json','.md','.yml','.yaml','.html','.css','.vue'] and p.stat().st_size<2000000:archive.add(p,arcname=file)
+          print(json.dumps({'prs':summary,'previous':old,'docx':registries['@file-viewer/docx']['dist-tags']},ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: final-maintenance-audit
+          path: /tmp/final-audit
+          retention-days: 7
+          if-no-files-found: error
