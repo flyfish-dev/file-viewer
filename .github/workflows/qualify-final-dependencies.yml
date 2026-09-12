@@ -58,7 +58,7 @@ jobs:
           test "$result" -ne 0
           grep -q 'Angular framework and tooling must use one exact cohort' /tmp/final-dependency-evidence/angular-guard-before.log
           cp ../payload/_review/dependency-cohort.test.mjs .github/scripts/dependency-cohort.test.mjs
-      - name: Freeze and inspect real dependencies and license metadata
+      - name: Freeze and inspect real dependencies and both license ledgers
         working-directory: source
         run: |
           set -euo pipefail
@@ -69,12 +69,13 @@ jobs:
           pnpm audit --registry=https://registry.npmjs.org --audit-level=low > /tmp/final-dependency-evidence/audit.log 2>&1
           pnpm verify:dicom-license-ledger --write
           pnpm verify:dicom-license-ledger
+          pnpm --filter @file-viewer/renderer-signature generate:licenses
           pnpm --filter @file-viewer/renderer-signature verify:licenses
           pnpm audit:renderer-deps
           pnpm verify:github-governance
           pnpm verify:public-release-facts
-          git diff -- packages/renderers/dicom/THIRD_PARTY_LICENSES.json packages/renderers/dicom/THIRD_PARTY_NOTICES.md > /tmp/final-dependency-evidence/license-ledger.patch
-      - name: Build affected packages and verify the complete IFC lifecycle
+          git diff -- packages/renderers/dicom/THIRD_PARTY_LICENSES.json packages/renderers/dicom/THIRD_PARTY_NOTICES.md packages/renderers/signature/THIRD_PARTY_LICENSES.json > /tmp/final-dependency-evidence/license-ledger.patch
+      - name: Build affected packages and verify actual browser Avro and IFC
         working-directory: source
         run: |
           set -euo pipefail
@@ -120,13 +121,13 @@ jobs:
         working-directory: source
         run: |
           set -euo pipefail
-          git add .github/scripts/dependency-cohort.test.mjs packages/renderers/data/package.json packages/renderers/data/scripts/verify-avro-browser.mjs packages/renderers/dicom/THIRD_PARTY_LICENSES.json packages/renderers/dicom/THIRD_PARTY_NOTICES.md pnpm-lock.yaml
+          git add .github/scripts/dependency-cohort.test.mjs packages/renderers/data/package.json packages/renderers/data/scripts/verify-avro-browser.mjs packages/renderers/dicom/THIRD_PARTY_LICENSES.json packages/renderers/dicom/THIRD_PARTY_NOTICES.md packages/renderers/signature/THIRD_PARTY_LICENSES.json pnpm-lock.yaml
           git diff --cached --check
           git diff --cached --stat
           git diff --cached > /tmp/final-dependency-evidence/qualified.patch
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'chore(deps): integrate reviewed updates with accurate peer and license gates' -m 'Refs #280, #282, #283, #284. Preserve Vitest 4 until a separately validated major migration. Test actual browser Avro and IFC output; regenerate DICOM license metadata without changing acceptance rules. No package publication.'
+          git commit -m 'chore(deps): integrate reviewed updates with accurate peer and license gates' -m 'Refs #280, #282, #283, #284. Preserve Vitest 4 until a separately validated major migration. Test actual browser Avro and IFC output; regenerate license metadata without changing acceptance rules. No package publication.'
           git push origin HEAD:refs/heads/maintenance/reviewed-dependencies-20260912
           git rev-parse HEAD > /tmp/final-dependency-evidence/commit.txt
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
