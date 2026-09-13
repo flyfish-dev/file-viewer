@@ -51,7 +51,7 @@
     "@xmldom/xmldom": "0.9.12",
     "epubjs": "0.3.93",
     "esbuild": "^0.28.1",
-    "happy-dom": "^20.14.0",
+    "happy-dom": "^20.14.3",
     "typescript": "^6.0.3",
     "vitest": "4.1.11"
   },
