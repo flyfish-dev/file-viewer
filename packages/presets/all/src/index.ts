@@ -58,7 +58,7 @@ const allRendererHandlers = coreBrowserRendererHandlers as readonly {
   handler: BrowserRendererHandler;
 }[];
 
-const extractedRendererIds = ['adobe-palette-design', 'adobe-xd-design', 'apple-keynote', 'apple-numbers', 'apple-pages', 'archive', 'audio', 'cad', 'chm', 'code', 'data-asset', 'drawing', 'ebook-fb2', 'eda', 'email', 'epub', 'geo', 'illustrator-pdf-design', 'image', 'indesign-idml-design', 'indesign-native-design', 'markdown', 'mindmap', 'model', 'ofd', 'office-hangul', 'office-presentation', 'office-presentation-binary', 'office-word-binary', 'office-word-openxml', 'office-wordperfect', 'open-document', 'pdf', 'photoshop-design', 'photoshop-resource-design', 'postscript-design', 'spreadsheet-dbf', 'spreadsheet-openxml', 'typst', 'umd', 'video'] as const;
+const extractedRendererIds = ['adobe-palette-design', 'adobe-xd-design', 'apple-keynote', 'apple-numbers', 'apple-pages', 'archive', 'audio', 'binary-inspector', 'cad', 'chm', 'code', 'data-asset', 'drawing', 'ebook-fb2', 'eda', 'email', 'epub', 'geo', 'illustrator-pdf-design', 'image', 'indesign-idml-design', 'indesign-native-design', 'markdown', 'mindmap', 'model', 'ofd', 'office-hangul', 'office-presentation', 'office-presentation-binary', 'office-word-binary', 'office-word-openxml', 'office-wordperfect', 'open-document', 'pdf', 'photoshop-design', 'photoshop-resource-design', 'postscript-design', 'spreadsheet-dbf', 'spreadsheet-openxml', 'typst', 'umd', 'video'] as const;
 
 export const fileViewerAllRendererPlugin: FileViewerRendererPlugin<BrowserRendererHandler> = {
   id: 'file-viewer-all-renderers',

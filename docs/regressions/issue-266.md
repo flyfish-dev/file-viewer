@@ -1,5 +1,9 @@
 # Original document sample regressions (#266)
 
+> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
+
+<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+
 Report: https://github.com/flyfish-dev/file-viewer/issues/266
 
 Public/sanitized attachment: https://github.com/user-attachments/files/32040630/default.zip

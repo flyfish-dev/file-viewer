@@ -294,7 +294,7 @@ npx --yes file-viewer-copy-assets ./public/file-viewer
 | `<flyfish-file-viewer>` | 原生 Web Component，可用属性、property、事件和实例方法控制完整预览器 |
 | `defineFileViewerElement(tagName?)` | 注册 Custom Element；IIFE 包会自动注册默认标签 |
 | `mountViewer(container, options)` | 挂载预览器并返回 controller |
-| `controller.update(options)` | 更新文件或运行参数 |
+| `controller.update(options)` | 更新文件或运行参数；源输入未变时保持当前文档，需强制重新解析时使用 `reload()` |
 | `controller.reload()` | 重新加载当前文件 |
 | `controller.destroy()` | 卸载预览器并释放资源 |
 | `createViewerControllerHandle()` | 创建可复用的 controller handle，适合框架组件包封装 |

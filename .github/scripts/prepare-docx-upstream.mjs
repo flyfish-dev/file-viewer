@@ -115,7 +115,7 @@ async function main() {
     run(process.execPath, ['.github/scripts/verify-docx-upstream.mjs'])
     run(process.execPath, ['.github/scripts/verify-public-release-facts.mjs'])
     console.log(
-      `[release-docx] ${previous} -> ${version}; manifest, lockfile, Worker provenance and current documentation synchronized. Run pnpm release:verify, then commit the changes. Nothing was published.`
+      `[release-docx] ${previous} -> ${version}; manifest, lockfile, Worker provenance and current documentation synchronized. Installed-engine and public-release-fact checks passed. Run the relevant original-file browser gate and the normal frozen release rehearsal, then commit the changes. Nothing was published.`
     )
   } catch (error) {
     await Promise.all(

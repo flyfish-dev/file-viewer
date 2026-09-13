@@ -618,6 +618,15 @@ const rendererModules: readonly RendererModuleDescriptor[] = [
     chunkName: 'file-viewer-data'
   },
   {
+    id: 'binary',
+    packageName: '@file-viewer/renderer-binary',
+    exportName: 'binaryRenderer',
+    formats: ['binary', 'binary-inspector', 'bin', 'hex', 'elf', 'exe', 'dll', 'class', 'macho'],
+    rendererIds: ['binary-inspector'],
+    chunkName: 'file-viewer-binary',
+    includeInPresetAll: false
+  },
+  {
     id: 'eda',
     packageName: '@file-viewer/renderer-eda',
     exportName: 'edaRenderer',
@@ -1859,6 +1868,29 @@ async function copyPdfCjkFontAssets(
   return true
 }
 
+function hasPdfCjkFontAssets(
+  root: string | null,
+  stylesheet: string,
+  license: string
+) {
+  if (!root) {
+    return false
+  }
+  const files = join(root, 'files')
+  try {
+    return (
+      existsSync(join(root, stylesheet)) &&
+      existsSync(join(root, license)) &&
+      statSync(files).isDirectory() &&
+      readdirSync(files, { withFileTypes: true }).some(
+        (entry) => entry.isFile() && entry.name.endsWith('.woff2')
+      )
+    )
+  } catch {
+    return false
+  }
+}
+
 async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly string[]) {
   const selected = new Set(rendererIds)
   const results: AssetCopyResult[] = []
@@ -1984,37 +2016,44 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     '@file-viewer/renderer-pdf'
   ])
   const pdfCjkFontTarget = join(targetRoot, 'vendor/pdf/fonts')
-  // The standard profile pack owns the CJK fallback font; presets that activate the pdf
-  // renderer without that pack declare the font package directly. renderer-pdf must not
-  // vendor a second copy, so when no source is installed the build warns instead of
-  // failing and PDF rendering keeps using embedded fonts.
+  // The PDF renderer owns the runtime font dependency so direct renderer installs retain
+  // CJK fallback support. The standard profile pack is only a pre-staged copy source.
+  // A missing source means an incomplete install and must not silently drop the fallback.
+  const hasStandardPdfCjkFont = hasPdfCjkFontAssets(
+    standardPdfCjkFontRoot,
+    'noto-sans-sc.css',
+    'OFL-1.1.txt'
+  )
+  const hasStagedPdfCjkFont = hasPdfCjkFontAssets(
+    stagedPdfCjkFontRoot,
+    'wght.css',
+    'LICENSE'
+  )
+  const hasDependencyPdfCjkFont = hasPdfCjkFontAssets(
+    dependencyPdfCjkFontRoot,
+    'wght.css',
+    'LICENSE'
+  )
   const pdfCjkFontSourceAvailable =
-    Boolean(
-      standardPdfCjkFontRoot && existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
-    ) ||
-    Boolean(stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) ||
-    Boolean(dependencyPdfCjkFontRoot)
+    hasStandardPdfCjkFont || hasStagedPdfCjkFont || hasDependencyPdfCjkFont
   await push(
     'pdf',
     'pdf-cjk-font-fallback',
     pdfCjkFontTarget,
     async () => {
-      if (
-        standardPdfCjkFontRoot &&
-        existsSync(join(standardPdfCjkFontRoot, 'noto-sans-sc.css'))
-      ) {
+      if (hasStandardPdfCjkFont && standardPdfCjkFontRoot) {
         return copyDirectoryIfPresent(standardPdfCjkFontRoot, pdfCjkFontTarget)
       }
-      if (stagedPdfCjkFontRoot && existsSync(join(stagedPdfCjkFontRoot, 'wght.css'))) {
+      if (hasStagedPdfCjkFont && stagedPdfCjkFontRoot) {
         return copyPdfCjkFontAssets(stagedPdfCjkFontRoot, pdfCjkFontTarget)
       }
       return copyPdfCjkFontAssets(dependencyPdfCjkFontRoot, pdfCjkFontTarget)
     },
     pdfCjkFontSourceAvailable
       ? undefined
-      : `install ${independentlyOwnedAssetRendererIds.get('pdf')} or @fontsource-variable/noto-sans-sc`,
+      : `repair @file-viewer/renderer-pdf and its @fontsource-variable/noto-sans-sc dependency`,
     undefined,
-    pdfCjkFontSourceAvailable ? undefined : false
+    true
   )
 
   const pptxRoot = resolvePackageRoot('@file-viewer/pptx', [

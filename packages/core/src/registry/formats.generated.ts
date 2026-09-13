@@ -1579,6 +1579,47 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
       "zoom": false,
       "search": true
     }
+  },
+  {
+    "id": "binary-inspector",
+    "label": "Binary Inspector",
+    "category": "asset",
+    "extensions": [
+      "bin",
+      "hex",
+      "elf",
+      "exe",
+      "dll",
+      "class",
+      "macho"
+    ],
+    "async": true,
+    "supportLevel": "structured",
+    "status": "experimental",
+    "packageName": "@file-viewer/renderer-binary",
+    "presets": [],
+    "containerVersions": [
+      "Raw bytes",
+      "ELF",
+      "PE/COFF",
+      "Mach-O",
+      "PNG",
+      "ZIP",
+      "WebAssembly",
+      "Java class"
+    ],
+    "knownLimits": [
+      "The package is explicit opt-in and never claims application/octet-stream or extensions owned by dedicated renderers",
+      "Only a reviewed built-in template catalog is parsed in a terminable module Worker; user-authored templates, dynamic imports, editing, and patching are out of scope",
+      "Whole inputs, parse time, structure nodes, nesting, and decoded string bytes are capped before data reaches the DOM; large files are rejected instead of partially scanning arbitrary pages"
+    ],
+    "capabilities": {
+      "download": true,
+      "print": false,
+      "exportHtml": false,
+      "zoom": false,
+      "search": false
+    }
   }
 ] as const satisfies readonly RendererDefinition[];
 

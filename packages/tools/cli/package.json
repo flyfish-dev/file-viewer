@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/cli",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "private": false,
   "type": "module",
   "description": "Create or integrate a File Viewer project with framework detection, selectable formats, offline packages, and self-hosted assets.",
@@ -65,10 +65,10 @@
     "prepack": "node scripts/stage-catalog.mjs && tsc -b tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/cli/dist/cli.js packages/tools/cli/dist/copy-assets.js"
   },
   "dependencies": {
-    "@file-viewer/asset-installer": "workspace:3.0.3"
+    "@file-viewer/asset-installer": "workspace:3.1.0"
   },
   "devDependencies": {
-    "@file-viewer/assets-standard": "workspace:3.0.3",
+    "@file-viewer/assets-standard": "workspace:3.1.0",
     "@types/node": "^26.5.0",
     "typescript": "^6.0.3"
   },

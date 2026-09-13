@@ -1,5 +1,9 @@
 # Release preparation: sample regressions
 
+> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
+
+<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+
 ## Source repairs
 
 - File Viewer #272: literal PPTX chart data and horizontal-bar orientation (issue #268).
@@ -11,9 +15,9 @@
 
 This preparation does not publish either package, create a release, or change issue state.
 
-1. Publish the reviewed, merged `flyfish-dev/docxjs` source under a **new version**. Do not republish the existing 0.3.31 version.
+1. `@file-viewer/docx@0.3.32` is published from the reviewed `flyfish-dev/docxjs` source. Verify its public registry integrity before consumer adoption; never republish that immutable version.
 2. In the clean File Viewer checkout, run `pnpm release:prepare-docx <the-published-version>`. This checks registry presence before mutation, synchronizes the dependency, lockfile, core Worker provenance/cache token and current version documentation, then behaviorally verifies the installed package. Metadata is restored if preparation fails.
-3. Run `pnpm release:verify`, followed by the normal full Public CI/browser matrix and original-file checks below. Commit the preparation changes with the planned File Viewer version/release metadata before creating the immutable release assets.
+3. The preparation step already runs `verify:docx-upstream` and `verify:public-release-facts`. Run `pnpm verify:github-266-browser /path/to/issue-266.zip --require-diagonals`, followed by the normal full Public CI/browser matrix. Commit the preparation changes with the planned File Viewer version/release metadata before creating the immutable release assets.
 4. Publish the new File Viewer packages using the existing release pipeline.
 
 `pnpm verify:docx-upstream` deliberately fails against an old engine that does not render direct cell diagonals. A successful source build is not a substitute for this consumer check. Keeping the currently published dependency until step 2 allows ordinary frozen-lockfile installs to work before the new upstream exists.

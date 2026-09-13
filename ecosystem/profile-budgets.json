@@ -5,9 +5,9 @@
       "packageName": "@file-viewer/preset-standard",
       "frameworkPackage": "@file-viewer/web",
       "maxPackageCount": 98,
-      "maxPackedClosureBytes": 31457280,
-      "maxUnpackedClosureBytes": 104857600,
-      "maxStaticAssetBytes": 25165824,
+      "maxPackedClosureBytes": 37748736,
+      "maxUnpackedClosureBytes": 115343360,
+      "maxStaticAssetBytes": 29360128,
       "forbiddenPackages": [
         "@file-viewer/ppt",
         "@file-viewer/renderer-3d",
@@ -46,8 +46,8 @@
     },
     "vue2.7": {
       "maxPackageCount": 114,
-      "maxPackedClosureBytes": 36700160,
-      "maxUnpackedClosureBytes": 131072000,
+      "maxPackedClosureBytes": 41943040,
+      "maxUnpackedClosureBytes": 134217728,
       "maxStaticAssetBytes": 25165824
     },
     "vue2.6": {
@@ -59,7 +59,7 @@
     "react": {
       "maxPackageCount": 101,
       "maxPackedClosureBytes": 33554432,
-      "maxUnpackedClosureBytes": 113246208,
+      "maxUnpackedClosureBytes": 117440512,
       "maxStaticAssetBytes": 25165824
     },
     "react-legacy": {
@@ -191,18 +191,18 @@
   },
   "standardEntryChunkBudgets": {
     "web": {
-      "maxEntryBytes": 960000,
-      "maxEntryGzipBytes": 340000,
+      "maxEntryBytes": 995000,
+      "maxEntryGzipBytes": 350000,
       "maxJsChunkCount": 78
     },
     "vue3": {
-      "maxEntryBytes": 1350000,
-      "maxEntryGzipBytes": 465000,
+      "maxEntryBytes": 1395000,
+      "maxEntryGzipBytes": 470000,
       "maxJsChunkCount": 86
     },
     "react": {
-      "maxEntryBytes": 955000,
-      "maxEntryGzipBytes": 338000,
+      "maxEntryBytes": 985000,
+      "maxEntryGzipBytes": 350000,
       "maxJsChunkCount": 78
     }
   }

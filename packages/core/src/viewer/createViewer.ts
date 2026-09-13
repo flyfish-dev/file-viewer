@@ -61,7 +61,7 @@ import { createFileViewerRequestScope } from '../source/loading';
 import { normalizeSource } from '../source';
 import { buildFileViewerWatermarkInlineStyle } from '../features/watermark';
 import { createFileViewerSnapshotDownload } from '../output/snapshotDownload';
-import { createFileViewerUnsupportedState } from './state';
+import { createFileViewerErrorState, createFileViewerUnsupportedState } from './state';
 import type {
   FileRenderContext,
   FileRenderExportAdapter,
@@ -175,6 +175,10 @@ const createFileViewerLoadSignal = (
   return controller.signal;
 };
 
+const isAbortError = (error: unknown) => {
+  return Boolean(error && typeof error === 'object' && (error as { name?: string }).name === 'AbortError');
+};
+
 const renderMissingRendererState = (
   container: HTMLElement,
   type: string,
@@ -205,6 +209,50 @@ const renderMissingRendererState = (
   description.textContent = state.description || state.title;
   description.style.cssText = 'max-width:520px;margin:0;';
   content.append(title, description);
+  wrapper.append(content);
+  container.replaceChildren(wrapper);
+};
+
+const renderFileViewerErrorState = (
+  container: HTMLElement,
+  type: string,
+  error: unknown,
+  options?: FileViewerOptions
+) => {
+  const documentRef = container.ownerDocument;
+  const state = createFileViewerErrorState(type, error, undefined, options);
+  const wrapper = documentRef.createElement('div');
+  wrapper.className = 'file-viewer-render-error';
+  wrapper.setAttribute('role', 'alert');
+  wrapper.setAttribute('aria-live', 'assertive');
+  wrapper.style.cssText = [
+    'display:flex',
+    'min-height:260px',
+    'height:100%',
+    'align-items:center',
+    'justify-content:center',
+    'padding:32px',
+    'box-sizing:border-box',
+    'color:var(--file-viewer-text,#172033)',
+    'font:14px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+  ].join(';');
+
+  const content = documentRef.createElement('div');
+  content.style.cssText = [
+    'width:min(680px,100%)',
+    'padding:24px',
+    'border:1px solid var(--file-viewer-border,rgba(20,35,53,.12))',
+    'border-radius:14px',
+    'background:var(--file-viewer-render-surface-background,#fff)',
+    'box-shadow:0 16px 42px rgba(25,42,54,.08)',
+  ].join(';');
+  const title = documentRef.createElement('strong');
+  title.textContent = state.title;
+  title.style.cssText = 'display:block;margin-bottom:10px;font-size:18px;';
+  const message = documentRef.createElement('p');
+  message.textContent = state.message;
+  message.style.cssText = 'margin:0;white-space:pre-wrap;overflow-wrap:anywhere;';
+  content.append(title, message);
   wrapper.append(content);
   container.replaceChildren(wrapper);
 };
@@ -728,11 +776,18 @@ export const createViewer = (
           },
         });
       } catch (error) {
-        if (!requestScope.isCurrentRequest(version)) {
+        if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted || isAbortError(error)) {
           removeRenderTarget(targetHost);
           return null;
         }
-        removeRenderTarget(targetHost);
+        applyFileViewerRenderSurfaceState(renderSurfaceState, {
+          session: null,
+          exportAdapter: null,
+          thumbnailAdapter: null,
+        });
+        removeWatermarkOverlay();
+        renderFileViewerErrorState(target, normalized.extension, error, options);
+        emitZoomAndOperationAvailabilityChange();
         throw error;
       }
 

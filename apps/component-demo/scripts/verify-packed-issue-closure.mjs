@@ -8,26 +8,33 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const packages = process.env.PACKED_ISSUE_PACKAGE_DIR
   ? resolve(process.env.PACKED_ISSUE_PACKAGE_DIR)
   : resolve(root, 'output/packed-issue-candidates', new Date().toISOString().replaceAll(':', '-'))
+const workspaceClosureArgs = [
+  '--recursive',
+  '--workspace-concurrency=1',
+  '--filter',
+  '@file-viewer/vue3...',
+  '--filter',
+  '@file-viewer/web...',
+  '--filter',
+  '@file-viewer/react-full...',
+  '--filter',
+  '@file-viewer/preset-office...',
+  '--filter',
+  'file-viewer-copy-assets'
+]
 
 if (!process.env.PACKED_ISSUE_PACKAGE_DIR) {
   await mkdir(packages, { recursive: true })
-  // CI packs the built dependency closure. Release rehearsal instead supplies
-  // its frozen tarball directory, so that path never rebuilds or repacks it.
+  // A standalone run must not pack ignored, stale dist files. A release
+  // rehearsal instead supplies frozen tarballs and never rebuilds or repacks.
+  execFileSync('pnpm', [...workspaceClosureArgs, 'build'], {
+    cwd: root,
+    stdio: 'inherit'
+  })
   execFileSync(
     'pnpm',
     [
-      '--recursive',
-      '--workspace-concurrency=1',
-      '--filter',
-      '@file-viewer/vue3...',
-      '--filter',
-      '@file-viewer/web...',
-      '--filter',
-      '@file-viewer/react-full...',
-      '--filter',
-      '@file-viewer/preset-office...',
-      '--filter',
-      'file-viewer-copy-assets',
+      ...workspaceClosureArgs,
       'pack',
       '--pack-destination',
       packages

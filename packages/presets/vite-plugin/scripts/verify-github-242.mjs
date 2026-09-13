@@ -7,9 +7,9 @@
 // leaving no source for `pdf-cjk-font-fallback` in an installed app, and `copyAssets` then aborted
 // `vite build` on that missing required asset, which is why rolling the version back looked like the fix.
 //
-// 3.0.1 moved font ownership onto the presets that activate the pdf renderer, and made the asset
-// optional so a genuinely missing font is a warning instead of a build failure. These are the
-// structural contracts that must stay true. verify-github-242-copy.mjs also runs the
+// The renderer now owns the runtime font dependency again. A missing font is an incomplete
+// installation, not an optional capability, so copyAssets must fail with an actionable error
+// instead of silently dropping CJK fallback support. verify-github-242-copy.mjs also runs the
 // production copyAssets hook with no workspace fallback, in public CI and private checks.
 import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
@@ -21,8 +21,13 @@ const sourceRoot = resolve(packageDir, '../../..')
 const presetsRoot = join(sourceRoot, 'packages', 'presets')
 export const pdfRendererPackageName = '@file-viewer/renderer-pdf'
 export const pdfCjkFontPackageName = '@fontsource-variable/noto-sans-sc'
-// Either source gives copyAssets a PDF CJK fallback font to self-host.
-export const pdfCjkFontSourcePackages = ['@file-viewer/assets-standard', pdfCjkFontPackageName]
+export const pdfCjkFontSourcePackages = [pdfCjkFontPackageName]
+
+async function readRendererPdfPackage() {
+  return JSON.parse(
+    await readFile(join(sourceRoot, 'packages', 'renderers', 'pdf', 'package.json'), 'utf8')
+  )
+}
 
 async function readPresetPackages() {
   const entries = await readdir(presetsRoot, { withFileTypes: true })
@@ -43,15 +48,19 @@ async function readPresetPackages() {
   return presets.sort((left, right) => left.dir.localeCompare(right.dir))
 }
 
-// Presets that turn on the pdf renderer without a font source are the #242 regression.
+// Every PDF preset reaches the renderer-owned font dependency transitively.
 export async function findPresetsMissingPdfCjkFontSource() {
+  const rendererPdfJson = await readRendererPdfPackage()
+  const rendererOwnsFont = Boolean(
+    (rendererPdfJson.dependencies || {})[pdfCjkFontPackageName]
+  )
   const missing = []
   for (const { dir, packageJson } of await readPresetPackages()) {
     const dependencies = packageJson.dependencies || {}
     if (!dependencies[pdfRendererPackageName]) {
       continue
     }
-    if (!pdfCjkFontSourcePackages.some((name) => dependencies[name])) {
+    if (!rendererOwnsFont) {
       missing.push(packageJson.name || dir)
     }
   }
@@ -73,26 +82,19 @@ export async function verifyGithub242() {
   const missing = await findPresetsMissingPdfCjkFontSource()
   assert(
     missing.length === 0,
-    `[issue-242] these presets activate ${pdfRendererPackageName} without a PDF CJK fallback font ` +
-      `source: ${missing.join(', ')}. Declare ${pdfCjkFontSourcePackages.join(' or ')} so ` +
-      `copyAssets can self-host the font for an installed app.`
+    `[issue-242] these presets activate ${pdfRendererPackageName}, but its runtime dependency ` +
+      `${pdfCjkFontPackageName} is missing: ${missing.join(', ')}. Direct renderer installs ` +
+      `must provide the CJK fallback source for copyAssets.`
   )
 
-  // renderer-pdf must not take the font back: that is what put it out of reach of the app.
-  const rendererPdfJson = JSON.parse(
-    await readFile(join(sourceRoot, 'packages', 'renderers', 'pdf', 'package.json'), 'utf8')
-  )
-  const rendererSelfOwnedFonts = Object.keys(rendererPdfJson.dependencies || {}).filter((name) =>
-    /fontsource|noto/i.test(name)
-  )
-  assert(
-    rendererSelfOwnedFonts.length === 0,
-    `[issue-242] ${pdfRendererPackageName} must not declare its own font dependencies, found ` +
-      `${rendererSelfOwnedFonts.join(', ')}. A font under the renderer is invisible to an ` +
-      `installed app and re-creates the missing-asset build failure.`
+  const rendererPdfJson = await readRendererPdfPackage()
+  assert.equal(
+    (rendererPdfJson.dependencies || {})[pdfCjkFontPackageName],
+    '5.3.0',
+    `[issue-242] ${pdfRendererPackageName} must keep ${pdfCjkFontPackageName} as its runtime ` +
+      `dependency so direct installs can self-host the CJK fallback.`
   )
 
-  // A missing optional asset has to stay optional, or a preset without a font breaks the build.
   const pluginSource = await readFile(join(packageDir, 'src', 'index.ts'), 'utf8')
   const start = pluginSource.indexOf(`'pdf-cjk-font-fallback'`)
   assert(start >= 0, `[issue-242] the pdf-cjk-font-fallback asset copy disappeared from the plugin`)
@@ -100,14 +102,13 @@ export async function verifyGithub242() {
   assert(end > start, `[issue-242] cannot bound the pdf-cjk-font-fallback copy block`)
   const block = pluginSource.slice(start, end)
   assert(
-    /pdfCjkFontSourceAvailable \? undefined : false/.test(block),
-    `[issue-242] pdf-cjk-font-fallback must stay an optional asset: the copy call has to pass ` +
-      `the required flag as \`pdfCjkFontSourceAvailable ? undefined : false\` so an installed ` +
-      `app without a font source gets a warning instead of a failed vite build.`
+    !/pdfCjkFontSourceAvailable\s*\?\s*undefined\s*:\s*false/.test(block),
+    `[issue-242] pdf-cjk-font-fallback must remain required. An incomplete renderer install ` +
+      `must fail instead of silently removing CJK fallback support.`
   )
   assert(
-    !/\bthrow\b/.test(block),
-    `[issue-242] pdf-cjk-font-fallback must not throw when the font source is absent.`
+    /\n\s*true\n\s*\)/.test(block),
+    `[issue-242] pdf-cjk-font-fallback must explicitly remain a required asset.`
   )
 
   return {
@@ -122,7 +123,7 @@ if (invokedDirectly) {
   const result = await verifyGithub242()
   console.log(
     `[vite-plugin] issue #242 gate: ${result.checkedPresets.length} pdf presets ` +
-      `(${result.checkedPresets.join(', ')}) each declare a CJK font source, ` +
-      `${pdfRendererPackageName} declares none, and the asset stays optional.`
+      `(${result.checkedPresets.join(', ')}) each reach the CJK font source transitively, ` +
+      `${pdfRendererPackageName} owns ${pdfCjkFontPackageName}, and the asset stays required.`
   )
 }

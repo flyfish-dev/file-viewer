@@ -11,6 +11,8 @@ Flyfish File Viewer 的原生 PPTX 渲染引擎包，从历史稳定实现中独
 
 `resolvePptxPackageWorkerUrl()` 可供集成层识别打包器已输出或包目录直接提供的 Worker URL。未识别时返回 `undefined`，不代表文件不存在；集成层仍可使用自己的资产复制策略或显式 Worker 配置。
 
+直接使用 `PptxViewer` 时，Vite 或 Webpack 可直接提供已识别的包内 Worker；无法识别的构建不会猜测应用相对路径。Angular、IIFE、离线静态目录或严格 CSP 部署应使用 `file-viewer-copy-assets` 或显式 `workerUrl`，让 Worker 由最终静态域名稳定提供。
+
 ## 使用
 
 ```ts

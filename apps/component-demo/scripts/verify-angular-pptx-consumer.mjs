@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import { createReadStream, existsSync, statSync } from 'node:fs'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { delimiter, dirname, extname, resolve, sep } from 'node:path'
@@ -98,7 +98,7 @@ async function verify(mode, port) {
   )
   const result = {
     mode,
-    url: `http://127.0.0.1:${port}/ui/${mode === 'development-explicit-worker' ? '?explicit-worker' : ''}`,
+    url: `http://127.0.0.1:${port}/ui/`,
     workers,
     errors,
     responses,
@@ -134,6 +134,19 @@ async function verify(mode, port) {
   )
   assert.equal(navigations.length, 1, `${mode}: the document reloaded during verification`)
   assert.ok(workers.length > 0, `${mode}: PPTX silently fell back to main-thread parsing`)
+  const usesCopiedWorker = (url) => url.includes('/file-viewer/vendor/pptx/pptx.worker.js')
+  const usesDirectPackageWorker = (url) =>
+    url.includes('/node_modules/@file-viewer/pptx/dist/worker/pptx.worker.js')
+  assert.ok(
+    workers.every((url) => usesCopiedWorker(url) || usesDirectPackageWorker(url)),
+    `${mode}: Worker URL must be a copied asset or a directly served package Worker`
+  )
+  if (mode === 'production') {
+    assert.ok(
+      workers.every(usesCopiedWorker),
+      'production: Angular must use the CLI-staged PPTX Worker'
+    )
+  }
   assert.deepEqual(errors, [], `${mode}: browser runtime errors`)
   assert.deepEqual(failures, [], `${mode}: failed application/Worker requests`)
   for (const url of workers) {
@@ -145,14 +158,6 @@ async function verify(mode, port) {
     assert.ok(
       response && response.status === 200 && /javascript/.test(response.mime),
       `${mode}: Worker did not load executable JavaScript: ${url}`
-    )
-  }
-  if (mode === 'development-explicit-worker') {
-    assert.ok(
-      workers.every((url) =>
-        new URL(url).pathname.endsWith('/file-viewer/vendor/pptx/pptx.worker.js')
-      ),
-      `${mode}: the documented explicit Worker URL was not used`
     )
   }
   assert.ok(
@@ -224,12 +229,61 @@ async function stopDev() {
   }
 }
 
+async function verifyMissingManifestDiagnostic(port, manifest) {
+  const held = `${manifest}.held`
+  await rename(manifest, held)
+  try {
+    page = await browser.newPage({ viewport: { width: 1200, height: 820 } })
+    page.setDefaultTimeout(30_000)
+    const workers = [], errors = [], responses = [], failures = []
+    page.on('worker', (worker) => workers.push(worker.url()))
+    page.on('pageerror', (error) => errors.push(error.message))
+    page.on('response', (response) =>
+      responses.push({ url: response.url(), status: response.status() })
+    )
+    page.on('requestfailed', (request) =>
+      failures.push({ url: request.url(), failure: request.failure() })
+    )
+    const result = {
+      mode: 'production-missing-manifest-diagnostic',
+      url: `http://127.0.0.1:${port}/ui/`,
+      workers,
+      errors,
+      responses,
+      failures,
+      passed: false
+    }
+    report.cases.push(result)
+    await page.goto(result.url)
+    const error = page.locator('.file-viewer-render-error')
+    await error.waitFor({ state: 'visible' })
+    result.text = await error.innerText()
+    await page.waitForFunction(() => {
+      return document.querySelector('[data-testid="angular-pptx-host"]')?.getAttribute('data-viewer-state') === 'error'
+    })
+    result.state = await page.locator('[data-testid="angular-pptx-host"]').getAttribute('data-viewer-state')
+    assert.match(result.text, /file-viewer-copy-assets/)
+    assert.equal(result.state, 'error', 'missing manifest: controller must enter the error state')
+    assert.deepEqual(workers, [], 'missing manifest: no unresolved Worker may start')
+    assert.deepEqual(errors, [], 'missing manifest: the renderer must surface a handled diagnostic')
+    assert.deepEqual(failures, [], 'missing manifest: the renderer must not request a guessed Worker URL')
+    assert.ok(
+      !responses.some((response) => response.url.endsWith('/worker/pptx.worker.js')),
+      'missing manifest: guessed application-relative Worker URL requested'
+    )
+    await page.screenshot({ path: resolve(output, 'production-missing-manifest-diagnostic.png') })
+    result.passed = true
+    await page.close()
+  } finally {
+    await rename(held, manifest)
+  }
+}
+
 try {
   await verifyAngularDevelopmentAssetModes({
     start: startDev,
     stop: stopDev,
-    verify,
-    manifest: resolve(project, 'public/file-viewer/flyfish-viewer-assets.json')
+    verify
   })
 
   const root = resolve(project, 'dist/browser')
@@ -253,7 +307,12 @@ try {
     response.writeHead(200, { 'content-type': mime })
     createReadStream(file).pipe(response)
   })
-  await verify('production', await bind(server))
+  const productionPort = await bind(server)
+  await verify('production', productionPort)
+  await verifyMissingManifestDiagnostic(
+    productionPort,
+    resolve(root, 'file-viewer/flyfish-viewer-assets.json')
+  )
   report.candidates = JSON.parse(
     await readFile(resolve(project, 'candidate-packages.json'), 'utf8')
   )

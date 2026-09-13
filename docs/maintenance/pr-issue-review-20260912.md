@@ -1,5 +1,9 @@
 # PR and issue review — 2026-09-12
 
+> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
+
+<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+
 Scope: all six open PRs and seven open issues in `flyfish-dev/file-viewer`, plus
 related DOCX/CAD/spreadsheet upstreams. Source maintenance only: no npm release,
 version bump, release tag or automatic issue closure.
@@ -35,7 +39,7 @@ silently replaced by a synthetic fixture, and issues stay open pending acceptanc
 | --- | --- |
 | #227 — XLS undefined name | Original sensitive XLS remains unavailable in the thread. WPS re-saving is a workaround, not root-cause proof. Require a sanitized failing file or dated private receipt; MiniFAT fixtures alone do not prove this report fixed. |
 | #248 — Vue CLI DOCX/XLS | Latest comment supplies an XLS screenshot, not a project/file. Existing cold Vue CLI tests do not prove the reporter's exact integration. Require lockfile, minimal project, original bytes and failing console/Worker requests. |
-| #266 — Word/OFD fidelity | Original-sample repairs are in #273/#276 and upstream docxjs#10. Diagonal source is merged, but npm `@file-viewer/docx` was still **0.3.31** at review. Pending upstream publication and downstream dependency/Worker/lock synchronization. |
+| #266 — Word/OFD fidelity | Original-sample repairs are in #273/#276 and upstream docxjs#10. The reviewed npm package is now `@file-viewer/docx@0.3.32`; downstream dependency/Worker/lock synchronization and the original-file browser gate remain required before the File Viewer release. |
 | #267 — IFC | Optional viewer foundation is merged; this change incorporates the advanced configuration request. Scope is local visualization/inspection, not full BIM authoring or a promise of arbitrary large-model performance. Preserve self-hosted assets and license notices. |
 | #268 — PPTX charts/tables | Reporter supplied `default.pptx` in comment `5628266590`; original-file repairs/evidence are in merged #272. Pending delivery of a new File Viewer package and reporter confirmation, not a claim that the public package is already updated. |
 | #269 — CAD Chinese text | Thread still lacks original CAD file, font resources and usable environment/version details. Need original DWG/DXF, SHX/TTF mapping and failing font/network requests. Screenshot alone cannot distinguish encoding from missing fonts. |
@@ -51,13 +55,13 @@ After the maintainer publishes the reviewed upstream DOCX version, run:
 
 ```sh
 pnpm release:prepare-docx <exact-published-version>
-pnpm release:verify
+pnpm verify:github-266-browser /path/to/issue-266.zip --require-diagonals
 git diff --check
 ```
 
+The preparation command runs the installed-engine and public-release-fact checks.
 Review and commit synchronized dependency, runtime/Worker and lockfile metadata.
-The actual-installed-engine behavioral gate must pass before File Viewer release.
-Do not publish with the old DOCX dependency simply because source CI is green.
+The original-file behavioral gate must pass before File Viewer release.
 
 ## Lifecycle defect caught during integration
 

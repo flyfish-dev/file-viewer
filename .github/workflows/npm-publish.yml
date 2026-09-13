@@ -1,4 +1,5 @@
 name: Publish npm release assets
+run-name: npm ${{ github.event.release.tag_name || inputs.release_tag }} ${{ inputs.request_id || github.run_id }}
 
 on:
   release:
@@ -14,6 +15,14 @@ on:
         required: true
         default: true
         type: boolean
+      request_id:
+        description: Release coordinator correlation ID
+        required: false
+        type: string
+      expected_sha:
+        description: Expected immutable public release commit
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -34,8 +43,7 @@ jobs:
       - name: Check out release publisher
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # A recovery dispatch needs the reviewed publisher revision; the tag can predate its fix.
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.release.tag_name }}
+          ref: ${{ github.event.release.tag_name || inputs.release_tag }}
           persist-credentials: false
 
       - name: Set up Node.js
@@ -43,6 +51,14 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+
+      - name: Verify the requested public commit
+        env:
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+        run: |
+          if [ -n "$EXPECTED_SHA" ]; then
+            test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          fi
 
       - name: Verify publisher failure and resume behavior
         run: node --test .github/scripts/npm-release-batch.test.mjs .github/scripts/publish-release-assets.test.mjs
@@ -60,11 +76,22 @@ jobs:
             --pattern 'npm-release-manifest.json' \
             --dir "$RUNNER_TEMP/file-viewer-release" \
             --clobber
+          cmp artifacts/npm-release-manifest.json "$RUNNER_TEMP/file-viewer-release/npm-release-manifest.json"
 
-      - name: Publish the verified package set with npm trusted publishing
+      - name: Rehearse the immutable package set
         env:
           FILE_VIEWER_RELEASE_ASSETS_DIR: ${{ runner.temp }}/file-viewer-release
-          FILE_VIEWER_RELEASE_DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          FILE_VIEWER_RELEASE_DRY_RUN: 'true'
+          FILE_VIEWER_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+        run: |
+          node .github/scripts/publish-release-assets.mjs
+          mv "$RUNNER_TEMP/file-viewer-release/npm-publish-report.json" "$RUNNER_TEMP/file-viewer-release/npm-rehearsal-report.json"
+
+      - name: Publish the verified package set with npm trusted publishing
+        if: github.event_name == 'release' || inputs.dry_run == false
+        env:
+          FILE_VIEWER_RELEASE_ASSETS_DIR: ${{ runner.temp }}/file-viewer-release
+          FILE_VIEWER_RELEASE_DRY_RUN: 'false'
           FILE_VIEWER_RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
           FILE_VIEWER_PUBLISH_VISIBILITY_ATTEMPTS: '90'
           FILE_VIEWER_PUBLISH_VISIBILITY_DELAY_MS: '10000'
@@ -75,12 +102,20 @@ jobs:
       - name: Retain per-package publish evidence
         if: always()
         run: |
+          rehearsal="$RUNNER_TEMP/file-viewer-release/npm-rehearsal-report.json"
+          if [ -f "$rehearsal" ]; then
+            printf '%s\n' '### Immutable package rehearsal' '```json' >> "$GITHUB_STEP_SUMMARY"
+            cat "$rehearsal" >> "$GITHUB_STEP_SUMMARY"
+            printf '\n%s\n' '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
           report="$RUNNER_TEMP/file-viewer-release/npm-publish-report.json"
           if [ -f "$report" ]; then
             cat "$report"
             printf '%s\n' '### Per-package publication evidence' '```json' >> "$GITHUB_STEP_SUMMARY"
             cat "$report" >> "$GITHUB_STEP_SUMMARY"
             printf '\n%s\n' '```' >> "$GITHUB_STEP_SUMMARY"
+          elif [ -f "$rehearsal" ]; then
+            echo 'Rehearsal completed; no npm uploads were requested.'
           else
             echo 'No package report was produced; inspect the failed preceding step.'
           fi

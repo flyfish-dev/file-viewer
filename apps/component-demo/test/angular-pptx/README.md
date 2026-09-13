@@ -10,6 +10,8 @@ then opens real PPTX slides in both `ng serve` and the production build. It chec
 actual Worker network responses, the complete slide count from the source PPTX,
 and the final virtualized slide, not just a computed URL or the first slide.
 
-It also temporarily withholds the copied manifest from the development server to
-exercise Angular's optimized dependency path with the real package Worker. The
-manifest is restored even when that check fails.
+It additionally withholds the copied manifest from the production static output
+to reproduce a broken deployment. The expected result is an explicit error
+state with the recovery command, no guessed application-relative Worker URL,
+and no unhandled browser error. The manifest is restored even when that check
+fails.

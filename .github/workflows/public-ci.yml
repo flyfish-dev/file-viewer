@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  checks: read
 
 concurrency:
   group: public-ci-${{ github.workflow }}-${{ github.ref }}
@@ -24,6 +25,16 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 2
+
+      - name: Select checks from the exact change and verified baseline
+        id: impact
+        env:
+          FILE_VIEWER_CI_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --test .github/scripts/release-ci-impact.test.mjs
+          node .github/scripts/release-ci-impact.mjs
 
       - name: Set up pnpm
         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
@@ -41,51 +52,73 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Set up Rust WASM toolchain
+        if: steps.impact.outputs.runtime != 'false'
         run: |
           rustup target add wasm32-unknown-unknown
           cargo install wasm-bindgen-cli --version 0.2.127 --locked
 
       - name: Test the CHM Rust parser
+        if: steps.impact.outputs.runtime != 'false'
         run: cargo test --manifest-path packages/renderers/chm/rust/Cargo.toml --locked
 
       - name: Verify repository governance
         run: pnpm verify:github-governance
 
       - name: Build source, components and demo
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm build
 
       - name: Verify PPTX generated styles and Worker resolution
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts test/pptx-worker-resolution.spec.ts
 
       - name: Verify the component host runtime contract
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec vitest run test/component-host-runtime-contract.spec.ts
 
       - name: Verify the Adobe design asset pack
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/assets-design verify
 
       - name: Type-check
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm type-check
 
       - name: Run the issue regression gates
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm test
+
+      - name: Verify the installed DOCX diagonal-border repair
+        run: pnpm verify:docx-upstream
 
       - name: Verify optional IFC entry ownership and installed CLI execution
         run: pnpm --filter @file-viewer/renderer-3d verify:ifc
 
       - name: Verify bounded metadata parsing and Illustrator namespace hints
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec vitest run test/metadata-input-safety.spec.ts test/chm-renderer.spec.ts
 
       - name: Build documentation
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm docs:build
 
       - name: Build Vue 3 toolbar browser fixture
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm build:component-demo
 
       - name: Verify Vue 3 toolbar contracts
+        if: steps.impact.outputs.runtime != 'false'
         run: node apps/component-demo/scripts/verify-vue3-toolbar.mjs
 
       - name: Install Chromium and WebKit
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Verify browser Avro decoding without Node globals
+        run: pnpm verify:data-avro-browser
+
+      - name: Verify the optional binary inspector in Chromium
+        run: pnpm verify:binary-inspector
 
       - name: Verify the shipped Avro browser bundle and Node shim isolation
         run: pnpm --filter @file-viewer/renderer-data verify:avro-browser
@@ -96,43 +129,53 @@ jobs:
           pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples
 
       - name: Verify PDF Worker cancellation
+        if: steps.impact.outputs.runtime != 'false'
         run: |
           pnpm exec vitest run test/pdf-worker-lifecycle.spec.ts test/pdf-runtime-provenance.spec.ts
           pnpm --filter @file-viewer/renderer-pdf verify:worker-lifecycle
 
       - name: Verify actual RequireJS entries and lazy renderers
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/web-full verify:github-258
         env:
           REQUIREJS_DEMO_DIR: apps/component-demo/dist
 
       - name: Verify cold Vite 6 and 8 nested-root Worker assets
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/vite-plugin verify:github-257-browser
 
       - name: Verify HTML, revisions, spreadsheet search and DOCX cover regressions
+        if: steps.impact.outputs.runtime != 'false'
         run: node apps/viewer-demo/scripts/verify-closed-issue-regressions.mjs
 
       - name: Verify column dragging, sheet and zoom persistence, and the disabled option
+        if: steps.impact.outputs.runtime != 'false'
         run: node apps/viewer-demo/scripts/verify-spreadsheet-resize.mjs
 
       - name: Verify native mobile toolbar and narrow-host search layout
+        if: steps.impact.outputs.runtime != 'false'
         run: node apps/viewer-demo/scripts/verify-mobile-toolbar.mjs
 
       - name: Verify CAD source, monochrome and actual exported pixels
+        if: steps.impact.outputs.runtime != 'false'
         run: |
           pnpm exec vitest run test/demo-file-capsule-motion.spec.ts
           node apps/viewer-demo/scripts/verify-cad-view-modes.mjs
 
       - name: Verify legacy XLS MiniFAT in main thread and Worker
+        if: steps.impact.outputs.runtime != 'false'
         run: node apps/viewer-demo/scripts/verify-cfb-mini-fat.mjs
 
       - name: Verify cold-consumer fixture isolation
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec vitest run test/angular-asset-modes.spec.ts test/zip-cross-realm.spec.ts
 
       - name: Cold-install Vue CLI and React full tarballs without bundler workarounds
+        if: steps.impact.outputs.runtime != 'false'
         run: node apps/component-demo/scripts/verify-packed-issue-closure.mjs
 
       - name: Upload packed-consumer failure evidence
-        if: failure()
+        if: failure() && steps.impact.outputs.runtime != 'false'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: packed-issue-consumer-evidence
@@ -141,20 +184,25 @@ jobs:
           retention-days: 7
 
       - name: Verify the CHM Rust/WASM renderer in Chromium
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:chm-renderer
         env:
           CHM_SMOKE_BROWSERS: chromium
 
       - name: Verify Vue 3 toolbar in Chromium
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:vue3-toolbar-browser
 
       - name: Verify untrusted renderer markup sanitization
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:renderer-sanitization
         env:
           FILE_VIEWER_RTF_BROWSERS: chromium
 
       - name: Browser smoke
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:browser-smoke
 
       - name: Verify PPTX slideshow
+        if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:pptx-slideshow

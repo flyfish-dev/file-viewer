@@ -23,7 +23,7 @@ export function FileViewerDocsLayout({ children, locale }: { children: ReactNode
               <IconShieldCheck size={18} stroke={1.8} aria-hidden="true" />
               <span>
                 <strong>{chinese ? '浏览器原生 · 离线优先' : 'Browser-native · Offline-first'}</strong>
-                <small>{chinese ? '266 个扩展名 · 45 条预览链路' : '266 extensions · 45 preview pipelines'}</small>
+                <small>{chinese ? '273 个扩展名 · 46 条预览链路' : '273 extensions · 46 preview pipelines'}</small>
               </span>
             </a>
           ),

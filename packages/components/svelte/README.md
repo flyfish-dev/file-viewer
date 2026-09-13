@@ -82,7 +82,7 @@ English README: [README.en.md](./README.en.md)。
 
 ## 格式支持矩阵
 
-共享格式目录当前注册 266 个扩展名（224 个稳定、42 个实验），映射到 45 条预览链路。实验格式不计入稳定支持数量；完整能力通过 renderer / preset 按需装配。
+共享格式目录当前注册 273 个扩展名（224 个稳定、49 个实验），映射到 46 条预览链路。实验格式不计入稳定支持数量；完整能力通过 renderer / preset 按需装配。
 
 | 预览链路 | 分类 | 扩展名 | 等级 / 状态 | 能力 | 加载 |
 | --- | --- | --- | --- | --- | --- |
@@ -131,6 +131,7 @@ English README: [README.en.md](./README.en.md)。
 | Adobe Color Palettes | asset | `.ase`, `.aco` | structured / stable | 下载, 打印, HTML, 搜索 | 按需异步 |
 | Adobe Photoshop Resources and Presets | asset | `.abr`, `.csh`, `.pat`, `.grd`, `.asl` | structured / experimental | 下载, 打印, 搜索 | 按需异步 |
 | Data Asset | asset | `.ttf`, `.otf`, `.woff`, `.woff2`, `.psd`, `.ai`, `.eps`, `.sqlite`, `.wasm`, `.parquet`, `.avro`, `.webarchive` | structured / stable | 下载, HTML, 搜索 | 按需异步 |
+| Binary Inspector | asset | `.bin`, `.hex`, `.elf`, `.exe`, `.dll`, `.class`, `.macho` | structured / experimental | 下载 | 按需异步 |
 
 ## 工程级按需 renderer 装配
 

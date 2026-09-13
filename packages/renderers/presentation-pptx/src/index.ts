@@ -1,6 +1,7 @@
 import { PptxViewer, RECOMMENDED_ZIP_LIMITS, resolvePptxPackageWorkerUrl } from '@file-viewer/pptx';
 import {
   DEFAULT_RENDERER_DEFINITIONS,
+  attachFileViewerErrorMessage,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter,
   getFileViewerShadowRootForNode,
@@ -316,8 +317,10 @@ const formatPptxDiagnosticError = (
       : localizedReason || rawReason
   ) || fallback;
   const detail = sanitizePptxDiagnosticText(error.detail);
-  const hint = sanitizePptxDiagnosticText(error.hint) ||
-    localizePptxDiagnosticCopy(pptxDiagnosticFallbackHints[code], locale);
+  // Engine diagnostics may carry source-language hints. A known code has a
+  // wrapper-owned translation, so prefer it over the engine's raw copy.
+  const hint = localizePptxDiagnosticCopy(pptxDiagnosticFallbackHints[code], locale) ||
+    sanitizePptxDiagnosticText(error.hint);
   const stage = sanitizePptxDiagnosticText(error.stage);
   const usesWesternPunctuation = locale === 'en-US' || locale === 'de-DE';
   const separator = usesWesternPunctuation ? ': ' : '：';
@@ -585,6 +588,14 @@ export default async function renderPptx(
     context?.registerExportAdapter?.(buildExportAdapter(surface, targetWindow, () => viewer));
   };
 
+  const reportPptxFailure = (failure: unknown) => {
+    state = 'error';
+    errorMessage = formatErrorMessage(failure, t('presentation.error.parseFailed'), context);
+    context?.registerExportAdapter?.(null);
+    syncUi();
+    return attachFileViewerErrorMessage(failure, errorMessage);
+  };
+
   registerFileViewerZoomProvider(shell, {
     zoomIn: () => setZoom(getCurrentZoomPercent() + 15),
     zoomOut: () => setZoom(getCurrentZoomPercent() - 15),
@@ -632,6 +643,11 @@ export default async function renderPptx(
       if (context?.signal?.aborted) {
         throw context.signal.reason || new DOMException('PPTX rendering aborted.', 'AbortError');
       }
+      if (!workerUrl) {
+        throw new Error(
+          'PPTX Worker URL is unavailable. Run file-viewer-copy-assets or provide presentation.workerUrl.'
+        );
+      }
       const nextViewer = await PptxViewer.open(buffer, surface, {
         styleRoot: resolvePptxStyleRoot(surface, context),
         fitMode: 'contain',
@@ -678,11 +694,7 @@ export default async function renderPptx(
           if (disposed || context?.signal?.aborted) {
             return;
           }
-          state = 'error';
-          errorMessage = formatErrorMessage(error, t('presentation.error.parseFailed'), context);
-          context?.registerExportAdapter?.(null);
-          syncUi();
-          rejectCompletion(error);
+          rejectCompletion(reportPptxFailure(error));
         },
       });
 
@@ -706,11 +718,7 @@ export default async function renderPptx(
       }
       viewer?.destroy();
       viewer = null;
-      state = 'error';
-      errorMessage = formatErrorMessage(error, t('presentation.error.parseFailed'), context);
-      context?.registerExportAdapter?.(null);
-      syncUi();
-      throw error;
+      throw reportPptxFailure(error);
     } finally {
       context?.signal?.removeEventListener('abort', abort);
     }

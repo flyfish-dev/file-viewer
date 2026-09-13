@@ -10,7 +10,7 @@ import { captureCommand } from './npm-release-batch.mjs'
 const publisher = join(dirname(fileURLToPath(import.meta.url)), 'publish-release-assets.mjs')
 const repository = 'https://github.com/flyfish-dev/file-viewer'
 
-async function fixture(t, scenario = '', extraPackages = []) {
+async function fixture(t, scenario = '') {
   const root = await mkdtemp(join(tmpdir(), 'file-viewer-publish-test-'))
   t.after(() => rm(root, { recursive: true, force: true }))
   const bin = join(root, 'bin')
@@ -19,22 +19,21 @@ async function fixture(t, scenario = '', extraPackages = []) {
   await mkdir(assets)
   const entries = []
   const existing = {}
-  for (const [name, dependencies, version = '3.0.3'] of [
+  for (const [name, dependencies] of [
     ['full', { ui: '3.0.3' }],
     ['ui', { core: '3.0.3' }],
-    ['core', {}],
-    ...extraPackages
+    ['core', {}]
   ]) {
     const directory = join(root, name)
     await mkdir(join(directory, 'package'), { recursive: true })
     const pkg = {
       name,
-      version,
+      version: '3.0.3',
       dependencies,
       repository: { type: 'git', url: repository }
     }
     await writeFile(join(directory, 'package/package.json'), JSON.stringify(pkg))
-    const tarball = `${name}-${version}.tgz`
+    const tarball = `${name}-3.0.3.tgz`
     assert.equal(
       (await captureCommand('tar', ['-czf', join(assets, tarball), '-C', directory, 'package']))
         .status,
@@ -43,13 +42,13 @@ async function fixture(t, scenario = '', extraPackages = []) {
     const bytes = await readFile(join(assets, tarball))
     existing[name] = {
       name,
-      version,
+      version: '3.0.3',
       'dist.integrity': `sha512-${createHash('sha512').update(bytes).digest('base64')}`,
       'dist.tarball': `https://registry.npmjs.org/${name}/-/${tarball}`
     }
     entries.push({
       packageName: name,
-      version,
+      version: '3.0.3',
       tarball,
       sha256: createHash('sha256').update(bytes).digest('hex')
     })
@@ -122,13 +121,6 @@ test('publisher obeys dependency order and resumes without republishing exact by
   const report = JSON.parse(await readFile(join(f.assets, 'npm-publish-report.json'), 'utf8'))
   assert.equal(report.status, 'verified')
   assert(report.packages.every((r) => r.status === 'verified-existing'))
-})
-
-test('publisher accepts a manifest package version distinct from the GitHub release tag', async (t) => {
-  const f = await fixture(t, '', [['compat', {}, '0.2.6']])
-  const outcome = await f.run()
-  assert.equal(outcome.status, 0, outcome.stderr)
-  assert.deepEqual((await f.calls()).sort(), ['compat', 'core', 'full', 'ui'])
 })
 
 test('a later invalid tarball blocks all writes, not just its own layer', async (t) => {

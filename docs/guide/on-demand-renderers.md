@@ -46,7 +46,7 @@ export default defineConfig({
 })
 ```
 
-`copyAssets` copies the offline payload that the installed packages provide. The PDF CJK fallback font is owned by `@file-viewer/assets-standard`, which `@file-viewer/preset-standard` installs; `@file-viewer/preset-office` and `@file-viewer/preset-all` declare `@fontsource-variable/noto-sans-sc` instead, so every profile that activates the pdf renderer self-hosts the font. When no source is installed the build still succeeds and the plugin only warns that the font was skipped, leaving PDF rendering to embedded fonts. `pnpm test:pdf-cjk-font-github-242` keeps this contract as a regression gate: every preset that activates the pdf renderer declares a font source, `@file-viewer/renderer-pdf` declares none itself, and the asset stays optional.
+`copyAssets` copies the offline payload that the installed packages provide. `@file-viewer/renderer-pdf` owns `@fontsource-variable/noto-sans-sc` as a runtime dependency, so direct renderer installs and every PDF preset self-host the CJK fallback automatically. `@file-viewer/assets-standard` remains the preferred pre-staged source for the standard profile. If neither source resolves, the installed dependency tree is incomplete and the build fails with an actionable error instead of silently dropping CJK fallback support. `pnpm test:pdf-cjk-font-github-242` verifies both the direct ownership and the required copied font/license payload.
 
 The plugin reads the Vite major installed by the application. Vite 5–7 receive `build.rollupOptions.output.manualChunks`; Vite 8 receives `build.rolldownOptions.output.codeSplitting.groups`. Existing application groups, priorities, array outputs, and `codeSplitting:false` are preserved, so the plugin adds only its stable CodeMirror and renderer groups.
 
@@ -62,32 +62,34 @@ The plugin reads the Vite major installed by the application. Vite 5–7 receive
 
 ## Optional Specialist Renderers
 
-Adobe design, DICOM, and digital-signature inspection are explicit opt-ins. They are not dependencies of the eight published `@file-viewer/*-full` packages or the frozen `@file-viewer/preset-all` compatibility baseline. This preserves the published Full contract and prevents specialist Worker/WASM, medical-imaging, or cryptographic dependencies from appearing during an ordinary upgrade.
+Adobe design, DICOM, digital-signature inspection, and binary inspection are explicit opt-ins. They are not dependencies of the eight published `@file-viewer/*-full` packages or the frozen `@file-viewer/preset-all` compatibility baseline. This preserves the published Full contract and prevents specialist Worker/WASM, medical-imaging, cryptographic, or binary-analysis dependencies from appearing during an ordinary upgrade.
 
 | Optional renderer | Formats | Direct npm install | CLI selection | What the viewer shows |
 | --- | --- | --- | --- | --- |
 | **Adobe design** (`@file-viewer/renderer-design`) | `.psd`, `.psb`, `.pdd`, `.psdt`, `.ai`, `.ait`, `.eps`, `.ps`, `.idml`, `.icml`, `.idms`, `.inx`, `.xd`, `.indd`, `.indt`, `.fla`, `.xfl`, `.ase`, `.aco`, `.abr`, `.csh`, `.pat`, `.grd`, `.asl` | `npm install @file-viewer/renderer-design` | `npx file-viewer-cli config add psd --write` | Browser-local Worker/WASM previews for saved Photoshop pixels and supported layers; verified PDF-compatible Illustrator plus switchable native PGF artboards/layers/paths through `illustrator-pgf`; IDML and exchange structures; embedded XD/INDD previews; modern XFL; palettes; Photoshop resources; and PostScript. Unsupported native operators and fidelity limits remain explicit. |
 | **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`, `.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | One local DICOM Part 10 file, including multi-frame navigation, window width/center, zoom, pan, rotation, fit-to-view, and basic metadata. It does not assemble studies or provide PACS/DICOMweb, MPR, segmentation, or diagnosis. |
 | **Digital signatures** (`@file-viewer/renderer-signature`) | `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`, `.tsq`, `.tsr`, `.tst`, `.tsd`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.jws`, `.asc`, `.sig`, `.pgp`, `.gpg` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | Bounded browser-local inspection of CMS/PKCS#7, selected CAdES data, timestamps, ASiC containers, evidence records, JWS, and public OpenPGP inputs. Parsing, digest, signature, and timestamp results are reported separately. |
+| **Binary inspector** (`@file-viewer/renderer-binary`) | `.bin`, `.hex`, `.elf`, `.exe`, `.dll`, `.class`, `.macho` | `npm install @file-viewer/renderer-binary` | `npx file-viewer-cli config add bin --write` | Read-only, browser-local offset/hex/ASCII view with a bounded module Worker, virtual rows, typed values, and a reviewed ELF, PE/COFF, Mach-O, PNG, ZIP, WebAssembly, and Java-class header catalog. It never claims `application/octet-stream` or displaces a dedicated renderer. |
 
 ### I already use a Full package. How do I enable an optional renderer?
 
 The same rule applies to `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, and `@file-viewer/svelte-full`.
 
-Keep the Full package installed, then add only the specialist renderer the application needs. The following example enables all three current opt-ins; remove any package, import, and array entry that the application does not need:
+Keep the Full package installed, then add only the specialist renderer the application needs. The following example enables all four current opt-ins; remove any package, import, and array entry that the application does not need:
 
 ```bash
-npm install @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature
+npm install @file-viewer/renderer-binary @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature
 ```
 
 ```ts
+import { binaryRenderer } from '@file-viewer/renderer-binary'
 import { designRenderer } from '@file-viewer/renderer-design'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
 import { signatureRenderer } from '@file-viewer/renderer-signature'
 
 const options = {
   rendererMode: 'extend',
-  renderers: [designRenderer, dicomRenderer, signatureRenderer]
+  renderers: [binaryRenderer, designRenderer, dicomRenderer, signatureRenderer]
 }
 ```
 
@@ -107,20 +109,27 @@ npx file-viewer-cli config add dicom --write
 # Digital-signature containers
 npx file-viewer-cli config add p7m --write
 
+# Binary inspection
+npx file-viewer-cli config add bin --write
+
 npx file-viewer-cli install --yes
 ```
 
 Use `npx file-viewer-cli list` to inspect the current catalog before changing a project.
 
-> Directly installing a Full package and selecting the CLI `full` profile are intentionally different. A Full package keeps the published `preset-all` compatibility baseline. The CLI `full` profile keeps that package and defaults to the established DICOM/signature additions; Adobe design is added only when `config add`, `--formats`, or `--capabilities` explicitly selects it, after its weight and license boundaries are shown.
+> Directly installing a Full package and selecting the CLI `full` profile are intentionally different. A Full package keeps the published `preset-all` compatibility baseline. The CLI `full` profile keeps that package and defaults to the established DICOM/signature additions; Adobe design and binary inspection are added only when `config add`, `--formats`, or `--capabilities` explicitly selects them, after their weight and license boundaries are shown.
 
 ### Using a prebuilt `web-full` browser bundle?
 
-The downloadable `web-full` IIFE bundle contains the published Full renderer set. Adobe design, DICOM, and digital-signature renderers are not embedded in that bundle.
+The downloadable `web-full` IIFE bundle contains the published Full renderer set. Adobe design, DICOM, digital-signature, and binary-inspector renderers are not embedded in that bundle.
 
 Use a package-manager project or the File Viewer CLI when the integration needs an optional renderer. Copying a renderer package next to the prebuilt bundle does not register it.
 
 The digital-signature renderer can pass safely extracted PDF, XML, image, Office, or other supported content back through the nested-renderer pipeline, so keep the matching normal renderer available when that preview is required. Cryptographic verification does not establish certificate or key trust, qualified-signature status, policy compliance, or legal validity.
+
+### Binary inspector boundary
+
+Use the binary inspector only when an application explicitly asks for byte-level inspection. It has no MIME wildcard route and does not replace PNG, ZIP, WASM, or other specialist renderers. The first catalog is read-only and bounded to a 16 MiB whole-file default, 5 seconds of parsing, 512 structure nodes, 16 levels of nesting, and 4 KiB decoded strings; over-limit input fails clearly instead of doing a partial arbitrary scan. A one-shot module Worker parses each input and terminates after a result, error, timeout, or cancellation. The hex grid virtualizes rows, so large accepted inputs do not create one DOM node per byte.
 
 ## Renderer Package Reference
 
@@ -222,7 +231,7 @@ fileViewerRenderers({
 
 The default experience is intentionally zero-config: if the plugin receives no explicit `preset`, `formats`, or `renderers`, or only receives `copyAssets:true`, it auto-discovers installed `@file-viewer/preset-*` packages. `preset-all` takes precedence when present; otherwise installed `lite`, `office`, and `engineering` presets are composed.
 
-Install `@file-viewer/preset-all` when an application needs the published compatibility baseline. Adobe design, DICOM, and digital signatures remain explicit:
+Install `@file-viewer/preset-all` when an application needs the published compatibility baseline. Adobe design, DICOM, digital signatures, and binary inspection remain explicit:
 
 ```bash
 npm install @file-viewer/vue3 @file-viewer/preset-all
