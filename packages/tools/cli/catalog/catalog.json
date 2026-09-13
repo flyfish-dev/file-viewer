@@ -295,9 +295,9 @@
       "assetPackageName": "@file-viewer/assets-standard",
       "profileManifestSha256": "aa60cba3fc4bb663516fc3be23881aeb3bfaf7039aa4fad9687bc21f8687caec",
       "estimates": {
-        "packedClosureBytes": 31457280,
-        "unpackedClosureBytes": 104857600,
-        "staticAssetBytes": 25165824
+        "packedClosureBytes": 37748736,
+        "unpackedClosureBytes": 115343360,
+        "staticAssetBytes": 29360128
       }
     },
     {

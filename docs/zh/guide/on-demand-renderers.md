@@ -210,7 +210,7 @@ export default defineConfig({
 })
 ```
 
-`copyAssets` 会复制已安装包能提供的离线资产。PDF 的 CJK 回退字体归 `@file-viewer/assets-standard` 所有，`@file-viewer/preset-standard` 会一并安装它；`@file-viewer/preset-office` 和 `@file-viewer/preset-all` 则直接声明 `@fontsource-variable/noto-sans-sc`，因此启用 pdf 能力的 profile 都能离线自托管该字体。缺少字体来源时构建仍然成功，插件只警告该字体被跳过，PDF 渲染回退到内嵌字体。`pnpm test:pdf-cjk-font-github-242` 把这条契约锁成回归门禁：启用 pdf 能力的每个 preset 都必须声明字体来源，`@file-viewer/renderer-pdf` 自身不得声明字体，且该资产必须保持可选。
+`copyAssets` 会复制已安装包能提供的离线资产。`@file-viewer/renderer-pdf` 以运行时依赖拥有 `@fontsource-variable/noto-sans-sc`，因此直接安装 renderer 或任何启用 PDF 的 preset 都会自动自托管 CJK 回退字体。`@file-viewer/assets-standard` 仍是 standard profile 的优先预置来源。两种来源都无法解析时，说明已安装的依赖树不完整，构建会给出可操作的失败信息，不会静默移除 CJK 回退能力。`pnpm test:pdf-cjk-font-github-242` 会验证直接所有权，以及必须被复制的字体和许可证载荷。
 
 插件默认 `inject:true`，会把生成的 renderer 模块注入 Vite HTML 入口，组件通过 `autoRenderers` 自动获得能力。常规业务代码无需再手动传 `renderers`。
 

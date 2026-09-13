@@ -1,9 +1,9 @@
 {
   "version": "3.1.0",
   "package": "@flyfish-group/file-viewer-workspace",
-  "generatedAt": "2026-09-12T21:44:49.638Z",
+  "generatedAt": "2026-09-13T03:03:42.385Z",
   "sourceBranch": "main",
-  "sourceCommit": "a65e569e",
+  "sourceCommit": "893dca36",
   "corePackage": {
     "packageName": "@file-viewer/core",
     "description": "Framework-neutral modular TypeScript file preview core with format registry, renderer orchestration, lifecycle APIs, search, zoom, print, and export.",
@@ -2078,7 +2078,7 @@
     }
   ],
   "vue2Package": null,
-  "publicRepo": "/private/tmp/fv-public-3.1.0-after286",
+  "publicRepo": "/private/tmp/fv-public-release-3.1.0-r6-main-installed",
   "openSourceMain": true,
   "coreSourceIncluded": true,
   "sourcePolicy": "public-open-source-main-repository",

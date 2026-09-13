@@ -1,6 +1,6 @@
 {
   "version": "3.1.0",
-  "generatedAt": "2026-09-12T20:45:25.572Z",
+  "generatedAt": "2026-09-13T02:19:51.806Z",
   "packageCount": 89,
   "packages": [
     {
@@ -328,7 +328,7 @@
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
       "tarballSize": 71839237,
-      "sha256": "2ed3a42a1e91f497b54cbaa238458ece411e919c75a6175c3deb932390efedd9",
+      "sha256": "2829466b2ee83538a8a04cf486e2d84274a503376c39adfa94adfeec25778d06",
       "entrypointCount": 4,
       "assetCount": 2922,
       "fileCount": 2926
@@ -371,8 +371,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 75831,
-      "sha256": "f42f41b7b1b7b49f7409d60dcc5561a3dcfc61c7cb6387c876449a10071c020a",
+      "tarballSize": 75832,
+      "sha256": "51fee5cfc916b0b661300f7f507a636214b65cb4b7df4590dfdfb0fa4dbf7a6f",
       "entrypointCount": 6,
       "assetCount": 18,
       "fileCount": 23
@@ -393,8 +393,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 2491616,
-      "sha256": "3772ca81c52151fdedfcdd3ce3e01a8cd74e1fcb380ae214f04bfe3c283d13c9",
+      "tarballSize": 2491614,
+      "sha256": "c7ee33e4a51f433fd60626b22fb51143587965c4591550ff972b4fe36006086a",
       "entrypointCount": 5,
       "assetCount": 230,
       "fileCount": 235
@@ -1383,8 +1383,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 5982,
-      "sha256": "7fbfb3842477337651273c76b7bc2bd851b0c446df257aa9884706bf4afe8e2a",
+      "tarballSize": 5958,
+      "sha256": "d8313ddb27a6bbdfae9cd7d1ddf7a528e0ce6c4f477c1daa9d64f3e2dc23f426",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 6
@@ -1427,8 +1427,8 @@
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
-      "tarballSize": 31450,
-      "sha256": "cb9a57cd5f67285760e4883bc12e1c4f57e74845f2f0be9883097c219bcfc250",
+      "tarballSize": 31571,
+      "sha256": "6fb09decb8f96e641d92eda0b85fc766728d056d3601759fd7c256dff6dee593",
       "entrypointCount": 4,
       "assetCount": 2,
       "fileCount": 7
