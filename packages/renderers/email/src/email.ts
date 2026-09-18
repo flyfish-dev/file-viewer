@@ -8,8 +8,11 @@ import type {
   FileViewerRenderedInstance,
 } from '@file-viewer/core';
 
+import { createEmailHtmlDocument, createEmailImageResource } from './emailHtml.js';
+import { getMsgLabels, type MsgNotice } from './msgMessages.js';
+
 type EmailKind = 'eml' | 'msg' | 'mbox';
-type EmailBodyMode = 'html' | 'text' | 'headers';
+type EmailBodyMode = 'html' | 'rtf' | 'text' | 'headers';
 
 interface EmailAddress {
   name?: string;
@@ -22,6 +25,8 @@ interface EmailAttachmentView {
   mimeType?: string;
   size: number;
   contentId?: string;
+  contentLocation?: string;
+  inline?: boolean;
   load(): Promise<ArrayBuffer>;
 }
 
@@ -29,8 +34,12 @@ export interface ParsedEmailView {
   kind: EmailKind;
   subject: string;
   from: EmailAddress[];
+  sender?: EmailAddress[];
   to: EmailAddress[];
   cc: EmailAddress[];
+  bcc?: EmailAddress[];
+  rtf?: ArrayBuffer;
+  warnings?: MsgNotice[];
   date?: string;
   text?: string;
   html?: string;
@@ -41,7 +50,7 @@ export interface ParsedEmailView {
 const emailStyle = `
 .email-viewer{position:relative;height:100%;min-height:0;display:flex;flex-direction:column;background:#f3f6f8;color:#172033;box-sizing:border-box}
 .email-viewer *{box-sizing:border-box}
-.email-header{padding:18px 22px;border-bottom:1px solid rgba(23,32,51,.08);background:#fff}
+.email-header{max-height:35%;overflow:auto;flex:0 0 auto;padding:18px 22px;border-bottom:1px solid rgba(23,32,51,.08);background:#fff}
 .email-header>span{color:#1f7a58;font-size:12px;font-weight:900}
 .email-header h2{margin:4px 0 12px;font-size:22px;line-height:1.25}
 .email-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px}
@@ -49,7 +58,7 @@ const emailStyle = `
 .email-meta strong{margin-right:8px;color:#172033}
 .email-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr)}
 .email-sidebar{min-height:0;display:flex;flex-direction:column;gap:14px;padding:14px;border-right:1px solid rgba(23,32,51,.08);background:rgba(255,255,255,.7)}
-.body-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:4px;border-radius:12px;background:rgba(23,32,51,.06)}
+.body-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(52px,1fr));gap:6px;padding:4px;border-radius:12px;background:rgba(23,32,51,.06)}
 .body-tabs button,.attachment-item,.attachment-preview-head button{font:inherit;cursor:pointer}
 .body-tabs button{height:34px;border:0;border-radius:9px;background:transparent;color:#64748b;font-size:12px;font-weight:800}
 .body-tabs button.active{background:#fff;color:#172033}
@@ -63,7 +72,13 @@ const emailStyle = `
 .attachment-item span{grid-row:span 2;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(31,122,88,.12);color:#1f7a58;font-size:11px;font-weight:900}
 .attachment-item strong,.attachment-item em{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .attachment-item em{color:#64748b;font-size:12px;font-style:normal}
-.message-panel{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(240px,46%) minmax(0,1fr)}
+.message-panel{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr)}
+.message-panel.has-attachment-preview{grid-template-rows:minmax(160px,46%) minmax(0,1fr)}
+.email-rtf{height:100%;overflow:auto}
+.email-notices{max-height:25%;overflow:auto;margin:0;padding:10px 22px;background:#fff7e8;color:#714700;font-size:13px;line-height:1.5}
+.email-notices p{margin:4px 0}
+.attachment-preview-actions{display:flex;gap:8px;align-items:center}
+[data-viewer-theme='dark'] .email-notices{background:#332711;color:#f8daa0}
 .email-message-content{min-height:0}
 .email-html,.email-text{width:100%;height:100%;border:0;background:#fff}
 .email-text{margin:0;overflow:auto;padding:20px;white-space:pre-wrap;word-break:break-word;line-height:1.65}
@@ -86,7 +101,8 @@ const emailStyle = `
 [data-viewer-theme='dark'] .email-html{background:#111827;color-scheme:dark}
 [data-viewer-theme='dark'] .email-state{background:rgba(13,17,23,.9);color:#cbd5e1}
 @media (prefers-color-scheme:dark){[data-viewer-theme='system'] .email-viewer{background:#172033;color:#e5eef8}[data-viewer-theme='system'] .email-header,[data-viewer-theme='system'] .email-sidebar,[data-viewer-theme='system'] .attachment-item,[data-viewer-theme='system'] .email-text,[data-viewer-theme='system'] .attachment-preview-head{border-color:rgba(139,148,158,.2);background:#111827;color:#e5eef8}[data-viewer-theme='system'] .email-meta p,[data-viewer-theme='system'] .attachment-item em,[data-viewer-theme='system'] .attachment-title span,[data-viewer-theme='system'] .attachment-empty{color:#94a3b8}[data-viewer-theme='system'] .email-meta strong,[data-viewer-theme='system'] .attachment-title,[data-viewer-theme='system'] .attachment-item strong{color:#f8fafc}[data-viewer-theme='system'] .body-tabs{background:rgba(139,148,158,.12)}[data-viewer-theme='system'] .body-tabs button{color:#94a3b8}[data-viewer-theme='system'] .body-tabs button.active{background:#1f2937;color:#f8fafc}[data-viewer-theme='system'] .email-html{background:#111827;color-scheme:dark}[data-viewer-theme='system'] .email-state{background:rgba(13,17,23,.9);color:#cbd5e1}}
-@media (max-width:860px){.email-meta,.email-body{grid-template-columns:1fr}.email-body{grid-template-rows:auto minmax(0,1fr)}.email-sidebar{border-right:0;border-bottom:1px solid rgba(23,32,51,.08)}}
+@media (prefers-reduced-motion:reduce){.email-state span{animation:none}}
+@media (max-width:860px){.email-sidebar{max-height:220px;overflow:auto}.email-meta,.email-body{grid-template-columns:1fr}.email-body{grid-template-rows:auto minmax(0,1fr)}.email-sidebar{border-right:0;border-bottom:1px solid rgba(23,32,51,.08)}}
 `;
 
 const formatBytes = (value: number) => {
@@ -166,8 +182,7 @@ const createPostalAttachments = (
       return;
     }
     const buffer = await attachment.load();
-    const url = URL.createObjectURL(new Blob([buffer], { type: attachment.mimeType }));
-    objectUrls.push(url);
+    const url = createEmailImageResource(buffer, attachment.mimeType!, objectUrls);
     cidUrls.set(normalizeContentId(attachment.contentId), url);
   })).then(() => attachments);
 };
@@ -239,50 +254,18 @@ const parseMbox = async (
   };
 };
 
-const parseMsg = async (buffer: ArrayBuffer, filename: string): Promise<ParsedEmailView> => {
-  const msgReaderModule = await import('@kenjiuno/msgreader');
-  const MsgReader = ((msgReaderModule.default as any)?.default || msgReaderModule.default) as any;
-  const reader = new MsgReader(buffer);
-  const fileData = reader.getFileData();
-  const attachments: EmailAttachmentView[] = (fileData.attachments || []).map((attachment: any, index: number) => {
-    const name = attachment.fileName || attachment.fileNameShort || attachment.name || `attachment-${index + 1}${attachment.extension || ''}`;
-    return {
-      id: `${index}-${name}`,
-      name,
-      mimeType: 'application/octet-stream',
-      size: attachment.contentLength || attachment.size || 0,
-      contentId: attachment.pidContentId,
-      async load() {
-        const file = reader.getAttachment(attachment);
-        return toArrayBuffer(file.content);
-      },
-    };
-  });
-
-  return {
-    kind: 'msg',
-    subject: fileData.subject || filename,
-    from: normalizeAddress({ name: fileData.senderName, address: fileData.senderEmail }),
-    to: normalizeAddress(fileData.recipients || []).filter(item => item.name || item.address),
-    cc: [],
-    date: fileData.messageDeliveryTime || fileData.clientSubmitTime || fileData.creationTime,
-    text: fileData.body,
-    html: fileData.html || '',
-    headers: fileData.headers,
-    attachments,
-  };
-};
-
 const parseEmail = (
   buffer: ArrayBuffer,
   type: EmailKind,
   filename: string,
   objectUrls: string[],
   cidUrls: Map<string, string>,
-  t: ReturnType<typeof createFileViewerTranslator>
+  t: ReturnType<typeof createFileViewerTranslator>,
+  signal?: AbortSignal
 ) => {
   if (type === 'msg') {
-    return parseMsg(buffer, filename);
+    return import('./msg.js').then(({ parseMsg }) =>
+      parseMsg(buffer, filename, objectUrls, cidUrls, signal));
   }
   if (type === 'mbox') {
     return parseMbox(buffer, filename, objectUrls, cidUrls, t);
@@ -313,25 +296,14 @@ const createElement = <K extends keyof HTMLElementTagNameMap>(
 
 const getAttachmentExtension = (name: string) => {
   const index = name.lastIndexOf('.');
-  return index >= 0 ? name.slice(index + 1).toLowerCase() : 'txt';
-};
-
-const createHtmlSrcdoc = (html: string, cidUrls: Map<string, string>, darkMode = false) => {
-  let next = html;
-  cidUrls.forEach((url, cid) => {
-    const escaped = cid.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    next = next.replace(new RegExp(`cid:${escaped}`, 'gi'), url);
-  });
-  const pageStyle = darkMode
-    ? ':root{color-scheme:dark}body{background:#111827;color:#e5e7eb}'
-    : ':root{color-scheme:light}body{background:#fff;color:#172033}';
-  return `<!doctype html><html><head><meta charset="utf-8"><base target="_blank"><style>${pageStyle}body{margin:0;padding:18px;font-family:Aptos,"Segoe UI",sans-serif;line-height:1.6;word-break:break-word;}img{max-width:100%;height:auto;}</style></head><body>${next}</body></html>`;
+  return index >= 0 ? name.slice(index + 1).toLowerCase() : 'bin';
 };
 
 const appendMeta = (meta: HTMLElement, label: string, value: string) => {
   const row = document.createElement('p');
   const strong = document.createElement('strong');
   strong.textContent = label;
+  row.title = value || '-';
   row.append(strong, document.createTextNode(value || '-'));
   meta.append(row);
 };
@@ -342,15 +314,25 @@ export default async function renderEmail(
   type = 'eml',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  type = type.toLowerCase().replace(/^\./, '');
   const normalizedType: EmailKind = type === 'msg' ? 'msg' : type === 'mbox' ? 'mbox' : 'eml';
   const filename = context?.filename || `message.${normalizedType}`;
   const objectUrls: string[] = [];
   const cidUrls = new Map<string, string>();
   const t = createFileViewerTranslator(context?.options);
+  const msgLabels = getMsgLabels(context?.options);
+  const controller = new AbortController();
+  const abortFromParent = () => controller.abort(context?.signal?.reason);
+  if (context?.signal?.aborted) abortFromParent();
+  else context?.signal?.addEventListener('abort', abortFromParent, { once: true });
+  const signal = controller.signal;
   const systemDark = target.ownerDocument.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
   const darkMode = resolveFileViewerColorScheme(context?.options?.theme, systemDark) === 'dark';
   const cleanups: Array<() => void> = [];
   let nestedRendered: FileViewerRenderedInstance | undefined;
+  let bodyRendered: FileViewerRenderedInstance | undefined;
+  let bodyVersion = 0;
+  let bodyController: AbortController | undefined;
   let attachmentPreviewVersion = 0;
   let attachmentAbortController: AbortController | undefined;
   let disposed = false;
@@ -397,12 +379,39 @@ export default async function renderEmail(
   };
 
   const clearAttachmentPreview = async () => {
-    await disposeFileViewerRendered(nestedRendered);
+    const previous = nestedRendered;
     nestedRendered = undefined;
+    await disposeFileViewerRendered(previous);
+  };
+  const clearBodyPreview = async () => {
+    const previous = bodyRendered;
+    bodyRendered = undefined;
+    await disposeFileViewerRendered(previous);
+  };
+  const cleanup = async () => {
+    if (disposed) return;
+    disposed = true;
+    controller.abort();
+    bodyVersion += 1;
+    attachmentPreviewVersion += 1;
+    bodyController?.abort();
+    attachmentAbortController?.abort();
+    context?.signal?.removeEventListener('abort', abortFromParent);
+    cleanups.splice(0).forEach(cleanup => cleanup());
+    try {
+      await Promise.allSettled([clearAttachmentPreview(), clearBodyPreview()]);
+    } finally {
+      objectUrls.splice(0).forEach(url => URL.revokeObjectURL(url));
+      cidUrls.clear();
+      if (root.parentNode === target) target.replaceChildren();
+    }
   };
 
   const downloadAttachment = async (attachment: EmailAttachmentView) => {
+    signal.throwIfAborted();
     const attachmentBuffer = await attachment.load();
+    if (disposed) return;
+    signal.throwIfAborted();
     const url = URL.createObjectURL(new Blob([attachmentBuffer], { type: attachment.mimeType || 'application/octet-stream' }));
     objectUrls.push(url);
     const link = document.createElement('a');
@@ -413,8 +422,8 @@ export default async function renderEmail(
     link.remove();
   };
 
-  const renderParsedEmail = (parsed: ParsedEmailView) => {
-    let activeBody: EmailBodyMode = parsed.html ? 'html' : parsed.text ? 'text' : 'headers';
+  const renderParsedEmail = async (parsed: ParsedEmailView) => {
+    let activeBody: EmailBodyMode = parsed.html ? 'html' : parsed.rtf && context?.renderNestedBuffer ? 'rtf' : parsed.text ? 'text' : 'headers';
     let activeAttachment: EmailAttachmentView | null = null;
     const tabButtons: Array<{ mode: EmailBodyMode; button: HTMLButtonElement }> = [];
     const attachmentButtons: Array<{ id: string; button: HTMLButtonElement }> = [];
@@ -426,10 +435,12 @@ export default async function renderEmail(
     header.append(createElement('h2', undefined, parsed.subject || filename));
     const meta = createElement('div', 'email-meta');
     appendMeta(meta, t('email.meta.from'), addressText(parsed.from));
+    if (parsed.sender?.length) appendMeta(meta, msgLabels.sender, addressText(parsed.sender));
     appendMeta(meta, t('email.meta.to'), addressText(parsed.to));
     if (parsed.cc.length) {
       appendMeta(meta, t('email.meta.cc'), addressText(parsed.cc));
     }
+    if (parsed.bcc?.length) appendMeta(meta, msgLabels.bcc, addressText(parsed.bcc));
     appendMeta(meta, t('email.meta.date'), parsed.date || '-');
     header.append(meta);
 
@@ -445,31 +456,95 @@ export default async function renderEmail(
     const attachmentDownload = createElement('button', undefined, t('email.attachments.download'));
     attachmentDownload.type = 'button';
     const attachmentTarget = createElement('div', 'attachment-target') as HTMLDivElement;
-    attachmentPreviewHead.append(attachmentPreviewTitle, attachmentDownload);
+    const attachmentClose = createElement('button', undefined, '×');
+    attachmentClose.type = 'button';
+    attachmentClose.setAttribute('aria-label', msgLabels.close);
+    attachmentClose.title = msgLabels.close;
+    const attachmentActions = createElement('div', 'attachment-preview-actions');
+    attachmentActions.append(attachmentDownload, attachmentClose);
+    attachmentPreviewHead.append(attachmentPreviewTitle, attachmentActions);
     attachmentPreview.append(attachmentPreviewHead, attachmentTarget);
 
-    const renderMessageContent = () => {
-      messageContent.replaceChildren();
-      if (activeBody === 'html' && parsed.html) {
-        const iframe = createElement('iframe', 'email-html') as HTMLIFrameElement;
-        iframe.setAttribute('sandbox', '');
-        iframe.srcdoc = createHtmlSrcdoc(parsed.html, cidUrls, darkMode);
-        messageContent.append(iframe);
-        return;
-      }
+    const notices = createElement('div', 'email-notices');
+    notices.setAttribute('role', 'status');
+    const noticeKeys = new Set(parsed.warnings || []);
+    const renderNotices = () => {
+      notices.replaceChildren();
+      noticeKeys.forEach(key => notices.append(createElement('p', undefined, msgLabels[key])));
+      notices.hidden = !noticeKeys.size;
+    };
+    if (parsed.rtf && !parsed.html && !context?.renderNestedBuffer) noticeKeys.add('email.msg.rtfUnavailable');
+    renderNotices();
+
+    const renderPlainBody = (mode: 'text' | 'headers') => {
       const pre = createElement('pre', 'email-text');
-      pre.textContent = activeBody === 'text' ? parsed.text || '' : parsed.headers || '';
-      messageContent.append(pre);
+      pre.textContent = mode === 'text' ? parsed.text || '' : parsed.headers || '';
+      messageContent.replaceChildren(pre);
+    };
+    const renderMessageContent = async () => {
+      const version = ++bodyVersion;
+      bodyController?.abort();
+      const current = new AbortController();
+      bodyController = current;
+      const abort = () => current.abort(signal.reason);
+      if (signal.aborted) abort();
+      else signal.addEventListener('abort', abort, { once: true });
+      const stale = () => disposed || version !== bodyVersion || current.signal.aborted;
+      try {
+        await clearBodyPreview();
+        if (stale()) return;
+        messageContent.replaceChildren();
+        if (activeBody === 'html' && parsed.html) {
+          const iframe = createElement('iframe', 'email-html');
+          iframe.title = parsed.subject || filename;
+          iframe.setAttribute('sandbox', '');
+          iframe.referrerPolicy = 'no-referrer';
+          iframe.srcdoc = createEmailHtmlDocument(parsed.html, cidUrls, darkMode, target.ownerDocument);
+          messageContent.append(iframe);
+        } else if (activeBody === 'rtf' && parsed.rtf && context?.renderNestedBuffer) {
+          const child = createElement('div', 'email-rtf');
+          messageContent.append(child);
+          // Reuse the host's opt-in RTF capability (RTF.js), like attachments.
+          // A mail body must not inherit the host's external-resource opt-in.
+          const rendered = await context.renderNestedBuffer(parsed.rtf, 'rtf', child, {
+            ...context,
+            filename: `${filename}.rtf`,
+            sourceUrl: undefined,
+            signal: current.signal,
+            options: {
+              ...context.options,
+              docx: { ...context.options?.docx, externalResourcePolicy: 'block', externalLinkPolicy: 'block' },
+            },
+          });
+          if (stale()) { await disposeFileViewerRendered(rendered); return; }
+          bodyRendered = rendered;
+        } else {
+          renderPlainBody(activeBody === 'headers' ? 'headers' : 'text');
+        }
+      } catch (error) {
+        if (stale()) return;
+        if (activeBody === 'rtf') {
+          noticeKeys.add('email.msg.rtfUnavailable');
+          renderNotices();
+          renderPlainBody(parsed.text ? 'text' : 'headers');
+        } else {
+          throw error;
+        }
+      } finally {
+        signal.removeEventListener('abort', abort);
+      }
     };
 
     const syncTabState = () => {
       tabButtons.forEach(({ mode, button }) => {
         button.classList.toggle('active', mode === activeBody);
+        button.setAttribute('aria-pressed', String(mode === activeBody));
       });
     };
 
     const bodyModes: Array<{ key: EmailBodyMode; label: string; disabled: boolean }> = [
       { key: 'html', label: 'HTML', disabled: !parsed.html },
+      ...(parsed.rtf ? [{ key: 'rtf' as const, label: 'RTF', disabled: !context?.renderNestedBuffer }] : []),
       { key: 'text', label: t('email.tabs.text'), disabled: !parsed.text },
       { key: 'headers', label: t('email.tabs.headers'), disabled: !parsed.headers },
     ];
@@ -483,7 +558,9 @@ export default async function renderEmail(
         }
         activeBody = mode.key;
         syncTabState();
-        renderMessageContent();
+        void renderMessageContent().catch(error => {
+          if (!disposed && !signal.aborted) showError(error instanceof Error ? error.message : String(error));
+        });
       });
       tabButtons.push({ mode: mode.key, button });
       tabs.append(button);
@@ -509,21 +586,26 @@ export default async function renderEmail(
       attachmentAbortController?.abort();
       const previewAbortController = new AbortController();
       attachmentAbortController = previewAbortController;
-      const abortFromParent = () => previewAbortController.abort(context?.signal?.reason);
-      if (context?.signal?.aborted) {
-        abortFromParent();
-      } else {
-        context?.signal?.addEventListener('abort', abortFromParent, { once: true });
-      }
+      const abort = () => previewAbortController.abort(signal.reason);
+      if (signal.aborted) abort();
+      else signal.addEventListener('abort', abort, { once: true });
+      const stale = () => disposed || previewVersion !== attachmentPreviewVersion || previewAbortController.signal.aborted;
       activeAttachment = attachment;
       syncAttachmentState();
       attachmentPreview.hidden = false;
+      messagePanel.classList.add('has-attachment-preview');
+      errorElement?.remove();
+      errorElement = null;
       attachmentPreviewTitle.textContent = attachment.name;
       showLoading(t('email.attachments.opening', { name: attachment.name }));
       try {
         await clearAttachmentPreview();
+        if (stale()) return;
         attachmentTarget.replaceChildren();
         const attachmentBuffer = await attachment.load();
+        if (stale()) return;
+        const sizeLabel = attachmentButtons.find(item => item.id === attachment.id)?.button.querySelector('em');
+        if (sizeLabel) sizeLabel.textContent = formatBytes(attachmentBuffer.byteLength);
         const child = createElement('div', 'email-attachment-render') as HTMLDivElement;
         attachmentTarget.append(child);
         const extension = getAttachmentExtension(attachment.name);
@@ -531,10 +613,11 @@ export default async function renderEmail(
           const nextRendered = await context.renderNestedBuffer(attachmentBuffer, extension, child, {
             ...context,
             filename: attachment.name,
+            sourceUrl: undefined,
             options: context.options,
             signal: previewAbortController.signal,
           });
-          if (disposed || previewVersion !== attachmentPreviewVersion || previewAbortController.signal.aborted) {
+          if (stale()) {
             await disposeFileViewerRendered(nextRendered);
             return;
           }
@@ -543,13 +626,13 @@ export default async function renderEmail(
           child.append(createElement('div', undefined, t('email.attachments.nestedUnavailable', { name: attachment.name })));
         }
       } catch (nextError) {
-        if (disposed || previewVersion !== attachmentPreviewVersion || previewAbortController.signal.aborted) {
+        if (stale()) {
           return;
         }
         console.error(nextError);
         showError(nextError instanceof Error ? nextError.message : String(nextError));
       } finally {
-        context?.signal?.removeEventListener('abort', abortFromParent);
+        signal.removeEventListener('abort', abort);
         if (attachmentAbortController === previewAbortController) {
           attachmentAbortController = undefined;
         }
@@ -573,42 +656,52 @@ export default async function renderEmail(
       attachmentPanel.append(button);
     });
 
+    listen(attachmentClose, 'click', () => {
+      attachmentPreviewVersion += 1;
+      attachmentAbortController?.abort();
+      attachmentAbortController = undefined;
+      const previous = activeAttachment;
+      activeAttachment = null;
+      syncAttachmentState();
+      attachmentPreview.hidden = true;
+      messagePanel.classList.remove('has-attachment-preview');
+      hideLoading();
+      void clearAttachmentPreview().catch(() => {});
+      attachmentTarget.replaceChildren();
+      attachmentButtons.find(item => item.id === previous?.id)?.button.focus();
+    });
+
     listen(attachmentDownload, 'click', () => {
       if (activeAttachment) {
-        void downloadAttachment(activeAttachment);
+        void downloadAttachment(activeAttachment).catch(error => {
+          if (!disposed && !signal.aborted) showError(error instanceof Error ? error.message : String(error));
+        });
       }
     });
 
-    renderMessageContent();
     sidebar.append(tabs, attachmentPanel);
     messagePanel.append(messageContent, attachmentPreview);
     body.append(sidebar, messagePanel);
-    root.append(header, body);
+    root.append(header, notices, body);
+    await renderMessageContent();
   };
 
   showLoading(t('email.loading.parsing'));
   try {
-    const parsed = await parseEmail(buffer, normalizedType, filename, objectUrls, cidUrls, t);
-    renderParsedEmail(parsed);
+    signal.throwIfAborted();
+    const parsed = await parseEmail(buffer, normalizedType, filename, objectUrls, cidUrls, t, signal);
+    signal.throwIfAborted();
+    await renderParsedEmail(parsed);
+    signal.throwIfAborted();
   } catch (nextError) {
-    console.error(nextError);
-    root.replaceChildren();
-    showError(nextError instanceof Error ? nextError.message : String(nextError));
+    await cleanup();
+    throw nextError;
   } finally {
     hideLoading();
   }
 
   return {
     $el: root,
-    async unmount() {
-      disposed = true;
-      attachmentPreviewVersion += 1;
-      attachmentAbortController?.abort();
-      attachmentAbortController = undefined;
-      await clearAttachmentPreview();
-      cleanups.splice(0).forEach(cleanup => cleanup());
-      objectUrls.forEach(url => URL.revokeObjectURL(url));
-      target.replaceChildren();
-    },
+    unmount: cleanup,
   };
 }

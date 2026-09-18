@@ -58,7 +58,10 @@
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "type-check": "tsc -b tsconfig.json",
-    "verify:github-232": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-github-232.mjs"
+    "verify:email": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-github-232.mjs && node --test test/msg.test.mjs",
+    "verify:github-232": "pnpm verify:email",
+    "verify:msg": "pnpm --filter @file-viewer/core build && pnpm build && node --test test/msg.test.mjs",
+    "verify:msg:browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-msg-browser.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.1",
