@@ -51,7 +51,6 @@ import {
   toggleFileViewerColorScheme
 } from '@file-viewer/core'
 import type {
-  FileViewerComponentEmits as FileViewerEmits,
   FileViewerComponentProps as FileViewerProps,
   FileViewerOptions,
   FileViewerResolvedThemeMode
@@ -75,7 +74,7 @@ import {
   resolveFileViewerLoadingVisual,
   type FileViewerLoadingVisualFamily
 } from './loadingVisual'
-import type { FileViewerToolbarSlotProps } from '../../common/type'
+import type { FileViewerEmits, FileViewerToolbarSlotProps } from '../../common/type'
 
 const props = defineProps<FileViewerProps>()
 
@@ -235,7 +234,11 @@ const {
   showError,
   clearError,
   resetLoading
-} = useLoading(currentExtend, () => effectiveOptions.value)
+} = useLoading(
+  currentExtend,
+  () => effectiveOptions.value,
+  message => emit('error', message)
+)
 
 const LOADING_ICONS: Readonly<Record<FileViewerLoadingVisualFamily, Component>> = Object.freeze({
   word: FileText,
@@ -671,7 +674,11 @@ useViewerPreviewLifecycle({
   getUrl: () => props.url,
   getSourceFilename: () => props.filename || props.name,
   refreshPreview,
-  getRenderOptions: () => [effectiveOptions.value?.docx, effectiveOptions.value?.text],
+  getRenderOptions: () => [
+    effectiveOptions.value?.docx,
+    effectiveOptions.value?.text,
+    effectiveOptions.value?.image
+  ],
   cancelPreview,
   clearRenderedContent,
   resetLoading,
