@@ -509,7 +509,6 @@ export default async function renderEmail(
           const rendered = await context.renderNestedBuffer(parsed.rtf, 'rtf', child, {
             ...context,
             filename: `${filename}.rtf`,
-            sourceUrl: undefined,
             signal: current.signal,
             options: {
               ...context.options,
@@ -613,7 +612,6 @@ export default async function renderEmail(
           const nextRendered = await context.renderNestedBuffer(attachmentBuffer, extension, child, {
             ...context,
             filename: attachment.name,
-            sourceUrl: undefined,
             options: context.options,
             signal: previewAbortController.signal,
           });
