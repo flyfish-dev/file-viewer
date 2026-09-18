@@ -236,6 +236,7 @@ export async function renderTiffWithDecoder(
   assertTiffSourceSafety(buffer);
 
   const t = createFileViewerTranslator(context?.options);
+  const rotationEnabled = context?.options?.image?.rotation !== false;
   const documentRef = target.ownerDocument || document;
   const windowRef = documentRef.defaultView;
   const urlApi = windowRef?.URL || URL;
@@ -280,7 +281,16 @@ export async function renderTiffWithDecoder(
   rotationMeter.className = 'tiff-rotation-meter';
   rotationMeter.textContent = '0°';
   const rotateRightButton = createButton(t('image.toolbar.rotateRight'), '↻');
-  toolbar.append(pageMeter, rotateLeftButton, rotationMeter, rotateRightButton);
+  toolbar.append(pageMeter);
+  if (rotationEnabled) {
+    toolbar.append(rotateLeftButton, rotationMeter, rotateRightButton);
+  } else {
+    // Keep the page status without an empty, misleading rotation toolbar.
+    toolbar.removeAttribute('role');
+    toolbar.removeAttribute('aria-label');
+    pageMeter.style.borderRight = 'none';
+    pageMeter.style.paddingRight = '0';
+  }
   const stage = documentRef.createElement('div');
   stage.className = 'tiff-stage';
   root.append(toolbar, stage);
@@ -375,6 +385,7 @@ export async function renderTiffWithDecoder(
     source: FileViewerViewStateChangeSource,
     notify = true
   ) => {
+    if (!rotationEnabled) return getViewState();
     currentRotation = normalizeRotation(rotation);
     rotationMeter.textContent = `${currentRotation}°`;
     lightbox.setRotation(currentRotation);
