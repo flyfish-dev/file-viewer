@@ -251,12 +251,17 @@ export type FileViewerBeforeOperation = CoreFileViewerBeforeOperation;
 
 export type FileViewerProps = CoreFileViewerComponentProps;
 
-export type FileViewerEventMap = CoreFileViewerComponentEventMap;
+export type FileViewerEventMap = CoreFileViewerComponentEventMap & {
+  /** Localized display message for a preview or viewer-operation failure. */
+  error: string;
+};
 
 /**
  * `<file-viewer>` 组件的标准事件契约。
  */
-export type FileViewerEmits = CoreFileViewerComponentEmits;
+export interface FileViewerEmits extends CoreFileViewerComponentEmits {
+  (event: 'error', message: FileViewerEventMap['error']): void;
+}
 
 /**
  * `<file-viewer>` 组件实例对外暴露的统一方法集。
