@@ -71,7 +71,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: 4.1.11
-        version: 4.1.11(@types/node@26.5.1)(happy-dom@20.14.5)(jsdom@27.4.0)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
+        version: 4.1.11(@types/node@26.5.1)(happy-dom@20.14.5)(jsdom@27.4.0)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
       vue:
         specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -152,14 +152,14 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   apps/docs-site:
     dependencies:
       '@fumadocs/language':
         specifier: 0.2.4
-        version: 0.2.4(@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3))(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))
+        version: 0.2.4(@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3))(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))
       '@tabler/icons-react':
         specifier: 3.46.0
         version: 3.46.0(react@19.3.0)
@@ -170,14 +170,14 @@ importers:
         specifier: 0.8.212
         version: 0.8.212
       fumadocs-core:
-        specifier: 16.15.8
-        version: 16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
+        specifier: 16.15.9
+        version: 16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
       fumadocs-mdx:
         specifier: 15.4.0
-        version: 15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react@19.3.0)(rolldown@1.2.8)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
+        version: 15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react@19.3.0)(rolldown@1.2.8)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
       fumadocs-ui:
         specifier: npm:@fumadocs/base-ui@16.15.8
-        version: '@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3)'
+        version: '@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3)'
       next:
         specifier: 16.3.4
         version: 16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1)
@@ -233,7 +233,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.8(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.8(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vue/tsconfig':
         specifier: ^0.9.1
         version: 0.9.1(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))
@@ -241,8 +241,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
       vue-tsc:
         specifier: ^3.3.4
         version: 3.3.11(typescript@6.0.3)
@@ -291,10 +291,10 @@ importers:
         version: 6.15.1
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.8(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.8(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vitejs/plugin-vue-jsx':
         specifier: ^5.1.5
-        version: 5.1.6(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 5.1.6(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vue/tsconfig':
         specifier: ^0.9.1
         version: 0.9.1(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))
@@ -320,8 +320,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
       vue-tsc:
         specifier: ^3.3.4
         version: 3.3.11(typescript@6.0.3)
@@ -339,8 +339,8 @@ importers:
         version: link:../../packages/components/web
     devDependencies:
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   examples/react-vite:
     dependencies:
@@ -368,13 +368,13 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.1.1
-        version: 6.1.1(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
+        version: 6.1.1(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   examples/vanilla-vite:
     dependencies:
@@ -392,8 +392,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   examples/vue3-vite:
     dependencies:
@@ -409,13 +409,13 @@ importers:
         version: link:../../packages/presets/vite-plugin
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.8(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.8(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
       vue-tsc:
         specifier: ^3.3.4
         version: 3.3.11(typescript@6.0.3)
@@ -611,8 +611,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   packages/components/jquery:
     dependencies:
@@ -838,10 +838,10 @@ importers:
         version: 26.5.1
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.8(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.8(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vitejs/plugin-vue-jsx':
         specifier: ^5.1.5
-        version: 5.1.6(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 5.1.6(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vue/language-core':
         specifier: ^3.3.4
         version: 3.3.11
@@ -855,11 +855,11 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: 8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
       vite-plugin-dts:
         specifier: 5.1.0
-        version: 5.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
+        version: 5.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
       vue:
         specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -902,8 +902,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   packages/components/web-full:
     dependencies:
@@ -996,8 +996,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   packages/core:
     dependencies:
@@ -1269,8 +1269,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   packages/renderers/3d:
     dependencies:
@@ -1419,8 +1419,8 @@ importers:
         specifier: workspace:3.1.1
         version: link:../data
       '@paged-media/introspect-wasm':
-        specifier: 0.62.0
-        version: 0.62.0
+        specifier: 0.63.0
+        version: 0.63.0
       '@webtoon/psd':
         specifier: 0.4.0
         version: 0.4.0
@@ -2032,7 +2032,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: 4.1.11
-        version: 4.1.11(@types/node@26.5.1)(happy-dom@20.14.5)(jsdom@27.4.0)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
+        version: 4.1.11(@types/node@26.5.1)(happy-dom@20.14.5)(jsdom@27.4.0)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
 
   packages/tools/asset-installer:
     devDependencies:
@@ -3098,8 +3098,8 @@ packages:
   '@oxc-project/types@0.149.0':
     resolution: {integrity: sha512-Efcc+iF0j3Bf67YjEqIqWXbX5XddXoK/Mw4K1/JuXwRCZ8N16VR7iT23nlCc9XrveFVh/E5Rqs2StT0V8v9LdA==}
 
-  '@paged-media/introspect-wasm@0.62.0':
-    resolution: {integrity: sha512-k+0ac4aMdA8we5n1yb7fOOaCiuvF4L6cfKHOZmlNHT7tYLFMj9mI2klbpMoCkxtB5ECAoAnF924dmcGFdncFkA==}
+  '@paged-media/introspect-wasm@0.63.0':
+    resolution: {integrity: sha512-BGzd0K9Zfw7tD+AKbYKnTt9EhG/VrpvcuonqvBY2Eh5VWvccsebxbya2VE9w0AifDc/wjNoVCSI0Le+ASZT4OQ==}
 
   '@panzoom/panzoom@4.6.2':
     resolution: {integrity: sha512-Zn3B5/hwa6eYIPRSKX0xf2clv8nviTX8AnAU5kU/EugiTDhG41ya2wlBqYrZJYCWQROr/5XkWObZhIkepi89qw==}
@@ -4778,11 +4778,12 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  fumadocs-core@16.15.8:
-    resolution: {integrity: sha512-becV45sD2Mki57WgICAocwp0ufvydy3nj+AWIBnik7Im00MrAx81DW9a6lIa94NDSHGLZFNfDMdaNeHuUuya/A==}
+  fumadocs-core@16.15.9:
+    resolution: {integrity: sha512-aefFBU1e9w+pX23qpM2QT9g99hhGYe7fV1H19A8ozcyU9DqW0iBL3kH9/c6wMKOnVd643xaY8JzMdSiVA7XKIA==}
     peerDependencies:
       '@mdx-js/mdx': '*'
       '@mixedbread/sdk': 0.x.x
+      '@modelcontextprotocol/server': 2.x.x
       '@orama/core': 1.x.x
       '@oramacloud/client': 2.x.x
       '@tanstack/react-router': 1.x.x
@@ -4803,6 +4804,8 @@ packages:
       '@mdx-js/mdx':
         optional: true
       '@mixedbread/sdk':
+        optional: true
+      '@modelcontextprotocol/server':
         optional: true
       '@orama/core':
         optional: true
@@ -5557,8 +5560,8 @@ packages:
   mgrs@1.0.0:
     resolution: {integrity: sha512-awNbTOqCxK1DBGjalK3xqWIstBZgN6fxsMSiXLs9/spqWkF2pAhb2rrYCFSsr1/tT7PhcDGjZndG8SWYn0byYA==}
 
-  micromark-core-commonmark@2.0.0:
-    resolution: {integrity: sha512-jThOz/pVmAYUtkroV3D5c1osFXAMv9e0ypGDOIZuCeAe91/sD6BoE2Sjzt30yuXtwOYUmySOhMas/PVyh02itA==}
+  micromark-core-commonmark@2.0.3:
+    resolution: {integrity: sha512-RDBrHEMSxVFLg6xvnXmb1Ayr2WzLAWjeSATAoxwKYJV94TeNavgoIdA0a9ytzDSVzBy2YKFK+emCPOEibLeCrg==}
 
   micromark-extension-gfm-autolink-literal@2.1.0:
     resolution: {integrity: sha512-oOg7knzhicgQ3t4QCjCWgTmfNhvQbDDnJeVu9v81r7NltNCVmhPy1fJRX27pISafdjL+SVc4d3l48Gb6pbRypw==}
@@ -5596,71 +5599,71 @@ packages:
   micromark-extension-mdxjs@3.0.0:
     resolution: {integrity: sha512-A873fJfhnJ2siZyUrJ31l34Uqwy4xIFmvPY1oj+Ean5PHcPBYzEsvqvWGaWcfEIr11O5Dlw3p2y0tZWpKHDejQ==}
 
-  micromark-factory-destination@2.0.0:
-    resolution: {integrity: sha512-j9DGrQLm/Uhl2tCzcbLhy5kXsgkHUrjJHg4fFAeoMRwJmJerT9aw4FEhIbZStWN8A3qMwOp1uzHr4UL8AInxtA==}
+  micromark-factory-destination@2.0.1:
+    resolution: {integrity: sha512-Xe6rDdJlkmbFRExpTOmRj9N3MaWmbAgdpSrBQvCFqhezUn4AHqJHbaEnfbVYYiexVSs//tqOdY/DxhjdCiJnIA==}
 
-  micromark-factory-label@2.0.0:
-    resolution: {integrity: sha512-RR3i96ohZGde//4WSe/dJsxOX6vxIg9TimLAS3i4EhBAFx8Sm5SmqVfR8E87DPSR31nEAjZfbt91OMZWcNgdZw==}
+  micromark-factory-label@2.0.1:
+    resolution: {integrity: sha512-VFMekyQExqIW7xIChcXn4ok29YE3rnuyveW3wZQWWqF4Nv9Wk5rgJ99KzPvHjkmPXF93FXIbBp6YdW3t71/7Vg==}
 
   micromark-factory-mdx-expression@2.0.0:
     resolution: {integrity: sha512-2Q5+jhTBhtMdNDN9aQb9WWhpmO3ALY+eNTPfZZpDRdbK5m/bywnexvvNrP5EKdIg83udifcxpB0jyJOGKuMA9Q==}
 
-  micromark-factory-space@2.0.0:
-    resolution: {integrity: sha512-TKr+LIDX2pkBJXFLzpyPyljzYK3MtmllMUMODTQJIUfDGncESaqB90db9IAUcz4AZAJFdd8U9zOp9ty1458rxg==}
+  micromark-factory-space@2.0.1:
+    resolution: {integrity: sha512-zRkxjtBxxLd2Sc0d+fbnEunsTj46SWXgXciZmHq0kDYGnck/ZSGj9/wULTV95uoeYiK5hRXP2mJ98Uo4cq/LQg==}
 
-  micromark-factory-title@2.0.0:
-    resolution: {integrity: sha512-jY8CSxmpWLOxS+t8W+FG3Xigc0RDQA9bKMY/EwILvsesiRniiVMejYTE4wumNc2f4UbAa4WsHqe3J1QS1sli+A==}
+  micromark-factory-title@2.0.1:
+    resolution: {integrity: sha512-5bZ+3CjhAd9eChYTHsjy6TGxpOFSKgKKJPJxr293jTbfry2KDoWkhBb6TcPVB4NmzaPhMs1Frm9AZH7OD4Cjzw==}
 
-  micromark-factory-whitespace@2.0.0:
-    resolution: {integrity: sha512-28kbwaBjc5yAI1XadbdPYHX/eDnqaUFVikLwrO7FDnKG7lpgxnvk/XGRhX/PN0mOZ+dBSZ+LgunHS+6tYQAzhA==}
+  micromark-factory-whitespace@2.0.1:
+    resolution: {integrity: sha512-Ob0nuZ3PKt/n0hORHyvoD9uZhr+Za8sFoP+OnMcnWK5lngSzALgQYKMr9RJVOWLqQYuyn6ulqGWSXdwf6F80lQ==}
 
-  micromark-util-character@2.0.0:
-    resolution: {integrity: sha512-DtHHqgTRz32ylwiGSZwoK+BTx4gaq//ig71g20pwBwRLxo3CfInyD+NyTrriLOhPz5WQOfAOSLLbKOaaGXWz9Q==}
+  micromark-util-character@2.1.1:
+    resolution: {integrity: sha512-wv8tdUTJ3thSFFFJKtpYKOYiGP2+v96Hvk4Tu8KpCAsTMs6yi+nVmGh1syvSCsaxz45J6Jbw+9DD6g97+NV67Q==}
 
-  micromark-util-chunked@2.0.0:
-    resolution: {integrity: sha512-anK8SWmNphkXdaKgz5hJvGa7l00qmcaUQoMYsBwDlSKFKjc6gjGXPDw3FNL3Nbwq5L8gE+RCbGqTw49FK5Qyvg==}
+  micromark-util-chunked@2.0.1:
+    resolution: {integrity: sha512-QUNFEOPELfmvv+4xiNg2sRYeS/P84pTW0TCgP5zc9FpXetHY0ab7SxKyAQCNCc1eK0459uoLI1y5oO5Vc1dbhA==}
 
-  micromark-util-classify-character@2.0.0:
-    resolution: {integrity: sha512-S0ze2R9GH+fu41FA7pbSqNWObo/kzwf8rN/+IGlW/4tC6oACOs8B++bh+i9bVyNnwCcuksbFwsBme5OCKXCwIw==}
+  micromark-util-classify-character@2.0.1:
+    resolution: {integrity: sha512-K0kHzM6afW/MbeWYWLjoHQv1sgg2Q9EccHEDzSkxiP/EaagNzCm7T/WMKZ3rjMbvIpvBiZgwR3dKMygtA4mG1Q==}
 
-  micromark-util-combine-extensions@2.0.0:
-    resolution: {integrity: sha512-vZZio48k7ON0fVS3CUgFatWHoKbbLTK/rT7pzpJ4Bjp5JjkZeasRfrS9wsBdDJK2cJLHMckXZdzPSSr1B8a4oQ==}
+  micromark-util-combine-extensions@2.0.1:
+    resolution: {integrity: sha512-OnAnH8Ujmy59JcyZw8JSbK9cGpdVY44NKgSM7E9Eh7DiLS2E9RNQf0dONaGDzEG9yjEl5hcqeIsj4hfRkLH/Bg==}
 
-  micromark-util-decode-numeric-character-reference@2.0.0:
-    resolution: {integrity: sha512-pIgcsGxpHEtTG/rPJRz/HOLSqp5VTuIIjXlPI+6JSDlK2oljApusG6KzpS8AF0ENUMCHlC/IBb5B9xdFiVlm5Q==}
+  micromark-util-decode-numeric-character-reference@2.0.2:
+    resolution: {integrity: sha512-ccUbYk6CwVdkmCQMyr64dXz42EfHGkPQlBj5p7YVGzq8I7CtjXZJrubAYezf7Rp+bjPseiROqe7G6foFd+lEuw==}
 
   micromark-util-decode-string@2.0.1:
     resolution: {integrity: sha512-nDV/77Fj6eH1ynwscYTOsbK7rR//Uj0bZXBwJZRfaLEJ1iGBR6kIfNmlNqaqJf649EP0F3NWNdeJi03elllNUQ==}
 
-  micromark-util-encode@2.0.0:
-    resolution: {integrity: sha512-pS+ROfCXAGLWCOc8egcBvT0kf27GoWMqtdarNfDcjb6YLuV5cM3ioG45Ys2qOVqeqSbjaKg72vU+Wby3eddPsA==}
+  micromark-util-encode@2.0.1:
+    resolution: {integrity: sha512-c3cVx2y4KqUnwopcO9b/SCdo2O67LwJJ/UyqGfbigahfegL9myoEFoDYZgkT7f36T0bLrM9hZTAaAyH+PCAXjw==}
 
   micromark-util-events-to-acorn@2.0.3:
     resolution: {integrity: sha512-jmsiEIiZ1n7X1Rr5k8wVExBQCg5jy4UXVADItHmNk1zkwEVhBuIUKRu3fqv+hs4nxLISi2DQGlqIOGiFxgbfHg==}
 
-  micromark-util-html-tag-name@2.0.0:
-    resolution: {integrity: sha512-xNn4Pqkj2puRhKdKTm8t1YHC/BAjx6CEwRFXntTaRf/x16aqka6ouVoutm+QdkISTlT7e2zU7U4ZdlDLJd2Mcw==}
+  micromark-util-html-tag-name@2.0.1:
+    resolution: {integrity: sha512-2cNEiYDhCWKI+Gs9T0Tiysk136SnR13hhO8yW6BGNyhOC4qYFnwF1nKfD3HFAIXA5c45RrIG1ub11GiXeYd1xA==}
 
-  micromark-util-normalize-identifier@2.0.0:
-    resolution: {integrity: sha512-2xhYT0sfo85FMrUPtHcPo2rrp1lwbDEEzpx7jiH2xXJLqBuy4H0GgXk5ToU8IEwoROtXuL8ND0ttVa4rNqYK3w==}
+  micromark-util-normalize-identifier@2.0.1:
+    resolution: {integrity: sha512-sxPqmo70LyARJs0w2UclACPUUEqltCkJ6PhKdMIDuJ3gSf/Q+/GIe3WKl0Ijb/GyH9lOpUkRAO2wp0GVkLvS9Q==}
 
-  micromark-util-resolve-all@2.0.0:
-    resolution: {integrity: sha512-6KU6qO7DZ7GJkaCgwBNtplXCvGkJToU86ybBAUdavvgsCiG8lSSvYxr9MhwmQ+udpzywHsl4RpGJsYWG1pDOcA==}
+  micromark-util-resolve-all@2.0.1:
+    resolution: {integrity: sha512-VdQyxFWFT2/FGJgwQnJYbe1jjQoNTS4RjglmSjTUlpUMa95Htx9NHeYW4rGDJzbjvCsl9eLjMQwGeElsqmzcHg==}
 
-  micromark-util-sanitize-uri@2.0.0:
-    resolution: {integrity: sha512-WhYv5UEcZrbAtlsnPuChHUAsu/iBPOVaEVsntLBIdpibO0ddy8OzavZz3iL2xVvBZOpolujSliP65Kq0/7KIYw==}
+  micromark-util-sanitize-uri@2.0.1:
+    resolution: {integrity: sha512-9N9IomZ/YuGGZZmQec1MbgxtlgougxTodVwDzzEouPKo3qFWvymFHWcnDi2vzV1ff6kas9ucW+o3yzJK9YB1AQ==}
 
-  micromark-util-subtokenize@2.0.0:
-    resolution: {integrity: sha512-vc93L1t+gpR3p8jxeVdaYlbV2jTYteDje19rNSS/H5dlhxUYll5Fy6vJ2cDwP8RnsXi818yGty1ayP55y3W6fg==}
+  micromark-util-subtokenize@2.1.0:
+    resolution: {integrity: sha512-XQLu552iSctvnEcgXw6+Sx75GflAPNED1qx7eBJ+wydBb2KCbRZe+NwvIEEMM83uml1+2WSXpBAcp9IUCgCYWA==}
 
-  micromark-util-symbol@2.0.0:
-    resolution: {integrity: sha512-8JZt9ElZ5kyTnO94muPxIGS8oyElRJaiJO8EzV6ZSyGQ1Is8xwl4Q45qU5UOg+bGH4AikWziz0iN4sFLWs8PGw==}
+  micromark-util-symbol@2.0.1:
+    resolution: {integrity: sha512-vs5t8Apaud9N28kgCrRUdEed4UJ+wWNvicHLPxCa9ENlYuAY31M0ETy5y1vA33YoNPDFTghEbnh6efaE8h4x0Q==}
 
-  micromark-util-types@2.0.0:
-    resolution: {integrity: sha512-oNh6S2WMHWRZrmutsRmDDfkzKtxF+bc2VxLC9dvtrDIRFln627VsFP6fLMgTryGDljgLPjkrzQSDcPrjPyDJ5w==}
+  micromark-util-types@2.0.2:
+    resolution: {integrity: sha512-Yw0ECSpJoViF1qTU4DC6NwtC4aWGt1EkzaQB8KPPyCRR8z9TWeV0HbEFGTO+ZY1wB22zmxnJqhPyTpOVCpeHTA==}
 
-  micromark@4.0.0:
-    resolution: {integrity: sha512-o/sd0nMof8kYff+TqcDx3VSrgBTcZpSvYcAHIfHhv5VAuNmisCxjhx6YmxS8PFEpb9z5WKWKPdzf0jM23ro3RQ==}
+  micromark@4.0.2:
+    resolution: {integrity: sha512-zpe98Q6kvavpCr1NPVSCMebCKfD7CA2NqZ+rykeNhONIJBpc1tFKt9hucLGwha3jNTNI8lHpctWJWoimVF4PfA==}
 
   midi-file@1.2.4:
     resolution: {integrity: sha512-B5SnBC6i2bwJIXTY9MElIydJwAmnKx+r5eJ1jknTLetzLflEl0GWveuBB6ACrQpecSRkOB6fhTx1PwXk2BVxnA==}
@@ -6613,13 +6616,13 @@ packages:
       vite:
         optional: true
 
-  vite@8.2.2:
-    resolution: {integrity: sha512-cFKLV/PRgAUlIRm5WjMjJ86jrftzpqcgH+Us+DS8mI3CDNiH30Whrz8uHL3+MOLPAgqbMBAqWdAHAphOAM+z/Q==}
+  vite@8.3.0:
+    resolution: {integrity: sha512-lhZBVvEHefgE+HQZC9O7EBJgCU/nVzFNl7vkS4RE0APtWLP02/8QVIkQtzBxPquh7lq5/78NHipTj7ODQ6XuyQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
       '@types/node': ^20.19.0 || >=22.12.0
-      '@vitejs/devtools': ^0.4.0 || ^0.5.0
+      '@vitejs/devtools': ^0.7.1
       esbuild: ^0.27.0 || ^0.28.0
       jiti: '>=1.21.0'
       less: ^4.0.0
@@ -7271,14 +7274,14 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3)':
+  '@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3)':
     dependencies:
       '@base-ui/react': 1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@fuma-translate/react': 1.0.2(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@fumadocs/tailwind': 0.1.1(tailwindcss@4.3.3)
       class-variance-authority: 0.7.1
       cn: 0.2.6
-      fumadocs-core: 16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
+      fumadocs-core: 16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
       lucide-react: 1.45.0(react@19.3.0)
       motion: 13.2.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       next-themes: 0.4.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -7298,10 +7301,10 @@ snapshots:
       - date-fns
       - tailwindcss
 
-  '@fumadocs/language@0.2.4(@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3))(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))':
+  '@fumadocs/language@0.2.4(@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3))(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))':
     optionalDependencies:
-      fumadocs-core: 16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
-      fumadocs-ui: '@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3)'
+      fumadocs-core: 16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
+      fumadocs-ui: '@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3)'
 
   '@fumadocs/tailwind@0.1.1(tailwindcss@4.3.3)':
     optionalDependencies:
@@ -7668,7 +7671,7 @@ snapshots:
 
   '@oxc-project/types@0.149.0': {}
 
-  '@paged-media/introspect-wasm@0.62.0': {}
+  '@paged-media/introspect-wasm@0.63.0': {}
 
   '@panzoom/panzoom@4.6.2': {}
 
@@ -8188,27 +8191,27 @@ snapshots:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
 
-  '@vitejs/plugin-react@6.1.1(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))':
+  '@vitejs/plugin-react@6.1.1(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
-  '@vitejs/plugin-vue-jsx@5.1.6(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
+  '@vitejs/plugin-vue-jsx@5.1.6(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/plugin-syntax-typescript': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-typescript': 7.29.7(@babel/core@7.29.7)
       '@rolldown/pluginutils': 1.0.1
       '@vue/babel-plugin-jsx': 2.0.1(@babel/core@7.29.7)
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
       vue: 3.5.42(typescript@6.0.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@6.0.8(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
+  '@vitejs/plugin-vue@6.0.8(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
       vue: 3.5.42(typescript@6.0.3)
 
   '@vitest/expect@4.1.11':
@@ -8220,13 +8223,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.1
 
-  '@vitest/mocker@4.1.11(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))':
+  '@vitest/mocker@4.1.11(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))':
     dependencies:
       '@vitest/spy': 4.1.11
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
 
   '@vitest/pretty-format@4.1.11':
     dependencies:
@@ -9347,7 +9350,7 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4):
+  fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4):
     dependencies:
       '@fumari/image-size': 0.1.0
       estree-util-value-to-estree: 3.5.0
@@ -9383,14 +9386,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react@19.3.0)(rolldown@1.2.8)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
+  fumadocs-mdx@15.4.0(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react@19.3.0)(rolldown@1.2.8)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
     dependencies:
       '@mdx-js/mdx': 3.1.1
       '@standard-schema/spec': 1.1.0
       chokidar: 5.0.0
       esbuild: 0.28.2
       estree-util-value-to-estree: 3.5.0
-      fumadocs-core: 16.15.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
+      fumadocs-core: 16.15.9(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.45.0(react@19.3.0))(next@16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.4)
       github-slugger: 2.0.0
       magic-string: 1.3.1
       mdast-util-mdx: 3.0.0
@@ -9412,7 +9415,7 @@ snapshots:
       next: 16.3.4(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.104.1)
       react: 19.3.0
       rolldown: 1.2.8
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -10076,12 +10079,12 @@ snapshots:
       decode-named-character-reference: 1.3.0
       devlop: 1.1.0
       mdast-util-to-string: 4.0.0
-      micromark: 4.0.0
-      micromark-util-decode-numeric-character-reference: 2.0.0
+      micromark: 4.0.2
+      micromark-util-decode-numeric-character-reference: 2.0.2
       micromark-util-decode-string: 2.0.1
-      micromark-util-normalize-identifier: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-normalize-identifier: 2.0.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
       unist-util-stringify-position: 4.0.0
     transitivePeerDependencies:
       - supports-color
@@ -10092,7 +10095,7 @@ snapshots:
       ccount: 2.0.1
       devlop: 1.1.0
       mdast-util-find-and-replace: 3.0.2
-      micromark-util-character: 2.0.0
+      micromark-util-character: 2.1.1
 
   mdast-util-gfm-footnote@2.1.0:
     dependencies:
@@ -10100,7 +10103,7 @@ snapshots:
       devlop: 1.1.0
       mdast-util-from-markdown: 2.0.3
       mdast-util-to-markdown: 2.1.2
-      micromark-util-normalize-identifier: 2.0.0
+      micromark-util-normalize-identifier: 2.0.1
     transitivePeerDependencies:
       - supports-color
 
@@ -10203,7 +10206,7 @@ snapshots:
       '@types/mdast': 4.0.4
       '@ungap/structured-clone': 1.4.0
       devlop: 1.1.0
-      micromark-util-sanitize-uri: 2.0.0
+      micromark-util-sanitize-uri: 2.0.1
       trim-lines: 3.0.1
       unist-util-position: 5.0.0
       unist-util-visit: 5.1.0
@@ -10216,7 +10219,7 @@ snapshots:
       longest-streak: 3.1.0
       mdast-util-phrasing: 4.1.0
       mdast-util-to-string: 4.0.0
-      micromark-util-classify-character: 2.0.0
+      micromark-util-classify-character: 2.0.1
       micromark-util-decode-string: 2.0.1
       unist-util-visit: 5.1.0
       zwitch: 2.0.4
@@ -10258,71 +10261,71 @@ snapshots:
 
   mgrs@1.0.0: {}
 
-  micromark-core-commonmark@2.0.0:
+  micromark-core-commonmark@2.0.3:
     dependencies:
       decode-named-character-reference: 1.3.0
       devlop: 1.1.0
-      micromark-factory-destination: 2.0.0
-      micromark-factory-label: 2.0.0
-      micromark-factory-space: 2.0.0
-      micromark-factory-title: 2.0.0
-      micromark-factory-whitespace: 2.0.0
-      micromark-util-character: 2.0.0
-      micromark-util-chunked: 2.0.0
-      micromark-util-classify-character: 2.0.0
-      micromark-util-html-tag-name: 2.0.0
-      micromark-util-normalize-identifier: 2.0.0
-      micromark-util-resolve-all: 2.0.0
-      micromark-util-subtokenize: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-factory-destination: 2.0.1
+      micromark-factory-label: 2.0.1
+      micromark-factory-space: 2.0.1
+      micromark-factory-title: 2.0.1
+      micromark-factory-whitespace: 2.0.1
+      micromark-util-character: 2.1.1
+      micromark-util-chunked: 2.0.1
+      micromark-util-classify-character: 2.0.1
+      micromark-util-html-tag-name: 2.0.1
+      micromark-util-normalize-identifier: 2.0.1
+      micromark-util-resolve-all: 2.0.1
+      micromark-util-subtokenize: 2.1.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-gfm-autolink-literal@2.1.0:
     dependencies:
-      micromark-util-character: 2.0.0
-      micromark-util-sanitize-uri: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-character: 2.1.1
+      micromark-util-sanitize-uri: 2.0.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-gfm-footnote@2.1.0:
     dependencies:
       devlop: 1.1.0
-      micromark-core-commonmark: 2.0.0
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
-      micromark-util-normalize-identifier: 2.0.0
-      micromark-util-sanitize-uri: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-core-commonmark: 2.0.3
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
+      micromark-util-normalize-identifier: 2.0.1
+      micromark-util-sanitize-uri: 2.0.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-gfm-strikethrough@2.1.0:
     dependencies:
       devlop: 1.1.0
-      micromark-util-chunked: 2.0.0
-      micromark-util-classify-character: 2.0.0
-      micromark-util-resolve-all: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-chunked: 2.0.1
+      micromark-util-classify-character: 2.0.1
+      micromark-util-resolve-all: 2.0.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-gfm-table@2.1.2:
     dependencies:
       devlop: 1.1.0
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-gfm-tagfilter@2.0.0:
     dependencies:
-      micromark-util-types: 2.0.0
+      micromark-util-types: 2.0.2
 
   micromark-extension-gfm-task-list-item@2.1.0:
     dependencies:
       devlop: 1.1.0
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-gfm@3.0.0:
     dependencies:
@@ -10332,19 +10335,19 @@ snapshots:
       micromark-extension-gfm-table: 2.1.2
       micromark-extension-gfm-tagfilter: 2.0.0
       micromark-extension-gfm-task-list-item: 2.1.0
-      micromark-util-combine-extensions: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-combine-extensions: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-mdx-expression@3.0.0:
     dependencies:
       '@types/estree': 1.0.9
       devlop: 1.1.0
       micromark-factory-mdx-expression: 2.0.0
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
       micromark-util-events-to-acorn: 2.0.3
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-extension-mdx-jsx@3.0.2:
     dependencies:
@@ -10352,26 +10355,26 @@ snapshots:
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
       micromark-factory-mdx-expression: 2.0.0
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
       micromark-util-events-to-acorn: 2.0.3
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
       vfile-message: 4.0.3
 
   micromark-extension-mdx-md@2.0.0:
     dependencies:
-      micromark-util-types: 2.0.0
+      micromark-util-types: 2.0.2
 
   micromark-extension-mdxjs-esm@3.0.0:
     dependencies:
       '@types/estree': 1.0.9
       devlop: 1.1.0
-      micromark-core-commonmark: 2.0.0
-      micromark-util-character: 2.0.0
+      micromark-core-commonmark: 2.0.3
+      micromark-util-character: 2.1.1
       micromark-util-events-to-acorn: 2.0.3
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
       unist-util-position-from-estree: 2.0.0
       vfile-message: 4.0.3
 
@@ -10383,84 +10386,84 @@ snapshots:
       micromark-extension-mdx-jsx: 3.0.2
       micromark-extension-mdx-md: 2.0.0
       micromark-extension-mdxjs-esm: 3.0.0
-      micromark-util-combine-extensions: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-combine-extensions: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-factory-destination@2.0.0:
+  micromark-factory-destination@2.0.1:
     dependencies:
-      micromark-util-character: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-character: 2.1.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-factory-label@2.0.0:
+  micromark-factory-label@2.0.1:
     dependencies:
       devlop: 1.1.0
-      micromark-util-character: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-character: 2.1.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
   micromark-factory-mdx-expression@2.0.0:
     dependencies:
       '@types/estree': 1.0.9
       devlop: 1.1.0
-      micromark-util-character: 2.0.0
+      micromark-util-character: 2.1.1
       micromark-util-events-to-acorn: 2.0.3
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
       unist-util-position-from-estree: 1.1.2
       vfile-message: 4.0.3
 
-  micromark-factory-space@2.0.0:
+  micromark-factory-space@2.0.1:
     dependencies:
-      micromark-util-character: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-character: 2.1.1
+      micromark-util-types: 2.0.2
 
-  micromark-factory-title@2.0.0:
+  micromark-factory-title@2.0.1:
     dependencies:
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-factory-whitespace@2.0.0:
+  micromark-factory-whitespace@2.0.1:
     dependencies:
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-util-character@2.0.0:
+  micromark-util-character@2.1.1:
     dependencies:
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-util-chunked@2.0.0:
+  micromark-util-chunked@2.0.1:
     dependencies:
-      micromark-util-symbol: 2.0.0
+      micromark-util-symbol: 2.0.1
 
-  micromark-util-classify-character@2.0.0:
+  micromark-util-classify-character@2.0.1:
     dependencies:
-      micromark-util-character: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-character: 2.1.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-util-combine-extensions@2.0.0:
+  micromark-util-combine-extensions@2.0.1:
     dependencies:
-      micromark-util-chunked: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-chunked: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-util-decode-numeric-character-reference@2.0.0:
+  micromark-util-decode-numeric-character-reference@2.0.2:
     dependencies:
-      micromark-util-symbol: 2.0.0
+      micromark-util-symbol: 2.0.1
 
   micromark-util-decode-string@2.0.1:
     dependencies:
       decode-named-character-reference: 1.3.0
-      micromark-util-character: 2.0.0
-      micromark-util-decode-numeric-character-reference: 2.0.0
-      micromark-util-symbol: 2.0.0
+      micromark-util-character: 2.1.1
+      micromark-util-decode-numeric-character-reference: 2.0.2
+      micromark-util-symbol: 2.0.1
 
-  micromark-util-encode@2.0.0: {}
+  micromark-util-encode@2.0.1: {}
 
   micromark-util-events-to-acorn@2.0.3:
     dependencies:
@@ -10468,56 +10471,56 @@ snapshots:
       '@types/unist': 3.0.3
       devlop: 1.1.0
       estree-util-visit: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
       vfile-message: 4.0.3
 
-  micromark-util-html-tag-name@2.0.0: {}
+  micromark-util-html-tag-name@2.0.1: {}
 
-  micromark-util-normalize-identifier@2.0.0:
+  micromark-util-normalize-identifier@2.0.1:
     dependencies:
-      micromark-util-symbol: 2.0.0
+      micromark-util-symbol: 2.0.1
 
-  micromark-util-resolve-all@2.0.0:
+  micromark-util-resolve-all@2.0.1:
     dependencies:
-      micromark-util-types: 2.0.0
+      micromark-util-types: 2.0.2
 
-  micromark-util-sanitize-uri@2.0.0:
+  micromark-util-sanitize-uri@2.0.1:
     dependencies:
-      micromark-util-character: 2.0.0
-      micromark-util-encode: 2.0.0
-      micromark-util-symbol: 2.0.0
+      micromark-util-character: 2.1.1
+      micromark-util-encode: 2.0.1
+      micromark-util-symbol: 2.0.1
 
-  micromark-util-subtokenize@2.0.0:
+  micromark-util-subtokenize@2.1.0:
     dependencies:
       devlop: 1.1.0
-      micromark-util-chunked: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-util-chunked: 2.0.1
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
 
-  micromark-util-symbol@2.0.0: {}
+  micromark-util-symbol@2.0.1: {}
 
-  micromark-util-types@2.0.0: {}
+  micromark-util-types@2.0.2: {}
 
-  micromark@4.0.0:
+  micromark@4.0.2:
     dependencies:
       '@types/debug': 4.1.13
       debug: 4.4.3
       decode-named-character-reference: 1.3.0
       devlop: 1.1.0
-      micromark-core-commonmark: 2.0.0
-      micromark-factory-space: 2.0.0
-      micromark-util-character: 2.0.0
-      micromark-util-chunked: 2.0.0
-      micromark-util-combine-extensions: 2.0.0
-      micromark-util-decode-numeric-character-reference: 2.0.0
-      micromark-util-encode: 2.0.0
-      micromark-util-normalize-identifier: 2.0.0
-      micromark-util-resolve-all: 2.0.0
-      micromark-util-sanitize-uri: 2.0.0
-      micromark-util-subtokenize: 2.0.0
-      micromark-util-symbol: 2.0.0
-      micromark-util-types: 2.0.0
+      micromark-core-commonmark: 2.0.3
+      micromark-factory-space: 2.0.1
+      micromark-util-character: 2.1.1
+      micromark-util-chunked: 2.0.1
+      micromark-util-combine-extensions: 2.0.1
+      micromark-util-decode-numeric-character-reference: 2.0.2
+      micromark-util-encode: 2.0.1
+      micromark-util-normalize-identifier: 2.0.1
+      micromark-util-resolve-all: 2.0.1
+      micromark-util-sanitize-uri: 2.0.1
+      micromark-util-subtokenize: 2.1.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
     transitivePeerDependencies:
       - supports-color
 
@@ -10981,7 +10984,7 @@ snapshots:
     dependencies:
       '@types/mdast': 4.0.4
       mdast-util-from-markdown: 2.0.3
-      micromark-util-types: 2.0.0
+      micromark-util-types: 2.0.2
       unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
@@ -11456,7 +11459,7 @@ snapshots:
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.0.2
 
-  unplugin-dts@1.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
+  unplugin-dts@1.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
     dependencies:
       '@rollup/pluginutils': 5.4.0
       '@volar/typescript': 2.4.28
@@ -11472,7 +11475,7 @@ snapshots:
       '@vue/language-core': 3.3.11
       esbuild: 0.28.2
       rolldown: 1.2.8
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -11545,11 +11548,11 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-dts@5.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
+  vite-plugin-dts@5.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
     dependencies:
-      unplugin-dts: 1.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
+      unplugin-dts: 1.1.0(@vue/language-core@3.3.11)(esbuild@0.28.2)(rolldown@1.2.8)(typescript@6.0.3)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
     optionalDependencies:
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
     transitivePeerDependencies:
       - '@rspack/core'
       - '@vue/language-core'
@@ -11559,7 +11562,7 @@ snapshots:
       - typescript
       - webpack
 
-  vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1):
+  vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -11574,10 +11577,10 @@ snapshots:
       sass: 1.104.1
       yaml: 2.9.1
 
-  vitest@4.1.11(@types/node@26.5.1)(happy-dom@20.14.5)(jsdom@27.4.0)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
+  vitest@4.1.11(@types/node@26.5.1)(happy-dom@20.14.5)(jsdom@27.4.0)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)):
     dependencies:
       '@vitest/expect': 4.1.11
-      '@vitest/mocker': 4.1.11(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
+      '@vitest/mocker': 4.1.11(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1))
       '@vitest/pretty-format': 4.1.11
       '@vitest/runner': 4.1.11
       '@vitest/snapshot': 4.1.11
@@ -11594,7 +11597,7 @@ snapshots:
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vite: 8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
+      vite: 8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(yaml@2.9.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 26.5.1
