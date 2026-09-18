@@ -20,7 +20,8 @@ export const resolveLoadingTheme = resolveFileViewerLoadingTheme
  */
 export const useLoading = (
   extendSource: MaybeRefOrGetter<string>,
-  i18nSource?: MaybeRefOrGetter<FileViewerI18nInput>
+  i18nSource?: MaybeRefOrGetter<FileViewerI18nInput>,
+  onError?: (message: string) => void
 ) => {
   const controller = createFileViewerLoadingController(toValue(extendSource), toValue(i18nSource))
   const state = reactive<FileViewerLoadingState>(controller.getState())
@@ -44,7 +45,12 @@ export const useLoading = (
     startLoading: actions.startLoading,
     setLoadingMessage: actions.setLoadingMessage,
     stopLoading: actions.stopLoading,
-    showError: actions.showError,
+    showError: (message: string) => {
+      actions.showError(message)
+      // Notify for each failure, including retries with the same message.
+      // Updating the display state first lets hosts safely switch to a fallback.
+      onError?.(message)
+    },
     clearError: actions.clearError,
     resetLoading: actions.resetLoading,
     syncLoadingState: actions.syncLoadingState

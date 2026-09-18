@@ -13,12 +13,11 @@ import {
   normalizeFileViewerStyleIsolation,
 } from '@file-viewer/core'
 import type {
-  FileViewerComponentEmits as FileViewerEmits,
   FileViewerComponentProps as FileViewerProps,
   FileViewerPublicApi as FileViewerExpose,
 } from '@file-viewer/core'
 import componentStyleHref from '../../style.css?url'
-import type { FileViewerToolbarSlotProps } from '../../common/type'
+import type { FileViewerEmits, FileViewerToolbarSlotProps } from '../../common/type'
 import FileViewerContent from './FileViewer.vue'
 
 defineOptions({ inheritAttrs: false })
@@ -222,6 +221,7 @@ onMounted(() => {
       <FileViewerContent
         ref="contentViewer"
         v-bind="props"
+        @error="message => emit('error', message)"
         @load-start="context => emit('load-start', context)"
         @load-complete="context => emit('load-complete', context)"
         @unload-start="context => emit('unload-start', context)"
@@ -250,6 +250,7 @@ onMounted(() => {
     v-light-dom-style
     ref="contentViewer"
     v-bind="{ ...props, ...attrs }"
+    @error="message => emit('error', message)"
     @load-start="context => emit('load-start', context)"
     @load-complete="context => emit('load-complete', context)"
     @unload-start="context => emit('unload-start', context)"
