@@ -272,6 +272,7 @@ export default async function renderImage(
     return renderTiff(buffer, target, context);
   }
   const t = createFileViewerTranslator(context?.options);
+  const rotationEnabled = context?.options?.image?.rotation !== false;
   const documentRef = target.ownerDocument || document;
   const src = await resolveImageUrl(buffer, type);
   let userZoom = 1;
@@ -328,7 +329,8 @@ export default async function renderImage(
   });
   frame.append(image);
   stage.append(frame);
-  root.append(toolbar, stage);
+  if (rotationEnabled) root.append(toolbar);
+  root.append(stage);
 
   const lightbox = createLightbox(documentRef, src, t);
   const openLightbox = () => lightbox.open(image);
@@ -460,6 +462,7 @@ export default async function renderImage(
     source: FileViewerViewStateChangeSource = 'viewer',
     notifyViewState = true
   ) => {
+    if (!rotationEnabled) return getImageViewState();
     const normalized = normalizeImageRotation(rotation);
     if (normalized === currentRotation) {
       return getImageViewState();
