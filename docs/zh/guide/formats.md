@@ -65,7 +65,7 @@
 | EDA | `olb`、`dra`、`gds`、`oas`、`oasis` | `@file-viewer/renderer-eda` + `cfb` 容器解析 + GDSII/OASIS 版图解析 + WebGL 批次 | 独立 EDA renderer 优先解析 OrCAD / Allegro 常见 CFB 容器；标准 GDSII 会读取 structure、boundary、path、text、reference 并生成 SVG 版图预览，元素较多时自动切到 WebGL canvas；OAS/OASIS 可读文本版图夹具会生成 SVG 预览，真实 SEMI 二进制 OASIS 当前做安全结构索引、可读字符串、实体候选和诊断；完整 OLB/DRA/OASIS 可视化路线见 [格式完整度](/zh/guide/format-fidelity) | 元件库、封装图纸、芯片版图文件初筛 |
 | CAD | `dwg`、`dxf`、`dwf`、`dwfx`、`xps` | `@flyfish-dev/cad-viewer` | DWG 通过 Worker + LibreDWG WASM 解析；DXF 使用 JS parser；DWF/DWFx/XPS 使用 native `dwf-viewer` 渲染 W2D/W3D/XPS 图形，并支持 WebGL / WASM fallback | 工程图纸、二维 CAD 附件、AutoCAD 归档文件 |
 | 地理数据 | `geojson`、`kml`、`gpx`、`shp` | `@file-viewer/renderer-geo` + GeoJSON 标准化 + CRS 归一化 + MapLibre 矢量叠加层 | GeoJSON 直接读取，KML/GPX 使用 `@tmcw/togeojson` 转换，SHP 使用 `shpjs`；默认离线空底图，可通过 `options.geo.tileUrl` / `options.geo.basemap` 启用公网、内网或离线自托管瓦片；支持 Web Mercator 推断、`options.geo.projection` 和 SVG fallback | 地理附件、轨迹、边界、点位和轻量 GIS 数据 |
-| 3D 模型 | `glb`、`gltf`、`obj`、`stl`、`ply`、`fbx`、`dae`、`3ds`、`3mf`、`amf`、`usd`、`usda`、`usdc`、`usdz`、`kmz`、`pcd`、`wrl`、`vrml`、`xyz`、`vtk`、`vtp`、`step`、`stp`、`iges`、`igs`、`brep`、`ifc`、`3dm` | `@file-viewer/renderer-3d` + Three.js loaders + `@file-viewer/geometry-engine` / `occt-import-js` | WebGL 交互预览，支持轨道控制、适配视图、网格/坐标轴、线框、自动旋转和统一缩放；STEP/STP、IGES/IGS、BREP 在本地 OCCT Worker/WASM 中解析，IFC/3DM 当前提供签名识别和接入提示 | 设计模型、点云、三维资产、工程模型 |
+| 3D 模型 | `glb`、`gltf`、`obj`、`stl`、`ply`、`fbx`、`dae`、`3ds`、`3mf`、`amf`、`usd`、`usda`、`usdc`、`usdz`、`kmz`、`pcd`、`wrl`、`vrml`、`xyz`、`vtk`、`vtp`、`step`、`stp`、`iges`、`igs`、`brep`、`ifc`、`3dm` | `@file-viewer/renderer-3d` + Three.js loaders + `@file-viewer/geometry-engine` / `occt-import-js`；IFC 另有显式 `@file-viewer/renderer-3d/ifc` | WebGL 交互预览，支持轨道控制、适配视图、网格/坐标轴、线框、自动旋转和统一缩放；STEP/STP、IGES/IGS、BREP 在本地 OCCT Worker/WASM 中解析；显式 IFC 子路径用本地 That Open / `web-ifc` 进行实验性可视预览，3DM 仍提供签名识别和接入提示 | 设计模型、点云、三维资产、工程模型 |
 | XMind 脑图 | `xmind` | `@file-viewer/renderer-mindmap` + `@ljheee/xmind-parser` + `@panzoom/panzoom` | 支持 XMind 8 XML 与 XMind 2020+ JSON 包结构，展示多 sheet、节点树、标签、备注、超链接、标记、图片、目录侧栏，并通过成熟 Panzoom 画布提供拖拽平移、移动端双指缩放、Ctrl/Command 滚轮锚点缩放、键盘平移、统一 toolbar 状态同步、适配画布、搜索、打印和 HTML 导出 | 脑图、规划图、知识结构、会议纪要 |
 | Excalidraw | `excalidraw` | `@file-viewer/renderer-drawing` + `roughjs` | 独立绘图 renderer 默认输出稳定只读 SVG；运行环境已提供官方 `@excalidraw/excalidraw` ESM 模块时会优先尝试 `restore` + `exportToSvg`，不可用时使用 rough.js 安全兜底 | 白板草图、产品沟通图、流程草稿 |
 | draw.io | `drawio`、`dio` | `@file-viewer/renderer-drawing` 内置 SVG；官方 diagrams.net `GraphViewer` 为显式可选能力 | 默认不执行文档 HTML；设置 `options.drawing.preferOfficial = true` 后，单独分发的 `vendor/drawio/viewer-static.min.js` 在受限 iframe 中按需加载，资源固定到本地目录，失败时回退安全 SVG | 流程图、架构图、业务泳道图 |
@@ -176,7 +176,7 @@
 - `glb` / `gltf` 是最推荐的 Web 3D 交换格式；`obj`、`stl`、`ply` 适合轻量几何和打印模型；`fbx`、`dae`、`3ds`、`3mf`、`amf`、`usd` / `usdz`、`kmz` 适合兼容设计工具导出的历史或工程资产。
 - `pcd`、`xyz`、`vtk`、`vtp` 会按点云或几何模型展示，适合扫描、仿真和工程数据的快速浏览。
 - `step` / `stp`、`iges` / `igs`、`brep` 已通过 `@file-viewer/geometry-engine` 接入本地 `occt-import-js` / OpenCascade Worker/WASM，能够解析装配层级、实例、法线和面颜色并生成 Three.js 网格，不需要服务端转换。
-- OCCT Worker、runtime、WASM 和许可证文件随 viewer assets 离线分发；子路径或独立资产域名可用 `options.model.workerUrl`、`options.model.runtimeUrl`、`options.model.wasmUrl` 覆盖。`ifc` 与 `3dm` 当前仍只展示签名识别和明确接入说明，后续分别沿 `web-ifc` / That Open 与 `rhino3dm` 路线独立维护。
+- OCCT Worker、runtime、WASM 和许可证文件随 viewer assets 离线分发；子路径或独立资产域名可用 `options.model.workerUrl`、`options.model.runtimeUrl`、`options.model.wasmUrl` 覆盖。`@file-viewer/renderer-3d/ifc` 是独立、实验性的可选入口，需自托管匹配的 That Open / `web-ifc` Worker、WASM 和许可证资产；官方 Demo 以 IFC4、IFC4.3 验证其画布、适配视图、选择和属性面板。`3dm` 仍只展示签名识别和明确接入说明，后续沿 `rhino3dm` 路线独立维护。
 - 如果 `.gltf`、`.dae`、`.fbx` 依赖同目录贴图、材质或 `.bin` 文件，使用 `url` 远程预览时会以原始 URL 的目录作为资源基准继续加载；使用本地单文件上传时，请优先选择 `.glb` 或把资源内联。
 
 ### 绘图文件
@@ -227,7 +227,7 @@
 - 你要看结构化数据或二进制资产：SQLite、Parquet、Avro、WASM、PSD、字体和 WebArchive 都能做快速结构审阅，但不建议把它们当完整编辑器使用。
 - 你在做品牌、示意图或视觉素材展示：`png`、`svg`、`webp` 这类图片格式会比转成文档更省心。
 - 你要预览 CAD：优先提供 `dwg`、`dxf`、`dwf` 或 `dwfx`；DWG 和 DWF native renderer 会按需加载 Worker/WASM，私有化部署时请确认 viewer assets 中的 `wasm/cad/` 资源可访问。
-- 你要预览 3D 模型：优先沉淀 `glb` / `gltf`，历史模型可用 OBJ、STL、PLY、FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ 等格式接入；STEP/STP、IGES/IGS、BREP 可以直接走本地 OCCT 预览，IFC、3DM 当前建议先转换或接入对应专业内核。
+- 你要预览 3D 模型：优先沉淀 `glb` / `gltf`，历史模型可用 OBJ、STL、PLY、FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ 等格式接入；STEP/STP、IGES/IGS、BREP 可以直接走本地 OCCT 预览。IFC 需要时显式装配 `@file-viewer/renderer-3d/ifc` 和本地 That Open / `web-ifc` 资产；3DM 仍建议先转换或接入对应专业内核。
 - 你要预览绘图文件：Excalidraw 和 draw.io 都保留源格式入口，前者走官方恢复与导出 SVG，后者默认走内置 SVG；只有显式设置 `preferOfficial = true` 才在受限 iframe 中按需加载 diagrams.net 离线 viewer，异常时回退内置 SVG。
 - 你要预览电子书或音视频：EPUB / UMD 优先保留源文件，音频优先选择浏览器兼容最稳定的 MP3 / OGG，视频优先选择 MP4 / WEBM；需要流媒体体验时可以提供 M3U8。
 

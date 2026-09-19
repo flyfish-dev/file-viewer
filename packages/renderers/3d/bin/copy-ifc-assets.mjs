@@ -71,7 +71,7 @@ export async function copyIfcAssets(destination) {
       join(stage, "fragments.worker.mjs"),
     );
     await build({
-      entryPoints: [join(packageRoot, "dist/ifc-import.worker.js")],
+      entryPoints: [join(packageRoot, "src/ifc-import.worker.ts")],
       outfile: join(stage, "ifc-import.worker.js"),
       bundle: true,
       format: "esm",

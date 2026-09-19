@@ -305,7 +305,7 @@ const options = {
 | `@file-viewer/renderer-presentation` | `presentationRenderer` | 二进制 PPT 按需使用 `@file-viewer/ppt`；PPTX/PPTM/POTX/POTM/PPSX/PPSM 按需使用 `@file-viewer/pptx` |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG/DXF/DWF/DWFx/XPS 等 CAD |
-| `@file-viewer/renderer-3d` | `modelRenderer` | GLB/GLTF/OBJ/STL/PLY/FBX/DAE/USD 等模型；STEP/STP、IGES/IGS、BREP 本地 OCCT 预览；IFC/3DM 几何签名与接入提示 |
+| `@file-viewer/renderer-3d` | `modelRenderer` | GLB/GLTF/OBJ/STL/PLY/FBX/DAE/USD 等模型；STEP/STP、IGES/IGS、BREP 本地 OCCT 预览；显式 `@file-viewer/renderer-3d/ifc` 子路径可追加实验性本地 IFC 预览，3DM 仍为几何签名与接入提示 |
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io、Excalidraw、Mermaid、PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON、KML、GPX、SHP |
@@ -665,7 +665,7 @@ async function useLocal(blob: Blob) {
 
 `.olb` 与 `.dra` 使用 `@file-viewer/renderer-eda` + `cfb` 做 OrCAD / Allegro 常见复合文档结构预览。标准 `.gds` 会读取 GDSII 记录流，提取库名、structure、boundary、path、文本和引用，并生成可滚动 SVG 版图预览；项目内可读 `.oas` / `.oasis` 文本夹具会输出 SVG 版图，真实 SEMI 二进制 OASIS 当前做安全结构索引、可读字符串和诊断信息。EDA 链路适合附件初筛和内容确认，不替代专业 EDA 软件里的封装编辑、版图编辑、DRC/LVS、规则校核和电气验证；完整 OASIS / Cadence 几何预览后续更适合拆成独立 WASM 按需包持续维护。
 
-3D 模型使用 `@file-viewer/renderer-3d` + Three.js loaders，支持 `glb/gltf/obj/stl/ply/fbx/dae/3ds/3mf/amf/usd/usda/usdc/usdz/kmz/pcd/wrl/vrml/xyz/vtk/vtp`。如果模型有外部贴图、材质或 `.bin`，远程 `url` 预览会按原始文件目录继续加载；本地上传时更推荐使用单文件 `.glb`。`step/stp`、`iges/igs` 和 `brep` 已通过 `@file-viewer/geometry-engine` 接入浏览器本地 OpenCascade Worker/WASM，解析后直接构建 Three.js 装配层级和网格，并复用全局统一缩放。默认离线资产位于 `wasm/model/`；子路径或独立资产域名可通过 `options.model.workerUrl`、`options.model.runtimeUrl`、`options.model.wasmUrl` 覆盖。`ifc` 与 `3dm` 当前仍做签名识别和接入提示，后续分别沿 `web-ifc` / That Open 与 `rhino3dm` 路线实现。
+3D 模型使用 `@file-viewer/renderer-3d` + Three.js loaders，支持 `glb/gltf/obj/stl/ply/fbx/dae/3ds/3mf/amf/usd/usda/usdc/usdz/kmz/pcd/wrl/vrml/xyz/vtk/vtp`。如果模型有外部贴图、材质或 `.bin`，远程 `url` 预览会按原始文件目录继续加载；本地上传时更推荐使用单文件 `.glb`。`step/stp`、`iges/igs` 和 `brep` 已通过 `@file-viewer/geometry-engine` 接入浏览器本地 OpenCascade Worker/WASM，解析后直接构建 Three.js 装配层级和网格，并复用全局统一缩放。默认离线资产位于 `wasm/model/`；子路径或独立资产域名可通过 `options.model.workerUrl`、`options.model.runtimeUrl`、`options.model.wasmUrl` 覆盖。需要 IFC 可视预览时，显式安装并注册 `@file-viewer/renderer-3d/ifc`，再自托管匹配的 That Open / `web-ifc` Worker、WASM 和许可证资产；官方 Demo 已验证 IFC4、IFC4.3、适配视图、选择与属性面板。该实验性路径不进入默认 preset、Full 包或 core，3DM 仍只提供签名识别和专业内核接入说明。
 
 ### 地理数据怎么接
 

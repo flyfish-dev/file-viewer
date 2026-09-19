@@ -1,0 +1,11 @@
+File Viewer Binary Inspector Demo Fixtures
+
+Copyright 2026 Flyfish contributors.
+License: Apache-2.0, the same license as this repository.
+
+binary-raw.bin and binary-pe.exe are copied from
+packages/renderers/binary/fixtures. binary-pe.dll is a same-byte PE fixture
+provided to exercise the DLL extension route. The remaining binary-* fixtures
+are generated deterministically by
+apps/viewer-demo/scripts/stage-specialist-demo-fixtures.mjs from the parser
+structures asserted by packages/renderers/binary/scripts/verify-binary-inspector.mjs.

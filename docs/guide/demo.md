@@ -11,7 +11,7 @@ description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, c
 <div class="doc-kicker">Real Samples, Real Renderers</div>
 
 <p class="doc-lead">
-  The official demo is the fastest way to verify the 273-extension, 46-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading. The 224 stable and 49 experimental mappings stay visibly distinguished.
+  The official demo is the complete capability experience: it verifies the 273-extension, 46-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading. Every public matrix entry maps to a visible representative fixture and a real click-regression pipeline; the 224 stable and 49 experimental mappings stay visibly distinguished.
 </p>
 
 <div class="doc-shot">
@@ -40,6 +40,8 @@ description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, c
 | Word | Stream-style document reading, correct text flow, printing without clipped first-page-only output |
 | Spreadsheet | Sheet tabs remain readable on desktop and mobile; optional column resize can be enabled |
 | Image | Open `multipage-ccitt-g4.tif` to verify two TIFF pages, group zoom/rotation/fit, page state, and double-click or keyboard lightbox access |
+| IFC | Open either buildingSMART IFC4 fixture to verify the local Web-IFC import worker, canvas, Fit, selection, and property panel without a runtime CDN |
+| Binary inspector | Open the raw, PE, ELF, Mach-O, ZIP, WASM, PNG, and Java-class samples to verify the explicit read-only structure tree and virtualized byte rows |
 | Archive | Nested entries preview through the same renderer registry, with safe metadata filtering, cache support, optional compact `ui.density:'compact'` spacing via `?density=compact`, and `archive.entryActions.download` checks for hiding nested entry downloads independently from the viewer-level original download |
 | Mobile | The filename stays centered, secondary controls collapse into one More action, only the document container scrolls, and heavy renderers remain lazy |
 
@@ -47,7 +49,7 @@ description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, c
 
 The demo follows the browser language by default. Chinese browsers open the Chinese sample system; other languages open the English sample system. Use `?locale=zh-CN` or `?locale=en-US` for a stable locale; the historical `lang` parameter remains compatible.
 
-The English demo uses public real-world samples for DOCX, PDF, PPTX, and XLSX, plus local lightweight fixtures for Markdown, text, logs, CSV, JSON, TypeScript, JavaScript, GeoJSON, glTF, and archive nesting. All files are served from the demo origin so enterprise intranet deployments do not depend on public CDNs at runtime.
+The English demo uses public real-world samples for DOCX, PDF, PPTX, XLSX, and buildingSMART IFC4/IFC4.3, plus local lightweight fixtures for Markdown, text, logs, CSV, JSON, TypeScript, JavaScript, GeoJSON, glTF, binary inspection, and archive nesting. The Demo explicitly registers its optional IFC and binary renderers while keeping normal presets unchanged. All files and heavy Worker/WASM assets are served from the demo origin so enterprise intranet deployments do not depend on public CDNs at runtime.
 
 <div class="doc-shot">
   <img src="/_media/file-viewer-demo-v2.2.6-samples-en.webp" alt="File Viewer by Flyfish v2.3.0 English dark sample library with format-specific file icons" width="1440" height="900" loading="lazy" />

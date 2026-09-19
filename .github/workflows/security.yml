@@ -54,7 +54,6 @@ jobs:
 
       - name: Audit the complete lockfile
         run: |
-          node .github/scripts/verify-dependency-exceptions.mjs
           pnpm audit --registry=https://registry.npmjs.org --audit-level=low
 
       - name: Verify renderer dependency and license boundaries

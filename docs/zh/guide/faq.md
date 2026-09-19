@@ -158,7 +158,7 @@ const file = new File([blobOrBuffer], 'report.xlsx')
 
 3D 模型走 `@file-viewer/renderer-3d` 按需渲染，当前支持 `glb`、`gltf`、`obj`、`stl`、`ply`、`fbx`、`dae`、`3ds`、`3mf`、`amf`、`usd`、`usda`、`usdc`、`usdz`、`kmz`、`pcd`、`wrl`、`vrml`、`xyz`、`vtk`、`vtp`。如果模型依赖外部贴图、材质或 `.bin`，远程 URL 预览会按原文件目录继续加载；本地上传建议优先使用单文件 `.glb`。
 
-`step` / `stp`、`iges` / `igs` 和 `brep` 已经可以直接预览：文件在本地 OCCT Worker/WASM 中解析，生成真实网格后支持轨道控制、适配视图和统一缩放，不需要私有服务端转换。私有化部署需保留 `wasm/model/occt-worker.js`、`wasm/model/occt-import-js.js` 和 `wasm/model/occt-import-js.wasm`；子路径可用 `options.model.workerUrl`、`options.model.runtimeUrl`、`options.model.wasmUrl` 覆盖。`ifc` 与 `3dm` 当前仍只提供签名识别和专业内核接入说明。
+`step` / `stp`、`iges` / `igs` 和 `brep` 已经可以直接预览：文件在本地 OCCT Worker/WASM 中解析，生成真实网格后支持轨道控制、适配视图和统一缩放，不需要私有服务端转换。私有化部署需保留 `wasm/model/occt-worker.js`、`wasm/model/occt-import-js.js` 和 `wasm/model/occt-import-js.wasm`；子路径可用 `options.model.workerUrl`、`options.model.runtimeUrl`、`options.model.wasmUrl` 覆盖。IFC 需要显式安装并注册实验性的 `@file-viewer/renderer-3d/ifc`，再自托管匹配的 That Open / `web-ifc` Worker、WASM 和许可证资产；它不进入默认 preset 或 Full 包。`3dm` 仍只提供签名识别和专业内核接入说明。
 
 ## Excalidraw 和 draw.io 是怎么预览的
 

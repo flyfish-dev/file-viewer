@@ -36,4 +36,3 @@ export function decodeEmailHtmlBytes(value: string | Uint8Array | ArrayBuffer, i
   try { return new TextDecoder('utf-8', { fatal: true }).decode(bytes).replace(/\0+$/, ''); }
   catch { return new TextDecoder('windows-1252').decode(bytes).replace(/\0+$/, ''); }
 }
-

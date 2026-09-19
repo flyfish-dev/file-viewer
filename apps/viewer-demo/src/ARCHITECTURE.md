@@ -29,6 +29,14 @@ must not become the owner of every feature.
    demo shell.
 5. Keep comments focused on invariants, compatibility reasons and ownership.
    Avoid comments that merely repeat the next line.
+6. Treat the official Demo as the complete capability experience: every
+   published optional renderer must be registered here, keep its heavy
+   implementation lazy, and have a license-tracked fixture covering each
+   public capability and critical behavior boundary through the real
+   sample-click gate.
+   Every public entry in `ecosystem/format-catalog.json` maps to a visible
+   fixture and click pipeline; `verify:specialist-renderer-boundary` rejects
+   an unmapped catalog entry or pipeline before release.
 
 ## Comment coverage
 
