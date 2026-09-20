@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "generator": "apps/viewer-demo/scripts/stage-specialist-demo-fixtures.mjs",
+  "license": "Apache-2.0",
+  "files": [
+    {
+      "name": "binary-raw.bin",
+      "template": "raw",
+      "sha256": "8bc465196a5494c8b636fc392034ba8e4b62f14b55ad95da8e4d10d00f953a84"
+    },
+    {
+      "name": "binary-png-signature.hex",
+      "template": "png",
+      "sha256": "e0e6fd836f2c429c829e082ee65f96870ef1ac2b9a72f83860398ad2b86c62e6"
+    },
+    {
+      "name": "binary-wasm-signature.hex",
+      "template": "wasm",
+      "sha256": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476"
+    },
+    {
+      "name": "binary-elf.elf",
+      "template": "elf",
+      "sha256": "56fd656ee5efde559588bdc6a22563f7f3da6cdbb221040bebd59be1b6787b01"
+    },
+    {
+      "name": "binary-pe.exe",
+      "template": "pe",
+      "sha256": "f236e4797a70a9bc04a0b37bafa82f464cb2582edf4431bd3ea9c8dbea7a3732"
+    },
+    {
+      "name": "binary-pe.dll",
+      "template": "pe",
+      "sha256": "f236e4797a70a9bc04a0b37bafa82f464cb2582edf4431bd3ea9c8dbea7a3732"
+    },
+    {
+      "name": "binary-macho.macho",
+      "template": "macho",
+      "sha256": "3fa3562aee779ae4065f8c6bbf063ef8bc669bc90ba926649ecf4df2ae449c81"
+    },
+    {
+      "name": "binary-zip-signature.hex",
+      "template": "zip",
+      "sha256": "0f85d3d9bedfe38b34bb0c640b95168f5fc4b3b31639a2eae169ee2c574ef857"
+    },
+    {
+      "name": "binary-java.class",
+      "template": "java-class",
+      "sha256": "45ff804a0e13eb19b4f3f75decf5e77d32e8959dbc6118272657a11897a76527"
+    }
+  ]
+}

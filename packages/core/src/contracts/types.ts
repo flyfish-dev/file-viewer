@@ -1645,6 +1645,14 @@ export interface FileViewerOptions {
   docx?: FileViewerDocxOptions
   presentation?: FileViewerPresentationOptions
   spreadsheet?: FileViewerSpreadsheetOptions
+  /** Image renderer controls; also applies to multipage TIFF previews. */
+  image?: {
+    /**
+     * Show rotation controls and allow view-state rotation. Defaults to true.
+     * Set false for compact previews. Decoder/EXIF orientation is unchanged.
+     */
+    rotation?: boolean
+  }
   iwork?: FileViewerIworkOptions
   wordPerfect?: FileViewerWordPerfectOptions
   hangul?: FileViewerHangulOptions

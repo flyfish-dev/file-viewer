@@ -255,6 +255,30 @@ try {
     throw new Error(`CHM Worker/WASM browser runtime failed: ${JSON.stringify(chmRuntime)}`)
   }
 
+  await page.goto(`${baseUrl}/?lang=en&url=/example/binary-pe.exe&smoke=public-ci-binary`, {
+    waitUntil: 'domcontentloaded',
+    timeout
+  })
+  const binaryRoot = page.locator('[data-binary-inspector-ready="true"]')
+  await binaryRoot.waitFor({ state: 'visible', timeout })
+  if ((await binaryRoot.getAttribute('data-binary-template')) !== 'pe') {
+    throw new Error('Binary Demo did not parse the PE sample.')
+  }
+
+  await page.goto(`${baseUrl}/?lang=en&url=/example/buildingSMART-ifc4-building.ifc&smoke=public-ci-ifc`, {
+    waitUntil: 'domcontentloaded',
+    timeout
+  })
+  const ifcRoot = page.locator('.fv-ifc[data-ifc-status="ready"]')
+  await ifcRoot.waitFor({ state: 'visible', timeout })
+  const ifcModel = await ifcRoot.evaluate(root => ({
+    elementCount: Number(root.dataset.ifcElementCount),
+    canvasWidth: root.querySelector('canvas')?.getBoundingClientRect().width || 0
+  }))
+  if (ifcModel.elementCount < 1 || ifcModel.canvasWidth < 1) {
+    throw new Error(`IFC Demo did not render the building model: ${JSON.stringify(ifcModel)}`)
+  }
+
   await page.goto(`${baseUrl}/?lang=en&smoke=public-ci-locale-menu`, {
     waitUntil: 'domcontentloaded',
     timeout
@@ -382,7 +406,7 @@ try {
     throw new Error(`Browser console errors:\n${actionableErrors.join('\n')}`)
   }
 
-  console.log('[public-browser-smoke] Main and compare four-language globe menus, English Markdown, CHM Worker/WASM, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile layout verified.')
+  console.log('[public-browser-smoke] Main and compare four-language globe menus, English Markdown, CHM Worker/WASM, Binary PE, IFC4, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile layout verified.')
 } finally {
   await browser?.close()
   await new Promise(resolveClose => server.close(resolveClose))

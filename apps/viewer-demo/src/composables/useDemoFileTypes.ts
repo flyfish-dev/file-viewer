@@ -317,6 +317,13 @@ const explicitFileIconMeta = {
   asl: { icon: 'ASL', family: 'data' },
   sqlite: { icon: 'SQL', family: 'data' },
   wasm: { icon: 'WASM', family: 'data' },
+  bin: { icon: 'BIN', family: 'data' },
+  hex: { icon: 'HEX', family: 'data' },
+  elf: { icon: 'ELF', family: 'data' },
+  exe: { icon: 'EXE', family: 'data' },
+  dll: { icon: 'DLL', family: 'data' },
+  class: { icon: 'CLS', family: 'data' },
+  macho: { icon: 'M-O', family: 'data' },
   parquet: { icon: 'PARQ', family: 'data' },
   avro: { icon: 'AVRO', family: 'data' },
   webarchive: { icon: 'WEB', family: 'data' }

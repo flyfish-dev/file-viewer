@@ -3,6 +3,8 @@ import {
   DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION
 } from '@file-viewer/core'
 import { allRenderers } from '@file-viewer/preset-all'
+import { createIfcRenderer } from '@file-viewer/renderer-3d/ifc'
+import { binaryRenderer } from '@file-viewer/renderer-binary'
 import { designRenderer } from '@file-viewer/renderer-design'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
 import { signatureRenderer } from '@file-viewer/renderer-signature'
@@ -41,11 +43,20 @@ const pptRuntimeAssetUrl = (path: string) => (
 
 // Renderer handlers use their concrete DOM targets internally. The public
 // options surface intentionally erases that implementation detail.
+const demoIfcRenderer = createIfcRenderer({
+  assetBaseUrl: '/file-viewer/vendor/ifc/',
+  enableSelection: true,
+  fitToModel: true,
+  showProperties: true
+})
+
 const unifiedDemoRenderers = [
   allRenderers,
   designRenderer,
   dicomRenderer,
-  signatureRenderer
+  signatureRenderer,
+  binaryRenderer,
+  demoIfcRenderer
 ] as unknown as NonNullable<FileViewerOptions['renderers']>
 
 /**

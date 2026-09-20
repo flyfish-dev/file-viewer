@@ -32,6 +32,7 @@ const extraUploadExtensions = [
   'jar', 'war', 'ear', 'apk', 'cbz', 'cbr', 'eml', 'msg', 'mbox', 'olb', 'dra', 'gds', 'oas', 'oasis', 'xmind', 'typst',
   'mermaid', 'mmd', 'plantuml', 'puml', 'patch', 'bundle', 'bdl',
   'ttf', 'otf', 'woff', 'woff2', 'psd', 'ai', 'eps', 'parquet', 'avro', 'webarchive',
+  'bin', 'hex', 'elf', 'exe', 'dll', 'class', 'macho',
   'dcm', 'dicom', 'p7m', 'p7s', 'p7b', 'p7c', 'cms', 'jws', 'jwt', 'asc', 'gpg', 'pgp', 'sig'
 ]
 

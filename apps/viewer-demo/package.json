@@ -4,23 +4,29 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
-    "build": "vue-tsc --noEmit -p tsconfig.json && vite build",
+    "prepare-assets": "node scripts/stage-specialist-demo-fixtures.mjs && node ../../packages/renderers/3d/bin/copy-ifc-assets.mjs public/file-viewer/vendor/ifc",
+    "dev": "pnpm prepare-assets && vite --host 127.0.0.1",
+    "build": "pnpm prepare-assets && vue-tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "type-check": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.1",
     "@file-viewer/preset-all": "workspace:3.1.1",
+    "@file-viewer/renderer-3d": "workspace:3.1.1",
+    "@file-viewer/renderer-binary": "workspace:3.1.1",
     "@file-viewer/renderer-design": "workspace:3.1.1",
     "@file-viewer/renderer-dicom": "workspace:3.1.1",
     "@file-viewer/renderer-signature": "workspace:3.1.1",
     "@file-viewer/web": "workspace:3.1.1",
     "@file-viewer/vue3": "workspace:3.1.1",
+    "@thatopen/components": "3.4.8",
+    "@thatopen/fragments": "3.4.7",
     "@lucide/vue": "^1.43.0",
     "diff": "^9.0.0",
     "qs": "^6.16.0",
-    "vue": "^3.5.42"
+    "vue": "^3.5.42",
+    "web-ifc": "0.0.77"
   },
   "devDependencies": {
     "@types/node": "^26.5.1",
@@ -30,6 +36,7 @@
     "@vue/tsconfig": "^0.9.1",
     "buffer": "^6.0.3",
     "events": "^3.3.0",
+    "esbuild": "^0.28.2",
     "path-browserify": "^1.0.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

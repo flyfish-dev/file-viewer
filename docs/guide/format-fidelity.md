@@ -26,7 +26,8 @@ Some engineering formats are intentionally conservative:
 | --- | --- |
 | OLB / DRA | Safe structure preview for common OrCAD / Allegro containers and readable metadata |
 | OAS / OASIS | Readable fixtures render; complex binary OASIS stays structure-index focused until the dedicated layout kernel matures |
-| IFC / 3DM | Signature detection and integration guidance; dedicated `web-ifc` / That Open and `rhino3dm` renderers are still required for visual preview |
+| IFC | Optional experimental local visual preview through `@file-viewer/renderer-3d/ifc`, with self-hosted That Open / `web-ifc` assets, fit, selection and property inspection; the official Demo includes IFC4 and IFC4.3 fixtures |
+| 3DM | Signature detection and integration guidance; a dedicated `rhino3dm` renderer is still required for visual preview |
 | PlantUML | Offline source/SVG-style preview by default; configure an intranet PlantUML service for full server-rendered SVG |
 
 ## Verification

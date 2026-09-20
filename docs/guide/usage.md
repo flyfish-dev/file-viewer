@@ -115,7 +115,7 @@ Every renderer below can be passed through `options.renderers`:
 | `@file-viewer/renderer-presentation` | `presentationRenderer` | Binary PPT through `@file-viewer/ppt`; PPTX/PPTM/POTX/POTM/PPSX/PPSM through `@file-viewer/pptx`; both load on demand |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG, DXF, DWF, DWFx, XPS |
-| `@file-viewer/renderer-3d` | `modelRenderer` | GLB, GLTF, OBJ, STL, PLY, FBX, DAE, USD; local OCCT preview for STEP/STP, IGES/IGS, and BREP; signature and integration guidance for IFC/3DM |
+| `@file-viewer/renderer-3d` | `modelRenderer` | GLB, GLTF, OBJ, STL, PLY, FBX, DAE, USD; local OCCT preview for STEP/STP, IGES/IGS, and BREP; the separate experimental `@file-viewer/renderer-3d/ifc` entry adds local IFC preview, while 3DM keeps signature and integration guidance |
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io, Excalidraw, Mermaid, PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |
 | `@file-viewer/renderer-geo` | `geoRenderer` | GeoJSON, KML, GPX, SHP |

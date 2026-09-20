@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "source": {
+    "repository": "buildingSMART/Certification-datasets",
+    "revision": "80d976a9b193a26a8e928c3e79bff67af1de68a8",
+    "license": "CC-BY-4.0",
+    "attribution": "buildingSMART International Ltd.; source bytes are unmodified and filenames are normalized for the Demo.",
+    "licenseFile": "licenses/buildingSMART-Certification-datasets-CC-BY-4.0.txt",
+    "licenseNormalization": "Trailing whitespace normalized only.",
+    "licenseSha256": "24bf1e3b532f78881731b3c8cc61269043cbbb709383c865d4154de23d1eded7"
+  },
+  "files": [
+    {
+      "name": "buildingSMART-ifc4-building.ifc",
+      "schema": "IFC4 ADD2 TC1",
+      "sourcePath": "IFC 4.0.2.1 (IFC 4 ADD2 TC1)/Simple-Scene/Building-Architecture.ifc",
+      "sha256": "8790a1e193e82b8e7e7f337ec2633cd40f2120590317a1443503a25b079e2e80"
+    },
+    {
+      "name": "buildingSMART-ifc43-building.ifc",
+      "schema": "IFC4.3 ADD2",
+      "sourcePath": "IFC 4.3.2.0 (IFC 4.3 ADD2)/Simple-Scene/Building-Architecture.ifc",
+      "sha256": "96e7103812b15b65eb1fd7802d36b9962833485dce5ead4f440bbf529530881d"
+    }
+  ]
+}

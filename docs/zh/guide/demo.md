@@ -8,7 +8,7 @@
 
 <p class="doc-lead">
   一个好用的 Demo，不只是“给别人看看”，也是团队内部确认能力边界、联调文件样本和复现问题的最快入口。
-  当前能力矩阵包含 273 个已注册扩展名（224 个稳定、49 个实验）和 46 条预览链路；Demo 为每条链路提供可重复验证的代表样例，实验样例不会冒充稳定支持证据。
+  当前能力矩阵包含 273 个已注册扩展名（224 个稳定、49 个实验）和 46 条预览链路；Demo 是完整能力体验入口：公开矩阵的每一条能力都映射到可见代表样例和真实点击回归链路，实验样例不会冒充稳定支持证据。
 </p>
 
 ## 四个验证入口
@@ -317,7 +317,7 @@ pnpm --filter @flyfish-group/file-viewer-component-demo preview
 
 上面的清单已经覆盖当前注册的主要样例扩展名。CAD 链路使用 `@flyfish-dev/cad-viewer` 0.8.1，支持 DWG / DXF / DWF / DWFx / XPS，并增强了 DWG 文字、宽多段线、复杂线型以及外部 SHX 引用识别。0.8.0 底层引擎新增 BOM 提取与 CSV/JSON 导出接口，强化 DWG/DXF 元数据边界，并把 LibreDWG WASM 升级到 0.7.9，修复复杂线型 STYLE 引用为空时合法图纸无法加载的问题；DWG 会按需加载 viewer assets 中 `wasm/cad/` 下的 Worker 和 LibreDWG WASM，DWF/DWFx/XPS 会按需加载 native renderer 与 `dwfv-render.wasm`。
 
-3D 模型示例覆盖 glTF、OBJ、STL、PLY 四条最常用的浏览器模型入口；FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ、PCD、VRML/WRL、XYZ、VTK/VTP 等扩展名也已经注册到 `@file-viewer/renderer-3d`。STEP / STP、IGES / IGS 和 BREP 已通过 `@file-viewer/geometry-engine` 在本地 OCCT Worker/WASM 中三角化并交给 Three.js 渲染；`model.step` 会强制验证真实网格、适配视图和统一缩放，不能退回转换提示。IFC 与 3DM 当前仍只展示签名识别和独立 `web-ifc` / `rhino3dm` 接入说明。XMind 样例用于验证多 sheet 脑图、目录、标签、备注、链接、Panzoom 画布拖拽平移、移动端双指缩放、适配画布、搜索、缩放和导出链路。
+3D 模型示例覆盖 glTF、OBJ、STL、PLY 四条最常用的浏览器模型入口；FBX、DAE、3DS、3MF、AMF、USD/USDZ、KMZ、PCD、VRML/WRL、XYZ、VTK/VTP 等扩展名也已经注册到 `@file-viewer/renderer-3d`。STEP / STP、IGES / IGS 和 BREP 已通过 `@file-viewer/geometry-engine` 在本地 OCCT Worker/WASM 中三角化并交给 Three.js 渲染；`model.step` 会强制验证真实网格、适配视图和统一缩放，不能退回转换提示。官方 Demo 还显式装配实验性的 `@file-viewer/renderer-3d/ifc`，用本地 That Open / Web-IFC Worker、WASM、适配视图、选择和属性面板打开 buildingSMART IFC4、IFC4.3 样例；这不改变默认 preset 或 Full 包。3DM 仍只保留签名识别和专业内核接入说明。二进制检查器样例覆盖全部公开扩展和原始字节、PNG、WASM、ELF、PE、Mach-O、ZIP、Java class 结构，始终只读且不执行文件。XMind 样例用于验证多 sheet 脑图、目录、标签、备注、链接、Panzoom 画布拖拽平移、移动端双指缩放、适配画布、搜索、缩放和导出链路。
 
 Excalidraw 默认使用 `roughjs` 生成只读 SVG，运行环境提供官方 Excalidraw ESM 模块时会优先尝试 `restore` 与 `exportToSvg`；draw.io / diagrams.net 文件默认使用不执行文档 HTML 的内置 SVG 预览。只有显式设置 `options.drawing.preferOfficial = true` 时才在无 same-origin 权限、带严格 CSP 的 iframe 中加载单独分发的官方 `GraphViewer`；其 styles、shapes、stencils、img、mxgraph 和 math 资源来自本地 `vendor/drawio/`，加载异常会回退内置 SVG。内网路径特殊时可通过 `options.drawing.viewerScriptUrl` 指定同源自托管脚本。
 
@@ -340,6 +340,8 @@ Demo 默认保持 `comfortable` 密度，避免首次打开就进入紧凑版；
 | `samples/autodesk/robot-arm.dwfx` | Autodesk `viewer-javascript-tutorial` 的 `Sample files/RobotArm1.dwfx` 官方样例 | MIT |
 | `model.gltf` / `model.obj` / `model.stl` / `model.ply` | 项目内生成的最小 3D fixture | Apache-2.0 |
 | `model.step` | `occt-import-js` 上游 `simple-basic-cube/cube.stp`（上游记录原始来源为 GrabCAD simple-basic-cube） | 保留上游来源归属；仅用于解析回归 |
+| `buildingSMART-ifc4-building.ifc` / `buildingSMART-ifc43-building.ifc` | `buildingSMART/Certification-datasets` revision `80d976a9b193a26a8e928c3e79bff67af1de68a8` 的公开 Simple Building 样例 | CC-BY-4.0；本地保留许可证、来源 revision 和 SHA-256 台账 |
+| `binary-*` | 项目内二进制检查器 fixture 与确定性结构生成器 | Apache-2.0；只含非执行性结构字节 |
 | `mindmap.xmind` | 项目内使用 `@ljheee/xmind-parser` 生成的双 sheet XMind fixture | Apache-2.0 |
 | `flow.excalidraw` | `neo4j-labs/agent-memory` 的 `poleo-model.excalidraw` | Apache-2.0 |
 | `process.drawio` | `jgraph/drawio-diagrams` 的 `blog/data-flow.drawio` | Apache-2.0 |

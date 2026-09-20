@@ -41,7 +41,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### Apache-2.0
 
-- `baseline-browser-mapping@2.11.23` — https://github.com/web-platform-dx/baseline-browser-mapping
+- `baseline-browser-mapping@2.11.25` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
 - `dompurify@3.4.15` — https://github.com/cure53/DOMPurify
 
@@ -67,7 +67,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `d3-scale@4.0.2` — https://github.com/d3/d3-scale
 - `d3-time@3.1.0` — https://github.com/d3/d3-time
 - `d3-time-format@4.1.0` — https://github.com/d3/d3-time-format
-- `electron-to-chromium@1.5.427` — https://github.com/Kilian/electron-to-chromium
+- `electron-to-chromium@1.5.431` — https://github.com/Kilian/electron-to-chromium
 - `fs.realpath@1.0.0` — https://github.com/isaacs/fs.realpath
 - `glob@7.2.0` — https://github.com/isaacs/node-glob
 - `inflight@1.0.6` — https://github.com/npm/inflight
@@ -96,8 +96,8 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `@rollup/rollup-linux-x64-gnu@4.13.0` (platform-optional) — https://github.com/rollup/rollup
 - `@types/trusted-types@2.0.7` (platform-optional) — https://github.com/DefinitelyTyped/DefinitelyTyped
 - `@types/webxr@0.5.5` — https://github.com/DefinitelyTyped/DefinitelyTyped
-- `adm-zip@0.6.0` — https://github.com/cthackers/adm-zip
-- `autoprefixer@10.6.0` — https://github.com/postcss/autoprefixer
+- `adm-zip@0.6.1` — https://github.com/cthackers/adm-zip
+- `autoprefixer@10.6.1` — https://github.com/postcss/autoprefixer
 - `balanced-match@1.0.0` — https://github.com/juliangruber/balanced-match
 - `brace-expansion@1.1.18` — https://github.com/juliangruber/brace-expansion
 - `browserslist@4.28.7` — https://github.com/browserslist/browserslist
@@ -118,14 +118,14 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `interpret@1.4.0` — https://github.com/gulpjs/interpret
 - `iota-array@1.0.0` — https://github.com/mikolalysenko/iota-array
 - `is-buffer@1.1.6` — https://github.com/feross/is-buffer
-- `is-core-module@2.16.2` — https://github.com/inspect-js/is-core-module
+- `is-core-module@2.17.0` — https://github.com/inspect-js/is-core-module
 - `jpeg-lossless-decoder-js@2.1.2` — https://github.com/rii-mango/JPEGLosslessDecoderJS
 - `js-yaml@4.3.2` — https://github.com/nodeca/js-yaml
 - `lodash.clonedeep@4.5.0` — https://github.com/lodash/lodash
 - `loglevel@1.9.2` — https://github.com/pimterry/loglevel
 - `nanoid@3.3.18` — https://github.com/ai/nanoid
 - `ndarray@1.0.19` — https://github.com/mikolalysenko/ndarray
-- `node-releases@2.0.55` — https://github.com/chicoxyzzy/node-releases
+- `node-releases@2.0.56` — https://github.com/chicoxyzzy/node-releases
 - `path-is-absolute@1.0.1` — https://github.com/sindresorhus/path-is-absolute
 - `path-parse@1.0.7` — https://github.com/jbgutierrez/path-parse
 - `postcss@8.5.23` — https://github.com/postcss/postcss

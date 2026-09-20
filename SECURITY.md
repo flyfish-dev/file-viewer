@@ -36,4 +36,4 @@ Vue 2 已终止上游维护。新项目应优先使用 `@file-viewer/vue3`；必
 
 The audit includes development dependencies and runs against the official npm registry before release builds. Vue 2 remains an explicitly documented compatibility exception.
 
-`GHSA-vwc7-r8mq-g2x9` affects `adm-zip` filesystem extraction through pre-existing destination symlinks. No patched npm version was available on 2026-09-09. The installed `dcmjs@0.52.0` declares this dependency but neither runtime entry nor its dictionary export imports or invokes it. `.github/scripts/verify-dependency-exceptions.mjs` checks those exports, the exact dcmjs version and the sole lockfile consumer before the audit. A new consumer, export or version fails this check and requires review. This is an unreachable dependency exception in File Viewer, not a claim that adm-zip itself is fixed. Remove the exception when a patched version is published.
+The former `adm-zip` exception is retired. The workspace now resolves `adm-zip@0.6.1` or newer, which addresses `GHSA-vwc7-r8mq-g2x9` and `GHSA-7q85-xj36-vmfc`; CI and release rehearsal audit the complete lockfile against the official npm registry.

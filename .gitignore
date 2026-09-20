@@ -13,9 +13,13 @@ test-results/
 /output/
 artifacts/*.tgz
 artifacts/*.tar.gz
+packages/renderers/signature/rust/target/
 packages/components/web/viewer/
 packages/compat/web/viewer/
+packages/tools/assets-*/viewer/
 apps/component-demo/public/file-viewer/
+apps/component-demo/public/requirejs/
+apps/viewer-demo/public/file-viewer/
 apps/component-demo/public/example/word.docx
 apps/component-demo/public/example/pdf.pdf
 apps/component-demo/public/example/ppt.pptx

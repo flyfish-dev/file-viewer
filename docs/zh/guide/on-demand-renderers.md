@@ -306,7 +306,7 @@ const options = {
 | `@file-viewer/renderer-presentation` | `presentationRenderer` | 二进制 `.ppt` 使用 `@file-viewer/ppt`；OpenXML 演示文稿使用 `@file-viewer/pptx` |
 | `@file-viewer/renderer-ofd` | `ofdRenderer` | OFD |
 | `@file-viewer/renderer-cad` | `cadRenderer` | DWG、DXF、DWF、DWFx、XPS |
-| `@file-viewer/renderer-3d` | `modelRenderer` | 3D 模型和轻量几何签名 |
+| `@file-viewer/renderer-3d` | `modelRenderer` | 3D 模型和轻量几何签名；`@file-viewer/renderer-3d/ifc` 是单独导出的实验性 IFC 可视预览入口 |
 | `@file-viewer/renderer-design` | `designRenderer` | PSD/PSB/PDD/PSDT、AI/AIT、EPS/PS、IDML/ICML/IDMS/INX、XD、INDD/INDT、现代 FLA/XFL、ASE/ACO 与 ABR/CSH/PAT/GRD/ASL |
 | `@file-viewer/renderer-dicom` | `dicomRenderer` | 在标准 Viewer 入口中选择启用的本地 DICOM Part 10 单文件与多帧预览 |
 | `@file-viewer/renderer-signature` | `signatureRenderer` | 在标准 Viewer 入口中选择启用的 CMS/CAdES、时间戳、ASiC、证据记录、JWS 与公开 OpenPGP 检查 |
@@ -325,6 +325,10 @@ const options = {
 | `@file-viewer/renderer-eda` | `edaRenderer` | OLB、DRA、GDS、OAS/OASIS |
 
 `@file-viewer/ppt`、`@file-viewer/pptx`、`@file-viewer/geometry-engine`、`@file-viewer/eda-layout` 和 `@file-viewer/eda-orcad` 是 renderer 内部引擎包；常规业务预览优先使用上表 renderer 或 preset。
+
+### 可选 IFC BIM 查看器
+
+显式的 `@file-viewer/renderer-3d/ifc` 只增强 IFC 文件：它在浏览器本地使用 That Open / `web-ifc` 完成可视预览、选择、属性面板和配置钩子。既有 Full/Office 入口保持不变；使用方需要安装可选 peer，并通过 `file-viewer-ifc-assets` 自托管匹配的 Worker/WASM 和许可证资产。官方 Demo 已用 buildingSMART IFC4、IFC4.3 样例验证这条路径。具体安装和许可边界见包内 [IFC 指南](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/IFC.md)。
 
 `preset: 'auto'` 会发现项目中已安装的 preset 包；当 `preset-all` 存在时会优先使用它，避免重复导入其它 preset。
 

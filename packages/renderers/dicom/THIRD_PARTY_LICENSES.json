@@ -386,7 +386,7 @@
     },
     {
       "name": "adm-zip",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -414,7 +414,7 @@
     },
     {
       "name": "autoprefixer",
-      "version": "10.6.0",
+      "version": "10.6.1",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -442,7 +442,7 @@
     },
     {
       "name": "baseline-browser-mapping",
-      "version": "2.11.23",
+      "version": "2.11.25",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,
@@ -696,7 +696,7 @@
     },
     {
       "name": "electron-to-chromium",
-      "version": "1.5.427",
+      "version": "1.5.431",
       "license": "ISC",
       "direct": false,
       "optional": false,
@@ -948,7 +948,7 @@
     },
     {
       "name": "is-core-module",
-      "version": "2.16.2",
+      "version": "2.17.0",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -1060,7 +1060,7 @@
     },
     {
       "name": "node-releases",
-      "version": "2.0.55",
+      "version": "2.0.56",
       "license": "MIT",
       "direct": false,
       "optional": false,

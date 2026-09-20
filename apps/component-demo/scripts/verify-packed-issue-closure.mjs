@@ -27,6 +27,12 @@ if (!process.env.PACKED_ISSUE_PACKAGE_DIR) {
   await mkdir(packages, { recursive: true })
   // A standalone run must not pack ignored, stale dist files. A release
   // rehearsal instead supplies frozen tarballs and never rebuilds or repacks.
+  // The copy-assets package tests its versioned Viewer payload while the
+  // recursive consumer build reaches it through full-package dependencies.
+  execFileSync('pnpm', ['--filter', 'file-viewer-copy-assets', 'stage-assets'], {
+    cwd: root,
+    stdio: 'inherit'
+  })
   execFileSync('pnpm', [...workspaceClosureArgs, 'build'], {
     cwd: root,
     stdio: 'inherit'
