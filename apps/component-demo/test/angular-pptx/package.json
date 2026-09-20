@@ -7,10 +7,10 @@
     "build": "ng build"
   },
   "dependencies": {
-    "@angular/common": "22.1.6",
-    "@angular/compiler": "22.1.6",
-    "@angular/core": "22.1.6",
-    "@angular/platform-browser": "22.1.6",
+    "@angular/common": "22.1.7",
+    "@angular/compiler": "22.1.7",
+    "@angular/core": "22.1.7",
+    "@angular/platform-browser": "22.1.7",
     "@file-viewer/web": "3.1.2",
     "@file-viewer/preset-office": "3.1.2",
     "file-viewer-copy-assets": "3.1.2",
@@ -20,7 +20,7 @@
   "devDependencies": {
     "@angular/build": "22.1.8",
     "@angular/cli": "22.1.8",
-    "@angular/compiler-cli": "22.1.6",
+    "@angular/compiler-cli": "22.1.7",
     "typescript": "6.0.3"
   }
 }
