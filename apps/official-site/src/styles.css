@@ -1692,47 +1692,6 @@ code.hljs {
   font-size: 14px;
 }
 
-.quickstart-dots {
-  display: inline-flex;
-  flex: 0 0 auto;
-  gap: 7px;
-}
-
-.quickstart-dots button {
-  width: 9px;
-  height: 9px;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.26);
-  cursor: pointer;
-  transition:
-    width 180ms ease,
-    background 180ms ease;
-}
-
-.quickstart-dots button.is-active {
-  width: 28px;
-  background: #8be6d0;
-}
-
-.quickstart-tab,
-.quickstart-workbench {
-  opacity: 0;
-  transform: translateY(18px);
-}
-
-.quickstart-active .quickstart-tab,
-.quickstart-active .quickstart-workbench {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.quickstart-active .quickstart-tab:hover,
-.quickstart-active .quickstart-tab:focus-visible {
-  transform: translateX(4px);
-}
-
 .docs-section {
   position: relative;
 }
@@ -2453,9 +2412,7 @@ code.hljs {
   }
 
   .quickstart-tab:hover,
-  .quickstart-tab:focus-visible,
-  .quickstart-active .quickstart-tab:hover,
-  .quickstart-active .quickstart-tab:focus-visible {
+  .quickstart-tab:focus-visible {
     transform: translateY(-2px);
   }
 
@@ -2836,20 +2793,6 @@ code.hljs {
 
   .quickstart-header strong {
     font-size: 17px;
-  }
-
-  .quickstart-dots {
-    width: 100%;
-  }
-
-  .quickstart-dots button {
-    flex: 1;
-    height: 8px;
-  }
-
-  .quickstart-dots button.is-active {
-    flex: 2.4;
-    width: auto;
   }
 
   pre {

@@ -197,7 +197,6 @@ const siteMain = ref<HTMLElement | null>(null)
 const topbar = ref<HTMLElement | null>(null)
 const flatNav = ref<HTMLElement | null>(null)
 const demoReveal = ref<HTMLElement | null>(null)
-const quickStartSection = ref<HTMLElement | null>(null)
 const supportDialogPanel = ref<HTMLElement | null>(null)
 const supportDialogCloseButton = ref<HTMLButtonElement | null>(null)
 const supportDialogSponsorTriggerButton = ref<HTMLButtonElement | null>(null)
@@ -212,7 +211,6 @@ const heroPreviewShield = ref<HeroPreviewShield | null>(null)
 const demoRevealActive = ref(false)
 const demoFrameMounted = ref(false)
 const demoFrameReady = ref(false)
-const quickStartSectionActive = ref(false)
 const activeQuickStartIndex = ref(0)
 const githubStarCount = ref(githubStarCountFallback)
 const supportDialogOpen = ref(false)
@@ -1484,9 +1482,6 @@ function scrollInitialHashIntoView() {
   if (!target) return
 
   window.requestAnimationFrame(() => {
-    if (hashId === 'ecosystem') {
-      quickStartSectionActive.value = true
-    }
     if (isPageSectionId(hashId)) {
       activeSectionId.value = hashId
     }
@@ -1509,9 +1504,6 @@ function scrollToSection(event: MouseEvent, id: SectionId) {
     id === 'top'
       ? 0
       : Math.max(0, target.getBoundingClientRect().top + window.scrollY - getTopbarScrollOffset())
-  if (id === 'ecosystem') {
-    quickStartSectionActive.value = true
-  }
   activeSectionId.value = id
   window.history.replaceState(null, '', `#${id}`)
   window.scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
@@ -1582,7 +1574,6 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 
 let demoRevealObserver: IntersectionObserver | undefined
 let heroMotionObserver: IntersectionObserver | undefined
-let quickStartObserver: IntersectionObserver | undefined
 let siteRevealObserver: IntersectionObserver | undefined
 let topbarResizeObserver: ResizeObserver | undefined
 let demoFrameUnmountTimer: number | undefined
@@ -1714,9 +1705,6 @@ onMounted(async () => {
   })
   const heroSection = siteMain.value?.querySelector('#top')
   if (heroSection) heroMotionObserver.observe(heroSection)
-  if (window.location.hash === '#ecosystem') {
-    quickStartSectionActive.value = true
-  }
   scrollInitialHashIntoView()
 
   if (demoReveal.value) {
@@ -1732,21 +1720,6 @@ onMounted(async () => {
     )
     demoRevealObserver.observe(demoReveal.value)
   }
-
-  if (quickStartSection.value) {
-    quickStartObserver = new IntersectionObserver(
-      ([entry]) => {
-        quickStartSectionActive.value =
-          window.location.hash === '#ecosystem' ||
-          (entry.isIntersecting && entry.intersectionRatio > 0.16)
-      },
-      {
-        rootMargin: '-14% 0px -18% 0px',
-        threshold: [0, 0.16, 0.42, 0.72]
-      }
-    )
-    quickStartObserver.observe(quickStartSection.value)
-  }
 })
 
 onBeforeUnmount(() => {
@@ -1759,7 +1732,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('pointerdown', clearHeroPreviewOutside)
   demoRevealObserver?.disconnect()
   heroMotionObserver?.disconnect()
-  quickStartObserver?.disconnect()
   siteRevealObserver?.disconnect()
   topbarResizeObserver?.disconnect()
   clearHeroPreviewTransitionTimer()
@@ -2288,18 +2260,16 @@ onBeforeUnmount(() => {
         </div>
       </section>
 
-      <section
-        id="ecosystem"
-        ref="quickStartSection"
-        class="band ecosystem-section"
-        :class="{ 'quickstart-active': quickStartSectionActive }"
-        aria-labelledby="ecosystem-title"
-      >
+      <section id="ecosystem" class="band ecosystem-section" aria-labelledby="ecosystem-title">
         <div class="ecosystem-copy">
           <p class="section-kicker">Native components</p>
           <h2 id="ecosystem-title">{{ currentCopy.ecosystemTitle }}</h2>
           <p>{{ currentCopy.ecosystemIntro }}</p>
-          <div class="quickstart-tabs" role="tablist" aria-label="Ecosystem quick start examples">
+          <div
+            class="quickstart-tabs"
+            role="tablist"
+            :aria-label="isZh ? '选择框架接入示例' : 'Framework integration examples'"
+          >
             <button
               v-for="(item, index) in quickStartItems"
               :id="`quickstart-tab-${index}`"
@@ -2309,7 +2279,6 @@ onBeforeUnmount(() => {
                 `quickstart-tab-${item.tone}`,
                 { 'is-active': index === activeQuickStartIndex }
               ]"
-              :style="{ transitionDelay: `${index * 55}ms` }"
               type="button"
               role="tab"
               :aria-selected="index === activeQuickStartIndex"
@@ -2329,7 +2298,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <div class="quickstart-workbench" aria-label="Ecosystem quick start code">
+        <div class="quickstart-workbench">
           <div class="quickstart-header">
             <div>
               <span>{{ activeQuickStart.install }}</span>
@@ -2341,7 +2310,7 @@ onBeforeUnmount(() => {
             </a>
           </div>
 
-          <div class="quickstart-track" tabindex="0" aria-live="polite">
+          <div class="quickstart-track">
             <article
               v-for="(item, index) in quickStartItems"
               v-show="index === activeQuickStartIndex"
@@ -2359,7 +2328,10 @@ onBeforeUnmount(() => {
                 <span />
                 <strong>{{ item.language }}</strong>
               </div>
-              <pre><code
+              <pre
+                tabindex="0"
+                :aria-label="`${item.label} ${isZh ? '代码示例' : 'code example'}`"
+              ><code
               class="hljs"
               :class="`language-${item.highlightLanguage}`"
               v-html="highlightSnippet(item.code, item.highlightLanguage)"
@@ -2369,16 +2341,6 @@ onBeforeUnmount(() => {
 
           <div class="quickstart-footer">
             <span>{{ activeQuickStart.summary }}</span>
-            <div class="quickstart-dots" aria-label="Quick start slides">
-              <button
-                v-for="(item, index) in quickStartItems"
-                :key="`dot-${item.packageName}`"
-                type="button"
-                :class="{ 'is-active': index === activeQuickStartIndex }"
-                :aria-label="`${isZh ? '切换到' : 'Show'} ${item.label}`"
-                @click="selectQuickStart(index)"
-              />
-            </div>
           </div>
         </div>
       </section>

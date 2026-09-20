@@ -840,19 +840,22 @@ body::after {
 
 .workflow-grid {
   display: grid;
-  grid-template-columns: minmax(310px, 0.72fr) minmax(0, 1.28fr);
-  gap: 64px;
+  grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr);
+  gap: clamp(32px, 4vw, 56px);
+  align-items: start;
   padding: 76px 0 88px;
   border-bottom: 1px solid var(--precision-line);
 }
 
 .workflow-grid > .band {
+  min-width: 0;
+  margin: 0;
   padding: 0;
 }
 
-.scenario-section {
-  padding-right: 46px !important;
-  border-right: 1px solid var(--precision-line) !important;
+.workflow-grid > .scenario-section {
+  padding-right: 32px;
+  border-right: 1px solid var(--precision-line);
 }
 
 .scenario-section .section-heading,
@@ -863,7 +866,9 @@ body::after {
 
 .scenario-section .section-heading h2,
 .ecosystem-copy h2 {
-  font-size: clamp(29px, 2.6vw, 39px);
+  font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+  line-height: 1.25;
+  text-wrap: balance;
 }
 
 .scenario-section .section-heading > p:last-child,
@@ -913,16 +918,16 @@ body::after {
   grid-column: 2;
   margin: 0;
   color: var(--precision-ink);
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 760;
 }
 
 .scenario-card p {
   grid-column: 2;
   margin: 4px 0 0;
-  color: #71827d;
-  font-size: 12px;
-  line-height: 1.55;
+  color: var(--site-muted);
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .ecosystem-section {
@@ -930,6 +935,7 @@ body::after {
 }
 
 .workflow-grid > .ecosystem-section {
+  overflow: visible;
   border: 0;
   background: transparent !important;
   box-shadow: none;
@@ -2157,11 +2163,29 @@ body::after {
   }
 
   .workflow-grid {
-    gap: 42px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
   }
 
-  .scenario-section {
-    padding-right: 34px !important;
+  .workflow-grid > .scenario-section {
+    padding-right: 0;
+    padding-bottom: 28px;
+    border-right: 0;
+    border-bottom: 1px solid var(--precision-line);
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scenario-card:nth-child(odd) {
+    padding-right: 24px;
+    border-right: 1px solid var(--precision-line);
+  }
+
+  .scenario-card:nth-child(even) {
+    padding-left: 24px;
   }
 
   .support-footer {
@@ -2252,31 +2276,6 @@ body::after {
 
   .format-card p {
     display: none;
-  }
-
-  .workflow-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .scenario-section {
-    padding-right: 0 !important;
-    padding-bottom: 18px !important;
-    border-right: 0 !important;
-    border-bottom: 1px solid var(--precision-line) !important;
-  }
-
-  .scenario-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .scenario-card:nth-child(odd) {
-    padding-right: 18px;
-    border-right: 1px solid var(--precision-line);
-  }
-
-  .scenario-card:nth-child(even) {
-    padding-left: 18px;
   }
 
   .commercial-route {

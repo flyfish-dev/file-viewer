@@ -816,34 +816,81 @@
 .support-footer {
   margin-top: 0;
 }
+.workflow-grid .section-heading > p:last-child,
+.workflow-grid .ecosystem-copy > p:not(.section-kicker) {
+  max-width: 62ch;
+  color: var(--site-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.workflow-grid .section-kicker {
+  color: var(--precision-green-dark);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
 .quickstart-tabs {
   flex-wrap: wrap;
   overflow: visible;
-  gap: 5px;
-  padding-bottom: 12px;
+  gap: 6px;
+  padding-bottom: 16px;
 }
 .quickstart-tab {
-  min-height: 36px;
-  padding: 0 11px;
+  min-width: 0;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 8px 12px;
   border: 1px solid transparent;
   border-radius: 7px;
 }
 .quickstart-tab.is-active {
-  border-color: var(--site-line);
-  background: var(--site-surface-soft) !important;
+  border-color: color-mix(in srgb, var(--precision-green) 30%, var(--site-line));
+  background: color-mix(in srgb, var(--precision-green) 10%, var(--site-surface)) !important;
 }
 .quickstart-tab-copy strong {
   color: var(--site-muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: normal;
 }
 .quickstart-tab.is-active .quickstart-tab-copy strong {
   color: var(--precision-green-dark);
 }
-.quickstart-tab:focus-visible {
+.quickstart-tab:focus-visible,
+.quickstart-panel pre:focus-visible {
   outline: 2px solid var(--precision-green);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
-.quickstart-dots {
+.quickstart-header {
+  flex-direction: row;
   flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+}
+.quickstart-header > div {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+.quickstart-header div > span {
+  overflow-wrap: anywhere;
+  white-space: normal;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.quickstart-header div > strong,
+.quickstart-header a {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.quickstart-header a {
+  min-height: 44px;
+}
+.quickstart-footer {
+  padding: 16px 20px;
+}
+.quickstart-footer > span {
+  max-width: 68ch;
+  font-size: 0.875rem;
+  line-height: 1.6;
 }
 .quickstart-track {
   display: block;
@@ -852,6 +899,19 @@
 }
 .quickstart-panel {
   width: 100%;
+}
+.quickstart-panel pre {
+  min-height: 18rem;
+  max-height: 26rem;
+  padding: 20px;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--site-muted) transparent;
+  scrollbar-width: thin;
+}
+.quickstart-panel code,
+.quickstart-panel code.hljs {
+  font-size: 0.875rem;
+  line-height: 1.75;
 }
 .quickstart-panel[aria-hidden='false'] {
   animation: snippet-appear 180ms ease-out;
