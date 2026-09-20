@@ -76,7 +76,7 @@
     "three": "^0.186.0"
   },
   "devDependencies": {
-    "@types/three": "^0.185.4",
+    "@types/three": "^0.186.0",
     "typescript": "^6.0.3",
     "@thatopen/components": "3.4.8",
     "@thatopen/fragments": "3.4.7",

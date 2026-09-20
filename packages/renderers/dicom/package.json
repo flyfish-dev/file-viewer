@@ -70,9 +70,9 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@cornerstonejs/core": "5.8.2",
-    "@cornerstonejs/dicom-image-loader": "5.8.2",
-    "@cornerstonejs/metadata": "5.8.2",
+    "@cornerstonejs/core": "5.10.6",
+    "@cornerstonejs/dicom-image-loader": "5.10.6",
+    "@cornerstonejs/metadata": "5.10.6",
     "@file-viewer/core": "workspace:3.1.2",
     "dicom-parser": "1.8.21",
     "pako": "2.2.0"
