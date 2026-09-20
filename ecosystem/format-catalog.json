@@ -543,7 +543,7 @@
       "extensions": ["idml"],
       "supportLevel": "experimental",
       "status": "experimental",
-      "containerVersions": ["IDML package", "@paged-media/introspect-wasm 0.62.0"],
+      "containerVersions": ["IDML package", "@paged-media/introspect-wasm 0.63.0"],
       "knownLimits": [
         "Pages are rendered locally by the CPU WASM engine in a module Worker; the browser never uploads the IDML package",
         "ZIP64, encrypted, multi-disk, overlapping, unsafe-path, unsupported-compression, and configured expansion-limit packages are rejected before the WASM engine opens them",

@@ -133,7 +133,7 @@ export class IdmlDocumentSession {
       }
       const opened: IdmlOpenResult = {
         engine: '@paged-media/introspect-wasm',
-        engineVersion: '0.62.0',
+        engineVersion: '0.63.0',
         renderBackend: 'cpu-tiny-skia',
         tree,
         archive: {
