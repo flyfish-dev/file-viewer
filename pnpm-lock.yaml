@@ -513,8 +513,8 @@ importers:
         specifier: workspace:3.1.2
         version: link:../../renderers/pptx
       billboard.js:
-        specifier: ^3.17.2
-        version: 3.18.0
+        specifier: ^4.1.0
+        version: 4.1.0(react@19.3.0)
       d3-format:
         specifier: ^3.1.2
         version: 3.1.2
@@ -1846,8 +1846,8 @@ importers:
         specifier: ^26.5.1
         version: 26.6.2
       billboard.js:
-        specifier: ^3.17.2
-        version: 3.18.0
+        specifier: ^4.1.0
+        version: 4.1.0(react@19.3.0)
       d3-format:
         specifier: ^3.1.2
         version: 3.1.2
@@ -4083,8 +4083,13 @@ packages:
   bidi-js@1.1.0:
     resolution: {integrity: sha512-fX1Onk0tdVPC7obPWB5EbJ1z7NVhLq4m2xZLq2YXBkxzMXIGRpNMU88n0EPgWseKl12J7zXs7qrDxPK4sRs2fg==}
 
-  billboard.js@3.18.0:
-    resolution: {integrity: sha512-aci69MLwOX0HfdmQHk+v/iA7L4R+wG53hW9VwhkYzMOyqemWLjscf229XsQRrTau9EJSVyOHnr/rpVukoqppXw==}
+  billboard.js@4.1.0:
+    resolution: {integrity: sha512-1TKpX8iAUQtl3ux9HhXSRO8P52tQ9jjlnrIQJyDsc4RhF134fCA6KHeGEpH87zQDwMMWxvPBWpsXOCK8rVNXQw==}
+    peerDependencies:
+      react: '>=16.8.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   boolbase@2.0.0:
     resolution: {integrity: sha512-DkVaaQHymRhpYEYo9x1oo7Q7B0Y6KJUsjm3c9eTyFDby4MHLBTwZ6ZDWBel5zrYxj1WsZgC5oLpiz+93MluXeA==}
@@ -8712,15 +8717,13 @@ snapshots:
     dependencies:
       require-from-string: 2.0.2
 
-  billboard.js@3.18.0:
+  billboard.js@4.1.0(react@19.3.0):
     dependencies:
       '@types/d3-selection': 3.0.12
       '@types/d3-transition': 3.0.9
       d3-axis: 3.0.0
       d3-brush: 3.0.0
       d3-drag: 3.0.0
-      d3-dsv: 3.0.1
-      d3-ease: 3.0.1
       d3-hierarchy: 3.1.2
       d3-interpolate: 3.0.1
       d3-scale: 4.0.2
@@ -8729,6 +8732,8 @@ snapshots:
       d3-time-format: 4.1.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
       d3-zoom: 3.0.0
+    optionalDependencies:
+      react: 19.3.0
 
   boolbase@2.0.0: {}
 
