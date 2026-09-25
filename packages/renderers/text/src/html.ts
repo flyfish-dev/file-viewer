@@ -124,7 +124,11 @@ export default async function renderHtml(
     if (view === 'preview' && !frame.hasAttribute('srcdoc')) {
       frame.srcdoc = createHtmlPreviewDocument(
         documentRef,
-        decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text
+        decodeFileViewerTextBuffer(
+          buffer,
+          context?.options?.text?.encoding,
+          context?.options?.text?.fallbackEncoding
+        ).text
       )
     }
     if (view === 'source' && !sourcePending) {

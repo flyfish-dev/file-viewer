@@ -204,7 +204,11 @@ export default async function renderText(
     supportsFileViewerPrettyPrint(normalizedExtension) &&
     canPossiblyFitDecodedPrettyPrintLimit(buffer, resolveFileViewerPrettyPrintMaxBytes(textOptions))
   ) {
-    sourceText = decodeFileViewerTextBuffer(buffer, textOptions.encoding).text
+    sourceText = decodeFileViewerTextBuffer(
+      buffer,
+      textOptions.encoding,
+      textOptions.fallbackEncoding
+    ).text
     prettyPrintResult = await formatFileViewerTextForDisplay(
       sourceText,
       normalizedExtension,
@@ -230,7 +234,11 @@ export default async function renderText(
     return renderGitBundle(buffer, target, extension, context)
   }
 
-  const originalText = sourceText ?? decodeFileViewerTextBuffer(buffer, textOptions?.encoding).text
+  const originalText = sourceText ?? decodeFileViewerTextBuffer(
+    buffer,
+    textOptions?.encoding,
+    textOptions?.fallbackEncoding
+  ).text
   const formattedText = prettyPrintResult?.formatted ? prettyPrintResult.text : null
   const language = resolveLanguage(extension)
   const showToolbar = textOptions?.toolbar !== false

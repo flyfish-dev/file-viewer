@@ -141,7 +141,11 @@ export default async function renderXml(
     const milliseconds = options.timeoutMs ?? 15000
     if (!Number.isFinite(milliseconds) || milliseconds < 1) throw new XmlProfileError('invalid-manifest', 'XML timeout must be a positive number.')
     timeout = setTimeout(() => controller.abort(new XmlProfileError('timeout', 'XML profile processing timed out.')), Math.min(milliseconds, 60000))
-    const source = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text
+    const source = decodeFileViewerTextBuffer(
+      buffer,
+      context?.options?.text?.encoding,
+      context?.options?.text?.fallbackEncoding
+    ).text
     const result = await applyXmlProfiles(source, buffer.byteLength, options, doc, signal, emit)
     checkXmlAbort(signal)
     if (result && !disposed) {
