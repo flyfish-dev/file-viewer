@@ -245,7 +245,11 @@ export default async function renderMarkdown(
   target: HTMLDivElement,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const text = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text;
+  const text = decodeFileViewerTextBuffer(
+    buffer,
+    context?.options?.text?.encoding,
+    context?.options?.text?.fallbackEncoding
+  ).text;
   let zoom = 1;
   const zoomEmitter = createZoomChangeEmitter();
   const root = document.createElement('div');

@@ -1,12 +1,75 @@
+/**
+ * Single-byte legacy encodings. Every browser TextDecoder ships these labels,
+ * and one byte always decodes to one UTF-16 code unit, so the virtual
+ * large-text renderer can slice them at any byte offset.
+ */
+export type FileViewerSingleByteTextEncoding =
+  | 'iso-8859-1'
+  | 'iso-8859-2'
+  | 'iso-8859-15'
+  | 'windows-1250'
+  | 'windows-1251'
+  | 'windows-1252';
+
 export type FileViewerTextEncoding =
   | 'auto'
   | 'utf-8'
   | 'utf-16le'
   | 'utf-16be'
   | 'gbk'
-  | 'gb18030';
+  | 'gb18030'
+  | FileViewerSingleByteTextEncoding;
 
 export type ResolvedFileViewerTextEncoding = Exclude<FileViewerTextEncoding, 'auto' | 'gbk'>;
+
+/**
+ * Encoding used by `auto` when the bytes carry no BOM, do not look like
+ * UTF-16, and are not valid UTF-8. GB18030 keeps the historical behavior.
+ */
+export const DEFAULT_FILE_VIEWER_TEXT_FALLBACK_ENCODING: ResolvedFileViewerTextEncoding = 'gb18030';
+
+const SINGLE_BYTE_ENCODING_ALIASES: ReadonlyMap<string, FileViewerSingleByteTextEncoding> = new Map<string, FileViewerSingleByteTextEncoding>([
+  ['iso-8859-1', 'iso-8859-1'],
+  ['iso8859-1', 'iso-8859-1'],
+  ['iso88591', 'iso-8859-1'],
+  ['latin1', 'iso-8859-1'],
+  ['latin-1', 'iso-8859-1'],
+  ['l1', 'iso-8859-1'],
+  ['cp819', 'iso-8859-1'],
+  ['ibm819', 'iso-8859-1'],
+  ['iso-8859-2', 'iso-8859-2'],
+  ['iso8859-2', 'iso-8859-2'],
+  ['iso88592', 'iso-8859-2'],
+  ['latin2', 'iso-8859-2'],
+  ['latin-2', 'iso-8859-2'],
+  ['l2', 'iso-8859-2'],
+  ['iso-8859-15', 'iso-8859-15'],
+  ['iso8859-15', 'iso-8859-15'],
+  ['iso885915', 'iso-8859-15'],
+  ['latin9', 'iso-8859-15'],
+  ['latin-9', 'iso-8859-15'],
+  ['l9', 'iso-8859-15'],
+  ['windows-1250', 'windows-1250'],
+  ['windows1250', 'windows-1250'],
+  ['cp1250', 'windows-1250'],
+  ['x-cp1250', 'windows-1250'],
+  ['windows-1251', 'windows-1251'],
+  ['windows1251', 'windows-1251'],
+  ['cp1251', 'windows-1251'],
+  ['x-cp1251', 'windows-1251'],
+  ['windows-1252', 'windows-1252'],
+  ['windows1252', 'windows-1252'],
+  ['cp1252', 'windows-1252'],
+  ['x-cp1252', 'windows-1252']
+]);
+
+const SINGLE_BYTE_ENCODINGS: ReadonlySet<string> = new Set(SINGLE_BYTE_ENCODING_ALIASES.values());
+
+export const isSingleByteFileViewerTextEncoding = (
+  encoding: string | undefined
+): encoding is FileViewerSingleByteTextEncoding => {
+  return encoding !== undefined && SINGLE_BYTE_ENCODINGS.has(encoding);
+};
 
 export interface DecodedFileViewerText {
   text: string;
@@ -21,7 +84,7 @@ export interface ResolvedFileViewerTextSource {
 const normalizeEncoding = (
   encoding: FileViewerTextEncoding | string | undefined
 ): FileViewerTextEncoding => {
-  const normalized = String(encoding || 'auto').trim().toLowerCase().replace('_', '-');
+  const normalized = String(encoding || 'auto').trim().toLowerCase().replace(/_/g, '-');
   if (normalized === 'utf8' || normalized === 'utf-8') {
     return 'utf-8';
   }
@@ -37,7 +100,26 @@ const normalizeEncoding = (
   if (normalized === 'gb18030') {
     return 'gb18030';
   }
+  const singleByte = SINGLE_BYTE_ENCODING_ALIASES.get(normalized);
+  if (singleByte) {
+    return singleByte;
+  }
   return 'auto';
+};
+
+const toResolvedEncoding = (
+  encoding: Exclude<FileViewerTextEncoding, 'auto'>
+): ResolvedFileViewerTextEncoding => {
+  return encoding === 'gbk' ? 'gb18030' : encoding;
+};
+
+const normalizeFallbackEncoding = (
+  fallbackEncoding: FileViewerTextEncoding | string | undefined
+): ResolvedFileViewerTextEncoding => {
+  const normalized = normalizeEncoding(fallbackEncoding);
+  return normalized === 'auto'
+    ? DEFAULT_FILE_VIEWER_TEXT_FALLBACK_ENCODING
+    : toResolvedEncoding(normalized);
 };
 
 const isContinuationByte = (value: number | undefined) => {
@@ -141,14 +223,24 @@ const inferBomlessUtf16 = (bytes: Uint8Array): ResolvedFileViewerTextEncoding | 
   return null;
 };
 
+/**
+ * Picks the decoder for a text buffer.
+ *
+ * `encoding` other than `auto` is used as-is. In `auto` mode the order is:
+ * BOM, UTF-16 byte structure, strict UTF-8, then `fallbackEncoding`. The
+ * fallback defaults to GB18030; pass `windows-1252`, `windows-1251`, or
+ * another supported label for Latin, Cyrillic, or Central European legacy
+ * files, which are otherwise misread as CJK text.
+ */
 export const resolveFileViewerTextEncoding = (
   bytes: Uint8Array,
-  encoding: FileViewerTextEncoding | string = 'auto'
+  encoding: FileViewerTextEncoding | string = 'auto',
+  fallbackEncoding: FileViewerTextEncoding | string = DEFAULT_FILE_VIEWER_TEXT_FALLBACK_ENCODING
 ): ResolvedFileViewerTextSource => {
   const normalized = normalizeEncoding(encoding);
   if (normalized !== 'auto') {
     return {
-      encoding: normalized === 'gbk' ? 'gb18030' : normalized,
+      encoding: toResolvedEncoding(normalized),
       bomLength: normalized === 'utf-8' && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf
         ? 3
         : (normalized === 'utf-16le' && bytes[0] === 0xff && bytes[1] === 0xfe) ||
@@ -173,7 +265,7 @@ export const resolveFileViewerTextEncoding = (
   }
   return isValidFileViewerUtf8(bytes)
     ? { encoding: 'utf-8', bomLength: 0 }
-    : { encoding: 'gb18030', bomLength: 0 };
+    : { encoding: normalizeFallbackEncoding(fallbackEncoding), bomLength: 0 };
 };
 
 export const createFileViewerTextDecoder = (encoding: ResolvedFileViewerTextEncoding) => {
@@ -195,10 +287,11 @@ export const createFileViewerTextDecoder = (encoding: ResolvedFileViewerTextEnco
 
 export const decodeFileViewerTextBuffer = (
   data: ArrayBuffer,
-  encoding: FileViewerTextEncoding | string = 'auto'
+  encoding: FileViewerTextEncoding | string = 'auto',
+  fallbackEncoding: FileViewerTextEncoding | string = DEFAULT_FILE_VIEWER_TEXT_FALLBACK_ENCODING
 ): DecodedFileViewerText => {
   const bytes = new Uint8Array(data);
-  const resolved = resolveFileViewerTextEncoding(bytes, encoding);
+  const resolved = resolveFileViewerTextEncoding(bytes, encoding, fallbackEncoding);
   return {
     text: createFileViewerTextDecoder(resolved.encoding).decode(bytes.subarray(resolved.bomLength)),
     encoding: resolved.encoding

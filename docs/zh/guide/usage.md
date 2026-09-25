@@ -251,6 +251,8 @@ const options = {
 | `docx.progressive` | 是否启用异步分批渲染，默认按批次让出主线程，提升大文档首屏和滚动响应 |
 | `docx.visualPagination` | 是否启用固定页高和预览层测量分页，默认 `false`。默认流式阅读保留作者插入的分页符和分节边界，但不按页高自动拆分长表格、目录或段落；需要自动分页时再设为 `true` |
 | `docx.workerTimeout` | DOCX Worker 超时时间，默认 5000ms，静态资源路径、MIME、CSP 或 WebView 不兼容时会更快回退 |
+| `text.encoding` | 文本、代码、Markdown、HTML 源码、XML 和 patch 的解码编码，默认 `auto`：先识别 BOM 和 UTF-16 字节结构，再严格校验 UTF-8，否则使用 `text.fallbackEncoding`；也可显式指定 `utf-8`、`utf-16le`、`utf-16be`、`gbk`、`gb18030`、`iso-8859-1`、`iso-8859-2`、`iso-8859-15`、`windows-1250`、`windows-1251` 或 `windows-1252`。按 WHATWG Encoding 标准，浏览器会用 windows-1252 码表解码 `iso-8859-1` 标签 |
+| `text.fallbackEncoding` | `auto` 模式下非 UTF-8 字节的兜底编码，默认 `gb18030`（同时覆盖 GBK）。西欧 Latin-1 文件设为 `windows-1252`，西里尔文件设为 `windows-1251`。单字节文本在结构上也是合法的 GB18030，无法自动区分，否则会显示成 `Saarbr點ken` 这样的中文乱码。下载仍返回原始字节 |
 | `spreadsheet.worker` | 是否启用表格静态 Worker。默认 `auto`：文件体积达到 `spreadsheet.workerAutoThreshold` 时自动尝试 Worker，小文件继续主线程兼容路径；显式设为 `true` / `false` 时按业务配置执行 |
 | `spreadsheet.workerAutoThreshold` | `worker: 'auto'` 时的大文件阈值，单位字节，默认 1MB。需要更激进优化可调低；WebView、CSP 或静态资源不稳定环境可调高或设 `worker: false` |
 | `spreadsheet.workerUrl` | 自定义 Excel/XLSX Worker 地址，默认尝试当前部署 base 下的 `vendor/xlsx/sheet.worker.js` |

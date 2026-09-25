@@ -1481,9 +1481,42 @@ export interface FileViewerTextOptions {
   htmlView?: 'preview' | 'source'
   /**
    * Source encoding. Defaults to `auto`: BOM and UTF-16 structure first,
-   * then strict UTF-8, with GB18030 (including GBK) as the final fallback.
+   * then strict UTF-8, then `fallbackEncoding`. Explicit single-byte labels
+   * decode legacy Latin, Cyrillic, and Central European files. Browsers
+   * decode the `iso-8859-1` label with the windows-1252 table, as the
+   * WHATWG Encoding Standard requires.
    */
-  encoding?: 'auto' | 'utf-8' | 'utf-16le' | 'utf-16be' | 'gbk' | 'gb18030'
+  encoding?:
+    | 'auto'
+    | 'utf-8'
+    | 'utf-16le'
+    | 'utf-16be'
+    | 'gbk'
+    | 'gb18030'
+    | 'iso-8859-1'
+    | 'iso-8859-2'
+    | 'iso-8859-15'
+    | 'windows-1250'
+    | 'windows-1251'
+    | 'windows-1252'
+  /**
+   * Encoding used by `auto` for bytes that are not valid UTF-8 and carry no
+   * BOM or UTF-16 structure. Defaults to `gb18030`, which preserves the
+   * historical behavior for GBK files. Set `windows-1252` for Western
+   * European sources or `windows-1251` for Cyrillic sources; single-byte
+   * bytes are structurally valid GB18030, so they cannot be told apart
+   * automatically. Ignored when `encoding` is explicit.
+   */
+  fallbackEncoding?:
+    | 'utf-8'
+    | 'gbk'
+    | 'gb18030'
+    | 'iso-8859-1'
+    | 'iso-8859-2'
+    | 'iso-8859-15'
+    | 'windows-1250'
+    | 'windows-1251'
+    | 'windows-1252'
   /**
    * Shows the renderer-local source metadata toolbar (file type, indexing
    * status, and line count). Defaults to true. This does not control the
