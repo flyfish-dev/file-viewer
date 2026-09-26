@@ -18,7 +18,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/remaining-source"
-          git archive --format=tar HEAD -- packages/core packages/renderers/word packages/renderers/pptx packages/renderers/doc packages/renderers/spreadsheet packages/renderers/pdf packages/renderers/text packages/renderers/ofd packages/renderers/archive packages/renderers/shared scripts test docs/regressions patches package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json CONTRIBUTING.md apps/viewer-demo/public/vendor/docx/docx.worker.js apps/viewer-demo/public/vendor/pptx/pptx.worker.js | gzip > "$RUNNER_TEMP/remaining-source/source.tar.gz"
+          git ls-files -z -- packages/core packages/renderers/word packages/renderers/pptx packages/renderers/doc packages/renderers/spreadsheet packages/renderers/pdf packages/renderers/text packages/renderers/ofd packages/renderers/archive scripts test docs/regressions patches package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json CONTRIBUTING.md apps/viewer-demo/public/vendor/docx/docx.worker.js apps/viewer-demo/public/vendor/pptx/pptx.worker.js | tar --null -T - -czf "$RUNNER_TEMP/remaining-source/source.tar.gz"
           git rev-parse HEAD > "$RUNNER_TEMP/remaining-source/head.txt"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
