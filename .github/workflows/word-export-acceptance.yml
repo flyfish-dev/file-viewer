@@ -1,0 +1,140 @@
+name: Word export and original acceptance
+on:
+  push:
+    branches: [fix/compatibility-review-20260922]
+    paths: [.github/word-export-acceptance.b64, .github/workflows/word-export-acceptance.yml]
+permissions:
+  contents: write
+concurrency:
+  group: word-export-acceptance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    if: github.repository == 'flyfish-dev/file-viewer' && github.ref == 'refs/heads/fix/compatibility-review-20260922'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Apply bounded content-verified source and tests
+        run: |
+          python3 - <<'PY'
+          import pathlib,base64,lzma,hashlib,subprocess
+          decoder=lzma.LZMADecompressor(memlimit=128*1024*1024)
+          patch=decoder.decompress(base64.b64decode(pathlib.Path('.github/word-export-acceptance.b64').read_text().strip(),validate=True),max_length=1024*1024)
+          assert decoder.eof and not decoder.unused_data
+          assert hashlib.sha256(patch).hexdigest()=='bcdb0edd114ea7a6d6d37b8c4b75839975a2cee5b1dbd7e828b17d7a3cafbaa5'
+          subprocess.run(['git','apply','--check','-'],input=patch,check=True)
+          subprocess.run(['git','apply','--index','-'],input=patch,check=True)
+          paths=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          assert len(paths)==7 and all(p.startswith(('packages/renderers/word/','test/remaining-originals/','docs/regressions/')) for p in paths)
+          subprocess.run(['git','diff','--cached','--check'],check=True)
+          PY
+      - name: Install the actual frozen workspace dependencies
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/export-tooling" --ignore-scripts --no-audit --no-fund --save-exact pnpm@11.0.9
+          node "$RUNNER_TEMP/export-tooling/node_modules/pnpm/bin/pnpm.cjs" --filter . --filter @file-viewer/renderer-word... --filter @file-viewer/pptx --filter @file-viewer/renderer-pdf install --frozen-lockfile --ignore-scripts
+          git diff --exit-code -- pnpm-lock.yaml pnpm-workspace.yaml package.json patches/
+      - name: Build and type-check owning packages
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+          mkdir -p output/word-export-build
+          npm --prefix packages/core run build 2>&1 | tee output/word-export-build/core.log
+          npm --prefix packages/renderers/doc run build 2>&1 | tee output/word-export-build/doc.log
+          npm --prefix packages/renderers/word run build 2>&1 | tee output/word-export-build/word.log
+      - name: Prepare Chromium and fonts
+        timeout-minutes: 5
+        run: |
+          node node_modules/playwright/cli.js install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Prepare hash-pinned originals outside the repository
+        timeout-minutes: 3
+        run: |
+          python3 - <<'PY'
+          import pathlib,os,urllib.request,hashlib,json,zipfile,io,concurrent.futures
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'export-originals';root.mkdir()
+          pins={p['id']:p for p in json.loads(pathlib.Path('test/remaining-originals/identities.json').read_text())}
+          direct={'C007':'29028968/default.doc','C011':'29651456/Microsoft.Word.2.docx','C042':'31932517/e10.docx','C052':'32314000/1.docx','C055':'32331964/2.docx'}
+          def get(part):
+            with urllib.request.urlopen('https://github.com/user-attachments/files/'+part,timeout=60) as response:data=response.read(32*1024*1024+1)
+            assert len(data)<=32*1024*1024
+            return data
+          def save(id,data):
+            pin=pins[id];assert len(data)==pin['bytes'] and hashlib.sha256(data).hexdigest()==pin['sha256'],id
+            (root/(id+pin['extension'])).write_bytes(data)
+          def download(item):
+            id,part=item;save(id,get(part))
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:list(pool.map(download,direct.items()))
+          for part,digest,ids in [('30493069/default.zip','14f70693ec3b03fb38b48ddf2724ec6339aa3c6621d579ab27a018ba874f6e33',['C064','C066']),('31764289/default.zip','b29b311d3591a57232f606cad9858bd5b9d1434ecdd376d64f10761904a229a1',['C071'])]:
+            data=get(part);assert hashlib.sha256(data).hexdigest()==digest
+            remaining=set(ids)
+            with zipfile.ZipFile(io.BytesIO(data)) as archive:
+              for info in archive.infolist():
+                candidates=[id for id in remaining if pins[id]['bytes']==info.file_size]
+                if not candidates:continue
+                payload=archive.read(info)
+                for id in candidates:
+                  if hashlib.sha256(payload).hexdigest()==pins[id]['sha256']:save(id,payload);remaining.remove(id)
+            assert not remaining
+          data=get('31549497/2025.19.-.docx')
+          assert len(data)==299642 and hashlib.sha256(data).hexdigest()=='d5a60516f06b7f116c629fdbc834b81ae8a0d7ac70e64006483d2a4c44ff89ab'
+          (root/'C037.docx').write_bytes(data)
+          PY
+      - name: Reproduce the old HTML paragraph-splitting defect
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          file=packages/renderers/word/src/wordDocx.ts
+          git show "HEAD:$file" > "$file"
+          trap 'git checkout-index -f -- packages/renderers/word/src/wordDocx.ts' EXIT
+          if WORD_EXPORT_OUTPUT=output/word-paragraph-export-before node packages/renderers/word/scripts/verify-paragraph-export.mjs > "$RUNNER_TEMP/export-before.log" 2>&1; then cat "$RUNNER_TEMP/export-before.log"; exit 1; fi
+          python3 - <<'PY'
+          import pathlib,json
+          r=json.loads(pathlib.Path('output/word-paragraph-export-before/report.json').read_text())
+          assert r['failed']==1 and any(c['status']=='fail' and 'serialized paragraphs and chart bounds' in c['name'] and 'empty paragraphs' in c['error'] for c in r['checks'])
+          PY
+      - name: Verify actual export, originals, Worker cleanup and existing regressions
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          node packages/renderers/word/scripts/verify-paragraph-export.mjs
+          WORD_ORIGINAL_CORPUS_DIR="$RUNNER_TEMP/export-originals" node packages/renderers/word/scripts/verify-remaining-originals.mjs
+          WORD_MERGE_ORIGINAL="$RUNNER_TEMP/export-originals/C037.docx" node packages/renderers/word/scripts/verify-merged-borders.mjs
+          WORD_VML_ORIGINAL="$RUNNER_TEMP/export-originals/C037.docx" node packages/renderers/word/scripts/verify-vml-text-layout.mjs
+          node scripts/verify-docx-engine-compatibility.mjs
+          node scripts/verify-container-compatibility.mjs
+          for name in table-spec github-34 github-87 github-171 github-192 github-236; do node "packages/renderers/doc/scripts/verify-$name.mjs"; done
+      - name: Commit verified code and non-sensitive evidence
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/fix/compatibility-review-20260922
+          python3 - <<'PY'
+          import pathlib,json,os,hashlib,shutil,subprocess
+          dst=pathlib.Path('docs/regressions/evidence/word-export-originals-20260926');dst.mkdir(parents=True,exist_ok=True)
+          suites=[('word-paragraph-export','export.json',37),('word-remaining-originals','originals.json',83),('word-merged-borders','merged.json',21),('word-vml-text','vml.json',57),('docx-engine-compatibility','engine.json',11),('container-compatibility','containers.json',4)]
+          counts={}
+          for directory,name,count in suites:
+            src=pathlib.Path('output')/directory/'report.json';r=json.loads(src.read_text());assert r['passed']==count and not r.get('failed',0),(directory,r)
+            if directory in ['word-paragraph-export','word-remaining-originals']:assert r['completed']
+            shutil.copyfile(src,dst/name);counts[directory]=count
+          shutil.copyfile('output/word-paragraph-export-before/report.json',dst/'baseline.json')
+          shutil.copyfile('output/word-paragraph-export/generated.png',dst/'generated.png')
+          shutil.copyfile('output/word-export-build/word.log',dst/'word-build.log')
+          assert 'tests 86' in (dst/'word-build.log').read_text() and 'pass 86' in (dst/'word-build.log').read_text()
+          paths=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          receipt={'run':os.environ['GITHUB_RUN_ID'],'checkedCommit':os.environ['GITHUB_SHA'],'functionalBase':'c77e693ea81897c54ec3ad47d6958e2df0eabbc4','originalDocuments':8,'dpr':[1,2],'checks':counts,'wordUnitTests':86,'newUnitTests':12,'baselineTargetFailure':True,'actualWorkerParsed':True,'actualPrintedPdf':'C052 A4 and generated Letter; page count, dimensions and paragraph/chart geometry','install':'actual pnpm 11.0.9 frozen selected workspace install','builds':['core','doc','word'],'runtimeDependenciesChanged':False,'engineOrStaticWorkerChanged':False,'physicalPrintDriverTested':False,'fullCorpusAccepted':False,'sourceSha256':{p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in paths},'evidenceSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in dst.iterdir() if p.is_file()}}
+          (dst/'verification.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          p=pathlib.Path('docs/regressions/corpus-progress-20260922.md');s=p.read_text();s+='\n## Word 原样补验与实际打印\n\n[导出结构及原样补验](word-export-originals-20260926.md)：修复图表段落序列化造成空段落/内容下移和流式打印误用A4高度。八份原稿C007/C011/C042/C052/C055/C064/C066/C071完成83项正文、图片、网格、图表、居中、往返缩放与清理检查；C052实际打印验证正文、页边距、图表坐标和一页A4。生成式37项覆盖分页/流式/缩放及实际Letter打印，Word86项单元测试通过。已确认子项不再保留为未验证；真实宿主、未提供原件及其他未覆盖的跨页布局继续独立记录。\n';p.write_text(s)
+          subprocess.run(['git','add','--',str(dst),str(p)],check=True)
+          PY
+          git rm -- .github/word-export-acceptance.b64 .github/workflows/word-export-acceptance.yml .github/workflows/remaining-review-source.yml
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(word): preserve chart paragraphs and authored flow paper on export'
+          git push origin HEAD:refs/heads/fix/compatibility-review-20260922
