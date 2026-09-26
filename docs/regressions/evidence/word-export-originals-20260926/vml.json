@@ -1,0 +1,512 @@
+{
+  "completed": true,
+  "passed": 57,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "generated DPR 1: original text and VML shapes are retained without invented content",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 0 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 0 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 1 zoom 0.5: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 1 zoom 0.5: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 2 zoom 2: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 2 zoom 2: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 3 zoom 0.88: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 3 zoom 0.88: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 4 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 step 4 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1: export preserves resolved origins, viewport units and content",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1: actual Worker returns parsed data and preserves repaired VML geometry",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1: unmount removes the preview",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1: original text and VML shapes are retained without invented content",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 0 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 0 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 1 zoom 0.5: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 1 zoom 0.5: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 2 zoom 2: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 2 zoom 2: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 3 zoom 0.88: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 3 zoom 0.88: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 4 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1 step 4 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1: export preserves resolved origins, viewport units and content",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1: actual Worker returns parsed data and preserves repaired VML geometry",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 1: unmount removes the preview",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2: original text and VML shapes are retained without invented content",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 0 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 0 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 1 zoom 0.5: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 1 zoom 0.5: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 2 zoom 2: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 2 zoom 2: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 3 zoom 0.88: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 3 zoom 0.88: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 4 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 step 4 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2: export preserves resolved origins, viewport units and content",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2: actual Worker returns parsed data and preserves repaired VML geometry",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2: unmount removes the preview",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2: original text and VML shapes are retained without invented content",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 0 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 0 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 1 zoom 0.5: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 1 zoom 0.5: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 2 zoom 2: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 2 zoom 2: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 3 zoom 0.88: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 3 zoom 0.88: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 4 zoom 1: text-relative origins and shape extents match XML",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2 step 4 zoom 1: physical font sizes do not get a second SVG scale",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2: export preserves resolved origins, viewport units and content",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2: actual Worker returns parsed data and preserves repaired VML geometry",
+      "status": "pass"
+    },
+    {
+      "name": "C037 DPR 2: unmount removes the preview",
+      "status": "pass"
+    },
+    {
+      "name": "No browser exceptions or external resource requests",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "generated",
+      "sha256": "123eac8baa6b915b8eae2448c1e68f19dae596b5ad71bf6ed53660209a1c178a",
+      "dpr": 1,
+      "characters": 103,
+      "bodySha256": "b7cab071b4af47bc5ce52db32a40fb3a9e98d4bf447c119e783ac14169800500",
+      "pages": 1,
+      "shapes": [
+        {
+          "part": "word/header1.xml",
+          "left": 26.65625,
+          "top": -10.65625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 20pt; margin-top: -8pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: calc(96px); top: calc(80px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 14
+        },
+        {
+          "part": "word/document.xml",
+          "left": 53.328125,
+          "top": 26.640625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 40pt; margin-top: 20pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(53.3281px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 31
+        },
+        {
+          "part": "word/document.xml",
+          "left": 16,
+          "top": 26.65625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 12pt; margin-top: 20pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(122.656px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 13
+        },
+        {
+          "part": "word/document.xml",
+          "left": 60,
+          "top": -10.65625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 45pt; margin-top: -8pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(191.984px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 23
+        }
+      ],
+      "images": 0
+    },
+    {
+      "id": "C037",
+      "sha256": "d5a60516f06b7f116c629fdbc834b81ae8a0d7ac70e64006483d2a4c44ff89ab",
+      "dpr": 1,
+      "characters": 6034,
+      "bodySha256": "e1008c32fbdb6df1753a16641ec93ae659a15d7b9ea850ca261b192c41b93d58",
+      "pages": 13,
+      "shapes": [
+        {
+          "part": "word/document.xml",
+          "left": 109.95450337777955,
+          "top": 4.732416835719773,
+          "width": 183.04925846414434,
+          "height": 25.11460815787919,
+          "fontScale": [
+            0.9995864610374682,
+            0.9995864188392026
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 82.5023pt; margin-top: 3.55489pt; width: 137.35pt; height: 18.85pt; z-index: 251658240; display: block; overflow: visible; pointer-events: none; left: calc(-310px); top: 0px;",
+          "viewport": {
+            "width": "183.12496301",
+            "transform": "scale(0.750034281201 0.750248889614)"
+          },
+          "textCharacters": 9
+        },
+        {
+          "part": "word/document.xml",
+          "left": 2.3271620743308454,
+          "top": 16.071474996553288,
+          "width": 599.0802394973707,
+          "height": 0.6559785712878893,
+          "fontScale": null,
+          "textFits": true,
+          "style": "position: absolute; margin-left: 1.74946pt; margin-top: 12.0746pt; width: 449.5pt; height: 0.5pt; z-index: 251685888; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(688.125px);",
+          "viewport": null,
+          "textCharacters": 0
+        },
+        {
+          "part": "word/document.xml",
+          "left": 2.3271620743308454,
+          "top": 31.76810509522778,
+          "width": 599.0802394973707,
+          "height": 0.6559785712878893,
+          "fontScale": null,
+          "textFits": true,
+          "style": "position: absolute; margin-left: 1.74946pt; margin-top: 23.8493pt; width: 449.5pt; height: 0.5pt; z-index: 251686912; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(708.656px);",
+          "viewport": null,
+          "textCharacters": 0
+        }
+      ],
+      "images": 5
+    },
+    {
+      "id": "generated",
+      "sha256": "123eac8baa6b915b8eae2448c1e68f19dae596b5ad71bf6ed53660209a1c178a",
+      "dpr": 2,
+      "characters": 103,
+      "bodySha256": "b7cab071b4af47bc5ce52db32a40fb3a9e98d4bf447c119e783ac14169800500",
+      "pages": 1,
+      "shapes": [
+        {
+          "part": "word/header1.xml",
+          "left": 26.65625,
+          "top": -10.65625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 20pt; margin-top: -8pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: calc(96px); top: calc(80px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 14
+        },
+        {
+          "part": "word/document.xml",
+          "left": 53.328125,
+          "top": 26.640625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 40pt; margin-top: 20pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(53.3281px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 31
+        },
+        {
+          "part": "word/document.xml",
+          "left": 16,
+          "top": 26.65625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 12pt; margin-top: 20pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(123.656px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 13
+        },
+        {
+          "part": "word/document.xml",
+          "left": 60,
+          "top": -10.65625,
+          "width": 280,
+          "height": 48,
+          "fontScale": [
+            1,
+            1
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 45pt; margin-top: -8pt; width: 210pt; height: 36pt; z-index: 4; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(193.984px);",
+          "viewport": {
+            "width": "280.00000000",
+            "transform": "scale(0.750000000000 0.750000000000)"
+          },
+          "textCharacters": 23
+        }
+      ],
+      "images": 0
+    },
+    {
+      "id": "C037",
+      "sha256": "d5a60516f06b7f116c629fdbc834b81ae8a0d7ac70e64006483d2a4c44ff89ab",
+      "dpr": 2,
+      "characters": 6034,
+      "bodySha256": "e1008c32fbdb6df1753a16641ec93ae659a15d7b9ea850ca261b192c41b93d58",
+      "pages": 13,
+      "shapes": [
+        {
+          "part": "word/document.xml",
+          "left": 109.95450337777955,
+          "top": 4.732416835719773,
+          "width": 183.04925846414434,
+          "height": 25.11460815787919,
+          "fontScale": [
+            0.9995864610374682,
+            0.9995864188392026
+          ],
+          "textFits": true,
+          "style": "position: absolute; margin-left: 82.5023pt; margin-top: 3.55489pt; width: 137.35pt; height: 18.85pt; z-index: 251658240; display: block; overflow: visible; pointer-events: none; left: calc(-310px); top: 0px;",
+          "viewport": {
+            "width": "183.12496301",
+            "transform": "scale(0.750034281201 0.750248889614)"
+          },
+          "textCharacters": 9
+        },
+        {
+          "part": "word/document.xml",
+          "left": 2.3271620743308454,
+          "top": 16.071474996553288,
+          "width": 599.0802394973707,
+          "height": 0.6559785712878893,
+          "fontScale": null,
+          "textFits": true,
+          "style": "position: absolute; margin-left: 1.74946pt; margin-top: 12.0746pt; width: 449.5pt; height: 0.5pt; z-index: 251685888; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(700.125px);",
+          "viewport": null,
+          "textCharacters": 0
+        },
+        {
+          "part": "word/document.xml",
+          "left": 2.3271620743308454,
+          "top": 31.76810509522778,
+          "width": 599.0802394973707,
+          "height": 0.6559785712878893,
+          "fontScale": null,
+          "textFits": true,
+          "style": "position: absolute; margin-left: 1.74946pt; margin-top: 23.8493pt; width: 449.5pt; height: 0.5pt; z-index: 251686912; display: block; overflow: visible; pointer-events: none; left: 0px; top: calc(720.656px);",
+          "viewport": null,
+          "textCharacters": 0
+        }
+      ],
+      "images": 5
+    }
+  ],
+  "errors": [],
+  "requests": [],
+  "scope": "Anchored VML text-relative positioning and physical text units only; not full-page typography, stamp authentication or all group/cell positioning policies."
+}

@@ -1,3 +1,4 @@
+import { preserveDocxParagraphStructureForExport, readDocxFlowPaperHeight } from './docxExport.js'
 import type { DocxProgressEvent, Options, renderAsync } from '@file-viewer/docx'
 import JSZip from 'jszip'
 import { correctDocxMixedAnchorOrigins, correctDocxVmlTextAnchorOrigins } from './docxAnchors.js'
@@ -809,7 +810,7 @@ function getDocxFramePrintSize(frame: HTMLElement | undefined) {
 
   return {
     width: size.width,
-    height: Math.max(page.scrollHeight || 0, page.offsetHeight || 0, DOCX_DEFAULT_PAGE_SIZE.height)
+    height: Math.max(page.scrollHeight || 0, page.offsetHeight || 0, readDocxFlowPaperHeight(page, DOCX_DEFAULT_PAGE_SIZE.height))
   }
 }
 
@@ -865,7 +866,9 @@ function buildDocxPrintStyle(target: HTMLDivElement) {
   return buildPrintPageStyle({
     selector,
     width: pageSize.width,
-    height: isDocxFlowFrame(firstFrame) ? DOCX_DEFAULT_PAGE_SIZE.height : pageSize.height,
+    height: isDocxFlowFrame(firstFrame)
+      ? readDocxFlowPaperHeight(getDocxPageElement(firstFrame), DOCX_DEFAULT_PAGE_SIZE.height)
+      : pageSize.height,
     heightMode: isDocxFlowFrame(firstFrame) ? 'min' : 'fixed',
     // Flow sections are browser-paginated rather than fixed authored pages.
     pages: frames.some(isDocxFlowFrame) ? undefined : frames.map(getDocxFramePrintSize)
@@ -892,6 +895,7 @@ async function prepareDocxCloneForExport(target: HTMLDivElement) {
     const selector = '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
     const liveFrames = Array.from(target.querySelectorAll<HTMLElement>(selector))
     const clone = target.cloneNode(true) as HTMLElement
+    preserveDocxParagraphStructureForExport(target, clone)
     replaceFileViewerCanvasWithImages(target, clone)
     const printDocument = target.ownerDocument.createElement('div')
     printDocument.className = 'docx-print-document'

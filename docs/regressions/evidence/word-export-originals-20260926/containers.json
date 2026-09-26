@@ -1,0 +1,22 @@
+{
+  "checks": [
+    {
+      "name": "Signature dispatch, plain text, HTML and unrelated binary records",
+      "status": "pass"
+    },
+    {
+      "name": "UTF-16 HTML keeps tables and author CSS without active markup or external requests",
+      "status": "pass"
+    },
+    {
+      "name": "Repeated Word mount and disposal clears page and export lifecycle",
+      "status": "pass"
+    },
+    {
+      "name": "No browser errors or network side effects",
+      "status": "pass"
+    }
+  ],
+  "passed": 4,
+  "pictureUnitTests": 6
+}
