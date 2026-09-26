@@ -1,0 +1,80 @@
+name: PPTX original text and picture acceptance
+on:
+  push:
+    branches: [fix/compatibility-review-20260922]
+    paths: [packages/renderers/pptx/scripts/verify-original-text-overlays.mjs, .github/workflows/pptx-original-overlays.yml]
+permissions:
+  contents: write
+jobs:
+  verify:
+    if: github.repository == 'flyfish-dev/file-viewer' && github.ref == 'refs/heads/fix/compatibility-review-20260922'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Frozen selected workspace installation
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/pptx-tooling" --ignore-scripts --no-audit --no-fund --save-exact pnpm@11.0.9
+          node "$RUNNER_TEMP/pptx-tooling/node_modules/pnpm/bin/pnpm.cjs" --filter . --filter @file-viewer/renderer-word... --filter @file-viewer/pptx install --frozen-lockfile --ignore-scripts
+          git diff --exit-code -- pnpm-lock.yaml pnpm-workspace.yaml package.json patches/
+          npm --prefix packages/core run build
+          npm --prefix packages/renderers/pptx run build
+          cmp packages/renderers/pptx/dist/worker/pptx.worker.js apps/viewer-demo/public/vendor/pptx/pptx.worker.js
+      - name: Prepare Chromium and fonts
+        timeout-minutes: 5
+        run: |
+          node node_modules/playwright/cli.js install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Prepare immutable originals outside the repository
+        run: |
+          python3 - <<'PY'
+          import pathlib,json,os,urllib.request,hashlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'pptx-originals';root.mkdir()
+          pins={p['id']:p for p in json.loads(pathlib.Path('test/remaining-originals/identities.json').read_text())}
+          for id,part in [('C015','30030939/default.pptx'),('C035','31502119/default.pptx')]:
+            with urllib.request.urlopen('https://github.com/user-attachments/files/'+part,timeout=60) as response:data=response.read(2*1024*1024)
+            p=pins[id];assert len(data)==p['bytes'] and hashlib.sha256(data).hexdigest()==p['sha256']
+            (root/(id+p['extension'])).write_bytes(data)
+          PY
+      - name: Verify originals and prior text drawing chart regressions
+        timeout-minutes: 4
+        run: |
+          set -euo pipefail
+          PPTX_ORIGINAL_CORPUS_DIR="$RUNNER_TEMP/pptx-originals" node packages/renderers/pptx/scripts/verify-original-text-overlays.mjs
+          node packages/renderers/pptx/scripts/verify-text-body.mjs
+          node packages/renderers/pptx/scripts/verify-diagram-text.mjs
+          node packages/renderers/pptx/scripts/verify-drawing-semantics.mjs
+          node packages/renderers/pptx/scripts/verify-paragraph-numbering.mjs
+          node packages/renderers/pptx/scripts/verify-chart-families.mjs
+          node packages/renderers/pptx/scripts/verify-github-176.mjs
+          node packages/renderers/pptx/scripts/verify-github-268.mjs
+      - name: Commit non-sensitive acceptance evidence
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/fix/compatibility-review-20260922
+          python3 - <<'PY'
+          import pathlib,json,hashlib,shutil,os,subprocess
+          dst=pathlib.Path('docs/regressions/evidence/pptx-original-overlays-20260926');dst.mkdir(parents=True,exist_ok=True)
+          suites={'pptx-original-text-overlays':29,'pptx-text-body':16,'pptx-drawing-semantics':26,'pptx-paragraph-numbering':11,'pptx-chart-families':25}
+          for directory,count in suites.items():
+            src=pathlib.Path('output')/directory/'report.json';r=json.loads(src.read_text());assert r['passed']==count and not r.get('failed',0),(directory,r)
+            shutil.copyfile(src,dst/(directory+'.json'))
+          original=json.loads((dst/'pptx-original-text-overlays.json').read_text());assert original['completed'] and len(original['originals'])==4
+          src=pathlib.Path('output/pptx-diagram-text/report.json');r=json.loads(src.read_text());assert r['completed'] and r['failed']==0 and r['passed']>0
+          suites['pptx-diagram-text']=r['passed'];shutil.copyfile(src,dst/'pptx-diagram-text.json')
+          record={'run':os.environ['GITHUB_RUN_ID'],'checkedCommit':os.environ['GITHUB_SHA'],'originals':['C015','C035'],'dpr':[1,2],'zooms':[100,50,200,88,100],'checks':suites,'newProductFix':False,'builds':['core','pptx'],'install':'actual pnpm 11.0.9 frozen selected workspace install','productionWorkerIdentical':True,'sourceSha256':hashlib.sha256(pathlib.Path('packages/renderers/pptx/scripts/verify-original-text-overlays.mjs').read_bytes()).hexdigest(),'fullCorpusAccepted':False,'evidenceSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in dst.iterdir() if p.is_file()}}
+          (dst/'verification.json').write_text(json.dumps(record,indent=2)+'\n')
+          p=pathlib.Path('docs/regressions/corpus-progress-20260922.md');s=p.read_text();s+='\n## 原稿日期位置与图片遮挡补验\n\n[原稿文字及图片布局](pptx-original-overlays-20260926.md)：C015日期所在三段按布局默认字号、原始150%行距及8pt段后距离独立计算定位；C035原图字节与原始坐标一致，正文实际逐行字形矩形不与图片相交。两份原稿DPR1/2及五档往返缩放共29项通过，实际生产Worker与静态副本一致，销毁释放Worker。这是已有行为验收，不重复记作新修复。\n';p.write_text(s)
+          subprocess.run(['git','add','--',str(dst),str(p)],check=True)
+          PY
+          git rm -- .github/workflows/pptx-original-overlays.yml
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'test(pptx): close original date placement and picture overlap checks'
+          git push origin HEAD:refs/heads/fix/compatibility-review-20260922
