@@ -1,0 +1,114 @@
+{
+  "passed": 26,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Mixed fields retain XML run order and use display numbering starting at zero",
+      "status": "pass"
+    },
+    {
+      "name": "Field-only paragraphs preserve every field",
+      "status": "pass"
+    },
+    {
+      "name": "Display numbering does not change navigation indices",
+      "status": "pass"
+    },
+    {
+      "name": "Two consecutive authored breaks survive",
+      "status": "pass"
+    },
+    {
+      "name": "Bitmap alpha scales only image pixels",
+      "status": "pass"
+    },
+    {
+      "name": "Picture horizontal flip applies around the picture viewport",
+      "status": "pass"
+    },
+    {
+      "name": "Custom geometry and image flip share a coordinate system",
+      "status": "pass"
+    },
+    {
+      "name": "Zero opacity remains fully transparent",
+      "status": "pass"
+    },
+    {
+      "name": "Percentage-form image alpha is interpreted as a percentage",
+      "status": "pass"
+    },
+    {
+      "name": "Layout paint stays above master regardless of part-local order",
+      "status": "pass"
+    },
+    {
+      "name": "Vertical flip keeps the authored crop inside the transformed custom mask",
+      "status": "pass"
+    },
+    {
+      "name": "Repeated alpha modulation composes without erasing intrinsic image alpha",
+      "status": "pass"
+    },
+    {
+      "name": "Alpha amplification acts on pixel alpha rather than CSS opacity clamping",
+      "status": "pass"
+    },
+    {
+      "name": "Amplification then attenuation preserves intermediate alpha saturation",
+      "status": "pass"
+    },
+    {
+      "name": "Picture rotation composes with its authored local flip",
+      "status": "pass"
+    },
+    {
+      "name": "Slide-local drawing remains above layout and master stacking contexts",
+      "status": "pass"
+    },
+    {
+      "name": "First-slide metadata accepts the full signed schema range and rejects malformed values",
+      "status": "pass"
+    },
+    {
+      "name": "Mixed XML sequence retains field styling without mutating shared layout nodes",
+      "status": "pass"
+    },
+    {
+      "name": "Malformed alpha never injects markup or non-finite filter coefficients",
+      "status": "pass"
+    },
+    {
+      "name": "Actual classic Worker retains display numbers, field order, breaks and picture effects",
+      "status": "pass"
+    },
+    {
+      "name": "Sequential document load resets display numbering (7)",
+      "status": "pass"
+    },
+    {
+      "name": "Sequential document load resets display numbering (-1)",
+      "status": "pass"
+    },
+    {
+      "name": "Sequential document load resets display numbering (null)",
+      "status": "pass"
+    },
+    {
+      "name": "Master visibility suppression leaves layout paint and slide text intact",
+      "status": "pass"
+    },
+    {
+      "name": "Public PptxViewer resolves the real Worker, sanitizes SVG filters and preserves drawing semantics",
+      "status": "pass"
+    },
+    {
+      "name": "No uncaught browser errors or external requests",
+      "status": "pass"
+    }
+  ],
+  "originals": [],
+  "errors": [],
+  "external": [],
+  "scope": "Drawing order, picture alpha/flip, dynamic text fields; not full Office pixel equivalence"
+}

@@ -1,0 +1,111 @@
+{
+  "completed": true,
+  "passed": 25,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Chart family metadata preserves bounded angles, ratios, grouping and point indices",
+      "status": "pass"
+    },
+    {
+      "name": "Malformed chart metadata cannot create CSS or unbounded point allocations",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: ring type, hole size, start angle and grouping survive actual parser/Worker",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: repeated/blank labels retain three independent sectors and point fills",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: real SVG hole ratio and first-slice angle match the document",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: duplicate series remain distinct and stack on the same category baseline",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: horizontal percent stacking keeps category totals and ratios",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: chart rendering preserves the authored outer positioning",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: ring keeps its fractional hole after a narrow-container resize",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: hole 10, full circle, zero/error and negative-value boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: hole 90, full circle, zero/error and negative-value boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: hole 50, full circle, zero/error and negative-value boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: public viewer loads the actual Worker and chart capability, then disposes",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: ring type, hole size, start angle and grouping survive actual parser/Worker",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: repeated/blank labels retain three independent sectors and point fills",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: real SVG hole ratio and first-slice angle match the document",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: duplicate series remain distinct and stack on the same category baseline",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: horizontal percent stacking keeps category totals and ratios",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: chart rendering preserves the authored outer positioning",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: ring keeps its fractional hole after a narrow-container resize",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: hole 10, full circle, zero/error and negative-value boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: hole 90, full circle, zero/error and negative-value boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: hole 50, full circle, zero/error and negative-value boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: public viewer loads the actual Worker and chart capability, then disposes",
+      "status": "pass"
+    },
+    {
+      "name": "No uncaught browser errors, library warnings or external requests",
+      "status": "pass"
+    }
+  ],
+  "originals": [],
+  "errors": [],
+  "requests": [],
+  "scope": "Single-series doughnuts, stacked chart grouping and corresponding C048 data; not full chart-style fidelity."
+}

@@ -1,0 +1,85 @@
+{
+  "completed": true,
+  "passed": 19,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Composite constraints resolve coordinates and independent axis scales",
+      "status": "pass"
+    },
+    {
+      "name": "moveWith retains authored drag offset",
+      "status": "pass"
+    },
+    {
+      "name": "Already independent cached text transform wins",
+      "status": "pass"
+    },
+    {
+      "name": "Presentation relationships, not names alone, establish text ownership",
+      "status": "pass"
+    },
+    {
+      "name": "Unsupported algorithms and conditions retain the original drawing",
+      "status": "pass"
+    },
+    {
+      "name": "Ambiguous constraints, zero sizes and indirect references are not guessed",
+      "status": "pass"
+    },
+    {
+      "name": "Rotated and flipped shapes keep their cached diagram layout",
+      "status": "pass"
+    },
+    {
+      "name": "Partial explicit text transforms inherit only missing geometry",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid and nonfinite text rectangles keep the painted shape geometry",
+      "status": "pass"
+    },
+    {
+      "name": "Constraint evaluation does not mutate cached source objects",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: source constraints position independent text boxes in the real Worker/viewer",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: single cached shape and explicit text viewport remain visible",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: paragraph wrapping uses the text viewport instead of painted shape size",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: destroy releases viewer and repeated open remains valid",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: source constraints position independent text boxes in the real Worker/viewer",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: single cached shape and explicit text viewport remain visible",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: paragraph wrapping uses the text viewport instead of painted shape size",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: destroy releases viewer and repeated open remains valid",
+      "status": "pass"
+    },
+    {
+      "name": "No unhandled browser exceptions",
+      "status": "pass"
+    }
+  ],
+  "originals": [],
+  "errors": []
+}
