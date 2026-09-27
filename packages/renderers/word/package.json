@@ -65,7 +65,7 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.2",
     "@file-viewer/doc": "workspace:3.1.2",
-    "@file-viewer/docx": "0.3.32",
+    "@file-viewer/docx": "0.3.33",
     "jszip": "3.10.2"
   },
   "devDependencies": {

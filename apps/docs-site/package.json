@@ -11,14 +11,14 @@
     "type-check": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@fumadocs/language": "0.2.4",
-    "@tabler/icons-react": "3.46.0",
+    "@fumadocs/language": "0.2.6",
+    "@tabler/icons-react": "3.48.0",
     "cnfast": "^0.2.0",
     "flexsearch": "0.8.212",
-    "fumadocs-core": "16.15.9",
-    "fumadocs-mdx": "15.4.0",
+    "fumadocs-core": "16.15.14",
+    "fumadocs-mdx": "15.4.4",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.8",
-    "next": "16.3.4",
+    "next": "16.3.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
