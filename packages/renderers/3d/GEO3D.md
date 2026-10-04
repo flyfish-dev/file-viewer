@@ -384,6 +384,24 @@ The large TIFF case contains metadata only; the inspector must not request pixel
 data. These checks do not replace the real-engine browser and installed-consumer
 suites described below.
 
+The built input helpers can also run in Chromium with native File,
+ReadableStream, iframe base URLs and Worker APIs, without network access:
+
+```sh
+pnpm --filter @file-viewer/renderer-3d verify:geo3d-native-browser
+```
+
+This focused browser command requires the normal build output and Playwright.
+It loads production modules as data URLs and uses the committed fixture bytes;
+it does not replace the renderer or codec with a substitute. On headless Linux,
+a virtual display may be needed for SwiftShader/WebGL.
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` selects an already installed Chromium;
+`GEO3D_NATIVE_BROWSER_OUTPUT` overrides `output/geo3d-native-browser/`.
+The screenshot is diagnostic: it shows input test results, **not** a rendered
+dataset, and must not satisfy the PR's rendering-evidence requirement. These
+checks do not validate HTTP/CORS, LAZ decoding, WASM assets or the full renderer's
+offline/private-deployment behavior.
+
 
 Fixtures are in `test/fixtures/geo3d/`. `probe.copc.laz` is an identifier/VLR
 fixture, not a compressed rendering dataset. Real compressed MIT samples live
