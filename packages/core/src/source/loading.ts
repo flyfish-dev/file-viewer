@@ -194,6 +194,8 @@ export interface CreateFileViewerLoadStartStateInput {
   sourceUrl?: string | null;
   bufferSize?: number;
   loadingMessage?: string;
+  signal?: AbortSignal;
+  typeOverride?: string;
   i18n?: FileViewerI18nInput;
   timestamp?: number;
 }
@@ -249,7 +251,10 @@ export interface RunFileViewerReadAndRenderFileInput<Session = unknown> {
     buffer: ArrayBuffer,
     file: File,
     version: number,
-    sourceUrl?: string
+    sourceUrl?: string,
+    streamUrl?: string,
+    signal?: AbortSignal,
+    typeOverride?: string
   ) => Promise<Session | undefined>;
   destroyRenderSession?: (session?: Session | null) => void;
   buildRenderCompleteState: (input: {
@@ -278,6 +283,8 @@ export type FileViewerReadAndRenderFileState<Session = unknown> =
     readonly complete: FileViewerRenderCompleteState;
   };
 
+export type FileViewerStreamSourceDecision = boolean | string;
+
 export interface RunFileViewerStreamingPdfPreviewInput<Session = unknown> {
   url: string;
   version: number;
@@ -289,7 +296,9 @@ export interface RunFileViewerStreamingPdfPreviewInput<Session = unknown> {
     file: File,
     version: number,
     sourceUrl?: string,
-    streamUrl?: string
+    streamUrl?: string,
+    signal?: AbortSignal,
+    typeOverride?: string
   ) => Promise<Session | undefined>;
   destroyRenderSession?: (session?: Session | null) => void;
   buildRenderCompleteState: (input: {
@@ -298,6 +307,8 @@ export interface RunFileViewerStreamingPdfPreviewInput<Session = unknown> {
     sourceUrl?: string | null;
   }) => FileViewerRenderCompleteState;
   loadingMessage?: string;
+  signal?: AbortSignal;
+  typeOverride?: string;
   i18n?: FileViewerI18nInput;
   onStartLoading?: (message: string) => void;
   onSession?: (session: Session | null) => void;
@@ -336,13 +347,23 @@ export interface RunFileViewerLocalFilePreviewInput<Session = unknown> {
   version: number;
   currentFilename?: string;
   fallbackFilename?: string;
+  shouldStreamLocalFile?: (input: {
+    file: File;
+    filename: string;
+    extension: string;
+    signal?: AbortSignal;
+  }) => FileViewerStreamSourceDecision | Promise<FileViewerStreamSourceDecision>;
+  requestController?: Pick<FileViewerRequestController, 'createAbortController' | 'clearAbortController'>;
   previewTarget: MutableFileViewerPreviewState;
   isCurrent: (version: number) => boolean;
   mountRenderedContent: (
     buffer: ArrayBuffer,
     file: File,
     version: number,
-    sourceUrl?: string
+    sourceUrl?: string,
+    streamUrl?: string,
+    signal?: AbortSignal,
+    typeOverride?: string
   ) => Promise<Session | undefined>;
   destroyRenderSession?: (session?: Session | null) => void;
   buildLoadStartState: (input: {
@@ -444,6 +465,13 @@ export interface RunFileViewerRemoteFilePreviewInput<Session = unknown> {
   version: number;
   pageHref?: string;
   streaming?: FileViewerPdfOptions['streaming'];
+  shouldStreamRemoteUrl?: (input: {
+    url: string;
+    filename: string;
+    extension: string;
+    pageHref?: string;
+    signal?: AbortSignal;
+  }) => FileViewerStreamSourceDecision | Promise<FileViewerStreamSourceDecision>;
   previewTarget: MutableFileViewerPreviewState;
   requestController: Pick<FileViewerRequestController, 'createAbortController' | 'clearAbortController'>;
   isCurrent: (version: number) => boolean;
@@ -453,7 +481,9 @@ export interface RunFileViewerRemoteFilePreviewInput<Session = unknown> {
     file: File,
     version: number,
     sourceUrl?: string,
-    streamUrl?: string
+    streamUrl?: string,
+    signal?: AbortSignal,
+    typeOverride?: string
   ) => Promise<Session | undefined>;
   destroyRenderSession?: (session?: Session | null) => void;
   buildLoadStartState: (input: {
@@ -611,7 +641,20 @@ export interface CreateFileViewerSourceLoadingActionHandlersInput<Session = unkn
   getFile: () => FileViewerFileRef | null | undefined;
   getUrl: () => string | null | undefined;
   getCurrentFilename?: () => string | undefined;
+  shouldStreamLocalFile?: (input: {
+    file: File;
+    filename: string;
+    extension: string;
+    signal?: AbortSignal;
+  }) => FileViewerStreamSourceDecision | Promise<FileViewerStreamSourceDecision>;
   getPdfStreaming?: () => FileViewerPdfOptions['streaming'] | undefined;
+  shouldStreamRemoteUrl?: (input: {
+    url: string;
+    filename: string;
+    extension: string;
+    pageHref?: string;
+    signal?: AbortSignal;
+  }) => FileViewerStreamSourceDecision | Promise<FileViewerStreamSourceDecision>;
   getI18n?: () => FileViewerI18nInput;
   getPageHref?: () => string | undefined;
   previewTarget: MutableFileViewerPreviewState;
@@ -622,7 +665,9 @@ export interface CreateFileViewerSourceLoadingActionHandlersInput<Session = unkn
     file: File,
     version: number,
     sourceUrl?: string,
-    streamUrl?: string
+    streamUrl?: string,
+    signal?: AbortSignal,
+    typeOverride?: string
   ) => Promise<Session | undefined>;
   destroyRenderSession?: (session?: Session | null) => void;
   buildLoadStartState: (input: {
@@ -1193,6 +1238,8 @@ export const runFileViewerStreamingPdfPreview = async <Session = unknown>({
   destroyRenderSession,
   buildRenderCompleteState,
   loadingMessage,
+  signal,
+  typeOverride,
   i18n,
   onStartLoading,
   onSession,
@@ -1210,7 +1257,15 @@ export const runFileViewerStreamingPdfPreview = async <Session = unknown>({
     placeholderFile = createFileViewerStreamingPdfPlaceholderFile(filename);
     applyFileViewerPreviewSourceUrlState(previewTarget, url);
 
-    const session = await mountRenderedContent(new ArrayBuffer(0), placeholderFile, version, url, url);
+    const session = await mountRenderedContent(
+      new ArrayBuffer(0),
+      placeholderFile,
+      version,
+      url,
+      url,
+      signal,
+      typeOverride
+    );
     if (!isCurrent(version)) {
       destroyRenderSession?.(session);
       return {
@@ -1278,6 +1333,8 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
   version,
   currentFilename,
   fallbackFilename,
+  shouldStreamLocalFile,
+  requestController,
   previewTarget,
   isCurrent,
   mountRenderedContent,
@@ -1314,7 +1371,55 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
     onStartLoading,
   });
 
+  const controller = requestController?.createAbortController() || null;
+
   try {
+    const streamDecision = await shouldStreamLocalFile?.({
+      file,
+      filename: localSource.filename,
+      extension: getExtension(localSource.filename),
+      signal: controller?.signal,
+    });
+    if (streamDecision) {
+      const buffer = new ArrayBuffer(0);
+      const typeOverride =
+        typeof streamDecision === 'string' ? streamDecision : undefined;
+      applyFileViewerReadPreviewState(previewTarget, createFileViewerReadPreviewState({
+        file,
+        buffer,
+        fallbackFilename: localSource.filename,
+      }));
+      const session = await mountRenderedContent(
+        buffer,
+        file,
+        version,
+        undefined,
+        undefined,
+        controller?.signal,
+        typeOverride
+      );
+      if (!isCurrent(version)) {
+        destroyRenderSession?.(session);
+        return { status: 'stale', source: localSource, read: null, error: null };
+      }
+      const complete = commitFileViewerRenderCompleteState({
+        version,
+        session,
+        readinessTarget: previewTarget,
+        buildState: () => buildRenderCompleteState({ version, source: 'file', file }),
+        onSession,
+        onActiveDocumentContext,
+        onLifecycle,
+        onClearLoadStarted,
+      });
+      return {
+        status: 'ready',
+        source: localSource,
+        read: { stale: false, buffer, session, complete },
+        error: null,
+      };
+    }
+
     const read = await runFileViewerReadAndRenderFile({
       file,
       version,
@@ -1367,6 +1472,7 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
       error,
     };
   } finally {
+    requestController?.clearAbortController(controller);
     finalizeFileViewerPreviewLoadState({
       version,
       isCurrent,
@@ -1381,6 +1487,7 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
   version,
   pageHref,
   streaming,
+  shouldStreamRemoteUrl,
   previewTarget,
   requestController,
   isCurrent,
@@ -1401,12 +1508,33 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
   onMissingData,
   onError,
 }: RunFileViewerRemoteFilePreviewInput<Session>): Promise<FileViewerRemoteFilePreviewState<Session>> => {
-  const remoteSource = resolveFileViewerRemoteSourcePlan({
+  let remoteSource = resolveFileViewerRemoteSourcePlan({
     pageHref,
     streaming,
     url,
   });
   const sourceUrl = remoteSource.url;
+  const controller = requestController.createAbortController();
+
+  if (!remoteSource.streamPdf && shouldStreamRemoteUrl) {
+    const streamDecision = await shouldStreamRemoteUrl({
+      url: sourceUrl,
+      filename: remoteSource.filename,
+      extension: remoteSource.extension,
+      pageHref,
+      signal: controller?.signal,
+    });
+    if (streamDecision) {
+      remoteSource = {
+        ...remoteSource,
+        streamRenderer: true,
+        streamType:
+          typeof streamDecision === 'string'
+            ? streamDecision
+            : remoteSource.extension,
+      };
+    }
+  }
 
   commitFileViewerLoadStartState({
     version,
@@ -1422,7 +1550,7 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
     onStartLoading,
   });
 
-  if (remoteSource.streamPdf) {
+  if (remoteSource.streamPdf || remoteSource.streamRenderer) {
     const stream = await runFileViewerStreamingPdfPreview({
       url: sourceUrl,
       version,
@@ -1437,6 +1565,9 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
         sourceUrl,
       }),
       i18n,
+      loadingMessage: remoteSource.streamPdf ? undefined : resolveFileViewerPreviewMessages(i18n).downloading,
+      signal: controller?.signal,
+      typeOverride: remoteSource.streamType,
       onStartLoading,
       onSession,
       onActiveDocumentContext,
@@ -1445,6 +1576,8 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
       onStopLoading,
       onError: error => onError?.(error, 'stream'),
     });
+
+    requestController.clearAbortController(controller);
 
     if (stream.status === 'ready') {
       return {
@@ -1477,8 +1610,6 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
       error: null,
     };
   }
-
-  const controller = requestController.createAbortController();
 
   try {
     const data = await downloadFile({
@@ -1593,7 +1724,9 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
   getFile,
   getUrl,
   getCurrentFilename,
+  shouldStreamLocalFile,
   getPdfStreaming,
+  shouldStreamRemoteUrl,
   getI18n,
   getPageHref,
   previewTarget,
@@ -1627,6 +1760,8 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
       source,
       version,
       currentFilename: getCurrentFilename?.() ?? previewTarget.filename,
+      shouldStreamLocalFile,
+      requestController,
       previewTarget,
       isCurrent: isCurrentRequest,
       mountRenderedContent,
@@ -1669,6 +1804,7 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
       version,
       pageHref: getPageHref?.(),
       streaming: getPdfStreaming?.(),
+      shouldStreamRemoteUrl,
       i18n: getI18n?.(),
       previewTarget,
       requestController,
@@ -1916,6 +2052,8 @@ export interface FileViewerRemoteSourcePlan {
   readonly filename: string;
   readonly extension: string;
   readonly streamPdf: boolean;
+  readonly streamRenderer: boolean;
+  readonly streamType?: string;
 }
 
 export interface CommitFileViewerRemoteDownloadStateInput {
@@ -1961,30 +2099,51 @@ export const resolveFileViewerRemoteSourcePlan = ({
   fallbackFilename = DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
   pageHref,
   streaming,
+  shouldStreamRemoteUrl,
   url,
 }: {
   filename?: string;
   fallbackFilename?: string;
   pageHref?: string;
   streaming?: FileViewerPdfOptions['streaming'];
+  shouldStreamRemoteUrl?: (input: {
+    url: string;
+    filename: string;
+    extension: string;
+    pageHref?: string;
+  }) => FileViewerStreamSourceDecision;
   url: string;
 }): FileViewerRemoteSourcePlan => {
   const sourceUrl = normalizeFileViewerSourceUrl(url) || url;
   const nextFilename = normalizeFilename(filename || url, fallbackFilename);
   const extension = getExtension(nextFilename);
 
+  const streamPdf = pageHref
+    ? shouldStreamPdfUrl({
+      extension,
+      pageHref,
+      streaming,
+      url: sourceUrl,
+    })
+    : false;
+
+  const streamDecision = !streamPdf
+    ? shouldStreamRemoteUrl?.({
+      url: sourceUrl,
+      filename: nextFilename,
+      extension,
+      pageHref,
+    })
+    : false;
+
   return {
     url: sourceUrl,
     filename: nextFilename,
     extension,
-    streamPdf: pageHref
-      ? shouldStreamPdfUrl({
-        extension,
-        pageHref,
-        streaming,
-        url: sourceUrl,
-      })
-      : false,
+    streamPdf,
+    streamRenderer: streamDecision === true || typeof streamDecision === 'string',
+    streamType:
+      typeof streamDecision === 'string' ? streamDecision : undefined,
   };
 };
 

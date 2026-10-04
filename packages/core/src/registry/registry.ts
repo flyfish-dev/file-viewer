@@ -1,5 +1,5 @@
 import { DEFAULT_RENDERER_DEFINITIONS } from './formats';
-import { normalizeFileExtension } from '../source';
+import { getExtension, normalizeFileExtension, normalizeFilename } from '../source';
 import type {
   FileViewerRendererHandlerRegistration,
   FileViewerRendererPluginInput,
@@ -115,6 +115,32 @@ export const createRendererRegistry = (
       return Array.from(byExtension.keys()).sort();
     },
   };
+};
+
+export const matchesFileViewerRendererFilename = (
+  definition: Pick<RendererDefinition, 'filenamePatterns'>,
+  filename: string
+) => {
+  const normalizedFilename = normalizeFilename(filename, '').toLowerCase();
+  if (!normalizedFilename) return false;
+  return (definition.filenamePatterns || []).some(pattern => {
+    const normalizedPattern = pattern.trim().toLowerCase();
+    if (!normalizedPattern) return false;
+    if (normalizedPattern.startsWith('*.')) return normalizedFilename.endsWith(normalizedPattern.slice(1));
+    return normalizedFilename === normalizedPattern;
+  });
+};
+
+export const resolveFileViewerRendererDefinition = (
+  registry: Pick<RendererRegistry, 'getByExtension' | 'list'>,
+  input: { filename?: string; extension?: string }
+) => {
+  const filenameMatch = input.filename
+    ? registry.list().find(definition => matchesFileViewerRendererFilename(definition, input.filename || ''))
+    : undefined;
+  if (filenameMatch) return filenameMatch;
+  const extension = normalizeFileExtension(input.extension || getExtension(input.filename || ''));
+  return extension ? registry.getByExtension(extension) : undefined;
 };
 
 export interface InstallFileViewerRendererPluginsOptions<Handler = unknown> {

@@ -72,6 +72,7 @@ Adobe design, DICOM, digital-signature inspection, and binary inspection are exp
 | **DICOM** (`@file-viewer/renderer-dicom`) | `.dcm`, `.dicom` | `npm install @file-viewer/renderer-dicom` | `npx file-viewer-cli config add dicom --write` | One local DICOM Part 10 file, including multi-frame navigation, window width/center, zoom, pan, rotation, fit-to-view, and basic metadata. It does not assemble studies or provide PACS/DICOMweb, MPR, segmentation, or diagnosis. |
 | **Digital signatures** (`@file-viewer/renderer-signature`) | `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`, `.tsq`, `.tsr`, `.tst`, `.tsd`, `.asics`, `.scs`, `.asice`, `.sce`, `.ers`, `.jws`, `.asc`, `.sig`, `.pgp`, `.gpg` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | Bounded browser-local inspection of CMS/PKCS#7, selected CAdES data, timestamps, ASiC containers, evidence records, JWS, and public OpenPGP inputs. Parsing, digest, signature, and timestamp results are reported separately. |
 | **Binary inspector** (`@file-viewer/renderer-binary`) | `.bin`, `.hex`, `.elf`, `.exe`, `.dll`, `.class`, `.macho` | `npm install @file-viewer/renderer-binary` | `npx file-viewer-cli config add bin --write` | Read-only, browser-local offset/hex/ASCII view with a bounded module Worker, virtual rows, typed values, and a reviewed ELF, PE/COFF, Mach-O, PNG, ZIP, WebAssembly, and Java-class header catalog. It never claims `application/octet-stream` or displaces a dedicated renderer. |
+| **Streaming Geo3D** (`@file-viewer/renderer-3d/geo3d`) | `.las`, `.laz`, `.copc`, GeoTIFF/COG, CityJSON, `tileset.json`, `.3tz` | `npm install @file-viewer/renderer-3d @giro3d/giro3d@2.0.4` (add `jszip@3.10.2` for 3TZ) | Manual subpath registration | Explicit Giro3D-powered streaming/range preview. Ordinary TIFF stays on the image renderer unless GeoTIFF tags are detected; COPC/COG/3D Tiles keep progressive URL access; 3TZ extraction is bounded and path-safe. Copy self-hosted decoder assets with `npx file-viewer-geo3d-assets public/file-viewer/vendor/geo3d`. |
 
 ### I already use a Full package. How do I enable an optional renderer?
 
@@ -80,7 +81,7 @@ The same rule applies to `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@fi
 Keep the Full package installed, then add only the specialist renderer the application needs. The following example enables four specialist renderers; remove any package, import, and array entry that the application does not need:
 
 ```bash
-npm install @file-viewer/renderer-binary @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature
+npm install @file-viewer/renderer-binary @file-viewer/renderer-design @file-viewer/renderer-dicom @file-viewer/renderer-signature @file-viewer/renderer-3d @giro3d/giro3d@2.0.4
 ```
 
 ```ts
@@ -88,10 +89,15 @@ import { binaryRenderer } from '@file-viewer/renderer-binary'
 import { designRenderer } from '@file-viewer/renderer-design'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
 import { signatureRenderer } from '@file-viewer/renderer-signature'
+import { createGeo3dRenderer } from '@file-viewer/renderer-3d/geo3d'
+
+const geo3dRenderer = createGeo3dRenderer({
+  assetBaseUrl: '/file-viewer/vendor/geo3d/',
+})
 
 const options = {
   rendererMode: 'extend',
-  renderers: [binaryRenderer, designRenderer, dicomRenderer, signatureRenderer]
+  renderers: [binaryRenderer, designRenderer, dicomRenderer, signatureRenderer, geo3dRenderer]
 }
 ```
 
@@ -299,6 +305,20 @@ Use `copyAssets:true` or `npx --yes file-viewer-copy-assets ./public/file-viewer
 - [x] The Rust/WASM parser runs in a dedicated Worker, and standard asset tooling self-hosts the Worker, JavaScript bridge, and WASM binary under `vendor/chm/`.
 - [x] Contents, keyword index, text search, internal navigation, and packaged resources stay within the current archive.
 - [x] Topic documents are sanitized, scripts remain disabled by sandbox and CSP, and remote active content is not loaded automatically.
+
+## Optional streaming Geo3D viewer
+
+The explicit `@file-viewer/renderer-3d/geo3d` entry adds the streaming-first
+geospatial formats without changing the ordinary 3D renderer or any Full preset.
+It covers LAS/LAZ/COPC, GeoTIFF/COG, CityJSON, 3D Tiles and bounded 3TZ archives.
+Regular TIFF stays on the image renderer unless bounded TIFF metadata inspection
+finds GeoTIFF tags. COPC/COG/3D Tiles keep URL/File random-access semantics where
+the source format supports them.
+
+Install the optional Giro3D peer and copy its decoder assets locally with
+`file-viewer-geo3d-assets`. See
+[`GEO3D.md`](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/GEO3D.md)
+for detection, range/CORS, 3TZ safety, samples and deployment details.
 
 ## Optional IFC BIM viewer
 

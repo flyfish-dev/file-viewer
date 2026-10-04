@@ -9,6 +9,7 @@ import {
   normalizeSource,
   renderFileViewerHandler,
   resolveFileViewerRendererPresetInputs,
+  resolveFileViewerRendererDefinition,
   syncFileViewerRenderSurfaceBackground,
   type FileRenderContext,
   type FileRenderHandler,
@@ -81,6 +82,7 @@ const createRendererRegistryForContext = async (
         load: createFileRenderHandlerLoader({
           handler: registration.handler,
           rendererId: definition.id,
+          allowUrlSource: definition.sourceAccess === 'stream-preferred',
           getTarget: loadContext => loadContext.surface.container as HTMLDivElement
         })
       })
@@ -107,7 +109,13 @@ export async function createVueRenderSession(
 ): Promise<FileViewerVueRenderSession> {
   syncFileViewerRenderSurfaceBackground(target, context?.options)
   const registry = await createRendererRegistryForContext(context)
-  const renderer = registry.getByExtension(type) || vueRendererRegistry.getByExtension(type)
+  const renderer = resolveFileViewerRendererDefinition(registry, {
+    filename: context?.filename,
+    extension: type
+  }) || resolveFileViewerRendererDefinition(vueRendererRegistry, {
+    filename: context?.filename,
+    extension: type
+  })
   onSearchAvailabilityChange?.(!!renderer?.load && !!renderer.capabilities?.search)
 
   if (renderer?.load) {
