@@ -74,17 +74,17 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.2",
     "@panzoom/panzoom": "^4.6.2",
-    "dompurify": "3.4.15",
+    "dompurify": "3.4.16",
     "mermaid": "^11.17.2",
     "plantuml-encoder": "^1.4.0",
     "roughjs": "^4.6.6"
   },
   "devDependencies": {
-    "bpmn-js": "18.28.0",
+    "bpmn-js": "18.31.0",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "bpmn-js": "18.28.0"
+    "bpmn-js": "18.31.0"
   },
   "peerDependenciesMeta": {
     "bpmn-js": {
