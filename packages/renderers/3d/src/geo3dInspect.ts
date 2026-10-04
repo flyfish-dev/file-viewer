@@ -80,6 +80,11 @@ function numeric(bytes: Uint8Array, type: number, le: boolean): number[] {
 }
 const numbers = (d: Ifd, tag: number): number[] => { const a = d.tags.get(tag); return Array.isArray(a) ? a : [] }
 const first = (d: Ifd, tag: number) => numbers(d, tag)[0]
+// TIFF offset arrays are bounded per tag, but up to MAX_IFDS arrays can be
+// inspected together. Never spread dataset-controlled arrays into Math.min/max:
+// a valid metadata-only probe can exceed the engine's argument-count limit.
+const minimum = (values: number[]): number => values.reduce((result, value) => Math.min(result, value), Infinity)
+const maximum = (values: number[]): number => values.reduce((result, value) => Math.max(result, value), -Infinity)
 async function readIfd(get: Geo3dRangeGetter, offset: number, big: boolean, le: boolean): Promise<Ifd> {
   const countSize = big ? 8 : 2, entrySize = big ? 20 : 12, pointerSize = big ? 8 : 4
   const countBytes = await get(offset, offset + countSize)
@@ -174,15 +179,15 @@ export async function inspectGeoTiffRangeSource(getter: Geo3dRangeGetter): Promi
   if (!geoTags.length) return null
   const width = first(primary,256), height = first(primary,257), tiled = !!first(primary,322) && !!first(primary,323) && numbers(primary,324).length > 0
   const overviews = ifds.slice(1).filter(d => first(d,256) > 0 && first(d,257) > 0 && first(d,256) < width! && first(d,257) < height! && !(first(d,254) & 4))
-  const tiles = ifds.flatMap(d => numbers(d,324))
+  const firstTileOffset = ifds.reduce((result, d) => Math.min(result, minimum(numbers(d,324))), Infinity)
   const sorted = (a: number[]) => a.every((n, i) => n > 0 && (i === 0 || n >= a[i-1]))
   const complete = queue.length === 0 && ifds.every(d => !d.truncated)
   const validLayout = tiled && complete && ifds.every(d => numbers(d,324).length > 0 && sorted(numbers(d,324))) &&
-    sorted(ifds.map(d => d.offset)) && tiles.length > 0 && Math.max(...ifds.map(d => d.end)) <= Math.min(...tiles)
+    sorted(ifds.map(d => d.offset)) && Number.isFinite(firstTileOffset) && ifds.every(d => d.end <= firstTileOffset)
   const overviewLayout = overviews.every((d, i) => {
     const higher = i === 0 ? primary : overviews[i-1]
     return first(d,256) < first(higher,256) && first(d,257) < first(higher,257) &&
-      Math.max(...numbers(d,324)) < Math.min(...numbers(higher,324))
+      maximum(numbers(d,324)) < minimum(numbers(higher,324))
   })
   let isCog: GeoTiffInspection['isCog'] = 'unknown'
   if (!tiled && numbers(primary,273).length) isCog = false

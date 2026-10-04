@@ -1,6 +1,16 @@
 name: Geo3D focused validation
 
 on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'packages/core/**'
+      - 'packages/renderers/3d/**'
+      - 'test/geo3d-*.spec.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/geo3d-focused-validation.yml'
   push:
     branches: [feat/geo3d-opt-in]
     paths:

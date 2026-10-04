@@ -21,6 +21,7 @@ import { createGeo3dLasWorkers } from './geo3dLasWorkers.js'
 import { createGeo3dRasterWorkers } from './geo3dRasterWorkers.js'
 import { runGeo3dHook, type Geo3dHookResult } from './geo3dHooks.js'
 import { repairGeo3dPointMaterial } from './geo3dPointMaterial.js'
+import { resolveGeo3dDatasetUrl } from './geo3dUrl.js'
 type Instance=InstanceModule.default
 type PointCloud=PointCloudModule.default
 type GiroMap=MapModule.default
@@ -114,7 +115,7 @@ export async function renderGeo3d(buffer:ArrayBuffer,target:HTMLDivElement,type?
   let archiveDataset:Geo3d3tzPreparedDataset|undefined
   let metadata:Geo3dMetadataLike|GeoTiffInspection|null=null
   let format=inspection.format
-  const originalUrl=context?.streamUrl||context?.url
+  const originalUrl=resolveGeo3dDatasetUrl(context?.streamUrl||context?.url,target.ownerDocument.baseURI)
   let source:Geo3dDatasetSource={format,filename:context?.filename||'dataset',url:originalUrl,file:context?.sourceFile,buffer:buffer.byteLength?buffer:undefined,
     resolveRelativeUrl(reference){return originalUrl?new URL(reference,originalUrl).href:reference}}
   const cleanup=():Promise<void>=>{

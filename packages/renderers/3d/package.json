@@ -76,7 +76,7 @@
     "type-check": "tsc -b tsconfig.json",
     "verify:ifc": "node scripts/verify-ifc-entry.mjs && node --test scripts/ifc-settings.test.mjs",
     "verify:ifc-browser": "node scripts/verify-ifc-browser.mjs",
-    "verify:geo3d": "node scripts/verify-geo3d-entry.mjs && node scripts/verify-geo3d-types.mjs && node --test scripts/geo3d-owned-workers.test.mjs scripts/geo3d-raster-workers.test.mjs scripts/geo3d-raster-cache.test.mjs scripts/geo3d-point-lifecycle.test.mjs scripts/geo3d-hooks.test.mjs scripts/geo3d-point-material.test.mjs scripts/geo3d-memory-fixtures.test.mjs",
+    "verify:geo3d": "node scripts/verify-geo3d-entry.mjs && node scripts/verify-geo3d-types.mjs && node --test scripts/geo3d-inputs.test.mjs scripts/geo3d-owned-workers.test.mjs scripts/geo3d-raster-workers.test.mjs scripts/geo3d-raster-cache.test.mjs scripts/geo3d-point-lifecycle.test.mjs scripts/geo3d-hooks.test.mjs scripts/geo3d-point-material.test.mjs scripts/geo3d-memory-fixtures.test.mjs",
     "verify:geo3d-browser": "node scripts/verify-geo3d-browser.mjs"
   },
   "dependencies": {

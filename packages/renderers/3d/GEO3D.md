@@ -105,6 +105,14 @@ const options = {
 }
 ```
 
+### Relative dataset URLs
+
+Root-relative and document-relative dataset URLs are resolved against the viewer
+container's owning document `baseURI`, including a host `<base href>`. The
+normalized dataset URL is then used by the engine and as the base for relative
+CityJSON textures and 3D Tiles resources. Absolute dataset URLs and their query
+strings are preserved. Local File/buffer inputs are not assigned a network URL.
+
 ## Advanced API and resource ownership
 
 `configureInstance` exposes the actual Giro3D `Instance`. `configure` adds a
@@ -359,6 +367,23 @@ overwrite is refused and output pixels/CRS/layout are checked. It is not an
 automatic conversion inside the browser.
 
 ## Fixtures, licenses and verification
+
+### Input regression checks
+
+After building the renderer, run the input checks independently with:
+
+```sh
+node --test packages/renderers/3d/scripts/geo3d-inputs.test.mjs
+```
+
+They are also included in `verify:geo3d`. They cover a bounded TIFF metadata
+probe with 262,144 tile offsets, ordinary TIFF/GeoTIFF/COG routing, relative
+source URLs in nested deployments, exact cancellation reasons (including
+non-Error values), byte limits, and HTTP range behavior against a local server.
+The large TIFF case contains metadata only; the inspector must not request pixel
+data. These checks do not replace the real-engine browser and installed-consumer
+suites described below.
+
 
 Fixtures are in `test/fixtures/geo3d/`. `probe.copc.laz` is an identifier/VLR
 fixture, not a compressed rendering dataset. Real compressed MIT samples live

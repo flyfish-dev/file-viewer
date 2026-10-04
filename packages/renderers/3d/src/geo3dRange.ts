@@ -9,8 +9,8 @@ export interface RangeSource {
 const MAX_RANGE = 128 * 1024 * 1024
 const MAX_PREFIX = 1024 * 1024
 export const checkAbort = (signal?: AbortSignal): void => {
-  if (signal?.aborted) throw signal.reason instanceof Error
-    ? signal.reason : new DOMException('Geo3D rendering aborted.', 'AbortError')
+  // AbortSignal reasons may be any JavaScript value, not only Error objects.
+  if (signal?.aborted) throw signal.reason
 }
 export const byteLimit = (value: number, name = 'byte limit'): number => {
   if (!Number.isSafeInteger(value) || value <= 0) throw new Error(`Invalid Geo3D ${name}.`)
