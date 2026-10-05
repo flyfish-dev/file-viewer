@@ -44,3 +44,10 @@ e060ce0212f2e83e609f57e9ca7c9795b72a381d:dist/index.umd.js:generic-api-key:4974
 ffdff515e2aa1e9b572f30624e9cddf6811428ad:dist/index.umd.js:gcp-api-key:5034
 ffdff515e2aa1e9b572f30624e9cddf6811428ad:dist/index.umd.js:generic-api-key:4892
 ffdff515e2aa1e9b572f30624e9cddf6811428ad:dist/index.umd.js:generic-api-key:4974
+# Exact historical fingerprint for the reviewed Geo3D COPC validator error string
+# ("Invalid or duplicate hierarchy node"). The wording was reworded in the current
+# tree, but the pre-rewording commit is still part of the scanned history, so the
+# commit-specific fingerprint remains blocking for any new finding in that path.
+4ef83aea5a74eca0817c22190900ee2f0eaef42d:packages/renderers/3d/scripts/geo3d_compressed_samples.py:generic-api-key:193
+fba5f5720e39c1a53c610f9dedb742889c086c83:packages/renderers/3d/scripts/geo3d_compressed_samples.py:generic-api-key:193
+34e46c0b1e47bf778a7b8519f5b510bce9ea5353:packages/renderers/3d/scripts/geo3d_compressed_samples.py:generic-api-key:193
