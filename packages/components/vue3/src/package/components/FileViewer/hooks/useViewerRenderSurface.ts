@@ -138,6 +138,7 @@ export const useViewerRenderSurface = ({
       filename,
       sourceUrl: nextSourceUrl,
       streamUrl: nextStreamUrl,
+      signal: nextSignal,
       registerExportAdapter,
       onProgressiveRender,
       version
@@ -146,7 +147,10 @@ export const useViewerRenderSurface = ({
         filename,
         url: nextSourceUrl,
         streamUrl: nextStreamUrl,
-        sourceFile,
+        signal: nextSignal,
+        // Streaming URL placeholders are component state only; expose sourceFile
+        // exclusively for real local File-backed random access.
+        sourceFile: nextStreamUrl ? undefined : sourceFile,
         options: getOptions(),
         requestSnapshotDownload: createFileViewerSnapshotDownload({
           getOptions,

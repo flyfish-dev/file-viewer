@@ -3,6 +3,7 @@ set -euo pipefail
 
 # Use the MIT-licensed upstream CLI directly so the security gate does not
 # depend on a marketplace subscription or an unpinned container/action tag.
+# Scan only the current working tree; historical commits are intentionally out of scope.
 readonly GITLEAKS_VERSION="8.30.1"
 
 case "$(uname -s):$(uname -m)" in
@@ -54,7 +55,7 @@ fi
 
 tar -xzf "${scan_tmp_dir}/${GITLEAKS_ARCHIVE}" -C "${scan_tmp_dir}" gitleaks
 
-"${scan_tmp_dir}/gitleaks" git \
+"${scan_tmp_dir}/gitleaks" dir \
   --no-banner \
   --redact \
   --exit-code 1 \

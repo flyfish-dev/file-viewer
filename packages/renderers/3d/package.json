@@ -53,6 +53,11 @@
       "types": "./dist/ifc.d.ts",
       "import": "./dist/ifc.js",
       "default": "./dist/ifc.js"
+    },
+    "./geo3d": {
+      "types": "./dist/geo3d.d.ts",
+      "import": "./dist/geo3d.js",
+      "default": "./dist/geo3d.js"
     }
   },
   "files": [
@@ -62,13 +67,18 @@
     "LICENSE",
     "bin",
     "IFC.md",
-    "licenses"
+    "licenses",
+    "GEO3D.md",
+    "GEO3D_THIRD_PARTY_NOTICES.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && node scripts/build-geo3d-point-adapters.mjs && node scripts/build-geo3d-raster-adapters.mjs && node scripts/verify-geo3d-material-compatibility.mjs",
     "type-check": "tsc -b tsconfig.json",
     "verify:ifc": "node scripts/verify-ifc-entry.mjs && node --test scripts/ifc-settings.test.mjs",
-    "verify:ifc-browser": "node scripts/verify-ifc-browser.mjs"
+    "verify:ifc-browser": "node scripts/verify-ifc-browser.mjs",
+    "verify:geo3d": "node scripts/verify-geo3d-entry.mjs && node scripts/verify-geo3d-types.mjs && node --test scripts/geo3d-inputs.test.mjs scripts/geo3d-owned-workers.test.mjs scripts/geo3d-raster-workers.test.mjs scripts/geo3d-raster-cache.test.mjs scripts/geo3d-point-lifecycle.test.mjs scripts/geo3d-hooks.test.mjs scripts/geo3d-point-material.test.mjs scripts/geo3d-memory-fixtures.test.mjs",
+    "verify:geo3d-browser": "node scripts/verify-geo3d-browser.mjs",
+    "verify:geo3d-native-browser": "node scripts/verify-geo3d-native-browser.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.2",
@@ -81,17 +91,22 @@
     "@thatopen/components": "3.4.8",
     "@thatopen/fragments": "3.4.7",
     "web-ifc": "0.0.77",
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "@giro3d/giro3d": "2.0.4",
+    "jszip": "3.10.2"
   },
   "license": "Apache-2.0",
   "bin": {
-    "file-viewer-ifc-assets": "./bin/copy-ifc-assets.mjs"
+    "file-viewer-ifc-assets": "./bin/copy-ifc-assets.mjs",
+    "file-viewer-geo3d-assets": "./bin/copy-geo3d-assets.mjs"
   },
   "peerDependencies": {
     "@thatopen/components": "3.4.8",
     "@thatopen/fragments": "3.4.7",
     "web-ifc": "0.0.77",
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "@giro3d/giro3d": "2.0.4",
+    "jszip": "3.10.2"
   },
   "peerDependenciesMeta": {
     "@thatopen/components": {
@@ -104,6 +119,12 @@
       "optional": true
     },
     "esbuild": {
+      "optional": true
+    },
+    "@giro3d/giro3d": {
+      "optional": true
+    },
+    "jszip": {
       "optional": true
     }
   }

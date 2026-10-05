@@ -14,7 +14,7 @@ attachment redirect:
 
 ```sh
 mkdir -p .release/issue-300
-GH_TOKEN=public-attachment-download GITHUB_TOKEN=public-attachment-download GH_DEBUG= gh api https://github.com/user-attachments/files/32370159/moby-dick.epub.txt --header 'Authorization: ' > .release/issue-300/moby-dick.epub
+curl --fail --location --output .release/issue-300/moby-dick.epub https://github.com/user-attachments/files/32370159/moby-dick.epub.txt
 ```
 
 The browser harness blocks off-origin HTTP requests and checks that every
