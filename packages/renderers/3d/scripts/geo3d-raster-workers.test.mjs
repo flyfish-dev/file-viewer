@@ -3,6 +3,7 @@ import { test } from 'node:test'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { createHash } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { adaptGeoTIFFSource, adaptTextureGenerator, copyRasterPackageLicenses, extractTextureWorker } from './build-geo3d-raster-adapters.mjs'
@@ -65,6 +66,28 @@ test('missing Lerc package license uses exact retained LICENSE and NOTICE offlin
     const bytes = await readFile(join(output, name))
     assert.deepEqual(bytes, await readFile(new URL(`../licenses/${name}`, import.meta.url)))
     assert.equal(createHash('sha256').update(bytes).digest('hex'), result.sha256[name])
+  }
+})
+
+test('Git preserves reviewed Lerc bytes with both LF and CRLF checkout settings', async t => {
+  const attributes = await readFile(new URL('../../../../.gitattributes', import.meta.url))
+  for (const autocrlf of ['false', 'true']) {
+    const { root } = await licenseFixture(t)
+    const git = args => execFileSync('git', ['-c', `core.autocrlf=${autocrlf}`, ...args], { cwd: root })
+    const prefix = 'packages/renderers/3d/licenses'
+    await mkdir(join(root, prefix), { recursive: true })
+    await writeFile(join(root, '.gitattributes'), attributes)
+    git(['init', '--quiet'])
+    for (const name of ['lerc-LICENSE', 'lerc-NOTICE']) {
+      const original = await readFile(new URL(`../licenses/${name}`, import.meta.url))
+      const path = `${prefix}/${name}`
+      await writeFile(join(root, path), original)
+      git(['add', '--', '.gitattributes', path])
+      assert.deepEqual(git(['show', `:${path}`]), original, `${name}: stored bytes, autocrlf=${autocrlf}`)
+      await rm(join(root, path))
+      git(['checkout-index', '--', path])
+      assert.deepEqual(await readFile(join(root, path)), original, `${name}: checkout bytes, autocrlf=${autocrlf}`)
+    }
   }
 })
 

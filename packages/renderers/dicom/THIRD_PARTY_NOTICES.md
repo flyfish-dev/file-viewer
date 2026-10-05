@@ -10,7 +10,7 @@ The DICOM renderer is not part of any standard/full package or preset. These dep
 `pako@1.0.5`, `pako@2.1.0`, `pako@2.2.0` contain zlib-derived code by Jean-loup Gailly and Mark Adler under `(MIT AND Zlib)`; their installed source retains the zlib notices and license terms.
 - `spark-md5@3.0.2` is available under `(WTFPL OR MIT)` as declared by the package. Its installed package retains the upstream license file.
 - `argparse@2.0.1` is licensed under Python-2.0 and retains the complete Python Software Foundation license in its installed `LICENSE` file.
-`dompurify@3.4.15` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
+`dompurify@3.4.16` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
 
 ### Native libraries statically linked into codec WebAssembly
 
@@ -43,7 +43,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 - `baseline-browser-mapping@2.11.25` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
-- `dompurify@3.4.15` — https://github.com/cure53/DOMPurify
+- `dompurify@3.4.16` — https://github.com/cure53/DOMPurify
 
 ### BSD-3-Clause
 
@@ -99,7 +99,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `adm-zip@0.6.1` — https://github.com/cthackers/adm-zip
 - `autoprefixer@10.6.1` — https://github.com/postcss/autoprefixer
 - `balanced-match@1.0.0` — https://github.com/juliangruber/balanced-match
-- `brace-expansion@1.1.18` — https://github.com/juliangruber/brace-expansion
+- `brace-expansion@1.1.21` — https://github.com/juliangruber/brace-expansion
 - `browserslist@4.28.7` — https://github.com/browserslist/browserslist
 - `commander@9.2.0` — https://github.com/tj/commander.js
 - `concat-map@0.0.1` — https://github.com/substack/node-concat-map
