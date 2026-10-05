@@ -113,10 +113,11 @@ export async function copyRasterPackageLicenses({ folder, metadata }, output,
     if (metadata.name !== 'lerc' || metadata.version !== '3.0.0' || metadata.license !== 'Apache-2.0') {
       throw new Error(`Missing raster decoder license: ${metadata.name}@${metadata.version}`)
     }
-    // Verify both files before writing the fallback, including NOTICE's original
-    // CRLF bytes. A different package version or license needs a fresh review.
+    // Restore upstream line endings after Git checkout conversion, then verify
+    // the exact original bytes before copying. All other changes remain fatal.
     for (const [name, expected] of Object.entries(LERC_LICENSE_BLOBS)) {
-      const bytes = await readFile(join(retainedRoot, name))
+      const text = (await readFile(join(retainedRoot, name), 'utf8')).replace(/\r\n/g, '\n')
+      const bytes = Buffer.from(name === 'lerc-NOTICE' ? text.replace(/\n/g, '\r\n') : text)
       const blob = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
       if (blob !== expected) throw new Error(`Unreviewed raster decoder legal file: ${name}`)
       legal.set(name, bytes)

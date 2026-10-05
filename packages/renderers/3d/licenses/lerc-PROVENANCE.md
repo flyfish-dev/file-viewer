@@ -10,8 +10,10 @@ Reviewed upstream source: <https://github.com/Esri/lerc/tree/v3.0>.
 The package at `OtherLanguages/js/package.json` declares version `3.0.0`, license
 `Apache-2.0`, and a files list containing the two decoder JavaScript files.
 
-The following files are retained byte-for-byte, including the upstream line
-endings, trailing spaces, and final-newline choices:
+The following files are shipped byte-for-byte, including the upstream line
+endings, trailing spaces, and final-newline choices. Before verification, the
+build restores upstream line endings (LF for LICENSE, CRLF for NOTICE) if Git
+converted them during checkout. The checkout files themselves are not modified:
 
 | Local file | Upstream file | Git blob identity |
 | --- | --- | --- |

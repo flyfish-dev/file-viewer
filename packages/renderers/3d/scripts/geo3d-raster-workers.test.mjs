@@ -3,7 +3,6 @@ import { test } from 'node:test'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { createHash } from 'node:crypto'
-import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { adaptGeoTIFFSource, adaptTextureGenerator, copyRasterPackageLicenses, extractTextureWorker } from './build-geo3d-raster-adapters.mjs'
@@ -49,6 +48,14 @@ test('the built raster workers are shipped as hash-matched static assets', async
 })
 
 const lercMetadata = { name: 'lerc', version: '3.0.0', license: 'Apache-2.0' }
+const lercUpstreamBlobs = {
+  'lerc-LICENSE': '863d15091ebca6473a211f9d99a0051502f63d8b',
+  'lerc-NOTICE': '826163b3f97fc3c5c417ae72440e263927e99163',
+}
+function assertLercUpstreamBytes(name, bytes) {
+  const blob = createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex')
+  assert.equal(blob, lercUpstreamBlobs[name], `${name} must match its reviewed upstream blob`)
+}
 async function licenseFixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'geo3d-raster-licenses-'))
   t.after(() => rm(root, { recursive: true, force: true }))
@@ -64,29 +71,30 @@ test('missing Lerc package license uses exact retained LICENSE and NOTICE offlin
   assert.equal(result.license, 'Apache-2.0')
   for (const name of result.files) {
     const bytes = await readFile(join(output, name))
-    assert.deepEqual(bytes, await readFile(new URL(`../licenses/${name}`, import.meta.url)))
+    assertLercUpstreamBytes(name, bytes)
     assert.equal(createHash('sha256').update(bytes).digest('hex'), result.sha256[name])
   }
 })
 
-test('Git preserves reviewed Lerc bytes with both LF and CRLF checkout settings', async t => {
-  const attributes = await readFile(new URL('../../../../.gitattributes', import.meta.url))
-  for (const autocrlf of ['false', 'true']) {
-    const { root } = await licenseFixture(t)
-    const git = args => execFileSync('git', ['-c', `core.autocrlf=${autocrlf}`, ...args], { cwd: root })
-    const prefix = 'packages/renderers/3d/licenses'
-    await mkdir(join(root, prefix), { recursive: true })
-    await writeFile(join(root, '.gitattributes'), attributes)
-    git(['init', '--quiet'])
-    for (const name of ['lerc-LICENSE', 'lerc-NOTICE']) {
-      const original = await readFile(new URL(`../licenses/${name}`, import.meta.url))
-      const path = `${prefix}/${name}`
-      await writeFile(join(root, path), original)
-      git(['add', '--', '.gitattributes', path])
-      assert.deepEqual(git(['show', `:${path}`]), original, `${name}: stored bytes, autocrlf=${autocrlf}`)
-      await rm(join(root, path))
-      git(['checkout-index', '--', path])
-      assert.deepEqual(await readFile(join(root, path)), original, `${name}: checkout bytes, autocrlf=${autocrlf}`)
+test('Lerc fallback restores exact upstream bytes from LF and CRLF checkouts', async t => {
+  for (const lineEnding of ['\n', '\r\n']) {
+    const { root, folder, output } = await licenseFixture(t)
+    const retained = join(root, 'retained')
+    await mkdir(retained)
+    const inputs = new Map()
+    for (const name of Object.keys(lercUpstreamBlobs)) {
+      const original = await readFile(new URL(`../licenses/${name}`, import.meta.url), 'utf8')
+      const input = Buffer.from(original.replace(/\r\n/g, '\n').replace(/\n/g, lineEnding))
+      inputs.set(name, input)
+      await writeFile(join(retained, name), input)
+    }
+    const result = await copyRasterPackageLicenses({ folder, metadata: lercMetadata }, output, retained)
+    assert.deepEqual(result.files, Object.keys(lercUpstreamBlobs))
+    for (const [name, input] of inputs) {
+      const bytes = await readFile(join(output, name))
+      assertLercUpstreamBytes(name, bytes)
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), result.sha256[name])
+      assert.deepEqual(await readFile(join(retained, name)), input, 'Checkout files must remain unchanged')
     }
   }
 })
