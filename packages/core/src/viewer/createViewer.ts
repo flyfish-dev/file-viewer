@@ -761,11 +761,18 @@ export const createViewer = (
       }
 
       const normalized = normalizeSource(source);
-      const resolvedExtension = await resolveDetectedSourceType(
-        normalized,
-        loadSignal
-      );
-      if (!requestScope.isCurrentRequest(version)) {
+      let resolvedExtension: string;
+      try {
+        resolvedExtension = await resolveDetectedSourceType(normalized, loadSignal);
+      } catch (error) {
+        requestScope.requestController.clearAbortController(requestAbortController);
+        if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted || isAbortError(error)) {
+          return null;
+        }
+        throw error;
+      }
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
+        requestScope.requestController.clearAbortController(requestAbortController);
         return null;
       }
 
@@ -840,8 +847,9 @@ export const createViewer = (
         throw error;
       }
 
-      if (!requestScope.isCurrentRequest(version)) {
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
         await disposeStaleSession(session, targetHost);
+        requestScope.requestController.clearAbortController(requestAbortController);
         return null;
       }
 

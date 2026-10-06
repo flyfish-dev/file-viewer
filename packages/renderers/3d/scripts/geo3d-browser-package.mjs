@@ -10,19 +10,36 @@ const here = dirname(fileURLToPath(import.meta.url))
 export const repositoryRoot = resolve(here, '../../../..')
 export const installedConsumer = Boolean(process.env.GEO3D_TEST_PACKAGE_ROOT)
 export const rendererPackageRoot = installedConsumer
-  ? realpathSync(resolve(process.env.GEO3D_TEST_PACKAGE_ROOT)) : resolve(here, '..')
-export const browserOutput = resolve(process.env.GEO3D_TEST_OUTPUT || join(repositoryRoot, 'output/geo3d-browser'))
-const consumerRoot = installedConsumer ? realpathSync(resolve(process.env.GEO3D_TEST_CONSUMER_ROOT || '.')) : null
+  ? realpathSync(resolve(process.env.GEO3D_TEST_PACKAGE_ROOT))
+  : resolve(here, '..')
+export const browserOutput = resolve(
+  process.env.GEO3D_TEST_OUTPUT || join(repositoryRoot, 'output/geo3d-browser')
+)
+const consumerRoot = installedConsumer
+  ? realpathSync(resolve(process.env.GEO3D_TEST_CONSUMER_ROOT || '.'))
+  : null
 const inside = (path, directory) => path === directory || path.startsWith(directory + sep)
 if (installedConsumer) {
-  assert.ok(!inside(consumerRoot, repositoryRoot), 'Installed consumer must be outside the checkout')
-  assert.ok(inside(rendererPackageRoot, join(consumerRoot, 'node_modules')), 'Runtime must be physically installed in consumer node_modules')
-  assert.ok(inside(browserOutput, consumerRoot), 'Installed test output must be isolated from the workspace report')
+  assert.ok(
+    !inside(consumerRoot, repositoryRoot),
+    'Installed consumer must be outside the checkout'
+  )
+  assert.ok(
+    inside(rendererPackageRoot, join(consumerRoot, 'node_modules')),
+    'Runtime must be physically installed in consumer node_modules'
+  )
+  assert.ok(
+    inside(browserOutput, consumerRoot),
+    'Installed test output must be isolated from the workspace report'
+  )
 }
-export const rendererFile = relative => resolve(rendererPackageRoot, relative)
+export const rendererFile = (relative) => resolve(rendererPackageRoot, relative)
 const resolver = createRequire(rendererFile('package.json'))
-export const engineFile = relative => resolver.resolve('@giro3d/giro3d/' + relative)
-export const { copyGeo3dAssets } = await import(pathToFileURL(rendererFile('bin/copy-geo3d-assets.mjs')).href)
+export const coreEntry = resolver.resolve('@file-viewer/core')
+export const engineFile = (relative) => resolver.resolve('@giro3d/giro3d/' + relative)
+export const { copyGeo3dAssets } = await import(
+  pathToFileURL(rendererFile('bin/copy-geo3d-assets.mjs')).href
+)
 
 /** Permit test instrumentation, never workspace runtime/dependencies, in a cold build. */
 export function verifyRuntimeModules(moduleIds) {
@@ -37,8 +54,10 @@ export function verifyRuntimeModules(moduleIds) {
     const file = realpathSync(id.split('?')[0])
     files.add(file)
     if (installedConsumer) {
-      assert.ok(inside(file, consumerRoot) || file === harness,
-        `Installed browser build reached outside its consumer: ${file}`)
+      assert.ok(
+        inside(file, consumerRoot) || file === harness,
+        `Installed browser build reached outside its consumer: ${file}`
+      )
     }
   }
   return [...files].sort()
@@ -49,11 +68,27 @@ export function runtimeGraphPlugin(suite) {
     name: 'geo3d-physical-runtime-graph',
     async generateBundle() {
       const modules = verifyRuntimeModules([...this.getModuleIds()])
-      assert.ok(modules.some(path => path === realpathSync(rendererFile('dist/geo3d.js'))), 'Browser must use the selected renderer')
-      assert.ok(modules.some(path => path === realpathSync(engineFile('core/Instance.js'))), 'Browser must use the selected real engine')
-      await writeFile(join(browserOutput, `${suite}-module-graph.json`), JSON.stringify({
-        installedConsumer, rendererPackageRoot, consumerRoot, modules,
-      }, null, 2) + '\n')
-    },
+      assert.ok(
+        modules.some((path) => path === realpathSync(rendererFile('dist/geo3d.js'))),
+        'Browser must use the selected renderer'
+      )
+      assert.ok(
+        modules.some((path) => path === realpathSync(engineFile('core/Instance.js'))),
+        'Browser must use the selected real engine'
+      )
+      await writeFile(
+        join(browserOutput, `${suite}-module-graph.json`),
+        JSON.stringify(
+          {
+            installedConsumer,
+            rendererPackageRoot,
+            consumerRoot,
+            modules
+          },
+          null,
+          2
+        ) + '\n'
+      )
+    }
   }
 }

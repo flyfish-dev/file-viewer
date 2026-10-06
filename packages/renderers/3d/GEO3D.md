@@ -113,6 +113,15 @@ normalized dataset URL is then used by the engine and as the base for relative
 CityJSON textures and 3D Tiles resources. Absolute dataset URLs and their query
 strings are preserved. Local File/buffer inputs are not assigned a network URL.
 
+### Local Blob sources
+
+The headless `createViewer().load()` API retains the original File or Blob for
+Geo3D. Local COPC reads only the requested slices rather than materializing the
+whole file. The browser acceptance fixture verifies that behavior with a Blob
+whose whole-file `arrayBuffer()` method throws.
+
+![Local COPC Blob rendered by the public headless API](docs/headless-blob-copc.png)
+
 ## Advanced API and resource ownership
 
 `configureInstance` exposes the actual Giro3D `Instance`. `configure` adds a
@@ -338,6 +347,14 @@ paths, duplicates, overlaps, encryption, entry counts, expanded sizes and
 compression ratios. Actual extraction is bounded and CRC32 is checked. The
 browser subset supports stored/DEFLATE entries and rejects unsupported ZIP64,
 data-descriptor and other layouts.
+
+The archive subset supports JSON tilesets, glTF/GLB models and PNTS tiles with
+archive-local buffers and images. B3DM, I3DM and CMPT entries are rejected by
+both extension and binary magic before URLs are exposed: their native loaders
+can fetch nested resources outside the archive hook. GLB entries must retain
+their `.glb` extension. Inline tile/model data URLs are rejected; inline glTF
+buffers and images remain supported. These restrictions apply to 3TZ archives;
+remote tilesets retain their normal resource-loading behavior.
 
 Prepared archives use extension-preserving, per-archive virtual URLs for
 models/tilesets and a narrow public `fetchData` hook returning validated local

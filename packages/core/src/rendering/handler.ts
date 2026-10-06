@@ -983,7 +983,7 @@ export const buildFileRenderContextFromLoadContext = ({
   filename: source.filename,
   url: source.url,
   streamUrl: source.url,
-  sourceFile: typeof File !== 'undefined' && source.file instanceof File ? source.file : undefined,
+  sourceFile: source.file,
   signal,
   options,
   surface,
