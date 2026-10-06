@@ -246,7 +246,7 @@ function resolveEntryName(base: string, reference: string): string | null {
 async function rewriteUris(
   value: unknown,
   name: string,
-  getUrl: (name: string, depth: number) => Promise<string>,
+  getUrl: (name: string, depth: number, asBlob?: boolean) => Promise<string>,
   depth: number
 ): Promise<void> {
   // Only glTF buffers/images may embed data. An inline tile/model can contain
@@ -278,14 +278,17 @@ async function rewriteUris(
     }
     const record = v as Record<string, unknown>
     for (const [key, child] of Object.entries(record)) {
-      if ((key === 'uri' || key === 'url') && typeof child === 'string') {
+      if ((key === 'uri' || key === 'url' || key === 'schemaUri') && typeof child === 'string') {
         if (/^data:/i.test(child)) {
           if (!inlineResources.has(record))
             throw new Error('3TZ inline tile/model resources are unsupported.')
           continue
         }
         const target = resolveEntryName(name, child)
-        if (target) record[key] = await getUrl(target, depth + 1)
+        // The enabled structural-metadata plugin loads schemaUri directly
+        // with Three's FileLoader, outside TilesRenderer.fetchData. Give it an
+        // owned Blob URL instead of a virtual tileset URL or an external URL.
+        if (target) record[key] = await getUrl(target, depth + 1, key === 'schemaUri')
       } else stack.push([child, nesting + 1])
     }
   }
@@ -293,7 +296,7 @@ async function rewriteUris(
 async function rewriteGlbUris(
   data: Uint8Array,
   name: string,
-  getUrl: (name: string, depth: number) => Promise<string>,
+  getUrl: (name: string, depth: number, asBlob?: boolean) => Promise<string>,
   depth: number
 ): Promise<Uint8Array> {
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength)
@@ -315,7 +318,11 @@ async function rewriteGlbUris(
     let bytes = data.slice(offset + 8, offset + 8 + length)
     if (chunks.length === 0) {
       if (type !== 0x4e4f534a) throw new Error('GLB JSON must be the first chunk.')
-      const json = JSON.parse(utf8.decode(bytes).replace(/[\0 ]+$/g, ''))
+      // Strip only trailing GLB padding. An unanchored greedy regexp can scan
+      // every leading whitespace suffix before finding no trailing match.
+      let end = bytes.length
+      while (end > 0 && (bytes[end - 1] === 0 || bytes[end - 1] === 32)) end--
+      const json = JSON.parse(utf8.decode(bytes.subarray(0, end)))
       await rewriteUris(json, name, getUrl, depth)
       const encoded = new TextEncoder().encode(JSON.stringify(json)),
         padded = new Uint8Array(Math.ceil(encoded.length / 4) * 4).fill(32)
@@ -402,14 +409,15 @@ export async function prepare3tzDataset(
     const root = JSON.parse(utf8.decode(extracted.get('tileset.json')!))
     if (typeof root?.asset?.version !== 'string' || !root.root || typeof root.root !== 'object')
       throw new Error('3TZ root tileset.json is not a 3D Tiles dataset.')
-    const getUrl = async (name: string, depth = 0): Promise<string> => {
+    const getUrl = async (name: string, depth = 0, asBlob = false): Promise<string> => {
       checkAbort(signal)
-      if (depth > 64 || creating.has(name)) throw new Error('3TZ cyclic/deep resource reference.')
-      const existing = urls.get(name)
+      const cacheKey = asBlob ? `schema:${name}` : name
+      if (depth > 64 || creating.has(cacheKey)) throw new Error('3TZ cyclic/deep resource reference.')
+      const existing = urls.get(cacheKey)
       if (existing) return existing
       const data = extracted.get(name)
       if (!data) throw new Error(`Missing 3TZ relative resource: ${name}`)
-      creating.add(name)
+      creating.add(cacheKey)
       try {
         let payload: Uint8Array = data
         if (/\.(json|gltf)$/i.test(name)) {
@@ -421,17 +429,17 @@ export async function prepare3tzDataset(
         // TilesRenderer classifies nested tilesets and models by path extension.
         // An extensionless Blob URL (or a fake suffix in its fragment) is not
         // sufficient. Its documented fetchData plugin serves these local URLs.
-        const nativeTile = /\.(json|gltf|glb|b3dm|i3dm|pnts|cmpt)$/i.test(name)
+        const nativeTile = !asBlob && /\.(json|gltf|glb|b3dm|i3dm|pnts|cmpt)$/i.test(name)
         const url = nativeTile
           ? archiveBase + name.split('/').map(encodeURIComponent).join('/')
           : URL.createObjectURL(
               new Blob([payload.slice().buffer as ArrayBuffer], { type: mimeFor(name) })
             )
         if (nativeTile) responses.set(url, { bytes: payload, mime: mimeFor(name) })
-        urls.set(name, url)
+        urls.set(cacheKey, url)
         return url
       } finally {
-        creating.delete(name)
+        creating.delete(cacheKey)
       }
     }
     const rootUrl = await getUrl('tileset.json')

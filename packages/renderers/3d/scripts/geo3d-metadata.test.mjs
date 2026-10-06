@@ -60,3 +60,15 @@ test('GeoTIFF probes embedded NULs and trailing ASCII terminators within the bud
     assert.deepEqual(result.geoTags, [34737])
   }
 })
+
+test('3TZ parses legally padded GLB JSON within the CPU budget', async () => {
+  const results = await inspectInWorker({ kind: 'glb' })
+  assert.deepEqual(
+    results,
+    [65536, 131072, 262144].map((padding) => ({
+      padding,
+      version: '2.0',
+      scene: 0
+    }))
+  )
+})

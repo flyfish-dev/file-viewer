@@ -242,6 +242,7 @@ export interface CommitFileViewerRenderCompleteStateInput<Session = unknown> {
 export interface RunFileViewerReadAndRenderFileInput<Session = unknown> {
   file: File;
   version: number;
+  signal?: AbortSignal;
   source?: FileViewerLifecycleContext['source'];
   sourceUrl?: string;
   fallbackFilename?: string;
@@ -1163,6 +1164,7 @@ export const commitFileViewerRenderCompleteState = <Session = unknown>({
 export const runFileViewerReadAndRenderFile = async <Session = unknown>({
   file,
   version,
+  signal,
   sourceUrl,
   source = sourceUrl ? 'url' : 'file',
   fallbackFilename = '',
@@ -1177,7 +1179,7 @@ export const runFileViewerReadAndRenderFile = async <Session = unknown>({
   onClearLoadStarted,
 }: RunFileViewerReadAndRenderFileInput<Session>): Promise<FileViewerReadAndRenderFileState<Session>> => {
   const buffer = await readFileViewerBuffer(file);
-  if (!isCurrent(version)) {
+  if (!isCurrent(version) || signal?.aborted) {
     return {
       stale: true,
       buffer,
@@ -1194,7 +1196,7 @@ export const runFileViewerReadAndRenderFile = async <Session = unknown>({
   }));
 
   const session = await mountRenderedContent(buffer, file, version, sourceUrl);
-  if (!isCurrent(version)) {
+  if (!isCurrent(version) || signal?.aborted) {
     destroyRenderSession?.(session);
     return {
       stale: true,
@@ -1380,6 +1382,9 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
       extension: getExtension(localSource.filename),
       signal: controller?.signal,
     });
+    if (!isCurrent(version) || controller?.signal.aborted) {
+      return { status: 'stale', source: localSource, read: null, error: null };
+    }
     if (streamDecision) {
       const buffer = new ArrayBuffer(0);
       const typeOverride =
@@ -1398,7 +1403,7 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
         controller?.signal,
         typeOverride
       );
-      if (!isCurrent(version)) {
+      if (!isCurrent(version) || controller?.signal.aborted) {
         destroyRenderSession?.(session);
         return { status: 'stale', source: localSource, read: null, error: null };
       }
@@ -1423,10 +1428,12 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
     const read = await runFileViewerReadAndRenderFile({
       file,
       version,
+      signal: controller?.signal,
       source: 'file',
       previewTarget,
       isCurrent,
-      mountRenderedContent,
+      mountRenderedContent: (buffer, file, version, sourceUrl) =>
+        mountRenderedContent(buffer, file, version, sourceUrl, undefined, controller?.signal),
       destroyRenderSession,
       buildRenderCompleteState: input => buildRenderCompleteState({
         version: input.version,
@@ -1455,7 +1462,7 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
       error: null,
     };
   } catch (error) {
-    if (!isCurrent(version)) {
+    if (!isCurrent(version) || controller?.signal.aborted) {
       return {
         status: 'stale',
         source: localSource,

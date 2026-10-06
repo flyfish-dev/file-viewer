@@ -857,10 +857,28 @@ export const createViewer = (
       syncWatermarkOverlay();
       zoomController.refreshProvider();
       viewStateController.refreshProvider();
+      const finishStaleLoad = async () => {
+        // unload/replace may already have disposed this session. Clear only
+        // the session still owned by this load, preserving a replacement.
+        if (renderSurfaceState.session === session && currentRenderTarget === targetHost) {
+          await destroyCurrent('replace');
+        } else {
+          removeRenderTarget(targetHost);
+        }
+        requestScope.requestController.clearAbortController(requestAbortController);
+      };
       await documentActions.refreshDocumentIndex({ notify: false });
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
+        await finishStaleLoad();
+        return null;
+      }
       await fitController.applyInitialFit({
         skip: hasFileViewerExplicitInitialViewState(options.initialViewState),
       });
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
+        await finishStaleLoad();
+        return null;
+      }
       zoomController.refreshProvider();
       viewStateController.refreshProvider();
       emitZoomAndOperationAvailabilityChange();

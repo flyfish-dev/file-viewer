@@ -349,7 +349,7 @@ browser subset supports stored/DEFLATE entries and rejects unsupported ZIP64,
 data-descriptor and other layouts.
 
 The archive subset supports JSON tilesets, glTF/GLB models and PNTS tiles with
-archive-local buffers and images. B3DM, I3DM and CMPT entries are rejected by
+archive-local buffers, images and structural-metadata schemas. B3DM, I3DM and CMPT entries are rejected by
 both extension and binary magic before URLs are exposed: their native loaders
 can fetch nested resources outside the archive hook. GLB entries must retain
 their `.glb` extension. Inline tile/model data URLs are rejected; inline glTF
@@ -358,7 +358,10 @@ remote tilesets retain their normal resource-loading behavior.
 
 Prepared archives use extension-preserving, per-archive virtual URLs for
 models/tilesets and a narrow public `fetchData` hook returning validated local
-Responses. Buffers/images use owned Blob URLs. There is no remote fallback or
+Responses. Buffers, images and `EXT_structural_metadata.schemaUri` resources use
+owned Blob URLs, including JSON schemas that the native plugin loads directly.
+External schema references are rejected before the model reaches that plugin.
+There is no remote fallback or
 service worker. All archive-owned resources are released on teardown. A file-only
 multi-resource tileset without an archive is rejected. Nested tileset/model
 arrival wakes the on-demand render loop; its listeners are removed at teardown.

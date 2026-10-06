@@ -349,7 +349,7 @@ console.log('Both public entries imported with all optional specialist peers abs
   const browserRunner = join(consumer, 'run-browser-suites.mjs')
   await writeFile(
     browserRunner,
-    `await import(${JSON.stringify(new URL('./verify-geo3d-browser-scenarios.mjs', import.meta.url).href)});\nawait import(${JSON.stringify(new URL('./verify-geo3d-concurrent.mjs', import.meta.url).href)});\n`
+    `await import(${JSON.stringify(new URL('./verify-geo3d-browser-scenarios.mjs', import.meta.url).href)});\nawait import(${JSON.stringify(new URL('./verify-geo3d-concurrent.mjs', import.meta.url).href)});\nawait import(${JSON.stringify(new URL('./verify-geo3d-archive-browser.mjs', import.meta.url).href)});\n`
   )
   await run('installed-browser-suites', process.execPath, [browserRunner], consumer, {
     ...env,
@@ -362,13 +362,15 @@ console.log('Both public entries imported with all optional specialist peers abs
   assert.equal(browser.concurrency?.status, 'passed')
   assert.equal(browser.cases.length, 15)
   assert.equal(browser.concurrency.cases.length, 10)
+  assert.equal(browser.archiveSchemas?.status, 'passed')
+  assert.equal(browser.archiveSchemas.cases.length, 8)
   for (const name of ['headless-blob-las', 'headless-blob-copc']) {
     const scenario = browser.cases.find((item) => item.name === name)
     assert.equal(scenario?.status, 'passed', `Missing public Blob integration: ${name}`)
     assert.equal(scenario.loaded.blobSource, true)
   }
   assert.deepEqual(browser.concurrency.notRun, [])
-  for (const suite of ['datasets', 'concurrent']) {
+  for (const suite of ['datasets', 'concurrent', 'archive-schema']) {
     const graph = JSON.parse(
       await readFile(join(childOutput, `${suite}-module-graph.json`), 'utf8')
     )

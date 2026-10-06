@@ -122,6 +122,7 @@ try {
   await import('./verify-geo3d-browser-scenarios.mjs')
   await import('./verify-geo3d-concurrent.mjs')
   await import('./verify-geo3d-host-browser.mjs')
+  await import('./verify-geo3d-archive-browser.mjs')
   await import('./verify-geo3d-installed.mjs')
 } finally {
   try {
