@@ -94,7 +94,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "dompurify": "3.4.15"
+    "dompurify": "3.4.16"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
