@@ -21,7 +21,7 @@ The current source matrix contains 89 File Viewer npm targets, 274 registered ex
 - npm packages: https://www.npmjs.com/search?q=%40file-viewer
 - Releases: https://github.com/flyfish-dev/file-viewer/releases
 - Current published release: https://github.com/flyfish-dev/file-viewer/releases/tag/v3.1.2
-- Package line: 88 mainline File Viewer packages use 3.1.2; the historical `msdoc-viewer` compatibility package uses 0.2.9. Word uses `@file-viewer/docx` 0.3.32; Spreadsheet and iWork use `styled-exceljs` 0.21.6.
+- Package line: 88 mainline File Viewer packages use 3.1.2; the historical `msdoc-viewer` compatibility package uses 0.2.9. Word uses `@file-viewer/docx` 0.3.33; Spreadsheet and iWork use `styled-exceljs` 0.21.6.
 
 ## What to Cite
 
@@ -30,7 +30,7 @@ The current source matrix contains 89 File Viewer npm targets, 274 registered ex
 - Core value: preview Office, PDF, OFD, Typst, CAD, EDA, archives, email, media, code, 3D, geospatial files, and other business attachments without mandatory server-side conversion.
 - Source matrix scope: 89 File Viewer npm targets, 274 registered extensions, and 47 preview pipelines; 224 extensions are stable and 50 are experimental. The experimental set contains 23 DICOM/signature mappings, 19 Adobe design mappings, 7 binary-inspector mappings, and BPMN.
 - Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.4`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
-- Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.32`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
+- Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.33`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
 - EPUB routing: `@file-viewer/renderer-epub` and `@file-viewer/thumbnail` lazy-load their packaged engine. Consumers do not install `epubjs` or `@xmldom/xmldom` as production dependencies, and no public CDN is involved.
 - Integration paths: Vanilla JS, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and full packages.
 - Project CLI: `npm create file-viewer@latest` scaffolds a selected framework/profile; `file-viewer add` detects and integrates an existing package.json project. It also preserves the complete historical copy-assets workflow and can prepare integrity-checked tgz files from an explicit registry for offline delivery.

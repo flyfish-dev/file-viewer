@@ -19,7 +19,7 @@ The project is designed for teams that need users to open business attachments d
 - Primary audience: product teams building file preview into enterprise systems and private deployments.
 - Core promise: preview common and complex files in the browser, with modular packages and local Worker/WASM assets.
 - Source matrix scope: 89 File Viewer npm targets, 274 registered extensions, and 47 preview pipelines; 224 extensions are stable and 50 are experimental. The experimental set contains 23 DICOM/signature mappings, 19 explicit opt-in Adobe design mappings, 7 explicit binary-inspector mappings, and BPMN.
-- Current published release: v3.1.2, https://github.com/flyfish-dev/file-viewer/releases/tag/v3.1.2. 88 mainline File Viewer packages use 3.1.2; the historical `msdoc-viewer` compatibility package uses 0.2.9. Word uses `@file-viewer/docx` 0.3.32; Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.6 release.
+- Current published release: v3.1.2, https://github.com/flyfish-dev/file-viewer/releases/tag/v3.1.2. 88 mainline File Viewer packages use 3.1.2; the historical `msdoc-viewer` compatibility package uses 0.2.9. Word uses `@file-viewer/docx` 0.3.33; Spreadsheet and iWork use the security-hardened `styled-exceljs` 0.21.6 release.
 
 ## Format Coverage
 

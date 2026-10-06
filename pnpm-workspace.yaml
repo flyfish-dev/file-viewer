@@ -29,7 +29,7 @@ allowBuilds:
   fsevents: true
 
 minimumReleaseAgeExclude:
-  - '@file-viewer/docx@0.3.32'
+  - '@file-viewer/docx@0.3.33'
   - 'styled-exceljs@0.21.6'
 
 overrides:

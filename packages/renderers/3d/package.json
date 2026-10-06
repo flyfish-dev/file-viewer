@@ -80,7 +80,7 @@
     "typescript": "^6.0.3",
     "@thatopen/components": "3.4.8",
     "@thatopen/fragments": "3.4.7",
-    "web-ifc": "0.0.78",
+    "web-ifc": "0.0.77",
     "esbuild": "^0.28.2"
   },
   "license": "Apache-2.0",
@@ -90,7 +90,7 @@
   "peerDependencies": {
     "@thatopen/components": "3.4.8",
     "@thatopen/fragments": "3.4.7",
-    "web-ifc": "0.0.78",
+    "web-ifc": "0.0.77",
     "esbuild": "^0.28.2"
   },
   "peerDependenciesMeta": {

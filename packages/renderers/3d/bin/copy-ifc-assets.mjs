@@ -36,6 +36,7 @@ export async function copyIfcAssets(destination) {
     ["web-ifc", "@thatopen/fragments", "three"].map((name) => packageDir(name)),
   );
   const fragmentRequire = createRequire(join(fragments.path, "package.json"));
+  const importerWebIfc = await packageDir("web-ifc", fragmentRequire);
   const packages = [
     webIfc,
     fragments,
@@ -46,12 +47,16 @@ export async function copyIfcAssets(destination) {
       ),
     )),
   ];
+  // The published 0.0.78 JS calls StreamMeshes with four arguments, while its
+  // browser WASM accepts three. Native IFC verification retains 0.0.77 until
+  // an upstream JS/WASM pair passes that same check.
   if (
     webIfc.metadata.version !== "0.0.77" ||
-    fragments.metadata.version !== "3.4.7"
+    fragments.metadata.version !== "3.4.7" ||
+    realpathSync(importerWebIfc.path) !== realpathSync(webIfc.path)
   )
     throw new Error(
-      "IFC assets must match the tested web-ifc@0.0.77 and @thatopen/fragments@3.4.7 engines",
+      "IFC assets and importer must share the tested web-ifc@0.0.77 and @thatopen/fragments@3.4.7 engines",
     );
   const { build } = await import("esbuild");
   destination = resolve(destination);

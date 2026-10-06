@@ -105,11 +105,15 @@ const attributionHost = attribution.onAdd({
 })
 document.body.append(attributionHost)
 await new Promise(resolve => setTimeout(resolve, 100))
+// Upstream removes untrusted IDs; verify the preserved credit's semantics
+// without requiring an attribute that the sanitizer intentionally rejects.
+const safeAttributionLink = Array.from(attributionHost.querySelectorAll('a'))
+  .find(link => link.textContent === 'safe attribution')
 const mapAttributionResult = {
   sentinel: window.__mapAttributionSentinel,
   dangerousAttributes: attributionHost.querySelectorAll('[onload],[ontoggle],[onclick]').length,
   unsafeLinks: attributionHost.querySelectorAll('a[href^="javascript:"]').length,
-  safeHref: attributionHost.querySelector('#map-safe-attribution')?.getAttribute('href'),
+  safeHref: safeAttributionLink?.getAttribute('href'),
 }
 attribution.onRemove()
 const mapWorkerResult = []
