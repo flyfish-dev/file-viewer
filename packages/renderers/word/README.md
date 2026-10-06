@@ -64,6 +64,10 @@ DOC、DOCX 与 RTF 的外部链接及 HTTP(S) 图片关系默认阻断。只有�
 
 标准 renderer 会在挂载前净化 `rtf.js` 产生的 DOM。自定义 RTF 集成若直接消费 HTML，应先调用 `sanitizeFileViewerRtfHtml(document, markup, options)`；该边界与标准挂载使用同一链接策略和 DOMPurify 配置。严格 Trusted Types CSP 需允许 `file-viewer-document-sanitizer` 策略名。
 
+## 嵌入 HTML
+
+使用 `options.docx.renderAltChunks: false` 可以完全省略 DOCX 内嵌 HTML 部件，正文与普通内嵌图片不受影响。未指定或设为 `true` 时保留引擎原有沙箱渲染，不会开启脚本执行、同源权限或放宽外部链接/资源策略。该选项适用于 Worker 与主线程解析，不涉及旧二进制 DOC。
+
 ## 迁移说明
 
 `@file-viewer/core` 已不再直接依赖 `@file-viewer/docx`、`@file-viewer/doc`、`rtf.js`、`linkedom` 或 `@xmldom/xmldom`。需要 Word 完整预览时，请安装本包并通过 `renderers` 传入，或使用 `@file-viewer/preset-all`。

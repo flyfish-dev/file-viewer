@@ -797,6 +797,8 @@ export interface FileViewerDocxOptions {
   updatePageReferences?: boolean
   hideWebHiddenContent?: boolean
   ignoreLastRenderedPageBreak?: boolean
+  /** Set false to omit embedded HTML altChunks. Omitted/true retains the engine sandbox. */
+  renderAltChunks?: boolean
   /** External DOC/DOCX/RTF links are blocked by default; internal bookmark links remain active. */
   externalLinkPolicy?: 'allow' | 'block'
   /** Linked DOC/DOCX/RTF image resources are blocked by default; embedded images remain available. */

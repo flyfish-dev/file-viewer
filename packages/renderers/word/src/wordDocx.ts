@@ -492,6 +492,9 @@ export const createDocxOptions = (
   if (docxOptions?.hideWebHiddenContent !== undefined) {
     options.hideWebHiddenContent = docxOptions.hideWebHiddenContent
   }
+  if (docxOptions?.renderAltChunks !== undefined) {
+    options.renderAltChunks = docxOptions.renderAltChunks
+  }
 
   return options
 }

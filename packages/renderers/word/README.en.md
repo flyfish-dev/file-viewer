@@ -69,6 +69,10 @@ DOC, DOCX, and RTF external links and HTTP(S) image relationships are blocked by
 
 The standard renderer sanitizes the DOM produced by `rtf.js` before mounting it. Custom RTF integrations that consume HTML directly should first call `sanitizeFileViewerRtfHtml(document, markup, options)`; it uses the same link policy and DOMPurify boundary as the standard mount path. A strict Trusted Types CSP should allow the `file-viewer-document-sanitizer` policy name.
 
+## Embedded HTML
+
+Set `options.docx.renderAltChunks: false` to omit embedded HTML parts in DOCX. Normal document text and embedded images remain available. Omitting the option or setting it to `true` preserves the engine sandbox; it does not enable scripts or same-origin access, or relax external link/resource policies. The option applies to both Worker and main-thread parsing, not to binary DOC.
+
 ## Migration
 
 `@file-viewer/core` no longer depends on `@file-viewer/docx`, `@file-viewer/doc`, `rtf.js`, `linkedom`, or `@xmldom/xmldom` directly. Install and pass this renderer for full Word preview, or use `@file-viewer/preset-all`.
