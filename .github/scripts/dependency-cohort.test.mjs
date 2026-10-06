@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readFileSync, realpathSync } from 'node:fs'
 import { test } from 'node:test'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
 const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8')
 function angularCohort(manifest) {
   const dependencies = { ...manifest.dependencies, ...manifest.devDependencies }
@@ -79,6 +81,43 @@ test('thumbnail manifest agrees with workspace Vitest security override', () => 
   const override = read('pnpm-workspace.yaml').match(/^  vitest: (\S+)$/m)?.[1]
   assert.ok(override)
   assert.equal(thumbnail.devDependencies.vitest, override)
+})
+test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
+  const patchedVersion = '3.4.16'
+  const override = read('pnpm-workspace.yaml').match(/^  dompurify: (\S+)$/m)?.[1]
+  assert.equal(override, patchedVersion, 'Workspace override must not restore vulnerable DOMPurify')
+  for (const path of [
+    'packages/core/package.json',
+    ...['doc', 'drawing', 'pptx', 'text'].map((name) => `packages/renderers/${name}/package.json`)
+  ]) {
+    const manifest = JSON.parse(read(path))
+    // Consumers do not inherit this workspace's overrides: the published manifest must be safe too.
+    assert.equal(manifest.dependencies.dompurify, patchedVersion, `${path}: unsafe consumer pin`)
+    const require = createRequire(new URL(`../../${path}`, import.meta.url))
+    assert.equal(require('dompurify').version, patchedVersion, `${path}: unsafe runtime`)
+  }
+})
+test('IFC importer and asset owner retain the verified web-ifc cohort', () => {
+  const version = '0.0.77'
+  const manifest = JSON.parse(read('packages/renderers/3d/package.json'))
+  const demo = JSON.parse(read('apps/viewer-demo/package.json'))
+  assert.equal(manifest.devDependencies['web-ifc'], version)
+  assert.equal(manifest.peerDependencies['web-ifc'], version)
+  assert.equal(demo.dependencies['web-ifc'], version)
+  const require = createRequire(
+    new URL('../../packages/renderers/3d/package.json', import.meta.url)
+  )
+  const entry = require.resolve('web-ifc')
+  const importerRequire = createRequire(require.resolve('@thatopen/fragments'))
+  assert.equal(
+    realpathSync(importerRequire.resolve('web-ifc')),
+    realpathSync(entry),
+    'The importer must load the same physical package that owns the copied WASM'
+  )
+  assert.equal(
+    JSON.parse(readFileSync(join(dirname(entry), 'package.json'), 'utf8')).version,
+    version
+  )
 })
 test('Dependabot groups version and security Angular updates in the nested fixture', () => {
   const entry = read('.github/dependabot.yml')

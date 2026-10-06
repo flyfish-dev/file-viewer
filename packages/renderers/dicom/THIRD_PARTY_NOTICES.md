@@ -1,29 +1,29 @@
 # Third-party notices
 
-This file records the complete production dependency closure of the optional `@file-viewer/renderer-dicom` package, including the Linux-only optional codec dependency. Exact machine-readable versions, SPDX expressions, source repositories, and packaged license/notice filenames are in `THIRD_PARTY_LICENSES.json`.
+This file records the complete production dependency closure of the optional `@file-viewer/renderer-dicom` package, including any platform-optional dependencies. Exact machine-readable versions, SPDX expressions, source repositories, and packaged license/notice filenames are in `THIRD_PARTY_LICENSES.json`.
 
 The DICOM renderer is not part of any standard/full package or preset. These dependencies are installed only when this capability is selected, and its Cornerstone implementation is loaded only when a DICOM file is opened.
 
 ## Required attribution
 
-- `caniuse-lite@1.0.30001810` data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as `caniuse-lite/LICENSE` in the installed dependency.
+- `caniuse-lite@1.0.30001814` data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as `caniuse-lite/LICENSE` in the installed dependency.
 `pako@1.0.5`, `pako@2.1.0`, `pako@2.2.0` contain zlib-derived code by Jean-loup Gailly and Mark Adler under `(MIT AND Zlib)`; their installed source retains the zlib notices and license terms.
 - `spark-md5@3.0.2` is available under `(WTFPL OR MIT)` as declared by the package. Its installed package retains the upstream license file.
 - `argparse@2.0.1` is licensed under Python-2.0 and retains the complete Python Software Foundation license in its installed `LICENSE` file.
-`dompurify@3.4.15` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
+`dompurify@3.4.16` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
 
 ### Native libraries statically linked into codec WebAssembly
 
-All four codec wrapper packages were built from `cornerstonejs/codecs` commit `8634194b68ab43bde8f35fcc466a36d91ac700b4`. The wrapper package license is not used as a substitute for the linked native library terms:
+The four wrappers share the reviewed npm gitHead and release-source tree. Exact official tarball integrities, all installed-file hashes and native source gitlinks are retained in `third-party/native-codecs/PROVENANCE.json` and checked against the installed artifacts. These releases have verified registry signatures but no npm build attestations; this is release-source provenance rather than a signed build or independent rebuild claim. The wrapper package license is not used as a substitute for the linked native library terms:
 
-- `CharLS` (`@cornerstonejs/codec-charls@1.2.5`): `BSD-3-Clause`; source `38d95d00671f4cddfa61f3f51eaf81b8bac34543` at https://github.com/cornerstonejs/charls; linked target `charls`; retained files `third-party/native-codecs/charls/LICENSE.md`.
-- `libjpeg-turbo` (`@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4`): `IJG AND BSD-3-Clause AND Zlib`; source `dc4a93fab38b42d29b89a533409e012570180e28` at https://github.com/cornerstonejs/libjpeg-turbo; linked target `turbojpeg-static`; retained files `third-party/native-codecs/libjpeg-turbo/LICENSE.md`, `third-party/native-codecs/libjpeg-turbo/README.ijg`.
-- `OpenJPEG` (`@cornerstonejs/codec-openjpeg@1.3.2`): `BSD-2-Clause`; source `2d606701e8b7aa83f657d113c3367508e99bd12b` at https://github.com/cornerstonejs/openjpeg; linked target `openjp2`; retained files `third-party/native-codecs/openjpeg/LICENSE`.
-- `OpenJPH` (`@cornerstonejs/codec-openjph@2.4.9`): `BSD-2-Clause`; source `e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6` at https://github.com/cornerstonejs/OpenJPH; linked target `openjphsimd`; retained files `third-party/native-codecs/openjph/LICENSE`.
+- `CharLS` (`@cornerstonejs/codec-charls@1.2.5`): `BSD-3-Clause`; release source gitlink `38d95d00671f4cddfa61f3f51eaf81b8bac34543` at https://github.com/cornerstonejs/charls; linked target `charls`; retained files `third-party/native-codecs/charls/LICENSE.md`.
+- `libjpeg-turbo` (`@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4`): `IJG AND BSD-3-Clause AND Zlib`; release source gitlink `dc4a93fab38b42d29b89a533409e012570180e28` at https://github.com/cornerstonejs/libjpeg-turbo; linked target `turbojpeg-static`; retained files `third-party/native-codecs/libjpeg-turbo/LICENSE.md`, `third-party/native-codecs/libjpeg-turbo/README.ijg`.
+- `OpenJPEG` (`@cornerstonejs/codec-openjpeg@1.3.2`): `BSD-2-Clause`; release source gitlink `2d606701e8b7aa83f657d113c3367508e99bd12b` at https://github.com/cornerstonejs/openjpeg; linked target `openjp2`; retained files `third-party/native-codecs/openjpeg/LICENSE`.
+- `OpenJPH` (`@cornerstonejs/codec-openjph@2.4.9`): `BSD-2-Clause`; release source gitlink `e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6` at https://github.com/cornerstonejs/OpenJPH; linked target `openjphsimd`; retained files `third-party/native-codecs/openjph/LICENSE`.
 
 **libjpeg-turbo attribution:** This software is based in part on the work of the Independent JPEG Group.
 
-The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package, together with the exact CharLS, OpenJPEG, and OpenJPH license texts. These native components use BSD-style, IJG, and zlib terms; none is LGPL or strong copyleft.
+The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package. All native license files listed above are retained unmodified. These native components use permissive terms; none is LGPL or strong copyleft.
 
 None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTICE` file. All top-level license and notice files found in each installed package are recorded in the ledger.
 
@@ -41,20 +41,20 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### Apache-2.0
 
-- `baseline-browser-mapping@2.11.25` — https://github.com/web-platform-dx/baseline-browser-mapping
+- `baseline-browser-mapping@2.11.27` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
-- `dompurify@3.4.15` — https://github.com/cure53/DOMPurify
+- `dompurify@3.4.16` — https://github.com/cure53/DOMPurify
 
 ### BSD-3-Clause
 
 - `@kitware/vtk.js@36.4.1` — https://github.com/Kitware/vtk-js
 - `shelljs@0.8.5` — https://github.com/shelljs/shelljs
-- `source-map-js@1.2.1` — https://github.com/7rulnik/source-map-js
+- `source-map-js@1.2.2` — https://github.com/7rulnik/source-map-js
 - `wslink@2.5.0` — https://github.com/kitware/wslink
 
 ### CC-BY-4.0
 
-- `caniuse-lite@1.0.30001810` — https://github.com/browserslist/caniuse-lite
+- `caniuse-lite@1.0.30001814` — https://github.com/browserslist/caniuse-lite
 
 ### ISC
 
@@ -69,7 +69,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `d3-time-format@4.1.0` — https://github.com/d3/d3-time-format
 - `electron-to-chromium@1.5.433` — https://github.com/Kilian/electron-to-chromium
 - `fs.realpath@1.0.0` — https://github.com/isaacs/fs.realpath
-- `glob@7.2.0` — https://github.com/isaacs/node-glob
+- `glob@7.2.3` — https://github.com/isaacs/node-glob
 - `inflight@1.0.6` — https://github.com/npm/inflight
 - `inherits@2.0.4` — https://github.com/isaacs/inherits
 - `internmap@2.0.3` — https://github.com/mbostock/internmap
@@ -85,10 +85,10 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `@cornerstonejs/codec-charls@1.2.5` — https://github.com/chafey/charls-js
 - `@cornerstonejs/codec-openjpeg@1.3.2` — https://github.com/cornerstonejs/codecs
 - `@cornerstonejs/codec-openjph@2.4.9` — https://github.com/cornerstonejs/codecs
-- `@cornerstonejs/core@5.8.2` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/dicom-image-loader@5.8.2` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/metadata@5.8.2` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/utils@5.8.2` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/core@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/dicom-image-loader@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/metadata@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/utils@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
 - `@oozcitak/dom@2.0.2` — https://github.com/oozcitak/dom
 - `@oozcitak/infra@2.0.2` — https://github.com/oozcitak/infra
 - `@oozcitak/url@3.0.0` — https://github.com/oozcitak/url
@@ -99,7 +99,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `adm-zip@0.6.1` — https://github.com/cthackers/adm-zip
 - `autoprefixer@10.6.1` — https://github.com/postcss/autoprefixer
 - `balanced-match@1.0.0` — https://github.com/juliangruber/balanced-match
-- `brace-expansion@1.1.18` — https://github.com/juliangruber/brace-expansion
+- `brace-expansion@1.1.21` — https://github.com/juliangruber/brace-expansion
 - `browserslist@4.28.7` — https://github.com/browserslist/browserslist
 - `commander@9.2.0` — https://github.com/tj/commander.js
 - `concat-map@0.0.1` — https://github.com/substack/node-concat-map
@@ -108,6 +108,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `dicom-parser@1.8.21` — https://github.com/cornerstonejs/dicomParser
 - `es-errors@1.3.0` — https://github.com/ljharb/es-errors
 - `escalade@3.2.0` — https://github.com/lukeed/escalade
+- `events@3.3.0` — https://github.com/Gozala/events
 - `fast-deep-equal@3.1.3` — https://github.com/epoberezkin/fast-deep-equal
 - `fflate@0.7.5` — https://github.com/101arrowz/fflate
 - `fraction.js@5.3.4` — https://github.com/rawify/Fraction.js

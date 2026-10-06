@@ -68,14 +68,14 @@
   },
   "dependencies": {
     "dingbat-to-unicode": "^1.0.1",
-    "dompurify": "3.4.15",
+    "dompurify": "3.4.16",
     "jszip": "3.10.2",
     "tinycolor2": "^1.6.0",
     "utif": "^3.1.0"
   },
   "devDependencies": {
     "@types/d3-format": "^3.0.4",
-    "@types/node": "^26.5.1",
+    "@types/node": "^26.6.3",
     "billboard.js": "^3.17.2",
     "d3-format": "^3.1.2",
     "esbuild": "^0.28.2",
