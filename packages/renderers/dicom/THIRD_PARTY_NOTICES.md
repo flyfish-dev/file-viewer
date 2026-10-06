@@ -49,7 +49,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 - `@kitware/vtk.js@36.4.1` — https://github.com/Kitware/vtk-js
 - `shelljs@0.8.5` — https://github.com/shelljs/shelljs
-- `source-map-js@1.2.1` — https://github.com/7rulnik/source-map-js
+- `source-map-js@1.2.2` — https://github.com/7rulnik/source-map-js
 - `wslink@2.5.0` — https://github.com/kitware/wslink
 
 ### CC-BY-4.0
