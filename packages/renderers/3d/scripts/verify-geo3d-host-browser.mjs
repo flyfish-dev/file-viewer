@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { execFileSync } from 'node:child_process'
 import { createServer } from 'node:http'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
@@ -17,6 +18,12 @@ import {
 const output = join(browserOutput, 'host-integration')
 const work = join(output, 'fixture')
 const site = join(output, 'site')
+// Focused validation builds only the Geo3D closure. This host fixture also uses
+// the public Vue component, so build its closure instead of relying on old dist.
+execFileSync('pnpm', ['--filter', '@file-viewer/vue3...', 'build'], {
+  cwd: repositoryRoot,
+  stdio: 'inherit'
+})
 await mkdir(work, { recursive: true })
 const rootRequire = createRequire(join(repositoryRoot, 'package.json'))
 const { chromium } = rootRequire('playwright')
