@@ -75,11 +75,27 @@ test('missing members, ranges and prerelease versions are rejected', () => {
   delete changed.devDependencies['@angular/compiler-cli']
   assert.throws(() => angularCohort(changed), /Missing Angular/)
 })
-test('thumbnail manifest agrees with workspace Vitest security override', () => {
+test('root and thumbnail declarations agree with the reviewed workspace Vitest cohort', () => {
+  const root = JSON.parse(read('package.json'))
   const thumbnail = JSON.parse(read('packages/thumbnail/package.json'))
   const override = read('pnpm-workspace.yaml').match(/^  vitest: (\S+)$/m)?.[1]
   assert.ok(override)
+  assert.ok(
+    [override, `^${override}`].includes(root.devDependencies.vitest),
+    'Root Vitest declaration must use the reviewed exact version or its caret range'
+  )
   assert.equal(thumbnail.devDependencies.vitest, override)
+})
+test('root and thumbnail physically installed Vitest runtimes agree with the workspace override', () => {
+  const override = read('pnpm-workspace.yaml').match(/^  vitest: (\S+)$/m)?.[1]
+  assert.ok(override)
+  for (const path of ['package.json', 'packages/thumbnail/package.json']) {
+    // Resolve from each package; root hoisting alone must not conceal a split runner installation.
+    const require = createRequire(new URL(`../../${path}`, import.meta.url))
+    const installed = require('vitest/package.json')
+    assert.equal(installed.name, 'vitest')
+    assert.equal(installed.version, override, `${path}: installed Vitest does not match override`)
+  }
 })
 test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
   const patchedVersion = '3.4.16'
