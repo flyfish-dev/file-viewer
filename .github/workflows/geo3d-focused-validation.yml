@@ -56,7 +56,7 @@ jobs:
       - name: Install Chromium
         id: browser
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium webkit
       - name: Browser datasets and resource ownership
         if: >-
           ${{ !cancelled() && steps.entry.outcome == 'success' && steps.browser.outcome == 'success' }}
