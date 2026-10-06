@@ -1,3 +1,4 @@
+import { clampWordScale, isPositiveFinite, readWordFitViewport } from './wordViewport.js'
 import { preserveDocxParagraphStructureForExport, readDocxFlowPaperHeight } from './docxExport.js'
 import type { DocxProgressEvent, Options, renderAsync } from '@file-viewer/docx'
 import JSZip from 'jszip'
@@ -599,7 +600,7 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
   const zoomEmitter = createZoomChangeEmitter()
 
   const clampScale = (scale: number) => {
-    return Math.min(DOCX_MAX_SCALE, Math.max(DOCX_MIN_SCALE, Number(scale.toFixed(2))))
+    return clampWordScale(scale, DOCX_MIN_SCALE, DOCX_MAX_SCALE)
   }
 
   const applyResponsiveLayout = () => {
@@ -674,14 +675,18 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
   })
 
   const setUserZoom = (nextZoom: number) => {
-    userZoom = Math.min(6, Math.max(0.2, Number(nextZoom.toFixed(2))))
+    if (!isPositiveFinite(nextZoom)) return getZoomState()
+    // A narrow viewport may require a multiplier greater than six to reach
+    // the advertised 300% scale. Only the final rendered scale is bounded.
+    userZoom = nextZoom
     view?.cancelAnimationFrame(resizeFrame)
     applyResponsiveLayout()
     return getZoomState()
   }
 
   const setAbsoluteScale = (scale: number) => {
-    return setUserZoom(scale / Math.max(currentFitScale, 0.01))
+    if (!isPositiveFinite(scale)) return getZoomState()
+    return setUserZoom(clampScale(scale) / currentFitScale)
   }
 
   const readFitPageSize = (): PrintPageSize | null => {
@@ -690,12 +695,14 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
       if (!page) {
         continue
       }
-      const pageSize = getElementPrintPageSize(page, DOCX_DEFAULT_PAGE_SIZE)
+      if (!page.offsetWidth || !page.offsetHeight) continue
       return {
-        width: page.offsetWidth || pageSize.width || DOCX_DEFAULT_PAGE_SIZE.width,
+        width: page.offsetWidth,
+        // Fit the visible flow, not an invented A4 page. Paper height is a
+        // separate concern handled by the export adapter.
         height: isDocxFlowFrame(frame)
-          ? DOCX_DEFAULT_PAGE_SIZE.height
-          : page.offsetHeight || pageSize.height || DOCX_DEFAULT_PAGE_SIZE.height
+          ? Math.max(page.scrollHeight, page.offsetHeight)
+          : page.offsetHeight
       }
     }
     return null
@@ -703,7 +710,8 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
 
   const fitDocx = (request: FileViewerFitRequest): FileViewerFitResult => {
     const pageSize = readFitPageSize()
-    if (!pageSize) {
+    const viewport = readWordFitViewport(target, request)
+    if (!pageSize || !viewport) {
       return {
         applied: false,
         mode: request.mode,
@@ -717,8 +725,8 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
     const mode = request.mode === 'auto' ? 'width' : request.mode
     const scale = resolveFileViewerFitScale({
       mode,
-      viewportWidth: Math.max(1, request.viewportWidth || target.clientWidth || 0),
-      viewportHeight: Math.max(1, request.viewportHeight || target.clientHeight || 0),
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
       contentWidth: pageSize.width,
       contentHeight: pageSize.height,
       currentScale,
@@ -726,7 +734,7 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
       maxScale: request.maxScale ?? DOCX_MAX_SCALE
     })
 
-    if (!scale) {
+    if (!scale || !isPositiveFinite(scale)) {
       return {
         applied: false,
         mode: request.mode,
