@@ -27,6 +27,12 @@ can opt in separately with `externalLinkPolicy: 'allow'` and
 
 The package also exports `parseMsDocToHtml`, `mountMsDoc`, `createMsDocViewer`, and `MsDocWorkerClient`.
 
+Font output preserves the authored name and alternate name. Missing fonts use the
+document's font-family/PANOSE metadata and compatible installed CJK substitutes;
+no fonts are downloaded. Different installed fonts can still change exact glyph
+shapes and line wrapping. Vertical table text retains intrinsic logical sizes in
+Chromium and Safari.
+
 ## Scope
 
 - OLE/CFB container parsing

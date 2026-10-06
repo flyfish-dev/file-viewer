@@ -202,7 +202,7 @@ for (const packageName of publishedMinimum) {
 }
 for (const [key, values] of Object.entries(legacyMeasurements)) {
   if (legacyFullBaseline.candidateContract[key].count !== values.length || legacyFullBaseline.candidateContract[key].sha256 !== hashList(values)) {
-    throw new Error(`preset-all compatibility baseline drifted for ${key}; existing full packages are frozen at the published 2.4 matrix`)
+    throw new Error(`preset-all compatibility baseline drifted for ${key}; update the reviewed candidate contract explicitly and preserve the published 2.4 dependencies`)
   }
 }
 const presetEntries = wrappers.presets || []

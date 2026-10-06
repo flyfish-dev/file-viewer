@@ -38,7 +38,30 @@ try {
     entryPoints: [path.join(root, 'test/compatibility-review/entry.ts')],
     outfile: path.join(temporary, 'unit.mjs'),
     bundle: true,
-    packages: 'external',
+    plugins: [
+      {
+        name: 'node-fixture-package-ownership',
+        setup(builder) {
+          builder.onResolve({ filter: /^[^./]/ }, async (args) => {
+            if (args.pluginData?.resolvedByOwner) return
+            // Keep packages external, but resolve them from their original importer.
+            // Moving the bundle to output/ must not change which package owns a dependency.
+            const resolved = await builder.resolve(args.path, {
+              resolveDir: args.resolveDir,
+              kind: args.kind,
+              pluginData: { resolvedByOwner: true }
+            })
+            if (resolved.errors.length) return { errors: resolved.errors }
+            return {
+              path: path.isAbsolute(resolved.path)
+                ? pathToFileURL(resolved.path).href
+                : resolved.path,
+              external: true
+            }
+          })
+        }
+      }
+    ],
     platform: 'node',
     format: 'esm',
     logLevel: 'silent'

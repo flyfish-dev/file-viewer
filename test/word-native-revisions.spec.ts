@@ -96,6 +96,20 @@ describe('DOC revision boundary isolation', () => {
     inlines: [{ type: 'text', text, style: charPropsToState([]) }]
   })
   const nativeTable = parsed.blocks.find((block) => block.type === 'table')!
+  const tableCell = (
+    index: number,
+    cellParagraphs: ParagraphBlock[],
+    representation: 'blocks' | 'paragraphs'
+  ) => {
+    // Parsed cells now retain ordered blocks for nested tables. A modified fixture
+    // must replace that content too; legacy callers may still provide paragraphs only.
+    const { blocks: _blocks, ...original } = nativeTable.rows[0].cells[index]
+    return {
+      ...original,
+      paragraphs: cellParagraphs,
+      ...(representation === 'blocks' ? { blocks: cellParagraphs } : {})
+    }
+  }
 
   it.each(['final', 'original'] as const)(
     'merges consecutive removed marks in %s without mutating the parsed tree',
@@ -112,56 +126,63 @@ describe('DOC revision boundary isolation', () => {
     }
   )
 
-  it('does not merge across table, story, or cell boundaries', () => {
-    const marked = paragraph('A', { revisionDeleted: true })
-    const table = {
-      ...nativeTable,
-      rows: [
-        {
-          ...nativeTable.rows[0],
-          cells: [
-            { ...nativeTable.rows[0].cells[0], paragraphs: [marked] },
-            { ...nativeTable.rows[0].cells[1], paragraphs: [paragraph('B')] }
-          ]
-        }
-      ]
+  it.each(['blocks', 'paragraphs'] as const)(
+    'does not merge across table, story, or cell boundaries (%s)',
+    (representation) => {
+      const marked = paragraph('A', { revisionDeleted: true })
+      const table = {
+        ...nativeTable,
+        rows: [
+          {
+            ...nativeTable.rows[0],
+            cells: [
+              tableCell(0, [marked], representation),
+              tableCell(1, [paragraph('B')], representation)
+            ]
+          }
+        ]
+      }
+      const input = {
+        ...parsed,
+        blocks: [
+          marked,
+          table,
+          paragraph('C', { revisionDeleted: true }),
+          paragraph('D', {}, 'textbox')
+        ]
+      }
+      const document = documentFor(input, 'final')
+      expect(paragraphs(document)).toEqual(['A', 'C', 'D'])
+      expect([...document.querySelectorAll('td')].map((td) => td.textContent)).toEqual(['A', 'B'])
     }
-    const input = {
-      ...parsed,
-      blocks: [
-        marked,
-        table,
-        paragraph('C', { revisionDeleted: true }),
-        paragraph('D', {}, 'textbox')
-      ]
-    }
-    const document = documentFor(input, 'final')
-    expect(paragraphs(document)).toEqual(['A', 'C', 'D'])
-    expect([...document.querySelectorAll('td')].map((td) => td.textContent)).toEqual(['A', 'B'])
-  })
+  )
 
-  it('merges within one table cell without discarding another cell', () => {
-    const table = {
-      ...nativeTable,
-      rows: [
-        {
-          ...nativeTable.rows[0],
-          cells: [
-            {
-              ...nativeTable.rows[0].cells[0],
-              paragraphs: [paragraph('A', { revisionDeleted: true }), paragraph('B')]
-            },
-            { ...nativeTable.rows[0].cells[1], paragraphs: [paragraph('C')] }
-          ]
-        }
-      ]
+  it.each(['blocks', 'paragraphs'] as const)(
+    'merges within one table cell without discarding another cell (%s)',
+    (representation) => {
+      const table = {
+        ...nativeTable,
+        rows: [
+          {
+            ...nativeTable.rows[0],
+            cells: [
+              tableCell(
+                0,
+                [paragraph('A', { revisionDeleted: true }), paragraph('B')],
+                representation
+              ),
+              tableCell(1, [paragraph('C')], representation)
+            ]
+          }
+        ]
+      }
+      expect(
+        [...documentFor({ ...parsed, blocks: [table] }, 'final').querySelectorAll('td')].map(
+          (td) => td.textContent
+        )
+      ).toEqual(['AB', 'C'])
     }
-    expect(
-      [...documentFor({ ...parsed, blocks: [table] }, 'final').querySelectorAll('td')].map(
-        (td) => td.textContent
-      )
-    ).toEqual(['AB', 'C'])
-  })
+  )
 
   it.each(['lineBreak', 'pageBreak'] as const)(
     'filters %s revisions and keeps legacy unmarked nodes',

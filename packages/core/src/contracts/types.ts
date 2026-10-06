@@ -1521,6 +1521,10 @@ export interface FileViewerTextOptions {
    * an application prefers bounded source inspection for exceptionally large files.
    */
   markdownVirtualizeAboveBytes?: number
+  /** Highlights fenced Markdown code in common named languages. Default: true.
+   * Unknown, untagged, Mermaid and blocks above 100 KiB characters stay plain.
+   */
+  markdownHighlight?: boolean
   /** Maximum source bytes mounted for one very long logical line at a time. Defaults to 16 KiB. */
   maxRenderedLineBytes?: number
   /** Extra logical lines mounted above and below the visible viewport. Defaults to 12. */

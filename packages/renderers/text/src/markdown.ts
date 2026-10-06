@@ -19,6 +19,7 @@ import {
 } from '@file-viewer/core';
 import { getFileViewerMermaidLoader } from './optionalCapabilities.js';
 import { sanitizeFileViewerRichHtml } from './sanitizeHtml.js';
+import { highlightMarkdownCode, markdownCodeStyle } from './markdownHighlight.js';
 
 const sanitizeMarkdownHtml = sanitizeFileViewerRichHtml;
 
@@ -72,7 +73,7 @@ const markdownStyle = `
 
 const createStyle = () => {
   const style = document.createElement('style');
-  style.textContent = markdownStyle;
+  style.textContent = markdownStyle + markdownCodeStyle;
   return style;
 };
 
@@ -263,6 +264,7 @@ export default async function renderMarkdown(
   applyMarkdownZoom(root, zoom);
   root.append(article);
   target.replaceChildren(createStyle(), root);
+  await highlightMarkdownCode(article, context);
   await renderEmbeddedMermaid(article, context?.options?.theme);
   const baseContentHeight = Math.max(
     article.scrollHeight || 0,

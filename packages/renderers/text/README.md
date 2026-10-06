@@ -1,5 +1,7 @@
 # @file-viewer/renderer-text
 
+Markdown 会在自身渲染区域内高亮带语言标记的代码块，例如 `js`、`html`、`py`，并支持 Shadow DOM 和明暗主题。可设置 `options.text.markdownHighlight: false` 关闭。无语言标记、不支持的语言、Mermaid 及 JavaScript 字符串长度超过 102,400 的代码块保留纯文本；无需调用宿主页面的 `highlightAll()`。
+
 Flyfish File Viewer 的基础代码、文本和 Markdown renderer 包。Mermaid、patch 左右比对和 Git bundle 检查已拆到 `@file-viewer/capability-mermaid` 与 `@file-viewer/capability-text-tools`，不进入 standard/full 默认闭包。
 
 ## 用法

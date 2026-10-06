@@ -1,5 +1,7 @@
 # @file-viewer/renderer-text
 
+Markdown highlights fenced code with common language names and aliases such as `js`, `html` and `py` inside its own rendered article, including Shadow DOM and light/dark themes. Set `options.text.markdownHighlight: false` to disable it. Untagged, unknown-language, Mermaid and blocks whose JavaScript string length exceeds 102,400 stay plain text. A host-page `highlightAll()` call is unnecessary.
+
 Base code, text, and Markdown renderer package for Flyfish File Viewer. Mermaid, side-by-side patch diff, and Git bundle inspection live in `@file-viewer/capability-mermaid` and `@file-viewer/capability-text-tools`; they are excluded from the standard/full default closure.
 
 ## Usage
