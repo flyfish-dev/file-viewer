@@ -35,6 +35,22 @@ const licenseSelections = new Map([
     }
   ]
 ])
+// pnpm lists the Linux-only optional package on macOS without installing it.
+// Its official registry metadata and lockfile integrity are version-pinned;
+// an installed package must still supply its own license declaration.
+const knownPlatformOptionalPackages = new Map([
+  [
+    '@rollup/rollup-linux-x64-gnu@4.13.0',
+    {
+      package: '@rollup/rollup-linux-x64-gnu@4.13.0',
+      integrity:
+        'sha512-yUD/8wMffnTKuiIsl6xU+4IA8UNhQ/f1sAnQebmE/lyQ8abjsVyDkyRkWop0kdMhKMprpNIhPmYlCxgHrPoXoA==',
+      author: 'Lukas Taegert-Atkinson',
+      license: 'MIT',
+      repository: 'https://github.com/rollup/rollup'
+    }
+  ]
+])
 const repositoryOverrides = new Map([
   ['@cornerstonejs/calculate-suv', 'https://github.com/cornerstonejs/calculate-suv'],
   ['@cornerstonejs/codec-libjpeg-turbo-8bit', 'https://github.com/cornerstonejs/codecs'],
@@ -48,7 +64,7 @@ const nativeWrapperArtifacts = new Map(
   nativeProvenance.wrapperArtifacts.map((artifact) => [artifact.name, artifact])
 )
 assert(nativeProvenance.schemaVersion === 1, 'Unsupported native codec provenance schema')
-assert(nativeWrapperArtifacts.size === 5, 'Expected all five reviewed native codec wrappers')
+assert(nativeWrapperArtifacts.size === 4, 'Expected all four reviewed native codec wrappers')
 const lockfile = readFileSync(join(sourceRoot, 'pnpm-lock.yaml'), 'utf8')
 for (const artifact of nativeWrapperArtifacts.values()) verifyCodecLockIntegrity(lockfile, artifact)
 
@@ -139,7 +155,9 @@ function visit(node, nameHint, state) {
   assert(name && version, `Dependency tree entry is missing name/version: ${JSON.stringify(node)}`)
   const key = `${name}@${version}`
   const installedLicense = packageJson ? normalizeLicense(packageJson) : ''
-  const declaredLicense = installedLicense
+  const fallback = !packageJson && state.optional ? knownPlatformOptionalPackages.get(key) : null
+  if (fallback) verifyCodecLockIntegrity(lockfile, fallback)
+  const declaredLicense = fallback?.license || installedLicense
   const selection = licenseSelections.get(name)
   if (selection) {
     assert(
@@ -170,8 +188,12 @@ function visit(node, nameHint, state) {
     direct: Boolean(state.direct || previous?.direct),
     optional: previous ? Boolean(previous.optional && state.optional) : Boolean(state.optional),
     firstParty: name.startsWith('@file-viewer/'),
-    author: normalizeAuthor(packageJson?.author) || '',
-    repository: repositoryOverrides.get(name) || normalizeRepository(packageJson?.repository) || '',
+    author: fallback?.author || normalizeAuthor(packageJson?.author) || '',
+    repository:
+      fallback?.repository ||
+      repositoryOverrides.get(name) ||
+      normalizeRepository(packageJson?.repository) ||
+      '',
     licenseFiles: previous?.licenseFiles?.length
       ? previous.licenseFiles
       : packageFiles.licenseFiles,
@@ -204,6 +226,10 @@ function compareAscii(left, right) {
 
 const sortedPackages = [...packages.values()].sort(
   (left, right) => compareAscii(left.name, right.name) || compareAscii(left.version, right.version)
+)
+assert(
+  sortedPackages.some((entry) => entry.name === '@rollup/rollup-linux-x64-gnu' && entry.optional),
+  'Linux codec optional dependency is missing'
 )
 assert(
   sortedPackages.some((entry) => entry.license === 'CC-BY-4.0'),
@@ -291,7 +317,7 @@ capability.license.notices = [
   ...nativeCodecComponents.map((component) => ({
     packageName: `${component.name} native codec`,
     spdx: component.license,
-    notice: `Release source gitlink ${component.sourceSha}; linked target ${component.linkedTarget}; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance.${component.name === 'libjpeg-turbo' ? ' This software is based in part on the work of the Independent JPEG Group.' : ''}`
+    notice: `Release source gitlink ${component.sourceSha}; linked target ${component.linkedTarget}; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and release-source provenance.${component.name === 'libjpeg-turbo' ? ' This software is based in part on the work of the Independent JPEG Group.' : ''}`
   })),
   {
     packageName: 'dicom-parser',
@@ -342,7 +368,7 @@ const noticeLines = [
   '',
   '### Native libraries statically linked into codec WebAssembly',
   '',
-  'The five wrappers have separate npm publish and signed build-provenance commits. Exact official tarball integrities, installed-file hashes, source commits and build invocations are retained in `third-party/native-codecs/PROVENANCE.json` and checked against the installed artifacts. The wrapper package license is not used as a substitute for the linked native library terms:',
+  'The four wrappers share the reviewed npm gitHead and release-source tree. Exact official tarball integrities, all installed-file hashes and native source gitlinks are retained in `third-party/native-codecs/PROVENANCE.json` and checked against the installed artifacts. These releases have verified registry signatures but no npm build attestations; this is release-source provenance rather than a signed build or independent rebuild claim. The wrapper package license is not used as a substitute for the linked native library terms:',
   '',
   ...nativeCodecComponents.flatMap((component) => [
     `- \`${component.name}\` (\`${component.wrapperPackage}\`): \`${component.license}\`; release source gitlink \`${component.sourceSha}\` at ${component.repository}; linked target \`${component.linkedTarget}\`; retained files ${component.files.map((file) => `\`${file.path}\``).join(', ')}.${component.sourceNote ? ` ${component.sourceNote}` : ''}`

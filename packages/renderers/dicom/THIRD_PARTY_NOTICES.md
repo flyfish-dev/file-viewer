@@ -14,16 +14,12 @@ The DICOM renderer is not part of any standard/full package or preset. These dep
 
 ### Native libraries statically linked into codec WebAssembly
 
-The five wrappers have separate npm publish and signed build-provenance commits. Exact official tarball integrities, installed-file hashes, source commits and build invocations are retained in `third-party/native-codecs/PROVENANCE.json` and checked against the installed artifacts. The wrapper package license is not used as a substitute for the linked native library terms:
+The four wrappers share the reviewed npm gitHead and release-source tree. Exact official tarball integrities, all installed-file hashes and native source gitlinks are retained in `third-party/native-codecs/PROVENANCE.json` and checked against the installed artifacts. These releases have verified registry signatures but no npm build attestations; this is release-source provenance rather than a signed build or independent rebuild claim. The wrapper package license is not used as a substitute for the linked native library terms:
 
-- `CharLS` (`@cornerstonejs/codec-charls@1.2.7`): `BSD-3-Clause`; release source gitlink `9930a2a2fa75f516c4a08708180c9907fa501a97` at https://github.com/cornerstonejs/charls; linked target `charls`; retained files `third-party/native-codecs/charls/LICENSE.md`. Official build job https://github.com/cornerstonejs/codecs/actions/runs/34269730799/job/102207962308 records checkout of this exact native SHA. The wrapper's conditional CMake --remote block is not entered in the monorepo package layout.
-- `libjpeg-turbo` (`@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7`): `IJG AND BSD-3-Clause AND Zlib`; release source gitlink `dc4a93fab38b42d29b89a533409e012570180e28` at https://github.com/cornerstonejs/libjpeg-turbo; linked target `turbojpeg-static`; retained files `third-party/native-codecs/libjpeg-turbo/LICENSE.md`, `third-party/native-codecs/libjpeg-turbo/README.ijg`.
-- `OpenJPEG` (`@cornerstonejs/codec-openjpeg@1.3.6`): `BSD-2-Clause`; release source gitlink `6c4a29b00211eb0430fa0e5e890f1ce5c80f409f` at https://github.com/cornerstonejs/openjpeg; linked target `openjp2`; retained files `third-party/native-codecs/openjpeg/LICENSE`.
-- `OpenJPH` (`@cornerstonejs/codec-openjph@2.4.11`): `BSD-2-Clause`; release source gitlink `4a68609b55034a14fac23f95afc60e239a9e809e` at https://github.com/cornerstonejs/OpenJPH; linked target `openjph`; retained files `third-party/native-codecs/openjph/LICENSE`.
-- `JPEG XL` (`@cornerstonejs/codec-libjxl@1.1.1`): `BSD-3-Clause`; release source gitlink `794a5dcf0d54f9f0b20d288a12e87afb91d20dfc` at https://github.com/libjxl/libjxl; linked target `jxl_dec, jxl, jxl_cms`; retained files `third-party/native-codecs/libjxl/LICENSE`, `third-party/native-codecs/libjxl/PATENTS`, `third-party/native-codecs/libjxl/AUTHORS`.
-- `Brotli` (`@cornerstonejs/codec-libjxl@1.1.1`): `MIT`; release source gitlink `36533a866ed1ca4b75cf049f4521e4ec5fe24727` at https://github.com/google/brotli; linked target `brotlidec, brotlicommon, brotlienc`; retained files `third-party/native-codecs/brotli/LICENSE`.
-- `Highway` (`@cornerstonejs/codec-libjxl@1.1.1`): `Apache-2.0`; release source gitlink `457c891775a7397bdb0376bb1031e6e027af1c48` at https://github.com/google/highway; linked target `hwy`; retained files `third-party/native-codecs/highway/LICENSE`, `third-party/native-codecs/highway/LICENSE-BSD3`. Highway offers Apache-2.0 or BSD-3-Clause. File Viewer elects Apache-2.0 and retains both upstream license texts.
-- `skcms` (`@cornerstonejs/codec-libjxl@1.1.1`): `BSD-3-Clause`; release source gitlink `42030a771244ba67f86b1c1c76a6493f873c5f91` at https://skia.googlesource.com/skcms; linked target `skcms`; retained files `third-party/native-codecs/skcms/LICENSE`.
+- `CharLS` (`@cornerstonejs/codec-charls@1.2.5`): `BSD-3-Clause`; release source gitlink `38d95d00671f4cddfa61f3f51eaf81b8bac34543` at https://github.com/cornerstonejs/charls; linked target `charls`; retained files `third-party/native-codecs/charls/LICENSE.md`.
+- `libjpeg-turbo` (`@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4`): `IJG AND BSD-3-Clause AND Zlib`; release source gitlink `dc4a93fab38b42d29b89a533409e012570180e28` at https://github.com/cornerstonejs/libjpeg-turbo; linked target `turbojpeg-static`; retained files `third-party/native-codecs/libjpeg-turbo/LICENSE.md`, `third-party/native-codecs/libjpeg-turbo/README.ijg`.
+- `OpenJPEG` (`@cornerstonejs/codec-openjpeg@1.3.2`): `BSD-2-Clause`; release source gitlink `2d606701e8b7aa83f657d113c3367508e99bd12b` at https://github.com/cornerstonejs/openjpeg; linked target `openjp2`; retained files `third-party/native-codecs/openjpeg/LICENSE`.
+- `OpenJPH` (`@cornerstonejs/codec-openjph@2.4.9`): `BSD-2-Clause`; release source gitlink `e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6` at https://github.com/cornerstonejs/OpenJPH; linked target `openjphsimd`; retained files `third-party/native-codecs/openjph/LICENSE`.
 
 **libjpeg-turbo attribution:** This software is based in part on the work of the Independent JPEG Group.
 
@@ -51,7 +47,6 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### BSD-3-Clause
 
-- `@cornerstonejs/codec-libjxl@1.1.1` — https://github.com/cornerstonejs/codecs
 - `@kitware/vtk.js@36.4.1` — https://github.com/Kitware/vtk-js
 - `shelljs@0.8.5` — https://github.com/shelljs/shelljs
 - `source-map-js@1.2.2` — https://github.com/7rulnik/source-map-js
@@ -63,7 +58,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### ISC
 
-- `@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7` — https://github.com/cornerstonejs/codecs
+- `@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4` — https://github.com/cornerstonejs/codecs
 - `@msgpack/msgpack@2.8.0` — https://github.com/msgpack/msgpack-javascript
 - `d3-array@3.2.4` — https://github.com/d3/d3-array
 - `d3-color@3.1.0` — https://github.com/d3/d3-color
@@ -87,18 +82,18 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 - `@babel/runtime-corejs3@7.29.2` — https://github.com/babel/babel
 - `@cornerstonejs/calculate-suv@1.0.3` — https://github.com/cornerstonejs/calculate-suv
-- `@cornerstonejs/codec-charls@1.2.7` — https://github.com/cornerstonejs/codecs
-- `@cornerstonejs/codec-openjpeg@1.3.6` — https://github.com/cornerstonejs/codecs
-- `@cornerstonejs/codec-openjph@2.4.11` — https://github.com/cornerstonejs/codecs
-- `@cornerstonejs/core@5.11.3` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/dicom-image-loader@5.11.3` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/jpeg-lossless-decoder-js@2.2.1` — https://github.com/cornerstonejs/JPEGLosslessDecoderJS
-- `@cornerstonejs/metadata@5.11.3` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/utils@5.11.3` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/codec-charls@1.2.5` — https://github.com/chafey/charls-js
+- `@cornerstonejs/codec-openjpeg@1.3.2` — https://github.com/cornerstonejs/codecs
+- `@cornerstonejs/codec-openjph@2.4.9` — https://github.com/cornerstonejs/codecs
+- `@cornerstonejs/core@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/dicom-image-loader@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/metadata@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/utils@5.10.11` — https://github.com/cornerstonejs/cornerstone3D
 - `@oozcitak/dom@2.0.2` — https://github.com/oozcitak/dom
 - `@oozcitak/infra@2.0.2` — https://github.com/oozcitak/infra
 - `@oozcitak/url@3.0.0` — https://github.com/oozcitak/url
 - `@oozcitak/util@10.0.0` — https://github.com/oozcitak/util
+- `@rollup/rollup-linux-x64-gnu@4.13.0` (platform-optional) — https://github.com/rollup/rollup
 - `@types/trusted-types@2.0.7` (platform-optional) — https://github.com/DefinitelyTyped/DefinitelyTyped
 - `@types/webxr@0.5.5` — https://github.com/DefinitelyTyped/DefinitelyTyped
 - `adm-zip@0.6.1` — https://github.com/cthackers/adm-zip
@@ -113,6 +108,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `dicom-parser@1.8.21` — https://github.com/cornerstonejs/dicomParser
 - `es-errors@1.3.0` — https://github.com/ljharb/es-errors
 - `escalade@3.2.0` — https://github.com/lukeed/escalade
+- `events@3.3.0` — https://github.com/Gozala/events
 - `fast-deep-equal@3.1.3` — https://github.com/epoberezkin/fast-deep-equal
 - `fflate@0.7.5` — https://github.com/101arrowz/fflate
 - `fraction.js@5.3.4` — https://github.com/rawify/Fraction.js
@@ -124,6 +120,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `iota-array@1.0.0` — https://github.com/mikolalysenko/iota-array
 - `is-buffer@1.1.6` — https://github.com/feross/is-buffer
 - `is-core-module@2.17.0` — https://github.com/inspect-js/is-core-module
+- `jpeg-lossless-decoder-js@2.1.2` — https://github.com/rii-mango/JPEGLosslessDecoderJS
 - `js-yaml@4.3.2` — https://github.com/nodeca/js-yaml
 - `lodash.clonedeep@4.5.0` — https://github.com/lodash/lodash
 - `loglevel@1.9.2` — https://github.com/pimterry/loglevel

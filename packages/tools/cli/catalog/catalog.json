@@ -809,57 +809,37 @@
           {
             "packageName": "@cornerstonejs/core",
             "spdx": "MIT",
-            "notice": "`@cornerstonejs/core@5.11.3`; complete JavaScript and native codec provenance and license closure are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "`@cornerstonejs/core@5.10.11`; complete JavaScript and native codec provenance and license closure are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "@cornerstonejs/dicom-image-loader",
             "spdx": "MIT",
-            "notice": "`@cornerstonejs/dicom-image-loader@5.11.3`; complete JavaScript and native codec provenance and license closure are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "`@cornerstonejs/dicom-image-loader@5.10.11`; complete JavaScript and native codec provenance and license closure are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "@cornerstonejs/metadata",
             "spdx": "MIT",
-            "notice": "`@cornerstonejs/metadata@5.11.3`; complete JavaScript and native codec provenance and license closure are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "`@cornerstonejs/metadata@5.10.11`; complete JavaScript and native codec provenance and license closure are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "CharLS native codec",
             "spdx": "BSD-3-Clause",
-            "notice": "Release source gitlink 9930a2a2fa75f516c4a08708180c9907fa501a97; linked target charls; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance."
+            "notice": "Release source gitlink 38d95d00671f4cddfa61f3f51eaf81b8bac34543; linked target charls; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and release-source provenance."
           },
           {
             "packageName": "libjpeg-turbo native codec",
             "spdx": "IJG AND BSD-3-Clause AND Zlib",
-            "notice": "Release source gitlink dc4a93fab38b42d29b89a533409e012570180e28; linked target turbojpeg-static; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance. This software is based in part on the work of the Independent JPEG Group."
+            "notice": "Release source gitlink dc4a93fab38b42d29b89a533409e012570180e28; linked target turbojpeg-static; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and release-source provenance. This software is based in part on the work of the Independent JPEG Group."
           },
           {
             "packageName": "OpenJPEG native codec",
             "spdx": "BSD-2-Clause",
-            "notice": "Release source gitlink 6c4a29b00211eb0430fa0e5e890f1ce5c80f409f; linked target openjp2; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance."
+            "notice": "Release source gitlink 2d606701e8b7aa83f657d113c3367508e99bd12b; linked target openjp2; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and release-source provenance."
           },
           {
             "packageName": "OpenJPH native codec",
             "spdx": "BSD-2-Clause",
-            "notice": "Release source gitlink 4a68609b55034a14fac23f95afc60e239a9e809e; linked target openjph; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance."
-          },
-          {
-            "packageName": "JPEG XL native codec",
-            "spdx": "BSD-3-Clause",
-            "notice": "Release source gitlink 794a5dcf0d54f9f0b20d288a12e87afb91d20dfc; linked target jxl_dec, jxl, jxl_cms; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance."
-          },
-          {
-            "packageName": "Brotli native codec",
-            "spdx": "MIT",
-            "notice": "Release source gitlink 36533a866ed1ca4b75cf049f4521e4ec5fe24727; linked target brotlidec, brotlicommon, brotlienc; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance."
-          },
-          {
-            "packageName": "Highway native codec",
-            "spdx": "Apache-2.0",
-            "notice": "Release source gitlink 457c891775a7397bdb0376bb1031e6e027af1c48; linked target hwy; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance."
-          },
-          {
-            "packageName": "skcms native codec",
-            "spdx": "BSD-3-Clause",
-            "notice": "Release source gitlink 42030a771244ba67f86b1c1c76a6493f873c5f91; linked target skcms; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance."
+            "notice": "Release source gitlink e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6; linked target openjphsimd; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and release-source provenance."
           },
           {
             "packageName": "dicom-parser",

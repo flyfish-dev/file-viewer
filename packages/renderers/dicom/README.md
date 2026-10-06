@@ -2,9 +2,40 @@
 
 用于本地 DICOM Part 10 文件的显式按需渲染器。它直接使用模块化的 Cornerstone3D core 与 DICOM image-loader，不嵌入 OHIF 整套应用，也不使用 DCMTK。
 
-该包有意不进入 File Viewer 的 full 或 preset 默认依赖。需要医学影像预览的项目再单独安装并注册：
+本包显式依赖 `dcmjs` 传递 XML builder 所需的浏览器版 `events`，独立浏览器消费者不应依赖工作区中的其他包补齐它。
 
-当前 Cornerstone 5.11.3 依赖闭包包含 `@cornerstonejs/codec-libjxl@1.1.1`，该包声明安装和构建工具链需要 Node >=24。真实冷安装中，Node 22.16.0 开启 `engine-strict` 时旧 Cornerstone 5.8.2 闭包安装成功，当前闭包会被拒绝，因此升级此可选包需要 Node 24 工具链。安装新增 codec 不会扩大渲染器接受的传输语法；JPEG XL 与 HTJ2K 仍不在下述已测试的 Part 10 范围内。
+该包有意不进入 File Viewer 的 full 或 preset 默认依赖。需要医学影像预览的项目再单独安装并注册。
+
+Core、image-loader 和 metadata 统一使用 Cornerstone 5.10.11，这是 image-loader 引入需要 Node >=24 的 JPEG XL 依赖前最后一个 5.10 版本。Node 22.16.0 开启 `engine-strict` 的真实冷安装通过；已有的传递依赖 `dcmjs` 要求 Node >=22.13.0，因此这里不承诺 Node 20 兼容。JPEG XL 与 HTJ2K 仍不在下述已测试的 Part 10 范围内。
+
+上游依赖闭包仍钉住有漏洞的 `adm-zip`、`uuid` 和 `fflate` 版本。File Viewer 工作区已有 overrides 修复，但库自身的工作区策略不会传递给安装它的应用。应用需要在根目录设置下列限定依赖的策略，并提交生成的 lockfile；未设置这些 overrides 的默认安装不能通过安全审计。
+
+npm 应用在根 `package.json` 中添加：
+
+```json
+{
+  "overrides": {
+    "dcmjs": { "adm-zip": "0.6.1" },
+    "@cornerstonejs/dicom-image-loader": { "uuid": "11.1.1" },
+    "@kitware/vtk.js": { "fflate": "0.7.5" }
+  }
+}
+```
+
+pnpm 应用在根 `pnpm-workspace.yaml` 中添加：
+
+```yaml
+overrides:
+  'dcmjs>adm-zip': 0.6.1
+  '@cornerstonejs/dicom-image-loader>uuid': 11.1.1
+  '@kitware/vtk.js>fflate': 0.7.5
+allowBuilds:
+  core-js-pure: false
+```
+
+pnpm 11 策略显式跳过 `core-js-pure` 的可选安装后捐助提示，该脚本不会生成运行时文件；其他依赖的构建权限继续由应用策略决定。
+
+安装后使用官方 npm registry 运行 `npm audit` 或 `pnpm audit`，再注册渲染器：
 
 ```ts
 import { createViewer } from '@file-viewer/core'

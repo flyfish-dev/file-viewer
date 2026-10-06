@@ -2,9 +2,40 @@
 
 An explicitly installed DICOM renderer for local DICOM Part 10 files. It uses the modular Cornerstone3D core and DICOM image-loader packages; it does not embed the OHIF application and does not use DCMTK.
 
-This package is intentionally excluded from File Viewer full and preset packages. Applications that need medical imaging install and register it explicitly:
+The package declares the browser `events` implementation required by `dcmjs`'s transitive XML builder. Standalone browser consumers must not depend on an unrelated workspace package supplying it.
 
-The current Cornerstone 5.11.3 dependency closure includes `@cornerstonejs/codec-libjxl@1.1.1`, which declares Node >=24 for installation and build tooling. A cold install with `engine-strict` on Node 22.16.0 succeeds with the previous Cornerstone 5.8.2 closure and rejects this closure. This upgrade therefore requires a Node 24 toolchain for this optional package. Installing the codec does not extend the renderer's supported transfer syntaxes: JPEG XL and HTJ2K remain outside the tested Part 10 scope below.
+This package is intentionally excluded from File Viewer full and preset packages. Applications that need medical imaging install and register it explicitly.
+
+Core, image-loader and metadata use Cornerstone 5.10.11 together. This is the last 5.10 release before the image-loader adds the Node >=24 JPEG XL dependency; genuine cold installation with `engine-strict` passes on Node 22.16.0. The existing transitive `dcmjs` dependency requires Node >=22.13.0, so this is not a Node 20 compatibility claim. JPEG XL and HTJ2K remain outside the tested Part 10 scope below.
+
+The upstream dependency closure still pins vulnerable versions of `adm-zip`, `uuid` and `fflate`. File Viewer's workspace overrides fix them, but a library's workspace policy does not propagate to an installing application. Apply the following scoped policy in the application root and commit its lockfile. A default install without these overrides does not pass the security audit.
+
+For npm, add this field to the application's `package.json`:
+
+```json
+{
+  "overrides": {
+    "dcmjs": { "adm-zip": "0.6.1" },
+    "@cornerstonejs/dicom-image-loader": { "uuid": "11.1.1" },
+    "@kitware/vtk.js": { "fflate": "0.7.5" }
+  }
+}
+```
+
+For pnpm, add this policy to the application's `pnpm-workspace.yaml`:
+
+```yaml
+overrides:
+  'dcmjs>adm-zip': 0.6.1
+  '@cornerstonejs/dicom-image-loader>uuid': 11.1.1
+  '@kitware/vtk.js>fflate': 0.7.5
+allowBuilds:
+  core-js-pure: false
+```
+
+The pnpm 11 policy explicitly skips `core-js-pure`'s optional postinstall donation banner; it does not generate runtime files. Other dependency build permissions remain subject to the application's policy.
+
+Then install and audit against the official npm registry (`npm audit` or `pnpm audit`). Register the renderer after installing it:
 
 ```ts
 import { createViewer } from '@file-viewer/core'

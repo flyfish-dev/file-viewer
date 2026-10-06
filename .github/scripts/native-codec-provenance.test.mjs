@@ -26,17 +26,17 @@ const codecRoot = (artifact) => {
 }
 const lockfile = readFileSync(join(root, 'pnpm-lock.yaml'), 'utf8')
 
-test('all five installed codec artifacts and official lockfile integrities match', () => {
-  assert.equal(provenance.wrapperArtifacts.length, 5)
+test('all four installed codec artifacts and official lockfile integrities match', () => {
+  assert.equal(provenance.wrapperArtifacts.length, 4)
   for (const artifact of provenance.wrapperArtifacts) {
     verifyCodecArtifact(codecRoot(artifact), artifact)
     verifyCodecLockIntegrity(lockfile, artifact)
   }
 })
 
-test('changed WASM, additional files and package versions are rejected without packaged gitHead', () => {
+test('changed WASM, additional files, package versions and gitHead are rejected', () => {
   const artifact = provenance.wrapperArtifacts.find(
-    (entry) => entry.name === '@cornerstonejs/codec-libjxl'
+    (entry) => entry.name === '@cornerstonejs/codec-charls'
   )
   const directory = mkdtempSync(join(tmpdir(), 'file-viewer-codec-tamper-'))
   try {
@@ -54,7 +54,11 @@ test('changed WASM, additional files and package versions are rejected without p
     rmSync(additional)
     const manifestPath = join(directory, 'package.json')
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
-    assert.equal(manifest.gitHead, undefined)
+    assert.equal(manifest.gitHead, artifact.gitHead)
+    manifest.gitHead = '0'.repeat(40)
+    writeFileSync(manifestPath, JSON.stringify(manifest))
+    assert.throws(() => verifyCodecArtifact(directory, artifact), /gitHead drifted/)
+    manifest.gitHead = artifact.gitHead
     manifest.version = '0.0.0'
     writeFileSync(manifestPath, JSON.stringify(manifest))
     assert.throws(() => verifyCodecArtifact(directory, artifact), /version drifted/)

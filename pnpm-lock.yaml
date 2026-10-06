@@ -1488,20 +1488,23 @@ importers:
   packages/renderers/dicom:
     dependencies:
       '@cornerstonejs/core':
-        specifier: 5.11.3
-        version: 5.11.3(@cornerstonejs/metadata@5.11.3)(@cornerstonejs/utils@5.11.3)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0)
+        specifier: 5.10.11
+        version: 5.10.11(@cornerstonejs/metadata@5.10.11)(@cornerstonejs/utils@5.10.11)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0)
       '@cornerstonejs/dicom-image-loader':
-        specifier: 5.11.3
-        version: 5.11.3(@cornerstonejs/core@5.11.3(@cornerstonejs/metadata@5.11.3)(@cornerstonejs/utils@5.11.3)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.3)(dicom-parser@1.8.21)
+        specifier: 5.10.11
+        version: 5.10.11(@cornerstonejs/core@5.10.11(@cornerstonejs/metadata@5.10.11)(@cornerstonejs/utils@5.10.11)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0))(@cornerstonejs/metadata@5.10.11)(dicom-parser@1.8.21)
       '@cornerstonejs/metadata':
-        specifier: 5.11.3
-        version: 5.11.3
+        specifier: 5.10.11
+        version: 5.10.11
       '@file-viewer/core':
         specifier: workspace:3.1.2
         version: link:../../core
       dicom-parser:
         specifier: 1.8.21
         version: 1.8.21
+      events:
+        specifier: 3.3.0
+        version: 3.3.0
       pako:
         specifier: 2.2.0
         version: 2.2.0
@@ -2380,47 +2383,40 @@ packages:
     resolution: {integrity: sha512-2SwVJKzC1DzyxdxJtCht9dhTND2GFjLwhhkDyyC7vJq5tIgbhxgPk1CSwovO1pxmoybAXzjOxnaubllxLgoT+w==}
     engines: {node: '>=10'}
 
-  '@cornerstonejs/codec-charls@1.2.7':
-    resolution: {integrity: sha512-kNfQ7J8LIrfQUbt56fPJ0SEvevLlAAbsLHjqPS4DUDWVSuAHb5Fn0cMIV/U0SYkJRJqKvzyLJYF1hl7/xQGqLQ==}
+  '@cornerstonejs/codec-charls@1.2.5':
+    resolution: {integrity: sha512-BoENE2cXfzQ2RMxPfMMJxyv7E78iErTCB8b8lod/qv3dsYfCmSOUQKiRsuOZJM24JrjCFnyzbkxhAnF8gAKQnQ==}
     engines: {node: '>=0.14'}
 
-  '@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7':
-    resolution: {integrity: sha512-TINxDtm+RQuMvWNyNR6z8lCkqDKguZBMrPJ3+oAvLc1XQ3tQsIGIIUWzveedpyr8gp7DYsQqoPLhCl2mYTSv3w==}
+  '@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4':
+    resolution: {integrity: sha512-k5e2/EjE9gV7dkg2x3CzId6mp6P7tTya/AmnLzbN3fZTW6skTMrOTJfqowgGQBzX7styLdcsnjlqwEVqeqaaHQ==}
     engines: {node: '>=0.14'}
 
-  '@cornerstonejs/codec-libjxl@1.1.1':
-    resolution: {integrity: sha512-Gp5AXNDuqX9CggJ6VJzjEuPowL2IsKGkvUPo3I7ZmCaY1vNDTwOdJUFrHACl3RIMDm+EL9EUw0Lhsmbs5b0fvA==}
-    engines: {node: '>=24'}
-
-  '@cornerstonejs/codec-openjpeg@1.3.6':
-    resolution: {integrity: sha512-bSdZXF+2GxfBkWHUr7yGLQtIwbAm9wOl3e4ARee/9Z9lfKyVqhUCixI6+ZjIn9YKTIuDcn/NZNK94XEUg1SBtw==}
+  '@cornerstonejs/codec-openjpeg@1.3.2':
+    resolution: {integrity: sha512-IsvhGRZ/3LzoNQFyAsKKzPw/S769b9JrKhpufU8uEEalOBn+D1OLetzZ48pvpbwxR4J7ZFrnK0FBIYtl8Hdt9Q==}
     engines: {node: '>=0.14'}
 
-  '@cornerstonejs/codec-openjph@2.4.11':
-    resolution: {integrity: sha512-NzwCYevGSj2JOuP7BztxrOd5WnJ86gOGLv3sq36jZxxHUXoDo1YhzizHiYz+T7GQqkzbfaQcwSyxsRogzGFIPQ==}
+  '@cornerstonejs/codec-openjph@2.4.9':
+    resolution: {integrity: sha512-iUGvF8r4SMHFrHGjwhNsTlHDPm+fIcGw3fUYm4vzhsf2J6VR9DqHtynXwUVOCBMSG9YTyWkcsD4db++0kMffMw==}
     engines: {node: '>=0.14'}
 
-  '@cornerstonejs/core@5.11.3':
-    resolution: {integrity: sha512-V8g//JddmlHrR5nwEu7MthyRYOmqam2H8/SXca/5euaD66CQG1kYKu8WYkdW/FZLv1DE0m/CIYrSNXuw/yuQqQ==}
+  '@cornerstonejs/core@5.10.11':
+    resolution: {integrity: sha512-/FiaC+QpYBLUnBruZC2cr3EJ+gIxRQQ6+37PkeK4o6kg3vcuyiFlose4Oqdc5GPWh+C2POX/YJsaD9Y9p5Qk3w==}
     peerDependencies:
-      '@cornerstonejs/metadata': 5.11.3
-      '@cornerstonejs/utils': 5.11.3
+      '@cornerstonejs/metadata': 5.10.11
+      '@cornerstonejs/utils': 5.10.11
 
-  '@cornerstonejs/dicom-image-loader@5.11.3':
-    resolution: {integrity: sha512-eaol1zmKCMr0UabHTM+CFBHrXJ6LZuYCXBo5I2/BR9YxCVHN8Eo7g/jQ825vNMzhkGIYKWHC0zcRuNwAh9quvw==}
+  '@cornerstonejs/dicom-image-loader@5.10.11':
+    resolution: {integrity: sha512-FB8awysPFQO/u4S4RfYAsnXJK6TlpC046ZvnmhpSghyMyg2qwDix87ZnKhyBc0BNYx8iLEWezDJZ5Sar4QqfNg==}
     peerDependencies:
-      '@cornerstonejs/core': 5.11.3
-      '@cornerstonejs/metadata': 5.11.3
+      '@cornerstonejs/core': 5.10.11
+      '@cornerstonejs/metadata': 5.10.11
       dicom-parser: 1.8.21
 
-  '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1':
-    resolution: {integrity: sha512-cDCv7dm3qw9kbxCydvj0UGbNQcsPmTwcyd9SQXkBt34CDgSBeb8Xvj0Gz9HlJ+7DIKOFMTazF1oDJSu0pcCKmg==}
+  '@cornerstonejs/metadata@5.10.11':
+    resolution: {integrity: sha512-k3mZV3A+N1qV5mQg0C2ctcfUQjNpSppA9GR7ltgFvpdXwC6Pz0QzanNzrHcUrMpd1lkKclP3nSqMneMzrm/h/w==}
 
-  '@cornerstonejs/metadata@5.11.3':
-    resolution: {integrity: sha512-H/FUUc2c2naGdEgqVI/VHFVckCbFpStO8PIinsZHQy0iayRgRjkDS5YdsEPUKjyLpdHDyt8IWN2BYQYcI5KnDw==}
-
-  '@cornerstonejs/utils@5.11.3':
-    resolution: {integrity: sha512-1NGZtr1z5yr/InivwB/74wLWKujxxXzTPSRDaogRtkfot2mRvnbihYIAwm48wmGlaSXZkczkGn54EvkWy5/YOg==}
+  '@cornerstonejs/utils@5.10.11':
+    resolution: {integrity: sha512-1WM6kvcRDVd+KnyEYT+bDZyV56GnFde7/7zOz1QrKQs3WO/X7vC+bQWhtIPo7Z+7VYyzuSrysmVhWz3TRnCnhA==}
 
   '@csstools/color-helpers@6.1.1':
     resolution: {integrity: sha512-gLNsunvwf3mCi5u5o46/Z/JcJMnhbHSaZ69rkgPzNM3J4s8hWwpPUQB6/tt0EDFyCiWzxANlx+2LJwpYj4zS1w==}
@@ -3365,6 +3361,12 @@ packages:
     peerDependenciesMeta:
       rollup:
         optional: true
+
+  '@rollup/rollup-linux-x64-gnu@4.13.0':
+    resolution: {integrity: sha512-yUD/8wMffnTKuiIsl6xU+4IA8UNhQ/f1sAnQebmE/lyQ8abjsVyDkyRkWop0kdMhKMprpNIhPmYlCxgHrPoXoA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
 
   '@shikijs/core@4.4.3':
     resolution: {integrity: sha512-QCR4q2ZO/ILJEuwiBMel4wdcTDb1JGwfjKTxPDF6x8ixOaluPrVqIn06C99AcRPhmYlBR56d/Fb+GN58GzExpg==}
@@ -5321,6 +5323,9 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
+  jpeg-lossless-decoder-js@2.1.2:
+    resolution: {integrity: sha512-fYf/plymnuKwVw+s8gJ8O/BPw8y8OLaN11MBvEcT05kuy3m45o7BEC4J0JbxMNUYyO+MdK/I/jq0q1gkVYZm2Q==}
+
   jquery@4.0.0:
     resolution: {integrity: sha512-TXCHVR3Lb6TZdtw1l3RTLf8RBWVGexdxL6AC8/e0xZKEpBflBsjh9/8LXw+dkNFuOyW9B7iB3O1sP7hS0Kiacg==}
 
@@ -7276,20 +7281,18 @@ snapshots:
 
   '@cornerstonejs/calculate-suv@1.0.3': {}
 
-  '@cornerstonejs/codec-charls@1.2.7': {}
+  '@cornerstonejs/codec-charls@1.2.5': {}
 
-  '@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7': {}
+  '@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4': {}
 
-  '@cornerstonejs/codec-libjxl@1.1.1': {}
+  '@cornerstonejs/codec-openjpeg@1.3.2': {}
 
-  '@cornerstonejs/codec-openjpeg@1.3.6': {}
+  '@cornerstonejs/codec-openjph@2.4.9': {}
 
-  '@cornerstonejs/codec-openjph@2.4.11': {}
-
-  '@cornerstonejs/core@5.11.3(@cornerstonejs/metadata@5.11.3)(@cornerstonejs/utils@5.11.3)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0)':
+  '@cornerstonejs/core@5.10.11(@cornerstonejs/metadata@5.10.11)(@cornerstonejs/utils@5.10.11)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0)':
     dependencies:
-      '@cornerstonejs/metadata': 5.11.3
-      '@cornerstonejs/utils': 5.11.3
+      '@cornerstonejs/metadata': 5.10.11
+      '@cornerstonejs/utils': 5.10.11
       '@kitware/vtk.js': 36.4.1(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0)
       comlink: 4.4.2
       gl-matrix: 3.4.3
@@ -7298,31 +7301,28 @@ snapshots:
       - autoprefixer
       - wslink
 
-  '@cornerstonejs/dicom-image-loader@5.11.3(@cornerstonejs/core@5.11.3(@cornerstonejs/metadata@5.11.3)(@cornerstonejs/utils@5.11.3)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.3)(dicom-parser@1.8.21)':
+  '@cornerstonejs/dicom-image-loader@5.10.11(@cornerstonejs/core@5.10.11(@cornerstonejs/metadata@5.10.11)(@cornerstonejs/utils@5.10.11)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0))(@cornerstonejs/metadata@5.10.11)(dicom-parser@1.8.21)':
     dependencies:
-      '@cornerstonejs/codec-charls': 1.2.7
-      '@cornerstonejs/codec-libjpeg-turbo-8bit': 1.2.7
-      '@cornerstonejs/codec-libjxl': 1.1.1
-      '@cornerstonejs/codec-openjpeg': 1.3.6
-      '@cornerstonejs/codec-openjph': 2.4.11
-      '@cornerstonejs/core': 5.11.3(@cornerstonejs/metadata@5.11.3)(@cornerstonejs/utils@5.11.3)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0)
-      '@cornerstonejs/jpeg-lossless-decoder-js': 2.2.1
-      '@cornerstonejs/metadata': 5.11.3
+      '@cornerstonejs/codec-charls': 1.2.5
+      '@cornerstonejs/codec-libjpeg-turbo-8bit': 1.2.4
+      '@cornerstonejs/codec-openjpeg': 1.3.2
+      '@cornerstonejs/codec-openjph': 2.4.9
+      '@cornerstonejs/core': 5.10.11(@cornerstonejs/metadata@5.10.11)(@cornerstonejs/utils@5.10.11)(autoprefixer@10.6.1(postcss@8.5.23))(wslink@2.5.0)
+      '@cornerstonejs/metadata': 5.10.11
       comlink: 4.4.2
       dicom-parser: 1.8.21
+      jpeg-lossless-decoder-js: 2.1.2
       pako: 2.1.0
       uuid: 11.1.1
 
-  '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1': {}
-
-  '@cornerstonejs/metadata@5.11.3':
+  '@cornerstonejs/metadata@5.10.11':
     dependencies:
       '@cornerstonejs/calculate-suv': 1.0.3
-      '@cornerstonejs/utils': 5.11.3
+      '@cornerstonejs/utils': 5.10.11
       dcmjs: 0.52.0
       gl-matrix: 3.4.3
 
-  '@cornerstonejs/utils@5.11.3':
+  '@cornerstonejs/utils@5.10.11':
     dependencies:
       dcmjs: 0.52.0
 
@@ -8007,6 +8007,9 @@ snapshots:
       '@types/estree': 1.0.9
       estree-walker: 2.0.2
       picomatch: 4.0.7
+
+  '@rollup/rollup-linux-x64-gnu@4.13.0':
+    optional: true
 
   '@shikijs/core@4.4.3':
     dependencies:
@@ -10107,6 +10110,10 @@ snapshots:
   isexe@2.0.0: {}
 
   jiti@2.7.0: {}
+
+  jpeg-lossless-decoder-js@2.1.2:
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.13.0
 
   jquery@4.0.0: {}
 
