@@ -4,6 +4,8 @@ An explicitly installed DICOM renderer for local DICOM Part 10 files. It uses th
 
 This package is intentionally excluded from File Viewer full and preset packages. Applications that need medical imaging install and register it explicitly:
 
+The current Cornerstone 5.11.3 dependency closure includes `@cornerstonejs/codec-libjxl@1.1.1`, which declares Node >=24 for installation and build tooling. A cold install with `engine-strict` on Node 22.16.0 succeeds with the previous Cornerstone 5.8.2 closure and rejects this closure. This upgrade therefore requires a Node 24 toolchain for this optional package. Installing the codec does not extend the renderer's supported transfer syntaxes: JPEG XL and HTJ2K remain outside the tested Part 10 scope below.
+
 ```ts
 import { createViewer } from '@file-viewer/core'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'

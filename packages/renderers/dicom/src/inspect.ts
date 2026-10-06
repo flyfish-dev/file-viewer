@@ -1,4 +1,6 @@
-import * as dicomParser from 'dicom-parser';
+// The UMD package exposes its API as the default export in native Node ESM;
+// bundlers previously masked the missing named exports on a namespace import.
+import dicomParser from 'dicom-parser';
 import { Inflate } from 'pako';
 import type { FileViewerDicomLimits } from './index.js';
 

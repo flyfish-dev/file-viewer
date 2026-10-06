@@ -67,7 +67,8 @@
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "type-check": "tsc -b tsconfig.json",
+    "verify:inspection": "pnpm build && node scripts/verify-node-inspection.mjs"
   },
   "dependencies": {
     "@cornerstonejs/core": "5.11.3",

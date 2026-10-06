@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { pnpmInvocation } from './lib/pinned-pnpm.mjs'
+import { verifyCodecArtifact, verifyCodecLockIntegrity } from './lib/verified-codec-artifacts.mjs'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const sourceRoot = resolve(scriptDir, '../..')
@@ -11,6 +12,7 @@ const pnpm = pnpmInvocation()
 const packageDir = join(sourceRoot, 'packages/renderers/dicom')
 const ledgerPath = join(packageDir, 'THIRD_PARTY_LICENSES.json')
 const noticesPath = join(packageDir, 'THIRD_PARTY_NOTICES.md')
+const capabilityPath = join(packageDir, 'file-viewer.capability.json')
 const write = process.argv.includes('--write')
 const allowedLicenses = new Set([
   '(MIT AND Zlib)',
@@ -33,87 +35,22 @@ const licenseSelections = new Map([
     }
   ]
 ])
-const knownPlatformOptionalPackages = new Map([
-  [
-    '@rollup/rollup-linux-x64-gnu@4.13.0',
-    {
-      author: 'Rollup contributors',
-      license: 'MIT',
-      repository: 'https://github.com/rollup/rollup'
-    }
-  ]
-])
 const repositoryOverrides = new Map([
   ['@cornerstonejs/calculate-suv', 'https://github.com/cornerstonejs/calculate-suv'],
   ['@cornerstonejs/codec-libjpeg-turbo-8bit', 'https://github.com/cornerstonejs/codecs'],
   ['@cornerstonejs/codec-openjpeg', 'https://github.com/cornerstonejs/codecs']
 ])
-const cornerstoneCodecsGitHead = '8634194b68ab43bde8f35fcc466a36d91ac700b4'
-const nativeCodecComponents = [
-  {
-    name: 'CharLS',
-    wrapperPackage: '@cornerstonejs/codec-charls@1.2.5',
-    repository: 'https://github.com/cornerstonejs/charls',
-    sourceSha: '38d95d00671f4cddfa61f3f51eaf81b8bac34543',
-    license: 'BSD-3-Clause',
-    linkedTarget: 'charls',
-    files: [
-      {
-        path: 'third-party/native-codecs/charls/LICENSE.md',
-        sha256: 'e293ccc327ee42f4e723e73aac39b23ffc40655cc6f8baec5c046f2e7d093695'
-      }
-    ]
-  },
-  {
-    name: 'libjpeg-turbo',
-    wrapperPackage: '@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4',
-    repository: 'https://github.com/cornerstonejs/libjpeg-turbo',
-    sourceSha: 'dc4a93fab38b42d29b89a533409e012570180e28',
-    license: 'IJG AND BSD-3-Clause AND Zlib',
-    linkedTarget: 'turbojpeg-static',
-    files: [
-      {
-        path: 'third-party/native-codecs/libjpeg-turbo/LICENSE.md',
-        sha256: 'ee1eaf194d5924b6360af8a6ba6a4e1554037091f7505943300cdeec65f1aebb'
-      },
-      {
-        path: 'third-party/native-codecs/libjpeg-turbo/README.ijg',
-        sha256: '4b7b9f8c03bb8d60270dfd12684e70ab21e4abfd27e73905cd1a7c4cae6f5cdb'
-      }
-    ]
-  },
-  {
-    name: 'OpenJPEG',
-    wrapperPackage: '@cornerstonejs/codec-openjpeg@1.3.2',
-    repository: 'https://github.com/cornerstonejs/openjpeg',
-    sourceSha: '2d606701e8b7aa83f657d113c3367508e99bd12b',
-    license: 'BSD-2-Clause',
-    linkedTarget: 'openjp2',
-    files: [
-      {
-        path: 'third-party/native-codecs/openjpeg/LICENSE',
-        sha256: 'a6af136f3e15038a666b61f376612a07d9a4e48cb7c01adbf3e33b3f14ab49b6'
-      }
-    ]
-  },
-  {
-    name: 'OpenJPH',
-    wrapperPackage: '@cornerstonejs/codec-openjph@2.4.9',
-    repository: 'https://github.com/cornerstonejs/OpenJPH',
-    sourceSha: 'e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6',
-    license: 'BSD-2-Clause',
-    linkedTarget: 'openjphsimd',
-    files: [
-      {
-        path: 'third-party/native-codecs/openjph/LICENSE',
-        sha256: '5ddf5177863dfc9ab65fa129d587db651241f00e21ed2427b218bea997591f98'
-      }
-    ]
-  }
-]
-const nativeWrapperNames = new Set(
-  nativeCodecComponents.map((entry) => entry.wrapperPackage.replace(/@\d[^@]*$/, ''))
+const nativeProvenance = JSON.parse(
+  readFileSync(join(packageDir, 'third-party/native-codecs/PROVENANCE.json'), 'utf8')
 )
+const nativeCodecComponents = nativeProvenance.components
+const nativeWrapperArtifacts = new Map(
+  nativeProvenance.wrapperArtifacts.map((artifact) => [artifact.name, artifact])
+)
+assert(nativeProvenance.schemaVersion === 1, 'Unsupported native codec provenance schema')
+assert(nativeWrapperArtifacts.size === 5, 'Expected all five reviewed native codec wrappers')
+const lockfile = readFileSync(join(sourceRoot, 'pnpm-lock.yaml'), 'utf8')
+for (const artifact of nativeWrapperArtifacts.values()) verifyCodecLockIntegrity(lockfile, artifact)
 
 function assert(condition, message) {
   if (!condition) throw new Error(message)
@@ -201,15 +138,8 @@ function visit(node, nameHint, state) {
   const version = packageJson?.version || String(node?.version || '').replace(/^link:/, '')
   assert(name && version, `Dependency tree entry is missing name/version: ${JSON.stringify(node)}`)
   const key = `${name}@${version}`
-  const fallback = knownPlatformOptionalPackages.get(key)
   const installedLicense = packageJson ? normalizeLicense(packageJson) : ''
-  if (fallback && installedLicense) {
-    assert(
-      installedLicense === fallback.license,
-      `${key} platform metadata license drifted from ${fallback.license}`
-    )
-  }
-  const declaredLicense = fallback?.license || installedLicense
+  const declaredLicense = installedLicense
   const selection = licenseSelections.get(name)
   if (selection) {
     assert(
@@ -227,11 +157,8 @@ function visit(node, nameHint, state) {
     allowedLicenses.has(license),
     `${key} uses unapproved license expression ${declaredLicense}`
   )
-  if (nativeWrapperNames.has(name)) {
-    assert(
-      packageJson?.gitHead === cornerstoneCodecsGitHead,
-      `${key} codec gitHead drifted from ${cornerstoneCodecsGitHead}`
-    )
+  if (nativeWrapperArtifacts.has(name)) {
+    verifyCodecArtifact(node.path, nativeWrapperArtifacts.get(name))
   }
   const previous = packages.get(key)
   const packageFiles = licenseFilesFor(node?.path)
@@ -243,12 +170,8 @@ function visit(node, nameHint, state) {
     direct: Boolean(state.direct || previous?.direct),
     optional: previous ? Boolean(previous.optional && state.optional) : Boolean(state.optional),
     firstParty: name.startsWith('@file-viewer/'),
-    author: fallback?.author || normalizeAuthor(packageJson?.author) || '',
-    repository:
-      fallback?.repository ||
-      repositoryOverrides.get(name) ||
-      normalizeRepository(packageJson?.repository) ||
-      '',
+    author: normalizeAuthor(packageJson?.author) || '',
+    repository: repositoryOverrides.get(name) || normalizeRepository(packageJson?.repository) || '',
     licenseFiles: previous?.licenseFiles?.length
       ? previous.licenseFiles
       : packageFiles.licenseFiles,
@@ -281,10 +204,6 @@ function compareAscii(left, right) {
 
 const sortedPackages = [...packages.values()].sort(
   (left, right) => compareAscii(left.name, right.name) || compareAscii(left.version, right.version)
-)
-assert(
-  sortedPackages.some((entry) => entry.name === '@rollup/rollup-linux-x64-gnu' && entry.optional),
-  'Linux codec optional dependency is missing'
 )
 assert(
   sortedPackages.some((entry) => entry.license === 'CC-BY-4.0'),
@@ -345,8 +264,8 @@ const ledger = {
     closureIncludesPlatformOptionalDependencies: true
   },
   nativeCodecBuild: {
-    cornerstoneCodecsGitHead,
-    note: 'The npm wrapper license describes JavaScript glue; these entries describe native libraries statically linked into the shipped WebAssembly codecs.',
+    wrapperArtifacts: nativeProvenance.wrapperArtifacts,
+    note: nativeProvenance.note,
     components: nativeCodecComponents
   },
   packages: sortedPackages
@@ -360,16 +279,62 @@ const packageVersionList = (name) => {
   assert(entries.length > 0, `Expected ${name} in the DICOM production closure`)
   return entries.map((entry) => `\`${entry.name}@${entry.version}\``).join(', ')
 }
+const capability = JSON.parse(readFileSync(capabilityPath, 'utf8'))
+capability.license.notices = [
+  ...['@cornerstonejs/core', '@cornerstonejs/dicom-image-loader', '@cornerstonejs/metadata'].map(
+    (name) => ({
+      packageName: name,
+      spdx: 'MIT',
+      notice: `${packageVersionList(name)}; complete JavaScript and native codec provenance and license closure are recorded in THIRD_PARTY_LICENSES.json.`
+    })
+  ),
+  ...nativeCodecComponents.map((component) => ({
+    packageName: `${component.name} native codec`,
+    spdx: component.license,
+    notice: `Release source gitlink ${component.sourceSha}; linked target ${component.linkedTarget}; unmodified license files are packaged under third-party/native-codecs. See PROVENANCE.json for official artifact hashes and build provenance.${component.name === 'libjpeg-turbo' ? ' This software is based in part on the work of the Independent JPEG Group.' : ''}`
+  })),
+  {
+    packageName: 'dicom-parser',
+    spdx: 'MIT',
+    notice: `${packageVersionList('dicom-parser')}; used for bounded Part 10 inspection before runtime initialization.`
+  },
+  {
+    packageName: '@kitware/vtk.js',
+    spdx: 'BSD-3-Clause',
+    notice: `${packageVersionList('@kitware/vtk.js')}; transitive Cornerstone runtime dependency.`
+  },
+  {
+    packageName: 'caniuse-lite',
+    spdx: 'CC-BY-4.0',
+    notice: `${packageVersionList('caniuse-lite')} data by Ben Briggs and contributors; source https://github.com/browserslist/caniuse-lite; unmodified by this renderer.`
+  },
+  {
+    packageName: 'pako',
+    spdx: '(MIT AND Zlib)',
+    notice: `${packageVersionList('pako')} contain zlib-derived code by Jean-loup Gailly and Mark Adler.`
+  },
+  {
+    packageName: 'argparse',
+    spdx: 'Python-2.0',
+    notice: `${packageVersionList('argparse')} retains the Python Software Foundation license in its installed LICENSE file.`
+  },
+  {
+    packageName: 'spark-md5',
+    spdx: '(WTFPL OR MIT)',
+    notice: `${packageVersionList('spark-md5')} retains its upstream license file.`
+  }
+]
+const capabilityText = `${JSON.stringify(capability, null, 2)}\n`
 const noticeLines = [
   '# Third-party notices',
   '',
-  'This file records the complete production dependency closure of the optional `@file-viewer/renderer-dicom` package, including the Linux-only optional codec dependency. Exact machine-readable versions, SPDX expressions, source repositories, and packaged license/notice filenames are in `THIRD_PARTY_LICENSES.json`.',
+  'This file records the complete production dependency closure of the optional `@file-viewer/renderer-dicom` package, including any platform-optional dependencies. Exact machine-readable versions, SPDX expressions, source repositories, and packaged license/notice filenames are in `THIRD_PARTY_LICENSES.json`.',
   '',
   'The DICOM renderer is not part of any standard/full package or preset. These dependencies are installed only when this capability is selected, and its Cornerstone implementation is loaded only when a DICOM file is opened.',
   '',
   '## Required attribution',
   '',
-  '- `caniuse-lite@1.0.30001810` data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as `caniuse-lite/LICENSE` in the installed dependency.',
+  `- ${packageVersionList('caniuse-lite')} data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as \`caniuse-lite/LICENSE\` in the installed dependency.`,
   `${packageVersionList('pako')} contain zlib-derived code by Jean-loup Gailly and Mark Adler under \`(MIT AND Zlib)\`; their installed source retains the zlib notices and license terms.`,
   '- `spark-md5@3.0.2` is available under `(WTFPL OR MIT)` as declared by the package. Its installed package retains the upstream license file.',
   '- `argparse@2.0.1` is licensed under Python-2.0 and retains the complete Python Software Foundation license in its installed `LICENSE` file.',
@@ -377,15 +342,15 @@ const noticeLines = [
   '',
   '### Native libraries statically linked into codec WebAssembly',
   '',
-  `All four codec wrapper packages were built from \`cornerstonejs/codecs\` commit \`${cornerstoneCodecsGitHead}\`. The wrapper package license is not used as a substitute for the linked native library terms:`,
+  'The five wrappers have separate npm publish and signed build-provenance commits. Exact official tarball integrities, installed-file hashes, source commits and build invocations are retained in `third-party/native-codecs/PROVENANCE.json` and checked against the installed artifacts. The wrapper package license is not used as a substitute for the linked native library terms:',
   '',
   ...nativeCodecComponents.flatMap((component) => [
-    `- \`${component.name}\` (\`${component.wrapperPackage}\`): \`${component.license}\`; source \`${component.sourceSha}\` at ${component.repository}; linked target \`${component.linkedTarget}\`; retained files ${component.files.map((file) => `\`${file.path}\``).join(', ')}.`
+    `- \`${component.name}\` (\`${component.wrapperPackage}\`): \`${component.license}\`; release source gitlink \`${component.sourceSha}\` at ${component.repository}; linked target \`${component.linkedTarget}\`; retained files ${component.files.map((file) => `\`${file.path}\``).join(', ')}.${component.sourceNote ? ` ${component.sourceNote}` : ''}`
   ]),
   '',
   '**libjpeg-turbo attribution:** This software is based in part on the work of the Independent JPEG Group.',
   '',
-  'The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package, together with the exact CharLS, OpenJPEG, and OpenJPH license texts. These native components use BSD-style, IJG, and zlib terms; none is LGPL or strong copyleft.',
+  'The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package, together with the CharLS, OpenJPEG, OpenJPH, JPEG XL, Brotli, Highway and skcms license texts. JPEG XL authors and patent grant are retained as well. Highway elects Apache-2.0 and retains its alternative BSD text. These native components use permissive terms; none is LGPL or strong copyleft.',
   '',
   'None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTICE` file. All top-level license and notice files found in each installed package are recorded in the ledger.',
   '',
@@ -406,6 +371,7 @@ const noticesText = `${noticeLines.join('\n').trimEnd()}\n`
 if (write) {
   writeFileSync(ledgerPath, ledgerText)
   writeFileSync(noticesPath, noticesText)
+  writeFileSync(capabilityPath, capabilityText)
 } else {
   assert(existsSync(ledgerPath), `Missing ${relative(sourceRoot, ledgerPath)}; run with --write`)
   assert(existsSync(noticesPath), `Missing ${relative(sourceRoot, noticesPath)}; run with --write`)
@@ -416,6 +382,10 @@ if (write) {
   assert(
     readFileSync(noticesPath, 'utf8') === noticesText,
     'DICOM third-party notices are stale; run verifier with --write'
+  )
+  assert(
+    readFileSync(capabilityPath, 'utf8') === capabilityText,
+    'DICOM capability license metadata is stale; run verifier with --write'
   )
 }
 

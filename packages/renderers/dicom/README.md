@@ -4,6 +4,8 @@
 
 该包有意不进入 File Viewer 的 full 或 preset 默认依赖。需要医学影像预览的项目再单独安装并注册：
 
+当前 Cornerstone 5.11.3 依赖闭包包含 `@cornerstonejs/codec-libjxl@1.1.1`，该包声明安装和构建工具链需要 Node >=24。真实冷安装中，Node 22.16.0 开启 `engine-strict` 时旧 Cornerstone 5.8.2 闭包安装成功，当前闭包会被拒绝，因此升级此可选包需要 Node 24 工具链。安装新增 codec 不会扩大渲染器接受的传输语法；JPEG XL 与 HTJ2K 仍不在下述已测试的 Part 10 范围内。
+
 ```ts
 import { createViewer } from '@file-viewer/core'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'

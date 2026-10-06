@@ -28,14 +28,229 @@
     "closureIncludesPlatformOptionalDependencies": true
   },
   "nativeCodecBuild": {
-    "cornerstoneCodecsGitHead": "8634194b68ab43bde8f35fcc466a36d91ac700b4",
-    "note": "The npm wrapper license describes JavaScript glue; these entries describe native libraries statically linked into the shipped WebAssembly codecs.",
+    "wrapperArtifacts": [
+      {
+        "package": "@cornerstonejs/codec-charls@1.2.7",
+        "name": "@cornerstonejs/codec-charls",
+        "version": "1.2.7",
+        "gitHead": "d546620bc7814e836a0587e878b17e95146c76d0",
+        "registry": "https://registry.npmjs.org",
+        "integrity": "sha512-kNfQ7J8LIrfQUbt56fPJ0SEvevLlAAbsLHjqPS4DUDWVSuAHb5Fn0cMIV/U0SYkJRJqKvzyLJYF1hl7/xQGqLQ==",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "a9cc2e879aafe18f40cae21bd4b6c8b78d81ca2a09b103607d192000c04ad65f"
+          },
+          {
+            "path": "README.md",
+            "sha256": "efacf95c989e8446f96068aa76585f298dce7692a1322eac924fb98eff69b938"
+          },
+          {
+            "path": "dist/charlsjs.js",
+            "sha256": "03fe833b5a3390a2475612f2f56645736a81e799d320a1361fbf468d665ce882"
+          },
+          {
+            "path": "dist/charlsjs_decode.js",
+            "sha256": "180ea0504397f580c76ce81c7e98e264cbbca1cbcfdf098f1f57dfe5ba0233c5"
+          },
+          {
+            "path": "dist/charlswasm.js",
+            "sha256": "9dfac72965b6b8b361ca38c8d04794bb3488ba5cb34a6dc3617b62ce12d9f296"
+          },
+          {
+            "path": "dist/charlswasm.wasm",
+            "sha256": "9aff76ec3208aae5d8d59365a999fcc33f2ed72fb299719a156d32529d6c3896"
+          },
+          {
+            "path": "dist/charlswasm_decode.js",
+            "sha256": "c8ef100ac02552c692d59e60f61ab9dc84f355a62386d571e3db2c1046aa1f5a"
+          },
+          {
+            "path": "dist/charlswasm_decode.wasm",
+            "sha256": "7e3696ecffee534d7c188ff91790812710c0a267fcbf78620b19da6bc78979f4"
+          },
+          {
+            "path": "package.json",
+            "sha256": "b199ff874ad78fb19c8998f210e54ed51f1ce3d43eb8aa2daa8a649524dad289"
+          }
+        ],
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "attestationUrl": "https://registry.npmjs.org/-/npm/v1/attestations/@cornerstonejs%2fcodec-charls@1.2.7",
+        "buildSourceSha": "70030e062b3ff0a2ac69dfbe4a2012d0567cc579",
+        "buildInvocation": "https://github.com/cornerstonejs/codecs/actions/runs/34269730799/attempts/1"
+      },
+      {
+        "package": "@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7",
+        "name": "@cornerstonejs/codec-libjpeg-turbo-8bit",
+        "version": "1.2.7",
+        "gitHead": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+        "registry": "https://registry.npmjs.org",
+        "integrity": "sha512-TINxDtm+RQuMvWNyNR6z8lCkqDKguZBMrPJ3+oAvLc1XQ3tQsIGIIUWzveedpyr8gp7DYsQqoPLhCl2mYTSv3w==",
+        "files": [
+          {
+            "path": "README.md",
+            "sha256": "5b9446a56a74bd8664d43defe8ad52481d7249dab16496a013e1b8f7ebf08dc4"
+          },
+          {
+            "path": "dist/libjpegturbojs.js",
+            "sha256": "f27aeacebd8e922bbcb1a17bcb9ee6e9865048db2677056704ed0aaaebfb7b25"
+          },
+          {
+            "path": "dist/libjpegturbojs_decode.js",
+            "sha256": "512fc1c5efb6423766aeb3b9db4d0a02889245320483379e77c53fe6b2bd37a4"
+          },
+          {
+            "path": "dist/libjpegturbowasm.js",
+            "sha256": "b0a83e5a702f1a58ba80f01c5220666ea904a607aaf30e7786bf411efd8df1f5"
+          },
+          {
+            "path": "dist/libjpegturbowasm.wasm",
+            "sha256": "38e7b5e9d4d82dcdba8ffa2079dee9058be0f39343485007d08a7b82c95ec0aa"
+          },
+          {
+            "path": "dist/libjpegturbowasm_decode.js",
+            "sha256": "850e02f058ec3360dcc4bd9df4f0ba6412ce536c1a37cbf50e14c21be0b56bed"
+          },
+          {
+            "path": "dist/libjpegturbowasm_decode.wasm",
+            "sha256": "572510e3f5b0f46a7b5e69e1c5260ea97b2fd59851c83d5e9d54e59775944b20"
+          },
+          {
+            "path": "package.json",
+            "sha256": "f1a621c27ebcae8fa364e6bce2c15245b9e023235af5289c29e5fa61b74e86e7"
+          }
+        ],
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "attestationUrl": "https://registry.npmjs.org/-/npm/v1/attestations/@cornerstonejs%2fcodec-libjpeg-turbo-8bit@1.2.7",
+        "buildSourceSha": "3f122136bfdfff94ce7c5be92c62ae129c182fda",
+        "buildInvocation": "https://github.com/cornerstonejs/codecs/actions/runs/34367155621/attempts/1"
+      },
+      {
+        "package": "@cornerstonejs/codec-libjxl@1.1.1",
+        "name": "@cornerstonejs/codec-libjxl",
+        "version": "1.1.1",
+        "gitHead": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428",
+        "registry": "https://registry.npmjs.org",
+        "integrity": "sha512-Gp5AXNDuqX9CggJ6VJzjEuPowL2IsKGkvUPo3I7ZmCaY1vNDTwOdJUFrHACl3RIMDm+EL9EUw0Lhsmbs5b0fvA==",
+        "files": [
+          {
+            "path": "README.md",
+            "sha256": "c7f42c05ddf1fb35a0a3c8583732cbce9068a7309f52ccd7484fa7b23825483a"
+          },
+          {
+            "path": "dist/jpegxlwasm_decode.js",
+            "sha256": "bb78d8128c9b19a67bc522c6dbb00f81395d3b0328ba06a1c60dd02b5fb59401"
+          },
+          {
+            "path": "dist/jpegxlwasm_decode.wasm",
+            "sha256": "bc37b0f5ed04beb177182a65480371b9ffb1946f59d2ffbe8ddc86f02d6b4dbe"
+          },
+          {
+            "path": "dist/jpegxlwasm_encode.js",
+            "sha256": "851bc93debf2e7ff0ecef5a83d4836035c14d43be0d2b88bb64dbec7fcec58c4"
+          },
+          {
+            "path": "dist/jpegxlwasm_encode.wasm",
+            "sha256": "6eccfd6d5aa65149e6e8d4802849e0ca64149cbccd76dd31bcfecf836606114b"
+          },
+          {
+            "path": "package.json",
+            "sha256": "2faa52c33d98e06862a8130b61bc1160944dc46c8c30880a7f6e29cc8cf4f40e"
+          }
+        ],
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "attestationUrl": "https://registry.npmjs.org/-/npm/v1/attestations/@cornerstonejs%2fcodec-libjxl@1.1.1",
+        "buildSourceSha": "c9ffa62a82e837485fd9fc918555e340e8d0402a",
+        "buildInvocation": "https://github.com/cornerstonejs/codecs/actions/runs/34263763515/attempts/1"
+      },
+      {
+        "package": "@cornerstonejs/codec-openjpeg@1.3.6",
+        "name": "@cornerstonejs/codec-openjpeg",
+        "version": "1.3.6",
+        "gitHead": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+        "registry": "https://registry.npmjs.org",
+        "integrity": "sha512-bSdZXF+2GxfBkWHUr7yGLQtIwbAm9wOl3e4ARee/9Z9lfKyVqhUCixI6+ZjIn9YKTIuDcn/NZNK94XEUg1SBtw==",
+        "files": [
+          {
+            "path": "README.md",
+            "sha256": "d2f365ef43ee7df785a036790332f130489e9ec0cd6261a12b39b529b34c6e14"
+          },
+          {
+            "path": "dist/openjpegjs.js",
+            "sha256": "5afe8fc774b51005e6ba23f0ab73cb5afaa3967598bd8db874fe6ea1c879cb08"
+          },
+          {
+            "path": "dist/openjpegjs_decode.js",
+            "sha256": "d08864a5b6b023dc5c0cc32badbf9938ac691b6cbb68c2d5a9f68c01e0ad10fc"
+          },
+          {
+            "path": "dist/openjpegwasm.js",
+            "sha256": "7da697c067da8c0ee0dd81071bc6cca0ab17a93b70274945e03c690ee89c163a"
+          },
+          {
+            "path": "dist/openjpegwasm.wasm",
+            "sha256": "77084ac4c723115ee2b883b818fbcbf6a918c3242b5704989b5f53e0e4a5025b"
+          },
+          {
+            "path": "dist/openjpegwasm_decode.js",
+            "sha256": "8e6d4ea409ed817ee08aed0c440048616091781fce5b22b81c7cd850d80937b5"
+          },
+          {
+            "path": "dist/openjpegwasm_decode.wasm",
+            "sha256": "5aff4e65444480a402898fe7369a9d2bc77e8181f858fc0d10150b2dabf07dee"
+          },
+          {
+            "path": "package.json",
+            "sha256": "2633633dc1dcda89e8e0db97ab17f058ef527ee1e7b721af03c2ec45f517fdf7"
+          }
+        ],
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "attestationUrl": "https://registry.npmjs.org/-/npm/v1/attestations/@cornerstonejs%2fcodec-openjpeg@1.3.6",
+        "buildSourceSha": "3f122136bfdfff94ce7c5be92c62ae129c182fda",
+        "buildInvocation": "https://github.com/cornerstonejs/codecs/actions/runs/34367155621/attempts/1"
+      },
+      {
+        "package": "@cornerstonejs/codec-openjph@2.4.11",
+        "name": "@cornerstonejs/codec-openjph",
+        "version": "2.4.11",
+        "gitHead": "bac71dd0d78996e63f2dac3e9ee3a44f2b366a05",
+        "registry": "https://registry.npmjs.org",
+        "integrity": "sha512-NzwCYevGSj2JOuP7BztxrOd5WnJ86gOGLv3sq36jZxxHUXoDo1YhzizHiYz+T7GQqkzbfaQcwSyxsRogzGFIPQ==",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "a9cc2e879aafe18f40cae21bd4b6c8b78d81ca2a09b103607d192000c04ad65f"
+          },
+          {
+            "path": "README.md",
+            "sha256": "6e69a4386a5ee4e5db8b221bdbc2aaaf7bb3d7ccc293ca07ff16337fd20cfe34"
+          },
+          {
+            "path": "dist/openjphjs.js",
+            "sha256": "56c1d1a35bbaec18911a1d6fd79c44b49d82765a9f8d44b3d1e5c82b41274da8"
+          },
+          {
+            "path": "dist/openjphjs.wasm",
+            "sha256": "4f5d495f3eacd36a9e5e04c51dd94d48fdf2222120b28b9b006869478e757a39"
+          },
+          {
+            "path": "package.json",
+            "sha256": "7994f39c3f29d72a6eb7ca3e38a17e9bad85749a8faf81b80018c7fd4cd82c95"
+          }
+        ],
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "attestationUrl": "https://registry.npmjs.org/-/npm/v1/attestations/@cornerstonejs%2fcodec-openjph@2.4.11",
+        "buildSourceSha": "bac71dd0d78996e63f2dac3e9ee3a44f2b366a05",
+        "buildInvocation": "https://github.com/cornerstonejs/codecs/actions/runs/33879890059/attempts/1"
+      }
+    ],
+    "note": "Each official npm tarball SHA512 and every installed file SHA256 were verified, and npm audit signatures verified all five registry signatures and attestations. gitHead is npm publish metadata; buildSourceSha is the signed provenance build commit. Native SHAs identify reviewed release source gitlinks, not an independent bit-for-bit rebuild. JPEG XL source configuration links Brotli, Highway and skcms, with tools, tests, lcms, libpng and sjpeg disabled. Decoder and encoder assets in the wrapper are both accounted for.",
     "components": [
       {
         "name": "CharLS",
-        "wrapperPackage": "@cornerstonejs/codec-charls@1.2.5",
+        "wrapperPackage": "@cornerstonejs/codec-charls@1.2.7",
         "repository": "https://github.com/cornerstonejs/charls",
-        "sourceSha": "38d95d00671f4cddfa61f3f51eaf81b8bac34543",
+        "sourceSha": "9930a2a2fa75f516c4a08708180c9907fa501a97",
         "license": "BSD-3-Clause",
         "linkedTarget": "charls",
         "files": [
@@ -43,11 +258,12 @@
             "path": "third-party/native-codecs/charls/LICENSE.md",
             "sha256": "e293ccc327ee42f4e723e73aac39b23ffc40655cc6f8baec5c046f2e7d093695"
           }
-        ]
+        ],
+        "sourceNote": "Official build job https://github.com/cornerstonejs/codecs/actions/runs/34269730799/job/102207962308 records checkout of this exact native SHA. The wrapper's conditional CMake --remote block is not entered in the monorepo package layout."
       },
       {
         "name": "libjpeg-turbo",
-        "wrapperPackage": "@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4",
+        "wrapperPackage": "@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7",
         "repository": "https://github.com/cornerstonejs/libjpeg-turbo",
         "sourceSha": "dc4a93fab38b42d29b89a533409e012570180e28",
         "license": "IJG AND BSD-3-Clause AND Zlib",
@@ -65,9 +281,9 @@
       },
       {
         "name": "OpenJPEG",
-        "wrapperPackage": "@cornerstonejs/codec-openjpeg@1.3.2",
+        "wrapperPackage": "@cornerstonejs/codec-openjpeg@1.3.6",
         "repository": "https://github.com/cornerstonejs/openjpeg",
-        "sourceSha": "2d606701e8b7aa83f657d113c3367508e99bd12b",
+        "sourceSha": "6c4a29b00211eb0430fa0e5e890f1ce5c80f409f",
         "license": "BSD-2-Clause",
         "linkedTarget": "openjp2",
         "files": [
@@ -79,17 +295,87 @@
       },
       {
         "name": "OpenJPH",
-        "wrapperPackage": "@cornerstonejs/codec-openjph@2.4.9",
+        "wrapperPackage": "@cornerstonejs/codec-openjph@2.4.11",
         "repository": "https://github.com/cornerstonejs/OpenJPH",
-        "sourceSha": "e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6",
+        "sourceSha": "4a68609b55034a14fac23f95afc60e239a9e809e",
         "license": "BSD-2-Clause",
-        "linkedTarget": "openjphsimd",
+        "linkedTarget": "openjph",
         "files": [
           {
             "path": "third-party/native-codecs/openjph/LICENSE",
             "sha256": "5ddf5177863dfc9ab65fa129d587db651241f00e21ed2427b218bea997591f98"
           }
         ]
+      },
+      {
+        "name": "JPEG XL",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://github.com/libjxl/libjxl",
+        "sourceSha": "794a5dcf0d54f9f0b20d288a12e87afb91d20dfc",
+        "license": "BSD-3-Clause",
+        "linkedTarget": "jxl_dec, jxl, jxl_cms",
+        "files": [
+          {
+            "path": "third-party/native-codecs/libjxl/LICENSE",
+            "sha256": "8405932022a556380c2d8c272eff154a923feb197233f348ce5f7334fb0a5ede"
+          },
+          {
+            "path": "third-party/native-codecs/libjxl/PATENTS",
+            "sha256": "91915f8ae056a68a3c5bdf05d9f6f78bb6903e27a8ca3a8434c9e4ac87300575"
+          },
+          {
+            "path": "third-party/native-codecs/libjxl/AUTHORS",
+            "sha256": "00be88a8e3275f8f52a147ecede84c11900fd3180f88478d7cc9f55acabf3a35"
+          }
+        ]
+      },
+      {
+        "name": "Brotli",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://github.com/google/brotli",
+        "sourceSha": "36533a866ed1ca4b75cf049f4521e4ec5fe24727",
+        "license": "MIT",
+        "linkedTarget": "brotlidec, brotlicommon, brotlienc",
+        "files": [
+          {
+            "path": "third-party/native-codecs/brotli/LICENSE",
+            "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+          }
+        ]
+      },
+      {
+        "name": "Highway",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://github.com/google/highway",
+        "sourceSha": "457c891775a7397bdb0376bb1031e6e027af1c48",
+        "license": "Apache-2.0",
+        "linkedTarget": "hwy",
+        "files": [
+          {
+            "path": "third-party/native-codecs/highway/LICENSE",
+            "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1"
+          },
+          {
+            "path": "third-party/native-codecs/highway/LICENSE-BSD3",
+            "sha256": "d25e82e26acd42ca3ccc9993622631163425b869b9e16284226d534cff6470f2"
+          }
+        ],
+        "sourceNote": "Highway offers Apache-2.0 or BSD-3-Clause. File Viewer elects Apache-2.0 and retains both upstream license texts."
+      },
+      {
+        "name": "skcms",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://skia.googlesource.com/skcms",
+        "sourceSha": "42030a771244ba67f86b1c1c76a6493f873c5f91",
+        "license": "BSD-3-Clause",
+        "linkedTarget": "skcms",
+        "files": [
+          {
+            "path": "third-party/native-codecs/skcms/LICENSE",
+            "sha256": "e59bb5c5c6ba426a9ac4ba9fe667ad14c5166b12aa25be8af1d122b14fbe2e36"
+          }
+        ],
+        "sourceMirror": "https://github.com/google/skcms"
       }
     ]
   },
@@ -124,13 +410,13 @@
     },
     {
       "name": "@cornerstonejs/codec-charls",
-      "version": "1.2.5",
+      "version": "1.2.7",
       "license": "MIT",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "Chris Hafey <chafey@gmail.com>",
-      "repository": "https://github.com/chafey/charls-js",
+      "repository": "https://github.com/cornerstonejs/codecs",
       "licenseFiles": [
         "LICENSE"
       ],
@@ -138,35 +424,43 @@
     },
     {
       "name": "@cornerstonejs/codec-libjpeg-turbo-8bit",
-      "version": "1.2.4",
+      "version": "1.2.7",
       "license": "ISC",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/codecs",
-      "licenseFiles": [
-        "LICENSE"
-      ],
+      "licenseFiles": [],
+      "noticeFiles": []
+    },
+    {
+      "name": "@cornerstonejs/codec-libjxl",
+      "version": "1.1.1",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/codecs",
+      "licenseFiles": [],
       "noticeFiles": []
     },
     {
       "name": "@cornerstonejs/codec-openjpeg",
-      "version": "1.3.2",
+      "version": "1.3.6",
       "license": "MIT",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/codecs",
-      "licenseFiles": [
-        "LICENSE"
-      ],
+      "licenseFiles": [],
       "noticeFiles": []
     },
     {
       "name": "@cornerstonejs/codec-openjph",
-      "version": "2.4.9",
+      "version": "2.4.11",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -180,21 +474,19 @@
     },
     {
       "name": "@cornerstonejs/core",
-      "version": "5.8.2",
+      "version": "5.11.3",
       "license": "MIT",
       "direct": true,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
-      "licenseFiles": [
-        "LICENSE"
-      ],
+      "licenseFiles": [],
       "noticeFiles": []
     },
     {
       "name": "@cornerstonejs/dicom-image-loader",
-      "version": "5.8.2",
+      "version": "5.11.3",
       "license": "MIT",
       "direct": true,
       "optional": false,
@@ -207,31 +499,41 @@
       "noticeFiles": []
     },
     {
-      "name": "@cornerstonejs/metadata",
-      "version": "5.8.2",
+      "name": "@cornerstonejs/jpeg-lossless-decoder-js",
+      "version": "2.2.1",
       "license": "MIT",
-      "direct": true,
+      "direct": false,
       "optional": false,
       "firstParty": false,
-      "author": "",
-      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "author": "Michael Martinez",
+      "repository": "https://github.com/cornerstonejs/JPEGLosslessDecoderJS",
       "licenseFiles": [
         "LICENSE"
       ],
       "noticeFiles": []
     },
     {
+      "name": "@cornerstonejs/metadata",
+      "version": "5.11.3",
+      "license": "MIT",
+      "direct": true,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "licenseFiles": [],
+      "noticeFiles": []
+    },
+    {
       "name": "@cornerstonejs/utils",
-      "version": "5.8.2",
+      "version": "5.11.3",
       "license": "MIT",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
-      "licenseFiles": [
-        "LICENSE"
-      ],
+      "licenseFiles": [],
       "noticeFiles": []
     },
     {
@@ -345,18 +647,6 @@
       "noticeFiles": []
     },
     {
-      "name": "@rollup/rollup-linux-x64-gnu",
-      "version": "4.13.0",
-      "license": "MIT",
-      "direct": false,
-      "optional": true,
-      "firstParty": false,
-      "author": "Rollup contributors",
-      "repository": "https://github.com/rollup/rollup",
-      "licenseFiles": [],
-      "noticeFiles": []
-    },
-    {
       "name": "@types/trusted-types",
       "version": "2.0.7",
       "license": "MIT",
@@ -442,7 +732,7 @@
     },
     {
       "name": "baseline-browser-mapping",
-      "version": "2.11.25",
+      "version": "2.11.27",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,
@@ -484,7 +774,7 @@
     },
     {
       "name": "caniuse-lite",
-      "version": "1.0.30001810",
+      "version": "1.0.30001814",
       "license": "CC-BY-4.0",
       "direct": false,
       "optional": false,
@@ -836,7 +1126,7 @@
     },
     {
       "name": "glob",
-      "version": "7.2.0",
+      "version": "7.2.3",
       "license": "ISC",
       "direct": false,
       "optional": false,
@@ -955,20 +1245,6 @@
       "firstParty": false,
       "author": "Jordan Harband <ljharb@gmail.com>",
       "repository": "https://github.com/inspect-js/is-core-module",
-      "licenseFiles": [
-        "LICENSE"
-      ],
-      "noticeFiles": []
-    },
-    {
-      "name": "jpeg-lossless-decoder-js",
-      "version": "2.1.2",
-      "license": "MIT",
-      "direct": false,
-      "optional": false,
-      "firstParty": false,
-      "author": "",
-      "repository": "https://github.com/rii-mango/JPEGLosslessDecoderJS",
       "licenseFiles": [
         "LICENSE"
       ],
