@@ -376,7 +376,7 @@ const noticeLines = [
   '',
   '**libjpeg-turbo attribution:** This software is based in part on the work of the Independent JPEG Group.',
   '',
-  'The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package, together with the CharLS, OpenJPEG, OpenJPH, JPEG XL, Brotli, Highway and skcms license texts. JPEG XL authors and patent grant are retained as well. Highway elects Apache-2.0 and retains its alternative BSD text. These native components use permissive terms; none is LGPL or strong copyleft.',
+  'The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package. All native license files listed above are retained unmodified. These native components use permissive terms; none is LGPL or strong copyleft.',
   '',
   'None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTICE` file. All top-level license and notice files found in each installed package are recorded in the ledger.',
   '',
