@@ -1,0 +1,111 @@
+name: Word embedded content verification
+on:
+  push:
+    branches: [fix/compatibility-review-20260922]
+    paths: [.github/workflows/word-embedded-review.yml, .github/word-embedded-review.patch]
+permissions:
+  contents: write
+concurrency:
+  group: word-embedded-review-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    if: github.repository == 'flyfish-dev/file-viewer' && github.ref == 'refs/heads/fix/compatibility-review-20260922'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Apply reviewed source and documentation patch
+        run: |
+          set -euo pipefail
+          echo '983d48be077612fc5c7175bb66cfe6fed097d61979d75db4ab481a0b96390008  .github/word-embedded-review.patch' | sha256sum -c -
+          git apply --check .github/word-embedded-review.patch
+          git apply --index .github/word-embedded-review.patch
+          git diff --cached --check
+      - name: Install actual frozen workspace dependencies
+        timeout-minutes: 7
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/embedded-tooling" --ignore-scripts --no-audit --no-fund --save-exact pnpm@11.0.9
+          node "$RUNNER_TEMP/embedded-tooling/node_modules/pnpm/bin/pnpm.cjs" --filter . --filter @file-viewer/renderer-word... --filter @file-viewer/pptx install --frozen-lockfile --ignore-scripts
+          git diff --exit-code -- pnpm-lock.yaml pnpm-workspace.yaml package.json patches/
+      - name: Build and type-check owning packages
+        run: |
+          set -euo pipefail
+          mkdir -p output/word-embedded-content
+          npm --prefix packages/core run build
+          npm --prefix packages/renderers/doc run build
+          npm --prefix packages/renderers/word run build | tee output/word-embedded-content/build-word.log
+      - name: Prepare Chromium and bounded immutable originals
+        run: |
+          set -euo pipefail
+          node node_modules/playwright/cli.js install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+          python3 - <<'PY'
+          import pathlib,os,urllib.request,hashlib,zipfile,io
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'embedded-originals';root.mkdir()
+          def fetch(part):
+            with urllib.request.urlopen('https://github.com/user-attachments/files/'+part,timeout=60) as r:data=r.read(4*1024*1024+1)
+            assert len(data)<=4*1024*1024
+            return data
+          for name,digest,part in [('C053.docx','8d9708851337cdd1819b01768507cbbc71c9a0964a464add759bc36779c784eb','32318472/hyperlink-scheme.docx'),('C054.docx','69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877','32318480/altchunk.docx'),('C037.docx','d5a60516f06b7f116c629fdbc834b81ae8a0d7ac70e64006483d2a4c44ff89ab','31549497/2025.19.-.docx')]:
+            data=fetch(part);assert hashlib.sha256(data).hexdigest()==digest,name
+            (root/name).write_bytes(data)
+          data=fetch('31734252/default.zip');assert hashlib.sha256(data).hexdigest()=='e562163940282e3a51e5b0a506ef655e62aa51ef77a6e22666ff6c60d7a07703'
+          found=False
+          with zipfile.ZipFile(io.BytesIO(data)) as z:
+            for entry in z.infolist():
+              if entry.is_dir() or entry.file_size!=115200:continue
+              item=z.read(entry)
+              if hashlib.sha256(item).hexdigest()=='20d54c7246abc43147c6145abdef283cac113fdbf684387bfdc69b9df9887e94':
+                (root/'C069.doc').write_bytes(item);found=True
+          assert found
+          PY
+      - name: Reproduce the ignored host opt-out on the old renderer
+        run: |
+          set -euo pipefail
+          trap 'git checkout-index -f -- packages/renderers/word/src/wordDocx.ts' EXIT
+          git show HEAD:packages/renderers/word/src/wordDocx.ts > packages/renderers/word/src/wordDocx.ts
+          if WORD_EMBED_OUTPUT=output/word-embedded-before WORD_EMBED_CORPUS_DIR="$RUNNER_TEMP/embedded-originals" node packages/renderers/word/scripts/verify-embedded-content.mjs > "$RUNNER_TEMP/embedded-before.log" 2>&1; then cat "$RUNNER_TEMP/embedded-before.log"; exit 1; fi
+          node - <<'JS'
+          const r=require('./output/word-embedded-before/report.json');
+          if(!r.completed || r.failed!==4 || !r.checks.some(c=>c.status==='fail' && c.name.includes('C054 Worker disabled')))throw Error('The original opt-out defect was not reproduced');
+          JS
+      - name: Verify the fixed renderer and prior original regressions
+        run: |
+          set -euo pipefail
+          WORD_EMBED_CORPUS_DIR="$RUNNER_TEMP/embedded-originals" node packages/renderers/word/scripts/verify-embedded-content.mjs
+          WORD_ZOOM_CORPUS_DIR="$RUNNER_TEMP/embedded-originals" node packages/renderers/word/scripts/verify-zoom-fit.mjs
+          WORD_MERGE_ORIGINAL="$RUNNER_TEMP/embedded-originals/C037.docx" node packages/renderers/word/scripts/verify-merged-borders.mjs
+          WORD_VML_ORIGINAL="$RUNNER_TEMP/embedded-originals/C037.docx" node packages/renderers/word/scripts/verify-vml-text-layout.mjs
+          node scripts/verify-docx-engine-compatibility.mjs
+          node scripts/verify-container-compatibility.mjs
+          for name in table-spec github-34 github-87 github-171 github-192 github-236; do node "packages/renderers/doc/scripts/verify-$name.mjs"; done
+      - name: Push only verified implementation and neutral evidence
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/fix/compatibility-review-20260922
+          python3 - <<'PY'
+          import pathlib,json,os,hashlib,shutil,subprocess
+          dst=pathlib.Path('docs/regressions/evidence/word-embedded-content-20261006');dst.mkdir(parents=True,exist_ok=True)
+          counts={}
+          for name,count in [('word-embedded-content',81),('word-zoom-fit',109),('word-merged-borders',21),('word-vml-text',57),('docx-engine-compatibility',11),('container-compatibility',4)]:
+            src=pathlib.Path('output')/name/'report.json';r=json.loads(src.read_text());assert r['passed']==count and not r.get('failed',0),name
+            shutil.copyfile(src,dst/(name+'.json'));counts[name]=count
+          shutil.copyfile('output/word-embedded-before/report.json',dst/'baseline.json')
+          shutil.copyfile('output/word-embedded-content/build-word.log',dst/'build-word.log')
+          sources=['packages/core/src/contracts/types.ts','packages/renderers/word/src/wordDocx.ts','packages/renderers/word/README.md','packages/renderers/word/README.en.md','packages/renderers/word/test/docx-embedded-options.test.mjs','packages/renderers/word/scripts/verify-embedded-content.mjs','docs/regressions/word-embedded-content-20261006.md']
+          record={'run':os.environ['GITHUB_RUN_ID'],'checkedCommit':os.environ['GITHUB_SHA'],'functionalBase':'0fa622dc011a7c9298dc4d81c0d7be160a6b7b5f','checks':counts,'originals':['C053','C054'],'originalBaselineFailure':True,'unitTestsAdded':4,'wordUnitTests':101,'actualWorkerAndMainThread':True,'externalRequests':0,'builds':['core','doc','word'],'install':'actual pnpm 11.0.9 frozen selected workspace install','dependenciesOrEngineChanged':False,'newOption':'options.docx.renderAltChunks','fullCorpusAccepted':False,'sourceSha256':{p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in sources},'evidenceSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in dst.iterdir() if p.is_file()}}
+          (dst/'verification.json').write_text(json.dumps(record,indent=2)+'\n')
+          p=pathlib.Path('docs/regressions/corpus-progress-20260922.md');s=p.read_text();s+='\n## 嵌入 HTML 与危险链接原样补验\n\n[嵌入HTML配置与链接策略](word-embedded-content-20261006.md)：C054宿主关闭内嵌HTML的配置断链已修复；C053链接文字、危险协议阻断与HTTPS对照已确认属于现有有效防护。81项实际Worker/主线程/沙箱/正文/销毁检查通过，Word累计101项单元测试；上一批109项缩放及C037合并边框、VML回归再次通过。未覆盖的其他原件、完整跨页保真和目标宿主继续独立记录，不以本批通过宣称整包清零。\n';p.write_text(s)
+          subprocess.run(['git','add','--',str(dst),str(p)],check=True)
+          PY
+          git rm -- .github/word-embedded-review.patch .github/workflows/word-embedded-review.yml
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(word): honor embedded HTML opt-out without weakening the sandbox' -m 'AI-assisted implementation and regression coverage.'
+          git push origin HEAD:refs/heads/fix/compatibility-review-20260922
