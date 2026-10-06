@@ -190,13 +190,21 @@ try {
                   range.setEnd(node, i + 1);
                   const rect = range.getBoundingClientRect();
                   glyphs.push({
+                    character: node.data[i],
                     x: rect.x,
                     y: rect.y,
                     right: rect.right,
                     bottom: rect.bottom,
+                    width: rect.width,
+                    height: rect.height,
                   });
                 }
+              const style = getComputedStyle(element);
               return {
+                writingMode: style.writingMode,
+                inlineSize: style.inlineSize,
+                blockSize: style.blockSize,
+                fontFamily: style.fontFamily,
                 cell: {
                   x: cell.x,
                   y: cell.y,
@@ -208,6 +216,12 @@ try {
             },
           ),
         );
+        // Capture native pixels before assertions so a platform-specific failure
+        // retains the actual layout, rather than only a boolean assertion.
+        await page.screenshot({
+          path: join(output, `${name}-${kind}.png`),
+          fullPage: true,
+        });
         assert.ok(row.tables.length > 0);
         for (const { cell, glyphs } of row.tables) {
           assert.ok(glyphs.length > 1);
@@ -219,7 +233,7 @@ try {
             if (index)
               assert.ok(
                 glyph.y > glyphs[index - 1].y,
-                "Vertical glyphs formed horizontal columns",
+                `Vertical glyphs formed horizontal columns: ${JSON.stringify(row)}`,
               );
           }
         }
@@ -232,10 +246,6 @@ try {
         );
         assert.deepEqual(row.errors, []);
         assert.deepEqual(row.external, []);
-        await page.screenshot({
-          path: join(output, `${name}-${kind}.png`),
-          fullPage: true,
-        });
         await page.evaluate(() => window.handle.unmount());
         assert.equal(await page.locator("#host > *").count(), 0);
         row.passed = true;

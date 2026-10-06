@@ -1,0 +1,45 @@
+name: DOC font platform validation
+
+on:
+  push:
+    branches: [fix/issue-audit-20261006]
+    paths:
+      - packages/renderers/doc/**
+      - .github/workflows/doc-font-platform.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - packages/renderers/doc/**
+      - .github/workflows/doc-font-platform.yml
+
+permissions:
+  contents: read
+
+jobs:
+  font-table:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 11.0.9
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - run: pnpm --filter '@file-viewer/renderer-word...' build
+      - run: pnpm --filter @file-viewer/doc verify:font-table
+      - name: Retain native font and table evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: doc-font-platform-evidence
+          path: output/doc-font-table/
+          if-no-files-found: warn
+          retention-days: 7
