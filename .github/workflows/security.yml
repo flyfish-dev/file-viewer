@@ -3,7 +3,7 @@ name: Security
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, fix/issue-audit-20261006]
   schedule:
     - cron: '37 19 * * 1'
 

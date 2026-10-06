@@ -2,7 +2,7 @@ name: Public CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix/issue-audit-20261006]
   pull_request:
     branches: [main]
 
