@@ -1,0 +1,110 @@
+name: Word viewport and zoom verification
+on:
+  push:
+    branches: [fix/compatibility-review-20260922]
+    paths: [.github/workflows/word-viewport-review.yml, .github/word-viewport-review.patch]
+permissions:
+  contents: write
+concurrency:
+  group: word-viewport-review-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    if: github.repository == 'flyfish-dev/file-viewer' && github.ref == 'refs/heads/fix/compatibility-review-20260922'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+      - name: Apply reviewed source changes to the index
+        run: |
+          set -euo pipefail
+          echo '42e4733d9d555adcb4eae0b49c2e92f00d83081a3f200f6c3f33322748ac395b  .github/word-viewport-review.patch' | sha256sum -c -
+          git apply --check .github/word-viewport-review.patch
+          git apply --index .github/word-viewport-review.patch
+          git diff --cached --check
+      - name: Install actual frozen selected workspace dependencies
+        timeout-minutes: 7
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/viewport-tooling" --ignore-scripts --no-audit --no-fund --save-exact pnpm@11.0.9
+          node "$RUNNER_TEMP/viewport-tooling/node_modules/pnpm/bin/pnpm.cjs" --filter . --filter @file-viewer/renderer-word... --filter @file-viewer/pptx install --frozen-lockfile --ignore-scripts
+          git diff --exit-code -- pnpm-lock.yaml pnpm-workspace.yaml package.json patches/
+      - name: Build and type-check owning packages
+        run: |
+          set -euo pipefail
+          mkdir -p output/word-zoom-fit
+          npm --prefix packages/core run build
+          npm --prefix packages/renderers/doc run build
+          npm --prefix packages/renderers/word run build | tee output/word-zoom-fit/build-word.log
+      - name: Prepare Chromium and immutable originals
+        run: |
+          set -euo pipefail
+          node node_modules/playwright/cli.js install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+          python3 - <<'PY'
+          import pathlib,os,urllib.request,hashlib,zipfile,io
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'viewport-originals';root.mkdir()
+          def fetch(part):
+            with urllib.request.urlopen('https://github.com/user-attachments/files/'+part,timeout=60) as r:data=r.read(4*1024*1024+1)
+            assert len(data)<=4*1024*1024
+            return data
+          for name,digest,part in [('C053.docx','8d9708851337cdd1819b01768507cbbc71c9a0964a464add759bc36779c784eb','32318472/hyperlink-scheme.docx'),('C054.docx','69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877','32318480/altchunk.docx')]:
+            data=fetch(part);assert hashlib.sha256(data).hexdigest()==digest,name
+            (root/name).write_bytes(data)
+          data=fetch('31734252/default.zip');assert hashlib.sha256(data).hexdigest()=='e562163940282e3a51e5b0a506ef655e62aa51ef77a6e22666ff6c60d7a07703'
+          found=False
+          with zipfile.ZipFile(io.BytesIO(data)) as z:
+            for entry in z.infolist():
+              if entry.is_dir() or entry.file_size!=115200:continue
+              item=z.read(entry)
+              if hashlib.sha256(item).hexdigest()=='20d54c7246abc43147c6145abdef283cac113fdbf684387bfdc69b9df9887e94':
+                (root/'C069.doc').write_bytes(item);found=True
+          assert found
+          PY
+      - name: Reproduce the old narrow-container scale defect
+        run: |
+          set -euo pipefail
+          trap 'git checkout-index -f -- packages/renderers/word/src/wordDoc.ts packages/renderers/word/src/wordDocx.ts' EXIT
+          for file in packages/renderers/word/src/wordDoc.ts packages/renderers/word/src/wordDocx.ts; do git show "HEAD:$file" > "$file"; done
+          if WORD_ZOOM_OUTPUT=output/word-zoom-before WORD_ZOOM_CORPUS_DIR="$RUNNER_TEMP/viewport-originals" node packages/renderers/word/scripts/verify-zoom-fit.mjs > "$RUNNER_TEMP/viewport-baseline.log" 2>&1; then cat "$RUNNER_TEMP/viewport-baseline.log"; exit 1; fi
+          node - <<'JS'
+          const r=require('./output/word-zoom-before/report.json');
+          if(!r.completed || !r.checks.some(c=>c.status==='fail' && c.name.includes('narrow host reaches'))) throw Error('The target defect was not reproduced');
+          console.log({passed:r.passed,failed:r.failed,targetReproduced:true});
+          JS
+      - name: Verify fixed source, real Worker, originals and previous regressions
+        run: |
+          set -euo pipefail
+          WORD_ZOOM_CORPUS_DIR="$RUNNER_TEMP/viewport-originals" node packages/renderers/word/scripts/verify-zoom-fit.mjs
+          node scripts/verify-docx-engine-compatibility.mjs
+          node scripts/verify-container-compatibility.mjs
+          for name in table-spec github-34 github-87 github-171 github-192 github-236; do node "packages/renderers/doc/scripts/verify-$name.mjs"; done
+          git diff --check
+      - name: Commit tested source and neutral evidence
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/fix/compatibility-review-20260922
+          python3 - <<'PY'
+          import os,pathlib,json,hashlib,shutil,subprocess
+          dst=pathlib.Path('docs/regressions/evidence/word-zoom-fit-20261006');dst.mkdir(parents=True,exist_ok=True)
+          reports=[('word-zoom-fit',109),('docx-engine-compatibility',11),('container-compatibility',4)]
+          counts={}
+          for name,count in reports:
+            src=pathlib.Path('output')/name/'report.json';r=json.loads(src.read_text());assert r['passed']==count and not r.get('failed',0),name
+            shutil.copyfile(src,dst/(name+'.json'));counts[name]=count
+          for source,name in [('output/word-zoom-fit/generated.png','generated.png'),('output/word-zoom-fit/build-word.log','build-word.log'),('output/word-zoom-before/report.json','baseline.json')]:shutil.copyfile(source,dst/name)
+          sources=['packages/renderers/word/src/wordDoc.ts','packages/renderers/word/src/wordDocx.ts','packages/renderers/word/src/wordViewport.ts','packages/renderers/word/test/word-viewport.test.mjs','packages/renderers/word/scripts/verify-zoom-fit.mjs','docs/regressions/word-zoom-fit-20261006.md']
+          record={'run':os.environ['GITHUB_RUN_ID'],'checkedCommit':os.environ['GITHUB_SHA'],'functionalBase':'751191bda12923d4f548570436f38bf3023aacdb','checks':counts,'unitTestsAdded':11,'wordUnitTests':97,'dpr':[1,2],'originals':['C053','C054','C069'],'actualWorkerParsed':True,'builds':['core','doc','word'],'install':'actual pnpm 11.0.9 frozen selected workspace install','dependenciesOrEngineChanged':False,'fullCorpusAccepted':False,'sourceSha256':{p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in sources},'evidenceSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in dst.iterdir() if p.is_file()}}
+          (dst/'verification.json').write_text(json.dumps(record,indent=2)+'\n')
+          p=pathlib.Path('docs/regressions/corpus-progress-20260922.md');s=p.read_text();s+='\n## Word 窄容器缩放与适配\n\n[绝对缩放与可测视口](word-zoom-fit-20261006.md)：修复窄容器达不到300%、内部小数比例二次取整、流式适高使用固定A4及无效视口虚报成功的问题。109项实际浏览器检查包含生成式和C053/C054/C069原样，97项Word单元测试通过；C053/C054本组只验证正文与缩放，安全专项不由本组结论外推。未覆盖的跨页布局及目标宿主继续保留状态。\n';p.write_text(s)
+          subprocess.run(['git','add','--',str(dst),str(p)],check=True)
+          PY
+          git rm -- .github/word-viewport-review.patch .github/workflows/word-viewport-review.yml .github/workflows/remaining-input-audit-20261006.yml
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(word): preserve absolute zoom precision and measurable fit geometry'
+          git push origin HEAD:refs/heads/fix/compatibility-review-20260922
