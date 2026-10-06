@@ -34,12 +34,28 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium webkit
       - run: pnpm --filter '@file-viewer/renderer-word...' build
+      - name: Retain geometry and actual fonts before CJK font installation
+        continue-on-error: true
+        run: |
+          set +e
+          pnpm --filter @file-viewer/doc verify:font-table
+          result=$?
+          mkdir -p output/doc-font-baseline
+          cp -R output/doc-font-table/. output/doc-font-baseline/
+          exit "$result"
+      - name: Install fonts required by native CJK layout
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends fonts-noto-cjk
+          fc-match 'Noto Serif CJK SC'
       - run: pnpm --filter @file-viewer/doc verify:font-table
       - name: Retain native font and table evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: doc-font-platform-evidence
-          path: output/doc-font-table/
+          path: |
+            output/doc-font-table/
+            output/doc-font-baseline/
           if-no-files-found: warn
           retention-days: 7

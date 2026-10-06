@@ -216,6 +216,26 @@ try {
             },
           ),
         );
+        if (name === "chromium") {
+          // CSS families describe the fallback list; DevTools reports which
+          // installed font actually supplied each glyph on this platform.
+          const session = await page.context().newCDPSession(page);
+          await session.send("DOM.enable");
+          await session.send("CSS.enable");
+          const { root } = await session.send("DOM.getDocument");
+          const { nodeIds } = await session.send("DOM.querySelectorAll", {
+            nodeId: root.nodeId,
+            selector: ".msdoc-cell span",
+          });
+          const texts = await page.locator(".msdoc-cell span").allTextContents();
+          row.platformFonts = await Promise.all(
+            nodeIds.map(async (nodeId, index) => ({
+              text: texts[index],
+              ...(await session.send("CSS.getPlatformFontsForNode", { nodeId })),
+            })),
+          );
+          await session.detach();
+        }
         // Capture native pixels before assertions so a platform-specific failure
         // retains the actual layout, rather than only a boolean assertion.
         await page.screenshot({
@@ -227,13 +247,21 @@ try {
           assert.ok(glyphs.length > 1);
           for (const [index, glyph] of glyphs.entries()) {
             assert.ok(
+              glyph.width > 0 && glyph.height > 0,
+              "Vertical glyph has no advance or visible bounds",
+            );
+            assert.ok(
               glyph.x >= cell.x - 1 && glyph.right <= cell.right + 1,
               "Vertical glyph escaped its cell",
+            );
+            assert.ok(
+              glyph.y >= cell.y - 1 && glyph.bottom <= cell.bottom + 1,
+              "Vertical glyph escaped its row",
             );
             if (index)
               assert.ok(
                 glyph.y > glyphs[index - 1].y,
-                `Vertical glyphs formed horizontal columns: ${JSON.stringify(row)}`,
+                `Vertical glyphs overlap or have no vertical advance: ${JSON.stringify(row)}`,
               );
           }
         }

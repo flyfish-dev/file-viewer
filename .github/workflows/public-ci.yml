@@ -108,6 +108,13 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec playwright install --with-deps chromium webkit
 
+      - name: Install fonts required by native CJK layout
+        if: steps.impact.outputs.runtime != 'false'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends fonts-noto-cjk
+          fc-match 'Noto Serif CJK SC'
+
       - name: Run the issue regression gates
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm test
