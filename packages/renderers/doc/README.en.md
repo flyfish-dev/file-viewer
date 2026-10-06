@@ -31,7 +31,17 @@ Font output preserves the authored name and alternate name. Missing fonts use th
 document's font-family/PANOSE metadata and compatible installed CJK substitutes;
 no fonts are downloaded. Different installed fonts can still change exact glyph
 shapes and line wrapping. Vertical table text retains intrinsic logical sizes in
-Chromium and Safari.
+Chromium and Safari when the selected font has working vertical metrics.
+
+The Linux browser regression found zero vertical advances and overlapping Han
+glyphs with WenQuanYi Zen Hei. Installing `fonts-noto-cjk` in the Ubuntu environment
+running the browser selected the existing `Noto Serif CJK SC` fallback and passed
+the strict Chromium/WebKit bounds and ordering checks. A browser host that still
+selects the affected WenQuanYi font can reproduce the overlap. Provide a compatible
+installed font, or register your own same-origin `@font-face`/`FontFace` named
+`Noto Serif CJK SC` and await its load before mounting the document. Installing a
+font on the web server alone does not install it in visitors' browsers. The DOC
+renderer has no font gateway and does not fetch or bundle replacement fonts.
 
 ## Scope
 
