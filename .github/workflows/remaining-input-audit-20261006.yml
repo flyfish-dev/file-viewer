@@ -1,0 +1,79 @@
+name: Remaining input audit
+on:
+  push:
+    branches: [fix/compatibility-review-20260922]
+    paths: [.github/workflows/remaining-input-audit-20261006.yml]
+permissions:
+  contents: read
+jobs:
+  inputs:
+    if: github.repository == 'flyfish-dev/file-viewer'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Inspect bounded public inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import os,pathlib,subprocess,json,urllib.request,hashlib,re,concurrent.futures,zipfile,io
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'remaining-inputs';root.mkdir()
+          wanted={
+            '66f7af3b90ce9bd8e9e1d83f554c9f304afec453d5867e20dacfb91f5760d8c2':'C014.zip',
+            'cec52acdecffffb3cad972af9d967aaf88842c2fd7a368de21e1511f373706ee':'C017.xlsx',
+            '14f70693ec3b03fb38b48ddf2724ec6339aa3c6621d579ab27a018ba874f6e33':'C019.zip',
+            '119e095a0580dd7cdf3cc11c5305082d6ee51a33e9849a1eb8b3c36c55c1af71':'C024.zip',
+            'f274299e61ab54562635b7748365ee4fce27a6900621165d32cbdb4b359ddbfe':'C025.zip',
+            'd852b32786dd8f7b108b545fbe82767e8f300ffb5fcb320adc63b6b37b0cc425':'C027.txt',
+            '5656f3782534b6d4d9ff4066ca86124d6446db251c36a5c0c6e3b6bbd9839285':'C029.zip',
+            'e562163940282e3a51e5b0a506ef655e62aa51ef77a6e22666ff6c60d7a07703':'C039.zip',
+            'b29b311d3591a57232f606cad9858bd5b9d1434ecdd376d64f10761904a229a1':'C040.zip',
+            '39f6bad48c921ebc0761c274547a0aa135eaac4726fa12b72923c51be66bdc95':'C043.zip',
+            '06168d4e046031bd46ce74af93dd0a332afc25524eeb923d1b2ba2a117c8b780':'C051.zip',
+            '8d9708851337cdd1819b01768507cbbc71c9a0964a464add759bc36779c784eb':'C053.docx',
+            '69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877':'C054.docx',
+            '0e371f6dbcf8d7f2d960db807d7ba8c275b91c38ab5f594571c9ad519b88f243':'C059.txt',
+            'd5680f84b25a33c23e7dbebc1e8ec180c20cb6e09ced294a69b46da6c82d7554':'C060.txt'
+          }
+          records=[]
+          for endpoint in ['issues?state=all&per_page=100','issues/comments?per_page=100']:
+            pages=json.loads(subprocess.check_output(['gh','api','--paginate','--slurp','repos/xushanpei/open-file-viewer/'+endpoint],text=True))
+            for page in pages:
+              for item in page:
+                if item.get('created_at','')>'2026-09-23':continue
+                records.append({'number':item.get('number'),'issue_url':item.get('issue_url',item.get('url')),'title':item.get('title'),'body':item.get('body') or ''})
+          (root/'input-records.json').write_text(json.dumps(records,ensure_ascii=False,indent=2))
+          urls=set()
+          for rec in records:
+            urls.update(re.findall(r'https://github\.com/user-attachments/files/[^\s)<>"\]]+',rec['body']))
+          urls=sorted(urls);assert len(urls)<=180
+          def fetch(url):
+            try:
+              with urllib.request.urlopen(url,timeout=40) as r:data=r.read(16*1024*1024+1)
+              if len(data)>16*1024*1024:return {'error':'size limit'}
+              digest=hashlib.sha256(data).hexdigest();matches=[]
+              if digest in wanted:(root/wanted[digest]).write_bytes(data);matches.append(wanted[digest])
+              if zipfile.is_zipfile(io.BytesIO(data)):
+                with zipfile.ZipFile(io.BytesIO(data)) as z:
+                  members=z.infolist()
+                  if len(members)<=300 and sum(i.file_size for i in members)<=32*1024*1024:
+                    for item in members:
+                      if item.is_dir() or item.file_size>2*1024*1024:continue
+                      part=z.read(item);h=hashlib.sha256(part).hexdigest()
+                      if h in wanted:(root/wanted[h]).write_bytes(part);matches.append(wanted[h])
+              return {'url':url,'bytes':len(data),'sha256':digest,'matches':matches}
+            except Exception as exc:return {'url':url,'error':type(exc).__name__}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:report=list(pool.map(fetch,urls))
+          (root/'retrieval.json').write_text(json.dumps(report,indent=2))
+          found=sorted(p.name for p in root.iterdir() if p.suffix!='.json')
+          print('Matched neutral remaining inputs:',','.join(found))
+          assert (root/'C017.xlsx').is_file()
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: remaining-input-audit-20261006
+          path: ${{ runner.temp }}/remaining-inputs/
+          retention-days: 1
