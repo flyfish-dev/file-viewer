@@ -41,6 +41,11 @@ VML text coordinates, merged-cell borders, page backgrounds and revision styles.
 This package handles container fitting, interaction and output integration;
 it does not rewrite generated document nodes to repair rendering or export.
 
+Word 2003 XML detection checks the document root and its complete namespace;
+HTML comments, embedded examples and namespace substrings do not change the
+container type. DOCX Workers without bundled JSZip use same-origin HTTP(S) or
+Blob library URLs and reject cross-origin URLs or URL credentials.
+
 ## Text Revisions
 
 `options.docx.reviewMode` applies to DOC and DOCX: `all` (default) shows actual

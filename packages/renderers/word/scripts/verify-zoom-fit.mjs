@@ -1,5 +1,6 @@
 /** Browser acceptance for actual Word zoom providers, not copies of their math. */
 import assert from 'node:assert/strict'
+import { establishWordBrowserOrigin } from '../test/browser-origin.mjs'
 import path from 'node:path'
 import { createRequire } from 'node:module'
 import { createHash } from 'node:crypto'
@@ -63,6 +64,7 @@ let completed = false
 try {
   for (const dpr of [1, 2]) for (const sample of samples) {
     const page = await browser.newPage({ viewport: { width: 1150, height: 850 }, deviceScaleFactor: dpr })
+    await establishWordBrowserOrigin(page)
     page.on('pageerror', error => errors.push(error.message))
     await page.route(/^https?:/, route => { requests.push(route.request().url()); return route.abort() })
     const label = `${sample.id} DPR ${dpr}`

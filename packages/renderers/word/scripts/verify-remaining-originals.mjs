@@ -1,5 +1,6 @@
 /** Read-only, hash-pinned original acceptance. No source text, images or URLs enter reports. */
 import assert from 'node:assert/strict';
+import {establishWordBrowserOrigin} from '../test/browser-origin.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -103,6 +104,7 @@ try {
     const expected = await reference(bytes);
     for (const dpr of [1, 2]) {
       const page = await browser.newPage({ viewport: { width: 1200, height: 1000 }, deviceScaleFactor: dpr });
+      await establishWordBrowserOrigin(page);
       page.on('pageerror', e => errors.push(e.message));
       await page.route(/^https?:/, route => { network.push(route.request().url()); return route.abort(); });
       try {

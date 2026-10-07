@@ -1,5 +1,6 @@
 /** Actual Word renderer checks. Original documents remain outside Git and are hash-validated. */
 import assert from 'node:assert/strict'
+import { establishWordBrowserOrigin } from '../test/browser-origin.mjs'
 import path from 'node:path'
 import { createRequire } from 'node:module'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
@@ -69,7 +70,7 @@ try{
  const generated=await makeFixture();await writeFile(path.join(output,'generated.docx'),generated)
  const entries=[['generated',generated]];if(original){const data=await readFile(original);assert.equal(sha(data),digest,'C037 original identity');entries.push(['C037',data])}
  for(const dpr of [1,2])for(const [id,data]of entries){
-  const page=await browser.newPage({viewport:{width:1150,height:1100},deviceScaleFactor:dpr});page.on('pageerror',e=>errors.push(e.message));await page.route(/^https?:/,route=>{requests.push(route.request().url());return route.abort()})
+  const page=await browser.newPage({viewport:{width:1150,height:1100},deviceScaleFactor:dpr});await establishWordBrowserOrigin(page);page.on('pageerror',e=>errors.push(e.message));await page.route(/^https?:/,route=>{requests.push(route.request().url());return route.abort()})
   try{
    await page.setContent('<!doctype html><style>body{margin:0}</style><div id="host" style="width:1050px;height:1000px"></div>');await page.addScriptTag({content:bundle.outputFiles[0].text})
    const expected=await expectations(page,data)

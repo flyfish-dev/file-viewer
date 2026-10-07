@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {establishWordBrowserOrigin} from '../test/browser-origin.mjs';
 import { createRequire } from 'node:module';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -40,6 +41,7 @@ const browser=await chromium.launch({headless:true,executablePath:process.env.PL
 async function check(name,fn){await fn();checks.push({name,status:'pass'});console.log('PASS '+name);}
 async function pageFor(name) {
  const page=await browser.newPage({viewport:{width:1100,height:1000}});
+ await establishWordBrowserOrigin(page);
  page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',r=>{external.push(r.request().url());return r.abort();});
  await page.setContent('<style>html,body{margin:0}#host{width:1000px;height:950px;overflow:auto}</style><div id="host"></div>');
  await page.addScriptTag({content:bundles[name]});return page;

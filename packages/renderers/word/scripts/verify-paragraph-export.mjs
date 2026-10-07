@@ -1,5 +1,6 @@
 /** Generated real-Worker regression for invalid block-in-paragraph HTML serialization. */
 import assert from 'node:assert/strict';
+import {establishWordBrowserOrigin} from '../test/browser-origin.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -44,6 +45,7 @@ const browser = await chromium.launch({ headless: true, executablePath: process.
 try {
   for (const dpr of [1, 2]) for (const paged of [false, true]) {
     const page = await browser.newPage({ viewport: { width: 1100, height: 920 }, deviceScaleFactor: dpr });
+    await establishWordBrowserOrigin(page);
     page.on('pageerror', e => errors.push(e.message));
     await page.route(/^https?:/, r => { externalRequests.push(r.request().url()); return r.abort(); });
     try {

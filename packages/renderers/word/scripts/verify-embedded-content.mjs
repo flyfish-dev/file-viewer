@@ -1,5 +1,6 @@
 /** Explicit host opt-out and sandbox/link policy checks on the real renderer. */
 import assert from 'node:assert/strict'
+import { establishWordBrowserOrigin } from '../test/browser-origin.mjs'
 import path from 'node:path'
 import { createRequire } from 'node:module'
 import { createHash } from 'node:crypto'
@@ -57,6 +58,7 @@ try {
     const variants = sample.kind === 'chunk' ? ['default', 'enabled', 'disabled'] : ['block', 'allow']
     for (const variant of variants) {
       const page = await browser.newPage({ viewport: { width: 1050, height: 800 } })
+      await establishWordBrowserOrigin(page)
       const label = `${sample.id} ${useWorker ? 'Worker' : 'main-thread'} ${variant}`
       page.on('pageerror', error => errors.push(error.message))
       await page.route(/^https?:/, route => { requests.push(route.request().url()); return route.abort() })

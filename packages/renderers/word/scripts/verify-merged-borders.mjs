@@ -1,5 +1,6 @@
 /** Real parser/renderer/Worker checks with an optional read-only original. */
 import assert from 'node:assert/strict'
+import {establishWordBrowserOrigin} from '../test/browser-origin.mjs'
 import path from 'node:path'
 import {createRequire} from 'node:module'
 import {readFile,writeFile,mkdir} from 'node:fs/promises'
@@ -23,7 +24,7 @@ const check=async(name,f)=>{try{await f();checks.push({name,status:'pass'});cons
 const entries=[['generated',fixture]];if(process.env.WORD_MERGE_ORIGINAL){const b=await readFile(process.env.WORD_MERGE_ORIGINAL);assert.equal(sha(b),'d5a60516f06b7f116c629fdbc834b81ae8a0d7ac70e64006483d2a4c44ff89ab');entries.push(['C037',b])}
 const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined,headless:true})
 try{for(const dpr of [1,2])for(const [id,bytes]of entries){
- const page=await browser.newPage({viewport:{width:1150,height:1050},deviceScaleFactor:dpr});page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(e.message));await page.route(/^https?:/,r=>{requests.push(r.request().url());return r.abort()});
+ const page=await browser.newPage({viewport:{width:1150,height:1050},deviceScaleFactor:dpr});await establishWordBrowserOrigin(page);page.setDefaultTimeout(10000);page.on('pageerror',e=>errors.push(e.message));await page.route(/^https?:/,r=>{requests.push(r.request().url());return r.abort()});
  try{
   await page.setContent('<!doctype html><style>body{margin:0}</style><div id="host" style="width:1050px;height:1000px"></div>');await page.addScriptTag({content:bundle.outputFiles[0].text});
   const zip=await JSZip.loadAsync(bytes),xml=await zip.file('word/document.xml').async('string');
