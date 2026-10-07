@@ -13,14 +13,14 @@
     "@file-viewer/renderer-cad": "3.1.2",
     "file-viewer-copy-assets": "3.1.2",
     "element-plus": "2.14.5",
-    "vue": "3.5.21",
+    "vue": "3.5.43",
     "react": "19.1.1",
     "react-dom": "19.1.1"
   },
   "devDependencies": {
     "@vue/cli-service": "5.0.8",
     "@vue/cli-plugin-typescript": "5.0.8",
-    "@vue/compiler-sfc": "3.5.21",
+    "@vue/compiler-sfc": "3.5.43",
     "typescript": "5.9.3",
     "ts-loader": "9.5.4"
   }

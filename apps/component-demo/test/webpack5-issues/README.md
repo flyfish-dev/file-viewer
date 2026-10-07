@@ -30,3 +30,12 @@ checks the installed package boundary, not a Demo-only button or source alias.
 DOCX progressively inserts visible elements before its layout is complete. The
 fixture records both load lifecycle events so an early SVG does not masquerade
 as a finished document. The original coordinate tolerances remain unchanged.
+
+## Consumer dependency policy
+
+Vue and `@vue/compiler-sfc` are aligned at 3.5.43, a patch update that includes
+the server-renderer security fix. The Vue CLI 5 and React fixture versions are
+preserved. This fixture does not inherit the repository's pnpm overrides and
+does not override Mermaid or KaTeX. Its legacy development-tooling advisories
+and the transitive KaTeX advisory must be reported separately; a passing build
+or browser regression is not a clean security audit.

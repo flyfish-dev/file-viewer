@@ -6,6 +6,18 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
+// Only the consumer fixture owns application-level dependency policy. Workspace
+// pnpm overrides must not leak into this isolated npm consumer.
+export function preparePackedConsumerManifest(fixtureManifest, version) {
+  const manifest = structuredClone(fixtureManifest)
+  for (const name of Object.keys(manifest.dependencies)) {
+    if (name.startsWith('@file-viewer/') || name === 'file-viewer-copy-assets')
+      manifest.dependencies[name] = version
+  }
+  manifest.overrides ??= {}
+  return manifest
+}
+
 export async function buildPackedIssueConsumer(
   packageDirectory,
   {
@@ -34,15 +46,11 @@ export async function buildPackedIssueConsumer(
   await mkdir(project, { recursive: true })
   assert.ok(['webpack5-issues', 'angular-pptx'].includes(fixture), 'Unknown consumer fixture')
   await cp(resolve(root, 'apps/component-demo/test', fixture), project, { recursive: true })
-  const manifest = JSON.parse(await readFile(resolve(project, 'package.json'), 'utf8'))
+  const fixtureManifest = JSON.parse(await readFile(resolve(project, 'package.json'), 'utf8'))
   const version =
     process.env.PACKED_ISSUE_BASE_VERSION ||
     JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8')).version
-  for (const name of Object.keys(manifest.dependencies)) {
-    if (name.startsWith('@file-viewer/') || name === 'file-viewer-copy-assets')
-      manifest.dependencies[name] = version
-  }
-  manifest.overrides = {}
+  const manifest = preparePackedConsumerManifest(fixtureManifest, version)
   const candidates = []
   for (const filename of (await readdir(packages)).filter((name) => name.endsWith('.tgz')).sort()) {
     const path = resolve(packages, filename)
