@@ -86,11 +86,11 @@
     "three": "^0.186.0"
   },
   "devDependencies": {
-    "@types/three": "^0.185.4",
+    "@types/three": "^0.186.0",
     "typescript": "^6.0.3",
     "@thatopen/components": "3.4.8",
     "@thatopen/fragments": "3.4.7",
-    "web-ifc": "0.0.77",
+    "web-ifc": "0.0.78",
     "esbuild": "^0.28.2",
     "@giro3d/giro3d": "2.0.4",
     "jszip": "3.10.2"
@@ -103,7 +103,7 @@
   "peerDependencies": {
     "@thatopen/components": "3.4.8",
     "@thatopen/fragments": "3.4.7",
-    "web-ifc": "0.0.77",
+    "web-ifc": "0.0.78",
     "esbuild": "^0.28.2",
     "@giro3d/giro3d": "2.0.4",
     "jszip": "3.10.2"
