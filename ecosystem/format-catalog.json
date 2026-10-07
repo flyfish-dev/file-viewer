@@ -469,11 +469,11 @@
       "category": "code",
       "packageName": "@file-viewer/renderer-text",
       "preset": ["lite", "standard", "all"],
-      "extensions": ["txt", "json", "js", "mjs", "cjs", "css", "java", "py", "html", "htm", "jsx", "ts", "tsx", "xml", "log", "vue", "yaml", "yml", "ini", "sh", "bash", "sql", "go", "rs", "php", "c", "cpp", "cc", "h", "hpp", "cs", "diff", "patch", "bundle", "bdl", "jsonc", "json5", "ipynb", "toml", "proto", "hcl", "tex", "gv", "http", "react", "rb", "swift", "kt"],
+      "extensions": ["txt", "lrc", "json", "js", "mjs", "cjs", "css", "java", "py", "html", "htm", "jsx", "ts", "tsx", "xml", "log", "vue", "yaml", "yml", "ini", "sh", "bash", "sql", "go", "rs", "php", "c", "cpp", "cc", "h", "hpp", "cs", "diff", "patch", "bundle", "bdl", "jsonc", "json5", "ipynb", "toml", "proto", "hcl", "tex", "gv", "http", "react", "rb", "swift", "kt"],
       "supportLevel": "structured",
       "status": "stable",
-      "containerVersions": ["Plain text", "source code", "Git bundle"],
-      "knownLimits": [],
+      "containerVersions": ["Plain text", "source code", "Git bundle", "LRC lyrics"],
+      "knownLimits": ["LRC is a static annotated/lyrics/source preview, not synchronized audio playback"],
       "capabilities": { "download": true, "print": true, "exportHtml": true, "zoom": false, "search": true }
     },
     {

@@ -1,0 +1,256 @@
+{
+  "completed": true,
+  "passed": 27,
+  "failed": 0,
+  "screenshots": true,
+  "imageDecodeAwaited": true,
+  "originalSupplied": true,
+  "checks": [
+    {
+      "name": "DPR 1 zoom 1: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 1 zoom 0.5: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 1 zoom 2: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 1 zoom 0.88: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.01555548833806597
+    },
+    {
+      "name": "DPR 1 zoom 1: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 1: repeated layout and unchanged input preserve tab widths",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: unmount clears the viewer",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 zoom 1: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 2 zoom 0.5: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 2 zoom 2: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 2 zoom 0.88: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.01555548833806597
+    },
+    {
+      "name": "DPR 2 zoom 1: generated left/right/center, multiple, break, frame and cell stops",
+      "status": "pass",
+      "tabs": 9,
+      "maxError": 0.015625
+    },
+    {
+      "name": "DPR 2: repeated layout and unchanged input preserve tab widths",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: unmount clears the viewer",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 1: original characters, all images and framed-paragraph structure preserved",
+      "status": "pass",
+      "characters": 871,
+      "textSha256": "cbf51d1c19ffb30f769c501642e7b793c703c2da015452f3a8100da7fd878353",
+      "images": 5
+    },
+    {
+      "name": "C030 DPR 1 zoom 1: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 1 zoom 0.5: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 1 zoom 2: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 1 zoom 0.88: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 1 zoom 1: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 2: original characters, all images and framed-paragraph structure preserved",
+      "status": "pass",
+      "characters": 871,
+      "textSha256": "cbf51d1c19ffb30f769c501642e7b793c703c2da015452f3a8100da7fd878353",
+      "images": 5
+    },
+    {
+      "name": "C030 DPR 2 zoom 1: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 2 zoom 0.5: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 2 zoom 2: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 2 zoom 0.88: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "C030 DPR 2 zoom 1: suffix ends at the authored right stop",
+      "status": "pass"
+    },
+    {
+      "name": "No external network requests or uncaught browser errors",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C030",
+      "dpr": 1,
+      "scale": 1,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 1,
+      "scale": 0.5,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 1,
+      "scale": 2,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 1,
+      "scale": 0.88,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 1,
+      "scale": 1,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 2,
+      "scale": 1,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 2,
+      "scale": 0.5,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 2,
+      "scale": 2,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 2,
+      "scale": 0.88,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    },
+    {
+      "id": "C030",
+      "dpr": 2,
+      "scale": 1,
+      "sha256": "4b2e9b2519af88f32cec9c4e0622ca7979f5c768c569819d48e26355001cb467",
+      "align": "right",
+      "pos": 566.6666666666666,
+      "gap": 288.557,
+      "distance": 566.656,
+      "error": -0.010666666666679703
+    }
+  ]
+}

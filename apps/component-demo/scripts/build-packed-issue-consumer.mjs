@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { packCompatibilityEngines } from './pack-compatibility-engines.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 export async function buildPackedIssueConsumer(
@@ -44,8 +45,18 @@ export async function buildPackedIssueConsumer(
   }
   manifest.overrides = {}
   const candidates = []
-  for (const filename of (await readdir(packages)).filter((name) => name.endsWith('.tgz')).sort()) {
-    const path = resolve(packages, filename)
+  // Independently versioned engines are built in their owning repositories.
+  // A release rehearsal can supply their verified tarballs without relying on
+  // workspace-only patchedDependencies in the physical npm consumer.
+  const packageDirectories = [packages]
+  if (process.env.PACKED_ISSUE_ENGINE_DIR)
+    packageDirectories.push(resolve(process.env.PACKED_ISSUE_ENGINE_DIR))
+  else packageDirectories.push(await packCompatibilityEngines(root, project))
+  const tarballs = []
+  for (const directory of packageDirectories)
+    for (const filename of (await readdir(directory)).filter((name) => name.endsWith('.tgz')).sort())
+      tarballs.push({ filename, path: resolve(directory, filename) })
+  for (const { filename, path } of tarballs) {
     const metadata = JSON.parse(
       execFileSync('tar', ['-xOf', path, 'package/package.json'], { encoding: 'utf8' })
     )

@@ -442,7 +442,7 @@
     },
     {
       "name": "baseline-browser-mapping",
-      "version": "2.11.25",
+      "version": "2.11.27",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,
@@ -456,7 +456,7 @@
     },
     {
       "name": "brace-expansion",
-      "version": "1.1.18",
+      "version": "1.1.21",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -484,7 +484,7 @@
     },
     {
       "name": "caniuse-lite",
-      "version": "1.0.30001810",
+      "version": "1.0.30001814",
       "license": "CC-BY-4.0",
       "direct": false,
       "optional": false,
@@ -680,7 +680,7 @@
     },
     {
       "name": "dompurify",
-      "version": "3.4.15",
+      "version": "3.4.16",
       "license": "Apache-2.0",
       "declaredLicense": "(MPL-2.0 OR Apache-2.0)",
       "direct": false,
@@ -696,7 +696,7 @@
     },
     {
       "name": "electron-to-chromium",
-      "version": "1.5.433",
+      "version": "1.5.445",
       "license": "ISC",
       "direct": false,
       "optional": false,
@@ -733,6 +733,20 @@
       "repository": "https://github.com/lukeed/escalade",
       "licenseFiles": [
         "license"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "events",
+      "version": "3.3.0",
+      "license": "MIT",
+      "direct": true,
+      "optional": false,
+      "firstParty": false,
+      "author": "Irakli Gozalishvili <rfobic@gmail.com> (http://jeditoolkit.com)",
+      "repository": "https://github.com/Gozala/events",
+      "licenseFiles": [
+        "LICENSE"
       ],
       "noticeFiles": []
     },
@@ -1060,7 +1074,7 @@
     },
     {
       "name": "node-releases",
-      "version": "2.0.56",
+      "version": "2.0.57",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -1254,7 +1268,7 @@
     },
     {
       "name": "source-map-js",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "license": "BSD-3-Clause",
       "direct": false,
       "optional": false,

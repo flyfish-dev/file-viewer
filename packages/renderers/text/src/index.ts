@@ -42,6 +42,10 @@ export const renderFileViewerCode: FileRenderHandler<FileViewerRenderedInstance,
   type,
   context?: FileRenderContext
 ) => {
+  if (type?.trim().toLowerCase() === 'lrc') {
+    const { default: renderLrc } = await import('./lrc.js');
+    return renderLrc(buffer, target, type, context);
+  }
   if (/^(?:html|htm)$/i.test(type || '')) {
     const { default: renderHtml } = await import('./html.js');
     return renderHtml(buffer, target, type, context);

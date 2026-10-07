@@ -49,6 +49,19 @@ final class PDFNavigationTests: XCTestCase {
         XCTAssertFalse(previous.isEnabled)
         capture(safari, "page-1-after-return")
         verifyCompactToolbar(safari, next: next)
+        verifyDocumentPinchZoom(safari)
+    }
+
+    private func verifyDocumentPinchZoom(_ safari: XCUIApplication) {
+        let zoom = safari.buttons.matching(NSPredicate(format: "label MATCHES %@", "[0-9]+(?:\\.[0-9]+)?%" )).firstMatch
+        XCTAssertTrue(zoom.waitForExistence(timeout: 10))
+        let before = zoom.label
+        safari.webViews.firstMatch.pinch(withScale: 1.5, velocity: 1.0)
+        let changed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            zoom.exists && zoom.label != before
+        }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [changed], timeout: 10), .completed, "Two real fingers must change document zoom")
+        capture(safari, "document-pinch-zoom")
     }
 
     private func verifyCompactToolbar(_ safari: XCUIApplication, next: XCUIElement) {

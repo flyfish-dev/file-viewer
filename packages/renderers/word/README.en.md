@@ -36,6 +36,11 @@ Use `@file-viewer/preset-all` when you want the same complete matrix as the offi
 - With the RTF capability installed, RTF uses `rtf.js`; without it the viewer shows the exact CLI enablement command. ODT / ODP read `content.xml` from OpenDocument packages for safe structure previews.
 - The renderer reuses core search, zoom, print, export, lifecycle, and operation APIs.
 
+The `docxjs` engine owns DOCX parsing, pagination, tab stops, drawing anchors,
+VML text coordinates, merged-cell borders, page backgrounds and revision styles.
+This package handles container fitting, interaction and output integration;
+it does not rewrite generated document nodes to repair rendering or export.
+
 ## Text Revisions
 
 `options.docx.reviewMode` applies to DOC and DOCX: `all` (default) shows actual
@@ -69,6 +74,19 @@ DOC, DOCX, and RTF external links and HTTP(S) image relationships are blocked by
 
 The standard renderer sanitizes the DOM produced by `rtf.js` before mounting it. Custom RTF integrations that consume HTML directly should first call `sanitizeFileViewerRtfHtml(document, markup, options)`; it uses the same link policy and DOMPurify boundary as the standard mount path. A strict Trusted Types CSP should allow the `file-viewer-document-sanitizer` policy name.
 
+## Embedded HTML
+
+Set `options.docx.renderAltChunks: false` to omit embedded HTML parts in DOCX. Normal document text and embedded images remain available. Omitting the option or setting it to `true` preserves the engine sandbox; it does not enable scripts or same-origin access, or relax external link/resource policies. The option applies to both Worker and main-thread parsing, not to binary DOC.
+
 ## Migration
 
 `@file-viewer/core` no longer depends on `@file-viewer/docx`, `@file-viewer/doc`, `rtf.js`, `linkedom`, or `@xmldom/xmldom` directly. Install and pass this renderer for full Word preview, or use `@file-viewer/preset-all`.
+
+## Print layout
+
+Fixed-page DOCX output preserves each page's authored paper size, including
+landscape sections and mixed A4/Letter documents. Preview zoom is not applied to
+physical print dimensions. The browser receives named CSS page rules and zero
+additional outer margins; the document's own margins remain intact. Flow mode
+continues to use browser pagination rather than fixed-page clipping. Printer
+drivers and print-dialog overrides can still change the final paper selection.

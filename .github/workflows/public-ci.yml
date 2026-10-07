@@ -227,6 +227,14 @@ jobs:
         env:
           FILE_VIEWER_RTF_BROWSERS: chromium
 
+      - name: Verify Markdown fenced highlighting in Chromium and WebKit
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm verify:markdown-highlighting
+
+      - name: Verify standalone DICOM Node inspection
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm --filter @file-viewer/renderer-dicom verify:inspection
+
       - name: Browser smoke, including CHM Worker/WASM
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:browser-smoke

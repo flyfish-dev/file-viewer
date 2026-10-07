@@ -11,7 +11,7 @@ description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, c
 <div class="doc-kicker">Real Samples, Real Renderers</div>
 
 <p class="doc-lead">
-  The official demo is the complete capability experience: it verifies the 274-extension, 47-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading. Every public matrix entry maps to a visible representative fixture and a real click-regression pipeline; the 224 stable and 50 experimental mappings stay visibly distinguished.
+  The official demo is the complete capability experience: it verifies the 275-extension, 47-pipeline registry against real renderer behavior, toolbar operations, mobile layout, archive nesting, comparison, and offline asset loading. Every public matrix entry maps to a visible representative fixture and a real click-regression pipeline; the 225 stable and 50 experimental mappings stay visibly distinguished.
 </p>
 
 <div class="doc-shot">

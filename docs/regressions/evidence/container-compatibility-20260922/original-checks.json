@@ -1,0 +1,110 @@
+[
+  {
+    "id": "C008",
+    "sha256": "a9d82233ec365432b9c0b61f468eb9b814f39e9fb89234921af9c7f12f7ddf5c",
+    "slides": 1,
+    "errors": [],
+    "images": 1,
+    "brokenImages": 0
+  },
+  {
+    "id": "C010",
+    "sha256": "310d4a4f7da2051ea152227c8ea0b63c9e242e1ef220b8216800d4b51e0b5aa7",
+    "slides": 2,
+    "errors": [],
+    "images": 3,
+    "brokenImages": 0
+  },
+  {
+    "id": "C015",
+    "sha256": "388291cb01e86db7f7b9f049b0bf719a1d2137d3e9a274b90d156a756df1b28a",
+    "slides": 1,
+    "errors": [],
+    "images": 1,
+    "brokenImages": 0
+  },
+  {
+    "id": "C016",
+    "sha256": "ff4ac0df803b5d07603e8b44c7759e275d1502506f72e2ef33e1f4de4b9ee5c3",
+    "slides": 29,
+    "errors": [],
+    "images": 9,
+    "brokenImages": 0
+  },
+  {
+    "id": "C035",
+    "sha256": "3570bbd6a66c11bd7340b803308c6272963d7ec14205f298ca232b18cb4017fb",
+    "slides": 1,
+    "errors": [],
+    "images": 1,
+    "brokenImages": 0
+  },
+  {
+    "id": "C041",
+    "sha256": "1d9d8517cb2bb87acd10b44b70fdc9357b6f7c8db62242ae126a062d7658e4c8",
+    "slides": 4,
+    "errors": [],
+    "images": 17,
+    "brokenImages": 0
+  },
+  {
+    "id": "C044",
+    "sha256": "dc6172154bbfdd37d538c26641ea006c28f714b53b2dcccab89b6977596fa2e1",
+    "slides": 2,
+    "errors": [],
+    "images": 8,
+    "brokenImages": 0
+  },
+  {
+    "id": "C045",
+    "sha256": "0c08f0c65c55c1b3a47a54183466958496997204e050e278ec1bd6fbcbb3c386",
+    "slides": 3,
+    "errors": [],
+    "images": 9,
+    "brokenImages": 0
+  },
+  {
+    "id": "C046",
+    "sha256": "a7afc41664bec43e6e4f6bce03af2dbf20f34ce9886dbe2945ccece53214019d",
+    "slides": 1,
+    "errors": [],
+    "images": 2,
+    "brokenImages": 0
+  },
+  {
+    "id": "C048",
+    "sha256": "be977ca8c84382b69994866fa0f5606185ff80fdbe86ec68a417e7223801e846",
+    "slides": 14,
+    "errors": [],
+    "images": 7,
+    "brokenImages": 0
+  },
+  {
+    "id": "C049",
+    "sha256": "49f14b34e7d5b1ce7c29de55dd64a726acdea3d6dcb4b10489fb973a8446c34b",
+    "slides": 1,
+    "errors": [],
+    "images": 2,
+    "brokenImages": 0
+  },
+  {
+    "id": "C050",
+    "sha256": "5a178b6c5dc63976ae4a133eaff14927ac40320609073b6e836ee7b814b1e685",
+    "slides": 1,
+    "errors": [],
+    "images": 2,
+    "brokenImages": 0
+  },
+  {
+    "id": "C061",
+    "sha256": "59203e7de9f0d370bc6e38129e712f18c65eef310d491504e220582b1be6b3a6",
+    "characters": 15,
+    "tables": 0
+  },
+  {
+    "id": "C068",
+    "sha256": "8013f71089628d5e72457d76cca7aaff291c9ef761e6ec498e6dfd96f2e9d57c",
+    "characters": 139,
+    "tables": 0
+  }
+]

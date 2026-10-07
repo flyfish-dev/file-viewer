@@ -120,8 +120,8 @@ describe('DOC revision boundary isolation', () => {
         {
           ...nativeTable.rows[0],
           cells: [
-            { ...nativeTable.rows[0].cells[0], paragraphs: [marked] },
-            { ...nativeTable.rows[0].cells[1], paragraphs: [paragraph('B')] }
+            { ...nativeTable.rows[0].cells[0], blocks: [marked], paragraphs: [marked] },
+            { ...nativeTable.rows[0].cells[1], blocks: [paragraph('B')], paragraphs: [paragraph('B')] }
           ]
         }
       ]
@@ -149,9 +149,10 @@ describe('DOC revision boundary isolation', () => {
           cells: [
             {
               ...nativeTable.rows[0].cells[0],
+              blocks: [paragraph('A', { revisionDeleted: true }), paragraph('B')],
               paragraphs: [paragraph('A', { revisionDeleted: true }), paragraph('B')]
             },
-            { ...nativeTable.rows[0].cells[1], paragraphs: [paragraph('C')] }
+            { ...nativeTable.rows[0].cells[1], blocks: [paragraph('C')], paragraphs: [paragraph('C')] }
           ]
         }
       ]

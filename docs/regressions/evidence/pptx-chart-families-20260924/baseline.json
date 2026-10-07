@@ -1,0 +1,131 @@
+{
+  "completed": true,
+  "passed": 5,
+  "failed": 20,
+  "checks": [
+    {
+      "name": "Chart family metadata preserves bounded angles, ratios, grouping and point indices",
+      "status": "pass"
+    },
+    {
+      "name": "Malformed chart metadata cannot create CSS or unbounded point allocations",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: ring type, hole size, start angle and grouping survive actual parser/Worker",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n-   'doughnutChart',\n    'barChart',\n    'barChart'\n  ]\n"
+    },
+    {
+      "name": "DPR 1: repeated/blank labels retain three independent sectors and point fills",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 3\n"
+    },
+    {
+      "name": "DPR 1: real SVG hole ratio and first-slice angle match the document",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'd')"
+    },
+    {
+      "name": "DPR 1: duplicate series remain distinct and stack on the same category baseline",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading '0')"
+    },
+    {
+      "name": "DPR 1: horizontal percent stacking keeps category totals and ratios",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'normal')"
+    },
+    {
+      "name": "DPR 1: chart rendering preserves the authored outer positioning",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: ring keeps its fractional hole after a narrow-container resize",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 3\n"
+    },
+    {
+      "name": "DPR 1: hole 10, full circle, zero/error and negative-value boundaries",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "DPR 1: hole 90, full circle, zero/error and negative-value boundaries",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   1,\n+   4\n+ ]\n- []\n"
+    },
+    {
+      "name": "DPR 1: hole 50, full circle, zero/error and negative-value boundaries",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 2\n"
+    },
+    {
+      "name": "DPR 1: public viewer loads the actual Worker and chart capability, then disposes",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   arcs: 0,\n+   charts: 2,\n-   arcs: 3,\n-   charts: 3,\n    slides: 3\n  }\n"
+    },
+    {
+      "name": "DPR 2: ring type, hole size, start angle and grouping survive actual parser/Worker",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n-   'doughnutChart',\n    'barChart',\n    'barChart'\n  ]\n"
+    },
+    {
+      "name": "DPR 2: repeated/blank labels retain three independent sectors and point fills",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 3\n"
+    },
+    {
+      "name": "DPR 2: real SVG hole ratio and first-slice angle match the document",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'd')"
+    },
+    {
+      "name": "DPR 2: duplicate series remain distinct and stack on the same category baseline",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading '0')"
+    },
+    {
+      "name": "DPR 2: horizontal percent stacking keeps category totals and ratios",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'normal')"
+    },
+    {
+      "name": "DPR 2: chart rendering preserves the authored outer positioning",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: ring keeps its fractional hole after a narrow-container resize",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 3\n"
+    },
+    {
+      "name": "DPR 2: hole 10, full circle, zero/error and negative-value boundaries",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "DPR 2: hole 90, full circle, zero/error and negative-value boundaries",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   1,\n+   4\n+ ]\n- []\n"
+    },
+    {
+      "name": "DPR 2: hole 50, full circle, zero/error and negative-value boundaries",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 2\n"
+    },
+    {
+      "name": "DPR 2: public viewer loads the actual Worker and chart capability, then disposes",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   arcs: 0,\n+   charts: 2,\n-   arcs: 3,\n-   charts: 3,\n    slides: 3\n  }\n"
+    },
+    {
+      "name": "No uncaught browser errors, library warnings or external requests",
+      "status": "pass"
+    }
+  ],
+  "originals": [],
+  "errors": [],
+  "requests": [],
+  "scope": "Single-series doughnuts, stacked chart grouping and corresponding C048 data; not full chart-style fidelity."
+}

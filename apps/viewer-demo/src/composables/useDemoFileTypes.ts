@@ -57,6 +57,7 @@ const explicitFileIconMeta = {
   dotx: { icon: 'DOT', family: 'word' },
   dotm: { icon: 'DOT', family: 'word' },
   rtf: { icon: 'RTF', family: 'word' },
+  lrc: { icon: 'LRC', family: 'text' },
   odt: { icon: 'ODT', family: 'word' },
   xlsx: { icon: 'XL', family: 'sheet' },
   xltx: { icon: 'XLT', family: 'sheet' },

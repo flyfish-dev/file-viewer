@@ -1,0 +1,332 @@
+{
+  "completed": true,
+  "passed": 15,
+  "failed": 8,
+  "checks": [
+    {
+      "name": "Composite constraints resolve coordinates and independent axis scales",
+      "status": "pass"
+    },
+    {
+      "name": "moveWith retains authored drag offset",
+      "status": "pass"
+    },
+    {
+      "name": "Already independent cached text transform wins",
+      "status": "pass"
+    },
+    {
+      "name": "Presentation relationships, not names alone, establish text ownership",
+      "status": "pass"
+    },
+    {
+      "name": "Unsupported algorithms and conditions retain the original drawing",
+      "status": "pass"
+    },
+    {
+      "name": "Ambiguous constraints, zero sizes and indirect references are not guessed",
+      "status": "pass"
+    },
+    {
+      "name": "Rotated and flipped shapes keep their cached diagram layout",
+      "status": "pass"
+    },
+    {
+      "name": "Partial explicit text transforms inherit only missing geometry",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid and nonfinite text rectangles keep the painted shape geometry",
+      "status": "pass"
+    },
+    {
+      "name": "Constraint evaluation does not mutate cached source objects",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: source constraints position independent text boxes in the real Worker/viewer",
+      "status": "fail",
+      "error": "20 != 40"
+    },
+    {
+      "name": "DPR 1: single cached shape and explicit text viewport remain visible",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "DPR 1: paragraph wrapping uses the text viewport instead of painted shape size",
+      "status": "pass"
+    },
+    {
+      "name": "C016 DPR 1: all six labels match independently read layout equations",
+      "status": "fail",
+      "error": "127.90625 != 355.0744156980378"
+    },
+    {
+      "name": "C016 DPR 1: recovered label rectangles do not overlap",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)<.1||Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)<.1)\n"
+    },
+    {
+      "name": "DPR 1: destroy releases viewer and repeated open remains valid",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: source constraints position independent text boxes in the real Worker/viewer",
+      "status": "fail",
+      "error": "20 != 40"
+    },
+    {
+      "name": "DPR 2: single cached shape and explicit text viewport remain visible",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "DPR 2: paragraph wrapping uses the text viewport instead of painted shape size",
+      "status": "pass"
+    },
+    {
+      "name": "C016 DPR 2: all six labels match independently read layout equations",
+      "status": "fail",
+      "error": "127.90625 != 355.0744156980378"
+    },
+    {
+      "name": "C016 DPR 2: recovered label rectangles do not overlap",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)<.1||Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)<.1)\n"
+    },
+    {
+      "name": "DPR 2: destroy releases viewer and repeated open remains valid",
+      "status": "pass"
+    },
+    {
+      "name": "No unhandled browser exceptions",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C016",
+      "sha256": "ff4ac0df803b5d07603e8b44c7759e275d1502506f72e2ef33e1f4de4b9ee5c3",
+      "dpr": 1,
+      "count": 6,
+      "rows": [
+        {
+          "expected": {
+            "x": 355.0744156980378,
+            "y": 91.03615360579927,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 127.90625,
+            "y": 35.640625,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 8,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 429.9320809898763,
+            "y": 214.9422322209724,
+            "w": 118.74134483189603,
+            "h": 85.18400824896888
+          },
+          "actual": {
+            "x": 135.65625,
+            "y": 39.40625,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 12,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 357.6546781652294,
+            "y": 341.42760717410323,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 130.484375,
+            "y": 48.328125,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 10,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 213.09997750281212,
+            "y": 341.42760717410323,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 120.171875,
+            "y": 48.328125,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 15,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 135.66001249843768,
+            "y": 214.9422322209724,
+            "w": 118.74134483189603,
+            "h": 85.18400824896888
+          },
+          "actual": {
+            "x": 115,
+            "y": 39.40625,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 13,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 213.09997750281212,
+            "y": 85.87562867141608,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 120.171875,
+            "y": 30.46875,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 11,
+          "visible": true,
+          "invalid": false
+        }
+      ],
+      "slides": 29
+    },
+    {
+      "id": "C016",
+      "sha256": "ff4ac0df803b5d07603e8b44c7759e275d1502506f72e2ef33e1f4de4b9ee5c3",
+      "dpr": 2,
+      "count": 6,
+      "rows": [
+        {
+          "expected": {
+            "x": 355.0744156980378,
+            "y": 91.03615360579927,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 127.90625,
+            "y": 35.640625,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 8,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 429.9320809898763,
+            "y": 214.9422322209724,
+            "w": 118.74134483189603,
+            "h": 85.18400824896888
+          },
+          "actual": {
+            "x": 135.65625,
+            "y": 39.40625,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 12,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 357.6546781652294,
+            "y": 341.42760717410323,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 130.484375,
+            "y": 48.328125,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 10,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 213.09997750281212,
+            "y": 341.42760717410323,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 120.171875,
+            "y": 48.328125,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 15,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 135.66001249843768,
+            "y": 214.9422322209724,
+            "w": 118.74134483189603,
+            "h": 85.18400824896888
+          },
+          "actual": {
+            "x": 115,
+            "y": 39.40625,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 13,
+          "visible": true,
+          "invalid": false
+        },
+        {
+          "expected": {
+            "x": 213.09997750281212,
+            "y": 85.87562867141608,
+            "w": 113.57867766529185,
+            "h": 87.76534183227098
+          },
+          "actual": {
+            "x": 120.171875,
+            "y": 30.46875,
+            "w": 433.65625,
+            "h": 433.65625
+          },
+          "characters": 11,
+          "visible": true,
+          "invalid": false
+        }
+      ],
+      "slides": 29
+    }
+  ],
+  "errors": []
+}

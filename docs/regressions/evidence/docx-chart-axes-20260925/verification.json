@@ -1,0 +1,58 @@
+{
+  "run": "36110593459",
+  "checkedCommit": "6603eac18db97a4d516d2c7a91473350facfac88",
+  "baseCommit": "078ee358e2a7c777b3b74ec8c5b1e88521171c5a",
+  "original": "C034",
+  "charts": 12,
+  "dataPoints": 542,
+  "manualAxisTitles": 11,
+  "bodyCharacters": 3643,
+  "decodedImages": 11,
+  "headerImages": 7,
+  "unitTests": 27,
+  "checks": {
+    "docx-chart-axes": 29,
+    "docx-engine-compatibility": 11,
+    "container-compatibility": 4,
+    "grid": 49
+  },
+  "dpr": [
+    1,
+    2
+  ],
+  "builds": [
+    "core",
+    "doc",
+    "word"
+  ],
+  "actualWorkerParsed": true,
+  "install": "actual pnpm 11.0.9 frozen filtered workspace install before and after declared patch regeneration",
+  "upstreamSourceBuild": false,
+  "fullCorpusAccepted": false,
+  "sourceSha256": {
+    "apps/viewer-demo/public/vendor/docx/docx.worker.js": "4702cd006fa46c5f55c10e482c9787b3e3874206713f470f004b70e25956e722",
+    "docs/regressions/docx-chart-axes-20260925.md": "bf2705676201890daca48537131fcd17204bed83a4053aa4d1a1c60ede972e3e",
+    "packages/core/src/platform/assets.ts": "5edbdf8c4b9cf12a6c01c41785fe53a254e565cc8ea215a2c86af3ade2b6efd4",
+    "patches/@file-viewer__docx@0.3.32.patch": "0f27cd1be09d1c659969fa077b613931060cec6e4f211559a7acfefd4130af89",
+    "patches/docx-engine-compatibility.json": "56ed5e6648daf62cac0f10cbcc4b82887d63afa5f8dfa9172f75e9f07a52e2f9",
+    "pnpm-lock.yaml": "c80c8cd5dc7e2e968a31d7fe8cc9dd437b52baead122356173791d6e7177192a",
+    "scripts/lib/docx-chart-axes.mjs": "bd2c66b43cc56c0f7c26df4c85657be9c784beb01c0be0a2e1edc8d9bd377d2a",
+    "scripts/prepare-docx-chart-axes.mjs": "da1260f759ce84e1779f418dc4071116f686614150cbcec9f02e0abcc898cdc0",
+    "scripts/verify-docx-chart-axes.mjs": "5638539b9a83b4a9aefe273c7d0a268689d9c19addd2e611b48e2af2ffb0b182",
+    "test/docx-chart-axes/baseline.json": "8b5d86cbc297fe3fddbb336ce70d34603c0688f0866fea3c075084899ee25a7f",
+    "test/docx-chart-axes/date-format.test.mjs": "02a17e0e4410dab90e7a02567a3447717f335015d8c550cbd75631636b10bdea",
+    "test/docx-chart-axes/fixtures.mjs": "621c0062c340abed72a92ffcc0b7e2c93d7643121b251a9e6450e5f03670c0fc"
+  },
+  "evidenceSha256": {
+    "grid.json": "b84a0a64c9dec737f6419a44344f8a230281ea7d0f5f1cfbd462bfdcb9717a14",
+    "engine.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "generated.png": "7bcb3346c1aeb09e19e9ca9f38eac586c4a8a0e5ad5025a1c3797f8c1c640340",
+    "original-header-2.json": "9bac073388ceba2616095ebfc3eda161edb04f8660ae1f0efcb3cd64585ea745",
+    "original-chart-geometry-2.json": "a0f9c8c2e33df3e8bcf03e245a74bef87dcd3e0b4ac46f34d440ea5f9d7eb331",
+    "original-chart-geometry-1.json": "a0f9c8c2e33df3e8bcf03e245a74bef87dcd3e0b4ac46f34d440ea5f9d7eb331",
+    "containers.json": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c",
+    "original-header-1.json": "9bac073388ceba2616095ebfc3eda161edb04f8660ae1f0efcb3cd64585ea745",
+    "report.json": "9acdb96dde164f0d563afbd057d310a53afb5565f8ac073ff4c96597b1c9b226",
+    "baseline.json": "8ddefd6f17db4cd985a4ff82a63c21b0448abfff60adacb9de9eabbc9f475757"
+  }
+}

@@ -1,0 +1,144 @@
+[
+  {
+    "text": "I. Section 1",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "I. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "II. Section 2",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "II. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "III. Section 3",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "III. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "IV. Section 4",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "IV. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "V. Section 5",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "V. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Small Large",
+    "before": 18.1667,
+    "after": 18.1667,
+    "line": "19.2px",
+    "maxFont": 36.3333
+  },
+  {
+    "text": "Percent string",
+    "before": 13.3333,
+    "after": 6.66667,
+    "line": "20.8px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Point spacing",
+    "before": 8,
+    "after": 12,
+    "line": "19.2px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Zero spacing",
+    "before": 0,
+    "after": 0,
+    "line": "19.2px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Malformed spacing",
+    "before": 0,
+    "after": 0,
+    "line": "19.2px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "IV. Restart IV",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "IV. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "V. Continue V",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "V. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "AA. Restart AA",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "AA. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "AB. Continue AB",
+    "before": 13.3333,
+    "after": 13.3333,
+    "line": "19.2px",
+    "bullet": "AB. ",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Inherited spacing",
+    "before": 13.3333,
+    "after": 6.66667,
+    "line": "19.2px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Explicit zero",
+    "before": 0,
+    "after": 6.66667,
+    "line": "19.2px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Explicit points",
+    "before": 8,
+    "after": 6.66667,
+    "line": "19.2px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Master spacing",
+    "before": 3.33333,
+    "after": 6.66667,
+    "line": "32px",
+    "maxFont": 26.6667
+  },
+  {
+    "text": "Layout spacing",
+    "before": 13.3333,
+    "after": 20,
+    "line": "32px",
+    "maxFont": 26.6667
+  }
+]

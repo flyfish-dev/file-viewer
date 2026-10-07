@@ -1,0 +1,5 @@
+{
+  "run": "35756370332",
+  "checks": 18,
+  "scope": "Core and Spreadsheet builds; actual parser, renderer search and classic Worker; existing dimension and rich-text gates; not full workbook fidelity"
+}

@@ -357,6 +357,7 @@ const {
 } = useViewerZoom({
   output,
   enabled: () => true,
+  gestures: () => effectiveOptions.value?.zoomGestures,
   runBeforeOperation
 })
 

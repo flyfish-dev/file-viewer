@@ -1,0 +1,18 @@
+{
+  "run": "35884046936",
+  "checkedCommit": "f51c7739a75781b19e9c8c640f12da19db1c1151",
+  "baseCommit": "a01892aa87a037cc82dfd3d0e4c526c670f7aaae",
+  "checksPerSuite": 33,
+  "original": "C013",
+  "moduleWorkerUiSkipped": false,
+  "install": "pnpm 11.0.9 actual frozen filtered workspace install",
+  "builds": [
+    "core",
+    "doc",
+    "pptx",
+    "word",
+    "spreadsheet"
+  ],
+  "workerSha256": "57fd8dc83e938648f7556454da155c915aba9b00c3131e3dfba8bcec11c50b25",
+  "fullCorpusAccepted": false
+}

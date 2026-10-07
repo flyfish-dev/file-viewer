@@ -25,10 +25,15 @@ export function prepareDocxTexts(texts, version) {
   manifest.dependencies['@file-viewer/docx'] = version
   result[manifestPath] = JSON.stringify(manifest, null, 2) + '\n'
   const path = 'packages/core/src/platform/assets.ts'
-  const before = `DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '${previous}'`
-  assert.ok(texts[path].includes(before), 'Core Worker provenance differs from the Word package')
+  const runtime = /DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION\s*=\s*(['"])([^'"]+)\1/.exec(
+    texts[path]
+  )
+  assert.ok(
+    runtime && (runtime[2] === previous || runtime[2].startsWith(`${previous}+compat.`)),
+    'Core Worker provenance differs from the Word package'
+  )
   result[path] = texts[path].replace(
-    before,
+    runtime[0],
     `DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '${version}'`
   )
   result['pnpm-workspace.yaml'] = texts['pnpm-workspace.yaml'].replace(

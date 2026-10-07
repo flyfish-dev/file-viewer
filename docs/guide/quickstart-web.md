@@ -224,6 +224,10 @@ const controller = mountViewer(document.getElementById('viewer')!, {
 controller.zoomIn()
 ```
 
+Renderers with continuous zoom also accept Ctrl/⌘ + wheel and two-finger pinch.
+Set `options.zoomGestures: false` to disable them; the same zoom permissions and
+operation hooks apply to gestures and toolbar buttons.
+
 ## Authenticated Files
 
 When the business system must authenticate first, fetch the file in the host page and pass a named `File`:

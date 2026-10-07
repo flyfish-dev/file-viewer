@@ -1,6 +1,8 @@
 import { createFileViewerZoomState } from './model';
 import { findFileViewerZoomProvider } from './dom';
+import { installFileViewerZoomGestures } from './zoomGestures';
 import type {
+  FileViewerOptions,
   FileViewerOperationType,
   FileViewerZoomProvider,
   FileViewerZoomState,
@@ -14,6 +16,7 @@ export type FileViewerZoomOperation = Extract<
 export interface CreateFileViewerZoomControllerOptions {
   root: () => HTMLElement | null | undefined;
   enabled?: () => boolean;
+  gestures?: () => FileViewerOptions['zoomGestures'];
   beforeZoom?: (operation: FileViewerZoomOperation) => Promise<boolean> | boolean;
   onChange?: (state: FileViewerZoomState) => void;
 }
@@ -189,12 +192,14 @@ const getMutationObserverConstructor = (root: HTMLElement | null | undefined) =>
 export const createFileViewerZoomController = ({
   root,
   enabled,
+  gestures,
   beforeZoom,
   onChange,
 }: CreateFileViewerZoomControllerOptions): FileViewerZoomController => {
   let provider: FileViewerZoomProvider | null = null;
   let unsubscribe: (() => void) | null = null;
   let observer: MutationObserver | null = null;
+  let disposeGestures: (() => void) | null = null;
   let runningAction = false;
   const state = createFileViewerZoomState();
 
@@ -233,6 +238,8 @@ export const createFileViewerZoomController = ({
   const disconnectObserver = () => {
     observer?.disconnect();
     observer = null;
+    disposeGestures?.();
+    disposeGestures = null;
   };
 
   const runZoomAction = async (
@@ -270,6 +277,18 @@ export const createFileViewerZoomController = ({
     observe() {
       disconnectObserver();
       const currentRoot = root();
+      if (currentRoot) {
+        disposeGestures = installFileViewerZoomGestures(currentRoot, {
+          provider: syncProvider,
+          enabled: () => enabled?.() !== false,
+          settings: () => gestures?.(),
+          beforeZoom: operation => beforeZoom?.(operation) ?? true,
+          onZoom: () => {
+            syncProvider();
+            notifyChange();
+          },
+        });
+      }
       const MutationObserverCtor = getMutationObserverConstructor(currentRoot);
       if (!currentRoot || !MutationObserverCtor) {
         syncProvider();

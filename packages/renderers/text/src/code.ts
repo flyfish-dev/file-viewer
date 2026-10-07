@@ -8,7 +8,12 @@ import {
   type FileViewerRenderedInstance,
   type FileViewerZoomState
 } from '@file-viewer/core'
-import type { HLJSApi, LanguageFn } from 'highlight.js'
+import {
+  escapeHtml,
+  loadHighlighter,
+  registerLanguageOnce,
+  resolveLanguage
+} from './syntaxHighlight.js'
 import { codeStyle } from './codeStyle.js'
 import renderLargeText, { shouldVirtualizeTextBuffer } from './largeText.js'
 import {
@@ -17,92 +22,6 @@ import {
   supportsFileViewerPrettyPrint,
   type FileViewerPrettyPrintResult
 } from './prettyPrint.js'
-
-const languageMap: Record<string, string> = {
-  bash: 'bash',
-  c: 'cpp',
-  cc: 'cpp',
-  cjs: 'javascript',
-  cpp: 'cpp',
-  cs: 'csharp',
-  css: 'css',
-  diff: 'diff',
-  patch: 'diff',
-  bundle: 'plaintext',
-  bdl: 'plaintext',
-  gv: 'plaintext',
-  go: 'go',
-  graphql: 'graphql',
-  gql: 'graphql',
-  h: 'cpp',
-  hcl: 'plaintext',
-  hpp: 'cpp',
-  html: 'xml',
-  htm: 'xml',
-  http: 'http',
-  ini: 'ini',
-  ipynb: 'json',
-  java: 'java',
-  js: 'javascript',
-  json: 'json',
-  json5: 'json',
-  jsonc: 'json',
-  jsx: 'javascript',
-  kt: 'kotlin',
-  log: 'plaintext',
-  md: 'markdown',
-  markdown: 'markdown',
-  mjs: 'javascript',
-  php: 'php',
-  proto: 'protobuf',
-  py: 'python',
-  rb: 'ruby',
-  react: 'javascript',
-  rs: 'rust',
-  sh: 'bash',
-  sql: 'sql',
-  swift: 'swift',
-  tex: 'latex',
-  toml: 'ini',
-  ts: 'typescript',
-  tsx: 'typescript',
-  txt: 'plaintext',
-  vue: 'xml',
-  xml: 'xml',
-  yaml: 'yaml',
-  yml: 'yaml'
-}
-
-const languageLoaders: Record<string, () => Promise<{ default: LanguageFn }>> = {
-  bash: () => import('highlight.js/lib/languages/bash'),
-  cpp: () => import('highlight.js/lib/languages/cpp'),
-  csharp: () => import('highlight.js/lib/languages/csharp'),
-  css: () => import('highlight.js/lib/languages/css'),
-  diff: () => import('highlight.js/lib/languages/diff'),
-  go: () => import('highlight.js/lib/languages/go'),
-  graphql: () => import('highlight.js/lib/languages/graphql'),
-  http: () => import('highlight.js/lib/languages/http'),
-  ini: () => import('highlight.js/lib/languages/ini'),
-  java: () => import('highlight.js/lib/languages/java'),
-  javascript: () => import('highlight.js/lib/languages/javascript'),
-  json: () => import('highlight.js/lib/languages/json'),
-  kotlin: () => import('highlight.js/lib/languages/kotlin'),
-  latex: () => import('highlight.js/lib/languages/latex'),
-  markdown: () => import('highlight.js/lib/languages/markdown'),
-  php: () => import('highlight.js/lib/languages/php'),
-  protobuf: () => import('highlight.js/lib/languages/protobuf'),
-  python: () => import('highlight.js/lib/languages/python'),
-  ruby: () => import('highlight.js/lib/languages/ruby'),
-  rust: () => import('highlight.js/lib/languages/rust'),
-  sql: () => import('highlight.js/lib/languages/sql'),
-  swift: () => import('highlight.js/lib/languages/swift'),
-  typescript: () => import('highlight.js/lib/languages/typescript'),
-  xml: () => import('highlight.js/lib/languages/xml'),
-  yaml: () => import('highlight.js/lib/languages/yaml')
-}
-
-let highlighterPromise: Promise<HLJSApi> | null = null
-const registeredLanguages = new Set<string>()
 
 const createElement = <TagName extends keyof HTMLElementTagNameMap>(
   documentRef: Document,
@@ -126,44 +45,6 @@ const createStyle = (documentRef: Document) => {
   return style
 }
 
-const resolveLanguage = (type: string) => {
-  return languageMap[type.trim().toLowerCase()] || 'plaintext'
-}
-
-const escapeHtml = (value: string) => {
-  return value.replace(/[&<>"']/g, char => {
-    const entities: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }
-    return entities[char]
-  })
-}
-
-const loadHighlighter = async () => {
-  if (!highlighterPromise) {
-    highlighterPromise = import('highlight.js/lib/core').then(module => module.default)
-  }
-  return highlighterPromise
-}
-
-const registerLanguageOnce = async (hljs: HLJSApi, name: string) => {
-  if (registeredLanguages.has(name)) {
-    return true
-  }
-  const loader = languageLoaders[name]
-  if (!loader) {
-    return false
-  }
-  const { default: language } = await loader()
-  hljs.registerLanguage(name, language)
-  registeredLanguages.add(name)
-  return true
-}
-
 const clampZoom = (value: number) => {
   return Math.min(2.6, Math.max(0.6, Number(value.toFixed(2))))
 }
@@ -177,8 +58,8 @@ const createLineNumberText = (lineCount: number) => {
 }
 
 interface WrappedSourceLine {
-  row: HTMLSpanElement;
-  content: HTMLSpanElement;
+  row: HTMLSpanElement
+  content: HTMLSpanElement
 }
 
 const createWrappedSourceLine = (documentRef: Document, lineNumber: number): WrappedSourceLine => {
@@ -217,7 +98,7 @@ const mountWrappedHighlightedLines = (
     lineIndex += 1
     lines.push(createWrappedSourceLine(documentRef, lineIndex + 1))
     let parent: Element = currentContent()
-    activeClones = activeElements.map(element => {
+    activeClones = activeElements.map((element) => {
       const clone = element.cloneNode(false) as Element
       parent.append(clone)
       parent = clone
@@ -256,7 +137,7 @@ const mountWrappedHighlightedLines = (
   while (lines.length < expectedLineCount) {
     lines.push(createWrappedSourceLine(documentRef, lines.length + 1))
   }
-  code.replaceChildren(...lines.map(line => line.row))
+  code.replaceChildren(...lines.map((line) => line.row))
 }
 
 const mountCodeMarkup = (
@@ -277,7 +158,12 @@ const mountCodeMarkup = (
 
   pre.className = showLineNumbers ? 'code-area code-area--line-numbers' : 'code-area'
   if (showLineNumbers) {
-    const gutter = createElement(pre.ownerDocument, 'span', 'code-line-numbers', createLineNumberText(lineCount))
+    const gutter = createElement(
+      pre.ownerDocument,
+      'span',
+      'code-line-numbers',
+      createLineNumberText(lineCount)
+    )
     gutter.setAttribute('aria-hidden', 'true')
     pre.replaceChildren(gutter, code)
   } else {
@@ -290,7 +176,7 @@ const canPossiblyFitDecodedPrettyPrintLimit = (buffer: ArrayBuffer, maxBytes: nu
   // UTF-16 ASCII is the widest supported source encoding relative to its
   // decoded UTF-8 representation. This fast guard avoids decoding enormous
   // structured files that cannot possibly fit the configured decoded limit.
-  return buffer.byteLength <= (maxBytes * 2) + 4
+  return buffer.byteLength <= maxBytes * 2 + 4
 }
 
 /**
@@ -387,7 +273,8 @@ export default async function renderText(
   root.style.setProperty('--code-font-size', `${13 * zoom}px`)
   target.replaceChildren(createStyle(documentRef), root)
 
-  const currentText = () => showingFormatted && formattedText !== null ? formattedText : originalText
+  const currentText = () =>
+    showingFormatted && formattedText !== null ? formattedText : originalText
 
   const syncRepresentationControls = (lineCount: number) => {
     const formatted = showingFormatted && formattedText !== null

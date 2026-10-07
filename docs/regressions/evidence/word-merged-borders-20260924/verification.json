@@ -1,0 +1,53 @@
+{
+  "run": "35992189531",
+  "checkedCommit": "5621e68d96f7a503aff4cd0c3da2e7f26033db6c",
+  "baseCommit": "cd3f49925f767e9e959c6f284ffe858cca5ef982",
+  "original": "C037",
+  "mergedRegions": 19,
+  "bodyCharacters": 6034,
+  "images": 5,
+  "checks": {
+    "word-merged-borders": 21,
+    "word-vml-text": 57,
+    "docx-engine-compatibility": 11,
+    "container-compatibility": 4
+  },
+  "unitTestsAdded": 11,
+  "wordUnitTests": 74,
+  "existingDocGates": 6,
+  "dpr": [
+    1,
+    2
+  ],
+  "zoom": [
+    1,
+    0.5,
+    2,
+    0.88,
+    1
+  ],
+  "actualWorkerParsed": true,
+  "export": "actual HTML export adapter; physical print driver not tested",
+  "builds": [
+    "core",
+    "doc",
+    "word"
+  ],
+  "install": "actual pnpm 11.0.9 frozen filtered workspace install; engine patch and dependencies unchanged",
+  "fullCorpusAccepted": false,
+  "sourceSha256": {
+    "docs/regressions/word-merged-borders-20260924.md": "f21829e19d3a4a781748e8217d0bbe312c4803eecae910543f4a3e581f89a1a4",
+    "packages/renderers/word/scripts/verify-merged-borders.mjs": "853022b8355d91942d47ad8757f0139d3f444b3b22285bd0a8d8677b90ca8821",
+    "packages/renderers/word/src/docxMergedBorders.ts": "875696be24b0bcbe8ad35e29049ee4f9b33d68c6b62c0d2702fe6c6449384840",
+    "packages/renderers/word/src/wordDocx.ts": "b67056d2276327d17c5044241f6048b6bc86c9b3f785b20cfa13a3270c1046d7",
+    "packages/renderers/word/test/docx-merged-borders.test.mjs": "2e1adf5f02ffa83d0c3af1e7ff999df9352707ddbce48280de01ee956bb8944f"
+  },
+  "evidenceSha256": {
+    "engine.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "vml.json": "955787d1f586466223e02b6b47c2c1697d6453aa7ad3f2f71c056f55c69248d8",
+    "report.json": "4a12c84cd7f161399f78b5f800fe69c8938d45097f292f0e4323248d26f4f0aa",
+    "baseline.json": "ce42dead32ebbfa5b0893787abd7b83cd90c14ae7765f8b32594ea50b2dfa912",
+    "containers.json": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c",
+    "generated.png": "ee0374962b1c062611bbf4759c8d3599dcabdc453bc86d9006d5f7560b03f652"
+  }
+}

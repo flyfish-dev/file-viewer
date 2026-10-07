@@ -46,6 +46,7 @@ const options = {
 - HTML/HTM opens a static page preview with a source-view toggle. `options.text.htmlView: 'source'` starts with the original source. Inline CSS and embedded images are preserved; scripts, forms, external navigation, and external resource requests are blocked by sanitization, CSP, and an opaque sandbox. This is not a website runtime.
 - XML, Vue, and similar files default to escaped source previews. XML can opt into the XSD/XSLT profiles below. HTML source supports the same highlighting, formatting, and large-text virtualization options.
 - Markdown uses `marked` for a read-only reading surface with dark/light theme support, table scrolling, and a unified zoom provider.
+- Fenced Markdown code with a declared supported language is highlighted automatically, including inside Shadow DOM. Language modules load locally on demand; unknown languages and code beyond a 512 KiB per-document highlighting budget stay readable as source. Set `options.text.markdownHighlight: false` to disable highlighting; no call to `highlightAll()` is needed.
 - Markdown no longer falls back to source because of the general large-text threshold. Set `options.text.markdownVirtualizeAboveBytes` only when an application must bound exceptionally large Markdown files.
 - Does not depend on any online service or public CDN, making it suitable for intranet logs, configs, snippets, README files, and knowledge-base attachments.
 
@@ -137,3 +138,24 @@ capped at 64 MiB. Timeout, cancellation and unload terminate workers and revoke 
 The source repository's `test/fixtures/issue-305/` contains redistributable
 valid/invalid XML, XSD, XSLT and a manifest. See [XML profiles notices](./licenses/xml-profiles/NOTICE.md)
 for verified licenses and upstream sources.
+
+### Markdown heading navigation
+
+Headings without an authored ID receive Unicode-preserving, lowercase IDs.
+Repeated headings get numeric suffixes. Existing table-of-contents links such as
+`[Introduction](#introduction)` scroll within their own viewer, including Shadow
+DOM and multiple viewers on one page; the host page URL is not changed. Authored
+IDs, external links and modified clicks are preserved. This does not generate a
+table of contents from a `[TOC]` directive.
+
+### LRC lyrics
+
+`.lrc` uses the text renderer and is registered in the lite, standard and all presets.
+The read-only view offers annotated lyrics, plain lyrics and the exact decoded source.
+It supports repeated line timestamps, inline word timestamps, metadata, signed offsets,
+UTF-8/UTF-16/GBK, wrapping and the shared zoom controls. `M:`, `F:` and `D:` roles
+continue until the next explicit role; untimed text and unknown markers remain visible.
+Positive offsets advance timestamps. This is static preview, not synchronized playback.
+`options.text.encoding`, `toolbar` and `wrapLongLines` retain their existing meaning.
+Oversized inputs or excessive timestamp expansion fall back to the existing source
+viewer instead of silently truncating lyrics. LRC content never creates active HTML.

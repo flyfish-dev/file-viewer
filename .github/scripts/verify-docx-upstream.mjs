@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url'
 import JSZip from 'jszip'
 import { JSDOM } from 'jsdom'
 
-// A behavioral release gate: an npm version string alone does not prove that
-// the packed browser renderer contains the upstream table-border repair.
+// Verify the installed owning engine, including semantics that must not be
+// repaired by File Viewer after rendering.
 export async function verifyDocxUpstream(
   root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 ) {
@@ -65,10 +65,76 @@ export async function verifyDocxUpstream(
     assert.equal(diagonal.getAttribute('x1'), '0%')
     assert.equal(diagonal.getAttribute('x2'), '100%')
     assert.equal(diagonal.closest('svg').style.pointerEvents, 'none')
+    const wordNamespace = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
+    const relationshipNamespace =
+      'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+    zip.file(
+      'word/_rels/document.xml.rels',
+      `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+      <Relationship Id="header" Type="${relationshipNamespace}/header" Target="header.xml"/>
+      <Relationship Id="footer" Type="${relationshipNamespace}/footer" Target="footer.xml"/>
+      <Relationship Id="external" Type="${relationshipNamespace}/hyperlink" Target="https://example.com/preview" TargetMode="External"/>
+    </Relationships>`
+    )
+    zip.file(
+      'word/header.xml',
+      `<w:hdr xmlns:w="${wordNamespace}"><w:p><w:r><w:t>NATIVE_HEADER</w:t></w:r></w:p></w:hdr>`
+    )
+    zip.file(
+      'word/footer.xml',
+      `<w:ftr xmlns:w="${wordNamespace}"><w:p><w:r><w:t>NATIVE_FOOTER</w:t></w:r></w:p></w:ftr>`
+    )
+    const body = await zip.file('word/document.xml').async('string')
+    zip.file(
+      'word/document.xml',
+      body
+        .replace('<w:document ', `<w:document xmlns:r="${relationshipNamespace}" `)
+        .replace(
+          '<w:body>',
+          '<w:body><w:p><w:hyperlink r:id="external"><w:r><w:t>EXTERNAL_LINK</w:t></w:r></w:hyperlink><w:hyperlink w:anchor="section"><w:r><w:t>INTERNAL_LINK</w:t></w:r></w:hyperlink></w:p>'
+        )
+        .replace(
+          '<w:sectPr/>',
+          '<w:sectPr><w:headerReference w:type="default" r:id="header"/><w:footerReference w:type="default" r:id="footer"/></w:sectPr>'
+        )
+    )
+    const bytes = await zip.generateAsync({ type: 'nodebuffer' })
+    const parsed = await docx.parseAsync(bytes, { useWorker: false, externalLinkPolicy: 'block' })
+    // A missing parsed header root must not discard the valid footer or body.
+    const header = parsed.findPartByRelId('header', parsed.documentPart)
+    assert.ok(header?.rootElement)
+    header.rootElement = undefined
+    host.replaceChildren(
+      ...(await docx.renderDocument(parsed, {
+        externalLinkPolicy: 'block',
+        breakPages: false,
+        ignoreFonts: true
+      }))
+    )
+    assert.match(host.textContent, /UPSTREAM_RELEASE_GATE/)
+    assert.match(host.querySelector('footer')?.textContent || '', /NATIVE_FOOTER/)
+    assert.equal(host.querySelector('header'), null)
+    const externalLink = () =>
+      Array.from(host.querySelectorAll('a')).find((link) => link.textContent === 'EXTERNAL_LINK')
+    assert.equal(externalLink()?.hasAttribute('href'), false)
+    assert.equal(host.querySelector('a[href="#section"]')?.textContent, 'INTERNAL_LINK')
+    await docx.renderAsync(bytes, host, null, {
+      useWorker: false,
+      awaitLayout: false,
+      ignoreFonts: true,
+      breakPages: false,
+      externalLinkPolicy: 'allow'
+    })
+    assert.match(host.querySelector('header')?.textContent || '', /NATIVE_HEADER/)
+    assert.match(host.querySelector('footer')?.textContent || '', /NATIVE_FOOTER/)
+    assert.equal(externalLink()?.getAttribute('href'), 'https://example.com/preview')
+    docx.disposeRenderedDocument(host)
     const result = {
       package: manifest.name,
       version: manifest.version,
       diagonalCount: 1,
+      nativeHeaderFooter: true,
+      nativeHyperlinkPolicy: true,
       passed: true
     }
     console.log('[docx-upstream]', JSON.stringify(result))

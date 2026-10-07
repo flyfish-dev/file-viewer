@@ -37,7 +37,7 @@ try {
   const calls = []
   let destroyed = 0
   registerPptxChartLibraryLoader(async () => ({ billboard: { bar: () => "bar", default: { generate: options => { calls.push(options); return { destroy() { destroyed++ } } } } }, d3Format: { format: () => value => String(value) } }))
-  const target = { id: 'chart-test' }
+  const target = { id: 'chart-test', ownerDocument: { createElement: () => ({ style: {}, remove() {} }) }, replaceChildren() {} }
   const root = { querySelectorAll: selector => selector === '[id]' ? [target] : [] }
   const data = extractChartData(series(literal('num', point(0, 0)), literal('num', point(0, '3'))))
   const charts = { MsgQueue: [{ type: 'createChart', data: { chartID: 'chart-test', chartType: 'barChart', barDirection: 'bar', chartData: data } }] }

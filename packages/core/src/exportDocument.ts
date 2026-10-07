@@ -749,6 +749,11 @@ const EXPORT_DOCUMENT_STYLE = `
       overflow: visible;
       background: #ffffff;
     }
+    .viewer-export-content .docx-print-document {
+      width: auto !important;
+      max-width: none !important;
+      margin: 0 !important;
+    }
     .viewer-export-content .pdf-export-document {
       display: block;
       padding: 0;

@@ -1,11 +1,12 @@
-import type { DocxProgressEvent, Options, renderAsync } from '@file-viewer/docx'
-import JSZip from 'jszip'
-import { correctDocxMixedAnchorOrigins } from './docxAnchors.js'
+import { clampWordScale, isPositiveFinite, readWordFitViewport } from './wordViewport.js'
+import { readDocxFlowPaperHeight } from './docxExport.js'
+import type { DocxProgressEvent, Options, renderAsync, disposeRenderedDocument } from '@file-viewer/docx'
+import { observeDocxFrames } from './docxFrames.js'
 import {
   DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   resolveFileViewerDocxWorkerJsZipUrl,
   resolveFileViewerDocxWorkerUrl,
-  resolveFileViewerRuntimeAssetBaseUrl,
+  resolveFileViewerRuntimeAssetBaseUrl
 } from '@file-viewer/core/assets'
 
 import {
@@ -27,7 +28,7 @@ import {
   type FileViewerDocxOptions,
   type FileViewerRenderedInstance as AppWrapper,
   type FileViewerZoomState,
-  type PrintPageSize,
+  type PrintPageSize
 } from '@file-viewer/core'
 
 const DOCX_DEFAULT_PAGE_SIZE: PrintPageSize = {
@@ -40,37 +41,17 @@ const DOCX_MIN_SCALE = 0.24
 const DOCX_MAX_SCALE = 3
 const DOCX_ZOOM_STEP = 0.15
 const ZIP_SIGNATURE_PK = 0x504b
-const WORDPROCESSINGML_NAMESPACE = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
-const OFFICE_RELATIONSHIP_NAMESPACE =
-  'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
-const PACKAGE_RELATIONSHIP_NAMESPACE =
-  'http://schemas.openxmlformats.org/package/2006/relationships'
-const VML_NAMESPACE = 'urn:schemas-microsoft-com:vml'
-const DOCX_DOCUMENT_PART = 'word/document.xml'
-const DOCX_DOCUMENT_RELATIONSHIPS_PART = 'word/_rels/document.xml.rels'
-const DOCX_PAGE_BACKGROUND_CLASS = 'docx-page-background'
-const DOCX_BACKGROUND_MIME_TYPES: Record<string, string> = {
-  bmp: 'image/bmp',
-  gif: 'image/gif',
-  jpeg: 'image/jpeg',
-  jpg: 'image/jpeg',
-  png: 'image/png',
-  svg: 'image/svg+xml',
-  tif: 'image/tiff',
-  tiff: 'image/tiff',
-  webp: 'image/webp'
-}
 
 type DocxLibrary = {
   defaultOptions: Options
   renderAsync: typeof renderAsync
+  disposeRenderedDocument: typeof disposeRenderedDocument
 }
 
 type DocxLibraryImport = DocxLibrary & {
   default?: DocxLibrary
 }
 
-type DocxRenderAsync = typeof renderAsync
 type DocxExternalLinkPolicy = NonNullable<FileViewerDocxOptions['externalLinkPolicy']>
 type DocxExternalResourcePolicy = NonNullable<FileViewerDocxOptions['externalResourcePolicy']>
 type DocxRenderOptions = Partial<Options> & {
@@ -95,52 +76,13 @@ const loadLibrary = (() => {
       if (!this.module) {
         this.module = import('@file-viewer/docx') as Promise<DocxLibraryImport>
       }
-      return this.module;
+      return this.module
     }
   }
   return async () => {
     return resolveDocxLibrary(await loader.load())
   }
 })()
-
-export const isMissingDocxHeaderFooterRootError = (error: unknown) => {
-  if (!(error instanceof Error)) {
-    return false
-  }
-
-  return /(?:undefined|null).*children|children.*(?:undefined|null)/i.test(error.message) &&
-    /renderHeaderFooter/i.test(error.stack || '')
-}
-
-/**
- * Some malformed or partially generated DOCX files reference a header/footer
- * part whose parsed root is missing. @file-viewer/docx 0.3.21 skips that part;
- * this retry keeps older installed engines usable while the dependency update
- * rolls through lockfiles and private registries.
- */
-export const renderDocxWithHeaderFooterFallback = async (
-  render: DocxRenderAsync,
-  buffer: ArrayBuffer,
-  target: HTMLDivElement,
-  options: Options
-) => {
-  try {
-    await render(buffer, target, undefined, options)
-    return false
-  } catch (error) {
-    if (!isMissingDocxHeaderFooterRootError(error)) {
-      throw error
-    }
-
-    target.replaceChildren()
-    await render(buffer, target, undefined, {
-      ...options,
-      renderHeaders: false,
-      renderFooters: false
-    })
-    return true
-  }
-}
 
 /**
  * DOCX / DOCM / DOTX / DOTM are OOXML packages, so a valid file must start
@@ -160,11 +102,6 @@ const getTargetWindow = (target: HTMLDivElement) => {
   return target.ownerDocument.defaultView
 }
 
-const createTargetXmlParser = (target: HTMLDivElement) => {
-  const DOMParserCtor = getTargetWindow(target)?.DOMParser ?? globalThis.DOMParser
-  return new DOMParserCtor()
-}
-
 const getTargetProtocol = (target: HTMLDivElement) => {
   const candidates = [
     target.ownerDocument.URL,
@@ -181,142 +118,6 @@ const getTargetProtocol = (target: HTMLDivElement) => {
   }
 
   return ''
-}
-
-type DocxXmlSearchRoot = Pick<XMLDocument, 'getElementsByTagName' | 'getElementsByTagNameNS'>
-
-const getElementsByLocalName = (root: DocxXmlSearchRoot, namespace: string, localName: string) => {
-  const namespaced = Array.from(root.getElementsByTagNameNS(namespace, localName))
-  if (namespaced.length) {
-    return namespaced
-  }
-
-  return Array.from(root.getElementsByTagName('*')).filter(
-    element => element.localName === localName
-  )
-}
-
-const parseDocxXml = (source: string, parser: Pick<DOMParser, 'parseFromString'>) => {
-  const xml = parser.parseFromString(source, 'application/xml')
-  return getElementsByLocalName(
-    xml,
-    'http://www.mozilla.org/newlayout/xml/parsererror.xml',
-    'parsererror'
-  ).length
-    ? null
-    : xml
-}
-
-const resolvePackagePartPath = (basePart: string, relationshipTarget: string) => {
-  const segments = relationshipTarget.startsWith('/') ? [] : basePart.split('/').slice(0, -1)
-
-  relationshipTarget
-    .replace(/^\/+/, '')
-    .split('/')
-    .forEach(segment => {
-      if (!segment || segment === '.') {
-        return
-      }
-      if (segment === '..') {
-        segments.pop()
-        return
-      }
-      segments.push(segment)
-    })
-
-  return segments.join('/')
-}
-
-const resolveDocxImageMimeType = (partName: string) => {
-  const extension = partName.split('.').pop()?.toLowerCase() || ''
-  return DOCX_BACKGROUND_MIME_TYPES[extension]
-}
-
-/**
- * WPS and Word can store a page background as a document-level VML fill. The
- * DOCX engine intentionally ignores that legacy drawing node, so resolve only
- * its package-local image relationship here and leave all body layout to it.
- */
-export const resolveDocxPageBackgroundImage = async (
-  buffer: ArrayBuffer,
-  createXmlParser: () => Pick<DOMParser, 'parseFromString'> = () => new DOMParser()
-) => {
-  try {
-    const archive = await JSZip.loadAsync(buffer)
-    const documentEntry = archive.file(DOCX_DOCUMENT_PART)
-    const relationshipsEntry = archive.file(DOCX_DOCUMENT_RELATIONSHIPS_PART)
-    if (!documentEntry || !relationshipsEntry) {
-      return undefined
-    }
-
-    const parser = createXmlParser()
-    const documentXml = parseDocxXml(await documentEntry.async('string'), parser)
-    const relationshipsXml = parseDocxXml(await relationshipsEntry.async('string'), parser)
-    if (!documentXml || !relationshipsXml) {
-      return undefined
-    }
-
-    const background = getElementsByLocalName(
-      documentXml,
-      WORDPROCESSINGML_NAMESPACE,
-      'background'
-    )[0]
-    const fill = background && getElementsByLocalName(background, VML_NAMESPACE, 'fill')[0]
-    const relationshipId =
-      fill?.getAttributeNS(OFFICE_RELATIONSHIP_NAMESPACE, 'id') || fill?.getAttribute('r:id')
-    if (!relationshipId) {
-      return undefined
-    }
-
-    const relationship = getElementsByLocalName(
-      relationshipsXml,
-      PACKAGE_RELATIONSHIP_NAMESPACE,
-      'Relationship'
-    ).find(candidate => candidate.getAttribute('Id') === relationshipId)
-    const target = relationship?.getAttribute('Target')
-    if (!target || relationship?.getAttribute('TargetMode') === 'External') {
-      return undefined
-    }
-
-    const partName = resolvePackagePartPath(DOCX_DOCUMENT_PART, target)
-    const mimeType = resolveDocxImageMimeType(partName)
-    const imageEntry = archive.file(partName) || archive.file(decodeURIComponent(partName))
-    if (!mimeType || !imageEntry) {
-      return undefined
-    }
-
-    return `data:${mimeType};base64,${await imageEntry.async('base64')}`
-  } catch {
-    // A page background is optional and must never make an otherwise readable
-    // document fail. The DOCX engine remains responsible for package errors.
-    return undefined
-  }
-}
-
-export const applyDocxPageBackgroundImage = (
-  target: HTMLDivElement,
-  imageUrl: string | undefined
-) => {
-  if (!imageUrl) {
-    return 0
-  }
-
-  let applied = 0
-  target.querySelectorAll<HTMLElement>('section.docx').forEach(page => {
-    const existing = Array.from(page.children).find(child =>
-      child.classList.contains(DOCX_PAGE_BACKGROUND_CLASS)
-    ) as HTMLElement | undefined
-    const background = existing || target.ownerDocument.createElement('div')
-    background.className = DOCX_PAGE_BACKGROUND_CLASS
-    background.setAttribute('aria-hidden', 'true')
-    background.style.backgroundImage = `url("${imageUrl}")`
-    if (!existing) {
-      page.prepend(background)
-    }
-    applied += 1
-  })
-
-  return applied
 }
 
 const shouldUseDocxWorker = (
@@ -382,31 +183,6 @@ const appendDocxVendorAssetVersion = (url: string | undefined, explicitUrl: bool
   return `${url}${url.includes('?') ? '&' : '?'}file-viewer-docx=${DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION}`
 }
 
-export const applyDocxExternalLinkPolicy = (
-  target: Pick<ParentNode, 'querySelectorAll'>,
-  policy: DocxExternalLinkPolicy
-) => {
-  if (policy === 'allow') {
-    return 0
-  }
-
-  let blocked = 0
-  target.querySelectorAll<HTMLAnchorElement>('a[href]').forEach(anchor => {
-    const href = anchor.getAttribute('href')
-    if (!href || href.startsWith('#')) {
-      return
-    }
-
-    if (!anchor.hasAttribute('data-docx-external-href')) {
-      anchor.setAttribute('data-docx-external-href', href)
-    }
-    anchor.removeAttribute('href')
-    anchor.setAttribute('aria-disabled', 'true')
-    blocked += 1
-  })
-  return blocked
-}
-
 export const createDocxOptions = (
   target: HTMLDivElement,
   context: FileRenderContext | undefined,
@@ -427,6 +203,8 @@ export const createDocxOptions = (
   const externalResourcePolicy = docxOptions?.externalResourcePolicy ?? 'block'
   const options: DocxRenderOptions = {
     useWorker,
+    // 仅传递原生身份开关，不介入 DOCX 解析、分页或文档写回。
+    exposeDisplayTargets: docxOptions?.exposeDisplayTargets === true,
     reviewMode: docxOptions?.reviewMode ?? 'all',
     // Authored page breaks define separate anchor coordinate spaces even in
     // flow mode. Only measured/fixed-height pagination remains opt-in.
@@ -436,12 +214,8 @@ export const createDocxOptions = (
     externalLinkPolicy,
     externalResourcePolicy,
     darkMode,
-    progress: event => {
-      if (event.phase === 'render' || event.phase === 'layout' || event.phase === 'done') {
-        applyDocxExternalLinkPolicy(target, externalLinkPolicy)
-      }
-      progress(event)
-    }
+    reviewPresentation: 'inline',
+    progress
   }
 
   if (useWorker) {
@@ -486,6 +260,9 @@ export const createDocxOptions = (
   if (docxOptions?.hideWebHiddenContent !== undefined) {
     options.hideWebHiddenContent = docxOptions.hideWebHiddenContent
   }
+  if (docxOptions?.renderAltChunks !== undefined) {
+    options.renderAltChunks = docxOptions.renderAltChunks
+  }
 
   return options
 }
@@ -496,8 +273,6 @@ const isTargetHTMLElement = (value: unknown, target: HTMLDivElement): value is H
 }
 
 const DOCX_RESPONSIVE_CSS = `
-/* This component has no review balloon rail, so keep all-markup deletions readable inline. */
-.docx-fit-viewer [data-docx-review-enabled="true"][data-docx-review-mode="all"] del[data-docx-change-kind]{display:inline!important;width:auto!important;max-width:none!important;height:auto!important;overflow:visible!important;line-height:inherit!important;color:var(--docx-review-color,#c2410c);text-decoration:line-through;text-decoration-color:var(--docx-review-color,#c2410c)}
 .docx-fit-viewer {
   box-sizing: border-box;
   height: 100%;
@@ -539,24 +314,13 @@ const DOCX_RESPONSIVE_CSS = `
   top: 0;
   left: 50%;
   margin: 0 !important;
-  background: #ffffff !important;
   box-shadow: 0 2px 14px rgba(25, 35, 48, 0.18);
   box-sizing: border-box;
   overflow: hidden;
   transform-origin: top center;
 }
-.docx-fit-viewer .docx-page-background {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
 .docx-fit-viewer[data-docx-dark-mode='true'] .docx-page-frame > section.docx,
 .docx-fit-viewer[data-docx-dark-mode='true'] .docx-flow-frame > section.docx {
-  background: rgb(51, 51, 51) !important;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   outline: 1px solid rgba(255, 255, 255, 0.15);
   outline-offset: -1px;
@@ -580,30 +344,11 @@ function installResponsiveStyle(target: HTMLDivElement) {
   return style
 }
 
-function wrapDocxSections(target: HTMLDivElement, pagedLayout: boolean) {
-  const wrapper = target.querySelector('.docx-wrapper')
-  if (!wrapper) {
-    return []
-  }
-
-  return Array.from(wrapper.children).flatMap(child => {
-    if (!isTargetHTMLElement(child, target) || !child.matches('section.docx')) {
-      return []
-    }
-
-    const frame = target.ownerDocument.createElement('div')
-    frame.className = pagedLayout ? 'docx-page-frame' : 'docx-flow-frame'
-    child.before(frame)
-    frame.appendChild(child)
-    return [frame]
-  })
-}
-
 function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext) {
   target.classList.add('docx-fit-viewer')
   const style = installResponsiveStyle(target)
   const pagedLayout = context?.options?.docx?.visualPagination === true
-  const frames = wrapDocxSections(target, pagedLayout)
+  let frames: HTMLElement[] = []
   const view = getTargetWindow(target)
   const ResizeObserverCtor = view?.ResizeObserver
   let resizeFrame = 0
@@ -613,7 +358,7 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
   const zoomEmitter = createZoomChangeEmitter()
 
   const clampScale = (scale: number) => {
-    return Math.min(DOCX_MAX_SCALE, Math.max(DOCX_MIN_SCALE, Number(scale.toFixed(2))))
+    return clampWordScale(scale, DOCX_MIN_SCALE, DOCX_MAX_SCALE)
   }
 
   const applyResponsiveLayout = () => {
@@ -621,14 +366,13 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
     let firstFitScale = currentFitScale
     let measured = false
 
-    frames.forEach(frame => {
+    frames.forEach((frame) => {
       const page = frame.firstElementChild
       if (!isTargetHTMLElement(page, target)) {
         return
       }
 
       page.style.transform = 'translateX(-50%)'
-      correctDocxMixedAnchorOrigins(page)
 
       const pageWidth = page.offsetWidth
       const contentHeight = pagedLayout
@@ -684,14 +428,18 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
   })
 
   const setUserZoom = (nextZoom: number) => {
-    userZoom = Math.min(6, Math.max(0.2, Number(nextZoom.toFixed(2))))
+    if (!isPositiveFinite(nextZoom)) return getZoomState()
+    // A narrow viewport may require a multiplier greater than six to reach
+    // the advertised 300% scale. Only the final rendered scale is bounded.
+    userZoom = nextZoom
     view?.cancelAnimationFrame(resizeFrame)
     applyResponsiveLayout()
     return getZoomState()
   }
 
   const setAbsoluteScale = (scale: number) => {
-    return setUserZoom(scale / Math.max(currentFitScale, 0.01))
+    if (!isPositiveFinite(scale)) return getZoomState()
+    return setUserZoom(clampScale(scale) / currentFitScale)
   }
 
   const readFitPageSize = (): PrintPageSize | null => {
@@ -700,12 +448,14 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
       if (!page) {
         continue
       }
-      const pageSize = getElementPrintPageSize(page, DOCX_DEFAULT_PAGE_SIZE)
+      if (!page.offsetWidth || !page.offsetHeight) continue
       return {
-        width: page.offsetWidth || pageSize.width || DOCX_DEFAULT_PAGE_SIZE.width,
+        width: page.offsetWidth,
+        // Fit the visible flow, not an invented A4 page. Paper height is a
+        // separate concern handled by the export adapter.
         height: isDocxFlowFrame(frame)
-          ? DOCX_DEFAULT_PAGE_SIZE.height
-          : page.offsetHeight || pageSize.height || DOCX_DEFAULT_PAGE_SIZE.height
+          ? Math.max(page.scrollHeight, page.offsetHeight)
+          : page.offsetHeight
       }
     }
     return null
@@ -713,7 +463,8 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
 
   const fitDocx = (request: FileViewerFitRequest): FileViewerFitResult => {
     const pageSize = readFitPageSize()
-    if (!pageSize) {
+    const viewport = readWordFitViewport(target, request)
+    if (!pageSize || !viewport) {
       return {
         applied: false,
         mode: request.mode,
@@ -727,8 +478,8 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
     const mode = request.mode === 'auto' ? 'width' : request.mode
     const scale = resolveFileViewerFitScale({
       mode,
-      viewportWidth: Math.max(1, request.viewportWidth || target.clientWidth || 0),
-      viewportHeight: Math.max(1, request.viewportHeight || target.clientHeight || 0),
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
       contentWidth: pageSize.width,
       contentHeight: pageSize.height,
       currentScale,
@@ -736,7 +487,7 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
       maxScale: request.maxScale ?? DOCX_MAX_SCALE
     })
 
-    if (!scale) {
+    if (!scale || !isPositiveFinite(scale)) {
       return {
         applied: false,
         mode: request.mode,
@@ -771,17 +522,22 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
 
   const observer = ResizeObserverCtor ? new ResizeObserverCtor(resize) : null
   observer?.observe(target)
-  frames.forEach(frame => {
-    const page = getDocxPageElement(frame)
-    if (page) {
-      observer?.observe(page)
-    }
+  const disposeFrames = observeDocxFrames(target, pagedLayout, nextFrames => {
+    observer?.disconnect()
+    observer?.observe(target)
+    frames = nextFrames
+    frames.forEach(frame => {
+      const page = getDocxPageElement(frame)
+      if (page) observer?.observe(page)
+    })
+    resize()
   })
   applyResponsiveLayout()
 
   return () => {
     view?.cancelAnimationFrame(resizeFrame)
     observer?.disconnect()
+    disposeFrames()
     unregisterFileViewerZoomProvider(target)
     style.remove()
     target.classList.remove('docx-fit-viewer')
@@ -815,7 +571,7 @@ function getDocxFramePrintSize(frame: HTMLElement | undefined) {
 
   return {
     width: size.width,
-    height: Math.max(page.scrollHeight || 0, page.offsetHeight || 0, DOCX_DEFAULT_PAGE_SIZE.height)
+    height: Math.max(page.scrollHeight || 0, page.offsetHeight || 0, readDocxFlowPaperHeight(page, DOCX_DEFAULT_PAGE_SIZE.height))
   }
 }
 
@@ -858,23 +614,25 @@ function normalizeDocxPageForPrint(frame: HTMLElement, pageSize: PrintPageSize) 
 }
 
 function buildDocxPrintStyle(target: HTMLDivElement) {
-  const firstFrame = target.querySelector<HTMLElement>(
+  const frames = Array.from(target.querySelectorAll<HTMLElement>(
     '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
-  )
-  const pageSize = getDocxFramePrintSize(firstFrame || undefined)
-  const selector = isDocxCanvasSheet(firstFrame || undefined)
+  ))
+  const firstFrame = frames[0]
+  const pageSize = getDocxFramePrintSize(firstFrame)
+  const selector = isDocxCanvasSheet(firstFrame)
     ? '.viewer-export-content .docx-canvas-sheet'
-    : firstFrame?.classList.contains('docx-flow-frame')
+    : isDocxFlowFrame(firstFrame)
       ? '.viewer-export-content .docx-flow-frame'
       : '.viewer-export-content .docx-page-frame'
-
   return buildPrintPageStyle({
     selector,
     width: pageSize.width,
-    height: firstFrame?.classList.contains('docx-flow-frame')
-      ? DOCX_DEFAULT_PAGE_SIZE.height
+    height: isDocxFlowFrame(firstFrame)
+      ? readDocxFlowPaperHeight(getDocxPageElement(firstFrame), DOCX_DEFAULT_PAGE_SIZE.height)
       : pageSize.height,
-    heightMode: firstFrame?.classList.contains('docx-flow-frame') ? 'min' : 'fixed'
+    heightMode: isDocxFlowFrame(firstFrame) ? 'min' : 'fixed',
+    // Flow sections are browser-paginated rather than fixed authored pages.
+    pages: frames.some(isDocxFlowFrame) ? undefined : frames.map(getDocxFramePrintSize)
   })
 }
 
@@ -899,11 +657,18 @@ async function prepareDocxCloneForExport(target: HTMLDivElement) {
     const liveFrames = Array.from(target.querySelectorAll<HTMLElement>(selector))
     const clone = target.cloneNode(true) as HTMLElement
     replaceFileViewerCanvasWithImages(target, clone)
-    const printDocument = target.ownerDocument.createElement('div')
-    printDocument.className = 'docx-print-document'
+    // The engine wrapper carries document theme variables and review metadata.
+    // Preserve that context while replacing only the viewer's zoom/scroll frames.
+    const engineWrapper = clone.querySelector<HTMLElement>('.docx-wrapper')
+    const printDocument = engineWrapper
+      ? engineWrapper.cloneNode(false) as HTMLElement
+      : target.ownerDocument.createElement('div')
+    printDocument.classList.add('docx-print-document')
+    printDocument.style.padding = '0'
+    printDocument.style.background = 'transparent'
     const scopedStyles = Array.from(clone.querySelectorAll('style'))
-      .filter(style => !style.textContent?.includes('.docx-fit-viewer'))
-      .map(style => style.outerHTML)
+      .filter((style) => !style.textContent?.includes('.docx-fit-viewer'))
+      .map((style) => style.outerHTML)
       .join('')
 
     clone.querySelectorAll<HTMLElement>(selector).forEach((frame, index) => {
@@ -912,7 +677,9 @@ async function prepareDocxCloneForExport(target: HTMLDivElement) {
       printDocument.appendChild(frame.cloneNode(true))
     })
 
-    return printDocument.childElementCount ? `${scopedStyles}${printDocument.outerHTML}` : clone.innerHTML
+    return printDocument.childElementCount
+      ? `${scopedStyles}${printDocument.outerHTML}`
+      : clone.innerHTML
   } finally {
     if (materializedForSnapshot && view) {
       const afterPrint = target.ownerDocument.createEvent('Event')
@@ -925,7 +692,11 @@ async function prepareDocxCloneForExport(target: HTMLDivElement) {
 /**
  * 渲染docx文件
  */
-export default async function(buffer: ArrayBuffer, target: HTMLDivElement, context?: FileRenderContext): Promise<AppWrapper> {
+export default async function (
+  buffer: ArrayBuffer,
+  target: HTMLDivElement,
+  context?: FileRenderContext
+): Promise<AppWrapper> {
   assertValidDocxPackage(buffer, context)
   target.replaceChildren()
 
@@ -938,29 +709,22 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
     context?.onProgressiveRender?.()
   }
   const docxOptions = createDocxOptions(target, context, notifyProgressiveRender)
-  const [{ defaultOptions, renderAsync }, pageBackgroundImage] = await Promise.all([
-    loadLibrary(),
-    resolveDocxPageBackgroundImage(buffer, () => createTargetXmlParser(target))
-  ])
+  const { defaultOptions, renderAsync, disposeRenderedDocument } = await loadLibrary()
 
   target.dataset.docxWorker = docxOptions.useWorker ? 'self' : 'false'
   target.dataset.docxDarkMode = docxOptions.darkMode ? 'true' : 'false'
-  const usedHeaderFooterFallback = await renderDocxWithHeaderFooterFallback(renderAsync, buffer, target, {
-    ...defaultOptions,
-    ...docxOptions
-  })
-  applyDocxExternalLinkPolicy(target, docxOptions.externalLinkPolicy)
-  target.dataset.docxHeaderFooterFallback = usedHeaderFooterFallback ? 'true' : 'false'
-  target.dataset.docxPageBackground =
-    applyDocxPageBackgroundImage(target, pageBackgroundImage) > 0 ? 'true' : 'false'
+  await renderAsync(buffer, target, undefined, { ...defaultOptions, ...docxOptions })
   notifyProgressiveRender()
 
   const disposeResponsive = makeDocxResponsive(target, context)
   context?.registerExportAdapter?.({
     includeDocumentStyles: false,
-    getPrintMaskPages: () => Array.from(
-      target.querySelectorAll<HTMLElement>('.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet')
-    ),
+    getPrintMaskPages: () =>
+      Array.from(
+        target.querySelectorAll<HTMLElement>(
+          '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
+        )
+      ),
     beforeSnapshot: () => {
       const view = getTargetWindow(target)
       if (view) {
@@ -971,9 +735,8 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
     toHtml: () => prepareDocxCloneForExport(target)
   })
   context?.registerThumbnailAdapter?.({
-    getTarget: () => target.querySelector(
-      '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
-    ) || target
+    getTarget: () =>
+      target.querySelector('.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet') || target
   })
 
   return {
@@ -982,10 +745,9 @@ export default async function(buffer: ArrayBuffer, target: HTMLDivElement, conte
       context?.registerExportAdapter?.(null)
       context?.registerThumbnailAdapter?.(null)
       disposeResponsive()
+      disposeRenderedDocument(target)
       delete target.dataset.docxWorker
       delete target.dataset.docxDarkMode
-      delete target.dataset.docxHeaderFooterFallback
-      delete target.dataset.docxPageBackground
       target.replaceChildren()
     }
   }

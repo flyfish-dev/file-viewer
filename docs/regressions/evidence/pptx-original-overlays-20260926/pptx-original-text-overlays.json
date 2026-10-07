@@ -1,0 +1,1409 @@
+{
+  "completed": true,
+  "passed": 29,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "C015 DPR 1: authored transforms, run fonts and content survive production Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 1 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 1 zoom 50: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 1 zoom 200: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 1 zoom 88: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 1 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 1: destroy releases the actual Worker and slide DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 2: authored transforms, run fonts and content survive production Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 2 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 2 zoom 50: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 2 zoom 200: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 2 zoom 88: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 2 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C015 DPR 2: destroy releases the actual Worker and slide DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 1: authored transforms, run fonts and content survive production Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 1 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 1 zoom 50: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 1 zoom 200: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 1 zoom 88: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 1 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 1: destroy releases the actual Worker and slide DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 2: authored transforms, run fonts and content survive production Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 2 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 2 zoom 50: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 2 zoom 200: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 2 zoom 88: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 2 zoom 100: original text and image placement have no unintended overlap",
+      "status": "pass"
+    },
+    {
+      "name": "C035 DPR 2: destroy releases the actual Worker and slide DOM",
+      "status": "pass"
+    },
+    {
+      "name": "No external loads or unhandled browser errors",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C015",
+      "sha256": "388291cb01e86db7f7b9f049b0bf719a1d2137d3e9a274b90d156a756df1b28a",
+      "dpr": 1,
+      "pages": 1,
+      "geometry": [
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 50,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 200,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 88,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.57812223481866,
+                "y": 302.39062954316074,
+                "width": 1176.6562466912649,
+                "height": 77.53122335062844
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.01563104682334,
+                    "y": 303.8281114788898,
+                    "width": 1154.4062277532441,
+                    "height": 64.00000693581306
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125004809011,
+                "y": 454.21873321926086,
+                "width": 453.2031221129001,
+                "height": 132.21875684437413
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.92187467657708,
+                    "y": 460.6093566935852,
+                    "width": 427.59370744025256,
+                    "height": 47.999987862327146
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.92187467657708,
+                    "y": 519.2655970992696,
+                    "width": 427.59370744025256,
+                    "height": 48.00002254139245
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.92187467657708,
+                    "y": 577.9218721840192,
+                    "width": 427.59370744025256,
+                    "height": 47.999953183261844
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        }
+      ]
+    },
+    {
+      "id": "C015",
+      "sha256": "388291cb01e86db7f7b9f049b0bf719a1d2137d3e9a274b90d156a756df1b28a",
+      "dpr": 2,
+      "pages": 1,
+      "geometry": [
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 50,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 200,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 88,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.57812223481866,
+                "y": 302.39062954316074,
+                "width": 1176.6562466912649,
+                "height": 77.53122335062844
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.01563104682334,
+                    "y": 303.8281114788898,
+                    "width": 1154.4062277532441,
+                    "height": 64.00000693581306
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125004809011,
+                "y": 454.21873321926086,
+                "width": 453.2031221129001,
+                "height": 132.21875684437413
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.92187467657708,
+                    "y": 460.6093566935852,
+                    "width": 427.59370744025256,
+                    "height": 47.999987862327146
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.92187467657708,
+                    "y": 519.2655970992696,
+                    "width": 427.59370744025256,
+                    "height": 48.00002254139245
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.92187467657708,
+                    "y": 577.9218721840192,
+                    "width": 427.59370744025256,
+                    "height": 47.999953183261844
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        },
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 95.578125,
+                "y": 302.390625,
+                "width": 1176.65625,
+                "height": 77.53125
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 105.015625,
+                    "y": 303.828125,
+                    "width": 1154.40625,
+                    "height": 64
+                  },
+                  "textSha256": "aee780e98aa9a5533d39d93c7a4e8ba89feb9bc8f45b1a91fa8701c9be514ef9"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 98.125,
+                "y": 454.21875,
+                "width": 453.203125,
+                "height": 132.21875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 460.609375,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "65366ed7535b13fc285f6127897e5910797aefdbb7476e6a9ddda8011091dbd8"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 519.265625,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "4eb28296dd9cfb99284dd18a335e4fb5f060076e6032665bd1194fd927f7ea9d"
+                },
+                {
+                  "box": {
+                    "x": 110.921875,
+                    "y": 577.921875,
+                    "width": 427.59375,
+                    "height": 48
+                  },
+                  "textSha256": "88aa0171e77412e9e46313a487878b837a922c41f7d8ebafdce17085a2c39ea1"
+                }
+              ]
+            }
+          ],
+          "pictures": []
+        }
+      ]
+    },
+    {
+      "id": "C035",
+      "sha256": "3570bbd6a66c11bd7340b803308c6272963d7ec14205f298ca232b18cb4017fb",
+      "dpr": 1,
+      "pages": 1,
+      "geometry": [
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 50,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 200,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 88,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.12501042338614,
+                "y": 49.12499741873692,
+                "width": 952.3750599180813,
+                "height": 99.34374652553795
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71873089045873,
+                    "y": 63.5937490658286,
+                    "width": 933.1718746886095,
+                    "height": 70.4062432313546
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.12501042338614,
+                "y": 188.95311429800134,
+                "width": 952.3750599180813,
+                "height": 345.1875021633443
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71873089045873,
+                    "y": 212.6093688541355,
+                    "width": 933.1718746886095,
+                    "height": 102.40623738049162
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71873089045873,
+                    "y": 333.8749832176927,
+                    "width": 933.1718746886095,
+                    "height": 51.20311869024581
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875435946653,
+                "y": 395.562484791034,
+                "width": 219.6094074009975,
+                "height": 184.609353382946
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C035",
+      "sha256": "3570bbd6a66c11bd7340b803308c6272963d7ec14205f298ca232b18cb4017fb",
+      "dpr": 2,
+      "pages": 1,
+      "geometry": [
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 50,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 200,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 88,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.12501042338614,
+                "y": 49.12499741873692,
+                "width": 952.3750599180813,
+                "height": 99.34374652553795
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71873089045873,
+                    "y": 63.5937490658286,
+                    "width": 933.1718746886095,
+                    "height": 70.4062432313546
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.12501042338614,
+                "y": 188.95311429800134,
+                "width": 952.3750599180813,
+                "height": 345.1875021633443
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71873089045873,
+                    "y": 212.6093688541355,
+                    "width": 933.1718746886095,
+                    "height": 102.40623738049162
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71873089045873,
+                    "y": 333.8749832176927,
+                    "width": 933.1718746886095,
+                    "height": 51.20311869024581
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875435946653,
+                "y": 395.562484791034,
+                "width": 219.6094074009975,
+                "height": 184.609353382946
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        },
+        {
+          "zoom": 100,
+          "shapes": [
+            {
+              "box": {
+                "x": 49.125,
+                "y": 49.125,
+                "width": 952.375,
+                "height": 99.34375
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 63.59375,
+                    "width": 933.171875,
+                    "height": 70.40625
+                  },
+                  "textSha256": "ed0504f70a48ffe9ed17e7ddee02a72a9c8af602aee1f7ce11853975ce911733"
+                }
+              ]
+            },
+            {
+              "box": {
+                "x": 49.125,
+                "y": 188.953125,
+                "width": 952.375,
+                "height": 345.1875
+              },
+              "paragraphs": [
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 212.609375,
+                    "width": 933.171875,
+                    "height": 102.40625
+                  },
+                  "textSha256": "24e0bec1d0c326edc0fb8fa0a8bae4d1062843da1c3aef89f10288c9ba00b073"
+                },
+                {
+                  "box": {
+                    "x": 58.71875,
+                    "y": 333.875,
+                    "width": 933.171875,
+                    "height": 51.203125
+                  },
+                  "textSha256": "2fab2c6aed0e32a377e43338309f162cf5ca4302823fdb1315cfe7eeae217807"
+                }
+              ]
+            }
+          ],
+          "pictures": [
+            {
+              "box": {
+                "x": 94.46875,
+                "y": 395.5625,
+                "width": 219.609375,
+                "height": 184.609375
+              },
+              "sha256": "9076d1e9056d7ec7a1f9aef9cfa3e0288f8be9188a4824b6ea2510ddd38a73d9"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "externalRequestCount": 0,
+  "errors": []
+}

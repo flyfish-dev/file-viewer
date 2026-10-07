@@ -64,6 +64,20 @@ describe('original GitHub 255 DOC revision records', () => {
 })
 
 describe('DOCX revision mode integration', () => {
+  it('exposes paragraph identities only when the host explicitly opts in', () => {
+    const target = parseHTML('<html><body><div></div></body></html>').document.querySelector(
+      'div'
+    )! as unknown as HTMLDivElement
+    expect(createDocxOptions(target, undefined, () => {}).exposeDisplayTargets).toBe(false)
+    expect(
+      createDocxOptions(
+        target,
+        { options: { docx: { exposeDisplayTargets: true } } } as any,
+        () => {}
+      ).exposeDisplayTargets
+    ).toBe(true)
+  })
+
   it('retains revisions by default and forwards explicit review modes', () => {
     const target = parseHTML('<html><body><div></div></body></html>').document.querySelector(
       'div'

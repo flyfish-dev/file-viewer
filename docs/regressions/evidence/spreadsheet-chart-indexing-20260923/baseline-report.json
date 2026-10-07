@@ -1,0 +1,153 @@
+{
+  "passed": 3,
+  "failed": 26,
+  "checks": [
+    {
+      "name": "Sparse caches retain declared count, absent categories and source indices",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n3 !== 6\n"
+    },
+    {
+      "name": "Line gaps do not connect unrelated categories or create zero values",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n1 !== 3\n"
+    },
+    {
+      "name": "Labels keep the full logical domain, including trailing empty categories",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    0,\n+   1,\n    2,\n-   4\n  ]\n"
+    },
+    {
+      "name": "Blank cells honour explicit zero policy without converting error values to zero",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    10,\n-   0,\n-   'error',\n    40,\n-   0\n  ]\n"
+    },
+    {
+      "name": "Span policy connects blanks but not malformed numeric points",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n1 !== 2\n"
+    },
+    {
+      "name": "Unordered cache entries are indexed and malformed index tokens are ignored",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n7 !== 6\n"
+    },
+    {
+      "name": "Empty numeric text is absent; genuine zero stays a data point",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(Number.isNaN(c.series[0].values[1]))\n"
+    },
+    {
+      "name": "Omitted ptCount uses highest valid index without compressing the data",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n2 !== 4\n"
+    },
+    {
+      "name": "Formula fallback preserves empty cell positions",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(Number.isNaN(c.series[0].values[1]))\n"
+    },
+    {
+      "name": "Explicit empty cache is not replaced by unrelated formula cells",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(Number.isNaN(c.series[0].values[0]))\n"
+    },
+    {
+      "name": "All-empty category strings stay empty instead of inventing numbered labels",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   '1'\n-   '',\n-   '',\n-   ''\n  ]\n"
+    },
+    {
+      "name": "Multiple series use the same category extent for axis labels and geometry",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n612 !== 335\n"
+    },
+    {
+      "name": "Column charts omit absent points without producing non-finite SVG attributes",
+      "status": "pass"
+    },
+    {
+      "name": "Area fill closes each contiguous run separately",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n0 !== 2\n"
+    },
+    {
+      "name": "Single nonzero pie and doughnut values form a complete circle",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n2 !== 1\n"
+    },
+    {
+      "name": "Bounded extrema sampling preserves an explicit separator for every skipped gap",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(values.slice(left+1,right).every(Number.isFinite))\n"
+    },
+    {
+      "name": "Small sampling budgets remain bounded without joining hard gaps",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(indexes.length<=limit)\n"
+    },
+    {
+      "name": "Worker transfer sampling preserves source extent and gap metadata",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(s.values.some(Number.isNaN))\n"
+    },
+    {
+      "name": "Sampling never hides numeric errors behind spanned blank separators",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n1 !== 2\n"
+    },
+    {
+      "name": "Unreasonable ptCount cannot expand a short malformed cache",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid worksheet ranges do not expand or read unrelated cells",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n2 !== 1\n"
+    },
+    {
+      "name": "Axis font sizes retain hundredth-point precision and chart-level inheritance",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 12.333333333333334\n"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 320, DPR 1, Worker false",
+      "status": "fail",
+      "error": "Authored category axis font size must match sheet zoom"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 1000, DPR 1, Worker false",
+      "status": "fail",
+      "error": "Authored category axis font size must match sheet zoom"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 320, DPR 2, Worker false",
+      "status": "fail",
+      "error": "Authored category axis font size must match sheet zoom"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 1000, DPR 2, Worker false",
+      "status": "fail",
+      "error": "Authored category axis font size must match sheet zoom"
+    },
+    {
+      "name": "Actual SVG pixels preserve sparse islands and a complete single-value doughnut",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n1 !== 2\n"
+    },
+    {
+      "name": "Actual classic Worker and structured clone retain missing source positions",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\n3 !== 6\n"
+    },
+    {
+      "name": "Browser rendering has no external requests or uncaught exceptions",
+      "status": "pass"
+    }
+  ],
+  "originals": [],
+  "errors": [],
+  "requests": [],
+  "moduleWorkerUiSkipped": true,
+  "workerSha256": "84c01957700a47488a69f714bc99799de4e16715760090b202f13964fed8efbb"
+}

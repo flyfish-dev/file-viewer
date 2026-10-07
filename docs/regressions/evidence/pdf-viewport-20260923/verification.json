@@ -1,0 +1,4 @@
+{
+  "run": "35817304468",
+  "scope": "Core/PDF builds; baseline assertion fails; nine real browser/Worker lifecycle checks pass. Original corpus not included in this gate."
+}

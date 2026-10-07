@@ -1,0 +1,46 @@
+[
+  {
+    "path": "/browser.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/web/pdf_viewer.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/build/pdf.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+    "status": 200
+  },
+  {
+    "path": "/browser.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/web/pdf_viewer.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/build/pdf.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+    "status": 200
+  },
+  {
+    "path": "/pdfjs/wasm/openjpeg.wasm",
+    "status": 200
+  }
+]

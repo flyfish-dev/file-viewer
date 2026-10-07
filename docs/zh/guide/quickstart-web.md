@@ -220,6 +220,9 @@ RequireJS 的 `paths` 不写末尾 `.js`，模块别名可自行选择。`render
 
 ## 通过普通 script 引入
 
+支持连续缩放的渲染器默认启用 Ctrl/⌘ + 滚轮和双指缩放。
+可用 `options.zoomGestures: false` 关闭；手势与工具栏按钮遵守相同的缩放权限和操作钩子。
+
 IIFE 包会暴露 `window.FlyfishFileViewerWeb`:
 
 ```bash

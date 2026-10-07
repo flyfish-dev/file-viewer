@@ -694,88 +694,96 @@ export function normalizeRowEndOnlyTables(paragraphs: ParagraphModel[]): void {
   }
 }
 
-function buildTableBlock(tableParagraphs: ParagraphModel[]): TableBlock {
-  const rows: TableRowBlock[] = [];
-  let pendingRow: { cells: TableCellBlock[] } = { cells: [] };
-  let pendingCellParagraphs: ParagraphModel[] = [];
-
-  for (const paragraph of tableParagraphs) {
-    pendingCellParagraphs.push(paragraph);
-    if (paragraph.terminator === DOC_CONTROL.cellMark) {
-      pendingRow.cells.push({
-        id: uniqueId('cell'),
-        paragraphs: pendingCellParagraphs.map(paragraphToBlock),
-        meta: null,
-      });
-      pendingCellParagraphs = [];
-
-      if (paragraph.paraState.tableRowEnd || paragraph.paraState.innerTableRowEnd) {
-        const cellDefs = applyTableStateToCells(paragraph.tableState);
-        while (
-          cellDefs.length &&
-          pendingRow.cells.length > cellDefs.length &&
-          pendingRow.cells[pendingRow.cells.length - 1]!.paragraphs.every((block) => !block.text && !(block.inlines || []).length)
-        ) {
-          pendingRow.cells.pop();
-        }
-        pendingRow.cells.forEach((cell, index) => {
-          cell.meta = cellDefs[index] || { index };
-        });
-        const gridWidthTwips = cellDefs.length
-          ? ((cellDefs[cellDefs.length - 1]!.rightBoundary || 0) - (cellDefs[0]!.leftBoundary || 0))
-          : 0;
-        rows.push({
-          id: uniqueId('row'),
-          cells: pendingRow.cells,
-          state: paragraph.tableState,
-          gridWidthTwips,
-        });
-        pendingRow = { cells: [] };
-      }
-    }
-  }
-
-  if (pendingCellParagraphs.length) {
-    pendingRow.cells.push({ id: uniqueId('cell'), paragraphs: pendingCellParagraphs.map(paragraphToBlock), meta: null });
-  }
-  if (pendingRow.cells.length) {
-    rows.push({ id: uniqueId('row'), cells: pendingRow.cells, state: tableParagraphs[0]?.tableState || tablePropsToState([]), gridWidthTwips: 0 });
-  }
-
-  finalizeTableGrid(rows);
-  resolveTableGridBorders(rows);
-
-  const gridWidthTwips = rows.find((row) => row.gridWidthTwips)?.gridWidthTwips || 0;
-  const depth = Math.max(...tableParagraphs.map((paragraph) => getTableDepth(paragraph.paraState)), 1);
-
-  return {
-    type: 'table',
-    id: uniqueId('table'),
-    depth,
-    rows,
-    state: rows[0]?.state || tablePropsToState([]),
-    gridWidthTwips,
-  };
-}
-
-function buildBlocks(paragraphs: ParagraphModel[]): MsDocParseResult['blocks'] {
+/** Restore the table-depth tree before resolving each table's independent grid.
+ * At depth > 1, a paragraph mark plus InnerTableCell/InnerTtp terminates
+ * a cell/row. Treating all 0x07 runs as one table destroys nested grids.
+ * The explicit stack advances once per paragraph, including malformed depth jumps.
+ */
+export function buildBlocks(paragraphs: ParagraphModel[]): MsDocParseResult['blocks'] {
   const blocks: MsDocParseResult['blocks'] = [];
-  let index = 0;
-  while (index < paragraphs.length) {
-    const paragraph = paragraphs[index]!;
+  type CellContent = NonNullable<TableCellBlock['blocks']>;
+  interface PendingTable {
+    table: TableBlock;
+    cells: TableCellBlock[];
+    content: CellContent;
+    lastState: ParagraphModel['tableState'];
+    storyKind: ParagraphModel['storyKind'];
+  }
+  const stack: PendingTable[] = [];
+  const finishCell = (pending: PendingTable) => {
+    pending.cells.push({
+      id: uniqueId('cell'),
+      paragraphs: pending.content.filter((block): block is ParagraphBlock => block.type === 'paragraph'),
+      blocks: pending.content,
+      meta: null,
+    });
+    pending.content = [];
+  };
+  const finishRow = (pending: PendingTable, state = pending.lastState) => {
+    if (pending.content.length) finishCell(pending);
+    const definitions = applyTableStateToCells(state);
+    // A row mark is not an additional cell. Missing declared cells are blank;
+    // surplus nonempty cells remain visible instead of silently losing content.
+    while (pending.cells.length < definitions.length) finishCell(pending);
+    if (!pending.cells.length) finishCell(pending);
+    pending.cells.forEach((cell, index) => { cell.meta = definitions[index] || { index }; });
+    pending.table.rows.push({
+      id: uniqueId('row'),
+      cells: pending.cells,
+      state,
+      gridWidthTwips: definitions.length
+        ? (definitions[definitions.length - 1]!.rightBoundary || 0) - (definitions[0]!.leftBoundary || 0)
+        : 0,
+    });
+    pending.cells = [];
+  };
+  const finishTable = () => {
+    const pending = stack.pop()!;
+    if (pending.content.length || pending.cells.length) finishRow(pending);
+    const table = pending.table;
+    finalizeTableGrid(table.rows);
+    resolveTableGridBorders(table.rows);
+    table.state = table.rows[0]?.state || pending.lastState;
+    table.gridWidthTwips = table.rows.find(row => row.gridWidthTwips)?.gridWidthTwips || 0;
+    const parent = stack[stack.length - 1];
+    if (parent) parent.content.push(table);
+    else blocks.push(table);
+  };
+  for (const paragraph of paragraphs) {
     const depth = getTableDepth(paragraph.paraState);
+    // Text-box stories must not extend the main story's final table.
+    if (stack.length && stack[0]!.storyKind !== paragraph.storyKind) {
+      while (stack.length) finishTable();
+    }
+    while (stack.length && stack[stack.length - 1]!.table.depth > depth) finishTable();
     if (depth <= 0) {
       blocks.push(paragraphToBlock(paragraph));
-      index += 1;
       continue;
     }
-    const tableParagraphs: ParagraphModel[] = [];
-    while (index < paragraphs.length && getTableDepth(paragraphs[index]!.paraState) > 0) {
-      tableParagraphs.push(paragraphs[index]!);
-      index += 1;
+    let pending = stack[stack.length - 1];
+    if (!pending || pending.table.depth < depth) {
+      pending = {
+        table: { type: 'table', id: uniqueId('table'), depth, rows: [], state: paragraph.tableState, gridWidthTwips: 0 },
+        cells: [], content: [], lastState: paragraph.tableState, storyKind: paragraph.storyKind,
+      };
+      stack.push(pending);
     }
-    blocks.push(buildTableBlock(tableParagraphs));
+    pending.lastState = paragraph.tableState;
+    const rowEnd = depth > 1 ? paragraph.paraState.innerTableRowEnd : paragraph.paraState.tableRowEnd;
+    if (rowEnd) {
+      // Damaged producer data can place real text on a row mark. Retain it,
+      // but do not manufacture an empty paragraph/cell for the normal sentinel.
+      if (paragraph.text || paragraph.inlines.length) pending.content.push(paragraphToBlock(paragraph));
+      finishRow(pending, paragraph.tableState);
+      continue;
+    }
+    pending.content.push(paragraphToBlock(paragraph));
+    const cellEnd = depth > 1
+      ? paragraph.paraState.innerTableCell
+      : paragraph.terminator === DOC_CONTROL.cellMark;
+    if (cellEnd) finishCell(pending);
   }
+  while (stack.length) finishTable();
   return blocks;
 }
 

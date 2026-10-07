@@ -685,6 +685,8 @@ export default class SheetJsModel implements SheetModel {
         title: chart.title,
         categoryAxisTitle: chart.categoryAxisTitle,
         valueAxisTitle: chart.valueAxisTitle,
+        categoryAxisFontSize: chart.categoryAxisFontSize,
+        valueAxisFontSize: chart.valueAxisFontSize,
         barDirection: chart.barDirection,
         grouping: chart.grouping,
         scatterStyle: chart.scatterStyle,

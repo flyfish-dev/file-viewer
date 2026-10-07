@@ -1,0 +1,291 @@
+{
+  "completed": true,
+  "passed": 49,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "generated DPR 1 flow: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 flow: font metrics keep subscript and superscript lines separate",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 flow: a larger inline font enlarges its line without a size threshold",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 flow: exact, disabled-grid and ordinary table-cell line rules are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 flow: mixed pt/px paragraph minimum cannot shrink",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 flow: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 paged: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 paged: font metrics keep subscript and superscript lines separate",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 paged: a larger inline font enlarges its line without a size threshold",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 paged: exact, disabled-grid and ordinary table-cell line rules are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 paged: mixed pt/px paragraph minimum cannot shrink",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1 paged: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1: actual Worker parsing agrees with the direct path",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1: export adapter retains inline metrics and exact original content",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 1: unmount clears the document and adapters",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1 flow: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1 flow: original line glyphs are not occluded by subsequent paragraph shading",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1 flow: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1 paged: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1 paged: original line glyphs are not occluded by subsequent paragraph shading",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1 paged: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1: actual Worker parsing agrees with the direct path",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1: export adapter retains inline metrics and exact original content",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 1: unmount clears the document and adapters",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 flow: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 flow: font metrics keep subscript and superscript lines separate",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 flow: a larger inline font enlarges its line without a size threshold",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 flow: exact, disabled-grid and ordinary table-cell line rules are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 flow: mixed pt/px paragraph minimum cannot shrink",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 flow: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 paged: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 paged: font metrics keep subscript and superscript lines separate",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 paged: a larger inline font enlarges its line without a size threshold",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 paged: exact, disabled-grid and ordinary table-cell line rules are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 paged: mixed pt/px paragraph minimum cannot shrink",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2 paged: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2: actual Worker parsing agrees with the direct path",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2: export adapter retains inline metrics and exact original content",
+      "status": "pass"
+    },
+    {
+      "name": "generated DPR 2: unmount clears the document and adapters",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2 flow: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2 flow: original line glyphs are not occluded by subsequent paragraph shading",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2 flow: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2 paged: source text including literal tabs is preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2 paged: original line glyphs are not occluded by subsequent paragraph shading",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2 paged: five zoom round trips preserve text, page count and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2: actual Worker parsing agrees with the direct path",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2: export adapter retains inline metrics and exact original content",
+      "status": "pass"
+    },
+    {
+      "name": "C005 DPR 2: unmount clears the document and adapters",
+      "status": "pass"
+    },
+    {
+      "name": "No unhandled browser errors or external requests",
+      "status": "pass"
+    }
+  ],
+  "samples": [
+    {
+      "id": "generated",
+      "dpr": 1,
+      "paged": false,
+      "sha256": "84de52de3a05bd2a48225c20ec1ad04cb3a5f47a6240ca0887ac598c9b2dc7fd",
+      "characters": 131,
+      "textSha256": "0a907f92d1c4da7bd790df92ecbb68df3c443c7f5525298b594df3337431642c",
+      "pages": 1
+    },
+    {
+      "id": "generated",
+      "dpr": 1,
+      "paged": true,
+      "sha256": "84de52de3a05bd2a48225c20ec1ad04cb3a5f47a6240ca0887ac598c9b2dc7fd",
+      "characters": 131,
+      "textSha256": "0a907f92d1c4da7bd790df92ecbb68df3c443c7f5525298b594df3337431642c",
+      "pages": 1
+    },
+    {
+      "id": "C005",
+      "dpr": 1,
+      "paged": false,
+      "sha256": "0b6a601d5c98fb9d543a0baf4afce712f79831710ca6de4a383a1f69c89428a8",
+      "characters": 4952,
+      "textSha256": "dfffc0e88dfe43272eea39e5559a80a3ff406f8d31187d09555813d4811475ee",
+      "pages": 1,
+      "minimumShadingGap": 1.0000003149730305,
+      "minimumWrappedLineGap": 12.859379050356313,
+      "minimumParagraphGap": 12.859379050356313
+    },
+    {
+      "id": "C005",
+      "dpr": 1,
+      "paged": true,
+      "sha256": "0b6a601d5c98fb9d543a0baf4afce712f79831710ca6de4a383a1f69c89428a8",
+      "characters": 4952,
+      "textSha256": "dfffc0e88dfe43272eea39e5559a80a3ff406f8d31187d09555813d4811475ee",
+      "pages": 6,
+      "minimumShadingGap": 1.0000003149730305,
+      "minimumWrappedLineGap": 12.859379050356313,
+      "minimumParagraphGap": 12.859379050356313
+    },
+    {
+      "id": "generated",
+      "dpr": 2,
+      "paged": false,
+      "sha256": "84de52de3a05bd2a48225c20ec1ad04cb3a5f47a6240ca0887ac598c9b2dc7fd",
+      "characters": 131,
+      "textSha256": "0a907f92d1c4da7bd790df92ecbb68df3c443c7f5525298b594df3337431642c",
+      "pages": 1
+    },
+    {
+      "id": "generated",
+      "dpr": 2,
+      "paged": true,
+      "sha256": "84de52de3a05bd2a48225c20ec1ad04cb3a5f47a6240ca0887ac598c9b2dc7fd",
+      "characters": 131,
+      "textSha256": "0a907f92d1c4da7bd790df92ecbb68df3c443c7f5525298b594df3337431642c",
+      "pages": 1
+    },
+    {
+      "id": "C005",
+      "dpr": 2,
+      "paged": false,
+      "sha256": "0b6a601d5c98fb9d543a0baf4afce712f79831710ca6de4a383a1f69c89428a8",
+      "characters": 4952,
+      "textSha256": "dfffc0e88dfe43272eea39e5559a80a3ff406f8d31187d09555813d4811475ee",
+      "pages": 1,
+      "minimumShadingGap": 1.0000003149730305,
+      "minimumWrappedLineGap": 12.859379050356313,
+      "minimumParagraphGap": 12.859379050356313
+    },
+    {
+      "id": "C005",
+      "dpr": 2,
+      "paged": true,
+      "sha256": "0b6a601d5c98fb9d543a0baf4afce712f79831710ca6de4a383a1f69c89428a8",
+      "characters": 4952,
+      "textSha256": "dfffc0e88dfe43272eea39e5559a80a3ff406f8d31187d09555813d4811475ee",
+      "pages": 6,
+      "minimumShadingGap": 1.0000003149730305,
+      "minimumWrappedLineGap": 12.859379050356313,
+      "minimumParagraphGap": 12.859379050356313
+    }
+  ],
+  "errors": [],
+  "requests": []
+}

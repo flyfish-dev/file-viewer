@@ -1,0 +1,150 @@
+[
+  {
+    "id": "C038",
+    "sha256": "9aa83ab164c8e4aa8d2aec2f962b7c320b6731ef5b3e67096ed14866a5a9887f",
+    "before": {
+      "pages": 1,
+      "tables": 0,
+      "images": 0,
+      "broken": 0,
+      "charts": 2
+    },
+    "after": {
+      "pages": 1,
+      "tables": 0,
+      "images": 0,
+      "broken": 0,
+      "charts": 2
+    },
+    "indexedLabelsAfter": 32,
+    "scope": "chart labels and structural smoke checks only"
+  },
+  {
+    "id": "C037",
+    "sha256": "d5a60516f06b7f116c629fdbc834b81ae8a0d7ac70e64006483d2a4c44ff89ab",
+    "before": {
+      "pages": 13,
+      "tables": 4,
+      "images": 5,
+      "broken": 0,
+      "charts": 0
+    },
+    "after": {
+      "pages": 13,
+      "tables": 4,
+      "images": 5,
+      "broken": 0,
+      "charts": 0
+    },
+    "indexedLabelsAfter": 0,
+    "scope": "chart labels and structural smoke checks only"
+  },
+  {
+    "id": "C011",
+    "sha256": "41f550e09602c728f1bd9d738f0369123608d29484d456416fe1aa8e351b4dad",
+    "before": {
+      "pages": 1,
+      "tables": 1,
+      "images": 0,
+      "broken": 0,
+      "charts": 1
+    },
+    "after": {
+      "pages": 1,
+      "tables": 1,
+      "images": 0,
+      "broken": 0,
+      "charts": 1
+    },
+    "indexedLabelsAfter": 4,
+    "scope": "chart labels and structural smoke checks only"
+  },
+  {
+    "id": "C012",
+    "sha256": "208f3352ddf1f06c93ded06f74ac71d5fa3a402454a0d245fe93b93e2643f979",
+    "before": {
+      "pages": 1,
+      "tables": 1,
+      "images": 0,
+      "broken": 0,
+      "charts": 2
+    },
+    "after": {
+      "pages": 1,
+      "tables": 1,
+      "images": 0,
+      "broken": 0,
+      "charts": 2
+    },
+    "indexedLabelsAfter": 17,
+    "scope": "chart labels and structural smoke checks only"
+  },
+  {
+    "id": "C052",
+    "sha256": "b436f5132c43ca5808b040ada3959982c66f1877ba0c06a4f123940b8e3889ec",
+    "before": {
+      "pages": 1,
+      "tables": 0,
+      "images": 0,
+      "broken": 0,
+      "charts": 2
+    },
+    "after": {
+      "pages": 1,
+      "tables": 0,
+      "images": 0,
+      "broken": 0,
+      "charts": 2
+    },
+    "indexedLabelsAfter": 16,
+    "scope": "chart labels and structural smoke checks only"
+  },
+  {
+    "id": "C071",
+    "sha256": "424e108345c5bf62384d2dfdf6cec94bbcb75cba27315852bc805398b90e68c5",
+    "before": {
+      "pages": 2,
+      "tables": 0,
+      "images": 2,
+      "broken": 0,
+      "charts": 1
+    },
+    "after": {
+      "pages": 2,
+      "tables": 0,
+      "images": 2,
+      "broken": 0,
+      "charts": 1
+    },
+    "indexedLabelsAfter": 4,
+    "scope": "chart labels and structural smoke checks only"
+  },
+  {
+    "id": "C042",
+    "sha256": "66118e197c3369bd43550252048392941d07d2f5808207e5bc75055b1142aef9",
+    "before": {
+      "pages": 4,
+      "tables": 1,
+      "images": 7,
+      "broken": 0,
+      "charts": 0
+    },
+    "after": {
+      "pages": 4,
+      "tables": 1,
+      "images": 7,
+      "broken": 0,
+      "charts": 0
+    },
+    "indexedLabelsAfter": 0,
+    "scope": "chart labels and structural smoke checks only"
+  },
+  {
+    "id": "C022",
+    "sha256": "74c3da195b8afaa638124e4fef5440193a811aa2180820411c1cb4b2ebbc6d61",
+    "status": "extended-diagnostic",
+    "elapsedMs": 50829,
+    "pages": 19,
+    "remaining": "pagination fidelity and performance need separate reference comparison"
+  }
+]

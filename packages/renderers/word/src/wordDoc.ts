@@ -1,3 +1,4 @@
+import { clampWordScale, isPositiveFinite, readWordFitViewport } from './wordViewport.js'
 import { defaultMsDocCss, parseMsDocToHtml, sanitizeMsDocHtml } from '@file-viewer/doc'
 
 import {
@@ -56,7 +57,7 @@ const WORD_PAGE_CSS = `
   display:table;
   width:auto;
   max-width:100%;
-  table-layout:auto!important;
+  table-layout:fixed;
   border-collapse:collapse;
   border-spacing:0;
 }
@@ -81,7 +82,7 @@ const WORD_PAGE_CSS = `
   margin-bottom:0;
 }
 .msdoc-page .msdoc-cell span{
-  white-space:normal!important;
+  white-space:normal;
 }
 .msdoc-page .msdoc-page-break{
   display:none;
@@ -271,7 +272,7 @@ function makeMsDocResponsive(target: HTMLDivElement) {
   let currentFitScale = 1
 
   const clampScale = (scale: number) => {
-    return Math.min(MSDOC_MAX_SCALE, Math.max(MSDOC_MIN_SCALE, Number(scale.toFixed(2))))
+    return clampWordScale(scale, MSDOC_MIN_SCALE, MSDOC_MAX_SCALE)
   }
 
   const applyResponsiveLayout = () => {
@@ -334,31 +335,47 @@ function makeMsDocResponsive(target: HTMLDivElement) {
   })
 
   const setUserZoom = (nextZoom: number) => {
-    userZoom = Math.min(6, Math.max(0.2, Number(nextZoom.toFixed(2))))
+    if (!isPositiveFinite(nextZoom)) return getZoomState()
+    // A narrow viewport may require a multiplier greater than six to reach
+    // the advertised 300% scale. Only the final rendered scale is bounded.
+    userZoom = nextZoom
     view?.cancelAnimationFrame(resizeFrame)
     applyResponsiveLayout()
     return getZoomState()
   }
 
   const setAbsoluteScale = (scale: number) => {
-    return setUserZoom(scale / Math.max(currentFitScale, 0.01))
+    if (!isPositiveFinite(scale)) return getZoomState()
+    return setUserZoom(clampScale(scale) / currentFitScale)
   }
 
   const readFitPageSize = () => {
     const root = pages[0]?.querySelector<HTMLElement>('.msdoc-root')
+    if (!root?.offsetWidth || !root.offsetHeight) return null
     return {
-      width: root?.offsetWidth || MSDOC_PAGE_SIZE.width,
-      height: MSDOC_PAGE_SIZE.height
+      width: root.offsetWidth,
+      height: Math.max(root.scrollHeight, root.offsetHeight)
     }
   }
 
   const fitDoc = (request: FileViewerFitRequest): FileViewerFitResult => {
     const pageSize = readFitPageSize()
+    const viewport = readWordFitViewport(target, request)
+    if (!pageSize || !viewport) {
+      return {
+        applied: false,
+        mode: request.mode,
+        resize: request.resize,
+        source: request.source,
+        reason: 'unmeasurable',
+        provider: 'zoom'
+      }
+    }
     const mode = request.mode === 'auto' ? 'width' : request.mode
     const scale = resolveFileViewerFitScale({
       mode,
-      viewportWidth: Math.max(1, request.viewportWidth || target.clientWidth || 0),
-      viewportHeight: Math.max(1, request.viewportHeight || target.clientHeight || 0),
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
       contentWidth: pageSize.width,
       contentHeight: pageSize.height,
       currentScale,
@@ -366,7 +383,7 @@ function makeMsDocResponsive(target: HTMLDivElement) {
       maxScale: request.maxScale ?? MSDOC_MAX_SCALE
     })
 
-    if (!scale) {
+    if (!scale || !isPositiveFinite(scale)) {
       return {
         applied: false,
         mode: request.mode,
@@ -425,19 +442,26 @@ export default async function render(buffer: ArrayBuffer, target: HTMLDivElement
   const rendered = await parseMsDocToHtml(buffer, {
     renderOptions: {
       reviewMode: context?.options?.docx?.reviewMode ?? 'all',
-      css: `${defaultMsDocCss()}\n${WORD_PAGE_CSS}`,
+      css: defaultMsDocCss(),
       externalLinkPolicy: context?.options?.docx?.externalLinkPolicy ?? 'block',
       externalResourcePolicy: context?.options?.docx?.externalResourcePolicy ?? 'block'
     }
   })
 
+  return mountWordDocument(rendered, target, context)
+}
+
+/** Shared page, zoom, export and cleanup boundary for legacy Word containers. */
+export function mountWordDocument(
+  rendered: { html: string; css: string }, target: HTMLDivElement, context?: FileRenderContext
+): AppWrapper {
   const targetWindow = target.ownerDocument.defaultView
   if (!targetWindow) {
     throw new Error('The DOC target must belong to a browser document')
   }
   const style = target.ownerDocument.createElement('style')
   style.dataset.msdoc = ''
-  style.textContent = rendered.css
+  style.textContent = `${rendered.css}\n${WORD_PAGE_CSS}`
   const content = target.ownerDocument.createElement('div')
   content.append(sanitizeMsDocHtml(wrapAsWordPages(rendered.html), targetWindow))
   target.replaceChildren(style, ...Array.from(content.childNodes))

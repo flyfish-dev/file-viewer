@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
+import { createRequire } from 'node:module'
 const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8')
 function angularCohort(manifest) {
   const dependencies = { ...manifest.dependencies, ...manifest.devDependencies }
@@ -79,6 +80,21 @@ test('thumbnail manifest agrees with workspace Vitest security override', () => 
   const override = read('pnpm-workspace.yaml').match(/^  vitest: (\S+)$/m)?.[1]
   assert.ok(override)
   assert.equal(thumbnail.devDependencies.vitest, override)
+})
+test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
+  const patchedVersion = '3.4.16'
+  const override = read('pnpm-workspace.yaml').match(/^  dompurify: (\S+)$/m)?.[1]
+  assert.equal(override, patchedVersion, 'Workspace override must not restore vulnerable DOMPurify')
+  for (const path of [
+    'packages/core/package.json',
+    ...['doc', 'drawing', 'pptx', 'text'].map((name) => `packages/renderers/${name}/package.json`)
+  ]) {
+    const manifest = JSON.parse(read(path))
+    // Consumers do not inherit this workspace's overrides: the published manifest must be safe too.
+    assert.equal(manifest.dependencies.dompurify, patchedVersion, `${path}: unsafe consumer pin`)
+    const require = createRequire(new URL(`../../${path}`, import.meta.url))
+    assert.equal(require('dompurify').version, patchedVersion, `${path}: unsafe runtime`)
+  }
 })
 test('Dependabot groups version and security Angular updates in the nested fixture', () => {
   const entry = read('.github/dependabot.yml')

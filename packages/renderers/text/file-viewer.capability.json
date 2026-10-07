@@ -4,7 +4,7 @@
   "id": "text",
   "packageName": "@file-viewer/renderer-text",
   "rendererIds": ["markdown", "code"],
-  "formats": ["md", "markdown", "txt", "json", "js", "mjs", "cjs", "css", "java", "py", "html", "htm", "jsx", "ts", "tsx", "xml", "log", "vue", "yaml", "yml", "ini", "sh", "bash", "sql", "go", "rs", "php", "c", "cpp", "cc", "h", "hpp", "cs", "jsonc", "json5", "ipynb", "toml", "proto", "hcl", "tex", "gv", "http", "react", "rb", "swift", "kt"],
+  "formats": ["md", "markdown", "txt", "lrc", "json", "js", "mjs", "cjs", "css", "java", "py", "html", "htm", "jsx", "ts", "tsx", "xml", "log", "vue", "yaml", "yml", "ini", "sh", "bash", "sql", "go", "rs", "php", "c", "cpp", "cc", "h", "hpp", "cs", "jsonc", "json5", "ipynb", "toml", "proto", "hcl", "tex", "gv", "http", "react", "rb", "swift", "kt"],
   "assets": { "rendererIds": [] },
   "license": { "spdx": "Apache-2.0", "policy": "permissive" },
   "weight": "standard",

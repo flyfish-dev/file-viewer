@@ -75,7 +75,7 @@ Every standard component package shares `@file-viewer/core` as the only common f
 
 ## Format Support Matrix
 
-The shared catalog registers 274 file extensions (224 stable and 50 experimental) across 47 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
+The shared catalog registers 275 file extensions (225 stable and 50 experimental) across 47 preview pipelines. Experimental formats do not count toward stable support; full capability is assembled through renderer packages or presets.
 
 | Preview pipeline | Category | Extensions | Level / status | Capabilities | Loading |
 | --- | --- | --- | --- | --- | --- |
