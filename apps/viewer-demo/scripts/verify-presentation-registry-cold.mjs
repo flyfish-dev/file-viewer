@@ -4,6 +4,7 @@ import { mkdtemp, readFile, readdir, realpath, rm, stat, writeFile } from 'node:
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { assertPptxOnlyBundle } from './presentation-bundle-boundary.mjs'
 
 const registry = process.env.FILE_VIEWER_NPM_REGISTRY || 'https://registry.npmjs.org/'
 const currentReleaseVersion = JSON.parse(
@@ -60,8 +61,12 @@ try {
     "import { pptxRenderer } from '@file-viewer/renderer-presentation/pptx';\nconsole.log(pptxRenderer.id);\n"
   )
   await writeFile(
+    join(fixtureRoot, 'presentation-bundle-boundary.mjs'),
+    await readFile(new URL('./presentation-bundle-boundary.mjs', import.meta.url), 'utf8')
+  )
+  await writeFile(
     join(fixtureRoot, 'vite.config.mjs'),
-    "import { defineConfig } from 'vite';\nimport fileViewerRenderers from '@file-viewer/vite-plugin';\nexport default defineConfig({ plugins: [fileViewerRenderers({ formats: ['pptx'], autoPresets: false })], build: { manifest: true } });\n"
+    "import { defineConfig } from 'vite';\nimport fileViewerRenderers from '@file-viewer/vite-plugin';\nimport { presentationModuleGraph } from './presentation-bundle-boundary.mjs';\nexport default defineConfig({ plugins: [fileViewerRenderers({ formats: ['pptx'], autoPresets: false }), presentationModuleGraph()], worker: { plugins: () => [presentationModuleGraph('pptx-worker-module-graph.json')] }, build: { manifest: true } });\n"
   )
 
   run('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'])
@@ -95,29 +100,8 @@ try {
     outputRecords.push({ file, body: await readFile(path) })
   }
 
-  const legacyPptAssets = outputFiles.filter((file) =>
-    /(?:ppt-font-cjk|ppt-native|file-viewer-presentation-ppt\b)/i.test(file)
-  )
-  assert.deepEqual(
-    legacyPptAssets,
-    [],
-    `Registry-cold PPTX build emitted PPT assets: ${legacyPptAssets}`
-  )
-
-  const legacyPptReferences = outputRecords.filter(({ file, body }) =>
-    /(?:ppt-font-cjk|ppt-native\.wasm|Flyfish PPT Viewer)/i.test(
-      `${file}\n${body.toString('utf8')}`
-    )
-  )
-  assert.deepEqual(
-    legacyPptReferences.map(({ file }) => file),
-    [],
-    `Registry-cold PPTX build retained PPT references: ${legacyPptReferences.map(({ file }) => file)}`
-  )
-  assert.ok(
-    outputFiles.some((file) => /pptx\.worker/i.test(file)),
-    `Registry-cold PPTX build did not emit a PPTX worker: ${outputFiles.join(', ')}`
-  )
+  assertPptxOnlyBundle(outputRecords,
+    await readFile(join(fixtureRoot, 'node_modules/@file-viewer/pptx/dist/worker/pptx.worker.js')))
 
   console.log(
     `Registry-cold PPTX-only build passed with @file-viewer/renderer-presentation@${rendererVersion} and @file-viewer/vite-plugin@${pluginVersion}.`

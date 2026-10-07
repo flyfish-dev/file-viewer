@@ -27,6 +27,7 @@ Some engineering formats are intentionally conservative:
 | OLB / DRA | Safe structure preview for common OrCAD / Allegro containers and readable metadata |
 | OAS / OASIS | Readable fixtures render; complex binary OASIS stays structure-index focused until the dedicated layout kernel matures |
 | IFC | Optional experimental local visual preview through `@file-viewer/renderer-3d/ifc`, with self-hosted That Open / `web-ifc` assets, fit, selection and property inspection; the official Demo includes IFC4 and IFC4.3 fixtures |
+| Streaming Geo3D | Explicit experimental `@file-viewer/renderer-3d/geo3d` path for LAS/LAZ/COPC, GeoTIFF/COG, CityJSON, 3D Tiles and 3TZ. COPC/COG/3D Tiles preserve progressive/range access; TIFF is metadata-sniffed before takeover; 3TZ extraction applies traversal/size/count/duplicate guards. Self-host the decoder assets and validate production dataset sizes; converting LAS/LAZ to COPC and GeoTIFF to COG can improve streaming. |
 | 3DM | Signature detection and integration guidance; a dedicated `rhino3dm` renderer is still required for visual preview |
 | PlantUML | Offline source/SVG-style preview by default; configure an intranet PlantUML service for full server-rendered SVG |
 

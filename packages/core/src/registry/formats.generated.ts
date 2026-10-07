@@ -1092,6 +1092,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "category": "code",
     "extensions": [
       "txt",
+      "lrc",
       "json",
       "js",
       "mjs",
@@ -1152,9 +1153,12 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "containerVersions": [
       "Plain text",
       "source code",
-      "Git bundle"
+      "Git bundle",
+      "LRC lyrics"
     ],
-    "knownLimits": [],
+    "knownLimits": [
+      "LRC is a static annotated/lyrics/source preview, not synchronized audio playback"
+    ],
     "capabilities": {
       "download": true,
       "print": true,

@@ -1,0 +1,845 @@
+{
+  "passed": 4,
+  "failed": 16,
+  "checks": [
+    {
+      "name": "Default and explicit-zero inset values",
+      "status": "pass"
+    },
+    {
+      "name": "Per-attribute body inheritance and invalid coordinate protection",
+      "status": "pass"
+    },
+    {
+      "name": "AutoFit modes, percentages and malformed factors",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: Insets reduce the paragraph's effective width without resizing its shape",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'padding')"
+    },
+    {
+      "name": "DPR 1: Shape AutoFit cannot silently shrink authored 9pt text",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'font')"
+    },
+    {
+      "name": "DPR 1: Normal AutoFit preserves fractional fontScale and baseline zero",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'font')"
+    },
+    {
+      "name": "DPR 1: Explicit no-wrap survives sanitizer and layout",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'wrap')"
+    },
+    {
+      "name": "DPR 1: Repeated postprocessing is idempotent",
+      "status": "fail",
+      "error": "locator.evaluate: Timeout 5000ms exceeded.\nCall log:\n  - waiting for locator('[data-pptx-autofit=\"shape\"] .text-block').filter({ hasText: 'Preserve authored' }).first()\n"
+    },
+    {
+      "name": "DPR 1: C049 original typography remains authored after postprocessing",
+      "status": "fail",
+      "error": "11.4 != 12"
+    },
+    {
+      "name": "DPR 1: C050 original typography remains authored after postprocessing",
+      "status": "fail",
+      "error": "0 != 4.796535433070867"
+    },
+    {
+      "name": "DPR 1: Public viewer retains metrics using the production Worker and releases its DOM",
+      "status": "fail",
+      "error": "6.51605 != 12"
+    },
+    {
+      "name": "DPR 2: Insets reduce the paragraph's effective width without resizing its shape",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'padding')"
+    },
+    {
+      "name": "DPR 2: Shape AutoFit cannot silently shrink authored 9pt text",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'font')"
+    },
+    {
+      "name": "DPR 2: Normal AutoFit preserves fractional fontScale and baseline zero",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'font')"
+    },
+    {
+      "name": "DPR 2: Explicit no-wrap survives sanitizer and layout",
+      "status": "fail",
+      "error": "Cannot read properties of undefined (reading 'wrap')"
+    },
+    {
+      "name": "DPR 2: Repeated postprocessing is idempotent",
+      "status": "fail",
+      "error": "locator.evaluate: Timeout 5000ms exceeded.\nCall log:\n  - waiting for locator('[data-pptx-autofit=\"shape\"] .text-block').filter({ hasText: 'Preserve authored' }).first()\n"
+    },
+    {
+      "name": "DPR 2: C049 original typography remains authored after postprocessing",
+      "status": "fail",
+      "error": "11.4 != 12"
+    },
+    {
+      "name": "DPR 2: C050 original typography remains authored after postprocessing",
+      "status": "fail",
+      "error": "0 != 4.796535433070867"
+    },
+    {
+      "name": "DPR 2: Public viewer retains metrics using the production Worker and releases its DOM",
+      "status": "fail",
+      "error": "6.51605 != 12"
+    },
+    {
+      "name": "No unhandled browser exceptions",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C049",
+      "sha256": "49f14b34e7d5b1ce7c29de55dd64a726acdea3d6dcb4b10489fb973a8446c34b",
+      "dpr": 1,
+      "matched9ptRuns": 9,
+      "insets": [
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 1016.25,
+          "contentWidth": 1016.25
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 777.8125,
+          "contentWidth": 777.812
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 512.1875,
+          "contentWidth": 512.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 58.765625,
+          "contentWidth": 58.7656
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        }
+      ],
+      "slides": 1
+    },
+    {
+      "id": "C050",
+      "sha256": "5a178b6c5dc63976ae4a133eaff14927ac40320609073b6e836ee7b814b1e685",
+      "dpr": 1,
+      "matched9ptRuns": 0,
+      "insets": [
+        {
+          "expected": [
+            4.796535433070867,
+            4.796535433070867,
+            4.796535433070867,
+            4.796535433070867
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 175.59375,
+          "contentWidth": 175.594
+        },
+        {
+          "expected": [
+            4.799790026246719,
+            4.799790026246719,
+            4.799790026246719,
+            4.799790026246719
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 523.0625,
+          "contentWidth": 523.062
+        }
+      ],
+      "slides": 1
+    },
+    {
+      "id": "C049",
+      "sha256": "49f14b34e7d5b1ce7c29de55dd64a726acdea3d6dcb4b10489fb973a8446c34b",
+      "dpr": 2,
+      "matched9ptRuns": 9,
+      "insets": [
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 1016.25,
+          "contentWidth": 1016.25
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 777.8125,
+          "contentWidth": 777.812
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 512.1875,
+          "contentWidth": 512.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 58.765625,
+          "contentWidth": 58.7656
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 280.1875,
+          "contentWidth": 280.188
+        },
+        {
+          "expected": [
+            4.8,
+            9.6,
+            4.8,
+            9.6
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 302,
+          "contentWidth": 302
+        }
+      ],
+      "slides": 1
+    },
+    {
+      "id": "C050",
+      "sha256": "5a178b6c5dc63976ae4a133eaff14927ac40320609073b6e836ee7b814b1e685",
+      "dpr": 2,
+      "matched9ptRuns": 0,
+      "insets": [
+        {
+          "expected": [
+            4.796535433070867,
+            4.796535433070867,
+            4.796535433070867,
+            4.796535433070867
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 175.59375,
+          "contentWidth": 175.594
+        },
+        {
+          "expected": [
+            4.799790026246719,
+            4.799790026246719,
+            4.799790026246719,
+            4.799790026246719
+          ],
+          "actual": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "paragraphWidth": 523.0625,
+          "contentWidth": 523.062
+        }
+      ],
+      "slides": 1
+    }
+  ],
+  "errors": []
+}

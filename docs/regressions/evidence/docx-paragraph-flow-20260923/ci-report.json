@@ -1,0 +1,168 @@
+{
+  "passed": 11,
+  "checks": [
+    {
+      "name": "Baseline reproduces the invalid signed line-gap regression",
+      "status": "pass"
+    },
+    {
+      "name": "Eight real OOXML spacing cases preserve precedence and signed indentation",
+      "status": "pass"
+    },
+    {
+      "name": "Actual classic Worker parses the same spacing model without fallback",
+      "status": "pass"
+    },
+    {
+      "name": "flow: optimized pagination matches the corrected reference on every page",
+      "status": "pass"
+    },
+    {
+      "name": "keep: optimized pagination matches the corrected reference on every page",
+      "status": "pass"
+    },
+    {
+      "name": "table: optimized pagination matches the corrected reference on every page",
+      "status": "pass"
+    },
+    {
+      "name": "breaks: optimized pagination matches the corrected reference on every page",
+      "status": "pass"
+    },
+    {
+      "name": "columns: optimized pagination matches the corrected reference on every page",
+      "status": "pass"
+    },
+    {
+      "name": "explicit-column: optimized pagination matches the corrected reference on every page",
+      "status": "pass"
+    },
+    {
+      "name": "All engine entries match the published review pin",
+      "status": "pass"
+    },
+    {
+      "name": "No unexpected browser exceptions or external network requests",
+      "status": "pass"
+    }
+  ],
+  "observations": [
+    {
+      "id": "flow",
+      "pages": 10,
+      "control": {
+        "ms": 579,
+        "LayoutCount": 607,
+        "RecalcStyleCount": 657,
+        "LayoutDuration": 0.068117,
+        "TaskDuration": 0.236124
+      },
+      "optimized": {
+        "ms": 151,
+        "LayoutCount": 49,
+        "RecalcStyleCount": 99,
+        "LayoutDuration": 0.013189,
+        "TaskDuration": 0.090702
+      },
+      "geometryMatches": true
+    },
+    {
+      "id": "keep",
+      "pages": 3,
+      "control": {
+        "ms": 84,
+        "LayoutCount": 13,
+        "RecalcStyleCount": 28,
+        "LayoutDuration": 0.003144,
+        "TaskDuration": 0.042147000000000004
+      },
+      "optimized": {
+        "ms": 84,
+        "LayoutCount": 12,
+        "RecalcStyleCount": 27,
+        "LayoutDuration": 0.002887,
+        "TaskDuration": 0.043332
+      },
+      "geometryMatches": true
+    },
+    {
+      "id": "table",
+      "pages": 5,
+      "control": {
+        "ms": 146,
+        "LayoutCount": 89,
+        "RecalcStyleCount": 114,
+        "LayoutDuration": 0.010898,
+        "TaskDuration": 0.080957
+      },
+      "optimized": {
+        "ms": 107,
+        "LayoutCount": 23,
+        "RecalcStyleCount": 48,
+        "LayoutDuration": 0.006671,
+        "TaskDuration": 0.074543
+      },
+      "geometryMatches": true
+    },
+    {
+      "id": "breaks",
+      "pages": 4,
+      "control": {
+        "ms": 104,
+        "LayoutCount": 7,
+        "RecalcStyleCount": 27,
+        "LayoutDuration": 0.00243,
+        "TaskDuration": 0.049823
+      },
+      "optimized": {
+        "ms": 100,
+        "LayoutCount": 7,
+        "RecalcStyleCount": 27,
+        "LayoutDuration": 0.002477,
+        "TaskDuration": 0.043096999999999996
+      },
+      "geometryMatches": true
+    },
+    {
+      "id": "columns",
+      "pages": 2,
+      "control": {
+        "ms": 84,
+        "LayoutCount": 16,
+        "RecalcStyleCount": 26,
+        "LayoutDuration": 0.007529,
+        "TaskDuration": 0.049431
+      },
+      "optimized": {
+        "ms": 66,
+        "LayoutCount": 16,
+        "RecalcStyleCount": 25,
+        "LayoutDuration": 0.006048,
+        "TaskDuration": 0.041455
+      },
+      "geometryMatches": true
+    },
+    {
+      "id": "explicit-column",
+      "pages": 2,
+      "control": {
+        "ms": 84,
+        "LayoutCount": 19,
+        "RecalcStyleCount": 29,
+        "LayoutDuration": 0.005495,
+        "TaskDuration": 0.050884
+      },
+      "optimized": {
+        "ms": 66,
+        "LayoutCount": 19,
+        "RecalcStyleCount": 28,
+        "LayoutDuration": 0.004451,
+        "TaskDuration": 0.039617
+      },
+      "geometryMatches": true
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "scope": "Spacing parser/Worker and corrected-control pagination parity; not complete desktop document fidelity."
+}

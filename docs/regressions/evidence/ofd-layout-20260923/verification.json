@@ -1,0 +1,6 @@
+{
+  "run": "35814715203",
+  "checks": 25,
+  "existingSuites": 6,
+  "scope": "Core and OFD builds; 25 geometry combinations and six existing suites. Six original-file browser checks ran locally with hash-pinned bytes."
+}

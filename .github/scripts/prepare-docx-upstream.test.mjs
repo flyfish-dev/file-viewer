@@ -39,3 +39,24 @@ test('mismatched Worker version fails instead of changing unrelated release fact
     /Worker provenance/
   )
 })
+test('a compatibility cache suffix is accepted only for the exact installed engine', () => {
+  const previous = JSON.parse(texts[paths[0]]).dependencies['@file-viewer/docx']
+  const withRuntime = (runtime) => ({
+    ...texts,
+    [paths[1]]: `export const DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION =\n  '${runtime}';`
+  })
+  const prepared = prepareDocxTexts(withRuntime(`${previous}+compat.sections`), '99.88.77')
+  assert.match(prepared.result[paths[1]], /DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '99.88.77'/)
+  const doubleQuoted = {
+    ...texts,
+    [paths[1]]: `export const DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = "${previous}+compat.sections";`
+  }
+  assert.match(
+    prepareDocxTexts(doubleQuoted, '99.88.77').result[paths[1]],
+    /DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '99.88.77'/
+  )
+  assert.throws(
+    () => prepareDocxTexts(withRuntime('99.99.99+compat.sections'), '99.88.77'),
+    /Worker provenance/
+  )
+})

@@ -1,0 +1,18 @@
+{
+  "run": "35819650869",
+  "checkedCommit": "b1c4d09c2f11308b4f3f7f7ba234b6c5ff28b6ec",
+  "install": "actual pnpm 11.0.9 frozen-lockfile filtered install with declared patches; not lockfile-only",
+  "packages": [
+    "workspace-root tooling",
+    "core",
+    "renderer-pdf",
+    "pptx"
+  ],
+  "builds": 3,
+  "checks": {
+    "pdfLifecycle": 9,
+    "pptxParagraph": 11,
+    "existingPptxSuites": 2
+  },
+  "fullWorkspaceBuild": false
+}

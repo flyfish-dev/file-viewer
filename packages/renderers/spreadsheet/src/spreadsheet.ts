@@ -1790,6 +1790,7 @@ const renderFileViewerSpreadsheet = async (
       virtualState.defaults.rowHeight
     );
     applyRowHeight(row, baseHeight);
+    virtualState.rowHeightOverrides.set(rowIndex, baseHeight);
     virtualState.rowHeightCache.set(rowIndex, baseHeight);
 
     const activeSheetId = getActiveSheetId();
@@ -1876,7 +1877,8 @@ const renderFileViewerSpreadsheet = async (
       if (!row) {
         return;
       }
-      const height = normalizeRowHeight(rawHeight, virtualState.defaults.rowHeight);
+      const height = virtualState.rowHeightOverrides.get(absoluteRow)
+        ?? normalizeRowHeight(rawHeight, virtualState.defaults.rowHeight);
       applyRowHeight(row, height);
       virtualState.rowHeightCache.set(absoluteRow, height);
     });
@@ -1907,7 +1909,7 @@ const renderFileViewerSpreadsheet = async (
       });
 
       const windowHeight = getRowHeight(ws.rowHeights, relativeRow, virtualState.defaults.rowHeight);
-      const height = normalizeRowHeight(
+      const height = virtualState.rowHeightOverrides.get(absoluteRow) ?? normalizeRowHeight(
         getRowHeight(ws.structure?.rowHeights, absoluteRow, windowHeight),
         virtualState.defaults.rowHeight
       );
@@ -2087,6 +2089,9 @@ const renderFileViewerSpreadsheet = async (
 
     cached.loadingWindows.clear();
     virtualState = cached;
+    // Cached rows store display heights from their last active zoom. Rebuild
+    // those heights from unscaled state before loading them into the table.
+    syncScaledRowHeights();
     errorMessage = '';
     totalRows = cached.totalRows;
     totalCols = cached.totalCols;
@@ -2099,6 +2104,9 @@ const renderFileViewerSpreadsheet = async (
 
     queueMicrotask(() => {
       if (disposed) {
+        return;
+      }
+      if (virtualState !== cached || sheetId !== getActiveSheetId()) {
         return;
       }
       renderTable(ensureTable(), cached.columns, cached.rows);

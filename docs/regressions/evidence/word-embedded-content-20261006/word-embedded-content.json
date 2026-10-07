@@ -1,0 +1,515 @@
+{
+  "completed": true,
+  "passed": 81,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "generated-chunk main-thread default: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread default: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread default: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread default: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread enabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread enabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread enabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread enabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread disabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread disabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread disabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk main-thread disabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread block: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread block: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread block: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread block: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread allow: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread allow: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread allow: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links main-thread allow: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread block: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread block: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread block: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread block: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread allow: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread allow: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread allow: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C053 main-thread allow: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread default: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread default: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread default: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread default: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread enabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread enabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread enabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread enabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread disabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread disabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread disabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C054 main-thread disabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker default: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker default: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker default: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker default: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker enabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker enabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker enabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker enabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker disabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker disabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker disabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-chunk Worker disabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker block: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker block: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker block: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker block: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker allow: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker allow: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker allow: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "generated-links Worker allow: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker block: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker block: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker block: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker block: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker allow: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker allow: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker allow: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C053 Worker allow: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker default: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker default: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker default: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker default: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker enabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker enabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker enabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker enabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker disabled: original body and parsing path are preserved",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker disabled: explicit embedded-content or link policy is honored",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker disabled: embedded content cannot execute marker scripts",
+      "status": "pass"
+    },
+    {
+      "name": "C054 Worker disabled: destroy removes frames and terminates created Workers",
+      "status": "pass"
+    },
+    {
+      "name": "No unhandled browser exceptions or external resource requests",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "generated-chunk",
+      "sha256": "6a65e649116a51418e7520980304ed77bd3265e9cfb162e96785ab2649fe6368",
+      "useWorker": false,
+      "variant": "default",
+      "characters": 42,
+      "bodySha256": "547aca331a1cf2026a668b2b069340c7c7ebd8411c9284a0ed29f5fe64d8fc68",
+      "frames": 1
+    },
+    {
+      "id": "generated-chunk",
+      "sha256": "6a65e649116a51418e7520980304ed77bd3265e9cfb162e96785ab2649fe6368",
+      "useWorker": false,
+      "variant": "enabled",
+      "characters": 42,
+      "bodySha256": "547aca331a1cf2026a668b2b069340c7c7ebd8411c9284a0ed29f5fe64d8fc68",
+      "frames": 1
+    },
+    {
+      "id": "generated-chunk",
+      "sha256": "6a65e649116a51418e7520980304ed77bd3265e9cfb162e96785ab2649fe6368",
+      "useWorker": false,
+      "variant": "disabled",
+      "characters": 42,
+      "bodySha256": "547aca331a1cf2026a668b2b069340c7c7ebd8411c9284a0ed29f5fe64d8fc68",
+      "frames": 0
+    },
+    {
+      "id": "generated-links",
+      "sha256": "df26372c68217c385b59869ac1be5317c2ca6eee630556647788a4762797911b",
+      "useWorker": false,
+      "variant": "block",
+      "characters": 69,
+      "bodySha256": "e7f4d11282f6d7dc4c3ed2d81ef04e81de2296f25dc9356161ef1bb8b2ade818",
+      "frames": 0
+    },
+    {
+      "id": "generated-links",
+      "sha256": "df26372c68217c385b59869ac1be5317c2ca6eee630556647788a4762797911b",
+      "useWorker": false,
+      "variant": "allow",
+      "characters": 69,
+      "bodySha256": "e7f4d11282f6d7dc4c3ed2d81ef04e81de2296f25dc9356161ef1bb8b2ade818",
+      "frames": 0
+    },
+    {
+      "id": "C053",
+      "sha256": "8d9708851337cdd1819b01768507cbbc71c9a0964a464add759bc36779c784eb",
+      "useWorker": false,
+      "variant": "block",
+      "characters": 163,
+      "bodySha256": "be3721ea8c7962046ac5d46b06c99a4632f1d946ba839181c7fba61b66a780d5",
+      "frames": 0
+    },
+    {
+      "id": "C053",
+      "sha256": "8d9708851337cdd1819b01768507cbbc71c9a0964a464add759bc36779c784eb",
+      "useWorker": false,
+      "variant": "allow",
+      "characters": 163,
+      "bodySha256": "be3721ea8c7962046ac5d46b06c99a4632f1d946ba839181c7fba61b66a780d5",
+      "frames": 0
+    },
+    {
+      "id": "C054",
+      "sha256": "69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877",
+      "useWorker": false,
+      "variant": "default",
+      "characters": 59,
+      "bodySha256": "1f113316ee4087f315a71e8aa9817f42772572c6033a2d2cbadb5a08fb8df40c",
+      "frames": 1
+    },
+    {
+      "id": "C054",
+      "sha256": "69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877",
+      "useWorker": false,
+      "variant": "enabled",
+      "characters": 59,
+      "bodySha256": "1f113316ee4087f315a71e8aa9817f42772572c6033a2d2cbadb5a08fb8df40c",
+      "frames": 1
+    },
+    {
+      "id": "C054",
+      "sha256": "69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877",
+      "useWorker": false,
+      "variant": "disabled",
+      "characters": 59,
+      "bodySha256": "1f113316ee4087f315a71e8aa9817f42772572c6033a2d2cbadb5a08fb8df40c",
+      "frames": 0
+    },
+    {
+      "id": "generated-chunk",
+      "sha256": "6a65e649116a51418e7520980304ed77bd3265e9cfb162e96785ab2649fe6368",
+      "useWorker": true,
+      "variant": "default",
+      "characters": 42,
+      "bodySha256": "547aca331a1cf2026a668b2b069340c7c7ebd8411c9284a0ed29f5fe64d8fc68",
+      "frames": 1
+    },
+    {
+      "id": "generated-chunk",
+      "sha256": "6a65e649116a51418e7520980304ed77bd3265e9cfb162e96785ab2649fe6368",
+      "useWorker": true,
+      "variant": "enabled",
+      "characters": 42,
+      "bodySha256": "547aca331a1cf2026a668b2b069340c7c7ebd8411c9284a0ed29f5fe64d8fc68",
+      "frames": 1
+    },
+    {
+      "id": "generated-chunk",
+      "sha256": "6a65e649116a51418e7520980304ed77bd3265e9cfb162e96785ab2649fe6368",
+      "useWorker": true,
+      "variant": "disabled",
+      "characters": 42,
+      "bodySha256": "547aca331a1cf2026a668b2b069340c7c7ebd8411c9284a0ed29f5fe64d8fc68",
+      "frames": 0
+    },
+    {
+      "id": "generated-links",
+      "sha256": "df26372c68217c385b59869ac1be5317c2ca6eee630556647788a4762797911b",
+      "useWorker": true,
+      "variant": "block",
+      "characters": 69,
+      "bodySha256": "e7f4d11282f6d7dc4c3ed2d81ef04e81de2296f25dc9356161ef1bb8b2ade818",
+      "frames": 0
+    },
+    {
+      "id": "generated-links",
+      "sha256": "df26372c68217c385b59869ac1be5317c2ca6eee630556647788a4762797911b",
+      "useWorker": true,
+      "variant": "allow",
+      "characters": 69,
+      "bodySha256": "e7f4d11282f6d7dc4c3ed2d81ef04e81de2296f25dc9356161ef1bb8b2ade818",
+      "frames": 0
+    },
+    {
+      "id": "C053",
+      "sha256": "8d9708851337cdd1819b01768507cbbc71c9a0964a464add759bc36779c784eb",
+      "useWorker": true,
+      "variant": "block",
+      "characters": 163,
+      "bodySha256": "be3721ea8c7962046ac5d46b06c99a4632f1d946ba839181c7fba61b66a780d5",
+      "frames": 0
+    },
+    {
+      "id": "C053",
+      "sha256": "8d9708851337cdd1819b01768507cbbc71c9a0964a464add759bc36779c784eb",
+      "useWorker": true,
+      "variant": "allow",
+      "characters": 163,
+      "bodySha256": "be3721ea8c7962046ac5d46b06c99a4632f1d946ba839181c7fba61b66a780d5",
+      "frames": 0
+    },
+    {
+      "id": "C054",
+      "sha256": "69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877",
+      "useWorker": true,
+      "variant": "default",
+      "characters": 59,
+      "bodySha256": "1f113316ee4087f315a71e8aa9817f42772572c6033a2d2cbadb5a08fb8df40c",
+      "frames": 1
+    },
+    {
+      "id": "C054",
+      "sha256": "69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877",
+      "useWorker": true,
+      "variant": "enabled",
+      "characters": 59,
+      "bodySha256": "1f113316ee4087f315a71e8aa9817f42772572c6033a2d2cbadb5a08fb8df40c",
+      "frames": 1
+    },
+    {
+      "id": "C054",
+      "sha256": "69fabb8f1d78d8c51eba52539b23292b5fae6133778a23a9527d606709a63877",
+      "useWorker": true,
+      "variant": "disabled",
+      "characters": 59,
+      "bodySha256": "1f113316ee4087f315a71e8aa9817f42772572c6033a2d2cbadb5a08fb8df40c",
+      "frames": 0
+    }
+  ],
+  "errors": [],
+  "requests": []
+}

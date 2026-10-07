@@ -10,7 +10,10 @@ const readPoints = source => {
     const index = typeof rawIndex === 'number' || /^\d+$/.test(String(rawIndex))
       ? Number(rawIndex) : NaN;
     if (Number.isSafeInteger(index) && index >= 0) {
-      points.set(index, point['c:v']);
+      // Empty XML elements are represented as objects by the XML reader.
+      // They denote an empty label/value, never the string '[object Object]'.
+      const value = point['c:v'];
+      points.set(index, value != null && typeof value === 'object' ? '' : value);
     }
   }
   return points;

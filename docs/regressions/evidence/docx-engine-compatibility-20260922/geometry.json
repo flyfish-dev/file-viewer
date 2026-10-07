@@ -1,0 +1,333 @@
+[
+  {
+    "labels": [
+      {
+        "index": 0,
+        "x": 60,
+        "text": "1日"
+      },
+      {
+        "index": 2,
+        "x": 94.83870967741936,
+        "text": "3日"
+      },
+      {
+        "index": 4,
+        "x": 129.67741935483872,
+        "text": "5日"
+      },
+      {
+        "index": 6,
+        "x": 164.51612903225805,
+        "text": "7日"
+      },
+      {
+        "index": 8,
+        "x": 199.3548387096774,
+        "text": "9日"
+      },
+      {
+        "index": 10,
+        "x": 234.19354838709677,
+        "text": "11日"
+      },
+      {
+        "index": 12,
+        "x": 269.0322580645161,
+        "text": "13日"
+      },
+      {
+        "index": 14,
+        "x": 303.8709677419355,
+        "text": "15日"
+      },
+      {
+        "index": 16,
+        "x": 338.7096774193548,
+        "text": "17日"
+      },
+      {
+        "index": 18,
+        "x": 373.54838709677415,
+        "text": "19日"
+      },
+      {
+        "index": 20,
+        "x": 408.38709677419354,
+        "text": "21日"
+      },
+      {
+        "index": 22,
+        "x": 443.22580645161287,
+        "text": "23日"
+      },
+      {
+        "index": 24,
+        "x": 478.0645161290322,
+        "text": "25日"
+      },
+      {
+        "index": 26,
+        "x": 512.9032258064516,
+        "text": "27日"
+      },
+      {
+        "index": 28,
+        "x": 547.741935483871,
+        "text": "29日"
+      },
+      {
+        "index": 30,
+        "x": 582.5806451612902,
+        "text": "31日"
+      }
+    ],
+    "points": [
+      {
+        "tag": "circle",
+        "index": 0,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 1,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 2,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 3,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 4,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 5,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 6,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 7,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 8,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 9,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 10,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 11,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 12,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 13,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 14,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 15,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 16,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 17,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 18,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 19,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 20,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 21,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 22,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 23,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 24,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 25,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 26,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 27,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 28,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 29,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 30,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 31,
+        "height": null
+      }
+    ],
+    "paths": [
+      "M60,292.8125 L77.41935483870968,285.625 L94.83870967741936,278.4375 L112.25806451612902,271.25 L129.67741935483872,264.0625 L147.09677419354838,256.875 L164.51612903225805,249.6875 L181.93548387096774,242.5 L199.3548387096774,235.3125 L216.77419354838707,228.125 L234.19354838709677,220.9375 L251.61290322580643,213.75 L269.0322580645161,206.5625 L286.4516129032258,199.375 L303.8709677419355,192.1875 L321.2903225806451,185 L338.7096774193548,177.8125 L356.1290322580645,170.625 L373.54838709677415,163.4375 L390.96774193548384,156.25 L408.38709677419354,149.0625 L425.8064516129032,141.875 L443.22580645161287,134.6875 L460.64516129032256,127.5 L478.0645161290322,120.3125 L495.4838709677419,113.125 L512.9032258064516,105.9375 L530.3225806451612,98.75 L547.741935483871,91.5625 L565.1612903225806,84.375 L582.5806451612902,77.1875 L600,70"
+    ],
+    "invalid": false
+  },
+  {
+    "labels": [
+      {
+        "index": 0,
+        "x": 60,
+        "text": "A"
+      },
+      {
+        "index": 1,
+        "x": 330,
+        "text": "B"
+      },
+      {
+        "index": 2,
+        "x": 600,
+        "text": "C"
+      }
+    ],
+    "points": [
+      {
+        "tag": "circle",
+        "index": 0,
+        "height": null
+      },
+      {
+        "tag": "circle",
+        "index": 2,
+        "height": null
+      }
+    ],
+    "paths": [
+      "M60,185",
+      "M600,70"
+    ],
+    "invalid": false
+  },
+  {
+    "labels": [
+      {
+        "index": 0,
+        "x": 150,
+        "text": "A"
+      },
+      {
+        "index": 1,
+        "x": 330,
+        "text": "B"
+      },
+      {
+        "index": 2,
+        "x": 510,
+        "text": "C"
+      }
+    ],
+    "points": [
+      {
+        "tag": "rect",
+        "index": 0,
+        "height": "92"
+      },
+      {
+        "tag": "rect",
+        "index": 2,
+        "height": "138"
+      }
+    ],
+    "paths": [],
+    "invalid": false
+  },
+  {
+    "labels": [],
+    "points": [
+      {
+        "tag": "circle",
+        "index": 2,
+        "height": null
+      }
+    ],
+    "paths": [],
+    "invalid": false
+  }
+]

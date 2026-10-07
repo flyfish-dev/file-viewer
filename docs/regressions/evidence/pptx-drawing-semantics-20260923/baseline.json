@@ -1,0 +1,134 @@
+{
+  "passed": 6,
+  "failed": 20,
+  "checks": [
+    {
+      "name": "Mixed fields retain XML run order and use display numbering starting at zero",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   'Page  / saved  end932001-02-03',\n+   'Page  / saved  end932001-02-03',\n+   'Page  / saved  end932001-02-03'\n-   'Page 0 / saved 2001-02-03 end',\n-   'Page 1 / saved 2001-02-03 end',\n-   'Page 2 / saved 2001-02-03 end'\n  ]\n"
+    },
+    {
+      "name": "Field-only paragraphs preserve every field",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n+   ' ',\n+   ' ',\n+   ' '\n-   '00',\n-   '11',\n-   '22'\n  ]\n"
+    },
+    {
+      "name": "Display numbering does not change navigation indices",
+      "status": "pass"
+    },
+    {
+      "name": "Two consecutive authored breaks survive",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 2\n"
+    },
+    {
+      "name": "Bitmap alpha scales only image pixels",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[255,166,166,255]}"
+    },
+    {
+      "name": "Picture horizontal flip applies around the picture viewport",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[0,0,255,255]}"
+    },
+    {
+      "name": "Custom geometry and image flip share a coordinate system",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[255,255,255,255]}"
+    },
+    {
+      "name": "Zero opacity remains fully transparent",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[255,255,255,255]}"
+    },
+    {
+      "name": "Percentage-form image alpha is interpreted as a percentage",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[255,127,127,255]}"
+    },
+    {
+      "name": "Layout paint stays above master regardless of part-local order",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[0,0,255,255]}"
+    },
+    {
+      "name": "Vertical flip keeps the authored crop inside the transformed custom mask",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[0,0,255,255],\"expected\":[255,255,255,255]}"
+    },
+    {
+      "name": "Repeated alpha modulation composes without erasing intrinsic image alpha",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[255,191,191,255]}"
+    },
+    {
+      "name": "Alpha amplification acts on pixel alpha rather than CSS opacity clamping",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,153,153,255],\"expected\":[255,51,51,255]}"
+    },
+    {
+      "name": "Amplification then attenuation preserves intermediate alpha saturation",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,51,51,255],\"expected\":[255,127,127,255]}"
+    },
+    {
+      "name": "Picture rotation composes with its authored local flip",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: {\"actual\":[255,0,0,255],\"expected\":[0,0,255,255]}"
+    },
+    {
+      "name": "Slide-local drawing remains above layout and master stacking contexts",
+      "status": "pass"
+    },
+    {
+      "name": "First-slide metadata accepts the full signed schema range and rejects malformed values",
+      "status": "pass"
+    },
+    {
+      "name": "Mixed XML sequence retains field styling without mutating shared layout nodes",
+      "status": "pass"
+    },
+    {
+      "name": "Malformed alpha never injects markup or non-finite filter coefficients",
+      "status": "pass"
+    },
+    {
+      "name": "Actual classic Worker retains display numbers, field order, breaks and picture effects",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 2\n"
+    },
+    {
+      "name": "Sequential document load resets display numbering (7)",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Page  / saved  end932001-02-03'\n- 'Page 7 / saved 2001-02-03 end'\n        ^\n"
+    },
+    {
+      "name": "Sequential document load resets display numbering (-1)",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Page  / saved  end932001-02-03'\n- 'Page -1 / saved 2001-02-03 end'\n        ^\n"
+    },
+    {
+      "name": "Sequential document load resets display numbering (null)",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Page  / saved  end932001-02-03'\n- 'Page 1 / saved 2001-02-03 end'\n        ^\n"
+    },
+    {
+      "name": "Master visibility suppression leaves layout paint and slide text intact",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "Public PptxViewer resolves the real Worker, sanitizes SVG filters and preserves drawing semantics",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   alphaStages: 0,\n-   alphaStages: 3,\n    count: 3,\n    events: [\n      1,\n      2,\n      3\n    ],\n+   layers: 0,\n+   opacity: '1',\n+   text: 'Page  / saved  end932001-02-03'\n-   layers: 2,\n-   opacity: '0.35',\n-   text: 'Page 0 / saved 2001-02-03 end'\n  }\n"
+    },
+    {
+      "name": "No uncaught browser errors or external requests",
+      "status": "pass"
+    }
+  ],
+  "originals": [],
+  "errors": [],
+  "external": [],
+  "scope": "Drawing order, picture alpha/flip, dynamic text fields; not full Office pixel equivalence"
+}

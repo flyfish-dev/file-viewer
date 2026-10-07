@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "name": "Real DOCX ZIP/XML loads all generated charts",
+      "status": "pass"
+    },
+    {
+      "name": "Sparse labels keep full category domain and source coordinates",
+      "status": "pass"
+    },
+    {
+      "name": "Missing numeric indices form gaps, not zeroes or joined paths",
+      "status": "pass"
+    },
+    {
+      "name": "Signed columns keep finite positive geometry and original indices",
+      "status": "pass"
+    },
+    {
+      "name": "Single positive pie category remains a visible complete circle",
+      "status": "pass"
+    },
+    {
+      "name": "Floating column drawing keeps authored offset and paragraph origin",
+      "status": "pass"
+    },
+    {
+      "name": "Actual Worker parser returns charts without a fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Default worker cache key identifies the patched distribution",
+      "status": "pass"
+    },
+    {
+      "name": "CommonJS bundle retains browser chart parity",
+      "status": "pass"
+    },
+    {
+      "name": "ESM, browser, minified and Worker entries match the engine pin",
+      "status": "pass"
+    },
+    {
+      "name": "No unhandled browser errors or external requests",
+      "status": "pass"
+    }
+  ],
+  "passed": 11
+}

@@ -9,6 +9,8 @@ export interface ApplyPrintPageSizeOptions {
 
 export interface BuildPrintPageStyleOptions extends PrintPageSize {
   selector: string;
+  /** Per-page CSS pixel sizes, matched by data-viewer-print-page-index (fixed layout only). */
+  pages?: readonly PrintPageSize[];
   heightMode?: 'fixed' | 'min';
 }
 
@@ -38,13 +40,22 @@ export const getElementPrintPageSize = (
   element: HTMLElement,
   fallback: Partial<PrintPageSize> = {}
 ): PrintPageSize => {
-  const style = window.getComputedStyle(element);
-  const width = readPositiveCssNumber(style.width) ||
+  const style = element.ownerDocument.defaultView?.getComputedStyle(element);
+  const horizontal = style && style.boxSizing !== 'border-box'
+    ? ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth']
+      .reduce((sum, key) => sum + readPositiveCssNumber(style[key as keyof CSSStyleDeclaration] as string), 0)
+    : 0;
+  const vertical = style && style.boxSizing !== 'border-box'
+    ? ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth']
+      .reduce((sum, key) => sum + readPositiveCssNumber(style[key as keyof CSSStyleDeclaration] as string), 0)
+    : 0;
+  const cssWidth = readPositiveCssNumber(style?.width || '');
+  const cssHeight = readPositiveCssNumber(style?.height || '') || readPositiveCssNumber(style?.minHeight || '');
+  const width = (cssWidth ? cssWidth + horizontal : 0) ||
     element.offsetWidth ||
     fallback.width ||
     element.getBoundingClientRect().width;
-  const height = readPositiveCssNumber(style.height) ||
-    readPositiveCssNumber(style.minHeight) ||
+  const height = (cssHeight ? cssHeight + vertical : 0) ||
     element.offsetHeight ||
     fallback.height ||
     element.getBoundingClientRect().height;
@@ -85,12 +96,31 @@ export const buildPrintPageStyle = ({
   width,
   height,
   heightMode = 'fixed',
+  pages,
 }: BuildPrintPageStyleOptions) => {
   const pageWidth = formatCssPixels(width);
   const pageHeight = formatCssPixels(height);
   const heightRule = heightMode === 'fixed'
     ? `height:${pageHeight}!important;min-height:${pageHeight}!important;overflow:hidden!important;`
     : `height:auto!important;min-height:${pageHeight}!important;overflow:visible!important;`;
+
+  const mixedPages = heightMode === 'fixed' && pages && pages.length > 1 &&
+    pages.every(page => Number.isFinite(page.width) && page.width > 0 && Number.isFinite(page.height) && page.height > 0) &&
+    pages.some(page => normalizeCssPixels(page.width) !== normalizeCssPixels(width) || normalizeCssPixels(page.height) !== normalizeCssPixels(height))
+    ? pages : [];
+
+  const namedPages = mixedPages.map((page, index) => {
+    const name = `file-viewer-print-page-${index}`;
+    const w = formatCssPixels(page.width), h = formatCssPixels(page.height);
+    return `
+      @page ${name} { size: ${w} ${h}; margin: 0; }
+      @media print {
+        ${selector}[data-viewer-print-page-index="${index}"] {
+          page: ${name}; width: ${w}!important; height: ${h}!important; min-height: ${h}!important;
+        }
+      }
+    `;
+  }).join('');
 
   return `
     @page { size: ${formatCssInches(width)} ${formatCssInches(height)}; margin: 0; }
@@ -125,5 +155,11 @@ export const buildPrintPageStyle = ({
         page-break-after: auto;
       }
     }
+    ${namedPages}
+    ${mixedPages.length ? `@media print {
+      html, body, .viewer-export-shell, .viewer-export-content {
+        width: auto!important; min-width: 0!important; max-width: none!important;
+      }
+    }` : ''}
   `;
 };

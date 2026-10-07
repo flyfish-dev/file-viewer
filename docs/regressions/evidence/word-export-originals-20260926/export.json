@@ -1,0 +1,751 @@
+{
+  "completed": true,
+  "passed": 37,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "DPR 1 flow: actual Worker creates both chart paragraphs",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow zoom 0.5: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow zoom 0.5: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow zoom 1: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow zoom 1: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow: actual PDF has one authored Letter page",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow zoom 2: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow zoom 2: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow: exporting never changes the live paragraph/chart subtree",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged: actual Worker creates both chart paragraphs",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged zoom 0.5: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged zoom 0.5: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged zoom 1: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged zoom 1: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged: actual PDF has one authored Letter page",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged zoom 2: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged zoom 2: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 paged: exporting never changes the live paragraph/chart subtree",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow: actual Worker creates both chart paragraphs",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow zoom 0.5: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow zoom 0.5: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow zoom 1: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow zoom 1: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow: actual PDF has one authored Letter page",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow zoom 2: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow zoom 2: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 flow: exporting never changes the live paragraph/chart subtree",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged: actual Worker creates both chart paragraphs",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged zoom 0.5: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged zoom 0.5: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged zoom 1: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged zoom 1: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged: actual PDF has one authored Letter page",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged zoom 2: serialized paragraphs and chart bounds exactly match preview",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged zoom 2: second HTML parse remains stable",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2 paged: exporting never changes the live paragraph/chart subtree",
+      "status": "pass"
+    },
+    {
+      "name": "No external loads or unhandled browser errors",
+      "status": "pass"
+    }
+  ],
+  "geometry": [
+    {
+      "dpr": 1,
+      "paged": false,
+      "before": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ],
+      "after": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ]
+    },
+    {
+      "dpr": 1,
+      "paged": true,
+      "before": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ],
+      "after": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ]
+    },
+    {
+      "dpr": 2,
+      "paged": false,
+      "before": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ],
+      "after": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ]
+    },
+    {
+      "dpr": 2,
+      "paged": true,
+      "before": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ],
+      "after": [
+        {
+          "type": "paragraph",
+          "text": "Generated paragraph export regression",
+          "x": 48,
+          "y": 48,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "1日3日5日7日9日11日13日15日17日19日21日23日25日27日29日31日Test series",
+          "x": 48,
+          "y": 71.328125,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text between two charts",
+          "x": 48,
+          "y": 232.65625,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 720,
+          "height": 161.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        },
+        {
+          "type": "chart",
+          "text": "Only",
+          "x": 48,
+          "y": 255.984375,
+          "width": 320,
+          "height": 160,
+          "fontSize": "18.6667px",
+          "lineHeight": "23.3333px"
+        },
+        {
+          "type": "paragraph",
+          "text": "Text after both charts",
+          "x": 48,
+          "y": 417.3125,
+          "width": 720,
+          "height": 23.328125,
+          "fontSize": "14px",
+          "lineHeight": "17.5px"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "externalRequestCount": 0
+}

@@ -67,6 +67,8 @@ export interface VirtualSheetState {
   mergeStartMap: Map<string, CellMerge>
   mergeCoveredMap: Map<string, true>
   rowHeightCache: Map<number, number>
+  /** Unscaled user sizes take precedence over asynchronously loaded metrics. */
+  rowHeightOverrides: Map<number, number>
   windowRows: Map<number, number[]>
   windowCells: Map<number, string[]>
   loadedWindows: Set<number>
@@ -96,6 +98,7 @@ export const createEmptyVirtualState = (): VirtualSheetState => ({
   mergeStartMap: new Map(),
   mergeCoveredMap: new Map(),
   rowHeightCache: new Map(),
+  rowHeightOverrides: new Map(),
   windowRows: new Map(),
   windowCells: new Map(),
   loadedWindows: new Set(),

@@ -1,0 +1,72 @@
+{
+  "passed": 16,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Default and explicit-zero inset values",
+      "status": "pass"
+    },
+    {
+      "name": "Per-attribute body inheritance and invalid coordinate protection",
+      "status": "pass"
+    },
+    {
+      "name": "AutoFit modes, percentages and malformed factors",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: Insets reduce the paragraph's effective width without resizing its shape",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: Shape AutoFit cannot silently shrink authored 9pt text",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: Normal AutoFit preserves fractional fontScale and baseline zero",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: Explicit no-wrap survives sanitizer and layout",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: Repeated postprocessing is idempotent",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: Public viewer retains metrics using the production Worker and releases its DOM",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: Insets reduce the paragraph's effective width without resizing its shape",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: Shape AutoFit cannot silently shrink authored 9pt text",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: Normal AutoFit preserves fractional fontScale and baseline zero",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: Explicit no-wrap survives sanitizer and layout",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: Repeated postprocessing is idempotent",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: Public viewer retains metrics using the production Worker and releases its DOM",
+      "status": "pass"
+    },
+    {
+      "name": "No unhandled browser exceptions",
+      "status": "pass"
+    }
+  ],
+  "originals": [],
+  "errors": []
+}

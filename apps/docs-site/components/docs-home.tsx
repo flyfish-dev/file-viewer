@@ -94,7 +94,7 @@ export function DocsHome({ locale }: { locale: 'en' | 'zh' }) {
         </section>
 
         <dl className="fv-home-facts">
-          <div><dt>274</dt><dd>{chinese ? '个已注册扩展名（224 稳定 / 50 实验）' : 'registered extensions (224 stable / 50 experimental)'}</dd></div>
+          <div><dt>275</dt><dd>{chinese ? '个已注册扩展名（225 稳定 / 50 实验）' : 'registered extensions (225 stable / 50 experimental)'}</dd></div>
           <div><dt>47</dt><dd>{chinese ? '条预览链路' : 'preview pipelines'}</dd></div>
           <div><dt>100%</dt><dd>{chinese ? '运行时资源可自托管' : 'self-hostable runtime'}</dd></div>
         </dl>

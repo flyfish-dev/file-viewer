@@ -2,6 +2,9 @@
   "schemaVersion": 1,
   "release": "2.4.0",
   "policy": "legacy-compatible-frozen",
+  "additiveExtensions": [
+    { "extension": "lrc", "rendererId": "code", "scope": "Static lyrics through the existing text renderer; no new package or assets" }
+  ],
   "publishedMinimum": {
     "source": "https://registry.npmjs.org/@file-viewer/preset-all/2.4.0",
     "dependencyNames": [

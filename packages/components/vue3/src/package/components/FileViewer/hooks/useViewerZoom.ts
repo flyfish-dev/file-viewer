@@ -5,11 +5,13 @@ import {
   createFileViewerZoomControllerActionHandlers,
   createFileViewerZoomState,
   type FileViewerOperationType,
+  type FileViewerOptions,
 } from '@file-viewer/core'
 
 interface UseFileViewerZoomOptions {
   output: Ref<HTMLDivElement | null>;
   enabled: () => boolean;
+  gestures: () => FileViewerOptions['zoomGestures'];
   runBeforeOperation: (operation: FileViewerOperationType) => Promise<boolean>;
 }
 
@@ -22,12 +24,14 @@ interface UseFileViewerZoomOptions {
 export const useViewerZoom = ({
   output,
   enabled,
+  gestures,
   runBeforeOperation
 }: UseFileViewerZoomOptions) => {
   const state = reactive(createFileViewerZoomState())
   const controller = createFileViewerZoomController({
     root: () => output.value,
     enabled,
+    gestures,
     beforeZoom: operation => runBeforeOperation(operation),
     onChange: nextState => {
       applyFileViewerZoomState(state, nextState)

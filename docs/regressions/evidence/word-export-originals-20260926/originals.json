@@ -1,0 +1,666 @@
+{
+  "completed": true,
+  "passed": 83,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "C007 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C007 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C011 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C042 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 1: actual print PDF keeps original paper, margins and chart boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 2: actual print PDF keeps original paper, margins and chart boundaries",
+      "status": "pass"
+    },
+    {
+      "name": "C052 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C055 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C064 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C066 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 1: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 1: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 1: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 1: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 1: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 2: original body text and table grid survive the actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 2: every authored embedded picture decodes from the exact package bytes",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 2: chart types, source indexes and values are not missing or substituted",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 2: fitted pages stay centered through narrow-host and zoom round trips",
+      "status": "pass"
+    },
+    {
+      "name": "C071 DPR 2: unmount releases its Worker and viewer DOM",
+      "status": "pass"
+    },
+    {
+      "name": "No external requests or unhandled browser errors",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C007",
+      "sha256": "dc39bcab0d542016838ab1d451b3a506cea00681f9f50d0ce37742246c613771",
+      "dpr": 1,
+      "bodyCharacters": 1189,
+      "bodySha256": "f13bc9640be6563d504bc41e9c291356f4ab5fc57f0e8ec43285765a0585e14e",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 2,
+      "embeddedPictures": 0,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C007",
+      "sha256": "dc39bcab0d542016838ab1d451b3a506cea00681f9f50d0ce37742246c613771",
+      "dpr": 2,
+      "bodyCharacters": 1189,
+      "bodySha256": "f13bc9640be6563d504bc41e9c291356f4ab5fc57f0e8ec43285765a0585e14e",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 2,
+      "embeddedPictures": 0,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C011",
+      "sha256": "41f550e09602c728f1bd9d738f0369123608d29484d456416fe1aa8e351b4dad",
+      "dpr": 1,
+      "bodyCharacters": 9,
+      "bodySha256": "30a51bed296debc0aedfaece26ee16204baffeeba1512c135ee61c9de2271db8",
+      "tableRows": 2,
+      "tableCells": 6,
+      "pages": 1,
+      "embeddedPictures": 0,
+      "chartFamilies": [
+        "barChart"
+      ],
+      "chartPoints": [
+        12
+      ],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C011",
+      "sha256": "41f550e09602c728f1bd9d738f0369123608d29484d456416fe1aa8e351b4dad",
+      "dpr": 2,
+      "bodyCharacters": 9,
+      "bodySha256": "30a51bed296debc0aedfaece26ee16204baffeeba1512c135ee61c9de2271db8",
+      "tableRows": 2,
+      "tableCells": 6,
+      "pages": 1,
+      "embeddedPictures": 0,
+      "chartFamilies": [
+        "barChart"
+      ],
+      "chartPoints": [
+        12
+      ],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C042",
+      "sha256": "66118e197c3369bd43550252048392941d07d2f5808207e5bc75055b1142aef9",
+      "dpr": 1,
+      "bodyCharacters": 866,
+      "bodySha256": "266c902eed098999070220025cfb4738714d30b4e2b741c4535b2a92d2ecfd32",
+      "tableRows": 1,
+      "tableCells": 1,
+      "pages": 4,
+      "embeddedPictures": 7,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C042",
+      "sha256": "66118e197c3369bd43550252048392941d07d2f5808207e5bc75055b1142aef9",
+      "dpr": 2,
+      "bodyCharacters": 866,
+      "bodySha256": "266c902eed098999070220025cfb4738714d30b4e2b741c4535b2a92d2ecfd32",
+      "tableRows": 1,
+      "tableCells": 1,
+      "pages": 4,
+      "embeddedPictures": 7,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C052",
+      "sha256": "b436f5132c43ca5808b040ada3959982c66f1877ba0c06a4f123940b8e3889ec",
+      "dpr": 1,
+      "bodyCharacters": 77,
+      "bodySha256": "8c0aa7c00e806c6f8e5e89d92cc34eddb2912520cf3f4961597c4412e646e54a",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 1,
+      "embeddedPictures": 0,
+      "chartFamilies": [
+        "pieChart",
+        "lineChart"
+      ],
+      "chartPoints": [
+        10,
+        32
+      ],
+      "actualWorkerParsed": true,
+      "printed": {
+        "pages": 1,
+        "size": {
+          "width": 594.95996,
+          "height": 841.91998
+        },
+        "sha256": "effb04030fb38c4fae6b51c3c257d4073f319dd6deb0bcbcdaef9b6b3c70886d",
+        "margins": [
+          96,
+          120,
+          96,
+          120
+        ],
+        "chartGeometry": [
+          {
+            "x": 132.53125,
+            "y": 376.4375,
+            "w": 551.859375,
+            "h": 313.71875
+          },
+          {
+            "x": 132.53125,
+            "y": 717.40625,
+            "w": 551.859375,
+            "h": 313.71875
+          }
+        ]
+      }
+    },
+    {
+      "id": "C052",
+      "sha256": "b436f5132c43ca5808b040ada3959982c66f1877ba0c06a4f123940b8e3889ec",
+      "dpr": 2,
+      "bodyCharacters": 77,
+      "bodySha256": "8c0aa7c00e806c6f8e5e89d92cc34eddb2912520cf3f4961597c4412e646e54a",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 1,
+      "embeddedPictures": 0,
+      "chartFamilies": [
+        "pieChart",
+        "lineChart"
+      ],
+      "chartPoints": [
+        10,
+        32
+      ],
+      "actualWorkerParsed": true,
+      "printed": {
+        "pages": 1,
+        "size": {
+          "width": 594.95996,
+          "height": 841.91998
+        },
+        "sha256": "e9c448cedc84bc6babf3f4a05e89033cdad3055fee9b66bfccdc74fcf3f0400b",
+        "margins": [
+          96,
+          120,
+          96,
+          120
+        ],
+        "chartGeometry": [
+          {
+            "x": 132.53125,
+            "y": 376.4375,
+            "w": 551.859375,
+            "h": 313.71875
+          },
+          {
+            "x": 132.53125,
+            "y": 717.40625,
+            "w": 551.859375,
+            "h": 313.71875
+          }
+        ]
+      }
+    },
+    {
+      "id": "C055",
+      "sha256": "ca1bc66e0a97ab31f6ffe62b883b57661a23856c53aab4b72c259aae976c67fd",
+      "dpr": 1,
+      "bodyCharacters": 5,
+      "bodySha256": "cc399d73903f06ee694032ab0538f05634ff7e1ce5e8e50ac330a871484f34cf",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 1,
+      "embeddedPictures": 1,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C055",
+      "sha256": "ca1bc66e0a97ab31f6ffe62b883b57661a23856c53aab4b72c259aae976c67fd",
+      "dpr": 2,
+      "bodyCharacters": 5,
+      "bodySha256": "cc399d73903f06ee694032ab0538f05634ff7e1ce5e8e50ac330a871484f34cf",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 1,
+      "embeddedPictures": 1,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C064",
+      "sha256": "e58c419ec5e0a2a46ba65d2b18d8d7d212e833b9c23272d180364836d8f39a7b",
+      "dpr": 1,
+      "bodyCharacters": 1357,
+      "bodySha256": "7422f16a9e476b2474a2d7d81035753dd4952f32d47dd7fe9caed1bceb7e2baf",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 3,
+      "embeddedPictures": 0,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C064",
+      "sha256": "e58c419ec5e0a2a46ba65d2b18d8d7d212e833b9c23272d180364836d8f39a7b",
+      "dpr": 2,
+      "bodyCharacters": 1357,
+      "bodySha256": "7422f16a9e476b2474a2d7d81035753dd4952f32d47dd7fe9caed1bceb7e2baf",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 3,
+      "embeddedPictures": 0,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C066",
+      "sha256": "a3ca3c139dccf44008e975fe9729fb8529a0c4c600b6e885e94f827cd11ab494",
+      "dpr": 1,
+      "bodyCharacters": 3523,
+      "bodySha256": "ed56609be9fa4aff62dd6515e2bda4505ca88cbdb1b0952fbd1889ac083421ff",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 4,
+      "embeddedPictures": 0,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C066",
+      "sha256": "a3ca3c139dccf44008e975fe9729fb8529a0c4c600b6e885e94f827cd11ab494",
+      "dpr": 2,
+      "bodyCharacters": 3523,
+      "bodySha256": "ed56609be9fa4aff62dd6515e2bda4505ca88cbdb1b0952fbd1889ac083421ff",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 4,
+      "embeddedPictures": 0,
+      "chartFamilies": [],
+      "chartPoints": [],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C071",
+      "sha256": "424e108345c5bf62384d2dfdf6cec94bbcb75cba27315852bc805398b90e68c5",
+      "dpr": 1,
+      "bodyCharacters": 27,
+      "bodySha256": "da1e79c4a61f57ce5739b80f72f3c98dbaf4cd5f63abd8cbc519e66a22c65d52",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 2,
+      "embeddedPictures": 2,
+      "chartFamilies": [
+        "barChart"
+      ],
+      "chartPoints": [
+        12
+      ],
+      "actualWorkerParsed": true,
+      "printed": null
+    },
+    {
+      "id": "C071",
+      "sha256": "424e108345c5bf62384d2dfdf6cec94bbcb75cba27315852bc805398b90e68c5",
+      "dpr": 2,
+      "bodyCharacters": 27,
+      "bodySha256": "da1e79c4a61f57ce5739b80f72f3c98dbaf4cd5f63abd8cbc519e66a22c65d52",
+      "tableRows": 0,
+      "tableCells": 0,
+      "pages": 2,
+      "embeddedPictures": 2,
+      "chartFamilies": [
+        "barChart"
+      ],
+      "chartPoints": [
+        12
+      ],
+      "actualWorkerParsed": true,
+      "printed": null
+    }
+  ],
+  "errors": [],
+  "externalRequestCount": 0,
+  "scope": "Original body/resource integrity, reported centering and missing charts, zoom, and original PDF print geometry; not complete desktop typography or physical driver validation."
+}

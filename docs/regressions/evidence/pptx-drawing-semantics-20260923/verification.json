@@ -1,0 +1,22 @@
+{
+  "run": "35847299341",
+  "checkedCommit": "ce58f0f27ee963153dc0d56142af0f965dece817",
+  "baseCommit": "9a11f533b471db6cafac30f8f58dae86511329a7",
+  "checks": 33,
+  "originalDocuments": 12,
+  "originalPages": 60,
+  "builds": [
+    "core",
+    "pptx"
+  ],
+  "install": "actual frozen pnpm 11.0.9 filtered workspace install; no lock or dependency changes",
+  "publicViewer": true,
+  "productionWorkerCopiedAndTested": true,
+  "fullCorpusAccepted": false,
+  "sha256": {
+    "packages/renderers/pptx/src/engine/support/vendor.js": "ce1aa3a4c5b3aed28ba82eb4743bc3d5ca67fc2400bfa0442a299015e2730419",
+    "packages/renderers/pptx/src/engine/support/drawing-semantics.js": "1aecbbe1c2357368fc7b7504e10e3c39f325e9f1704086347826aaadd132dcdd",
+    "packages/renderers/pptx/scripts/verify-drawing-semantics.mjs": "7587463ee65744956a507760a6591895a216bd24a5bcd853c5e33010f505d9a2",
+    "apps/viewer-demo/public/vendor/pptx/pptx.worker.js": "824eed6d3f8af155fb9c7d81153ab607c154f137d8390d83aa78c1525b3137e1"
+  }
+}

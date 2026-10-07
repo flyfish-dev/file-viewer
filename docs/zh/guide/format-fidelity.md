@@ -65,6 +65,7 @@
 | GDSII / OASIS | GDSII 已可按 record parser 生成 SVG/WebGL；OASIS 是 SEMI 二进制版图格式，支持压缩块、重复结构和更复杂索引，完整渲染更适合参考 KLayout/KWeb 或自研 WebGL/WASM pipeline | GDSII 当前提供 SVG 快速预览和大元素集 WebGL canvas；OASIS 可读文本夹具已可生成 SVG，真实二进制 OASIS 继续结构索引，底层能力已拆到 `@file-viewer/eda-layout`，后续做 WASM/增量渲染 |
 | STEP / STP、IGES / IGS、BREP | OpenCascade / OCCT WASM 在浏览器内解析 B-Rep 并输出 Three.js 可用网格 | `@file-viewer/geometry-engine` 已接入本地 OCCT Worker、runtime 和 WASM；`@file-viewer/renderer-3d` 保留装配层级、实例、法线和面颜色，并注册统一缩放 provider；重型内核不进入 core 默认路径 |
 | IFC | `@file-viewer/renderer-3d/ifc` 是显式、实验性的本地 That Open / `web-ifc` 可视预览入口 | 官方 Demo 自托管匹配的 Worker/WASM，并验证 IFC4、IFC4.3、适配视图、选择和属性面板；它不进入 core、默认组件或 Full 包，也不承诺 BIM 编辑或任意大型模型性能 |
+| 流式 Geo3D | 显式、实验性的 `@file-viewer/renderer-3d/geo3d` 入口，支持 LAS/LAZ/COPC、GeoTIFF/COG、CityJSON、3D Tiles 和 3TZ | 保留 COPC/COG/3D Tiles 的渐进和随机读取；检测地理标签后才接管 TIFF；3TZ 限制解压大小、数量并拒绝目录穿越和重复路径。解码资产需自托管，生产数据规模需实测；LAS/LAZ 转 COPC、GeoTIFF 转 COG 可改善流式读取 |
 | 3DM | 3DM 走 `rhino3dm` + Three.js Rhino3dmLoader | 当前只维护格式签名和接入提示，后续在独立几何包中实现，不影响已经落地的 OCCT 预览链路 |
 | Draw.io / Excalidraw / Mermaid / PlantUML | Draw.io 最佳链路是自托管 diagrams.net offline viewer；Excalidraw 默认使用 rough.js 只读 SVG，运行环境提供官方 ESM 模块时尝试官方 restore/export；Mermaid 使用官方 SVG renderer；PlantUML 默认离线预览源码，可选接入自托管 SVG 服务 | 已拆成 `@file-viewer/renderer-drawing` 独立维护，继续离线 vendor 分发；PlantUML 完整图形渲染推荐企业内网自托管服务端点 |
 | Presentation / PPT / PPTX | 二进制 PPT 与 OOXML 演示文稿都适合独立 engine + renderer 双层维护，避免 core 被解析器、主题和媒体链路拖重 | `@file-viewer/renderer-presentation` 暴露标准 renderer 插件，`.ppt` 使用独立版本且保留包内许可证的 `@file-viewer/ppt@0.3.4`，OpenXML 文件使用 `@file-viewer/pptx` Worker；Full/CDN 分别交付两条链路的匹配资产 |
@@ -111,7 +112,7 @@
 
 - [x] XMind 使用 `@panzoom/panzoom` 支持 Pointer / 鼠标 / 触摸拖拽平移、从节点卡片起手拖拽、移动端双指缩放、Ctrl/Command 滚轮锚点缩放、键盘方向键平移、双击适配视图、容器 resize 自适应和用户交互后视角保留。
 - [x] 继续保持 Draw.io、Typst WASM/字体、CAD、archive、PDF worker/WASM/vendor 静态资源全部自托管，不依赖公共 CDN。
-- [x] 使用 `pnpm verify:format-support` 校验 274 个注册扩展名（224 个稳定、50 个实验）和 47 条 renderer pipeline 口径一致。
+- [x] 使用 `pnpm verify:format-support` 校验 275 个注册扩展名（225 个稳定、50 个实验）和 47 条 renderer pipeline 口径一致。
 - [x] 在 smoke matrix 中把 XMind `pan` 和真实鼠标拖拽列为显式断言，防止只校验打开成功而漏掉画布交互。
 - [ ] 为 XMind 增加真实复杂样本，覆盖多 sheet、标签、备注、图片、链接、折叠节点和大脑图拖拽回归。
 - [ ] 为 GDSII 增加真实公开版图样本，验证层过滤、实例引用、文本和大文件性能。

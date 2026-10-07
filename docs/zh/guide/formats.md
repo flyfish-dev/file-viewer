@@ -3,7 +3,7 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  唯一格式目录当前注册 <strong>274 个扩展名</strong>，覆盖 <strong>47 条预览链路</strong>：其中 <strong>224 个稳定</strong>、<strong>50 个实验</strong>。
+  唯一格式目录当前注册 <strong>275 个扩展名</strong>，覆盖 <strong>47 条预览链路</strong>：其中 <strong>225 个稳定</strong>、<strong>50 个实验</strong>。
   这一页不是“计划支持什么”，而是以当前代码里已经注册好的渲染器为准，告诉你项目现在到底能处理哪些格式、分别走哪条渲染链路，以及在真实业务里应该怎么选。
 </p>
 
@@ -14,7 +14,7 @@
 
 <div class="doc-grid">
   <div class="doc-card">
-    <h3>274 个已注册扩展名</h3>
+    <h3>275 个已注册扩展名</h3>
     <p>覆盖 Office、PDF、OFD、Typst、XMind、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、Mermaid、PlantUML、EPUB、UMD、Markdown、图片、音视频、代码/文本、Git patch/bundle、字体、PSD 图层资产和结构化数据等常见附件类型。</p>
   </div>
   <div class="doc-card">
@@ -173,6 +173,7 @@
 ### 3D 模型
 
 - 3D 模型由 `@file-viewer/renderer-3d` 承接，组件会根据扩展名按需加载对应 Three.js loader，避免普通文档预览被 3D 依赖拖慢。
+- 流式地理数据通过 `@file-viewer/renderer-3d/geo3d` 显式装配，支持 LAS/LAZ/COPC、GeoTIFF/COG、CityJSON、3D Tiles 和 3TZ。普通 TIFF 继续使用图片渲染器，只有检测到地理标签才切换；COPC/COG/3D Tiles 保留 URL 或本地 File 的随机读取，3TZ 解压限制大小和数量并拒绝不安全路径。此能力不进入默认 preset 或 Full 包，需单独安装 Giro3D 并自托管解码资产。
 - `glb` / `gltf` 是最推荐的 Web 3D 交换格式；`obj`、`stl`、`ply` 适合轻量几何和打印模型；`fbx`、`dae`、`3ds`、`3mf`、`amf`、`usd` / `usdz`、`kmz` 适合兼容设计工具导出的历史或工程资产。
 - `pcd`、`xyz`、`vtk`、`vtp` 会按点云或几何模型展示，适合扫描、仿真和工程数据的快速浏览。
 - `step` / `stp`、`iges` / `igs`、`brep` 已通过 `@file-viewer/geometry-engine` 接入本地 `occt-import-js` / OpenCascade Worker/WASM，能够解析装配层级、实例、法线和面颜色并生成 Three.js 网格，不需要服务端转换。

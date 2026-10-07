@@ -10,7 +10,7 @@ The DICOM renderer is not part of any standard/full package or preset. These dep
 `pako@1.0.5`, `pako@2.1.0`, `pako@2.2.0` contain zlib-derived code by Jean-loup Gailly and Mark Adler under `(MIT AND Zlib)`; their installed source retains the zlib notices and license terms.
 - `spark-md5@3.0.2` is available under `(WTFPL OR MIT)` as declared by the package. Its installed package retains the upstream license file.
 - `argparse@2.0.1` is licensed under Python-2.0 and retains the complete Python Software Foundation license in its installed `LICENSE` file.
-`dompurify@3.4.15` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
+`dompurify@3.4.16` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
 
 ### Native libraries statically linked into codec WebAssembly
 
@@ -41,20 +41,20 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### Apache-2.0
 
-- `baseline-browser-mapping@2.11.25` — https://github.com/web-platform-dx/baseline-browser-mapping
+- `baseline-browser-mapping@2.11.27` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
-- `dompurify@3.4.15` — https://github.com/cure53/DOMPurify
+- `dompurify@3.4.16` — https://github.com/cure53/DOMPurify
 
 ### BSD-3-Clause
 
 - `@kitware/vtk.js@36.4.1` — https://github.com/Kitware/vtk-js
 - `shelljs@0.8.5` — https://github.com/shelljs/shelljs
-- `source-map-js@1.2.1` — https://github.com/7rulnik/source-map-js
+- `source-map-js@1.2.2` — https://github.com/7rulnik/source-map-js
 - `wslink@2.5.0` — https://github.com/kitware/wslink
 
 ### CC-BY-4.0
 
-- `caniuse-lite@1.0.30001810` — https://github.com/browserslist/caniuse-lite
+- `caniuse-lite@1.0.30001814` — https://github.com/browserslist/caniuse-lite
 
 ### ISC
 
@@ -67,7 +67,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `d3-scale@4.0.2` — https://github.com/d3/d3-scale
 - `d3-time@3.1.0` — https://github.com/d3/d3-time
 - `d3-time-format@4.1.0` — https://github.com/d3/d3-time-format
-- `electron-to-chromium@1.5.433` — https://github.com/Kilian/electron-to-chromium
+- `electron-to-chromium@1.5.445` — https://github.com/Kilian/electron-to-chromium
 - `fs.realpath@1.0.0` — https://github.com/isaacs/fs.realpath
 - `glob@7.2.0` — https://github.com/isaacs/node-glob
 - `inflight@1.0.6` — https://github.com/npm/inflight
@@ -99,7 +99,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `adm-zip@0.6.1` — https://github.com/cthackers/adm-zip
 - `autoprefixer@10.6.1` — https://github.com/postcss/autoprefixer
 - `balanced-match@1.0.0` — https://github.com/juliangruber/balanced-match
-- `brace-expansion@1.1.18` — https://github.com/juliangruber/brace-expansion
+- `brace-expansion@1.1.21` — https://github.com/juliangruber/brace-expansion
 - `browserslist@4.28.7` — https://github.com/browserslist/browserslist
 - `commander@9.2.0` — https://github.com/tj/commander.js
 - `concat-map@0.0.1` — https://github.com/substack/node-concat-map
@@ -108,6 +108,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `dicom-parser@1.8.21` — https://github.com/cornerstonejs/dicomParser
 - `es-errors@1.3.0` — https://github.com/ljharb/es-errors
 - `escalade@3.2.0` — https://github.com/lukeed/escalade
+- `events@3.3.0` — https://github.com/Gozala/events
 - `fast-deep-equal@3.1.3` — https://github.com/epoberezkin/fast-deep-equal
 - `fflate@0.7.5` — https://github.com/101arrowz/fflate
 - `fraction.js@5.3.4` — https://github.com/rawify/Fraction.js
@@ -125,7 +126,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `loglevel@1.9.2` — https://github.com/pimterry/loglevel
 - `nanoid@3.3.18` — https://github.com/ai/nanoid
 - `ndarray@1.0.19` — https://github.com/mikolalysenko/ndarray
-- `node-releases@2.0.56` — https://github.com/chicoxyzzy/node-releases
+- `node-releases@2.0.57` — https://github.com/chicoxyzzy/node-releases
 - `path-is-absolute@1.0.1` — https://github.com/sindresorhus/path-is-absolute
 - `path-parse@1.0.7` — https://github.com/jbgutierrez/path-parse
 - `postcss@8.5.23` — https://github.com/postcss/postcss

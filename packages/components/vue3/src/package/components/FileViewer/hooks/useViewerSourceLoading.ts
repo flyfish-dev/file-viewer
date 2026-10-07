@@ -1,8 +1,13 @@
 import type { Ref } from 'vue'
 import {
+  collectFileViewerRendererPlugins,
   createFileViewerPreviewStateTarget,
   createFileViewerSourceLoadingActionHandlers,
+  getExtension,
+  listFileViewerAutoRendererPresets,
+  matchesFileViewerRendererFilename,
   normalizeFileViewerSourceUrl,
+  resolveFileViewerRendererPresetInputs,
   translateFileViewerMessage,
 } from '@file-viewer/core'
 import type { FileViewerErrorMessageFormatter, FileViewerRequestController } from '@file-viewer/core'
@@ -137,11 +142,110 @@ export const useViewerSourceLoading = ({
     }
   })
 
+  const resolveStreamPreferredSource = async ({
+    sourceFilename,
+    extension,
+    file,
+    url,
+    signal
+  }: {
+    sourceFilename: string;
+    extension: string;
+    file?: File;
+    url?: string;
+    signal?: AbortSignal;
+  }) => {
+    const options = getOptions() || {}
+    const autoSetting = options.autoRenderers
+    const autoRenderersEnabled = typeof autoSetting === 'boolean'
+      ? autoSetting
+      : autoSetting?.enabled !== undefined
+        ? autoSetting.enabled
+        : (options.rendererMode || 'extend') !== 'replace'
+    const rendererInputs = [
+      ...(autoRenderersEnabled ? listFileViewerAutoRendererPresets() : []),
+      ...resolveFileViewerRendererPresetInputs(options.preset),
+      ...resolveFileViewerRendererPresetInputs(options.presets),
+      ...(options.renderers ? [options.renderers] : [])
+    ]
+    const definitions = collectFileViewerRendererPlugins(rendererInputs)
+      .flatMap(plugin => [...(plugin.definitions || [])])
+
+    for (const definition of definitions) {
+      if (definition.sourceAccess !== 'stream-preferred') continue
+
+      const detected = await definition.resolveSourceType?.({
+        filename: sourceFilename,
+        extension,
+        file,
+        url,
+        mimeType: file?.type,
+        signal
+      })
+      if (typeof detected === 'string' && detected.trim()) {
+        return detected.trim()
+      }
+      if (detected) {
+        return true
+      }
+
+      if (matchesFileViewerRendererFilename(definition, sourceFilename)) {
+        return true
+      }
+      if (
+        definition.extensions.some(
+          item => item.toLowerCase() === extension.toLowerCase()
+        )
+      ) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  const shouldStreamRemoteUrl = ({
+    url,
+    filename: sourceFilename,
+    extension,
+    signal
+  }: {
+    url: string;
+    filename: string;
+    extension: string;
+    pageHref?: string;
+    signal?: AbortSignal;
+  }) => resolveStreamPreferredSource({
+    sourceFilename,
+    extension,
+    url,
+    signal
+  })
+
+  const shouldStreamLocalFile = ({
+    file,
+    filename: sourceFilename,
+    extension,
+    signal
+  }: {
+    file: File;
+    filename: string;
+    extension: string;
+    signal?: AbortSignal;
+  }) => resolveStreamPreferredSource({
+    sourceFilename,
+    extension: extension || getExtension(sourceFilename),
+    file,
+    signal
+  })
+
   const actions = createFileViewerSourceLoadingActionHandlers<FileViewerVueRenderSession>({
     getFile,
     getUrl,
     getCurrentFilename: () => getSourceFilename?.() || filename.value,
+    shouldStreamLocalFile,
     getPdfStreaming: () => getOptions()?.pdf?.streaming,
+    shouldStreamRemoteUrl,
     getI18n: getOptions,
     getPageHref: () => window.location.href,
     previewTarget: previewStateTarget,

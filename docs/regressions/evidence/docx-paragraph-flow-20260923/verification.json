@@ -1,0 +1,20 @@
+{
+  "run": "35833880258",
+  "checkedCommit": "ebc9dbc922bd06872de47195b389c7f6390536a1",
+  "baselineCommit": "7d493f5fbd7978c47e96e26f0e1570e2a81115c7",
+  "install": "actual pnpm 11.0.9 frozen filtered install before and after rebuilding declared engine patch",
+  "builds": [
+    "core",
+    "doc",
+    "pptx",
+    "word"
+  ],
+  "checks": {
+    "paragraphFlow": 11,
+    "previousEngine": 11
+  },
+  "patchSha256": "43dbf071f654a3fad1d4f044e6cb7452e9593ed7534d359d2e2ac5fe96f0025c",
+  "upstreamSourceBuild": false,
+  "fullWorkspaceBuild": false,
+  "originalsInCi": false
+}

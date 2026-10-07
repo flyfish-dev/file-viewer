@@ -1,0 +1,54 @@
+{
+  "run": "35958564768",
+  "checkedCommit": "9966d2c36de1e80e4df2a33ecac7f70210bceceb",
+  "baseCommit": "9f3fedf7a799e6d6db6d1660123c0d585300a26d",
+  "rootCauses": 2,
+  "original": "C037",
+  "checks": 57,
+  "unitTestsAdded": 16,
+  "wordUnitTests": 63,
+  "priorChecks": {
+    "C030Tabs": 27,
+    "C070Wordml": 19,
+    "engine": 11,
+    "containers": 4
+  },
+  "dpr": [
+    1,
+    2
+  ],
+  "zoom": [
+    1,
+    0.5,
+    2,
+    0.88,
+    1
+  ],
+  "actualWorkerParsed": true,
+  "export": "real export adapter HTML; physical print driver not tested",
+  "builds": [
+    "core",
+    "doc",
+    "word"
+  ],
+  "install": "actual pnpm 11.0.9 frozen filtered workspace install; dependencies, lock, engine patch and static Worker unchanged",
+  "fullCorpusAccepted": false,
+  "sourceSha256": {
+    "docs/regressions/word-vml-text-20260924.md": "d001fa213687e193618348c44c0fb799a8ada1ee3aef11bc8cdcac8c0877f17a",
+    "packages/renderers/word/scripts/verify-vml-text-layout.mjs": "bcc88fa63c25705037d53f128c30c7cf6e0c832a3a73bdd2e5fbe8c9ac16747d",
+    "packages/renderers/word/src/docxAnchors.ts": "3d54f75487cda4c26ed4c8ba602c44f309c59c376c9a7a7e17af1b040bcb0552",
+    "packages/renderers/word/src/docxVml.ts": "92aca523cd6f634f2abffaed5f1fb7a64449f7b5a8903e04f280f8b5818f6f58",
+    "packages/renderers/word/src/wordDocx.ts": "0edb4b498829a73dacb14318250e6411ebb207722e106f9d1659e338685f7c4f",
+    "packages/renderers/word/test/docx-vml-layout.test.mjs": "b8ac1bb0b2b4b6f1a0bcdeccfdad7f1995f7cd18bf035a6fb5966e82554a584c"
+  },
+  "evidenceSha256": {
+    "tabs.json": "0981ed9993d10834dd55ef4f341927cdd996a46e0f13cce240b16bce710b2fda",
+    "engine.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "report.json": "3675c5dbd50f6f53615a7dad836a62ffef10584ca3813bf68672f5ef60f3f9b0",
+    "baseline.json": "457d2d70e90b51bb201580e6712ee6b8abdeb97d60a3d46eb3e7c4384be3ffa0",
+    "containers.json": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c",
+    "before.png": "eb7c1357b2d812efa95a23401e8f0c6631fb45df7f0e5fa7b1c0a44bfce23a99",
+    "wordml.json": "3969e0a9a2a91dc7e7c5cac29dc23a2965c33a7757f5e20a97d321ac2d44f7d8",
+    "after.png": "da3bf8a1aeac1d99de5e56d73fd3153aed09d24a9c4cb902758483a333180aa6"
+  }
+}

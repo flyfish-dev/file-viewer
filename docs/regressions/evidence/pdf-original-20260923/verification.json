@@ -1,0 +1,13 @@
+{
+  "run": "35817787925",
+  "checkedCommit": "5a42a8b0cb29c38361383c7b4c860cbcae63868a",
+  "sha256": "bd367dfbbb8722865062a44275ae8ea58465d73b7836cd2734d97c6709d3e36e",
+  "originals": 6,
+  "uniquePages": 63,
+  "pageChecks": 126,
+  "dpr": [
+    1,
+    2
+  ],
+  "scope": "Original byte identities, page geometry/backing resolution, thumbnail native raster comparison, one content scroller, hidden dialog initial fit, controlled same-origin Referer and 403 policy. Not iOS/App WebView or desktop pixel equivalence."
+}

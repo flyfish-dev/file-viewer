@@ -55,19 +55,8 @@ export const renderFileViewerWordDocx: FileRenderHandler<FileViewerRenderedInsta
  * leaving genuine OLE/CFB `.doc` files on the binary parser. Word 2003 XML
  * has its own single-file container and is adapted lazily to the OOXML renderer.
  */
-export const resolveFileViewerWordContainer = (buffer: ArrayBuffer): 'openxml' | 'wordml' | 'binary' => {
-  if (buffer.byteLength < 2) {
-    return 'binary';
-  }
-  const bytes = new Uint8Array(buffer, 0, 2);
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b) return 'openxml';
-  const prefix = new Uint8Array(buffer, 0, Math.min(buffer.byteLength, 8192));
-  const utf16le = (bytes[0] === 0xff && bytes[1] === 0xfe) || (bytes[0] === 0x3c && bytes[1] === 0);
-  const utf16be = (bytes[0] === 0xfe && bytes[1] === 0xff) || (bytes[0] === 0 && bytes[1] === 0x3c);
-  const text = new TextDecoder(utf16le ? 'utf-16le' : utf16be ? 'utf-16be' : 'utf-8').decode(prefix);
-  return /<(?:[\w.-]+:)?wordDocument(?:\s|>)/.test(text) &&
-    text.includes('http://schemas.microsoft.com/office/word/2003/wordml') ? 'wordml' : 'binary';
-};
+export { resolveWordContainer as resolveFileViewerWordContainer } from './wordContainer.js';
+import { resolveWordContainer } from './wordContainer.js';
 
 export const renderFileViewerWordDoc: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = (
   buffer,
@@ -75,7 +64,11 @@ export const renderFileViewerWordDoc: FileRenderHandler<FileViewerRenderedInstan
   _type,
   context
 ) => {
-  const container = resolveFileViewerWordContainer(buffer);
+  const container = resolveWordContainer(buffer);
+  if (container === 'html' || container === 'text') {
+    return import('./wordText.js').then(({ renderWordText }) =>
+      renderWordText(buffer, target, container, context));
+  }
   if (container === 'wordml') {
     return Promise.all([import('./wordMl.js'), import('./wordDocx.js')])
       .then(async ([{ convertWordMlToDocx }, { default: renderWordDocx }]) =>

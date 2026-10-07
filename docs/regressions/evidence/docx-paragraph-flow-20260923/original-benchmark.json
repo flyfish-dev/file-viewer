@@ -1,0 +1,287 @@
+{
+  "input": {
+    "id": "C022",
+    "sha256": "74c3da195b8afaa638124e4fef5440193a811aa2180820411c1cb4b2ebbc6d61"
+  },
+  "completed": true,
+  "results": [
+    {
+      "run": 1,
+      "variant": "control",
+      "elapsedMs": 2925.328705,
+      "pages": 30,
+      "bodySha256": "c5325db863ba0658c4c5adec8429965f51da3b04f36c425c999212fd67ef390b",
+      "sourceCharacters": 30769,
+      "exactSourceText": true,
+      "tableRows": 87,
+      "footers": 30,
+      "performance": {
+        "LayoutObjects": 26832,
+        "LayoutCount": 2608,
+        "RecalcStyleCount": 3608,
+        "LayoutDuration": 0.621592,
+        "RecalcStyleDuration": 0.96971,
+        "TaskDuration": 2.797251
+      }
+    },
+    {
+      "run": 1,
+      "variant": "optimized",
+      "elapsedMs": 1191.1801400000004,
+      "pages": 30,
+      "bodySha256": "c5325db863ba0658c4c5adec8429965f51da3b04f36c425c999212fd67ef390b",
+      "sourceCharacters": 30769,
+      "exactSourceText": true,
+      "tableRows": 87,
+      "footers": 30,
+      "performance": {
+        "LayoutObjects": 17721,
+        "LayoutCount": 122,
+        "RecalcStyleCount": 1125,
+        "LayoutDuration": 0.253412,
+        "RecalcStyleDuration": 0.170598,
+        "TaskDuration": 1.135114
+      }
+    },
+    {
+      "run": 2,
+      "variant": "optimized",
+      "elapsedMs": 1193.183524,
+      "pages": 30,
+      "bodySha256": "c5325db863ba0658c4c5adec8429965f51da3b04f36c425c999212fd67ef390b",
+      "sourceCharacters": 30769,
+      "exactSourceText": true,
+      "tableRows": 87,
+      "footers": 30,
+      "performance": {
+        "LayoutObjects": 19479,
+        "LayoutCount": 122,
+        "RecalcStyleCount": 1125,
+        "LayoutDuration": 0.248221,
+        "RecalcStyleDuration": 0.163465,
+        "TaskDuration": 1.13079
+      }
+    },
+    {
+      "run": 2,
+      "variant": "control",
+      "elapsedMs": 2931.9323889999996,
+      "pages": 30,
+      "bodySha256": "c5325db863ba0658c4c5adec8429965f51da3b04f36c425c999212fd67ef390b",
+      "sourceCharacters": 30769,
+      "exactSourceText": true,
+      "tableRows": 87,
+      "footers": 30,
+      "performance": {
+        "LayoutObjects": 27062,
+        "LayoutCount": 2608,
+        "RecalcStyleCount": 3608,
+        "LayoutDuration": 0.607384,
+        "RecalcStyleDuration": 0.956214,
+        "TaskDuration": 2.787583
+      }
+    }
+  ],
+  "summary": {
+    "control": {
+      "runs": 2,
+      "medianMs": 2928.6305469999998,
+      "medianLayouts": 2608
+    },
+    "optimized": {
+      "runs": 2,
+      "medianMs": 1192.1818320000002,
+      "medianLayouts": 122
+    }
+  },
+  "identicalPageContentAndGeometry": true,
+  "pageIdentity": {
+    "pageSha256": [
+      "02a44d59b1377d8c769323696c95c30f32cade7657aeab1563943f8560783a8d",
+      "365137a76e3f202bc8f3252ba8d6c1cfa962edb58583f7ee768b1658dd985cfc",
+      "11d087e1783d349f37ca9dada2775ef772d084a287538859b693adf27ae6a3d7",
+      "0f9b8098d1d071ea28cfbaa57b53ba94938f37ec1c7ce24263a947dfa19ce815",
+      "cbf3c1db880655882cbf8f3f8e820846dad274eb4da8aaa1bbbf9080812a0449",
+      "d70c476d9256b55b2d180436d8aa62f2e9d1462f585a81051c8db5faddcc77d4",
+      "0c343a2eebb63c5deb73cf77805a9311dc200358aaba9b365e5766597f739f10",
+      "223594e1321ec2f1dbc2822874d2e354f95304e59703570f288d3b8a81f470e8",
+      "f502216649245cee2982882da2b4accf43118855aa264aeeff8334b134b811ad",
+      "1187be729a860db38386426747eef071762863cdd33c577accb408d1b59d70bd",
+      "af77d826950ebbe0f6b67e5ee6fc493b37731ac64ba3138f81212f5c00762f01",
+      "e62b2c464f8e2b833c02204c9645f2b70337b57b4d28147cdc92aac1c779add6",
+      "369884105fd7a04713d8ea7980578dde3809aef8f2125156e8f71cac925c7072",
+      "98c7f67e9898974f3623191f0c58d84b47c2494014d2f67ad47018ce9b8f3282",
+      "1b7cd165848c063abcd02eb1a72a9b41715ad453c88b68a6f8207e667c9e7aae",
+      "a4ce7e0b16d04e10fb8b3d19fada07d3d5b010d9312773bfd88b179198d7d36d",
+      "745ab24ebc2975eebc71f193b41a0368d7b029aeda7f61220d169fb2c5f2ed66",
+      "1f67bae305da0bba92da560c836be41fada42618b3712c8bed25f0a3d6f434cc",
+      "dca4e6dac50db7ec6aa1a0108114a5b226e8bc1ee8a3f7f5224b2b61d21111cc",
+      "ddf3ecce0c3c8d82b391caf38b225a89a2de2d1b8b94310e21b85aae5af6bf40",
+      "71b0e4cf7eee9049bf21432ed5bec59e431ab8295a2127171bda9ab4fa3bbf05",
+      "c0c3af1ee75c1c5e8de7b250678c8eaa7b8fe1d14a1f4e82d550f2bff7dfb874",
+      "37640f90dd4028dc7edae6b108272245494aef5cadd33edde1cd2fdc08a2cf50",
+      "b36643775cee02933b264677291392460c2e20e5747742bb86a29a82d9f892b1",
+      "3617daf092db3b554e889544aede1673a3ba4310a97df63bdd1dcb95ea16d32d",
+      "f36e111ac1d0d59ac422f1379b893a090c25b06f462dc3b51940d5356cff5b99",
+      "9eebf5dea03098d02612a35901fd12ffd5df13cb3c0ef1ade95e33a5c5134b83",
+      "ffafba60959d93de83ba8b7670d13adbf4c41c1e31bfc2086ff86ce76770d653",
+      "6c2307587eb9e86a01214d2ef8b4a288cf55c39ff0ae07dcda754ceca2bbbdd1",
+      "b9357f3591a50a740f8e2378f9e559690f70323b94c3aaeea333817ba41f96be"
+    ],
+    "pageBoxes": [
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ]
+    ],
+    "elementGeometrySha256": [
+      "b748f3a11ffb9d1abdd1c9760c423b308c839cf7337b22a900e753eb020350fd",
+      "2d06ce760254a4dd4cf8f37fe2d8846cf0a168bd04449a358ecbbbc45f9796bb",
+      "bbf167bc9e1e20efd0b4aa2929cc657fa6638631c04aa2438e74daa59ade8c43",
+      "79745e21adec29e132b6a53db23288e4230ed28da57657abdc7fd59d39d955aa",
+      "ddfbc5618ff63f80089ee4b99768f114f0231c050f3d47537aec03262b5558da",
+      "90b92e3cfda1b3c3bb84a43ea14d4d18a9cff403570927a05db9ab6d6f0d422d",
+      "c10f43dc1567cdc03c1eeb4bfa2438b71b18b84be7cc9387fdc07eabdd276e23",
+      "b8c6943a6401f5065984e306e8d2fe0f4b1c64f98ea7fda89418e6684771fed1",
+      "ea3d71bcf0011d85adfc0690f1736f1d59fa13f13ee6ee36d2e0dfe0db801635",
+      "982c9c43dc7a299915cfb4b824bab1b1e4d317388b4b4c442c51f6c8e40b7837",
+      "c092d8bdbf57d46804679ccdd70499b6d08f04ecd08f101b7036c25ff05fd48c",
+      "ec3e8e669c12c0a65b7b19423e9dbea72264e09157621acadb14259dbd341872",
+      "9330cde51e305d13496a7f5fdbd7c6155022dcf9de3c2023bebd6fa7eb4dcbb9",
+      "ac88da5dd7f08fa0fd7033b8d13680f0629593692f2407027cab5721e9ad3cc9",
+      "9120ffe337eb8d593ae53626d99c0dd9b57e7a93d0643b8a594e67a9f0671a23",
+      "48b3eb210f55b6405205b37a536f18d92c2bfbac625992faf029946842dd6051",
+      "c0538ce90c4ba4149adcd8eb2587c7d7a4a86391418e102a8867b73ee60a0f9b",
+      "909104cc639647cecf1dc4ee1af8433145d62b9047170efadeb3934f52f35b7d",
+      "6360c52c6cf54136fa34eb2e9d349cdf80d46befcce1854383ac48346b18e1f6",
+      "d1716e95efb1eb3a793785d49f9e31c39e683f19e3b099667f7de3686c2f96fd",
+      "af56ba462ad58c619ecb6c12f7e167e57d3d5e08ff701e691f77963f68c65cdd",
+      "41804f307ef8e6ab6061acb89d0edfdef2628e7a518c38c26dfd3135c056de72",
+      "ad2c4d4665bfc0f9b82be517b7019466f72713440d102c0746208241ef62f3b6",
+      "244825ce776c0c71df9d0918cc682101664fa47589409817d6f3b22efd8bb3d9",
+      "981415a6658493fe606b5ec26c5e1ce3eb27a667f7a2818fdc199c5ed9eae570",
+      "0daa4ea55792d14b8dca6663c76f3d8710ea1512caab7459ec24059f7a8f3297",
+      "721b706d8482d80c826a7ddbd6b120dcf3dbf68627d4f5885c2df5ce3d4812d6",
+      "f3ac9d31ab8db0aa1f0d564cad6cc8ab2103f22cfd01a4b4c2af02f3712b0b12",
+      "ac67f8de54b4ea09f0a01a798788092503db0af214592691ac66453d7bb117b9",
+      "c580f6996b242575980942071d59b5f5429839caea25e2033b29423d79d49ffb"
+    ]
+  },
+  "scope": "Spacing and single-column corrected control vs optimized, alternating order, actual Word renderer at 1000px/DPR1. Same local browser; not an Office reference or universal SLO."
+}

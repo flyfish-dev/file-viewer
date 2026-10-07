@@ -1,0 +1,28 @@
+{
+  "run": "36003215485",
+  "checkedCommit": "9cf99b4bdc6cd12f77e7a71979b5203203b3589c",
+  "baseCommit": "2fc54c12293aa9a9ffae03d642553450be49f8df",
+  "original": "C005",
+  "bodyTextCharacters": 4951,
+  "literalTabs": 1,
+  "checks": 49,
+  "inlineUnitChecks": 6,
+  "wordPackageTests": 74,
+  "originalPaintOverlapReproduced": true,
+  "actualWorkerParsed": true,
+  "workerUpdated": true,
+  "install": "actual frozen pnpm 11.0.9 filtered installation after regenerating the declared patch",
+  "builds": [
+    "core",
+    "doc",
+    "word"
+  ],
+  "fullCorpusAccepted": false,
+  "sha256": {
+    "engine.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "generated.png": "520166d148c461c28e365e1aec8c1c03935c3624d47d25ec7cc59edcc216b2da",
+    "containers.json": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c",
+    "report.json": "451bc81ddbad87b1605596195baa6ecc97e15feff6d52bce1dcfd4f1fcf16a7c",
+    "baseline.json": "b867e65e7d48563c78509bf5e6d07c8df2706c2dc820d2b3a6a40d0e20a11887"
+  }
+}

@@ -65,6 +65,26 @@
 
 ## 可选专业 renderer
 
+流式地理数据可显式装配 `@file-viewer/renderer-3d/geo3d`，支持 LAS/LAZ/COPC、GeoTIFF/COG、CityJSON、3D Tiles 和 3TZ；默认 3D renderer 和 Full preset 不会加载它。普通 TIFF 继续走图片链路，检测到地理标签后才切换。URL 或本地 File 输入保留随机读取；3TZ 解压有大小、数量和路径边界。
+
+```bash
+npm install @file-viewer/renderer-3d @giro3d/giro3d@2.0.4
+# 需要 3TZ 时再安装
+npm install jszip@3.10.2
+npx file-viewer-geo3d-assets public/file-viewer/vendor/geo3d
+```
+
+```ts
+import { createGeo3dRenderer } from '@file-viewer/renderer-3d/geo3d'
+
+const options = {
+  rendererMode: 'extend',
+  renderers: [createGeo3dRenderer({ assetBaseUrl: '/file-viewer/vendor/geo3d/' })]
+}
+```
+
+安装的匹配版本解码资产、Worker、WASM 和许可证均部署在本地。检测规则、Range/CORS、3TZ 边界和样例说明见 [Geo3D 指南](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/GEO3D.md)。
+
 从 3.1.2 起，[BPMN 流程图](/zh/guide/bpmn) 和 [XML 校验与转换配置](/zh/guide/xml-profiles) 可显式启用，但不会随 Full 包自动开启。
 
 Adobe 设计、DICOM、数字签名检查与二进制检查器都是显式可选能力，不属于八个已发布 `@file-viewer/*-full` 包或冻结的 `@file-viewer/preset-all` 兼容基线。这样普通升级不会额外引入专业 Worker/WASM、医学影像、密码学或二进制分析依赖，也不会改变 Full 包已经发布的能力边界。
@@ -549,7 +569,7 @@ fileViewerRenderers({
 - [x] `FileViewerOptions.builtinRenderers` 支持 `all`、`lite`、`none`，为默认轻量化和显式全量装配提供稳定开关。
 - [x] wrapper README 和开源总仓 README 补齐 `renderers` / `rendererMode` / `builtinRenderers` 的按需装配示例，并由 `verify:ecosystem-readmes` 校验 `@file-viewer/vite-plugin`、`virtual:file-viewer-renderers` 和 `configuredFileViewerRenderers` 等关键接入口径。
 - [x] Vue3 原生组件渲染面板切换到同一套 renderer plugin/preset 装配链路，`options.renderers`、`rendererMode` 和 `builtinRenderers` 会在组件路径真实生效。
-- [x] `@file-viewer/preset-all` 在既有兼容能力基础上加入浏览器原生 CHM，共 222 个稳定扩展名、33 条链路；后续新增的 Adobe 设计、DICOM、数字签名/证据与二进制检查器均为显式按需渲染器，不会静默进入既有 preset/full 依赖闭包。完整源码目录当前为 274 个扩展名（224 个稳定、50 个实验）和 47 条链路。
+- [x] `@file-viewer/preset-all` 在既有兼容能力基础上加入浏览器原生 CHM，共 222 个稳定扩展名、33 条链路；后续新增的 Adobe 设计、DICOM、数字签名/证据与二进制检查器均为显式按需渲染器，不会静默进入既有 preset/full 依赖闭包。完整源码目录当前为 275 个扩展名（225 个稳定、50 个实验）和 47 条链路。
 - [x] `pnpm audit:renderer-deps` 输出所有 core 直接依赖对应的目标 renderer package，不允许 unclassified。
 - [x] `pnpm verify:on-demand-boundaries` 守住按需加载边界：core 不依赖 renderer/preset/wrapper，标准组件包不依赖 renderer/preset，compat 包只 alias 到目标组件，`preset-lite` / `preset-office` / `preset-engineering` 只能聚合各自白名单 renderer，`preset-all` 才聚合完整 renderer。
 

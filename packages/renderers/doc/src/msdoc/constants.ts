@@ -45,7 +45,7 @@ export const JC_MAP = {
 
 export const VERTICAL_ALIGN_MAP = {
   0: 'top',
-  1: 'center',
+  1: 'middle',
   2: 'bottom',
 };
 

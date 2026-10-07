@@ -52,6 +52,15 @@ const svgText = (
   return text
 }
 
+// The fixed plot coordinate system is letterboxed into the authored chart box.
+// Compensate font units once for that intrinsic scale; sheet zoom is still
+// applied by the containing renderer, so user zoom never gets cancelled out.
+const axisFontSize = (chart: SheetChart, size: number | undefined, fallback: number) => {
+  const scale = Math.min(chart.width / 640, chart.height / 360)
+  return size !== undefined && Number.isFinite(size) && size > 0 && Number.isFinite(scale) && scale > 0
+    ? size / scale : fallback
+}
+
 const seriesColor = (series: SheetChartSeries, index: number) => {
   return series.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]
 }
@@ -211,7 +220,8 @@ const drawSeriesMarker = (
 }
 
 const categoryLabels = (chart: SheetChart) => {
-  const labels = chart.series.find((series) => series.categories.length)?.categories || []
+  const labels = chart.series.reduce<string[]>((longest, series) =>
+    series.categories.length > longest.length ? series.categories : longest, [])
   const valueCount = chart.series.reduce(
     (count, series) => Math.max(count, series.values.length),
     0
@@ -258,7 +268,8 @@ const drawValueGrid = (
   documentRef: Document,
   svg: SVGSVGElement,
   plot: Plot,
-  domain: ReturnType<typeof valueDomain>
+  domain: ReturnType<typeof valueDomain>,
+  fontSize = 10
 ) => {
   const tickCount = 5
   for (let index = 0; index <= tickCount; index += 1) {
@@ -280,10 +291,10 @@ const drawValueGrid = (
         documentRef,
         Number.isInteger(value) ? `${value}` : value.toFixed(1),
         plot.left - 8,
-        y + 4,
+        y + fontSize / 3,
         {
           anchor: 'end',
-          size: 10
+          size: fontSize
         }
       )
     )
@@ -301,13 +312,15 @@ const drawCategoryLabels = (
   if (!categories.length) {
     return
   }
-  const categorySeries = chart.series.find((series) => series.categories.length)
+  const categorySeries = chart.series.find(series => series.categories === categories)
   const sourcePointCount = Math.max(
-    categorySeries?.sourcePointCount || categories.length,
+    ...chart.series.map(series => series.sourcePointCount || Math.max(series.values.length, series.categories.length)),
     categories.length
   )
   const step = plot.width / categories.length
-  categoryLabelIndexes(categories.length, plot.width).forEach((index) => {
+  const visible = categories.flatMap((label, i) => label ? [i] : [])
+  categoryLabelIndexes(visible.length, plot.width).forEach((visibleIndex) => {
+    const index = visible[visibleIndex]
     const category = categories[index]
     const maxLength = categories.length > 8 ? 8 : 14
     const label = category.length > maxLength ? `${category.slice(0, maxLength - 1)}…` : category
@@ -318,7 +331,7 @@ const drawCategoryLabels = (
         : plot.left + (index + 0.5) * step
     const labelElement = svgText(documentRef, label, x, plot.bottom + 17, {
       anchor: 'middle',
-      size: 10
+      size: axisFontSize(chart, chart.categoryAxisFontSize, 10)
     })
     labelElement.classList.add('excel-chart-category-label')
     labelElement.dataset.categoryIndex = `${sourceIndex}`
@@ -344,9 +357,10 @@ const drawColumnChart = (
   const slotWidth = (groupWidth * 0.76) / seriesCount
   const zeroY = plot.bottom - ((0 - domain.min) / domain.span) * plot.height
 
-  drawValueGrid(documentRef, svg, plot, domain)
+  drawValueGrid(documentRef, svg, plot, domain, axisFontSize(chart, chart.valueAxisFontSize, 10))
   chart.series.forEach((series, seriesIndex) => {
     series.values.forEach((value, valueIndex) => {
+      if (!Number.isFinite(value)) return
       const valueY = plot.bottom - ((value - domain.min) / domain.span) * plot.height
       const x = plot.left + valueIndex * groupWidth + groupWidth * 0.12 + seriesIndex * slotWidth
       const y = Math.min(zeroY, valueY)
@@ -402,6 +416,7 @@ const drawHorizontalBarChart = (
 
   chart.series.forEach((series, seriesIndex) => {
     series.values.forEach((value, valueIndex) => {
+      if (!Number.isFinite(value)) return
       const valueX = plot.left + ((value - domain.min) / domain.span) * plot.width
       const y = plot.top + valueIndex * groupHeight + groupHeight * 0.12 + seriesIndex * slotHeight
       svg.appendChild(
@@ -421,7 +436,7 @@ const drawHorizontalBarChart = (
     svg.appendChild(
       svgText(documentRef, category, plot.left - 8, plot.top + (index + 0.5) * groupHeight + 4, {
         anchor: 'end',
-        size: 10
+        size: axisFontSize(chart, chart.categoryAxisFontSize, 10)
       })
     )
   })
@@ -444,34 +459,47 @@ const drawLineChart = (
   )
   const step = count > 1 ? plot.width / (count - 1) : plot.width
 
-  drawValueGrid(documentRef, svg, plot, domain)
+  drawValueGrid(documentRef, svg, plot, domain, axisFontSize(chart, chart.valueAxisFontSize, 10))
   chart.series.forEach((series, seriesIndex) => {
     const pointIndexes = extremaPointIndexes(
       series.values,
-      Math.max(64, Math.floor(plot.width * MAX_LINE_POINTS_PER_PIXEL))
+      Math.max(64, Math.floor(plot.width * MAX_LINE_POINTS_PER_PIXEL)),
+      series.spanBlankIndexes
     )
-    const points = pointIndexes.map((index) => {
+    const spanning = new Set(series.spanBlankIndexes || [])
+    type Point = {x: number; y: number}
+    const segments: Point[][] = []
+    let segment: Point[] = []
+    for (const index of pointIndexes) {
       const value = series.values[index]
+      if (!Number.isFinite(value)) {
+        if (spanning.has(index)) continue
+        if (segment.length) segments.push(segment)
+        segment = []
+        continue
+      }
       const sourceIndex = series.sourcePointIndexes?.[index] ?? index
-      return {
+      segment.push({
         x: plot.left + (count > 1 ? sourceIndex * step : plot.width / 2),
         y: plot.bottom - ((value - domain.min) / domain.span) * plot.height
-      }
-    })
-    if (!points.length) {
-      return
+      })
     }
-    const pathData = points
-      .map((point, index) => `${index ? 'L' : 'M'}${point.x},${point.y}`)
-      .join(' ')
-    if (fillArea && points.length > 1) {
-      svg.appendChild(
-        svgElement(documentRef, 'path', {
-          d: `${pathData} L${points[points.length - 1].x},${plot.bottom} L${points[0].x},${plot.bottom} Z`,
-          fill: seriesColor(series, seriesIndex),
-          opacity: 0.2
-        })
-      )
+    if (segment.length) segments.push(segment)
+    const points = segments.flat()
+    if (!points.length) return
+    const pathFor = (points: Point[]) => points
+      .map((point, index) => `${index ? 'L' : 'M'}${point.x},${point.y}`).join(' ')
+    const pathData = segments.map(pathFor).join(' ')
+    if (fillArea) {
+      const zeroY = plot.bottom - ((0 - domain.min) / domain.span) * plot.height
+      for (const points of segments) {
+        if (points.length < 2) continue
+        svg.appendChild(svgElement(documentRef, 'path', {
+          class: 'excel-chart-area',
+          d: `${pathFor(points)} L${points[points.length - 1].x},${zeroY} L${points[0].x},${zeroY} Z`,
+          fill: seriesColor(series, seriesIndex), opacity: 0.2
+        }))
+      }
     }
     const color = seriesColor(series, seriesIndex)
     const dashArray = seriesDashArray(series)
@@ -515,6 +543,16 @@ const pieSlicePath = (
   startAngle: number,
   endAngle: number
 ) => {
+  // A single SVG arc with identical endpoints is empty, not a full circle.
+  if (endAngle - startAngle >= 360 - 1e-7) {
+    const a = polarPoint(cx, cy, outerRadius, startAngle)
+    const b = polarPoint(cx, cy, outerRadius, startAngle + 180)
+    const outer = `M${a.x},${a.y} A${outerRadius},${outerRadius} 0 1,0 ${b.x},${b.y} A${outerRadius},${outerRadius} 0 1,0 ${a.x},${a.y} Z`
+    if (!innerRadius) return outer
+    const c = polarPoint(cx, cy, innerRadius, startAngle)
+    const d = polarPoint(cx, cy, innerRadius, startAngle + 180)
+    return `${outer} M${c.x},${c.y} A${innerRadius},${innerRadius} 0 1,1 ${d.x},${d.y} A${innerRadius},${innerRadius} 0 1,1 ${c.x},${c.y} Z`
+  }
   const outerStart = polarPoint(cx, cy, outerRadius, endAngle)
   const outerEnd = polarPoint(cx, cy, outerRadius, startAngle)
   const largeArc = endAngle - startAngle > 180 ? 1 : 0
@@ -535,14 +573,16 @@ const drawPieChart = (
   const series = chart.series[0]
   const values = series?.values || []
   const categories = series?.categories || []
-  const total = values.reduce((sum, value) => sum + Math.max(0, value), 0) || 1
+  const max = values.reduce((m, v) => Number.isFinite(v) ? Math.max(m, v) : m, 0) || 1
+  const total = values.reduce((sum, value) => sum + (Number.isFinite(value) ? Math.max(0, value) / max : 0), 0) || 1
   const cx = chart.legendPosition === 'right' ? 260 : 320
   const cy = chart.title ? 180 : 170
   const radius = 120
   let angle = 0
 
   values.forEach((value, index) => {
-    const nextAngle = angle + (Math.max(0, value) / total) * 360
+    if (!Number.isFinite(value) || value <= 0) return
+    const nextAngle = angle + (value / max / total) * 360
     const color = DEFAULT_COLORS[index % DEFAULT_COLORS.length]
     const path = svgElement(documentRef, 'path', {
       d: pieSlicePath(cx, cy, radius, doughnut ? 62 : 0, angle, nextAngle),

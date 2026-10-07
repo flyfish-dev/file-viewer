@@ -77,7 +77,8 @@ export const calPageBox = function (screenWidth, document, page) {
         }
     }
     let array = box.split(' ');
-    const scale = ((screenWidth - 10) / parseFloat(array[2])).toFixed(1);
+    // Keep full precision: rounding upward can exceed the available viewport.
+    const scale = (screenWidth - 10) / parseFloat(array[2]);
     setMaxPageScal(scale);
     setPageScal(scale);
     box = parseStBox( box);

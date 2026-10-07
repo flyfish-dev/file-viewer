@@ -1,0 +1,52 @@
+{
+  "transport": "local-server",
+  "passed": 9,
+  "checks": [
+    {
+      "name": "Initial fit stays pending while its actual container is hidden",
+      "status": "pass"
+    },
+    {
+      "name": "Revealing the container completes pending initial fit using the actual viewport",
+      "status": "pass"
+    },
+    {
+      "name": "A completed initial-only fit does not override later user-selected viewport changes",
+      "status": "pass"
+    },
+    {
+      "name": "Manual zoom cancels a pending initial fit before reveal",
+      "status": "pass"
+    },
+    {
+      "name": "Latest pending fit mode and padding win over an earlier hidden request",
+      "status": "pass"
+    },
+    {
+      "name": "Default width-fit follows narrow and wide dialog layout changes",
+      "status": "pass"
+    },
+    {
+      "name": "Explicit always-fit remains responsive after reveal",
+      "status": "pass"
+    },
+    {
+      "name": "Disposal cancels deferred fits and releases registered providers",
+      "status": "pass"
+    },
+    {
+      "name": "Server mode uses a real PDF Worker without external requests",
+      "status": "pass"
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "workers": [
+    "http://127.0.0.1:43671/pdfjs/legacy/build/pdf.worker.mjs",
+    "http://127.0.0.1:43671/pdfjs/legacy/build/pdf.worker.mjs",
+    "http://127.0.0.1:43671/pdfjs/legacy/build/pdf.worker.mjs",
+    "http://127.0.0.1:43671/pdfjs/legacy/build/pdf.worker.mjs",
+    "http://127.0.0.1:43671/pdfjs/legacy/build/pdf.worker.mjs",
+    "http://127.0.0.1:43671/pdfjs/legacy/build/pdf.worker.mjs"
+  ]
+}

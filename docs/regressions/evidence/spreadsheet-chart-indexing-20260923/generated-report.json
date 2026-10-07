@@ -1,0 +1,616 @@
+{
+  "passed": 33,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Sparse caches retain declared count, absent categories and source indices",
+      "status": "pass"
+    },
+    {
+      "name": "Line gaps do not connect unrelated categories or create zero values",
+      "status": "pass"
+    },
+    {
+      "name": "Labels keep the full logical domain, including trailing empty categories",
+      "status": "pass"
+    },
+    {
+      "name": "Blank cells honour explicit zero policy without converting error values to zero",
+      "status": "pass"
+    },
+    {
+      "name": "Span policy connects blanks but not malformed numeric points",
+      "status": "pass"
+    },
+    {
+      "name": "Unordered cache entries are indexed and malformed index tokens are ignored",
+      "status": "pass"
+    },
+    {
+      "name": "Empty numeric text is absent; genuine zero stays a data point",
+      "status": "pass"
+    },
+    {
+      "name": "Omitted ptCount uses highest valid index without compressing the data",
+      "status": "pass"
+    },
+    {
+      "name": "Formula fallback preserves empty cell positions",
+      "status": "pass"
+    },
+    {
+      "name": "Explicit empty cache is not replaced by unrelated formula cells",
+      "status": "pass"
+    },
+    {
+      "name": "All-empty category strings stay empty instead of inventing numbered labels",
+      "status": "pass"
+    },
+    {
+      "name": "Multiple series use the same category extent for axis labels and geometry",
+      "status": "pass"
+    },
+    {
+      "name": "Column charts omit absent points without producing non-finite SVG attributes",
+      "status": "pass"
+    },
+    {
+      "name": "Area fill closes each contiguous run separately",
+      "status": "pass"
+    },
+    {
+      "name": "Single nonzero pie and doughnut values form a complete circle",
+      "status": "pass"
+    },
+    {
+      "name": "Bounded extrema sampling preserves an explicit separator for every skipped gap",
+      "status": "pass"
+    },
+    {
+      "name": "Small sampling budgets remain bounded without joining hard gaps",
+      "status": "pass"
+    },
+    {
+      "name": "Worker transfer sampling preserves source extent and gap metadata",
+      "status": "pass"
+    },
+    {
+      "name": "Sampling never hides numeric errors behind spanned blank separators",
+      "status": "pass"
+    },
+    {
+      "name": "Unreasonable ptCount cannot expand a short malformed cache",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid worksheet ranges do not expand or read unrelated cells",
+      "status": "pass"
+    },
+    {
+      "name": "Axis font sizes retain hundredth-point precision and chart-level inheritance",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 320, DPR 1, Worker false",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 1000, DPR 1, Worker false",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 320, DPR 2, Worker false",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 1000, DPR 2, Worker false",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 320, DPR 1, Worker true",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 1000, DPR 1, Worker true",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 320, DPR 2, Worker true",
+      "status": "pass"
+    },
+    {
+      "name": "Real renderer preserves vector labels and authored 9pt size at width 1000, DPR 2, Worker true",
+      "status": "pass"
+    },
+    {
+      "name": "Actual SVG pixels preserve sparse islands and a complete single-value doughnut",
+      "status": "pass"
+    },
+    {
+      "name": "Actual classic Worker and structured clone retain missing source positions",
+      "status": "pass"
+    },
+    {
+      "name": "Browser rendering has no external requests or uncaught exceptions",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "generated",
+      "worker": false,
+      "dpr": 1,
+      "width": 320,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "3b2184cf27c83584f60ac671912a69e5fb8be03d51d75f892a82a89e511d60b5"
+    },
+    {
+      "id": "generated",
+      "worker": false,
+      "dpr": 1,
+      "width": 1000,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "3b2184cf27c83584f60ac671912a69e5fb8be03d51d75f892a82a89e511d60b5"
+    },
+    {
+      "id": "generated",
+      "worker": false,
+      "dpr": 2,
+      "width": 320,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "3b2184cf27c83584f60ac671912a69e5fb8be03d51d75f892a82a89e511d60b5"
+    },
+    {
+      "id": "generated",
+      "worker": false,
+      "dpr": 2,
+      "width": 1000,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "3537806cb32ecd2884aa9e782e72787ac424ac7d351caa234d69a59b9b29880b"
+    },
+    {
+      "id": "generated",
+      "worker": true,
+      "dpr": 1,
+      "width": 320,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "3537806cb32ecd2884aa9e782e72787ac424ac7d351caa234d69a59b9b29880b"
+    },
+    {
+      "id": "generated",
+      "worker": true,
+      "dpr": 1,
+      "width": 1000,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "3a2473b88dc0199081e9c9f1abc93284044b7a9ad432e583c0eaf3ffd4bb39e3"
+    },
+    {
+      "id": "generated",
+      "worker": true,
+      "dpr": 2,
+      "width": 320,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "3a2473b88dc0199081e9c9f1abc93284044b7a9ad432e583c0eaf3ffd4bb39e3"
+    },
+    {
+      "id": "generated",
+      "worker": true,
+      "dpr": 2,
+      "width": 1000,
+      "labels": 2,
+      "barHeights": [
+        52.068965517241395,
+        302
+      ],
+      "zoomSizes": [
+        {
+          "zoom": 0.5,
+          "sizes": [
+            6,
+            6
+          ],
+          "valueSizes": [
+            6,
+            6,
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "zoom": 1,
+          "sizes": [
+            12,
+            12
+          ],
+          "valueSizes": [
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "zoom": 2,
+          "sizes": [
+            24,
+            24
+          ],
+          "valueSizes": [
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ],
+      "sha256": "41666cc769c617865a8b5d4c1d30fc79942b033644cc076cb8836cc259e0e93a"
+    }
+  ],
+  "errors": [],
+  "requests": [],
+  "moduleWorkerUiSkipped": false,
+  "workerSha256": "57fd8dc83e938648f7556454da155c915aba9b00c3131e3dfba8bcec11c50b25"
+}

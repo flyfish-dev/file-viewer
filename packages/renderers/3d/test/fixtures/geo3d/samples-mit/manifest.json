@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "license": "MIT",
+  "origin": "Synthetic, generated for File Viewer; no external dataset",
+  "generator": "../../../../scripts/generate-geo3d-samples.py",
+  "pointCount": 256,
+  "streamingPointCount": 576,
+  "compressedGenerator": "lazrs 0.8.2; deterministic COPC fixture layout",
+  "requiredCompressedSamples": [
+    "terrain.laz",
+    "terrain.copc.laz",
+    "streaming.copc.laz"
+  ],
+  "missingCompressedSamples": [],
+  "files": [
+    {
+      "path": "LICENSE",
+      "bytes": 1081,
+      "sha256": "72d02d872fbd3cc52b7a07ca056898b00bc3239ba848cb4298156cca87797f31"
+    },
+    {
+      "path": "building-indexed.3tz",
+      "bytes": 4041,
+      "sha256": "16f7aaa94ac526ed4dac6851598254e676af8803d29957d92ed9dd816bc2a16d"
+    },
+    {
+      "path": "building-textured.city.json",
+      "bytes": 3663,
+      "sha256": "59e6d66f36541ee45ac1154cd805bb4c25fd91f8f0a51ab9423f8b4eb472eefa"
+    },
+    {
+      "path": "building.3dtiles.zip",
+      "bytes": 4041,
+      "sha256": "16f7aaa94ac526ed4dac6851598254e676af8803d29957d92ed9dd816bc2a16d"
+    },
+    {
+      "path": "building.city.json",
+      "bytes": 1919,
+      "sha256": "8db570af9c4bf9a8cfd0fe307d4f6a674e75290a24aceb508f3bd692ec26be4a"
+    },
+    {
+      "path": "geotiff-striped.tif",
+      "bytes": 6388,
+      "sha256": "2e448e96449de0d228ffbcface38dcf373b7a8b50d3594125b9d47ed8f40b5f9"
+    },
+    {
+      "path": "imagery-overviews.cog.tif",
+      "bytes": 15024,
+      "sha256": "a1b01775b50e9d36b446484a0da245bc3d5d14d5af625271efb79133b3c93184"
+    },
+    {
+      "path": "ordinary.tiff",
+      "bytes": 6174,
+      "sha256": "e8aafde8b11d225bc66443573803d134d436ad8f899ac8085706d343e2bfd0c0"
+    },
+    {
+      "path": "original-deliveries/geotiff-striped-original.tif",
+      "bytes": 279550,
+      "sha256": "74b7ad2dbeb590730aae3a0fa25ce27300a7f24b30525926f47fb729a88e313f"
+    },
+    {
+      "path": "original-deliveries/imagery-overviews-original.cog.tif",
+      "bytes": 748329,
+      "sha256": "136ae93cd99b1a1f10c9c7448ee538df9f9a347bae37805735a4d99527ab0f1d"
+    },
+    {
+      "path": "original-deliveries/ordinary-original.tiff",
+      "bytes": 786848,
+      "sha256": "e9a4e89c4e2c98b183fa4d07e5c332d7d11bfde4061a8f576144567e96637347"
+    },
+    {
+      "path": "original-deliveries/streaming-16384.copc.laz",
+      "bytes": 145393,
+      "sha256": "a9a0854230fbfeae0fa9e1b67334d2f115e9538160a09d3f3d67b561dd5be0f3"
+    },
+    {
+      "path": "original-deliveries/terrain-4096.las",
+      "bytes": 148482,
+      "sha256": "4c535093b94f60922ad807f4ba72a1a534e702655434026c54b807db9d6f2b17"
+    },
+    {
+      "path": "streaming.copc.laz",
+      "bytes": 18133,
+      "sha256": "e97ad19993fbadffb6ab80c3a7b6e8f18ab85ef347cf68cc9e871af43ab32dd0"
+    },
+    {
+      "path": "terrain.copc.laz",
+      "bytes": 8466,
+      "sha256": "a8ef0b3b6b874175d4b2dc098f19e423a1c8ae75ff1726f1bbcbdab173d9f02e"
+    },
+    {
+      "path": "terrain.las",
+      "bytes": 10242,
+      "sha256": "ff3cced982f8a052012a5edb8c6707e549a0898c38a4ee434bb9f591d4577264"
+    },
+    {
+      "path": "terrain.laz",
+      "bytes": 2495,
+      "sha256": "3ed4f7fe351e7fa6a026e429d5380eca92d52e2673655fc86726cf0f5f018721"
+    },
+    {
+      "path": "textures/checker.png",
+      "bytes": 94,
+      "sha256": "2d338969a6eeea1851ab20354797ad3920a5d2940c53bf83b69595f11c588b98"
+    },
+    {
+      "path": "tiles3d/models/buffers/building.bin",
+      "bytes": 552,
+      "sha256": "bcc975401f04afb0162b58e54eac918dc7c27e8541e87f81660f94d42f2c9f85"
+    },
+    {
+      "path": "tiles3d/models/building.gltf",
+      "bytes": 1665,
+      "sha256": "b7237110a2df5bfdd67306a75961900a11462b43abb3c24ca8be7935bbe5b85a"
+    },
+    {
+      "path": "tiles3d/nested/tileset.json",
+      "bytes": 354,
+      "sha256": "f7136f04ecb3aa125882c44bcf9d138f6a7ee9b39cae9711ffa942933f3d814b"
+    },
+    {
+      "path": "tiles3d/textures/checker.png",
+      "bytes": 94,
+      "sha256": "2d338969a6eeea1851ab20354797ad3920a5d2940c53bf83b69595f11c588b98"
+    },
+    {
+      "path": "tiles3d/tileset.json",
+      "bytes": 552,
+      "sha256": "ad51dcd674e491683fc5ddbb0519591afd58e387c393541025e57c0e09aab510"
+    }
+  ],
+  "originalDeliveryVariants": {
+    "manifest": "original-deliveries/manifest.json",
+    "verification": "../../../../scripts/restore-geo3d-originals.py --verify-only",
+    "largeCopcPointCount": 16384,
+    "originalLasPointCount": 4096
+  }
+}

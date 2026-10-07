@@ -1,0 +1,20 @@
+{
+  "sample": "C036",
+  "sha256": "0d49c0e5cdd0e4254b88bcef7b8e89f423b4924252604ae70dd8201e436437a9",
+  "passed": 11,
+  "originalChecked": true,
+  "checks": [
+    "Authored row metrics and 100% zoom",
+    "Real pointer column drag",
+    "Real pointer row drag",
+    "Independent per-sheet sizes",
+    "Cached sheet heights follow current global zoom",
+    "50% drag; 88%, 200%, 100%, 50% cached switches",
+    "Delayed window and structure hydration preserve override",
+    "Rapid cached tab changes keep final selection",
+    "Resizing remains opt-in",
+    "C036 original bytes: pointer resize and repeated zoom preserve source/user metrics",
+    "Disposal, no external requests or browser errors"
+  ],
+  "scope": "Original C036 has one sheet; cross-sheet coverage uses a separately generated two-sheet XLSX. Delayed window boundary is replayed through test-only observers. Actual parser and table are not replaced."
+}

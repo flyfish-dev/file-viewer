@@ -5,7 +5,7 @@
 <p class="doc-lead">
   File Viewer by Flyfish is an offline-first frontend file preview system for web applications.
   It is designed for attachment centers, workflow tools, knowledge bases, support portals, and self-hosted intranet products that need broad file coverage without running a document conversion backend.
-  The canonical catalog registers 274 file extensions across 47 preview pipelines: 224 stable and 50 experimental.
+  The canonical catalog registers 275 file extensions across 47 preview pipelines: 225 stable and 50 experimental.
 </p>
 
 ## What To Read First

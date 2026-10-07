@@ -65,6 +65,8 @@ export interface CreateFileRenderHandlerLoaderOptions<
 > {
   handler: FileRenderHandler<Rendered, Target>;
   rendererId?: string;
+  /** Allows stream-preferred handlers to receive an empty buffer plus context.streamUrl. */
+  allowUrlSource?: boolean;
   getTarget?: (context: RendererLoadContext) => Target;
   createContext?: (context: RendererLoadContext) => FileRenderContext;
   destroy?: (rendered: Rendered, context: RendererLoadContext) => void | Promise<void>;
@@ -147,6 +149,7 @@ export interface FileViewerRenderSurfaceMountContext<
   filename: string;
   sourceUrl?: string;
   streamUrl?: string;
+  signal?: AbortSignal;
   onProgressiveRender: () => void;
   registerExportAdapter: (adapter: FileRenderExportAdapter | null) => void;
   surfaceState: MutableFileViewerRenderSurfaceState<Session>;
@@ -161,6 +164,8 @@ export interface RunFileViewerRenderSurfaceMountInput<
   version: number;
   sourceUrl?: string;
   streamUrl?: string;
+  signal?: AbortSignal;
+  typeOverride?: string;
   getContainer: () => HTMLElement | null | undefined;
   surfaceState: MutableFileViewerRenderSurfaceState<Session>;
   readinessState: MutableFileViewerRenderReadinessState;
@@ -227,7 +232,9 @@ export interface FileViewerRenderSurfaceActionHandlers<
     file: File,
     version: number,
     sourceUrl?: string,
-    streamUrl?: string
+    streamUrl?: string,
+    signal?: AbortSignal,
+    typeOverride?: string
   ) => Promise<Session | undefined>;
 }
 
@@ -761,6 +768,8 @@ export const runFileViewerRenderSurfaceMount = async <
   version,
   sourceUrl,
   streamUrl,
+  signal,
+  typeOverride,
   getContainer,
   surfaceState,
   readinessState,
@@ -816,11 +825,12 @@ export const runFileViewerRenderSurfaceMount = async <
       buffer,
       file,
       version,
-      type: getExtension(file.name),
+      type: typeOverride || getExtension(file.name),
       target,
       filename: file.name,
       sourceUrl,
       streamUrl,
+      signal,
       onProgressiveRender,
       registerExportAdapter,
       surfaceState,
@@ -922,7 +932,9 @@ export const createFileViewerRenderSurfaceActionHandlers = <
     file: File,
     version: number,
     sourceUrl?: string,
-    streamUrl?: string
+    streamUrl?: string,
+    signal?: AbortSignal,
+    typeOverride?: string
   ) => {
     return await runFileViewerRenderSurfaceMount<Session>({
       buffer,
@@ -930,6 +942,8 @@ export const createFileViewerRenderSurfaceActionHandlers = <
       version,
       sourceUrl,
       streamUrl,
+      signal,
+      typeOverride,
       getContainer,
       surfaceState,
       readinessState,
@@ -969,6 +983,7 @@ export const buildFileRenderContextFromLoadContext = ({
   filename: source.filename,
   url: source.url,
   streamUrl: source.url,
+  sourceFile: source.file,
   signal,
   options,
   surface,
@@ -1031,20 +1046,22 @@ export const createFileRenderHandlerLoader = <
 >({
   handler,
   rendererId,
+  allowUrlSource = false,
   getTarget = context => context.surface.container as Target,
   createContext = buildFileRenderContextFromLoadContext,
   destroy,
 }: CreateFileRenderHandlerLoaderOptions<Rendered, Target>): RendererLoader => {
   return async context => {
     const { source } = context;
-    if (!source.buffer) {
+    if (!source.buffer && !(allowUrlSource && (source.url || source.file))) {
       throw new Error('FileRenderHandler renderer requires an ArrayBuffer source.');
     }
 
+    const buffer = source.buffer || new ArrayBuffer(0);
     const target = getTarget(context);
     const renderContext = createContext(context);
     const rendered = await handler(
-      source.buffer,
+      buffer,
       target,
       source.extension,
       renderContext

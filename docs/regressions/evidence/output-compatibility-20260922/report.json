@@ -1,0 +1,162 @@
+{
+  "mode": "full-browser",
+  "passed": 39,
+  "checks": [
+    {
+      "name": "Unscaled border-box print geometry without a global window",
+      "status": "pass"
+    },
+    {
+      "name": "Unscaled content-box print geometry without a global window",
+      "status": "pass"
+    },
+    {
+      "name": "Uniform and flow print styles do not create named pages",
+      "status": "pass"
+    },
+    {
+      "name": "Heterogeneous paper styles target only their indexed page",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 0 plus viewer offset 0",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 0 plus viewer offset 90",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 0 plus viewer offset 180",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 0 plus viewer offset 270",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 90 plus viewer offset 0",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 90 plus viewer offset 90",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 90 plus viewer offset 180",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 90 plus viewer offset 270",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 180 plus viewer offset 0",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 180 plus viewer offset 90",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 180 plus viewer offset 180",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 180 plus viewer offset 270",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 270 plus viewer offset 0",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 270 plus viewer offset 90",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 270 plus viewer offset 180",
+      "status": "pass"
+    },
+    {
+      "name": "PDF page rotation 270 plus viewer offset 270",
+      "status": "pass"
+    },
+    {
+      "name": "Hidden-host animation frame wait has a bounded fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Synchronous RAF errors fall back without an unhandled rejection",
+      "status": "pass"
+    },
+    {
+      "name": "Image load settles even while decode remains pending",
+      "status": "pass"
+    },
+    {
+      "name": "Image error settles even while decode remains pending",
+      "status": "pass"
+    },
+    {
+      "name": "Decode rejection after image completion cannot miss the completion state",
+      "status": "pass"
+    },
+    {
+      "name": "Stalled image has a five-second ceiling and removes listeners",
+      "status": "pass"
+    },
+    {
+      "name": "Snapshot waits for fonts, then paints the settled layout",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: retina canvas export preserves CSS box, positioning, classes and bitmap",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: iframe print measurement includes padding and ignores preview transforms",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: broken image cannot block snapshot readiness",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: actual DOCX export preserves portrait, landscape and Letter pages",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: actual DOCX export preserves one A4 page without extra margins",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: real PDF.js thumbnails preserve authored rotation plus 0 degree viewer offset",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: PDF export and physical print retain every page size at user rotation 0",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: real PDF.js thumbnails preserve authored rotation plus 90 degree viewer offset",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: PDF export and physical print retain every page size at user rotation 90",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: JPEG2000 image decodes through packaged OpenJPEG WASM",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: PDF assets stay local and contain no missing runtime resources",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: no unhandled page errors or external HTTP requests",
+      "status": "pass"
+    }
+  ]
+}

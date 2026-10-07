@@ -1,0 +1,26 @@
+{
+  "run": "35948336999",
+  "checkedCommit": "bb075c5354c5c314e8cf3d880ec63c36f5c147cb",
+  "checks": 15,
+  "originals": [
+    "C018",
+    "C031",
+    "C033"
+  ],
+  "dpr": [
+    1,
+    2
+  ],
+  "builds": [
+    "core",
+    "doc",
+    "word"
+  ],
+  "install": "actual pnpm 11.0.9 frozen filtered install; declared patches retained",
+  "newProductFix": false,
+  "fullCorpusAccepted": false,
+  "sha256": {
+    "report.json": "c34bc792fe8e0a3a088bfd4dfdfb7cfaa076181e3941515cc3e538d2d57d8d43",
+    "engine-regression.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927"
+  }
+}

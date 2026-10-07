@@ -1,3 +1,11 @@
+type ChartOptions = {
+  grouping?: 'standard' | 'clustered' | 'stacked' | 'percentStacked';
+  holeSize?: number;
+  firstSliceAngle?: number;
+  legend?: { show?: boolean; position?: string };
+  series?: Array<{ color?: string; points?: Record<string, string> }>;
+};
+
 type ChartMessage = {
   type?: string;
   data?: {
@@ -5,6 +13,7 @@ type ChartMessage = {
     chartType?: string;
     barDirection?: string;
     chartData?: any;
+    chartOptions?: ChartOptions;
   };
 };
 
@@ -45,22 +54,65 @@ export const findPptxChartTarget = (root: ParentNode, chartID: string) => {
     .find(element => element.id === chartID) || null;
 };
 
-const getNumericBulletText = (type: string, index: number) => {
-  switch (type) {
-    case 'arabicPeriod':
-      return `${index}. `;
-    case 'arabicParenR':
-      return `${index}) `;
-    case 'alphaLcParenR':
-      return `${String.fromCharCode(index + 96)}) `;
-    case 'alphaLcPeriod':
-      return `${String.fromCharCode(index + 96)}. `;
-    case 'alphaUcParenR':
-      return `${String.fromCharCode(index + 64)}) `;
-    case 'alphaUcPeriod':
-      return `${String.fromCharCode(index + 64)}. `;
-    default:
-      return String(index);
+const formatEastAsianNumber = (index: number): string => {
+  const digits = '零一二三四五六七八九';
+  const units: readonly (readonly [number, string])[] = [[1000, '千'], [100, '百'], [10, '十'], [1, '']];
+  const group = (value: number, omitLeadingOne = true) => {
+    let label = '';
+    let gap = false;
+    for (const [place, unit] of units) {
+      const digit = Math.floor(value / place);
+      value %= place;
+      if (digit) {
+        if (gap) label += digits[0];
+        label += (place === 10 && digit === 1 && !label && omitLeadingOne ? '' : digits[digit]) + unit;
+        gap = false;
+      } else if (label && value) gap = true;
+    }
+    return label;
+  };
+  if (index < 10000) return group(index);
+  const remainder = index % 10000;
+  return digits[Math.floor(index / 10000)] + '万' +
+    (remainder ? (remainder < 1000 ? digits[0] : '') + group(remainder, false) : '');
+};
+
+/** DrawingML numbering, including the authored suffix punctuation. */
+export const getNumericBulletText = (type: string, index: number) => {
+  if (!Number.isInteger(index) || index < 1 || index > 32767) {
+    return String(index);
+  }
+  if (type === 'ea1JpnChsDbPeriod') {
+    return `${formatEastAsianNumber(index)}． `;
+  }
+  const match = /^(arabic|alphaLc|alphaUc|romanLc|romanUc)(Period|ParenR|ParenBoth|Plain)$/.exec(type);
+  if (!match) {
+    return String(index);
+  }
+  let label = String(index);
+  if (match[1].startsWith('alpha')) {
+    label = '';
+    for (let remaining = index; remaining > 0; remaining = Math.floor((remaining - 1) / 26)) {
+      label = String.fromCharCode(65 + (remaining - 1) % 26) + label;
+    }
+  } else if (match[1].startsWith('roman')) {
+    label = '';
+    let remaining = index;
+    const digits: readonly (readonly [number, string])[] = [
+      [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'], [100, 'C'], [90, 'XC'],
+      [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+    ];
+    for (const [value, symbol] of digits) {
+      label += symbol.repeat(Math.floor(remaining / value));
+      remaining %= value;
+    }
+  }
+  if (match[1].endsWith('Lc')) label = label.toLowerCase();
+  switch (match[2]) {
+    case 'Period': return `${label}. `;
+    case 'ParenR': return `${label}) `;
+    case 'ParenBoth': return `(${label}) `;
+    default: return label;
   }
 };
 
@@ -78,7 +130,10 @@ const restoreNumericBullets = (root: ParentNode) => {
       const type = String(bullet.dataset.bulltname || 'arabicPeriod');
       const level = String(bullet.dataset.bulltlvl || '0');
       const key = `${level}:${type}`;
-      const nextIndex = (counters.get(key) || 0) + 1;
+      const startAt = Number(bullet.dataset.bulltstartat);
+      const nextIndex = Number.isInteger(startAt) && startAt >= 1 && startAt <= 32767
+        ? startAt
+        : (counters.get(key) || 0) + 1;
       counters.set(key, nextIndex);
       bullet.textContent = getNumericBulletText(type, nextIndex);
     }
@@ -196,6 +251,11 @@ const hasTextOverflow = (block: HTMLElement, fitWidth = true) =>
   (fitWidth && block.scrollWidth > block.clientWidth + TEXT_FIT_TOLERANCE);
 
 const fitOverflowingTextBlock = (block: HTMLElement, fitWidth = true) => {
+  // noAutofit/spAutoFit preserve authored typography. Only normal AutoFit may
+  // shrink text; unmarked legacy/table content retains its existing policy.
+  const mode = block.dataset.pptxAutofit;
+  if (mode && mode !== 'normal') return;
+  if (block.dataset.pptxWrap === 'none') fitWidth = false;
   if (!block.querySelector('.text-block') || block.clientWidth <= 0 || block.clientHeight <= 0) {
     return;
   }
@@ -262,7 +322,7 @@ const renderChart = async (message: ChartMessage, root: ParentNode) => {
   }
   const { billboard, d3Format } = await chartLibraryLoader();
   const bb = billboard.default || billboard;
-  const { area, bar, line, pie, scatter } = billboard;
+  const { area, bar, line, pie, donut, scatter } = billboard;
   const chart: Record<string, any> = {
     // A selector makes Billboard query the main document. That misses chart
     // placeholders inside the viewer Shadow DOM and makes it fall back to body.
@@ -280,6 +340,54 @@ const renderChart = async (message: ChartMessage, root: ParentNode) => {
   };
 
   switch (payload.chartType) {
+    case 'doughnutChart': {
+      const series = chartData[0];
+      const columns: Array<[string, number]> = [];
+      const names: Record<string, string> = {};
+      const colors: Record<string, string> = {};
+      for (const [index, point] of (series?.values || []).entries()) {
+        // Keep one library id per indexed point, not per label. Duplicate/empty
+        // labels are valid and must never merge sectors. Null is not zero.
+        if (typeof point.y !== 'number' || !Number.isFinite(point.y) || point.y === 0) continue;
+        const id = `point-${index}`;
+        columns.push([id, Math.abs(point.y)]);
+        names[id] = String(series.xlabels?.[index] ?? point.x ?? index);
+        const fill = payload.chartOptions?.series?.[0]?.points?.[point.x] ?? payload.chartOptions?.series?.[0]?.color;
+        if (fill && /^(?:#[\da-f]{6}(?:[\da-f]{2})?|transparent)$/i.test(fill)) colors[id] = fill;
+      }
+      const hole = payload.chartOptions?.holeSize;
+      const holeRatio = (typeof hole === 'number' && Number.isFinite(hole) && hole >= 10 && hole <= 90 ? hole : 50) / 100;
+      const angle = payload.chartOptions?.firstSliceAngle;
+      let adjustingWidth = false;
+      Object.assign(chart, {
+        data: { columns, names, colors, type: donut(), order: null },
+        donut: {
+          startingAngle: typeof angle === 'number' && Number.isFinite(angle) ? angle * Math.PI / 180 : 0,
+          expand: false,
+          label: { show: false },
+        },
+        transition: { duration: 0 },
+        onrendered(this: any) {
+          // Billboard accepts an absolute ring width, while DrawingML specifies
+          // a ratio. Read its finished SVG geometry and update through the public
+          // config API. This also tracks library resize without private state or
+          // assumptions about legend/font layout. The re-entrancy guard bounds
+          // the corrective redraw to one pass per changed radius.
+          if (adjustingWidth || typeof this.config !== 'function') return;
+          let radius = 0;
+          for (const arc of chartTarget.querySelectorAll<SVGPathElement>('.bb-arc')) {
+            const match = /[Aa]([\d.+eE-]+)[ ,]+([\d.+eE-]+)/.exec(arc.getAttribute('d') || '');
+            if (match) radius = Math.max(radius, Number(match[1]));
+          }
+          if (!(radius > 0) || !Number.isFinite(radius)) return;
+          const width = radius * (1 - holeRatio);
+          if (Math.abs(Number(this.config('donut.width')) - width) <= 0.01) return;
+          adjustingWidth = true;
+          try { this.config('donut.width', width, true); } finally { adjustingWidth = false; }
+        },
+      });
+      break;
+    }
     case 'lineChart':
       Object.assign(chart, {
         data: {
@@ -361,7 +469,65 @@ const renderChart = async (message: ChartMessage, root: ParentNode) => {
   }
 
   if (chart.data) {
-    return bb.generate(chart) as BillboardChart;
+    const options = payload.chartOptions;
+    if (options?.legend) {
+      chart.legend = {
+        show: options.legend.show !== false,
+        position: options.legend.position === 'b' ? 'bottom' : 'right',
+        // The chart library cannot measure an empty SVG text node. Use an
+        // invisible measuring character only in legend presentation; names and
+        // tooltip data still retain the document's actual empty string.
+        format: (label: string) => label === '' ? '\u200b' : label,
+      };
+    }
+    if (['barChart', 'areaChart', 'lineChart'].includes(payload.chartType)) {
+      // Distinct series can legitimately share a display name. Billboard groups
+      // by id, so disambiguate only duplicate ids and preserve authored labels.
+      const used = new Set<string>();
+      const reserved = new Set<string>(chart.data.columns.map((column: any[]) => String(column[0])));
+      const names: Record<string, string> = {};
+      chart.data.columns.forEach((column: any[], index: number) => {
+        const label = String(column[0]);
+        let id = label;
+        if (used.has(id)) {
+          id = `pptx-series-${index}`;
+          while (reserved.has(id) || used.has(id)) id += '-';
+          column[0] = id;
+        }
+        used.add(id);
+        Object.defineProperty(names, id, { value: label, enumerable: true });
+      });
+      chart.data.names = names;
+      if (options?.grouping === 'stacked' || options?.grouping === 'percentStacked') {
+        chart.data.groups = [chart.data.columns.map((column: any[]) => column[0])];
+        if (options.grouping === 'percentStacked') chart.data.stack = { normalize: true };
+        chart.data.order = null;
+      }
+      const colors: Record<string, string> = {};
+      chartData.forEach((item: any, index: number) => {
+        const fill = options?.series?.[index]?.color;
+        if (fill && /^(?:#[\da-f]{6}(?:[\da-f]{2})?|transparent)$/i.test(fill)) Object.defineProperty(colors, String(chart.data.columns[index][0]), { value: fill, enumerable: true });
+      });
+      if (Object.keys(colors).length) chart.data.colors = colors;
+    }
+    // Billboard resets the bind target's position to relative. Keep DrawingML
+    // placement on the outer frame; only let the library own its inner surface.
+    const surface = chartTarget.ownerDocument.createElement('div');
+    surface.className = 'pptx-chart-surface';
+    surface.style.cssText = 'width:100%;height:100%;min-width:0;min-height:0;flex:1 1 auto';
+    chartTarget.replaceChildren(surface);
+    chart.bindto = surface;
+    try {
+      const instance = bb.generate(chart) as BillboardChart;
+      return {
+        destroy() {
+          try { instance.destroy?.(); } finally { surface.remove(); }
+        },
+      };
+    } catch (error) {
+      surface.remove();
+      throw error;
+    }
   }
 };
 

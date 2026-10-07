@@ -1,0 +1,854 @@
+{
+  "passed": 33,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Mixed fields retain XML run order and use display numbering starting at zero",
+      "status": "pass"
+    },
+    {
+      "name": "Field-only paragraphs preserve every field",
+      "status": "pass"
+    },
+    {
+      "name": "Display numbering does not change navigation indices",
+      "status": "pass"
+    },
+    {
+      "name": "Two consecutive authored breaks survive",
+      "status": "pass"
+    },
+    {
+      "name": "Bitmap alpha scales only image pixels",
+      "status": "pass"
+    },
+    {
+      "name": "Picture horizontal flip applies around the picture viewport",
+      "status": "pass"
+    },
+    {
+      "name": "Custom geometry and image flip share a coordinate system",
+      "status": "pass"
+    },
+    {
+      "name": "Zero opacity remains fully transparent",
+      "status": "pass"
+    },
+    {
+      "name": "Percentage-form image alpha is interpreted as a percentage",
+      "status": "pass"
+    },
+    {
+      "name": "Layout paint stays above master regardless of part-local order",
+      "status": "pass"
+    },
+    {
+      "name": "Vertical flip keeps the authored crop inside the transformed custom mask",
+      "status": "pass"
+    },
+    {
+      "name": "Repeated alpha modulation composes without erasing intrinsic image alpha",
+      "status": "pass"
+    },
+    {
+      "name": "Alpha amplification acts on pixel alpha rather than CSS opacity clamping",
+      "status": "pass"
+    },
+    {
+      "name": "Amplification then attenuation preserves intermediate alpha saturation",
+      "status": "pass"
+    },
+    {
+      "name": "Picture rotation composes with its authored local flip",
+      "status": "pass"
+    },
+    {
+      "name": "Slide-local drawing remains above layout and master stacking contexts",
+      "status": "pass"
+    },
+    {
+      "name": "First-slide metadata accepts the full signed schema range and rejects malformed values",
+      "status": "pass"
+    },
+    {
+      "name": "Mixed XML sequence retains field styling without mutating shared layout nodes",
+      "status": "pass"
+    },
+    {
+      "name": "Malformed alpha never injects markup or non-finite filter coefficients",
+      "status": "pass"
+    },
+    {
+      "name": "Actual classic Worker retains display numbers, field order, breaks and picture effects",
+      "status": "pass"
+    },
+    {
+      "name": "Sequential document load resets display numbering (7)",
+      "status": "pass"
+    },
+    {
+      "name": "Sequential document load resets display numbering (-1)",
+      "status": "pass"
+    },
+    {
+      "name": "Sequential document load resets display numbering (null)",
+      "status": "pass"
+    },
+    {
+      "name": "Master visibility suppression leaves layout paint and slide text intact",
+      "status": "pass"
+    },
+    {
+      "name": "C010: authored layout image alpha, local flips and custom masks match original XML",
+      "status": "pass"
+    },
+    {
+      "name": "C045: visible page fields retain presentation order",
+      "status": "pass"
+    },
+    {
+      "name": "C044: visible page fields retain presentation order",
+      "status": "pass"
+    },
+    {
+      "name": "C041: visible page fields retain presentation order",
+      "status": "pass"
+    },
+    {
+      "name": "C008: authored layout image alpha, local flips and custom masks match original XML",
+      "status": "pass"
+    },
+    {
+      "name": "C049: visible page fields retain presentation order",
+      "status": "pass"
+    },
+    {
+      "name": "Original corpus parses every supplied slide without a slide-error",
+      "status": "pass"
+    },
+    {
+      "name": "Public PptxViewer resolves the real Worker, sanitizes SVG filters and preserves drawing semantics",
+      "status": "pass"
+    },
+    {
+      "name": "No uncaught browser errors or external requests",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C010",
+      "sha256": "310d4a4f7da2051ea152227c8ea0b63c9e242e1ef220b8216800d4b51e0b5aa7",
+      "bytes": 1633011,
+      "pages": 2,
+      "details": [
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "0.35",
+            "1"
+          ],
+          "transforms": [
+            "matrix(1, 0, 0, -1, 0, 0)",
+            "matrix(-1, 0, 0, 1, 0, 0)"
+          ],
+          "layerCount": 2,
+          "textSha256": "9a82380e869369a07a2db57a36ba23130da4ce31e088c3a8cc52edb075423de5"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "0.35"
+          ],
+          "transforms": [
+            "matrix(1, 0, 0, -1, 0, 0)",
+            "matrix(0.838671, -0.544639, 0.544639, 0.838671, 0, 0)",
+            "matrix(0.529919, 0.848048, -0.848048, 0.529919, 0, 0)",
+            "matrix(0.5, 0.866025, -0.866025, 0.5, 0, 0)",
+            "matrix(0.798636, -0.601815, 0.601815, 0.798636, 0, 0)"
+          ],
+          "layerCount": 2,
+          "textSha256": "3102a1012e6fc13e041b372bb1152c776896730098774cfcb6780c5a7012154d"
+        }
+      ]
+    },
+    {
+      "id": "C045",
+      "sha256": "0c08f0c65c55c1b3a47a54183466958496997204e050e278ec1bd6fbcbb3c386",
+      "bytes": 2563196,
+      "pages": 3,
+      "details": [
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "d3a0804042c9e27f4d02f5fa7013689c77459854a4d363978907d0435a16cf7e"
+        },
+        {
+          "fields": [
+            "2"
+          ],
+          "images": 6,
+          "alphas": [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "5e1752f6581d62d0070f292201437d61b8ad276145e1a8ad41ce651fc011efc9"
+        },
+        {
+          "fields": [
+            "3"
+          ],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "1913e1c5c1e1886988c5d7a2a7a9be15affe1f246694d0df6660ea0602c6789e"
+        }
+      ]
+    },
+    {
+      "id": "C046",
+      "sha256": "a7afc41664bec43e6e4f6bce03af2dbf20f34ce9886dbe2945ccece53214019d",
+      "bytes": 7455203,
+      "pages": 1,
+      "details": [
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "cacdf35f5779228cd71fe5686eed0d223a2d188729a06b752c0dbf10df320296"
+        }
+      ]
+    },
+    {
+      "id": "C044",
+      "sha256": "dc6172154bbfdd37d538c26641ea006c28f714b53b2dcccab89b6977596fa2e1",
+      "bytes": 1067733,
+      "pages": 2,
+      "details": [
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "4e70210951e2e49f4ba5b0e1fea777fe3d5eb1e669cd445c6954d083f43a92e7"
+        },
+        {
+          "fields": [
+            "2"
+          ],
+          "images": 6,
+          "alphas": [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "f272c1c1a942f2a82b903478d4e9c3fb548d202f7865b0b4787945a26ca176ef"
+        }
+      ]
+    },
+    {
+      "id": "C048",
+      "sha256": "be977ca8c84382b69994866fa0f5606185ff80fdbe86ec68a417e7223801e846",
+      "bytes": 716349,
+      "pages": 14,
+      "details": [
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [
+            "matrix(0, 1, -1, 0, 0, 0)"
+          ],
+          "layerCount": 1,
+          "textSha256": "d4c0224840e6f0e8294d49654d93798ecd4a0cdfb2789391cf6d3fcd784a9761"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [
+            "matrix(0, 1, -1, 0, 0, 0)"
+          ],
+          "layerCount": 1,
+          "textSha256": "20d1252b8b8d9daa2e240171fa2287b87910f7bb5aa4008055e101c4bb0683c4"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "8e9c4e5e522333edefdbae03da683ec53afdc31c82ac34471eba63386fc1336e"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "c6657641faa3a20afd66b5f447341692f7a2f80d7f15c42b77b71a16d3db83b5"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "615f9917de400a85d5dbe55636cbdc28288f0b89fe8cce3af45a8151a590a2e1"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "48d6390ed53d8b98c83fdd60e3d2a5b809e41a1493f0df972cf463390088627b"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "fadd4cffd2e9e80db726b12c53dfcdeb1e47640d08a02786b176f184442ba804"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "688529d6d95f688c8d79a444ea9669fdd0a1bae57523e44af29b84250135dc5c"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [
+            "none"
+          ],
+          "layerCount": 2,
+          "textSha256": "aa9c66f400b4b37787cd0f010c290b24d14a8aa8a850626c3518038f98f4002c"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [
+            "none"
+          ],
+          "layerCount": 2,
+          "textSha256": "b6b1b68577a50126218c155fd150929c4c4a22d1ae2d65673f151f7d3398825f"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [
+            "none"
+          ],
+          "layerCount": 2,
+          "textSha256": "f423c1b2e76a4e01c739c7b3892545ae9a47b3847b5e1a56345c2e485a351942"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [
+            "none"
+          ],
+          "layerCount": 2,
+          "textSha256": "3cc9836a709d87e781d3451377abfa97a19945c9700629de292029ca8e3bdd64"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [
+            "none"
+          ],
+          "layerCount": 2,
+          "textSha256": "1c2c5d31efe6d89ca240f339c134fe177c2abee564268c92fbcb886a72c76ba3"
+        },
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [
+            "matrix(0, 1, -1, 0, 0, 0)"
+          ],
+          "layerCount": 1,
+          "textSha256": "6563a8e64809c0f8972714af317c505ed398c31abd633bddda492d5ba35bbd8e"
+        }
+      ]
+    },
+    {
+      "id": "C016",
+      "sha256": "ff4ac0df803b5d07603e8b44c7759e275d1502506f72e2ef33e1f4de4b9ee5c3",
+      "bytes": 1649977,
+      "pages": 29,
+      "details": [
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "976a8cc1dd537c9f46fb519b517e27c89d427ce55efcca05fc42a0558f3d5848"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "8ee0bb2992d3fc5045dc34e7d5bad93b54e6d570fd12cf30886c368b53eb28c6"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "ec5eef1873050ff65db67c6f595182c22e0a3c6781335324bf1943f1cf2a39b2"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "49cec1dc9ec3cc774f6a3adcbf4b944edd6c48d4378791af3f7083c068a108cd"
+        },
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "aeca6a6ab96ed8bb248caa40c0e448f56c089245aa2a25b1420f75f58917dbcc"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [
+            "matrix(0, 1, -1, 0, 0, 0)"
+          ],
+          "layerCount": 2,
+          "textSha256": "c59fdacd6a72a12cda88746a617d80476e5ddd98b8a152c1a9a7e4148bba6135"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "ceb7a8d8c5d573b10628078edcfc005b2ebd630d152ee1080da006efc4498437"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "dd0cba6fb524289167eae601165c920a6822a894b732c2fa20d6face7c3c1b1d"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "a58818866a115158a5b670ba7432fd291068743de1a02d1a015ae000fae058b3"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "b140c6d11e81d82d741e70ed2b54307b7f05e6c9c434f3052c9f4f7063063221"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "625755cfc1d67dd3ccd430cf6d0a308228d7c16785ca45f22e0ad52035670bea"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "7a13ff91e4a028739798c26ea75328db4206db0cd899a2180ae07400577ed858"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "297986d8036fa796bb7d86eaab1441c75c4c3b55f20e5498498a52e6fd3c43eb"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "07e23c3ee1d2079f4161990086f3da8f182f7d5ac1cd086899713bd56de75cff"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "dfee6bd90ed5e5317770b33feeebed9270d07c2d2ee0c7affcf00a3561ecd3f3"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "9e87ef210df6cc6a3d5a855a25fea9150f7b772514910653ca1f97e502ac1ac2"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "9e87ef210df6cc6a3d5a855a25fea9150f7b772514910653ca1f97e502ac1ac2"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "d7942e184caeb0dd5feba3884c0476b55f4913c8018a9e309c640fffad56f3ac"
+        },
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "04937672e07fbc9648c8ffdd9cb7c702be218a80c0470ebdb03e07e383b92aaf"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "d98de8348691f4ad69c7d8dbcce9f11abba2c2b7d644da1dc786a253a8877fd6"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "2d743cd245a86ff1e0fdc5a87e75d7209c1e9be1a4cbfa605dbc2a9f59259005"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "46ab1bf622735658fbe8dc35493194325d02283e2e8f24eab140be8a2616d427"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "905e02260c297cc17c5a95c6471dbd935b8715c08039782ed9a18c50130e01d7"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [
+            "matrix(0, -1, 1, 0, 0, 0)"
+          ],
+          "layerCount": 2,
+          "textSha256": "023718119321b8bfc7241ddc84a9a40def8167856c06c64b702716987165b2c8"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "4875a29dda540af205c2180b13427d6156e3f2547715a2bcd3c847a990882f60"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [
+            "matrix(0, -1, 1, 0, 0, 0)"
+          ],
+          "layerCount": 2,
+          "textSha256": "966b8c0093ea98e40ec3b1bd09e9b8cc47a86b4265fac612fa21785c97b49b37"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "13787be1e175d6bcb02b8df8b89aaeecdb8c35f6f5c525c50be045004ce8222e"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "eeccab4d24415cb4fca2263a5dedd0ac567c673df682e9c401d6d2ebd73b0035"
+        },
+        {
+          "fields": [],
+          "images": 0,
+          "alphas": [],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "bc5d50e4c8b2392810682e68ab3592e30ba9efc85adeb64ce86badea361b17fb"
+        }
+      ]
+    },
+    {
+      "id": "C015",
+      "sha256": "388291cb01e86db7f7b9f049b0bf719a1d2137d3e9a274b90d156a756df1b28a",
+      "bytes": 682064,
+      "pages": 1,
+      "details": [
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "ee7c818926bd34fe62ce025c220a02203d879ea612dd32c889418c304e3e82ae"
+        }
+      ]
+    },
+    {
+      "id": "C035",
+      "sha256": "3570bbd6a66c11bd7340b803308c6272963d7ec14205f298ca232b18cb4017fb",
+      "bytes": 51329,
+      "pages": 1,
+      "details": [
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "beec90b39b0d4b82a4a8c176b9ad0a16e927996702e4d08e20756a26f941be0d"
+        }
+      ]
+    },
+    {
+      "id": "C041",
+      "sha256": "1d9d8517cb2bb87acd10b44b70fdc9357b6f7c8db62242ae126a062d7658e4c8",
+      "bytes": 1914905,
+      "pages": 4,
+      "details": [
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "7bc28ab2324d47cc0f523027a0f825fb1cd5bc24b87d0da63c04a740ed7a8e7f"
+        },
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "541a0f0e833830f5aa5288372575ab552346157726d0d8de2c3406105816bbba"
+        },
+        {
+          "fields": [
+            "3"
+          ],
+          "images": 10,
+          "alphas": [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "0e7817c0f4ca7eb53fb4eb274c26c2753bf4162b013bdb76ff046438f06d7a15"
+        },
+        {
+          "fields": [],
+          "images": 3,
+          "alphas": [
+            "1",
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "f4b82cf2521ef48ed863dfb70a6335629e2755c2daec05d82947340abec7fc93"
+        }
+      ]
+    },
+    {
+      "id": "C008",
+      "sha256": "a9d82233ec365432b9c0b61f468eb9b814f39e9fb89234921af9c7f12f7ddf5c",
+      "bytes": 101837,
+      "pages": 1,
+      "details": [
+        {
+          "fields": [],
+          "images": 1,
+          "alphas": [
+            "0.35"
+          ],
+          "transforms": [
+            "matrix(1, 0, 0, -1, 0, 0)"
+          ],
+          "layerCount": 2,
+          "textSha256": "3a10dec1cbd1bf3e7b4234bcc7136137b20e35156311b203cf6ea879d672ae4b"
+        }
+      ]
+    },
+    {
+      "id": "C049",
+      "sha256": "49f14b34e7d5b1ce7c29de55dd64a726acdea3d6dcb4b10489fb973a8446c34b",
+      "bytes": 1896517,
+      "pages": 1,
+      "details": [
+        {
+          "fields": [
+            "1"
+          ],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "97b7a77299ad36e16e63b2405a45510a249f73b636a6631ed750e343f942781a"
+        }
+      ]
+    },
+    {
+      "id": "C050",
+      "sha256": "5a178b6c5dc63976ae4a133eaff14927ac40320609073b6e836ee7b814b1e685",
+      "bytes": 972288,
+      "pages": 1,
+      "details": [
+        {
+          "fields": [],
+          "images": 2,
+          "alphas": [
+            "1",
+            "1"
+          ],
+          "transforms": [],
+          "layerCount": 2,
+          "textSha256": "4e70210951e2e49f4ba5b0e1fea777fe3d5eb1e669cd445c6954d083f43a92e7"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "scope": "Drawing order, picture alpha/flip, dynamic text fields; not full Office pixel equivalence"
+}

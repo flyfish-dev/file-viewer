@@ -3,7 +3,7 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  The canonical catalog registers 274 file extensions across 47 preview pipelines: 224 stable and 50 experimental.
+  The canonical catalog registers 275 file extensions across 47 preview pipelines: 225 stable and 50 experimental.
   Renderers are loaded on demand, so opening a lightweight text file does not force the browser to load every heavy document engine.
 </p>
 
@@ -28,7 +28,7 @@
 | Binary inspection (explicit opt-in) | `bin`, `hex`, `elf`, `exe`, `dll`, `class`, `macho` through `@file-viewer/renderer-binary`; a bounded, read-only byte inspector with no MIME wildcard or specialist-route override |
 | Diagrams and mind maps | `xmind`, `drawio`, `dio`, `excalidraw`, `mermaid`, `mmd`, `plantuml`, `puml` |
 | CAD and engineering | `dwg`, `dxf`, `dwf`, `dwfx`, `xps`, plus EDA files such as `gds`, `oas`, `oasis`, `olb`, `dra` |
-| 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `ifc`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp` |
+| 3D and geospatial | `gltf`, `glb`, `obj`, `stl`, `ply`, `step`, `stp`, `iges`, `ifc`, `3dm`, `brep`, `geojson`, `kml`, `gpx`, `shp`; opt-in `/geo3d`: `las`, `laz`, `copc`, GeoTIFF/COG, CityJSON, 3D Tiles, `3tz` |
 | Text, code, and data | Markdown, source code, logs, JSON, YAML, TOML, SQL, IPYNB, SQLite, WASM, Parquet, Avro |
 | Adobe design files (explicit opt-in) | `psd`, `psb`, `pdd`, `psdt`, `ai`, `ait`, `eps`, `ps`, `idml`, `icml`, `idms`, `inx`, `xd`, `indd`, `indt`, `fla`, `xfl`, `ase`, `aco`, `abr`, `csh`, `pat`, `grd`, `asl` through `@file-viewer/renderer-design` |
 | Media and assets | Images, SVG, HEIC, audio, video, HLS, and fonts |
@@ -61,6 +61,7 @@ The full machine-readable matrix, including containers, levels, status, and limi
 - Archives use `@file-viewer/renderer-archive` with `libarchive.js` Worker + WASM first, then ZIP/TAR/GZIP compatibility fallback when the Worker cannot start. Legacy ZIP files without the UTF-8 filename flag are decoded with GBK/GB18030 detection so Chinese entry names remain readable in the compatibility path.
 - Media uses `@file-viewer/renderer-media` and native browser decoders first. When Chromium rejects an MPEG-4 Part 2 (`mp4v`) Simple Profile track, the renderer loads a dedicated Worker and the Apache-2.0 AOSP PacketVideo decoder. It uses the AAC track as the playback clock and draws decoded I420 frames to a Canvas. The WASM file is 111,379 bytes, or 34,410 bytes with gzip, and loads only after native decoding fails. The implementation contains no FFmpeg, libav, or LGPL/GPL/AGPL source. Files outside the decoder's current coverage get an explicit compatibility notice.
 - STEP, IGES, and BREP use the `@file-viewer/renderer-3d` entry plus the lightweight `@file-viewer/geometry-engine` route package and local OpenCascade/WASM decoding. The separate experimental `@file-viewer/renderer-3d/ifc` entry provides self-hosted That Open / Web-IFC preview when explicitly installed, as in the official Demo; it is not added to core, default component installs, or Full packages. 3DM remains signature and conversion guidance pending a dedicated `rhino3dm` path.
+- Streaming-first engineering/geospatial datasets use the explicit `@file-viewer/renderer-3d/geo3d` subpath. TIFF is content-sniffed so ordinary `.tif/.tiff` continues to use the image renderer; GeoTIFF/COG is routed only when geographic tags are present. COPC/COG/3D Tiles preserve random-access URLs, while 3TZ extraction is bounded and rejects unsafe archive paths.
 
 ## Binary PPT Engine License Boundary
 

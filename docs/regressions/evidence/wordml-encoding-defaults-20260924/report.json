@@ -1,0 +1,131 @@
+{
+  "completed": true,
+  "passed": 19,
+  "failed": 0,
+  "screenshots": true,
+  "originalSupplied": true,
+  "checks": [
+    {
+      "name": "DPR 1: UTF-8 original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 6,
+      "expectedTextSha256": "e01a02f98827b6144208e0ffda2d63680546bef2c51a176d276774292af29d59"
+    },
+    {
+      "name": "DPR 1: GBK original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 2,
+      "expectedTextSha256": "72726d8818f693066ceb69afa364218b692e62ea92b385782363780f47529c21"
+    },
+    {
+      "name": "DPR 1: windows-1252 original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 6,
+      "expectedTextSha256": "e66baa599b628bfeacdf904db6d22eb50d9feaadb2947a689b1ef83707a1d4f2"
+    },
+    {
+      "name": "DPR 1: Shift_JIS original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 2,
+      "expectedTextSha256": "cf2abf0c5be326cb922a70f8163f91079c4d9aa8655c60ead89ad545c9de2e92"
+    },
+    {
+      "name": "DPR 1: default, named style and direct run font precedence is rendered",
+      "status": "pass",
+      "families": [
+        "\"Courier New\", SimSun, \"Songti SC\", \"Noto Serif CJK SC\", serif, Tahoma",
+        "Arial",
+        "\"Times New Roman\""
+      ]
+    },
+    {
+      "name": "DPR 1: font defaults remain stable through zoom and disposal",
+      "status": "pass"
+    },
+    {
+      "name": "C070 DPR 1: conversion creates default fonts in styles and preserves section relationships",
+      "status": "pass"
+    },
+    {
+      "name": "C070 DPR 1: unchanged original body, tables and footer remain visible",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: all generated and original previews clean up their host",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: UTF-8 original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 6,
+      "expectedTextSha256": "e01a02f98827b6144208e0ffda2d63680546bef2c51a176d276774292af29d59"
+    },
+    {
+      "name": "DPR 2: GBK original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 2,
+      "expectedTextSha256": "72726d8818f693066ceb69afa364218b692e62ea92b385782363780f47529c21"
+    },
+    {
+      "name": "DPR 2: windows-1252 original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 6,
+      "expectedTextSha256": "e66baa599b628bfeacdf904db6d22eb50d9feaadb2947a689b1ef83707a1d4f2"
+    },
+    {
+      "name": "DPR 2: Shift_JIS original bytes reach the visible text without replacement",
+      "status": "pass",
+      "characters": 2,
+      "expectedTextSha256": "cf2abf0c5be326cb922a70f8163f91079c4d9aa8655c60ead89ad545c9de2e92"
+    },
+    {
+      "name": "DPR 2: default, named style and direct run font precedence is rendered",
+      "status": "pass",
+      "families": [
+        "\"Courier New\", SimSun, \"Songti SC\", \"Noto Serif CJK SC\", serif, Tahoma",
+        "Arial",
+        "\"Times New Roman\""
+      ]
+    },
+    {
+      "name": "DPR 2: font defaults remain stable through zoom and disposal",
+      "status": "pass"
+    },
+    {
+      "name": "C070 DPR 2: conversion creates default fonts in styles and preserves section relationships",
+      "status": "pass"
+    },
+    {
+      "name": "C070 DPR 2: unchanged original body, tables and footer remain visible",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: all generated and original previews clean up their host",
+      "status": "pass"
+    },
+    {
+      "name": "No external requests or unhandled browser errors",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C070",
+      "sha256": "7b9380a4c80eb4c17b8f3c7d2b69b4c012d2c2ff1e1d58125ee7cb8bfc07e35d",
+      "dpr": 1,
+      "bodyCharacters": 6,
+      "textSha256": "966ec83c308f36165d28b88a33f14af36f2ec44d6373bae55d2796644ea35e9d",
+      "tables": 0,
+      "footers": 1
+    },
+    {
+      "id": "C070",
+      "sha256": "7b9380a4c80eb4c17b8f3c7d2b69b4c012d2c2ff1e1d58125ee7cb8bfc07e35d",
+      "dpr": 2,
+      "bodyCharacters": 6,
+      "textSha256": "966ec83c308f36165d28b88a33f14af36f2ec44d6373bae55d2796644ea35e9d",
+      "tables": 0,
+      "footers": 1
+    }
+  ]
+}

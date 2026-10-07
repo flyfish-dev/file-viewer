@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
+import { assertPptxOnlyBundle, presentationModuleGraph } from './presentation-bundle-boundary.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const presentationPackagePath = join(root, 'packages/renderers/presentation/package.json')
@@ -35,7 +36,8 @@ try {
   await build({
     root: fixtureRoot,
     logLevel: 'silent',
-    plugins: [fileViewerRenderers({ formats: ['pptx'], autoPresets: false })],
+    plugins: [fileViewerRenderers({ formats: ['pptx'], autoPresets: false }), presentationModuleGraph()],
+    worker: { plugins: () => [presentationModuleGraph('pptx-worker-module-graph.json')] },
     build: {
       manifest: true,
       outDir: 'dist'
@@ -53,22 +55,8 @@ try {
     const body = await readFile(path)
     outputRecords.push({ file, body })
   }
-  const legacyPptAssets = outputFiles.filter((file) =>
-    /(?:ppt-font-cjk|ppt-native|file-viewer-presentation-ppt\b)/i.test(file)
-  )
-  assert.deepEqual(legacyPptAssets, [], `PPTX-only build emitted legacy PPT assets: ${legacyPptAssets.join(', ')}`)
-  const legacyPptReferences = outputRecords.filter(({ file, body }) =>
-    /(?:ppt-font-cjk|ppt-native\.wasm|Flyfish PPT Viewer)/i.test(`${file}\n${body.toString('utf8')}`)
-  )
-  assert.deepEqual(
-    legacyPptReferences.map(({ file }) => file),
-    [],
-    `PPTX-only build retained legacy PPT references: ${legacyPptReferences.map(({ file }) => file).join(', ')}`
-  )
-  assert.ok(
-    outputFiles.some((file) => /pptx\.worker/i.test(file)),
-    `PPTX-only build did not emit a PPTX renderer worker: ${outputFiles.join(', ')}`
-  )
+  assertPptxOnlyBundle(outputRecords,
+    await readFile(join(root, 'packages/renderers/pptx/dist/worker/pptx.worker.js')))
 } finally {
   await rm(fixtureRoot, { recursive: true, force: true })
 }

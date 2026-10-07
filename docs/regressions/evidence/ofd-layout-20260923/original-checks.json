@@ -1,0 +1,19 @@
+{
+  "completed": true,
+  "originalFiles": 6,
+  "pages": 17,
+  "pageRenderings": 34,
+  "dpr": 2,
+  "textRuns": 997,
+  "middleDotGlyphsWithVisiblePixels": 34,
+  "leadingSpaceDateRuns": 2,
+  "scope": "Original page order, exact text/advances/CTM, glyph pixels, image loading and geometry. Stamp appearance is not cryptographic verification.",
+  "samples": [
+    {"id":"C002","sha256":"59eb2d321eedf6b3feaedd52af8f57fee70bbd9c920cd8182eadb6cbffb7f597","pageIds":["6003"],"textRuns":68,"dots":0,"datesWithLeadingSpaces":0,"images":3,"seals":0,"widths":[850,320],"status":"pass"},
+    {"id":"C003","sha256":"afd2fe0ca524f7a981f0581e77809c8f0ac4b38515971e35df44b6813a88c928","pageIds":["1"],"textRuns":0,"dots":0,"datesWithLeadingSpaces":0,"images":3,"seals":0,"widths":[850,320],"status":"pass"},
+    {"id":"C004","sha256":"4d2476dce9e54b29a3a16ff0beef268ad230b9a36ee2aef34889e5a0fdc3b139","pageIds":["1"],"textRuns":41,"dots":0,"datesWithLeadingSpaces":0,"images":2,"seals":0,"widths":[850,320],"status":"pass"},
+    {"id":"C062","sha256":"d2f0c8f76f83b9a49de0df7c663742fff625daed5edc4cee6cc6d58df63719cd","pageIds":["1","124"],"textRuns":159,"dots":0,"datesWithLeadingSpaces":0,"images":1,"seals":1,"widths":[850,320],"status":"pass"},
+    {"id":"C063","sha256":"1868aec4acb9a8767e99b14f3e914e19d7fce7d61cbdfbb69d35926e69750629","pageIds":["1","67"],"textRuns":92,"dots":0,"datesWithLeadingSpaces":0,"images":1,"seals":0,"widths":[850,320],"status":"pass"},
+    {"id":"C065","sha256":"f97fa3593cdabd2aaf34864325f800bb6b7523e04e27aa7c15f246f5c69f8e38","pageIds":["1","2","3","4","5","6","7","8","9","10"],"textRuns":637,"dots":34,"datesWithLeadingSpaces":2,"images":36,"seals":1,"widths":[850,320],"status":"pass"}
+  ]
+}

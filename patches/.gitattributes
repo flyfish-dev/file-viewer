@@ -1,0 +1,2 @@
+# Serialized diffs use a space to represent an empty context line.
+*.patch whitespace=-blank-at-eol

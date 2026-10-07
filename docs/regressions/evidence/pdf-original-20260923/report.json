@@ -1,0 +1,4361 @@
+{
+  "passed": 16,
+  "checks": [
+    {
+      "name": "C020 DPR 1: all 3 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C021 DPR 1: all 7 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C023 DPR 1: all 1 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C026 DPR 1: all 1 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C028 DPR 1: all 50 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C047 DPR 1: all 1 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C020 DPR 2: all 3 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C021 DPR 2: all 7 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C023 DPR 2: all 1 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C026 DPR 2: all 1 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C028 DPR 2: all 50 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C047 DPR 2: all 1 pages render with native geometry and a single content scroller",
+      "status": "pass"
+    },
+    {
+      "name": "C026 original: hidden initial fit completes after dialog reveal",
+      "status": "pass"
+    },
+    {
+      "name": "Protected same-origin PDF URL preserves browser Referer",
+      "status": "pass"
+    },
+    {
+      "name": "Host no-referrer policy remains authoritative and 403 is not bypassed",
+      "status": "pass"
+    },
+    {
+      "name": "All originals use local PDF runtime without missing assets or unhandled browser errors",
+      "status": "pass"
+    }
+  ],
+  "documents": [
+    {
+      "id": "C020",
+      "sha256": "d4fbb2af8f4635b7c573195ea7270ab825bb60f8828aa517198a0ecbe79030ab",
+      "dpr": 1,
+      "pageCount": 3,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            411.1,
+            595.35
+          ],
+          "viewport": [
+            871.532,
+            1262.142
+          ],
+          "canvas": [
+            871,
+            1262
+          ],
+          "css": [
+            872,
+            1262
+          ],
+          "inkPixels": 2073,
+          "referenceInkPixels": 1746,
+          "thumbnailMeanError": 0.010593647875816993,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 890
+        },
+        {
+          "page": 2,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            411.1,
+            595.35
+          ],
+          "viewport": [
+            871.532,
+            1262.142
+          ],
+          "canvas": [
+            871,
+            1262
+          ],
+          "css": [
+            872,
+            1262
+          ],
+          "inkPixels": 1956,
+          "referenceInkPixels": 1608,
+          "thumbnailMeanError": 0.012168811274509804,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 890
+        },
+        {
+          "page": 3,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            411.1,
+            595.35
+          ],
+          "viewport": [
+            871.532,
+            1262.142
+          ],
+          "canvas": [
+            871,
+            1262
+          ],
+          "css": [
+            872,
+            1262
+          ],
+          "inkPixels": 14,
+          "referenceInkPixels": 14,
+          "thumbnailMeanError": 0.00004549632352941176,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 890
+        }
+      ]
+    },
+    {
+      "id": "C021",
+      "sha256": "a2f4535c6e092e984ab96641938b7d710d2f9dc151eea529eddd01f25c353cca",
+      "dpr": 1,
+      "pageCount": 7,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            874,
+            1236
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 2131,
+          "referenceInkPixels": 2131,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 2,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            874,
+            1236
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1811,
+          "referenceInkPixels": 1811,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 3,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            874,
+            1236
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 2106,
+          "referenceInkPixels": 2106,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 4,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            874,
+            1236
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1851,
+          "referenceInkPixels": 1851,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 5,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            874,
+            1236
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 2412,
+          "referenceInkPixels": 2412,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 6,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            874,
+            1236
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1651,
+          "referenceInkPixels": 1651,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 7,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            874,
+            1236
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1341,
+          "referenceInkPixels": 1341,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        }
+      ]
+    },
+    {
+      "id": "C023",
+      "sha256": "9c4f76d09fadc48d0ee21137de4f42e5b4dc2706e9b78eed8e4adae0261235e4",
+      "dpr": 1,
+      "pageCount": 1,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            841.89,
+            595.276
+          ],
+          "viewport": [
+            875.5656,
+            619.08704
+          ],
+          "canvas": [
+            875,
+            619
+          ],
+          "css": [
+            876,
+            619
+          ],
+          "inkPixels": 3999,
+          "referenceInkPixels": 4014,
+          "thumbnailMeanError": 0.007006229575163399,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 894
+        }
+      ]
+    },
+    {
+      "id": "C026",
+      "sha256": "3e6749434d0fbb8ba5d646bf24abc1bdeba8319437e76883474a7399f0c34c0f",
+      "dpr": 1,
+      "pageCount": 1,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.276,
+            841.89
+          ],
+          "viewport": [
+            873.0714666666667,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 9773,
+          "referenceInkPixels": 9774,
+          "thumbnailMeanError": 0.0031273488562091503,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        }
+      ]
+    },
+    {
+      "id": "C028",
+      "sha256": "2f253d5a1064e5ca97bc70ce1e38caa84c649aa09b999cf1a1f1a055b33eeae4",
+      "dpr": 1,
+      "pageCount": 50,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1295,
+          "referenceInkPixels": 1005,
+          "thumbnailMeanError": 0.00871328635620915,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 2,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1257,
+          "referenceInkPixels": 982,
+          "thumbnailMeanError": 0.008600439133986929,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 3,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1663,
+          "referenceInkPixels": 1339,
+          "thumbnailMeanError": 0.010846200980392157,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 4,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1124,
+          "referenceInkPixels": 915,
+          "thumbnailMeanError": 0.003963235294117647,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 5,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1990,
+          "referenceInkPixels": 1651,
+          "thumbnailMeanError": 0.011795445261437908,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 6,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1943,
+          "referenceInkPixels": 1669,
+          "thumbnailMeanError": 0.011450725081699347,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 7,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1124,
+          "referenceInkPixels": 1056,
+          "thumbnailMeanError": 0.002249387254901961,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 8,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1580,
+          "referenceInkPixels": 1377,
+          "thumbnailMeanError": 0.006648233251633987,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 9,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2314,
+          "referenceInkPixels": 1984,
+          "thumbnailMeanError": 0.01300873161764706,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 10,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1713,
+          "referenceInkPixels": 1420,
+          "thumbnailMeanError": 0.009640114379084967,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 11,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 926,
+          "referenceInkPixels": 907,
+          "thumbnailMeanError": 0.00030877246732026144,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 12,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1581,
+          "referenceInkPixels": 1598,
+          "thumbnailMeanError": 0.004962367238562092,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 13,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1638,
+          "referenceInkPixels": 1469,
+          "thumbnailMeanError": 0.007521395016339869,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 14,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1585,
+          "referenceInkPixels": 1334,
+          "thumbnailMeanError": 0.0061863766339869284,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 15,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 823,
+          "referenceInkPixels": 770,
+          "thumbnailMeanError": 0.002868719362745098,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 16,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2653,
+          "referenceInkPixels": 2183,
+          "thumbnailMeanError": 0.013416462418300653,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 17,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2269,
+          "referenceInkPixels": 1962,
+          "thumbnailMeanError": 0.008915849673202615,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 18,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1781,
+          "referenceInkPixels": 1496,
+          "thumbnailMeanError": 0.009765573937908497,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 19,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2211,
+          "referenceInkPixels": 1783,
+          "thumbnailMeanError": 0.012483762254901961,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 20,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 3306,
+          "referenceInkPixels": 2694,
+          "thumbnailMeanError": 0.017536049836601307,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 21,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1510,
+          "referenceInkPixels": 1408,
+          "thumbnailMeanError": 0.009404871323529412,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 22,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2160,
+          "referenceInkPixels": 1873,
+          "thumbnailMeanError": 0.011433108660130718,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 23,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2223,
+          "referenceInkPixels": 1812,
+          "thumbnailMeanError": 0.010595383986928105,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 24,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2312,
+          "referenceInkPixels": 2162,
+          "thumbnailMeanError": 0.014207261029411765,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 25,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1294,
+          "referenceInkPixels": 1101,
+          "thumbnailMeanError": 0.007029462826797386,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 26,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1648,
+          "referenceInkPixels": 1525,
+          "thumbnailMeanError": 0.008431423611111112,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 27,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2232,
+          "referenceInkPixels": 1873,
+          "thumbnailMeanError": 0.011484272875816994,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 28,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2230,
+          "referenceInkPixels": 2062,
+          "thumbnailMeanError": 0.013547385620915033,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 29,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1766,
+          "referenceInkPixels": 1497,
+          "thumbnailMeanError": 0.00815374795751634,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 30,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 215,
+          "referenceInkPixels": 154,
+          "thumbnailMeanError": 0.0005675040849673202,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 31,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2152,
+          "referenceInkPixels": 1990,
+          "thumbnailMeanError": 0.01154125816993464,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 32,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1012,
+          "referenceInkPixels": 783,
+          "thumbnailMeanError": 0.005564389297385621,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 33,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1731,
+          "referenceInkPixels": 1469,
+          "thumbnailMeanError": 0.008357281454248366,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 34,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 973,
+          "referenceInkPixels": 978,
+          "thumbnailMeanError": 0.005037071078431372,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 35,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1321,
+          "referenceInkPixels": 1355,
+          "thumbnailMeanError": 0.0077641441993464054,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 36,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1969,
+          "referenceInkPixels": 1502,
+          "thumbnailMeanError": 0.010182751225490196,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 37,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1574,
+          "referenceInkPixels": 1298,
+          "thumbnailMeanError": 0.009817759395424836,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 38,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1559,
+          "referenceInkPixels": 1281,
+          "thumbnailMeanError": 0.009200367647058824,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 39,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1454,
+          "referenceInkPixels": 1189,
+          "thumbnailMeanError": 0.007546006944444445,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 40,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1644,
+          "referenceInkPixels": 1341,
+          "thumbnailMeanError": 0.007703737745098039,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 41,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1945,
+          "referenceInkPixels": 1839,
+          "thumbnailMeanError": 0.012150122549019609,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 42,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1326,
+          "referenceInkPixels": 1062,
+          "thumbnailMeanError": 0.00715344158496732,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 43,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1739,
+          "referenceInkPixels": 1481,
+          "thumbnailMeanError": 0.010185763888888888,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 44,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1661,
+          "referenceInkPixels": 1339,
+          "thumbnailMeanError": 0.006386131535947712,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 45,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1911,
+          "referenceInkPixels": 1637,
+          "thumbnailMeanError": 0.008704299428104575,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 46,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1786,
+          "referenceInkPixels": 1557,
+          "thumbnailMeanError": 0.008331137663398692,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 47,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2166,
+          "referenceInkPixels": 1874,
+          "thumbnailMeanError": 0.01249249387254902,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 48,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1929,
+          "referenceInkPixels": 1701,
+          "thumbnailMeanError": 0.011428513071895425,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 49,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2195,
+          "referenceInkPixels": 2016,
+          "thumbnailMeanError": 0.010473549836601308,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 50,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1532,
+          "referenceInkPixels": 1411,
+          "thumbnailMeanError": 0.006387152777777778,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        }
+      ]
+    },
+    {
+      "id": "C047",
+      "sha256": "b158fee6494e550b1df8367776700aaee16683a8d3abaf5bd53ee238b61d0dde",
+      "dpr": 1,
+      "pageCount": 1,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.32,
+            841.92
+          ],
+          "viewport": [
+            873.1360000000002,
+            1234.816
+          ],
+          "canvas": [
+            873,
+            1234
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 0,
+          "referenceInkPixels": 0,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        }
+      ]
+    },
+    {
+      "id": "C020",
+      "sha256": "d4fbb2af8f4635b7c573195ea7270ab825bb60f8828aa517198a0ecbe79030ab",
+      "dpr": 2,
+      "pageCount": 3,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            411.1,
+            595.35
+          ],
+          "viewport": [
+            871.532,
+            1262.142
+          ],
+          "canvas": [
+            1742,
+            2524
+          ],
+          "css": [
+            872,
+            1262
+          ],
+          "inkPixels": 1357,
+          "referenceInkPixels": 1365,
+          "thumbnailMeanError": 0.009597273284313725,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 890
+        },
+        {
+          "page": 2,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            411.1,
+            595.35
+          ],
+          "viewport": [
+            871.532,
+            1262.142
+          ],
+          "canvas": [
+            1742,
+            2524
+          ],
+          "css": [
+            872,
+            1262
+          ],
+          "inkPixels": 1225,
+          "referenceInkPixels": 1260,
+          "thumbnailMeanError": 0.011259803921568627,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 890
+        },
+        {
+          "page": 3,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            411.1,
+            595.35
+          ],
+          "viewport": [
+            871.532,
+            1262.142
+          ],
+          "canvas": [
+            1742,
+            2524
+          ],
+          "css": [
+            872,
+            1262
+          ],
+          "inkPixels": 3,
+          "referenceInkPixels": 3,
+          "thumbnailMeanError": 0.00003170955882352941,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 890
+        }
+      ]
+    },
+    {
+      "id": "C021",
+      "sha256": "a2f4535c6e092e984ab96641938b7d710d2f9dc151eea529eddd01f25c353cca",
+      "dpr": 2,
+      "pageCount": 7,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            1748,
+            2472
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1991,
+          "referenceInkPixels": 1991,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 2,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            1748,
+            2472
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1724,
+          "referenceInkPixels": 1724,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 3,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            1748,
+            2472
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 2010,
+          "referenceInkPixels": 2010,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 4,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            1748,
+            2472
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1732,
+          "referenceInkPixels": 1732,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 5,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            1748,
+            2472
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 2264,
+          "referenceInkPixels": 2264,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 6,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            1748,
+            2472
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1597,
+          "referenceInkPixels": 1597,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        },
+        {
+          "page": 7,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.92,
+            842.88
+          ],
+          "viewport": [
+            874.016,
+            1236.2240000000002
+          ],
+          "canvas": [
+            1748,
+            2472
+          ],
+          "css": [
+            874,
+            1236
+          ],
+          "inkPixels": 1301,
+          "referenceInkPixels": 1301,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 892
+        }
+      ]
+    },
+    {
+      "id": "C023",
+      "sha256": "9c4f76d09fadc48d0ee21137de4f42e5b4dc2706e9b78eed8e4adae0261235e4",
+      "dpr": 2,
+      "pageCount": 1,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            841.89,
+            595.276
+          ],
+          "viewport": [
+            875.5656,
+            619.08704
+          ],
+          "canvas": [
+            1750,
+            1238
+          ],
+          "css": [
+            876,
+            619
+          ],
+          "inkPixels": 3677,
+          "referenceInkPixels": 3754,
+          "thumbnailMeanError": 0.0086484375,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 894
+        }
+      ]
+    },
+    {
+      "id": "C026",
+      "sha256": "3e6749434d0fbb8ba5d646bf24abc1bdeba8319437e76883474a7399f0c34c0f",
+      "dpr": 2,
+      "pageCount": 1,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.276,
+            841.89
+          ],
+          "viewport": [
+            873.0714666666667,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 9773,
+          "referenceInkPixels": 9771,
+          "thumbnailMeanError": 0.001930249183006536,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        }
+      ]
+    },
+    {
+      "id": "C028",
+      "sha256": "2f253d5a1064e5ca97bc70ce1e38caa84c649aa09b999cf1a1f1a055b33eeae4",
+      "dpr": 2,
+      "pageCount": 50,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 887,
+          "referenceInkPixels": 728,
+          "thumbnailMeanError": 0.009574142156862746,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 2,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 848,
+          "referenceInkPixels": 725,
+          "thumbnailMeanError": 0.00953405841503268,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 3,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1187,
+          "referenceInkPixels": 974,
+          "thumbnailMeanError": 0.012317759395424836,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 4,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 797,
+          "referenceInkPixels": 653,
+          "thumbnailMeanError": 0.004838643790849673,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 5,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1344,
+          "referenceInkPixels": 1202,
+          "thumbnailMeanError": 0.011873876633986927,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 6,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1374,
+          "referenceInkPixels": 1314,
+          "thumbnailMeanError": 0.01417876838235294,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 7,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1051,
+          "referenceInkPixels": 916,
+          "thumbnailMeanError": 0.003716656454248366,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 8,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1309,
+          "referenceInkPixels": 1251,
+          "thumbnailMeanError": 0.004668045343137255,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 9,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1779,
+          "referenceInkPixels": 1507,
+          "thumbnailMeanError": 0.01664971405228758,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 10,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1240,
+          "referenceInkPixels": 1073,
+          "thumbnailMeanError": 0.013031811683006536,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 11,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 828,
+          "referenceInkPixels": 847,
+          "thumbnailMeanError": 0.0016241830065359477,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 12,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1520,
+          "referenceInkPixels": 1307,
+          "thumbnailMeanError": 0.006412122140522876,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 13,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1316,
+          "referenceInkPixels": 1215,
+          "thumbnailMeanError": 0.00805545343137255,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 14,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1299,
+          "referenceInkPixels": 1094,
+          "thumbnailMeanError": 0.009953993055555556,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 15,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 743,
+          "referenceInkPixels": 702,
+          "thumbnailMeanError": 0.0026839256535947714,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 16,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1814,
+          "referenceInkPixels": 1576,
+          "thumbnailMeanError": 0.017656964869281047,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 17,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1608,
+          "referenceInkPixels": 1417,
+          "thumbnailMeanError": 0.013190359477124183,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 18,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1186,
+          "referenceInkPixels": 1071,
+          "thumbnailMeanError": 0.01027047589869281,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 19,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1428,
+          "referenceInkPixels": 1313,
+          "thumbnailMeanError": 0.013315819035947713,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 20,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 2322,
+          "referenceInkPixels": 1944,
+          "thumbnailMeanError": 0.023961397058823528,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 21,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1208,
+          "referenceInkPixels": 1185,
+          "thumbnailMeanError": 0.006754697712418301,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 22,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1452,
+          "referenceInkPixels": 1251,
+          "thumbnailMeanError": 0.013267667483660131,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 23,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1437,
+          "referenceInkPixels": 1156,
+          "thumbnailMeanError": 0.013074448529411765,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 24,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1585,
+          "referenceInkPixels": 1314,
+          "thumbnailMeanError": 0.014568984885620915,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 25,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 913,
+          "referenceInkPixels": 738,
+          "thumbnailMeanError": 0.008806832107843138,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 26,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 853,
+          "referenceInkPixels": 1016,
+          "thumbnailMeanError": 0.007791768790849673,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 27,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1498,
+          "referenceInkPixels": 1131,
+          "thumbnailMeanError": 0.012924887663398693,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 28,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1585,
+          "referenceInkPixels": 1554,
+          "thumbnailMeanError": 0.012040390114379084,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 29,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1141,
+          "referenceInkPixels": 987,
+          "thumbnailMeanError": 0.009457873774509804,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 30,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 142,
+          "referenceInkPixels": 113,
+          "thumbnailMeanError": 0.00039133986928104573,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 31,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1443,
+          "referenceInkPixels": 1405,
+          "thumbnailMeanError": 0.013224315767973857,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 32,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 609,
+          "referenceInkPixels": 532,
+          "thumbnailMeanError": 0.005118974673202614,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 33,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1026,
+          "referenceInkPixels": 1201,
+          "thumbnailMeanError": 0.010623723447712419,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 34,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 634,
+          "referenceInkPixels": 708,
+          "thumbnailMeanError": 0.00443203635620915,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 35,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 844,
+          "referenceInkPixels": 867,
+          "thumbnailMeanError": 0.007586754493464052,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 36,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1383,
+          "referenceInkPixels": 973,
+          "thumbnailMeanError": 0.012037581699346406,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 37,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1074,
+          "referenceInkPixels": 965,
+          "thumbnailMeanError": 0.010573274101307189,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 38,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1133,
+          "referenceInkPixels": 950,
+          "thumbnailMeanError": 0.011607434640522876,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 39,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 926,
+          "referenceInkPixels": 810,
+          "thumbnailMeanError": 0.006933721405228758,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 40,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1084,
+          "referenceInkPixels": 969,
+          "thumbnailMeanError": 0.009238051470588236,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 41,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1222,
+          "referenceInkPixels": 1194,
+          "thumbnailMeanError": 0.014327818627450981,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 42,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 940,
+          "referenceInkPixels": 792,
+          "thumbnailMeanError": 0.009424274918300654,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 43,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1226,
+          "referenceInkPixels": 1082,
+          "thumbnailMeanError": 0.008878421160130719,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 44,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1149,
+          "referenceInkPixels": 912,
+          "thumbnailMeanError": 0.010518688725490196,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 45,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1362,
+          "referenceInkPixels": 1075,
+          "thumbnailMeanError": 0.011193065767973857,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 46,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1264,
+          "referenceInkPixels": 1125,
+          "thumbnailMeanError": 0.009948376225490196,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 47,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1565,
+          "referenceInkPixels": 1341,
+          "thumbnailMeanError": 0.012948223039215686,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 48,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1341,
+          "referenceInkPixels": 1196,
+          "thumbnailMeanError": 0.01014562908496732,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 49,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1434,
+          "referenceInkPixels": 1469,
+          "thumbnailMeanError": 0.013633169934640523,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        },
+        {
+          "page": 50,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.28,
+            841.89
+          ],
+          "viewport": [
+            873.0773333333334,
+            1234.7720000000002
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 1140,
+          "referenceInkPixels": 1007,
+          "thumbnailMeanError": 0.007203482434640523,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        }
+      ]
+    },
+    {
+      "id": "C047",
+      "sha256": "b158fee6494e550b1df8367776700aaee16683a8d3abaf5bd53ee238b61d0dde",
+      "dpr": 2,
+      "pageCount": 1,
+      "pages": [
+        {
+          "page": 1,
+          "rotation": 0,
+          "sourceBox": [
+            0,
+            0,
+            595.32,
+            841.92
+          ],
+          "viewport": [
+            873.1360000000002,
+            1234.816
+          ],
+          "canvas": [
+            1746,
+            2468
+          ],
+          "css": [
+            873,
+            1235
+          ],
+          "inkPixels": 0,
+          "referenceInkPixels": 0,
+          "thumbnailMeanError": 0,
+          "hostOverflow": 0,
+          "shellOverflow": 0,
+          "wrapperWidth": 920,
+          "pageWidth": 891
+        }
+      ]
+    }
+  ],
+  "workerCount": 27,
+  "errors": [],
+  "external": [],
+  "requests": [
+    {
+      "path": "/",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/browser.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/web/pdf_viewer.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C020.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C020.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C021.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/wasm/openjpeg.wasm",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C021.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/wasm/openjpeg.wasm",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C023.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C023.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C026.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C026.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C028.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C028.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C047.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C047.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/browser.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/web/pdf_viewer.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C020.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C020.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C021.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/wasm/openjpeg.wasm",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C021.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/wasm/openjpeg.wasm",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C023.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C023.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C026.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C026.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C028.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C028.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C047.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C047.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/browser.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/web/pdf_viewer.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C026.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C026.pdf",
+      "status": 200,
+      "hasReferer": true,
+      "range": ""
+    },
+    {
+      "path": "/no-referrer",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/browser.mjs",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.mjs",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/web/pdf_viewer.mjs",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": false,
+      "range": "bytes=0-4095"
+    },
+    {
+      "path": "/pdfjs/legacy/build/pdf.worker.mjs",
+      "status": 200,
+      "hasReferer": false,
+      "range": ""
+    },
+    {
+      "path": "/fixtures/C026.pdf",
+      "status": 403,
+      "hasReferer": false,
+      "range": ""
+    }
+  ],
+  "scope": "Six hash-pinned PDFs; all pages at DPR 1/2, native thumbnail raster comparison, hidden initial fit and controlled same-origin Referer. Not iOS/App WebView acceptance."
+}

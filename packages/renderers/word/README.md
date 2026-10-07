@@ -36,6 +36,10 @@ const options = {
 - 安装 RTF capability 后才使用 `rtf.js`；未安装时会显示精确 CLI 启用命令。ODT / ODP 读取 OpenDocument 包内 `content.xml` 做安全结构预览。
 - 继续复用 core 的统一搜索、缩放、打印、导出、生命周期和操作能力。
 
+DOCX 的解析、分页、制表位、绘图锚点、VML 文本坐标、合并单元格边框、背景图和修订样式均由 `docxjs` 引擎负责。本包负责容器适配、交互与输出接入，不再对生成的文档节点做补救改写。
+
+Word 2003 XML 按根元素及其完整命名空间识别，HTML 注释、正文中的示例或命名空间子串不会改变容器类型。未内置 JSZip 的 DOCX Worker 使用同源 HTTP(S) 或 Blob 库地址，拒绝跨源及含凭据的地址。
+
 ## 文本修订
 
 `options.docx.reviewMode` 同时适用于 DOC 和 DOCX：`all`（默认）用下划线显示实际插入、用删除线显示实际删除；`final` 显示定稿，`original` 显示修订前文字。同一组件修改该参数后会更新预览，不需要重新选择文件，也不会接受、拒绝修订或重写原始文件。文本修订支持不等于完整支持 Word 审阅历史、格式修订或移动记录。
@@ -64,6 +68,17 @@ DOC、DOCX 与 RTF 的外部链接及 HTTP(S) 图片关系默认阻断。只有�
 
 标准 renderer 会在挂载前净化 `rtf.js` 产生的 DOM。自定义 RTF 集成若直接消费 HTML，应先调用 `sanitizeFileViewerRtfHtml(document, markup, options)`；该边界与标准挂载使用同一链接策略和 DOMPurify 配置。严格 Trusted Types CSP 需允许 `file-viewer-document-sanitizer` 策略名。
 
+## 嵌入 HTML
+
+使用 `options.docx.renderAltChunks: false` 可以完全省略 DOCX 内嵌 HTML 部件，正文与普通内嵌图片不受影响。未指定或设为 `true` 时保留引擎原有沙箱渲染，不会开启脚本执行、同源权限或放宽外部链接/资源策略。该选项适用于 Worker 与主线程解析，不涉及旧二进制 DOC。
+
 ## 迁移说明
 
 `@file-viewer/core` 已不再直接依赖 `@file-viewer/docx`、`@file-viewer/doc`、`rtf.js`、`linkedom` 或 `@xmldom/xmldom`。需要 Word 完整预览时，请安装本包并通过 `renderers` 传入，或使用 `@file-viewer/preset-all`。
+
+## 打印页面
+
+固定分页 DOCX 按每页原始纸张尺寸输出，支持横向分节和 A4／Letter 混排。
+预览缩放不改变打印尺寸；通过具名 CSS 页面规则避免额外添加外层页边距，
+文档本身的页边距保持不变。流式模式仍由浏览器分页，不按固定高度裁切。
+打印驱动或打印对话框中的纸张设置仍可能覆盖浏览器提供的尺寸。

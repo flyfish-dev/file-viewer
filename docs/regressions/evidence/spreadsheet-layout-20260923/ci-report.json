@@ -1,0 +1,46 @@
+{
+  "checks": [
+    {
+      "name": "Authored row metrics survive initial layout and explicit 100% zoom",
+      "status": "pass"
+    },
+    {
+      "name": "Real pointer column drag updates displayed width",
+      "status": "pass"
+    },
+    {
+      "name": "Real pointer row drag stores unscaled user height",
+      "status": "pass"
+    },
+    {
+      "name": "Separate sheets retain independent row and column sizes",
+      "status": "pass"
+    },
+    {
+      "name": "Cached sheet heights follow the current global zoom after switching",
+      "status": "pass"
+    },
+    {
+      "name": "Drag at 50% remains proportional through 88%, 200% and cached switches",
+      "status": "pass"
+    },
+    {
+      "name": "Delayed window/structure hydration does not overwrite resized row metrics",
+      "status": "pass"
+    },
+    {
+      "name": "Rapid cached tab changes display only the final selected sheet",
+      "status": "pass"
+    },
+    {
+      "name": "Resizing remains opt-in",
+      "status": "pass"
+    },
+    {
+      "name": "Disposal clears rendering listeners with no external requests or browser errors",
+      "status": "pass"
+    }
+  ],
+  "passed": 10,
+  "originalChecked": false
+}

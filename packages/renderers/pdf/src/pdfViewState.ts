@@ -9,6 +9,10 @@ export const normalizePdfRotation = (rotation: number): PdfRotation => {
   ) as PdfRotation
 }
 
+/** PDFViewer rotation is an offset from each page's authored /Rotate value. */
+export const resolvePdfPageRotation = (pageRotation: number, viewerRotation: number): PdfRotation =>
+  normalizePdfRotation(normalizePdfRotation(pageRotation) + normalizePdfRotation(viewerRotation))
+
 export const clampPdfScale = (scale: number, minScale: number, maxScale: number) => {
   return Number(Math.min(maxScale, Math.max(minScale, scale)).toFixed(2))
 }

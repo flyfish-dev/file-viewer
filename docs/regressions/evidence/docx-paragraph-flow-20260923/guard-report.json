@@ -1,0 +1,309 @@
+{
+  "checks": [
+    {
+      "name": "Real XML paragraph spacing precedence case 0",
+      "status": "pass"
+    },
+    {
+      "name": "Real XML paragraph spacing precedence case 1",
+      "status": "pass"
+    },
+    {
+      "name": "Real XML paragraph spacing precedence case 2",
+      "status": "pass"
+    },
+    {
+      "name": "Real XML paragraph spacing precedence case 3",
+      "status": "pass"
+    },
+    {
+      "name": "Real XML paragraph spacing precedence case 4",
+      "status": "pass"
+    },
+    {
+      "name": "Real XML paragraph spacing precedence case 5",
+      "status": "pass"
+    },
+    {
+      "name": "Real XML paragraph spacing precedence case 6",
+      "status": "pass"
+    },
+    {
+      "name": "Real XML paragraph spacing precedence case 7",
+      "status": "pass"
+    },
+    {
+      "name": "Generated document retains all ordered paragraphs, cells and repeated footers",
+      "status": "pass"
+    },
+    {
+      "name": "Ordinary one-column sections do not introduce CSS column fragmentation",
+      "status": "pass"
+    },
+    {
+      "name": "Preserve authored multiple columns",
+      "status": "pass"
+    },
+    {
+      "name": "Preserve authored explicit single-column width",
+      "status": "pass"
+    },
+    {
+      "name": "Actual Worker returns parsed and keeps main-thread pagination parity",
+      "status": "pass"
+    },
+    {
+      "name": "Worker paragraph spacing matches the main-thread corrected result",
+      "status": "pass"
+    },
+    {
+      "name": "CommonJS distribution retains corrected pagination content and boxes",
+      "status": "pass"
+    },
+    {
+      "name": "Shallow body clone retains shell and deeply copies header/footer",
+      "status": "pass"
+    },
+    {
+      "name": "Page clone removes ID and keeps dynamic marker",
+      "status": "pass"
+    },
+    {
+      "name": "Batch preserves order while retaining first block",
+      "status": "pass"
+    },
+    {
+      "name": "Keep-next chain crossing page boundary cannot be batched",
+      "status": "pass"
+    },
+    {
+      "name": "Wholly overflowing keep-next group moves together",
+      "status": "pass"
+    },
+    {
+      "name": "Unsafe negative margins uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Unsafe positioned blocks uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Unsafe floated blocks uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Unsafe transformed blocks uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Unsafe cleared blocks uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Unsafe vertical writing uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Column fragmentation uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Embedded floating drawing uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "Single-tail transfer uses existing fallback",
+      "status": "pass"
+    },
+    {
+      "name": "All five shipped entries match content-addressed distribution outputs",
+      "status": "pass"
+    },
+    {
+      "name": "C022 original has finite paragraph gaps and all 87 table rows",
+      "status": "pass"
+    },
+    {
+      "name": "Disposal and offline rendering produce no unhandled errors or remote requests",
+      "status": "pass"
+    }
+  ],
+  "passed": 32,
+  "original": {
+    "id": "C022",
+    "sha256": "74c3da195b8afaa638124e4fef5440193a811aa2180820411c1cb4b2ebbc6d61",
+    "sourceCharacters": 30769,
+    "exactOriginalBody": true,
+    "pages": 30,
+    "tableRows": 87,
+    "footerCount": 30,
+    "bodySha256": "c5325db863ba0658c4c5adec8429965f51da3b04f36c425c999212fd67ef390b",
+    "pageSha256": [
+      "02a44d59b1377d8c769323696c95c30f32cade7657aeab1563943f8560783a8d",
+      "365137a76e3f202bc8f3252ba8d6c1cfa962edb58583f7ee768b1658dd985cfc",
+      "11d087e1783d349f37ca9dada2775ef772d084a287538859b693adf27ae6a3d7",
+      "0f9b8098d1d071ea28cfbaa57b53ba94938f37ec1c7ce24263a947dfa19ce815",
+      "cbf3c1db880655882cbf8f3f8e820846dad274eb4da8aaa1bbbf9080812a0449",
+      "d70c476d9256b55b2d180436d8aa62f2e9d1462f585a81051c8db5faddcc77d4",
+      "0c343a2eebb63c5deb73cf77805a9311dc200358aaba9b365e5766597f739f10",
+      "223594e1321ec2f1dbc2822874d2e354f95304e59703570f288d3b8a81f470e8",
+      "f502216649245cee2982882da2b4accf43118855aa264aeeff8334b134b811ad",
+      "1187be729a860db38386426747eef071762863cdd33c577accb408d1b59d70bd",
+      "af77d826950ebbe0f6b67e5ee6fc493b37731ac64ba3138f81212f5c00762f01",
+      "e62b2c464f8e2b833c02204c9645f2b70337b57b4d28147cdc92aac1c779add6",
+      "369884105fd7a04713d8ea7980578dde3809aef8f2125156e8f71cac925c7072",
+      "98c7f67e9898974f3623191f0c58d84b47c2494014d2f67ad47018ce9b8f3282",
+      "1b7cd165848c063abcd02eb1a72a9b41715ad453c88b68a6f8207e667c9e7aae",
+      "a4ce7e0b16d04e10fb8b3d19fada07d3d5b010d9312773bfd88b179198d7d36d",
+      "745ab24ebc2975eebc71f193b41a0368d7b029aeda7f61220d169fb2c5f2ed66",
+      "1f67bae305da0bba92da560c836be41fada42618b3712c8bed25f0a3d6f434cc",
+      "dca4e6dac50db7ec6aa1a0108114a5b226e8bc1ee8a3f7f5224b2b61d21111cc",
+      "ddf3ecce0c3c8d82b391caf38b225a89a2de2d1b8b94310e21b85aae5af6bf40",
+      "71b0e4cf7eee9049bf21432ed5bec59e431ab8295a2127171bda9ab4fa3bbf05",
+      "c0c3af1ee75c1c5e8de7b250678c8eaa7b8fe1d14a1f4e82d550f2bff7dfb874",
+      "37640f90dd4028dc7edae6b108272245494aef5cadd33edde1cd2fdc08a2cf50",
+      "b36643775cee02933b264677291392460c2e20e5747742bb86a29a82d9f892b1",
+      "3617daf092db3b554e889544aede1673a3ba4310a97df63bdd1dcb95ea16d32d",
+      "f36e111ac1d0d59ac422f1379b893a090c25b06f462dc3b51940d5356cff5b99",
+      "9eebf5dea03098d02612a35901fd12ffd5df13cb3c0ef1ade95e33a5c5134b83",
+      "ffafba60959d93de83ba8b7670d13adbf4c41c1e31bfc2086ff86ce76770d653",
+      "6c2307587eb9e86a01214d2ef8b4a288cf55c39ff0ae07dcda754ceca2bbbdd1",
+      "b9357f3591a50a740f8e2378f9e559690f70323b94c3aaeea333817ba41f96be"
+    ],
+    "pageBoxes": [
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ],
+      [
+        793.71875,
+        1122.53125
+      ]
+    ],
+    "elapsedMs": 1280.6309339999998,
+    "performance": {
+      "LayoutObjects": 28831,
+      "LayoutCount": 123,
+      "RecalcStyleCount": 1126,
+      "LayoutDuration": 0.259389,
+      "RecalcStyleDuration": 0.169068,
+      "TaskDuration": 1.211783
+    }
+  },
+  "errors": [],
+  "external": [],
+  "scope": "Pinned parser and actual browser/Worker behavior; optional original bytes. No Office page-count or universal performance claim."
+}

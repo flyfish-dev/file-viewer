@@ -1,0 +1,94 @@
+{
+  "passed": 12,
+  "checks": [
+    {
+      "name": "Authored Roman numbering and punctuation survive parser and post-processing",
+      "status": "pass"
+    },
+    {
+      "name": "Percent paragraph spacing preserves fractional largest-run metrics",
+      "status": "pass"
+    },
+    {
+      "name": "Percentage strings use font-relative, not container-relative dimensions",
+      "status": "pass"
+    },
+    {
+      "name": "Point-based before/after spacing remains unchanged",
+      "status": "pass"
+    },
+    {
+      "name": "Explicit zero remains zero and malformed percentages are not applied",
+      "status": "pass"
+    },
+    {
+      "name": "List-level percent inheritance respects explicit zero and point overrides",
+      "status": "pass"
+    },
+    {
+      "name": "Placeholder layout and master paragraph spacing remain distinct",
+      "status": "pass"
+    },
+    {
+      "name": "Numbering restarts and continues after Roman/extended alphabetic start values",
+      "status": "pass"
+    },
+    {
+      "name": "Roman subtractive notation, case, suffixes and alphabetic rollover are bounded",
+      "status": "pass"
+    },
+    {
+      "name": "Repeated post-processing produces the same numbering",
+      "status": "pass"
+    },
+    {
+      "name": "C050: original bytes preserve all five Roman labels and explicit paragraph spacing",
+      "status": "pass"
+    },
+    {
+      "name": "Offline parsing and disposal produce no external requests or browser errors",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C050",
+      "sha256": "5a178b6c5dc63976ae4a133eaff14927ac40320609073b6e836ee7b814b1e685",
+      "paragraphs": [
+        {
+          "bullet": "I. ",
+          "before": 13.3333,
+          "after": 13.3333,
+          "maxFont": 26.6667
+        },
+        {
+          "bullet": "II. ",
+          "before": 13.3333,
+          "after": 13.3333,
+          "maxFont": 26.6667
+        },
+        {
+          "bullet": "III. ",
+          "before": 13.3333,
+          "after": 13.3333,
+          "maxFont": 26.6667
+        },
+        {
+          "bullet": "IV. ",
+          "before": 13.3333,
+          "after": 13.3333,
+          "maxFont": 26.6667
+        },
+        {
+          "bullet": "V. ",
+          "before": 13.3333,
+          "after": 13.3333,
+          "maxFont": 26.6667
+        }
+      ],
+      "scope": "Roman labels and percent margins only; not all fonts, alignment or slide pixel fidelity"
+    }
+  ],
+  "errors": [],
+  "external": []
+}

@@ -1,0 +1,30 @@
+{
+  "run": "35987998337",
+  "checkedCommit": "1a242d8a06801d64b48f725ff46bc37e8e6f775a",
+  "baseCommit": "3f5a70a7f23d3ab1498d293d9e5af3e3d88ac7c4",
+  "originals": [
+    "C049",
+    "C050"
+  ],
+  "checks": {
+    "pptx-text-body": 20,
+    "pptx-paragraph-numbering": 12,
+    "pptx-drawing-semantics": 26,
+    "pptx-chart-families": 25
+  },
+  "install": "actual pnpm 11.0.9 frozen filtered workspace install",
+  "builds": [
+    "core",
+    "pptx"
+  ],
+  "productionWorkerSynced": true,
+  "fullCorpusAccepted": false,
+  "sha256": {
+    "charts.json": "20d8b00d98b6f464a861d370102a570ad804a24795c984e10eb632a7ef8bbce4",
+    "generated.png": "51bd8807f7e9c095c3182c3d8e3205139ca87316915bd11fc1dcc54e238a789b",
+    "drawing.json": "59db568b76b0408ed78d3c2d9f6401c5f53fb6d1644157bbc0ad52d577e97398",
+    "report.json": "bd8b6cb6af9d85d446423a2139633fc5c0401803adbf25e3a3dd8470be3da19b",
+    "baseline.json": "1655a8546f779375f02fa633ba7ebf7754cb5a116edad0545c17356ebea42508",
+    "paragraphs.json": "9dbe3700bb9be1006f76a68ccb99404598a4387834b1623f36d02ca72a6a7573"
+  }
+}
