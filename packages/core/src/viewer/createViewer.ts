@@ -47,6 +47,7 @@ import {
   installFileViewerRendererPlugins,
   listFileViewerAutoRendererPresets,
   resolveFileViewerRendererPresetInputs,
+  resolveFileViewerRendererDefinition,
 } from '../registry/registry';
 import {
   createFileRenderHandlerLoader,
@@ -271,6 +272,7 @@ export const createViewer = (
   let installedAutoRenderersEnabled = resolveAutoRenderersEnabled(options);
   let installedAutoRendererVersion = -1;
   let currentSource: NormalizedFileViewerSource | null = null;
+  let currentRendererId: string | null = null;
   let currentRenderTarget: HTMLElement | null = null;
   let currentDocumentRoot: HTMLElement | null = null;
   const renderSurfaceState = createFileViewerRenderSurfaceState<RendererSession>();
@@ -498,6 +500,7 @@ export const createViewer = (
         load: createFileRenderHandlerLoader({
           handler: registration.handler,
           rendererId: definition.id,
+          allowUrlSource: definition.sourceAccess === 'stream-preferred',
           getTarget: context => context.surface.container as HTMLDivElement,
         }),
       });
@@ -508,6 +511,28 @@ export const createViewer = (
       plugins,
       registerHandler,
     });
+  };
+
+  const resolveDetectedSourceType = async (
+    source: NormalizedFileViewerSource,
+    signal?: AbortSignal
+  ) => {
+    for (const definition of registry.list()) {
+      if (!definition.resolveSourceType) continue
+      const detected = await definition.resolveSourceType({
+        filename: source.filename,
+        extension: source.extension,
+        url: source.url,
+        file: source.file,
+        buffer: source.buffer,
+        mimeType: source.file?.type,
+        signal,
+      })
+      if (typeof detected === 'string' && detected.trim()) {
+        return detected.trim()
+      }
+    }
+    return source.extension
   };
 
   const renderNestedBuffer: NonNullable<FileRenderContext['renderNestedBuffer']> = async (
@@ -592,7 +617,16 @@ export const createViewer = (
 
   const getCapabilitiesForExtension = (extension?: string) => {
     const targetExtension = extension || currentSource?.extension || '';
-    const renderer = registry.getByExtension(targetExtension);
+    const renderer = extension
+      ? resolveFileViewerRendererDefinition(registry, {
+          extension,
+        })
+      : currentRendererId
+        ? registry.getById(currentRendererId)
+        : resolveFileViewerRendererDefinition(registry, {
+            filename: currentSource?.filename,
+            extension: targetExtension,
+          });
     const zoomState = zoomController.getState();
     if (!renderer) {
       return applyFileViewerZoomAvailability(createUnsupportedAvailability(targetExtension), zoomState);
@@ -689,6 +723,7 @@ export const createViewer = (
     await session?.destroy?.();
     removeRenderTarget(target || undefined);
     currentSource = null;
+    currentRendererId = null;
     currentDocumentRoot = null;
     applyFileViewerRenderSurfaceState(renderSurfaceState, {
       session: null,
@@ -726,9 +761,30 @@ export const createViewer = (
       }
 
       const normalized = normalizeSource(source);
-      currentSource = normalized;
+      let resolvedExtension: string;
+      try {
+        resolvedExtension = await resolveDetectedSourceType(normalized, loadSignal);
+      } catch (error) {
+        requestScope.requestController.clearAbortController(requestAbortController);
+        if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted || isAbortError(error)) {
+          return null;
+        }
+        throw error;
+      }
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
+        requestScope.requestController.clearAbortController(requestAbortController);
+        return null;
+      }
 
-      const renderer = registry.getByExtension(normalized.extension);
+      const renderer = resolveFileViewerRendererDefinition(registry, {
+        filename: normalized.filename,
+        extension: resolvedExtension,
+      });
+      const routedSource = resolvedExtension === normalized.extension
+        ? normalized
+        : { ...normalized, extension: resolvedExtension };
+      currentSource = normalized;
+      currentRendererId = renderer?.id || null;
       const startedAt = Date.now();
       await emitLifecycle(options, createOptions.onEvent, 'load-start', normalized, version, startedAt);
 
@@ -740,7 +796,7 @@ export const createViewer = (
       currentDocumentRoot = target;
 
       if (!renderer?.load) {
-        renderMissingRendererState(target, normalized.extension, options);
+        renderMissingRendererState(target, resolvedExtension, options);
         applyFileViewerRenderSurfaceState(renderSurfaceState, { session: null });
         syncWatermarkOverlay();
         emitZoomAndOperationAvailabilityChange();
@@ -751,7 +807,7 @@ export const createViewer = (
       let session: RendererSession | undefined;
       try {
         session = await renderer.load({
-          source: normalized,
+          source: routedSource,
           surface,
           options,
           signal: loadSignal,
@@ -786,13 +842,14 @@ export const createViewer = (
           thumbnailAdapter: null,
         });
         removeWatermarkOverlay();
-        renderFileViewerErrorState(target, normalized.extension, error, options);
+        renderFileViewerErrorState(target, resolvedExtension, error, options);
         emitZoomAndOperationAvailabilityChange();
         throw error;
       }
 
-      if (!requestScope.isCurrentRequest(version)) {
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
         await disposeStaleSession(session, targetHost);
+        requestScope.requestController.clearAbortController(requestAbortController);
         return null;
       }
 
@@ -800,10 +857,28 @@ export const createViewer = (
       syncWatermarkOverlay();
       zoomController.refreshProvider();
       viewStateController.refreshProvider();
+      const finishStaleLoad = async () => {
+        // unload/replace may already have disposed this session. Clear only
+        // the session still owned by this load, preserving a replacement.
+        if (renderSurfaceState.session === session && currentRenderTarget === targetHost) {
+          await destroyCurrent('replace');
+        } else {
+          removeRenderTarget(targetHost);
+        }
+        requestScope.requestController.clearAbortController(requestAbortController);
+      };
       await documentActions.refreshDocumentIndex({ notify: false });
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
+        await finishStaleLoad();
+        return null;
+      }
       await fitController.applyInitialFit({
         skip: hasFileViewerExplicitInitialViewState(options.initialViewState),
       });
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
+        await finishStaleLoad();
+        return null;
+      }
       zoomController.refreshProvider();
       viewStateController.refreshProvider();
       emitZoomAndOperationAvailabilityChange();
@@ -840,7 +915,13 @@ export const createViewer = (
       return getCapabilitiesForExtension(extension);
     },
     getRenderer(extension?: string) {
-      return registry.getByExtension(extension || currentSource?.extension || '');
+      if (!extension && currentRendererId) {
+        return registry.getById(currentRendererId);
+      }
+      return resolveFileViewerRendererDefinition(registry, {
+        filename: extension ? undefined : currentSource?.filename,
+        extension: extension || currentSource?.extension || '',
+      });
     },
     getSource() {
       return currentSource;

@@ -170,7 +170,7 @@ const reviewedGitleaksFingerprints = gitleaksIgnore
   .filter((line) => line && !line.startsWith('#'))
 assert.equal(
   reviewedGitleaksFingerprints.length,
-  43,
+  46,
   'Gitleaks historical review baseline changed without updating the governance evidence'
 )
 assert.equal(

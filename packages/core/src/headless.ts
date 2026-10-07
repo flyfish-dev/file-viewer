@@ -297,6 +297,8 @@ export type {
 
 export {
   createRendererRegistry,
+  matchesFileViewerRendererFilename,
+  resolveFileViewerRendererDefinition,
 } from './registry/registry';
 
 export {
@@ -595,6 +597,8 @@ export type {
   NormalizedFileViewerSource,
   RenderSurface,
   RendererCapability,
+  RendererSourceTypeProbe,
+  RendererSourceTypeProbeInput,
   RendererDefinition,
   RendererLoadContext,
   RendererLoader,

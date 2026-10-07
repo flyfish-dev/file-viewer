@@ -22,6 +22,8 @@ const options = {
 
 `modelRenderer` can be combined with CAD and other renderer packages, or consumed through `@file-viewer/preset-all`. Full packages and `@file-viewer/vite-plugin` prepare the default offline assets. A renderer-only integration must self-host the OCCT worker, runtime, WASM, and both license notices.
 
+Specialist capabilities stay opt-in through separate subpath entries: `@file-viewer/renderer-3d/ifc` for IFC and `@file-viewer/renderer-3d/geo3d` for LAS / LAZ / COPC / GeoTIFF / COG / CityJSON / 3D Tiles / 3TZ. Neither sub-entry is imported by the ordinary model renderer or added implicitly to Full presets. See `IFC.md` and `GEO3D.md` for installation, self-hosted runtime assets, and configuration.
+
 Default paths:
 
 - `wasm/model/occt-worker.js`
@@ -35,5 +37,5 @@ For subpath deployments or a dedicated asset origin, provide final URLs through 
 - STEP / STP, IGES / IGS, and BREP are tessellated by `occt-import-js` / OpenCascade in a worker. Assembly hierarchy, instances, normals, and face colors are preserved when the Three.js scene is built.
 - General models support WebGL orbit controls, fit-to-view, grid, axes, wireframe, and auto-rotate. External textures or binary resources referenced by `gltf`, `dae`, and `fbx` continue to resolve against the original file URL directory.
 - Unified global zoom: the renderer registers the standard zoom provider, so the outer toolbar's zoom in, zoom out, reset, and fit actions control the camera. Wheel, trackpad, and pinch zoom also update the shared zoom state.
-- IFC and 3DM currently provide signature detection and explicit integration guidance only. They still need dedicated `web-ifc` / That Open and `rhino3dm` renderers and are not reported as successful previews.
+- IFC is available through the explicit `@file-viewer/renderer-3d/ifc` specialist entry. Streaming COPC / 3D Tiles are available through the explicit `@file-viewer/renderer-3d/geo3d` entry. 3DM still needs a dedicated `rhino3dm` renderer.
 - `@file-viewer/core` does not bundle Three.js or a geometry kernel. Install this renderer, the matching preset, or a full package when model preview is required.

@@ -1,0 +1,98 @@
+name: Geo3D focused validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'packages/core/**'
+      - 'packages/renderers/3d/**'
+      - 'test/geo3d-*.spec.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/geo3d-focused-validation.yml'
+  push:
+    branches: [feat/geo3d-opt-in]
+    paths:
+      - 'packages/renderers/3d/**'
+      - 'packages/renderers/text/src/xmlEngines.ts'
+      - '.github/workflows/geo3d-focused-validation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: geo3d-focused-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+        with:
+          version: 11.0.9
+          run_install: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install frozen workspace
+        id: install
+        run: pnpm install --frozen-lockfile
+      - name: Geo3D entry and texture contracts
+        id: entry
+        shell: bash
+        run: |
+          mkdir -p output/geo3d-focused
+          pnpm test:geo3d-entry 2>&1 | tee output/geo3d-focused/entry.log
+      - name: Install Chromium
+        id: browser
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: pnpm exec playwright install --with-deps chromium webkit
+      - name: Browser datasets and resource ownership
+        if: >-
+          ${{ !cancelled() && steps.entry.outcome == 'success' && steps.browser.outcome == 'success' }}
+        shell: bash
+        run: node packages/renderers/3d/scripts/verify-geo3d-browser.mjs 2>&1 | tee output/geo3d-focused/browser.log
+      - name: XML malformed-WASM recovery regression
+        if: >-
+          ${{ !cancelled() && steps.install.outcome == 'success' && steps.browser.outcome == 'success' }}
+        shell: bash
+        run: |
+          pnpm --filter @file-viewer/core build
+          pnpm --filter @file-viewer/renderer-text build
+          node packages/renderers/text/test/issue-305-xml-profiles.browser.mjs 2>&1 | tee output/geo3d-focused/xml.log
+      - name: Strict fixture and original-delivery verification
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        shell: bash
+        run: |
+          python3 -m venv "$RUNNER_TEMP/geo3d-focused-python"
+          python="$RUNNER_TEMP/geo3d-focused-python/bin/python"
+          "$python" -m pip install -r packages/renderers/3d/scripts/geo3d-samples-requirements.txt
+          "$python" packages/renderers/3d/scripts/verify-geo3d-samples.py --range-smoke > output/geo3d-focused/fixtures.json
+          "$python" packages/renderers/3d/scripts/test-geo3d-compressed-samples.py 2>&1 | tee output/geo3d-focused/fixture-tests.log
+          "$python" packages/renderers/3d/scripts/restore-geo3d-originals.py --output packages/renderers/3d/test/fixtures/geo3d/samples-mit/original-deliveries --verify-only > output/geo3d-focused/originals.json
+      - name: Repository governance and workflow formatting
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        shell: bash
+        run: pnpm verify:github-governance 2>&1 | tee output/geo3d-focused/governance.log
+      - name: Retain focused evidence even when a check fails
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: geo3d-focused-${{ github.sha }}
+          path: |
+            output/geo3d-focused/
+            output/geo3d-validation/engine-ownership.json
+            output/geo3d-browser/report.json
+            output/geo3d-browser/*.png
+          if-no-files-found: error
+          retention-days: 14

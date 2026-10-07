@@ -956,8 +956,8 @@ export interface FileRenderContext {
   filename?: string
   url?: string
   streamUrl?: string
-  /** Original browser File retained for renderers that support Blob-backed random access. */
-  sourceFile?: File
+  /** Original browser File or Blob retained for renderers with random access. */
+  sourceFile?: File | Blob
   signal?: AbortSignal
   options?: FileViewerOptions
   surface?: RenderSurface
@@ -2071,11 +2071,35 @@ export interface RendererCapability {
 export type FileViewerFormatSupportLevel = 'high-fidelity' | 'structured' | 'basic' | 'experimental'
 export type FileViewerFormatStatus = 'stable' | 'experimental'
 
+export interface RendererSourceTypeProbeInput {
+  filename: string
+  extension: string
+  url?: string
+  file?: File | Blob
+  buffer?: ArrayBuffer
+  mimeType?: string
+  signal?: AbortSignal
+}
+
+export type RendererSourceTypeProbe = (
+  input: RendererSourceTypeProbeInput
+) => string | false | null | undefined | Promise<string | false | null | undefined>
+
 export interface RendererDefinition {
   id: string
   label: string
   category: FileViewerRendererCategory
   extensions: readonly string[]
+  /** Optional compound filename claims such as tileset.json or *.copc.laz. */
+  filenamePatterns?: readonly string[]
+  /** Prefer passing the original URL to the renderer instead of eagerly downloading it. */
+  sourceAccess?: 'buffer' | 'stream-preferred'
+  /**
+   * Optional bounded content probe. Return the specialist type to route the
+   * source through this renderer, or false when the existing extension owner
+   * must remain unchanged.
+   */
+  resolveSourceType?: RendererSourceTypeProbe
   async?: boolean
   /** Product-level fidelity contract generated from ecosystem/format-catalog.json. */
   supportLevel?: FileViewerFormatSupportLevel

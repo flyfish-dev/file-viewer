@@ -1,0 +1,47 @@
+{
+  "asset": {
+    "version": "1.1"
+  },
+  "geometricError": 64,
+  "root": {
+    "boundingVolume": {
+      "box": [
+        0,
+        0,
+        5,
+        5,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        5
+      ]
+    },
+    "transform": [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      6378137,
+      0,
+      0,
+      1
+    ],
+    "geometricError": 32,
+    "refine": "REPLACE",
+    "content": {
+      "uri": "nested/tileset.json"
+    }
+  }
+}
