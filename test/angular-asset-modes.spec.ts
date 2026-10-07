@@ -1,4 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import {
+  preparePackedConsumerManifest,
+  summarizeConsumerAudit
+} from '../apps/component-demo/scripts/build-packed-issue-consumer.mjs'
 import { verifyAngularDevelopmentAssetModes } from '../apps/component-demo/scripts/lib/angular-asset-modes.mjs'
 
 describe('Angular asset fixture server isolation', () => {
@@ -42,4 +46,67 @@ describe('Angular asset fixture server isolation', () => {
       ])
     }
   )
+})
+
+describe('packed consumer dependency policy', () => {
+  it('keeps explicit fixture overrides without mutating the fixture', () => {
+    const fixture = {
+      dependencies: {
+        '@file-viewer/core': '3.1.2',
+        'file-viewer-copy-assets': '3.1.2',
+        vue: '3.5.43'
+      },
+      overrides: {
+        '@angular/build': { piscina: '5.3.2' },
+        '@angular/cli': { '@modelcontextprotocol/sdk': '1.31.0' }
+      }
+    }
+    const manifest = preparePackedConsumerManifest(fixture, '3.1.3')
+    expect(manifest.dependencies).toEqual({
+      '@file-viewer/core': '3.1.3',
+      'file-viewer-copy-assets': '3.1.3',
+      vue: '3.5.43'
+    })
+    expect(manifest.overrides).toEqual(fixture.overrides)
+    manifest.overrides['@angular/build'].piscina = 'changed'
+    expect(fixture.overrides['@angular/build'].piscina).toBe('5.3.2')
+    expect(fixture.dependencies['@file-viewer/core']).toBe('3.1.2')
+  })
+
+  it('does not inject workspace policy into a fixture without overrides', () => {
+    const fixture = { dependencies: { '@file-viewer/core': '3.1.2' } }
+    const manifest = preparePackedConsumerManifest(fixture, '3.1.3')
+    expect(manifest.overrides).toEqual({})
+    expect(fixture).not.toHaveProperty('overrides')
+  })
+})
+
+describe('packed consumer audit evidence', () => {
+  it('separates propagated affected entries from distinct advisories', () => {
+    const advisory = { url: 'https://github.com/advisories/GHSA-test' }
+    const report = {
+      vulnerabilities: {
+        direct: { via: [advisory] },
+        indirect: { via: ['direct', advisory] }
+      },
+      metadata: { vulnerabilities: { high: 2, total: 2 } }
+    }
+    expect(summarizeConsumerAudit(report, 1)).toEqual({
+      affectedEntries: { high: 2, total: 2 },
+      distinctAdvisories: [advisory.url]
+    })
+  })
+
+  it('accepts a completed clean audit but rejects missing data and audit errors', () => {
+    const report = { vulnerabilities: {}, metadata: { vulnerabilities: { total: 0 } } }
+    expect(summarizeConsumerAudit(report, 0).distinctAdvisories).toEqual([])
+    expect(() => summarizeConsumerAudit(report, 2)).toThrow('npm audit failed')
+    expect(() => summarizeConsumerAudit({ error: { code: 'ENOAUDIT' } }, 1)).toThrow(
+      'npm audit error'
+    )
+    expect(() => summarizeConsumerAudit({}, 0)).toThrow('Missing npm audit data')
+    expect(() =>
+      summarizeConsumerAudit({ ...report, vulnerabilities: { missing: {} } }, 1)
+    ).toThrow()
+  })
 })

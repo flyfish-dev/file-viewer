@@ -213,6 +213,20 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Upload packed-consumer security evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: packed-consumer-security-evidence
+          path: |
+            output/packed-issue-consumer/*/audit-*.json
+            output/packed-issue-consumer/*/package.json
+            output/packed-issue-consumer/*/package-lock.json
+            output/packed-issue-consumer/*/candidate-packages.json
+            output/packed-issue-consumer/*/engine-candidate-provenance.json
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Verify CHM Rust/WASM build and distribution assets
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:chm-renderer
