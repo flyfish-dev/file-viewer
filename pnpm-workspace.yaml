@@ -37,7 +37,8 @@ overrides:
   'adm-zip@<0.6.1': 0.6.1
   'acorn@>=7.0.0 <7.1.1': 7.4.1
   'js-yaml@>=4.0.0 <4.3.2': 4.3.2
-  'sharp@<0.35.4': 0.35.4
+  # Keep Next's optional image processor on the reviewed librsvg security release.
+  'sharp@<0.35.5': 0.35.5
   vitest: 5.0.1
   'epubjs>@xmldom/xmldom': 0.9.12
   # issue #246: @xmldom/xmldom <0.9.12 has six GHSA advisories and the XMind
