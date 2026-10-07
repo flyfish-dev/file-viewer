@@ -68,7 +68,7 @@
   },
   "dependencies": {
     "dingbat-to-unicode": "^1.0.1",
-    "dompurify": "3.4.15",
+    "dompurify": "3.4.16",
     "jszip": "3.10.2",
     "tinycolor2": "^1.6.0",
     "utif": "^3.1.0"
