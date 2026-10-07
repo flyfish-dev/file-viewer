@@ -96,6 +96,15 @@ test('DOMPurify manifests, override and installed runtimes use the reviewed secu
     assert.equal(require('dompurify').version, patchedVersion, `${path}: unsafe runtime`)
   }
 })
+test('docs-site Next uses the reviewed sharp security runtime', () => {
+  const patchedVersion = '0.35.5'
+  const require = createRequire(new URL('../../apps/docs-site/package.json', import.meta.url))
+  // Resolve through Next: a root dependency must not conceal its image-processing runtime.
+  const nextRequire = createRequire(require.resolve('next/package.json'))
+  assert.equal(nextRequire('sharp').versions.sharp, patchedVersion, 'Unsafe Next sharp runtime')
+  const override = read('pnpm-workspace.yaml').match(/^  'sharp@<0\.35\.5': (\S+)$/m)?.[1]
+  assert.equal(override, patchedVersion, 'Workspace override must retain the reviewed sharp fix')
+})
 test('Dependabot groups version and security Angular updates in the nested fixture', () => {
   const entry = read('.github/dependabot.yml')
     .split('  - package-ecosystem: npm')
