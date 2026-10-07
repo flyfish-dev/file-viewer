@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
+import { createRequire } from 'node:module'
 const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8')
 function angularCohort(manifest) {
   const dependencies = { ...manifest.dependencies, ...manifest.devDependencies }
@@ -74,11 +75,51 @@ test('missing members, ranges and prerelease versions are rejected', () => {
   delete changed.devDependencies['@angular/compiler-cli']
   assert.throws(() => angularCohort(changed), /Missing Angular/)
 })
-test('thumbnail manifest agrees with workspace Vitest security override', () => {
+test('root and thumbnail declarations agree with the reviewed workspace Vitest cohort', () => {
+  const root = JSON.parse(read('package.json'))
   const thumbnail = JSON.parse(read('packages/thumbnail/package.json'))
   const override = read('pnpm-workspace.yaml').match(/^  vitest: (\S+)$/m)?.[1]
   assert.ok(override)
+  assert.ok(
+    [override, `^${override}`].includes(root.devDependencies.vitest),
+    'Root Vitest declaration must use the reviewed exact version or its caret range'
+  )
   assert.equal(thumbnail.devDependencies.vitest, override)
+})
+test('root and thumbnail physically installed Vitest runtimes agree with the workspace override', () => {
+  const override = read('pnpm-workspace.yaml').match(/^  vitest: (\S+)$/m)?.[1]
+  assert.ok(override)
+  for (const path of ['package.json', 'packages/thumbnail/package.json']) {
+    // Resolve from each package; root hoisting alone must not conceal a split runner installation.
+    const require = createRequire(new URL(`../../${path}`, import.meta.url))
+    const installed = require('vitest/package.json')
+    assert.equal(installed.name, 'vitest')
+    assert.equal(installed.version, override, `${path}: installed Vitest does not match override`)
+  }
+})
+test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
+  const patchedVersion = '3.4.16'
+  const override = read('pnpm-workspace.yaml').match(/^  dompurify: (\S+)$/m)?.[1]
+  assert.equal(override, patchedVersion, 'Workspace override must not restore vulnerable DOMPurify')
+  for (const path of [
+    'packages/core/package.json',
+    ...['doc', 'drawing', 'pptx', 'text'].map((name) => `packages/renderers/${name}/package.json`)
+  ]) {
+    const manifest = JSON.parse(read(path))
+    // Consumers do not inherit this workspace's overrides: the published manifest must be safe too.
+    assert.equal(manifest.dependencies.dompurify, patchedVersion, `${path}: unsafe consumer pin`)
+    const require = createRequire(new URL(`../../${path}`, import.meta.url))
+    assert.equal(require('dompurify').version, patchedVersion, `${path}: unsafe runtime`)
+  }
+})
+test('docs-site Next uses the reviewed sharp security runtime', () => {
+  const patchedVersion = '0.35.5'
+  const require = createRequire(new URL('../../apps/docs-site/package.json', import.meta.url))
+  // Resolve through Next: a root dependency must not conceal its image-processing runtime.
+  const nextRequire = createRequire(require.resolve('next/package.json'))
+  assert.equal(nextRequire('sharp').versions.sharp, patchedVersion, 'Unsafe Next sharp runtime')
+  const override = read('pnpm-workspace.yaml').match(/^  'sharp@<0\.35\.5': (\S+)$/m)?.[1]
+  assert.equal(override, patchedVersion, 'Workspace override must retain the reviewed sharp fix')
 })
 test('Dependabot groups version and security Angular updates in the nested fixture', () => {
   const entry = read('.github/dependabot.yml')

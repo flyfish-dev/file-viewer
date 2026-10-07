@@ -76,7 +76,7 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.2",
     "@prettier/plugin-xml": "3.4.2",
-    "dompurify": "3.4.15",
+    "dompurify": "3.4.16",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.12",
     "prettier": "3.9.6"
