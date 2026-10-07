@@ -35,7 +35,14 @@ as a finished document. The original coordinate tolerances remain unchanged.
 
 Vue and `@vue/compiler-sfc` are aligned at 3.5.43, a patch update that includes
 the server-renderer security fix. The Vue CLI 5 and React fixture versions are
-preserved. This fixture does not inherit the repository's pnpm overrides and
+preserved.
+[`ts-loader` 9.6.2](https://github.com/TypeStrong/ts-loader/releases/tag/v9.6.2) replaces
+its `micromatch` dependency with `picomatch` and removes that route to the
+unpatched `braces` advisory. The loader's declared Node.js minimum remains 12.
+This fixture uses TypeScript 5.9.3; upstream notes changed resolver behavior
+in some older TypeScript scenarios.
+
+This fixture does not inherit the repository's pnpm overrides and
 does not override Mermaid or KaTeX. Its legacy development-tooling advisories
 and the transitive KaTeX advisory must be reported separately; a passing build
 or browser regression is not a clean security audit.
