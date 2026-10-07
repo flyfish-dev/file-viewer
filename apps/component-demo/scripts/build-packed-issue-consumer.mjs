@@ -23,11 +23,38 @@ export function summarizeConsumerAudit(report, status) {
   assert.ok(status === 0 || status === 1, `npm audit failed with status ${status}`)
   assert.ok(!report.error, `npm audit error: ${JSON.stringify(report.error)}`)
   assert.ok(report.vulnerabilities && report.metadata?.vulnerabilities, 'Missing npm audit data')
+  assert.equal(report.auditReportVersion, 2, 'Unsupported npm audit report version')
+  assert.ok(
+    typeof report.vulnerabilities === 'object' && !Array.isArray(report.vulnerabilities),
+    'Invalid npm audit vulnerabilities'
+  )
   const affectedEntries = report.metadata.vulnerabilities
+  for (const severity of ['info', 'low', 'moderate', 'high', 'critical', 'total'])
+    assert.ok(
+      Number.isSafeInteger(affectedEntries[severity]) && affectedEntries[severity] >= 0,
+      `Invalid npm audit ${severity} count`
+    )
+  assert.equal(
+    affectedEntries.total,
+    ['info', 'low', 'moderate', 'high', 'critical'].reduce(
+      (total, severity) => total + affectedEntries[severity],
+      0
+    ),
+    'Inconsistent npm audit severity counts'
+  )
   assert.equal(affectedEntries.total, Object.keys(report.vulnerabilities).length)
   const advisories = new Set()
-  for (const vulnerability of Object.values(report.vulnerabilities))
-    for (const via of vulnerability.via) if (typeof via === 'object') advisories.add(via.url)
+  for (const vulnerability of Object.values(report.vulnerabilities)) {
+    assert.ok(Array.isArray(vulnerability.via), 'Invalid npm audit advisory paths')
+    for (const via of vulnerability.via) {
+      if (typeof via === 'string') continue
+      assert.ok(
+        typeof via?.url === 'string' && via.url.length > 0,
+        'Missing npm audit advisory URL'
+      )
+      advisories.add(via.url)
+    }
+  }
   return { affectedEntries, distinctAdvisories: [...advisories].sort() }
 }
 

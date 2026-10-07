@@ -82,23 +82,30 @@ describe('packed consumer dependency policy', () => {
 })
 
 describe('packed consumer audit evidence', () => {
+  const cleanReport = {
+    auditReportVersion: 2,
+    vulnerabilities: {},
+    metadata: { vulnerabilities: { info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: 0 } }
+  }
+
   it('separates propagated affected entries from distinct advisories', () => {
     const advisory = { url: 'https://github.com/advisories/GHSA-test' }
     const report = {
+      auditReportVersion: 2,
       vulnerabilities: {
         direct: { via: [advisory] },
         indirect: { via: ['direct', advisory] }
       },
-      metadata: { vulnerabilities: { high: 2, total: 2 } }
+      metadata: { vulnerabilities: { ...cleanReport.metadata.vulnerabilities, high: 2, total: 2 } }
     }
     expect(summarizeConsumerAudit(report, 1)).toEqual({
-      affectedEntries: { high: 2, total: 2 },
+      affectedEntries: report.metadata.vulnerabilities,
       distinctAdvisories: [advisory.url]
     })
   })
 
   it('accepts a completed clean audit but rejects missing data and audit errors', () => {
-    const report = { vulnerabilities: {}, metadata: { vulnerabilities: { total: 0 } } }
+    const report = cleanReport
     expect(summarizeConsumerAudit(report, 0).distinctAdvisories).toEqual([])
     expect(() => summarizeConsumerAudit(report, 2)).toThrow('npm audit failed')
     expect(() => summarizeConsumerAudit({ error: { code: 'ENOAUDIT' } }, 1)).toThrow(
@@ -108,5 +115,32 @@ describe('packed consumer audit evidence', () => {
     expect(() =>
       summarizeConsumerAudit({ ...report, vulnerabilities: { missing: {} } }, 1)
     ).toThrow()
+  })
+
+  it('rejects malformed zero-finding reports and incomplete severity totals', () => {
+    expect(() => summarizeConsumerAudit({ ...cleanReport, vulnerabilities: [] }, 0)).toThrow(
+      'Invalid npm audit vulnerabilities'
+    )
+    expect(() => summarizeConsumerAudit({ ...cleanReport, auditReportVersion: 3 }, 0)).toThrow(
+      'Unsupported npm audit report version'
+    )
+    expect(() =>
+      summarizeConsumerAudit(
+        {
+          ...cleanReport,
+          metadata: { vulnerabilities: { total: 0 } }
+        },
+        0
+      )
+    ).toThrow('Invalid npm audit info count')
+    expect(() =>
+      summarizeConsumerAudit(
+        {
+          ...cleanReport,
+          metadata: { vulnerabilities: { ...cleanReport.metadata.vulnerabilities, high: 1 } }
+        },
+        0
+      )
+    ).toThrow('Inconsistent npm audit severity counts')
   })
 })
