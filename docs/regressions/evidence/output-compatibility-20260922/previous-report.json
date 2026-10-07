@@ -1,0 +1,150 @@
+{
+  "mode": "unit-and-browser",
+  "checks": [
+    {
+      "name": "DOC nonuniform union grid survives merged first row",
+      "status": "pass"
+    },
+    {
+      "name": "DOC justification overrides left indentation",
+      "status": "pass"
+    },
+    {
+      "name": "DOC uses valid middle alignment and upright vertical text",
+      "status": "pass"
+    },
+    {
+      "name": "DOC missing geometric metadata keeps the fallback table",
+      "status": "pass"
+    },
+    {
+      "name": "DOC revision filtering still precedes vertical layout",
+      "status": "pass"
+    },
+    {
+      "name": "Markdown Unicode, repeated and authored heading IDs",
+      "status": "pass"
+    },
+    {
+      "name": "Markdown fragment resolution stays inside its own viewer",
+      "status": "pass"
+    },
+    {
+      "name": "Markdown leaves unresolved or external link unchanged: #%E0%A4%A",
+      "status": "pass"
+    },
+    {
+      "name": "Markdown leaves unresolved or external link unchanged: #missing",
+      "status": "pass"
+    },
+    {
+      "name": "Markdown leaves unresolved or external link unchanged: https://example.test/#章节-一",
+      "status": "pass"
+    },
+    {
+      "name": "Markdown preserves modified clicks and cleans temporary focus state",
+      "status": "pass"
+    },
+    {
+      "name": "DOCX leaves scheduled pagination direct children intact",
+      "status": "pass"
+    },
+    {
+      "name": "DOCX leaves running pagination direct children intact",
+      "status": "pass"
+    },
+    {
+      "name": "DOCX builds exactly one responsive frame per completed page",
+      "status": "pass"
+    },
+    {
+      "name": "DOCX observer does not loop on its own mutations",
+      "status": "pass"
+    },
+    {
+      "name": "DOCX disposal cancels late frame mutations",
+      "status": "pass"
+    },
+    {
+      "name": "DOCX continuous layout retains flow frame semantics",
+      "status": "pass"
+    },
+    {
+      "name": "DrawingML built-in style {5C22544A-7EE6-4342-B048-85BDC9FD1C3A}",
+      "status": "pass"
+    },
+    {
+      "name": "DrawingML built-in style {21E4AEA4-8DFA-4A89-87EB-49C32662AFE0}",
+      "status": "pass"
+    },
+    {
+      "name": "DrawingML built-in style {F5AB1C69-6EDB-4FF4-983F-18BD219EF322}",
+      "status": "pass"
+    },
+    {
+      "name": "DrawingML built-in style {00A15C55-8517-42AA-B614-E9B94910E393}",
+      "status": "pass"
+    },
+    {
+      "name": "DrawingML built-in style {7DF18680-E054-41AD-8BC1-D1AEF772440D}",
+      "status": "pass"
+    },
+    {
+      "name": "DrawingML built-in style {93296810-A885-4BE3-A3E7-6D5BEEA58F35}",
+      "status": "pass"
+    },
+    {
+      "name": "DrawingML does not invent an unknown built-in style",
+      "status": "pass"
+    },
+    {
+      "name": "PPTX real ZIP/XML pipeline: standard",
+      "status": "pass"
+    },
+    {
+      "name": "PPTX real ZIP/XML pipeline: unknown",
+      "status": "pass"
+    },
+    {
+      "name": "PPTX real ZIP/XML pipeline: explicit",
+      "status": "pass"
+    },
+    {
+      "name": "PPTX real ZIP/XML pipeline: missing",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: real PPTX parser output and chart library keep slide frames",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: Markdown rendering, Unicode TOC and independent host scrolling",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: PDF hand tool moves scroll position using real mouse input",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: PDF hand tool preserves controls, touch and modifier gestures",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: PDF hand tool cancels active drag on disposal",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: DOC layout keeps asymmetric grid, middle alignment and vertical glyphs",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: actual DOCX pagination completes before page framing",
+      "status": "pass"
+    },
+    {
+      "name": "Chromium: no unhandled browser errors or external HTTP requests",
+      "status": "pass"
+    }
+  ],
+  "passed": 36
+}

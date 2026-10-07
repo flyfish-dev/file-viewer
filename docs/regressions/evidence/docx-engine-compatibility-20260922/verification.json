@@ -1,0 +1,14 @@
+{
+  "run": "35754946798",
+  "engineCommit": "4236e8ad0d9a37563cb93a4fb1b9f2fce295d5e7",
+  "scope": "six owning builds; frozen workspace lock-only check; 11 engine checks, 36 prior checks, container regressions; not a full workspace release build",
+  "sha256": {
+    "docs/regressions/evidence/docx-engine-compatibility-20260922/report.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "docs/regressions/evidence/docx-engine-compatibility-20260922/worker.json": "4c43443bf2d1a126065a0d4d7c22db4934ad2c72e029cf3a1238945ffa0d35ce",
+    "docs/regressions/evidence/docx-engine-compatibility-20260922/original-checks.json": "62794adb98008fac9ac39d7481ac1505092919f4fef4e811408f744c16f404b4",
+    "docs/regressions/evidence/docx-engine-compatibility-20260922/charts.png": "c917441dc214e4f16b85125d44da22fc7e0821ca125a6fd44bb549c7467b46eb",
+    "docs/regressions/evidence/docx-engine-compatibility-20260922/containers-report.json": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c",
+    "docs/regressions/evidence/docx-engine-compatibility-20260922/geometry.json": "f184a205e73413eaca84d6542870d0628594a98bdb6b0ea6203fc8b04cbd6bf8",
+    "docs/regressions/evidence/docx-engine-compatibility-20260922/previous-report.json": "a4904fc1ded2fb1a371ca8926b326187d5929ebd2159e0afbe2c9e363021c59d"
+  }
+}

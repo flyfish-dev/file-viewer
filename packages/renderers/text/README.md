@@ -1,5 +1,7 @@
 # @file-viewer/renderer-text
 
+Markdown 会在自身渲染区域内高亮带语言标记的代码块，例如 `js`、`html`、`py`，并支持 Shadow DOM 和明暗主题。可设置 `options.text.markdownHighlight: false` 关闭。无语言标记、不支持的语言、Mermaid 及 JavaScript 字符串长度超过 102,400 的代码块保留纯文本；无需调用宿主页面的 `highlightAll()`。
+
 Flyfish File Viewer 的基础代码、文本和 Markdown renderer 包。Mermaid、patch 左右比对和 Git bundle 检查已拆到 `@file-viewer/capability-mermaid` 与 `@file-viewer/capability-text-tools`，不进入 standard/full 默认闭包。
 
 ## 用法
@@ -126,3 +128,19 @@ DTD、实体声明、XInclude、XSD include/import/redefine/override、XSLT incl
 
 源仓库的 `test/fixtures/issue-305/` 提供可再分发的 valid/invalid XML、XSD、XSLT 和 manifest。
 引擎许可证与具体上游来源见 [XML profiles notices](./licenses/xml-profiles/NOTICE.md)。
+
+### Markdown 标题导航
+
+没有显式 ID 的标题会生成保留 Unicode 字符的小写锚点，重复标题追加数字后缀。
+既有目录链接（例如 `[简介](#简介)`）只滚动当前预览器，在 Shadow DOM 或同页多个
+预览器中保持独立，不修改宿主页 URL。保留显式 ID、外部链接及带修饰键的点击行为。
+此能力不负责从 `[TOC]` 指令自动生成目录。
+
+### LRC 歌词
+
+`.lrc` 由文本渲染器处理，已注册到 lite、standard、all 预设。提供时间标注、歌词、
+解码后原文三种只读视图，支持一行多时间标签、逐词时间标签、元数据、有符号偏移、
+UTF-8／UTF-16／GBK、自动换行和共享缩放。`M:`、`F:`、`D:` 角色继承到下一次显式
+切换；无时间文本和未知标记保留。正偏移表示提前显示。本能力不播放音频或模拟同步。
+沿用 `options.text.encoding`、`toolbar`、`wrapLongLines`；超大输入或标签展开过多
+时回退到原文预览，不静默丢弃内容。歌词中的 HTML 始终按普通文字显示。

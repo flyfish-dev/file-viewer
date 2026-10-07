@@ -1,0 +1,39 @@
+{
+  "functionalHead": "231873131302dd51d83554b1ccd2b1221313c433",
+  "run": "35757013877",
+  "checkedCommit": "ab97902a6fa4bf761956de9b6bdc4c9062e1e3ae",
+  "packageBuilds": [
+    "core",
+    "doc",
+    "pptx",
+    "word",
+    "pdf",
+    "text",
+    "spreadsheet"
+  ],
+  "frozenLock": "lockfile-only validation passed; not a full workspace install/build",
+  "suites": {
+    "containers": {
+      "passed": 4,
+      "sha256": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c"
+    },
+    "engine": {
+      "passed": 11,
+      "sha256": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927"
+    },
+    "spreadsheet": {
+      "passed": 18,
+      "sha256": "cb73b1cd00b5856f0a00362438781b65a34e6622ff54b8c869bfa4a8b67b8310"
+    },
+    "prior-renderers": {
+      "passed": 36,
+      "sha256": "a4904fc1ded2fb1a371ca8926b326187d5929ebd2159e0afbe2c9e363021c59d"
+    },
+    "prior-output": {
+      "passed": 39,
+      "sha256": "bfa3cf2e08b03bb9ece82c9dcd37ce82f0162a2478fa26ebaa1b29b9e5f1d78a"
+    }
+  },
+  "extraPictureUnitTests": 6,
+  "fullCorpusFidelityAccepted": false
+}

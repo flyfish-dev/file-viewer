@@ -1,0 +1,29 @@
+{
+  "package": "@file-viewer/docx",
+  "version": "0.3.32",
+  "engineCommit": "002f66eca18765eb4ffd322797e13ffb2186fe7c",
+  "patchSha256": "bd1e92c79cd8319437b9a4d6b459329bc0a329297e8eff8589d48c2094917b12",
+  "sha256": {
+    "docx-preview.mjs": "099bdcc08c166019329a0ddca01309fa0ae9450ab354c0e55bb30572fc4c0099",
+    "docx-preview.min.mjs": "099bdcc08c166019329a0ddca01309fa0ae9450ab354c0e55bb30572fc4c0099",
+    "docx-preview.js": "7fdfd2a99d202d4c0186915c073be3fc2c20430b8330112d8bffd87964faa68d",
+    "docx-preview.min.js": "7fdfd2a99d202d4c0186915c073be3fc2c20430b8330112d8bffd87964faa68d",
+    "docx-preview.worker.js": "222402811e0bc8f211f1108d67207520742b9be78b3e4f8adf03a098ff9aba88"
+  },
+  "workerBootstrapCommit": "4236e8ad0d9a37563cb93a4fb1b9f2fce295d5e7",
+  "runtimeVersion": "0.3.32+compat.20260924.grid",
+  "paragraphFlow": {
+    "baselineCommit": "7d493f5fbd7978c47e96e26f0e1570e2a81115c7",
+    "baselinePinSha256": "3f23124e92693a4dd7e3072e5ff0f2c997f397d9845c0a38184db30a2065b437",
+    "transform": "scripts/lib/docx-paragraph-flow.mjs",
+    "transformSha256": "18428d61a9dc27baf378831174fb733342dadc652e653f22aa624f51dcc38a2d",
+    "method": "hash-pinned build-time transformation; no upstream source-build claim"
+  },
+  "gridMetrics": {
+    "baselineCommit": "2fc54c12293aa9a9ffae03d642553450be49f8df",
+    "baselinePinSha256": "51fd6785107293c34bd9167b388b10d456926e44da8927ec5e8f4b2cbeb1da86",
+    "transform": "scripts/lib/docx-grid-metrics.mjs",
+    "transformSha256": "a4572495c615ca70e5ad2839c4cac57191eacc80c8190f2347f43c64cb3e5055",
+    "method": "hash-pinned build-time transformation; no upstream source-build claim"
+  }
+}

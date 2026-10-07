@@ -94,6 +94,10 @@ pnpm --filter @file-viewer/doc verify:github-34
 
 ## 快速开始
 
+字体输出保留原字体名和替代名称。缺少字体时，按文档字体族/PANOSE 信息及已安装的兼容中日韩字体回退，不联网下载字体。不同本地字体仍可能影响字形和换行；选中的字体具备有效竖排度量时，竖排表格使用兼容 Chromium 和 Safari 的固有逻辑尺寸。
+
+Linux 浏览器实测中，WenQuanYi Zen Hei 的汉字竖向 advance 为 0，导致字形重叠；在运行浏览器的 Ubuntu 环境安装 `fonts-noto-cjk` 后，已有的 `Noto Serif CJK SC` 回退被选中，Chromium/WebKit 的严格尺寸和顺序断言通过。仍只选中上述文泉驿字体的浏览器宿主可能重现重叠。部署时应提供有有效竖排度量的本地字体，或由宿主注册同源的 `@font-face`/`FontFace`，字体族命名为 `Noto Serif CJK SC`，加载完成后再挂载文档。只在 Web 服务器安装字体不会为访问者的浏览器安装字体。DOC 渲染链路没有字体 gateway，也不会自行下载或打包替代字体。
+
 ### 1）直接解析并渲染
 
 ```ts

@@ -1,0 +1,49 @@
+{
+  "passed": 11,
+  "checks": [
+    {
+      "name": "actual renderer preserves repeated line and word clocks with offset",
+      "passed": true
+    },
+    {
+      "name": "recognized speaker persists and unknown markup stays literal",
+      "passed": true
+    },
+    {
+      "name": "source mode has exact original text",
+      "passed": true
+    },
+    {
+      "name": "lyrics mode hides timestamps without losing words",
+      "passed": true
+    },
+    {
+      "name": "zoom clamps finite input and ignores NaN",
+      "passed": true
+    },
+    {
+      "name": "wrap control and narrow layout remain operable",
+      "passed": true
+    },
+    {
+      "name": "four supported locales render controls",
+      "passed": true
+    },
+    {
+      "name": "UTF-16LE and GBK source use the shared decoder",
+      "passed": true
+    },
+    {
+      "name": "abort releases the mounted renderer and its zoom provider",
+      "passed": true
+    },
+    {
+      "name": "Shadow DOM and idempotent unmount do not clear replacement content",
+      "passed": true
+    },
+    {
+      "name": "no script execution, external request or browser exception",
+      "passed": true
+    }
+  ]
+}

@@ -1,4 +1,10 @@
+import { resolveDiagramTextFrames, effectiveTextTransform } from './diagram-text.js';
+import { getTextBodyMetrics } from './text-body.js';
+import { getDrawingTextRuns, getFirstSlideNumber, getPictureEffects } from './drawing-semantics.js';
+import { getEmbeddedPictureCandidates } from './picture-resource.js';
+import { createBuiltinDrawingMlTableStyle } from './table-styles.js';
 import { extractChartData } from './chart-data.js';
+import { extractChartOptions } from './chart-options.js';
 import tinycolor from 'tinycolor2'
 import { parse } from './txml'
 import * as dingbatToUnicode from "dingbat-to-unicode";
@@ -36,6 +42,7 @@ let isIE11 = false;
 //var slideLayoutClrOvride = "";
 
 let defaultTextStyle = null;
+let firstSlideNumber = 1;
 
 let chartID = 0;
 
@@ -199,7 +206,8 @@ function addRelationshipResource(targetObj, relationship, sourcePartPath) {
   }
   targetObj[attrs["Id"]] = {
     "type": getRelationshipTypeName(attrs["Type"]),
-    "target": resolvePartTarget(sourcePartPath, attrs["Target"])
+    "target": resolvePartTarget(sourcePartPath, attrs["Target"]),
+    "external": attrs["TargetMode"] === "External"
   };
 }
 
@@ -348,6 +356,7 @@ export async function getSlideSizeAndSetDefaultTextStyle(zip) {
   console.log("Presentation size type: ", sldSzType)
 
   defaultTextStyle = getTextByPathList(content, [ "p:presentation", "p:defaultTextStyle" ]) || {};
+  firstSlideNumber = getFirstSlideNumber(getTextByPathList(content, [ "p:presentation", "attrs", "firstSlideNum" ]));
 
   const incSlide = settings.incSlide || {};
   slideWidth = sldSzWidth * slideFactor + toFiniteNumber(incSlide.width, 0)|0;// * scaleX;//parseInt(sldSzAttrs["cx"]) * 96 / 914400;
@@ -482,7 +491,8 @@ export async function processSingleSlide(zip, sldFileName, index, slideSize) {
     "diagramResObj": diagramResObj,
     "defaultTextStyle": defaultTextStyle,
     "slideIndex": index,
-    "slideNumber": index + 1
+    "slideNumber": index + 1,
+    "displaySlideNumber": firstSlideNumber + index
   };
   var bgResult = "";
   if (processFullTheme === true) {
@@ -864,14 +874,6 @@ function getBlipCropStyles(blipFillNode) {
   };
 }
 
-function getBlipEffectStyles(blipFillNode) {
-  var duotone = getTextByPathList(blipFillNode, ["a:blip", "a:duotone"]);
-  if (duotone !== undefined) {
-    return "filter:grayscale(1);";
-  }
-  return "";
-}
-
 function getPicturePresetClipStyles(picNode) {
   var preset = getTextByPathList(picNode, ["p:spPr", "a:prstGeom", "attrs", "prst"]);
   if (preset === "ellipse") {
@@ -1055,6 +1057,13 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
     direction: bodyPrAttrs["vert"],
     upright: getTransformBool(bodyPrAttrs["upright"])
   });
+  const textXfrm = effectiveTextTransform(txtXframeNode, slideXfrmNode);
+  const textMetrics = getTextBodyMetrics(node["p:txBody"], slideLayoutSpNode?.["p:txBody"], slideMasterSpNode?.["p:txBody"]);
+  const textInsetStyle = "box-sizing:border-box;padding:" +
+    mapGroupSizeToPx(textMetrics.top, "y", groupContext) + "px " +
+    mapGroupSizeToPx(textMetrics.right, "x", groupContext) + "px " +
+    mapGroupSizeToPx(textMetrics.bottom, "y", groupContext) + "px " +
+    mapGroupSizeToPx(textMetrics.left, "x", groupContext) + "px;";
   //////////////////////////////////////////////////
   if (shapType !== undefined || custShapType !== undefined /*&& slideXfrmNode !== undefined*/) {
     var off = getTextByPathList(slideXfrmNode, [ "a:off", "attrs" ]) || { x: 0, y: 0 };
@@ -7994,17 +8003,20 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
 
     result += "<div class='block " + getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
       " " + getContentDir(node, type, warpObj) +
-      "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
+      "' data-pptx-autofit='" + textMetrics.autofit + "' data-pptx-wrap='" + textMetrics.wrap + "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
       "' style='" +
-      getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, groupContext) +
-      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, groupContext) +
+      getPosition(textXfrm, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, groupContext) +
+      getSize(textXfrm, slideLayoutXfrmNode, slideMasterXfrmNode, groupContext) +
+      textInsetStyle +
       " z-index: " + order + ";" +
       "transform: rotate(" + ((txtRotate !== undefined) ? txtRotate : 0) + "deg);" +
       "'>";
 
     // TextBody
     if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-      if (type != "diagram" && type != "textBox") {
+      // Geometry does not erase a placeholder's text-style inheritance.
+      if (type != "diagram" && type != "textBox" &&
+          getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph"]) === undefined) {
         type = "shape";
       }
       result += await genTextBody(node["p:txBody"], node, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj, undefined, groupContext); //type='shape'
@@ -8288,17 +8300,20 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
     result += "</svg>";
     result += "<div class='block " + getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) + //block content
       " " + getContentDir(node, type, warpObj) +
-      "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
+      "' data-pptx-autofit='" + textMetrics.autofit + "' data-pptx-wrap='" + textMetrics.wrap + "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
       "' style='" +
-      getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, groupContext) +
-      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, groupContext) +
+      getPosition(textXfrm, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, groupContext) +
+      getSize(textXfrm, slideLayoutXfrmNode, slideMasterXfrmNode, groupContext) +
+      textInsetStyle +
       " z-index: " + order + ";" +
       "transform: rotate(" + ((txtRotate !== undefined) ? txtRotate : 0) + "deg);" +
       "'>";
 
     // TextBody
     if (node["p:txBody"] !== undefined && (isUserDrawnBg === undefined || isUserDrawnBg === true)) {
-      if (type != "diagram" && type != "textBox") {
+      // Geometry does not erase a placeholder's text-style inheritance.
+      if (type != "diagram" && type != "textBox" &&
+          getTextByPathList(node, ["p:nvSpPr", "p:nvPr", "p:ph"]) === undefined) {
         type = "shape";
       }
       result += await genTextBody(node["p:txBody"], node, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj, undefined, groupContext); //type=shape
@@ -8310,10 +8325,11 @@ async function genShape(node, pNode, slideLayoutSpNode, slideMasterSpNode, id, n
 
     result += "<div class='block " + getVerticalAlign(node, slideLayoutSpNode, slideMasterSpNode, type) +//block content
       " " + getContentDir(node, type, warpObj) +
-      "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
+      "' data-pptx-autofit='" + textMetrics.autofit + "' data-pptx-wrap='" + textMetrics.wrap + "' _id='" + id + "' _idx='" + idx + "' _type='" + type + "' _name='" + name +
       "' style='" +
-      getPosition(slideXfrmNode, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, groupContext) +
-      getSize(slideXfrmNode, slideLayoutXfrmNode, slideMasterXfrmNode, groupContext) +
+      getPosition(textXfrm, pNode, slideLayoutXfrmNode, slideMasterXfrmNode, sType, groupContext) +
+      getSize(textXfrm, slideLayoutXfrmNode, slideMasterXfrmNode, groupContext) +
+      textInsetStyle +
       getBorder(node, pNode, false, "shape", warpObj) +
       await getShapeFill(node, pNode, false, warpObj, source) +
       " z-index: " + order + ";" +
@@ -8634,7 +8650,7 @@ async function processPicNode(node, warpObj, source, sType, groupContext) {
   var mediaPicFlag = false;
   var order = node["attrs"]["order"];
 
-  var rid = node["p:blipFill"]["a:blip"]["attrs"]["r:embed"];
+  var blip = getTextByPathList(node, ["p:blipFill", "a:blip"]);
   var resObj;
   if (source == "slideMasterBg") {
     resObj = warpObj["masterResObj"];
@@ -8644,14 +8660,21 @@ async function processPicNode(node, warpObj, source, sType, groupContext) {
     //imgName = warpObj["slideResObj"][rid]["target"];
     resObj = warpObj["slideResObj"];
   }
-  var imgName = resObj[rid]["target"];
-
-  //console.log("processPicNode imgName:", imgName);
-  var imgFileExt = extractFileExtension(imgName).toLowerCase();
   var zip = warpObj["zip"];
-  var imgArrayBuffer = await zip.file(imgName).async('arraybuffer');
-  var mimeType = "";
-  var xfrmNode = node["p:spPr"]["a:xfrm"];
+  var imageDataUrl;
+  for (var candidate of getEmbeddedPictureCandidates(blip, resObj, zip)) {
+    try {
+      imageDataUrl = await getImageDataUrl(
+        extractFileExtension(candidate.target).toLowerCase(),
+        await candidate.entry.async('arraybuffer')
+      );
+      if (imageDataUrl) break;
+    } catch (error) {
+      // A damaged optional image must not discard the rest of this slide.
+      console.warn("Unable to decode embedded PPTX picture", error);
+    }
+  }
+  var xfrmNode = getTextByPathList(node, ["p:spPr", "a:xfrm"]);
   if (xfrmNode === undefined) {
     var idx = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "idx"]);
     var type = getTextByPathList(node, ["p:nvPicPr", "p:nvPr", "p:ph", "attrs", "type"]);
@@ -8661,7 +8684,7 @@ async function processPicNode(node, warpObj, source, sType, groupContext) {
   }
   ///////////////////////////////////////Amir//////////////////////////////
   var rotate = 0;
-  var rotateNode = getTextByPathList(node, ["p:spPr", "a:xfrm", "attrs", "rot"]);
+  var rotateNode = getTextByPathList(xfrmNode, ["attrs", "rot"]);
   if (rotateNode !== undefined) {
     rotate = angleToDegrees(rotateNode);
   }
@@ -8743,13 +8766,14 @@ async function processPicNode(node, warpObj, source, sType, groupContext) {
   }
   //console.log(node)
   //////////////////////////////////////////////////////////////////////////
-  mimeType = getMimeType(imgFileExt);
-  var imageDataUrl = await getImageDataUrl(imgFileExt, imgArrayBuffer);
   if (!imageDataUrl && ((vdoNode === undefined && audioNode === undefined) || !mediaProcess || !mediaSupportFlag)) {
     return "";
   }
   var cropStyles = getBlipCropStyles(node["p:blipFill"]);
-  var blipEffectStyles = getBlipEffectStyles(node["p:blipFill"]);
+  var pictureEffects = getPictureEffects(blip, mediaIdPrefix + "-" + source + "-alpha");
+  var blipEffectStyles = pictureEffects.style;
+  var pictureFlip = (getTransformBool(getTextByPathList(xfrmNode, ["attrs", "flipH"])) ? " scaleX(-1)" : "") +
+    (getTransformBool(getTextByPathList(xfrmNode, ["attrs", "flipV"])) ? " scaleY(-1)" : "");
   var customGeometryPaths = [];
   var customGeometrySize = { width: 100, height: 100 };
   var customGeometryNode = getTextByPathList(node, ["p:spPr", "a:custGeom"]);
@@ -8766,12 +8790,13 @@ async function processPicNode(node, warpObj, source, sType, groupContext) {
     ((mediaProcess && audioPlayerFlag) ? getPosition(audioObjc, node, undefined, undefined, sType, groupContext) : getPosition(xfrmNode, node, undefined, undefined, sType, groupContext)) +
     ((mediaProcess && audioPlayerFlag) ? getSize(audioObjc, undefined, undefined, groupContext) : getSize(xfrmNode, undefined, undefined, groupContext)) +
     " z-index: " + order + ";" +
-    "transform: rotate(" + rotate + "deg);" +
+    "transform: rotate(" + rotate + "deg)" + pictureFlip + ";" +
     (((vdoNode === undefined && audioNode === undefined) || !mediaProcess || !mediaSupportFlag) ? cropStyles.container + getPicturePresetClipStyles(node) : "") +
     "'>";
   if ((vdoNode === undefined && audioNode === undefined) || !mediaProcess || !mediaSupportFlag) {
+    rtrnData += pictureEffects.definitions;
     if (customGeometryPaths.length > 0) {
-      var picClipId = "pptx_pic_clip_" + ((warpObj && warpObj.slideNumber) || "0") + "_" +
+      var picClipId = "pptx_pic_clip_" + source + "_" + ((warpObj && warpObj.slideNumber) || "0") + "_" +
         (getTextByPathList(node, ["p:nvPicPr", "p:cNvPr", "attrs", "id"]) || order || customGeometryPaths.length);
       var svgImageX = customGeometrySize.width * cropStyles.svg.x / 100;
       var svgImageY = customGeometrySize.height * cropStyles.svg.y / 100;
@@ -8871,9 +8896,10 @@ function processSpPrNode(node, warpObj) {
   // TODO:
 }
 
-var is_first_br = false;
 async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterSpNode, type, idx, warpObj, tbl_col_width, groupContext) {
   var text = "";
+  const textMetrics = getTextBodyMetrics(textBodyNode, slideLayoutSpNode?.["p:txBody"], slideMasterSpNode?.["p:txBody"]);
+  const insetWidth = tbl_col_width === undefined ? mapGroupSizeToPx(textMetrics.left + textMetrics.right, "x", groupContext) : 0;
   var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
 
   if (textBodyNode === undefined) {
@@ -8894,32 +8920,8 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
 
   for (var i = 0; i < apNode.length; i++) {
     var pNode = apNode[i];
-    var rNode = pNode["a:r"];
-    var fldNode = pNode["a:fld"];
-    var brNode = pNode["a:br"];
-    if (rNode !== undefined) {
-      rNode = (rNode.constructor === Array) ? rNode : [ rNode ];
-    }
-    if (rNode !== undefined && fldNode !== undefined) {
-      fldNode = (fldNode.constructor === Array) ? fldNode : [ fldNode ];
-      rNode = rNode.concat(fldNode)
-    }
-    if (rNode !== undefined && brNode !== undefined) {
-      is_first_br = true;
-      brNode = (brNode.constructor === Array) ? brNode : [ brNode ];
-      brNode.forEach(function (item, indx) {
-        item.type = "br";
-      });
-      if (brNode.length > 1) {
-        brNode.shift();
-      }
-      rNode = rNode.concat(brNode)
-      //console.log("single a:p  rNode:", rNode, "brNode:", brNode )
-      rNode.sort(function (a, b) {
-        return a.attrs.order - b.attrs.order;
-      });
-      //console.log("sorted rNode:",rNode)
-    }
+    var rNode = getDrawingTextRuns(pNode);
+    if (rNode.length === 0) rNode = undefined;
     //rtlStr = "";//"dir='"+isRTL+"'";
     var styleText = "";
     var marginsVer = getVerticalMargins(pNode, textBodyNode, type, idx, warpObj);
@@ -8947,7 +8949,7 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
       };
     }
     //console.log("textBodyNode: ", textBodyNode["a:lstStyle"])
-    var prg_width_node = getTextByPathList(spNode, [ "p:spPr", "a:xfrm", "a:ext", "attrs", "cx" ]);
+    var prg_width_node = effectiveTextTransform(spNode["p:txXfrm"], spNode["p:spPr"]?.["a:xfrm"])?.["a:ext"]?.attrs?.cx;
     if (prg_width_node === undefined) {
       prg_width_node = getTextByPathList(slideLayoutSpNode, [ "p:spPr", "a:xfrm", "a:ext", "attrs", "cx" ]);
     }
@@ -8961,11 +8963,11 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
     if (prg_height_node === undefined) {
       prg_height_node = getTextByPathList(slideMasterSpNode, [ "p:spPr", "a:xfrm", "a:ext", "attrs", "cy" ]);
     }
-    var sld_prg_width_px = prg_width_node !== undefined ? mapGroupSizeToPx(prg_width_node, "x", groupContext) : NaN;
+    var sld_prg_width_px = prg_width_node !== undefined ? Math.max(0, mapGroupSizeToPx(prg_width_node, "x", groupContext) - insetWidth) : NaN;
     var sld_prg_width = Number.isFinite(sld_prg_width_px) ? ("width:" + sld_prg_width_px + "px;") : "width:inherit;";
     var sld_prg_height = "";
     var prg_dir = getPregraphDir(pNode, textBodyNode, idx, type, warpObj);
-    text += "<div style='display: flex;" + sld_prg_width + sld_prg_height + "' class='slide-prgrph " + getHorizontalAlign(pNode, textBodyNode, idx, type, prg_dir, warpObj) + " " +
+    text += "<div style='display: flex;flex-shrink:0;" + sld_prg_width + sld_prg_height + "' class='slide-prgrph " + getHorizontalAlign(pNode, textBodyNode, idx, type, prg_dir, warpObj) + " " +
       prg_dir + " " + cssName + "' >";
     var buText_ary = await genBuChar(pNode, i, spNode, textBodyNode, pFontStyle, idx, type, warpObj);
     var isBullate = (buText_ary[0] !== undefined && buText_ary[0] !== null && buText_ary[0] != "") ? true : false;
@@ -9014,7 +9016,7 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
 
     var prg_width_px = undefined;
     if (prg_width_node !== undefined) {
-      prg_width_px = mapGroupSizeToPx(prg_width_node, "x", groupContext) - bu_width - mrgin_val;
+      prg_width_px = Math.max(0, mapGroupSizeToPx(prg_width_node, "x", groupContext) - insetWidth - bu_width - mrgin_val);
     }
     if (isBullate) {
       //get prg_width_node if there is a bulltes
@@ -9027,12 +9029,12 @@ async function genTextBody(textBodyNode, spNode, slideLayoutSpNode, slideMasterS
     var prg_width = ((prg_width_px !== undefined && !isNaN(prg_width_px)) ? ("width:" + prg_width_px) + "px;" : "width:inherit;");
     var paragraphContentHeight = tbl_col_width !== undefined
       ? "height:auto;min-height:0;max-height:100%;"
-      : "height:100%;";
+      : "height:auto;min-height:0;";
     var paragraphLineHeightMatch = /(?:^|;)line-height:\s*([^;]+)/.exec(styleText);
     var paragraphLineHeight = paragraphLineHeightMatch !== null
       ? paragraphLineHeightMatch[1]
       : DRAWINGML_SINGLE_LINE_HEIGHT;
-    text += "<div style='" + paragraphContentHeight + "line-height:" + paragraphLineHeight + ";direction: initial;overflow-wrap:normal;word-wrap:normal;word-break:normal;" + prg_width + margin + "' >";
+    text += "<div style='" + paragraphContentHeight + (textMetrics.wrap === "none" ? "white-space:nowrap;" : "white-space:normal;") + "line-height:" + paragraphLineHeight + ";direction: initial;overflow-wrap:normal;word-wrap:normal;word-break:normal;" + prg_width + margin + "' >";
     text += prgrph_text;
     text += "</div>";
     text += "</div>";
@@ -9086,6 +9088,7 @@ async function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, w
 
   var buChar = getTextByPathList(pPrNode, [ "a:buChar", "attrs", "char" ]);
   var buNum = getTextByPathList(pPrNode, [ "a:buAutoNum", "attrs", "type" ]);
+  var buStartAt = getTextByPathList(pPrNode, [ "a:buAutoNum", "attrs", "startAt" ]);
   var buPic = getTextByPathList(pPrNode, [ "a:buBlip" ]);
   if (buChar !== undefined) {
     buType = "TYPE_BULLET";
@@ -9125,6 +9128,7 @@ async function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, w
       buType = "TYPE_NONE";
       buChar = getTextByPathList(lstStyle, [ lvlStr, "a:buChar", "attrs", "char" ]);
       buNum = getTextByPathList(lstStyle, [ lvlStr, "a:buAutoNum", "attrs", "type" ]);
+      buStartAt = getTextByPathList(lstStyle, [ lvlStr, "a:buAutoNum", "attrs", "startAt" ]);
       buPic = getTextByPathList(lstStyle, [ lvlStr, "a:buBlip" ]);
       if (buChar !== undefined) {
         buType = "TYPE_BULLET";
@@ -9150,6 +9154,7 @@ async function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, w
       buType = "TYPE_NONE";
       buChar = getTextByPathList(pPrNodeLaout, [ "a:buChar", "attrs", "char" ]);
       buNum = getTextByPathList(pPrNodeLaout, [ "a:buAutoNum", "attrs", "type" ]);
+      buStartAt = getTextByPathList(pPrNodeLaout, [ "a:buAutoNum", "attrs", "startAt" ]);
       buPic = getTextByPathList(pPrNodeLaout, [ "a:buBlip" ]);
       if (buChar !== undefined) {
         buType = "TYPE_BULLET";
@@ -9172,6 +9177,7 @@ async function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, w
         buType = "TYPE_NONE";
         buChar = getTextByPathList(pPrNodeMaster, [ "a:buChar", "attrs", "char" ]);
         buNum = getTextByPathList(pPrNodeMaster, [ "a:buAutoNum", "attrs", "type" ]);
+        buStartAt = getTextByPathList(pPrNodeMaster, [ "a:buAutoNum", "attrs", "startAt" ]);
         buPic = getTextByPathList(pPrNodeMaster, [ "a:buBlip" ]);
         if (buChar !== undefined) {
           buType = "TYPE_BULLET";
@@ -9452,7 +9458,11 @@ async function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, w
     } else {
       bulvar += "display: inline-block;white-space: nowrap ;direction:ltr;"; //float: left;
     }
-    bulvar += "' data-bulltname = '" + buNum + "' data-bulltlvl = '" + lvl + "' class='numeric-bullet-style'></div>";
+    var numericStartAt = Number(buStartAt);
+    var restartAttribute = Number.isInteger(numericStartAt) && numericStartAt >= 1 && numericStartAt <= 32767
+      ? " data-bulltstartat='" + numericStartAt + "'" : "";
+    bulvar += "' data-bulltname='" + escapeHtml(buNum) + "' data-bulltlvl='" + lvl + "'" +
+      restartAttribute + " class='numeric-bullet-style'></div>";
     // } else {
     //     marginLeft = 328600 * slideFactor * lvl;
     //     bulvar = "<div style='margin-left: " + marginLeft + "px;";
@@ -9594,6 +9604,7 @@ function getLayoutAndMasterNode(node, idx, type, warpObj) {
 }
 async function genSpanElement(node, rIndex, pNode, textBodyNode, pFontStyle, slideLayoutSpNode, idx, type, rNodeLength, warpObj, isBullate) {
   //https://codepen.io/imdunn/pen/GRgwaye ?
+  if (node.type === "br") return "<span class='line-break-br'></span>";
   var text_style = "";
   var lstStyle = textBodyNode["a:lstStyle"];
   var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
@@ -9601,33 +9612,13 @@ async function genSpanElement(node, rIndex, pNode, textBodyNode, pFontStyle, sli
   var text = node["a:t"];
   var fieldType = getTextByPathList(node, [ "a:fld", "attrs", "type" ]);
   if (typeof fieldType === "string" && fieldType.toLowerCase() === "slidenum") {
-    text = String((warpObj && warpObj.slideNumber) || "");
+    text = String(warpObj?.displaySlideNumber ?? warpObj?.slideNumber ?? "");
   }
   //var text_count = text.length;
 
-  var openElemnt = "<span";//"<bdi";
+  var openElemnt = "<span" + (typeof fieldType === "string" && fieldType.toLowerCase() === "slidenum" ? " data-pptx-field='slidenum'" : "");//"<bdi";
   var closeElemnt = "</span>";// "</bdi>";
   var styleText = "";
-  if (text === undefined && node["type"] !== undefined) {
-    if (is_first_br) {
-      //openElemnt = "<br";
-      //closeElemnt = "";
-      //return "<br style='font-size: initial'>"
-      is_first_br = false;
-      return "<span class='line-break-br' ></span>";
-    } else {
-      // styleText += "display: block;";
-      // openElemnt = "<sapn";
-      // closeElemnt = "</sapn>";
-    }
-
-    styleText += "display: block;";
-    //openElemnt = "<sapn";
-    //closeElemnt = "</sapn>";
-  } else {
-
-    is_first_br = true;
-  }
   if (typeof text !== 'string') {
     text = getTextByPathList(node, [ "a:fld", "a:t" ]);
     if (typeof text !== 'string') {
@@ -9986,7 +9977,8 @@ async function genTable(node, warpObj, groupContext) {
   var tableNode = getTextByPathList(node, [ "a:graphic", "a:graphicData", "a:tbl" ]);
   var xfrmNode = getTextByPathList(node, [ "p:xfrm" ]);
   /////////////////////////////////////////Amir////////////////////////////////////////////////
-  var getTblPr = getTextByPathList(node, [ "a:graphic", "a:graphicData", "a:tbl", "a:tblPr" ]);
+  var getTblPr = getTextByPathList(node, [ "a:graphic", "a:graphicData", "a:tbl", "a:tblPr" ]) || {};
+  getTblPr.attrs = getTblPr.attrs || {};
   var getColsGrid = getTextByPathList(node, [ "a:graphic", "a:graphicData", "a:tbl", "a:tblGrid", "a:gridCol" ]);
   var tblDir = "";
   if (getTblPr !== undefined) {
@@ -10010,9 +10002,9 @@ async function genTable(node, warpObj, groupContext) {
   }
 
   var thisTblStyle;
-  var tbleStyleId = getTblPr["a:tableStyleId"];
+  var tbleStyleId = getTblPr["a:tableStyleId"] || getTextByPathList(tableStyles, [ "a:tblStyleLst", "attrs", "def" ]);
   if (tbleStyleId !== undefined) {
-    var tbleStylList = tableStyles["a:tblStyleLst"]["a:tblStyle"];
+    var tbleStylList = getTextByPathList(tableStyles, [ "a:tblStyleLst", "a:tblStyle" ]);
     if (tbleStylList !== undefined) {
       if (tbleStylList.constructor === Array) {
         for (var k = 0; k < tbleStylList.length; k++) {
@@ -10027,6 +10019,8 @@ async function genTable(node, warpObj, groupContext) {
       }
     }
   }
+  thisTblStyle = thisTblStyle || createBuiltinDrawingMlTableStyle(tbleStyleId);
+  warpObj["thisTbiStyle"] = undefined;
   if (thisTblStyle !== undefined) {
     thisTblStyle["tblStylAttrObj"] = tblStylAttrObj;
     warpObj["thisTbiStyle"] = thisTblStyle;
@@ -10048,9 +10042,8 @@ async function genTable(node, warpObj, groupContext) {
     tbl_bgFillschemeClr = getTextByPathList(thisTblStyle, [ "a:wholeTbl", "a:tcStyle", "a:fill", "a:solidFill" ]);
     tbl_bgcolor = getSolidFill(tbl_bgFillschemeClr, undefined, undefined, warpObj);
   }
-  if (tbl_bgcolor !== "") {
-    tbl_bgcolor = "background-color: #" + tbl_bgcolor + ";";
-  }
+  tbl_bgcolor = typeof tbl_bgcolor === "string" && tbl_bgcolor
+    ? "background-color: #" + tbl_bgcolor + ";" : "";
   var tableGridColumns = asArray(getColsGrid);
   var tableGridWidth = resolveDrawingMlTableGridWidth(tableGridColumns.map(function (column) {
     return getTextByPathList(column, [ "attrs", "w" ]);
@@ -10271,7 +10264,7 @@ async function genTable(node, warpObj, groupContext) {
         var totalColSpan = 0;
         while (j < tcNodes.length) {
           if (rowSpanAry[j] == 0 && totalColSpan == 0) {
-            var a_sorce;
+            var a_sorce = undefined; // Column overrides never leak into the next cell.
             //j=0 : first col
             if (j == 0 && tblStylAttrObj["isFrstColAttr"] == 1) {
               a_sorce = "a:firstCol";
@@ -10345,7 +10338,7 @@ async function genTable(node, warpObj, groupContext) {
       } else {
         //single column
 
-        var a_sorce;
+        var a_sorce = undefined; // Column overrides never leak into the next cell.
         if (tblStylAttrObj["isFrstColAttr"] == 1 && !(tblStylAttrObj["isLstRowAttr"] == 1)) {
           a_sorce = "a:firstCol";
 
@@ -10385,7 +10378,7 @@ async function genTable(node, warpObj, groupContext) {
   //////////////////////////////////////////////////////////////////////////////////
 
 
-  return tableHtml;
+  return tableHtml + "</table>";
 }
 
 async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTblStyle, cellSource, warpObj, tableRowHeights, groupContext) {
@@ -10449,9 +10442,9 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
 
   //cell bords
   lin_bottm = getTextByPathList(tcNodes, [ "a:tcPr", "a:lnB" ]);
-  if (lin_bottm === undefined && cellSource !== undefined) {
+  if (lin_bottm === undefined) {
     if (cellSource !== undefined)
-      lin_bottm = getTextByPathList(thisTblStyle[cellSource], [ "a:tcStyle", "a:tcBdr", "a:bottom", "a:ln" ]);
+      lin_bottm = getTextByPathList(thisTblStyle, [ cellSource, "a:tcStyle", "a:tcBdr", "a:bottom", "a:ln" ]);
     if (lin_bottm === undefined) {
       lin_bottm = getTextByPathList(thisTblStyle, [ "a:wholeTbl", "a:tcStyle", "a:tcBdr", "a:bottom", "a:ln" ]);
     }
@@ -10459,7 +10452,7 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
   lin_top = getTextByPathList(tcNodes, [ "a:tcPr", "a:lnT" ]);
   if (lin_top === undefined) {
     if (cellSource !== undefined)
-      lin_top = getTextByPathList(thisTblStyle[cellSource], [ "a:tcStyle", "a:tcBdr", "a:top", "a:ln" ]);
+      lin_top = getTextByPathList(thisTblStyle, [ cellSource, "a:tcStyle", "a:tcBdr", "a:top", "a:ln" ]);
     if (lin_top === undefined) {
       lin_top = getTextByPathList(thisTblStyle, [ "a:wholeTbl", "a:tcStyle", "a:tcBdr", "a:top", "a:ln" ]);
     }
@@ -10467,7 +10460,7 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
   lin_left = getTextByPathList(tcNodes, [ "a:tcPr", "a:lnL" ]);
   if (lin_left === undefined) {
     if (cellSource !== undefined)
-      lin_left = getTextByPathList(thisTblStyle[cellSource], [ "a:tcStyle", "a:tcBdr", "a:left", "a:ln" ]);
+      lin_left = getTextByPathList(thisTblStyle, [ cellSource, "a:tcStyle", "a:tcBdr", "a:left", "a:ln" ]);
     if (lin_left === undefined) {
       lin_left = getTextByPathList(thisTblStyle, [ "a:wholeTbl", "a:tcStyle", "a:tcBdr", "a:left", "a:ln" ]);
     }
@@ -10475,7 +10468,7 @@ async function getTableCellParams(tcNodes, getColsGrid, row_idx, col_idx, thisTb
   lin_right = getTextByPathList(tcNodes, [ "a:tcPr", "a:lnR" ]);
   if (lin_right === undefined) {
     if (cellSource !== undefined)
-      lin_right = getTextByPathList(thisTblStyle[cellSource], [ "a:tcStyle", "a:tcBdr", "a:right", "a:ln" ]);
+      lin_right = getTextByPathList(thisTblStyle, [ cellSource, "a:tcStyle", "a:tcBdr", "a:right", "a:ln" ]);
     if (lin_right === undefined) {
       lin_right = getTextByPathList(thisTblStyle, [ "a:wholeTbl", "a:tcStyle", "a:tcBdr", "a:right", "a:ln" ]);
     }
@@ -10616,6 +10609,16 @@ async function genChart(node, warpObj, groupContext) {
           }
         };
         break;
+      case "c:doughnutChart":
+        chartData = {
+          "type": "createChart",
+          "data": {
+            "chartID": "chart" + chartID,
+            "chartType": "doughnutChart",
+            "chartData": extractChartData(plotArea[key]["c:ser"])
+          }
+        };
+        break;
       case "c:pieChart":
         chartData = {
           "type": "createChart",
@@ -10661,6 +10664,14 @@ async function genChart(node, warpObj, groupContext) {
       case "c:valAx":
         break;
       default:
+    }
+    // Attach metadata only to the chart group just selected. Axis siblings must
+    // not overwrite family-specific settings with defaults.
+    if (chartData !== null && key === "c:" + chartData.data.chartType) {
+      chartData.data.chartOptions = extractChartOptions(
+        plotArea[key], getTextByPathList(content, ["c:chartSpace", "c:chart"]),
+        fill => getSolidFill(fill, undefined, undefined, warpObj)
+      );
     }
   }
 
@@ -10715,20 +10726,13 @@ async function genDiagram(node, warpObj, source, sType, groupContext) {
   // }
   // var dgmDrwSpArray = getTextByPathList(dgmDrwFile, ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
   //var dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], ["dsp:drawing", "dsp:spTree", "dsp:sp"]);
-  var dgmDrwSpArray = getTextByPathList(warpObj["digramFileContent"], ["p:drawing", "p:spTree", "p:sp"]);
+  var dgmDrwSpArray = asArray(getTextByPathList(warpObj["digramFileContent"], ["p:drawing", "p:spTree", "p:sp"]));
+  const frames = resolveDiagramTextFrames(dgmDrwSpArray, dgmData, dgmLayout);
   var rslt = "";
-  if (dgmDrwSpArray !== undefined) {
-    var dgmDrwSpArrayLen = dgmDrwSpArray.length;
-    for (var i = 0; i < dgmDrwSpArrayLen; i++) {
-      var dspSp = dgmDrwSpArray[i];
-      // var dspSpObjToStr = JSON.stringify(dspSp);
-      // var pSpStr = dspSpObjToStr.replace(/dsp:/g, "p:");
-      // var pSpStrToObj = JSON.parse(pSpStr);
-      //console.log("pSpStrToObj[" + i + "]: ", pSpStrToObj);
-      //rslt += processSpNode(pSpStrToObj, node, warpObj, "diagramBg", sType)
-      rslt += await processSpNode(dspSp, node, warpObj, "diagramBg", sType, groupContext)
-    }
-    // dgmDrwFile: "dsp:"-> "p:"
+  for (const original of dgmDrwSpArray) {
+    const frame = frames.get(original.attrs?.modelId);
+    const dspSp = frame ? { ...original, "p:txXfrm": frame } : original;
+    rslt += await processSpNode(dspSp, node, warpObj, "diagramBg", sType, groupContext);
   }
 
   return "<div class='block diagram-content' style='" +
@@ -10783,17 +10787,11 @@ function getSize(slideSpNode, slideLayoutSpNode, slideMasterSpNode, groupContext
 
 }
 function getVerticalMargins(pNode, textBodyNode, type, idx, warpObj) {
-  //margin-top ;
-  //a:pPr => a:spcBef => a:spcPts (/100) | a:spcPct (/?)
-  //margin-bottom
-  //a:pPr => a:spcAft => a:spcPts (/100) | a:spcPct (/?)
-  //+
-  //a:pPr =>a:lnSpc => a:spcPts (/?) | a:spcPct (/?)
-  //console.log("getVerticalMargins ", pNode, type,idx, warpObj)
-  //var lstStyle = textBodyNode["a:lstStyle"];
   var lvl = 1
   var spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPts", "attrs", "val"]);
   var spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPts", "attrs", "val"]);
+  var spcBefPctNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPct", "attrs", "val"]);
+  var spcAftPctNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPct", "attrs", "val"]);
   var lnSpcNode = getTextByPathList(pNode, ["a:pPr", "a:lnSpc", "a:spcPct", "attrs", "val"]);
   var lnSpcNodeType = "Pct";
   if (lnSpcNode === undefined) {
@@ -10806,80 +10804,49 @@ function getVerticalMargins(pNode, textBodyNode, type, idx, warpObj) {
   if (lvlNode !== undefined) {
     lvl = parseInt(lvlNode) + 1;
   }
+  // Resolve percentage spacing against the largest effective run, preserving fractional pixels.
   var fontSize;
-  if (getTextByPathList(pNode, ["a:r"]) !== undefined) {
-    var fontSizeStr = getFontSize(pNode["a:r"], textBodyNode,undefined, lvl, type, warpObj);
-    if (fontSizeStr != "inherit") {
-      fontSize = parseInt(fontSizeStr, "px"); //pt
-    }
+  var runs = asArray(pNode["a:r"]).concat(asArray(pNode["a:fld"]));
+  if (runs.length === 0) runs = [pNode];
+  runs.forEach(function (run) {
+    var size = parseFloat(getFontSize(run, textBodyNode, undefined, lvl, type, warpObj));
+    if (Number.isFinite(size) && size > 0) fontSize = Math.max(fontSize || 0, size);
+  });
+  var paragraphListStyle = getTextByPathList(textBodyNode, ["a:lstStyle", "a:lvl" + lvl + "pPr"]);
+  if (spcBefNode === undefined && spcBefPctNode === undefined) {
+    spcBefNode = getTextByPathList(paragraphListStyle, ["a:spcBef", "a:spcPts", "attrs", "val"]);
+    spcBefPctNode = getTextByPathList(paragraphListStyle, ["a:spcBef", "a:spcPct", "attrs", "val"]);
   }
-  //var spcBef = "";
-  //console.log("getVerticalMargins 1", fontSizeStr, fontSize, lnSpcNode, parseInt(lnSpcNode) / 100000, spcBefNode, spcAftNode)
-  // if(spcBefNode !== undefined){
-  //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
-  // }
-  // else{
-  //    //i did not found case with percentage
-  //     spcBefNode = getTextByPathList(pNode, ["a:pPr", "a:spcBef", "a:spcPct","attrs","val"]);
-  //     if(spcBefNode !== undefined){
-  //         spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "%;"
-  //     }
-  // }
-  //var spcAft = "";
-  // if(spcAftNode !== undefined){
-  //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
-  // }
-  // else{
-  //    //i did not found case with percentage
-  //     spcAftNode = getTextByPathList(pNode, ["a:pPr", "a:spcAft", "a:spcPct","attrs","val"]);
-  //     if(spcAftNode !== undefined){
-  //         spcBef = "margin-bottom:" + parseInt(spcAftNode)/100 + "%;"
-  //     }
-  // }
-  // if(spcAftNode !== undefined){
-  //     //check in layout and then in master
-  // }
+  if (spcAftNode === undefined && spcAftPctNode === undefined) {
+    spcAftNode = getTextByPathList(paragraphListStyle, ["a:spcAft", "a:spcPts", "attrs", "val"]);
+    spcAftPctNode = getTextByPathList(paragraphListStyle, ["a:spcAft", "a:spcPct", "attrs", "val"]);
+  }
   var isInLayoutOrMaster = true;
   if(type == "shape" || type == "textBox"){
     isInLayoutOrMaster = false;
   }
   if (isInLayoutOrMaster && (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)) {
-    //check in layout
     if (idx !== undefined) {
-      var laypPrNode = getTextByPathList(warpObj, ["slideLayoutTables", "idxTable", idx, "p:txBody", "a:p", (lvl - 1), "a:pPr"]);
-
-      if (spcBefNode === undefined) {
-        spcBefNode = getTextByPathList(laypPrNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
-        // if(spcBefNode !== undefined){
-        //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
-        // }
-        // else{
-        //    //i did not found case with percentage
-        //     spcBefNode = getTextByPathList(laypPrNode, ["a:spcBef", "a:spcPct","attrs","val"]);
-        //     if(spcBefNode !== undefined){
-        //         spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "%;"
-        //     }
-        // }
+      var layoutBody = getTextByPathList(warpObj, ["slideLayoutTables", "idxTable", idx, "p:txBody"]);
+      var laypPrNode = getTextByPathList(layoutBody, ["a:lstStyle", "a:lvl" + lvl + "pPr"]);
+      if (laypPrNode === undefined) {
+        laypPrNode = getTextByPathList(asArray(getTextByPathList(layoutBody, ["a:p"]))[lvl - 1], ["a:pPr"]);
       }
 
-      if (spcAftNode === undefined) {
+      if (spcBefNode === undefined && spcBefPctNode === undefined) {
+        spcBefNode = getTextByPathList(laypPrNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
+        spcBefPctNode = getTextByPathList(laypPrNode, ["a:spcBef", "a:spcPct", "attrs", "val"]);
+      }
+
+      if (spcAftNode === undefined && spcAftPctNode === undefined) {
         spcAftNode = getTextByPathList(laypPrNode, ["a:spcAft", "a:spcPts", "attrs", "val"]);
-        // if(spcAftNode !== undefined){
-        //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
-        // }
-        // else{
-        //    //i did not found case with percentage
-        //     spcAftNode = getTextByPathList(laypPrNode, ["a:spcAft", "a:spcPct","attrs","val"]);
-        //     if(spcAftNode !== undefined){
-        //         spcBef = "margin-bottom:" + parseInt(spcAftNode)/100 + "%;"
-        //     }
-        // }
+        spcAftPctNode = getTextByPathList(laypPrNode, ["a:spcAft", "a:spcPct", "attrs", "val"]);
       }
 
       if (lnSpcNode === undefined) {
         lnSpcNode = getTextByPathList(laypPrNode, ["a:lnSpc", "a:spcPct", "attrs", "val"]);
         if (lnSpcNode === undefined) {
-          lnSpcNode = getTextByPathList(laypPrNode, ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"]);
+          lnSpcNode = getTextByPathList(laypPrNode, ["a:lnSpc", "a:spcPts", "attrs", "val"]);
           if (lnSpcNode !== undefined) {
             lnSpcNodeType = "Pts";
           }
@@ -10889,8 +10856,6 @@ function getVerticalMargins(pNode, textBodyNode, type, idx, warpObj) {
 
   }
   if (isInLayoutOrMaster && (spcBefNode === undefined || spcAftNode === undefined || lnSpcNode === undefined)) {
-    //check in master
-    //slideMasterTextStyles
     var slideMasterTextStyles = warpObj["slideMasterTextStyles"];
     var dirLoc = "";
     var lvl = "a:lvl" + lvl + "pPr";
@@ -10905,51 +10870,28 @@ function getVerticalMargins(pNode, textBodyNode, type, idx, warpObj) {
       case "ftr":
       case "sldNum":
       case "textBox":
-        // case "shape":
         dirLoc = "p:bodyStyle";
         break;
       case "shape":
-      //case "textBox":
       default:
         dirLoc = "p:otherStyle";
     }
-    // if (type == "shape" || type == "textBox") {
-    //     lvl = "a:lvl1pPr";
-    // }
     var inLvlNode = getTextByPathList(slideMasterTextStyles, [dirLoc, lvl]);
     if (inLvlNode !== undefined) {
-      if (spcBefNode === undefined) {
+      if (spcBefNode === undefined && spcBefPctNode === undefined) {
         spcBefNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPts", "attrs", "val"]);
-        // if(spcBefNode !== undefined){
-        //     spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "pt;"
-        // }
-        // else{
-        //    //i did not found case with percentage
-        //     spcBefNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPct","attrs","val"]);
-        //     if(spcBefNode !== undefined){
-        //         spcBef = "margin-top:" + parseInt(spcBefNode)/100 + "%;"
-        //     }
-        // }
+        spcBefPctNode = getTextByPathList(inLvlNode, ["a:spcBef", "a:spcPct", "attrs", "val"]);
       }
 
-      if (spcAftNode === undefined) {
+      if (spcAftNode === undefined && spcAftPctNode === undefined) {
         spcAftNode = getTextByPathList(inLvlNode, ["a:spcAft", "a:spcPts", "attrs", "val"]);
-        // if(spcAftNode !== undefined){
-        //     spcAft = "margin-bottom:" + parseInt(spcAftNode)/100 + "pt;"
-        // }
-        // else{
-        //    //i did not found case with percentage
-        //     spcAftNode = getTextByPathList(inLvlNode, ["a:spcAft", "a:spcPct","attrs","val"]);
-        //     if(spcAftNode !== undefined){
-        //         spcBef = "margin-bottom:" + parseInt(spcAftNode)/100 + "%;"
-        //     }
-        // }
+        spcAftPctNode = getTextByPathList(inLvlNode, ["a:spcAft", "a:spcPct", "attrs", "val"]);
       }
 
       if (lnSpcNode === undefined) {
         lnSpcNode = getTextByPathList(inLvlNode, ["a:lnSpc", "a:spcPct", "attrs", "val"]);
         if (lnSpcNode === undefined) {
-          lnSpcNode = getTextByPathList(inLvlNode, ["a:pPr", "a:lnSpc", "a:spcPts", "attrs", "val"]);
+          lnSpcNode = getTextByPathList(inLvlNode, ["a:lnSpc", "a:spcPts", "attrs", "val"]);
           if (lnSpcNode !== undefined) {
             lnSpcNodeType = "Pts";
           }
@@ -10966,6 +10908,19 @@ function getVerticalMargins(pNode, textBodyNode, type, idx, warpObj) {
     spcAfter = parseInt(spcAftNode) / 100 * fontSizeFactor;
   }
 
+  function percentSpace(value) {
+    if (value === undefined || fontSize === undefined) return undefined;
+    var token = String(value).trim();
+    if (!/^\+?(?:\d+(?:\.\d*)?|\.\d+)%?$/.test(token)) return undefined;
+    var fraction = token.endsWith("%") ? parseFloat(token) / 100 : Number(token) / 100000;
+    var pixels = fontSize * fraction;
+    return Number.isFinite(pixels) && pixels >= 0 ? pixels : undefined;
+  }
+  var beforePercent = percentSpace(spcBefPctNode);
+  var afterPercent = percentSpace(spcAftPctNode);
+  if (spcBefNode === undefined && beforePercent !== undefined) spcBefor = beforePercent;
+  if (spcAftNode === undefined && afterPercent !== undefined) spcAfter = afterPercent;
+
   if (lnSpcNode !== undefined && fontSize !== undefined) {
     if (lnSpcNodeType == "Pts") {
       var lineHeightPx = parseInt(lnSpcNode) / 100 * fontSizeFactor;
@@ -10973,26 +10928,24 @@ function getVerticalMargins(pNode, textBodyNode, type, idx, warpObj) {
         marginTopBottomStr += "line-height: " + lineHeightPx + "px;";
       }
     } else {
-      var fct = parseInt(lnSpcNode) / 100000;
+      var fct = String(lnSpcNode).trim().endsWith("%") ? parseFloat(lnSpcNode) / 100 : Number(lnSpcNode) / 100000;
       if (Number.isFinite(fct) && fct > 0) {
         marginTopBottomStr += "line-height: " + fct + ";";
       }
     }
   }
 
-  if (spcBefNode !== undefined) {
+  if ((spcBefNode !== undefined || beforePercent !== undefined) && Number.isFinite(spcBefor)) {
     marginTopBottomStr += "margin-top: " + Math.max(0, spcBefor) + "px;";
   }
-  if (spcAftNode !== undefined) {
+  if ((spcAftNode !== undefined || afterPercent !== undefined) && Number.isFinite(spcAfter)) {
     marginTopBottomStr += "margin-bottom: " + Math.max(0, spcAfter) + "px;";
   }
 
-  //console.log("getVerticalMargins 2 fontSize:", fontSize, "lnSpcNode:", lnSpcNode, "spcLines:", spcLines, "spcBefor:", spcBefor, "spcAfter:", spcAfter)
-  //console.log("getVerticalMargins 3 ", marginTopBottomStr, pNode, warpObj)
 
-  //return spcAft + spcBef;
   return marginTopBottomStr;
 }
+
 function getHorizontalAlign(node, textBodyNode, idx, type, prg_dir, warpObj) {
   var algn = getTextByPathList(node, ["a:pPr", "attrs", "algn"]);
   if (algn === undefined) {
@@ -11676,7 +11629,7 @@ function getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj) {
   var lstStyle = (textBodyNode !== undefined)? textBodyNode["a:lstStyle"] : undefined;
   var lvlpPr = "a:lvl" + lvl + "pPr";
   var fontSize = undefined;
-  var sz, kern;
+  var sz;
   if (node["a:rPr"] !== undefined) {
     fontSize = parseInt(node["a:rPr"]["attrs"]["sz"]) / 100;
   }
@@ -11692,19 +11645,6 @@ function getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj) {
     sz = getTextByPathList(lstStyle, [lvlpPr, "a:defRPr", "attrs", "sz"]);
     fontSize = parseInt(sz) / 100;
   }
-  //a:spAutoFit
-  var isAutoFit = false;
-  var isKerning = false;
-  if (textBodyNode !== undefined){
-    var spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:spAutoFit"]);
-    // if (spAutoFitNode === undefined) {
-    //     spAutoFitNode = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit"]);
-    // }
-    if (spAutoFitNode !== undefined){
-      isAutoFit = true;
-      isKerning = true;
-    }
-  }
   if (isNaN(fontSize) || fontSize === undefined) {
     // if (type == "shape" || type == "textBox") {
     //     type = "body";
@@ -11712,10 +11652,7 @@ function getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj) {
     // }
     sz = getTextByPathList(warpObj["slideLayoutTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
     fontSize = parseInt(sz) / 100;
-    kern = getTextByPathList(warpObj["slideLayoutTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
-    if (isKerning && kern !== undefined && !isNaN(fontSize) && (fontSize - parseInt(kern) / 100) > 0){
-      fontSize = fontSize - parseInt(kern) / 100;
-    }
+
   }
 
   if (isNaN(fontSize) || fontSize === undefined) {
@@ -11724,46 +11661,33 @@ function getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj) {
     //     lvlpPr = "a:lvl1pPr";
     // }
     sz = getTextByPathList(warpObj["slideMasterTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-    kern = getTextByPathList(warpObj["slideMasterTables"], ["typeTable", type, "p:txBody", "a:lstStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
     if (sz === undefined) {
       if (type == "title" || type == "subTitle" || type == "ctrTitle") {
         sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:titleStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:titleStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
       } else if (type == "body" || type == "obj" || type == "dt" || type == "sldNum") {
         sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:bodyStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:bodyStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
       }
       else if (type == "shape" || type === "textBox") {
         // Freeform shapes and text boxes inherit otherStyle, not body
         // placeholder typography.
         sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
-        isKerning = false;
       }
 
       if (sz === undefined) {
         sz = getTextByPathList(warpObj["defaultTextStyle"], [lvlpPr, "a:defRPr", "attrs", "sz"]);
-        kern = (kern === undefined)? getTextByPathList(warpObj["defaultTextStyle"], [lvlpPr, "a:defRPr", "attrs", "kern"]) : undefined;
-        isKerning = false;
       }
       //  else if (type === undefined || type == "shape") {
       //     sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-      //     kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
       // }
       // else if (type == "textBox") {
       //     sz = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "sz"]);
-      //     kern = getTextByPathList(warpObj["slideMasterTextStyles"], ["p:otherStyle", lvlpPr, "a:defRPr", "attrs", "kern"]);
       // }
     }
     fontSize = parseInt(sz) / 100;
-    if (isKerning && kern !== undefined && !isNaN(fontSize) && ((fontSize - parseInt(kern) / 100) > parseInt(kern) / 100 )) {
-      fontSize = fontSize - parseInt(kern) / 100;
-      //fontSize =  parseInt(kern) / 100;
-    }
   }
 
   var baseline = getTextByPathList(node, ["a:rPr", "attrs", "baseline"]);
-  if (baseline !== undefined && !isNaN(fontSize)) {
+  if (baseline !== undefined && Number(baseline) !== 0 && !isNaN(fontSize)) {
     // PowerPoint renders superscript/subscript runs at two thirds of the
     // inherited size. Treating baseline as a point delta leaves those runs
     // almost full-size and can push following text onto a new line.
@@ -11771,11 +11695,8 @@ function getFontSize(node, textBodyNode, pFontStyle, lvl, type, warpObj) {
   }
 
   if (!isNaN(fontSize)){
-    var normAutofit = getTextByPathList(textBodyNode, ["a:bodyPr", "a:normAutofit", "attrs", "fontScale"]);
-    if (normAutofit !== undefined && normAutofit != 0){
-      //console.log("fontSize", fontSize, "normAutofit: ", normAutofit, normAutofit/100000)
-      fontSize = Math.round(fontSize * (normAutofit / 100000))
-    }
+    const fontScale = getTextBodyMetrics(textBodyNode).fontScale;
+    fontSize *= fontScale;
   }
 
   return isNaN(fontSize) ? ((type == "br") ? "initial" : "inherit") : (fontSize * fontSizeFactor + "px");// + "pt");
@@ -12126,6 +12047,7 @@ async function getBackground(warpObj, slideSize, index) {
   var result = "<div class='slide-background slide-background-" + index + "' style='position:absolute;top:0;left:0;overflow:hidden;z-index:0;width:" + slideSize.width + "px; height:" + slideSize.height + "px;" + bgColor + "'>"
 
   if (nodesSldMaster !== undefined && shouldShowMasterSp) {
+    result += "<div class='pptx-master-layer' style='position:absolute;inset:0;z-index:0;'>";
     for (var nodeKey in nodesSldMaster) {
       if (nodesSldMaster[nodeKey].constructor === Array) {
         for (var i = 0; i < nodesSldMaster[nodeKey].length; i++) {
@@ -12141,8 +12063,10 @@ async function getBackground(warpObj, slideSize, index) {
         //}
       }
     }
+    result += "</div>";
   }
   if (nodesSldLayout !== undefined) {
+    result += "<div class='pptx-layout-layer' style='position:absolute;inset:0;z-index:1;'>";
     for (var nodeKey in nodesSldLayout) {
       if (nodesSldLayout[nodeKey].constructor === Array) {
         for (var i = 0; i < nodesSldLayout[nodeKey].length; i++) {
@@ -12158,6 +12082,7 @@ async function getBackground(warpObj, slideSize, index) {
         }
       }
     }
+    result += "</div>";
   }
 
   return result + "</div>";

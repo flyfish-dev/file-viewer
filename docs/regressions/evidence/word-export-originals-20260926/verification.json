@@ -1,0 +1,53 @@
+{
+  "run": "36205161551",
+  "checkedCommit": "f507eb7ca3d098cabb308ead6705bfc25a418950",
+  "functionalBase": "c77e693ea81897c54ec3ad47d6958e2df0eabbc4",
+  "originalDocuments": 8,
+  "dpr": [
+    1,
+    2
+  ],
+  "checks": {
+    "word-paragraph-export": 37,
+    "word-remaining-originals": 83,
+    "word-merged-borders": 21,
+    "word-vml-text": 57,
+    "docx-engine-compatibility": 11,
+    "container-compatibility": 4
+  },
+  "wordUnitTests": 86,
+  "newUnitTests": 12,
+  "baselineTargetFailure": true,
+  "actualWorkerParsed": true,
+  "actualPrintedPdf": "C052 A4 and generated Letter; page count, dimensions and paragraph/chart geometry",
+  "install": "actual pnpm 11.0.9 frozen selected workspace install",
+  "builds": [
+    "core",
+    "doc",
+    "word"
+  ],
+  "runtimeDependenciesChanged": false,
+  "engineOrStaticWorkerChanged": false,
+  "physicalPrintDriverTested": false,
+  "fullCorpusAccepted": false,
+  "sourceSha256": {
+    "docs/regressions/word-export-originals-20260926.md": "e400ea9dd0621d6682faf654e8e529d98b4ff2bad906082016cc42ff58d8e5f4",
+    "packages/renderers/word/scripts/verify-paragraph-export.mjs": "dde67707939a955ced77aab9d025ce6aac647341a3ab510fe4d1247173d67664",
+    "packages/renderers/word/scripts/verify-remaining-originals.mjs": "3650d7e8dd48c759b60a66dba6424633b905a051a6cb78f3968b3ad8fed2b62f",
+    "packages/renderers/word/src/docxExport.ts": "44cfedc7b05f43e13be95b47246c8d814e03f9c5d9dde3adb5f54c168a9c29d9",
+    "packages/renderers/word/src/wordDocx.ts": "617678c4d2e25abb51d00f8a5b07b94eed30036f68e4277ba5986c9febc27234",
+    "packages/renderers/word/test/docx-export.test.mjs": "ae9ea197fcf5a2a116aeb7447ea50030b4860114b95215dcb4074e503b6adefa",
+    "test/remaining-originals/identities.json": "9f4a6a0c94c84398dbcf913d9181fca8076f057a9d6d2b25d05cffaabe9e3d19"
+  },
+  "evidenceSha256": {
+    "vml.json": "5cbfd902ea2bcd787d530cd394317594249cfa3d17144e2a0febb3b116a59543",
+    "engine.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "generated.png": "1f629ac12f4aee20b497158560890a200b5c5c5e8edbb2cb0f69541bf9f29a25",
+    "containers.json": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c",
+    "export.json": "1cd119bcc97c31fb7348474258c19ae2184cc5606db356ac8ead433c1c2e26b2",
+    "baseline.json": "393a508e1aa4cb214d8d44bf49d97202db97a56adf287145e33f1d8729a2a269",
+    "merged.json": "52cf29c6dbb87f6eb4926286795e911b6a13a3c408ff15f6d2cd9ecee933c371",
+    "word-build.log": "fa509b6b730ac332b78dbf7f16996587a4063483aa532c0f26c37035cda62130",
+    "originals.json": "dc65d460f2aa8239bfdd59fa1243b61edbd61d9b76c45c90a10c71dcd552cd91"
+  }
+}

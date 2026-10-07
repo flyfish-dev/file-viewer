@@ -1,0 +1,19 @@
+{
+  "completed": false,
+  "passed": 1,
+  "failed": 1,
+  "checks": [
+    {
+      "name": "DPR 1 flow: actual Worker creates both chart paragraphs",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1 flow zoom 0.5: serialized paragraphs and chart bounds exactly match preview",
+      "status": "fail",
+      "error": "Reparsing must not add empty paragraphs.\n\n9 !== 7\n"
+    }
+  ],
+  "geometry": [],
+  "errors": [],
+  "externalRequestCount": 0
+}

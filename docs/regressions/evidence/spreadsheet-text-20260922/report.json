@@ -1,0 +1,77 @@
+{
+  "checks": [
+    {
+      "name": "UTF-8 text values under legacy type xls",
+      "status": "pass"
+    },
+    {
+      "name": "UTF-8 text values under legacy type xlt",
+      "status": "pass"
+    },
+    {
+      "name": "UTF-8 text values under legacy type xla",
+      "status": "pass"
+    },
+    {
+      "name": "UTF-8 text values under legacy type application/vnd.ms-excel",
+      "status": "pass"
+    },
+    {
+      "name": "Filename-only legacy hint and uppercase MIME parameters",
+      "status": "pass"
+    },
+    {
+      "name": "UTF-16 LE BOM text under XLS",
+      "status": "pass"
+    },
+    {
+      "name": "UTF-16 BE BOM text under XLS",
+      "status": "pass"
+    },
+    {
+      "name": "GBK legacy text uses shared automatic decoding",
+      "status": "pass"
+    },
+    {
+      "name": "UTF-8 BOM and delimited text keep independent cells",
+      "status": "pass"
+    },
+    {
+      "name": "Existing CSV decoding remains unchanged",
+      "status": "pass"
+    },
+    {
+      "name": "HTML-in-XLS preserves Unicode cell values",
+      "status": "pass"
+    },
+    {
+      "name": "Real OLE workbook bypasses text decoding",
+      "status": "pass"
+    },
+    {
+      "name": "ZIP workbooks, raw BIFF, controls and odd UTF-16 remain binary",
+      "status": "pass"
+    },
+    {
+      "name": "Modern workbook hints and unknown types are not forced into text",
+      "status": "pass"
+    },
+    {
+      "name": "Text probing is bounded and whole-file decoding keeps a split UTF-8 character",
+      "status": "pass"
+    },
+    {
+      "name": "Actual renderer searches the decoded Unicode cell",
+      "status": "pass"
+    },
+    {
+      "name": "Bundled real classic Worker returns correctly decoded search values",
+      "status": "pass"
+    },
+    {
+      "name": "Disposal clears renderer and has no browser errors or external requests",
+      "status": "pass"
+    }
+  ],
+  "passed": 18
+}

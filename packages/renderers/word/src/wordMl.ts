@@ -18,9 +18,29 @@ const aliases: Record<string, string> = {
 
 export function decodeWordMlBytes(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer)
+  // An XML declaration is ASCII-compatible until an explicit encoding is known.
+  // BOM/signature detection is still required before inspecting UTF-16 XML.
   const utf16le = (bytes[0] === 0xff && bytes[1] === 0xfe) || (bytes[0] === 0x3c && bytes[1] === 0)
   const utf16be = (bytes[0] === 0xfe && bytes[1] === 0xff) || (bytes[0] === 0 && bytes[1] === 0x3c)
-  return new TextDecoder(utf16le ? 'utf-16le' : utf16be ? 'utf-16be' : 'utf-8').decode(bytes)
+  const utf8Bom = bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf
+  const detected = utf16le ? 'utf-16le' : utf16be ? 'utf-16be' : utf8Bom ? 'utf-8' : null
+  const prefix = new TextDecoder(detected || 'windows-1252').decode(bytes.subarray(0, 1024))
+  const declaration = /^<\?xml\s[^?]*\?>/.exec(prefix)?.[0]
+  const encoding = declaration && /\sencoding\s*=\s*(["'])([A-Za-z][A-Za-z0-9._-]*)\1/.exec(declaration)?.[2]
+  let decoder: TextDecoder
+  try {
+    decoder = new TextDecoder(detected || encoding || 'utf-8', { fatal: true })
+    if (detected && encoding) {
+      const declared = new TextDecoder(encoding).encoding
+      const genericUtf16 = /^utf-16$/i.test(encoding) && detected.startsWith('utf-16')
+      if (declared !== detected && !genericUtf16) {
+        throw new Error('Encoding declaration conflicts with the byte signature.')
+      }
+    }
+    return decoder.decode(bytes)
+  } catch (error) {
+    throw new Error(`Invalid or unsupported Word 2003 XML encoding: ${error instanceof Error ? error.message : String(error)}`)
+  }
 }
 
 /**
@@ -43,6 +63,11 @@ export async function convertWordMlToDocx(buffer: ArrayBuffer, target: HTMLEleme
   }
   const body = Array.from(input.documentElement.children).find(element => element.namespaceURI === WORDML && element.localName === 'body')
   if (!body) throw new Error('Word 2003 XML document has no body.')
+
+  const fontTable = Array.from(input.documentElement.children).find(child =>
+    child.namespaceURI === WORDML && child.localName === 'fonts')
+  const defaultFonts = fontTable && Array.from(fontTable.children).find(child =>
+    child.namespaceURI === WORDML && child.localName === 'defaultFonts')
 
   const zip = new JSZip()
   const serializer = new Serializer()
@@ -166,9 +191,28 @@ export async function convertWordMlToDocx(buffer: ArrayBuffer, target: HTMLEleme
     ['docPr', 'settings', 'settings.xml', 'settings'],
   ]) {
     const element = Array.from(input.documentElement.children).find(child => child.namespaceURI === WORDML && child.localName === sourceName)
-    if (!element) continue
+    if (!element && !(sourceName === 'styles' && defaultFonts)) continue
     const part = createDocument(rootName)
-    for (const child of Array.from(element.childNodes)) appendConverted(child, part.documentElement, path)
+    if (sourceName === 'styles' && defaultFonts) {
+      // WordML fonts/defaultFonts are document run defaults, not an OOXML
+      // font-table entry. Keep them below named styles/direct run formatting.
+      const defaults = part.createElementNS(WORD, 'w:docDefaults')
+      const runDefaults = part.createElementNS(WORD, 'w:rPrDefault')
+      const properties = part.createElementNS(WORD, 'w:rPr')
+      const fonts = part.createElementNS(WORD, 'w:rFonts')
+      for (const [legacy, modern] of [['ascii', 'ascii'], ['h-ansi', 'hAnsi'], ['fareast', 'eastAsia'], ['cs', 'cs']]) {
+        const value = defaultFonts.getAttributeNS(WORDML, legacy)
+        if (value !== null) fonts.setAttributeNS(WORD, `w:${modern}`, value)
+      }
+      properties.appendChild(fonts)
+      runDefaults.appendChild(properties)
+      defaults.appendChild(runDefaults)
+      part.documentElement.appendChild(defaults)
+    }
+    for (const child of Array.from(element?.childNodes || [])) {
+      if (child === defaultFonts) continue
+      appendConverted(child, part.documentElement, path)
+    }
     zip.file(`word/${path}`, serialize(part))
     relate('document.xml', type, path)
     overrides.push([`/word/${path}`, `application/vnd.openxmlformats-officedocument.wordprocessingml.${type}+xml`])

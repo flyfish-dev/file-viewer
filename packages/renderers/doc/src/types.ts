@@ -633,7 +633,10 @@ export interface ParagraphBlock {
 
 export interface TableCellBlock {
   id: string;
+  /** Direct paragraphs retained for existing consumers. */
   paragraphs: ParagraphBlock[];
+  /** Ordered cell content, including nested tables. When present this is authoritative. */
+  blocks?: Array<ParagraphBlock | TableBlock>;
   meta: TableCellMeta | null;
   colIndex?: number;
   colspan?: number;

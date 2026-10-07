@@ -93,10 +93,10 @@ const options = {
 | `scan` | `true` 或 `{ roots, extensions, maxFileSize }`，扫描源码 hint 并合并格式 |
 | `inject` | 默认 `true`；设为 `false` 后手动导入 `virtual:file-viewer-renderers` |
 | `chunkStrategy` | `'renderer' | 'none'`，控制是否注入 renderer 级 chunk 分组 |
-| `stabilizeInteropChunks` | 默认 `true`；当宿主项目已有 `manualChunks` 函数时，把 CodeMirror / Lezer / Sandpack 归到同一 chunk，避免生产构建 TDZ 初始化错误 |
+| `stabilizeInteropChunks` | 默认 `true`；稳定 Pako / CommonJS helpers 和 CodeMirror / Lezer / Sandpack 的分组，避免生产构建初始化循环；也会包裹宿主已有的 `manualChunks` 函数 |
 | `missingRenderer` | `'error' | 'warn' | 'ignore'`，控制尚未提取的 renderer 映射提示方式 |
 
-如果宿主项目按包名拆分 `node_modules`，`@codemirror/*`、`@lezer/*` 和 Sandpack 之间的循环依赖可能在生产构建中表现为 `codemirror-view.* Cannot access ... before initialization`。插件默认会包裹已有的 `manualChunks` 函数，只稳定这些已知互操作 chunk，保留其它自定义分组；确实需要完全接管时可设置 `stabilizeInteropChunks:false`。
+默认分组将 Pako 和共享的 CommonJS helpers 放在一起，避免压缩格式依赖初始化时出现 `Cannot read properties of undefined (reading 'assign')`。宿主按包名拆分 `node_modules` 时，`@codemirror/*`、`@lezer/*` 和 Sandpack 之间的循环依赖还可能表现为 `Cannot access ... before initialization`。插件也会包裹已有的 `manualChunks` 函数，保留这些已知依赖以外的自定义分组。对象形式的 `manualChunks` 由宿主管理；需要完全接管分组时可设置 `stabilizeInteropChunks:false`。
 
 `copyAssets.baseDir` 可以覆盖自动目录：必须是相对路径，不能包含 `..`；传空字符串表示显式复制到根目录。插件会为标准包、preset 和 full 包同步统一运行时资源根；full 包仍同时同步 `setDefaultFullAssetBaseUrl()`。只有设置 `inject:false` 且不手动导入虚拟模块时，业务才需要调用 `setDefaultFileViewerAssetBaseUrl()`（full 包同时调用 `setDefaultFullAssetBaseUrl()`）。Vite 配置了 `base:'/app/'` 时，full 包开发 URL 为 `/app/file-viewer/...`，构建文件仍位于 `outDir/file-viewer/`。
 

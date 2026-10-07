@@ -1,0 +1,20 @@
+[
+  {
+    "id": "C006",
+    "sha256": "97260111ed25f2264b855329dcf21b6a3204c8554c8809527fa5e5d62e45cb67",
+    "rows": 3,
+    "columns": 4,
+    "expectedTextMatches": true,
+    "status": "existing-csv-correct",
+    "scope": "actual parser cell value; not whole-document visual certification"
+  },
+  {
+    "id": "C032",
+    "sha256": "b98b14896277106dd6d197c6a401dc3d3d7a63efd4a8eacc83e9061989175b79",
+    "rows": 1,
+    "columns": 1,
+    "expectedTextMatches": true,
+    "status": "fixed-decoding",
+    "scope": "actual parser cell value; not whole-document visual certification"
+  }
+]

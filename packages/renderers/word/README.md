@@ -67,3 +67,10 @@ DOC、DOCX 与 RTF 的外部链接及 HTTP(S) 图片关系默认阻断。只有�
 ## 迁移说明
 
 `@file-viewer/core` 已不再直接依赖 `@file-viewer/docx`、`@file-viewer/doc`、`rtf.js`、`linkedom` 或 `@xmldom/xmldom`。需要 Word 完整预览时，请安装本包并通过 `renderers` 传入，或使用 `@file-viewer/preset-all`。
+
+## 打印页面
+
+固定分页 DOCX 按每页原始纸张尺寸输出，支持横向分节和 A4／Letter 混排。
+预览缩放不改变打印尺寸；通过具名 CSS 页面规则避免额外添加外层页边距，
+文档本身的页边距保持不变。流式模式仍由浏览器分页，不按固定高度裁切。
+打印驱动或打印对话框中的纸张设置仍可能覆盖浏览器提供的尺寸。

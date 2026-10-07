@@ -1,0 +1,22 @@
+{
+  "package": "@file-viewer/docx",
+  "version": "0.3.32",
+  "engineCommit": "002f66eca18765eb4ffd322797e13ffb2186fe7c",
+  "patchSha256": "43dbf071f654a3fad1d4f044e6cb7452e9593ed7534d359d2e2ac5fe96f0025c",
+  "sha256": {
+    "docx-preview.mjs": "3bc5b76ecd1642101a90b91d5307a984d77b1a9164ec4b29326e901d3d5cb567",
+    "docx-preview.min.mjs": "3bc5b76ecd1642101a90b91d5307a984d77b1a9164ec4b29326e901d3d5cb567",
+    "docx-preview.js": "ce97efcfcddab6b14b561bb6b284a6ff686f8c864c0a4349a462b47bfaa8b2dc",
+    "docx-preview.min.js": "ce97efcfcddab6b14b561bb6b284a6ff686f8c864c0a4349a462b47bfaa8b2dc",
+    "docx-preview.worker.js": "8904171a8ecd2e779b1a5c41e8496e87232814cc45c43c3d15811203a9c06651"
+  },
+  "workerBootstrapCommit": "4236e8ad0d9a37563cb93a4fb1b9f2fce295d5e7",
+  "runtimeVersion": "0.3.32+compat.20260923.flow",
+  "paragraphFlow": {
+    "baselineCommit": "7d493f5fbd7978c47e96e26f0e1570e2a81115c7",
+    "baselinePinSha256": "3f23124e92693a4dd7e3072e5ff0f2c997f397d9845c0a38184db30a2065b437",
+    "transform": "scripts/lib/docx-paragraph-flow.mjs",
+    "transformSha256": "18428d61a9dc27baf378831174fb733342dadc652e653f22aa624f51dcc38a2d",
+    "method": "hash-pinned build-time transformation; no upstream source-build claim"
+  }
+}

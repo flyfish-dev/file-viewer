@@ -21,6 +21,8 @@ const CHART_RELATIONSHIP_SUFFIX = '/chart'
 const DRAWING_RELATIONSHIP_SUFFIX = '/drawing'
 const WORKSHEET_RELATIONSHIP_SUFFIX = '/worksheet'
 const EMUS_PER_CSS_PIXEL = 9525
+// Bound cache indices and formula expansion before allocating producer-controlled arrays.
+const MAX_CHART_POINTS = 1_048_576
 
 const CHART_TYPE_MAP: Record<string, SheetChartType> = {
   areaChart: 'area',
@@ -271,10 +273,16 @@ const parseFormulaRange = (formula: string) => {
   const sheetName = sheetToken.startsWith("'") && sheetToken.endsWith("'")
     ? sheetToken.slice(1, -1).replace(/''/g, "'")
     : sheetToken
-  const [startToken, endToken = startToken] = rangeToken.split(':')
+  const tokens = rangeToken.split(':')
+  if (tokens.length > 2) return null
+  const [startToken, endToken = startToken] = tokens
   const start = parseCellAddress(startToken)
   const end = parseCellAddress(endToken)
-  if (!sheetName || !start || !end) {
+  if (!sheetName || !start || !end ||
+      start.row < 0 || end.row < 0 ||
+      Math.max(start.row, end.row) >= MAX_CHART_POINTS ||
+      Math.max(start.col, end.col) >= 16_384 ||
+      (Math.abs(end.row - start.row) + 1) * (Math.abs(end.col - start.col) + 1) > MAX_CHART_POINTS) {
     return null
   }
 
@@ -322,15 +330,34 @@ const parsePointValues = (
     return []
   }
 
-  const cachedValues = elementsByLocal(element, 'pt')
-    .map((point) => ({
-      index: Number(point.getAttribute('idx')) || 0,
-      value: textContent(firstChildByLocal(point, 'v')) || textContent(firstByLocal(point, 'v'))
-    }))
-    .sort((left, right) => left.index - right.index)
-    .map((point) => point.value)
-  if (cachedValues.length) {
-    return cachedValues
+  // Cache point idx is a logical source position, not the point's XML order.
+  // Select one cache/level; flattening nested caches mixes category hierarchies.
+  const literal = firstChildByLocal(element, 'strLit') || firstChildByLocal(element, 'numLit')
+  const reference = firstChildByLocal(element, 'strRef') || firstChildByLocal(element, 'numRef')
+  const multiLevel = firstChildByLocal(firstChildByLocal(element, 'multiLvlStrRef'), 'multiLvlStrCache')
+  const cache = literal || firstChildByLocal(reference, 'strCache') ||
+    firstChildByLocal(reference, 'numCache') || multiLevel
+  if (cache) {
+    const unsigned = (token: string | null | undefined) => {
+      const text = token?.trim() || ''
+      if (!/^\+?\d+$/.test(text)) return undefined
+      const value = Number(text)
+      return Number.isSafeInteger(value) && value >= 0 && value <= MAX_CHART_POINTS
+        ? value : undefined
+    }
+    const entries = childrenByLocal(multiLevel ? firstChildByLocal(cache, 'lvl') : cache, 'pt')
+      .flatMap(point => {
+        const index = unsigned(point.getAttribute('idx'))
+        return index !== undefined && index < MAX_CHART_POINTS
+          ? [{index, value: firstChildByLocal(point, 'v')?.textContent || ''}] : []
+      })
+    const count = entries.reduce((length, point) => Math.max(length, point.index + 1),
+      unsigned(firstChildByLocal(cache, 'ptCount')?.getAttribute('val')) || 0)
+    const values = Array<string>(count).fill('')
+    for (const point of entries) values[point.index] = point.value
+    // An explicit empty cache is still a cache. Do not silently replace it with
+    // possibly unrelated/stale worksheet values or discard its declared extent.
+    return values
   }
 
   const formula = textContent(firstByLocal(element, 'f'))
@@ -392,7 +419,7 @@ const parseSeriesMarker = (series: XmlElement): SheetChartSeries['marker'] => {
   }
 }
 
-const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
+const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null, blankMode = 'gap') => {
   const chartType = CHART_TYPE_MAP[localName(chartNode)]
   const compactLineSeries = chartType === 'line'
     || chartType === 'area'
@@ -404,14 +431,28 @@ const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
     const category = firstChildByLocal(series, 'cat') || firstChildByLocal(series, 'xVal')
     const value = firstChildByLocal(series, 'val') || firstChildByLocal(series, 'yVal')
     const categories = parsePointValues(category, workbook)
-    const values = parsePointValues(value, workbook, false).map(Number).filter(Number.isFinite)
+    const rawValues = parsePointValues(value, workbook, false)
+    const count = Math.max(categories.length, rawValues.length)
+    const spanBlankIndexes: number[] = []
+    const values = Array.from({length: count}, (_, pointIndex) => {
+      const raw = rawValues[pointIndex]?.trim() || ''
+      if (!raw) {
+        if (blankMode === 'span') spanBlankIndexes.push(pointIndex)
+        return blankMode === 'zero' ? 0 : Number.NaN
+      }
+      // Empty cells and error values are not zero. Keep an error as a hard gap,
+      // even when blank cells are explicitly spanned or plotted as zero.
+      const number = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(raw) ? Number(raw) : NaN
+      return Number.isFinite(number) ? number : Number.NaN
+    })
 
     const result: SheetChartSeries = {
       name: chartText(tx, workbook) || `Series ${index + 1}`,
       categories: categories.length
-        ? categories
+        ? Array.from({length: count}, (_, i) => categories[i] ?? '')
         : values.map((_, valueIndex) => `${valueIndex + 1}`),
       values,
+      ...(spanBlankIndexes.length ? {spanBlankIndexes} : {}),
       color: parseSeriesColor(series),
       ...parseSeriesLine(series),
       marker: parseSeriesMarker(series)
@@ -421,17 +462,30 @@ const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null) => {
       return result
     }
 
-    const sourcePointIndexes = extremaPointIndexes(values, MAX_TRANSFERRED_LINE_CHART_POINTS)
+    const sourcePointIndexes = extremaPointIndexes(values, MAX_TRANSFERRED_LINE_CHART_POINTS, spanBlankIndexes)
+    const spanning = new Set(spanBlankIndexes)
     return {
       ...result,
       categories: sourcePointIndexes.map((sourceIndex) => (
         result.categories[sourceIndex] ?? `${sourceIndex + 1}`
       )),
       values: sourcePointIndexes.map((sourceIndex) => values[sourceIndex]),
+      ...(spanBlankIndexes.length ? {spanBlankIndexes: sourcePointIndexes.flatMap((sourceIndex, i) => spanning.has(sourceIndex) ? [i] : [])} : {}),
       sourcePointCount: values.length,
       sourcePointIndexes
     }
   })
+}
+
+/** DrawingML font sizes are hundredths of a point, not SVG viewport units. */
+const parseAxisFontSize = (axis: XmlElement | undefined, chartSpace: XmlElement | null) => {
+  const size = (node: XmlElement | null | undefined) => {
+    const props = firstByLocal(firstChildByLocal(node, 'txPr'), 'defRPr')
+    const raw = props?.getAttribute('sz')?.trim() || ''
+    const value = /^\d+$/.test(raw) ? Number(raw) : NaN
+    return Number.isFinite(value) && value >= 100 && value <= 400000 ? value / 75 : undefined
+  }
+  return size(axis) ?? size(chartSpace)
 }
 
 type ParsedChart = Omit<SheetChartDefinition, 'id' | 'from' | 'to' | 'ext'>
@@ -462,11 +516,13 @@ const parseChart = (document: XmlDocument, workbook?: WorkBook | null): ParsedCh
     categoryAxisTitle: chartText(firstChildByLocal(categoryAxis, 'title'), workbook) || undefined,
     valueAxisTitle: chartText(firstChildByLocal(valueAxis, 'title'), workbook) || undefined,
     barDirection,
+    categoryAxisFontSize: parseAxisFontSize(categoryAxis, root),
+    valueAxisFontSize: parseAxisFontSize(valueAxis, root),
     grouping: firstChildByLocal(chartEntry.element, 'grouping')?.getAttribute('val') || undefined,
     scatterStyle:
       firstChildByLocal(chartEntry.element, 'scatterStyle')?.getAttribute('val') || undefined,
     legendPosition: legend ? LEGEND_POSITION_MAP[legendPositionValue] || 'bottom' : undefined,
-    series: parseSeries(chartEntry.element, workbook)
+    series: parseSeries(chartEntry.element, workbook, firstChildByLocal(chart, 'dispBlanksAs')?.getAttribute('val') || 'gap')
   }
 }
 

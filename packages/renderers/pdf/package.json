@@ -64,6 +64,7 @@
     "type-check": "tsc -b tsconfig.json",
     "verify:pdfjs-runtime": "node scripts/stage-pdfjs-runtime.mjs --check",
     "verify:worker-lifecycle": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-worker-lifecycle.mjs",
+    "verify:hand-tool": "node scripts/verify-hand-tool-browser.mjs",
     "prepack": "node scripts/stage-pdfjs-runtime.mjs --check"
   },
   "dependencies": {
@@ -79,6 +80,7 @@
     }
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "pdf-lib": "1.17.1",
     "pdfjs-dist": "5.4.624",
     "typescript": "^6.0.3"

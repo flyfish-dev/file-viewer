@@ -1,0 +1,36 @@
+{
+  "package": "@file-viewer/docx",
+  "version": "0.3.32",
+  "engineCommit": "002f66eca18765eb4ffd322797e13ffb2186fe7c",
+  "patchSha256": "0f27cd1be09d1c659969fa077b613931060cec6e4f211559a7acfefd4130af89",
+  "sha256": {
+    "docx-preview.mjs": "7f17800be13f6e2e7b1de711022480470d925538a041f794e2afbe35364b95b1",
+    "docx-preview.min.mjs": "7f17800be13f6e2e7b1de711022480470d925538a041f794e2afbe35364b95b1",
+    "docx-preview.js": "c751d3554115d1a3b86df5b80287e468f65b8d839b446c1c259d3b46aab58e28",
+    "docx-preview.min.js": "c751d3554115d1a3b86df5b80287e468f65b8d839b446c1c259d3b46aab58e28",
+    "docx-preview.worker.js": "4702cd006fa46c5f55c10e482c9787b3e3874206713f470f004b70e25956e722"
+  },
+  "workerBootstrapCommit": "4236e8ad0d9a37563cb93a4fb1b9f2fce295d5e7",
+  "runtimeVersion": "0.3.32+compat.20260925.axes",
+  "paragraphFlow": {
+    "baselineCommit": "7d493f5fbd7978c47e96e26f0e1570e2a81115c7",
+    "baselinePinSha256": "3f23124e92693a4dd7e3072e5ff0f2c997f397d9845c0a38184db30a2065b437",
+    "transform": "scripts/lib/docx-paragraph-flow.mjs",
+    "transformSha256": "18428d61a9dc27baf378831174fb733342dadc652e653f22aa624f51dcc38a2d",
+    "method": "hash-pinned build-time transformation; no upstream source-build claim"
+  },
+  "gridMetrics": {
+    "baselineCommit": "2fc54c12293aa9a9ffae03d642553450be49f8df",
+    "baselinePinSha256": "51fd6785107293c34bd9167b388b10d456926e44da8927ec5e8f4b2cbeb1da86",
+    "transform": "scripts/lib/docx-grid-metrics.mjs",
+    "transformSha256": "a4572495c615ca70e5ad2839c4cac57191eacc80c8190f2347f43c64cb3e5055",
+    "method": "hash-pinned build-time transformation; no upstream source-build claim"
+  },
+  "chartAxes": {
+    "baselineCommit": "078ee358e2a7c777b3b74ec8c5b1e88521171c5a",
+    "baselinePinSha256": "8b5d86cbc297fe3fddbb336ce70d34603c0688f0866fea3c075084899ee25a7f",
+    "transform": "scripts/lib/docx-chart-axes.mjs",
+    "transformSha256": "bd2c66b43cc56c0f7c26df4c85657be9c784beb01c0be0a2e1edc8d9bd377d2a",
+    "method": "hash-pinned build-time transformation; no upstream source-build claim"
+  }
+}

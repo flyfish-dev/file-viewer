@@ -1,0 +1,22 @@
+{
+  "pixels": [
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      255,
+      0,
+      255
+    ]
+  ],
+  "wasm": [
+    {
+      "path": "/pdfjs/wasm/openjpeg.wasm",
+      "status": 200
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  The canonical catalog registers 274 file extensions across 47 preview pipelines: 224 stable and 50 experimental.
+  The canonical catalog registers 275 file extensions across 47 preview pipelines: 225 stable and 50 experimental.
   Renderers are loaded on demand, so opening a lightweight text file does not force the browser to load every heavy document engine.
 </p>
 

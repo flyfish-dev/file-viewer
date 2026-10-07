@@ -1,0 +1,28 @@
+{
+  "run": "35838676436",
+  "checkedCommit": "7cc66683cef305ad610b5a0f290a00e634c055cb",
+  "functionalCommit": "e9ff0a50811aa1ebe9919b9a92d4a2ed0c26925a",
+  "original": "C022",
+  "bodyCharacters": 30769,
+  "exactSourceText": true,
+  "originalParityChecks": 12,
+  "guardChecks": 32,
+  "priorEngineChecks": 11,
+  "benchmarkRunsPerVariant": 2,
+  "install": "actual frozen pnpm filtered workspace install with existing package patches unchanged",
+  "owningBuilds": [
+    "core",
+    "doc",
+    "pptx",
+    "word"
+  ],
+  "upstreamSourceBuild": false,
+  "fullCorpusAccepted": false,
+  "sha256": {
+    "original-parity.json": "c93e6698a4af70b6ad082e07346a614b0a4bebe692c88991ae1fe418abbad1ba",
+    "guard-report.json": "8b32d5b39ddd1637d410335599f9700bf865840826986feaaa161e05a199272b",
+    "engine-regression.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "original-benchmark.json": "244b903c2a18c3dfa4b6293ea5609084c695f2fd4af363f8a0e057234f4a2c14",
+    "guard-fixture.png": "a2b919ccd6cc367ad98b658aaa44cf23791a2cf5fc7d07855bee67159e326f90"
+  }
+}

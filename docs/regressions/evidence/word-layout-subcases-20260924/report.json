@@ -1,0 +1,137 @@
+{
+  "completed": true,
+  "passed": 15,
+  "checks": [
+    {
+      "name": "C018 DPR 1: every original body character and table row/cell is retained",
+      "status": "pass"
+    },
+    {
+      "name": "C018 DPR 1: authored list marks remain visible inside the original cell",
+      "status": "pass"
+    },
+    {
+      "name": "C031 DPR 1: every original body character and table row/cell is retained",
+      "status": "pass"
+    },
+    {
+      "name": "C031 DPR 1: 100%, 88%, 50%, 200% and reset preserve one page and scale both dimensions",
+      "status": "pass"
+    },
+    {
+      "name": "C033 DPR 1: every original body character and table row/cell is retained",
+      "status": "pass"
+    },
+    {
+      "name": "C033 DPR 1: table writing direction matches the original rather than forcing vertical text",
+      "status": "pass"
+    },
+    {
+      "name": "C033 DPR 1: flowchart image uses exact embedded bytes and authored display ratio",
+      "status": "pass"
+    },
+    {
+      "name": "C018 DPR 2: every original body character and table row/cell is retained",
+      "status": "pass"
+    },
+    {
+      "name": "C018 DPR 2: authored list marks remain visible inside the original cell",
+      "status": "pass"
+    },
+    {
+      "name": "C031 DPR 2: every original body character and table row/cell is retained",
+      "status": "pass"
+    },
+    {
+      "name": "C031 DPR 2: 100%, 88%, 50%, 200% and reset preserve one page and scale both dimensions",
+      "status": "pass"
+    },
+    {
+      "name": "C033 DPR 2: every original body character and table row/cell is retained",
+      "status": "pass"
+    },
+    {
+      "name": "C033 DPR 2: table writing direction matches the original rather than forcing vertical text",
+      "status": "pass"
+    },
+    {
+      "name": "C033 DPR 2: flowchart image uses exact embedded bytes and authored display ratio",
+      "status": "pass"
+    },
+    {
+      "name": "No browser exceptions or external requests while checking the original subcases",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C018",
+      "sha256": "95d88af68bde958c0825c575731a2cf81c716b736f4f9c06bf15e427ab4bf4cb",
+      "dpr": 1,
+      "characters": 111,
+      "bodySha256": "22d4223ebf689882333f956c7ddb18e8fb6c3f2dcb296f3576bf191214993f3c",
+      "rows": 1,
+      "cells": 3,
+      "pages": 1,
+      "images": 0
+    },
+    {
+      "id": "C031",
+      "sha256": "19a5b398b8037bd2cc3bbab4a5d39c2b889873aa181091829a0fd7429f0a5418",
+      "dpr": 1,
+      "characters": 553,
+      "bodySha256": "1656f05e830b370e49aaa1dc6f952893798ce35e0776368276a0444ef54cd6b0",
+      "rows": 0,
+      "cells": 0,
+      "pages": 1,
+      "images": 0
+    },
+    {
+      "id": "C033",
+      "sha256": "66eaea32fac0ee6cd8fc359fa01a7273263cb53b4f630cf92ba590f4c3bd73dc",
+      "dpr": 1,
+      "characters": 2734,
+      "bodySha256": "ae9b9c40d3e5a1f0352e872665db304b097fcb6886062591f399f18bcb5800e5",
+      "rows": 48,
+      "cells": 192,
+      "pages": 5,
+      "images": 1
+    },
+    {
+      "id": "C018",
+      "sha256": "95d88af68bde958c0825c575731a2cf81c716b736f4f9c06bf15e427ab4bf4cb",
+      "dpr": 2,
+      "characters": 111,
+      "bodySha256": "22d4223ebf689882333f956c7ddb18e8fb6c3f2dcb296f3576bf191214993f3c",
+      "rows": 1,
+      "cells": 3,
+      "pages": 1,
+      "images": 0
+    },
+    {
+      "id": "C031",
+      "sha256": "19a5b398b8037bd2cc3bbab4a5d39c2b889873aa181091829a0fd7429f0a5418",
+      "dpr": 2,
+      "characters": 553,
+      "bodySha256": "1656f05e830b370e49aaa1dc6f952893798ce35e0776368276a0444ef54cd6b0",
+      "rows": 0,
+      "cells": 0,
+      "pages": 1,
+      "images": 0
+    },
+    {
+      "id": "C033",
+      "sha256": "66eaea32fac0ee6cd8fc359fa01a7273263cb53b4f630cf92ba590f4c3bd73dc",
+      "dpr": 2,
+      "characters": 2734,
+      "bodySha256": "ae9b9c40d3e5a1f0352e872665db304b097fcb6886062591f399f18bcb5800e5",
+      "rows": 48,
+      "cells": 192,
+      "pages": 5,
+      "images": 1
+    }
+  ],
+  "errors": [],
+  "requests": [],
+  "scope": "C018 markers, C031 zoom and C033 writing direction/embedded flowchart; existing behavior confirmed, not new product fixes or complete Word fidelity."
+}

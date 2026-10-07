@@ -1,0 +1,191 @@
+{
+  "completed": true,
+  "checks": [
+    {
+      "name": "DPR 1: generated charts load through actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: date intervals follow serial coordinates without closing gaps",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ null\n- '44927,44938'\n"
+    },
+    {
+      "name": "DPR 1: axis title and chart title stay separate, rich runs keep spacing",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ []\n- [\n-   '(days)',\n-   '(units)'\n- ]\n"
+    },
+    {
+      "name": "DPR 1: dates obey format and 1904 flag with omitted value",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(charts[0].dates.some((t) => t.text === \"2023/01/01\"))\n"
+    },
+    {
+      "name": "DPR 1: authored scaling, major ticks and reversed axes are retained",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\nnull !== '-10,10'\n"
+    },
+    {
+      "name": "DPR 1: month steps preserve calendar progression and deleted axes stay hidden",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ []\n- [\n-   '2023/01/31',\n-   '2023/02/28',\n-   '2023/03/31',\n-   '2023/04/30'\n- ]\n"
+    },
+    {
+      "name": "DPR 1: geometry is finite and independent of host width",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: combined column and line retain separate series and value axes",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ []\n- [\n-   'barChart',\n-   'lineChart'\n- ]\n"
+    },
+    {
+      "name": "DPR 1: C034 renders all original chart relationships in the real Worker",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: C034 retains every date/value index and both combination series",
+      "status": "fail",
+      "error": "Cannot read properties of null (reading 'split')"
+    },
+    {
+      "name": "DPR 1: C034 date labels and manually positioned unit titles stay distinct",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(c.dates.length > 0)\n"
+    },
+    {
+      "name": "DPR 1: C034 header logo retains authored paragraph and column offsets",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: C034 body text is complete and original images decode",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 1: renderer unmount and blob cleanup finish",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: generated charts load through actual Worker",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: date intervals follow serial coordinates without closing gaps",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ null\n- '44927,44938'\n"
+    },
+    {
+      "name": "DPR 2: axis title and chart title stay separate, rich runs keep spacing",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ []\n- [\n-   '(days)',\n-   '(units)'\n- ]\n"
+    },
+    {
+      "name": "DPR 2: dates obey format and 1904 flag with omitted value",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(charts[0].dates.some((t) => t.text === \"2023/01/01\"))\n"
+    },
+    {
+      "name": "DPR 2: authored scaling, major ticks and reversed axes are retained",
+      "status": "fail",
+      "error": "Expected values to be strictly equal:\n\nnull !== '-10,10'\n"
+    },
+    {
+      "name": "DPR 2: month steps preserve calendar progression and deleted axes stay hidden",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ []\n- [\n-   '2023/01/31',\n-   '2023/02/28',\n-   '2023/03/31',\n-   '2023/04/30'\n- ]\n"
+    },
+    {
+      "name": "DPR 2: geometry is finite and independent of host width",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: combined column and line retain separate series and value axes",
+      "status": "fail",
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ []\n- [\n-   'barChart',\n-   'lineChart'\n- ]\n"
+    },
+    {
+      "name": "DPR 2: C034 renders all original chart relationships in the real Worker",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: C034 retains every date/value index and both combination series",
+      "status": "fail",
+      "error": "Cannot read properties of null (reading 'split')"
+    },
+    {
+      "name": "DPR 2: C034 date labels and manually positioned unit titles stay distinct",
+      "status": "fail",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(c.dates.length > 0)\n"
+    },
+    {
+      "name": "DPR 2: C034 header logo retains authored paragraph and column offsets",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: C034 body text is complete and original images decode",
+      "status": "pass"
+    },
+    {
+      "name": "DPR 2: renderer unmount and blob cleanup finish",
+      "status": "pass"
+    },
+    {
+      "name": "No unhandled errors or network requests",
+      "status": "pass"
+    }
+  ],
+  "passed": 13,
+  "failed": 16,
+  "originals": [
+    {
+      "id": "C034",
+      "sha256": "ca47e0507cb803f920aa88aac9a1600d568a7c66ff24c6142d509484b55e7571",
+      "charts": 12,
+      "points": 542,
+      "dates": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bodyCharacters": 3643,
+      "bodyTextSha256": "e147cdb4b3ba49dbc957be48603fc94a94dec0b2750ff8b24a8c73b20cb6ce16",
+      "images": 11,
+      "headers": 7,
+      "dpr": 1
+    },
+    {
+      "id": "C034",
+      "sha256": "ca47e0507cb803f920aa88aac9a1600d568a7c66ff24c6142d509484b55e7571",
+      "charts": 12,
+      "points": 542,
+      "dates": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bodyCharacters": 3643,
+      "bodyTextSha256": "e147cdb4b3ba49dbc957be48603fc94a94dec0b2750ff8b24a8c73b20cb6ce16",
+      "images": 11,
+      "headers": 7,
+      "dpr": 2
+    }
+  ]
+}

@@ -25,11 +25,21 @@ export function prepareDocxTexts(texts, version) {
   manifest.dependencies['@file-viewer/docx'] = version
   result[manifestPath] = JSON.stringify(manifest, null, 2) + '\n'
   const path = 'packages/core/src/platform/assets.ts'
-  const before = `DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '${previous}'`
-  assert.ok(texts[path].includes(before), 'Core Worker provenance differs from the Word package')
+  const declarations = [
+    ...texts[path].matchAll(
+      /\bDEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION\s*=\s*(['"])([^'"\r\n]+)\1/g
+    )
+  ]
+  assert.equal(declarations.length, 1, 'Core Worker provenance must have one version declaration')
+  const [before, quote, runtimeVersion] = declarations[0]
+  const provenance = /^(\d+\.\d+\.\d+)(\+compat\.\d{8}\.[a-z0-9.-]+)?$/.exec(runtimeVersion)
+  assert.ok(provenance?.[1] === previous, 'Core Worker provenance differs from the Word package')
+  // The compatibility build metadata busts Worker caches. Keep it when changing
+  // the published upstream version; never treat it as an npm package version.
+  const nextRuntimeVersion = version + (provenance[2] || '')
   result[path] = texts[path].replace(
     before,
-    `DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '${version}'`
+    `DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = ${quote}${nextRuntimeVersion}${quote}`
   )
   result['pnpm-workspace.yaml'] = texts['pnpm-workspace.yaml'].replace(
     `'@file-viewer/docx@${previous}'`,
@@ -37,6 +47,7 @@ export function prepareDocxTexts(texts, version) {
   )
   for (const path of factsPaths) {
     result[path] = texts[path]
+      .replaceAll(`file-viewer-docx=${runtimeVersion}`, `file-viewer-docx=${nextRuntimeVersion}`)
       .replaceAll(`@file-viewer/docx@${previous}`, `@file-viewer/docx@${version}`)
       .replaceAll(`file-viewer-docx=${previous}`, `file-viewer-docx=${version}`)
       .replaceAll(`@file-viewer/docx\` ${previous}`, `@file-viewer/docx\` ${version}`)

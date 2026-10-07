@@ -3,7 +3,7 @@
 <div class="doc-kicker">Format Truth</div>
 
 <p class="doc-lead">
-  唯一格式目录当前注册 <strong>274 个扩展名</strong>，覆盖 <strong>47 条预览链路</strong>：其中 <strong>224 个稳定</strong>、<strong>50 个实验</strong>。
+  唯一格式目录当前注册 <strong>275 个扩展名</strong>，覆盖 <strong>47 条预览链路</strong>：其中 <strong>225 个稳定</strong>、<strong>50 个实验</strong>。
   这一页不是“计划支持什么”，而是以当前代码里已经注册好的渲染器为准，告诉你项目现在到底能处理哪些格式、分别走哪条渲染链路，以及在真实业务里应该怎么选。
 </p>
 
@@ -14,7 +14,7 @@
 
 <div class="doc-grid">
   <div class="doc-card">
-    <h3>274 个已注册扩展名</h3>
+    <h3>275 个已注册扩展名</h3>
     <p>覆盖 Office、PDF、OFD、Typst、XMind、压缩包、邮件、OLB/DRA/GDS/OASIS、CAD、地理数据、3D 模型、Excalidraw、draw.io、Mermaid、PlantUML、EPUB、UMD、Markdown、图片、音视频、代码/文本、Git patch/bundle、字体、PSD 图层资产和结构化数据等常见附件类型。</p>
   </div>
   <div class="doc-card">

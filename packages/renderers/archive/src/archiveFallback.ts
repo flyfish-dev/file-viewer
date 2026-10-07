@@ -15,7 +15,10 @@ const ZIP_GENERAL_PURPOSE_UTF8_FLAG = 0x0800;
 
 const UTF8_DECODER = new TextDecoder('utf-8');
 const UTF8_FATAL_DECODER = new TextDecoder('utf-8', { fatal: true });
-const CJK_TEXT_PATTERN = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/;
+// A GBK filename may contain only circled numbers, CJK punctuation or fullwidth
+// forms. Han-only detection corrupts those valid names and skips the ZIP fallback.
+// Keep a bounded script/symbol heuristic: arbitrary legacy bytes remain ambiguous.
+const GBK_FILENAME_TEXT_PATTERN = /[\u2460-\u24ff\u3000-\u303f\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff01-\uff60]/;
 
 type DecompressionFormat = ConstructorParameters<typeof DecompressionStream>[0];
 
@@ -46,7 +49,7 @@ const isJSZipLike = (value: unknown): value is JSZipLike => {
 
 const createTextDecoder = (label: string) => {
   try {
-    return new TextDecoder(label);
+    return new TextDecoder(label, { fatal: true });
   } catch {
     return null;
   }
@@ -78,7 +81,7 @@ export const decodeZipFilename = (bytes: Uint8Array | number[]) => {
   }
 
   const gbk = decodeGbk(data);
-  if (gbk && CJK_TEXT_PATTERN.test(gbk)) {
+  if (gbk && GBK_FILENAME_TEXT_PATTERN.test(gbk)) {
     return gbk;
   }
 
@@ -268,8 +271,9 @@ export const hasLikelyGbkZipFilenames = (data: ArrayBuffer, filename: string) =>
 
     if ((flag & ZIP_GENERAL_PURPOSE_UTF8_FLAG) === 0) {
       const rawName = new Uint8Array(data, nameStart, nameLength);
-      const decoded = decodeZipFilename(rawName);
-      if (CJK_TEXT_PATTERN.test(decoded)) {
+      // Valid UTF-8 needs no legacy decoding, even when the producer omitted bit 11.
+      const decoded = decodeUtf8Strict(rawName) === null ? decodeGbk(rawName) : null;
+      if (decoded && GBK_FILENAME_TEXT_PATTERN.test(decoded)) {
         return true;
       }
     }

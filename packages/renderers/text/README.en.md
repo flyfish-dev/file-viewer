@@ -1,5 +1,7 @@
 # @file-viewer/renderer-text
 
+Markdown highlights fenced code with common language names and aliases such as `js`, `html` and `py` inside its own rendered article, including Shadow DOM and light/dark themes. Set `options.text.markdownHighlight: false` to disable it. Untagged, unknown-language, Mermaid and blocks whose JavaScript string length exceeds 102,400 stay plain text. A host-page `highlightAll()` call is unnecessary.
+
 Base code, text, and Markdown renderer package for Flyfish File Viewer. Mermaid, side-by-side patch diff, and Git bundle inspection live in `@file-viewer/capability-mermaid` and `@file-viewer/capability-text-tools`; they are excluded from the standard/full default closure.
 
 ## Usage
@@ -137,3 +139,24 @@ capped at 64 MiB. Timeout, cancellation and unload terminate workers and revoke 
 The source repository's `test/fixtures/issue-305/` contains redistributable
 valid/invalid XML, XSD, XSLT and a manifest. See [XML profiles notices](./licenses/xml-profiles/NOTICE.md)
 for verified licenses and upstream sources.
+
+### Markdown heading navigation
+
+Headings without an authored ID receive Unicode-preserving, lowercase IDs.
+Repeated headings get numeric suffixes. Existing table-of-contents links such as
+`[Introduction](#introduction)` scroll within their own viewer, including Shadow
+DOM and multiple viewers on one page; the host page URL is not changed. Authored
+IDs, external links and modified clicks are preserved. This does not generate a
+table of contents from a `[TOC]` directive.
+
+### LRC lyrics
+
+`.lrc` uses the text renderer and is registered in the lite, standard and all presets.
+The read-only view offers annotated lyrics, plain lyrics and the exact decoded source.
+It supports repeated line timestamps, inline word timestamps, metadata, signed offsets,
+UTF-8/UTF-16/GBK, wrapping and the shared zoom controls. `M:`, `F:` and `D:` roles
+continue until the next explicit role; untimed text and unknown markers remain visible.
+Positive offsets advance timestamps. This is static preview, not synchronized playback.
+`options.text.encoding`, `toolbar` and `wrapLongLines` retain their existing meaning.
+Oversized inputs or excessive timestamp expansion fall back to the existing source
+viewer instead of silently truncating lyrics. LRC content never creates active HTML.

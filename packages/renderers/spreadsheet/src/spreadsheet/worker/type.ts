@@ -55,7 +55,10 @@ export interface SheetDrawingMarker {
 export interface SheetChartSeries {
   name: string;
   categories: string[];
+  /** Non-finite entries are gaps; structured clone preserves their positions. */
   values: number[];
+  /** Transferred-array blank positions to span, excluding numeric errors. */
+  spanBlankIndexes?: number[];
   sourcePointCount?: number;
   sourcePointIndexes?: number[];
   color?: string;
@@ -73,6 +76,9 @@ export interface SheetChartDefinition {
   type: SheetChartType;
   title?: string;
   categoryAxisTitle?: string;
+  /** Unscaled CSS pixels from DrawingML hundredth-point text properties. */
+  categoryAxisFontSize?: number;
+  valueAxisFontSize?: number;
   valueAxisTitle?: string;
   barDirection?: 'column' | 'bar';
   grouping?: string;

@@ -332,7 +332,7 @@
   "legacyFull": {
     "release": "2.4.0",
     "policy": "legacy-compatible-frozen",
-    "baselineSha256": "1ec679529f081000fedae3f3dda89ba4e25b610a6136a9f7d54556cbc926c566",
+    "baselineSha256": "c95eb8e4f73eea5c1b8517defe8adf2b8dda347aecb2fdbaca7bd5fa7ee471ac",
     "excludedFutureCapabilities": [
       "dicom",
       "signature"
@@ -1569,6 +1569,7 @@
         "md",
         "markdown",
         "txt",
+        "lrc",
         "json",
         "js",
         "mjs",

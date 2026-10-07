@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import { fileURLToPath, URL } from 'node:url';
 import { createRequire } from 'node:module';
 
@@ -31,5 +31,12 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}', 'test/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    // These suites use node:test and run through test:native-regressions in pnpm test.
+    exclude: [
+      ...configDefaults.exclude,
+      'test/container-compatibility/pictures.test.mjs',
+      'test/docx-chart-axes/date-format.test.mjs',
+      'test/docx-grid-metrics/inline.test.mjs',
+    ],
   },
 });

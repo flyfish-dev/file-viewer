@@ -1,0 +1,14 @@
+{
+  "package": "@file-viewer/docx",
+  "version": "0.3.32",
+  "engineCommit": "002f66eca18765eb4ffd322797e13ffb2186fe7c",
+  "patchSha256": "d8004da3e75841411439a04a7a83181159bc5dd3459ca5c5e9a1d3b40b93e9bb",
+  "sha256": {
+    "docx-preview.mjs": "fda139c9441bb635ed2a3d81a0aa07210e5d727f3933ba26e98341c20285b6ae",
+    "docx-preview.min.mjs": "fda139c9441bb635ed2a3d81a0aa07210e5d727f3933ba26e98341c20285b6ae",
+    "docx-preview.js": "e35702050cbd8ff35191ef332117ded81b104ce45f88e747613e7b5fec181609",
+    "docx-preview.min.js": "e35702050cbd8ff35191ef332117ded81b104ce45f88e747613e7b5fec181609",
+    "docx-preview.worker.js": "de353fa299819d225cd5771863381f4f1ab4b5376a1ef1fe85af669573aeaa05"
+  },
+  "workerBootstrapCommit": "4236e8ad0d9a37563cb93a4fb1b9f2fce295d5e7"
+}

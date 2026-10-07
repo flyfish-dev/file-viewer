@@ -2,7 +2,7 @@ name: Public CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix/issue-audit-20261006]
   pull_request:
     branches: [main]
 
@@ -107,6 +107,13 @@ jobs:
       - name: Install Chromium and WebKit
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Install fonts required by native CJK layout
+        if: steps.impact.outputs.runtime != 'false'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends fonts-noto-cjk
+          fc-match 'Noto Serif CJK SC'
 
       - name: Run the issue regression gates
         if: steps.impact.outputs.runtime != 'false'

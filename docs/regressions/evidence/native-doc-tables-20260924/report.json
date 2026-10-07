@@ -1,0 +1,306 @@
+{
+  "completed": true,
+  "passed": 22,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Nested paragraph-mark rows retain independent grids and ordered cell blocks",
+      "status": "pass"
+    },
+    {
+      "name": "Row marks do not create phantom cells and authored empty cells survive",
+      "status": "pass"
+    },
+    {
+      "name": "Interrupted and malformed rows retain text instead of dropping pending content",
+      "status": "pass"
+    },
+    {
+      "name": "Adjacent inner tables separated by parent paragraphs remain separate",
+      "status": "pass"
+    },
+    {
+      "name": "Three nesting levels close only their own row and cell state",
+      "status": "pass"
+    },
+    {
+      "name": "Depth jumps do not allocate synthetic intermediate tables or recurse during parsing",
+      "status": "pass"
+    },
+    {
+      "name": "Supplemental story boundaries do not join unrelated tables",
+      "status": "pass"
+    },
+    {
+      "name": "Row-end-only recovery never promotes inner table paragraphs to the outer grid",
+      "status": "pass"
+    },
+    {
+      "name": "Legacy paragraph-only cells still render and nested content remains escaped",
+      "status": "pass"
+    },
+    {
+      "name": "Vertical parent text does not rotate or absorb a nested table grid",
+      "status": "pass"
+    },
+    {
+      "name": "Actual HTML renderer and sanitizer preserve nested tables at DPR 1",
+      "status": "pass"
+    },
+    {
+      "name": "C001: actual Worker and public Word renderer retain tables and embedded pictures at DPR 1",
+      "status": "pass"
+    },
+    {
+      "name": "C056: actual Worker and public Word renderer retain tables and embedded pictures at DPR 1",
+      "status": "pass"
+    },
+    {
+      "name": "C057: actual Worker and public Word renderer retain tables and embedded pictures at DPR 1",
+      "status": "pass"
+    },
+    {
+      "name": "C069: actual Worker and public Word renderer retain tables and embedded pictures at DPR 1",
+      "status": "pass"
+    },
+    {
+      "name": "No uncaught exceptions or external requests at DPR 1",
+      "status": "pass"
+    },
+    {
+      "name": "Actual HTML renderer and sanitizer preserve nested tables at DPR 2",
+      "status": "pass"
+    },
+    {
+      "name": "C001: actual Worker and public Word renderer retain tables and embedded pictures at DPR 2",
+      "status": "pass"
+    },
+    {
+      "name": "C056: actual Worker and public Word renderer retain tables and embedded pictures at DPR 2",
+      "status": "pass"
+    },
+    {
+      "name": "C057: actual Worker and public Word renderer retain tables and embedded pictures at DPR 2",
+      "status": "pass"
+    },
+    {
+      "name": "C069: actual Worker and public Word renderer retain tables and embedded pictures at DPR 2",
+      "status": "pass"
+    },
+    {
+      "name": "No uncaught exceptions or external requests at DPR 2",
+      "status": "pass"
+    }
+  ],
+  "originals": [
+    {
+      "id": "C001",
+      "sha256": "275fcd589ec2cafe1e96fd2634d1b001b7ce055434a5618459179408ee8dda98",
+      "dpr": 1,
+      "tables": 16,
+      "rows": 82,
+      "images": 12,
+      "bodyTextSha256": "f73998c5c848fa8af025358e3ecbb8a6ff94ce66d861be06bdf23976108c9ac3",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 16,
+          "rows": 82
+        },
+        {
+          "scale": 1,
+          "tables": 16,
+          "rows": 82
+        },
+        {
+          "scale": 2,
+          "tables": 16,
+          "rows": 82
+        }
+      ]
+    },
+    {
+      "id": "C056",
+      "sha256": "c61860b68b3b04e4ee2d00516dba1102fda84a51c559f1217ccb285940b5697c",
+      "dpr": 1,
+      "tables": 0,
+      "rows": 0,
+      "images": 1,
+      "bodyTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 1,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 2,
+          "tables": 0,
+          "rows": 0
+        }
+      ]
+    },
+    {
+      "id": "C057",
+      "sha256": "55e95c66c431ce7ca0fffc4fb296ad5d9beaefd9caf40ce9c1f648ff8849c7b6",
+      "dpr": 1,
+      "tables": 0,
+      "rows": 0,
+      "images": 1,
+      "bodyTextSha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 1,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 2,
+          "tables": 0,
+          "rows": 0
+        }
+      ]
+    },
+    {
+      "id": "C069",
+      "sha256": "20d54c7246abc43147c6145abdef283cac113fdbf684387bfdc69b9df9887e94",
+      "dpr": 1,
+      "tables": 2,
+      "rows": 39,
+      "images": 0,
+      "bodyTextSha256": "239060c882c8f5961c30c3335c686015feae433f4f0db501d9527c2b406763b5",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 2,
+          "rows": 39
+        },
+        {
+          "scale": 1,
+          "tables": 2,
+          "rows": 39
+        },
+        {
+          "scale": 2,
+          "tables": 2,
+          "rows": 39
+        }
+      ]
+    },
+    {
+      "id": "C001",
+      "sha256": "275fcd589ec2cafe1e96fd2634d1b001b7ce055434a5618459179408ee8dda98",
+      "dpr": 2,
+      "tables": 16,
+      "rows": 82,
+      "images": 12,
+      "bodyTextSha256": "f73998c5c848fa8af025358e3ecbb8a6ff94ce66d861be06bdf23976108c9ac3",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 16,
+          "rows": 82
+        },
+        {
+          "scale": 1,
+          "tables": 16,
+          "rows": 82
+        },
+        {
+          "scale": 2,
+          "tables": 16,
+          "rows": 82
+        }
+      ]
+    },
+    {
+      "id": "C056",
+      "sha256": "c61860b68b3b04e4ee2d00516dba1102fda84a51c559f1217ccb285940b5697c",
+      "dpr": 2,
+      "tables": 0,
+      "rows": 0,
+      "images": 1,
+      "bodyTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 1,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 2,
+          "tables": 0,
+          "rows": 0
+        }
+      ]
+    },
+    {
+      "id": "C057",
+      "sha256": "55e95c66c431ce7ca0fffc4fb296ad5d9beaefd9caf40ce9c1f648ff8849c7b6",
+      "dpr": 2,
+      "tables": 0,
+      "rows": 0,
+      "images": 1,
+      "bodyTextSha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 1,
+          "tables": 0,
+          "rows": 0
+        },
+        {
+          "scale": 2,
+          "tables": 0,
+          "rows": 0
+        }
+      ]
+    },
+    {
+      "id": "C069",
+      "sha256": "20d54c7246abc43147c6145abdef283cac113fdbf684387bfdc69b9df9887e94",
+      "dpr": 2,
+      "tables": 2,
+      "rows": 39,
+      "images": 0,
+      "bodyTextSha256": "239060c882c8f5961c30c3335c686015feae433f4f0db501d9527c2b406763b5",
+      "zoom": [
+        {
+          "scale": 0.5,
+          "tables": 2,
+          "rows": 39
+        },
+        {
+          "scale": 1,
+          "tables": 2,
+          "rows": 39
+        },
+        {
+          "scale": 2,
+          "tables": 2,
+          "rows": 39
+        }
+      ]
+    }
+  ],
+  "scope": "Nested-table structure, content order, embedded picture decoding and public entry/Worker parity; not whole-document desktop visual equivalence."
+}

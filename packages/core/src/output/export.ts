@@ -27,22 +27,44 @@ export const triggerFileViewerUrlDownload = (url: string, name: string) => {
   link.remove()
 }
 
+// Copy only presentation properties. The bitmap's pixel dimensions may be
+// several times larger than its CSS box, and canvas-only selectors will no
+// longer match after replacing the node with an image.
+const CANVAS_PRESENTATION_PROPERTIES = [
+  'display', 'position', 'top', 'right', 'bottom', 'left', 'box-sizing',
+  'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+  'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+  'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+  'border-top', 'border-right', 'border-bottom', 'border-left', 'border-radius',
+  'transform', 'transform-origin', 'vertical-align', 'float', 'clear',
+  'opacity', 'visibility', 'z-index', 'align-self', 'justify-self',
+  'flex-grow', 'flex-shrink', 'flex-basis', 'order', 'grid-area',
+] as const
+
 export const replaceFileViewerCanvasWithImages = (source: HTMLElement, clone: HTMLElement) => {
   const sourceCanvases = Array.from(source.querySelectorAll('canvas'))
   const clonedCanvases = Array.from(clone.querySelectorAll('canvas'))
 
   clonedCanvases.forEach((canvas, index) => {
     const sourceCanvas = sourceCanvases[index]
-    if (!sourceCanvas) {
-      return
-    }
+    if (!sourceCanvas) return
     try {
-      const image = source.ownerDocument.createElement('img')
+      const image = canvas.ownerDocument.createElement('img')
       image.src = sourceCanvas.toDataURL('image/png')
-      image.alt = 'rendered canvas'
-      image.style.maxWidth = '100%'
-      image.style.display = 'block'
-      image.style.margin = '0 auto'
+      image.alt = sourceCanvas.getAttribute('aria-label') || 'rendered canvas'
+      image.className = canvas.className
+      image.id = canvas.id
+      image.style.cssText = canvas.style.cssText
+      const style = sourceCanvas.ownerDocument.defaultView?.getComputedStyle(sourceCanvas)
+      if (style) {
+        for (const property of CANVAS_PRESENTATION_PROPERTIES) {
+          const value = style.getPropertyValue(property)
+          if (value) image.style.setProperty(property, value, canvas.style.getPropertyPriority(property))
+        }
+      }
+      // Detached canvases have no used style; keep their normal intrinsic size.
+      if (!image.style.width || image.style.width === 'auto') image.style.width = `${sourceCanvas.width}px`
+      if (!image.style.height || image.style.height === 'auto') image.style.height = `${sourceCanvas.height}px`
       canvas.replaceWith(image)
     } catch {
       // A canvas tainted by cross-origin resources cannot be exported.
@@ -51,47 +73,84 @@ export const replaceFileViewerCanvasWithImages = (source: HTMLElement, clone: HT
 }
 
 export const waitForFileViewerNextPaint = (
-  targetWindow?: Partial<Pick<Window, 'requestAnimationFrame' | 'setTimeout'>>
+  targetWindow?: Partial<Pick<Window, 'requestAnimationFrame' | 'cancelAnimationFrame' | 'setTimeout' | 'clearTimeout'>>
 ) => {
   return new Promise<void>(resolve => {
     const currentWindow = targetWindow || globalThis.window
-    if (!currentWindow || typeof currentWindow.requestAnimationFrame !== 'function') {
-      const schedule = currentWindow?.setTimeout
-        ? currentWindow.setTimeout.bind(currentWindow)
-        : globalThis.setTimeout.bind(globalThis)
-      schedule(() => resolve(), 0)
-      return
+    const schedule = currentWindow?.setTimeout?.bind(currentWindow) || globalThis.setTimeout.bind(globalThis)
+    const cancel = currentWindow?.clearTimeout?.bind(currentWindow) || globalThis.clearTimeout.bind(globalThis)
+    let frame: number | undefined
+    let finished = false
+    const finish = () => {
+      if (finished) return
+      finished = true
+      cancel(timeout)
+      if (frame !== undefined) currentWindow?.cancelAnimationFrame?.(frame)
+      resolve()
     }
-
-    const requestAnimationFrame = currentWindow.requestAnimationFrame.bind(currentWindow)
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => resolve())
-    })
+    // Background tabs and hidden print hosts may never run animation frames.
+    const timeout = schedule(finish, currentWindow?.requestAnimationFrame ? 250 : 0)
+    if (!currentWindow?.requestAnimationFrame) return
+    try {
+      frame = currentWindow.requestAnimationFrame(() => {
+        if (!finished) {
+          try { frame = currentWindow.requestAnimationFrame!(finish) } catch { finish() }
+        }
+      })
+    } catch {
+      finish()
+    }
   })
 }
 
-export const waitForFileViewerImages = async (root: ParentNode | null | undefined) => {
-  if (!root || typeof root.querySelectorAll !== 'function') {
-    return
-  }
-  const images = Array.from(root.querySelectorAll('img'))
-  await Promise.all(images.map(async image => {
-    if (image.complete) {
-      return
+const waitForImage = (image: HTMLImageElement, timeoutMs: number) => {
+  if (image.complete) return Promise.resolve()
+  return new Promise<void>(resolve => {
+    let settled = false
+    const finish = () => {
+      if (settled) return
+      settled = true
+      clearTimeout(timeout)
+      image.removeEventListener('load', finish)
+      image.removeEventListener('error', finish)
+      resolve()
     }
-    if ('decode' in image) {
+    // Start the timeout before decode(): a stalled decode must not bypass it.
+    const timeout = setTimeout(finish, timeoutMs)
+    image.addEventListener('load', finish, { once: true })
+    image.addEventListener('error', finish, { once: true })
+    if (image.complete) finish()
+    else if (typeof image.decode === 'function') {
       try {
-        await image.decode()
-        return
+        image.decode().then(finish, () => {
+          // An error/load event may already have fired before decode rejects.
+          if (image.complete) finish()
+        })
       } catch {
-        // Fall back to load/error events so one bad image cannot block export.
+        if (image.complete) finish()
       }
     }
-    await new Promise<void>(resolve => {
-      image.addEventListener('load', () => resolve(), { once: true })
-      image.addEventListener('error', () => resolve(), { once: true })
-    })
-  }))
+  })
+}
+
+const waitForFonts = async (documentRef: Document | undefined, timeoutMs: number) => {
+  if (!documentRef?.fonts) return
+  let timeout: ReturnType<typeof setTimeout> | undefined
+  try {
+    await Promise.race([
+      documentRef.fonts.ready,
+      new Promise<void>(resolve => { timeout = setTimeout(resolve, timeoutMs) }),
+    ])
+  } catch {
+    // A failed optional font should not prevent the browser's fallback print.
+  } finally {
+    if (timeout !== undefined) clearTimeout(timeout)
+  }
+}
+
+export const waitForFileViewerImages = async (root: ParentNode | null | undefined) => {
+  if (!root || typeof root.querySelectorAll !== 'function') return
+  await Promise.all(Array.from(root.querySelectorAll('img'), image => waitForImage(image, 5000)))
 }
 
 const bytesToDataUrl = (bytes: ArrayBuffer, mimeType: string) => {
@@ -169,48 +228,26 @@ export const waitForFileViewerPrintWindowReady = async (printWindow: Window) => 
   const { document: printDocument } = printWindow
   if (printDocument.readyState !== 'complete') {
     await new Promise<void>(resolve => {
-      printWindow.addEventListener('load', () => resolve(), { once: true })
-      printWindow.setTimeout(() => resolve(), 1200)
+      let settled = false
+      const finish = () => {
+        if (settled) return
+        settled = true
+        printWindow.clearTimeout(timeout)
+        printWindow.removeEventListener('load', finish)
+        resolve()
+      }
+      const timeout = printWindow.setTimeout(finish, 1200)
+      printWindow.addEventListener('load', finish, { once: true })
+      if (printDocument.readyState === 'complete') finish()
     })
   }
 
-  await Promise.all(Array.from(printDocument.images).map(async image => {
-    if (image.complete) {
-      return
-    }
-    if ('decode' in image) {
-      try {
-        await image.decode()
-        return
-      } catch {
-        // Image decode failures do not block the browser's print attempt.
-      }
-    }
-    await new Promise<void>(resolve => {
-      image.addEventListener('load', () => resolve(), { once: true })
-      image.addEventListener('error', () => resolve(), { once: true })
-      printWindow.setTimeout(() => resolve(), 1500)
-    })
-  }))
+  await Promise.all([
+    ...Array.from(printDocument.images, image => waitForImage(image, 1500)),
+    waitForFonts(printDocument, 1500),
+  ])
 
-  await new Promise<void>(resolve => {
-    let settled = false
-    let timeoutId: number | undefined
-    const finish = () => {
-      if (settled) return
-      settled = true
-      if (timeoutId !== undefined) printWindow.clearTimeout(timeoutId)
-      resolve()
-    }
-    timeoutId = printWindow.setTimeout(finish, 250)
-    try {
-      printWindow.requestAnimationFrame(() => {
-        printWindow.requestAnimationFrame(finish)
-      })
-    } catch {
-      finish()
-    }
-  })
+  await waitForFileViewerNextPaint(printWindow)
 }
 
 export const resolveFileViewerPrintStyle = async (
@@ -233,6 +270,9 @@ export const prepareFileViewerRenderedContentForSnapshot = async (
   adapter?: FileRenderExportAdapter | null
 ) => {
   await adapter?.beforeSnapshot?.()
+  await Promise.all([
+    waitForFileViewerImages(source),
+    waitForFonts(source.ownerDocument, 5000),
+  ])
   await waitForFileViewerNextPaint(source.ownerDocument.defaultView || undefined)
-  await waitForFileViewerImages(source)
 }

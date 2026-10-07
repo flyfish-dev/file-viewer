@@ -1,0 +1,11 @@
+{
+  "run": "35818968969",
+  "baselineTargetFailure": true,
+  "checks": 12,
+  "scope": "Core/PPTX builds, existing connector/chart regressions, generated package and C050 raw-byte Roman labels/spacing. Not complete slide fidelity.",
+  "sha256": {
+    "report.json": "9dbe3700bb9be1006f76a68ccb99404598a4387834b1623f36d02ca72a6a7573",
+    "geometry.json": "4cfb3f2a1f412c291070679be5f8467232d9ab6deb89ccafd3bada7cba296896",
+    "generated.png": "4609af1748c32818a21d8bd81872b42e33fe891b6455c4a414d5fc8b7bb3c829"
+  }
+}

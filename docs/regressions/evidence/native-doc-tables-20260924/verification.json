@@ -1,0 +1,32 @@
+{
+  "run": "35946109280",
+  "checkedCommit": "857ee7e8467421058fd46b9c3b73f6702d3eb35b",
+  "baseCommit": "196c81be07216586d3bacb863ef220bcaef817bb",
+  "checks": 22,
+  "originalDocuments": 4,
+  "dpr": [
+    1,
+    2
+  ],
+  "zoom": [
+    0.5,
+    1,
+    2
+  ],
+  "builds": [
+    "core",
+    "doc",
+    "word"
+  ],
+  "install": "actual pnpm 11.0.9 frozen filtered workspace install",
+  "existingDocGates": 6,
+  "wordPackageTests": 20,
+  "fullCorpusAccepted": false,
+  "sha256": {
+    "engine.json": "9026ef0f7f9d8cd448a390a55fb650385ae3d5ea22f37f88dbec1311ab9d7927",
+    "generated.png": "8174966c13f290c9696d8e959fc9e4a8c9d53ee6098ede46ec4b5bb286b4d342",
+    "containers.json": "580d5f884ad889b40e4c87b41f21d1b824f1f6507ff8b7147af626929efbab1c",
+    "report.json": "6e08a02dcb441e19aa1e9cae1dcc2afbf1ca8332ff556f2184989c5c70097c36",
+    "baseline.json": "380acd02390222a6a103400601c45d9ce72bf0866f4cb6c2cdde8a971639a8b0"
+  }
+}

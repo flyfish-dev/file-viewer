@@ -1,6 +1,11 @@
+import { preserveDocxParagraphStructureForExport, readDocxFlowPaperHeight } from './docxExport.js'
 import type { DocxProgressEvent, Options, renderAsync } from '@file-viewer/docx'
 import JSZip from 'jszip'
-import { correctDocxMixedAnchorOrigins } from './docxAnchors.js'
+import { correctDocxMixedAnchorOrigins, correctDocxVmlTextAnchorOrigins } from './docxAnchors.js'
+import { observeDocxFrames } from './docxFrames.js'
+import { layoutDocxExplicitTabs } from './docxTabs.js'
+import { normalizeDocxVmlTextViewports } from './docxVml.js'
+import { normalizeDocxMergedCellBorders } from './docxMergedBorders.js'
 import {
   DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
   resolveFileViewerDocxWorkerJsZipUrl,
@@ -580,30 +585,11 @@ function installResponsiveStyle(target: HTMLDivElement) {
   return style
 }
 
-function wrapDocxSections(target: HTMLDivElement, pagedLayout: boolean) {
-  const wrapper = target.querySelector('.docx-wrapper')
-  if (!wrapper) {
-    return []
-  }
-
-  return Array.from(wrapper.children).flatMap(child => {
-    if (!isTargetHTMLElement(child, target) || !child.matches('section.docx')) {
-      return []
-    }
-
-    const frame = target.ownerDocument.createElement('div')
-    frame.className = pagedLayout ? 'docx-page-frame' : 'docx-flow-frame'
-    child.before(frame)
-    frame.appendChild(child)
-    return [frame]
-  })
-}
-
 function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext) {
   target.classList.add('docx-fit-viewer')
   const style = installResponsiveStyle(target)
   const pagedLayout = context?.options?.docx?.visualPagination === true
-  const frames = wrapDocxSections(target, pagedLayout)
+  let frames: HTMLElement[] = []
   const view = getTargetWindow(target)
   const ResizeObserverCtor = view?.ResizeObserver
   let resizeFrame = 0
@@ -628,7 +614,11 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
       }
 
       page.style.transform = 'translateX(-50%)'
+      normalizeDocxMergedCellBorders(page)
       correctDocxMixedAnchorOrigins(page)
+      correctDocxVmlTextAnchorOrigins(page)
+      normalizeDocxVmlTextViewports(page)
+      layoutDocxExplicitTabs(page)
 
       const pageWidth = page.offsetWidth
       const contentHeight = pagedLayout
@@ -771,17 +761,22 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
 
   const observer = ResizeObserverCtor ? new ResizeObserverCtor(resize) : null
   observer?.observe(target)
-  frames.forEach(frame => {
-    const page = getDocxPageElement(frame)
-    if (page) {
-      observer?.observe(page)
-    }
+  const disposeFrames = observeDocxFrames(target, pagedLayout, nextFrames => {
+    observer?.disconnect()
+    observer?.observe(target)
+    frames = nextFrames
+    frames.forEach(frame => {
+      const page = getDocxPageElement(frame)
+      if (page) observer?.observe(page)
+    })
+    resize()
   })
   applyResponsiveLayout()
 
   return () => {
     view?.cancelAnimationFrame(resizeFrame)
     observer?.disconnect()
+    disposeFrames()
     unregisterFileViewerZoomProvider(target)
     style.remove()
     target.classList.remove('docx-fit-viewer')
@@ -815,7 +810,7 @@ function getDocxFramePrintSize(frame: HTMLElement | undefined) {
 
   return {
     width: size.width,
-    height: Math.max(page.scrollHeight || 0, page.offsetHeight || 0, DOCX_DEFAULT_PAGE_SIZE.height)
+    height: Math.max(page.scrollHeight || 0, page.offsetHeight || 0, readDocxFlowPaperHeight(page, DOCX_DEFAULT_PAGE_SIZE.height))
   }
 }
 
@@ -858,23 +853,25 @@ function normalizeDocxPageForPrint(frame: HTMLElement, pageSize: PrintPageSize) 
 }
 
 function buildDocxPrintStyle(target: HTMLDivElement) {
-  const firstFrame = target.querySelector<HTMLElement>(
+  const frames = Array.from(target.querySelectorAll<HTMLElement>(
     '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
-  )
-  const pageSize = getDocxFramePrintSize(firstFrame || undefined)
-  const selector = isDocxCanvasSheet(firstFrame || undefined)
+  ))
+  const firstFrame = frames[0]
+  const pageSize = getDocxFramePrintSize(firstFrame)
+  const selector = isDocxCanvasSheet(firstFrame)
     ? '.viewer-export-content .docx-canvas-sheet'
-    : firstFrame?.classList.contains('docx-flow-frame')
+    : isDocxFlowFrame(firstFrame)
       ? '.viewer-export-content .docx-flow-frame'
       : '.viewer-export-content .docx-page-frame'
-
   return buildPrintPageStyle({
     selector,
     width: pageSize.width,
-    height: firstFrame?.classList.contains('docx-flow-frame')
-      ? DOCX_DEFAULT_PAGE_SIZE.height
+    height: isDocxFlowFrame(firstFrame)
+      ? readDocxFlowPaperHeight(getDocxPageElement(firstFrame), DOCX_DEFAULT_PAGE_SIZE.height)
       : pageSize.height,
-    heightMode: firstFrame?.classList.contains('docx-flow-frame') ? 'min' : 'fixed'
+    heightMode: isDocxFlowFrame(firstFrame) ? 'min' : 'fixed',
+    // Flow sections are browser-paginated rather than fixed authored pages.
+    pages: frames.some(isDocxFlowFrame) ? undefined : frames.map(getDocxFramePrintSize)
   })
 }
 
@@ -898,6 +895,7 @@ async function prepareDocxCloneForExport(target: HTMLDivElement) {
     const selector = '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
     const liveFrames = Array.from(target.querySelectorAll<HTMLElement>(selector))
     const clone = target.cloneNode(true) as HTMLElement
+    preserveDocxParagraphStructureForExport(target, clone)
     replaceFileViewerCanvasWithImages(target, clone)
     const printDocument = target.ownerDocument.createElement('div')
     printDocument.className = 'docx-print-document'

@@ -32,6 +32,23 @@ const legacyPptxCss = `
 .slide table tr,.slide table td{box-sizing:border-box;min-width:0;overflow:hidden}
 .slide .pptx-table-cell-content{box-sizing:border-box;min-height:0;overflow:hidden}
 .slide svg.drawing{position:absolute;overflow:visible}
+/* Chart shapes need renderer-owned styling even in offline / Shadow DOM hosts.
+   Without it SVG's default black fill closes line and axis paths into polygons. */
+.slide .pptx-chart-surface svg{font:10px sans-serif;overflow:hidden}
+.slide .pptx-chart-surface .bb-axis path,.slide .pptx-chart-surface .bb-axis line{fill:none;stroke:currentColor}
+.slide .pptx-chart-surface .bb-line{fill:none;stroke-width:1px}
+.slide .pptx-chart-surface .bb-bar{stroke-width:0}
+.slide .pptx-chart-surface .bb-area{stroke-width:0;opacity:.2}
+.slide .pptx-chart-surface .bb-chart-arc path{stroke:#fff}
+.slide .pptx-chart-surface .bb-chart-arc text{fill:#fff;font-size:13px}
+.slide .pptx-chart-surface .bb-grid line{fill:none;stroke:#aaa}
+.slide .pptx-chart-surface .bb-xgrid,.slide .pptx-chart-surface .bb-ygrid{stroke-dasharray:3 3}
+.slide .pptx-chart-surface .bb-xgrid-focus,.slide .pptx-chart-surface .bb-ygrid-focus{pointer-events:none}
+.slide .pptx-chart-surface .bb-legend-item{font-size:12px}
+.slide .pptx-chart-surface .bb-tooltip-container{z-index:10;pointer-events:none}
+.slide .pptx-chart-surface table.bb-tooltip{position:static;width:auto;table-layout:auto;background:#fff;color:#172033;border:1px solid #ccc;opacity:.95;font-size:12px}
+.slide .pptx-chart-surface .bb-tooltip td,.slide .pptx-chart-surface .bb-tooltip th{padding:4px 6px}
+
 `;
 
 const PPTX_CONTENT_STYLE_SCOPE = '.flyfish-pptx-content';

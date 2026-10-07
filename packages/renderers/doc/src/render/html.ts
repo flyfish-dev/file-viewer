@@ -1,7 +1,7 @@
 import { escapeHtml, slugify, twipsToPx } from '../core/utils.js';
 import { HIGHLIGHT_COLORS } from '../msdoc/constants.js';
 import { cssTextAlign, cssUnderline, cssVerticalAlign } from '../msdoc/properties.js';
-import { textFontRuns } from './fonts.js';
+import { fontFallbacks, textFontRuns } from './fonts.js';
 import type {
   AttachmentAsset,
   AttachmentsBlock,
@@ -18,6 +18,7 @@ import type {
   TableCellBlock,
   ShadingSpec,
   TextInlineNode,
+  FontInfo,
 } from '../types.js';
 
 const COLOR_INDEX_MAP: Record<number, string> = {
@@ -46,6 +47,7 @@ interface RenderContext {
   reviewMode: NonNullable<MsDocRenderOptions['reviewMode']>;
   externalLinkPolicy: ExternalLinkPolicy;
   externalResourcePolicy: ExternalResourcePolicy;
+  fonts: ReadonlyMap<string, FontInfo>;
 }
 
 function styleObjectToCss(style: CssStyleObject): string {
@@ -215,14 +217,19 @@ function buildUnderlineStyle(underline: number): CssStyleObject {
   return css;
 }
 
-function inlineStyleToCss(styleState: CharState): CssStyleObject {
+function fontFamilyToCss(name: string, context: RenderContext): string {
+  const stack = fontFallbacks(name, context.fonts.get(name));
+  return [...new Set(stack.families)].map(quoteCssString).concat(stack.generic).join(',');
+}
+
+function inlineStyleToCss(styleState: CharState, context: RenderContext): CssStyleObject {
   const style: CssStyleObject = {};
   if (styleState.bold || styleState.boldBi) style['font-weight'] = '700';
   if (styleState.italic || styleState.italicBi) style['font-style'] = 'italic';
   if (styleState.strike || styleState.doubleStrike) style['text-decoration-line'] = `${style['text-decoration-line'] ? `${style['text-decoration-line']} ` : ''}line-through`;
   Object.assign(style, buildUnderlineStyle(styleState.underline));
   if (styleState.fontSizeHalfPoints) style['font-size'] = `${styleState.fontSizeHalfPoints / 2}pt`;
-  if (styleState.fontFamily) style['font-family'] = `${quoteCssString(styleState.fontFamily)},sans-serif`;
+  if (styleState.fontFamily) style['font-family'] = fontFamilyToCss(styleState.fontFamily, context);
   if (styleState.colorIndex && COLOR_INDEX_MAP[styleState.colorIndex]) style.color = COLOR_INDEX_MAP[styleState.colorIndex];
   const highlightIndex = typeof styleState.highlight === 'number' ? styleState.highlight : styleState.highlight?.index;
   if (highlightIndex && HIGHLIGHT_COLORS[highlightIndex as keyof typeof HIGHLIGHT_COLORS]) {
@@ -251,10 +258,10 @@ function renderTextNode(node: TextInlineNode, context: RenderContext): string {
   const content = textFontRuns(node.text, node.style).map(run => {
     const text = escapeHtml(run.text);
     if (!run.fontFamily || run.fontFamily === node.style.fontFamily) return text;
-    const font = styleObjectToCss({ 'font-family': `${quoteCssString(run.fontFamily)},sans-serif` });
+    const font = styleObjectToCss({ 'font-family': fontFamilyToCss(run.fontFamily, context) });
     return `<span style="${font}">${text}</span>`;
   }).join('');
-  const inlineStyle = inlineStyleToCss(node.style);
+  const inlineStyle = inlineStyleToCss(node.style, context);
   inlineStyle['white-space'] = 'break-spaces';
   const revision = context.reviewMode === 'all'
     ? node.style.revisionDeleted ? 'delete' : node.style.revisionInserted ? 'insert' : null
@@ -369,7 +376,7 @@ function renderImageNode(node: Extract<InlineNode, { type: 'image' }>, context: 
     context.externalResourcePolicy,
     allowGeneratedVector,
   );
-  const baseStyle = inlineStyleToCss(node.style);
+  const baseStyle = inlineStyleToCss(node.style, context);
   const displaySize = inlineImageDisplaySizePx(node.asset);
   if (displaySize.widthPx || displaySize.heightPx) {
     applyInlineImageDisplaySize(baseStyle, node.asset);
@@ -491,7 +498,14 @@ function tableStyle(block: TableBlock): CssStyleObject {
   if (widthPx) style.width = `${widthPx}px`;
   else style.width = '100%';
   const marginLeft = twipsToPx(block.state?.leftIndent);
-  if (marginLeft) style['margin-inline-start'] = `${marginLeft}px`;
+  // Table justification wins over the indentation used by left-aligned tables.
+  if (block.state?.alignment === 1) {
+    style['margin-inline-start'] = 'auto';
+    style['margin-inline-end'] = 'auto';
+  } else if (block.state?.alignment === 2) {
+    style['margin-inline-start'] = 'auto';
+    style['margin-inline-end'] = '0';
+  } else if (marginLeft) style['margin-inline-start'] = `${marginLeft}px`;
   if (block.state?.rtl) style.direction = 'rtl';
   const spacing = block.rows.flatMap(row => row.cells).reduce((maximum, cell) => {
     const value = cell.meta?.spacingTwips;
@@ -511,6 +525,51 @@ function tableStyle(block: TableBlock): CssStyleObject {
   return style;
 }
 
+/** Match the parser's union grid, including rows that begin with a merged cell.
+ * Fixed-layout HTML otherwise divides that first colspan into equal columns. */
+function renderTableColumns(block: TableBlock): string {
+  const boundaries = new Set<number>();
+  for (const row of block.rows) for (const cell of row.cells) {
+    const left = cell.meta?.leftBoundary;
+    const right = cell.meta?.rightBoundary;
+    if (Number.isFinite(left) && Number.isFinite(right) && right! > left!) {
+      boundaries.add(left!);
+      boundaries.add(right!);
+    }
+  }
+  const sorted = [...boundaries].sort((a, b) => a - b);
+  if (sorted.length < 2) return '';
+  return `<colgroup>${sorted.slice(1).map((right, i) => `<col style="width:${twipsToPx(right - sorted[i]!)}px">`).join('')}</colgroup>`;
+}
+
+function renderCellBody(cell: TableCellBlock, context: RenderContext): string {
+  const parts: string[] = [];
+  let paragraphs: ParagraphBlock[] = [];
+  const wrapText = (body: string) => cell.meta?.textFlow === 5
+    // Explicit intrinsic logical sizes keep WebKit from using a horizontal
+    // table-cell line as the vertical paragraph's available inline space.
+    ? `<div class="msdoc-cell-vertical" style="writing-mode:vertical-rl;text-orientation:upright;inline-size:max-content;block-size:max-content;margin:0 auto">${body}</div>`
+    : body;
+  const flush = () => {
+    if (!paragraphs.length) return;
+    const body = reviewParagraphs(paragraphs, context)
+      .map(paragraph => renderParagraphBlock(paragraph, context, { inline: true })).join('');
+    if (body) parts.push(wrapText(body));
+    paragraphs = [];
+  };
+  for (const block of cell.blocks ?? cell.paragraphs) {
+    if (block.type === 'paragraph') paragraphs.push(block);
+    else {
+      // Review/vertical-flow groups stop at the nested table boundary. Neither
+      // revision merging nor textFlow may absorb or rotate a child's own grid.
+      flush();
+      parts.push(renderTableBlock(block, context));
+    }
+  }
+  flush();
+  return parts.join('') || wrapText('<div class="msdoc-paragraph"><br></div>');
+}
+
 function renderTableBlock(block: TableBlock, context: RenderContext): string {
   const rows = block.rows.map((row) => {
     const rowHeight = row.state?.rowHeight ? twipsToPx(Math.abs(row.state.rowHeight)) : null;
@@ -522,15 +581,14 @@ function renderTableBlock(block: TableBlock, context: RenderContext): string {
         if ((cell.colspan ?? 1) > 1) attrs.push(` colspan="${cell.colspan}"`);
         if ((cell.rowspan ?? 1) > 1) attrs.push(` rowspan="${cell.rowspan}"`);
         const style = styleObjectToCss(cellStyle(cell));
-        const body = reviewParagraphs(cell.paragraphs, context)
-          .map((paragraph) => renderParagraphBlock(paragraph, context, { inline: true })).join('');
+        const body = renderCellBody(cell, context);
         return `<td class="msdoc-cell"${attrs.join('')}${style ? ` style="${style}"` : ''}>${body || '<div class="msdoc-paragraph"><br></div>'}</td>`;
       })
       .join('');
     return `<tr class="msdoc-row"${rowStyle}>${cells}</tr>`;
   }).join('');
 
-  return `<table class="msdoc-table msdoc-table-depth-${block.depth}" style="${styleObjectToCss(tableStyle(block))}"><tbody>${rows}</tbody></table>`;
+  return `<table class="msdoc-table msdoc-table-depth-${block.depth}" style="${styleObjectToCss(tableStyle(block))}">${renderTableColumns(block)}<tbody>${rows}</tbody></table>`;
 }
 
 function renderAttachmentsBlock(block: AttachmentsBlock): string {
@@ -553,6 +611,7 @@ export function defaultMsDocCss(): string {
 .msdoc-line-at-least span,.msdoc-line-at-least ins,.msdoc-line-at-least del{line-height:normal}
 .msdoc-paragraph:last-child{margin-bottom:0}
 .msdoc-table{margin:12px 0;border-collapse:collapse;border-spacing:0;max-width:100%}
+.msdoc-cell>.msdoc-table{margin-top:0;margin-bottom:0}
 .msdoc-cell{padding:6px 8px;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
 .msdoc-link{color:#1a73e8;text-decoration:none}
 .msdoc-link:hover{text-decoration:underline}
@@ -576,6 +635,8 @@ export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOption
     reviewMode: options.reviewMode ?? 'all',
     externalLinkPolicy: options.externalLinkPolicy ?? 'block',
     externalResourcePolicy: options.externalResourcePolicy ?? 'block',
+    fonts: new Map((parsed.fonts ?? []).flatMap(font =>
+      [font.name, font.altName].filter(Boolean).map(name => [name, font] as const))),
   };
   const parts: string[] = [];
   let paragraphs: ParagraphBlock[] = [];

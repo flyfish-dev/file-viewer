@@ -1,0 +1,23 @@
+{
+  "sample": "C009",
+  "sha256": "dbbb2ba181355380d245d43fa768f4500485c57a34a61522e129d597038e0f52",
+  "completed": true,
+  "checks": [
+    {"name":"Original ZIP names and extracted bytes match independent stored headers","status":"pass"},
+    {"name":"Actual archive renderer lists all three decoded names","status":"pass"},
+    {"name":"Chinese/circled filename search selects the intended entry","status":"pass"},
+    {"name":"Original child 1: actual nested renderer displays GBK text without replacement characters","status":"pass"},
+    {"name":"Original child 2: actual nested renderer displays GBK text without replacement characters","status":"pass"},
+    {"name":"Original child 3: actual nested renderer displays GBK text without replacement characters","status":"pass"},
+    {"name":"Child download link preserves decoded filename and downloaded bytes","status":"pass"},
+    {"name":"Cleanup completes with no browser errors or external requests","status":"pass"}
+  ],
+  "passed": 8,
+  "downloadFilenameAccepted": false,
+  "childBytes": [
+    {"size":55,"sha256":"0e371f6dbcf8d7f2d960db807d7ba8c275b91c38ab5f594571c9ad519b88f243"},
+    {"size":29,"sha256":"d5680f84b25a33c23e7dbebc1e8ec180c20cb6e09ced294a69b46da6c82d7554"},
+    {"size":27,"sha256":"59203e7de9f0d370bc6e38129e712f18c65eef310d491504e220582b1be6b3a6"}
+  ],
+  "scope": "Actual archive UI, fallback extraction, preset-driven child text/Word rendering and download; original stored entries. Download link attribute and saved bytes are checked; browser-suggested filename acceptance is reported separately, not inferred. No encrypted/RAR or arbitrary code-page guarantee."
+}

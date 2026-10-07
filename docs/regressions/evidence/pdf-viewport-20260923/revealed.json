@@ -1,0 +1,34 @@
+{
+  "state": {
+    "renderer": "pdf",
+    "page": 1,
+    "pageCount": 3,
+    "scale": 0.72,
+    "zoom": {
+      "scale": 0.72,
+      "label": "72%",
+      "canZoomIn": true,
+      "canZoomOut": true,
+      "canReset": true,
+      "minScale": 0.2,
+      "maxScale": 3
+    },
+    "rotation": 0,
+    "scroll": {
+      "top": 28,
+      "left": 0,
+      "width": 620,
+      "height": 2383,
+      "clientWidth": 620,
+      "clientHeight": 471,
+      "topRatio": 0.014644351464435146,
+      "leftRatio": 0
+    },
+    "navigation": {
+      "visible": false,
+      "mode": "pages"
+    }
+  },
+  "width": 620,
+  "page": 594
+}

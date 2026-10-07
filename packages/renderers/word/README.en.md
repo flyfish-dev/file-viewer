@@ -72,3 +72,12 @@ The standard renderer sanitizes the DOM produced by `rtf.js` before mounting it.
 ## Migration
 
 `@file-viewer/core` no longer depends on `@file-viewer/docx`, `@file-viewer/doc`, `rtf.js`, `linkedom`, or `@xmldom/xmldom` directly. Install and pass this renderer for full Word preview, or use `@file-viewer/preset-all`.
+
+## Print layout
+
+Fixed-page DOCX output preserves each page's authored paper size, including
+landscape sections and mixed A4/Letter documents. Preview zoom is not applied to
+physical print dimensions. The browser receives named CSS page rules and zero
+additional outer margins; the document's own margins remain intact. Flow mode
+continues to use browser pagination rather than fixed-page clipping. Printer
+drivers and print-dialog overrides can still change the final paper selection.

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "C007",
+    "extension": ".doc",
+    "bytes": 14670,
+    "sha256": "dc39bcab0d542016838ab1d451b3a506cea00681f9f50d0ce37742246c613771"
+  },
+  {
+    "id": "C011",
+    "extension": ".docx",
+    "bytes": 28230,
+    "sha256": "41f550e09602c728f1bd9d738f0369123608d29484d456416fe1aa8e351b4dad"
+  },
+  {
+    "id": "C042",
+    "extension": ".docx",
+    "bytes": 1270093,
+    "sha256": "66118e197c3369bd43550252048392941d07d2f5808207e5bc75055b1142aef9"
+  },
+  {
+    "id": "C052",
+    "extension": ".docx",
+    "bytes": 35924,
+    "sha256": "b436f5132c43ca5808b040ada3959982c66f1877ba0c06a4f123940b8e3889ec"
+  },
+  {
+    "id": "C055",
+    "extension": ".docx",
+    "bytes": 19548,
+    "sha256": "ca1bc66e0a97ab31f6ffe62b883b57661a23856c53aab4b72c259aae976c67fd"
+  },
+  {
+    "id": "C064",
+    "extension": ".docx",
+    "bytes": 15841,
+    "sha256": "e58c419ec5e0a2a46ba65d2b18d8d7d212e833b9c23272d180364836d8f39a7b"
+  },
+  {
+    "id": "C066",
+    "extension": ".docx",
+    "bytes": 19338,
+    "sha256": "a3ca3c139dccf44008e975fe9729fb8529a0c4c600b6e885e94f827cd11ab494"
+  },
+  {
+    "id": "C071",
+    "extension": ".docx",
+    "bytes": 32948,
+    "sha256": "424e108345c5bf62384d2dfdf6cec94bbcb75cba27315852bc805398b90e68c5"
+  },
+  {
+    "id": "C015",
+    "extension": ".pptx",
+    "bytes": 682064,
+    "sha256": "388291cb01e86db7f7b9f049b0bf719a1d2137d3e9a274b90d156a756df1b28a"
+  },
+  {
+    "id": "C035",
+    "extension": ".pptx",
+    "bytes": 51329,
+    "sha256": "3570bbd6a66c11bd7340b803308c6272963d7ec14205f298ca232b18cb4017fb"
+  }
+]

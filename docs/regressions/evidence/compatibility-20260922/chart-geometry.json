@@ -1,0 +1,58 @@
+{
+  "slides": 3,
+  "nested": 0,
+  "charts": [
+    {
+      "position": "absolute",
+      "top": 100,
+      "left": 40,
+      "expectedTop": 100,
+      "expectedLeft": 40,
+      "surface": true
+    },
+    {
+      "position": "absolute",
+      "top": 100,
+      "left": 660,
+      "expectedTop": 100,
+      "expectedLeft": 660,
+      "surface": true
+    }
+  ],
+  "fills": [
+    "none"
+  ],
+  "border": "1px",
+  "cells": [
+    {
+      "background": "rgb(40, 100, 155)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Header"
+    },
+    {
+      "background": "rgb(40, 100, 155)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Value 0"
+    },
+    {
+      "background": "rgb(40, 100, 155)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Row 1"
+    },
+    {
+      "background": "rgb(155, 194, 229)",
+      "color": "rgb(0, 0, 0)",
+      "text": "Value 1"
+    },
+    {
+      "background": "rgb(40, 100, 155)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Row 2"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "color": "rgb(0, 0, 0)",
+      "text": "Value 2"
+    }
+  ]
+}
