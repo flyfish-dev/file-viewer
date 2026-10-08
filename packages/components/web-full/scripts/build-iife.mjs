@@ -6,6 +6,7 @@ import { build } from 'vite'
 import { sanitizeOfflineViewerAssetTree } from './offline-asset-sanitize.mjs'
 import { verifyPptRuntimeDistributionRoot } from './ppt-runtime-integrity.mjs'
 import { isolateAmd, writeAmdEntry } from '../../web/scripts/amd-entry.mjs'
+import * as webNode from '../../web/dist/node.js'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const packageManifest = JSON.parse(await readFile(resolve(packageDir, 'package.json'), 'utf8'))
@@ -193,39 +194,42 @@ const assetSource = assetSourceCandidates.find(candidate =>
 )
 
 if (assetSource) {
-  for (const entry of [
-    'vendor',
-    'wasm',
-    'flyfish-viewer-assets.json',
-    'flyfish-viewer-manifest.json'
-  ]) {
+  for (const entry of ['vendor', 'wasm']) {
     const sourcePath = resolve(assetSource, entry)
+    const targetPath = resolve(outDir, entry)
+    await rm(targetPath, { recursive: true, force: true })
     if (!existsSync(sourcePath)) {
       continue
     }
-    const targetPath = resolve(outDir, entry)
-    await rm(targetPath, { recursive: true, force: true })
     await cp(sourcePath, targetPath, { recursive: true })
   }
-  await writeFile(
-    resolve(outDir, 'flyfish-viewer-manifest.json'),
-    `${JSON.stringify({
-      name: packageManifest.name,
-      version: packageManifest.version,
-      kind: 'viewer-assets',
-      assets: 'flyfish-viewer-assets.json'
-    }, null, 2)}\n`,
-    'utf8'
-  )
   console.log(`[web-full-iife] Copied viewer assets from ${assetSource}`)
 } else {
-  console.warn('[web-full-iife] Viewer assets were not copied. Run pnpm build:viewer-assets before publishing the full CDN package.')
+  throw new Error('[web-full-iife] Missing viewer asset source. Build viewer assets before publishing the full CDN package.')
 }
 
 const sanitization = await sanitizeOfflineViewerAssetTree(outDir)
 await verifyPptRuntimeDistributionRoot(outDir, {
   unbundledJavaScriptPath: 'renderers/presentation.iife.js'
 })
+const validation = await webNode.validateViewerAssets({ sourceDir: outDir })
+if (!validation.valid) {
+  const missing = validation.missingRequired
+    .map(asset => `${asset.rendererId}:${asset.relativePath}`)
+    .join(', ')
+  throw new Error(`[web-full-iife] Viewer static assets are missing required resources: ${missing}`)
+}
+await webNode.writeViewerAssetManifest(outDir, webNode.buildViewerAssetManifest(validation))
+await writeFile(
+  resolve(outDir, 'flyfish-viewer-manifest.json'),
+  `${JSON.stringify({
+    name: packageManifest.name,
+    version: packageManifest.version,
+    kind: 'viewer-assets',
+    assets: webNode.VIEWER_ASSET_MANIFEST_FILENAME
+  }, null, 2)}\n`,
+  'utf8'
+)
 console.log(
   `[web-full-iife] Sanitized ${sanitization.checkedFiles} shipped text assets; ` +
   `replaced ${sanitization.replacementCount} public runtime fallback markers in ` +

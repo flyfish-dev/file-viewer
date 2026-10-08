@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { pnpmInvocation } from './lib/pinned-pnpm.mjs'
+import { verifyCodecArtifact, verifyCodecLockIntegrity } from './lib/verified-codec-artifacts.mjs'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const sourceRoot = resolve(scriptDir, '../..')
@@ -12,6 +13,18 @@ const packageDir = join(sourceRoot, 'packages/renderers/dicom')
 const ledgerPath = join(packageDir, 'THIRD_PARTY_LICENSES.json')
 const noticesPath = join(packageDir, 'THIRD_PARTY_NOTICES.md')
 const write = process.argv.includes('--write')
+const nativeProvenance = JSON.parse(
+  readFileSync(join(packageDir, 'third-party/native-codecs/PROVENANCE.json'), 'utf8')
+)
+const nativeArtifacts = new Map(
+  nativeProvenance.wrapperArtifacts.map((artifact) => [artifact.name, artifact])
+)
+assert(
+  nativeProvenance.schemaVersion === 1 && nativeArtifacts.size === 4,
+  'Expected four reviewed native codec artifacts'
+)
+const lockfile = readFileSync(join(sourceRoot, 'pnpm-lock.yaml'), 'utf8')
+for (const artifact of nativeArtifacts.values()) verifyCodecLockIntegrity(lockfile, artifact)
 const allowedLicenses = new Set([
   '(MIT AND Zlib)',
   '(WTFPL OR MIT)',
@@ -228,6 +241,7 @@ function visit(node, nameHint, state) {
     `${key} uses unapproved license expression ${declaredLicense}`
   )
   if (nativeWrapperNames.has(name)) {
+    verifyCodecArtifact(node.path, nativeArtifacts.get(name))
     assert(
       packageJson?.gitHead === cornerstoneCodecsGitHead,
       `${key} codec gitHead drifted from ${cornerstoneCodecsGitHead}`
@@ -293,6 +307,10 @@ assert(
 assert(
   !sortedPackages.some((entry) => /(?:^|[^A-Z])(AGPL|GPL|LGPL|SSPL)(?:-|\b)/i.test(entry.license)),
   'Strong-copyleft dependency detected'
+)
+assert(
+  JSON.stringify(nativeProvenance.components) === JSON.stringify(nativeCodecComponents),
+  'Native codec release-source records drifted'
 )
 for (const component of nativeCodecComponents) {
   assert(
@@ -376,6 +394,8 @@ const noticeLines = [
   `${packageVersionList('dompurify')} is dual-licensed as \`(MPL-2.0 OR Apache-2.0)\`. File Viewer elects Apache-2.0, and the installed \`LICENSE\` file retains the complete Apache-2.0 text.`,
   '',
   '### Native libraries statically linked into codec WebAssembly',
+  '',
+  'Exact official tarball integrities and the complete installed-file inventory are retained in `third-party/native-codecs/PROVENANCE.json`. The verifier checks every codec file and lockfile integrity against those reviewed artifacts; source gitlinks describe release-source provenance, not an independent reproducible-build claim.',
   '',
   `All four codec wrapper packages were built from \`cornerstonejs/codecs\` commit \`${cornerstoneCodecsGitHead}\`. The wrapper package license is not used as a substitute for the linked native library terms:`,
   '',

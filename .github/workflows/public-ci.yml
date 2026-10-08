@@ -88,6 +88,10 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm build
 
+      - name: Verify Web Full asset manifest
+        if: steps.impact.outputs.runtime != 'false'
+        run: node --test packages/components/web-full/test/asset-manifest.test.mjs
+
       - name: Verify PPTX generated styles and Worker resolution
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts test/pptx-worker-resolution.spec.ts
@@ -170,6 +174,31 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/vite-plugin verify:github-257-browser
 
+      - name: Verify Vite CommonJS initialization in installed Chromium and WebKit consumers
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm --filter @file-viewer/vite-plugin verify:github-311-browser
+
+      - name: Verify PDF hand tool and native DOC font table in Chromium and WebKit
+        if: steps.impact.outputs.runtime != 'false'
+        run: |
+          pnpm --filter @file-viewer/renderer-pdf verify:hand-tool
+          pnpm --filter @file-viewer/doc verify:font-table-browser
+
+      - name: Retain intermediate renderer browser evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: intermediate-renderer-browser-evidence
+          path: |
+            output/vite-github-311/*.json
+            output/vite-github-311/*.png
+            output/pdf-hand-tool/**/report.json
+            output/pdf-hand-tool/**/*.png
+            output/doc-font-table/*.json
+            output/doc-font-table/*.png
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Verify HTML, revisions, spreadsheet search and DOCX cover regressions
         if: steps.impact.outputs.runtime != 'false'
         run: node apps/viewer-demo/scripts/verify-closed-issue-regressions.mjs
@@ -211,6 +240,20 @@ jobs:
           name: packed-issue-consumer-evidence
           path: output/packed-issue-consumer/*/angular-regression-evidence
           if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload packed-consumer security evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: packed-consumer-security-evidence
+          path: |
+            output/packed-issue-consumer/*/audit-*.json
+            output/packed-issue-consumer/*/package.json
+            output/packed-issue-consumer/*/package-lock.json
+            output/packed-issue-consumer/*/candidate-packages.json
+            output/packed-issue-consumer/*/engine-candidate-provenance.json
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Verify CHM Rust/WASM build and distribution assets

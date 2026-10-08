@@ -93,10 +93,10 @@ const options = {
 | `scan` | `true` or `{ roots, extensions, maxFileSize }`; scans source hints and merges formats |
 | `inject` | Defaults to `true`; set `false` to import `virtual:file-viewer-renderers` manually |
 | `chunkStrategy` | `'renderer' | 'none'`; controls renderer-level chunk grouping |
-| `stabilizeInteropChunks` | Defaults to `true`; when the host project already defines a `manualChunks` function, keeps CodeMirror / Lezer / Sandpack in one chunk to avoid production TDZ initialization errors |
+| `stabilizeInteropChunks` | Defaults to `true`; keeps Pako / shared CommonJS helpers and CodeMirror / Lezer / Sandpack in stable groups for default and host-defined chunk splitting |
 | `missingRenderer` | `'error' | 'warn' | 'ignore'`; controls notices for planned renderer mappings |
 
-When host apps split `node_modules` by package name, circular dependencies between `@codemirror/*`, `@lezer/*`, and Sandpack can show up in production as `codemirror-view.* Cannot access ... before initialization`. The plugin wraps existing `manualChunks` functions by default, stabilizes only those known interop chunks, and preserves the rest of the app's custom grouping. Set `stabilizeInteropChunks:false` only when the host build needs total control.
+When host apps split `node_modules` by package name, circular dependencies between `@codemirror/*`, `@lezer/*`, and Sandpack can show up in production as `codemirror-view.* Cannot access ... before initialization`. The plugin stabilizes default chunk splitting and wraps existing `manualChunks` functions. Pako and shared CommonJS helpers use `vendor-commonjs` to prevent compressed-format initialization cycles; CodeMirror / Lezer / Sandpack use `vendor-codemirror`. Other custom groups remain intact, and Vite 8 receives equivalent Rolldown groups. Set `stabilizeInteropChunks:false` only when the host build needs total control.
 
 `copyAssets.baseDir` overrides automatic placement. It must be relative and cannot contain `..`; an empty string explicitly selects the root. The plugin now aligns the shared runtime asset base for standard packages, presets, and full packages; full packages also keep `setDefaultFullAssetBaseUrl()` synchronized. Only integrations that set `inject:false` and do not import the virtual module must call `setDefaultFileViewerAssetBaseUrl()` themselves (plus `setDefaultFullAssetBaseUrl()` for a full package). With Vite `base:'/app/'`, full-package dev URLs start with `/app/file-viewer/...`, while production files remain under `outDir/file-viewer/`.
 

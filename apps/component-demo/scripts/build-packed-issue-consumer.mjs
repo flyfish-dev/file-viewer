@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
@@ -7,6 +7,81 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { packCompatibilityEngines } from './pack-compatibility-engines.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
+// Only the consumer fixture owns application-level dependency policy. Workspace
+// pnpm overrides must not leak into this isolated npm consumer.
+export function preparePackedConsumerManifest(fixtureManifest, version) {
+  const manifest = structuredClone(fixtureManifest)
+  for (const name of Object.keys(manifest.dependencies)) {
+    if (name.startsWith('@file-viewer/') || name === 'file-viewer-copy-assets')
+      manifest.dependencies[name] = version
+  }
+  manifest.overrides ??= {}
+  return manifest
+}
+
+export function summarizeConsumerAudit(report, status) {
+  assert.ok(status === 0 || status === 1, `npm audit failed with status ${status}`)
+  assert.ok(!report.error, `npm audit error: ${JSON.stringify(report.error)}`)
+  assert.ok(report.vulnerabilities && report.metadata?.vulnerabilities, 'Missing npm audit data')
+  assert.equal(report.auditReportVersion, 2, 'Unsupported npm audit report version')
+  assert.ok(
+    typeof report.vulnerabilities === 'object' && !Array.isArray(report.vulnerabilities),
+    'Invalid npm audit vulnerabilities'
+  )
+  const affectedEntries = report.metadata.vulnerabilities
+  for (const severity of ['info', 'low', 'moderate', 'high', 'critical', 'total'])
+    assert.ok(
+      Number.isSafeInteger(affectedEntries[severity]) && affectedEntries[severity] >= 0,
+      `Invalid npm audit ${severity} count`
+    )
+  assert.equal(
+    affectedEntries.total,
+    ['info', 'low', 'moderate', 'high', 'critical'].reduce(
+      (total, severity) => total + affectedEntries[severity],
+      0
+    ),
+    'Inconsistent npm audit severity counts'
+  )
+  assert.equal(affectedEntries.total, Object.keys(report.vulnerabilities).length)
+  const advisories = new Set()
+  for (const vulnerability of Object.values(report.vulnerabilities)) {
+    assert.ok(Array.isArray(vulnerability.via), 'Invalid npm audit advisory paths')
+    for (const via of vulnerability.via) {
+      if (typeof via === 'string') continue
+      assert.ok(
+        typeof via?.url === 'string' && via.url.length > 0,
+        'Missing npm audit advisory URL'
+      )
+      advisories.add(via.url)
+    }
+  }
+  return { affectedEntries, distinctAdvisories: [...advisories].sort() }
+}
+
+async function recordConsumerAudits(project, fixture) {
+  const summaries = {}
+  for (const scope of ['full', 'production']) {
+    const result = spawnSync(
+      'npm',
+      [
+        'audit',
+        '--json',
+        '--registry=https://registry.npmjs.org',
+        ...(scope === 'production' ? ['--omit=dev'] : [])
+      ],
+      { cwd: project, encoding: 'utf8', timeout: 120_000, maxBuffer: 10 * 1024 * 1024 }
+    )
+    if (result.error) throw result.error
+    await writeFile(resolve(project, `audit-${scope}.json`), result.stdout)
+    const report = JSON.parse(result.stdout)
+    summaries[scope] = summarizeConsumerAudit(report, result.status)
+    // npm's total counts affected dependency entries, including propagated findings.
+    // Keep the distinct advisory identities separate; neither count proves exploitability.
+    console.log(`PACKED_CONSUMER_AUDIT=${JSON.stringify({ fixture, scope, ...summaries[scope] })}`)
+  }
+  await writeFile(resolve(project, 'audit-summary.json'), JSON.stringify(summaries, null, 2) + '\n')
+}
+
 export async function buildPackedIssueConsumer(
   packageDirectory,
   {
@@ -35,15 +110,11 @@ export async function buildPackedIssueConsumer(
   await mkdir(project, { recursive: true })
   assert.ok(['webpack5-issues', 'angular-pptx'].includes(fixture), 'Unknown consumer fixture')
   await cp(resolve(root, 'apps/component-demo/test', fixture), project, { recursive: true })
-  const manifest = JSON.parse(await readFile(resolve(project, 'package.json'), 'utf8'))
+  const fixtureManifest = JSON.parse(await readFile(resolve(project, 'package.json'), 'utf8'))
   const version =
     process.env.PACKED_ISSUE_BASE_VERSION ||
     JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8')).version
-  for (const name of Object.keys(manifest.dependencies)) {
-    if (name.startsWith('@file-viewer/') || name === 'file-viewer-copy-assets')
-      manifest.dependencies[name] = version
-  }
-  manifest.overrides = {}
+  const manifest = preparePackedConsumerManifest(fixtureManifest, version)
   const candidates = []
   // Independently versioned engines are built in their owning repositories.
   // A release rehearsal can supply their verified tarballs without relying on
@@ -54,7 +125,9 @@ export async function buildPackedIssueConsumer(
   else packageDirectories.push(await packCompatibilityEngines(root, project))
   const tarballs = []
   for (const directory of packageDirectories)
-    for (const filename of (await readdir(directory)).filter((name) => name.endsWith('.tgz')).sort())
+    for (const filename of (await readdir(directory))
+      .filter((name) => name.endsWith('.tgz'))
+      .sort())
       tarballs.push({ filename, path: resolve(directory, filename) })
   for (const { filename, path } of tarballs) {
     const metadata = JSON.parse(
@@ -93,6 +166,7 @@ export async function buildPackedIssueConsumer(
     execFileSync(command, args, { cwd: project, stdio: 'inherit', timeout: 600_000 })
   }
   run('npm', ['install', '--ignore-scripts', '--registry=https://registry.npmjs.org'])
+  await recordConsumerAudits(project, fixture)
   run('node', [
     resolve(project, 'node_modules/file-viewer-copy-assets/dist/cli.js'),
     'public/file-viewer',

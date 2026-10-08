@@ -14,6 +14,8 @@ The DICOM renderer is not part of any standard/full package or preset. These dep
 
 ### Native libraries statically linked into codec WebAssembly
 
+Exact official tarball integrities and the complete installed-file inventory are retained in `third-party/native-codecs/PROVENANCE.json`. The verifier checks every codec file and lockfile integrity against those reviewed artifacts; source gitlinks describe release-source provenance, not an independent reproducible-build claim.
+
 All four codec wrapper packages were built from `cornerstonejs/codecs` commit `8634194b68ab43bde8f35fcc466a36d91ac700b4`. The wrapper package license is not used as a substitute for the linked native library terms:
 
 - `CharLS` (`@cornerstonejs/codec-charls@1.2.5`): `BSD-3-Clause`; source `38d95d00671f4cddfa61f3f51eaf81b8bac34543` at https://github.com/cornerstonejs/charls; linked target `charls`; retained files `third-party/native-codecs/charls/LICENSE.md`.

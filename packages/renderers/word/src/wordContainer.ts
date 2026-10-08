@@ -3,6 +3,13 @@ import { decodeFileViewerTextBuffer, resolveFileViewerTextEncoding } from '@file
 export type WordContainer = 'openxml' | 'wordml' | 'html' | 'text' | 'binary'
 const ole = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]
 const wordMlNamespace = 'http://schemas.microsoft.com/office/word/2003/wordml'
+// XML 1.0 Fifth Edition names include more than Unicode letters. Colon is
+// reserved here for the QName separator; each component must be an NCName.
+const xmlNameStart = String.raw`A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF` +
+  String.raw`\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F` +
+  String.raw`\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}`
+const xmlName = String.raw`[${xmlNameStart}][${xmlNameStart}.0-9\u00B7\u0300-\u036F\u203F-\u2040-]*`
+const wordMlRoot = new RegExp(String.raw`^<(?:(${xmlName}):)?wordDocument(?=[\t\n\r />])`, 'u')
 
 function documentStart(text: string): string | null {
   let index = text.charCodeAt(0) === 0xfeff ? 1 : 0
@@ -29,9 +36,10 @@ function decodeNamespace(value: string): string {
 
 /** Inspect only the bounded root opening tag; conversion validates the full XML. */
 function isWordMlRoot(start: string): boolean {
-  const root = /^<(?:([^\s:"'<>/=!?]+):)?wordDocument(?=[\t\n\r />])/.exec(start)
+  const root = wordMlRoot.exec(start)
   if (!root) return false
   const attributes = new Map<string, string>()
+  const attributeName = new RegExp(String.raw`(?:${xmlName}:)?${xmlName}`, 'uy')
   let index = root[0].length
   while (index < start.length) {
     const beforeSpace = index
@@ -40,21 +48,42 @@ function isWordMlRoot(start: string): boolean {
       return decodeNamespace(attributes.get(root[1] ? 'xmlns:' + root[1] : 'xmlns') || '') === wordMlNamespace
     }
     if (index === beforeSpace) return false
-    const nameStart = index
-    while (index < start.length && /[^\s="'<>/?]/.test(start[index])) index++
-    const name = start.slice(nameStart, index)
+    attributeName.lastIndex = index
+    const name = attributeName.exec(start)?.[0]
     if (!name || attributes.has(name)) return false
+    index = attributeName.lastIndex
     while (index < start.length && /[\t\n\r ]/.test(start[index])) index++
     if (start[index++] !== '=') return false
     while (index < start.length && /[\t\n\r ]/.test(start[index])) index++
     const quote = start[index++]
     if (quote !== '"' && quote !== "'") return false
     const end = start.indexOf(quote, index)
-    if (end < 0) return false
+    if (end < 0 || start.slice(index, end).includes('<')) return false
     attributes.set(name, start.slice(index, end))
     index = end + 1
   }
   return false
+}
+
+/** XML decoding is independent of the auto-detection used for plain text. */
+function hasWordMlDocument(sample: ArrayBuffer): boolean {
+  const bytes = new Uint8Array(sample)
+  const utf16le = (bytes[0] === 0xff && bytes[1] === 0xfe) || (bytes[0] === 0x3c && bytes[1] === 0)
+  const utf16be = (bytes[0] === 0xfe && bytes[1] === 0xff) || (bytes[0] === 0 && bytes[1] === 0x3c)
+  const utf8Bom = bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf
+  const detected = utf16le ? 'utf-16le' : utf16be ? 'utf-16be' : utf8Bom ? 'utf-8' : null
+  try {
+    const prefix = new TextDecoder(detected || 'windows-1252').decode(bytes.subarray(0, 1024))
+    const declaration = /^<\?xml\s[^?]*\?>/.exec(prefix)?.[0]
+    const declared = declaration && /\sencoding\s*=\s*(["'])([A-Za-z][A-Za-z0-9._-]*)\1/.exec(declaration)?.[2]
+    // The bounded sample may end inside a UTF-8 sequence. Do not let that tail
+    // change the decoding of the root. The converter validates the full bytes,
+    // including malformed input and conflicts with the encoding declaration.
+    const start = documentStart(new TextDecoder(detected || declared || 'utf-8').decode(bytes))
+    return start !== null && isWordMlRoot(start)
+  } catch {
+    return false
+  }
 }
 
 /** Signature-first dispatch: a legacy suffix does not establish binary DOC. */
@@ -65,11 +94,11 @@ export function resolveWordContainer(buffer: ArrayBuffer): WordContainer {
   const sample = buffer.slice(0, Math.min(buffer.byteLength, 65536))
   const encoding = resolveFileViewerTextEncoding(new Uint8Array(sample)).encoding
   if (encoding.startsWith('utf-16') && buffer.byteLength % 2 !== 0) return 'binary'
+  if (hasWordMlDocument(sample)) return 'wordml'
   let text: string
   try { text = decodeFileViewerTextBuffer(sample).text } catch { return 'binary' }
   const start = documentStart(text)
   if (start === null) return 'binary'
-  if (isWordMlRoot(start)) return 'wordml'
   if (/^(?:<!doctype\s+html\b|<html\b|<head\b|<body\b)/i.test(start)) return 'html'
   // Reject binary/control data and unrelated XML/RTF rather than displaying it
   // as convincing but incorrect document text. Permit ordinary tabs/newlines.

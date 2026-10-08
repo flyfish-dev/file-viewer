@@ -64,7 +64,9 @@
     "type-check": "tsc -b tsconfig.json",
     "verify:pdfjs-runtime": "node scripts/stage-pdfjs-runtime.mjs --check",
     "verify:worker-lifecycle": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-worker-lifecycle.mjs",
-    "prepack": "node scripts/stage-pdfjs-runtime.mjs --check"
+    "prepack": "node scripts/stage-pdfjs-runtime.mjs --check",
+    "verify:hand-tool": "node scripts/verify-hand-tool-browser.mjs && node scripts/verify-hand-tool-installed.mjs",
+    "verify:hand-tool:installed": "node scripts/verify-hand-tool-installed.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.2",

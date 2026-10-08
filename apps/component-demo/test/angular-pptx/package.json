@@ -22,5 +22,13 @@
     "@angular/cli": "22.1.8",
     "@angular/compiler-cli": "22.1.6",
     "typescript": "6.0.3"
+  },
+  "overrides": {
+    "@angular/build": {
+      "piscina": "5.3.2"
+    },
+    "@angular/cli": {
+      "@modelcontextprotocol/sdk": "1.31.0"
+    }
   }
 }

@@ -1,30 +1,73 @@
+import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
-import { readFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { readFile, mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
 import path from 'node:path';
 
-/** Real renderer/Worker harness. Originals remain outside Git and are served by neutral ID. */
-export async function createPdfReviewHarness({ output, fixtures = new Map() } = {}) {
+const inside = (file, directory) => file === directory || file.startsWith(directory + path.sep);
+
+/** Prepare the exact browser bundle without starting a server or browser. */
+export async function preparePdfReviewBundle({ output, installedRoot } = {}) {
   const root = path.resolve(import.meta.dirname, '../../../..');
   const packageRoot = path.resolve(import.meta.dirname, '..');
   const require = createRequire(import.meta.url);
   const { build } = require('esbuild');
-  const { chromium } = require('playwright');
+  const consumerRoot = installedRoot && await realpath(path.resolve(installedRoot));
+  const installed = consumerRoot && createRequire(path.join(consumerRoot, 'package.json'));
+  const rendererEntry = installed?.resolve('@file-viewer/renderer-pdf');
+  const coreEntry = installed?.resolve('@file-viewer/core');
+  const rendererRequire = installed && createRequire(rendererEntry);
+  const runtime = installed
+    ? path.join(path.dirname(installed.resolve('@file-viewer/renderer-pdf/package.json')), 'dist/vendor/pdfjs')
+    : path.join(packageRoot, 'dist/vendor/pdfjs');
+  const cjkFonts = path.dirname((rendererRequire || require).resolve('@fontsource-variable/noto-sans-sc/package.json'));
+  if (installed) {
+    assert.ok(!inside(consumerRoot, await realpath(root)), 'Installed consumer must be outside the checkout');
+    for (const file of [rendererEntry, coreEntry, runtime, cjkFonts]) {
+      assert.ok(inside(await realpath(file), path.join(consumerRoot, 'node_modules')), `Runtime escaped the installed consumer: ${file}`);
+    }
+    assert.equal(await realpath(rendererRequire.resolve('@file-viewer/core')), await realpath(coreEntry), 'Renderer must use the same installed core as the harness');
+  }
+  const imports = installed
+    ? `import { renderFileViewerPdf } from ${JSON.stringify(rendererEntry)};
+       const renderPdf = (bytes, target, context) => renderFileViewerPdf(bytes, target, 'pdf', context);
+       import { findFileViewerViewStateProvider, findFileViewerZoomProvider } from ${JSON.stringify(coreEntry)};
+       import { buildFileViewerRenderedHtmlDocument } from ${JSON.stringify(installed.resolve('@file-viewer/core/export'))};`
+    : `import renderPdf from './src/pdf.ts';
+       import { findFileViewerViewStateProvider, findFileViewerZoomProvider } from '@file-viewer/core';
+       import { buildFileViewerRenderedHtmlDocument } from '../../core/src/exportDocument.ts';`;
   await mkdir(output, { recursive: true });
   const temporary = await mkdtemp(path.join(output, 'runtime-'));
   const bundle = path.join(temporary, 'browser.mjs');
   const inMemory = process.env.PDF_REVIEW_IN_MEMORY === '1';
-  await build({ stdin: { contents: `
-    import renderPdf from './src/pdf.ts';
-    import { findFileViewerViewStateProvider, findFileViewerZoomProvider } from '@file-viewer/core';
-    import { getDocument, PixelsPerInch } from 'pdfjs-dist/legacy/build/pdf.mjs';
-    import { buildFileViewerRenderedHtmlDocument } from '../../core/src/exportDocument.ts';
+  const pdfJsEntry = installed ? path.join(runtime, 'legacy/build/pdf.mjs') : 'pdfjs-dist/legacy/build/pdf.mjs';
+  const result = await build({ absWorkingDir: root, metafile: Boolean(installed), stdin: { contents: `
+    ${imports}
+    import { getDocument, PixelsPerInch } from ${JSON.stringify(pdfJsEntry)};
     window.pdfReview = { renderPdf, findFileViewerViewStateProvider, findFileViewerZoomProvider,
       getDocument, PixelsPerInch, buildFileViewerRenderedHtmlDocument };
-  `, resolveDir: packageRoot, loader: 'ts' }, outfile: bundle, bundle: true, platform: 'browser', format: inMemory ? 'iife' : 'esm', logLevel: 'warning',
-    plugins: inMemory ? [] : [{ name: 'local-pdf-runtime', setup(b) { b.onResolve({ filter: /^pdfjs-dist\// }, args => ({ path: '/pdfjs/' + args.path.slice('pdfjs-dist/'.length), external: true })); } }] });
-  const runtime = path.join(root, 'packages/renderers/pdf/dist/vendor/pdfjs');
-  const cjkFonts = path.dirname(require.resolve('@fontsource-variable/noto-sans-sc/package.json'));
+  `, resolveDir: consumerRoot || packageRoot, loader: 'ts' }, outfile: bundle, bundle: true, platform: 'browser', format: inMemory ? 'iife' : 'esm', logLevel: 'warning',
+    plugins: inMemory ? [] : [{ name: 'local-pdf-runtime', setup(b) {
+      b.onResolve({ filter: /(?:^pdfjs-dist\/|[\\/]vendor[\\/]pdfjs[\\/])/ }, args => {
+        const normalized = args.path.replaceAll('\\', '/');
+        const asset = normalized.startsWith('pdfjs-dist/') ? normalized.slice('pdfjs-dist/'.length) : normalized.split('/vendor/pdfjs/')[1];
+        return { path: '/pdfjs/' + asset, external: true };
+      });
+    } }] });
+  const bundleInputs = Object.keys(result.metafile?.inputs || {}).filter(file => file !== '<stdin>');
+  if (installed) {
+    for (const file of bundleInputs) {
+      assert.ok(inside(await realpath(path.resolve(root, file)), path.join(consumerRoot, 'node_modules')), `Bundle imported a workspace or external dependency: ${file}`);
+    }
+  }
+  return { root, temporary, bundle, runtime, cjkFonts, inMemory, bundleInputs };
+}
+
+/** Real renderer/Worker harness. Originals remain outside Git and are served by neutral ID. */
+export async function createPdfReviewHarness({ output, fixtures = new Map(), browserName = 'chromium', installedRoot } = {}) {
+  if (!['chromium', 'webkit'].includes(browserName)) throw Error('Unsupported PDF review browser');
+  const browsers = createRequire(import.meta.url)('playwright');
+  const { root, temporary, bundle, runtime, cjkFonts, inMemory } = await preparePdfReviewBundle({ output, installedRoot });
   const requests = [], errors = [], external = [], workers = [];
   let origin;
   const server = createServer(async (req, res) => {
@@ -76,7 +119,7 @@ export async function createPdfReviewHarness({ output, fixtures = new Map() } = 
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   origin = `http://127.0.0.1:${server.address().port}`;
   let browser;
-  try { browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined, headless: true, args: ['--no-sandbox'] }); }
+  try { browser = await browsers[browserName].launch({ executablePath: browserName === 'chromium' ? process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined : undefined, headless: true, args: browserName === 'chromium' ? ['--no-sandbox'] : [] }); }
   catch (error) { server.closeAllConnections();await new Promise(resolve => server.close(resolve));await rm(temporary,{recursive:true,force:true});throw error; }
   const assets = { workerUrl: '/pdfjs/legacy/build/pdf.worker.mjs', cMapUrl: '/pdfjs/cmaps/', wasmUrl: '/pdfjs/wasm/', standardFontDataUrl: '/pdfjs/standard_fonts/', cjkFontFallbackPath: '/pdf-cjk/' };
   async function newPage({width=1100,height=800,dpr=1,route='/'}={}) {
