@@ -205,6 +205,8 @@ jobs:
             output/doc-font-table/*.json
             output/doc-font-table/*.png
             output/doc-font-table/font-cohort.log
+            output/text-single-byte-encodings/*.json
+            output/text-single-byte-encodings/*.png
           if-no-files-found: ignore
           retention-days: 7
 

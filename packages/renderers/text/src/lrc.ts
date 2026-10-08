@@ -44,7 +44,11 @@ const css = `
 export default async function renderLrc(buffer: ArrayBuffer, target: HTMLDivElement, type?: string, context?: FileRenderContext): Promise<FileViewerRenderedInstance> {
   if (context?.signal?.aborted) throw new DOMException('Aborted', 'AbortError')
   if (buffer.byteLength > 4_000_000) return renderCode(buffer, target, type, context)
-  const source = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text
+  const source = decodeFileViewerTextBuffer(
+    buffer,
+    context?.options?.text?.encoding,
+    context?.options?.text?.fallbackEncoding
+  ).text
   let model: ReturnType<typeof parseLrc>
   try { model = parseLrc(source) } catch (error) {
     if (!(error instanceof RangeError)) throw error

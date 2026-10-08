@@ -886,12 +886,14 @@ export type {
 } from './rendering/handler';
 export {
   DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
+  DEFAULT_FILE_VIEWER_TEXT_FALLBACK_ENCODING,
   createFileViewerTextDecoder,
   decodeFileViewerTextBuffer,
   decodeFilename,
   getExtension,
   normalizeFileExtension,
   normalizeFilename,
+  isSingleByteFileViewerTextEncoding,
   isValidFileViewerUtf8,
   resolveFileViewerTextEncoding,
   resolveFileViewerSourceFilename,
@@ -904,6 +906,7 @@ export {
 export type {
   DecodedFileViewerText,
   FileViewerReadResult,
+  FileViewerSingleByteTextEncoding,
   FileViewerTextEncoding,
   ResolvedFileViewerTextEncoding,
   ResolvedFileViewerTextSource,

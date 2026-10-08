@@ -333,6 +333,8 @@ export {
   normalizeFileExtension,
   normalizeFilename,
   normalizeSource,
+  DEFAULT_FILE_VIEWER_TEXT_FALLBACK_ENCODING,
+  isSingleByteFileViewerTextEncoding,
   isValidFileViewerUtf8,
   resolveFileViewerTextEncoding,
   readFileViewerBuffer,
@@ -344,6 +346,7 @@ export {
 export type {
   DecodedFileViewerText,
   FileViewerReadResult,
+  FileViewerSingleByteTextEncoding,
   FileViewerTextEncoding,
   ResolvedFileViewerTextEncoding,
   ResolvedFileViewerTextSource,
