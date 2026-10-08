@@ -181,6 +181,14 @@ jobs:
       - name: Verify PDF hand tool and native DOC font table in Chromium and WebKit
         if: steps.impact.outputs.runtime != 'false'
         run: |
+          # WenQuanYi's CJK vertical advances can be zero in Chromium. The
+          # geometry contract needs the same reviewed Noto cohort as DOCX CI.
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          mkdir -p output/doc-font-table
+          fc-match -f '%{family}\n' 'Noto Serif CJK SC' | tee output/doc-font-table/font-cohort.log
+          grep -q 'Noto Serif CJK SC' output/doc-font-table/font-cohort.log
+          dpkg-query -W fonts-noto-cjk >> output/doc-font-table/font-cohort.log
           pnpm --filter @file-viewer/renderer-pdf verify:hand-tool
           pnpm --filter @file-viewer/doc verify:font-table-browser
 
@@ -196,6 +204,7 @@ jobs:
             output/pdf-hand-tool/**/*.png
             output/doc-font-table/*.json
             output/doc-font-table/*.png
+            output/doc-font-table/font-cohort.log
           if-no-files-found: ignore
           retention-days: 7
 
