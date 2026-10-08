@@ -1,7 +1,0 @@
-digraph FlyfishViewer {
-  rankdir=LR;
-  input -> router -> async_renderer;
-  async_renderer -> preview;
-  async_renderer -> search;
-  async_renderer -> export;
-}

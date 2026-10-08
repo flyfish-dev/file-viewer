@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<invoice xmlns="urn:example:invoice:v1" number="INV-1002">
-  <customer>Example Customer</customer>
-  <!-- Missing required <total> element: root/namespace match, XSD validation fails. -->
-</invoice>

@@ -1,7 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "chm",
-  "packageName": "@file-viewer/assets-chm",
-  "copyGroups": ["chm"],
-  "receiptFilename": "file-viewer-assets-chm.receipt.json"
-}

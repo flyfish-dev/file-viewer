@@ -1,6 +1,0 @@
-{
-  // JSON5 permits comments and trailing commas.
-  viewer: 'Flyfish',
-  release: 'matrix-alignment',
-  formats: ['json5', 'jsonc', 'ipynb'],
-}

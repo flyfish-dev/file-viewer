@@ -1,9 +1,0 @@
-# Development-only fixture generation/validation. Not renderer dependencies.
-numpy==2.3.5
-rasterio==1.5.0
-tifffile==2026.5.15
-# Optional external executable: PDAL with readers.las/readers.copc/writers.copc.
-# PDAL is not installed automatically by these scripts.
-
-# Development-only LAZ codec; not a File Viewer runtime dependency.
-lazrs==0.8.2

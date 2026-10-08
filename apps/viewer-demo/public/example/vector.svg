@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="260" viewBox="0 0 480 260">
-  <rect width="480" height="260" fill="#f6f8fb"/>
-  <rect x="68" y="58" width="344" height="144" rx="20" fill="#ffffff" stroke="#21a366" stroke-width="6"/>
-  <text x="240" y="126" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#142335">SVG Preview</text>
-  <text x="240" y="166" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#64748b">Rendered as a safe image asset</text>
-</svg>

@@ -1,8 +1,0 @@
-[viewer]
-name = "File Viewer"
-theme = "light"
-formats = ["toml", "hcl", "proto", "http"]
-
-[viewer.performance]
-lazy_loading = true
-worker_first = true

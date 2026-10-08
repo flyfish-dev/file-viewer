@@ -1,9 +1,0 @@
-%SEMI-OASIS
-# File Viewer OASIS structure fixture
-START version=1.0 unit=1000
-CELL TOP
-LAYER 1 DATATYPE 0
-RECT 0 0 1200 800
-TEXT 120 120 "Flyfish OASIS sample"
-ENDCELL
-END

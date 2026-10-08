@@ -1,3 +1,0 @@
-File Viewer text sample
-
-This file is rendered as plain text with the same safe code preview pipeline.

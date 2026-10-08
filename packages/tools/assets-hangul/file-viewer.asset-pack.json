@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "hangul",
-  "packageName": "@file-viewer/assets-hangul",
-  "copyGroups": [
-    "office-hangul"
-  ],
-  "receiptFilename": "file-viewer-assets-hangul.receipt.json"
-}

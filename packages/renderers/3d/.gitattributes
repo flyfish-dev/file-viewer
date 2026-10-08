@@ -1,4 +1,0 @@
-# Keep upstream license texts byte-for-byte, including their authored whitespace.
-licenses/* whitespace=-blank-at-eol
-# Markdown uses trailing spaces for hard line breaks.
-*.md whitespace=-blank-at-eol

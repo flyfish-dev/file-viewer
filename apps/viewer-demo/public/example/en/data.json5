@@ -1,6 +1,0 @@
-{
-  viewer: 'File Viewer',
-  locale: 'en-US',
-  trailingCommas: true,
-  formats: ['docx', 'pdf', 'dwg', 'xmind'],
-}

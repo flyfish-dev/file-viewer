@@ -1,6 +1,0 @@
-node_modules
-dist
-public/file-viewer
-package-lock.json
-*.log
-.DS_Store

@@ -1,2 +1,0 @@
-File Viewer issue 206 synthetic fixture
-This content is signed by two test signers.

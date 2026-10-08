@@ -1,4 +1,0 @@
-/* Library entry style side effect.
- * Importing this file from src/package/index.ts makes Vite emit the component styles
- * into the package bundle so Vue consumers get them automatically on install.
- */

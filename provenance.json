@@ -1,0 +1,186 @@
+{
+  "repository": "flyfish-dev/file-viewer",
+  "pull_request": 350,
+  "code_head": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+  "tested_merge": "1a21722cd8370ac12bc28e88b056ce715951f3f8",
+  "tested_tree": "ecabf9c49059d281ff973ab7b16d79e3593a5131",
+  "base": "eb842206323f19793ce71836c116d54f461f849e",
+  "scope": "Fresh generated public browser screenshots. Browser interactions and checks are established by the referenced artifact reports. Encoding and DOC screenshots use source renderers; PDF and Geo3D captions distinguish source from installed consumers. This evidence does not claim final registry-release coverage.",
+  "artifacts": {
+    "11528363846": {
+      "name": "intermediate-renderer-browser-evidence",
+      "run_id": 37727084188,
+      "sha256": "1d785c860e9bddc85a39771c84ad6858a6af323ee121bcb3ba2b9d9b44d38eff",
+      "url": "https://github.com/flyfish-dev/file-viewer/actions/runs/37727084188/artifacts/11528363846"
+    },
+    "11528362532": {
+      "name": "geo3d-focused-1a21722cd8370ac12bc28e88b056ce715951f3f8",
+      "run_id": 37727084250,
+      "sha256": "477f5369b5988f7d383340ecab97957a6a2a5c9efaec7a7900a16d7cdc1d7b2e",
+      "url": "https://github.com/flyfish-dev/file-viewer/actions/runs/37727084250/artifacts/11528362532"
+    }
+  },
+  "images": [
+    {
+      "path": "images/text-windows-1251-chromium.png",
+      "sha256": "98a2972def99286169f33198d773fe7cb90967247c4b770d3b36a06ddb3cef0e",
+      "bytes": 11032,
+      "git_blob_sha": "da82f05bd51ba242ccd085c24ecce2e6ae2b7f2e",
+      "caption": "Chromium source: generated Windows-1251 fallback fixture in the virtual text renderer. The two rows show “first ПриветЂА last” and “second line”. This image illustrates rendering; CURRENT.json records the 165 successful groups.",
+      "artifact_id": 11528363846,
+      "artifact_path": "text-single-byte-encodings/chromium-windows-1251-rendered.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/renderers/text/test/single-byte-encodings.browser.mjs",
+          "git_blob_sha": "528d7e6e798ec7750858f2cf73780028a565fadb",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/text/test/single-byte-encodings.browser.mjs"
+        },
+        {
+          "path": "packages/renderers/text/test/single-byte-encodings/fixtures.mjs",
+          "git_blob_sha": "d975a5e072f74bc024b3abeaf72d274768a8c073",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/text/test/single-byte-encodings/fixtures.mjs"
+        }
+      ]
+    },
+    {
+      "path": "images/text-windows-1251-webkit.png",
+      "sha256": "19c6d8e4eeb074a44cd10a944680024a1d24ca22ce28859e20825b194985b5d7",
+      "bytes": 13569,
+      "git_blob_sha": "e02d07dbc83780c2da16665ec7fdc9dfabfb5878",
+      "caption": "WebKit source: the same generated Windows-1251 fallback fixture renders two readable rows in the virtual text renderer. CURRENT.json separately records 165 successful groups.",
+      "artifact_id": 11528363846,
+      "artifact_path": "text-single-byte-encodings/webkit-windows-1251-rendered.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/renderers/text/test/single-byte-encodings.browser.mjs",
+          "git_blob_sha": "528d7e6e798ec7750858f2cf73780028a565fadb",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/text/test/single-byte-encodings.browser.mjs"
+        },
+        {
+          "path": "packages/renderers/text/test/single-byte-encodings/fixtures.mjs",
+          "git_blob_sha": "d975a5e072f74bc024b3abeaf72d274768a8c073",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/text/test/single-byte-encodings/fixtures.mjs"
+        }
+      ]
+    },
+    {
+      "path": "images/doc-font-table-chromium.png",
+      "sha256": "6c22a59568fe8094621867ffb0609a60b1dabd73abbcf3524d1570c4eb79b1ff",
+      "bytes": 13454,
+      "git_blob_sha": "9623d1987c20ea553fe164defe16fd32f07c031e",
+      "caption": "Chromium source: generated DOC model with vertical Chinese glyphs and horizontal 17：15. This is synthetic model coverage, not a screenshot of an original DOC file.",
+      "artifact_id": 11528363846,
+      "artifact_path": "doc-font-table/chromium-generated.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/renderers/doc/scripts/verify-font-table-browser.mjs",
+          "git_blob_sha": "46cad95328267f52d13a2f903764c61d948cc6ff",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/doc/scripts/verify-font-table-browser.mjs"
+        }
+      ]
+    },
+    {
+      "path": "images/doc-font-table-webkit.png",
+      "sha256": "02a32440579b2e2e1ba56e10c6c140ab922885a5eef1748e4c72746dacc7fa0d",
+      "bytes": 15932,
+      "git_blob_sha": "2cf9f028011815a3314a6350ab0e4ddfb7b187ba",
+      "caption": "WebKit source: generated DOC model with visible vertical Chinese glyphs and horizontal 17：15. Spacing differs from Chromium; the geometry gate passes. This is synthetic model coverage.",
+      "artifact_id": 11528363846,
+      "artifact_path": "doc-font-table/webkit-generated.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/renderers/doc/scripts/verify-font-table-browser.mjs",
+          "git_blob_sha": "46cad95328267f52d13a2f903764c61d948cc6ff",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/doc/scripts/verify-font-table-browser.mjs"
+        }
+      ]
+    },
+    {
+      "path": "images/pdf-source-chromium.png",
+      "sha256": "3c35072d8a42c23727a0b83e9ec32b6ef625a12fb0a1e51efd8e1981f00f434b",
+      "bytes": 20671,
+      "git_blob_sha": "99a8c077c66a908b4935216b7956b7728fed6a0f",
+      "caption": "Chromium source: generated PDF first page with page 1/2 toolbar, GO TO SECOND PAGE and SELECTABLE PDF TEXT. The screenshot shows the rendered default state; interaction checks are recorded separately.",
+      "artifact_id": 11528363846,
+      "artifact_path": "pdf-hand-tool/source/chromium/default-text-selection.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/renderers/pdf/scripts/verify-hand-tool-browser.mjs",
+          "git_blob_sha": "1d2ff370185493f742c48c77fc6efd8005529fbf",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/pdf/scripts/verify-hand-tool-browser.mjs"
+        }
+      ]
+    },
+    {
+      "path": "images/pdf-installed-webkit.png",
+      "sha256": "e404cb1cdbea3fa11a7dc367471266170dcb5002720d8143ba3b62f4ad63f66c",
+      "bytes": 22138,
+      "git_blob_sha": "787a3dc70eef39c59c15008287cba2f010badcb9",
+      "caption": "WebKit installed consumer: generated PDF first page with navigation toolbar and selectable text. The screenshot shows the default state; the report proves selection and hand-tool checks against current packed output.",
+      "artifact_id": 11528363846,
+      "artifact_path": "pdf-hand-tool/installed-consumer/browsers/webkit/default-text-selection.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/renderers/pdf/scripts/verify-hand-tool-browser.mjs",
+          "git_blob_sha": "1d2ff370185493f742c48c77fc6efd8005529fbf",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/pdf/scripts/verify-hand-tool-browser.mjs"
+        },
+        {
+          "path": "packages/renderers/pdf/scripts/verify-hand-tool-installed.mjs",
+          "git_blob_sha": "32adfaa475424f576afc4493800a19d91904fd8b",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/pdf/scripts/verify-hand-tool-installed.mjs"
+        }
+      ]
+    },
+    {
+      "path": "images/vite8-cjs-chromium.png",
+      "sha256": "6a7cbbd05388871b6382746d32b3312f88b457e11f975d2612e9e8f4e37df515",
+      "bytes": 14999,
+      "git_blob_sha": "c697ecb6a74b118ba93e6e606add5546f585fd6e",
+      "caption": "Vite 8 Chromium production fixture: completed blue CJS initialization rectangle and rotation controls in default-with-assets mode. This is a minimal CJS initialization fixture.",
+      "artifact_id": 11528363846,
+      "artifact_path": "vite-github-311/vite-8-default-with-assets-chromium.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/presets/vite-plugin/scripts/verify-github-311-browser.mjs",
+          "git_blob_sha": "4bc89dabb5ff31a5dc569d634b9997085c4b900b",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/presets/vite-plugin/scripts/verify-github-311-browser.mjs"
+        }
+      ]
+    },
+    {
+      "path": "images/geo3d-installed-concurrent-cog-copc.png",
+      "sha256": "772c67f28708685784e07f5c0e3257f76ccd5bb10a7a638bce10235b38c6b70f",
+      "bytes": 43089,
+      "git_blob_sha": "1f4eeb260241b4de1e496aa492cbe638f38371e5",
+      "caption": "Installed Geo3D consumer: both completed viewers are visible together, colorful raster at left and colored point cloud at right. This fixed synthetic fixture is not a production-scale benchmark.",
+      "artifact_id": 11528362532,
+      "artifact_path": "geo3d-browser/installed-concurrent-cog-copc-0-complete-viewers-both.png",
+      "tested_head_sha": "91f2859f2a431e8c0cd48f9a855eca99adfabf69",
+      "fixture_or_generator": [
+        {
+          "path": "packages/renderers/3d/scripts/verify-geo3d-concurrent.mjs",
+          "git_blob_sha": "b13aca55fa88eb9188aa40fa5042b30422186716",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/3d/scripts/verify-geo3d-concurrent.mjs"
+        },
+        {
+          "path": "packages/renderers/3d/test/fixtures/geo3d/samples-mit/imagery-overviews.cog.tif",
+          "git_blob_sha": "c5887fd53f285da7d98682f7ff774fd4541500a3",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/3d/test/fixtures/geo3d/samples-mit/imagery-overviews.cog.tif"
+        },
+        {
+          "path": "packages/renderers/3d/test/fixtures/geo3d/samples-mit/original-deliveries/streaming-16384.copc.laz",
+          "git_blob_sha": "39aeba6188bdfa841f71fc37c7b5237bbce8eb28",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/3d/test/fixtures/geo3d/samples-mit/original-deliveries/streaming-16384.copc.laz"
+        }
+      ]
+    }
+  ]
+}

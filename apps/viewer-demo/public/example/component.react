@@ -1,7 +1,0 @@
-export function PreviewBadge({ format }) {
-  return (
-    <span data-format={format}>
-      Flyfish preview: {format.toUpperCase()}
-    </span>
-  )
-}
