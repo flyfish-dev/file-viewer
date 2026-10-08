@@ -171,9 +171,9 @@
           "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/3d/scripts/verify-geo3d-concurrent.mjs"
         },
         {
-          "path": "packages/renderers/3d/test/fixtures/geo3d/samples-mit/imagery-overviews.cog.tif",
-          "git_blob_sha": "c5887fd53f285da7d98682f7ff774fd4541500a3",
-          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/3d/test/fixtures/geo3d/samples-mit/imagery-overviews.cog.tif"
+          "path": "packages/renderers/3d/scripts/verify-geo3d-browser-scenarios.mjs",
+          "git_blob_sha": "a01a65f62085b9bad3c3b1b998ef993db6f58e2c",
+          "url": "https://github.com/flyfish-dev/file-viewer/blob/91f2859f2a431e8c0cd48f9a855eca99adfabf69/packages/renderers/3d/scripts/verify-geo3d-browser-scenarios.mjs"
         },
         {
           "path": "packages/renderers/3d/test/fixtures/geo3d/samples-mit/original-deliveries/streaming-16384.copc.laz",
