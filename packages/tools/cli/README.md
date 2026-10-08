@@ -44,6 +44,8 @@ npx file-viewer-cli create my-viewer \
 
 直接安装 Full 包不会自动带入以后新增的专业能力；通过 CLI 明确选择 `--profile full` 时，CLI 会保留对应 Full 包，并加入目录中标记为 Full 默认追加的后续可选能力。当前默认额外能力是 DICOM 和数字签名/证据容器，因此确认前会显示体积和许可证信息。Adobe 设计 renderer 仍需显式选择，例如追加 `--formats pat`、`--formats psd` 或 `--capabilities design`；显式选择会安装 `@file-viewer/renderer-design` 及其独立资产包，但不会改变 `preset-all` 的 221 个扩展名、32 条链路冻结基线。DICOM 仅预览本地单个 DICOM Part 10 文件及其多帧，不包含 series、PACS/DICOMweb、MPR、分割、诊断或内嵌 OHIF。签名 renderer 仅声明有界容器检查和密码学验证结果，不代替证书信任、政策或法律效力判定。
 
+选择 DICOM（包括 `--profile full`）时，还需遵循 [DICOM 安装策略](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.md#应用安装策略)，由应用配置依赖 overrides 并满足 Node.js 要求。CLI 不会配置这些 overrides；部署前需验证实际应用依赖图及浏览器行为。
+
 ## 配置、资产与旧命令兼容
 
 ```bash

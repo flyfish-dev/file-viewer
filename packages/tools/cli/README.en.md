@@ -44,6 +44,8 @@ npx file-viewer-cli create my-viewer \
 
 Installing a Full package directly does not automatically add future specialist capabilities. Explicit CLI `--profile full` keeps the matching Full package and adds the later opt-ins marked as Full defaults in the catalog. The current default additions are DICOM and digital-signature/evidence containers, so the CLI shows their weight and licenses before confirmation. The Adobe design renderer remains explicit: add `--formats pat`, `--formats psd`, or `--capabilities design` to install `@file-viewer/renderer-design` and its independent asset pack without changing the frozen 221-extension, 32-pipeline `preset-all` baseline. DICOM covers one local DICOM Part 10 file, including multi-frame navigation. It does not provide series assembly, PACS/DICOMweb, MPR, segmentation, diagnosis, or an embedded OHIF application. The signature renderer reports bounded container inspection and cryptographic verification separately from certificate trust, policy, and legal-validity decisions.
 
+DICOM selections, including `--profile full`, also require the application-owned overrides and Node.js requirements in the [DICOM installation policy](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.en.md#application-installation-policy). The CLI does not configure those overrides; verify the resolved application graph and browser behavior before deployment.
+
 ## Configuration, assets, and legacy compatibility
 
 ```bash
