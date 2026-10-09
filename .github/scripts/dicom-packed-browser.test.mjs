@@ -5,6 +5,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  realpathSync,
   rmSync,
   symlinkSync,
   writeFileSync
@@ -23,7 +24,7 @@ import {
 } from '../../packages/renderers/dicom/scripts/verify-packed-browser.mjs'
 
 const temporary = (t) => {
-  const directory = mkdtempSync(join(tmpdir(), 'dicom-packed-control-'))
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), 'dicom-packed-control-')))
   t.after(() => rmSync(directory, { recursive: true, force: true }))
   return directory
 }
@@ -234,14 +235,30 @@ test('clean child startup removes effective preload and lookup contamination, re
   assert.equal(result.proxy, environment.HTTPS_PROXY)
 })
 
-test('full Public CI runs both installed browser engines after inspection and always retains compact evidence', () => {
+test('independent Public CI builds the exact browser sources, inspects DICOM, runs both engines and retains compact evidence', () => {
   const workflow = readFileSync(resolve(import.meta.dirname, '../workflows/public-ci.yml'), 'utf8')
-  const install = workflow.indexOf('pnpm exec playwright install --with-deps chromium webkit')
-  const inspection = workflow.indexOf('pnpm --filter @file-viewer/renderer-dicom verify:inspection')
-  const gate = workflow.indexOf('pnpm --filter @file-viewer/renderer-dicom verify:packed-browser')
-  assert.ok(install >= 0 && inspection > install && gate > inspection)
-  const retention = workflow
-    .split('- name: Retain packed DICOM browser evidence')[1]
+  const runtimeJob = workflow.split('  browser-runtimes:')[1]?.split('\n  verify:')[0]
+  assert.ok(
+    runtimeJob,
+    'The runtime consumers must run independently from unrelated full-package gates'
+  )
+  const build = runtimeJob.indexOf(
+    'pnpm --filter @file-viewer/core --filter @file-viewer/renderer-text --filter @file-viewer/capability-mermaid --filter @file-viewer/renderer-drawing --filter @file-viewer/renderer-dicom build'
+  )
+  const install = runtimeJob.indexOf('pnpm exec playwright install --with-deps chromium webkit')
+  const inspection = runtimeJob.indexOf(
+    'node packages/renderers/dicom/scripts/verify-node-inspection.mjs'
+  )
+  const gateCommand = 'node packages/renderers/dicom/scripts/verify-packed-browser.mjs'
+  const gate = runtimeJob.indexOf(gateCommand)
+  assert.ok(build >= 0 && install > build && inspection > install && gate > inspection)
+  assert.equal(
+    workflow.split(gateCommand).length - 1,
+    1,
+    'Unchanged runtime proof must not be duplicated in full CI'
+  )
+  const retention = runtimeJob
+    .split('- name: Retain cold browser runtime evidence')[1]
     ?.split('- name:')[0]
   assert.ok(retention)
   assert.match(retention, /if: always\(\) && steps\.impact\.outputs\.runtime != 'false'/)

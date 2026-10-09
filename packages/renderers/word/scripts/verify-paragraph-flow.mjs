@@ -38,7 +38,12 @@ const entries={base:baseSource,control,optimized:installed};
 const bundles={};
 for(const [name,source] of Object.entries(entries)) {
  const target=path.join(output,`${name}.mjs`);await writeFile(target,source);
- const compiled=await build({stdin:{contents:`import * as engine from '@file-viewer/docx';import {renderFileViewerWordDoc} from './packages/renderers/word/src/index.ts';Object.assign(window,{engine,renderFileViewerWordDoc});`,resolveDir:root,loader:'ts'},bundle:true,format:'iife',platform:'browser',write:false,logLevel:'warning',plugins:[{name:'owned-engine',setup(b){b.onResolve({filter:/^@file-viewer\/docx$/},()=>({path:target}));}}]});
+ const compiled=await build({stdin:{contents:`import * as engine from '@file-viewer/docx';import {renderFileViewerWordDoc} from './packages/renderers/word/src/index.ts';Object.assign(window,{engine,renderFileViewerWordDoc});`,resolveDir:root,loader:'ts'},bundle:true,format:'iife',platform:'browser',write:false,logLevel:'warning',plugins:[{name:'owned-engine',setup(b){
+  b.onResolve({filter:/^@file-viewer\/docx$/},()=>({path:target,namespace:'verified-docx-control'}));
+  // Evidence may live outside the workspace. Resolve the copied entry's
+  // dependencies from the installed engine, rather than the evidence folder.
+  b.onLoad({filter:/.*/,namespace:'verified-docx-control'},()=>({contents:source,loader:'js',resolveDir:engine}));
+ }}]});
  bundles[name]=compiled.outputFiles[0].text;
 }
 const checks=[],observations=[],errors=[],external=[];

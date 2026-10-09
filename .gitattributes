@@ -1,0 +1,5 @@
+packages/renderers/iwork/test/fixtures/LICENSE.libetonyek.txt -whitespace
+packages/renderers/wordperfect/test/fixtures/LICENSE.MPL-2.0.txt -whitespace
+# Registry-verified DOCX mirrors retain the publisher's exact bytes.
+**/vendor/docx/docx.worker.js whitespace=-blank-at-eol
+**/vendor/docx/jszip.min.js whitespace=-blank-at-eol

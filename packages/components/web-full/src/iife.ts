@@ -23,6 +23,11 @@ import type {
   ViewerMountOptions,
   ViewerOptions
 } from '@file-viewer/web'
+import { resolveFullAssetPackBaseUrl } from './asset-pack-base.js'
+
+declare const __FILE_VIEWER_WEB_FULL_VERSION__: string
+const fullAssetPackVersion = typeof __FILE_VIEWER_WEB_FULL_VERSION__ === 'undefined'
+  ? undefined : __FILE_VIEWER_WEB_FULL_VERSION__
 
 export * from '@file-viewer/web'
 export { createViewerControllerHandle, FileViewerElement, FILE_VIEWER_ELEMENT_TAG }
@@ -145,6 +150,8 @@ function createFullAssetOptions(assetBaseUrl?: string | URL | null): ViewerOptio
   if (!baseUrl) {
     return {}
   }
+  const cadBaseUrl = resolveFullAssetPackBaseUrl(baseUrl, '@file-viewer/assets-cad', fullAssetPackVersion)
+  const drawingBaseUrl = resolveFullAssetPackBaseUrl(baseUrl, '@file-viewer/assets-drawing', fullAssetPackVersion)
   const pptAssetUrl = (path: string) => (
     `${baseUrl}${path}?file-viewer-ppt=${encodeURIComponent(DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION)}`
   )
@@ -152,7 +159,7 @@ function createFullAssetOptions(assetBaseUrl?: string | URL | null): ViewerOptio
     `${baseUrl}${path}?file-viewer-docx=${encodeURIComponent(DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION)}`
   )
   const cadAssetUrl = (path: string) => (
-    `${baseUrl}${path}?file-viewer-cad=${encodeURIComponent(DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION)}`
+    `${cadBaseUrl}${path}?file-viewer-cad=${encodeURIComponent(DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION)}`
   )
   return {
     archive: {
@@ -160,7 +167,7 @@ function createFullAssetOptions(assetBaseUrl?: string | URL | null): ViewerOptio
       wasmUrl: `${baseUrl}vendor/libarchive/libarchive.wasm`
     },
     cad: {
-      wasmPath: `${baseUrl}wasm/cad/${DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION}/`,
+      wasmPath: `${cadBaseUrl}wasm/cad/${DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION}/`,
       workerUrl: cadAssetUrl(`wasm/cad/${DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION}/dwg-worker.js`),
       dwfWasmUrl: cadAssetUrl(`wasm/cad/${DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION}/dwfv-render.wasm`)
     },
@@ -172,7 +179,7 @@ function createFullAssetOptions(assetBaseUrl?: string | URL | null): ViewerOptio
       workerJsZipUrl: docxAssetUrl('vendor/docx/jszip.min.js')
     },
     drawing: {
-      viewerScriptUrl: `${baseUrl}vendor/drawio/viewer-static.min.js`
+      viewerScriptUrl: `${drawingBaseUrl}vendor/drawio/viewer-static.min.js`
     },
     iwork: {
       workerUrl: `${baseUrl}vendor/iwork/iwork.worker.js`

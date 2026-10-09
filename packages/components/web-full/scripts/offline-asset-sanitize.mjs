@@ -180,7 +180,11 @@ const replacements = [
   {
     pattern: /\bunpkg\.com\b/g,
     replacement: 'file-viewer-offline-cdn',
-    reason: 'runtime CDN fallback markers are forbidden in release assets'
+    reason: 'runtime CDN fallback markers are forbidden in release assets',
+    // Comparing the selected script's hostname does not introduce an outbound
+    // fallback. Preserve that comparison so explicit unpkg loading can select
+    // its own exact-version asset packs; actual URL fallbacks are still localized.
+    skipMatch: (text, offset) => /\.hostname\s*={2,3}\s*['"]$/.test(text.slice(Math.max(0, offset - 100), offset)) && /^['"]/.test(text.slice(offset + 'unpkg.com'.length))
   },
   {
     pattern: /http:\/\/localhost\//g,
@@ -241,9 +245,11 @@ export async function sanitizeOfflineViewerAssetTree(root) {
       if (item.skipFile?.(file)) {
         continue
       }
-      text = text.replace(item.pattern, () => {
+      text = text.replace(item.pattern, (...arguments_) => {
+        const offset = arguments_.at(-2)
+        if (item.skipMatch?.(text, offset)) return arguments_[0]
         replacementCount += 1
-        return item.replacement
+        return item.replacement.replace(/\$(\d+)/g, (_, group) => arguments_[Number(group)] || '')
       })
     }
     if (text !== original) {

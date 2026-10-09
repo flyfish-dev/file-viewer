@@ -2,9 +2,17 @@
 
 An explicitly installed DICOM renderer for local DICOM Part 10 files. It uses the modular Cornerstone3D core and DICOM image-loader packages; it does not embed the OHIF application and does not use DCMTK.
 
-This package is intentionally excluded from File Viewer full and preset packages. The CLI `--profile full` separately adds DICOM and signature capabilities. Both CLI and manual DICOM installations need the application policy below.
+This package is excluded from File Viewer full and preset packages. The CLI `--profile full` separately adds DICOM and signature capabilities.
 
-## Application installation policy
+## Current source build and verification
+
+The normal source build bundles Cornerstone 5.8.2, the SDK modules actually used, and the codec Worker. Applications no longer resolve the complete Cornerstone npm graph when installing this candidate. Decoder imports are built into the Worker, and four native WASM codecs are embedded with reviewed SHA-256 identities. `dist/bundled-runtime.json` records hashes for the source lockfile, input files, package metadata and license files, outputs, and WASM codecs. `dist/THIRD_PARTY_LICENSES.txt` retains the complete licenses of the bundled dependencies.
+
+`pnpm --filter @file-viewer/renderer-dicom verify:packed-browser` installs source-packed artifacts in an independent consumer with an empty npm cache and no dependency security overrides. It verifies the installed files and runs full and production audits. Chromium and WebKit exercise eight bounded fixtures covering the six transfer syntaxes listed below, actual PNG pixels, frame changes, offline request boundaries, and cleanup. The macOS checks have passed; Public CI runs the strict Linux screenshot gate. JSON reports, command logs, and available screenshots are retained for seven days.
+
+These results describe the source candidate. They do not mean the published npm 3.1.2 package has changed or that every DICOM file is covered. The same gate must pass on the target platform before release.
+
+## Application policy for published 3.1.2
 
 `@file-viewer/renderer-dicom@3.1.2` uses Cornerstone 5.8.2. Its default dependency graph still resolves affected transitive dependencies. The repository's workspace overrides are not inherited by applications installing the published package, and the CLI does not add this policy automatically.
 
@@ -39,7 +47,7 @@ Fresh npm consumer checks on 2026-10-08 used core and renderer artifacts packed 
 
 Installation and build tooling must satisfy the current transitive dependency `dcmjs@0.52.0`'s existing Node.js `>=22.13` requirement. These checks used Node.js 24.20.0 and npm 11.9.0.
 
-Applications must qualify their resolved dependency graph, bundler, browser targets, and required DICOM transfer syntaxes before deployment. The audit checks above did not run a browser gate. Full-runtime Public CI runs Node inspection followed by `pnpm --filter @file-viewer/renderer-dicom verify:packed-browser`. The latter installs source-packed artifacts in an independent consumer with an empty npm cache and this application policy, audits that graph, and checks real CT pixels and cleanup in Chromium and WebKit. CI retains JSON reports, command logs, and available screenshots for seven days on success or failure. This bounded fixture gate does not establish coverage for every transfer syntax or make the default dependency graph clean.
+Applications must qualify their resolved dependency graph, bundler, browser targets, and required DICOM transfer syntaxes before deployment. The older audit checks above did not run a browser gate and do not establish runtime behavior of the current candidate.
 
 ## Registration
 
@@ -55,10 +63,10 @@ const viewer = createViewer(container, {
 })
 ```
 
-The first scope accepts Implicit/Explicit/Deflated Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless Part 10 files covered by Chromium, Firefox, and WebKit regression (single-frame or multi-frame). It provides stack navigation, window width/center, zoom, pan, left/right 90° rotation, fit-to-view, and unified File Viewer view-state restoration. Other transfer syntaxes, PACS/DICOMweb, multi-file series assembly, annotations, MPR, segmentation, hanging protocols, and diagnostic use are outside this package.
+It accepts Implicit/Explicit/Deflated Explicit VR Little Endian, JPEG Lossless Process 14 SV1, JPEG-LS Lossless, and JPEG 2000 Lossless Part 10 files (single-frame or multi-frame). The current candidate checks these syntaxes in Chromium and WebKit. It provides stack navigation, window width/center, zoom, pan, left/right 90° rotation, fit-to-view, and unified File Viewer view-state restoration. Other transfer syntaxes, PACS/DICOMweb, multi-file series assembly, annotations, MPR, segmentation, hanging protocols, and diagnostic use are outside this package.
 
 The package initializes codec workers only after a DICOM file is selected. Defaults are limited to a 64 MiB source, 256 frames, 16 million decoded samples per frame, and 48 million decoded samples in total; applications can configure lower limits. Destroying the viewer removes only that instance's file-manager entry, viewport, rendering engine, listeners, metadata, and image cache. Cornerstone owns the shared worker pool, so destroying a File Viewer instance never terminates a host-owned worker.
 
-The local Part 10 path registers only the `dicomfile:` loader, not `wadors` or another DICOMweb loader, and performs no `fetch` or XHR after the file bytes are handed to the renderer. `THIRD_PARTY_LICENSES.json` and `THIRD_PARTY_NOTICES.md` record the repository's workspace-resolved npm dependency/license snapshot and native WebAssembly codec licenses. Review the application's actual resolved closure as it may differ from that snapshot.
+The local Part 10 path registers only the `dicomfile:` loader, not `wadors` or another DICOMweb loader. Image data comes directly from the supplied bytes, without a `fetch` or XHR request; the first preview still loads this package's Worker and JavaScript modules from the deployment paths. `THIRD_PARTY_LICENSES.json` and `THIRD_PARTY_NOTICES.md` record the build SDK dependency and native WebAssembly license snapshot. The modules actually bundled are separately recorded in `dist/bundled-runtime.json`. Dependency audits and license inventories answer different questions; review both.
 
 This renderer is a preview aid, not a medical device or a diagnostic workstation.

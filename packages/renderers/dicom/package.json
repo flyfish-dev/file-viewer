@@ -66,23 +66,24 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && node scripts/build-runtime.mjs",
     "type-check": "tsc -b tsconfig.json",
     "verify:inspection": "pnpm build && node scripts/verify-node-inspection.mjs",
     "verify:packed-browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-packed-browser.mjs"
   },
   "dependencies": {
-    "@cornerstonejs/core": "5.8.2",
-    "@cornerstonejs/dicom-image-loader": "5.8.2",
-    "@cornerstonejs/metadata": "5.8.2",
     "@file-viewer/core": "workspace:3.1.2",
     "dicom-parser": "1.8.21",
     "events": "3.3.0",
     "pako": "2.2.0"
   },
   "devDependencies": {
+    "@cornerstonejs/core": "5.8.2",
+    "@cornerstonejs/dicom-image-loader": "5.8.2",
+    "@cornerstonejs/metadata": "5.8.2",
     "@types/pako": "^2.0.4",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "8.3.0"
   },
   "license": "Apache-2.0"
 }

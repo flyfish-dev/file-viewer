@@ -8,8 +8,14 @@ npm install @file-viewer/web-full
 
 ## RequireJS
 
-从 3.0.3 起可直接加载 `dist/flyfish-file-viewer-web-full.amd.js`。完整部署 `dist/`，
-保留同级 `renderers/`、`vendor/`、`wasm/`，不需要 shim 或覆盖宿主 `define`。
+从 3.0.3 起可直接加载 `dist/flyfish-file-viewer-web-full.amd.js`，不需要 shim 或覆盖宿主 `define`。
+从 npm 安装后，先运行 `npx --no-install file-viewer-copy-assets ./public/file-viewer`，
+再把 `dist/` 内的入口和 `renderers/` 复制到同一目录。复制命令会从同版本的
+`@file-viewer/assets-cad` 和 `@file-viewer/assets-drawing` 依赖补齐 CAD 与 Draw.io 资源。
+GitHub 完整离线发行物仍包含全部资产。
+
+通过 jsDelivr 或 unpkg 加载 IIFE/AMD 时，CAD 和 Draw.io 资源从所选 CDN 的同版本资产包读取。
+自托管部署继续使用本地资源；显式资源 URL 和 `setDefaultFullAssetBaseUrl()` 可覆盖默认位置。
 
 ```js
 require.config({ paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' } })

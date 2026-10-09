@@ -6,7 +6,7 @@ import {
   type FileViewerThemeMode
 } from '@file-viewer/core'
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom'
-import { sanitizeDrawingSvg } from './sanitize.js'
+import { sanitizeDrawingSvg, sanitizeGeneratedMermaidSvg } from './sanitize.js'
 
 export type DiagramKind = 'mermaid' | 'plantuml'
 
@@ -72,17 +72,18 @@ const renderMermaidSvg = async (
   t: DiagramTranslator
 ) => {
   assertFileViewerMermaidSourceHasNoExternalResources(text)
-  const mermaidModule = await import('mermaid')
+  const mermaidModule = await import('@file-viewer/capability-mermaid/engine')
   const mermaid = mermaidModule.default
   const id = `file-viewer-mermaid-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  const mathLabels = text.includes('$$')
   mermaid.initialize({
     startOnLoad: false,
     securityLevel: 'strict',
-    htmlLabels: false,
+    htmlLabels: mathLabels,
     theme: isDarkTheme(documentRef, theme) ? 'dark' : 'default'
   })
   const rendered = await mermaid.render(id, text)
-  return sanitizeDrawingSvg(documentRef, rendered.svg, t('drawing.error.svgParseFailed'))
+  return sanitizeGeneratedMermaidSvg(documentRef, rendered.svg, t('drawing.error.svgParseFailed'), mathLabels)
 }
 
 const appendSvgText = (
@@ -253,7 +254,6 @@ export const renderDiagram = async ({
   const panzoom: PanzoomObject = Panzoom(panTarget, {
     minScale: 0.4,
     maxScale: 4,
-    contain: 'outside',
     canvas: true
   })
   const wheelTarget = shell.parentElement || shell

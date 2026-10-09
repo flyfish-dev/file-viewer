@@ -1,5 +1,9 @@
 # Preparing an ordinary upstream DOCX release
 
+> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
+
+<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
+
 DOCX fixes belong in the owning `flyfish-dev/docxjs` repository. Publish its reviewed stable
 package first, then prepare File Viewer's exact dependency update:
 

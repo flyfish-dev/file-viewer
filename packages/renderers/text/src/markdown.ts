@@ -178,15 +178,17 @@ const isDarkTheme = (documentRef: Document, theme?: FileViewerThemeMode) => {
   return Boolean(documentRef.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches)
 }
 
-export const sanitizeMermaidSvg = (documentRef: Document, svg: string) => {
+export const sanitizeMermaidSvg = (documentRef: Document, svg: string, mathLabels = false) => {
   const purifier = getMarkdownPurifier(documentRef)
   if (!purifier) {
     throw new Error('Unable to initialize the Mermaid SVG sanitizer.')
   }
   const fragment = purifier.sanitize(svg, {
     RETURN_DOM_FRAGMENT: true,
-    USE_PROFILES: { html: true, svg: true, svgFilters: true },
-    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form'],
+    USE_PROFILES: { html: mathLabels, svg: true, svgFilters: true, mathMl: mathLabels },
+    ADD_TAGS: mathLabels ? ['foreignObject'] : [],
+    HTML_INTEGRATION_POINTS: mathLabels ? { foreignobject: true } : {},
+    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', ...(mathLabels ? [] : ['foreignObject'])],
     FORBID_ATTR: ['srcdoc']
   })
   const root = fragment.querySelector('svg')
@@ -213,14 +215,17 @@ const renderMermaidSvg = async (
     const mermaidModule = await loadMermaid()
     const mermaid = mermaidModule.default
     const id = `file-viewer-markdown-mermaid-${Date.now()}-${(mermaidRenderSequence += 1)}`
+    // Mermaid emits MathML inside an HTML label; SVG text labels preserve the
+    // delimiters literally. Ordinary diagrams retain their SVG-only labels.
+    const mathLabels = source.includes('$$')
     mermaid.initialize({
       startOnLoad: false,
       securityLevel: 'strict',
-      htmlLabels: false,
+      htmlLabels: mathLabels,
       theme: isDarkTheme(documentRef, theme) ? 'dark' : 'default'
     })
     const rendered = await mermaid.render(id, source)
-    return sanitizeMermaidSvg(documentRef, rendered.svg)
+    return sanitizeMermaidSvg(documentRef, rendered.svg, mathLabels)
   }
 
   const result = mermaidRenderQueue.then(render, render)

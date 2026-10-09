@@ -4,6 +4,8 @@
 import { readFile as readFile2 } from "node:fs/promises";
 import { resolve as resolve2 } from "node:path";
 import { fileURLToPath as fileURLToPath2 } from "node:url";
+import { createRequire } from "node:module";
+import { dirname as dirname2 } from "node:path";
 
 // ../../tools/copy-assets/src/index.ts
 import { createHash } from "node:crypto";
@@ -98,7 +100,21 @@ var readAggregateReceipt = async (targetDir) => {
     )) {
       throw new Error(`Invalid ${receiptFilename}`);
     }
-    return receipt;
+    const files = /* @__PURE__ */ new Map();
+    for (const file of receipt.files) {
+      const path = file.path.replace(/\/{2,}/g, "/");
+      const previous = files.get(path);
+      if (previous && (previous.sha256 !== file.sha256 || previous.size !== file.size))
+        throw new Error(`Conflicting receipt entries for ${path}`);
+      files.set(path, previous ? {
+        ...previous,
+        ownership: previous.ownership === "shared" || file.ownership === "shared" ? "shared" : "managed",
+        copyGroups: [.../* @__PURE__ */ new Set([...previous.copyGroups, ...file.copyGroups])].sort()
+      } : { ...file, path });
+    }
+    const canonicalFiles = [...files.values()].sort((left, right) => left.path.localeCompare(right.path));
+    const pathsCanonicalized = JSON.stringify(canonicalFiles) !== JSON.stringify(receipt.files);
+    return pathsCanonicalized ? { ...receipt, files: canonicalFiles, pathsCanonicalized: true } : receipt;
   } catch (error) {
     if (error.code === "ENOENT") return null;
     throw error;
@@ -150,31 +166,38 @@ var assertNoSymlinkPath = async (root, relativePath = "") => {
     }
   }
 };
-var copySelectedAssetsTransactionally = async (targetDir, sourceDir, packageVersion, manifest, selectedManifest, selectedRendererIds) => {
+var copySelectedAssetsTransactionally = async (targetDir, sourceDir, packageVersion, manifest, selectedManifest, selectedRendererIds, rendererSources = {}) => {
   await mkdir(targetDir, { recursive: true });
   await assertNoSymlinkPath(targetDir);
   const previous = await readAggregateReceipt(targetDir);
   const previousByPath = new Map(previous?.files.map((file) => [file.path, file]) || []);
   const selectedFiles = /* @__PURE__ */ new Map();
   for (const renderer of selectedManifest.rendererAssetManifests) {
+    const rendererSource = resolve(rendererSources[renderer.rendererId] || sourceDir);
     for (const asset of renderer.assets) {
       if (asset.target !== "public" || !asset.defaultPath) continue;
-      const sourcePath = containedPath(sourceDir, asset.defaultPath);
+      const defaultPath = asset.defaultPath;
+      const sourcePath = containedPath(rendererSource, defaultPath);
       if (!existsSync(sourcePath)) {
         if (asset.required) throw new Error(`Missing bundled viewer asset: ${sourcePath}`);
         continue;
       }
       const info = await stat(sourcePath);
       const paths = info.isDirectory() ? (await listFilePaths(sourcePath)).map(
-        (path) => normalizeRelativePath(`${asset.defaultPath}/${path}`)
-      ) : [normalizeRelativePath(asset.defaultPath)];
+        (path) => normalizeRelativePath(`${defaultPath.replace(/\/+$/, "")}/${path}`)
+      ) : [normalizeRelativePath(defaultPath)];
       for (const path of paths) {
-        const contentPath = containedPath(sourceDir, path);
+        const contentPath = containedPath(rendererSource, path);
         const content = await readFile(contentPath);
+        const hash = sha256(content);
+        const previousFile = selectedFiles.get(path);
+        if (previousFile && previousFile.sha256 !== hash)
+          throw new Error(`Conflicting bundled viewer asset: ${path}`);
         const current = selectedFiles.get(path) || {
           path,
+          sourcePath: contentPath,
           size: content.byteLength,
-          sha256: sha256(content),
+          sha256: hash,
           copyGroups: /* @__PURE__ */ new Set()
         };
         current.copyGroups.add(renderer.rendererId);
@@ -188,6 +211,7 @@ var copySelectedAssetsTransactionally = async (targetDir, sourceDir, packageVers
     const content = await readFile(source);
     selectedFiles.set(metadataName, {
       path: metadataName,
+      sourcePath: source,
       size: content.byteLength,
       sha256: sha256(content),
       copyGroups: new Set(selectedRendererIds)
@@ -235,7 +259,7 @@ var copySelectedAssetsTransactionally = async (targetDir, sourceDir, packageVers
         await copyFile(destination, backup);
       }
       await mkdir(dirname(destination), { recursive: true });
-      await copyFile(containedPath(sourceDir, file.path), destination);
+      await copyFile(file.sourcePath, destination);
       touched.push(file.path);
     }
     const nextByPath = new Map(previous?.files.map((file) => [file.path, file]) || []);
@@ -273,7 +297,7 @@ var copySelectedAssetsTransactionally = async (targetDir, sourceDir, packageVers
       missingRequired: installedValidation.missingRequired,
       missingOptional: installedValidation.missingOptional
     };
-    const samePayload = previous?.packageVersion === packageVersion && JSON.stringify(previous.copyGroups) === JSON.stringify(copyGroups) && JSON.stringify(previous.files) === JSON.stringify(files);
+    const samePayload = !previous?.pathsCanonicalized && previous?.packageVersion === packageVersion && JSON.stringify(previous.copyGroups) === JSON.stringify(copyGroups) && JSON.stringify(previous.files) === JSON.stringify(files);
     let checkedAt = installedValidation.checkedAt;
     const previousManifestText = metadataBefore.get(resolve(targetDir, manifestFilename));
     const previousSelectedManifestText = metadataBefore.get(
@@ -466,7 +490,8 @@ var copyFileViewerAssets = async (options = {}) => {
         packageVersion,
         manifest,
         selectedManifest,
-        selectedRendererIds
+        selectedRendererIds,
+        options.rendererSources
       );
     } catch (error) {
       await rm(targetDir, { recursive: true, force: true });
@@ -482,13 +507,25 @@ var copyFileViewerAssets = async (options = {}) => {
     packageVersion,
     manifest,
     selectedManifest,
-    selectedRendererIds
+    selectedRendererIds,
+    options.rendererSources
   );
 };
 
 // scripts/copy-assets-entry.mjs
 var packageDir2 = fileURLToPath2(new URL("..", import.meta.url));
 var packageJson2 = JSON.parse(await readFile2(resolve2(packageDir2, "package.json"), "utf8"));
+var require2 = createRequire(resolve2(packageDir2, "package.json"));
+var resolveRendererSources = async () => Object.fromEntries(await Promise.all(
+  ["cad", "drawing"].map(async (id) => {
+    const name = `@file-viewer/assets-${id}`;
+    const manifestPath = require2.resolve(`${name}/package.json`);
+    const manifest = JSON.parse(await readFile2(manifestPath, "utf8"));
+    if (manifest.name !== name || manifest.version !== packageJson2.version)
+      throw new Error(`Asset pack version mismatch: ${name}`);
+    return [id, resolve2(dirname2(manifestPath), "viewer")];
+  })
+));
 var help = `file-viewer-copy-assets ${packageJson2.version}
 
 Copy File Viewer Worker, WASM, font, and vendor assets into a self-hosted web project.
@@ -522,6 +559,7 @@ try {
     const result = await copyFileViewerAssets({
       ...parsed,
       sourceDir: resolve2(packageDir2, "dist"),
+      rendererSources: await resolveRendererSources(),
       packageVersion: packageJson2.version
     });
     if (parsed.json) {

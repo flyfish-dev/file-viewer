@@ -193,7 +193,6 @@ const listResult = spawnSync(
     '--filter',
     '@file-viewer/renderer-dicom',
     'list',
-    '--prod',
     '--depth',
     'Infinity',
     '--json'
@@ -288,6 +287,17 @@ function packageFilesForSelection(packagePath, filename) {
   return Boolean(packagePath && existsSync(join(packagePath, filename)))
 }
 visit(roots[0], roots[0].name, { direct: false, root: true, optional: false })
+// The SDK is compiled into the shipped browser runtime. Keep its reviewed
+// source closure in the ledger after moving it to build dependencies.
+for (const name of [
+  '@cornerstonejs/core',
+  '@cornerstonejs/dicom-image-loader',
+  '@cornerstonejs/metadata'
+]) {
+  const sdk = roots[0].devDependencies?.[name]
+  assert(sdk, `Missing bundled SDK build dependency: ${name}`)
+  visit(sdk, name, { direct: true, root: false, optional: false })
+}
 
 function compareAscii(left, right) {
   return left < right ? -1 : left > right ? 1 : 0
@@ -315,7 +325,7 @@ assert(
 for (const component of nativeCodecComponents) {
   assert(
     sortedPackages.some((entry) => `${entry.name}@${entry.version}` === component.wrapperPackage),
-    `${component.wrapperPackage} wrapper is missing from production closure`
+    `${component.wrapperPackage} wrapper is missing from the reviewed SDK source closure`
   )
   assert(
     !/(?:^|[^A-Z])(AGPL|GPL|LGPL|SSPL)(?:-|\b)/i.test(component.license),
@@ -355,7 +365,8 @@ const ledger = {
     packageName: '@file-viewer/renderer-dicom',
     packageVersion: roots[0].version,
     packageManager: 'pnpm',
-    command: 'pnpm --filter @file-viewer/renderer-dicom list --prod --depth Infinity --json'
+    command:
+      'pnpm --filter @file-viewer/renderer-dicom list --depth Infinity --json; direct runtime and three bundled Cornerstone SDK roots only'
   },
   policy: {
     allowedSpdxExpressions: [...allowedLicenses].sort(),
@@ -381,9 +392,9 @@ const packageVersionList = (name) => {
 const noticeLines = [
   '# Third-party notices',
   '',
-  'This file records the complete production dependency closure of the optional `@file-viewer/renderer-dicom` package, including the Linux-only optional codec dependency. Exact machine-readable versions, SPDX expressions, source repositories, and packaged license/notice filenames are in `THIRD_PARTY_LICENSES.json`.',
+  'This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone SDK build dependencies, including the Linux-only optional codec dependency. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in `THIRD_PARTY_LICENSES.json`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in `dist/bundled-runtime.json`; complete JavaScript license texts are retained in `dist/THIRD_PARTY_LICENSES.txt`.',
   '',
-  'The DICOM renderer is not part of any standard/full package or preset. These dependencies are installed only when this capability is selected, and its Cornerstone implementation is loaded only when a DICOM file is opened.',
+  'The DICOM renderer is not part of any standard/full package or preset. The bundled Cornerstone implementation is installed only when this capability is selected and loaded only when a DICOM file is opened. Source-closure entries are an attribution inventory; unused build dependencies are not necessarily present in the runtime bundle.',
   '',
   '## Required attribution',
   '',
@@ -409,7 +420,7 @@ const noticeLines = [
   '',
   'None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTICE` file. All top-level license and notice files found in each installed package are recorded in the ledger.',
   '',
-  '## Exact third-party closure by SPDX expression',
+  '## Reviewed runtime and SDK source closure by SPDX expression',
   ''
 ]
 for (const license of [...grouped.keys()].sort()) {
@@ -443,5 +454,5 @@ const counts = Object.fromEntries(
   [...grouped].map(([license, entries]) => [license, entries.length])
 )
 console.log(
-  `[dicom-license-ledger] Verified ${sortedPackages.length} production packages (${thirdPartyPackages.length} third-party, ${sortedPackages.filter((entry) => entry.optional).length} platform-optional): ${JSON.stringify(counts)}`
+  `[dicom-license-ledger] Verified ${sortedPackages.length} runtime/SDK source packages (${thirdPartyPackages.length} third-party, ${sortedPackages.filter((entry) => entry.optional).length} platform-optional): ${JSON.stringify(counts)}`
 )
