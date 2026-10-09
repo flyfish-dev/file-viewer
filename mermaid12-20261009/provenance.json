@@ -1,0 +1,546 @@
+{
+  "recordedAt": "2026-10-09T10:06:55.874597+00:00",
+  "scope": "Synthetic Mermaid browser evidence from ordinary source-built packages; not a registry release or all diagram-type compatibility claim",
+  "reviewedCandidateSourceCommit": "cf2ecfd40bb10d3c6c8780d55cf5f8db70fe8c15",
+  "candidateSourceTree": "c8570a2e47d1bada34b092784a87325ef2bbda75",
+  "testBinding": "Both local reports were recorded before committing the same nine tracked source files. Exact public-commit CI is a separate required landing gate.",
+  "fixtureScript": "packages/capabilities/mermaid/scripts/verify-packed-browser.mjs",
+  "checks": [
+    {
+      "status": "passed",
+      "startedAt": "2026-10-09T09:51:58.721Z",
+      "finishedAt": "2026-10-09T09:52:07.229Z",
+      "sourceNode": "v26.8.2",
+      "consumerMode": "source-vite",
+      "consumerNode": "v26.8.2",
+      "consumerBuild": {
+        "bundler": "vite@8.3.0"
+      },
+      "testsRanBeforeSourceCommit": true,
+      "audits": {
+        "full": {
+          "status": 0,
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          }
+        },
+        "production": {
+          "status": 0,
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          }
+        }
+      },
+      "isolation": {
+        "cacheInitiallyEmpty": true,
+        "nodePath": null,
+        "nodeOptions": null,
+        "ancestorNodeModulesAbsent": true
+      },
+      "tarballs": {
+        "file-viewer-core-3.1.2.tgz": "74d19570244a198c6809b66367feb1075452f21704e142370be294cbda42fe5a",
+        "file-viewer-renderer-text-3.1.2.tgz": "dcb2bc86b6b458eec2b9feea97a8a67407fc3a8d73d117131cdcde3f82d8609a",
+        "file-viewer-capability-mermaid-3.1.2.tgz": "25282d697efb250a893dec9ee2bd5f8830e688ea064e5bfb8e953992116e4442",
+        "file-viewer-renderer-drawing-3.1.2.tgz": "02aa8b6e2b1898e82fadd320c34697489cf4f055d29a724953d744c87cfab735"
+      },
+      "productionLockSha256": "b74010e673d8f4aaf54191e5ecbe6b9960fb7d5a7e1a981b3140bbe49abc94da",
+      "bundledRuntime": {
+        "versions": {
+          "mermaid": "12.1.0",
+          "katex": "0.18.2"
+        },
+        "licenseInputsVerified": 54,
+        "outputFilesVerified": 102,
+        "manifestSha256": "37f36fb1aa7ca12a771ab20b7c39f85ecd342f7a26360fee2b50cdfafca46103"
+      },
+      "browserResults": [
+        {
+          "browser": "chromium",
+          "errors": [],
+          "externalRequests": [],
+          "failedResponses": [],
+          "version": "153.0.8010.12",
+          "flowchart": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 59,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 360,
+              "height": 59,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "math": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 55.953125,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 17.640625,
+                  "height": 14.8125,
+                  "visible": true
+                },
+                {
+                  "width": 17.734375,
+                  "height": 15.953125,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 360,
+              "height": 55.953125,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 17.640625,
+                  "height": 14.8125,
+                  "visible": true
+                },
+                {
+                  "width": 17.734375,
+                  "height": 15.953125,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            }
+          ],
+          "sequence": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 450,
+              "height": 311,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 450,
+              "height": 311,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "status": "passed"
+        },
+        {
+          "browser": "webkit",
+          "errors": [],
+          "externalRequests": [],
+          "failedResponses": [],
+          "version": "26.6",
+          "flowchart": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 58.59375,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 300,
+              "height": 48.828125,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "math": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 60.21875,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 15.109375,
+                  "height": 13.109375,
+                  "visible": true
+                },
+                {
+                  "width": 28.328125,
+                  "height": 20.21875,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 300,
+              "height": 50.171875,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 12.588531494140625,
+                  "height": 10.9222412109375,
+                  "visible": true
+                },
+                {
+                  "width": 23.60186767578125,
+                  "height": 16.845458984375,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            }
+          ],
+          "sequence": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 450,
+              "height": 311,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 300,
+              "height": 207.328125,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "status": "passed",
+      "startedAt": "2026-10-09T09:56:07.758Z",
+      "finishedAt": "2026-10-09T09:56:18.917Z",
+      "sourceNode": "v26.8.2",
+      "consumerMode": "node20-esbuild",
+      "consumerNode": "v20.20.2",
+      "consumerBuild": {
+        "node": "v20.20.2",
+        "bundler": "esbuild@0.28.2"
+      },
+      "testsRanBeforeSourceCommit": true,
+      "audits": {
+        "full": {
+          "status": 0,
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          }
+        },
+        "production": {
+          "status": 0,
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          }
+        }
+      },
+      "isolation": {
+        "cacheInitiallyEmpty": true,
+        "nodePath": null,
+        "nodeOptions": null,
+        "ancestorNodeModulesAbsent": true
+      },
+      "tarballs": {
+        "file-viewer-core-3.1.2.tgz": "74d19570244a198c6809b66367feb1075452f21704e142370be294cbda42fe5a",
+        "file-viewer-renderer-text-3.1.2.tgz": "dcb2bc86b6b458eec2b9feea97a8a67407fc3a8d73d117131cdcde3f82d8609a",
+        "file-viewer-capability-mermaid-3.1.2.tgz": "25282d697efb250a893dec9ee2bd5f8830e688ea064e5bfb8e953992116e4442",
+        "file-viewer-renderer-drawing-3.1.2.tgz": "02aa8b6e2b1898e82fadd320c34697489cf4f055d29a724953d744c87cfab735"
+      },
+      "productionLockSha256": "2b504b9d0871ecac3467b88283d92a8a0987a2123b16c22f174b0b1b3f6c334f",
+      "bundledRuntime": {
+        "versions": {
+          "mermaid": "12.1.0",
+          "katex": "0.18.2"
+        },
+        "licenseInputsVerified": 54,
+        "outputFilesVerified": 102,
+        "manifestSha256": "37f36fb1aa7ca12a771ab20b7c39f85ecd342f7a26360fee2b50cdfafca46103"
+      },
+      "browserResults": [
+        {
+          "browser": "chromium",
+          "errors": [],
+          "externalRequests": [],
+          "failedResponses": [],
+          "version": "153.0.8010.12",
+          "flowchart": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 59,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 360,
+              "height": 59,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "math": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 55.953125,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 17.640625,
+                  "height": 14.8125,
+                  "visible": true
+                },
+                {
+                  "width": 17.734375,
+                  "height": 15.953125,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 360,
+              "height": 55.953125,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 17.640625,
+                  "height": 14.8125,
+                  "visible": true
+                },
+                {
+                  "width": 17.734375,
+                  "height": 15.953125,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            }
+          ],
+          "sequence": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 450,
+              "height": 311,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 450,
+              "height": 311,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "status": "passed"
+        },
+        {
+          "browser": "webkit",
+          "errors": [],
+          "externalRequests": [],
+          "failedResponses": [],
+          "version": "26.6",
+          "flowchart": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 58.59375,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 300,
+              "height": 48.828125,
+              "text": "Cold Offline",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "math": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 360,
+              "height": 60.21875,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 15.109375,
+                  "height": 13.109375,
+                  "visible": true
+                },
+                {
+                  "width": 28.328125,
+                  "height": 20.21875,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 300,
+              "height": 50.171875,
+              "text": "x2 x",
+              "mathNodes": 2,
+              "mathLabels": [
+                {
+                  "width": 12.588531494140625,
+                  "height": 10.9222412109375,
+                  "visible": true
+                },
+                {
+                  "width": 23.60186767578125,
+                  "height": 16.845458984375,
+                  "visible": true
+                }
+              ],
+              "errors": 0
+            }
+          ],
+          "sequence": [
+            {
+              "id": "markdown",
+              "svg": true,
+              "width": 450,
+              "height": 311,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            },
+            {
+              "id": "drawing",
+              "svg": true,
+              "width": 300,
+              "height": 207.328125,
+              "text": "Link Bob Link Bob Cold sequence Offline response",
+              "mathNodes": 0,
+              "mathLabels": [],
+              "errors": 0
+            }
+          ],
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "mermaid12-20261009/source-vite-webkit-math.png",
+      "sha256": "87b3e2f1fecc9fb4a8b4de1d90b2414df1c4cae6d9121eea1a88311046d16270",
+      "browser": "webkit",
+      "case": "math",
+      "consumerMode": "source-vite"
+    },
+    {
+      "path": "mermaid12-20261009/source-vite-webkit-sequence.png",
+      "sha256": "46708bc580147bbc9f44d8d71df23f1351a92e001ccf5c0dd291cb8b022fa985",
+      "browser": "webkit",
+      "case": "sequence",
+      "consumerMode": "source-vite"
+    },
+    {
+      "path": "mermaid12-20261009/node20-consumer-webkit-math.png",
+      "sha256": "87b3e2f1fecc9fb4a8b4de1d90b2414df1c4cae6d9121eea1a88311046d16270",
+      "browser": "webkit",
+      "case": "math",
+      "consumerMode": "node20-esbuild"
+    },
+    {
+      "path": "mermaid12-20261009/node20-consumer-webkit-sequence.png",
+      "sha256": "46708bc580147bbc9f44d8d71df23f1351a92e001ccf5c0dd291cb8b022fa985",
+      "browser": "webkit",
+      "case": "sequence",
+      "consumerMode": "node20-esbuild"
+    }
+  ],
+  "publicCandidateCommit": "47bcbdf4e2c9b5434977e3b18c9ee97e04ac8a22"
+}
