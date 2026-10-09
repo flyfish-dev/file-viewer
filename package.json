@@ -45,6 +45,7 @@
     "test:epub-github-300": "pnpm exec vitest run test/issue-300-epub-viewport-media.spec.ts",
     "test:html-preview-github-256": "pnpm exec vitest run test/html-preview.spec.ts",
     "test:image-github-298": "pnpm exec vitest run test/image-rotation-option.spec.ts",
+    "test:text-single-byte-encodings": "pnpm exec vitest run test/text-single-byte-encodings.spec.ts",
     "test:ofd-github-177": "pnpm --filter @file-viewer/renderer-ofd verify:github-177",
     "test:ofd-github-266": "pnpm --filter @file-viewer/renderer-ofd verify:github-266",
     "test:ofd-github-94": "pnpm --filter @file-viewer/renderer-ofd verify:github-94",

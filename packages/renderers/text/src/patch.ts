@@ -85,7 +85,11 @@ export default async function renderPatch(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document
-  const text = decodeFileViewerTextBuffer(buffer, context?.options?.text?.encoding).text
+  const text = decodeFileViewerTextBuffer(
+    buffer,
+    context?.options?.text?.encoding,
+    context?.options?.text?.fallbackEncoding
+  ).text
   let zoom = 1
   const zoomEmitter = createZoomChangeEmitter()
 
