@@ -62,7 +62,7 @@ or replace the browser's `XSLTProcessor`. To enable profiles, install the pinned
 engines and copy their assets:
 
 ```sh
-pnpm add xmllint-wasm@5.3.0 xslt-polyfill@1.0.29
+pnpm add xmllint-wasm@5.3.0 xslt-polyfill@1.0.31
 pnpm exec file-viewer-xml-assets public/file-viewer/xml
 ```
 

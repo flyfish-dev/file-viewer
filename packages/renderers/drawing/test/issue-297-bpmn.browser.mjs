@@ -12,6 +12,10 @@ const root = resolve(here, '../../../..');
 const require = createRequire(join(root, 'package.json'));
 const { chromium, webkit } = require('playwright');
 const { build } = createRequire(join(root, 'apps/viewer-demo/package.json'))('esbuild');
+const drawingRequire = createRequire(join(here, '../package.json'));
+const bpmnPackage = JSON.parse(await readFile(drawingRequire.resolve('bpmn-js/package.json'), 'utf8'));
+const drawingPackage = JSON.parse(await readFile(join(here, '../package.json'), 'utf8'));
+assert.equal(bpmnPackage.version, drawingPackage.devDependencies['bpmn-js'], 'BPMN evidence must identify the declared installed engine');
 const output = resolve(process.env.BPMN_EVIDENCE_DIR || join(root, '.release/issue-297-bpmn'));
 await mkdir(output, { recursive: true });
 const simple = await readFile(join(here, 'fixtures/simple-process.bpmn'), 'utf8');
@@ -77,7 +81,7 @@ const report = {
   sourceSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
   verifiedAt: new Date().toISOString(),
   fixture: { simple: createHash('sha256').update(simple).digest('hex'), pizza: pizza ? createHash('sha256').update(pizza).digest('hex') : null },
-  engine: 'bpmn-js@18.28.0', entryBytes: entry[1].bytes, engines: [],
+  engine: `bpmn-js@${bpmnPackage.version}`, entryBytes: entry[1].bytes, engines: [],
   artifacts: Object.fromEntries(await Promise.all(Object.keys(built.metafile.outputs).map(async path => [
     path, createHash('sha256').update(await readFile(resolve(root, path))).digest('hex'),
   ]))),

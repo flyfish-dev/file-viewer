@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url)
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const engines = [
   { name: 'xmllint-wasm', version: '5.3.0', files: ['xmllint-browser.mjs', 'xmllint.wasm'] },
-  { name: 'xslt-polyfill', version: '1.0.29', files: ['dist/xslt-wasm.js'] }
+  { name: 'xslt-polyfill', version: '1.0.31', files: ['dist/xslt-wasm.js'] }
 ]
 
 /** Copy pinned optional runtimes and notices; never download or install packages. */
@@ -19,7 +19,7 @@ export async function copyXmlProfileAssets(destination = 'public/file-viewer/xml
   for (const engine of engines) {
     let manifest
     try { manifest = require.resolve(`${engine.name}/package.json`) } catch {
-      throw new Error(`Install the optional XML engines first: pnpm add xmllint-wasm@5.3.0 xslt-polyfill@1.0.29 (missing ${engine.name}).`)
+      throw new Error(`Install the optional XML engines first: pnpm add xmllint-wasm@5.3.0 xslt-polyfill@1.0.31 (missing ${engine.name}).`)
     }
     const metadata = JSON.parse(await readFile(manifest, 'utf8'))
     if (metadata.version !== engine.version) throw new Error(`Expected ${engine.name}@${engine.version}; found ${metadata.version}.`)
@@ -47,7 +47,7 @@ let entryPoint = false
 try { entryPoint = !!process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url) } catch { /* Imported helper. */ }
 if (entryPoint) {
   if (process.argv.includes('--help')) {
-    console.log('Usage: file-viewer-xml-assets [destination-directory]\nDefault: public/file-viewer/xml\nRequires xmllint-wasm@5.3.0 and xslt-polyfill@1.0.29 installed by the host.')
+    console.log('Usage: file-viewer-xml-assets [destination-directory]\nDefault: public/file-viewer/xml\nRequires xmllint-wasm@5.3.0 and xslt-polyfill@1.0.31 installed by the host.')
   } else if (process.argv.length > 3 || process.argv[2]?.startsWith('-')) {
     console.error('Expected one destination directory.'); process.exitCode = 1
   } else {

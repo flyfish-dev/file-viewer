@@ -6,6 +6,11 @@ import { createHash } from 'node:crypto';
 
 const root = path.resolve(import.meta.dirname, '../../../..');
 const require = createRequire(path.join(root, 'package.json'));
+const spreadsheetRequire = createRequire(path.join(root, 'packages/renderers/spreadsheet/package.json'));
+const tableRoot = await fs.realpath(path.dirname(spreadsheetRequire.resolve('e-virt-table/package.json')));
+const tablePackage = JSON.parse(await fs.readFile(path.join(tableRoot, 'package.json'), 'utf8'));
+const rendererPackage = JSON.parse(await fs.readFile(path.join(root, 'packages/renderers/spreadsheet/package.json'), 'utf8'));
+assert.equal(tablePackage.version, rendererPackage.dependencies['e-virt-table']);
 const { build } = require('esbuild');
 const { chromium } = require('playwright');
 const JSZip = require('jszip');
@@ -31,7 +36,7 @@ async function fixture() {
 // Observe the actual renderer state without replacing its parser, table, events,
 // or geometry. The test-only hook also replays a delayed window after a real drag.
 const entry = path.join(root, 'packages/renderers/spreadsheet/src/spreadsheet.ts');
-const bundle = await build({stdin:{contents:`import render from ${JSON.stringify(entry)};globalThis.layoutTestRender=render;`,resolveDir:root},bundle:true,format:'iife',write:false,logLevel:'warning',plugins:[{
+const bundle = await build({stdin:{contents:`import render from ${JSON.stringify(entry)};globalThis.layoutTestRender=render;`,resolveDir:root},bundle:true,format:'iife',write:false,metafile:true,logLevel:'warning',plugins:[{
   name:'observe-layout-state', setup(builder) {
     builder.onLoad({filter:/\/spreadsheet\/src\/spreadsheet\.ts$/},async({path:sourcePath})=>{
       let source = await fs.readFile(sourcePath,'utf8');
@@ -42,6 +47,8 @@ const bundle = await build({stdin:{contents:`import render from ${JSON.stringify
     });
   }
 }]});
+const tableInputs = Object.keys(bundle.metafile.inputs).map(input=>path.resolve(root,input)).filter(input=>input.startsWith(tableRoot+path.sep));
+assert.ok(tableInputs.length>0, 'The actual browser bundle must use the verified physical e-virt-table package');
 const browser = await chromium.launch({headless:true,executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined});
 const errors = [], requests = [];
 const page = await browser.newPage({viewport:{width:1100,height:800}});
@@ -144,5 +151,6 @@ try {
   });
 } finally {
   await browser.close();
-  await fs.writeFile(path.join(output,'report.json'),JSON.stringify({checks,passed:checks.length,originalChecked:!!process.env.SPREADSHEET_LAYOUT_SAMPLE},null,2)+'\n');
+  const engineInputs = await Promise.all(tableInputs.map(async input=>({file:path.relative(tableRoot,input),sha256:createHash('sha256').update(await fs.readFile(input)).digest('hex')})));
+  await fs.writeFile(path.join(output,'report.json'),JSON.stringify({engine:{name:'e-virt-table',version:tablePackage.version,inputs:engineInputs},checks,passed:checks.length,originalChecked:!!process.env.SPREADSHEET_LAYOUT_SAMPLE},null,2)+'\n');
 }

@@ -1074,7 +1074,7 @@
     },
     {
       "name": "node-releases",
-      "version": "2.0.57",
+      "version": "2.0.58",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -1186,7 +1186,7 @@
     },
     {
       "name": "postcss",
-      "version": "8.5.23",
+      "version": "8.5.29",
       "license": "MIT",
       "direct": false,
       "optional": false,

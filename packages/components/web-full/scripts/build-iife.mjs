@@ -6,7 +6,8 @@ import { build } from 'vite'
 import { sanitizeOfflineViewerAssetTree } from './offline-asset-sanitize.mjs'
 import { verifyPptRuntimeDistributionRoot } from './ppt-runtime-integrity.mjs'
 import { isolateAmd, writeAmdEntry } from '../../web/scripts/amd-entry.mjs'
-import * as webNode from '../../web/dist/node.js'
+import * as webNode from '@file-viewer/web/node'
+import { assertFullAssetDependencies } from './full-asset-dependencies.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const packageManifest = JSON.parse(await readFile(resolve(packageDir, 'package.json'), 'utf8'))
@@ -223,10 +224,7 @@ if (!validation.valid) {
 await webNode.writeViewerAssetManifest(outDir, webNode.buildViewerAssetManifest(validation))
 // Keep the complete local dist for self-hosted release assets. The ordinary npm
 // archive carries these two groups through exact-version asset dependencies.
-for (const name of ['@file-viewer/assets-cad', '@file-viewer/assets-drawing']) {
-  if (packageManifest.dependencies?.[name] !== `workspace:${packageManifest.version}`)
-    throw new Error(`[web-full-iife] ${name} must match the full package version`)
-}
+await assertFullAssetDependencies(packageManifest, resolve(packageDir, 'package.json'))
 await writeFile(join(outDir, '.npmignore'), '/vendor/drawio/\n/wasm/cad/\n', 'utf8')
 await writeFile(
   resolve(outDir, 'flyfish-viewer-manifest.json'),

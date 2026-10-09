@@ -98,6 +98,48 @@ test('root and thumbnail physically installed Vitest runtimes agree with the wor
     assert.equal(installed.version, override, `${path}: installed Vitest does not match override`)
   }
 })
+test('docs and Vite physically install the declared PostCSS workspace cohort', () => {
+  const override = read('pnpm-workspace.yaml').match(/^  postcss: (\S+)$/m)?.[1]
+  assert.ok(override)
+  const manifest = JSON.parse(read('apps/docs-site/package.json'))
+  assert.ok(
+    [override, `^${override}`].includes(manifest.devDependencies.postcss),
+    'The PostCSS override must not mask the docs-site declaration'
+  )
+  const require = createRequire(new URL('../../apps/docs-site/package.json', import.meta.url))
+  assert.equal(require('postcss/package.json').version, override)
+  const browserRequire = createRequire(
+    new URL('../../packages/capabilities/mermaid/package.json', import.meta.url)
+  )
+  const viteRequire = createRequire(browserRequire.resolve('vite/package.json'))
+  assert.equal(viteRequire('postcss/package.json').version, override)
+})
+test('browser runtime builds use the same physical Vite cohort as public consumers', () => {
+  const runtime = JSON.parse(read('packages/renderers/dicom/package.json'))
+  const version = runtime.devDependencies.vite
+  assert.match(version, /^\d+\.\d+\.\d+$/)
+  for (const path of [
+    'packages/renderers/dicom/package.json',
+    'packages/capabilities/mermaid/package.json',
+    'packages/components/vue3/package.json',
+    'packages/components/web/package.json',
+    'packages/components/web-full/package.json',
+    'packages/compat/web/package.json',
+    'packages/presets/vite-plugin/package.json',
+    'apps/component-demo/package.json',
+    'apps/viewer-demo/package.json',
+    'apps/web-demo/package.json',
+    'apps/official-site/package.json',
+    'examples/vanilla-vite/package.json',
+    'examples/react-vite/package.json',
+    'examples/vue3-vite/package.json'
+  ]) {
+    const manifest = JSON.parse(read(path))
+    assert.ok([version, `^${version}`].includes(manifest.devDependencies.vite), path)
+    const require = createRequire(new URL(`../../${path}`, import.meta.url))
+    assert.equal(require('vite/package.json').version, version, `${path}: split Vite build`)
+  }
+})
 test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
   const patchedVersion = '3.4.16'
   const override = read('pnpm-workspace.yaml').match(/^  dompurify: (\S+)$/m)?.[1]

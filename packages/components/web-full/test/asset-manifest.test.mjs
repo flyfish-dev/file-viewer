@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
 import * as webNode from '../../web/dist/node.js'
+import { assertFullAssetDependencies } from '../scripts/full-asset-dependencies.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const manifestFilename = 'flyfish-viewer-assets.json'
@@ -36,6 +37,16 @@ async function fixture(t) {
     `export * from ${JSON.stringify(new URL('../../web/dist/node.js', import.meta.url).href)}\n`
   )
   await writeFile(join(root, 'package.json'), '{"type":"module"}\n')
+  const web = join(targetPackage, 'node_modules/@file-viewer/web')
+  await mkdir(web, { recursive: true })
+  await writeFile(join(web, 'package.json'), JSON.stringify({ name: '@file-viewer/web', type: 'module', exports: { './node': './node.js' } }))
+  await writeFile(join(web, 'node.js'), `export * from ${JSON.stringify(new URL('../../web/dist/node.js', import.meta.url).href)}\n`)
+  const fullManifest = JSON.parse(await readFile(join(targetPackage, 'package.json'), 'utf8'))
+  for (const name of ['@file-viewer/assets-cad', '@file-viewer/assets-drawing']) {
+    const directory = join(targetPackage, 'node_modules', name)
+    await mkdir(directory, { recursive: true })
+    await writeFile(join(directory, 'package.json'), JSON.stringify({ name, version: fullManifest.version, exports: { './package.json': './package.json' } }))
+  }
 
   // Exercise the real asset-copy, sanitation, PPT-integrity and manifest stages.
   // Bundling is deliberately stubbed so this regression needs no browser or
@@ -166,4 +177,24 @@ test('a build without a viewer asset source fails explicitly', async t => {
   const built = f.run()
   assert.notEqual(built.status, 0)
   assert.match(built.stderr, /Missing viewer asset source/)
+})
+
+test('exact installed asset versions work in workspace, exported and local tarball builds', async t => {
+  const f = await fixture(t)
+  const packageJsonPath = join(f.targetPackage, 'package.json')
+  const manifest = JSON.parse(await readFile(packageJsonPath, 'utf8'))
+  for (const spec of [`workspace:${manifest.version}`, manifest.version, 'file:./candidate.tgz']) {
+    const candidate = { ...manifest, dependencies: { ...manifest.dependencies, '@file-viewer/assets-cad': spec, '@file-viewer/assets-drawing': spec } }
+    await assertFullAssetDependencies(candidate, packageJsonPath)
+  }
+})
+
+test('an open asset range or a mismatched installed tarball cannot weaken version ownership', async t => {
+  const f = await fixture(t)
+  const packageJsonPath = join(f.targetPackage, 'package.json')
+  const manifest = JSON.parse(await readFile(packageJsonPath, 'utf8'))
+  await assert.rejects(assertFullAssetDependencies({ ...manifest, dependencies: { ...manifest.dependencies, '@file-viewer/assets-cad': `^${manifest.version}` } }, packageJsonPath), /must match the full package version/)
+  manifest.dependencies['@file-viewer/assets-cad'] = 'file:./mismatched.tgz'
+  await writeFile(join(f.targetPackage, 'node_modules/@file-viewer/assets-cad/package.json'), JSON.stringify({ name: '@file-viewer/assets-cad', version: '0.0.0', exports: { './package.json': './package.json' } }))
+  await assert.rejects(assertFullAssetDependencies(manifest, packageJsonPath), /assets-cad@0.0.0 must match/)
 })

@@ -250,6 +250,10 @@ jobs:
           node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
           pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples
 
+      - name: Verify MapLibre rendering, pointer interaction and native map cleanup
+        if: steps.impact.outputs.runtime != 'false'
+        run: node packages/renderers/geo/scripts/verify-maplibre-browser.mjs
+
       - name: Verify PDF Worker cancellation
         if: steps.impact.outputs.runtime != 'false'
         run: |
@@ -269,6 +273,10 @@ jobs:
       - name: Verify Vite CommonJS initialization in installed Chromium and WebKit consumers
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/vite-plugin verify:github-311-browser
+
+      - name: Verify the cold Web and Lite consumer without a host core dependency
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm --filter @file-viewer/vite-plugin verify:lite-consumer
 
       - name: Verify PDF hand tool and native DOC font table in Chromium and WebKit
         if: steps.impact.outputs.runtime != 'false'
@@ -292,6 +300,8 @@ jobs:
           path: |
             output/vite-github-311/*.json
             output/vite-github-311/*.png
+            output/vite-lite-consumer/*.json
+            output/vite-lite-consumer/*.png
             output/pdf-hand-tool/**/report.json
             output/pdf-hand-tool/**/*.png
             output/doc-font-table/*.json
@@ -299,6 +309,8 @@ jobs:
             output/doc-font-table/font-cohort.log
             output/text-single-byte-encodings/*.json
             output/text-single-byte-encodings/*.png
+            output/maplibre-browser/report.json
+            output/maplibre-browser/*.png
           if-no-files-found: ignore
           retention-days: 7
 
