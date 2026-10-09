@@ -13,11 +13,13 @@ import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import test from 'node:test'
+import { runInNewContext } from 'node:vm'
 import {
   assertNoAncestorNodeModules,
   cleanEnvironment,
   installedPackage,
-  retainEvidence
+  retainEvidence,
+  retainRenderedPixels
 } from '../../packages/renderers/dicom/scripts/verify-packed-browser.mjs'
 
 const temporary = (t) => {
@@ -25,6 +27,104 @@ const temporary = (t) => {
   t.after(() => rmSync(directory, { recursive: true, force: true }))
   return directory
 }
+
+test('pixel evidence retains the successful poll sample even when a later read would be blank', async () => {
+  const rendered = { width: 480, height: 512, maximum: 254, brightRatio: 0.7874796549479167 }
+  const blank = { ...rendered, maximum: 0, brightRatio: 0 }
+  const pending = [null, blank, { ...rendered, maximum: 64 }, { ...rendered, brightRatio: 0.01 }]
+  let current
+  let reads = 0
+  let disposed = false
+  const context = {
+    window: {
+      dicomPacked: {
+        pixels: () => {
+          reads++
+          return current
+        }
+      }
+    }
+  }
+  const page = {
+    async waitForFunction(predicate) {
+      const poll = () => runInNewContext(`(${predicate.toString()})()`, context)
+      for (current of pending) assert.equal(poll(), false)
+      current = rendered
+      const sample = poll()
+      // Model a canvas whose contents change after the wait resolves. Reading
+      // the handle must return the asserted measurement without sampling again.
+      current = blank
+      return {
+        async jsonValue() {
+          return structuredClone(sample)
+        },
+        async dispose() {
+          disposed = true
+        }
+      }
+    },
+    async evaluate() {
+      assert.fail('Pixel evidence must not resample after a successful poll')
+    }
+  }
+  const result = {}
+  await retainRenderedPixels(page, result)
+  assert.deepEqual(result.pixels, rendered)
+  assert.equal(reads, pending.length + 1)
+  assert.equal(disposed, true)
+})
+
+test('blank retained pixels fail the gate and remain in the failed report', async (t) => {
+  const directory = temporary(t)
+  const output = join(directory, 'evidence')
+  const consumer = join(directory, 'consumer')
+  mkdirSync(consumer)
+  const blank = { width: 480, height: 512, maximum: 0, brightRatio: 0 }
+  let disposed = false
+  const page = {
+    async waitForFunction() {
+      return {
+        async jsonValue() {
+          return blank
+        },
+        async dispose() {
+          disposed = true
+        }
+      }
+    }
+  }
+  const result = { browser: 'negative-control' }
+  const report = { status: 'running', results: [result] }
+  await assert.rejects(
+    retainEvidence(output, consumer, report, () => retainRenderedPixels(page, result)),
+    /Retained CT pixel evidence must have maximum > 64 and brightRatio > 0.01/
+  )
+  const retained = JSON.parse(readFileSync(join(output, 'report.json'), 'utf8'))
+  assert.equal(retained.status, 'failed')
+  assert.deepEqual(retained.results[0].pixels, blank)
+  assert.equal(disposed, true)
+  assert.equal(existsSync(consumer), false)
+})
+
+test('retained pixel evidence independently enforces both strict thresholds', async () => {
+  for (const pixels of [
+    null,
+    { maximum: 64, brightRatio: 1 },
+    { maximum: 255, brightRatio: 0.01 }
+  ]) {
+    const page = {
+      async waitForFunction() {
+        return {
+          async jsonValue() {
+            return pixels
+          },
+          async dispose() {}
+        }
+      }
+    }
+    await assert.rejects(retainRenderedPixels(page, {}), /Retained CT pixel evidence/)
+  }
+})
 
 test('a failed consumer retains its report, command log and lockfile before cleanup', async (t) => {
   const directory = temporary(t)

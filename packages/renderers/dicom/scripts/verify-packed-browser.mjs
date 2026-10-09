@@ -94,6 +94,24 @@ export function installedPackage(consumer, name, version) {
   throw new Error(`Installed package identity missing: ${name}`)
 }
 
+export async function retainRenderedPixels(page, result) {
+  // Retain the sample that satisfied the poll. A later canvas read can differ
+  // between rendering/compositing steps and is not the evidence we asserted.
+  const sample = await page.waitForFunction(() => {
+    const pixels = window.dicomPacked.pixels()
+    return pixels?.maximum > 64 && pixels.brightRatio > 0.01 ? pixels : false
+  })
+  try {
+    result.pixels = await sample.jsonValue()
+    assert.ok(
+      result.pixels?.maximum > 64 && result.pixels.brightRatio > 0.01,
+      'Retained CT pixel evidence must have maximum > 64 and brightRatio > 0.01'
+    )
+  } finally {
+    await sample.dispose()
+  }
+}
+
 // Finalize on every ordinary failure, including install/audit/build/launch. The
 // outer process also records timeouts if a stuck child cannot reach this block.
 export async function retainEvidence(output, consumer, report, verify) {
@@ -418,11 +436,7 @@ window.dicomPacked = {
           await page.goto(`http://127.0.0.1:${server.address().port}`)
           await page.waitForFunction(() => Boolean(window.dicomPacked))
           await page.evaluate(() => window.dicomPacked.render())
-          await page.waitForFunction(() => {
-            const pixels = window.dicomPacked.pixels()
-            return pixels?.maximum > 64 && pixels.brightRatio > 0.01
-          })
-          result.pixels = await page.evaluate(() => window.dicomPacked.pixels())
+          await retainRenderedPixels(page, result)
           await page.screenshot({ path: join(output, `${name}.png`) })
           assert.equal(await page.evaluate(() => window.dicomPacked.destroy()), true)
           result.cleanup = 'passed'
