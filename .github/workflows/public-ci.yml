@@ -289,6 +289,25 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/renderer-dicom verify:inspection
 
+      - name: Verify packed DICOM CT pixels and cleanup in Chromium and WebKit
+        if: steps.impact.outputs.runtime != 'false'
+        timeout-minutes: 15
+        run: |
+          mkdir -p output/dicom-packed-browser
+          pnpm --filter @file-viewer/renderer-dicom verify:packed-browser 2>&1 | tee output/dicom-packed-browser/command.log
+
+      - name: Retain packed DICOM browser evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dicom-packed-browser-evidence
+          path: |
+            output/dicom-packed-browser/**/*.json
+            output/dicom-packed-browser/**/*.log
+            output/dicom-packed-browser/**/*.png
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Browser smoke, including CHM Worker/WASM
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:browser-smoke

@@ -100,7 +100,7 @@
     "verify:binary-inspector": "pnpm --filter @file-viewer/renderer-binary build && pnpm --filter @file-viewer/renderer-binary verify",
     "verify:github-266-browser": "node apps/viewer-demo/scripts/verify-issue-266-samples.mjs",
     "verify:markdown-highlighting": "node apps/viewer-demo/scripts/verify-markdown-highlighting.mjs",
-    "verify:docx-upstream": "node .github/scripts/verify-docx-upstream.mjs",
+    "verify:docx-upstream": "node .github/scripts/verify-docx-distribution.mjs && node .github/scripts/verify-docx-upstream.mjs",
     "release:prepare-docx": "node .github/scripts/prepare-docx-upstream.mjs",
     "release:verify": "pnpm verify:docx-upstream && pnpm build && pnpm type-check && pnpm test",
     "verify:github-governance": "node --test .github/scripts/*.test.mjs && node .github/scripts/verify-community-standards.mjs && prettier --config .github/prettier-governance.json --check '.github/**/*.{md,yml,mjs,json}' CONTRIBUTING.md SUPPORT.md"

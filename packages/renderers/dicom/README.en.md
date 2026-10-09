@@ -39,7 +39,7 @@ Fresh npm consumer checks on 2026-10-08 used core and renderer artifacts packed 
 
 Installation and build tooling must satisfy the current transitive dependency `dcmjs@0.52.0`'s existing Node.js `>=22.13` requirement. These checks used Node.js 24.20.0 and npm 11.9.0.
 
-Applications must qualify their resolved dependency graph, bundler, browser targets, and required DICOM transfer syntaxes before deployment. The audit checks above did not run a browser gate. Regular DICOM CI runs Node inspection; the separate repository command `pnpm --filter @file-viewer/renderer-dicom verify:packed-browser` tests a packed consumer with this application policy and must be run separately to establish that coverage.
+Applications must qualify their resolved dependency graph, bundler, browser targets, and required DICOM transfer syntaxes before deployment. The audit checks above did not run a browser gate. Full-runtime Public CI runs Node inspection followed by `pnpm --filter @file-viewer/renderer-dicom verify:packed-browser`. The latter installs source-packed artifacts in an independent consumer with an empty npm cache and this application policy, audits that graph, and checks real CT pixels and cleanup in Chromium and WebKit. CI retains JSON reports, command logs, and available screenshots for seven days on success or failure. This bounded fixture gate does not establish coverage for every transfer syntax or make the default dependency graph clean.
 
 ## Registration
 

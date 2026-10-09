@@ -39,7 +39,7 @@ npm audit --omit=dev
 
 安装与构建工具必须满足当前传递依赖 `dcmjs@0.52.0` 已有的 Node.js `>=22.13` 要求。上述检查使用 Node.js 24.20.0 和 npm 11.9.0。
 
-部署前，应用需要验证其实际依赖图、打包工具、目标浏览器及所需 DICOM 传输语法。上述依赖审计未运行浏览器检查。常规 DICOM CI 运行 Node inspection；仓库中独立的 `pnpm --filter @file-viewer/renderer-dicom verify:packed-browser` 命令使用本应用策略测试打包后的消费项目，需单独运行才能确认该项覆盖。
+部署前，应用需要验证其实际依赖图、打包工具、目标浏览器及所需 DICOM 传输语法。上述依赖审计未运行浏览器检查。Public CI 的完整运行时检查在 Node inspection 后运行 `pnpm --filter @file-viewer/renderer-dicom verify:packed-browser`：在独立消费项目中使用空 npm 缓存安装源码打包产物及上述应用策略，审计其依赖图，并在 Chromium 与 WebKit 中检查真实 CT 像素和销毁清理。无论成功或失败，CI 均保留 JSON 报告、命令日志及可用截图七天。这项有界样例检查不代表所有传输语法均已覆盖，也不代表默认依赖图审计无问题。
 
 ## 注册
 
