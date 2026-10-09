@@ -57,7 +57,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### CC-BY-4.0
 
-- `caniuse-lite@1.0.30001814` — https://github.com/browserslist/caniuse-lite
+- `caniuse-lite@1.0.30001815` — https://github.com/browserslist/caniuse-lite
 
 ### ISC
 
@@ -70,7 +70,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `d3-scale@4.0.2` — https://github.com/d3/d3-scale
 - `d3-time@3.1.0` — https://github.com/d3/d3-time
 - `d3-time-format@4.1.0` — https://github.com/d3/d3-time-format
-- `electron-to-chromium@1.5.445` — https://github.com/Kilian/electron-to-chromium
+- `electron-to-chromium@1.5.451` — https://github.com/Kilian/electron-to-chromium
 - `fs.realpath@1.0.0` — https://github.com/isaacs/fs.realpath
 - `glob@7.2.0` — https://github.com/isaacs/node-glob
 - `inflight@1.0.6` — https://github.com/npm/inflight
@@ -135,10 +135,10 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `postcss@8.5.23` — https://github.com/postcss/postcss
 - `postcss-value-parser@4.2.0` — https://github.com/TrySound/postcss-value-parser
 - `rechoir@0.6.2` — https://github.com/tkellen/node-rechoir
-- `resolve@1.22.12` — https://github.com/browserify/resolve
+- `resolve@1.22.13` — https://github.com/browserify/resolve
 - `seedrandom@3.0.5` — https://github.com/davidbau/seedrandom
 - `supports-preserve-symlinks-flag@1.0.0` — https://github.com/inspect-js/node-supports-preserve-symlinks-flag
-- `update-browserslist-db@1.3.3` — https://github.com/browserslist/update-db
+- `update-browserslist-db@1.3.4` — https://github.com/browserslist/update-db
 - `utif@3.1.0` — https://github.com/photopea/UTIF.js
 - `uuid@11.1.1` — https://github.com/uuidjs/uuid
 - `webworker-promise@0.5.0` — https://github.com/kwolfy/webworker-promise

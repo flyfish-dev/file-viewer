@@ -3213,11 +3213,11 @@
     {
       "ecosystem": "npm",
       "name": "readable-stream",
-      "version": "2.3.8",
+      "version": "2.3.6",
       "declaredLicense": "MIT",
       "selectedLicense": "MIT",
       "repository": "git://github.com/nodejs/readable-stream",
-      "source": "https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.8.tgz",
+      "source": "https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.6.tgz",
       "licenseFiles": [
         {
           "path": "LICENSE",
