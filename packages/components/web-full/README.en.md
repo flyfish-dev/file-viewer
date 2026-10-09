@@ -9,8 +9,17 @@ npm install @file-viewer/web-full
 ## RequireJS
 
 From 3.0.3, load `dist/flyfish-file-viewer-web-full.amd.js` as an AMD module.
-Deploy the complete `dist/` with its `renderers/`, `vendor/`, and `wasm/` directories.
-No shim or host `define` override is needed.
+No shim or host `define` override is needed. After installing from npm, run
+`npx --no-install file-viewer-copy-assets ./public/file-viewer`, then copy the
+`dist/` entries and `renderers/` into the same directory. The copier includes
+CAD and Draw.io from the exact-version `@file-viewer/assets-cad` and
+`@file-viewer/assets-drawing` dependencies. The complete GitHub offline
+distribution retains all assets.
+
+When loading the IIFE/AMD through jsDelivr or unpkg, CAD and Draw.io use
+asset packs at the built package version on the selected CDN. Self-hosted
+deployments use local resources; explicit URLs and `setDefaultFullAssetBaseUrl()`
+can override the default location.
 
 ```js
 require.config({ paths: { viewer: '/file-viewer/flyfish-file-viewer-web-full.amd' } })

@@ -103,6 +103,12 @@ function runXsdWorker() {
   scope.onmessage = async ({ data }) => {
     let errors = ''
     try {
+      // Reject corrupt binaries before Emscripten starts asynchronous
+      // instantiation, whose rejection can escape its module factory.
+      // Validation checks structure without executing the module.
+      if (!data.wasm || !WebAssembly.validate(data.wasm as BufferSource)) {
+        throw new Error('Invalid XML Schema WASM binary.')
+      }
       await Module({
         inputFiles: [
           { fileName: 'input.xml', contents: data.xml },

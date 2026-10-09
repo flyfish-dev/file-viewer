@@ -15,6 +15,77 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  browser-runtimes:
+    name: Cold DICOM and Mermaid browser consumers
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Select checks from the exact change and verified baseline
+        id: impact
+        env:
+          FILE_VIEWER_CI_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/release-ci-impact.mjs
+
+      - name: Set up pnpm
+        if: steps.impact.outputs.runtime != 'false'
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 11.0.9
+          run_install: false
+
+      - name: Set up Node.js
+        if: steps.impact.outputs.runtime != 'false'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the browser runtime source packages
+        id: browser-source
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm --filter @file-viewer/core --filter @file-viewer/renderer-text --filter @file-viewer/capability-mermaid --filter @file-viewer/renderer-drawing --filter @file-viewer/renderer-dicom build
+
+      - name: Install Chromium and WebKit
+        id: browsers
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Verify DICOM cold consumers, six transfer syntaxes and visible PNGs
+        if: steps.impact.outputs.runtime != 'false'
+        run: |
+          node packages/renderers/dicom/scripts/verify-node-inspection.mjs
+          node packages/renderers/dicom/scripts/verify-packed-browser.mjs
+
+      - name: Verify Mermaid cold consumers, visible math and offline resources
+        if: always() && steps.browser-source.outcome == 'success' && steps.browsers.outcome == 'success'
+        run: node packages/capabilities/mermaid/scripts/verify-packed-browser.mjs
+
+      - name: Retain cold browser runtime evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: cold-browser-runtime-evidence
+          path: |
+            output/dicom-packed-browser/**/*.json
+            output/dicom-packed-browser/**/*.png
+            output/dicom-packed-browser/**/*.log
+            output/mermaid-packed-browser/**/*.json
+            output/mermaid-packed-browser/**/*.png
+            output/mermaid-packed-browser/**/*.log
+          if-no-files-found: warn
+          retention-days: 7
+
   verify:
     name: Install, type-check, test, build and smoke
     runs-on: ubuntu-latest
@@ -174,6 +245,42 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/vite-plugin verify:github-257-browser
 
+      - name: Verify Vite CommonJS initialization in installed Chromium and WebKit consumers
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm --filter @file-viewer/vite-plugin verify:github-311-browser
+
+      - name: Verify PDF hand tool and native DOC font table in Chromium and WebKit
+        if: steps.impact.outputs.runtime != 'false'
+        run: |
+          # WenQuanYi's CJK vertical advances can be zero in Chromium. The
+          # geometry contract needs the same reviewed Noto cohort as DOCX CI.
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          mkdir -p output/doc-font-table
+          fc-match -f '%{family}\n' 'Noto Serif CJK SC' | tee output/doc-font-table/font-cohort.log
+          grep -q 'Noto Serif CJK SC' output/doc-font-table/font-cohort.log
+          dpkg-query -W fonts-noto-cjk >> output/doc-font-table/font-cohort.log
+          pnpm --filter @file-viewer/renderer-pdf verify:hand-tool
+          pnpm --filter @file-viewer/doc verify:font-table-browser
+
+      - name: Retain intermediate renderer browser evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: intermediate-renderer-browser-evidence
+          path: |
+            output/vite-github-311/*.json
+            output/vite-github-311/*.png
+            output/pdf-hand-tool/**/report.json
+            output/pdf-hand-tool/**/*.png
+            output/doc-font-table/*.json
+            output/doc-font-table/*.png
+            output/doc-font-table/font-cohort.log
+            output/text-single-byte-encodings/*.json
+            output/text-single-byte-encodings/*.png
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Verify HTML, revisions, spreadsheet search and DOCX cover regressions
         if: steps.impact.outputs.runtime != 'false'
         run: node apps/viewer-demo/scripts/verify-closed-issue-regressions.mjs
@@ -249,9 +356,22 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:markdown-highlighting
 
-      - name: Verify standalone DICOM Node inspection
+      - name: Verify Web Full unpacked package size and complete offline assets
         if: steps.impact.outputs.runtime != 'false'
-        run: pnpm --filter @file-viewer/renderer-dicom verify:inspection
+        timeout-minutes: 15
+        run: pnpm --filter @file-viewer/web-full verify:packed-assets
+
+      - name: Retain packed Web Full evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: web-full-packed-evidence
+          path: |
+            output/web-full-packed-assets/**/report.json
+            output/web-full-packed-assets/**/*.log
+            output/web-full-packed-assets/**/offline-source-files.json
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Browser smoke, including CHM Worker/WASM
         if: steps.impact.outputs.runtime != 'false'

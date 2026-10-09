@@ -136,7 +136,12 @@ export const rendererModularizationLines = [
     phase: 3,
     status: 'extracted',
     renderers: ['drawing'],
-    dependencies: ['roughjs', 'mermaid', 'plantuml-encoder', '@panzoom/panzoom']
+    dependencies: [
+      'roughjs',
+      '@file-viewer/capability-mermaid',
+      'plantuml-encoder',
+      '@panzoom/panzoom'
+    ]
   },
   {
     id: 'engineering-bpmn',

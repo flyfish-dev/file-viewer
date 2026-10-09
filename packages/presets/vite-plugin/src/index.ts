@@ -92,9 +92,11 @@ export interface FileViewerRenderersPluginOptions {
    */
   chunkStrategy?: FileViewerChunkStrategy
   /**
-   * Wraps existing manualChunks functions with known circular-dependency-safe
-   * vendor groups. This keeps CodeMirror/Lezer/Sandpack in one chunk when host
+   * Stabilizes default chunk groups and wraps existing manualChunks functions.
+   * This keeps CodeMirror/Lezer/Sandpack in one chunk when host
    * apps split node_modules by package name, avoiding production TDZ errors.
+   * Pako and the shared CommonJS helpers also stay outside renderer/app chunks
+   * so compressed-format imports cannot form an initialization cycle.
    */
   stabilizeInteropChunks?: boolean
   /**
@@ -1220,9 +1222,19 @@ function getNodeModulePackageName(id: string) {
 }
 
 function getStableInteropChunkName(id: string) {
+  // Rollup's virtual helper is shared by every converted CommonJS package.
+  // Leaving it in an app/renderer chunk makes Pako depend back on that chunk
+  // before its exported utility object has been initialized (issue #311).
+  if (id.startsWith('\0') && /(?:^|\/)commonjsHelpers\.js$/.test(id.slice(1))) {
+    return 'vendor-commonjs'
+  }
   const packageName = getNodeModulePackageName(id)
   if (!packageName) {
     return undefined
+  }
+
+  if (packageName === 'pako') {
+    return 'vendor-commonjs'
   }
 
   if (
@@ -1256,6 +1268,11 @@ function createRolldownCodeSplittingGroups(
 ): FileViewerCodeSplittingGroup[] {
   const groups: FileViewerCodeSplittingGroup[] = []
   if (options.stabilizeInteropChunks !== false) {
+    groups.push({
+      name: 'vendor-commonjs',
+      test: (id: string) => getStableInteropChunkName(id) === 'vendor-commonjs',
+      priority: -10
+    })
     groups.push({
       name: 'vendor-codemirror',
       test: (id: string) => getStableInteropChunkName(id) === 'vendor-codemirror',
@@ -3394,7 +3411,9 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
         build: {
           rollupOptions: {
             output: {
-              manualChunks: createManualChunks(selection, autoPresetIds)
+              manualChunks: options.stabilizeInteropChunks === false
+                ? createManualChunks(selection, autoPresetIds)
+                : createStableInteropManualChunks(createManualChunks(selection, autoPresetIds))
             }
           }
         }

@@ -1,8 +1,8 @@
 # Third-party notices
 
-This file records the complete production dependency closure of the optional `@file-viewer/renderer-dicom` package, including the Linux-only optional codec dependency. Exact machine-readable versions, SPDX expressions, source repositories, and packaged license/notice filenames are in `THIRD_PARTY_LICENSES.json`.
+This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone SDK build dependencies, including the Linux-only optional codec dependency. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in `THIRD_PARTY_LICENSES.json`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in `dist/bundled-runtime.json`; complete JavaScript license texts are retained in `dist/THIRD_PARTY_LICENSES.txt`.
 
-The DICOM renderer is not part of any standard/full package or preset. These dependencies are installed only when this capability is selected, and its Cornerstone implementation is loaded only when a DICOM file is opened.
+The DICOM renderer is not part of any standard/full package or preset. The bundled Cornerstone implementation is installed only when this capability is selected and loaded only when a DICOM file is opened. Source-closure entries are an attribution inventory; unused build dependencies are not necessarily present in the runtime bundle.
 
 ## Required attribution
 
@@ -13,6 +13,8 @@ The DICOM renderer is not part of any standard/full package or preset. These dep
 `dompurify@3.4.16` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
 
 ### Native libraries statically linked into codec WebAssembly
+
+Exact official tarball integrities and the complete installed-file inventory are retained in `third-party/native-codecs/PROVENANCE.json`. The verifier checks every codec file and lockfile integrity against those reviewed artifacts; source gitlinks describe release-source provenance, not an independent reproducible-build claim.
 
 All four codec wrapper packages were built from `cornerstonejs/codecs` commit `8634194b68ab43bde8f35fcc466a36d91ac700b4`. The wrapper package license is not used as a substitute for the linked native library terms:
 
@@ -27,7 +29,7 @@ The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped 
 
 None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTICE` file. All top-level license and notice files found in each installed package are recorded in the ledger.
 
-## Exact third-party closure by SPDX expression
+## Reviewed runtime and SDK source closure by SPDX expression
 
 ### (MIT AND Zlib)
 
@@ -44,6 +46,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `baseline-browser-mapping@2.11.27` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
 - `dompurify@3.4.16` — https://github.com/cure53/DOMPurify
+- `typescript@6.0.3` — https://github.com/microsoft/TypeScript
 
 ### BSD-3-Clause
 

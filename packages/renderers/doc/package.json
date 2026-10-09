@@ -62,14 +62,15 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && node --test test/*.test.mjs",
     "type-check": "tsc -b tsconfig.json",
     "verify:table-spec": "pnpm build && node scripts/verify-table-spec.mjs",
     "verify:github-34": "pnpm build && node scripts/verify-github-34.mjs",
     "verify:github-87": "pnpm build && node scripts/verify-github-87.mjs",
     "verify:github-171": "pnpm build && node scripts/verify-github-171.mjs",
     "verify:github-192": "pnpm build && node scripts/verify-github-192.mjs",
-    "verify:github-236": "pnpm build && node scripts/verify-github-236.mjs"
+    "verify:github-236": "pnpm build && node scripts/verify-github-236.mjs",
+    "verify:font-table-browser": "node scripts/verify-font-table-browser.mjs"
   },
   "dependencies": {
     "dompurify": "3.4.16"

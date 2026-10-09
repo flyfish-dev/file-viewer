@@ -5,6 +5,7 @@ import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { packCompatibilityEngines } from './pack-compatibility-engines.mjs'
+import { docxPatchEntries } from '../../../.github/scripts/lib/docx-release-state.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 // Only the consumer fixture owns application-level dependency policy. Workspace
@@ -17,6 +18,14 @@ export function preparePackedConsumerManifest(fixtureManifest, version) {
   }
   manifest.overrides ??= {}
   return manifest
+}
+
+export function assertDocxCandidateAllowed(name, workspace) {
+  if (name === '@file-viewer/docx')
+    assert.ok(
+      docxPatchEntries(workspace).length > 0,
+      'Published DOCX must resolve from the ordinary registry, not a local candidate override'
+    )
 }
 
 export function summarizeConsumerAudit(report, status) {
@@ -123,6 +132,7 @@ export async function buildPackedIssueConsumer(
   if (process.env.PACKED_ISSUE_ENGINE_DIR)
     packageDirectories.push(resolve(process.env.PACKED_ISSUE_ENGINE_DIR))
   else packageDirectories.push(await packCompatibilityEngines(root, project))
+  const workspace = await readFile(resolve(root, 'pnpm-workspace.yaml'), 'utf8')
   const tarballs = []
   for (const directory of packageDirectories)
     for (const filename of (await readdir(directory))
@@ -137,6 +147,7 @@ export async function buildPackedIssueConsumer(
       !candidates.some((candidate) => candidate.name === metadata.name),
       `Duplicate candidate ${metadata.name}`
     )
+    assertDocxCandidateAllowed(metadata.name, workspace)
     const spec = `file:${path}`
     if (manifest.dependencies[metadata.name]) {
       manifest.dependencies[metadata.name] = spec

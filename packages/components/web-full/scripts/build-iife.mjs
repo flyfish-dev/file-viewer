@@ -83,6 +83,7 @@ await build({
   publicDir: false,
   logLevel: 'warn',
   define: {
+    '__FILE_VIEWER_WEB_FULL_VERSION__': JSON.stringify(packageManifest.version),
     'process.env.NODE_ENV': JSON.stringify('production'),
     'process.env': JSON.stringify({ NODE_ENV: 'production' }),
     'import.meta.url': 'document.currentScript?.src || location.href'
@@ -220,6 +221,13 @@ if (!validation.valid) {
   throw new Error(`[web-full-iife] Viewer static assets are missing required resources: ${missing}`)
 }
 await webNode.writeViewerAssetManifest(outDir, webNode.buildViewerAssetManifest(validation))
+// Keep the complete local dist for self-hosted release assets. The ordinary npm
+// archive carries these two groups through exact-version asset dependencies.
+for (const name of ['@file-viewer/assets-cad', '@file-viewer/assets-drawing']) {
+  if (packageManifest.dependencies?.[name] !== `workspace:${packageManifest.version}`)
+    throw new Error(`[web-full-iife] ${name} must match the full package version`)
+}
+await writeFile(join(outDir, '.npmignore'), '/vendor/drawio/\n/wasm/cad/\n', 'utf8')
 await writeFile(
   resolve(outDir, 'flyfish-viewer-manifest.json'),
   `${JSON.stringify({

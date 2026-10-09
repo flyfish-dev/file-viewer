@@ -21,6 +21,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./engine": {
+      "types": "./dist/engine.d.ts",
+      "import": "./dist/engine.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -30,15 +34,17 @@
     "README.en.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
-    "type-check": "tsc -b tsconfig.json"
+    "build": "tsc -b tsconfig.json && node scripts/build-runtime.mjs",
+    "type-check": "tsc -b tsconfig.json",
+    "verify:packed-browser": "pnpm --filter @file-viewer/core --filter @file-viewer/renderer-text --filter @file-viewer/renderer-drawing build && pnpm build && node scripts/verify-packed-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/renderer-text": "workspace:3.1.2",
-    "mermaid": "^11.17.2"
+    "@file-viewer/renderer-text": "workspace:3.1.2"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "mermaid": "11.17.2",
+    "typescript": "^6.0.3",
+    "vite": "8.3.0"
   },
   "fileViewer": {
     "capabilityManifest": "./file-viewer.capability.json"

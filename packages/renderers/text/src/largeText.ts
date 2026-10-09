@@ -4,6 +4,7 @@ import {
   createEmptyFileViewerSearchState,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
+  isSingleByteFileViewerTextEncoding,
   normalizeFileViewerSearchOptions,
   resolveFileViewerTextEncoding,
   registerFileViewerSearchProvider,
@@ -132,15 +133,36 @@ const alignGb18030Boundary = (
   return cursor
 }
 
+// Single-byte encodings decode one byte to one UTF-16 code unit, so any byte
+// offset is already a character boundary.
 const alignTextBoundary = (
   index: Pick<LargeTextIndex, 'bytes' | 'encoding'>,
   knownBoundary: number,
   requestedOffset: number,
   limit: number
 ) => {
-  return index.encoding === 'gb18030'
-    ? alignGb18030Boundary(index.bytes, knownBoundary, requestedOffset, limit)
-    : alignUtf8End(index.bytes, requestedOffset, limit)
+  if (index.encoding === 'gb18030') {
+    return alignGb18030Boundary(index.bytes, knownBoundary, requestedOffset, limit)
+  }
+  if (isSingleByteFileViewerTextEncoding(index.encoding)) {
+    return clamp(requestedOffset, 0, limit)
+  }
+  return alignUtf8End(index.bytes, requestedOffset, limit)
+}
+
+const alignSegmentStart = (
+  index: Pick<LargeTextIndex, 'bytes' | 'encoding'>,
+  lineStart: number,
+  requestedOffset: number,
+  limit: number
+) => {
+  if (index.encoding === 'gb18030') {
+    return alignTextBoundary(index, lineStart, requestedOffset, limit)
+  }
+  if (isSingleByteFileViewerTextEncoding(index.encoding)) {
+    return clamp(requestedOffset, 0, limit)
+  }
+  return alignUtf8Start(index.bytes, requestedOffset, limit)
 }
 
 const isLineBreak = (bytes: Uint8Array, offset: number) => {
@@ -264,9 +286,7 @@ const decodeLargeTextSegment = (
   const normalizedSegment = clamp(Math.trunc(segmentIndex), 0, segmentCount - 1)
   const rawStart = line.start + (normalizedSegment * segmentBytes)
   const rawEnd = Math.min(line.end, rawStart + segmentBytes)
-  const start = index.encoding === 'gb18030'
-    ? alignTextBoundary(index, line.start, rawStart, line.end)
-    : alignUtf8Start(index.bytes, rawStart, line.end)
+  const start = alignSegmentStart(index, line.start, rawStart, line.end)
   const end = alignTextBoundary(index, start, rawEnd, line.end)
   return {
     text: createFileViewerTextDecoder(index.encoding).decode(index.bytes.subarray(start, end)),
@@ -305,7 +325,11 @@ export const shouldVirtualizeTextBuffer = (buffer: ArrayBuffer, context?: FileRe
     return false
   }
   const bytes = new Uint8Array(buffer)
-  const { encoding } = resolveFileViewerTextEncoding(bytes, context?.options?.text?.encoding)
+  const { encoding } = resolveFileViewerTextEncoding(
+    bytes,
+    context?.options?.text?.encoding,
+    context?.options?.text?.fallbackEncoding
+  )
   return encoding !== 'utf-16le' && encoding !== 'utf-16be'
 }
 
@@ -318,7 +342,11 @@ export const shouldVirtualizeMarkdownBuffer = (buffer: ArrayBuffer, context?: Fi
     return false
   }
   const bytes = new Uint8Array(buffer)
-  const { encoding } = resolveFileViewerTextEncoding(bytes, context?.options?.text?.encoding)
+  const { encoding } = resolveFileViewerTextEncoding(
+    bytes,
+    context?.options?.text?.encoding,
+    context?.options?.text?.fallbackEncoding
+  )
   return encoding !== 'utf-16le' && encoding !== 'utf-16be'
 }
 
@@ -354,7 +382,11 @@ export default async function renderLargeText(
   const t = createFileViewerTranslator(context?.options)
   const documentRef = target.ownerDocument
   const sourceBytes = new Uint8Array(buffer)
-  const source = resolveFileViewerTextEncoding(sourceBytes, context?.options?.text?.encoding)
+  const source = resolveFileViewerTextEncoding(
+    sourceBytes,
+    context?.options?.text?.encoding,
+    context?.options?.text?.fallbackEncoding
+  )
   const bytes = sourceBytes.subarray(source.bomLength)
   const configuredSegmentBytes = context?.options?.text?.maxRenderedLineBytes
   const segmentBytes = Number.isFinite(configuredSegmentBytes)
@@ -796,9 +828,12 @@ export default async function renderLargeText(
     const maxMatches = Math.max(1, options.maxMatches || DEFAULT_FILE_VIEWER_SEARCH_MAX_MATCHES)
     const expression = createLargeTextSearchRegExp(query, options)
     const encoder = new TextEncoder()
+    const singleByte = isSingleByteFileViewerTextEncoding(index.encoding)
     const encodedQueryBytes = index.encoding === 'gb18030'
       ? query.length * 4
-      : encoder.encode(query).byteLength
+      : singleByte
+        ? query.length
+        : encoder.encode(query).byteLength
     const overlap = clamp(encodedQueryBytes * 2, 256, 64 * 1024)
 
     const advanceBytesForCharacters = (
@@ -806,6 +841,9 @@ export default async function renderLargeText(
       end: number,
       characterCount: number
     ) => {
+      if (singleByte) {
+        return clamp(characterCount, 0, Math.max(0, end - start))
+      }
       if (index.encoding !== 'gb18030') {
         const decoded = createFileViewerTextDecoder(index.encoding).decode(index.bytes.subarray(start, end))
         return encoder.encode(decoded.slice(0, characterCount)).byteLength

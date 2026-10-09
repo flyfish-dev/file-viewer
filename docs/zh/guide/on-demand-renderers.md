@@ -96,6 +96,8 @@ Adobe 设计、DICOM、数字签名检查与二进制检查器都是显式可选
 | **数字签名** (`@file-viewer/renderer-signature`) | `.p7m`、`.p7s`、`.p7c`、`.p7b`、`.pkcs7`、`.cms`、`.cmsc`、`.tsd`、`.tst`、`.tsq`、`.tsr`、`.asics`、`.scs`、`.asice`、`.sce`、`.ers`、`.asc`、`.sig`、`.pgp`、`.gpg`、`.jws` | `npm install @file-viewer/renderer-signature` | `npx file-viewer-cli config add p7m --write` | 在浏览器本地做有界容器检查，并分开报告解析、摘要、签名和时间戳结果。 |
 | **二进制检查器** (`@file-viewer/renderer-binary`) | `.bin`、`.hex`、`.elf`、`.exe`、`.dll`、`.class`、`.macho` | `npm install @file-viewer/renderer-binary` | `npx file-viewer-cli config add bin --write` | 浏览器本地的只读 offset/十六进制/ASCII 视图，使用受限模块 Worker、虚拟化行、类型值与受审核的 ELF、PE/COFF、Mach-O、PNG、ZIP、WebAssembly、Java class 头部目录；不会声明 `application/octet-stream`，也不会替换专用 renderer。 |
 
+DICOM 安装（包括 CLI `--profile full`）需要遵循包内 [DICOM 安装策略](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.md#应用安装策略)，配置应用根目录的依赖 overrides 并满足 Node.js 要求。默认依赖图仍有审计发现，消费项目不会继承本仓库的 workspace 策略。部署前需验证实际应用及浏览器行为。
+
 ### 已经使用 Full 包时
 
 这条规则适用于 `@file-viewer/web-full`、`@file-viewer/vue3-full`、`@file-viewer/vue2.7-full`、`@file-viewer/vue2.6-full`、`@file-viewer/react-full`、`@file-viewer/react-legacy-full`、`@file-viewer/jquery-full` 和 `@file-viewer/svelte-full`。

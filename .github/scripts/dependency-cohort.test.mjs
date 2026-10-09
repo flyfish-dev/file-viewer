@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readFileSync, realpathSync } from 'node:fs'
 import { test } from 'node:test'
 import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
 const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8')
 function angularCohort(manifest) {
   const dependencies = { ...manifest.dependencies, ...manifest.devDependencies }
@@ -133,5 +134,24 @@ test('Dependabot groups version and security Angular updates in the nested fixtu
   assert.match(
     entry,
     /angular-security-cohort:\s+applies-to: security-updates\s+patterns:\s+- '@angular\/\*'/
+  )
+})
+
+test('IFC importer and copied WASM use the same verified physical web-ifc package', () => {
+  const version = '0.0.77'
+  const manifest = JSON.parse(read('packages/renderers/3d/package.json'))
+  const demo = JSON.parse(read('apps/viewer-demo/package.json'))
+  assert.equal(manifest.devDependencies['web-ifc'], version)
+  assert.equal(manifest.peerDependencies['web-ifc'], version)
+  assert.equal(demo.dependencies['web-ifc'], version)
+  const require = createRequire(
+    new URL('../../packages/renderers/3d/package.json', import.meta.url)
+  )
+  const entry = require.resolve('web-ifc')
+  const importerRequire = createRequire(require.resolve('@thatopen/fragments'))
+  assert.equal(realpathSync(importerRequire.resolve('web-ifc')), realpathSync(entry))
+  assert.equal(
+    JSON.parse(readFileSync(join(dirname(entry), 'package.json'), 'utf8')).version,
+    version
   )
 })

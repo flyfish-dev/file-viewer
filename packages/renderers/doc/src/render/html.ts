@@ -18,6 +18,7 @@ import type {
   TableCellBlock,
   ShadingSpec,
   TextInlineNode,
+  FontInfo,
 } from '../types.js';
 
 const COLOR_INDEX_MAP: Record<number, string> = {
@@ -46,6 +47,7 @@ interface RenderContext {
   reviewMode: NonNullable<MsDocRenderOptions['reviewMode']>;
   externalLinkPolicy: ExternalLinkPolicy;
   externalResourcePolicy: ExternalResourcePolicy;
+  fonts: ReadonlyMap<string, FontInfo>;
 }
 
 function styleObjectToCss(style: CssStyleObject): string {
@@ -64,8 +66,8 @@ function quoteCssString(value: unknown): string {
   return `'${escaped}'`;
 }
 
-function fontFamilyToCss(family: string): string {
-  const fallbacks = msDocFontFallbacks(family);
+function fontFamilyToCss(family: string, context: RenderContext): string {
+  const fallbacks = msDocFontFallbacks(family, context.fonts.get(family));
   return [quoteCssString(family), ...fallbacks.map((name, index) =>
     index === fallbacks.length - 1 ? name : quoteCssString(name)
   )].join(',');
@@ -222,14 +224,14 @@ function buildUnderlineStyle(underline: number): CssStyleObject {
   return css;
 }
 
-function inlineStyleToCss(styleState: CharState): CssStyleObject {
+function inlineStyleToCss(styleState: CharState, context: RenderContext): CssStyleObject {
   const style: CssStyleObject = {};
   if (styleState.bold || styleState.boldBi) style['font-weight'] = '700';
   if (styleState.italic || styleState.italicBi) style['font-style'] = 'italic';
   if (styleState.strike || styleState.doubleStrike) style['text-decoration-line'] = `${style['text-decoration-line'] ? `${style['text-decoration-line']} ` : ''}line-through`;
   Object.assign(style, buildUnderlineStyle(styleState.underline));
   if (styleState.fontSizeHalfPoints) style['font-size'] = `${styleState.fontSizeHalfPoints / 2}pt`;
-  if (styleState.fontFamily) style['font-family'] = fontFamilyToCss(styleState.fontFamily);
+  if (styleState.fontFamily) style['font-family'] = fontFamilyToCss(styleState.fontFamily, context);
   if (styleState.colorIndex && COLOR_INDEX_MAP[styleState.colorIndex]) style.color = COLOR_INDEX_MAP[styleState.colorIndex];
   const highlightIndex = typeof styleState.highlight === 'number' ? styleState.highlight : styleState.highlight?.index;
   if (highlightIndex && HIGHLIGHT_COLORS[highlightIndex as keyof typeof HIGHLIGHT_COLORS]) {
@@ -258,10 +260,10 @@ function renderTextNode(node: TextInlineNode, context: RenderContext): string {
   const content = textFontRuns(node.text, node.style).map(run => {
     const text = escapeHtml(run.text);
     if (!run.fontFamily || run.fontFamily === node.style.fontFamily) return text;
-    const font = styleObjectToCss({ 'font-family': fontFamilyToCss(run.fontFamily) });
+    const font = styleObjectToCss({ 'font-family': fontFamilyToCss(run.fontFamily, context) });
     return `<span style="${font}">${text}</span>`;
   }).join('');
-  const inlineStyle = inlineStyleToCss(node.style);
+  const inlineStyle = inlineStyleToCss(node.style, context);
   inlineStyle['white-space'] = 'break-spaces';
   const revision = context.reviewMode === 'all'
     ? node.style.revisionDeleted ? 'delete' : node.style.revisionInserted ? 'insert' : null
@@ -376,7 +378,7 @@ function renderImageNode(node: Extract<InlineNode, { type: 'image' }>, context: 
     context.externalResourcePolicy,
     allowGeneratedVector,
   );
-  const baseStyle = inlineStyleToCss(node.style);
+  const baseStyle = inlineStyleToCss(node.style, context);
   const displaySize = inlineImageDisplaySizePx(node.asset);
   if (displaySize.widthPx || displaySize.heightPx) {
     applyInlineImageDisplaySize(baseStyle, node.asset);
@@ -546,7 +548,9 @@ function renderCellBody(cell: TableCellBlock, context: RenderContext): string {
   const parts: string[] = [];
   let paragraphs: ParagraphBlock[] = [];
   const wrapText = (body: string) => cell.meta?.textFlow === 5
-    ? `<div class="msdoc-cell-vertical" style="writing-mode:vertical-rl;text-orientation:upright;margin:0 auto">${body}</div>`
+    // Intrinsic logical sizes prevent a horizontal table-cell line from being
+    // used as the available inline space for vertical text in WebKit.
+    ? `<div class="msdoc-cell-vertical" style="writing-mode:vertical-rl;text-orientation:upright;inline-size:max-content;block-size:max-content;margin:0 auto">${body}</div>`
     : body;
   const flush = () => {
     if (!paragraphs.length) return;
@@ -633,6 +637,8 @@ export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOption
     reviewMode: options.reviewMode ?? 'all',
     externalLinkPolicy: options.externalLinkPolicy ?? 'block',
     externalResourcePolicy: options.externalResourcePolicy ?? 'block',
+    fonts: new Map((parsed.fonts ?? []).flatMap(font =>
+      [font.name, font.altName].filter(Boolean).map(name => [name, font] as const))),
   };
   const parts: string[] = [];
   let paragraphs: ParagraphBlock[] = [];

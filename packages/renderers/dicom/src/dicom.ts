@@ -392,6 +392,7 @@ export default async function renderDicom(
         minPixelValue?: unknown;
         slope?: unknown;
       };
+      if (!image) return false;
       const slope = finiteNumber(image.slope, 1);
       const intercept = finiteNumber(image.intercept, 0);
       const first = finiteNumber(image.minPixelValue, Number.NaN) * slope + intercept;

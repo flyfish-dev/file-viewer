@@ -170,9 +170,12 @@ export const assertFileViewerMermaidSourceHasNoExternalResources = (source: stri
   const normalized = canonicalizeMermaidSourceForResourceScan(String(source || ''))
   const compact = normalized.replace(/[\t\r\n ]+/g, '')
   const hasImageMetadata = /(?:^|[,{])\s*(?:img|["']img["'])\s*:/im.test(normalized)
+  // HTML math labels are created by Mermaid before its SVG is returned. Reject
+  // loading elements even when their URL uses entities or a relative path.
+  const hasLoadingElement = /<\s*(?:img|image|iframe|object|embed|video|audio|source|link|script|style)\b/i.test(normalized)
   const hasRemoteUrl = /(?:https?|ftp):\/\//i.test(compact) ||
     /(?:^|[\s"'(=:,])(?:\/\/|\\\\)[A-Za-z0-9]/m.test(normalized)
-  if (hasImageMetadata || hasRemoteUrl) {
+  if (hasImageMetadata || hasLoadingElement || hasRemoteUrl) {
     throw new Error('Mermaid diagrams may not load external image resources.')
   }
 }

@@ -4,7 +4,7 @@
     "packageName": "@file-viewer/renderer-dicom",
     "packageVersion": "3.1.2",
     "packageManager": "pnpm",
-    "command": "pnpm --filter @file-viewer/renderer-dicom list --prod --depth Infinity --json"
+    "command": "pnpm --filter @file-viewer/renderer-dicom list --depth Infinity --json; direct runtime and three bundled Cornerstone SDK roots only"
   },
   "policy": {
     "allowedSpdxExpressions": [
@@ -1305,6 +1305,20 @@
       "repository": "https://github.com/inspect-js/node-supports-preserve-symlinks-flag",
       "licenseFiles": [
         "LICENSE"
+      ],
+      "noticeFiles": []
+    },
+    {
+      "name": "typescript",
+      "version": "6.0.3",
+      "license": "Apache-2.0",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "Microsoft Corp.",
+      "repository": "https://github.com/microsoft/TypeScript",
+      "licenseFiles": [
+        "LICENSE.txt"
       ],
       "noticeFiles": []
     },

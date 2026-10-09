@@ -6,13 +6,16 @@ import type {
 } from '../contracts/types';
 
 export {
+  DEFAULT_FILE_VIEWER_TEXT_FALLBACK_ENCODING,
   createFileViewerTextDecoder,
   decodeFileViewerTextBuffer,
+  isSingleByteFileViewerTextEncoding,
   isValidFileViewerUtf8,
   resolveFileViewerTextEncoding,
 } from './textEncoding';
 export type {
   DecodedFileViewerText,
+  FileViewerSingleByteTextEncoding,
   FileViewerTextEncoding,
   ResolvedFileViewerTextEncoding,
   ResolvedFileViewerTextSource,

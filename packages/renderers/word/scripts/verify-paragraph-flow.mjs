@@ -6,22 +6,27 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import ts from 'typescript';
 import { makeParagraphFlowFixture, spacingCases } from '../test/paragraph-flow-fixtures.mjs';
+import {readPublishedDocxEntry,verifyDocxDistribution} from '../../../../.github/scripts/verify-docx-distribution.mjs';
 const root=path.resolve(import.meta.dirname,'../../../..');
 const require=createRequire(path.join(root,'packages/renderers/pptx/package.json'));
 const {build}=require('esbuild');const {chromium}=createRequire(path.join(root,'package.json'))('playwright');
 const wordRequire=createRequire(path.join(root,'packages/renderers/word/package.json'));
 const engine=path.dirname(wordRequire.resolve('@file-viewer/docx/package.json'));
 const output=path.resolve(process.env.DOCX_FLOW_OUTPUT||path.join(root,'output/docx-paragraph-flow'));
-const baseDir=path.resolve(process.env.DOCX_FLOW_BASE_DIR||path.join(root,'output/docx-paragraph-flow/base'));
 await mkdir(output,{recursive:true});
-const baseSource=await readFile(path.join(baseDir,'docx-preview.mjs'),'utf8');
+const baseline=process.env.DOCX_FLOW_BASE_DIR
+ ? {text:await readFile(path.resolve(process.env.DOCX_FLOW_BASE_DIR,'docx-preview.mjs'),'utf8'),provenance:{mode:'explicit-local-test-baseline'}}
+ : await readPublishedDocxEntry('0.3.33','dist/docx-preview.mjs');
+const baseSource=baseline.text;
+const baselineProvenance={...baseline.provenance,sha256:createHash('sha256').update(baseSource).digest('hex')};
 const installed=await readFile(path.join(engine,'dist/docx-preview.mjs'),'utf8');
-const pin=JSON.parse(await readFile(path.join(root,'patches/docx-engine-compatibility.json'),'utf8'));
-assert.equal(createHash('sha256').update(installed).digest('hex'),pin.sha256['docx-preview.mjs'],'Actual installed source build is pinned');
+const provenance=await verifyDocxDistribution(root);
+const entryHashes=provenance.mode==='published'?provenance.sha256:Object.fromEntries(Object.entries(provenance.sha256).map(([name,sha])=>['dist/'+name,sha]));
+assert.equal(createHash('sha256').update(installed).digest('hex'),entryHashes['dist/docx-preview.mjs'],'The tested engine must match the verified distribution');
 let control;
-assert.ok(pin.sourceBuild, 'The runtime must be compiled from owning docxjs source');
 {
- // Disable only the safe bulk-transfer optimization in the same source build.
+ // Test-only negative control: disable the safe bulk-transfer optimization in
+ // an output-directory copy. Production always uses the verified installed bytes.
  // Section inheritance, grid metrics and chart axes stay identical on both sides.
  const file=ts.createSourceFile('control.mjs',installed,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
  const calls=[];
@@ -33,7 +38,12 @@ const entries={base:baseSource,control,optimized:installed};
 const bundles={};
 for(const [name,source] of Object.entries(entries)) {
  const target=path.join(output,`${name}.mjs`);await writeFile(target,source);
- const compiled=await build({stdin:{contents:`import * as engine from '@file-viewer/docx';import {renderFileViewerWordDoc} from './packages/renderers/word/src/index.ts';Object.assign(window,{engine,renderFileViewerWordDoc});`,resolveDir:root,loader:'ts'},bundle:true,format:'iife',platform:'browser',write:false,logLevel:'warning',plugins:[{name:'owned-engine',setup(b){b.onResolve({filter:/^@file-viewer\/docx$/},()=>({path:target}));}}]});
+ const compiled=await build({stdin:{contents:`import * as engine from '@file-viewer/docx';import {renderFileViewerWordDoc} from './packages/renderers/word/src/index.ts';Object.assign(window,{engine,renderFileViewerWordDoc});`,resolveDir:root,loader:'ts'},bundle:true,format:'iife',platform:'browser',write:false,logLevel:'warning',plugins:[{name:'owned-engine',setup(b){
+  b.onResolve({filter:/^@file-viewer\/docx$/},()=>({path:target,namespace:'verified-docx-control'}));
+  // Evidence may live outside the workspace. Resolve the copied entry's
+  // dependencies from the installed engine, rather than the evidence folder.
+  b.onLoad({filter:/.*/,namespace:'verified-docx-control'},()=>({contents:source,loader:'js',resolveDir:engine}));
+ }}]});
  bundles[name]=compiled.outputFiles[0].text;
 }
 const checks=[],observations=[],errors=[],external=[];
@@ -119,11 +129,10 @@ try {
    }finally{await cp.close();await op.close();}
   });
  }
- await check('All engine entries match the published review pin',async()=>{
-  const pin=JSON.parse(await readFile(path.join(root,'patches/docx-engine-compatibility.json'),'utf8'));
-  for(const [name,sha]of Object.entries(pin.sha256))assert.equal(createHash('sha256').update(await readFile(path.join(engine,'dist',name))).digest('hex'),sha,name);
+ await check('All installed engine entries still match verified distribution bytes',async()=>{
+  for(const [name,sha]of Object.entries(entryHashes))assert.equal(createHash('sha256').update(await readFile(path.join(engine,name))).digest('hex'),sha,name);
  });
  await check('No unexpected browser exceptions or external network requests',()=>{assert.deepEqual(errors,[]);assert.deepEqual(external,[]);});
 }finally {
- await browser.close();await writeFile(path.join(output,'report.json'),JSON.stringify({passed:checks.length,checks,observations,errors,external,scope:'Spacing parser/Worker and corrected-control pagination parity; not complete desktop document fidelity.'},null,2)+'\n');
+ await browser.close();await writeFile(path.join(output,'report.json'),JSON.stringify({passed:checks.length,checks,observations,errors,external,provenance,baseline:baselineProvenance,scope:'Spacing parser/Worker and corrected-control pagination parity; not complete desktop document fidelity.'},null,2)+'\n');
 }

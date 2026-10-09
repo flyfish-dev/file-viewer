@@ -11,6 +11,7 @@ apps/docs-site/next-env.d.ts
 playwright-report/
 test-results/
 /output/
+/.release/
 artifacts/*.tgz
 artifacts/*.tar.gz
 packages/renderers/signature/rust/target/
