@@ -11,12 +11,12 @@
     "type-check": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@fumadocs/language": "0.2.4",
-    "@tabler/icons-react": "3.46.0",
+    "@fumadocs/language": "0.2.10",
+    "@tabler/icons-react": "3.49.0",
     "cnfast": "^0.2.0",
     "flexsearch": "0.8.212",
-    "fumadocs-core": "16.15.15",
-    "fumadocs-mdx": "15.4.0",
+    "fumadocs-core": "16.16.2",
+    "fumadocs-mdx": "15.4.6",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.8",
     "next": "16.3.8",
     "react": "^19.2.8",
@@ -29,7 +29,7 @@
     "@types/node": "^26.5.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.3.0",
-    "postcss": "^8.5.28",
+    "postcss": "^8.5.29",
     "serve": "^14.2.6",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"

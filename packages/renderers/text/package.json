@@ -79,7 +79,7 @@
     "dompurify": "3.4.16",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.12",
-    "prettier": "3.9.6"
+    "prettier": "3.9.9"
   },
   "devDependencies": {
     "diff2html": "^3.4.56",
@@ -88,11 +88,11 @@
     "jsdom": "^27.4.0",
     "typescript": "^6.0.3",
     "xmllint-wasm": "5.3.0",
-    "xslt-polyfill": "1.0.29"
+    "xslt-polyfill": "1.0.31"
   },
   "peerDependencies": {
     "xmllint-wasm": "5.3.0",
-    "xslt-polyfill": "1.0.29"
+    "xslt-polyfill": "1.0.31"
   },
   "peerDependenciesMeta": {
     "xmllint-wasm": {
