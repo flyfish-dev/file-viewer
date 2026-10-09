@@ -72,9 +72,9 @@
     "verify:packed-browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-packed-browser.mjs"
   },
   "dependencies": {
-    "@cornerstonejs/core": "5.8.2",
-    "@cornerstonejs/dicom-image-loader": "5.8.2",
-    "@cornerstonejs/metadata": "5.8.2",
+    "@cornerstonejs/core": "5.11.5",
+    "@cornerstonejs/dicom-image-loader": "5.11.5",
+    "@cornerstonejs/metadata": "5.11.5",
     "@file-viewer/core": "workspace:3.1.2",
     "dicom-parser": "1.8.21",
     "events": "3.3.0",
