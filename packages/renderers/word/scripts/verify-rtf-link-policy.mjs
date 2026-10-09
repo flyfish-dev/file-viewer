@@ -5,6 +5,7 @@ import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { delimiter, dirname, extname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { assertRtfCspExpectations } from './rtf-csp-expectations.mjs'
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const root = resolve(packageRoot, '../../..')
@@ -83,6 +84,17 @@ const dangerous = target => target.querySelectorAll('script,iframe,object,embed,
 window.__rtfSecuritySentinel = 0
 window.__rtfSecurityResult = null
 window.__rtfSecurityError = null
+window.__rtfCspPhase = 'renderer'
+window.__rtfCspViolations = []
+document.addEventListener('securitypolicyviolation', event => {
+  window.__rtfCspViolations.push({
+    phase: window.__rtfCspPhase,
+    directive: event.effectiveDirective,
+    blockedURI: event.blockedURI,
+    disposition: event.disposition,
+    sample: event.sample,
+  })
+})
 
 try {
   registerFileViewerRtfLoader(() => import('@security/rtfjs'))
@@ -124,10 +136,25 @@ try {
     '<span id="direct-image-style" style="background-image:image(\'https://attacker.example/a.png\')">image</span>',
     '<script>window.__rtfSecuritySentinel=50</script>',
   ].join('')
-  const directHtml = sanitizeFileViewerRtfHtml(document, directMarkup, { externalLinkPolicy: 'allow' })
   const trustedPolicy = window.trustedTypes?.createPolicy('file-viewer-rtf-test', { createHTML: value => value })
+  const trustedHtml = value => trustedPolicy ? trustedPolicy.createHTML(value) : value
+  // Chromium156 checks script-src-attr while parsing even an inert document.
+  // Probe that parser behavior under the same CSP, without mounting this node.
+  window.__rtfCspPhase = 'parser-probe'
+  const probe = new DOMParser().parseFromString(
+    trustedHtml('<span onclick="window.__rtfSecuritySentinel=60">parser probe</span>'),
+    'text/html',
+  )
+  if (probe.body.firstElementChild?.getAttribute('onclick') !== 'window.__rtfSecuritySentinel=60') {
+    throw new Error('The inert parser probe did not preserve its controlled input attribute')
+  }
+  await new Promise(resolve => setTimeout(resolve, 20))
+  window.__rtfCspPhase = 'untrusted-input'
+  const directHtml = sanitizeFileViewerRtfHtml(document, directMarkup, { externalLinkPolicy: 'allow' })
+  await new Promise(resolve => setTimeout(resolve, 20))
+  window.__rtfCspPhase = 'sanitized-output'
   const directDocument = new DOMParser().parseFromString(
-    trustedPolicy ? trustedPolicy.createHTML(directHtml) : directHtml,
+    trustedHtml(directHtml),
     'text/html',
   )
   const directMount = document.createElement('div')
@@ -177,6 +204,9 @@ try {
   }
   await Promise.all([blockedInstance.unmount(), allowedInstance.unmount(), docInstance.unmount()])
   result.cleanupEmpty = [rtfBlockedTarget, rtfAllowedTarget, docTarget].every(target => target.childNodes.length === 0)
+  await new Promise(resolve => setTimeout(resolve, 20))
+  result.cspViolations = window.__rtfCspViolations
+  window.__rtfCspPhase = 'done'
   window.__rtfSecurityResult = result
 } catch (error) {
   window.__rtfSecurityError = error instanceof Error ? error.stack || error.message : String(error)
@@ -305,7 +335,7 @@ try {
         "frame-src 'none'",
         "img-src 'self' data: blob:",
         "object-src 'none'",
-        "script-src 'self'",
+        "script-src 'self' 'report-sample'",
         "style-src 'self' 'unsafe-inline'",
         "worker-src 'self' blob:",
         ...(strict
@@ -368,7 +398,7 @@ try {
           await page.waitForFunction(
             () => window.__rtfSecurityResult || window.__rtfSecurityError,
             null,
-            { timeout }
+            { timeout, polling: 50 }
           )
           const state = await page.evaluate(() => ({
             result: window.__rtfSecurityResult,
@@ -421,11 +451,13 @@ try {
           assert.ok(result.doc.textLength > 500)
           assert.equal(result.doc.dangerous, 0)
           assert.equal(result.cleanupEmpty, true)
+          const csp = assertRtfCspExpectations(result.cspViolations, failures)
+          console.log(JSON.stringify({ browser:name, version:browser.version(), rtfCsp:csp, sentinel:result.sentinel }))
         } else {
           await page.waitForFunction(
             () => window.__docxRegressionResult || window.__docxRegressionError,
             null,
-            { timeout }
+            { timeout, polling: 50 }
           )
           const state = await page.evaluate(() => ({
             result: window.__docxRegressionResult,
@@ -438,7 +470,7 @@ try {
           assert.equal(state.result.dangerous, 0)
           assert.equal(state.result.cleanupEmpty, true)
         }
-        assert.deepEqual(failures, [], `${name}/${pageName}`)
+        if (pageName === 'docx') assert.deepEqual(failures, [], `${name}/${pageName}`)
         assert.deepEqual(externalRequests, [], `${name}/${pageName}`)
         assert.equal(dialogs, 0)
         await page.close()
