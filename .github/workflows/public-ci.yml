@@ -71,6 +71,27 @@ jobs:
         if: always() && steps.browser-source.outcome == 'success' && steps.browsers.outcome == 'success'
         run: node packages/capabilities/mermaid/scripts/verify-packed-browser.mjs
 
+      - name: Retain the source Node.js path
+        id: source-node
+        if: always() && steps.browser-source.outcome == 'success' && steps.browsers.outcome == 'success'
+        run: echo "path=$(node -p 'process.execPath')" >> "$GITHUB_OUTPUT"
+
+      - name: Set up the Node20 consumer runtime
+        if: always() && steps.browser-source.outcome == 'success' && steps.browsers.outcome == 'success'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 20.20.2
+
+      - name: Verify the actual Node20 Mermaid consumer build
+        if: always() && steps.browser-source.outcome == 'success' && steps.browsers.outcome == 'success'
+        env:
+          FILE_VIEWER_SOURCE_NODE: ${{ steps.source-node.outputs.path }}
+        run: |
+          export FILE_VIEWER_CONSUMER_NODE="$(node -p 'process.execPath')"
+          export FILE_VIEWER_CONSUMER_NPM_CLI="$(dirname "$FILE_VIEWER_CONSUMER_NODE")/../lib/node_modules/npm/bin/npm-cli.js"
+          export PATH="$(dirname "$FILE_VIEWER_SOURCE_NODE"):$PATH"
+          "$FILE_VIEWER_SOURCE_NODE" packages/capabilities/mermaid/scripts/verify-packed-browser.mjs --node20-consumer
+
       - name: Retain cold browser runtime evidence
         if: always() && steps.impact.outputs.runtime != 'false'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
