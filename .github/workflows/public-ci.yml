@@ -88,6 +88,10 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm build
 
+      - name: Verify Web Full asset manifest
+        if: steps.impact.outputs.runtime != 'false'
+        run: node --test packages/components/web-full/test/asset-manifest.test.mjs
+
       - name: Verify PPTX generated styles and Worker resolution
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec vitest run test/pptx-generated-style-regression.spec.ts test/pptx-worker-resolution.spec.ts
