@@ -30,3 +30,31 @@ checks the installed package boundary, not a Demo-only button or source alias.
 DOCX progressively inserts visible elements before its layout is complete. The
 fixture records both load lifecycle events so an early SVG does not masquerade
 as a finished document. The original coordinate tolerances remain unchanged.
+
+## Consumer dependency policy
+
+Vue and `@vue/compiler-sfc` are aligned at 3.5.43, a patch update that includes
+the server-renderer security fix. The Vue CLI 5 and React fixture versions are
+preserved.
+[`ts-loader` 9.6.2](https://github.com/TypeStrong/ts-loader/releases/tag/v9.6.2) replaces
+its `micromatch` dependency with `picomatch` and removes that route to the
+unpatched `braces` advisory. The loader's declared Node.js minimum remains 12.
+This fixture uses TypeScript 5.9.3; upstream notes changed resolver behavior
+in some older TypeScript scenarios.
+
+This fixture does not inherit the repository's pnpm overrides and
+does not override Mermaid or KaTeX. Its legacy development-tooling advisories
+and the transitive KaTeX advisory must be reported separately; a passing build
+or browser regression is not a clean security audit.
+
+Each packed install records `audit-full.json`, `audit-production.json`, and an
+`audit-summary.json` that separates affected dependency entries from distinct
+advisories. Public CI retains these alongside the installed lockfile and
+candidate tarball hashes in `packed-consumer-security-evidence`.
+
+The separate Vue 2 compatibility packages are not covered by this Vue 3 patch.
+Their workspace exception for GHSA-5j4c-8p2g-v4jx can include an auto-installed
+production Vue 2 peer and is not exclusively development-only. Vue 2 hosts must
+keep templates application-controlled and must not compile untrusted templates,
+including during server-side rendering. This usage boundary does not fix the
+advisory; a maintained backport or migration remains a separate decision.
