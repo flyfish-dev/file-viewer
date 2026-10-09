@@ -1,0 +1,30 @@
+{
+  "publicHead": "18c12a899372140eba38c2bf8950827b294c889b",
+  "publicTree": "439b912825445278b0b091a04ada760853af757b",
+  "githubMergeCommit": "1d196197e3115d03dce46784eedfe3aa52b928f4",
+  "githubMergeParents": [
+    "eb842206323f19793ce71836c116d54f461f849e",
+    "18c12a899372140eba38c2bf8950827b294c889b"
+  ],
+  "githubMergeTreeMatchesPublicHead": true,
+  "runUrl": "https://github.com/flyfish-dev/file-viewer/actions/runs/37895626926",
+  "artifactId": 11599549297,
+  "artifactZipSha256": "e7116236819f4b505354fb092f42cd3700eb051df623557ab134b6aeca98ace8",
+  "images": [
+    {
+      "file": "webkit-dicom-ct.png",
+      "sha256": "1e966c24dc8b47c8925609f5d869cd63670de6c7e558624f3135435f15181e60"
+    },
+    {
+      "file": "webkit-mermaid-math.png",
+      "sha256": "3a62c54f4b2bafa5f89d0b9cbd296f1024d336f5d65f4357cba1130644d2f00b"
+    }
+  ],
+  "publicFixturePath": "test/fixtures/dicom",
+  "dicomScreenshotsIndependentlyVerified": 22,
+  "fixturesPerBrowser": 8,
+  "defaultColdConsumerAuditsZero": true,
+  "overrides": false,
+  "mermaidMathLabelsFullyVisible": true,
+  "scope": "Source-packed candidate evidence; not registry release proof"
+}
