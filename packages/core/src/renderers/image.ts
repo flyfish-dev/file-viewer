@@ -164,6 +164,7 @@ export default async function renderImage(
 ): Promise<FileViewerRenderedInstance> {
   const t = createFileViewerTranslator(context?.options);
   const documentRef = target.ownerDocument || document;
+  const targetWindow = documentRef.defaultView;
   const src = await resolveImageUrl(buffer, type);
   context?.registerThumbnailAdapter?.({
     capture: () => new Blob([buffer], { type: getImageBlobType(type) }),
@@ -172,6 +173,8 @@ export default async function renderImage(
   let fitScale = 1;
   let currentScale = 1;
   let viewportHeight = 0;
+  let viewportResizeFrame: number | null = null;
+  let destroyed = false;
   const zoomEmitter = createZoomChangeEmitter();
 
   const root = documentRef.createElement('div');
@@ -235,7 +238,20 @@ export default async function renderImage(
     applyImageZoom();
     zoomEmitter.emit();
   };
-  const resizeObserver = new ResizeObserver(updateViewportSize);
+  // Zoom subscribers may resize the parent toolbar. Keep geometry writes out
+  // of ResizeObserver delivery so ancestor notifications remain deliverable.
+  const scheduleViewportUpdate = () => {
+    if (destroyed || viewportResizeFrame !== null) return;
+    if (!targetWindow?.requestAnimationFrame) {
+      updateViewportSize();
+      return;
+    }
+    viewportResizeFrame = targetWindow.requestAnimationFrame(() => {
+      viewportResizeFrame = null;
+      if (!destroyed) updateViewportSize();
+    });
+  };
+  const resizeObserver = new ResizeObserver(scheduleViewportUpdate);
   resizeObserver.observe(root);
   image.addEventListener('load', updateViewportSize);
 
@@ -327,6 +343,11 @@ export default async function renderImage(
   return {
     $el: target,
     unmount() {
+      destroyed = true;
+      if (viewportResizeFrame !== null) {
+        targetWindow?.cancelAnimationFrame(viewportResizeFrame);
+        viewportResizeFrame = null;
+      }
       context?.registerThumbnailAdapter?.(null);
       unregisterFileViewerZoomProvider(root);
       resizeObserver.disconnect();
