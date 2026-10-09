@@ -200,9 +200,9 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm type-check
 
-      - name: Install Chromium and WebKit
+      - name: Install Chromium, Firefox and WebKit
         if: steps.impact.outputs.runtime != 'false'
-        run: pnpm exec playwright install --with-deps chromium webkit
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Run the issue regression gates
         if: steps.impact.outputs.runtime != 'false'
@@ -371,7 +371,7 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:renderer-sanitization
         env:
-          FILE_VIEWER_RTF_BROWSERS: chromium
+          FILE_VIEWER_RTF_BROWSERS: chromium,firefox,webkit
 
       - name: Verify Markdown fenced highlighting in Chromium and WebKit
         if: steps.impact.outputs.runtime != 'false'
