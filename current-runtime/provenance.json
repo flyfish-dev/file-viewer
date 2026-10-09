@@ -1,15 +1,15 @@
 {
-  "publicHead": "18c12a899372140eba38c2bf8950827b294c889b",
+  "publicHead": "9d56e9737b84bd3c88674b97dac730b0bc009c8c",
   "publicTree": "439b912825445278b0b091a04ada760853af757b",
-  "githubMergeCommit": "1d196197e3115d03dce46784eedfe3aa52b928f4",
+  "githubMergeCommit": "eab601b062fc3096189617796c91ed7301585261",
   "githubMergeParents": [
-    "eb842206323f19793ce71836c116d54f461f849e",
-    "18c12a899372140eba38c2bf8950827b294c889b"
+    "e8a2cf9581e942cf31a9b32b3791e646d6fdc579",
+    "9d56e9737b84bd3c88674b97dac730b0bc009c8c"
   ],
   "githubMergeTreeMatchesPublicHead": true,
-  "runUrl": "https://github.com/flyfish-dev/file-viewer/actions/runs/37895626926",
-  "artifactId": 11599549297,
-  "artifactZipSha256": "e7116236819f4b505354fb092f42cd3700eb051df623557ab134b6aeca98ace8",
+  "runUrl": "https://github.com/flyfish-dev/file-viewer/actions/runs/37903752782",
+  "artifactId": 11602814777,
+  "artifactZipSha256": "f51a2c55979770f362b2ba181295e3ffa0571db4e4fc8474475fa7004f1f4291",
   "images": [
     {
       "file": "webkit-dicom-ct.png",
@@ -26,5 +26,6 @@
   "defaultColdConsumerAuditsZero": true,
   "overrides": false,
   "mermaidMathLabelsFullyVisible": true,
-  "scope": "Source-packed candidate evidence; not registry release proof"
+  "previousVerifiedSameTreeHead": "18c12a899372140eba38c2bf8950827b294c889b",
+  "scope": "Source-packed current candidate evidence; not registry release proof"
 }
