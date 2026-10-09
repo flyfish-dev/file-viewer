@@ -105,11 +105,16 @@ const attributionHost = attribution.onAdd({
 })
 document.body.append(attributionHost)
 await new Promise(resolve => setTimeout(resolve, 100))
+// MapLibre's attribution allowlist strips custom ids. Locate the credit by
+// its visible text and still require the exact safe URL and a single link.
+const safeAttributionLinks = Array.from(attributionHost.querySelectorAll('a'))
+  .filter(link => link.textContent === 'safe attribution')
 const mapAttributionResult = {
   sentinel: window.__mapAttributionSentinel,
   dangerousAttributes: attributionHost.querySelectorAll('[onload],[ontoggle],[onclick]').length,
   unsafeLinks: attributionHost.querySelectorAll('a[href^="javascript:"]').length,
-  safeHref: attributionHost.querySelector('#map-safe-attribution')?.getAttribute('href'),
+  safeHref: safeAttributionLinks[0]?.getAttribute('href'),
+  safeLinkCount: safeAttributionLinks.length,
 }
 attribution.onRemove()
 const mapWorkerResult = []
@@ -946,7 +951,7 @@ try {
   const officialSentinelAfterClick = await officialFrame.evaluate(() => window.__fileViewerDrawioSentinel)
 
   assert.deepEqual(result.mapAttribution, {
-    sentinel: 0, dangerousAttributes: 0, unsafeLinks: 0, safeHref: 'https://example.com/license'
+    sentinel: 0, dangerousAttributes: 0, unsafeLinks: 0, safeHref: 'https://example.com/license', safeLinkCount: 1
   }, 'MapLibre attribution must remove adjacent dangerous attributes without removing safe credit links')
   assert.deepEqual(result.mapWorker, [true, true], 'Offline workers must render after map creation and recreation')
   assert.deepEqual(result.mapControlGlyphs, ['"+"', '"-"'], 'Map zoom controls must retain visible icons')
