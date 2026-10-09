@@ -97,14 +97,16 @@ test('cache eviction bounds ownership tracking and disabled or oversized writes 
 })
 
 test('source disposal also releases stale regions omitted by the public entry iterator', async () => {
-  const cache = new Cache({ byteCapacity: 1024, maxNumberOfEntries: 8, ttl: 1 }), a = owner(cache)
+  // Keep the entry live until this fixture explicitly expires it. A real 1 ms
+  // TTL can expire during insertion, before the source records its ownership.
+  const cache = new Cache({ byteCapacity: 1024, maxNumberOfEntries: 8, ttl: 0 }), a = owner(cache)
   await region(a); assert.equal(cache.count, 1)
+  assert.equal(a._regionCacheKeys.size, 1)
   // Expire deterministically without sleeps. This is test-local LRU state, not
   // an application or engine singleton; production code uses only Cache APIs.
   for (const [key, entry] of cache._lru.dump()) cache._lru.set(key, entry.value, { size: entry.size, ttl: 1, start: performance.now() - 5000 })
-  // Replacement above invokes onDelete; register ownership of the deliberately
-  // expired fixture again to model a region becoming stale without eviction.
-  a._regionCacheKeys.add(a._cacheId + '-tile-0')
+  // Rewriting the same value retains its ownership and deletion callback.
+  assert.equal(a._regionCacheKeys.size, 1)
   assert.equal(cache.entries().length, 0); assert.equal(cache.count, 1)
   a.dispose(); assert.equal(cache.count, 0); assert.equal(cache.size, 0); assert.equal(a._regionCacheKeys.size, 0)
 })
