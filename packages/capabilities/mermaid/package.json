@@ -42,7 +42,7 @@
     "@file-viewer/renderer-text": "workspace:3.1.2"
   },
   "devDependencies": {
-    "mermaid": "11.17.2",
+    "mermaid": "12.1.0",
     "typescript": "^6.0.3",
     "vite": "8.3.0"
   },
