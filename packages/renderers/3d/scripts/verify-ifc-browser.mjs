@@ -3,14 +3,17 @@ import { createRequire } from "node:module";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createServer } from "node:http";
 import { resolve, dirname, extname, sep, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createHash } from "node:crypto";
-import { copyIfcAssets } from "../bin/copy-ifc-assets.mjs";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../../../..");
+const packageRoot = resolve(process.env.IFC_TEST_PACKAGE_ROOT || join(here, ".."));
+const { copyIfcAssets } = await import(
+  pathToFileURL(join(packageRoot, "bin/copy-ifc-assets.mjs")).href
+);
 const require = createRequire(resolve(root, "package.json"));
 const { chromium } = require("playwright");
-const { build } = createRequire(resolve(here, "../package.json"))("esbuild");
+const { build } = createRequire(join(packageRoot, "package.json"))("esbuild");
 const samples = resolve(process.argv[2] || "output/ifc-samples");
 const output = resolve(
   process.env.IFC_EVIDENCE_DIR || join(root, "output/ifc-browser"),
@@ -37,7 +40,7 @@ for (const [file, hash] of metadata)
 await copyIfcAssets(join(output, "assets"));
 // Static entry remains small; heavy optional engines must be in a separate lazy chunk.
 const built = await build({
-  entryPoints: [resolve(here, "../dist/ifc.js")],
+  entryPoints: [join(packageRoot, "dist/ifc.js")],
   outdir: join(output, "app"),
   splitting: true,
   bundle: true,
@@ -51,7 +54,7 @@ const built = await build({
 const entry = Object.entries(built.metafile.outputs).find(
   ([, value]) =>
     value.entryPoint &&
-    resolve(value.entryPoint) === resolve(here, "../dist/ifc.js"),
+    resolve(value.entryPoint) === join(packageRoot, "dist/ifc.js"),
 );
 assert.ok(entry);
 assert.ok(entry[1].bytes < 10_000, `Entry not lazy: ${entry[1].bytes}`);

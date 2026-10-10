@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare-assets": "node scripts/stage-specialist-demo-fixtures.mjs && node ../../packages/renderers/text/bin/copy-xml-profile-assets.mjs public/file-viewer/xml && node ../../packages/renderers/3d/bin/copy-ifc-assets.mjs public/file-viewer/vendor/ifc",
+    "prepare-assets": "pnpm --dir ../.. --filter @file-viewer/core --filter @file-viewer/geometry-engine --filter @file-viewer/renderer-3d -r build && node scripts/stage-specialist-demo-fixtures.mjs && node ../../packages/renderers/text/bin/copy-xml-profile-assets.mjs public/file-viewer/xml && node ../../packages/renderers/3d/bin/copy-ifc-assets.mjs public/file-viewer/vendor/ifc",
     "dev": "pnpm prepare-assets && vite --host 127.0.0.1",
     "build": "pnpm prepare-assets && vue-tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview --host 127.0.0.1",

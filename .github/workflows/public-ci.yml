@@ -249,6 +249,7 @@ jobs:
         run: |
           node packages/renderers/3d/scripts/download-ifc-fixtures.mjs /tmp/ifc-samples
           pnpm --filter @file-viewer/renderer-3d verify:ifc-browser /tmp/ifc-samples
+          pnpm --filter @file-viewer/renderer-3d verify:ifc-installed /tmp/ifc-samples
 
       - name: Verify MapLibre rendering, pointer interaction and native map cleanup
         if: steps.impact.outputs.runtime != 'false'
