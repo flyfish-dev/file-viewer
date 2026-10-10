@@ -11,6 +11,8 @@ import {
   mkdtemp,
   rm,
   readdir,
+  lstat,
+  rename,
 } from "node:fs/promises";
 import { createHash } from "node:crypto";
 
@@ -30,6 +32,22 @@ async function packageDir(name, resolver = require) {
       throw new Error(`Cannot locate ${name} package root`);
     current = parent;
   }
+}
+async function checkOutputPath(path, directory = false) {
+  let info;
+  try {
+    info = await lstat(path);
+  } catch (error) {
+    if (error.code === "ENOENT") return;
+    throw error;
+  }
+  if (
+    info.isSymbolicLink() ||
+    !(directory ? info.isDirectory() : info.isFile())
+  )
+    throw new Error(
+      `IFC asset destination must be a regular ${directory ? "directory" : "file"}: ${path}`,
+    );
 }
 export async function copyIfcAssets(destination) {
   const [webIfc, fragments, three] = await Promise.all(
@@ -57,6 +75,8 @@ export async function copyIfcAssets(destination) {
     );
   const { build } = await import("esbuild");
   destination = resolve(destination);
+  await checkOutputPath(destination, true);
+  await checkOutputPath(join(destination, "licenses"), true);
   await mkdir(dirname(destination), { recursive: true });
   const stage = await mkdtemp(join(dirname(destination), ".ifc-assets-"));
   try {
@@ -73,7 +93,7 @@ export async function copyIfcAssets(destination) {
       join(stage, "fragments.worker.mjs"),
     );
     await build({
-      entryPoints: [join(packageRoot, "src/ifc-import.worker.ts")],
+      entryPoints: [join(packageRoot, "dist/ifc-import.worker.js")],
       outfile: join(stage, "ifc-import.worker.js"),
       bundle: true,
       format: "esm",
@@ -138,17 +158,21 @@ export async function copyIfcAssets(destination) {
         2,
       ) + "\n",
     );
-    // Only replace our own asset names, never remove a user's destination directory.
+    // Check every owned path before changing any existing asset. Host files stay intact.
+    const assetNames = (await readdir(stage)).filter((name) => name !== "licenses");
+    const licenseNames = await readdir(licenses);
+    for (const name of assetNames)
+      await checkOutputPath(join(destination, name));
+    for (const name of licenseNames)
+      await checkOutputPath(join(destination, "licenses", name));
     await mkdir(join(destination, "licenses"), { recursive: true });
-    for (const name of await readdir(stage)) {
-      if (name === "licenses") {
-        for (const license of await readdir(licenses))
-          await copyFile(
-            join(licenses, license),
-            join(destination, "licenses", license),
-          );
-      } else await copyFile(join(stage, name), join(destination, name));
-    }
+    await checkOutputPath(destination, true);
+    await checkOutputPath(join(destination, "licenses"), true);
+    // Rename complete staged files so a final file link is replaced rather than followed.
+    for (const name of assetNames)
+      await rename(join(stage, name), join(destination, name));
+    for (const name of licenseNames)
+      await rename(join(licenses, name), join(destination, "licenses", name));
     return { destination, files };
   } finally {
     await rm(stage, { recursive: true, force: true });
