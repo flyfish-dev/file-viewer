@@ -38,6 +38,7 @@ vi.mock('@file-viewer/core', () => {
 })
 
 import renderImage from '../packages/renderers/image/src/image'
+import renderCoreImage from '../packages/core/src/renderers/image'
 import { renderTiffWithDecoder } from '../packages/renderers/image/src/tiff'
 
 const instances: FileViewerRenderedInstance[] = []
@@ -174,4 +175,97 @@ it('includes image options in the Vue3 renderer-reload dependencies', () => {
     process.cwd(), 'packages/components/vue3/src/package/components/FileViewer/FileViewer.vue'
   ), 'utf8')
   expect(source).toMatch(/getRenderOptions:\s*\(\)\s*=>\s*\[[\s\S]*?effectiveOptions\.value\?\.image[\s\S]*?\]/)
+})
+
+describe.each([
+  ['standalone image', renderImage],
+  ['core image', renderCoreImage]
+] as const)('%s ResizeObserver lifecycle', (_name, renderer) => {
+  const setup = async () => {
+    const frames = new Map<number, FrameRequestCallback>()
+    let sequence = 0
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      const id = ++sequence
+      frames.set(id, callback)
+      return id
+    })
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
+      frames.delete(id)
+    })
+    let deliver!: () => void
+    let observing = false
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          deliver = () => callback([], this as unknown as ResizeObserver)
+        }
+        observe() {
+          observing = true
+        }
+        disconnect() {
+          observing = false
+        }
+      }
+    )
+    const target = document.createElement('div')
+    document.body.append(target)
+    const instance = await renderer(new Uint8Array([1, 2, 3]).buffer, target, 'png')
+    instances.push(instance)
+    const root = target.querySelector<HTMLElement>('.image-viewer')!
+    const image = root.querySelector('img')!
+    let width = 800
+    let height = 600
+    Object.defineProperties(root, {
+      clientWidth: { configurable: true, get: () => width },
+      clientHeight: { configurable: true, get: () => height }
+    })
+    const frame = () => {
+      const pending = [...frames]
+      frames.clear()
+      for (const [, callback] of pending) callback(performance.now())
+    }
+    frame()
+    return {
+      target,
+      instance,
+      image,
+      frames,
+      frame,
+      deliver,
+      observing: () => observing,
+      resize: (nextWidth: number, nextHeight: number) => {
+        width = nextWidth
+        height = nextHeight
+        deliver()
+      }
+    }
+  }
+
+  it('keeps geometry writes outside observer delivery and coalesces to the latest viewport', async () => {
+    const view = await setup()
+    expect(view.image.style.width).toBe('40px')
+    view.resize(80, 80)
+    view.resize(70, 80)
+    expect(view.image.style.width).toBe('40px')
+    expect(view.frames.size).toBe(1)
+    view.frame()
+    expect(view.image.style.width).toBe('22px')
+    expect(view.frames.size).toBe(0)
+    expect(view.observing()).toBe(true)
+  })
+
+  it('disconnects and cancels pending geometry writes on destroy, including stale delivery', async () => {
+    const view = await setup()
+    view.resize(70, 80)
+    view.instance.unmount?.()
+    const removedStyle = view.image.style.cssText
+    expect(view.observing()).toBe(false)
+    expect(view.frames.size).toBe(0)
+    expect(view.target.childElementCount).toBe(0)
+    view.resize(88, 80)
+    view.frame()
+    expect(view.image.style.cssText).toBe(removedStyle)
+    expect(view.frames.size).toBe(0)
+  })
 })

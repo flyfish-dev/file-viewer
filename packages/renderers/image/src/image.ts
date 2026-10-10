@@ -281,6 +281,7 @@ export default async function renderImage(
   let currentRotation = 0;
   let viewportHeight = 0;
   let scrollStateFrame = 0;
+  let viewportResizeFrame: number | null = null;
   let destroyed = false;
   const zoomEmitter = createZoomChangeEmitter();
   const viewStateEmitter = createFileViewerViewStateChangeEmitter();
@@ -392,7 +393,20 @@ export default async function renderImage(
     applyImageZoom();
     zoomEmitter.emit();
   };
-  const resizeObserver = new ResizeObserver(updateViewportSize);
+  // Zoom subscribers may resize the parent toolbar. Deliver the resulting
+  // geometry writes in a frame, outside the observer's same-frame depth loop.
+  const scheduleViewportUpdate = () => {
+    if (destroyed || viewportResizeFrame !== null) return;
+    if (!targetWindow?.requestAnimationFrame) {
+      updateViewportSize();
+      return;
+    }
+    viewportResizeFrame = targetWindow.requestAnimationFrame(() => {
+      viewportResizeFrame = null;
+      if (!destroyed) updateViewportSize();
+    });
+  };
+  const resizeObserver = new ResizeObserver(scheduleViewportUpdate);
   resizeObserver.observe(root);
   image.addEventListener('load', updateViewportSize);
 
@@ -621,6 +635,10 @@ export default async function renderImage(
     if (scrollStateFrame && targetWindow?.cancelAnimationFrame) {
       targetWindow.cancelAnimationFrame(scrollStateFrame);
       scrollStateFrame = 0;
+    }
+    if (viewportResizeFrame !== null) {
+      targetWindow?.cancelAnimationFrame(viewportResizeFrame);
+      viewportResizeFrame = null;
     }
     resizeObserver.disconnect();
     root.removeEventListener('scroll', scheduleScrollViewStateChange);

@@ -60,7 +60,8 @@
     "verify:github-242": "pnpm build && node scripts/verify-github-242.mjs && node scripts/verify-github-242-copy.mjs",
     "verify:github-257": "pnpm build && node scripts/verify-github-257.mjs",
     "verify:github-257-browser": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-github-257-browser.mjs",
-    "verify:github-311-browser": "node scripts/verify-github-311-browser.mjs"
+    "verify:github-311-browser": "node scripts/verify-github-311-browser.mjs",
+    "verify:lite-consumer": "node scripts/verify-lite-consumer.mjs"
   },
   "peerDependencies": {
     "vite": ">=5 <9"
@@ -73,7 +74,7 @@
   "devDependencies": {
     "@types/node": "^26.5.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.0"
+    "vite": "8.3.3"
   },
   "license": "Apache-2.0"
 }

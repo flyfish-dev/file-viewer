@@ -20,6 +20,6 @@ test('XML asset helper copies pinned offline engines and notices without deletin
     assert.ok(result.files['licenses/xslt-polyfill-LICENSE.txt'])
     assert.ok(result.files['licenses/xmllint-wasm-COPYING.txt'])
     assert.deepEqual([...await readFile(join(destination, 'xmllint.wasm'))].slice(0, 4), [0, 97, 115, 109])
-    assert.equal(JSON.parse(await readFile(join(destination, 'manifest.json'), 'utf8')).engines[1].version, '1.0.29')
+    assert.equal(JSON.parse(await readFile(join(destination, 'manifest.json'), 'utf8')).engines[1].version, '1.0.31')
   } finally { await rm(destination, { recursive: true, force: true }) }
 })

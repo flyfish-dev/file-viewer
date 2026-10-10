@@ -129,10 +129,10 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `loglevel@1.9.2` — https://github.com/pimterry/loglevel
 - `nanoid@3.3.18` — https://github.com/ai/nanoid
 - `ndarray@1.0.19` — https://github.com/mikolalysenko/ndarray
-- `node-releases@2.0.57` — https://github.com/chicoxyzzy/node-releases
+- `node-releases@2.0.58` — https://github.com/chicoxyzzy/node-releases
 - `path-is-absolute@1.0.1` — https://github.com/sindresorhus/path-is-absolute
 - `path-parse@1.0.7` — https://github.com/jbgutierrez/path-parse
-- `postcss@8.5.23` — https://github.com/postcss/postcss
+- `postcss@8.5.29` — https://github.com/postcss/postcss
 - `postcss-value-parser@4.2.0` — https://github.com/TrySound/postcss-value-parser
 - `rechoir@0.6.2` — https://github.com/tkellen/node-rechoir
 - `resolve@1.22.13` — https://github.com/browserify/resolve

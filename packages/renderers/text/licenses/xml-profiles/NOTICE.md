@@ -8,7 +8,7 @@ the engine's instructions or data, nor install the automatic page polyfill.
 
 | Component | Verified upstream notice | Included notice |
 | --- | --- | --- |
-| xslt-polyfill 1.0.29 | [BSD-3-Clause](https://github.com/mfreed7/xslt_polyfill/blob/main/LICENSE) | xslt-polyfill-LICENSE.txt |
+| xslt-polyfill 1.0.31 | [BSD-3-Clause](https://github.com/mfreed7/xslt_polyfill/blob/main/LICENSE) | xslt-polyfill-LICENSE.txt |
 | xmllint-wasm 5.3.0 | [MIT](https://github.com/noppa/xmllint-wasm/blob/master/COPYING) | xmllint-wasm-COPYING.txt |
 | XSLT libxml2 submodule | [Copyright at c34742f](https://github.com/GNOME/libxml2/blob/c34742f3017f6d39f3e4ccae4f70172238160ef8/Copyright) | libxml2-xslt-Copyright.txt |
 | XSD libxml2 submodule | [Copyright at eb0a2f2](https://github.com/GNOME/libxml2/blob/eb0a2f2b91566384f378d870ffcd69c0a24162cc/Copyright) | libxml2-xsd-Copyright.txt |

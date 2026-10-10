@@ -62,7 +62,7 @@ XML profiles 使用真实的 libxml2 XML Schema 1.0 和 libxslt XSLT 1.0 WASM �
 需要此功能时，安装固定版本并复制资源：
 
 ```sh
-pnpm add xmllint-wasm@5.3.0 xslt-polyfill@1.0.29
+pnpm add xmllint-wasm@5.3.0 xslt-polyfill@1.0.31
 pnpm exec file-viewer-xml-assets public/file-viewer/xml
 ```
 
