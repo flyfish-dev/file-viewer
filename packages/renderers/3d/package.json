@@ -88,11 +88,11 @@
   "devDependencies": {
     "@types/three": "^0.186.0",
     "typescript": "^6.0.3",
-    "@thatopen/components": "3.4.8",
-    "@thatopen/fragments": "3.4.7",
-    "web-ifc": "0.0.77",
+    "@thatopen/components": "3.4.9",
+    "@thatopen/fragments": "3.4.8",
+    "web-ifc": "0.0.78",
     "esbuild": "^0.28.2",
-    "@giro3d/giro3d": "2.0.4",
+    "@giro3d/giro3d": "2.0.5",
     "jszip": "3.10.2"
   },
   "license": "Apache-2.0",
@@ -101,11 +101,11 @@
     "file-viewer-geo3d-assets": "./bin/copy-geo3d-assets.mjs"
   },
   "peerDependencies": {
-    "@thatopen/components": "3.4.8",
-    "@thatopen/fragments": "3.4.7",
-    "web-ifc": "0.0.77",
+    "@thatopen/components": "3.4.9",
+    "@thatopen/fragments": "3.4.8",
+    "web-ifc": "0.0.78",
     "esbuild": "^0.28.2",
-    "@giro3d/giro3d": "2.0.4",
+    "@giro3d/giro3d": "2.0.5",
     "jszip": "3.10.2"
   },
   "peerDependenciesMeta": {
