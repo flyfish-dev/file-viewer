@@ -73,6 +73,12 @@ const report = {
   cases: [],
   passed: false
 }
+const acceptedFixture = JSON.parse(
+  await readFile(resolve(source, 'apps/component-demo/test/angular-pptx/package.json'), 'utf8')
+)
+assert.equal(report.angular, acceptedFixture.dependencies['@angular/core'])
+assert.equal(report.tooling.build, acceptedFixture.devDependencies['@angular/build'])
+assert.equal(report.tooling.cli, acceptedFixture.devDependencies['@angular/cli'])
 let dev,
   server,
   page,
