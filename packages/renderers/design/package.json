@@ -114,7 +114,7 @@
     "@paged-media/introspect-wasm": "0.70.2",
     "@webtoon/psd": "0.4.0",
     "@xmldom/xmldom": "0.9.12",
-    "ag-psd": "31.0.2",
+    "ag-psd": "31.0.3",
     "fzstd": "0.1.1",
     "illustrator-pgf": "0.1.0",
     "saxes": "6.0.0"
