@@ -1330,7 +1330,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "presets": [],
     "containerVersions": [
       "IDML package",
-      "@paged-media/introspect-wasm 0.63.0"
+      "@paged-media/introspect-wasm 0.70.2"
     ],
     "knownLimits": [
       "Pages are rendered locally by the CPU WASM engine in a module Worker; the browser never uploads the IDML package",

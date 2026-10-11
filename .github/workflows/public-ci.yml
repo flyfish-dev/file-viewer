@@ -214,6 +214,14 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm exec vitest run test/metadata-input-safety.spec.ts test/chm-renderer.spec.ts
 
+      - name: Verify IDML real installed pages and Worker cleanup
+        if: steps.impact.outputs.runtime != 'false'
+        run: pnpm --filter @file-viewer/renderer-design verify:idml-installed
+
+      - name: Retain IDML installed browser evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        run: node .github/scripts/report-ci-evidence.mjs output/idml-installed
+
       - name: Build documentation
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm docs:build

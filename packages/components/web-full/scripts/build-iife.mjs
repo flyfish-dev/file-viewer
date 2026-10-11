@@ -6,6 +6,7 @@ import { build } from 'vite'
 import { sanitizeOfflineViewerAssetTree } from './offline-asset-sanitize.mjs'
 import { verifyPptRuntimeDistributionRoot } from './ppt-runtime-integrity.mjs'
 import { stageInstalledPptRuntime } from './stage-ppt-runtime.mjs'
+import { stagePreparedDesignRuntime } from '../../../build-support/stage-design-runtime.mjs'
 import { isolateAmd, writeAmdEntry } from '../../web/scripts/amd-entry.mjs'
 import * as webNode from '@file-viewer/web/node'
 import { assertFullAssetDependencies } from './full-asset-dependencies.mjs'
@@ -212,6 +213,7 @@ if (assetSource) {
 }
 
 await stageInstalledPptRuntime(join(outDir, 'vendor/ppt'))
+await stagePreparedDesignRuntime(outDir)
 const sanitization = await sanitizeOfflineViewerAssetTree(outDir)
 await verifyPptRuntimeDistributionRoot(outDir, {
   unbundledJavaScriptPath: 'renderers/presentation.iife.js'

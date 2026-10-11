@@ -111,6 +111,7 @@ export default async function renderIdml(
   style.textContent = idmlStyle
   const root = element(documentRef, 'section', 'idml-viewer')
   root.dataset.idmlEngine = opened.engine
+  root.dataset.idmlEngineVersion = opened.engineVersion
   root.dataset.idmlBackend = opened.renderBackend
   root.dataset.pageCount = String(opened.tree.pageCount)
   root.dataset.idmlPixelLimit = String(limits.maxRenderedPixels)

@@ -1,4 +1,4 @@
-/** Narrow, source-hash-checked compatibility boundary for Giro3D 2.0.4.
+/** Narrow, source-hash-checked compatibility boundary for Giro3D 2.0.5.
  * Keep the real material, classification slots, textures and disposal ownership.
  * No prototypes, global shaders or singleton state are modified.
  */

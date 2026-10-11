@@ -2,12 +2,13 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
 import * as webNode from '../../web/dist/node.js'
 import { assertFullAssetDependencies } from '../scripts/full-asset-dependencies.mjs'
+import { listFileViewerRendererAssetManifests } from '../../../core/dist/assets.js'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const manifestFilename = 'flyfish-viewer-assets.json'
@@ -98,8 +99,53 @@ export async function build(options) {
   await writeFile(join(installedPpt, 'package.json'), JSON.stringify({
     name: '@file-viewer/ppt', version: '0.3.6', exports: { '.': './index.mjs' }
   }))
+  // Keep the real prepared-design copy stage in this isolated build. Only the
+  // fixture package payloads are synthetic; the production helper is unchanged.
+  const support = join(root, 'packages/build-support')
+  await mkdir(support, { recursive: true })
+  await cp(
+    join(packageDir, '../../build-support/stage-design-runtime.mjs'),
+    join(support, 'stage-design-runtime.mjs')
+  )
+  const designOwner = join(root, 'packages/renderers/design')
+  const designExports = {}
+  const preparedDesignAssets = listFileViewerRendererAssetManifests().map(manifest => ({
+    ...manifest,
+    assets: manifest.assets.filter(asset =>
+      asset.packagePath?.startsWith('@file-viewer/renderer-design/') ||
+      asset.packagePath?.startsWith('@paged-media/introspect-wasm/')
+    )
+  })).filter(manifest => manifest.assets.length)
+  const introspect = join(designOwner, 'node_modules/@paged-media/introspect-wasm')
+  await mkdir(join(designOwner, 'prepared'), { recursive: true })
+  await mkdir(introspect, { recursive: true })
+  await writeFile(join(introspect, 'package.json'), JSON.stringify({
+    name: '@paged-media/introspect-wasm', version: '0.70.2', type: 'module',
+    exports: { '.': './index.js', './paged_introspect_wasm_bg.wasm': './paged_introspect_wasm_bg.wasm' }
+  }))
+  await writeFile(join(introspect, 'index.js'), 'export {}')
+  for (const asset of preparedDesignAssets.flatMap(manifest => manifest.assets)) {
+    if (asset.packagePath.startsWith('@file-viewer/renderer-design/')) {
+      const key = './' + asset.packagePath.slice('@file-viewer/renderer-design/'.length)
+      designExports[key] = './prepared/' + basename(asset.defaultPath)
+      await cp(join(source, asset.defaultPath), join(designOwner, designExports[key]))
+    } else {
+      await cp(join(source, asset.defaultPath), join(introspect, basename(asset.defaultPath)))
+    }
+  }
+  await writeFile(join(designOwner, 'package.json'), JSON.stringify({
+    name: '@file-viewer/renderer-design', version: '1.0.0', type: 'module',
+    dependencies: { '@paged-media/introspect-wasm': '0.70.2' }, exports: designExports
+  }))
+  const core = join(designOwner, 'node_modules/@file-viewer/core')
+  await mkdir(core, { recursive: true })
+  await writeFile(join(core, 'package.json'), JSON.stringify({
+    name: '@file-viewer/core', type: 'module', exports: { './assets': './assets.js' }
+  }))
+  await writeFile(join(core, 'assets.js'),
+    `export function listFileViewerRendererAssetManifests(){return ${JSON.stringify(preparedDesignAssets)}}\n`)
   return {
-    root, source, dist, targetPackage, installedPpt,
+    root, source, dist, targetPackage, installedPpt, designOwner,
     run: () => {
       const env = { ...process.env }
       delete env.NODE_PATH
@@ -152,6 +198,25 @@ test('source metadata is regenerated from the packaged files', async t => {
   assert.equal(manifest.validation.valid, true)
   assert.ok(manifest.validation.assets.length > 0)
   assert.notEqual(manifest.generatedAt, 'stale')
+})
+
+test('stale design metadata is replaced by the prepared owner exports', async t => {
+  const f = await fixture(t)
+  await writeFile(join(f.source, 'vendor/design/THIRD_PARTY_NOTICES.md'), 'stale previous notices')
+  const built = f.run()
+  assert.equal(built.status, 0, built.stderr)
+  assert.deepEqual(
+    await readFile(join(f.dist, 'vendor/design/THIRD_PARTY_NOTICES.md')),
+    await readFile(join(f.designOwner, 'prepared/THIRD_PARTY_NOTICES.md'))
+  )
+})
+
+test('missing prepared design notices cannot fall back to bootstrap bytes', async t => {
+  const f = await fixture(t)
+  await rm(join(f.designOwner, 'prepared/THIRD_PARTY_NOTICES.md'))
+  const built = f.run()
+  assert.notEqual(built.status, 0)
+  assert.match(built.stderr, /THIRD_PARTY_NOTICES\.md/)
 })
 
 test('a stale PPT bootstrap is replaced with the installed official runtime', async t => {

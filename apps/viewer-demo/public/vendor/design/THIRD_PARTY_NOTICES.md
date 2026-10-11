@@ -56,9 +56,9 @@ Source: <https://github.com/nodeca/pako/tree/2.1.0>
 
 The MIT-licensed DEFLATE implementation is bundled transitively through `ag-psd` in the Photoshop document and resource Workers. The complete upstream license is shipped as `LICENSES/pako-MIT.txt`.
 
-## @paged-media/introspect-wasm 0.63.0
+## @paged-media/introspect-wasm 0.70.2
 
-Source: <https://github.com/paged-media/core/tree/v0.63.0>
+Source: <https://github.com/paged-media/core/tree/c7a4b788cc24acd7d5af8843655ec3806ad613a1>
 
 The package declares `MPL-2.0 OR LicenseRef-PMEL`. File Viewer elects the Mozilla Public License 2.0 option for the distributed JavaScript and WebAssembly runtime. The complete MPL-2.0 text is shipped as `LICENSES/MPL-2.0.txt` and copied next to the self-hosted IDML runtime assets.
 

@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 const require = createRequire(import.meta.url)
 
 async function packageDir(name, resolver = require) {
-  // Giro3D 2.0.4 exposes subpath modules but has no index.js at its bare
+  // Giro3D 2.0.5 exposes subpath modules but has no index.js at its bare
   // package entry. Resolve metadata first; packages with restrictive exports
   // (such as Three.js) can still be located by walking from their real entry.
   let entry
@@ -74,7 +74,7 @@ async function collectFiles(root, prefix = '') {
 }
 export async function copyGeo3dAssets(destination) {
   const giro = await packageDir('@giro3d/giro3d')
-  if (giro.metadata.version !== '2.0.4') throw new Error(`Geo3D assets require tested @giro3d/giro3d@2.0.4, found ${giro.metadata.version}`)
+  if (giro.metadata.version !== '2.0.5') throw new Error(`Geo3D assets require tested @giro3d/giro3d@2.0.5, found ${giro.metadata.version}`)
   const giroRequire = createRequire(join(giro.path, 'package.json'))
   const [lazPerf, three] = await Promise.all([
     packageDir('laz-perf', giroRequire),

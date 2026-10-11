@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generatedFrom": {
     "packageName": "@file-viewer/renderer-dicom",
     "packageVersion": "3.1.2",
@@ -28,14 +28,20 @@
     "closureIncludesPlatformOptionalDependencies": true
   },
   "nativeCodecBuild": {
-    "cornerstoneCodecsGitHead": "8634194b68ab43bde8f35fcc466a36d91ac700b4",
+    "wrapperReleaseSourceCommits": {
+      "@cornerstonejs/codec-charls@1.2.7": "d546620bc7814e836a0587e878b17e95146c76d0",
+      "@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+      "@cornerstonejs/codec-openjpeg@1.3.6": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+      "@cornerstonejs/codec-openjph@2.4.11": "bac71dd0d78996e63f2dac3e9ee3a44f2b366a05",
+      "@cornerstonejs/codec-libjxl@1.1.1": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428"
+    },
     "note": "The npm wrapper license describes JavaScript glue; these entries describe native libraries statically linked into the shipped WebAssembly codecs.",
     "components": [
       {
         "name": "CharLS",
-        "wrapperPackage": "@cornerstonejs/codec-charls@1.2.5",
+        "wrapperPackage": "@cornerstonejs/codec-charls@1.2.7",
         "repository": "https://github.com/cornerstonejs/charls",
-        "sourceSha": "38d95d00671f4cddfa61f3f51eaf81b8bac34543",
+        "sourceSha": "9930a2a2fa75f516c4a08708180c9907fa501a97",
         "license": "BSD-3-Clause",
         "linkedTarget": "charls",
         "files": [
@@ -43,11 +49,13 @@
             "path": "third-party/native-codecs/charls/LICENSE.md",
             "sha256": "e293ccc327ee42f4e723e73aac39b23ffc40655cc6f8baec5c046f2e7d093695"
           }
-        ]
+        ],
+        "wrapperGitHead": "d546620bc7814e836a0587e878b17e95146c76d0",
+        "buildGitCommit": "70030e062b3ff0a2ac69dfbe4a2012d0567cc579"
       },
       {
         "name": "libjpeg-turbo",
-        "wrapperPackage": "@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.4",
+        "wrapperPackage": "@cornerstonejs/codec-libjpeg-turbo-8bit@1.2.7",
         "repository": "https://github.com/cornerstonejs/libjpeg-turbo",
         "sourceSha": "dc4a93fab38b42d29b89a533409e012570180e28",
         "license": "IJG AND BSD-3-Clause AND Zlib",
@@ -61,13 +69,15 @@
             "path": "third-party/native-codecs/libjpeg-turbo/README.ijg",
             "sha256": "4b7b9f8c03bb8d60270dfd12684e70ab21e4abfd27e73905cd1a7c4cae6f5cdb"
           }
-        ]
+        ],
+        "wrapperGitHead": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+        "buildGitCommit": "3f122136bfdfff94ce7c5be92c62ae129c182fda"
       },
       {
         "name": "OpenJPEG",
-        "wrapperPackage": "@cornerstonejs/codec-openjpeg@1.3.2",
+        "wrapperPackage": "@cornerstonejs/codec-openjpeg@1.3.6",
         "repository": "https://github.com/cornerstonejs/openjpeg",
-        "sourceSha": "2d606701e8b7aa83f657d113c3367508e99bd12b",
+        "sourceSha": "6c4a29b00211eb0430fa0e5e890f1ce5c80f409f",
         "license": "BSD-2-Clause",
         "linkedTarget": "openjp2",
         "files": [
@@ -75,21 +85,185 @@
             "path": "third-party/native-codecs/openjpeg/LICENSE",
             "sha256": "a6af136f3e15038a666b61f376612a07d9a4e48cb7c01adbf3e33b3f14ab49b6"
           }
-        ]
+        ],
+        "wrapperGitHead": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+        "buildGitCommit": "3f122136bfdfff94ce7c5be92c62ae129c182fda"
       },
       {
         "name": "OpenJPH",
-        "wrapperPackage": "@cornerstonejs/codec-openjph@2.4.9",
+        "wrapperPackage": "@cornerstonejs/codec-openjph@2.4.11",
         "repository": "https://github.com/cornerstonejs/OpenJPH",
-        "sourceSha": "e01c7b7f9e7ecbb15cf13bb45661c9a41ab7fec6",
+        "sourceSha": "4a68609b55034a14fac23f95afc60e239a9e809e",
         "license": "BSD-2-Clause",
-        "linkedTarget": "openjphsimd",
+        "linkedTarget": "openjph",
         "files": [
           {
             "path": "third-party/native-codecs/openjph/LICENSE",
             "sha256": "5ddf5177863dfc9ab65fa129d587db651241f00e21ed2427b218bea997591f98"
           }
-        ]
+        ],
+        "wrapperGitHead": "bac71dd0d78996e63f2dac3e9ee3a44f2b366a05",
+        "buildGitCommit": "bac71dd0d78996e63f2dac3e9ee3a44f2b366a05"
+      },
+      {
+        "name": "libjxl",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://github.com/libjxl/libjxl",
+        "sourceSha": "794a5dcf0d54f9f0b20d288a12e87afb91d20dfc",
+        "license": "BSD-3-Clause",
+        "linkedTarget": "jxl_dec and jxl_cms",
+        "files": [
+          {
+            "path": "third-party/native-codecs/libjxl/LICENSE",
+            "sha256": "8405932022a556380c2d8c272eff154a923feb197233f348ce5f7334fb0a5ede"
+          },
+          {
+            "path": "third-party/native-codecs/libjxl/PATENTS",
+            "sha256": "91915f8ae056a68a3c5bdf05d9f6f78bb6903e27a8ca3a8434c9e4ac87300575"
+          },
+          {
+            "path": "third-party/native-codecs/libjxl/AUTHORS",
+            "sha256": "00be88a8e3275f8f52a147ecede84c11900fd3180f88478d7cc9f55acabf3a35"
+          }
+        ],
+        "wrapperGitHead": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428",
+        "buildGitCommit": "c9ffa62a82e837485fd9fc918555e340e8d0402a"
+      },
+      {
+        "name": "Brotli",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://github.com/google/brotli",
+        "sourceSha": "36533a866ed1ca4b75cf049f4521e4ec5fe24727",
+        "license": "MIT",
+        "linkedTarget": "brotlidec and brotlicommon",
+        "files": [
+          {
+            "path": "third-party/native-codecs/brotli/LICENSE",
+            "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+          }
+        ],
+        "wrapperGitHead": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428",
+        "buildGitCommit": "c9ffa62a82e837485fd9fc918555e340e8d0402a"
+      },
+      {
+        "name": "Highway",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://github.com/google/highway",
+        "sourceSha": "457c891775a7397bdb0376bb1031e6e027af1c48",
+        "license": "Apache-2.0",
+        "linkedTarget": "hwy",
+        "files": [
+          {
+            "path": "third-party/native-codecs/highway/LICENSE",
+            "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1"
+          },
+          {
+            "path": "third-party/native-codecs/highway/LICENSE-BSD3",
+            "sha256": "d25e82e26acd42ca3ccc9993622631163425b869b9e16284226d534cff6470f2"
+          }
+        ],
+        "wrapperGitHead": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428",
+        "buildGitCommit": "c9ffa62a82e837485fd9fc918555e340e8d0402a",
+        "declaredLicense": "Apache-2.0 OR BSD-3-Clause",
+        "licenseSelectionNote": "File Viewer elects Apache-2.0; both complete upstream texts are retained."
+      },
+      {
+        "name": "skcms",
+        "wrapperPackage": "@cornerstonejs/codec-libjxl@1.1.1",
+        "repository": "https://skia.googlesource.com/skcms",
+        "sourceSha": "42030a771244ba67f86b1c1c76a6493f873c5f91",
+        "license": "BSD-3-Clause",
+        "linkedTarget": "skcms through jxl_cms",
+        "files": [
+          {
+            "path": "third-party/native-codecs/skcms/LICENSE",
+            "sha256": "e59bb5c5c6ba426a9ac4ba9fe667ad14c5166b12aa25be8af1d122b14fbe2e36"
+          }
+        ],
+        "wrapperGitHead": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428",
+        "buildGitCommit": "c9ffa62a82e837485fd9fc918555e340e8d0402a"
+      }
+    ],
+    "wrapperSourceLicenses": [
+      {
+        "name": "@cornerstonejs/codec-libjpeg-turbo-8bit",
+        "version": "1.2.7",
+        "declaredLicense": "ISC",
+        "sourceLicense": "MIT",
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "gitCommit": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+        "buildGitCommit": "3f122136bfdfff94ce7c5be92c62ae129c182fda",
+        "sourcePath": "LICENSE",
+        "path": "third-party/native-codecs/wrapper/LICENSE",
+        "bytes": 1087,
+        "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+      },
+      {
+        "name": "@cornerstonejs/codec-openjpeg",
+        "version": "1.3.6",
+        "declaredLicense": "MIT",
+        "sourceLicense": "MIT",
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "gitCommit": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+        "buildGitCommit": "3f122136bfdfff94ce7c5be92c62ae129c182fda",
+        "sourcePath": "LICENSE",
+        "path": "third-party/native-codecs/wrapper/LICENSE",
+        "bytes": 1087,
+        "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+      },
+      {
+        "name": "@cornerstonejs/codec-libjxl",
+        "version": "1.1.1",
+        "declaredLicense": "BSD-3-Clause",
+        "sourceLicense": "MIT",
+        "repository": "https://github.com/cornerstonejs/codecs",
+        "gitCommit": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428",
+        "buildGitCommit": "c9ffa62a82e837485fd9fc918555e340e8d0402a",
+        "sourcePath": "LICENSE",
+        "path": "third-party/native-codecs/wrapper/LICENSE",
+        "bytes": 1087,
+        "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+      }
+    ],
+    "sdkSourceLicenses": [
+      {
+        "name": "@cornerstonejs/core",
+        "version": "5.11.6",
+        "declaredLicense": "MIT",
+        "sourceLicense": "MIT",
+        "repository": "https://github.com/cornerstonejs/cornerstone3D",
+        "gitCommit": "be55d2009e03d71e5ba287f5ccfa0580b96834c8",
+        "buildGitCommit": "fa5d1790ab05723b49711072a624a234fd92ee76",
+        "sourcePath": "LICENSE",
+        "path": "third-party/native-codecs/sdk/LICENSE",
+        "bytes": 1087,
+        "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+      },
+      {
+        "name": "@cornerstonejs/metadata",
+        "version": "5.11.6",
+        "declaredLicense": "MIT",
+        "sourceLicense": "MIT",
+        "repository": "https://github.com/cornerstonejs/cornerstone3D",
+        "gitCommit": "be55d2009e03d71e5ba287f5ccfa0580b96834c8",
+        "buildGitCommit": "fa5d1790ab05723b49711072a624a234fd92ee76",
+        "sourcePath": "LICENSE",
+        "path": "third-party/native-codecs/sdk/LICENSE",
+        "bytes": 1087,
+        "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+      },
+      {
+        "name": "@cornerstonejs/utils",
+        "version": "5.11.6",
+        "declaredLicense": "MIT",
+        "sourceLicense": "MIT",
+        "repository": "https://github.com/cornerstonejs/cornerstone3D",
+        "gitCommit": "be55d2009e03d71e5ba287f5ccfa0580b96834c8",
+        "buildGitCommit": "fa5d1790ab05723b49711072a624a234fd92ee76",
+        "sourcePath": "LICENSE",
+        "path": "third-party/native-codecs/sdk/LICENSE",
+        "bytes": 1087,
+        "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
       }
     ]
   },
@@ -124,13 +298,13 @@
     },
     {
       "name": "@cornerstonejs/codec-charls",
-      "version": "1.2.5",
+      "version": "1.2.7",
       "license": "MIT",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "Chris Hafey <chafey@gmail.com>",
-      "repository": "https://github.com/chafey/charls-js",
+      "repository": "https://github.com/cornerstonejs/codecs",
       "licenseFiles": [
         "LICENSE"
       ],
@@ -138,35 +312,88 @@
     },
     {
       "name": "@cornerstonejs/codec-libjpeg-turbo-8bit",
-      "version": "1.2.4",
+      "version": "1.2.7",
       "license": "ISC",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/codecs",
-      "licenseFiles": [
-        "LICENSE"
-      ],
-      "noticeFiles": []
+      "licenseFiles": [],
+      "noticeFiles": [],
+      "retainedSourceLicenses": [
+        {
+          "name": "@cornerstonejs/codec-libjpeg-turbo-8bit",
+          "version": "1.2.7",
+          "declaredLicense": "ISC",
+          "sourceLicense": "MIT",
+          "repository": "https://github.com/cornerstonejs/codecs",
+          "gitCommit": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+          "buildGitCommit": "3f122136bfdfff94ce7c5be92c62ae129c182fda",
+          "sourcePath": "LICENSE",
+          "path": "third-party/native-codecs/wrapper/LICENSE",
+          "bytes": 1087,
+          "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+        }
+      ]
+    },
+    {
+      "name": "@cornerstonejs/codec-libjxl",
+      "version": "1.1.1",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/codecs",
+      "licenseFiles": [],
+      "noticeFiles": [],
+      "retainedSourceLicenses": [
+        {
+          "name": "@cornerstonejs/codec-libjxl",
+          "version": "1.1.1",
+          "declaredLicense": "BSD-3-Clause",
+          "sourceLicense": "MIT",
+          "repository": "https://github.com/cornerstonejs/codecs",
+          "gitCommit": "c44693e9c96a126cb100b2c56ebfb7cad1e0a428",
+          "buildGitCommit": "c9ffa62a82e837485fd9fc918555e340e8d0402a",
+          "sourcePath": "LICENSE",
+          "path": "third-party/native-codecs/wrapper/LICENSE",
+          "bytes": 1087,
+          "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+        }
+      ]
     },
     {
       "name": "@cornerstonejs/codec-openjpeg",
-      "version": "1.3.2",
+      "version": "1.3.6",
       "license": "MIT",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/codecs",
-      "licenseFiles": [
-        "LICENSE"
-      ],
-      "noticeFiles": []
+      "licenseFiles": [],
+      "noticeFiles": [],
+      "retainedSourceLicenses": [
+        {
+          "name": "@cornerstonejs/codec-openjpeg",
+          "version": "1.3.6",
+          "declaredLicense": "MIT",
+          "sourceLicense": "MIT",
+          "repository": "https://github.com/cornerstonejs/codecs",
+          "gitCommit": "5c48f12a598db126de66c07779ac764ee1a3bc42",
+          "buildGitCommit": "3f122136bfdfff94ce7c5be92c62ae129c182fda",
+          "sourcePath": "LICENSE",
+          "path": "third-party/native-codecs/wrapper/LICENSE",
+          "bytes": 1087,
+          "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+        }
+      ]
     },
     {
       "name": "@cornerstonejs/codec-openjph",
-      "version": "2.4.9",
+      "version": "2.4.11",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -180,21 +407,34 @@
     },
     {
       "name": "@cornerstonejs/core",
-      "version": "5.8.2",
+      "version": "5.11.6",
       "license": "MIT",
       "direct": true,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
-      "licenseFiles": [
-        "LICENSE"
-      ],
-      "noticeFiles": []
+      "licenseFiles": [],
+      "noticeFiles": [],
+      "retainedSourceLicenses": [
+        {
+          "name": "@cornerstonejs/core",
+          "version": "5.11.6",
+          "declaredLicense": "MIT",
+          "sourceLicense": "MIT",
+          "repository": "https://github.com/cornerstonejs/cornerstone3D",
+          "gitCommit": "be55d2009e03d71e5ba287f5ccfa0580b96834c8",
+          "buildGitCommit": "fa5d1790ab05723b49711072a624a234fd92ee76",
+          "sourcePath": "LICENSE",
+          "path": "third-party/native-codecs/sdk/LICENSE",
+          "bytes": 1087,
+          "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+        }
+      ]
     },
     {
       "name": "@cornerstonejs/dicom-image-loader",
-      "version": "5.8.2",
+      "version": "5.11.6",
       "license": "MIT",
       "direct": true,
       "optional": false,
@@ -207,32 +447,72 @@
       "noticeFiles": []
     },
     {
-      "name": "@cornerstonejs/metadata",
-      "version": "5.8.2",
+      "name": "@cornerstonejs/jpeg-lossless-decoder-js",
+      "version": "2.2.1",
       "license": "MIT",
-      "direct": true,
+      "direct": false,
       "optional": false,
       "firstParty": false,
-      "author": "",
-      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "author": "Michael Martinez",
+      "repository": "https://github.com/cornerstonejs/JPEGLosslessDecoderJS",
       "licenseFiles": [
         "LICENSE"
       ],
       "noticeFiles": []
     },
     {
+      "name": "@cornerstonejs/metadata",
+      "version": "5.11.6",
+      "license": "MIT",
+      "direct": true,
+      "optional": false,
+      "firstParty": false,
+      "author": "",
+      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "licenseFiles": [],
+      "noticeFiles": [],
+      "retainedSourceLicenses": [
+        {
+          "name": "@cornerstonejs/metadata",
+          "version": "5.11.6",
+          "declaredLicense": "MIT",
+          "sourceLicense": "MIT",
+          "repository": "https://github.com/cornerstonejs/cornerstone3D",
+          "gitCommit": "be55d2009e03d71e5ba287f5ccfa0580b96834c8",
+          "buildGitCommit": "fa5d1790ab05723b49711072a624a234fd92ee76",
+          "sourcePath": "LICENSE",
+          "path": "third-party/native-codecs/sdk/LICENSE",
+          "bytes": 1087,
+          "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+        }
+      ]
+    },
+    {
       "name": "@cornerstonejs/utils",
-      "version": "5.8.2",
+      "version": "5.11.6",
       "license": "MIT",
       "direct": false,
       "optional": false,
       "firstParty": false,
       "author": "",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
-      "licenseFiles": [
-        "LICENSE"
-      ],
-      "noticeFiles": []
+      "licenseFiles": [],
+      "noticeFiles": [],
+      "retainedSourceLicenses": [
+        {
+          "name": "@cornerstonejs/utils",
+          "version": "5.11.6",
+          "declaredLicense": "MIT",
+          "sourceLicense": "MIT",
+          "repository": "https://github.com/cornerstonejs/cornerstone3D",
+          "gitCommit": "be55d2009e03d71e5ba287f5ccfa0580b96834c8",
+          "buildGitCommit": "fa5d1790ab05723b49711072a624a234fd92ee76",
+          "sourcePath": "LICENSE",
+          "path": "third-party/native-codecs/sdk/LICENSE",
+          "bytes": 1087,
+          "sha256": "456823558d5aee9aaed81428f9eb90d97c85ba0f770975b7ccff9ce12ef61438"
+        }
+      ]
     },
     {
       "name": "@file-viewer/core",
@@ -345,18 +625,6 @@
       "noticeFiles": []
     },
     {
-      "name": "@rollup/rollup-linux-x64-gnu",
-      "version": "4.13.0",
-      "license": "MIT",
-      "direct": false,
-      "optional": true,
-      "firstParty": false,
-      "author": "Rollup contributors",
-      "repository": "https://github.com/rollup/rollup",
-      "licenseFiles": [],
-      "noticeFiles": []
-    },
-    {
       "name": "@types/trusted-types",
       "version": "2.0.7",
       "license": "MIT",
@@ -442,7 +710,7 @@
     },
     {
       "name": "baseline-browser-mapping",
-      "version": "2.11.27",
+      "version": "2.11.28",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,
@@ -850,7 +1118,7 @@
     },
     {
       "name": "glob",
-      "version": "7.2.0",
+      "version": "7.2.3",
       "license": "ISC",
       "direct": false,
       "optional": false,
@@ -969,20 +1237,6 @@
       "firstParty": false,
       "author": "Jordan Harband <ljharb@gmail.com>",
       "repository": "https://github.com/inspect-js/is-core-module",
-      "licenseFiles": [
-        "LICENSE"
-      ],
-      "noticeFiles": []
-    },
-    {
-      "name": "jpeg-lossless-decoder-js",
-      "version": "2.1.2",
-      "license": "MIT",
-      "direct": false,
-      "optional": false,
-      "firstParty": false,
-      "author": "",
-      "repository": "https://github.com/rii-mango/JPEGLosslessDecoderJS",
       "licenseFiles": [
         "LICENSE"
       ],
