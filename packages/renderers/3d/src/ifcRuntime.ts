@@ -345,9 +345,12 @@ export async function renderIfc(
           });
         ensureLive();
         if (request !== selectionId) return null;
+        await fragments?.update(true);
+        ensureLive();
+        if (request !== selectionId) return null;
+        // Publish committed selection state only after the engine has flushed.
         root.dataset.ifcSelected = selection ? String(selection.localId) : "";
         renderProperties(selection);
-        await fragments?.update(true);
         options.onSelectionChange?.(selection);
         return selection;
       });

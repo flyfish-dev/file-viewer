@@ -7,7 +7,9 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { createHash } from "node:crypto";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../../../..");
-const packageRoot = resolve(process.env.IFC_TEST_PACKAGE_ROOT || join(here, ".."));
+const packageRoot = resolve(
+  process.env.IFC_TEST_PACKAGE_ROOT || join(here, ".."),
+);
 const { copyIfcAssets } = await import(
   pathToFileURL(join(packageRoot, "bin/copy-ifc-assets.mjs")).href
 );
@@ -189,12 +191,99 @@ try {
       selected.globalId && selected.entityType,
       JSON.stringify(selected),
     );
+    // Hold the real engine's next forced refresh so completion cannot be
+    // inferred from DOM state before the preceding selection has finished.
+    await page.evaluate(() => {
+      const fragments = extension.fragments;
+      const original = fragments.update.bind(fragments);
+      let release;
+      const pending = new Promise((resolve) => {
+        release = resolve;
+      });
+      window.ifcSelectionFlushGate = {
+        waiting: false,
+        release,
+        restore: () => {
+          fragments.update = original;
+        },
+      };
+      fragments.update = async (force) => {
+        if (force && !ifcSelectionFlushGate.waiting) {
+          ifcSelectionFlushGate.waiting = true;
+          await pending;
+        }
+        return original(force);
+      };
+    });
     await page.getByRole("button", { name: "Clear selection" }).click();
+    await page.waitForFunction(() => ifcSelectionFlushGate.waiting);
+    const pendingClear = await page.evaluate(() => ({
+      selected: instance.$el.dataset.ifcSelected,
+      lastCallback: selections.at(-1)?.localId ?? null,
+    }));
+    console.log("IFC_CLEAR_PENDING", JSON.stringify({ name, ...pendingClear }));
+    assert.equal(
+      pendingClear.selected,
+      String(selected.localId),
+      "Cleared DOM state was published before the engine completed its refresh",
+    );
+    assert.equal(pendingClear.lastCallback, selected.localId);
+    await page.evaluate(() => {
+      ifcSelectionFlushGate.release();
+      ifcSelectionFlushGate.restore();
+    });
     await page.waitForFunction(
       () =>
         document.querySelector("[data-ifc-selected]")?.dataset.ifcSelected ===
-        "",
+          "" && selections.at(-1) === null,
     );
+    await page.evaluate(() => {
+      window.ifcPickingTrace = [];
+      const { world, model } = extension;
+      const canvas = world.renderer.three.domElement;
+      for (const type of ["pointerdown", "pointerup"])
+        canvas.addEventListener(
+          type,
+          (event) => {
+            ifcPickingTrace.push({
+              type,
+              x: event.clientX,
+              y: event.clientY,
+              button: event.button,
+              trusted: event.isTrusted,
+              target: event.target === canvas,
+            });
+          },
+          { capture: true },
+        );
+      const raycast = model.raycast.bind(model);
+      model.raycast = (options) => {
+        const rect = canvas.getBoundingClientRect();
+        const record = {
+          type: "raycast",
+          x: options.mouse.x,
+          y: options.mouse.y,
+          rect: {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height,
+          },
+          camera: [...options.camera.matrixWorld.elements],
+        };
+        ifcPickingTrace.push(record);
+        const result = raycast(options);
+        result.then(
+          (hit) => {
+            record.localId = hit?.localId ?? null;
+          },
+          (error) => {
+            record.error = error.message;
+          },
+        );
+        return result;
+      };
+    });
     // Find a real ray hit without assuming the file's element IDs or geometry.
     const hit = await page.evaluate(async () => {
       const { world, model } = extension,
@@ -214,6 +303,8 @@ try {
       return null;
     });
     assert.ok(hit, "No visible IFC geometry can be picked");
+    report.pendingPicking = { name, hit };
+    console.log("IFC_PICK_REFERENCE", JSON.stringify(report.pendingPicking));
     await page.mouse.click(hit.x, hit.y);
     await page.waitForFunction(
       (id) =>
@@ -221,6 +312,12 @@ try {
         String(id),
       hit.localId,
     );
+    const picking = await page.evaluate(() => ({
+      events: ifcPickingTrace,
+      selections: selections.map((value) => value?.localId ?? null),
+      selected: instance.$el.dataset.ifcSelected,
+    }));
+    console.log("IFC_PICK_OBSERVATION", JSON.stringify(picking));
     await page.waitForFunction(
       () => extension.world.renderer.three.info.render.triangles > 0,
     );
@@ -243,6 +340,7 @@ try {
       ...loaded,
       selected,
       picked: hit.localId,
+      picking,
       drawn,
       milliseconds: Date.now() - start,
       workers: await page.evaluate(() => ({ ...workerCounts })),
@@ -481,6 +579,20 @@ try {
   report.inputLimit = true;
   report.abort = true;
 } catch (error) {
+  const page = browser.contexts()[0]?.pages()[0];
+  report.failure = {
+    message: error.message,
+    picking: await page
+      ?.evaluate(() => ({
+        events: window.ifcPickingTrace,
+        selections: window.selections?.map((value) => value?.localId ?? null),
+        selected: window.instance?.$el.dataset.ifcSelected,
+        status: window.instance?.$el.dataset.ifcStatus,
+        message: document.querySelector(".fv-ifc-status")?.textContent,
+      }))
+      .catch(() => null),
+  };
+  console.error("IFC_PICK_FAILURE", JSON.stringify(report.failure));
   console.error(error);
   await Promise.all(
     browser
