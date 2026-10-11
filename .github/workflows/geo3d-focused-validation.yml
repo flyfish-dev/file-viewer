@@ -62,6 +62,15 @@ jobs:
           ${{ !cancelled() && steps.entry.outcome == 'success' && steps.browser.outcome == 'success' }}
         shell: bash
         run: node packages/renderers/3d/scripts/verify-geo3d-browser.mjs 2>&1 | tee output/geo3d-focused/browser.log
+      - name: Real IFC models and physically installed consumer selection
+        if: >-
+          ${{ !cancelled() && steps.entry.outcome == 'success' && steps.browser.outcome == 'success' }}
+        shell: bash
+        run: |
+          pnpm --filter @file-viewer/renderer-3d... build
+          node packages/renderers/3d/scripts/download-ifc-fixtures.mjs "$RUNNER_TEMP/ifc-samples"
+          pnpm --filter @file-viewer/renderer-3d verify:ifc-browser "$RUNNER_TEMP/ifc-samples"
+          pnpm --filter @file-viewer/renderer-3d verify:ifc-installed "$RUNNER_TEMP/ifc-samples"
       - name: XML malformed-WASM recovery regression
         if: >-
           ${{ !cancelled() && steps.install.outcome == 'success' && steps.browser.outcome == 'success' }}
@@ -86,4 +95,4 @@ jobs:
         run: pnpm verify:github-governance 2>&1 | tee output/geo3d-focused/governance.log
       - name: Retain focused evidence even when a check fails
         if: ${{ !cancelled() }}
-        run: node .github/scripts/report-ci-evidence.mjs --require-files output/geo3d-focused output/geo3d-validation output/geo3d-browser
+        run: node .github/scripts/report-ci-evidence.mjs --require-files output/geo3d-focused output/geo3d-validation output/geo3d-browser output/ifc-browser output/ifc-installed
