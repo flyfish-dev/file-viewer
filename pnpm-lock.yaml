@@ -79,7 +79,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: 5.0.3
-        version: 5.0.3(@types/node@26.6.4)(happy-dom@20.14.5)(jsdom@30.1.2)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
+        version: 5.0.3(@types/node@26.6.4)(happy-dom@20.14.5)(jsdom@30.1.2)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
       vue:
         specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -160,8 +160,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   apps/docs-site:
     dependencies:
@@ -182,7 +182,7 @@ importers:
         version: 16.16.2(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.5)
       fumadocs-mdx:
         specifier: 15.4.6
-        version: 15.4.6(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.16.2(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.5))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react@19.3.0)(rolldown@1.2.13)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
+        version: 15.4.6(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.16.2(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.5))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react@19.3.0)(rolldown@1.2.13)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
       fumadocs-ui:
         specifier: npm:@fumadocs/base-ui@16.15.8
         version: '@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.16.2(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.5))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3)'
@@ -241,7 +241,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.9(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.9(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vue/tsconfig':
         specifier: ^0.9.1
         version: 0.9.1(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))
@@ -249,8 +249,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
       vue-tsc:
         specifier: ^3.3.4
         version: 3.3.12(typescript@6.0.3)
@@ -295,10 +295,10 @@ importers:
         version: 1.53.0(vue@3.5.42(typescript@6.0.3))
       '@thatopen/components':
         specifier: 3.4.9
-        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
+        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
       '@thatopen/fragments':
         specifier: 3.4.8
-        version: 3.4.8(three@0.186.1)(web-ifc@0.0.77)
+        version: 3.4.8(three@0.186.1)(web-ifc@0.0.78)
       bpmn-js:
         specifier: 18.31.0
         version: 18.31.0
@@ -312,8 +312,8 @@ importers:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
       web-ifc:
-        specifier: 0.0.77
-        version: 0.0.77
+        specifier: 0.0.78
+        version: 0.0.78
       xmllint-wasm:
         specifier: 5.3.0
         version: 5.3.0(@types/node@26.6.4)
@@ -329,10 +329,10 @@ importers:
         version: 6.15.1
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.9(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.9(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vitejs/plugin-vue-jsx':
         specifier: ^5.1.5
-        version: 5.1.6(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 5.1.6(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vue/tsconfig':
         specifier: ^0.9.1
         version: 0.9.1(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))
@@ -361,8 +361,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
       vue-tsc:
         specifier: ^3.3.4
         version: 3.3.12(typescript@6.0.3)
@@ -380,8 +380,8 @@ importers:
         version: link:../../packages/components/web
     devDependencies:
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   examples/react-vite:
     dependencies:
@@ -409,13 +409,13 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.1.1
-        version: 6.1.2(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
+        version: 6.1.2(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   examples/vanilla-vite:
     dependencies:
@@ -433,8 +433,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   examples/vue3-vite:
     dependencies:
@@ -450,13 +450,13 @@ importers:
         version: link:../../packages/presets/vite-plugin
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.9(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.9(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
       vue-tsc:
         specifier: ^3.3.4
         version: 3.3.12(typescript@6.0.3)
@@ -484,8 +484,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   packages/capabilities/midi:
     dependencies:
@@ -655,8 +655,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   packages/components/jquery:
     dependencies:
@@ -882,10 +882,10 @@ importers:
         version: 26.6.4
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.9(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 6.0.9(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vitejs/plugin-vue-jsx':
         specifier: ^5.1.5
-        version: 5.1.6(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
+        version: 5.1.6(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))
       '@vue/language-core':
         specifier: ^3.3.4
         version: 3.3.12
@@ -899,11 +899,11 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
       vite-plugin-dts:
         specifier: 5.1.2
-        version: 5.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
+        version: 5.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
       vue:
         specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -946,8 +946,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   packages/components/web-full:
     dependencies:
@@ -1049,8 +1049,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   packages/core:
     dependencies:
@@ -1322,8 +1322,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   packages/renderers/3d:
     dependencies:
@@ -1342,10 +1342,10 @@ importers:
         version: 2.0.5(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
       '@thatopen/components':
         specifier: 3.4.9
-        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
+        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
       '@thatopen/fragments':
         specifier: 3.4.8
-        version: 3.4.8(three@0.186.1)(web-ifc@0.0.77)
+        version: 3.4.8(three@0.186.1)(web-ifc@0.0.78)
       '@types/three':
         specifier: ^0.186.0
         version: 0.186.0
@@ -1359,8 +1359,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       web-ifc:
-        specifier: 0.0.77
-        version: 0.0.77
+        specifier: 0.0.78
+        version: 0.0.78
 
   packages/renderers/archive:
     dependencies:
@@ -1522,14 +1522,14 @@ importers:
         version: 2.2.0
     devDependencies:
       '@cornerstonejs/core':
-        specifier: 5.11.6
-        version: 5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
+        specifier: 5.11.7
+        version: 5.11.7(@cornerstonejs/metadata@5.11.7)(@cornerstonejs/utils@5.11.7)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
       '@cornerstonejs/dicom-image-loader':
-        specifier: 5.11.6
-        version: 5.11.6(@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.6)(dicom-parser@1.8.21)
+        specifier: 5.11.7
+        version: 5.11.7(@cornerstonejs/core@5.11.7(@cornerstonejs/metadata@5.11.7)(@cornerstonejs/utils@5.11.7)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.7)(dicom-parser@1.8.21)
       '@cornerstonejs/metadata':
-        specifier: 5.11.6
-        version: 5.11.6
+        specifier: 5.11.7
+        version: 5.11.7
       '@types/pako':
         specifier: ^2.0.4
         version: 2.0.4
@@ -1537,8 +1537,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vite:
-        specifier: 8.3.3
-        version: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   packages/renderers/doc:
     dependencies:
@@ -2109,7 +2109,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: 5.0.3
-        version: 5.0.3(@types/node@26.6.4)(happy-dom@20.14.5)(jsdom@30.1.2)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
+        version: 5.0.3(@types/node@26.6.4)(happy-dom@20.14.5)(jsdom@30.1.2)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
 
   packages/tools/asset-installer:
     devDependencies:
@@ -2465,27 +2465,27 @@ packages:
     resolution: {integrity: sha512-NzwCYevGSj2JOuP7BztxrOd5WnJ86gOGLv3sq36jZxxHUXoDo1YhzizHiYz+T7GQqkzbfaQcwSyxsRogzGFIPQ==}
     engines: {node: '>=0.14'}
 
-  '@cornerstonejs/core@5.11.6':
-    resolution: {integrity: sha512-xnbkL/xValS+ACzKdru4Rtd0gY3i2JcCitJzjPF1DKk4zxN7dhqnSndfZr2e3Sc5LJ5gG7IEg5G39UIfqd76rg==}
+  '@cornerstonejs/core@5.11.7':
+    resolution: {integrity: sha512-RIQYu6WmlDCXNKcBdgpR9UpMXuulJYX4JlQE74D6Bq+TqIdheXii1MsCTaIgM09QgZxdqnQPqXFrFA4SGhe+Wg==}
     peerDependencies:
-      '@cornerstonejs/metadata': 5.11.6
-      '@cornerstonejs/utils': 5.11.6
+      '@cornerstonejs/metadata': 5.11.7
+      '@cornerstonejs/utils': 5.11.7
 
-  '@cornerstonejs/dicom-image-loader@5.11.6':
-    resolution: {integrity: sha512-YCvj7M+1YVFD3k1Aroqsw3b7DM9VMcSmSxIUQggCw0XoResSBMDkscKm00uDPCG79bKarkotqwqu8G8Fc3iZWA==}
+  '@cornerstonejs/dicom-image-loader@5.11.7':
+    resolution: {integrity: sha512-1s02lj7NXUHslaw/V/3McJHA55qI9BQs88HO6nVcHM2ybIgndFtPoFeP8H9HoPpBJ7HIUNIGSF3kapkYPrXMEA==}
     peerDependencies:
-      '@cornerstonejs/core': 5.11.6
-      '@cornerstonejs/metadata': 5.11.6
+      '@cornerstonejs/core': 5.11.7
+      '@cornerstonejs/metadata': 5.11.7
       dicom-parser: 1.8.21
 
   '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1':
     resolution: {integrity: sha512-cDCv7dm3qw9kbxCydvj0UGbNQcsPmTwcyd9SQXkBt34CDgSBeb8Xvj0Gz9HlJ+7DIKOFMTazF1oDJSu0pcCKmg==}
 
-  '@cornerstonejs/metadata@5.11.6':
-    resolution: {integrity: sha512-df4TSp3iXWtAeDOtTu2O8OfLYt0L9aJLDTMQ8Y+mTduGOddbMXY0jiLEZFKCSA7L9JcHm6mz07fSNI6bpI98tA==}
+  '@cornerstonejs/metadata@5.11.7':
+    resolution: {integrity: sha512-CWfUkAI2Gst2l4tmDo2wJGzEh8DfP4DoNrHPXG2/67gxHZ8owWexRW0DOdzovx8B4jWJpGXYruYNAu0WO8uqpQ==}
 
-  '@cornerstonejs/utils@5.11.6':
-    resolution: {integrity: sha512-er+R90NmjJazUfXV/IoeWN5eUvFbuONrRF/bmJdSVvluWBvGbNLmPONif+gEFA4cOyFr0mq9t7uxn7S0g4hJig==}
+  '@cornerstonejs/utils@5.11.7':
+    resolution: {integrity: sha512-1voMt9+AUqbI0wtJMIsxj5VpUX+RlqaefQKdDHrGZZSx3VpRdYf0D63sn8aR4NKfi+2vXbWm5dIfFPQgv/1Uyw==}
 
   '@csstools/color-helpers@6.1.2':
     resolution: {integrity: sha512-grhRy3OKmniaAEKXMjua5z/EODX0MSqBGjunw8+j/3HQjOnahs2AGhvEOIYVUWcU6ScApbhLhVrQTX8XqrMrow==}
@@ -6889,8 +6889,8 @@ packages:
       vite:
         optional: true
 
-  vite@8.3.3:
-    resolution: {integrity: sha512-cTAldKPImjg6c+gk48U19POPn3GCBzZwpdsN8ZMEEcbpes+6/wvfqUd0C2y3qYY4wsj8PwgFwrZ/1jBPVttMSg==}
+  vite@8.3.4:
+    resolution: {integrity: sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -7002,8 +7002,8 @@ packages:
     resolution: {integrity: sha512-4Nsy8K5Tr6SPDH9jhKJOHf7ChDrc1zufZTVSF7x72hwuEXBqxqk9G6cK+K2NRUtB3iELRJqjXb4JPDMBjMTl2Q==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
-  web-ifc@0.0.77:
-    resolution: {integrity: sha512-VzQ0W/Iiqbidxn1ECUvz6qJ6p2sXBVNcOsUOBCETzy77psAH6yFLKQm74aXabkx3JH4OvFVHe8k1qS6+Z2zl1w==}
+  web-ifc@0.0.78:
+    resolution: {integrity: sha512-LGKMNYFVNyz9vVERN0iz+zvPQJqT7MEGBxslzcuuhwDDOA116LmJLKkg8sZ5SEvQJSc5NRVMWgpRNkDmuoQoJg==}
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
@@ -7411,10 +7411,10 @@ snapshots:
 
   '@cornerstonejs/codec-openjph@2.4.11': {}
 
-  '@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)':
+  '@cornerstonejs/core@5.11.7(@cornerstonejs/metadata@5.11.7)(@cornerstonejs/utils@5.11.7)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)':
     dependencies:
-      '@cornerstonejs/metadata': 5.11.6
-      '@cornerstonejs/utils': 5.11.6
+      '@cornerstonejs/metadata': 5.11.7
+      '@cornerstonejs/utils': 5.11.7
       '@kitware/vtk.js': 36.4.1(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
       comlink: 4.4.2
       gl-matrix: 3.4.3
@@ -7423,16 +7423,16 @@ snapshots:
       - autoprefixer
       - wslink
 
-  '@cornerstonejs/dicom-image-loader@5.11.6(@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.6)(dicom-parser@1.8.21)':
+  '@cornerstonejs/dicom-image-loader@5.11.7(@cornerstonejs/core@5.11.7(@cornerstonejs/metadata@5.11.7)(@cornerstonejs/utils@5.11.7)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.7)(dicom-parser@1.8.21)':
     dependencies:
       '@cornerstonejs/codec-charls': 1.2.7
       '@cornerstonejs/codec-libjpeg-turbo-8bit': 1.2.7
       '@cornerstonejs/codec-libjxl': 1.1.1
       '@cornerstonejs/codec-openjpeg': 1.3.6
       '@cornerstonejs/codec-openjph': 2.4.11
-      '@cornerstonejs/core': 5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
+      '@cornerstonejs/core': 5.11.7(@cornerstonejs/metadata@5.11.7)(@cornerstonejs/utils@5.11.7)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
       '@cornerstonejs/jpeg-lossless-decoder-js': 2.2.1
-      '@cornerstonejs/metadata': 5.11.6
+      '@cornerstonejs/metadata': 5.11.7
       comlink: 4.4.2
       dicom-parser: 1.8.21
       pako: 2.1.0
@@ -7440,14 +7440,14 @@ snapshots:
 
   '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1': {}
 
-  '@cornerstonejs/metadata@5.11.6':
+  '@cornerstonejs/metadata@5.11.7':
     dependencies:
       '@cornerstonejs/calculate-suv': 1.0.3
-      '@cornerstonejs/utils': 5.11.6
+      '@cornerstonejs/utils': 5.11.7
       dcmjs: 0.52.0
       gl-matrix: 3.4.3
 
-  '@cornerstonejs/utils@5.11.6':
+  '@cornerstonejs/utils@5.11.7':
     dependencies:
       dcmjs: 0.52.0
 
@@ -8292,24 +8292,24 @@ snapshots:
       postcss: 8.5.29
       tailwindcss: 4.3.3
 
-  '@thatopen/components@3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)':
+  '@thatopen/components@3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)':
     dependencies:
-      '@thatopen/fragments': 3.4.8(three@0.186.1)(web-ifc@0.0.77)
+      '@thatopen/fragments': 3.4.8(three@0.186.1)(web-ifc@0.0.78)
       camera-controls: 3.1.2(three@0.186.1)
       fast-xml-parser: 5.7.2
       jszip: 3.10.2
       three: 0.186.1
       three-mesh-bvh: 0.9.9(three@0.186.1)
-      web-ifc: 0.0.77
+      web-ifc: 0.0.78
 
-  '@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77)':
+  '@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.78)':
     dependencies:
       earcut: 3.2.4
       flatbuffers: 25.2.10
       lru-cache: 11.1.0
       pako: 2.1.0
       three: 0.186.1
-      web-ifc: 0.0.77
+      web-ifc: 0.0.78
       xxhash-wasm: 1.1.0
 
   '@tmcw/togeojson@7.1.2': {}
@@ -8544,37 +8544,37 @@ snapshots:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
 
-  '@vitejs/plugin-react@6.1.2(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))':
+  '@vitejs/plugin-react@6.1.2(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
-  '@vitejs/plugin-vue-jsx@5.1.6(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
+  '@vitejs/plugin-vue-jsx@5.1.6(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/plugin-syntax-typescript': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-typescript': 7.29.9(@babel/core@7.29.7)
       '@rolldown/pluginutils': 1.0.1
       '@vue/babel-plugin-jsx': 2.0.1(@babel/core@7.29.7)
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
       vue: 3.5.42(typescript@6.0.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@6.0.9(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
+  '@vitejs/plugin-vue@6.0.9(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
       vue: 3.5.42(typescript@6.0.3)
 
-  '@vitest/mocker@5.0.3(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))':
+  '@vitest/mocker@5.0.3(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.3
       estree-walker: 3.0.3
       magic-string: 1.4.3
     optionalDependencies:
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
 
   '@vitest/spy@5.0.3': {}
 
@@ -9798,7 +9798,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@15.4.6(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.16.2(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.5))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react@19.3.0)(rolldown@1.2.13)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
+  fumadocs-mdx@15.4.6(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.16.2(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.5))(next@16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1))(react@19.3.0)(rolldown@1.2.13)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
     dependencies:
       '@mdx-js/mdx': 3.1.1
       '@standard-schema/spec': 1.1.0
@@ -9827,7 +9827,7 @@ snapshots:
       next: 16.4.0(@types/node@26.6.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.105.1)
       react: 19.3.0
       rolldown: 1.2.13
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -11949,7 +11949,7 @@ snapshots:
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.0.2
 
-  unplugin-dts@1.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
+  unplugin-dts@1.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
     dependencies:
       '@rollup/pluginutils': 5.4.0
       '@volar/typescript': 2.4.28
@@ -11965,7 +11965,7 @@ snapshots:
       '@vue/language-core': 3.3.12
       esbuild: 0.28.2
       rolldown: 1.2.13
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -12040,11 +12040,11 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-dts@5.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
+  vite-plugin-dts@5.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
     dependencies:
-      unplugin-dts: 1.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
+      unplugin-dts: 1.1.2(@vue/language-core@3.3.12)(esbuild@0.28.2)(rolldown@1.2.13)(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
     optionalDependencies:
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
     transitivePeerDependencies:
       - '@rspack/core'
       - '@vue/language-core'
@@ -12054,7 +12054,7 @@ snapshots:
       - typescript
       - webpack
 
-  vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1):
+  vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -12069,10 +12069,10 @@ snapshots:
       sass: 1.105.1
       yaml: 2.9.1
 
-  vitest@5.0.3(@types/node@26.6.4)(happy-dom@20.14.5)(jsdom@30.1.2)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
+  vitest@5.0.3(@types/node@26.6.4)(happy-dom@20.14.5)(jsdom@30.1.2)(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.3(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
+      '@vitest/mocker': 5.0.3(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
       chai: 6.3.0
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -12083,7 +12083,7 @@ snapshots:
       tinybench: 6.2.1
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
-      vite: 8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
+      vite: 8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)
       why-is-node-running: 3.2.1
     optionalDependencies:
       '@types/node': 26.6.4
@@ -12121,7 +12121,7 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  web-ifc@0.0.77: {}
+  web-ifc@0.0.78: {}
 
   web-namespaces@2.0.1: {}
 
