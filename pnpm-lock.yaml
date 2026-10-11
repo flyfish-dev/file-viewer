@@ -46,7 +46,6 @@ overrides:
   '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.1.2
 
 patchedDependencies:
-  '@file-viewer/ppt@0.3.4': 5c160aa61e49f524994702dea8b6341541a4b693f9bf0b274e1bb2287d720f63
   illustrator-pgf@0.1.0: 20b0fb03a2d6dc6397b53ed6e83b26b2d47464a44831145881d4b17914319b3d
   pdfjs-dist@5.4.624: a484b7eff884a0e5161286126623b28a0d3100053f850a56f5ae56e587ab4c26
 
@@ -1037,6 +1036,9 @@ importers:
       '@file-viewer/capability-pdf-identity-repair':
         specifier: workspace:3.1.2
         version: link:../../capabilities/pdf-identity-repair
+      '@file-viewer/ppt':
+        specifier: 0.3.6
+        version: 0.3.6
       '@types/node':
         specifier: ^26.5.1
         version: 26.6.4
@@ -1911,8 +1913,8 @@ importers:
         specifier: workspace:3.1.2
         version: link:../../core
       '@file-viewer/ppt':
-        specifier: 0.3.4
-        version: 0.3.4(patch_hash=5c160aa61e49f524994702dea8b6341541a4b693f9bf0b274e1bb2287d720f63)
+        specifier: 0.3.6
+        version: 0.3.6
     devDependencies:
       typescript:
         specifier: ^6.0.3
@@ -2695,8 +2697,8 @@ packages:
   '@file-viewer/docx@0.3.34':
     resolution: {integrity: sha512-ser6ws0xgnG0hnYxL0yM8rggmHtGWSyNY8GPvvWMiv8RYroS/ts0u3tUPy5hD0jAMsv3Clt5ivK/9ScKsaH2XQ==}
 
-  '@file-viewer/ppt@0.3.4':
-    resolution: {integrity: sha512-9I0rCheWYlPO7peC4DjflCcBTJJxbGMkEvqIZfueG7Lgh/VLow/Ol1YqWSr3kuNHr4FBojQJOa+lqmfx3iJsSg==}
+  '@file-viewer/ppt@0.3.6':
+    resolution: {integrity: sha512-nl3Cwu7uIPVi4mHfD8aOzsbjIPJCqUSaSJxig/2V7T+qsZbGX/EZT1Txgmae8oPjsA4N3fychETyMXk5L9xCDw==}
     engines: {node: '>=18'}
 
   '@floating-ui/core@1.8.0':
@@ -7565,7 +7567,7 @@ snapshots:
       '@xmldom/xmldom': 0.9.12
       jszip: 3.10.2
 
-  '@file-viewer/ppt@0.3.4(patch_hash=5c160aa61e49f524994702dea8b6341541a4b693f9bf0b274e1bb2287d720f63)': {}
+  '@file-viewer/ppt@0.3.6': {}
 
   '@floating-ui/core@1.8.0':
     dependencies:

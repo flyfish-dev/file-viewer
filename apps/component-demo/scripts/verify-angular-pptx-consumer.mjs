@@ -22,7 +22,17 @@ const project = process.env.PACKED_ANGULAR_CONSUMER_DIR
       ],
       renderers: 'office-presentation'
     })
-const output = resolve(project, 'angular-regression-evidence')
+const browserName = process.env.PACKED_ANGULAR_BROWSER || 'chromium'
+assert.ok(
+  ['chromium', 'webkit'].includes(browserName),
+  `Unsupported Angular test browser: ${browserName}`
+)
+const output = resolve(
+  project,
+  browserName === 'chromium'
+    ? 'angular-regression-evidence'
+    : `angular-regression-evidence-${browserName}`
+)
 await mkdir(output, { recursive: true })
 const require = createRequire(import.meta.url)
 const consumerRequire = createRequire(resolve(project, 'package.json'))
@@ -45,11 +55,14 @@ for (const path of [
   } catch {}
 }
 assert.ok(playwright, 'Run with npm exec --package playwright')
-const browser = await (playwright.chromium || playwright.default.chromium).launch({
+const browserType = playwright[browserName] || playwright.default?.[browserName]
+assert.ok(browserType, `Playwright does not provide ${browserName}`)
+const browser = await browserType.launch({
   headless: true
 })
 const report = {
   project,
+  browser: browserName,
   angular: consumerRequire('@angular/core/package.json').version,
   tooling: {
     build: consumerRequire('@angular/build/package.json').version,
@@ -77,6 +90,7 @@ async function verify(mode, port) {
   page = await browser.newPage({ viewport: { width: 1200, height: 820 } })
   page.setDefaultTimeout(90_000)
   const workers = [],
+    closedWorkers = [],
     errors = [],
     responses = [],
     failures = [],
@@ -84,7 +98,10 @@ async function verify(mode, port) {
   page.on('framenavigated', (frame) => {
     if (frame === page.mainFrame()) navigations.push(frame.url())
   })
-  page.on('worker', (worker) => workers.push(worker.url()))
+  page.on('worker', (worker) => {
+    const index = workers.push(worker.url()) - 1
+    worker.on('close', () => closedWorkers.push(index))
+  })
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('response', (response) =>
     responses.push({
@@ -165,6 +182,25 @@ async function verify(mode, port) {
     `${mode}: application returned failed resource responses`
   )
   await page.screenshot({ path: resolve(output, `${mode}.png`) })
+  await page.waitForFunction(
+    () => typeof window.fileViewerRegressionDestroyAngularApp === 'function'
+  )
+  await page.evaluate(() => window.fileViewerRegressionDestroyAngularApp())
+  await page.waitForFunction(() => !document.querySelector('.flyfish-pptx-content'))
+  for (let attempt = 0; attempt < 100 && closedWorkers.length < workers.length; attempt++)
+    await page.waitForTimeout(50)
+  assert.equal(
+    closedWorkers.length,
+    workers.length,
+    `${mode}: Angular disposal must terminate every PPTX Worker before closing the page`
+  )
+  assert.deepEqual(errors, [], `${mode}: Angular disposal caused browser errors`)
+  result.disposal = {
+    applicationDestroyed: true,
+    viewerDomRemoved: true,
+    workerCount: workers.length,
+    closedWorkerIndexes: [...closedWorkers]
+  }
   result.passed = true
   await page.close()
 }
@@ -235,7 +271,10 @@ async function verifyMissingManifestDiagnostic(port, manifest) {
   try {
     page = await browser.newPage({ viewport: { width: 1200, height: 820 } })
     page.setDefaultTimeout(30_000)
-    const workers = [], errors = [], responses = [], failures = []
+    const workers = [],
+      errors = [],
+      responses = [],
+      failures = []
     page.on('worker', (worker) => workers.push(worker.url()))
     page.on('pageerror', (error) => errors.push(error.message))
     page.on('response', (response) =>
@@ -259,14 +298,24 @@ async function verifyMissingManifestDiagnostic(port, manifest) {
     await error.waitFor({ state: 'visible' })
     result.text = await error.innerText()
     await page.waitForFunction(() => {
-      return document.querySelector('[data-testid="angular-pptx-host"]')?.getAttribute('data-viewer-state') === 'error'
+      return (
+        document
+          .querySelector('[data-testid="angular-pptx-host"]')
+          ?.getAttribute('data-viewer-state') === 'error'
+      )
     })
-    result.state = await page.locator('[data-testid="angular-pptx-host"]').getAttribute('data-viewer-state')
+    result.state = await page
+      .locator('[data-testid="angular-pptx-host"]')
+      .getAttribute('data-viewer-state')
     assert.match(result.text, /file-viewer-copy-assets/)
     assert.equal(result.state, 'error', 'missing manifest: controller must enter the error state')
     assert.deepEqual(workers, [], 'missing manifest: no unresolved Worker may start')
     assert.deepEqual(errors, [], 'missing manifest: the renderer must surface a handled diagnostic')
-    assert.deepEqual(failures, [], 'missing manifest: the renderer must not request a guessed Worker URL')
+    assert.deepEqual(
+      failures,
+      [],
+      'missing manifest: the renderer must not request a guessed Worker URL'
+    )
     assert.ok(
       !responses.some((response) => response.url.endsWith('/worker/pptx.worker.js')),
       'missing manifest: guessed application-relative Worker URL requested'

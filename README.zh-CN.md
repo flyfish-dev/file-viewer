@@ -165,7 +165,7 @@ CLI 默认使用 Standard 组合；`--profile full` 选择 Full 兼容包并添�
 ></flyfish-file-viewer>
 ```
 
-先将 `@file-viewer/web-full` 的完整 `dist/` 部署到示例中的 `/file-viewer/dist/`。IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包、CHM 等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@0.3.4` ESM、Worker、WASM、CJK 字体与帧缓存模块，`vendor/chm/` 包含 CHM Rust/WASM Worker，并与其它版本对齐的资产一起交付。二进制 `.ppt` 和 CHM 默认无需配置运行时 URL；格式专用 URL 选项只用于非标准资产路径覆盖。
+先将 `@file-viewer/web-full` 的完整 `dist/` 部署到示例中的 `/file-viewer/dist/`。IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包、CHM 等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@0.3.6` ESM、Worker、WASM、CJK 字体与帧缓存模块，`vendor/chm/` 包含 CHM Rust/WASM Worker，并与其它版本对齐的资产一起交付。二进制 `.ppt` 和 CHM 默认无需配置运行时 URL；格式专用 URL 选项只用于非标准资产路径覆盖。
 
 ### Vanilla JS
 
@@ -261,7 +261,7 @@ $('#viewer').fileViewer({ url: '/files/report.pdf' })
 
 ### full 包运行时资产
 
-所有 full 包默认把 Archive、CHM、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 配置资产插件复制资源或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@0.3.4` 运行时位于 `vendor/ppt/`，CHM Worker、JavaScript bridge 与 Rust/WASM 文件位于 `vendor/chm/`，并保留各自 LICENSE 与 NOTICE。
+所有 full 包默认把 Archive、CHM、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 配置资产插件复制资源或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@0.3.6` 运行时位于 `vendor/ppt/`，CHM Worker、JavaScript bridge 与 Rust/WASM 文件位于 `vendor/chm/`，并保留各自 LICENSE 与 NOTICE。
 
 ```ts
 import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
@@ -476,7 +476,7 @@ npm install ./vendor/file-viewer-core-3.1.1.tgz ./vendor/file-viewer-web-3.1.1.t
 
 这只安装示例中的两个包，不包含全部格式或所有传递依赖。完全断网前，还需准备所选组件、preset、renderer、框架及第三方依赖的完整缓存或内网镜像；运行时则部署匹配版本的 Worker、WASM、字体和 vendor 目录。
 
-Core、PPTX、所有框架组件、Full 包和历史兼容包均可从 Release 获取。`file-viewer3` 和 `@flyfish-group/file-viewer3` 两个兼容包都提供 tarball。二进制 PPT 使用独立版本的 `@file-viewer/ppt@0.3.4`，其匹配运行时随 Demo、Full 资产和 IIFE 交付。非 Vite Full 项目仍使用随包 CLI 复制资产：`npx --no-install file-viewer-copy-assets ./public/file-viewer`。
+Core、PPTX、所有框架组件、Full 包和历史兼容包均可从 Release 获取。`file-viewer3` 和 `@flyfish-group/file-viewer3` 两个兼容包都提供 tarball。二进制 PPT 使用独立版本的 `@file-viewer/ppt@0.3.6`，其匹配运行时随 Demo、Full 资产和 IIFE 交付。非 Vite Full 项目仍使用随包 CLI 复制资产：`npx --no-install file-viewer-copy-assets ./public/file-viewer`。
 
 GitHub Release 会同步提供完整下载项:
 

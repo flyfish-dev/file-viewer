@@ -80,12 +80,12 @@ export async function build(options) {
   await writeFile(join(ppt, 'ppt-native.wasm'), wasm)
   await writeFile(join(ppt, 'ppt-font-cjk.otf'), font)
   await writeFile(join(ppt, 'manifest.json'), JSON.stringify({
-    packageName: '@file-viewer/ppt', packageVersion: '0.3.4',
+    packageName: '@file-viewer/ppt', packageVersion: '0.3.6',
     wasmFile: 'ppt-native.wasm', wasmBytes: wasm.length, wasmSha256: sha256(wasm),
     workerFile: 'worker.mjs',
     fontPack: { file: 'ppt-font-cjk.otf', bytes: font.length, sha256: sha256(font) }
   }))
-  await writeFile(join(ppt, 'package.json'), '{"name":"@file-viewer/ppt","version":"0.3.4"}')
+  await writeFile(join(ppt, 'package.json'), '{"name":"@file-viewer/ppt","version":"0.3.6"}')
   await writeFile(join(ppt, 'index.mjs'), '// FV-PPT-PUBLIC-WATERMARKED-V2 createPptViewer ppt-native.wasm ppt-font-cjk.otf worker.mjs\n')
   await writeFile(join(ppt, 'worker.mjs'), "import './frame-cache.mjs'; // from './frame-cache.mjs'\n")
   await writeFile(join(ppt, 'frame-cache.mjs'), [
@@ -93,8 +93,13 @@ export async function build(options) {
     'export function createFrameCacheKey() {}',
     'export function createFrameCache() {}'
   ].join('\n'))
+  const installedPpt = join(targetPackage, 'node_modules/@file-viewer/ppt')
+  await cp(ppt, installedPpt, { recursive: true })
+  await writeFile(join(installedPpt, 'package.json'), JSON.stringify({
+    name: '@file-viewer/ppt', version: '0.3.6', exports: { '.': './index.mjs' }
+  }))
   return {
-    root, source, dist, targetPackage,
+    root, source, dist, targetPackage, installedPpt,
     run: () => {
       const env = { ...process.env }
       delete env.NODE_PATH
@@ -147,6 +152,46 @@ test('source metadata is regenerated from the packaged files', async t => {
   assert.equal(manifest.validation.valid, true)
   assert.ok(manifest.validation.assets.length > 0)
   assert.notEqual(manifest.generatedAt, 'stale')
+})
+
+test('a stale PPT bootstrap is replaced with the installed official runtime', async t => {
+  const f = await fixture(t)
+  const staleRuntime = join(f.source, 'vendor/ppt')
+  await writeFile(join(staleRuntime, 'package.json'), '{"name":"@file-viewer/ppt","version":"0.3.4"}')
+  await writeFile(join(staleRuntime, 'manifest.json'), '{"packageName":"@file-viewer/ppt","packageVersion":"0.3.4"}')
+  await writeFile(join(staleRuntime, 'ppt-native.wasm'), 'stale native bytes')
+  await writeFile(join(staleRuntime, 'stale-only.js'), '// obsolete asset')
+  const built = f.run()
+  assert.equal(built.status, 0, built.stderr)
+  const installedFiles = ['index.mjs', 'worker.mjs', 'frame-cache.mjs', 'ppt-native.wasm', 'ppt-font-cjk.otf', 'manifest.json', 'package.json', 'LICENSE', 'NOTICE']
+  for (const filename of installedFiles) {
+    assert.deepEqual(
+      await readFile(join(f.dist, 'vendor/ppt', filename)),
+      await readFile(join(f.installedPpt, filename)),
+      filename
+    )
+  }
+  await assert.rejects(readFile(join(f.dist, 'vendor/ppt/stale-only.js')), { code: 'ENOENT' })
+})
+
+test('an old installed PPT version fails even when bootstrap assets are current', async t => {
+  const f = await fixture(t)
+  await writeFile(join(f.installedPpt, 'package.json'), JSON.stringify({
+    name: '@file-viewer/ppt', version: '0.3.4', exports: { '.': './index.mjs' }
+  }))
+  const built = f.run()
+  assert.notEqual(built.status, 0)
+  assert.match(built.stderr, /version mismatch: manifest=0\.3\.6, package=0\.3\.4, expected=0\.3\.6/)
+})
+
+test('corrupt installed PPT bytes fail without falling back to bootstrap assets', async t => {
+  const f = await fixture(t)
+  const wasm = await readFile(join(f.installedPpt, 'ppt-native.wasm'))
+  wasm[0] ^= 1
+  await writeFile(join(f.installedPpt, 'ppt-native.wasm'), wasm)
+  const built = f.run()
+  assert.notEqual(built.status, 0)
+  assert.match(built.stderr, /native WASM or CJK font integrity hash does not match/)
 })
 
 test('a missing required non-PPT asset fails the build with its path', async t => {

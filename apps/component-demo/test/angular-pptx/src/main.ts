@@ -3,6 +3,13 @@ import { bootstrapApplication } from '@angular/platform-browser'
 import { mountViewer, type ViewerController } from '@file-viewer/web'
 import officePreset from '@file-viewer/preset-office'
 
+// Regression fixture only: exercise Angular's real ApplicationRef disposal.
+declare global {
+  interface Window {
+    fileViewerRegressionDestroyAngularApp?: () => void
+  }
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -35,4 +42,11 @@ class App implements AfterViewInit, OnDestroy {
   }
 }
 
-bootstrapApplication(App).catch((error) => console.error(error))
+bootstrapApplication(App)
+  .then((app) => {
+    window.fileViewerRegressionDestroyAngularApp = () => {
+      app.destroy()
+      delete window.fileViewerRegressionDestroyAngularApp
+    }
+  })
+  .catch((error) => console.error(error))

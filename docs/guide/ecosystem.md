@@ -66,7 +66,7 @@ export default {
 | Stack | Standard package | Notes |
 | --- | --- | --- |
 | Core foundation | `@file-viewer/core` | Framework-neutral contracts, browser engine, renderer registry, events, search, zoom, print, export, and asset manifests |
-| Binary PPT runtime | `@file-viewer/ppt@0.3.4` | Independently versioned dependency; Full/CDN ships its public `vendor/ppt/` assets, isolated from the PPTX Worker path |
+| Binary PPT runtime | `@file-viewer/ppt@0.3.6` | Independently versioned dependency; Full/CDN ships its public `vendor/ppt/` assets, isolated from the PPTX Worker path |
 | PPTX engine | `@file-viewer/pptx` | OpenXML presentation parsing with progressive Worker output |
 | Word renderer | `@file-viewer/renderer-word` | DOCX/DOC/RTF/ODT renderer plugin that lazy-loads Word engines outside core |
 | Lite renderer preset | `@file-viewer/preset-lite` | Text, Markdown, code, image, audio, and video preview lines |
@@ -116,7 +116,7 @@ Heavy renderers are split so applications can install only what they need:
 
 Standard component packages depend on the lightweight core foundation by default.
 Install only the renderer packages your product needs, use `@file-viewer/preset-lite` / `@file-viewer/preset-office` / `@file-viewer/preset-engineering` for product-shaped bundles, or pass `@file-viewer/preset-all` when you want the complete official demo capability matrix.
-For example, PowerPoint preview is provided by `@file-viewer/renderer-presentation`, which routes binary `.ppt` to the native-WASM `@file-viewer/ppt@0.3.4` engine and PPTX/PPTM/POTX/POTM/PPSX/PPSM to the separate `@file-viewer/pptx` Worker engine. Neither engine enters the core-only install.
+For example, PowerPoint preview is provided by `@file-viewer/renderer-presentation`, which routes binary `.ppt` to the native-WASM `@file-viewer/ppt@0.3.6` engine and PPTX/PPTM/POTX/POTM/PPSX/PPSM to the separate `@file-viewer/pptx` Worker engine. Neither engine enters the core-only install.
 
 Style isolation is controlled by the shared `options.styleIsolation` field. Every standard component defaults to Shadow DOM so host global CSS cannot break the viewer. Customize with `--file-viewer-*` tokens plus `::part()`; use `styleIsolation:'none'` only as a legacy light-DOM escape hatch. See [Style Isolation And Customization](/guide/style-isolation).
 
@@ -225,7 +225,7 @@ Core is pure TypeScript and owns shared contracts, file source normalization, re
 PowerPoint rendering is available through `@file-viewer/renderer-presentation`. Its lower-level engines keep binary and OpenXML formats separate:
 
 ```bash
-npm install @file-viewer/ppt@0.3.4 @file-viewer/pptx
+npm install @file-viewer/ppt@0.3.6 @file-viewer/pptx
 ```
 
 Use `@file-viewer/ppt` only for PowerPoint 97–2003 `.ppt`, and `@file-viewer/pptx` only for PPTX/OpenXML presentations. Most application teams should use the presentation renderer or `preset-office` instead of calling either engine directly.

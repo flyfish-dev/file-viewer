@@ -1,6 +1,6 @@
 # @file-viewer/renderer-presentation
 
-Flyfish File Viewer 的独立演示文稿 renderer 包。传统 PowerPoint 97–2003 `.ppt` 使用独立的 `@file-viewer/ppt@0.3.4` Worker/OffscreenCanvas/WASM 链路，PPTX/PPTM/POTX/POTM/PPSX/PPSM 继续使用 `@file-viewer/pptx` 渐进式渲染；两条链路都接入统一缩放、打印和 HTML 导出。
+Flyfish File Viewer 的独立演示文稿 renderer 包。传统 PowerPoint 97–2003 `.ppt` 使用独立的 `@file-viewer/ppt@0.3.6` Worker/OffscreenCanvas/WASM 链路，PPTX/PPTM/POTX/POTM/PPSX/PPSM 继续使用 `@file-viewer/pptx` 渐进式渲染；两条链路都接入统一缩放、打印和 HTML 导出。
 
 ## 用法
 

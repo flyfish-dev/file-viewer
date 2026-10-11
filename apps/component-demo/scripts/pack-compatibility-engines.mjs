@@ -5,12 +5,11 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { basename, dirname, join, resolve } from 'node:path'
 import { verifyDocxDistribution } from '../../../.github/scripts/verify-docx-distribution.mjs'
+import { verifyPptDistribution } from '../../../.github/scripts/verify-ppt-distribution.mjs'
 
 export function compatibilityEngineCandidates(docxMode) {
   assert.ok(['compatibility', 'published'].includes(docxMode), 'Unknown DOCX distribution mode')
-  const candidates = [
-    ['packages/renderers/presentation-ppt', 'patches/ppt-http-compatibility.json']
-  ]
+  const candidates = []
   if (docxMode === 'compatibility')
     candidates.unshift(['packages/renderers/word', 'patches/docx-engine-compatibility.json'])
   return candidates
@@ -22,6 +21,7 @@ export async function packCompatibilityEngines(root, output) {
   const destination = join(output, 'engine-tarballs')
   await mkdir(destination, { recursive: true })
   const docx = await verifyDocxDistribution(root)
+  const ppt = await verifyPptDistribution(root)
   const provenance =
     docx.mode === 'published'
       ? [
@@ -31,6 +31,10 @@ export async function packCompatibilityEngines(root, output) {
           }
         ]
       : []
+  provenance.push({
+    ...ppt,
+    method: 'Unmodified ordinary registry dependency; no PPT candidate tarball or override'
+  })
   // Preserve the existing compatibility rehearsal until the published migration.
   // Afterwards, cold consumers resolve DOCX normally from their registry.
   for (const [owner, metadataPath] of compatibilityEngineCandidates(docx.mode)) {

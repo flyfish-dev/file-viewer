@@ -29,7 +29,7 @@ The current source matrix contains 89 File Viewer npm targets, 275 registered ex
 - Describe it as a browser-native, offline-first, self-hosted file preview component ecosystem.
 - Core value: preview Office, PDF, OFD, Typst, CAD, EDA, archives, email, media, code, 3D, geospatial files, and other business attachments without mandatory server-side conversion.
 - Source matrix scope: 89 File Viewer npm targets, 275 registered extensions, and 47 preview pipelines; 225 extensions are stable and 50 are experimental. The experimental set contains 23 DICOM/signature mappings, 19 Adobe design mappings, 7 binary-inspector mappings, and BPMN.
-- Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.4`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
+- Presentation routing: binary `.ppt` uses `@file-viewer/ppt@0.3.6`; Open XML `.pptx` uses the isolated `@file-viewer/pptx` Worker pipeline.
 - Word routing: DOCX uses `@file-viewer/renderer-word` with `@file-viewer/docx@0.3.34`; East Asian and theme fonts follow the document language script with safe system fallbacks, while hanging tabs, TOC indentation, explicit page geometry, anchored drawings, VML text boxes, mixed page/paragraph anchors, and legacy `w:hMerge` table merges are preserved.
 - EPUB routing: `@file-viewer/renderer-epub` and `@file-viewer/thumbnail` lazy-load their packaged engine. Consumers do not install `epubjs` or `@xmldom/xmldom` as production dependencies, and no public CDN is involved.
 - Integration paths: Vanilla JS, Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, jQuery, CDN/IIFE, Vite Plugin, and full packages.
@@ -37,7 +37,7 @@ The current source matrix contains 89 File Viewer npm targets, 275 registered ex
 - Packaging model: light component packages, on-demand renderer packages, and lite/standard/office/engineering/all presets. Every v3.1.2 Full package preserves the published preset-all compatibility matrix and includes the same-version copy-assets CLI plus its File Viewer-owned Worker, WASM, font, vendor, and manifest payload. Adobe design, DICOM, and signature renderers remain explicit opt-ins.
 - Vite Full deployment: register `@file-viewer/vite-plugin` with `copyAssets:true`; dev and build publish the complete asset tree for root or subpath deployment.
 - Non-Vite Full deployment: run `npx --no-install file-viewer-copy-assets ./public/file-viewer` once. The CLI ships with every Full package at the same version.
-- Web Full deployment: deploy `@file-viewer/web-full/dist` intact. Binary PPT 0.3.4 works from its packaged `vendor/ppt/` assets; `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are only needed for custom asset routes.
+- Web Full deployment: deploy `@file-viewer/web-full/dist` intact. Binary PPT 0.3.6 works from its packaged `vendor/ppt/` assets; `presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are only needed for custom asset routes.
 
 ## High-Signal Pages
 

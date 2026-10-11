@@ -37,16 +37,11 @@ if (!process.env.PACKED_ISSUE_PACKAGE_DIR) {
     cwd: root,
     stdio: 'inherit'
   })
-  execFileSync(
-    'pnpm',
-    [
-      ...workspaceClosureArgs,
-      'pack',
-      '--pack-destination',
-      packages
-    ],
-    { cwd: root, stdio: 'inherit', env: { ...process.env, npm_config_ignore_scripts: 'true' } }
-  )
+  execFileSync('pnpm', [...workspaceClosureArgs, 'pack', '--pack-destination', packages], {
+    cwd: root,
+    stdio: 'inherit',
+    env: { ...process.env, npm_config_ignore_scripts: 'true' }
+  })
 }
 const project = await buildPackedIssueConsumer(packages)
 execFileSync(
@@ -58,12 +53,28 @@ execFileSync(
     env: { ...process.env, PACKED_ISSUE_CONSUMER_DIR: project }
   }
 )
-execFileSync(
-  process.execPath,
-  [resolve(root, 'apps/component-demo/scripts/verify-angular-pptx-consumer.mjs')],
-  {
-    cwd: root,
-    stdio: 'inherit',
-    env: { ...process.env, PACKED_ISSUE_PACKAGE_DIR: packages }
-  }
-)
+const angularProject = await buildPackedIssueConsumer(packages, {
+  fixture: 'angular-pptx',
+  required: [
+    '@file-viewer/core',
+    '@file-viewer/web',
+    '@file-viewer/pptx',
+    '@file-viewer/preset-office'
+  ],
+  renderers: 'office-presentation'
+})
+for (const browser of ['chromium', 'webkit']) {
+  execFileSync(
+    process.execPath,
+    [resolve(root, 'apps/component-demo/scripts/verify-angular-pptx-consumer.mjs')],
+    {
+      cwd: root,
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        PACKED_ANGULAR_CONSUMER_DIR: angularProject,
+        PACKED_ANGULAR_BROWSER: browser
+      }
+    }
+  )
+}

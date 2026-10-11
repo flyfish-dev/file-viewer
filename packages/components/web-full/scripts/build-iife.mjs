@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
 import { sanitizeOfflineViewerAssetTree } from './offline-asset-sanitize.mjs'
 import { verifyPptRuntimeDistributionRoot } from './ppt-runtime-integrity.mjs'
+import { stageInstalledPptRuntime } from './stage-ppt-runtime.mjs'
 import { isolateAmd, writeAmdEntry } from '../../web/scripts/amd-entry.mjs'
 import * as webNode from '@file-viewer/web/node'
 import { assertFullAssetDependencies } from './full-asset-dependencies.mjs'
@@ -210,6 +211,7 @@ if (assetSource) {
   throw new Error('[web-full-iife] Missing viewer asset source. Build viewer assets before publishing the full CDN package.')
 }
 
+await stageInstalledPptRuntime(join(outDir, 'vendor/ppt'))
 const sanitization = await sanitizeOfflineViewerAssetTree(outDir)
 await verifyPptRuntimeDistributionRoot(outDir, {
   unbundledJavaScriptPath: 'renderers/presentation.iife.js'

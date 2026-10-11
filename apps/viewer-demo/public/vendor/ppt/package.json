@@ -1,6 +1,10 @@
 {
   "name": "@file-viewer/ppt",
-  "version": "0.3.4",
+  "version": "0.3.6",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/pptjs.git"
+  },
   "description": "Professional native WebAssembly canvas viewer for PowerPoint 97-2003 (.ppt) files.",
   "type": "module",
   "main": "./index.mjs",

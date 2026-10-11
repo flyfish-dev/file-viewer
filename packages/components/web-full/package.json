@@ -97,6 +97,7 @@
   },
   "devDependencies": {
     "@file-viewer/capability-pdf-identity-repair": "workspace:3.1.2",
+    "@file-viewer/ppt": "0.3.6",
     "@types/node": "^26.5.1",
     "esbuild": "^0.28.2",
     "typescript": "^6.0.3",

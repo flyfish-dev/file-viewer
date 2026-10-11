@@ -82,7 +82,7 @@ export default {
 | 场景 | 推荐包 | 适合项目 | 入口能力 |
 | --- | --- | --- | --- |
 | 底层能力 | `@file-viewer/core` | 自研组件、二次封装、框架适配 | 纯 TypeScript 预览能力、格式矩阵、事件、搜索、缩放、打印、导出和共享类型 |
-| 二进制 PPT 运行时 | `@file-viewer/ppt@0.3.4` | 单独验证 PowerPoint 97–2003 `.ppt` | 独立版本依赖；Full/CDN 在 `vendor/ppt/` 交付公开运行时，与 PPTX Worker 严格分路 |
+| 二进制 PPT 运行时 | `@file-viewer/ppt@0.3.6` | 单独验证 PowerPoint 97–2003 `.ppt` | 独立版本依赖；Full/CDN 在 `vendor/ppt/` 交付公开运行时，与 PPTX Worker 严格分路 |
 | PPTX 引擎 | `@file-viewer/pptx` | 单独优化或验证 PPTX 渲染 | 独立 OpenXML 演示文稿引擎、Worker 渐进解析和样式文件 |
 | 轻量 preset | `@file-viewer/preset-lite` | 常见轻附件预览 | 文本、Markdown、代码、图片、音频和视频的轻量组合 |
 | 文档 preset | `@file-viewer/preset-office` | PDF / Office / OFD 文档平台 | PDF、Word、Excel、PowerPoint、OFD、RTF 和 OpenDocument |
@@ -572,10 +572,10 @@ Core 暴露格式矩阵、资源路径解析、搜索/缩放/打印导出工具�
 npm install @file-viewer/pptx
 ```
 
-`@file-viewer/renderer-presentation` 对外提供统一演示文稿能力，但内部保持两条严格隔离的引擎：PowerPoint 97–2003 `.ppt` 使用 `@file-viewer/ppt@0.3.4` 原生 WASM，PPTX/OpenXML 使用 `@file-viewer/pptx` Worker。两者都不会进入 core-only 安装。标准 Vanilla JS / Pure Web、Vue、React、jQuery 和 Svelte 项目应优先安装 presentation renderer，或通过 `preset-office` / `preset-all` 获得完整路由；只有自研 renderer 时才直接调用底层引擎。
+`@file-viewer/renderer-presentation` 对外提供统一演示文稿能力，但内部保持两条严格隔离的引擎：PowerPoint 97–2003 `.ppt` 使用 `@file-viewer/ppt@0.3.6` 原生 WASM，PPTX/OpenXML 使用 `@file-viewer/pptx` Worker。两者都不会进入 core-only 安装。标准 Vanilla JS / Pure Web、Vue、React、jQuery 和 Svelte 项目应优先安装 presentation renderer，或通过 `preset-office` / `preset-all` 获得完整路由；只有自研 renderer 时才直接调用底层引擎。
 
 ```bash
-npm install @file-viewer/ppt@0.3.4 @file-viewer/pptx
+npm install @file-viewer/ppt@0.3.6 @file-viewer/pptx
 ```
 
 ## 离线资源

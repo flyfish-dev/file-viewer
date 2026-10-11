@@ -1,6 +1,6 @@
 # @file-viewer/renderer-presentation
 
-Standalone presentation renderer package for Flyfish File Viewer. Binary PowerPoint 97–2003 `.ppt` uses the separate `@file-viewer/ppt@0.3.4` Worker/OffscreenCanvas/WASM path; PPTX/PPTM/POTX/POTM/PPSX/PPSM keep the progressive `@file-viewer/pptx` path. Both integrate with the shared zoom, print, and HTML export controls.
+Standalone presentation renderer package for Flyfish File Viewer. Binary PowerPoint 97–2003 `.ppt` uses the separate `@file-viewer/ppt@0.3.6` Worker/OffscreenCanvas/WASM path; PPTX/PPTM/POTX/POTM/PPSX/PPSM keep the progressive `@file-viewer/pptx` path. Both integrate with the shared zoom, print, and HTML export controls.
 
 ## Usage
 

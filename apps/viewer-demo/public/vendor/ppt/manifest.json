@@ -3,9 +3,9 @@
   "product": "Flyfish PPT Viewer",
   "format": "PowerPoint 97-2003 (.ppt)",
   "packageName": "@file-viewer/ppt",
-  "packageVersion": "0.3.4",
+  "packageVersion": "0.3.6",
   "engine": "flyfish-classic-ppt-native-engine",
-  "engineBuild": "d2b522ef23b5c08a",
+  "engineBuild": "c8c5f419b9ec85db",
   "id": "FV-PPT-PUBLIC-WATERMARKED-V2",
   "feature": "ppt",
   "edition": "public-watermarked",
@@ -28,7 +28,7 @@
   "renderer": "native-wasm-worker-offscreen-canvas",
   "integrity": "native-wasm-font-sha256-v2",
   "wasmFile": "ppt-native.wasm",
-  "wasmBytes": 1557729,
+  "wasmBytes": 1555542,
   "workerFile": "worker.mjs",
   "fontPack": {
     "kind": "flyfish-cjk-font-pack-v1",
@@ -40,5 +40,5 @@
   "virtualScrollDefault": true,
   "frameCache": "indexeddb-final-watermarked-png-lru",
   "watermarkEnforcement": "native-final-frame",
-  "wasmSha256": "5e1313c50fee36c9573527bc3bf88920ea54b25016ee72d369bb7b27df1540ba"
+  "wasmSha256": "00adf3b25554cb44000c7213eb4a8f86086ecb211dfef5306f524c2f29248c5d"
 }

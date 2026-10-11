@@ -12,7 +12,7 @@ import {
   verifyPublishedDocxFiles
 } from './verify-docx-distribution.mjs'
 import { compatibilityEngineCandidates } from '../../apps/component-demo/scripts/pack-compatibility-engines.mjs'
-import { assertDocxCandidateAllowed } from '../../apps/component-demo/scripts/build-packed-issue-consumer.mjs'
+import { assertPublishedEngineCandidateAllowed } from '../../apps/component-demo/scripts/build-packed-issue-consumer.mjs'
 
 const version = '0.3.34'
 const sha = (algorithm, bytes, encoding = 'hex') =>
@@ -232,26 +232,27 @@ test('the interim compatibility path retains byte checks but cannot masquerade a
   assert.equal(stub.calls.length, 0)
 })
 
-test('published consumers never repack or override DOCX while PPT compatibility remains available', () => {
+test('published consumers never repack or override DOCX or PPT', () => {
   const published = compatibilityEngineCandidates('published')
-  assert.deepEqual(published, [
-    ['packages/renderers/presentation-ppt', 'patches/ppt-http-compatibility.json']
-  ])
+  assert.deepEqual(published, [])
   assert.deepEqual(compatibilityEngineCandidates('compatibility'), [
     ['packages/renderers/word', 'patches/docx-engine-compatibility.json'],
     ...published
   ])
   assert.throws(
     () =>
-      assertDocxCandidateAllowed(
+      assertPublishedEngineCandidateAllowed(
         '@file-viewer/docx',
         'patchedDependencies:\n  ppt@1.0.0: patches/ppt.patch\n'
       ),
     /ordinary registry/
   )
-  assert.doesNotThrow(() => assertDocxCandidateAllowed('@file-viewer/ppt', ''))
+  assert.throws(
+    () => assertPublishedEngineCandidateAllowed('@file-viewer/ppt', ''),
+    /ordinary registry/
+  )
   assert.doesNotThrow(() =>
-    assertDocxCandidateAllowed(
+    assertPublishedEngineCandidateAllowed(
       '@file-viewer/docx',
       `patchedDependencies:\n  '@file-viewer/docx@0.3.33': patches/@file-viewer__docx@0.3.33.patch\n`
     )

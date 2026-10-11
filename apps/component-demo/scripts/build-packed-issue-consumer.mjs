@@ -20,7 +20,8 @@ export function preparePackedConsumerManifest(fixtureManifest, version) {
   return manifest
 }
 
-export function assertDocxCandidateAllowed(name, workspace) {
+export function assertPublishedEngineCandidateAllowed(name, workspace) {
+  assert.notEqual(name, '@file-viewer/ppt', 'Published PPT must resolve from the ordinary registry, not a local candidate override')
   if (name === '@file-viewer/docx')
     assert.ok(
       docxPatchEntries(workspace).length > 0,
@@ -147,7 +148,7 @@ export async function buildPackedIssueConsumer(
       !candidates.some((candidate) => candidate.name === metadata.name),
       `Duplicate candidate ${metadata.name}`
     )
-    assertDocxCandidateAllowed(metadata.name, workspace)
+    assertPublishedEngineCandidateAllowed(metadata.name, workspace)
     const spec = `file:${path}`
     if (manifest.dependencies[metadata.name]) {
       manifest.dependencies[metadata.name] = spec

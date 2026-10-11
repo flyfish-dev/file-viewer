@@ -139,41 +139,60 @@ export function prepareDocxWorkspace(workspace, version) {
 }
 
 export function assertPublishedDocxLock(lockfile, version) {
+  return assertPublishedEngineLock(lockfile, version)
+}
+
+export function assertPublishedEngineLock(
+  lockfile,
+  version,
+  {
+    packageName = docxPackage,
+    manifestPath = docxManifestPath,
+    label = 'DOCX',
+    owner = 'Word'
+  } = {}
+) {
+  const escape = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const importerPath = manifestPath.replace(/\/package\.json$/, '')
   assert.ok(
-    !patchRegistrations(lockfile).some(({ key }) => isDocxKey(key)),
-    'Lockfile still registers a DOCX patch'
+    !patchRegistrations(lockfile).some(
+      ({ key }) => key === packageName || key.startsWith(`${packageName}@`)
+    ),
+    `Lockfile still registers a ${label} patch`
   )
   const importers = lockfile
     .split(/(?=^  \S)/m)
     .filter((block) =>
-      /^  (?:'packages\/renderers\/word'|"packages\/renderers\/word"|packages\/renderers\/word):\r?\n/.test(
-        block
-      )
+      new RegExp(
+        `^  (?:'${escape(importerPath)}'|"${escape(importerPath)}"|${escape(importerPath)}):\\r?\\n`
+      ).test(block)
     )
-  assert.equal(importers.length, 1, 'Missing or duplicate Word lockfile importer')
+  assert.equal(importers.length, 1, `Missing or duplicate ${owner} lockfile importer`)
   const entries = [
-    ...importers[0].matchAll(/^      (['"])@file-viewer\/docx\1:\r?\n((?:        .*\r?\n?)+)/gm)
+    ...importers[0].matchAll(
+      new RegExp(`^      (['"])${escape(packageName)}\\1:\\r?\\n((?:        .*\\r?\\n?)+)`, 'gm')
+    )
   ]
-  assert.equal(entries.length, 1, 'Missing or duplicate locked DOCX dependency')
+  assert.equal(entries.length, 1, `Missing or duplicate locked ${label} dependency`)
   const fields = Object.fromEntries(
     entries[0][2]
       .trim()
       .split(/\r?\n/)
       .map((line) => {
         const match = /^\s*(specifier|version):\s*(.+)$/.exec(line)
-        assert.ok(match, 'Unsupported locked DOCX dependency')
+        assert.ok(match, `Unsupported locked ${label} dependency`)
         return [match[1], scalar(match[2])]
       })
   )
   assert.equal(
     fields.specifier,
     version,
-    'DOCX lockfile specifier differs from the exact registry dependency'
+    `${label} lockfile specifier differs from the exact registry dependency`
   )
   assert.equal(
     fields.version,
     version,
-    'DOCX lockfile resolution must be the ordinary unpatched registry version'
+    `${label} lockfile resolution must be the ordinary unpatched registry version`
   )
 }
 
