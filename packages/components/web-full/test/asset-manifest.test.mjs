@@ -142,8 +142,12 @@ export async function build(options) {
   await writeFile(join(core, 'package.json'), JSON.stringify({
     name: '@file-viewer/core', type: 'module', exports: { './assets': './assets.js' }
   }))
-  await writeFile(join(core, 'assets.js'),
-    `export function listFileViewerRendererAssetManifests(){return ${JSON.stringify(preparedDesignAssets)}}\n`)
+  await writeFile(join(core, 'assets.json'), JSON.stringify(preparedDesignAssets))
+  await writeFile(join(core, 'assets.js'), [
+    "import { readFileSync } from 'node:fs'",
+    "const manifests = JSON.parse(readFileSync(new URL('./assets.json', import.meta.url), 'utf8'))",
+    'export function listFileViewerRendererAssetManifests() { return manifests }'
+  ].join('\n') + '\n')
   return {
     root, source, dist, targetPackage, installedPpt, designOwner,
     run: () => {
