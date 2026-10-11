@@ -62,7 +62,7 @@ for(const pattern of[/boundedExtract/,/CRC32 mismatch/,/path traversal/i,/duplic
 const pkg=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'))
 assert.equal(pkg.exports['./geo3d'].import,'./dist/geo3d.js');assert.ok(pkg.files.includes('GEO3D.md'))
 assert.ok(!pkg.dependencies['@giro3d/giro3d']);assert.ok(!pkg.dependencies.jszip)
-assert.equal(pkg.peerDependencies['@giro3d/giro3d'],'2.0.4');assert.equal(pkg.peerDependenciesMeta['@giro3d/giro3d']?.optional,true)
+assert.equal(pkg.peerDependencies['@giro3d/giro3d'],'2.0.5');assert.equal(pkg.peerDependenciesMeta['@giro3d/giro3d']?.optional,true)
 assert.equal(pkg.peerDependencies.jszip,'3.10.2');assert.equal(pkg.peerDependenciesMeta.jszip?.optional,true)
 assert.equal(pkg.bin['file-viewer-geo3d-assets'],'./bin/copy-geo3d-assets.mjs')
 const cli=fileURLToPath(new URL('../bin/copy-geo3d-assets.mjs',import.meta.url)),temp=await mkdtemp(join(tmpdir(),'file-viewer-geo3d-cli-'))
@@ -80,7 +80,7 @@ try{
   const copied=await copyGeo3dAssets(assets)
   assert.equal(await readFile(join(assets,'host-owned.txt'),'utf8'),'preserve this host file')
   const manifest=JSON.parse(await readFile(join(assets,'manifest.json'),'utf8'))
-  assert.equal(manifest.packages.find(p=>p.name==='@giro3d/giro3d')?.version,'2.0.4')
+  assert.equal(manifest.packages.find(p=>p.name==='@giro3d/giro3d')?.version,'2.0.5')
   for(const name of ['workers/las-worker.js','workers/geotiff-worker.js','workers/texture-worker.js','workers/raster-licenses/lerc-LICENSE','workers/raster-licenses/lerc-NOTICE'])assert.ok(copied.files[name],`Missing deployed Geo3D asset: ${name}`)
   for(const [name,entry]of Object.entries(copied.files)){
     const bytes=await readFile(join(assets,name))

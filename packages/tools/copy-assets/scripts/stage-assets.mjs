@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { stageInstalledPptRuntime } from '../../../components/web-full/scripts/stage-ppt-runtime.mjs'
+import { stagePreparedDesignRuntime } from '../../../build-support/stage-design-runtime.mjs'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const packageDir = resolve(scriptDir, '..')
@@ -86,6 +87,7 @@ for (const asset of declaredAssets) {
 }
 
 await stageInstalledPptRuntime(resolve(targetDir, 'vendor/ppt'))
+await stagePreparedDesignRuntime(targetDir)
 const missingRequired = validationAssets.filter(asset => asset.required && !asset.exists)
 const missingOptional = validationAssets.filter(asset => !asset.required && !asset.exists)
 const generatedAt = new Date().toISOString()

@@ -50,14 +50,17 @@ async function checkOutputPath(path, directory = false) {
     );
 }
 export async function copyIfcAssets(destination) {
-  const [webIfc, fragments, three] = await Promise.all(
-    ["web-ifc", "@thatopen/fragments", "three"].map((name) => packageDir(name)),
+  const [webIfc, fragments, components, three] = await Promise.all(
+    ["web-ifc", "@thatopen/fragments", "@thatopen/components", "three"].map((name) => packageDir(name)),
   );
   const fragmentRequire = createRequire(join(fragments.path, "package.json"));
   const importerWebIfc = await packageDir("web-ifc", fragmentRequire);
+  const componentRequire = createRequire(join(components.path, "package.json"));
+  const componentFragments = await packageDir("@thatopen/fragments", componentRequire);
   const packages = [
     webIfc,
     fragments,
+    components,
     three,
     ...(await Promise.all(
       ["earcut", "flatbuffers", "lru-cache", "pako"].map((name) =>
@@ -67,11 +70,13 @@ export async function copyIfcAssets(destination) {
   ];
   if (
     webIfc.metadata.version !== "0.0.77" ||
-    fragments.metadata.version !== "3.4.7" ||
-    realpathSync(importerWebIfc.path) !== realpathSync(webIfc.path)
+    fragments.metadata.version !== "3.4.8" ||
+    components.metadata.version !== "3.4.9" ||
+    realpathSync(importerWebIfc.path) !== realpathSync(webIfc.path) ||
+    realpathSync(componentFragments.path) !== realpathSync(fragments.path)
   )
     throw new Error(
-      "IFC assets and importer must share the tested web-ifc@0.0.77 and @thatopen/fragments@3.4.7 engines",
+      "IFC assets and importer must share the tested web-ifc@0.0.77, @thatopen/fragments@3.4.8 and @thatopen/components@3.4.9 engines",
     );
   const { build } = await import("esbuild");
   destination = resolve(destination);
@@ -109,6 +114,10 @@ export async function copyIfcAssets(destination) {
       join(packageRoot, "licenses/thatopen-fragments-MIT.txt"),
       join(licenses, "thatopen-fragments-MIT.txt"),
     );
+    await copyFile(
+      join(packageRoot, "licenses/thatopen-components-MIT.txt"),
+      join(licenses, "thatopen-components-MIT.txt"),
+    );
     for (const pkg of packages) {
       const names = (await readdir(pkg.path)).filter((name) =>
         /^licen[cs]e(?:[.-]|$)/i.test(name),
@@ -123,8 +132,9 @@ export async function copyIfcAssets(destination) {
       "Optional IFC runtime assets for File Viewer.",
       "These assets are not loaded by the ordinary model/Office entry.",
       "web-ifc is MPL-2.0. Its WASM and bundled import code are unmodified upstream implementations.",
-      "Corresponding source and build instructions: https://github.com/ThatOpen/engine_web-ifc (release 0.0.77).",
-      "Fragments is MIT: https://github.com/ThatOpen/engine_fragment (release 3.4.7).",
+      "Corresponding source and build instructions: https://github.com/ThatOpen/engine_web-ifc/tree/f26c4beef0a668ebdb180d2b95a94097a1e21cef (release 0.0.77).",
+      "Fragments is MIT: https://github.com/ThatOpen/engine_fragment/tree/2ba7e9ddbc02689b8c1044e31daed26f3005f3c5 (release 3.4.8).",
+      "Components is MIT: https://github.com/ThatOpen/engine_components/tree/8479a7c5c6a3c0cf8c7ceab1d1fb329a3f7d1922 (release 3.4.9).",
       "Preserve licenses/, the linked worker legal notices and this notice when redistributing.",
       ...packages.map(
         (pkg) =>

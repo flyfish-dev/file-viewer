@@ -145,6 +145,8 @@ try {
   }
   assert.equal(sha256(await readFile(join(assets, "licenses/thatopen-fragments-MIT.txt"))),
     sha256(await readFile(join(installed, "licenses/thatopen-fragments-MIT.txt"))));
+  assert.equal(sha256(await readFile(join(assets, "licenses/thatopen-components-MIT.txt"))),
+    sha256(await readFile(join(installed, "licenses/thatopen-components-MIT.txt"))));
   report.checks.push({ name: "physical installed CLI, compiled worker, complete assets and licences", status: "passed", sourceAbsent: true, assetManifest });
 
   const outside = join(consumer, "host-file.txt");
@@ -155,6 +157,7 @@ try {
     ["asset-link", async (path) => { await mkdir(path); await symlink(outside, join(path, "web-ifc.wasm")); }],
     ["asset-directory", async (path) => { await mkdir(join(path, "web-ifc.wasm"), { recursive: true }); }],
     ["license-link", async (path) => { await mkdir(join(path, "licenses"), { recursive: true }); await symlink(outside, join(path, "licenses/thatopen-fragments-MIT.txt")); }],
+    ["components-license-link", async (path) => { await mkdir(join(path, "licenses"), { recursive: true }); await symlink(outside, join(path, "licenses/thatopen-components-MIT.txt")); }],
   ];
   for (const [name, setup] of redirects) {
     const path = join(consumer, "path-cases", name);

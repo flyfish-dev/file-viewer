@@ -66,7 +66,7 @@ export function verifyPointCloudSource(text) {
  * Preserve the real PointCloud class and all its public APIs. Only link the
  * loading method's signal to this entity's lifetime. Never patch a prototype,
  * call clear() to stop work (it reloads!), or dispose a shared request queue.
- * Giro3D 2.0.4 consumes Error('aborted') at this internal boundary. The public
+ * Giro3D 2.0.5 consumes Error('aborted') at this internal boundary. The public
  * viewer/hook signal and its original cancellation reason remain untouched.
  */
 export function createPointCloudWithCancellation(PointCloud, options) {
@@ -134,7 +134,7 @@ export function adaptPointSource(name, text) {
   if (/^export /m.test(body)) throw new Error(`Unexpected export in ${name}.`)
   // Emit the same self-contained helper exercised by the regression tests.
   // This is build-time source generation, not runtime evaluation or patching.
-  return `${imports.join('')}\n// Derived from pinned Giro3D 2.0.4, MIT; see geo3d-workers/licenses/.\nexport function create${name}(LASWorkerPool, options) {\n${body}\n${createPointSourceWithCancellation.toString()}\nreturn createPointSourceWithCancellation(${name}, options);\n}\n`
+  return `${imports.join('')}\n// Derived from pinned Giro3D 2.0.5, MIT; see geo3d-workers/licenses/.\nexport function create${name}(LASWorkerPool, options) {\n${body}\n${createPointSourceWithCancellation.toString()}\nreturn createPointSourceWithCancellation(${name}, options);\n}\n`
 }
 
 async function packageRoot(path) {
@@ -153,7 +153,7 @@ export async function buildPointAdapters() {
   const { build } = require('esbuild')
   const las = require.resolve('@giro3d/giro3d/sources/LASSource.js')
   const giro = await packageRoot(las)
-  if (giro.metadata.version !== '2.0.4') throw new Error('Owned point adapters require Giro3D 2.0.4.')
+  if (giro.metadata.version !== '2.0.5') throw new Error('Owned point adapters require Giro3D 2.0.5.')
   verifyPointCloudSource(await readFile(join(giro.folder, 'entities/PointCloud.js'), 'utf8'))
   verifyPointSourceInitialization(await readFile(join(giro.folder, 'sources/PointCloudSource.js'), 'utf8'))
   const paths = Object.fromEntries(['LASSource', 'COPCSource'].map(name => [name, join(giro.folder, 'sources', `${name}.js`)]))
@@ -217,7 +217,7 @@ export async function buildPointAdapters() {
     if (!files.length) throw new Error(`No redistribution license found for bundled ${metadata.name}.`)
     licensing.push({ name: metadata.name, version: metadata.version, license: metadata.license, files })
   }
-  await writeFile(join(workers, 'manifest.json'), JSON.stringify({ schema: 1, engine: '2.0.4', sourceHashes: SOURCE_HASHES,
+  await writeFile(join(workers, 'manifest.json'), JSON.stringify({ schema: 1, engine: '2.0.5', sourceHashes: SOURCE_HASHES,
     adapterSha256: hash(await readFile(join(out, 'geo3dPointFactories.js'))),
     workerSha256: hash(await readFile(join(workers, 'las-worker.js'))), packages: licensing }, null, 2) + '\n')
   console.log('Built source-owned LAS/COPC adapters and a self-hosted module Worker; installed packages unchanged.')

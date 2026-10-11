@@ -20,7 +20,7 @@ glTF resources and textures remain relative to the dataset.
 Giro3D is an optional peer, matching the IFC specialist entry:
 
 ```sh
-npm install @file-viewer/renderer-3d @giro3d/giro3d@2.0.4
+npm install @file-viewer/renderer-3d @giro3d/giro3d@2.0.5
 # Only required when 3TZ archives are enabled:
 npm install jszip@3.10.2
 
@@ -242,7 +242,7 @@ cases run against both workspace output and physical installed tarballs.
 
 ### Pinned engine maintenance boundary
 
-The ownership adapters deliberately depend on reviewed Giro3D 2.0.4 source.
+The ownership adapters deliberately depend on reviewed Giro3D 2.0.5 source.
 Besides source-local pool injection, the PointCloud subclass overrides the
 engine's internal loading method to link node and viewer cancellation. Source
 initialization uses protected readiness fields. These are not an assertion of

@@ -2335,6 +2335,23 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
 
   const sqlJsRoot = resolvePackageRoot('sql.js', ['@file-viewer/renderer-data'])
   const designRendererRoot = resolvePackageRoot('@file-viewer/renderer-design')
+  const designRendererIds = rendererModules.find(
+    descriptor => descriptor.packageName === '@file-viewer/renderer-design'
+  )?.rendererIds || []
+  for (const rendererId of designRendererIds) {
+    await push(
+      rendererId,
+      `${rendererId}-third-party-notices`,
+      join(targetRoot, 'vendor/design/THIRD_PARTY_NOTICES.md'),
+      () => copyFileIfPresent(
+        designRendererRoot ? join(designRendererRoot, 'THIRD_PARTY_NOTICES.md') : null,
+        join(targetRoot, 'vendor/design/THIRD_PARTY_NOTICES.md')
+      ),
+      undefined,
+      undefined,
+      true
+    )
+  }
   const introspectWasmRoot = resolvePackageRoot('@paged-media/introspect-wasm', [
     '@file-viewer/renderer-design'
   ])

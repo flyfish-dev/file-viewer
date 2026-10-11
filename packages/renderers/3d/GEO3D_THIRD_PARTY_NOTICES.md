@@ -6,9 +6,10 @@ runtime packages.
 
 ## Runtime packages
 
-### @giro3d/giro3d 2.0.4
+### @giro3d/giro3d 2.0.5
 
 - License: MIT
+- Exact source: https://gitlab.com/giro3d/giro3d/-/tree/8554742f4379899c939244f983e4871865b5d76c
 - Role: streaming/rendering engine for COPC, LAS/LAZ, GeoTIFF/COG and 3D Tiles.
 - Installation: optional peer dependency.
 - Runtime decoder assets are self-hosted by `file-viewer-geo3d-assets`.

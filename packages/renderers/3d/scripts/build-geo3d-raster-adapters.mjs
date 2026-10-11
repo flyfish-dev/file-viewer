@@ -34,7 +34,7 @@ export function adaptTextureGenerator(text) {
   body = body.replace(/^export (?=(?:const|function) )/gm, '')
   body = replaceOnce(body, 'export default {', 'return {')
   if (/^export /m.test(body)) throw new Error('Unexpected texture generator export.')
-  return `${imports.join('')}\n// Derived from reviewed Giro3D 2.0.4, MIT.\nexport function createTextureGenerator(pool) {\n${body}\n}\n`
+  return `${imports.join('')}\n// Derived from reviewed Giro3D 2.0.5, MIT.\nexport function createTextureGenerator(pool) {\n${body}\n}\n`
 }
 export function adaptGeoTIFFSource(text) {
   reviewed('GeoTIFFSource', text)
@@ -71,7 +71,7 @@ export function adaptGeoTIFFSource(text) {
   body = body.replace(/^export (?=(?:class|function) )/gm, '')
   body = replaceOnce(body, 'export default GeoTIFFSource;', 'return new GeoTIFFSource(options);')
   if (/^export /m.test(body)) throw new Error('Unexpected GeoTIFF source export.')
-  return `${imports.join('')}\nimport { createTextureGenerator } from 'geo3d-owned-raster:TextureGenerator';\n// Derived from reviewed Giro3D 2.0.4, MIT. All pool state is inside this factory.\nexport function createGeoTIFFSource(workers, options) {\nconst TextureGenerator = createTextureGenerator(workers.texture);\nconst Pool = class { constructor() { return workers.decoder; } };\n${body}\n}\n`
+  return `${imports.join('')}\nimport { createTextureGenerator } from 'geo3d-owned-raster:TextureGenerator';\n// Derived from reviewed Giro3D 2.0.5, MIT. All pool state is inside this factory.\nexport function createGeoTIFFSource(workers, options) {\nconst TextureGenerator = createTextureGenerator(workers.texture);\nconst Pool = class { constructor() { return workers.decoder; } };\n${body}\n}\n`
 }
 export function extractTextureWorker(text) {
   reviewed('TextureGenerator', text)
@@ -137,7 +137,7 @@ export async function buildRasterAdapters() {
   const require = createRequire(join(root, 'package.json'))
   const { build } = require('esbuild')
   const giro = await packageRoot(require.resolve('@giro3d/giro3d/sources/GeoTIFFSource.js'))
-  if (giro.metadata.version !== '2.0.4') throw new Error('Owned raster adapters require Giro3D 2.0.4.')
+  if (giro.metadata.version !== '2.0.5') throw new Error('Owned raster adapters require Giro3D 2.0.5.')
   const giroRequire = createRequire(join(giro.folder, 'package.json'))
   const geotiff = await packageRoot(giroRequire.resolve('geotiff'))
   const paths = { GeoTIFFSource: join(giro.folder, 'sources/GeoTIFFSource.js'), TextureGenerator: join(giro.folder, 'utils/TextureGenerator.js') }
