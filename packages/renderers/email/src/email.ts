@@ -195,11 +195,12 @@ export const parseEml = async (
   objectUrls: string[],
   cidUrls: Map<string, string>
 ): Promise<ParsedEmailView> => {
-  const PostalMime = (await import('postal-mime')).default as any;
+  const { default: PostalMime } = await import('postal-mime');
   const email = await PostalMime.parse(buffer, {
     attachmentEncoding: 'arraybuffer',
     maxNestingDepth: 24,
     maxHeadersSize: 2 * 1024 * 1024,
+    maxPartCount: 10_000,
   });
   const attachments = await createPostalAttachments(email, objectUrls, cidUrls);
 
@@ -231,11 +232,12 @@ const parseMbox = async (
   const secondStart = starts[1] ?? source.length;
   const firstMessage = source.slice(firstStart, secondStart).replace(/^From .*$\n/, '');
   const encoded = new TextEncoder().encode(firstMessage).buffer;
-  const PostalMime = (await import('postal-mime')).default as any;
+  const { default: PostalMime } = await import('postal-mime');
   const email = await PostalMime.parse(encoded, {
     attachmentEncoding: 'arraybuffer',
     maxNestingDepth: 24,
     maxHeadersSize: 2 * 1024 * 1024,
+    maxPartCount: 10_000,
   });
   const attachments = await createPostalAttachments(email, objectUrls, cidUrls);
 

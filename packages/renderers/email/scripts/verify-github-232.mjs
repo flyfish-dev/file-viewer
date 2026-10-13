@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 import { parseEml } from '../dist/email.js'
 
 // GitHub PR #232 adopted postal-mime 3.0.0 purely for EML header correctness, so
@@ -21,11 +22,13 @@ import { parseEml } from '../dist/email.js'
 const packageDir = dirname(dirname(fileURLToPath(import.meta.url)))
 const manifest = JSON.parse(await readFile(join(packageDir, 'package.json'), 'utf8'))
 const postalRange = String(manifest.dependencies['postal-mime'])
+const require = createRequire(join(packageDir, 'package.json'))
 
 assert.ok(
-  /^(?:\^|~)?3\./.test(postalRange),
-  'the EML renderer must stay on postal-mime 3.x header parsing, found ' + postalRange
+  /^(?:\^|~)?4\./.test(postalRange),
+  'the EML renderer requires the qualified postal-mime 4.x parser, found ' + postalRange
 )
+assert.equal(require('postal-mime/package.json').version, '4.0.5')
 
 const fixtureText = (
   await readFile(join(packageDir, 'test', 'fixtures', 'github-232-headers.eml'), 'utf8')

@@ -52,6 +52,7 @@ const options = {
 - 提示支持简体中文、英语、日语、德语，跟随 viewer locale；适配窄容器和明暗主题。
 
 EML/MBOX 继续使用 `postal-mime`。MBOX 仍预览第一封邮件并提示邮件数量，本次不新增邮箱列表浏览器。
+EML/MBOX 解析最多允许 24 层 MIME 嵌套、合计 2 MiB MIME 头和含根节点在内的 10,000 个 MIME part。使用 postal-mime 4.0.5 的 part 计数上限和线性 HTML 转文本处理，同时保留字符集、折叠邮件头和重复头取首值的语义。
 
 ## 隐私、限制与兼容性
 

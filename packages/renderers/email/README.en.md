@@ -52,6 +52,7 @@ Compressed RTF is decompressed locally. HTML-encapsulated RTF can supply an HTML
 - Simplified Chinese, English, Japanese and German notices follow the viewer locale. Narrow-host layout and light/dark presentation are supported.
 
 EML/MBOX remain on `postal-mime`; MBOX still previews its first message and reports the count rather than implementing a mailbox browser.
+EML/MBOX parsing limits MIME nesting to 24 levels, combined MIME headers to 2 MiB and MIME parts to 10,000 including the root. The renderer uses postal-mime 4.0.5's bounded part counter and linear HTML-to-text conversion while retaining charset, unfolded-header and first-header semantics.
 
 ## Privacy, limits and compatibility
 
