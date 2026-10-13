@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { readFileSync, readdirSync, realpathSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 
@@ -72,9 +72,23 @@ function verifyGeneratedSdkBins(packagePath, artifact, manifest) {
     )
     const shimPath = join(packagePath, record.path)
     const target = join(providerPath, record.providerBin.path)
+    const alias = join(dirname(dirname(packagePath)), record.provider, record.providerBin.path)
+    const aliasBindings = []
+    if (existsSync(alias)) {
+      assert.equal(
+        realpathSync(alias),
+        realpathSync(target),
+        'Generated bin alias must resolve to the verified provider'
+      )
+      aliasBindings.push(
+        [relative(dirname(shimPath), alias).split(sep).join('/'), '<relative-bin>'],
+        [alias, '<provider-bin>']
+      )
+    }
     // Only the exact installation paths are variable. All shell code, flags,
     // target references and environment handling must match the reviewed shim.
     const bindings = [
+      ...aliasBindings,
       [relative(dirname(shimPath), target).split(sep).join('/'), '<relative-bin>'],
       [target, '<provider-bin>'],
       [join(providerPath, 'node_modules'), '<provider-node-modules>'],

@@ -184,13 +184,17 @@ test('SDK installation boundary rejects unknown files and changed generated shim
       const sourceShim = join(original, record.path)
       const shim = join(directory, record.path)
       const target = join(provider, record.providerBin.path)
-      writeFileSync(
-        shim,
-        readFileSync(sourceShim, 'utf8').replaceAll(
-          relative(dirname(sourceShim), target).split(sep).join('/'),
-          relative(dirname(shim), target).split(sep).join('/')
-        )
-      )
+      let relocated = readFileSync(sourceShim, 'utf8')
+      const alias = join(dirname(dirname(original)), record.provider, record.providerBin.path)
+      for (const spelling of new Set([alias, target])) {
+        relocated = relocated
+          .replaceAll(
+            relative(dirname(sourceShim), spelling).split(sep).join('/'),
+            relative(dirname(shim), target).split(sep).join('/')
+          )
+          .replaceAll(spelling, target)
+      }
+      writeFileSync(shim, relocated)
     }
     verifyCodecArtifact(directory, artifact)
     const unknown = join(directory, 'node_modules/.bin/unreviewed')
@@ -212,6 +216,54 @@ test('SDK installation boundary rejects unknown files and changed generated shim
     const altered = structuredClone(artifact)
     altered.installationGeneratedBinShims.pop()
     assert.throws(() => verifyCodecArtifact(directory, altered), /bin records drifted/)
+  } finally {
+    rmSync(temp, { recursive: true, force: true })
+  }
+})
+
+test('SDK bin aliases must still point to the verified provider', () => {
+  const artifact = provenance.sdkArtifacts.find((entry) => entry.name === '@cornerstonejs/core')
+  const original = dirname(dicomRequire.resolve('@cornerstonejs/core/package.json'))
+  const provider = dirname(
+    createRequire(join(original, 'package.json')).resolve('@kitware/vtk.js/package.json')
+  )
+  const temp = mkdtempSync(join(tmpdir(), 'file-viewer-sdk-alias-'))
+  const directory = join(temp, 'node_modules/@cornerstonejs/core')
+  const alias = join(temp, 'node_modules/@kitware/vtk.js')
+  try {
+    cpSync(original, directory, { recursive: true })
+    mkdirSync(dirname(alias), { recursive: true })
+    symlinkSync(provider, alias, 'dir')
+    for (const record of artifact.installationGeneratedBinShims) {
+      const sourceShim = join(original, record.path)
+      const target = join(provider, record.providerBin.path)
+      const originalAlias = join(
+        dirname(dirname(original)),
+        record.provider,
+        record.providerBin.path
+      )
+      let relocated = readFileSync(sourceShim, 'utf8')
+      for (const spelling of new Set([originalAlias, target])) {
+        relocated = relocated
+          .replaceAll(
+            relative(dirname(sourceShim), spelling).split(sep).join('/'),
+            relative(dirname(join(directory, record.path)), target)
+              .split(sep)
+              .join('/')
+          )
+          .replaceAll(spelling, target)
+      }
+      writeFileSync(join(directory, record.path), relocated)
+    }
+    verifyCodecArtifact(directory, artifact)
+    const replacement = join(temp, 'replacement')
+    cpSync(provider, replacement, { recursive: true })
+    rmSync(alias)
+    symlinkSync(replacement, alias, 'dir')
+    assert.throws(
+      () => verifyCodecArtifact(directory, artifact),
+      /alias must resolve to the verified provider/
+    )
   } finally {
     rmSync(temp, { recursive: true, force: true })
   }
