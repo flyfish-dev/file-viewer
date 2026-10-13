@@ -37,6 +37,7 @@ SQLite 预览依赖 `sql.js` WASM。默认路径仍由 `@file-viewer/core/assets
 ## 能力边界
 
 - PSD 使用 `ag-psd` 读取画布和图层，支持图层选择显隐、重绘和统一缩放。
+- 旧 PSD 路径默认限制解码缓冲区为 128 MiB，可通过正整数 `options.design.maxDecodedBytes` 调整，并跳过未使用的缩略图和关联文件数据。
 - SQLite 使用 `sql.js` 读取表结构和首个表的示例数据。
 - Parquet 使用 `hyparquet` 读取列式元数据和示例行。
 - Avro 使用 `avsc` 读取对象容器 schema 与示例数据。

@@ -57,7 +57,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json && node scripts/build-browser.mjs",
+    "build": "tsc -b tsconfig.json && node scripts/build-browser.mjs && node --test test/psd-memory.test.mjs",
     "type-check": "tsc -b tsconfig.json",
     "verify:avro-browser": "node scripts/verify-avro-browser.mjs"
   },

@@ -37,6 +37,7 @@ SQLite preview depends on the `sql.js` WASM file. The default URL is still resol
 ## Scope
 
 - PSD uses `ag-psd` for canvas and layer previews with layer visibility toggles, redraw, and unified zoom.
+- The legacy PSD path limits decoded buffers to 128 MiB by default, honors a positive integer `options.design.maxDecodedBytes`, and skips unused thumbnails and linked-file payloads.
 - SQLite uses `sql.js` for table metadata and sample rows.
 - Parquet uses `hyparquet` for column metadata and sample rows.
 - Avro uses `avsc` for object container schema and sample data.

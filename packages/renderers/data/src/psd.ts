@@ -163,7 +163,18 @@ export default async function renderPsdAsset(
   const t = createFileViewerTranslator(context?.options)
   const imported = await import('ag-psd/dist/bundle.js')
   const { readPsd } = imported.default || imported
-  const psd = readPsd(buffer, { useImageData: true })
+  const configuredLimit = context?.options?.design?.maxDecodedBytes
+  const totalMemoryLimit = Number.isSafeInteger(configuredLimit) && Number(configuredLimit) > 0
+    ? Number(configuredLimit)
+    : 128 * 1024 * 1024
+  // Keep the legacy route within the design renderer's pixel budget before
+  // ag-psd allocates composite, layer or mask buffers. Its default is 2 GiB.
+  const psd = readPsd(buffer, {
+    useImageData: true,
+    skipThumbnail: true,
+    skipLinkedFilesData: true,
+    totalMemoryLimit,
+  })
   const compositeCanvas = toCanvas(documentRef, (psd as any).canvas || (psd as any).imageData)
   const layerTree = buildLayerTree(documentRef, (psd as any).children)
   const layers = flattenLayerTreeForDrawing(layerTree)
