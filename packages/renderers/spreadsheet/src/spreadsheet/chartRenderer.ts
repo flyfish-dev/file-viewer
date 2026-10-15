@@ -563,7 +563,15 @@ const drawLegend = (documentRef: Document, svg: SVGSVGElement, chart: SheetChart
     return
   }
   const right = chart.legendPosition === 'right'
-  chart.series.slice(0, 8).forEach((series, index) => {
+  const categorySeries = chart.type === 'pie' || chart.type === 'doughnut' ? chart.series[0] : undefined
+  const entries = chart.type === 'pie' || chart.type === 'doughnut'
+    ? (categorySeries?.values || []).map((_, index) => ({
+        ...categorySeries!,
+        name: categorySeries!.categories[index] || `${index + 1}`,
+        color: DEFAULT_COLORS[index % DEFAULT_COLORS.length]
+      }))
+    : chart.series
+  entries.slice(0, 8).forEach((series, index) => {
     const x = right ? 510 : 76 + (index % 4) * 136
     const y = right ? 72 + index * 28 : 342 - Math.floor(index / 4) * 20
     const color = seriesColor(series, index)
