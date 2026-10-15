@@ -70,6 +70,10 @@ export const cloneFileViewerViewState = (
 
   return {
     ...state,
+    spreadsheet: state.spreadsheet ? {
+      ...state.spreadsheet,
+      range: state.spreadsheet.range ? { ...state.spreadsheet.range } : undefined,
+    } : undefined,
     zoom: state.zoom ? { ...state.zoom } : undefined,
     scroll: state.scroll ? { ...state.scroll } : undefined,
     navigation: state.navigation ? { ...state.navigation } : undefined,
