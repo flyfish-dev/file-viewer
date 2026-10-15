@@ -1303,3 +1303,5 @@ export type {
   ViewerOperationContext,
 } from './contracts/types';
 export { resolveFileViewerCopiedAssetUrl } from './platform/copiedAssets';
+
+export type { FileViewerSpreadsheetRange, FileViewerSpreadsheetNavigationStatus } from './contracts/types';

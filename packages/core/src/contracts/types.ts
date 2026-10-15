@@ -1791,7 +1791,23 @@ export interface FileViewerNavigationState {
   mode?: string
 }
 
+/** Zero-based workbook sheet id and inclusive cell bounds. */
+export interface FileViewerSpreadsheetRange {
+  sheetId: number;
+  startRow: number;
+  startCol: number;
+  endRow: number;
+  endCol: number;
+}
+export type FileViewerSpreadsheetNavigationStatus =
+  'idle' | 'pending' | 'applied' | 'rejected' | 'cancelled' | 'failed' | 'disposed';
+
 export interface FileViewerViewState {
+  /** Coordinate navigation for spreadsheets; does not edit or select cell contents. */
+  spreadsheet?: {
+    range?: FileViewerSpreadsheetRange;
+    status?: FileViewerSpreadsheetNavigationStatus;
+  };
   renderer?: string
   page?: number
   pageCount?: number
