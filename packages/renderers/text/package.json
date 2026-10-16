@@ -76,10 +76,10 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.1.2",
     "@prettier/plugin-xml": "3.4.2",
-    "dompurify": "3.4.16",
+    "dompurify": "3.4.17",
     "highlight.js": "^11.11.1",
-    "marked": "^18.0.12",
-    "prettier": "3.9.9"
+    "marked": "^18.1.1",
+    "prettier": "3.9.10"
   },
   "devDependencies": {
     "diff2html": "^3.4.56",
