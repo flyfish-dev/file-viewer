@@ -35,8 +35,10 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v2.2.6-formats-en.gif" width="920" alt="Live demo switching between document and engineering previews"></a>
+  <a href="https://demo.file-viewer.app/"><img src="docs/public/_media/file-viewer-demo-v3-en.webp" width="920" alt="File Viewer live demo: Word, Excel, PowerPoint, 3D model, CAD drawing and binary inspector"></a>
 </p>
+
+<p align="center">⭐ If File Viewer helps you, please <a href="https://github.com/flyfish-dev/file-viewer">star the repo</a>.</p>
 
 ## Quick start
 
@@ -128,6 +130,16 @@ Maintenance is supported through [GitHub Sponsors](https://github.com/sponsors/w
 ### Thanks to Our Sponsors
 
 <a href="https://github.com/p4535992"><img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="GitHub sponsor @p4535992"></a>
+
+## Star History
+
+<a href="https://www.star-history.com/?type=date&repos=flyfish-dev%2Ffile-viewer">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=flyfish-dev/file-viewer&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=flyfish-dev/file-viewer&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=flyfish-dev/file-viewer&type=date&legend=top-left" />
+ </picture>
+</a>
 
 ## License
 

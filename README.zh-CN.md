@@ -43,8 +43,10 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.file-viewer.app"><img src="docs/public/_media/file-viewer-demo-v2.2.6-desktop-zh.webp" width="920" alt="File Viewer 浏览器原生 DOCX 预览工作区" /></a>
+  <a href="https://demo.file-viewer.app"><img src="docs/public/_media/file-viewer-demo-v3-zh.webp" width="920" alt="File Viewer 在线演示：Word、Excel、PPT、3D 模型、CAD 图纸与二进制检查器" /></a>
 </p>
+
+<p align="center">⭐ 如果 File Viewer 对你有帮助，欢迎<a href="https://github.com/flyfish-dev/file-viewer">点个 Star</a>。</p>
 
 ---
 
@@ -891,6 +893,16 @@ pnpm docs:build
 - [支持格式](https://doc.file-viewer.app/guide/formats)
 - [本地开发与打包](https://doc.file-viewer.app/guide/development)
 - [Docker 部署](https://doc.file-viewer.app/guide/docker)
+
+## Star History
+
+<a href="https://www.star-history.com/?type=date&repos=flyfish-dev%2Ffile-viewer">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=flyfish-dev/file-viewer&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=flyfish-dev/file-viewer&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=flyfish-dev/file-viewer&type=date&legend=top-left" />
+ </picture>
+</a>
 
 ## 开源说明
 

@@ -1,5 +1,23 @@
 # @file-viewer/vue3
 
+<!-- FILE_VIEWER_PACKAGE_HEADER -->
+<p>
+  <a href="https://www.npmjs.com/package/@file-viewer/vue3"><img src="https://img.shields.io/npm/v/@file-viewer%2Fvue3?logo=npm" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/@file-viewer/vue3"><img src="https://img.shields.io/npm/dm/@file-viewer%2Fvue3?logo=npm" alt="npm downloads"></a>
+  <a href="https://github.com/flyfish-dev/file-viewer/stargazers"><img src="https://img.shields.io/github/stars/flyfish-dev/file-viewer?style=flat&logo=github" alt="GitHub stars"></a>
+  <a href="https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License: Apache-2.0"></a>
+</p>
+
+<p>
+  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/zh/">文档</a> · <a href="https://demo.file-viewer.app/">在线 Demo</a> · <a href="https://doc.file-viewer.app/guide/formats">格式矩阵</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">问题反馈</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/vue3/README.en.md">English</a>
+</p>
+
+<p>
+  <a href="https://demo.file-viewer.app/"><img src="https://raw.githubusercontent.com/flyfish-dev/file-viewer/main/docs/public/_media/file-viewer-demo-v3-zh.webp" width="760" alt="File Viewer 在线演示：Word、Excel、PPT、3D 模型、CAD 图纸与二进制检查器"></a>
+</p>
+
+> ⭐ 如果 File Viewer 对你有帮助，欢迎到 [GitHub](https://github.com/flyfish-dev/file-viewer) 点个 Star。
+
 标准 Vue3 native 组件包。它维护 Vue3 组件生命周期和本地 controller，同时消费共享的 `@file-viewer/core` 底层契约与 core browser engine，提供插件安装、组件 props、生命周期事件、搜索/缩放/打印/导出等 ref API。
 
 ```bash
@@ -431,3 +449,15 @@ Vue 3 组件提供 `toolbar-start` 与 `toolbar-end` 插槽。它们保留内置
 - `searchState`：查询、命中总数和当前命中位置。
 
 使用宿主页面 CSS 定制插槽内容时，建议设置 `styleIsolation: 'none'`；Shadow DOM 模式下可使用内联样式或 File Viewer CSS 变量。
+
+## 格式与相关包
+
+File Viewer 在浏览器内预览 275+ 种扩展名，覆盖 Office、PDF/OFD、CAD、3D、压缩包、邮件、图片、音视频和代码，无需服务端转码；完整清单见 [格式矩阵](https://doc.file-viewer.app/guide/formats)。
+
+- 组件：`@file-viewer/web`、`@file-viewer/vue3`、`@file-viewer/vue2.7`、`@file-viewer/vue2.6`、`@file-viewer/react`、`@file-viewer/react-legacy`、`@file-viewer/svelte`、`@file-viewer/jquery`，以及对应的 `-full` 包
+- 能力组合：`@file-viewer/preset-lite`、`@file-viewer/preset-office`、`@file-viewer/preset-engineering`、`@file-viewer/preset-all`
+- 构建：`@file-viewer/vite-plugin`、`file-viewer-copy-assets`
+
+## 许可证
+
+本包采用 Apache-2.0。详见 [LICENSE](https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE)。
