@@ -29,6 +29,6 @@
     "verify": "node scripts/verify-binary-inspector.mjs && node scripts/verify-browser.mjs"
   },
   "dependencies": { "@file-viewer/core": "workspace:3.2.2" },
-  "devDependencies": { "playwright": "^1.63.0", "typescript": "^6.0.3" },
+  "devDependencies": { "playwright": "^1.64.1", "typescript": "^6.0.3" },
   "license": "Apache-2.0"
 }
