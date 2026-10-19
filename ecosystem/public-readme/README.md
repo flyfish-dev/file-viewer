@@ -129,7 +129,11 @@ Maintenance is supported through [GitHub Sponsors](https://github.com/sponsors/w
 
 ### Thanks to Our Sponsors
 
-<a href="https://github.com/p4535992"><img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="GitHub sponsor @p4535992"></a>
+<p align="center">
+  <img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="Project sponsors @p4535992 and @jtianling">
+  <br>
+  <sub><a href="https://github.com/p4535992">@p4535992</a> · <a href="https://github.com/jtianling">@jtianling</a></sub>
+</p>
 
 ## Star History
 

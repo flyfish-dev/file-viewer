@@ -764,9 +764,9 @@ File Viewer 自有源码保持 Apache-2.0 开源，部分运行时依赖采用�
 感谢你对 File Viewer 兼容性修复、文档完善和持续发布工作的支持。
 
 <p align="center">
-  <a href="https://github.com/p4535992" title="在 GitHub 查看 @p4535992">
-    <img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="GitHub 赞助者 @p4535992" />
-  </a>
+  <img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="项目赞助者 @p4535992 和 @jtianling" />
+  <br />
+  <sub><a href="https://github.com/p4535992">@p4535992</a> · <a href="https://github.com/jtianling">@jtianling</a></sub>
 </p>
 
 国内赞赏、联系与商业支持请使用 [官方支持入口](https://dev.flyfish.group/shop)。
