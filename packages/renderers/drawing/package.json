@@ -76,7 +76,7 @@
     "@file-viewer/capability-mermaid": "workspace:3.2.2",
     "@file-viewer/core": "workspace:3.2.2",
     "@panzoom/panzoom": "^4.6.2",
-    "dompurify": "3.4.16",
+    "dompurify": "3.4.17",
     "plantuml-encoder": "^1.4.0",
     "roughjs": "^4.6.6"
   },

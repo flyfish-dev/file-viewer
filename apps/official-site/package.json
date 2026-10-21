@@ -10,15 +10,15 @@
     "verify:responsive": "node scripts/verify-responsive-layout.mjs"
   },
   "dependencies": {
-    "@lucide/vue": "^1.43.0",
+    "@lucide/vue": "^1.59.0",
     "highlight.js": "^11.11.1",
     "vue": "^3.5.42"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitejs/plugin-vue": "^6.0.10",
     "@vue/tsconfig": "^0.9.1",
     "typescript": "^6.0.3",
     "vite": "8.3.4",
-    "vue-tsc": "^3.3.4"
+    "vue-tsc": "^3.3.13"
   }
 }

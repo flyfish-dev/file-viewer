@@ -74,7 +74,7 @@
     "verify:font-table-browser": "node scripts/verify-font-table-browser.mjs"
   },
   "dependencies": {
-    "dompurify": "3.4.16"
+    "dompurify": "3.4.17"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
