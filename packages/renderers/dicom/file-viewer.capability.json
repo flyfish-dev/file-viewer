@@ -230,7 +230,7 @@
       {
         "packageName": "dompurify",
         "spdx": "Apache-2.0",
-        "notice": "Reviewed runtime/SDK source dompurify@3.4.16; repository https://github.com/cure53/DOMPurify; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source dompurify@3.4.17; repository https://github.com/cure53/DOMPurify; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "electron-to-chromium",

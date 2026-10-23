@@ -40,7 +40,7 @@ jobs:
           version: 11.0.9
           run_install: false
       - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
           cache: pnpm
@@ -61,7 +61,9 @@ jobs:
         if: >-
           ${{ !cancelled() && steps.entry.outcome == 'success' && steps.browser.outcome == 'success' }}
         shell: bash
-        run: node packages/renderers/3d/scripts/verify-geo3d-browser.mjs 2>&1 | tee output/geo3d-focused/browser.log
+        run: |
+          node packages/renderers/3d/scripts/verify-geo3d-browser.mjs 2>&1 | tee output/geo3d-focused/browser.log
+          node packages/renderers/3d/scripts/verify-github-406-browser.mjs 2>&1 | tee output/geo3d-focused/las-crs.log
       - name: XML malformed-WASM recovery regression
         if: >-
           ${{ !cancelled() && steps.install.outcome == 'success' && steps.browser.outcome == 'success' }}
@@ -86,7 +88,7 @@ jobs:
         run: pnpm verify:github-governance 2>&1 | tee output/geo3d-focused/governance.log
       - name: Retain focused evidence even when a check fails
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: geo3d-focused-${{ github.sha }}
           path: |
@@ -94,5 +96,8 @@ jobs:
             output/geo3d-validation/engine-ownership.json
             output/geo3d-browser/report.json
             output/geo3d-browser/*.png
+            output/geo3d-browser/las-crs/report.json
+            output/geo3d-browser/las-crs/*.png
+            output/geo3d-browser/las-crs-module-graph.json
           if-no-files-found: error
           retention-days: 14

@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve, join } from 'node:path'
 import { verifySourceRetention } from '../../packages/build-support/source-retention.mjs'
+import { verifyPublicDocumentation } from './lib/public-documentation.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
 const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
@@ -46,13 +47,14 @@ const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: root, maxBuffer: 
 const inventory = readFileSync(join(root, 'ecosystem/source-retention.json'))
 assert.equal(
   createHash('sha256').update(inventory).digest('hex'),
-  'b9b9b6fe59576d0f7f7b427c14f0633a080bc866d3f11225b6f87e8b805638f0',
+  'a3a40af14e4de99826a089cf10ccae78a1c9a0e2ca4e2cfefe2a5a4b440ee2d6',
   'Source retention policy changed; review the complete baseline and each removal'
 )
 const policy = JSON.parse(inventory)
 assert.equal(policy.schemaVersion, 1)
 assert.equal(policy.baselineCommit, '7bb5e683784735d5ff6b8eb5ebcd4b98ffed8db3')
 const retention = await verifySourceRetention({ root, tracked, policy })
+const documentation = verifyPublicDocumentation(root, packageJson.scripts)
 for (const path of tracked) {
   assert(!path.split('/').includes('.build'), `Local build receipt is tracked: ${path}`)
   assert(
@@ -86,6 +88,7 @@ console.log(
     status: 'verified-complete-open-source-layout',
     trackedFiles: tracked.length,
     requiredSourceEntries: required.length,
+    ...documentation,
     ...retention
   })
 )

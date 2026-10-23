@@ -1,6 +1,8 @@
 # @file-viewer/geometry-engine
 
-Flyfish File Viewer 的无 UI、框架无关几何内核包。它已经提供浏览器原生的 STEP / STP、IGES / IGS 和 BREP 解析：文件在本地 OCCT Worker 中完成三角化，不需要上传或服务端转换。IFC 和 Rhino 3DM 目前只提供格式识别与准确的能力提示，尚未接入完整几何渲染。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geometry-engine/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geometry-engine/README.zh-CN.md)
+
+Framework-neutral, UI-free geometry kernel for Flyfish File Viewer. It now decodes STEP / STP, IGES / IGS, and BREP directly in the browser: OCCT tessellation runs in a local worker, with no upload or server-side conversion. IFC and Rhino 3DM currently provide signature detection and accurate capability notices only; their full geometry renderers are not wired yet.
 
 ```ts
 import { importOcctGeometryFile } from '@file-viewer/geometry-engine'
@@ -18,11 +20,11 @@ const result = await importOcctGeometryFile(buffer, 'step', {
 })
 ```
 
-`result` 包含 OCCT 输出的装配层级、网格、法线、索引和面颜色信息，可继续转换为 Three.js 或其他渲染对象。解析默认在一次性 Worker 中执行，文件字节和网格缓冲区使用 transferable 传递；完成、取消、报错或超时后 Worker 都会释放。`timeoutMs` 默认是 120 秒。只有 Worker 确实不可用时才建议设置 `useWorker: false`，因为回退会占用主线程。
+`result` contains the OCCT assembly hierarchy, meshes, normals, indices, and face colors for conversion into Three.js or another rendering layer. Parsing uses a one-shot worker by default and transfers both source bytes and mesh buffers. The worker is released after success, cancellation, failure, or timeout. `timeoutMs` defaults to 120 seconds. Set `useWorker: false` only when workers are genuinely unavailable, because that fallback parses on the main thread.
 
-## 离线资产
+## Offline Assets
 
-运行时不访问 CDN。部署时需要把下列文件放到同一套静态资源中：
+The runtime never falls back to a CDN. Deploy these files with the viewer:
 
 - `wasm/model/occt-worker.js`
 - `wasm/model/occt-import-js.js`
@@ -30,15 +32,15 @@ const result = await importOcctGeometryFile(buffer, 'step', {
 - `wasm/model/LICENSE.occt.txt`
 - `wasm/model/LICENSE.occt-import-js.txt`
 
-`@file-viewer/vite-plugin`、full 包和仓库构建脚本会复制这些资产。直接集成本包时，需要自行托管并传入 `workerUrl`、`runtimeUrl` 和 `wasmUrl`。应用部署在子路径、资源域名或受控网关下时，请传入最终可访问的绝对 URL 或带前缀 URL，不要依赖站点根路径。
+`@file-viewer/vite-plugin`, full packages, and the repository build scripts copy these assets. A bare package integration must self-host them and provide `workerUrl`, `runtimeUrl`, and `wasmUrl`. For subpath deployments, asset domains, or controlled gateways, pass final absolute URLs or correctly prefixed URLs instead of relying on the site root.
 
-严格 CSP 至少应允许资产来源出现在 `worker-src`、`script-src` 和用于获取 WASM 的 `connect-src` 中；部分浏览器还要求 `script-src 'wasm-unsafe-eval'` 才能编译 WebAssembly。Worker 使用本地 `importScripts()` 加载 runtime，因此不要只放行 WASM 而漏掉 runtime 脚本。
+A strict CSP must at least allow the asset origin in `worker-src`, `script-src`, and `connect-src` for the WASM fetch; some browsers also require `script-src 'wasm-unsafe-eval'` to compile WebAssembly. The classic worker loads the local runtime with `importScripts()`, so allowing only the WASM file is not sufficient.
 
-## 能力边界
+## Boundaries
 
-- `inspectGeometryKernelFile()` 仍可只读取文件前缀，识别 STEP / IGES / IFC / 3DM / BREP 常见签名。
-- STEP / STP、IGES / IGS 和 BREP 走 `occt-import-js` / OpenCascade，已经具备完整网格预览路径。
-- IFC 仍需要独立的 `web-ifc` / That Open 集成；3DM 仍需要 McNeel `rhino3dm` 集成。当前不会把它们伪装成已支持预览。
-- OCCT 与 `occt-import-js` 的许可证文件必须随离线资产一起分发。
+- `inspectGeometryKernelFile()` still offers prefix-only detection for common STEP / IGES / IFC / 3DM / BREP signatures.
+- STEP / STP, IGES / IGS, and BREP use `occt-import-js` / OpenCascade and have a complete mesh-preview path.
+- IFC still needs a dedicated `web-ifc` / That Open integration; 3DM still needs McNeel `rhino3dm`. Neither format is presented as fully previewable yet.
+- The OCCT and `occt-import-js` license notices must ship with the offline assets.
 
-把重型几何能力留在独立包中，可以让 `@file-viewer/core` 保持轻量，同时隔离 Worker、WASM、许可证和真实工程样本回归边界。
+Keeping this heavy path in a separate package lets `@file-viewer/core` stay small while worker, WASM, licensing, and real engineering-file regressions remain independently maintainable.

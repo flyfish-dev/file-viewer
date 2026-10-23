@@ -40,6 +40,8 @@ const guideOrder = [
   'faq',
   '---Development and release---',
   'development',
+  'collaboration',
+  'translations',
   'docker',
   'distribution',
 ];
@@ -75,6 +77,8 @@ const guideOrderZh = [
   'faq',
   '---开发与发布---',
   'development',
+  'collaboration',
+  'translations',
   'docker',
   'distribution',
 ];
@@ -155,7 +159,8 @@ function extractDescription(raw, title, locale) {
   const fallback = locale === 'zh'
     ? `了解 File Viewer 的${title}配置、能力边界与上线建议。`
     : `Learn ${title} for File Viewer, including configuration, capability boundaries, and production guidance.`;
-  return shorten(candidate.length >= 45 ? candidate : fallback, 188, fallback);
+  const minimumLength = locale === 'zh' ? 22 : 45;
+  return shorten(candidate.length >= minimumLength ? candidate : fallback, 188, fallback);
 }
 
 function extractFrontmatterDescription(raw) {
@@ -231,6 +236,13 @@ function transformMarkdown(raw, locale) {
       } else {
         line = line.replace(/\]\(\/en\//g, '](/').replace(/href="\/en\//g, 'href="/');
       }
+      // Source links also work on GitHub; map cross-language guide paths to
+      // local documentation routes after applying the current locale prefix.
+      line = line
+        .replace(/\]\(\.\.\/zh\/guide\/([\w-]+)\.md\)/g, '](/zh/guide/$1)')
+        .replace(/\]\(\.\.\/\.\.\/guide\/([\w-]+)\.md\)/g, '](/guide/$1)');
+      line = line.replace(/\]\(([\w-]+)\.md(#[^)]*)?\)/g, (original, name, anchor = '') =>
+        guideOrder.includes(name) ? `](/${locale === 'zh' ? 'zh/' : ''}guide/${name}${anchor})` : original);
     }
     output.push(line);
   }

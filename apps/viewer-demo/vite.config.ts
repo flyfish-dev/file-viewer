@@ -171,7 +171,7 @@ export default defineConfig(ctx => {
       vueJsx(),
       createOfflineAssetSanitizerPlugin(
         fileURLToPath(new URL('./dist', import.meta.url)),
-        { label: 'viewer-demo-offline-assets' }
+        { label: 'viewer-demo-offline-assets', preserveProductNavigation: true }
       )
     ],
     base: './',

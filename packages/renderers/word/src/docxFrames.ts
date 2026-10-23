@@ -30,6 +30,13 @@ export function observeDocxFrames(
         const frame = target.ownerDocument.createElement('div')
         frame.className = pagedLayout ? 'docx-page-frame' : 'docx-flow-frame'
         frame.dataset.docxResponsiveFrame = 'true'
+        // The engine paints direct page children. Preserve that resolved paper
+        // color before our zoom frame makes its direct-child selector stop
+        // matching, including the engine's dark mode and authored page colors.
+        const paperBackground = view?.getComputedStyle(child).backgroundColor
+        if (paperBackground) {
+          frame.style.setProperty('--file-viewer-docx-page-background', paperBackground)
+        }
         child.before(frame)
         frame.appendChild(child)
         next.push(frame)

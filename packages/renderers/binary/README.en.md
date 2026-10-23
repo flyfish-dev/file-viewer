@@ -1,5 +1,7 @@
 # @file-viewer/renderer-binary
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/binary/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/binary/README.zh-CN.md)
+
 `@file-viewer/renderer-binary` is an explicit, read-only binary inspector for File Viewer. It parses a reviewed built-in header catalog in a local module Worker and presents virtualized offset, hexadecimal, ASCII, structure-tree, and synchronized byte-selection views.
 
 ## Install and use

@@ -16,6 +16,7 @@ must not become the owner of every feature.
 | Settings lifecycle | `composables/useDemoViewerSettings.ts` | Draft/apply state, renderer remount decisions and view-state restoration. |
 | Floating panels | `composables/useDemoFloatingPanels.ts` | Anchoring and responsive placement. |
 | Recent files | `composables/useDemoRecentFiles.ts` | Serializable history; live local `File` objects remain in memory. |
+| Integration snippet and clipboard | `composables/useDemoIntegrationSnippet.ts` | Input-sensitive snippet text, clipboard timeout/fallback and copy-feedback cleanup. |
 | File capsule motion | `composables/useDemoFileCapsuleMotion.ts` | Animation state machine; DOM geometry is supplied by the page. |
 | Visual regions | `components/demo/*` | Independently styled UI with explicit props/events. |
 

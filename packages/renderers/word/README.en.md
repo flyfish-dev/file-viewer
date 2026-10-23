@@ -1,5 +1,7 @@
 # @file-viewer/renderer-word
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/word/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/word/README.zh-CN.md)
+
 Word and OpenDocument renderer package for Flyfish File Viewer. Standard/full includes DOCX/DOCM/DOTX/DOTM, legacy DOC/DOT, ODT, and ODP. RTF is enabled explicitly by `@file-viewer/capability-rtf`.
 
 ## Usage

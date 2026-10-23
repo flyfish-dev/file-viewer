@@ -948,7 +948,7 @@
     },
     {
       "name": "dompurify",
-      "version": "3.4.16",
+      "version": "3.4.17",
       "license": "Apache-2.0",
       "declaredLicense": "(MPL-2.0 OR Apache-2.0)",
       "direct": false,

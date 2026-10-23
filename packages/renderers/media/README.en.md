@@ -1,5 +1,7 @@
 # @file-viewer/renderer-media
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/media/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/media/README.zh-CN.md)
+
 Base audio and video renderer package for Flyfish File Viewer. It provides browser-native media playback by default. HLS fallback and MIDI inspection are enabled explicitly by `@file-viewer/capability-streaming-media` and `@file-viewer/capability-midi`; neither enters the standard/full default closure.
 
 ## Usage

@@ -21,6 +21,8 @@ const ignoredMetadataFileNames = new Set([
   'sitemap.xml'
 ])
 
+const officialProductNavigationLiteral = /^https:\/\/file-viewer\.app\/(?:en\/)?(?=[`'"])/
+
 const replacements = [
   {
     pattern: /https:\/\/cdn\.jsdelivr\.net\/npm\/@mathjax/g,
@@ -205,7 +207,13 @@ const replacements = [
     pattern: /https:\/\/(?:demo\.|doc\.)?file-viewer\.app\/?/g,
     replacement: './',
     reason: 'official site origins must not be used as runtime fallback bases',
-    skipFile: file => /\/apps\/viewer-demo\/dist\/(?:index|compare|iframe)\.html$/.test(file.replaceAll('\\', '/'))
+    skipFile: file => /\/apps\/viewer-demo\/dist\/(?:index|compare|iframe)\.html$/.test(file.replaceAll('\\', '/')),
+    // The demo's product-home link (https://file-viewer.app/ and /en/) is user
+    // navigation, not a runtime fallback base. Rewriting it to './' or './en/'
+    // sent the demo logo to demo.file-viewer.app/en/ (404). Only callers that opt
+    // in (the viewer demo build) keep these two exact string literals.
+    skipMatch: (text, offset, options) => Boolean(options?.preserveProductNavigation) &&
+      officialProductNavigationLiteral.test(text.slice(offset, offset + 32))
   }
 ]
 
@@ -233,14 +241,14 @@ async function collectTextFiles(root, files = []) {
   return files
 }
 
-export function sanitizeOfflineAssetText(original, file) {
+export function sanitizeOfflineAssetText(original, file, options = {}) {
   let text = original
   let replacementCount = 0
   for (const item of replacements) {
     if (item.skipFile?.(file)) continue
     text = text.replace(item.pattern, (...arguments_) => {
       const offset = arguments_.at(-2)
-      if (item.skipMatch?.(text, offset)) return arguments_[0]
+      if (item.skipMatch?.(text, offset, options)) return arguments_[0]
       replacementCount += 1
       return item.replacement.replace(/\$(\d+)/g, (_, group) => arguments_[Number(group)] || '')
     })
@@ -248,14 +256,14 @@ export function sanitizeOfflineAssetText(original, file) {
   return { output: text, replacementCount }
 }
 
-export async function sanitizeOfflineViewerAssetTree(root) {
+export async function sanitizeOfflineViewerAssetTree(root, options = {}) {
   const files = await collectTextFiles(root)
   const touchedFiles = []
   let replacementCount = 0
 
   for (const file of files) {
     const original = await readFile(file, 'utf8')
-    const sanitized = sanitizeOfflineAssetText(original, file)
+    const sanitized = sanitizeOfflineAssetText(original, file, options)
     const text = sanitized.output
     replacementCount += sanitized.replacementCount
     if (text !== original) {
@@ -278,7 +286,9 @@ export function createOfflineAssetSanitizerPlugin(outputDir, options = {}) {
     apply: 'build',
     enforce: 'post',
     async closeBundle() {
-      const result = await sanitizeOfflineViewerAssetTree(outputDir)
+      const result = await sanitizeOfflineViewerAssetTree(outputDir, {
+        preserveProductNavigation: options.preserveProductNavigation === true
+      })
       if (options.log === false) {
         return
       }

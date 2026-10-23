@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "legal": [
+    {
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "artist": "PixelMannen",
+      "year": "2014",
+      "owner": "Public",
+      "what": "Model",
+      "text": "Creative Commons Zero v1.0 Universal",
+      "spdx": "CC0-1.0",
+      "icon": "https://licensebuttons.net/p/zero/1.0/88x31.png"
+    },
+    {
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/legalcode",
+      "artist": "tomkranis",
+      "year": "2014",
+      "owner": "tomkranis",
+      "what": "Rigging & Animation",
+      "text": "Creative Commons Attribution 4.0 International",
+      "spdx": "CC-BY-4.0",
+      "icon": "https://licensebuttons.net/l/by/4.0/88x31.png"
+    },
+    {
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/legalcode",
+      "artist": "@AsoboStudio and @scurest",
+      "year": "2017",
+      "owner": "@AsoboStudio and @scurest",
+      "what": "Conversion to glTF",
+      "text": "Creative Commons Attribution 4.0 International",
+      "spdx": "CC-BY-4.0",
+      "icon": "https://licensebuttons.net/l/by/4.0/88x31.png"
+    }
+  ],
+  "tags": [
+    "core",
+    "testing"
+  ],
+  "screenshot": "screenshot/screenshot.jpg",
+  "name": "Fox",
+  "path": "./Models/Fox",
+  "summary": "Multiple animations cycles: Survey, Walk, Run.",
+  "createReadme": true
+}

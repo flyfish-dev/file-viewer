@@ -2,13 +2,13 @@ blank_issues_enabled: false
 contact_links:
   - name: Documentation
     url: https://doc.file-viewer.app
-    about: Read setup guides, API notes, format support, and deployment docs.
+    about: Read setup guides, API notes, format support, and deployment docs. / 安装指南、API 说明、格式支持与部署文档。
   - name: Live demo
     url: https://demo.file-viewer.app
-    about: Try public samples or test a sanitized local file before opening an issue.
+    about: Try public samples or test a sanitized local file before opening an issue. / 提 issue 前先用公开样例或脱敏的本地文件试一试。
   - name: Usage and deployment support
     url: https://github.com/flyfish-dev/file-viewer/blob/main/SUPPORT.md
-    about: Check the support routes before filing a bug without a reproducible artifact.
+    about: Check the support routes before filing a bug without a reproducible artifact. / 没有可复现材料时，请先查看支持方式。
   - name: Private security report
     url: https://github.com/flyfish-dev/file-viewer/security/advisories/new
-    about: Report vulnerabilities privately. Do not disclose exploitable details in a public issue.
+    about: Report vulnerabilities privately. Do not disclose exploitable details in a public issue. / 私下报告安全漏洞，不要在公开 issue 中披露可利用细节。

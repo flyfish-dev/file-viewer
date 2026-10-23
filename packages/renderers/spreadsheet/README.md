@@ -1,8 +1,10 @@
 # @file-viewer/renderer-spreadsheet
 
-Flyfish File Viewer 的独立表格 renderer 包。它基于 `styled-exceljs` 与 `e-virt-table` 提供 XLSX、XLSM、XLSB、XLS、CSV、TSV、ODS、FODS、Numbers 等表格文件的浏览器端预览，并通过 File Viewer 统一的 asset manifest 解析可选 Worker 路径，适合企业内网和离线部署。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/spreadsheet/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/spreadsheet/README.zh-CN.md)
 
-## 用法
+Standalone spreadsheet renderer package for Flyfish File Viewer. It is powered by `styled-exceljs` and `e-virt-table`, previews XLSX, XLSM, XLSB, XLS, CSV, TSV, ODS, FODS, Numbers, and compatible spreadsheet files in the browser, and resolves the optional worker URL through the File Viewer asset manifest for offline enterprise deployments.
+
+## Usage
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -14,7 +16,7 @@ const options = {
 }
 ```
 
-也可以和其他 renderer 一起组合：
+You can also compose it with other renderer packages:
 
 ```ts
 import { pdfRenderer } from '@file-viewer/renderer-pdf'
@@ -26,38 +28,38 @@ const options = {
 }
 ```
 
-## 能力边界
+## Capabilities
 
-- 支持 `.xlsx`、`.xltx`、`.xlsm`、`.xlsb`、`.xls`、`.xlt`、`.xltm`、`.csv`、`.tsv`、`.ods`、`.fods`、`.numbers`。
-- CSV / TSV 默认自动识别 UTF-8（含 BOM）与 GBK / GB18030；遇到来源编码已知的文件时，可通过 `options.spreadsheet.textEncoding` 固定为 `utf-8`、`gbk` 或 `gb18030`。
-- 默认 `options.spreadsheet.worker: 'auto'`：小文件走主线程兼容路径，大文件达到 `options.spreadsheet.workerAutoThreshold`（默认 1MB）后自动尝试静态 Worker。
-- 可以通过 `options.spreadsheet.worker: true` 强制启用静态 Worker，通过 `worker: false` 关闭自动启用；静态路径特殊时配置 `options.spreadsheet.workerUrl`。
-- 支持多 sheet、横向滚动标签栏、合并单元格、列宽/行高、边框、填充、对齐、文本颜色、Office 365 / WPS 单元格内嵌图片、workbook drawing 图片、图片双击大图预览、统一缩放 provider 和可选表头拖拽调整列宽。
-- XLSX drawing 中的 TIFF 图片会按需加载 MIT 许可的 UTIF.js，在浏览器内转换为 PNG；普通表格不会加载 TIFF 解码器。
-- 表格使用虚拟渲染，适合交互预览；完整打印按钮通常由上层能力判断隐藏，避免只打印当前视口。
+- Supports `.xlsx`, `.xltx`, `.xlsm`, `.xlsb`, `.xls`, `.xlt`, `.xltm`, `.csv`, `.tsv`, `.ods`, `.fods`, and `.numbers`.
+- CSV / TSV automatically detects UTF-8 (with or without BOM) and GBK / GB18030. For known inputs, set `options.spreadsheet.textEncoding` to `utf-8`, `gbk`, or `gb18030`.
+- Defaults to `options.spreadsheet.worker: 'auto'`: small files keep the main-thread compatibility path, while files at or above `options.spreadsheet.workerAutoThreshold` (1MB by default) automatically try the static worker.
+- Can force the static worker with `options.spreadsheet.worker: true`, disable auto worker with `worker: false`, and override custom static paths with `options.spreadsheet.workerUrl`.
+- Supports multiple sheets, horizontally scrollable sheet tabs, merged cells, row and column sizing, borders, fills, alignment, text color, Office 365 and WPS in-cell images, workbook drawing images, double-click image previews, the global zoom provider, and optional header drag column resizing.
+- TIFF drawings in XLSX files load the MIT-licensed UTIF.js decoder only when needed and are converted to PNG in the browser. Ordinary spreadsheets do not load the TIFF decoder.
+- Uses virtual rendering for interaction. Host components usually hide full-document print for spreadsheets to avoid printing only the current viewport.
 
-## 小内容 Excel 填满视口
+## Fill the viewport for small Excel sheets
 
-`options.spreadsheet.fillViewport` 默认 `false`。仅 Excel 格式（XLSX / XLSM / XLSB / XLS 及其模板）有效；开启后以工作表默认行高、列宽补充空白列标题（A / B / …）、行号和网格，让小表或空 Sheet 填满当前预览区域。容器 resize、缩放和切 Sheet 时会重新计算，补充部分沿用虚拟画布，不生成整张 Excel 空表，也不拉伸已有单元格。
+`options.spreadsheet.fillViewport` defaults to `true` for spreadsheet formats, including Excel and CSV / TSV. Small and empty sheets show blank column headers (A / B / …), row numbers and grid cells using the worksheet's default sizes. Padding recalculates on resize, zoom and sheet changes, stays virtual, and never stretches existing cells or changes workbook data. Set it to `false` to show only the used range.
 
 ```ts
 const options = {
   rendererMode: 'replace',
   renderers: spreadsheetRenderer,
-  spreadsheet: { fillViewport: true },
+  spreadsheet: { fillViewport: false }, // Optional: show only the used range.
 }
 ```
 
-补充部分只用于显示，不改变工作簿数据、used-range、原文件下载/导出、搜索结果或内容统计。CSV / TSV / ODS / Numbers 等格式忽略此属性；不传或设为 `false` 保持原有行为。
+This changes only the display: workbook data, used range, original-file downloads/exports, search results and content counts remain unchanged. CSV / TSV / ODS / Numbers ignore this option. Omitting it or setting it to `false` preserves the existing behavior.
 
-## 离线资产
+## Offline Assets
 
-默认可选 Worker 路径为：
+The optional worker path is:
 
 - `vendor/xlsx/sheet.worker.js`
 
-私有化部署时可以通过 `options.spreadsheet.workerUrl` 覆盖。官方 Vite 插件和 Demo worker 构建脚本会从本包的 worker 入口生成该文件。
+For private deployments, override it with `options.spreadsheet.workerUrl`. The official Vite plugin and demo worker build script generate this file from this package's worker entry.
 
-## 迁移说明
+## Migration Note
 
-表格预览已经从 `@file-viewer/core` 中彻底移出，core 只保留资产 manifest、类型和兼容错误提示，不再默认安装 `styled-exceljs`、`e-virt-table` 或 `tinycolor2`。完整表格能力请安装本包并传入 `renderers`，或直接使用 `@file-viewer/preset-all`。
+Spreadsheet preview has moved completely out of `@file-viewer/core`. Core now only keeps the asset manifest, shared types, and a compatibility error message, and it no longer installs `styled-exceljs`, `e-virt-table`, or `tinycolor2` by default. Install this package and pass it through `renderers`, or use `@file-viewer/preset-all` for the complete spreadsheet experience.

@@ -4,12 +4,14 @@
 
 | Local file | Source | License | Purpose |
 | --- | --- | --- | --- |
+| `fox.glb` | [Khronos glTF Sample Assets, Fox](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Fox) | PixelMannen model: CC0-1.0; tomkranis rigging/animation and AsoboStudio/scurest glTF conversion: CC-BY-4.0. Original texts and attribution in `licenses/fox/` | Real low-poly model for the featured 3D card, self-hosted GLB loading and orbit interaction; upstream GLB unchanged |
 | `page.html` | Project-authored static report | Apache-2.0 | HTML page/source switching, inline styles, responsive layout, and offline sandbox behavior |
 | `word-revisions.doc` | [Issue #255](https://github.com/flyfish-dev/file-viewer/issues/255), original public `111.doc` attachment | Reporter confirmed sanitized redistribution for regression testing | Original DOC insertion/deletion records; SHA256 `762969dde787960b8e33e65ac11b5c85247c648329e69f560dd7554633cc706f` |
 | `word-cover.docx` | [Issue #250](https://github.com/flyfish-dev/file-viewer/issues/250), unchanged `test/fixtures/issue-250/page-anchors.docx` | Reporter confirmed sanitized redistribution for regression testing | Page-relative cover-border geometry; SHA256 `d9e59a52a9f2bcb3e42142b4abb0f80410a7d62d142f4c0515f004806cd38dff` |
 | `drawing.dxf` | `https://github.com/mozman/ezdxf/blob/master/examples_dxf/wipeout_door.dxf` | MIT | Real DXF CAD drawing for pan, zoom and layer smoke tests |
 | `word.docx` | `https://www.basel.int/Portals/4/download.aspx?d=UNEP-CHW.15-6-Add.5-Rev.1.Chinese.docx` | Public Basel Convention document, source attribution required | Rich Chinese DOCX preview with headings, long-form text, tables, drawings, responsive white paper and print/export smoke tests |
-| `en/calibre-demo.docx` | `https://calibre-ebook.com/downloads/demos/demo.docx` | calibre public demo document by Kovid Goyal / calibre project | Rich English DOCX preview with typography, headings, lists, tables and conversion-oriented Word features |
+| `en/quarterly-operations-report.docx` | Project-authored fictional business report; `apps/viewer-demo/scripts/generate-business-report.mjs`; provenance and original SVG figures under `sources/quarterly-operations-report/` | Apache-2.0, File Viewer contributors | English Word showcase: nine pages of native text, linked contents, page fields, merged table headers, a chart and a wrapped diagram. Every organization, figure and decision is fictional. |
+| `en/calibre-demo.docx` | `https://calibre-ebook.com/downloads/demos/demo.docx` | calibre public demo document by Kovid Goyal / calibre project | Additional formatting reference with typography, headings, lists, tables and conversion-oriented Word features |
 | `template.dot` | Copied from project `test.doc` fixture and saved with the Word 97-2003 template extension | Apache-2.0 | DOT extension routing smoke test for legacy Word template preview |
 | `ppt.pptx` | `https://science.nasa.gov/wp-content/uploads/2023/11/day2-1630-pac-lunarstrategy-noble-nov2023.pptx` | NASA public media usage guidelines; acknowledge NASA and do not imply endorsement | Professional NASA lunar science strategy deck for rich backgrounds, imagery, section pages, dense text, comparison layouts and multi-page PPTX rendering |
 | `office-demo.ppt` | `@file-viewer/ppt` upstream public browser fixture at `office-render-demo/public/samples/office-demo.ppt` | Project-owner authorized Demo distribution and renderer regression use | Real PowerPoint 97–2003 binary deck for native WASM parsing, multi-slide Canvas output, unified zoom, print and PPT/PPTX route isolation |
@@ -89,7 +91,8 @@
 - `samples/autodesk/house.dwfx` 来自 Autodesk 官方 Viewer 教程仓库，用于验证 DWFx / XPS native renderer、图形、多页结构和视图适配；该文件约 17MB，但只在用户选择样例时按需加载。
 - `samples/autodesk/robot-arm.dwfx` 同样来自 Autodesk 官方 Viewer 教程仓库，用于验证 W2D/W3D native renderer 和复杂装配图形。
 - `word.docx` 来自 Basel Convention 公开中文正式文档，覆盖标题层级、长正文、表格、图示、白色纸张和完整打印回归；该样本保留真实文档复杂度，但避免默认 Demo 首屏触发超大 DOCX 保护。
-- `en/calibre-demo.docx` 来自 calibre 官方 DOCX demo，用于英文浏览器默认 Demo，覆盖英文排版、标题、列表、表格和富文本结构。
+- `en/quarterly-operations-report.docx` 是项目原创的虚构业务报告，用作英文 Word 示例。正文、目录、表格和页码均为可编辑的原生 Word 元素；虚构企业与数据在封面、页眉页脚和来源说明中明确标注。
+- `en/calibre-demo.docx` 来自 calibre 官方 DOCX demo，保留为额外格式参考，覆盖英文排版、标题、列表、表格和富文本结构。
 - `template.dot` 复用 `test.doc` 的二进制内容，仅用于验证 Word 97-2003 模板扩展名能正确进入老 Word 渲染链路。
 - `ppt.pptx` 与 `en/sample-presentation.pptx` 均来自 NASA Science 公开的 `Implementation Plan for a NASA Integrated Lunar Science Strategy in the Artemis Era` 演示稿，覆盖星云封面、深色引用页、分栏信息页、图文混排、正式页眉页脚和 20 页真实演示稿结构；使用时按 NASA 媒体使用说明注明来源，不暗示 NASA 对项目背书。
 - `office-demo.ppt` 来自 `@file-viewer/ppt` 上游公开浏览器的固定回归样例，按项目方授权用于 Demo 分发和预览验收；它是中英文 Demo 共用的语言中立 PPT fixture，仅用于验证 `@file-viewer/ppt@0.3.6` Worker/OffscreenCanvas/WASM 链路与 PPTX Worker 链路彼此隔离。

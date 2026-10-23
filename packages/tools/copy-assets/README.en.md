@@ -1,5 +1,7 @@
 # file-viewer-copy-assets
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/copy-assets/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/copy-assets/README.zh-CN.md)
+
 The official Flyfish File Viewer asset-copy CLI. Full packages include `preset-all`, but their Worker, WASM, font, and vendor files still have to be published. Without those files, only part of the format matrix can work.
 
 Every `*-full` package automatically installs an exactly matching CLI. For Webpack, Vue CLI, and other non-Vite builds, run it to copy into the default static directory:

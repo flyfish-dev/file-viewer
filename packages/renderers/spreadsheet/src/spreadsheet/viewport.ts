@@ -2,10 +2,10 @@ import type { Column } from 'e-virt-table'
 import { getDataKey, ROW_KEY_FIELD, ROW_STATE_FIELD, RowState, type VirtualRow, type VirtualSheetState } from './state.js'
 import { getDisplayColumns, HEADER_HEIGHT, normalizeRowHeight } from './view.js'
 
-const EXCEL_FORMATS = new Set(['xlsx', 'xltx', 'xlsm', 'xltm', 'xlsb', 'xls', 'xlt'])
+const GRID_FORMATS = new Set(['xlsx', 'xltx', 'xlsm', 'xltm', 'xlsb', 'xls', 'xlt', 'xla', 'xlam', 'csv', 'tsv', 'ods', 'fods', 'numbers', 'et', 'ett', 'dbf'])
 
 export const shouldFillSpreadsheetViewport = (enabled: boolean | undefined, type = '') => (
-  enabled === true && EXCEL_FORMATS.has(type.toLowerCase().replace(/^\./, ''))
+  enabled !== false && GRID_FORMATS.has(type.toLowerCase().replace(/^\./, ''))
 )
 
 const columnLabel = (index: number) => {

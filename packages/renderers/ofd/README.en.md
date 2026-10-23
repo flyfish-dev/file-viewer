@@ -1,5 +1,7 @@
 # @file-viewer/renderer-ofd
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/ofd/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/ofd/README.zh-CN.md)
+
 Standalone OFD renderer for Flyfish File Viewer. It uses the pure-browser DLTech21/ofd.js pipeline and lazy-loads the OFD vendor, XML parser, and ZIP parser only when an `.ofd` document is opened.
 
 ## Install

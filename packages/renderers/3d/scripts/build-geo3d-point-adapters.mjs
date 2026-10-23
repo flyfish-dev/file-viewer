@@ -168,6 +168,15 @@ export function createPointCloudWithCancellation(PointCloud, options) {
   return { entity, stop }
 }
 
+/** LAS ranges are half-open: a complete final EVLR may end exactly at EOF. */
+export function sliceLasMetadataBuffer(buffer, begin, end) {
+  if (!Number.isSafeInteger(begin) || !Number.isSafeInteger(end) || begin < 0 ||
+      end < begin || end > buffer.byteLength) {
+    throw new Error('Invalid LAS metadata range.')
+  }
+  return new Uint8Array(buffer.slice(begin, end))
+}
+
 /** Isolate pool ownership/disposal and preserve per-request cancellation. */
 export function adaptPointSource(name, text) {
   if (!['LASSource', 'COPCSource'].includes(name) || hash(text) !== SOURCE_HASHES[name]) {
@@ -184,6 +193,17 @@ export function adaptPointSource(name, text) {
   }
   body = body.replace(`export default class ${name}`, `class ${name}`)
   if (name === 'COPCSource') body = body.replace('export function isCOPCSource', 'function isCOPCSource')
+  if (name === 'LASSource') {
+    const originalRange = `const getBufferChunk = (begin, end) => {
+      if (end >= buffer.byteLength) {
+        throw new Error();
+      }
+      return new Uint8Array(buffer.slice(begin, end));
+    };`
+    if (!body.includes(originalRange)) throw new Error('Unexpected reviewed LAS metadata range reader.')
+    body = body.replace(originalRange, 'const getBufferChunk = (begin, end) => sliceLasMetadataBuffer(buffer, begin, end);')
+    body = `${sliceLasMetadataBuffer.toString()}\n${body}`
+  }
   if (name === 'COPCSource') {
     const originalHierarchy = `async function loadSubtree(getter, root, nodeMap) {
   const {

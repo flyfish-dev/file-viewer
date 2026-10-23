@@ -1,3 +1,5 @@
 # @file-viewer/assets-hangul
 
-Hangul HWP/HWPX Worker runtime. This package is installed only when the matching capability is selected. Its installer performs a transactional merge and records a per-file SHA-256 receipt.
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/assets-hangul/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/assets-hangul/README.zh-CN.md)
+
+Self-hosted Worker assets for the opt-in HWP and HWPX renderer. Hangul support is not part of the standard full packages.

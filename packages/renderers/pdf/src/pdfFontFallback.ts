@@ -1,6 +1,6 @@
 const PDF_CJK_FONT_CSS_FILE = 'noto-sans-sc.css';
 const PDF_CJK_FONT_TEMPLATE_FAMILY = 'Noto Sans SC Variable';
-const PDF_CJK_TEXT_RE = /[\u2e80-\u2fff\u3000-\u303f\u3040-\u30ff\u3100-\u312f\u31a0-\u31bf\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff00-\uffef]/;
+const PDF_CJK_TEXT_RE = /[\u2e80-\u2fff\u3000-\u303f\u3040-\u30ff\u3100-\u312f\u31a0-\u31bf\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff00-\uffef\u{20000}-\u{323af}]/u;
 const PDF_CONTROL_TEXT_RE = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g;
 const PDF_CJK_FONT_MAX_PROBE_CHARS = 4096;
 const PDF_IDENTITY_FONT_MIN_CONTROL_CHARS = 2;
@@ -280,12 +280,10 @@ const loadFamilyText = async (
   }
   ensureAliasStyle(documentRef, state, template, family);
 
-  const pendingChars = [...chars].filter(char => !state.loadedChars.has(char));
-  if (!pendingChars.length) {
+  const needsFont = [...chars].some(char => !state.loadedChars.has(char));
+  if (!needsFont) {
     return false;
   }
-  pendingChars.forEach(char => state?.loadedChars.add(char));
-  const probeText = pendingChars.join('');
   const escapedFamily = escapeCssString(family);
   const fontSet = documentRef.fonts;
   if (!fontSet?.load) {
@@ -293,6 +291,11 @@ const loadFamilyText = async (
   }
 
   const operation = state.tail.then(async () => {
+    // Another viewer may be loading these shards. Readiness is shared, not just
+    // scheduling: never let a concurrent canvas render before that load settles.
+    const pendingChars = [...chars].filter(char => !state.loadedChars.has(char));
+    if (!pendingChars.length) return;
+    const probeText = pendingChars.join('');
     const loadedFaces = await Promise.all([
       fontSet.load(`normal 400 16px "${escapedFamily}"`, probeText),
       fontSet.load(`normal 700 16px "${escapedFamily}"`, probeText),
@@ -300,15 +303,11 @@ const loadFamilyText = async (
     if (!loadedFaces.some(faces => faces.length > 0)) {
       throw new Error(`No matching CJK fallback font face loaded for ${family}`);
     }
+    pendingChars.forEach(char => state.loadedChars.add(char));
   });
   state.tail = operation.catch(() => {});
-  try {
-    await operation;
-    return true;
-  } catch (error) {
-    pendingChars.forEach(char => state?.loadedChars.delete(char));
-    throw error;
-  }
+  await operation;
+  return true;
 };
 
 export const createPdfCjkFontFallbackManager = ({
@@ -330,7 +329,10 @@ export const createPdfCjkFontFallbackManager = ({
   };
 
   const getTemplate = () => {
-    templatePromise ||= loadFontTemplate(documentRef, cssUrl);
+    templatePromise ||= loadFontTemplate(documentRef, cssUrl).catch(error => {
+      templatePromise = null;
+      throw error;
+    });
     return templatePromise;
   };
 

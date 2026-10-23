@@ -37,6 +37,7 @@ PDF、DOCX、PPT、PPTX、CAD、OpenDocument、3D 模型、绘图、音视频、
 - `map.geojson`: 验证 GeoJSON 点线面离线地图预览
 - `route.kml`: 验证 KML 转 GeoJSON 后预览
 - `track.gpx`: 验证 GPX 轨迹转 GeoJSON 后预览
+- `fox.glb`: 使用 Khronos 开放示例库的真实低模狐狸展示 3D 预览与旋转，原始署名和许可见 `licenses/fox/NOTICE.txt`
 - `model.gltf`: 使用项目内最小 glTF 验证 Web 3D 预览
 - `model.obj`: 使用项目内 OBJ 四面体验证 OBJ 几何预览
 - `model.stl`: 使用项目内 STL 四面体验证 STL 几何预览

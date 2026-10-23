@@ -74,7 +74,8 @@
     "IFC.md",
     "licenses",
     "GEO3D.md",
-    "GEO3D_THIRD_PARTY_NOTICES.md"
+    "GEO3D_THIRD_PARTY_NOTICES.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node scripts/build-geo3d-point-adapters.mjs && node scripts/build-geo3d-raster-adapters.mjs && node scripts/verify-geo3d-material-compatibility.mjs",
@@ -82,8 +83,8 @@
     "verify:ifc": "node scripts/verify-ifc-entry.mjs && node --test scripts/ifc-settings.test.mjs",
     "verify:ifc-browser": "node scripts/verify-ifc-browser.mjs",
     "verify:ifc-installed": "node scripts/verify-ifc-installed.mjs",
-    "verify:geo3d": "node scripts/verify-geo3d-entry.mjs && node scripts/verify-geo3d-types.mjs && node --test scripts/geo3d-inputs.test.mjs scripts/geo3d-owned-workers.test.mjs scripts/geo3d-raster-workers.test.mjs scripts/geo3d-raster-cache.test.mjs scripts/geo3d-point-lifecycle.test.mjs scripts/geo3d-copc-hierarchy.test.mjs scripts/geo3d-hooks.test.mjs scripts/geo3d-point-material.test.mjs scripts/geo3d-memory-fixtures.test.mjs scripts/geo3d-metadata.test.mjs",
-    "verify:geo3d-browser": "node scripts/verify-geo3d-browser.mjs",
+    "verify:geo3d": "node scripts/verify-geo3d-entry.mjs && node scripts/verify-geo3d-types.mjs && node --test scripts/geo3d-inputs.test.mjs scripts/geo3d-owned-workers.test.mjs scripts/geo3d-raster-workers.test.mjs scripts/geo3d-raster-cache.test.mjs scripts/geo3d-point-lifecycle.test.mjs scripts/geo3d-copc-hierarchy.test.mjs scripts/geo3d-hooks.test.mjs scripts/geo3d-point-material.test.mjs scripts/geo3d-memory-fixtures.test.mjs scripts/geo3d-metadata.test.mjs scripts/geo3d-las-crs.test.mjs",
+    "verify:geo3d-browser": "node scripts/verify-geo3d-browser.mjs && node scripts/verify-github-406-browser.mjs",
     "verify:optional-sdk-types": "node scripts/verify-optional-sdk-types.mjs",
     "verify:geo3d-native-browser": "node scripts/verify-geo3d-native-browser.mjs"
   },

@@ -7,6 +7,7 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import {
   adaptPointSource,
+  sliceLasMetadataBuffer,
   createPointSourceWithCancellation
 } from './build-geo3d-point-adapters.mjs'
 const { Geo3dOwnedWorkerPool } = await import(
@@ -304,7 +305,15 @@ test('real workers transfer bytes and terminate independently', async (t) => {
   await cancelled
   assert.equal(new Uint8Array(await done)[0], 10)
 })
-test('pinned adapter transformation rejects changes and injects only local ownership', async () => {
+test('LAS metadata ranges retain complete EOF records and reject invalid bounds', () => {
+  const buffer = Uint8Array.from([11, 22, 33, 44]).buffer
+  assert.deepEqual([...sliceLasMetadataBuffer(buffer, 1, 4)], [22, 33, 44])
+  assert.equal(sliceLasMetadataBuffer(buffer, 4, 4).length, 0)
+  for (const [begin, end] of [[-1, 2], [0, 5], [3, 2], [0.5, 2], [0, NaN]]) {
+    assert.throws(() => sliceLasMetadataBuffer(buffer, begin, end), /Invalid LAS metadata range/)
+  }
+})
+test('pinned adapter transformation rejects source changes and retains reviewed local fixes', async () => {
   const require = createRequire(import.meta.url)
   for (const name of ['LASSource', 'COPCSource']) {
     const path = process.env.GEO3D_ENGINE_SOURCE
@@ -317,6 +326,7 @@ test('pinned adapter transformation rejects changes and injects only local owner
     assert.match(adapted, /LASWorkerPool\.dispose\(\)/)
     assert.ok(adapted.includes(createPointSourceWithCancellation.toString()))
     assert.ok(adapted.includes(`return createPointSourceWithCancellation(${name}, options);`))
+    if (name === 'LASSource') assert.ok(adapted.includes(sliceLasMetadataBuffer.toString()))
     assert.throws(() => adaptPointSource(name, source + '\n'), /Unreviewed/)
   }
   assert.throws(() => adaptPointSource('Other', ''), /Unreviewed/)

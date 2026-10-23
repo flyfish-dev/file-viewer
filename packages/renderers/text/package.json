@@ -66,7 +66,8 @@
     "README.en.md",
     "LICENSE",
     "bin/copy-xml-profile-assets.mjs",
-    "licenses/xml-profiles"
+    "licenses/xml-profiles",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node --test test/*.test.mjs",
@@ -77,7 +78,7 @@
     "@file-viewer/core": "workspace:3.2.2",
     "@types/pako": "^2.0.4",
     "@prettier/plugin-xml": "3.4.2",
-    "dompurify": "3.4.16",
+    "dompurify": "3.4.17",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.12",
     "prettier": "3.9.9"

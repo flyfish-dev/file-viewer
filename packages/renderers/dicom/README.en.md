@@ -1,5 +1,7 @@
 # @file-viewer/renderer-dicom
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.zh-CN.md)
+
 An explicitly installed DICOM renderer for local DICOM Part 10 files. It uses the modular Cornerstone3D core and DICOM image-loader packages; it does not embed the OHIF application and does not use DCMTK.
 
 This package is excluded from File Viewer full and preset packages. The CLI `--profile full` separately adds DICOM and signature capabilities.

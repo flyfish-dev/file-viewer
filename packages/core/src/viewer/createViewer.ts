@@ -395,6 +395,7 @@ export const createViewer = (
       surface.container.style.height = '100%';
     }
     syncFileViewerRenderSurfaceBackground(target, options);
+    target.setAttribute('data-viewer-theme', options.theme || 'system');
     currentRenderTarget = target;
     return surface;
   };
@@ -906,6 +907,7 @@ export const createViewer = (
         ...nextOptions,
       };
       syncFileViewerRenderSurfaceBackground(currentRenderTarget, options);
+      currentRenderTarget?.setAttribute('data-viewer-theme', options.theme || 'system');
       syncWatermarkOverlay();
       if ('fit' in nextOptions && nextOptions.fit !== previousFit) {
         fitController.resetAutoFit();

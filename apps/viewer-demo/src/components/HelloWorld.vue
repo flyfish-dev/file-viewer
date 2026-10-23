@@ -30,8 +30,19 @@ import {
 import { createDemoFileHandoff } from '@/components/utils'
 import DemoFileTypeIcon from '@/components/demo/DemoFileTypeIcon.vue'
 import DemoRecentFiles from '@/components/demo/DemoRecentFiles.vue'
+import DemoWelcomeCard from '@/components/demo/DemoWelcomeCard.vue'
+import type { DemoWelcomeSample } from '@/components/demo/DemoWelcomeCard.vue'
+import samplePreviews from '@/data/demoSamplePreviews.json'
+import {
+  demoSampleParamFor,
+  readDemoSampleParam,
+  resolveDemoSampleParam,
+  syncDemoSampleParam
+} from '@/composables/useDemoSampleLink'
+import { demoWelcomeCopy, dismissDemoWelcome, shouldShowDemoWelcome } from '@/composables/useDemoWelcome'
 import DemoViewerSettingsPanel from '@/components/demo/DemoViewerSettingsPanel.vue'
 import { useDemoCopy } from '@/composables/useDemoCopy'
+import { useDemoIntegrationSnippet } from '@/composables/useDemoIntegrationSnippet'
 import { resolveDemoFileCapsuleMergeBounds, useDemoFileCapsuleMotion } from '@/composables/useDemoFileCapsuleMotion'
 import { useDemoFileTypes } from '@/composables/useDemoFileTypes'
 import { useDemoFloatingPanels } from '@/composables/useDemoFloatingPanels'
@@ -42,6 +53,7 @@ import {
   DEFAULT_DEMO_URL_BY_LOCALE,
   isSameSampleUrl,
   normalizeDemoUrl,
+  sampleUrlKey,
   useDemoSamples
 } from '@/composables/useDemoSamples'
 import {
@@ -130,7 +142,20 @@ const {
   },
   onSelect: setDemoLocale
 })
-const url = ref(demoFileHandoff.isEmbedRequest && !demoFileHandoff.initialUrl ? '' : DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value])
+// `?sample=` is a shareable navigation inside the full demo shell. It is
+// ignored for embed/`?url=` integrations and only resolves bundled samples.
+const sampleParam = demoFileHandoff.isEmbedRequest || demoFileHandoff.initialUrl ? null : readDemoSampleParam()
+const initialSampleUrl = resolveDemoSampleParam(sampleParam, demoLocale.value)
+const url = ref(demoFileHandoff.isEmbedRequest && !demoFileHandoff.initialUrl
+  ? ''
+  : initialSampleUrl || DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value])
+// First-visit welcome card: product shell only, never for shared sample links,
+// embeds or `?url=` handoffs. Dismissal persists in localStorage.
+const welcomeOpen = ref(!demoFileHandoff.isImmersiveRequest && !demoFileHandoff.isEmbedRequest && !demoFileHandoff.initialUrl && !initialSampleUrl && shouldShowDemoWelcome())
+const welcomeSampleAliases = computed(() => demoLocale.value === 'en-US'
+  ? ['dwg', 'word', 'xlsx', 'fox'] as const
+  : ['dwg', 'pptx', 'xlsx', 'fox'] as const)
+const welcomeCopy = computed(() => demoWelcomeCopy[demoLocale.value] ?? demoWelcomeCopy['en-US'])
 const preview = ref('')
 
 // ── Page overlays and responsive controls ──────────────────────────────────
@@ -171,7 +196,6 @@ const {
   samplesTrigger: sampleRailButtonRef,
   fileTrigger: fileIdentityButtonRef
 })
-const snippetCopied = ref(false)
 const snippetDialogOpen = ref(false)
 const snippetCloseRef = ref<HTMLButtonElement | null>(null)
 const snippetDialogRef = ref<HTMLElement | null>(null)
@@ -357,20 +381,8 @@ const {
 
 // The snippet reflects the currently active input path. Local files cannot be
 // represented as a URL, so that branch demonstrates the `file` prop instead.
-const integrationSnippet = computed(() => {
-  if (file.value) {
-    return `import FileViewer from '@file-viewer/react-full'
-
-export function Preview({ file }: { file: File }) {
-  return <FileViewer file={file} locale="${demoLocale.value}" style={{ height: 720 }} />
-}`
-  }
-  const sampleUrl = preview.value || url.value || DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value]
-  return `import FileViewer from '@file-viewer/react-full'
-
-export function Preview() {
-  return <FileViewer url="${sampleUrl}" locale="${demoLocale.value}" style={{ height: 720 }} />
-}`
+const { integrationSnippet, snippetCopied, copyIntegrationSnippet } = useDemoIntegrationSnippet({
+  file, preview, url, locale: demoLocale
 })
 
 const activeIconMeta = computed(() => {
@@ -447,6 +459,11 @@ const fileIdentityAriaLabel = computed(() => (
 
 // A file change invalidates the old capsule geometry even when the URL changes
 // without changing the surrounding responsive breakpoint.
+// Existing toolbar actions take over from the guide instead of opening behind it.
+watch([desktopSourcePanelOpen, desktopActionsOpen, settingsPanelOpen, mobileControlsOpen, mobileActionsOpen], (panels) => {
+  if (panels.some(Boolean)) closeWelcome()
+})
+
 watch(currentFileTarget, (nextTarget, previousTarget) => {
   if (nextTarget !== previousTarget) {
     resetFileCapsuleMotion()
@@ -621,9 +638,6 @@ async function applySettingsAndRestoreFocus() {
   }
 }
 
-let copyResetTimer: number | undefined
-const clipboardWriteTimeoutMs = 800
-
 // ── Integration snippet dialog and clipboard fallback ──────────────────────
 //
 // Clipboard access can stall or be denied in embedded/private contexts. The
@@ -643,60 +657,6 @@ function closeSnippetDialog() {
   }
   snippetDialogOpen.value = false
   void nextTick(focusActionsTrigger)
-}
-
-function copyIntegrationSnippetFallback() {
-  const textarea = document.createElement('textarea')
-  textarea.value = integrationSnippet.value
-  textarea.setAttribute('readonly', 'true')
-  textarea.style.position = 'fixed'
-  textarea.style.opacity = '0'
-  document.body.appendChild(textarea)
-  textarea.select()
-  const copied = document.execCommand('copy')
-  textarea.remove()
-  if (!copied) {
-    throw new Error('Clipboard copy was rejected')
-  }
-}
-
-async function writeIntegrationSnippetToClipboard() {
-  if (!navigator.clipboard?.writeText) {
-    copyIntegrationSnippetFallback()
-    return
-  }
-  let timeoutId: number | undefined
-  try {
-    await Promise.race([
-      navigator.clipboard.writeText(integrationSnippet.value),
-      new Promise<never>((_, reject) => {
-        timeoutId = window.setTimeout(() => reject(new Error('Clipboard write timed out')), clipboardWriteTimeoutMs)
-      })
-    ])
-  } catch {
-    copyIntegrationSnippetFallback()
-  } finally {
-    if (timeoutId) {
-      window.clearTimeout(timeoutId)
-    }
-  }
-}
-
-async function copyIntegrationSnippet() {
-  snippetCopied.value = true
-  if (copyResetTimer) {
-    window.clearTimeout(copyResetTimer)
-  }
-  copyResetTimer = window.setTimeout(() => {
-    snippetCopied.value = false
-    copyResetTimer = undefined
-  }, 1600)
-
-  try {
-    await writeIntegrationSnippetToClipboard()
-  } catch {
-    snippetCopied.value = false
-  }
 }
 
 async function toggleDesktopActions() {
@@ -903,7 +863,7 @@ onMounted(() => {
   desktopFileCapsuleMotionQuery?.addEventListener?.('change', handleFileCapsuleMotionPreferenceChange)
   reducedFileCapsuleMotionQuery?.addEventListener?.('change', handleFileCapsuleMotionPreferenceChange)
   if (url.value || !immersiveMode.value) {
-    openUrlPreview(url.value)
+    openUrlPreview(url.value, initialSampleUrl ? 'sample' : 'auto')
   }
 })
 
@@ -915,9 +875,6 @@ onBeforeUnmount(() => {
   desktopFileCapsuleMotionQuery?.removeEventListener?.('change', handleFileCapsuleMotionPreferenceChange)
   reducedFileCapsuleMotionQuery?.removeEventListener?.('change', handleFileCapsuleMotionPreferenceChange)
   stopDemoFileHandoff()
-  if (copyResetTimer) {
-    window.clearTimeout(copyResetTimer)
-  }
   recentLocalFiles.clear()
 })
 
@@ -961,6 +918,11 @@ function openUrlPreview(nextUrl = url.value, recentSource: DemoRemoteRecentSourc
   mobileControlsOpen.value = false
   mobileActionsOpen.value = false
   rememberRemotePreview(normalizedUrl, recentSource)
+  if (!immersiveMode.value) {
+    // Explicit sample picks become shareable `?sample=` links; anything else
+    // (typed URLs, the locale default) removes a stale parameter.
+    syncDemoSampleParam(recentSource === 'sample' ? demoSampleParamFor(normalizedUrl, demoLocale.value) : undefined, demoLocale.value)
+  }
 }
 
 function setDemoLocale(nextLocale: DemoLocale) {
@@ -970,8 +932,13 @@ function setDemoLocale(nextLocale: DemoLocale) {
     return
   }
   const previousDefaultUrl = DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value]
+  const selectedSample = resolveDemoSampleParam(readDemoSampleParam(), demoLocale.value)
   persistDemoLocale(nextLocale)
   syncDemoDocumentChrome(nextLocale)
+  if (!file.value && selectedSample) {
+    syncDemoSampleParam(demoSampleParamFor(url.value || preview.value, nextLocale), nextLocale)
+    return
+  }
   if (!file.value && isSameSampleUrl(url.value || preview.value, previousDefaultUrl)) {
     const nextDefaultUrl = DEFAULT_DEMO_URL_BY_LOCALE[nextLocale]
     url.value = nextDefaultUrl
@@ -998,6 +965,10 @@ function activateLocalFile(value: File) {
   // File objects are assigned directly to the viewer and cached only for this
   // page lifetime; recent-file metadata remains serializable.
   clearPendingViewState()
+  closeWelcome()
+  if (!immersiveMode.value) {
+    syncDemoSampleParam(undefined)
+  }
   samplePickerOpen.value = false
   desktopSourcePanelOpen.value = false
   mobileControlsOpen.value = false
@@ -1073,6 +1044,45 @@ async function toggleSamplePicker() {
 //
 function toggleSampleGroup(index: number) {
   expandedSampleGroupIndex.value = expandedSampleGroupIndex.value === index ? null : index
+}
+
+const welcomeSamples = computed<DemoWelcomeSample[]>(() => welcomeSampleAliases.value.flatMap(alias => {
+  const sampleUrl = resolveDemoSampleParam(alias, demoLocale.value)
+  if (!sampleUrl) {
+    return []
+  }
+  const normalizedUrl = normalizeDemoUrl(sampleUrl)
+  const thumbnail = samplePreviews.previews.find(entry => entry.sources.includes(sampleUrlKey(normalizedUrl)))
+  const kind = ({ dwg: 'drawing', word: 'document', pptx: 'presentation', xlsx: 'workbook', fox: 'model' } as const)[alias]
+  const item = sampleGroups.value.flatMap(group => group.items).find(entry => isSameSampleUrl(entry.url, normalizedUrl))
+  return [{
+    url: normalizedUrl,
+    name: item?.name || fileNameOf(normalizedUrl) || normalizedUrl,
+    filename: fileNameOf(normalizedUrl) || normalizedUrl,
+    kind,
+    preview: thumbnail?.path,
+    bytes: thumbnail?.sourceBytes,
+    attribution: thumbnail?.attribution,
+    ...getFileIconMeta(normalizedUrl)
+  }]
+}))
+
+function closeWelcome() {
+  if (!welcomeOpen.value) {
+    return
+  }
+  welcomeOpen.value = false
+  dismissDemoWelcome()
+}
+
+function openWelcomeSample(sampleUrl: string) {
+  closeWelcome()
+  selectPreset(sampleUrl)
+}
+
+function openWelcomeFile(value: File) {
+  closeWelcome()
+  activateLocalFile(value)
 }
 
 function selectPreset(nextUrl: string) {
@@ -1771,6 +1781,16 @@ function handleWindowResize() {
           </div>
         </section>
 
+        <!-- First-visit welcome: product shell only (hidden for ?sample=, ?url= and embeds). -->
+        <DemoWelcomeCard
+          v-if='welcomeOpen'
+          :copy='welcomeCopy'
+          :samples='welcomeSamples'
+          @close='closeWelcome'
+          @sample='openWelcomeSample'
+          @file='openWelcomeFile'
+        />
+
         <!-- Recent history is product-mode UI and never appears in URL/embed mode. -->
         <DemoRecentFiles
           v-if='recentPanelOpen && recentDisplayEntries.length'
@@ -1798,6 +1818,35 @@ function handleWindowResize() {
           :aria-label='demoCopy.closeMobileControls'
           @click='closeMobileControls'
         />
+
+        <!--
+          Mobile primary entries stay visible next to More so opening a file or
+          the sample library does not require discovering the overflow menu.
+        -->
+        <nav
+          v-if='!mobileActionsOpen && !mobileControlsOpen && !welcomeOpen'
+          class='mobile-entry-actions'
+          :aria-label='demoCopy.previewActions'
+        >
+          <button
+            type='button'
+            class='mobile-entry-trigger'
+            :aria-label='demoCopy.uploadLocalFile'
+            @click='openMobileControls("upload")'
+          >
+            <Upload :size='20' :stroke-width='2.4' aria-hidden='true' />
+            <span>{{ demoCopy.upload }}</span>
+          </button>
+          <button
+            type='button'
+            class='mobile-entry-trigger'
+            :aria-label='demoCopy.openSamples'
+            @click='openMobileControls("samples", "samples")'
+          >
+            <FileSearch :size='20' :stroke-width='2.4' aria-hidden='true' />
+            <span>{{ demoCopy.samples }}</span>
+          </button>
+        </nav>
 
         <!--
           Mobile exposes one More entry. It contains source selection, viewer

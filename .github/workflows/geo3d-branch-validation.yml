@@ -68,7 +68,7 @@ jobs:
           run_install: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24
           cache: pnpm
@@ -164,6 +164,10 @@ jobs:
         if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}
         run: bash "$RUNNER_TEMP/geo3d-record.sh" browser-smoke pnpm verify:browser-smoke
 
+      - name: LAS GeoKey and final-EVLR browser regression
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/geo3d-record.sh" las-crs node packages/renderers/3d/scripts/verify-github-406-browser.mjs
+
       - name: Prepare isolated fixture validation environment
         id: python
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
@@ -205,12 +209,15 @@ jobs:
 
       - name: Upload logs and Geo3D visual evidence
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: geo3d-validation-${{ github.sha }}
           path: |
             output/geo3d-validation/
             output/geo3d-browser/report.json
             output/geo3d-browser/cityjson.png
+            output/geo3d-browser/las-crs/report.json
+            output/geo3d-browser/las-crs/*.png
+            output/geo3d-browser/las-crs-module-graph.json
           if-no-files-found: error
           retention-days: 14

@@ -52,16 +52,18 @@
     "client.d.ts",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json && node --test scripts/interop-chunks.test.mjs scripts/full-split-assets.test.mjs scripts/format-selection.test.mjs",
+    "build": "tsc -b tsconfig.json && node --test scripts/interop-chunks.test.mjs scripts/full-split-assets.test.mjs scripts/format-selection.test.mjs scripts/asset-copy-idempotence.test.mjs",
     "type-check": "tsc -b tsconfig.json",
     "verify:github-242": "pnpm build && node scripts/verify-github-242.mjs && node scripts/verify-github-242-copy.mjs",
     "verify:github-257": "pnpm build && node scripts/verify-github-257.mjs",
     "verify:github-257-browser": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-github-257-browser.mjs",
     "verify:github-311-browser": "node scripts/verify-github-311-browser.mjs",
-    "verify:lite-consumer": "node scripts/verify-lite-consumer.mjs"
+    "verify:lite-consumer": "node scripts/verify-lite-consumer.mjs",
+    "verify:asset-copy-browser": "pnpm build && node scripts/verify-assets-idempotence-browser.mjs"
   },
   "peerDependencies": {
     "vite": ">=5 <9"

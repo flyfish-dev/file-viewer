@@ -1,8 +1,4 @@
 ---
-
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
 description: '查看 File Viewer 主线版本的功能更新、安全修复、性能优化、验证证据与各发行渠道同步记录。'
 ---
 
@@ -253,7 +249,7 @@ npm 包于 2026-08-13 发布；GitHub Release 于 2026-08-17 完成最终归档�
 
 - 修复 Vue 2.6 + Vue CLI 3 / webpack 4 示例上传 DOCX 后报 `renderAsync is not a function`（生产压缩后表现为 `u is not a function`）：webpack 4 默认选择 `@file-viewer/docx` 的 UMD `browser` 入口，该入口再次经过 Babel 转译后会丢失 CommonJS 导出。
 - 旧构建链通过 alias 固定使用 `@file-viewer/docx/dist/docx-preview.mjs`，Word renderer 同时兼容传统 bundler 将 CommonJS API 放在 `default` 的模块形状。
-- `pnpm verify:vue26-cli3-office-demo` 不再只验证内置 PDF；冷安装本地 tarball 后会真实上传 DOCX、等待文档页出现，并确认离线 DOCX Worker 被请求。`build`、`noApiBuild`、`nginx` 三种模式均纳入回归。
+- `Vue 2.6 / CLI3 Office 回归` 不再只验证内置 PDF；冷安装本地 tarball 后会真实上传 DOCX、等待文档页出现，并确认离线 DOCX Worker 被请求。`build`、`noApiBuild`、`nginx` 三种模式均纳入回归。
 - 修复标准组件启用 `styleIsolation: 'shadow'` 后 Excel 单元格内容空白（GitHub #117）：`e-virt-table` 默认写入 `document.head` 的完整样式无法穿透 ShadowRoot，导致承载单元格文字的 overlayer 失去绝对定位并被画布裁掉。
 - Spreadsheet renderer 会识别当前 `e-virt-table` 版本实际注入的完整样式，将其复制到渲染 ShadowRoot，并把 vendor `:root` 变量收敛到 host / `.excel-wrapper`；新增 harness 会先在 npm `2.1.23` 复现空白布局，再验证本地 Vite 开发与生产构建的多 sheet、合并单元格、公式、样式和 overlayer 几何关系。
 - 移除 OFD vendor 对 `Array.prototype.pipeline` 的可枚举污染（GitHub #111），避免先加载 OFD 后 PDF.js 把数组误判为非法请求参数；OFD→PDF、PDF→OFD、重复切换和取消均纳入浏览器回归。
@@ -392,7 +388,7 @@ npm 包于 2026-08-13 发布；GitHub Release 于 2026-08-17 完成最终归档�
 - core 的 zoom controller 会订阅 renderer provider 的异步状态变更，首屏自适应、容器 resize 和内部重排后同步抛出真实 `zoom-change`
 - `getOperationAvailability()` / `operation-availability-change` 会结合当前 `zoomState` 动态计算 `zoomIn`、`zoomOut`、`zoomReset`，各生态组件和自定义工具栏不再拿到静态缩放能力
 - PDF、Word/DOCX、DOC 和图片预览修正首屏 fit 后的真实比例、缩放步进和 reset 状态，避免显示默认 `100%` 或点击缩放时来回跳
-- 新增 `pnpm verify:zoom-state` 浏览器回归，覆盖 DOCX、PDF 和图片的首屏比例、内部 scale 与工具栏显示一致性
+- 新增 `缩放状态回归检查` 浏览器回归，覆盖 DOCX、PDF 和图片的首屏比例、内部 scale 与工具栏显示一致性
 
 ## `v2.1.9` OFD 资源路径解析加固
 
@@ -573,7 +569,7 @@ npm 包于 2026-08-13 发布；GitHub Release 于 2026-08-17 完成最终归档�
 - PDF 预览新增 `options.pdf.thumbnails`，页面导航可切换为真实页面缩略图；缩略图使用 IntersectionObserver 按可见区域懒渲染，避免大文档一次性生成所有 canvas
 - PDF 视图会在页面初始化、缩放、旋转和渲染后写回传统 `px` 页面尺寸，兼容不支持 CSS `round()` 的 360 极速、华为浏览器等 Chromium 分支
 - Typst compiler / renderer WASM 和默认字体资产改为随 viewer assets 本地分发，并新增 `options.typst.fontAssetsUrl` / `options.typst.renderTimeoutMs`；默认加载 / 编译超时提升到 180 秒，浏览器端始终走真实 SVG 预览链路，不再用源码视图冒充成功，也不再为默认字体访问公共 CDN
-- Cloudflare Pages 部署脚本会对超过单文件限制的 Typst compiler WASM 自动做 Brotli 预压缩并写入 `_headers`，补齐 `Content-Encoding: br`、`Vary: Accept-Encoding`、WASM MIME 和长期缓存策略；新增 `pnpm verify:cloudflare-compression` 用于上线后验证官网、文档站、Demo 和 Typst WASM 的 Cloudflare 压缩响应
+- Cloudflare Pages 部署脚本会对超过单文件限制的 Typst compiler WASM 自动做 Brotli 预压缩并写入 `_headers`，补齐 `Content-Encoding: br`、`Vary: Accept-Encoding`、WASM MIME 和长期缓存策略；新增 `部署压缩响应检查` 用于上线后验证官网、文档站、Demo 和 Typst WASM 的 Cloudflare 压缩响应
 - 运行时不再提供公共 CDN 或第三方在线资源 fallback；Typst 本地 WASM 或字体目录不可用时会显示明确部署错误，Draw.io 默认走官方离线 viewer 并在异常时回退内置 SVG，适合企业内网和纯离线部署
 - PDF.js worker、CMap、WASM 和 standard fonts 默认随 viewer assets 分发到 `vendor/pdf/`，构建脚本会同步复制并校验，避免 PDF 预览隐式访问公网静态资源
 - SQLite 预览默认使用 viewer assets 中的 `wasm/data/sql-wasm.wasm`，构建脚本同步复制并校验 sql.js WASM，减少移动端 WebView、本地服务器和 CSP 环境下的加载不确定性
@@ -738,7 +734,7 @@ npm 包于 2026-08-13 发布；GitHub Release 于 2026-08-17 完成最终归档�
 - Demo 新增 GLTF / OBJ / STL / PLY / STEP 3D 样例，以及 ZIP、TAR.GZ、EML、MSG、OLB、DRA 样例，支持格式矩阵更新到 135 个扩展名、19 条预览链路
 - 文档站全局导航、首页、格式矩阵、分发说明、快速开始和 npm README 均刷新到 `1.0.12`
 - 开源总仓库已升级为一站式主入口，保留可运行源码、Demo 静态站、文档静态站、样例文件和 release tarball
-- React / 纯 JS 文档继续推荐 `npm install` 零步骤安装，并补充 pnpm 10 拦截 `postinstall` 时的 `pnpm approve-builds` / `pnpm exec file-viewer-copy-assets` 处理方式
+- React / 纯 JS 文档继续推荐 `npm install` 零步骤安装，并补充 pnpm 10 拦截 `postinstall` 时的 `构建依赖审批` / `pnpm exec file-viewer-copy-assets` 处理方式
 
 ### `v1.0.9` 媒体、绘图与电子书预览增强版本
 
@@ -773,7 +769,7 @@ npm 包于 2026-08-13 发布；GitHub Release 于 2026-08-17 完成最终归档�
 - 新增 PDF 缩放工具栏、页码状态和可显隐页面导航窗格
 - 补齐 OFD、CAD、代码高亮与完整示例文件盒子
 - 示例文件选择器支持分组折叠，默认展开第一个分组，并保持同一时间只展开一个分组
-- 增加 `pnpm obfuscate` 与 `pnpm release:ecosystem:pack`，库产物支持压缩混淆后分发
+- 增加 `发布产物混淆步骤` 与 `维护者发布打包步骤`，库产物支持压缩混淆后分发
 - README、文档站和开源总仓库说明同步补充 npm、GitHub、私有聚合仓、优先支持、授权与贡献说明
 - npm tarball 只包含 `README.md`、`LICENSE` 和混淆压缩后的 `dist/`
 

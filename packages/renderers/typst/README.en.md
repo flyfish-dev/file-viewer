@@ -1,5 +1,7 @@
 # @file-viewer/renderer-typst
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/typst/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/typst/README.zh-CN.md)
+
 Standalone Typst renderer package for Flyfish File Viewer. It reads `.typ` / `.typst` source files directly and uses the browser WASM compiler / renderer from `@myriaddreamin/typst.ts` to produce paged SVG output, so source-code fallback is never treated as a successful preview.
 
 ## Usage

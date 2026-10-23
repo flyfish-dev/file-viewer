@@ -5,10 +5,10 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { assertMaintainedReadme, readmeContract, readPackageReadmes, verifyPackageReadmes } from './package-readmes.mjs'
 
-const readmes = () => Object.fromEntries(['README.md', 'README.en.md'].map(name => [name,
+const readmes = () => Object.fromEntries(['README.md', 'README.en.md', 'README.zh-CN.md'].map(name => [name,
   Buffer.from(`# @example/viewer\n\nMaintained ${name} documentation.\n\n## Usage\n\n\`\`\`js\nimport { createViewer } from '@example/viewer'\n\`\`\`\n`)]))
 
-test('both packed READMEs bind to their maintained source bytes', () => {
+test('all packed READMEs bind to their maintained source bytes', () => {
   const source = readmes()
   verifyPackageReadmes(source, readmeContract(source), source)
   const changed = { ...source, 'README.md': Buffer.from(source['README.md'].toString().replace('createViewer', 'createOther')) }
@@ -22,8 +22,17 @@ test('missing, empty, placeholder and unbound READMEs cannot qualify', () => {
     Buffer.from('# @example/viewer\n\nRuntime package version 3.2.1.\n\nUsage and API documentation: https://example.test/\n')]) {
     assert.throws(() => verifyPackageReadmes({ ...source, 'README.md': value }, contract))
   }
-  assert.throws(() => verifyPackageReadmes(source, {}), /bind both/)
+  assert.throws(() => verifyPackageReadmes(source, {}), /bind every/)
   assert.throws(() => assertMaintainedReadme(Buffer.from([0xff, 0xfe])), /encoded data/)
+})
+
+test('frozen two-document releases remain verifiable; Chinese bytes are bound for new contracts', () => {
+  const current = readmes()
+  const legacy = { 'README.md': current['README.md'], 'README.en.md': current['README.en.md'] }
+  verifyPackageReadmes(legacy, readmeContract(legacy))
+  assert.throws(() => verifyPackageReadmes(legacy, readmeContract(current)), /README/)
+  const changed = { ...current, 'README.zh-CN.md': Buffer.from('# Changed Chinese documentation') }
+  assert.throws(() => verifyPackageReadmes(changed, readmeContract(current)), /README (hash|size) differs/)
 })
 
 test('source lookup rejects links and paths outside the checkout', async t => {

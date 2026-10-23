@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "purpose": "shared-runtime-material-attribution",
   "scope": "Material identity and actual copied payloads; not a source-availability or release approval.",
-  "registrySha256": "d06cd1dfceaf3da9d1650c3f4f1967b9fb1d8bed734a7309adc700f11ccefbe0",
+  "registrySha256": "a69a955195bba1a28f8b9d199033bea4b6d6080b5421eee5e558ee6b31e4189c",
   "releaseApproval": false,
   "materials": [
     {
@@ -3123,7 +3123,7 @@
     },
     {
       "path": "vendor/xlsx/licenses/THIRD_PARTY_LICENSES.txt",
-      "sha256": "edc339ede30f53ff49c1901b861cc11dbdb9ea171b21fd258faa5f197d053649",
+      "sha256": "cb601b1ed88a83b18a79f08e122879b979d7f71f99f93b7513be189ccbf1ba2f",
       "bytes": 76320,
       "kind": "generated-original-bundle-grants",
       "component": "Physical Worker dependency inputs",
@@ -3131,6 +3131,21 @@
       "source": "Exact normal Worker bundle-input inventory and complete original grants",
       "runtimePaths": [
         "vendor/xlsx/sheet.worker.js"
+      ]
+    },
+    {
+      "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE_NOTICE.txt",
+      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
+      "bytes": 2466,
+      "kind": "generated-corresponding-source-offer",
+      "component": "CAD runtime@0.8.3",
+      "declaredLicense": null,
+      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "runtimePaths": [
+        "wasm/cad/0.8.0/dwfv-render.wasm",
+        "wasm/cad/0.8.0/dwg-worker.js",
+        "wasm/cad/0.8.0/libredwg-web.js",
+        "wasm/cad/0.8.0/libredwg-web.wasm"
       ]
     },
     {
@@ -3175,6 +3190,21 @@
       ]
     },
     {
+      "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE_NOTICE.txt",
+      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
+      "bytes": 2466,
+      "kind": "generated-corresponding-source-offer",
+      "component": "CAD runtime@0.8.3",
+      "declaredLicense": null,
+      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "runtimePaths": [
+        "wasm/cad/0.8.1/dwfv-render.wasm",
+        "wasm/cad/0.8.1/dwg-worker.js",
+        "wasm/cad/0.8.1/libredwg-web.js",
+        "wasm/cad/0.8.1/libredwg-web.wasm"
+      ]
+    },
+    {
       "path": "wasm/cad/0.8.1/GPL-3.0.txt",
       "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
       "bytes": 35147,
@@ -3216,6 +3246,21 @@
       ]
     },
     {
+      "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE_NOTICE.txt",
+      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
+      "bytes": 2466,
+      "kind": "generated-corresponding-source-offer",
+      "component": "CAD runtime@0.8.3",
+      "declaredLicense": null,
+      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "runtimePaths": [
+        "wasm/cad/0.8.3/dwfv-render.wasm",
+        "wasm/cad/0.8.3/dwg-worker.js",
+        "wasm/cad/0.8.3/libredwg-web.js",
+        "wasm/cad/0.8.3/libredwg-web.wasm"
+      ]
+    },
+    {
       "path": "wasm/cad/0.8.3/GPL-3.0.txt",
       "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
       "bytes": 35147,
@@ -3254,6 +3299,33 @@
         "wasm/cad/0.8.3/dwg-worker.js",
         "wasm/cad/0.8.3/libredwg-web.js",
         "wasm/cad/0.8.3/libredwg-web.wasm"
+      ]
+    },
+    {
+      "path": "wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
+      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
+      "bytes": 2466,
+      "kind": "generated-corresponding-source-offer",
+      "component": "CAD runtime@0.8.3",
+      "declaredLicense": null,
+      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "runtimePaths": [
+        "wasm/cad/0.8.0/dwfv-render.wasm",
+        "wasm/cad/0.8.0/dwg-worker.js",
+        "wasm/cad/0.8.0/libredwg-web.js",
+        "wasm/cad/0.8.0/libredwg-web.wasm",
+        "wasm/cad/0.8.1/dwfv-render.wasm",
+        "wasm/cad/0.8.1/dwg-worker.js",
+        "wasm/cad/0.8.1/libredwg-web.js",
+        "wasm/cad/0.8.1/libredwg-web.wasm",
+        "wasm/cad/0.8.3/dwfv-render.wasm",
+        "wasm/cad/0.8.3/dwg-worker.js",
+        "wasm/cad/0.8.3/libredwg-web.js",
+        "wasm/cad/0.8.3/libredwg-web.wasm",
+        "wasm/cad/dwfv-render.wasm",
+        "wasm/cad/dwg-worker.js",
+        "wasm/cad/libredwg-web.js",
+        "wasm/cad/libredwg-web.wasm"
       ]
     },
     {
@@ -21742,9 +21814,9 @@
     },
     {
       "path": "vendor/xlsx/sheet.worker.js",
-      "bytes": 903671,
-      "sha256": "7f5b980ffbc226f042077ed25635142ac92e75cfdf6aeaee37bac471f55fbc7a",
-      "sourceSha256": "7f5b980ffbc226f042077ed25635142ac92e75cfdf6aeaee37bac471f55fbc7a",
+      "bytes": 904101,
+      "sha256": "51cb9b73150d72e53f40adf66274d01a4ce8c4cd9a9c8b760c40fe9f24db8bcc",
+      "sourceSha256": "51cb9b73150d72e53f40adf66274d01a4ce8c4cd9a9c8b760c40fe9f24db8bcc",
       "sourceTransform": "none"
     },
     {

@@ -54,7 +54,8 @@
     "README.md",
     "README.en.md",
     "LICENSE",
-    "CORRESPONDING_SOURCE_NOTICE.txt"
+    "CORRESPONDING_SOURCE_NOTICE.txt",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node scripts/write-source-notice.mjs",

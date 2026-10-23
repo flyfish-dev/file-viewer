@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
-import { copyFile, cp, lstat, mkdir, readFile, readdir, realpath, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, lstat, mkdir, readFile, readdir, realpath, rm, stat, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import type { Alias, AliasOptions, Plugin, ResolvedConfig, UserConfig } from 'vite'
@@ -1822,6 +1822,40 @@ function createFileViewerResolveAliases(anchorPackages: readonly string[]) {
   return aliases
 }
 
+async function assetPathInfo(path: string) {
+  try {
+    return await lstat(path)
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null
+    throw error
+  }
+}
+
+async function ensureAssetCopyDirectory(path: string, replace: boolean) {
+  const info = await assetPathInfo(path)
+  if (info?.isDirectory() && !info.isSymbolicLink()) return
+  if (info) {
+    if (!replace) throw new Error(`[file-viewer:vite-plugin] Unsafe asset directory ${path}.`)
+    await rm(path, { recursive: info.isDirectory(), force: true })
+  }
+  await mkdir(path, { recursive: true })
+}
+
+async function writeAssetJsonIfChanged(path: string, value: Record<string, unknown>) {
+  const manifest = { ...value }
+  delete manifest.copiedAt
+  const content = `${JSON.stringify(manifest, null, 2)}\n`
+  const info = await assetPathInfo(path)
+  if (info) {
+    if (!info.isFile() || info.isSymbolicLink()) {
+      throw new Error(`[file-viewer:vite-plugin] Unsafe asset manifest ${path}.`)
+    }
+    if (await readFile(path, 'utf8') === content) return
+  }
+  await mkdir(dirname(path), { recursive: true })
+  await writeFile(path, content)
+}
+
 async function copyFileIfPresent(
   from: string | null,
   to: string
@@ -1833,6 +1867,16 @@ async function copyFileIfPresent(
   if (!info.isFile()) {
     return false
   }
+  const destination = await assetPathInfo(to)
+  if (destination) {
+    if (!destination.isFile() || destination.isSymbolicLink()) {
+      throw new Error(`[file-viewer:vite-plugin] Unsafe asset file ${to}.`)
+    }
+    if (info.size === destination.size) {
+      const [sourceBytes, destinationBytes] = await Promise.all([readFile(from), readFile(to)])
+      if (sourceBytes.equals(destinationBytes)) return true
+    }
+  }
   await mkdir(dirname(to), { recursive: true })
   await copyFile(from, to)
   return true
@@ -1840,18 +1884,49 @@ async function copyFileIfPresent(
 
 async function copyDirectoryIfPresent(
   from: string | null,
-  to: string
+  to: string,
+  options: { merge?: boolean; exclude?: readonly string[] } = {}
 ): Promise<AssetCopyResult['copied']> {
   if (!from || !existsSync(from)) {
     return false
   }
-  const info = await stat(from)
+  const info = await lstat(from)
+  if (info.isSymbolicLink()) {
+    throw new Error(`[file-viewer:vite-plugin] Asset source is a symbolic link: ${from}.`)
+  }
   if (!info.isDirectory()) {
     return false
   }
-  await rm(to, { recursive: true, force: true })
-  await mkdir(dirname(to), { recursive: true })
-  await cp(from, to, { recursive: true, force: true })
+  if (isPathWithin(from, to) || isPathWithin(to, from)) {
+    throw new Error(`[file-viewer:vite-plugin] Asset source and destination overlap: ${from}, ${to}.`)
+  }
+  const entries = await readdir(from, { withFileTypes: true })
+  if (entries.some(entry => entry.isSymbolicLink())) {
+    throw new Error(`[file-viewer:vite-plugin] Asset source contains a symbolic link: ${from}.`)
+  }
+  await ensureAssetCopyDirectory(to, !options.merge)
+  const excluded = new Set(options.exclude || [])
+  if (!options.merge) {
+    const names = new Set([...entries.map(entry => entry.name), ...excluded])
+    for (const entry of await readdir(to)) {
+      if (!names.has(entry)) await rm(join(to, entry), { recursive: true, force: true })
+    }
+  }
+  for (const entry of entries) {
+    if (excluded.has(entry.name)) continue
+    const source = join(from, entry.name), destination = join(to, entry.name)
+    if (entry.isDirectory()) {
+      await copyDirectoryIfPresent(source, destination, { merge: options.merge })
+    } else if (entry.isFile()) {
+      const destinationInfo = await assetPathInfo(destination)
+      if (!options.merge && destinationInfo && (!destinationInfo.isFile() || destinationInfo.isSymbolicLink())) {
+        await rm(destination, { recursive: destinationInfo.isDirectory(), force: true })
+      }
+      await copyFileIfPresent(source, destination)
+    } else {
+      throw new Error(`[file-viewer:vite-plugin] Asset source is not a regular file: ${source}.`)
+    }
+  }
   return true
 }
 
@@ -1868,12 +1943,13 @@ async function copyVersionedCadRuntimeDirectoryIfPresent(
       `[file-viewer:vite-plugin] Cannot publish CAD runtime assets with invalid version ${JSON.stringify(runtimeVersion)}.`
     )
   }
-  const copied = await copyDirectoryIfPresent(from, to)
+  const copied = await copyDirectoryIfPresent(from, to, { exclude: [runtimeVersion] })
   if (!copied) {
     return false
   }
   const versionedTarget = join(to, runtimeVersion)
-  return copyDirectoryIfPresent(from, versionedTarget)
+  // These files are copied from the package root after its runtime directory.
+  return copyDirectoryIfPresent(from, versionedTarget, { exclude: ['LICENSE', 'NOTICE'] })
 }
 
 async function copyPdfCjkFontAssets(
@@ -1889,11 +1965,14 @@ async function copyPdfCjkFontAssets(
   if (![files, stylesheet, license].every(existsSync) || !statSync(files).isDirectory()) {
     return false
   }
-  await rm(to, { recursive: true, force: true })
-  await mkdir(to, { recursive: true })
-  await cp(files, join(to, 'files'), { recursive: true, force: true })
-  await copyFile(stylesheet, join(to, 'noto-sans-sc.css'))
-  await copyFile(license, join(to, 'OFL-1.1.txt'))
+  await ensureAssetCopyDirectory(to, true)
+  const retained = new Set(['files', 'noto-sans-sc.css', 'OFL-1.1.txt'])
+  for (const name of await readdir(to)) {
+    if (!retained.has(name)) await rm(join(to, name), { recursive: true, force: true })
+  }
+  await copyDirectoryIfPresent(files, join(to, 'files'))
+  await copyFileIfPresent(stylesheet, join(to, 'noto-sans-sc.css'))
+  await copyFileIfPresent(license, join(to, 'OFL-1.1.txt'))
   return true
 }
 
@@ -2548,19 +2627,9 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
   )
 
   await mkdir(targetRoot, { recursive: true })
-  await writeFile(
+  await writeAssetJsonIfChanged(
     join(targetRoot, 'flyfish-viewer-assets.json'),
-    `${JSON.stringify(
-      {
-        schemaVersion: 1,
-        generatedBy: '@file-viewer/vite-plugin',
-        rendererIds,
-        copiedAt: new Date().toISOString(),
-        assets: results
-      },
-      null,
-      2
-    )}\n`
+    { schemaVersion: 1, generatedBy: '@file-viewer/vite-plugin', rendererIds, assets: results }
   )
 
   return results
@@ -2741,17 +2810,17 @@ async function copyInstalledCapabilityAssetPacks(
   const manifests = [...rendererOwners]
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([, value]) => value.manifest)
-  await writeFile(join(targetRoot, 'flyfish-viewer-assets.json'), `${JSON.stringify({
+  await writeAssetJsonIfChanged(join(targetRoot, 'flyfish-viewer-assets.json'), {
     schemaVersion: 1,
     generatedBy: '@file-viewer/vite-plugin',
     rendererAssetManifests: manifests
-  }, null, 2)}\n`)
-  await writeFile(join(targetRoot, 'flyfish-viewer-manifest.json'), `${JSON.stringify({
+  })
+  await writeAssetJsonIfChanged(join(targetRoot, 'flyfish-viewer-manifest.json'), {
     schemaVersion: 1,
     kind: 'file-viewer-capability-assets',
     owners: sources.map(source => ({ packageName: source.packageName, packageVersion: source.packageVersion }))
       .sort((left, right) => left.packageName.localeCompare(right.packageName))
-  }, null, 2)}\n`)
+  })
   return { results, rendererIds: [...rendererOwners.keys()].sort() }
 }
 
@@ -2937,7 +3006,12 @@ async function copyBundledFullRendererAssets(
   }
 
   await mkdir(targetRoot, { recursive: true })
-  await cp(source.payloadRoot, targetRoot, { recursive: true, force: true })
+  // The runtime manifest is generated below; never overwrite it with the bundled
+  // source first, otherwise an unchanged copy still writes it twice.
+  await copyDirectoryIfPresent(source.payloadRoot, targetRoot, {
+    merge: true,
+    exclude: ['flyfish-viewer-assets.json']
+  })
   const results: AssetCopyResult[] = []
   for (const asset of manifest.rendererAssetManifests.flatMap(
     (rendererManifest) => rendererManifest.assets
@@ -2977,19 +3051,9 @@ async function copyBundledFullRendererAssets(
     })
   }
 
-  await writeFile(
+  await writeAssetJsonIfChanged(
     join(targetRoot, 'flyfish-viewer-assets.json'),
-    `${JSON.stringify(
-      {
-        ...manifest,
-        generatedBy: '@file-viewer/vite-plugin',
-        copiedAt: new Date().toISOString(),
-        rendererIds,
-        assets: results
-      },
-      null,
-      2
-    )}\n`
+    { ...manifest, generatedBy: '@file-viewer/vite-plugin', rendererIds, assets: results }
   )
   return results
 }

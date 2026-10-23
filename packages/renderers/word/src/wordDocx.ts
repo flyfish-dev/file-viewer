@@ -314,6 +314,7 @@ const DOCX_RESPONSIVE_CSS = `
   top: 0;
   left: 50%;
   margin: 0 !important;
+  background-color: var(--file-viewer-docx-page-background, #fff);
   box-shadow: 0 2px 14px rgba(25, 35, 48, 0.18);
   box-sizing: border-box;
   overflow: hidden;

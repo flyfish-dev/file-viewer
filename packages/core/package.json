@@ -87,14 +87,15 @@
     "vendor",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -b tsconfig.json --force && node scripts/fix-core-esm-extensions.mjs",
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "dompurify": "3.4.16"
+    "dompurify": "3.4.17"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

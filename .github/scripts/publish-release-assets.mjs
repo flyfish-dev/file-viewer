@@ -6,7 +6,6 @@ import { lstat, readFile, writeFile } from 'node:fs/promises'
 import { basename, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
-  packageReadmeFiles,
   readPackageReadmes,
   verifyPackageReadmes
 } from '../../packages/build-support/package-readmes.mjs'
@@ -121,10 +120,15 @@ async function verifyAsset(entry) {
     throw new Error(`${name} repository.url must point to ${trustedRepositoryUrl}`)
   }
   if (packageJson.private === true) throw new Error(`${name} is private`)
-  const sourceReadmes = await readPackageReadmes(sourceRoot, entry.packageDir, packageName)
+  const sourceReadmes = await readPackageReadmes(
+    sourceRoot,
+    entry.packageDir,
+    packageName,
+    Object.keys(entry.readmes || {})
+  )
   const packedReadmes = Object.fromEntries(
     await Promise.all(
-      packageReadmeFiles.map(async (path) => {
+      Object.keys(sourceReadmes).map(async (path) => {
         const { stdout } = await extractTar('tar', ['-xOzf', tarball, `package/${path}`], {
           encoding: 'buffer',
           maxBuffer: 2 * 1024 * 1024,

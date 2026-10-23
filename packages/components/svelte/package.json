@@ -73,7 +73,8 @@
   "files": [
     "dist",
     "README.md",
-    "README.en.md"
+    "README.en.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node ../../../.github/scripts/build-svelte-runtime.mjs --package-root .",

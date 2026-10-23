@@ -1,5 +1,7 @@
 # file-viewer-cli
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/file-viewer-cli/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/file-viewer-cli/README.zh-CN.md)
+
 Friendly single-bin entry for running the File Viewer CLI with `npx`:
 
 ```bash

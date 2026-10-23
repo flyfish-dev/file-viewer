@@ -1,3 +1,5 @@
 # @file-viewer/assets-wordperfect
 
-WordPerfect Worker/WASM runtime. This package is installed only when the matching capability is selected. Its installer performs a transactional merge and records a per-file SHA-256 receipt.
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/assets-wordperfect/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/assets-wordperfect/README.zh-CN.md)
+
+Self-hosted Worker and WebAssembly assets for the opt-in WordPerfect renderer. They are installed separately from the standard profile.

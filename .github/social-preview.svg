@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
   <title id="title">File Viewer social preview</title>
-  <desc id="desc">File Viewer previews 208 file extensions entirely in the browser through 25 lazy pipelines, with self-hosted Worker, WASM, font, and vendor assets.</desc>
+  <desc id="desc">File Viewer registers 275 file extensions across 47 preview pipelines, including stable and experimental support, with self-hosted Worker, WASM, font, and vendor assets.</desc>
   <defs>
     <linearGradient id="page" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#e8f5fa"/>
@@ -28,7 +28,7 @@
 
   <g filter="url(#shadow)">
     <rect x="540" y="44" width="700" height="552" rx="22" fill="#ffffff" stroke="#dce8e3"/>
-    <image x="540" y="44" width="700" height="552" preserveAspectRatio="xMidYMid slice" clip-path="url(#workspace-clip)" xlink:href="../apps/official-site/public/file-viewer-demo-v2.2.2-desktop-en.webp" href="../apps/official-site/public/file-viewer-demo-v2.2.2-desktop-en.webp"/>
+    <image x="540" y="44" width="700" height="552" preserveAspectRatio="xMidYMid slice" clip-path="url(#workspace-clip)" xlink:href="../docs/public/_media/file-viewer-demo-v3-en.webp" href="../docs/public/_media/file-viewer-demo-v3-en.webp"/>
   </g>
   <rect x="500" y="0" width="300" height="640" fill="url(#fade)"/>
 
@@ -46,9 +46,9 @@
 
   <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19" font-weight="760">
     <rect x="64" y="478" width="166" height="42" rx="9" fill="#ffffff" fill-opacity="0.72" stroke="#d7e5df"/>
-    <text x="84" y="505" fill="#1c8555">208 extensions</text>
+    <text x="84" y="505" fill="#1c8555">275 extensions</text>
     <rect x="240" y="478" width="174" height="42" rx="9" fill="#ffffff" fill-opacity="0.72" stroke="#d7e5df"/>
-    <text x="260" y="505" fill="#2872bd">25 pipelines</text>
+    <text x="260" y="505" fill="#2872bd">47 pipelines</text>
   </g>
 
   <text x="64" y="574" fill="#5c6f67" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Office · PDF/OFD · CAD · Archives · Email · 3D · Code</text>

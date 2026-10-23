@@ -1,5 +1,7 @@
 # @file-viewer/renderer-archive
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/archive/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/archive/README.zh-CN.md)
+
 Standalone archive renderer package for Flyfish File Viewer. It reads ZIP, TAR, GZIP, RAR, 7z, and other archive directories with `libarchive.js` Worker + WASM, then extracts internal files only when the user opens them.
 
 ## Usage

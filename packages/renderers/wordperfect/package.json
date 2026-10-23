@@ -57,7 +57,8 @@
     "README.md",
     "README.en.md",
     "LICENSE",
-    "THIRD_PARTY_NOTICES.md"
+    "THIRD_PARTY_NOTICES.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json --force && node scripts/build-worker.mjs",

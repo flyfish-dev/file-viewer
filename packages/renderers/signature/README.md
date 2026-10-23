@@ -1,21 +1,21 @@
 # @file-viewer/renderer-signature
 
-File Viewer 的可选、本地运行的数字签名与时间戳渲染器。它覆盖 CMS/PKCS#7、CAdES 属性、RFC 3161、RFC 5544、ASiC、RFC 4998、JWS/JAdES 元数据以及 OpenPGP，并能把安全提取出的文档交回 File Viewer 的嵌套渲染管线。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/signature/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/signature/README.zh-CN.md)
 
-[English](./README.en.md)
+Optional, browser-local renderer for digital signatures, timestamps, evidence containers, and OpenPGP. It covers CMS/PKCS#7, selected CAdES attributes, RFC 3161, RFC 5544, ASiC, RFC 4998, JWS/JAdES metadata, and OpenPGP, then delegates safely extracted documents back to File Viewer's nested-renderer pipeline.
 
-## 支持范围
+## Supported formats
 
-- CMS / PKCS#7：`.p7m`、`.p7s`、`.p7b`、`.p7c`、`.pkcs7`、`.cms`、`.cmsc`
-- 时间戳：RFC 3161 `.tsq`、`.tsr`、`.tst`，RFC 5544 `.tsd`
-- 关联签名容器：ASiC-S / ASiC-E `.asics`、`.scs`、`.asice`、`.sce`
-- 归档证据：RFC 4998 `.ers`
-- JSON Web Signature：Compact、Flattened JSON、General JSON `.jws`
-- OpenPGP：`.asc`、`.sig`、`.pgp`、`.gpg`
+- CMS / PKCS#7: `.p7m`, `.p7s`, `.p7b`, `.p7c`, `.pkcs7`, `.cms`, `.cmsc`
+- Timestamps: RFC 3161 `.tsq`, `.tsr`, `.tst`; RFC 5544 `.tsd`
+- Associated containers: ASiC-S / ASiC-E `.asics`, `.scs`, `.asice`, `.sce`
+- Archival evidence: RFC 4998 `.ers`
+- JSON Web Signature: compact, flattened JSON, and general JSON `.jws`
+- OpenPGP: `.asc`, `.sig`, `.pgp`, `.gpg`
 
-签名 renderer 被显式选中后会同时检查扩展名与内容，不会抢占普通 PDF、XML、JSON、EML 或 MSG 的既有路由。ASiC 文档、CMS 封装内容、JWS payload 和可安全提取的 OpenPGP literal data 会通过 `renderNestedBuffer` 继续预览。外部 `dataUri`、`jku`、`x5u`、OCSP、CRL、AIA、TSA、keyserver 和 WKD 地址不会自动请求。
+After the signature renderer is explicitly selected, it uses both the extension and the file contents. It does not take over the existing PDF, XML, JSON, EML, or MSG routes. ASiC documents, encapsulated CMS content, JWS payloads, and safely extracted OpenPGP literal data can continue through `renderNestedBuffer`. External `dataUri`, `jku`, `x5u`, OCSP, CRL, AIA, TSA, keyserver, and WKD URLs are never fetched automatically.
 
-## 按需安装
+## Opt-in registration
 
 ```ts
 import { signatureRenderer } from '@file-viewer/renderer-signature'
@@ -26,19 +26,19 @@ const options = {
 }
 ```
 
-需要预览容器内的 PDF、XML、图片或 Office 文档时，同时注册相应 renderer。此包不会进入冻结的旧版 `preset-all` 或历史 `*-full` 依赖矩阵，避免既有用户升级时突然下载密码学 WASM；File Viewer CLI 的新项目 `full` 选择会按清单安装全部 renderer，也可以只勾选 `signature`。
+Register the relevant PDF, XML, image, or Office renderer as well when extracted documents should be previewed. This package is not added to the frozen legacy `preset-all` or historical `*-full` dependency matrix, so existing upgrades do not unexpectedly download cryptographic WASM. A new project created with the File Viewer CLI's `full` selection installs every renderer from the catalog, including `signature`; users can also select it alone.
 
-## 主机输入
+## Host inputs
 
-`options.signature` 支持：
+`options.signature` accepts:
 
-- `originalContent` / `originalFilename`：分离式 CMS、时间戳、ERS 或 JWS 的原文；
-- `openPgpPublicKeys`：OpenPGP 分离签名、cleartext 签名和未加密内嵌签名的公开验证密钥；
-- `jwsVerificationKeys`：JWS 的非对称公开 JWK；
-- `openPgpLimits` / `containerLimits`：只能在绝对安全上限内调整的资源限制；
-- `workerFactory`：严格 Trusted Types/CSP 环境提供的 Worker 创建边界。
+- `originalContent` / `originalFilename` for detached CMS, timestamps, ERS, or JWS;
+- `openPgpPublicKeys` for detached, cleartext, and unencrypted embedded OpenPGP signature verification;
+- `jwsVerificationKeys` for asymmetric public JWKs;
+- `openPgpLimits` / `containerLimits`, bounded by non-disableable absolute ceilings;
+- `workerFactory` for strict Trusted Types/CSP applications.
 
-严格 Trusted Types 示例：
+Strict Trusted Types example:
 
 ```ts
 const policy = trustedTypes.createPolicy('file-viewer-workers', {
@@ -56,25 +56,25 @@ const signature = {
 }
 ```
 
-策略只能接受应用自己解析出的固定包内 URL，不能把文档内容传入 `createScriptURL`。
+The policy must accept only application-resolved, fixed package URLs. Never pass document-derived strings to `createScriptURL`.
 
-## OpenPGP 与体积边界
+## OpenPGP and size boundary
 
-OpenPGP 后端使用 MIT/Apache-2.0 的 rPGP `0.20.0`，在专用 Worker 中懒加载 WASM；不使用 OpenPGP.js、GnuPG 或 LGPL 源码。公开 API 只暴露分类、受限元数据检查，以及分离、cleartext、未加密内嵌/压缩消息的多签名验证，不暴露 rPGP 底层对象或私钥材料。
+The OpenPGP backend uses permissively licensed rPGP `0.20.0` inside a dedicated, lazy Worker/WASM path. It does not use OpenPGP.js, GnuPG, or LGPL source. The narrow public boundary supports classification, bounded metadata inspection, and multi-signature verification for detached, cleartext, and unencrypted embedded/compressed messages; it does not expose rPGP internals or secret key material.
 
-当前优化产物的硬门禁为：WASM 不超过 1,900,000 B raw / 450,000 B Brotli，npm tarball 不超过 1,800,000 B。raw 预算对应不启用 WasmGC 的兼容性构建，保证 Node 18 与无 GC 的浏览器可解析。构建会做两次字节级可复现校验。默认解析上限为 32 MiB 输入、16 MiB 提取输出、4096 个包、16 层嵌套、128 个 user ID、128 个子密钥和 256 个签名。
+The optimized artifact has hard release gates of 1,900,000 B raw / 450,000 B Brotli for WASM and 1,800,000 B for the npm tarball. The raw budget reflects a WasmGC-free build so engines without GC (Node 18, older browsers) can parse the module. The verifier performs two byte-for-byte reproducibility builds. Default limits are 32 MiB input, 16 MiB extracted output, 4,096 packets, 16 nesting levels, 128 user IDs, 128 subkeys, and 256 signatures.
 
-直接调用 ASN.1 API 时，`inspectSignatureContainer` 和 `inspectEvidenceRecord` 还会限制输入、原文、节点、嵌套、摘要算法、证书、CRL、签名人、属性、提取内容、时间证据链和 hash-tree 数量；`options.limits` 只能调低，不能突破绝对上限。
+Direct ASN.1 calls to `inspectSignatureContainer` and `inspectEvidenceRecord` also bound input, original content, node and nesting counts, algorithms, certificates, CRLs, signers, attributes, extracted bytes, timestamp chains, and hash-tree nodes. Per-call `options.limits` can only lower these absolute ceilings.
 
-加密消息只报告收件人标识、完整性保护及容器中可见的算法元数据。自动解密、签名、密钥生成、私钥解锁、系统 keyring 导入和在线密钥发现均未开放。
+Encrypted messages report only recipient identifiers, integrity protection, and algorithms visible in the container. Automatic decryption, signing, key generation, private-key unlocking, system-keyring import, and online key discovery are intentionally unavailable.
 
-## 验证边界
+## Validation boundary
 
-解析成功不等于签名有效；签名有效也不等于证书或密钥可信、身份可信、策略合规、合格电子签名或法律有效。界面会分别标记结构解析、内容摘要、密码学签名和未执行的信任/策略检查。
+Successful parsing is not signature verification. A valid cryptographic signature does not establish certificate or key trust, identity, policy compliance, qualified-signature status, or legal validity. The UI separates structural parsing, content-digest checks, cryptographic verification, and checks that were not performed.
 
-ASiC 会在解压前检查中央目录与本地头一致性、数据区间、路径、重复项、符号链接、加密、ZIP64、压缩方法、CRC、压缩率、单项与累计解压量；不安全包直接失败。RFC 4998 当前验证可证明的摘要关系并展示归档时间戳链，不声称完成长期归档策略验证。XAdES/XMLDSig 在 ASiC 中仅做有界结构与引用映射，JAdES 仅报告元数据；PAdES、S/MIME、PGP/MIME 和完整 XML canonicalization / XMLDSig / XAdES / JAdES profile validation 需要对应既有 renderer 的显式集成，当前不伪装成已完成。
+ASiC input is checked before inflation for central/local-header consistency, data-range overlap, unsafe paths, duplicates, symlinks, encryption, ZIP64, unsupported compression, CRC, compression ratio, entry size, and aggregate output. RFC 4998 verifies only relationships that can be established from the supplied data and does not claim complete archival-policy validation. XAdES/XMLDSig inside ASiC is bounded structural/reference inspection, and JAdES is metadata only. PAdES, S/MIME, PGP/MIME, and full XML canonicalization or XMLDSig/XAdES/JAdES profile validation remain outside this renderer because they require host integration with their existing PDF, XML, and message renderers.
 
-## 构建与验收
+## Build and verification
 
 ```bash
 rustup target add wasm32-unknown-unknown
@@ -84,6 +84,6 @@ pnpm --filter @file-viewer/renderer-signature verify
 pnpm verify:issue-206-signature
 ```
 
-发布门禁固定使用 `wasm-bindgen-cli 0.2.127` 和 Binaryen `wasm-opt 132`，以 `-Oz` 加 Rust 输出所需的后 MVP 特性运行，绝不启用会引入 WasmGC 编码的 `--all-features`。浏览器回归覆盖 Chromium、Firefox、WebKit、严格 CSP/Trusted Types、恶意 DOM 载荷、路径穿越、压缩炸弹、外网请求禁止和 Worker 卸载归零。
+The release gate pins `wasm-bindgen-cli 0.2.127` and Binaryen `wasm-opt 132`, running `-Oz` with only the post-MVP features emitted by Rust. It never enables `--all-features`, which can introduce WasmGC encodings. Browser acceptance covers Chromium, Firefox, WebKit, strict CSP/Trusted Types, hostile DOM payloads, path traversal, compression bombs, zero external requests, and Worker cleanup after unmount.
 
-完整运行时依赖、选择的许可证分支和对应许可证正文见 `THIRD_PARTY_LICENSES.json`；摘要见 `THIRD_PARTY_NOTICES.md`。
+See `THIRD_PARTY_LICENSES.json` for the exact runtime closure, selected license branches, and license texts. `THIRD_PARTY_NOTICES.md` provides the short summary.

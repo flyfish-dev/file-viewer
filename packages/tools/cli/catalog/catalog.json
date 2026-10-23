@@ -919,7 +919,7 @@
           {
             "packageName": "autoprefixer",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source autoprefixer@10.5.4; repository https://github.com/postcss/autoprefixer; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source autoprefixer@10.6.1; repository https://github.com/postcss/autoprefixer; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "balanced-match",
@@ -929,7 +929,7 @@
           {
             "packageName": "baseline-browser-mapping",
             "spdx": "Apache-2.0",
-            "notice": "Reviewed runtime/SDK source baseline-browser-mapping@2.11.19; repository https://github.com/web-platform-dx/baseline-browser-mapping; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source baseline-browser-mapping@2.11.28; repository https://github.com/web-platform-dx/baseline-browser-mapping; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "brace-expansion",
@@ -944,7 +944,7 @@
           {
             "packageName": "caniuse-lite",
             "spdx": "CC-BY-4.0",
-            "notice": "Reviewed runtime/SDK source caniuse-lite@1.0.30001810; repository https://github.com/browserslist/caniuse-lite; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source caniuse-lite@1.0.30001815; repository https://github.com/browserslist/caniuse-lite; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "comlink",
@@ -1014,12 +1014,12 @@
           {
             "packageName": "dompurify",
             "spdx": "Apache-2.0",
-            "notice": "Reviewed runtime/SDK source dompurify@3.4.16; repository https://github.com/cure53/DOMPurify; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source dompurify@3.4.17; repository https://github.com/cure53/DOMPurify; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "electron-to-chromium",
             "spdx": "ISC",
-            "notice": "Reviewed runtime/SDK source electron-to-chromium@1.5.414; repository https://github.com/Kilian/electron-to-chromium; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source electron-to-chromium@1.5.451; repository https://github.com/Kilian/electron-to-chromium; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "es-errors",
@@ -1074,7 +1074,7 @@
           {
             "packageName": "glob",
             "spdx": "ISC",
-            "notice": "Reviewed runtime/SDK source glob@7.2.0; repository https://github.com/isaacs/node-glob; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source glob@7.2.3; repository https://github.com/isaacs/node-glob; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "hasown",
@@ -1114,7 +1114,7 @@
           {
             "packageName": "is-core-module",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source is-core-module@2.16.2; repository https://github.com/inspect-js/is-core-module; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source is-core-module@2.17.0; repository https://github.com/inspect-js/is-core-module; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "js-yaml",
@@ -1149,7 +1149,7 @@
           {
             "packageName": "node-releases",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source node-releases@2.0.53; repository https://github.com/chicoxyzzy/node-releases; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source node-releases@2.0.58; repository https://github.com/chicoxyzzy/node-releases; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "once",
@@ -1159,7 +1159,7 @@
           {
             "packageName": "pako",
             "spdx": "(MIT AND Zlib)",
-            "notice": "Reviewed runtime/SDK source pako@1.0.11; repository https://github.com/nodeca/pako; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source pako@1.0.5; repository https://github.com/nodeca/pako; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "pako",
@@ -1204,7 +1204,7 @@
           {
             "packageName": "resolve",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source resolve@1.22.12; repository https://github.com/browserify/resolve; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source resolve@1.22.13; repository https://github.com/browserify/resolve; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "seedrandom",
@@ -1239,7 +1239,7 @@
           {
             "packageName": "update-browserslist-db",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source update-browserslist-db@1.3.1; repository https://github.com/browserslist/update-db; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source update-browserslist-db@1.3.4; repository https://github.com/browserslist/update-db; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "utif",

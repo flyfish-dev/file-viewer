@@ -830,6 +830,7 @@ export {
 export {
   resolveFileViewerPresentationState,
 } from './presentation/state';
+export { observeFileViewerColorScheme } from './presentation/colorScheme';
 export type {
   FileViewerPresentationState,
   ResolveFileViewerPresentationStateInput,
@@ -1247,6 +1248,7 @@ export type {
   FileViewerPdfBoundingBoxOrigin,
   FileViewerPdfBoundingBoxUnit,
   FileViewerPdfOptions,
+  FileViewerEpubOptions,
   FileViewerPresentationOptions,
   FileViewerPrintOptions,
   FileViewerPrintMaskOptions,

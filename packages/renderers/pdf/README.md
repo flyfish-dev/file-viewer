@@ -1,8 +1,15 @@
 # @file-viewer/renderer-pdf
 
-Flyfish File Viewer 的独立 PDF renderer 包，基于 PDF.js，提供 PDF 页面渲染、导航、目录、搜索、缩放、打印和 HTML 导出能力。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/pdf/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/pdf/README.zh-CN.md)
 
-## 用法
+Cold-network loading starts the real Worker directly, without a duplicate version-probe request.
+PDF.js checks API compatibility before parsing. Mismatched workers are destroyed and retried
+with the bundled matching handler without losing transferred input. Main-thread fallbacks
+use asynchronous resource fetching instead of synchronous binary XHR.
+
+Standalone PDF renderer package for Flyfish File Viewer. It is powered by PDF.js and provides page rendering, navigation, outline, search, zoom, print, and HTML export support.
+
+## Usage
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -14,7 +21,7 @@ const options = {
 }
 ```
 
-也可以和其他 renderer 一起组合：
+You can combine it with other renderer packages:
 
 ```ts
 const options = {
@@ -23,9 +30,15 @@ const options = {
 }
 ```
 
-## 离线资源
+## Reading theme
 
-PDF 预览依赖 PDF.js worker、cMaps、WASM、standard fonts，以及未嵌入中文字体的离线回退资源。资源路径沿用 `@file-viewer/core` 的统一 options：
+Live updates without reloading apply to the renderer's observed theme attributes, system color scheme and the Vanilla core theme update path. Framework component and toolbar/controller option updates may reinitialize the preview.
+
+PDF pages follow `options.theme` (`light`, `dark`, or `system`), including live theme changes. Dark reading uses a preview-only canvas color filter; it also changes image colors. Set `pdf.darkMode: false` to keep the document's original colors, or `true` to force dark reading independently of the toolbar. Original downloads, printed pages, and exported canvas bytes retain their source colors.
+
+## Offline Assets
+
+PDF preview depends on the PDF.js worker, cMaps, WASM helpers, standard fonts, and an offline fallback for unembedded CJK fonts. Asset paths use the same unified options as `@file-viewer/core`:
 
 ```ts
 const options = {
@@ -42,37 +55,35 @@ const options = {
 }
 ```
 
-默认未显式配置时，渲染器优先使用 Vite 等构建器提供的公开基址，并可从页面入口脚本回退识别部署子路径。因此应用部署在 `/workspace/`、当前 SPA 路由为 `/workspace/c/` 时，仍会请求 `/workspace/vendor/pdf/pdf.worker.mjs`。UMI、自定义代理或无法自动识别的构建环境可以设置 `pdf.assetBaseUrl: '/workspace/'` 固定全部 PDF 离线资源的基址。真实 Worker 在解析前通过 PDF.js API 握手确认版本；旧版本不匹配时会被销毁，并安全重试包内同版本 handler，不额外发送版本探测请求。项目未执行 `file-viewer-copy-assets`、未使用 `@file-viewer/vite-plugin`，或本地临时服务器把该路径回退成 HTML 时，也会使用同一兜底，避免 `Setting up fake worker failed` 直接中断预览。需要最佳性能、完整 cMap/standard fonts/WASM 解码或严格离线部署时，仍建议复制 viewer assets 并配置真实静态地址。当前锁定的 PDF.js 5.4 稳定线会通过 `wasmUrl` 本地加载 JBIG2、JPEG 2000、颜色管理等辅助资源；这些资源由 viewer assets 和 Vite 插件统一复制，不依赖公网。
+When no explicit PDF asset URL is configured, the renderer first uses the public base exposed by build tools such as Vite and can fall back to the page entry script. An app deployed under `/workspace/` therefore still requests `/workspace/vendor/pdf/pdf.worker.mjs` while its current SPA route is `/workspace/c/`. UMI, custom proxies, and builds whose public path cannot be detected can set `pdf.assetBaseUrl: '/workspace/'` to pin the base for every PDF offline asset. The real Worker checks API compatibility before parsing. An incompatible Worker is destroyed and retried with the packaged matching handler, without a separate version-probe request. If the host app did not run `file-viewer-copy-assets`, does not use `@file-viewer/vite-plugin`, or a local dev server falls back to HTML for that path, the same fallback prevents `Setting up fake worker failed`. For best performance, complete cMap/standard-font/WASM decoding, or strict offline deployments, still copy viewer assets and point these URLs at real static files. The pinned PDF.js 5.4 stable line loads local JBIG2, JPEG 2000, color-management, and related helpers through `wasmUrl`; viewer assets and the Vite plugin copy them without relying on the public internet.
 
-`cjkFontFallback` 默认开启。PDF 引用了 `MicrosoftYaHei-Bold`、宋体、黑体或其他中文字体但没有嵌入字体数据时，渲染器优先使用本机字体；本机缺失时，会把原 PDF 字体名映射到 `@file-viewer/assets-standard` 提供的本地 Noto Sans SC 可变字体，并根据当前页实际文字只加载需要的 WOFF2 分片。Vite 插件会优先复用这份标准资源，避免在 renderer 中重复打包字体。首屏会在字体就绪后再渲染，后续页发现新字形时会自动重绘。可设为 `false` 完全关闭，或用 `cjkFontFallbackPath` 指向同结构的自托管字体目录。
+`cjkFontFallback` is enabled by default. When a PDF references `MicrosoftYaHei-Bold`, SimSun, SimHei, or another CJK font without embedding the font program, the renderer prefers an installed system font and otherwise aliases the original PDF font name to the local Noto Sans SC variable font supplied by `@file-viewer/assets-standard`. The Vite plugin reuses that standard asset set instead of packing a second font copy into the renderer. Only WOFF2 shards needed by the current page text are loaded. The first page waits for the font before rendering, and later pages are redrawn when they introduce new glyphs. Set the option to `false` to disable this behavior, or point `cjkFontFallbackPath` at a self-hosted directory with the same structure.
 
-`identityFontRepair` 也默认开启，用于少数把 TrueType 字形 ID 写入 `Identity-H`/`Identity-V`、却遗漏 `ToUnicode` 的异常 PDF。只有检测到中文字体替换和多个控制字符乱码时，渲染器才会懒加载修复模块；若文件内同时嵌入了可用的同族 TrueType 字体，就从其 cmap 重建内存预览所需的 Unicode 映射。修复只作用于预览副本，不覆盖原始文件和下载源；无法安全修复时继续使用原预览。可设为 `false` 关闭。
+`identityFontRepair` is also enabled by default for malformed PDFs that write TrueType glyph IDs through `Identity-H`/`Identity-V` but omit `ToUnicode`. The repair module is loaded only after CJK font substitution and multiple control-character glyphs are detected. If the same PDF embeds a usable same-family TrueType font, its cmap is used to rebuild the Unicode mapping for the in-memory preview. The repair is applied only to a preview copy and never overwrites the original file or download source; an unsafe or unsupported repair falls back to the original preview. Set the option to `false` to disable this compatibility path.
 
-## 迁移说明
+## Migration Note
 
-直接启动真实 Worker，不再额外读取版本前缀或重复下载 Worker。
-PDF.js 在解析前通过 API 握手检查版本；不匹配时销毁旧 Worker，并用保留的输入安全重试包内同版本回退。
-主线程回退使用异步资源读取，不依赖窗口中不允许的同步二进制 XHR。
+PDF rendering has moved out of `@file-viewer/core` into this package, and `pdfjs-dist` is now declared only by `@file-viewer/renderer-pdf`. Installing core or a standard component package no longer pulls PDF.js; explicitly assemble this renderer when PDF preview is needed, or use `@file-viewer/preset-all`.
 
-PDF 渲染已经从 `@file-viewer/core` 移入本包，`pdfjs-dist` 只由 `@file-viewer/renderer-pdf` 声明。只安装 core 或标准组件包时不会再拉取 PDF.js；需要 PDF 预览时请显式装配本 renderer，或使用 `@file-viewer/preset-all`。
+The published renderer stages its Apache-2.0 PDF.js runtime under `dist/vendor/pdfjs` and isolates PDF.js' internal webpack bootstrap before packing. `provenance.json` records source hashes after the declared patches, transform counts, and staged output hashes, so webpack 4 consumers do not need a loader for renderer-internal paths.
 
-发布产物会把 Apache-2.0 的 PDF.js runtime 内封到 `dist/vendor/pdfjs`，并在打包前隔离 PDF.js 内部 webpack bootstrap。`provenance.json` 会记录应用声明补丁后的源文件哈希、变换次数和产物哈希，因此 webpack 4 消费项目不需要再为 renderer 内部路径配置 loader。
+The staged runtime also includes a PDF.js 5.4.624 document-startup cancellation patch. It prevents unhandled promise rejections when switching files during main-thread fallback initialization; active parsing and password errors remain visible. The patch is included under `dist/vendor/pdfjs/patches/` with its hash in `provenance.json`. `pnpm verify:worker-lifecycle` tests cancellation, subsequent rendering, and invalid-file errors in both real and main-thread Workers on Chromium and WebKit.
 
-内封运行时还包含 PDF.js 5.4.624 的文档初始化取消补丁，避免快速切换文件时主线程降级路径产生未处理的 Promise 异常；正常解析和密码错误仍会报告。补丁原文保留在 `dist/vendor/pdfjs/patches/`，其哈希记入 `provenance.json`。`pnpm verify:worker-lifecycle` 使用 Chromium/WebKit 分别验证真实 Worker 和主线程降级路径的取消、后续渲染及损坏文件报错。
+## Mouse panning
 
-## 鼠标拖拽浏览
-
-设置 `options.pdf.handTool: true`，可在 PDF 阅读区按住鼠标左键拖动页面。默认关闭，
-保留原有文字选择行为。触摸滚动与双指缩放、链接、表单控件、滚动条及带修饰键的操作
-保持原生行为。
+`options.pdf.handTool: true` enables mouse drag-to-pan in the PDF viewport. It is
+`false` by default, preserving text selection. Touch scrolling/pinch, links, form
+fields, scrollbars, and modified clicks retain their native behavior.
 
 ```ts
 const options = { pdf: { handTool: true } }
 ```
 
-## 页面方向与打印
+## Page orientation and print output
 
-适配缩放、侧栏和首页缩略图、导出图片及打印均叠加 PDF 页面原有旋转角度
-与查看器旋转偏移。视图状态中的 `rotation` 仍表示查看器偏移，不包含文件
-中的原始旋转。混合尺寸和方向的页面使用独立 CSS 页面规则打印，不改写
-源 PDF。打印对话框的纸张覆盖设置仍可能强制统一尺寸。
+A page's stored PDF rotation is combined with the viewer's rotation offset in
+fit calculations, sidebar/first-page thumbnails, exported images, and printing.
+The view-state `rotation` field remains the viewer offset, not the stored page
+rotation. Mixed page sizes and orientations use individual CSS page rules for
+printing; no source PDF bytes are modified. Printer-dialog overrides may still
+force a uniform paper size.

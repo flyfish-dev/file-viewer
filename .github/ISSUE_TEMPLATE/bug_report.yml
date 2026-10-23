@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible File Viewer defect. A sample or runnable reproduction is required.
+description: Report a reproducible File Viewer defect. A sample or runnable reproduction is required. / 报告可复现的 File Viewer 缺陷，必须提供样例或可运行复现。
 title: '[bug]: '
 labels:
   - bug
@@ -15,11 +15,15 @@ body:
         include exact package versions, configuration and runnable commands inline.
         Never upload confidential data to a public issue.
 
+        **中文：** 截图有帮助，但不能替代出问题的文件或可运行复现。提交前请提供公开 / 脱敏附件、公开链接，
+        或把私有样例发送到 `admin@flyfish.dev`。不涉及文件的配置类问题，请直接写明确切的包版本、配置和可运行命令。
+        不要在公开 issue 中上传机密数据。
+
   - type: dropdown
     id: area
     attributes:
       label: Affected area
-      description: Choose the closest ownership area. Maintainers will route it to the owning package.
+      description: Choose the closest ownership area. Maintainers will route it to the owning package. / 选择最接近的归属范围，维护者会分派到负责的包。
       options:
         - File rendering or format fidelity
         - Framework component or public API
@@ -35,7 +39,7 @@ body:
     id: format
     attributes:
       label: File type and extension
-      description: Use N/A only when no file is involved.
+      description: Use N/A only when no file is involved. / 仅在不涉及文件时填写 N/A。
       placeholder: pptx (Microsoft 365), xlsx (WPS), PDF, or N/A
     validations:
       required: true
@@ -44,8 +48,8 @@ body:
     id: packages
     attributes:
       label: Package names and exact versions
-      description: Include the component, preset, renderer, or full package that is actually installed.
-      placeholder: '@file-viewer/vue3-full@2.3.3, @file-viewer/renderer-spreadsheet@2.3.2'
+      description: Include the component, preset, renderer, or full package that is actually installed. / 填写实际安装的组件、preset、renderer 或 full 包。
+      placeholder: '@file-viewer/vue3-full@3.2.2, @file-viewer/renderer-spreadsheet@3.2.2'
     validations:
       required: true
 
@@ -53,7 +57,7 @@ body:
     id: sample-sharing
     attributes:
       label: Sample sharing method
-      description: Choose a file/repository or a complete inline integration reproduction.
+      description: Choose a file/repository or a complete inline integration reproduction. / 选择文件 / 仓库，或完整的内联集成复现。
       options:
         - Public or sanitized sample attached to this issue
         - Public download or minimal reproduction link provided below
@@ -72,6 +76,7 @@ body:
         exposing the file. For a no-file integration bug, paste the configuration and commands
         in the reproduction steps and write "Inline reproduction below" here.
         A screenshot alone is not a sample.
+        中文：附上附件 / 链接并说明文件如何产生；私有样例请写上面的回执行。只有截图不算样例。
       placeholder: |
         Public: https://example.com/reproduction/sample.pptx
         Private: Sent to admin@flyfish.dev on 2026-08-24: sanitized-customer-layout.pptx
@@ -82,7 +87,7 @@ body:
     id: reproduction
     attributes:
       label: Minimal reproduction steps
-      description: Start from a clean page, the official Demo, or a small repository and list exact actions.
+      description: Start from a clean page, the official Demo, or a small repository and list exact actions. / 从干净页面、官方 Demo 或小型仓库开始，列出确切操作步骤。
       placeholder: |
         1. Open https://demo.file-viewer.app with Chrome ...
         2. Load the sample above ...
@@ -95,7 +100,7 @@ body:
     id: actual
     attributes:
       label: Actual behavior
-      description: Describe the visible result and the first relevant console or network failure.
+      description: Describe the visible result and the first relevant console or network failure. / 描述看到的结果，以及第一条相关的控制台或网络错误。
     validations:
       required: true
 
@@ -103,7 +108,7 @@ body:
     id: expected
     attributes:
       label: Expected behavior
-      description: State the measurable result that would make the bug fixed.
+      description: State the measurable result that would make the bug fixed. / 写明修复后可衡量的预期结果。
     validations:
       required: true
 
@@ -111,7 +116,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Browser/version, OS, framework, bundler, deployment base path, CSP, and self-hosted assets.
+      description: Browser/version, OS, framework, bundler, deployment base path, CSP, and self-hosted assets. / 浏览器及版本、操作系统、框架、打包工具、部署 base path、CSP 和自托管资源。
       placeholder: Chrome 140, macOS, Vue 3 + Vite 8, /file-viewer/ base path, self-hosted Worker/WASM
     validations:
       required: true
@@ -131,13 +136,13 @@ body:
     id: visual-evidence
     attributes:
       label: Screenshots or recordings
-      description: Add before/after or expected/actual evidence when the failure is visual. Remove sensitive data first.
+      description: Add before/after or expected/actual evidence when the failure is visual. Remove sensitive data first. / 视觉问题请附前后或预期 / 实际对比，先去除敏感信息。
 
   - type: textarea
     id: logs
     attributes:
       label: Console and network evidence
-      description: Include the first relevant error, failed URL/status/MIME, or a short stack trace. Redact tokens.
+      description: Include the first relevant error, failed URL/status/MIME, or a short stack trace. Redact tokens. / 附上第一条相关错误、失败的 URL / 状态码 / MIME 或简短堆栈，注意脱敏 Token。
       render: text
 
   - type: checkboxes

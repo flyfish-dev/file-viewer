@@ -104,6 +104,7 @@ async function fixture(t) {
       await mkdir(join(out, 'wasm/cad'), { recursive: true })
       await writeFile(join(out, 'wasm/cad/runtime-fixture.txt'), 'cad runtime fixture\n')
     },
+    stageBuiltWorkers: async out => { calls.push(['workers', out]) },
     stageRetainedNotices: async (out, options) => {
       calls.push(['notices', out, options])
       await writeFile(join(out, 'THIRD_PARTY_LICENSES.assets.json'), '{"fixture":true}\n')
@@ -162,16 +163,16 @@ test('bootstrap without a manifest produces valid, portable metadata for the fin
 test('runtime and legal stagers run in order and their notices reach the manifest', async t => {
   const f = await fixture(t)
   await f.stage()
-  assert.deepEqual(f.calls.map(call => call[0]), ['ppt', 'design', 'cad', 'notices', 'notice-manifests', 'notice-validation'])
+  assert.deepEqual(f.calls.map(call => call[0]), ['ppt', 'design', 'cad', 'workers', 'notices', 'notice-manifests', 'notice-validation'])
   assert.equal(f.calls[0][1], join(f.dist, 'vendor/ppt'))
-  const [, noticeRoot, noticeOptions] = f.calls[3]
+  const [, noticeRoot, noticeOptions] = f.calls[4]
   assert.equal(noticeRoot, f.dist)
   const version = JSON.parse(await readFile(join(f.targetPackage, 'package.json'), 'utf8')).version
   assert.deepEqual(noticeOptions.externalAssetOwners.map(owner => [owner.prefix, owner.packageName, owner.version]), [
     ['vendor/drawio/', '@file-viewer/assets-drawing', version],
     ['wasm/cad/', '@file-viewer/assets-cad', version]
   ])
-  assert.equal(f.calls[5][1], true, 'Notice validation must see the notice-extended manifests')
+  assert.equal(f.calls[6][1], true, 'Notice validation must see the notice-extended manifests')
   assert.equal(await readFile(join(f.dist, 'THIRD_PARTY_LICENSES.assets.json'), 'utf8'), '{"fixture":true}\n')
   assert.equal(await readFile(join(f.dist, 'wasm/cad/runtime-fixture.txt'), 'utf8'), 'cad runtime fixture\n')
   assert.equal(await readFile(join(f.dist, 'vendor/design/runtime-fixture.txt'), 'utf8'), 'design runtime fixture\n')
@@ -221,7 +222,7 @@ test('a build without a viewer asset source fails explicitly', async t => {
 test('the build uses the production stagers', () => {
   assert.equal(Object.isFrozen(fullAssetStagers), true)
   assert.deepEqual(Object.keys(fullAssetStagers).sort(), [
-    'assertAssetDependencies', 'stageCadRuntime', 'stageDesignRuntime', 'stagePptRuntime',
+    'assertAssetDependencies', 'stageBuiltWorkers', 'stageCadRuntime', 'stageDesignRuntime', 'stagePptRuntime',
     'stageRetainedNotices', 'withNoticeManifests', 'withNoticeValidation'
   ])
 })

@@ -11,9 +11,7 @@
     "sourceRepository": "https://github.com/flyfish-dev/file-viewer-core",
     "github": "https://github.com/flyfish-dev/file-viewer-core",
     "gitee": "https://gitee.com/flyfish-dev/file-viewer-core",
-    "aggregateRepository": "https://git.flyfish.dev/flyfish-group/file-viewer.git",
     "corePolicy": "framework-neutral-low-level-core-only",
-    "note": "Core source is public. The private Gitea repository remains the complete aggregate workspace with release automation, integration history, and priority support for sponsors.",
     "releaseVersion": "3.2.2"
   },
   "utilityPackages": [

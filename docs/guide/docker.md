@@ -15,8 +15,6 @@ You may mirror the published image into an internal registry and deploy it with 
 
 ## Maintainer boundary
 
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 Building and publishing the official Docker image, producing release archives and running the complete release matrix are maintainer-only operations in the complete private workspace. They are intentionally not exposed as commands in this public checkout.
 
 For a custom source deployment, use the public build commands in [Development](./development.md) and serve the generated demo output with your own static web server.

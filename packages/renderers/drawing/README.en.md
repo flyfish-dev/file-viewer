@@ -1,5 +1,7 @@
 # @file-viewer/renderer-drawing
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/drawing/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/drawing/README.zh-CN.md)
+
 Standalone Draw.io, Excalidraw, Mermaid, and PlantUML renderer for Flyfish File Viewer.
 
 ## Highlights

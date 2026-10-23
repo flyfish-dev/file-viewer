@@ -1,5 +1,7 @@
 # @file-viewer/renderer-email
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/email/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/email/README.zh-CN.md)
+
 Browser-native `.eml`, Outlook `.msg`, and `.mbox` preview with body/header switching, attachment download and nested attachment preview. No server conversion or runtime CDN is used.
 
 ## Usage

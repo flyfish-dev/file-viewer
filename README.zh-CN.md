@@ -66,15 +66,15 @@
 
 为了预览一份内部 DOCX 就把文件上传到第三方，既慢也不合适。File Viewer 把预览留在浏览器内，让企业后台、OA、知识库、工单、附件中心和工程资料库使用同一套 API，而不是继续拼接一堆互不一致的查看器。
 
-当前内置 274 个已注册扩展名（224 个稳定、50 个实验）和 47 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、Adobe 设计文件、字体、结构化数据、DICOM、数字签名容器和显式二进制检查器共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
+当前内置 275 个已注册扩展名（225 个稳定、50 个实验）和 47 条预览链路。Office、PDF、OFD、Typst、CAD、STEP、XMind、压缩包、邮件、绘图、音视频、代码、Adobe 设计文件、字体、结构化数据、DICOM、数字签名容器和显式二进制检查器共享文件源、生命周期、搜索、缩放、打印、导出和下载契约；重型 Worker、WASM、字体与 vendor 资产保持按需加载，并可完全托管在自己的网络中。
 
-源码新增显式启用的 [BPMN 流程图](docs/zh/guide/bpmn.md) 和 [XML 校验与转换配置](docs/zh/guide/xml-profiles.md)，尚未包含在 npm 3.1.1 中。Full 包的默认依赖和兼容范围不变。
+[BPMN 流程图](docs/zh/guide/bpmn.md)（`@file-viewer/renderer-drawing/bpmn`）和 [XML 校验与转换配置](docs/zh/guide/xml-profiles.md)（`@file-viewer/renderer-text/xml-profiles`）自 3.1.2 起随 npm 发布，需显式启用。Full 包的默认依赖和兼容范围不变。
 
 新项目优先使用 `@file-viewer/*`；`@flyfish-group/*` 历史包继续同步维护。
 
 ## 当前版本与新增能力
 
-当前稳定版为 [v3.1.1](https://github.com/flyfish-dev/file-viewer/releases/tag/v3.1.1)。本页说明当前源码的能力；主分支与在线 Demo 可能包含稳定版之后的修复，使用 npm 或 Release 归档时请按对应版本验证。
+当前稳定版为 [v3.2.2](https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.2)。本页说明当前源码的能力；主分支与在线 Demo 可能包含稳定版之后的修复，使用 npm 或 Release 归档时请按对应版本验证。
 
 - 二进制检查器 `@file-viewer/renderer-binary` 提供十六进制、ASCII、字段树和字节范围联动，可检查 BIN、HEX、ELF、PE、Java Class 与 Mach-O 文件，只读分析，不执行文件。
 - IFC 可通过 `@file-viewer/renderer-3d/ifc` 显式启用，提供本地几何预览、构件选择与属性查看；需要另行安装依赖并自托管 Worker/WASM，见 [IFC 接入说明](packages/renderers/3d/IFC.md)。
@@ -84,7 +84,7 @@
 ## 亮点
 
 - **一个组件起步。** Vanilla JS / Web Component 优先，并提供 Vue、React、Svelte、jQuery 原生组件。
-- **矩阵可核验。** 274 个已注册扩展名（224 个稳定、50 个显式按需实验项）映射到 47 条预览链路，覆盖办公、工程、设计、数据、音视频、代码、DICOM、数字签名和二进制检查附件。
+- **矩阵可核验。** 275 个已注册扩展名（225 个稳定、50 个显式按需实验项）映射到 47 条预览链路，覆盖办公、工程、设计、数据、音视频、代码、DICOM、数字签名和二进制检查附件。
 - **部署不出网。** 浏览器内解析和渲染，支持离线网络、Docker、私有 CDN 和完整资源自托管。
 - **模块化。** 轻量组件、renderer、preset、full 包分层清晰，可以只安装需要的格式，也可以使用预置组合。
 - **按需加载。** PDF、Office、CAD、Typst、压缩包、图纸、PSD、Mermaid 等重型能力只在命中格式时加载。
@@ -343,7 +343,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 
 ## 支持格式
 
-[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：当前源码注册 274 个不重复扩展名和 47 条预览链路，其中 224 个稳定、50 个实验。下表按文件家族列出已注册扩展名。注册并不代表所有格式都能高还原：具体支持级别、已知限制和验证样例见 [格式矩阵](https://doc.file-viewer.app/guide/formats)，上线前请用业务文件验证。
+[`ecosystem/format-catalog.json`](ecosystem/format-catalog.json) 是唯一格式事实源：当前源码注册 275 个不重复扩展名和 47 条预览链路，其中 225 个稳定、50 个实验。下表按文件家族列出已注册扩展名。注册并不代表所有格式都能高还原：具体支持级别、已知限制和验证样例见 [格式矩阵](https://doc.file-viewer.app/guide/formats)，上线前请用业务文件验证。
 
 | 类别 | 扩展名 | 当前表现 | 适合场景 |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
@@ -413,7 +413,7 @@ Preset 选择:
 
 ## 当前 npm 生态
 
-v3.1.1 对应 89 个 npm 发布目标：88 个包为 `3.1.1`，`msdoc-viewer` 独立版本为 `0.2.8`；按用途分为 81 个标准包和 8 个历史兼容包。`@file-viewer/docx`、`@file-viewer/ppt` 等独立引擎依赖有各自版本，不计入这 89 个目标。实际安装版本以 npm dist-tag 和项目锁文件为准。新项目优先使用 `@file-viewer/*`；历史兼容包继续维护。
+v3.2.2 对应 89 个 npm 发布目标：88 个包为 `3.2.2`，`msdoc-viewer` 独立版本为 `0.2.12`；按用途分为 81 个标准包和 8 个历史兼容包。`@file-viewer/docx`、`@file-viewer/ppt` 等独立引擎依赖有各自版本，不计入这 89 个目标。实际安装版本以 npm dist-tag 和项目锁文件为准。新项目优先使用 `@file-viewer/*`；历史兼容包继续维护。
 
 Adobe 创意文件能力是显式专业包：安装 [`@file-viewer/renderer-design`](https://www.npmjs.com/package/@file-viewer/renderer-design) 后按需启用 PSD/PSB/PDD/PSDT、AI/AIT、EPS/PS、InDesign exchange 与嵌入预览、XD、现代 FLA/XFL、色板和 Photoshop 资源预设；它不会静默进入冻结的 `preset-all` / Full 兼容基线。
 
@@ -467,13 +467,13 @@ pnpm add @file-viewer/pptx
 
 内网或离线部署可以从 [GitHub Releases](https://github.com/flyfish-dev/file-viewer/releases) 下载同一版本的 npm tarball，放入项目自己的 `vendor/` 目录，或导入企业 npm 镜像。仓库不再保存 `artifacts/` 构建产物。
 
-例如，下载 v3.1.1 的 core 与 Web 组件包：
+例如，下载 v3.2.2 的 core 与 Web 组件包：
 
 ```bash
-gh release download v3.1.1 --repo flyfish-dev/file-viewer \
-  --pattern 'file-viewer-core-3.1.1.tgz' \
-  --pattern 'file-viewer-web-3.1.1.tgz' --dir ./vendor
-npm install ./vendor/file-viewer-core-3.1.1.tgz ./vendor/file-viewer-web-3.1.1.tgz
+gh release download v3.2.2 --repo flyfish-dev/file-viewer \
+  --pattern 'file-viewer-core-3.2.2.tgz' \
+  --pattern 'file-viewer-web-3.2.2.tgz' --dir ./vendor
+npm install ./vendor/file-viewer-core-3.2.2.tgz ./vendor/file-viewer-web-3.2.2.tgz
 ```
 
 这只安装示例中的两个包，不包含全部格式或所有传递依赖。完全断网前，还需准备所选组件、preset、renderer、框架及第三方依赖的完整缓存或内网镜像；运行时则部署匹配版本的 Worker、WASM、字体和 vendor 目录。
@@ -746,7 +746,7 @@ const options = {
 
 视图状态同步用于投屏、双端协同和恢复阅读进度。所有通过标准 renderer loader 挂载的格式都会获得通用 view-state provider，至少能记录 `renderer`、当前缩放和滚动位置；PDF、XMind、Geo、3D、CAD 等高交互路径会补充页码、导航、画布 pan、地图中心、相机视角或底层视图快照。初始化可传 `options.initialViewState`，运行中监听 `view-state-change`；Pure Web / Vue3 controller 可直接调用 `getViewState()` 和 `applyViewState(state, { source: "api", action: "restore" })`。
 
-生态当前维护 89 个 npm 发布目标（81 个标准包 + 8 个历史兼容包）；格式目录声明 47 条预览链路、274 个扩展名（已注册），其中 224 个稳定、50 个实验。格式说明见官方文档: https://doc.file-viewer.app/guide/formats
+生态当前维护 89 个 npm 发布目标（81 个标准包 + 8 个历史兼容包）；格式目录声明 47 条预览链路、275 个扩展名（已注册），其中 225 个稳定、50 个实验。格式说明见官方文档: https://doc.file-viewer.app/guide/formats
 <!-- FILE_VIEWER_PUBLIC_GENERATED:END -->
 
 ## 支持项目与商业版
@@ -764,9 +764,9 @@ File Viewer 自有源码保持 Apache-2.0 开源，部分运行时依赖采用�
 感谢你对 File Viewer 兼容性修复、文档完善和持续发布工作的支持。
 
 <p align="center">
-  <a href="https://github.com/p4535992" title="在 GitHub 查看 @p4535992">
-    <img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="GitHub 赞助者 @p4535992" />
-  </a>
+  <img src="docs/public/_media/sponsors/sponsors.svg" width="320" alt="项目赞助者 @p4535992 和 @jtianling" />
+  <br />
+  <sub><a href="https://github.com/p4535992">@p4535992</a> · <a href="https://github.com/jtianling">@jtianling</a></sub>
 </p>
 
 国内赞赏、联系与商业支持请使用 [官方支持入口](https://dev.flyfish.group/shop)。
@@ -911,3 +911,5 @@ File Viewer 自有源码采用 [Apache-2.0](LICENSE)。DWG/DWF/DWFX 运行时（
 旧版 PPT 运行时 `@file-viewer/ppt` 保留独立 LICENSE、NOTICE 和内置水印；移除水印需商业授权。其他依赖按各自许可证使用，不因被 File Viewer 引用而改为 Apache-2.0。
 
 欢迎通过 issue / PR 贡献通用修复与改进，参与方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+新贡献者可从[本地开发](docs/zh/guide/development.md)、[国际协作](docs/zh/guide/collaboration.md)和[翻译指南](docs/zh/guide/translations.md)开始；欢迎中英文参与，其他语言可附简短英文摘要。

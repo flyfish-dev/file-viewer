@@ -1,5 +1,7 @@
 # @file-viewer/vite-plugin
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.zh-CN.md)
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/vite-plugin"><img src="https://img.shields.io/npm/v/@file-viewer%2Fvite-plugin?logo=npm" alt="npm version"></a>
@@ -9,7 +11,7 @@
 </p>
 
 <p>
-  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/">Docs</a> · <a href="https://demo.file-viewer.app/">Live demo</a> · <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">Issues</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.md">简体中文</a>
+  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/">Docs</a> · <a href="https://demo.file-viewer.app/">Live demo</a> · <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">Issues</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.zh-CN.md">简体中文</a>
 </p>
 
 <p>
@@ -117,6 +119,8 @@ const options = {
 When host apps split `node_modules` by package name, circular dependencies between `@codemirror/*`, `@lezer/*`, and Sandpack can show up in production as `codemirror-view.* Cannot access ... before initialization`. The plugin stabilizes default chunk splitting and wraps existing `manualChunks` functions. Pako and shared CommonJS helpers use `vendor-commonjs` to prevent compressed-format initialization cycles; CodeMirror / Lezer / Sandpack use `vendor-codemirror`. Other custom groups remain intact, and Vite 8 receives equivalent Rolldown groups. Set `stabilizeInteropChunks:false` only when the host build needs total control.
 
 `copyAssets.baseDir` overrides automatic placement. It must be relative and cannot contain `..`; an empty string explicitly selects the root. The plugin now aligns the shared runtime asset base for standard packages, presets, and full packages; full packages also keep `setDefaultFullAssetBaseUrl()` synchronized. Only integrations that set `inject:false` and do not import the virtual module must call `setDefaultFileViewerAssetBaseUrl()` themselves (plus `setDefaultFullAssetBaseUrl()` for a full package). With Vite `base:'/app/'`, full-package dev URLs start with `/app/file-viewer/...`, while production files remain under `outDir/file-viewer/`.
+
+Asset copying runs at dev-server startup/restart and after a production build, not on ordinary HMR. Files with identical contents are left untouched, and generated manifests omit the volatile `copiedAt` timestamp. Vite's own output cleanup and public-directory copying remain unchanged.
 
 For strict registry control, disable injection and pass the virtual module explicitly:
 

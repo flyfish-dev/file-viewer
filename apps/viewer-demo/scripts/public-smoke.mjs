@@ -315,6 +315,16 @@ try {
   await page.locator('.rail-nav-button--samples').click()
   await page.waitForSelector('.sample-picker.open .sample-menu', { timeout })
 
+  // Only the active sample family is mounted. Open Documents explicitly so
+  // this locale assertion remains independent of the landing sample format.
+  const documentGroup = page.locator('.sample-group[data-family="word"] .sample-group-header')
+  if (await documentGroup.getAttribute('aria-expanded') !== 'true') {
+    await documentGroup.click()
+  }
+  await page.locator('.sample-group[data-family="word"] .sample-group-grid').waitFor({
+    state: 'visible', timeout
+  })
+
   const japaneseUi = await page.evaluate(() => {
     const localeGroup = document.querySelector('.viewer-locale-switch')
     const sampleNames = Array.from(document.querySelectorAll('.sample-menu .sample-card strong'))

@@ -76,7 +76,8 @@
     "file-viewer.capability.json",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
-    "THIRD_PARTY_LICENSES.json"
+    "THIRD_PARTY_LICENSES.json",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build:ts": "tsc -b tsconfig.json --force",

@@ -1,5 +1,7 @@
 # @file-viewer/renderer-text
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/text/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/text/README.zh-CN.md)
+
 Base code, text, and Markdown renderer package for Flyfish File Viewer. Mermaid, side-by-side patch diff, and Git bundle inspection live in `@file-viewer/capability-mermaid` and `@file-viewer/capability-text-tools`; they are excluded from the standard/full default closure.
 
 ## Usage

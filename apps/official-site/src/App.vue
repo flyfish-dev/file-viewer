@@ -49,6 +49,9 @@ import {
 import { FORMAT_CATALOG_SUMMARY } from './formatCatalog.generated'
 import FormatExperience from './components/FormatExperience.vue'
 import ProductResources from './components/ProductResources.vue'
+import serviceQrImage from './assets/contact/wecom.webp'
+import updatesQrImage from './assets/contact/updates.webp'
+import communityQrImage from './assets/contact/community.webp'
 
 type Locale = 'zh' | 'en'
 type SiteTheme = 'light' | 'dark'
@@ -124,7 +127,6 @@ const demoUrl = 'https://demo.file-viewer.app/'
 const compareUrl = 'https://demo.file-viewer.app/compare.html'
 const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
-const githubStarCountFallback = 1900
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
 const currentReleaseVersion = '3.2.2'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
@@ -146,9 +148,10 @@ const demoPreviewMobilePaths = {
   zh: '/file-viewer-demo-v2.2.6-mobile-zh.webp',
   en: '/file-viewer-demo-v2.2.6-mobile-en.webp'
 } satisfies Record<Locale, string>
+// Share cards use the same 1280x640 PNG as the GitHub repository social preview.
 const sitePreviewImageUrls = {
-  zh: `${siteRootUrl}${demoPreviewDesktopPaths.zh.slice(1)}`,
-  en: `${siteRootUrl}${demoPreviewDesktopPaths.en.slice(1)}`
+  zh: `${siteRootUrl}social-preview.png`,
+  en: `${siteRootUrl}social-preview.png`
 } satisfies Record<Locale, string>
 const siteLocalePreferenceKey = 'flyfish-site-locale-preference'
 const siteThemePreferenceKey = 'flyfish-site-theme-preference'
@@ -171,16 +174,16 @@ const siteMetadata = {
     description: `开源 File Viewer 在浏览器内预览 Office、PDF、CAD 等 ${registeredExtensionCount} 个扩展名（${stableExtensionCount} 个稳定、${experimentalExtensionCount} 个实验），通过 ${previewPipelineCount} 条链路按需加载，无需服务端转码，支持离线与私有化部署。`,
     ogLocale: 'zh_CN',
     ogLocaleAlternate: 'en_US',
-    imageAlt: `File Viewer v${currentReleaseVersion} 浏览器原生 DOCX 预览工作区`
+    imageAlt: 'File Viewer：浏览器内预览文件，资源可自托管'
   },
   en: {
     lang: 'en',
     canonical: siteEnglishUrl,
     title: 'File Viewer for Office, PDF & CAD | Flyfish',
-    description: `Open-source browser file viewer for Office, PDF, CAD, archives, email, and ${registeredExtensionCount} formats (${stableExtensionCount} stable, ${experimentalExtensionCount} experimental) across ${previewPipelineCount} lazy preview pipelines. No conversion server. Self-hosted and offline-ready.`,
+    description: `Open-source browser file viewer for Office, PDF, CAD, archives, email, and ${registeredExtensionCount} registered extensions (${stableExtensionCount} stable, ${experimentalExtensionCount} experimental) across ${previewPipelineCount} lazy preview pipelines. No conversion server. Self-hosted and offline-ready.`,
     ogLocale: 'en_US',
     ogLocaleAlternate: 'zh_CN',
-    imageAlt: `File Viewer v${currentReleaseVersion} browser-native DOCX preview workspace`
+    imageAlt: 'File Viewer: local browser previews with self-hosted runtime assets'
   }
 } satisfies Record<Locale, SiteMetadata>
 
@@ -214,7 +217,7 @@ const demoFrameMounted = ref(false)
 const demoFrameReady = ref(false)
 const quickStartSectionActive = ref(false)
 const activeQuickStartIndex = ref(0)
-const githubStarCount = ref(githubStarCountFallback)
+const githubStarCount = ref<number | null>(null)
 const supportDialogOpen = ref(false)
 const supportDialogView = ref<SupportDialogView>('sponsor')
 const activeChineseContactId = ref<ChineseContactId>('service')
@@ -239,9 +242,9 @@ const heroPreviewShieldStyle = computed(() => {
     height: `${shield.height}px`
   }
 })
-const githubStarsLabel = computed(() => formatStarCount(githubStarCount.value))
+const githubStarsLabel = computed(() => githubStarCount.value === null ? 'GitHub' : formatStarCount(githubStarCount.value))
 const githubStarsAriaLabel = computed(() =>
-  isZh.value
+  githubStarCount.value === null ? (isZh.value ? 'GitHub 开源总仓' : 'GitHub repository') : isZh.value
     ? `GitHub 开源总仓，${githubStarsLabel.value} stars`
     : `GitHub repository, ${githubStarsLabel.value} stars`
 )
@@ -318,11 +321,11 @@ async function loadGithubStarCount() {
       return
     }
     const payload = (await response.json()) as { stargazers_count?: unknown }
-    if (typeof payload.stargazers_count === 'number' && Number.isFinite(payload.stargazers_count)) {
+    if (typeof payload.stargazers_count === 'number' && Number.isSafeInteger(payload.stargazers_count) && payload.stargazers_count >= 0) {
       githubStarCount.value = payload.stargazers_count
     }
   } catch {
-    // Keep the baked-in count when GitHub is unavailable or rate limited.
+    // Keep the repository link usable without inventing a count when offline.
   }
 }
 
@@ -458,8 +461,8 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm 发布目标',
-          value: '84',
-          detail: '76 个标准包、7 个同版本 alias，msdoc-viewer 独立版本',
+          value: '89',
+          detail: '81 个标准包、8 个历史兼容包，msdoc-viewer 独立版本',
           tone: 'amber'
         }
       ]
@@ -484,9 +487,9 @@ const metrics = computed<MetricItem[]>(() =>
         },
         {
           title: 'npm targets',
-          value: '84',
+          value: '89',
           detail:
-            '76 standard packages, 7 same-line aliases, and independently versioned msdoc-viewer',
+            '81 standard packages, 8 legacy-compatible packages, and independently versioned msdoc-viewer',
           tone: 'amber'
         }
       ]
@@ -932,26 +935,54 @@ const donationQrItems: QrItem[] = [
 const chineseContactItems: ChineseContactItem[] = [
   {
     id: 'service',
-    label: '客服微信',
+    label: '客服企业微信',
     note: '商务咨询、商业授权与优先技术支持',
-    image: '/contact.jpg',
+    image: serviceQrImage,
     icon: MessageCircle
   },
   {
     id: 'updates',
     label: '微信公众号',
     note: '获取版本更新与文件预览实践文章',
-    image: '/wechat-mp.png',
+    image: updatesQrImage,
     icon: Newspaper
   },
   {
     id: 'community',
     label: '用户交流群',
     note: '与开发者和 File Viewer 用户交流',
-    image: '/invite.webp',
+    image: communityQrImage,
     icon: Users
   }
 ]
+
+const contactQrStates = ref<Record<ChineseContactId, 'loading' | 'ready' | 'error'>>({
+  service: 'loading',
+  updates: 'loading',
+  community: 'loading'
+})
+const contactQrPreloads = new Map<ChineseContactId, HTMLImageElement>()
+
+function preloadContactQrs() {
+  if (!isZh.value) return
+  for (const item of chineseContactItems) {
+    if (contactQrPreloads.has(item.id)) continue
+    const image = new Image()
+    image.decoding = 'async'
+    image.onload = () => {
+      void image.decode().catch(() => undefined)
+    }
+    image.onerror = () => contactQrPreloads.delete(item.id)
+    contactQrPreloads.set(item.id, image)
+    image.src = item.image
+  }
+}
+
+function retryContactQr(item: ChineseContactItem) {
+  contactQrStates.value[item.id] = 'loading'
+  contactQrPreloads.delete(item.id)
+  preloadContactQrs()
+}
 
 const activeChineseContact = computed(
   () =>
@@ -1523,6 +1554,7 @@ let supportDialogReturnFocusElement: HTMLButtonElement | null = null
 function openSupportDialog(view: SupportDialogView) {
   if (supportDialogOpen.value) return
 
+  if (view === 'contact') preloadContactQrs()
   navExplorerOpen.value = false
   supportDialogView.value = view
   activeChineseContactId.value = 'service'
@@ -1696,6 +1728,7 @@ onMounted(async () => {
     syncBrowserPathForLocale(locale.value)
   }
   updateDocumentMetadata(locale.value)
+  preloadContactQrs()
   void loadGithubStarCount()
   await nextTick()
   topbarResizeObserver = new ResizeObserver(requestPageNavStateUpdate)
@@ -2479,6 +2512,8 @@ onBeforeUnmount(() => {
           aria-haspopup="dialog"
           :aria-expanded="supportDialogOpen && supportDialogView === 'contact'"
           aria-controls="support-dialog"
+          @pointerenter="preloadContactQrs"
+          @focus="preloadContactQrs"
           @click="openSupportDialog('contact')"
         >
           <MessageCircle :size="20" aria-hidden="true" />
@@ -2591,7 +2626,7 @@ onBeforeUnmount(() => {
               {{
                 supportDialogView === 'contact'
                   ? isZh
-                    ? '客服微信用于商务与优先支持；公众号和交流群用于获取更新与社区交流。'
+                    ? '企业微信用于商务与优先支持；公众号和交流群用于获取更新与社区交流。'
                     : 'Reach the File Viewer team through WhatsApp or Telegram.'
                   : isZh
                     ? '扫描微信或支付宝二维码，也可以使用 GitHub Sponsors 或小铺直链。'
@@ -2675,14 +2710,34 @@ onBeforeUnmount(() => {
 
             <article class="support-contact-preview" aria-live="polite">
               <div
+                v-for="item in chineseContactItems"
+                v-show="activeChineseContactId === item.id"
+                :key="item.id"
                 class="support-contact-preview-image"
-                :class="{ 'is-portrait': activeChineseContact.id === 'service' }"
+                :aria-busy="contactQrStates[item.id] === 'loading'"
               >
                 <img
-                  :src="activeChineseContact.image"
-                  :alt="`${activeChineseContact.label}二维码`"
+                  v-if="contactQrStates[item.id] !== 'error'"
+                  v-show="contactQrStates[item.id] === 'ready'"
+                  :src="item.image"
+                  :alt="`${item.label}二维码`"
+                  width="624"
+                  height="624"
                   decoding="async"
+                  @load="contactQrStates[item.id] = 'ready'"
+                  @error="contactQrStates[item.id] = 'error'"
                 />
+                <span
+                  v-if="contactQrStates[item.id] === 'loading'"
+                  class="support-contact-loading"
+                  role="status"
+                >
+                  正在加载{{ item.label }}二维码…
+                </span>
+                <div v-else-if="contactQrStates[item.id] === 'error'" class="support-contact-error">
+                  <span>二维码加载失败</span>
+                  <button type="button" @click="retryContactQr(item)">重新加载</button>
+                </div>
               </div>
               <strong>{{ activeChineseContact.label }}</strong>
               <span>{{ activeChineseContact.note }}</span>

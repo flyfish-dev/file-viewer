@@ -1,5 +1,7 @@
 # @flyfish-group/file-viewer-react
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/react/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/react/README.zh-CN.md)
+
 React file preview component. This package is the historical alias of `@file-viewer/react` and now provides the same native React component experience: it mounts the shared core directly and exposes consistent props, events, and ref APIs.
 
 ```bash

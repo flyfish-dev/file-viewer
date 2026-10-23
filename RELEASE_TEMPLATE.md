@@ -35,8 +35,8 @@ Sync the full `dist` directory, including Worker, WASM, vendor, font, PDF CMap, 
 
 - `pnpm type-check`
 - `pnpm docs:build`
-- `pnpm verify:format-support`
-- `pnpm verify:offline-assets`
+- `pnpm verify:public-release-facts`
+- `pnpm verify:github-governance`
 
 ### Notes
 

@@ -1,8 +1,4 @@
 ---
-
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
 description: "快速排查 File Viewer 组件选型、Full 包资源、Worker/WASM 路径、格式支持、移动端布局、授权与部署问题。"
 ---
 
@@ -70,11 +66,7 @@ pnpm install
 
 离线 tgz 场景也要注意：只安装一个顶层 tgz 时，它的依赖仍需要能从 npm registry、私有 registry 或同目录依赖 tarball 中解析到。企业内网建议把 `@file-viewer/vue3`、所选 preset、preset 内部 renderer、`@file-viewer/core` 等同版本 tarball 一起放入私有 npm 源，或在安装命令/业务 package.json 中同时声明这些本地 tgz。
 
-项目内置了安装烟测命令，发布前可复核 npm 最新版兼容性:
-
-```bash
-pnpm verify:npm-install-smoke
-```
+重新安装后，运行业务项目自己的构建来检查依赖闭包。仓库的[冷安装消费者工作流](https://github.com/flyfish-dev/file-viewer/blob/main/.github/workflows/public-ci.yml)会单独验证固定版本的发布归档。
 
 ## URL 预览为什么失败或空白
 

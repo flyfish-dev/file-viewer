@@ -1,14 +1,16 @@
 # file-viewer-cli
 
-用于通过 `npx` 友好运行 File Viewer CLI 的单 bin 入口：
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/file-viewer-cli/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/file-viewer-cli/README.zh-CN.md)
+
+Friendly single-bin entry for running the File Viewer CLI with `npx`:
 
 ```bash
 npx file-viewer-cli@latest add .
 npx file-viewer-cli@latest plan --profile standard
 ```
 
-本包不携带 renderer 或静态资源，只委托给严格同版本的 `@file-viewer/cli`。项目已安装 scoped 包后，可直接使用它提供的 `file-viewer` 命令。历史 `file-viewer-copy-assets` 命令和统一的 `copy-assets` 子命令均继续保留。
+The package contains no renderer or asset payload. It delegates to the exact same-version `@file-viewer/cli` dependency. After installing the scoped package in a project, use its primary `file-viewer` command directly. The historical `file-viewer-copy-assets` command and the unified `copy-assets` subcommand remain available.
 
-- [CLI 使用主页](https://file-viewer.app/cli/)
-- [完整中文指南](https://doc.file-viewer.app/zh/guide/cli)
-- [English](./README.en.md)
+- [CLI home](https://file-viewer.app/en/cli/)
+- [Complete guide](https://doc.file-viewer.app/guide/cli)
+- [简体中文](./README.md)

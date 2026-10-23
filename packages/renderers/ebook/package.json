@@ -51,7 +51,8 @@
     "dist",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json --force && node scripts/build-epub-engine.mjs",

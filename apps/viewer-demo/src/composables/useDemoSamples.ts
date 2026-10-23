@@ -15,9 +15,9 @@ import type { DemoSampleGroup } from '@/data/demoSamples'
  */
 export const DEFAULT_DEMO_URL_BY_LOCALE: Record<DemoLocale, string> = {
   'zh-CN': '/example/word.docx',
-  'en-US': '/example/en/calibre-demo.docx',
-  'ja-JP': '/example/en/calibre-demo.docx',
-  'de-DE': '/example/en/calibre-demo.docx'
+  'en-US': '/example/en/sample-presentation.pptx',
+  'ja-JP': '/example/en/sample-presentation.pptx',
+  'de-DE': '/example/en/sample-presentation.pptx'
 }
 
 const extraUploadExtensions = [
@@ -57,6 +57,13 @@ const localUrlBase = () => {
   return 'file:///'
 }
 
+const deploymentPrefix = () => {
+  if (typeof window === 'undefined' || !window.location?.href) return '/'
+  return new URL('./', window.location.href).pathname
+}
+
+const catalogUrls = new Set(allDemoPresetFiles.map(item => item.url))
+
 /**
  * Produce a stable key for local, absolute and encoded URLs.
  *
@@ -70,7 +77,11 @@ export const sampleUrlKey = (target: string) => {
     const parsed = new URL(clean, base)
     const isLocal = parsed.origin === new URL(base).origin
     const originKey = isLocal ? '' : parsed.origin.toLowerCase()
-    return `${originKey}${safeDecodeURIComponent(parsed.pathname)}`
+    const prefix = deploymentPrefix()
+    const path = isLocal && prefix !== '/' && parsed.pathname.startsWith(`${prefix}example/`)
+      ? `/${parsed.pathname.slice(prefix.length)}`
+      : parsed.pathname
+    return `${originKey}${safeDecodeURIComponent(path)}`
   } catch {
     const path = clean.startsWith('/') ? clean : `/${clean}`
     return safeDecodeURIComponent(path)
@@ -85,8 +96,9 @@ const legacyDemoUrlMap: Record<string, string> = {
  * Keep old shared demo links working without rewriting third-party origins.
  */
 export const normalizeDemoUrl = (target: string) => {
-  const normalizedPath = legacyDemoUrlMap[sampleUrlKey(target)]
-  if (!normalizedPath) {
+  const key = sampleUrlKey(target)
+  const normalizedPath = legacyDemoUrlMap[key] || key
+  if (!catalogUrls.has(normalizedPath)) {
     return target
   }
   try {
@@ -96,7 +108,7 @@ export const normalizeDemoUrl = (target: string) => {
     if (!isRelative && !isLocalOrigin) {
       return target
     }
-    return `${normalizedPath}${parsed.search}${parsed.hash}`
+    return `${deploymentPrefix()}${normalizedPath.slice(1)}${parsed.search}${parsed.hash}`
   } catch {
     return normalizedPath
   }

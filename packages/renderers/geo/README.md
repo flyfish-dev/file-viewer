@@ -1,8 +1,10 @@
 # @file-viewer/renderer-geo
 
-Flyfish File Viewer 的独立地理数据 renderer 包。它负责 GeoJSON、KML、GPX 和 Shapefile 的浏览器端预览，并让 `@tmcw/togeojson`、`shpjs`、`maplibre-gl`、`proj4` 只在命中地理数据格式时加载。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geo/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geo/README.zh-CN.md)
 
-## 使用
+Standalone geospatial renderer package for Flyfish File Viewer. It previews GeoJSON, KML, GPX, and Shapefile data in the browser while keeping `@tmcw/togeojson`, `shpjs`, `maplibre-gl`, and `proj4` lazy-loaded for geospatial files only.
+
+## Usage
 
 ```ts
 import { geoRenderer } from '@file-viewer/renderer-geo'
@@ -13,7 +15,7 @@ const options = {
 }
 ```
 
-也可以通过全量 preset 自动装配：
+You can also compose it through the full preset:
 
 ```ts
 import { allRenderers } from '@file-viewer/preset-all'
@@ -24,17 +26,17 @@ const options = {
 }
 ```
 
-## 能力
+## Capabilities
 
-- GeoJSON 直接读取 `FeatureCollection`、`Feature` 或单个 geometry。
-- KML / GPX 只在命中格式时按需加载 `@tmcw/togeojson`，转换为统一 GeoJSON 管线。
-- SHP / Shapefile 只在命中格式时按需加载 `shpjs`，支持常见 ZIP 或二进制 Shapefile 数据转 GeoJSON。
-- 默认使用离线 MapLibre 空底图渲染点、线、面叠加层，支持平移、缩放和适配范围；显式配置后可叠加公网、内网或离线自托管瓦片底图。
-- 支持 GeoJSON `crs` 元数据、`options.geo.projection` 显式坐标系、Web Mercator 自动推断，以及 `EPSG:4326`、`EPSG:3857`、`EPSG:4490`、`GCJ02`、`BD09` 和 proj4 字符串转换到 WGS84。
-- WebGL 或 MapLibre 初始化失败时自动回退 SVG 矢量预览，适合内网部署和附件快速审阅。
-- 卸载时清理 DOM 资源，和 core 的生命周期、导出 HTML、缩放能力保持一致。
+- Reads GeoJSON `FeatureCollection`, `Feature`, and standalone geometry objects.
+- Loads `@tmcw/togeojson` only for KML / GPX and normalizes them into the shared GeoJSON pipeline.
+- Loads `shpjs` only for SHP / Shapefile previews, including common ZIP or binary Shapefile payloads.
+- Uses an offline MapLibre empty style to render point, line, and polygon overlays with pan, zoom, and fit-to-bounds controls. Public, intranet, or fully self-hosted basemap tiles can be enabled explicitly.
+- Supports GeoJSON `crs` metadata, explicit `options.geo.projection`, Web Mercator inference, and conversion from `EPSG:4326`, `EPSG:3857`, `EPSG:4490`, `GCJ02`, `BD09`, or proj4 strings to WGS84.
+- Falls back to an SVG vector preview when WebGL or MapLibre initialization is unavailable.
+- Cleans up DOM resources on unmount and remains compatible with core lifecycle, HTML export, and zoom orchestration.
 
-## 坐标系选项
+## Projection Options
 
 ```ts
 const options = {
@@ -47,17 +49,18 @@ const options = {
 }
 ```
 
-标准 GeoJSON 默认按 WGS84 读取。如果业务导出没有写 `crs`，但坐标是 Web Mercator，默认会自动推断；GCJ-02 / BD-09 这类非 EPSG 坐标建议通过 `options.geo.projection` 显式声明。
+Standard GeoJSON is read as WGS84 by default. If an export omits `crs` but contains Web Mercator coordinates, the renderer infers EPSG:3857 by default. For non-EPSG systems such as GCJ-02 or BD-09, pass `options.geo.projection` explicitly.
 
-## 底图和瓦片选项
+## Basemap and Tile Options
 
-Geo renderer 默认不访问公网。需要真实底图时，可以选择公开 MapLibre style、自托管 style，或简单 raster XYZ/TMS 瓦片模板：
+The geo renderer does not access public networks by default. When a real basemap is needed, pass a public MapLibre style, a self-hosted style, or a simple raster XYZ/TMS tile template:
 
 ```ts
 const options = {
   renderers: [geoRenderer],
   geo: {
-    // 国际化开源底图，适合 demo 或轻量在线场景；生产建议按需自托管或镜像到内网/国内 CDN。
+    // International open-source basemap, good for demos or light online usage.
+    // Production systems should self-host or mirror it when needed.
     basemap: 'openfreemap-liberty',
   },
 }
@@ -67,7 +70,8 @@ const options = {
 const options = {
   renderers: [geoRenderer],
   geo: {
-    // 最简单的 raster 瓦片入口，可指向公网、内网网关、对象存储或本地静态目录。
+    // Simple raster tile entry. It can point to public tiles, an intranet gateway,
+    // object storage, or a local static tile directory.
     tileUrl: '/tiles/world/{z}/{x}/{y}.png',
   },
 }
@@ -86,22 +90,22 @@ const options = {
 }
 ```
 
-天地图需要使用在天地图控制台为部署域名申请的 token。内置 preset 会同时加载对应的底图和中文注记图层：
+Tianditu requires a token registered for the deployment's domain. Each built-in preset combines its base and annotation layers:
 
 ```ts
 const options = {
   renderers: [geoRenderer],
   geo: {
-    basemap: 'tianditu-vector', // 也支持 tianditu-imagery / tianditu-terrain
+    basemap: 'tianditu-vector', // or tianditu-imagery / tianditu-terrain
     tiandituToken: import.meta.env.VITE_TIANDITU_TOKEN,
   },
 }
 ```
 
-需要隐藏注记时可使用对象形式：`basemap: { type: 'tianditu', token, mapStyle: 'imagery', labels: false }`。组件不会内置、保存或代理 token；未提供 token 时会安全回退到离线空底图。
+Use `basemap: { type: 'tianditu', token, mapStyle: 'imagery', labels: false }` to omit annotations. The viewer never bundles, stores, or proxies the token; a missing token safely falls back to the offline empty basemap.
 
-内置 preset 包含 `openfreemap-liberty`、`openfreemap-bright`、`openfreemap-positron`、`openfreemap-dark`、`openfreemap-fiord`、显式 opt-in 的 `osm-raster`，以及需要调用方 token 的 `tianditu-vector`、`tianditu-imagery`、`tianditu-terrain`。`osm-raster` 只建议用于 demo 或低频访问，生产环境请遵守 OpenStreetMap 官方 tile policy，配置可替换 URL、缓存和正确 attribution。中国大陆也可以把 OpenFreeMap / OpenMapTiles 栈自托管到内网或国内 CDN，再通过 `styleUrl` 或 `tileUrl` 接入。
+Built-in presets include `openfreemap-liberty`, `openfreemap-bright`, `openfreemap-positron`, `openfreemap-dark`, `openfreemap-fiord`, explicit opt-in `osm-raster`, and the caller-token-based `tianditu-vector`, `tianditu-imagery`, and `tianditu-terrain` presets. Use `osm-raster` only for demos or low-volume traffic; production deployments should follow the official OpenStreetMap tile policy, keep the URL replaceable, cache correctly, and show attribution. OpenFreeMap / OpenMapTiles can also be self-hosted or mirrored to an intranet or domestic CDN and connected through `styleUrl` or `tileUrl`.
 
-## 迁移说明
+## Migration Note
 
-`@file-viewer/core` 已不再内置 geo renderer，也不会默认安装 `@tmcw/togeojson` 和 `shpjs`。需要 GeoJSON / KML / GPX / SHP 预览时，请显式安装本包，或直接使用 `@file-viewer/preset-all` 聚合能力。
+`@file-viewer/core` no longer bundles the geo renderer and no longer installs `@tmcw/togeojson` or `shpjs` by default. Install this renderer explicitly, or use `@file-viewer/preset-all`, when GeoJSON / KML / GPX / SHP preview is required.

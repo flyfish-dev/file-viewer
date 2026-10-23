@@ -1,5 +1,7 @@
 # @file-viewer/preset-engineering
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.zh-CN.md)
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/preset-engineering"><img src="https://img.shields.io/npm/v/@file-viewer%2Fpreset-engineering?logo=npm" alt="npm version"></a>
@@ -9,26 +11,26 @@
 </p>
 
 <p>
-  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/zh/">文档</a> · <a href="https://demo.file-viewer.app/">在线 Demo</a> · <a href="https://doc.file-viewer.app/guide/formats">格式矩阵</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">问题反馈</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.en.md">English</a>
+  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/">Docs</a> · <a href="https://demo.file-viewer.app/">Live demo</a> · <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">Issues</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.zh-CN.md">简体中文</a>
 </p>
 
 <p>
-  <a href="https://demo.file-viewer.app/"><img src="https://raw.githubusercontent.com/flyfish-dev/file-viewer/main/docs/public/_media/file-viewer-demo-v3-zh.webp" width="760" alt="File Viewer 在线演示：Word、Excel、PPT、3D 模型、CAD 图纸与二进制检查器"></a>
+  <a href="https://demo.file-viewer.app/"><img src="https://raw.githubusercontent.com/flyfish-dev/file-viewer/main/docs/public/_media/file-viewer-demo-v3-en.webp" width="760" alt="File Viewer live demo: Word, Excel, PowerPoint, 3D model, CAD drawing and binary inspector"></a>
 </p>
 
-> ⭐ 如果 File Viewer 对你有帮助，欢迎到 [GitHub](https://github.com/flyfish-dev/file-viewer) 点个 Star。
+> ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-Flyfish File Viewer 的工程类 renderer preset。它面向 CAD、三维模型、Draw.io / Excalidraw / Mermaid / PlantUML、XMind、地理数据、Typst、EDA、压缩包和数据资产等专业附件场景。
+The engineering renderer preset for Flyfish File Viewer. It targets professional attachment workflows such as CAD, 3D models, Draw.io / Excalidraw / Mermaid / PlantUML, XMind, geospatial files, Typst, EDA, archives, and structured data assets.
 
-## 何时使用
+## When To Use
 
-- 业务集中在研发、制造、设计、工程交付、EDA 初筛或技术文档协作。
-- 你需要 CAD / 3D / 图形 / 地理 / EDA 等专业格式，但不想安装完整 demo 的所有 renderer。
-- 你希望这些 WASM、Worker、vendor 资产都继续通过统一 manifest 和 `@file-viewer/vite-plugin` 自托管。
+- Your product focuses on R&D, manufacturing, design review, engineering delivery, EDA triage, or technical documentation.
+- You need CAD / 3D / drawing / geospatial / EDA preview lines without installing the complete official demo renderer matrix.
+- You want WASM, Worker, and vendor assets to keep using the shared manifest and `@file-viewer/vite-plugin` self-hosting flow.
 
-## 用法
+## Usage
 
-推荐和 `@file-viewer/vite-plugin` 一起使用。安装本 preset 后，插件会自动发现并激活工程附件能力：
+The recommended path is to use it with `@file-viewer/vite-plugin`. Once this preset is installed, the plugin discovers and activates engineering-file capability automatically:
 
 ```ts
 fileViewerRenderers({
@@ -36,7 +38,7 @@ fileViewerRenderers({
 })
 ```
 
-组件默认 `autoRenderers:true`，业务代码无需手动传 `renderers`。需要完全手动控制 registry 时再直接传入：
+Components keep `autoRenderers:true` by default, so application code does not pass `renderers` manually. Pass the preset directly only when you need full manual registry control:
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -49,7 +51,7 @@ const options = {
 }
 ```
 
-## 包含的 renderer
+## Included Renderers
 
 - `@file-viewer/renderer-cad`
 - `@file-viewer/renderer-3d`
@@ -61,19 +63,19 @@ const options = {
 - `@file-viewer/renderer-data`
 - `@file-viewer/renderer-eda`
 
-## 文档
+## Documentation
 
-- 按需渲染架构: <https://doc.file-viewer.app/guide/on-demand-renderers>
-- 支持格式: <https://doc.file-viewer.app/guide/formats>
+- On-demand renderer architecture: <https://doc.file-viewer.app/guide/on-demand-renderers>
+- Supported formats: <https://doc.file-viewer.app/guide/formats>
 
-## 格式与相关包
+## Formats and related packages
 
-File Viewer 在浏览器内预览 275+ 种扩展名，覆盖 Office、PDF/OFD、CAD、3D、压缩包、邮件、图片、音视频和代码，无需服务端转码；完整清单见 [格式矩阵](https://doc.file-viewer.app/guide/formats)。
+File Viewer previews 275+ file extensions in the browser, covering Office, PDF/OFD, CAD, 3D, archives, email, images, media and code, without server-side conversion. See the [format matrix](https://doc.file-viewer.app/guide/formats) for the full list.
 
-- 组件：`@file-viewer/web`、`@file-viewer/vue3`、`@file-viewer/vue2.7`、`@file-viewer/vue2.6`、`@file-viewer/react`、`@file-viewer/react-legacy`、`@file-viewer/svelte`、`@file-viewer/jquery`，以及对应的 `-full` 包
-- 能力组合：`@file-viewer/preset-lite`、`@file-viewer/preset-office`、`@file-viewer/preset-engineering`、`@file-viewer/preset-all`
-- 构建：`@file-viewer/vite-plugin`、`file-viewer-copy-assets`
+- Components: `@file-viewer/web`, `@file-viewer/vue3`, `@file-viewer/vue2.7`, `@file-viewer/vue2.6`, `@file-viewer/react`, `@file-viewer/react-legacy`, `@file-viewer/svelte`, `@file-viewer/jquery`, plus their `-full` packages
+- Presets: `@file-viewer/preset-lite`, `@file-viewer/preset-office`, `@file-viewer/preset-engineering`, `@file-viewer/preset-all`
+- Build: `@file-viewer/vite-plugin`, `file-viewer-copy-assets`
 
-## 许可证
+## License
 
-本包采用 Apache-2.0。`*-full` 包包含 `@flyfish-dev/cad-viewer` 等 DWG/DWF/DWFX 运行时，该部分采用 **AGPL-3.0-only**，使用 CAD 能力时请遵守其许可证。详见 [LICENSE](https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE)。
+This package is Apache-2.0. `*-full` packages include the DWG/DWF/DWFX runtime (`@flyfish-dev/cad-viewer`), which is **AGPL-3.0-only**; using CAD support requires complying with that license. See [LICENSE](https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE).

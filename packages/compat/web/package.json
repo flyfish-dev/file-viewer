@@ -64,7 +64,8 @@
     "scripts/copy-assets.mjs",
     "viewer",
     "README.md",
-    "README.en.md"
+    "README.en.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node ../../../.github/scripts/build-web-iife.mjs packages/compat/web",

@@ -1,0 +1,36 @@
+{
+  "repository": "KhronosGroup/glTF-Sample-Assets",
+  "commit": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+  "files": [
+    {
+      "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Fox/glTF-Binary/Fox.glb",
+      "file": "fox.glb",
+      "bytes": 162852,
+      "sha256": "d97044e701822bac5a62696459b27d7b375aada5de8574ed4362edbba94771f7"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Fox/README.md",
+      "file": "licenses/fox/UPSTREAM-README.md",
+      "bytes": 1782,
+      "sha256": "cf767a7943b12f3af0ea14a1b18947a45ed7a03c3e722678df33854d97df0f88"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Fox/metadata.json",
+      "file": "licenses/fox/metadata.json",
+      "bytes": 1430,
+      "sha256": "1d888d832b5eb2a32a461ae6d5e2bc00f925e3a571c1447842466d2061800604"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/LICENSES/CC0-1.0.txt",
+      "file": "licenses/fox/CC0-1.0.txt",
+      "bytes": 6533,
+      "sha256": "a43fc2004d1e073f1107a1f6146664d08dae6cea93cb828742a4bec6da828e91"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/LICENSES/CC-BY-4.0.txt",
+      "file": "licenses/fox/CC-BY-4.0.txt",
+      "bytes": 13034,
+      "sha256": "c8041334a99cb48852b2139253cbde5f8ac87e27f124aed51223e0d5bf0080eb"
+    }
+  ]
+}

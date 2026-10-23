@@ -29,6 +29,10 @@ async function fixture(t, scenario = '') {
     new URL('../../packages/build-support/package-readmes.mjs', import.meta.url),
     join(checkout, 'packages/build-support/package-readmes.mjs')
   )
+  await cp(
+    new URL('../../packages/build-support/readme-locales.mjs', import.meta.url),
+    join(checkout, 'packages/build-support/readme-locales.mjs')
+  )
   const isolatedPublisher = join(scriptDirectory, 'publish-release-assets.mjs')
   const entries = []
   const existing = {}

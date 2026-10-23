@@ -1,5 +1,7 @@
 # @flyfish-group/file-viewer-web
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/web/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/web/README.zh-CN.md)
+
 Pure web file preview package. This package is the historical alias of `@file-viewer/web` and ships the same `<flyfish-file-viewer>` Web Component, imperative `mountViewer` controller, IIFE global bundle, and asset-copy CLI.
 
 ```bash

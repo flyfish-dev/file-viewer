@@ -1,5 +1,7 @@
 # file-viewer3
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/vue3-unscoped/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/vue3-unscoped/README.zh-CN.md)
+
 `file-viewer3` is the historical unscoped compatibility package. It only re-exports `@file-viewer/vue3`. New integrations should prefer the standard package name `@file-viewer/vue3`.
 
 ```bash

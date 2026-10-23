@@ -320,6 +320,12 @@ color-map bounds to the data range.
 The point-cloud scene CRS must match the dataset CRS. An incompatible scene is
 rejected before application hooks; no runtime point-cloud reprojection is
 performed. Reproject the dataset beforehand when a different scene is required.
+LAS/LAZ GeoKeyDirectory CRS codes are read as well as WKT. A projected EPSG
+code takes precedence over its underlying geographic CRS. Supply unregistered
+CRS definitions through `crsDefinitions` for offline use. A declared CRS with
+only citation text or an unsupported/user-defined GeoKey fails explicitly;
+citation names are not guessed into EPSG codes or silently assigned the scene
+CRS. Add authoritative WKT/EPSG metadata to such a dataset before loading it.
 
 ### GeoTIFF / COG versus ordinary TIFF
 

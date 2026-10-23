@@ -1,5 +1,7 @@
 # @file-viewer/renderer-design
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/design/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/design/README.zh-CN.md)
+
 Adobe design-file renderers for Flyfish File Viewer. Parsing and pixel synthesis run in a terminable module Worker, and every runtime asset can be self-hosted without a public CDN.
 
 ## Current scope

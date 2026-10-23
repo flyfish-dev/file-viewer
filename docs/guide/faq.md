@@ -1,8 +1,4 @@
 ---
-
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
 description: "Troubleshoot File Viewer packages, runtime assets, Worker and WASM paths, supported formats, licensing, mobile layout, and deployment behavior."
 ---
 
@@ -76,11 +72,7 @@ pnpm install
 
 For offline tgz installs, the top-level tgz still needs all runtime dependencies to resolve from npm, a private registry, or sibling local tarballs. In intranet environments, publish the same-version `@file-viewer/vue3`, the selected preset, its renderer packages, and `@file-viewer/core` to a private registry, or declare the local tgz dependency closure together.
 
-Release verification includes:
-
-```bash
-pnpm verify:npm-install-smoke
-```
+After reinstalling, run your application's build to check its dependency graph. The repository's [cold-consumer workflow](https://github.com/flyfish-dev/file-viewer/blob/main/.github/workflows/public-ci.yml) tests the fixed release archives separately.
 
 ## Can I deploy without public CDNs?
 

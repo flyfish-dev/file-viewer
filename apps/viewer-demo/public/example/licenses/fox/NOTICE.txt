@@ -1,0 +1,18 @@
+Fox — Khronos glTF Sample Assets
+
+Source:
+https://github.com/KhronosGroup/glTF-Sample-Assets/tree/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Fox
+
+Model: PixelMannen, 2014. CC0-1.0 (Public).
+Rigging & Animation: © 2014 tomkranis. CC-BY-4.0.
+Conversion to glTF: © 2017 @AsoboStudio and @scurest. CC-BY-4.0.
+
+The GLB is redistributed unchanged. Its preview image is a screenshot rendered
+by File Viewer. The authors do not endorse File Viewer.
+
+Full upstream attribution is preserved in UPSTREAM-README.md and metadata.json.
+Original license texts are included beside this notice:
+CC0-1.0.txt and CC-BY-4.0.txt.
+
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+https://creativecommons.org/licenses/by/4.0/legalcode

@@ -1,5 +1,7 @@
 # @file-viewer/geometry-engine
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geometry-engine/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geometry-engine/README.zh-CN.md)
+
 Framework-neutral, UI-free geometry kernel for Flyfish File Viewer. It now decodes STEP / STP, IGES / IGS, and BREP directly in the browser: OCCT tessellation runs in a local worker, with no upload or server-side conversion. IFC and Rhino 3DM currently provide signature detection and accurate capability notices only; their full geometry renderers are not wired yet.
 
 ```ts

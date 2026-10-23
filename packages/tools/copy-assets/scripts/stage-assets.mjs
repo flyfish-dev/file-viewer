@@ -6,7 +6,7 @@ import { stageInstalledPptRuntime } from '../../../components/web-full/scripts/s
 import { stagePreparedDesignRuntime } from '../../../build-support/stage-design-runtime.mjs'
 import { stageInstalledCadRuntime } from '../../../build-support/stage-cad-runtime.mjs'
 import { sanitizeOfflineViewerAssetTree } from '../../../components/web-full/scripts/offline-asset-sanitize.mjs'
-import { stageRetainedAssetNotices, withRetainedAssetNoticeManifests } from '../../../build-support/retained-asset-notices.mjs'
+import { stageBuiltRetainedWorkers, stageRetainedAssetNotices, withRetainedAssetNoticeManifests } from '../../../build-support/retained-asset-notices.mjs'
 import { stableAssetManifest } from '../../../build-support/stable-asset-manifest.mjs'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
@@ -100,6 +100,7 @@ for (const asset of declaredAssets) {
   })
 }
 
+await stageBuiltRetainedWorkers(targetDir)
 await stageRetainedAssetNotices(targetDir)
 rendererAssetManifests = withRetainedAssetNoticeManifests(rendererAssetManifests)
 await stageInstalledPptRuntime(resolve(targetDir, 'vendor/ppt'))

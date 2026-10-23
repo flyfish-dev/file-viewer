@@ -1,5 +1,7 @@
 # @file-viewer/eda-layout
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/eda-layout/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/eda-layout/README.zh-CN.md)
+
 Framework-neutral EDA layout inspection engine for Flyfish File Viewer. It exposes pure TypeScript APIs for standard GDSII record parsing, GDSII WebGL draw-batch generation, readable OASIS text-fixture parsing, and real binary OASIS upgrade boundaries without any UI dependency.
 
 ```ts

@@ -1,8 +1,10 @@
 # @file-viewer/renderer-word
 
-Flyfish File Viewer 的 Word / OpenDocument renderer 包。standard/full 默认承接 DOCX/DOCM/DOTX/DOTM、旧版 DOC/DOT 与 ODT/ODP；RTF 由 `@file-viewer/capability-rtf` 显式启用。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/word/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/word/README.zh-CN.md)
 
-## 用法
+Word and OpenDocument renderer package for Flyfish File Viewer. Standard/full includes DOCX/DOCM/DOTX/DOTM, legacy DOC/DOT, ODT, and ODP. RTF is enabled explicitly by `@file-viewer/capability-rtf`.
+
+## Usage
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -14,7 +16,7 @@ const options = {
 }
 ```
 
-也可以和其他 renderer 一起组合：
+You can compose it with other renderers:
 
 ```ts
 import { wordRenderer } from '@file-viewer/renderer-word'
@@ -27,31 +29,42 @@ const options = {
 }
 ```
 
-官方 Demo 和完整格式矩阵可以直接使用 `@file-viewer/preset-all`。
+Use `@file-viewer/preset-all` when you want the same complete matrix as the official demo.
 
-## 能力边界
+## Capabilities
 
-- DOCX / DOCM / DOTX / DOTM 使用自研 `@file-viewer/docx`，默认 Worker 解析、连续流式阅读、目录字段缓存、异步分批渲染，并跟随 viewer 主题启用暗黑文档面。
-- DOC / DOT 使用 `@file-viewer/doc`，并套用 Word 风格纸张阅读面、缩放、打印和 HTML 导出适配。
-- 安装 RTF capability 后才使用 `rtf.js`；未安装时会显示精确 CLI 启用命令。ODT / ODP 读取 OpenDocument 包内 `content.xml` 做安全结构预览。
-- 继续复用 core 的统一搜索、缩放、打印、导出、生命周期和操作能力。
+- DOCX / DOCM / DOTX / DOTM use the self-maintained `@file-viewer/docx` engine with Worker parsing, continuous reading layout, cached TOC fields, async batched rendering, and a dark document surface that follows the viewer theme.
+- DOC / DOT use `@file-viewer/doc` with a Word-like paper surface, zoom, print, and HTML export adapters.
+- With the RTF capability installed, RTF uses `rtf.js`; without it the viewer shows the exact CLI enablement command. ODT / ODP read `content.xml` from OpenDocument packages for safe structure previews.
+- The renderer reuses core search, zoom, print, export, lifecycle, and operation APIs.
 
-DOCX 的解析、分页、制表位、绘图锚点、VML 文本坐标、合并单元格边框、背景图和修订样式均由 `docxjs` 引擎负责。本包负责容器适配、交互与输出接入，不再对生成的文档节点做补救改写。
+The `docxjs` engine owns DOCX parsing, pagination, tab stops, drawing anchors,
+VML text coordinates, merged-cell borders, page backgrounds and revision styles.
+This package handles container fitting, interaction and output integration;
+it does not rewrite generated document nodes to repair rendering or export.
 
-Word 2003 XML 按根元素及其完整命名空间识别，HTML 注释、正文中的示例或命名空间子串不会改变容器类型。未内置 JSZip 的 DOCX Worker 使用同源 HTTP(S) 或 Blob 库地址，拒绝跨源及含凭据的地址。
+Word 2003 XML detection checks the document root and its complete namespace;
+HTML comments, embedded examples and namespace substrings do not change the
+container type. DOCX Workers without bundled JSZip use same-origin HTTP(S) or
+Blob library URLs and reject cross-origin URLs or URL credentials.
 
-## 文本修订
+## Text Revisions
 
-`options.docx.reviewMode` 同时适用于 DOC 和 DOCX：`all`（默认）用下划线显示实际插入、用删除线显示实际删除；`final` 显示定稿，`original` 显示修订前文字。同一组件修改该参数后会更新预览，不需要重新选择文件，也不会接受、拒绝修订或重写原始文件。文本修订支持不等于完整支持 Word 审阅历史、格式修订或移动记录。
+`options.docx.reviewMode` applies to DOC and DOCX: `all` (default) shows actual
+insertions underlined and deletions struck through; `final` shows revised text,
+and `original` shows text before those edits. Changing this option updates the
+current preview without replacing the file. It does not accept/reject revisions
+or rewrite the original bytes. Text revisions are not a claim of complete
+Word review-history, formatting-change, or move-tracking support.
 
-## 离线资产
+## Offline Assets
 
-DOCX Worker 默认读取 viewer assets 下的：
+DOCX Worker defaults to viewer assets:
 
 - `vendor/docx/docx.worker.js`
 - `vendor/docx/jszip.min.js`
 
-私有化部署时可以通过 `options.docx.workerUrl` 和 `options.docx.workerJsZipUrl` 覆盖：
+Override them for private deployments:
 
 ```ts
 const options = {
@@ -62,23 +75,25 @@ const options = {
 }
 ```
 
-DOCX 暗黑渲染默认由 `options.theme` 决定：`dark` 开启、`light` 关闭、`system` 跟随浏览器系统主题。需要业务固定效果时可传 `options.docx.darkMode: true / false`。
+DOCX dark rendering follows `options.theme` by default: `dark` enables it, `light` disables it, and `system` follows the browser color scheme. Pass `options.docx.darkMode: true / false` when the host app needs a fixed result.
 
-DOC、DOCX 与 RTF 的外部链接及 HTTP(S) 图片关系默认阻断。只有显式设置 `options.docx.externalLinkPolicy: 'allow'` 和 `options.docx.externalResourcePolicy: 'allow'` 才会启用；链接仍只接受 HTTP(S)、`mailto:`、`tel:` 和安全相对地址，未知协议与协议相对地址始终拒绝。内嵌图片、内部书签以及本地 `data:`/`blob:` 图片资源不受影响。
+DOC, DOCX, and RTF external links and HTTP(S) image relationships are blocked by default. Enable them explicitly with `options.docx.externalLinkPolicy: 'allow'` and `options.docx.externalResourcePolicy: 'allow'`; links are still limited to HTTP(S), `mailto:`, `tel:`, and safe relative addresses. Unknown and protocol-relative schemes are always rejected. Embedded images, internal bookmarks, and local `data:`/`blob:` image resources remain available.
 
-标准 renderer 会在挂载前净化 `rtf.js` 产生的 DOM。自定义 RTF 集成若直接消费 HTML，应先调用 `sanitizeFileViewerRtfHtml(document, markup, options)`；该边界与标准挂载使用同一链接策略和 DOMPurify 配置。严格 Trusted Types CSP 需允许 `file-viewer-document-sanitizer` 策略名。
+The standard renderer sanitizes the DOM produced by `rtf.js` before mounting it. Custom RTF integrations that consume HTML directly should first call `sanitizeFileViewerRtfHtml(document, markup, options)`; it uses the same link policy and DOMPurify boundary as the standard mount path. A strict Trusted Types CSP should allow the `file-viewer-document-sanitizer` policy name.
 
-## 嵌入 HTML
+## Embedded HTML
 
-使用 `options.docx.renderAltChunks: false` 可以完全省略 DOCX 内嵌 HTML 部件，正文与普通内嵌图片不受影响。未指定或设为 `true` 时保留引擎原有沙箱渲染，不会开启脚本执行、同源权限或放宽外部链接/资源策略。该选项适用于 Worker 与主线程解析，不涉及旧二进制 DOC。
+Set `options.docx.renderAltChunks: false` to omit embedded HTML parts in DOCX. Normal document text and embedded images remain available. Omitting the option or setting it to `true` preserves the engine sandbox; it does not enable scripts or same-origin access, or relax external link/resource policies. The option applies to both Worker and main-thread parsing, not to binary DOC.
 
-## 迁移说明
+## Migration
 
-`@file-viewer/core` 已不再直接依赖 `@file-viewer/docx`、`@file-viewer/doc`、`rtf.js`、`linkedom` 或 `@xmldom/xmldom`。需要 Word 完整预览时，请安装本包并通过 `renderers` 传入，或使用 `@file-viewer/preset-all`。
+`@file-viewer/core` no longer depends on `@file-viewer/docx`, `@file-viewer/doc`, `rtf.js`, `linkedom`, or `@xmldom/xmldom` directly. Install and pass this renderer for full Word preview, or use `@file-viewer/preset-all`.
 
-## 打印页面
+## Print layout
 
-固定分页 DOCX 按每页原始纸张尺寸输出，支持横向分节和 A4／Letter 混排。
-预览缩放不改变打印尺寸；通过具名 CSS 页面规则避免额外添加外层页边距，
-文档本身的页边距保持不变。流式模式仍由浏览器分页，不按固定高度裁切。
-打印驱动或打印对话框中的纸张设置仍可能覆盖浏览器提供的尺寸。
+Fixed-page DOCX output preserves each page's authored paper size, including
+landscape sections and mixed A4/Letter documents. Preview zoom is not applied to
+physical print dimensions. The browser receives named CSS page rules and zero
+additional outer margins; the document's own margins remain intact. Flow mode
+continues to use browser pagination rather than fixed-page clipping. Printer
+drivers and print-dialog overrides can still change the final paper selection.

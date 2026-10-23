@@ -1,5 +1,7 @@
 # @file-viewer/pptx
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/pptx/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/pptx/README.zh-CN.md)
+
 Native PPTX rendering engine extracted from Flyfish File Viewer. It is maintained as a standalone package so presentation rendering can evolve independently from framework adapters.
 
 ## Highlights

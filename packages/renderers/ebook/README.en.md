@@ -1,5 +1,7 @@
 # @file-viewer/renderer-epub
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/ebook/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/ebook/README.zh-CN.md)
+
 Standalone ebook renderer package for Flyfish File Viewer. It handles `.epub` parsing, table-of-contents navigation, scrolling reading, previous/next navigation, reading progress, and `.umd` mobile ebook metadata, TOC, and zlib text blocks.
 
 ## Usage
@@ -35,6 +37,12 @@ const options = {
 - Supports TOC visibility, chapter jumping, previous/next navigation, and reading progress.
 - Does not depend on any online service or public CDN, making it suitable for intranet knowledge bases, training materials, and long-form attachment preview.
 - `dist/vendor/epubjs.NOTICE.txt` records the versions, sources, and license texts for the engine and every inlined dependency.
+
+## Reading theme
+
+The no-reload behavior applies to observed theme attributes, system color-scheme changes and the Vanilla core theme update path. Framework component and toolbar/controller option updates may reinitialize the preview.
+
+EPUB chapters and navigation follow `options.theme`, including `system` and live changes. Dark reading overrides text and solid backgrounds without inverting images or reloading the chapter. Set `epub.darkMode: false` to retain the book's authored colors, or `true` to force dark reading. UMD and FB2 rendering are unchanged.
 
 ## Migration Note
 

@@ -1,5 +1,7 @@
 # @file-viewer/renderer-pptx
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation-pptx/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation-pptx/README.zh-CN.md)
+
 This renderer contains only modern OpenXML PowerPoint support. It does not install the legacy binary-PPT WASM, font, or runtime.
 
 ```ts

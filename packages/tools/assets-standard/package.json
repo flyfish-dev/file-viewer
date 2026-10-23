@@ -24,7 +24,8 @@
     "dist",
     "viewer",
     "README.md",
-    "README.en.md"
+    "README.en.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "pnpm stage-assets && tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/assets-standard/dist/cli.js && node --test test/*.test.mjs",

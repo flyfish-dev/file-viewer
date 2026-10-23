@@ -1,9 +1,5 @@
 # Format Fidelity
 
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 <div class="doc-kicker">Clear Capability Boundaries</div>
 
 <p class="doc-lead">
@@ -36,7 +32,7 @@ Some engineering formats are intentionally conservative:
 Use the built-in checks when the format matrix changes:
 
 ```bash
-pnpm verify:format-support
-pnpm verify:smoke-matrix
-pnpm verify:renderer-assets
+pnpm verify:public-release-facts
+pnpm type-check
+pnpm test
 ```

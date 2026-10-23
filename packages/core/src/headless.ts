@@ -558,6 +558,7 @@ export type {
   FileViewerPdfBoundingBoxOrigin,
   FileViewerPdfBoundingBoxUnit,
   FileViewerPdfOptions,
+  FileViewerEpubOptions,
   FileViewerPresentationOptions,
   FileViewerPrintMaskOptions,
   FileViewerPrintMaskRegion,

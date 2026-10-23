@@ -1,3 +1,5 @@
 # @file-viewer/capability-pptx-charts
 
-显式启用 PPTX 图表渲染。导入本包会向 `@file-viewer/pptx` 注册 Billboard/D3 图表加载器；基础 PPTX 包不再强制安装图表运行时。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/capabilities/pptx-charts/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/capabilities/pptx-charts/README.zh-CN.md)
+
+Explicitly enables chart rendering in the native PPTX engine. Importing this package registers the Billboard and D3 chart loader; the base PPTX package does not require the chart runtime.

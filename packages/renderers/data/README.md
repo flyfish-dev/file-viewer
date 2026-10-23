@@ -1,8 +1,10 @@
 # @file-viewer/renderer-data
 
-Flyfish File Viewer 的独立数据资产 renderer 包。它承接 PSD、SQLite、Parquet、Avro、WASM、字体、AI/EPS、WebArchive 等非文档型数据资产预览，避免普通文档预览场景安装数据解析链路。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/data/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/data/README.zh-CN.md)
 
-## 用法
+Standalone data asset renderer for Flyfish File Viewer. It covers PSD, SQLite, Parquet, Avro, WASM, fonts, AI/EPS, WebArchive, and other non-document data assets without forcing regular document preview users to install data parsing dependencies.
+
+## Usage
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -14,7 +16,7 @@ const options = {
 }
 ```
 
-也可以和其他 renderer 一起组合：
+You can compose it with other renderers:
 
 ```ts
 import { dataRenderer } from '@file-viewer/renderer-data'
@@ -26,20 +28,20 @@ const options = {
 }
 ```
 
-## 离线资产
+## Offline Assets
 
-SQLite 预览依赖 `sql.js` WASM。默认路径仍由 `@file-viewer/core/assets` 统一解析为 `wasm/data/sql-wasm.wasm`，也可以通过 `options.data.sqlWasmUrl` 指定自托管地址。
+SQLite preview depends on the `sql.js` WASM file. The default URL is still resolved through `@file-viewer/core/assets` as `wasm/data/sql-wasm.wasm`, and applications can override it through `options.data.sqlWasmUrl`.
 
-## 迁移说明
+## Migration Notes
 
-`@file-viewer/core` 已不再内置数据资产 renderer，也不再默认安装 `ag-psd`、`sql.js`、`hyparquet` 和 `avsc`。需要 PSD / SQLite / Parquet / Avro / WASM / 字体 / AI / EPS / WebArchive 预览时，请显式安装本包，或使用 `@file-viewer/preset-all` 聚合能力。
+`@file-viewer/core` no longer bundles the data asset renderer and no longer installs `ag-psd`, `sql.js`, `hyparquet`, or `avsc` by default. Install this package explicitly, or use `@file-viewer/preset-all`, when you need PSD, SQLite, Parquet, Avro, WASM, font, AI, EPS, or WebArchive previews.
 
-## 能力边界
+## Scope
 
-- PSD 使用 `ag-psd` 读取画布和图层，支持图层选择显隐、重绘和统一缩放。
-- 旧 PSD 路径默认限制解码缓冲区为 128 MiB，可通过正整数 `options.design.maxDecodedBytes` 调整，并跳过未使用的缩略图和关联文件数据。
-- SQLite 使用 `sql.js` 读取表结构和首个表的示例数据。
-- Parquet 使用 `hyparquet` 读取列式元数据和示例行。
-- Avro 使用 `avsc` 读取对象容器 schema 与示例数据。
-- WASM 使用浏览器 `WebAssembly.Module` 安全读取 import/export 摘要。
-- AI/EPS/WebArchive 等格式以摘要和可读文本片段安全展示，不执行脚本。
+- PSD uses `ag-psd` for canvas and layer previews with layer visibility toggles, redraw, and unified zoom.
+- The legacy PSD path limits decoded buffers to 128 MiB by default, honors a positive integer `options.design.maxDecodedBytes`, and skips unused thumbnails and linked-file payloads.
+- SQLite uses `sql.js` for table metadata and sample rows.
+- Parquet uses `hyparquet` for column metadata and sample rows.
+- Avro uses `avsc` for object container schema and sample data.
+- WASM uses browser `WebAssembly.Module` to inspect imports and exports safely.
+- AI/EPS/WebArchive fall back to safe summaries and readable text snippets without executing scripts.

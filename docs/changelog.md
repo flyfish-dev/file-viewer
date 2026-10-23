@@ -1,10 +1,5 @@
 # Changelog
 
-## Unreleased
-
-- Restore the complete open-source project and normal source development workflow.
-- Preserve PDF worker fallback recovery (#375), DOCX 0.3.36 pagination (#322), and pie/doughnut category legends (#376). Thanks to @kami-woo for #377; legend construction remains bounded.
-
 <div class="doc-kicker">Release history</div>
 
 <p class="doc-lead">

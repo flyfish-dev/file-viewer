@@ -1,6 +1,8 @@
 # @flyfish-group/file-viewer-react
 
-React 文件预览组件。这个包是 `@file-viewer/react` 的历史包名同步版本，当前提供原生 React 组件体验: 组件内部直接挂载共享预览底座，并暴露一致的 props、事件和 ref API。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/react/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/react/README.zh-CN.md)
+
+React file preview component. This package is the historical alias of `@file-viewer/react` and now provides the same native React component experience: it mounts the shared core directly and exposes consistent props, events, and ref APIs.
 
 ```bash
 npm install @flyfish-group/file-viewer-react
@@ -13,15 +15,14 @@ export function Preview() {
   return (
     <div style={{ height: '100vh' }}>
       <FileViewer
-        url="https://example.com/demo.docx"
-        onViewerEvent={(event) => {
-          console.log(event.type, event.event, event.payload)
-        }}
+        url="/files/demo.docx"
         options={{
           theme: 'light',
           toolbar: { position: 'bottom-right' },
-          watermark: { text: '内部预览', opacity: 0.14 },
           archive: { cache: true }
+        }}
+        onViewerEvent={(event) => {
+          console.log(event.type, event.event, event.payload)
         }}
       />
     </div>
@@ -29,12 +30,12 @@ export function Preview() {
 }
 ```
 
-`file` 优先级高于 `url`。当传入 `Blob` 或 `ArrayBuffer` 时，请同时传 `name`，例如 `contract.pdf`，用于识别格式:
+`file` takes precedence over `url`. When passing a `Blob` or `ArrayBuffer`, also provide `name`, for example `contract.pdf`, so the viewer can detect the format:
 
 ```tsx
 <FileViewer file={blob} name="contract.pdf" />
 ```
 
-`options` 支持主题、水印、搜索、统一缩放、下载、打印、导出 HTML、beforeOperation 前置校验、生命周期 hooks 和格式专项参数。生命周期、操作能力变化、搜索状态和当前位置会通过 `onViewerEvent` 回传给宿主。
+`options` cover theme, watermarking, search, unified zoom, download, print, HTML export, beforeOperation guards, lifecycle hooks, and format-specific settings. Lifecycle, operation availability, search state, and document location updates are emitted through `onViewerEvent`.
 
-新项目建议优先使用标准包名 `@file-viewer/react`。官方文档: https://doc.file-viewer.app/
+New projects should prefer the standard package name `@file-viewer/react`. Official documentation: https://doc.file-viewer.app/

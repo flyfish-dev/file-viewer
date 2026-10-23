@@ -26,6 +26,4 @@ pnpm docs:build
 
 ## 维护者边界
 
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 版本管理、npm 发布、官方 Docker 发布、Cloudflare 部署、仓库同步和发行签名属于完整私有工作区的维护者操作。公开边界不复制这些内部脚本，从而保证公开文档中的命令真实可执行。

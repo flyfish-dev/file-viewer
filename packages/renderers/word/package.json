@@ -55,7 +55,8 @@
     "file-viewer.capability.json",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node --test test/*.test.mjs",

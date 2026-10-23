@@ -1,5 +1,7 @@
 # @file-viewer/doc
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/doc/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/doc/README.zh-CN.md)
+
 `@file-viewer/doc` is the open-source legacy MS-DOC (`.doc`) parser and HTML renderer used by File Viewer. It is extracted from the public `msdoc-viewer@0.2.0` line and maintained as the `docjs` source package.
 
 ## Install

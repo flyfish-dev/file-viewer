@@ -140,8 +140,14 @@ test('browser runtime builds use the same physical Vite cohort as public consume
     assert.equal(require('vite/package.json').version, version, `${path}: split Vite build`)
   }
 })
+test('root browser regression tools are declared without relying on an ancestor installation', () => {
+  const root = JSON.parse(read('package.json'))
+  assert.equal(root.devDependencies.esbuild, '0.28.2')
+  const require = createRequire(new URL('../../package.json', import.meta.url))
+  assert.equal(require('esbuild/package.json').version, root.devDependencies.esbuild)
+})
 test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
-  const patchedVersion = '3.4.16'
+  const patchedVersion = '3.4.17'
   const override = read('pnpm-workspace.yaml').match(/^  dompurify: (\S+)$/m)?.[1]
   assert.equal(override, patchedVersion, 'Workspace override must not restore vulnerable DOMPurify')
   for (const path of [
@@ -156,6 +162,18 @@ test('DOMPurify manifests, override and installed runtimes use the reviewed secu
   }
 })
 test('docs-site Next uses the reviewed sharp security runtime', () => {
+  const docs = JSON.parse(read('apps/docs-site/package.json'))
+  assert.equal(
+    docs.dependencies.next,
+    '16.4.1',
+    'Docs must declare the reviewed Next security release'
+  )
+  const docsRequire = createRequire(new URL('../../apps/docs-site/package.json', import.meta.url))
+  assert.equal(
+    docsRequire('next/package.json').version,
+    '16.4.1',
+    'Installed Next must match the security declaration'
+  )
   const patchedVersion = '0.35.5'
   const require = createRequire(new URL('../../apps/docs-site/package.json', import.meta.url))
   // Resolve through Next: a root dependency must not conceal its image-processing runtime.

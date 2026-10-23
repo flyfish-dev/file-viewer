@@ -253,6 +253,7 @@ const RENDER_AFFECTING_VIEWER_OPTION_KEYS: readonly (keyof ViewerOptions)[] = [
   'archive',
   'chm',
   'pdf',
+  'epub',
   'docx',
   'presentation',
   'spreadsheet',

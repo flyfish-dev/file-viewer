@@ -1,8 +1,4 @@
 ---
-
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
 description: "Test File Viewer against real PDF, Office, CAD, archive, mobile, comparison, toolbar, and offline-asset behavior in the official demo."
 ---
 
@@ -101,8 +97,9 @@ The Vite dev server serves the main demo. Open `/compare.html` on the same host 
 Use the same uploaded bytes as the report, not just a similar sample. The regression suite covers hidden XLS search matches, DOC/DOCX text revisions, and page-relative DOCX cover borders on desktop and narrow screens. It also opens real files inside a resizable Element Plus drawer from cold-installed Vue CLI and React full tarballs, without aliases or application-specific Node polyfills.
 
 ```sh
-# Source-built Demo, including native file upload and HTML page/source switching.
-pnpm verify:closed-issue-regressions
+# Build the Demo and run maintained regression tests.
+pnpm build:demo
+pnpm test
 # Against the already-built Demo: CAD pixels/print and XLS main-thread/Worker paths.
 pnpm verify:issue-245-cad-output
 pnpm verify:issue-227-cfb
@@ -135,9 +132,8 @@ After deployment, repeat the Demo checks against `https://demo.file-viewer.app` 
 The repository keeps browser smoke scripts for the demo and component packages:
 
 ```bash
-pnpm verify:demo-browser-smoke
-pnpm verify:demo-sample-click-regression
-pnpm verify:component-browser-smoke
+pnpm build:demo
+pnpm build:component-demo
 pnpm verify:browser-smoke
 ```
 

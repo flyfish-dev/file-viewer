@@ -1,5 +1,7 @@
 # @file-viewer/capability-mermaid
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/capabilities/mermaid/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/capabilities/mermaid/README.zh-CN.md)
+
 Registers the Mermaid loader used by Mermaid code blocks in Markdown. The standard profile does not install this package.
 
 The normal source build bundles Mermaid 12.1.0 and KaTeX 0.18.2. Drawing uses the same engine through `@file-viewer/capability-mermaid/engine`. Installing the compiled package needs no dependency security overrides. `dist/bundled-runtime.json` records the actual input versions, lockfile and source hashes, license files, and output hashes. Complete third-party licenses are retained in `dist/THIRD_PARTY_LICENSES.txt`.

@@ -7,7 +7,7 @@ import { stageInstalledPptRuntime } from './stage-ppt-runtime.mjs'
 import { assertFullAssetDependencies } from './full-asset-dependencies.mjs'
 import { stagePreparedDesignRuntime } from '../../../build-support/stage-design-runtime.mjs'
 import { stageInstalledCadRuntime } from '../../../build-support/stage-cad-runtime.mjs'
-import { stageRetainedAssetNotices, withRetainedAssetNoticeManifests, withRetainedAssetNoticeValidation } from '../../../build-support/retained-asset-notices.mjs'
+import { stageBuiltRetainedWorkers, stageRetainedAssetNotices, withRetainedAssetNoticeManifests, withRetainedAssetNoticeValidation } from '../../../build-support/retained-asset-notices.mjs'
 import { stableAssetManifest } from '../../../build-support/stable-asset-manifest.mjs'
 
 // Production stagers. build-iife.mjs always uses these; tests inject stubs for the
@@ -16,6 +16,7 @@ export const fullAssetStagers = Object.freeze({
   stagePptRuntime: stageInstalledPptRuntime,
   stageDesignRuntime: stagePreparedDesignRuntime,
   stageCadRuntime: stageInstalledCadRuntime,
+  stageBuiltWorkers: stageBuiltRetainedWorkers,
   stageRetainedNotices: stageRetainedAssetNotices,
   withNoticeManifests: withRetainedAssetNoticeManifests,
   withNoticeValidation: withRetainedAssetNoticeValidation,
@@ -62,6 +63,7 @@ export async function stageFullViewerAssets({
   await stagers.stagePptRuntime(join(outDir, 'vendor/ppt'))
   await stagers.stageDesignRuntime(outDir)
   await stagers.stageCadRuntime(outDir)
+  await stagers.stageBuiltWorkers(outDir)
   const sanitization = await sanitizeOfflineViewerAssetTree(outDir)
   await verifyPptRuntimeDistributionRoot(outDir, {
     unbundledJavaScriptPath: 'renderers/presentation.iife.js'

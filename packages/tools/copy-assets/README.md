@@ -1,45 +1,47 @@
 # file-viewer-copy-assets
 
-Flyfish File Viewer 官方静态资源复制 CLI。full 包已经内置 `preset-all`，但 Worker、WASM、字体和 vendor 文件仍需要发布到静态目录；缺少这些文件时只能使用部分格式。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/copy-assets/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/copy-assets/README.zh-CN.md)
 
-所有 `*-full` 包都会自动安装与自身完全同版本的 CLI。Webpack、Vue CLI 等非 Vite 项目直接运行它并复制到默认静态目录：
+The official Flyfish File Viewer asset-copy CLI. Full packages include `preset-all`, but their Worker, WASM, font, and vendor files still have to be published. Without those files, only part of the format matrix can work.
+
+Every `*-full` package automatically installs an exactly matching CLI. For Webpack, Vue CLI, and other non-Vite builds, run it to copy into the default static directory:
 
 ```bash
 npx --no-install file-viewer-copy-assets ./public/file-viewer
-# pnpm 项目也可以运行：
+# In pnpm projects:
 pnpm exec file-viewer-copy-assets ./public/file-viewer
 ```
 
-单独使用标准包时先显式安装同版本 CLI；需要独立执行时，也可以使用带明确版本的 `npx` 入口：
+When using a standard package, explicitly install the matching CLI. For standalone execution, use an explicitly versioned `npx` command:
 
 ```bash
 npm install -D file-viewer-copy-assets@3.0.2
 npx --yes file-viewer-copy-assets@3.0.2 ./public/file-viewer
 ```
 
-CLI 自带与当前版本严格匹配的资源载荷，会将 Worker、WASM、字体、PDF、CAD、Typst、Archive、Draw.io 和 Office vendor 资源复制到目标目录，并生成 `flyfish-viewer-assets.json` 完整性清单。安装或执行 `--version` 不会修改项目目录；只有执行复制命令时才会写入指定目标。运行时资源全部自托管，不依赖公共 CDN。
+The CLI carries a version-matched asset payload, copies Worker, WASM, font, PDF, CAD, Typst, Archive, Draw.io, and Office vendor assets, and writes a `flyfish-viewer-assets.json` integrity manifest. Installing it or running `--version` does not modify the project; only the copy command writes to the selected target. Runtime assets remain self-hosted with no public CDN dependency.
 
-复制完成后，静态服务必须把目标目录映射为部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`），并让清单、JavaScript、WASM、字体等 URL 以正确 MIME 返回。清单通过只能证明本地资源完整，不能替代 HTTP 部署检查。若资源不在这个约定目录，请同步调用 full 包导出的 `setDefaultFullAssetBaseUrl()`。
+After copying, the static server must expose the target as `file-viewer/` under the deployment base (`/file-viewer/` for a root deployment) and return the manifest, JavaScript, WASM, and font URLs with correct MIME types. A valid manifest proves the local payload is complete; it does not replace an HTTP deployment check. If assets live elsewhere, call the full package's `setDefaultFullAssetBaseUrl()` during startup.
 
-Vite 项目优先使用 `@file-viewer/vite-plugin` 的 `copyAssets: true`，插件会按已安装的 full/preset 自动发布资源。完整部署 `@file-viewer/web-full/dist/` 的 CDN/IIFE 场景已经携带 assets，无需再次复制；只部署入口 IIFE 文件并不完整，可改用随包安装的 CLI。
+Vite projects should use `copyAssets: true` in `@file-viewer/vite-plugin`; the plugin publishes assets matching installed full/preset packages. A CDN/IIFE deployment of the complete `@file-viewer/web-full/dist/` directory already carries assets and needs no extra copy. Deploying only the entry IIFE is incomplete; use the installed CLI instead.
 
-## 用法
+## Usage
 
 ```bash
-# 默认输出到 ./public/file-viewer
+# Defaults to ./public/file-viewer
 npx --no-install file-viewer-copy-assets
-# pnpm 等价命令
+# pnpm equivalent
 pnpm exec file-viewer-copy-assets
 
-# 保留目标目录中已有的其他文件
+# Keep unrelated existing files in the target directory
 pnpm exec file-viewer-copy-assets ./public/file-viewer --no-clean
 
-# 未安装本地依赖时，显式锁定独立 CLI 版本
+# With no local dependency, pin the standalone CLI version explicitly
 pnpm dlx file-viewer-copy-assets@3.0.2 ./public/file-viewer
 ```
 
-自动化脚本可追加 `--json`，标准输出只包含一个机器可读结果对象；普通调用仍保留原有两行文本提示。
+Automation can append `--json`; stdout then contains exactly one machine-readable result object. Existing calls keep the original two-line text output.
 
-可使用 `FILE_VIEWER_PUBLIC_DIR` 设置默认输出目录，或将 `FILE_VIEWER_SKIP_ASSET_COPY=1` 用于需要跳过复制步骤的 CI 场景。完整部署说明见 [File Viewer 文档](https://doc.file-viewer.app/guide/distribution)。
+Set `FILE_VIEWER_PUBLIC_DIR` to override the default output or `FILE_VIEWER_SKIP_ASSET_COPY=1` when a CI step should skip copying. See the [File Viewer deployment guide](https://doc.file-viewer.app/guide/distribution) for full details.
 
-English: [README.en.md](./README.en.md)
+简体中文：[README.md](./README.md)

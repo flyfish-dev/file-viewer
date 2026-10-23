@@ -1,0 +1,79 @@
+{
+  "method": "local-renderer-screenshot",
+  "previews": [
+    {
+      "id": "drawing",
+      "sources": [
+        "/example/sample.dwg"
+      ],
+      "sourceSha256": "3c95e8a82d5c8c251483fabc61efa8ca904f4e4bc8c2fce4786d74e812284d07",
+      "sourceBytes": 227008,
+      "path": "./sample-previews/drawing.png",
+      "imageSha256": "4155da2027332a28eb7ba1e19fc843642d3818d4f915071cd09951b5266ec3b9",
+      "width": 868,
+      "height": 549
+    },
+    {
+      "id": "presentation",
+      "sources": [
+        "/example/en/sample-presentation.pptx",
+        "/example/ppt.pptx"
+      ],
+      "sourceSha256": "aef6d5e07e1840ddcdd1f16e4846d7c28a19610a6e91e9e94c09080ae10c742b",
+      "sourceBytes": 1947635,
+      "path": "./sample-previews/presentation.png",
+      "imageSha256": "35a1668cd624581c2237bffff9ca9c8602005cd5a571411357c5aacbf8e7bb3a",
+      "width": 920,
+      "height": 518
+    },
+    {
+      "id": "workbook-en",
+      "sources": [
+        "/example/en/financial-sample.xlsx"
+      ],
+      "sourceSha256": "c3f17156ab7c192571ecfc742e88c16a4b7243a4d4b4a420fcb68dec44e10196",
+      "sourceBytes": 83418,
+      "path": "./sample-previews/workbook-en.png",
+      "imageSha256": "4cae8c457acc56ff379182c520316823155715bfc87712abf55fa4adc33413e7",
+      "width": 960,
+      "height": 555
+    },
+    {
+      "id": "workbook-zh",
+      "sources": [
+        "/example/excel.xlsx"
+      ],
+      "sourceSha256": "b70c312b2ba39a2adfaab02dc07131d02b5aa9ecbd528846b1953c8d2128c953",
+      "sourceBytes": 396406,
+      "path": "./sample-previews/workbook-zh.png",
+      "imageSha256": "a913e65346ddc24fcea235d729ea77a5f82cdd4b17b91038a342de3f2862be22",
+      "width": 960,
+      "height": 555
+    },
+    {
+      "id": "model",
+      "sources": [
+        "/example/fox.glb"
+      ],
+      "sourceSha256": "d97044e701822bac5a62696459b27d7b375aada5de8574ed4362edbba94771f7",
+      "sourceBytes": 162852,
+      "path": "./sample-previews/model.png",
+      "imageSha256": "2ea1165a4aac747dea4875ae70cc8f5467d9e3bfdc196ac0b6f8b2189553c93f",
+      "width": 960,
+      "height": 554,
+      "attribution": "./example/licenses/fox/NOTICE.txt"
+    },
+    {
+      "id": "business-report",
+      "sources": [
+        "/example/en/quarterly-operations-report.docx"
+      ],
+      "sourceSha256": "4d8c08aed5651cb17b71fda46dd4abf312e213af285423444c65fb82f0e63547",
+      "sourceBytes": 83054,
+      "path": "./sample-previews/business-report.png",
+      "imageSha256": "e7f454990527febecd7b5e096dcab75447c8ff01696fe0225ca442f09cb818b7",
+      "width": 816,
+      "height": 1056
+    }
+  ]
+}

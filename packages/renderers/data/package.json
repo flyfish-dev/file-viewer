@@ -54,7 +54,8 @@
     "dist",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node scripts/build-browser.mjs && node --test test/psd-memory.test.mjs",

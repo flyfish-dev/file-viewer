@@ -31,7 +31,8 @@
     "dist",
     "file-viewer.capability.json",
     "README.md",
-    "README.en.md"
+    "README.en.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node scripts/build-runtime.mjs",

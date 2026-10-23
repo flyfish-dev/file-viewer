@@ -225,7 +225,7 @@
   padding: 0 15px;
   border-radius: var(--demo-field-radius);
   white-space: nowrap;
-  box-shadow: 0 12px 24px rgba(33, 163, 102, 0.18);
+  box-shadow: none;
 }
 
 .sample-picker-open .panel-body {
@@ -361,16 +361,17 @@
   padding: 0 16px;
   border: 0;
   border-radius: 14px;
-  background: linear-gradient(135deg, #168757 0%, #2bc87e 100%);
-  color: #ffffff;
+  background: var(--demo-accent-strong);
+  color: var(--demo-on-accent);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(33, 163, 102, 0.2);
+  box-shadow: none;
 }
 
 .snippet-dialog-copy.copied {
-  background: linear-gradient(135deg, #2668c9 0%, #4a91ef 100%);
+  background: var(--demo-accent-soft);
+  color: var(--demo-accent-strong);
 }
 
 .snippet-dialog-copy strong {
@@ -665,10 +666,10 @@
 .primary-button {
   min-height: 48px;
   border-radius: 17px;
-  background: linear-gradient(135deg, #168757 0%, #2bc87e 100%);
-  color: #ffffff;
+  background: var(--demo-accent-strong);
+  color: var(--demo-on-accent);
   font-weight: 700;
-  box-shadow: 0 16px 28px rgba(33, 163, 102, 0.2);
+  box-shadow: none;
 }
 
 .viewer-panel {
@@ -1028,8 +1029,9 @@
 }
 
 .demo-shell[data-demo-theme='dark'] .primary-button {
-  background: linear-gradient(135deg, #15935f 0%, #2dd493 100%);
-  box-shadow: 0 16px 32px rgba(21, 147, 95, 0.26);
+  background: var(--demo-accent-strong);
+  color: var(--demo-on-accent);
+  box-shadow: none;
 }
 
 .demo-shell[data-demo-theme='dark'] .viewer-toolbar {

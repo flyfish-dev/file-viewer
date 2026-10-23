@@ -1,5 +1,7 @@
 # @file-viewer/renderer-eda
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/eda/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/eda/README.zh-CN.md)
+
 Standalone EDA renderer package for Flyfish File Viewer. It handles safe structure previews for OLB, DRA, GDSII, and OASIS files without forcing normal document preview installs to carry EDA parsing code.
 
 ## Usage

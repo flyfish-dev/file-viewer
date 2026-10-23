@@ -1,5 +1,7 @@
 # @file-viewer/thumbnail
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/thumbnail/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/thumbnail/README.zh-CN.md)
+
 Browser thumbnail generation for Flyfish File Viewer. It reuses `createViewer()`, installed renderers, optional native thumbnail adapters, a bounded viewer pool, ordered batch results, and completion-order streaming.
 
 ```bash

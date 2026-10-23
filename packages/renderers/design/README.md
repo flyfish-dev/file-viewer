@@ -1,29 +1,31 @@
 # @file-viewer/renderer-design
 
-Flyfish File Viewer 的 Adobe 设计文件 renderer。解析和像素合成都在可终止的 module Worker 中进行，所有运行时资源可自托管，不依赖公网 CDN。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/design/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/design/README.zh-CN.md)
 
-## 当前能力
+Adobe design-file renderers for Flyfish File Viewer. Parsing and pixel synthesis run in a terminable module Worker, and every runtime asset can be self-hosted without a public CDN.
 
-- PSD：支持 8-bit RGB/灰度 PSD。默认先显示文件内保存的合并图，作为视觉保真基准；只有不含组隔离、蒙版、裁剪、特殊混合、图层效果等复杂合成语义的文件才开放基础图层显隐。额外通道只有在 layer-info 明确声明 merged transparency 时才会作为显示 alpha，其余 selection/spot 通道不会被误用。
-- PDD/PSDT：只接受签名、版本和结构均验证为 PSD v1 的容器别名，并复用同一像素与图层链路；不符合该边界的 PhotoDeluxe 私有变体会明确拒绝。
-- PSB：支持无额外 alpha/spot 通道的 8-bit RGB/灰度 PSB 合并图和只读图层结构。PSB Raw 合并图由本项目按 planar 规范解码，避开上游 RGB 通道错误；PackBits RLE 由独立解析器处理。交互式图层合成、额外通道、16-bit、CMYK，以及含 ZIP 图层通道的 PSB 当前会明确拒绝。
-- AI/AIT：默认优先使用文件内已验证的 PDF-compatible representation，保留保存时的画面、搜索与打印能力；同时可切换到 `illustrator-pgf` 原生 PGF/private-source Worker，读取真实画板和图层并在 Canvas 中按需渲染。原生链路保留未知操作符并输出 fidelity/unsupported 诊断，不把尚未实现的渐变、复杂文字、图片、插件、效果、蒙版、混合、叠印或专色还原冒充为完整 Illustrator 画面。普通 PDF 改名为 `.ai` 仍会被拒绝。
-- IDML：在独立 Worker 中通过 `@paged-media/introspect-wasm` CPU WASM 按页渲染；先做 ZIP 路径、重叠、加密、ZIP64、压缩比与展开量检查，再懒渲染当前页。当前结构树只公开 TextFrame 与 Rectangle 摘要。
-- ICML/IDMS/INX：在共享可终止 Worker 中做严格 UTF-8/XML 解析。ICML 展示带样式的故事内容；IDMS 重建有界版面片段、路径、颜色、图层与故事；旧 INX 只可视化已映射的常见页面项，同时保留全部未映射元素清单。任何链接资源只列路径，从不主动请求。
-- FLA/XFL：支持现代 ZIP/XFL-based FLA 的舞台、时间轴、图层、关键帧、符号、资源清单，以及实色图形、静态文字、嵌套符号和 PNG/JPEG 的有界首帧预览。单个 DOMDocument XML 可读，但标准未压缩 XFL 文件夹需要未来的目录/多文件输入；旧二进制 FLA、补间、脚本、音视频和私有 `.dat` 不冒充完整还原。
-- XD：严格读取 UCF/ZIP、manifest 与 AGC 结构，展示结构引用的最高分辨率 PNG/JPEG 预览和画板/图层/资源清单；不冒充尚未实现的原生 AGC 矢量重建。
-- INDD/INDT：只在主页面、连续对象和 XMP 边界都验证通过时展示内嵌 JPEG/PNG 缩略图。专有原生排版数据库不做猜测；要看完整页面应导出 IDML。
-- ASE/ACO：有界解析颜色模型、名称和分组，支持搜索、打印与 HTML 色板；Lab/CMYK 的浏览器 sRGB 仅作近似，同时保留原始值。
-- ABR：支持现代 ABR 6/7/9/10 的笔尖 alpha、内嵌图案和预设参数；不模拟 Photoshop 笔触、动态和混合引擎。
-- CSH：支持 v2 Bezier 路径与布尔操作元数据。减去、相交、排除不会被冒充为 Photoshop 最终栅格效果。
-- PAT：支持 v1 的 8-bit RGB、灰度和索引色图案，解码 Raw/PackBits、alpha 与透明索引并显示真实像素；更老版本、16/32-bit、CMYK/Lab 和其他压缩会明确拒绝。
-- GRD：支持 v5 Action Descriptor、文件夹、实色渐变色标/透明度与浏览器预览；噪声渐变只提供带固定种子的确定性近似并明确标注，不声称与 Photoshop 噪声算法逐像素一致。
-- ASL：支持 v2 样式名称/ID、效果图、多实例数量、混合/不透明度/Blend If 摘要、图案引用和内嵌 PAT 预览。缺少目标图层、字体、色彩配置和 Photoshop 私有效果语义时不伪造最终样式栅格。
-- EPS/PS：在可终止 Worker 中运行 Stet WASM，支持多页、按需栅格化、缩放和有界打印。引擎直接使用上游 URW Base35 OFL 字体和 CC0 CMYK profile。它是实验性通用预览，不承诺覆盖全部 Adobe PostScript Level 3 扩展；文档所用字体及印刷条件仍可能与 Adobe 应用不同。
+## Current scope
 
-以上状态会在支持矩阵中分别标为实验性或未实现；扩展名识别不等于完整支持。
+- PSD: 8-bit RGB and grayscale PSD. The saved composite is the visual reference. Basic layer visibility is enabled only when the document has no group isolation, masks, clipping, special blend modes, layer effects, or other composition semantics that Canvas cannot reproduce faithfully. An extra channel is used as display alpha only when layer-info declares merged transparency; saved selection and spot channels are not silently repurposed.
+- PDD/PSDT: accepted only when the signature, version, and structure validate as a PSD v1 container alias, then routed through the same pixel and layer pipeline. Other private PhotoDeluxe dialects fail explicitly.
+- PSB: saved-composite rendering and a read-only layer tree for 8-bit RGB and grayscale PSB without auxiliary alpha/spot channels. This package decodes planar Raw composites itself to avoid an upstream RGB-channel bug; PackBits RLE uses the independent PSB parser. Interactive PSB composition, extra channels, 16-bit, CMYK, and PSB files containing ZIP-compressed layer channels are rejected explicitly.
+- AI/AIT: automatic mode prefers a verified PDF-compatible representation for saved-appearance fidelity, search, and printing. The viewer can also switch to the `illustrator-pgf` native PGF/private-source Worker for real artboards, layer visibility, and demand-rendered Canvas output. The native path preserves unknown operators and reports fidelity/unsupported diagnostics; gradients, complex text, images, plugins, effects, masks, blending, overprint, and spot-color handling are not presented as complete Illustrator reconstruction. An ordinary PDF renamed to `.ai` is still rejected.
+- IDML: pages are rendered lazily in a Worker by the `@paged-media/introspect-wasm` CPU engine after strict ZIP path, overlap, encryption, ZIP64, ratio, and expansion checks. The current tree exposes TextFrame and Rectangle summaries only.
+- ICML/IDMS/INX: strict UTF-8/XML parsing in the shared terminable Worker. ICML presents styled stories; IDMS reconstructs bounded layout fragments, paths, colors, layers, and stories; legacy INX visualizes mapped common page items while retaining every unmapped element in the structure inventory. Linked resources are listed but never fetched.
+- FLA/XFL: modern ZIP/XFL-based FLA exposes the stage, timelines, layers, keyframes, symbols, resources, and a bounded first-frame preview for solid shapes, static text, nested symbols, and PNG/JPEG. A single DOMDocument XML can be read, but a standard uncompressed XFL folder needs a future directory/multi-file input API; legacy binary FLA, tweens, scripts, audio/video, and private `.dat` payloads are not presented as fully reconstructed.
+- XD: bounded UCF/ZIP, manifest, and AGC inspection with the highest-resolution structurally referenced PNG/JPEG preview plus artboard, layer, and resource inventories. Native AGC vector reconstruction is not claimed.
+- INDD/INDT: an embedded JPEG/PNG thumbnail is shown only after master-page, contiguous-object, and XMP boundaries are verified. The proprietary native layout database is not guessed; export IDML for full page rendering.
+- ASE/ACO: bounded color-model, name, and group parsing with search, print, and HTML palette output. Browser sRGB for Lab/CMYK is approximate and the original values remain visible.
+- ABR: modern ABR 6/7/9/10 tip alpha, embedded patterns, and preset parameters. Photoshop stroke dynamics and blending are not simulated.
+- CSH: v2 Bezier paths with boolean-operation metadata. Subtract, intersect, and exclude are not presented as Photoshop-equivalent final raster output.
+- PAT: v1 8-bit RGB, grayscale, and indexed pattern tiles with Raw/PackBits, alpha, transparent-index, and exact pixel previews. Older revisions, 16/32-bit data, CMYK/Lab, and other compression modes fail explicitly.
+- GRD: v5 Action Descriptors, folders, solid color/alpha stops, and browser previews. Noise gradients use a labeled deterministic approximation and are not claimed to match Photoshop's private noise algorithm pixel for pixel.
+- ASL: v2 style names/IDs, effect graphs, multi-effect counts, blend/opacity/Blend If summaries, pattern references, and embedded PAT previews. A final style raster is not fabricated without a target layer, fonts, color configuration, and Photoshop's private effect semantics.
+- EPS/PS: Stet WASM runs in a terminable Worker with multi-page, demand-rasterized zoom and bounded printing. The engine directly embeds upstream URW Base35 OFL fonts and the CC0 CMYK profile. This is an experimental general preview, not a claim of complete Adobe PostScript Level 3 compatibility; document-specific fonts and print conditions can still differ from Adobe applications.
 
-## 用法
+The format catalog marks these states separately. Recognizing an extension is not counted as complete format support.
+
+## Usage
 
 ```ts
 import { designRenderer } from '@file-viewer/renderer-design'
@@ -46,20 +48,20 @@ const options = {
 }
 ```
 
-AI/AIT 原生 PGF 预览可独立使用 design renderer；只有 PDF-compatible 表面需要同时装配 PDF renderer。`auto` 在 PDF 表面可用时优先高还原 PDF，否则尝试原生 PGF。design renderer 保持显式按需安装，不会自动进入 preset-all 或 full 组件。
+Native PGF AI/AIT preview can use the design renderer alone; only the PDF-compatible surface requires the PDF renderer. `auto` prefers the PDF surface when available and otherwise tries native PGF. The design renderer remains an explicit on-demand installation and is not injected into preset-all or full component packages.
 
-## 离线资源
+## Offline asset
 
-PSD/PSB/PDD/PSDT、AI/AIT、XD/INDD/INDT/ASE/ACO/ICML/IDMS/INX/FLA/XFL、ABR/CSH/PAT/GRD/ASL、IDML 与 EPS/PS 分别使用各自的 `vendor/design/*.worker.js`；AI/AIT 原生路径使用 `illustrator-pgf.worker.js`，ICML/IDMS/INX/FLA/XFL 与 XD/INDD/ASE/ACO 复用 Adobe container Worker，PAT/GRD/ASL 复用 Adobe resource Worker，不增加运行时网络依赖。IDML 还需要 `paged_introspect_wasm_bg.wasm`，EPS/PS 需要 `stet_wasm_bg.wasm`。`@file-viewer/vite-plugin` 在安装 design renderer 后可按 manifest 复制资源，`@file-viewer/assets-design` 也提供显式复制；也可通过 `options.design.*Url` 指定自托管地址。默认浏览器 Worker 已内置流式有界 zstd 解码，同时支持未压缩、deflate 与 Illustrator 24 zstd 私有源；超限输出和不受支持的长距离 zstd frame 会明确失败。所有许可证文本与 WASM 同目录分发。
+PSD/PSB/PDD/PSDT, AI/AIT, XD/INDD/INDT/ASE/ACO/ICML/IDMS/INX/FLA/XFL, ABR/CSH/PAT/GRD/ASL, IDML, and EPS/PS use the matching `vendor/design/*.worker.js` paths. Native AI/AIT uses `illustrator-pgf.worker.js`; ICML/IDMS/INX/FLA/XFL share the Adobe container Worker with XD/INDD/ASE/ACO; PAT/GRD/ASL share the Adobe resource Worker, adding no runtime network dependency. IDML also needs `paged_introspect_wasm_bg.wasm`; EPS/PS needs `stet_wasm_bg.wasm`. With renderer-design installed, `@file-viewer/vite-plugin` can copy manifest assets, while `@file-viewer/assets-design` provides an explicit copy path. The corresponding `options.design.*Url` fields can point to other self-hosted locations. The packaged browser Worker includes bounded streaming zstd decoding and supports uncompressed, deflate, and Illustrator 24 zstd private source; over-limit output and unsupported long-distance zstd frames fail explicitly. License texts are distributed with the npm package or beside the WASM files.
 
-## 安全和性能边界
+## Security and performance boundaries
 
-默认限制源文件 128 MiB、画布 1600 万像素且单边不超过 16384 像素、2000 层、单层 1600 万像素、单次解码 128 MiB，并将主线程图层画布 LRU 控制在 64 MiB。IDML/EPS/PS 打印门禁按可见画布、缓存、打印副本和当前解码临时量的总工作集计算。解析超时会直接终止 Worker；损坏文件、超限文件和不支持的色彩/位深会显式失败。合并图只接受 Raw/PackBits RLE，ZIP 合并图明确拒绝；PSD 的 ZIP 图层可由 ag-psd 按需解码，而 PSB 解析器目前会拒绝含 ZIP 图层通道的文件。只读结构建立后会立即释放 Worker 内的源文件和解析树。嵌入 ICC 当前会给出“未做颜色转换”诊断。`useWorker: false` 只对明确提供本地回退的 Photoshop/资源解析路径生效；XD、INDD/INDT、ASE/ACO、IDML 与 EPS/PS 始终要求可终止 Worker。
+Defaults cap the source at 128 MiB, the document at 16 million pixels and 16,384 pixels per side, the layer tree at 2,000 entries, one interactive layer at 16 million pixels, one decoded result at 128 MiB, and retained main-thread layer canvases at 64 MiB. IDML and EPS/PS print gates account for the visible canvas, cache, print copies, and current decode temporary as one working set. A timeout terminates the Worker. The saved composite must use Raw or PackBits RLE and ZIP composites fail explicitly. PSD ZIP layer channels can be decoded lazily by ag-psd; the current PSB parser rejects a file containing ZIP layer channels. Read-only structure views release the Worker source and parse tree immediately after open. An embedded ICC profile currently produces an unconverted-color diagnostic. Corrupt, oversized, unsupported-depth, and unsupported-color files fail explicitly. `useWorker: false` applies only to the Photoshop/resource paths that explicitly provide a local fallback; XD, INDD/INDT, ASE/ACO, IDML, and EPS/PS always require a terminable Worker.
 
-EPS/PS 默认另限 32 MiB 源文件、100 页、8192 像素单边、1600 万输出像素、256 MiB VM 和 30 秒 Worker 操作；超时或 abort 会终止整个 Worker。完整构建与边界说明见 `POSTSCRIPT-WASM.md`。
+EPS/PS separately defaults to a 32 MiB source, 100 pages, 8,192 pixels per side, 16 million output pixels, 256 MiB VM, and a 30-second Worker operation; timeout or abort terminates the Worker. See `POSTSCRIPT-WASM.md` for the full build and safety boundary.
 
-手机布局提供自适应首屏、拖动画布、双指缩放和抽屉式图层列表。复杂 PSD/PSB 的图层列表保持只读，避免用不准确的 Canvas 合成覆盖文件内高保真合并图。
+The mobile layout includes fit-to-view, canvas pan, pinch zoom, and a layer drawer. Complex PSD/PSB layer trees remain read-only so that an inaccurate browser recomposite never replaces the high-fidelity saved composite.
 
-## 许可证
+## License
 
-本包采用 Apache-2.0。`ag-psd`、`@webtoon/psd`、`base64-js`、`pako`、`@xmldom/xmldom` 与 `xmlchars` 采用 MIT，`saxes` 采用 ISC；`@paged-media/introspect-wasm` 选择 MPL-2.0；Stet 为 Apache-2.0 OR MIT，内嵌 URW Base35 字体为 SIL OFL 1.1，CMYK profile 为 CC0。完整声明见 `THIRD_PARTY_NOTICES.md`，许可全文随 npm 包或离线资产分发。本 npm 包不携带上游图片或笔刷 fixture；Demo 的外部样例均在 `SOURCES.md` 与哈希清单中记录来源和许可证。
+This package is Apache-2.0. `ag-psd`, `@webtoon/psd`, `base64-js`, `pako`, `@xmldom/xmldom`, and `xmlchars` are MIT-licensed; `saxes` is ISC; File Viewer elects MPL-2.0 for `@paged-media/introspect-wasm`; Stet is Apache-2.0 OR MIT, its embedded URW Base35 fonts are SIL OFL 1.1, and its CMYK profile is CC0. See `THIRD_PARTY_NOTICES.md`; full texts ship in both the npm and offline asset packages. The npm package contains no upstream image or brush fixtures. External Demo fixtures record their sources, licenses, and hashes in `SOURCES.md` and the fixture manifests.

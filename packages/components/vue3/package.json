@@ -81,7 +81,8 @@
     "dist",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "license": "Apache-2.0"
 }

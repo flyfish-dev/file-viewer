@@ -14,7 +14,9 @@
   --demo-border: rgba(35, 61, 53, 0.09);
   --demo-border-strong: rgba(35, 61, 53, 0.14);
   --demo-text: #18241f;
-  --demo-muted: #718079;
+  --demo-muted: #62746a;
+  --demo-on-accent: #fff;
+  --demo-action-hover: #146b44;
   --demo-accent: #31a66f;
   --demo-accent-strong: #1c8555;
   --demo-accent-soft: rgba(49, 166, 111, 0.11);
@@ -349,8 +351,8 @@
   min-height: 44px;
   padding: 0 17px;
   border-radius: 14px;
-  background: #2c9e69;
-  box-shadow: 0 10px 22px rgba(36, 141, 91, 0.2);
+  background: var(--demo-accent-strong);
+  box-shadow: none;
 }
 
 .source-context-row {
@@ -1763,7 +1765,9 @@
   --demo-border: rgba(210, 233, 224, 0.1);
   --demo-border-strong: rgba(210, 233, 224, 0.16);
   --demo-text: #e8f0ec;
-  --demo-muted: #92a49c;
+  --demo-muted: #9db0a5;
+  --demo-on-accent: #10241a;
+  --demo-action-hover: #8be6b6;
   --demo-accent: #48c989;
   --demo-accent-strong: #6cdda3;
   --demo-accent-soft: rgba(72, 201, 137, 0.14);
@@ -2650,5 +2654,75 @@
   .settings-panel :deep(.settings-toggle-indicator i) {
     scroll-behavior: auto;
     transition-duration: 0.01ms;
+  }
+}
+
+/*
+ * Desktop source panel: .viewer-toolbar (z 75) sits above .control-panel
+ * (z 70), and .panel-body's z-index is capped by the control-panel stacking
+ * context, so the file capsule covered the panel header ("Sample library").
+ * Lift the panel only while the desktop source panel is open.
+ */
+@media (min-width: 721px) {
+  .control-panel.desktop-source-open {
+    z-index: 77;
+  }
+}
+
+/* Mobile primary entries (Upload / Samples) reuse the More trigger styling. */
+.mobile-entry-actions {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .mobile-entry-actions {
+    position: fixed;
+    z-index: 66;
+    left: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Same treatment as .mobile-more-trigger; kept as a separate class so
+     existing selectors for the More trigger stay unique. */
+  .mobile-entry-trigger {
+    width: 66px;
+    height: 58px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--demo-accent-strong);
+    box-shadow: var(--demo-chrome-shadow);
+    backdrop-filter: var(--demo-glass-blur);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .mobile-entry-trigger span {
+    font-size: 9px;
+    font-weight: 760;
+  }
+
+  .mobile-entry-trigger:hover {
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--demo-floating-shadow);
+  }
+
+  .mobile-entry-trigger:focus-visible {
+    outline: 3px solid var(--demo-focus);
+    outline-offset: 3px;
+  }
+
+  .demo-shell[data-demo-theme='dark'] .mobile-entry-trigger {
+    border-color: var(--demo-border);
+    background: rgba(20, 30, 35, 0.84);
+    color: #cedbd5;
   }
 }

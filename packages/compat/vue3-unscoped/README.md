@@ -1,6 +1,8 @@
 # file-viewer3
 
-`file-viewer3` 是历史非 scoped 兼容包，内部仅 re-export `@file-viewer/vue3`。新项目建议优先使用标准包名 `@file-viewer/vue3`。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/vue3-unscoped/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/vue3-unscoped/README.zh-CN.md)
+
+`file-viewer3` is the historical unscoped compatibility package. It only re-exports `@file-viewer/vue3`. New integrations should prefer the standard package name `@file-viewer/vue3`.
 
 ```bash
 npm install file-viewer3
@@ -15,8 +17,6 @@ import App from './App.vue'
 createApp(App).use(FileViewer).mount('#app')
 ```
 
-完整格式矩阵、参数、生命周期 hooks、beforeOperation、主题、水印、搜索、缩放、打印和导出能力请查看官方文档: https://doc.file-viewer.app/
+See the official documentation for the full format matrix, options, lifecycle hooks, beforeOperation, theme, watermark, search, zoom, print, and export APIs: https://doc.file-viewer.app/
 
-在线 Demo: https://demo.file-viewer.app/ 。License: Apache-2.0。二开或商用请保留 Flyfish Viewer 来源说明；如果修复了通用兼容问题，也欢迎贡献回来。
-
-English README: [README.en.md](./README.en.md)。
+Online demo: https://demo.file-viewer.app/. License: Apache-2.0. For second development or commercial use, keep clear Flyfish Viewer attribution; shared compatibility fixes are welcome.

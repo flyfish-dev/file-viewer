@@ -1,5 +1,7 @@
 # @flyfish-group/file-viewer
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/vue2.7/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/vue2.7/README.zh-CN.md)
+
 `@flyfish-group/file-viewer` is the historical Vue 2.7 compatibility package. It only re-exports the standard `@file-viewer/vue2.7` package. New integrations should prefer the standard package name.
 
 ```bash

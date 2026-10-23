@@ -11,7 +11,8 @@
     "dist",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "fileViewer": {
     "executableOnly": true

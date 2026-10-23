@@ -1,3 +1,5 @@
 # @file-viewer/assets-design
 
-Adobe 设计文件预览的离线 Worker、WASM 与随附许可证资产，覆盖 PSD/PSB/PDD/PSDT、AI/AIT、IDML/ICML/IDMS/INX、XD、INDD/INDT、FLA/XFL、ASE/ACO、ABR/CSH/PAT/GRD/ASL 与 EPS/PS。该包只在选择 `@file-viewer/renderer-design` 时安装，并通过事务式安装器把 10 个资产组合并到稳定的 `file-viewer/` 运行时目录；AI/AIT 的 PDF 兼容面与原生 PGF Worker 均离线自托管，不依赖公共 CDN。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/assets-design/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/assets-design/README.zh-CN.md)
+
+Self-hosted Workers, WebAssembly, and accompanying license assets for PSD/PSB/PDD/PSDT, AI/AIT, IDML/ICML/IDMS/INX, XD, INDD/INDT, FLA/XFL, ASE/ACO, ABR/CSH/PAT/GRD/ASL, and EPS/PS previews. The package is installed only with `@file-viewer/renderer-design` and transactionally merges ten asset groups into the stable `file-viewer/` runtime directory. AI/AIT supports both its saved PDF surface and an offline native PGF Worker without a public CDN.

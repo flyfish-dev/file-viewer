@@ -25,6 +25,7 @@ import {
   createFileViewerViewStateChange,
   createFileViewerViewStateChangeEmitter,
   createFileViewerTranslator,
+  observeFileViewerColorScheme,
   buildPrintPageStyle,
   formatCssPixels,
   DEFAULT_PDF_RANGE_CHUNK_SIZE,
@@ -184,6 +185,10 @@ const createStyle = (documentRef: Document) => {
 .pdf-state[hidden],.pdf-nav-pane[hidden]{display:none!important}
 .pdf-page-button--with-thumbnail{grid-template-columns:52px minmax(0,1fr);min-height:74px}
 .pdf-page-thumb--thumbnail{width:46px;height:60px;overflow:hidden;background:#fff}
+/* Reading colors affect presentation only, never canvas bytes or downloads. */
+.pdf-shell[data-pdf-reading-theme='dark'] .canvasWrapper canvas{filter:invert(.9) hue-rotate(180deg)}
+.pdf-shell[data-pdf-reading-theme='dark'] .pdfViewer .page{background:#1a1a1a}
+@media print{.pdf-shell[data-pdf-reading-theme='dark'] .canvasWrapper canvas{filter:none}}
 .pdf-page-thumb--thumbnail img{display:block;width:100%;height:100%;object-fit:contain}
 .pdf-page-thumb--thumbnail span{display:inline-flex;align-items:center;justify-content:center;width:100%;height:100%}
 .pdf-bbox-layer{position:absolute;inset:0;z-index:20;pointer-events:none;overflow:hidden}
@@ -391,10 +396,6 @@ const suppressPdfJsMissingSystemFontWarnings = (view: Window) => {
   };
 };
 
-const isConfiguredUrl = (value: string | URL | undefined) => {
-  return value !== undefined && value !== null && String(value).trim().length > 0;
-};
-
 const loadBundledPdfWorkerModule = async () => {
   bundledPdfWorkerModulePromise ??= import('pdfjs-dist/legacy/build/pdf.worker.mjs') as Promise<PdfWorkerHandlerModule>;
   return bundledPdfWorkerModulePromise;
@@ -540,14 +541,23 @@ export default async function renderPdf(
 
   const ensurePdfPageCjkFontFallback = (
     pageNumber: number,
-    page: PdfTextContentPage
+    page: PdfTextContentPage | PdfTextContent
   ) => {
     if (!pdfCjkFontFallbackManager) {
       return Promise.resolve(false);
     }
     let pending = pdfCjkFontFallbackPageLoads.get(pageNumber);
     if (!pending) {
-      pending = pdfCjkFontFallbackManager.ensurePage(page);
+      pending = ('getTextContent' in page
+        ? pdfCjkFontFallbackManager.ensurePage(page)
+        : pdfCjkFontFallbackManager.ensureTextContent(page)
+      ).then(loaded => {
+        // A failed first inspection must not suppress the post-paint retry.
+        if (!loaded && pdfCjkFontFallbackPageLoads.get(pageNumber) === pending) {
+          pdfCjkFontFallbackPageLoads.delete(pageNumber);
+        }
+        return loaded;
+      });
       pdfCjkFontFallbackPageLoads.set(pageNumber, pending);
     }
     return pending;
@@ -556,6 +566,9 @@ export default async function renderPdf(
   const root = createElement(documentRef, 'div', 'pdf-shell');
   root.dataset.viewerSearchProvider = 'pdf';
   root.dataset.viewerZoomProvider = 'pdf';
+  const disposeReadingTheme = observeFileViewerColorScheme(target, context?.options?.theme, theme => {
+    root.dataset.pdfReadingTheme = (options?.darkMode ?? theme === 'dark') ? 'dark' : 'light';
+  });
 
   const toolbar = createElement(documentRef, 'div', 'pdf-toolbar');
   const navToggleButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.toggleNavigation'));
@@ -2319,11 +2332,7 @@ export default async function renderPdf(
       pdfContext.document = pdfDocument;
       if (pdfCjkFontFallbackManager && pageCount > 0) {
         if (firstPageTextContent) {
-          pdfCjkFontFallbackPageLoads.set(
-            1,
-            pdfCjkFontFallbackManager.ensureTextContent(firstPageTextContent)
-          );
-          await pdfCjkFontFallbackPageLoads.get(1);
+          await ensurePdfPageCjkFontFallback(1, firstPageTextContent);
         } else {
           const firstPage = await pdfDocument.getPage(1);
           await ensurePdfPageCjkFontFallback(
@@ -2443,6 +2452,7 @@ export default async function renderPdf(
     $el: root,
     unmount() {
       destroyed = true;
+      disposeReadingTheme();
       disposeHandTool();
       loadVersion += 1;
       restorePdfJsMissingSystemFontWarnings();

@@ -1,9 +1,5 @@
 # Demo 说明
 
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 <div class="doc-kicker">See It Before You Ship It</div>
 
 <p class="doc-lead">
@@ -116,16 +112,16 @@ PDF 在比对页中默认隐藏自身阅读工具栏，只保留正文和可滚�
 
 为了保持左右对照清晰，比对页默认关闭每个预览器通用操作栏。如果需要下载、打印、导出 HTML、水印或业务权限钩子，请使用主预览入口或在业务侧基于 `FileViewer` 组件自定义比对容器。
 
-私有化部署时，`pnpm build-only` 产物、Docker 镜像和开源总仓库的 `demo/` 目录都会包含同一个入口:
+运行 `pnpm build:demo` 后，比对入口位于：
 
 ```text
-demo/compare.html
+apps/viewer-demo/dist/compare.html
 ```
 
 上线前建议至少验证下面两条:
 
 ```bash
-pnpm verify:demo-output
+pnpm verify:browser-smoke
 ```
 
 ```text
@@ -141,8 +137,9 @@ pnpm verify:demo-output
 使用 issue 中相同字节的原始附件验证，不用相似样本代替。当前回归覆盖 XLS 不可见区域搜索、DOC / DOCX 文本修订、DOCX 页相对封面边框，以及桌面和窄屏下的实际上传。独立 Vue CLI / React full 测试项目还会通过真实可调整大小的 Element Plus 抽屉验证冷安装包，不添加源码 alias 或业务侧 Node polyfill。
 
 ```sh
-# 构建本地 Demo，检查原附件上传、搜索、封面和 HTML 两种视图。
-pnpm verify:closed-issue-regressions
+# 构建本地 Demo，并运行维护中的回归测试。
+pnpm build:demo
+pnpm test
 # 对已构建 Demo 验证 CAD 实际输出像素，以及 XLS 主线程 / Worker 解析。
 pnpm verify:issue-245-cad-output
 pnpm verify:issue-227-cfb

@@ -295,7 +295,12 @@ export async function verifyFrozenArtifacts(
     results.push({
       ...entry,
       ...(await inspectFrozenTarball(join(directory, entry.tarball), entry, {
-        sourceReadmes: await readPackageReadmes(sourceRoot, entry.packageDir, entry.packageName)
+        sourceReadmes: await readPackageReadmes(
+          sourceRoot,
+          entry.packageDir,
+          entry.packageName,
+          Object.keys(entry.readmes || {})
+        )
       }))
     })
   }

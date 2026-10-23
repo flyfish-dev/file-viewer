@@ -1,5 +1,7 @@
 # @file-viewer/vite-plugin
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.zh-CN.md)
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/vite-plugin"><img src="https://img.shields.io/npm/v/@file-viewer%2Fvite-plugin?logo=npm" alt="npm version"></a>
@@ -9,20 +11,20 @@
 </p>
 
 <p>
-  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/zh/">文档</a> · <a href="https://demo.file-viewer.app/">在线 Demo</a> · <a href="https://doc.file-viewer.app/guide/formats">格式矩阵</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">问题反馈</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.en.md">English</a>
+  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/">Docs</a> · <a href="https://demo.file-viewer.app/">Live demo</a> · <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">Issues</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/vite-plugin/README.zh-CN.md">简体中文</a>
 </p>
 
 <p>
-  <a href="https://demo.file-viewer.app/"><img src="https://raw.githubusercontent.com/flyfish-dev/file-viewer/main/docs/public/_media/file-viewer-demo-v3-zh.webp" width="760" alt="File Viewer 在线演示：Word、Excel、PPT、3D 模型、CAD 图纸与二进制检查器"></a>
+  <a href="https://demo.file-viewer.app/"><img src="https://raw.githubusercontent.com/flyfish-dev/file-viewer/main/docs/public/_media/file-viewer-demo-v3-en.webp" width="760" alt="File Viewer live demo: Word, Excel, PowerPoint, 3D model, CAD drawing and binary inspector"></a>
 </p>
 
-> ⭐ 如果 File Viewer 对你有帮助，欢迎到 [GitHub](https://github.com/flyfish-dev/file-viewer) 点个 Star。
+> ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-Flyfish File Viewer 的 Vite 按需 renderer 自动装配插件。它可以自动发现已安装的 `@file-viewer/preset-*` 和 `@file-viewer/*-full` 包，让 Vue、React、Svelte、jQuery 和 Vanilla JS 组件无需手动传 `renderers` 就获得对应预览能力；也可以根据业务声明的文件格式生成 `virtual:file-viewer-renderers`，只 import 命中的 renderer 包，并提供 chunk 分组和离线 worker/WASM/字体资源复制能力。
+Vite plugin for Flyfish File Viewer on-demand renderer assembly. It can auto-discover installed `@file-viewer/preset-*` and `@file-viewer/*-full` packages, so Vue, React, Svelte, jQuery, and Vanilla JS components receive matching preview capability without application code passing `renderers` manually. It can also generate `virtual:file-viewer-renderers` from declared formats, import only matching renderer packages, and provide renderer-oriented chunk planning plus offline worker/WASM/font asset copying.
 
-## 最快开始
+## Fastest Start
 
-需要完整格式支持时，最快路径是“full 包 + 注册一次 Vite 插件”。full 已内置 `preset-all`，不要再安装 preset；`copyAssets:true` 会在开发和构建时自动匹配 full 包，并把 Worker、WASM、字体和 vendor 文件发布到部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）：
+For complete format support, the fastest path is one full package and one Vite plugin registration. Full packages already include `preset-all`; do not install another preset. `copyAssets:true` matches the installed full package and publishes its Worker, WASM, font, and vendor files under `file-viewer/` at the deployment base (`/file-viewer/` for a root deployment) in both dev and build:
 
 ```bash
 pnpm add @file-viewer/vue3-full
@@ -42,29 +44,29 @@ export default defineConfig({
 })
 ```
 
-只安装 full 包而不启用资源复制，PDF Worker、CAD/Typst/Archive WASM 等格式会缺少运行文件，只能获得部分格式支持。
+Installing a full package without publishing these assets leaves PDF Worker, CAD/Typst/Archive WASM, and other formats without runtime files. That is partial support, not a complete setup.
 
-需要更小体积时，改用“标准组件包 + 一个 preset”，Vite 配置保持不变。插件会自动发现已安装的 preset，无需手写 renderer import，也无需显式写 `preset:'office'`：
+For a smaller install, use a standard component with one preset and keep the same Vite config. The plugin auto-discovers installed presets, so application code does not hand-write renderer imports and the plugin does not need `preset:'office'`:
 
 ```bash
 pnpm add @file-viewer/vue3 @file-viewer/preset-office
 pnpm add -D @file-viewer/vite-plugin
 ```
 
-组件默认 `autoRenderers:true`，会读取 Vite 插件注入的 preset / renderer registry。常规业务代码只要使用 `@file-viewer/vue3`、`@file-viewer/react`、`@file-viewer/web`、`@file-viewer/svelte`、`@file-viewer/jquery`、`@file-viewer/vue2.7` 或 `@file-viewer/vue2.6` 即可获得对应能力。
+Components keep `autoRenderers:true` by default, so `@file-viewer/vue3`, `@file-viewer/react`, `@file-viewer/web`, `@file-viewer/svelte`, `@file-viewer/jquery`, `@file-viewer/vue2.7`, and `@file-viewer/vue2.6` automatically consume the injected preset / renderer registry.
 
-可选 preset：
+Available presets:
 
-- `@file-viewer/preset-lite`: 文本、Markdown、代码、图片、音频、视频。
-- `@file-viewer/preset-office`: PDF、Word、Excel、PowerPoint、OFD、RTF、OpenDocument。
-- `@file-viewer/preset-engineering`: CAD、3D、绘图、XMind、Geo、Typst、Archive、Data、EDA。
-- `@file-viewer/preset-all`: 官方 demo 完整格式矩阵。
+- `@file-viewer/preset-lite`: text, Markdown, code, image, audio, and video.
+- `@file-viewer/preset-office`: PDF, Word, Excel, PowerPoint, OFD, RTF, and OpenDocument.
+- `@file-viewer/preset-engineering`: CAD, 3D, drawing, XMind, Geo, Typst, Archive, Data, and EDA.
+- `@file-viewer/preset-all`: the complete official demo format matrix.
 
-如果只需要极少数格式，也可以安装对应 renderer 包，例如 `@file-viewer/renderer-pdf`、`@file-viewer/renderer-word`、`@file-viewer/renderer-ofd`、`@file-viewer/renderer-presentation`、`@file-viewer/renderer-cad`、`@file-viewer/renderer-drawing`、`@file-viewer/renderer-3d`、`@file-viewer/renderer-data`、`@file-viewer/renderer-eda`、`@file-viewer/renderer-typst`、`@file-viewer/renderer-archive`、`@file-viewer/renderer-text`，再通过 `formats` 做精确裁剪。
+Install individual renderer packages only for strict cuts, such as `@file-viewer/renderer-pdf`, `@file-viewer/renderer-word`, `@file-viewer/renderer-ofd`, `@file-viewer/renderer-presentation`, `@file-viewer/renderer-cad`, `@file-viewer/renderer-drawing`, `@file-viewer/renderer-3d`, `@file-viewer/renderer-data`, `@file-viewer/renderer-eda`, `@file-viewer/renderer-typst`, `@file-viewer/renderer-archive`, or `@file-viewer/renderer-text`, then use `formats` to generate exact imports.
 
 ## vite.config.ts
 
-推荐默认使用 full/preset 自动装配。只传 `copyAssets:true` 时，插件会自动发现已安装的 `@file-viewer/*-full` 或 `@file-viewer/preset-*`，无需写 `preset:'all'`：
+Prefer full/preset auto assembly for normal products. With only `copyAssets:true`, the plugin auto-discovers installed `@file-viewer/*-full` or `@file-viewer/preset-*` packages:
 
 ```ts
 fileViewerRenderers({
@@ -72,7 +74,7 @@ fileViewerRenderers({
 })
 ```
 
-只有在需要源码扫描、单格式裁剪、或手动 registry 管理时，再使用自定义能力：
+Use customization options only when you need source scanning, single-format cuts, or manual registry control:
 
 ```ts
 import { defineConfig } from 'vite'
@@ -90,35 +92,37 @@ export default defineConfig({
 })
 ```
 
-`inject` 默认开启，插件会把 `virtual:file-viewer-renderers` 注入 Vite HTML 入口，preset 导入后会自动注册到 core。常规业务只需要安装组件包和对应 preset，组件会通过 `autoRenderers` 默认读取这些能力。
+`inject` is enabled by default. The plugin injects `virtual:file-viewer-renderers` into Vite HTML entrypoints, preset imports register themselves in core, and framework components consume them through `autoRenderers`.
 
 ```ts
 const options = {
-  // 默认 true；需要完全手动控制时设为 false。
+  // Defaults to true; set false when a product needs total manual control.
   autoRenderers: true
 }
 ```
 
-### 可定制能力
+### Customization Options
 
-| 选项 | 说明 |
+| Option | Description |
 | --- | --- |
-| `copyAssets` | `true` 或 `{ publicDir, outDir, mode, baseDir }`；复制匹配的 Worker、WASM、字体和 vendor 资源。检测到 full 时默认发布到 `<部署基址>/file-viewer/`，这是 full 完整格式支持的必需项；标准包/preset 保持原有根目录行为 |
-| `preset` | `'auto' | 'lite' | 'office' | 'engineering' | 'all'`；默认无显式格式时自动发现已安装 preset |
-| `autoPresets` | `true` 或 preset 列表；常用于 `scan:true` 时继续自动激活已安装 preset |
-| `formats` | 文件扩展名或格式 token，例如 `['pdf', 'docx', 'dwg']` |
-| `renderers` | renderer id，例如 `['pdf', 'word', 'cad']` |
-| `scan` | `true` 或 `{ roots, extensions, maxFileSize }`，扫描源码 hint 并合并格式 |
-| `inject` | 默认 `true`；设为 `false` 后手动导入 `virtual:file-viewer-renderers` |
-| `chunkStrategy` | `'renderer' | 'none'`，控制是否注入 renderer 级 chunk 分组 |
-| `stabilizeInteropChunks` | 默认 `true`；为默认分组和宿主 `manualChunks` 稳定 Pako / CommonJS 辅助模块及 CodeMirror / Lezer / Sandpack 的分组 |
-| `missingRenderer` | `'error' | 'warn' | 'ignore'`，控制尚未提取的 renderer 映射提示方式 |
+| `copyAssets` | `true` or `{ publicDir, outDir, mode, baseDir }`; copies matching Worker, WASM, font, and vendor assets. Installed full packages default to `<deployment-base>/file-viewer/`, which is required for complete full support; standard packages/presets keep the existing root behavior |
+| `preset` | `'auto' | 'lite' | 'office' | 'engineering' | 'all'`; with no explicit formats, installed presets are discovered automatically |
+| `autoPresets` | `true` or a preset list; useful with `scan:true` when installed presets should stay active |
+| `formats` | File extensions or format tokens, for example `['pdf', 'docx', 'dwg']` |
+| `renderers` | Renderer ids, for example `['pdf', 'word', 'cad']` |
+| `scan` | `true` or `{ roots, extensions, maxFileSize }`; scans source hints and merges formats |
+| `inject` | Defaults to `true`; set `false` to import `virtual:file-viewer-renderers` manually |
+| `chunkStrategy` | `'renderer' | 'none'`; controls renderer-level chunk grouping |
+| `stabilizeInteropChunks` | Defaults to `true`; keeps Pako / shared CommonJS helpers and CodeMirror / Lezer / Sandpack in stable groups for default and host-defined chunk splitting |
+| `missingRenderer` | `'error' | 'warn' | 'ignore'`; controls notices for planned renderer mappings |
 
-如果宿主项目按包名拆分 `node_modules`，`@codemirror/*`、`@lezer/*` 和 Sandpack 之间的循环依赖可能在生产构建中表现为 `codemirror-view.* Cannot access ... before initialization`。插件同时稳定默认分组和已有的 `manualChunks` 函数：Pako 与共享 CommonJS 辅助模块归入 `vendor-commonjs`，避免压缩格式的初始化循环；CodeMirror / Lezer / Sandpack 归入 `vendor-codemirror`。Vite 8 使用对应的 Rolldown 分组，其它自定义分组保持不变；确实需要完全接管时可设置 `stabilizeInteropChunks:false`。
+When host apps split `node_modules` by package name, circular dependencies between `@codemirror/*`, `@lezer/*`, and Sandpack can show up in production as `codemirror-view.* Cannot access ... before initialization`. The plugin stabilizes default chunk splitting and wraps existing `manualChunks` functions. Pako and shared CommonJS helpers use `vendor-commonjs` to prevent compressed-format initialization cycles; CodeMirror / Lezer / Sandpack use `vendor-codemirror`. Other custom groups remain intact, and Vite 8 receives equivalent Rolldown groups. Set `stabilizeInteropChunks:false` only when the host build needs total control.
 
-`copyAssets.baseDir` 可以覆盖自动目录：必须是相对路径，不能包含 `..`；传空字符串表示显式复制到根目录。插件会为标准包、preset 和 full 包同步统一运行时资源根；full 包仍同时同步 `setDefaultFullAssetBaseUrl()`。只有设置 `inject:false` 且不手动导入虚拟模块时，业务才需要调用 `setDefaultFileViewerAssetBaseUrl()`（full 包同时调用 `setDefaultFullAssetBaseUrl()`）。Vite 配置了 `base:'/app/'` 时，full 包开发 URL 为 `/app/file-viewer/...`，构建文件仍位于 `outDir/file-viewer/`。
+`copyAssets.baseDir` overrides automatic placement. It must be relative and cannot contain `..`; an empty string explicitly selects the root. The plugin now aligns the shared runtime asset base for standard packages, presets, and full packages; full packages also keep `setDefaultFullAssetBaseUrl()` synchronized. Only integrations that set `inject:false` and do not import the virtual module must call `setDefaultFileViewerAssetBaseUrl()` themselves (plus `setDefaultFullAssetBaseUrl()` for a full package). With Vite `base:'/app/'`, full-package dev URLs start with `/app/file-viewer/...`, while production files remain under `outDir/file-viewer/`.
 
-如果你需要严格控制 registry，可以关闭注入并手动传入：
+Asset copying runs at dev-server startup/restart and after a production build, not on ordinary HMR. Files with identical contents are left untouched, and generated manifests omit the volatile `copiedAt` timestamp. Vite's own output cleanup and public-directory copying remain unchanged.
+
+For strict registry control, disable injection and pass the virtual module explicitly:
 
 ```ts
 fileViewerRenderers({
@@ -137,7 +141,7 @@ const options = {
 }
 ```
 
-也可以使用 `preset: 'auto'` 发现项目中已安装的 preset 包；当 `preset-all` 存在时会优先使用它，避免重复导入其它 preset。注意：如果同时开启 `scan:true`，请显式使用 `preset:'auto'` 或 `autoPresets:true`，否则插件会以源码 hint 为准，不再做“无配置 preset 自动发现”。
+You can also use `preset: 'auto'` to discover installed preset packages. When `preset-all` is installed, it wins to avoid importing narrower presets twice. Note: when `scan:true` is enabled, use `preset:'auto'` or `autoPresets:true` explicitly; otherwise the plugin treats source hints as the explicit renderer selection and skips zero-config preset discovery.
 
 ```ts
 fileViewerRenderers({
@@ -149,7 +153,7 @@ fileViewerRenderers({
 })
 ```
 
-`scan: true` 会扫描常见源码目录里的轻量 hint，并把它们合并到 `formats`：
+`scan: true` inspects common source folders for lightweight hints and merges them with `formats`:
 
 ```ts
 export const fileViewerFormats = ['pdf', 'docx', 'xlsx']
@@ -159,36 +163,36 @@ export const fileViewerFormats = ['pdf', 'docx', 'xlsx']
 <input accept=".pdf,.docx" data-file-viewer-formats="dwg,xmind" />
 ```
 
-这适合业务把上传入口、示例矩阵或附件白名单维护在源码中时使用：开发和构建阶段插件会自动生成 renderer 装配模块，少写一份手工 import 清单。
+This is useful when upload accept lists, sample matrices, or attachment allow-lists already live in source code: dev and production builds can generate the renderer assembly module without a second hand-written import list.
 
-## 缺失 renderer 提示
+## Missing Renderer Guidance
 
-如果用户打开的是支持矩阵内的格式，但项目没有安装或装配对应 renderer，core 会显示“需要装配预览能力”，并提示推荐安装的 preset / renderer 包，例如 `.pdf` 会引导安装 `@file-viewer/preset-office` 或 `@file-viewer/renderer-pdf`。只有真正不在支持矩阵中的扩展名才显示“不支持在线预览”。
+When a file extension is in the supported matrix but the current project has not assembled its renderer, core now shows an install-oriented “renderer assembly required” state with the recommended preset / renderer package. For example, `.pdf` points to `@file-viewer/preset-office` or `@file-viewer/renderer-pdf`. Only truly unknown extensions show an unsupported-format state.
 
-## 嵌套 Vite 项目
+## Nested Vite Projects
 
-从 3.0.3 起，子目录只有项目元数据或 Vite 插件声明时，会沿祖先 `package.json`
-查找实际可解析的 Full 依赖。子项目明确声明轻量组件或 preset 时保留其根目录资产布局，
-不会继承父项目的 Full 布局。`copyAssets.baseDir` 仍具有最高优先级；`publicDir`
-和 `build.outDir` 均相对于 Vite root，不相对于依赖所在目录。
+From 3.0.3, a nested metadata-only project can use a resolvable Full dependency
+declared in an ancestor `package.json`. A nearer light component or preset keeps
+its own root asset layout. Explicit `copyAssets.baseDir` still takes precedence;
+`publicDir` and `build.outDir` stay relative to the Vite root, not the dependency owner.
 
-## 当前边界
+## Current Boundary
 
-当前插件会为已经拆出的 renderer 包生成导入：Word、Spreadsheet、PDF、OFD、Presentation、CAD、Draw.io/Excalidraw/Mermaid/PlantUML、3D、Data、EDA、Typst、压缩包、邮件、EPUB、代码/Markdown/Patch/Git Bundle、图片、媒体、XMind 和 Geo。可以通过 `formats` 显式声明，也可以通过 `scan: true` 从源码 hint 自动发现；`.zipx`、`.cbz`、`.tiff`、`.mjs`、`.gv`、`.patch`、`.bundle`、`.mermaid`、`.puml`、`.mpeg` 等 core 支持的扩展也会映射到对应 renderer。开启 `copyAssets:true` 时会识别已安装能力；full 包把匹配资源复制到开发 `publicDir/file-viewer/` 与构建 `outDir/file-viewer/`，标准包/preset 维持根目录行为，包括 Typst compiler / renderer WASM 与默认字体目录。`preset: 'auto' | 'lite' | 'office' | 'engineering' | 'all'` 会导入对应 `@file-viewer/preset-*` 包；如果同时声明 `formats`，插件会在 preset 之外补充额外 renderer。
+The plugin currently generates imports for extracted renderer packages: Word, Spreadsheet, PDF, OFD, Presentation, CAD, Draw.io/Excalidraw/Mermaid/PlantUML, 3D, Data, EDA, Typst, archives, email, EPUB, code/Markdown/Patch/Git Bundle, image, media, XMind, and Geo. Declare them explicitly with `formats`, or let `scan: true` discover source hints automatically; core-supported extensions such as `.zipx`, `.cbz`, `.tiff`, `.mjs`, `.gv`, `.patch`, `.bundle`, `.mermaid`, `.puml`, and `.mpeg` also resolve to their renderer packages. With `copyAssets:true`, the plugin detects installed capability packages. Full packages copy matching assets into dev `publicDir/file-viewer/` and production `outDir/file-viewer/`; standard packages/presets keep the existing root placement, including the Typst compiler / renderer WASM files and default fonts. `preset: 'auto' | 'lite' | 'office' | 'engineering' | 'all'` imports matching `@file-viewer/preset-*` packages; when `formats` are also present, the plugin adds extra renderers outside the preset.
 
-## 文档
+## Documentation
 
-- 按需渲染架构: <https://doc.file-viewer.app/guide/on-demand-renderers>
-- 支持格式: <https://doc.file-viewer.app/guide/formats>
+- On-demand renderer architecture: <https://doc.file-viewer.app/guide/on-demand-renderers>
+- Supported formats: <https://doc.file-viewer.app/guide/formats>
 
-## 格式与相关包
+## Formats and related packages
 
-File Viewer 在浏览器内预览 275+ 种扩展名，覆盖 Office、PDF/OFD、CAD、3D、压缩包、邮件、图片、音视频和代码，无需服务端转码；完整清单见 [格式矩阵](https://doc.file-viewer.app/guide/formats)。
+File Viewer previews 275+ file extensions in the browser, covering Office, PDF/OFD, CAD, 3D, archives, email, images, media and code, without server-side conversion. See the [format matrix](https://doc.file-viewer.app/guide/formats) for the full list.
 
-- 组件：`@file-viewer/web`、`@file-viewer/vue3`、`@file-viewer/vue2.7`、`@file-viewer/vue2.6`、`@file-viewer/react`、`@file-viewer/react-legacy`、`@file-viewer/svelte`、`@file-viewer/jquery`，以及对应的 `-full` 包
-- 能力组合：`@file-viewer/preset-lite`、`@file-viewer/preset-office`、`@file-viewer/preset-engineering`、`@file-viewer/preset-all`
-- 构建：`@file-viewer/vite-plugin`、`file-viewer-copy-assets`
+- Components: `@file-viewer/web`, `@file-viewer/vue3`, `@file-viewer/vue2.7`, `@file-viewer/vue2.6`, `@file-viewer/react`, `@file-viewer/react-legacy`, `@file-viewer/svelte`, `@file-viewer/jquery`, plus their `-full` packages
+- Presets: `@file-viewer/preset-lite`, `@file-viewer/preset-office`, `@file-viewer/preset-engineering`, `@file-viewer/preset-all`
+- Build: `@file-viewer/vite-plugin`, `file-viewer-copy-assets`
 
-## 许可证
+## License
 
-本包采用 Apache-2.0。详见 [LICENSE](https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE)。
+This package is Apache-2.0. See [LICENSE](https://github.com/flyfish-dev/file-viewer/blob/main/LICENSE).

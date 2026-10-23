@@ -1932,6 +1932,8 @@ body::after {
 }
 
 .support-contact-preview-image {
+  display: grid;
+  place-items: center;
   width: min(100%, 218px);
   aspect-ratio: 1;
   padding: 8px;
@@ -1941,16 +1943,30 @@ body::after {
   box-shadow: 0 12px 28px rgba(8, 38, 30, 0.1);
 }
 
-.support-contact-preview-image.is-portrait {
-  width: min(100%, 196px);
-  aspect-ratio: 0.64;
-}
-
 .support-contact-preview-image img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.support-contact-loading,
+.support-contact-error {
+  padding: 12px;
+  color: #5d716a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.support-contact-error button {
+  display: block;
+  margin: 8px auto 0;
+  padding: 6px 12px;
+  border: 1px solid #b9d5c8;
+  border-radius: 8px;
+  color: #075c3d;
+  background: #f2f8f5;
+  cursor: pointer;
 }
 
 .support-contact-preview > strong {

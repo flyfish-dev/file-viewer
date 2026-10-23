@@ -54,7 +54,8 @@
     "viewer",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && node ../../build-support/ensure-node-bin.mjs packages/tools/copy-assets/dist/cli.js && pnpm test",

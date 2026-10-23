@@ -1,0 +1,25 @@
+{
+  "title": "Quarterly operations and risk review",
+  "organization": "Example Operations (fictional)",
+  "reportingPeriod": "2026 Q3 (fictional data)",
+  "author": "File Viewer contributors",
+  "license": "Apache-2.0",
+  "generator": "apps/viewer-demo/scripts/generate-business-report.mjs",
+  "authoringTool": "office-cli 1.0.157",
+  "disclosure": "Project-authored fictional organization, figures and decisions. No real company or customer data.",
+  "document": {
+    "path": "/example/en/quarterly-operations-report.docx",
+    "sha256": "4d8c08aed5651cb17b71fda46dd4abf312e213af285423444c65fb82f0e63547",
+    "bytes": 83054
+  },
+  "figures": [
+    {
+      "path": "revenue-chart.svg",
+      "sha256": "73d78fd7e17d242316d1f758c62b9eca9b376a45f516289d5dbe44c594addeba"
+    },
+    {
+      "path": "delivery-cycle.svg",
+      "sha256": "e3b0b67de3e4c26c485fc8bddd807d1de58bde42665c0868660cebc7a0110f85"
+    }
+  ]
+}

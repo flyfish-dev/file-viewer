@@ -363,8 +363,8 @@
       "initialOccurrences": 5
     },
     {
-      "sourcePath": "packages/components/web/viewer/vendor/xlsx/licenses/THIRD_PARTY_LICENSES.txt",
-      "sha256": "edc339ede30f53ff49c1901b861cc11dbdb9ea171b21fd258faa5f197d053649",
+      "sourcePath": "packages/renderers/spreadsheet/dist/worker.THIRD_PARTY_LICENSES.txt",
+      "sha256": "cb601b1ed88a83b18a79f08e122879b979d7f71f99f93b7513be189ccbf1ba2f",
       "bytes": 76320,
       "kind": "generated-original-bundle-grants",
       "component": "Physical Worker dependency inputs",
@@ -444,7 +444,7 @@
     },
     {
       "sourcePath": "packages/renderers/dicom/THIRD_PARTY_NOTICES.md",
-      "sha256": "32239a61a2dc59fb63aedd6429095d00484bb57a429e23d10eaeb3d54e5c85ee",
+      "sha256": "197379984adb7e753627d00a91364f7a9269c003822a057e6499c51b65fd78a6",
       "bytes": 14376,
       "kind": "generated-attribution-inventory",
       "component": "DICOM source inventory",

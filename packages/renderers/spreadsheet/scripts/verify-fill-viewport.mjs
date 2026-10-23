@@ -37,12 +37,13 @@ const tableEntry = join(dirname(require.resolve('e-virt-table/package.json')), '
 const bundle = await build({
   stdin: {
     resolveDir: root, loader: 'ts', contents: `
-      import renderSpreadsheet from './packages/renderers/spreadsheet/dist/spreadsheet.js';
-      import {findFileViewerZoomProvider,findFileViewerSearchProvider} from './packages/core/dist/index.js';
+      import renderSpreadsheet from './packages/renderers/spreadsheet/src/spreadsheet.ts';
+      import {findFileViewerZoomProvider,findFileViewerSearchProvider} from './packages/core/src/index.ts';
       window.review={renderSpreadsheet,findFileViewerZoomProvider,findFileViewerSearchProvider};
     `,
   },
   bundle: true, format: 'iife', platform: 'browser', write: false, logLevel: 'warning',
+  alias: { '@file-viewer/core': join(root, 'packages/core/src/index.ts') },
   plugins: [{ name: 'observe-real-virtual-table', setup(builder) {
     builder.onResolve({ filter: /^e-virt-table(?:\/dist\/index\.es\.js)?$/ }, () => ({ path: 'table', namespace: 'review-table' }))
     builder.onLoad({ filter: /.*/, namespace: 'review-table' }, () => ({
@@ -80,9 +81,9 @@ async function mount(fillViewport, worker = false, file = '/book.xlsx', type = '
     window.workerMessages = []
     const NativeWorker = window.Worker
     window.Worker = class extends NativeWorker {
-      constructor(...args) { super(...args); this.addEventListener('message', event => workerMessages.push(event.data?.type)) }
+      constructor(...args) { super(...args); this.addEventListener('message', event => window.workerMessages.push(event.data?.type)) }
     }
-    window.handle = await review.renderSpreadsheet(bytes, host, type, {
+    window.handle = await window.review.renderSpreadsheet(bytes, host, type, {
       registerExportAdapter: adapter => { window.exportAdapter = adapter },
       filename: file.slice(1), options: {
         initialViewState: { scale: 1 }, spreadsheet: {
@@ -98,7 +99,7 @@ async function mount(fillViewport, worker = false, file = '/book.xlsx', type = '
 }
 async function snapshot() {
   return page.evaluate(() => {
-    const ctx = reviewTable.ctx, host = ctx.containerElement
+    const ctx = window.reviewTable.ctx, host = ctx.containerElement
     return {
       rows: ctx.body.data.length, columns: ctx.header.leafCellHeaders.map(header => ({ key: header.key, title: header.column.title, width: header.width, fixed: header.fixed, x: header.drawX })),
       width: ctx.header.width, height: ctx.body.height + ctx.header.height,
@@ -107,14 +108,11 @@ async function snapshot() {
       firstValue: ctx.body.data[0]?.c0 ?? null,
       dom: host.querySelectorAll('*').length,
       head: ctx.body.headIndex, tail: ctx.body.tailIndex,
-      scrollX: ctx.scrollX, scrollY: ctx.scrollY, messages: workerMessages,
+      scrollX: ctx.scrollX, scrollY: ctx.scrollY, messages: window.workerMessages,
       exportAdapter: window.exportAdapter,
     }
   })
 }
-const stableGeometry = value => ({
-  ...value, columns: value.columns.map(({ x: _drawPosition, ...column }) => column),
-})
 function covers(value) {
   assert.ok(value.width >= value.viewportWidth - 1, JSON.stringify(value))
   assert.ok(value.height >= value.viewportHeight - 1, JSON.stringify(value))
@@ -124,24 +122,23 @@ function covers(value) {
 async function check(name, action) { await action(); report.checks.push({ name, passed: true }); console.log('PASS ' + name) }
 try {
   await page.goto(origin)
-  await check('omitted and false retain the original small-sheet range and geometry', async () => {
-    await mount(undefined); report.baseline = await snapshot()
-    await mount(false); assert.deepEqual(stableGeometry(await snapshot()), stableGeometry(report.baseline))
+  await check('false retains the original small-sheet range and geometry', async () => {
+    await mount(false); report.baseline = await snapshot()
     assert.equal(report.baseline.rows, 1); assert.equal(report.baseline.columns.length, 15)
   })
   await check('enabled grid covers the viewport without resizing authored columns or changing counts/search', async () => {
-    await mount(true); const value = await snapshot(); covers(value)
+    await mount(undefined); const value = await snapshot(); covers(value)
     assert.deepEqual(value.columns.slice(0, 15).map(column => column.width), report.baseline.columns.map(column => column.width))
     assert.equal(value.summary, report.baseline.summary); assert.equal(value.firstValue, '测试附件')
     assert.deepEqual(value.exportAdapter, report.baseline.exportAdapter)
-    const matches = await page.evaluate(async () => (await review.findFileViewerSearchProvider(handle.$el).search('测试附件')).matches)
+    const matches = await page.evaluate(async () => (await window.review.findFileViewerSearchProvider(window.handle.$el).search('测试附件')).matches)
     assert.equal(matches.length, 1); assert.equal(matches[0].anchor.spreadsheet.row, 0)
     report.small = value
     await page.screenshot({ path: join(output, 'small-enabled.png') })
   })
   await check('real canvas paints the blank grid near the bottom and right edges', async () => {
     const pixels = await page.evaluate(() => {
-      const canvas = reviewTable.ctx.canvasElement, context = canvas.getContext('2d')
+      const canvas = window.reviewTable.ctx.canvasElement, context = canvas.getContext('2d')
       const bytes = context.getImageData(Math.max(0, canvas.width - 110), Math.max(0, canvas.height - 110), 80, 80).data
       let grid = 0
       for (let i = 0; i < bytes.length; i += 4) if (bytes[i + 3] && bytes[i] < 240 && bytes[i] > 180) grid++
@@ -152,15 +149,15 @@ try {
   await check('padding keeps default metrics when the host enables row and column resizing', async () => {
     const before = await snapshot()
     await page.evaluate(() => {
-      const ctx = reviewTable.ctx
+      const ctx = window.reviewTable.ctx
       ctx.body.data[1]._height = 80
       ctx.emit('resizeRowChange', { rowIndex: 1, height: 80 })
     })
     await settle()
-    assert.equal(await page.evaluate(() => reviewTable.ctx.body.data[1]._height), 20)
+    assert.equal(await page.evaluate(() => window.reviewTable.ctx.body.data[1]._height), 20)
     assert.equal((await snapshot()).summary, before.summary)
     assert.deepEqual(await page.evaluate(() => {
-      const padding = reviewTable.ctx.header.leafCellHeaders.find(header => header.key === 'c14').column
+      const padding = window.reviewTable.ctx.header.leafCellHeaders.find(header => header.key === 'c14').column
       return [padding.minWidth, padding.maxWidth]
     }), Array(2).fill(before.columns.find(column => column.key === 'c14').width))
     covers(await snapshot())
@@ -169,9 +166,9 @@ try {
     for (const [width, height, zoom] of [[420, 330, 1], [2000, 900, 0.25], [1100, 720, 2.5], [1100, 720, 1]]) {
       await page.evaluate(({ width, height, zoom }) => {
         const host = document.querySelector('#host'); host.style.width = width + 'px'; host.style.height = height + 'px'
-        review.findFileViewerZoomProvider(handle.$el).setZoom(zoom)
+        window.review.findFileViewerZoomProvider(window.handle.$el).setZoom(zoom)
       }, { width, height, zoom })
-      await page.waitForFunction(width => reviewTable.ctx.containerElement.clientWidth === width, width)
+      await page.waitForFunction(width => window.reviewTable.ctx.containerElement.clientWidth === width, width)
       await settle(); const value = await snapshot(); covers(value)
       assert.equal(value.columns[1].width, Math.round(64 * zoom))
       if (zoom === 0.25) assert.equal(value.columns[27].title, 'AA')
@@ -180,7 +177,7 @@ try {
   await check('empty sheets keep zero content counts and work when switched or restored from cache', async () => {
     await page.getByRole('button', { name: 'Empty', exact: true }).click()
     await page.waitForFunction(() => document.querySelector('.sheet-tab.active')?.textContent === 'Empty' && document.querySelector('.summary')?.textContent === '')
-    await page.waitForFunction(() => reviewTable.ctx.body.data[0]?.__k.startsWith('viewport-'))
+    await page.waitForFunction(() => window.reviewTable.ctx.body.data[0]?.__k.startsWith('viewport-'))
     await settle(); const empty = await snapshot(); covers(empty); assert.equal(empty.columns[1].title, 'A'); assert.equal(empty.firstValue, null)
     await page.getByRole('button', { name: 'Small', exact: true }).click(); await settle()
     await page.getByRole('button', { name: 'Empty', exact: true }).click(); await settle(); covers(await snapshot())
@@ -188,9 +185,9 @@ try {
   })
   await check('merged cells, hidden dimensions and fixed row-number headers retain their behavior', async () => {
     await page.getByRole('button', { name: 'Merged', exact: true }).click()
-    await page.waitForFunction(() => reviewTable.ctx.body.data[0]?.c0 === 'Merged')
+    await page.waitForFunction(() => window.reviewTable.ctx.body.data[0]?.c0 === 'Merged')
     await settle(); covers(await snapshot())
-    const span = await page.evaluate(() => reviewTable.ctx.config.SPAN_METHOD({ rowIndex: 0, colIndex: 1, column: { key: 'c0' } }))
+    const span = await page.evaluate(() => window.reviewTable.ctx.config.SPAN_METHOD({ rowIndex: 0, colIndex: 1, column: { key: 'c0' } }))
     assert.deepEqual(span, { rowspan: 2, colspan: 3 })
     const columns = (await snapshot()).columns
     assert.equal(columns[0].fixed, 'left'); assert.equal(columns[1].width, 92)
@@ -198,16 +195,16 @@ try {
   })
   await check('large sheets do not expand and still load after horizontal and vertical scrolling', async () => {
     await page.getByRole('button', { name: 'Large', exact: true }).click()
-    await page.waitForFunction(() => reviewTable.ctx.body.data[0]?.c0 === 'R1C1')
+    await page.waitForFunction(() => window.reviewTable.ctx.body.data[0]?.c0 === 'R1C1')
     const before = await snapshot(); assert.equal(before.rows, 3000); assert.equal(before.columns.length, 41)
-    await page.evaluate(() => reviewTable.scrollTo(1100, 42000))
+    await page.evaluate(() => window.reviewTable.scrollTo(1100, 42000))
     await page.waitForFunction(() => {
-      const ctx = reviewTable.ctx; return ctx.body.headIndex > 1000 && ctx.body.data[ctx.body.headIndex]?.__s === 2
+      const ctx = window.reviewTable.ctx; return ctx.body.headIndex > 1000 && ctx.body.data[ctx.body.headIndex]?.__s === 2
     })
     const after = await snapshot(); assert.equal(after.rows, 3000); assert.equal(after.columns.length, 41)
     assert.equal(after.columns[0].fixed, 'left'); assert.equal(after.columns[0].x, 0)
     assert.ok(after.scrollX > 0 && after.scrollY > 0); assert.ok(after.dom < 1500)
-    assert.equal(await page.evaluate(() => reviewTable.ctx.body.data[reviewTable.ctx.body.headIndex].c0), `R${after.head + 1}C1`)
+    assert.equal(await page.evaluate(() => window.reviewTable.ctx.body.data[window.reviewTable.ctx.body.headIndex].c0), `R${after.head + 1}C1`)
     report.large = after
   })
   await check('actual static Worker supports small and empty sheets without fallback', async () => {
@@ -215,16 +212,17 @@ try {
     assert.ok((await snapshot()).messages.includes('sheets'))
     await mount(true, true, '/empty.xlsx'); covers(await snapshot())
     assert.ok((await snapshot()).messages.includes('parseSheet'))
-    const matches = await page.evaluate(async () => (await review.findFileViewerSearchProvider(handle.$el).search('测试附件')).matches)
+    const matches = await page.evaluate(async () => (await window.review.findFileViewerSearchProvider(window.handle.$el).search('测试附件')).matches)
     assert.equal(matches.length, 0)
   })
-  await check('all-empty workbook defaults stay unchanged and non-Excel formats ignore the option', async () => {
+  await check('CSV fills by default and false retains the original range for CSV and empty Excel', async () => {
     await mount(false, false, '/empty.xlsx'); const empty = await snapshot(); assert.equal(empty.rows, 0); assert.equal(empty.columns.length, 0)
     await mount(false, false, '/small.csv', 'csv'); const normal = await snapshot()
-    await mount(true, false, '/small.csv', 'csv'); assert.deepEqual(stableGeometry(await snapshot()), stableGeometry(normal))
+    await mount(undefined, false, '/small.csv', 'csv'); const filled = await snapshot(); covers(filled)
+    assert.equal(filled.firstValue, normal.firstValue); assert.equal(filled.summary, normal.summary)
   })
   await check('unmount releases the table and no browser errors or external requests occur', async () => {
-    await page.evaluate(() => handle.unmount())
+    await page.evaluate(() => window.handle.unmount())
     assert.deepEqual(errors, []); assert.deepEqual(external, [])
   })
   report.fixtureSha256 = createHash('sha256').update(assets.get('/book.xlsx')).digest('hex')

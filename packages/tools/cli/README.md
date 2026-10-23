@@ -1,30 +1,32 @@
 # @file-viewer/cli
 
-File Viewer 的项目创建、已有项目接入、能力选择和离线交付 CLI。它只携带冻结的能力目录，不重复打包 renderer、Worker、WASM、字体或其他静态资源。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/cli/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/cli/README.zh-CN.md)
 
-- [CLI 使用主页](https://file-viewer.app/cli/)
-- [完整中文指南](https://doc.file-viewer.app/zh/guide/cli)
-- [English README](./README.en.md)
+Create projects, integrate existing applications, select exact capabilities, and prepare offline File Viewer delivery. The CLI carries only a frozen capability catalog; it does not duplicate renderers, Workers, WASM, fonts, or static assets.
 
-## 快速开始
+- [CLI home](https://file-viewer.app/en/cli/)
+- [Complete guide](https://doc.file-viewer.app/guide/cli)
+- [简体中文](./README.md)
 
-创建一个可运行项目：
+## Quick start
+
+Create a runnable project:
 
 ```bash
 npm create file-viewer@latest my-viewer
 ```
 
-接入当前 `package.json` 项目：
+Integrate the project containing the current `package.json`:
 
 ```bash
 npx file-viewer-cli@latest add .
 ```
 
-`file-viewer-cli` 是便于 `npx` 自动选择命令的单 bin 入口，并严格依赖同版本的本 scoped 包。项目已经安装 `@file-viewer/cli` 时，直接运行 `file-viewer add .`。
+`file-viewer-cli` is the single-bin `npx` carrier and pins this scoped package at the same version. If `@file-viewer/cli` is already installed locally, run `file-viewer add .` instead.
 
-向导可选择框架及其已校验版本、File Viewer 版本、profile、格式、包管理器和资源目录。交互模式会按 renderer/格式族列出复选项，profile 已包含的能力预先打勾并保持启用；额外能力可用单个编号或范围切换，无需手写扩展名。支持 Vanilla/Web Component、Vue 3、Vue 2.7、Vue 2.6、React、React Legacy、Svelte 和 jQuery。
+The wizard selects a framework and validated version, File Viewer release, profile, formats, package manager, and asset directory. Interactive runs present checkbox-style renderer/format-family rows, preselect and retain everything supplied by the chosen profile, and let users toggle optional capabilities by number or range instead of typing extensions. It supports Vanilla/Web Component, Vue 3, Vue 2.7, Vue 2.6, React, React Legacy, Svelte, and jQuery.
 
-新建项目使用 Vite 8。生成的 `package.json` 会声明 Node `^20.19.0 || >=22.12.0`，并在 `dev`/`build` 前执行版本检查；不兼容环境会直接给出升级和重新安装依赖的操作提示，而不是以间接的 `CustomEvent` 异常失败。
+New projects use Vite 8. The generated `package.json` declares Node `^20.19.0 || >=22.12.0`, and `dev`/`build` run a version preflight. Unsupported runtimes therefore fail with an actionable upgrade-and-reinstall message instead of an indirect `CustomEvent` exception.
 
 ```bash
 npx file-viewer-cli create my-viewer \
@@ -36,17 +38,17 @@ npx file-viewer-cli create my-viewer \
   --yes
 ```
 
-`add` 会检测 `packageManager`、lockfile、框架及版本、既有 preset/Full 包、Vite、Vue CLI、Webpack、Next.js、Nuxt 2/3、可静态证明的公开目录和应用入口。存在多个候选或无法安全推导静态目录时会生成 `manualSteps`，并在安装或写文件前失败关闭；确认实际构建目标后可显式传入 `--asset-target`。
+`add` detects the `packageManager` field, lockfiles, framework and version, installed preset/Full packages, Vite, Vue CLI, Webpack, Next.js, Nuxt 2/3, statically provable public directories, and application entries. Multiple candidates or an unsafe static-directory inference produce `manualSteps` and fail closed before installation or file writes; pass a contained `--asset-target` after confirming the real build target.
 
-## Standard 与 Full
+## Standard and Full
 
-`standard` 是新项目推荐的常用格式基线。现有八个 `@file-viewer/*-full` 包继续保持已发布的 `preset-all`、API、资产和格式行为，不会被静默改成 `standard`。
+`standard` is the recommended common-format baseline for new projects. The eight existing `@file-viewer/*-full` packages keep their published `preset-all`, API, asset, and format behavior; they are not silently changed to `standard`.
 
-直接安装 Full 包不会自动带入以后新增的专业能力；通过 CLI 明确选择 `--profile full` 时，CLI 会保留对应 Full 包，并加入目录中标记为 Full 默认追加的后续可选能力。当前默认额外能力是 DICOM 和数字签名/证据容器，因此确认前会显示体积和许可证信息。Adobe 设计 renderer 仍需显式选择，例如追加 `--formats pat`、`--formats psd` 或 `--capabilities design`；显式选择会安装 `@file-viewer/renderer-design` 及其独立资产包，但不会改变 `preset-all` 的 221 个扩展名、32 条链路冻结基线。DICOM 仅预览本地单个 DICOM Part 10 文件及其多帧，不包含 series、PACS/DICOMweb、MPR、分割、诊断或内嵌 OHIF。签名 renderer 仅声明有界容器检查和密码学验证结果，不代替证书信任、政策或法律效力判定。
+Installing a Full package directly does not automatically add future specialist capabilities. Explicit CLI `--profile full` keeps the matching Full package and adds the later opt-ins marked as Full defaults in the catalog. The current default additions are DICOM and digital-signature/evidence containers, so the CLI shows their weight and licenses before confirmation. The Adobe design renderer remains explicit: add `--formats pat`, `--formats psd`, or `--capabilities design` to install `@file-viewer/renderer-design` and its independent asset pack without changing the frozen 221-extension, 32-pipeline `preset-all` baseline. DICOM covers one local DICOM Part 10 file, including multi-frame navigation. It does not provide series assembly, PACS/DICOMweb, MPR, segmentation, diagnosis, or an embedded OHIF application. The signature renderer reports bounded container inspection and cryptographic verification separately from certificate trust, policy, and legal-validity decisions.
 
-选择 DICOM（包括 `--profile full`）时，还需遵循 [DICOM 安装策略](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.md#应用安装策略)，由应用配置依赖 overrides 并满足 Node.js 要求。CLI 不会配置这些 overrides；部署前需验证实际应用依赖图及浏览器行为。
+DICOM selections, including `--profile full`, also require the application-owned overrides and Node.js requirements in the [DICOM installation policy](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.en.md#application-installation-policy). The CLI does not configure those overrides; verify the resolved application graph and browser behavior before deployment.
 
-## 配置、资产与旧命令兼容
+## Configuration, assets, and legacy compatibility
 
 ```bash
 npx file-viewer-cli list
@@ -59,20 +61,20 @@ npx file-viewer-cli doctor --json
 npx file-viewer-cli verify --json
 ```
 
-原有命令和包继续可用：
+The original package and command remain available:
 
 ```bash
 npx --no-install file-viewer-copy-assets ./public/file-viewer \
   --renderers pdf,office-word-openxml
 
-# 同一兼容实现的统一入口
+# Unified entry to the same compatibility implementation
 npx file-viewer-cli copy-assets ./public/file-viewer \
   --renderers pdf,office-word-openxml
 ```
 
-未提供项目配置时，`file-viewer assets` 的参数、环境变量、合并模式、回执及安全校验与 `file-viewer-copy-assets` 保持一致。默认合并并保留无关文件；只有同时传入 `--clean --confirm` 才会清理并替换专用且通过安全边界校验的 `file-viewer` 目标目录。完整部署 `@file-viewer/web-full/dist/` 时无需再复制资产。
+Without a project config, `file-viewer assets` preserves the arguments, environment variables, merge default, receipts, and safety checks of `file-viewer-copy-assets`. Merge mode preserves unrelated files by default; cleanup replaces only a dedicated, boundary-checked `file-viewer` target and requires both `--clean --confirm`. A complete deployment of `@file-viewer/web-full/dist/` needs no separate copy step.
 
-## 私有源和离线 tgz
+## Private registries and offline tgz files
 
 ```bash
 npx file-viewer-cli prepare \
@@ -91,23 +93,23 @@ npx file-viewer-cli add . \
   --yes
 ```
 
-离线目录包含精确 CLI，带完整性清单并按精确版本复用；tarball 还会核对包身份，但完整性不等于 registry 来源可信。远程源必须使用 HTTPS（HTTP 只允许回环地址）。`prepare` 并发为 `1-8`，安装并发为 `1-32`。Registry 凭据应配置在包管理器或 CI 中；CLI 拒绝 URL 内嵌账号密码，也不会把凭据写入项目配置。
+The offline directory includes the exact CLI, has an integrity manifest, and is reused only for exact versions. Tarballs are checked against their package identity; integrity is not registry provenance. Remote registries must use HTTPS (HTTP is loopback-only). `prepare` concurrency is `1-8`; install concurrency is `1-32`. Keep credentials in package-manager or CI configuration—the CLI rejects credentials embedded in URLs and does not write secrets into project config.
 
-## 失败恢复与依赖所有权
+## Recovery and dependency ownership
 
-确认安装后，CLI 会先把已有的项目内 `node_modules` 及 Yarn unplugged 目录原子移动到同文件系统备份区，同时保存 manifest、lockfile、Yarn PnP/install-state、生成模块和受管资产目录。包管理器或资产步骤正常抛错时会恢复这些字节；无法建立安全原子备份时，会在调用包管理器前停止。
+Before a confirmed install, the CLI moves an existing project-local `node_modules` and Yarn unplugged directory into a same-filesystem backup, and snapshots the manifest, lockfiles, Yarn PnP/install-state files, generated integration, and managed asset target. A handled package-manager or asset failure restores those bytes. If safe atomic staging cannot be established, installation stops before invoking the package manager.
 
-进程或主机被强制中断时，项目同级可能留下 `.<项目名>.file-viewer-install-*` 备份。再次执行前应先检查并恢复，不能直接删除。包管理器 cache（包括项目内 Yarn cache）不在该事务范围内。只有在配置的 `managedPackages` 中明确记录为 CLI 所有的过期重型依赖才会被移除；CLI 未安装、未跟踪的用户依赖保持不动。
+An abrupt process or host termination can leave an adjacent `.<project>.file-viewer-install-*` backup. Inspect and restore that directory before rerunning; do not delete it blindly. Package-manager caches, including a project-local Yarn cache, are outside this transaction. Obsolete heavy dependencies are removed only when the project config records them in `managedPackages` as CLI-owned; packages that were not installed and tracked by the CLI remain untouched.
 
-## 帮助与语言
+## Help and language
 
-CLI 的交互和帮助支持英文、简体中文、日文和德文；`--json` 始终使用稳定英文键。
+Interactive text and help support English, Simplified Chinese, Japanese, and German. `--json` always uses stable English keys.
 
 ```bash
-file-viewer --help --lang zh-CN
-file-viewer create --help --lang en
+file-viewer --help --lang en
+file-viewer create --help --lang zh-CN
 file-viewer add --help --lang ja-JP
 file-viewer prepare --help --lang de-DE
 ```
 
-完整命令、配置字段、CI 模式、离线限制和故障排查请查看[完整 CLI 指南](https://doc.file-viewer.app/zh/guide/cli)。
+See the [complete CLI guide](https://doc.file-viewer.app/guide/cli) for every command, config field, CI pattern, offline boundary, and troubleshooting step.

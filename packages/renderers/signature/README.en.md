@@ -1,5 +1,7 @@
 # @file-viewer/renderer-signature
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/signature/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/signature/README.zh-CN.md)
+
 Optional, browser-local renderer for digital signatures, timestamps, evidence containers, and OpenPGP. It covers CMS/PKCS#7, selected CAdES attributes, RFC 3161, RFC 5544, ASiC, RFC 4998, JWS/JAdES metadata, and OpenPGP, then delegates safely extracted documents back to File Viewer's nested-renderer pipeline.
 
 ## Supported formats

@@ -35,7 +35,8 @@
     "dist",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "node scripts/clean-dist.mjs && tsc -b tsconfig.json --force && node ../renderers/ebook/scripts/build-epub-engine.mjs --package-root=.",

@@ -1,8 +1,10 @@
 # @file-viewer/renderer-binary
 
-`@file-viewer/renderer-binary` 是 File Viewer 的显式可选、只读二进制检查器。它在本地模块 Worker 中解析受审核的内置格式头，并提供虚拟化偏移量、十六进制、ASCII 列、字段树和双向字节选区。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/binary/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/binary/README.zh-CN.md)
 
-## 安装与接入
+`@file-viewer/renderer-binary` is an explicit, read-only binary inspector for File Viewer. It parses a reviewed built-in header catalog in a local module Worker and presents virtualized offset, hexadecimal, ASCII, structure-tree, and synchronized byte-selection views.
+
+## Install and use
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -17,15 +19,15 @@ const options = {
 }
 ```
 
-Vite 项目也可显式选择：`fileViewerRenderers({ formats: ['bin'] })`。本包不属于 `preset-all` 或 Full/Vue 2 依赖闭包。
+Vite applications can explicitly select it with `fileViewerRenderers({ formats: ['bin'] })`. This package is not part of the `preset-all`, Full, or Vue 2 dependency closure.
 
-## 路由与范围
+## Routing and scope
 
-- 只注册 `.bin`、`.hex`、`.elf`、`.exe`、`.dll`、`.class`、`.macho`；不注册 `application/octet-stream`。
-- PNG、ZIP、WASM 只在用户显式打开本包时用作结构模板，绝不覆盖已有专用 renderer。
-- 支持内置的 ELF、PE/COFF、Mach-O、PNG、ZIP、WASM 与 Java class 头部结构；未命中时展示原始字节。
-- 不支持编辑、补丁、用户自定义模板、动态导入或任意二进制扫描。
+- It owns only `.bin`, `.hex`, `.elf`, `.exe`, `.dll`, `.class`, and `.macho`; it never claims `application/octet-stream`.
+- PNG, ZIP, and WASM signatures are templates only when this package is explicitly selected. Dedicated renderers keep their routes.
+- The first built-in catalog reads ELF, PE/COFF, Mach-O, PNG, ZIP, WebAssembly, and Java class headers, with a raw-byte fallback for unknown input.
+- Editing, patching, user-authored templates, dynamic imports, and arbitrary binary scans are intentionally excluded.
 
-## 安全限制
+## Safety limits
 
-默认整文件上限为 16 MiB，并对解析时间、结构节点、层级和解码字符串长度设上限。Worker 在返回一个结果、超时、出错或取消时都会终止；UI 只渲染可见的十六进制行。
+The default whole-file ceiling is 16 MiB. Parse time, structure nodes, nesting, and decoded string sizes are bounded; the Worker terminates after a result, timeout, error, or cancellation, and the UI renders only visible hex rows.

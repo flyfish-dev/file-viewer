@@ -1,5 +1,7 @@
 # @file-viewer/renderer-geo
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geo/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/geo/README.zh-CN.md)
+
 Standalone geospatial renderer package for Flyfish File Viewer. It previews GeoJSON, KML, GPX, and Shapefile data in the browser while keeping `@tmcw/togeojson`, `shpjs`, `maplibre-gl`, and `proj4` lazy-loaded for geospatial files only.
 
 ## Usage

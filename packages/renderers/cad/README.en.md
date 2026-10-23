@@ -1,5 +1,7 @@
 # @file-viewer/renderer-cad
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/cad/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/cad/README.zh-CN.md)
+
 Standalone CAD renderer package for Flyfish File Viewer. It is powered by `@flyfish-dev/cad-viewer`, previews DWG, DXF, DWF, DWFx, and XPS in the browser, and resolves wasm / worker URLs through the File Viewer asset manifest for offline enterprise deployments.
 
 ## Usage

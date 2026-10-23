@@ -1,5 +1,7 @@
 # @file-viewer/renderer-hangul
 
-File Viewer 的 HWP v5 / HWPX 离线 renderer。HWPX 解析 ZIP/XML、段落、表格与媒体；HWP v5 解析 CFB、FileHeader、BodyText 和 BinData。解析默认在按需加载的模块 Worker 内执行，并限制解压量、压缩率、ZIP 条目数、HWP 记录数和超时。加密、DRM 与发行文档会被明确拒绝，不会尝试绕过保护。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/hangul/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/hangul/README.zh-CN.md)
 
-可通过 `options.hangul` 覆盖 `workerUrl`、`workerTimeoutMs` 和解析安全上限；`useWorker: false` 只适用于没有 Worker 的兼容环境。可再分发的 Apache-2.0 HWP v5/HWPX fixture 已覆盖页面几何、样式、合并表格、页眉页脚、注释和图片，并通过 Chromium、Firefox、WebKit，公开格式目录标记为 `structured / stable`。罕见控件与生产者私有版式仍是已知限制。
+Offline HWP v5 and HWPX renderer for File Viewer. It parses HWPX ZIP/XML and HWP v5 CFB structures in an on-demand module Worker, with bounded inflation, compression ratio, ZIP entry, HWP record, and timeout limits. Encrypted, DRM-protected, and distribution documents are detected and rejected explicitly.
+
+Use `options.hangul` to override the Worker URL, timeout, or parser limits. `useWorker: false` is only for environments without Worker support. Redistributable Apache-2.0 HWP v5/HWPX fixtures cover page geometry, styles, merged tables, headers, footers, notes, and images in Chromium, Firefox, and WebKit, so the catalog classifies HWP/HWPX as `structured / stable`. Rare controls and producer-specific layout constructs remain documented limitations.

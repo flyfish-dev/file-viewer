@@ -1,5 +1,7 @@
 # @file-viewer/renderer-pdf
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/pdf/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/pdf/README.zh-CN.md)
+
 Cold-network loading starts the real Worker directly, without a duplicate version-probe request.
 PDF.js checks API compatibility before parsing. Mismatched workers are destroyed and retried
 with the bundled matching handler without losing transferred input. Main-thread fallbacks
@@ -27,6 +29,12 @@ const options = {
   renderers: [pdfRenderer],
 }
 ```
+
+## Reading theme
+
+Live updates without reloading apply to the renderer's observed theme attributes, system color scheme and the Vanilla core theme update path. Framework component and toolbar/controller option updates may reinitialize the preview.
+
+PDF pages follow `options.theme` (`light`, `dark`, or `system`), including live theme changes. Dark reading uses a preview-only canvas color filter; it also changes image colors. Set `pdf.darkMode: false` to keep the document's original colors, or `true` to force dark reading independently of the toolbar. Original downloads, printed pages, and exported canvas bytes retain their source colors.
 
 ## Offline Assets
 

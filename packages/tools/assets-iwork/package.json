@@ -14,10 +14,15 @@
     "viewer",
     "file-viewer.asset-pack.json",
     "README.md",
-    "README.en.md"
+    "README.en.md",
+    "README.zh-CN.md"
   ],
-  "bin": { "file-viewer-assets-iwork": "./bin/install.mjs" },
-  "dependencies": { "@file-viewer/asset-installer": "workspace:3.2.2" },
+  "bin": {
+    "file-viewer-assets-iwork": "./bin/install.mjs"
+  },
+  "dependencies": {
+    "@file-viewer/asset-installer": "workspace:3.2.2"
+  },
   "scripts": {
     "stage-assets": "node ../../build-support/stage-capability-asset-pack.mjs --package-dir packages/tools/assets-iwork",
     "prepack": "pnpm stage-assets"

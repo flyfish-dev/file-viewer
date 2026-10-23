@@ -1,5 +1,7 @@
 # @file-viewer/renderer-data
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/data/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/data/README.zh-CN.md)
+
 Standalone data asset renderer for Flyfish File Viewer. It covers PSD, SQLite, Parquet, Avro, WASM, fonts, AI/EPS, WebArchive, and other non-document data assets without forcing regular document preview users to install data parsing dependencies.
 
 ## Usage

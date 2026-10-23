@@ -2,8 +2,9 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { lstat, readFile, realpath } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve } from 'node:path'
+import { maintainedReadmeFiles, legacyReadmeFiles } from './readme-locales.mjs'
 
-export const packageReadmeFiles = Object.freeze(['README.md', 'README.en.md'])
+export const packageReadmeFiles = maintainedReadmeFiles
 const maximumBytes = 2 * 1024 * 1024
 const hash = bytes => createHash('sha256').update(bytes).digest('hex')
 
@@ -20,16 +21,20 @@ export function assertMaintainedReadme(bytes, label = 'Package README') {
 }
 
 export function readmeContract(readmes) {
-  return Object.fromEntries(packageReadmeFiles.map(name => {
+  const files = readmes['README.zh-CN.md'] ? maintainedReadmeFiles : legacyReadmeFiles
+  assert.deepEqual(Object.keys(readmes).sort(), [...files].sort(), 'Unexpected maintained README set')
+  return Object.fromEntries(files.map(name => {
     const bytes = assertMaintainedReadme(readmes[name], name)
     return [name, { bytes: bytes.length, sha256: hash(bytes) }]
   }))
 }
 
 export function verifyPackageReadmes(packed, expected, source) {
-  assert.deepEqual(Object.keys(expected || {}).sort(), [...packageReadmeFiles].sort(),
-    'Release entry must bind both maintained package READMEs')
-  for (const name of packageReadmeFiles) {
+  const names = Object.keys(expected || {}).sort()
+  const known = [maintainedReadmeFiles, legacyReadmeFiles].some(files =>
+    [...files].sort().join(',') === names.join(','))
+  assert.ok(known, 'Release entry must bind every maintained package README (both legacy READMEs for frozen releases)')
+  for (const name of names) {
     const bytes = assertMaintainedReadme(packed[name], `Packed ${name}`)
     assert.ok(Number.isSafeInteger(expected[name]?.bytes) && expected[name].bytes > 0 &&
       expected[name].bytes <= maximumBytes && /^[a-f0-9]{64}$/.test(expected[name].sha256 || ''),
@@ -41,7 +46,9 @@ export function verifyPackageReadmes(packed, expected, source) {
   }
 }
 
-export async function readPackageReadmes(sourceRoot, packageDir, expectedPackageName) {
+export async function readPackageReadmes(sourceRoot, packageDir, expectedPackageName, files = packageReadmeFiles) {
+  assert.ok([maintainedReadmeFiles, legacyReadmeFiles].some(known =>
+    [...known].sort().join(',') === [...files].sort().join(',')), 'Unknown maintained README source set')
   assert.ok(typeof packageDir === 'string' && packageDir && !isAbsolute(packageDir) &&
     !packageDir.includes('\\') && packageDir.split('/').every(part => part && part !== '.' && part !== '..'),
   'README source packageDir must be a normalized relative path')
@@ -58,7 +65,7 @@ export async function readPackageReadmes(sourceRoot, packageDir, expectedPackage
     const owner = JSON.parse(await readFile(manifestPath, 'utf8'))
     assert.equal(owner.name, expectedPackageName, 'README source package identity differs')
   }
-  return Object.fromEntries(await Promise.all(packageReadmeFiles.map(async name => {
+  return Object.fromEntries(await Promise.all(files.map(async name => {
     const path = join(directory, name)
     const info = await lstat(path)
     assert.ok(info.isFile() && !info.isSymbolicLink() && info.size <= maximumBytes,

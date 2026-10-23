@@ -1,5 +1,5 @@
 name: Feature request
-description: Propose a focused format, API, integration, deployment, or documentation improvement.
+description: Propose a focused format, API, integration, deployment, or documentation improvement. / 提出一个聚焦的格式、API、集成、部署或文档改进。
 title: '[feature]: '
 labels:
   - enhancement
@@ -9,6 +9,8 @@ body:
       value: |
         Keep one request focused on one user outcome. For a new file format, include a public specification,
         a license-compatible implementation candidate, and at least one redistributable or privately shared sample.
+
+        **中文：** 一个需求只聚焦一个用户目标。新文件格式请附公开规范、许可证兼容的实现候选，以及至少一个可再分发或私下提供的样例。
 
   - type: dropdown
     id: area
@@ -29,7 +31,7 @@ body:
     id: use-case
     attributes:
       label: User problem and use case
-      description: Who needs this, in which workflow, and what currently blocks them?
+      description: Who needs this, in which workflow, and what currently blocks them? / 谁需要它、在什么流程中、目前被什么阻碍？
     validations:
       required: true
 
@@ -37,7 +39,7 @@ body:
     id: proposed-outcome
     attributes:
       label: Proposed outcome
-      description: Describe observable behavior or API acceptance criteria, not only an implementation name.
+      description: Describe observable behavior or API acceptance criteria, not only an implementation name. / 描述可观察的行为或 API 验收标准，而不只是一个实现名称。
     validations:
       required: true
 
@@ -45,19 +47,19 @@ body:
     id: examples
     attributes:
       label: Samples, specifications, or references
-      description: For new formats, provide a legal sample/specification link or note private delivery to admin@flyfish.dev.
+      description: For new formats, provide a legal sample/specification link or note private delivery to admin@flyfish.dev. / 新格式请提供合法的样例 / 规范链接，或注明已私下发送到 admin@flyfish.dev。
 
   - type: textarea
     id: alternatives
     attributes:
       label: Alternatives considered
-      description: What do you use today, and why is it insufficient?
+      description: What do you use today, and why is it insufficient? / 你目前用什么方案，为什么不够？
 
   - type: textarea
     id: licensing
     attributes:
       label: Dependency and license notes
-      description: If suggesting a library, include its license and browser/offline/Worker/WASM implications.
+      description: If suggesting a library, include its license and browser/offline/Worker/WASM implications. / 如果推荐某个库，请写明其许可证以及对浏览器 / 离线 / Worker / WASM 的影响。
 
   - type: checkboxes
     id: confirmations

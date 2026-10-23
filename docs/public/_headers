@@ -37,3 +37,9 @@
 /llms.mdx/*
   Content-Type: text/markdown; charset=utf-8
   Cache-Control: public, max-age=3600, must-revalidate
+
+# The extensionless static search index needs a JSON content type so the host
+# can apply its JSON compression and cache policy.
+/api/search
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=3600, must-revalidate

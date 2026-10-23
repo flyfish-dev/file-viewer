@@ -15,8 +15,6 @@ docker run --rm -p 8080:80 flyfishdev/file-viewer:latest
 
 ## 维护者边界
 
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 官方 Docker 镜像构建与发布、发行归档生成、完整 release gate 都属于完整私有工作区的维护者操作，公开 checkout 不提供这些命令。
 
 如需自定义源码部署，请按照[参与开发](./development.md)中的公开构建命令生成 demo，再使用自己的静态 Web 服务发布。

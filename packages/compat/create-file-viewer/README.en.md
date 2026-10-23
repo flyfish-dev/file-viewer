@@ -1,5 +1,7 @@
 # create-file-viewer
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/create-file-viewer/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/create-file-viewer/README.zh-CN.md)
+
 Official scaffold entry point for `npm create file-viewer`, `pnpm create file-viewer`, `yarn create file-viewer`, and `bun create file-viewer`.
 
 It delegates to the exact matching `@file-viewer/cli` catalog. The default `standard` profile keeps large specialist renderers opt-in; use the prompts or deterministic CLI flags to choose a framework, validated framework version, profile, formats, package source, and self-hosted asset location.

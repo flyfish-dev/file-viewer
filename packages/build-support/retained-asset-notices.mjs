@@ -77,6 +77,24 @@ export async function withRetainedAssetNoticeValidation(validation, manifests) {
     valid: missingRequired.length === 0 }
 }
 
+// A source build may have rebuilt Workers since the bootstrap viewer tree was
+// copied. Stage each retained Worker from the same canonical build as its grants
+// before applying the unchanged byte-for-byte notice gate.
+export async function stageBuiltRetainedWorkers(viewerRoot, { sourceRoot = workspaceRoot } = {}) {
+  const pending = []
+  for (const entry of workerNotices) {
+    try { await stat(join(viewerRoot, entry.runtime)) } catch (error) {
+      if (error.code === 'ENOENT') continue
+      throw error
+    }
+    const bytes = await readFile(resolveWorkspaceAsset(sourceRoot, entry.source))
+    const grant = await readFile(resolveWorkspaceAsset(sourceRoot, entry.grant))
+    assert.ok(bytes.length > 0 && grant.length > 0, `Missing built Worker or complete grants: ${entry.runtime}`)
+    pending.push({ target: join(viewerRoot, entry.runtime), bytes })
+  }
+  for (const { target, bytes } of pending) await writeFile(target, bytes)
+}
+
 export async function stageRetainedAssetNotices(viewerRoot, { sourceRoot = workspaceRoot, externalAssetOwners = [] } = {}) {
   const writes = []
   const readOptional = async path => readFile(path).catch(error => { if (error.code === 'ENOENT') return null; throw error })

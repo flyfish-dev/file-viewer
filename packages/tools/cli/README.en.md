@@ -1,5 +1,7 @@
 # @file-viewer/cli
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/cli/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/cli/README.zh-CN.md)
+
 Create projects, integrate existing applications, select exact capabilities, and prepare offline File Viewer delivery. The CLI carries only a frozen capability catalog; it does not duplicate renderers, Workers, WASM, fonts, or static assets.
 
 - [CLI home](https://file-viewer.app/en/cli/)

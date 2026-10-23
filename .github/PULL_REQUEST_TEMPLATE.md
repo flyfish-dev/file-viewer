@@ -4,6 +4,10 @@ Thank you for contributing. Keep the comments: they explain the evidence contrac
 PR title format: type(scope): concise outcome
 Allowed types: feat, fix, perf, refactor, docs, test, build, ci, chore, revert
 Example: fix(spreadsheet): preserve WPS embedded image dimensions
+
+中文：感谢贡献。请保留这些注释，它们说明证据约定，校验时会被忽略。
+PR 标题格式：type(scope): 简洁的结果描述；各小节标题请保持英文，校验依赖这些标题。
+详见 CONTRIBUTING.md 的「中文说明」。
 -->
 
 ## Summary

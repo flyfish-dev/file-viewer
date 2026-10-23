@@ -1,8 +1,10 @@
 # @file-viewer/renderer-cad
 
-Flyfish File Viewer 的独立 CAD renderer 包。它基于 `@flyfish-dev/cad-viewer` 提供 DWG、DXF、DWF、DWFx 和 XPS 的浏览器端预览，并通过 File Viewer 统一的 asset manifest 解析 wasm / worker 路径，适合企业内网和离线部署。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/cad/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/cad/README.zh-CN.md)
 
-## 用法
+Standalone CAD renderer package for Flyfish File Viewer. It is powered by `@flyfish-dev/cad-viewer`, previews DWG, DXF, DWF, DWFx, and XPS in the browser, and resolves wasm / worker URLs through the File Viewer asset manifest for offline enterprise deployments.
+
+## Usage
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -14,7 +16,7 @@ const options = {
 }
 ```
 
-也可以和其他 renderer 一起组合：
+You can also compose it with other renderer packages:
 
 ```ts
 import { cadRenderer } from '@file-viewer/renderer-cad'
@@ -26,17 +28,17 @@ const options = {
 }
 ```
 
-## 能力边界
+## Capabilities
 
-- 支持 `.dwg`、`.dxf`、`.dwf`、`.dwfx`、`.xps`。
-- DWG 使用 Worker + LibreDWG WASM 按需解析，避免阻塞主线程。
-- DXF 使用 JavaScript parser 并归一化为统一 CAD document。
-- DWF / DWFx / XPS 使用 native renderer，并通过 `dwfv-render.wasm` 提供高性能 raster / WebGL fallback。
-- 支持图层显示切换、结构统计、适配视图、缩放、全局 toolbar zoom provider 和 resize observer。
+- Supports `.dwg`, `.dxf`, `.dwf`, `.dwfx`, and `.xps`.
+- DWG is parsed on demand with a worker and LibreDWG WASM to keep the main thread responsive.
+- DXF is parsed in JavaScript and normalized into the common CAD document model.
+- DWF / DWFx / XPS use the native renderer with `dwfv-render.wasm` for performant raster / WebGL fallback.
+- Includes layer toggling, structure stats, fit-to-view, zoom controls, global toolbar zoom provider, and resize handling.
 
-## 离线资产
+## Offline Assets
 
-默认会从 viewer assets 下读取：
+The default asset paths are:
 
 - `wasm/cad/`
 - `wasm/cad/dwg-worker.js`
@@ -44,17 +46,17 @@ const options = {
 - `wasm/cad/libredwg-web.js`
 - `wasm/cad/libredwg-web.wasm`
 
-私有化部署时可以通过 `options.cad.wasmPath`、`options.cad.workerUrl`、`options.cad.dwfWasmUrl` 覆盖。
+For private deployments, override them with `options.cad.wasmPath`, `options.cad.workerUrl`, and `options.cad.dwfWasmUrl`.
 
-## 迁移说明
+## Migration Note
 
-CAD 预览已经从 `@file-viewer/core` 中彻底移出，core 只保留资产 manifest、类型和兼容错误提示，不再默认安装 `@flyfish-dev/cad-viewer`。完整 CAD 能力请安装本包并传入 `renderers`，或直接使用 `@file-viewer/preset-all`。
+CAD preview has moved completely out of `@file-viewer/core`. Core now only keeps the asset manifest, shared types, and a compatibility error message, and it no longer installs `@flyfish-dev/cad-viewer` by default. Install this package and pass it through `renderers`, or use `@file-viewer/preset-all` for the complete CAD experience.
 
-## 黑白出图模式
+## Monochrome plot mode
 
-`cad.colorMode` 可设为 `source` 或 `monochrome`。黑白模式通过 CAD 引擎的实体颜色策略实现，不使用 CSS 滤镜，因此 Canvas、WebGL、文字覆盖层及原生 DWF 渲染可保持一致，同时保留透明度、线型、线宽和源文件数据。
+Set `cad.colorMode` to `source` or `monochrome`. Monochrome rendering uses the CAD engine's entity-color policy rather than a CSS filter, keeping Canvas, WebGL, text overlays and native DWF output consistent while preserving alpha, line types, line weights and source data.
 
-默认原色模式使用深色背景，黑白模式使用白纸黑线。自适应对比度会提高与背景过近的线条和文字的可见性；要求严格显示源颜色时可设 `cad.canvasOptions.contrastMode: 'preserve'`。显式设置的 `cad.canvasOptions.background` / `cad.dwfBackground` 不会被模式切换覆盖。
+Source mode defaults to a dark background; monochrome defaults to black lines on white paper. Adaptive contrast makes lines and text near the background color readable. Use `cad.canvasOptions.contrastMode: 'preserve'` for exact source colors. Explicit `cad.canvasOptions.background` / `cad.dwfBackground` values survive mode changes.
 
 ```ts
 {
@@ -66,10 +68,10 @@ CAD 预览已经从 `@file-viewer/core` 中彻底移出，core 只保留资产 m
 }
 ```
 
-### 图片、打印与离线 HTML
+### Images, print and offline HTML
 
-先选择原色或黑白模式，再使用统一工具栏的“打印”或“HTML”。输出会重新绘制并立即捕获当前视图，包含 WebGL 线条和文字覆盖层，不含图层面板或工具栏。HTML 内嵌 PNG，不依赖临时 blob 地址；打印窗口可使用浏览器的“另存为 PDF”，并保留 File Viewer 的权限检查、水印和遮罩。
+Select the color mode, then use Print or HTML in the shared toolbar. Output redraws and captures the current view, including WebGL lines and text overlays, without layer panels or controls. HTML embeds a PNG instead of a temporary blob URL. The print window supports the browser's Save as PDF and retains File Viewer permission checks, watermarks and masks.
 
-CAD 工具栏的 PNG、JPEG 按钮下载同一视图，并保留配置的文本或图片水印。`toolbar.permissions.download` 与 `toolbar.permissions['export-html']` 都必须允许；捕获前由所属组件执行既有 `beforeOperation`、工具栏 `beforeOperation` 和 `beforeDownload` 钩子。取消操作、切换文档或撤销权限后不会下载旧快照。`cad.showImageExport: false` 可隐藏这两个格式专用按钮。水印资源不可读时明确失败，预览仍保持可用。打印遮罩仅作用于打印，不作用于图片下载。
+PNG and JPEG buttons download the same rendered view, including configured text or image watermarks. Both `toolbar.permissions.download` and `toolbar.permissions['export-html']` must allow the operation. The owning viewer runs its normal `beforeOperation`, toolbar `beforeOperation` and `beforeDownload` hooks before capture; cancellation or a document/permission change prevents the download. Use `cad.showImageExport: false` to hide these renderer-local buttons. A missing watermark fails explicitly without breaking the live preview. Print masks apply to Print, not to image downloads.
 
-这里输出的是当前相机视图 / 当前 DWF 页的栅格快照，不是整个 CAD 文件的矢量转换，也不会自动批量打印其他图纸页。需要完整图纸时先点击“适配”。原文件下载始终保持输入字节不变。
+This is a raster snapshot of the current camera view / current DWF page, not a vector conversion or batch export of every sheet. Use Fit first to include the full drawing. Original-file download never changes the input bytes.

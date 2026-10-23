@@ -94,7 +94,7 @@ jobs:
 
       - name: Retain cold browser runtime evidence
         if: always() && steps.impact.outputs.runtime != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: cold-browser-runtime-evidence
           path: |
@@ -295,7 +295,7 @@ jobs:
 
       - name: Retain intermediate renderer browser evidence
         if: always() && steps.impact.outputs.runtime != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: intermediate-renderer-browser-evidence
           path: |
@@ -351,7 +351,7 @@ jobs:
 
       - name: Upload packed-consumer failure evidence
         if: failure() && steps.impact.outputs.runtime != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: packed-issue-consumer-evidence
           path: output/packed-issue-consumer/*/angular-regression-evidence
@@ -360,7 +360,7 @@ jobs:
 
       - name: Upload packed-consumer security evidence
         if: always() && steps.impact.outputs.runtime != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: packed-consumer-security-evidence
           path: |
@@ -397,7 +397,7 @@ jobs:
 
       - name: Retain packed Web Full evidence
         if: always() && steps.impact.outputs.runtime != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: web-full-packed-evidence
           path: |

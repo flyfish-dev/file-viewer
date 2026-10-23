@@ -3,9 +3,9 @@ import { mkdir } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
-import { writeBundleInventory } from '../../packages/build-support/bundle-inventory.mjs'
-import { writeBundleNotices } from '../../packages/build-support/bundle-notices.mjs'
-import { bundleInputPlugin } from '../../packages/build-support/rollup-bundle-inputs.mjs'
+import { writeBundleInventory } from '../packages/build-support/bundle-inventory.mjs'
+import { writeBundleNotices } from '../packages/build-support/bundle-notices.mjs'
+import { bundleInputPlugin } from '../packages/build-support/rollup-bundle-inputs.mjs'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const sourceRoot = resolve(scriptDir, '../..')

@@ -1,5 +1,7 @@
 # @file-viewer/renderer-3d
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/README.zh-CN.md)
+
 Standalone 3D model renderer for Flyfish File Viewer. It uses Three.js, OrbitControls, and lazy format-specific loaders for GLB / GLTF, OBJ, STL, PLY, FBX, DAE, 3DS, 3MF, AMF, USD, KMZ, PCD, VRML, XYZ, VTK, and related files. STEP / STP, IGES / IGS, and BREP use a local OCCT worker for real geometry decoding and rendering.
 
 ## Usage

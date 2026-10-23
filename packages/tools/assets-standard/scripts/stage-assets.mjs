@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { stageRetainedAssetNotices, withRetainedAssetNoticeManifests } from '../../../build-support/retained-asset-notices.mjs'
+import { stageBuiltRetainedWorkers, stageRetainedAssetNotices, withRetainedAssetNoticeManifests } from '../../../build-support/retained-asset-notices.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const sourceRoot = resolve(packageDir, '../../..')
@@ -53,6 +53,7 @@ for (const asset of selected.flatMap(item => item.assets)) {
   const info = await stat(targetPath)
   if (!info.isFile() && !info.isDirectory()) throw new Error(`Invalid standard asset: ${targetPath}`)
 }
+await stageBuiltRetainedWorkers(targetDir)
 await stageRetainedAssetNotices(targetDir)
 selected = withRetainedAssetNoticeManifests(selected)
 await writeFile(resolve(targetDir, manifestFilename), `${JSON.stringify({

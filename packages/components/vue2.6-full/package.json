@@ -55,7 +55,8 @@
     "dist",
     "scripts/copy-assets.mjs",
     "README.md",
-    "README.en.md"
+    "README.en.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json",

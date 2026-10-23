@@ -1,8 +1,10 @@
 # @file-viewer/renderer-mindmap
 
-Flyfish File Viewer 的独立 XMind / Mind Map renderer 包。它负责解析现代 `content.json` 和经典 `content.xml` XMind 文件，并使用轻量 `@panzoom/panzoom` 提供支持拖拽平移、移动端双指缩放、键盘平移、自适应容器尺寸、统一 toolbar 状态同步和定位的脑图画布。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/mindmap/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/mindmap/README.zh-CN.md)
 
-## 用法
+Standalone XMind and mind map renderer package for Flyfish File Viewer. It parses modern `content.json` and classic `content.xml` XMind files, then renders an interactive `@panzoom/panzoom` powered canvas with drag panning, mobile pinch zoom, keyboard panning, responsive viewport fitting, unified toolbar state sync, sheet tabs, and node navigation.
+
+## Usage
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -14,7 +16,7 @@ const options = {
 }
 ```
 
-也可以和其他 renderer 一起组合：
+You can combine it with other renderer packages:
 
 ```ts
 import { pdfRenderer } from '@file-viewer/renderer-pdf'
@@ -26,15 +28,15 @@ const options = {
 }
 ```
 
-## 能力边界
+## Capabilities
 
-- 支持 `.xmind`。
-- 支持 XMind 2020+ 的 `content.json` 和 XMind 8 / Classic 的 `content.xml`。
-- 支持多 sheet、节点层级、标签、备注、链接、图片资源提示、概要/标注/浮动节点状态。
-- 支持工具栏缩放、适配画布、Panzoom 拖拽平移、移动端双指缩放、按帧合并平移更新、`Ctrl` / `Command` + 滚轮指针缩放、键盘方向键平移。
-- 首次打开和容器尺寸变化时会自动适配视图；用户手动拖拽、滚轮或缩放后会保留当前画布视角，只做安全边界校正。
-- 浏览器 smoke 会对 `.xmind` 样例执行真实 pan 回归，覆盖普通 Pointer、节点起手拖拽、滚轮平移和真实鼠标拖拽，避免画布再次退化成“能打开但拖不动”。
+- Supports `.xmind`.
+- Supports XMind 2020+ `content.json` and XMind 8 / Classic `content.xml`.
+- Supports multiple sheets, hierarchy, labels, notes, hyperlinks, image resource hints, summaries, callouts, and floating-topic states.
+- Supports toolbar zoom, fit-to-canvas, Panzoom drag panning, requestAnimationFrame-coalesced pan updates, `Ctrl` / `Command` + wheel pointer zoom, arrow-key panning, and mobile pinch zoom.
+- Auto-fits the canvas on first render and host resize; after a user pans, wheels, or zooms manually, the renderer preserves the current view and only clamps unsafe bounds.
+- Release browser smoke runs a real `.xmind` pan regression across normal Pointer, node-start dragging, wheel panning, and real mouse drag paths, so the canvas cannot silently regress into a non-draggable preview.
 
-## 迁移说明
+## Migration Note
 
-core 已不再内置 XMind 解析器，也不会默认安装 `@ljheee/xmind-parser`。需要 XMind 脑图预览时，请显式安装本包，或直接使用 `@file-viewer/preset-all` 聚合能力。
+The core package no longer bundles the XMind parser and no longer installs `@ljheee/xmind-parser` by default. Install this renderer explicitly, or use `@file-viewer/preset-all`, when XMind preview is required.

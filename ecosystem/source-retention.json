@@ -5875,6 +5875,1361 @@
       "path": "packages/renderers/design/source/postscript/stet-safe-browser.patch",
       "replacement": "packages/renderers/design/source/postscript/upstream.json",
       "reason": "Stet 0.8.7 uses unmodified upstream source; the obsolete font-substitution/profile-removal patch must not be applied."
+    },
+    {
+      "path": "BRANCHES.md",
+      "replacement": "CONTRIBUTING.md",
+      "reason": "Private repository administration is retained privately; the public contribution workflow is the applicable entry."
+    },
+    {
+      "path": "WRAPPER_ECOSYSTEM.md",
+      "replacement": "docs/guide/ecosystem.md",
+      "reason": "Obsolete private export/release workflow is retained privately; current public package integration guidance is retained."
+    },
+    {
+      "path": "docs/maintenance/3.0.3-preparation.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/dependency-review-20260912.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/docx-upstream-preparation.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/issues-3.0.2.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/issues-3.0.3-preparation.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/issues-unreleased.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/issues-v2.3.0.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/issues-v2.3.2.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/pr-issue-review-20260912.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/maintenance/release-readiness-20260911.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/archive-filenames-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/archive-original-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/compatibility-review-20260922.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/container-compatibility-20260922.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/corpus-completion-20261007.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/corpus-progress-20260922.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/docx-chart-axes-20260925.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/docx-engine-compatibility-20260922.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/docx-grid-metrics-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/docx-paragraph-flow-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/archive-original-20260923/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/chart-geometry.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/doc-table.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/docx-pagination.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/docx-pagination.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/markdown-anchors.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/pptx-charts.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/pptx-table.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/compatibility-20260922/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/container-compatibility-20260922/original-checks.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/container-compatibility-20260922/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/container-compatibility-20260922/word-html.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/corpus-combined-20260922/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/corpus-combined-20260922/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/corpus-combined-20260922/prior-output.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/corpus-combined-20260922/prior-renderers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/corpus-combined-20260922/spreadsheet.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/corpus-combined-20260922/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/grid.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/original-chart-geometry-1.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/original-chart-geometry-2.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/original-header-1.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/original-header-2.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-chart-axes-20260925/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/charts.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/containers-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/geometry.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/original-checks.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/previous-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-engine-compatibility-20260922/worker.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-grid-metrics-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-grid-metrics-20260924/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-grid-metrics-20260924/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-grid-metrics-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-grid-metrics-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-grid-metrics-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/ci-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/engine-regression.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/guard-fixture.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/guard-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/original-benchmark.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/original-parity.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/original-verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/prior-engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/docx-paragraph-flow-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/lrc-20260923/annotated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/lrc-20260923/ci-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/lrc-20260923/local-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/lrc-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/native-doc-tables-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/native-doc-tables-20260924/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/native-doc-tables-20260924/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/native-doc-tables-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/native-doc-tables-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/native-doc-tables-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/ofd-layout-20260923/ci-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/ofd-layout-20260923/original-checks.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/ofd-layout-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/README.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/canvas-export.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/docx-a4.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/docx-mixed-paper.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/docx-mixed-paper.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-jpx.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-jpx.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-requests.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-rotation-0.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-rotation-0.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-rotation-90.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-rotation-90.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-thumbnail-0.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/pdf-thumbnail-90.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/previous-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/output-compatibility-20260922/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-original-20260923/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-original-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-pptx-frozen-20260923/pdf.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-pptx-frozen-20260923/pptx.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-pptx-frozen-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-viewport-20260923/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-viewport-20260923/revealed.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-viewport-20260923/revealed.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pdf-viewport-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-billboard4-hover/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-billboard4-hover/interaction.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-chart-families-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-chart-families-20260924/drawing-regression.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-chart-families-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-chart-families-20260924/paragraph-regression.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-chart-families-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-chart-families-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/charts.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/drawing.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/paragraphs.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/text.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-diagram-text-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-drawing-semantics-20260923/after.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-drawing-semantics-20260923/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-drawing-semantics-20260923/before.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-drawing-semantics-20260923/prior-paragraph.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-drawing-semantics-20260923/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-drawing-semantics-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-original-overlays-20260926/pptx-chart-families.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-original-overlays-20260926/pptx-diagram-text.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-original-overlays-20260926/pptx-drawing-semantics.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-original-overlays-20260926/pptx-original-text-overlays.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-original-overlays-20260926/pptx-paragraph-numbering.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-original-overlays-20260926/pptx-text-body.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-original-overlays-20260926/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-paragraph-20260923/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-paragraph-20260923/geometry.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-paragraph-20260923/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-paragraph-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-text-body-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-text-body-20260924/charts.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-text-body-20260924/drawing.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-text-body-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-text-body-20260924/paragraphs.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-text-body-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/pptx-text-body-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-chart-indexing-20260923/after.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-chart-indexing-20260923/baseline-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-chart-indexing-20260923/generated-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-chart-indexing-20260923/original-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-chart-indexing-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-layout-20260923/ci-report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-layout-20260923/original-checks.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-layout-20260923/sheet-layout.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-layout-20260923/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-text-20260922/original-checks.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-text-20260922/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-text-20260922/unicode-cell.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/spreadsheet-text-20260922/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/container-compatibility.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/docx-engine-compatibility.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/word-embedded-content.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/word-merged-borders.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/word-vml-text.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-embedded-content-20261006/word-zoom-fit.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-explicit-tabs-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-explicit-tabs-20260924/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-explicit-tabs-20260924/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-explicit-tabs-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-explicit-tabs-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-explicit-tabs-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/export.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/merged.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/originals.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-export-originals-20260926/vml.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-layout-subcases-20260924/engine-regression.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-layout-subcases-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-layout-subcases-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-merged-borders-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-merged-borders-20260924/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-merged-borders-20260924/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-merged-borders-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-merged-borders-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-merged-borders-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-merged-borders-20260924/vml.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/after.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/before.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/tabs.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-vml-text-20260924/wordml.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-zoom-fit-20261006/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-zoom-fit-20261006/container-compatibility.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-zoom-fit-20261006/docx-engine-compatibility.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-zoom-fit-20261006/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-zoom-fit-20261006/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/word-zoom-fit-20261006/word-zoom-fit.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/wordml-encoding-defaults-20260924/baseline.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/wordml-encoding-defaults-20260924/containers.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/wordml-encoding-defaults-20260924/engine.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/wordml-encoding-defaults-20260924/generated.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/wordml-encoding-defaults-20260924/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/wordml-encoding-defaults-20260924/tabs-regression.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/evidence/wordml-encoding-defaults-20260924/verification.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/intermediate-reconciliation-20261008.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-248.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-266.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-266/after-docx-seals.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-266/after-ofd-date.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-266/after-wordml.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-266/before-docx-seals.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-266/before-ofd-date.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-266/before-wordml.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-267/advanced/README.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-267/advanced/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-267/ifc4.ifc.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-267/ifc43.ifc.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-267/report.json",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-268.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-268/after-slide-3.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-268/after-slide-6.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-268/before-slide-3.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-268/before-slide-6.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-292.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-297/README.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-298.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/issue-299.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/lrc-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/native-doc-tables-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/ofd-layout-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/output-compatibility-20260922.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pdf-viewport-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pptx-billboard4-hover.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pptx-chart-families-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pptx-diagram-text-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pptx-drawing-semantics-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pptx-original-overlays-20260926.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pptx-paragraph-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/pptx-text-body-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/spreadsheet-chart-indexing-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/spreadsheet-layout-20260923.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/spreadsheet-text-20260922.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/text-single-byte-encodings.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/text-single-byte-encodings/original-before-after.png",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/word-embedded-content-20261006.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/word-explicit-tabs-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/word-export-originals-20260926.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/word-layout-subcases-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/word-merged-borders-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/word-vml-text-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/word-zoom-fit-20261006.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "docs/regressions/wordml-encoding-defaults-20260924.md",
+      "replacement": "docs/guide/development.md",
+      "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
     }
   ]
 }

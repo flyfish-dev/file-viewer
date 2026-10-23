@@ -1,5 +1,7 @@
 # msdoc-viewer
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/msdoc-viewer/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/compat/msdoc-viewer/README.zh-CN.md)
+
 `msdoc-viewer` is the historical compatibility alias for `@file-viewer/doc`. Existing projects can keep their old imports; new projects should install:
 
 ```bash

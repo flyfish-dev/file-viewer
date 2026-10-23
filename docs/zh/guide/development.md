@@ -1,9 +1,5 @@
 # 参与开发
 
-> **Maintainer-only commands:** this page contains complete-workspace release or verification examples that are not part of the public checkout. Public contributors should use the commands in `/README.md` or `/docs/guide/development.md`.
-
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 本页只描述 GitHub 公开 checkout 中可重复执行的开发流程。发布、部署和仓库同步等维护者操作保留在完整私有工作区，不在公开仓暴露无效命令。
 
 ## 环境要求

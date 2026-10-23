@@ -1,5 +1,7 @@
 # @file-viewer/eda-orcad
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/eda-orcad/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/eda-orcad/README.zh-CN.md)
+
 Framework-neutral OrCAD / Allegro binary inspection helpers for Flyfish File Viewer. It provides CFB/OLE2 detection, safe text sampling, hex preview, and string extraction primitives without any UI dependency.
 
 ```ts

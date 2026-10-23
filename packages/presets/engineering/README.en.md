@@ -1,5 +1,7 @@
 # @file-viewer/preset-engineering
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.zh-CN.md)
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/preset-engineering"><img src="https://img.shields.io/npm/v/@file-viewer%2Fpreset-engineering?logo=npm" alt="npm version"></a>
@@ -9,7 +11,7 @@
 </p>
 
 <p>
-  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/">Docs</a> · <a href="https://demo.file-viewer.app/">Live demo</a> · <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">Issues</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.md">简体中文</a>
+  <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a> · <a href="https://doc.file-viewer.app/">Docs</a> · <a href="https://demo.file-viewer.app/">Live demo</a> · <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> · <a href="https://github.com/flyfish-dev/file-viewer/issues">Issues</a> · <a href="https://github.com/flyfish-dev/file-viewer/blob/main/packages/presets/engineering/README.zh-CN.md">简体中文</a>
 </p>
 
 <p>

@@ -1,5 +1,7 @@
 # @file-viewer/renderer-mindmap
 
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/mindmap/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/mindmap/README.zh-CN.md)
+
 Standalone XMind and mind map renderer package for Flyfish File Viewer. It parses modern `content.json` and classic `content.xml` XMind files, then renders an interactive `@panzoom/panzoom` powered canvas with drag panning, mobile pinch zoom, keyboard panning, responsive viewport fitting, unified toolbar state sync, sheet tabs, and node navigation.
 
 ## Usage

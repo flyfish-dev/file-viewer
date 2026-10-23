@@ -55,7 +55,8 @@
     "catalog",
     "README.md",
     "README.en.md",
-    "LICENSE"
+    "LICENSE",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "stage-catalog": "node scripts/stage-catalog.mjs",

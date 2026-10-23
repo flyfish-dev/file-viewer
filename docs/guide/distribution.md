@@ -26,6 +26,4 @@ See [Development](./development.md) for the complete public quality gate and [Do
 
 ## Maintainer boundary
 
-<!-- FILE_VIEWER_MAINTAINER_COMMANDS -->
-
 Versioning, npm publication, official Docker publication, Cloudflare deployment, repository synchronization and release signing are maintainer-only operations in the complete private workspace. This separation keeps public commands accurate and prevents private operational tooling from leaking into the open-source boundary.

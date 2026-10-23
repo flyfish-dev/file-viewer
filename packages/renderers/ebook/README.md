@@ -1,8 +1,10 @@
 # @file-viewer/renderer-epub
 
-Flyfish File Viewer 的独立电子书 renderer 包。它负责 `.epub` 文件解析、目录展示、滚动阅读、上一页/下一页导航和阅读进度同步，也负责 `.umd` 移动电子书的元数据、目录和 zlib 正文解析。
+[English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/ebook/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/ebook/README.zh-CN.md)
 
-## 用法
+Standalone ebook renderer package for Flyfish File Viewer. It handles `.epub` parsing, table-of-contents navigation, scrolling reading, previous/next navigation, reading progress, and `.umd` mobile ebook metadata, TOC, and zlib text blocks.
+
+## Usage
 
 ```ts
 import FileViewer from '@file-viewer/vue3'
@@ -14,7 +16,7 @@ const options = {
 }
 ```
 
-也可以与其他 renderer 组合：
+You can also compose it with other renderers:
 
 ```ts
 import { ebookRenderer } from '@file-viewer/renderer-epub'
@@ -27,15 +29,21 @@ const options = {
 }
 ```
 
-## 能力边界
+## Capabilities
 
-- `.epub` 使用包内置的 `epubjs` 引擎解析 EPUB 包、OPF 元数据、导航目录和章节资源。引擎按需加载，并在构建时固定使用安全的 XML DOM 实现；用户无需额外安装引擎或配置 CDN。
-- `.umd` 使用项目内解析器读取早期移动电子书封装，并通过 `pako` 解压正文段。
-- 阅读区采用滚动文档模式，兼容性优先，避免部分浏览器在超宽分页布局下出现正文白板。
-- 支持目录窗格显隐、章节跳转、上一页/下一页和阅读进度展示。
-- 不绑定任何在线服务或公共 CDN，适合内网知识库、培训资料和长文档附件预览。
-- 随包的 `dist/vendor/epubjs.NOTICE.txt` 记录引擎及所有内联依赖的版本、来源和许可证文本。
+- Parses `.epub` packages, OPF metadata, navigation, and chapter resources with the bundled `epubjs` engine. The engine is lazy-loaded and built against the pinned safe XML DOM implementation, so consumers do not need another package or a CDN.
+- Parses `.umd` mobile ebook containers with the project parser and inflates text blocks through `pako`.
+- Uses scrolling reading mode for compatibility, avoiding blank content in browsers that struggle with very wide paginated EPUB layouts.
+- Supports TOC visibility, chapter jumping, previous/next navigation, and reading progress.
+- Does not depend on any online service or public CDN, making it suitable for intranet knowledge bases, training materials, and long-form attachment preview.
+- `dist/vendor/epubjs.NOTICE.txt` records the versions, sources, and license texts for the engine and every inlined dependency.
 
-## 迁移说明
+## Reading theme
 
-`@file-viewer/core` 已不再内置 EPUB / UMD renderer，也不再直接安装 `epubjs` 或 `pako`。需要电子书预览时，请显式安装本包，或直接使用 `@file-viewer/preset-all` 聚合能力；`epubjs` 已作为本包的离线懒加载产物随包发布，不会进入应用的外部生产依赖树。
+The no-reload behavior applies to observed theme attributes, system color-scheme changes and the Vanilla core theme update path. Framework component and toolbar/controller option updates may reinitialize the preview.
+
+EPUB chapters and navigation follow `options.theme`, including `system` and live changes. Dark reading overrides text and solid backgrounds without inverting images or reloading the chapter. Set `epub.darkMode: false` to retain the book's authored colors, or `true` to force dark reading. UMD and FB2 rendering are unchanged.
+
+## Migration Note
+
+The core package no longer bundles the EPUB / UMD renderer and no longer installs `epubjs` or `pako` directly. Install this renderer explicitly, or use `@file-viewer/preset-all`, when ebook preview is required. The EPUB engine ships as an offline, lazy-loaded artifact inside this package and does not enter the application's external production dependency tree.

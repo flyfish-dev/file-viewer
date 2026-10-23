@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import test from 'node:test'
 import { createRequire } from 'node:module'
-import { resolveRetainedAssetNoticeSource, stageRetainedAssetNotices, withRetainedAssetNoticeManifests, withRetainedAssetNoticeValidation } from './retained-asset-notices.mjs'
+import { resolveRetainedAssetNoticeSource, stageBuiltRetainedWorkers, stageRetainedAssetNotices, withRetainedAssetNoticeManifests, withRetainedAssetNoticeValidation } from './retained-asset-notices.mjs'
 
 test('retained host legal sources require an exact declared runtime and notice pair', () => {
   const runtime = { id: 'postscript-design-wasm', rendererId: 'postscript-design',
@@ -58,6 +58,34 @@ test('copied Workers keep their complete original grants and reject a stale buil
   } finally {
     await rm(root, { recursive: true, force: true })
   }
+})
+
+test('source builds stage the rebuilt spreadsheet Worker before the unchanged notice gate', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'file-viewer-built-worker-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const sourceRoot = join(root, 'source')
+  await seedMaterialSources(sourceRoot)
+  const viewer = join(root, 'viewer')
+  const source = join(sourceRoot, 'packages/renderers/spreadsheet/dist/worker/sheet.worker.js')
+  const grantSource = join(sourceRoot, 'packages/renderers/spreadsheet/dist/worker.THIRD_PARTY_LICENSES.txt')
+  const target = join(viewer, 'vendor/xlsx/sheet.worker.js')
+  await mkdir(dirname(source), { recursive: true })
+  await mkdir(dirname(target), { recursive: true })
+  await writeFile(source, 'export const currentSourceBuild = true\n')
+  // Use the reviewed complete original grants seeded for this canonical build.
+  const grant = await readFile(grantSource)
+  await writeFile(target, 'stale bootstrap Worker\n')
+  await assert.rejects(() => stageRetainedAssetNotices(viewer, { sourceRoot }), /differs from its original notice build/)
+  await stageBuiltRetainedWorkers(viewer, { sourceRoot })
+  assert.deepEqual(await readFile(target), await readFile(source))
+  await stageRetainedAssetNotices(viewer, { sourceRoot })
+  assert.deepEqual(await readFile(join(dirname(target), 'licenses/THIRD_PARTY_LICENSES.txt')), grant)
+  const receipt = JSON.parse(await readFile(join(viewer, 'THIRD_PARTY_LICENSES.assets.json')))
+  assert.ok(receipt.materials.some(entry => entry.path === 'vendor/xlsx/licenses/THIRD_PARTY_LICENSES.txt'
+    && entry.runtimePaths.includes('vendor/xlsx/sheet.worker.js')))
+  assert.ok(receipt.runtimeFiles.some(entry => entry.path === 'vendor/xlsx/sheet.worker.js'))
+  await writeFile(target, 'tampered Worker\n')
+  await assert.rejects(() => stageRetainedAssetNotices(viewer, { sourceRoot }), /differs from its original notice build/)
 })
 
 test('asset manifests deploy legal directories alongside exactly their declared payloads', () => {

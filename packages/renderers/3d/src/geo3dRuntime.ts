@@ -33,6 +33,7 @@ import {
 } from './geo3dArchive.js'
 import { byteLimit, checkAbort, createRangeGetter, readBoundedResponse } from './geo3dRange.js'
 import { resolveGeo3dCrs, type Geo3dCrsInput } from './geo3dCrs.js'
+import { inspectLasCrsRangeSource } from './geo3dLasCrs.js'
 import { createGeo3dLasWorkers } from './geo3dLasWorkers.js'
 import { createGeo3dRasterWorkers } from './geo3dRasterWorkers.js'
 import { runGeo3dHook, type Geo3dHookResult } from './geo3dHooks.js'
@@ -400,6 +401,9 @@ export async function renderGeo3d(
       const factories = await import('./geo3dPointFactories.js')
       checkAbort(signal)
       let pointSource
+      let lasBytes: Promise<Uint8Array> | undefined
+      const loadLasBytes = () => lasBytes ??= whole(source, maxLasBytes, signal)
+      owned.push(() => { lasBytes = undefined })
       if (format === 'copc') {
         // Content-Range, body length and representation identity are validated together.
         const input = {
@@ -411,7 +415,7 @@ export async function renderGeo3d(
         pointSource = factories.createCOPCSource(workers, input)
       } else {
         const input = {
-          url: () => whole(source, maxLasBytes, signal),
+          url: loadLasBytes,
           enableWorkers: pointOptions?.enableWorkers,
           decimate: pointOptions?.decimate,
           compressColorsTo8Bit: pointOptions?.compressColorsTo8Bit
@@ -419,11 +423,26 @@ export async function renderGeo3d(
         pointSource = factories.createLASSource(workers, input)
       }
       sourceObject = pointSource
+      // Raw LAS/LAZ already requires a bounded whole read. Inspect the same
+      // immutable bytes the decoder receives, avoiding repeated full downloads
+      // on servers that ignore Range and metadata/point representation races.
+      // COPC retains bounded range-only metadata access.
+      const lasCrs = await inspectLasCrsRangeSource(format === 'copc'
+        ? createGeo3dProbeRangeGetter({ ...source, signal })
+        : async (begin, end) => (await loadLasBytes()).subarray(begin, end))
       await pointSource.initialize()
+      lasBytes = undefined
       checkAbort(signal)
       metadata = (await pointSource.getMetadata()) as unknown as Geo3dMetadataLike
-      const native =
+      let native =
         typeof metadata?.crs === 'string' ? await resolveGeo3dCrs(metadata.crs) : metadata?.crs
+      if (!native || native.isUnknown()) {
+        if (lasCrs.crs) native = await resolveGeo3dCrs(lasCrs.crs)
+        else if (lasCrs.hasCrsMetadata) throw new Error(
+          'LAS CRS metadata cannot be resolved. Add an authoritative EPSG GeoKey or WKT definition before loading; coordinates are not silently relabelled.'
+        )
+      }
+      if (native && !native.isUnknown()) metadata = { ...metadata, crs: native }
       const scene = await resolveGeo3dCrs(instanceCrs, native)
       // Giro3D PointCloud keeps source coordinates; unlike Map it does not
       // reproject them into the Instance CRS. Reject before constructing a scene.

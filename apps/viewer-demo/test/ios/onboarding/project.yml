@@ -1,0 +1,23 @@
+name: FileViewerDemoOnboarding
+options:
+  deploymentTarget:
+    iOS: '18.0'
+settings:
+  CODE_SIGNING_ALLOWED: NO
+  GENERATE_INFOPLIST_FILE: YES
+  SWIFT_VERSION: '5.0'
+targets:
+  DemoOnboardingTests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [Tests]
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: dev.flyfish.fileviewer.onboardingtests
+      TARGETED_DEVICE_FAMILY: '1'
+schemes:
+  DemoOnboarding:
+    build:
+      targets:
+        DemoOnboardingTests: [test]
+    test:
+      targets: [DemoOnboardingTests]
