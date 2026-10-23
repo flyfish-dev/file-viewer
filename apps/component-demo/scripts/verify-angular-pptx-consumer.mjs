@@ -66,7 +66,8 @@ const report = {
   angular: consumerRequire('@angular/core/package.json').version,
   tooling: {
     build: consumerRequire('@angular/build/package.json').version,
-    cli: consumerRequire('@angular/cli/package.json').version
+    cli: consumerRequire('@angular/cli/package.json').version,
+    vite: createRequire(consumerRequire.resolve('@angular/build/package.json'))('vite/package.json').version
   },
   baseHref: '/ui/',
   expectedSlides,
@@ -79,6 +80,7 @@ const acceptedFixture = JSON.parse(
 assert.equal(report.angular, acceptedFixture.dependencies['@angular/core'])
 assert.equal(report.tooling.build, acceptedFixture.devDependencies['@angular/build'])
 assert.equal(report.tooling.cli, acceptedFixture.devDependencies['@angular/cli'])
+assert.equal(report.tooling.vite, acceptedFixture.overrides['@angular/build'].vite)
 let dev,
   server,
   page,

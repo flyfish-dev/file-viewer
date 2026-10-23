@@ -25,7 +25,8 @@
   },
   "overrides": {
     "@angular/build": {
-      "piscina": "5.3.2"
+      "piscina": "5.3.2",
+      "vite": "8.3.4"
     },
     "@angular/cli": {
       "@modelcontextprotocol/sdk": "1.31.0"

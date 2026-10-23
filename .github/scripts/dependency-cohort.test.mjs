@@ -43,6 +43,9 @@ function angularCohort(manifest) {
 const fixture = JSON.parse(read('apps/component-demo/test/angular-pptx/package.json'))
 test('cold Angular consumer pins coherent framework and tooling groups', () =>
   angularCohort(fixture))
+test('cold Angular consumer declares the reviewed Vite security runtime', () => {
+  assert.equal(fixture.overrides['@angular/build'].vite, '8.3.4')
+})
 test('independently released tooling patches are accepted', () => {
   const changed = structuredClone(fixture)
   for (const section of ['dependencies', 'devDependencies'])
