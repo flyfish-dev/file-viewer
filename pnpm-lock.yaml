@@ -146,7 +146,7 @@ importers:
         specifier: npm:react@17.0.2
         version: react@17.0.2
       vue:
-        specifier: ^3.5.42
+        specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
     devDependencies:
       '@types/jquery':
@@ -241,7 +241,7 @@ importers:
         specifier: ^11.11.1
         version: 11.12.0
       vue:
-        specifier: ^3.5.42
+        specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
     devDependencies:
       '@vitejs/plugin-vue':
@@ -314,7 +314,7 @@ importers:
         specifier: ^6.16.0
         version: 6.16.0
       vue:
-        specifier: ^3.5.42
+        specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
       web-ifc:
         specifier: 0.0.77
@@ -447,7 +447,7 @@ importers:
         specifier: workspace:3.2.2
         version: link:../../packages/components/vue3-full
       vue:
-        specifier: ^3.5.42
+        specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
     devDependencies:
       '@file-viewer/vite-plugin':
@@ -825,8 +825,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: 2.6.14
-        version: 2.6.14
+        specifier: 3.5.42
+        version: 3.5.42(typescript@6.0.3)
 
   packages/components/vue2.6-full:
     dependencies:
@@ -844,8 +844,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^2.6.14
-        version: 2.6.14
+        specifier: 3.5.42
+        version: 3.5.42(typescript@6.0.3)
 
   packages/components/vue2.7:
     dependencies:
@@ -857,8 +857,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^2.7.16
-        version: 2.7.16
+        specifier: 3.5.42
+        version: 3.5.42(typescript@6.0.3)
 
   packages/components/vue2.7-full:
     dependencies:
@@ -876,8 +876,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^2.7.16
-        version: 2.7.16
+        specifier: 3.5.42
+        version: 3.5.42(typescript@6.0.3)
 
   packages/components/vue3:
     dependencies:
@@ -938,7 +938,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vue:
-        specifier: ^3.5.42
+        specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
 
   packages/components/web:
@@ -3958,6 +3958,9 @@ packages:
   '@vue/shared@3.5.43':
     resolution: {integrity: sha512-uksS7YGMR5NZyr4JNq0Rp+QyLns0ueaz20KwzIPW9R0LH1Vnt4E+XUM29PNseEbf1www2gOuhuDi5AKOIXag9Q==}
 
+  '@vue/shared@3.5.44':
+    resolution: {integrity: sha512-H82XLH0DjmSOdbEwO15x3QTo1f5PWEtv237eLpYKc0mqLu+B8hnq16lFWmuBmNurkeiG3wr+oM1FhOll/YVFRg==}
+
   '@vue/tsconfig@0.9.1':
     resolution: {integrity: sha512-buvjm+9NzLCJL29KY1j1991YYJ5e6275OiK+G4jtmfIb+z4POywbdm0wXusT9adVWqe0xqg70TbI7+mRx4uU9w==}
     peerDependencies:
@@ -4257,8 +4260,8 @@ packages:
   caniuse-lite@1.0.30001815:
     resolution: {integrity: sha512-uDybUEyfgbyJJ93J1vikTylBX31AkdVYeVPeffMQpf8XN7hSfr0oZOn4VFOIMNvtU5+rHvC5Udg2TgtJKHm23Q==}
 
-  caniuse-lite@1.0.30001816:
-    resolution: {integrity: sha512-+8Yx7BXCoqk6IF8yTicjfUR6D/ldJzdlsodlEOiOSPmhK844WIgk67/zIQaGAOxNkZyyvBlrRFnLvqKIoqbAFw==}
+  caniuse-lite@1.0.30001819:
+    resolution: {integrity: sha512-LFUqIIAwpzsIuevnKnsR9qnStBcgzPShTX61lBwN9uFkkf8o8zLiebEjbW8AYtZiF+1YKDWfdt/pWDtMuG8Xwg==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -7008,10 +7011,6 @@ packages:
     peerDependencies:
       typescript: '>=5.0.0'
 
-  vue@2.6.14:
-    resolution: {integrity: sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==}
-    deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
-
   vue@2.7.16:
     resolution: {integrity: sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==}
     deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
@@ -8649,7 +8648,7 @@ snapshots:
       '@babel/types': 7.29.8
       '@vue/babel-helper-vue-transform-on': 2.0.1
       '@vue/babel-plugin-resolve-type': 2.0.1(@babel/core@7.29.7)
-      '@vue/shared': 3.5.43
+      '@vue/shared': 3.5.44
     optionalDependencies:
       '@babel/core': 7.29.7
     transitivePeerDependencies:
@@ -8769,6 +8768,8 @@ snapshots:
   '@vue/shared@3.5.42': {}
 
   '@vue/shared@3.5.43': {}
+
+  '@vue/shared@3.5.44': {}
 
   '@vue/tsconfig@0.9.1(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))':
     optionalDependencies:
@@ -8895,7 +8896,7 @@ snapshots:
   autoprefixer@10.6.1(postcss@8.5.29):
     dependencies:
       browserslist: 4.28.7
-      caniuse-lite: 1.0.30001816
+      caniuse-lite: 1.0.30001819
       fraction.js: 5.3.4
       picocolors: 1.1.1
       postcss: 8.5.29
@@ -9028,7 +9029,7 @@ snapshots:
 
   caniuse-lite@1.0.30001815: {}
 
-  caniuse-lite@1.0.30001816: {}
+  caniuse-lite@1.0.30001819: {}
 
   ccount@2.0.1: {}
 
@@ -12179,8 +12180,6 @@ snapshots:
       '@volar/typescript': 2.4.28
       '@vue/language-core': 3.3.12
       typescript: 6.0.3
-
-  vue@2.6.14: {}
 
   vue@2.7.16:
     dependencies:

@@ -74,7 +74,7 @@
     "typescript": "^6.0.3",
     "vite": "8.3.4",
     "vite-plugin-dts": "5.1.2",
-    "vue": "3.5.42",
+    "vue": "3.0.0",
     "vue-tsc": "^3.3.4"
   },
   "files": [
