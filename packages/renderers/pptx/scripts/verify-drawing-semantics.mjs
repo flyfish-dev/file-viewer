@@ -198,9 +198,13 @@ try {
   }
   const replacementZip = await JSZip.loadAsync(bytes);
   const alternate = (id, label) => `<mc:AlternateContent><mc:Choice Requires="a14">${text(id, 300, run(label + '_CHOICE'))}</mc:Choice><mc:Fallback>${text(id, 300, run(label))}</mc:Fallback></mc:AlternateContent>`;
-  const visibleSet = (id, value) => `<p:set><p:cBhvr><p:cTn dur="1" fill="hold"/><p:tgtEl><p:spTgt spid="${id}"/></p:tgtEl><p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="${value}"/></p:to></p:set>`;
+  const visibleSet = (id, value, child = '') => `<p:set><p:cBhvr><p:cTn dur="1" fill="hold"/><p:tgtEl><p:spTgt spid="${id}">${child}</p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="${value}"/></p:to></p:set>`;
   const mainTiming = `<p:timing><p:tnLst><p:par><p:cTn nodeType="tmRoot"><p:childTnLst><p:seq><p:cTn nodeType="mainSeq"><p:childTnLst><p:par><p:cTn><p:childTnLst>${visibleSet(10, 'visible')}</p:childTnLst></p:cTn></p:par><p:par><p:cTn><p:childTnLst>${visibleSet(10, 'hidden')}${visibleSet(11, 'visible')}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>`;
   const replacementBody = text(8, 10, run('ASSEMBLED_A')) + text(9, 10, run('ASSEMBLED_B')) + alternate(10, 'OLD_FORMULA') + alternate(11, 'FINAL_FORMULA');
+  const partialTargets = ['<p:subSp spid="99"/>', '<p:graphicEl/>', '<p:oleChartEl/>', '<p:bg/>', '<p:txEl/>', '<x:unknownTarget/>'];
+  const partialBody = partialTargets.map((_, i) => text(40 + i, 10 + i * 85, run(`PARTIAL_PARENT_${i}`))).join('');
+  const partialTiming = `<p:timing><p:tnLst><p:par><p:cTn nodeType="mainSeq"><p:childTnLst><p:par><p:cTn><p:childTnLst>${partialTargets.map((child, i) => visibleSet(40 + i, 'hidden', child)).join('')}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>`;
+  replacementZip.file('ppt/slides/slide3.xml', slide(partialBody).replace('</p:sld>', `${partialTiming}</p:sld>`));
   for (const i of [1, 2]) replacementZip.file(`ppt/slides/slide${i}.xml`, slide(replacementBody)
     .replace('<p:sld ', '<p:sld xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" ')
     .replace('</p:sld>', (i === 1 ? mainTiming : '') + '</p:sld>'));
@@ -214,6 +218,7 @@ try {
     assert.ok(!text[0].includes('_CHOICE'));
     assert.ok(text[1].includes('OLD_FORMULA') && text[1].includes('FINAL_FORMULA'), 'Authored overlap without an exit is retained');
     assert.ok(text[1].includes('ASSEMBLED_A') && text[1].includes('ASSEMBLED_B'));
+    for (let i = 0; i < partialTargets.length; i++) assert.ok(text[2].includes(`PARTIAL_PARENT_${i}`), 'Partial animation targets must retain their parent shape');
   });
 
   await check('Static replacement survives real slideshow next/back navigation and destroy', async () => {

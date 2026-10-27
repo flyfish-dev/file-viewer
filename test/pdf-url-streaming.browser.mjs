@@ -136,6 +136,12 @@ function pdf(label) {
 }
 const pdfs = new Map([['large',pdf('Range first page')],['new',pdf('Newest document')]]);
 const requests=[], errors=[], workers=[];
+// Keep the unused bulk stream pending until the first verified painted page.
+// A timer-only throttle turns this into a CPU-speed benchmark on slow WebKit
+// runners. Required header/xref Range responses remain unblocked, while a
+// renderer that waits for a complete buffer cannot reach the paint assertion.
+const firstPaintGates=new Map();
+const releaseFirstPaintGate=id=>{const gate=firstPaintGates.get(id);if(!gate)return;gate.released=true;const resume=gate.resume;gate.resume=null;resume?.();};
 const serve = async (req,res) => {
   const url = new URL(req.url,'http://localhost');
   res.setHeader('Access-Control-Allow-Origin','*');
@@ -156,8 +162,9 @@ const serve = async (req,res) => {
     res.setHeader('Content-Length',data.length);
     if(url.searchParams.has('delay'))await new Promise(resolve=>setTimeout(resolve,300));
     if(res.destroyed)return;res.flushHeaders();
-    let position=0;const send=()=>{if(res.destroyed)return;const end=Math.min(position+65536,data.length);const chunk=data.subarray(position,end);entry.bytes+=chunk.length;res.write(chunk);position=end;if(position===data.length)res.end();else timer=setTimeout(send,20);};
-    let timer=setTimeout(send,0);res.on('close',()=>clearTimeout(timer));return;
+    const gate=firstPaintGates.get(id);
+    let position=0;const send=()=>{if(res.destroyed)return;if(gate&&!gate.released&&position>=131072){gate.pausedAtBytes=position;gate.resume=send;return;}const end=Math.min(position+65536,data.length);const chunk=data.subarray(position,end);entry.bytes+=chunk.length;res.write(chunk);position=end;if(position===data.length)res.end();else timer=setTimeout(send,20);};
+    let timer=setTimeout(send,0);res.on('close',()=>{clearTimeout(timer);if(gate?.resume===send)gate.resume=null;});return;
   }
   try {
     if (url.pathname === '/') {res.setHeader('Content-Type','text/html');res.end('<!doctype html><meta charset="utf-8"><style>html,body{margin:0;height:100%}#host{height:740px;width:1000px}</style><div id="host"></div><script type="module" src="/browser/entry.js"></script>');return;}
@@ -202,6 +209,7 @@ for(const browserName of (process.env.FILE_VIEWER_TEST_BROWSERS || 'chromium,web
       try{
         await page.goto(origins[0]+'/');await page.waitForFunction(()=>!!window.fixture);
         const id=browserName+'-'+index+'-'+c.mode;
+        if(c.stream)firstPaintGates.set(id,{released:false,resume:null,pausedAtBytes:null});
         const url=(c.cross?origins[1]:origins[0])+(c.signed?'/signed':'/large.pdf')+'?case='+id;
         await page.evaluate(async ({wrapper,source,pdf})=>window.fixture.mount(wrapper,source,pdf),{wrapper:c.wrapper,source:{url,...(c.filename?{filename:c.filename}:{}),...(c.type?{type:c.type}:{})},pdf:c.pdf||{}});
         await page.waitForFunction(()=>window.fixture.visible() && window.fixture.text().includes('Range first page'),null,{timeout:20000,polling:25});
@@ -211,6 +219,9 @@ for(const browserName of (process.env.FILE_VIEWER_TEST_BROWSERS || 'chromium,web
         const network=firstCanvasNetwork;
         if(c.stream){assert.ok(network.some(r=>r.status===206),`${id}: actual HTTP Range`);assert.ok(network.reduce((n,r)=>n+r.bytes,0)<pdfs.get('large').length/2,`${id}: first canvas before complete download`);assert.ok(!network.some(r=>r.status===200&&r.completed),`${id}: no completed core prefetch`);}
         else{assert.equal(network.length,1,`${id}: buffered PDF fetched only once`);assert.equal(network[0].bytes,pdfs.get('large').length);assert.ok(network[0].completed);}
+        // Release before the demand-only follow-up, so its auto-fetch check
+        // still observes unrestricted transport after painting.
+        releaseFirstPaintGate(id);
         if(c.pdf?.disableAutoFetch){await page.waitForTimeout(350);const after=requests.filter(r=>r.id===id);assert.ok(!after.some(r=>r.status===200&&r.completed));assert.ok(after.reduce((n,r)=>n+r.bytes,0)<pdfs.get('large').length/2);}
         assert.deepEqual(caseErrors,[],`${id}: no uncaught errors`);
         await page.screenshot({path:path.join(output,id+'.png')});

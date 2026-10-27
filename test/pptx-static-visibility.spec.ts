@@ -32,6 +32,20 @@ describe('PPTX static main-sequence final visibility', () => {
     expect([...getFinalSlideHiddenShapeIds(timeline([setter('10', 'hidden', 'hold', '<p:txEl><p:pRg st="0" end="0"/></p:txEl>')]))]).toEqual([])
   })
 
+  it.each([
+    '<p:subSp spid="11"/>', '<p:graphicEl/>', '<p:oleChartEl/>', '<p:bg/>',
+    '<p:txEl><p:pRg st="0" end="0"/></p:txEl>', '<x:unknownTarget/>'
+  ])('retains the parent for a partial or unknown target: %s', child => {
+    expect([...getFinalSlideHiddenShapeIds(timeline([setter('10', 'hidden', 'hold', child)]))]).toEqual([])
+    expect([...getFinalSlideHiddenShapeIds(timeline([setter('10', 'hidden'), setter('10', 'hidden', 'hold', child)]))]).toEqual([])
+  })
+
+  it('retains content for unknown target attributes', () => {
+    const unknown = setter('10', 'hidden').replace('spid="10"', 'spid="10" unknownPart="child"')
+    expect([...getFinalSlideHiddenShapeIds(timeline([unknown]))]).toEqual([])
+    expect([...getFinalSlideHiddenShapeIds(timeline([setter('10', 'hidden'), unknown]))]).toEqual([])
+  })
+
   it('requires a held supported value and leaves unsupported setters intact', () => {
     for (const [value, fill] of [['hidden', 'remove'], ['collapse', 'hold']]) {
       expect([...getFinalSlideHiddenShapeIds(timeline([setter('10', value, fill)]))]).toEqual([])

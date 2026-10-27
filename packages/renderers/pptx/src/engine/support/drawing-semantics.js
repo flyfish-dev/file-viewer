@@ -22,7 +22,7 @@ function walkTiming(node, visit) {
 }
 
 /** Static previews show the held final visibility of the main click sequence.
- * This is not an animation player: retain content for partial-text targets,
+ * This is not an animation player: retain content for partial-shape targets,
  * repeated timelines, non-held setters and conflicting simultaneous changes.
  * In particular, never infer replacement from geometry or equal-looking math.
  */
@@ -46,7 +46,9 @@ export function getFinalSlideHiddenShapeIds(slide) {
       const properties = asArray(behavior?.['p:attrNameLst']?.['p:attrName']);
       if (id === undefined || !properties.includes('style.visibility')) return;
       const value = node['p:to']?.['p:strVal']?.attrs?.val;
-      const state = !target['p:txEl'] && ['hold', 'freeze'].includes(behavior?.['p:cTn']?.attrs?.fill) && ['visible', 'hidden'].includes(value) ? value : undefined;
+      const wholeShape = Object.keys(target).every(key => key === 'attrs') &&
+        Object.keys(target.attrs || {}).every(key => key === 'spid' || key === 'order' || key === 'xmlns' || key.startsWith('xmlns:'));
+      const state = wholeShape && ['hold', 'freeze'].includes(behavior?.['p:cTn']?.attrs?.fill) && ['visible', 'hidden'].includes(value) ? value : undefined;
       states.set(id, states.has(id) && states.get(id) !== state ? undefined : state);
     })) return new Set();
     for (const [id, state] of states) final.set(id, state);
