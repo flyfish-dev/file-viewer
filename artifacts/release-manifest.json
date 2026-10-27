@@ -2078,7 +2078,7 @@
     }
   ],
   "vue2Package": null,
-  "publicRepo": "/Users/wangyu/Documents/Codex/2026-10-23/task/.release/issue-release-20261026/public-release-2862",
+  "publicRepo": "https://github.com/flyfish-dev/file-viewer",
   "openSourceMain": true,
   "coreSourceIncluded": true,
   "sourcePolicy": "public-open-source-main-repository",

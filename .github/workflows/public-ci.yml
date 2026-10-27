@@ -197,7 +197,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          node --test ecosystem/public-runtime/frozen-validation-registry.test.mjs packages/build-support/bundle-notices.test.mjs packages/build-support/cad-corresponding-source.test.mjs packages/build-support/cad-source-offer.test.mjs packages/build-support/cad-source-reference.test.mjs packages/build-support/stage-cad-runtime.test.mjs
+          node --test .github/scripts/frozen-validation-registry.test.mjs packages/build-support/bundle-notices.test.mjs packages/build-support/cad-corresponding-source.test.mjs packages/build-support/cad-source-offer.test.mjs packages/build-support/cad-source-reference.test.mjs packages/build-support/stage-cad-runtime.test.mjs
           mkdir -p output/cad-corresponding-source
           node packages/build-support/verify-full-workspace-notices.mjs | tee output/cad-corresponding-source/workspace-copyrights.log
           node packages/build-support/verify-cad-corresponding-source.mjs --rebuild --remote | tee output/cad-corresponding-source/rebuild.log
