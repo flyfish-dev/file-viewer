@@ -179,7 +179,7 @@ test('a throwing frozen listener cannot skip cancellation or base disposal', asy
 
 test('built factory preserves the host engine import and runtime installs stop before add', async () => {
   const built = await readFile(new URL('../dist/geo3dPointFactories.js', import.meta.url), 'utf8')
-  assert.match(built, /from ["']@giro3d\/giro3d\/entities\/PointCloud\.js["']/)
+  assert.match(built, /from\s*["']@giro3d\/giro3d\/entities\/PointCloud\.js["']/)
   assert.match(built, /createOwnedPointCloud/)
   const runtime = (
     await readFile(new URL('../src/geo3dRuntime.ts', import.meta.url), 'utf8')

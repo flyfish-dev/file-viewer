@@ -1,15 +1,45 @@
 import assert from 'node:assert/strict'
 import { readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
+import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
+
+// This already-public source snapshot was downloaded and rebuilt through its
+// normal owner graph to the exact current CAD integration runtime bytes.
+export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
+  sourceCommit: 'b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd',
+  sha256: 'b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5',
+  bytes: 199843365,
+  runtimeSha256: '12a5a9060ae0e2035ead248add91b6657ae7973c2a4754112fbe3a9b40ca96f9'
+})
+
+// Native preferred sources are distinct from the File Viewer integration source.
+// Keep them in the common notice as well as the optional native asset layer:
+// the Full bundle includes owner JavaScript even when assets are separate deps.
+export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
+  Object.freeze({ name: '@flyfish-dev/cad-viewer 0.8.3',
+    url: 'https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6366d2f7b1013cd5c300008c3c3fbf017ca9aace',
+    sha256: '65d00f07230553734262d671abf45be94d83d3068318c0f25f8665494ec82bcb' }),
+  Object.freeze({ name: 'dwf-viewer 0.6.7',
+    url: 'https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/72783571e2cd744862d8eb32f7d3455906c76226',
+    sha256: 'd246d61b914475412fdc33ea250646710c4a3431bfecad9c9a7700602923afb1' }),
+  Object.freeze({ name: '@mlightcad/libredwg-web 0.7.9',
+    url: 'https://codeload.github.com/mlightcad/libredwg-web/tar.gz/b70b5573a6bf2345e5fb10f2adff7fb74a8123c5',
+    sha256: 'af350d628535a2842262af5b49d50568b6dae62854667e13bb9f161b26c00431' })
+])
 
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
-  // 3.2.2 retains the same CAD/DWF inputs and byte-identical integration.
-  // The original reviewed corresponding-source archive therefore still applies.
-  releaseVersion: '3.2.2',
+  // This release includes its complete current integration source, independently
+  // rebuilt against the ordinary Full runtime. Native owner versions stay fixed.
+  releaseVersion: '3.3.0',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
-  url: 'https://github.com/flyfish-dev/file-viewer/releases/download/v3.2.0-sources/file-viewer-cad-corresponding-source-3.2.0.tar.gz',
-  sha256: 'ca91f24f8adf161bc41a787d111afca493f15f2ee15511dc25e5153a7a607b57'
+  url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
+  sha256: 'f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409',
+  bytes: 352153,
+  files: 84,
+  runtimeBytes: 627842,
+  runtimeSha256: '12a5a9060ae0e2035ead248add91b6657ae7973c2a4754112fbe3a9b40ca96f9'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {
@@ -19,12 +49,18 @@ export function cadIntegrationSourceNotice(releaseVersion) {
     'File Viewer CAD integration corresponding source',
     '',
     'Package release: ' + releaseVersion,
-    'Source archive: ' + CAD_INTEGRATION_SOURCE.url,
-    'SHA-256: ' + CAD_INTEGRATION_SOURCE.sha256,
+    'Corresponding source (immutable HTTPS): ' + CAD_PUBLIC_CORRESPONDING_SOURCE.url,
+    'HTTPS archive SHA-256: ' + CAD_PUBLIC_CORRESPONDING_SOURCE.sha256,
     '',
-    'This archive reconstructs the CAD JavaScript integration from the original public preferred source, version-specific asset-license descriptors, fixed dependencies and ordinary build scripts.',
+    'This existing complete public source snapshot reconstructs the CAD integration output identified below through its ordinary owner build.',
+    'Use the repository build prerequisites, Node.js 24.20.0 and pnpm 11.0.9: pnpm install --frozen-lockfile; pnpm build:core; pnpm build:renderers; pnpm build:presets; pnpm --filter @file-viewer/web-full build.',
+    'A standalone current preferred-source archive is also retained in the complete public source checkout and CAD asset directories as ' + CAD_SOURCE_ARCHIVE_NAME + '.',
+    'Standalone archive SHA-256: ' + CAD_INTEGRATION_SOURCE.sha256,
+    'Runtime-only npm archives do not include source ZIPs; retain this notice and its immutable HTTPS source reference.',
     'It retains complete original license texts and identifies the exact public CAD, DWF and LibreDWG bindings sources in upstream-sources.json.',
-    'The integration output is 622,502 bytes with SHA-256 9d548ef213c59c2ffe81070c7410b1825093817f684ee5353486f409e913f3f5.',
+    'The integration output is ' + CAD_INTEGRATION_SOURCE.runtimeBytes + ' bytes with SHA-256 ' + CAD_INTEGRATION_SOURCE.runtimeSha256 + '.',
+    'Native owner preferred sources and their build inputs (in addition to the integration source):',
+    ...CAD_NATIVE_CORRESPONDING_SOURCES.flatMap(source => [source.name, source.url, 'SHA-256: ' + source.sha256, '']),
     'The original component grants, attribution and native source notices remain applicable.',
     ''
   ].join('\n')
@@ -36,8 +72,11 @@ export async function writeCadIntegrationSourceNotice(packageDir) {
     'This generator writes only the CAD renderer source notice')
   assert.equal(manifest.dependencies['@flyfish-dev/cad-viewer'], CAD_INTEGRATION_SOURCE.cadVersion,
     'The CAD source offer must be reviewed for a different runtime')
-  await writeFile(join(packageDir, 'CORRESPONDING_SOURCE_NOTICE.txt'),
-    cadIntegrationSourceNotice(manifest.version))
+  const notice = cadIntegrationSourceNotice(manifest.version)
+  const sourceRoot = resolve(packageDir, '../../..')
+  const archive = await readCadCorrespondingSource(sourceRoot, CAD_INTEGRATION_SOURCE)
+  await verifyCadPreferredSourceInputs(sourceRoot, archive.manifest)
+  await writeFile(join(packageDir, 'CORRESPONDING_SOURCE_NOTICE.txt'), notice)
 }
 
 export async function appendCadIntegrationSourceNotice(noticePath, releaseVersion) {

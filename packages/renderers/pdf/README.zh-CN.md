@@ -25,6 +25,12 @@ const options = {
 }
 ```
 
+## PDF URL 读取
+
+标准 PDF 渲染器在 Vanilla/Web Component、React、Svelte、jQuery 和 Vue 使用相同的 URL 策略。`pdf.streaming` 默认 `same-origin`；跨域或签名 URL 可显式设为 `true`，无扩展名 URL 同时提供 `filename: 'document.pdf'` 或 `type: 'pdf'`。此时直接交给 PDF.js，不先在 core 完整下载。Range 需要服务端支持；跨域还须通过 CORS 暴露 `Accept-Ranges`、`Content-Length`、`Content-Range`。
+
+`pdf.streaming: false` 会先下载一次再预览。显式 buffer/file、自定义 `fetchFile` 仍优先提供字节；原 URL 保留为元数据，不会触发 PDF.js 重复下载。自定义仅支持 buffer 的渲染器继续遵循其能力声明。PDF.js 默认可在后台继续取流；如需仅按需读取 Range，同时设置 `pdf.disableStream: true` 和 `pdf.disableAutoFetch: true`。禁用自动预取需要同时禁用流读取；未配置时保留 PDF.js 默认值。
+
 ## 深色阅读
 
 无需重载的实时更新适用于 renderer 观察到的主题属性、系统配色及 Vanilla core 的主题更新路径。框架组件与工具栏/controller 的选项更新可能重新初始化预览。

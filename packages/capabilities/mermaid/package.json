@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-mermaid",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "private": false,
   "type": "module",
   "description": "Opt-in Mermaid rendering for Markdown in File Viewer.",
@@ -40,7 +40,7 @@
     "verify:packed-browser": "pnpm --filter @file-viewer/core --filter @file-viewer/renderer-text --filter @file-viewer/renderer-drawing build && pnpm build && node scripts/verify-packed-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/renderer-text": "workspace:3.2.2"
+    "@file-viewer/renderer-text": "workspace:3.3.0"
   },
   "devDependencies": {
     "mermaid": "12.1.0",

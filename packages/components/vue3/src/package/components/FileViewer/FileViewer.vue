@@ -491,6 +491,7 @@ const {
   cancelPreview,
   refreshPreview
 } = useViewerSourceLoading({
+  getSourceType: () => props.type,
   getFile: () => props.file,
   getUrl: () => props.url,
   getSourceFilename: () => props.filename || props.name,
@@ -677,6 +678,8 @@ useViewerPreviewLifecycle({
   getSourceFilename: () => props.filename || props.name,
   refreshPreview,
   getRenderOptions: () => [
+    props.type,
+    effectiveOptions.value?.pdf,
     effectiveOptions.value?.docx,
     effectiveOptions.value?.text,
     effectiveOptions.value?.image,

@@ -43,7 +43,12 @@ assert.ok(!/from\s+['"]@giro3d\/giro3d/.test(entry),'Geo3D peer must stay behind
 const runtime=await readFile(new URL('../dist/geo3dRuntime.js',import.meta.url),'utf8')
 assert.ok(!runtime.includes("from 'three'")&&!runtime.includes('from "three"'),"Geo3D runtime must not import File Viewer's Three.js copy")
 assert.ok(!runtime.includes('MapControls'),'Geo3D navigation must stay inside Giro3D peer graph')
-for(const pattern of[/@giro3d\/giro3d\/controls\/FirstPersonControls\.js/,/view\.goTo/,/@giro3d\/giro3d\/core\/Instance\.js/,/geo3dPointFactories\.js/,/createCOPCSource/,/createLASSource/,/createOwnedPointCloud/,/geo3dRasterFactories\.js/,/createGeo3dRasterWorkers/,/@giro3d\/giro3d\/entities\/Tiles3D\.js/,/Content-Range/,/maxLasBytes/,/maxCityJsonBytes/,/max3tzBytes/,/three\/draco\//,/three\/basis\//])assert.match(runtime,pattern)
+for(const pattern of[/@giro3d\/giro3d\/controls\/FirstPersonControls\.js/,/view\.goTo/,/@giro3d\/giro3d\/core\/Instance\.js/,/geo3dPointFactories\.js/,/createCOPCSource/,/createLASSource/,/createOwnedPointCloud/,/geo3dRasterFactories\.js/,/createGeo3dRasterWorkers/,/@giro3d\/giro3d\/entities\/Tiles3D\.js/,/maxLasBytes/,/maxCityJsonBytes/,/max3tzBytes/,/three\/draco\//,/three\/basis\//])assert.match(runtime,pattern)
+// Range validation is shared with format probes, rather than duplicated here.
+assert.match(runtime,/import\s*\{[^}]*\bcreateRangeGetter\b[^}]*\}\s*from\s*['"]\.\/geo3dRange\.js['"]/)
+assert.match(runtime,/\bcreateRangeGetter\(/)
+const rangeRuntime=await readFile(new URL('../dist/geo3dRange.js',import.meta.url),'utf8')
+assert.match(rangeRuntime,/Content-Range/)
 // Neither point nor raster sources may bypass the owned factory boundary.
 assert.match(runtime,/import\(['"]\.\/geo3dPointFactories\.js['"]\)/)
 assert.doesNotMatch(runtime,/@giro3d\/giro3d\/sources\/(?:LASSource|COPCSource)\.js/,'Point runtime must not bypass the cancellation-preserving factory')
@@ -54,7 +59,7 @@ const pointFactory=await readFile(new URL('../dist/geo3dPointFactories.js',impor
 const decoderManifest=JSON.parse(await readFile(new URL('../dist/geo3d-workers/manifest.json',import.meta.url),'utf8'))
 assert.equal(createHash('sha256').update(rasterFactory).digest('hex'),decoderManifest.raster.factorySha256,'Built raster factory must match the reviewed build manifest')
 assert.equal(createHash('sha256').update(pointFactory).digest('hex'),decoderManifest.adapterSha256,'Built point factory must match the reviewed build manifest')
-assert.match(pointFactory.toString(),/from ["']@giro3d\/giro3d\/entities\/PointCloud\.js["']/,'Owned PointCloud must extend the real host engine class')
+assert.match(pointFactory.toString(),/from\s*["']@giro3d\/giro3d\/entities\/PointCloud\.js["']/,'Owned PointCloud must extend the real host engine class')
 const archive=await readFile(new URL('../dist/geo3dArchive.js',import.meta.url),'utf8')
 // The behavioural CRC-corruption test below replaces JSZip's unbounded eager
 // checkCRC32 mode. Actual expansion is limited before CRC acceptance.

@@ -7,6 +7,7 @@ import { stageFullViewerAssets } from './stage-full-assets.mjs'
 import { isolateAmd, writeAmdEntry } from '../../web/scripts/amd-entry.mjs'
 import * as webNode from '@file-viewer/web/node'
 import { writeBundleNotices } from '../../../build-support/bundle-notices.mjs'
+import { fullWorkspaceLicensePackages } from '../../../build-support/full-workspace-notices.mjs'
 import { appendCadIntegrationSourceNotice } from '../../../build-support/cad-source-offer.mjs'
 import { writeBundleInventory } from '../../../build-support/bundle-inventory.mjs'
 
@@ -203,7 +204,7 @@ await writeBundleInventory([...bundledInputs], join(packageDir, '.build/iife-inp
 await writeBundleNotices(
   { inputs: Object.fromEntries([...bundledInputs].map(id => [id, {}])) },
   join(outDir, 'THIRD_PARTY_LICENSES.txt'),
-  { readmeLicensePackages: ['@ljheee/xmind-parser'], includeWorkspacePackages: ['@file-viewer/doc'], includePrebundledSdkPackages: ['@file-viewer/capability-mermaid'] }
+  { readmeLicensePackages: ['@ljheee/xmind-parser'], includeWorkspacePackages: fullWorkspaceLicensePackages.map(owner => owner.packageName), includePrebundledSdkPackages: ['@file-viewer/capability-mermaid'] }
 )
 await appendCadIntegrationSourceNotice(join(outDir, 'THIRD_PARTY_LICENSES.txt'), packageManifest.version)
 

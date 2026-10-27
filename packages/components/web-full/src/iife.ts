@@ -1,3 +1,4 @@
+import { pdfRendererDefinition } from '@file-viewer/renderer-pdf'
 import {
   DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION,
   DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
@@ -366,7 +367,7 @@ const createLazyRendererPlugin = (line: LazyRendererLine): FileViewerRendererPlu
   label: `Lazy ${line.label}`,
   definitions: DEFAULT_RENDERER_DEFINITIONS.filter(definition =>
     line.rendererIds.includes(definition.id)
-  ) as RendererDefinition[],
+  ).map(definition => definition.id === 'pdf' ? pdfRendererDefinition : definition) as RendererDefinition[],
   handlers: line.rendererIds.map(rendererId => ({
     rendererId,
     handler: createLazyHandler(line, rendererId)

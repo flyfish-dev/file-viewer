@@ -156,7 +156,9 @@ test('interactive version choice uses a numbered stable candidate', async () => 
 
 test('package README documents exact, registry, offline, and non-interactive selection', async () => {
   const readmeEn = await readFile(new URL('../README.en.md', import.meta.url), 'utf8');
-  const readmeZh = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+  const readmeDefault = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+  const readmeZh = await readFile(new URL('../README.zh-CN.md', import.meta.url), 'utf8');
+  assert.equal(readmeDefault, readmeEn, 'The default and explicit English README must agree');
   for (const marker of ['--file-viewer-version', '--registry', '--offline-dir', '--non-interactive']) {
     assert(readmeEn.includes(marker), `English README is missing ${marker}`);
     assert(readmeZh.includes(marker), `Chinese README is missing ${marker}`);

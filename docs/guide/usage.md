@@ -175,7 +175,8 @@ EML and MSG attachments open through the same resolved renderer registry as the 
 | `presentation.workerUrl` / `presentation.workerType` | Self-host the `@file-viewer/pptx` worker or override its Worker type for strict CSP, legacy WebViews, or custom static asset routing. |
 | `presentation.pptModuleUrl` / `presentation.pptWorkerUrl` / `presentation.pptWasmUrl` / `presentation.pptFontUrl` | Advanced overrides for the packaged PowerPoint 97–2003 `.ppt` 0.3.4 ESM, Worker, WASM, and CJK font asset routes. Demo, Vite/full, copy-assets, and CDN/IIFE builds work without them. |
 | `presentation.pptWorker` / `presentation.pptCache` | Select `auto` / required / disabled binary-PPT Worker rendering and configure or disable its bounded IndexedDB frame cache. |
-| `pdf.streaming` / `pdf.rangeChunkSize` | Controls URL-based progressive PDF loading and PDF.js range chunk size. |
+| `pdf.streaming` / `pdf.rangeChunkSize` | Standard components share same-origin URL streaming by default; true permits CORS URLs and false buffers once. Signed URLs may use filename/type hints. Explicit bytes/custom fetch hooks retain precedence. |
+| `pdf.disableStream` / `pdf.disableAutoFetch` | PDF.js network controls; set both to true for demanded ranges. Omitted values retain PDF.js defaults. |
 | `pdf.toolbar` | Shows or hides the PDF renderer's own page / zoom / rotation toolbar. Useful for comparison layouts. |
 | `pdf.navigation` / `pdf.defaultNavigationVisible` | Enables the left page / outline navigation pane and initial visibility. |
 | `pdf.bbox` | Highlights and focuses one or more PDF regions. Supports normalized ratios, percentages, native PDF points, and OCR pixels with explicit source dimensions. |

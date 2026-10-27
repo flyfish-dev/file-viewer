@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-spreadsheet",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "private": false,
   "type": "module",
   "description": "Standalone spreadsheet renderer plugin for File Viewer powered by styled-exceljs and e-virt-table.",
@@ -84,7 +84,7 @@
     "verify:fill-viewport": "node scripts/verify-fill-viewport.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.2.2",
+    "@file-viewer/core": "workspace:3.3.0",
     "@xmldom/xmldom": "^0.9.12",
     "e-virt-table": "1.4.16",
     "jszip": "3.10.2",

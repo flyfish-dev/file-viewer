@@ -24,6 +24,7 @@ interface UseViewerSourceLoadingOptions {
   getFile: () => FileRef | undefined;
   getUrl: () => string | undefined;
   getSourceFilename?: () => string | undefined;
+  getSourceType?: () => string | undefined;
   getOptions: () => FileViewerOptions | undefined;
   filename: Ref<string>;
   currentFile: Ref<File | null>;
@@ -77,6 +78,7 @@ export const useViewerSourceLoading = ({
   getFile,
   getUrl,
   getSourceFilename,
+  getSourceType,
   getOptions,
   filename,
   currentFile,
@@ -155,6 +157,10 @@ export const useViewerSourceLoading = ({
     url?: string;
     signal?: AbortSignal;
   }) => {
+    // PDF URLs have their own same-origin/explicit streaming policy. Local PDF
+    // files keep the buffer path; generic stream-preferred probing must not
+    // override pdf.streaming=false or turn a File into an unsupported URL source.
+    if (extension.toLowerCase() === 'pdf') return false
     const options = getOptions() || {}
     const autoSetting = options.autoRenderers
     const autoRenderersEnabled = typeof autoSetting === 'boolean'
@@ -243,6 +249,8 @@ export const useViewerSourceLoading = ({
     getFile,
     getUrl,
     getCurrentFilename: () => getSourceFilename?.() || filename.value,
+    getSourceFilename,
+    getSourceType,
     shouldStreamLocalFile,
     getPdfStreaming: () => getOptions()?.pdf?.streaming,
     shouldStreamRemoteUrl,

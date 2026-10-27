@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "purpose": "shared-runtime-material-attribution",
   "scope": "Material identity and actual copied payloads; not a source-availability or release approval.",
-  "registrySha256": "a69a955195bba1a28f8b9d199033bea4b6d6080b5421eee5e558ee6b31e4189c",
+  "registrySha256": "25d980ae11faa9ca4c6b9d3209bbd977256065efde4996be60052b76779ed0e9",
   "releaseApproval": false,
   "materials": [
     {
@@ -3135,13 +3135,14 @@
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
-      "bytes": 2466,
+      "sha256": "d3bfec722e53263e9531a103496ed457a3e5e40ca5908124e7e7b5cb134821eb",
+      "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
+        "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
         "wasm/cad/0.8.0/dwg-worker.js",
         "wasm/cad/0.8.0/libredwg-web.js",
@@ -3191,13 +3192,14 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
-      "bytes": 2466,
+      "sha256": "d3bfec722e53263e9531a103496ed457a3e5e40ca5908124e7e7b5cb134821eb",
+      "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
+        "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.1/dwfv-render.wasm",
         "wasm/cad/0.8.1/dwg-worker.js",
         "wasm/cad/0.8.1/libredwg-web.js",
@@ -3247,13 +3249,14 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
-      "bytes": 2466,
+      "sha256": "d3bfec722e53263e9531a103496ed457a3e5e40ca5908124e7e7b5cb134821eb",
+      "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
+        "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.3/dwfv-render.wasm",
         "wasm/cad/0.8.3/dwg-worker.js",
         "wasm/cad/0.8.3/libredwg-web.js",
@@ -3303,25 +3306,29 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "70513af0df0e9e24a7099b7b90e0987e5be9ec04528cad5b6a896e94ef312c9d",
-      "bytes": 2466,
+      "sha256": "d3bfec722e53263e9531a103496ed457a3e5e40ca5908124e7e7b5cb134821eb",
+      "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.0-sources",
+      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
+        "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
         "wasm/cad/0.8.0/dwg-worker.js",
         "wasm/cad/0.8.0/libredwg-web.js",
         "wasm/cad/0.8.0/libredwg-web.wasm",
+        "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.1/dwfv-render.wasm",
         "wasm/cad/0.8.1/dwg-worker.js",
         "wasm/cad/0.8.1/libredwg-web.js",
         "wasm/cad/0.8.1/libredwg-web.wasm",
+        "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.3/dwfv-render.wasm",
         "wasm/cad/0.8.3/dwg-worker.js",
         "wasm/cad/0.8.3/libredwg-web.js",
         "wasm/cad/0.8.3/libredwg-web.wasm",
+        "wasm/cad/CORRESPONDING_SOURCE.zip",
         "wasm/cad/dwfv-render.wasm",
         "wasm/cad/dwg-worker.js",
         "wasm/cad/libredwg-web.js",
@@ -21815,8 +21822,15 @@
     {
       "path": "vendor/xlsx/sheet.worker.js",
       "bytes": 914492,
-      "sha256": "1906584f64cb4f60dce974fc2128c21715a30c2f68db8caf494e5a137cda1029",
-      "sourceSha256": "1906584f64cb4f60dce974fc2128c21715a30c2f68db8caf494e5a137cda1029",
+      "sha256": "e6531dfee21249f831d788476bb922b67073b32c3459228b65f87c97c69aa300",
+      "sourceSha256": "e6531dfee21249f831d788476bb922b67073b32c3459228b65f87c97c69aa300",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
+      "bytes": 352153,
+      "sha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
+      "sourceSha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
       "sourceTransform": "none"
     },
     {
@@ -21848,6 +21862,13 @@
       "sourceTransform": "none"
     },
     {
+      "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
+      "bytes": 352153,
+      "sha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
+      "sourceSha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
+      "sourceTransform": "none"
+    },
+    {
       "path": "wasm/cad/0.8.1/dwfv-render.wasm",
       "bytes": 4916,
       "sha256": "f537c5b05cbfc744578110ce49a7fdf97a7d6bdb2b1dff849ad4330f7997140e",
@@ -21876,6 +21897,13 @@
       "sourceTransform": "none"
     },
     {
+      "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
+      "bytes": 352153,
+      "sha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
+      "sourceSha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
+      "sourceTransform": "none"
+    },
+    {
       "path": "wasm/cad/0.8.3/dwfv-render.wasm",
       "bytes": 4916,
       "sha256": "f537c5b05cbfc744578110ce49a7fdf97a7d6bdb2b1dff849ad4330f7997140e",
@@ -21901,6 +21929,13 @@
       "bytes": 9960337,
       "sha256": "d8b78f6d5e63e6e178cf7343cfd08ebe798d75b6754c593e15d8f948b823e038",
       "sourceSha256": "d8b78f6d5e63e6e178cf7343cfd08ebe798d75b6754c593e15d8f948b823e038",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "wasm/cad/CORRESPONDING_SOURCE.zip",
+      "bytes": 352153,
+      "sha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
+      "sourceSha256": "f803d753524f0e3a50022a3dade200e2f9b3b8a76877d2fddf796ef1e3443409",
       "sourceTransform": "none"
     },
     {

@@ -1999,11 +1999,24 @@
       "normalizedLicenseExpression": "MPL-2.0 OR LicenseRef-PMEL",
       "correspondingSource": {
         "status": "verified",
-        "url": "https://codeload.github.com/paged-media/plugin-publish/tar.gz/47ab9d90c8004c32b7d410cc8f2a554b6493a260",
-        "sha256": "1053e5d3170d7a8ae01c90534ec7d0dc3821429df84aba6e78cdefedc11cbebe",
-        "commit": "47ab9d90c8004c32b7d410cc8f2a554b6493a260",
+        "url": "https://codeload.github.com/paged-media/paged/tar.gz/0a6ad98729b759f4c698f9e829f5b75d9ae431b9",
+        "sha256": "b12e8384271b88cd27ef4efdd08785a63f6c50e706c4cbae3e75e09b639eca45",
+        "commit": "0a6ad98729b759f4c698f9e829f5b75d9ae431b9",
         "matchesInstalledInput": true,
-        "includesCoveredModifications": false
+        "includesCoveredModifications": false,
+        "originalCommit": "47ab9d90c8004c32b7d410cc8f2a554b6493a260",
+        "subdirectory": "modules/publish",
+        "migration": {
+          "repository": "https://github.com/paged-media/paged",
+          "mapCommit": "a86a8867d8cdc78b8f737ad18ef7bd0e48f0b0d6",
+          "mapPath": "tooling/import/commit-maps/plugin-publish.tsv",
+          "mapGitBlob": "9a575f70ec1409a47d166340cedd3dcb0358b648",
+          "manifestPath": "tooling/import/manifest.yaml",
+          "manifestGitBlob": "55a0c023d5c2bd8afe6d215484de54db22704a86",
+          "sourceTree": "f271f202b6d764e7af4146f6fb12240c8df9a66c",
+          "sourceFiles": 154,
+          "includesAllOriginalFiles": true
+        }
       },
       "coveredModifications": "none",
       "licenseReview": {
@@ -2045,11 +2058,24 @@
       "normalizedLicenseExpression": "MPL-2.0 OR LicenseRef-PMEL",
       "correspondingSource": {
         "status": "verified",
-        "url": "https://codeload.github.com/paged-media/plugin-publish/tar.gz/47ab9d90c8004c32b7d410cc8f2a554b6493a260",
-        "sha256": "1053e5d3170d7a8ae01c90534ec7d0dc3821429df84aba6e78cdefedc11cbebe",
-        "commit": "47ab9d90c8004c32b7d410cc8f2a554b6493a260",
+        "url": "https://codeload.github.com/paged-media/paged/tar.gz/0a6ad98729b759f4c698f9e829f5b75d9ae431b9",
+        "sha256": "b12e8384271b88cd27ef4efdd08785a63f6c50e706c4cbae3e75e09b639eca45",
+        "commit": "0a6ad98729b759f4c698f9e829f5b75d9ae431b9",
         "matchesInstalledInput": true,
-        "includesCoveredModifications": false
+        "includesCoveredModifications": false,
+        "originalCommit": "47ab9d90c8004c32b7d410cc8f2a554b6493a260",
+        "subdirectory": "modules/publish",
+        "migration": {
+          "repository": "https://github.com/paged-media/paged",
+          "mapCommit": "a86a8867d8cdc78b8f737ad18ef7bd0e48f0b0d6",
+          "mapPath": "tooling/import/commit-maps/plugin-publish.tsv",
+          "mapGitBlob": "9a575f70ec1409a47d166340cedd3dcb0358b648",
+          "manifestPath": "tooling/import/manifest.yaml",
+          "manifestGitBlob": "55a0c023d5c2bd8afe6d215484de54db22704a86",
+          "sourceTree": "f271f202b6d764e7af4146f6fb12240c8df9a66c",
+          "sourceFiles": 154,
+          "includesAllOriginalFiles": true
+        }
       },
       "coveredModifications": "none",
       "licenseReview": {
@@ -7112,11 +7138,24 @@
       },
       {
         "status": "verified",
-        "url": "https://codeload.github.com/paged-media/plugin-publish/tar.gz/47ab9d90c8004c32b7d410cc8f2a554b6493a260",
-        "sha256": "1053e5d3170d7a8ae01c90534ec7d0dc3821429df84aba6e78cdefedc11cbebe",
-        "commit": "47ab9d90c8004c32b7d410cc8f2a554b6493a260",
+        "url": "https://codeload.github.com/paged-media/paged/tar.gz/0a6ad98729b759f4c698f9e829f5b75d9ae431b9",
+        "sha256": "b12e8384271b88cd27ef4efdd08785a63f6c50e706c4cbae3e75e09b639eca45",
+        "commit": "0a6ad98729b759f4c698f9e829f5b75d9ae431b9",
         "matchesInstalledInput": true,
-        "includesCoveredModifications": false
+        "includesCoveredModifications": false,
+        "originalCommit": "47ab9d90c8004c32b7d410cc8f2a554b6493a260",
+        "subdirectory": "modules/publish",
+        "migration": {
+          "repository": "https://github.com/paged-media/paged",
+          "mapCommit": "a86a8867d8cdc78b8f737ad18ef7bd0e48f0b0d6",
+          "mapPath": "tooling/import/commit-maps/plugin-publish.tsv",
+          "mapGitBlob": "9a575f70ec1409a47d166340cedd3dcb0358b648",
+          "manifestPath": "tooling/import/manifest.yaml",
+          "manifestGitBlob": "55a0c023d5c2bd8afe6d215484de54db22704a86",
+          "sourceTree": "f271f202b6d764e7af4146f6fb12240c8df9a66c",
+          "sourceFiles": 154,
+          "includesAllOriginalFiles": true
+        }
       }
     ],
     "embeddedPatterns": "Complete original BSD, MIT attribution and MPL grants retained. Spanish MPL-1.1-or-later elects MPL-2.0; Dutch elects Revised BSD. All four dictionary identities remain byte-pinned.",

@@ -36,18 +36,28 @@ assert(
 )
 await WebAssembly.compile(first.wasm)
 
-execFileSync(process.execPath, ['scripts/build-wasm.mjs'], { cwd: packageDir, stdio: 'inherit' })
-const second = await readArtifacts()
-assert.equal(
-  hash(second.wasm),
-  hash(first.wasm),
-  'Two locked rPGP WASM builds produced different bytes.'
-)
-assert.equal(
-  hash(second.glue),
-  hash(first.glue),
-  'Two locked wasm-bindgen glue builds produced different bytes.'
-)
+// A source-mode validation must not replace the safe release payload with a
+// machine-specific binary. Check complete WASM/glue bytes, not just debug data.
+const assertPathPrivacy = artifacts => {
+  for (const [name, bytes] of Object.entries(artifacts)) {
+    assert(!/(?:\/Users\/[^/\s"']+\/|\/home\/[^/\s"']+\/|[A-Za-z]:\\Users\\)/.test(bytes.toString('latin1')),
+      `rPGP ${name} includes a local absolute path`)
+  }
+}
+assertPathPrivacy(first)
+for (const mode of ['source', 'runtime-only']) {
+  execFileSync(process.execPath, ['scripts/build-wasm.mjs'], {
+    cwd: packageDir, stdio: 'inherit',
+    env: { ...process.env, FILE_VIEWER_DISTRIBUTION_MODE: mode }
+  })
+  const rebuilt = await readArtifacts()
+  assertPathPrivacy(rebuilt)
+  assert.equal(hash(rebuilt.wasm), hash(first.wasm),
+    `Locked rPGP ${mode} build produced different WASM bytes.`)
+  assert.equal(hash(rebuilt.glue), hash(first.glue),
+    `Locked rPGP ${mode} build produced different glue bytes.`)
+  console.log(`[signature-build-path-privacy] ${mode}: complete WASM/glue path-free and byte-identical`)
+}
 
 const temporaryDirectory = await mkdtemp(resolve(tmpdir(), 'file-viewer-signature-pack-'))
 try {

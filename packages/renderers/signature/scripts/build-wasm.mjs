@@ -34,7 +34,9 @@ try {
   run('cargo', ['generate-lockfile'])
 }
 const buildEnvironment = { ...process.env }
-if (process.env.FILE_VIEWER_DISTRIBUTION_MODE === 'runtime-only') {
+// Verification and developer builds can overwrite the release output. Keep
+// host paths out of every build, including strings in the WASM data section.
+{
   const existing = process.env.CARGO_ENCODED_RUSTFLAGS ?? process.env.RUSTFLAGS?.trim().split(/\s+/).join('\x1f') ?? ''
   const prefixes = new Set([homedir(), packageDir,
     resolve(process.env.CARGO_HOME || resolve(homedir(), '.cargo')),

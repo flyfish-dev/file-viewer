@@ -6,12 +6,12 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@file-viewer/core": "3.2.2",
-    "@file-viewer/vue3": "3.2.2",
-    "@file-viewer/preset-office": "3.2.2",
-    "@file-viewer/react-full": "3.2.2",
-    "@file-viewer/renderer-cad": "3.2.2",
-    "file-viewer-copy-assets": "3.2.2",
+    "@file-viewer/core": "3.3.0",
+    "@file-viewer/vue3": "3.3.0",
+    "@file-viewer/preset-office": "3.3.0",
+    "@file-viewer/react-full": "3.3.0",
+    "@file-viewer/renderer-cad": "3.3.0",
+    "file-viewer-copy-assets": "3.3.0",
     "element-plus": "2.14.5",
     "vue": "3.5.43",
     "react": "19.1.1",

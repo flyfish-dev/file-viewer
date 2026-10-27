@@ -276,11 +276,15 @@ export async function buildPointAdapters() {
     outfile: join(out, 'geo3dPointFactories.js'),
     plugins: [{ name: 'source-local-giro3d-pools', setup(builder) {
       builder.onResolve({ filter: /^geo3d-owned:/ }, args => {
-        const path = paths[args.path.slice('geo3d-owned:'.length)]
-        if (!path) throw new Error('Unknown owned point adapter.')
-        return { path, namespace: 'owned-point-source' }
+        const name = args.path.slice('geo3d-owned:'.length)
+        if (!paths[name]) throw new Error('Unknown owned point adapter.')
+        return { path: name, namespace: 'owned-point-source' }
       })
-      builder.onLoad({ filter: /.*/, namespace: 'owned-point-source' }, args => ({ contents: adapted[args.path], loader: 'js', resolveDir: dirname(args.path) }))
+      builder.onLoad({ filter: /.*/, namespace: 'owned-point-source' }, args => {
+        const path = paths[args.path]
+        if (!path) throw new Error('Unknown owned point module identity.')
+        return { contents: adapted[path], loader: 'js', resolveDir: dirname(path) }
+      })
       // Keep the host's actual engine classes, CRS registry and cache identity.
       // Only the two reviewed sources are copied. No engine prototype is patched.
       builder.onResolve({ filter: /^\./, namespace: 'owned-point-source' }, args => {

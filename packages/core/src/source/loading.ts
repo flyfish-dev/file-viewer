@@ -22,6 +22,7 @@ import {
   DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
   getExtension,
   normalizeFilename,
+  normalizeFileExtension,
   readFileViewerBuffer,
   resolveFileViewerSourceFilename,
   wrapFileViewerFileRef,
@@ -463,6 +464,8 @@ export const reportFileViewerMissingRemoteData = ({
 
 export interface RunFileViewerRemoteFilePreviewInput<Session = unknown> {
   url: string;
+  filename?: string;
+  type?: string;
   version: number;
   pageHref?: string;
   streaming?: FileViewerPdfOptions['streaming'];
@@ -642,6 +645,8 @@ export interface CreateFileViewerSourceLoadingActionHandlersInput<Session = unkn
   getFile: () => FileViewerFileRef | null | undefined;
   getUrl: () => string | null | undefined;
   getCurrentFilename?: () => string | undefined;
+  getSourceFilename?: () => string | undefined;
+  getSourceType?: () => string | undefined;
   shouldStreamLocalFile?: (input: {
     file: File;
     filename: string;
@@ -1491,6 +1496,8 @@ export const runFileViewerLocalFilePreview = async <Session = unknown>({
 
 export const runFileViewerRemoteFilePreview = async <Session = unknown>({
   url,
+  filename,
+  type,
   version,
   pageHref,
   streaming,
@@ -1518,6 +1525,8 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
   FileViewerRemoteFilePreviewState<Session>
 > => {
   let remoteSource = resolveFileViewerRemoteSourcePlan({
+    filename,
+    type,
     pageHref,
     streaming,
     url,
@@ -1592,7 +1601,7 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
           ? undefined
           : resolveFileViewerPreviewMessages(i18n).downloading,
         signal: controller?.signal,
-        typeOverride: remoteSource.streamType,
+        typeOverride: remoteSource.streamPdf ? 'pdf' : remoteSource.streamType,
         onStartLoading,
         onSession,
         onActiveDocumentContext,
@@ -1751,6 +1760,8 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
   getFile,
   getUrl,
   getCurrentFilename,
+  getSourceFilename,
+  getSourceType,
   shouldStreamLocalFile,
   getPdfStreaming,
   shouldStreamRemoteUrl,
@@ -1828,6 +1839,8 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
   ) => {
     return await runFileViewerRemoteFilePreview<Session>({
       url,
+      filename: getSourceFilename?.(),
+      type: getSourceType?.(),
       version,
       pageHref: getPageHref?.(),
       streaming: getPdfStreaming?.(),
@@ -2123,6 +2136,7 @@ export const resolveFileViewerPageHref = (
 
 export const resolveFileViewerRemoteSourcePlan = ({
   filename,
+  type,
   fallbackFilename = DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
   pageHref,
   streaming,
@@ -2130,6 +2144,7 @@ export const resolveFileViewerRemoteSourcePlan = ({
   url,
 }: {
   filename?: string;
+  type?: string;
   fallbackFilename?: string;
   pageHref?: string;
   streaming?: FileViewerPdfOptions['streaming'];
@@ -2143,16 +2158,14 @@ export const resolveFileViewerRemoteSourcePlan = ({
 }): FileViewerRemoteSourcePlan => {
   const sourceUrl = normalizeFileViewerSourceUrl(url) || url;
   const nextFilename = normalizeFilename(filename || url, fallbackFilename);
-  const extension = getExtension(nextFilename);
+  const extension = normalizeFileExtension(type || getExtension(nextFilename));
 
-  const streamPdf = pageHref
-    ? shouldStreamPdfUrl({
-      extension,
-      pageHref,
-      streaming,
-      url: sourceUrl,
-    })
-    : false;
+  const streamPdf = shouldStreamPdfUrl({
+    extension,
+    pageHref: pageHref || '',
+    streaming,
+    url: sourceUrl,
+  });
 
   const streamDecision = !streamPdf
     ? shouldStreamRemoteUrl?.({

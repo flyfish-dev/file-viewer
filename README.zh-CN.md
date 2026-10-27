@@ -74,6 +74,8 @@
 
 ## 当前版本与新增能力
 
+当前源码正在准备 `3.3.0` 候选，接入已发布的 DOCX `0.3.39` 引擎；File Viewer 候选软件包与生产站点尚未发布，详见[候选变更说明](CHANGELOG.md)。
+
 当前稳定版为 [v3.2.2](https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.2)。本页说明当前源码的能力；主分支与在线 Demo 可能包含稳定版之后的修复，使用 npm 或 Release 归档时请按对应版本验证。
 
 - 二进制检查器 `@file-viewer/renderer-binary` 提供十六进制、ASCII、字段树和字节范围联动，可检查 BIN、HEX、ELF、PE、Java Class 与 Mach-O 文件，只读分析，不执行文件。
@@ -913,3 +915,7 @@ File Viewer 自有源码采用 [Apache-2.0](LICENSE)。DWG/DWF/DWFX 运行时（
 欢迎通过 issue / PR 贡献通用修复与改进，参与方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 新贡献者可从[本地开发](docs/zh/guide/development.md)、[国际协作](docs/zh/guide/collaboration.md)和[翻译指南](docs/zh/guide/translations.md)开始；欢迎中英文参与，其他语言可附简短英文摘要。
+
+## PDF URL 读取
+
+标准组件的 PDF URL 默认同源渐进读取。跨域签名 URL 可用 `pdf.streaming: true` 并提供 filename/type；设为 `false` 则完整下载一次。只按需读取 Range 时同时设置 `pdf.disableStream`、`pdf.disableAutoFetch` 为 `true`，并由服务端提供 Range/CORS 支持。显式字节和自定义 fetchFile 保持优先。

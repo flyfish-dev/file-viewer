@@ -264,7 +264,8 @@ const options = {
 | `presentation.workerType` | PPTX Worker 类型，通常保持默认 `module`；只有旧 WebView、特殊 CSP 或构建系统要求 classic Worker 时再覆盖 |
 | `presentation.pptModuleUrl` / `presentation.pptWorkerUrl` / `presentation.pptWasmUrl` / `presentation.pptFontUrl` | PowerPoint 97–2003 `.ppt` 0.3.4 的 ESM、Worker、WASM 和 CJK 字体高级路径覆盖；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局无需配置 |
 | `presentation.pptWorker` / `presentation.pptCache` | 控制二进制 PPT 的 Worker 模式和有界 IndexedDB 帧缓存；默认均自动启用可用能力 |
-| `pdf.streaming` | PDF URL 渐进读取策略，默认 `same-origin`；设为 `true` 时跨域也尝试 URL 直连读取，设为 `false` 时完全回到 Blob 下载后预览 |
+| `pdf.streaming` | 标准框架组件统一使用 PDF URL 策略，默认 `same-origin`；`true` 允许 CORS 跨域直读，`false` 完整下载一次后预览。签名 URL 可用 filename/type 标明 PDF；显式字节与自定义 fetchFile 优先。 |
+| `pdf.disableStream` / `pdf.disableAutoFetch` | PDF.js 网络控制；仅按需读取 Range 时同时设为 true，省略时保留 PDF.js 默认值。 |
 | `pdf.toolbar` | 是否显示 PDF 渲染器自己的页码、缩放和旋转工具栏。独立预览建议显示；左右文档比对等紧凑场景可设为 `false`，让 PDF 与其他格式的正文区域对齐 |
 | `pdf.navigation` / `pdf.defaultNavigationVisible` | 是否启用左侧导航窗格以及初始是否展开。导航窗格支持页面列表和目录树切换 |
 | `pdf.thumbnails` | 页面列表是否显示真实页面缩略图，默认 `false`；开启后只对可见页懒渲染缩略图，避免大 PDF 一次性生成所有 canvas |

@@ -131,6 +131,8 @@ type PdfLoadingSource =
       url: string;
       rangeChunkSize: number;
       withCredentials: boolean;
+      disableStream?: boolean;
+      disableAutoFetch?: boolean;
     };
 type PdfFontInspectionPage = PdfTextContentPage & {
   getOperatorList: () => Promise<unknown>;
@@ -2178,11 +2180,16 @@ export default async function renderPdf(
         });
         restorePdfJsMissingSystemFontWarnings = suppressPdfJsMissingSystemFontWarnings(targetWindow);
       }
-      const source: PdfLoadingSource = context?.streamUrl
+      // Explicit/caller-acquired bytes take precedence over URL metadata. The
+      // URL-only path deliberately supplies an empty buffer for PDF.js Range I/O.
+      const streamUrl = buffer.byteLength ? undefined : context?.streamUrl;
+      const source: PdfLoadingSource = streamUrl
         ? {
-            url: context.streamUrl,
+            url: streamUrl,
             rangeChunkSize: options?.rangeChunkSize || DEFAULT_PDF_RANGE_CHUNK_SIZE,
             withCredentials: options?.withCredentials === true,
+            disableStream: options?.disableStream,
+            disableAutoFetch: options?.disableAutoFetch,
           }
         : {
             data: buffer,

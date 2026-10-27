@@ -21,7 +21,10 @@ if (!pdfDefinition) {
   throw new Error('@file-viewer/renderer-pdf could not locate the core PDF renderer definition.');
 }
 
-export const pdfRendererDefinition = pdfDefinition;
+export const pdfRendererDefinition: RendererDefinition = {
+  ...pdfDefinition,
+  sourceAccess: 'stream-preferred',
+};
 
 export const renderFileViewerPdf: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = (
   buffer,

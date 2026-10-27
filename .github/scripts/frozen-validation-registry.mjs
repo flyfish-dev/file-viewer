@@ -132,8 +132,14 @@ export async function startFrozenValidationRegistry({ archives, cacheDirectory }
     })
     await pipeline(createReadStream(path), response)
   }
-  const sendJson = (response, status, value) => {
-    response.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store' })
+  const sendJson = (response, status, value, cacheableMetadata = false) => {
+    // This process freezes successful metadata. Normal npm clients must be able
+    // to retain it for the required offline rehearsal. Errors, health and access
+    // denials remain uncacheable; audit and write guards still run first.
+    response.writeHead(status, {
+      'content-type': 'application/json',
+      'cache-control': status === 200 && cacheableMetadata ? 'public, max-age=600' : 'no-store'
+    })
     response.end(JSON.stringify(value))
   }
   const server = createServer(
@@ -149,6 +155,12 @@ export async function startFrozenValidationRegistry({ archives, cacheDirectory }
         if (!['GET', 'HEAD'].includes(request.method)) {
           requests.blockedWrites++
           sendJson(response, 405, { error: 'This validation registry is read-only' })
+          return
+        }
+        // Package managers and the real CLI use the registry's own health
+        // endpoint. It is not upstream package metadata and performs no writes.
+        if (path === '/-/ping') {
+          sendJson(response, 200, { ok: true })
           return
         }
         if (path.startsWith('/frozen/')) {
@@ -222,7 +234,8 @@ export async function startFrozenValidationRegistry({ archives, cacheDirectory }
               name,
               'dist-tags': { latest: values.at(-1).version },
               versions: Object.fromEntries(values.map((value) => [value.version, value]))
-            }
+            },
+            true
           )
           return
         }
@@ -260,7 +273,7 @@ export async function startFrozenValidationRegistry({ archives, cacheDirectory }
             })
           )
         const result = await metadata.get(raw)
-        sendJson(response, result.status, result.value)
+        sendJson(response, result.status, result.value, true)
       })().catch((error) => {
         if (!response.headersSent) sendJson(response, 502, { error: error.message })
         else response.destroy(error)

@@ -699,6 +699,10 @@ export interface FileViewerPdfOptions {
    */
   initialViewState?: FileViewerViewState
   streaming?: boolean | 'same-origin'
+  /** Opt out of PDF.js background streaming while retaining HTTP Range reads. Default: PDF.js defaults. */
+  disableStream?: boolean
+  /** Stop speculative PDF.js reads; requires disableStream:true to be fully effective. */
+  disableAutoFetch?: boolean
   rangeChunkSize?: number
   withCredentials?: boolean
   /**

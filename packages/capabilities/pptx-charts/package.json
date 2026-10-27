@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-pptx-charts",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "private": false,
   "type": "module",
   "description": "Opt-in chart runtime for the File Viewer native PPTX renderer.",
@@ -27,7 +27,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/pptx": "workspace:3.2.2",
+    "@file-viewer/pptx": "workspace:3.3.0",
     "billboard.js": "^4.1.0",
     "d3-format": "^3.1.2"
   },

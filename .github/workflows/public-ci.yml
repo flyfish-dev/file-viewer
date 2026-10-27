@@ -185,6 +185,32 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm build
 
+      - name: Verify source and runtime build-path privacy
+        if: steps.impact.outputs.runtime != 'false'
+        run: |
+          node --test packages/renderers/3d/scripts/geo3d-build-path-privacy.test.mjs
+          node packages/renderers/signature/scripts/verify-artifacts.mjs
+
+      - name: Verify CAD source HTTPS bytes and rebuild against the actual Full runtime
+        if: steps.impact.outputs.runtime != 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          node --test ecosystem/public-runtime/frozen-validation-registry.test.mjs packages/build-support/bundle-notices.test.mjs packages/build-support/cad-corresponding-source.test.mjs packages/build-support/cad-source-offer.test.mjs packages/build-support/cad-source-reference.test.mjs packages/build-support/stage-cad-runtime.test.mjs
+          mkdir -p output/cad-corresponding-source
+          node packages/build-support/verify-full-workspace-notices.mjs | tee output/cad-corresponding-source/workspace-copyrights.log
+          node packages/build-support/verify-cad-corresponding-source.mjs --rebuild --remote | tee output/cad-corresponding-source/rebuild.log
+
+      - name: Retain CAD corresponding-source evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cad-corresponding-source-evidence
+          path: output/cad-corresponding-source/**
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Verify Web Full asset manifest
         if: steps.impact.outputs.runtime != 'false'
         run: node --test packages/components/web-full/test/asset-manifest.test.mjs
@@ -324,6 +350,10 @@ jobs:
             output/pdf-hand-tool/**/*.png
             output/pdf-text-selection/**/report.json
             output/pdf-text-selection/**/*.png
+            output/pdf-url-streaming/**/*.json
+            output/pdf-url-streaming/**/*.png
+            output/issue-419/**/*.json
+            output/issue-419/**/*.png
             output/doc-font-table/*.json
             output/doc-font-table/*.png
             output/doc-font-table/font-cohort.log

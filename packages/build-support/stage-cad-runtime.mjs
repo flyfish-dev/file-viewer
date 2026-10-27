@@ -15,7 +15,8 @@ import { tmpdir } from 'node:os'
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { sanitizeOfflineViewerAssetTree } from '../components/web-full/scripts/offline-asset-sanitize.mjs'
-import { cadIntegrationSourceNotice } from './cad-source-offer.mjs'
+import { CAD_INTEGRATION_SOURCE, cadIntegrationSourceNotice } from './cad-source-offer.mjs'
+import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource } from './cad-corresponding-source.mjs'
 
 const workspaceRoot = resolve(import.meta.dirname, '../..')
 const ownerManifestPath = resolve(workspaceRoot, 'packages/renderers/cad/package.json')
@@ -25,7 +26,7 @@ const notices = ['LICENSE', 'NOTICE']
 const retainedGpl = new URL('./licenses/libredwg-web-0.7.9-GPL-3.0.txt', import.meta.url)
 const retainedGplSha256 = '8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903'
 const generatedFilename = filename => [...requiredFiles, ...notices, 'GPL-3.0.txt',
-  'CORRESPONDING_SOURCE_NOTICE.txt'].includes(filename) || /^dwg-worker(?:-.+)?\.js(?:\.map)?$/.test(filename)
+  'CORRESPONDING_SOURCE_NOTICE.txt', CAD_SOURCE_ARCHIVE_NAME].includes(filename) || /^dwg-worker(?:-.+)?\.js(?:\.map)?$/.test(filename)
 
 // These directories are generated outputs. Validate all replaced entries before
 // changing any bytes, so an unexpected user file or symlink is never removed.
@@ -164,6 +165,8 @@ export async function stageInstalledCadRuntimeDirectory(targetDirectory) {
   } finally {
     await rm(normalizationRoot, { recursive: true, force: true })
   }
+  const sourceArchive = await readCadCorrespondingSource(workspaceRoot, CAD_INTEGRATION_SOURCE)
+  files.set(CAD_SOURCE_ARCHIVE_NAME, sourceArchive.bytes)
   const gpl = await readFile(retainedGpl)
   assert.equal(createHash('sha256').update(gpl).digest('hex'), retainedGplSha256, 'Retained original GPL text changed')
   files.set('GPL-3.0.txt', gpl)
@@ -173,8 +176,7 @@ export async function stageInstalledCadRuntimeDirectory(targetDirectory) {
     `The current (${version}), unversioned and compatibility (${aliases.filter(alias => alias !== version).join(', ')}) paths contain the same installed CAD ${version} runtime.`,
     'The compatibility paths are aliases for existing deployments; they do not distribute older binaries.',
     'JavaScript source-map reference comments are omitted and the normal public offline sanitizer localizes fallback markers. WebAssembly bytes are unchanged.',
-    'The unchanged normalization script is available in the public File Viewer source:',
-    'https://github.com/flyfish-dev/file-viewer/blob/c4cbee1b42ef1a7357e08c222da7451bf0ef2c31/packages/components/web-full/scripts/offline-asset-sanitize.mjs',
+    'The exact offline sanitizer is included in the integration source at the immutable HTTPS reference below.',
     '',
     '@flyfish-dev/cad-viewer 0.8.3 (AGPL-3.0-only), including its Worker and asset build scripts:',
     'https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6366d2f7b1013cd5c300008c3c3fbf017ca9aace',

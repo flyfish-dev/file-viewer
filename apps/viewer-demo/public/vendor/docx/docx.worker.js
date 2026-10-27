@@ -12336,6 +12336,8 @@
 	            result.tagName = "g";
 	            result.isGroup = true;
 	            break;
+	        case "roundrect":
+	            result.roundRectArc = 0.2;
 	        case "rect":
 	            result.tagName = "rect";
 	            Object.assign(result.attrs, { width: '100%', height: '100%' });
@@ -12369,6 +12371,10 @@
 	                break;
 	            case "coordsize":
 	                result.coordSize = parseNumericPoint(at.value);
+	                break;
+	            case "arcsize":
+	                if (result.roundRectArc != null)
+	                    result.roundRectArc = parseRoundRectArc(at.value);
 	                break;
 	            case "inset":
 	                if (result.textInset) {
@@ -12466,6 +12472,13 @@
 	        };
 	    }
 	    return result;
+	}
+	function parseRoundRectArc(value) {
+	    const source = value.trim();
+	    if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:%|f)?$/i.test(source))
+	        return 0.2;
+	    const fraction = parseFloat(source) / (/%$/.test(source) ? 100 : /f$/i.test(source) ? 65536 : 1);
+	    return Number.isFinite(fraction) ? Math.max(0, Math.min(1, fraction)) : 0.2;
 	}
 	function vmlImageAttrs(el) {
 	    const cropLeft = parseVmlFraction(globalXmlParser.attr(el, "cropleft"));
@@ -14024,6 +14037,9 @@
 	        const prstGeom = globalXmlParser.element(spPr, "prstGeom");
 	        const fillStyle = this.parseDmlFillStyle(spPr);
 	        const lineStyle = this.parseDmlLineStyle(globalXmlParser.element(spPr, "ln"));
+	        const roundedRadius = !geom ? this.parseDmlRoundRectRadius(spPr, bounds.width, bounds.height, transform) : null;
+	        if (roundedRadius != null)
+	            cssStyle["border-radius"] = roundedRadius;
 	        if (geom) {
 	            const path = this.parseDmlCustomGeometry(geom);
 	            return {
@@ -14060,6 +14076,23 @@
 	            title: cNvPr ? globalXmlParser.attr(cNvPr, "title") ?? globalXmlParser.attr(cNvPr, "name") : null,
 	            alt: cNvPr ? globalXmlParser.attr(cNvPr, "descr") : null
 	        };
+	    }
+	    parseDmlRoundRectRadius(spPr, width, height, transform) {
+	        const preset = globalXmlParser.element(spPr, "prstGeom");
+	        if (!preset || globalXmlParser.attr(preset, "prst") != "roundRect")
+	            return null;
+	        const guides = globalXmlParser.element(preset, "avLst");
+	        const adjustment = (guides ? globalXmlParser.elements(guides, "gd") : [])
+	            .find(guide => globalXmlParser.attr(guide, "name") == "adj");
+	        const formula = adjustment ? globalXmlParser.attr(adjustment, "fmla") : "";
+	        const value = /^val\s+[+-]?(?:\d+(?:\.\d*)?|\.\d+)\s*$/.test(formula ?? "")
+	            ? Number(formula.trim().split(/\s+/)[1]) : 16667;
+	        const fraction = Math.max(0, Math.min(50000, value)) / 100000;
+	        const scaleX = Math.abs(transform?.scaleX ?? 1);
+	        const scaleY = Math.abs(transform?.scaleY ?? 1);
+	        const radius = Number.isFinite(scaleX) && Number.isFinite(scaleY) && scaleX > 0 && scaleY > 0
+	            ? Math.min(width / scaleX, height / scaleY) * fraction : 0;
+	        return `${this.pt(Number.isFinite(radius * scaleX) ? radius * scaleX : 0)} / ${this.pt(Number.isFinite(radius * scaleY) ? radius * scaleY : 0)}`;
 	    }
 	    parseDmlShapeBounds(spPr, transform) {
 	        const xfrm = globalXmlParser.element(spPr, "xfrm");
@@ -14197,6 +14230,7 @@
 	        return {
 	            dmlTextBox: true,
 	            textInsets: textInsetStyle,
+	            textCompatibleLineSpacing: bodyPr ? globalXmlParser.boolAttr(bodyPr, "compatLnSpc", false) : false,
 	            textVerticalAlign: this.dmlVerticalAlign(bodyPr)
 	        };
 	    }
@@ -14296,6 +14330,10 @@
 	    }
 	    parseDmlShapeProperties(elem, style) {
 	        const xfrm = globalXmlParser.element(elem, "xfrm");
+	        const bounds = this.parseDmlShapeBounds(elem);
+	        const roundedRadius = this.parseDmlRoundRectRadius(elem, bounds.width, bounds.height);
+	        if (roundedRadius != null)
+	            style["border-radius"] = roundedRadius;
 	        if (xfrm) {
 	            for (const n of globalXmlParser.elements(xfrm)) {
 	                switch (n.localName) {
@@ -14740,6 +14778,10 @@
 	                case "textAlignment":
 	                    style["vertical-align"] = values.valueOfTextAlignment(c);
 	                    break;
+	                case "autoSpaceDE":
+	                case "autoSpaceDN":
+	                    style[c.localName == "autoSpaceDE" ? "--docx-auto-space-de" : "--docx-auto-space-dn"] = `${globalXmlParser.boolAttr(c, "val", true)}`;
+	                    break;
 	                case "color":
 	                    style["color"] = xmlUtil.colorAttr(c, "val", null, autos.color);
 	                    break;
@@ -15038,6 +15080,7 @@
 	        fonts.push(...[asciiTheme, hAnsiTheme]
 	            .filter(x => x)
 	            .map(x => x.startsWith("var(") ? x : encloseFontFamily(x)));
+	        const latinFonts = fonts.slice();
 	        if (eastAsia) {
 	            fonts.push(...eastAsianFontFamilyStack(eastAsia, eastAsiaScript));
 	        }
@@ -15051,6 +15094,9 @@
 	        if (fonts.length > 0) {
 	            const currentFonts = (style["font-family"] ?? "").split(',').map(x => x.trim()).filter(x => x);
 	            style["font-family"] = [...new Set([...currentFonts, ...fonts])].join(', ');
+	            if (latinFonts.length)
+	                style["--docx-latin-font-family"] = [...new Set(latinFonts)].join(', ');
+	            style["--docx-partial-eastasia-font"] = !latinFonts.length && (eastAsia || eastAsiaTheme) && !cs && !csTheme ? "true" : "false";
 	        }
 	    }
 	    scriptThemeFontValue(value, language) {

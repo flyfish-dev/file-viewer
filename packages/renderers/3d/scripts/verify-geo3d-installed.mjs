@@ -280,7 +280,7 @@ console.log('Both public entries imported with all optional specialist peers abs
   const diagnostics = []
   for (const mode of ['NodeNext', 'Bundler']) {
     const ts = typescript
-    const program = ts.createProgram([fixture], {
+    const options = {
       target: ts.ScriptTarget.ES2022,
       module: mode === 'NodeNext' ? ts.ModuleKind.NodeNext : ts.ModuleKind.ESNext,
       moduleResolution:
@@ -289,8 +289,14 @@ console.log('Both public entries imported with all optional specialist peers abs
       noEmit: true,
       skipLibCheck: true,
       types: [],
+      // A checkout-owned compiler must not resolve triple-slash type
+      // references from its own process working directory.
+      typeRoots: [join(consumer, 'node_modules/@types')],
       lib: ['lib.es2022.d.ts', 'lib.dom.d.ts', 'lib.dom.iterable.d.ts']
-    })
+    }
+    const host = ts.createCompilerHost(options)
+    host.getCurrentDirectory = () => consumer
+    const program = ts.createProgram([fixture], options, host)
     const errors = ts.getPreEmitDiagnostics(program)
     diagnostics.push({ mode, count: errors.length })
     if (errors.length)

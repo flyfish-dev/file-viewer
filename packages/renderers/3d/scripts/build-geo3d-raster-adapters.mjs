@@ -159,11 +159,12 @@ export async function buildRasterAdapters() {
       builder.onResolve({ filter: /^geo3d-owned-raster:/ }, args => {
         const name = args.path.slice('geo3d-owned-raster:'.length)
         if (!paths[name]) throw new Error('Unknown owned raster source.')
-        return { path: paths[name], namespace: 'owned-raster' }
+        return { path: name, namespace: 'owned-raster' }
       })
       builder.onLoad({ filter: /.*/, namespace: 'owned-raster' }, args => {
-        const name = Object.keys(paths).find(key => paths[key] === args.path)
-        return { contents: adapted[name], loader: 'js', resolveDir: dirname(args.path) }
+        const name = args.path, path = paths[name]
+        if (!path) throw new Error('Unknown owned raster module identity.')
+        return { contents: adapted[name], loader: 'js', resolveDir: dirname(path) }
       })
       builder.onResolve({ filter: /^\./, namespace: 'owned-raster' }, args => {
         const path = resolve(args.resolveDir, args.path)

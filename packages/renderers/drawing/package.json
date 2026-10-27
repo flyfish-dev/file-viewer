@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-drawing",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "private": false,
   "type": "module",
   "description": "Draw.io, Excalidraw, Mermaid, and PlantUML renderers for File Viewer, with an opt-in BPMN viewer.",
@@ -73,8 +73,8 @@
     "capabilityManifest": "./file-viewer.capability.json"
   },
   "dependencies": {
-    "@file-viewer/capability-mermaid": "workspace:3.2.2",
-    "@file-viewer/core": "workspace:3.2.2",
+    "@file-viewer/capability-mermaid": "workspace:3.3.0",
+    "@file-viewer/core": "workspace:3.3.0",
     "@panzoom/panzoom": "^4.6.2",
     "dompurify": "3.4.17",
     "plantuml-encoder": "^1.4.0",

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-3d",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "private": false,
   "type": "module",
   "description": "Standalone 3D model renderer plugin for File Viewer powered by Three.js loaders and OrbitControls.",
@@ -83,14 +83,14 @@
     "verify:ifc": "node scripts/verify-ifc-entry.mjs && node --test scripts/ifc-settings.test.mjs",
     "verify:ifc-browser": "node scripts/verify-ifc-browser.mjs",
     "verify:ifc-installed": "node scripts/verify-ifc-installed.mjs",
-    "verify:geo3d": "node scripts/verify-geo3d-entry.mjs && node scripts/verify-geo3d-types.mjs && node --test scripts/geo3d-inputs.test.mjs scripts/geo3d-owned-workers.test.mjs scripts/geo3d-raster-workers.test.mjs scripts/geo3d-raster-cache.test.mjs scripts/geo3d-point-lifecycle.test.mjs scripts/geo3d-copc-hierarchy.test.mjs scripts/geo3d-hooks.test.mjs scripts/geo3d-point-material.test.mjs scripts/geo3d-memory-fixtures.test.mjs scripts/geo3d-metadata.test.mjs scripts/geo3d-las-crs.test.mjs",
+    "verify:geo3d": "node scripts/verify-geo3d-entry.mjs && node scripts/verify-geo3d-types.mjs && node --test scripts/geo3d-inputs.test.mjs scripts/geo3d-owned-workers.test.mjs scripts/geo3d-raster-workers.test.mjs scripts/geo3d-raster-cache.test.mjs scripts/geo3d-point-lifecycle.test.mjs scripts/geo3d-copc-hierarchy.test.mjs scripts/geo3d-hooks.test.mjs scripts/geo3d-point-material.test.mjs scripts/geo3d-memory-fixtures.test.mjs scripts/geo3d-metadata.test.mjs scripts/geo3d-las-crs.test.mjs && node --test scripts/geo3d-build-path-privacy.test.mjs",
     "verify:geo3d-browser": "node scripts/verify-geo3d-browser.mjs && node scripts/verify-github-406-browser.mjs",
     "verify:optional-sdk-types": "node scripts/verify-optional-sdk-types.mjs",
     "verify:geo3d-native-browser": "node scripts/verify-geo3d-native-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.2.2",
-    "@file-viewer/geometry-engine": "workspace:3.2.2",
+    "@file-viewer/core": "workspace:3.3.0",
+    "@file-viewer/geometry-engine": "workspace:3.3.0",
     "@types/emscripten": "^1.41.6",
     "three": "^0.186.0"
   },
