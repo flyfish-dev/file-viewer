@@ -242,11 +242,17 @@ const heroPreviewShieldStyle = computed(() => {
     height: `${shield.height}px`
   }
 })
-const githubStarsLabel = computed(() => githubStarCount.value === null ? 'GitHub' : formatStarCount(githubStarCount.value))
+const githubStarsLabel = computed(() =>
+  githubStarCount.value === null ? 'GitHub' : formatStarCount(githubStarCount.value)
+)
 const githubStarsAriaLabel = computed(() =>
-  githubStarCount.value === null ? (isZh.value ? 'GitHub 开源总仓' : 'GitHub repository') : isZh.value
-    ? `GitHub 开源总仓，${githubStarsLabel.value} stars`
-    : `GitHub repository, ${githubStarsLabel.value} stars`
+  githubStarCount.value === null
+    ? isZh.value
+      ? 'GitHub 开源总仓'
+      : 'GitHub repository'
+    : isZh.value
+      ? `GitHub 开源总仓，${githubStarsLabel.value} stars`
+      : `GitHub repository, ${githubStarsLabel.value} stars`
 )
 const demoPreviewDesktopPath = computed(() => demoPreviewDesktopPaths[locale.value])
 const demoPreviewMobilePath = computed(() => demoPreviewMobilePaths[locale.value])
@@ -321,7 +327,11 @@ async function loadGithubStarCount() {
       return
     }
     const payload = (await response.json()) as { stargazers_count?: unknown }
-    if (typeof payload.stargazers_count === 'number' && Number.isSafeInteger(payload.stargazers_count) && payload.stargazers_count >= 0) {
+    if (
+      typeof payload.stargazers_count === 'number' &&
+      Number.isSafeInteger(payload.stargazers_count) &&
+      payload.stargazers_count >= 0
+    ) {
       githubStarCount.value = payload.stargazers_count
     }
   } catch {
@@ -918,19 +928,6 @@ const activeQuickStart = computed(() => {
   const items = quickStartItems.value
   return items[activeQuickStartIndex.value] ?? items[0]!
 })
-
-const donationQrItems: QrItem[] = [
-  {
-    label: '微信打赏',
-    note: '微信扫码，请维护者喝杯柠檬水',
-    image: '/donate-wx.jpg?v=637db1a6'
-  },
-  {
-    label: '支付宝打赏',
-    note: '支付宝扫码，支持开源持续迭代',
-    image: '/donate-alipay.jpg?v=3b614e81'
-  }
-]
 
 const chineseContactItems: ChineseContactItem[] = [
   {
@@ -1589,6 +1586,20 @@ function handleSupportDialogKeydown(event: KeyboardEvent) {
   const firstElement = focusableElements[0]!
   const lastElement = focusableElements[focusableElements.length - 1]!
   const activeElement = document.activeElement
+
+  if (supportDialogView.value === 'sponsor' && !event.altKey && !event.ctrlKey && !event.metaKey) {
+    event.preventDefault()
+    const activeIndex = focusableElements.findIndex((element) => element === activeElement)
+    const nextIndex =
+      activeIndex < 0
+        ? event.shiftKey
+          ? focusableElements.length - 1
+          : 0
+        : (activeIndex + (event.shiftKey ? -1 : 1) + focusableElements.length) %
+          focusableElements.length
+    focusableElements[nextIndex]!.focus()
+    return
+  }
 
   if (
     event.shiftKey &&
@@ -2573,6 +2584,7 @@ onBeforeUnmount(() => {
         <section
           ref="supportDialogPanel"
           class="support-dialog-panel"
+          :class="{ 'is-sponsor': supportDialogView === 'sponsor' }"
           role="dialog"
           aria-modal="true"
           aria-labelledby="support-dialog-title"
@@ -2618,8 +2630,8 @@ onBeforeUnmount(() => {
                     ? '选择最适合你的联系渠道'
                     : 'Choose a direct contact channel.'
                   : isZh
-                    ? '选择你方便的支持方式'
-                    : 'Support open-source maintenance.'
+                    ? '让开源维护持续向前。'
+                    : 'Keep open-source work moving.'
               }}
             </h2>
             <p id="support-dialog-description">
@@ -2629,32 +2641,21 @@ onBeforeUnmount(() => {
                     ? '企业微信用于商务与优先支持；公众号和交流群用于获取更新与社区交流。'
                     : 'Reach the File Viewer team through WhatsApp or Telegram.'
                   : isZh
-                    ? '扫描微信或支付宝二维码，也可以使用 GitHub Sponsors 或小铺直链。'
-                    : 'Choose GitHub Sponsors for recurring support, or open the support shop directly.'
+                    ? '通过 GitHub Sponsors 或飞鱼小铺，支持 File Viewer 的持续维护。'
+                    : 'Support ongoing maintenance through GitHub Sponsors or the Flyfish support shop.'
               }}
             </p>
           </header>
 
           <div
-            v-if="isZh && supportDialogView === 'sponsor'"
+            v-if="supportDialogView === 'sponsor'"
             class="support-dialog-sponsor"
-            data-support-locale="zh-CN"
+            :data-support-locale="isZh ? 'zh-CN' : 'international'"
           >
-            <div class="support-dialog-qr-grid">
-              <article
-                v-for="item in donationQrItems"
-                :key="item.label"
-                class="support-dialog-qr-card"
-              >
-                <div class="support-dialog-qr-image">
-                  <img :src="item.image" :alt="item.label" decoding="async" />
-                </div>
-                <strong>{{ item.label }}</strong>
-                <span>{{ item.note }}</span>
-              </article>
-            </div>
-
-            <div class="support-dialog-actions" aria-label="其他打赏方式">
+            <div
+              class="support-dialog-actions"
+              :aria-label="isZh ? '打赏支持方式' : 'Support options'"
+            >
               <a
                 class="is-github"
                 :href="githubSponsorsUrl"
@@ -2664,22 +2665,30 @@ onBeforeUnmount(() => {
                 <GitHubMark />
                 <span>
                   <strong>GitHub Sponsors</strong>
-                  <small>一次性或持续赞助</small>
+                  <small>{{
+                    isZh ? '一次性支持，也可持续赞助' : 'One-time or recurring support'
+                  }}</small>
                 </span>
                 <ArrowRight :size="18" aria-hidden="true" />
               </a>
               <a :href="domesticSponsorUrl" target="_blank" rel="noopener noreferrer">
                 <ShoppingCart :size="20" aria-hidden="true" />
                 <span>
-                  <strong>小铺打赏</strong>
-                  <small>直达小铺支持页面</small>
+                  <strong>{{ isZh ? '小铺打赏' : 'Support shop' }}</strong>
+                  <small>{{
+                    isZh ? '打开飞鱼小铺支持页面' : 'Open the Flyfish support page'
+                  }}</small>
                 </span>
                 <ArrowRight :size="18" aria-hidden="true" />
               </a>
             </div>
 
             <p class="support-dialog-note">
-              打赏完全自愿，不影响 File Viewer 的开源功能与使用许可。
+              {{
+                isZh
+                  ? '支持完全自愿，不影响 File Viewer 的开源功能与使用许可。'
+                  : 'Support is optional and does not change the open-source features or license.'
+              }}
             </p>
           </div>
 
@@ -2742,43 +2751,6 @@ onBeforeUnmount(() => {
               <strong>{{ activeChineseContact.label }}</strong>
               <span>{{ activeChineseContact.note }}</span>
             </article>
-          </div>
-
-          <div
-            v-else-if="supportDialogView === 'sponsor'"
-            class="support-dialog-international is-sponsor-only"
-            data-support-locale="international"
-          >
-            <section aria-labelledby="international-support-title">
-              <h3 id="international-support-title">Support maintenance</h3>
-              <div class="support-dialog-actions" aria-label="International support options">
-                <a
-                  class="is-github"
-                  :href="githubSponsorsUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <GitHubMark />
-                  <span>
-                    <strong>GitHub Sponsors</strong>
-                    <small>One-time or recurring support</small>
-                  </span>
-                  <ArrowRight :size="18" aria-hidden="true" />
-                </a>
-                <a :href="domesticSponsorUrl" target="_blank" rel="noopener noreferrer">
-                  <ShoppingCart :size="20" aria-hidden="true" />
-                  <span>
-                    <strong>Support shop</strong>
-                    <small>Open the direct support page</small>
-                  </span>
-                  <ArrowRight :size="18" aria-hidden="true" />
-                </a>
-              </div>
-            </section>
-
-            <p class="support-dialog-note">
-              Support is optional and does not change the open-source features or license.
-            </p>
           </div>
 
           <div

@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import { rm } from 'node:fs/promises'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -6,7 +7,18 @@ import vue from '@vitejs/plugin-vue'
 const resolveSiteFile = (path: string) => fileURLToPath(new URL(path, import.meta.url))
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    {
+      name: 'omit-personal-donation-qr-assets',
+      apply: 'build',
+      async closeBundle() {
+        for (const name of ['donate-wx.jpg', 'donate-alipay.jpg']) {
+          await rm(resolveSiteFile(`./dist/${name}`), { force: true })
+        }
+      }
+    }
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
