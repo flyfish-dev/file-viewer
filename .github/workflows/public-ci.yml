@@ -242,7 +242,9 @@ jobs:
 
       - name: Run the issue regression gates
         if: steps.impact.outputs.runtime != 'false'
-        run: pnpm test
+        run: |
+          pnpm test
+          PPTX_DRAWING_OUTPUT="$GITHUB_WORKSPACE/output/pptx-drawing-semantics" pnpm --filter @file-viewer/pptx verify:drawing-semantics
 
       - name: Verify the installed DOCX diagonal-border repair
         if: steps.impact.outputs.runtime != 'false'
@@ -352,6 +354,8 @@ jobs:
             output/pdf-text-selection/**/*.png
             output/pdf-url-streaming/**/*.json
             output/pdf-url-streaming/**/*.png
+            output/pptx-drawing-semantics/*.json
+            output/pptx-drawing-semantics/*.png
             output/issue-419/**/*.json
             output/issue-419/**/*.png
             output/doc-font-table/*.json

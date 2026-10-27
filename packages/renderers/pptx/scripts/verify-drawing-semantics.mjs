@@ -196,6 +196,61 @@ try {
     }
     await check('Original corpus parses every supplied slide without a slide-error',()=>assert.equal(originals.reduce((n,r)=>n+r.pages,0),60));
   }
+  const replacementZip = await JSZip.loadAsync(bytes);
+  const alternate = (id, label) => `<mc:AlternateContent><mc:Choice Requires="a14">${text(id, 300, run(label + '_CHOICE'))}</mc:Choice><mc:Fallback>${text(id, 300, run(label))}</mc:Fallback></mc:AlternateContent>`;
+  const visibleSet = (id, value) => `<p:set><p:cBhvr><p:cTn dur="1" fill="hold"/><p:tgtEl><p:spTgt spid="${id}"/></p:tgtEl><p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="${value}"/></p:to></p:set>`;
+  const mainTiming = `<p:timing><p:tnLst><p:par><p:cTn nodeType="tmRoot"><p:childTnLst><p:seq><p:cTn nodeType="mainSeq"><p:childTnLst><p:par><p:cTn><p:childTnLst>${visibleSet(10, 'visible')}</p:childTnLst></p:cTn></p:par><p:par><p:cTn><p:childTnLst>${visibleSet(10, 'hidden')}${visibleSet(11, 'visible')}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>`;
+  const replacementBody = text(8, 10, run('ASSEMBLED_A')) + text(9, 10, run('ASSEMBLED_B')) + alternate(10, 'OLD_FORMULA') + alternate(11, 'FINAL_FORMULA');
+  for (const i of [1, 2]) replacementZip.file(`ppt/slides/slide${i}.xml`, slide(replacementBody)
+    .replace('<p:sld ', '<p:sld xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" ')
+    .replace('</p:sld>', (i === 1 ? mainTiming : '') + '</p:sld>'));
+  const replacementBytes = await replacementZip.generateAsync({ type: 'nodebuffer' });
+  for (const useWorker of [false, true]) await check(`Static held exit replaces the prior fallback only, preserving assembled/no-exit shapes (${useWorker ? 'Worker' : 'main'})`, async () => {
+    await mount(replacementBytes, useWorker);
+    const text = await page.locator('.slide').evaluateAll(slides => slides.map(s => s.textContent));
+    assert.ok(text[0].includes('ASSEMBLED_A') && text[0].includes('ASSEMBLED_B'));
+    assert.ok(!text[0].includes('OLD_FORMULA'));
+    assert.equal(text[0].split('FINAL_FORMULA').length - 1, 1);
+    assert.ok(!text[0].includes('_CHOICE'));
+    assert.ok(text[1].includes('OLD_FORMULA') && text[1].includes('FINAL_FORMULA'), 'Authored overlap without an exit is retained');
+    assert.ok(text[1].includes('ASSEMBLED_A') && text[1].includes('ASSEMBLED_B'));
+  });
+
+  await check('Static replacement survives real slideshow next/back navigation and destroy', async () => {
+    await page.evaluate(async ({ bytes, workerSource }) => {
+      root.replaceChildren();
+      window.visibilityUrl = URL.createObjectURL(new Blob([workerSource], { type: 'text/javascript' }));
+      window.visibilityWorkers = 0;
+      let done, fail;
+      const ready = new Promise((resolve, reject) => { done = resolve; fail = reject; });
+      window.visibilityViewer = await review.PptxViewer.open(Uint8Array.from(atob(bytes), c => c.charCodeAt(0)).buffer, root,
+        { fitMode: 'none', lazySlides: false, presentationFullscreen: false, workerFactory: () => {
+          const worker = new Worker(visibilityUrl), terminate = worker.terminate.bind(worker);
+          visibilityWorkers++;
+          worker.terminate = () => { if (!worker.stopped) { worker.stopped = true; visibilityWorkers--; terminate(); } };
+          return worker;
+        }, onRenderComplete: done, onError: fail, onSlideError: (_, error) => fail(error) });
+      await ready;
+      await visibilityViewer.enterPresentation(1);
+    }, { bytes: replacementBytes.toString('base64'), workerSource });
+    const state = () => page.evaluate(() => ({ slide: visibilityViewer.presentationSlideNumber, text: visibilityViewer.presentationRoot.querySelector('.flyfish-pptx-presentation .is-active-slide')?.textContent || '' }));
+    try {
+      const first = await state();
+      assert.equal(first.slide, 1);
+      assert.ok(first.text.includes('FINAL_FORMULA') && !first.text.includes('OLD_FORMULA'));
+      await page.keyboard.press('ArrowRight');
+      const next = await state();
+      assert.equal(next.slide, 2);
+      assert.ok(next.text.includes('OLD_FORMULA') && next.text.includes('FINAL_FORMULA'));
+      await page.keyboard.press('ArrowLeft');
+      const back = await state();
+      assert.equal(back.slide, 1);
+      assert.ok(!back.text.includes('OLD_FORMULA') && back.text.includes('FINAL_FORMULA'));
+    } finally {
+      assert.deepEqual(await page.evaluate(() => { visibilityViewer.exitPresentation(); visibilityViewer.destroy(); URL.revokeObjectURL(visibilityUrl); return { workers: visibilityWorkers, children: root.childElementCount }; }), { workers: 0, children: 0 });
+    }
+  });
+
   await check('Public PptxViewer resolves the real Worker, sanitizes SVG filters and preserves drawing semantics',async()=>{
     const result=await page.evaluate(async({bytes,workerSource})=>{
       root.replaceChildren();const url=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));let viewer;

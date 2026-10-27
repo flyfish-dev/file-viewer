@@ -1,6 +1,6 @@
 import { resolveDiagramTextFrames, effectiveTextTransform } from './diagram-text.js';
 import { getTextBodyMetrics } from './text-body.js';
-import { getDrawingTextRuns, getFirstSlideNumber, getPictureEffects } from './drawing-semantics.js';
+import { getDrawingTextRuns, getFirstSlideNumber, getPictureEffects, getFinalSlideHiddenShapeIds, isFinalSlideShapeHidden } from './drawing-semantics.js';
 import { getEmbeddedPictureCandidates } from './picture-resource.js';
 import { createBuiltinDrawingMlTableStyle } from './table-styles.js';
 import { extractChartModel } from './chart-model.js';
@@ -480,6 +480,7 @@ export async function processSingleSlide(zip, sldFileName, index, slideSize) {
     "slideMasterContent": slideMasterContent,
     "slideMasterTables": slideMasterTables,
     "slideContent": slideContent,
+    "finalHiddenShapeIds": getFinalSlideHiddenShapeIds(slideContent),
     "slideResObj": slideResObj,
     "slideMasterTextStyles": slideMasterTextStyles,
     "layoutResObj": layoutResObj,
@@ -580,7 +581,8 @@ function indexNodes(content) {
 async function processNodesInSlide(nodeKey, nodeValue, nodes, warpObj, source, sType, groupContext) {
   var result = "";
 
-  if (isHiddenDrawingNode(nodeValue)) {
+  if (isHiddenDrawingNode(nodeValue) || (source === 'slide' &&
+      isFinalSlideShapeHidden(warpObj.finalHiddenShapeIds, getDrawingNonVisualAttrs(nodeValue).id))) {
     return result;
   }
 
