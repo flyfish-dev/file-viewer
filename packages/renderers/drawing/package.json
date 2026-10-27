@@ -81,11 +81,11 @@
     "roughjs": "^4.6.6"
   },
   "devDependencies": {
-    "bpmn-js": "18.31.0",
+    "bpmn-js": "18.31.1",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "bpmn-js": "18.31.0"
+    "bpmn-js": "18.31.1"
   },
   "peerDependenciesMeta": {
     "bpmn-js": {
