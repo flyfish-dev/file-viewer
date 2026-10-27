@@ -238,7 +238,7 @@ export const buildFont = (style: Record<string, any>) => {
   return [
     style.fontStyle || 'normal',
     normalizedWeight,
-    `${Number.parseInt(style.fontSize, 10) || TABLE_FONT_SIZE}px`,
+    `${Number.parseFloat(style.fontSize) || TABLE_FONT_SIZE}px`,
     normalizeFontFamily(style.fontFamily)
   ].join(' ')
 }
@@ -704,7 +704,7 @@ const getExcelOverflowLayout = (
     return undefined
   }
 
-  const font = style?.font || BODY_FONT
+  const font = style?.font || getBodyFont(zoomScale)
   const measuredWidth = Math.ceil(measureTextWidth(text, font, scaleNumber(CELL_PADDING, zoomScale), documentRef))
   if (measuredWidth <= ownWidth) {
     return undefined

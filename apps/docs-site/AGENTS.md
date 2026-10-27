@@ -7,3 +7,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Project scope
+
+In this project, the generated "before writing any code" rule applies only when changing Next.js APIs,
+routing, configuration, or build behavior. Content, copy, and CSS-only edits need no framework-guide
+read unless they affect those areas. Keep the generated block intact so `next dev` preserves this scope.

@@ -60,10 +60,11 @@ assertEqual(sourceMeta.richText?.[0]?.text, '☐', 'F75 first symbol run')
 assertEqual(sourceMeta.richText?.[0]?.fontFamily, '"Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", sans-serif', 'F75 symbol fallback font')
 assertEqual(sourceMeta.richText?.[1]?.text, '初级', 'F75 first label run')
 assertEqual(sourceMeta.richText?.[1]?.fontFamily, '等线', 'F75 label font')
-assertEqual(sourceMeta.richText?.[1]?.fontSize, 11, 'F75 label font size')
+const expectedFontSize = 11 * 96 / 72
+assertEqual(sourceMeta.richText?.[1]?.fontSize, expectedFontSize, 'F75 label font size in CSS pixels')
 
 const normalized = normalizeCellStyle(sourceMeta)
-assertEqual(normalized?.font, 'normal normal 11px "Wingdings 2"', 'quoted cell font shorthand')
+assertEqual(normalized?.font, `normal normal ${expectedFontSize}px "Wingdings 2"`, 'quoted cell font shorthand')
 assertEqual(normalized?.richText?.length, 6, 'normalized rich-text run count')
 assertEqual(buildFont({ fontFamily: 'Wingdings 2', fontSize: '11px' }), 'normal normal 11px "Wingdings 2"', 'font family quoting')
 
@@ -80,7 +81,7 @@ const createMockElement = tagName => ({
 })
 const mockDocument = { createElement: createMockElement }
 const textLayer = createTextLayer(mockDocument, '☐初级☐中级☐高级', normalized, 2)
-assertEqual(textLayer.style.font, 'normal normal 11px "Wingdings 2"', 'rich-text layer base font')
+assertEqual(textLayer.style.font, `normal normal ${expectedFontSize}px "Wingdings 2"`, 'rich-text layer base font')
 const textContent = textLayer.children[0]
 assertEqual(textContent?.dataset?.fileViewerRichText, 'true', 'rich-text layer marker')
 assertEqual(textContent?.children?.length, 6, 'rich-text DOM segment count')
@@ -88,7 +89,7 @@ assertEqual(textContent?.children?.[0]?.textContent, '☐', 'rich-text DOM symbo
 assertEqual(textContent?.children?.[0]?.style?.fontFamily, '"Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", sans-serif', 'rich-text DOM symbol font')
 assertEqual(textContent?.children?.[1]?.textContent, '初级', 'rich-text DOM label text')
 assertEqual(textContent?.children?.[1]?.style?.fontFamily, '等线', 'rich-text DOM label font')
-assertEqual(textContent?.children?.[1]?.style?.fontSize, '11px', 'rich-text DOM font size')
+assertEqual(textContent?.children?.[1]?.style?.fontSize, `${expectedFontSize}px`, 'rich-text DOM font size')
 
 const windowResponses = await handleSpreadsheetWorkerRequest(context, {
   type: 'parseSheet',

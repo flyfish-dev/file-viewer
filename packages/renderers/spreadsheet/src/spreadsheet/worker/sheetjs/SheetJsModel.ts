@@ -417,9 +417,10 @@ const getCellStyle = (cellStyle?: Record<string, any>) => {
   if (font.bold || cellStyle?.bold) {
     style.fontWeight = 'bold'
   }
-  const fontSize = font.sz || cellStyle?.sz
-  if (fontSize) {
-    style.fontSize = `${fontSize}px`
+  const fontSize = Number(font.sz || cellStyle?.sz)
+  if (Number.isFinite(fontSize) && fontSize > 0) {
+    // Excel 字号以 pt 存储；模型统一输出 CSS px，视图层再单独应用缩放。
+    style.fontSize = `${fontSize * 96 / 72}px`
   }
   const fontName = font.name || cellStyle?.name
   if (fontName) {

@@ -64,7 +64,8 @@ const parseColor = (element: XmlElement | undefined) => {
 
 const parseFontSize = (element: XmlElement | undefined) => {
   const value = Number(element?.getAttribute('val'))
-  return Number.isFinite(value) && value > 0 ? value : undefined
+  // 富文本的 <sz> 同样使用 pt，段字号与普通单元格都以 CSS px 传给视图。
+  return Number.isFinite(value) && value > 0 ? value * 96 / 72 : undefined
 }
 
 const normalizeSymbolText = (text: string, fontFamily: string | undefined) => {

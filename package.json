@@ -62,7 +62,7 @@
     "test:shadow-focus-github-243": "pnpm exec vitest run test/web-style-isolation.spec.ts",
     "test:spreadsheet-github-175": "pnpm --filter @file-viewer/renderer-spreadsheet verify:github-175",
     "test:spreadsheet-github-178": "pnpm --filter @file-viewer/renderer-spreadsheet verify:github-178",
-    "test:spreadsheet-github-234": "pnpm --filter @file-viewer/renderer-spreadsheet verify:github-234",
+    "test:spreadsheet-github-234": "pnpm exec vitest run test/spreadsheet-font-size.spec.ts && pnpm --filter @file-viewer/renderer-spreadsheet verify:github-234",
     "test:spreadsheet-github-405": "pnpm --filter @file-viewer/renderer-spreadsheet verify:github-405",
     "test:spreadsheet-github-414": "pnpm exec vitest run test/spreadsheet-formula-values.spec.ts && pnpm --filter @file-viewer/renderer-spreadsheet verify:github-414",
     "test:text-single-byte-encodings": "pnpm exec vitest run test/text-single-byte-encodings.spec.ts test/text-encoding-contracts.spec.ts && node packages/renderers/text/test/single-byte-encodings.browser.mjs",
