@@ -69,6 +69,7 @@ import {
 
 import { resolveFileViewerToolbarZoomButtons } from '../lifecycle/operations';
 import { createToolbarFocusRestorer } from './toolbar-focus';
+import { createViewerSourceFeedback, type ViewerSourcePhase } from './source-feedback';
 
 export type FileRef = FileViewerFileRef;
 
@@ -384,12 +385,14 @@ const resolveViewerLoadSource = async (
     streaming?: FileViewerPdfOptions['streaming'];
     pageHref?: string;
     acceptsPdfUrl?: boolean;
+    onPhase?: (phase: ViewerSourcePhase) => void;
   } = {}
 ): Promise<FileViewerSource> => {
   const filename = resolveViewerSourceFilename(source);
   const type = source.type || getExtension(filename);
 
   if (source.buffer) {
+    options.onPhase?.('reading');
     return {
       buffer: source.buffer,
       filename,
@@ -400,6 +403,7 @@ const resolveViewerLoadSource = async (
   }
 
   if (source.file) {
+    options.onPhase?.('reading');
     const file = wrapFileViewerFileRef(source.file, filename);
     return {
       file,
@@ -419,8 +423,10 @@ const resolveViewerLoadSource = async (
     // A supplied transport owns authentication/acquisition and keeps its normal
     // buffered contract. Only the default PDF URL path defers bytes to PDF.js.
     if (!options.fetchFile && options.acceptsPdfUrl && plan.streamPdf) {
+      options.onPhase?.('streamingPdf');
       return { url: plan.url, filename: plan.filename, type: plan.extension, size: source.size };
     }
+    options.onPhase?.('downloading');
     const fileRef = await (options.fetchFile || defaultFetchFile)({
       url: source.url,
       signal: options.signal,
@@ -431,6 +437,7 @@ const resolveViewerLoadSource = async (
     }
 
     const file = wrapFileViewerFileRef(fileRef, filename);
+    options.onPhase?.('reading');
     return {
       file,
       buffer: await readFileViewerBuffer(file),
@@ -579,6 +586,9 @@ const WEB_VIEWER_STYLE = `
 .file-viewer-web-shell{position:relative;width:100%;height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--file-viewer-render-surface-background,var(--file-viewer-bg));color:var(--file-viewer-text);font:var(--file-viewer-font);letter-spacing:0;box-sizing:border-box;contain:content}
 .file-viewer-web-shell[data-viewer-density="compact"]{--file-viewer-toolbar-gap:3px;--file-viewer-toolbar-min-height:34px;--file-viewer-toolbar-padding:3px 5px;--file-viewer-toolbar-floating-min-height:32px;--file-viewer-toolbar-floating-padding:3px;--file-viewer-toolbar-floating-offset:10px;--file-viewer-group-gap:2px;--file-viewer-group-padding:2px;--file-viewer-button-radius:6px;--file-viewer-button-min-width:34px;--file-viewer-button-height:26px;--file-viewer-button-padding:0 6px;--file-viewer-icon-button-size:26px;--file-viewer-zoom-meter-min-width:42px;--file-viewer-zoom-meter-padding:0 5px;--file-viewer-floating-button-min-width:38px;--file-viewer-floating-button-height:28px;--file-viewer-floating-icon-button-size:28px;--file-viewer-floating-zoom-meter-min-width:46px;--file-viewer-search-input-height:26px;--file-viewer-search-input-padding:0 8px;--file-viewer-search-button-min-width:28px;--file-viewer-search-button-padding:0 6px;--file-viewer-search-count-min-width:36px;--file-viewer-floating-search-input-height:28px}
 .file-viewer-web-content{position:relative;flex:1 1 auto;min-height:0;min-width:0;overflow:auto;overscroll-behavior:contain;background:var(--file-viewer-render-surface-background,var(--file-viewer-content-bg))}
+.file-viewer-web-source-status{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;background:var(--file-viewer-toolbar-bg);color:var(--file-viewer-text);text-align:center;overflow:auto}
+.file-viewer-web-source-status p{margin:0;max-width:560px;white-space:pre-wrap;overflow-wrap:anywhere}
+.file-viewer-web-source-status strong{font-size:18px}
 .file-viewer-web-toolbar{flex:0 0 auto;min-height:var(--file-viewer-toolbar-min-height);display:inline-flex;align-items:center;justify-content:flex-end;gap:var(--file-viewer-toolbar-gap);padding:var(--file-viewer-toolbar-padding);border-bottom:1px solid var(--file-viewer-toolbar-border);background:var(--file-viewer-toolbar-bg);box-sizing:border-box;z-index:var(--file-viewer-z-toolbar)}
 .file-viewer-web-toolbar[hidden]{display:none!important}
 .file-viewer-web-toolbar[data-toolbar-position="top-center"]{justify-content:center}
@@ -764,7 +774,11 @@ export const mountViewer = (
   let currentSource: ViewerSourceInput | null = hasSource(currentOptions)
     ? toViewerSourceInput(currentOptions)
     : null;
-  let abortController: AbortController | null = null;
+  type SourceRequest = { abort: AbortController | null; phase: ViewerSourcePhase; pending: boolean; rendering: boolean };
+  let sourceRequest: SourceRequest | null = null;
+  let renderingRequest: SourceRequest | null = null;
+  let lifecycleVersion = -1;
+  const updateSourceFeedback = createViewerSourceFeedback(shell, contentEl);
   const listeners = new Set<ViewerStateListener>();
   const state: ViewerState = {
     loading: false,
@@ -1158,10 +1172,23 @@ export const mountViewer = (
   const notifyState = (event?: ViewerEvent) => {
     const snapshot = snapshotState();
     renderToolbar();
+    updateSourceFeedback(
+      sourceRequest?.pending ? sourceRequest.phase : null,
+      state.error,
+      currentSource ? currentSource.type || getExtension(resolveViewerSourceFilename(currentSource)) : '',
+      currentOptions.options,
+      Boolean(sourceRequest?.rendering && contentEl.querySelector('.file-viewer-render-error'))
+    );
     currentOptions.onStateChange?.(snapshot, event);
     listeners.forEach(listener => listener(snapshot, event));
   };
   const applyViewerEvent = (event: ViewerEvent) => {
+    if (disposed || sourceRequest !== renderingRequest) return;
+    if (event.type === 'load-start' || event.type === 'load-complete' ||
+      event.type === 'unload-start' || event.type === 'unload-complete') {
+      if (event.payload.version < lifecycleVersion) return;
+      lifecycleVersion = event.payload.version;
+    }
     state.lastEvent = event;
     if (event.type === 'load-start') {
       state.loading = true;
@@ -1171,6 +1198,7 @@ export const mountViewer = (
       state.search = null;
       searchDraft = '';
     } else if (event.type === 'load-complete') {
+      if (sourceRequest) sourceRequest.pending = false;
       state.loading = false;
       state.ready = true;
       state.lifecycle = event.payload;
@@ -1179,7 +1207,7 @@ export const mountViewer = (
       state.ready = false;
       state.lifecycle = event.payload;
     } else if (event.type === 'unload-complete') {
-      state.loading = false;
+      state.loading = Boolean(sourceRequest?.pending);
       state.ready = false;
       state.lifecycle = event.payload;
     } else if (event.type === 'operation-availability-change') {
@@ -1206,21 +1234,26 @@ export const mountViewer = (
   renderToolbar();
 
   const cancel = () => {
-    abortController?.abort();
-    abortController = null;
+    const previous = sourceRequest;
+    sourceRequest = null;
+    previous?.abort?.abort();
   };
 
   const loadSource = async (nextSource: ViewerSourceInput): Promise<RendererSession | null> => {
     cancel();
     currentSource = nextSource;
-    abortController = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    const controller = abortController;
+    const request: SourceRequest = {
+      abort: typeof AbortController !== 'undefined' ? new AbortController() : null,
+      phase: 'reading', pending: true, rendering: false,
+    };
+    sourceRequest = request;
+    const isCurrent = () => !disposed && sourceRequest === request && !request.abort?.signal.aborted;
     try {
       state.loading = true;
       state.error = null;
       notifyState();
       await instance.prepare?.();
-      if (disposed || controller?.signal.aborted || abortController !== controller) {
+      if (!isCurrent()) {
         return null;
       }
       const extension = nextSource.type || getExtension(resolveViewerSourceFilename(nextSource));
@@ -1228,27 +1261,39 @@ export const mountViewer = (
       const resolvedSource = await resolveViewerLoadSource(nextSource, {
         acceptsPdfUrl: renderer?.sourceAccess === 'stream-preferred' && Boolean(renderer.load),
         fetchFile: coreOptions.fetchFile,
-        signal: controller?.signal,
+        signal: request.abort?.signal,
         streaming: currentOptions.options?.pdf?.streaming,
         pageHref: documentRef.defaultView?.location?.href,
+        onPhase(phase) {
+          if (!isCurrent()) return;
+          request.phase = phase;
+          updateSourceFeedback(phase, null, extension, currentOptions.options);
+        },
       });
-      if (disposed || controller?.signal.aborted || abortController !== controller) {
+      if (!isCurrent()) {
         return null;
       }
-      return await instance.load(resolvedSource);
+      if (resolvedSource.buffer || resolvedSource.file) request.phase = 'reading';
+      request.rendering = true;
+      renderingRequest = request;
+      notifyState();
+      return await instance.load(resolvedSource, { signal: request.abort?.signal });
     } catch (error) {
-      if (disposed || controller?.signal.aborted || abortController !== controller) {
+      if (!isCurrent()) {
         return null;
       }
       state.loading = false;
       state.ready = false;
-      state.error = error;
+      state.error = error ?? new Error(createFileViewerTranslator(currentOptions.options)('error.unknown'));
+      request.pending = false;
       notifyState();
       coreOptions.onError?.(error, nextSource);
       throw error;
     } finally {
-      if (abortController === controller) {
-        abortController = null;
+      if (isCurrent() && request.pending) {
+        request.pending = false;
+        state.loading = false;
+        notifyState();
       }
     }
   };
@@ -1318,7 +1363,13 @@ export const mountViewer = (
           });
         }
       } else {
+        cancel();
+        renderingRequest = null;
         currentSource = null;
+        state.loading = false;
+        state.ready = false;
+        state.error = null;
+        notifyState();
         await instance.load({ filename: DEFAULT_FILE_VIEWER_SOURCE_FILENAME });
       }
     },

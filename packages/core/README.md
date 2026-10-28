@@ -34,6 +34,10 @@ Current framework-neutral browser renderers still inside core are limited to the
 npm install @file-viewer/core
 ```
 
+## Browser source feedback (unreleased)
+
+The browser `mountViewer` shell shows localized download feedback while buffering a URL, then reading feedback until the renderer takes over. File and buffer inputs use reading feedback. The status follows the configured locale/theme, reports acquisition failures, and is cleared when a source is replaced or the viewer is destroyed.
+
 ## Preflight Before Rendering
 
 `precheckFileViewerSource()` does not create a viewer or load a heavy renderer. It checks whether the extension is available and validates known PDF, OpenXML / OpenDocument, legacy OLE Office, and RTF signatures or package parts. `valid: null` explicitly means capability-only detection, not a full parse; the real renderer remains the final authority for malformed content.

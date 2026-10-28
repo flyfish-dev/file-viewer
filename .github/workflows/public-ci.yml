@@ -354,6 +354,8 @@ jobs:
             output/pdf-text-selection/**/*.png
             output/pdf-url-streaming/**/*.json
             output/pdf-url-streaming/**/*.png
+            output/url-source-feedback/**/*.json
+            output/url-source-feedback/**/*.png
             output/pptx-drawing-semantics/*.json
             output/pptx-drawing-semantics/*.png
             output/issue-419/**/*.json

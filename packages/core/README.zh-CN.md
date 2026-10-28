@@ -34,6 +34,10 @@ Current framework-neutral browser renderers still inside core are limited to the
 npm install @file-viewer/core
 ```
 
+## 浏览器源加载反馈（未发布）
+
+浏览器 `mountViewer` 在缓冲 URL 时显示本地化的下载提示，随后显示读取提示，直至渲染器接管。File 和 buffer 输入显示读取提示。状态遵循配置的语言和主题，展示获取失败，并在切源或销毁时清理。
+
 ## 渲染前预检
 
 `precheckFileViewerSource()` 不会创建 viewer，也不会加载重型 renderer。它先检查当前扩展名是否在能力范围内，并对 PDF、OpenXML / OpenDocument、旧版 OLE Office、RTF 等格式执行签名或包结构检查。`valid: null` 明确表示该格式只有能力检查、没有做完整解析；真实 renderer 仍是畸形文件的最终判断者。
