@@ -155,6 +155,29 @@ test('root browser regression tools are declared without relying on an ancestor 
   const require = createRequire(new URL('../../package.json', import.meta.url))
   assert.equal(require('esbuild/package.json').version, root.devDependencies.esbuild)
 })
+test('Demo query parsing uses the reviewed qs security patch without losing nested options', () => {
+  const manifest = JSON.parse(read('apps/viewer-demo/package.json'))
+  assert.equal(manifest.dependencies.qs, '^6.16.1')
+  const require = createRequire(new URL('../../apps/viewer-demo/package.json', import.meta.url))
+  assert.equal(require('qs/package.json').version, '6.16.1')
+  const qs = require('qs')
+  assert.deepEqual(
+    qs.parse(
+      'url=https%3A%2F%2Fexample.test%2Ffile.xlsx%3Fsig%3Da%252Bb&options[pdf][streaming]=false&options[ui][locale]=zh-CN'
+    ),
+    {
+      url: 'https://example.test/file.xlsx?sig=a%2Bb',
+      options: { pdf: { streaming: 'false' }, ui: { locale: 'zh-CN' } }
+    }
+  )
+  for (const encodeValuesOnly of [false, true]) {
+    assert.doesNotThrow(() =>
+      qs.stringify({ a: [{ toString: 'untrusted' }] }, { arrayFormat: 'comma', encodeValuesOnly })
+    )
+  }
+  qs.parse('a[__proto__][fileViewerPolluted]=yes')
+  assert.equal({}.fileViewerPolluted, undefined)
+})
 test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
   const patchedVersion = '3.4.17'
   const override = read('pnpm-workspace.yaml').match(/^  dompurify: (\S+)$/m)?.[1]
