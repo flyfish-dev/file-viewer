@@ -139,7 +139,8 @@ test('MSG: raster CID attachments are registered; ordinary and nested attachment
     { fileName: '../../report.txt', contentLength: 22 },
     { name: 'Forwarded', innerMsgContent: true, innerMsgContentFields: fields() },
   ] }), 'email.msg', urls, cids);
-  assert.equal(extractions, 1); assert.equal(urls.length, 1); assert.ok(cids.get('logo@example.test').startsWith('blob:'));
+  assert.equal(extractions, 1); assert.equal(urls.length, 0); assert.ok(cids.get('logo@example.test').startsWith('data:image/png;base64,'));
+  assert.deepEqual(Buffer.from(cids.get('logo@example.test').split(',')[1], 'base64'), Buffer.from(PNG));
   assert.deepEqual(parsed.attachments.map(a => [a.name, a.mimeType]), [['inline.png', 'image/png'], ['report.txt', 'text/plain'], ['Forwarded.msg', 'application/vnd.ms-outlook']]);
   assert.equal(decode(await parsed.attachments[1].load()), 'Exact attachment bytes'); assert.equal(extractions, 2);
 });
@@ -181,14 +182,37 @@ test('MSG: attachment basenames strip paths, control and bidi characters', () =>
 });
 
 
-test('HTML: opaque-origin image fallback preserves bytes without leaking a blob URL', t => {
+test('HTML: sandbox images preserve bytes without allocating parent-origin blob URLs', t => {
   const create = URL.createObjectURL, revoke = URL.revokeObjectURL;
-  const revoked = []; URL.createObjectURL = () => 'blob:null/opaque'; URL.revokeObjectURL = value => revoked.push(value);
+  URL.createObjectURL = () => { throw new Error('Sandbox images must not depend on parent-origin blobs'); };
+  URL.revokeObjectURL = () => { throw new Error('No sandbox image blob should need revoking'); };
   t.after(() => { URL.createObjectURL = create; URL.revokeObjectURL = revoke; });
   const bytes = new Uint8Array(50001).map((_, i) => i % 251), urls = [];
   const data = createEmailImageResource(bytes.buffer, 'image/png', urls);
   assert.deepEqual(new Uint8Array(Buffer.from(data.split(',')[1], 'base64')), bytes);
-  assert.deepEqual(urls, []); assert.deepEqual(revoked, ['blob:null/opaque']);
+  assert.deepEqual(urls, []);
+});
+test('HTML: unsupported inline MIME types cannot become image resources', () => {
+  for (const mime of ['image/svg+xml', 'text/html', 'image/png;charset=utf-8', 'image/png;base64,evil']) {
+    assert.throws(() => createEmailImageResource(new ArrayBuffer(0), mime, []), /Unsupported inline/);
+  }
+});
+test('HTML: inline image encoding is bounded before base64 allocation', t => {
+  const encode = globalThis.btoa;
+  globalThis.btoa = () => { throw new Error('Encoding must not start for an over-budget image'); };
+  t.after(() => { globalThis.btoa = encode; });
+  assert.throws(() => createEmailImageResource(new ArrayBuffer(36 * 1024 * 1024), 'image/png', []), /expansion limit/);
+});
+test('HTML: inline image budget is aggregate, exact and scoped to the preview', () => {
+  const limit = 48 * 1024 * 1024, prefix = 'data:image/png;base64,', urls = [];
+  const bytes = new ArrayBuffer(3 * Math.floor((limit - 2 * prefix.length) / 8));
+  const first = createEmailImageResource(bytes, 'image/png', urls);
+  const remainder = new ArrayBuffer(3 * Math.floor((limit - first.length - prefix.length) / 4));
+  const second = createEmailImageResource(remainder, 'image/png', urls);
+  assert.equal(first.length + second.length, limit);
+  assert.throws(() => createEmailImageResource(new ArrayBuffer(0), 'image/png', urls), /expansion limit/);
+  assert.equal(createEmailImageResource(new ArrayBuffer(0), 'image/png', []), prefix);
+  assert.deepEqual(urls, []);
 });
 test('HTML: BOM-less UTF-16 HTML is detected', () => assert.equal(decodeEmailHtmlBytes(Uint8Array.from(Buffer.from('<p>中文</p>', 'utf16le'))), '<p>中文</p>'));
 test('MAPI: property observer captures Unicode and ANSI supplemental metadata only', () => {

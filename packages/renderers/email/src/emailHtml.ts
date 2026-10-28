@@ -7,23 +7,30 @@ export const normalizeEmailResourceId = (value: string): string => {
   return result;
 };
 
-/** Sandboxed srcdoc cannot read blob:null URLs from a different opaque
- * origin (file:// WebViews, data: hosts). Keep ordinary hosts zero-copy and use
- * a bounded data URL only for those hosts or browsers without object URLs.
+const MAX_INLINE_RESOURCE_CHARACTERS = 48 * 1024 * 1024;
+const inlineResourceCharacters = new WeakMap<string[], number>();
+export const isEmailImageMimeType = (value: string): boolean => /^image\/(?:png|jpeg|gif|webp|avif|bmp)$/i.test(value);
+
+/** A srcdoc with an empty sandbox has its own opaque origin, even when its
+ * parent is HTTP. Parent-owned blob URLs cannot be decoded there. Keep the
+ * sandbox intact and bound raster data URLs before allocating base64 strings.
+ * The existing URL owner identifies this preview's aggregate resource budget.
  */
 export function createEmailImageResource(buffer: ArrayBuffer, mimeType: string, objectUrls: string[]): string {
-  if (typeof URL.createObjectURL === 'function') {
-    const url = URL.createObjectURL(new Blob([buffer], { type: mimeType }));
-    if (!url.startsWith('blob:null/')) { objectUrls.push(url); return url; }
-    URL.revokeObjectURL(url);
-  }
+  if (!isEmailImageMimeType(mimeType)) throw new Error('Unsupported inline email image type.');
+  const prefix = `data:${mimeType};base64,`;
+  const size = prefix.length + 4 * Math.ceil(buffer.byteLength / 3);
+  const used = inlineResourceCharacters.get(objectUrls) || 0;
+  if (size > MAX_INLINE_RESOURCE_CHARACTERS - used) throw new Error('Email inline resource expansion limit exceeded.');
   const bytes = new Uint8Array(buffer);
   const parts: string[] = [];
   // Divisible by three: only the final base64 chunk can contain padding.
   for (let offset = 0; offset < bytes.length; offset += 24576) {
     parts.push(btoa(String.fromCharCode(...bytes.subarray(offset, offset + 24576))));
   }
-  return `data:${mimeType};base64,${parts.join('')}`;
+  const url = prefix + parts.join('');
+  inlineResourceCharacters.set(objectUrls, used + size);
+  return url;
 }
 
 
@@ -77,7 +84,7 @@ export function createEmailHtmlDocument(html: string, resources: Map<string, str
     const resolved = lookup(value);
     if (resolved) {
       expandedResourceCharacters += resolved.length;
-      if (expandedResourceCharacters > 48 * 1024 * 1024) throw new Error('Email inline resource expansion limit exceeded.');
+      if (expandedResourceCharacters > MAX_INLINE_RESOURCE_CHARACTERS) throw new Error('Email inline resource expansion limit exceeded.');
     }
     return resolved;
   };

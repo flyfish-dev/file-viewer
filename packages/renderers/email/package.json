@@ -62,7 +62,7 @@
     "verify:email": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-github-232.mjs && node --test test/msg.test.mjs test/postal-mime-limits.test.mjs",
     "verify:github-232": "pnpm verify:email",
     "verify:msg": "pnpm --filter @file-viewer/core build && pnpm build && node --test test/msg.test.mjs",
-    "verify:msg:browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-msg-browser.mjs"
+    "verify:msg:browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-msg-browser.mjs && node scripts/verify-inline-image-browser.mjs"
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.3.0",

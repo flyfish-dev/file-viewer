@@ -24,6 +24,22 @@ test('EML rejects one more MIME part instead of returning partial content', asyn
   )
 })
 
+test('EML keeps raster CIDs sandbox-readable and non-raster attachments downloadable', async () => {
+  const png = Uint8Array.of(0, 1, 254, 255), svg = '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
+  const input = 'Subject: Local attachments\r\nMIME-Version: 1.0\r\nContent-Type: multipart/related; boundary=local\r\n\r\n' +
+    '--local\r\nContent-Type: text/html\r\n\r\n<p>Local content</p><img src="cid:logo"><img src="cid:drawing">\r\n' +
+    '--local\r\nContent-Type: image/png\r\nContent-ID: <logo>\r\nContent-Disposition: inline; filename="local.png"\r\nContent-Transfer-Encoding: base64\r\n\r\n' + Buffer.from(png).toString('base64') + '\r\n' +
+    '--local\r\nContent-Type: image/svg+xml\r\nContent-ID: <drawing>\r\nContent-Disposition: inline; filename="drawing.svg"\r\nContent-Transfer-Encoding: base64\r\n\r\n' + Buffer.from(svg).toString('base64') + '\r\n--local--\r\n'
+  const urls = [], cids = new Map()
+  const email = await parseEml(encode(input), 'local.eml', urls, cids)
+  assert.match(cids.get('logo'), /^data:image\/png;base64,/)
+  assert.deepEqual(Buffer.from(cids.get('logo').split(',')[1], 'base64'), Buffer.from(png))
+  assert.equal(cids.has('drawing'), false)
+  assert.equal(email.attachments.length, 2)
+  assert.equal(Buffer.from(await email.attachments[1].load()).toString(), svg)
+  assert.deepEqual(urls, [])
+})
+
 test('MBOX first-message parsing uses the same MIME part budget', async () => {
   const { document } = parseHTML('<html><body><div id="target"></div></body></html>')
   const previous = globalThis.document

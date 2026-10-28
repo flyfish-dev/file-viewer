@@ -8,7 +8,7 @@ import type {
   FileViewerRenderedInstance,
 } from '@file-viewer/core';
 
-import { createEmailHtmlDocument, createEmailImageResource } from './emailHtml.js';
+import { createEmailHtmlDocument, createEmailImageResource, isEmailImageMimeType } from './emailHtml.js';
 import { getMsgLabels, type MsgNotice } from './msgMessages.js';
 
 type EmailKind = 'eml' | 'msg' | 'mbox';
@@ -178,7 +178,7 @@ const createPostalAttachments = (
   });
 
   return Promise.all(attachments.map(async attachment => {
-    if (!attachment.contentId || !attachment.mimeType?.startsWith('image/')) {
+    if (!attachment.contentId || !isEmailImageMimeType(attachment.mimeType || '')) {
       return;
     }
     const buffer = await attachment.load();
