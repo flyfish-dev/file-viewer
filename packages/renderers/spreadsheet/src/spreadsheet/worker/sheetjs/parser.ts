@@ -95,6 +95,9 @@ interface WorksheetWithMergeDiagnostics {
   '!mergeErrors'?: SpreadsheetMergeError[];
 }
 
+// HTML/XML 文件必须传入 type: 'string' 保持原有的 HTML 单元格解析结果
+const prefersSheetJsTextSniff = (text: string) => /^[\s\uFEFF]*</.test(text);
+
 const isMergeValidationError = (error: unknown): error is Error & { code: string } => (
   error instanceof Error
   && typeof (error as Error & { code?: unknown }).code === 'string'
@@ -173,8 +176,14 @@ const readPreparedWorkbook = (
   input: ReturnType<typeof prepareSpreadsheetReadInput>,
   validateMerges: boolean
 ) => (
+  /***
+   * 对于二进制格式，直接透传 ArrayBuffer
+   * 对于文本格式用 prefersSheetJsTextSniff 选 type:
+   *   - 普通文本 -> 'binary'，绕过 SheetJS 内部 utf8write 的大数组崩溃
+   *   - HTML/XML -> 'string'，保持原有的 HTML 单元格解析结果
+   */
   input.kind === 'text'
-    ? read(input.data, { ...readOptions, type: 'string', validateMerges })
+    ? read(input.data, { ...readOptions, type: prefersSheetJsTextSniff(input.data) ? 'string' : 'binary', validateMerges })
     : read(input.data, { ...readOptions, validateMerges })
 );
 
