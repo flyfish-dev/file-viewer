@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-signature",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "sideEffects": false,
@@ -97,7 +97,7 @@
     "verify": "pnpm verify:licenses && pnpm verify:fixtures && pnpm verify:github-206 && pnpm verify:structured && pnpm verify:openpgp && pnpm verify:artifacts"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.0",
+    "@file-viewer/core": "workspace:3.3.1",
     "jszip": "3.10.2"
   },
   "devDependencies": {

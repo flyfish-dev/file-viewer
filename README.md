@@ -13,6 +13,7 @@
 <p align="center">
   <a href="https://demo.file-viewer.app/">Live demo</a> ·
   <a href="https://doc.file-viewer.app/">Documentation</a> ·
+  <a href="https://flutter.file-viewer.app/en/">Flutter SDK (preview)</a> ·
   <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> ·
   <a href="https://github.com/flyfish-dev/file-viewer/releases">Releases</a>
 </p>
@@ -33,7 +34,7 @@
 </p>
 <p align="center">⭐ If File Viewer helps you, please <a href="https://github.com/flyfish-dev/file-viewer">star the repo</a>.</p>
 
-The current source prepares a `3.3.0` release candidate with the published DOCX `0.3.39` engine. File Viewer packages and production sites have not been released from this candidate. See [the candidate notes](CHANGELOG.md).
+For fixes and package versions, see the [changelog](CHANGELOG.md).
 
 ## Why File Viewer
 

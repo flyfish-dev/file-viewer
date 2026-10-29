@@ -51,7 +51,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### Apache-2.0
 
-- `baseline-browser-mapping@2.11.28` — https://github.com/web-platform-dx/baseline-browser-mapping
+- `baseline-browser-mapping@2.11.33` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
 - `dompurify@3.4.17` — https://github.com/cure53/DOMPurify
 - `typescript@6.0.3` — https://github.com/microsoft/TypeScript
@@ -66,8 +66,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 ### CC-BY-4.0
 
-- `caniuse-lite@1.0.30001815` — https://github.com/browserslist/caniuse-lite
-- `caniuse-lite@1.0.30001816` — https://github.com/browserslist/caniuse-lite
+- `caniuse-lite@1.0.30001819` — https://github.com/browserslist/caniuse-lite
 
 ### ISC
 
@@ -82,7 +81,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `d3-time-format@4.1.0` — https://github.com/d3/d3-time-format
 - `electron-to-chromium@1.5.451` — https://github.com/Kilian/electron-to-chromium
 - `fs.realpath@1.0.0` — https://github.com/isaacs/fs.realpath
-- `glob@7.2.3` — https://github.com/isaacs/node-glob
+- `glob@7.2.0` — https://github.com/isaacs/node-glob
 - `inflight@1.0.6` — https://github.com/npm/inflight
 - `inherits@2.0.4` — https://github.com/isaacs/inherits
 - `internmap@2.0.3` — https://github.com/mbostock/internmap
@@ -116,7 +115,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `browserslist@4.28.7` — https://github.com/browserslist/browserslist
 - `commander@9.2.0` — https://github.com/tj/commander.js
 - `concat-map@0.0.1` — https://github.com/substack/node-concat-map
-- `core-js-pure@3.50.0` — https://github.com/zloirock/core-js
+- `core-js-pure@3.51.0` — https://github.com/zloirock/core-js
 - `dcmjs@0.52.0` — https://github.com/dcmjs-org/dcmjs
 - `dicom-parser@1.8.21` — https://github.com/cornerstonejs/dicomParser
 - `es-errors@1.3.0` — https://github.com/ljharb/es-errors
@@ -141,7 +140,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `node-releases@2.0.58` — https://github.com/chicoxyzzy/node-releases
 - `path-is-absolute@1.0.1` — https://github.com/sindresorhus/path-is-absolute
 - `path-parse@1.0.7` — https://github.com/jbgutierrez/path-parse
-- `postcss@8.5.29` — https://github.com/postcss/postcss
+- `postcss@8.5.31` — https://github.com/postcss/postcss
 - `postcss-value-parser@4.2.0` — https://github.com/TrySound/postcss-value-parser
 - `rechoir@0.6.2` — https://github.com/tkellen/node-rechoir
 - `resolve@1.22.13` — https://github.com/browserify/resolve

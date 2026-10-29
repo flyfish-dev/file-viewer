@@ -28,6 +28,37 @@ const libraries = { bar: () => 'bar', line: () => 'line', area: () => 'area' };
 
 afterEach(() => registerPptxChartRenderer(null));
 describe('DrawingML chart groups and metadata', () => {
+  it('carries authored chart, axis, legend and per-point fonts through the serializable model', () => {
+    const source = combo() as any;
+    const txPr = (size: number) => ({ 'a:p': { 'a:pPr': { 'a:defRPr': {
+      attrs: { sz: size, b: '1', i: '0' }, 'a:latin': { attrs: { typeface: 'Arial' } },
+      'a:ea': { attrs: { typeface: '宋体' } }, 'a:cs': { attrs: { typeface: 'Tahoma' } },
+      'a:solidFill': { 'a:srgbClr': { attrs: { val: '123456' } } },
+    } } } });
+    const chart = source['c:chartSpace']['c:chart'];
+    source['c:chartSpace']['c:txPr'] = txPr(1200);
+    chart['c:legend'] = { 'c:legendPos': val('t'), 'c:overlay': val(1), 'c:txPr': txPr(1400) };
+    chart['c:plotArea']['c:catAx']['c:txPr'] = txPr(1600);
+    chart['c:plotArea']['c:catAx']['c:txPr']['a:bodyPr'] = { attrs: { rot: '-2700000' } };
+    chart['c:plotArea']['c:barChart']['c:dLbls']['c:dLbl'] = {
+      'c:idx': val(1), 'c:txPr': txPr(1800), 'c:showVal': val(1),
+    };
+    const model = JSON.parse(JSON.stringify(extractChartModel(source, () => '123456'))) as PptxChartModel;
+    expect(model.font).toEqual({ family: 'Arial', eastAsianFamily: '宋体', complexScriptFamily: 'Tahoma',
+      sizePt: 12, bold: true, italic: false, color: '#123456' });
+    expect(model.axes[0].font?.sizePt).toBe(16);
+    expect(model.axes[0].labelRotation).toBe(-45);
+    expect(createPptxCartesianChart(model, libraries)!.axis.x.tick).toMatchObject({ rotate: -45, autorotate: false });
+    expect(model.groups[0].options.legend).toMatchObject({ position: 't', overlay: true, font: { sizePt: 14 } });
+    expect(model.groups[0].options.labels?.points?.[1].font?.sizePt).toBe(18);
+    const invalid = txPr(Infinity);
+    invalid['a:p']['a:pPr']['a:defRPr']['a:latin'].attrs.typeface = 'x'.repeat(1000);
+    source['c:chartSpace']['c:txPr'] = invalid;
+    const bounded = extractChartModel(source, () => 'red;position:fixed').font!;
+    expect(bounded.sizePt).toBeUndefined();
+    expect(bounded.color).toBeUndefined();
+    expect(bounded.family?.length).toBe(512);
+  });
   it('retains both bar series and the line with explicit primary/secondary axes', () => {
     const model = extractChartModel(combo()) as PptxChartModel;
     expect(model.groups.map(group => [group.chartType, group.series.length])).toEqual([['barChart', 2], ['lineChart', 1]]);

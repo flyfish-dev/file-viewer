@@ -31,12 +31,12 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
   // This release includes its complete current integration source, independently
   // rebuilt against the ordinary Full runtime. Native owner versions stay fixed.
-  releaseVersion: '3.3.0',
+  releaseVersion: '3.3.1',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '319941ade00de22b434ecc3cd9dd21a0a6f7b084e48a7ea47e2b13f0aadde7cc',
-  bytes: 353837,
+  sha256: 'b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c',
+  bytes: 352471,
   files: 85,
   runtimeBytes: 627842,
   runtimeSha256: '12a5a9060ae0e2035ead248add91b6657ae7973c2a4754112fbe3a9b40ca96f9'

@@ -15,7 +15,7 @@ const proof = {
   url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/' + 'a'.repeat(40)
 }
 test('the npm offer identifies the existing source instead of promising a bundled ZIP', () => {
-  const notice = cadIntegrationSourceNotice('3.3.0')
+  const notice = cadIntegrationSourceNotice(CAD_INTEGRATION_SOURCE.releaseVersion)
   assert.ok(notice.includes(CAD_PUBLIC_CORRESPONDING_SOURCE.url))
   assert.ok(notice.includes(CAD_PUBLIC_CORRESPONDING_SOURCE.sha256))
   assert.ok(notice.includes(CAD_INTEGRATION_SOURCE.sha256))

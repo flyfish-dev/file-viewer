@@ -90,7 +90,7 @@ export async function verifyGithub242() {
   const rendererPdfJson = await readRendererPdfPackage()
   assert.equal(
     (rendererPdfJson.dependencies || {})[pdfCjkFontPackageName],
-    '5.3.0',
+    '5.3.1',
     `[issue-242] ${pdfRendererPackageName} must keep ${pdfCjkFontPackageName} as its runtime ` +
       `dependency so direct installs can self-host the CJK fallback.`
   )

@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-open-source",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.0.9",
@@ -121,7 +121,7 @@
     "@types/node": "^26.6.5",
     "prettier": "3.9.10",
     "esbuild": "0.28.2",
-    "playwright": "^1.64.1",
+    "playwright": "^1.61.1",
     "pngjs": "7.0.0",
     "typescript": "^6.0.3",
     "vitest": "5.0.5",

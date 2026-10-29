@@ -129,7 +129,7 @@ const compareUrl = 'https://demo.file-viewer.app/compare.html'
 const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '3.3.0'
+const currentReleaseVersion = '3.3.1'
 const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
 const registeredExtensionCount = FORMAT_CATALOG_SUMMARY.registeredExtensionCount
 const stableExtensionCount = FORMAT_CATALOG_SUMMARY.stableExtensionCount
@@ -391,7 +391,7 @@ const copy = {
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
     releaseTitle:
-      'v3.3.0 候选：DOCX 裁剪、稀疏表格与 PDF 选区修复，新增可选图片拖拽和显式点云源坐标配置；软件包尚未发布。',
+      'v3.3.1：修复大 CSV、表格布局和 PPTX 图表，完善接入说明与文件下载反馈。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -444,7 +444,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v3.3.0 candidate: DOCX crop, sparse spreadsheet and PDF selection fixes, with opt-in image panning and explicit point-cloud source CRS; packages are not yet published.',
+      'v3.3.1: large CSV, workbook layout and PPTX chart fixes, clearer setup and file-download feedback.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }

@@ -145,7 +145,7 @@
       {
         "packageName": "baseline-browser-mapping",
         "spdx": "Apache-2.0",
-        "notice": "Reviewed runtime/SDK source baseline-browser-mapping@2.11.28; repository https://github.com/web-platform-dx/baseline-browser-mapping; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source baseline-browser-mapping@2.11.33; repository https://github.com/web-platform-dx/baseline-browser-mapping; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "brace-expansion",
@@ -160,12 +160,7 @@
       {
         "packageName": "caniuse-lite",
         "spdx": "CC-BY-4.0",
-        "notice": "Reviewed runtime/SDK source caniuse-lite@1.0.30001815; repository https://github.com/browserslist/caniuse-lite; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
-      },
-      {
-        "packageName": "caniuse-lite",
-        "spdx": "CC-BY-4.0",
-        "notice": "Reviewed runtime/SDK source caniuse-lite@1.0.30001816; repository https://github.com/browserslist/caniuse-lite; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source caniuse-lite@1.0.30001819; repository https://github.com/browserslist/caniuse-lite; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "comlink",
@@ -185,7 +180,7 @@
       {
         "packageName": "core-js-pure",
         "spdx": "MIT",
-        "notice": "Reviewed runtime/SDK source core-js-pure@3.50.0; repository https://github.com/zloirock/core-js; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source core-js-pure@3.51.0; repository https://github.com/zloirock/core-js; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "d3-array",
@@ -295,7 +290,7 @@
       {
         "packageName": "glob",
         "spdx": "ISC",
-        "notice": "Reviewed runtime/SDK source glob@7.2.3; repository https://github.com/isaacs/node-glob; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source glob@7.2.0; repository https://github.com/isaacs/node-glob; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "hasown",
@@ -410,7 +405,7 @@
       {
         "packageName": "postcss",
         "spdx": "MIT",
-        "notice": "Reviewed runtime/SDK source postcss@8.5.29; repository https://github.com/postcss/postcss; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source postcss@8.5.31; repository https://github.com/postcss/postcss; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "postcss-value-parser",

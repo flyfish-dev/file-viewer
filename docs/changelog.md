@@ -6,7 +6,17 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
-## File Viewer v3.3.0 — Candidate (not yet published)
+## File Viewer v3.3.1
+
+- Fix large CSV/TSV parsing without allocating a second UTF-8 array (#426). The reporter's 155 MB CSV passes real Worker and main-thread previews.
+- Preserve worksheet default widths and convert saved row heights from points to CSS pixels. Merged notes no longer stretch the first column (#203).
+- Preserve PPTX chart sizes through slideshow zoom, apply authored text styles, measure CJK labels independently of CSS scaling, support all five legend positions and clear old chart queues between documents (#385).
+- Show feedback while downloading URL sources across standard component entries (#423), retain isolated email inline images, and keep spreadsheet point sizes correct.
+- Clarify npm setup and support links, and include the Flutter preview documentation. Vue 2.6/2.7 remain supported.
+
+Version composition: 88 mainline packages at `3.3.1` and `msdoc-viewer@0.2.14` (89 targets).
+
+## File Viewer v3.3.0 — 2026-10-27
 
 - Respect shared PDF URL streaming policy across standard component entries, including signed URLs, same-URL option changes and buffered single downloads (#418). Expose PDF.js stream/auto-fetch controls for demanded ranges.
 - Adopt the published `@file-viewer/docx@0.3.39` engine for DrawingML source-rectangle cropping and bounded inline-picture pagination (#413). Normal pictures keep their dimensions when continuous sections move onto a fresh page. Main-thread and offline Worker assets use the same engine.
@@ -16,7 +26,7 @@
 - Read authoritative LAS GeoKey/WKT metadata and support explicit `giro3d.sources.las.sourceCrs` for files with ambiguous citation-only metadata (#406). The original Palac_Moszna LAZ renders with explicit CRS; automatic inference from its citation text is not claimed.
 - Retain the white DOCX paper fix (#415), Vue 2.6/2.7 compatibility, complete public source, contributor credit and the existing Full-package capabilities. Asset staging checks continue to require matching Worker bytes and retained license notices.
 
-Candidate composition: 88 mainline packages at `3.3.0` and `msdoc-viewer@0.2.13` (89 targets). The independently versioned engines are `@file-viewer/docx@0.3.39` and `styled-exceljs@0.21.6`. File Viewer npm publication and production deployment remain pending. The original PPTX files for the remaining #385 typography/overlap report, and the supporter PDF plus exact old/new versions, are still unavailable; known fixtures do not close those reports.
+Release composition: 88 mainline packages at `3.3.0` and `msdoc-viewer@0.2.13` (89 targets). The independently versioned engines are `@file-viewer/docx@0.3.39` and `styled-exceljs@0.21.6`. The separate supporter PDF report remains unverified without its original file and exact old/new versions.
 
 ## v3.1.2 - EPUB and Patch fixes, opt-in BPMN and XML views
 

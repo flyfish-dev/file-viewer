@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/jquery",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Lightweight jQuery file viewer. Add PDF, Office and other browser-side previews with renderer presets.",
@@ -60,7 +60,7 @@
     "jquery": ">=3 <5"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.0"
+    "@file-viewer/core": "workspace:3.3.1"
   },
   "devDependencies": {
     "@types/jquery": "^4.0.1",

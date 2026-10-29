@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-email",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Standalone email renderer plugin for File Viewer with EML, MSG, MBOX, attachments, and nested previews.",
@@ -65,7 +65,7 @@
     "verify:msg:browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-msg-browser.mjs && node scripts/verify-inline-image-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.0",
+    "@file-viewer/core": "workspace:3.3.1",
     "@kenjiuno/msgreader": "^1.29.0",
     "buffer": "^6.0.3",
     "postal-mime": "4.1.4"

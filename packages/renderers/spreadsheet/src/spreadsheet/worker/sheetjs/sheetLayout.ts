@@ -21,11 +21,12 @@ export const readWorkbookDigitWidth = (workbook?: WorkBook | null): number => {
   const fontId = normal?.xfId === undefined ? 0 : styles?.CellStyleXf?.[normal.xfId]?.fontId ?? 0
   const font = styles?.Fonts?.[fontId]
   const size = Number(font?.sz)
-  // SimSun/NSimSun's compatible 11pt digit grid is eight pixels. Do not
-  // assume every CJK family shares these metrics or measure a fallback font.
+  // SimSun/NSimSun digits advance half an em. Convert font points to CSS
+  // pixels before rounding; scaling an already rounded 11pt grid widens
+  // 10.5pt and 12pt templates. Other CJK families can have different metrics.
   if (/^(?:宋体|新宋体|simsun|nsimsun)$/i.test(font?.name?.trim() || '')
     && Number.isFinite(size) && size >= 1 && size <= 409) {
-    return Math.max(1, Math.round(8 * size / 11))
+    return Math.max(1, Math.ceil(size * 96 / 72 / 2))
   }
   return 7
 }
