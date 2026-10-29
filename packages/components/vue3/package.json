@@ -64,18 +64,18 @@
     "vue": ">=3.3 <4"
   },
   "devDependencies": {
-    "@lucide/vue": "^1.43.0",
-    "@types/node": "^26.5.1",
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@lucide/vue": "^1.61.0",
+    "@types/node": "^26.6.5",
+    "@vitejs/plugin-vue": "^6.0.10",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
-    "@vue/language-core": "^3.3.4",
+    "@vue/language-core": "^3.3.13",
     "@vue/tsconfig": "^0.9.1",
-    "sass": "^1.104.0",
+    "sass": "^1.106.1",
     "typescript": "^6.0.3",
-    "vite": "8.3.4",
+    "vite": "8.3.5",
     "vite-plugin-dts": "5.1.2",
     "vue": "3.5.42",
-    "vue-tsc": "^3.3.4"
+    "vue-tsc": "^3.3.13"
   },
   "files": [
     "dist",

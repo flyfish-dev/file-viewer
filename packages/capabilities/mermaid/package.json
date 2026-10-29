@@ -43,9 +43,9 @@
     "@file-viewer/renderer-text": "workspace:3.3.0"
   },
   "devDependencies": {
-    "mermaid": "12.1.0",
+    "mermaid": "12.2.0",
     "typescript": "^6.0.3",
-    "vite": "8.3.4"
+    "vite": "8.3.5"
   },
   "fileViewer": {
     "capabilityManifest": "./file-viewer.capability.json"
