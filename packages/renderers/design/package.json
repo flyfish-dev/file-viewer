@@ -117,7 +117,7 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.3.1",
     "@file-viewer/renderer-data": "workspace:3.3.1",
-    "@paged-media/introspect-wasm": "0.70.2",
+    "@paged-media/introspect-wasm": "0.73.4",
     "@webtoon/psd": "0.4.0",
     "@xmldom/xmldom": "0.9.12",
     "ag-psd": "31.0.3",

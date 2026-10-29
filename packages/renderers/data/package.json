@@ -67,7 +67,7 @@
     "ag-psd": "^31.0.3",
     "avsc": "^5.7.9",
     "hyparquet": "^1.31.5",
-    "sql.js": "1.14.1"
+    "sql.js": "1.15.2"
   },
   "devDependencies": {
     "assert": "2.1.0",

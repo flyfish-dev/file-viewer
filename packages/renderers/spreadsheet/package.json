@@ -86,7 +86,7 @@
   "dependencies": {
     "@file-viewer/core": "workspace:3.3.1",
     "@xmldom/xmldom": "^0.9.12",
-    "e-virt-table": "1.4.16",
+    "e-virt-table": "1.4.17",
     "jszip": "3.10.2",
     "styled-exceljs": "0.21.6",
     "tinycolor2": "^1.6.0",

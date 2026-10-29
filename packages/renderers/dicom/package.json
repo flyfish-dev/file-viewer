@@ -79,9 +79,9 @@
     "pako": "2.2.0"
   },
   "devDependencies": {
-    "@cornerstonejs/core": "5.11.6",
-    "@cornerstonejs/dicom-image-loader": "5.11.6",
-    "@cornerstonejs/metadata": "5.11.6",
+    "@cornerstonejs/core": "5.13.2",
+    "@cornerstonejs/dicom-image-loader": "5.13.2",
+    "@cornerstonejs/metadata": "5.13.2",
     "@types/pako": "^2.0.4",
     "typescript": "^6.0.3",
     "vite": "8.3.5"

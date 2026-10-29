@@ -301,11 +301,11 @@ importers:
         specifier: ^1.61.0
         version: 1.61.0(vue@3.5.42(typescript@6.0.3))
       '@thatopen/components':
-        specifier: 3.4.9
-        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
+        specifier: 3.6.0
+        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
       '@thatopen/fragments':
-        specifier: 3.4.8
-        version: 3.4.8(three@0.186.1)(web-ifc@0.0.77)
+        specifier: 3.6.0
+        version: 3.6.0(three@0.186.1)(web-ifc@0.0.78)
       bpmn-js:
         specifier: 18.31.1
         version: 18.31.1
@@ -319,14 +319,14 @@ importers:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
       web-ifc:
-        specifier: 0.0.77
-        version: 0.0.77
+        specifier: 0.0.78
+        version: 0.0.78
       xmllint-wasm:
         specifier: 5.3.0
         version: 5.3.0(@types/node@26.6.5)
       xslt-polyfill:
-        specifier: 1.0.31
-        version: 1.0.31
+        specifier: 1.0.33
+        version: 1.0.33
     devDependencies:
       '@types/node':
         specifier: ^26.6.5
@@ -789,8 +789,8 @@ importers:
         specifier: 0.28.2
         version: 0.28.2
       svelte:
-        specifier: ^5.57.0
-        version: 5.57.2
+        specifier: ^5.57.3
+        version: 5.57.3
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -811,8 +811,8 @@ importers:
         specifier: 0.28.2
         version: 0.28.2
       svelte:
-        specifier: ^5.57.0
-        version: 5.57.2
+        specifier: ^5.57.3
+        version: 5.57.3
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1357,11 +1357,11 @@ importers:
         specifier: 2.0.5
         version: 2.0.5(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
       '@thatopen/components':
-        specifier: 3.4.9
-        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
+        specifier: 3.6.0
+        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
       '@thatopen/fragments':
-        specifier: 3.4.8
-        version: 3.4.8(three@0.186.1)(web-ifc@0.0.77)
+        specifier: 3.6.0
+        version: 3.6.0(three@0.186.1)(web-ifc@0.0.78)
       '@types/three':
         specifier: ^0.186.0
         version: 0.186.0
@@ -1375,8 +1375,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       web-ifc:
-        specifier: 0.0.77
-        version: 0.0.77
+        specifier: 0.0.78
+        version: 0.0.78
 
   packages/renderers/archive:
     dependencies:
@@ -1448,8 +1448,8 @@ importers:
         specifier: ^1.31.5
         version: 1.31.5
       sql.js:
-        specifier: 1.14.1
-        version: 1.14.1
+        specifier: 1.15.2
+        version: 1.15.2
     devDependencies:
       assert:
         specifier: 2.1.0
@@ -1494,8 +1494,8 @@ importers:
         specifier: workspace:3.3.1
         version: link:../data
       '@paged-media/introspect-wasm':
-        specifier: 0.70.2
-        version: 0.70.2
+        specifier: 0.73.4
+        version: 0.73.4
       '@webtoon/psd':
         specifier: 0.4.0
         version: 0.4.0
@@ -1538,14 +1538,14 @@ importers:
         version: 2.2.0
     devDependencies:
       '@cornerstonejs/core':
-        specifier: 5.11.6
-        version: 5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
+        specifier: 5.13.2
+        version: 5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
       '@cornerstonejs/dicom-image-loader':
-        specifier: 5.11.6
-        version: 5.11.6(@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.6)(dicom-parser@1.8.21)
+        specifier: 5.13.2
+        version: 5.13.2(@cornerstonejs/core@5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0))(@cornerstonejs/metadata@5.13.2)(dicom-parser@1.8.21)
       '@cornerstonejs/metadata':
-        specifier: 5.11.6
-        version: 5.11.6
+        specifier: 5.13.2
+        version: 5.13.2
       '@types/pako':
         specifier: ^2.0.4
         version: 2.0.4
@@ -1971,8 +1971,8 @@ importers:
         specifier: ^0.9.12
         version: 0.9.12
       e-virt-table:
-        specifier: 1.4.16
-        version: 1.4.16
+        specifier: 1.4.17
+        version: 1.4.17
       jszip:
         specifier: 3.10.2
         version: 3.10.2
@@ -2014,8 +2014,8 @@ importers:
         specifier: ^11.11.1
         version: 11.12.0
       marked:
-        specifier: ^18.1.1
-        version: 18.1.1
+        specifier: ^18.1.2
+        version: 18.1.2
       prettier:
         specifier: 3.9.10
         version: 3.9.10
@@ -2039,8 +2039,8 @@ importers:
         specifier: 5.3.0
         version: 5.3.0(@types/node@26.6.5)
       xslt-polyfill:
-        specifier: 1.0.31
-        version: 1.0.31
+        specifier: 1.0.33
+        version: 1.0.33
 
   packages/renderers/typst:
     dependencies:
@@ -2506,27 +2506,27 @@ packages:
     resolution: {integrity: sha512-NzwCYevGSj2JOuP7BztxrOd5WnJ86gOGLv3sq36jZxxHUXoDo1YhzizHiYz+T7GQqkzbfaQcwSyxsRogzGFIPQ==}
     engines: {node: '>=0.14'}
 
-  '@cornerstonejs/core@5.11.6':
-    resolution: {integrity: sha512-xnbkL/xValS+ACzKdru4Rtd0gY3i2JcCitJzjPF1DKk4zxN7dhqnSndfZr2e3Sc5LJ5gG7IEg5G39UIfqd76rg==}
+  '@cornerstonejs/core@5.13.2':
+    resolution: {integrity: sha512-CcDU+SWsNsZTF+OsXkq0sC8Abx/ZED779tu4oLnWYGcvNOiTQ28NCi3OPIFfRE1byT8eCI6f217bUpn3c5BkIQ==}
     peerDependencies:
-      '@cornerstonejs/metadata': 5.11.6
-      '@cornerstonejs/utils': 5.11.6
+      '@cornerstonejs/metadata': 5.13.2
+      '@cornerstonejs/utils': 5.13.2
 
-  '@cornerstonejs/dicom-image-loader@5.11.6':
-    resolution: {integrity: sha512-YCvj7M+1YVFD3k1Aroqsw3b7DM9VMcSmSxIUQggCw0XoResSBMDkscKm00uDPCG79bKarkotqwqu8G8Fc3iZWA==}
+  '@cornerstonejs/dicom-image-loader@5.13.2':
+    resolution: {integrity: sha512-qTbHLmANYVwt6CVyTTa9Vd1/tT3lbQu3n86hNKbWUSD8iBitA1/EsZSqjJlWkrgYyEI01UjO+jP+KV6CPqeOpw==}
     peerDependencies:
-      '@cornerstonejs/core': 5.11.6
-      '@cornerstonejs/metadata': 5.11.6
+      '@cornerstonejs/core': 5.13.2
+      '@cornerstonejs/metadata': 5.13.2
       dicom-parser: 1.8.21
 
   '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1':
     resolution: {integrity: sha512-cDCv7dm3qw9kbxCydvj0UGbNQcsPmTwcyd9SQXkBt34CDgSBeb8Xvj0Gz9HlJ+7DIKOFMTazF1oDJSu0pcCKmg==}
 
-  '@cornerstonejs/metadata@5.11.6':
-    resolution: {integrity: sha512-df4TSp3iXWtAeDOtTu2O8OfLYt0L9aJLDTMQ8Y+mTduGOddbMXY0jiLEZFKCSA7L9JcHm6mz07fSNI6bpI98tA==}
+  '@cornerstonejs/metadata@5.13.2':
+    resolution: {integrity: sha512-ZXPUCUaMgP4BGouDcji5PYzR4GB4GzY9WtQteQnU4XxJEn3azFd/Ivjn+tyY/P77nx+yaZQSj3bw3pk/NsWibw==}
 
-  '@cornerstonejs/utils@5.11.6':
-    resolution: {integrity: sha512-er+R90NmjJazUfXV/IoeWN5eUvFbuONrRF/bmJdSVvluWBvGbNLmPONif+gEFA4cOyFr0mq9t7uxn7S0g4hJig==}
+  '@cornerstonejs/utils@5.13.2':
+    resolution: {integrity: sha512-0rnt2WTuNeptxJMMxDxiXRRqAnEnHjqYOzdmvsWgAqcWeC9i7tpaqXQiASQs8MvdlWNiCoCshJurmgj6BZybQw==}
 
   '@csstools/color-helpers@6.1.2':
     resolution: {integrity: sha512-grhRy3OKmniaAEKXMjua5z/EODX0MSqBGjunw8+j/3HQjOnahs2AGhvEOIYVUWcU6ScApbhLhVrQTX8XqrMrow==}
@@ -3006,19 +3006,14 @@ packages:
   '@jridgewell/gen-mapping@0.3.12':
     resolution: {integrity: sha512-OuLGC46TjB5BbN1dH8JULVVZY4WTdkF7tV9Ys6wLL1rubZnCMstOhNHueU5bLCrnRuDhKPDM4g6sw4Bel5Gzqg==}
 
-  '@jridgewell/gen-mapping@0.3.5':
-    resolution: {integrity: sha512-IzL8ZoEDIBRWEzlCcRhOaCupYyN5gdIK+Q6fbFdPDg6HqX6jpkItn7DFIpW9LQzXG6Df9sA7+OKnq0qlz/GaQg==}
-    engines: {node: '>=6.0.0'}
+  '@jridgewell/gen-mapping@0.3.13':
+    resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
 
   '@jridgewell/remapping@2.3.5':
     resolution: {integrity: sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
-    engines: {node: '>=6.0.0'}
-
-  '@jridgewell/set-array@1.2.1':
-    resolution: {integrity: sha512-R8gLRTZeyp03ymzP/6Lil/28tGeGEzhx1q2k703KGWRAI1VdvPIXdG70VJc2pAMw3NA6JKL5hhFu1sJX0Mnn/A==}
     engines: {node: '>=6.0.0'}
 
   '@jridgewell/sourcemap-codec@1.6.0':
@@ -3269,8 +3264,8 @@ packages:
   '@oxc-project/types@0.155.0':
     resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
 
-  '@paged-media/introspect-wasm@0.70.2':
-    resolution: {integrity: sha512-vnnntpMigt03vPOBXfddPV99fe6dMd5JWZ/RWiMA0mE4Vd2vF0inZtT0Olm2yeFrQbmMjg70BjHpCAiSjV9UWg==}
+  '@paged-media/introspect-wasm@0.73.4':
+    resolution: {integrity: sha512-t8srSjMaNXAdwpsHE4BRFGCKOPkoVoP7UDTrG8Ew2UHfnqOwowrYr7K4+i0/5nyrXbI11zh0+ZfleIp/AjMJGQ==}
 
   '@panzoom/panzoom@4.6.2':
     resolution: {integrity: sha512-Zn3B5/hwa6eYIPRSKX0xf2clv8nviTX8AnAU5kU/EugiTDhG41ya2wlBqYrZJYCWQROr/5XkWObZhIkepi89qw==}
@@ -3633,16 +3628,16 @@ packages:
   '@tailwindcss/postcss@4.3.3':
     resolution: {integrity: sha512-JTSZZGQi1AyKirbLN3azmjVzef92tcX7h+iSqPdaeStyFpGpDlKvvpxeOE8njhbUanbRwr3z8DyzhICWnMtQeg==}
 
-  '@thatopen/components@3.4.9':
-    resolution: {integrity: sha512-qfmoeOBV+hMr5tTBJg3cObfi/YaK04y8qXCTzlkeWD27Mtg0iPTtFByL3IHc4kgbRPCITSpaAfznAsG0qBj0lg==}
+  '@thatopen/components@3.6.0':
+    resolution: {integrity: sha512-NFO8G8axXVgsXklxhTS7gYcP5O1pe/PnS+jzDSwICaeE2zENk23vCtxHQfHlfWmx15E5Iu4LwsqfRdgM5iSNtA==}
     peerDependencies:
-      '@thatopen/fragments': ~3.4.7
+      '@thatopen/fragments': ~3.6.0
       camera-controls: '>=3.1.2'
       three: '>=0.182.0'
       web-ifc: '>=0.0.77'
 
-  '@thatopen/fragments@3.4.8':
-    resolution: {integrity: sha512-oIEJIG7e6koDpW3Zyrfq+qNpm7yjzF5QGCMxHvT+10Frkt5LjPJp++bhNSPzSvjYT6Weor6EYUVU8TpIFesOfg==}
+  '@thatopen/fragments@3.6.0':
+    resolution: {integrity: sha512-80BzigJj1IdaEYwF5u5SYOU8L63EKvoKgPvN+hwyS6mawxKn6+YiFScf3hix07fXgDoGobjpRYC9OAgoFa3nwQ==}
     engines: {node: '>=20.11.0'}
     peerDependencies:
       three: '>=0.182.0'
@@ -4794,8 +4789,8 @@ packages:
   dxf-parser@1.1.2:
     resolution: {integrity: sha512-GPTumUvRkounlIazLIyJMmTWt+nlg+ksS0Hdm8jWvejmZKBTz6gvHTam76wRm4PQMma5sgKLThblQyeIJcH79Q==}
 
-  e-virt-table@1.4.16:
-    resolution: {integrity: sha512-kYgjH0NH6qB5s1FEkhw0O5iBb1otl3X9F3EqeKp8bjtKIFFBjYPo7uegR4NGdkb0kdB/JV4CWKcvpPKtG4l91A==}
+  e-virt-table@1.4.17:
+    resolution: {integrity: sha512-/hFyL7X7gCTlGjW3ocucWrrYfa6JbBOJnn1gA9EDbqzO/LlmDDkKxl0IDm23ten6nZXISno+Ic3tx88AnZccsQ==}
 
   earcut@2.2.4:
     resolution: {integrity: sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==}
@@ -5174,8 +5169,8 @@ packages:
   glob-to-regexp@0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
 
-  glob@7.2.0:
-    resolution: {integrity: sha512-lmLf6gtyrPq8tTjSmrO94wBeQbFR3HbLHbuyD69wuyQkImp2hWqMGB47OX65FBkPffO641IP9jWa1z4ivqG26Q==}
+  glob@7.2.3:
+    resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   gopd@1.2.0:
@@ -5726,9 +5721,6 @@ packages:
       '@types/react':
         optional: true
 
-  magic-string@0.30.11:
-    resolution: {integrity: sha512-+Wri9p0QHMy+545hKww7YAu5NyzF8iomPL/RQazugQ9+Ez4Ic3mERMd8ZTX5rfK944j+560ZJi8iAwgak1Ac7A==}
-
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -5756,8 +5748,8 @@ packages:
     engines: {node: '>= 20'}
     hasBin: true
 
-  marked@18.1.1:
-    resolution: {integrity: sha512-zEGgrtUG8crk+TrMacJSVABU4DYDDkS8uqgU3ohrn/2fW9C2AEfUrO3m6IhpIpQpl7YcVpiXXC9cSMWDANT3dg==}
+  marked@18.1.2:
+    resolution: {integrity: sha512-DfOnvLAQ6WYeWxWO1u4RyFOeqyHup6dks5PPqnoFiooU7ipRvidO/2j8plhAHIiZg574E9ZlzSjUiPMLAzFkgg==}
     engines: {node: '>= 20'}
     hasBin: true
 
@@ -6639,8 +6631,8 @@ packages:
   spark-md5@3.0.2:
     resolution: {integrity: sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==}
 
-  sql.js@1.14.1:
-    resolution: {integrity: sha512-gcj8zBWU5cFsi9WUP+4bFNXAyF1iRpA3LLyS/DP5xlrNzGmPIizUeBggKa8DbDwdqaKwUcTEnChtd2grWo/x/A==}
+  sql.js@1.15.2:
+    resolution: {integrity: sha512-ZmMYFsZPZWDKIJUh3A5rdnpRV3hB/r7AijwAzSzLnfv/9CSx4obUmDtA8brAjWJWjGtUVh43nIEJ+6nl6HuOUg==}
 
   std-env@4.3.0:
     resolution: {integrity: sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag==}
@@ -6722,8 +6714,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svelte@5.57.2:
-    resolution: {integrity: sha512-1YiPCAXT0Ct6g1vOMmSLa0Nsc3QRMvtDF32ihgglGVrugIuIK38RyDiFNXVDhtQ81TJjSO57NdMw6DyYLqSGDQ==}
+  svelte@5.57.3:
+    resolution: {integrity: sha512-5mAftM3SoDV9X0zdF386F9p2pv8iKOwi/KfBS1XnBAkVCKFzVOLHUoa8iGWAt4buoicLmyWVRpuuD5wplXOQsg==}
     engines: {node: '>=18'}
 
   tailwindcss@4.3.3:
@@ -7090,8 +7082,8 @@ packages:
     resolution: {integrity: sha512-4Nsy8K5Tr6SPDH9jhKJOHf7ChDrc1zufZTVSF7x72hwuEXBqxqk9G6cK+K2NRUtB3iELRJqjXb4JPDMBjMTl2Q==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
-  web-ifc@0.0.77:
-    resolution: {integrity: sha512-VzQ0W/Iiqbidxn1ECUvz6qJ6p2sXBVNcOsUOBCETzy77psAH6yFLKQm74aXabkx3JH4OvFVHe8k1qS6+Z2zl1w==}
+  web-ifc@0.0.78:
+    resolution: {integrity: sha512-LGKMNYFVNyz9vVERN0iz+zvPQJqT7MEGBxslzcuuhwDDOA116LmJLKkg8sZ5SEvQJSc5NRVMWgpRNkDmuoQoJg==}
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
@@ -7194,8 +7186,8 @@ packages:
     peerDependencies:
       '@types/node': '>=16'
 
-  xslt-polyfill@1.0.31:
-    resolution: {integrity: sha512-ojWdHilMmtl3oXqsmsy5AQcRORBpHAyf2ACt7uO0u4lzw5iMkVtI2golreHi5DDCTiBgxLTXODOUjUOy+OGiSg==}
+  xslt-polyfill@1.0.33:
+    resolution: {integrity: sha512-GFKg8/M20hbSWLgEBa0ucs36Fhun1gcIymJTw5vz5Suao+00g0KV2/6M4HF5kJ4oB36PfIkHJCVgejPNs5ZMlw==}
 
   xxhash-wasm@1.1.0:
     resolution: {integrity: sha512-147y/6YNh+tlp6nd/2pWq38i9h6mz/EuQ6njIrmW8D1BS5nCqs0P6DG+m6zTGnNz5I+uhZ0SHxBs9BsPrwcKDA==}
@@ -7518,10 +7510,10 @@ snapshots:
 
   '@cornerstonejs/codec-openjph@2.4.11': {}
 
-  '@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)':
+  '@cornerstonejs/core@5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)':
     dependencies:
-      '@cornerstonejs/metadata': 5.11.6
-      '@cornerstonejs/utils': 5.11.6
+      '@cornerstonejs/metadata': 5.13.2
+      '@cornerstonejs/utils': 5.13.2
       '@kitware/vtk.js': 36.4.1(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
       comlink: 4.4.2
       gl-matrix: 3.4.3
@@ -7530,16 +7522,16 @@ snapshots:
       - autoprefixer
       - wslink
 
-  '@cornerstonejs/dicom-image-loader@5.11.6(@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.6)(dicom-parser@1.8.21)':
+  '@cornerstonejs/dicom-image-loader@5.13.2(@cornerstonejs/core@5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0))(@cornerstonejs/metadata@5.13.2)(dicom-parser@1.8.21)':
     dependencies:
       '@cornerstonejs/codec-charls': 1.2.7
       '@cornerstonejs/codec-libjpeg-turbo-8bit': 1.2.7
       '@cornerstonejs/codec-libjxl': 1.1.1
       '@cornerstonejs/codec-openjpeg': 1.3.6
       '@cornerstonejs/codec-openjph': 2.4.11
-      '@cornerstonejs/core': 5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
+      '@cornerstonejs/core': 5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
       '@cornerstonejs/jpeg-lossless-decoder-js': 2.2.1
-      '@cornerstonejs/metadata': 5.11.6
+      '@cornerstonejs/metadata': 5.13.2
       comlink: 4.4.2
       dicom-parser: 1.8.21
       pako: 2.1.0
@@ -7547,14 +7539,14 @@ snapshots:
 
   '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1': {}
 
-  '@cornerstonejs/metadata@5.11.6':
+  '@cornerstonejs/metadata@5.13.2':
     dependencies:
       '@cornerstonejs/calculate-suv': 1.0.3
-      '@cornerstonejs/utils': 5.11.6
+      '@cornerstonejs/utils': 5.13.2
       dcmjs: 0.52.0
       gl-matrix: 3.4.3
 
-  '@cornerstonejs/utils@5.11.6':
+  '@cornerstonejs/utils@5.13.2':
     dependencies:
       dcmjs: 0.52.0
 
@@ -7890,20 +7882,17 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.6.0
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@jridgewell/gen-mapping@0.3.5':
+  '@jridgewell/gen-mapping@0.3.13':
     dependencies:
-      '@jridgewell/set-array': 1.2.1
       '@jridgewell/sourcemap-codec': 1.6.0
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/remapping@2.3.5':
     dependencies:
-      '@jridgewell/gen-mapping': 0.3.5
+      '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/resolve-uri@3.1.2': {}
-
-  '@jridgewell/set-array@1.2.1': {}
 
   '@jridgewell/sourcemap-codec@1.6.0': {}
 
@@ -8129,7 +8118,7 @@ snapshots:
 
   '@oxc-project/types@0.155.0': {}
 
-  '@paged-media/introspect-wasm@0.70.2': {}
+  '@paged-media/introspect-wasm@0.73.4': {}
 
   '@panzoom/panzoom@4.6.2': {}
 
@@ -8399,24 +8388,24 @@ snapshots:
       postcss: 8.5.31
       tailwindcss: 4.3.3
 
-  '@thatopen/components@3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)':
+  '@thatopen/components@3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)':
     dependencies:
-      '@thatopen/fragments': 3.4.8(three@0.186.1)(web-ifc@0.0.77)
+      '@thatopen/fragments': 3.6.0(three@0.186.1)(web-ifc@0.0.78)
       camera-controls: 3.1.2(three@0.186.1)
       fast-xml-parser: 5.7.2
       jszip: 3.10.2
       three: 0.186.1
       three-mesh-bvh: 0.9.9(three@0.186.1)
-      web-ifc: 0.0.77
+      web-ifc: 0.0.78
 
-  '@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77)':
+  '@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78)':
     dependencies:
       earcut: 3.2.4
       flatbuffers: 25.2.10
       lru-cache: 11.1.0
       pako: 2.1.0
       three: 0.186.1
-      web-ifc: 0.0.77
+      web-ifc: 0.0.78
       xxhash-wasm: 1.1.0
 
   '@tmcw/togeojson@7.1.3': {}
@@ -9649,7 +9638,7 @@ snapshots:
     dependencies:
       loglevel: 1.9.2
 
-  e-virt-table@1.4.16:
+  e-virt-table@1.4.17:
     dependencies:
       '@floating-ui/dom': 1.8.0
 
@@ -10035,7 +10024,7 @@ snapshots:
 
   glob-to-regexp@0.4.1: {}
 
-  glob@7.2.0:
+  glob@7.2.3:
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -10591,10 +10580,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
-  magic-string@0.30.11:
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.6.0
-
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -10632,7 +10617,7 @@ snapshots:
 
   marked@18.1.0: {}
 
-  marked@18.1.1: {}
+  marked@18.1.2: {}
 
   marks-pane@1.0.9: {}
 
@@ -11825,7 +11810,7 @@ snapshots:
 
   shelljs@0.8.5:
     dependencies:
-      glob: 7.2.0
+      glob: 7.2.3
       interpret: 1.4.0
       rechoir: 0.6.2
 
@@ -11890,7 +11875,7 @@ snapshots:
 
   spark-md5@3.0.2: {}
 
-  sql.js@1.14.1: {}
+  sql.js@1.15.2: {}
 
   std-env@4.3.0: {}
 
@@ -11967,7 +11952,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte@5.57.2:
+  svelte@5.57.3:
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -11982,7 +11967,7 @@ snapshots:
       esrap: 2.4.0
       is-reference: 3.0.3
       locate-character: 3.0.0
-      magic-string: 0.30.11
+      magic-string: 0.30.21
       zimmerframe: 1.1.5
     transitivePeerDependencies:
       - '@typescript-eslint/types'
@@ -12288,7 +12273,7 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  web-ifc@0.0.77: {}
+  web-ifc@0.0.78: {}
 
   web-namespaces@2.0.1: {}
 
@@ -12374,7 +12359,7 @@ snapshots:
     dependencies:
       '@types/node': 26.6.5
 
-  xslt-polyfill@1.0.31: {}
+  xslt-polyfill@1.0.33: {}
 
   xxhash-wasm@1.1.0: {}
 
