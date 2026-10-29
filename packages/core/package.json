@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/core",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Framework-neutral TypeScript APIs for browser-side file preview, renderer presets, search, zoom, page navigation, print and export.",

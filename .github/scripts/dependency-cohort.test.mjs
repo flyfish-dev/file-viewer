@@ -197,13 +197,13 @@ test('docs-site Next uses the reviewed sharp security runtime', () => {
   const docs = JSON.parse(read('apps/docs-site/package.json'))
   assert.equal(
     docs.dependencies.next,
-    '16.4.1',
+    '16.4.3',
     'Docs must declare the reviewed Next security release'
   )
   const docsRequire = createRequire(new URL('../../apps/docs-site/package.json', import.meta.url))
   assert.equal(
     docsRequire('next/package.json').version,
-    '16.4.1',
+    '16.4.3',
     'Installed Next must match the security declaration'
   )
   const patchedVersion = '0.35.5'

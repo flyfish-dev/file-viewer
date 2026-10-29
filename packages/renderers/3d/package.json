@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-3d",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Standalone 3D model renderer plugin for File Viewer powered by Three.js loaders and OrbitControls.",
@@ -89,8 +89,8 @@
     "verify:geo3d-native-browser": "node scripts/verify-geo3d-native-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.0",
-    "@file-viewer/geometry-engine": "workspace:3.3.0",
+    "@file-viewer/core": "workspace:3.3.1",
+    "@file-viewer/geometry-engine": "workspace:3.3.1",
     "@types/emscripten": "^1.41.6",
     "three": "^0.186.0"
   },

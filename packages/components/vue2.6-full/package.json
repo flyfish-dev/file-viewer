@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vue2.6-full",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Browser-native file preview for Vue 2.6 with the Full renderer preset and self-hosted runtime assets.",
@@ -66,9 +66,9 @@
     "vue": ">=2.6 <2.7"
   },
   "dependencies": {
-    "@file-viewer/preset-all": "workspace:3.3.0",
-    "@file-viewer/vue2.6": "workspace:3.3.0",
-    "file-viewer-copy-assets": "workspace:3.3.0"
+    "@file-viewer/preset-all": "workspace:3.3.1",
+    "@file-viewer/vue2.6": "workspace:3.3.1",
+    "file-viewer-copy-assets": "workspace:3.3.1"
   },
   "devDependencies": {
     "typescript": "^6.0.3",

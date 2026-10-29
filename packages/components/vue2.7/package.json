@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vue2.7",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Lightweight Vue 2.7 file viewer. Add PDF, Office and other browser-side previews with renderer presets.",
@@ -61,7 +61,7 @@
     "vue": ">=2.7 <3"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.0"
+    "@file-viewer/core": "workspace:3.3.1"
   },
   "devDependencies": {
     "typescript": "^6.0.3",

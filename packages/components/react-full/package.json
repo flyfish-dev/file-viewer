@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/react-full",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Browser-native file preview for React 18/19 with the Full renderer preset and self-hosted runtime assets.",
@@ -65,9 +65,9 @@
     "react": ">=17 <20"
   },
   "dependencies": {
-    "@file-viewer/preset-all": "workspace:3.3.0",
-    "@file-viewer/react": "workspace:3.3.0",
-    "file-viewer-copy-assets": "workspace:3.3.0"
+    "@file-viewer/preset-all": "workspace:3.3.1",
+    "@file-viewer/react": "workspace:3.3.1",
+    "file-viewer-copy-assets": "workspace:3.3.1"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "generatedFrom": {
     "packageName": "@file-viewer/renderer-dicom",
-    "packageVersion": "3.3.0",
+    "packageVersion": "3.3.1",
     "packageManager": "pnpm",
     "command": "pnpm --filter @file-viewer/renderer-dicom list --depth Infinity --json; direct runtime and three bundled Cornerstone SDK roots only"
   },
@@ -516,7 +516,7 @@
     },
     {
       "name": "@file-viewer/core",
-      "version": "3.3.0",
+      "version": "3.3.1",
       "license": "Apache-2.0",
       "direct": true,
       "optional": false,
@@ -528,7 +528,7 @@
     },
     {
       "name": "@file-viewer/renderer-dicom",
-      "version": "3.3.0",
+      "version": "3.3.1",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,
@@ -710,7 +710,7 @@
     },
     {
       "name": "baseline-browser-mapping",
-      "version": "2.11.28",
+      "version": "2.11.33",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,
@@ -752,21 +752,7 @@
     },
     {
       "name": "caniuse-lite",
-      "version": "1.0.30001815",
-      "license": "CC-BY-4.0",
-      "direct": false,
-      "optional": false,
-      "firstParty": false,
-      "author": "Ben Briggs <beneb.info@gmail.com> http://beneb.info",
-      "repository": "https://github.com/browserslist/caniuse-lite",
-      "licenseFiles": [
-        "LICENSE"
-      ],
-      "noticeFiles": []
-    },
-    {
-      "name": "caniuse-lite",
-      "version": "1.0.30001816",
+      "version": "1.0.30001819",
       "license": "CC-BY-4.0",
       "direct": false,
       "optional": false,
@@ -822,7 +808,7 @@
     },
     {
       "name": "core-js-pure",
-      "version": "3.50.0",
+      "version": "3.51.0",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -1132,7 +1118,7 @@
     },
     {
       "name": "glob",
-      "version": "7.2.3",
+      "version": "7.2.0",
       "license": "ISC",
       "direct": false,
       "optional": false,
@@ -1454,7 +1440,7 @@
     },
     {
       "name": "postcss",
-      "version": "8.5.29",
+      "version": "8.5.31",
       "license": "MIT",
       "direct": false,
       "optional": false,

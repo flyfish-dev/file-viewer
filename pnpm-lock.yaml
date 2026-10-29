@@ -10,7 +10,7 @@ overrides:
   acorn@>=7.0.0 <7.1.1: 7.4.1
   js-yaml@>=4.0.0 <4.3.2: 4.3.2
   sharp@<0.35.5: 0.35.5
-  vitest: 5.0.3
+  vitest: 5.0.5
   epubjs>@xmldom/xmldom: 0.9.12
   '@ljheee/xmind-parser>@xmldom/xmldom': 0.9.12
   ansi-regex@>=4.0.0 <4.1.1: 4.1.1
@@ -24,9 +24,9 @@ overrides:
   '@file-viewer/docx>jszip': 3.10.2
   immutable@5.1.6: 5.1.9
   ini@<1.3.6: 1.3.8
-  mermaid: 12.1.0
+  mermaid: 12.2.0
   nanoid: 3.3.18
-  postcss: 8.5.29
+  postcss: 8.5.31
   style-to-js: 1.1.21
   postcss-selector-parser: 7.1.6
   undici@>=6.0.0 <6.29.1: 6.29.1
@@ -40,14 +40,14 @@ overrides:
   source-map-js@<1.2.2: 1.2.2
   compression@<1.8.2: 1.8.2
   '@kitware/vtk.js>fflate': 0.7.5
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.0
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.0
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.0
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.0
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.0
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.0
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.0
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.0
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.1
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.1
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.1
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.1
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.1
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.1
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.1
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.1
 
 patchedDependencies:
   illustrator-pgf@0.1.0: 20b0fb03a2d6dc6397b53ed6e83b26b2d47464a44831145881d4b17914319b3d
@@ -73,7 +73,7 @@ importers:
         specifier: ^0.18.14
         version: 0.18.14
       playwright:
-        specifier: ^1.64.1
+        specifier: ^1.61.1
         version: 1.64.1
       pngjs:
         specifier: 7.0.0
@@ -85,8 +85,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vitest:
-        specifier: 5.0.3
-        version: 5.0.3(@types/node@26.6.5)(happy-dom@21.0.4)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))
+        specifier: 5.0.5
+        version: 5.0.5(@types/node@26.6.5)(happy-dom@21.0.4)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))
       vue:
         specifier: 3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -94,43 +94,43 @@ importers:
   apps/component-demo:
     dependencies:
       '@file-viewer/jquery':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/jquery
       '@file-viewer/jquery-full':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/jquery-full
       '@file-viewer/preset-standard':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/standard
       '@file-viewer/react':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/react
       '@file-viewer/react-full':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/react-full
       '@file-viewer/react-legacy':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/react-legacy
       '@file-viewer/react-legacy-full':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/react-legacy-full
       '@file-viewer/svelte':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/svelte
       '@file-viewer/svelte-full':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/svelte-full
       '@file-viewer/vue3':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/vue3
       '@file-viewer/vue3-full':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/vue3-full
       '@file-viewer/web':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/web
       '@file-viewer/web-full':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/web-full
       jquery:
         specifier: ^4.0.0
@@ -222,8 +222,8 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
       postcss:
-        specifier: 8.5.29
-        version: 8.5.29
+        specifier: 8.5.31
+        version: 8.5.31
       serve:
         specifier: ^14.2.6
         version: 14.2.6
@@ -265,47 +265,47 @@ importers:
   apps/viewer-demo:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/core
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/all
       '@file-viewer/renderer-3d':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/renderers/3d
       '@file-viewer/renderer-binary':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/renderers/binary
       '@file-viewer/renderer-design':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/renderers/design
       '@file-viewer/renderer-dicom':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/renderers/dicom
       '@file-viewer/renderer-drawing':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/renderers/drawing
       '@file-viewer/renderer-signature':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/renderers/signature
       '@file-viewer/renderer-text':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/renderers/text
       '@file-viewer/vue3':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/vue3
       '@file-viewer/web':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/web
       '@lucide/vue':
         specifier: ^1.61.0
         version: 1.61.0(vue@3.5.42(typescript@6.0.3))
       '@thatopen/components':
-        specifier: 3.6.0
-        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
+        specifier: 3.4.9
+        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
       '@thatopen/fragments':
-        specifier: 3.6.0
-        version: 3.6.0(three@0.186.1)(web-ifc@0.0.78)
+        specifier: 3.4.8
+        version: 3.4.8(three@0.186.1)(web-ifc@0.0.77)
       bpmn-js:
         specifier: 18.31.1
         version: 18.31.1
@@ -319,14 +319,14 @@ importers:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
       web-ifc:
-        specifier: 0.0.78
-        version: 0.0.78
+        specifier: 0.0.77
+        version: 0.0.77
       xmllint-wasm:
         specifier: 5.3.0
         version: 5.3.0(@types/node@26.6.5)
       xslt-polyfill:
-        specifier: 1.0.33
-        version: 1.0.33
+        specifier: 1.0.31
+        version: 1.0.31
     devDependencies:
       '@types/node':
         specifier: ^26.6.5
@@ -377,13 +377,13 @@ importers:
   apps/web-demo:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/core
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/all
       '@file-viewer/web':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/web
     devDependencies:
       vite:
@@ -393,10 +393,10 @@ importers:
   examples/react-vite:
     dependencies:
       '@file-viewer/preset-office':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/office
       '@file-viewer/react':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/react
       react:
         specifier: ^19.2.7
@@ -406,7 +406,7 @@ importers:
         version: 19.3.0(react@19.3.0)
     devDependencies:
       '@file-viewer/vite-plugin':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/vite-plugin
       '@types/react':
         specifier: ^19.3.0
@@ -427,14 +427,14 @@ importers:
   examples/vanilla-vite:
     dependencies:
       '@file-viewer/preset-lite':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/lite
       '@file-viewer/web':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/web
     devDependencies:
       '@file-viewer/vite-plugin':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/vite-plugin
       typescript:
         specifier: ^6.0.3
@@ -446,14 +446,14 @@ importers:
   examples/vue3-vite:
     dependencies:
       '@file-viewer/vue3-full':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/components/vue3-full
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
     devDependencies:
       '@file-viewer/vite-plugin':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../packages/presets/vite-plugin
       '@vitejs/plugin-vue':
         specifier: ^6.0.10
@@ -471,7 +471,7 @@ importers:
   packages/capabilities/drawio-official:
     dependencies:
       '@file-viewer/renderer-drawing':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/drawing
     devDependencies:
       typescript:
@@ -481,12 +481,12 @@ importers:
   packages/capabilities/mermaid:
     dependencies:
       '@file-viewer/renderer-text':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/text
     devDependencies:
       mermaid:
-        specifier: 12.1.0
-        version: 12.1.0
+        specifier: 12.2.0
+        version: 12.2.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -497,7 +497,7 @@ importers:
   packages/capabilities/midi:
     dependencies:
       '@file-viewer/renderer-media':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/media
       '@tonejs/midi':
         specifier: ^2.0.28
@@ -510,7 +510,7 @@ importers:
   packages/capabilities/pdf-identity-repair:
     dependencies:
       '@file-viewer/renderer-pdf':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/pdf
     devDependencies:
       esbuild:
@@ -526,10 +526,10 @@ importers:
   packages/capabilities/pptx-charts:
     dependencies:
       '@file-viewer/pptx':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/pptx
       billboard.js:
-        specifier: ^4.1.3
+        specifier: 4.1.3
         version: 4.1.3(react@19.3.0)
       d3-format:
         specifier: ^3.1.2
@@ -545,7 +545,7 @@ importers:
   packages/capabilities/rtf:
     dependencies:
       '@file-viewer/renderer-word':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/word
       rtf.js:
         specifier: ^3.0.9
@@ -558,7 +558,7 @@ importers:
   packages/capabilities/streaming-media:
     dependencies:
       '@file-viewer/renderer-media':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/media
       hls.js:
         specifier: ^1.7.2
@@ -571,7 +571,7 @@ importers:
   packages/capabilities/text-tools:
     dependencies:
       '@file-viewer/renderer-text':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/text
       diff2html:
         specifier: ^3.4.56
@@ -590,19 +590,19 @@ importers:
   packages/compat/create-file-viewer:
     dependencies:
       '@file-viewer/cli':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/cli
 
   packages/compat/file-viewer-cli:
     dependencies:
       '@file-viewer/cli':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/cli
 
   packages/compat/msdoc-viewer:
     dependencies:
       '@file-viewer/doc':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/doc
     devDependencies:
       typescript:
@@ -612,7 +612,7 @@ importers:
   packages/compat/react:
     dependencies:
       '@file-viewer/react':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../components/react
     devDependencies:
       '@types/react':
@@ -628,7 +628,7 @@ importers:
   packages/compat/vue2.7:
     dependencies:
       '@file-viewer/vue2.7':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../components/vue2.7
       vue:
         specifier: '>=2.7 <3'
@@ -637,13 +637,13 @@ importers:
   packages/compat/vue3-scoped:
     dependencies:
       '@file-viewer/vue3':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../components/vue3
 
   packages/compat/vue3-unscoped:
     dependencies:
       '@file-viewer/vue3':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../components/vue3
       vue:
         specifier: 3.5.42
@@ -652,7 +652,7 @@ importers:
   packages/compat/web:
     dependencies:
       '@file-viewer/web':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../components/web
     devDependencies:
       '@types/node':
@@ -668,7 +668,7 @@ importers:
   packages/components/jquery:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       jquery:
         specifier: '>=3 <5'
@@ -684,13 +684,13 @@ importers:
   packages/components/jquery-full:
     dependencies:
       '@file-viewer/jquery':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../jquery
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       file-viewer-copy-assets:
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/copy-assets
       jquery:
         specifier: '>=3 <5'
@@ -706,7 +706,7 @@ importers:
   packages/components/react:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       '@types/react':
@@ -722,13 +722,13 @@ importers:
   packages/components/react-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       '@file-viewer/react':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../react
       file-viewer-copy-assets:
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -744,7 +744,7 @@ importers:
   packages/components/react-legacy:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       '@types/react':
@@ -760,13 +760,13 @@ importers:
   packages/components/react-legacy-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       '@file-viewer/react-legacy':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../react-legacy
       file-viewer-copy-assets:
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       '@types/react':
@@ -782,7 +782,7 @@ importers:
   packages/components/svelte:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       esbuild:
@@ -798,13 +798,13 @@ importers:
   packages/components/svelte-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       '@file-viewer/svelte':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../svelte
       file-viewer-copy-assets:
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       esbuild:
@@ -820,7 +820,7 @@ importers:
   packages/components/vue2.6:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       typescript:
@@ -833,13 +833,13 @@ importers:
   packages/components/vue2.6-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       '@file-viewer/vue2.6':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../vue2.6
       file-viewer-copy-assets:
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -852,7 +852,7 @@ importers:
   packages/components/vue2.7:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       typescript:
@@ -865,13 +865,13 @@ importers:
   packages/components/vue2.7-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       '@file-viewer/vue2.7':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../vue2.7
       file-viewer-copy-assets:
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -884,7 +884,7 @@ importers:
   packages/components/vue3:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       '@lucide/vue':
@@ -927,13 +927,13 @@ importers:
   packages/components/vue3-full:
     dependencies:
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       '@file-viewer/vue3':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../vue3
       file-viewer-copy-assets:
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/copy-assets
     devDependencies:
       typescript:
@@ -946,7 +946,7 @@ importers:
   packages/components/web:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       '@types/node':
@@ -965,89 +965,89 @@ importers:
   packages/components/web-full:
     dependencies:
       '@file-viewer/assets-cad':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/assets-cad
       '@file-viewer/assets-drawing':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/assets-drawing
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/preset-all':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../presets/all
       '@file-viewer/renderer-3d':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/3d
       '@file-viewer/renderer-archive':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/archive
       '@file-viewer/renderer-cad':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/cad
       '@file-viewer/renderer-data':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/data
       '@file-viewer/renderer-drawing':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/drawing
       '@file-viewer/renderer-eda':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/eda
       '@file-viewer/renderer-email':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/email
       '@file-viewer/renderer-epub':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/ebook
       '@file-viewer/renderer-geo':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/geo
       '@file-viewer/renderer-hangul':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/hangul
       '@file-viewer/renderer-image':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/image
       '@file-viewer/renderer-iwork':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/iwork
       '@file-viewer/renderer-media':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/media
       '@file-viewer/renderer-mindmap':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/mindmap
       '@file-viewer/renderer-ofd':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/ofd
       '@file-viewer/renderer-pdf':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/pdf
       '@file-viewer/renderer-presentation':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/presentation
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-text':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/text
       '@file-viewer/renderer-typst':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/typst
       '@file-viewer/renderer-word':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/word
       '@file-viewer/renderer-wordperfect':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/wordperfect
       '@file-viewer/web':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../web
     devDependencies:
       '@file-viewer/capability-pdf-identity-repair':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/pdf-identity-repair
       '@file-viewer/ppt':
         specifier: 0.3.6
@@ -1078,106 +1078,106 @@ importers:
   packages/presets/all:
     dependencies:
       '@file-viewer/capability-drawio-official':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/drawio-official
       '@file-viewer/capability-mermaid':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/mermaid
       '@file-viewer/capability-midi':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/midi
       '@file-viewer/capability-pdf-identity-repair':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/pdf-identity-repair
       '@file-viewer/capability-pptx-charts':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/pptx-charts
       '@file-viewer/capability-rtf':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/rtf
       '@file-viewer/capability-streaming-media':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/streaming-media
       '@file-viewer/capability-text-tools':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/text-tools
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/renderer-3d':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/3d
       '@file-viewer/renderer-archive':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/archive
       '@file-viewer/renderer-cad':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/cad
       '@file-viewer/renderer-chm':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/chm
       '@file-viewer/renderer-data':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/data
       '@file-viewer/renderer-drawing':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/drawing
       '@file-viewer/renderer-eda':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/eda
       '@file-viewer/renderer-email':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/email
       '@file-viewer/renderer-epub':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/ebook
       '@file-viewer/renderer-geo':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/geo
       '@file-viewer/renderer-hangul':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/hangul
       '@file-viewer/renderer-image':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/image
       '@file-viewer/renderer-iwork':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/iwork
       '@file-viewer/renderer-media':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/media
       '@file-viewer/renderer-mindmap':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/mindmap
       '@file-viewer/renderer-ofd':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/ofd
       '@file-viewer/renderer-pdf':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/pdf
       '@file-viewer/renderer-ppt':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/presentation-ppt
       '@file-viewer/renderer-pptx':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/presentation-pptx
       '@file-viewer/renderer-presentation':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/presentation
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-text':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/text
       '@file-viewer/renderer-typst':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/typst
       '@file-viewer/renderer-word':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/word
       '@file-viewer/renderer-wordperfect':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/wordperfect
       '@fontsource-variable/noto-sans-sc':
         specifier: 5.3.1
@@ -1190,34 +1190,34 @@ importers:
   packages/presets/engineering:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/renderer-3d':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/3d
       '@file-viewer/renderer-archive':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/archive
       '@file-viewer/renderer-cad':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/cad
       '@file-viewer/renderer-data':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/data
       '@file-viewer/renderer-drawing':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/drawing
       '@file-viewer/renderer-eda':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/eda
       '@file-viewer/renderer-geo':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/geo
       '@file-viewer/renderer-mindmap':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/mindmap
       '@file-viewer/renderer-typst':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/typst
     devDependencies:
       typescript:
@@ -1227,16 +1227,16 @@ importers:
   packages/presets/lite:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/renderer-image':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/image
       '@file-viewer/renderer-media':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/media
       '@file-viewer/renderer-text':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/text
     devDependencies:
       typescript:
@@ -1246,31 +1246,31 @@ importers:
   packages/presets/office:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/renderer-hangul':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/hangul
       '@file-viewer/renderer-iwork':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/iwork
       '@file-viewer/renderer-ofd':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/ofd
       '@file-viewer/renderer-pdf':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/pdf
       '@file-viewer/renderer-presentation':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/presentation
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-word':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/word
       '@file-viewer/renderer-wordperfect':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/wordperfect
     devDependencies:
       typescript:
@@ -1280,46 +1280,46 @@ importers:
   packages/presets/standard:
     dependencies:
       '@file-viewer/assets-standard':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../tools/assets-standard
       '@file-viewer/capability-pdf-identity-repair':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/pdf-identity-repair
       '@file-viewer/capability-pptx-charts':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/pptx-charts
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/renderer-archive':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/archive
       '@file-viewer/renderer-email':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/email
       '@file-viewer/renderer-image':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/image
       '@file-viewer/renderer-media':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/media
       '@file-viewer/renderer-ofd':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/ofd
       '@file-viewer/renderer-pdf':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/pdf
       '@file-viewer/renderer-pptx':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/presentation-pptx
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/spreadsheet
       '@file-viewer/renderer-text':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/text
       '@file-viewer/renderer-word':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/word
     devDependencies:
       typescript:
@@ -1341,10 +1341,10 @@ importers:
   packages/renderers/3d:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/geometry-engine':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../geometry-engine
       '@types/emscripten':
         specifier: ^1.41.6
@@ -1357,11 +1357,11 @@ importers:
         specifier: 2.0.5
         version: 2.0.5(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
       '@thatopen/components':
-        specifier: 3.6.0
-        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
+        specifier: 3.4.9
+        version: 3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
       '@thatopen/fragments':
-        specifier: 3.6.0
-        version: 3.6.0(three@0.186.1)(web-ifc@0.0.78)
+        specifier: 3.4.8
+        version: 3.4.8(three@0.186.1)(web-ifc@0.0.77)
       '@types/three':
         specifier: ^0.186.0
         version: 0.186.0
@@ -1375,13 +1375,13 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       web-ifc:
-        specifier: 0.0.78
-        version: 0.0.78
+        specifier: 0.0.77
+        version: 0.0.77
 
   packages/renderers/archive:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       jszip:
         specifier: 3.10.2
@@ -1397,7 +1397,7 @@ importers:
   packages/renderers/binary:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       playwright:
@@ -1410,7 +1410,7 @@ importers:
   packages/renderers/cad:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@flyfish-dev/cad-viewer':
         specifier: 0.8.3
@@ -1423,7 +1423,7 @@ importers:
   packages/renderers/chm:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       esbuild:
@@ -1436,7 +1436,7 @@ importers:
   packages/renderers/data:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       ag-psd:
         specifier: ^31.0.3
@@ -1448,8 +1448,8 @@ importers:
         specifier: ^1.31.5
         version: 1.31.5
       sql.js:
-        specifier: 1.15.1
-        version: 1.15.1
+        specifier: 1.14.1
+        version: 1.14.1
     devDependencies:
       assert:
         specifier: 2.1.0
@@ -1488,14 +1488,14 @@ importers:
   packages/renderers/design:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/renderer-data':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../data
       '@paged-media/introspect-wasm':
-        specifier: 0.73.4
-        version: 0.73.4
+        specifier: 0.70.2
+        version: 0.70.2
       '@webtoon/psd':
         specifier: 0.4.0
         version: 0.4.0
@@ -1525,7 +1525,7 @@ importers:
   packages/renderers/dicom:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       dicom-parser:
         specifier: 1.8.21
@@ -1538,14 +1538,14 @@ importers:
         version: 2.2.0
     devDependencies:
       '@cornerstonejs/core':
-        specifier: 5.13.2
-        version: 5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
+        specifier: 5.11.6
+        version: 5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
       '@cornerstonejs/dicom-image-loader':
-        specifier: 5.13.2
-        version: 5.13.2(@cornerstonejs/core@5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0))(@cornerstonejs/metadata@5.13.2)(dicom-parser@1.8.21)
+        specifier: 5.11.6
+        version: 5.11.6(@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.6)(dicom-parser@1.8.21)
       '@cornerstonejs/metadata':
-        specifier: 5.13.2
-        version: 5.13.2
+        specifier: 5.11.6
+        version: 5.11.6
       '@types/pako':
         specifier: ^2.0.4
         version: 2.0.4
@@ -1569,10 +1569,10 @@ importers:
   packages/renderers/drawing:
     dependencies:
       '@file-viewer/capability-mermaid':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../capabilities/mermaid
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@panzoom/panzoom':
         specifier: ^4.6.2
@@ -1597,7 +1597,7 @@ importers:
   packages/renderers/ebook:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       pako:
         specifier: ^2.2.0
@@ -1622,13 +1622,13 @@ importers:
   packages/renderers/eda:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/eda-layout':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../eda-layout
       '@file-viewer/eda-orcad':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../eda-orcad
       cfb:
         specifier: ^1.2.2
@@ -1653,7 +1653,7 @@ importers:
   packages/renderers/email:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@kenjiuno/msgreader':
         specifier: ^1.29.0
@@ -1672,7 +1672,7 @@ importers:
   packages/renderers/geo:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@tmcw/togeojson':
         specifier: ^7.1.3
@@ -1713,7 +1713,7 @@ importers:
   packages/renderers/hangul:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@ssabrojs/hwpxjs':
         specifier: 0.4.0
@@ -1744,7 +1744,7 @@ importers:
   packages/renderers/image:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       heic2any:
         specifier: ^0.0.4
@@ -1760,7 +1760,7 @@ importers:
   packages/renderers/iwork:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@xmldom/xmldom':
         specifier: ^0.9.12
@@ -1794,7 +1794,7 @@ importers:
   packages/renderers/media:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       '@tonejs/midi':
@@ -1810,7 +1810,7 @@ importers:
   packages/renderers/mindmap:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@ljheee/xmind-parser':
         specifier: ^1.1.3
@@ -1832,7 +1832,7 @@ importers:
   packages/renderers/ofd:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       jszip:
         specifier: 3.10.2
@@ -1851,7 +1851,7 @@ importers:
   packages/renderers/pdf:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@fontsource-variable/noto-sans-sc':
         specifier: 5.3.1
@@ -1895,7 +1895,7 @@ importers:
         specifier: ^26.6.5
         version: 26.6.5
       billboard.js:
-        specifier: ^4.1.3
+        specifier: 4.1.3
         version: 4.1.3(react@19.3.0)
       d3-format:
         specifier: ^3.1.2
@@ -1910,13 +1910,13 @@ importers:
   packages/renderers/presentation:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/renderer-ppt':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../presentation-ppt
       '@file-viewer/renderer-pptx':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../presentation-pptx
     devDependencies:
       typescript:
@@ -1926,7 +1926,7 @@ importers:
   packages/renderers/presentation-ppt:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/ppt':
         specifier: 0.3.6
@@ -1939,10 +1939,10 @@ importers:
   packages/renderers/presentation-pptx:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/pptx':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../pptx
     devDependencies:
       typescript:
@@ -1952,7 +1952,7 @@ importers:
   packages/renderers/signature:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       jszip:
         specifier: 3.10.2
@@ -1965,7 +1965,7 @@ importers:
   packages/renderers/spreadsheet:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@xmldom/xmldom':
         specifier: ^0.9.12
@@ -1999,7 +1999,7 @@ importers:
   packages/renderers/text:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@prettier/plugin-xml':
         specifier: 3.4.2
@@ -2027,8 +2027,8 @@ importers:
         specifier: ^30.1.3
         version: 30.1.3
       mermaid:
-        specifier: 12.1.0
-        version: 12.1.0
+        specifier: 12.2.0
+        version: 12.2.0
       pako:
         specifier: ^2.2.0
         version: 2.2.0
@@ -2039,13 +2039,13 @@ importers:
         specifier: 5.3.0
         version: 5.3.0(@types/node@26.6.5)
       xslt-polyfill:
-        specifier: 1.0.33
-        version: 1.0.33
+        specifier: 1.0.31
+        version: 1.0.31
 
   packages/renderers/typst:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@myriaddreamin/typst-ts-renderer':
         specifier: 0.7.0
@@ -2064,10 +2064,10 @@ importers:
   packages/renderers/word:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
       '@file-viewer/doc':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../doc
       '@file-viewer/docx':
         specifier: 0.3.39
@@ -2089,7 +2089,7 @@ importers:
   packages/renderers/wordperfect:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../core
     devDependencies:
       esbuild:
@@ -2102,7 +2102,7 @@ importers:
   packages/thumbnail:
     dependencies:
       '@file-viewer/core':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../core
       jszip:
         specifier: 3.10.2
@@ -2127,8 +2127,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       vitest:
-        specifier: 5.0.3
-        version: 5.0.3(@types/node@26.6.5)(happy-dom@21.0.4)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))
+        specifier: 5.0.5
+        version: 5.0.5(@types/node@26.6.5)(happy-dom@21.0.4)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))
 
   packages/tools/asset-installer:
     devDependencies:
@@ -2142,68 +2142,68 @@ importers:
   packages/tools/assets-cad:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-chm:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-data:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-design:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-drawing:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-hangul:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-iwork:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-model:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-ppt:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-standard:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
     devDependencies:
       '@file-viewer/renderer-pdf':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/pdf
       '@file-viewer/renderer-spreadsheet':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../../renderers/spreadsheet
       '@types/node':
         specifier: ^26.6.5
@@ -2215,23 +2215,23 @@ importers:
   packages/tools/assets-typst:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/assets-wordperfect:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
 
   packages/tools/cli:
     dependencies:
       '@file-viewer/asset-installer':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../asset-installer
     devDependencies:
       '@file-viewer/assets-standard':
-        specifier: workspace:3.3.0
+        specifier: workspace:3.3.1
         version: link:../assets-standard
       '@types/node':
         specifier: ^26.6.5
@@ -2506,27 +2506,27 @@ packages:
     resolution: {integrity: sha512-NzwCYevGSj2JOuP7BztxrOd5WnJ86gOGLv3sq36jZxxHUXoDo1YhzizHiYz+T7GQqkzbfaQcwSyxsRogzGFIPQ==}
     engines: {node: '>=0.14'}
 
-  '@cornerstonejs/core@5.13.2':
-    resolution: {integrity: sha512-CcDU+SWsNsZTF+OsXkq0sC8Abx/ZED779tu4oLnWYGcvNOiTQ28NCi3OPIFfRE1byT8eCI6f217bUpn3c5BkIQ==}
+  '@cornerstonejs/core@5.11.6':
+    resolution: {integrity: sha512-xnbkL/xValS+ACzKdru4Rtd0gY3i2JcCitJzjPF1DKk4zxN7dhqnSndfZr2e3Sc5LJ5gG7IEg5G39UIfqd76rg==}
     peerDependencies:
-      '@cornerstonejs/metadata': 5.13.2
-      '@cornerstonejs/utils': 5.13.2
+      '@cornerstonejs/metadata': 5.11.6
+      '@cornerstonejs/utils': 5.11.6
 
-  '@cornerstonejs/dicom-image-loader@5.13.2':
-    resolution: {integrity: sha512-qTbHLmANYVwt6CVyTTa9Vd1/tT3lbQu3n86hNKbWUSD8iBitA1/EsZSqjJlWkrgYyEI01UjO+jP+KV6CPqeOpw==}
+  '@cornerstonejs/dicom-image-loader@5.11.6':
+    resolution: {integrity: sha512-YCvj7M+1YVFD3k1Aroqsw3b7DM9VMcSmSxIUQggCw0XoResSBMDkscKm00uDPCG79bKarkotqwqu8G8Fc3iZWA==}
     peerDependencies:
-      '@cornerstonejs/core': 5.13.2
-      '@cornerstonejs/metadata': 5.13.2
+      '@cornerstonejs/core': 5.11.6
+      '@cornerstonejs/metadata': 5.11.6
       dicom-parser: 1.8.21
 
   '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1':
     resolution: {integrity: sha512-cDCv7dm3qw9kbxCydvj0UGbNQcsPmTwcyd9SQXkBt34CDgSBeb8Xvj0Gz9HlJ+7DIKOFMTazF1oDJSu0pcCKmg==}
 
-  '@cornerstonejs/metadata@5.13.2':
-    resolution: {integrity: sha512-ZXPUCUaMgP4BGouDcji5PYzR4GB4GzY9WtQteQnU4XxJEn3azFd/Ivjn+tyY/P77nx+yaZQSj3bw3pk/NsWibw==}
+  '@cornerstonejs/metadata@5.11.6':
+    resolution: {integrity: sha512-df4TSp3iXWtAeDOtTu2O8OfLYt0L9aJLDTMQ8Y+mTduGOddbMXY0jiLEZFKCSA7L9JcHm6mz07fSNI6bpI98tA==}
 
-  '@cornerstonejs/utils@5.13.2':
-    resolution: {integrity: sha512-0rnt2WTuNeptxJMMxDxiXRRqAnEnHjqYOzdmvsWgAqcWeC9i7tpaqXQiASQs8MvdlWNiCoCshJurmgj6BZybQw==}
+  '@cornerstonejs/utils@5.11.6':
+    resolution: {integrity: sha512-er+R90NmjJazUfXV/IoeWN5eUvFbuONrRF/bmJdSVvluWBvGbNLmPONif+gEFA4cOyFr0mq9t7uxn7S0g4hJig==}
 
   '@csstools/color-helpers@6.1.2':
     resolution: {integrity: sha512-grhRy3OKmniaAEKXMjua5z/EODX0MSqBGjunw8+j/3HQjOnahs2AGhvEOIYVUWcU6ScApbhLhVrQTX8XqrMrow==}
@@ -3269,8 +3269,8 @@ packages:
   '@oxc-project/types@0.155.0':
     resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
 
-  '@paged-media/introspect-wasm@0.73.4':
-    resolution: {integrity: sha512-t8srSjMaNXAdwpsHE4BRFGCKOPkoVoP7UDTrG8Ew2UHfnqOwowrYr7K4+i0/5nyrXbI11zh0+ZfleIp/AjMJGQ==}
+  '@paged-media/introspect-wasm@0.70.2':
+    resolution: {integrity: sha512-vnnntpMigt03vPOBXfddPV99fe6dMd5JWZ/RWiMA0mE4Vd2vF0inZtT0Olm2yeFrQbmMjg70BjHpCAiSjV9UWg==}
 
   '@panzoom/panzoom@4.6.2':
     resolution: {integrity: sha512-Zn3B5/hwa6eYIPRSKX0xf2clv8nviTX8AnAU5kU/EugiTDhG41ya2wlBqYrZJYCWQROr/5XkWObZhIkepi89qw==}
@@ -3633,16 +3633,16 @@ packages:
   '@tailwindcss/postcss@4.3.3':
     resolution: {integrity: sha512-JTSZZGQi1AyKirbLN3azmjVzef92tcX7h+iSqPdaeStyFpGpDlKvvpxeOE8njhbUanbRwr3z8DyzhICWnMtQeg==}
 
-  '@thatopen/components@3.6.0':
-    resolution: {integrity: sha512-NFO8G8axXVgsXklxhTS7gYcP5O1pe/PnS+jzDSwICaeE2zENk23vCtxHQfHlfWmx15E5Iu4LwsqfRdgM5iSNtA==}
+  '@thatopen/components@3.4.9':
+    resolution: {integrity: sha512-qfmoeOBV+hMr5tTBJg3cObfi/YaK04y8qXCTzlkeWD27Mtg0iPTtFByL3IHc4kgbRPCITSpaAfznAsG0qBj0lg==}
     peerDependencies:
-      '@thatopen/fragments': ~3.6.0
+      '@thatopen/fragments': ~3.4.7
       camera-controls: '>=3.1.2'
       three: '>=0.182.0'
       web-ifc: '>=0.0.77'
 
-  '@thatopen/fragments@3.6.0':
-    resolution: {integrity: sha512-80BzigJj1IdaEYwF5u5SYOU8L63EKvoKgPvN+hwyS6mawxKn6+YiFScf3hix07fXgDoGobjpRYC9OAgoFa3nwQ==}
+  '@thatopen/fragments@3.4.8':
+    resolution: {integrity: sha512-oIEJIG7e6koDpW3Zyrfq+qNpm7yjzF5QGCMxHvT+10Frkt5LjPJp++bhNSPzSvjYT6Weor6EYUVU8TpIFesOfg==}
     engines: {node: '>=20.11.0'}
     peerDependencies:
       three: '>=0.182.0'
@@ -3889,10 +3889,10 @@ packages:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
       vue: 3.5.42
 
-  '@vitest/mocker@5.0.3':
-    resolution: {integrity: sha512-T8sWAIbkSyAjkwTcaEc3Iu0o9A27X1/kdXrizhZkGuSKScRQtRzclfAMpOTcGdXCsqxeWlpGy3XjqaW8CpLORg==}
+  '@vitest/mocker@5.0.5':
+    resolution: {integrity: sha512-xLL3lkDegJZw+MGoGaCCsFayDZthGgpAtr3Vziyfc4p7xH89K7KRPcRBBh/kEYm0Aqkt5DtTmkYpBtRV/FrHZg==}
     peerDependencies:
-      msw: ^2.4.9
+      msw: ^2.4.9 || ^3.0.0
       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
     peerDependenciesMeta:
       msw:
@@ -3900,8 +3900,8 @@ packages:
       vite:
         optional: true
 
-  '@vitest/spy@5.0.3':
-    resolution: {integrity: sha512-XhFysQTB8AZ+P4gMi+Lpo99vg2AZi0qKpaB9yXQl37+CaMEAPO3iH/wGVnSyL5MPERiLezpqTVtrR6UZH5GCXg==}
+  '@vitest/spy@5.0.5':
+    resolution: {integrity: sha512-lwJRExuH417257Q5wv9QYugN9IMJkoxcrKrYxGPQkBzl7wlNpTUxD/5yNX4ESKVUIShKPgkGchYPFMWOOk0wzw==}
 
   '@volar/language-core@2.4.28':
     resolution: {integrity: sha512-w4qhIJ8ZSitgLAkVay6AbcnC7gP3glYM3fYwKV3srj8m494E3xtrCv6E+bWviiK/8hs6e6t1ij1s2Endql7vzQ==}
@@ -4187,7 +4187,7 @@ packages:
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
-      postcss: 8.5.29
+      postcss: 8.5.31
 
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
@@ -5174,8 +5174,8 @@ packages:
   glob-to-regexp@0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
 
-  glob@7.2.3:
-    resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+  glob@7.2.0:
+    resolution: {integrity: sha512-lmLf6gtyrPq8tTjSmrO94wBeQbFR3HbLHbuyD69wuyQkImp2hWqMGB47OX65FBkPffO641IP9jWa1z4ivqG26Q==}
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   gopd@1.2.0:
@@ -5822,8 +5822,8 @@ packages:
   merge-stream@2.0.0:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
 
-  mermaid@12.1.0:
-    resolution: {integrity: sha512-wlVCp+8eTupfCeeFvoZNNiTuHrvag0P2jz/ILgb/f/6jkVokUefOcujefi8qUe/j2asHiSePncVsz/xzzA80LQ==}
+  mermaid@12.2.0:
+    resolution: {integrity: sha512-w7nr/SFrLO7BaVTs3dQTvYSV6nYSBj0Yy9DjBhsIJtAcHqRzXSq4Pg32ujHZ/AdWsAMNEvvhbm5dt9E2tOiHzw==}
     engines: {node: '>=22.12.0'}
 
   meshoptimizer@1.1.1:
@@ -6118,8 +6118,8 @@ packages:
     resolution: {integrity: sha512-nK28WOo+QIjBkDduTINE4JkF/UJJKyf2EJxvJKfblDpyg0Q+pkOHNTL0Qwy6NP6FhE/EnzV73BxxqcJaXY9anw==}
     engines: {node: '>= 0.4'}
 
-  obug@2.2.1:
-    resolution: {integrity: sha512-XrsrhT5sybtKI6wakr2SPOlGZWWYbUXZ7a0jT8/QOeAPau+1X/bSegNe5YR75oJmEZQbKningirmGOEJCIk61Q==}
+  obug@3.0.0:
+    resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
     engines: {node: '>=12.20.0'}
 
   occt-import-js@0.0.23:
@@ -6273,8 +6273,8 @@ packages:
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  postcss@8.5.29:
-    resolution: {integrity: sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ==}
+  postcss@8.5.31:
+    resolution: {integrity: sha512-YUbWYCgErwnMAVkjUnYa+KlMBzGpHwiIt/DE7f0G33AuX2LH9UcTk6KgWxd3zRU+pN3u/C+Xl3EnMLM4Hea7Sg==}
     engines: {node: ^10 || ^12 || >=14}
 
   potpack@2.1.0:
@@ -6639,8 +6639,8 @@ packages:
   spark-md5@3.0.2:
     resolution: {integrity: sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==}
 
-  sql.js@1.15.1:
-    resolution: {integrity: sha512-i0M/6s+lcl67Flm/1m8/AeVU5caDramlILXU/udUwpTQym2qKMSe2sJiXB5d5WXFB272aj4B2v1JbtQ93ID3Pg==}
+  sql.js@1.14.1:
+    resolution: {integrity: sha512-gcj8zBWU5cFsi9WUP+4bFNXAyF1iRpA3LLyS/DP5xlrNzGmPIizUeBggKa8DbDwdqaKwUcTEnChtd2grWo/x/A==}
 
   std-env@4.3.0:
     resolution: {integrity: sha512-OtU/EgQ1kIm5KwqQpBC6ZEMXrZRui11w8zgfTWp8cdO9B8OaPsbA8bTHO2P+HNo1VlUTGMVBwPhydu6poeXiag==}
@@ -7007,20 +7007,20 @@ packages:
       yaml:
         optional: true
 
-  vitest@5.0.3:
-    resolution: {integrity: sha512-xMw97S3rjdtj5dkVat7jCsqWBpvchs3RlpQctUqwJD0KkERk40vz2fJ77lDwW/Vzh/pk18eItYAzkodhSes3jQ==}
+  vitest@5.0.5:
+    resolution: {integrity: sha512-cPODOMF8YnkiiYtDdHo6n4wWmBrOBBbOIYH2d33M4l3CdNn72h+qMmO6uXffUN6A5AZFXNND/d+krS9mgkXRfg==}
     engines: {node: ^22.12.0 || ^24.0.0 || >=26.0.0}
     hasBin: true
     peerDependencies:
       '@edge-runtime/vm': '*'
       '@opentelemetry/api': ^1.9.0
       '@types/node': ^22.0.0 || >=24.0.0
-      '@vitest/browser-playwright': 5.0.3
-      '@vitest/browser-preview': 5.0.3
+      '@vitest/browser-playwright': 5.0.5
+      '@vitest/browser-preview': 5.0.5
       '@vitest/browser-webdriverio': ^5.0.0-beta.5 || >=5.0.0
-      '@vitest/coverage-istanbul': 5.0.3
-      '@vitest/coverage-v8': 5.0.3
-      '@vitest/ui': 5.0.3
+      '@vitest/coverage-istanbul': 5.0.5
+      '@vitest/coverage-v8': 5.0.5
+      '@vitest/ui': 5.0.5
       happy-dom: '*'
       jsdom: '*'
       vite: ^6.4.0 || ^7.0.0 || ^8.0.0
@@ -7090,8 +7090,8 @@ packages:
     resolution: {integrity: sha512-4Nsy8K5Tr6SPDH9jhKJOHf7ChDrc1zufZTVSF7x72hwuEXBqxqk9G6cK+K2NRUtB3iELRJqjXb4JPDMBjMTl2Q==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
-  web-ifc@0.0.78:
-    resolution: {integrity: sha512-LGKMNYFVNyz9vVERN0iz+zvPQJqT7MEGBxslzcuuhwDDOA116LmJLKkg8sZ5SEvQJSc5NRVMWgpRNkDmuoQoJg==}
+  web-ifc@0.0.77:
+    resolution: {integrity: sha512-VzQ0W/Iiqbidxn1ECUvz6qJ6p2sXBVNcOsUOBCETzy77psAH6yFLKQm74aXabkx3JH4OvFVHe8k1qS6+Z2zl1w==}
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
@@ -7194,8 +7194,8 @@ packages:
     peerDependencies:
       '@types/node': '>=16'
 
-  xslt-polyfill@1.0.33:
-    resolution: {integrity: sha512-GFKg8/M20hbSWLgEBa0ucs36Fhun1gcIymJTw5vz5Suao+00g0KV2/6M4HF5kJ4oB36PfIkHJCVgejPNs5ZMlw==}
+  xslt-polyfill@1.0.31:
+    resolution: {integrity: sha512-ojWdHilMmtl3oXqsmsy5AQcRORBpHAyf2ACt7uO0u4lzw5iMkVtI2golreHi5DDCTiBgxLTXODOUjUOy+OGiSg==}
 
   xxhash-wasm@1.1.0:
     resolution: {integrity: sha512-147y/6YNh+tlp6nd/2pWq38i9h6mz/EuQ6njIrmW8D1BS5nCqs0P6DG+m6zTGnNz5I+uhZ0SHxBs9BsPrwcKDA==}
@@ -7518,11 +7518,11 @@ snapshots:
 
   '@cornerstonejs/codec-openjph@2.4.11': {}
 
-  '@cornerstonejs/core@5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)':
+  '@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)':
     dependencies:
-      '@cornerstonejs/metadata': 5.13.2
-      '@cornerstonejs/utils': 5.13.2
-      '@kitware/vtk.js': 36.4.1(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
+      '@cornerstonejs/metadata': 5.11.6
+      '@cornerstonejs/utils': 5.11.6
+      '@kitware/vtk.js': 36.4.1(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
       comlink: 4.4.2
       gl-matrix: 3.4.3
       loglevel: 1.9.2
@@ -7530,16 +7530,16 @@ snapshots:
       - autoprefixer
       - wslink
 
-  '@cornerstonejs/dicom-image-loader@5.13.2(@cornerstonejs/core@5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0))(@cornerstonejs/metadata@5.13.2)(dicom-parser@1.8.21)':
+  '@cornerstonejs/dicom-image-loader@5.11.6(@cornerstonejs/core@5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0))(@cornerstonejs/metadata@5.11.6)(dicom-parser@1.8.21)':
     dependencies:
       '@cornerstonejs/codec-charls': 1.2.7
       '@cornerstonejs/codec-libjpeg-turbo-8bit': 1.2.7
       '@cornerstonejs/codec-libjxl': 1.1.1
       '@cornerstonejs/codec-openjpeg': 1.3.6
       '@cornerstonejs/codec-openjph': 2.4.11
-      '@cornerstonejs/core': 5.13.2(@cornerstonejs/metadata@5.13.2)(@cornerstonejs/utils@5.13.2)(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)
+      '@cornerstonejs/core': 5.11.6(@cornerstonejs/metadata@5.11.6)(@cornerstonejs/utils@5.11.6)(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)
       '@cornerstonejs/jpeg-lossless-decoder-js': 2.2.1
-      '@cornerstonejs/metadata': 5.13.2
+      '@cornerstonejs/metadata': 5.11.6
       comlink: 4.4.2
       dicom-parser: 1.8.21
       pako: 2.1.0
@@ -7547,14 +7547,14 @@ snapshots:
 
   '@cornerstonejs/jpeg-lossless-decoder-js@2.2.1': {}
 
-  '@cornerstonejs/metadata@5.13.2':
+  '@cornerstonejs/metadata@5.11.6':
     dependencies:
       '@cornerstonejs/calculate-suv': 1.0.3
-      '@cornerstonejs/utils': 5.13.2
+      '@cornerstonejs/utils': 5.11.6
       dcmjs: 0.52.0
       gl-matrix: 3.4.3
 
-  '@cornerstonejs/utils@5.13.2':
+  '@cornerstonejs/utils@5.11.6':
     dependencies:
       dcmjs: 0.52.0
 
@@ -7919,10 +7919,10 @@ snapshots:
       '@kenjiuno/decompressrtf': 0.1.4
       iconv-lite: 0.6.3
 
-  '@kitware/vtk.js@36.4.1(autoprefixer@10.6.1(postcss@8.5.29))(wslink@2.5.0)':
+  '@kitware/vtk.js@36.4.1(autoprefixer@10.6.1(postcss@8.5.31))(wslink@2.5.0)':
     dependencies:
       '@types/webxr': 0.5.5
-      autoprefixer: 10.6.1(postcss@8.5.29)
+      autoprefixer: 10.6.1(postcss@8.5.31)
       commander: 9.2.0
       d3-scale: 4.0.2
       fast-deep-equal: 3.1.3
@@ -8129,7 +8129,7 @@ snapshots:
 
   '@oxc-project/types@0.155.0': {}
 
-  '@paged-media/introspect-wasm@0.73.4': {}
+  '@paged-media/introspect-wasm@0.70.2': {}
 
   '@panzoom/panzoom@4.6.2': {}
 
@@ -8396,27 +8396,27 @@ snapshots:
       '@alloc/quick-lru': 5.3.0
       '@tailwindcss/node': 4.3.3
       '@tailwindcss/oxide': 4.3.3
-      postcss: 8.5.29
+      postcss: 8.5.31
       tailwindcss: 4.3.3
 
-  '@thatopen/components@3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)':
+  '@thatopen/components@3.4.9(@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)':
     dependencies:
-      '@thatopen/fragments': 3.6.0(three@0.186.1)(web-ifc@0.0.78)
+      '@thatopen/fragments': 3.4.8(three@0.186.1)(web-ifc@0.0.77)
       camera-controls: 3.1.2(three@0.186.1)
       fast-xml-parser: 5.7.2
       jszip: 3.10.2
       three: 0.186.1
       three-mesh-bvh: 0.9.9(three@0.186.1)
-      web-ifc: 0.0.78
+      web-ifc: 0.0.77
 
-  '@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78)':
+  '@thatopen/fragments@3.4.8(three@0.186.1)(web-ifc@0.0.77)':
     dependencies:
       earcut: 3.2.4
       flatbuffers: 25.2.10
       lru-cache: 11.1.0
       pako: 2.1.0
       three: 0.186.1
-      web-ifc: 0.0.78
+      web-ifc: 0.0.77
       xxhash-wasm: 1.1.0
 
   '@tmcw/togeojson@7.1.3': {}
@@ -8676,16 +8676,16 @@ snapshots:
       vite: 8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1)
       vue: 3.5.42(typescript@6.0.3)
 
-  '@vitest/mocker@5.0.3(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))':
+  '@vitest/mocker@5.0.5(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
-      '@vitest/spy': 5.0.3
+      '@vitest/spy': 5.0.5
       estree-walker: 3.0.3
       magic-string: 1.4.4
     optionalDependencies:
       vite: 8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1)
 
-  '@vitest/spy@5.0.3': {}
+  '@vitest/spy@5.0.5': {}
 
   '@volar/language-core@2.4.28':
     dependencies:
@@ -8794,7 +8794,7 @@ snapshots:
   '@vue/compiler-sfc@2.7.16':
     dependencies:
       '@babel/parser': 7.29.9
-      postcss: 8.5.29
+      postcss: 8.5.31
       source-map: 0.6.1
     optionalDependencies:
       prettier: 2.8.8
@@ -8808,7 +8808,7 @@ snapshots:
       '@vue/shared': 3.5.42
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.29
+      postcss: 8.5.31
       source-map-js: 1.2.2
 
   '@vue/compiler-sfc@3.5.43':
@@ -8820,7 +8820,7 @@ snapshots:
       '@vue/shared': 3.5.43
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.29
+      postcss: 8.5.31
       source-map-js: 1.2.2
 
   '@vue/compiler-ssr@3.5.42':
@@ -8993,13 +8993,13 @@ snapshots:
 
   astring@1.9.0: {}
 
-  autoprefixer@10.6.1(postcss@8.5.29):
+  autoprefixer@10.6.1(postcss@8.5.31):
     dependencies:
       browserslist: 4.28.7
       caniuse-lite: 1.0.30001819
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.29
+      postcss: 8.5.31
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -10035,7 +10035,7 @@ snapshots:
 
   glob-to-regexp@0.4.1: {}
 
-  glob@7.2.3:
+  glob@7.2.0:
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -10807,7 +10807,7 @@ snapshots:
 
   merge-stream@2.0.0: {}
 
-  mermaid@12.1.0:
+  mermaid@12.2.0:
     dependencies:
       '@braintree/sanitize-url': 7.1.2
       '@iconify/utils': 3.1.7
@@ -11195,7 +11195,7 @@ snapshots:
       '@swc/helpers': 0.5.23
       baseline-browser-mapping: 2.11.33
       caniuse-lite: 1.0.30001819
-      postcss: 8.5.29
+      postcss: 8.5.31
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
       styled-jsx: 5.1.6(react@19.3.0)
@@ -11267,7 +11267,7 @@ snapshots:
       has-symbols: 1.1.0
       object-keys: 1.1.1
 
-  obug@2.2.1: {}
+  obug@3.0.0: {}
 
   occt-import-js@0.0.23: {}
 
@@ -11409,7 +11409,7 @@ snapshots:
 
   postcss-value-parser@4.2.0: {}
 
-  postcss@8.5.29:
+  postcss@8.5.31:
     dependencies:
       nanoid: 3.3.18
       picocolors: 1.1.1
@@ -11825,7 +11825,7 @@ snapshots:
 
   shelljs@0.8.5:
     dependencies:
-      glob: 7.2.3
+      glob: 7.2.0
       interpret: 1.4.0
       rechoir: 0.6.2
 
@@ -11890,7 +11890,7 @@ snapshots:
 
   spark-md5@3.0.2: {}
 
-  sql.js@1.15.1: {}
+  sql.js@1.14.1: {}
 
   std-env@4.3.0: {}
 
@@ -12214,7 +12214,7 @@ snapshots:
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
-      postcss: 8.5.29
+      postcss: 8.5.31
       rolldown: 1.2.15
       tinyglobby: 0.2.17
     optionalDependencies:
@@ -12225,15 +12225,15 @@ snapshots:
       sass: 1.106.1
       yaml: 2.9.1
 
-  vitest@5.0.3(@types/node@26.6.5)(happy-dom@21.0.4)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1)):
+  vitest@5.0.5(@types/node@26.6.5)(happy-dom@21.0.4)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.3(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))
+      '@vitest/mocker': 5.0.5(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.106.1)(yaml@2.9.1))
       chai: 6.3.0
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
       magic-string: 1.4.4
-      obug: 2.2.1
+      obug: 3.0.0
       picomatch: 4.0.7
       std-env: 4.3.0
       tinybench: 6.2.2
@@ -12288,7 +12288,7 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  web-ifc@0.0.78: {}
+  web-ifc@0.0.77: {}
 
   web-namespaces@2.0.1: {}
 
@@ -12374,7 +12374,7 @@ snapshots:
     dependencies:
       '@types/node': 26.6.5
 
-  xslt-polyfill@1.0.33: {}
+  xslt-polyfill@1.0.31: {}
 
   xxhash-wasm@1.1.0: {}
 

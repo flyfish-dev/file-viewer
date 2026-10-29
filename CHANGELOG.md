@@ -1,10 +1,14 @@
 # Changelog
 
-## Unreleased
+## File Viewer v3.3.1
 
-- Keep native PPTX charts at their authored slide-coordinate size during slideshow scaling, hidden-slide navigation and return to preview (#385). This addresses chart enlargement and clipping; the remaining document-specific typography reports are still open.
+- Keep native PPTX charts at their authored size during slideshow scaling and hidden-slide navigation. Apply chart, axis, legend and data-label fonts, measure distinct CJK labels in logical coordinates, support top/left legends, and discard stale charts between main-thread document opens (#385).
+- Parse large CSV/TSV without the text reader's temporary UTF-8 array overflow (#426). Preserve worksheet default widths, Normal-style font metrics for SimSun templates, and saved point-based row heights; merged notes no longer stretch individual columns (#203, #432).
+- Preserve authored spreadsheet point sizes, fractional CSS sizes and zoom-aware overflow measurements, including the source-owned Worker. Show loading feedback while acquiring URL sources, and retain inline images in isolated email previews.
+- Clarify lightweight and Full package setup, preset and asset requirements, and public support links. Keep English npm entry pages and maintained Chinese READMEs; CLI help and errors include documentation and issue links while successful, JSON and version output remain unchanged.
+- Keep Vue 2.6/2.7 and the existing Full format coverage. The release cohort contains 88 mainline packages at `3.3.1` and `msdoc-viewer@0.2.14` (89 targets); upstream engine versions are unchanged.
 
-## File Viewer v3.3.0 — Candidate (not yet published)
+## File Viewer v3.3.0 - 2026-10-27
 
 - Adopt the published `@file-viewer/docx@0.3.39` engine for DrawingML source-rectangle cropping and bounded inline-picture pagination (#413). Normal pictures keep their dimensions when continuous sections move onto a fresh page. Main-thread and offline Worker assets use the same engine.
 - Ignore ghost spreadsheet formatting without discarding distant real cells, formulas, merges or drawings (#405). Recover supported formulas without cached results using a bounded offline evaluator (#414); errors and unsupported formulas remain unavailable rather than becoming fabricated values. Preserve cached values, Excel boolean concatenation and error-domain behavior.
@@ -15,7 +19,7 @@
 - Read authoritative LAS GeoKey/WKT metadata and support explicit `giro3d.sources.las.sourceCrs` for files with ambiguous citation-only metadata (#406). The original Palac_Moszna LAZ renders with explicit CRS; automatic inference from its citation text is not claimed.
 - Retain the white DOCX paper fix (#415), Vue 2.6/2.7 compatibility, complete public source, contributor credit and the existing Full-package capabilities. Asset staging checks continue to require matching Worker bytes and retained license notices.
 
-Candidate composition: 88 mainline packages at `3.3.0` and `msdoc-viewer@0.2.13` (89 targets). The independently versioned engines are `@file-viewer/docx@0.3.39` and `styled-exceljs@0.21.6`. File Viewer npm publication and production deployment remain pending. The original PPTX files for the remaining #385 typography/overlap report, and the supporter PDF plus exact old/new versions, are still unavailable; known fixtures do not close those reports.
+Release composition: 88 mainline packages at `3.3.0` and `msdoc-viewer@0.2.13` (89 targets). The independently versioned engines are `@file-viewer/docx@0.3.39` and `styled-exceljs@0.21.6`. Report-specific PPTX typography/CJK and legend-spacing fidelity is not claimed resolved. The supporter PDF report remains unverified without its original file and exact old/new versions.
 
 ## File Viewer v3.2.2 - 2026-10-18
 

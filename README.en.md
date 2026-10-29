@@ -13,6 +13,7 @@
 <p align="center">
   <a href="https://demo.file-viewer.app/">Live demo</a> ·
   <a href="https://doc.file-viewer.app/">Documentation</a> ·
+  <a href="https://flutter.file-viewer.app/en/">Flutter SDK (preview)</a> ·
   <a href="https://doc.file-viewer.app/guide/formats">Format matrix</a> ·
   <a href="https://github.com/flyfish-dev/file-viewer/releases">Releases</a>
 </p>
@@ -33,7 +34,7 @@
 </p>
 <p align="center">⭐ If File Viewer helps you, please <a href="https://github.com/flyfish-dev/file-viewer">star the repo</a>.</p>
 
-The current source prepares a `3.3.0` release candidate with the published DOCX `0.3.39` engine. File Viewer packages and production sites have not been released from this candidate. See [the candidate notes](CHANGELOG.md).
+For fixes and package versions, see the [changelog](CHANGELOG.md).
 
 ## Why File Viewer
 
@@ -86,9 +87,9 @@ const options = { preset: officePreset }
 
 ## Flutter development preview
 
-The independent [File Viewer Flutter](https://flutter.file-viewer.app/en/) SDK is available on [pub.dev](https://pub.dev/packages/file_viewer_flutter) as development preview `0.1.0-dev.2`, with bundled offline assets, application-scoped prewarming and reusable viewer sessions. Integrate the root with `FileViewerHost(child: MyApp())` and display a document with `FileViewer(source: source)` after the initial platform setup.
+The independent [File Viewer Flutter](https://flutter.file-viewer.app/en/) SDK is available on [pub.dev](https://pub.dev/packages/file_viewer_flutter) as development preview `0.1.0-dev.2`. It provides bundled offline assets, application-scoped warm-up and reusable viewer sessions. Start with the [Flutter quick start](docs/guide/quickstart-flutter.md), or read the [complete integration guides](https://flutter.file-viewer.app/en/docs/quickstart/).
 
-Android, iOS, Web, Windows, macOS and Linux are the delivery targets. This is a development preview; follow the repository's qualification matrix for measured support, package availability and remaining work. Background prewarming retains an instance while the application process lives and recovers after system reclamation. See [Flutter integration](docs/guide/quickstart-flutter.md).
+Android, iOS, Web, Windows, macOS and Linux are the delivery targets. Follow the [platform guide](https://flutter.file-viewer.app/en/docs/platforms/) for measured support and remaining qualification. Sessions stay within the application process; operating systems can suspend or terminate it. The [Flutter repository](https://github.com/flyfish-dev/file-viewer-flutter) contains the SDK source and runnable example.
 
 ## Formats and limits
 

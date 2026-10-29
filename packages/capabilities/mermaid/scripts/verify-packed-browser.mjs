@@ -235,7 +235,7 @@ try {
         `Installed runtime bytes changed: ${name}`
       )
     for (const [name, version] of [
-      ['mermaid', '12.1.0'],
+      ['mermaid', '12.2.0'],
       ['katex', '0.18.2']
     ])
       assert.ok(

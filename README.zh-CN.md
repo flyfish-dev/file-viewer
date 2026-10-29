@@ -16,6 +16,7 @@
 
 <p align="center">
   <a href="https://demo.file-viewer.app">在线 Demo</a> ·
+  <a href="https://flutter.file-viewer.app">Flutter SDK（开发预览）</a> ·
   <a href="https://doc.file-viewer.app">文档</a> ·
   <a href="https://github.com/flyfish-dev/file-viewer/wiki">GitHub Wiki</a> ·
   <a href="https://github.com/sponsors/wybaby168">GitHub Sponsors</a> ·
@@ -74,7 +75,7 @@
 
 ## 当前版本与新增能力
 
-当前源码正在准备 `3.3.0` 候选，接入已发布的 DOCX `0.3.39` 引擎；File Viewer 候选软件包与生产站点尚未发布，详见[候选变更说明](CHANGELOG.md)。
+修复内容与版本信息见[更新日志](CHANGELOG.md)。
 
 当前稳定版为 [v3.2.2](https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.2)。本页说明当前源码的能力；主分支与在线 Demo 可能包含稳定版之后的修复，使用 npm 或 Release 归档时请按对应版本验证。
 

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/svelte",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Lightweight Svelte file viewer. Add PDF, Office and other browser-side previews with renderer presets.",
@@ -84,7 +84,7 @@
     "svelte": ">=3.59 <6"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.0"
+    "@file-viewer/core": "workspace:3.3.1"
   },
   "devDependencies": {
     "esbuild": "0.28.2",

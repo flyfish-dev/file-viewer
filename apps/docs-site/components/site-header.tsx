@@ -27,6 +27,7 @@ export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
           label: '产品',
           links: [
             ['File Viewer 官网', site.productUrl],
+            ['Flutter 接入文档', 'https://flutter.file-viewer.app/zh/docs/quickstart/'],
             ['在线 Demo', site.demoUrl],
             ['方案对比', `${site.demoUrl}/compare.html`],
           ],
@@ -40,6 +41,7 @@ export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
             ['npm Vue 3', 'https://www.npmjs.com/package/@file-viewer/vue3'],
             ['npm React', 'https://www.npmjs.com/package/@file-viewer/react'],
             ['npm Svelte', 'https://www.npmjs.com/package/@file-viewer/svelte'],
+            ['Flutter / pub.dev', 'https://pub.dev/packages/file_viewer_flutter'],
           ],
         },
         {
@@ -59,6 +61,7 @@ export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
           label: 'Product',
           links: [
             ['File Viewer website', `${site.productUrl}/en/`],
+            ['Flutter documentation', 'https://flutter.file-viewer.app/en/docs/quickstart/'],
             ['Live demo', site.demoUrl],
             ['Compare demo', `${site.demoUrl}/compare.html`],
           ],
@@ -72,6 +75,7 @@ export function SiteHeader({ locale }: { locale: 'en' | 'zh' }) {
             ['npm Vue 3', 'https://www.npmjs.com/package/@file-viewer/vue3'],
             ['npm React', 'https://www.npmjs.com/package/@file-viewer/react'],
             ['npm Svelte', 'https://www.npmjs.com/package/@file-viewer/svelte'],
+            ['Flutter / pub.dev', 'https://pub.dev/packages/file_viewer_flutter'],
           ],
         },
         {

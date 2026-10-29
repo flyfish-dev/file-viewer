@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-binary",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Opt-in, browser-local binary inspector plugin for File Viewer with virtualized hex rows and bounded Worker parsing.",
@@ -60,7 +60,7 @@
     "verify": "node scripts/verify-binary-inspector.mjs && node scripts/verify-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.0"
+    "@file-viewer/core": "workspace:3.3.1"
   },
   "devDependencies": {
     "playwright": "^1.64.1",

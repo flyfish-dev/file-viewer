@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/react-legacy-full",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": false,
   "type": "module",
   "description": "Browser-native file preview for React 16.8/17 with the Full renderer preset and self-hosted runtime assets.",
@@ -65,9 +65,9 @@
     "react": ">=16.8 <18"
   },
   "dependencies": {
-    "@file-viewer/preset-all": "workspace:3.3.0",
-    "@file-viewer/react-legacy": "workspace:3.3.0",
-    "file-viewer-copy-assets": "workspace:3.3.0"
+    "@file-viewer/preset-all": "workspace:3.3.1",
+    "@file-viewer/react-legacy": "workspace:3.3.1",
+    "file-viewer-copy-assets": "workspace:3.3.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",
