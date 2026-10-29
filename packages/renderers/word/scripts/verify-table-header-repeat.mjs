@@ -10,7 +10,11 @@ const root = resolve(import.meta.dirname, '../../../..')
 const require = createRequire(join(root, 'packages/renderers/word/package.json'))
 const { build } = createRequire(join(root, 'packages/renderers/pptx/package.json'))('esbuild')
 const engine = dirname(require.resolve('@file-viewer/docx/package.json'))
-assert.equal(JSON.parse(await readFile(join(engine, 'package.json'), 'utf8')).version, '0.3.35')
+const ownerManifest = JSON.parse(await readFile(join(root, 'packages/renderers/word/package.json'), 'utf8'))
+const engineVersion = ownerManifest.dependencies['@file-viewer/docx']
+assert.match(engineVersion, /^0\.3\.(?:0|[1-9]\d*)$/, 'Table-header verification requires a reviewed, exactly pinned DOCX 0.3.x engine')
+assert.ok(Number(engineVersion.split('.')[2]) >= 35, 'The DOCX engine must retain the table-header fix introduced in 0.3.35')
+assert.equal(JSON.parse(await readFile(join(engine, 'package.json'), 'utf8')).version, engineVersion)
 const worker = await readFile(join(engine, 'dist/docx-preview.worker.js'), 'utf8')
 const zipWorker = await readFile(require.resolve('jszip/dist/jszip.min.js'), 'utf8')
 assert.equal(
@@ -66,7 +70,7 @@ const bundle = await build({
   write: false,
   logLevel: 'silent'
 })
-const report = { engine: '0.3.35', expectedRows: expected.length, cases: [], passed: false }
+const report = { engine: engineVersion, expectedRows: expected.length, cases: [], passed: false }
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined
@@ -176,7 +180,7 @@ try {
       if (useWorker) {
         assert.equal(servedAssets.length, 2)
         for (const url of servedAssets) {
-          assert.equal(new URL(url).searchParams.get('file-viewer-docx'), '0.3.35')
+          assert.equal(new URL(url).searchParams.get('file-viewer-docx'), engineVersion)
         }
       } else assert.deepEqual(servedAssets, [])
       await page.screenshot({
@@ -212,5 +216,5 @@ try {
   await writeFile(join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n')
 }
 console.log(
-  'DOCX 0.3.35: cross-page headers and all 37 logical rows passed in main and actual Worker paths.'
+  `DOCX ${engineVersion}: cross-page headers and all 37 logical rows passed in main and actual Worker paths.`
 )
