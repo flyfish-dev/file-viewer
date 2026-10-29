@@ -37,6 +37,7 @@ const options = {
 - Supports multiple sheets, horizontally scrollable sheet tabs, merged cells, row and column sizing, borders, fills, alignment, text color, Office 365 and WPS in-cell images, workbook drawing images, double-click image previews, the global zoom provider, and optional header drag column resizing.
 - TIFF drawings in XLSX files load the MIT-licensed UTIF.js decoder only when needed and are converted to PNG in the browser. Ordinary spreadsheets do not load the TIFF decoder.
 - Uses virtual rendering for interaction. Host components usually hide full-document print for spreadsheets to avoid printing only the current viewport.
+- XLSX uses saved default and explicit column widths and point-based row heights. CSV/TSV retains content auto-fit and supports large decoded text without creating a second UTF-8 byte array.
 
 ## Fill the viewport for small Excel sheets
 
@@ -50,7 +51,7 @@ const options = {
 }
 ```
 
-This changes only the display: workbook data, used range, original-file downloads/exports, search results and content counts remain unchanged. CSV / TSV / ODS / Numbers ignore this option. Omitting it or setting it to `false` preserves the existing behavior.
+This changes only the display: workbook data, used range, original-file downloads/exports, search results and content counts remain unchanged.
 
 ## Offline Assets
 
