@@ -8,7 +8,8 @@ export async function createFormulaWorkbook() {
   const number = (address, value) => `<c r="${address}"><v>${value}</v></c>`
   const escape = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
   const formula = (address, value, cached = '') => `<c r="${address}"><f>${escape(value)}</f><v>${cached}</v></c>`
-  const worksheet = (ref, rows) => `<?xml version="1.0"?><worksheet xmlns="${schema}"><dimension ref="${ref}"/><sheetData>${rows}</sheetData></worksheet>`
+  // Browser checks need the complete formula text, independent of renderer auto-fit.
+  const worksheet = (ref, rows) => `<?xml version="1.0"?><worksheet xmlns="${schema}"><dimension ref="${ref}"/><cols><col min="3" max="3" width="24" customWidth="1"/></cols><sheetData>${rows}</sheetData></worksheet>`
   const row = (r, cells) => `<row r="${r}">${cells}</row>`
   zip.file('[Content_Types].xml', '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>')
   zip.file('_rels/.rels', `<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${relSchema}/officeDocument" Target="xl/workbook.xml"/></Relationships>`)
