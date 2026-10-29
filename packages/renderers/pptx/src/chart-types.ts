@@ -59,6 +59,7 @@ export interface PptxChartAxis {
   numberFormat?: { code: string; sourceLinked?: boolean };
   title?: string;
   majorGridlines: boolean;
+  labelRotation?: number;
   font?: PptxChartFont;
 }
 
