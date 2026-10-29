@@ -1,9 +1,33 @@
 import { DOMParser } from '@xmldom/xmldom'
 import type JSZip from 'jszip'
+import type { WorkBook } from 'styled-exceljs'
 
 export interface StoredSheetLayout {
   columnWidth?: number
   rowHeightPt?: number
+  maximumDigitWidth?: number
+}
+
+/** OOXML column units refer to the workbook's Normal style, which need not
+ * use fonts[0]. Preserve the established fallback for unmeasured fonts. */
+export const readWorkbookDigitWidth = (workbook?: WorkBook | null): number => {
+  const styles = (workbook as (WorkBook & { Styles?: {
+    CellStyles?: Array<{ builtinId?: number; name?: string; xfId?: number }>
+    CellStyleXf?: Array<{ fontId?: number }>
+    Fonts?: Array<{ name?: string; sz?: number }>
+  } }) | null | undefined)?.Styles
+  const normal = styles?.CellStyles?.find(style => style.builtinId === 0)
+    ?? styles?.CellStyles?.find(style => style.name?.toLowerCase() === 'normal')
+  const fontId = normal?.xfId === undefined ? 0 : styles?.CellStyleXf?.[normal.xfId]?.fontId ?? 0
+  const font = styles?.Fonts?.[fontId]
+  const size = Number(font?.sz)
+  // SimSun/NSimSun's compatible 11pt digit grid is eight pixels. Do not
+  // assume every CJK family shares these metrics or measure a fallback font.
+  if (/^(?:宋体|新宋体|simsun|nsimsun)$/i.test(font?.name?.trim() || '')
+    && Number.isFinite(size) && size >= 1 && size <= 409) {
+    return Math.max(1, Math.round(8 * size / 11))
+  }
+  return 7
 }
 
 /** Read only the worksheet header; never materialize a large sheet's cells a
