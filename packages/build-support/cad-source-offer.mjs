@@ -35,8 +35,8 @@ export const CAD_INTEGRATION_SOURCE = Object.freeze({
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '0f8bc82c26cb8511fdad4403a9aa3f5550678097ccfe2d342ea9badf49223a28',
-  bytes: 353843,
+  sha256: '319941ade00de22b434ecc3cd9dd21a0a6f7b084e48a7ea47e2b13f0aadde7cc',
+  bytes: 353837,
   files: 85,
   runtimeBytes: 627842,
   runtimeSha256: '12a5a9060ae0e2035ead248add91b6657ae7973c2a4754112fbe3a9b40ca96f9'
