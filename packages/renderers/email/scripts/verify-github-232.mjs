@@ -28,8 +28,13 @@ assert.ok(
   /^(?:\^|~)?4\./.test(postalRange),
   'the EML renderer requires the qualified postal-mime 4.x parser, found ' + postalRange
 )
-assert.equal(postalRange, '4.0.8', 'Published consumers must receive the reviewed header/MIME resource-limit patch')
-assert.equal(require('postal-mime/package.json').version, '4.0.8')
+assert.match(postalRange, /^4\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$/,
+  'Published consumers must receive an exactly pinned, reviewed postal-mime 4.x version')
+const [, minor, patch] = postalRange.split('.').map(Number)
+assert.ok(minor > 0 || patch >= 8,
+  'Published consumers must retain the header/MIME resource limits introduced in 4.0.8')
+assert.equal(require('postal-mime/package.json').version, postalRange,
+  'The installed parser must match the reviewed renderer dependency')
 
 const fixtureText = (
   await readFile(join(packageDir, 'test', 'fixtures', 'github-232-headers.eml'), 'utf8')
