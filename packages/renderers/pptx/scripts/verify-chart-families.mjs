@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import JSZip from 'jszip';
 import { build } from 'esbuild';
-import { chromium } from 'playwright';
+import { chromium, webkit } from 'playwright';
 import { extractChartOptions } from '../src/engine/support/chart-options.js';
 import { makePresentation } from './chart-fixture.mjs';
 const root = path.resolve(import.meta.dirname, '../../../..');
@@ -53,6 +53,18 @@ async function comboFixture() {
     </c:plotArea><c:legend><c:legendPos val="b"/></c:legend></c:chart></c:chartSpace>`);
   return zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
 }
+async function typographyFixture(position) {
+  const zip=await JSZip.loadAsync(await comboFixture());
+  const font=pt=>`<c:txPr><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="${pt*100}"><a:latin typeface="monospace"/></a:defRPr></a:pPr></a:p></c:txPr>`;
+  const part='ppt/charts/chart1.xml';
+  const xml=(await zip.file(part).async('string'))
+    .replace('<c:v>收入</c:v>','<c:v>....</c:v>').replace('<c:v>支出</c:v>','<c:v>中文图例</c:v>').replace('<c:v>增长率</c:v>','<c:v>部门科室</c:v>')
+    .replace('</c:catAx>',font(16)+'</c:catAx>')
+    .replace(/<c:legend>[\s\S]*?<\/c:legend>/,`<c:legend><c:legendPos val="${position}"/>${font(14)}</c:legend>`)
+    .replace('</c:chartSpace>',font(12)+'</c:chartSpace>');
+  zip.file(part,xml);
+  return zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
+}
 await check('Chart family metadata preserves bounded angles, ratios, grouping and point indices',()=>{
   const options=extractChartOptions({'c:grouping':val('stacked'),'c:holeSize':val(75),'c:firstSliceAng':val(90),'c:ser':{'c:dPt':[{'c:idx':val(4),'c:spPr':{'a:solidFill':{}}}]}},{'c:legend':{'c:legendPos':val('b')}},()=> '123456');
   assert.equal(options.holeSize,75);assert.equal(options.firstSliceAngle,90);assert.equal(options.grouping,'stacked');assert.deepEqual(options.series[0].points,{'4':'#123456'});assert.deepEqual(options.legend,{show:true,position:'b'});
@@ -79,7 +91,9 @@ const compiled=await build({alias:sourceAliases,stdin:{resolveDir:packageDir,con
 `},bundle:true,platform:'browser',format:'iife',write:false,logLevel:'warning'});
 const workerPath=process.env.PPTX_CHART_WORKER_FILE;
 const workerSource=workerPath?await readFile(path.resolve(workerPath),'utf8'):(await build({alias:sourceAliases,entryPoints:[path.join(packageDir,'src/worker-entry.ts')],bundle:true,format:'iife',write:false,platform:'browser',logLevel:'warning'})).outputFiles[0].text;
-const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined,headless:true});
+const browserName=process.env.PPTX_CHART_BROWSER||'chromium';
+assert.ok(['chromium','webkit'].includes(browserName),'Select a supported chart browser');
+const browser=await ({chromium,webkit}[browserName]).launch({executablePath:browserName==='chromium'?process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined:undefined,headless:true});
 try {
   for(const dpr of [1,2]) {
     const page=await browser.newPage({viewport:{width:1200,height:900},deviceScaleFactor:dpr});
@@ -249,11 +263,53 @@ try {
       });
       assert.deepEqual(result,{groups:2,axes:3,libraryCalls:0,destroyed:3});
     });
+    for(const worker of [false,true]) for(const position of ['b','r','t','l','tr']) {
+      const textQueue=await mount(await typographyFixture(position),worker);
+      await check(`DPR ${dpr}, ${worker?'Worker':'main'}, legend ${position}: authored fonts and CJK labels stay in logical slide coordinates`,async()=>{
+        assert.equal(textQueue.length,3,'Reused engine must only return charts from the current document');
+        assert.equal(textQueue[0].data.chartModel.axes[0].font.sizePt,16);
+        assert.equal(textQueue[0].data.chartOptions.legend.font.sizePt,14);
+        let logicalWidth;
+        for(const scale of [.5,1,1.5]) {
+          const state=await page.evaluate(scale=>{
+            const {options:o}=calls[0],target=o.bindto.closest('.block');
+            target.closest('.slide').style.transform=`scale(${scale})`;
+            target.closest('.slide').style.transformOrigin='0 0';
+            const rect=node=>{const b=node.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height};};
+            const labels=[...target.querySelectorAll('.bb-legend-item text,.pptx-chart-legend-label')];
+            return {labels:labels.map(node=>({text:node.textContent,font:parseFloat(getComputedStyle(node).fontSize),...rect(node)})),
+              ticks:[...target.querySelectorAll('.bb-axis-x .tick text')].map(node=>parseFloat(getComputedStyle(node).fontSize)),
+              frame:rect(target),plot:rect(o.bindto),svgWidth:Number(o.bindto.querySelector('svg').getAttribute('width'))};
+          },scale);
+          assert.equal(state.labels.length,3);
+          assert.deepEqual(state.labels.map(label=>label.text),['....','中文图例','部门科室']);
+          assert.ok(state.labels.every(label=>Math.abs(label.font-14*96/72)<.01));
+          assert.ok(state.ticks.length>0&&state.ticks.every(size=>Math.abs(size-16*96/72)<.01));
+          for(let a=0;a<state.labels.length;a++)for(let b=a+1;b<state.labels.length;b++){
+            const x=state.labels[a],y=state.labels[b];
+            assert.ok(Math.min(x.x+x.w,y.x+y.w)-Math.max(x.x,y.x)<=.5||Math.min(x.y+x.h,y.y+y.h)-Math.max(x.y,y.y)<=.5,JSON.stringify(state));
+          }
+          for(const label of state.labels)assert.ok(label.x>=state.frame.x-2&&label.y>=state.frame.y-2&&label.x+label.w<=state.frame.x+state.frame.w+2&&label.y+label.h<=state.frame.y+state.frame.h+2,JSON.stringify(state));
+          if(position==='t'||position==='tr')assert.ok(state.labels.every(label=>label.y+label.h<=state.plot.y+1));
+          if(position==='l')assert.ok(state.labels.every(label=>label.x+label.w<=state.plot.x+1));
+          logicalWidth??=state.svgWidth;assert.equal(state.svgWidth,logicalWidth);
+        }
+        if(worker&&position==='t') {
+          const button=page.locator('.pptx-chart-legend button').first();
+          await button.focus();await page.keyboard.press('Enter');assert.equal(await button.getAttribute('aria-pressed'),'false');
+          await page.keyboard.press('Enter');assert.equal(await button.getAttribute('aria-pressed'),'true');
+        }
+      });
+    }
+    await page.evaluate(()=>handle.destroy());
+    await check(`DPR ${dpr}: chart text styles and external legend resources are released`,async()=>{
+      assert.equal(await page.locator('.pptx-chart-surface,.pptx-chart-layout,style[data-pptx-chart-fonts]').count(),0);
+    });
     await page.close();
   }
   await check('No uncaught browser errors, library warnings or external requests',()=>{assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);});
   completed=true;
 } finally {
-  await browser.close();await writeFile(path.join(output,'report.json'),JSON.stringify({completed,passed:checks.filter(c=>c.status==='pass').length,failed:checks.filter(c=>c.status==='fail').length,checks,originals,errors,requests,scope:'Doughnuts/stacked grouping plus synthetic issue385 real-PPTX combo/dual-axis/category/data-label model; not full chart-style fidelity.'},null,2)+'\n');
+  await browser.close();await writeFile(path.join(output,'report.json'),JSON.stringify({completed,passed:checks.filter(c=>c.status==='pass').length,failed:checks.filter(c=>c.status==='fail').length,checks,originals,errors,requests,scope:'Doughnuts/stacking and real-PPTX combo/dual-axis/category/data-label model, authored fonts, CJK measurements and all five legend placements under slide scaling.'},null,2)+'\n');
 }
 if(checks.some(c=>c.status==='fail'))process.exitCode=1;

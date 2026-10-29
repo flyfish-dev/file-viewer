@@ -64,7 +64,7 @@
     "build": "node scripts/clean-dist.mjs && tsc -b tsconfig.json --force && node scripts/build-worker.mjs && node scripts/copy-assets.mjs && node scripts/fix-esm-extensions.mjs",
     "type-check": "tsc -b tsconfig.json",
     "verify:github-176": "node scripts/verify-github-176.mjs",
-    "verify:github-268": "node scripts/verify-github-268.mjs",
+    "verify:github-268": "node scripts/verify-github-268.mjs && node scripts/verify-chart-families.mjs",
     "verify:github-268-browser": "node scripts/verify-github-268-browser.mjs",
     "verify:drawing-semantics": "node scripts/verify-drawing-semantics.mjs"
   },

@@ -1,4 +1,5 @@
 /** Chart-family metadata, kept separate from the existing cache message contract. */
+import { extractChartFont } from './chart-font.js';
 const many = value => value == null ? [] : Array.isArray(value) ? value : [value];
 const valueOf = (node, key) => node?.[key]?.attrs?.val;
 const unsigned = (value, min, max, fallback) => {
@@ -7,7 +8,7 @@ const unsigned = (value, min, max, fallback) => {
   return Number.isSafeInteger(parsed) && parsed >= min && parsed <= max ? parsed : fallback;
 };
 
-export function extractChartLabels(node) {
+export function extractChartLabels(node, resolveColor, resolveFont) {
   if (!node) return undefined;
   const boolean = key => {
     const value = valueOf(node, key);
@@ -16,6 +17,7 @@ export function extractChartLabels(node) {
   const position = valueOf(node, 'c:dLblPos');
   const format = node?.['c:numFmt']?.attrs;
   return {
+    ...(node['c:txPr'] ? { font: extractChartFont(node['c:txPr'], resolveColor, resolveFont) } : {}),
     showValue: boolean('c:showVal'), showCategory: boolean('c:showCatName'),
     showSeries: boolean('c:showSerName'), showPercent: boolean('c:showPercent'),
     deleted: boolean('c:delete'),
@@ -25,12 +27,12 @@ export function extractChartLabels(node) {
     ...(node['c:dLbl'] ? { points: Object.fromEntries(many(node['c:dLbl']).flatMap(point => {
       const index = unsigned(valueOf(point, 'c:idx'), 0, Number.MAX_SAFE_INTEGER, undefined);
       // Do not recursively accept nested per-point label collections.
-      return index === undefined ? [] : [[index, extractChartLabels({ ...point, 'c:dLbl': undefined })]];
+      return index === undefined ? [] : [[index, extractChartLabels({ ...point, 'c:dLbl': undefined }, resolveColor, resolveFont)]];
     })) } : {}),
   };
 }
 
-export function extractChartOptions(group, chart, resolveColor) {
+export function extractChartOptions(group, chart, resolveColor, resolveFont) {
   const grouping = valueOf(group, 'c:grouping');
   const legend = chart?.['c:legend'];
   const position = valueOf(legend, 'c:legendPos');
@@ -46,11 +48,15 @@ export function extractChartOptions(group, chart, resolveColor) {
     firstSliceAngle: unsigned(valueOf(group, 'c:firstSliceAng'), 0, 360, 0),
     gapWidth: unsigned(valueOf(group, 'c:gapWidth'), 0, 500, undefined),
     overlap: /^-?\d+$/.test(String(valueOf(group, 'c:overlap'))) && Math.abs(Number(valueOf(group, 'c:overlap'))) <= 100 ? Number(valueOf(group, 'c:overlap')) : undefined,
-    legend: { show: legend != null, position: ['l', 'r', 't', 'b', 'tr'].includes(position) ? position : 'r' },
+    legend: {
+      show: legend != null, position: ['l', 'r', 't', 'b', 'tr'].includes(position) ? position : 'r',
+      ...(legend?.['c:overlay'] ? { overlay: ['1', 'true'].includes(String(valueOf(legend, 'c:overlay'))) } : {}),
+      ...(legend?.['c:txPr'] ? { font: extractChartFont(legend['c:txPr'], resolveColor, resolveFont) } : {}),
+    },
     // Indexed point fills must not move when labels are repeated or blank.
     series: many(group?.['c:ser']).map(series => ({
       color: safeColor(series?.['c:spPr']),
-      ...(series?.['c:dLbls'] ? { labels: extractChartLabels(series['c:dLbls']) } : {}),
+      ...(series?.['c:dLbls'] ? { labels: extractChartLabels(series['c:dLbls'], resolveColor, resolveFont) } : {}),
       points: Object.fromEntries(many(series?.['c:dPt']).flatMap(point => {
         const index = unsigned(valueOf(point, 'c:idx'), 0, Number.MAX_SAFE_INTEGER, undefined);
         const color = safeColor(point?.['c:spPr']);

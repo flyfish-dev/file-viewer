@@ -5,7 +5,7 @@ export { createPptxWorker, resolvePptxPackageWorkerUrl } from './worker';
 export { registerPptxChartLibraryLoader, registerPptxChartRenderer } from './chart';
 export type { PptxChartLibraries, PptxChartLibraryLoader } from './chart';
 export type {
-  PptxChartType, PptxChartLabels, PptxChartOptions, PptxChartSeries,
+  PptxChartType, PptxChartFont, PptxChartLabels, PptxChartOptions, PptxChartSeries,
   PptxChartAxis, PptxChartGroup, PptxChartModel, PptxChartMessage, PptxChartCollection, PptxChartRenderer,
 } from './chart-types';
 export {

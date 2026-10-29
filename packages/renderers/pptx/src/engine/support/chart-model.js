@@ -1,5 +1,6 @@
 import { extractChartData, extractScatterSeries } from './chart-data.js';
 import { extractChartOptions, extractChartLabels } from './chart-options.js';
+import { extractChartFont } from './chart-font.js';
 
 const many = value => value == null ? [] : Array.isArray(value) ? value : [value];
 const valueOf = (node, key) => node?.[key]?.attrs?.val;
@@ -11,16 +12,6 @@ const number = value => {
 const id = value => /^\d{1,10}$/.test(String(value)) && Number(value) <= 4294967295 ? String(Number(value)) : undefined;
 const flag = value => value === true || value === 1 || value === '1' || value === 'true';
 const text = value => typeof value === 'string' || typeof value === 'number' ? String(value).slice(0, 4096) : '';
-const fontOf = node => {
-  const paragraph = many(node?.['a:p'])[0];
-  const properties = paragraph?.['a:pPr']?.['a:defRPr'] ?? many(paragraph?.['a:r'])[0]?.['a:rPr'];
-  if (!properties) return undefined;
-  const size = number(properties.attrs?.sz);
-  return {
-    family: text(properties['a:latin']?.attrs?.typeface || properties['a:ea']?.attrs?.typeface) || undefined,
-    sizePt: size > 0 && size <= 400000 ? size / 100 : undefined,
-  };
-};
 const titleOf = title => {
   const tx = title?.['c:tx'];
   if (tx?.['c:rich']) {
@@ -33,7 +24,7 @@ const titleOf = title => {
 };
 
 /** Preserve each plot group and its explicit axis relationships. */
-export function extractChartModel(content, resolveColor) {
+export function extractChartModel(content, resolveColor, resolveFont) {
   const space = content?.['c:chartSpace'];
   const chart = space?.['c:chart'];
   const plot = chart?.['c:plotArea'];
@@ -43,8 +34,8 @@ export function extractChartModel(content, resolveColor) {
     const chartType = name.slice(2);
     if (!name.startsWith('c:') || !families.has(chartType)) continue;
     for (const node of many(nodes)) {
-      const options = extractChartOptions(node, chart, resolveColor);
-      options.labels = extractChartLabels(node?.['c:dLbls']);
+      const options = extractChartOptions(node, chart, resolveColor, resolveFont);
+      options.labels = extractChartLabels(node?.['c:dLbls'], resolveColor, resolveFont);
       groups.push({
         chartType,
         barDirection: ['bar', 'col'].includes(valueOf(node, 'c:barDir')) ? valueOf(node, 'c:barDir') : undefined,
@@ -78,9 +69,9 @@ export function extractChartModel(content, resolveColor) {
         numberFormat: format ? { code: text(format.formatCode).slice(0, 512), sourceLinked: format.sourceLinked == null ? undefined : flag(format.sourceLinked) } : undefined,
         title: titleOf(node?.['c:title']),
         majorGridlines: node?.['c:majorGridlines'] != null,
-        font: fontOf(node?.['c:txPr']),
+        font: extractChartFont(node?.['c:txPr'], resolveColor, resolveFont),
       });
     }
   }
-  return { schemaVersion: 1, groups, axes, title: titleOf(chart?.['c:title']), font: fontOf(space?.['c:txPr']) };
+  return { schemaVersion: 1, groups, axes, title: titleOf(chart?.['c:title']), font: extractChartFont(space?.['c:txPr'], resolveColor, resolveFont) };
 }

@@ -2,7 +2,18 @@
 export type PptxChartType = 'lineChart' | 'barChart' | 'areaChart' | 'scatterChart' |
   'pieChart' | 'pie3DChart' | 'doughnutChart';
 
+export interface PptxChartFont {
+  family?: string;
+  eastAsianFamily?: string;
+  complexScriptFamily?: string;
+  sizePt?: number;
+  bold?: boolean;
+  italic?: boolean;
+  color?: string;
+}
+
 export interface PptxChartLabels {
+  font?: PptxChartFont;
   showValue?: boolean;
   showCategory?: boolean;
   showSeries?: boolean;
@@ -20,7 +31,7 @@ export interface PptxChartOptions {
   firstSliceAngle?: number;
   gapWidth?: number;
   overlap?: number;
-  legend?: { show?: boolean; position?: string };
+  legend?: { show?: boolean; position?: string; overlay?: boolean; font?: PptxChartFont };
   labels?: PptxChartLabels;
   series?: Array<{ color?: string; points?: Record<string, string>; labels?: PptxChartLabels }>;
 }
@@ -48,7 +59,7 @@ export interface PptxChartAxis {
   numberFormat?: { code: string; sourceLinked?: boolean };
   title?: string;
   majorGridlines: boolean;
-  font?: { family?: string; sizePt?: number };
+  font?: PptxChartFont;
 }
 
 export interface PptxChartGroup {
@@ -64,7 +75,7 @@ export interface PptxChartModel {
   groups: PptxChartGroup[];
   axes: PptxChartAxis[];
   title?: string;
-  font?: { family?: string; sizePt?: number };
+  font?: PptxChartFont;
 }
 
 export interface PptxChartMessage {
