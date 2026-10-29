@@ -102,3 +102,4 @@ auditConfig:
 patchedDependencies:
   illustrator-pgf@0.1.0: patches/illustrator-pgf@0.1.0.patch
   pdfjs-dist@5.4.624: patches/pdfjs-dist@5.4.624.patch
+  styled-exceljs@0.21.6: patches/styled-exceljs@0.21.6.patch

@@ -1,0 +1,29 @@
+--- a/xlsx.mjs
++++ b/xlsx.mjs
+@@ -16821,6 +16821,26 @@
+ 	var hlink = data2.match(hlinkregex);
+ 	if(hlink) parse_ws_xml_hlinks(s, hlink, rels);
+ 
++	/* File Viewer modification: 18.3.1.82 sheetFormatPr CT_SheetFormatPr.
++	 * defaultColWidth/baseColWidth decide how wide un-sized columns render.
++	 * WPS and zh-CN Excel templates routinely store defaultColWidth (e.g. 9
++	 * with a SimSun 11 Normal font); dropping it made every default column
++	 * narrower than Office. Keep the raw attributes for downstream renderers. */
++	var sfmtpr = data1.match(/<(?:\w+:)?sheetFormatPr\b[^<>]*\/?>/);
++	if(sfmtpr) {
++		var sfmt = parsexmltag(sfmtpr[0], true);
++		var sfmtOut = {};
++		if(sfmt.defaultColWidth != null) sfmtOut.defaultColWidth = +sfmt.defaultColWidth;
++		if(sfmt.baseColWidth != null) sfmtOut.baseColWidth = +sfmt.baseColWidth;
++		if(sfmt.defaultRowHeight != null) sfmtOut.defaultRowHeight = +sfmt.defaultRowHeight;
++		if(sfmt.customHeight) sfmtOut.customHeight = parsexmlbool(sfmt.customHeight);
++		var normalFont = styles && styles.Fonts && styles.Fonts[0];
++		if(normalFont && (normalFont.name || normalFont.sz != null)) {
++			sfmtOut.normalFont = { name: normalFont.name, size: normalFont.sz };
++		}
++		if(Object.keys(sfmtOut).length) s['!sheetFormatPr'] = sfmtOut;
++	}
++
+ 	/* 18.3.1.62 pageMargins CT_PageMargins */
+ 	var margins = data2.match(marginregex);
+ 	if(margins) s['!margins'] = parse_ws_xml_margins(parsexmltag(margins[0]));
