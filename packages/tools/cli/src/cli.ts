@@ -389,6 +389,8 @@ const helpCopy: Record<FileViewerCliLocale, HelpCopy> = {
   }
 }
 
+const supportLinks = 'Docs: https://doc.file-viewer.app/guide/cli\nIssues: https://github.com/flyfish-dev/file-viewer/issues'
+
 const renderUsage = (locale: FileViewerCliLocale) => {
   const copy = helpCopy[locale]
   const rows = (items: readonly string[], descriptions: Record<string, string>) =>
@@ -407,6 +409,8 @@ ${rows(helpOptions, copy.flags)}
 ${copy.offline}:
   file-viewer prepare --profile <name> --registry <url> --offline-dir <dir> --yes
   ${copy.offlineDescription}
+
+${supportLinks}
 `
 }
 
@@ -2337,5 +2341,6 @@ main().catch((error) => {
     return
   }
   process.stderr.write(`[file-viewer] ${(error as Error).message}\n`)
+  if (!(error as Error).message.includes(supportLinks)) process.stderr.write(`${supportLinks}\n`)
   process.exitCode = 1
 })

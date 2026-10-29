@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFile, writeFile } from 'node:fs/promises'
 import { resolve, join } from 'node:path'
-import { readmeLanguageLinks } from './readme-locales.mjs'
+import { assertEnglishPackageReadme, readmeLanguageLinks } from './readme-locales.mjs'
 
 // This contributor command works in both canonical and public source checkouts;
 // it only needs the public package catalog, never release receipts or credentials.
@@ -33,6 +33,7 @@ for (const entry of entries) {
     migrating = true
   }
   const english = readmeLanguageLinks(migrating ? await read('README.en.md') : current, entry.packageDir)
+  assertEnglishPackageReadme(english, entry.packageDir)
   const documents = { 'README.md': english, 'README.en.md': english,
     'README.zh-CN.md': readmeLanguageLinks(chinese, entry.packageDir) }
   for (const [name, content] of Object.entries(documents)) {

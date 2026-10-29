@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/core/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/core/README.zh-CN.md)
 
+Framework-neutral TypeScript APIs for browser-side file preview. Build a viewer in Vanilla JavaScript, or use the Vue, React, Svelte and jQuery components with the same loading, search, zoom, page navigation, print and export controls. Files are processed locally, without server-side conversion.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/core"><img src="https://img.shields.io/npm/v/@file-viewer%2Fcore?logo=npm" alt="npm version"></a>
@@ -20,19 +22,21 @@
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-Framework-neutral TypeScript foundation for Flyfish File Viewer.
+File Viewer has a catalog of 275 file extensions through optional renderers. **This package is the lightweight foundation, not an all-format viewer.** Add only the engines your application needs; stable and experimental support are listed separately in the [format matrix](https://doc.file-viewer.app/guide/formats).
 
-This package is the migration base for the next architecture: one pure TypeScript core package with internal `headless`, `browser`, and `renderers` layers, plus multiple native standard component packages for Vue, React, pure JavaScript, jQuery, and Svelte. Core owns the shared format matrix, source detection, renderer protocol, capability calculation, lifecycle context, operation guards, operation/event/search/location/zoom/print/export contracts, heavy renderer asset manifests, option normalization, pure state models, and framework-neutral browser rendering engine.
+## Start here
 
-Browser execution belongs inside core only when it remains framework-neutral TypeScript. DOM mounting, the standard browser shell and toolbar, `HTMLElement` traversal, search highlights, zoom provider discovery, print windows, download triggers, Canvas, Worker, and WASM renderers must not depend on Vue, React, Svelte, or any component package. Framework component packages keep their own component lifecycle, public type surface, compatibility defaults, and ecosystem interaction layer while depending on `@file-viewer/core` as the only shared base.
-
-`@file-viewer/core` is the only shared foundation package. It owns the headless contracts plus browser/renderers layers for the direct `createViewer(container, options)` engine, renderer registry, DOM provider registry, print layout helpers, browser asset resolution, and framework-neutral DOM/Canvas/Worker/WASM rendering contracts. Core source is public; the private Gitea aggregate remains available for the complete workspace, unified release automation, sponsorship, and priority support.
-
-Current framework-neutral browser renderers still inside core are limited to the low-cost image path. Spreadsheet rendering has moved to `@file-viewer/renderer-spreadsheet`; CAD rendering has moved to `@file-viewer/renderer-cad`; Typst rendering has moved to `@file-viewer/renderer-typst`; OFD rendering has moved to `@file-viewer/renderer-ofd`; PDF rendering has moved to `@file-viewer/renderer-pdf`; archive rendering has moved to `@file-viewer/renderer-archive`; email rendering has moved to `@file-viewer/renderer-email`; EPUB and UMD ebook rendering has moved to `@file-viewer/renderer-epub`; 3D model rendering has moved to `@file-viewer/renderer-3d`; Draw.io, Excalidraw, Mermaid, and PlantUML rendering has moved to `@file-viewer/renderer-drawing`; audio, video, HLS, and MIDI rendering has moved to `@file-viewer/renderer-media`; code, text, Markdown, patch, and git bundle rendering has moved to `@file-viewer/renderer-text`; Word DOCX/DOC/RTF/ODT rendering has moved to `@file-viewer/renderer-word`; PowerPoint rendering has moved to `@file-viewer/renderer-presentation`; XMind rendering has moved to `@file-viewer/renderer-mindmap`; geospatial rendering has moved to `@file-viewer/renderer-geo`; data asset rendering has moved to `@file-viewer/renderer-data`; EDA rendering and parsing has moved to `@file-viewer/renderer-eda`. Core-only installs now avoid direct OFD, PDF, Word, Spreadsheet, PPTX, CAD, Typst, XMind, Geo, media, 3D, drawing, archive, email, EPUB, UMD, data asset, EDA, `ofd-xml-parser`, `jszip`, `pdfjs-dist`, `styled-exceljs`, `e-virt-table`, `tinycolor2`, `@flyfish-dev/cad-viewer`, `@myriaddreamin/*`, `highlight.js`, `marked`, `diff2html`, `pako`, `mermaid`, `plantuml-encoder`, `@panzoom/panzoom`, `hls.js`, `@tonejs/midi`, `three`, `@excalidraw/excalidraw`, `roughjs`, `libarchive.js`, `postal-mime`, `@kenjiuno/msgreader`, `epubjs`, `ag-psd`, `sql.js`, `hyparquet`, `avsc`, and `cfb` engine dependencies.
+- [Create a configured application](https://doc.file-viewer.app/guide/cli): `npm create file-viewer@latest my-viewer`.
+- [Use a Web Component](https://doc.file-viewer.app/guide/quickstart-web), or choose a [framework integration](https://github.com/flyfish-dev/file-viewer#readme).
+- For a custom integration, use `core/headless` for metadata and contracts, or `core/browser` for DOM rendering. PDF and Office require an explicit renderer or preset and local runtime assets.
 
 ```bash
 npm install @file-viewer/core
 ```
+
+## Browser source feedback (unreleased)
+
+The browser `mountViewer` shell shows localized download feedback while buffering a URL, then reading feedback until the renderer takes over. File and buffer inputs use reading feedback. The status follows the configured locale/theme, reports acquisition failures, and is cleared when a source is replaced or the viewer is destroyed.
 
 ## Preflight Before Rendering
 
@@ -71,10 +75,7 @@ const pdfAssets = resolveFileViewerRendererAssets('pdf', {
 Use `@file-viewer/core/browser` when a native component package or pure browser integration needs the shared browser shell and toolbar, direct DOM engine, renderer registry, search/zoom providers, print/export adapters, and framework-neutral Canvas/Worker/WASM renderers.
 
 ```ts
-import {
-  createViewer,
-  coreBrowserRendererHandlers
-} from '@file-viewer/core/browser'
+import { createViewer } from '@file-viewer/core/browser'
 
 const viewer = createViewer(document.querySelector('#viewer')!, {
   options: {
@@ -83,7 +84,8 @@ const viewer = createViewer(document.querySelector('#viewer')!, {
   }
 })
 
-await viewer.load({ url: '/files/report.pdf' })
+// Images use the built-in renderer; document formats need an optional preset.
+await viewer.load({ url: '/files/photo.png' })
 ```
 
 Zoom buttons keep their positions and become disabled at their limits. Configure the existing `toolbar.items` map to hide reset controls while retaining the `resetZoom()` API. Set `pdf.zoomToolbar` to `false` to hide the PDF renderer's zoom group while keeping its page navigation and rotation controls:
@@ -148,8 +150,6 @@ Public source repositories:
 
 - GitHub: https://github.com/flyfish-dev/file-viewer-core
 - Gitee: https://gitee.com/flyfish-dev/file-viewer-core
-
-The GitHub/Gitee repositories are distributed public source packages. The private Gitea aggregate remains useful for the complete workspace, release automation, integration history, sponsorship, and priority support.
 
 License: Apache-2.0. For second development or commercial use, keep clear Flyfish Viewer attribution and contribute shared compatibility improvements where possible.
 

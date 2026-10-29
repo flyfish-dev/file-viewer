@@ -2,11 +2,15 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/cli/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/tools/cli/README.zh-CN.md)
 
-Create projects, integrate existing applications, select exact capabilities, and prepare offline File Viewer delivery. The CLI carries only a frozen capability catalog; it does not duplicate renderers, Workers, WASM, fonts, or static assets.
+Create a browser-native file viewer, or add one to an existing application. Choose a framework and formats; the CLI configures renderer packages and self-hosted runtime assets without adding an installation script to your project.
+
+[GitHub](https://github.com/flyfish-dev/file-viewer) · [Live demo](https://demo.file-viewer.app/) · [Report an issue](https://github.com/flyfish-dev/file-viewer/issues)
+
+`file-viewer --help` and failed commands include documentation and issue links. Successful commands, `--version`, and JSON output have no promotional footer, and the CLI sends no usage telemetry.
 
 - [CLI home](https://file-viewer.app/en/cli/)
 - [Complete guide](https://doc.file-viewer.app/guide/cli)
-- [简体中文](./README.md)
+- [简体中文](./README.zh-CN.md)
 
 ## Quick start
 

@@ -13,4 +13,4 @@ The package contains no renderer or asset payload. It delegates to the exact sam
 
 - [CLI home](https://file-viewer.app/en/cli/)
 - [Complete guide](https://doc.file-viewer.app/guide/cli)
-- [简体中文](./README.md)
+- [简体中文](./README.zh-CN.md)

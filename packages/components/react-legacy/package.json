@@ -3,7 +3,7 @@
   "version": "3.3.0",
   "private": false,
   "type": "module",
-  "description": "Standard React 16/17 legacy component package for File Viewer",
+  "description": "Lightweight React 16.8/17 file viewer. Add PDF, Office and other browser-side previews with renderer presets.",
   "keywords": [
     "file-viewer",
     "document-preview",
@@ -28,7 +28,7 @@
     "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/components/react-legacy"
   },
-  "homepage": "https://doc.file-viewer.app/",
+  "homepage": "https://github.com/flyfish-dev/file-viewer#readme",
   "bugs": {
     "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },

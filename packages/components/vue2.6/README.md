@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/vue2.6/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/vue2.6/README.zh-CN.md)
 
+Browser-side file preview for Vue 2.6. Use one component API for loading, search, zoom, page navigation, print and export where supported by the selected format. This is the lightweight package: add renderer presets for PDF, Office and other document formats.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/vue2.6"><img src="https://img.shields.io/npm/v/@file-viewer%2Fvue2.6?logo=npm" alt="npm version"></a>
@@ -20,7 +22,19 @@
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-The standard Vue 2.6 native component package for Flyfish File Viewer. It supports both `Vue.use()` plugin installation and local component registration. It does not depend on the Vue 2.7 Composition API. Internally it mounts the complete viewer through its local controller on top of `@file-viewer/core` and the core browser engine.
+## Quick start
+
+Create an application with renderers and local assets configured:
+
+```bash
+npx file-viewer-cli@latest create my-viewer --framework vue2.6 --profile standard
+```
+
+For an existing project, use `npx file-viewer-cli@latest add .`, or follow the [manual integration guide](https://doc.file-viewer.app/guide/on-demand-renderers). The component alone does not install document engines or deploy their Worker/WASM files.
+
+## Manual integration
+
+The examples below require the matching renderer preset and self-hosted assets. The CLI configures these for you; a bare component install is not a PDF or Office viewer.
 
 ```bash
 npm install vue@2.6 @file-viewer/vue2.6

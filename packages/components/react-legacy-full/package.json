@@ -3,7 +3,7 @@
   "version": "3.3.0",
   "private": false,
   "type": "module",
-  "description": "Full React 16.8/17 package with preset-all; Vite publishes deployment-base/file-viewer assets, and other bundlers use the included same-version copy CLI.",
+  "description": "Browser-native file preview for React 16.8/17 with the Full renderer preset and self-hosted runtime assets.",
   "keywords": [
     "file-viewer",
     "document-preview",
@@ -28,7 +28,7 @@
     "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/components/react-legacy-full"
   },
-  "homepage": "https://doc.file-viewer.app/",
+  "homepage": "https://github.com/flyfish-dev/file-viewer#readme",
   "bugs": {
     "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },

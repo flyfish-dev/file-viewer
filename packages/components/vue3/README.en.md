@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/vue3/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/vue3/README.zh-CN.md)
 
+Browser-side file preview for Vue 3. Use one component API for loading, search, zoom, page navigation, print and export where supported by the selected format. This is the lightweight package: add renderer presets for PDF, Office and other document formats.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/vue3"><img src="https://img.shields.io/npm/v/@file-viewer%2Fvue3?logo=npm" alt="npm version"></a>
@@ -20,10 +22,23 @@
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-The standard Vue 3 native component package for Flyfish File Viewer. It owns the Vue 3 component lifecycle and local controller while consuming the shared `@file-viewer/core` contracts and core browser engine. It exposes plugin install, component props, lifecycle events, search, zoom, print, export, and document-location ref APIs.
+## Quick start
+
+Create an application with renderers and local assets configured:
 
 ```bash
-npm install vue @file-viewer/vue3
+npx file-viewer-cli@latest create my-viewer --framework vue3 --profile standard
+```
+
+For an existing project, use `npx file-viewer-cli@latest add .`, or follow the [manual integration guide](https://doc.file-viewer.app/guide/on-demand-renderers). The component alone does not install document engines or deploy their Worker/WASM files.
+
+## Manual integration
+
+The examples below require the matching renderer preset and self-hosted assets. The CLI configures these for you; a bare component install is not a PDF or Office viewer.
+
+```bash
+npm install vue @file-viewer/vue3 @file-viewer/preset-standard file-viewer-copy-assets
+npx --no-install file-viewer-copy-assets ./public/file-viewer
 ```
 
 ```ts
@@ -37,16 +52,21 @@ createApp(App).use(FileViewer).mount('#app')
 ```
 
 ```vue
+<script setup lang="ts">
+import standardRenderers from '@file-viewer/preset-standard'
+
+const viewerOptions = {
+  preset: standardRenderers,
+  theme: 'light' as const,
+  toolbar: { position: 'bottom-right' as const }
+}
+</script>
+
 <template>
   <section style="height: 100vh">
     <file-viewer
-      ref="viewer"
       url="/example/demo.pdf"
-      :options="{
-        theme: 'light',
-        toolbar: { position: 'bottom-right' }
-      }"
-      @load-complete="handleLoadComplete"
+      :options="viewerOptions"
     />
   </section>
 </template>

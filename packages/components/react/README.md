@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/react/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/react/README.zh-CN.md)
 
+Browser-side file preview for React 18/19. Use one component API for loading, search, zoom, page navigation, print and export where supported by the selected format. This is the lightweight package: add renderer presets for PDF, Office and other document formats.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/react"><img src="https://img.shields.io/npm/v/@file-viewer%2Freact?logo=npm" alt="npm version"></a>
@@ -20,14 +22,28 @@
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-The standard React native component package for Flyfish File Viewer. The component renders a React container and mounts the complete viewer through this package's local controller on top of `@file-viewer/core` and the core browser engine. It keeps ref APIs, controlled props, lifecycle events, and the full options surface.
+## Quick start
+
+Create an application with renderers and local assets configured:
 
 ```bash
-npm install @file-viewer/react
+npx file-viewer-cli@latest create my-viewer --framework react --profile standard
+```
+
+For an existing project, use `npx file-viewer-cli@latest add .`, or follow the [manual integration guide](https://doc.file-viewer.app/guide/on-demand-renderers). The component alone does not install document engines or deploy their Worker/WASM files.
+
+## Manual integration
+
+The examples below require the matching renderer preset and self-hosted assets. The CLI configures these for you; a bare component install is not a PDF or Office viewer.
+
+```bash
+npm install @file-viewer/react @file-viewer/preset-standard file-viewer-copy-assets
+npx --no-install file-viewer-copy-assets ./public/file-viewer
 ```
 
 ```tsx
 import FileViewer from '@file-viewer/react'
+import standardRenderers from '@file-viewer/preset-standard'
 
 export function Preview() {
   return (
@@ -35,6 +51,7 @@ export function Preview() {
       <FileViewer
         url="/example/demo.docx"
         options={{
+          preset: standardRenderers,
           theme: 'light',
           toolbar: { position: 'bottom-right' }
         }}

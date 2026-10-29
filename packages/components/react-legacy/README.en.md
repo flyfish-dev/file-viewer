@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/react-legacy/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/react-legacy/README.zh-CN.md)
 
+Browser-side file preview for React 16.8/17. Use one component API for loading, search, zoom, page navigation, print and export where supported by the selected format. This is the lightweight package: add renderer presets for PDF, Office and other document formats.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/react-legacy"><img src="https://img.shields.io/npm/v/@file-viewer%2Freact-legacy?logo=npm" alt="npm version"></a>
@@ -20,7 +22,19 @@
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-The standard legacy React native component package for React 16.8 and React 17. It avoids React 18/19-only assumptions and does not require the new JSX transform. The package mounts the complete viewer through its local controller on top of `@file-viewer/core` and the core browser engine.
+## Quick start
+
+Create an application with renderers and local assets configured:
+
+```bash
+npx file-viewer-cli@latest create my-viewer --framework react-legacy --profile standard
+```
+
+For an existing project, use `npx file-viewer-cli@latest add .`, or follow the [manual integration guide](https://doc.file-viewer.app/guide/on-demand-renderers). The component alone does not install document engines or deploy their Worker/WASM files.
+
+## Manual integration
+
+The examples below require the matching renderer preset and self-hosted assets. The CLI configures these for you; a bare component install is not a PDF or Office viewer.
 
 ```bash
 npm install react@17 @file-viewer/react-legacy

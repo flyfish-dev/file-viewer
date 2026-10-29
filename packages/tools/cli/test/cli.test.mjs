@@ -1872,6 +1872,8 @@ test('all four help locales expose the same flags and global version is command-
       shell: false
     })
     assert.equal(help.status, 0, help.stderr)
+    assert.match(help.stdout, /https:\/\/doc\.file-viewer\.app\/guide\/cli/)
+    assert.match(help.stdout, /https:\/\/github\.com\/flyfish-dev\/file-viewer\/issues/)
     for (const marker of semanticMarkers[locale]) assert.match(help.stdout, new RegExp(marker))
     for (const command of [
       'create',
@@ -1952,6 +1954,7 @@ test('all four help locales expose the same flags and global version is command-
   })
   assert.equal(unsupportedLocale.status, 1)
   assert.match(unsupportedLocale.stderr, /Unsupported language fr/)
+  assert.match(unsupportedLocale.stderr, /https:\/\/github\.com\/flyfish-dev\/file-viewer\/issues/)
   assert.doesNotMatch(unsupportedLocale.stderr, /TypeError/)
   for (const argv of [['--version'], ['create', '--version'], ['doctor', '--version']]) {
     const version = spawnSync(process.execPath, [cli.pathname, ...argv], {
@@ -2022,6 +2025,24 @@ test('prepare rejects concurrency above eight before registry access while insta
     '7',
     '--concurrent-scripts'
   ])
+})
+
+test('support guidance stays out of JSON output and does not duplicate error links', () => {
+  const cli = new URL('../dist/cli.js', import.meta.url)
+  const success = spawnSync(process.execPath, [cli.pathname, 'list', '--json', '--lang', 'en'], {
+    encoding: 'utf8', shell: false
+  })
+  assert.equal(success.status, 0, success.stderr)
+  assert.doesNotThrow(() => JSON.parse(success.stdout))
+  assert.equal(success.stderr, '')
+  assert.doesNotMatch(success.stdout, /Docs:|Issues:/)
+
+  const failure = spawnSync(process.execPath, [cli.pathname, 'unknown-command', '--json'], {
+    encoding: 'utf8', shell: false
+  })
+  assert.equal(failure.status, 1)
+  assert.equal(failure.stdout, '')
+  assert.equal(failure.stderr.split('https://github.com/flyfish-dev/file-viewer/issues').length - 1, 1)
 })
 
 test('--dry-run wins over mutation flags for every mutating workflow', async () => {

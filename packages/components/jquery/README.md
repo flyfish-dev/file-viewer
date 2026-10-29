@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/jquery/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/jquery/README.zh-CN.md)
 
+Browser-side file preview for jQuery. Use one component API for loading, search, zoom, page navigation, print and export where supported by the selected format. This is the lightweight package: add renderer presets for PDF, Office and other document formats.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/jquery"><img src="https://img.shields.io/npm/v/@file-viewer%2Fjquery?logo=npm" alt="npm version"></a>
@@ -20,7 +22,19 @@
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-The standard jQuery native component package for Flyfish File Viewer. It mounts the complete viewer through this package's local controller on top of `@file-viewer/core` and the core browser engine. The package itself is only a small `$(el).fileViewer()` bridge.
+## Quick start
+
+Create an application with renderers and local assets configured:
+
+```bash
+npx file-viewer-cli@latest create my-viewer --framework jquery --profile standard
+```
+
+For an existing project, use `npx file-viewer-cli@latest add .`, or follow the [manual integration guide](https://doc.file-viewer.app/guide/on-demand-renderers). The component alone does not install document engines or deploy their Worker/WASM files.
+
+## Manual integration
+
+The examples below require the matching renderer preset and self-hosted assets. The CLI configures these for you; a bare component install is not a PDF or Office viewer.
 
 ```bash
 npm install jquery @file-viewer/jquery

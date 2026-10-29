@@ -3,7 +3,7 @@
   "version": "3.3.0",
   "private": false,
   "type": "module",
-  "description": "Framework-neutral modular TypeScript core for File Viewer renderer orchestration, lifecycle APIs, search, zoom, print, and export",
+  "description": "Framework-neutral TypeScript APIs for browser-side file preview, renderer presets, search, zoom, page navigation, print and export.",
   "keywords": [
     "file-viewer",
     "document-preview",
@@ -37,7 +37,7 @@
     "type": "individual",
     "url": "https://dev.flyfish.group/donate?source=npm"
   },
-  "homepage": "https://doc.file-viewer.app/",
+  "homepage": "https://github.com/flyfish-dev/file-viewer#readme",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

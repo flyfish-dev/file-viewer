@@ -3,7 +3,7 @@
   "version": "3.3.0",
   "private": false,
   "type": "module",
-  "description": "Standard Vue 2.6 component package for File Viewer",
+  "description": "Lightweight Vue 2.6 file viewer. Add PDF, Office and other browser-side previews with renderer presets.",
   "keywords": [
     "file-viewer",
     "document-preview",
@@ -28,7 +28,7 @@
     "url": "git+https://github.com/flyfish-dev/file-viewer.git",
     "directory": "packages/components/vue2.6"
   },
-  "homepage": "https://doc.file-viewer.app/",
+  "homepage": "https://github.com/flyfish-dev/file-viewer#readme",
   "bugs": {
     "url": "https://github.com/flyfish-dev/file-viewer/issues"
   },

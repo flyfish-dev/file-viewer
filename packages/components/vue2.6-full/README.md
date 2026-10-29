@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/vue2.6-full/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/vue2.6-full/README.zh-CN.md)
 
+Browser-side file preview for Vue 2.6, with the Full renderer preset already included. Process files locally and self-host the runtime assets; no server-side conversion is required. New specialist formats are opt-in: see the [format matrix](https://doc.file-viewer.app/guide/formats) before choosing a package.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/vue2.6-full"><img src="https://img.shields.io/npm/v/@file-viewer%2Fvue2.6-full?logo=npm" alt="npm version"></a>
@@ -19,8 +21,6 @@
 </p>
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
-
-A one-step Vue 2.6 Full integration that preserves the published v2.4 Full capability matrix and default asset-copy behavior, including iWork, CAD, 3D, EDA, Geo, Typst, Drawing, Hangul, WordPerfect, and legacy PPT. DICOM and future heavy formats do not enter the historical Full closure automatically and require explicit selection through `@file-viewer/cli`.
 
 ```bash
 npm install @file-viewer/vue2.6-full

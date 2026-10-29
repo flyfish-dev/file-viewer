@@ -2,6 +2,8 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/web/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/components/web/README.zh-CN.md)
 
+Browser-side file preview for Vanilla JS / Pure Web. Use one component API for loading, search, zoom, page navigation, print and export where supported by the selected format. This is the lightweight package: add renderer presets for PDF, Office and other document formats.
+
 <!-- FILE_VIEWER_PACKAGE_HEADER -->
 <p>
   <a href="https://www.npmjs.com/package/@file-viewer/web"><img src="https://img.shields.io/npm/v/@file-viewer%2Fweb?logo=npm" alt="npm version"></a>
@@ -20,35 +22,41 @@
 
 > ⭐ If File Viewer helps you, please [star the repo on GitHub](https://github.com/flyfish-dev/file-viewer).
 
-The standard pure web native component package for Flyfish File Viewer. It ships the `<flyfish-file-viewer>` Web Component, imperative `mountViewer` controller, IIFE global bundle, and asset-copy CLI for legacy admin pages, script-tag usage, micro-frontends, and framework-free systems.
+## Quick start
+
+Create an application with renderers and local assets configured:
 
 ```bash
-npm install @file-viewer/web
+npx file-viewer-cli@latest create my-viewer --framework web --profile standard
+```
+
+For an existing project, use `npx file-viewer-cli@latest add .`, or follow the [manual integration guide](https://doc.file-viewer.app/guide/on-demand-renderers). The component alone does not install document engines or deploy their Worker/WASM files.
+
+## Manual integration
+
+The examples below require the matching renderer preset and self-hosted assets. The CLI configures these for you; a bare component install is not a PDF or Office viewer.
+
+```bash
+npm install @file-viewer/web @file-viewer/preset-standard file-viewer-copy-assets
+npx --no-install file-viewer-copy-assets ./public/file-viewer
 ```
 
 ```html
-<flyfish-file-viewer
-  id="viewer"
-  src="/example/demo.pdf"
-  theme="light"
-  toolbar-position="bottom-right"
-  style="display:block;height:720px"
-></flyfish-file-viewer>
+<div id="viewer" style="height:720px"></div>
 ```
 
 ```ts
-import { defineFileViewerElement } from '@file-viewer/web'
+import { mountViewer } from '@file-viewer/web'
+import standardRenderers from '@file-viewer/preset-standard'
 
-defineFileViewerElement()
-
-const viewer = document.getElementById('viewer')
-viewer.addEventListener('viewer-event', event => {
-  console.log(event.detail.type)
+const viewer = mountViewer(document.getElementById('viewer')!, {
+  url: '/example/demo.pdf',
+  options: { preset: standardRenderers, theme: 'light' },
+  onEvent: event => console.log(event.type)
 })
-viewer.zoomIn()
 ```
 
-Use `mountViewer(container, options)` when you need a fully imperative controller.
+`mountViewer(container, options)` returns the controller API. For declarative markup, the same package also provides `<flyfish-file-viewer>`; see the [Web Component guide](https://doc.file-viewer.app/guide/quickstart-web).
 
 ## Style Isolation And Customization
 
