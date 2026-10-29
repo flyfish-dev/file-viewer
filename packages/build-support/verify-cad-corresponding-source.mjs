@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict'
-import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { spawnSync } from 'node:child_process'
@@ -8,6 +7,7 @@ import { dirname, join, resolve } from 'node:path'
 import { CAD_INTEGRATION_SOURCE, CAD_PUBLIC_CORRESPONDING_SOURCE } from './cad-source-offer.mjs'
 import { readCadRemoteSource } from './cad-source-reference.mjs'
 import { readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
+import { readCadBuildToolchain, workspaceCadBuildRecipe, verifyCadRebuiltRuntime } from './cad-rebuild-toolchain.mjs'
 
 const root = resolve(import.meta.dirname, '../..')
 const args = process.argv.slice(2)
@@ -43,9 +43,36 @@ if (args.includes('--rebuild')) {
     }
     const rebuilt = await readFile(join(temporary, 'dist/cad.iife.js'))
     const distributed = await readFile(join(root, 'packages/components/web-full/dist/renderers/cad.iife.js'))
-    assert.equal(rebuilt.length, CAD_INTEGRATION_SOURCE.runtimeBytes)
-    assert.equal(createHash('sha256').update(rebuilt).digest('hex'), CAD_INTEGRATION_SOURCE.runtimeSha256)
-    assert.ok(rebuilt.equals(distributed), 'CAD archive does not reconstruct the actual Full runtime')
+    const sourceToolchain = await readCadBuildToolchain(join(temporary, 'package.json'))
+    const workspaceToolchain = rebuilt.equals(distributed) ? undefined : await readCadBuildToolchain(
+      join(root, 'packages/components/web-full/package.json')
+    )
+    result.reproduction = await verifyCadRebuiltRuntime({
+      canonical: rebuilt, distributed, expected: CAD_INTEGRATION_SOURCE,
+      sourceToolchain, workspaceToolchain,
+      rebuildWithWorkspace: async () => {
+        // The source archive pins its own reproducible toolchain. A newer workspace
+        // bundler can emit different helpers; rebuild those same sources with the
+        // actual owner's installed tools and retain both byte fingerprints.
+        const recipe = workspaceCadBuildRecipe(archive.files.get('build.mjs').toString('utf8'), workspaceToolchain)
+        await writeFile(join(temporary, 'pinned-cad.iife.js'), rebuilt)
+        for (const path of ['dist', 'packages/core/dist', 'packages/renderers/cad/dist']) {
+          await rm(join(temporary, path), { recursive: true, force: true })
+        }
+        await writeFile(join(temporary, 'build.workspace.mjs'), recipe, { flag: 'wx' })
+        const child = spawnSync(process.execPath, ['build.workspace.mjs'], {
+          cwd: temporary, stdio: 'inherit', env: process.env, timeout: 600_000, shell: false
+        })
+        if (child.error) throw child.error
+        assert.equal(child.status, 0, 'CAD workspace-toolchain cold rebuild failed')
+        return readFile(join(temporary, 'dist/cad.iife.js'))
+      }
+    })
+    for (const [relative, original] of archive.files) {
+      assert.ok(original.equals(await readFile(join(temporary, relative))),
+        'CAD rebuild altered an archived preferred input: ' + relative)
+    }
+    result.standaloneInputsUnmodified = true
     result.coldRebuildMatchesActualFullRuntime = true
     passed = true
   } finally {
