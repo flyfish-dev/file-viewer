@@ -122,7 +122,11 @@ const assets = new Map(
 )
 async function workbook(label) {
   const book = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(book, XLSX.utils.aoa_to_sheet([[label, 423]]), 'Download')
+  const sheet = XLSX.utils.aoa_to_sheet([[label, 423]])
+  // This gate checks source acquisition, including the exact rendered label.
+  // Give the label authored space instead of relying on renderer auto-fit.
+  sheet['!cols'] = [{ wch: 28 }, { wch: 10 }]
+  XLSX.utils.book_append_sheet(book, sheet, 'Download')
   const zip = await JSZip.loadAsync(XLSX.write(book, { type: 'buffer', bookType: 'xlsx' }))
   zip.file('customXml/item1.xml', '<extra><!--' + 'x'.repeat(6900000) + '--></extra>')
   for (const entry of Object.values(zip.files)) entry.date = new Date('2026-01-01T00:00:00Z')
@@ -391,7 +395,7 @@ try {
             error: error.stack,
             browserErrors: errors,
             state: await page
-              .evaluate(() => ({ state: fixture.state(), text: fixture.text() }))
+              .evaluate(() => ({ state: fixture.state(), text: fixture.text(), drawn: window.drawn }))
               .catch(() => null)
           }
           await page.screenshot({ path: path.join(output, id + '-failure.png') })
