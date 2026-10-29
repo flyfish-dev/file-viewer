@@ -33,6 +33,14 @@ const defined = (labels?: PptxChartLabels) => Object.fromEntries(
   Object.entries(labels || {}).filter(([, value]) => value !== undefined),
 );
 
+export const resolvePptxChartAxes = (model: PptxChartModel) => {
+  const axesFor = (group?: typeof model.groups[number]) => model.axes.filter(axis => group?.axisIds.includes(axis.id));
+  const primary = axesFor(model.groups[0]).find(axis => axis.kind === 'value') ?? model.axes.find(axis => axis.kind === 'value');
+  const secondary = model.groups.filter(group => group.series.length > 0).flatMap(axesFor).find(axis => axis.kind === 'value' && axis.id !== primary?.id);
+  const category = axesFor(model.groups[0]).find(axis => axis.kind === 'category' || axis.kind === 'date') ?? model.axes.find(axis => axis.kind === 'category' || axis.kind === 'date');
+  return { category, primary, secondary };
+};
+
 /** One category coordinate system, with every authored bar/line/area group. */
 export const createPptxCartesianChart = (model: PptxChartModel, library: Record<string, any>) => {
   if (!model.groups.length || model.groups.some(group => !['lineChart', 'barChart', 'areaChart'].includes(group.chartType))) return null;
@@ -52,10 +60,7 @@ export const createPptxCartesianChart = (model: PptxChartModel, library: Record<
     const points = new Map(series.values.map(point => [String(point.x), point.y]));
     return indices.map(index => points.get(index) ?? null);
   };
-  const axesFor = (group: typeof model.groups[number]) => model.axes.filter(axis => group.axisIds.includes(axis.id));
-  const primary = axesFor(model.groups[0]).find(axis => axis.kind === 'value') ?? model.axes.find(axis => axis.kind === 'value');
-  const secondary = rows.flatMap(row => axesFor(row.group)).find(axis => axis.kind === 'value' && axis.id !== primary?.id);
-  const category = axesFor(model.groups[0]).find(axis => axis.kind === 'category' || axis.kind === 'date') ?? model.axes.find(axis => axis.kind === 'category' || axis.kind === 'date');
+  const { primary, secondary, category } = resolvePptxChartAxes(model);
   const factory = { barChart: library.bar, lineChart: library.line, areaChart: library.area };
   if (rows.some(row => typeof factory[row.group.chartType as keyof typeof factory] !== 'function')) return null;
   const originalValues = rows.map(row => valueFor(row.series));

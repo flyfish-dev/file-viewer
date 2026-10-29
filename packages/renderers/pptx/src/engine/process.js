@@ -134,6 +134,10 @@ export default function process(setOnMessage, postMessage) {
    */
   async function processPPTX(data) {
     MediaFiles.MsgQueue.length = 0;
+    // A reused main-thread engine must not return charts from prior documents.
+    // Replace the queue so a previous caller's result remains an immutable snapshot.
+    Charts.MsgQueue = [];
+    Charts.isDone = false;
     const zip = await readZip(data)
     const dateBefore = new Date();
 

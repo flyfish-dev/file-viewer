@@ -10589,7 +10589,9 @@ async function genChart(node, warpObj, groupContext) {
   var content = await readXmlFile(warpObj["zip"], refName);
   var plotArea = getTextByPathList(content, ["c:chartSpace", "c:chart", "c:plotArea"]);
 
-  var model = extractChartModel(content, fill => getSolidFill(fill, undefined, undefined, warpObj));
+  var model = extractChartModel(content,
+    fill => getSolidFill(fill, undefined, undefined, warpObj),
+    (typeface, lang) => resolveThemeTypeface(typeface, warpObj, lang, ""));
   if (model.groups.length) {
     var primary = model.groups[0];
     var legacyData = primary.chartType === 'scatterChart'
