@@ -94,7 +94,7 @@
   },
   "devDependencies": {
     "esbuild": "0.28.2",
-    "svelte": "^5.57.0",
+    "svelte": "^5.57.3",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"
