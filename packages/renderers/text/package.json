@@ -90,11 +90,11 @@
     "jsdom": "^30.1.3",
     "typescript": "^6.0.3",
     "xmllint-wasm": "5.3.0",
-    "xslt-polyfill": "1.0.33"
+    "xslt-polyfill": "1.0.31"
   },
   "peerDependencies": {
     "xmllint-wasm": "5.3.0",
-    "xslt-polyfill": "1.0.33"
+    "xslt-polyfill": "1.0.31"
   },
   "peerDependenciesMeta": {
     "xmllint-wasm": {
