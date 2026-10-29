@@ -8,8 +8,8 @@ export const createPptxChartLegend = (
 ) => {
   const document = surface.ownerDocument;
   const view = document?.defaultView;
-  if (!view || legend?.show === false || !['t', 'tr', 'l'].includes(legend?.position || '')) return;
-  const left = legend?.position === 'l';
+  if (!view || legend?.show === false || !(legend?.overlay || ['t', 'tr', 'l'].includes(legend?.position || ''))) return;
+  const left = legend?.position === 'l' || legend?.position === 'r';
   const layout = document.createElement('div');
   layout.className = 'pptx-chart-layout';
   layout.style.cssText = `display:flex;flex-direction:${left ? 'row' : 'column'};width:100%;height:100%;min-width:0;min-height:0;position:relative`;
@@ -23,8 +23,10 @@ export const createPptxChartLegend = (
   if (legend?.overlay) {
     list.style.position = 'absolute';
     list.style.zIndex = '1';
-    list.style.top = '0';
-    list.style[legend.position === 'tr' ? 'right' : 'left'] = '0';
+    list.style[legend.position === 'b' ? 'bottom' : 'top'] = '0';
+    list.style[legend.position === 'tr' || legend.position === 'r' ? 'right' : 'left'] = '0';
+    if (left) list.style.height = '100%';
+    else list.style.width = '100%';
   }
   // Prevent the surface's 100% basis from pushing a non-overlay legend outside
   // the frame. Flex assigns only the remaining logical area to the plot.

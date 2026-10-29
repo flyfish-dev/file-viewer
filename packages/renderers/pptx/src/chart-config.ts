@@ -121,7 +121,9 @@ export const createPptxCartesianChart = (model: PptxChartModel, library: Record<
     },
     axis: {
       rotated: model.groups.some(group => group.barDirection === 'bar'),
-      x: { ...axisOptions(category), type: 'category', categories, tick: { multiline: true } },
+      x: { ...axisOptions(category), type: 'category', categories, tick: model.groups.some(group => group.barDirection === 'bar')
+        ? { multiline: true }
+        : { multiline: false, culling: false, rotate: category?.labelRotation ?? 60, autorotate: category?.labelRotation === undefined } },
       y: axisOptions(primary),
       ...(secondary ? { y2: axisOptions(secondary) } : {}),
     },

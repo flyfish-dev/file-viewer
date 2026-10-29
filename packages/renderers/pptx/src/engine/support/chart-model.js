@@ -55,6 +55,7 @@ export function extractChartModel(content, resolveColor, resolveFont) {
       const format = node?.['c:numFmt']?.attrs;
       const logBase = number(valueOf(scaling, 'c:logBase'));
       const crosses = valueOf(node, 'c:crosses');
+      const rotation = number(node?.['c:txPr']?.['a:bodyPr']?.attrs?.rot);
       axes.push({
         id: axisId, kind,
         position: ['l', 'r', 't', 'b'].includes(position) ? position : undefined,
@@ -69,6 +70,7 @@ export function extractChartModel(content, resolveColor, resolveFont) {
         numberFormat: format ? { code: text(format.formatCode).slice(0, 512), sourceLinked: format.sourceLinked == null ? undefined : flag(format.sourceLinked) } : undefined,
         title: titleOf(node?.['c:title']),
         majorGridlines: node?.['c:majorGridlines'] != null,
+        labelRotation: rotation !== undefined && Math.abs(rotation) <= 5400000 ? rotation / 60000 : undefined,
         font: extractChartFont(node?.['c:txPr'], resolveColor, resolveFont),
       });
     }

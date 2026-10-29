@@ -53,16 +53,24 @@ async function comboFixture() {
     </c:plotArea><c:legend><c:legendPos val="b"/></c:legend></c:chart></c:chartSpace>`);
   return zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
 }
-async function typographyFixture(position) {
+async function typographyFixture(position,overlay=false) {
   const zip=await JSZip.loadAsync(await comboFixture());
   const font=pt=>`<c:txPr><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="${pt*100}"><a:latin typeface="monospace"/></a:defRPr></a:pPr></a:p></c:txPr>`;
   const part='ppt/charts/chart1.xml';
   const xml=(await zip.file(part).async('string'))
     .replace('<c:v>收入</c:v>','<c:v>....</c:v>').replace('<c:v>支出</c:v>','<c:v>中文图例</c:v>').replace('<c:v>增长率</c:v>','<c:v>部门科室</c:v>')
     .replace('</c:catAx>',font(16)+'</c:catAx>')
-    .replace(/<c:legend>[\s\S]*?<\/c:legend>/,`<c:legend><c:legendPos val="${position}"/>${font(14)}</c:legend>`)
+    .replace(/<c:legend>[\s\S]*?<\/c:legend>/,`<c:legend><c:legendPos val="${position}"/><c:overlay val="${overlay?1:0}"/>${font(14)}</c:legend>`)
     .replace('</c:chartSpace>',font(12)+'</c:chartSpace>');
   zip.file(part,xml);
+  return zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
+}
+async function longCategoryFixture() {
+  const zip=await JSZip.loadAsync(await typographyFixture('b'));
+  const part='ppt/charts/chart1.xml';
+  const cat='<c:cat><c:strLit>'+Array.from({length:8},(_,index)=>`<c:pt idx="${index}"><c:v>很长的中文类别名称第${index+1}项</c:v></c:pt>`).join('')+'</c:strLit></c:cat>';
+  const values='<c:val><c:numLit>'+Array.from({length:8},(_,index)=>`<c:pt idx="${index}"><c:v>${index+1}</c:v></c:pt>`).join('')+'</c:numLit></c:val>';
+  zip.file(part,(await zip.file(part).async('string')).replace(/<c:cat>[\s\S]*?<\/c:cat>/g,cat).replace(/<c:val>[\s\S]*?<\/c:val>/g,values));
   return zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
 }
 await check('Chart family metadata preserves bounded angles, ratios, grouping and point indices',()=>{
@@ -293,12 +301,42 @@ try {
           if(position==='t'||position==='tr')assert.ok(state.labels.every(label=>label.y+label.h<=state.plot.y+1));
           if(position==='l')assert.ok(state.labels.every(label=>label.x+label.w<=state.plot.x+1));
           logicalWidth??=state.svgWidth;assert.equal(state.svgWidth,logicalWidth);
+          if(worker&&position==='b') {
+            const target=page.locator('.pptx-chart-surface').first();
+            const bar=await target.locator('.bb-bar').first().boundingBox();
+            assert.ok(bar&&bar.width>0&&bar.height>0);
+            await page.mouse.move(bar.x+bar.width/2,bar.y+bar.height/2);
+            await page.waitForTimeout(30);
+            const tooltip=await target.locator('.bb-tooltip-container').evaluate(node=>({visible:getComputedStyle(node).visibility!=='hidden',text:node.textContent}));
+            assert.equal(tooltip.visible,true);assert.match(tooltip.text,/四月/,'Scaled hit-testing must select the hovered category: '+JSON.stringify(tooltip));
+            await page.mouse.move(1190,0);
+          }
         }
         if(worker&&position==='t') {
           const button=page.locator('.pptx-chart-legend button').first();
           await button.focus();await page.keyboard.press('Enter');assert.equal(await button.getAttribute('aria-pressed'),'false');
           await page.keyboard.press('Enter');assert.equal(await button.getAttribute('aria-pressed'),'true');
         }
+      });
+    }
+    await mount(await longCategoryFixture(),true);
+    await check(`DPR ${dpr}: long CJK categories auto-rotate without dropping ticks`,async()=>{
+      const ticks=await page.evaluate(()=>[...calls[0].options.bindto.querySelectorAll('.bb-axis-x .tick text')].map(node=>({text:node.textContent,transform:node.getAttribute('transform')})));
+      assert.equal(ticks.length,8);assert.ok(ticks.every(tick=>/很长的中文类别名称/.test(tick.text)&&/rotate\(60\)/.test(tick.transform)),JSON.stringify(ticks));
+      if(dpr===1)await page.locator('.slide').first().screenshot({path:path.join(output,'long-cjk-categories.png')});
+    });
+    for(const position of ['b','r','t','l','tr']) {
+      const overlayQueue=await mount(await typographyFixture(position,true),true);
+      await check(`DPR ${dpr}, overlay legend ${position}: Worker metadata and full plot area are preserved`,async()=>{
+        assert.equal(overlayQueue[0].data.chartOptions.legend.overlay,true);
+        const result=await page.evaluate(()=>{
+          const surface=calls[0].options.bindto,frame=surface.closest('.block'),legend=frame.querySelector('.pptx-chart-legend');
+          return {legendPosition:getComputedStyle(legend).position,labels:legend.querySelectorAll('button').length,
+            width:Number(surface.querySelector('svg').getAttribute('width')),height:Number(surface.querySelector('svg').getAttribute('height')),
+            frameWidth:Number.parseFloat(frame.style.width),frameHeight:Number.parseFloat(frame.style.height)};
+        });
+        assert.equal(result.legendPosition,'absolute');assert.equal(result.labels,3);
+        assert.equal(result.width,result.frameWidth);assert.equal(result.height,result.frameHeight);
       });
     }
     await page.evaluate(()=>handle.destroy());
