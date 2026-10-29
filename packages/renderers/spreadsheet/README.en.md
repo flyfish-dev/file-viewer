@@ -38,6 +38,7 @@ const options = {
 - TIFF drawings in XLSX files load the MIT-licensed UTIF.js decoder only when needed and are converted to PNG in the browser. Ordinary spreadsheets do not load the TIFF decoder.
 - Uses virtual rendering for interaction. Host components usually hide full-document print for spreadsheets to avoid printing only the current viewport.
 - XLSX uses saved default and explicit column widths and point-based row heights. CSV/TSV retains content auto-fit and supports large decoded text without creating a second UTF-8 byte array.
+- Column units follow the workbook's Normal style. SimSun/NSimSun templates use their compatible digit metrics; unmeasured custom fonts retain the standard fallback, so exact geometry can depend on the font.
 
 ## Fill the viewport for small Excel sheets
 

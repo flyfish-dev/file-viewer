@@ -6,7 +6,7 @@ import {
 } from '@xmldom/xmldom'
 import JSZip from 'jszip'
 import type { WorkBook } from 'styled-exceljs'
-import { readStoredSheetLayout } from './sheetLayout.js'
+import { readStoredSheetLayout, readWorkbookDigitWidth } from './sheetLayout.js'
 import type {
   SheetChartDefinition,
   SheetChartSeries,
@@ -598,6 +598,7 @@ export const parseSpreadsheetCharts = async (data: ArrayBuffer, workbook?: WorkB
   if (!workbookDocument) {
     return result
   }
+  const maximumDigitWidth = readWorkbookDigitWidth(workbook)
 
   for (const sheet of elementsByLocal(workbookDocument.documentElement, 'sheet')) {
     const name = sheet.getAttribute('name') || ''
@@ -611,7 +612,10 @@ export const parseSpreadsheetCharts = async (data: ArrayBuffer, workbook?: WorkB
     const worksheet = workbook?.Sheets?.[name]
     if (worksheet) {
       worksheet['!fileViewerLayout'] = {}
-      worksheet['!fileViewerLayout'] = await readStoredSheetLayout(zip, worksheetRelationship.target)
+      worksheet['!fileViewerLayout'] = {
+        ...await readStoredSheetLayout(zip, worksheetRelationship.target),
+        maximumDigitWidth
+      }
     }
 
     // A worksheet can expand to hundreds of megabytes even when the drawing

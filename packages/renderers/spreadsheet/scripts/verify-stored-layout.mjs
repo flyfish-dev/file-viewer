@@ -18,4 +18,15 @@ assert.equal(data.structure.colWidths[0],undefined);assert.equal(data.structure.
 assert.equal(data.structure.rowHeights[0],60);
 assert.deepEqual(data.structure.merge,[{row:1,col:0,rowspan:1,colspan:3}]);
 assert.equal(data.data[1][0],'合并注释'.repeat(40));
+const styles=await zip.file('xl/styles.xml').async('string');
+const formatted=await zip.file(part).async('string');
+for(const [name,mdw] of [['SimSun',8],['Calibri',7]]){
+  zip.file('xl/styles.xml',styles.replace(/<name val="[^"]*"\/>/,`<name val="${name}"/>`).replace(/<sz val="[^"]*"\/>/,'<sz val="11"/>'));
+  zip.file(part,formatted.replace(/<cols>[\s\S]*?<\/cols>/,'<cols><col min="2" max="2" width="12" customWidth="1"/><col min="3" max="3" width="20" customWidth="1"/></cols>'));
+  const context=createSpreadsheetParserContext();
+  await parseSpreadsheetWorkbook(context,await zip.generateAsync({type:'arraybuffer'}));
+  const rendered=parseSpreadsheetSheet(context,{sheet:0})[0].payload.sheetData;
+  assert.equal(rendered.defaults.colWidth,9*mdw);
+  assert.deepEqual(Array.from(rendered.structure.colWidths),[undefined,12*mdw,20*mdw]);
+}
 console.log('[spreadsheet] Stored defaults, explicit widths, point-based row heights and merged notes passed.');
