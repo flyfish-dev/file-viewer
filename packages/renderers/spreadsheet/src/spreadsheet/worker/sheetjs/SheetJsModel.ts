@@ -101,6 +101,75 @@ export const defaults = {
   colWidth: getDefaultColumnWidth()
 }
 
+/*
+ * styled-exceljs 不解析 <sheetFormatPr>，也感知不到工作簿 Normal 字体，
+ * 因此 MDW 只会取默认 7（Calibri 11 的度量）。中文模板的 Normal 字体通常是
+ * 宋体 11（MDW=8）甚至更大，且会把 defaultColWidth 直接写进文件（例如 9）。
+ * 两者都会让无 <cols> 定义的列在预览里比 Office 窄一截，这里按 Excel 的
+ * 存储规则补齐：MDW 来自 Normal 字体，默认列宽优先取 sheetFormatPr.defaultColWidth。
+ */
+const NORMAL_FONT_WIDTHS: Array<{ match: RegExp; width: number }> = [
+  // 宋体/等线/微软雅黑等 CJK 字体 11pt 的最大数字宽度
+  { match: /^(宋体|SimSun|等线|DengXian|微软雅黑|Microsoft YaHei|新宋体|NSimSun|仿宋|FangSong|楷体|KaiTi)$/, width: 8 },
+  { match: /^(MS Gothic|ＭＳ Ｐゴシック|MS PGothic|游ゴシック|Yu Gothic|メイリオ|Meiryo)/, width: 8 },
+  { match: /^(맑은 고딕|Malgun Gothic)/, width: 8 }
+]
+
+const measureMaxDigitWidth = (font: { name?: string; size?: number }) => {
+  const size = toFiniteNumber(font.size) || 11
+  const name = font.name || ''
+  const known = NORMAL_FONT_WIDTHS.find(item => item.match.test(name))
+  if (known) {
+    return Math.round(known.width * (size / 11) * 2) / 2
+  }
+  // 未识别字体按 Calibri 系的默认刻度 7 处理，避免把西文模板错误放大。
+  return 7
+}
+
+interface SheetFormatMetrics {
+  mdw: number
+  defaultColWidth?: number
+}
+
+const getSheetFormatMetrics = (ws: WorkSheet): SheetFormatMetrics => {
+  const raw = (ws as WorkSheet & {
+    '!sheetFormatPr'?: {
+      defaultColWidth?: unknown
+      normalFont?: { name?: unknown; size?: unknown }
+    }
+  })['!sheetFormatPr']
+  const normalFont = raw?.normalFont
+  const mdw = typeof normalFont?.name === 'string' && normalFont.name
+    ? measureMaxDigitWidth({
+      name: normalFont.name,
+      size: toFiniteNumber(normalFont.size)
+    })
+    : 7
+
+  const stored = toFiniteNumber(raw?.defaultColWidth)
+  return {
+    mdw,
+    defaultColWidth: stored && stored > 0 ? stored : undefined
+  }
+}
+
+const colWidthCharsToPx = (chars: number, mdw: number) => {
+  const converter = (utils as any).col_width_to_px
+  if (mdw === 7 && typeof converter === 'function') {
+    const converted = toFiniteNumber(converter(chars))
+    if (converted !== undefined) {
+      return Math.ceil(converted)
+    }
+  }
+  // 与 Excel 的像素公式一致：Truncate(((256*chars + Truncate(128/MDW))/256)*MDW)
+  return Math.trunc(((256 * chars + Math.floor(128 / mdw)) / 256) * mdw)
+}
+
+const getSheetDefaultColumnWidth = (metrics: SheetFormatMetrics) => {
+  const chars = metrics.defaultColWidth ?? EXCEL_DEFAULT_COLUMN_WIDTH
+  return Math.max(colWidthCharsToPx(chars, metrics.mdw), 1)
+}
+
 interface SheetSliceOptions {
   startRow?: number
   pageSize?: number
@@ -146,7 +215,7 @@ export const formatCellValue = (cell?: CellObject) => {
   return `${cell.v}`
 }
 
-const getColumnPixelWidth = (column?: SheetColumnMeta) => {
+const getColumnPixelWidth = (column?: SheetColumnMeta, sheetMdw?: number) => {
   if (!column) {
     return undefined
   }
@@ -154,23 +223,29 @@ const getColumnPixelWidth = (column?: SheetColumnMeta) => {
     return 0
   }
 
-  // styled-exceljs 在 browserPixels 模式下会优先输出 wpx，这是最接近浏览器渲染的列宽。
-  const wpx = toFiniteNumber(column.wpx)
-  if (wpx !== undefined && wpx >= 0) {
-    return Math.ceil(wpx)
-  }
-
   const width = toFiniteNumber(column.width)
   if (width === 0) {
     return 0
   }
   if (width !== undefined && width > 0) {
+    // 显式列宽以工作簿 Normal 字体的 MDW 为刻度；styled-exceljs 只按默认
+    // MDW=7 换算（其 wpx 同样偏小），中文字体（宋体 11 → MDW=8）下会整体偏窄，
+    // 已知真实 MDW 时直接按 Office 公式重算。
+    if (sheetMdw && sheetMdw !== 7) {
+      return Math.max(Math.trunc(((256 * width + Math.floor(128 / sheetMdw)) / 256) * sheetMdw), 1)
+    }
     const converter = (utils as any).col_width_to_px
     const converted = typeof converter === 'function' ? toFiniteNumber(converter(width)) : undefined
     if (converted !== undefined) {
       return Math.ceil(converted)
     }
     return Math.ceil(width * (column.MDW || 7))
+  }
+
+  // styled-exceljs 在 browserPixels 模式下会优先输出 wpx，这是最接近浏览器渲染的列宽。
+  const wpx = toFiniteNumber(column.wpx)
+  if (wpx !== undefined && wpx >= 0) {
+    return Math.ceil(wpx)
   }
 
   const wch = toFiniteNumber(column.wch)
@@ -474,6 +549,10 @@ export default class SheetJsModel implements SheetModel {
 
   private static readonly defaults = defaults
 
+  private _defaults: undefined | { rowHeight: number; colWidth: number }
+
+  private _sheetMetrics: undefined | SheetFormatMetrics
+
   private _data: undefined | string[][]
 
   private _cell: undefined | Record<string, SheetCellMetadata>
@@ -517,8 +596,21 @@ export default class SheetJsModel implements SheetModel {
     return this._ws
   }
 
+  private get sheetMetrics(): SheetFormatMetrics {
+    if (!this._sheetMetrics) {
+      this._sheetMetrics = getSheetFormatMetrics(this.ws)
+    }
+    return this._sheetMetrics
+  }
+
   public get defaults() {
-    return SheetJsModel.defaults
+    if (!this._defaults) {
+      this._defaults = {
+        rowHeight: SheetJsModel.defaults.rowHeight,
+        colWidth: getSheetDefaultColumnWidth(this.sheetMetrics)
+      }
+    }
+    return this._defaults
   }
 
   public get data() {
@@ -873,6 +965,12 @@ export default class SheetJsModel implements SheetModel {
       return sourceColumn
     }
 
+    // 工作表声明了 defaultColWidth 时，无显式列宽的列必须按该值渲染（Office 行为），
+    // 不能被内容测量结果替代，否则列宽会随内容漂移。
+    if (this.sheetMetrics.defaultColWidth !== undefined) {
+      return sourceColumn
+    }
+
     // A drawing anchor is measured against the workbook's stored/default
     // column geometry. Auto-fitting blank columns to 24px changes that
     // coordinate system and makes two-cell images visibly smaller than Excel.
@@ -891,15 +989,29 @@ export default class SheetJsModel implements SheetModel {
 
   private getColWidths() {
     const { colWidth } = this.defaults
+    const { mdw: sheetMdw } = this.sheetMetrics
     const { '!cols': sourceCols = [] } = this.ws as WorkSheet & { '!cols'?: SheetColumnMeta[] }
     const widths: number[] = []
+    let hasExplicitWidth = false
     for (let colIndex = 0; colIndex < this.totalCols; colIndex += 1) {
-      const width = getColumnPixelWidth(this.getColumnMeta(sourceCols, colIndex))
+      const width = getColumnPixelWidth(this.getColumnMeta(sourceCols, colIndex), sheetMdw)
       if (width !== undefined) {
         widths[colIndex] = width
+        hasExplicitWidth = true
       }
     }
-    return widths.length ? widths : colWidth
+    // 没有任何显式列宽时整表使用工作表默认列宽（含 sheetFormatPr 与 Normal 字体 MDW），
+    // 不能回退到全局 64px——那会让中文模板的每一列都比 Office 显示得窄。
+    if (!hasExplicitWidth) {
+      return colWidth
+    }
+    // 有显式列宽的表中，未定义的列同样应按工作表默认列宽渲染（Office 行为）。
+    for (let colIndex = 0; colIndex < this.totalCols; colIndex += 1) {
+      if (widths[colIndex] === undefined) {
+        widths[colIndex] = colWidth
+      }
+    }
+    return widths
   }
 
   private getColumns(): Array<SheetColumn> {
