@@ -213,17 +213,18 @@ const verifyParserOutput = async ({ format, path, privateSample, tiffSample }) =
     assert.equal(officeCellImage.row, 1, 'Office cell image row anchor changed.')
     assert.equal(officeCellImage.col, 1, 'Office cell image column anchor changed.')
     assert.equal(officeCellImage.width, 124, 'Office cell image no longer follows B-column width.')
-    assert.equal(officeCellImage.height, 72, 'Office cell image no longer follows row height.')
+    // The fixture stores a 72pt row: at 96 CSS dpi its cell images are 96px tall.
+    assert.equal(officeCellImage.height, 96, 'Office cell image no longer follows the 72pt row.')
     assert.equal(wpsCellImage.row, 1, 'WPS cell image row anchor changed.')
     assert.equal(wpsCellImage.col, 2, 'WPS cell image column anchor changed.')
     assert.equal(wpsCellImage.width, 280, 'WPS cell image no longer follows C-column width.')
-    assert.equal(wpsCellImage.height, 72, 'WPS cell image no longer follows row height.')
+    assert.equal(wpsCellImage.height, 96, 'WPS cell image no longer follows the 72pt row.')
     assert.equal(floatingImage.row, 8, 'Floating image row anchor changed.')
     assert.equal(floatingImage.col, 3, 'Floating image column anchor changed.')
     assert.equal(
       Math.round(floatingImage.width),
-      177,
-      'Floating image collapsed after blank columns were auto-fitted.'
+      3 * 64,
+      'Floating image no longer spans its three default-width columns.'
     )
     assert.equal(Math.round(floatingImage.height), 220, 'Floating image height changed.')
   } else {
