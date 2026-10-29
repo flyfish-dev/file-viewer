@@ -31,7 +31,7 @@
     "vue": "^3.5.42",
     "web-ifc": "0.0.77",
     "xmllint-wasm": "5.3.0",
-    "xslt-polyfill": "1.0.33"
+    "xslt-polyfill": "1.0.31"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
