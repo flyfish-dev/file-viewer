@@ -26,7 +26,7 @@
     "file-viewer-cli": "3.3.2",
     "file-viewer-copy-assets": "3.3.2"
   },
-  "privateReceiptSha256": "51466a2792ce757a6239a25c9d8c0bcc01bea9503c768184c1441ecd5628bb8a",
+  "privateReceiptSha256": "af67ccb80b0a0005a69c6e8ce103fd24f3bbaa0f9152c2c01b673db542558a33",
   "packageCount": 18,
   "packages": [
     {
@@ -325,10 +325,10 @@
       "sourcePackageVersion": "3.3.1",
       "version": "3.3.2",
       "tarball": "file-viewer-web-full-3.3.2.tgz",
-      "tarballSize": 69702614,
-      "sha256": "3996656a73210918137e87995d4814c8dcb458333e6213d754d0f8f0385cd255",
-      "fileCount": 449,
-      "integrity": "sha512-70E7FRSkXwUQ9vqd+uvaJkhCfJLb1rL8pekEwZ9WoTtWSrvijCWCxh1zUQxm7l6B9Fhs8pvmKRocqvj04BdA2Q==",
+      "tarballSize": 53347661,
+      "sha256": "8214969e62da5f8c44f6096d357fcf930219aeb6a8bb3a6a815c06317dc13b30",
+      "fileCount": 419,
+      "integrity": "sha512-/P+6Jx77w0n4wpaZHcfSEJlT2YR/F7EszuBuVZAp9yIqftvICOybIZQgBUYDuodaZ1Hsk+EL6ckgrdWYe+ei5A==",
       "license": "Apache-2.0",
       "readmes": {
         "README.md": {
@@ -346,6 +346,10 @@
       },
       "releaseArtifact": {
         "includeTarball": true
+      },
+      "qualifiedBaselineArtifact": {
+        "sha256": "6f7aa162f4f9348b6c7433d34559a2a82731b994bf02464ddd12ef236f04e0de",
+        "sourceCommit": "032d7e9a3c071d55b29762fb7dfd66b1fa3ae8e5"
       }
     },
     {
