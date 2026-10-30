@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { readFile } from 'node:fs/promises'
 import { las14EvlrWkt } from '../test/fixtures/las14-evlr-wkt.mjs'
+import { lasWithCitation } from '../test/fixtures/las-citation.mjs'
 import { inspectLasCrsRangeSource, parseLasGeoKeys } from '../dist/geo3dLasCrs.js'
 
 function directory(entries) {
@@ -11,7 +12,7 @@ function directory(entries) {
 }
 const inline = (key, code) => [key, 0, 1, code]
 
-test('citation-only projected LAS metadata never becomes WGS84 or an inferred EPSG', async () => {
+test('citation-only projected LAS resolves an authority alias without using its WGS84 base', async () => {
   // Metadata-only synthetic probe matching the reported key/units layout.
   // No compressed points are present: this is not original-file decoder evidence.
   for (const explicit of [false, true]) {
@@ -29,7 +30,7 @@ test('citation-only projected LAS metadata never becomes WGS84 or an inferred EP
     for (const [index, value] of [6483522, 5589361, 226].entries()) header.writeDoubleLE(value, 155 + index * 8)
     const bytes = Buffer.concat([header, records]), reads = []
     const inspection = await inspectLasCrsRangeSource(async (begin, end) => { reads.push([begin, end]); return bytes.subarray(begin, end) })
-    assert.deepEqual(inspection, { hasCrsMetadata: true, crs: explicit ? 'EPSG:2177' : undefined })
+    assert.deepEqual(inspection, { hasCrsMetadata: true, crs: 'EPSG:2177' })
     assert.ok(reads.every(([begin, end]) => begin >= 0 && end <= bytes.length))
   }
 })
@@ -53,6 +54,8 @@ test('malformed, conflicting and indirect GeoKeys fail explicitly', () => {
   assert.throws(() => parseLasGeoKeys(truncated), /Truncated/)
   assert.throws(() => parseLasGeoKeys(directory([inline(3072, 2177), inline(3072, 3857)])), /Conflicting/)
   assert.throws(() => parseLasGeoKeys(directory([[3072, 34735, 1, 8]])), /encoding/)
+  assert.throws(() => parseLasGeoKeys(directory([inline(3076, 9001), inline(3076, 9002)])), /Conflicting/)
+  assert.throws(() => parseLasGeoKeys(directory([[3076, 34735, 1, 8]])), /encoding/)
 })
 test('reporter LAS twins expose matching declared-CRS decisions without reading points', async () => {
   for (const name of ['crs-geokeys-only', 'crs-wkt']) {
@@ -66,6 +69,22 @@ test('reporter LAS twins expose matching declared-CRS decisions without reading 
     assert.equal(result.crs, name === 'crs-geokeys-only' ? 'EPSG:2177' : undefined)
     assert.ok(reads.every(([a, b]) => a >= 0 && b <= end))
   }
+})
+
+test('citation offsets, conflicting authority codes and units fail before point reads', async () => {
+  const original = await readFile(new URL('../test/fixtures/github-406-crs-geokeys-only.las', import.meta.url))
+  const inspect = bytes => inspectLasCrsRangeSource(async (begin, end) => {
+    assert.ok(end <= bytes.readUInt32LE(96), 'CRS inspection must not read points')
+    return bytes.subarray(begin, end)
+  })
+  const name = 'ETRS89 / Poland CS2000 zone 6'
+  assert.equal((await inspect(lasWithCitation(original, name))).crs, 'EPSG:2177')
+  await assert.rejects(inspect(lasWithCitation(original, name, {code: 2154})), /conflicts/)
+  await assert.rejects(inspect(lasWithCitation(original, name, {units: 9002})), /units/)
+  await assert.rejects(inspect(lasWithCitation(original, 'EPSG:2177, EPSG:2154')), /ambiguous/)
+  const invalid = lasWithCitation(original, name)
+  invalid.writeUInt16LE(65535, invalid.readUInt16LE(94) + 54 + 8 + 3 * 8 + 6)
+  await assert.rejects(inspect(invalid), /citation bounds/)
 })
 test('LAS 1.4 sole/final EVLR metadata is detected without reading point data', async () => {
   const source = await readFile(new URL('../test/fixtures/github-406-crs-wkt.las', import.meta.url))

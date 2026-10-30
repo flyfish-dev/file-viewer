@@ -392,7 +392,7 @@ for (const name of [
 ]) {
   const sdk = roots[0].devDependencies?.[name]
   assert(sdk, `Missing bundled SDK build dependency: ${name}`)
-  assert(loadPackageJson(sdk.path)?.version === '5.11.6', `Unreviewed SDK source version: ${name}`)
+  assert(loadPackageJson(sdk.path)?.version === '5.13.2', `Unreviewed SDK source version: ${name}`)
   visit(sdk, name, { direct: true, root: false, optional: false })
 }
 
@@ -491,7 +491,7 @@ const packageVersionList = (name) => {
 const noticeLines = [
   '# Third-party notices',
   '',
-  'This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone 5.11.6 SDK build dependencies. All declared optional dependency edges are traversed. The five reviewed codec wrappers declare no runtime or optional dependencies, and this closure contains no Rollup build tools. The direct core closure retains its optional trusted-types declarations. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in `THIRD_PARTY_LICENSES.json`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in `dist/bundled-runtime.json`; complete JavaScript license texts are retained in `dist/THIRD_PARTY_LICENSES.txt`.',
+  'This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone 5.13.2 SDK build dependencies. All declared optional dependency edges are traversed. The five reviewed codec wrappers declare no runtime or optional dependencies, and this closure contains no Rollup build tools. The direct core closure retains its optional trusted-types declarations. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in `THIRD_PARTY_LICENSES.json`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in `dist/bundled-runtime.json`; complete JavaScript license texts are retained in `dist/THIRD_PARTY_LICENSES.txt`.',
   '',
   'The DICOM renderer is not part of any standard/full package or preset. The bundled Cornerstone implementation is installed only when this capability is selected and loaded only when a DICOM file is opened. Source-closure entries are an attribution inventory; unused build dependencies are not necessarily present in the runtime bundle.',
   '',
@@ -517,7 +517,7 @@ const noticeLines = [
   '',
   '**libjpeg-turbo attribution:** This software is based in part on the work of the Independent JPEG Group.',
   '',
-  'The full exact-source SDK MIT text is retained for core, metadata and utils 5.11.6, whose tarballs omit it. Their separate registry and verified publisher-build commits and complete official file inventories are recorded in `PROVENANCE.json`; normal builds check these bytes and include the unmodified license text in bundle notices.',
+  'The full exact-source SDK MIT text is retained for core, metadata and utils 5.13.2, whose tarballs omit it. Their separate registry and verified publisher-build commits and complete official file inventories are recorded in `PROVENANCE.json`; normal builds check these bytes and include the unmodified license text in bundle notices.',
   '',
   'The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package, together with the exact CharLS, OpenJPEG, and OpenJPH license texts. The additional JPEG XL component ships its LICENSE, PATENTS and AUTHORS along with the exact linked Brotli MIT, Highway Apache-2.0 (both dual-license texts retained) and skcms BSD-3-Clause texts. The native components use BSD-style, MIT, Apache-2.0, IJG and zlib terms; none is LGPL or strong copyleft.',
   '',

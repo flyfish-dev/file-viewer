@@ -82,10 +82,16 @@ with static decoder scripts under a nested custom asset path.
 
 ## Usage
 
-Raw LAS/LAZ with unresolved CRS metadata is rejected by default. Citation text
-is descriptive and is never converted into a guessed EPSG code. When the data
-owner has verified the source CRS, configure it explicitly without rewriting
-the original file:
+LAS/LAZ reads numeric GeoKeys, decoded WKT, and exact CRS names or historical
+authority aliases referenced by GeoASCII citation keys. Definitions and aliases
+are bundled offline. Projected coordinates are never labelled with their base
+geographic CRS. Ambiguous names, conflicting codes or units, missing datum
+grids, and unresolved declarations fail explicitly.
+
+With no explicit scene CRS, the point-cloud viewer uses the resolved dataset
+CRS. Recognized citation-only files need no `sourceCrs` setting. For an
+unrecognized declaration whose CRS the data owner has verified, configure a
+fallback without rewriting the original file:
 
 ```ts
 const renderer = createGeo3dRenderer({
@@ -97,7 +103,7 @@ const renderer = createGeo3dRenderer({
 ```
 
 Use the dataset's verified CRS, rather than the example code above. For a CRS
-without a built-in definition, pass `{ id, definition }` as `sourceCrs`, with an
+without an offline authority definition, pass `{ id, definition }` as `sourceCrs`, with an
 offline WKT or PROJ definition, or register it through `crsDefinitions`.
 This fallback applies only to unresolved raw LAS/LAZ. A conflicting GeoKey or
 decoded WKT CRS is rejected; a resolved file definition remains authoritative.

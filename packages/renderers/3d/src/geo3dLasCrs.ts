@@ -20,7 +20,7 @@ export function parseLasGeoKeys(bytes: Uint8Array): string | undefined {
   for (let i = 0; i < count; i++) {
     const offset = 8 + i * 8
     const key = data.getUint16(offset, true)
-    if (![1024, 2048, 3072].includes(key)) continue
+    if (![1024, 2048, 3072, 3076].includes(key)) continue
     if (data.getUint16(offset + 2, true) !== 0 || data.getUint16(offset + 4, true) !== 1)
       throw new Error('Unsupported LAS GeoKey CRS value encoding.')
     const value = data.getUint16(offset + 6, true)
@@ -54,14 +54,22 @@ export async function inspectLasCrsRangeSource(getter: Geo3dRangeGetter): Promis
   if (offset < 227 || end < offset || count > 4096) throw new Error('Invalid LAS VLR metadata bounds.')
   let crs: string | undefined
   let hasCrsMetadata = false
+  const directories: Uint8Array[] = []
+  let ascii: Uint8Array | undefined
   const inspectPayload = async (userId: string, id: number, begin: number, end: number) => {
     if (userId !== 'LASF_Projection' || ![2112, 34735, 34736, 34737].includes(id) || end === begin) return
     const payload = await exact(begin, end)
     hasCrsMetadata ||= id === 34735 || id === 34736 || !!text(payload)
     if (id === 34735) {
+      directories.push(payload)
       const candidate = parseLasGeoKeys(payload)
       if (crs && candidate && crs !== candidate) throw new Error('Conflicting LAS GeoKey CRS directories.')
       crs = candidate ?? crs
+    }
+    if (id === 34737) {
+      if (ascii && (ascii.length !== payload.length || ascii.some((byte, i) => byte !== payload[i])))
+        throw new Error('Conflicting LAS GeoASCII CRS metadata.')
+      ascii = payload
     }
   }
   for (let i = 0; i < count; i++) {
@@ -90,6 +98,36 @@ export async function inspectLasCrsRangeSource(getter: Geo3dRangeGetter): Promis
       if (!Number.isSafeInteger(length) || !Number.isSafeInteger(next)) throw new Error('Invalid LAS EVLR payload length.')
       await inspectPayload(text(evlr.subarray(2, 18)), fields.getUint16(18, true), offset + 60, next)
       offset = next
+    }
+  }
+  if (ascii) {
+    for (const directory of directories) {
+      const data = view(directory), count = data.getUint16(6, true)
+      const inline = new Map<number, number>()
+      const citations: Array<{ key: number; value: string }> = []
+      for (let i = 0; i < count; i++) {
+        const offset = 8 + i * 8, key = data.getUint16(offset, true)
+        const location = data.getUint16(offset + 2, true), length = data.getUint16(offset + 4, true), begin = data.getUint16(offset + 6, true)
+        if (key === 3076 && (location !== 0 || length !== 1)) throw new Error('Unsupported LAS linear-unit GeoKey encoding.')
+        if (location === 0 && length === 1) {
+          if (inline.has(key) && inline.get(key) !== begin) throw new Error('Conflicting LAS GeoKey values.')
+          inline.set(key, begin)
+        }
+        if (![1026, 2049, 3073].includes(key)) continue
+        if (location !== 34737 || !length || begin + length > ascii.length)
+          throw new Error('Invalid LAS CRS citation bounds.')
+        citations.push({ key, value: text(ascii.subarray(begin, begin + length)) })
+      }
+      if (!citations.length) continue
+      const { resolveCitedCrs } = await import('./geo3dCrsCatalog.js')
+      for (const citation of citations) {
+        const model = inline.get(1024)
+        // Geographic citations describe a projected CRS's base, not its XY coordinates.
+        if (model === 1 && citation.key === 2049) continue
+        const candidate = resolveCitedCrs(citation.value, model ?? (citation.key === 3073 ? 1 : citation.key === 2049 ? 2 : undefined), inline.get(3076))
+        if (crs && candidate && crs !== candidate) throw new Error('LAS CRS citation conflicts with its authoritative GeoKey.')
+        crs = candidate ?? crs
+      }
     }
   }
   return { crs, hasCrsMetadata }

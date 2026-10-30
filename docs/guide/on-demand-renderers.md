@@ -76,6 +76,8 @@ Adobe design, DICOM, digital-signature inspection, and binary inspection are exp
 
 DICOM installations, including CLI `--profile full`, need the application's root dependency overrides and Node.js requirements described in the packaged [DICOM installation policy](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/dicom/README.en.md#application-installation-policy). The default dependency graph still has audit findings; the workspace policy is not inherited by consumers. Qualify the resulting application and browser behavior before deployment.
 
+LAS/LAZ resolves numeric GeoKeys, WKT, and exact GeoASCII authority names or historical aliases using bundled offline data. With no explicit scene CRS, the viewer adopts the dataset CRS. Ambiguous citations, conflicting units and mismatched scene CRS fail explicitly. For an unrecognized declaration, `createGeo3dRenderer({ giro3d: { sources: { las: { sourceCrs: 'EPSG:32632' } } } })` accepts a source CRS verified by the data owner. See the packaged [Geo3D guide](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/GEO3D.md#usage) for offline definitions and limits.
+
 ### I already use a Full package. How do I enable an optional renderer?
 
 The same rule applies to `@file-viewer/web-full`, `@file-viewer/vue3-full`, `@file-viewer/vue2.7-full`, `@file-viewer/vue2.6-full`, `@file-viewer/react-full`, `@file-viewer/react-legacy-full`, `@file-viewer/jquery-full`, and `@file-viewer/svelte-full`.
@@ -321,6 +323,13 @@ Install the optional Giro3D peer and copy its decoder assets locally with
 `file-viewer-geo3d-assets`. See
 [`GEO3D.md`](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/3d/GEO3D.md)
 for detection, range/CORS, 3TZ safety, samples and deployment details.
+
+The [Demo LAS sample](https://demo.file-viewer.app/?sample=point-cloud-citation.las)
+uses a generated point cloud with a citation-only CRS. The Demo explicitly enables
+the Geo3D plugin; recognized authority names resolve offline and use the dataset's
+native CRS without an application-supplied definition.
+
+![Generated citation-only LAS point cloud in the Demo](/_media/geo3d-citation.png)
 
 ## Optional IFC BIM viewer
 

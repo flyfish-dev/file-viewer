@@ -5,6 +5,7 @@ import { createRequire } from 'node:module'
 import { extname, join, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { las14EvlrWkt } from '../test/fixtures/las14-evlr-wkt.mjs'
+import { lasWithCitation } from '../test/fixtures/las-citation.mjs'
 import { browserOutput, copyGeo3dAssets, engineFile, rendererFile, repositoryRoot, runtimeGraphPlugin } from './geo3d-browser-package.mjs'
 
 const output = join(browserOutput, 'las-crs')
@@ -17,6 +18,10 @@ const files = {}
 // Test inputs belong to the harness; runtime bytes still resolve exclusively
 // through rendererFile(), including in the physical installed consumer.
 for (const name of ['crs-geokeys-only', 'crs-wkt']) files[name] = await readFile(new URL(`../test/fixtures/github-406-${name}.las`, import.meta.url))
+if (process.env.GEO3D_CITATION_SAMPLE) files['original-citation'] = await readFile(process.env.GEO3D_CITATION_SAMPLE)
+files['citation-only'] = lasWithCitation(files['crs-geokeys-only'], 'WGS84, WGS84, ETRS89 / Poland CS2000 zone 6')
+files['citation-ambiguous'] = lasWithCitation(files['crs-geokeys-only'], 'EPSG:2177, EPSG:2154')
+files['citation-unit-conflict'] = lasWithCitation(files['crs-geokeys-only'], 'EPSG:2177', {units: 9002})
 const wktFile = files['crs-wkt']
 files['evlr-wkt'] = las14EvlrWkt(wktFile)
 files['evlr-wkt-final'] = las14EvlrWkt(wktFile, true)
@@ -69,14 +74,15 @@ window.sourceCrsContracts = async () => {
  for(const input of ['',null,{id:'',definition:explicit.definition},'EPSG:999999999'])checks.push(await rejected(()=>resolveLasSourceCrs(undefined,{hasCrsMetadata:true},input),/Invalid explicit|Unknown Geo3D/));
  return checks;
 };
-window.check = async (name,worker,matching=false,remote=false,sourceCrs) => {
+window.check = async (name,worker,matching=false,remote=false,sourceCrs,automatic=false) => {
  window.hooks=0;
- const buffer=remote?new ArrayBuffer(0):await data(name);let app;let observed;
+ const buffer=remote?new ArrayBuffer(0):await data(name);let app;let observed;let instance;let datasetPoints;
  try {
   app=await renderFileViewerGeo3d(buffer,document.getElementById('viewer'),'las',{filename:name+'.las',url:remote?'/'+name+'.las':undefined},
-   {assetBaseUrl:'/vendor/geo3d/',crsDefinitions:{'EPSG:2177':wkt},giro3d:{instance:{crs:matching?(name.startsWith('evlr-wkt')?{id:'ETRS89 / Poland CS2000 zone 6',definition:wkt}:'EPSG:2177'):'EPSG:3857'},view:{controls:false},sources:{las:{enableWorkers:worker,sourceCrs}}},
-    configureInstance(context){hooks++;observed=context.metadata?.crs?.id}});
-  return {name,worker,matching,status:'rendered',crs:observed,canvases:document.querySelectorAll('canvas').length};
+   {assetBaseUrl:'/vendor/geo3d/',...(automatic?{}:{crsDefinitions:{'EPSG:2177':wkt}}),giro3d:{instance:automatic?{}:{crs:matching?(name.startsWith('evlr-wkt')?{id:'ETRS89 / Poland CS2000 zone 6',definition:wkt}:'EPSG:2177'):'EPSG:3857'},view:{controls:false},sources:{las:{enableWorkers:worker,sourceCrs}}},
+    configureInstance(context){hooks++;observed=context.metadata?.crs?.id;datasetPoints=context.metadata?.pointCount;instance=context.instance}});
+  if(automatic){const deadline=performance.now()+120000;while(instance.renderer.info.render.points===0){if(performance.now()>deadline)throw Error('No decoded points reached the real WebGL renderer');await new Promise(r=>requestAnimationFrame(r))}}
+  return {name,worker,matching,automatic,status:'rendered',crs:observed,datasetPoints,gpuPoints:instance?.renderer.info.render.points,canvases:document.querySelectorAll('canvas').length};
  }catch(error){return {name,worker,matching,status:'rejected',error:String(error),hooks}}
  finally{await app?.unmount();}
 };
@@ -122,6 +128,20 @@ try {
   await page.route('**/*',route=>{if(route.request().url().startsWith(origin+'/')||/^(?:blob:|data:)/.test(route.request().url()))return route.continue();external.push(route.request().url());return route.abort()})
   await page.goto(origin)
   await page.waitForFunction(()=>window.ready)
+  const originalResults=[]
+  for(const name of ['citation-only', ...(files['original-citation']?['original-citation']:[])])for(const worker of [false,true]){
+    // A reload clears the engine's CRS registry: no definition from another
+    // case may accidentally make this automatic-resolution assertion pass.
+    await page.reload();await page.waitForFunction(()=>window.ready)
+    const result=await page.evaluate(({name,worker})=>window.check(name,worker,false,false,undefined,true),{name,worker})
+    assert.equal(result.status,'rendered',JSON.stringify(result));assert.equal(result.crs,'EPSG:2177');assert.equal(result.datasetPoints,files[name].readUInt32LE(107));assert.ok(result.gpuPoints>0)
+    originalResults.push(result);console.log('[geo3d] '+name+': automatic CRS and actual GPU points passed, Worker='+worker)
+  }
+  for(const name of ['citation-ambiguous','citation-unit-conflict']){
+    const result=await page.evaluate(name=>window.check(name,false),name)
+    assert.equal(result.status,'rejected');assert.match(result.error,/ambiguous|linear units/);assert.equal(result.hooks,0)
+    originalResults.push(result)
+  }
   const sourceCrsContracts=await page.evaluate(()=>window.sourceCrsContracts())
   const sourceCrsObservations=await page.evaluate(()=>window.sourceCrsObservations)
   await writeFile(join(output,'source-crs-contracts.json'),JSON.stringify({sourceCrsContracts,sourceCrsObservations},null,2)+'\n')
@@ -176,7 +196,7 @@ try {
   }
   assert.deepEqual(errors,[]);assert.deepEqual(external,[])
   assert.ok(wasm.length>0&&wasm.every(r=>r.status===200&&r.mime==='application/wasm'))
-  const report={browser:await browser.version(),baseline,sourceCrsContracts,sourceCrsObservations,results,wasm,externalRequests:external,pageErrors:errors}
+  const report={browser:await browser.version(),baseline,sourceCrsContracts,sourceCrsObservations,originalResults,results,wasm,externalRequests:external,pageErrors:errors}
   await page.evaluate(report=>{document.getElementById('report').textContent=JSON.stringify(report,null,2)},report)
   await page.screenshot({path:join(output,'crs-decisions.png'),fullPage:true})
   await writeFile(join(output,'report.json'),JSON.stringify(report,null,2)+'\n')

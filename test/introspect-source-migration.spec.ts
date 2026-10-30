@@ -3,20 +3,20 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 
 const book = JSON.parse(readFileSync(new URL('../packages/renderers/design/LICENSES/Introspect_NATIVE_THIRD_PARTY_LICENSES.json', import.meta.url), 'utf8'));
-const original = '47ab9d90c8004c32b7d410cc8f2a554b6493a260';
-const migrated = '0a6ad98729b759f4c698f9e829f5b75d9ae431b9';
+const original = '468262044817a2b8bef1540b67759bf979e577af';
+const migrated = '116e5df5dab8bd5b7677c1155a79cb0ed3048a4a';
 
 describe('IDML official corresponding-source migration', () => {
   it('preserves the installed Cargo identity while naming the complete immutable migrated source', () => {
     const archive = book.licenseReview.correspondingSourceArchives.find((item: { originalCommit?: string }) => item.originalCommit === original);
     expect(archive).toMatchObject({
-      url: `https://codeload.github.com/paged-media/paged/tar.gz/${migrated}`,
-      sha256: 'b12e8384271b88cd27ef4efdd08785a63f6c50e706c4cbae3e75e09b639eca45',
+      url: `https://api.github.com/repos/paged-media/paged/tarball/${migrated}`,
+      sha256: 'e9f01936ff17fd5184da3a958821acd122eaa07ec011162e4de6d95312661448',
       commit: migrated, originalCommit: original, subdirectory: 'modules/publish',
       migration: {
         mapCommit: 'a86a8867d8cdc78b8f737ad18ef7bd0e48f0b0d6',
         mapPath: 'tooling/import/commit-maps/plugin-publish.tsv',
-        sourceTree: 'f271f202b6d764e7af4146f6fb12240c8df9a66c', sourceFiles: 154,
+        sourceTree: 'e2e5af9b5a8a170d0c918dd1293d6bdd7db49e7a', sourceFiles: 231,
         includesAllOriginalFiles: true,
       },
     });

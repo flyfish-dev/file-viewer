@@ -230,6 +230,8 @@ test('Dependabot groups version and security Angular updates in the nested fixtu
 })
 
 test('IFC importer and copied WASM use the same verified physical web-ifc package', () => {
+  // 0.0.78's JS calls StreamMeshes with four arguments, while its official
+  // WASM still accepts three. Retain the working ABI until upstream fixes it.
   const version = '0.0.77'
   const manifest = JSON.parse(read('packages/renderers/3d/package.json'))
   const demo = JSON.parse(read('apps/viewer-demo/package.json'))

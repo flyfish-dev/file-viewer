@@ -844,12 +844,12 @@
           {
             "packageName": "@cornerstonejs/core",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source @cornerstonejs/core@5.11.6; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source @cornerstonejs/core@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "@cornerstonejs/dicom-image-loader",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source @cornerstonejs/dicom-image-loader@5.11.6; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source @cornerstonejs/dicom-image-loader@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "@cornerstonejs/jpeg-lossless-decoder-js",
@@ -859,12 +859,12 @@
           {
             "packageName": "@cornerstonejs/metadata",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source @cornerstonejs/metadata@5.11.6; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source @cornerstonejs/metadata@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "@cornerstonejs/utils",
             "spdx": "MIT",
-            "notice": "Reviewed runtime/SDK source @cornerstonejs/utils@5.11.6; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source @cornerstonejs/utils@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "@kitware/vtk.js",
@@ -1074,7 +1074,7 @@
           {
             "packageName": "glob",
             "spdx": "ISC",
-            "notice": "Reviewed runtime/SDK source glob@7.2.0; repository https://github.com/isaacs/node-glob; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source glob@7.2.3; repository https://github.com/isaacs/node-glob; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "hasown",

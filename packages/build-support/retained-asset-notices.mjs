@@ -114,7 +114,7 @@ export async function stageRetainedAssetNotices(viewerRoot, { sourceRoot = works
     const packageRoot = resolve(dirname(wasmPath), '..')
     const metadata = JSON.parse(await readFile(join(packageRoot, 'package.json')))
     assert.equal(metadata.name, 'sql.js')
-    assert.equal(metadata.version, '1.14.1', 'Unreviewed SQL runtime version')
+    assert.equal(metadata.version, '1.15.2', 'Unreviewed SQL runtime version')
     assert.equal(metadata.license, 'MIT', 'SQL runtime declaration changed')
     assert.ok(sqlRuntime.equals(await readFile(wasmPath)), 'Copied SQL WASM differs from its exact installed package')
     writes.push({ target: join(viewerRoot, 'wasm/data/licenses/LICENSE.sql-js.txt'), bytes: await readFile(join(packageRoot, 'LICENSE')) })

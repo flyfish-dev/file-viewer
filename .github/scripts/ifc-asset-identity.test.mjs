@@ -23,8 +23,8 @@ test('IFC copier rejects a second physical web-ifc even when its version matches
       return directory
     }
     await makePackage(root, 'web-ifc', '0.0.77')
-    const fragments = await makePackage(root, '@thatopen/fragments', '3.4.8')
-    await makePackage(root, '@thatopen/components', '3.4.9')
+    const fragments = await makePackage(root, '@thatopen/fragments', '3.6.0')
+    await makePackage(root, '@thatopen/components', '3.6.0')
     await makePackage(fragments, 'web-ifc', '0.0.77')
     for (const name of ['three', 'earcut', 'flatbuffers', 'lru-cache', 'pako'])
       await makePackage(root, name, '1.0.0')
