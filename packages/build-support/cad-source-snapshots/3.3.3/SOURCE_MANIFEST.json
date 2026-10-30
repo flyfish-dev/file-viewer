@@ -3,15 +3,15 @@
   "releaseVersion": "3.3.3",
   "preferredSourceInputs": [
     {
-      "path": "packages/components/web/scripts/amd-entry.mjs",
-      "sha256": "9d7ffb06437354571dd0b64d3a21b77e496eb0e9637c8630d75978e9e5980a7f",
-      "archiveSha256": "9d7ffb06437354571dd0b64d3a21b77e496eb0e9637c8630d75978e9e5980a7f",
-      "hashMode": "bytes"
-    },
-    {
       "path": "packages/components/web-full/scripts/offline-asset-sanitize.mjs",
       "sha256": "8a953bd09ff7fb7f01fef88952fb677a50243102ebcb6e63a35778ce5648a8ae",
       "archiveSha256": "8a953bd09ff7fb7f01fef88952fb677a50243102ebcb6e63a35778ce5648a8ae",
+      "hashMode": "bytes"
+    },
+    {
+      "path": "packages/components/web/scripts/amd-entry.mjs",
+      "sha256": "9d7ffb06437354571dd0b64d3a21b77e496eb0e9637c8630d75978e9e5980a7f",
+      "archiveSha256": "9d7ffb06437354571dd0b64d3a21b77e496eb0e9637c8630d75978e9e5980a7f",
       "hashMode": "bytes"
     },
     {
@@ -33,16 +33,34 @@
       "hashMode": "bytes"
     },
     {
-      "path": "packages/core/src/browser/controller.ts",
-      "sha256": "291ab7df9eb05acff3de5aca54d1d5ddc661dbdd7a3256cd6e53db40afe9ab5b",
-      "archiveSha256": "291ab7df9eb05acff3de5aca54d1d5ddc661dbdd7a3256cd6e53db40afe9ab5b",
-      "hashMode": "bytes"
-    },
-    {
       "path": "packages/core/src/browser.ts",
       "sha256": "53d8475219a080b78e8e4154d679349549503891b50ef9b7e487e3268a81c423",
       "archiveSha256": "53d8475219a080b78e8e4154d679349549503891b50ef9b7e487e3268a81c423",
       "hashMode": "bytes"
+    },
+    {
+      "path": "packages/core/src/browser/controller.ts",
+      "sha256": "8385b77c548c4b44a870dadd03f75ef87d8d4a73be5d989b0896abafc821e6bf",
+      "archiveSha256": "8385b77c548c4b44a870dadd03f75ef87d8d4a73be5d989b0896abafc821e6bf",
+      "hashMode": "bytes"
+    },
+    {
+      "path": "packages/core/src/browser/source-feedback.ts",
+      "hashMode": "bytes",
+      "sha256": "ae1b265ce58c84e66c04f86ec6c2025ef4d9e8616975dfdf8a808484605d5440",
+      "archiveSha256": "ae1b265ce58c84e66c04f86ec6c2025ef4d9e8616975dfdf8a808484605d5440"
+    },
+    {
+      "path": "packages/core/src/browser/toolbar-focus.ts",
+      "hashMode": "bytes",
+      "sha256": "8dbc74901763b0ac6ec19093a0420519e77c029bdaf3e45fe4f5499551579286",
+      "archiveSha256": "8dbc74901763b0ac6ec19093a0420519e77c029bdaf3e45fe4f5499551579286"
+    },
+    {
+      "path": "packages/core/src/browser/toolbar-keyboard.ts",
+      "hashMode": "bytes",
+      "sha256": "fbd807415e2a32c014053ce3141fece89484f6e248e6bd8871c1f0402fb5280f",
+      "archiveSha256": "fbd807415e2a32c014053ce3141fece89484f6e248e6bd8871c1f0402fb5280f"
     },
     {
       "path": "packages/core/src/config/options.ts",
@@ -415,18 +433,6 @@
       "sha256": "bf42a86d380d1011fffbe212a114e7658472c584a504975706343f1e2f961765",
       "archiveSha256": "c77804114c54bbb78e65dbe3ca29b238368f492c11850686bb98fb67466e4610",
       "hashMode": "json"
-    },
-    {
-      "path": "packages/core/src/browser/toolbar-focus.ts",
-      "hashMode": "bytes",
-      "sha256": "8dbc74901763b0ac6ec19093a0420519e77c029bdaf3e45fe4f5499551579286",
-      "archiveSha256": "8dbc74901763b0ac6ec19093a0420519e77c029bdaf3e45fe4f5499551579286"
-    },
-    {
-      "path": "packages/core/src/browser/source-feedback.ts",
-      "hashMode": "bytes",
-      "sha256": "ae1b265ce58c84e66c04f86ec6c2025ef4d9e8616975dfdf8a808484605d5440",
-      "archiveSha256": "ae1b265ce58c84e66c04f86ec6c2025ef4d9e8616975dfdf8a808484605d5440"
     }
   ],
   "manifestNormalization": "Preferred TypeScript and build-helper bytes are exact. Own JSON configurations/manifests are hashed canonically to tolerate public projection whitespace only; changed semantic values still fail. Standalone workspace manifests/configurations have explicit archiveSha256 values for reproduction.",
@@ -435,8 +441,12 @@
     "sha256": "97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f"
   },
   "upstream": "upstream-sources.json; all original license texts retained",
-  "priorArchiveSha256": "1a5a485b9cc4837614ba32dc01abaa1de4ccd16d340ab66b312a9cb8c03f5b6c",
+  "priorArchiveSha256": "32759cd0a4826871361f7bc2d4056b19afbf4522314b68a27d6e1f8ffb0bf4eb",
   "files": [
+    {
+      "path": "build.mjs",
+      "sha256": "b05944ca7aaf72f07b8b692b4b094df88c5fe111a30aac4ac4abff859ac3dc38"
+    },
     {
       "path": "LICENSE",
       "sha256": "55ce5d9fb8138a058b60c431cb9e68e13dd3f90691f73a757e38f06fed81e69b"
@@ -448,22 +458,6 @@
     {
       "path": "LICENSES/GPL-3.0.txt",
       "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
-    },
-    {
-      "path": "PRIOR_SOURCE_ARCHIVE_LICENSE_NOTICES.txt",
-      "sha256": "88a262e964e7baf9378ba99141827fe2e73a8d49c58d803ff8fba4b6c9d4195c"
-    },
-    {
-      "path": "PRIOR_SOURCE_ARCHIVE_README.md",
-      "sha256": "d48cbb26854627b6675221ca1f01d7d729bc84b6fee3ed25f287d58b0f09f399"
-    },
-    {
-      "path": "README.md",
-      "sha256": "39899131e1a9a648a4c13a6dbd777795c5593c73ba3be43084703d25c5336b91"
-    },
-    {
-      "path": "build.mjs",
-      "sha256": "b05944ca7aaf72f07b8b692b4b094df88c5fe111a30aac4ac4abff859ac3dc38"
     },
     {
       "path": "package-lock.json",
@@ -503,7 +497,19 @@
     },
     {
       "path": "packages/core/src/browser/controller.ts",
-      "sha256": "291ab7df9eb05acff3de5aca54d1d5ddc661dbdd7a3256cd6e53db40afe9ab5b"
+      "sha256": "8385b77c548c4b44a870dadd03f75ef87d8d4a73be5d989b0896abafc821e6bf"
+    },
+    {
+      "path": "packages/core/src/browser/source-feedback.ts",
+      "sha256": "ae1b265ce58c84e66c04f86ec6c2025ef4d9e8616975dfdf8a808484605d5440"
+    },
+    {
+      "path": "packages/core/src/browser/toolbar-focus.ts",
+      "sha256": "8dbc74901763b0ac6ec19093a0420519e77c029bdaf3e45fe4f5499551579286"
+    },
+    {
+      "path": "packages/core/src/browser/toolbar-keyboard.ts",
+      "sha256": "fbd807415e2a32c014053ce3141fece89484f6e248e6bd8871c1f0402fb5280f"
     },
     {
       "path": "packages/core/src/config/options.ts",
@@ -762,16 +768,20 @@
       "sha256": "c77804114c54bbb78e65dbe3ca29b238368f492c11850686bb98fb67466e4610"
     },
     {
+      "path": "PRIOR_SOURCE_ARCHIVE_LICENSE_NOTICES.txt",
+      "sha256": "88a262e964e7baf9378ba99141827fe2e73a8d49c58d803ff8fba4b6c9d4195c"
+    },
+    {
+      "path": "PRIOR_SOURCE_ARCHIVE_README.md",
+      "sha256": "d48cbb26854627b6675221ca1f01d7d729bc84b6fee3ed25f287d58b0f09f399"
+    },
+    {
+      "path": "README.md",
+      "sha256": "39899131e1a9a648a4c13a6dbd777795c5593c73ba3be43084703d25c5336b91"
+    },
+    {
       "path": "upstream-sources.json",
       "sha256": "843192506a29e821d1f2c6bfa4dd4ec721f5a87406943c90a1410d3b56bc2d16"
-    },
-    {
-      "path": "packages/core/src/browser/toolbar-focus.ts",
-      "sha256": "8dbc74901763b0ac6ec19093a0420519e77c029bdaf3e45fe4f5499551579286"
-    },
-    {
-      "path": "packages/core/src/browser/source-feedback.ts",
-      "sha256": "ae1b265ce58c84e66c04f86ec6c2025ef4d9e8616975dfdf8a808484605d5440"
     }
   ]
 }
