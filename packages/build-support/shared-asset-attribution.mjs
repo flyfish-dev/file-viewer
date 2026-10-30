@@ -73,9 +73,14 @@ async function files(directory) {
  * Original grants, generated inventories and source offers remain distinct.
  */
 export async function stageSharedAssetAttribution(viewerRoot, { sourceRoot = workspace, externalAssetOwners = [] } = {}) {
+  const assetOwners = {
+    'vendor/drawio/': '@file-viewer/assets-drawing',
+    'wasm/cad/': '@file-viewer/assets-cad',
+    'vendor/design/': '@file-viewer/assets-design'
+  }
   for (const owner of externalAssetOwners) {
-    assert.match(owner.prefix, /^(?:vendor\/drawio|wasm\/cad)\/$/, 'Only the established Full asset split can be delegated')
-    assert.ok(owner.packageName === (owner.prefix === 'vendor/drawio/' ? '@file-viewer/assets-drawing' : '@file-viewer/assets-cad'))
+    assert.ok(Object.hasOwn(assetOwners, owner.prefix), 'Only the established Full asset split can be delegated')
+    assert.equal(owner.packageName, assetOwners[owner.prefix])
     assert.match(owner.version, /^\d+\.\d+\.\d+$/)
     assert.equal(owner.inventoryPath, 'viewer/THIRD_PARTY_LICENSES.assets.json')
   }

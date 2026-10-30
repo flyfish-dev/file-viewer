@@ -46,8 +46,9 @@ From 3.0.3, load `dist/flyfish-file-viewer-web-full.amd.js` as an AMD module.
 No shim or host `define` override is needed. After installing from npm, run
 `npx --no-install file-viewer-copy-assets ./public/file-viewer`, then copy the
 `dist/` entries and `renderers/` into the same directory. The copier includes
-CAD and Draw.io from the exact-version `@file-viewer/assets-cad` and
-`@file-viewer/assets-drawing` dependencies. The complete GitHub offline
+CAD, Draw.io and design resources from the exact-version `@file-viewer/assets-cad`,
+`@file-viewer/assets-drawing` and `@file-viewer/assets-design` dependencies, keeping
+the main npm archive below the CDN size limit. The complete GitHub offline
 distribution retains all assets.
 
 When loading the IIFE/AMD through jsDelivr or unpkg, CAD and Draw.io use

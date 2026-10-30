@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { cp, lstat, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, lstat, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
 import * as webNode from '../../web/dist/node.js'
-import { assertFullAssetDependencies } from '../scripts/full-asset-dependencies.mjs'
+import { assertFullAssetDependencies, resolveFullAssetSources } from '../scripts/full-asset-dependencies.mjs'
 import { PPT_RUNTIME_VERSION } from '../scripts/ppt-runtime-integrity.mjs'
 import { stagePptRuntimeFrom } from '../scripts/stage-ppt-runtime.mjs'
 import { fullAssetStagers, stageFullViewerAssets } from '../scripts/stage-full-assets.mjs'
@@ -37,10 +37,16 @@ async function fixture(t) {
   await mkdir(targetPackage, { recursive: true })
   await cp(join(packageDir, 'package.json'), join(targetPackage, 'package.json'))
   const packageManifest = JSON.parse(await readFile(join(targetPackage, 'package.json'), 'utf8'))
-  for (const name of ['@file-viewer/assets-cad', '@file-viewer/assets-drawing']) {
+  for (const name of ['@file-viewer/assets-cad', '@file-viewer/assets-drawing', '@file-viewer/assets-design']) {
     const directory = join(targetPackage, 'node_modules', name)
     await mkdir(directory, { recursive: true })
-    await writeFile(join(directory, 'package.json'), JSON.stringify({ name, version: packageManifest.version, exports: { './package.json': './package.json' } }))
+    await writeFile(join(directory, 'package.json'), JSON.stringify({ name, version: packageManifest.version, exports: { './package.json': './package.json', './asset-pack': './viewer/file-viewer-asset-pack.json' } }))
+    await mkdir(join(directory, 'viewer'))
+    const rendererId = name.endsWith('design') ? 'indesign-idml-design' : name.slice('@file-viewer/assets-'.length)
+    await writeFile(join(directory, 'viewer/file-viewer-asset-pack.json'), JSON.stringify({
+      schemaVersion: 1, packageName: name, packageVersion: packageManifest.version,
+      copyGroups: [rendererId], rendererAssetManifests: [{ rendererId, assets: [] }]
+    }))
   }
 
   // Demo/source asset tree: one placeholder per declared asset.
@@ -157,7 +163,7 @@ test('bootstrap without a manifest produces valid, portable metadata for the fin
     "const fallback = 'file-viewer-offline-cdn/example'\n"
   )
   assert.equal(await readFile(join(f.source, textAsset), 'utf8'), originalText)
-  assert.equal(await readFile(join(f.dist, '.npmignore'), 'utf8'), '/vendor/drawio/\n/wasm/cad/\n')
+  assert.equal(await readFile(join(f.dist, '.npmignore'), 'utf8'), '/vendor/drawio/\n/wasm/cad/\n/vendor/design/\n')
 })
 
 test('runtime and legal stagers run in order and their notices reach the manifest', async t => {
@@ -170,7 +176,8 @@ test('runtime and legal stagers run in order and their notices reach the manifes
   const version = JSON.parse(await readFile(join(f.targetPackage, 'package.json'), 'utf8')).version
   assert.deepEqual(noticeOptions.externalAssetOwners.map(owner => [owner.prefix, owner.packageName, owner.version]), [
     ['vendor/drawio/', '@file-viewer/assets-drawing', version],
-    ['wasm/cad/', '@file-viewer/assets-cad', version]
+    ['wasm/cad/', '@file-viewer/assets-cad', version],
+    ['vendor/design/', '@file-viewer/assets-design', version]
   ])
   assert.equal(f.calls[6][1], true, 'Notice validation must see the notice-extended manifests')
   assert.equal(await readFile(join(f.dist, 'THIRD_PARTY_LICENSES.assets.json'), 'utf8'), '{"fixture":true}\n')
@@ -245,4 +252,19 @@ test('an open asset range or a mismatched installed tarball cannot weaken versio
   manifest.dependencies['@file-viewer/assets-cad'] = 'file:./mismatched.tgz'
   await writeFile(join(f.targetPackage, 'node_modules/@file-viewer/assets-cad/package.json'), JSON.stringify({ name: '@file-viewer/assets-cad', version: '0.0.0', exports: { './package.json': './package.json' } }))
   await assert.rejects(assertFullAssetDependencies(manifest, packageJsonPath), /assets-cad@0.0.0 must match/)
+})
+
+test('the copier resolves actual asset-pack groups and rejects stale or duplicate owners', async t => {
+  const f = await fixture(t)
+  const packageJsonPath = join(f.targetPackage, 'package.json')
+  const manifest = JSON.parse(await readFile(packageJsonPath, 'utf8'))
+  const sources = await resolveFullAssetSources(manifest, packageJsonPath)
+  assert.deepEqual(Object.keys(sources).sort(), ['cad', 'drawing', 'indesign-idml-design'])
+  assert.equal(sources['indesign-idml-design'], await realpath(join(f.targetPackage, 'node_modules/@file-viewer/assets-design/viewer')))
+  const path = join(sources['indesign-idml-design'], 'file-viewer-asset-pack.json')
+  const pack = JSON.parse(await readFile(path, 'utf8'))
+  await writeFile(path, JSON.stringify({ ...pack, packageVersion: '0.0.0' }))
+  await assert.rejects(resolveFullAssetSources(manifest, packageJsonPath), /Asset pack version mismatch/)
+  await writeFile(path, JSON.stringify({ ...pack, copyGroups: ['cad'], rendererAssetManifests: [{ rendererId: 'cad', assets: [] }] }))
+  await assert.rejects(resolveFullAssetSources(manifest, packageJsonPath), /Duplicate or invalid asset group: cad/)
 })

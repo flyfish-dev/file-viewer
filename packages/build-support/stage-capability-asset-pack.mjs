@@ -3,6 +3,7 @@ import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { stageBuiltRetainedWorkers, stageRetainedAssetNotices, withRetainedAssetNoticeManifests } from './retained-asset-notices.mjs'
+import { stagePreparedDesignRuntime } from './stage-design-runtime.mjs'
 
 const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const packageDirFlag = process.argv.indexOf('--package-dir')
@@ -43,6 +44,8 @@ for (const asset of selected.flatMap(entry => entry.assets)) {
   const info = await stat(targetPath)
   if (!info.isFile() && !info.isDirectory()) throw new Error(`Invalid capability asset: ${targetPath}`)
 }
+// Prepared exports take precedence over a viewer cache from an older SDK build.
+if (config.id === 'design') await stagePreparedDesignRuntime(targetDir)
 await stageBuiltRetainedWorkers(targetDir)
 await stageRetainedAssetNotices(targetDir)
 selected = withRetainedAssetNoticeManifests(selected)

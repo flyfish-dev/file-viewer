@@ -1,8 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
-import { dirname } from 'node:path'
+import { resolveFullAssetSources } from './full-asset-dependencies.mjs'
 import {
   copyFileViewerAssets,
   parseCopyAssetsCliArguments
@@ -10,17 +9,6 @@ import {
 
 const packageDir = fileURLToPath(new URL('..', import.meta.url))
 const packageJson = JSON.parse(await readFile(resolve(packageDir, 'package.json'), 'utf8'))
-const require = createRequire(resolve(packageDir, 'package.json'))
-const resolveRendererSources = async () => Object.fromEntries(await Promise.all(
-  ['cad', 'drawing'].map(async (id) => {
-    const name = `@file-viewer/assets-${id}`
-    const manifestPath = require.resolve(`${name}/package.json`)
-    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
-    if (manifest.name !== name || manifest.version !== packageJson.version)
-      throw new Error(`Asset pack version mismatch: ${name}`)
-    return [id, resolve(dirname(manifestPath), 'viewer')]
-  })
-))
 const help = `file-viewer-copy-assets ${packageJson.version}
 
 Copy File Viewer Worker, WASM, font, and vendor assets into a self-hosted web project.
@@ -53,7 +41,7 @@ try {
     const result = await copyFileViewerAssets({
       ...parsed,
       sourceDir: resolve(packageDir, 'dist'),
-      rendererSources: await resolveRendererSources(),
+      rendererSources: await resolveFullAssetSources(packageJson, resolve(packageDir, 'package.json')),
       packageVersion: packageJson.version,
     })
     if (parsed.json) {

@@ -31,7 +31,8 @@ npm install @file-viewer/web-full
 从 3.0.3 起可直接加载 `dist/flyfish-file-viewer-web-full.amd.js`，不需要 shim 或覆盖宿主 `define`。
 从 npm 安装后，先运行 `npx --no-install file-viewer-copy-assets ./public/file-viewer`，
 再把 `dist/` 内的入口和 `renderers/` 复制到同一目录。复制命令会从同版本的
-`@file-viewer/assets-cad` 和 `@file-viewer/assets-drawing` 依赖补齐 CAD 与 Draw.io 资源。
+`@file-viewer/assets-cad`、`@file-viewer/assets-drawing` 和 `@file-viewer/assets-design`
+依赖补齐 CAD、Draw.io 与设计格式资源，使主 npm 包保持在 CDN 体积上限内。
 GitHub 完整离线发行物仍包含全部资产。
 
 通过 jsDelivr 或 unpkg 加载 IIFE/AMD 时，CAD 和 Draw.io 资源从所选 CDN 的同版本资产包读取。
