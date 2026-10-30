@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "mode": "runtime-only",
+  "version": "3.3.2",
+  "sourceCommit": "725305663ec82c4097347e4c82d4f4fe5c2341df",
+  "releaseScope": "package-patch",
+  "baselineVersion": "3.3.1",
+  "baselineSourceCommit": "7f77f14ea5be3917b9493620084a7201124e8383",
+  "packageVersionOverrides": {
+    "@flyfish-group/file-viewer-web": "3.3.2"
+  },
+  "privateReceiptSha256": "88c87774eaf486cf05e5df1f965e3b9f803040a8c23f8723f9d82c050385518b",
+  "packageCount": 1,
+  "packages": [
+    {
+      "packageName": "@flyfish-group/file-viewer-web",
+      "packageDir": "packages/compat/web",
+      "sourcePackageVersion": "3.3.1",
+      "version": "3.3.2",
+      "tarball": "flyfish-group-file-viewer-web-3.3.2.tgz",
+      "tarballSize": 80877523,
+      "sha256": "1d6c9e54f7753abc236474370b3a4928abc4161a252b59bdd0c68d485b6416ab",
+      "integrity": "sha512-fwCuLRyGDR0WUNsd8+PncO0F+kxXFVgAnoB8sGWpeF9XqR/Mg8f79mj7fYhHJs3on8oegkZikHGVkyXxAkwJ7A==",
+      "fileCount": 2861,
+      "license": "Apache-2.0",
+      "readmes": {
+        "README.md": {
+          "bytes": 2453,
+          "sha256": "17e942f471aedcba7120460a81db6ed3fd9d2b596f75970755aaf2a1ff4bddba"
+        },
+        "README.en.md": {
+          "bytes": 2453,
+          "sha256": "17e942f471aedcba7120460a81db6ed3fd9d2b596f75970755aaf2a1ff4bddba"
+        },
+        "README.zh-CN.md": {
+          "bytes": 2630,
+          "sha256": "e1d59d54a76944668c10f03f8410521289fa65a4eddcd7696651d9de56ab0f0a"
+        }
+      },
+      "releaseArtifact": {
+        "includeTarball": true
+      }
+    }
+  ]
+}
