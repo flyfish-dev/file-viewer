@@ -967,6 +967,9 @@ importers:
       '@file-viewer/assets-cad':
         specifier: workspace:3.3.1
         version: link:../../tools/assets-cad
+      '@file-viewer/assets-design':
+        specifier: workspace:3.3.1
+        version: link:../../tools/assets-design
       '@file-viewer/assets-drawing':
         specifier: workspace:3.3.1
         version: link:../../tools/assets-drawing

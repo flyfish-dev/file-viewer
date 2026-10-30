@@ -73,6 +73,7 @@ export async function stageFullViewerAssets({
     externalAssetOwners: [
       { prefix: 'vendor/drawio/', packageName: '@file-viewer/assets-drawing', version: packageManifest.version, inventoryPath: 'viewer/THIRD_PARTY_LICENSES.assets.json' },
       { prefix: 'wasm/cad/', packageName: '@file-viewer/assets-cad', version: packageManifest.version, inventoryPath: 'viewer/THIRD_PARTY_LICENSES.assets.json' },
+      { prefix: 'vendor/design/', packageName: '@file-viewer/assets-design', version: packageManifest.version, inventoryPath: 'viewer/THIRD_PARTY_LICENSES.assets.json' },
     ],
   })
   const initialValidation = await webNode.validateViewerAssets({ sourceDir: outDir })
@@ -95,9 +96,9 @@ export async function stageFullViewerAssets({
   }, null, 2)}\n`)
   await webNode.writeViewerAssetManifest(outDir, stableAssetManifest(previousAssetManifest, viewerAssetManifest))
   // Keep the complete local dist for self-hosted release assets. The ordinary npm
-  // archive carries these two groups through exact-version asset dependencies.
+  // archive carries CAD, drawing and design through exact-version asset dependencies.
   await stagers.assertAssetDependencies(packageManifest, resolve(packageDir, 'package.json'))
-  await writeFile(join(outDir, '.npmignore'), '/vendor/drawio/\n/wasm/cad/\n', 'utf8')
+  await writeFile(join(outDir, '.npmignore'), '/vendor/drawio/\n/wasm/cad/\n/vendor/design/\n', 'utf8')
   await writeFile(
     resolve(outDir, 'flyfish-viewer-manifest.json'),
     `${JSON.stringify({

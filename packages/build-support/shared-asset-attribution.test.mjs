@@ -41,6 +41,13 @@ test('the established Full asset split names exact owners without claiming their
   assert.deepEqual(receipt.materials, [])
   assert.deepEqual(receipt.runtimeFiles, [])
   await assert.rejects(stageSharedAssetAttribution(target, { externalAssetOwners: [{ ...owner, prefix: 'vendor/pdf/' }] }), /established Full asset split/)
+  const design = { ...owner, prefix: 'vendor/design/', packageName: '@file-viewer/assets-design' }
+  await mkdir(join(target, 'vendor/design'), { recursive: true })
+  await writeFile(join(target, 'vendor/design/paged_introspect_wasm_bg.wasm'), 'delegated to the exact-version design owner')
+  const withDesign = await stageSharedAssetAttribution(target, { externalAssetOwners: [owner, design] })
+  assert.deepEqual(withDesign.externalAssetOwners, [owner, design])
+  assert.deepEqual(withDesign.runtimeFiles, [])
+  await assert.rejects(stageSharedAssetAttribution(target, { externalAssetOwners: [{ ...design, packageName: '@file-viewer/assets-drawing' }] }), /AssertionError/)
 })
 
 test('separate native CAD bindings retain their GPL text and independent AGPL owner grant', async t => {

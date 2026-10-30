@@ -65,7 +65,7 @@ try {
   const packs = join(output, 'packs')
   mkdirSync(packs)
   const pnpm = pnpmInvocation()
-  for (const name of ['web-full', 'assets-cad', 'assets-drawing']) {
+  for (const name of ['web-full', 'assets-cad', 'assets-drawing', 'assets-design']) {
     run(`pack-${name}`, pnpm.command, [...pnpm.args, '--filter', `@file-viewer/${name}`, 'pack', '--pack-destination', packs])
     const tarball = join(packs, `file-viewer-${name}-${version}.tgz`)
     const packageDir = join(consumer, 'node_modules/@file-viewer', name)
@@ -80,8 +80,9 @@ try {
   const fullManifest = JSON.parse(readFileSync(join(full, 'package.json'), 'utf8'))
   assert.equal(fullManifest.dependencies['@file-viewer/assets-cad'], version)
   assert.equal(fullManifest.dependencies['@file-viewer/assets-drawing'], version)
+  assert.equal(fullManifest.dependencies['@file-viewer/assets-design'], version)
   const fullInventory = report.tarballs['web-full'].files.map(file => file.path)
-  assert.ok(!fullInventory.some(path => path.startsWith('dist/vendor/drawio/') || path.startsWith('dist/wasm/cad/')))
+  assert.ok(!fullInventory.some(path => path.startsWith('dist/vendor/drawio/') || path.startsWith('dist/wasm/cad/') || path.startsWith('dist/vendor/design/')))
   const rendererEntries = fullInventory.filter(path => /^dist\/renderers\/[^/]+\.iife\.js$/.test(path)).sort()
   assert.equal(rendererEntries.length, 22, 'Every full renderer entry must remain in the npm tarball')
   report.rendererEntries = rendererEntries
