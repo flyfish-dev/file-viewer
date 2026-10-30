@@ -2,6 +2,15 @@ name: Frozen release artifacts
 
 on:
   workflow_dispatch:
+    inputs:
+      corresponding_source_commit:
+        description: Immutable commit containing a new standalone CAD source snapshot
+        type: string
+        required: false
+      source_version:
+        description: Version directory of the standalone source snapshot
+        type: string
+        required: false
   release:
     types: [published]
 
@@ -9,9 +18,40 @@ permissions:
   contents: read
 
 jobs:
+  corresponding-source:
+    name: Verify public corresponding source and cold rebuild
+    if: github.event_name == 'workflow_dispatch' && inputs.corresponding_source_commit != ''
+    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CAD_SOURCE_COMMIT: ${{ inputs.corresponding_source_commit }}
+      CAD_SOURCE_VERSION: ${{ inputs.source_version }}
+      FILE_VIEWER_SOURCE_CACHE: /work/source-archives
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24.20.0
+      - name: Use the qualified npm toolchain
+        run: |
+          npm install --prefix "$RUNNER_TEMP/file-viewer-npm" npm@11.19.0 --ignore-scripts --registry=https://registry.npmjs.org
+          echo "$RUNNER_TEMP/file-viewer-npm/node_modules/.bin" >> "$GITHUB_PATH"
+      - name: Read exact public source bytes and rebuild the standalone integration
+        run: node .github/scripts/verify-cad-source-snapshot.mjs
+      - name: Retain public source proof
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cad-public-source-proof
+          path: /work/source-archives/${{ inputs.corresponding_source_commit }}.proof.json
+          if-no-files-found: error
+
   release-consumers:
     name: Validate frozen archives and installed consumers
-    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || inputs.corresponding_source_commit == ''
+    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
     timeout-minutes: 90
     env:
       GH_TOKEN: ${{ github.token }}
@@ -24,7 +64,9 @@ jobs:
         with:
           node-version: 24.20.0
       - name: Use the qualified npm toolchain
-        run: npm install --global npm@11.19.0 --ignore-scripts --registry=https://registry.npmjs.org
+        run: |
+          npm install --prefix "$RUNNER_TEMP/file-viewer-npm" npm@11.19.0 --ignore-scripts --registry=https://registry.npmjs.org
+          echo "$RUNNER_TEMP/file-viewer-npm/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Download and byte-check immutable release archives
         run: node .github/scripts/runtime-ci-artifacts.mjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
       - name: Validate declarations, builds and offline Chromium and WebKit consumers
