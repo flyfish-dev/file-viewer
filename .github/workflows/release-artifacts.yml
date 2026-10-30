@@ -1,45 +1,50 @@
-name: Frozen release artifacts
+# Temporary transfer branch only. No npm command or OIDC token is used here.
+# Normal npm publishing remains on the immutable v3.3.2 source tags.
+name: Recover frozen Release assets
+run-name: Recover 3.3.2 frozen assets ${{ inputs.phase }}
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+    inputs:
+      phase:
+        description: Frozen archive set to restore
+        required: true
+        type: choice
+        options: [main, legacy]
+      expected_sha:
+        description: Exact reviewed transfer-controller commit
+        required: true
+        type: string
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: recover-frozen-3.3.2-assets
+  cancel-in-progress: false
 
 jobs:
-  release-consumers:
-    name: Validate frozen archives and installed consumers
+  transfer:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
-    env:
-      GH_TOKEN: ${{ github.token }}
-      npm_config_audit: 'false'
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Check out the exact transfer controller
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+      - name: Use the frozen gzip encoder
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.20.0
-      - name: Use the qualified npm toolchain
-        run: npm install --global npm@11.19.0 --ignore-scripts --registry=https://registry.npmjs.org
-      - name: Download and byte-check immutable release archives
-        run: node .github/scripts/runtime-ci-artifacts.mjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
-      - name: Validate declarations, builds and offline Chromium and WebKit consumers
-        run: node .github/scripts/runtime-ci-consumers.mjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
-      - name: Audit only approved frozen production scopes
+      - name: Verify transfer guards and complete public source inventory
+        run: |
+          node --test .github/scripts/recover-frozen-assets.test.mjs
+          node .github/scripts/verify-source-layout.mjs
+          zstd --version
+      - name: Restore only missing byte-identical Release archives
         env:
-          RUNTIME_AUDIT_DISCLOSURE_APPROVED: ${{ vars.RUNTIME_AUDIT_DISCLOSURE_APPROVED }}
-        run: node .github/scripts/runtime-ci-security.mjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
-      - name: Retain consumer evidence
-        if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
-        with:
-          name: frozen-release-consumers
-          path: |
-            ${{ runner.temp }}/runtime-ci-evidence/consumers.json
-            ${{ runner.temp }}/runtime-ci-evidence/*.png
-          if-no-files-found: warn
-          retention-days: 14
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ inputs.expected_sha }}
+          TRANSFER_PHASE: ${{ inputs.phase }}
+        run: node .github/scripts/recover-frozen-assets.mjs

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "releaseTag": "v3.3.2",
+  "releaseId": 428968345,
+  "node": "v24.20.0",
+  "zlib": "1.3.2.1-motley-42c2f19",
+  "manifests": {
+    "main": {
+      "asset": "npm-release-manifest.json",
+      "sourceTag": "v3.3.2",
+      "sourceCommit": "d6bcb1a9fc336267f025de7ea1e0e1b9ac1a0eb1",
+      "sha256": "6bee8e984f9ca37ce4fd350e030770ff26cac6664c74fb6824805ba9773ca0b1"
+    },
+    "legacy": {
+      "asset": "npm-legacy-web-release-manifest.json",
+      "sourceTag": "v3.3.2-legacy-web",
+      "sourceCommit": "1c1ff4261a4aa3bacf1bd65dc9f471d91bb4a458",
+      "sha256": "2595ee1742959d7be9b21087e730a90c001586995a9634b8967323e430f9f857"
+    }
+  },
+  "archives": [
+    {
+      "packageName": "file-viewer-copy-assets",
+      "phase": "main",
+      "baseTag": "v3.3.1",
+      "baseArchive": "file-viewer-copy-assets-3.3.1.tgz",
+      "baseSha256": "022aec136b91b22b1b7278ad7b3b5ececc5809f78d116031c5e620dc2c65d5bb",
+      "baseTarSha256": "d6da101c455c06183940e9efbf94c1b2896f914281a89aaf41d8ea66b88c0e0f",
+      "targetArchive": "file-viewer-copy-assets-3.3.2.tgz",
+      "targetSha256": "4771ff27ebd9417b6350921d960ed10df42ce13dfa5b01060897582315acc832",
+      "targetBytes": 80739351,
+      "targetTarSha256": "28d341998b07290805ebd97b5d4c8ac484839fdbcb8b6698e1e2871bbea0eb44",
+      "gzipHeaderHex": "1f8b08000000000002ff",
+      "deltaAsset": "file-viewer-copy-assets-3.3.2.tgz.transfer.zst",
+      "deltaSha256": "3b600a9d6353a3a67b77c9ad6499cfd2f9ecc8c0171daae92fb9290760515847",
+      "deltaBytes": 49370
+    },
+    {
+      "packageName": "@file-viewer/web-full",
+      "phase": "main",
+      "baseTag": "v3.3.1",
+      "baseArchive": "file-viewer-web-full-3.3.1.tgz",
+      "baseSha256": "451691a3509a2aeafa8d4fb6063aaf8c6ad5c912b27190cff35a5cee29092a69",
+      "baseTarSha256": "eaf46c9fb77182091b3d36488ff01325f2920ac9b9063dca655ec47b6ea7ff8c",
+      "targetArchive": "file-viewer-web-full-3.3.2.tgz",
+      "targetSha256": "8214969e62da5f8c44f6096d357fcf930219aeb6a8bb3a6a815c06317dc13b30",
+      "targetBytes": 53347661,
+      "targetTarSha256": "c253ccad67a632530657fa2604eb3d330f45131b1341f2ccf26b1a1eaf069b89",
+      "gzipHeaderHex": "1f8b08000000000002ff",
+      "deltaAsset": "file-viewer-web-full-3.3.2.tgz.transfer.zst",
+      "deltaSha256": "6bcb09e8cfa97bab3295b5dab3f398ef5af79789668d34a3c2ffc1ac538fa914",
+      "deltaBytes": 553493
+    },
+    {
+      "packageName": "@flyfish-group/file-viewer-web",
+      "phase": "legacy",
+      "baseTag": "v3.3.1",
+      "baseArchive": "flyfish-group-file-viewer-web-3.3.1.tgz",
+      "baseSha256": "c10b7f64e06a6bb4d5b33e9a8aeaf0ea9dbc1bb143774fd442c4eb464d05cfa7",
+      "baseTarSha256": "ef3ec1407d89982784bdc2ade48cc74bf42bf5b70870a5f4a8f3da03e411cbde",
+      "targetArchive": "flyfish-group-file-viewer-web-3.3.2.tgz",
+      "targetSha256": "1d6c9e54f7753abc236474370b3a4928abc4161a252b59bdd0c68d485b6416ab",
+      "targetBytes": 80877523,
+      "targetTarSha256": "4b7a889612699216af59c45e61f46d188388681bce6be79e243e6b6c5bb48d21",
+      "gzipHeaderHex": "1f8b08000000000002ff",
+      "deltaAsset": "flyfish-group-file-viewer-web-3.3.2.tgz.transfer.zst",
+      "deltaSha256": "1ac6fe45c8c7b9c05484fd70d94fecb800fd22e7f4973916a6dfb89ee3cdd9c7",
+      "deltaBytes": 50071
+    }
+  ]
+}
