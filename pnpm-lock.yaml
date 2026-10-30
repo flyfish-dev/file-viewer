@@ -237,8 +237,8 @@ importers:
   apps/official-site:
     dependencies:
       '@lucide/vue':
-        specifier: ^1.61.0
-        version: 1.61.0(vue@3.5.42(typescript@6.0.3))
+        specifier: ^1.62.0
+        version: 1.62.0(vue@3.5.42(typescript@6.0.3))
       highlight.js:
         specifier: ^11.11.1
         version: 11.12.0
@@ -298,8 +298,8 @@ importers:
         specifier: workspace:3.3.1
         version: link:../../packages/components/web
       '@lucide/vue':
-        specifier: ^1.61.0
-        version: 1.61.0(vue@3.5.42(typescript@6.0.3))
+        specifier: ^1.62.0
+        version: 1.62.0(vue@3.5.42(typescript@6.0.3))
       '@thatopen/components':
         specifier: 3.6.0
         version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
@@ -313,8 +313,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       qs:
-        specifier: ^6.16.1
-        version: 6.16.1
+        specifier: ^6.17.0
+        version: 6.17.0
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -888,8 +888,8 @@ importers:
         version: link:../../core
     devDependencies:
       '@lucide/vue':
-        specifier: ^1.61.0
-        version: 1.61.0(vue@3.5.42(typescript@6.0.3))
+        specifier: ^1.62.0
+        version: 1.62.0(vue@3.5.42(typescript@6.0.3))
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
@@ -3046,8 +3046,8 @@ packages:
     resolution: {integrity: sha512-cAfbd8ANkOmyHgE3FZrCJwdyQv8ty0woMC6toSUvgo6Cm2crS3ibS+YKrTPDbDhjP6cJoVsoboRNdCWeDL5xMg==}
     engines: {node: '>=14.8.0'}
 
-  '@lucide/vue@1.61.0':
-    resolution: {integrity: sha512-XYclbwUQ6Mvf0UskBG9gJH91BdF3VK4Tt6Pv8PSntwPwNnf357PCQnma4TrzOEdwD49UYCtsTafpfytRIxm1cQ==}
+  '@lucide/vue@1.62.0':
+    resolution: {integrity: sha512-uuVefuSb79HC/XBRIL4AFlIOx4nezJ/DmyeiHQTejQ9odF265SksOKjXbBW6kyDDIJimBh+3LYR4wz/da0aqRA==}
     peerDependencies:
       vue: 3.5.42
 
@@ -6325,8 +6325,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  qs@6.16.1:
-    resolution: {integrity: sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==}
+  qs@6.17.0:
+    resolution: {integrity: sha512-5LK5BZ2XDHMvcUJaf0CQ5HL3aVgKbpklvByC7qLSxYkfE8COEEbJg5xCHWCTqzqi0Gs4Jn5Mv5v3R38W6edscA==}
     engines: {node: '>=0.6'}
 
   quansync@0.2.11:
@@ -7939,7 +7939,7 @@ snapshots:
     dependencies:
       '@xmldom/xmldom': 0.9.12
 
-  '@lucide/vue@1.61.0(vue@3.5.42(typescript@6.0.3))':
+  '@lucide/vue@1.62.0(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       vue: 3.5.42(typescript@6.0.3)
 
@@ -11438,7 +11438,7 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  qs@6.16.1:
+  qs@6.17.0:
     dependencies:
       es-define-property: 1.0.1
       side-channel: 1.1.1
