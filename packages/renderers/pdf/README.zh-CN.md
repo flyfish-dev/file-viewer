@@ -62,6 +62,8 @@ const options = {
 
 `identityFontRepair` 也默认开启，用于少数把 TrueType 字形 ID 写入 `Identity-H`/`Identity-V`、却遗漏 `ToUnicode` 的异常 PDF。只有检测到中文字体替换和多个控制字符乱码时，渲染器才会懒加载修复模块；若文件内同时嵌入了可用的同族 TrueType 字体，就从其 cmap 重建内存预览所需的 Unicode 映射。修复只作用于预览副本，不覆盖原始文件和下载源；无法安全修复时继续使用原预览。可设为 `false` 关闭。
 
+字体遗漏 `FontDescriptor` 时，`UniGB-UCS2-H/V`、GBK、Big5 等预定义 CID CMap 仍按多字节编码解码，并保留文件提供的 `ToUnicode` 映射。这类 PDF 无需额外安装 Identity 字体修复能力，原始 PDF 字节也不会改写。
+
 ## 迁移说明
 
 直接启动真实 Worker，不再额外读取版本前缀或重复下载 Worker。
