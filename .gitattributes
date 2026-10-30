@@ -47,3 +47,5 @@ apps/viewer-demo/public/example/licenses/fox/CC0-1.0.txt -text whitespace=-blank
 apps/viewer-demo/public/example/licenses/fox/CC-BY-4.0.txt -text
 apps/viewer-demo/public/example/licenses/fox/UPSTREAM-README.md -text
 apps/viewer-demo/public/example/licenses/fox/metadata.json -text
+# Corresponding-source snapshots retain all original source and legal bytes.
+packages/build-support/cad-source-snapshots/** -text -whitespace
