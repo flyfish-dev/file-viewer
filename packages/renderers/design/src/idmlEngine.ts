@@ -22,7 +22,7 @@ export interface IdmlInspectorRuntime {
 export type IdmlInspectorRuntimeLoader = (wasmUrl?: string) => Promise<IdmlInspectorRuntime>
 
 interface IntrospectWasmModule extends IdmlInspectorRuntime {
-  default(input?: { module_or_path: string | URL }): Promise<unknown>
+  default(input?: { module_or_path: string | URL | ArrayBuffer }): Promise<unknown>
 }
 
 export interface IdmlEngineOptions {
@@ -57,7 +57,17 @@ const loadDefaultRuntime: IdmlInspectorRuntimeLoader = async (wasmUrl) => {
   defaultRuntimeWasmUrl = wasmUrl
   defaultRuntimePromise = (async () => {
     const imported = (await import('@paged-media/introspect-wasm')) as IntrospectWasmModule
-    await imported.default(wasmUrl ? { module_or_path: wasmUrl } : undefined)
+    let bytes: ArrayBuffer | undefined
+    if (wasmUrl) {
+      const response = await fetch(wasmUrl)
+      if (!response.ok) {
+        throw new IdmlEngineError('IDML_WASM_FETCH', `Failed to fetch IDML WebAssembly: HTTP ${response.status}.`)
+      }
+      // Streaming compilation can stall on compressed self-hosted responses in
+      // Workers. Finish the runtime download before initializing it.
+      bytes = await response.arrayBuffer()
+    }
+    await imported.default(bytes ? { module_or_path: bytes } : undefined)
     if (typeof imported.Inspector !== 'function') {
       throw new IdmlEngineError('IDML_ENGINE_API', 'introspect-wasm did not export Inspector.')
     }
