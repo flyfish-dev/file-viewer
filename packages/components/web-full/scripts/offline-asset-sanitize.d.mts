@@ -5,6 +5,8 @@ export interface OfflineAssetSanitizationResult {
   replacementCount: number
 }
 
+export declare function isRetainedNativeNoticeBook(original: string, file: string): boolean
+
 export interface OfflineAssetSanitizerPluginOptions {
   label?: string
   log?: boolean

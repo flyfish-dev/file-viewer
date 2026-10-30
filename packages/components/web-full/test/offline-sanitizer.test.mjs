@@ -5,6 +5,21 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { sanitizeOfflineAssetText, sanitizeOfflineViewerAssetTree } from '../scripts/offline-asset-sanitize.mjs'
 
+test('retains complete native grants and source offers without exempting executable or ordinary JSON fallbacks', async () => {
+  const source = await readFile(new URL('../../../renderers/design/LICENSES/Introspect_NATIVE_THIRD_PARTY_LICENSES.json', import.meta.url), 'utf8')
+  assert.match(source, /https:\/\/api\.github\.com\/repos\/.+\/tarball\//)
+  const retained = sanitizeOfflineAssetText(source, '/assets/native-notices.json')
+  assert.equal(retained.output, source)
+  assert.equal(retained.replacementCount, 0)
+  const runtime = `const metadata=${source};fetch('https://api.github.com/repos/owner/runtime');`
+  assert.doesNotMatch(sanitizeOfflineAssetText(runtime, '/assets/LICENSE.js').output, /https:\/\/api\.github\.com/)
+  const ordinary = '{"materials":{},"url":"https://api.github.com/repos/owner/runtime"}'
+  assert.doesNotMatch(sanitizeOfflineAssetText(ordinary, '/assets/native-notices.json').output, /https:\/\/api\.github\.com/)
+  const invalid = JSON.parse(source)
+  Object.values(invalid.materials)[0].text += 'modified grant'
+  assert.doesNotMatch(sanitizeOfflineAssetText(JSON.stringify(invalid), '/assets/native-notices.json').output, /https:\/\/api\.github\.com/)
+})
+
 test('preserves selected CDN hostname comparisons while localizing actual runtime fallbacks and Draw.io paths', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'file-viewer-offline-sanitizer-'))
   t.after(() => rm(directory, { recursive: true, force: true }))
