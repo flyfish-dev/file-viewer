@@ -225,7 +225,9 @@ jobs:
 
       - name: Verify the Adobe design asset pack
         if: steps.impact.outputs.runtime != 'false'
-        run: pnpm --filter @file-viewer/assets-design verify
+        run: |
+          pnpm --filter @file-viewer/assets-design verify
+          node --test packages/renderers/design/test/idml-wasm-initialization.test.mjs
 
       - name: Type-check
         if: steps.impact.outputs.runtime != 'false'
