@@ -26,7 +26,7 @@
     "file-viewer-cli": "3.3.2",
     "file-viewer-copy-assets": "3.3.2"
   },
-  "privateReceiptSha256": "19b3a1061ccaaffbd8b1b5d4a5cf5beb799b5bfdcf6eb099ed2d2bdf0706ec8e",
+  "privateReceiptSha256": "51466a2792ce757a6239a25c9d8c0bcc01bea9503c768184c1441ecd5628bb8a",
   "packageCount": 18,
   "packages": [
     {
@@ -325,23 +325,23 @@
       "sourcePackageVersion": "3.3.1",
       "version": "3.3.2",
       "tarball": "file-viewer-web-full-3.3.2.tgz",
-      "tarballSize": 69702494,
-      "sha256": "c9849537cc63a779b3243633b784d5c0ac31fa1e9535f4ab07eb6215b04cc9fe",
+      "tarballSize": 69702614,
+      "sha256": "3996656a73210918137e87995d4814c8dcb458333e6213d754d0f8f0385cd255",
       "fileCount": 449,
-      "integrity": "sha512-zgKSDGhgVCK1ZdKUN3Mu9UGT/PjKNf3eTXzUxlBdWXXwbFdGtlFG248qplu0AHobFCjR/+H1QbhuIpPqiiVMKQ==",
+      "integrity": "sha512-70E7FRSkXwUQ9vqd+uvaJkhCfJLb1rL8pekEwZ9WoTtWSrvijCWCxh1zUQxm7l6B9Fhs8pvmKRocqvj04BdA2Q==",
       "license": "Apache-2.0",
       "readmes": {
         "README.md": {
-          "bytes": 39714,
-          "sha256": "a8dfe0af502d4eeb3461a52535ed8d1c88897f71eb13ebd318e5d2605d9cd058"
+          "bytes": 39817,
+          "sha256": "46ead638e5297494196312fae3eb7b2ea5cf83e0bfa8177c8e8e38813eeed0be"
         },
         "README.en.md": {
-          "bytes": 39714,
-          "sha256": "a8dfe0af502d4eeb3461a52535ed8d1c88897f71eb13ebd318e5d2605d9cd058"
+          "bytes": 39817,
+          "sha256": "46ead638e5297494196312fae3eb7b2ea5cf83e0bfa8177c8e8e38813eeed0be"
         },
         "README.zh-CN.md": {
-          "bytes": 37251,
-          "sha256": "f540513b7002002c80165f3832d7db2a268f36fc71c520b730b957b085a64521"
+          "bytes": 37341,
+          "sha256": "ae1e531d4fef623db2cb6b8576705381261586950492f6e4d036e0f1a48b34e8"
         }
       },
       "releaseArtifact": {

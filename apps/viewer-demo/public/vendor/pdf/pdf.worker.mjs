@@ -1,3 +1,4 @@
+/* File Viewer modification: isolated PDF.js internal webpack runtime identifiers for webpack 4 compatibility and removed unavailable source-map metadata. */
 /**
  * @licstart The following is the entire license notice for the
  * JavaScript code in this page
@@ -24,13 +25,13 @@
  * pdfjsVersion = 5.4.624
  * pdfjsBuild = 384c6208b
  */
-/******/ var __webpack_modules__ = ({
+/******/ var __pdfjs_webpack_modules__ = ({
 
 /***/ 34
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isCallable = __webpack_require__(4901);
+var isCallable = __pdfjs_webpack_require__(4901);
 
 module.exports = function (it) {
   return typeof it == 'object' ? it !== null : isCallable(it);
@@ -40,14 +41,14 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 81
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var call = __webpack_require__(9565);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var tryToString = __webpack_require__(6823);
-var getIteratorMethod = __webpack_require__(851);
+var call = __pdfjs_webpack_require__(9565);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var tryToString = __pdfjs_webpack_require__(6823);
+var getIteratorMethod = __pdfjs_webpack_require__(851);
 
 var $TypeError = TypeError;
 
@@ -61,17 +62,17 @@ module.exports = function (argument, usingIterator) {
 /***/ },
 
 /***/ 116
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var call = __webpack_require__(9565);
-var iterate = __webpack_require__(2652);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var iteratorClose = __webpack_require__(9539);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
+var $ = __pdfjs_webpack_require__(6518);
+var call = __pdfjs_webpack_require__(9565);
+var iterate = __pdfjs_webpack_require__(2652);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
 
 var findWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('find', TypeError);
 
@@ -100,17 +101,17 @@ $({ target: 'Iterator', proto: true, real: true, forced: findWithoutClosingOnEar
 /***/ },
 
 /***/ 283
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
-var fails = __webpack_require__(9039);
-var isCallable = __webpack_require__(4901);
-var hasOwn = __webpack_require__(9297);
-var DESCRIPTORS = __webpack_require__(3724);
-var CONFIGURABLE_FUNCTION_NAME = (__webpack_require__(350).CONFIGURABLE);
-var inspectSource = __webpack_require__(3706);
-var InternalStateModule = __webpack_require__(1181);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var fails = __pdfjs_webpack_require__(9039);
+var isCallable = __pdfjs_webpack_require__(4901);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var CONFIGURABLE_FUNCTION_NAME = (__pdfjs_webpack_require__(350).CONFIGURABLE);
+var inspectSource = __pdfjs_webpack_require__(3706);
+var InternalStateModule = __pdfjs_webpack_require__(1181);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
@@ -162,11 +163,11 @@ Function.prototype.toString = makeBuiltIn(function toString() {
 /***/ },
 
 /***/ 350
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var hasOwn = __webpack_require__(9297);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var hasOwn = __pdfjs_webpack_require__(9297);
 
 var FunctionPrototype = Function.prototype;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
@@ -187,10 +188,10 @@ module.exports = {
 /***/ },
 
 /***/ 397
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var getBuiltIn = __webpack_require__(7751);
+var getBuiltIn = __pdfjs_webpack_require__(7751);
 
 module.exports = getBuiltIn('document', 'documentElement');
 
@@ -207,14 +208,14 @@ module.exports = {};
 /***/ },
 
 /***/ 456
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var uncurryThis = __webpack_require__(9504);
-var anUint8Array = __webpack_require__(4154);
-var notDetached = __webpack_require__(5169);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var anUint8Array = __pdfjs_webpack_require__(4154);
+var notDetached = __pdfjs_webpack_require__(5169);
 
 var numberToString = uncurryThis(1.1.toString);
 
@@ -248,10 +249,10 @@ if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIO
 /***/ },
 
 /***/ 507
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var call = __webpack_require__(9565);
+var call = __pdfjs_webpack_require__(9565);
 
 module.exports = function (record, fn, ITERATOR_INSTEAD_OF_RECORD) {
   var iterator = ITERATOR_INSTEAD_OF_RECORD ? record : record.iterator;
@@ -267,20 +268,20 @@ module.exports = function (record, fn, ITERATOR_INSTEAD_OF_RECORD) {
 /***/ },
 
 /***/ 531
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var call = __webpack_require__(9565);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var getIteratorFlattenable = __webpack_require__(8646);
-var createIteratorProxy = __webpack_require__(9462);
-var iteratorClose = __webpack_require__(9539);
-var IS_PURE = __webpack_require__(6395);
-var iteratorHelperThrowsOnInvalidIterator = __webpack_require__(684);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
+var $ = __pdfjs_webpack_require__(6518);
+var call = __pdfjs_webpack_require__(9565);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var getIteratorFlattenable = __pdfjs_webpack_require__(8646);
+var createIteratorProxy = __pdfjs_webpack_require__(9462);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var IS_PURE = __pdfjs_webpack_require__(6395);
+var iteratorHelperThrowsOnInvalidIterator = __pdfjs_webpack_require__(684);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
 
 var FLAT_MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE
   && !iteratorHelperThrowsOnInvalidIterator('flatMap', function () { /* empty */ });
@@ -335,10 +336,10 @@ $({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
 /***/ },
 
 /***/ 616
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var fails = __webpack_require__(9039);
+var fails = __pdfjs_webpack_require__(9039);
 
 module.exports = !fails(function () {
   // eslint-disable-next-line es/no-function-prototype-bind -- safe
@@ -351,10 +352,10 @@ module.exports = !fails(function () {
 /***/ },
 
 /***/ 655
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var classof = __webpack_require__(6955);
+var classof = __pdfjs_webpack_require__(6955);
 
 var $String = String;
 
@@ -367,10 +368,10 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 679
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isPrototypeOf = __webpack_require__(1625);
+var isPrototypeOf = __pdfjs_webpack_require__(1625);
 
 var $TypeError = TypeError;
 
@@ -420,13 +421,13 @@ module.exports = Math.trunc || function trunc(x) {
 /***/ },
 
 /***/ 757
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var getBuiltIn = __webpack_require__(7751);
-var isCallable = __webpack_require__(4901);
-var isPrototypeOf = __webpack_require__(1625);
-var USE_SYMBOL_AS_UID = __webpack_require__(7040);
+var getBuiltIn = __pdfjs_webpack_require__(7751);
+var isCallable = __pdfjs_webpack_require__(4901);
+var isPrototypeOf = __pdfjs_webpack_require__(1625);
+var USE_SYMBOL_AS_UID = __pdfjs_webpack_require__(7040);
 
 var $Object = Object;
 
@@ -441,14 +442,14 @@ module.exports = USE_SYMBOL_AS_UID ? function (it) {
 /***/ },
 
 /***/ 851
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var classof = __webpack_require__(6955);
-var getMethod = __webpack_require__(5966);
-var isNullOrUndefined = __webpack_require__(4117);
-var Iterators = __webpack_require__(6269);
-var wellKnownSymbol = __webpack_require__(8227);
+var classof = __pdfjs_webpack_require__(6955);
+var getMethod = __pdfjs_webpack_require__(5966);
+var isNullOrUndefined = __pdfjs_webpack_require__(4117);
+var Iterators = __pdfjs_webpack_require__(6269);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
 
 var ITERATOR = wellKnownSymbol('iterator');
 
@@ -477,11 +478,11 @@ module.exports = function (options) {
 /***/ },
 
 /***/ 1072
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var internalObjectKeys = __webpack_require__(1828);
-var enumBugKeys = __webpack_require__(8727);
+var internalObjectKeys = __pdfjs_webpack_require__(1828);
+var enumBugKeys = __pdfjs_webpack_require__(8727);
 
 // `Object.keys` method
 // https://tc39.es/ecma262/#sec-object.keys
@@ -509,10 +510,10 @@ module.exports = function (exec) {
 /***/ },
 
 /***/ 1108
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var classof = __webpack_require__(6955);
+var classof = __pdfjs_webpack_require__(6955);
 
 module.exports = function (it) {
   var klass = classof(it);
@@ -523,17 +524,17 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 1148
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var call = __webpack_require__(9565);
-var iterate = __webpack_require__(2652);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var iteratorClose = __webpack_require__(9539);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
+var $ = __pdfjs_webpack_require__(6518);
+var call = __pdfjs_webpack_require__(9565);
+var iterate = __pdfjs_webpack_require__(2652);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
 
 var everyWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('every', TypeError);
 
@@ -562,17 +563,17 @@ $({ target: 'Iterator', proto: true, real: true, forced: everyWithoutClosingOnEa
 /***/ },
 
 /***/ 1181
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var NATIVE_WEAK_MAP = __webpack_require__(8622);
-var globalThis = __webpack_require__(4576);
-var isObject = __webpack_require__(34);
-var createNonEnumerableProperty = __webpack_require__(6699);
-var hasOwn = __webpack_require__(9297);
-var shared = __webpack_require__(7629);
-var sharedKey = __webpack_require__(6119);
-var hiddenKeys = __webpack_require__(421);
+var NATIVE_WEAK_MAP = __pdfjs_webpack_require__(8622);
+var globalThis = __pdfjs_webpack_require__(4576);
+var isObject = __pdfjs_webpack_require__(34);
+var createNonEnumerableProperty = __pdfjs_webpack_require__(6699);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var shared = __pdfjs_webpack_require__(7629);
+var sharedKey = __pdfjs_webpack_require__(6119);
+var hiddenKeys = __pdfjs_webpack_require__(421);
 
 var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
 var TypeError = globalThis.TypeError;
@@ -640,10 +641,10 @@ module.exports = {
 /***/ },
 
 /***/ 1291
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var trunc = __webpack_require__(741);
+var trunc = __pdfjs_webpack_require__(741);
 
 // `ToIntegerOrInfinity` abstract operation
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
@@ -657,10 +658,10 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 1385
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var iteratorClose = __webpack_require__(9539);
+var iteratorClose = __pdfjs_webpack_require__(9539);
 
 module.exports = function (iters, kind, value) {
   for (var i = iters.length - 1; i >= 0; i--) {
@@ -680,13 +681,13 @@ module.exports = function (iters, kind, value) {
 /***/ },
 
 /***/ 1548
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var fails = __webpack_require__(9039);
-var V8 = __webpack_require__(9519);
-var ENVIRONMENT = __webpack_require__(4215);
+var globalThis = __pdfjs_webpack_require__(4576);
+var fails = __pdfjs_webpack_require__(9039);
+var V8 = __pdfjs_webpack_require__(9519);
+var ENVIRONMENT = __pdfjs_webpack_require__(4215);
 
 var structuredClone = globalThis.structuredClone;
 
@@ -703,20 +704,20 @@ module.exports = !!structuredClone && !fails(function () {
 /***/ },
 
 /***/ 1549
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // TODO: Remove from `core-js@4`
-__webpack_require__(6632);
+__pdfjs_webpack_require__(6632);
 
 
 /***/ },
 
 /***/ 1625
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
+var uncurryThis = __pdfjs_webpack_require__(9504);
 
 module.exports = uncurryThis({}.isPrototypeOf);
 
@@ -724,16 +725,16 @@ module.exports = uncurryThis({}.isPrototypeOf);
 /***/ },
 
 /***/ 1689
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var apply = __webpack_require__(8745);
-var slice = __webpack_require__(7680);
-var newPromiseCapabilityModule = __webpack_require__(6043);
-var aCallable = __webpack_require__(9306);
-var perform = __webpack_require__(1103);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var apply = __pdfjs_webpack_require__(8745);
+var slice = __pdfjs_webpack_require__(7680);
+var newPromiseCapabilityModule = __pdfjs_webpack_require__(6043);
+var aCallable = __pdfjs_webpack_require__(9306);
+var perform = __pdfjs_webpack_require__(1103);
 
 var Promise = globalThis.Promise;
 
@@ -764,13 +765,13 @@ $({ target: 'Promise', stat: true, forced: FORCED }, {
 /***/ },
 
 /***/ 1698
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var union = __webpack_require__(4204);
-var setMethodGetKeysBeforeCloning = __webpack_require__(9835);
-var setMethodAcceptSetLike = __webpack_require__(4916);
+var $ = __pdfjs_webpack_require__(6518);
+var union = __pdfjs_webpack_require__(4204);
+var setMethodGetKeysBeforeCloning = __pdfjs_webpack_require__(9835);
+var setMethodAcceptSetLike = __pdfjs_webpack_require__(4916);
 
 var FORCED = !setMethodAcceptSetLike('union') || !setMethodGetKeysBeforeCloning('union');
 
@@ -784,20 +785,20 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /***/ },
 
 /***/ 1701
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var call = __webpack_require__(9565);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var createIteratorProxy = __webpack_require__(9462);
-var callWithSafeIterationClosing = __webpack_require__(6319);
-var iteratorClose = __webpack_require__(9539);
-var iteratorHelperThrowsOnInvalidIterator = __webpack_require__(684);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
-var IS_PURE = __webpack_require__(6395);
+var $ = __pdfjs_webpack_require__(6518);
+var call = __pdfjs_webpack_require__(9565);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var createIteratorProxy = __pdfjs_webpack_require__(9462);
+var callWithSafeIterationClosing = __pdfjs_webpack_require__(6319);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorHelperThrowsOnInvalidIterator = __pdfjs_webpack_require__(684);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
+var IS_PURE = __pdfjs_webpack_require__(6395);
 
 var MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !iteratorHelperThrowsOnInvalidIterator('map', function () { /* empty */ });
 var mapWithoutClosingOnEarlyError = !IS_PURE && !MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR
@@ -852,13 +853,13 @@ module.exports = function (obj) {
 /***/ },
 
 /***/ 1806
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var anObject = __webpack_require__(8551);
-var iterate = __webpack_require__(2652);
-var getIteratorDirect = __webpack_require__(1767);
+var $ = __pdfjs_webpack_require__(6518);
+var anObject = __pdfjs_webpack_require__(8551);
+var iterate = __pdfjs_webpack_require__(2652);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
 
 var push = [].push;
 
@@ -876,14 +877,14 @@ $({ target: 'Iterator', proto: true, real: true }, {
 /***/ },
 
 /***/ 1828
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
-var hasOwn = __webpack_require__(9297);
-var toIndexedObject = __webpack_require__(5397);
-var indexOf = (__webpack_require__(9617).indexOf);
-var hiddenKeys = __webpack_require__(421);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var toIndexedObject = __pdfjs_webpack_require__(5397);
+var indexOf = (__pdfjs_webpack_require__(9617).indexOf);
+var hiddenKeys = __pdfjs_webpack_require__(421);
 
 var push = uncurryThis([].push);
 
@@ -904,11 +905,11 @@ module.exports = function (object, names) {
 /***/ },
 
 /***/ 2106
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var makeBuiltIn = __webpack_require__(283);
-var defineProperty = __webpack_require__(4913);
+var makeBuiltIn = __pdfjs_webpack_require__(283);
+var defineProperty = __pdfjs_webpack_require__(4913);
 
 module.exports = function (target, name, descriptor) {
   if (descriptor.get) makeBuiltIn(descriptor.get, name, { getter: true });
@@ -920,10 +921,10 @@ module.exports = function (target, name, descriptor) {
 /***/ },
 
 /***/ 2140
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var wellKnownSymbol = __webpack_require__(8227);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var test = {};
@@ -936,10 +937,10 @@ module.exports = String(test) === '[object z]';
 /***/ },
 
 /***/ 2195
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
+var uncurryThis = __pdfjs_webpack_require__(9504);
 
 var toString = uncurryThis({}.toString);
 var stringSlice = uncurryThis(''.slice);
@@ -952,10 +953,10 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 2211
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var fails = __webpack_require__(9039);
+var fails = __pdfjs_webpack_require__(9039);
 
 module.exports = !fails(function () {
   function F() { /* empty */ }
@@ -968,11 +969,11 @@ module.exports = !fails(function () {
 /***/ },
 
 /***/ 2303
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var uncurryThis = __webpack_require__(9504);
+var globalThis = __pdfjs_webpack_require__(4576);
+var uncurryThis = __pdfjs_webpack_require__(9504);
 
 var Uint8Array = globalThis.Uint8Array;
 var SyntaxError = globalThis.SyntaxError;
@@ -1001,17 +1002,17 @@ module.exports = function (string, into) {
 /***/ },
 
 /***/ 2360
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 /* global ActiveXObject -- old IE, WSH */
-var anObject = __webpack_require__(8551);
-var definePropertiesModule = __webpack_require__(6801);
-var enumBugKeys = __webpack_require__(8727);
-var hiddenKeys = __webpack_require__(421);
-var html = __webpack_require__(397);
-var documentCreateElement = __webpack_require__(4055);
-var sharedKey = __webpack_require__(6119);
+var anObject = __pdfjs_webpack_require__(8551);
+var definePropertiesModule = __pdfjs_webpack_require__(6801);
+var enumBugKeys = __pdfjs_webpack_require__(8727);
+var hiddenKeys = __pdfjs_webpack_require__(421);
+var html = __pdfjs_webpack_require__(397);
+var documentCreateElement = __pdfjs_webpack_require__(4055);
+var sharedKey = __pdfjs_webpack_require__(6119);
 
 var GT = '>';
 var LT = '<';
@@ -1093,12 +1094,12 @@ module.exports = Object.create || function create(O, Properties) {
 /***/ },
 
 /***/ 2475
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var isSupersetOf = __webpack_require__(8527);
-var setMethodAcceptSetLike = __webpack_require__(4916);
+var $ = __pdfjs_webpack_require__(6518);
+var isSupersetOf = __pdfjs_webpack_require__(8527);
+var setMethodAcceptSetLike = __pdfjs_webpack_require__(4916);
 
 var INCORRECT = !setMethodAcceptSetLike('isSupersetOf', function (result) {
   return !result;
@@ -1114,20 +1115,20 @@ $({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
 /***/ },
 
 /***/ 2489
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var call = __webpack_require__(9565);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var createIteratorProxy = __webpack_require__(9462);
-var callWithSafeIterationClosing = __webpack_require__(6319);
-var IS_PURE = __webpack_require__(6395);
-var iteratorClose = __webpack_require__(9539);
-var iteratorHelperThrowsOnInvalidIterator = __webpack_require__(684);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
+var $ = __pdfjs_webpack_require__(6518);
+var call = __pdfjs_webpack_require__(9565);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var createIteratorProxy = __pdfjs_webpack_require__(9462);
+var callWithSafeIterationClosing = __pdfjs_webpack_require__(6319);
+var IS_PURE = __pdfjs_webpack_require__(6395);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorHelperThrowsOnInvalidIterator = __pdfjs_webpack_require__(684);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
 
 var FILTER_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !iteratorHelperThrowsOnInvalidIterator('filter', function () { /* empty */ });
 var filterWithoutClosingOnEarlyError = !IS_PURE && !FILTER_WITHOUT_THROWING_ON_INVALID_ITERATOR
@@ -1185,19 +1186,19 @@ module.exports = function (value, done) {
 /***/ },
 
 /***/ 2652
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var bind = __webpack_require__(6080);
-var call = __webpack_require__(9565);
-var anObject = __webpack_require__(8551);
-var tryToString = __webpack_require__(6823);
-var isArrayIteratorMethod = __webpack_require__(4209);
-var lengthOfArrayLike = __webpack_require__(6198);
-var isPrototypeOf = __webpack_require__(1625);
-var getIterator = __webpack_require__(81);
-var getIteratorMethod = __webpack_require__(851);
-var iteratorClose = __webpack_require__(9539);
+var bind = __pdfjs_webpack_require__(6080);
+var call = __pdfjs_webpack_require__(9565);
+var anObject = __pdfjs_webpack_require__(8551);
+var tryToString = __pdfjs_webpack_require__(6823);
+var isArrayIteratorMethod = __pdfjs_webpack_require__(4209);
+var lengthOfArrayLike = __pdfjs_webpack_require__(6198);
+var isPrototypeOf = __pdfjs_webpack_require__(1625);
+var getIterator = __pdfjs_webpack_require__(81);
+var getIteratorMethod = __pdfjs_webpack_require__(851);
+var iteratorClose = __pdfjs_webpack_require__(9539);
 
 var $TypeError = TypeError;
 
@@ -1261,15 +1262,15 @@ module.exports = function (iterable, unboundFunction, options) {
 /***/ },
 
 /***/ 2777
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var call = __webpack_require__(9565);
-var isObject = __webpack_require__(34);
-var isSymbol = __webpack_require__(757);
-var getMethod = __webpack_require__(5966);
-var ordinaryToPrimitive = __webpack_require__(4270);
-var wellKnownSymbol = __webpack_require__(8227);
+var call = __pdfjs_webpack_require__(9565);
+var isObject = __pdfjs_webpack_require__(34);
+var isSymbol = __pdfjs_webpack_require__(757);
+var getMethod = __pdfjs_webpack_require__(5966);
+var ordinaryToPrimitive = __pdfjs_webpack_require__(4270);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
 
 var $TypeError = TypeError;
 var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
@@ -1294,14 +1295,14 @@ module.exports = function (input, pref) {
 /***/ },
 
 /***/ 2787
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var hasOwn = __webpack_require__(9297);
-var isCallable = __webpack_require__(4901);
-var toObject = __webpack_require__(8981);
-var sharedKey = __webpack_require__(6119);
-var CORRECT_PROTOTYPE_GETTER = __webpack_require__(2211);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var isCallable = __pdfjs_webpack_require__(4901);
+var toObject = __pdfjs_webpack_require__(8981);
+var sharedKey = __pdfjs_webpack_require__(6119);
+var CORRECT_PROTOTYPE_GETTER = __pdfjs_webpack_require__(2211);
 
 var IE_PROTO = sharedKey('IE_PROTO');
 var $Object = Object;
@@ -1323,11 +1324,11 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O
 /***/ },
 
 /***/ 2796
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var fails = __webpack_require__(9039);
-var isCallable = __webpack_require__(4901);
+var fails = __pdfjs_webpack_require__(9039);
+var isCallable = __pdfjs_webpack_require__(4901);
 
 var replacement = /#|\.prototype\./;
 
@@ -1393,10 +1394,10 @@ module.exports = function (passed, required) {
 /***/ },
 
 /***/ 2839
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
+var globalThis = __pdfjs_webpack_require__(4576);
 
 var navigator = globalThis.navigator;
 var userAgent = navigator && navigator.userAgent;
@@ -1407,14 +1408,14 @@ module.exports = userAgent ? String(userAgent) : '';
 /***/ },
 
 /***/ 2967
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 /* eslint-disable no-proto -- safe */
-var uncurryThisAccessor = __webpack_require__(6706);
-var isObject = __webpack_require__(34);
-var requireObjectCoercible = __webpack_require__(7750);
-var aPossiblePrototype = __webpack_require__(3506);
+var uncurryThisAccessor = __pdfjs_webpack_require__(6706);
+var isObject = __pdfjs_webpack_require__(34);
+var requireObjectCoercible = __pdfjs_webpack_require__(7750);
+var aPossiblePrototype = __pdfjs_webpack_require__(3506);
 
 // `Object.setPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.setprototypeof
@@ -1443,14 +1444,14 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
 /***/ },
 
 /***/ 3068
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // based on Shewchuk's algorithm for exactly floating point addition
 // adapted from https://github.com/tc39/proposal-math-sum/blob/3513d58323a1ae25560e8700aa5294500c6c9287/polyfill/polyfill.mjs
-var $ = __webpack_require__(6518);
-var uncurryThis = __webpack_require__(9504);
-var iterate = __webpack_require__(2652);
+var $ = __pdfjs_webpack_require__(6518);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var iterate = __pdfjs_webpack_require__(2652);
 
 var $RangeError = RangeError;
 var $TypeError = TypeError;
@@ -1601,12 +1602,12 @@ $({ target: 'Math', stat: true }, {
 /***/ },
 
 /***/ 3238
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var NATIVE_ARRAY_BUFFER = __webpack_require__(7811);
-var arrayBufferByteLength = __webpack_require__(7394);
+var globalThis = __pdfjs_webpack_require__(4576);
+var NATIVE_ARRAY_BUFFER = __pdfjs_webpack_require__(7811);
+var arrayBufferByteLength = __pdfjs_webpack_require__(7394);
 
 var DataView = globalThis.DataView;
 
@@ -1625,10 +1626,10 @@ module.exports = function (O) {
 /***/ },
 
 /***/ 3392
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
+var uncurryThis = __pdfjs_webpack_require__(9504);
 
 var id = 0;
 var postfix = Math.random();
@@ -1642,16 +1643,16 @@ module.exports = function (key) {
 /***/ },
 
 /***/ 3440
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aSet = __webpack_require__(7080);
-var SetHelpers = __webpack_require__(4402);
-var clone = __webpack_require__(9286);
-var size = __webpack_require__(5170);
-var getSetRecord = __webpack_require__(3789);
-var iterateSet = __webpack_require__(8469);
-var iterateSimple = __webpack_require__(507);
+var aSet = __pdfjs_webpack_require__(7080);
+var SetHelpers = __pdfjs_webpack_require__(4402);
+var clone = __pdfjs_webpack_require__(9286);
+var size = __pdfjs_webpack_require__(5170);
+var getSetRecord = __pdfjs_webpack_require__(3789);
+var iterateSet = __pdfjs_webpack_require__(8469);
+var iterateSimple = __pdfjs_webpack_require__(507);
 
 var has = SetHelpers.has;
 var remove = SetHelpers.remove;
@@ -1689,10 +1690,10 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 3506
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isPossiblePrototype = __webpack_require__(3925);
+var isPossiblePrototype = __pdfjs_webpack_require__(3925);
 
 var $String = String;
 var $TypeError = TypeError;
@@ -1706,17 +1707,17 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 3579
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var call = __webpack_require__(9565);
-var iterate = __webpack_require__(2652);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var iteratorClose = __webpack_require__(9539);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
+var $ = __pdfjs_webpack_require__(6518);
+var call = __pdfjs_webpack_require__(9565);
+var iterate = __pdfjs_webpack_require__(2652);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
 
 var someWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('some', TypeError);
 
@@ -1745,13 +1746,13 @@ $({ target: 'Iterator', proto: true, real: true, forced: someWithoutClosingOnEar
 /***/ },
 
 /***/ 3611
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var defineBuiltInAccessor = __webpack_require__(2106);
-var DESCRIPTORS = __webpack_require__(3724);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var defineBuiltInAccessor = __pdfjs_webpack_require__(2106);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
 
 var $TypeError = TypeError;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
@@ -1793,14 +1794,14 @@ try {
 /***/ },
 
 /***/ 3650
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aSet = __webpack_require__(7080);
-var SetHelpers = __webpack_require__(4402);
-var clone = __webpack_require__(9286);
-var getSetRecord = __webpack_require__(3789);
-var iterateSimple = __webpack_require__(507);
+var aSet = __pdfjs_webpack_require__(7080);
+var SetHelpers = __pdfjs_webpack_require__(4402);
+var clone = __pdfjs_webpack_require__(9286);
+var getSetRecord = __pdfjs_webpack_require__(3789);
+var iterateSimple = __pdfjs_webpack_require__(507);
 
 var add = SetHelpers.add;
 var has = SetHelpers.has;
@@ -1823,12 +1824,12 @@ module.exports = function symmetricDifference(other) {
 /***/ },
 
 /***/ 3706
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
-var isCallable = __webpack_require__(4901);
-var store = __webpack_require__(7629);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var isCallable = __pdfjs_webpack_require__(4901);
+var store = __pdfjs_webpack_require__(7629);
 
 var functionToString = uncurryThis(Function.toString);
 
@@ -1855,10 +1856,10 @@ exports.f = Object.getOwnPropertySymbols;
 /***/ },
 
 /***/ 3724
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var fails = __webpack_require__(9039);
+var fails = __pdfjs_webpack_require__(9039);
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
@@ -1870,14 +1871,14 @@ module.exports = !fails(function () {
 /***/ },
 
 /***/ 3789
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var call = __webpack_require__(9565);
-var toIntegerOrInfinity = __webpack_require__(1291);
-var getIteratorDirect = __webpack_require__(1767);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var call = __pdfjs_webpack_require__(9565);
+var toIntegerOrInfinity = __pdfjs_webpack_require__(1291);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
 
 var INVALID_SIZE = 'Invalid size';
 var $RangeError = RangeError;
@@ -1917,13 +1918,13 @@ module.exports = function (obj) {
 /***/ },
 
 /***/ 3838
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aSet = __webpack_require__(7080);
-var size = __webpack_require__(5170);
-var iterate = __webpack_require__(8469);
-var getSetRecord = __webpack_require__(3789);
+var aSet = __pdfjs_webpack_require__(7080);
+var size = __pdfjs_webpack_require__(5170);
+var iterate = __pdfjs_webpack_require__(8469);
+var getSetRecord = __pdfjs_webpack_require__(3789);
 
 // `Set.prototype.isSubsetOf` method
 // https://tc39.es/ecma262/#sec-set.prototype.issubsetof
@@ -1940,12 +1941,12 @@ module.exports = function isSubsetOf(other) {
 /***/ },
 
 /***/ 3853
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var isDisjointFrom = __webpack_require__(4449);
-var setMethodAcceptSetLike = __webpack_require__(4916);
+var $ = __pdfjs_webpack_require__(6518);
+var isDisjointFrom = __pdfjs_webpack_require__(4449);
+var setMethodAcceptSetLike = __pdfjs_webpack_require__(4916);
 
 var INCORRECT = !setMethodAcceptSetLike('isDisjointFrom', function (result) {
   return !result;
@@ -1961,10 +1962,10 @@ $({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
 /***/ },
 
 /***/ 3925
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isObject = __webpack_require__(34);
+var isObject = __pdfjs_webpack_require__(34);
 
 module.exports = function (argument) {
   return isObject(argument) || argument === null;
@@ -1974,10 +1975,10 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 3972
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isObject = __webpack_require__(34);
+var isObject = __pdfjs_webpack_require__(34);
 
 var $String = String;
 var $TypeError = TypeError;
@@ -1991,11 +1992,11 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 4055
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var isObject = __webpack_require__(34);
+var globalThis = __pdfjs_webpack_require__(4576);
+var isObject = __pdfjs_webpack_require__(34);
 
 var document = globalThis.document;
 // typeof document.createElement is 'object' in old IE
@@ -2009,15 +2010,15 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 4114
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var toObject = __webpack_require__(8981);
-var lengthOfArrayLike = __webpack_require__(6198);
-var setArrayLength = __webpack_require__(4527);
-var doesNotExceedSafeInteger = __webpack_require__(6837);
-var fails = __webpack_require__(9039);
+var $ = __pdfjs_webpack_require__(6518);
+var toObject = __pdfjs_webpack_require__(8981);
+var lengthOfArrayLike = __pdfjs_webpack_require__(6198);
+var setArrayLength = __pdfjs_webpack_require__(4527);
+var doesNotExceedSafeInteger = __pdfjs_webpack_require__(6837);
+var fails = __pdfjs_webpack_require__(9039);
 
 var INCORRECT_TO_LENGTH = fails(function () {
   return [].push.call({ length: 0x100000000 }, 1) !== 4294967297;
@@ -2071,10 +2072,10 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 4154
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var classof = __webpack_require__(6955);
+var classof = __pdfjs_webpack_require__(6955);
 
 var $TypeError = TypeError;
 
@@ -2089,14 +2090,14 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 4204
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aSet = __webpack_require__(7080);
-var add = (__webpack_require__(4402).add);
-var clone = __webpack_require__(9286);
-var getSetRecord = __webpack_require__(3789);
-var iterateSimple = __webpack_require__(507);
+var aSet = __pdfjs_webpack_require__(7080);
+var add = (__pdfjs_webpack_require__(4402).add);
+var clone = __pdfjs_webpack_require__(9286);
+var getSetRecord = __pdfjs_webpack_require__(3789);
+var iterateSimple = __pdfjs_webpack_require__(507);
 
 // `Set.prototype.union` method
 // https://tc39.es/ecma262/#sec-set.prototype.union
@@ -2114,11 +2115,11 @@ module.exports = function union(other) {
 /***/ },
 
 /***/ 4209
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var wellKnownSymbol = __webpack_require__(8227);
-var Iterators = __webpack_require__(6269);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
+var Iterators = __pdfjs_webpack_require__(6269);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var ArrayPrototype = Array.prototype;
@@ -2132,13 +2133,13 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 4215
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 /* global Bun, Deno -- detection */
-var globalThis = __webpack_require__(4576);
-var userAgent = __webpack_require__(2839);
-var classof = __webpack_require__(2195);
+var globalThis = __pdfjs_webpack_require__(4576);
+var userAgent = __pdfjs_webpack_require__(2839);
+var classof = __pdfjs_webpack_require__(2195);
 
 var userAgentStartsWith = function (string) {
   return userAgent.slice(0, string.length) === string;
@@ -2160,15 +2161,15 @@ module.exports = (function () {
 /***/ },
 
 /***/ 4226
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var aString = __webpack_require__(3463);
-var anUint8Array = __webpack_require__(4154);
-var notDetached = __webpack_require__(5169);
-var $fromHex = __webpack_require__(2303);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var aString = __pdfjs_webpack_require__(3463);
+var anUint8Array = __pdfjs_webpack_require__(4154);
+var notDetached = __pdfjs_webpack_require__(5169);
+var $fromHex = __pdfjs_webpack_require__(2303);
 
 // `Uint8Array.prototype.setFromHex` method
 // https://github.com/tc39/proposal-arraybuffer-base64
@@ -2186,22 +2187,22 @@ if (globalThis.Uint8Array) $({ target: 'Uint8Array', proto: true }, {
 /***/ },
 
 /***/ 4235
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // TODO: Remove from `core-js@4`
-__webpack_require__(3068);
+__pdfjs_webpack_require__(3068);
 
 
 /***/ },
 
 /***/ 4270
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var call = __webpack_require__(9565);
-var isCallable = __webpack_require__(4901);
-var isObject = __webpack_require__(34);
+var call = __pdfjs_webpack_require__(9565);
+var isCallable = __pdfjs_webpack_require__(4901);
+var isObject = __pdfjs_webpack_require__(34);
 
 var $TypeError = TypeError;
 
@@ -2219,10 +2220,10 @@ module.exports = function (input, pref) {
 /***/ },
 
 /***/ 4376
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var classof = __webpack_require__(2195);
+var classof = __pdfjs_webpack_require__(2195);
 
 // `IsArray` abstract operation
 // https://tc39.es/ecma262/#sec-isarray
@@ -2235,10 +2236,10 @@ module.exports = Array.isArray || function isArray(argument) {
 /***/ },
 
 /***/ 4402
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
+var uncurryThis = __pdfjs_webpack_require__(9504);
 
 // eslint-disable-next-line es/no-set -- safe
 var SetPrototype = Set.prototype;
@@ -2256,16 +2257,16 @@ module.exports = {
 /***/ },
 
 /***/ 4449
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aSet = __webpack_require__(7080);
-var has = (__webpack_require__(4402).has);
-var size = __webpack_require__(5170);
-var getSetRecord = __webpack_require__(3789);
-var iterateSet = __webpack_require__(8469);
-var iterateSimple = __webpack_require__(507);
-var iteratorClose = __webpack_require__(9539);
+var aSet = __pdfjs_webpack_require__(7080);
+var has = (__pdfjs_webpack_require__(4402).has);
+var size = __pdfjs_webpack_require__(5170);
+var getSetRecord = __pdfjs_webpack_require__(3789);
+var iterateSet = __pdfjs_webpack_require__(8469);
+var iterateSimple = __pdfjs_webpack_require__(507);
+var iteratorClose = __pdfjs_webpack_require__(9539);
 
 // `Set.prototype.isDisjointFrom` method
 // https://tc39.es/ecma262/#sec-set.prototype.isdisjointfrom
@@ -2285,12 +2286,12 @@ module.exports = function isDisjointFrom(other) {
 /***/ },
 
 /***/ 4483
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var getBuiltInNodeModule = __webpack_require__(9429);
-var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(1548);
+var globalThis = __pdfjs_webpack_require__(4576);
+var getBuiltInNodeModule = __pdfjs_webpack_require__(9429);
+var PROPER_STRUCTURED_CLONE_TRANSFER = __pdfjs_webpack_require__(1548);
 
 var structuredClone = globalThis.structuredClone;
 var $ArrayBuffer = globalThis.ArrayBuffer;
@@ -2329,13 +2330,13 @@ module.exports = detach;
 /***/ },
 
 /***/ 4495
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 /* eslint-disable es/no-symbol -- required for testing */
-var V8_VERSION = __webpack_require__(9519);
-var fails = __webpack_require__(9039);
-var globalThis = __webpack_require__(4576);
+var V8_VERSION = __pdfjs_webpack_require__(9519);
+var fails = __pdfjs_webpack_require__(9039);
+var globalThis = __pdfjs_webpack_require__(4576);
 
 var $String = globalThis.String;
 
@@ -2355,11 +2356,11 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 /***/ },
 
 /***/ 4527
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var isArray = __webpack_require__(4376);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var isArray = __pdfjs_webpack_require__(4376);
 
 var $TypeError = TypeError;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
@@ -2389,10 +2390,10 @@ module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
 /***/ },
 
 /***/ 4549
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
+var globalThis = __pdfjs_webpack_require__(4576);
 
 // https://github.com/tc39/ecma262/pull/3467
 module.exports = function (METHOD_NAME, ExpectedError) {
@@ -2442,13 +2443,13 @@ module.exports =
 /***/ },
 
 /***/ 4603
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var defineBuiltIn = __webpack_require__(6840);
-var uncurryThis = __webpack_require__(9504);
-var toString = __webpack_require__(655);
-var validateArgumentsLength = __webpack_require__(2812);
+var defineBuiltIn = __pdfjs_webpack_require__(6840);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var toString = __pdfjs_webpack_require__(655);
+var validateArgumentsLength = __pdfjs_webpack_require__(2812);
 
 var $URLSearchParams = URLSearchParams;
 var URLSearchParamsPrototype = $URLSearchParams.prototype;
@@ -2498,11 +2499,11 @@ if (params + '' !== 'a=2') {
 /***/ },
 
 /***/ 4628
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var newPromiseCapabilityModule = __webpack_require__(6043);
+var $ = __pdfjs_webpack_require__(6518);
+var newPromiseCapabilityModule = __pdfjs_webpack_require__(6043);
 
 // `Promise.withResolvers` method
 // https://tc39.es/ecma262/#sec-promise.withResolvers
@@ -2521,26 +2522,26 @@ $({ target: 'Promise', stat: true }, {
 /***/ },
 
 /***/ 4644
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var NATIVE_ARRAY_BUFFER = __webpack_require__(7811);
-var DESCRIPTORS = __webpack_require__(3724);
-var globalThis = __webpack_require__(4576);
-var isCallable = __webpack_require__(4901);
-var isObject = __webpack_require__(34);
-var hasOwn = __webpack_require__(9297);
-var classof = __webpack_require__(6955);
-var tryToString = __webpack_require__(6823);
-var createNonEnumerableProperty = __webpack_require__(6699);
-var defineBuiltIn = __webpack_require__(6840);
-var defineBuiltInAccessor = __webpack_require__(2106);
-var isPrototypeOf = __webpack_require__(1625);
-var getPrototypeOf = __webpack_require__(2787);
-var setPrototypeOf = __webpack_require__(2967);
-var wellKnownSymbol = __webpack_require__(8227);
-var uid = __webpack_require__(3392);
-var InternalStateModule = __webpack_require__(1181);
+var NATIVE_ARRAY_BUFFER = __pdfjs_webpack_require__(7811);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var globalThis = __pdfjs_webpack_require__(4576);
+var isCallable = __pdfjs_webpack_require__(4901);
+var isObject = __pdfjs_webpack_require__(34);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var classof = __pdfjs_webpack_require__(6955);
+var tryToString = __pdfjs_webpack_require__(6823);
+var createNonEnumerableProperty = __pdfjs_webpack_require__(6699);
+var defineBuiltIn = __pdfjs_webpack_require__(6840);
+var defineBuiltInAccessor = __pdfjs_webpack_require__(2106);
+var isPrototypeOf = __pdfjs_webpack_require__(1625);
+var getPrototypeOf = __pdfjs_webpack_require__(2787);
+var setPrototypeOf = __pdfjs_webpack_require__(2967);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
+var uid = __pdfjs_webpack_require__(3392);
+var InternalStateModule = __pdfjs_webpack_require__(1181);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
@@ -2721,12 +2722,12 @@ module.exports = {
 /***/ },
 
 /***/ 4659
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var definePropertyModule = __webpack_require__(4913);
-var createPropertyDescriptor = __webpack_require__(6980);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var definePropertyModule = __pdfjs_webpack_require__(4913);
+var createPropertyDescriptor = __pdfjs_webpack_require__(6980);
 
 module.exports = function (object, key, value) {
   if (DESCRIPTORS) definePropertyModule.f(object, key, createPropertyDescriptor(0, value));
@@ -2756,14 +2757,14 @@ module.exports = typeof documentAll == 'undefined' && documentAll !== undefined 
 /***/ },
 
 /***/ 4913
-(__unused_webpack_module, exports, __webpack_require__) {
+(__unused_webpack_module, exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var IE8_DOM_DEFINE = __webpack_require__(5917);
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(8686);
-var anObject = __webpack_require__(8551);
-var toPropertyKey = __webpack_require__(6969);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var IE8_DOM_DEFINE = __pdfjs_webpack_require__(5917);
+var V8_PROTOTYPE_DEFINE_BUG = __pdfjs_webpack_require__(8686);
+var anObject = __pdfjs_webpack_require__(8551);
+var toPropertyKey = __pdfjs_webpack_require__(6969);
 
 var $TypeError = TypeError;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
@@ -2807,10 +2808,10 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
 /***/ },
 
 /***/ 4916
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var getBuiltIn = __webpack_require__(7751);
+var getBuiltIn = __pdfjs_webpack_require__(7751);
 
 var createSetLike = function (size) {
   return {
@@ -2872,13 +2873,13 @@ module.exports = function (name, callback) {
 /***/ },
 
 /***/ 5024
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var symmetricDifference = __webpack_require__(3650);
-var setMethodGetKeysBeforeCloning = __webpack_require__(9835);
-var setMethodAcceptSetLike = __webpack_require__(4916);
+var $ = __pdfjs_webpack_require__(6518);
+var symmetricDifference = __pdfjs_webpack_require__(3650);
+var setMethodGetKeysBeforeCloning = __pdfjs_webpack_require__(9835);
+var setMethodAcceptSetLike = __pdfjs_webpack_require__(4916);
 
 var FORCED = !setMethodAcceptSetLike('symmetricDifference') || !setMethodGetKeysBeforeCloning('symmetricDifference');
 
@@ -2892,14 +2893,14 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /***/ },
 
 /***/ 5031
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var getBuiltIn = __webpack_require__(7751);
-var uncurryThis = __webpack_require__(9504);
-var getOwnPropertyNamesModule = __webpack_require__(8480);
-var getOwnPropertySymbolsModule = __webpack_require__(3717);
-var anObject = __webpack_require__(8551);
+var getBuiltIn = __pdfjs_webpack_require__(7751);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var getOwnPropertyNamesModule = __pdfjs_webpack_require__(8480);
+var getOwnPropertySymbolsModule = __pdfjs_webpack_require__(3717);
+var anObject = __pdfjs_webpack_require__(8551);
 
 var concat = uncurryThis([].concat);
 
@@ -2914,10 +2915,10 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 /***/ },
 
 /***/ 5169
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isDetached = __webpack_require__(3238);
+var isDetached = __pdfjs_webpack_require__(3238);
 
 var $TypeError = TypeError;
 
@@ -2930,11 +2931,11 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 5170
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThisAccessor = __webpack_require__(6706);
-var SetHelpers = __webpack_require__(4402);
+var uncurryThisAccessor = __pdfjs_webpack_require__(6706);
+var SetHelpers = __pdfjs_webpack_require__(4402);
 
 module.exports = uncurryThisAccessor(SetHelpers.proto, 'size', 'get') || function (set) {
   return set.size;
@@ -2944,11 +2945,11 @@ module.exports = uncurryThisAccessor(SetHelpers.proto, 'size', 'get') || functio
 /***/ },
 
 /***/ 5213
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var fails = __webpack_require__(9039);
+var globalThis = __pdfjs_webpack_require__(4576);
+var fails = __pdfjs_webpack_require__(9039);
 
 // babel-minify and Closure Compiler transpiles RegExp('.', 'd') -> /./d and it causes SyntaxError
 var RegExp = globalThis.RegExp;
@@ -2998,10 +2999,10 @@ module.exports = { correct: FLAGS_GETTER_IS_CORRECT };
 /***/ },
 
 /***/ 5370
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var lengthOfArrayLike = __webpack_require__(6198);
+var lengthOfArrayLike = __pdfjs_webpack_require__(6198);
 
 module.exports = function (Constructor, list, $length) {
   var index = 0;
@@ -3015,12 +3016,12 @@ module.exports = function (Constructor, list, $length) {
 /***/ },
 
 /***/ 5397
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // toObject with fallback for non-array-like ES3 strings
-var IndexedObject = __webpack_require__(7055);
-var requireObjectCoercible = __webpack_require__(7750);
+var IndexedObject = __pdfjs_webpack_require__(7055);
+var requireObjectCoercible = __pdfjs_webpack_require__(7750);
 
 module.exports = function (it) {
   return IndexedObject(requireObjectCoercible(it));
@@ -3030,10 +3031,10 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 5610
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var toIntegerOrInfinity = __webpack_require__(1291);
+var toIntegerOrInfinity = __pdfjs_webpack_require__(1291);
 
 var max = Math.max;
 var min = Math.min;
@@ -3050,27 +3051,27 @@ module.exports = function (index, length) {
 /***/ },
 
 /***/ 5623
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // TODO: Remove from `core-js@4`
-__webpack_require__(456);
+__pdfjs_webpack_require__(456);
 
 
 /***/ },
 
 /***/ 5636
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var uncurryThis = __webpack_require__(9504);
-var uncurryThisAccessor = __webpack_require__(6706);
-var toIndex = __webpack_require__(7696);
-var notDetached = __webpack_require__(5169);
-var arrayBufferByteLength = __webpack_require__(7394);
-var detachTransferable = __webpack_require__(4483);
-var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(1548);
+var globalThis = __pdfjs_webpack_require__(4576);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var uncurryThisAccessor = __pdfjs_webpack_require__(6706);
+var toIndex = __pdfjs_webpack_require__(7696);
+var notDetached = __pdfjs_webpack_require__(5169);
+var arrayBufferByteLength = __pdfjs_webpack_require__(7394);
+var detachTransferable = __pdfjs_webpack_require__(4483);
+var PROPER_STRUCTURED_CLONE_TRANSFER = __pdfjs_webpack_require__(1548);
 
 var structuredClone = globalThis.structuredClone;
 var ArrayBuffer = globalThis.ArrayBuffer;
@@ -3112,10 +3113,10 @@ module.exports = (PROPER_STRUCTURED_CLONE_TRANSFER || detachTransferable) && fun
 /***/ },
 
 /***/ 5745
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var store = __webpack_require__(7629);
+var store = __pdfjs_webpack_require__(7629);
 
 module.exports = function (key, value) {
   return store[key] || (store[key] = value || {});
@@ -3125,14 +3126,14 @@ module.exports = function (key, value) {
 /***/ },
 
 /***/ 5781
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var getBuiltIn = __webpack_require__(7751);
-var validateArgumentsLength = __webpack_require__(2812);
-var toString = __webpack_require__(655);
-var USE_NATIVE_URL = __webpack_require__(7416);
+var $ = __pdfjs_webpack_require__(6518);
+var getBuiltIn = __pdfjs_webpack_require__(7751);
+var validateArgumentsLength = __pdfjs_webpack_require__(2812);
+var toString = __pdfjs_webpack_require__(655);
+var USE_NATIVE_URL = __pdfjs_webpack_require__(7416);
 
 var URL = getBuiltIn('URL');
 
@@ -3155,10 +3156,10 @@ $({ target: 'URL', stat: true, forced: !USE_NATIVE_URL }, {
 /***/ },
 
 /***/ 5854
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var toPrimitive = __webpack_require__(2777);
+var toPrimitive = __pdfjs_webpack_require__(2777);
 
 var $TypeError = TypeError;
 
@@ -3175,12 +3176,12 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 5876
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var isSubsetOf = __webpack_require__(3838);
-var setMethodAcceptSetLike = __webpack_require__(4916);
+var $ = __pdfjs_webpack_require__(6518);
+var isSubsetOf = __pdfjs_webpack_require__(3838);
+var setMethodAcceptSetLike = __pdfjs_webpack_require__(4916);
 
 var INCORRECT = !setMethodAcceptSetLike('isSubsetOf', function (result) {
   return result;
@@ -3196,12 +3197,12 @@ $({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
 /***/ },
 
 /***/ 5917
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var fails = __webpack_require__(9039);
-var createElement = __webpack_require__(4055);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var fails = __pdfjs_webpack_require__(9039);
+var createElement = __pdfjs_webpack_require__(4055);
 
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
@@ -3215,11 +3216,11 @@ module.exports = !DESCRIPTORS && !fails(function () {
 /***/ },
 
 /***/ 5966
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aCallable = __webpack_require__(9306);
-var isNullOrUndefined = __webpack_require__(4117);
+var aCallable = __pdfjs_webpack_require__(9306);
+var isNullOrUndefined = __pdfjs_webpack_require__(4117);
 
 // `GetMethod` abstract operation
 // https://tc39.es/ecma262/#sec-getmethod
@@ -3232,10 +3233,10 @@ module.exports = function (V, P) {
 /***/ },
 
 /***/ 6043
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aCallable = __webpack_require__(9306);
+var aCallable = __pdfjs_webpack_require__(9306);
 
 var $TypeError = TypeError;
 
@@ -3260,12 +3261,12 @@ module.exports.f = function (C) {
 /***/ },
 
 /***/ 6080
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(7476);
-var aCallable = __webpack_require__(9306);
-var NATIVE_BIND = __webpack_require__(616);
+var uncurryThis = __pdfjs_webpack_require__(7476);
+var aCallable = __pdfjs_webpack_require__(9306);
+var NATIVE_BIND = __pdfjs_webpack_require__(616);
 
 var bind = uncurryThis(uncurryThis.bind);
 
@@ -3281,11 +3282,11 @@ module.exports = function (fn, that) {
 /***/ },
 
 /***/ 6119
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var shared = __webpack_require__(5745);
-var uid = __webpack_require__(3392);
+var shared = __pdfjs_webpack_require__(5745);
+var uid = __pdfjs_webpack_require__(3392);
 
 var keys = shared('keys');
 
@@ -3297,10 +3298,10 @@ module.exports = function (key) {
 /***/ },
 
 /***/ 6193
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var ENVIRONMENT = __webpack_require__(4215);
+var ENVIRONMENT = __pdfjs_webpack_require__(4215);
 
 module.exports = ENVIRONMENT === 'NODE';
 
@@ -3308,10 +3309,10 @@ module.exports = ENVIRONMENT === 'NODE';
 /***/ },
 
 /***/ 6198
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var toLength = __webpack_require__(8014);
+var toLength = __pdfjs_webpack_require__(8014);
 
 // `LengthOfArrayLike` abstract operation
 // https://tc39.es/ecma262/#sec-lengthofarraylike
@@ -3332,10 +3333,10 @@ module.exports = {};
 /***/ },
 
 /***/ 6279
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var defineBuiltIn = __webpack_require__(6840);
+var defineBuiltIn = __pdfjs_webpack_require__(6840);
 
 module.exports = function (target, src, options) {
   for (var key in src) defineBuiltIn(target, key, src[key], options);
@@ -3346,11 +3347,11 @@ module.exports = function (target, src, options) {
 /***/ },
 
 /***/ 6319
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var anObject = __webpack_require__(8551);
-var iteratorClose = __webpack_require__(9539);
+var anObject = __pdfjs_webpack_require__(8551);
+var iteratorClose = __pdfjs_webpack_require__(9539);
 
 // call something on iterator step with safe closing on error
 module.exports = function (iterator, fn, value, ENTRIES) {
@@ -3374,16 +3375,16 @@ module.exports = false;
 /***/ },
 
 /***/ 6518
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var getOwnPropertyDescriptor = (__webpack_require__(7347).f);
-var createNonEnumerableProperty = __webpack_require__(6699);
-var defineBuiltIn = __webpack_require__(6840);
-var defineGlobalProperty = __webpack_require__(9433);
-var copyConstructorProperties = __webpack_require__(7740);
-var isForced = __webpack_require__(2796);
+var globalThis = __pdfjs_webpack_require__(4576);
+var getOwnPropertyDescriptor = (__pdfjs_webpack_require__(7347).f);
+var createNonEnumerableProperty = __pdfjs_webpack_require__(6699);
+var defineBuiltIn = __pdfjs_webpack_require__(6840);
+var defineGlobalProperty = __pdfjs_webpack_require__(9433);
+var copyConstructorProperties = __pdfjs_webpack_require__(7740);
+var isForced = __pdfjs_webpack_require__(2796);
 
 /*
   options.target         - name of the target object
@@ -3436,12 +3437,12 @@ module.exports = function (options, source) {
 /***/ },
 
 /***/ 6573
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var defineBuiltInAccessor = __webpack_require__(2106);
-var isDetached = __webpack_require__(3238);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var defineBuiltInAccessor = __pdfjs_webpack_require__(2106);
+var isDetached = __pdfjs_webpack_require__(3238);
 
 var ArrayBufferPrototype = ArrayBuffer.prototype;
 
@@ -3460,13 +3461,13 @@ if (DESCRIPTORS && !('detached' in ArrayBufferPrototype)) {
 /***/ },
 
 /***/ 6632
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var $fromBase64 = __webpack_require__(9143);
-var anUint8Array = __webpack_require__(4154);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var $fromBase64 = __pdfjs_webpack_require__(9143);
+var anUint8Array = __pdfjs_webpack_require__(4154);
 
 var Uint8Array = globalThis.Uint8Array;
 
@@ -3504,12 +3505,12 @@ if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIO
 /***/ },
 
 /***/ 6699
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var definePropertyModule = __webpack_require__(4913);
-var createPropertyDescriptor = __webpack_require__(6980);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var definePropertyModule = __pdfjs_webpack_require__(4913);
+var createPropertyDescriptor = __pdfjs_webpack_require__(6980);
 
 module.exports = DESCRIPTORS ? function (object, key, value) {
   return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
@@ -3522,11 +3523,11 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
 /***/ },
 
 /***/ 6706
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
-var aCallable = __webpack_require__(9306);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var aCallable = __pdfjs_webpack_require__(9306);
 
 module.exports = function (object, key, method) {
   try {
@@ -3539,15 +3540,15 @@ module.exports = function (object, key, method) {
 /***/ },
 
 /***/ 6801
-(__unused_webpack_module, exports, __webpack_require__) {
+(__unused_webpack_module, exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(8686);
-var definePropertyModule = __webpack_require__(4913);
-var anObject = __webpack_require__(8551);
-var toIndexedObject = __webpack_require__(5397);
-var objectKeys = __webpack_require__(1072);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var V8_PROTOTYPE_DEFINE_BUG = __pdfjs_webpack_require__(8686);
+var definePropertyModule = __pdfjs_webpack_require__(4913);
+var anObject = __pdfjs_webpack_require__(8551);
+var toIndexedObject = __pdfjs_webpack_require__(5397);
+var objectKeys = __pdfjs_webpack_require__(1072);
 
 // `Object.defineProperties` method
 // https://tc39.es/ecma262/#sec-object.defineproperties
@@ -3599,13 +3600,13 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 6840
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isCallable = __webpack_require__(4901);
-var definePropertyModule = __webpack_require__(4913);
-var makeBuiltIn = __webpack_require__(283);
-var defineGlobalProperty = __webpack_require__(9433);
+var isCallable = __pdfjs_webpack_require__(4901);
+var definePropertyModule = __pdfjs_webpack_require__(4913);
+var makeBuiltIn = __pdfjs_webpack_require__(283);
+var defineGlobalProperty = __pdfjs_webpack_require__(9433);
 
 module.exports = function (O, key, value, options) {
   if (!options) options = {};
@@ -3634,13 +3635,13 @@ module.exports = function (O, key, value, options) {
 /***/ },
 
 /***/ 6955
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var TO_STRING_TAG_SUPPORT = __webpack_require__(2140);
-var isCallable = __webpack_require__(4901);
-var classofRaw = __webpack_require__(2195);
-var wellKnownSymbol = __webpack_require__(8227);
+var TO_STRING_TAG_SUPPORT = __pdfjs_webpack_require__(2140);
+var isCallable = __pdfjs_webpack_require__(4901);
+var classofRaw = __pdfjs_webpack_require__(2195);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var $Object = Object;
@@ -3671,11 +3672,11 @@ module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
 /***/ },
 
 /***/ 6969
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var toPrimitive = __webpack_require__(2777);
-var isSymbol = __webpack_require__(757);
+var toPrimitive = __pdfjs_webpack_require__(2777);
+var isSymbol = __pdfjs_webpack_require__(757);
 
 // `ToPropertyKey` abstract operation
 // https://tc39.es/ecma262/#sec-topropertykey
@@ -3704,11 +3705,11 @@ module.exports = function (bitmap, value) {
 /***/ },
 
 /***/ 7040
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 /* eslint-disable es/no-symbol -- required for testing */
-var NATIVE_SYMBOL = __webpack_require__(4495);
+var NATIVE_SYMBOL = __pdfjs_webpack_require__(4495);
 
 module.exports = NATIVE_SYMBOL &&
   !Symbol.sham &&
@@ -3718,12 +3719,12 @@ module.exports = NATIVE_SYMBOL &&
 /***/ },
 
 /***/ 7055
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
-var fails = __webpack_require__(9039);
-var classof = __webpack_require__(2195);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var fails = __pdfjs_webpack_require__(9039);
+var classof = __pdfjs_webpack_require__(2195);
 
 var $Object = Object;
 var split = uncurryThis(''.split);
@@ -3741,10 +3742,10 @@ module.exports = fails(function () {
 /***/ },
 
 /***/ 7080
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var has = (__webpack_require__(4402).has);
+var has = (__pdfjs_webpack_require__(4402).has);
 
 // Perform ? RequireInternalSlot(M, [[SetData]])
 module.exports = function (it) {
@@ -3756,17 +3757,17 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 7347
-(__unused_webpack_module, exports, __webpack_require__) {
+(__unused_webpack_module, exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var call = __webpack_require__(9565);
-var propertyIsEnumerableModule = __webpack_require__(8773);
-var createPropertyDescriptor = __webpack_require__(6980);
-var toIndexedObject = __webpack_require__(5397);
-var toPropertyKey = __webpack_require__(6969);
-var hasOwn = __webpack_require__(9297);
-var IE8_DOM_DEFINE = __webpack_require__(5917);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var call = __pdfjs_webpack_require__(9565);
+var propertyIsEnumerableModule = __pdfjs_webpack_require__(8773);
+var createPropertyDescriptor = __pdfjs_webpack_require__(6980);
+var toIndexedObject = __pdfjs_webpack_require__(5397);
+var toPropertyKey = __pdfjs_webpack_require__(6969);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var IE8_DOM_DEFINE = __pdfjs_webpack_require__(5917);
 
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
@@ -3786,12 +3787,12 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
 /***/ },
 
 /***/ 7394
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var uncurryThisAccessor = __webpack_require__(6706);
-var classof = __webpack_require__(2195);
+var globalThis = __pdfjs_webpack_require__(4576);
+var uncurryThisAccessor = __pdfjs_webpack_require__(6706);
+var classof = __pdfjs_webpack_require__(2195);
 
 var ArrayBuffer = globalThis.ArrayBuffer;
 var TypeError = globalThis.TypeError;
@@ -3808,13 +3809,13 @@ module.exports = ArrayBuffer && uncurryThisAccessor(ArrayBuffer.prototype, 'byte
 /***/ },
 
 /***/ 7416
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var fails = __webpack_require__(9039);
-var wellKnownSymbol = __webpack_require__(8227);
-var DESCRIPTORS = __webpack_require__(3724);
-var IS_PURE = __webpack_require__(6395);
+var fails = __pdfjs_webpack_require__(9039);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var IS_PURE = __pdfjs_webpack_require__(6395);
 
 var ITERATOR = wellKnownSymbol('iterator');
 
@@ -3857,11 +3858,11 @@ module.exports = !fails(function () {
 /***/ },
 
 /***/ 7476
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var classofRaw = __webpack_require__(2195);
-var uncurryThis = __webpack_require__(9504);
+var classofRaw = __pdfjs_webpack_require__(2195);
+var uncurryThis = __pdfjs_webpack_require__(9504);
 
 module.exports = function (fn) {
   // Nashorn bug:
@@ -3874,13 +3875,13 @@ module.exports = function (fn) {
 /***/ },
 
 /***/ 7566
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var defineBuiltIn = __webpack_require__(6840);
-var uncurryThis = __webpack_require__(9504);
-var toString = __webpack_require__(655);
-var validateArgumentsLength = __webpack_require__(2812);
+var defineBuiltIn = __pdfjs_webpack_require__(6840);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var toString = __pdfjs_webpack_require__(655);
+var validateArgumentsLength = __pdfjs_webpack_require__(2812);
 
 var $URLSearchParams = URLSearchParams;
 var URLSearchParamsPrototype = $URLSearchParams.prototype;
@@ -3909,17 +3910,17 @@ if (params.has('a', 2) || !params.has('a', undefined)) {
 /***/ },
 
 /***/ 7588
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var call = __webpack_require__(9565);
-var iterate = __webpack_require__(2652);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var iteratorClose = __webpack_require__(9539);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
+var $ = __pdfjs_webpack_require__(6518);
+var call = __pdfjs_webpack_require__(9565);
+var iterate = __pdfjs_webpack_require__(2652);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
 
 var forEachWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('forEach', TypeError);
 
@@ -3948,13 +3949,13 @@ $({ target: 'Iterator', proto: true, real: true, forced: forEachWithoutClosingOn
 /***/ },
 
 /***/ 7594
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var arrayFromConstructorAndList = __webpack_require__(5370);
-var $fromBase64 = __webpack_require__(9143);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var arrayFromConstructorAndList = __pdfjs_webpack_require__(5370);
+var $fromBase64 = __pdfjs_webpack_require__(9143);
 
 var Uint8Array = globalThis.Uint8Array;
 
@@ -3984,12 +3985,12 @@ if (Uint8Array) $({ target: 'Uint8Array', stat: true, forced: INCORRECT_BEHAVIOR
 /***/ },
 
 /***/ 7629
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var IS_PURE = __webpack_require__(6395);
-var globalThis = __webpack_require__(4576);
-var defineGlobalProperty = __webpack_require__(9433);
+var IS_PURE = __pdfjs_webpack_require__(6395);
+var globalThis = __pdfjs_webpack_require__(4576);
+var defineGlobalProperty = __pdfjs_webpack_require__(9433);
 
 var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
@@ -4006,13 +4007,13 @@ var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, 
 /***/ },
 
 /***/ 7642
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var difference = __webpack_require__(3440);
-var fails = __webpack_require__(9039);
-var setMethodAcceptSetLike = __webpack_require__(4916);
+var $ = __pdfjs_webpack_require__(6518);
+var difference = __pdfjs_webpack_require__(3440);
+var fails = __pdfjs_webpack_require__(9039);
+var setMethodAcceptSetLike = __pdfjs_webpack_require__(4916);
 
 var SET_LIKE_INCORRECT_BEHAVIOR = !setMethodAcceptSetLike('difference', function (result) {
   return result.size === 0;
@@ -4050,17 +4051,17 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /***/ },
 
 /***/ 7657
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var fails = __webpack_require__(9039);
-var isCallable = __webpack_require__(4901);
-var isObject = __webpack_require__(34);
-var create = __webpack_require__(2360);
-var getPrototypeOf = __webpack_require__(2787);
-var defineBuiltIn = __webpack_require__(6840);
-var wellKnownSymbol = __webpack_require__(8227);
-var IS_PURE = __webpack_require__(6395);
+var fails = __pdfjs_webpack_require__(9039);
+var isCallable = __pdfjs_webpack_require__(4901);
+var isObject = __pdfjs_webpack_require__(34);
+var create = __pdfjs_webpack_require__(2360);
+var getPrototypeOf = __pdfjs_webpack_require__(2787);
+var defineBuiltIn = __pdfjs_webpack_require__(6840);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
+var IS_PURE = __pdfjs_webpack_require__(6395);
 
 var ITERATOR = wellKnownSymbol('iterator');
 var BUGGY_SAFARI_ITERATORS = false;
@@ -4106,10 +4107,10 @@ module.exports = {
 /***/ },
 
 /***/ 7680
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
+var uncurryThis = __pdfjs_webpack_require__(9504);
 
 module.exports = uncurryThis([].slice);
 
@@ -4117,11 +4118,11 @@ module.exports = uncurryThis([].slice);
 /***/ },
 
 /***/ 7696
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var toIntegerOrInfinity = __webpack_require__(1291);
-var toLength = __webpack_require__(8014);
+var toIntegerOrInfinity = __pdfjs_webpack_require__(1291);
+var toLength = __pdfjs_webpack_require__(8014);
 
 var $RangeError = RangeError;
 
@@ -4139,13 +4140,13 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 7740
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var hasOwn = __webpack_require__(9297);
-var ownKeys = __webpack_require__(5031);
-var getOwnPropertyDescriptorModule = __webpack_require__(7347);
-var definePropertyModule = __webpack_require__(4913);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var ownKeys = __pdfjs_webpack_require__(5031);
+var getOwnPropertyDescriptorModule = __pdfjs_webpack_require__(7347);
+var definePropertyModule = __pdfjs_webpack_require__(4913);
 
 module.exports = function (target, source, exceptions) {
   var keys = ownKeys(source);
@@ -4163,10 +4164,10 @@ module.exports = function (target, source, exceptions) {
 /***/ },
 
 /***/ 7750
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isNullOrUndefined = __webpack_require__(4117);
+var isNullOrUndefined = __pdfjs_webpack_require__(4117);
 
 var $TypeError = TypeError;
 
@@ -4181,11 +4182,11 @@ module.exports = function (it) {
 /***/ },
 
 /***/ 7751
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var isCallable = __webpack_require__(4901);
+var globalThis = __pdfjs_webpack_require__(4576);
+var isCallable = __pdfjs_webpack_require__(4901);
 
 var aFunction = function (argument) {
   return isCallable(argument) ? argument : undefined;
@@ -4209,11 +4210,11 @@ module.exports = typeof ArrayBuffer != 'undefined' && typeof DataView != 'undefi
 /***/ },
 
 /***/ 7936
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var $transfer = __webpack_require__(5636);
+var $ = __pdfjs_webpack_require__(6518);
+var $transfer = __pdfjs_webpack_require__(5636);
 
 // `ArrayBuffer.prototype.transferToFixedLength` method
 // https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfertofixedlength
@@ -4227,10 +4228,10 @@ if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
 /***/ },
 
 /***/ 7979
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var anObject = __webpack_require__(8551);
+var anObject = __pdfjs_webpack_require__(8551);
 
 // `RegExp.prototype.flags` getter implementation
 // https://tc39.es/ecma262/#sec-get-regexp.prototype.flags
@@ -4252,13 +4253,13 @@ module.exports = function () {
 /***/ },
 
 /***/ 8004
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var fails = __webpack_require__(9039);
-var intersection = __webpack_require__(8750);
-var setMethodAcceptSetLike = __webpack_require__(4916);
+var $ = __pdfjs_webpack_require__(6518);
+var fails = __pdfjs_webpack_require__(9039);
+var intersection = __pdfjs_webpack_require__(8750);
+var setMethodAcceptSetLike = __pdfjs_webpack_require__(4916);
 
 var INCORRECT = !setMethodAcceptSetLike('intersection', function (result) {
   return result.size === 2 && result.has(1) && result.has(2);
@@ -4277,10 +4278,10 @@ $({ target: 'Set', proto: true, real: true, forced: INCORRECT }, {
 /***/ },
 
 /***/ 8014
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var toIntegerOrInfinity = __webpack_require__(1291);
+var toIntegerOrInfinity = __pdfjs_webpack_require__(1291);
 
 var min = Math.min;
 
@@ -4295,11 +4296,11 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 8100
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var $transfer = __webpack_require__(5636);
+var $ = __pdfjs_webpack_require__(6518);
+var $transfer = __pdfjs_webpack_require__(5636);
 
 // `ArrayBuffer.prototype.transfer` method
 // https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer
@@ -4313,23 +4314,23 @@ if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
 /***/ },
 
 /***/ 8111
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var anInstance = __webpack_require__(679);
-var anObject = __webpack_require__(8551);
-var isCallable = __webpack_require__(4901);
-var getPrototypeOf = __webpack_require__(2787);
-var defineBuiltInAccessor = __webpack_require__(2106);
-var createProperty = __webpack_require__(4659);
-var fails = __webpack_require__(9039);
-var hasOwn = __webpack_require__(9297);
-var wellKnownSymbol = __webpack_require__(8227);
-var IteratorPrototype = (__webpack_require__(7657).IteratorPrototype);
-var DESCRIPTORS = __webpack_require__(3724);
-var IS_PURE = __webpack_require__(6395);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var anInstance = __pdfjs_webpack_require__(679);
+var anObject = __pdfjs_webpack_require__(8551);
+var isCallable = __pdfjs_webpack_require__(4901);
+var getPrototypeOf = __pdfjs_webpack_require__(2787);
+var defineBuiltInAccessor = __pdfjs_webpack_require__(2106);
+var createProperty = __pdfjs_webpack_require__(4659);
+var fails = __pdfjs_webpack_require__(9039);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
+var IteratorPrototype = (__pdfjs_webpack_require__(7657).IteratorPrototype);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var IS_PURE = __pdfjs_webpack_require__(6395);
 
 var CONSTRUCTOR = 'constructor';
 var ITERATOR = 'Iterator';
@@ -4385,15 +4386,15 @@ $({ global: true, constructor: true, forced: FORCED }, {
 /***/ },
 
 /***/ 8227
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var shared = __webpack_require__(5745);
-var hasOwn = __webpack_require__(9297);
-var uid = __webpack_require__(3392);
-var NATIVE_SYMBOL = __webpack_require__(4495);
-var USE_SYMBOL_AS_UID = __webpack_require__(7040);
+var globalThis = __pdfjs_webpack_require__(4576);
+var shared = __pdfjs_webpack_require__(5745);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var uid = __pdfjs_webpack_require__(3392);
+var NATIVE_SYMBOL = __pdfjs_webpack_require__(4495);
+var USE_SYMBOL_AS_UID = __pdfjs_webpack_require__(7040);
 
 var Symbol = globalThis.Symbol;
 var WellKnownSymbolsStore = shared('wks');
@@ -4411,18 +4412,18 @@ module.exports = function (name) {
 /***/ },
 
 /***/ 8237
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var iterate = __webpack_require__(2652);
-var aCallable = __webpack_require__(9306);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var iteratorClose = __webpack_require__(9539);
-var iteratorHelperWithoutClosingOnEarlyError = __webpack_require__(4549);
-var apply = __webpack_require__(8745);
-var fails = __webpack_require__(9039);
+var $ = __pdfjs_webpack_require__(6518);
+var iterate = __pdfjs_webpack_require__(2652);
+var aCallable = __pdfjs_webpack_require__(9306);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorHelperWithoutClosingOnEarlyError = __pdfjs_webpack_require__(4549);
+var apply = __pdfjs_webpack_require__(8745);
+var fails = __pdfjs_webpack_require__(9039);
 
 var $TypeError = TypeError;
 
@@ -4470,12 +4471,12 @@ $({ target: 'Iterator', proto: true, real: true, forced: FAILS_ON_INITIAL_UNDEFI
 /***/ },
 
 /***/ 8469
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
-var iterateSimple = __webpack_require__(507);
-var SetHelpers = __webpack_require__(4402);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var iterateSimple = __pdfjs_webpack_require__(507);
+var SetHelpers = __pdfjs_webpack_require__(4402);
 
 var Set = SetHelpers.Set;
 var SetPrototype = SetHelpers.proto;
@@ -4491,11 +4492,11 @@ module.exports = function (set, fn, interruptible) {
 /***/ },
 
 /***/ 8480
-(__unused_webpack_module, exports, __webpack_require__) {
+(__unused_webpack_module, exports, __pdfjs_webpack_require__) {
 
 
-var internalObjectKeys = __webpack_require__(1828);
-var enumBugKeys = __webpack_require__(8727);
+var internalObjectKeys = __pdfjs_webpack_require__(1828);
+var enumBugKeys = __pdfjs_webpack_require__(8727);
 
 var hiddenKeys = enumBugKeys.concat('length', 'prototype');
 
@@ -4510,15 +4511,15 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 /***/ },
 
 /***/ 8527
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aSet = __webpack_require__(7080);
-var has = (__webpack_require__(4402).has);
-var size = __webpack_require__(5170);
-var getSetRecord = __webpack_require__(3789);
-var iterateSimple = __webpack_require__(507);
-var iteratorClose = __webpack_require__(9539);
+var aSet = __pdfjs_webpack_require__(7080);
+var has = (__pdfjs_webpack_require__(4402).has);
+var size = __pdfjs_webpack_require__(5170);
+var getSetRecord = __pdfjs_webpack_require__(3789);
+var iterateSimple = __pdfjs_webpack_require__(507);
+var iteratorClose = __pdfjs_webpack_require__(9539);
 
 // `Set.prototype.isSupersetOf` method
 // https://tc39.es/ecma262/#sec-set.prototype.issupersetof
@@ -4536,10 +4537,10 @@ module.exports = function isSupersetOf(other) {
 /***/ },
 
 /***/ 8551
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isObject = __webpack_require__(34);
+var isObject = __pdfjs_webpack_require__(34);
 
 var $String = String;
 var $TypeError = TypeError;
@@ -4554,11 +4555,11 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 8622
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var isCallable = __webpack_require__(4901);
+var globalThis = __pdfjs_webpack_require__(4576);
+var isCallable = __pdfjs_webpack_require__(4901);
 
 var WeakMap = globalThis.WeakMap;
 
@@ -4568,13 +4569,13 @@ module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 /***/ },
 
 /***/ 8646
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var call = __webpack_require__(9565);
-var anObject = __webpack_require__(8551);
-var getIteratorDirect = __webpack_require__(1767);
-var getIteratorMethod = __webpack_require__(851);
+var call = __pdfjs_webpack_require__(9565);
+var anObject = __pdfjs_webpack_require__(8551);
+var getIteratorDirect = __pdfjs_webpack_require__(1767);
+var getIteratorMethod = __pdfjs_webpack_require__(851);
 
 module.exports = function (obj, stringHandling) {
   if (!stringHandling || typeof obj !== 'string') anObject(obj);
@@ -4586,11 +4587,11 @@ module.exports = function (obj, stringHandling) {
 /***/ },
 
 /***/ 8686
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var fails = __webpack_require__(9039);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var fails = __pdfjs_webpack_require__(9039);
 
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
@@ -4606,12 +4607,12 @@ module.exports = DESCRIPTORS && fails(function () {
 /***/ },
 
 /***/ 8721
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var uncurryThis = __webpack_require__(9504);
-var defineBuiltInAccessor = __webpack_require__(2106);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var defineBuiltInAccessor = __pdfjs_webpack_require__(2106);
 
 var URLSearchParamsPrototype = URLSearchParams.prototype;
 var forEach = uncurryThis(URLSearchParamsPrototype.forEach);
@@ -4652,10 +4653,10 @@ module.exports = [
 /***/ },
 
 /***/ 8745
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var NATIVE_BIND = __webpack_require__(616);
+var NATIVE_BIND = __pdfjs_webpack_require__(616);
 
 var FunctionPrototype = Function.prototype;
 var apply = FunctionPrototype.apply;
@@ -4670,15 +4671,15 @@ module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? c
 /***/ },
 
 /***/ 8750
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var aSet = __webpack_require__(7080);
-var SetHelpers = __webpack_require__(4402);
-var size = __webpack_require__(5170);
-var getSetRecord = __webpack_require__(3789);
-var iterateSet = __webpack_require__(8469);
-var iterateSimple = __webpack_require__(507);
+var aSet = __pdfjs_webpack_require__(7080);
+var SetHelpers = __pdfjs_webpack_require__(4402);
+var size = __pdfjs_webpack_require__(5170);
+var getSetRecord = __pdfjs_webpack_require__(3789);
+var iterateSet = __pdfjs_webpack_require__(8469);
+var iterateSimple = __pdfjs_webpack_require__(507);
 
 var Set = SetHelpers.Set;
 var add = SetHelpers.add;
@@ -4729,10 +4730,10 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /***/ },
 
 /***/ 8981
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var requireObjectCoercible = __webpack_require__(7750);
+var requireObjectCoercible = __pdfjs_webpack_require__(7750);
 
 var $Object = Object;
 
@@ -4761,17 +4762,17 @@ module.exports = function (exec) {
 /***/ },
 
 /***/ 9143
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var uncurryThis = __webpack_require__(9504);
-var anObjectOrUndefined = __webpack_require__(3972);
-var aString = __webpack_require__(3463);
-var hasOwn = __webpack_require__(9297);
-var base64Map = __webpack_require__(2804);
-var getAlphabetOption = __webpack_require__(944);
-var notDetached = __webpack_require__(5169);
+var globalThis = __pdfjs_webpack_require__(4576);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var anObjectOrUndefined = __pdfjs_webpack_require__(3972);
+var aString = __pdfjs_webpack_require__(3463);
+var hasOwn = __pdfjs_webpack_require__(9297);
+var base64Map = __pdfjs_webpack_require__(2804);
+var getAlphabetOption = __pdfjs_webpack_require__(944);
+var notDetached = __pdfjs_webpack_require__(5169);
 
 var base64Alphabet = base64Map.c2i;
 var base64UrlAlphabet = base64Map.c2iUrl;
@@ -4925,11 +4926,11 @@ module.exports = function (string, options, into, maxLength) {
 /***/ },
 
 /***/ 9286
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var SetHelpers = __webpack_require__(4402);
-var iterate = __webpack_require__(8469);
+var SetHelpers = __pdfjs_webpack_require__(4402);
+var iterate = __pdfjs_webpack_require__(8469);
 
 var Set = SetHelpers.Set;
 var add = SetHelpers.add;
@@ -4946,11 +4947,11 @@ module.exports = function (set) {
 /***/ },
 
 /***/ 9297
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var uncurryThis = __webpack_require__(9504);
-var toObject = __webpack_require__(8981);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var toObject = __pdfjs_webpack_require__(8981);
 
 var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 
@@ -4965,11 +4966,11 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
 /***/ },
 
 /***/ 9306
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var isCallable = __webpack_require__(4901);
-var tryToString = __webpack_require__(6823);
+var isCallable = __pdfjs_webpack_require__(4901);
+var tryToString = __pdfjs_webpack_require__(6823);
 
 var $TypeError = TypeError;
 
@@ -4983,11 +4984,11 @@ module.exports = function (argument) {
 /***/ },
 
 /***/ 9429
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var IS_NODE = __webpack_require__(6193);
+var globalThis = __pdfjs_webpack_require__(4576);
+var IS_NODE = __pdfjs_webpack_require__(6193);
 
 module.exports = function (name) {
   if (IS_NODE) {
@@ -5005,20 +5006,20 @@ module.exports = function (name) {
 /***/ },
 
 /***/ 9432
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // TODO: Remove from `core-js@4`
-__webpack_require__(7594);
+__pdfjs_webpack_require__(7594);
 
 
 /***/ },
 
 /***/ 9433
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
+var globalThis = __pdfjs_webpack_require__(4576);
 
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
@@ -5035,20 +5036,20 @@ module.exports = function (key, value) {
 /***/ },
 
 /***/ 9462
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var call = __webpack_require__(9565);
-var create = __webpack_require__(2360);
-var createNonEnumerableProperty = __webpack_require__(6699);
-var defineBuiltIns = __webpack_require__(6279);
-var wellKnownSymbol = __webpack_require__(8227);
-var InternalStateModule = __webpack_require__(1181);
-var getMethod = __webpack_require__(5966);
-var IteratorPrototype = (__webpack_require__(7657).IteratorPrototype);
-var createIterResultObject = __webpack_require__(2529);
-var iteratorClose = __webpack_require__(9539);
-var iteratorCloseAll = __webpack_require__(1385);
+var call = __pdfjs_webpack_require__(9565);
+var create = __pdfjs_webpack_require__(2360);
+var createNonEnumerableProperty = __pdfjs_webpack_require__(6699);
+var defineBuiltIns = __pdfjs_webpack_require__(6279);
+var wellKnownSymbol = __pdfjs_webpack_require__(8227);
+var InternalStateModule = __pdfjs_webpack_require__(1181);
+var getMethod = __pdfjs_webpack_require__(5966);
+var IteratorPrototype = (__pdfjs_webpack_require__(7657).IteratorPrototype);
+var createIterResultObject = __pdfjs_webpack_require__(2529);
+var iteratorClose = __pdfjs_webpack_require__(9539);
+var iteratorCloseAll = __pdfjs_webpack_require__(1385);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var ITERATOR_HELPER = 'IteratorHelper';
@@ -5128,13 +5129,13 @@ module.exports = function (nextHandler, IS_ITERATOR, RETURN_HANDLER_RESULT) {
 /***/ },
 
 /***/ 9479
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var DESCRIPTORS = __webpack_require__(3724);
-var defineBuiltInAccessor = __webpack_require__(2106);
-var regExpFlagsDetection = __webpack_require__(5213);
-var regExpFlagsGetterImplementation = __webpack_require__(7979);
+var DESCRIPTORS = __pdfjs_webpack_require__(3724);
+var defineBuiltInAccessor = __pdfjs_webpack_require__(2106);
+var regExpFlagsDetection = __pdfjs_webpack_require__(5213);
+var regExpFlagsGetterImplementation = __pdfjs_webpack_require__(7979);
 
 // `RegExp.prototype.flags` getter
 // https://tc39.es/ecma262/#sec-get-regexp.prototype.flags
@@ -5151,17 +5152,17 @@ if (DESCRIPTORS && !regExpFlagsDetection.correct) {
 /***/ },
 
 /***/ 9486
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var uncurryThis = __webpack_require__(9504);
-var anObjectOrUndefined = __webpack_require__(3972);
-var anUint8Array = __webpack_require__(4154);
-var notDetached = __webpack_require__(5169);
-var base64Map = __webpack_require__(2804);
-var getAlphabetOption = __webpack_require__(944);
+var $ = __pdfjs_webpack_require__(6518);
+var globalThis = __pdfjs_webpack_require__(4576);
+var uncurryThis = __pdfjs_webpack_require__(9504);
+var anObjectOrUndefined = __pdfjs_webpack_require__(3972);
+var anUint8Array = __pdfjs_webpack_require__(4154);
+var notDetached = __pdfjs_webpack_require__(5169);
+var base64Map = __pdfjs_webpack_require__(2804);
+var getAlphabetOption = __pdfjs_webpack_require__(944);
 
 var base64Alphabet = base64Map.i2c;
 var base64UrlAlphabet = base64Map.i2cUrl;
@@ -5218,10 +5219,10 @@ if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIO
 /***/ },
 
 /***/ 9504
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var NATIVE_BIND = __webpack_require__(616);
+var NATIVE_BIND = __pdfjs_webpack_require__(616);
 
 var FunctionPrototype = Function.prototype;
 var call = FunctionPrototype.call;
@@ -5238,11 +5239,11 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
 /***/ },
 
 /***/ 9519
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var globalThis = __webpack_require__(4576);
-var userAgent = __webpack_require__(2839);
+var globalThis = __pdfjs_webpack_require__(4576);
+var userAgent = __pdfjs_webpack_require__(2839);
 
 var process = globalThis.process;
 var Deno = globalThis.Deno;
@@ -5273,12 +5274,12 @@ module.exports = version;
 /***/ },
 
 /***/ 9539
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var call = __webpack_require__(9565);
-var anObject = __webpack_require__(8551);
-var getMethod = __webpack_require__(5966);
+var call = __pdfjs_webpack_require__(9565);
+var anObject = __pdfjs_webpack_require__(8551);
+var getMethod = __pdfjs_webpack_require__(5966);
 
 module.exports = function (iterator, kind, value) {
   var innerResult, innerError;
@@ -5304,10 +5305,10 @@ module.exports = function (iterator, kind, value) {
 /***/ },
 
 /***/ 9565
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var NATIVE_BIND = __webpack_require__(616);
+var NATIVE_BIND = __pdfjs_webpack_require__(616);
 
 var call = Function.prototype.call;
 // eslint-disable-next-line es/no-function-prototype-bind -- safe
@@ -5319,14 +5320,14 @@ module.exports = NATIVE_BIND ? call.bind(call) : function () {
 /***/ },
 
 /***/ 9577
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var arrayWith = __webpack_require__(9928);
-var ArrayBufferViewCore = __webpack_require__(4644);
-var isBigIntArray = __webpack_require__(1108);
-var toIntegerOrInfinity = __webpack_require__(1291);
-var toBigInt = __webpack_require__(5854);
+var arrayWith = __pdfjs_webpack_require__(9928);
+var ArrayBufferViewCore = __pdfjs_webpack_require__(4644);
+var isBigIntArray = __pdfjs_webpack_require__(1108);
+var toIntegerOrInfinity = __pdfjs_webpack_require__(1291);
+var toBigInt = __pdfjs_webpack_require__(5854);
 
 var aTypedArray = ArrayBufferViewCore.aTypedArray;
 var getTypedArrayConstructor = ArrayBufferViewCore.getTypedArrayConstructor;
@@ -5366,12 +5367,12 @@ exportTypedArrayMethod('with', { 'with': function (index, value) {
 /***/ },
 
 /***/ 9617
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var toIndexedObject = __webpack_require__(5397);
-var toAbsoluteIndex = __webpack_require__(5610);
-var lengthOfArrayLike = __webpack_require__(6198);
+var toIndexedObject = __pdfjs_webpack_require__(5397);
+var toAbsoluteIndex = __pdfjs_webpack_require__(5610);
+var lengthOfArrayLike = __pdfjs_webpack_require__(6198);
 
 // `Array.prototype.{ indexOf, includes }` methods implementation
 var createMethod = function (IS_INCLUDES) {
@@ -5407,21 +5408,21 @@ module.exports = {
 /***/ },
 
 /***/ 9631
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // TODO: Remove from `core-js@4`
-__webpack_require__(9486);
+__pdfjs_webpack_require__(9486);
 
 
 /***/ },
 
 /***/ 9797
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+(__unused_webpack_module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
 // TODO: Remove from `core-js@4`
-__webpack_require__(4226);
+__pdfjs_webpack_require__(4226);
 
 
 /***/ },
@@ -5464,11 +5465,11 @@ module.exports = function (METHOD_NAME) {
 /***/ },
 
 /***/ 9928
-(module, __unused_webpack_exports, __webpack_require__) {
+(module, __unused_webpack_exports, __pdfjs_webpack_require__) {
 
 
-var lengthOfArrayLike = __webpack_require__(6198);
-var toIntegerOrInfinity = __webpack_require__(1291);
+var lengthOfArrayLike = __pdfjs_webpack_require__(6198);
+var toIntegerOrInfinity = __pdfjs_webpack_require__(1291);
 
 var $RangeError = RangeError;
 
@@ -5491,24 +5492,24 @@ module.exports = function (O, C, index, value) {
 /******/ });
 /************************************************************************/
 /******/ // The module cache
-/******/ var __webpack_module_cache__ = {};
+/******/ var __pdfjs_webpack_module_cache__ = {};
 /******/
 /******/ // The require function
-/******/ function __webpack_require__(moduleId) {
+/******/ function __pdfjs_webpack_require__(moduleId) {
 /******/ 	// Check if module is in cache
-/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	var cachedModule = __pdfjs_webpack_module_cache__[moduleId];
 /******/ 	if (cachedModule !== undefined) {
 /******/ 		return cachedModule.exports;
 /******/ 	}
 /******/ 	// Create a new module (and put it into the cache)
-/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 	var module = __pdfjs_webpack_module_cache__[moduleId] = {
 /******/ 		// no module.id needed
 /******/ 		// no module.loaded needed
 /******/ 		exports: {}
 /******/ 	};
 /******/
 /******/ 	// Execute the module function
-/******/ 	__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	__pdfjs_webpack_modules__[moduleId].call(module.exports, module, module.exports, __pdfjs_webpack_require__);
 /******/
 /******/ 	// Return the exports of the module
 /******/ 	return module.exports;
@@ -5518,9 +5519,9 @@ module.exports = function (O, C, index, value) {
 /******/ /* webpack/runtime/define property getters */
 /******/ (() => {
 /******/ 	// define getter functions for harmony exports
-/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 	__pdfjs_webpack_require__.d = (exports, definition) => {
 /******/ 		for(var key in definition) {
-/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 			if(__pdfjs_webpack_require__.o(definition, key) && !__pdfjs_webpack_require__.o(exports, key)) {
 /******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 			}
 /******/ 		}
@@ -5529,62 +5530,62 @@ module.exports = function (O, C, index, value) {
 /******/
 /******/ /* webpack/runtime/hasOwnProperty shorthand */
 /******/ (() => {
-/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	__pdfjs_webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ })();
 /******/
 /************************************************************************/
-var __webpack_exports__ = {};
+var __pdfjs_webpack_exports__ = {};
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
-var es_array_push = __webpack_require__(4114);
+var es_array_push = __pdfjs_webpack_require__(4114);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array-buffer.detached.js
-var es_array_buffer_detached = __webpack_require__(6573);
+var es_array_buffer_detached = __pdfjs_webpack_require__(6573);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array-buffer.transfer.js
-var es_array_buffer_transfer = __webpack_require__(8100);
+var es_array_buffer_transfer = __pdfjs_webpack_require__(8100);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array-buffer.transfer-to-fixed-length.js
-var es_array_buffer_transfer_to_fixed_length = __webpack_require__(7936);
+var es_array_buffer_transfer_to_fixed_length = __pdfjs_webpack_require__(7936);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.constructor.js
-var es_iterator_constructor = __webpack_require__(8111);
+var es_iterator_constructor = __pdfjs_webpack_require__(8111);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.filter.js
-var es_iterator_filter = __webpack_require__(2489);
+var es_iterator_filter = __pdfjs_webpack_require__(2489);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.map.js
-var es_iterator_map = __webpack_require__(1701);
+var es_iterator_map = __pdfjs_webpack_require__(1701);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.some.js
-var es_iterator_some = __webpack_require__(3579);
+var es_iterator_some = __pdfjs_webpack_require__(3579);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.promise.with-resolvers.js
-var es_promise_with_resolvers = __webpack_require__(4628);
+var es_promise_with_resolvers = __pdfjs_webpack_require__(4628);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.difference.v2.js
-var es_set_difference_v2 = __webpack_require__(7642);
+var es_set_difference_v2 = __pdfjs_webpack_require__(7642);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.intersection.v2.js
-var es_set_intersection_v2 = __webpack_require__(8004);
+var es_set_intersection_v2 = __pdfjs_webpack_require__(8004);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.is-disjoint-from.v2.js
-var es_set_is_disjoint_from_v2 = __webpack_require__(3853);
+var es_set_is_disjoint_from_v2 = __pdfjs_webpack_require__(3853);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.is-subset-of.v2.js
-var es_set_is_subset_of_v2 = __webpack_require__(5876);
+var es_set_is_subset_of_v2 = __pdfjs_webpack_require__(5876);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.is-superset-of.v2.js
-var es_set_is_superset_of_v2 = __webpack_require__(2475);
+var es_set_is_superset_of_v2 = __pdfjs_webpack_require__(2475);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.symmetric-difference.v2.js
-var es_set_symmetric_difference_v2 = __webpack_require__(5024);
+var es_set_symmetric_difference_v2 = __pdfjs_webpack_require__(5024);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.union.v2.js
-var es_set_union_v2 = __webpack_require__(1698);
+var es_set_union_v2 = __pdfjs_webpack_require__(1698);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.typed-array.with.js
-var es_typed_array_with = __webpack_require__(9577);
+var es_typed_array_with = __pdfjs_webpack_require__(9577);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.uint8-array.set-from-base64.js
-var esnext_uint8_array_set_from_base64 = __webpack_require__(1549);
+var esnext_uint8_array_set_from_base64 = __pdfjs_webpack_require__(1549);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.uint8-array.set-from-hex.js
-var esnext_uint8_array_set_from_hex = __webpack_require__(9797);
+var esnext_uint8_array_set_from_hex = __pdfjs_webpack_require__(9797);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.uint8-array.to-base64.js
-var esnext_uint8_array_to_base64 = __webpack_require__(9631);
+var esnext_uint8_array_to_base64 = __pdfjs_webpack_require__(9631);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.uint8-array.to-hex.js
-var esnext_uint8_array_to_hex = __webpack_require__(5623);
+var esnext_uint8_array_to_hex = __pdfjs_webpack_require__(5623);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.self.js
-var web_self = __webpack_require__(3611);
+var web_self = __pdfjs_webpack_require__(3611);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.reduce.js
-var es_iterator_reduce = __webpack_require__(8237);
+var es_iterator_reduce = __pdfjs_webpack_require__(8237);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.math.sum-precise.js
-var esnext_math_sum_precise = __webpack_require__(4235);
+var esnext_math_sum_precise = __pdfjs_webpack_require__(4235);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url.parse.js
-var web_url_parse = __webpack_require__(5781);
+var web_url_parse = __pdfjs_webpack_require__(5781);
 ;// ./src/shared/util.js
 
 
@@ -6476,7 +6477,7 @@ if (typeof AbortSignal.any !== "function") {
 }
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.every.js
-var es_iterator_every = __webpack_require__(1148);
+var es_iterator_every = __pdfjs_webpack_require__(1148);
 ;// ./src/core/primitives.js
 
 
@@ -7365,11 +7366,11 @@ function getSizeInBytes(x) {
 }
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.delete.js
-var web_url_search_params_delete = __webpack_require__(4603);
+var web_url_search_params_delete = __pdfjs_webpack_require__(4603);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.has.js
-var web_url_search_params_has = __webpack_require__(7566);
+var web_url_search_params_has = __pdfjs_webpack_require__(7566);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.size.js
-var web_url_search_params_size = __webpack_require__(8721);
+var web_url_search_params_size = __pdfjs_webpack_require__(8721);
 ;// ./external/qcms/qcms_utils.js
 
 
@@ -12865,11 +12866,11 @@ class OperatorList {
 }
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.find.js
-var es_iterator_find = __webpack_require__(116);
+var es_iterator_find = __pdfjs_webpack_require__(116);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.flags.js
-var es_regexp_flags = __webpack_require__(9479);
+var es_regexp_flags = __pdfjs_webpack_require__(9479);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.for-each.js
-var es_iterator_for_each = __webpack_require__(7588);
+var es_iterator_for_each = __pdfjs_webpack_require__(7588);
 ;// ./src/core/binary_cmap.js
 
 
@@ -23155,7 +23156,7 @@ function compileType3Glyph({
 }
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.to-array.js
-var es_iterator_to_array = __webpack_require__(1806);
+var es_iterator_to_array = __pdfjs_webpack_require__(1806);
 ;// ./src/core/charsets.js
 const ISOAdobeCharset = [".notdef", "space", "exclam", "quotedbl", "numbersign", "dollar", "percent", "ampersand", "quoteright", "parenleft", "parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash", "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "colon", "semicolon", "less", "equal", "greater", "question", "at", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "bracketleft", "backslash", "bracketright", "asciicircum", "underscore", "quoteleft", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "braceleft", "bar", "braceright", "asciitilde", "exclamdown", "cent", "sterling", "fraction", "yen", "florin", "section", "currency", "quotesingle", "quotedblleft", "guillemotleft", "guilsinglleft", "guilsinglright", "fi", "fl", "endash", "dagger", "daggerdbl", "periodcentered", "paragraph", "bullet", "quotesinglbase", "quotedblbase", "quotedblright", "guillemotright", "ellipsis", "perthousand", "questiondown", "grave", "acute", "circumflex", "tilde", "macron", "breve", "dotaccent", "dieresis", "ring", "cedilla", "hungarumlaut", "ogonek", "caron", "emdash", "AE", "ordfeminine", "Lslash", "Oslash", "OE", "ordmasculine", "ae", "dotlessi", "lslash", "oslash", "oe", "germandbls", "onesuperior", "logicalnot", "mu", "trademark", "Eth", "onehalf", "plusminus", "Thorn", "onequarter", "divide", "brokenbar", "degree", "thorn", "threequarters", "twosuperior", "registered", "minus", "eth", "multiply", "threesuperior", "copyright", "Aacute", "Acircumflex", "Adieresis", "Agrave", "Aring", "Atilde", "Ccedilla", "Eacute", "Ecircumflex", "Edieresis", "Egrave", "Iacute", "Icircumflex", "Idieresis", "Igrave", "Ntilde", "Oacute", "Ocircumflex", "Odieresis", "Ograve", "Otilde", "Scaron", "Uacute", "Ucircumflex", "Udieresis", "Ugrave", "Yacute", "Ydieresis", "Zcaron", "aacute", "acircumflex", "adieresis", "agrave", "aring", "atilde", "ccedilla", "eacute", "ecircumflex", "edieresis", "egrave", "iacute", "icircumflex", "idieresis", "igrave", "ntilde", "oacute", "ocircumflex", "odieresis", "ograve", "otilde", "scaron", "uacute", "ucircumflex", "udieresis", "ugrave", "yacute", "ydieresis", "zcaron"];
 const ExpertCharset = [".notdef", "space", "exclamsmall", "Hungarumlautsmall", "dollaroldstyle", "dollarsuperior", "ampersandsmall", "Acutesmall", "parenleftsuperior", "parenrightsuperior", "twodotenleader", "onedotenleader", "comma", "hyphen", "period", "fraction", "zerooldstyle", "oneoldstyle", "twooldstyle", "threeoldstyle", "fouroldstyle", "fiveoldstyle", "sixoldstyle", "sevenoldstyle", "eightoldstyle", "nineoldstyle", "colon", "semicolon", "commasuperior", "threequartersemdash", "periodsuperior", "questionsmall", "asuperior", "bsuperior", "centsuperior", "dsuperior", "esuperior", "isuperior", "lsuperior", "msuperior", "nsuperior", "osuperior", "rsuperior", "ssuperior", "tsuperior", "ff", "fi", "fl", "ffi", "ffl", "parenleftinferior", "parenrightinferior", "Circumflexsmall", "hyphensuperior", "Gravesmall", "Asmall", "Bsmall", "Csmall", "Dsmall", "Esmall", "Fsmall", "Gsmall", "Hsmall", "Ismall", "Jsmall", "Ksmall", "Lsmall", "Msmall", "Nsmall", "Osmall", "Psmall", "Qsmall", "Rsmall", "Ssmall", "Tsmall", "Usmall", "Vsmall", "Wsmall", "Xsmall", "Ysmall", "Zsmall", "colonmonetary", "onefitted", "rupiah", "Tildesmall", "exclamdownsmall", "centoldstyle", "Lslashsmall", "Scaronsmall", "Zcaronsmall", "Dieresissmall", "Brevesmall", "Caronsmall", "Dotaccentsmall", "Macronsmall", "figuredash", "hypheninferior", "Ogoneksmall", "Ringsmall", "Cedillasmall", "onequarter", "onehalf", "threequarters", "questiondownsmall", "oneeighth", "threeeighths", "fiveeighths", "seveneighths", "onethird", "twothirds", "zerosuperior", "onesuperior", "twosuperior", "threesuperior", "foursuperior", "fivesuperior", "sixsuperior", "sevensuperior", "eightsuperior", "ninesuperior", "zeroinferior", "oneinferior", "twoinferior", "threeinferior", "fourinferior", "fiveinferior", "sixinferior", "seveninferior", "eightinferior", "nineinferior", "centinferior", "dollarinferior", "periodinferior", "commainferior", "Agravesmall", "Aacutesmall", "Acircumflexsmall", "Atildesmall", "Adieresissmall", "Aringsmall", "AEsmall", "Ccedillasmall", "Egravesmall", "Eacutesmall", "Ecircumflexsmall", "Edieresissmall", "Igravesmall", "Iacutesmall", "Icircumflexsmall", "Idieresissmall", "Ethsmall", "Ntildesmall", "Ogravesmall", "Oacutesmall", "Ocircumflexsmall", "Otildesmall", "Odieresissmall", "OEsmall", "Oslashsmall", "Ugravesmall", "Uacutesmall", "Ucircumflexsmall", "Udieresissmall", "Yacutesmall", "Thornsmall", "Ydieresissmall"];
@@ -41418,7 +41419,9 @@ class PartialEvaluator {
   }) {
     const isType3Font = type === "Type3";
     if (!descriptor) {
-      if (isType3Font) {
+      // File Viewer modification: preserve composite CMap decoding when a CID
+      // font omits its descriptor; simple-font fallback splits multibyte codes.
+      if (isType3Font || composite) {
         descriptor = Dict.empty;
       } else {
         let baseFontName = dict.get("BaseFont");
@@ -46067,9 +46070,9 @@ const $toStyle = Symbol();
 const $uid = Symbol("uid");
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.flat-map.js
-var es_iterator_flat_map = __webpack_require__(531);
+var es_iterator_flat_map = __pdfjs_webpack_require__(531);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.uint8-array.from-base64.js
-var esnext_uint8_array_from_base64 = __webpack_require__(9432);
+var esnext_uint8_array_from_base64 = __pdfjs_webpack_require__(9432);
 ;// ./src/core/xfa/namespaces.js
 const $buildXFAObject = Symbol();
 const NamespaceIds = {
@@ -64279,7 +64282,7 @@ class NetworkPdfManager extends BasePdfManager {
 }
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.promise.try.js
-var es_promise_try = __webpack_require__(1689);
+var es_promise_try = __pdfjs_webpack_require__(1689);
 ;// ./src/shared/message_handler.js
 
 
