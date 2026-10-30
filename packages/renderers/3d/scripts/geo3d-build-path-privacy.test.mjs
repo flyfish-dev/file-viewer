@@ -32,8 +32,14 @@ test('source and runtime Geo3D builds preserve path privacy, SDK inputs and dete
       for (const path of paths) {
         const bytes = await readFile(join(root, 'dist', path))
         assert(!physicalPath.test(bytes.toString('latin1')), `${mode}/${path} includes a local absolute path`)
+        if (path === 'geo3d-workers/las-worker.js')
+          assert.doesNotMatch(bytes.toString('utf8'), /https:\/\/(?:cdn\.jsdelivr\.net|unpkg\.com|api\.github\.com)/,
+            'The installed LAS Worker must not retain a public decoder fallback')
         records.push({ path, bytes: bytes.length, sha256: hash(bytes) })
       }
+      const manifest = JSON.parse(await readFile(join(root, 'dist/geo3d-workers/manifest.json')))
+      assert.equal(manifest.workerSha256, records.find(record => record.path === 'geo3d-workers/las-worker.js').sha256,
+        'The Worker receipt must bind the final offline bytes')
       for (const type of ['point', 'raster']) {
         const inventory = JSON.parse(await readFile(join(root, `.build/geo3d-${type}-inputs.json`)))
         assert(inventory.virtualInputs.filter(path => /^owned-/.test(path))

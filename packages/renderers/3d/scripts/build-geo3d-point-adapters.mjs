@@ -1,4 +1,5 @@
 import { writeBundleInventory } from '../../../build-support/bundle-inventory.mjs'
+import { sanitizeOfflineAssetText } from '../../../components/web-full/scripts/offline-asset-sanitize.mjs'
 /** Build source-local adapters; never edits the installed engine or its singletons. */
 import { createHash } from 'node:crypto'
 import { realpathSync } from 'node:fs'
@@ -295,6 +296,13 @@ export async function buildPointAdapters() {
     } }]
   })
   const decoder = await build({ ...options, entryPoints: [worker], outfile: join(workers, 'las-worker.js') })
+  // The upstream decoder includes a CDN default even though our pool supplies
+  // local WASM. Localize fallbacks before hashing so installed Worker bytes and
+  // both asset manifests describe the same offline output.
+  const decoderPath = join(workers, 'las-worker.js')
+  const decoderSource = await readFile(decoderPath, 'utf8')
+  const offlineDecoder = sanitizeOfflineAssetText(decoderSource, decoderPath)
+  if (offlineDecoder.output !== decoderSource) await writeFile(decoderPath, offlineDecoder.output)
   await writeBundleInventory([...Object.keys(factories.metafile.inputs), ...Object.keys(decoder.metafile.inputs)], join(root, '.build/geo3d-point-inputs.json'), { extraInputs: Object.values(paths) })
   const packages = new Map([[giro.folder, giro]])
   for (const input of [...Object.keys(factories.metafile.inputs), ...Object.keys(decoder.metafile.inputs)]) {

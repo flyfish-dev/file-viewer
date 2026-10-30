@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "purpose": "shared-runtime-material-attribution",
   "scope": "Material identity and actual copied payloads; not a source-availability or release approval.",
-  "registrySha256": "404df7c51e14dd5d469517370d93b9c4ff95693ecf905316cb96d05eb0f8af8a",
+  "registrySha256": "ac563c6b63616c62c7c483ce82295338ddf6b5c75cbca4c2e8487d9bb3115592",
   "releaseApproval": false,
   "materials": [
     {
@@ -3135,7 +3135,7 @@
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "84708e14468333976a636351c2412d8304616bb846c0623fc329cc1c7572db0e",
+      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
       "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
@@ -3192,7 +3192,7 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "84708e14468333976a636351c2412d8304616bb846c0623fc329cc1c7572db0e",
+      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
       "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
@@ -3249,7 +3249,7 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "84708e14468333976a636351c2412d8304616bb846c0623fc329cc1c7572db0e",
+      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
       "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
@@ -3306,7 +3306,7 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "84708e14468333976a636351c2412d8304616bb846c0623fc329cc1c7572db0e",
+      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
       "bytes": 3560,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
@@ -21828,9 +21828,9 @@
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
-      "bytes": 352471,
-      "sha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
-      "sourceSha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
+      "bytes": 353024,
+      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
       "sourceTransform": "none"
     },
     {
@@ -21863,9 +21863,9 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
-      "bytes": 352471,
-      "sha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
-      "sourceSha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
+      "bytes": 353024,
+      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
       "sourceTransform": "none"
     },
     {
@@ -21898,9 +21898,9 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
-      "bytes": 352471,
-      "sha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
-      "sourceSha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
+      "bytes": 353024,
+      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
       "sourceTransform": "none"
     },
     {
@@ -21933,9 +21933,9 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE.zip",
-      "bytes": 352471,
-      "sha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
-      "sourceSha256": "b08842592422c95cc0b0073dfc1061214c740bec5f6a8da1771e05475c266b7c",
+      "bytes": 353024,
+      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
       "sourceTransform": "none"
     },
     {
