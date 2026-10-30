@@ -67,6 +67,8 @@ When no explicit PDF asset URL is configured, the renderer first uses the public
 
 `identityFontRepair` is also enabled by default for malformed PDFs that write TrueType glyph IDs through `Identity-H`/`Identity-V` but omit `ToUnicode`. The repair module is loaded only after CJK font substitution and multiple control-character glyphs are detected. If the same PDF embeds a usable same-family TrueType font, its cmap is used to rebuild the Unicode mapping for the in-memory preview. The repair is applied only to a preview copy and never overwrites the original file or download source; an unsafe or unsupported repair falls back to the original preview. Set the option to `false` to disable this compatibility path.
 
+Predefined CID CMaps such as `UniGB-UCS2-H/V`, GBK, and Big5 keep their multibyte decoding even when a font omits `FontDescriptor`. These documents use their declared CMap and any supplied `ToUnicode` mapping; they do not require the optional Identity-font repair capability. Original PDF bytes remain unchanged.
+
 ## Migration Note
 
 PDF rendering has moved out of `@file-viewer/core` into this package, and `pdfjs-dist` is now declared only by `@file-viewer/renderer-pdf`. Installing core or a standard component package no longer pulls PDF.js; explicitly assemble this renderer when PDF preview is needed, or use `@file-viewer/preset-all`.

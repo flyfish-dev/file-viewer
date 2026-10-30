@@ -51,7 +51,7 @@ overrides:
 
 patchedDependencies:
   illustrator-pgf@0.1.0: 20b0fb03a2d6dc6397b53ed6e83b26b2d47464a44831145881d4b17914319b3d
-  pdfjs-dist@5.4.624: a484b7eff884a0e5161286126623b28a0d3100053f850a56f5ae56e587ab4c26
+  pdfjs-dist@5.4.624: dd0af2e8847d9ed2723574797564f505cf1a6a047bfd985a0697e48dd472ae97
 
 importers:
 
@@ -1871,7 +1871,7 @@ importers:
         version: 1.17.1
       pdfjs-dist:
         specifier: 5.4.624
-        version: 5.4.624(patch_hash=a484b7eff884a0e5161286126623b28a0d3100053f850a56f5ae56e587ab4c26)
+        version: 5.4.624(patch_hash=dd0af2e8847d9ed2723574797564f505cf1a6a047bfd985a0697e48dd472ae97)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -11362,7 +11362,7 @@ snapshots:
       pako: 1.0.11
       tslib: 1.14.1
 
-  pdfjs-dist@5.4.624(patch_hash=a484b7eff884a0e5161286126623b28a0d3100053f850a56f5ae56e587ab4c26):
+  pdfjs-dist@5.4.624(patch_hash=dd0af2e8847d9ed2723574797564f505cf1a6a047bfd985a0697e48dd472ae97):
     optionalDependencies:
       '@napi-rs/canvas': 0.1.100
       node-readable-to-web-readable-stream: 0.4.2
