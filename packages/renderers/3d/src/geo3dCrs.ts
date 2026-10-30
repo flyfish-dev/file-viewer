@@ -12,6 +12,9 @@ export async function resolveGeo3dCrs(input?: Geo3dCrsInput | string, fallback?:
   if (match && Number(match[2]) >= 1 && Number(match[2]) <= 60) {
     return CRS.register(input, `+proj=utm +zone=${Number(match[2])}${match[1] === '327' ? ' +south' : ''} +datum=WGS84 +units=m +no_defs`, { throwIfFailedToRegisterWithProj: true })
   }
+  const { offlineEpsgDefinition } = await import('./geo3dCrsCatalog.js')
+  const definition = offlineEpsgDefinition(input)
+  if (definition) return CRS.register(input, definition, { throwIfFailedToRegisterWithProj: true })
   throw new UnknownGeo3dCrsError(`Unknown Geo3D CRS ${input}. Register its offline definition with crsDefinitions; coordinates are not silently relabelled.`)
 }
 

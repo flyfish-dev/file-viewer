@@ -302,10 +302,10 @@ importers:
         version: 1.61.0(vue@3.5.42(typescript@6.0.3))
       '@thatopen/components':
         specifier: 3.6.0
-        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
+        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
       '@thatopen/fragments':
         specifier: 3.6.0
-        version: 3.6.0(three@0.186.1)(web-ifc@0.0.78)
+        version: 3.6.0(three@0.186.1)(web-ifc@0.0.77)
       bpmn-js:
         specifier: 18.31.1
         version: 18.31.1
@@ -319,8 +319,8 @@ importers:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
       web-ifc:
-        specifier: 0.0.78
-        version: 0.0.78
+        specifier: 0.0.77
+        version: 0.0.77
       xmllint-wasm:
         specifier: 5.3.0
         version: 5.3.0(@types/node@26.6.5)
@@ -1349,6 +1349,9 @@ importers:
       '@types/emscripten':
         specifier: ^1.41.6
         version: 1.41.6
+      epsg-index:
+        specifier: 2.0.0
+        version: 2.0.0
       three:
         specifier: ^0.186.0
         version: 0.186.1
@@ -1358,10 +1361,10 @@ importers:
         version: 2.0.5(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
       '@thatopen/components':
         specifier: 3.6.0
-        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)
+        version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
       '@thatopen/fragments':
         specifier: 3.6.0
-        version: 3.6.0(three@0.186.1)(web-ifc@0.0.78)
+        version: 3.6.0(three@0.186.1)(web-ifc@0.0.77)
       '@types/three':
         specifier: ^0.186.0
         version: 0.186.0
@@ -1375,8 +1378,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
       web-ifc:
-        specifier: 0.0.78
-        version: 0.0.78
+        specifier: 0.0.77
+        version: 0.0.77
 
   packages/renderers/archive:
     dependencies:
@@ -4833,6 +4836,10 @@ packages:
     resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
     engines: {node: '>=20.19.0'}
 
+  epsg-index@2.0.0:
+    resolution: {integrity: sha512-JFRqtXMmxEO/BWbXZuLNJuWS44vbwDPQkfycnISnfm/I8/OLlAqwbYRImgAV9ulr63p/hyW2YIFT9jizHeDzvQ==}
+    engines: {node: '>=18'}
+
   epubjs@0.3.93:
     resolution: {integrity: sha512-c06pNSdBxcXv3dZSbXAVLE1/pmleRhOT6mXNZo6INKmvuKpYB65MwU/lO7830czCtjIiK9i+KR+3S+p0wtljrw==}
 
@@ -7082,8 +7089,8 @@ packages:
     resolution: {integrity: sha512-4Nsy8K5Tr6SPDH9jhKJOHf7ChDrc1zufZTVSF7x72hwuEXBqxqk9G6cK+K2NRUtB3iELRJqjXb4JPDMBjMTl2Q==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
-  web-ifc@0.0.78:
-    resolution: {integrity: sha512-LGKMNYFVNyz9vVERN0iz+zvPQJqT7MEGBxslzcuuhwDDOA116LmJLKkg8sZ5SEvQJSc5NRVMWgpRNkDmuoQoJg==}
+  web-ifc@0.0.77:
+    resolution: {integrity: sha512-VzQ0W/Iiqbidxn1ECUvz6qJ6p2sXBVNcOsUOBCETzy77psAH6yFLKQm74aXabkx3JH4OvFVHe8k1qS6+Z2zl1w==}
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
@@ -8388,24 +8395,24 @@ snapshots:
       postcss: 8.5.31
       tailwindcss: 4.3.3
 
-  '@thatopen/components@3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.78)':
+  '@thatopen/components@3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)':
     dependencies:
-      '@thatopen/fragments': 3.6.0(three@0.186.1)(web-ifc@0.0.78)
+      '@thatopen/fragments': 3.6.0(three@0.186.1)(web-ifc@0.0.77)
       camera-controls: 3.1.2(three@0.186.1)
       fast-xml-parser: 5.7.2
       jszip: 3.10.2
       three: 0.186.1
       three-mesh-bvh: 0.9.9(three@0.186.1)
-      web-ifc: 0.0.78
+      web-ifc: 0.0.77
 
-  '@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.78)':
+  '@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.77)':
     dependencies:
       earcut: 3.2.4
       flatbuffers: 25.2.10
       lru-cache: 11.1.0
       pako: 2.1.0
       three: 0.186.1
-      web-ifc: 0.0.78
+      web-ifc: 0.0.77
       xxhash-wasm: 1.1.0
 
   '@tmcw/togeojson@7.1.3': {}
@@ -9668,6 +9675,8 @@ snapshots:
   entities@7.0.1: {}
 
   entities@8.1.0: {}
+
+  epsg-index@2.0.0: {}
 
   epubjs@0.3.93:
     dependencies:
@@ -12273,7 +12282,7 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  web-ifc@0.0.78: {}
+  web-ifc@0.0.77: {}
 
   web-namespaces@2.0.1: {}
 

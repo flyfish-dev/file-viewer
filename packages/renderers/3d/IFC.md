@@ -15,7 +15,7 @@ metadata describes the base package, not an SDK-free version of the IFC API.
 ## Install and self-host
 
 ```sh
-npm install @file-viewer/renderer-3d @thatopen/components@3.4.8 @thatopen/fragments@3.4.7 web-ifc@0.0.77
+npm install @file-viewer/renderer-3d @thatopen/components@3.6.0 @thatopen/fragments@3.6.0 web-ifc@0.0.77
 npm install -D esbuild@0.28.2
 npx file-viewer-ifc-assets public/file-viewer/vendor/ifc
 ```

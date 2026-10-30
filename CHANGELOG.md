@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Resolve exact LAS/LAZ GeoASCII CRS names and historical authority aliases from an offline catalog (#406). Recognized citation-only point clouds use their native CRS automatically; ambiguous names, conflicting units and missing datum grids still fail explicitly.
+- Adopt 11 dependency updates from #434 with matching IFC engines, refreshed DICOM SDK provenance, XML asset metadata and complete native IDML source/license records. Retain web-ifc 0.0.77 because the official 0.0.78 JavaScript/WASM streaming interfaces disagree. Keep Vue 2.6/2.7 support and pako 2.
+
 ## File Viewer v3.3.1
 
 - Keep native PPTX charts at their authored size during slideshow scaling and hidden-slide navigation. Apply chart, axis, legend and data-label fonts, measure distinct CJK labels in logical coordinates, support top/left legends, and discard stale charts between main-thread document opens (#385).

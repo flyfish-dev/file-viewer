@@ -15,4 +15,8 @@ Original public attachments:
 The `.txt` suffix was only an attachment transport workaround; these files
 have the LASF binary signature. The unrelated real LAZ sample mentioned in
 the issue is not included, and these tests do not claim to reproduce its
-LAZ decoding or infer its CRS from a citation alone.
+LAZ decoding. `las-citation.mjs` makes a citation-only variant of the synthetic
+GeoKey fixture while preserving every point byte. It exercises exact offline
+authority-name resolution; it is also the source of the Demo's
+`point-cloud-citation.las` sample. Original-file LAZ decoding is verified
+separately with a local copy of the reporter-linked public file.

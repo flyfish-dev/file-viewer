@@ -1,6 +1,7 @@
-import { copyFile, mkdir, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { lasWithCitation } from '../../../packages/renderers/3d/test/fixtures/las-citation.mjs'
 
 const sourceRoot = resolve(fileURLToPath(new URL('../../..', import.meta.url)))
 const exampleDir = join(sourceRoot, 'apps/viewer-demo/public/example')
@@ -83,6 +84,10 @@ await Promise.all([
   copyFile(join(binaryFixtureDir, 'large.bin'), join(exampleDir, 'binary-raw.bin')),
   copyFile(join(binaryFixtureDir, 'pe32.bin'), join(exampleDir, 'binary-pe.exe')),
   copyFile(join(binaryFixtureDir, 'pe32.bin'), join(exampleDir, 'binary-pe.dll')),
+  writeFile(join(exampleDir, 'point-cloud-citation.las'), lasWithCitation(
+    await readFile(join(sourceRoot, 'packages/renderers/3d/test/fixtures/github-406-crs-geokeys-only.las')),
+    'WGS84, WGS84, ETRS89 / Poland CS2000 zone 6'
+  )),
   ...generatedFixtures.map(([name, bytes]) => writeFile(join(exampleDir, name), bytes))
 ])
 
@@ -97,6 +102,7 @@ console.log(
         'example/binary-raw.bin',
         'example/binary-pe.exe',
         'example/binary-pe.dll',
+        'example/point-cloud-citation.las',
         ...generatedFixtures.map(([name]) => `example/${name}`)
       ]
     },

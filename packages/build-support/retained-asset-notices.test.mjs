@@ -138,7 +138,7 @@ test('SQL grants resolve the exported WASM and reject changed bytes before repla
     await mkdir(join(packageRoot, 'dist'), { recursive: true })
     await mkdir(dirname(target), { recursive: true })
     await writeFile(join(dataRoot, 'package.json'), '{}')
-    await writeFile(join(packageRoot, 'package.json'), JSON.stringify({ name: 'sql.js', version: '1.14.1',
+    await writeFile(join(packageRoot, 'package.json'), JSON.stringify({ name: 'sql.js', version: '1.15.2',
       license: 'MIT', exports: { './dist/*': './dist/*' } }))
     const wasm = Buffer.from([0, 97, 115, 109, 1, 0, 0, 0])
     const grant = await readFile(new URL('../renderers/doc/LICENSE', import.meta.url))

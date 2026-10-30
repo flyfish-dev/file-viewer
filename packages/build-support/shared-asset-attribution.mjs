@@ -94,8 +94,8 @@ export async function stageSharedAssetAttribution(viewerRoot, { sourceRoot = wor
   // SQL stager; the initial 55-material backlog did not include it.
   byDigest.set('60a3f6e4d7b29b4321359e683b36cf198d24f58e24582070f56e6fa89d5ee2be', {
     sha256: '60a3f6e4d7b29b4321359e683b36cf198d24f58e24582070f56e6fa89d5ee2be',
-    kind: 'original-license-grant', component: 'sql.js@1.14.1', declaredLicense: 'MIT',
-    source: 'https://www.npmjs.com/package/sql.js/v/1.14.1',
+    kind: 'original-license-grant', component: 'sql.js@1.15.2', declaredLicense: 'MIT',
+    source: 'https://www.npmjs.com/package/sql.js/v/1.15.2',
   })
   // These original installed CAD materials were already retained by the
   // version-checked normal CAD stager, outside the initial unmapped backlog.

@@ -6,7 +6,17 @@ runtime packages.
 
 ## Runtime packages
 
-### @giro3d/giro3d 2.0.4
+### Offline CRS authority data
+
+- `epsg-index` 2.0.0 supplies coordinate-system names and definitions under ISC.
+- Historical authority aliases come from PROJ 9.9.0, commit
+  `1df2be61c0e4732aa1326126113776b291ae7657`, under its MIT-style license.
+- The generated alias module retains the original license. The package and
+  copied assets also retain `licenses/PROJ-COPYING.txt` and the EPSG index license.
+- These are offline lookup tables. File Viewer does not request a public CRS
+  registry or download datum grids while opening a document.
+
+### @giro3d/giro3d 2.0.5
 
 - License: MIT
 - Role: streaming/rendering engine for COPC, LAS/LAZ, GeoTIFF/COG and 3D Tiles.

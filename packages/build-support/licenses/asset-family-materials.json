@@ -444,7 +444,7 @@
     },
     {
       "sourcePath": "packages/renderers/dicom/THIRD_PARTY_NOTICES.md",
-      "sha256": "557747183728da56635a99ca6a613944825c169d0ac076c983591cf41f976625",
+      "sha256": "a7267ff1aa4909c9d14a8a3b07d9a721ce836d828c4d9ffd829b53a90cfb2513",
       "bytes": 14376,
       "kind": "generated-attribution-inventory",
       "component": "DICOM source inventory",
@@ -524,8 +524,8 @@
     },
     {
       "sourcePath": "packages/renderers/text/licenses/xml-profiles/NOTICE.md",
-      "sha256": "6a926c623a4b1df24584110f596f60dcfcdaa2e99c01e88ba16720b7e30eb2f4",
-      "bytes": 2356,
+      "sha256": "8f0fae92f691506d50490166a846fe4abc8d5bc1fbce0d493ba2754ee75a5431",
+      "bytes": 2392,
       "kind": "generated-runtime-provenance",
       "component": "XML optional profiles",
       "declaredLicense": null,

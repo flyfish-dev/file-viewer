@@ -33,6 +33,11 @@ updates:
       - dependency-name: '@types/pako'
         update-types:
           - version-update:semver-major
+      # 0.0.78's published JS passes four StreamMeshes arguments to a
+      # three-argument WASM binding. Keep the functioning IFC ABI until fixed.
+      - dependency-name: web-ifc
+        versions:
+          - '0.0.78'
       # pako 3 changes Inflate err/msg semantics used by the DICOM deflated-study
       # path and needs a licence ledger refresh, so its majors stay deferred.
 

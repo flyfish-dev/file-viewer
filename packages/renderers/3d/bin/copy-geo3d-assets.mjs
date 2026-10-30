@@ -76,9 +76,10 @@ export async function copyGeo3dAssets(destination) {
   const giro = await packageDir('@giro3d/giro3d')
   if (giro.metadata.version !== '2.0.5') throw new Error(`Geo3D assets require tested @giro3d/giro3d@2.0.5, found ${giro.metadata.version}`)
   const giroRequire = createRequire(join(giro.path, 'package.json'))
-  const [lazPerf, three] = await Promise.all([
+  const [lazPerf, three, epsg] = await Promise.all([
     packageDir('laz-perf', giroRequire),
     packageDir('three', giroRequire),
+    packageDir('epsg-index'),
   ])
   const lazWasm = await findNamedFile(lazPerf.path, 'laz-perf.wasm')
   if (!lazWasm) throw new Error('Cannot locate laz-perf.wasm in the installed laz-perf package')
@@ -106,13 +107,16 @@ export async function copyGeo3dAssets(destination) {
       }
     }
     await copyDirectory(workerDir, join(stage, 'workers'))
-    await copyLicenses([giro, lazPerf, three], join(stage, 'licenses'))
+    await copyLicenses([giro, lazPerf, three, epsg], join(stage, 'licenses'))
+    await copyFile(new URL('../licenses/PROJ-COPYING.txt', import.meta.url), join(stage, 'licenses/PROJ-COPYING.txt'))
     const notice = [
       'Optional Geo3D runtime assets for File Viewer.',
       'These assets are loaded only by @file-viewer/renderer-3d/geo3d.',
       `@giro3d/giro3d@${giro.metadata.version}: ${giro.metadata.license || 'See package license'}`,
       `laz-perf@${lazPerf.metadata.version}: ${lazPerf.metadata.license || 'See package license'}`,
       `three@${three.metadata.version}: ${three.metadata.license || 'See package license'}`,
+      `epsg-index@${epsg.metadata.version}: ISC. Offline coordinate-system authority definitions.`,
+      'PROJ 9.9.0 CRS aliases: MIT-style license, upstream commit 1df2be61c0e4732aa1326126113776b291ae7657.',
       'laz-perf.wasm is served locally for COPC and LAZ decoding.',
       'workers/las-worker.js, geotiff-worker.js and texture-worker.js are source-owned.',
       'Preserve workers/licenses/, workers/raster-licenses/ and workers/manifest.json.',
@@ -123,7 +127,7 @@ export async function copyGeo3dAssets(destination) {
     const files = await collectFiles(stage)
     await writeFile(join(stage, 'manifest.json'), JSON.stringify({
       schema: 1,
-      packages: [giro, lazPerf, three].map(pkg => ({ name: pkg.metadata.name, version: pkg.metadata.version, license: pkg.metadata.license })),
+      packages: [giro, lazPerf, three, epsg].map(pkg => ({ name: pkg.metadata.name, version: pkg.metadata.version, license: pkg.metadata.license })),
       files,
     }, null, 2) + '\n')
     await copyDirectory(stage, destination)

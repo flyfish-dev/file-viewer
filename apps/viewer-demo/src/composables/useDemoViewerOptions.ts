@@ -4,6 +4,7 @@ import {
 } from '@file-viewer/core'
 import { allRenderers } from '@file-viewer/preset-all'
 import { createIfcRenderer } from '@file-viewer/renderer-3d/ifc'
+import { createGeo3dRenderer } from '@file-viewer/renderer-3d/geo3d'
 import { binaryRenderer } from '@file-viewer/renderer-binary'
 import { designRenderer } from '@file-viewer/renderer-design'
 import { dicomRenderer } from '@file-viewer/renderer-dicom'
@@ -51,6 +52,9 @@ const demoIfcRenderer = createIfcRenderer({
   fitToModel: true,
   showProperties: true
 })
+const demoGeo3dRenderer = createGeo3dRenderer({
+  assetBaseUrl: '/file-viewer/vendor/geo3d/'
+})
 
 enableFileViewerXmlProfiles()
 
@@ -68,7 +72,8 @@ const unifiedDemoRenderers = [
   signatureRenderer,
   binaryRenderer,
   bpmnRenderer,
-  demoIfcRenderer
+  demoIfcRenderer,
+  demoGeo3dRenderer
 ] as unknown as NonNullable<FileViewerOptions['renderers']>
 
 /**

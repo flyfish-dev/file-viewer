@@ -30,11 +30,13 @@ export async function retainedBundleLicense(metadata) {
     expectedLicense = 'Apache-2.0'
     expectedHash = '06292ffcdd7d313747999255a8411e14933df33e24427a46d169cc5ff845227c'
     source = 'https://raw.githubusercontent.com/Myriad-Dreamin/typst.ts/0501ced21131dccc68d12c5602cdb20909a52541/LICENSE'
-  } else if (metadata.name === '@paged-media/introspect-wasm' && ['0.63.0', '0.70.2'].includes(metadata.version)) {
+  } else if (metadata.name === '@paged-media/introspect-wasm' && ['0.63.0', '0.70.2', '0.73.4'].includes(metadata.version)) {
     file = `introspect-wasm-${metadata.version}-MPL-2.0.txt`
     expectedLicense = 'MPL-2.0 OR LicenseRef-PMEL'
     expectedHash = '3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04'
-    const commit = metadata.version === '0.70.2'
+    const commit = metadata.version === '0.73.4'
+      ? '8eb9e21febaffbf5bb15e5158bb83896141682b2'
+      : metadata.version === '0.70.2'
       ? 'c7a4b788cc24acd7d5af8843655ec3806ad613a1'
       : '08fb4b14e3d2bfcb7e67f0b768ba196f82f3e80e'
     source = `https://raw.githubusercontent.com/paged-media/core/${commit}/LICENSE`
@@ -56,12 +58,16 @@ export async function retainedBundleLicense(metadata) {
     const noticeHash = createHash('sha256').update(noticeBytes).digest('hex')
     if (noticeHash !== '0f2f360ee7ab3daa36362fdf07ae6dfcf8a7e1b6987050ef1ffd0b9f6708bfa6') throw new Error('Retained upstream license grant changed')
     result.notice = { bytes: noticeBytes, sha256: noticeHash, source: source.replace(/LICENSE$/, 'LICENSE.md') }
-    if (metadata.version === '0.70.2') {
+    if (['0.70.2', '0.73.4'].includes(metadata.version)) {
       const book = JSON.parse(await readFile(new URL('../renderers/design/LICENSES/Introspect_NATIVE_THIRD_PARTY_LICENSES.json', import.meta.url)))
       assert.equal(book.source.npmPackage, metadata.name)
       assert.equal(book.source.npmVersion, metadata.version)
-      assert.equal(book.source.commit, 'c7a4b788cc24acd7d5af8843655ec3806ad613a1')
-      assert.equal(book.source.archiveSha256, '58f8eb6e1a0f06b8e2c8babf27d1ae0bad37a21db1ff8243298bdc647eee34a7')
+      assert.equal(book.source.commit, metadata.version === '0.73.4'
+        ? '8eb9e21febaffbf5bb15e5158bb83896141682b2'
+        : 'c7a4b788cc24acd7d5af8843655ec3806ad613a1')
+      assert.equal(book.source.archiveSha256, metadata.version === '0.73.4'
+        ? 'd7ebd70f16ce8f0b5936ec3daa0174b093122d5a0af728f01a16e7596cdce1a0'
+        : '58f8eb6e1a0f06b8e2c8babf27d1ae0bad37a21db1ff8243298bdc647eee34a7')
       assert.equal(book.licenseReview.status, 'reviewed')
       result.correspondingSource = book.licenseReview.correspondingSourceArchives
       assert.ok(result.correspondingSource.every(entry => entry.status === 'verified' && entry.matchesInstalledInput && !entry.includesCoveredModifications))

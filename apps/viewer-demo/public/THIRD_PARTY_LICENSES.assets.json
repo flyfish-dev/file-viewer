@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "purpose": "shared-runtime-material-attribution",
   "scope": "Material identity and actual copied payloads; not a source-availability or release approval.",
-  "registrySha256": "9f40588406caec3983baddcb1bcd3ab36e56ea09f806b63c2c139e9e8c8c51ad",
+  "registrySha256": "404df7c51e14dd5d469517370d93b9c4ff95693ecf905316cb96d05eb0f8af8a",
   "releaseApproval": false,
   "materials": [
     {
       "path": "file-viewer/xml/licenses/NOTICE.md",
-      "sha256": "6a926c623a4b1df24584110f596f60dcfcdaa2e99c01e88ba16720b7e30eb2f4",
-      "bytes": 2356,
+      "sha256": "8f0fae92f691506d50490166a846fe4abc8d5bc1fbce0d493ba2754ee75a5431",
+      "bytes": 2392,
       "kind": "generated-runtime-provenance",
       "component": "XML optional profiles",
       "declaredLicense": null,
@@ -3410,9 +3410,9 @@
       "path": "wasm/data/licenses/LICENSE.sql-js.txt",
       "sha256": "60a3f6e4d7b29b4321359e683b36cf198d24f58e24582070f56e6fa89d5ee2be",
       "kind": "original-license-grant",
-      "component": "sql.js@1.14.1",
+      "component": "sql.js@1.15.2",
       "declaredLicense": "MIT",
-      "source": "https://www.npmjs.com/package/sql.js/v/1.14.1",
+      "source": "https://www.npmjs.com/package/sql.js/v/1.15.2",
       "runtimePaths": [
         "wasm/data/sql-wasm.wasm"
       ]
@@ -3496,8 +3496,8 @@
     {
       "path": "file-viewer/xml/manifest.json",
       "bytes": 1660,
-      "sha256": "d16c2c606fd720b2b1725f9abcd065568a250faaa9a7a86cc01de73968275668",
-      "sourceSha256": "d16c2c606fd720b2b1725f9abcd065568a250faaa9a7a86cc01de73968275668",
+      "sha256": "b34798e695d6602644cce4ac48f2ee50c05621bd023924bd876c84b6b7b1b01f",
+      "sourceSha256": "b34798e695d6602644cce4ac48f2ee50c05621bd023924bd876c84b6b7b1b01f",
       "sourceTransform": "none"
     },
     {
@@ -21968,9 +21968,9 @@
     },
     {
       "path": "wasm/data/sql-wasm.wasm",
-      "bytes": 659730,
-      "sha256": "438c88f666dc054ce4e9395f80fe9db4218b1a3c379960454880f048a7898aed",
-      "sourceSha256": "438c88f666dc054ce4e9395f80fe9db4218b1a3c379960454880f048a7898aed",
+      "bytes": 685235,
+      "sha256": "0dfeecda2070b36da0cd4f6afa250af9453de528a983770f85b13d5d6b667572",
+      "sourceSha256": "0dfeecda2070b36da0cd4f6afa250af9453de528a983770f85b13d5d6b667572",
       "sourceTransform": "none"
     },
     {
