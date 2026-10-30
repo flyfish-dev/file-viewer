@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-29T15:06:50.851Z",
+  "generatedAt": "2026-10-29T20:12:37.533Z",
   "version": "3.3.1",
   "sourcePolicy": "private-complete-original-workspace",
   "openSourcePolicy": "public-open-source-main-repository",
@@ -32,7 +32,7 @@
       "url": "https://github.com/flyfish-dev/file-viewer",
       "branch": "main",
       "ok": true,
-      "hash": "b39432e349c113da609591341ef359f084802ec2",
+      "hash": "410ed36a192c3da06ea21f66837b73bc09e9c0a5",
       "error": ""
     },
     "gitee": {
@@ -43,22 +43,22 @@
       "error": ""
     },
     "inSync": false,
-    "syncMode": "unchecked",
-    "treeChecked": false,
-    "referenceTree": "afcecf868689fa8be5eeb3f466c50b56f7fe2a9a",
-    "giteeTree": "",
-    "treeError": "local public repository 49c31d33d60b does not match GitHub b39432e349c1",
+    "syncMode": "stale",
+    "treeChecked": true,
+    "referenceTree": "e03632ac108cf8afa3738459d36d249810d42b98",
+    "giteeTree": "dea9c935aefae52bdd7d61096092600fa128dd74",
+    "treeError": "",
     "reportHashNote": "The open-source main repository mirrors the current public source tree and records the private source commit in the public commit body for traceability. The observed remote hash can trail until that mirror commit is pushed. Gitee can intentionally use a shallow snapshot commit; inSync is true when the file tree matches even if commit hashes differ. Use pnpm audit:ecosystem-status for live remote heads."
   },
   "githubRelease": {
-    "ok": false,
+    "ok": true,
     "tag": "v3.3.1",
-    "url": "",
-    "assetCount": 0,
-    "hasManifest": false,
-    "hasStatus": false,
-    "hasSchema": false,
-    "error": "release not found"
+    "url": "https://github.com/flyfish-dev/file-viewer/releases/tag/v3.3.1",
+    "assetCount": 100,
+    "hasManifest": true,
+    "hasStatus": true,
+    "hasSchema": true,
+    "error": ""
   },
   "componentRepositories": [
     {
@@ -68,7 +68,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-core",
         "branch": "main",
         "ok": true,
-        "hash": "90d023dccdea98569e08e3a48b8dd9963ecf8e19",
+        "hash": "99762690b10d65c30dffa1587b94a1c46732367f",
         "error": ""
       },
       "gitee": {
@@ -86,7 +86,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-web",
         "branch": "main",
         "ok": true,
-        "hash": "40b48bc8a5ac4b24394039efcd26db7c4d9e2020",
+        "hash": "4aadf67da683e872e6588a1151e22bfab0a125d1",
         "error": ""
       },
       "gitee": {
@@ -104,7 +104,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-web-full",
         "branch": "main",
         "ok": true,
-        "hash": "2e20b4f8c867b2784b014889538c5974e3b11163",
+        "hash": "a13ae1b241683c83a25c01302506dced431683b5",
         "error": ""
       },
       "gitee": {
@@ -122,7 +122,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue3",
         "branch": "main",
         "ok": true,
-        "hash": "6b3e69a62bc6753d19530f4cc52a763a2288b2f4",
+        "hash": "1da9e04428b0d9a2801e0d1ec2f9ff1def45c667",
         "error": ""
       },
       "gitee": {
@@ -140,7 +140,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue3-full",
         "branch": "main",
         "ok": true,
-        "hash": "9324caa37ff0d7675c19e32d63554a004ecec963",
+        "hash": "237c790410686721854d8ce710ef0efad0075e17",
         "error": ""
       },
       "gitee": {
@@ -158,7 +158,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.7",
         "branch": "main",
         "ok": true,
-        "hash": "f7d7deff7df3bf163ef47962ec00ba7d4d763211",
+        "hash": "cf0d2891f3b9745390d0f979a49f2267ffc8eea9",
         "error": ""
       },
       "gitee": {
@@ -176,7 +176,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.7-full",
         "branch": "main",
         "ok": true,
-        "hash": "1a54d71f88bf1a7e4164ca8e8fd1aa057cb3ed56",
+        "hash": "32bfa222744bd64f349d2ecb2d1fe1b34d6e4b26",
         "error": ""
       },
       "gitee": {
@@ -194,7 +194,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.6",
         "branch": "main",
         "ok": true,
-        "hash": "ab28bb2e2e741213c32c8fd29a436461d06d1624",
+        "hash": "44e8017db07fc3e98751a6261a4b765ab439c609",
         "error": ""
       },
       "gitee": {
@@ -212,7 +212,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-vue2.6-full",
         "branch": "main",
         "ok": true,
-        "hash": "ee10f51bacb987b0074d701bd2e22d2c356ebc03",
+        "hash": "b80cc32d8095888f8d51568ef8e19d2eb3befbef",
         "error": ""
       },
       "gitee": {
@@ -230,7 +230,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react",
         "branch": "main",
         "ok": true,
-        "hash": "10344ddf15f909cc7e80867f93d387ca24dfeb0b",
+        "hash": "6d3c5d34c151d4456e7b1ad8092f906d1a1d532d",
         "error": ""
       },
       "gitee": {
@@ -248,7 +248,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-full",
         "branch": "main",
         "ok": true,
-        "hash": "7276783508261292dcf4c1b688da9c39fb890359",
+        "hash": "3aa13945f93eb1afea8d915663509d697a5e0c8f",
         "error": ""
       },
       "gitee": {
@@ -266,7 +266,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-legacy",
         "branch": "main",
         "ok": true,
-        "hash": "2488b318047dc419cfd8292b2139d2633680a4c4",
+        "hash": "6919354b421cc436f0c3667c2a0a2a0bd00412d8",
         "error": ""
       },
       "gitee": {
@@ -284,7 +284,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-react-legacy-full",
         "branch": "main",
         "ok": true,
-        "hash": "381d468d32a530d388bf80e505c586f29ae5f9cc",
+        "hash": "368c4097dbc7def6d1798178c2547ba462d087cb",
         "error": ""
       },
       "gitee": {
@@ -302,7 +302,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-jquery",
         "branch": "main",
         "ok": true,
-        "hash": "a222c39ea16bc803e19edf10eb8d47bd14314bb6",
+        "hash": "67c2cbe6682e89929316c6b3d1a6c97c1d19cf2f",
         "error": ""
       },
       "gitee": {
@@ -320,7 +320,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-jquery-full",
         "branch": "main",
         "ok": true,
-        "hash": "559f66a19f2c23bec76976b35f56aeba79edb87a",
+        "hash": "554c2f78ce487c0f942c039ebcac7d1c75cbe076",
         "error": ""
       },
       "gitee": {
@@ -338,7 +338,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-svelte",
         "branch": "main",
         "ok": true,
-        "hash": "6e4228007dc640890d8676f2384cb14436644809",
+        "hash": "b739fb40162d1445c11f811abd2cfaaa9d33824c",
         "error": ""
       },
       "gitee": {
@@ -356,7 +356,7 @@
         "url": "https://github.com/flyfish-dev/file-viewer-svelte-full",
         "branch": "main",
         "ok": true,
-        "hash": "5b321f17b74352c377aa417c8886dc72d477346f",
+        "hash": "40fb8d130971a41da09e5c7b1e7bb0bf394f2934",
         "error": ""
       },
       "gitee": {
@@ -372,1457 +372,638 @@
     {
       "packageName": "@file-viewer/core",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/asset-installer",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-cad",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-typst",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-model",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-drawing",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-iwork",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-ppt",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-hangul",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-wordperfect",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-chm",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-data",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-design",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/thumbnail",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "file-viewer-copy-assets",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/assets-standard",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/cli",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-pdf-identity-repair",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-pptx-charts",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-mermaid",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-midi",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-rtf",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-streaming-media",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-text-tools",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/capability-drawio-official",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-pdf",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-ofd",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-presentation",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-pptx",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-ppt",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/doc",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-word",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-spreadsheet",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-drawing",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-iwork",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-wordperfect",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-hangul",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-3d",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-mindmap",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-cad",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-typst",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-archive",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-chm",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-email",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-epub",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-text",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-image",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-dicom",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-signature",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-media",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-geo",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-design",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-data",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-binary",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/eda-layout",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/eda-orcad",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/geometry-engine",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/renderer-eda",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/pptx",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/preset-all",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/preset-lite",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/preset-standard",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/preset-office",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/preset-engineering",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vite-plugin",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@flyfish-group/file-viewer3",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "file-viewer3",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@flyfish-group/file-viewer",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@flyfish-group/file-viewer-web",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@flyfish-group/file-viewer-react",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "msdoc-viewer",
       "expectedVersion": "0.2.14",
-      "publishedVersion": "0.2.13",
-      "ok": false,
-      "error": "expected 0.2.14"
+      "publishedVersion": "0.2.14",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "create-file-viewer",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "file-viewer-cli",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/web",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/web-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue3",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue3-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue2.7",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue2.7-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue2.6",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/vue2.6-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/react",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/react-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/react-legacy",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/react-legacy-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/jquery",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/jquery-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/svelte",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     },
     {
       "packageName": "@file-viewer/svelte-full",
       "expectedVersion": "3.3.1",
-      "publishedVersion": "3.3.0",
-      "ok": false,
-      "error": "expected 3.3.1"
+      "publishedVersion": "3.3.1",
+      "ok": true,
+      "error": ""
     }
   ],
-  "gaps": [
-    "GitHub Release v3.3.1 missing",
-    "@file-viewer/core npm 3.3.0 !== 3.3.1",
-    "@file-viewer/asset-installer npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-cad npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-typst npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-model npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-drawing npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-iwork npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-ppt npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-hangul npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-wordperfect npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-chm npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-data npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-design npm 3.3.0 !== 3.3.1",
-    "@file-viewer/thumbnail npm 3.3.0 !== 3.3.1",
-    "file-viewer-copy-assets npm 3.3.0 !== 3.3.1",
-    "@file-viewer/assets-standard npm 3.3.0 !== 3.3.1",
-    "@file-viewer/cli npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-pdf-identity-repair npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-pptx-charts npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-mermaid npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-midi npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-rtf npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-streaming-media npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-text-tools npm 3.3.0 !== 3.3.1",
-    "@file-viewer/capability-drawio-official npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-pdf npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-ofd npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-presentation npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-pptx npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-ppt npm 3.3.0 !== 3.3.1",
-    "@file-viewer/doc npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-word npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-spreadsheet npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-drawing npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-iwork npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-wordperfect npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-hangul npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-3d npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-mindmap npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-cad npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-typst npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-archive npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-chm npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-email npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-epub npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-text npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-image npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-dicom npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-signature npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-media npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-geo npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-design npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-data npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-binary npm 3.3.0 !== 3.3.1",
-    "@file-viewer/eda-layout npm 3.3.0 !== 3.3.1",
-    "@file-viewer/eda-orcad npm 3.3.0 !== 3.3.1",
-    "@file-viewer/geometry-engine npm 3.3.0 !== 3.3.1",
-    "@file-viewer/renderer-eda npm 3.3.0 !== 3.3.1",
-    "@file-viewer/pptx npm 3.3.0 !== 3.3.1",
-    "@file-viewer/preset-all npm 3.3.0 !== 3.3.1",
-    "@file-viewer/preset-lite npm 3.3.0 !== 3.3.1",
-    "@file-viewer/preset-standard npm 3.3.0 !== 3.3.1",
-    "@file-viewer/preset-office npm 3.3.0 !== 3.3.1",
-    "@file-viewer/preset-engineering npm 3.3.0 !== 3.3.1",
-    "@file-viewer/vite-plugin npm 3.3.0 !== 3.3.1",
-    "@flyfish-group/file-viewer3 npm 3.3.0 !== 3.3.1",
-    "file-viewer3 npm 3.3.0 !== 3.3.1",
-    "@flyfish-group/file-viewer npm 3.3.0 !== 3.3.1",
-    "@flyfish-group/file-viewer-web npm 3.3.0 !== 3.3.1",
-    "@flyfish-group/file-viewer-react npm 3.3.0 !== 3.3.1",
-    "msdoc-viewer npm 0.2.13 !== 0.2.14",
-    "create-file-viewer npm 3.3.0 !== 3.3.1",
-    "file-viewer-cli npm 3.3.0 !== 3.3.1",
-    "@file-viewer/web npm 3.3.0 !== 3.3.1",
-    "@file-viewer/web-full npm 3.3.0 !== 3.3.1",
-    "@file-viewer/vue3 npm 3.3.0 !== 3.3.1",
-    "@file-viewer/vue3-full npm 3.3.0 !== 3.3.1",
-    "@file-viewer/vue2.7 npm 3.3.0 !== 3.3.1",
-    "@file-viewer/vue2.7-full npm 3.3.0 !== 3.3.1",
-    "@file-viewer/vue2.6 npm 3.3.0 !== 3.3.1",
-    "@file-viewer/vue2.6-full npm 3.3.0 !== 3.3.1",
-    "@file-viewer/react npm 3.3.0 !== 3.3.1",
-    "@file-viewer/react-full npm 3.3.0 !== 3.3.1",
-    "@file-viewer/react-legacy npm 3.3.0 !== 3.3.1",
-    "@file-viewer/react-legacy-full npm 3.3.0 !== 3.3.1",
-    "@file-viewer/jquery npm 3.3.0 !== 3.3.1",
-    "@file-viewer/jquery-full npm 3.3.0 !== 3.3.1",
-    "@file-viewer/svelte npm 3.3.0 !== 3.3.1",
-    "@file-viewer/svelte-full npm 3.3.0 !== 3.3.1"
-  ],
+  "gaps": [],
   "gapSummary": {
-    "total": 90,
-    "externalBlockers": 90,
+    "total": 0,
+    "externalBlockers": 0,
     "localActionable": 0,
-    "byChannel": {
-      "github-release": 1,
-      "npm": 89
-    },
-    "externalBlockerChannels": [
-      "github-release",
-      "npm"
-    ],
+    "byChannel": {},
+    "externalBlockerChannels": [],
     "localActionableChannels": []
   },
-  "gapDetails": [
-    {
-      "id": "github-release-github-release-v3.3.1-missing",
-      "channel": "github-release",
-      "scope": "release-assets",
-      "externalBlocker": true,
-      "message": "GitHub Release v3.3.1 missing",
-      "nextAction": "Upload the missing GitHub Release metadata or artifact and rerun verify:github-release-assets."
-    },
-    {
-      "id": "npm-@file-viewer-core-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/core npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-asset-installer-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/asset-installer npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-cad-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-cad npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-typst-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-typst npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-model-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-model npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-drawing-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-drawing npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-iwork-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-iwork npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-ppt-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-ppt npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-hangul-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-hangul npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-wordperfect-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-wordperfect npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-chm-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-chm npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-data-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-data npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-design-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-design npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-thumbnail-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/thumbnail npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-file-viewer-copy-assets-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "file-viewer-copy-assets npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-assets-standard-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/assets-standard npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-cli-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/cli npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-pdf-identity-repair-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-pdf-identity-repair npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-pptx-charts-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-pptx-charts npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-mermaid-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-mermaid npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-midi-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-midi npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-rtf-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-rtf npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-streaming-media-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-streaming-media npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-text-tools-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-text-tools npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-capability-drawio-official-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/capability-drawio-official npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-pdf-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-pdf npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-ofd-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-ofd npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-presentation-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-presentation npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-pptx-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-pptx npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-ppt-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-ppt npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-doc-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/doc npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-word-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-word npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-spreadsheet-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-spreadsheet npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-drawing-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-drawing npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-iwork-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-iwork npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-wordperfect-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-wordperfect npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-hangul-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-hangul npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-3d-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-3d npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-mindmap-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-mindmap npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-cad-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-cad npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-typst-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-typst npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-archive-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-archive npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-chm-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-chm npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-email-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-email npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-epub-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-epub npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-text-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-text npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-image-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-image npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-dicom-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-dicom npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-signature-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-signature npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-media-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-media npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-geo-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-geo npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-design-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-design npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-data-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-data npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-binary-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-binary npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-eda-layout-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/eda-layout npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-eda-orcad-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/eda-orcad npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-geometry-engine-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/geometry-engine npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-renderer-eda-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/renderer-eda npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-pptx-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/pptx npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-preset-all-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/preset-all npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-preset-lite-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/preset-lite npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-preset-standard-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/preset-standard npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-preset-office-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/preset-office npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-preset-engineering-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/preset-engineering npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vite-plugin-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vite-plugin npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@flyfish-group-file-viewer3-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@flyfish-group/file-viewer3 npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-file-viewer3-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "file-viewer3 npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@flyfish-group-file-viewer-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@flyfish-group/file-viewer npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@flyfish-group-file-viewer-web-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@flyfish-group/file-viewer-web npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@flyfish-group-file-viewer-react-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@flyfish-group/file-viewer-react npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-msdoc-viewer-npm-0.2.13-0.2.14",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "msdoc-viewer npm 0.2.13 !== 0.2.14",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-create-file-viewer-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "create-file-viewer npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-file-viewer-cli-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "file-viewer-cli npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-web-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/web npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-web-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/web-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue3-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue3 npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue3-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue3-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue2.7-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue2.7 npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue2.7-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue2.7-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue2.6-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue2.6 npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-vue2.6-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/vue2.6-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-react-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/react npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-react-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/react-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-react-legacy-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/react-legacy npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-react-legacy-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/react-legacy-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-jquery-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/jquery npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-jquery-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/jquery-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-svelte-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/svelte npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    },
-    {
-      "id": "npm-@file-viewer-svelte-full-npm-3.3.0-3.3.1",
-      "channel": "npm",
-      "scope": "package-registry",
-      "externalBlocker": true,
-      "message": "@file-viewer/svelte-full npm 3.3.0 !== 3.3.1",
-      "nextAction": "Complete npm login/passkey and publish the ecosystem packages."
-    }
-  ],
+  "gapDetails": [],
   "nextActions": [
-    "Run `npm login` / passkey in an interactive terminal, then `pnpm release:ecosystem:publish`.",
-    "Create or update the GitHub Release assets, then rerun `pnpm release:public`."
+    "Release channels are aligned. Keep this report attached to the GitHub Release for downstream verification."
   ]
 }
