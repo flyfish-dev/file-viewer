@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { stageBuiltRetainedWorkers, stageRetainedAssetNotices, withRetainedAssetNoticeManifests } from './retained-asset-notices.mjs'
 import { stagePreparedDesignRuntime } from './stage-design-runtime.mjs'
 
@@ -23,9 +23,12 @@ const sourceDir = existsSync(resolve(webViewerDir, 'flyfish-viewer-assets.json')
   ? webViewerDir
   : copyAssetsViewerDir
 const targetDir = resolve(packageDir, 'viewer')
-const sourceManifest = JSON.parse(await readFile(resolve(sourceDir, 'flyfish-viewer-assets.json'), 'utf8'))
+// Cached viewer payloads may predate newly declared runtime grants.
+const { listFileViewerRendererAssetManifests } = await import(
+  pathToFileURL(resolve(sourceRoot, 'packages/core/dist/assets.js')).href
+)
 const groups = new Set(config.copyGroups)
-let selected = withRetainedAssetNoticeManifests(sourceManifest.rendererAssetManifests.filter(entry => groups.has(entry.rendererId)))
+let selected = withRetainedAssetNoticeManifests(listFileViewerRendererAssetManifests().filter(entry => groups.has(entry.rendererId)))
 const missing = [...groups].filter(group => !selected.some(entry => entry.rendererId === group))
 if (missing.length) throw new Error(`${packageJson.name} references missing asset groups: ${missing.join(', ')}`)
 
