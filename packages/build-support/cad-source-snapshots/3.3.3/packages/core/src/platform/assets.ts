@@ -30,7 +30,7 @@ export const DEFAULT_FILE_VIEWER_DOCX_WORKER_JSZIP_PATH = 'vendor/docx/jszip.min
 export const DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '0.3.39';
 export const DEFAULT_FILE_VIEWER_PRESENTATION_WORKER_PATH = 'vendor/pptx/pptx.worker.js';
 export const DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH = 'vendor/ppt';
-export const DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION = '1.0.1';
+export const DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION = '1.0.2';
 export const DEFAULT_FILE_VIEWER_PPT_MODULE_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/dist/pptjs.mjs`;
 export const DEFAULT_FILE_VIEWER_PPT_WORKER_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/dist/pptjs.worker.js`;
 /** @deprecated Compatibility paths for the previous native engine; not loaded by TypeScript PPT. */

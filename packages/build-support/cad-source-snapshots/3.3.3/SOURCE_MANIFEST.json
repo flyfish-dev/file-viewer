@@ -256,8 +256,8 @@
     },
     {
       "path": "packages/core/src/platform/assets.ts",
-      "sha256": "091f50c745895e6af88572801280fd01a3499982e64759669eb25484c4a7ce65",
-      "archiveSha256": "091f50c745895e6af88572801280fd01a3499982e64759669eb25484c4a7ce65",
+      "sha256": "ce1600ccd1a355507f562b89144e4fd71c6830f88ccbe85106a48c1191b39d10",
+      "archiveSha256": "ce1600ccd1a355507f562b89144e4fd71c6830f88ccbe85106a48c1191b39d10",
       "hashMode": "bytes"
     },
     {
@@ -441,7 +441,7 @@
     "sha256": "97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f"
   },
   "upstream": "upstream-sources.json; all original license texts retained",
-  "priorArchiveSha256": "32759cd0a4826871361f7bc2d4056b19afbf4522314b68a27d6e1f8ffb0bf4eb",
+  "priorArchiveSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
   "files": [
     {
       "path": "build.mjs",
@@ -641,7 +641,7 @@
     },
     {
       "path": "packages/core/src/platform/assets.ts",
-      "sha256": "091f50c745895e6af88572801280fd01a3499982e64759669eb25484c4a7ce65"
+      "sha256": "ce1600ccd1a355507f562b89144e4fd71c6830f88ccbe85106a48c1191b39d10"
     },
     {
       "path": "packages/core/src/platform/copiedAssets.ts",
