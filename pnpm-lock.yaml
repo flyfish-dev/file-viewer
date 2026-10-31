@@ -1445,8 +1445,8 @@ importers:
         specifier: workspace:3.3.3
         version: link:../../core
       ag-psd:
-        specifier: ^31.0.3
-        version: 31.0.3
+        specifier: ^33.0.0
+        version: 33.0.0
       avsc:
         specifier: ^5.7.9
         version: 5.7.9
@@ -1509,8 +1509,8 @@ importers:
         specifier: 0.9.12
         version: 0.9.12
       ag-psd:
-        specifier: 31.0.3
-        version: 31.0.3
+        specifier: 33.0.0
+        version: 33.0.0
       fzstd:
         specifier: 0.1.1
         version: 0.1.1
@@ -4125,8 +4125,8 @@ packages:
     resolution: {integrity: sha512-Xwrja8nx9e5o2N1my4DsKCeKpdrnACyr1wtbPxBDgGzKzKyE9kRtBFA8mWldI+RVlD7CBZNWY/wQ2+ydwOR6kQ==}
     engines: {node: '>=14.0'}
 
-  ag-psd@31.0.3:
-    resolution: {integrity: sha512-THDYK+WK1F5GOH4G0l4wkQRc0Cyq5tnxIwBezACKwa6idKygphnGgMISr4lmW6n0Q89ceoqpdPZQF3Y7TL1pgg==}
+  ag-psd@33.0.0:
+    resolution: {integrity: sha512-u/RxJx5/bwFn/+Ba/aXL0mMa66c1Sz9NwwE4MNZenDqzyAiuPbaWi1/PSVCiIEYp+kVIvJJBwy4bZuhsFgqF4Q==}
 
   ajv@8.18.0:
     resolution: {integrity: sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==}
@@ -8940,7 +8940,7 @@ snapshots:
 
   adm-zip@0.6.1: {}
 
-  ag-psd@31.0.3:
+  ag-psd@33.0.0:
     dependencies:
       base64-js: 1.5.1
       pako: 2.1.0
