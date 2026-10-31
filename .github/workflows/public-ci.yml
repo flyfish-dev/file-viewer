@@ -458,7 +458,7 @@ jobs:
       - name: Verify Web Full unpacked package size and complete offline assets
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 15
-        run: pnpm --filter @file-viewer/web-full verify:packed-assets
+        run: env -u NODE_PATH -u NODE_OPTIONS pnpm --filter @file-viewer/web-full verify:packed-assets
 
       - name: Retain packed Web Full evidence
         if: always() && steps.impact.outputs.runtime != 'false'
