@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "purpose": "shared-runtime-material-attribution",
   "scope": "Material identity and actual copied payloads; not a source-availability or release approval.",
-  "registrySha256": "c59b733c13019003950d86996de91ad467ed9c61b92cf6c973df8c2a5d41b291",
+  "registrySha256": "03683fa23c117cff8fa742e03b76e31860e47f2d9f2920cf18b83dc76621e4e3",
   "releaseApproval": false,
   "materials": [
     {
@@ -3309,12 +3309,12 @@
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "sha256": "4a565fff1d93f4bd6c80c63634a4b274c2cd264ffb0810b4a50a6975ab90bccb",
       "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b (SHA-256 aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
@@ -3366,12 +3366,12 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "sha256": "4a565fff1d93f4bd6c80c63634a4b274c2cd264ffb0810b4a50a6975ab90bccb",
       "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b (SHA-256 aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.1/dwfv-render.wasm",
@@ -3423,12 +3423,12 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "sha256": "4a565fff1d93f4bd6c80c63634a4b274c2cd264ffb0810b4a50a6975ab90bccb",
       "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b (SHA-256 aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.3/dwfv-render.wasm",
@@ -3480,12 +3480,12 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "sha256": "4a565fff1d93f4bd6c80c63634a4b274c2cd264ffb0810b4a50a6975ab90bccb",
       "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b (SHA-256 aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
@@ -22037,16 +22037,16 @@
     },
     {
       "path": "vendor/ppt/dist/core/utils.d.ts",
-      "bytes": 459,
-      "sha256": "0e8e7c670886b61f89b64d5fea431000df403782c6ca21c63bcb03400fdd75e7",
-      "sourceSha256": "0e8e7c670886b61f89b64d5fea431000df403782c6ca21c63bcb03400fdd75e7",
+      "bytes": 601,
+      "sha256": "b2d909b3375399f6c6f13a9c359c61c8c643e0ba99f89340b6ec33e891b79bb4",
+      "sourceSha256": "b2d909b3375399f6c6f13a9c359c61c8c643e0ba99f89340b6ec33e891b79bb4",
       "sourceTransform": "none"
     },
     {
       "path": "vendor/ppt/dist/core/utils.js",
-      "bytes": 859,
-      "sha256": "2248ac18a1463881d82e6792ce54aa65213cb4d7bd94b876b02a9991dededd9d",
-      "sourceSha256": "2248ac18a1463881d82e6792ce54aa65213cb4d7bd94b876b02a9991dededd9d",
+      "bytes": 1141,
+      "sha256": "10298d93c1e93d9f582c6fa36e6dca757300000c2174424e7a05704e582bad4c",
+      "sourceSha256": "10298d93c1e93d9f582c6fa36e6dca757300000c2174424e7a05704e582bad4c",
       "sourceTransform": "none"
     },
     {
@@ -22072,9 +22072,9 @@
     },
     {
       "path": "vendor/ppt/dist/core/vector.js",
-      "bytes": 77857,
-      "sha256": "13f15694e614eb2503898699de56346d320bd63ba3b1cac116023522c5e8009e",
-      "sourceSha256": "13f15694e614eb2503898699de56346d320bd63ba3b1cac116023522c5e8009e",
+      "bytes": 77872,
+      "sha256": "3c39e7af66cca84c62340f9aeb080027ea145f3c003811a245a49b740042692e",
+      "sourceSha256": "3c39e7af66cca84c62340f9aeb080027ea145f3c003811a245a49b740042692e",
       "sourceTransform": "none"
     },
     {
@@ -22136,8 +22136,8 @@
     {
       "path": "vendor/ppt/dist/manifest.json",
       "bytes": 370,
-      "sha256": "edd0e06f681dd4809ab4e5cef27e5e5430124a1ffffe6520f111d25de311adf7",
-      "sourceSha256": "edd0e06f681dd4809ab4e5cef27e5e5430124a1ffffe6520f111d25de311adf7",
+      "sha256": "8046d42ba3044ceb071a69aad17b2c25b22bea92bcb90411917efc69b2af3da0",
+      "sourceSha256": "8046d42ba3044ceb071a69aad17b2c25b22bea92bcb90411917efc69b2af3da0",
       "sourceTransform": "none"
     },
     {
@@ -22233,9 +22233,9 @@
     },
     {
       "path": "vendor/ppt/dist/ppt/drawing.js",
-      "bytes": 32229,
-      "sha256": "e3e2dd2d803b3ac98e11904379f386fe1b7a13d5e0ea4075322fb55e914d11c2",
-      "sourceSha256": "e3e2dd2d803b3ac98e11904379f386fe1b7a13d5e0ea4075322fb55e914d11c2",
+      "bytes": 32278,
+      "sha256": "0f91d43328f3d0837d9313a3d42ae21b8f2e7bf43c20704d7cbb8c6868ac4b72",
+      "sourceSha256": "0f91d43328f3d0837d9313a3d42ae21b8f2e7bf43c20704d7cbb8c6868ac4b72",
       "sourceTransform": "none"
     },
     {
@@ -22261,9 +22261,9 @@
     },
     {
       "path": "vendor/ppt/dist/ppt/extras.js",
-      "bytes": 14104,
-      "sha256": "9e8488bf58a20e2d1008b812159beb85ddd0c045e34514a36960f52bae268757",
-      "sourceSha256": "9e8488bf58a20e2d1008b812159beb85ddd0c045e34514a36960f52bae268757",
+      "bytes": 14157,
+      "sha256": "bc189ca07e33490d7f48928a9540d6eb8f7446603ca898ae9e7c40541988a45e",
+      "sourceSha256": "bc189ca07e33490d7f48928a9540d6eb8f7446603ca898ae9e7c40541988a45e",
       "sourceTransform": "none"
     },
     {
@@ -22289,9 +22289,9 @@
     },
     {
       "path": "vendor/ppt/dist/ppt/headers-footers.js",
-      "bytes": 4584,
-      "sha256": "2fefd41b29fe0cc033cbacc9524bead9b66dbe24808fef68fe3683b0573380e0",
-      "sourceSha256": "2fefd41b29fe0cc033cbacc9524bead9b66dbe24808fef68fe3683b0573380e0",
+      "bytes": 4637,
+      "sha256": "1aa1e7dcc4e2b76a3d1a7e9ff5464ce6140c12e9047e39d653c80221d441f2e5",
+      "sourceSha256": "1aa1e7dcc4e2b76a3d1a7e9ff5464ce6140c12e9047e39d653c80221d441f2e5",
       "sourceTransform": "none"
     },
     {
@@ -22311,15 +22311,15 @@
     {
       "path": "vendor/ppt/dist/ppt/parser.d.ts",
       "bytes": 718,
-      "sha256": "b65a96f2c9ef86b0e31109651ca386f7cbcc662afa95d760f3c466f811a1d283",
-      "sourceSha256": "b65a96f2c9ef86b0e31109651ca386f7cbcc662afa95d760f3c466f811a1d283",
+      "sha256": "8d47f860cf7cc999e20b9ab3918094dd15905b448b4d011e6ea281b840f5588c",
+      "sourceSha256": "8d47f860cf7cc999e20b9ab3918094dd15905b448b4d011e6ea281b840f5588c",
       "sourceTransform": "none"
     },
     {
       "path": "vendor/ppt/dist/ppt/parser.js",
-      "bytes": 23587,
-      "sha256": "b7bf37dca370cce4c0d676417a13170ebbc13d0453793559143596f1b3a9c4d9",
-      "sourceSha256": "b7bf37dca370cce4c0d676417a13170ebbc13d0453793559143596f1b3a9c4d9",
+      "bytes": 23640,
+      "sha256": "cd130099022ac9d98cd4ca450ac887a63a0a7ca48d56e81faa276d83d83878bc",
+      "sourceSha256": "cd130099022ac9d98cd4ca450ac887a63a0a7ca48d56e81faa276d83d83878bc",
       "sourceTransform": "none"
     },
     {
@@ -22366,23 +22366,23 @@
     },
     {
       "path": "vendor/ppt/dist/pptjs.browser.js",
-      "bytes": 572514,
-      "sha256": "a9c954d8acd7a727da1df3cbff679f6867fe7e6ad7babde38908093f30fa8f75",
-      "sourceSha256": "a9c954d8acd7a727da1df3cbff679f6867fe7e6ad7babde38908093f30fa8f75",
+      "bytes": 573455,
+      "sha256": "4892c9b8286f2885129c321431a8ba0632c690375bf6fc2f94c5db73eff906c8",
+      "sourceSha256": "4892c9b8286f2885129c321431a8ba0632c690375bf6fc2f94c5db73eff906c8",
       "sourceTransform": "none"
     },
     {
       "path": "vendor/ppt/dist/pptjs.mjs",
-      "bytes": 572992,
-      "sha256": "0d93a2d0d2ab006f3f6b117d284d76743a8e6d710fbfa79be692fdc99e7d4c60",
-      "sourceSha256": "0d93a2d0d2ab006f3f6b117d284d76743a8e6d710fbfa79be692fdc99e7d4c60",
+      "bytes": 573933,
+      "sha256": "da1d42a07d3e9b0c3bca5fef05fd04f063273f857ef64caaa61d3300a22e7cb4",
+      "sourceSha256": "da1d42a07d3e9b0c3bca5fef05fd04f063273f857ef64caaa61d3300a22e7cb4",
       "sourceTransform": "none"
     },
     {
       "path": "vendor/ppt/dist/pptjs.worker.js",
-      "bytes": 572410,
-      "sha256": "d15959ec544da47e4aaf087e2df981b1166cb434f74b0c5359771618fd1a2782",
-      "sourceSha256": "d15959ec544da47e4aaf087e2df981b1166cb434f74b0c5359771618fd1a2782",
+      "bytes": 573351,
+      "sha256": "90dc709a3fffdf1588431333c57bd1ae8422a86dc7baf502fd2af671bef1eb6d",
+      "sourceSha256": "90dc709a3fffdf1588431333c57bd1ae8422a86dc7baf502fd2af671bef1eb6d",
       "sourceTransform": "none"
     },
     {
@@ -22570,8 +22570,8 @@
     {
       "path": "vendor/ppt/package.json",
       "bytes": 2352,
-      "sha256": "4e6ada2271a30aba61a49ff67309613b704e66b96aa09d960a4407e044c2ad9d",
-      "sourceSha256": "4e6ada2271a30aba61a49ff67309613b704e66b96aa09d960a4407e044c2ad9d",
+      "sha256": "27d196141d9894afaeb08b45e7b59c2f5669d40523c43554c84de01f0364310f",
+      "sourceSha256": "27d196141d9894afaeb08b45e7b59c2f5669d40523c43554c84de01f0364310f",
       "sourceTransform": "none"
     },
     {
@@ -22612,8 +22612,8 @@
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
       "bytes": 354745,
-      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
-      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
+      "sourceSha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
       "sourceTransform": "none"
     },
     {
@@ -22647,8 +22647,8 @@
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
       "bytes": 354745,
-      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
-      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
+      "sourceSha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
       "sourceTransform": "none"
     },
     {
@@ -22682,8 +22682,8 @@
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
       "bytes": 354745,
-      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
-      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
+      "sourceSha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
       "sourceTransform": "none"
     },
     {
@@ -22717,8 +22717,8 @@
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE.zip",
       "bytes": 354745,
-      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
-      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
+      "sourceSha256": "778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f",
       "sourceTransform": "none"
     },
     {

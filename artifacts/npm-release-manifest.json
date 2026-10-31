@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "mode": "runtime-only",
-  "sourceCommit": "dd64a44eaad6ac7464b953fbfbf627038a8e54a3",
-  "policyCatalogSha256": "d83860b75046e5a3d29d8a37a9282a0424e77858cb8b6cda2c6b079ac81ec250",
+  "sourceCommit": "aee3f688b763a8a4a26739bd3d03604038a08f51",
+  "policyCatalogSha256": "924066a20cea51da49ddef2735141fcec5bb73db92235b8357ccad3f214249d6",
   "version": "3.3.3",
-  "generatedAt": "2026-10-31T01:17:10.841Z",
+  "generatedAt": "2026-10-31T06:03:44.343Z",
   "packageCount": 89,
   "packages": [
     {
@@ -38,7 +38,7 @@
         }
       },
       "tarballSize": 240890,
-      "sha256": "3cba02621eddb861182f133840a0337ca973b27827775f9233eea2c44bd2652a",
+      "sha256": "b19db16c6619ef20f3108929d6b5de522db16166f8354b835ec3a2e9bd54930e",
       "entrypointCount": 13,
       "assetCount": 122,
       "fileCount": 135
@@ -109,8 +109,8 @@
           "sha256": "e778b5aff2780a74da0c7877a7c033461fc5048510b6ccdf03c5f9620515b7ad"
         }
       },
-      "tarballSize": 7089669,
-      "sha256": "785694f05f410721675f5b5ca236536a13c8a7c6fa1b213b9bf99294fb24fd44",
+      "tarballSize": 7089665,
+      "sha256": "a23bed313b6246cd5be76bea98541f1ac4659935cde26ade18ccd021d5f18654",
       "entrypointCount": 3,
       "assetCount": 22,
       "fileCount": 29
@@ -145,8 +145,8 @@
           "sha256": "417f75ca2c64167ec1c2de2ee92c472587ef3970694dc702c8dd75c6b2561530"
         }
       },
-      "tarballSize": 17183014,
-      "sha256": "4520cb01127da5dc454ad77f02988e9e5c5f83d1edddfedbd69dcc0e8fe6f97b",
+      "tarballSize": 17183036,
+      "sha256": "634e98d0e196c261ddd17779ff98e654d5b5fff573d710c0fa1aa158840edeed",
       "entrypointCount": 3,
       "assetCount": 26,
       "fileCount": 33
@@ -181,8 +181,8 @@
           "sha256": "aaf2f128a1469676a24a9c297d0568ac4ba54b911dd747ad13df917734097c62"
         }
       },
-      "tarballSize": 3178494,
-      "sha256": "b0c19b20d75c14f74a33c384d874ab59468f3961f71b7321f7cb78e42fe07358",
+      "tarballSize": 3178489,
+      "sha256": "6bf0b9acd01c229dd116c0a2d18d37f79b2884b3fb5bd028f805705b5f5ba3f1",
       "entrypointCount": 3,
       "assetCount": 9,
       "fileCount": 16
@@ -217,8 +217,8 @@
           "sha256": "22c4a9525435e2671f56733a7260443b4117ebdeb02b4f48f73efcdf422c30cd"
         }
       },
-      "tarballSize": 10857116,
-      "sha256": "03c02ef2a3b07cd00c68bf7bfe6a84a3814fcee7d5cb5abbfe37a19580bc35fe",
+      "tarballSize": 10857128,
+      "sha256": "fcd0b1d1eec5e53d0d90eeb0f9acc4e4e2997c86d38f4d6398d5908b13cdf0c8",
       "entrypointCount": 3,
       "assetCount": 2408,
       "fileCount": 2415
@@ -254,7 +254,7 @@
         }
       },
       "tarballSize": 590815,
-      "sha256": "19f630171cdaea6268480de943fcb37d638b4382b6bdc7123121578b91d7eb13",
+      "sha256": "cf495509e84c0d4324ce70894d1ab5ae5ca735df21e3b04fb0ffe25b909936cb",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 11
@@ -289,8 +289,8 @@
           "sha256": "0d804700acf892718fbb497d4c991396dde2530d86e67e6bd32dc446cc8e1ad4"
         }
       },
-      "tarballSize": 559225,
-      "sha256": "ba9399358d70cc748d1a812e509a7b680274e4a9cd9afc674026d08261686125",
+      "tarballSize": 560181,
+      "sha256": "7f654809324f9c6e0003a53cb981ad943ebab107aeb16792e5f0b6c106428cd8",
       "entrypointCount": 3,
       "assetCount": 98,
       "fileCount": 105
@@ -325,8 +325,8 @@
           "sha256": "f7d4213011db7105838a917613da84415d7f25ef94f5ac063678865658439a74"
         }
       },
-      "tarballSize": 199190,
-      "sha256": "2b1d6a53935da0855381074bb22c0d7e8dc795dc7b7fa4a99da237ad88715afa",
+      "tarballSize": 199188,
+      "sha256": "3d7588723fa209aa25761ac5cb2115e5441c6348026d15ace4a96be69572a6e9",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 11
@@ -361,8 +361,8 @@
           "sha256": "fee6818797928c31abba58a6caac8d69ef7de2c83957b165171027a3e364e434"
         }
       },
-      "tarballSize": 242121,
-      "sha256": "6d4318fc3247a88a197919103b17104da470a987aca24cdccb600a7803f19baa",
+      "tarballSize": 242113,
+      "sha256": "5371d518a72a80a985e5a3f67606c25f5f8d4a989ccd61380848311778ff4985",
       "entrypointCount": 3,
       "assetCount": 19,
       "fileCount": 26
@@ -397,8 +397,8 @@
           "sha256": "087724214b3d004b6793ca0f867f24390d23191227a699e53011495be7dcfbd8"
         }
       },
-      "tarballSize": 281551,
-      "sha256": "51045ae13ca150b4b3352d05d1c0e1583c9268cf4f5d6f125be1a106cfcce1d1",
+      "tarballSize": 281552,
+      "sha256": "8e7b06485f30d4197aa78b2fe1a1ec2b297bc6a62be4d8043fb595648ff962fb",
       "entrypointCount": 3,
       "assetCount": 9,
       "fileCount": 19
@@ -433,8 +433,8 @@
           "sha256": "e9d0ee6f10796fbb00c00b110f5af396ac38a3306bde2e1c10085f5ca707553e"
         }
       },
-      "tarballSize": 342760,
-      "sha256": "5915af94aebc4411f5a4ac3dcaa14807e1250675fabe0e64c528ad2379acd667",
+      "tarballSize": 342758,
+      "sha256": "dee017affa70da18b992eb9e5676120c4e58c0dc1d19b348751589cd950f2a24",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 11
@@ -469,8 +469,8 @@
           "sha256": "18f0638a5c041cc4e486a4d54597a0490d22b7b32105bab9e1156befeeaafad3"
         }
       },
-      "tarballSize": 17543513,
-      "sha256": "5f2b30bb11acc9abf3dc7aafbb634c54cc2aecca52f959599669cd1c3d30c68d",
+      "tarballSize": 17543508,
+      "sha256": "b4f0df36314bfa39eb6001d4bfb391bdf76d9908dc3e2eb63cbc857b5ab9b1a5",
       "entrypointCount": 3,
       "assetCount": 32,
       "fileCount": 39
@@ -541,8 +541,8 @@
           "sha256": "2a6288b806594a85ebdfa63ba15ccc16546384ea7f9eb43a99ad7c1c98050bb7"
         }
       },
-      "tarballSize": 68185819,
-      "sha256": "5a15ccc1dd33955d5fc8badfd7cfaafc7b05ef811767f2814e1ca278f4b45045",
+      "tarballSize": 68185587,
+      "sha256": "661ec7a5b66ea65e6125a71d1bdc685e41fe976ce46e94bf85fe8332b5d7e1a4",
       "entrypointCount": 4,
       "assetCount": 2934,
       "fileCount": 2939
@@ -577,8 +577,8 @@
           "sha256": "90ecfceb3d1e1241101de11542290954741974c1644382ded1cff484da361bef"
         }
       },
-      "tarballSize": 7846284,
-      "sha256": "2f972dd68ef84d610a1601978651c7e6c5e9a684b4605d3557b131c2e38b74ec",
+      "tarballSize": 7846277,
+      "sha256": "2bbedbc4ea4b144df306511f2f3118ff26fad5c312a2ea3b29d4d346cef47f29",
       "entrypointCount": 4,
       "assetCount": 313,
       "fileCount": 318
@@ -758,7 +758,7 @@
         }
       },
       "tarballSize": 12702,
-      "sha256": "c29aedb0855c1552e008480d4bf1ef4637aa47584711a16bf64dbaa151a040b8",
+      "sha256": "437cdbb5d0c63fbed0bf110eb7e373c7f706f597299e8b460998b344efea9154",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -1081,8 +1081,8 @@
           "sha256": "b1f11d330e307270a89759b72dbe62f8e0843067bfc06e5f5be3e668a982e903"
         }
       },
-      "tarballSize": 25252,
-      "sha256": "33aa33e8a8a3dcb3cf183dc36feae7adb59795684276070286935b68e9896ac0",
+      "tarballSize": 25256,
+      "sha256": "843b7e33e451bc72a11e801f32b0b68d78ee043aa88e9f9a8c69e9cc8828ed8a",
       "entrypointCount": 3,
       "assetCount": 8,
       "fileCount": 14
@@ -1334,7 +1334,7 @@
         }
       },
       "tarballSize": 1764451,
-      "sha256": "a2621c090350600572951d6593f2ab630e031d2fc84c5ee4dd74b25f2378ebe8",
+      "sha256": "3e743f57f683fd44ab25e68fe6ac549c7b360062fa2cba158b6bd40128768572",
       "entrypointCount": 5,
       "assetCount": 105,
       "fileCount": 111
@@ -1514,7 +1514,7 @@
         }
       },
       "tarballSize": 6621668,
-      "sha256": "4f659782a3666b695678294843dc658505be7f8a620ad9af276ae919ce88d4b5",
+      "sha256": "5c177274e4df2902a9fcf7d1664382a18329d1e3bb70d5dbb7def3e1c72f7557",
       "entrypointCount": 6,
       "assetCount": 17,
       "fileCount": 40
@@ -2114,19 +2114,19 @@
       "readmes": {
         "README.md": {
           "bytes": 3275,
-          "sha256": "c6cacbfc7c8c33a6bcef65a5ab3899d828468f94bf40158d0ef67f7dc3bcca11"
+          "sha256": "9d452d62926d936a1650ae81558d9b8a1fc0610a1b961de52231c99aff7620de"
         },
         "README.en.md": {
           "bytes": 3275,
-          "sha256": "c6cacbfc7c8c33a6bcef65a5ab3899d828468f94bf40158d0ef67f7dc3bcca11"
+          "sha256": "9d452d62926d936a1650ae81558d9b8a1fc0610a1b961de52231c99aff7620de"
         },
         "README.zh-CN.md": {
           "bytes": 3074,
-          "sha256": "80b5c789d762a8b3b10009b8b92190b71a80327dc67273b1dee3d88ffdc1ac77"
+          "sha256": "aabc88e5d653b2e9b6c6b04947dcd0167e5019fb09209b81d6f2480c015ab2de"
         }
       },
       "tarballSize": 7649,
-      "sha256": "8b8e557bbc36af247c5d85425831971634bc90c5ab29d403b40b6c64310526b1",
+      "sha256": "fd98c89e0c1cf12007b9291ab1c6c728db681960a2ac2ffd8dd3faa942f9fe93",
       "entrypointCount": 7,
       "assetCount": 6,
       "fileCount": 11
@@ -2522,8 +2522,8 @@
           "sha256": "e1d59d54a76944668c10f03f8410521289fa65a4eddcd7696651d9de56ab0f0a"
         }
       },
-      "tarballSize": 68321414,
-      "sha256": "20644bc04b8ef0dccf062b3843bd24a31a9e72048bf7546675ef693365499e60",
+      "tarballSize": 68324234,
+      "sha256": "14517482eaee33d89bfa4b198769cafb2cf6665732bc6eb3cb6cabdde2e86fec",
       "entrypointCount": 6,
       "assetCount": 2942,
       "fileCount": 2948
@@ -2558,8 +2558,8 @@
           "sha256": "aa72aa24a7c52afd80c23b660a6652702d2a3378b75a8728594bc3ec6a5913dc"
         }
       },
-      "tarballSize": 39597901,
-      "sha256": "26eb428caefe06e32c1454c6085c025ebfe43e5aedb185511d13e02c80841671",
+      "tarballSize": 39598084,
+      "sha256": "0d630cf6d25ffda9e6b7157c78aff357d6d4a3cd2d2722b70439c7c762906866",
       "entrypointCount": 5,
       "assetCount": 500,
       "fileCount": 506

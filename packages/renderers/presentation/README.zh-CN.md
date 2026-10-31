@@ -2,7 +2,7 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.zh-CN.md)
 
-Flyfish File Viewer 的独立演示文稿 renderer 包。PowerPoint 97–2003 二进制 `.ppt` / `.pot` 使用独立的 `@file-viewer/ppt@1.0.1` TypeScript 引擎，PPTX/PPTM/POTX/POTM/PPSX/PPSM 使用 `@file-viewer/pptx`；两条链路都接入统一缩放、打印和 HTML 导出。
+Flyfish File Viewer 的独立演示文稿 renderer 包。PowerPoint 97–2003 二进制 `.ppt` / `.pot` 使用独立的 `@file-viewer/ppt@1.0.2` TypeScript 引擎，PPTX/PPTM/POTX/POTM/PPSX/PPSM 使用 `@file-viewer/pptx`；两条链路都接入统一缩放、打印和 HTML 导出。
 
 ## 用法
 

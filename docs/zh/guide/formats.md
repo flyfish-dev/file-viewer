@@ -115,7 +115,7 @@
 
 - `ppt` 使用 `@file-viewer/renderer-presentation` 按需加载独立的 `@file-viewer/ppt` TypeScript 引擎，按页渲染二进制 PowerPoint 97–2003 文件；它与 PPTX 解析器保持严格路由边界。
 - `pptx` 等 OOXML 演示文稿使用独立的 `@file-viewer/pptx` 原生渲染引擎，各标准组件包共享同一条 renderer 链路，core-only 安装不会拉取任何演示文稿引擎。
-- 二进制 PPT 1.0.1 默认使用 TypeScript 解析 Worker 和主线程 SVG/Canvas；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局会自动发布并解析 `vendor/ppt/`，非标准资源布局才需要通过 `options.presentation.pptModuleUrl` / `pptWorkerUrl` 覆盖。PPTX 继续使用 `workerUrl` / `workerType` 配置另一条 Worker。
+- 二进制 PPT 1.0.2 默认使用 TypeScript 解析 Worker 和主线程 SVG/Canvas；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局会自动发布并解析 `vendor/ppt/`，非标准资源布局才需要通过 `options.presentation.pptModuleUrl` / `pptWorkerUrl` 覆盖。PPTX 继续使用 `workerUrl` / `workerType` 配置另一条 Worker。
 - PPTX 默认通过 renderer 内部的模块 Worker 渐进解析；私有静态资源路径、旧 WebView、严格 CSP 或自托管 CDN 场景可以用 `options.presentation.workerUrl` / `options.presentation.workerType` 固定 Worker 地址和类型，避免运行时从错误路径加载。
 - PPTX 渲染器现在会按 DrawingML 的组合图形坐标系处理 `chOff/chExt`，组合内元素在缩放、旋转、翻转时会更接近 PowerPoint 中的位置关系。
 - 主题背景支持从 `fillStyleLst` / `bgFillStyleLst` 解析纯色、渐变、图片和平铺图案；PPTX 内嵌的 EMF 图片会尽量转换为 SVG 数据图，避免只显示空白占位。
@@ -124,7 +124,7 @@
 
 #### 二进制 PPT 引擎许可边界
 
-`@file-viewer/ppt@1.0.1` 的 TypeScript 编译运行时采用包内 Apache-2.0 许可证，源码暂不公开。Demo、Full、copy-assets 与 CDN/IIFE 会交付匹配的编译包和解析 Worker，无需原生 WASM 或内置字体。此前原生版本仍适用其原有许可证与水印要求。
+`@file-viewer/ppt@1.0.2` 的 TypeScript 编译运行时采用包内 Apache-2.0 许可证，源码暂不公开。Demo、Full、copy-assets 与 CDN/IIFE 会交付匹配的编译包和解析 Worker，无需原生 WASM 或内置字体。此前原生版本仍适用其原有许可证与水印要求。
 - `pdf` 走 `pdfjs-dist`，通常是版式最稳定的一类文件，适合合同、流程单、正式成品材料。当前 PDF 视图提供顶部缩放工具栏、页码状态、旋转页兼容、可显隐导航窗格、页面/目录树切换、可选懒加载页面缩略图和宽度自适应。同源 URL 会默认使用 PDF.js 的 URL 渐进读取；文件服务支持 Range 时会自动分片加载，避免大文件必须整包下载后才出现首屏。
 - PDF.js worker、CMap、WASM 和 standard fonts 默认随 viewer assets 分发到 `vendor/pdf/`，不会访问公共 CDN。轻量组件 + preset 没有复制 assets 时，PDF renderer 会在默认 worker 不可用或返回 HTML 时懒加载包内 worker handler 兜底，保证先能预览；静态目录特殊、需要最佳性能或严格离线时可通过 `options.pdf.workerUrl`、`options.pdf.cMapUrl`、`options.pdf.wasmUrl` 和 `options.pdf.standardFontDataUrl` 指向自托管地址。
 - PDF 的打印与导出 HTML 会通过专属导出适配器逐页生成完整页面，不依赖当前滚动位置、当前可见页或已经渲染的 canvas，也不会被导航窗格、预览容器或全局样式截断，适合正式归档和审批留痕。

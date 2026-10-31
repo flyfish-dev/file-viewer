@@ -1,6 +1,6 @@
 import type { BinaryInput, ParseOptions, PptDocument } from '../types.js';
 import { type RecordContext } from './records.js';
-export declare const VERSION = "1.0.1";
+export declare const VERSION = "1.0.2";
 export interface PersistDirectory {
     objects: Map<number, number>;
     documentId: number;

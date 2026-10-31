@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/ppt",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Pure TypeScript legacy PowerPoint .ppt parser and SVG viewer, implemented from Microsoft Open Specifications",
   "type": "module",
   "license": "Apache-2.0",

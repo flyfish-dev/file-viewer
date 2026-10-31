@@ -1,4 +1,5 @@
 import { PptError } from '../core/errors.js';
+import { trimTrailingNulls } from '../core/utils.js';
 import { RT } from './constants.js';
 import { readRecords } from './records.js';
 import { adjustedPresetGeometry, customGeometry, officeArray } from './geometry.js';
@@ -243,7 +244,7 @@ function wordArt(values, complex, ctx, preset, record) {
     if (bytes.byteLength > ctx.limits.maxTextLength * 2)
         throw new PptError('LIMIT_TEXT', 'WordArt text exceeds the configured character limit', record.offset);
     const font = complex.get(197), align = values.get(194) ?? 1;
-    return { text: utf16.decode(bytes).replace(/\0+$/, ''), fontFamily: font ? utf16.decode(font).replace(/\0+$/, '') : 'Arial', fontSize: Math.max(1, fixed(values.get(195) ?? 36 * 65536) * 4 / 3), spacing: clamp(fixed(values.get(196) ?? 65536), 0, 5), bold: boolValue(values, 255, 5, false), italic: boolValue(values, 255, 4, false), vertical: boolValue(values, 255, 13, false), alignment: align === 2 ? 'left' : align === 3 ? 'right' : align === 0 || align === 4 || align === 5 ? 'justify' : 'center', warpPreset: preset, adjustments: Array.from({ length: 8 }, (_, i) => (values.get(327 + i) ?? (i === 0 ? 5400 : 0)) | 0) };
+    return { text: trimTrailingNulls(utf16.decode(bytes)), fontFamily: font ? trimTrailingNulls(utf16.decode(font)) : 'Arial', fontSize: Math.max(1, fixed(values.get(195) ?? 36 * 65536) * 4 / 3), spacing: clamp(fixed(values.get(196) ?? 65536), 0, 5), bold: boolValue(values, 255, 5, false), italic: boolValue(values, 255, 4, false), vertical: boolValue(values, 255, 13, false), alignment: align === 2 ? 'left' : align === 3 ? 'right' : align === 0 || align === 4 || align === 5 ? 'justify' : 'center', warpPreset: preset, adjustments: Array.from({ length: 8 }, (_, i) => (values.get(327 + i) ?? (i === 0 ? 5400 : 0)) | 0) };
 }
 function extrusion(values, ctx, record, id) {
     if (!boolValue(values, 703, 3, false))
@@ -308,8 +309,8 @@ function textForShape(records, values, complex, ctx, record) {
     if (!frame && wordart) {
         if (wordart.byteLength > ctx.limits.maxTextLength * 2)
             throw new PptError('LIMIT_TEXT', 'WordArt text exceeds the configured character limit', record.offset);
-        const text = utf16.decode(wordart).replace(/\0+$/, '');
-        const font = complex.get(197), fontFamily = font ? utf16.decode(font).replace(/\0+$/, '') : undefined;
+        const text = trimTrailingNulls(utf16.decode(wordart));
+        const font = complex.get(197), fontFamily = font ? trimTrailingNulls(utf16.decode(font)) : undefined;
         frame = { paragraphs: [{ level: 0, style: { alignment: 'center' }, runs: [{ text, style: { fontFamily, fontSize: fixed(values.get(195) ?? 36 * 65536) * 4 / 3, color: officeColor(values.get(385) ?? 0, ctx.colors), colorIndex: colorIndex(values.get(385) ?? 0) } }] }], margins: { left: 0, top: 0, right: 0, bottom: 0 }, verticalAlignment: 'middle', wrap: true, sourceText: text };
     }
     if (!frame)
@@ -409,7 +410,7 @@ function shape(record, ctx, masters) {
         bounds.height = -bounds.height;
         flipV = !flipV;
     }
-    const nameBytes = complex.get(896), name = nameBytes ? utf16.decode(nameBytes).replace(/\0+$/, '') : undefined;
+    const nameBytes = complex.get(896), name = nameBytes ? trimTrailingNulls(utf16.decode(nameBytes)) : undefined;
     const result = { id, kind: flags & 1 ? 'group' : 'shape', name, bounds, rotation: fixed(values.get(4) ?? 0), flipH, flipV, preset, fill: fill(values, complex, ctx, record, preset), line: line(values, ctx, preset), shadow: shadow(values, ctx), placeholder, hidden: boolValue(values, 959, 1, false), source: { offset: record.offset, recordType: record.type, shapeType: preset, properties: { ...Object.fromEntries(values), fspFlags: flags, hasAnchor: anchor ? 1 : 0 } } };
     const group = records.find(r => r.type === RT.OfficeArtFSPGR);
     if (group)

@@ -6,10 +6,10 @@ import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferred
 // This public snapshot was read back and cold-built on Oracle. Its standalone
 // preferred sources reproduce the canonical and actual Full owner runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: '5c7e9dab42d3ceee005f1929a23c5da137f018a1',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1',
-  sha256: 'aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c',
-  bytes: 203577258,
+  sourceCommit: '77fd41b331f3576b27f1414918051196fba3e57b',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b',
+  sha256: 'aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b',
+  bytes: 189976130,
   buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.3',
   runtimeSha256: '97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f'
 })
@@ -36,7 +36,7 @@ export const CAD_INTEGRATION_SOURCE = Object.freeze({
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d',
+  sha256: '778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f',
   bytes: 354745,
   files: 86,
   runtimeBytes: 627662,

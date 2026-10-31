@@ -1,4 +1,5 @@
 import { PptError } from '../core/errors.js';
+import { trimTrailingNulls } from '../core/utils.js';
 import { inflateZlib } from '../core/inflate.js';
 import { readRecords } from './records.js';
 /** Normative record IDs from [MS-PPT] 2.13.24. */
@@ -14,7 +15,7 @@ function string(ctx, node) {
     ctx.textLength += length;
     if (ctx.textLength > ctx.limits.maxTextLength)
         throw new PptError('LIMIT_TEXT', 'Metadata text exceeds the configured limit', node.offset);
-    return utf16.decode(ctx.bytes.subarray(node.dataOffset, node.dataOffset + length * 2)).replace(/\0+$/, '');
+    return trimTrailingNulls(utf16.decode(ctx.bytes.subarray(node.dataOffset, node.dataOffset + length * 2)));
 }
 function cstring(ctx, node, instance) { return string(ctx, node.children.find(r => r.type === R.CString && r.instance === instance)); }
 function view(ctx, node) { return new DataView(ctx.bytes.buffer, ctx.bytes.byteOffset + node.dataOffset, node.length); }

@@ -1,10 +1,10 @@
 {
   "name": "@file-viewer/ppt",
-  "version": "1.0.1",
-  "filename": "file-viewer-ppt-1.0.1.tgz",
-  "bytes": 549219,
-  "sha256": "4bba7dc5ec0f4e72b57385468b3347e038127e9ea08a6b7f4c2e0b5b4dc215da",
-  "integrity": "sha512-r6bYt7bC+fDL4yICKflfvb/yn9RNY5NB534F/OU343+sC1meHHKHapN86exqtUXqqP5oOEx8uu0IFCgcAj8Qfw==",
+  "version": "1.0.2",
+  "filename": "file-viewer-ppt-1.0.2.tgz",
+  "bytes": 550197,
+  "sha256": "df5c226f6a771c1ade4e64add03e2f533a568afa6820a70a581e49613ed4f458",
+  "integrity": "sha512-dyq341piRU3vjeImNwkyb+OWAn26SyUqhFNiOxyrsYfDMTGEZgVdk/AmCxlmbCXeIMGRM2zHdzUUWRBRxfSQdg==",
   "files": [
     {
       "path": "LICENSE",
@@ -32,7 +32,7 @@
     },
     {
       "path": "dist/ppt/drawing.js",
-      "sha256": "e3e2dd2d803b3ac98e11904379f386fe1b7a13d5e0ea4075322fb55e914d11c2"
+      "sha256": "0f91d43328f3d0837d9313a3d42ae21b8f2e7bf43c20704d7cbb8c6868ac4b72"
     },
     {
       "path": "dist/render/effects.js",
@@ -48,7 +48,7 @@
     },
     {
       "path": "dist/ppt/extras.js",
-      "sha256": "9e8488bf58a20e2d1008b812159beb85ddd0c045e34514a36960f52bae268757"
+      "sha256": "bc189ca07e33490d7f48928a9540d6eb8f7446603ca898ae9e7c40541988a45e"
     },
     {
       "path": "dist/render/fields.js",
@@ -64,7 +64,7 @@
     },
     {
       "path": "dist/ppt/headers-footers.js",
-      "sha256": "2fefd41b29fe0cc033cbacc9524bead9b66dbe24808fef68fe3683b0573380e0"
+      "sha256": "1aa1e7dcc4e2b76a3d1a7e9ff5464ce6140c12e9047e39d653c80221d441f2e5"
     },
     {
       "path": "dist/index.js",
@@ -92,7 +92,7 @@
     },
     {
       "path": "dist/ppt/parser.js",
-      "sha256": "b7bf37dca370cce4c0d676417a13170ebbc13d0453793559143596f1b3a9c4d9"
+      "sha256": "cd130099022ac9d98cd4ca450ac887a63a0a7ca48d56e81faa276d83d83878bc"
     },
     {
       "path": "dist/core/pict.js",
@@ -104,11 +104,11 @@
     },
     {
       "path": "dist/pptjs.browser.js",
-      "sha256": "a9c954d8acd7a727da1df3cbff679f6867fe7e6ad7babde38908093f30fa8f75"
+      "sha256": "4892c9b8286f2885129c321431a8ba0632c690375bf6fc2f94c5db73eff906c8"
     },
     {
       "path": "dist/pptjs.worker.js",
-      "sha256": "d15959ec544da47e4aaf087e2df981b1166cb434f74b0c5359771618fd1a2782"
+      "sha256": "90dc709a3fffdf1588431333c57bd1ae8422a86dc7baf502fd2af671bef1eb6d"
     },
     {
       "path": "dist/core/raster.js",
@@ -164,7 +164,7 @@
     },
     {
       "path": "dist/core/utils.js",
-      "sha256": "2248ac18a1463881d82e6792ce54aa65213cb4d7bd94b876b02a9991dededd9d"
+      "sha256": "10298d93c1e93d9f582c6fa36e6dca757300000c2174424e7a05704e582bad4c"
     },
     {
       "path": "dist/core/vector-font.js",
@@ -172,7 +172,7 @@
     },
     {
       "path": "dist/core/vector.js",
-      "sha256": "13f15694e614eb2503898699de56346d320bd63ba3b1cac116023522c5e8009e"
+      "sha256": "3c39e7af66cca84c62340f9aeb080027ea145f3c003811a245a49b740042692e"
     },
     {
       "path": "dist/viewer.js",
@@ -196,11 +196,11 @@
     },
     {
       "path": "dist/manifest.json",
-      "sha256": "edd0e06f681dd4809ab4e5cef27e5e5430124a1ffffe6520f111d25de311adf7"
+      "sha256": "8046d42ba3044ceb071a69aad17b2c25b22bea92bcb90411917efc69b2af3da0"
     },
     {
       "path": "package.json",
-      "sha256": "4e6ada2271a30aba61a49ff67309613b704e66b96aa09d960a4407e044c2ad9d"
+      "sha256": "27d196141d9894afaeb08b45e7b59c2f5669d40523c43554c84de01f0364310f"
     },
     {
       "path": "NOTICE.md",
@@ -212,7 +212,7 @@
     },
     {
       "path": "dist/pptjs.mjs",
-      "sha256": "0d93a2d0d2ab006f3f6b117d284d76743a8e6d710fbfa79be692fdc99e7d4c60"
+      "sha256": "da1d42a07d3e9b0c3bca5fef05fd04f063273f857ef64caaa61d3300a22e7cb4"
     },
     {
       "path": "dist/ppt/animation.d.ts",
@@ -296,7 +296,7 @@
     },
     {
       "path": "dist/ppt/parser.d.ts",
-      "sha256": "b65a96f2c9ef86b0e31109651ca386f7cbcc662afa95d760f3c466f811a1d283"
+      "sha256": "8d47f860cf7cc999e20b9ab3918094dd15905b448b4d011e6ea281b840f5588c"
     },
     {
       "path": "dist/core/pict.d.ts",
@@ -360,7 +360,7 @@
     },
     {
       "path": "dist/core/utils.d.ts",
-      "sha256": "0e8e7c670886b61f89b64d5fea431000df403782c6ca21c63bcb03400fdd75e7"
+      "sha256": "b2d909b3375399f6c6f13a9c359c61c8c643e0ba99f89340b6ec33e891b79bb4"
     },
     {
       "path": "dist/core/vector-font.d.ts",

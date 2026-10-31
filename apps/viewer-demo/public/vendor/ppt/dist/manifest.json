@@ -3,7 +3,7 @@
   "product": "Flyfish PPT Viewer",
   "format": "PowerPoint 97-2003 (.ppt)",
   "packageName": "@file-viewer/ppt",
-  "packageVersion": "1.0.1",
+  "packageVersion": "1.0.2",
   "renderer": "typescript-svg-canvas",
   "license": "Apache-2.0",
   "watermarkRequired": false,

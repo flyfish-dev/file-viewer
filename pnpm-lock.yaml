@@ -1053,8 +1053,8 @@ importers:
         specifier: workspace:3.3.3
         version: link:../../capabilities/pdf-identity-repair
       '@file-viewer/ppt':
-        specifier: 1.0.1
-        version: 1.0.1
+        specifier: 1.0.2
+        version: 1.0.2
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
@@ -1935,8 +1935,8 @@ importers:
         specifier: workspace:3.3.3
         version: link:../../core
       '@file-viewer/ppt':
-        specifier: 1.0.1
-        version: 1.0.1
+        specifier: 1.0.2
+        version: 1.0.2
     devDependencies:
       typescript:
         specifier: ^6.0.3
@@ -2744,8 +2744,8 @@ packages:
   '@file-viewer/docx@0.3.39':
     resolution: {integrity: sha512-+cHcv/YkTck9d6CKaYUBJVXreDLHkPkinc1JjWB9NUiGsfYkGlySM+6NSO9iCU1Do/7PbincByJwZHqYgsm3SQ==}
 
-  '@file-viewer/ppt@1.0.1':
-    resolution: {integrity: sha512-r6bYt7bC+fDL4yICKflfvb/yn9RNY5NB534F/OU343+sC1meHHKHapN86exqtUXqqP5oOEx8uu0IFCgcAj8Qfw==}
+  '@file-viewer/ppt@1.0.2':
+    resolution: {integrity: sha512-dyq341piRU3vjeImNwkyb+OWAn26SyUqhFNiOxyrsYfDMTGEZgVdk/AmCxlmbCXeIMGRM2zHdzUUWRBRxfSQdg==}
     engines: {node: '>=20'}
 
   '@floating-ui/core@1.8.0':
@@ -7676,7 +7676,7 @@ snapshots:
       '@xmldom/xmldom': 0.9.12
       jszip: 3.10.2
 
-  '@file-viewer/ppt@1.0.1': {}
+  '@file-viewer/ppt@1.0.2': {}
 
   '@floating-ui/core@1.8.0':
     dependencies:

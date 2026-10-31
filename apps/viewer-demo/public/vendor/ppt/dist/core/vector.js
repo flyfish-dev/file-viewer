@@ -1,5 +1,5 @@
 import { BinaryReader } from './binary.js';
-import { dataUrlFromBytes, escapeHtml } from './utils.js';
+import { dataUrlFromBytes, escapeHtml, trimTrailingNulls } from './utils.js';
 import { escapeXmlText } from './xml-text.js';
 import { readEmfFont, readWmfFont } from './vector-font.js';
 import { PptError } from './errors.js';
@@ -755,10 +755,10 @@ function addRasterImage(ctx, dest, image, source, sourceTransform = IDENTITY_MAT
 }
 function decodeAnsi(bytes, charset = 0) {
     const labels = { 0: 'windows-1252', 128: 'shift_jis', 129: 'euc-kr', 134: 'gbk', 136: 'big5', 161: 'windows-1253', 162: 'windows-1254', 163: 'windows-1258', 177: 'windows-1255', 178: 'windows-1256', 186: 'windows-1257', 204: 'windows-1251', 222: 'windows-874', 238: 'windows-1250' };
-    return new TextDecoder(labels[charset] ?? 'windows-1252').decode(bytes).replace(/\0+$/g, '');
+    return trimTrailingNulls(new TextDecoder(labels[charset] ?? 'windows-1252').decode(bytes));
 }
 function decodeUtf16(bytes) {
-    return new TextDecoder('utf-16le').decode(bytes).replace(/\0+$/g, '');
+    return trimTrailingNulls(new TextDecoder('utf-16le').decode(bytes));
 }
 function textAnchor(textAlign) {
     const horizontal = textAlign & 0x0006;

@@ -2,7 +2,7 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.zh-CN.md)
 
-Standalone presentation renderer package for Flyfish File Viewer. Binary PowerPoint 97–2003 `.ppt` / `.pot` uses the separate `@file-viewer/ppt@1.0.1` TypeScript engine; PPTX/PPTM/POTX/POTM/PPSX/PPSM use `@file-viewer/pptx`. Both integrate with the shared zoom, print, and HTML export controls.
+Standalone presentation renderer package for Flyfish File Viewer. Binary PowerPoint 97–2003 `.ppt` / `.pot` uses the separate `@file-viewer/ppt@1.0.2` TypeScript engine; PPTX/PPTM/POTX/POTM/PPSX/PPSM use `@file-viewer/pptx`. Both integrate with the shared zoom, print, and HTML export controls.
 
 ## Usage
 

@@ -32,7 +32,7 @@
       "lazyLoaded": true,
       "defaultScale": "fit-width",
       "presentationRoutes": {
-        "ppt": "@file-viewer/ppt@1.0.1",
+        "ppt": "@file-viewer/ppt@1.0.2",
         "pptx": "@file-viewer/pptx"
       }
     },

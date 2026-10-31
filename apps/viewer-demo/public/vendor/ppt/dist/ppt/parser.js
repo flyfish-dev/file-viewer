@@ -1,5 +1,6 @@
 import { CompoundFile, toBytes } from '../core/cfb.js';
 import { PptError } from '../core/errors.js';
+import { trimTrailingNulls } from '../core/utils.js';
 import { DEFAULT_LIMITS, RT } from './constants.js';
 import { readRecord } from './records.js';
 import { parseDefaultTextStyle, parseFonts, parseMasterTextStyles, parseTextFrames } from './text.js';
@@ -10,7 +11,7 @@ import { parseHeaderFooter, resolveHeaderFooter } from './headers-footers.js';
 import { parseLegacyAnimations } from './animation.js';
 import { decryptPptStreams } from './encryption.js';
 import { bindShapeInteractions, resolveSlideLinks } from './interactions.js';
-export const VERSION = '1.0.1';
+export const VERSION = '1.0.2';
 const now = () => typeof performance === 'undefined' ? Date.now() : performance.now();
 function dataView(bytes) { return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength); }
 /** Resolve newest-to-oldest save transactions; old versions never override newer IDs. [MS-PPT] 2.1.2. */
@@ -130,7 +131,7 @@ function summary(bytes) {
             const type = v.getUint32(at, true), n = v.getUint32(at + 4, true), length = type === 31 ? n * 2 : n;
             if ((type !== 30 && type !== 31) || at + 8 + length > p + size)
                 continue;
-            result[key] = new TextDecoder(type === 31 ? 'utf-16le' : encoding).decode(bytes.subarray(at + 8, at + 8 + length)).replace(/\0+$/, '');
+            result[key] = trimTrailingNulls(new TextDecoder(type === 31 ? 'utf-16le' : encoding).decode(bytes.subarray(at + 8, at + 8 + length)));
         }
     }
     catch { /* Optional metadata never prevents rendering a valid slide stream. */ }

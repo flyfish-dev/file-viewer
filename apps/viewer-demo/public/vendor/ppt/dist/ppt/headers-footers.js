@@ -1,4 +1,5 @@
 import { PptError } from '../core/errors.js';
+import { trimTrailingNulls } from '../core/utils.js';
 import { RT } from './constants.js';
 function warning(ctx, code, message, record) {
     ctx.diagnostics.push({ code, severity: 'warning', message, offset: record.offset });
@@ -28,7 +29,7 @@ function stringValue(record, ctx) {
             values.push(view.getUint16(record.dataOffset + i * 2, true));
         pieces.push(String.fromCharCode(...values));
     }
-    return pieces.join('').replace(/\0+$/, '');
+    return trimTrailingNulls(pieces.join(''));
 }
 /**
  * Read immediate children only: instance 3 is document slide defaults, 4 notes

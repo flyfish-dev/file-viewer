@@ -1,3 +1,10 @@
+/** Strip trailing NUL padding in linear time, preserving embedded NULs. */
+export function trimTrailingNulls(value) {
+    let end = value.length;
+    while (end > 0 && value.charCodeAt(end - 1) === 0)
+        end--;
+    return end === value.length ? value : value.slice(0, end);
+}
 export function textDecoder(label = 'utf-8') { return new TextDecoder(label, { fatal: false }); }
 export function escapeHtml(value) { return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 export function bytesToBase64(input) { const bytes = input instanceof ArrayBuffer ? new Uint8Array(input) : new Uint8Array(input.buffer, input.byteOffset, input.byteLength); let text = ''; for (let i = 0; i < bytes.length; i += 0x8000)

@@ -8,7 +8,8 @@
 
 ## File Viewer v3.3.3 — 2026-10-31
 
-- Upgrade binary PPT/POT to the compiled Apache-2.0 `@file-viewer/ppt@1.0.1` TypeScript engine. Full packages, Vite and the copy-assets CLI ship its matching local module and parsing Worker, without native WASM or bundled fonts. The engine source remains private; prior native releases retain their own terms.
+- Upgrade binary PPT/POT to the compiled Apache-2.0 `@file-viewer/ppt@1.0.2` TypeScript engine. Full packages, Vite and the copy-assets CLI ship its matching local module and parsing Worker, without native WASM or bundled fonts. The engine source remains private; prior native releases retain their own terms.
+- Strip trailing NUL padding in metadata, headers, WordArt and vector text with a linear scan, avoiding quadratic processing of malformed strings while preserving existing text and rendering results.
 - Align all 89 release targets and their offline assets, retaining the published PDF 3.3.2 fixes and existing Vue 2.6/2.7 support.
 
 Version composition: 88 mainline packages at `3.3.3` and `msdoc-viewer@0.2.15`.

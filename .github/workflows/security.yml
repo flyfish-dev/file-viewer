@@ -55,8 +55,16 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Audit the complete lockfile
-        run: |
-          pnpm audit --registry=https://registry.npmjs.org --audit-level=low
+        run: node .github/scripts/audit-lockfile.mjs
+
+      - name: Retain complete audit and classification evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dependency-audit-evidence
+          path: output/security/*.json
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Verify renderer dependency and license boundaries
         run: |

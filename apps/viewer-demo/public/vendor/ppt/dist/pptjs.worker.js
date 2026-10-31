@@ -289,15 +289,43 @@ System.register("core/cfb", ["core/errors"], function (exports_3, context_3) {
         }
     };
 });
-System.register("ppt/constants", [], function (exports_4, context_4) {
+System.register("core/utils", [], function (exports_4, context_4) {
+    "use strict";
+    var __moduleName = context_4 && context_4.id;
+    /** Strip trailing NUL padding in linear time, preserving embedded NULs. */
+    function trimTrailingNulls(value) {
+        let end = value.length;
+        while (end > 0 && value.charCodeAt(end - 1) === 0)
+            end--;
+        return end === value.length ? value : value.slice(0, end);
+    }
+    exports_4("trimTrailingNulls", trimTrailingNulls);
+    function textDecoder(label = 'utf-8') { return new TextDecoder(label, { fatal: false }); }
+    exports_4("textDecoder", textDecoder);
+    function escapeHtml(value) { return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    exports_4("escapeHtml", escapeHtml);
+    function bytesToBase64(input) { const bytes = input instanceof ArrayBuffer ? new Uint8Array(input) : new Uint8Array(input.buffer, input.byteOffset, input.byteLength); let text = ''; for (let i = 0; i < bytes.length; i += 0x8000)
+        text += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(text); }
+    exports_4("bytesToBase64", bytesToBase64);
+    function dataUrlFromBytes(bytes, mime = 'application/octet-stream') { return `data:${mime};base64,${bytesToBase64(bytes)}`; }
+    exports_4("dataUrlFromBytes", dataUrlFromBytes);
+    function escapeXmlText(text) { return escapeHtml(String(text).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '')); }
+    exports_4("escapeXmlText", escapeXmlText);
+    return {
+        setters: [],
+        execute: function () {
+        }
+    };
+});
+System.register("ppt/constants", [], function (exports_5, context_5) {
     "use strict";
     var RT, DEFAULT_LIMITS;
-    var __moduleName = context_4 && context_4.id;
+    var __moduleName = context_5 && context_5.id;
     return {
         setters: [],
         execute: function () {
             /** Record identifiers from Microsoft [MS-PPT] 2.13 and [MS-ODRAW]. */
-            exports_4("RT", RT = {
+            exports_5("RT", RT = {
                 Document: 1000, DocumentAtom: 1001, EndDocumentAtom: 1002, Slide: 1006, SlideAtom: 1007,
                 Notes: 1008, NotesAtom: 1009, Environment: 1010, SlidePersistAtom: 1011, MainMaster: 1016,
                 SSSlideInfoAtom: 1017, SlideViewInfo: 1018, VBAInfo: 1023, DocInfoList: 2000,
@@ -316,14 +344,14 @@ System.register("ppt/constants", [], function (exports_4, context_4) {
                 OfficeArtSecondaryFOPT: 0xF121, OfficeArtTertiaryFOPT: 0xF122,
                 OutlineTextRefAtom: 3998, OEPlaceholderAtom: 3011,
             });
-            exports_4("DEFAULT_LIMITS", DEFAULT_LIMITS = Object.freeze({ maxFileBytes: 256 * 1024 * 1024, maxStreamBytes: 256 * 1024 * 1024, maxRecords: 1_000_000, maxDepth: 64, maxSlides: 10_000, maxShapes: 200_000, maxAssetBytes: 128 * 1024 * 1024, maxTextLength: 16 * 1024 * 1024 }));
+            exports_5("DEFAULT_LIMITS", DEFAULT_LIMITS = Object.freeze({ maxFileBytes: 256 * 1024 * 1024, maxStreamBytes: 256 * 1024 * 1024, maxRecords: 1_000_000, maxDepth: 64, maxSlides: 10_000, maxShapes: 200_000, maxAssetBytes: 128 * 1024 * 1024, maxTextLength: 16 * 1024 * 1024 }));
         }
     };
 });
-System.register("ppt/records", ["core/errors"], function (exports_5, context_5) {
+System.register("ppt/records", ["core/errors"], function (exports_6, context_6) {
     "use strict";
     var errors_js_2;
-    var __moduleName = context_5 && context_5.id;
+    var __moduleName = context_6 && context_6.id;
     function readRecord(ctx, offset, end = ctx.bytes.length, depth = 0) {
         if (depth > ctx.limits.maxDepth)
             throw new errors_js_2.PptError('LIMIT_DEPTH', 'Record nesting exceeds the configured limit', offset);
@@ -348,7 +376,7 @@ System.register("ppt/records", ["core/errors"], function (exports_5, context_5) 
             node.children = readRecords(ctx, node.dataOffset, recordEnd, depth + 1);
         return node;
     }
-    exports_5("readRecord", readRecord);
+    exports_6("readRecord", readRecord);
     function readRecords(ctx, start, end, depth = 0) {
         const result = [];
         let offset = start;
@@ -365,18 +393,18 @@ System.register("ppt/records", ["core/errors"], function (exports_5, context_5) 
         }
         return result;
     }
-    exports_5("readRecords", readRecords);
+    exports_6("readRecords", readRecords);
     function* walkRecords(records) { for (const r of records) {
         yield r;
         yield* walkRecords(r.children);
     } }
-    exports_5("walkRecords", walkRecords);
+    exports_6("walkRecords", walkRecords);
     function findRecord(records, type) { for (const r of walkRecords(records))
         if (r.type === type)
             return r; return undefined; }
-    exports_5("findRecord", findRecord);
+    exports_6("findRecord", findRecord);
     function childrenOf(record, type) { return record.children.filter(r => r.type === type); }
-    exports_5("childrenOf", childrenOf);
+    exports_6("childrenOf", childrenOf);
     return {
         setters: [
             function (errors_js_2_1) {
@@ -387,10 +415,10 @@ System.register("ppt/records", ["core/errors"], function (exports_5, context_5) 
         }
     };
 });
-System.register("ppt/interactions", ["ppt/records"], function (exports_6, context_6) {
+System.register("ppt/interactions", ["ppt/records"], function (exports_7, context_7) {
     "use strict";
     var records_js_1, relative;
-    var __moduleName = context_6 && context_6.id;
+    var __moduleName = context_7 && context_7.id;
     /** MS-PPT 2.6.10, 2.13.13–15; no executable actions are promoted to links. */
     function interactionHref(record, bytes, targets) {
         if (record.type !== 0x0ff3 || record.length !== 16)
@@ -413,7 +441,7 @@ System.register("ppt/interactions", ["ppt/records"], function (exports_6, contex
         }
         return undefined;
     }
-    exports_6("interactionHref", interactionHref);
+    exports_7("interactionHref", interactionHref);
     /** PowerPoint stores its slide locator in LocationAtom as ID,number,title.
      * The stable ID wins over the stale displayed number after a slide reorder.
      * Unknown locator strings stay metadata; never reinterpret another-file targets.
@@ -457,7 +485,7 @@ System.register("ppt/interactions", ["ppt/records"], function (exports_6, contex
             }
         }
     }
-    exports_6("resolveSlideLinks", resolveSlideLinks);
+    exports_7("resolveSlideLinks", resolveSlideLinks);
     /** Bind shape actions and embedded sounds to their document-owned asset IDs. */
     function bindShapeInteractions(records, bytes, shapes, extras, targets, diagnostics, slideId) {
         const byOffset = new Map();
@@ -495,7 +523,7 @@ System.register("ppt/interactions", ["ppt/records"], function (exports_6, contex
         };
         visit(shapes);
     }
-    exports_6("bindShapeInteractions", bindShapeInteractions);
+    exports_7("bindShapeInteractions", bindShapeInteractions);
     return {
         setters: [
             function (records_js_1_1) {
@@ -507,10 +535,10 @@ System.register("ppt/interactions", ["ppt/records"], function (exports_6, contex
         }
     };
 });
-System.register("ppt/text", ["core/errors", "ppt/interactions", "ppt/constants", "ppt/records"], function (exports_7, context_7) {
+System.register("ppt/text", ["core/errors", "ppt/interactions", "ppt/constants", "ppt/records"], function (exports_8, context_8) {
     "use strict";
     var errors_js_3, interactions_js_1, constants_js_1, records_js_2, Cursor, EAST_ASIAN, parseTextBodies;
-    var __moduleName = context_7 && context_7.id;
+    var __moduleName = context_8 && context_8.id;
     function warn(ctx, code, message, offset) {
         ctx.diagnostics.push({ code, severity: 'warning', message, offset });
     }
@@ -1201,7 +1229,7 @@ System.register("ppt/text", ["core/errors", "ppt/interactions", "ppt/constants",
         flush();
         return result;
     }
-    exports_7("parseTextFrames", parseTextFrames);
+    exports_8("parseTextFrames", parseTextFrames);
     /** Read the document's default text language before resolving body/master runs. */
     function parseDefaultTextStyle(records, ctx) {
         for (const record of records_js_2.walkRecords(records)) {
@@ -1217,7 +1245,7 @@ System.register("ppt/text", ["core/errors", "ppt/interactions", "ppt/constants",
         }
         return {};
     }
-    exports_7("parseDefaultTextStyle", parseDefaultTextStyle);
+    exports_8("parseDefaultTextStyle", parseDefaultTextStyle);
     /** Master style entries remain unflattened so slide palette/paragraph overrides work. */
     function parseMasterTextStyles(records, ctx) {
         const result = new Map();
@@ -1254,7 +1282,7 @@ System.register("ppt/text", ["core/errors", "ppt/interactions", "ppt/constants",
         }
         return result;
     }
-    exports_7("parseMasterTextStyles", parseMasterTextStyles);
+    exports_8("parseMasterTextStyles", parseMasterTextStyles);
     function parseFonts(records, bytes) {
         const fonts = [];
         let fontIndex = 0;
@@ -1277,7 +1305,7 @@ System.register("ppt/text", ["core/errors", "ppt/interactions", "ppt/constants",
         }
         return fonts;
     }
-    exports_7("parseFonts", parseFonts);
+    exports_8("parseFonts", parseFonts);
     return {
         setters: [
             function (errors_js_3_1) {
@@ -1315,13 +1343,13 @@ System.register("ppt/text", ["core/errors", "ppt/interactions", "ppt/constants",
                 u32() { this.need(4); const n = this.view.getUint32(this.at, true); this.at += 4; return n; }
             };
             EAST_ASIAN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Bopomofo}\u3000-\u303f\uff01-\uffef]/u;
-            exports_7("parseTextBodies", parseTextBodies = parseTextFrames);
+            exports_8("parseTextBodies", parseTextBodies = parseTextFrames);
         }
     };
 });
-System.register("ppt/geometry", [], function (exports_8, context_8) {
+System.register("ppt/geometry", [], function (exports_9, context_9) {
     "use strict";
-    var __moduleName = context_8 && context_8.id;
+    var __moduleName = context_9 && context_9.id;
     /** An OfficeArt complex array includes its six-byte IMsoArray header. */
     function officeArray(bytes) {
         if (bytes.length < 6)
@@ -1332,7 +1360,7 @@ System.register("ppt/geometry", [], function (exports_8, context_8) {
             return undefined;
         return { view, count, size };
     }
-    exports_8("officeArray", officeArray);
+    exports_9("officeArray", officeArray);
     /** Evaluate the 17 SG operations; references are limited to preceding guides. */
     function evaluateGuides(bytes, values, geometry, bounds) {
         const arr = officeArray(bytes);
@@ -1435,7 +1463,7 @@ System.register("ppt/geometry", [], function (exports_8, context_8) {
         }
         return guides;
     }
-    exports_8("evaluateGuides", evaluateGuides);
+    exports_9("evaluateGuides", evaluateGuides);
     /** Stored vertices, SG guides, common path opcodes and elliptical arc escapes. */
     function customGeometry(values, complex, diagnostics, shapeId, offset, bounds) {
         const raw = complex.get(325);
@@ -1685,7 +1713,7 @@ System.register("ppt/geometry", [], function (exports_8, context_8) {
         finish();
         return { path: pathParts.map(p => p.path).join(' '), pathParts, pathBounds, noFill: pathParts.every(p => p.noFill), noLine: pathParts.every(p => p.noLine) };
     }
-    exports_8("customGeometry", customGeometry);
+    exports_9("customGeometry", customGeometry);
     /** Saved adjustment handles use the 21,600-unit OfficeArt geometry space.
      * Right-arrow construction is independently described by Microsoft's VML handles example.
      * Other analytic envelopes remain explicitly labelled where their complete Office recipe
@@ -1773,7 +1801,7 @@ System.register("ppt/geometry", [], function (exports_8, context_8) {
         }
         return undefined;
     }
-    exports_8("adjustedPresetGeometry", adjustedPresetGeometry);
+    exports_9("adjustedPresetGeometry", adjustedPresetGeometry);
     return {
         setters: [],
         execute: function () {
@@ -1788,10 +1816,10 @@ System.register("ppt/geometry", [], function (exports_8, context_8) {
  * preserves the browser-only build while still allowing the synchronous MS-DOC
  * parser to expose browser-displayable SVG assets.
  */
-System.register("core/inflate", [], function (exports_9, context_9) {
+System.register("core/inflate", [], function (exports_10, context_10) {
     "use strict";
     var InflateError, BitReader, ByteSink, LENGTH_BASE, LENGTH_EXTRA, DISTANCE_BASE, DISTANCE_EXTRA, fixedLiteralLengthTable, fixedDistanceTable, CODE_LENGTH_ORDER;
-    var __moduleName = context_9 && context_9.id;
+    var __moduleName = context_10 && context_10.id;
     function buildHuffmanTable(lengths) {
         const maxBits = Math.max(0, ...lengths);
         if (maxBits === 0)
@@ -1973,7 +2001,7 @@ System.register("core/inflate", [], function (exports_9, context_9) {
             return null;
         }
     }
-    exports_9("inflateRaw", inflateRaw);
+    exports_10("inflateRaw", inflateRaw);
     function inflateZlib(bytes, expectedLength, maxLength = 128 * 1024 * 1024) {
         if (bytes.length < 6)
             return null;
@@ -2009,7 +2037,7 @@ System.register("core/inflate", [], function (exports_9, context_9) {
             return null;
         }
     }
-    exports_9("inflateZlib", inflateZlib);
+    exports_10("inflateZlib", inflateZlib);
     return {
         setters: [],
         execute: function () {
@@ -2126,26 +2154,6 @@ System.register("core/inflate", [], function (exports_9, context_9) {
             fixedLiteralLengthTable = null;
             fixedDistanceTable = null;
             CODE_LENGTH_ORDER = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
-        }
-    };
-});
-System.register("core/utils", [], function (exports_10, context_10) {
-    "use strict";
-    var __moduleName = context_10 && context_10.id;
-    function textDecoder(label = 'utf-8') { return new TextDecoder(label, { fatal: false }); }
-    exports_10("textDecoder", textDecoder);
-    function escapeHtml(value) { return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
-    exports_10("escapeHtml", escapeHtml);
-    function bytesToBase64(input) { const bytes = input instanceof ArrayBuffer ? new Uint8Array(input) : new Uint8Array(input.buffer, input.byteOffset, input.byteLength); let text = ''; for (let i = 0; i < bytes.length; i += 0x8000)
-        text += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(text); }
-    exports_10("bytesToBase64", bytesToBase64);
-    function dataUrlFromBytes(bytes, mime = 'application/octet-stream') { return `data:${mime};base64,${bytesToBase64(bytes)}`; }
-    exports_10("dataUrlFromBytes", dataUrlFromBytes);
-    function escapeXmlText(text) { return escapeHtml(String(text).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '')); }
-    exports_10("escapeXmlText", escapeXmlText);
-    return {
-        setters: [],
-        execute: function () {
         }
     };
 });
@@ -3069,10 +3077,10 @@ System.register("core/vector", ["core/binary", "core/utils", "core/xml-text", "c
     }
     function decodeAnsi(bytes, charset = 0) {
         const labels = { 0: 'windows-1252', 128: 'shift_jis', 129: 'euc-kr', 134: 'gbk', 136: 'big5', 161: 'windows-1253', 162: 'windows-1254', 163: 'windows-1258', 177: 'windows-1255', 178: 'windows-1256', 186: 'windows-1257', 204: 'windows-1251', 222: 'windows-874', 238: 'windows-1250' };
-        return new TextDecoder(labels[charset] ?? 'windows-1252').decode(bytes).replace(/\0+$/g, '');
+        return utils_js_3.trimTrailingNulls(new TextDecoder(labels[charset] ?? 'windows-1252').decode(bytes));
     }
     function decodeUtf16(bytes) {
-        return new TextDecoder('utf-16le').decode(bytes).replace(/\0+$/g, '');
+        return utils_js_3.trimTrailingNulls(new TextDecoder('utf-16le').decode(bytes));
     }
     function textAnchor(textAlign) {
         const horizontal = textAlign & 0x0006;
@@ -5040,9 +5048,9 @@ System.register("ppt/pictures", ["core/errors", "core/inflate", "core/vector", "
         }
     };
 });
-System.register("ppt/drawing", ["core/errors", "ppt/constants", "ppt/records", "ppt/geometry", "ppt/text", "ppt/pictures"], function (exports_19, context_19) {
+System.register("ppt/drawing", ["core/errors", "core/utils", "ppt/constants", "ppt/records", "ppt/geometry", "ppt/text", "ppt/pictures"], function (exports_19, context_19) {
     "use strict";
-    var errors_js_9, constants_js_3, records_js_4, geometry_js_1, text_js_1, pictures_js_1, boolProps, dataView, fixed, colorIndex, clamp, utf16, assetBudgets, defaultComplexProperties, shapeComplexProperties, arrayElementSizes;
+    var errors_js_9, utils_js_5, constants_js_3, records_js_4, geometry_js_1, text_js_1, pictures_js_1, boolProps, dataView, fixed, colorIndex, clamp, utf16, assetBudgets, defaultComplexProperties, shapeComplexProperties, arrayElementSizes;
     var __moduleName = context_19 && context_19.id;
     function warn(ctx, code, message, record, shapeId) {
         ctx.diagnostics.push({ code, severity: 'warning', message, offset: record.offset, shapeId });
@@ -5270,7 +5278,7 @@ System.register("ppt/drawing", ["core/errors", "ppt/constants", "ppt/records", "
         if (bytes.byteLength > ctx.limits.maxTextLength * 2)
             throw new errors_js_9.PptError('LIMIT_TEXT', 'WordArt text exceeds the configured character limit', record.offset);
         const font = complex.get(197), align = values.get(194) ?? 1;
-        return { text: utf16.decode(bytes).replace(/\0+$/, ''), fontFamily: font ? utf16.decode(font).replace(/\0+$/, '') : 'Arial', fontSize: Math.max(1, fixed(values.get(195) ?? 36 * 65536) * 4 / 3), spacing: clamp(fixed(values.get(196) ?? 65536), 0, 5), bold: boolValue(values, 255, 5, false), italic: boolValue(values, 255, 4, false), vertical: boolValue(values, 255, 13, false), alignment: align === 2 ? 'left' : align === 3 ? 'right' : align === 0 || align === 4 || align === 5 ? 'justify' : 'center', warpPreset: preset, adjustments: Array.from({ length: 8 }, (_, i) => (values.get(327 + i) ?? (i === 0 ? 5400 : 0)) | 0) };
+        return { text: utils_js_5.trimTrailingNulls(utf16.decode(bytes)), fontFamily: font ? utils_js_5.trimTrailingNulls(utf16.decode(font)) : 'Arial', fontSize: Math.max(1, fixed(values.get(195) ?? 36 * 65536) * 4 / 3), spacing: clamp(fixed(values.get(196) ?? 65536), 0, 5), bold: boolValue(values, 255, 5, false), italic: boolValue(values, 255, 4, false), vertical: boolValue(values, 255, 13, false), alignment: align === 2 ? 'left' : align === 3 ? 'right' : align === 0 || align === 4 || align === 5 ? 'justify' : 'center', warpPreset: preset, adjustments: Array.from({ length: 8 }, (_, i) => (values.get(327 + i) ?? (i === 0 ? 5400 : 0)) | 0) };
     }
     function extrusion(values, ctx, record, id) {
         if (!boolValue(values, 703, 3, false))
@@ -5336,8 +5344,8 @@ System.register("ppt/drawing", ["core/errors", "ppt/constants", "ppt/records", "
         if (!frame && wordart) {
             if (wordart.byteLength > ctx.limits.maxTextLength * 2)
                 throw new errors_js_9.PptError('LIMIT_TEXT', 'WordArt text exceeds the configured character limit', record.offset);
-            const text = utf16.decode(wordart).replace(/\0+$/, '');
-            const font = complex.get(197), fontFamily = font ? utf16.decode(font).replace(/\0+$/, '') : undefined;
+            const text = utils_js_5.trimTrailingNulls(utf16.decode(wordart));
+            const font = complex.get(197), fontFamily = font ? utils_js_5.trimTrailingNulls(utf16.decode(font)) : undefined;
             frame = { paragraphs: [{ level: 0, style: { alignment: 'center' }, runs: [{ text, style: { fontFamily, fontSize: fixed(values.get(195) ?? 36 * 65536) * 4 / 3, color: officeColor(values.get(385) ?? 0, ctx.colors), colorIndex: colorIndex(values.get(385) ?? 0) } }] }], margins: { left: 0, top: 0, right: 0, bottom: 0 }, verticalAlignment: 'middle', wrap: true, sourceText: text };
         }
         if (!frame)
@@ -5437,7 +5445,7 @@ System.register("ppt/drawing", ["core/errors", "ppt/constants", "ppt/records", "
             bounds.height = -bounds.height;
             flipV = !flipV;
         }
-        const nameBytes = complex.get(896), name = nameBytes ? utf16.decode(nameBytes).replace(/\0+$/, '') : undefined;
+        const nameBytes = complex.get(896), name = nameBytes ? utils_js_5.trimTrailingNulls(utf16.decode(nameBytes)) : undefined;
         const result = { id, kind: flags & 1 ? 'group' : 'shape', name, bounds, rotation: fixed(values.get(4) ?? 0), flipH, flipV, preset, fill: fill(values, complex, ctx, record, preset), line: line(values, ctx, preset), shadow: shadow(values, ctx), placeholder, hidden: boolValue(values, 959, 1, false), source: { offset: record.offset, recordType: record.type, shapeType: preset, properties: { ...Object.fromEntries(values), fspFlags: flags, hasAnchor: anchor ? 1 : 0 } } };
         const group = records.find(r => r.type === constants_js_3.RT.OfficeArtFSPGR);
         if (group)
@@ -5539,6 +5547,9 @@ System.register("ppt/drawing", ["core/errors", "ppt/constants", "ppt/records", "
             function (errors_js_9_1) {
                 errors_js_9 = errors_js_9_1;
             },
+            function (utils_js_5_1) {
+                utils_js_5 = utils_js_5_1;
+            },
             function (constants_js_3_1) {
                 constants_js_3 = constants_js_3_1;
             },
@@ -5575,9 +5586,9 @@ System.register("ppt/drawing", ["core/errors", "ppt/constants", "ppt/records", "
         }
     };
 });
-System.register("ppt/extras", ["core/errors", "core/inflate", "ppt/records"], function (exports_20, context_20) {
+System.register("ppt/extras", ["core/errors", "core/utils", "core/inflate", "ppt/records"], function (exports_20, context_20) {
     "use strict";
-    var errors_js_10, inflate_js_3, records_js_5, R, utf16;
+    var errors_js_10, utils_js_6, inflate_js_3, records_js_5, R, utf16;
     var __moduleName = context_20 && context_20.id;
     function warning(ctx, code, message, node) { ctx.diagnostics.push({ code, severity: 'warning', message, offset: node.offset }); }
     function string(ctx, node) {
@@ -5589,7 +5600,7 @@ System.register("ppt/extras", ["core/errors", "core/inflate", "ppt/records"], fu
         ctx.textLength += length;
         if (ctx.textLength > ctx.limits.maxTextLength)
             throw new errors_js_10.PptError('LIMIT_TEXT', 'Metadata text exceeds the configured limit', node.offset);
-        return utf16.decode(ctx.bytes.subarray(node.dataOffset, node.dataOffset + length * 2)).replace(/\0+$/, '');
+        return utils_js_6.trimTrailingNulls(utf16.decode(ctx.bytes.subarray(node.dataOffset, node.dataOffset + length * 2)));
     }
     function cstring(ctx, node, instance) { return string(ctx, node.children.find(r => r.type === R.CString && r.instance === instance)); }
     function view(ctx, node) { return new DataView(ctx.bytes.buffer, ctx.bytes.byteOffset + node.dataOffset, node.length); }
@@ -5806,6 +5817,9 @@ System.register("ppt/extras", ["core/errors", "core/inflate", "ppt/records"], fu
             function (errors_js_10_1) {
                 errors_js_10 = errors_js_10_1;
             },
+            function (utils_js_6_1) {
+                utils_js_6 = utils_js_6_1;
+            },
             function (inflate_js_3_1) {
                 inflate_js_3 = inflate_js_3_1;
             },
@@ -5820,9 +5834,9 @@ System.register("ppt/extras", ["core/errors", "core/inflate", "ppt/records"], fu
         }
     };
 });
-System.register("ppt/headers-footers", ["core/errors", "ppt/constants"], function (exports_21, context_21) {
+System.register("ppt/headers-footers", ["core/errors", "core/utils", "ppt/constants"], function (exports_21, context_21) {
     "use strict";
-    var errors_js_11, constants_js_4;
+    var errors_js_11, utils_js_7, constants_js_4;
     var __moduleName = context_21 && context_21.id;
     function warning(ctx, code, message, record) {
         ctx.diagnostics.push({ code, severity: 'warning', message, offset: record.offset });
@@ -5852,7 +5866,7 @@ System.register("ppt/headers-footers", ["core/errors", "ppt/constants"], functio
                 values.push(view.getUint16(record.dataOffset + i * 2, true));
             pieces.push(String.fromCharCode(...values));
         }
-        return pieces.join('').replace(/\0+$/, '');
+        return utils_js_7.trimTrailingNulls(pieces.join(''));
     }
     /**
      * Read immediate children only: instance 3 is document slide defaults, 4 notes
@@ -5924,6 +5938,9 @@ System.register("ppt/headers-footers", ["core/errors", "ppt/constants"], functio
         setters: [
             function (errors_js_11_1) {
                 errors_js_11 = errors_js_11_1;
+            },
+            function (utils_js_7_1) {
+                utils_js_7 = utils_js_7_1;
             },
             function (constants_js_4_1) {
                 constants_js_4 = constants_js_4_1;
@@ -6350,9 +6367,9 @@ System.register("ppt/encryption", ["core/errors", "core/crypto"], function (expo
         }
     };
 });
-System.register("ppt/parser", ["core/cfb", "core/errors", "ppt/constants", "ppt/records", "ppt/text", "ppt/drawing", "ppt/pictures", "ppt/extras", "ppt/headers-footers", "ppt/animation", "ppt/encryption", "ppt/interactions"], function (exports_25, context_25) {
+System.register("ppt/parser", ["core/cfb", "core/errors", "core/utils", "ppt/constants", "ppt/records", "ppt/text", "ppt/drawing", "ppt/pictures", "ppt/extras", "ppt/headers-footers", "ppt/animation", "ppt/encryption", "ppt/interactions"], function (exports_25, context_25) {
     "use strict";
-    var cfb_js_1, errors_js_14, constants_js_5, records_js_7, text_js_2, drawing_js_1, pictures_js_2, extras_js_1, headers_footers_js_1, animation_js_1, encryption_js_1, interactions_js_2, VERSION, now;
+    var cfb_js_1, errors_js_14, utils_js_8, constants_js_5, records_js_7, text_js_2, drawing_js_1, pictures_js_2, extras_js_1, headers_footers_js_1, animation_js_1, encryption_js_1, interactions_js_2, VERSION, now;
     var __moduleName = context_25 && context_25.id;
     function dataView(bytes) { return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength); }
     /** Resolve newest-to-oldest save transactions; old versions never override newer IDs. [MS-PPT] 2.1.2. */
@@ -6473,7 +6490,7 @@ System.register("ppt/parser", ["core/cfb", "core/errors", "ppt/constants", "ppt/
                 const type = v.getUint32(at, true), n = v.getUint32(at + 4, true), length = type === 31 ? n * 2 : n;
                 if ((type !== 30 && type !== 31) || at + 8 + length > p + size)
                     continue;
-                result[key] = new TextDecoder(type === 31 ? 'utf-16le' : encoding).decode(bytes.subarray(at + 8, at + 8 + length)).replace(/\0+$/, '');
+                result[key] = utils_js_8.trimTrailingNulls(new TextDecoder(type === 31 ? 'utf-16le' : encoding).decode(bytes.subarray(at + 8, at + 8 + length)));
             }
         }
         catch { /* Optional metadata never prevents rendering a valid slide stream. */ }
@@ -6705,6 +6722,9 @@ System.register("ppt/parser", ["core/cfb", "core/errors", "ppt/constants", "ppt/
             function (errors_js_14_1) {
                 errors_js_14 = errors_js_14_1;
             },
+            function (utils_js_8_1) {
+                utils_js_8 = utils_js_8_1;
+            },
             function (constants_js_5_1) {
                 constants_js_5 = constants_js_5_1;
             },
@@ -6737,7 +6757,7 @@ System.register("ppt/parser", ["core/cfb", "core/errors", "ppt/constants", "ppt/
             }
         ],
         execute: function () {
-            exports_25("VERSION", VERSION = '1.0.1');
+            exports_25("VERSION", VERSION = '1.0.2');
             now = () => typeof performance === 'undefined' ? Date.now() : performance.now();
         }
     };
