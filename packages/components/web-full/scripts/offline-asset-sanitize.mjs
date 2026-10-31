@@ -265,11 +265,33 @@ export function isRetainedNativeNoticeBook(original, file) {
   }
 }
 
+export function isRetainedPackageManifest(original, file) {
+  if (file.split(/[\\/]/).at(-1) !== 'package.json') return false
+  try {
+    const manifest = JSON.parse(original)
+    if (typeof manifest?.name !== 'string' || !/^(@[a-z0-9._-]+\/)?[a-z0-9._-]+$/i.test(manifest.name) ||
+      typeof manifest.version !== 'string' || !/^\d+\.\d+\.\d+(?:[-+][0-9a-z.+-]+)?$/i.test(manifest.version)) return false
+    const runtimeFields = { ...manifest }
+    // These npm fields describe publication, attribution and user navigation.
+    // They never supply runtime fetch defaults. Preserve their original bytes.
+    for (const key of ['homepage', 'repository', 'bugs', 'funding', 'author', 'contributors',
+      'maintainers', 'description', 'keywords', 'license', 'licenses', 'readme', 'unpkg', 'jsdelivr']) {
+      delete runtimeFields[key]
+    }
+    const runtime = JSON.stringify(runtimeFields)
+    return !replacements.some(item => new RegExp(item.pattern.source, item.pattern.flags).test(runtime))
+  } catch {
+    return false
+  }
+}
+
 export function sanitizeOfflineAssetText(original, file, options = {}) {
   // Complete native grants and immutable source offers are inert legal data.
   // Keep their original bytes; runtime JS and ordinary asset JSON still pass
   // through every offline fallback rule below.
-  if (isRetainedNativeNoticeBook(original, file)) return { output: original, replacementCount: 0 }
+  if (isRetainedNativeNoticeBook(original, file) || isRetainedPackageManifest(original, file)) {
+    return { output: original, replacementCount: 0 }
+  }
   let text = original
   let replacementCount = 0
   for (const item of replacements) {

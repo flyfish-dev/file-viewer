@@ -822,15 +822,15 @@ export interface FileViewerPresentationOptions {
   /** PPTX/OpenXML Worker URL. This is independent from the binary-PPT Worker. */
   workerUrl?: string | URL
   workerType?: WorkerType
-  /** Optional self-hosted native WASM URL used only by the PowerPoint 97–2003 renderer. */
+  /** @deprecated Accepted for migration; the TypeScript PPT engine does not load WASM. */
   pptWasmUrl?: string | URL
-  /** Optional self-hosted CJK font-pack URL used only by the PowerPoint 97–2003 renderer. */
+  /** @deprecated Accepted for migration; PPT uses fonts provided by the host browser. */
   pptFontUrl?: string | URL
   /** Optional module Worker URL used only by the PowerPoint 97–2003 renderer. */
   pptWorkerUrl?: string | URL
   /** Selects the binary-PPT Worker path. Defaults to `auto`. */
   pptWorker?: boolean | 'auto'
-  /** Controls the binary-PPT bounded IndexedDB frame cache. */
+  /** @deprecated Accepted for migration; the TypeScript PPT engine has no persistent frame cache. */
   pptCache?:
     | false
     | {

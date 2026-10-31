@@ -3,6 +3,8 @@ packages/renderers/wordperfect/test/fixtures/LICENSE.MPL-2.0.txt -whitespace
 # Registry-verified DOCX mirrors retain the publisher's exact bytes.
 **/vendor/docx/docx.worker.js whitespace=-blank-at-eol
 **/vendor/docx/jszip.min.js whitespace=-blank-at-eol
+# Keep the owner-prepared PDF compatibility Worker byte-exact across checkouts.
+**/vendor/pdf/pdf.worker.mjs -text -whitespace
 # Preserve the upstream font grant's original line endings.
 **/LICENSE.ArchitectsDaughter.txt -text
 # Preserve the exact original grants deployed with these runtime assets.
@@ -47,3 +49,5 @@ apps/viewer-demo/public/example/licenses/fox/CC0-1.0.txt -text whitespace=-blank
 apps/viewer-demo/public/example/licenses/fox/CC-BY-4.0.txt -text
 apps/viewer-demo/public/example/licenses/fox/UPSTREAM-README.md -text
 apps/viewer-demo/public/example/licenses/fox/metadata.json -text
+# Corresponding-source snapshots retain all original source and legal bytes.
+packages/build-support/cad-source-snapshots/** -text -whitespace

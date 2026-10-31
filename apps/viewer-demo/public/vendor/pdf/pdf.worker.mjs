@@ -5493,7 +5493,7 @@ module.exports = function (O, C, index, value) {
 /************************************************************************/
 /******/ // The module cache
 /******/ var __pdfjs_webpack_module_cache__ = {};
-/******/
+/******/ 
 /******/ // The require function
 /******/ function __pdfjs_webpack_require__(moduleId) {
 /******/ 	// Check if module is in cache
@@ -5507,14 +5507,14 @@ module.exports = function (O, C, index, value) {
 /******/ 		// no module.loaded needed
 /******/ 		exports: {}
 /******/ 	};
-/******/
+/******/ 
 /******/ 	// Execute the module function
 /******/ 	__pdfjs_webpack_modules__[moduleId].call(module.exports, module, module.exports, __pdfjs_webpack_require__);
-/******/
+/******/ 
 /******/ 	// Return the exports of the module
 /******/ 	return module.exports;
 /******/ }
-/******/
+/******/ 
 /************************************************************************/
 /******/ /* webpack/runtime/define property getters */
 /******/ (() => {
@@ -5527,12 +5527,12 @@ module.exports = function (O, C, index, value) {
 /******/ 		}
 /******/ 	};
 /******/ })();
-/******/
+/******/ 
 /******/ /* webpack/runtime/hasOwnProperty shorthand */
 /******/ (() => {
 /******/ 	__pdfjs_webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ })();
-/******/
+/******/ 
 /************************************************************************/
 var __pdfjs_webpack_exports__ = {};
 
@@ -67400,3 +67400,4 @@ globalThis.pdfjsWorker = {
 };
 
 export { WorkerMessageHandler };
+

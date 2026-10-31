@@ -12,6 +12,10 @@ const workerNotices = [
   { runtime: 'vendor/hangul/hangul.worker.js', source: 'packages/renderers/hangul/dist/hangul.worker.js', grant: 'packages/renderers/hangul/dist/workers.THIRD_PARTY_LICENSES.txt' },
   { runtime: 'vendor/xlsx/sheet.worker.js', source: 'packages/renderers/spreadsheet/dist/worker/sheet.worker.js', grant: 'packages/renderers/spreadsheet/dist/worker.THIRD_PARTY_LICENSES.txt' }
 ]
+const builtWorkerSources = [
+  ...workerNotices,
+  { runtime: 'vendor/pdf/pdf.worker.mjs', source: 'packages/renderers/pdf/dist/vendor/pdfjs/legacy/build/pdf.worker.mjs' }
+]
 const runtimePaths = new Set([...workerNotices.map(entry => entry.runtime), 'wasm/data/sql-wasm.wasm'])
 const noticeDirectories = new Set([...runtimePaths].map(path => `${dirname(path)}/licenses/`))
 const extraLegalAssets = [
@@ -82,14 +86,15 @@ export async function withRetainedAssetNoticeValidation(validation, manifests) {
 // before applying the unchanged byte-for-byte notice gate.
 export async function stageBuiltRetainedWorkers(viewerRoot, { sourceRoot = workspaceRoot } = {}) {
   const pending = []
-  for (const entry of workerNotices) {
+  for (const entry of builtWorkerSources) {
     try { await stat(join(viewerRoot, entry.runtime)) } catch (error) {
       if (error.code === 'ENOENT') continue
       throw error
     }
     const bytes = await readFile(resolveWorkspaceAsset(sourceRoot, entry.source))
-    const grant = await readFile(resolveWorkspaceAsset(sourceRoot, entry.grant))
-    assert.ok(bytes.length > 0 && grant.length > 0, `Missing built Worker or complete grants: ${entry.runtime}`)
+    if (entry.grant) assert.ok((await readFile(resolveWorkspaceAsset(sourceRoot, entry.grant))).length > 0,
+      `Missing complete grants: ${entry.runtime}`)
+    assert.ok(bytes.length > 0, `Missing built Worker: ${entry.runtime}`)
     pending.push({ target: join(viewerRoot, entry.runtime), bytes })
   }
   for (const { target, bytes } of pending) await writeFile(target, bytes)
@@ -98,6 +103,12 @@ export async function stageBuiltRetainedWorkers(viewerRoot, { sourceRoot = works
 export async function stageRetainedAssetNotices(viewerRoot, { sourceRoot = workspaceRoot, externalAssetOwners = [] } = {}) {
   const writes = []
   const readOptional = async path => readFile(path).catch(error => { if (error.code === 'ENOENT') return null; throw error })
+  for (const entry of builtWorkerSources) {
+    const runtime = await readOptional(join(viewerRoot, entry.runtime))
+    if (!runtime) continue
+    assert.ok(runtime.equals(await readFile(resolveWorkspaceAsset(sourceRoot, entry.source))),
+      `Copied Worker differs from its original notice build: ${entry.runtime}`)
+  }
   for (const entry of workerNotices) {
     const runtime = await readOptional(join(viewerRoot, entry.runtime))
     if (!runtime) continue

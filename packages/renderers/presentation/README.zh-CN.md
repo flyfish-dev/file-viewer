@@ -2,7 +2,7 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.zh-CN.md)
 
-Flyfish File Viewer 的独立演示文稿 renderer 包。传统 PowerPoint 97–2003 `.ppt` 使用独立的 `@file-viewer/ppt@0.3.5` Worker/OffscreenCanvas/WASM 链路，PPTX/PPTM/POTX/POTM/PPSX/PPSM 继续使用 `@file-viewer/pptx` 渐进式渲染；两条链路都接入统一缩放、打印和 HTML 导出。
+Flyfish File Viewer 的独立演示文稿 renderer 包。PowerPoint 97–2003 二进制 `.ppt` / `.pot` 使用独立的 `@file-viewer/ppt@1.0.2` TypeScript 引擎，PPTX/PPTM/POTX/POTM/PPSX/PPSM 使用 `@file-viewer/pptx`；两条链路都接入统一缩放、打印和 HTML 导出。
 
 ## 用法
 
@@ -36,7 +36,7 @@ import { fileViewerRenderers } from '@file-viewer/vite-plugin'
 fileViewerRenderers({ formats: ['pptx'] })
 ```
 
-这种配置不会在生产产物中生成传统 `.ppt` 的 CJK 字体或 WASM；需要同时支持两种格式时继续使用根入口 `presentationRenderer`。
+这种配置不会将二进制 `.ppt` 引擎带入生产产物；需要同时支持两种格式时继续使用根入口 `presentationRenderer`。
 
 也可以和其他 renderer 组合：
 
@@ -51,10 +51,10 @@ const options = {
 
 - 二进制 `.ppt` 与 OOXML 演示文稿保持独立解析链路，不会把传统 PPT 误送进 ZIP/PPTX 解析器。
 - `odp` 仍由 core 的 OpenDocument 兼容 renderer 负责，避免把不同格式族的解析链路混在一起。
-- File Viewer 将 `.ppt` 公共引擎作为独立版本依赖按需加载；Demo、full 资产包和 CDN/IIFE 会在 `vendor/ppt/` 交付匹配的 ESM、Worker、WASM、CJK 字体与帧缓存模块，默认无需额外配置。
-- 0.3.5 默认在支持的浏览器中使用模块 Worker 和 OffscreenCanvas，并通过有界 IndexedDB 帧缓存减少滚动回看时的重复原生渲染；不支持时自动回退到异步主线程链路。
-- `options.presentation.pptModuleUrl`、`pptWorkerUrl`、`pptWasmUrl` 和 `pptFontUrl` 只用于自定义静态资源路径；`pptWorker` 与 `pptCache` 可控制 Worker 和有界缓存策略。
-- `@file-viewer/ppt` 保留随包独立许可证，不属于本 renderer 的 Apache-2.0 许可范围。公开运行时保留可见水印；移除 PPT 水印需要商业授权。引擎在 HTTPS 或 localhost 使用 Web Crypto SHA-256；普通 HTTP 的 Chromium/WebKit 使用随包 SHA-256 实现，仍会校验 WASM 和字体字节。
+- File Viewer 按需加载独立版本的 `.ppt` 引擎。Demo、Full 资产包和 CDN/IIFE 在 `vendor/ppt/` 交付经过校验的完整包；独立模块和解析 Worker 位于 `vendor/ppt/dist/`，完整部署生成的资产即可使用默认 URL。
+- TypeScript 引擎通过模块 Worker 解析，SVG 布局与 Canvas 快照在主线程完成；Worker 不可用时回退直接解析。无需 WASM 和内置字体包，文字布局使用宿主浏览器字体。
+- `options.presentation.pptModuleUrl`、`pptWorkerUrl` 用于自定义静态路径；`pptWorker` 选择解析路径。旧 `pptWasmUrl`、`pptFontUrl`、`pptCache` 参数仅为迁移兼容而接受，不加载原生资源、不启用持久帧缓存。
+- 新 TypeScript 公共编译包采用 Apache-2.0，源码保持私有，交付时保留其 LICENSE 和 NOTICE.md。旧 native/WASM 发行线的许可与水印要求不变。复杂效果与缺失的宿主字体仍可能影响预览。
 
 ## 迁移说明
 

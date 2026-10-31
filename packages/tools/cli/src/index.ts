@@ -367,7 +367,12 @@ function installStep(
   }
   if (manager === 'pnpm') {
     if (cacheDir) extra.push('--store-dir', cacheDir)
-    if (concurrency) extra.push('--network-concurrency', concurrency)
+    if (concurrency) {
+      // pnpm 12 add no longer accepts install's network-concurrency flag.
+      // pnpm 11+ reads its own prefix; retain npm's prefix for older pnpm.
+      env.pnpm_config_network_concurrency = concurrency
+      env.npm_config_network_concurrency = concurrency
+    }
     return {
       id: 'install',
       kind: 'install' as const,

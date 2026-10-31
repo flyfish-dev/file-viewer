@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-dicom",
-  "version": "3.3.1",
+  "version": "3.3.3",
   "private": false,
   "type": "module",
   "sideEffects": false,
@@ -73,7 +73,7 @@
     "verify:packed-browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-packed-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.1",
+    "@file-viewer/core": "workspace:3.3.3",
     "dicom-parser": "1.8.21",
     "events": "3.3.0",
     "pako": "2.2.0"

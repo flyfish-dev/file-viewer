@@ -4,12 +4,12 @@
   "materials": [
     {
       "sourcePath": "packages/components/web/viewer/wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
-      "bytes": 3560,
+      "sha256": "4a565fff1d93f4bd6c80c63634a4b274c2cd264ffb0810b4a50a6975ab90bccb",
+      "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b (SHA-256 aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "initialOccurrences": 10
     },
     {
@@ -264,22 +264,22 @@
     },
     {
       "sourcePath": "packages/components/web/viewer/vendor/ppt/LICENSE",
-      "sha256": "fa3378d3e005fc6096e9da42d7fd53ea3a9742315560271369e0d958af2764f6",
-      "bytes": 5970,
-      "kind": "original-proprietary-runtime-notice",
+      "sha256": "55ce5d9fb8138a058b60c431cb9e68e13dd3f90691f73a757e38f06fed81e69b",
+      "bytes": 9140,
+      "kind": "original-license-grant",
       "component": "@file-viewer/ppt",
-      "declaredLicense": "LicenseRef-Flyfish-Public-Watermarked-Binary-v2",
-      "source": "Retained original public watermarked runtime grant",
+      "declaredLicense": "Apache-2.0",
+      "source": "Unmodified grant from the public TypeScript PPT npm package; development source remains private. Previous native runtime grants are unchanged.",
       "initialOccurrences": 4
     },
     {
-      "sourcePath": "packages/components/web/viewer/vendor/ppt/NOTICE",
-      "sha256": "6b57bc92d0cb360a1aee691a3374ccf722037422cbbec8693607cce5859eb2d4",
-      "bytes": 10493,
-      "kind": "original-proprietary-runtime-notice",
+      "sourcePath": "packages/components/web/viewer/vendor/ppt/NOTICE.md",
+      "sha256": "c458b1c7bdbb66b4f00bcc1b6126ca1ba3ba2cd516db26f4e883711cae806c7c",
+      "bytes": 5712,
+      "kind": "original-attribution-notice",
       "component": "@file-viewer/ppt",
-      "declaredLicense": "LicenseRef-Flyfish-Public-Watermarked-Binary-v2",
-      "source": "Retained original public watermarked runtime grant",
+      "declaredLicense": null,
+      "source": "Unmodified TypeScript PPT package notice identifying runtime provenance, source privacy and validation limits.",
       "initialOccurrences": 4
     },
     {

@@ -30,4 +30,15 @@ await writeFile(resolve(root, 'src/geo3dCrsAliases.generated.ts'), banner +
   'export const crsAliases: ReadonlyArray<readonly [string, string, string]> = ' + JSON.stringify(rows) + '\n')
 await mkdir(resolve(root, 'licenses'), {recursive: true})
 await writeFile(resolve(root, 'licenses/PROJ-COPYING.txt'), license)
+const preservedNotice = banner.slice(3, -3).trim() + '\n'
+await writeFile(resolve(root, 'licenses/PROJ-NOTICE.txt'), preservedNotice)
+const noticePath = resolve(root, 'GEO3D_THIRD_PARTY_NOTICES.md')
+const start = '<!-- BEGIN PROJ ALIAS NOTICE -->'
+const end = '<!-- END PROJ ALIAS NOTICE -->'
+const section = `${start}\n\n## Retained PROJ alias-table grant\n\n${preservedNotice}\n${end}`
+const priorNotice = await readFile(noticePath, 'utf8')
+assert.equal(priorNotice.includes(start), priorNotice.includes(end), 'Incomplete generated PROJ notice section')
+await writeFile(noticePath, priorNotice.includes(start)
+  ? priorNotice.slice(0, priorNotice.indexOf(start)) + section + priorNotice.slice(priorNotice.indexOf(end) + end.length)
+  : priorNotice.trimEnd() + '\n\n' + section + '\n')
 console.log(`Generated ${rows.length} authority aliases from the reviewed PROJ snapshot.`)

@@ -32,6 +32,8 @@ minimumReleaseAgeExclude:
   - '@file-viewer/docx@0.3.39'
   - '@file-viewer/ppt@0.3.5'
   - '@file-viewer/ppt@0.3.6'
+  - '@file-viewer/ppt@1.0.1'
+  - '@file-viewer/ppt@1.0.2'
   - '@flyfish-dev/cad-viewer@0.8.3'
   - 'styled-exceljs@0.21.6'
 
@@ -78,14 +80,14 @@ overrides:
   # @kitware/vtk.js@36.4.1 pins the vulnerable fflate 0.7.3 release. Keep
   # the same API line while consuming the patched 0.7.5 security release.
   '@kitware/vtk.js>fflate': 0.7.5
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.1
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.1
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.1
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.1
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.1
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.1
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.1
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.1
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.3
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.3
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.3
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.3
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.3
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.3
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.3
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.3
 
 auditConfig:
   ignoreGhsas:

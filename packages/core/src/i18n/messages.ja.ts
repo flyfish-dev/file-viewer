@@ -141,7 +141,7 @@ export const JA_JP_MESSAGES: Record<FileViewerMessageKey, string> = {
   'presentation.ppt.state.loading': 'PowerPoint 97–2003 を解析しています...',
   'presentation.ppt.error.title': 'PPT プレビューに失敗しました',
   'presentation.ppt.error.parseFailed': 'この PPT ファイルを解析できませんでした。',
-  'presentation.ppt.error.assetHint': '@file-viewer/ppt モジュール、pptWasmUrl、application/wasm MIME タイプ、Web Crypto、CSP 設定を確認してください。',
+  'presentation.ppt.error.assetHint': '@file-viewer/ppt モジュール、解析 Worker の JavaScript MIME タイプ、CSP 設定を確認してください。',
   'presentation.slideshow.start': 'スライドショーを開始',
   'presentation.slideshow.exit': 'スライドショーを終了',
   'presentation.slideshow.hint': '← → 移動 · Esc 終了',

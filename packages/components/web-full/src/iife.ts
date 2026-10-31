@@ -205,10 +205,8 @@ function createFullAssetOptions(assetBaseUrl?: string | URL | null): ViewerOptio
       cjkFontFallbackPath: `${baseUrl}vendor/pdf/fonts/`
     },
     presentation: {
-      pptModuleUrl: pptAssetUrl('vendor/ppt/index.mjs'),
-      pptWorkerUrl: pptAssetUrl('vendor/ppt/worker.mjs'),
-      pptWasmUrl: pptAssetUrl('vendor/ppt/ppt-native.wasm'),
-      pptFontUrl: pptAssetUrl('vendor/ppt/ppt-font-cjk.otf'),
+      pptModuleUrl: pptAssetUrl('vendor/ppt/dist/pptjs.mjs'),
+      pptWorkerUrl: pptAssetUrl('vendor/ppt/dist/pptjs.worker.js'),
       workerUrl: `${baseUrl}vendor/pptx/pptx.worker.js`
     },
     spreadsheet: {

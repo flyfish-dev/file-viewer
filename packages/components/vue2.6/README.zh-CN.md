@@ -308,7 +308,7 @@ const options = {
 | `iwork` | 显式安装 iWork capability 后，配置 Pages / Numbers / Keynote 的模块 Worker、超时、ZIP/Snappy/IWA 安全上限与 Quick Look 降级策略；它不属于 standard/full 默认闭包。 |
 | `hangul` | 显式安装 Hangul capability 后，配置 HWP/HWPX 模块 Worker、超时、ZIP 解压/压缩率/条目数与 HWP 记录数安全上限；它不属于 standard/full 默认闭包。 |
 | `wordPerfect` | 显式安装 WordPerfect capability 后，配置 Worker、libwpd/librevenge WASM 地址与超时；它不属于 standard/full 默认闭包。 |
-| `presentation` | standard/full 默认只装配 PPTX/OpenXML 的 `@file-viewer/pptx` Worker，可通过 `workerUrl` / `workerType` 覆盖。PowerPoint 97–2003 `.ppt` 是独立重型 capability，需用 `file-viewer add ppt --write` 显式安装其 Worker/WASM 和资产。 |
+| `presentation` | standard 默认包含 PPTX/OpenXML；Office/All preset 和 Full 包同时支持二进制 `.ppt` / `.pot`。PPT 使用 Apache-2.0 的 TypeScript 引擎与解析 Worker，无需 WASM 或内置字体。精简安装可用 `file-viewer add ppt --write`；自定义路径可覆盖 `pptModuleUrl` / `pptWorkerUrl`。 |
 | `typst` / `data` / `cad` | 显式安装相应 capability 后，配置 Typst、SQLite、CAD/DWG/DXF/DWF 等 WASM、Worker、编码和渲染策略；这些能力不属于 standard/full 默认闭包。 |
 | `hooks` / `beforeOperation` | 统一生命周期 hooks 和操作前置校验，可用于审计、权限、埋点和安全控制。 |
 
@@ -434,7 +434,7 @@ const options = {
 
 完整参数、生命周期 hooks、beforeOperation、主题、水印、搜索、缩放、打印和导出说明见官方文档: https://doc.file-viewer.app/
 
-在线 Demo: https://demo.file-viewer.app/ 。File Viewer 自身源码与本仓生成的组件包使用 Apache-2.0；发行物若包含 `@file-viewer/ppt` 运行时，该运行时保留其独立 LICENSE 与 NOTICE，不被 Apache-2.0 重新许可。二开或商用请保留 Flyfish Viewer 来源说明；如果修复了通用兼容问题，也欢迎贡献回对应组件仓库。
+在线 Demo: https://demo.file-viewer.app/ 。File Viewer 自身源码、组件包和新 TypeScript PPT 公共编译包使用 Apache-2.0；PPT 引擎源码保持私有，发行时保留其 LICENSE 与 NOTICE.md。旧 native PPT 的许可和水印要求不变，其余第三方运行时保留原许可证。二开或商用请保留 Flyfish Viewer 来源说明。
 <!-- FILE_VIEWER_GENERATED:END -->
 
 ## 格式与相关包

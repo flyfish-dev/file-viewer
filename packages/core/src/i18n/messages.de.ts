@@ -140,7 +140,7 @@ export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
   "presentation.ppt.state.loading": "Parsen von PowerPoint 97–2003...",
   "presentation.ppt.error.title": "PPT-Vorschau fehlgeschlagen",
   "presentation.ppt.error.parseFailed": "Diese PPT-Datei konnte nicht analysiert werden.",
-  "presentation.ppt.error.assetHint": "Überprüfen Sie die Einstellungen für Modul @file-viewer/ppt, pptWasmUrl, application/wasm MIME, Web Crypto und CSP.",
+  "presentation.ppt.error.assetHint": "Überprüfen Sie das Modul @file-viewer/ppt, den JavaScript-MIME-Typ des Parsing-Workers und die CSP-Einstellungen.",
   "presentation.slideshow.start": "Diashow starten",
   "presentation.slideshow.exit": "Diashow beenden",
   "presentation.slideshow.hint": "← → navigieren · Esc beenden",

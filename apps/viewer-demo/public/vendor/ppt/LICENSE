@@ -1,122 +1,160 @@
-Flyfish Public Watermarked Runtime License for @file-viewer/ppt
-Version 2.0, July 2026
-License policy identifier: flyfish-public-watermarked-binary-license-v2
+Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
 
-Copyright (c) 2026 Flyfish. All rights reserved except as expressly granted in this License.
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
-IMPORTANT: This is a proprietary runtime license, not an open-source license.
-By downloading, installing, copying, accessing, or using the Public Runtime,
-You accept this License. If You do not accept it, do not use the Public Runtime.
+1. Definitions.
 
-1. Definitions
+"License" shall mean the terms and conditions for use, reproduction, and
+distribution as defined by Sections 1 through 9 of this document.
 
-“Flyfish” means the copyright owner and licensor.
+"Licensor" shall mean the copyright owner or entity authorized by the copyright
+owner that is granting the License.
 
-“Public Runtime” means the official, unmodified @file-viewer/ppt public npm
-package and its required JavaScript, Worker, WebAssembly, font, declaration,
-manifest, documentation, notice, and Flyfish Viewer watermark files.
+"Legal Entity" shall mean the union of the acting entity and all other entities
+that control, are controlled by, or are under common control with that entity.
+For the purposes of this definition, "control" means (i) the power, direct or
+indirect, to cause the direction or management of such entity, whether by
+contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the
+outstanding shares, or (iii) beneficial ownership of such entity.
 
-“You” means any individual or organization using or distributing the Public
-Runtime under this License.
+"You" (or "Your") shall mean an individual or Legal Entity exercising
+permissions granted by this License.
 
-“Integrated Product” means an application, website, service, library, demo,
-deployment bundle, or other product in which the Public Runtime is included as
-a functional dependency for PowerPoint preview rather than offered as a
-standalone substitute for @file-viewer/ppt.
+"Source" form shall mean the preferred form for making modifications, including
+but not limited to software source code, documentation source, and configuration
+files.
 
-2. Public watermarked grant
+"Object" form shall mean any form resulting from mechanical transformation or
+translation of a Source form, including but not limited to compiled object code,
+generated documentation, and conversions to other media types.
 
-Subject to this License, Flyfish grants You a worldwide, royalty-free,
-non-exclusive, non-transferable license to:
+"Work" shall mean the work of authorship, whether in Source or Object form,
+made available under the License, as indicated by a copyright notice that is
+included in or attached to the work.
 
-- download, install, copy, and execute the Public Runtime for any lawful
-  personal, organizational, educational, government, nonprofit, internal,
-  commercial, production, SaaS, hosted, customer-facing, or professional use;
-- integrate and deploy the Public Runtime in an Integrated Product;
-- bundle or copy the unmodified Public Runtime through npm, package managers,
-  build tools, private registries, static asset directories, Docker images,
-  offline installers, demos, Full packages, CDN/IIFE distributions,
-  copy-assets workflows, and GitHub Release artifacts;
-- host, mirror, and redistribute the unmodified Public Runtime when reasonably
-  required to install, operate, deploy, or distribute an Integrated Product;
-  and
-- charge for an Integrated Product or service that includes the Public Runtime.
+"Derivative Works" shall mean any work, whether in Source or Object form, that
+is based on (or derived from) the Work and for which the editorial revisions,
+annotations, elaborations, or other modifications represent, as a whole, an
+original work of authorship. For the purposes of this License, Derivative Works
+shall not include works that remain separable from, or merely link (or bind by
+name) to the interfaces of, the Work and Derivative Works thereof.
 
-No paid license is required for these uses while the required Flyfish Viewer
-watermark remains visible, complete, unobstructed, and unmodified in every
-rendered slide and preview.
+"Contribution" shall mean any work of authorship, including the original version
+of the Work and any modifications or additions to that Work or Derivative Works
+thereof, that is intentionally submitted to Licensor for inclusion in the Work by
+the copyright owner or by an individual or Legal Entity authorized to submit on
+behalf of the copyright owner. For the purposes of this definition, "submitted"
+means any form of electronic, verbal, or written communication sent to the
+Licensor or its representatives, including but not limited to communication on
+electronic mailing lists, source code control systems, and issue tracking systems
+that are managed by, or on behalf of, the Licensor for the purpose of discussing
+and improving the Work, but excluding communication that is conspicuously marked
+or otherwise designated in writing by the copyright owner as "Not a
+Contribution."
 
-Routine technical bundling, tree-shaking, compression, content hashing, and
-minification are permitted when they do not change runtime behavior, bypass
-integrity checks, remove notices, or alter the required watermark.
+"Contributor" shall mean Licensor and any individual or Legal Entity on behalf
+of whom a Contribution has been received by Licensor and subsequently
+incorporated within the Work.
 
-3. Watermark-free commercial authorization
+2. Grant of Copyright License. Subject to the terms and conditions of this
+License, each Contributor hereby grants to You a perpetual, worldwide,
+non-exclusive, no-charge, royalty-free, irrevocable copyright license to
+reproduce, prepare Derivative Works of, publicly display, publicly perform,
+sublicense, and distribute the Work and such Derivative Works in Source or
+Object form.
 
-A separate written commercial authorization is required only to remove,
-replace, hide, crop, cover, weaken, restyle, or otherwise alter the required
-Flyfish Viewer watermark, or to receive a separately built watermark-free
-runtime or source delivery. Commercial authorization applies only to the
-entities, deployments, features, origins, term, and other scope stated in that
-agreement.
+3. Grant of Patent License. Subject to the terms and conditions of this License,
+each Contributor hereby grants to You a perpetual, worldwide, non-exclusive,
+no-charge, royalty-free, irrevocable (except as stated in this section) patent
+license to make, have made, use, offer to sell, sell, import, and otherwise
+transfer the Work, where such license applies only to those patent claims
+licensable by such Contributor that are necessarily infringed by their
+Contribution(s) alone or by combination of their Contribution(s) with the Work to
+which such Contribution(s) was submitted. If You institute patent litigation
+against any entity (including a cross-claim or counterclaim in a lawsuit)
+alleging that the Work or a Contribution incorporated within the Work
+constitutes direct or contributory patent infringement, then any patent licenses
+granted to You under this License for that Work shall terminate as of the date
+such litigation is filed.
 
-Authorization information: https://dev.flyfish.group/shop
+4. Redistribution. You may reproduce and distribute copies of the Work or
+Derivative Works thereof in any medium, with or without modifications, and in
+Source or Object form, provided that You meet the following conditions:
 
-4. Restrictions
+(a) You must give any other recipients of the Work or Derivative Works a copy of
+this License; and
 
-Except to the limited extent mandatory law permits despite these restrictions,
-You may not, and may not enable another person to:
+(b) You must cause any modified files to carry prominent notices stating that
+You changed the files; and
 
-- sell, rent, sublicense, rebrand, rename, or publish the Public Runtime as a
-  standalone or competing package, download, API, hosted conversion service,
-  or product that substitutes for the official @file-viewer/ppt package;
-- represent the Public Runtime as Your own engine, as open source, or as
-  licensed under Apache-2.0, MIT, BSD, GPL, or another open-source license;
-- modify, translate, patch, adapt, or create derivative works from the Public
-  Runtime except for the routine integration transformations expressly allowed
-  in Section 2;
-- reverse engineer, decrypt, decompile, disassemble, extract, dump, recover, or
-  attempt to derive source code, keys, protected modules, algorithms, or
-  non-public interfaces;
-- bypass, forge, replace, disable, or interfere with a policy gate, integrity
-  check, encryption measure, feature restriction, watermark control, or other
-  technical protection;
-- remove, hide, crop, cover, restyle, obscure, weaken, or interfere with the
-  required Flyfish Viewer watermark without separate written authorization; or
-- remove or alter copyright, license, attribution, provenance, trademark, or
-  third-party notices.
+(c) You must retain, in the Source form of any Derivative Works that You
+distribute, all copyright, patent, trademark, and attribution notices from the
+Source form of the Work, excluding those notices that do not pertain to any part
+of the Derivative Works; and
 
-An exact official package mirror, cache, backup, or static copy used to install
-or deploy an Integrated Product is not prohibited standalone redistribution.
+(d) If the Work includes a "NOTICE" text file as part of its distribution, then
+any Derivative Works that You distribute must include a readable copy of the
+attribution notices contained within such NOTICE file, excluding those notices
+that do not pertain to any part of the Derivative Works, in at least one of the
+following places: within a NOTICE text file distributed as part of the Derivative
+Works; within the Source form or documentation, if provided along with the
+Derivative Works; or, within a display generated by the Derivative Works, if and
+wherever such third-party notices normally appear. The contents of the NOTICE
+file are for informational purposes only and do not modify the License. You may
+add Your own attribution notices within Derivative Works that You distribute,
+alongside or as an addendum to the NOTICE text from the Work, provided that such
+additional attribution notices cannot be construed as modifying the License.
 
-5. Proprietary and open-source boundary
+You may add Your own copyright statement to Your modifications and may provide
+additional or different license terms and conditions for use, reproduction, or
+distribution of Your modifications, or for any such Derivative Works as a whole,
+provided Your use, reproduction, and distribution of the Work otherwise complies
+with the conditions stated in this License.
 
-This License applies only to the Public Runtime. It does not grant source code,
-source-delivery, patent, trademark, or open-source rights. Apache-2.0 terms that
-may apply to File Viewer or to a separately identified source delivery do not
-extend to @file-viewer/ppt, its WebAssembly runtime, or Flyfish trademarks.
+5. Submission of Contributions. Unless You explicitly state otherwise, any
+Contribution intentionally submitted for inclusion in the Work by You to the
+Licensor shall be under the terms and conditions of this License, without any
+additional terms or conditions. Notwithstanding the above, nothing herein shall
+supersede or modify the terms of any separate license agreement you may have
+executed with Licensor regarding such Contributions.
 
-Third-party components identified in the NOTICE remain subject to their own
-licenses. Those notices do not expand the grant for Flyfish proprietary code.
+6. Trademarks. This License does not grant permission to use the trade names,
+trademarks, service marks, or product names of the Licensor, except as required
+for reasonable and customary use in describing the origin of the Work and
+reproducing the content of the NOTICE file.
 
-6. Ownership and trademark
+7. Disclaimer of Warranty. Unless required by applicable law or agreed to in
+writing, Licensor provides the Work (and each Contributor provides its
+Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied, including, without limitation, any warranties or
+conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+PARTICULAR PURPOSE. You are solely responsible for determining the
+appropriateness of using or redistributing the Work and assume any risks
+associated with Your exercise of permissions under this License.
 
-Flyfish and its licensors retain all title and intellectual-property rights in
-the Public Runtime. The narrow permission to display the unmodified Flyfish
-Viewer watermark does not grant any other trademark or endorsement right.
+8. Limitation of Liability. In no event and under no legal theory, whether in
+tort (including negligence), contract, or otherwise, unless required by
+applicable law (such as deliberate and grossly negligent acts) or agreed to in
+writing, shall any Contributor be liable to You for damages, including any
+direct, indirect, special, incidental, or consequential damages of any character
+arising as a result of this License or out of the use or inability to use the
+Work (including but not limited to damages for loss of goodwill, work stoppage,
+computer failure or malfunction, or any and all other commercial damages or
+losses), even if such Contributor has been advised of the possibility of such
+damages.
 
-7. Termination
+9. Accepting Warranty or Additional Liability. While redistributing the Work or
+Derivative Works thereof, You may choose to offer, and charge a fee for,
+acceptance of support, warranty, indemnity, or other liability obligations and/or
+rights consistent with this License. However, in accepting such obligations, You
+may act only on Your own behalf and on Your sole responsibility, not on behalf of
+any other Contributor, and only if You agree to indemnify, defend, and hold each
+Contributor harmless for any liability incurred by, or claims asserted against,
+such Contributor by reason of your accepting any such warranty or additional
+liability.
 
-This License terminates automatically if You materially violate it. Your rights
-are reinstated when You cure the violation within 30 days after discovery,
-unless Flyfish has notified You of a repeated or intentional violation.
+END OF TERMS AND CONDITIONS
 
-8. Disclaimer and limitation of liability
-
-THE PUBLIC RUNTIME IS PROVIDED “AS IS”, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND. TO THE MAXIMUM EXTENT PERMITTED BY LAW, FLYFISH IS NOT LIABLE FOR INDIRECT,
-INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES ARISING FROM ITS USE.
-
-9. Entire license
-
-This License is the complete public grant for the Public Runtime. A separate
-written agreement controls only where it expressly grants additional rights.
+Copyright 2026 Flyfish Viewer

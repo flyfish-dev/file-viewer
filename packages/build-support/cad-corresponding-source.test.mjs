@@ -12,8 +12,9 @@ const root = resolve(import.meta.dirname, '../..')
 test('the bundled preferred source is complete and bound to the actual current source', async () => {
   const archive = await readCadCorrespondingSource(root, CAD_INTEGRATION_SOURCE)
   await verifyCadPreferredSourceInputs(root, archive.manifest)
-  assert.equal(archive.files.size, 85)
-  assert.equal(archive.manifest.preferredSourceInputs.length, 71)
+  assert.equal(archive.files.size, CAD_INTEGRATION_SOURCE.files)
+  assert.ok(archive.manifest.preferredSourceInputs.some(entry =>
+    entry.path === 'packages/core/src/browser/toolbar-keyboard.ts'))
   assert.deepEqual(
     archive.files.get('packages/core/src/browser/source-feedback.ts'),
     await readFile(join(root, 'packages/core/src/browser/source-feedback.ts'))

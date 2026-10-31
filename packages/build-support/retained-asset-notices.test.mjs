@@ -32,6 +32,25 @@ async function seedMaterialSources(sourceRoot) {
   }
 }
 
+test('PDF bootstrap assets retain the owner-prepared compatibility Worker and reject raw or stale copies', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'file-viewer-owned-pdf-worker-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const sourceRoot = join(root, 'source')
+  await seedMaterialSources(sourceRoot)
+  const viewer = join(root, 'viewer')
+  const source = join(sourceRoot, 'packages/renderers/pdf/dist/vendor/pdfjs/legacy/build/pdf.worker.mjs')
+  const target = join(viewer, 'vendor/pdf/pdf.worker.mjs')
+  await mkdir(dirname(source), { recursive: true })
+  await mkdir(dirname(target), { recursive: true })
+  const owned = 'var __pdfjs_webpack_require__ = {}; // prepared compatibility Worker\n'
+  await writeFile(source, owned)
+  await writeFile(target, 'var __webpack_require__ = {}; // unprepared upstream copy\n')
+  await assert.rejects(stageRetainedAssetNotices(viewer, { sourceRoot }), /differs from its original notice build/)
+  await stageBuiltRetainedWorkers(viewer, { sourceRoot })
+  assert.equal(await readFile(target, 'utf8'), owned)
+  await stageRetainedAssetNotices(viewer, { sourceRoot })
+})
+
 test('copied Workers keep their complete original grants and reject a stale build before writing', async () => {
   const root = await mkdtemp(join(tmpdir(), 'file-viewer-asset-grants-'))
   try {

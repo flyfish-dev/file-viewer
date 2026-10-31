@@ -6,6 +6,11 @@ export interface OfflineAssetSanitizationResult {
 }
 
 export declare function isRetainedNativeNoticeBook(original: string, file: string): boolean
+export declare function isRetainedPackageManifest(original: string, file: string): boolean
+export declare function sanitizeOfflineAssetText(original: string, file: string): {
+  output: string
+  replacementCount: number
+}
 
 export interface OfflineAssetSanitizerPluginOptions {
   label?: string

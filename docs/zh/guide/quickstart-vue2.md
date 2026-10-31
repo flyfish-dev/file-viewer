@@ -134,7 +134,7 @@ module.exports = {
 
 renderer 构建会在发布 tarball 前同时隔离 PDF.js 的 `modules`、`module_cache`、`exports`、`require` 四个内部标识，并在 `dist/vendor/pdfjs/provenance.json` 记录源文件哈希、变换次数和产物哈希，避免 PDF.js 内部 webpack bootstrap 遮蔽 webpack 4 宿主导出。如果业务代码另外直接导入 `pdfjs-dist` 源模块，那部分仍由业务构建配置负责；File Viewer 示例只把该包作为复制静态资产时的构建期来源。
 
-`@file-viewer/docx` 的 alias 也必须保留：webpack 4 默认优先选择 UMD `browser` 入口，该文件经过 Babel 转译后会丢失 CommonJS 导出，上传 DOCX 时表现为 `@file-viewer/docx did not expose a compatible renderAsync function`。另一个补丁 `build/babel-transform-import-meta-url.cjs` 负责让 webpack 4 解析 PPTX worker 模块。`scripts/copy-file-viewer-assets.cjs` 会把 PDF/DOCX/PPTX/Excel 资产和 `@file-viewer/ppt@0.3.4` 的 ESM、Worker、帧缓存、WASM、CJK 字体、manifest、package metadata、LICENSE、NOTICE 九个文件复制到 `public/file-viewer/`。
+`@file-viewer/docx` 的 alias 也必须保留：webpack 4 默认优先选择 UMD `browser` 入口，该文件经过 Babel 转译后会丢失 CommonJS 导出，上传 DOCX 时表现为 `@file-viewer/docx did not expose a compatible renderAsync function`。另一个补丁 `build/babel-transform-import-meta-url.cjs` 负责让 webpack 4 解析 PPTX worker 模块。现代依赖的 Babel 规则还需要 `@babel/plugin-transform-numeric-separator`：webpack 4 无法解析 `1_000_000` 这类数字分隔符，即使目标浏览器支持也要转译。`scripts/copy-file-viewer-assets.cjs` 会把 PDF/DOCX/PPTX/Excel 资产和 `@file-viewer/ppt@1.0.2` 编译包的完整 96 个文件复制到 `public/file-viewer/`，包括编译模块、解析 Worker、声明、包元数据、LICENSE 和 NOTICE.md；PPT 不需要 WASM 或内置字体包。
 
 `npm run serve` 对应的 `.env.normalServe` 使用 `NODE_ENV=production`，是为了避开 Vue CLI 3.1 dev server 对 HMR 客户端的强注入；真实项目可以先用这个模式确认 `preset-office` 构建链可用，再决定是否保留热更新。
 
@@ -161,10 +161,8 @@ export const viewerOptions = {
     workerJsZipUrl: `${assetBaseUrl}vendor/docx/jszip.min.js`
   },
   presentation: {
-    pptModuleUrl: `${assetBaseUrl}vendor/ppt/index.mjs`,
-    pptWorkerUrl: `${assetBaseUrl}vendor/ppt/worker.mjs`,
-    pptWasmUrl: `${assetBaseUrl}vendor/ppt/ppt-native.wasm`,
-    pptFontUrl: `${assetBaseUrl}vendor/ppt/ppt-font-cjk.otf`,
+    pptModuleUrl: `${assetBaseUrl}vendor/ppt/dist/pptjs.mjs`,
+    pptWorkerUrl: `${assetBaseUrl}vendor/ppt/dist/pptjs.worker.js`,
     workerUrl: `${assetBaseUrl}vendor/pptx/pptx.worker.js`
   },
   spreadsheet: {

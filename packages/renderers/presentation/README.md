@@ -2,7 +2,7 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/presentation/README.zh-CN.md)
 
-Standalone presentation renderer package for Flyfish File Viewer. Binary PowerPoint 97–2003 `.ppt` uses the separate `@file-viewer/ppt@0.3.5` Worker/OffscreenCanvas/WASM path; PPTX/PPTM/POTX/POTM/PPSX/PPSM keep the progressive `@file-viewer/pptx` path. Both integrate with the shared zoom, print, and HTML export controls.
+Standalone presentation renderer package for Flyfish File Viewer. Binary PowerPoint 97–2003 `.ppt` / `.pot` uses the separate `@file-viewer/ppt@1.0.2` TypeScript engine; PPTX/PPTM/POTX/POTM/PPSX/PPSM use `@file-viewer/pptx`. Both integrate with the shared zoom, print, and HTML export controls.
 
 ## Usage
 
@@ -36,7 +36,7 @@ import { fileViewerRenderers } from '@file-viewer/vite-plugin'
 fileViewerRenderers({ formats: ['pptx'] })
 ```
 
-This configuration does not emit the classic `.ppt` CJK font or WASM in production. Keep using the root `presentationRenderer` when both families are required.
+This configuration keeps the binary `.ppt` engine out of production. Keep using the root `presentationRenderer` when both families are required.
 
 You can compose it with other renderers:
 
@@ -51,10 +51,10 @@ const options = {
 
 - Binary `.ppt` and OOXML presentations use separate parsers; classic PPT bytes are never sent to the ZIP/PPTX parser.
 - `odp` remains handled by the core OpenDocument compatibility renderer, keeping different format families separated.
-- File Viewer lazy-loads the independently versioned public `.ppt` engine. Demo, full asset packages, and CDN/IIFE distributions ship its matching ESM, Worker, WASM, CJK font, and frame-cache files under `vendor/ppt/`, so the default path needs no extra configuration.
-- Version 0.3.5 defaults to a module Worker and OffscreenCanvas in capable browsers, with a bounded IndexedDB frame cache for revisited slides. It falls back to the asynchronous direct path when needed.
-- `options.presentation.pptModuleUrl`, `pptWorkerUrl`, `pptWasmUrl`, and `pptFontUrl` are advanced overrides for custom static asset routes. `pptWorker` and `pptCache` control Worker and bounded-cache behavior.
-- `@file-viewer/ppt` keeps its included license and is not covered by this renderer's Apache-2.0 license. The public runtime keeps its visible watermark; removing the PPT watermark requires commercial authorization. The engine uses Web Crypto SHA-256 on HTTPS or localhost. On ordinary HTTP in Chromium/WebKit it uses the included SHA-256 implementation and still verifies the WASM and font bytes.
+- File Viewer lazy-loads the independently versioned `.ppt` engine. Demo, Full packages and CDN/IIFE distributions include the verified package under `vendor/ppt/`; the standalone module and parsing Worker are in `vendor/ppt/dist/`. Deploy the complete generated assets to use the default URLs.
+- The TypeScript engine parses in a module Worker and performs SVG layout and Canvas snapshots on the main thread. It falls back to direct parsing when Workers are unavailable. It needs no WASM or embedded font pack; browser fonts determine text layout.
+- `options.presentation.pptModuleUrl` and `pptWorkerUrl` override custom static routes; `pptWorker` selects the parsing path. Previous `pptWasmUrl`, `pptFontUrl` and `pptCache` options are accepted for migration and do not load native assets or enable persistent caching.
+- The public compiled TypeScript runtime is Apache-2.0; its source remains private. Preserve its LICENSE and NOTICE.md. This does not change the license or watermark requirements of previous native/WASM releases. Complex effects and missing host fonts can still change the preview.
 
 ## Migration
 

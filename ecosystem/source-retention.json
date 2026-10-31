@@ -7230,6 +7230,41 @@
       "path": "docs/regressions/wordml-encoding-defaults-20260924.md",
       "replacement": "docs/guide/development.md",
       "reason": "Historical maintainer report/evidence is retained privately; public development guidance, source tests and actual fixtures remain available."
+    },
+    {
+      "path": "apps/viewer-demo/public/vendor/ppt/NOTICE",
+      "replacement": "apps/viewer-demo/public/vendor/ppt/NOTICE.md",
+      "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
+    },
+    {
+      "path": "apps/viewer-demo/public/vendor/ppt/frame-cache.mjs",
+      "replacement": "apps/viewer-demo/public/vendor/ppt/dist/index.js",
+      "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
+    },
+    {
+      "path": "apps/viewer-demo/public/vendor/ppt/index.mjs",
+      "replacement": "apps/viewer-demo/public/vendor/ppt/dist/pptjs.mjs",
+      "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
+    },
+    {
+      "path": "apps/viewer-demo/public/vendor/ppt/manifest.json",
+      "replacement": "apps/viewer-demo/public/vendor/ppt/dist/manifest.json",
+      "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
+    },
+    {
+      "path": "apps/viewer-demo/public/vendor/ppt/ppt-font-cjk.otf",
+      "replacement": "apps/viewer-demo/public/vendor/ppt/README.md",
+      "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
+    },
+    {
+      "path": "apps/viewer-demo/public/vendor/ppt/ppt-native.wasm",
+      "replacement": "apps/viewer-demo/public/vendor/ppt/dist/pptjs.mjs",
+      "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
+    },
+    {
+      "path": "apps/viewer-demo/public/vendor/ppt/worker.mjs",
+      "replacement": "apps/viewer-demo/public/vendor/ppt/dist/pptjs.worker.js",
+      "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
     }
   ]
 }

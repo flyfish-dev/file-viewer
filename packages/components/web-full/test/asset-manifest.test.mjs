@@ -1,19 +1,19 @@
 import assert from 'node:assert/strict'
-import { createHash } from 'node:crypto'
 import { cp, lstat, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 import { test } from 'node:test'
 import * as webNode from '../../web/dist/node.js'
 import { assertFullAssetDependencies, resolveFullAssetSources } from '../scripts/full-asset-dependencies.mjs'
-import { PPT_RUNTIME_VERSION } from '../scripts/ppt-runtime-integrity.mjs'
+import { PPT_RUNTIME_REQUIRED_FILES, PPT_RUNTIME_VERSION } from '../scripts/ppt-runtime-integrity.mjs'
 import { stagePptRuntimeFrom } from '../scripts/stage-ppt-runtime.mjs'
 import { fullAssetStagers, stageFullViewerAssets } from '../scripts/stage-full-assets.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const pptPackageDir = dirname(createRequire(import.meta.url).resolve('@file-viewer/ppt/package.json'))
 const manifestFilename = 'flyfish-viewer-assets.json'
-const sha256 = data => createHash('sha256').update(data).digest('hex')
 const quiet = async run => {
   const log = console.log
   console.log = () => {}
@@ -64,29 +64,15 @@ async function fixture(t) {
   await mkdir(join(source, 'vendor/ppt'), { recursive: true })
   await writeFile(join(source, 'vendor/ppt/ppt-native.wasm'), 'stale demo wasm copy')
 
-  // Installed official @file-viewer/ppt package (fixture bytes, real integrity rules).
-  const wasm = Buffer.from('unique wasm fixture bytes')
-  const font = Buffer.from('unique font fixture bytes, longer than the wasm')
+  // Copy the byte-pinned public package into the isolated installed-package fixture.
   const writePpt = async version => {
-    await mkdir(installedPpt, { recursive: true })
-    await writeFile(join(installedPpt, 'ppt-native.wasm'), wasm)
-    await writeFile(join(installedPpt, 'ppt-font-cjk.otf'), font)
-    await writeFile(join(installedPpt, 'manifest.json'), JSON.stringify({
-      packageName: '@file-viewer/ppt', packageVersion: version,
-      wasmFile: 'ppt-native.wasm', wasmBytes: wasm.length, wasmSha256: sha256(wasm),
-      workerFile: 'worker.mjs',
-      fontPack: { file: 'ppt-font-cjk.otf', bytes: font.length, sha256: sha256(font) }
-    }))
-    await writeFile(join(installedPpt, 'package.json'), JSON.stringify({ name: '@file-viewer/ppt', version }))
-    await writeFile(join(installedPpt, 'index.mjs'), '// FV-PPT-PUBLIC-WATERMARKED-V2 createPptViewer ppt-native.wasm ppt-font-cjk.otf worker.mjs\n')
-    await writeFile(join(installedPpt, 'worker.mjs'), "import './frame-cache.mjs'; // from './frame-cache.mjs'\n")
-    await writeFile(join(installedPpt, 'frame-cache.mjs'), [
-      'export function normalizeFrameCacheLimits() {}',
-      'export function createFrameCacheKey() {}',
-      'export function createFrameCache() {}'
-    ].join('\n'))
-    await writeFile(join(installedPpt, 'LICENSE'), 'ppt license fixture\n')
-    await writeFile(join(installedPpt, 'NOTICE'), 'ppt notice fixture\n')
+    await rm(installedPpt, { recursive: true, force: true })
+    await cp(pptPackageDir, installedPpt, { recursive: true })
+    if (version !== PPT_RUNTIME_VERSION) {
+      const manifestPath = join(installedPpt, 'package.json')
+      const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
+      await writeFile(manifestPath, JSON.stringify({ ...manifest, version }))
+    }
   }
   await writePpt(PPT_RUNTIME_VERSION)
 
@@ -133,7 +119,7 @@ async function fixture(t) {
 test('a stale installed PPT package cannot enter the Full asset tree', async t => {
   const f = await fixture(t)
   await f.writePpt('0.3.4')
-  await assert.rejects(f.stage(), new RegExp(`version mismatch: manifest=0\\.3\\.4, package=0\\.3\\.4, expected=${PPT_RUNTIME_VERSION.replaceAll('.', '\\.')}`))
+  await assert.rejects(f.stage(), /PPT runtime bytes differ from the frozen npm package: package\.json/)
   assert.deepEqual(f.calls.map(call => call[0]), ['ppt'])
 })
 
@@ -155,9 +141,10 @@ test('bootstrap without a manifest produces valid, portable metadata for the fin
   const packageManifest = JSON.parse(await readFile(join(f.dist, 'flyfish-viewer-manifest.json'), 'utf8'))
   assert.equal(packageManifest.assets, manifestFilename)
   // The installed runtime replaced the stale demo copy byte-for-byte.
-  for (const file of ['ppt-native.wasm', 'ppt-font-cjk.otf', 'manifest.json', 'LICENSE', 'NOTICE']) {
+  for (const file of PPT_RUNTIME_REQUIRED_FILES) {
     assert.deepEqual(await readFile(join(f.dist, 'vendor/ppt', file)), await readFile(join(f.installedPpt, file)))
   }
+  await assert.rejects(readFile(join(f.dist, 'vendor/ppt/ppt-native.wasm')), { code: 'ENOENT' })
   assert.equal(
     await readFile(join(f.dist, textAsset), 'utf8'),
     "const fallback = 'file-viewer-offline-cdn/example'\n"

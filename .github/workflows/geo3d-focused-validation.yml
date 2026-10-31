@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   focused:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
     timeout-minutes: 15
     steps:
       - name: Checkout
@@ -53,14 +53,11 @@ jobs:
         run: |
           mkdir -p output/geo3d-focused
           pnpm test:geo3d-entry 2>&1 | tee output/geo3d-focused/entry.log
-      - name: Configure bounded Ubuntu archive downloads
-        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: sudo python3 .github/scripts/prepare-browser-apt.py
       - name: Install Chromium
         id: browser
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         timeout-minutes: 10
-        run: pnpm exec playwright install --with-deps chromium webkit
+        run: pnpm exec playwright install chromium webkit
       - name: Browser datasets and resource ownership
         if: >-
           ${{ !cancelled() && steps.entry.outcome == 'success' && steps.browser.outcome == 'success' }}

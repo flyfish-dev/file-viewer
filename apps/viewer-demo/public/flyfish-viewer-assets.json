@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-12T04:19:47.223Z",
+  "generatedAt": "2026-10-30T16:27:47.106Z",
   "rendererAssetManifests": [
     {
       "rendererId": "chm",
@@ -94,6 +94,24 @@
           "defaultPath": "wasm/model/LICENSE.occt-import-js.txt",
           "packagePath": "occt-import-js/dist/license.occt-import-js.txt",
           "description": "occt-import-js license notice distributed with the browser geometry kernel."
+        },
+        {
+          "id": "model-occt-wasm-OCCT_LGPL_EXCEPTION.txt",
+          "rendererId": "model",
+          "kind": "file",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/OCCT_LGPL_EXCEPTION.txt",
+          "description": "Complete original native license materials and public corresponding source notice."
+        },
+        {
+          "id": "model-occt-wasm-CORRESPONDING_SOURCE_NOTICE.txt",
+          "rendererId": "model",
+          "kind": "file",
+          "target": "public",
+          "required": true,
+          "defaultPath": "wasm/model/CORRESPONDING_SOURCE_NOTICE.txt",
+          "description": "Complete original native license materials and public corresponding source notice."
         }
       ]
     },
@@ -387,9 +405,9 @@
           "kind": "script",
           "target": "public",
           "required": true,
-          "defaultPath": "vendor/ppt/index.mjs",
+          "defaultPath": "vendor/ppt/dist/pptjs.mjs",
           "optionPath": "presentation.pptModuleUrl",
-          "description": "Official @file-viewer/ppt 0.3 browser entry for PowerPoint 97–2003 preview."
+          "description": "Self-hosted TypeScript PPT standalone module for PowerPoint 97–2003 preview."
         },
         {
           "id": "ppt-worker",
@@ -397,38 +415,18 @@
           "kind": "worker",
           "target": "public",
           "required": true,
-          "defaultPath": "vendor/ppt/worker.mjs",
+          "defaultPath": "vendor/ppt/dist/pptjs.worker.js",
           "optionPath": "presentation.pptWorkerUrl",
-          "description": "Official @file-viewer/ppt 0.3 module Worker."
+          "description": "TypeScript PPT parsing Worker; layout and Canvas rendering use the main thread."
         },
         {
-          "id": "ppt-frame-cache",
+          "id": "ppt-runtime-dist",
           "rendererId": "office-presentation-binary",
-          "kind": "script",
+          "kind": "directory",
           "target": "public",
           "required": true,
-          "defaultPath": "vendor/ppt/frame-cache.mjs",
-          "description": "Bounded IndexedDB frame cache imported by the binary-PPT Worker."
-        },
-        {
-          "id": "ppt-wasm",
-          "rendererId": "office-presentation-binary",
-          "kind": "wasm",
-          "target": "public",
-          "required": true,
-          "defaultPath": "vendor/ppt/ppt-native.wasm",
-          "optionPath": "presentation.pptWasmUrl",
-          "description": "Official @file-viewer/ppt 0.3 native WebAssembly parser and renderer."
-        },
-        {
-          "id": "ppt-cjk-font",
-          "rendererId": "office-presentation-binary",
-          "kind": "font",
-          "target": "public",
-          "required": true,
-          "defaultPath": "vendor/ppt/ppt-font-cjk.otf",
-          "optionPath": "presentation.pptFontUrl",
-          "description": "CJK font pack verified and loaded by the binary-PPT runtime."
+          "defaultPath": "vendor/ppt/dist",
+          "description": "Unmodified compiled JavaScript and declarations from the installed PPT package."
         },
         {
           "id": "ppt-runtime-manifest",
@@ -436,7 +434,7 @@
           "kind": "metadata",
           "target": "public",
           "required": true,
-          "defaultPath": "vendor/ppt/manifest.json",
+          "defaultPath": "vendor/ppt/dist/manifest.json",
           "description": "Integrity and edition metadata for the official binary-PPT runtime."
         },
         {
@@ -447,6 +445,15 @@
           "required": true,
           "defaultPath": "vendor/ppt/package.json",
           "description": "Package identity metadata for the official binary-PPT runtime."
+        },
+        {
+          "id": "ppt-runtime-readme",
+          "rendererId": "office-presentation-binary",
+          "kind": "metadata",
+          "target": "public",
+          "required": true,
+          "defaultPath": "vendor/ppt/README.md",
+          "description": "Usage and supported-format limits shipped with the PPT runtime."
         },
         {
           "id": "ppt-runtime-license",
@@ -463,7 +470,7 @@
           "kind": "license",
           "target": "public",
           "required": true,
-          "defaultPath": "vendor/ppt/NOTICE",
+          "defaultPath": "vendor/ppt/NOTICE.md",
           "description": "Notices shipped by the independently versioned @file-viewer/ppt package."
         }
       ]
@@ -1191,7 +1198,7 @@
           "defaultPath": "vendor/design/stet_wasm_bg.wasm",
           "packagePath": "@file-viewer/renderer-design/wasm/postscript.wasm",
           "optionPath": "design.postscriptWasmUrl",
-          "description": "License-safe Stet WebAssembly interpreter with OFL substitutes and no bundled CMYK ICC profile."
+          "description": "Unpatched Stet WebAssembly interpreter with URW Base35 OFL fonts and the CC0 Compact ICC CMYK profile."
         },
         {
           "id": "postscript-design-license-stet-apache",
@@ -1212,6 +1219,46 @@
           "defaultPath": "vendor/design/LICENSE.stet-MIT.txt",
           "packagePath": "@file-viewer/renderer-design/licenses/Stet-MIT.txt",
           "description": "Stet MIT license text."
+        },
+        {
+          "id": "postscript-design-license-urw-ofl",
+          "rendererId": "postscript-design",
+          "kind": "license",
+          "target": "public",
+          "required": true,
+          "defaultPath": "vendor/design/LICENSE.Stet-URW-Fonts-OFL-1.1.txt",
+          "packagePath": "@file-viewer/renderer-design/licenses/Stet-URW-Fonts-OFL-1.1.txt",
+          "description": "URW Base35 font provenance, copyright notices and complete SIL OFL 1.1 text."
+        },
+        {
+          "id": "postscript-design-license-cmyk-provenance",
+          "rendererId": "postscript-design",
+          "kind": "license",
+          "target": "public",
+          "required": true,
+          "defaultPath": "vendor/design/LICENSE.Stet-CMYK-Profile.txt",
+          "packagePath": "@file-viewer/renderer-design/licenses/Stet-CMYK-Profile.txt",
+          "description": "Provenance of the CC0 Compact ICC CMYK profile embedded by Stet."
+        },
+        {
+          "id": "postscript-design-license-cc0",
+          "rendererId": "postscript-design",
+          "kind": "license",
+          "target": "public",
+          "required": true,
+          "defaultPath": "vendor/design/LICENSE.CC0-1.0.txt",
+          "packagePath": "@file-viewer/renderer-design/licenses/CC0-1.0.txt",
+          "description": "Complete CC0 1.0 legal text for the embedded CMYK profile."
+        },
+        {
+          "id": "postscript-design-license-native-dependencies",
+          "rendererId": "postscript-design",
+          "kind": "license",
+          "target": "public",
+          "required": true,
+          "defaultPath": "vendor/design/Stet_NATIVE_THIRD_PARTY_LICENSES.json",
+          "packagePath": "@file-viewer/renderer-design/licenses/Stet_NATIVE_THIRD_PARTY_LICENSES.json",
+          "description": "Exact locked Rust dependency legal materials and original standard-library grants, bound to the Stet WASM hash."
         },
         {
           "id": "postscript-design-license-carlito-ofl",
@@ -1340,7 +1387,7 @@
   ],
   "validation": {
     "valid": true,
-    "checkedAt": "2026-10-12T04:19:47.223Z",
+    "checkedAt": "2026-10-30T16:27:47.106Z",
     "assets": [
       {
         "id": "chm-worker",
@@ -1698,9 +1745,9 @@
         "kind": "script",
         "target": "public",
         "required": true,
-        "relativePath": "vendor/ppt/index.mjs",
+        "relativePath": "vendor/ppt/dist/pptjs.mjs",
         "exists": true,
-        "description": "Official @file-viewer/ppt 0.3 browser entry for PowerPoint 97–2003 preview."
+        "description": "Self-hosted TypeScript PPT standalone module for PowerPoint 97–2003 preview."
       },
       {
         "id": "ppt-worker",
@@ -1708,39 +1755,19 @@
         "kind": "worker",
         "target": "public",
         "required": true,
-        "relativePath": "vendor/ppt/worker.mjs",
+        "relativePath": "vendor/ppt/dist/pptjs.worker.js",
         "exists": true,
-        "description": "Official @file-viewer/ppt 0.3 module Worker."
+        "description": "TypeScript PPT parsing Worker; layout and Canvas rendering use the main thread."
       },
       {
-        "id": "ppt-frame-cache",
+        "id": "ppt-runtime-dist",
         "rendererId": "office-presentation-binary",
-        "kind": "script",
+        "kind": "directory",
         "target": "public",
         "required": true,
-        "relativePath": "vendor/ppt/frame-cache.mjs",
+        "relativePath": "vendor/ppt/dist",
         "exists": true,
-        "description": "Bounded IndexedDB frame cache imported by the binary-PPT Worker."
-      },
-      {
-        "id": "ppt-wasm",
-        "rendererId": "office-presentation-binary",
-        "kind": "wasm",
-        "target": "public",
-        "required": true,
-        "relativePath": "vendor/ppt/ppt-native.wasm",
-        "exists": true,
-        "description": "Official @file-viewer/ppt 0.3 native WebAssembly parser and renderer."
-      },
-      {
-        "id": "ppt-cjk-font",
-        "rendererId": "office-presentation-binary",
-        "kind": "font",
-        "target": "public",
-        "required": true,
-        "relativePath": "vendor/ppt/ppt-font-cjk.otf",
-        "exists": true,
-        "description": "CJK font pack verified and loaded by the binary-PPT runtime."
+        "description": "Unmodified compiled JavaScript and declarations from the installed PPT package."
       },
       {
         "id": "ppt-runtime-manifest",
@@ -1748,7 +1775,7 @@
         "kind": "metadata",
         "target": "public",
         "required": true,
-        "relativePath": "vendor/ppt/manifest.json",
+        "relativePath": "vendor/ppt/dist/manifest.json",
         "exists": true,
         "description": "Integrity and edition metadata for the official binary-PPT runtime."
       },
@@ -1761,6 +1788,16 @@
         "relativePath": "vendor/ppt/package.json",
         "exists": true,
         "description": "Package identity metadata for the official binary-PPT runtime."
+      },
+      {
+        "id": "ppt-runtime-readme",
+        "rendererId": "office-presentation-binary",
+        "kind": "metadata",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/ppt/README.md",
+        "exists": true,
+        "description": "Usage and supported-format limits shipped with the PPT runtime."
       },
       {
         "id": "ppt-runtime-license",
@@ -1778,7 +1815,7 @@
         "kind": "license",
         "target": "public",
         "required": true,
-        "relativePath": "vendor/ppt/NOTICE",
+        "relativePath": "vendor/ppt/NOTICE.md",
         "exists": true,
         "description": "Notices shipped by the independently versioned @file-viewer/ppt package."
       },
@@ -1803,16 +1840,6 @@
         "description": "Optional Spreadsheet worker for off-main-thread styled-exceljs workbook parsing."
       },
       {
-        "id": "spreadsheet-worker-licenses",
-        "rendererId": "spreadsheet-openxml",
-        "kind": "directory",
-        "target": "public",
-        "required": false,
-        "relativePath": "vendor/xlsx/licenses/",
-        "exists": true,
-        "description": "Complete original third-party licenses distributed with this runtime."
-      },
-      {
         "id": "apple-pages-iwork-worker",
         "rendererId": "apple-pages",
         "kind": "worker",
@@ -1821,16 +1848,6 @@
         "relativePath": "vendor/iwork/iwork.worker.js",
         "exists": true,
         "description": "Module Worker for bounded ZIP, Snappy, IWA/Protobuf and iWork 09 XML/APXL parsing."
-      },
-      {
-        "id": "apple-pages-iwork-worker-licenses",
-        "rendererId": "apple-pages",
-        "kind": "directory",
-        "target": "public",
-        "required": true,
-        "relativePath": "vendor/iwork/licenses/",
-        "exists": true,
-        "description": "Complete original third-party licenses distributed with this runtime."
       },
       {
         "id": "apple-numbers-iwork-worker",
@@ -1843,16 +1860,6 @@
         "description": "Module Worker for bounded ZIP, Snappy, IWA/Protobuf and iWork 09 XML/APXL parsing."
       },
       {
-        "id": "apple-numbers-iwork-worker-licenses",
-        "rendererId": "apple-numbers",
-        "kind": "directory",
-        "target": "public",
-        "required": true,
-        "relativePath": "vendor/iwork/licenses/",
-        "exists": true,
-        "description": "Complete original third-party licenses distributed with this runtime."
-      },
-      {
         "id": "apple-keynote-iwork-worker",
         "rendererId": "apple-keynote",
         "kind": "worker",
@@ -1863,16 +1870,6 @@
         "description": "Module Worker for bounded ZIP, Snappy, IWA/Protobuf and iWork 09 XML/APXL parsing."
       },
       {
-        "id": "apple-keynote-iwork-worker-licenses",
-        "rendererId": "apple-keynote",
-        "kind": "directory",
-        "target": "public",
-        "required": true,
-        "relativePath": "vendor/iwork/licenses/",
-        "exists": true,
-        "description": "Complete original third-party licenses distributed with this runtime."
-      },
-      {
         "id": "hangul-worker",
         "rendererId": "office-hangul",
         "kind": "worker",
@@ -1881,16 +1878,6 @@
         "relativePath": "vendor/hangul/hangul.worker.js",
         "exists": true,
         "description": "Module Worker for bounded HWP v5 CFB and HWPX ZIP/XML parsing."
-      },
-      {
-        "id": "hangul-worker-licenses",
-        "rendererId": "office-hangul",
-        "kind": "directory",
-        "target": "public",
-        "required": true,
-        "relativePath": "vendor/hangul/licenses/",
-        "exists": true,
-        "description": "Complete original third-party licenses distributed with this runtime."
       },
       {
         "id": "wordperfect-worker",
@@ -2410,7 +2397,7 @@
         "required": true,
         "relativePath": "vendor/design/stet_wasm_bg.wasm",
         "exists": true,
-        "description": "License-safe Stet WebAssembly interpreter with OFL substitutes and no bundled CMYK ICC profile."
+        "description": "Unpatched Stet WebAssembly interpreter with URW Base35 OFL fonts and the CC0 Compact ICC CMYK profile."
       },
       {
         "id": "postscript-design-license-stet-apache",
@@ -2431,6 +2418,46 @@
         "relativePath": "vendor/design/LICENSE.stet-MIT.txt",
         "exists": true,
         "description": "Stet MIT license text."
+      },
+      {
+        "id": "postscript-design-license-urw-ofl",
+        "rendererId": "postscript-design",
+        "kind": "license",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/design/LICENSE.Stet-URW-Fonts-OFL-1.1.txt",
+        "exists": true,
+        "description": "URW Base35 font provenance, copyright notices and complete SIL OFL 1.1 text."
+      },
+      {
+        "id": "postscript-design-license-cmyk-provenance",
+        "rendererId": "postscript-design",
+        "kind": "license",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/design/LICENSE.Stet-CMYK-Profile.txt",
+        "exists": true,
+        "description": "Provenance of the CC0 Compact ICC CMYK profile embedded by Stet."
+      },
+      {
+        "id": "postscript-design-license-cc0",
+        "rendererId": "postscript-design",
+        "kind": "license",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/design/LICENSE.CC0-1.0.txt",
+        "exists": true,
+        "description": "Complete CC0 1.0 legal text for the embedded CMYK profile."
+      },
+      {
+        "id": "postscript-design-license-native-dependencies",
+        "rendererId": "postscript-design",
+        "kind": "license",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/design/Stet_NATIVE_THIRD_PARTY_LICENSES.json",
+        "exists": true,
+        "description": "Exact locked Rust dependency legal materials and original standard-library grants, bound to the Stet WASM hash."
       },
       {
         "id": "postscript-design-license-carlito-ofl",
@@ -2531,6 +2558,76 @@
         "relativePath": "wasm/data/sql-wasm.wasm",
         "exists": true,
         "description": "sql.js WebAssembly module copied to the public assets directory for SQLite previews."
+      },
+      {
+        "id": "model-occt-wasm-OCCT_LGPL_EXCEPTION.txt",
+        "rendererId": "model",
+        "kind": "file",
+        "target": "public",
+        "required": true,
+        "relativePath": "wasm/model/OCCT_LGPL_EXCEPTION.txt",
+        "exists": true,
+        "description": "Complete original native license materials and public corresponding source notice."
+      },
+      {
+        "id": "model-occt-wasm-CORRESPONDING_SOURCE_NOTICE.txt",
+        "rendererId": "model",
+        "kind": "file",
+        "target": "public",
+        "required": true,
+        "relativePath": "wasm/model/CORRESPONDING_SOURCE_NOTICE.txt",
+        "exists": true,
+        "description": "Complete original native license materials and public corresponding source notice."
+      },
+      {
+        "id": "spreadsheet-worker-licenses",
+        "rendererId": "spreadsheet-openxml",
+        "kind": "directory",
+        "target": "public",
+        "required": false,
+        "relativePath": "vendor/xlsx/licenses/",
+        "exists": true,
+        "description": "Complete original third-party licenses distributed with this runtime."
+      },
+      {
+        "id": "apple-pages-iwork-worker-licenses",
+        "rendererId": "apple-pages",
+        "kind": "directory",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/iwork/licenses/",
+        "exists": true,
+        "description": "Complete original third-party licenses distributed with this runtime."
+      },
+      {
+        "id": "apple-numbers-iwork-worker-licenses",
+        "rendererId": "apple-numbers",
+        "kind": "directory",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/iwork/licenses/",
+        "exists": true,
+        "description": "Complete original third-party licenses distributed with this runtime."
+      },
+      {
+        "id": "apple-keynote-iwork-worker-licenses",
+        "rendererId": "apple-keynote",
+        "kind": "directory",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/iwork/licenses/",
+        "exists": true,
+        "description": "Complete original third-party licenses distributed with this runtime."
+      },
+      {
+        "id": "hangul-worker-licenses",
+        "rendererId": "office-hangul",
+        "kind": "directory",
+        "target": "public",
+        "required": true,
+        "relativePath": "vendor/hangul/licenses/",
+        "exists": true,
+        "description": "Complete original third-party licenses distributed with this runtime."
       },
       {
         "id": "data-sql-wasm-licenses",

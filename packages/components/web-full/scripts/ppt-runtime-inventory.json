@@ -1,0 +1,394 @@
+{
+  "name": "@file-viewer/ppt",
+  "version": "1.0.2",
+  "filename": "file-viewer-ppt-1.0.2.tgz",
+  "bytes": 550197,
+  "sha256": "df5c226f6a771c1ade4e64add03e2f533a568afa6820a70a581e49613ed4f458",
+  "integrity": "sha512-dyq341piRU3vjeImNwkyb+OWAn26SyUqhFNiOxyrsYfDMTGEZgVdk/AmCxlmbCXeIMGRM2zHdzUUWRBRxfSQdg==",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "55ce5d9fb8138a058b60c431cb9e68e13dd3f90691f73a757e38f06fed81e69b"
+    },
+    {
+      "path": "dist/ppt/animation.js",
+      "sha256": "ae463b0eda1c2a8ea316cd606a38cdea19cb36119241f4de8c8abecce4485131"
+    },
+    {
+      "path": "dist/core/binary.js",
+      "sha256": "242d90abdf8cd463d8260a71e677980576c5d997e2104a92215b21ac6f1b265b"
+    },
+    {
+      "path": "dist/core/cfb.js",
+      "sha256": "8ae56f1fb57b06ba7b9501c52edcd8d43aba744ddf44d39657e88e395b203673"
+    },
+    {
+      "path": "dist/ppt/constants.js",
+      "sha256": "b14ff55f4e7d8186eda12462f0ef0c9ae305deac29ada80fd9c703b92097c347"
+    },
+    {
+      "path": "dist/core/crypto.js",
+      "sha256": "c5fd34fe26390bdb30a4815c0bfc2f2640cf609f695369da337f30fec6f9dea7"
+    },
+    {
+      "path": "dist/ppt/drawing.js",
+      "sha256": "0f91d43328f3d0837d9313a3d42ae21b8f2e7bf43c20704d7cbb8c6868ac4b72"
+    },
+    {
+      "path": "dist/render/effects.js",
+      "sha256": "d92f5ef485609178804bbc4834a1a2a3d46fdc0b2eabf2776f26a0fd4b5e66ee"
+    },
+    {
+      "path": "dist/ppt/encryption.js",
+      "sha256": "fe3e252cd405a98f9ba35fa6fe77ee73d313572671972c8c71bda0a47309c3cf"
+    },
+    {
+      "path": "dist/core/errors.js",
+      "sha256": "3a5a61e90e1b452dc836e4809fc392f647a9ceb8483f4ce9dcfd72d128fa05b3"
+    },
+    {
+      "path": "dist/ppt/extras.js",
+      "sha256": "bc189ca07e33490d7f48928a9540d6eb8f7446603ca898ae9e7c40541988a45e"
+    },
+    {
+      "path": "dist/render/fields.js",
+      "sha256": "305014e97d1547e8bd5939372ea8a6eec4841a7e3a2a402479758ac355951ef1"
+    },
+    {
+      "path": "dist/ppt/geometry.js",
+      "sha256": "c8c98d8d9172b2e59bd80cf675b7ad9df152374b4f23e7aafd1e8b23dfb44a58"
+    },
+    {
+      "path": "dist/render/geometry.js",
+      "sha256": "5a8c03411d44ff1259c29646d26d0607bbfba8bf45f20f6a4e58b67fe0af6964"
+    },
+    {
+      "path": "dist/ppt/headers-footers.js",
+      "sha256": "1aa1e7dcc4e2b76a3d1a7e9ff5464ce6140c12e9047e39d653c80221d441f2e5"
+    },
+    {
+      "path": "dist/index.js",
+      "sha256": "32fcbb03fe6789d433f9786fa66f1b96c649485e08ec35d803814c2d1d4309c3"
+    },
+    {
+      "path": "dist/core/inflate.js",
+      "sha256": "2b8dde1c4e791f9ff09bf6bbdd37b836636951847a2d9a11dcd85b61a5984c9b"
+    },
+    {
+      "path": "dist/ppt/interactions.js",
+      "sha256": "888fa71a1ef8e8203ac34ef34bff960bcc52c5485cc26b9dae48cedda8cac8ef"
+    },
+    {
+      "path": "dist/layout/measure.js",
+      "sha256": "eca43cac215b76eac1f97001d26ddb5a13947afe397091eefc759be9c6bb2e4b"
+    },
+    {
+      "path": "dist/playback/media.js",
+      "sha256": "eb65ceed069d992d9954dacecf78f033cadd20d9a41681c6ac443b534c157236"
+    },
+    {
+      "path": "dist/playback/navigation.js",
+      "sha256": "20ce41a7ec3c3080842bf9fa7871afdcd6be2ea2b43aac4456c4a7ff12247120"
+    },
+    {
+      "path": "dist/ppt/parser.js",
+      "sha256": "cd130099022ac9d98cd4ca450ac887a63a0a7ca48d56e81faa276d83d83878bc"
+    },
+    {
+      "path": "dist/core/pict.js",
+      "sha256": "22b5da5b6eaf73b62ce14b4961607da8bbb7e5038a8f6c2d8ff913e84698f33b"
+    },
+    {
+      "path": "dist/ppt/pictures.js",
+      "sha256": "e70f219ef585ec5b5cbd3c3ef673e29023bfc611860c56d30e0f82613ac0f407"
+    },
+    {
+      "path": "dist/pptjs.browser.js",
+      "sha256": "4892c9b8286f2885129c321431a8ba0632c690375bf6fc2f94c5db73eff906c8"
+    },
+    {
+      "path": "dist/pptjs.worker.js",
+      "sha256": "90dc709a3fffdf1588431333c57bd1ae8422a86dc7baf502fd2af671bef1eb6d"
+    },
+    {
+      "path": "dist/core/raster.js",
+      "sha256": "0027ceac1d555a2dbbb5c73b2e2cb62e6eb23dfb1214d4e6b2798cecc10b55de"
+    },
+    {
+      "path": "dist/ppt/records.js",
+      "sha256": "471dbdefd6815886435ee8486ae91bf082baaddbf3b60952e9e773f42a146064"
+    },
+    {
+      "path": "dist/runtime.js",
+      "sha256": "39733abfc315999e52d34af022460b5b2b70de9fb4f47133fb6ad90dd0f217d5"
+    },
+    {
+      "path": "dist/render/safe.js",
+      "sha256": "3440f296d6733daa1a527d9a7b57a270a24ae2e0a524641a7bea0acc89ac1c4b"
+    },
+    {
+      "path": "dist/render/svg.js",
+      "sha256": "32545bd2b401cbafb976987d112da557a147592e64ec30e7466471f7159edb61"
+    },
+    {
+      "path": "dist/layout/text-layout.js",
+      "sha256": "3ec79c354ff437ef4c32b4884439dc25e27eb5af2943c80d2342afbbee65726c"
+    },
+    {
+      "path": "dist/ppt/text.js",
+      "sha256": "000c5fb3428090ad497fd31aa7d0774193c987b8baad38e9e95898185555b818"
+    },
+    {
+      "path": "dist/render/text.js",
+      "sha256": "969787aa70bb724eee8c4e685a45377b8abe4e6f0c7fd5c4e967d9a1524127a4"
+    },
+    {
+      "path": "dist/render/three-d.js",
+      "sha256": "3543cb106aeb8f2c6af2c792a177ac374546f32112117ad94a12d0ac1287b9f7"
+    },
+    {
+      "path": "dist/core/tiff.js",
+      "sha256": "11cb37837f93f7b83ed42c1cbc3f0cc829d5b9bd8c78d8c86ae07d38c980dca1"
+    },
+    {
+      "path": "dist/playback/timeline.js",
+      "sha256": "4d14dff5209ed8ed3127db8f485a62816ca80d38555e31f616043157972c83e2"
+    },
+    {
+      "path": "dist/playback/transitions.js",
+      "sha256": "1ab63a7ed485fd3d539ab89b99ebfde062e34aae98ce50c9d4435d811ec45d44"
+    },
+    {
+      "path": "dist/types.js",
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "dist/core/utils.js",
+      "sha256": "10298d93c1e93d9f582c6fa36e6dca757300000c2174424e7a05704e582bad4c"
+    },
+    {
+      "path": "dist/core/vector-font.js",
+      "sha256": "093dd21421b8e95e91cd616ee5daae67892824a254d986fb4117a2548031a52e"
+    },
+    {
+      "path": "dist/core/vector.js",
+      "sha256": "3c39e7af66cca84c62340f9aeb080027ea145f3c003811a245a49b740042692e"
+    },
+    {
+      "path": "dist/viewer.js",
+      "sha256": "d7de7ccdc901cf6629475187a1dbd82e36cd9954df716ae29bf1f5cda026e984"
+    },
+    {
+      "path": "dist/render/wordart.js",
+      "sha256": "57806b593e910d41fcb8890f7a08857efc1ab998cb1f47f02fa2d5b806758ea6"
+    },
+    {
+      "path": "dist/worker-client.js",
+      "sha256": "c46088b2e526fc071c911bd19cabf4658e45ddac84edf31ade860a2e25b4b00a"
+    },
+    {
+      "path": "dist/worker.js",
+      "sha256": "b8b7211a0724f1c0e2f2b6276acbeb527148760c8d138f78e0f1f122aa601c94"
+    },
+    {
+      "path": "dist/core/xml-text.js",
+      "sha256": "afd4c27306607b9c2d27c998cf87c516d197c5a4c02826fd7b010f21ed2132a5"
+    },
+    {
+      "path": "dist/manifest.json",
+      "sha256": "8046d42ba3044ceb071a69aad17b2c25b22bea92bcb90411917efc69b2af3da0"
+    },
+    {
+      "path": "package.json",
+      "sha256": "27d196141d9894afaeb08b45e7b59c2f5669d40523c43554c84de01f0364310f"
+    },
+    {
+      "path": "NOTICE.md",
+      "sha256": "c458b1c7bdbb66b4f00bcc1b6126ca1ba3ba2cd516db26f4e883711cae806c7c"
+    },
+    {
+      "path": "README.md",
+      "sha256": "f5415a9f7ec87a4ab140d66ac6f0e3783e79b1501ad91812171fbecec1b093d1"
+    },
+    {
+      "path": "dist/pptjs.mjs",
+      "sha256": "da1d42a07d3e9b0c3bca5fef05fd04f063273f857ef64caaa61d3300a22e7cb4"
+    },
+    {
+      "path": "dist/ppt/animation.d.ts",
+      "sha256": "788bb743d5ab1815ab635b489e46a4d6684c75a724ff308cfb06f98cd29460b6"
+    },
+    {
+      "path": "dist/core/binary.d.ts",
+      "sha256": "06cf914d190175b454763423215b7bf65b5d820c2a1406034d3b48b277777516"
+    },
+    {
+      "path": "dist/core/cfb.d.ts",
+      "sha256": "b25e61555d0e65a54521543f2292f273a4f1d6888f5b2799b3db4e57cf78dbd6"
+    },
+    {
+      "path": "dist/ppt/constants.d.ts",
+      "sha256": "576878f9f511d295faf89fb8a6cd6bea7da3a4be1fdf248a25f23c14e6b3d353"
+    },
+    {
+      "path": "dist/core/crypto.d.ts",
+      "sha256": "ab3c6e37a4db79397bc6d2c3714711cdcc762b0638f1d11631dbddc193b8845a"
+    },
+    {
+      "path": "dist/ppt/drawing.d.ts",
+      "sha256": "ddc3cf432e3bc9cbf87de798e66e19d04b84b356be85ba035b86a4d073018983"
+    },
+    {
+      "path": "dist/render/effects.d.ts",
+      "sha256": "8b3b9d04db76cc70d9af99aabd4dff73638272918459d2fac04214edf601e2cb"
+    },
+    {
+      "path": "dist/ppt/encryption.d.ts",
+      "sha256": "9a4bd217094fc4772019e9a5b8a98e65fb4afaf64997de7482ed74cf4e50abe5"
+    },
+    {
+      "path": "dist/core/errors.d.ts",
+      "sha256": "7672f29f19d3b9872c74d12b27a612221812c59dbb397f570c114565bb7fa6a0"
+    },
+    {
+      "path": "dist/ppt/extras.d.ts",
+      "sha256": "bf4867f1c4091e8adce56ddb1fbaf1ea789abf4b17c6247494ea4e2c2c888a9e"
+    },
+    {
+      "path": "dist/render/fields.d.ts",
+      "sha256": "0d9ce33efe1bcbe2b1005ea06d0bffd47f974934233127075527c0ba17e1a919"
+    },
+    {
+      "path": "dist/ppt/geometry.d.ts",
+      "sha256": "4439fd34920ab8e5400222cbab5ace9ea0fe03fbb1424626afd790859926a22d"
+    },
+    {
+      "path": "dist/render/geometry.d.ts",
+      "sha256": "93cee133021be28b6b781681ac24fb39f79af6b7d382e3e75bfb82e7ab84eea8"
+    },
+    {
+      "path": "dist/ppt/headers-footers.d.ts",
+      "sha256": "de223622b7723fccc9afe9d76e8c4a2bdf4fe769c0f56371959ee41a64871594"
+    },
+    {
+      "path": "dist/index.d.ts",
+      "sha256": "e834097967c0ce8eed785a338d359fc3b7a0528b92749bd6d081b078587aaac7"
+    },
+    {
+      "path": "dist/core/inflate.d.ts",
+      "sha256": "c6e7a91dc082b3c144e7e8ea710db5ae27b945d37b41d54b10f32f5e669197b3"
+    },
+    {
+      "path": "dist/ppt/interactions.d.ts",
+      "sha256": "c70e4d0c347e685f5c77a7d79384f6ef315f206398ed4229f069e873855d79e4"
+    },
+    {
+      "path": "dist/layout/measure.d.ts",
+      "sha256": "5e8245ddbf6e43640413ce36b58c6cae4d095802fc212a05d155d80b1420c69b"
+    },
+    {
+      "path": "dist/playback/media.d.ts",
+      "sha256": "f6f8998048edd8beea8b57cafb09201d89655144ae0d5feb2dd74c9635b91bbe"
+    },
+    {
+      "path": "dist/playback/navigation.d.ts",
+      "sha256": "308e560cae4e5d89841365a8a5f06273030cbf9c4aa8e2064834367efc101240"
+    },
+    {
+      "path": "dist/ppt/parser.d.ts",
+      "sha256": "8d47f860cf7cc999e20b9ab3918094dd15905b448b4d011e6ea281b840f5588c"
+    },
+    {
+      "path": "dist/core/pict.d.ts",
+      "sha256": "2dd71b86514e0b856a6ab494faf632b73ac2c7f96368613d65ecae3b902dff71"
+    },
+    {
+      "path": "dist/ppt/pictures.d.ts",
+      "sha256": "c1b1b6eb55648196c4823c9a03554a8e25d791e32f8303107e5023b2d75bc50f"
+    },
+    {
+      "path": "dist/core/raster.d.ts",
+      "sha256": "5f90f7e86001ee1d13f8de08a6c2d1cefab2d60b39422a93a542e78124658370"
+    },
+    {
+      "path": "dist/ppt/records.d.ts",
+      "sha256": "1b52bb09b50fd1023c09719747114f92c8a6340b745c3c467651498ba4b2e70b"
+    },
+    {
+      "path": "dist/runtime.d.ts",
+      "sha256": "ce8993ac33e470ac4a2fa04da1fa88bfb29a3dabd5a5c5695ab98f29799a967c"
+    },
+    {
+      "path": "dist/render/safe.d.ts",
+      "sha256": "7f43a307bf61a72b01c188c274fa44014156d24c21ff2e7a252f73227fb02842"
+    },
+    {
+      "path": "dist/render/svg.d.ts",
+      "sha256": "64dcbbbc8be7c77a980fb206a58dabaa522a63cc8af264b32886fa1a1b43045d"
+    },
+    {
+      "path": "dist/layout/text-layout.d.ts",
+      "sha256": "32cf031d28893a891bdd599706cc6fa931cb38446c44a7d37ac0bafe3b8f99ca"
+    },
+    {
+      "path": "dist/ppt/text.d.ts",
+      "sha256": "f2d3c0759956754ad1cd13913afd841fecef97c1e8bff86967cf30ee5ec5bd27"
+    },
+    {
+      "path": "dist/render/text.d.ts",
+      "sha256": "787e5ce7eeb5eb2eb2d05dc25b53a2ff6689842211c4815e1573010a2d5a2398"
+    },
+    {
+      "path": "dist/render/three-d.d.ts",
+      "sha256": "286064a2f87f16f0e16ebf96e161558681bf6602c80356e00a6af12b167bbc30"
+    },
+    {
+      "path": "dist/core/tiff.d.ts",
+      "sha256": "02cc4650002a92aa573bad680bb8297d6a2f34598a1b8da8b6dc8e543e634b39"
+    },
+    {
+      "path": "dist/playback/timeline.d.ts",
+      "sha256": "c1f60eb8265d82c80e40327268940f99f84eea44a9df4c944d96eed8c12c08dd"
+    },
+    {
+      "path": "dist/playback/transitions.d.ts",
+      "sha256": "834eae3d738349350f01f4f4e3b86afcfcf75ffe6466a9b316230a0ad6a9bc64"
+    },
+    {
+      "path": "dist/types.d.ts",
+      "sha256": "7b1c57fd3081dfb8fc60fe8e3bf4e817e68255acc7fb24f344f1908be671f6cd"
+    },
+    {
+      "path": "dist/core/utils.d.ts",
+      "sha256": "b2d909b3375399f6c6f13a9c359c61c8c643e0ba99f89340b6ec33e891b79bb4"
+    },
+    {
+      "path": "dist/core/vector-font.d.ts",
+      "sha256": "c5ef0a7cb6eb1eb1e15866b5969621ad8d05a6771c5cc96c0fe851cdbb06cd2c"
+    },
+    {
+      "path": "dist/core/vector.d.ts",
+      "sha256": "e88ed1172280f8fc92b473278f072629a695839d3d80b6b6db7eb34e2b55f890"
+    },
+    {
+      "path": "dist/viewer.d.ts",
+      "sha256": "8696337fb86ee16c7a736443b272d0cf56c3ac7d8481fe53356b47bc40357372"
+    },
+    {
+      "path": "dist/render/wordart.d.ts",
+      "sha256": "d3d0cacf87eeac057602f38e4cfb963e71871dbb6f1374aa8a4704971d45634d"
+    },
+    {
+      "path": "dist/worker-client.d.ts",
+      "sha256": "57a02aa2edd0800a3cc4935ae4ad451357d915836c673e0d6cca45134c525555"
+    },
+    {
+      "path": "dist/worker.d.ts",
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+    },
+    {
+      "path": "dist/core/xml-text.d.ts",
+      "sha256": "011ef42c8c339d39c1af22444c5793830c9f9c4594cf13cf7375698268f73658"
+    }
+  ]
+}

@@ -77,7 +77,7 @@
 
 修复内容与版本信息见[更新日志](CHANGELOG.md)。
 
-当前稳定版为 [v3.2.2](https://github.com/flyfish-dev/file-viewer/releases/tag/v3.2.2)。本页说明当前源码的能力；主分支与在线 Demo 可能包含稳定版之后的修复，使用 npm 或 Release 归档时请按对应版本验证。
+当前稳定版为 [v3.3.3](https://github.com/flyfish-dev/file-viewer/releases/tag/v3.3.3)。本页说明当前源码的能力；主分支与在线 Demo 可能包含稳定版之后的修复，使用 npm 或 Release 归档时请按对应版本验证。
 
 - 二进制检查器 `@file-viewer/renderer-binary` 提供十六进制、ASCII、字段树和字节范围联动，可检查 BIN、HEX、ELF、PE、Java Class 与 Mach-O 文件，只读分析，不执行文件。
 - IFC 可通过 `@file-viewer/renderer-3d/ifc` 显式启用，提供本地几何预览、构件选择与属性查看；需要另行安装依赖并自托管 Worker/WASM，见 [IFC 接入说明](packages/renderers/3d/IFC.md)。
@@ -176,7 +176,7 @@ CLI 默认使用 Standard 组合；`--profile full` 选择 Full 兼容包并添�
 ></flyfish-file-viewer>
 ```
 
-先将 `@file-viewer/web-full` 的完整 `dist/` 部署到示例中的 `/file-viewer/dist/`。IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包、CHM 等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@0.3.6` ESM、Worker、WASM、CJK 字体与帧缓存模块，`vendor/chm/` 包含 CHM Rust/WASM Worker，并与其它版本对齐的资产一起交付。二进制 `.ppt` 和 CHM 默认无需配置运行时 URL；格式专用 URL 选项只用于非标准资产路径覆盖。
+先将 `@file-viewer/web-full` 的完整 `dist/` 部署到示例中的 `/file-viewer/dist/`。IIFE 首包只注册 Custom Element、controller 和 lazy full preset；PDF、Word、Excel、二进制 PPT、PPTX、CAD、Typst、压缩包、CHM 等重型 renderer 会在命中文件类型时从 `dist/renderers/*.iife.js` 异步加载。完整部署 `dist/` 即可：其中 `vendor/ppt/` 已包含经过完整性校验的 `@file-viewer/ppt@1.0.2` TypeScript 编译包与解析 Worker，无需 WASM 或内置字体，`vendor/chm/` 包含 CHM Rust/WASM Worker，并与其它版本对齐的资产一起交付。二进制 `.ppt` 和 CHM 默认无需配置运行时 URL；格式专用 URL 选项只用于非标准资产路径覆盖。
 
 ### Vanilla JS
 
@@ -272,7 +272,7 @@ $('#viewer').fileViewer({ url: '/files/report.pdf' })
 
 ### full 包运行时资产
 
-所有 full 包默认把 Archive、CHM、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 配置资产插件复制资源或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@0.3.6` 运行时位于 `vendor/ppt/`，CHM Worker、JavaScript bridge 与 Rust/WASM 文件位于 `vendor/chm/`，并保留各自 LICENSE 与 NOTICE。
+所有 full 包默认把 Archive、CHM、PDF、DOCX、Excel、二进制 PPT、PPTX、CAD、Typst、Draw.io、SQLite 等运行时资产指向部署基址下的 `file-viewer/`（根部署即 `/file-viewer/`）。Vite 配置资产插件复制资源或随包 CLI 写入 `./public/file-viewer` 后，这些 URL 不需要逐项配置；经过校验的 `@file-viewer/ppt@1.0.2` 运行时位于 `vendor/ppt/`，CHM Worker、JavaScript bridge 与 Rust/WASM 文件位于 `vendor/chm/`，并保留各自 LICENSE 与 NOTICE。
 
 ```ts
 import { setDefaultFullAssetBaseUrl } from '@file-viewer/vue3-full'
@@ -361,7 +361,7 @@ Vite 项目可额外安装 `@file-viewer/vite-plugin`，自动发现已安装 pr
 | 兼容文档 | `rtf`、`odt` | `@file-viewer/renderer-word` + `rtf.js` / ODF `content.xml` 兼容预览 | RTF 富文本、OpenDocument 文本文档 |
 | Excel | `xlsx`、`xltx` | `@file-viewer/renderer-spreadsheet` + `styled-exceljs` + 虚拟滚动，支持尺寸、合并、常见样式、自动文本色、workbook drawing 图片和可选表头拖拽调整列宽；默认 `worker: auto`，大文件自动启用 Worker，小文件保留主线程兼容路径；打印按钮按能力隐藏，避免只打印当前视口 | 需要保留表格结构和样式的业务、Excel 模板 |
 | Excel 兼容格式 | `xlsm`、`xlsb`、`xls`、`xlt`、`xltm`、`xla`、`xlam`、`csv`、`tsv`、`ods`、`fods` | CSV / TSV 自动识别 UTF-8、GBK 和 GB18030，也可通过 `options.spreadsheet.textEncoding` 显式覆盖；其余格式按可用信息渐进还原样式；加载项和宏只读取已保存数据，不执行代码；同样遵循虚拟表格打印边界 | 老表格、轻量数据查看 |
-| PowerPoint | `ppt`、`pot`、`pptx`、`pptm`、`potx`、`potm`、`ppsx`、`ppsm`、`odp` | 二进制 `.ppt` 使用独立原生 WASM `@file-viewer/ppt` 引擎；OpenXML 文件使用 `@file-viewer/pptx` Worker 渐进解析；ODP 走 OpenDocument 幻灯片文本预览 | 汇报材料、课件、方案、演示模板 |
+| PowerPoint | `ppt`、`pot`、`pptx`、`pptm`、`potx`、`potm`、`ppsx`、`ppsm`、`odp` | 二进制 `.ppt` / `.pot` 使用独立 TypeScript `@file-viewer/ppt` 引擎；OpenXML 文件使用 `@file-viewer/pptx` Worker 渐进解析；ODP 走 OpenDocument 幻灯片文本预览 | 汇报材料、课件、方案、演示模板 |
 | Apple iWork | `pages`、`numbers`、`key` | `@file-viewer/renderer-iwork` 支持 iWork XML/IWA 静态预览；Numbers 读取保存的公式结果，Keynote 不执行动画、转场和视频；加密文件只识别、不解密 | Pages 文档、Numbers 表格、Keynote 演示 |
 | WordPerfect | `wpd`、`wp`、`wp5`、`wp6` | `@file-viewer/renderer-wordperfect` 解析 WP5/WP6 文档，提供结构化静态预览；不执行宏，不承诺完整分页和嵌入对象还原 | 历史办公文档 |
 | Hangul | `hwp`、`hwpx` | `@file-viewer/renderer-hangul` 提供段落、表格与可用图片的静态预览；加密、DRM 和分发文档只识别，不解密 | 韩文办公文档 |
@@ -422,7 +422,7 @@ Preset 选择:
 
 ## 当前 npm 生态
 
-v3.2.2 对应 89 个 npm 发布目标：88 个包为 `3.2.2`，`msdoc-viewer` 独立版本为 `0.2.12`；按用途分为 81 个标准包和 8 个历史兼容包。`@file-viewer/docx`、`@file-viewer/ppt` 等独立引擎依赖有各自版本，不计入这 89 个目标。实际安装版本以 npm dist-tag 和项目锁文件为准。新项目优先使用 `@file-viewer/*`；历史兼容包继续维护。
+v3.3.3 对应 89 个 npm 发布目标：88 个包为 `3.3.3`，`msdoc-viewer` 独立版本为 `0.2.15`；按用途分为 81 个标准包和 8 个历史兼容包。`@file-viewer/docx`、`@file-viewer/ppt` 等独立引擎依赖有各自版本，不计入这 89 个目标。实际安装版本以 npm dist-tag 和项目锁文件为准。新项目优先使用 `@file-viewer/*`；历史兼容包继续维护。
 
 Adobe 创意文件能力是显式专业包：安装 [`@file-viewer/renderer-design`](https://www.npmjs.com/package/@file-viewer/renderer-design) 后按需启用 PSD/PSB/PDD/PSDT、AI/AIT、EPS/PS、InDesign exchange 与嵌入预览、XD、现代 FLA/XFL、色板和 Photoshop 资源预设；它不会静默进入冻结的 `preset-all` / Full 兼容基线。
 
@@ -430,7 +430,7 @@ Adobe 创意文件能力是显式专业包：安装 [`@file-viewer/renderer-desi
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Core 底座 | [`@file-viewer/core`](https://www.npmjs.com/package/@file-viewer/core) | 无 | `latest` | 框架无关的格式矩阵、预览能力、资源加载、生命周期事件、搜索、缩放、打印、导出和操作 API |
 | PPTX 原生引擎 | [`@file-viewer/pptx`](https://www.npmjs.com/package/@file-viewer/pptx) | 无 | `latest` | 从 Flyfish 历史稳定实现拆出的独立 PPTX 渲染引擎，Worker 渐进解析，由 `@file-viewer/renderer-presentation` 按需加载 |
-| 二进制 PPT 运行时 | [`@file-viewer/ppt`](https://www.npmjs.com/package/@file-viewer/ppt) | 无 | `0.3.6` | 独立版本的演示文稿依赖；Demo、Full 资产与 CDN/IIFE 会交付其经过校验的公开运行时 |
+| 二进制 PPT 运行时 | [`@file-viewer/ppt`](https://www.npmjs.com/package/@file-viewer/ppt) | 无 | `1.0.2` | Apache-2.0 的独立 TypeScript 编译包，源码保持私有；Demo、Full 资产与 CDN/IIFE 会交付其经过校验的公开运行时 |
 | Word renderer | [`@file-viewer/renderer-word`](https://www.npmjs.com/package/@file-viewer/renderer-word) | 无 | `latest` | 标准 renderer 插件，承接 DOCX/DOC/DOT/RTF/ODT 链路，内部按需加载 `@file-viewer/docx`、`msdoc-viewer` 和 `rtf.js`，core-only 安装不再拉取 Word 重依赖 |
 | 演示文稿 renderer | [`@file-viewer/renderer-presentation`](https://www.npmjs.com/package/@file-viewer/renderer-presentation) | 无 | `latest` | 二进制 `.ppt` 路由到 `@file-viewer/ppt`，OpenXML 演示文稿路由到 `@file-viewer/pptx`，按需提供缩放、打印和导出 |
 | 绘图 renderer | [`@file-viewer/renderer-drawing`](https://www.npmjs.com/package/@file-viewer/renderer-drawing) | 无 | `latest` | 标准 renderer 插件，提供 Draw.io / diagrams.net 离线 viewer、Excalidraw 只读 SVG、Mermaid 官方 SVG 渲染、PlantUML SVG 服务接入、Panzoom 拖拽缩放、打印和 HTML 导出 |
@@ -476,18 +476,18 @@ pnpm add @file-viewer/pptx
 
 内网或离线部署可以从 [GitHub Releases](https://github.com/flyfish-dev/file-viewer/releases) 下载同一版本的 npm tarball，放入项目自己的 `vendor/` 目录，或导入企业 npm 镜像。仓库不再保存 `artifacts/` 构建产物。
 
-例如，下载 v3.2.2 的 core 与 Web 组件包：
+例如，下载 v3.3.3 的 core 与 Web 组件包：
 
 ```bash
-gh release download v3.2.2 --repo flyfish-dev/file-viewer \
-  --pattern 'file-viewer-core-3.2.2.tgz' \
-  --pattern 'file-viewer-web-3.2.2.tgz' --dir ./vendor
-npm install ./vendor/file-viewer-core-3.2.2.tgz ./vendor/file-viewer-web-3.2.2.tgz
+gh release download v3.3.3 --repo flyfish-dev/file-viewer \
+  --pattern 'file-viewer-core-3.3.3.tgz' \
+  --pattern 'file-viewer-web-3.3.3.tgz' --dir ./vendor
+npm install ./vendor/file-viewer-core-3.3.3.tgz ./vendor/file-viewer-web-3.3.3.tgz
 ```
 
 这只安装示例中的两个包，不包含全部格式或所有传递依赖。完全断网前，还需准备所选组件、preset、renderer、框架及第三方依赖的完整缓存或内网镜像；运行时则部署匹配版本的 Worker、WASM、字体和 vendor 目录。
 
-Core、PPTX、所有框架组件、Full 包和历史兼容包均可从 Release 获取。`file-viewer3` 和 `@flyfish-group/file-viewer3` 两个兼容包都提供 tarball。二进制 PPT 使用独立版本的 `@file-viewer/ppt@0.3.6`，其匹配运行时随 Demo、Full 资产和 IIFE 交付。非 Vite Full 项目仍使用随包 CLI 复制资产：`npx --no-install file-viewer-copy-assets ./public/file-viewer`。
+Core、PPTX、所有框架组件、Full 包和历史兼容包均可从 Release 获取。`file-viewer3` 和 `@flyfish-group/file-viewer3` 两个兼容包都提供 tarball。二进制 PPT 使用独立版本的 `@file-viewer/ppt@1.0.2`，其匹配运行时随 Demo、Full 资产和 IIFE 交付。非 Vite Full 项目仍使用随包 CLI 复制资产：`npx --no-install file-viewer-copy-assets ./public/file-viewer`。
 
 GitHub Release 会同步提供完整下载项:
 

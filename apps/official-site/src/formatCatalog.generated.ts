@@ -45,7 +45,7 @@ export const OFFICE_FORMAT_GROUPS = [
     "supportLevel": "structured",
     "status": "stable",
     "knownLimits": [
-      "Embedded engine watermark is retained",
+      "Host fonts and complex effects can differ from PowerPoint",
       "Macros are never executed"
     ]
   },

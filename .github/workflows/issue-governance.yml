@@ -15,7 +15,7 @@ concurrency:
 jobs:
   sample:
     name: Validate bug sample evidence
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
     timeout-minutes: 5
 
     steps:

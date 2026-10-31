@@ -262,7 +262,7 @@ const options = {
 | `presentation.workerUrl` | 自定义 `@file-viewer/pptx` Worker 地址，显式配置优先。未配置时先识别打包器已输出或应用资产基址下的标准复制清单；未知路径不会猜测应用相对 URL。Angular 子路径部署应使用标准 `file-viewer-copy-assets`，参见 [Web 接入](/zh/guide/quickstart-web) |
 | `cad.showImageExport` | 是否显示 CAD 渲染器内的 PNG/JPEG 按钮，默认 `true`。隐藏它们不影响共享工具栏的原文件下载；操作仍同时受下载和 HTML 导出权限约束 |
 | `presentation.workerType` | PPTX Worker 类型，通常保持默认 `module`；只有旧 WebView、特殊 CSP 或构建系统要求 classic Worker 时再覆盖 |
-| `presentation.pptModuleUrl` / `presentation.pptWorkerUrl` / `presentation.pptWasmUrl` / `presentation.pptFontUrl` | PowerPoint 97–2003 `.ppt` 0.3.4 的 ESM、Worker、WASM 和 CJK 字体高级路径覆盖；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局无需配置 |
+| `presentation.pptModuleUrl` / `presentation.pptWorkerUrl` | PowerPoint 97–2003 `.ppt` 1.0.2 的 TypeScript 模块和解析 Worker 高级路径覆盖，无需 WASM 或内置字体；Demo、Vite/full、copy-assets 与 CDN/IIFE 的标准布局无需配置 |
 | `presentation.pptWorker` / `presentation.pptCache` | 控制二进制 PPT 的 Worker 模式和有界 IndexedDB 帧缓存；默认均自动启用可用能力 |
 | `pdf.streaming` | 标准框架组件统一使用 PDF URL 策略，默认 `same-origin`；`true` 允许 CORS 跨域直读，`false` 完整下载一次后预览。签名 URL 可用 filename/type 标明 PDF；显式字节与自定义 fetchFile 优先。 |
 | `pdf.disableStream` / `pdf.disableAutoFetch` | PDF.js 网络控制；仅按需读取 Range 时同时设为 true，省略时保留 PDF.js 默认值。 |

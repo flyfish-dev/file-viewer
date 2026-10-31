@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { copyFile, mkdir, readFile, rm } from 'node:fs/promises'
 import { createRequire } from 'node:module'
-import { dirname, join, relative, resolve } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   PPT_RUNTIME_REQUIRED_FILES,
@@ -21,7 +21,7 @@ export async function stageInstalledPptRuntime(targetDirectory) {
     throw new Error('[ppt-runtime-stage] The official PPT build dependency must match the integrity verifier')
   }
   const require = createRequire(packageJsonPath)
-  return stagePptRuntimeFrom(dirname(require.resolve('@file-viewer/ppt')), targetDirectory)
+  return stagePptRuntimeFrom(dirname(require.resolve('@file-viewer/ppt/package.json')), targetDirectory)
 }
 
 // Copy and re-verify an official runtime directory. Exported separately so tests
@@ -30,7 +30,7 @@ export async function stagePptRuntimeFrom(sourceDirectory, targetDirectory) {
   const source = resolve(sourceDirectory)
   const target = resolve(targetDirectory)
   const sourceWithinTarget = relative(target, source)
-  if (sourceWithinTarget === '' || (!sourceWithinTarget.startsWith('..') && !sourceWithinTarget.startsWith('/'))) {
+  if (sourceWithinTarget === '' || (sourceWithinTarget !== '..' && !sourceWithinTarget.startsWith(`..${sep}`) && !isAbsolute(sourceWithinTarget))) {
     throw new Error('[ppt-runtime-stage] Refusing to replace the installed runtime or its parent')
   }
   await verifyPptRuntimeDirectory(source)
@@ -38,6 +38,7 @@ export async function stagePptRuntimeFrom(sourceDirectory, targetDirectory) {
   await mkdir(target, { recursive: true })
   const files = []
   for (const filename of PPT_RUNTIME_REQUIRED_FILES) {
+    await mkdir(dirname(join(target, filename)), { recursive: true })
     await copyFile(join(source, filename), join(target, filename))
     const [original, copied] = await Promise.all([
       readFile(join(source, filename)),

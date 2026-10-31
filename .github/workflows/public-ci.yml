@@ -17,7 +17,7 @@ concurrency:
 jobs:
   browser-runtimes:
     name: Cold DICOM and Mermaid browser consumers
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -56,15 +56,11 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/core --filter @file-viewer/renderer-text --filter @file-viewer/capability-mermaid --filter @file-viewer/renderer-drawing --filter @file-viewer/renderer-dicom build
 
-      - name: Configure bounded Ubuntu archive downloads
-        if: steps.impact.outputs.runtime != 'false'
-        run: sudo python3 .github/scripts/prepare-browser-apt.py
-
       - name: Install Chromium and WebKit
         id: browsers
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 10
-        run: pnpm exec playwright install --with-deps chromium webkit
+        run: pnpm exec playwright install chromium webkit
 
       - name: Verify DICOM cold consumers, six transfer syntaxes and visible PNGs
         if: steps.impact.outputs.runtime != 'false'
@@ -74,7 +70,7 @@ jobs:
 
       - name: Verify Mermaid cold consumers, visible math and offline resources
         if: always() && steps.browser-source.outcome == 'success' && steps.browsers.outcome == 'success'
-        run: node packages/capabilities/mermaid/scripts/verify-packed-browser.mjs
+        run: env -u NODE_PATH -u NODE_OPTIONS node packages/capabilities/mermaid/scripts/verify-packed-browser.mjs
 
       - name: Retain the source Node.js path
         id: source-node
@@ -95,7 +91,7 @@ jobs:
           export FILE_VIEWER_CONSUMER_NODE="$(node -p 'process.execPath')"
           export FILE_VIEWER_CONSUMER_NPM_CLI="$(dirname "$FILE_VIEWER_CONSUMER_NODE")/../lib/node_modules/npm/bin/npm-cli.js"
           export PATH="$(dirname "$FILE_VIEWER_SOURCE_NODE"):$PATH"
-          "$FILE_VIEWER_SOURCE_NODE" packages/capabilities/mermaid/scripts/verify-packed-browser.mjs --node20-consumer
+          env -u NODE_PATH -u NODE_OPTIONS "$FILE_VIEWER_SOURCE_NODE" packages/capabilities/mermaid/scripts/verify-packed-browser.mjs --node20-consumer
 
       - name: Retain cold browser runtime evidence
         if: always() && steps.impact.outputs.runtime != 'false'
@@ -114,7 +110,7 @@ jobs:
 
   verify:
     name: Install, type-check, test, build and smoke
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
     timeout-minutes: 60
 
     steps:
@@ -233,14 +229,10 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm type-check
 
-      - name: Configure bounded Ubuntu archive downloads
-        if: steps.impact.outputs.runtime != 'false'
-        run: sudo python3 .github/scripts/prepare-browser-apt.py
-
       - name: Install Chromium, Firefox and WebKit
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 10
-        run: pnpm exec playwright install --with-deps chromium firefox webkit
+        run: pnpm exec playwright install chromium firefox webkit
 
       - name: Run the issue regression gates
         if: steps.impact.outputs.runtime != 'false'
@@ -320,16 +312,13 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/vite-plugin verify:lite-consumer
 
-      - name: Install the Noto CJK font cohort
+      - name: Verify the provisioned Noto CJK font cohort
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 10
         run: |
           # WenQuanYi's CJK vertical advances can be zero in Chromium. The
           # geometry contract needs the same reviewed Noto cohort as DOCX CI.
-          if ! dpkg-query -W -f='${Status}' fonts-noto-cjk 2>/dev/null | grep -Fxq 'install ok installed'; then
-            sudo apt-get update
-            sudo apt-get install -y --no-install-recommends fonts-noto-cjk
-          fi
+          dpkg-query -W -f='${Status}' fonts-noto-cjk | grep -Fxq 'install ok installed'
           mkdir -p output/doc-font-table
           fc-match -f '%{family}\n' 'Noto Serif CJK SC' | tee output/doc-font-table/font-cohort.log
           grep -q 'Noto Serif CJK SC' output/doc-font-table/font-cohort.log
@@ -469,7 +458,7 @@ jobs:
       - name: Verify Web Full unpacked package size and complete offline assets
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 15
-        run: pnpm --filter @file-viewer/web-full verify:packed-assets
+        run: env -u NODE_PATH -u NODE_OPTIONS pnpm --filter @file-viewer/web-full verify:packed-assets
 
       - name: Retain packed Web Full evidence
         if: always() && steps.impact.outputs.runtime != 'false'

@@ -1,0 +1,26 @@
+{
+  "name": "file-viewer-cad-corresponding-source",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vite": "8.3.3",
+    "esbuild": "0.28.2"
+  },
+  "workspaces": [
+    "packages/core",
+    "packages/renderers/cad"
+  ],
+  "dependencies": {
+    "dompurify": "3.4.17",
+    "@flyfish-dev/cad-viewer": "0.8.3",
+    "dwf-viewer": "0.6.7",
+    "dxf-parser": "1.1.2",
+    "loglevel": "1.9.2",
+    "three": "0.186.0"
+  },
+  "version": "3.3.3"
+}

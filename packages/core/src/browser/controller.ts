@@ -69,6 +69,7 @@ import {
 
 import { resolveFileViewerToolbarZoomButtons } from '../lifecycle/operations';
 import { createToolbarFocusRestorer } from './toolbar-focus';
+import { bindToolbarKeyboardActivation } from './toolbar-keyboard';
 import { createViewerSourceFeedback, type ViewerSourcePhase } from './source-feedback';
 
 export type FileRef = FileViewerFileRef;
@@ -819,6 +820,7 @@ export const mountViewer = (
     syncFileViewerRenderSurfaceBackground(shell, currentOptions.options);
   };
   const captureToolbarFocus = createToolbarFocusRestorer(toolbarEl, contentEl);
+  const disposeToolbarKeyboard = bindToolbarKeyboardActivation(toolbarEl);
   let controller: ViewerController | null = null;
   let searchDraft = '';
   const isSearchToolbarVisible = (
@@ -1382,6 +1384,7 @@ export const mountViewer = (
     destroy() {
       if (disposed) return;
       disposed = true;
+      disposeToolbarKeyboard();
       cancel();
       viewerColorSchemeQuery?.removeEventListener?.('change', handleViewerColorSchemeChange);
       void instance.destroy('component-unmount');
