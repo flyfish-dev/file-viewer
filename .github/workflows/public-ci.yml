@@ -70,7 +70,7 @@ jobs:
 
       - name: Verify Mermaid cold consumers, visible math and offline resources
         if: always() && steps.browser-source.outcome == 'success' && steps.browsers.outcome == 'success'
-        run: node packages/capabilities/mermaid/scripts/verify-packed-browser.mjs
+        run: env -u NODE_PATH -u NODE_OPTIONS node packages/capabilities/mermaid/scripts/verify-packed-browser.mjs
 
       - name: Retain the source Node.js path
         id: source-node
@@ -91,7 +91,7 @@ jobs:
           export FILE_VIEWER_CONSUMER_NODE="$(node -p 'process.execPath')"
           export FILE_VIEWER_CONSUMER_NPM_CLI="$(dirname "$FILE_VIEWER_CONSUMER_NODE")/../lib/node_modules/npm/bin/npm-cli.js"
           export PATH="$(dirname "$FILE_VIEWER_SOURCE_NODE"):$PATH"
-          "$FILE_VIEWER_SOURCE_NODE" packages/capabilities/mermaid/scripts/verify-packed-browser.mjs --node20-consumer
+          env -u NODE_PATH -u NODE_OPTIONS "$FILE_VIEWER_SOURCE_NODE" packages/capabilities/mermaid/scripts/verify-packed-browser.mjs --node20-consumer
 
       - name: Retain cold browser runtime evidence
         if: always() && steps.impact.outputs.runtime != 'false'
