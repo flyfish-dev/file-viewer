@@ -176,8 +176,8 @@ importers:
         specifier: 0.2.16
         version: 0.2.16(@fumadocs/base-ui@16.15.8(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.17.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.3(@types/node@26.6.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.106.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.6))(next@16.4.3(@types/node@26.6.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.106.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tailwindcss@4.3.3))(fumadocs-core@16.17.8(@mdx-js/mdx@3.1.1)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(flexsearch@0.8.212)(lucide-react@1.53.0(@types/react@19.3.0)(react@19.3.0))(next@16.4.3(@types/node@26.6.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.106.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(zod@4.6.6))
       '@tabler/icons-react':
-        specifier: 3.49.0
-        version: 3.49.0(react@19.3.0)
+        specifier: 3.50.0
+        version: 3.50.0(react@19.3.0)
       cnfast:
         specifier: ^0.2.0
         version: 0.2.0
@@ -237,8 +237,8 @@ importers:
   apps/official-site:
     dependencies:
       '@lucide/vue':
-        specifier: ^1.61.0
-        version: 1.61.0(vue@3.5.42(typescript@6.0.3))
+        specifier: ^1.63.0
+        version: 1.63.0(vue@3.5.42(typescript@6.0.3))
       highlight.js:
         specifier: ^11.11.1
         version: 11.12.0
@@ -298,8 +298,8 @@ importers:
         specifier: workspace:3.3.3
         version: link:../../packages/components/web
       '@lucide/vue':
-        specifier: ^1.61.0
-        version: 1.61.0(vue@3.5.42(typescript@6.0.3))
+        specifier: ^1.63.0
+        version: 1.63.0(vue@3.5.42(typescript@6.0.3))
       '@thatopen/components':
         specifier: 3.6.0
         version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
@@ -313,8 +313,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       qs:
-        specifier: ^6.16.1
-        version: 6.16.1
+        specifier: ^6.17.0
+        version: 6.17.0
       vue:
         specifier: ^3.5.42
         version: 3.5.42(typescript@6.0.3)
@@ -888,8 +888,8 @@ importers:
         version: link:../../core
     devDependencies:
       '@lucide/vue':
-        specifier: ^1.61.0
-        version: 1.61.0(vue@3.5.42(typescript@6.0.3))
+        specifier: ^1.63.0
+        version: 1.63.0(vue@3.5.42(typescript@6.0.3))
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
@@ -1360,8 +1360,8 @@ importers:
         version: 0.186.1
     devDependencies:
       '@giro3d/giro3d':
-        specifier: 2.0.5
-        version: 2.0.5(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
+        specifier: 2.0.6
+        version: 2.0.6(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
       '@thatopen/components':
         specifier: 3.6.0
         version: 3.6.0(@thatopen/fragments@3.6.0(three@0.186.1)(web-ifc@0.0.77))(camera-controls@3.1.2(three@0.186.1))(three@0.186.1)(web-ifc@0.0.77)
@@ -2834,8 +2834,8 @@ packages:
   '@fumari/image-size@0.1.1':
     resolution: {integrity: sha512-iaiV2wyzJ4mW358NX4CX3yGit+WjKYzpaQ+rldK9BjL/5jFpeV6ruWnZVq7MEyMn3Gd0DLi8g/79NZAAQaGscw==}
 
-  '@giro3d/giro3d@2.0.5':
-    resolution: {integrity: sha512-aRZcGaCiMJgtxmHwKSyHQeS0cE7+Zk/fpeuXkeGJzt+EioVJMCoXb3lGmNlAzgrGPx5FLPRhQaNkb93unbf9Rg==}
+  '@giro3d/giro3d@2.0.6':
+    resolution: {integrity: sha512-edQjfNac9NCPGAcoQ1+P95aoFH20yX9euKAl3zzg7zdc+hOQWqK2YkKpvCEdstNgGJAbu8cUBvm70XArlNU6bQ==}
     peerDependencies:
       ol: ~10.8.0
       proj4: ^2.19.0
@@ -3046,8 +3046,8 @@ packages:
     resolution: {integrity: sha512-cAfbd8ANkOmyHgE3FZrCJwdyQv8ty0woMC6toSUvgo6Cm2crS3ibS+YKrTPDbDhjP6cJoVsoboRNdCWeDL5xMg==}
     engines: {node: '>=14.8.0'}
 
-  '@lucide/vue@1.61.0':
-    resolution: {integrity: sha512-XYclbwUQ6Mvf0UskBG9gJH91BdF3VK4Tt6Pv8PSntwPwNnf357PCQnma4TrzOEdwD49UYCtsTafpfytRIxm1cQ==}
+  '@lucide/vue@1.63.0':
+    resolution: {integrity: sha512-uJu7VLxXlUIw06r8F4ZdUbTHg8+VFTyqN+lxuMXrh0+8RarwyTWo/odWpH/xq7yUskCTNEtSP4K+BPYRECriDQ==}
     peerDependencies:
       vue: 3.5.42
 
@@ -3534,13 +3534,13 @@ packages:
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
-  '@tabler/icons-react@3.49.0':
-    resolution: {integrity: sha512-Um59pm5RVNUaQjFUtG0r4oYJbZuBS3tGugAA2tgBg0WufMk34Eio3nsO30RUkLuL2giYPQUNdY9HvqltLLYyNA==}
+  '@tabler/icons-react@3.50.0':
+    resolution: {integrity: sha512-X9XhFbxAmSNimQ71VAd7opfd4z84x1pLrEbBT33VCIEsFs8zWVqdhh5r/Jyi/3iJjQ861kE5Wm9ixiJfS2nwBA==}
     peerDependencies:
       react: '>= 16'
 
-  '@tabler/icons@3.49.0':
-    resolution: {integrity: sha512-l+GnSkFETx0U26icxv1VUFnxxiTqXfCcVRiRAnyMwibupM2S2L/hSaZ9gmSgz01rkrsH/93NvLsxykqdanc6lw==}
+  '@tabler/icons@3.50.0':
+    resolution: {integrity: sha512-HflLxyrH1cqC7s7jzQGSjpsTAVIoaf7+/yHjbdM59rJQBMjliibp+LYhDPFxOMcwa1M8DNpOk6ENzQiWn9a1Dg==}
 
   '@tailwindcss/node@4.3.3':
     resolution: {integrity: sha512-/T8IKEsf9VTU6tLjgC7+sv2mOPtQxzE2jMw7u4Tt40Tx+QSZxpzh95/H6cMKoja9XuW7iMdLJYBB0o9G1CaAgg==}
@@ -6325,8 +6325,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  qs@6.16.1:
-    resolution: {integrity: sha512-5Px6J7rfHBAGUhNQ3es4YzcOdBBw0SDcVtThJml4RdnKw4tKs2epA0kPZ+K8X+WiHktT93RHVcQ/3ym5aTCgtg==}
+  qs@6.17.0:
+    resolution: {integrity: sha512-5LK5BZ2XDHMvcUJaf0CQ5HL3aVgKbpklvByC7qLSxYkfE8COEEbJg5xCHWCTqzqi0Gs4Jn5Mv5v3R38W6edscA==}
     engines: {node: '>=0.6'}
 
   quansync@0.2.11:
@@ -7150,6 +7150,9 @@ packages:
   wkt-parser@1.5.6:
     resolution: {integrity: sha512-cqHU3lzGt/gt2OqIORP0uVy5yeOX43WABmgFkmJsmcqH3HhQo9PiJG6ftytwGKmpQUbegeX7+pQc2BuNCRfcrw==}
 
+  wkt-parser@1.6.0:
+    resolution: {integrity: sha512-O2WMUagkdOKkgcfqZBUauysHVeifCwcs+zUd2QG7UIzVljLwK9g5xHUfL/TkQFwmQ3eF7oHFKGnMcb/kZdvbaw==}
+
   wrap-ansi@8.0.1:
     resolution: {integrity: sha512-QFF+ufAqhoYHvoHdajT/Po7KoXVBPXS2bgjIam5isfWJPfIOnQZ50JtUiVvCv/sjgacf3yRrt2ZKUZ/V4itN4g==}
     engines: {node: '>=12'}
@@ -7751,7 +7754,7 @@ snapshots:
 
   '@fumari/image-size@0.1.1': {}
 
-  '@giro3d/giro3d@2.0.5(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)':
+  '@giro3d/giro3d@2.0.6(ol@10.11.0)(proj4@2.22.0(geotiff@3.0.5))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)':
     dependencies:
       3d-tiles-renderer: 0.4.22(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
       chart.js: 3.9.1
@@ -7763,7 +7766,7 @@ snapshots:
       ol: 10.11.0
       proj4: 2.22.0(geotiff@3.0.5)
       three: 0.186.1
-      wkt-parser: 1.5.6
+      wkt-parser: 1.6.0
     transitivePeerDependencies:
       - '@babylonjs/core'
       - '@babylonjs/loaders'
@@ -7939,7 +7942,7 @@ snapshots:
     dependencies:
       '@xmldom/xmldom': 0.9.12
 
-  '@lucide/vue@1.61.0(vue@3.5.42(typescript@6.0.3))':
+  '@lucide/vue@1.63.0(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       vue: 3.5.42(typescript@6.0.3)
 
@@ -8322,12 +8325,12 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@tabler/icons-react@3.49.0(react@19.3.0)':
+  '@tabler/icons-react@3.50.0(react@19.3.0)':
     dependencies:
-      '@tabler/icons': 3.49.0
+      '@tabler/icons': 3.50.0
       react: 19.3.0
 
-  '@tabler/icons@3.49.0': {}
+  '@tabler/icons@3.50.0': {}
 
   '@tailwindcss/node@4.3.3':
     dependencies:
@@ -11438,7 +11441,7 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  qs@6.16.1:
+  qs@6.17.0:
     dependencies:
       es-define-property: 1.0.1
       side-channel: 1.1.1
@@ -12337,6 +12340,8 @@ snapshots:
       string-width: 5.1.2
 
   wkt-parser@1.5.6: {}
+
+  wkt-parser@1.6.0: {}
 
   wrap-ansi@8.0.1:
     dependencies:
