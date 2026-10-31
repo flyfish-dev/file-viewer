@@ -3,6 +3,7 @@ import { cp, lstat, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'no
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 import { test } from 'node:test'
 import * as webNode from '../../web/dist/node.js'
 import { assertFullAssetDependencies, resolveFullAssetSources } from '../scripts/full-asset-dependencies.mjs'
@@ -11,6 +12,7 @@ import { stagePptRuntimeFrom } from '../scripts/stage-ppt-runtime.mjs'
 import { fullAssetStagers, stageFullViewerAssets } from '../scripts/stage-full-assets.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const pptPackageDir = dirname(createRequire(import.meta.url).resolve('@file-viewer/ppt/package.json'))
 const manifestFilename = 'flyfish-viewer-assets.json'
 const quiet = async run => {
   const log = console.log
@@ -65,7 +67,7 @@ async function fixture(t) {
   // Copy the byte-pinned public package into the isolated installed-package fixture.
   const writePpt = async version => {
     await rm(installedPpt, { recursive: true, force: true })
-    await cp(resolve(packageDir, '../web/viewer/vendor/ppt'), installedPpt, { recursive: true })
+    await cp(pptPackageDir, installedPpt, { recursive: true })
     if (version !== PPT_RUNTIME_VERSION) {
       const manifestPath = join(installedPpt, 'package.json')
       const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
