@@ -64,7 +64,7 @@
     "vue": ">=3.3 <4"
   },
   "devDependencies": {
-    "@lucide/vue": "^1.61.0",
+    "@lucide/vue": "^1.63.0",
     "@types/node": "^26.6.5",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
