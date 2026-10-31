@@ -6,6 +6,13 @@ description: '查看 File Viewer 主线版本的功能更新、安全修复、�
 
 这份日志记录的是当前仓库主线中，对外最值得说明的能力演进。
 
+## `v3.3.3` PPT 引擎与离线资产迁移
+
+- 二进制 PPT/POT 使用 `@file-viewer/ppt@1.0.1`。新版通过 JavaScript Worker 解析、SVG/Canvas 渲染，无需旧版 PPT WASM 或私有字体包；文字显示取决于宿主可用字体。
+- Full 包、Office preset、Vite 资产插件和复制工具统一使用完整的新版模块目录，支持离线部署和嵌套路径。
+- 保留 3.3.2 已发布的 PDF 修复；本次以新版本交付，既有 3.3.2 包保持原始字节。
+- 修复异步状态刷新期间工具栏空格键激活丢失，覆盖共享控制层、框架组件与 Shadow DOM。
+
 ## `v3.0.3` Word 修订、浏览器集成与移动端 PDF 修复 - 2026-09-09
 
 - MapLibre 6.4.1 修复地图署名 HTML 连续危险属性的清洗绕过；离线 Worker 内置，地图销毁重建后仍能加载。同步更新 js-yaml、sharp 和 Vitest 安全版本，以实际所需 polyfill 替代未使用的 Browserify 工具链。

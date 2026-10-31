@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "purpose": "shared-runtime-material-attribution",
   "scope": "Material identity and actual copied payloads; not a source-availability or release approval.",
-  "registrySha256": "ac563c6b63616c62c7c483ce82295338ddf6b5c75cbca4c2e8487d9bb3115592",
+  "registrySha256": "c59b733c13019003950d86996de91ad467ed9c61b92cf6c973df8c2a5d41b291",
   "releaseApproval": false,
   "materials": [
     {
@@ -3059,38 +3059,212 @@
     },
     {
       "path": "vendor/ppt/LICENSE",
-      "sha256": "fa3378d3e005fc6096e9da42d7fd53ea3a9742315560271369e0d958af2764f6",
-      "bytes": 5970,
-      "kind": "original-proprietary-runtime-notice",
+      "sha256": "55ce5d9fb8138a058b60c431cb9e68e13dd3f90691f73a757e38f06fed81e69b",
+      "bytes": 9140,
+      "kind": "original-license-grant",
       "component": "@file-viewer/ppt",
-      "declaredLicense": "LicenseRef-Flyfish-Public-Watermarked-Binary-v2",
-      "source": "Retained original public watermarked runtime grant",
+      "declaredLicense": "Apache-2.0",
+      "source": "Unmodified grant from the public TypeScript PPT npm package; development source remains private. Previous native runtime grants are unchanged.",
       "runtimePaths": [
-        "vendor/ppt/frame-cache.mjs",
-        "vendor/ppt/index.mjs",
-        "vendor/ppt/manifest.json",
-        "vendor/ppt/package.json",
-        "vendor/ppt/ppt-font-cjk.otf",
-        "vendor/ppt/ppt-native.wasm",
-        "vendor/ppt/worker.mjs"
+        "vendor/ppt/README.md",
+        "vendor/ppt/dist/core/binary.d.ts",
+        "vendor/ppt/dist/core/binary.js",
+        "vendor/ppt/dist/core/cfb.d.ts",
+        "vendor/ppt/dist/core/cfb.js",
+        "vendor/ppt/dist/core/crypto.d.ts",
+        "vendor/ppt/dist/core/crypto.js",
+        "vendor/ppt/dist/core/errors.d.ts",
+        "vendor/ppt/dist/core/errors.js",
+        "vendor/ppt/dist/core/inflate.d.ts",
+        "vendor/ppt/dist/core/inflate.js",
+        "vendor/ppt/dist/core/pict.d.ts",
+        "vendor/ppt/dist/core/pict.js",
+        "vendor/ppt/dist/core/raster.d.ts",
+        "vendor/ppt/dist/core/raster.js",
+        "vendor/ppt/dist/core/tiff.d.ts",
+        "vendor/ppt/dist/core/tiff.js",
+        "vendor/ppt/dist/core/utils.d.ts",
+        "vendor/ppt/dist/core/utils.js",
+        "vendor/ppt/dist/core/vector-font.d.ts",
+        "vendor/ppt/dist/core/vector-font.js",
+        "vendor/ppt/dist/core/vector.d.ts",
+        "vendor/ppt/dist/core/vector.js",
+        "vendor/ppt/dist/core/xml-text.d.ts",
+        "vendor/ppt/dist/core/xml-text.js",
+        "vendor/ppt/dist/index.d.ts",
+        "vendor/ppt/dist/index.js",
+        "vendor/ppt/dist/layout/measure.d.ts",
+        "vendor/ppt/dist/layout/measure.js",
+        "vendor/ppt/dist/layout/text-layout.d.ts",
+        "vendor/ppt/dist/layout/text-layout.js",
+        "vendor/ppt/dist/manifest.json",
+        "vendor/ppt/dist/playback/media.d.ts",
+        "vendor/ppt/dist/playback/media.js",
+        "vendor/ppt/dist/playback/navigation.d.ts",
+        "vendor/ppt/dist/playback/navigation.js",
+        "vendor/ppt/dist/playback/timeline.d.ts",
+        "vendor/ppt/dist/playback/timeline.js",
+        "vendor/ppt/dist/playback/transitions.d.ts",
+        "vendor/ppt/dist/playback/transitions.js",
+        "vendor/ppt/dist/ppt/animation.d.ts",
+        "vendor/ppt/dist/ppt/animation.js",
+        "vendor/ppt/dist/ppt/constants.d.ts",
+        "vendor/ppt/dist/ppt/constants.js",
+        "vendor/ppt/dist/ppt/drawing.d.ts",
+        "vendor/ppt/dist/ppt/drawing.js",
+        "vendor/ppt/dist/ppt/encryption.d.ts",
+        "vendor/ppt/dist/ppt/encryption.js",
+        "vendor/ppt/dist/ppt/extras.d.ts",
+        "vendor/ppt/dist/ppt/extras.js",
+        "vendor/ppt/dist/ppt/geometry.d.ts",
+        "vendor/ppt/dist/ppt/geometry.js",
+        "vendor/ppt/dist/ppt/headers-footers.d.ts",
+        "vendor/ppt/dist/ppt/headers-footers.js",
+        "vendor/ppt/dist/ppt/interactions.d.ts",
+        "vendor/ppt/dist/ppt/interactions.js",
+        "vendor/ppt/dist/ppt/parser.d.ts",
+        "vendor/ppt/dist/ppt/parser.js",
+        "vendor/ppt/dist/ppt/pictures.d.ts",
+        "vendor/ppt/dist/ppt/pictures.js",
+        "vendor/ppt/dist/ppt/records.d.ts",
+        "vendor/ppt/dist/ppt/records.js",
+        "vendor/ppt/dist/ppt/text.d.ts",
+        "vendor/ppt/dist/ppt/text.js",
+        "vendor/ppt/dist/pptjs.browser.js",
+        "vendor/ppt/dist/pptjs.mjs",
+        "vendor/ppt/dist/pptjs.worker.js",
+        "vendor/ppt/dist/render/effects.d.ts",
+        "vendor/ppt/dist/render/effects.js",
+        "vendor/ppt/dist/render/fields.d.ts",
+        "vendor/ppt/dist/render/fields.js",
+        "vendor/ppt/dist/render/geometry.d.ts",
+        "vendor/ppt/dist/render/geometry.js",
+        "vendor/ppt/dist/render/safe.d.ts",
+        "vendor/ppt/dist/render/safe.js",
+        "vendor/ppt/dist/render/svg.d.ts",
+        "vendor/ppt/dist/render/svg.js",
+        "vendor/ppt/dist/render/text.d.ts",
+        "vendor/ppt/dist/render/text.js",
+        "vendor/ppt/dist/render/three-d.d.ts",
+        "vendor/ppt/dist/render/three-d.js",
+        "vendor/ppt/dist/render/wordart.d.ts",
+        "vendor/ppt/dist/render/wordart.js",
+        "vendor/ppt/dist/runtime.d.ts",
+        "vendor/ppt/dist/runtime.js",
+        "vendor/ppt/dist/types.d.ts",
+        "vendor/ppt/dist/types.js",
+        "vendor/ppt/dist/viewer.d.ts",
+        "vendor/ppt/dist/viewer.js",
+        "vendor/ppt/dist/worker-client.d.ts",
+        "vendor/ppt/dist/worker-client.js",
+        "vendor/ppt/dist/worker.d.ts",
+        "vendor/ppt/dist/worker.js",
+        "vendor/ppt/package.json"
       ]
     },
     {
-      "path": "vendor/ppt/NOTICE",
-      "sha256": "6b57bc92d0cb360a1aee691a3374ccf722037422cbbec8693607cce5859eb2d4",
-      "bytes": 10493,
-      "kind": "original-proprietary-runtime-notice",
+      "path": "vendor/ppt/NOTICE.md",
+      "sha256": "c458b1c7bdbb66b4f00bcc1b6126ca1ba3ba2cd516db26f4e883711cae806c7c",
+      "bytes": 5712,
+      "kind": "original-attribution-notice",
       "component": "@file-viewer/ppt",
-      "declaredLicense": "LicenseRef-Flyfish-Public-Watermarked-Binary-v2",
-      "source": "Retained original public watermarked runtime grant",
+      "declaredLicense": null,
+      "source": "Unmodified TypeScript PPT package notice identifying runtime provenance, source privacy and validation limits.",
       "runtimePaths": [
-        "vendor/ppt/frame-cache.mjs",
-        "vendor/ppt/index.mjs",
-        "vendor/ppt/manifest.json",
-        "vendor/ppt/package.json",
-        "vendor/ppt/ppt-font-cjk.otf",
-        "vendor/ppt/ppt-native.wasm",
-        "vendor/ppt/worker.mjs"
+        "vendor/ppt/README.md",
+        "vendor/ppt/dist/core/binary.d.ts",
+        "vendor/ppt/dist/core/binary.js",
+        "vendor/ppt/dist/core/cfb.d.ts",
+        "vendor/ppt/dist/core/cfb.js",
+        "vendor/ppt/dist/core/crypto.d.ts",
+        "vendor/ppt/dist/core/crypto.js",
+        "vendor/ppt/dist/core/errors.d.ts",
+        "vendor/ppt/dist/core/errors.js",
+        "vendor/ppt/dist/core/inflate.d.ts",
+        "vendor/ppt/dist/core/inflate.js",
+        "vendor/ppt/dist/core/pict.d.ts",
+        "vendor/ppt/dist/core/pict.js",
+        "vendor/ppt/dist/core/raster.d.ts",
+        "vendor/ppt/dist/core/raster.js",
+        "vendor/ppt/dist/core/tiff.d.ts",
+        "vendor/ppt/dist/core/tiff.js",
+        "vendor/ppt/dist/core/utils.d.ts",
+        "vendor/ppt/dist/core/utils.js",
+        "vendor/ppt/dist/core/vector-font.d.ts",
+        "vendor/ppt/dist/core/vector-font.js",
+        "vendor/ppt/dist/core/vector.d.ts",
+        "vendor/ppt/dist/core/vector.js",
+        "vendor/ppt/dist/core/xml-text.d.ts",
+        "vendor/ppt/dist/core/xml-text.js",
+        "vendor/ppt/dist/index.d.ts",
+        "vendor/ppt/dist/index.js",
+        "vendor/ppt/dist/layout/measure.d.ts",
+        "vendor/ppt/dist/layout/measure.js",
+        "vendor/ppt/dist/layout/text-layout.d.ts",
+        "vendor/ppt/dist/layout/text-layout.js",
+        "vendor/ppt/dist/manifest.json",
+        "vendor/ppt/dist/playback/media.d.ts",
+        "vendor/ppt/dist/playback/media.js",
+        "vendor/ppt/dist/playback/navigation.d.ts",
+        "vendor/ppt/dist/playback/navigation.js",
+        "vendor/ppt/dist/playback/timeline.d.ts",
+        "vendor/ppt/dist/playback/timeline.js",
+        "vendor/ppt/dist/playback/transitions.d.ts",
+        "vendor/ppt/dist/playback/transitions.js",
+        "vendor/ppt/dist/ppt/animation.d.ts",
+        "vendor/ppt/dist/ppt/animation.js",
+        "vendor/ppt/dist/ppt/constants.d.ts",
+        "vendor/ppt/dist/ppt/constants.js",
+        "vendor/ppt/dist/ppt/drawing.d.ts",
+        "vendor/ppt/dist/ppt/drawing.js",
+        "vendor/ppt/dist/ppt/encryption.d.ts",
+        "vendor/ppt/dist/ppt/encryption.js",
+        "vendor/ppt/dist/ppt/extras.d.ts",
+        "vendor/ppt/dist/ppt/extras.js",
+        "vendor/ppt/dist/ppt/geometry.d.ts",
+        "vendor/ppt/dist/ppt/geometry.js",
+        "vendor/ppt/dist/ppt/headers-footers.d.ts",
+        "vendor/ppt/dist/ppt/headers-footers.js",
+        "vendor/ppt/dist/ppt/interactions.d.ts",
+        "vendor/ppt/dist/ppt/interactions.js",
+        "vendor/ppt/dist/ppt/parser.d.ts",
+        "vendor/ppt/dist/ppt/parser.js",
+        "vendor/ppt/dist/ppt/pictures.d.ts",
+        "vendor/ppt/dist/ppt/pictures.js",
+        "vendor/ppt/dist/ppt/records.d.ts",
+        "vendor/ppt/dist/ppt/records.js",
+        "vendor/ppt/dist/ppt/text.d.ts",
+        "vendor/ppt/dist/ppt/text.js",
+        "vendor/ppt/dist/pptjs.browser.js",
+        "vendor/ppt/dist/pptjs.mjs",
+        "vendor/ppt/dist/pptjs.worker.js",
+        "vendor/ppt/dist/render/effects.d.ts",
+        "vendor/ppt/dist/render/effects.js",
+        "vendor/ppt/dist/render/fields.d.ts",
+        "vendor/ppt/dist/render/fields.js",
+        "vendor/ppt/dist/render/geometry.d.ts",
+        "vendor/ppt/dist/render/geometry.js",
+        "vendor/ppt/dist/render/safe.d.ts",
+        "vendor/ppt/dist/render/safe.js",
+        "vendor/ppt/dist/render/svg.d.ts",
+        "vendor/ppt/dist/render/svg.js",
+        "vendor/ppt/dist/render/text.d.ts",
+        "vendor/ppt/dist/render/text.js",
+        "vendor/ppt/dist/render/three-d.d.ts",
+        "vendor/ppt/dist/render/three-d.js",
+        "vendor/ppt/dist/render/wordart.d.ts",
+        "vendor/ppt/dist/render/wordart.js",
+        "vendor/ppt/dist/runtime.d.ts",
+        "vendor/ppt/dist/runtime.js",
+        "vendor/ppt/dist/types.d.ts",
+        "vendor/ppt/dist/types.js",
+        "vendor/ppt/dist/viewer.d.ts",
+        "vendor/ppt/dist/viewer.js",
+        "vendor/ppt/dist/worker-client.d.ts",
+        "vendor/ppt/dist/worker-client.js",
+        "vendor/ppt/dist/worker.d.ts",
+        "vendor/ppt/dist/worker.js",
+        "vendor/ppt/package.json"
       ]
     },
     {
@@ -3135,12 +3309,12 @@
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
-      "bytes": 3560,
+      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
@@ -3192,12 +3366,12 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
-      "bytes": 3560,
+      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.1/dwfv-render.wasm",
@@ -3249,12 +3423,12 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
-      "bytes": 3560,
+      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.3/dwfv-render.wasm",
@@ -3306,12 +3480,12 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "30ebac1e8f44234126ff33dda824caf19f8887c3482254b2e2b7d66113676f2f",
-      "bytes": 3560,
+      "sha256": "9c98823037d57e9efbffe09ac9b1908046469fe2968649e9a5b143227f01b45c",
+      "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Existing immutable complete public source https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd (SHA-256 b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5), normal rebuild identical to current CAD integration; standalone source retained in public checkout. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1 (SHA-256 aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
@@ -21750,52 +21924,661 @@
       "sourceTransform": "none"
     },
     {
-      "path": "vendor/ppt/frame-cache.mjs",
-      "bytes": 22038,
-      "sha256": "34fc0e7a5f328d52b55a7b616e45d7967555c6d3609e426b47f73f6d839ae411",
-      "sourceSha256": "34fc0e7a5f328d52b55a7b616e45d7967555c6d3609e426b47f73f6d839ae411",
+      "path": "vendor/ppt/dist/core/binary.d.ts",
+      "bytes": 1245,
+      "sha256": "06cf914d190175b454763423215b7bf65b5d820c2a1406034d3b48b277777516",
+      "sourceSha256": "06cf914d190175b454763423215b7bf65b5d820c2a1406034d3b48b277777516",
       "sourceTransform": "none"
     },
     {
-      "path": "vendor/ppt/index.mjs",
-      "bytes": 38973,
-      "sha256": "a1f52bce577b57546ac9a2f9a96d2d21c65980605f5c2182af1092b07c99e126",
-      "sourceSha256": "a1f52bce577b57546ac9a2f9a96d2d21c65980605f5c2182af1092b07c99e126",
+      "path": "vendor/ppt/dist/core/binary.js",
+      "bytes": 3935,
+      "sha256": "242d90abdf8cd463d8260a71e677980576c5d997e2104a92215b21ac6f1b265b",
+      "sourceSha256": "242d90abdf8cd463d8260a71e677980576c5d997e2104a92215b21ac6f1b265b",
       "sourceTransform": "none"
     },
     {
-      "path": "vendor/ppt/manifest.json",
-      "bytes": 1656,
-      "sha256": "05193627f01227fc5fa45a15888f27288099dcd49e7b42ed92045225a5cc0dca",
-      "sourceSha256": "05193627f01227fc5fa45a15888f27288099dcd49e7b42ed92045225a5cc0dca",
+      "path": "vendor/ppt/dist/core/cfb.d.ts",
+      "bytes": 1258,
+      "sha256": "b25e61555d0e65a54521543f2292f273a4f1d6888f5b2799b3db4e57cf78dbd6",
+      "sourceSha256": "b25e61555d0e65a54521543f2292f273a4f1d6888f5b2799b3db4e57cf78dbd6",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/cfb.js",
+      "bytes": 11493,
+      "sha256": "8ae56f1fb57b06ba7b9501c52edcd8d43aba744ddf44d39657e88e395b203673",
+      "sourceSha256": "8ae56f1fb57b06ba7b9501c52edcd8d43aba744ddf44d39657e88e395b203673",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/crypto.d.ts",
+      "bytes": 501,
+      "sha256": "ab3c6e37a4db79397bc6d2c3714711cdcc762b0638f1d11631dbddc193b8845a",
+      "sourceSha256": "ab3c6e37a4db79397bc6d2c3714711cdcc762b0638f1d11631dbddc193b8845a",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/crypto.js",
+      "bytes": 3612,
+      "sha256": "c5fd34fe26390bdb30a4815c0bfc2f2640cf609f695369da337f30fec6f9dea7",
+      "sourceSha256": "c5fd34fe26390bdb30a4815c0bfc2f2640cf609f695369da337f30fec6f9dea7",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/errors.d.ts",
+      "bytes": 170,
+      "sha256": "7672f29f19d3b9872c74d12b27a612221812c59dbb397f570c114565bb7fa6a0",
+      "sourceSha256": "7672f29f19d3b9872c74d12b27a612221812c59dbb397f570c114565bb7fa6a0",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/errors.js",
+      "bytes": 185,
+      "sha256": "3a5a61e90e1b452dc836e4809fc392f647a9ceb8483f4ce9dcfd72d128fa05b3",
+      "sourceSha256": "3a5a61e90e1b452dc836e4809fc392f647a9ceb8483f4ce9dcfd72d128fa05b3",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/inflate.d.ts",
+      "bytes": 681,
+      "sha256": "c6e7a91dc082b3c144e7e8ea710db5ae27b945d37b41d54b10f32f5e669197b3",
+      "sourceSha256": "c6e7a91dc082b3c144e7e8ea710db5ae27b945d37b41d54b10f32f5e669197b3",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/inflate.js",
+      "bytes": 12332,
+      "sha256": "2b8dde1c4e791f9ff09bf6bbdd37b836636951847a2d9a11dcd85b61a5984c9b",
+      "sourceSha256": "2b8dde1c4e791f9ff09bf6bbdd37b836636951847a2d9a11dcd85b61a5984c9b",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/pict.d.ts",
+      "bytes": 387,
+      "sha256": "2dd71b86514e0b856a6ab494faf632b73ac2c7f96368613d65ecae3b902dff71",
+      "sourceSha256": "2dd71b86514e0b856a6ab494faf632b73ac2c7f96368613d65ecae3b902dff71",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/pict.js",
+      "bytes": 23534,
+      "sha256": "22b5da5b6eaf73b62ce14b4961607da8bbb7e5038a8f6c2d8ff913e84698f33b",
+      "sourceSha256": "22b5da5b6eaf73b62ce14b4961607da8bbb7e5038a8f6c2d8ff913e84698f33b",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/raster.d.ts",
+      "bytes": 678,
+      "sha256": "5f90f7e86001ee1d13f8de08a6c2d1cefab2d60b39422a93a542e78124658370",
+      "sourceSha256": "5f90f7e86001ee1d13f8de08a6c2d1cefab2d60b39422a93a542e78124658370",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/raster.js",
+      "bytes": 5152,
+      "sha256": "0027ceac1d555a2dbbb5c73b2e2cb62e6eb23dfb1214d4e6b2798cecc10b55de",
+      "sourceSha256": "0027ceac1d555a2dbbb5c73b2e2cb62e6eb23dfb1214d4e6b2798cecc10b55de",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/tiff.d.ts",
+      "bytes": 737,
+      "sha256": "02cc4650002a92aa573bad680bb8297d6a2f34598a1b8da8b6dc8e543e634b39",
+      "sourceSha256": "02cc4650002a92aa573bad680bb8297d6a2f34598a1b8da8b6dc8e543e634b39",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/tiff.js",
+      "bytes": 14235,
+      "sha256": "11cb37837f93f7b83ed42c1cbc3f0cc829d5b9bd8c78d8c86ae07d38c980dca1",
+      "sourceSha256": "11cb37837f93f7b83ed42c1cbc3f0cc829d5b9bd8c78d8c86ae07d38c980dca1",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/utils.d.ts",
+      "bytes": 459,
+      "sha256": "0e8e7c670886b61f89b64d5fea431000df403782c6ca21c63bcb03400fdd75e7",
+      "sourceSha256": "0e8e7c670886b61f89b64d5fea431000df403782c6ca21c63bcb03400fdd75e7",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/utils.js",
+      "bytes": 859,
+      "sha256": "2248ac18a1463881d82e6792ce54aa65213cb4d7bd94b876b02a9991dededd9d",
+      "sourceSha256": "2248ac18a1463881d82e6792ce54aa65213cb4d7bd94b876b02a9991dededd9d",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/vector-font.d.ts",
+      "bytes": 391,
+      "sha256": "c5ef0a7cb6eb1eb1e15866b5969621ad8d05a6771c5cc96c0fe851cdbb06cd2c",
+      "sourceSha256": "c5ef0a7cb6eb1eb1e15866b5969621ad8d05a6771c5cc96c0fe851cdbb06cd2c",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/vector-font.js",
+      "bytes": 989,
+      "sha256": "093dd21421b8e95e91cd616ee5daae67892824a254d986fb4117a2548031a52e",
+      "sourceSha256": "093dd21421b8e95e91cd616ee5daae67892824a254d986fb4117a2548031a52e",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/vector.d.ts",
+      "bytes": 608,
+      "sha256": "e88ed1172280f8fc92b473278f072629a695839d3d80b6b6db7eb34e2b55f890",
+      "sourceSha256": "e88ed1172280f8fc92b473278f072629a695839d3d80b6b6db7eb34e2b55f890",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/vector.js",
+      "bytes": 77857,
+      "sha256": "13f15694e614eb2503898699de56346d320bd63ba3b1cac116023522c5e8009e",
+      "sourceSha256": "13f15694e614eb2503898699de56346d320bd63ba3b1cac116023522c5e8009e",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/xml-text.d.ts",
+      "bytes": 62,
+      "sha256": "011ef42c8c339d39c1af22444c5793830c9f9c4594cf13cf7375698268f73658",
+      "sourceSha256": "011ef42c8c339d39c1af22444c5793830c9f9c4594cf13cf7375698268f73658",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/core/xml-text.js",
+      "bytes": 318,
+      "sha256": "afd4c27306607b9c2d27c998cf87c516d197c5a4c02826fd7b010f21ed2132a5",
+      "sourceSha256": "afd4c27306607b9c2d27c998cf87c516d197c5a4c02826fd7b010f21ed2132a5",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/index.d.ts",
+      "bytes": 989,
+      "sha256": "e834097967c0ce8eed785a338d359fc3b7a0528b92749bd6d081b078587aaac7",
+      "sourceSha256": "e834097967c0ce8eed785a338d359fc3b7a0528b92749bd6d081b078587aaac7",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/index.js",
+      "bytes": 502,
+      "sha256": "32fcbb03fe6789d433f9786fa66f1b96c649485e08ec35d803814c2d1d4309c3",
+      "sourceSha256": "32fcbb03fe6789d433f9786fa66f1b96c649485e08ec35d803814c2d1d4309c3",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/layout/measure.d.ts",
+      "bytes": 626,
+      "sha256": "5e8245ddbf6e43640413ce36b58c6cae4d095802fc212a05d155d80b1420c69b",
+      "sourceSha256": "5e8245ddbf6e43640413ce36b58c6cae4d095802fc212a05d155d80b1420c69b",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/layout/measure.js",
+      "bytes": 2912,
+      "sha256": "eca43cac215b76eac1f97001d26ddb5a13947afe397091eefc759be9c6bb2e4b",
+      "sourceSha256": "eca43cac215b76eac1f97001d26ddb5a13947afe397091eefc759be9c6bb2e4b",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/layout/text-layout.d.ts",
+      "bytes": 1532,
+      "sha256": "32cf031d28893a891bdd599706cc6fa931cb38446c44a7d37ac0bafe3b8f99ca",
+      "sourceSha256": "32cf031d28893a891bdd599706cc6fa931cb38446c44a7d37ac0bafe3b8f99ca",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/layout/text-layout.js",
+      "bytes": 17209,
+      "sha256": "3ec79c354ff437ef4c32b4884439dc25e27eb5af2943c80d2342afbbee65726c",
+      "sourceSha256": "3ec79c354ff437ef4c32b4884439dc25e27eb5af2943c80d2342afbbee65726c",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/manifest.json",
+      "bytes": 370,
+      "sha256": "edd0e06f681dd4809ab4e5cef27e5e5430124a1ffffe6520f111d25de311adf7",
+      "sourceSha256": "edd0e06f681dd4809ab4e5cef27e5e5430124a1ffffe6520f111d25de311adf7",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/media.d.ts",
+      "bytes": 438,
+      "sha256": "f6f8998048edd8beea8b57cafb09201d89655144ae0d5feb2dd74c9635b91bbe",
+      "sourceSha256": "f6f8998048edd8beea8b57cafb09201d89655144ae0d5feb2dd74c9635b91bbe",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/media.js",
+      "bytes": 1658,
+      "sha256": "eb65ceed069d992d9954dacecf78f033cadd20d9a41681c6ac443b534c157236",
+      "sourceSha256": "eb65ceed069d992d9954dacecf78f033cadd20d9a41681c6ac443b534c157236",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/navigation.d.ts",
+      "bytes": 231,
+      "sha256": "308e560cae4e5d89841365a8a5f06273030cbf9c4aa8e2064834367efc101240",
+      "sourceSha256": "308e560cae4e5d89841365a8a5f06273030cbf9c4aa8e2064834367efc101240",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/navigation.js",
+      "bytes": 915,
+      "sha256": "20ce41a7ec3c3080842bf9fa7871afdcd6be2ea2b43aac4456c4a7ff12247120",
+      "sourceSha256": "20ce41a7ec3c3080842bf9fa7871afdcd6be2ea2b43aac4456c4a7ff12247120",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/timeline.d.ts",
+      "bytes": 1684,
+      "sha256": "c1f60eb8265d82c80e40327268940f99f84eea44a9df4c944d96eed8c12c08dd",
+      "sourceSha256": "c1f60eb8265d82c80e40327268940f99f84eea44a9df4c944d96eed8c12c08dd",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/timeline.js",
+      "bytes": 8045,
+      "sha256": "4d14dff5209ed8ed3127db8f485a62816ca80d38555e31f616043157972c83e2",
+      "sourceSha256": "4d14dff5209ed8ed3127db8f485a62816ca80d38555e31f616043157972c83e2",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/transitions.d.ts",
+      "bytes": 624,
+      "sha256": "834eae3d738349350f01f4f4e3b86afcfcf75ffe6466a9b316230a0ad6a9bc64",
+      "sourceSha256": "834eae3d738349350f01f4f4e3b86afcfcf75ffe6466a9b316230a0ad6a9bc64",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/playback/transitions.js",
+      "bytes": 2553,
+      "sha256": "1ab63a7ed485fd3d539ab89b99ebfde062e34aae98ce50c9d4435d811ec45d44",
+      "sourceSha256": "1ab63a7ed485fd3d539ab89b99ebfde062e34aae98ce50c9d4435d811ec45d44",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/animation.d.ts",
+      "bytes": 396,
+      "sha256": "788bb743d5ab1815ab635b489e46a4d6684c75a724ff308cfb06f98cd29460b6",
+      "sourceSha256": "788bb743d5ab1815ab635b489e46a4d6684c75a724ff308cfb06f98cd29460b6",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/animation.js",
+      "bytes": 4794,
+      "sha256": "ae463b0eda1c2a8ea316cd606a38cdea19cb36119241f4de8c8abecce4485131",
+      "sourceSha256": "ae463b0eda1c2a8ea316cd606a38cdea19cb36119241f4de8c8abecce4485131",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/constants.d.ts",
+      "bytes": 2497,
+      "sha256": "576878f9f511d295faf89fb8a6cd6bea7da3a4be1fdf248a25f23c14e6b3d353",
+      "sourceSha256": "576878f9f511d295faf89fb8a6cd6bea7da3a4be1fdf248a25f23c14e6b3d353",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/constants.js",
+      "bytes": 1818,
+      "sha256": "b14ff55f4e7d8186eda12462f0ef0c9ae305deac29ada80fd9c703b92097c347",
+      "sourceSha256": "b14ff55f4e7d8186eda12462f0ef0c9ae305deac29ada80fd9c703b92097c347",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/drawing.d.ts",
+      "bytes": 1003,
+      "sha256": "ddc3cf432e3bc9cbf87de798e66e19d04b84b356be85ba035b86a4d073018983",
+      "sourceSha256": "ddc3cf432e3bc9cbf87de798e66e19d04b84b356be85ba035b86a4d073018983",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/drawing.js",
+      "bytes": 32229,
+      "sha256": "e3e2dd2d803b3ac98e11904379f386fe1b7a13d5e0ea4075322fb55e914d11c2",
+      "sourceSha256": "e3e2dd2d803b3ac98e11904379f386fe1b7a13d5e0ea4075322fb55e914d11c2",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/encryption.d.ts",
+      "bytes": 814,
+      "sha256": "9a4bd217094fc4772019e9a5b8a98e65fb4afaf64997de7482ed74cf4e50abe5",
+      "sourceSha256": "9a4bd217094fc4772019e9a5b8a98e65fb4afaf64997de7482ed74cf4e50abe5",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/encryption.js",
+      "bytes": 15022,
+      "sha256": "fe3e252cd405a98f9ba35fa6fe77ee73d313572671972c8c71bda0a47309c3cf",
+      "sourceSha256": "fe3e252cd405a98f9ba35fa6fe77ee73d313572671972c8c71bda0a47309c3cf",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/extras.d.ts",
+      "bytes": 1197,
+      "sha256": "bf4867f1c4091e8adce56ddb1fbaf1ea789abf4b17c6247494ea4e2c2c888a9e",
+      "sourceSha256": "bf4867f1c4091e8adce56ddb1fbaf1ea789abf4b17c6247494ea4e2c2c888a9e",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/extras.js",
+      "bytes": 14104,
+      "sha256": "9e8488bf58a20e2d1008b812159beb85ddd0c045e34514a36960f52bae268757",
+      "sourceSha256": "9e8488bf58a20e2d1008b812159beb85ddd0c045e34514a36960f52bae268757",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/geometry.d.ts",
+      "bytes": 1520,
+      "sha256": "4439fd34920ab8e5400222cbab5ace9ea0fe03fbb1424626afd790859926a22d",
+      "sourceSha256": "4439fd34920ab8e5400222cbab5ace9ea0fe03fbb1424626afd790859926a22d",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/geometry.js",
+      "bytes": 21827,
+      "sha256": "c8c98d8d9172b2e59bd80cf675b7ad9df152374b4f23e7aafd1e8b23dfb44a58",
+      "sourceSha256": "c8c98d8d9172b2e59bd80cf675b7ad9df152374b4f23e7aafd1e8b23dfb44a58",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/headers-footers.d.ts",
+      "bytes": 831,
+      "sha256": "de223622b7723fccc9afe9d76e8c4a2bdf4fe769c0f56371959ee41a64871594",
+      "sourceSha256": "de223622b7723fccc9afe9d76e8c4a2bdf4fe769c0f56371959ee41a64871594",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/headers-footers.js",
+      "bytes": 4584,
+      "sha256": "2fefd41b29fe0cc033cbacc9524bead9b66dbe24808fef68fe3683b0573380e0",
+      "sourceSha256": "2fefd41b29fe0cc033cbacc9524bead9b66dbe24808fef68fe3683b0573380e0",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/interactions.d.ts",
+      "bytes": 1045,
+      "sha256": "c70e4d0c347e685f5c77a7d79384f6ef315f206398ed4229f069e873855d79e4",
+      "sourceSha256": "c70e4d0c347e685f5c77a7d79384f6ef315f206398ed4229f069e873855d79e4",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/interactions.js",
+      "bytes": 5319,
+      "sha256": "888fa71a1ef8e8203ac34ef34bff960bcc52c5485cc26b9dae48cedda8cac8ef",
+      "sourceSha256": "888fa71a1ef8e8203ac34ef34bff960bcc52c5485cc26b9dae48cedda8cac8ef",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/parser.d.ts",
+      "bytes": 718,
+      "sha256": "b65a96f2c9ef86b0e31109651ca386f7cbcc662afa95d760f3c466f811a1d283",
+      "sourceSha256": "b65a96f2c9ef86b0e31109651ca386f7cbcc662afa95d760f3c466f811a1d283",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/parser.js",
+      "bytes": 23587,
+      "sha256": "b7bf37dca370cce4c0d676417a13170ebbc13d0453793559143596f1b3a9c4d9",
+      "sourceSha256": "b7bf37dca370cce4c0d676417a13170ebbc13d0453793559143596f1b3a9c4d9",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/pictures.d.ts",
+      "bytes": 814,
+      "sha256": "c1b1b6eb55648196c4823c9a03554a8e25d791e32f8303107e5023b2d75bc50f",
+      "sourceSha256": "c1b1b6eb55648196c4823c9a03554a8e25d791e32f8303107e5023b2d75bc50f",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/pictures.js",
+      "bytes": 12699,
+      "sha256": "e70f219ef585ec5b5cbd3c3ef673e29023bfc611860c56d30e0f82613ac0f407",
+      "sourceSha256": "e70f219ef585ec5b5cbd3c3ef673e29023bfc611860c56d30e0f82613ac0f407",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/records.d.ts",
+      "bytes": 738,
+      "sha256": "1b52bb09b50fd1023c09719747114f92c8a6340b745c3c467651498ba4b2e70b",
+      "sourceSha256": "1b52bb09b50fd1023c09719747114f92c8a6340b745c3c467651498ba4b2e70b",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/records.js",
+      "bytes": 2697,
+      "sha256": "471dbdefd6815886435ee8486ae91bf082baaddbf3b60952e9e773f42a146064",
+      "sourceSha256": "471dbdefd6815886435ee8486ae91bf082baaddbf3b60952e9e773f42a146064",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/text.d.ts",
+      "bytes": 1199,
+      "sha256": "f2d3c0759956754ad1cd13913afd841fecef97c1e8bff86967cf30ee5ec5bd27",
+      "sourceSha256": "f2d3c0759956754ad1cd13913afd841fecef97c1e8bff86967cf30ee5ec5bd27",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/ppt/text.js",
+      "bytes": 35410,
+      "sha256": "000c5fb3428090ad497fd31aa7d0774193c987b8baad38e9e95898185555b818",
+      "sourceSha256": "000c5fb3428090ad497fd31aa7d0774193c987b8baad38e9e95898185555b818",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/pptjs.browser.js",
+      "bytes": 572514,
+      "sha256": "a9c954d8acd7a727da1df3cbff679f6867fe7e6ad7babde38908093f30fa8f75",
+      "sourceSha256": "a9c954d8acd7a727da1df3cbff679f6867fe7e6ad7babde38908093f30fa8f75",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/pptjs.mjs",
+      "bytes": 572992,
+      "sha256": "0d93a2d0d2ab006f3f6b117d284d76743a8e6d710fbfa79be692fdc99e7d4c60",
+      "sourceSha256": "0d93a2d0d2ab006f3f6b117d284d76743a8e6d710fbfa79be692fdc99e7d4c60",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/pptjs.worker.js",
+      "bytes": 572410,
+      "sha256": "d15959ec544da47e4aaf087e2df981b1166cb434f74b0c5359771618fd1a2782",
+      "sourceSha256": "d15959ec544da47e4aaf087e2df981b1166cb434f74b0c5359771618fd1a2782",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/effects.d.ts",
+      "bytes": 1196,
+      "sha256": "8b3b9d04db76cc70d9af99aabd4dff73638272918459d2fac04214edf601e2cb",
+      "sourceSha256": "8b3b9d04db76cc70d9af99aabd4dff73638272918459d2fac04214edf601e2cb",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/effects.js",
+      "bytes": 9772,
+      "sha256": "d92f5ef485609178804bbc4834a1a2a3d46fdc0b2eabf2776f26a0fd4b5e66ee",
+      "sourceSha256": "d92f5ef485609178804bbc4834a1a2a3d46fdc0b2eabf2776f26a0fd4b5e66ee",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/fields.d.ts",
+      "bytes": 545,
+      "sha256": "0d9ce33efe1bcbe2b1005ea06d0bffd47f974934233127075527c0ba17e1a919",
+      "sourceSha256": "0d9ce33efe1bcbe2b1005ea06d0bffd47f974934233127075527c0ba17e1a919",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/fields.js",
+      "bytes": 12566,
+      "sha256": "305014e97d1547e8bd5939372ea8a6eec4841a7e3a2a402479758ac355951ef1",
+      "sourceSha256": "305014e97d1547e8bd5939372ea8a6eec4841a7e3a2a402479758ac355951ef1",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/geometry.d.ts",
+      "bytes": 608,
+      "sha256": "93cee133021be28b6b781681ac24fb39f79af6b7d382e3e75bfb82e7ab84eea8",
+      "sourceSha256": "93cee133021be28b6b781681ac24fb39f79af6b7d382e3e75bfb82e7ab84eea8",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/geometry.js",
+      "bytes": 9191,
+      "sha256": "5a8c03411d44ff1259c29646d26d0607bbfba8bf45f20f6a4e58b67fe0af6964",
+      "sourceSha256": "5a8c03411d44ff1259c29646d26d0607bbfba8bf45f20f6a4e58b67fe0af6964",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/safe.d.ts",
+      "bytes": 850,
+      "sha256": "7f43a307bf61a72b01c188c274fa44014156d24c21ff2e7a252f73227fb02842",
+      "sourceSha256": "7f43a307bf61a72b01c188c274fa44014156d24c21ff2e7a252f73227fb02842",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/safe.js",
+      "bytes": 3492,
+      "sha256": "3440f296d6733daa1a527d9a7b57a270a24ae2e0a524641a7bea0acc89ac1c4b",
+      "sourceSha256": "3440f296d6733daa1a527d9a7b57a270a24ae2e0a524641a7bea0acc89ac1c4b",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/svg.d.ts",
+      "bytes": 511,
+      "sha256": "64dcbbbc8be7c77a980fb206a58dabaa522a63cc8af264b32886fa1a1b43045d",
+      "sourceSha256": "64dcbbbc8be7c77a980fb206a58dabaa522a63cc8af264b32886fa1a1b43045d",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/svg.js",
+      "bytes": 22152,
+      "sha256": "32545bd2b401cbafb976987d112da557a147592e64ec30e7466471f7159edb61",
+      "sourceSha256": "32545bd2b401cbafb976987d112da557a147592e64ec30e7466471f7159edb61",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/text.d.ts",
+      "bytes": 453,
+      "sha256": "787e5ce7eeb5eb2eb2d05dc25b53a2ff6689842211c4815e1573010a2d5a2398",
+      "sourceSha256": "787e5ce7eeb5eb2eb2d05dc25b53a2ff6689842211c4815e1573010a2d5a2398",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/text.js",
+      "bytes": 16955,
+      "sha256": "969787aa70bb724eee8c4e685a45377b8abe4e6f0c7fd5c4e967d9a1524127a4",
+      "sourceSha256": "969787aa70bb724eee8c4e685a45377b8abe4e6f0c7fd5c4e967d9a1524127a4",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/three-d.d.ts",
+      "bytes": 1245,
+      "sha256": "286064a2f87f16f0e16ebf96e161558681bf6602c80356e00a6af12b167bbc30",
+      "sourceSha256": "286064a2f87f16f0e16ebf96e161558681bf6602c80356e00a6af12b167bbc30",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/three-d.js",
+      "bytes": 13387,
+      "sha256": "3543cb106aeb8f2c6af2c792a177ac374546f32112117ad94a12d0ac1287b9f7",
+      "sourceSha256": "3543cb106aeb8f2c6af2c792a177ac374546f32112117ad94a12d0ac1287b9f7",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/wordart.d.ts",
+      "bytes": 1134,
+      "sha256": "d3d0cacf87eeac057602f38e4cfb963e71871dbb6f1374aa8a4704971d45634d",
+      "sourceSha256": "d3d0cacf87eeac057602f38e4cfb963e71871dbb6f1374aa8a4704971d45634d",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/render/wordart.js",
+      "bytes": 11210,
+      "sha256": "57806b593e910d41fcb8890f7a08857efc1ab998cb1f47f02fa2d5b806758ea6",
+      "sourceSha256": "57806b593e910d41fcb8890f7a08857efc1ab998cb1f47f02fa2d5b806758ea6",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/runtime.d.ts",
+      "bytes": 4845,
+      "sha256": "ce8993ac33e470ac4a2fa04da1fa88bfb29a3dabd5a5c5695ab98f29799a967c",
+      "sourceSha256": "ce8993ac33e470ac4a2fa04da1fa88bfb29a3dabd5a5c5695ab98f29799a967c",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/runtime.js",
+      "bytes": 14540,
+      "sha256": "39733abfc315999e52d34af022460b5b2b70de9fb4f47133fb6ad90dd0f217d5",
+      "sourceSha256": "39733abfc315999e52d34af022460b5b2b70de9fb4f47133fb6ad90dd0f217d5",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/types.d.ts",
+      "bytes": 13811,
+      "sha256": "7b1c57fd3081dfb8fc60fe8e3bf4e817e68255acc7fb24f344f1908be671f6cd",
+      "sourceSha256": "7b1c57fd3081dfb8fc60fe8e3bf4e817e68255acc7fb24f344f1908be671f6cd",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/types.js",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "sourceSha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/viewer.d.ts",
+      "bytes": 255,
+      "sha256": "8696337fb86ee16c7a736443b272d0cf56c3ac7d8481fe53356b47bc40357372",
+      "sourceSha256": "8696337fb86ee16c7a736443b272d0cf56c3ac7d8481fe53356b47bc40357372",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/viewer.js",
+      "bytes": 15042,
+      "sha256": "d7de7ccdc901cf6629475187a1dbd82e36cd9954df716ae29bf1f5cda026e984",
+      "sourceSha256": "d7de7ccdc901cf6629475187a1dbd82e36cd9954df716ae29bf1f5cda026e984",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/worker-client.d.ts",
+      "bytes": 1140,
+      "sha256": "57a02aa2edd0800a3cc4935ae4ad451357d915836c673e0d6cca45134c525555",
+      "sourceSha256": "57a02aa2edd0800a3cc4935ae4ad451357d915836c673e0d6cca45134c525555",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/worker-client.js",
+      "bytes": 4032,
+      "sha256": "c46088b2e526fc071c911bd19cabf4658e45ddac84edf31ade860a2e25b4b00a",
+      "sourceSha256": "c46088b2e526fc071c911bd19cabf4658e45ddac84edf31ade860a2e25b4b00a",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/worker.d.ts",
+      "bytes": 11,
+      "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "sourceSha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "sourceTransform": "none"
+    },
+    {
+      "path": "vendor/ppt/dist/worker.js",
+      "bytes": 1327,
+      "sha256": "b8b7211a0724f1c0e2f2b6276acbeb527148760c8d138f78e0f1f122aa601c94",
+      "sourceSha256": "b8b7211a0724f1c0e2f2b6276acbeb527148760c8d138f78e0f1f122aa601c94",
       "sourceTransform": "none"
     },
     {
       "path": "vendor/ppt/package.json",
-      "bytes": 1348,
-      "sha256": "dd62e3e3ea70f05f29ae2e84ba6eb3800a5942356f8330034ef967774e81a3fd",
-      "sourceSha256": "dd62e3e3ea70f05f29ae2e84ba6eb3800a5942356f8330034ef967774e81a3fd",
+      "bytes": 2352,
+      "sha256": "4e6ada2271a30aba61a49ff67309613b704e66b96aa09d960a4407e044c2ad9d",
+      "sourceSha256": "4e6ada2271a30aba61a49ff67309613b704e66b96aa09d960a4407e044c2ad9d",
       "sourceTransform": "none"
     },
     {
-      "path": "vendor/ppt/ppt-font-cjk.otf",
-      "bytes": 16437364,
-      "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
-      "sourceSha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
-      "sourceTransform": "none"
-    },
-    {
-      "path": "vendor/ppt/ppt-native.wasm",
-      "bytes": 1555542,
-      "sha256": "00adf3b25554cb44000c7213eb4a8f86086ecb211dfef5306f524c2f29248c5d",
-      "sourceSha256": "00adf3b25554cb44000c7213eb4a8f86086ecb211dfef5306f524c2f29248c5d",
-      "sourceTransform": "none"
-    },
-    {
-      "path": "vendor/ppt/worker.mjs",
-      "bytes": 58449,
-      "sha256": "559f91d2727b44532ca99c1fda188fa7eaa365a3437596abe4e1bb0961c39724",
-      "sourceSha256": "559f91d2727b44532ca99c1fda188fa7eaa365a3437596abe4e1bb0961c39724",
+      "path": "vendor/ppt/README.md",
+      "bytes": 5276,
+      "sha256": "f5415a9f7ec87a4ab140d66ac6f0e3783e79b1501ad91812171fbecec1b093d1",
+      "sourceSha256": "f5415a9f7ec87a4ab140d66ac6f0e3783e79b1501ad91812171fbecec1b093d1",
       "sourceTransform": "none"
     },
     {
@@ -21821,16 +22604,16 @@
     },
     {
       "path": "vendor/xlsx/sheet.worker.js",
-      "bytes": 916827,
-      "sha256": "f7cedb1219d6eaef1da08392dca4ef32a7372983cedf1b165d9ae67f47f82c83",
-      "sourceSha256": "f7cedb1219d6eaef1da08392dca4ef32a7372983cedf1b165d9ae67f47f82c83",
+      "bytes": 916651,
+      "sha256": "44d7e40431f4c6f8edcc203f6a00c6d3ef5a9f8f3ec6e475f0b1cabbf7947dbc",
+      "sourceSha256": "44d7e40431f4c6f8edcc203f6a00c6d3ef5a9f8f3ec6e475f0b1cabbf7947dbc",
       "sourceTransform": "none"
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
-      "bytes": 353024,
-      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
-      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "bytes": 354745,
+      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
       "sourceTransform": "none"
     },
     {
@@ -21863,9 +22646,9 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
-      "bytes": 353024,
-      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
-      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "bytes": 354745,
+      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
       "sourceTransform": "none"
     },
     {
@@ -21898,9 +22681,9 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
-      "bytes": 353024,
-      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
-      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "bytes": 354745,
+      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
       "sourceTransform": "none"
     },
     {
@@ -21933,9 +22716,9 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE.zip",
-      "bytes": 353024,
-      "sha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
-      "sourceSha256": "686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e",
+      "bytes": 354745,
+      "sha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
+      "sourceSha256": "1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d",
       "sourceTransform": "none"
     },
     {

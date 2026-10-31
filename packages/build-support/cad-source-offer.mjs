@@ -3,14 +3,15 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
 
-// This already-public source snapshot was downloaded and rebuilt through its
-// normal owner graph to the exact current CAD integration runtime bytes.
+// This public snapshot was read back and cold-built on Oracle. Its standalone
+// preferred sources reproduce the canonical and actual Full owner runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: 'b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd',
-  sha256: 'b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5',
-  bytes: 199843365,
-  runtimeSha256: '12a5a9060ae0e2035ead248add91b6657ae7973c2a4754112fbe3a9b40ca96f9'
+  sourceCommit: '5c7e9dab42d3ceee005f1929a23c5da137f018a1',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1',
+  sha256: 'aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c',
+  bytes: 203577258,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.3',
+  runtimeSha256: '97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f'
 })
 
 // Native preferred sources are distinct from the File Viewer integration source.
@@ -31,15 +32,15 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
   // This release includes its complete current integration source, independently
   // rebuilt against the ordinary Full runtime. Native owner versions stay fixed.
-  releaseVersion: '3.3.1',
+  releaseVersion: '3.3.3',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e',
-  bytes: 353024,
-  files: 85,
-  runtimeBytes: 627842,
-  runtimeSha256: '12a5a9060ae0e2035ead248add91b6657ae7973c2a4754112fbe3a9b40ca96f9'
+  sha256: '1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d',
+  bytes: 354745,
+  files: 86,
+  runtimeBytes: 627662,
+  runtimeSha256: '97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {
@@ -52,8 +53,9 @@ export function cadIntegrationSourceNotice(releaseVersion) {
     'Corresponding source (immutable HTTPS): ' + CAD_PUBLIC_CORRESPONDING_SOURCE.url,
     'HTTPS archive SHA-256: ' + CAD_PUBLIC_CORRESPONDING_SOURCE.sha256,
     '',
-    'This existing complete public source snapshot reconstructs the CAD integration output identified below through its ordinary owner build.',
-    'Use the repository build prerequisites, Node.js 24.20.0 and pnpm 11.0.9: pnpm install --frozen-lockfile; pnpm build:core; pnpm build:renderers; pnpm build:presets; pnpm --filter @file-viewer/web-full build.',
+    'The public archive contains the exact standalone preferred-source snapshot at ' + CAD_PUBLIC_CORRESPONDING_SOURCE.buildDirectory + '.',
+    'Use Node.js 24.20.0 and npm 11.19.0. From that directory run: npm ci --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org/; npm run build.',
+    'The standalone lock pins its canonical build tools; the normal workspace-toolchain reconstruction also verifies the actual Full runtime bytes.',
     'A standalone current preferred-source archive is also retained in the complete public source checkout and CAD asset directories as ' + CAD_SOURCE_ARCHIVE_NAME + '.',
     'Standalone archive SHA-256: ' + CAD_INTEGRATION_SOURCE.sha256,
     'Runtime-only npm archives do not include source ZIPs; retain this notice and its immutable HTTPS source reference.',

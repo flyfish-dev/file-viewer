@@ -6,6 +6,13 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## File Viewer v3.3.3 — 2026-10-31
+
+- Upgrade binary PPT/POT to the compiled Apache-2.0 `@file-viewer/ppt@1.0.1` TypeScript engine. Full packages, Vite and the copy-assets CLI ship its matching local module and parsing Worker, without native WASM or bundled fonts. The engine source remains private; prior native releases retain their own terms.
+- Align all 89 release targets and their offline assets, retaining the published PDF 3.3.2 fixes and existing Vue 2.6/2.7 support.
+
+Version composition: 88 mainline packages at `3.3.3` and `msdoc-viewer@0.2.15`.
+
 ## File Viewer v3.3.1
 
 - Fix large CSV/TSV parsing without allocating a second UTF-8 array (#426). The reporter's 155 MB CSV passes real Worker and main-thread previews.

@@ -105,6 +105,7 @@ module.exports = {
           '@babel/plugin-proposal-optional-chaining',
           '@babel/plugin-proposal-nullish-coalescing-operator',
           '@babel/plugin-proposal-class-properties',
+          '@babel/plugin-transform-numeric-separator',
           resolveApp('build/babel-transform-import-meta-url.cjs')
         ]
       })

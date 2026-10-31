@@ -204,11 +204,9 @@ export function useDemoViewerOptions(input: UseDemoViewerOptionsInput) {
 
     // Keep the ESM entry in Vite's JavaScript bundle. Static servers that map
     // `.mjs` to a generic binary MIME type would reject a native import of the
-    // copied vendor entry. Worker/WASM/font assets remain external and versioned.
+    // copied vendor entry. The parsing Worker remains external and versioned.
     options.presentation = {
-      pptWorkerUrl: pptRuntimeAssetUrl('vendor/ppt/worker.mjs'),
-      pptWasmUrl: pptRuntimeAssetUrl('vendor/ppt/ppt-native.wasm'),
-      pptFontUrl: pptRuntimeAssetUrl('vendor/ppt/ppt-font-cjk.otf'),
+      pptWorkerUrl: pptRuntimeAssetUrl('vendor/ppt/dist/pptjs.worker.js'),
       ...runtime.presentation
     }
 

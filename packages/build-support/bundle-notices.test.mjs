@@ -78,6 +78,10 @@ test('Full preserves every contributor grant byte and associates equal grants wi
     }
     await writeFile(join(directory, 'package.json'), JSON.stringify(metadata))
     await writeFile(join(directory, 'LICENSE'), original)
+    for (const filename of owner.noticeFiles || []) {
+      await writeFile(join(directory, filename),
+        await readFile(new URL('../../' + owner.directory + '/' + filename, import.meta.url)))
+    }
     const entry = join(directory, 'index.js')
     await writeFile(entry, 'export const used=true\n')
     inputs[entry] = {}
@@ -98,7 +102,7 @@ test('Full preserves every contributor grant byte and associates equal grants wi
     includeWorkspacePackages: fullWorkspaceLicensePackages.map((owner) => owner.packageName)
   }
   await writeBundleNotices({ inputs }, output, options)
-  assert.equal((await verifyFullWorkspaceNotices(root)).checked.length, 4)
+  assert.equal((await verifyFullWorkspaceNotices(root)).checked.length, fullWorkspaceLicensePackages.length)
   const notices = await readFile(output)
   for (const owner of expected) assert.ok(notices.includes(owner.original))
   const altered = notices

@@ -395,17 +395,18 @@ test('registry preparation is bounded and uses explicit cache settings without a
     },
     { packageManager: 'pnpm', projectRoot: '/tmp/file-viewer-project' }
   )
-  assert.deepEqual(plan.steps[0].args.slice(0, 9), [
+  assert.deepEqual(plan.steps[0].args.slice(0, 7), [
     'add',
     '--save-exact',
     '--ignore-scripts',
     '--registry',
     'https://registry.example.invalid/npm/',
     '--store-dir',
-    '/tmp/file-viewer-project/.cache/file-viewer',
-    '--network-concurrency',
-    '4'
+    '/tmp/file-viewer-project/.cache/file-viewer'
   ])
+  assert.equal(plan.steps[0].args.includes('--network-concurrency'), false)
+  assert.equal(plan.steps[0].env.pnpm_config_network_concurrency, '4')
+  assert.equal(plan.steps[0].env.npm_config_network_concurrency, '4')
   const yarnPlan = await createFileViewerInstallPlan(
     {
       framework: 'react',

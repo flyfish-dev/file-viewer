@@ -1,0 +1,12 @@
+export { parsePpt, VERSION } from './ppt/parser.js';
+export { renderSlide, renderSlideSvg, defaultPptCss } from './render/svg.js';
+export { createPptViewer, loadPptViewer, getPptPackageManifest } from './runtime.js';
+export { createPptViewer as createSlideViewer } from './viewer.js';
+export type { PptDocument, PptViewerRuntime, PptPackageManifest, PptRuntimeLicenseSummary, PptWatermarkSummary, LoadPptViewerOptions, PptRenderOptions, PptMountOptions, PptAssetSource, MountedPptViewer, PptFrameCacheOptions, PptFrameCacheStats, PptRenderResult } from './runtime.js';
+export type { PptDocument as ParsedPptDocument } from './types.js';
+export { PptWorkerClient } from './worker-client.js';
+export { PptError } from './core/errors.js';
+export { createCanvasTextMeasurer } from './layout/measure.js';
+export { layoutText } from './layout/text-layout.js';
+export type { TextLayout, TextLayoutOptions, TextLine, TextFragment } from './layout/text-layout.js';
+export type * from './types.js';

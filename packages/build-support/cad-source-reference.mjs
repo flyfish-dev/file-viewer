@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+import { lstatSync, readFileSync } from 'node:fs'
 
 const prefix = 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/'
 export function assertCadSourceReference(bytes, proof) {
@@ -28,7 +29,10 @@ export function assertCadSourceReference(bytes, proof) {
   }
 }
 
-export function readCadRemoteSource(proof, { run = spawnSync } = {}) {
+export function readCadRemoteSource(proof, {
+  run = spawnSync,
+  frozenArchive = process.env.FILE_VIEWER_CAD_SOURCE_ARCHIVE
+} = {}) {
   assert.match(
     proof.url,
     /^https:\/\/codeload\.github\.com\/flyfish-dev\/file-viewer\/tar\.gz\/[a-f0-9]{40}$/,
@@ -39,6 +43,12 @@ export function readCadRemoteSource(proof, { run = spawnSync } = {}) {
     prefix + proof.sourceCommit,
     'CAD source URL must identify its exact immutable public commit'
   )
+  if (frozenArchive) {
+    const info = lstatSync(frozenArchive)
+    assert.ok(info.isFile() && !info.isSymbolicLink(), 'Frozen public CAD source must be a regular archive')
+    const bytes = readFileSync(frozenArchive)
+    return { bytes, proof: assertCadSourceReference(bytes, proof), retrieval: 'frozen-public-source-copy' }
+  }
   const result = run('gh', ['api', proof.url, '--method', 'GET'], {
     shell: false,
     encoding: null,
@@ -52,5 +62,5 @@ export function readCadRemoteSource(proof, { run = spawnSync } = {}) {
     'CAD corresponding source HTTPS read failed: ' + (result.stderr || '').toString()
   )
   const bytes = Buffer.from(result.stdout)
-  return { bytes, proof: assertCadSourceReference(bytes, proof) }
+  return { bytes, proof: assertCadSourceReference(bytes, proof), retrieval: 'github-https' }
 }

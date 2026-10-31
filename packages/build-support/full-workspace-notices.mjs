@@ -7,6 +7,7 @@ import { join } from 'node:path'
 // original grants or contributor notices, independently of the host grant.
 export const fullWorkspaceLicensePackages = Object.freeze([
   { packageName: '@file-viewer/doc', directory: 'packages/renderers/doc' },
+  { packageName: '@file-viewer/renderer-3d', directory: 'packages/renderers/3d', noticeFiles: ['GEO3D_THIRD_PARTY_NOTICES.md'] },
   { packageName: '@file-viewer/renderer-hangul', directory: 'packages/renderers/hangul' },
   { packageName: '@file-viewer/renderer-iwork', directory: 'packages/renderers/iwork' },
   { packageName: '@file-viewer/renderer-wordperfect', directory: 'packages/renderers/wordperfect' }
@@ -33,6 +34,10 @@ export async function verifyFullWorkspaceNotices(root) {
       Buffer.from(matches[0]).includes(original),
       `Full must retain every original LICENSE byte for ${id}`
     )
+    for (const filename of owner.noticeFiles || []) {
+      assert.ok(Buffer.from(matches[0]).includes(await readFile(join(root, owner.directory, filename))),
+        `Full must retain every original ${filename} byte for ${id}`)
+    }
     checked.push({
       packageName: metadata.name,
       version: metadata.version,

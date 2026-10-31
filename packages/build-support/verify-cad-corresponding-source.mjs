@@ -84,6 +84,9 @@ if (args.includes('--remote')) {
   assert.equal(CAD_PUBLIC_CORRESPONDING_SOURCE.runtimeSha256, CAD_INTEGRATION_SOURCE.runtimeSha256,
     'The existing public source no longer corresponds to the current CAD integration')
   const remote = readCadRemoteSource(CAD_PUBLIC_CORRESPONDING_SOURCE)
-  result.httpsReadback = { ...remote.proof, status: 'verified-public-source-bytes' }
+  result.httpsReadback = { ...remote.proof,
+    status: remote.retrieval === 'frozen-public-source-copy'
+      ? 'verified-frozen-public-source-bytes' : 'verified-public-source-bytes',
+    retrieval: remote.retrieval }
 }
 console.log('[cad-corresponding-source]', JSON.stringify(result))

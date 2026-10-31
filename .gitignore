@@ -24,6 +24,16 @@
 /test/fixtures/pptx-chart-model-3.2.2.png
 node_modules/
 **/dist/
+!/apps/viewer-demo/public/wasm/cad/dist/
+!/apps/viewer-demo/public/wasm/cad/dist/**
+!/apps/viewer-demo/public/vendor/ppt/dist/
+!/apps/viewer-demo/public/vendor/ppt/dist/**
+!/apps/viewer-demo/public/vendor/docx/dist/
+!/apps/viewer-demo/public/vendor/docx/dist/**
+!/apps/viewer-demo/public/vendor/pptx/dist/
+!/apps/viewer-demo/public/vendor/pptx/dist/**
+!/apps/viewer-demo/public/vendor/xlsx/dist/
+!/apps/viewer-demo/public/vendor/xlsx/dist/**
 **/.build/
 apps/docs-site/.next/
 apps/docs-site/.source/

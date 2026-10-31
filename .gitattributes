@@ -3,6 +3,8 @@ packages/renderers/wordperfect/test/fixtures/LICENSE.MPL-2.0.txt -whitespace
 # Registry-verified DOCX mirrors retain the publisher's exact bytes.
 **/vendor/docx/docx.worker.js whitespace=-blank-at-eol
 **/vendor/docx/jszip.min.js whitespace=-blank-at-eol
+# Keep the owner-prepared PDF compatibility Worker byte-exact across checkouts.
+**/vendor/pdf/pdf.worker.mjs -text -whitespace
 # Preserve the upstream font grant's original line endings.
 **/LICENSE.ArchitectsDaughter.txt -text
 # Preserve the exact original grants deployed with these runtime assets.

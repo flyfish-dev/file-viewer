@@ -2188,21 +2188,20 @@ async function copyKnownRendererAssets(targetRoot: string, rendererIds: readonly
     ? { sourcePackage: '@file-viewer/ppt', sourceVersion: pptVersion || undefined }
     : undefined
   for (const [id, filename] of [
-    ['ppt-module', 'index.mjs'],
-    ['ppt-worker', 'worker.mjs'],
-    ['ppt-frame-cache', 'frame-cache.mjs'],
-    ['ppt-wasm', 'ppt-native.wasm'],
-    ['ppt-cjk-font', 'ppt-font-cjk.otf'],
-    ['ppt-manifest', 'manifest.json'],
-    ['ppt-package', 'package.json'],
-    ['ppt-license', 'LICENSE'],
-    ['ppt-notice', 'NOTICE']
+    ['ppt-module', 'dist/pptjs.mjs'],
+    ['ppt-worker', 'dist/pptjs.worker.js'],
+    ['ppt-runtime-dist', 'dist'],
+    ['ppt-runtime-manifest', 'dist/manifest.json'],
+    ['ppt-runtime-package', 'package.json'],
+    ['ppt-runtime-license', 'LICENSE'],
+    ['ppt-runtime-notice', 'NOTICE.md'],
+    ['ppt-runtime-readme', 'README.md']
   ] as const) {
     await push(
       'office-presentation-binary',
       id,
       join(targetRoot, `vendor/ppt/${filename}`),
-      () => copyFileIfPresent(
+      () => (filename === 'dist' ? copyDirectoryIfPresent : copyFileIfPresent)(
         pptRoot ? join(pptRoot, filename) : null,
         join(targetRoot, `vendor/ppt/${filename}`)
       ),

@@ -8,10 +8,10 @@ const source = await readFile(sourcePath, 'utf8')
 const viteConfigPath = join(root, 'apps/viewer-demo/vite.config.ts')
 const viteConfigSource = await readFile(viteConfigPath, 'utf8')
 
-if (/pptModuleUrl\s*:\s*pptRuntimeAssetUrl\(['"]vendor\/ppt\/index\.mjs/.test(source)) {
-  throw new Error('The Demo still natively imports vendor/ppt/index.mjs, so a generic .mjs MIME type can reproduce GitHub #179.')
+if (/pptModuleUrl\s*:\s*pptRuntimeAssetUrl\(['"]vendor\/ppt\//.test(source)) {
+  throw new Error('The Demo still natively imports vendor/ppt/dist/pptjs.mjs, so a generic .mjs MIME type can reproduce GitHub #179.')
 }
-for (const asset of ['worker.mjs', 'ppt-native.wasm', 'ppt-font-cjk.otf']) {
+for (const asset of ['dist/pptjs.worker.js']) {
   if (!source.includes(`pptRuntimeAssetUrl('vendor/ppt/${asset}')`)) {
     throw new Error(`Expected the versioned external PPT asset ${asset}.`)
   }
@@ -53,4 +53,4 @@ if (existsSync(distRoot)) {
   }
 }
 
-console.log('[issue-179] Demo bundles the PPT ESM entry and keeps only Worker/WASM/font URLs external.')
+console.log('[issue-179] Demo bundles the PPT ESM entry and keeps only its parsing Worker URL external.')

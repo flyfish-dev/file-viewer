@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/web",
-  "version": "3.3.1",
+  "version": "3.3.3",
   "private": false,
   "type": "module",
   "description": "Lightweight Vanilla JS / Pure Web file viewer. Add PDF, Office and other browser-side previews with renderer presets.",
@@ -68,7 +68,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.1"
+    "@file-viewer/core": "workspace:3.3.3"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

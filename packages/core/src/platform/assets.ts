@@ -30,9 +30,10 @@ export const DEFAULT_FILE_VIEWER_DOCX_WORKER_JSZIP_PATH = 'vendor/docx/jszip.min
 export const DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION = '0.3.39';
 export const DEFAULT_FILE_VIEWER_PRESENTATION_WORKER_PATH = 'vendor/pptx/pptx.worker.js';
 export const DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH = 'vendor/ppt';
-export const DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION = '0.3.6';
-export const DEFAULT_FILE_VIEWER_PPT_MODULE_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/index.mjs`;
-export const DEFAULT_FILE_VIEWER_PPT_WORKER_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/worker.mjs`;
+export const DEFAULT_FILE_VIEWER_PPT_RUNTIME_VERSION = '1.0.1';
+export const DEFAULT_FILE_VIEWER_PPT_MODULE_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/dist/pptjs.mjs`;
+export const DEFAULT_FILE_VIEWER_PPT_WORKER_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/dist/pptjs.worker.js`;
+/** @deprecated Compatibility paths for the previous native engine; not loaded by TypeScript PPT. */
 export const DEFAULT_FILE_VIEWER_PPT_FRAME_CACHE_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/frame-cache.mjs`;
 export const DEFAULT_FILE_VIEWER_PPT_WASM_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/ppt-native.wasm`;
 export const DEFAULT_FILE_VIEWER_PPT_FONT_PATH = `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/ppt-font-cjk.otf`;
@@ -937,7 +938,7 @@ export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRe
         required: true,
         defaultPath: DEFAULT_FILE_VIEWER_PPT_MODULE_PATH,
         optionPath: 'presentation.pptModuleUrl',
-        description: 'Official @file-viewer/ppt 0.3 browser entry for PowerPoint 97–2003 preview.',
+        description: 'Self-hosted TypeScript PPT standalone module for PowerPoint 97–2003 preview.',
       },
       {
         id: 'ppt-worker',
@@ -947,36 +948,16 @@ export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRe
         required: true,
         defaultPath: DEFAULT_FILE_VIEWER_PPT_WORKER_PATH,
         optionPath: 'presentation.pptWorkerUrl',
-        description: 'Official @file-viewer/ppt 0.3 module Worker.',
+        description: 'TypeScript PPT parsing Worker; layout and Canvas rendering use the main thread.',
       },
       {
-        id: 'ppt-frame-cache',
+        id: 'ppt-runtime-dist',
         rendererId: 'office-presentation-binary',
-        kind: 'script',
+        kind: 'directory',
         target: 'public',
         required: true,
-        defaultPath: DEFAULT_FILE_VIEWER_PPT_FRAME_CACHE_PATH,
-        description: 'Bounded IndexedDB frame cache imported by the binary-PPT Worker.',
-      },
-      {
-        id: 'ppt-wasm',
-        rendererId: 'office-presentation-binary',
-        kind: 'wasm',
-        target: 'public',
-        required: true,
-        defaultPath: DEFAULT_FILE_VIEWER_PPT_WASM_PATH,
-        optionPath: 'presentation.pptWasmUrl',
-        description: 'Official @file-viewer/ppt 0.3 native WebAssembly parser and renderer.',
-      },
-      {
-        id: 'ppt-cjk-font',
-        rendererId: 'office-presentation-binary',
-        kind: 'font',
-        target: 'public',
-        required: true,
-        defaultPath: DEFAULT_FILE_VIEWER_PPT_FONT_PATH,
-        optionPath: 'presentation.pptFontUrl',
-        description: 'CJK font pack verified and loaded by the binary-PPT runtime.',
+        defaultPath: `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/dist`,
+        description: 'Unmodified compiled JavaScript and declarations from the installed PPT package.',
       },
       {
         id: 'ppt-runtime-manifest',
@@ -984,7 +965,7 @@ export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRe
         kind: 'metadata',
         target: 'public',
         required: true,
-        defaultPath: `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/manifest.json`,
+        defaultPath: `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/dist/manifest.json`,
         description: 'Integrity and edition metadata for the official binary-PPT runtime.',
       },
       {
@@ -995,6 +976,15 @@ export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRe
         required: true,
         defaultPath: `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/package.json`,
         description: 'Package identity metadata for the official binary-PPT runtime.',
+      },
+      {
+        id: 'ppt-runtime-readme',
+        rendererId: 'office-presentation-binary',
+        kind: 'metadata',
+        target: 'public',
+        required: true,
+        defaultPath: `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/README.md`,
+        description: 'Usage and supported-format limits shipped with the PPT runtime.',
       },
       {
         id: 'ppt-runtime-license',
@@ -1011,7 +1001,7 @@ export const DEFAULT_FILE_VIEWER_RENDERER_ASSET_MANIFESTS: readonly FileViewerRe
         kind: 'license',
         target: 'public',
         required: true,
-        defaultPath: `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/NOTICE`,
+        defaultPath: `${DEFAULT_FILE_VIEWER_PPT_RUNTIME_PATH}/NOTICE.md`,
         description: 'Notices shipped by the independently versioned @file-viewer/ppt package.',
       },
     ],

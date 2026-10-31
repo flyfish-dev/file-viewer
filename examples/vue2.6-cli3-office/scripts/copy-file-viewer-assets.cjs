@@ -16,7 +16,7 @@ function packageRoot(packageName, anchorPackages = []) {
     }
   }
   if (packageName === '@file-viewer/ppt') {
-    resolutionPaths.push(packageRoot('@file-viewer/renderer-presentation'))
+    resolutionPaths.push(packageRoot('@file-viewer/renderer-ppt', ['@file-viewer/renderer-presentation']))
   }
 
   try {
@@ -24,11 +24,20 @@ function packageRoot(packageName, anchorPackages = []) {
       paths: resolutionPaths
     }))
   } catch (error) {
-    // @file-viewer/ppt intentionally keeps package.json outside its public
-    // exports. Its ESM entry lives at the package root, so resolving that entry
-    // is the portable npm/pnpm fallback for this legacy CommonJS copy script.
+    // Packages may hide package.json and place their public entry below dist/.
+    // Find the actual owner instead of treating the entry directory as its root.
     try {
-      return path.dirname(require.resolve(packageName, { paths: resolutionPaths }))
+      let directory = path.dirname(require.resolve(packageName, { paths: resolutionPaths }))
+      while (true) {
+        const manifest = path.join(directory, 'package.json')
+        if (fs.existsSync(manifest) && JSON.parse(fs.readFileSync(manifest, 'utf8')).name === packageName) {
+          return directory
+        }
+        const parent = path.dirname(directory)
+        if (parent === directory) break
+        directory = parent
+      }
+      throw error
     } catch {
       throw error
     }
@@ -108,15 +117,10 @@ function copyDirFromPath(from, to) {
 }
 
 const pptRuntimeFiles = [
-  'index.mjs',
-  'worker.mjs',
-  'frame-cache.mjs',
-  'ppt-native.wasm',
-  'ppt-font-cjk.otf',
-  'manifest.json',
   'package.json',
   'LICENSE',
-  'NOTICE'
+  'NOTICE.md',
+  'README.md'
 ]
 
 removeDir(path.join(publicAssetRoot, 'vendor', 'ppt'))
@@ -151,6 +155,7 @@ const copied = [
   copyFile('@file-viewer/docx', 'dist/docx-preview.worker.js', 'vendor/docx/docx.worker.js'),
   copyFile('@file-viewer/docx', 'dist/jszip.min.js', 'vendor/docx/jszip.min.js'),
   ...pptRuntimeFiles.map(file => copyFile('@file-viewer/ppt', file, `vendor/ppt/${file}`)),
+  copyDir('@file-viewer/ppt', 'dist', 'vendor/ppt/dist'),
   copyFile('@file-viewer/pptx', 'dist/worker/pptx.worker.js', 'vendor/pptx/pptx.worker.js'),
   copyFile(
     '@file-viewer/renderer-spreadsheet',

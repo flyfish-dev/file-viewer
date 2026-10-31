@@ -89,8 +89,6 @@
       var sampleName = decodeURIComponent(sampleUrl.split(/[?#]/)[0].split('/').pop() || 'word.docx')
       var presentationOptions = params.get('pptModuleUrl') ? {
         pptModuleUrl: params.get('pptModuleUrl'),
-        pptWasmUrl: params.get('pptWasmUrl') || undefined,
-        pptFontUrl: params.get('pptFontUrl') || undefined,
         pptWorkerUrl: params.get('pptWorkerUrl') || undefined,
         pptVirtualize: params.get('pptVirtualize') !== 'false'
       } : undefined

@@ -89,27 +89,19 @@ const pptBundledRuntimeAssetUrlPlugin = (): Plugin => ({
   enforce: 'pre',
   transform(code, id) {
     const normalizedId = id.split('?', 1)[0]?.replace(/\\/g, '/') || ''
-    if (!normalizedId.endsWith('/@file-viewer/ppt/index.mjs')) {
+    if (!normalizedId.endsWith('/@file-viewer/ppt/dist/worker-client.js')) {
       return undefined
     }
 
     // Bundle the PPT JavaScript entry so generic static servers never need to
     // serve a native ESM module with the correct MIME type. Point its default
-    // asset URLs at the one authoritative vendor/ppt tree instead of letting
-    // Vite emit a second hashed WASM/font/Worker copy.
+    // Worker URL at the authoritative vendor/ppt tree instead of emitting a
+    // second hashed Worker copy. The TypeScript engine has no WASM/font assets.
     const runtimeBase = "(typeof document === 'undefined' ? import.meta.url : document.baseURI)"
     const replacements = [
       [
-        "new URL('./ppt-native.wasm', import.meta.url)",
-        `new URL('vendor/ppt/ppt-native.wasm', ${runtimeBase})`
-      ],
-      [
-        "new URL('./ppt-font-cjk.otf', import.meta.url)",
-        `new URL('vendor/ppt/ppt-font-cjk.otf', ${runtimeBase})`
-      ],
-      [
-        "new URL('./worker.mjs', import.meta.url)",
-        `new URL('vendor/ppt/worker.mjs', ${runtimeBase})`
+        "new URL('./pptjs.worker.js', import.meta.url)",
+        `new URL('vendor/ppt/dist/pptjs.worker.js', ${runtimeBase})`
       ]
     ] as const
     let transformed = code
@@ -182,10 +174,8 @@ export default defineConfig(ctx => {
       alias
     },
     optimizeDeps: {
-      // Vite rewrites the package's dynamic default font URL into an overly
-      // broad import.meta.glob while prebundling. Keep the small JavaScript
-      // entry in the normal transform pipeline so the plugin above can point
-      // all three runtime assets at the single public/vendor/ppt tree.
+      // Keep the parsing Worker URL in the normal transform pipeline so the
+      // plugin above can use the single public/vendor/ppt tree.
       exclude: ['@file-viewer/ppt']
     }
   }

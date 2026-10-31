@@ -187,7 +187,7 @@ export default defineConfig({
 | `inject:false` | 关闭自动注入，改为手动导入 `virtual:file-viewer-renderers` 并传给 `options.renderers` |
 | `chunkStrategy:'renderer'` | 使用 renderer 级 chunk 命名，便于缓存和定位体积问题 |
 
-PPTX-only 项目应直接从 `@file-viewer/renderer-pptx` 导入 `pptxRenderer`，或配置 `fileViewerRenderers({ formats: ['pptx'] })`。两条路径都不会把传统 `.ppt` 包、CJK 字体和 WASM 带入安装及生产闭包；原 `@file-viewer/renderer-presentation/pptx` 子路径继续兼容。只需要二进制 `.ppt` 时显式安装 `@file-viewer/renderer-ppt`；两种格式都需要时继续使用根入口 `presentationRenderer`。
+PPTX-only 项目应直接从 `@file-viewer/renderer-pptx` 导入 `pptxRenderer`，或配置 `fileViewerRenderers({ formats: ['pptx'] })`，两条路径都不会引入二进制 `.ppt` 引擎；原 `@file-viewer/renderer-presentation/pptx` 子路径继续兼容。仅二进制 `.ppt` / `.pot` 可安装 `@file-viewer/renderer-ppt`，两种格式都需要时使用 `presentationRenderer`。Office/All preset 和 Full 包已包含两条链路，新 PPT 引擎无需 WASM 或内置字体。
 
 ## 接入步骤
 
@@ -522,7 +522,7 @@ fileViewerRenderers({
 
 | 格式线                      | 当前优先方案                                                                                                                                                  | 后续拆包方向                                                                                             |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Presentation / PPT / PPTX   | `@file-viewer/renderer-presentation` 作为标准 renderer 插件；二进制 `.ppt` 按需加载包内 `@file-viewer/ppt@0.3.6` Worker/OffscreenCanvas/WASM 与有界帧缓存，OpenXML 文件按需加载 `@file-viewer/pptx` 和另一条 Worker，ODP 仍归 OpenDocument 兼容链路。 | core 不直接依赖任何演示文稿引擎；标准资产布局零配置，`.ppt` 只在自定义路径时使用 `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl` 覆盖，PPTX 使用 `workerUrl` / `workerType` 覆盖自托管资源。 |
+| Presentation / PPT / PPTX   | 二进制 `.ppt` / `.pot` 按需加载 Apache-2.0 的 `@file-viewer/ppt@1.0.1` TypeScript 编译包，Worker 解析、主线程 SVG/Canvas 绘制，无 WASM、内置字体或持久帧缓存；OpenXML 使用独立 `@file-viewer/pptx`，ODP 保持 OpenDocument 兼容链路。 | core 不依赖演示文稿引擎；Full 完整部署资产即可使用默认路径。自定义 `.ppt` 路径使用 `presentation.pptModuleUrl` / `pptWorkerUrl`，PPTX 使用 `workerUrl` / `workerType`；PPT 源码保持私有，保留包内 LICENSE/NOTICE，宿主字体和复杂效果仍有限制。 |
 | Word / DOCX / DOC / RTF / ODT | `@file-viewer/renderer-word` 作为标准 renderer 插件，底层按需加载自研 `@file-viewer/docx`、`msdoc-viewer` 和 RTF/OpenDocument 兼容链路。 | core 已移除 `@file-viewer/docx`、`msdoc-viewer`、`rtf.js`、`linkedom` 等 Word 直接依赖，Word 完整预览统一通过 renderer-word 或 preset-all 装配。 |
 | OFD                         | 使用 `@file-viewer/renderer-ofd` + `DLTech21/ofd.js` 源码链路在线预览，避开 npm dist 授权 WASM 分支；vendor 源码随 renderer 包离线分发。                  | core 已移除 OFD 兼容入口、`jszip`、`ofd-xml-parser` 和 OFD vendor，OFD 完整预览统一通过 renderer-ofd 或 preset-all 装配。 |
 | Typst                       | 使用官方 Typst Rust/WASM 生态在浏览器内编译并渲染，不退化为源码查看。                                                                                         | `@file-viewer/renderer-typst` 独立维护 compiler/renderer WASM、字体和缓存策略。                          |

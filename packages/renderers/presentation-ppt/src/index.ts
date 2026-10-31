@@ -98,8 +98,7 @@ const loadPptRuntime = async (
   options: LoadPptViewerOptions
 ): Promise<PptViewerRuntime> => {
   const module = await loadPptModule(moduleUrl);
-  // @file-viewer/ppt 0.3 owns one active document per Worker runtime. A fresh
-  // runtime per File Viewer instance prevents concurrent viewers from sharing
+  // A fresh runtime per File Viewer instance prevents concurrent viewers from sharing
   // (and closing) each other's Worker/document lifecycle.
   return module.createPptViewer(options);
 };
@@ -518,7 +517,7 @@ export default async function renderPpt(
     shell.dataset.pptVirtualized = String(mounted.virtualized);
     throwIfAborted();
 
-    // @file-viewer/ppt 0.3 supplies standalone defaults as inline styles.
+    // The PPT runtime supplies standalone defaults as inline styles.
     // File Viewer owns the surrounding scroll/zoom geometry, so normalize the
     // generated root before sizing pages. Otherwise the runtime's 20px padding
     // and max-width constraints squash slides while leaving their CSS height at

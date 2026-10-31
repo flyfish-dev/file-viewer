@@ -146,10 +146,8 @@
         }
         var pptModuleUrl = params.get('pptModuleUrl')
         window.__fileViewerPresentationOptions = pptModuleUrl ? {
-          pptModuleUrl: sameOriginUrl(pptModuleUrl, '/file-viewer/vendor/ppt/index.mjs'),
-          pptWasmUrl: params.get('pptWasmUrl') ? sameOriginUrl(params.get('pptWasmUrl'), '/file-viewer/vendor/ppt/ppt.wasm') : undefined,
-          pptFontUrl: params.get('pptFontUrl') ? sameOriginUrl(params.get('pptFontUrl'), '/file-viewer/vendor/ppt/fonts') : undefined,
-          pptWorkerUrl: params.get('pptWorkerUrl') ? sameOriginUrl(params.get('pptWorkerUrl'), '/file-viewer/vendor/ppt/ppt.worker.js') : undefined,
+          pptModuleUrl: sameOriginUrl(pptModuleUrl, '/file-viewer/vendor/ppt/dist/pptjs.mjs'),
+          pptWorkerUrl: params.get('pptWorkerUrl') ? sameOriginUrl(params.get('pptWorkerUrl'), '/file-viewer/vendor/ppt/dist/pptjs.worker.js') : undefined,
           pptVirtualize: params.get('pptVirtualize') !== 'false'
         } : undefined
         var host = document.getElementById('viewer')

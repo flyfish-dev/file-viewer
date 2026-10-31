@@ -162,9 +162,9 @@ Install a single renderer when a product needs the smallest possible capability 
 | `@file-viewer/renderer-dicom` | `dicomRenderer` | Selected local DICOM Part 10 single-file and multi-frame preview in the standard Viewer entry |
 | `@file-viewer/renderer-signature` | `signatureRenderer` | Selected CMS/CAdES, timestamp, ASiC, evidence-record, JWS, and public OpenPGP inspection in the standard Viewer entry |
 
-Binary PowerPoint and OpenXML PowerPoint now have separate npm renderer packages. The compatibility aggregate keeps the existing root and subpath APIs. The packaged `.ppt` 0.3.4 runtime is zero-config in layouts that explicitly install it; for custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl` / `pptWasmUrl` / `pptFontUrl`. PPTX continues to use `presentation.workerUrl` / `workerType`.
+Binary PowerPoint and OpenXML PowerPoint have separate npm renderer packages. The compatibility aggregate keeps the existing root and subpath APIs. Office/All presets and Full packages include the compiled Apache-2.0 `@file-viewer/ppt@1.0.1` TypeScript runtime and parsing Worker. For custom asset layouts, configure `presentation.pptModuleUrl` / `pptWorkerUrl`. PPT needs no WASM or embedded fonts. PPTX continues to use `presentation.workerUrl` / `workerType`.
 
-Strict PPTX-only applications should import `pptxRenderer` from `@file-viewer/renderer-pptx`, or configure `fileViewerRenderers({ formats: ['pptx'] })`. Both paths exclude the classic `.ppt` package, font, and WASM from the install and production closure. Existing `@file-viewer/renderer-presentation/pptx` imports remain compatible. The binary-only package is `@file-viewer/renderer-ppt`.
+Strict PPTX-only applications should import `pptxRenderer` from `@file-viewer/renderer-pptx`, or configure `fileViewerRenderers({ formats: ['pptx'] })`. Both paths exclude the binary `.ppt` engine from the install and production closure. Existing `@file-viewer/renderer-presentation/pptx` imports remain compatible. The binary-only package is `@file-viewer/renderer-ppt`.
 
 | `@file-viewer/renderer-drawing` | `drawingRenderer` | draw.io, Excalidraw, Mermaid, PlantUML |
 | `@file-viewer/renderer-mindmap` | `mindmapRenderer` | XMind |

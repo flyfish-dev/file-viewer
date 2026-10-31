@@ -87,7 +87,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
       "PowerPoint 97-2003 Binary"
     ],
     "knownLimits": [
-      "Embedded engine watermark is retained",
+      "Host fonts and complex effects can differ from PowerPoint",
       "Macros are never executed"
     ],
     "capabilities": {
@@ -1330,7 +1330,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     "presets": [],
     "containerVersions": [
       "IDML package",
-      "@paged-media/introspect-wasm 0.70.2"
+      "@paged-media/introspect-wasm 0.73.4"
     ],
     "knownLimits": [
       "Pages are rendered locally by the CPU WASM engine in a module Worker; the browser never uploads the IDML package",

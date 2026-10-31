@@ -300,7 +300,7 @@ export async function runFrozenConsumers({
         [
           join(runner, 'node_modules/playwright/cli.js'),
           'install',
-          '--with-deps',
+          ...(process.env.ORACLE_FILE_VIEWER_RUNNER === 'true' ? [] : ['--with-deps']),
           'chromium',
           'webkit'
         ],

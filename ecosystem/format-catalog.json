@@ -40,7 +40,7 @@
       "supportLevel": "structured",
       "status": "stable",
       "containerVersions": ["PowerPoint 97-2003 Binary"],
-      "knownLimits": ["Embedded engine watermark is retained", "Macros are never executed"],
+      "knownLimits": ["Host fonts and complex effects can differ from PowerPoint", "Macros are never executed"],
       "capabilities": { "download": true, "print": "adapter", "exportHtml": "adapter", "zoom": "provider", "search": false },
       "evidence": {
         "pot": { "fixture": "packages/renderers/presentation/test/fixtures/format-matrix-template.pot", "sha256": "12dfd552e38ffe1a6b8b9d9ec2af83585e5ded679b61cc7c4f1cfa11d8af0282", "assertions": ["load-complete", "slide-count", "template-content"], "required": true }
@@ -556,7 +556,7 @@
       "extensions": ["idml"],
       "supportLevel": "experimental",
       "status": "experimental",
-      "containerVersions": ["IDML package", "@paged-media/introspect-wasm 0.70.2"],
+      "containerVersions": ["IDML package", "@paged-media/introspect-wasm 0.73.4"],
       "knownLimits": [
         "Pages are rendered locally by the CPU WASM engine in a module Worker; the browser never uploads the IDML package",
         "ZIP64, encrypted, multi-disk, overlapping, unsafe-path, unsupported-compression, and configured expansion-limit packages are rejected before the WASM engine opens them",

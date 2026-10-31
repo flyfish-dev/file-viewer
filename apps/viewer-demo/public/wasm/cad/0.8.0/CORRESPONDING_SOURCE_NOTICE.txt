@@ -22,17 +22,18 @@ The asset sources above cover the native owner runtimes. The File Viewer integra
 
 File Viewer CAD integration corresponding source
 
-Package release: 3.3.1
-Corresponding source (immutable HTTPS): https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/b982adc6d8f7f635ef7b86d842ba28e45a8fd8cd
-HTTPS archive SHA-256: b3d5fca3ff9edf343fe07ef87c19a2ccb3d799c5065f26edb7bc818edf0b86b5
+Package release: 3.3.3
+Corresponding source (immutable HTTPS): https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/5c7e9dab42d3ceee005f1929a23c5da137f018a1
+HTTPS archive SHA-256: aeef9aa40eac2a55cea0538bb13b2c2e65cd00ae59b0c070cdfb9d50ac8b7a1c
 
-This existing complete public source snapshot reconstructs the CAD integration output identified below through its ordinary owner build.
-Use the repository build prerequisites, Node.js 24.20.0 and pnpm 11.0.9: pnpm install --frozen-lockfile; pnpm build:core; pnpm build:renderers; pnpm build:presets; pnpm --filter @file-viewer/web-full build.
+The public archive contains the exact standalone preferred-source snapshot at packages/build-support/cad-source-snapshots/3.3.3.
+Use Node.js 24.20.0 and npm 11.19.0. From that directory run: npm ci --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org/; npm run build.
+The standalone lock pins its canonical build tools; the normal workspace-toolchain reconstruction also verifies the actual Full runtime bytes.
 A standalone current preferred-source archive is also retained in the complete public source checkout and CAD asset directories as CORRESPONDING_SOURCE.zip.
-Standalone archive SHA-256: 686da57606f861601fe1d5df7d324f188aa4e121935a52a0b0bb038398226e8e
+Standalone archive SHA-256: 1e05787313d85d88d8fe7273b488aa809c0508b6877907bb517fd9746e56404d
 Runtime-only npm archives do not include source ZIPs; retain this notice and its immutable HTTPS source reference.
 It retains complete original license texts and identifies the exact public CAD, DWF and LibreDWG bindings sources in upstream-sources.json.
-The integration output is 627842 bytes with SHA-256 12a5a9060ae0e2035ead248add91b6657ae7973c2a4754112fbe3a9b40ca96f9.
+The integration output is 627662 bytes with SHA-256 97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f.
 Native owner preferred sources and their build inputs (in addition to the integration source):
 @flyfish-dev/cad-viewer 0.8.3
 https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6366d2f7b1013cd5c300008c3c3fbf017ca9aace

@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## File Viewer v3.3.3 - 2026-10-31
 
+- Upgrade binary PPT/POT to the Apache-2.0 TypeScript `@file-viewer/ppt@1.0.1` engine. Ship exact package assets and the parsing Worker through Full, CLI and Vite routes, remove obsolete native WASM/font/cache requirements, and retain the PDF fixes from the published 3.3.2 baseline.
+- Preserve toolbar Space activation across asynchronous state refreshes in the shared controller, including framework components and Shadow DOM.
 - Resolve exact LAS/LAZ GeoASCII CRS names and historical authority aliases from an offline catalog (#406). Recognized citation-only point clouds use their native CRS automatically; ambiguous names, conflicting units and missing datum grids still fail explicitly.
 - Adopt 11 dependency updates from #434 with matching IFC engines, refreshed DICOM SDK provenance, XML asset metadata and complete native IDML source/license records. Retain web-ifc 0.0.77 because the official 0.0.78 JavaScript/WASM streaming interfaces disagree. Keep Vue 2.6/2.7 support and pako 2.
 - Keep Web Full within the 150 MB unpacked CDN limit by carrying design resources through the exact-version `assets-design` dependency. The existing copy command retains complete offline assets, legal notices and stable receipts.
