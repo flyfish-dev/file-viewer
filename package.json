@@ -118,7 +118,7 @@
     "verify:github-governance": "node --test .github/scripts/*.test.mjs && node .github/scripts/verify-community-standards.mjs && prettier --config .github/prettier-governance.json --check '.github/**/*.{md,yml,mjs,json}' CONTRIBUTING.md SUPPORT.md"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "prettier": "3.9.10",
     "esbuild": "0.28.2",
     "playwright": "^1.61.1",
