@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -26,10 +27,14 @@ export async function createAnnotationFixture() {
 
   const freeText = (text, rect, size, flags = 4) => {
     const width = rect[2] - rect[0], height = rect[3] - rect[1];
+    const lines = text.split('\n'), lineHeight = size * 1.25;
+    assert.ok(lines.every(line => font.widthOfTextAtSize(line, size) <= width - 8), 'Annotation lines fit their authored box');
+    assert.ok((lines.length - 1) * lineHeight + size + 8 <= height, 'Annotation lines fit vertically');
     const appearance = context.register(context.flateStream([
       'q 1 0.95 0.75 rg', `0 0 ${width} ${height} re f`,
       `BT /Helv ${size} Tf 0 0 0 rg 4 ${height - size - 4} Td`,
-      `${font.encodeText(text)} Tj ET Q`,
+      ...lines.flatMap((line, i) => [...(i ? [`0 -${lineHeight} Td`] : []), `${font.encodeText(line)} Tj`]),
+      'ET Q',
     ].join('\n'), {
       Type: 'XObject', Subtype: 'Form', FormType: 1, BBox: [0, 0, width, height],
       Resources: { Font: { Helv: font.ref } },
@@ -42,37 +47,56 @@ export async function createAnnotationFixture() {
     }));
   };
   const labels = [
-    freeText('Annotation label', [70, 420, 330, 452], 12, 68),
-    freeText('Small annotation', [70, 372, 270, 392], 8),
+    freeText([
+      'Annotation label: a longer synthetic note.',
+      'Check the first line of the generated content.',
+      'Keep the next paragraph readable at every zoom.',
+      'The annotation must stay inside its own box.',
+    ].join('\n'), [70, 400, 410, 452], 8, 68),
+    freeText([
+      'Small annotation: compact text in three lines.',
+      'Long HTML duplicates must not cover nearby text.',
+      'The final line should remain inside this box.',
+    ].join('\n'), [70, 332, 380, 362], 6),
   ];
+  page.drawText('BODY LINE A: this paragraph must remain readable below the note.', { x: 70, y: 388, size: 10, font });
+  page.drawText('BODY LINE B: the next line must not be covered by oversized text.', { x: 70, y: 374, size: 10, font });
+  page.drawText('BODY LINE C: ordinary content continues below the smaller note.', { x: 70, y: 320, size: 10, font });
+  page.drawText('BODY LINE D: preserve this line when zooming out or hovering.', { x: 70, y: 306, size: 10, font });
 
-  page.drawText('Highlighted text with a review comment', { x: 70, y: 330, size: 14, font });
+  page.drawText('Highlighted text with a review comment', { x: 70, y: 278, size: 14, font });
   const highlight = context.register(context.obj({
-    Type: 'Annot', Subtype: 'Highlight', Rect: [68, 326, 370, 346],
-    QuadPoints: [68, 346, 370, 346, 68, 326, 370, 326], C: [1, 1, 0], F: 4,
+    Type: 'Annot', Subtype: 'Highlight', Rect: [68, 274, 370, 294],
+    QuadPoints: [68, 294, 370, 294, 68, 274, 370, 274], C: [1, 1, 0], F: 4,
     T: string('Fixture reviewer'),
-    Contents: string('A generated review comment with enough words to wrap onto several lines.\nHover to read it, or click to pin it while moving the pointer away.'),
+    Contents: string([
+      'A generated review comment with enough words to wrap onto several lines at every tested zoom level.',
+      'First review point: the authored annotation stays inside its box and the nearby body paragraphs remain readable.',
+      'Second review point: the complete comment remains visible, including its middle lines and this longer explanation of the expected behavior.',
+      'Third review point: hover opens the comment, moving away closes it, and clicking pins it until it is dismissed.',
+      'End of synthetic comment: this final sentence must remain visible.',
+    ].join('\n')),
   }));
   const popup = context.register(context.obj({
-    Type: 'Annot', Subtype: 'Popup', Rect: [380, 326, 650, 420],
+    Type: 'Annot', Subtype: 'Popup', Rect: [380, 274, 650, 420],
     Parent: highlight, Open: false,
   }));
   context.lookup(highlight).set(PDFName.of('Popup'), popup);
 
-  page.drawText('Go to the second page', { x: 70, y: 270, size: 14, font, color: rgb(0, 0.2, 0.7) });
+  page.drawText('Go to the second page', { x: 70, y: 230, size: 14, font, color: rgb(0, 0.2, 0.7) });
   const link = context.register(context.obj({
-    Type: 'Annot', Subtype: 'Link', Rect: [68, 266, 260, 288],
+    Type: 'Annot', Subtype: 'Link', Rect: [68, 226, 260, 248],
     Border: [0, 0, 0], Dest: [destination.ref, PDFName.of('Fit')],
   }));
   page.node.set(PDFName.of('Annots'), context.obj([...labels, highlight, popup, link]));
 
-  page.drawText('Editable form field:', { x: 70, y: 218, size: 12, font });
+  page.drawText('Editable form field:', { x: 70, y: 188, size: 12, font });
   const form = pdf.getForm();
   const field = form.createTextField('fixture-value');
   field.setText('Initial value');
-  field.addToPage(page, { x: 70, y: 178, width: 240, height: 26, font });
+  field.addToPage(page, { x: 70, y: 148, width: 240, height: 26, font });
   form.updateFieldAppearances(font);
-  page.drawText('All labels and metadata are synthetic.', { x: 70, y: 100, size: 12, font });
+  page.drawText('All labels and metadata are synthetic.', { x: 70, y: 84, size: 12, font });
   return Buffer.from(await pdf.save({ useObjectStreams: false }));
 }
 
