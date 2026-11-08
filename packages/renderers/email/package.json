@@ -68,7 +68,7 @@
     "@file-viewer/core": "workspace:3.3.3",
     "@kenjiuno/msgreader": "^1.29.0",
     "buffer": "^6.0.3",
-    "postal-mime": "4.1.4"
+    "postal-mime": "4.2.0"
   },
   "devDependencies": {
     "typescript": "^6.0.3"
