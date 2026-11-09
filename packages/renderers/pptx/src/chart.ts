@@ -524,7 +524,12 @@ const renderChart = async (message: ChartMessage, root: ParentNode) => {
       mergePptxChartFonts(payload.chartModel?.font, options?.legend?.font));
     const fontStyle = stylePptxChartText(surface, payload.chartModel, chart, payload.chartOptions?.legend?.font);
     const textPlugin = createPptxChartTextPlugin(surface);
-    if (textPlugin) chart.plugins = [...(chart.plugins || []), textPlugin];
+    if (textPlugin) {
+      chart.plugins = [...(chart.plugins || []), textPlugin];
+      // Billboard's maximum-tick layout otherwise reads viewport rectangles.
+      // Supply logical glyph sizes before it computes axis margins.
+      if (chart.axis) chart.axis.evalTextSize = textPlugin.evalTextSize;
+    }
     // DrawingML fixes the chart's size in slide coordinates. Billboard's
     // automatic measurement uses transformed screen rectangles (or a visible
     // ancestor for hidden slides), which applies presentation scaling twice.

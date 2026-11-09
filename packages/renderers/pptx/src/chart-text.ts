@@ -6,7 +6,7 @@ export const mergePptxChartFonts = (...fonts: Array<PptxChartFont | undefined>):
     Object.entries(font || {}).filter(([, value]) => value !== undefined),
   )));
 
-/** CSSOM property assignment keeps document font names out of stylesheet source. */
+/** Assign authored font values through CSSOM before serializing scoped rules. */
 export const applyPptxChartFont = (style: CSSStyleDeclaration, font?: PptxChartFont) => {
   if (!font) return;
   const families = [...new Set([font.family, font.eastAsianFamily, font.complexScriptFamily]
@@ -39,23 +39,28 @@ export const stylePptxChartText = (surface: HTMLElement, model?: PptxChartModel,
   // Billboard replaces the bind target's children during initialization.
   // Keep scoped rules beside that target so they also apply during measurement.
   surface.parentNode?.appendChild(element);
-  const sheet = element.sheet;
-  if (!sheet) return element;
+  const rules: string[] = [];
   const rule = (suffix: string, font?: PptxChartFont) => {
     if (!font || !Object.values(font).some(value => value !== undefined)) return;
-    const index = sheet.insertRule(suffix.split(',').map(value => `${selector} ${value.trim()}`).join(',') + '{}', sheet.cssRules.length);
-    applyPptxChartFont((sheet.cssRules[index] as CSSStyleRule).style, font);
+    const declaration = surface.ownerDocument.createElement('span').style;
+    applyPptxChartFont(declaration, font);
+    if (declaration.cssText) rules.push(suffix.split(',').map(value => `${selector} ${value.trim()}`).join(',') + `{${declaration.cssText}}`);
+  };
+  const persist = () => {
+    // Reparenting a slide rebuilds its style sheets from text, not CSSOM-only rules.
+    element.textContent = rules.join('\n');
+    return element;
   };
   rule('svg', model?.font);
   rule('.bb-legend-item,.bb-legend-item text', mergePptxChartFonts(model?.font, legendFont));
-  if (!model) return element;
+  if (!model) return persist();
   const { category, primary, secondary } = resolvePptxChartAxes(model);
   for (const [axis, font] of [['x', category?.font], ['y', primary?.font], ['y2', secondary?.font]] as const) {
     rule(`.bb-axis-${axis},.bb-axis-${axis} text`, mergePptxChartFonts(model.font, font));
   }
   let column = 0;
   const escape = view.CSS?.escape;
-  if (!escape) return element;
+  if (!escape) return persist();
   for (const group of model.groups) for (let index = 0; index < group.series.length; index++, column++) {
     const id = String(chart?.data?.columns?.[column]?.[0] ?? '');
     if (!id) continue;
@@ -69,7 +74,7 @@ export const stylePptxChartText = (surface: HTMLElement, model?: PptxChartModel,
       rule(`${texts} .bb-text-${escape(position)}`, mergePptxChartFonts(font, point.font));
     }
   }
-  return element;
+  return persist();
 };
 
 /**
@@ -85,8 +90,36 @@ export const createPptxChartTextPlugin = (surface: HTMLElement) => {
   let wrapped: any;
   let stopped = false;
   let context: CanvasRenderingContext2D | null | undefined;
+  const measureText = (svg: SVGSVGElement, text: string, className?: string, base?: SVGTextElement) => {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    if (className) node.setAttribute('class', className);
+    node.style.visibility = 'hidden';
+    if (base) node.style.font = view.getComputedStyle(base).font;
+    node.textContent = text;
+    svg.appendChild(node);
+    try {
+      const box = node.getBBox();
+      if (box.height > 0 && (box.width > 0 || !text)) {
+        return { x: box.x, y: box.y, left: box.x, top: box.y, right: box.x + box.width,
+          bottom: box.y + box.height, width: box.width, height: box.height };
+      }
+      // Hidden slides still need logical font metrics before they become visible.
+      const style = view.getComputedStyle(node);
+      context ??= document.createElement('canvas').getContext('2d');
+      const size = Number.parseFloat(style.fontSize) || 10;
+      if (context) context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      const metrics = context?.measureText(text);
+      const width = metrics?.width ?? 0;
+      const height = (metrics?.fontBoundingBoxAscent || 0) + (metrics?.fontBoundingBoxDescent || 0) || size * 1.2;
+      return { x: 0, y: 0, left: 0, top: 0, right: width, bottom: height, width, height };
+    } finally { node.remove(); }
+  };
   const plugin = {
     $$: undefined as any,
+    evalTextSize(node: SVGTextElement) {
+      const { width, height } = measureText(node.ownerSVGElement!, '0', undefined, node);
+      return { w: width, h: height };
+    },
     $beforeInit() {
       const internal = this.$$;
       if (typeof internal?.getTextRect !== 'function') return;
@@ -98,31 +131,8 @@ export const createPptxChartTextPlugin = (surface: HTMLElement) => {
         if (!Array.isArray(source) && !/text/i.test(base?.tagName || '')) base = base?.querySelector?.('text');
         if (!Array.isArray(source) && !base) return original.call(internal, source, className);
         const values = Array.isArray(source) ? source : [base.textContent || ''];
-        const rectangles = values.map((value: unknown) => {
-          const text = String(value ?? '');
-          const node = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          if (className) node.setAttribute('class', className);
-          node.style.visibility = 'hidden';
-          if (base && !Array.isArray(source)) node.style.font = view.getComputedStyle(base).font;
-          node.textContent = text;
-          svg.appendChild(node);
-          try {
-            const box = node.getBBox();
-            if (box.height > 0 && (box.width > 0 || !text)) {
-              return { x: box.x, y: box.y, left: box.x, top: box.y, right: box.x + box.width,
-                bottom: box.y + box.height, width: box.width, height: box.height };
-            }
-            // Hidden slides still need logical font metrics before they become visible.
-            const style = view.getComputedStyle(node);
-            context ??= document.createElement('canvas').getContext('2d');
-            const size = Number.parseFloat(style.fontSize) || 10;
-            if (context) context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-            const metrics = context?.measureText(text);
-            const width = metrics?.width ?? 0;
-            const height = (metrics?.fontBoundingBoxAscent || 0) + (metrics?.fontBoundingBoxDescent || 0) || size * 1.2;
-            return { x: 0, y: 0, left: 0, top: 0, right: width, bottom: height, width, height };
-          } finally { node.remove(); }
-        });
+        const rectangles = values.map((value: unknown) =>
+          measureText(svg, String(value ?? ''), className, Array.isArray(source) ? undefined : base));
         return rectangles.length > 1 ? rectangles : rectangles[0];
       };
       internal.getTextRect = wrapped;
