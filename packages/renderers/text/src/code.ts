@@ -192,7 +192,7 @@ export default async function renderText(
   type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const extension = type || 'txt'
   const normalizedExtension = extension.trim().toLowerCase()
   const textOptions = context?.options?.text
@@ -287,13 +287,13 @@ export default async function renderText(
   const syncRepresentationControls = (lineCount: number) => {
     const formatted = showingFormatted && formattedText !== null
     root.dataset.textRepresentation = formatted ? 'formatted' : 'source'
-    lineSummary.textContent = `${lineCount} lines`
+    t.bind(lineSummary, node => { node.textContent = t('ui.text.ui.lines.24e137', { p0: lineCount }); }, 'textContent')
     representationStatus.hidden = !formatted
-    representationStatus.textContent = formatted ? t('text.code.formattedPreview') : ''
+    t.bind(representationStatus, localizedNode => { localizedNode.textContent = formatted ? t('text.code.formattedPreview') : ''; }, 'textContent')
     representationToggle.hidden = formattedText === null
-    representationToggle.textContent = formatted
+    t.bind(representationToggle, localizedNode => { localizedNode.textContent = formatted
       ? t('text.code.showOriginal')
-      : t('text.code.showFormatted')
+      : t('text.code.showFormatted'); }, 'textContent')
     representationToggle.setAttribute('aria-pressed', String(formatted))
   }
 
@@ -309,7 +309,7 @@ export default async function renderText(
       return
     }
 
-    code.textContent = t('text.code.loadingHighlight')
+    t.text(code, 'text.code.loadingHighlight')
     try {
       const hljs = await loadHighlighter()
       const hasLanguage = await registerLanguageOnce(hljs, language)

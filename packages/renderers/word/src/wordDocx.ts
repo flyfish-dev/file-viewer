@@ -95,7 +95,7 @@ const assertValidDocxPackage = (buffer: ArrayBuffer, context?: FileRenderContext
     return
   }
 
-  throw new Error(createFileViewerTranslator(context?.options)('word.error.invalidDocx'))
+  throw new Error(createFileViewerTranslator(context?.i18n || context?.options)('word.error.invalidDocx'))
 }
 
 const getTargetWindow = (target: HTMLDivElement) => {

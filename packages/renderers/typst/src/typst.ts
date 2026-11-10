@@ -141,21 +141,7 @@ const createStyle = (documentRef: Document) => {
   return style;
 };
 
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tagName);
-  if (className) {
-    element.className = className;
-  }
-  if (text !== undefined) {
-    element.textContent = text;
-  }
-  return element;
-};
+
 
 const getWindowOverride = (
   key:
@@ -574,7 +560,8 @@ export default async function renderTypst(
   _type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const createElement = t.element;
   const source = await readFileViewerText(buffer);
   const documentRef = target.ownerDocument || document;
   const zoomEmitter = createFileViewerZoomChangeEmitter();
@@ -590,9 +577,9 @@ export default async function renderTypst(
   root.dataset.viewerZoomProvider = 'typst';
   const toolbar = createElement(documentRef, 'header', 'typst-toolbar');
   const titleGroup = createElement(documentRef, 'div');
-  const title = createElement(documentRef, 'strong', undefined, context?.filename || 'Typst document');
-  const summary = createElement(documentRef, 'span', undefined, t('typst.summaryRenderer'));
-  const status = createElement(documentRef, 'em', undefined, t('typst.status.compiling'));
+  const title = createElement(documentRef, 'strong', undefined, () => context?.filename || t('ui.typst.ui.typst.document.b37fc0'));
+  const summary = t.text(createElement(documentRef, 'span', undefined), 'typst.summaryRenderer');
+  const status = t.text(createElement(documentRef, 'em', undefined), 'typst.status.compiling');
   const body = createElement(documentRef, 'div');
 
   titleGroup.append(title, summary);
@@ -647,8 +634,8 @@ export default async function renderTypst(
     loading.setAttribute('role', 'status');
     loading.append(
       createElement(documentRef, 'span'),
-      createElement(documentRef, 'strong', undefined, t('typst.loading.title')),
-      createElement(documentRef, 'p', undefined, t('typst.loading.hint'))
+      t.text(createElement(documentRef, 'strong', undefined), 'typst.loading.title'),
+      t.text(createElement(documentRef, 'p', undefined), 'typst.loading.hint')
     );
     body.replaceChildren(loading);
   };
@@ -656,7 +643,7 @@ export default async function renderTypst(
   const renderError = () => {
     const error = createElement(documentRef, 'div', 'typst-error');
     error.append(
-      createElement(documentRef, 'strong', undefined, t('typst.error.title')),
+      t.text(createElement(documentRef, 'strong', undefined), 'typst.error.title'),
       createElement(documentRef, 'pre', undefined, errorMessage)
     );
     body.replaceChildren(error);
@@ -665,11 +652,11 @@ export default async function renderTypst(
   const renderPages = () => {
     pageShells.clear();
     const pagesRoot = createElement(documentRef, 'main', 'typst-pages');
-    pagesRoot.setAttribute('aria-label', 'Typst preview pages');
+    t.bind(pagesRoot, node => node.setAttribute('aria-label', t('ui.typst.ui.typst.preview.pages.7e618f')), 'aria-label');
 
     pages.forEach(page => {
       const shell = createElement(documentRef, 'section', 'typst-page-shell');
-      shell.setAttribute('aria-label', `Page ${page.index}`);
+      t.bind(shell, node => node.setAttribute('aria-label', t('ui.typst.ui.page.2a4109', { p0: page.index })), 'aria-label');
       const content = createElement(documentRef, 'div', 'typst-page-content');
       content.replaceChildren(importTypstSvgPageNode(documentRef, page));
       shell.append(content);
@@ -682,14 +669,14 @@ export default async function renderTypst(
   };
 
   const syncUi = () => {
-    summary.textContent = state === 'ready'
+    t.bind(summary, localizedNode => { localizedNode.textContent = state === 'ready'
       ? getPageSummary(pages, t)
-      : t('typst.summaryRenderer');
-    status.textContent = state === 'loading'
+      : t('typst.summaryRenderer'); }, 'textContent');
+    t.bind(status, localizedNode => { localizedNode.textContent = state === 'loading'
       ? t('typst.status.compiling')
       : state === 'error'
         ? t('typst.status.failed')
-        : t('typst.status.rendered');
+        : t('typst.status.rendered'); }, 'textContent');
 
     if (state === 'loading') {
       renderLoading();
@@ -736,7 +723,7 @@ export default async function renderTypst(
       }
     }
 
-    throw lastError instanceof Error ? lastError : new Error(t('typst.error.wasmLoadFailed'));
+    throw lastError instanceof Error ? lastError : t.error('typst.error.wasmLoadFailed');
   };
 
   const render = async () => {

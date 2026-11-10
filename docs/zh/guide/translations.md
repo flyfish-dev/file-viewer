@@ -6,17 +6,18 @@ description: "贡献 File Viewer 文档和界面翻译，保持 API 示例、语
 
 [English](../../guide/translations.md)
 
-文档目前有英文和简体中文路由，Demo 与共享预览器另有日文和德文字典。这不代表所有文档页面都有日文、
-德文翻译。语言与评审礼仪见[国际协作](collaboration.md)。
+文档目前有英文和简体中文路由，Demo 与共享预览器内置七种界面语言，见[国际化指南](i18n.md)。界面语言能力不会增加文档路由。语言与评审礼仪见[国际协作](collaboration.md)。
+
+七种语言的独立母语审校仍待完成，范围记录在源码中的 `docs/maintenance/i18n-review.md`。
 
 ## 文本所在位置
 
 | 界面 | 维护源 |
 | --- | --- |
 | 英文 / 中文文档 | `docs/guide/`、`docs/zh/guide/` |
-| Demo 界面 | `apps/viewer-demo/src/composables/useDemoCopy.ts`、`useDemoCopy.ja.ts`、`useDemoCopy.de.ts` |
+| Demo 界面 | `apps/viewer-demo/src/composables/useDemoCopy*.ts` |
 | Demo 欢迎卡片 | `apps/viewer-demo/src/composables/useDemoWelcome.ts` |
-| 共享预览器 | `packages/core/src/i18n/messages.ts`、`messages.ja.ts`、`messages.de.ts` |
+| 共享预览器 | `packages/core/src/i18n/messages*.ts`、`i18n/domains/`；语言注册表 `i18n/locales.ts` |
 | 官网 | `apps/official-site/src/App.vue` 及静态 HTML 元数据 |
 | 包说明 | 英文 `README.md`、中文 `README.zh-CN.md`；`README.en.md` 是兼容副本 |
 
@@ -36,6 +37,6 @@ API 名、导入路径、命令、版本号、URL 参数、代码语法、占位
 
 ## 验证实际体验
 
-执行对应文档构建或包类型检查；日文、德文 Demo 改动再运行 `pnpm test:i18n`。在真实浏览器打开翻译页面，
+执行对应文档构建或包类型检查；任意内置语言改动均运行 `pnpm test:i18n`。在真实浏览器打开翻译页面，
 检查导航、搜索、代码复制、键盘焦点、读屏标签、暗色、200% 字号缩放、长单词和窄屏。可见改动保留截图，
 记录实际验证过的语言和浏览器。

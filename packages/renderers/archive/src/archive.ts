@@ -8,6 +8,7 @@ import {
   createFileRenderHandlerLoader,
   createFileViewerCoreRendererRegistry,
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   createRendererRegistry,
   disposeFileViewerRendered,
   installFileViewerRendererPlugins,
@@ -29,7 +30,6 @@ import {
   buildArchiveNestedRenderContext,
   createArchiveCacheKey,
   flattenArchiveObject,
-  formatArchiveBytes,
   getArchiveEntryExtension,
   isArchiveEntryDownloadAllowed,
   type ArchiveEntryView,
@@ -145,21 +145,7 @@ const createStyle = (documentRef: Document) => {
   return style;
 };
 
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tagName);
-  if (className) {
-    element.className = className;
-  }
-  if (text !== undefined) {
-    element.textContent = text;
-  }
-  return element;
-};
+
 
 const normalizeWorkerError = (reason: unknown) => {
   if (reason instanceof Error) {
@@ -403,11 +389,12 @@ const renderNestedWithCurrentOptions = async (
   target: HTMLDivElement,
   context?: FileRenderContext
 ) => {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+
   const registry = await createNestedRendererRegistry(context);
   const renderer = registry.getByExtension(type);
   if (!renderer?.load) {
-    target.textContent = t('archive.error.nestedUnsupported', { type });
+    t.text(target, 'archive.error.nestedUnsupported', { type });
     return undefined;
   }
 
@@ -465,11 +452,13 @@ export default async function renderArchive(
   let selectedEntry: ArchiveEntryView | null = null;
   let nestedRendered: FileViewerRenderedInstance | undefined;
   let loading = false;
-  const t = createFileViewerTranslator(context?.options);
-  let loadingText = t('archive.loading.readingDirectory');
-  let loadingHint = t('archive.loading.readingDirectoryHint');
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const createElement = t.element;
+  const formatArchiveBytes = t.formatBytes;
+  let loadingText = () => t('archive.loading.readingDirectory');
+  let loadingHint = () => t('archive.loading.readingDirectoryHint');
   let errorText = '';
-  let archiveNotice = '';
+  let archiveNotice = () => '';
   let encrypted: boolean | null = null;
   let filterText = '';
   let passwordAttempt = 0;
@@ -498,7 +487,7 @@ export default async function renderArchive(
   const info = createElement(documentRef, 'div', 'archive-info');
   const search = createElement(documentRef, 'input', 'archive-search') as HTMLInputElement;
   search.type = 'search';
-  search.placeholder = t('archive.search.placeholder');
+  t.attr(search, 'placeholder', 'archive.search.placeholder');
   const list = createElement(documentRef, 'div', 'archive-list');
   list.setAttribute('role', 'list');
   sidebar.append(head, warning, info, search, list);
@@ -509,10 +498,10 @@ export default async function renderArchive(
   sidebarShowButton.type = 'button';
   const toolbarTitle = createElement(documentRef, 'div', 'archive-preview-title');
   toolbarTitle.append(
-    createElement(documentRef, 'span', undefined, t('archive.preview.title')),
-    createElement(documentRef, 'strong', undefined, t('archive.preview.chooseFile'))
+    t.text(createElement(documentRef, 'span', undefined), 'archive.preview.title'),
+    t.text(createElement(documentRef, 'strong', undefined), 'archive.preview.chooseFile')
   );
-  const downloadButton = createElement(documentRef, 'button', 'archive-download-button', t('archive.preview.downloadFile')) as HTMLButtonElement;
+  const downloadButton = t.text(createElement(documentRef, 'button', 'archive-download-button'), 'archive.preview.downloadFile') as HTMLButtonElement;
   downloadButton.type = 'button';
   const nestedTarget = createElement(documentRef, 'div', 'archive-nested-target') as HTMLDivElement;
   const comicBook = createComicBookController({
@@ -542,7 +531,7 @@ export default async function renderArchive(
   root.append(state);
 
   const error = createElement(documentRef, 'div', 'archive-error');
-  const errorTitle = createElement(documentRef, 'strong', undefined, t('archive.error.title'));
+  const errorTitle = t.text(createElement(documentRef, 'strong', undefined), 'archive.error.title');
   const errorMessage = createElement(documentRef, 'p');
   error.append(errorTitle, errorMessage);
   root.append(error);
@@ -551,17 +540,17 @@ export default async function renderArchive(
   passwordDialog.setAttribute('role', 'dialog');
   passwordDialog.setAttribute('aria-modal', 'true');
   const passwordCard = createElement(documentRef, 'form', 'archive-password-card') as HTMLFormElement;
-  const passwordTitle = createElement(documentRef, 'h3', undefined, t('archive.password.title'));
-  const passwordDescription = createElement(documentRef, 'p', undefined, t('archive.password.description'));
+  const passwordTitle = t.text(createElement(documentRef, 'h3', undefined), 'archive.password.title');
+  const passwordDescription = t.text(createElement(documentRef, 'p', undefined), 'archive.password.description');
   const passwordInput = createElement(documentRef, 'input') as HTMLInputElement;
   passwordInput.type = 'password';
   passwordInput.autocomplete = 'current-password';
-  passwordInput.placeholder = t('archive.password.placeholder');
+  t.attr(passwordInput, 'placeholder', 'archive.password.placeholder');
   const passwordError = createElement(documentRef, 'p', 'archive-password-error');
   const passwordActions = createElement(documentRef, 'div', 'archive-password-actions');
-  const passwordCancelButton = createElement(documentRef, 'button', 'archive-password-cancel', t('archive.password.cancel')) as HTMLButtonElement;
+  const passwordCancelButton = t.text(createElement(documentRef, 'button', 'archive-password-cancel'), 'archive.password.cancel') as HTMLButtonElement;
   passwordCancelButton.type = 'button';
-  const passwordSubmitButton = createElement(documentRef, 'button', 'archive-password-submit', t('archive.password.confirm')) as HTMLButtonElement;
+  const passwordSubmitButton = t.text(createElement(documentRef, 'button', 'archive-password-submit'), 'archive.password.confirm') as HTMLButtonElement;
   passwordSubmitButton.type = 'submit';
   passwordActions.append(passwordCancelButton, passwordSubmitButton);
   passwordCard.append(passwordTitle, passwordDescription, passwordInput, passwordError, passwordActions);
@@ -595,10 +584,10 @@ export default async function renderArchive(
       syncState();
       renderEmptyState();
     }
-    passwordDescription.textContent = t('archive.password.description');
-    passwordError.textContent = previousError || reason === 'invalid-password'
+    t.text(passwordDescription, 'archive.password.description');
+    t.bind(passwordError, localizedNode => { localizedNode.textContent = previousError || reason === 'invalid-password'
       ? t('archive.password.invalid')
-      : '';
+      : ''; }, 'textContent');
     passwordInput.value = '';
     passwordDialog.classList.remove('archive-hidden');
     targetWindow?.setTimeout(() => passwordInput.focus(), 0);
@@ -661,7 +650,7 @@ export default async function renderArchive(
     event.preventDefault();
     const password = passwordInput.value;
     if (!password) {
-      passwordError.textContent = t('archive.password.required');
+      t.text(passwordError, 'archive.password.required');
       passwordInput.focus();
       return;
     }
@@ -741,15 +730,14 @@ export default async function renderArchive(
     stats.textContent = statsText;
     stats.title = statsText;
     stats.setAttribute('aria-label', statsText);
-    warning.textContent = t('archive.warning.encrypted');
+    t.text(warning, 'archive.warning.encrypted');
     warning.classList.toggle('archive-hidden', !encrypted);
-    info.textContent = archiveNotice;
-    info.classList.toggle('archive-hidden', !archiveNotice);
+    info.textContent = archiveNotice();
+    info.classList.toggle('archive-hidden', !archiveNotice());
     state.classList.toggle('archive-hidden', !loading);
-    stateTitle.textContent = loadingText;
-    stateHint.textContent = loadingHint;
+    stateTitle.textContent = loadingText();
+    stateHint.textContent = loadingHint();
     error.classList.toggle('archive-hidden', !errorText);
-    errorMessage.textContent = errorText;
     const downloadAllowed = selectedEntry
       ? isArchiveEntryDownloadAllowed(selectedEntry, archiveOptions)
       : false;
@@ -757,7 +745,7 @@ export default async function renderArchive(
     downloadButton.disabled = !downloadAllowed;
     const activeTitle = toolbarTitle.querySelector('strong');
     if (activeTitle) {
-      activeTitle.textContent = selectedEntry?.name || t('archive.preview.chooseFile');
+      t.bind(activeTitle, localizedNode => { localizedNode.textContent = selectedEntry?.name || t('archive.preview.chooseFile'); }, 'textContent');
       activeTitle.setAttribute('title', selectedEntry?.path || selectedEntry?.name || '');
     }
     comicBook.sync();
@@ -770,29 +758,29 @@ export default async function renderArchive(
     }
     const empty = createElement(documentRef, 'div', 'archive-empty');
     empty.append(
-      createElement(documentRef, 'strong', undefined, t('archive.empty.title')),
-      createElement(documentRef, 'p', undefined, t('archive.empty.message'))
+      t.text(createElement(documentRef, 'strong', undefined), 'archive.empty.title'),
+      t.text(createElement(documentRef, 'p', undefined), 'archive.empty.message')
     );
     nestedTarget.replaceChildren(empty);
   };
 
   const renderEntryList = () => {
+    t.release(list);
     list.replaceChildren();
     getFilteredEntries().forEach(entry => {
       const button = createElement(documentRef, 'button', 'archive-entry') as HTMLButtonElement;
       button.type = 'button';
       button.style.setProperty('--entry-depth', String(entry.depth));
       button.classList.toggle('active', selectedEntry?.id === entry.id);
-      const icon = createElement(documentRef, 'span', 'entry-ext', entry.extension || 'file');
-      icon.title = entry.extension || 'file';
+      const icon = createElement(documentRef, 'span', 'entry-ext', () => entry.extension || t('ui.archive.ui.file.971c41'));
+      t.bind(icon, node => { node.title = entry.extension || t('ui.archive.ui.file.971c41'); }, 'title');
       const copy = createElement(documentRef, 'span', 'entry-copy');
       const nameNode = createElement(documentRef, 'strong', undefined, entry.name);
       const pathNode = createElement(documentRef, 'em', undefined, entry.path);
-      const sizeText = formatArchiveBytes(entry.size);
-      const sizeNode = createElement(documentRef, 'small', undefined, sizeText);
+      const sizeNode = createElement(documentRef, 'small', undefined, () => formatArchiveBytes(entry.size));
       nameNode.title = entry.name;
       pathNode.title = entry.path;
-      sizeNode.title = sizeText;
+      t.bind(sizeNode, node => { node.title = formatArchiveBytes(entry.size); }, 'title');
       button.title = entry.path;
       copy.append(nameNode, pathNode);
       button.append(icon, copy, sizeNode);
@@ -803,7 +791,7 @@ export default async function renderArchive(
     });
   };
 
-  const setLoading = (next: boolean, text?: string, hint?: string) => {
+  const setLoading = (next: boolean, text?: () => string, hint?: () => string) => {
     loading = next;
     if (text) {
       loadingText = text;
@@ -815,8 +803,10 @@ export default async function renderArchive(
     renderEmptyState();
   };
 
-  const setError = (message: string) => {
-    errorText = message;
+  const setError = (cause: unknown) => {
+    const copy = () => typeof cause === 'function' ? String(cause()) : normalizeFileViewerErrorMessage(cause, context?.options);
+    errorText = copy();
+    t.bind(errorMessage, node => { node.textContent = copy(); });
     syncState();
   };
 
@@ -864,7 +854,7 @@ export default async function renderArchive(
         },
       });
 
-      setLoading(true, t('archive.loading.initializingCandidate', { label: candidate.label }), t('archive.loading.initializingCandidateHint'));
+      setLoading(true, () => t('archive.loading.initializingCandidate', { label: candidate.label }), () => t('archive.loading.initializingCandidateHint'));
       const archiveFile = createArchiveFile(documentRef, buffer, filename);
       const archive = await withTimeout<any>(
         Archive.open(archiveFile),
@@ -886,7 +876,7 @@ export default async function renderArchive(
         await requestAndApplyPassword('encrypted');
       }
 
-      setLoading(true, t('archive.loading.readingDirectory'), t('archive.loading.directoryReadyHint'));
+      setLoading(true, () => t('archive.loading.readingDirectory'), () => t('archive.loading.directoryReadyHint'));
       const fileTree = await readArchiveDirectoryWithPassword(archive, candidate);
 
       entries = comicBook.sortEntries(flattenArchiveObject(fileTree));
@@ -911,10 +901,10 @@ export default async function renderArchive(
     const showWorkerFallbackNotice = options.showWorkerFallbackNotice !== false;
     setLoading(
       true,
-      showWorkerFallbackNotice
+      () => showWorkerFallbackNotice
         ? t('archive.loading.workerFallback')
         : t('archive.loading.readingDirectory'),
-      showWorkerFallbackNotice
+      () => showWorkerFallbackNotice
         ? t('archive.loading.workerFallbackHint')
         : t('archive.loading.directoryReadyHint')
     );
@@ -929,7 +919,7 @@ export default async function renderArchive(
 
     entries = comicBook.sortEntries(fallbackEntries);
     encrypted = null;
-    archiveNotice = showWorkerFallbackNotice ? t('archive.notice.workerFallback') : '';
+    archiveNotice = () => showWorkerFallbackNotice ? t('archive.notice.workerFallback') : '';
     syncState();
     renderEntryList();
     renderEmptyState();
@@ -939,16 +929,16 @@ export default async function renderArchive(
 
   const openArchive = async () => {
     if (buffer.byteLength > maxArchiveSize) {
-      setError(t('archive.error.tooLarge', {
+      setError(() => t('archive.error.tooLarge', {
         size: formatArchiveBytes(buffer.byteLength),
         limit: formatArchiveBytes(maxArchiveSize),
       }));
       return;
     }
 
-    setLoading(true, t('archive.loading.initializingWorker'), t('archive.loading.initializingWorkerHint'));
+    setLoading(true, () => t('archive.loading.initializingWorker'), () => t('archive.loading.initializingWorkerHint'));
     setError('');
-    archiveNotice = '';
+    archiveNotice = () => '';
 
     try {
       if (hasLegacyGbkZipFilenames && !isLikelyEncryptedArchive(buffer, filename)) {
@@ -980,7 +970,7 @@ export default async function renderArchive(
       if (isLikelyEncryptedArchive(buffer, filename)) {
         encrypted = true;
         syncState();
-        throw new Error(t('archive.error.encryptedRequiresWorker'));
+        throw t.error('archive.error.encryptedRequiresWorker');
       }
       if (await tryOpenArchiveWithFallback()) {
         return;
@@ -989,7 +979,7 @@ export default async function renderArchive(
       throw new Error(errors.join('; ') || t('archive.error.workerInitFailed'));
     } catch (nextError) {
       console.error(nextError);
-      setError(nextError instanceof Error ? nextError.message : String(nextError));
+      setError(nextError);
     } finally {
       setLoading(false);
     }
@@ -1065,7 +1055,7 @@ export default async function renderArchive(
       ? shapefileEntries.reduce((sum, component) => sum + component.size, 0)
       : entry.size;
     if (previewSize > maxEntryPreviewSize) {
-      setError(t('archive.error.entryTooLarge', {
+      setError(() => t('archive.error.entryTooLarge', {
         name: entry.name,
         size: formatArchiveBytes(previewSize),
         limit: formatArchiveBytes(maxEntryPreviewSize),
@@ -1073,7 +1063,7 @@ export default async function renderArchive(
       return;
     }
 
-    setLoading(true, t('archive.loading.extracting', { name: entry.name }));
+    setLoading(true, () => t('archive.loading.extracting', { name: entry.name }));
     setError('');
 
     try {
@@ -1083,12 +1073,12 @@ export default async function renderArchive(
       if (requestId !== previewSequence) {
         return;
       }
-      setLoading(true, t('archive.loading.rendering', { name: entry.name }));
+      setLoading(true, () => t('archive.loading.rendering', { name: entry.name }));
       await renderEntryBuffer(entry, entryBuffer, requestId);
     } catch (nextError) {
       if (requestId === previewSequence) {
         console.error(nextError);
-        setError(nextError instanceof Error ? nextError.message : String(nextError));
+        setError(nextError);
       }
     } finally {
       if (requestId === previewSequence) {
@@ -1098,7 +1088,7 @@ export default async function renderArchive(
   }
 
   const downloadEntry = async (entry: ArchiveEntryView) => {
-    setLoading(true, t('archive.loading.exporting', { name: entry.name }));
+    setLoading(true, () => t('archive.loading.exporting', { name: entry.name }));
     try {
       const entryBuffer = await extractEntryBuffer(entry);
       const url = URL.createObjectURL(new Blob([entryBuffer]));
@@ -1124,7 +1114,7 @@ export default async function renderArchive(
     }
   });
 
-  syncState();
+  t.bind(root, () => syncState(), 'chrome');
   renderEmptyState();
   void openArchive();
 
@@ -1137,6 +1127,7 @@ export default async function renderArchive(
       await clearNestedPreview();
       await closeArchive();
       objectUrls.forEach(url => URL.revokeObjectURL(url));
+      t.release(root);
       target.replaceChildren();
     },
   };

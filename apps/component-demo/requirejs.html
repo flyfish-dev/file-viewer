@@ -17,7 +17,7 @@
 <body>
   <header>
     <h1>File Viewer / RequireJS</h1>
-    <label>Sample <select id="sample" disabled>
+    <label><span data-demo-copy="sample">Sample</span> <select id="sample" disabled>
       <option value="pdf.pdf">PDF</option>
       <option value="word.docx">DOCX</option>
       <option value="ppt.pptx">PPTX</option>
@@ -37,25 +37,29 @@
     });
     require(['viewer'], function (api) {
       var controller = api.mountViewer(document.getElementById('viewer'));
+      window.addEventListener('file-viewer-demo-language', function(event) { controller.update({ options: { locale: event.detail } }); });
       async function load() {
         picker.disabled = true;
-        statusNode.textContent = 'Loading ' + picker.value;
+        document.body.dataset.viewerStatus = 'load-start';
         try {
           await controller.load({
             url: new URL('example/' + picker.value, deploymentBase).href,
             name: picker.value,
-            options: { theme: 'light' }
+            options: { theme: 'light', locale: document.documentElement.dataset.demoLocale || new URLSearchParams(location.search).get('locale') || 'auto' }
           });
-          statusNode.textContent = 'Ready: ' + picker.value;
+          document.body.dataset.viewerStatus = 'load-complete';
         } catch (error) {
+          document.body.dataset.viewerStatus = 'error';
           statusNode.textContent = String(error.message || error);
         } finally { picker.disabled = false; }
       }
       picker.addEventListener('change', load);
       load();
     }, function (error) {
+      document.body.dataset.viewerStatus = 'error';
       statusNode.textContent = String(error.message || error);
     });
   </script>
+  <script type="module" src="/src/locale.ts"></script>
 </body>
 </html>

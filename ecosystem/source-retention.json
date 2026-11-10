@@ -7265,6 +7265,21 @@
       "path": "apps/viewer-demo/public/vendor/ppt/worker.mjs",
       "replacement": "apps/viewer-demo/public/vendor/ppt/dist/pptjs.worker.js",
       "reason": "Replace the retired native PPT 0.3.x asset with the exact Apache-2.0 TypeScript PPT 1.0.1 package. The native engine and its license remain preserved in existing Git history and release tags."
+    },
+    {
+      "path": "apps/component-demo/public/requirejs.html",
+      "replacement": "apps/component-demo/requirejs.html",
+      "reason": "Move the RequireJS demo into the Vite HTML entry set so its shared locale module is compiled for production while retaining the same requirejs.html output URL."
+    },
+    {
+      "path": "apps/viewer-demo/scripts/verify-german-i18n.mjs",
+      "replacement": "test/i18n.spec.ts",
+      "reason": "German dictionary completeness and interpolation checks now run from the central locale registry in the shared i18n suite, replacing fixed-key and source-string assertions."
+    },
+    {
+      "path": "apps/viewer-demo/scripts/verify-japanese-i18n.mjs",
+      "replacement": "test/i18n.spec.ts",
+      "reason": "Japanese dictionary completeness and interpolation checks now run from the central locale registry in the shared i18n suite, replacing fixed-key and source-string assertions."
     }
   ]
 }

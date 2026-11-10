@@ -120,15 +120,11 @@ const createCompatibilityNotice = (
 
   const card = createElement('div', 'fv-video-compatibility-card')
   card.append(
-    createElement('span', '', t('media.video.codecUnsupportedBadge')),
-    createElement('strong', '', t('media.video.codecUnsupportedTitle')),
-    createElement(
-      'p',
-      '',
-      t('media.video.codecUnsupportedDescription', { codec: track.label })
-    ),
+    t.text(createElement('span', ''), 'media.video.codecUnsupportedBadge'),
+    t.text(createElement('strong', ''), 'media.video.codecUnsupportedTitle'),
+    t.text(createElement('p', ''), 'media.video.codecUnsupportedDescription', { codec: track.label }),
     createElement('code', '', track.contentType),
-    createElement('p', '', t('media.video.codecUnsupportedAction'))
+    t.text(createElement('p', ''), 'media.video.codecUnsupportedAction')
   )
   notice.append(card)
   return notice
@@ -146,7 +142,7 @@ export default async function renderVideo(
   type?: string,
   context?: FileRenderContext
 ) {
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const normalizedType = (type || 'mp4').toLowerCase()
   const mp4VideoTrack = normalizedType === 'mp4'
     ? inspectMp4VideoTrack(buffer)
@@ -164,21 +160,17 @@ export default async function renderVideo(
   const heading = createElement('div', 'fv-video-heading')
   heading.append(
     createElement('span', '', normalizedType.toUpperCase() || 'VIDEO'),
-    createElement('strong', '', t('media.video.title'))
+    t.text(createElement('strong', ''), 'media.video.title')
   )
 
   const video = createElement('video', 'fv-video-player')
   video.controls = true
   video.preload = 'metadata'
-  video.textContent = t('media.video.unsupported')
+  t.text(video, 'media.video.unsupported')
   shell.append(heading, video)
 
   if (normalizedType === 'm3u8') {
-    shell.append(createElement(
-      'p',
-      'fv-video-hint',
-      t('media.video.hlsHint')
-    ))
+    shell.append(t.text(createElement('p', 'fv-video-hint'), 'media.video.hlsHint'))
   }
 
   root.append(shell)

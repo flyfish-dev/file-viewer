@@ -1,9 +1,9 @@
-import type { FileViewerMessageKey } from '../contracts/types';
+import type { FileViewerBaseMessageKey as FileViewerMessageKey } from '../contracts/types';
 
 /**
  * Built-in Japanese messages for every runtime viewer state and renderer.
  * Keep placeholders such as {count}, {name}, and {type} aligned with the
- * Chinese and English catalogs; scripts/verify-japanese-i18n.mjs enforces it.
+ * Chinese and English catalogs; pnpm test:i18n verifies every registered locale.
  */
 export const JA_JP_MESSAGES: Record<FileViewerMessageKey, string> = {
   'toolbar.zoomGroup': 'ズーム操作',

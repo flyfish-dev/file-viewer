@@ -4,6 +4,8 @@
 // should be introduced here. Higher layers depend on these contracts, never the
 // other way around.
 import type { FileViewerXmlOptions } from './xml'
+import type { FileViewerResolvedLocale } from '../i18n/locales'
+import type { FileViewerExtendedMessageKey } from '../i18n/domains'
 
 export type FileViewerSourceKind = 'file' | 'url' | 'buffer' | 'empty'
 
@@ -11,11 +13,11 @@ export type FileViewerThemeMode = 'light' | 'dark' | 'system'
 
 export type FileViewerResolvedThemeMode = Exclude<FileViewerThemeMode, 'system'>
 
-export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE' | (string & {})
+export type FileViewerLocale = 'auto' | FileViewerResolvedLocale | (string & {})
 
 export type FileViewerStyleIsolation = 'auto' | 'shadow' | 'scoped' | 'none'
 
-export type FileViewerMessageKey =
+export type FileViewerBaseMessageKey =
   | 'toolbar.zoomGroup'
   | 'toolbar.zoomOut'
   | 'toolbar.zoomIn'
@@ -478,6 +480,8 @@ export type FileViewerMessageKey =
   | 'loading.audio.label'
   | 'loading.audio.hint'
 
+export type FileViewerMessageKey = FileViewerBaseMessageKey | FileViewerExtendedMessageKey
+
 export type FileViewerMessageParams = Record<string, string | number | boolean | null | undefined>
 
 export type FileViewerMessageResolver = (
@@ -492,6 +496,17 @@ export type FileViewerMessages =
 export interface FileViewerI18nOptions {
   locale?: FileViewerLocale
   messages?: FileViewerMessages
+}
+
+/** Per-viewer language state. Subscribers must unsubscribe when their UI is disposed. */
+export interface FileViewerI18nContext {
+  readonly locale: FileViewerResolvedLocale
+  readonly options: FileViewerOptions
+  t(key: FileViewerMessageKey, params?: FileViewerMessageParams): string
+  formatNumber(value: number, options?: Intl.NumberFormatOptions): string
+  formatDateTime(value: Date | number, options?: Intl.DateTimeFormatOptions): string
+  formatBytes(value: number): string
+  subscribe(listener: () => void): () => void
 }
 
 export type FileViewerFileRef = File | Blob | ArrayBuffer
@@ -959,6 +974,8 @@ export interface FileRenderContext {
   sourceFile?: File | Blob
   signal?: AbortSignal
   options?: FileViewerOptions
+  /** Live UI language inherited by attachments; document content is never translated. */
+  i18n?: FileViewerI18nContext
   surface?: RenderSurface
   registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void
   registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void
@@ -1602,7 +1619,7 @@ export interface FileViewerOptions {
   styleIsolation?: FileViewerStyleIsolation
   /**
    * Viewer UI language. `auto` follows the browser language and resolves the
-   * built-in Chinese, English, Japanese, and German locales before falling
+   * seven bundled locales from FILE_VIEWER_LOCALE_METADATA before falling
    * back to `en-US`.
    */
   locale?: FileViewerLocale

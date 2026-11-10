@@ -285,7 +285,7 @@ pnpm add -D @file-viewer/vite-plugin
 
 ## 语言与文案
 
-组件默认 `locale: 'auto'`，会根据浏览器语言在中文和英文之间自动选择。需要固定语言或覆盖文案时，直接通过同一套 `options` 传入:
+组件默认 `locale: 'auto'`，按浏览器偏好依次匹配七种内置语言：`zh-CN`、`en-US`、`ja-JP`、`zh-TW`、`zh-HK`、`de-DE`、`ru-RU`。别名、动态切换、自定义文案与 SSR 规则见[国际化指南](i18n.md)。需要固定语言或覆盖文案时，直接通过同一套 `options` 传入:
 
 ```ts
 const options = {

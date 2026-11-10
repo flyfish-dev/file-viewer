@@ -1,5 +1,5 @@
 import {
-  decodeFileViewerTextBuffer, disposeFileViewerRendered,
+  decodeFileViewerTextBuffer, disposeFileViewerRendered, createFileViewerTranslator,
   type FileRenderContext, type FileViewerRenderedInstance, type FileViewerXmlDiagnostic
 } from '@file-viewer/core'
 import renderCode from './code.js'
@@ -20,6 +20,7 @@ export default async function renderXml(
   buffer: ArrayBuffer, target: HTMLDivElement, context?: FileRenderContext
 ): Promise<FileViewerXmlRenderedInstance> {
   const options = context?.options?.xml ?? {}
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const doc = target.ownerDocument
   const controller = new AbortController()
   const signal = controller.signal
@@ -45,11 +46,11 @@ export default async function renderXml(
   const sourceButton = doc.createElement('button')
   sourceButton.type = 'button'
   sourceButton.dataset.xmlView = 'source'
-  sourceButton.textContent = options.labels?.viewSource ?? 'View Source'
+  t.bind(sourceButton, node => { node.textContent = context?.options?.xml?.labels?.viewSource ?? t('xml.viewSource') })
   const renderedButton = doc.createElement('button')
   renderedButton.type = 'button'
   renderedButton.dataset.xmlView = 'rendered'
-  renderedButton.textContent = options.labels?.viewRendered ?? 'View Rendered'
+  t.bind(renderedButton, node => { node.textContent = context?.options?.xml?.labels?.viewRendered ?? t('xml.viewRendered') })
   controls.append(renderedButton, sourceButton)
   const sourceTarget = doc.createElement('div')
   sourceTarget.className = 'xml-profile-source'
@@ -57,7 +58,7 @@ export default async function renderXml(
   details.className = 'xml-profile-diagnostics'
   details.hidden = true
   const summary = doc.createElement('summary')
-  summary.textContent = options.labels?.diagnostics ?? 'XML profile diagnostics'
+  t.bind(summary, node => { node.textContent = context?.options?.xml?.labels?.diagnostics ?? t('xml.diagnostics') })
   const diagnosticText = doc.createElement('div')
   details.append(summary, diagnosticText)
   root.append(controls, sourceTarget, details)
@@ -152,7 +153,7 @@ export default async function renderXml(
       const html = createHtmlPreviewDocument(doc, result.html)
       frame = doc.createElement('iframe')
       frame.className = 'xml-profile-rendered'
-      frame.title = options.labels?.viewRendered ?? 'Rendered XML'
+      t.bind(frame, node => { node.title = context?.options?.xml?.labels?.viewRendered ?? t('xml.viewRendered') }, 'title')
       frame.setAttribute('sandbox', '')
       frame.referrerPolicy = 'no-referrer'
       frame.srcdoc = html

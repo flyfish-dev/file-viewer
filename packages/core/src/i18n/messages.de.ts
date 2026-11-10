@@ -1,4 +1,4 @@
-import type { FileViewerMessageKey } from '../contracts/types';
+import type { FileViewerBaseMessageKey as FileViewerMessageKey } from '../contracts/types';
 
 /**
  * Built-in German messages for every runtime viewer state and renderer.
@@ -154,7 +154,7 @@ export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
   "archive.preview.chooseFile": "Wählen Sie eine Datei",
   "archive.preview.downloadFile": "Datei herunterladen",
   "archive.error.title": "Hinweis zur Archivvorschau",
-  "archive.stats.summary": "{count}-Dateien · {size} · {previewable} können direkt in der Vorschau angezeigt werden",
+  "archive.stats.summary": "Dateien: {count} · {size} · Direkt darstellbar: {previewable}",
   "archive.warning.encrypted": "Verschlüsselter Inhalt wurde erkannt. Geben Sie das richtige Passwort ein, um eine Vorschau anzuzeigen. Das Passwort wird für diese Sitzung nur an den libarchive-Worker weitergegeben.",
   "archive.password.title": "Geben Sie das Archivpasswort ein",
   "archive.password.description": "Dieses Archiv enthält verschlüsselte Inhalte. Zum Lesen des Verzeichnisses oder zur Vorschau von Einträgen ist ein Passwort erforderlich.",

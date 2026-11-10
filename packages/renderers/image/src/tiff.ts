@@ -164,10 +164,10 @@ const createLightbox = (
   element.setAttribute('aria-modal', 'true');
   element.setAttribute('aria-hidden', 'true');
   const image = documentRef.createElement('img');
-  image.alt = t('image.lightbox.alt');
+  t.attr(image, 'alt', 'image.lightbox.alt');
   const closeButton = documentRef.createElement('button');
   closeButton.type = 'button';
-  closeButton.setAttribute('aria-label', t('image.lightbox.close'));
+  t.attr(closeButton, 'aria-label', 'image.lightbox.close');
   closeButton.textContent = '×';
   let previousFocus: HTMLElement | null = null;
 
@@ -236,7 +236,7 @@ export async function renderTiffWithDecoder(
 ): Promise<FileViewerRenderedInstance> {
   assertTiffSourceSafety(buffer);
 
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const rotationEnabled = context?.options?.image?.rotation !== false;
   const documentRef = target.ownerDocument || document;
   const windowRef = documentRef.defaultView;
@@ -264,7 +264,7 @@ export async function renderTiffWithDecoder(
   const toolbar = documentRef.createElement('div');
   toolbar.className = 'tiff-toolbar';
   toolbar.setAttribute('role', 'toolbar');
-  toolbar.setAttribute('aria-label', t('image.toolbar.rotation'));
+  t.attr(toolbar, 'aria-label', 'image.toolbar.rotation');
   const pageMeter = documentRef.createElement('span');
   pageMeter.className = 'tiff-page-meter';
   pageMeter.setAttribute('aria-live', 'polite');
@@ -533,7 +533,7 @@ export async function renderTiffWithDecoder(
       frame.dataset.pageNumber = String(index + 1);
       const image = documentRef.createElement('img');
       image.src = objectUrl;
-      image.alt = `${t('image.alt')} ${index + 1}`;
+      t.bind(image, localizedNode => { localizedNode.alt = `${t('image.alt')} ${index + 1}`; }, 'alt');
       image.tabIndex = 0;
       image.setAttribute('role', 'button');
       image.setAttribute('aria-haspopup', 'dialog');

@@ -4,8 +4,11 @@ import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const root = process.env.FILE_VIEWER_TEST_ROOT || path.resolve(import.meta.dirname, '..');
+const i18nOnly = process.env.FILE_VIEWER_PDF_I18N_ONLY === '1';
+const { FILE_VIEWER_SUPPORTED_LOCALES, FILE_VIEWER_BUILTIN_MESSAGES } = await import(pathToFileURL(path.join(root, 'packages/core/dist/i18n/messages.js')).href);
 const require = createRequire(path.join(root, 'package.json'));
 const { build } = require('esbuild');
 const browsers = require('playwright');
@@ -91,12 +94,21 @@ window.fixture = {
     window.updateFixture = next => update({ ...next, ...(next.options ? { options: {
       ...options, ...next.options, pdf: { ...options.pdf, ...(next.options.pdf || {}) }
     }} : {}) });
+    // Full's mount expands asset defaults. A language update supplies only the
+    // language, so this check must retain those existing format option groups.
+    window.updateLanguage = wrapper === 'full'
+      ? locale => controller.update({ options: { locale } })
+      : locale => window.updateFixture({ options: { locale } });
     window.viewer = controller;
   },
   visible() {
     const visit = root => [...root.querySelectorAll('.pdfViewer .page canvas')].some(canvas => canvas.width > 20 && canvas.height > 20 &&
       canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data.some((n,i,all) => i % 4 === 0 && n < 150 && all[i+3] > 0)) ||
       (root.shadowRoot && visit(root.shadowRoot)) || [...root.querySelectorAll('*')].some(el => el.shadowRoot && visit(el.shadowRoot));
+    return visit(document.getElementById('host'));
+  },
+  element(selector) {
+    const visit = root => root.querySelector(selector) || (root.shadowRoot && visit(root.shadowRoot)) || [...root.querySelectorAll('*')].filter(el => el.shadowRoot).map(el => visit(el.shadowRoot)).find(Boolean);
     return visit(document.getElementById('host'));
   },
   text() {
@@ -195,7 +207,7 @@ try {
 for(const browserName of (process.env.FILE_VIEWER_TEST_BROWSERS || 'chromium,webkit').split(',')){
   const browser=await browsers[browserName].launch({headless:true,executablePath:browserName==='chromium'?process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined:undefined,args:browserName==='chromium'?['--no-sandbox']:[]});
   try {
-    const cases=[
+    const cases=i18nOnly ? ['web','vue','full'].map(wrapper => ({ wrapper, mode: 'i18n-retained-stream', stream: true, pdf: { streaming: true, disableStream: true, disableAutoFetch: true } })) : [
       ...['core','web','element','react','svelte','jquery','vue','full'].map(wrapper=>({wrapper,mode:'same-default',stream:true})),
       {wrapper:'react',mode:'cross-signed-filename',stream:true,cross:true,signed:true,filename:'contract.pdf',pdf:{streaming:true}},
       {wrapper:'vue',mode:'cross-signed-type',stream:true,cross:true,signed:true,type:'pdf',pdf:{streaming:true}},
@@ -223,6 +235,37 @@ for(const browserName of (process.env.FILE_VIEWER_TEST_BROWSERS || 'chromium,web
         // still observes unrestricted transport after painting.
         releaseFirstPaintGate(id);
         if(c.pdf?.disableAutoFetch){await page.waitForTimeout(350);const after=requests.filter(r=>r.id===id);assert.ok(!after.some(r=>r.status===200&&r.completed));assert.ok(after.reduce((n,r)=>n+r.bytes,0)<pdfs.get('large').length/2);}
+        if (i18nOnly) {
+          await page.evaluate(async () => { await window.fixture.element('.pdf-shell').__flyfishViewerViewStateProvider.applyState({ page: 1, rotation: 90, scale: 1.15 }); });
+          await page.waitForTimeout(150);
+          const countBefore = requests.filter(r => r.id === id).length;
+          const workersBefore = workers.length;
+          const changes = await page.evaluate(async locales => {
+            const node = window.fixture.element('.pdfViewer');
+            const provider = window.fixture.element('.pdf-shell').__flyfishViewerViewStateProvider;
+            const before = provider.getState();
+            const changes = [];
+            for (const locale of locales) {
+              await window.updateLanguage(locale);
+              await new Promise(resolve => setTimeout(resolve, 75));
+              const after = window.fixture.element('.pdf-shell').__flyfishViewerViewStateProvider.getState();
+              if (node !== window.fixture.element('.pdfViewer') || before.page !== after.page || before.rotation !== after.rotation || Math.abs(before.scale - after.scale) > .001 || window.pdfLoads.length !== 1) throw new Error('PDF reading state changed: ' + locale);
+              const label = window.fixture.element('.pdf-scale-button').getAttribute('aria-label');
+              const pageLabel = window.fixture.element('.page[data-page-number="1"]').getAttribute('aria-label');
+              changes.push({ locale, label, pageLabel, state: after });
+            }
+            return changes;
+          }, FILE_VIEWER_SUPPORTED_LOCALES);
+          assert.equal(requests.filter(r => r.id === id).length, countBefore, 'Locale changes must reuse the open PDF transport');
+          assert.equal(workers.length, workersBefore, 'Locale changes must reuse the PDF Worker');
+          for (const change of changes) {
+            assert.equal(change.label, FILE_VIEWER_BUILTIN_MESSAGES[change.locale]['pdf.toolbar.fitWidth']);
+            assert.equal(change.pageLabel, FILE_VIEWER_BUILTIN_MESSAGES[change.locale]['pdf.nav.pageLabel'].replace('{page}', '1'));
+          }
+          c.languageChanges = changes;
+          c.sourceRequests = countBefore;
+          c.mode = 'i18n-retained-open-pdf';
+        }
         assert.deepEqual(caseErrors,[],`${id}: no uncaught errors`);
         await page.screenshot({path:path.join(output,id+'.png')});
         report.cases.push({browser:browserName,...c,id,loads,network,status:'passed'});console.log('PASS',id);
@@ -231,6 +274,7 @@ for(const browserName of (process.env.FILE_VIEWER_TEST_BROWSERS || 'chromium,web
         await page.screenshot({path:path.join(output,browserName+'-failure.png')});throw error;
       }finally{await page.close();}
     }
+    if (i18nOnly) continue;
     // Same URL: a type hint and renderer-owned PDF options must reload the real
     // Vue/React entry, rather than silently retaining an obsolete source policy.
     for (const wrapper of ['vue','react']) {

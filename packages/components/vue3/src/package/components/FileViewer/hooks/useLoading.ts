@@ -4,6 +4,7 @@ import {
   createFileViewerLoadingControllerActionHandlers,
   resolveFileViewerLoadingTheme,
   type FileViewerI18nInput,
+  type FileViewerLoadingController,
   type FileViewerLoadingState,
   type FileViewerStateTheme
 } from '@file-viewer/core'
@@ -45,8 +46,8 @@ export const useLoading = (
     startLoading: actions.startLoading,
     setLoadingMessage: actions.setLoadingMessage,
     stopLoading: actions.stopLoading,
-    showError: (message: string) => {
-      actions.showError(message)
+    showError: (message: string, resolveMessage?: Parameters<FileViewerLoadingController['showError']>[1]) => {
+      actions.showError(message, resolveMessage)
       // Notify for each failure, including retries with the same message.
       // Updating the display state first lets hosts safely switch to a fallback.
       onError?.(message)

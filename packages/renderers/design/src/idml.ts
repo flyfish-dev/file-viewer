@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core'
 import {
   createFileViewerZoomChangeEmitter,
   registerFileViewerZoomProvider,
@@ -19,17 +20,7 @@ const idmlStyle = `
 @media(max-width:760px){.idml-viewer{min-height:360px}.idml-toolbar{align-items:flex-start;padding:8px}.idml-title span{max-width:140px}.idml-actions{flex-wrap:wrap;justify-content:flex-end}.idml-actions button{height:32px;min-width:34px;padding:0 7px}.idml-layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.idml-sidebar{max-width:100%;border-right:0;border-bottom:1px solid var(--idml-border);overflow-x:auto;overflow-y:hidden}.idml-page-list{display:flex;width:max-content;max-width:none;padding:7px}.idml-page-button{width:150px;min-height:44px}.idml-stage{padding:14px}.idml-status{bottom:calc(12px + var(--file-viewer-mobile-overlay-bottom,0px))}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string
-) => {
-  const node = documentRef.createElement(tag)
-  if (className) node.className = className
-  if (text !== undefined) node.textContent = text
-  return node
-}
+
 
 const clampZoom = (value: number) => Math.min(4, Math.max(0.05, Number(value.toFixed(3))))
 
@@ -43,29 +34,21 @@ export default async function renderIdml(
   target: HTMLDivElement,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+
   if (context?.signal?.aborted) throw new DOMException('IDML rendering was aborted.', 'AbortError')
   const documentRef = target.ownerDocument || document
   const design = context?.options?.design
-  const isChinese = (context?.options?.locale || documentRef.documentElement.lang || '')
-    .toLowerCase()
-    .startsWith('zh')
-  const copy = isChinese
-    ? {
-        title: 'Adobe InDesign IDML',
-        page: '页',
-        frames: '个对象',
-        fit: '适合窗口',
-        loading: '正在渲染页面',
-        ready: 'CPU WASM 页面渲染'
-      }
-    : {
-        title: 'Adobe InDesign IDML',
-        page: 'Page',
-        frames: 'frames',
-        fit: 'Fit',
-        loading: 'Rendering page',
-        ready: 'CPU WASM page render'
-      }
+
+  const copy = {
+    get title() { return t('design.idml.title'); },
+    get page() { return t('design.idml.page'); },
+    get frames() { return t('design.idml.frames'); },
+    get fit() { return t('design.idml.fit'); },
+    get loading() { return t('design.idml.loading'); },
+    get ready() { return t('design.idml.ready'); }
+  }
   const limits = resolveIdmlSafetyLimits({
     maxFileBytes: design?.maxFileBytes,
     maxEntries: design?.idmlMaxEntries,
@@ -119,12 +102,12 @@ export default async function renderIdml(
   const toolbar = element(documentRef, 'header', 'idml-toolbar')
   const title = element(documentRef, 'div', 'idml-title')
   title.append(
-    element(documentRef, 'strong', undefined, copy.title),
+    element(documentRef, 'strong', undefined, () => copy.title),
     element(
       documentRef,
       'span',
       undefined,
-      `${opened.tree.pageCount} ${copy.page.toLowerCase()} · ${opened.tree.frameCount} ${copy.frames} · ${opened.engineVersion}`
+      () => `${opened.tree.pageCount} ${copy.page.toLowerCase()} · ${opened.tree.frameCount} ${copy.frames} · ${opened.engineVersion}`
     )
   )
   const actions = element(documentRef, 'div', 'idml-actions')
@@ -133,7 +116,7 @@ export default async function renderIdml(
   const zoomOut = element(documentRef, 'button', undefined, '−')
   const zoomLabel = element(documentRef, 'span', undefined, '100%')
   const zoomIn = element(documentRef, 'button', undefined, '+')
-  const fit = element(documentRef, 'button', undefined, copy.fit)
+  const fit = element(documentRef, 'button', undefined, () => copy.fit)
   ;[previous, next, zoomOut, zoomIn, fit].forEach((button) => {
     button.type = 'button'
   })
@@ -142,21 +125,21 @@ export default async function renderIdml(
   zoomOut.dataset.idmlAction = 'zoom-out'
   zoomIn.dataset.idmlAction = 'zoom-in'
   fit.dataset.idmlAction = 'fit'
-  previous.setAttribute('aria-label', 'Previous IDML page')
-  next.setAttribute('aria-label', 'Next IDML page')
+  t.bind(previous, node => node.setAttribute('aria-label', t('design.ui.previous.idml.page.aee2a6')), 'aria-label')
+  t.bind(next, node => node.setAttribute('aria-label', t('design.ui.next.idml.page.fe7930')), 'aria-label')
   actions.append(previous, next, zoomOut, zoomLabel, zoomIn, fit)
   toolbar.append(title, actions)
 
   const layout = element(documentRef, 'div', 'idml-layout')
   const sidebar = element(documentRef, 'nav', 'idml-sidebar')
-  sidebar.setAttribute('aria-label', 'IDML pages')
+  t.bind(sidebar, node => node.setAttribute('aria-label', t('design.ui.idml.pages.bc51ac')), 'aria-label')
   const pageList = element(documentRef, 'ol', 'idml-page-list')
   sidebar.appendChild(pageList)
   const stage = element(documentRef, 'main', 'idml-stage')
   const wrap = element(documentRef, 'div', 'idml-canvas-wrap')
   const shell = element(documentRef, 'div', 'idml-page-shell')
   let canvas = element(documentRef, 'canvas')
-  const status = element(documentRef, 'span', 'idml-status', copy.loading)
+  const status = element(documentRef, 'span', 'idml-status', () => copy.loading)
   shell.appendChild(canvas)
   wrap.appendChild(shell)
   stage.append(wrap, status)
@@ -174,8 +157,8 @@ export default async function renderIdml(
     const number = element(documentRef, 'span', 'idml-page-number', String(page.index + 1))
     const text = element(documentRef, 'span', 'idml-page-copy')
     text.append(
-      element(documentRef, 'strong', undefined, page.label || `${copy.page} ${page.index + 1}`),
-      element(documentRef, 'span', undefined, `${page.frames.length} ${copy.frames}`)
+      element(documentRef, 'strong', undefined, () => page.label || `${copy.page} ${page.index + 1}`),
+      element(documentRef, 'span', undefined, () => `${page.frames.length} ${copy.frames}`)
     )
     button.append(number, text)
     item.appendChild(button)
@@ -281,7 +264,7 @@ export default async function renderIdml(
     })
     previous.disabled = index === 0
     next.disabled = index === pages.length - 1
-    status.textContent = `${copy.loading} ${index + 1}…`
+    t.bind(status, node => { node.textContent = `${copy.loading} ${index + 1}…`; }, 'textContent')
     const task = pageRenderQueue
       .catch(() => undefined)
       .then(async () => {
@@ -292,7 +275,7 @@ export default async function renderIdml(
           shell.replaceChildren(page.canvas)
           canvas = page.canvas
         }
-        status.textContent = `${copy.ready} · ${index + 1}/${pages.length} · ${Math.round(dpi)} DPI`
+        t.bind(status, node => { node.textContent = `${copy.ready} · ${index + 1}/${pages.length} · ${Math.round(dpi)} DPI`; }, 'textContent')
         if (!userAdjustedZoom) fitPage()
         context?.onProgressiveRender?.()
         context?.registerThumbnailAdapter?.({ getTarget: () => canvas })
@@ -366,7 +349,7 @@ export default async function renderIdml(
       printCanvas.getContext('2d')?.drawImage(cached.canvas, 0, 0)
       printPage.append(
         printCanvas,
-        element(documentRef, 'div', 'idml-print-label', page.label || `${copy.page} ${index + 1}`)
+        element(documentRef, 'div', 'idml-print-label', () => page.label || `${copy.page} ${index + 1}`)
       )
       printContainer.appendChild(printPage)
       total += cached.bytes

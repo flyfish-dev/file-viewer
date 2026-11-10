@@ -365,7 +365,7 @@ const copy = {
         `${stableExtensionCount} 个稳定扩展名`,
         `${experimentalExtensionCount} 个实验扩展名`,
         `${previewPipelineCount} 条预览链路`,
-        'Full 自托管资产契约'
+        '七语言组件界面 · 离线内置'
       ]
     },
     matrixTitle: `${registeredExtensionCount} 个已注册扩展名，按 ${previewPipelineCount} 条真实预览链路组织。`,
@@ -417,7 +417,7 @@ const copy = {
         `${stableExtensionCount} stable extensions`,
         `${experimentalExtensionCount} experimental extensions`,
         `${previewPipelineCount} preview pipelines`,
-        'Self-hosted Full assets'
+        'Seven built-in UI languages'
       ]
     },
     matrixTitle: `${registeredExtensionCount} registered extensions. ${previewPipelineCount} real preview pipelines.`,

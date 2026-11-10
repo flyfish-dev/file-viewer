@@ -70,7 +70,7 @@ export default async function renderHtml(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const root = documentRef.createElement('div')
   root.className = 'html-viewer'
   const style = documentRef.createElement('style')
@@ -90,19 +90,19 @@ export default async function renderHtml(
   toolbar.className = 'html-viewer-toolbar'
   const previewButton = documentRef.createElement('button')
   previewButton.type = 'button'
-  previewButton.textContent = t('text.html.preview')
+  t.text(previewButton, 'text.html.preview')
   previewButton.dataset.htmlView = 'preview'
   const sourceButton = documentRef.createElement('button')
   sourceButton.type = 'button'
-  sourceButton.textContent = t('text.html.source')
+  t.text(sourceButton, 'text.html.source')
   sourceButton.dataset.htmlView = 'source'
   const hint = documentRef.createElement('span')
   hint.className = 'html-viewer-hint'
-  hint.textContent = t('text.html.safePreview')
+  t.text(hint, 'text.html.safePreview')
   toolbar.append(previewButton, sourceButton, hint)
   const frame = documentRef.createElement('iframe')
   frame.className = 'html-preview-frame'
-  frame.title = t('text.html.preview')
+  t.attr(frame, 'title', 'text.html.preview')
   frame.setAttribute('sandbox', '')
   frame.referrerPolicy = 'no-referrer'
   const sourceTarget = documentRef.createElement('div')

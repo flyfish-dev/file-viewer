@@ -4,16 +4,19 @@ import {
   createFileViewerRenderSurfaceActionHandlers,
   createFileViewerRenderSurfaceStateTarget,
   createFileViewerSnapshotDownload,
+  createFileViewerI18n,
 } from '@file-viewer/core'
 import type {
   FileRenderExportAdapter,
   FileViewerLifecycleContext,
-  FileViewerOptions
+  FileViewerOptions,
+  FileViewerI18nContext
 } from '@file-viewer/core'
 import { createVueRenderSession, type FileViewerVueRenderSession } from '../rendererBridge'
 import { renderNestedBuffer } from '../../../vendors/nestedRender'
 
 interface UseViewerRenderSurfaceOptions {
+  i18n?: FileViewerI18nContext;
   output: Ref<HTMLDivElement | null>;
   getOptions: () => FileViewerOptions | undefined;
   beforeDownload: () => Promise<boolean>;
@@ -48,6 +51,7 @@ interface UseViewerRenderSurfaceOptions {
  * 具体格式派发仍由 core registry + Vue renderer bridge 完成。
  */
 export const useViewerRenderSurface = ({
+  i18n,
   output,
   getOptions,
   beforeDownload,
@@ -143,33 +147,43 @@ export const useViewerRenderSurface = ({
       onProgressiveRender,
       version
     }) => {
-      return await createVueRenderSession(nextBuffer, type, target as HTMLDivElement, {
-        filename,
-        url: nextSourceUrl,
-        streamUrl: nextStreamUrl,
-        signal: nextSignal,
-        // Streaming URL placeholders are component state only; expose sourceFile
-        // exclusively for real local File-backed random access.
-        sourceFile: nextStreamUrl ? undefined : sourceFile,
-        options: getOptions(),
-        requestSnapshotDownload: createFileViewerSnapshotDownload({
-          getOptions,
-          beforeDownload,
-          isCurrent: () => isCurrentRequest(version),
-        }),
-        registerExportAdapter,
-        onProgressiveRender,
-        renderNestedBuffer: async (nestedBuffer, nestedType, nestedTarget, nestedContext) => {
-          return await renderNestedBuffer(nestedBuffer, nestedType, nestedTarget, {
-            ...nestedContext,
-            options: nestedContext?.options || getOptions()
-          })
-        }
-      }, available => {
-        if (isCurrentRequest(version)) {
-          rendererSearchAvailable.value = available
-        }
-      })
+      const languageScope = createFileViewerI18n(getOptions(), { parent: i18n, signal: nextSignal })
+      try {
+        const session = await createVueRenderSession(nextBuffer, type, target as HTMLDivElement, {
+          filename,
+          url: nextSourceUrl,
+          streamUrl: nextStreamUrl,
+          signal: nextSignal,
+          // Streaming URL placeholders are component state only; expose sourceFile
+          // exclusively for real local File-backed random access.
+          sourceFile: nextStreamUrl ? undefined : sourceFile,
+          options: languageScope.options,
+          i18n: languageScope,
+          requestSnapshotDownload: createFileViewerSnapshotDownload({
+            getOptions,
+            beforeDownload,
+            isCurrent: () => isCurrentRequest(version),
+          }),
+          registerExportAdapter,
+          onProgressiveRender,
+          renderNestedBuffer: async (nestedBuffer, nestedType, nestedTarget, nestedContext) => {
+            return await renderNestedBuffer(nestedBuffer, nestedType, nestedTarget, {
+              ...nestedContext,
+              i18n: nestedContext?.i18n || languageScope,
+              options: nestedContext?.options || languageScope.options
+            })
+          }
+        }, available => {
+          if (isCurrentRequest(version)) {
+            rendererSearchAvailable.value = available
+          }
+        })
+        const destroy = session.destroy
+        return { ...session, destroy: async () => { languageScope.destroy(); await destroy?.() } }
+      } catch (error) {
+        languageScope.destroy()
+        throw error
+      }
     }
   })
 

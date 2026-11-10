@@ -161,7 +161,7 @@ const parseHeader = (bytes: Uint8Array, t: FileViewerTranslator): BundleHeader =
 
   const signature = lines.shift() || ''
   if (!signature.startsWith('# v') || !signature.includes('git bundle')) {
-    throw new Error(t('gitBundle.error.invalid'))
+    throw t.error('gitBundle.error.invalid')
   }
 
   const capabilities: string[] = []
@@ -366,7 +366,7 @@ const parsePack = async (
 ) => {
   const offset = header.packOffset
   if (asciiDecoder.decode(bytes.subarray(offset, offset + 4)) !== 'PACK') {
-    throw new Error(t('gitBundle.error.missingPack'))
+    throw t.error('gitBundle.error.missingPack')
   }
   const version = readUInt32(bytes, offset + 4)
   const count = readUInt32(bytes, offset + 8)
@@ -593,12 +593,7 @@ const renderMeta = (
   })
   panel.appendChild(meta)
   if (model.deltaCount > 0) {
-    panel.appendChild(createElement(
-      documentRef,
-      'div',
-      'git-bundle-notice',
-      t('gitBundle.notice.delta')
-    ))
+    panel.appendChild(t.text(createElement(documentRef, 'div', 'git-bundle-notice'), 'gitBundle.notice.delta'))
   }
 }
 
@@ -614,7 +609,7 @@ export default async function renderGitBundle(
   }
   ;({ Inflate } = await loadPako())
   const documentRef = target.ownerDocument || document
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const model = await parseBundleModel(buffer, t)
   let zoom = 1
   const zoomEmitter = createZoomChangeEmitter()
@@ -624,26 +619,26 @@ export default async function renderGitBundle(
   const toolbar = createElement(documentRef, 'div', 'git-bundle-toolbar')
   toolbar.append(
     createElement(documentRef, 'span', undefined, type.toUpperCase()),
-    createElement(documentRef, 'strong', undefined, t('gitBundle.toolbar.summary', {
+    t.text(createElement(documentRef, 'strong', undefined), 'gitBundle.toolbar.summary', {
       commits: model.commits.length,
       files: model.files.length
-    }))
+    })
   )
 
   const layout = createElement(documentRef, 'div', 'git-bundle-layout')
   const historyPanel = createElement(documentRef, 'section', 'git-bundle-panel')
-  historyPanel.appendChild(createElement(documentRef, 'h3', undefined, t('gitBundle.title.history')))
+  historyPanel.appendChild(t.text(createElement(documentRef, 'h3', undefined), 'gitBundle.title.history'))
   renderMeta(documentRef, historyPanel, model, t)
   const historyList = createElement(documentRef, 'ul', 'git-bundle-list')
   historyPanel.appendChild(historyList)
 
   const treePanel = createElement(documentRef, 'section', 'git-bundle-panel')
-  treePanel.appendChild(createElement(documentRef, 'h3', undefined, t('gitBundle.title.fileTree')))
+  treePanel.appendChild(t.text(createElement(documentRef, 'h3', undefined), 'gitBundle.title.fileTree'))
   const tree = createElement(documentRef, 'div', 'git-bundle-tree')
   treePanel.appendChild(tree)
 
   const filePanel = createElement(documentRef, 'section', 'git-bundle-panel git-bundle-file')
-  const fileHeader = createElement(documentRef, 'div', 'git-bundle-file-header', t('gitBundle.file.choose'))
+  const fileHeader = t.text(createElement(documentRef, 'div', 'git-bundle-file-header'), 'gitBundle.file.choose')
   const fileCode = createElement(documentRef, 'pre', 'git-bundle-code', '')
   filePanel.append(fileHeader, fileCode)
   layout.append(historyPanel, treePanel, filePanel)
@@ -653,19 +648,19 @@ export default async function renderGitBundle(
   const renderFiles = (files: FileEntry[]) => {
     tree.replaceChildren()
     if (!files.length) {
-      tree.appendChild(createElement(documentRef, 'div', 'git-bundle-notice', t('gitBundle.file.noTree')))
-      fileHeader.textContent = t('gitBundle.file.none')
+      tree.appendChild(t.text(createElement(documentRef, 'div', 'git-bundle-notice'), 'gitBundle.file.noTree'))
+      t.text(fileHeader, 'gitBundle.file.none')
       fileCode.textContent = ''
       return
     }
     files.forEach((file, index) => {
       const button = createElement(documentRef, 'button')
       button.type = 'button'
-      button.textContent = `${file.path} · ${file.size} B`
+      t.bind(button, node => { node.textContent = `${file.path} · ${t.formatBytes(file.size)}` })
       button.addEventListener('click', () => {
         tree.querySelectorAll('button').forEach(item => item.classList.remove('active'))
         button.classList.add('active')
-        fileHeader.textContent = `${file.path} · ${shortOid(file.oid)}`
+        t.bind(fileHeader, node => { node.textContent = `${file.path} · ${shortOid(file.oid)}` })
         fileCode.textContent = file.preview
       })
       tree.appendChild(button)
@@ -697,7 +692,7 @@ export default async function renderGitBundle(
   })
 
   if (!model.commits.length) {
-    historyList.appendChild(createElement(documentRef, 'li', 'git-bundle-notice', t('gitBundle.history.empty')))
+    historyList.appendChild(t.text(createElement(documentRef, 'li', 'git-bundle-notice'), 'gitBundle.history.empty'))
     renderFiles(model.files)
   }
 

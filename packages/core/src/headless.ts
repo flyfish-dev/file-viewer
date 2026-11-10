@@ -226,6 +226,11 @@ export {
   resolveFileViewerLocale,
   translateFileViewerMessage,
 } from './i18n/messages';
+export { FILE_VIEWER_LOCALE_METADATA, FILE_VIEWER_LOCALE_OPTIONS } from './i18n/locales';
+export { createFileViewerI18n } from './i18n/context';
+export type { FileViewerI18nController } from './i18n/context';
+export type { FileViewerI18nContext } from './contracts/types';
+export { formatFileViewerNumber, formatFileViewerDateTime, formatFileViewerBytes } from './i18n/format';
 export type {
   FileViewerI18nInput,
   FileViewerResolvedLocale,

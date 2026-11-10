@@ -2,15 +2,23 @@ import type {
   FileViewerI18nOptions,
   FileViewerLocale,
   FileViewerMessageKey,
+  FileViewerBaseMessageKey,
   FileViewerMessageParams,
   FileViewerMessages,
   FileViewerOptions,
+  FileViewerI18nContext,
 } from '../contracts/types';
 import { JA_JP_MESSAGES } from './messages.ja';
 import { DE_DE_MESSAGES } from './messages.de';
+import { ZH_TW_MESSAGES, ZH_HK_MESSAGES } from './messages.zh-Hant';
+import { RU_RU_MESSAGES } from './messages.ru';
+import { FILE_VIEWER_DOMAIN_MESSAGES } from './domains';
+import { fileViewerI18nContexts } from './context';
+import { formatFileViewerNumber, formatFileViewerDateTime, formatFileViewerBytes, resolveFileViewerPluralMessage } from './format';
+import { FILE_VIEWER_SUPPORTED_LOCALES, matchFileViewerLocale, type FileViewerResolvedLocale } from './locales';
 
-export const FILE_VIEWER_SUPPORTED_LOCALES = ['zh-CN', 'en-US', 'ja-JP', 'de-DE'] as const;
-export type FileViewerResolvedLocale = typeof FILE_VIEWER_SUPPORTED_LOCALES[number];
+export { FILE_VIEWER_SUPPORTED_LOCALES };
+export type { FileViewerResolvedLocale };
 
 export interface ResolveFileViewerI18nInput {
   locale?: FileViewerLocale;
@@ -23,7 +31,7 @@ export type FileViewerI18nInput = ResolveFileViewerI18nInput | FileViewerOptions
 export const FILE_VIEWER_DEFAULT_LOCALE: FileViewerResolvedLocale = 'zh-CN';
 export const FILE_VIEWER_FALLBACK_LOCALE: FileViewerResolvedLocale = 'en-US';
 
-const ZH_CN_MESSAGES: Record<FileViewerMessageKey, string> = {
+const ZH_CN_MESSAGES: Record<FileViewerBaseMessageKey, string> = {
   'toolbar.zoomGroup': '缩放控制',
   'toolbar.zoomOut': '缩小预览',
   'toolbar.zoomIn': '放大预览',
@@ -487,7 +495,7 @@ const ZH_CN_MESSAGES: Record<FileViewerMessageKey, string> = {
   'loading.audio.hint': '正在准备音频资源和播放控件。',
 };
 
-const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
+const EN_US_MESSAGES: Record<FileViewerBaseMessageKey, string> = {
   'toolbar.zoomGroup': 'Zoom controls',
   'toolbar.zoomOut': 'Zoom out',
   'toolbar.zoomIn': 'Zoom in',
@@ -637,7 +645,7 @@ const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
   'archive.preview.chooseFile': 'Choose a file',
   'archive.preview.downloadFile': 'Download file',
   'archive.error.title': 'Archive preview notice',
-  'archive.stats.summary': '{count} files · {size} · {previewable} directly previewable',
+  'archive.stats.summary': 'Files: {count} · {size} · Direct previews: {previewable}',
   'archive.warning.encrypted': 'Encrypted content was detected. Enter the correct password to preview it; the password is passed only to the libarchive Worker for this session.',
   'archive.password.title': 'Enter archive password',
   'archive.password.description': 'This archive contains encrypted content. A password is required to read the directory or preview entries.',
@@ -952,33 +960,16 @@ const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
 };
 
 export const FILE_VIEWER_BUILTIN_MESSAGES = Object.freeze({
-  'zh-CN': ZH_CN_MESSAGES,
-  'en-US': EN_US_MESSAGES,
-  'ja-JP': JA_JP_MESSAGES,
-  'de-DE': DE_DE_MESSAGES,
+  'zh-CN': { ...ZH_CN_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['zh-CN'] },
+  'en-US': { ...EN_US_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['en-US'] },
+  'ja-JP': { ...JA_JP_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['ja-JP'] },
+  'de-DE': { ...DE_DE_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['de-DE'] },
+  'zh-TW': { ...ZH_TW_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['zh-TW'] },
+  'zh-HK': { ...ZH_HK_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['zh-HK'] },
+  'ru-RU': { ...RU_RU_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['ru-RU'] },
 } satisfies Record<FileViewerResolvedLocale, Record<FileViewerMessageKey, string>>);
 
-const normalizeLocaleCandidate = (
-  locale?: string | null
-): FileViewerResolvedLocale | undefined => {
-  const normalized = String(locale || '').trim().replace(/_/g, '-').toLowerCase();
-  if (!normalized) {
-    return undefined;
-  }
-  if (normalized === 'zh' || normalized.startsWith('zh-')) {
-    return 'zh-CN';
-  }
-  if (normalized === 'ja' || normalized.startsWith('ja-')) {
-    return 'ja-JP';
-  }
-  if (normalized === 'de' || normalized.startsWith('de-')) {
-    return 'de-DE';
-  }
-  if (normalized === 'en' || normalized.startsWith('en-')) {
-    return 'en-US';
-  }
-  return undefined;
-};
+const normalizeLocaleCandidate = matchFileViewerLocale;
 
 const getBrowserLocales = (): string[] => {
   const browserNavigator = typeof window !== 'undefined' ? window.navigator : undefined;
@@ -1015,6 +1006,8 @@ const getCustomMessages = (input?: FileViewerI18nInput): FileViewerMessages | un
 };
 
 export const resolveFileViewerLocale = (input?: FileViewerI18nInput) => {
+  const context = input && fileViewerI18nContexts.get(input);
+  if (context) return context.locale;
   return normalizeFileViewerLocale(input?.i18n?.locale || input?.locale);
 };
 
@@ -1036,11 +1029,83 @@ export const translateFileViewerMessage = (
   const customMessage = typeof customMessages === 'function'
     ? customMessages(key, params, locale)
     : customMessages?.[key];
-  const message = customMessage || FILE_VIEWER_BUILTIN_MESSAGES[locale][key] || FILE_VIEWER_BUILTIN_MESSAGES[FILE_VIEWER_FALLBACK_LOCALE][key] || FILE_VIEWER_BUILTIN_MESSAGES[FILE_VIEWER_DEFAULT_LOCALE][key];
-  return formatFileViewerMessage(message, params);
+  const message = customMessage || resolveFileViewerPluralMessage(locale, key, params.count) || FILE_VIEWER_BUILTIN_MESSAGES[locale][key] || FILE_VIEWER_BUILTIN_MESSAGES[FILE_VIEWER_FALLBACK_LOCALE][key] || key;
+  // Custom resolvers own formatting; preserve the original numeric arguments.
+  const formattedParams = customMessage ? params : Object.fromEntries(Object.entries(params).map(([name, value]) => (
+    [name, typeof value === 'number' ? formatFileViewerNumber(locale, value) : value]
+  )));
+  return formatFileViewerMessage(message, formattedParams);
 };
 
-export const createFileViewerTranslator = (input?: FileViewerI18nInput) => {
-  return (key: FileViewerMessageKey, params?: FileViewerMessageParams) =>
-    translateFileViewerMessage(input, key, params);
+export const createFileViewerTranslator = (input?: FileViewerI18nInput | FileViewerI18nContext) => {
+  // Explicit contexts also work across independently bundled renderer scripts.
+  // Each bundle has its own WeakMap, so options identity alone is insufficient.
+  const explicitContext = input && 'subscribe' in input && 't' in input ? input as FileViewerI18nContext : undefined;
+  const options = explicitContext ? explicitContext.options : input as FileViewerI18nInput;
+  const translate = (key: FileViewerMessageKey, params?: FileViewerMessageParams) =>
+    explicitContext ? explicitContext.t(key, params) : translateFileViewerMessage(options, key, params);
+  const context = explicitContext || (options && fileViewerI18nContexts.get(options));
+  const bindings = new WeakMap<Node, Map<string, { update: () => void; unsubscribe?: () => void }>>();
+  const bind = <T extends Node>(node: T, property: string, update: () => void): T => {
+    let slots = bindings.get(node);
+    if (!slots) { slots = new Map(); bindings.set(node, slots); }
+    const current = slots.get(property);
+    if (current) current.update = update;
+    else {
+      const binding: { update: () => void; unsubscribe?: () => void } = { update };
+      slots.set(property, binding);
+      binding.unsubscribe = context?.subscribe(() => binding.update());
+    }
+    update();
+    return node;
+  };
+  const release = (root: Node) => {
+    // Dispose only an explicitly owned subtree, before its UI nodes are replaced.
+    // A WeakMap alone cannot release nodes retained by a context's listeners.
+    const pending: Node[] = [root];
+    while (pending.length) {
+      const node = pending.pop()!;
+      for (let index = 0; index < node.childNodes.length; index += 1) pending.push(node.childNodes[index]);
+      const slots = bindings.get(node);
+      if (!slots) continue;
+      for (const binding of slots.values()) binding.unsubscribe?.();
+      slots.clear();
+      bindings.delete(node);
+    }
+  };
+  return Object.assign(translate, {
+    /** Release this translator's bindings before replacing a disposable UI subtree. Cached/reused nodes must remain bound. */
+    release: (root: Node | null | undefined) => { if (root) release(root); },
+    /** Keep an owned error's stable code/parameters separate from display copy. */
+    error: (key: FileViewerMessageKey, params: FileViewerMessageParams = {}) => {
+      const retainedParams = Object.freeze({ ...params });
+      const error = Object.assign(new Error(translate(key, retainedParams)), { code: key, params: retainedParams });
+      Object.defineProperty(error, 'fileViewerErrorMessage', {
+        configurable: true,
+        value: (nextInput?: FileViewerI18nInput) => translateFileViewerMessage(nextInput, key, retainedParams),
+      });
+      return error;
+    },
+    formatNumber: (value: number, formatOptions?: Intl.NumberFormatOptions) => formatFileViewerNumber(context?.locale || resolveFileViewerLocale(options), value, formatOptions),
+    formatDateTime: (value: Date | number, formatOptions?: Intl.DateTimeFormatOptions) => formatFileViewerDateTime(context?.locale || resolveFileViewerLocale(options), value, formatOptions),
+    formatBytes: (value: number) => formatFileViewerBytes(context?.locale || resolveFileViewerLocale(options), value),
+    /** Renderer-local DOM factory: getters explicitly mark live UI copy. */
+    element: <K extends keyof HTMLElementTagNameMap>(documentRef: Document, tag: K, className?: string, copy?: string | number | (() => string | number)): HTMLElementTagNameMap[K] => {
+      const node = documentRef.createElement(tag);
+      if (className) node.className = className;
+      if (typeof copy === 'function') bind(node, 'textContent', () => { node.textContent = String(copy()); });
+      else if (copy !== undefined) node.textContent = String(copy);
+      return node;
+    },
+    text: <T extends Node | null | undefined>(node: T, key: FileViewerMessageKey, params?: FileViewerMessageParams | (() => FileViewerMessageParams)): T => {
+      if (node) bind(node, 'textContent', () => { node.textContent = translate(key, typeof params === 'function' ? params() : params); });
+      return node;
+    },
+    attr: <T extends Element | null | undefined>(node: T, attribute: string, key: FileViewerMessageKey, params?: FileViewerMessageParams | (() => FileViewerMessageParams)): T => {
+      if (node) bind(node, attribute, () => { node.setAttribute(attribute, translate(key, typeof params === 'function' ? params() : params)); });
+      return node;
+    },
+    /** Bind composed UI copy without matching or scanning document text. */
+    bind: <T extends Node>(node: T, update: (node: T) => void, slot = 'textContent'): T => bind(node, slot, () => update(node)),
+  });
 };

@@ -85,6 +85,8 @@ export type UseDemoPreferencesOptions = {
  * options; those are separate presentation and renderer responsibilities.
  */
 export function useDemoPreferences(options: UseDemoPreferencesOptions = {}) {
+  const requestedLocale = queryValue('locale', 'lang') || readStorage(LOCALE_STORAGE_KEY)
+  let automaticLocale = !requestedLocale || requestedLocale === 'auto'
   const locale = ref<DemoLocale>(resolveInitialLocale())
   const density = ref<FileViewerUiDensity>(resolveInitialDensity())
   const theme = ref<FileViewerThemeMode>(resolveInitialTheme())
@@ -102,18 +104,26 @@ export function useDemoPreferences(options: UseDemoPreferencesOptions = {}) {
       options.onSystemThemeChange?.()
     }
   }
+  const handleLanguageChange = () => {
+    if (automaticLocale) {
+      locale.value = normalizeDemoLocale('auto')
+    }
+  }
 
   onMounted(() => {
     systemThemeQuery?.addEventListener?.('change', handleSystemThemeChange)
+    window.addEventListener('languagechange', handleLanguageChange)
   })
 
   onBeforeUnmount(() => {
     systemThemeQuery?.removeEventListener?.('change', handleSystemThemeChange)
+    window.removeEventListener('languagechange', handleLanguageChange)
   })
 
   const setLocale = (nextLocale: DemoLocale) => {
     // Locale persistence is separate from document switching; the page decides
     // whether its locale-specific default sample should also change.
+    automaticLocale = false
     locale.value = nextLocale
     writeStorage(LOCALE_STORAGE_KEY, nextLocale)
   }

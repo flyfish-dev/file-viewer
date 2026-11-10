@@ -1,8 +1,8 @@
+import { createFileViewerTranslator } from '@file-viewer/core';
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core'
 import { readInDesignContainerInWorker } from './adobeContainerWorkerClient.js'
 import {
   type InDesignContainerLimits,
-  type InDesignDocumentPreview,
 } from './indesignContainer.js'
 
 const inDesignStyle = `
@@ -11,28 +11,9 @@ const inDesignStyle = `
 @media(max-width:760px){.indd-viewer{min-height:360px}.indd-layout{grid-template-columns:1fr;grid-template-rows:minmax(260px,1fr) auto}.indd-sidebar{max-height:230px;border-top:1px solid rgba(15,23,42,.1);border-left:0}.indd-stage{padding:12px}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string
-) => {
-  const node = documentRef.createElement(tag)
-  if (className) node.className = className
-  if (text !== undefined) node.textContent = text
-  return node
-}
 
-const appendFact = (documentRef: Document, list: HTMLDListElement, label: string, value: string) => {
-  list.append(element(documentRef, 'dt', undefined, label), element(documentRef, 'dd', undefined, value))
-}
 
-const statusLabel = (parsed: InDesignDocumentPreview) => {
-  if (parsed.status === 'preview') return 'EMBEDDED PREVIEW'
-  if (parsed.status === 'metadata-only') return 'XMP ONLY'
-  if (parsed.status === 'unsupported-structure') return 'UNSUPPORTED STRUCTURE'
-  return 'STRUCTURE ONLY'
-}
+
 
 export default async function renderAdobeInDesign(
   buffer: ArrayBuffer,
@@ -40,6 +21,12 @@ export default async function renderAdobeInDesign(
   type = 'indd',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+  const appendFact = (documentRef: Document, list: HTMLDListElement, label: string | (() => string), value: string | (() => string)) => {
+  list.append(element(documentRef, 'dt', undefined, label), element(documentRef, 'dd', undefined, value))
+}
+
   if (context?.signal?.aborted) throw new DOMException('InDesign rendering was aborted.', 'AbortError')
   const kind = type.toLowerCase() === 'indt' ? 'indt' : 'indd'
   const limits: Partial<InDesignContainerLimits> | undefined = context?.options?.design
@@ -76,15 +63,15 @@ export default async function renderAdobeInDesign(
   const header = element(documentRef, 'header', 'indd-header')
   const title = element(documentRef, 'div', 'indd-title')
   title.append(
-    element(documentRef, 'strong', undefined, `Adobe InDesign ${kind === 'indt' ? 'template' : 'document'}`),
+    element(documentRef, 'strong', undefined, () => t('design.ui.adobe.indesign.c33112', { p0: kind === 'indt' ? 'template' : 'document' })),
     element(
       documentRef,
       'span',
       undefined,
-      `Format ${parsed.header.formatVersion} · ${parsed.header.streamByteOrder} · ${parsed.header.databasePages} database pages`
+      () => t('design.ui.format.database.pages.5a4511', { p0: parsed.header.formatVersion, p1: parsed.header.streamByteOrder, p2: parsed.header.databasePages })
     )
   )
-  const badge = element(documentRef, 'span', 'indd-badge', statusLabel(parsed))
+  const badge = element(documentRef, 'span', 'indd-badge', () => t(`design.status.${parsed.status}`))
   badge.dataset.status = parsed.status
   header.append(title, badge)
 
@@ -94,11 +81,12 @@ export default async function renderAdobeInDesign(
   let previewUrl: string | undefined
   let previewBlob: Blob | undefined
   if (parsed.preview) {
+    const savedPreview = parsed.preview
     const previewBuffer = parsed.preview.bytes.slice().buffer as ArrayBuffer
     previewBlob = new Blob([previewBuffer], { type: parsed.preview.mimeType })
     previewUrl = urlApi.createObjectURL(previewBlob)
     const image = element(documentRef, 'img')
-    image.alt = `InDesign embedded ${parsed.preview.width} by ${parsed.preview.height} preview`
+    t.bind(image, node => { node.alt = t('design.ui.indesign.embedded.by.preview.87f77a', { p0: savedPreview.width, p1: savedPreview.height }); }, 'alt')
     image.src = previewUrl
     stage.appendChild(image)
     context?.registerThumbnailAdapter?.({ capture: async () => previewBlob! })
@@ -109,14 +97,13 @@ export default async function renderAdobeInDesign(
         documentRef,
         'strong',
         undefined,
-        parsed.status === 'unsupported-structure' ? 'This native structure is not safely addressable.' : 'No saved document preview is embedded.'
+        () => parsed.status === 'unsupported-structure' ? t('design.ui.this.native.structure.is.not.safely.d55fbd') : t('design.ui.no.saved.document.preview.is.embedded.50f51e')
       ),
       element(
         documentRef,
         'span',
         undefined,
-        parsed.unsupportedReason ||
-          'The native INDD/INDT layout database is proprietary. This browser reader only follows declared master pages and contiguous XMP objects; it never scans arbitrary binary bytes for coincidental JPEG or PNG signatures.'
+        () => parsed.unsupportedReason || t('design.ui.the.native.indd.indt.layout.database.c5380b')
       )
     )
     stage.appendChild(empty)
@@ -124,30 +111,30 @@ export default async function renderAdobeInDesign(
 
   const sidebar = element(documentRef, 'aside', 'indd-sidebar')
   const structure = element(documentRef, 'section', 'indd-section')
-  structure.appendChild(element(documentRef, 'h3', undefined, 'Verified structure'))
+  structure.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.verified.structure.1a23e4')))
   const facts = element(documentRef, 'dl', 'indd-facts')
-  appendFact(documentRef, facts, 'Active master', `${parsed.header.activeMasterPage} (sequence ${parsed.header.activeSequence})`)
-  appendFact(documentRef, facts, 'Database boundary', `${parsed.header.contiguousObjectOffset} bytes`)
-  appendFact(documentRef, facts, 'Contiguous objects', String(parsed.contiguousObjectCount))
-  appendFact(documentRef, facts, 'Verified XMP packets', String(parsed.xmpPacketCount))
-  appendFact(documentRef, facts, 'XMP bytes', parsed.xmp ? String(new TextEncoder().encode(parsed.xmp).byteLength) : 'none')
-  if (parsed.preview) appendFact(documentRef, facts, 'Preview raster', `${parsed.preview.width} × ${parsed.preview.height} ${parsed.preview.mimeType}`)
+  appendFact(documentRef, facts, () => t('design.ui.active.master.292374'), () => t('design.ui.sequence.ecfa60', { p0: parsed.header.activeMasterPage, p1: parsed.header.activeSequence }))
+  appendFact(documentRef, facts, () => t('design.ui.database.boundary.f40789'), () => t('design.ui.bytes.dda44a', { p0: parsed.header.contiguousObjectOffset }))
+  appendFact(documentRef, facts, () => t('design.ui.contiguous.objects.b753e5'), String(parsed.contiguousObjectCount))
+  appendFact(documentRef, facts, () => t('design.ui.verified.xmp.packets.7a2b4a'), String(parsed.xmpPacketCount))
+  appendFact(documentRef, facts, () => t('design.ui.xmp.bytes.89338f'), () => parsed.xmp ? String(new TextEncoder().encode(parsed.xmp).byteLength) : t('design.ui.none.71f8e7'))
+  if (parsed.preview) appendFact(documentRef, facts, () => t('design.ui.preview.raster.1b4dda'), `${parsed.preview.width} × ${parsed.preview.height} ${parsed.preview.mimeType}`)
   structure.appendChild(facts)
 
   const boundary = element(documentRef, 'section', 'indd-section')
   boundary.append(
-    element(documentRef, 'h3', undefined, 'Preview boundary'),
+    element(documentRef, 'h3', undefined, () => t('design.ui.preview.boundary.8378f0')),
     element(
       documentRef,
       'p',
       'indd-note',
-      'A preview exists only when InDesign saved a JPEG/PNG thumbnail inside a structurally verified XMP packet. Full page layout rendering still requires InDesign/IDML conversion.'
+      () => t('design.ui.a.preview.exists.only.when.indesign.28cc31')
     )
   )
   sidebar.append(structure, boundary)
   if (parsed.warnings.length > 0) {
     const warnings = element(documentRef, 'section', 'indd-section')
-    warnings.appendChild(element(documentRef, 'h3', undefined, 'Read notes'))
+    warnings.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.read.notes.fc2bee')))
     for (const warning of parsed.warnings) warnings.appendChild(element(documentRef, 'p', 'indd-warning', warning))
     sidebar.appendChild(warnings)
   }

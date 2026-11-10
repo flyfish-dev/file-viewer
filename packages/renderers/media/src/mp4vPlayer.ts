@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   type FileRenderContext
 } from '@file-viewer/core'
 import type { Mp4vSoftwareTrack } from './mp4.js'
@@ -63,7 +64,7 @@ export const mountMp4vSoftwarePlayer = async (
     throw new Error('OffscreenCanvas is unavailable.')
   }
 
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const player = createElement('div', 'fv-video-software-player')
   player.tabIndex = 0
   player.dataset.state = 'loading'
@@ -72,18 +73,14 @@ export const mountMp4vSoftwarePlayer = async (
   const canvas = createElement('canvas', 'fv-video-software-canvas')
   canvas.width = track.width
   canvas.height = track.height
-  const loading = createElement(
-    'div',
-    'fv-video-software-loading',
-    t('media.video.softwareLoading')
-  )
+  const loading = t.text(createElement('div', 'fv-video-software-loading'), 'media.video.softwareLoading')
   loading.setAttribute('role', 'status')
 
-  const badge = createElement('span', 'fv-video-software-badge', t('media.video.softwareBadge'))
+  const badge = t.text(createElement('span', 'fv-video-software-badge'), 'media.video.softwareBadge')
   const controls = createElement('div', 'fv-video-software-controls')
   const playButton = createElement('button', 'fv-video-software-button', '▶')
   playButton.type = 'button'
-  playButton.setAttribute('aria-label', t('media.video.play'))
+  t.attr(playButton, 'aria-label', 'media.video.play')
   const currentTime = createElement('span', 'fv-video-software-time', '00:00')
   const seek = createElement('input', 'fv-video-software-seek')
   seek.type = 'range'
@@ -91,7 +88,7 @@ export const mountMp4vSoftwarePlayer = async (
   seek.max = String(track.duration / track.timescale)
   seek.step = '0.01'
   seek.value = '0'
-  seek.setAttribute('aria-label', t('media.video.seek'))
+  t.attr(seek, 'aria-label', 'media.video.seek')
   const duration = createElement(
     'span',
     'fv-video-software-time',
@@ -99,10 +96,10 @@ export const mountMp4vSoftwarePlayer = async (
   )
   const volumeButton = createElement('button', 'fv-video-software-button', '🔊')
   volumeButton.type = 'button'
-  volumeButton.setAttribute('aria-label', t('media.video.mute'))
+  t.attr(volumeButton, 'aria-label', 'media.video.mute')
   const fullscreenButton = createElement('button', 'fv-video-software-button', '⛶')
   fullscreenButton.type = 'button'
-  fullscreenButton.setAttribute('aria-label', t('media.video.fullscreen'))
+  t.attr(fullscreenButton, 'aria-label', 'media.video.fullscreen')
   controls.append(playButton, currentTime, seek, duration, volumeButton, fullscreenButton)
 
   video.controls = false
@@ -163,7 +160,7 @@ export const mountMp4vSoftwarePlayer = async (
     if (video.paused) {
       void video.play().catch((error) => {
         player.dataset.state = 'error'
-        loading.textContent = error instanceof Error ? error.message : String(error)
+        t.bind(loading, node => { node.textContent = normalizeFileViewerErrorMessage(error, context?.options) })
       })
     } else {
       video.pause()
@@ -237,14 +234,14 @@ export const mountMp4vSoftwarePlayer = async (
     const error = new Error(message.message)
     player.dataset.state = 'error'
     loading.hidden = false
-    loading.textContent = message.message
+    t.bind(loading, node => { node.textContent = message.message })
     if (!ready) rejectReady?.(error)
   }
   worker.onerror = (event) => {
     const error = new Error(event.message || 'The MP4V decoder Worker failed.')
     player.dataset.state = 'error'
     loading.hidden = false
-    loading.textContent = error.message
+    t.bind(loading, node => { node.textContent = error.message })
     if (!ready) rejectReady?.(error)
   }
 

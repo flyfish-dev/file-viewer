@@ -1,3 +1,4 @@
+import { demoLanguage } from './locale'
 import jquery from 'jquery'
 import { installJQueryFileViewer } from '@file-viewer/jquery-full'
 import { getDemoSource } from './demoSource'
@@ -17,6 +18,7 @@ $(host).fileViewer({
   url: demoSource.url,
   filename: demoSource.filename,
   options: {
+    locale: demoLanguage.locale,
     theme: 'light',
     toolbar: {
       position: 'bottom-right'
@@ -25,3 +27,5 @@ $(host).fileViewer({
 })
 
 document.body.setAttribute('data-component', 'jquery')
+
+demoLanguage.subscribe(() => { $(host).fileViewer('update', { options: { theme: 'light', toolbar: { position: 'bottom-right' }, locale: demoLanguage.locale } }) })
