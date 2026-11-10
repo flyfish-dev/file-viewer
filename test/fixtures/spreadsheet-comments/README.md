@@ -17,3 +17,5 @@ node test/spreadsheet-comments.browser.mjs
 ```
 
 The fixture defaults to a real Worker. `?worker=false` runs the same workbook through the main-thread parser. `?theme=dark` and `?locale=ja-JP` exercise renderer theme and translated messages. Browser checks reject non-local requests, verify the Worker response, exercise pointer/keyboard navigation and capture standalone screenshots without host application UI. `CHROME_PATH` can select an installed Chromium binary.
+
+`preview.png` and `mobile-preview.png` are recorded review evidence from the standalone File Viewer shell with this generated workbook, not golden-image assertions. Fresh browser captures and machine-readable results are written to the ignored `artifacts/spreadsheet-comments/` directory.
