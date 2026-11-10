@@ -113,7 +113,10 @@ export const parseSpreadsheetComments = async (
   const zip = await JSZip.loadAsync(data);
   if (!zip.file('xl/workbook.xml')) return { comments, hasError: false };
   let hasError = false;
-  let bytesRead = 0;
+  const budget = {
+    maxPartBytes: MAX_COMMENT_PART_BYTES,
+    remainingBytes: MAX_COMMENT_XML_BYTES,
+  };
   const cache = new Map<string, XmlDocument | null>();
   const xml = async (
     path: string,
@@ -126,22 +129,7 @@ export const parseSpreadsheetComments = async (
         if (required) hasError = true;
         return null;
       }
-      const size =
-        '_data' in part &&
-        part._data &&
-        typeof part._data === 'object' &&
-        'uncompressedSize' in part._data
-          ? part._data.uncompressedSize
-          : undefined;
-      if (
-        typeof size !== 'number' ||
-        !Number.isSafeInteger(size) ||
-        size < 0 ||
-        size > MAX_COMMENT_PART_BYTES ||
-        (bytesRead += size) > MAX_COMMENT_XML_BYTES
-      )
-        throw new Error('Workbook comments exceed the preview limit');
-      const document = await loadXml(zip, path);
+      const document = await loadXml(zip, path, budget);
       cache.set(path, document);
       return document;
     } catch (error) {
