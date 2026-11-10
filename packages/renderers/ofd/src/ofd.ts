@@ -1,8 +1,11 @@
 import {
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter,
+  getFileViewerScrollableRange,
+  isFileViewerScrollableElement,
   normalizeFileViewerErrorMessage,
   registerFileViewerZoomProvider,
+  resolveFileViewerScrollContainer,
   unregisterFileViewerZoomProvider,
 } from '@file-viewer/core';
 import type {
@@ -110,25 +113,35 @@ const waitForPaint = (view?: Window | null) => new Promise<void>(resolve => {
   globalThis.setTimeout(resolve, 0);
 });
 
-const isScrollablePageContainer = (element: HTMLElement) => {
-  if (
-    !Number.isFinite(element.clientHeight)
-    || !Number.isFinite(element.scrollHeight)
-  ) {
+const getOfdPageScrollRange = (element: HTMLElement) => {
+  const range = getFileViewerScrollableRange(element);
+  return Number.isFinite(range) ? range : 0;
+};
+
+const isOfdPageScrollContainer = (element: HTMLElement) => {
+  if (getOfdPageScrollRange(element) <= 2) {
     return false;
   }
-  const range = Math.max(0, element.scrollHeight - element.clientHeight);
-  if (range <= 2) {
-    return false;
-  }
-  const view = element.ownerDocument.defaultView
-    || (typeof window !== 'undefined' ? window : undefined);
-  if (!view?.getComputedStyle) {
+  if (isFileViewerScrollableElement(element)) {
     return true;
   }
-  const style = view.getComputedStyle(element);
-  const overflowY = style.overflowY || style.overflow;
-  return ['auto', 'scroll', 'overlay', 'visible'].includes(overflowY);
+  const view = element.ownerDocument?.defaultView
+    || (typeof window !== 'undefined' ? window : undefined);
+  return !view?.getComputedStyle;
+};
+
+const findMarkedViewerScrollContainer = (start: HTMLElement | null) => {
+  let current = start;
+  while (current) {
+    if (
+      current.dataset.viewerScrollContainer === 'true'
+      && isOfdPageScrollContainer(current)
+    ) {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null;
 };
 
 const parseWithOfdJs = (ofd: OfdModule, buffer: ArrayBuffer) => {
@@ -228,7 +241,7 @@ export default async function renderOfd(
   let currentPage = 1;
   let pageCount = 0;
   let scrollFrame = 0;
-  let pageScrollContainer: HTMLElement | null = null;
+  let pageScrollContainers: HTMLElement[] = [];
   let ofdDocumentPromise: Promise<unknown> | null = null;
 
   const style = createStyle(documentRef);
@@ -310,38 +323,55 @@ export default async function renderOfd(
     return true;
   };
 
-  const resolvePageScrollContainer = () => {
-    const HTMLElementCtor = targetWindow?.HTMLElement || globalThis.HTMLElement;
-    if (isScrollablePageContainer(stage)) {
-      return stage;
-    }
+  const collectPageScrollContainers = () => {
+    const containers: HTMLElement[] = [];
+    const seen = new Set<HTMLElement>();
+    const add = (element: HTMLElement | null | undefined) => {
+      if (!element || seen.has(element) || !isOfdPageScrollContainer(element)) {
+        return;
+      }
+      seen.add(element);
+      containers.push(element);
+    };
+    add(findMarkedViewerScrollContainer(viewer));
+    add(resolveFileViewerScrollContainer(target));
+    add(stage);
     let current: HTMLElement | null = viewer.parentElement;
     while (current) {
-      if (
-        HTMLElementCtor
-        && current instanceof HTMLElementCtor
-        && isScrollablePageContainer(current)
-      ) {
-        return current;
-      }
+      add(current);
       current = current.parentElement;
     }
-    const rootElement = documentRef.documentElement;
-    if (rootElement && isScrollablePageContainer(rootElement)) {
-      return rootElement;
+    add(documentRef.documentElement);
+    return containers;
+  };
+
+  const resolvePageScrollContainer = () => {
+    const marked = findMarkedViewerScrollContainer(viewer);
+    if (marked) {
+      return marked;
     }
-    return stage;
+    const candidates = collectPageScrollContainers();
+    if (!candidates.length) {
+      return stage;
+    }
+    return candidates.sort(
+      (left, right) => getOfdPageScrollRange(right) - getOfdPageScrollRange(left)
+    )[0];
   };
 
   const bindPageScrollTracking = () => {
-    const nextContainer = resolvePageScrollContainer();
-    if (pageScrollContainer === nextContainer) {
+    const nextContainers = collectPageScrollContainers();
+    const unchanged = nextContainers.length === pageScrollContainers.length
+      && nextContainers.every((container, index) => container === pageScrollContainers[index]);
+    if (unchanged) {
       return;
     }
-    pageScrollContainer?.removeEventListener('scroll', scheduleCurrentPageDetection);
-    pageScrollContainer = nextContainer;
-    pageScrollContainer.addEventListener('scroll', scheduleCurrentPageDetection, {
-      passive: true,
+    pageScrollContainers.forEach(container => {
+      container.removeEventListener('scroll', scheduleCurrentPageDetection);
+    });
+    pageScrollContainers = nextContainers;
+    pageScrollContainers.forEach(container => {
+      container.addEventListener('scroll', scheduleCurrentPageDetection, { passive: true });
     });
   };
 
@@ -356,19 +386,21 @@ export default async function renderOfd(
     const scrollContainer = resolvePageScrollContainer();
     const viewportRect = scrollContainer.getBoundingClientRect();
     const viewportHeight = scrollContainer.clientHeight || viewportRect.height;
-    const viewportCenter = viewportRect.top + viewportHeight / 2;
-    let closestIndex = 0;
-    let closestDistance = Number.POSITIVE_INFINITY;
+    const viewportTop = viewportRect.top;
+    const viewportBottom = viewportTop + viewportHeight;
+    let bestIndex = 0;
+    let bestVisible = -1;
     frames.forEach((frame, index) => {
       const rect = frame.getBoundingClientRect();
-      const center = rect.top + rect.height / 2;
-      const distance = Math.abs(center - viewportCenter);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = index;
+      const visibleTop = Math.max(rect.top, viewportTop);
+      const visibleBottom = Math.min(rect.bottom, viewportBottom);
+      const visible = Math.max(0, visibleBottom - visibleTop);
+      if (visible > bestVisible) {
+        bestVisible = visible;
+        bestIndex = index;
       }
     });
-    const detectedPage = closestIndex + 1;
+    const detectedPage = bestIndex + 1;
     if (detectedPage !== currentPage) {
       currentPage = detectedPage;
       syncPageNavigation();
@@ -639,8 +671,10 @@ export default async function renderOfd(
         else targetWindow?.clearTimeout(scrollFrame);
       }
       scrollFrame = 0;
-      pageScrollContainer?.removeEventListener('scroll', scheduleCurrentPageDetection);
-      pageScrollContainer = null;
+      pageScrollContainers.forEach(container => {
+        container.removeEventListener('scroll', scheduleCurrentPageDetection);
+      });
+      pageScrollContainers = [];
       resizeObserver?.disconnect();
       resizeObserver = null;
       unregisterFileViewerZoomProvider(viewer);
