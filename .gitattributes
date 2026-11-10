@@ -29,6 +29,10 @@ apps/viewer-demo/public/vendor/hangul/licenses/THIRD_PARTY_LICENSES.txt -text wh
 apps/viewer-demo/public/vendor/iwork/licenses/THIRD_PARTY_LICENSES.txt -text whitespace=cr-at-eol
 
 # Fixed public native grants preserve their original bytes and formatting.
+packages/build-support/licenses/libredwg-web-0.7.9-GPL-3.0.txt -text
+packages/renderers/3d/licenses/laz-perf-COPYING.txt -text
+apps/viewer-demo/public/wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt -text
+apps/viewer-demo/public/wasm/cad/GPL-3.0.txt -text
 packages/build-support/licenses/native/** -text -whitespace
 packages/renderers/signature/licenses/*.txt -text -whitespace
 **/wasm/model/CORRESPONDING_SOURCE_NOTICE.txt -text -whitespace

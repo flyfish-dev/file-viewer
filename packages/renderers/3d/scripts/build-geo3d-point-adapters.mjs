@@ -1,4 +1,5 @@
 import { writeBundleInventory } from '../../../build-support/bundle-inventory.mjs'
+import { reconcilePinnedLegalBytes } from '../../../build-support/pinned-legal-bytes.mjs'
 import { sanitizeOfflineAssetText } from '../../../components/web-full/scripts/offline-asset-sanitize.mjs'
 /** Build source-local adapters; never edits the installed engine or its singletons. */
 import { createHash } from 'node:crypto'
@@ -16,6 +17,7 @@ export const SOURCE_HASHES = {
   worker: 'cd2fb4cf51d66175b21dcdc70229a6f256c83b923e5ed5cd6445a65cf8bf130b'
 }
 const hash = text => createHash('sha256').update(text).digest('hex')
+const LAZ_PERF_COPYING_SHA256 = '94b3c7e58be58920c5e87a3d9e21f7eef27fc0dea833075ae4547ebae3ce7d51'
 
 /** Merge only adjacent declared metadata pages, never speculative point bytes. */
 export function groupCopcHierarchyPages(pages) {
@@ -323,9 +325,9 @@ export async function buildPointAdapters() {
     // Preserve the upstream license locally, with no build-time fetch.
     if (!files.length && metadata.name === 'laz-perf' && metadata.version === '0.0.7' && metadata.license === 'Apache-2.0') {
       const source = join(root, 'licenses/laz-perf-COPYING.txt')
-      const bytes = await readFile(source)
-      if (hash(bytes) !== '94b3c7e58be58920c5e87a3d9e21f7eef27fc0dea833075ae4547ebae3ce7d51') throw new Error('Retained laz-perf license changed without review.')
-      await copyFile(source, join(workers, 'licenses/laz-perf-COPYING.txt'))
+      const bytes = reconcilePinnedLegalBytes(await readFile(source), { sha256: LAZ_PERF_COPYING_SHA256 })
+      if (hash(bytes) !== LAZ_PERF_COPYING_SHA256) throw new Error('Retained laz-perf license changed without review.')
+      await writeFile(join(workers, 'licenses', 'laz-perf-COPYING.txt'), bytes)
       files.push('laz-perf-COPYING.txt')
     }
     if (!files.length) throw new Error(`No redistribution license found for bundled ${metadata.name}.`)
