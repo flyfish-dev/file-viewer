@@ -179,8 +179,12 @@ export const loadXml = async (zip: JSZip, path: string) => {
   return parseXml(await file.async('text'))
 }
 
-export const loadRelationships = async (zip: JSZip, sourcePart: string) => {
-  const document = await loadXml(zip, relationshipPartPath(sourcePart))
+export const loadRelationships = async (
+  zip: JSZip,
+  sourcePart: string,
+  readPart = (path: string) => loadXml(zip, path)
+) => {
+  const document = await readPart(relationshipPartPath(sourcePart))
   if (!document) {
     return []
   }

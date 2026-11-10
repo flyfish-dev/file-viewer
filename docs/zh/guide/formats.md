@@ -105,6 +105,7 @@
 
 - 表格类文件统一走 `styled-exceljs` 解析和 `e-virt-table` 虚拟渲染，适合需要保留表格结构、合并单元格、Office 365 / WPS 单元格内嵌图片、workbook drawing 图片和视觉层级的场景；渲染出的图片可双击进入大图预览，并通过 Escape、遮罩或关闭按钮退出。
 - 表格解析默认使用 `options.spreadsheet.worker: 'auto'`：小文件走同一套 `styled-exceljs` 主线程解析以保持本地服务器、手机 WebView、MIME 和 CSP 兼容；大文件达到 `options.spreadsheet.workerAutoThreshold`（默认 1MB）时自动尝试 `vendor/xlsx/sheet.worker.js`，避免百万单元格解析阻塞 UI。静态资源路径特殊时可配置 `options.spreadsheet.workerUrl`，不希望自动启用时设为 `worker: false`。
+- Excel 预览还以纯文本显示备注和现代线程批注，包括作者、回复、时间戳及已解决状态。单元格标记打开只读预览；批注面板可跨工作表及虚拟行窗口定位，隐藏工作表不显示。本地打包的 Worker 和主线程解析路径均支持批注，不提供批注编辑或工作簿回写。某个批注部分损坏或超出 XML 预览预算时，会保留其他可用批注并显示部分读取警告。
 - CSV / TSV 默认按 UTF-8 BOM、严格 UTF-8、GB18030 的固定顺序识别文本编码，GB18030 同时覆盖常见 GBK 文件。来源编码已知或字节序列存在歧义时，可用 `options.spreadsheet.textEncoding` 显式选择 `utf-8`、`gbk` 或 `gb18030`；XLS / XLSX 等二进制表格不会进入文本解码路径。
 - 如果业务用户经常查看被截断的长文本，可以开启 `options.spreadsheet.resizableColumns: true`，用户即可拖拽表头右侧边界调整列宽。该能力默认关闭以保持历史交互兼容，官方 Demo 默认开启用于体验。
 - `xlsm`、`xlsb`、`xls`、`xlt`、`xltm`、`csv`、`tsv`、`ods`、`fods`、`numbers` 会读取格式中能表达的数据、尺寸和样式；部分格式本身不包含完整样式时，会按可用信息渐进还原。
