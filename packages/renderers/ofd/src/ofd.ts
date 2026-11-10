@@ -110,6 +110,27 @@ const waitForPaint = (view?: Window | null) => new Promise<void>(resolve => {
   globalThis.setTimeout(resolve, 0);
 });
 
+const isScrollablePageContainer = (element: HTMLElement) => {
+  if (
+    !Number.isFinite(element.clientHeight)
+    || !Number.isFinite(element.scrollHeight)
+  ) {
+    return false;
+  }
+  const range = Math.max(0, element.scrollHeight - element.clientHeight);
+  if (range <= 2) {
+    return false;
+  }
+  const view = element.ownerDocument.defaultView
+    || (typeof window !== 'undefined' ? window : undefined);
+  if (!view?.getComputedStyle) {
+    return true;
+  }
+  const style = view.getComputedStyle(element);
+  const overflowY = style.overflowY || style.overflow;
+  return ['auto', 'scroll', 'overlay', 'visible'].includes(overflowY);
+};
+
 const parseWithOfdJs = (ofd: OfdModule, buffer: ArrayBuffer) => {
   return new Promise<unknown[]>((resolve, reject) => {
     // 使用 DLTech21/ofd.js 的纯 JS 解析入口，签章验签链路不阻断正文预览。
@@ -207,6 +228,7 @@ export default async function renderOfd(
   let currentPage = 1;
   let pageCount = 0;
   let scrollFrame = 0;
+  let pageScrollContainer: HTMLElement | null = null;
   let ofdDocumentPromise: Promise<unknown> | null = null;
 
   const style = createStyle(documentRef);
@@ -288,15 +310,53 @@ export default async function renderOfd(
     return true;
   };
 
+  const resolvePageScrollContainer = () => {
+    const HTMLElementCtor = targetWindow?.HTMLElement || globalThis.HTMLElement;
+    if (isScrollablePageContainer(stage)) {
+      return stage;
+    }
+    let current: HTMLElement | null = viewer.parentElement;
+    while (current) {
+      if (
+        HTMLElementCtor
+        && current instanceof HTMLElementCtor
+        && isScrollablePageContainer(current)
+      ) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    const rootElement = documentRef.documentElement;
+    if (rootElement && isScrollablePageContainer(rootElement)) {
+      return rootElement;
+    }
+    return stage;
+  };
+
+  const bindPageScrollTracking = () => {
+    const nextContainer = resolvePageScrollContainer();
+    if (pageScrollContainer === nextContainer) {
+      return;
+    }
+    pageScrollContainer?.removeEventListener('scroll', scheduleCurrentPageDetection);
+    pageScrollContainer = nextContainer;
+    pageScrollContainer.addEventListener('scroll', scheduleCurrentPageDetection, {
+      passive: true,
+    });
+  };
+
   const detectCurrentPage = () => {
+    bindPageScrollTracking();
     const frames = getPageFrames();
     if (!frames.length) {
       currentPage = 0;
       syncPageNavigation();
       return;
     }
-    const stageRect = stage.getBoundingClientRect();
-    const viewportCenter = stageRect.top + stage.clientHeight / 2;
+    const scrollContainer = resolvePageScrollContainer();
+    const viewportRect = scrollContainer.getBoundingClientRect();
+    const viewportHeight = scrollContainer.clientHeight || viewportRect.height;
+    const viewportCenter = viewportRect.top + viewportHeight / 2;
     let closestIndex = 0;
     let closestDistance = Number.POSITIVE_INFINITY;
     frames.forEach((frame, index) => {
@@ -464,6 +524,8 @@ export default async function renderOfd(
       syncPageZoom();
       enablePageZoomTransitions();
       syncPageNavigation();
+      bindPageScrollTracking();
+      detectCurrentPage();
       if (currentPage > 1) scrollToPage(currentPage, 'auto');
       state = 'ready';
       syncState();
@@ -489,6 +551,8 @@ export default async function renderOfd(
     }
 
     resizeObserver = new targetWindow.ResizeObserver(() => {
+      bindPageScrollTracking();
+      scheduleCurrentPageDetection();
       targetWindow.clearTimeout(resizeTimer);
       resizeTimer = targetWindow.setTimeout(() => {
         void render({ showLoading: false });
@@ -503,7 +567,6 @@ export default async function renderOfd(
   nextPageButton.addEventListener('click', () => {
     scrollToPage(currentPage + 1);
   });
-  stage.addEventListener('scroll', scheduleCurrentPageDetection, { passive: true });
   stage.addEventListener('keydown', event => {
     if (event.key === 'PageUp') {
       event.preventDefault();
@@ -576,6 +639,8 @@ export default async function renderOfd(
         else targetWindow?.clearTimeout(scrollFrame);
       }
       scrollFrame = 0;
+      pageScrollContainer?.removeEventListener('scroll', scheduleCurrentPageDetection);
+      pageScrollContainer = null;
       resizeObserver?.disconnect();
       resizeObserver = null;
       unregisterFileViewerZoomProvider(viewer);
