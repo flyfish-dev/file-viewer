@@ -41,6 +41,20 @@ const exactPackageAlias = (packageName: string, replacement: string): Alias => (
 })
 
 const demoWorkspaceSourceAliases = [
+  ['@file-viewer/capability-drawio-official', '../../packages/capabilities/drawio-official/src/index.ts'],
+  ['@file-viewer/capability-mermaid/engine', '../../packages/capabilities/mermaid/src/engine.ts'],
+  ['@file-viewer/capability-mermaid', '../../packages/capabilities/mermaid/src/index.ts'],
+  ['@file-viewer/capability-midi', '../../packages/capabilities/midi/src/index.ts'],
+  ['@file-viewer/capability-pdf-identity-repair', '../../packages/capabilities/pdf-identity-repair/src/index.ts'],
+  ['@file-viewer/capability-pptx-charts', '../../packages/capabilities/pptx-charts/src/index.ts'],
+  ['@file-viewer/capability-rtf', '../../packages/capabilities/rtf/src/index.ts'],
+  ['@file-viewer/capability-streaming-media', '../../packages/capabilities/streaming-media/src/index.ts'],
+  ['@file-viewer/capability-text-tools', '../../packages/capabilities/text-tools/src/index.ts'],
+  ['@file-viewer/doc', '../../packages/renderers/doc/src/index.ts'],
+  ['@file-viewer/eda-layout', '../../packages/renderers/eda-layout/src/index.ts'],
+  ['@file-viewer/eda-orcad', '../../packages/renderers/eda-orcad/src/index.ts'],
+  ['@file-viewer/geometry-engine', '../../packages/renderers/geometry-engine/src/index.ts'],
+  ['@file-viewer/pptx', '../../packages/renderers/pptx/src/index.ts'],
   ['@file-viewer/preset-all', '../../packages/presets/all/src/index.ts'],
   ['@file-viewer/renderer-3d', '../../packages/renderers/3d/src/index.ts'],
   ['@file-viewer/renderer-3d/ifc', '../../packages/renderers/3d/src/ifc.ts'],
@@ -57,18 +71,23 @@ const demoWorkspaceSourceAliases = [
   ['@file-viewer/renderer-email', '../../packages/renderers/email/src/index.ts'],
   ['@file-viewer/renderer-epub', '../../packages/renderers/ebook/src/index.ts'],
   ['@file-viewer/renderer-geo', '../../packages/renderers/geo/src/index.ts'],
+  ['@file-viewer/renderer-hangul', '../../packages/renderers/hangul/src/index.ts'],
   ['@file-viewer/renderer-image', '../../packages/renderers/image/src/index.ts'],
+  ['@file-viewer/renderer-iwork', '../../packages/renderers/iwork/src/index.ts'],
   ['@file-viewer/renderer-media', '../../packages/renderers/media/src/index.ts'],
   ['@file-viewer/renderer-mindmap', '../../packages/renderers/mindmap/src/index.ts'],
   ['@file-viewer/renderer-ofd', '../../packages/renderers/ofd/src/index.ts'],
   ['@file-viewer/renderer-pdf', '../../packages/renderers/pdf/src/index.ts'],
   ['@file-viewer/renderer-presentation', '../../packages/renderers/presentation/src/index.ts'],
+  ['@file-viewer/renderer-ppt', '../../packages/renderers/presentation-ppt/src/index.ts'],
+  ['@file-viewer/renderer-pptx', '../../packages/renderers/presentation-pptx/src/index.ts'],
   ['@file-viewer/renderer-signature', '../../packages/renderers/signature/src/index.ts'],
   ['@file-viewer/renderer-spreadsheet', '../../packages/renderers/spreadsheet/src/index.ts'],
   ['@file-viewer/renderer-text', '../../packages/renderers/text/src/index.ts'],
   ['@file-viewer/renderer-text/xml-profiles', '../../packages/renderers/text/src/xml-profiles.ts'],
   ['@file-viewer/renderer-typst', '../../packages/renderers/typst/src/index.ts'],
-  ['@file-viewer/renderer-word', '../../packages/renderers/word/src/index.ts']
+  ['@file-viewer/renderer-word', '../../packages/renderers/word/src/index.ts'],
+  ['@file-viewer/renderer-wordperfect', '../../packages/renderers/wordperfect/src/index.ts']
 ] as const
 
 const viewerQueryFallbackPlugin = (): Plugin => ({
@@ -141,6 +160,7 @@ export default defineConfig(ctx => {
     alias.push(
       exactPackageAlias('@file-viewer/core/assets', fileURLToPath(new URL('../../packages/core/src/assets.ts', import.meta.url))),
       exactPackageAlias('@file-viewer/core/browser', fileURLToPath(new URL('../../packages/core/src/browser.ts', import.meta.url))),
+      exactPackageAlias('@file-viewer/core/export', fileURLToPath(new URL('../../packages/core/src/export.ts', import.meta.url))),
       exactPackageAlias('@file-viewer/core', fileURLToPath(new URL('../../packages/core/src/index.ts', import.meta.url)))
     )
     for (const [packageName, sourcePath] of demoWorkspaceSourceAliases) {

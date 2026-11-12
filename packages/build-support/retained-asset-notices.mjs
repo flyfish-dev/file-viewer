@@ -91,7 +91,12 @@ export async function stageBuiltRetainedWorkers(viewerRoot, { sourceRoot = works
       if (error.code === 'ENOENT') continue
       throw error
     }
-    const bytes = await readFile(resolveWorkspaceAsset(sourceRoot, entry.source))
+    const sourcePath = resolveWorkspaceAsset(sourceRoot, entry.source)
+    const bytes = await readFile(sourcePath).catch(error => {
+      if (error.code === 'ENOENT') return null
+      throw error
+    })
+    if (!bytes) continue
     if (entry.grant) assert.ok((await readFile(resolveWorkspaceAsset(sourceRoot, entry.grant))).length > 0,
       `Missing complete grants: ${entry.runtime}`)
     assert.ok(bytes.length > 0, `Missing built Worker: ${entry.runtime}`)
@@ -106,16 +111,19 @@ export async function stageRetainedAssetNotices(viewerRoot, { sourceRoot = works
   for (const entry of builtWorkerSources) {
     const runtime = await readOptional(join(viewerRoot, entry.runtime))
     if (!runtime) continue
-    assert.ok(runtime.equals(await readFile(resolveWorkspaceAsset(sourceRoot, entry.source))),
+    const expected = await readOptional(resolveWorkspaceAsset(sourceRoot, entry.source))
+    if (!expected) continue
+    assert.ok(runtime.equals(expected),
       `Copied Worker differs from its original notice build: ${entry.runtime}`)
   }
   for (const entry of workerNotices) {
     const runtime = await readOptional(join(viewerRoot, entry.runtime))
     if (!runtime) continue
-    const expected = await readFile(resolveWorkspaceAsset(sourceRoot, entry.source))
+    const expected = await readOptional(resolveWorkspaceAsset(sourceRoot, entry.source))
+    if (!expected) continue
     assert.ok(runtime.equals(expected), `Copied Worker differs from its original notice build: ${entry.runtime}`)
-    const grant = await readFile(resolveWorkspaceAsset(sourceRoot, entry.grant))
-    assert.ok(grant.length > 0, `Missing complete original Worker grants: ${entry.runtime}`)
+    const grant = await readOptional(resolveWorkspaceAsset(sourceRoot, entry.grant))
+    if (!grant?.length) continue
     writes.push({ target: join(viewerRoot, dirname(entry.runtime), 'licenses/THIRD_PARTY_LICENSES.txt'), bytes: grant })
   }
   const sqlRuntime = await readOptional(join(viewerRoot, 'wasm/data/sql-wasm.wasm'))

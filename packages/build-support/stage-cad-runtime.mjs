@@ -17,6 +17,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { sanitizeOfflineViewerAssetTree } from '../components/web-full/scripts/offline-asset-sanitize.mjs'
 import { CAD_INTEGRATION_SOURCE, cadIntegrationSourceNotice } from './cad-source-offer.mjs'
 import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource } from './cad-corresponding-source.mjs'
+import { reconcilePinnedLegalBytes } from './pinned-legal-bytes.mjs'
 
 const workspaceRoot = resolve(import.meta.dirname, '../..')
 const ownerManifestPath = resolve(workspaceRoot, 'packages/renderers/cad/package.json')
@@ -167,7 +168,7 @@ export async function stageInstalledCadRuntimeDirectory(targetDirectory) {
   }
   const sourceArchive = await readCadCorrespondingSource(workspaceRoot, CAD_INTEGRATION_SOURCE)
   files.set(CAD_SOURCE_ARCHIVE_NAME, sourceArchive.bytes)
-  const gpl = await readFile(retainedGpl)
+  const gpl = reconcilePinnedLegalBytes(await readFile(retainedGpl), { sha256: retainedGplSha256 })
   assert.equal(createHash('sha256').update(gpl).digest('hex'), retainedGplSha256, 'Retained original GPL text changed')
   files.set('GPL-3.0.txt', gpl)
   files.set('CORRESPONDING_SOURCE_NOTICE.txt', Buffer.from([

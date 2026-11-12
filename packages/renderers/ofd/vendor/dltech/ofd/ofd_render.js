@@ -457,9 +457,11 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
     const objectStyle = resolveDrawParamStyle(drawParamResObj, textObject['@_DrawParam'], {
         fillColor: defaultFillColor,
         strokeColor: defaultStrokeColor,
+        lineWith: converterDpi(0.353),
     });
     defaultFillColor = objectStyle.fillColor;
     defaultStrokeColor = objectStyle.strokeColor;
+    let lineWith = objectStyle.lineWith;
     const fillColor = textObject['ofd:FillColor'];
     if (fillColor) {
         defaultFillColor = parseColor(fillColor['@_Value']);
@@ -468,7 +470,31 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
             defaultFillOpacity = alpha>1? alpha/255:alpha;
         }
     }
-    for (const textCodePoint of textCodePointList) {
+    const strokeColor = textObject['ofd:StrokeColor'];
+    if (strokeColor) {
+        defaultStrokeColor = parseColor(strokeColor['@_Value']);
+    }
+    if (textObject['@_LineWidth']) {
+        lineWith = converterDpi(textObject['@_LineWidth']);
+    }
+    const fillEnabled = textObject['@_Fill'] !== 'false';
+    const strokeEnabled = textObject['@_Stroke'] !== 'false';
+    if (!fillEnabled && !strokeEnabled) {
+        let width = boundary.w;
+        let height = boundary.h;
+        let left = boundary.x;
+        let top = boundary.y;
+        svg.setAttribute('style', `overflow:visible;position:absolute;width:${width}px;height:${height}px;left:${left}px;top:${top}px;z-index:${textObject['pfIndex']}`);
+        return svg;
+    }
+    let resolvedStrokeColor = defaultStrokeColor;
+    if (strokeEnabled && lineWith > 0 && !resolvedStrokeColor) {
+        resolvedStrokeColor = defaultFillColor;
+        if (!resolvedStrokeColor) {
+            resolvedStrokeColor = 'rgb(0, 0, 0)';
+        }
+    }
+  for (const textCodePoint of textCodePointList) {
         if (textCodePoint && !isNaN(textCodePoint.x)) {
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', textCodePoint.xPositions?.join(' ') || textCodePoint.x);
@@ -483,10 +509,16 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
                 text.setAttribute('transform', `matrix(${hScale}, 0, 0, 1, ${(1-hScale)*textCodePoint.x}, 0)`)
                 // text.setAttribute('transform-origin', `${textCodePoint.x}`);
             }
-            const textFillColor = defaultFillColor || defaultStrokeColor || 'rgb(0, 0, 0)';
+            const textFillColor = fillEnabled
+                ? (defaultFillColor || 'rgb(0, 0, 0)')
+                : 'none';
+            let strokeStyle = '';
+            if (strokeEnabled && resolvedStrokeColor) {
+                strokeStyle = `stroke:${resolvedStrokeColor};stroke-width:${lineWith}px;`;
+            }
             text.setAttribute('fill', textFillColor);
-            text.setAttribute('fill-opacity', defaultFillOpacity);
-            text.setAttribute('style', `white-space:pre;font-weight: ${weight};font-size:${size}px;font-family: ${getFontFamily(fontResObj[font])};color:${textFillColor};`)
+            text.setAttribute('fill-opacity', fillEnabled ? defaultFillOpacity : 0);
+            text.setAttribute('style', `white-space:pre;font-weight: ${weight};font-size:${size}px;font-family: ${getFontFamily(fontResObj[font])};${strokeStyle}`)
             svg.appendChild(text);
         }
 

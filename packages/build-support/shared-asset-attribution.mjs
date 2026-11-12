@@ -5,6 +5,7 @@ import { dirname, join, relative, resolve } from 'node:path'
 import { sanitizeOfflineAssetText } from '../components/web-full/scripts/offline-asset-sanitize.mjs'
 import { removeRuntimeSourceReferences } from './runtime-only-javascript.mjs'
 import { resolveWorkspaceAsset } from './public-asset-mirror.mjs'
+import { reconcilePinnedLegalBytes } from './pinned-legal-bytes.mjs'
 
 const hash = bytes => createHash('sha256').update(bytes).digest('hex')
 const workspace = resolve(import.meta.dirname, '../..')
@@ -89,7 +90,10 @@ export async function stageSharedAssetAttribution(viewerRoot, { sourceRoot = wor
   const registry = JSON.parse(registryBytes)
   const byDigest = new Map()
   for (const entry of registry.materials) {
-    const source = await readFile(resolveWorkspaceAsset(sourceRoot, entry.sourcePath))
+    const source = reconcilePinnedLegalBytes(
+      await readFile(resolveWorkspaceAsset(sourceRoot, entry.sourcePath)),
+      entry
+    )
     assert.equal(hash(source), entry.sha256, `Shared legal source changed: ${entry.sourcePath}`)
     assert.equal(source.length, entry.bytes)
     const { sourcePath, initialOccurrences, ...publicIdentity } = entry

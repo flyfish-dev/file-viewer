@@ -8,9 +8,15 @@ const demoDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const repoDir = resolve(demoDir, '../..')
 const legacySourceDir = resolve(repoDir, 'packages/components/web/viewer')
 const stagedSourceDir = resolve(repoDir, 'packages/tools/copy-assets/viewer')
+const demoPublicDir = resolve(repoDir, 'apps/viewer-demo/public')
+const stagedManifest = resolve(stagedSourceDir, 'flyfish-viewer-assets.json')
 const sourceDir = existsSync(resolve(legacySourceDir, 'flyfish-viewer-assets.json'))
   ? legacySourceDir
-  : stagedSourceDir
+  : existsSync(stagedManifest)
+    ? stagedSourceDir
+    : existsSync(resolve(demoPublicDir, 'flyfish-viewer-assets.json'))
+      ? demoPublicDir
+      : stagedSourceDir
 const targetDir = resolve(demoDir, 'public/file-viewer')
 const helperSourceDir = resolve(repoDir, 'packages/components/web/dist')
 const helperTargetDir = targetDir
