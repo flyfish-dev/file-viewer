@@ -63,7 +63,7 @@
     "@file-viewer/core": "workspace:3.3.3"
   },
   "devDependencies": {
-    "playwright": "^1.64.1",
+    "playwright": "^1.65.0",
     "typescript": "^6.0.3"
   },
   "license": "Apache-2.0"
