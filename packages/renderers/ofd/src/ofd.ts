@@ -207,6 +207,7 @@ export default async function renderOfd(
   let currentPage = 1;
   let pageCount = 0;
   let scrollFrame = 0;
+  const trackedEvents: Array<[EventTarget, string]> = [];
   let ofdDocumentPromise: Promise<unknown> | null = null;
 
   const style = createStyle(documentRef);
@@ -288,6 +289,50 @@ export default async function renderOfd(
     return true;
   };
 
+  const composedParent = (element: Element): Element | null => (
+    element.assignedSlot || element.parentElement || (element.getRootNode() as ShadowRoot).host || null
+  );
+
+  const clipsVertically = (element: Element) => {
+    // The root's overflow, and the body's when the root is visible, belong to
+    // the window viewport. Their boxes move during window scroll and must not
+    // be intersected with the viewport a second time.
+    if (element === documentRef.documentElement) return false;
+    const computedStyle = targetWindow?.getComputedStyle?.(element);
+    const style = (element as HTMLElement).style;
+    if (element === documentRef.body) {
+      const root = documentRef.documentElement;
+      const rootStyle = targetWindow?.getComputedStyle?.(root);
+      const rootOverflowX = rootStyle?.overflowX || root.style.overflowX || root.style.overflow || '';
+      const rootOverflowY = rootStyle?.overflowY || root.style.overflowY || root.style.overflow || '';
+      const rootContain = rootStyle?.contain || root.style.contain || 'none';
+      const bodyContain = computedStyle?.contain || style?.contain || 'none';
+      if ((!rootOverflowX || rootOverflowX === 'visible') &&
+          (!rootOverflowY || rootOverflowY === 'visible') &&
+          rootContain === 'none' && bodyContain === 'none') return false;
+    }
+    const overflow = computedStyle?.overflowY ||
+      style?.overflowY || style?.overflow || '';
+    return /^(auto|scroll|hidden|clip)$/.test(overflow);
+  };
+
+  const visibleViewport = () => {
+    let top = 0;
+    let bottom = targetWindow?.innerHeight || documentRef.documentElement.clientHeight || Infinity;
+    let hasStageBounds = false;
+    for (let element: Element | null = stage; element; element = composedParent(element)) {
+      if (element !== stage && !clipsVertically(element)) continue;
+      const box = element.getBoundingClientRect();
+      const html = element as HTMLElement;
+      if (html.clientHeight <= 0) continue;
+      const innerTop = box.top + html.clientTop;
+      top = Math.max(top, innerTop);
+      bottom = Math.min(bottom, innerTop + html.clientHeight);
+      if (element === stage) hasStageBounds = true;
+    }
+    return hasStageBounds && bottom > top ? { top, bottom } : null;
+  };
+
   const detectCurrentPage = () => {
     const frames = getPageFrames();
     if (!frames.length) {
@@ -295,15 +340,19 @@ export default async function renderOfd(
       syncPageNavigation();
       return;
     }
-    const stageRect = stage.getBoundingClientRect();
-    const viewportCenter = stageRect.top + stage.clientHeight / 2;
+    const viewport = visibleViewport();
+    if (!viewport) return;
+    const viewportCenter = (viewport.top + viewport.bottom) / 2;
     let closestIndex = 0;
+    let greatestOverlap = -1;
     let closestDistance = Number.POSITIVE_INFINITY;
     frames.forEach((frame, index) => {
       const rect = frame.getBoundingClientRect();
       const center = rect.top + rect.height / 2;
+      const overlap = Math.max(0, Math.min(rect.bottom, viewport.bottom) - Math.max(rect.top, viewport.top));
       const distance = Math.abs(center - viewportCenter);
-      if (distance < closestDistance) {
+      if (overlap > greatestOverlap || (overlap === greatestOverlap && distance < closestDistance)) {
+        greatestOverlap = overlap;
         closestDistance = distance;
         closestIndex = index;
       }
@@ -329,6 +378,20 @@ export default async function renderOfd(
       scrollFrame = 0;
       detectCurrentPage();
     }, 0) || 0;
+  };
+
+  const startScrollTracking = () => {
+    const listen = (source: EventTarget, type: string) => {
+      source.addEventListener(type, scheduleCurrentPageDetection, { passive: true });
+      trackedEvents.push([source, type]);
+    };
+    for (let element: Element | null = stage; element; element = composedParent(element)) {
+      listen(element, 'scroll');
+    }
+    if (targetWindow) {
+      listen(targetWindow, 'scroll');
+      listen(targetWindow, 'resize');
+    }
   };
 
   const getOfdDocument = async (ofd: OfdModule) => {
@@ -399,6 +462,7 @@ export default async function renderOfd(
   const setZoom = (nextZoom: number) => {
     zoom = clampZoom(nextZoom);
     syncPageZoom(true);
+    scheduleCurrentPageDetection();
     zoomEmitter.emit();
     return getZoomState();
   };
@@ -465,6 +529,7 @@ export default async function renderOfd(
       enablePageZoomTransitions();
       syncPageNavigation();
       if (currentPage > 1) scrollToPage(currentPage, 'auto');
+      scheduleCurrentPageDetection();
       state = 'ready';
       syncState();
       zoomEmitter.emit();
@@ -503,7 +568,6 @@ export default async function renderOfd(
   nextPageButton.addEventListener('click', () => {
     scrollToPage(currentPage + 1);
   });
-  stage.addEventListener('scroll', scheduleCurrentPageDetection, { passive: true });
   stage.addEventListener('keydown', event => {
     if (event.key === 'PageUp') {
       event.preventDefault();
@@ -526,6 +590,7 @@ export default async function renderOfd(
     // parse failures through the normal renderer error lifecycle.
     await render({ force: true, showLoading: true, rejectOnError: true });
     if (!disposed) {
+      startScrollTracking();
       startResizeObserver();
     }
   } catch (error) {
@@ -576,6 +641,8 @@ export default async function renderOfd(
         else targetWindow?.clearTimeout(scrollFrame);
       }
       scrollFrame = 0;
+      trackedEvents.forEach(([source, type]) => source.removeEventListener(type, scheduleCurrentPageDetection));
+      trackedEvents.length = 0;
       resizeObserver?.disconnect();
       resizeObserver = null;
       unregisterFileViewerZoomProvider(viewer);
