@@ -11,27 +11,27 @@
     "type-check": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@fumadocs/language": "0.2.16",
-    "@tabler/icons-react": "3.49.0",
+    "@fumadocs/language": "0.2.19",
+    "@tabler/icons-react": "3.51.0",
     "cnfast": "^0.2.0",
     "flexsearch": "0.8.212",
-    "fumadocs-core": "16.17.8",
-    "fumadocs-mdx": "15.4.10",
+    "fumadocs-core": "16.18.3",
+    "fumadocs-mdx": "15.5.2",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.8",
-    "next": "16.4.3",
+    "next": "16.4.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.5",
     "@types/flexsearch": "^0.7.42",
     "@types/mdx": "^2.0.14",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "postcss": "^8.5.31",
-    "serve": "^14.2.6",
-    "tailwindcss": "^4.3.3",
+    "postcss": "^8.5.32",
+    "serve": "^14.2.7",
+    "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3"
   }
 }

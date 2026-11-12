@@ -11,7 +11,7 @@
     "verify:contact": "node scripts/verify-contact-qr.mjs"
   },
   "dependencies": {
-    "@lucide/vue": "^1.61.0",
+    "@lucide/vue": "^1.70.0",
     "highlight.js": "^11.11.1",
     "vue": "^3.5.42"
   },
@@ -19,7 +19,7 @@
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/tsconfig": "^0.9.1",
     "typescript": "^6.0.3",
-    "vite": "8.3.5",
-    "vue-tsc": "^3.3.13"
+    "vite": "8.3.6",
+    "vue-tsc": "^3.3.14"
   }
 }
