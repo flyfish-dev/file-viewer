@@ -23,7 +23,7 @@
   },
   "fixtures": {
     "format-matrix.hwp": { "source": "synthetic", "sha256": "11e47978b296621fd76d883354cf5163070914860a5c3fd09c5c3fe4c9da5e0b", "container": "HWP v5 CFB", "expected": { "sections": 1, "text": "HWP v5 searchable paragraph", "media": 1 } },
-    "format-matrix.hwpx": { "source": "synthetic", "sha256": "64e1e411740b0c054bb5da78d7f37031ad42bc30d42dbba48dfe55368202adef", "container": "HWPX ZIP/XML", "expected": { "sections": 1, "text": "HWPX searchable paragraph", "tables": 1, "media": 1 } },
+    "format-matrix.hwpx": { "source": "synthetic", "sha256": "6781891bcbbcd5db30f6b11f989c29e872f86aeb2c1b8c2b9d2d045f269e4942", "container": "HWPX ZIP/XML", "expected": { "sections": 1, "text": "HWPX searchable paragraph", "tables": 1, "media": 1 } },
     "hwplib-table.hwp": { "source": "hwplib", "sha256": "ed97e2136e53cbb09ab6362d5631f6f1e4f752a5e53f09e85e4bc9c19f9e6d35", "container": "HWP v5.0.3.4 CFB", "expected": { "sections": 1, "tables": 2, "tableRows": [3, 1] } },
     "hwplib-image.hwp": { "source": "hwplib", "sha256": "c9d6726edce369955821a06d9a0f9b3887d733e9d99ee122b23299c6db4d2d92", "container": "HWP v5 CFB", "expected": { "media": 1 } },
     "hwplib-header-footer.hwp": { "source": "hwplib", "sha256": "ac3a6139ff2e01295544b4483ac5b64a60f8fcd317a50bea5948e73e3e69070b", "container": "HWP v5 CFB", "expected": { "paragraphs": 42, "text": "aaa" } },
