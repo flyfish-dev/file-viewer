@@ -12,7 +12,7 @@ export type FileViewerThemeMode = 'light' | 'dark' | 'system'
 
 export type FileViewerResolvedThemeMode = Exclude<FileViewerThemeMode, 'system'>
 
-export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE' | (string & {})
+export type FileViewerLocale = 'auto' | 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE' | (string & {})
 
 export type FileViewerStyleIsolation = 'auto' | 'shadow' | 'scoped' | 'none'
 
@@ -25,6 +25,15 @@ export type FileViewerMessageKey =
   | 'signature.panel.validationNotices'
   | 'signature.panel.checksFailed'
   | 'signature.panel.checksIncomplete'
+  | 'text.code.lineCount'
+  | 'text.patch.summary'
+  | 'text.xml.viewSource'
+  | 'text.xml.viewRendered'
+  | 'text.xml.diagnostics'
+  | 'text.xml.renderedTitle'
+  | 'media.midi.trackFallback'
+  | 'media.midi.instrumentFallback'
+
   | 'toolbar.zoomGroup'
   | 'toolbar.zoomOut'
   | 'toolbar.zoomIn'
@@ -228,6 +237,7 @@ export type FileViewerMessageKey =
   | 'media.video.codecUnsupportedTitle'
   | 'media.video.codecUnsupportedDescription'
   | 'media.video.codecUnsupportedAction'
+  | 'media.video.softwareWorkerFailed'
   | 'media.video.softwareLoading'
   | 'media.video.softwareBadge'
   | 'media.video.play'
@@ -513,6 +523,15 @@ export type FileViewerMessages =
 export interface FileViewerI18nOptions {
   locale?: FileViewerLocale
   messages?: FileViewerMessages
+}
+
+/** A viewer-owned language scope. Pass explicitly across independently bundled renderers. */
+export interface FileViewerI18nContext {
+  readonly locale: 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE'
+  /** Effective language inputs only, never the host's mutable viewer options. */
+  readonly options: Readonly<FileViewerI18nOptions>
+  t: (key: FileViewerMessageKey, params?: FileViewerMessageParams) => string
+  subscribe: (listener: () => void) => () => void
 }
 
 export type FileViewerFileRef = File | Blob | ArrayBuffer
@@ -987,6 +1006,8 @@ export interface FileRenderContext {
   sourceFile?: File | Blob
   signal?: AbortSignal
   options?: FileViewerOptions
+  /** Live UI language. Does not authorize changing file-authored content. */
+  i18n?: FileViewerI18nContext
   surface?: RenderSurface
   registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void
   registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void

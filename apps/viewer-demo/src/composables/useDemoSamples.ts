@@ -6,6 +6,8 @@ import {
   sampleGroupsJa,
   sampleGroupsZh
 } from '@/data/demoSamples'
+import { sampleGroupsZhTW } from '@/data/demoSamples.zh-tw'
+import { sampleGroupsZhHK } from '@/data/demoSamples.zh-hk'
 import type { DemoLocale } from '@/composables/useDemoCopy'
 import type { DemoSampleGroup } from '@/data/demoSamples'
 
@@ -15,6 +17,8 @@ import type { DemoSampleGroup } from '@/data/demoSamples'
  */
 export const DEFAULT_DEMO_URL_BY_LOCALE: Record<DemoLocale, string> = {
   'zh-CN': '/example/word.docx',
+  'zh-TW': '/example/word.docx',
+  'zh-HK': '/example/word.docx',
   'en-US': '/example/en/sample-presentation.pptx',
   'ja-JP': '/example/en/sample-presentation.pptx',
   'de-DE': '/example/en/sample-presentation.pptx'
@@ -134,6 +138,8 @@ export function useDemoSamples(options: UseDemoSamplesOptions) {
   // language does not reset the selected group or active format.
   const sampleGroupsByLocale = {
     'zh-CN': sampleGroupsZh,
+    'zh-TW': sampleGroupsZhTW,
+    'zh-HK': sampleGroupsZhHK,
     'en-US': sampleGroupsEn,
     'ja-JP': sampleGroupsJa,
     'de-DE': sampleGroupsEn

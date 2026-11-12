@@ -6,7 +6,7 @@ export type GeometryKernelOutput = 'three-object' | 'mesh' | 'fragments';
 
 export type GeometryKernelConfidence = 'none' | 'low' | 'medium' | 'high';
 
-export type GeometryKernelLocale = 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE';
+export type GeometryKernelLocale = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE';
 
 export interface GeometryKernelCapability {
   readonly renderer: string;
@@ -515,6 +515,9 @@ export const formatGeometryKernelNotice = (
     if (locale === 'de-DE') {
       return `${formatLabel} wird lokal über den eigenen OCCT-Worker/WASM-Pfad angezeigt. Die Datei bleibt im Browser; konfigurieren Sie options.model nur für selbst gehostete Assets unter einem abweichenden Pfad.`;
     }
+    if (locale === 'zh-TW' || locale === 'zh-HK') {
+      return `${formatLabel} 已透過獨立 OCCT Worker/WASM 在瀏覽器本機完成預覽，檔案無須上傳；只有離線資源部署在自訂目錄時，才需要覆寫 options.model 路徑。`;
+    }
     return `${formatLabel} 已通过独立 OCCT Worker/WASM 在浏览器本地完成预览，文件无需上传；仅当离线资源部署在自定义目录时，才需要覆盖 options.model 路径。`;
   }
 
@@ -526,6 +529,9 @@ export const formatGeometryKernelNotice = (
   }
   if (locale === 'de-DE') {
     return `${formatLabel} benötigt für eine vollständige Browservorschau einen eigenen WebAssembly-Geometriekern (${engines}). Flyfish Viewer hält diese großen Laufzeiten aus core und dem standardmäßigen 3D-Renderer heraus; verwenden Sie den Geometrie-Engine-Pfad oder konvertieren Sie das Modell intern nach ${targets}.`;
+  }
+  if (locale === 'zh-TW' || locale === 'zh-HK') {
+    return `${formatLabel} 需要獨立 WebAssembly 幾何核心（${engines}）才能在瀏覽器完整預覽。Flyfish Viewer 不會把這類大型執行環境放進 core 或預設 3D renderer；請使用獨立幾何核心，或在私有轉換流程輸出 ${targets} 後預覽。`;
   }
   return `${formatLabel} 需要独立 WebAssembly 几何内核（${engines}）才能完整浏览器预览。Flyfish Viewer 不会把这类重型运行时塞进 core 或默认 3D renderer 安装路径；请通过独立几何内核路线接入，或在私有转换链路输出 ${targets} 后预览。`;
 };

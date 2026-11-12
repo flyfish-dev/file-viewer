@@ -41,6 +41,7 @@ import {
 } from '@lucide/vue'
 import {
   createFileViewerTranslator,
+  formatFileViewerErrorMessage,
   createFileViewerRequestScope,
   FILE_VIEWER_RENDER_SURFACE_BACKGROUND_PROPERTY,
   normalizeFileViewerRenderSurfaceBackground,
@@ -64,6 +65,7 @@ import { useViewerErrorState, useViewerPresentation } from './hooks/useViewerPre
 import { useViewerPreviewLifecycle } from './hooks/useViewerPreviewLifecycle'
 import { useViewerPublicApi } from './hooks/useViewerPublicApi'
 import { useViewerRenderSurface } from './hooks/useViewerRenderSurface'
+import { useViewerI18n } from './hooks/useViewerI18n'
 import { useViewerSourceLoading } from './hooks/useViewerSourceLoading'
 import { useViewerToolbar } from './hooks/useViewerToolbar'
 import { useViewerViewState } from './hooks/useViewerViewState'
@@ -153,8 +155,19 @@ watch(() => props.options?.theme, () => {
   manualViewerTheme.value = null
 })
 
+const onI18nError = (error: unknown) => emit('error', error instanceof Error ? error.message : String(error))
+const { i18n: viewerI18n, revision: i18nRevision } = useViewerI18n(
+  () => effectiveOptions.value,
+  () => viewerRoot.value?.ownerDocument,
+  onI18nError
+)
+const effectiveLanguageOptions = computed(() => {
+  i18nRevision.value
+  return { ...effectiveOptions.value, ...viewerI18n.options, i18n: undefined }
+})
 const viewerLabels = computed(() => {
-  const t = createFileViewerTranslator(effectiveOptions.value)
+  i18nRevision.value
+  const t = createFileViewerTranslator(viewerI18n)
   return {
     zoomGroup: t('toolbar.zoomGroup'),
     zoomOut: t('toolbar.zoomOut'),
@@ -236,7 +249,7 @@ const {
   resetLoading
 } = useLoading(
   currentExtend,
-  () => effectiveOptions.value,
+  () => effectiveLanguageOptions.value,
   message => emit('error', message)
 )
 
@@ -303,7 +316,7 @@ const errorState = useViewerErrorState({
   currentExtend,
   error,
   loadingTheme,
-  getOptions: () => effectiveOptions.value
+  getOptions: () => effectiveLanguageOptions.value
 })
 
 const {
@@ -341,7 +354,7 @@ const {
   handleOperationError: (nextError, context) => {
     reportFileViewerOperationError({ error: nextError, context })
   },
-  onOperationErrorMessage: showError
+  onOperationErrorMessage: message => showError(message)
 })
 
 const {
@@ -406,6 +419,8 @@ const {
   setActiveRenderSession
 } = useViewerRenderSurface({
   output,
+  i18n: viewerI18n,
+  onI18nError,
   getOptions: () => effectiveOptions.value,
   beforeDownload: () => runBeforeOperation('download'),
   isCurrentRequest,
@@ -495,7 +510,7 @@ const {
   getFile: () => props.file,
   getUrl: () => props.url,
   getSourceFilename: () => props.filename || props.name,
-  getOptions: () => effectiveOptions.value,
+  getOptions: () => effectiveLanguageOptions.value,
   filename,
   currentFile,
   currentBuffer,
@@ -519,7 +534,9 @@ const {
   showError,
   clearError,
   resetLoading,
-  formatErrorMessage
+  // Source loading already supplies effective ownerDocument options as the third argument.
+  // Preserve the canonical formatter identity for built-in prefix metadata.
+  formatErrorMessage: formatFileViewerErrorMessage
 })
 
 let externalThemeRefreshSequence = 0

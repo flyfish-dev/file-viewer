@@ -16,6 +16,8 @@ import type {
   FileViewerLifecycleContext,
   FileViewerLoadStartState,
   FileViewerOptions,
+  FileViewerLoadingMessageMetadata,
+  FileViewerErrorMessageMetadata,
   FileViewerRenderCompleteState
 } from '@file-viewer/core'
 import type { FileViewerVueRenderSession } from '../rendererBridge'
@@ -59,10 +61,10 @@ interface UseViewerSourceLoadingOptions {
   setActiveDocumentContext: (context: FileViewerLifecycleContext) => void;
   markLoadStarted: (version: number) => void;
   clearLoadStarted: (version: number) => void;
-  startLoading: (message: string) => void;
-  setLoadingMessage: (message: string) => void;
+  startLoading: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
+  setLoadingMessage: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
   stopLoading: () => void;
-  showError: (message: string) => void;
+  showError: (message: string, metadata?: FileViewerErrorMessageMetadata) => void;
   clearError: () => void;
   resetLoading: () => void;
   formatErrorMessage: FileViewerErrorMessageFormatter;

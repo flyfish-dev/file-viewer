@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   registerFileViewerZoomProvider,
   unregisterFileViewerZoomProvider,
@@ -570,7 +571,8 @@ const renderMeta = (
   documentRef: Document,
   panel: HTMLElement,
   model: BundleModel,
-  t: FileViewerTranslator
+  t: FileViewerTranslator,
+  bindings: ReturnType<typeof createFileViewerI18nBindings>
 ) => {
   const meta = createElement(documentRef, 'div', 'git-bundle-meta')
   const counts = new Map<PackObjectKind, number>()
@@ -578,27 +580,26 @@ const renderMeta = (
     counts.set(object.kind, (counts.get(object.kind) || 0) + 1)
   })
   const items = [
-    [t('gitBundle.meta.bundle'), model.header.signature],
-    [t('gitBundle.meta.refs'), String(model.header.refs.length)],
-    [t('gitBundle.meta.commits'), String(model.commits.length)],
-    [t('gitBundle.meta.objects'), String(model.objects.length)],
-    [t('gitBundle.meta.deltas'), String(model.deltaCount)],
-    [t('gitBundle.meta.objectFormat'), model.header.objectFormat],
-    [t('gitBundle.meta.objectTypes'), Array.from(counts).map(([kind, count]) => `${kind}:${count}`).join(' · ') || '-']
-  ]
+    ['gitBundle.meta.bundle', model.header.signature],
+    ['gitBundle.meta.refs', String(model.header.refs.length)],
+    ['gitBundle.meta.commits', String(model.commits.length)],
+    ['gitBundle.meta.objects', String(model.objects.length)],
+    ['gitBundle.meta.deltas', String(model.deltaCount)],
+    ['gitBundle.meta.objectFormat', model.header.objectFormat],
+    ['gitBundle.meta.objectTypes', Array.from(counts).map(([kind, count]) => `${kind}:${count}`).join(' · ') || '-']
+  ] as const
   items.forEach(([label, value]) => {
     const row = createElement(documentRef, 'div')
-    row.append(createElement(documentRef, 'span', undefined, label), createElement(documentRef, 'strong', undefined, value))
+    const labelNode = createElement(documentRef, 'span')
+    bindings.text(labelNode, () => t(label))
+    row.append(labelNode, createElement(documentRef, 'strong', undefined, value))
     meta.appendChild(row)
   })
   panel.appendChild(meta)
   if (model.deltaCount > 0) {
-    panel.appendChild(createElement(
-      documentRef,
-      'div',
-      'git-bundle-notice',
-      t('gitBundle.notice.delta')
-    ))
+    const notice = createElement(documentRef, 'div', 'git-bundle-notice')
+    bindings.text(notice, () => t('gitBundle.notice.delta'))
+    panel.appendChild(notice)
   }
 }
 
@@ -614,8 +615,14 @@ export default async function renderGitBundle(
   }
   ;({ Inflate } = await loadPako())
   const documentRef = target.ownerDocument || document
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const model = await parseBundleModel(buffer, t)
+  const bindings = createFileViewerI18nBindings(context?.i18n)
+  const label = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string | undefined, value: () => string) => {
+    const node = createElement(documentRef, tag, className)
+    bindings.text(node, value)
+    return node
+  }
   let zoom = 1
   const zoomEmitter = createZoomChangeEmitter()
 
@@ -624,7 +631,7 @@ export default async function renderGitBundle(
   const toolbar = createElement(documentRef, 'div', 'git-bundle-toolbar')
   toolbar.append(
     createElement(documentRef, 'span', undefined, type.toUpperCase()),
-    createElement(documentRef, 'strong', undefined, t('gitBundle.toolbar.summary', {
+    label('strong', undefined, () => t('gitBundle.toolbar.summary', {
       commits: model.commits.length,
       files: model.files.length
     }))
@@ -632,18 +639,18 @@ export default async function renderGitBundle(
 
   const layout = createElement(documentRef, 'div', 'git-bundle-layout')
   const historyPanel = createElement(documentRef, 'section', 'git-bundle-panel')
-  historyPanel.appendChild(createElement(documentRef, 'h3', undefined, t('gitBundle.title.history')))
-  renderMeta(documentRef, historyPanel, model, t)
+  historyPanel.appendChild(label('h3', undefined, () => t('gitBundle.title.history')))
+  renderMeta(documentRef, historyPanel, model, t, bindings)
   const historyList = createElement(documentRef, 'ul', 'git-bundle-list')
   historyPanel.appendChild(historyList)
 
   const treePanel = createElement(documentRef, 'section', 'git-bundle-panel')
-  treePanel.appendChild(createElement(documentRef, 'h3', undefined, t('gitBundle.title.fileTree')))
+  treePanel.appendChild(label('h3', undefined, () => t('gitBundle.title.fileTree')))
   const tree = createElement(documentRef, 'div', 'git-bundle-tree')
   treePanel.appendChild(tree)
 
   const filePanel = createElement(documentRef, 'section', 'git-bundle-panel git-bundle-file')
-  const fileHeader = createElement(documentRef, 'div', 'git-bundle-file-header', t('gitBundle.file.choose'))
+  const fileHeader = label('div', 'git-bundle-file-header', () => t('gitBundle.file.choose'))
   const fileCode = createElement(documentRef, 'pre', 'git-bundle-code', '')
   filePanel.append(fileHeader, fileCode)
   layout.append(historyPanel, treePanel, filePanel)
@@ -651,10 +658,11 @@ export default async function renderGitBundle(
   target.replaceChildren(createStyle(documentRef), root)
 
   const renderFiles = (files: FileEntry[]) => {
+    bindings.release(tree)
     tree.replaceChildren()
     if (!files.length) {
-      tree.appendChild(createElement(documentRef, 'div', 'git-bundle-notice', t('gitBundle.file.noTree')))
-      fileHeader.textContent = t('gitBundle.file.none')
+      tree.appendChild(label('div', 'git-bundle-notice', () => t('gitBundle.file.noTree')))
+      bindings.text(fileHeader, () => t('gitBundle.file.none'))
       fileCode.textContent = ''
       return
     }
@@ -665,6 +673,7 @@ export default async function renderGitBundle(
       button.addEventListener('click', () => {
         tree.querySelectorAll('button').forEach(item => item.classList.remove('active'))
         button.classList.add('active')
+        bindings.release(fileHeader)
         fileHeader.textContent = `${file.path} · ${shortOid(file.oid)}`
         fileCode.textContent = file.preview
       })
@@ -697,7 +706,7 @@ export default async function renderGitBundle(
   })
 
   if (!model.commits.length) {
-    historyList.appendChild(createElement(documentRef, 'li', 'git-bundle-notice', t('gitBundle.history.empty')))
+    historyList.appendChild(label('li', 'git-bundle-notice', () => t('gitBundle.history.empty')))
     renderFiles(model.files)
   }
 
@@ -731,6 +740,7 @@ export default async function renderGitBundle(
   return {
     $el: root,
     unmount() {
+      bindings.destroy()
       unregisterFileViewerZoomProvider(root)
       target.replaceChildren()
     }

@@ -342,6 +342,10 @@ export {
   resolveFileViewerOperationFilename,
   resolveFileViewerOriginalFilename,
 } from './viewer/operations';
+export { createFileViewerI18n, createFileViewerNestedI18n } from './i18n/context';
+export type { FileViewerI18nContext } from './contracts/types';
+export type { FileViewerI18nController } from './i18n/context';
+export { createFileViewerI18nBindings } from './i18n/bindings';
 export {
   FILE_VIEWER_BUILTIN_MESSAGES,
   FILE_VIEWER_DEFAULT_LOCALE,
@@ -535,10 +539,11 @@ export const renderFileViewerGeo = async (
 export const renderFileViewerImage = async (
   buffer: ArrayBuffer,
   target: HTMLDivElement,
-  type?: string
+  type?: string,
+  context: FileRenderContext | undefined = undefined
 ): Promise<FileViewerRenderedInstance> => {
   const { default: renderImage } = await import('./renderers/image');
-  return renderImage(buffer, target, type);
+  return renderImage(buffer, target, type, context);
 };
 export const renderFileViewerMarkdown = async (
   buffer: ArrayBuffer,
@@ -804,6 +809,8 @@ export {
 } from './viewer/loading';
 export type {
   FileViewerLoadingController,
+  FileViewerLoadingMessageMetadata,
+  FileViewerErrorMessageMetadata,
   FileViewerLoadingControllerActionHandlers,
   RunFileViewerLoadingExtensionSyncInput,
 } from './viewer/loading';

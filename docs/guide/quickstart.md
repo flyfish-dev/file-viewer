@@ -484,6 +484,10 @@ pnpm dev
 
 The main demo opens at the Vite dev server URL. The zero-dependency iframe entry is available at `/iframe.html`, and the comparison demo is available at `/compare.html`.
 
+### Traditional Chinese locales
+
+Use `locale: 'zh-TW'` for Taiwan or `locale: 'zh-HK'` for Hong Kong. The shared viewer and both demos also recognize `zh-Hant`, `zh-Hant-TW`, `zh-Hant-HK`, and regional browser preferences. Explicit `zh-Hans` stays in Simplified Chinese. The demo language menus let visitors choose either locale without changing the previewed file.
+
 ### Japanese locale
 
 Use `locale: 'ja-JP'` to force Japanese. The default `auto` mode checks the complete `navigator.languages` preference list and selects Japanese for `ja`, `ja-JP`, and other Japanese language tags. Unsupported browser locales fall back to English.

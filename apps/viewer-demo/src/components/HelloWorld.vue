@@ -126,7 +126,7 @@ const {
 } = useDemoPreferences({
   onSystemThemeChange: () => syncDemoDocumentChrome()
 })
-const officialSiteUrl = computed(() => demoLocale.value === 'zh-CN' ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/')
+const officialSiteUrl = computed(() => demoLocale.value.startsWith('zh-') ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/')
 const { copy: demoCopy, getCopy: getDemoCopy } = useDemoCopy(demoLocale)
 const {
   localeOptions: demoLocaleOptions, menuOpen: localeMenuOpen,
@@ -366,6 +366,8 @@ const demoThemeButtonTitle = computed(() => {
 })
 const githubRepositoryAriaLabel = computed(() => {
   if (demoLocale.value === 'zh-CN') return '在新标签页打开 File Viewer GitHub 开源仓库'
+  if (demoLocale.value === 'zh-TW') return '在新分頁開啟 File Viewer GitHub 開放原始碼專案'
+  if (demoLocale.value === 'zh-HK') return '在新分頁開啟 File Viewer GitHub 開源專案'
   if (demoLocale.value === 'ja-JP') return 'File Viewer の GitHub リポジトリを新しいタブで開く'
   return 'Open the File Viewer GitHub repository in a new tab'
 })
@@ -1365,7 +1367,7 @@ function handleWindowResize() {
             :href='officialSiteUrl'
             target='_blank'
             rel='noreferrer'
-            :aria-label='demoLocale === "zh-CN" ? "打开 File Viewer 官网" : "Open the File Viewer official website"'
+            :aria-label='demoLocale === "zh-CN" ? "打开 File Viewer 官网" : demoLocale.startsWith("zh-") ? "開啟 File Viewer 官方網站" : "Open the File Viewer official website"'
           >
             <span class='brand-mark'>
               <img :src='brandLogo' alt='' />

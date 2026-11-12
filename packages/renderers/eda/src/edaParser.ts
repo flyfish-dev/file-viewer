@@ -18,7 +18,7 @@ const MAX_STREAMS = 200
 const MAX_STREAM_STRINGS = 24
 const MAX_PROPERTIES = 420
 
-export type EdaParserLocale = 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE'
+export type EdaParserLocale = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE'
 
 type EdaParserTextKey =
   | 'oasisFixture'
@@ -62,6 +62,48 @@ const EDA_PARSER_TEXT: Record<EdaParserLocale, Record<EdaParserTextKey, string>>
     noOasis: '未发现明确的 OASIS 版图结构候选。OASIS 完整几何浏览通常需要专业版图库或独立 WASM/TS 内核，当前前端包会安全展示头部、字符串、属性和二进制结构线索。',
     maxStreams: '仅展示前 {count} 个 CFB 项，完整文件仍可下载后在专业 EDA 工具中打开。',
     binaryFallback: '该文件不是标准 CFB 容器，已退化为安全的二进制字符串索引预览。',
+  },
+  'zh-TW': {
+    oasisFixture: '已識別為 OASIS 文字結構夾具，並在瀏覽器端解析幾何預覽和結構索引；真實 SEMI 二進位制 OASIS 仍走安全索引與後續獨立核心路線。',
+    gdsLayout: '已識別為標準 GDSII 二進位制版圖記錄，並在瀏覽器端解析幾何預覽和結構索引。',
+    cfbContainer: '已識別為 Microsoft Compound File / OLE2 複合文件容器，並在瀏覽器端解析目錄與流。',
+    binaryIndex: '未識別為 CFB 容器，已使用二進位制字串索引模式展示可讀資訊。',
+    coverage: '已索引 {streams} 個條目、{strings} 個可讀字串、{entities} 個 EDA 結構候選。',
+    layout: '已解析 {layout}: {structures} 個 structure、{elements} 個幾何/引用/文字元素，可在版圖預覽面板中拖動檢視。',
+    layoutOasisName: 'OASIS 文字結構',
+    layoutGdsName: 'GDSII 版圖',
+    titleOrcadSymbolLibrary: 'OrCAD Capture 元件符號庫',
+    titleOlbBinaryLibrary: 'OLB 二進位制庫',
+    titleOrcadDrawingLibrary: 'OrCAD / Allegro 圖紙庫',
+    titleDraBinaryDrawing: 'DRA 二進位制圖紙',
+    titleLayoutStructure: '{type} 版圖結構',
+    noSymbol: '未發現明確的元件符號候選，檔案可能使用了私有二進位制編碼或需要專業工具匯出 ASCII/XML 後再檢查。',
+    noFootprint: '未發現明確的封裝、圖形或 padstack 候選，檔案可能使用了私有二進位制資料庫編碼。',
+    noGds: '未發現明確的 GDSII 版圖結構候選。檔案可能不是標準 GDSII 二進位制或使用了專有封裝。',
+    noOasis: '未發現明確的 OASIS 版圖結構候選。OASIS 完整幾何瀏覽通常需要專業版圖處理函式庫或獨立 WASM/TS 核心，當前前端包會安全展示頭部、字串、屬性和二進位制結構線索。',
+    maxStreams: '僅展示前 {count} 個 CFB 項，完整檔案仍可下載後在專業 EDA 工具中開啟。',
+    binaryFallback: '該檔案不是標準 CFB 容器，已退化為安全的二進位制字串索引預覽。',
+  },
+  'zh-HK': {
+    oasisFixture: '已識別為 OASIS 文本結構夾具，並在瀏覽器端解析幾何預覽和結構索引；真實 SEMI 二進制 OASIS 仍走安全索引與後續獨立內核路線。',
+    gdsLayout: '已識別為標準 GDSII 二進制版圖記錄，並在瀏覽器端解析幾何預覽和結構索引。',
+    cfbContainer: '已識別為 Microsoft Compound File / OLE2 複合文檔容器，並在瀏覽器端解析目錄與流。',
+    binaryIndex: '未識別為 CFB 容器，已使用二進制字符串索引模式展示可讀信息。',
+    coverage: '已索引 {streams} 個條目、{strings} 個可讀字符串、{entities} 個 EDA 結構候選。',
+    layout: '已解析 {layout}: {structures} 個 structure、{elements} 個幾何/引用/文本元素，可在版圖預覽面板中拖動查看。',
+    layoutOasisName: 'OASIS 文本結構',
+    layoutGdsName: 'GDSII 版圖',
+    titleOrcadSymbolLibrary: 'OrCAD Capture 元件符號庫',
+    titleOlbBinaryLibrary: 'OLB 二進制庫',
+    titleOrcadDrawingLibrary: 'OrCAD / Allegro 圖紙庫',
+    titleDraBinaryDrawing: 'DRA 二進制圖紙',
+    titleLayoutStructure: '{type} 版圖結構',
+    noSymbol: '未發現明確的元件符號候選，文件可能使用了私有二進制編碼或需要專業工具導出 ASCII/XML 後再檢查。',
+    noFootprint: '未發現明確的封裝、圖形或 padstack 候選，文件可能使用了私有二進制數據庫編碼。',
+    noGds: '未發現明確的 GDSII 版圖結構候選。文件可能不是標準 GDSII 二進制或使用了專有封裝。',
+    noOasis: '未發現明確的 OASIS 版圖結構候選。OASIS 完整幾何瀏覽通常需要專業版圖庫或獨立 WASM/TS 內核，當前前端包會安全展示頭部、字符串、屬性和二進制結構線索。',
+    maxStreams: '僅展示前 {count} 個 CFB 項，完整文件仍可下載後在專業 EDA 工具中打開。',
+    binaryFallback: '該文件不是標準 CFB 容器，已退化為安全的二進制字符串索引預覽。',
   },
   'en-US': {
     oasisFixture: 'Detected an OASIS text fixture and parsed geometry preview plus structure indexes in the browser. Full SEMI binary OASIS still follows the safe index and dedicated-kernel path.',

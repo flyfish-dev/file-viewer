@@ -1,5 +1,6 @@
 import {
   createFileViewerZoomChangeEmitter,
+  createFileViewerI18nBindings,
   decodeFileViewerTextBuffer,
   registerFileViewerZoomProvider,
   resolveFileViewerLocale,
@@ -14,9 +15,11 @@ import renderCode from './code.js'
 const labels = {
   'en-US': ['Annotated', 'Lyrics', 'Source', 'Wrap lines', 'Static lyrics preview; no audio playback.'],
   'zh-CN': ['时间标注', '歌词', '原文', '自动换行', '静态歌词预览，不播放音频。'],
+  'zh-TW': ['時間標註', '歌詞', '原文', '自動換行', '靜態歌詞預覽，不播放音訊。'],
+  'zh-HK': ['時間標註', '歌詞', '原文', '自動換行', '靜態歌詞預覽，不播放音頻。'],
   'ja-JP': ['時間付き', '歌詞', '原文', '折り返し', '歌詞の静的プレビューです。音声は再生しません。'],
   'de-DE': ['Mit Zeitangaben', 'Liedtext', 'Quelltext', 'Zeilenumbruch', 'Statische Liedtextvorschau ohne Audiowiedergabe.']
-} as const
+} as const satisfies Record<ReturnType<typeof resolveFileViewerLocale>, readonly [string, string, string, string, string]>
 const css = `
 .fv-lrc{--lrc-bg:#fff;--lrc-fg:#1f2937;height:100%;min-height:0;display:flex;flex-direction:column;color:var(--lrc-fg);background:var(--lrc-bg);font:14px/1.65 system-ui,sans-serif}
 .fv-lrc .lrc-toolbar{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-bottom:1px solid #8885;align-items:center}
@@ -55,20 +58,21 @@ export default async function renderLrc(buffer: ArrayBuffer, target: HTMLDivElem
     return renderCode(buffer, target, type, context)
   }
   const doc = target.ownerDocument
-  const words = labels[resolveFileViewerLocale(context?.options)]
+  const words = () => labels[context?.i18n?.locale || resolveFileViewerLocale(context?.options)]
+  const language = createFileViewerI18nBindings(context?.i18n)
   const root = doc.createElement('div'); root.className = 'fv-lrc'; root.dataset.wrap = String(context?.options?.text?.wrapLongLines !== false); root.dataset.viewerTheme = context?.options?.theme || 'system'
   const style = doc.createElement('style'); style.textContent = css
   const toolbar = doc.createElement('div'); toolbar.className = 'lrc-toolbar'; toolbar.hidden = context?.options?.text?.toolbar === false
   const scroller = doc.createElement('div'); scroller.className = 'lrc-scroll'
   const content = doc.createElement('div'); content.className = 'lrc-content'
   scroller.append(content)
-  const buttons = words.slice(0, 3).map((text, index) => {
-    const button = doc.createElement('button'); button.type = 'button'; button.textContent = text
+  const buttons = words().slice(0, 3).map((_text, index) => {
+    const button = doc.createElement('button'); button.type = 'button'; language.text(button, () => words()[index])
     button.dataset.lrcMode = String(index); toolbar.append(button); return button
   })
-  const wrap = doc.createElement('button'); wrap.type = 'button'; wrap.textContent = words[3]
+  const wrap = doc.createElement('button'); wrap.type = 'button'; language.text(wrap, () => words()[3])
   wrap.dataset.lrcWrap = ''; wrap.setAttribute('aria-pressed', root.dataset.wrap); toolbar.append(wrap)
-  const note = doc.createElement('span'); note.className = 'lrc-note'; note.textContent = words[4]; toolbar.append(note)
+  const note = doc.createElement('span'); note.className = 'lrc-note'; language.text(note, () => words()[4]); toolbar.append(note)
   root.append(style, toolbar, scroller)
   target.replaceChildren(root)
   let disposed = false
@@ -123,7 +127,7 @@ export default async function renderLrc(buffer: ArrayBuffer, target: HTMLDivElem
   }
   function unmount() {
     if (disposed) return
-    disposed = true; toolbar.removeEventListener('click', click)
+    disposed = true; language.destroy(); toolbar.removeEventListener('click', click)
     context?.signal?.removeEventListener('abort', unmount)
     unregisterFileViewerZoomProvider(root); emitter.clear(); root.remove()
   }

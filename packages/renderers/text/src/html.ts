@@ -1,6 +1,7 @@
 import createDOMPurify, { type WindowLike } from 'dompurify'
 import {
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   decodeFileViewerTextBuffer,
   disposeFileViewerRendered,
   type FileRenderContext,
@@ -70,7 +71,8 @@ export default async function renderHtml(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const bindings = createFileViewerI18nBindings(context?.i18n)
   const root = documentRef.createElement('div')
   root.className = 'html-viewer'
   const style = documentRef.createElement('style')
@@ -90,19 +92,19 @@ export default async function renderHtml(
   toolbar.className = 'html-viewer-toolbar'
   const previewButton = documentRef.createElement('button')
   previewButton.type = 'button'
-  previewButton.textContent = t('text.html.preview')
+  bindings.text(previewButton, () => t('text.html.preview'))
   previewButton.dataset.htmlView = 'preview'
   const sourceButton = documentRef.createElement('button')
   sourceButton.type = 'button'
-  sourceButton.textContent = t('text.html.source')
+  bindings.text(sourceButton, () => t('text.html.source'))
   sourceButton.dataset.htmlView = 'source'
   const hint = documentRef.createElement('span')
   hint.className = 'html-viewer-hint'
-  hint.textContent = t('text.html.safePreview')
+  bindings.text(hint, () => t('text.html.safePreview'))
   toolbar.append(previewButton, sourceButton, hint)
   const frame = documentRef.createElement('iframe')
   frame.className = 'html-preview-frame'
-  frame.title = t('text.html.preview')
+  bindings.attr(frame, 'title', () => t('text.html.preview'))
   frame.setAttribute('sandbox', '')
   frame.referrerPolicy = 'no-referrer'
   const sourceTarget = documentRef.createElement('div')
@@ -152,6 +154,7 @@ export default async function renderHtml(
     $el: target,
     unmount() {
       disposed = true
+      bindings.destroy()
       previewButton.removeEventListener('click', showPreview)
       sourceButton.removeEventListener('click', showSource)
       disposeFileViewerRendered(sourceInstance)

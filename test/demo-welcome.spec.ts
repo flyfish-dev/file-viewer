@@ -25,7 +25,7 @@ describe('first-visit welcome', () => {
     expect(() => dismissDemoWelcome()).not.toThrow()
   })
 
-  it('provides complete, nonempty welcome copy in all four supported locales', () => {
+  it('provides complete, nonempty welcome copy in all supported locales', () => {
     const keys = Object.keys(demoWelcomeCopy['en-US']).sort()
     for (const copy of Object.values(demoWelcomeCopy)) {
       expect(Object.keys(copy).sort()).toEqual(keys)

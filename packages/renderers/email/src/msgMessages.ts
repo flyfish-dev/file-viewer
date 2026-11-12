@@ -4,7 +4,7 @@ import { resolveFileViewerLocale, type FileViewerI18nInput } from '@file-viewer/
 export type MsgNotice = 'email.msg.rtfUnavailable' | 'email.msg.inlineUnavailable'
   | 'email.msg.noBody' | 'email.msg.protected';
 type Labels = Record<MsgNotice | 'bcc' | 'sender' | 'close', string>;
-const messages: Record<'en-US' | 'zh-CN' | 'ja-JP' | 'de-DE', Labels> = {
+const messages: Record<ReturnType<typeof resolveFileViewerLocale>, Labels> = {
   'en-US': {
     bcc: 'Bcc', sender: 'Sender', close: 'Close attachment preview',
     'email.msg.rtfUnavailable': 'Rich-text rendering is unavailable. The readable plain-text body is shown when available. Install the RTF capability to render RTF-only messages.',
@@ -25,6 +25,20 @@ const messages: Record<'en-US' | 'zh-CN' | 'ja-JP' | 'de-DE', Labels> = {
     'email.msg.inlineUnavailable': '一部の埋め込み画像を表示できません。元の添付ファイルは保持されています。',
     'email.msg.noBody': 'この Outlook アイテムには表示可能なメール本文がありません。メタデータと添付ファイルを表示します。',
     'email.msg.protected': 'このメールには保護または署名が含まれます。復号と署名検証は行いません。',
+  },
+  'zh-TW': {
+    bcc: '密件副本', sender: '代寄者', close: '關閉附件預覽',
+    'email.msg.rtfUnavailable': '暫時無法呈現豐富文字本文，已盡可能顯示純文字本文。僅含 RTF 的郵件需要安裝 RTF 預覽功能。',
+    'email.msg.inlineUnavailable': '部分內嵌圖片無法顯示，原始附件仍予保留。',
+    'email.msg.noBody': '此 Outlook 項目不含可讀取的郵件本文，已顯示中繼資料及內嵌附件。',
+    'email.msg.protected': '此郵件包含加密或簽章內容，本預覽器不會進行解密或簽章驗證。',
+  },
+  'zh-HK': {
+    bcc: '密送', sender: '代發人', close: '關閉附件預覽',
+    'email.msg.rtfUnavailable': '暫時無法顯示富文本正文，已盡可能顯示純文本正文。僅含 RTF 的郵件需要安裝 RTF 預覽功能。',
+    'email.msg.inlineUnavailable': '部分內嵌圖片無法顯示，原始附件仍予保留。',
+    'email.msg.noBody': '此 Outlook 項目不含可讀取的郵件正文，已顯示元數據及內嵌附件。',
+    'email.msg.protected': '此郵件包含加密或簽名內容，本預覽器不會進行解密或簽名驗證。',
   },
   'de-DE': {
     bcc: 'Bcc', sender: 'Absender', close: 'Anhangvorschau schließen',

@@ -1,30 +1,45 @@
-import type {
-  FileRenderContext,
-  FileViewerRenderedInstance as Rendered
+import {
+  createFileViewerNestedI18n,
+  type FileRenderContext,
+  type FileViewerI18nContext,
+  type FileViewerOptions,
+  type FileViewerRenderedInstance as Rendered
 } from '@file-viewer/core'
 import { createVueRenderSession } from '../components/FileViewer/rendererBridge'
 
-/**
- * 压缩包内文件和邮件附件的嵌套预览入口。
- *
- * 主预览器和附件预览必须共享同一套 renderer registry。这里复用 Vue3
- * 顶层渲染桥，让 `options.renderers` / preset-all / 自定义 renderer 在嵌套文件中
- * 继续生效，避免只落到 core 轻量兜底而丢失 PDF、Word、代码等完整能力。
- */
+/** Nested previews keep their parser/session; only viewer-owned UI language follows the parent. */
 export const renderNestedBuffer = async (
   buffer: ArrayBuffer,
   type: string,
   target: HTMLDivElement,
-  context?: FileRenderContext
+  context?: FileRenderContext,
+  parentI18n?: FileViewerI18nContext,
+  inheritedOptions?: FileViewerOptions,
+  onError?: (error: unknown) => void,
 ): Promise<Rendered> => {
-  const normalizedType = type.toLowerCase()
-  const session = await createVueRenderSession(buffer, normalizedType, target, {
-    ...context,
-    renderNestedBuffer: context?.renderNestedBuffer || renderNestedBuffer
-  })
-
-  return {
-    $el: session.rendered?.$el,
-    destroy: () => session.destroy?.()
+  const languageScope = createFileViewerNestedI18n(context, parentI18n, target.ownerDocument, onError)
+  const options = { ...inheritedOptions, ...context?.options, ...languageScope.options, i18n: undefined }
+  const nestedRender: NonNullable<FileRenderContext['renderNestedBuffer']> = (buffer, type, target, nextContext) =>
+    renderNestedBuffer(buffer, type, target, {
+      ...nextContext,
+      renderNestedBuffer: nextContext?.renderNestedBuffer === nestedRender ? undefined : nextContext?.renderNestedBuffer,
+    }, languageScope, options, onError)
+  try {
+    const session = await createVueRenderSession(buffer, type.toLowerCase(), target, {
+      ...context,
+      options,
+      i18n: languageScope,
+      renderNestedBuffer: context?.renderNestedBuffer || nestedRender,
+    })
+    return {
+      $el: session.rendered?.$el,
+      destroy: () => {
+        languageScope.destroy()
+        return session.destroy?.()
+      }
+    }
+  } catch (error) {
+    languageScope.destroy()
+    throw error
   }
 }

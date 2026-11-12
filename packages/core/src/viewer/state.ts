@@ -26,6 +26,15 @@ export type FileViewerErrorMessageFormatter = (
  */
 export const FILE_VIEWER_ERROR_MESSAGE = 'fileViewerErrorMessage' as const;
 
+const unknownErrorIdentity = Symbol('file-viewer-owned-unknown-error');
+/** Keep Error-compatible public state while retaining owned fallback identity. */
+export const createFileViewerUnknownError = (i18n?: FileViewerI18nInput): Error => {
+  const error = new Error(translateFileViewerMessage(i18n, 'error.unknown'));
+  Object.defineProperty(error, unknownErrorIdentity, { value: true });
+  return error;
+};
+
+
 export interface FileViewerErrorMessageCarrier {
   [FILE_VIEWER_ERROR_MESSAGE]?: string;
 }
@@ -89,8 +98,8 @@ const extensionLabel = (extension: string, i18n?: FileViewerI18nInput) => {
     return `.${normalized}`;
   }
   const locale = resolveFileViewerLocale(i18n);
-  if (locale === 'zh-CN') {
-    return '当前文件';
+  if (locale === 'zh-CN' || locale === 'zh-TW' || locale === 'zh-HK') {
+    return locale === 'zh-CN' ? '当前文件' : locale === 'zh-TW' ? '目前檔案' : '目前文件';
   }
   if (locale === 'ja-JP') {
     return '現在のファイル';
@@ -301,8 +310,8 @@ export const createFileViewerUnsupportedState = (
   if (installHint) {
     const locale = resolveFileViewerLocale(i18n);
     const localeRendererTip = installHint.rendererPackage
-      ? locale === 'zh-CN'
-        ? `；如果需要极致裁剪，也可以只安装 ${installHint.rendererPackage}`
+      ? locale === 'zh-CN' || locale === 'zh-TW' || locale === 'zh-HK'
+        ? `；${locale === 'zh-CN' ? '如果需要极致裁剪，也可以只安装' : '如需最精簡的安裝，也可以只安裝'} ${installHint.rendererPackage}`
         : locale === 'ja-JP'
           ? `；厳密に最小構成へ絞る場合は ${installHint.rendererPackage} のみをインストールすることもできます`
           : locale === 'de-DE'
@@ -368,9 +377,9 @@ const resolveKnownFileViewerErrorMessage = (
   return key ? translateFileViewerMessage(i18n, key) : message;
 };
 
-const readFileViewerErrorProperty = (error: object, key: string) => {
+const readFileViewerErrorProperty = (error: object, key: PropertyKey) => {
   try {
-    return (error as Record<string, unknown>)[key];
+    return (error as Record<PropertyKey, unknown>)[key];
   } catch {
     return undefined;
   }
@@ -381,6 +390,7 @@ export const normalizeFileViewerErrorMessage = (
   i18n?: FileViewerI18nInput
 ): string => {
   if (error && typeof error === 'object') {
+    if (readFileViewerErrorProperty(error, unknownErrorIdentity) === true) return translateFileViewerMessage(i18n, 'error.unknown');
     const presentedMessage = readFileViewerErrorProperty(error, FILE_VIEWER_ERROR_MESSAGE);
     if (typeof presentedMessage === 'string' && presentedMessage.trim()) {
       return resolveKnownFileViewerErrorMessage(presentedMessage, i18n);
@@ -413,15 +423,22 @@ export const normalizeFileViewerErrorMessage = (
     : fallback;
 };
 
-export const formatFileViewerErrorMessage: FileViewerErrorMessageFormatter = (prefix, error, i18n) => {
-  const detail = normalizeFileViewerErrorMessage(error, i18n);
+/** Internal formatting for a detail already normalized once at the original failure. */
+export const formatFileViewerErrorDetail = (
+  prefix: string,
+  detail: string,
+  i18n?: FileViewerI18nInput
+) => {
   if (!detail) {
     return prefix;
   }
-  return resolveFileViewerLocale(i18n) === 'zh-CN' || resolveFileViewerLocale(i18n) === 'ja-JP'
+  return ['zh-CN', 'zh-TW', 'zh-HK', 'ja-JP'].includes(resolveFileViewerLocale(i18n))
     ? `${prefix}：${detail}`
     : `${prefix}: ${detail}`;
 };
+
+export const formatFileViewerErrorMessage: FileViewerErrorMessageFormatter = (prefix, error, i18n) =>
+  formatFileViewerErrorDetail(prefix, normalizeFileViewerErrorMessage(error, i18n), i18n);
 
 export const createFileViewerErrorState = (
   extension = '',

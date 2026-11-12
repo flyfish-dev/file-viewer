@@ -1,5 +1,6 @@
 import { nextTick, ref, shallowRef, type Ref } from 'vue'
 import {
+  createFileViewerI18n,
   createFileViewerRenderReadinessTarget,
   createFileViewerRenderSurfaceActionHandlers,
   createFileViewerRenderSurfaceStateTarget,
@@ -7,6 +8,8 @@ import {
 } from '@file-viewer/core'
 import type {
   FileRenderExportAdapter,
+  FileRenderContext,
+  FileViewerI18nContext,
   FileViewerLifecycleContext,
   FileViewerOptions
 } from '@file-viewer/core'
@@ -16,6 +19,8 @@ import { renderNestedBuffer } from '../../../vendors/nestedRender'
 interface UseViewerRenderSurfaceOptions {
   output: Ref<HTMLDivElement | null>;
   getOptions: () => FileViewerOptions | undefined;
+  i18n: FileViewerI18nContext;
+  onI18nError: (error: unknown) => void;
   beforeDownload: () => Promise<boolean>;
   isCurrentRequest: (version: number) => boolean;
   notifyActiveUnloadStart: (
@@ -50,6 +55,8 @@ interface UseViewerRenderSurfaceOptions {
 export const useViewerRenderSurface = ({
   output,
   getOptions,
+  i18n,
+  onI18nError,
   beforeDownload,
   isCurrentRequest,
   notifyActiveUnloadStart,
@@ -143,33 +150,55 @@ export const useViewerRenderSurface = ({
       onProgressiveRender,
       version
     }) => {
-      return await createVueRenderSession(nextBuffer, type, target as HTMLDivElement, {
-        filename,
-        url: nextSourceUrl,
-        streamUrl: nextStreamUrl,
-        signal: nextSignal,
-        // Streaming URL placeholders are component state only; expose sourceFile
-        // exclusively for real local File-backed random access.
-        sourceFile: nextStreamUrl ? undefined : sourceFile,
-        options: getOptions(),
-        requestSnapshotDownload: createFileViewerSnapshotDownload({
-          getOptions,
-          beforeDownload,
-          isCurrent: () => isCurrentRequest(version),
-        }),
-        registerExportAdapter,
-        onProgressiveRender,
-        renderNestedBuffer: async (nestedBuffer, nestedType, nestedTarget, nestedContext) => {
-          return await renderNestedBuffer(nestedBuffer, nestedType, nestedTarget, {
-            ...nestedContext,
-            options: nestedContext?.options || getOptions()
-          })
-        }
-      }, available => {
-        if (isCurrentRequest(version)) {
-          rendererSearchAvailable.value = available
-        }
-      })
+      const renderOptions = getOptions();
+      const languageScope = createFileViewerI18n(undefined, {
+        parent: i18n, signal: nextSignal, ownerDocument: target.ownerDocument, onError: onI18nError,
+      });
+      const nestedRender: NonNullable<FileRenderContext['renderNestedBuffer']> = async (buffer, type, target, nestedContext) => {
+        const nextContext = {
+          ...nestedContext,
+          options: nestedContext?.options,
+          // Rebind our default recursion to the child scope, while preserving an explicit custom delegate.
+          renderNestedBuffer: nestedContext?.renderNestedBuffer === nestedRender ? undefined : nestedContext?.renderNestedBuffer,
+        };
+        return renderNestedBuffer(buffer, type, target, nextContext, languageScope, renderOptions, onI18nError);
+      };
+      try {
+        const session = await createVueRenderSession(nextBuffer, type, target as HTMLDivElement, {
+          filename,
+          url: nextSourceUrl,
+          streamUrl: nextStreamUrl,
+          signal: nextSignal,
+          // Streaming URL placeholders are component state only; expose sourceFile
+          // exclusively for real local File-backed random access.
+          sourceFile: nextStreamUrl ? undefined : sourceFile,
+          options: renderOptions,
+          i18n: languageScope,
+          requestSnapshotDownload: createFileViewerSnapshotDownload({
+            getOptions,
+            beforeDownload,
+            isCurrent: () => isCurrentRequest(version),
+          }),
+          registerExportAdapter,
+          onProgressiveRender,
+          renderNestedBuffer: nestedRender
+        }, available => {
+          if (isCurrentRequest(version)) {
+            rendererSearchAvailable.value = available
+          }
+        })
+        return {
+          get rendered() { return session.rendered },
+          getAvailability: session.getAvailability?.bind(session),
+          destroy: () => {
+            languageScope.destroy();
+            return session.destroy?.();
+          },
+        };
+      } catch (error) {
+        languageScope.destroy();
+        throw error;
+      }
     }
   })
 

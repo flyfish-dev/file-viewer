@@ -60,6 +60,8 @@ enableFileViewerXmlProfiles()
 
 const xmlLabels = {
   'zh-CN': { viewSource: '查看源码', viewRendered: '查看文档', diagnostics: 'XML 诊断' },
+  'zh-TW': { viewSource: '檢視原始碼', viewRendered: '檢視文件', diagnostics: 'XML 診斷' },
+  'zh-HK': { viewSource: '檢視原始碼', viewRendered: '檢視文件', diagnostics: 'XML 診斷' },
   'en-US': { viewSource: 'View Source', viewRendered: 'View Rendered', diagnostics: 'XML diagnostics' },
   'ja-JP': { viewSource: 'ソースを表示', viewRendered: '文書を表示', diagnostics: 'XML 診断' },
   'de-DE': { viewSource: 'Quelltext', viewRendered: 'Dokument', diagnostics: 'XML-Diagnose' }

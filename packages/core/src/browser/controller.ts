@@ -3,6 +3,8 @@ import {
   cloneFileViewerViewState,
   applyFileViewerZoomAvailability,
   createViewer,
+  createFileViewerI18n,
+  createFileViewerI18nBindings,
   isFileViewerShadowRoot,
   normalizeFileViewerUiDensity,
   normalizeFileViewerTheme,
@@ -70,6 +72,7 @@ import {
 import { resolveFileViewerToolbarZoomButtons } from '../lifecycle/operations';
 import { createToolbarFocusRestorer } from './toolbar-focus';
 import { bindToolbarKeyboardActivation } from './toolbar-keyboard';
+import { createFileViewerUnknownError } from '../viewer/state';
 import { createViewerSourceFeedback, type ViewerSourcePhase } from './source-feedback';
 
 export type FileRef = FileViewerFileRef;
@@ -766,6 +769,27 @@ export const mountViewer = (
 
   let disposed = false;
   let currentOptions: ViewerMountOptions = initialOptions;
+  const language = createFileViewerI18n(currentOptions.options, {
+    ownerDocument: documentRef,
+    onError: error => {
+      const diagnostic = currentOptions.options?.onDiagnostic;
+      if (diagnostic) diagnostic({ code: 'i18n-update-failed', level: 'error', message: error instanceof Error ? error.message : String(error) });
+      else console.error(error);
+    },
+  });
+  const toolbarLanguage = createFileViewerI18nBindings(language);
+  const sameNonLanguageOptions = (left: ViewerOptions = {}, right: ViewerOptions = {}) => {
+    const keys = new Set([...Object.keys(left), ...Object.keys(right)]);
+    for (const key of keys) {
+      if (key === 'locale' || key === 'messages' || key === 'i18n') continue;
+      if (left[key as keyof ViewerOptions] !== right[key as keyof ViewerOptions]) return false;
+    }
+    return true;
+  };
+  // Shell options are replacements; explicitly clear removed language overrides.
+  const coreOptionsSnapshot = () => ({ ...currentOptions.options,
+    locale: currentOptions.options?.locale, messages: currentOptions.options?.messages, i18n: currentOptions.options?.i18n,
+  });
   const viewerColorSchemeQuery = documentRef.defaultView?.matchMedia?.('(prefers-color-scheme: dark)') ?? null;
   const resolveCurrentViewerTheme = (theme: ViewerOptions['theme']) => {
     return viewerColorSchemeQuery
@@ -775,7 +799,7 @@ export const mountViewer = (
   let currentSource: ViewerSourceInput | null = hasSource(currentOptions)
     ? toViewerSourceInput(currentOptions)
     : null;
-  type SourceRequest = { abort: AbortController | null; phase: ViewerSourcePhase; pending: boolean; rendering: boolean };
+  type SourceRequest = { abort: AbortController | null; phase: ViewerSourcePhase; pending: boolean; rendering: boolean; unknownFailure?: boolean };
   let sourceRequest: SourceRequest | null = null;
   let renderingRequest: SourceRequest | null = null;
   let lifecycleVersion = -1;
@@ -859,9 +883,10 @@ export const mountViewer = (
     const showToolbar = hasVisibleFileViewerToolbarActions(visibleToolbar);
     const toolbarPosition = resolveFileViewerToolbarPosition(options, getCurrentExtension());
     const toolbarDisabled = state.loading || !!state.error;
-    const t = createFileViewerTranslator(options);
+    const t = createFileViewerTranslator(language);
     toolbarEl.hidden = !showToolbar;
     toolbarEl.dataset.toolbarPosition = toolbarPosition;
+    toolbarLanguage.release(toolbarEl);
     toolbarEl.replaceChildren();
 
     if (!showToolbar) {
@@ -881,16 +906,16 @@ export const mountViewer = (
       group.className = 'file-viewer-web-toolbar-group file-viewer-web-search';
       addPart(group, 'toolbar-group');
       group.setAttribute('role', 'search');
-      group.setAttribute('aria-label', t('toolbar.search'));
+      toolbarLanguage.attr(group, 'aria-label', () => t('toolbar.search'));
 
       const input = documentRef.createElement('input');
       input.type = 'search';
       input.dataset.viewerToolbarKey = 'search-input';
       addPart(input, 'input');
       input.value = searchDraft;
-      input.placeholder = t('toolbar.searchPlaceholder');
-      input.title = t('toolbar.searchPlaceholder');
-      input.setAttribute('aria-label', t('toolbar.searchPlaceholder'));
+      toolbarLanguage.attr(input, 'placeholder', () => t('toolbar.searchPlaceholder'));
+      toolbarLanguage.attr(input, 'title', () => t('toolbar.searchPlaceholder'));
+      toolbarLanguage.attr(input, 'aria-label', () => t('toolbar.searchPlaceholder'));
       input.disabled = toolbarDisabled;
       input.addEventListener('input', () => {
         searchDraft = input.value;
@@ -900,21 +925,21 @@ export const mountViewer = (
       searchButton.type = 'submit';
       searchButton.dataset.viewerToolbarKey = 'search-submit';
       addPart(searchButton, 'button');
-      searchButton.textContent = t('toolbar.search');
-      searchButton.title = t('toolbar.search');
-      searchButton.setAttribute('aria-label', t('toolbar.search'));
+      toolbarLanguage.text(searchButton, () => t('toolbar.search'));
+      toolbarLanguage.attr(searchButton, 'title', () => t('toolbar.search'));
+      toolbarLanguage.attr(searchButton, 'aria-label', () => t('toolbar.search'));
       searchButton.disabled = toolbarDisabled;
 
       const previousButton = createButton(documentRef, '<', 'file-viewer-web-icon-button', () => controller?.previousSearchResult());
       previousButton.dataset.viewerToolbarKey = 'search-previous';
-      previousButton.title = t('toolbar.searchPrevious');
-      previousButton.setAttribute('aria-label', t('toolbar.searchPrevious'));
+      toolbarLanguage.attr(previousButton, 'title', () => t('toolbar.searchPrevious'));
+      toolbarLanguage.attr(previousButton, 'aria-label', () => t('toolbar.searchPrevious'));
       previousButton.disabled = toolbarDisabled || searchTotal < 1;
 
       const nextButton = createButton(documentRef, '>', 'file-viewer-web-icon-button', () => controller?.nextSearchResult());
       nextButton.dataset.viewerToolbarKey = 'search-next';
-      nextButton.title = t('toolbar.searchNext');
-      nextButton.setAttribute('aria-label', t('toolbar.searchNext'));
+      toolbarLanguage.attr(nextButton, 'title', () => t('toolbar.searchNext'));
+      toolbarLanguage.attr(nextButton, 'aria-label', () => t('toolbar.searchNext'));
       nextButton.disabled = toolbarDisabled || searchTotal < 1;
 
       const clearButton = createButton(documentRef, 'x', 'file-viewer-web-icon-button', async () => {
@@ -922,8 +947,8 @@ export const mountViewer = (
         await controller?.clearDocumentSearch();
       });
       clearButton.dataset.viewerToolbarKey = 'search-clear';
-      clearButton.title = t('toolbar.searchClear');
-      clearButton.setAttribute('aria-label', t('toolbar.searchClear'));
+      toolbarLanguage.attr(clearButton, 'title', () => t('toolbar.searchClear'));
+      toolbarLanguage.attr(clearButton, 'aria-label', () => t('toolbar.searchClear'));
       clearButton.disabled = toolbarDisabled || (!searchDraft && !searchState?.query);
 
       const count = documentRef.createElement('span');
@@ -951,13 +976,13 @@ export const mountViewer = (
       const group = documentRef.createElement('div');
       group.className = 'file-viewer-web-toolbar-group';
       addPart(group, 'toolbar-group');
-      group.setAttribute('aria-label', t('toolbar.zoomGroup'));
+      toolbarLanguage.attr(group, 'aria-label', () => t('toolbar.zoomGroup'));
 
       if (zoomButtons.zoomOut) {
         const button = createButton(documentRef, '-', 'file-viewer-web-icon-button', () => controller?.zoomOut());
-        button.title = t('toolbar.zoomOut');
+        toolbarLanguage.attr(button, 'title', () => t('toolbar.zoomOut'));
         button.dataset.viewerToolbarKey = 'zoom-out';
-        button.setAttribute('aria-label', t('toolbar.zoomOut'));
+        toolbarLanguage.attr(button, 'aria-label', () => t('toolbar.zoomOut'));
         button.disabled = isFileViewerZoomButtonDisabled({
           action: 'canZoomOut',
           availability,
@@ -969,7 +994,7 @@ export const mountViewer = (
 
       if (zoomButtons.zoomReset) {
         const meter = createButton(documentRef, zoomState.label, 'file-viewer-web-zoom-meter', () => controller?.resetZoom());
-        meter.title = t('toolbar.zoomReset');
+        toolbarLanguage.attr(meter, 'title', () => t('toolbar.zoomReset'));
         meter.dataset.viewerToolbarKey = 'zoom-meter';
         meter.disabled = isFileViewerZoomButtonDisabled({
           action: 'canReset',
@@ -994,9 +1019,9 @@ export const mountViewer = (
         // top of the previous "+" position, turning a repeated zoom-in click
         // into an accidental reset (see GitHub issue #88).
         const button = createButton(documentRef, '1:1', 'file-viewer-web-icon-button', () => controller?.resetZoom());
-        button.title = t('toolbar.zoomReset');
+        toolbarLanguage.attr(button, 'title', () => t('toolbar.zoomReset'));
         button.dataset.viewerToolbarKey = 'zoom-reset';
-        button.setAttribute('aria-label', t('toolbar.zoomReset'));
+        toolbarLanguage.attr(button, 'aria-label', () => t('toolbar.zoomReset'));
         button.disabled = isFileViewerZoomButtonDisabled({
           action: 'canReset',
           availability,
@@ -1008,9 +1033,9 @@ export const mountViewer = (
 
       if (zoomButtons.zoomIn) {
         const button = createButton(documentRef, '+', 'file-viewer-web-icon-button', () => controller?.zoomIn());
-        button.title = t('toolbar.zoomIn');
+        toolbarLanguage.attr(button, 'title', () => t('toolbar.zoomIn'));
         button.dataset.viewerToolbarKey = 'zoom-in';
-        button.setAttribute('aria-label', t('toolbar.zoomIn'));
+        toolbarLanguage.attr(button, 'aria-label', () => t('toolbar.zoomIn'));
         button.disabled = isFileViewerZoomButtonDisabled({
           action: 'canZoomIn',
           availability,
@@ -1028,16 +1053,17 @@ export const mountViewer = (
     const appendToolbarButton = (
       visible: boolean | undefined,
       key: string,
-      label: string,
-      title: string,
+      label: () => string,
+      title: () => string,
       onClick: () => void | Promise<unknown>
     ) => {
       if (!visible) {
         return;
       }
-      const button = createButton(documentRef, label, '', onClick);
+      const button = createButton(documentRef, label(), '', onClick);
+      toolbarLanguage.text(button, label);
       button.dataset.viewerToolbarKey = key;
-      button.title = title;
+      toolbarLanguage.attr(button, 'title', title);
       button.disabled = toolbarDisabled;
       toolbarEl.appendChild(button);
     };
@@ -1047,7 +1073,7 @@ export const mountViewer = (
         return;
       }
       const currentTheme = resolveCurrentViewerTheme(options.theme);
-      const title = currentTheme === 'dark'
+      const title = () => currentTheme === 'dark'
         ? t('toolbar.themeToLight')
         : t('toolbar.themeToDark');
       const button = createButton(documentRef, '', 'file-viewer-web-icon-button file-viewer-web-theme-button', async () => {
@@ -1078,8 +1104,8 @@ export const mountViewer = (
       addPart(button, 'theme-toggle');
       button.dataset.viewerToolbarKey = 'theme';
       setThemeButtonIcon(button, currentTheme);
-      button.title = title;
-      button.setAttribute('aria-label', title);
+      toolbarLanguage.attr(button, 'title', title);
+      toolbarLanguage.attr(button, 'aria-label', title);
       button.setAttribute('aria-pressed', String(currentTheme === 'dark'));
       button.disabled = toolbarDisabled;
       toolbarEl.appendChild(button);
@@ -1094,8 +1120,8 @@ export const mountViewer = (
         appendToolbarButton(
           visibleToolbar.download,
           'download',
-          t('toolbar.download'),
-          t('toolbar.downloadTitle'),
+          () => t('toolbar.download'),
+          () => t('toolbar.downloadTitle'),
           () => controller?.downloadOriginalFile()
         );
       } else if (item === 'print') {
@@ -1109,9 +1135,10 @@ export const mountViewer = (
         const trigger = createButton(documentRef, t('toolbar.print'), '', () => {
           menu.dataset.open = menu.dataset.open === 'true' ? 'false' : 'true';
         });
-        trigger.title = t('toolbar.printTitle');
+        toolbarLanguage.text(trigger, () => t('toolbar.print'));
+        toolbarLanguage.attr(trigger, 'title', () => t('toolbar.printTitle'));
         trigger.dataset.viewerToolbarKey = 'print';
-        trigger.setAttribute('aria-label', t('toolbar.printTitle'));
+        toolbarLanguage.attr(trigger, 'aria-label', () => t('toolbar.printTitle'));
         trigger.setAttribute('aria-haspopup', 'menu');
         trigger.disabled = toolbarDisabled;
 
@@ -1127,7 +1154,8 @@ export const mountViewer = (
           closeMenu();
           await controller?.printRenderedHtml();
         });
-        directButton.title = t('toolbar.printTitle');
+        toolbarLanguage.text(directButton, () => t('toolbar.printDirect'));
+        toolbarLanguage.attr(directButton, 'title', () => t('toolbar.printTitle'));
         directButton.dataset.viewerToolbarKey = 'print-direct';
         directButton.setAttribute('role', 'menuitem');
         directButton.disabled = toolbarDisabled;
@@ -1136,7 +1164,8 @@ export const mountViewer = (
           closeMenu();
           await controller?.printWithMask();
         });
-        maskButton.title = t('toolbar.printMaskTitle');
+        toolbarLanguage.text(maskButton, () => t('toolbar.printMask'));
+        toolbarLanguage.attr(maskButton, 'title', () => t('toolbar.printMaskTitle'));
         maskButton.dataset.viewerToolbarKey = 'print-mask';
         maskButton.setAttribute('role', 'menuitem');
         maskButton.disabled = toolbarDisabled;
@@ -1154,8 +1183,8 @@ export const mountViewer = (
         appendToolbarButton(
           visibleToolbar.exportHtml,
           'export-html',
-          t('toolbar.exportHtml'),
-          t('toolbar.exportHtmlTitle'),
+          () => t('toolbar.exportHtml'),
+          () => t('toolbar.exportHtmlTitle'),
           () => controller?.exportRenderedHtml()
         );
       } else if (item === 'theme') {
@@ -1174,16 +1203,19 @@ export const mountViewer = (
   const notifyState = (event?: ViewerEvent) => {
     const snapshot = snapshotState();
     renderToolbar();
-    updateSourceFeedback(
-      sourceRequest?.pending ? sourceRequest.phase : null,
-      state.error,
-      currentSource ? currentSource.type || getExtension(resolveViewerSourceFilename(currentSource)) : '',
-      currentOptions.options,
-      Boolean(sourceRequest?.rendering && contentEl.querySelector('.file-viewer-render-error'))
-    );
+    refreshSourceFeedback();
     currentOptions.onStateChange?.(snapshot, event);
     listeners.forEach(listener => listener(snapshot, event));
   };
+  const refreshSourceFeedback = () => updateSourceFeedback(
+      sourceRequest?.pending ? sourceRequest.phase : null,
+      state.error,
+      currentSource ? currentSource.type || getExtension(resolveViewerSourceFilename(currentSource)) : '',
+      language,
+      Boolean(sourceRequest?.rendering && contentEl.querySelector('.file-viewer-render-error')),
+      sourceRequest?.unknownFailure
+    );
+  const unsubscribeLanguage = language.subscribe(() => { if (!disposed) refreshSourceFeedback(); });
   const applyViewerEvent = (event: ViewerEvent) => {
     if (disposed || sourceRequest !== renderingRequest) return;
     if (event.type === 'load-start' || event.type === 'load-complete' ||
@@ -1229,6 +1261,7 @@ export const mountViewer = (
   };
   const instance: FileViewerInstance = createViewer(contentEl, {
     registry: coreOptions.registry,
+    i18n: language,
     options: currentOptions.options,
     onEvent: applyViewerEvent,
   });
@@ -1269,7 +1302,7 @@ export const mountViewer = (
         onPhase(phase) {
           if (!isCurrent()) return;
           request.phase = phase;
-          updateSourceFeedback(phase, null, extension, currentOptions.options);
+          updateSourceFeedback(phase, null, extension, language);
         },
       });
       if (!isCurrent()) {
@@ -1286,7 +1319,8 @@ export const mountViewer = (
       }
       state.loading = false;
       state.ready = false;
-      state.error = error ?? new Error(createFileViewerTranslator(currentOptions.options)('error.unknown'));
+      request.unknownFailure = error == null;
+      state.error = error ?? createFileViewerUnknownError(language.options);
       request.pending = false;
       notifyState();
       coreOptions.onError?.(error, nextSource);
@@ -1325,8 +1359,11 @@ export const mountViewer = (
     container,
     async load(nextOptions) {
       if (disposed) return;
-      currentOptions = nextOptions;
-      instance.updateOptions(currentOptions.options || {});
+      // Loading a new source retains mount configuration unless options are supplied.
+      // Do not merge the source fields: an old URL/file must not shadow the new buffer.
+      currentOptions = { ...nextOptions, options: nextOptions.options ?? currentOptions.options };
+      language.update(currentOptions.options);
+      instance.updateOptions(coreOptionsSnapshot());
       renderToolbar();
       if (hasSource(currentOptions)) {
         await loadSource(toViewerSourceInput(currentOptions));
@@ -1335,6 +1372,7 @@ export const mountViewer = (
     async update(nextOptions = {}) {
       if (disposed) return;
       const nextViewerOptions = nextOptions.options ?? currentOptions.options;
+      const toolbarOptionsChanged = !sameNonLanguageOptions(currentOptions.options, nextViewerOptions);
       const renderingOptionsChanged = hasViewerRenderingOptionsChanged(
         currentOptions.options,
         nextViewerOptions
@@ -1351,8 +1389,9 @@ export const mountViewer = (
       const previousViewState = sameSource && renderingOptionsChanged
         ? instance.getViewState()
         : null;
-      instance.updateOptions(currentOptions.options || {});
-      renderToolbar();
+      if (nextOptions.options !== undefined) language.update(currentOptions.options);
+      instance.updateOptions(coreOptionsSnapshot());
+      if (toolbarOptionsChanged) renderToolbar();
       if (sameSource && !renderingOptionsChanged) {
         return;
       }
@@ -1384,6 +1423,9 @@ export const mountViewer = (
     destroy() {
       if (disposed) return;
       disposed = true;
+      unsubscribeLanguage();
+      toolbarLanguage.destroy();
+      language.destroy();
       disposeToolbarKeyboard();
       cancel();
       viewerColorSchemeQuery?.removeEventListener?.('change', handleViewerColorSchemeChange);

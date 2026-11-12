@@ -272,7 +272,7 @@ export default async function renderImage(
     const { renderTiff } = await import('./tiff.js');
     return renderTiff(buffer, target, context);
   }
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const rotationEnabled = context?.options?.image?.rotation !== false;
   const documentRef = target.ownerDocument || document;
   const src = await resolveImageUrl(buffer, type);
@@ -337,6 +337,18 @@ export default async function renderImage(
     ? installFileViewerImageHandTool(root, context.signal) : () => {};
 
   const lightbox = createLightbox(documentRef, src, t);
+  const refreshLocale = () => {
+    if (rotationEnabled) toolbar.setAttribute('aria-label', t('image.toolbar.rotation'));
+    for (const [button, key] of [[rotateLeftButton, 'image.toolbar.rotateLeft'], [rotateRightButton, 'image.toolbar.rotateRight']] as const) {
+      button.title = t(key);
+      button.setAttribute('aria-label', t(key));
+    }
+    lightbox.element.querySelector('img')!.alt = t('image.lightbox.alt');
+    lightbox.element.querySelector('button')!.setAttribute('aria-label', t('image.lightbox.close'));
+    image.alt = t('image.alt');
+  };
+  const unsubscribeLocale = context?.i18n?.subscribe(refreshLocale);
+  refreshLocale();
   const openLightbox = () => lightbox.open(image);
   const openLightboxFromKeyboard = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -632,6 +644,7 @@ export default async function renderImage(
 
   const cleanup = () => {
     destroyed = true;
+    unsubscribeLocale?.();
     disposeHandTool();
     context?.registerThumbnailAdapter?.(null);
     unregisterFileViewerViewStateProvider(root);

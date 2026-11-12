@@ -49,6 +49,58 @@ const copy = {
     localFile: '本地文件',
     noFile: '未选择文件'
   },
+  'zh-TW': {
+    subtitle: '基於 @file-viewer/web 的完整原生接入 Demo',
+    urlMode: '連結',
+    fileMode: '本地',
+    urlLabel: '檔案網址',
+    open: '預覽',
+    chooseFile: '選擇本地檔案',
+    dropHint: '支援拖曳或點選上傳',
+    quick: '快速試用',
+    samples: '示例檔案',
+    collapse: '收起',
+    expand: '展開',
+    snippet: '接入程式碼',
+    copyCode: '複製',
+    copied: '已複製',
+    search: '搜尋',
+    searchPlaceholder: '搜尋目前的文件',
+    watermark: '水印',
+    download: '下載',
+    print: '列印',
+    html: 'HTML',
+    ready: '就緒',
+    loading: '載入中',
+    localFile: '本地檔案',
+    noFile: '未選擇檔案'
+  },
+  'zh-HK': {
+    subtitle: '基於 @file-viewer/web 的完整原生接入 Demo',
+    urlMode: '鏈接',
+    fileMode: '本地',
+    urlLabel: '文件地址',
+    open: '預覽',
+    chooseFile: '選擇本地文件',
+    dropHint: '支持拖曳或點擊上傳',
+    quick: '快速試用',
+    samples: '示例文件',
+    collapse: '收起',
+    expand: '展開',
+    snippet: '接入代碼',
+    copyCode: '複製',
+    copied: '已複製',
+    search: '搜索',
+    searchPlaceholder: '搜索當前文檔',
+    watermark: '水印',
+    download: '下載',
+    print: '打印',
+    html: 'HTML',
+    ready: '就緒',
+    loading: '加載中',
+    localFile: '本地文件',
+    noFile: '未選擇文件'
+  },
   'en-US': {
     subtitle: 'Complete native demo powered by @file-viewer/web',
     urlMode: 'URL',
@@ -131,6 +183,8 @@ const copy = {
 
 const defaultUrlByLocale = {
   'zh-CN': '/example/word.docx',
+  'zh-TW': '/example/word.docx',
+  'zh-HK': '/example/word.docx',
   'en-US': '/example/en/calibre-demo.docx',
   'ja-JP': '/example/en/calibre-demo.docx',
   'de-DE': '/example/en/calibre-demo.docx'
@@ -138,7 +192,7 @@ const defaultUrlByLocale = {
 
 const sampleGroups = [
   {
-    title: { zh: '文档', en: 'Documents', ja: '文書' },
+    title: { zh: '文档', tw: '文件', hk: '文檔', en: 'Documents', ja: '文書' },
     description: 'Word / PDF / OFD / Typst',
     family: 'word',
     items: [
@@ -153,7 +207,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '表格', en: 'Spreadsheets', ja: 'スプレッドシート' },
+    title: { zh: '表格', tw: '表格', hk: '表格', en: 'Spreadsheets', ja: 'スプレッドシート' },
     description: 'Excel / CSV / ODS',
     family: 'sheet',
     items: [
@@ -168,7 +222,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '演示与图纸', en: 'Slides & CAD', ja: 'プレゼンテーションと CAD' },
+    title: { zh: '演示与图纸', tw: '簡報與圖面', hk: '簡報與圖紙', en: 'Slides & CAD', ja: 'プレゼンテーションと CAD' },
     description: 'PPTX / CAD',
     family: 'slide',
     items: [
@@ -182,7 +236,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '脑图与绘图', en: 'Mindmaps & Diagrams', ja: 'マインドマップと図表' },
+    title: { zh: '脑图与绘图', tw: '腦圖與繪圖', hk: '腦圖與繪圖', en: 'Mindmaps & Diagrams', ja: 'マインドマップと図表' },
     description: 'XMind / Mermaid / PlantUML / draw.io',
     family: 'drawing',
     items: [
@@ -194,7 +248,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '3D 模型和地理数据', en: '3D Models & Geospatial Data', ja: '3D モデルと地理空間データ' },
+    title: { zh: '3D 模型和地理数据', tw: '3D 模型和地理資料', hk: '3D 模型和地理數據', en: '3D Models & Geospatial Data', ja: '3D モデルと地理空間データ' },
     description: 'GLTF / OBJ / STL / GeoJSON / KML / GPX',
     family: 'model',
     items: [
@@ -209,7 +263,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '电子书', en: 'Ebooks', ja: '電子書籍' },
+    title: { zh: '电子书', tw: '電子書', hk: '電子書', en: 'Ebooks', ja: '電子書籍' },
     description: 'EPUB / UMD',
     family: 'ebook',
     items: [
@@ -218,7 +272,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '压缩包', en: 'Archives', ja: '圧縮ファイル' },
+    title: { zh: '压缩包', tw: '壓縮包', hk: '壓縮包', en: 'Archives', ja: '圧縮ファイル' },
     description: 'ZIP / TAR.GZ / Encrypted',
     family: 'archive',
     items: [
@@ -228,7 +282,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '邮件与 EDA', en: 'Email & EDA', ja: 'メールと EDA' },
+    title: { zh: '邮件与 EDA', tw: '郵件與 EDA', hk: '郵件與 EDA', en: 'Email & EDA', ja: 'メールと EDA' },
     description: 'EML / MSG / OLB / DRA / GDS / OASIS',
     family: 'email',
     items: [
@@ -243,7 +297,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '文本', en: 'Text', ja: 'テキスト' },
+    title: { zh: '文本', tw: '文字', hk: '文本', en: 'Text', ja: 'テキスト' },
     description: 'Markdown / TXT / Log',
     family: 'text',
     items: [
@@ -254,7 +308,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '前端与数据', en: 'Frontend & Data', ja: 'フロントエンドとデータ' },
+    title: { zh: '前端与数据', tw: '前端與資料', hk: '前端與數據', en: 'Frontend & Data', ja: 'フロントエンドとデータ' },
     description: 'JS / TS / Vue / Data',
     family: 'code',
     items: [
@@ -283,7 +337,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '后端与系统', en: 'Backend & System', ja: 'バックエンドとシステム' },
+    title: { zh: '后端与系统', tw: '後端與系統', hk: '後端與系統', en: 'Backend & System', ja: 'バックエンドとシステム' },
     description: 'Shell / SQL / C / Go',
     family: 'code',
     items: [
@@ -304,7 +358,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '资产与数据', en: 'Assets & Data', ja: 'アセットとデータ' },
+    title: { zh: '资产与数据', tw: '資產與資料', hk: '資產與數據', en: 'Assets & Data', ja: 'アセットとデータ' },
     description: 'SQLite / WASM / PSD / ICO',
     family: 'data',
     items: [
@@ -315,7 +369,7 @@ const sampleGroups = [
     ]
   },
   {
-    title: { zh: '媒体', en: 'Media', ja: 'メディア' },
+    title: { zh: '媒体', tw: '媒體', hk: '媒體', en: 'Media', ja: 'メディア' },
     description: 'Image / Audio / Video',
     family: 'image',
     items: [
@@ -401,6 +455,31 @@ const japaneseSampleNames = {
   '/example/icon.ico': 'ICO 画像'
 }
 
+const traditionalSampleNames = {
+  'zh-TW': {
+    'DOCX 中文长文档': 'DOCX 中文長篇文件',
+    'PDF 技术说明': 'PDF 技術說明',
+    'NASA 月球战略 PPTX': 'NASA 月球戰略 PPTX',
+    'XMind 脑图': 'XMind 腦圖',
+    'Mermaid 架构图': 'Mermaid 架構圖',
+    'PlantUML 时序图': 'PlantUML 時序圖',
+    '加密 ZIP（密码 flyfish）': '加密 ZIP（密碼 flyfish）',
+    'PATCH 左右比对': 'PATCH 左右比對',
+    'PSD 图层': 'PSD 圖層',
+  },
+  'zh-HK': {
+    'DOCX 中文长文档': 'DOCX 中文長文檔',
+    'PDF 技术说明': 'PDF 技術說明',
+    'NASA 月球战略 PPTX': 'NASA 月球戰略 PPTX',
+    'XMind 脑图': 'XMind 腦圖',
+    'Mermaid 架构图': 'Mermaid 架構圖',
+    'PlantUML 时序图': 'PlantUML 時序圖',
+    '加密 ZIP（密码 flyfish）': '加密 ZIP（密碼 flyfish）',
+    'PATCH 左右比对': 'PATCH 左右比對',
+    'PSD 图层': 'PSD 圖層',
+  },
+}
+
 const scenarios = {
   'zh-CN': [
     ['试试 Word 合同', 'DOCX 长文档', '/example/word.docx', 'word'],
@@ -409,6 +488,22 @@ const scenarios = {
     ['试试 DWG 图纸', '工程图纸', '/example/sample.dwg', 'cad'],
     ['试试压缩包', '嵌套预览', '/example/archive.zip', 'archive'],
     ['试试邮件', 'EML 附件', '/example/sample.eml', 'email']
+  ],
+  'zh-TW': [
+    ['試試 Word 合約', 'DOCX 長篇文件', '/example/word.docx', 'word'],
+    ['試試 Excel 報表', '多 sheet 表格', '/example/excel.xlsx', 'sheet'],
+    ['試試 NASA PPT', '專業簡報', '/example/ppt.pptx', 'slide'],
+    ['試試 DWG 圖紙', '工程圖紙', '/example/sample.dwg', 'cad'],
+    ['試試壓縮包', '巢狀預覽', '/example/archive.zip', 'archive'],
+    ['試試郵件', 'EML 附件', '/example/sample.eml', 'email']
+  ],
+  'zh-HK': [
+    ['試試 Word 合同', 'DOCX 長文檔', '/example/word.docx', 'word'],
+    ['試試 Excel 報表', '多 sheet 表格', '/example/excel.xlsx', 'sheet'],
+    ['試試 NASA PPT', '專業演示稿', '/example/ppt.pptx', 'slide'],
+    ['試試 DWG 圖紙', '工程圖紙', '/example/sample.dwg', 'cad'],
+    ['試試壓縮包', '嵌套預覽', '/example/archive.zip', 'archive'],
+    ['試試郵件', 'EML 附件', '/example/sample.eml', 'email']
   ],
   'en-US': [
     ['Try Word doc', 'Rich DOCX', '/example/en/calibre-demo.docx', 'word'],
@@ -504,6 +599,8 @@ const $ = id => document.getElementById(id)
 const els = {
   subtitle: $('subtitle'),
   localeZh: $('locale-zh'),
+  localeTw: $('locale-tw'),
+  localeHk: $('locale-hk'),
   localeEn: $('locale-en'),
   localeJa: $('locale-ja'),
   localeDe: $('locale-de'),
@@ -550,6 +647,11 @@ const els = {
 
 const normalizeLocale = value => {
   const normalized = String(value || '').trim().replaceAll('_', '-').toLowerCase()
+  const chinese = /^zh(?:-(hans|hant))?(?:-([a-z]{2}))?(?:-|$)/.exec(normalized)
+  if (chinese?.[1] === 'hans') return 'zh-CN'
+  if (chinese?.[1] === 'hant' || ['tw', 'hk', 'mo'].includes(chinese?.[2])) {
+    return ['hk', 'mo'].includes(chinese?.[2]) ? 'zh-HK' : 'zh-TW'
+  }
   if (normalized === 'zh' || normalized.startsWith('zh-')) return 'zh-CN'
   if (normalized === 'ja' || normalized.startsWith('ja-')) return 'ja-JP'
   if (normalized === 'de' || normalized.startsWith('de-')) return 'de-DE'
@@ -630,7 +732,7 @@ function itemForLocale(item) {
   if (state.locale === 'en-US' || state.locale === 'de-DE') {
     return { name: enName || zhName, url: enUrl || zhUrl }
   }
-  return { name: zhName, url: zhUrl }
+  return { name: state.locale === 'zh-CN' ? zhName : traditionalSampleNames[state.locale]?.[zhName] || zhName, url: zhUrl }
 }
 
 function sampleKey(url) {
@@ -684,7 +786,7 @@ function viewerOptions() {
     locale: state.locale,
     watermark: state.watermark
       ? {
-          text: state.locale === 'zh-CN' ? '内部资料' : state.locale === 'ja-JP' ? '社内資料' : state.locale === 'de-DE' ? 'Intern' : 'Internal',
+          text: state.locale === 'zh-CN' ? '内部资料' : state.locale === 'zh-TW' ? '內部資料' : state.locale === 'zh-HK' ? '內部資料' : state.locale === 'ja-JP' ? '社内資料' : state.locale === 'de-DE' ? 'Intern' : 'Internal',
           opacity: 0.16,
           rotate: -24,
           color: '#1f7a58'
@@ -778,7 +880,7 @@ const controller = mountViewer(document.getElementById('viewer'), {
     theme: 'light',
     locale: '${state.locale}',
     watermark: {
-      text: '${state.locale === 'zh-CN' ? '内部资料' : state.locale === 'ja-JP' ? '社内資料' : state.locale === 'de-DE' ? 'Intern' : 'Internal'}',
+      text: '${state.locale === 'zh-CN' ? '内部资料' : state.locale === 'zh-TW' ? '內部資料' : state.locale === 'zh-HK' ? '內部資料' : state.locale === 'ja-JP' ? '社内資料' : state.locale === 'de-DE' ? 'Intern' : 'Internal'}',
       opacity: 0.16,
       rotate: -24,
       color: '#1f7a58'
@@ -795,6 +897,10 @@ function updateLabels() {
   document.documentElement.lang = state.locale
   document.title = state.locale === 'zh-CN'
     ? 'File Viewer Web 原生 Demo'
+    : state.locale === 'zh-TW'
+      ? 'File Viewer Web 原生示範'
+      : state.locale === 'zh-HK'
+        ? 'File Viewer Web 原生示範'
     : state.locale === 'ja-JP'
       ? 'File Viewer Web ネイティブ Demo'
       : state.locale === 'de-DE'
@@ -821,6 +927,8 @@ function updateLabels() {
   els.print.textContent = text('print')
   els.html.textContent = text('html')
   els.localeZh.classList.toggle('active', state.locale === 'zh-CN')
+  els.localeTw.classList.toggle('active', state.locale === 'zh-TW')
+  els.localeHk.classList.toggle('active', state.locale === 'zh-HK')
   els.localeEn.classList.toggle('active', state.locale === 'en-US')
   els.localeJa.classList.toggle('active', state.locale === 'ja-JP')
   els.localeDe.classList.toggle('active', state.locale === 'de-DE')
@@ -864,7 +972,7 @@ function renderSamples() {
     const header = document.createElement('button')
     header.type = 'button'
     header.className = 'sample-group-header'
-    header.innerHTML = `<span><strong>${group.title[state.locale === 'zh-CN' ? 'zh' : state.locale === 'ja-JP' ? 'ja' : 'en']}</strong><em>${group.description}</em></span><b>${state.openGroup === groupIndex ? '-' : '+'}</b>`
+    header.innerHTML = `<span><strong>${group.title[state.locale === 'zh-CN' ? 'zh' : state.locale === 'zh-TW' ? 'tw' : state.locale === 'zh-HK' ? 'hk' : state.locale === 'ja-JP' ? 'ja' : 'en']}</strong><em>${group.description}</em></span><b>${state.openGroup === groupIndex ? '-' : '+'}</b>`
     header.addEventListener('click', () => {
       state.openGroup = state.openGroup === groupIndex ? -1 : groupIndex
       renderSampleGroupsOnly()
@@ -1013,6 +1121,8 @@ async function runSearch() {
 
 function wireEvents() {
   els.localeZh.addEventListener('click', () => setLocale('zh-CN'))
+  els.localeTw.addEventListener('click', () => setLocale('zh-TW'))
+  els.localeHk.addEventListener('click', () => setLocale('zh-HK'))
   els.localeEn.addEventListener('click', () => setLocale('en-US'))
   els.localeJa.addEventListener('click', () => setLocale('ja-JP'))
   els.localeDe.addEventListener('click', () => setLocale('de-DE'))

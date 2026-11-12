@@ -236,7 +236,7 @@ export async function renderTiffWithDecoder(
 ): Promise<FileViewerRenderedInstance> {
   assertTiffSourceSafety(buffer);
 
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const rotationEnabled = context?.options?.image?.rotation !== false;
   const documentRef = target.ownerDocument || document;
   const windowRef = documentRef.defaultView;
@@ -296,6 +296,18 @@ export async function renderTiffWithDecoder(
   stage.className = 'tiff-stage';
   root.append(toolbar, stage);
   const lightbox = createLightbox(documentRef, t);
+  const refreshLocale = () => {
+    if (rotationEnabled) toolbar.setAttribute('aria-label', t('image.toolbar.rotation'));
+    for (const [button, key] of [[rotateLeftButton, 'image.toolbar.rotateLeft'], [rotateRightButton, 'image.toolbar.rotateRight']] as const) {
+      button.title = t(key);
+      button.setAttribute('aria-label', t(key));
+    }
+    lightbox.element.querySelector('img')!.alt = t('image.lightbox.alt');
+    lightbox.element.querySelector('button')!.setAttribute('aria-label', t('image.lightbox.close'));
+    root.querySelectorAll<HTMLImageElement>('.tiff-stage img').forEach((image, index) => { image.alt = `${t('image.alt')} ${index + 1}`; });
+  };
+  const unsubscribeLocale = context?.i18n?.subscribe(refreshLocale);
+  refreshLocale();
   target.replaceChildren(style, root);
   const disposeHandTool = context?.options?.image?.handTool === true
     ? installFileViewerImageHandTool(root, context.signal) : () => {};
@@ -496,6 +508,7 @@ export async function renderTiffWithDecoder(
   const cleanup = () => {
     if (destroyed) return;
     destroyed = true;
+    unsubscribeLocale?.();
     disposeHandTool();
     context?.registerThumbnailAdapter?.(null);
     unregisterFileViewerViewStateProvider(root);

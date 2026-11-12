@@ -1,4 +1,5 @@
 import {
+  createFileViewerI18nBindings,
   createFileViewerTranslator,
   disposeFileViewerRendered,
   resolveFileViewerColorScheme,
@@ -275,39 +276,9 @@ const parseEmail = (
   return parseEml(buffer, filename, objectUrls, cidUrls);
 };
 
-const createStyle = () => {
-  const style = document.createElement('style');
-  style.textContent = emailStyle;
-  return style;
-};
-
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = document.createElement(tagName);
-  if (className) {
-    element.className = className;
-  }
-  if (text !== undefined) {
-    element.textContent = text;
-  }
-  return element;
-};
-
 const getAttachmentExtension = (name: string) => {
   const index = name.lastIndexOf('.');
   return index >= 0 ? name.slice(index + 1).toLowerCase() : 'bin';
-};
-
-const appendMeta = (meta: HTMLElement, label: string, value: string) => {
-  const row = document.createElement('p');
-  const strong = document.createElement('strong');
-  strong.textContent = label;
-  row.title = value || '-';
-  row.append(strong, document.createTextNode(value || '-'));
-  meta.append(row);
 };
 
 export default async function renderEmail(
@@ -321,10 +292,53 @@ export default async function renderEmail(
   const filename = context?.filename || `message.${normalizedType}`;
   const objectUrls: string[] = [];
   const cidUrls = new Map<string, string>();
-  const t = createFileViewerTranslator(context?.options);
-  const msgLabels = getMsgLabels(context?.options);
+  const document = target.ownerDocument;
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  // These two nested requests inherit this message's live UI language. Do not
+  // repeat parent language fields as explicit child overrides; keep every other option.
+  const nestedOptions = () => {
+    const options = { ...context?.options };
+    if (context?.i18n) {
+      delete options.locale;
+      delete options.messages;
+      delete options.i18n;
+    }
+    return options;
+  };
+  const msgLabels = () => getMsgLabels(context?.i18n ? { locale: context.i18n.locale } : context?.options);
+  const bindings = createFileViewerI18nBindings(context?.i18n);
+  const createElement = <K extends keyof HTMLElementTagNameMap>(
+    tagName: K,
+    className?: string,
+    text?: string
+  ) => {
+    const element = document.createElement(tagName);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+  };
+  // Only renderer-owned, text-only UI labels are bound. Parsed message data,
+  // body frames and nested renderers are never replaced on locale changes.
+  const createLabel = <K extends keyof HTMLElementTagNameMap>(
+    tagName: K,
+    getText: () => string,
+    className?: string
+  ) => {
+    const element = createElement(tagName, className);
+    bindings.text(element, getText);
+    return element;
+  };
+  const appendMeta = (meta: HTMLElement, getLabel: () => string, value: string) => {
+    const row = createElement('p');
+    row.title = value || '-';
+    row.append(createLabel('strong', getLabel), document.createTextNode(value || '-'));
+    meta.append(row);
+  };
   const controller = new AbortController();
-  const abortFromParent = () => controller.abort(context?.signal?.reason);
+  const abortFromParent = () => {
+    bindings.destroy();
+    controller.abort(context?.signal?.reason);
+  };
   if (context?.signal?.aborted) abortFromParent();
   else context?.signal?.addEventListener('abort', abortFromParent, { once: true });
   const signal = controller.signal;
@@ -342,7 +356,7 @@ export default async function renderEmail(
   let errorElement: HTMLDivElement | null = null;
 
   const root = createElement('section', 'email-viewer');
-  const style = createStyle();
+  const style = createElement('style', undefined, emailStyle);
   target.replaceChildren(style, root);
 
   const listen = <K extends keyof HTMLElementEventMap>(
@@ -354,28 +368,37 @@ export default async function renderEmail(
     cleanups.push(() => element.removeEventListener(event, listener as EventListener));
   };
 
-  const showLoading = (text: string) => {
+  const showLoading = (getText: () => string) => {
     if (!overlay) {
       overlay = createElement('div', 'email-state');
-      overlay.append(createElement('span'), createElement('strong', undefined, text));
+      overlay.append(createElement('span'), createLabel('strong', getText));
       root.append(overlay);
       return;
     }
     const label = overlay.querySelector('strong');
     if (label) {
-      label.textContent = text;
+      bindings.release(label);
+      bindings.text(label, getText);
     }
   };
 
   const hideLoading = () => {
+    if (overlay) bindings.release(overlay);
     overlay?.remove();
     overlay = null;
   };
 
-  const showError = (message: string) => {
+  const clearError = () => {
+    if (errorElement) bindings.release(errorElement);
     errorElement?.remove();
+    errorElement = null;
+  };
+
+  const showError = (message: string) => {
+    clearError();
     errorElement = createElement('div', 'email-error');
-    errorElement.append(createElement('strong', undefined, t('email.error.title')));
+    errorElement.append(createLabel('strong', () => t('email.error.title')));
+    // Parser/renderer error details are source data, not translated UI copy.
     errorElement.append(createElement('p', undefined, message));
     root.append(errorElement);
   };
@@ -393,6 +416,7 @@ export default async function renderEmail(
   const cleanup = async () => {
     if (disposed) return;
     disposed = true;
+    bindings.destroy();
     controller.abort();
     bodyVersion += 1;
     attachmentPreviewVersion += 1;
@@ -430,20 +454,23 @@ export default async function renderEmail(
     const tabButtons: Array<{ mode: EmailBodyMode; button: HTMLButtonElement }> = [];
     const attachmentButtons: Array<{ id: string; button: HTMLButtonElement }> = [];
 
+    bindings.release(root);
     root.replaceChildren();
+    overlay = null;
+    errorElement = null;
 
     const header = createElement('header', 'email-header');
     header.append(createElement('span', undefined, parsed.kind.toUpperCase()));
     header.append(createElement('h2', undefined, parsed.subject || filename));
     const meta = createElement('div', 'email-meta');
-    appendMeta(meta, t('email.meta.from'), addressText(parsed.from));
-    if (parsed.sender?.length) appendMeta(meta, msgLabels.sender, addressText(parsed.sender));
-    appendMeta(meta, t('email.meta.to'), addressText(parsed.to));
+    appendMeta(meta, () => t('email.meta.from'), addressText(parsed.from));
+    if (parsed.sender?.length) appendMeta(meta, () => msgLabels().sender, addressText(parsed.sender));
+    appendMeta(meta, () => t('email.meta.to'), addressText(parsed.to));
     if (parsed.cc.length) {
-      appendMeta(meta, t('email.meta.cc'), addressText(parsed.cc));
+      appendMeta(meta, () => t('email.meta.cc'), addressText(parsed.cc));
     }
-    if (parsed.bcc?.length) appendMeta(meta, msgLabels.bcc, addressText(parsed.bcc));
-    appendMeta(meta, t('email.meta.date'), parsed.date || '-');
+    if (parsed.bcc?.length) appendMeta(meta, () => msgLabels().bcc, addressText(parsed.bcc));
+    appendMeta(meta, () => t('email.meta.date'), parsed.date || '-');
     header.append(meta);
 
     const body = createElement('div', 'email-body');
@@ -455,13 +482,13 @@ export default async function renderEmail(
     attachmentPreview.hidden = true;
     const attachmentPreviewHead = createElement('div', 'attachment-preview-head');
     const attachmentPreviewTitle = createElement('strong');
-    const attachmentDownload = createElement('button', undefined, t('email.attachments.download'));
+    const attachmentDownload = createLabel('button', () => t('email.attachments.download'));
     attachmentDownload.type = 'button';
     const attachmentTarget = createElement('div', 'attachment-target') as HTMLDivElement;
     const attachmentClose = createElement('button', undefined, '×');
     attachmentClose.type = 'button';
-    attachmentClose.setAttribute('aria-label', msgLabels.close);
-    attachmentClose.title = msgLabels.close;
+    bindings.attr(attachmentClose, 'aria-label', () => msgLabels().close);
+    bindings.attr(attachmentClose, 'title', () => msgLabels().close);
     const attachmentActions = createElement('div', 'attachment-preview-actions');
     attachmentActions.append(attachmentDownload, attachmentClose);
     attachmentPreviewHead.append(attachmentPreviewTitle, attachmentActions);
@@ -471,8 +498,9 @@ export default async function renderEmail(
     notices.setAttribute('role', 'status');
     const noticeKeys = new Set(parsed.warnings || []);
     const renderNotices = () => {
+      bindings.release(notices);
       notices.replaceChildren();
-      noticeKeys.forEach(key => notices.append(createElement('p', undefined, msgLabels[key])));
+      noticeKeys.forEach(key => notices.append(createLabel('p', () => msgLabels()[key])));
       notices.hidden = !noticeKeys.size;
     };
     if (parsed.rtf && !parsed.html && !context?.renderNestedBuffer) noticeKeys.add('email.msg.rtfUnavailable');
@@ -481,6 +509,7 @@ export default async function renderEmail(
     const renderPlainBody = (mode: 'text' | 'headers') => {
       const pre = createElement('pre', 'email-text');
       pre.textContent = mode === 'text' ? parsed.text || '' : parsed.headers || '';
+      bindings.release(messageContent);
       messageContent.replaceChildren(pre);
     };
     const renderMessageContent = async () => {
@@ -495,6 +524,7 @@ export default async function renderEmail(
       try {
         await clearBodyPreview();
         if (stale()) return;
+        bindings.release(messageContent);
         messageContent.replaceChildren();
         if (activeBody === 'html' && parsed.html) {
           const iframe = createElement('iframe', 'email-html');
@@ -513,7 +543,7 @@ export default async function renderEmail(
             filename: `${filename}.rtf`,
             signal: current.signal,
             options: {
-              ...context.options,
+              ...nestedOptions(),
               docx: { ...context.options?.docx, externalResourcePolicy: 'block', externalLinkPolicy: 'block' },
             },
           });
@@ -543,14 +573,14 @@ export default async function renderEmail(
       });
     };
 
-    const bodyModes: Array<{ key: EmailBodyMode; label: string; disabled: boolean }> = [
-      { key: 'html', label: 'HTML', disabled: !parsed.html },
-      ...(parsed.rtf ? [{ key: 'rtf' as const, label: 'RTF', disabled: !context?.renderNestedBuffer }] : []),
-      { key: 'text', label: t('email.tabs.text'), disabled: !parsed.text },
-      { key: 'headers', label: t('email.tabs.headers'), disabled: !parsed.headers },
+    const bodyModes: Array<{ key: EmailBodyMode; label: () => string; disabled: boolean }> = [
+      { key: 'html', label: () => 'HTML', disabled: !parsed.html },
+      ...(parsed.rtf ? [{ key: 'rtf' as const, label: () => 'RTF', disabled: !context?.renderNestedBuffer }] : []),
+      { key: 'text', label: () => t('email.tabs.text'), disabled: !parsed.text },
+      { key: 'headers', label: () => t('email.tabs.headers'), disabled: !parsed.headers },
     ];
     bodyModes.forEach(mode => {
-      const button = createElement('button', undefined, mode.label);
+      const button = createLabel('button', mode.label);
       button.type = 'button';
       button.disabled = mode.disabled;
       listen(button, 'click', () => {
@@ -570,10 +600,10 @@ export default async function renderEmail(
 
     const attachmentPanel = createElement('section', 'attachment-panel');
     const attachmentTitle = createElement('div', 'attachment-title');
-    attachmentTitle.append(createElement('strong', undefined, t('email.attachments.title')), createElement('span', undefined, String(parsed.attachments.length)));
+    attachmentTitle.append(createLabel('strong', () => t('email.attachments.title')), createElement('span', undefined, String(parsed.attachments.length)));
     attachmentPanel.append(attachmentTitle);
     if (!parsed.attachments.length) {
-      attachmentPanel.append(createElement('p', 'attachment-empty', t('email.attachments.empty')));
+      attachmentPanel.append(createLabel('p', () => t('email.attachments.empty'), 'attachment-empty'));
     }
 
     const syncAttachmentState = () => {
@@ -595,13 +625,13 @@ export default async function renderEmail(
       syncAttachmentState();
       attachmentPreview.hidden = false;
       messagePanel.classList.add('has-attachment-preview');
-      errorElement?.remove();
-      errorElement = null;
+      clearError();
       attachmentPreviewTitle.textContent = attachment.name;
-      showLoading(t('email.attachments.opening', { name: attachment.name }));
       try {
+        showLoading(() => t('email.attachments.opening', { name: attachment.name }));
         await clearAttachmentPreview();
         if (stale()) return;
+        bindings.release(attachmentTarget);
         attachmentTarget.replaceChildren();
         const attachmentBuffer = await attachment.load();
         if (stale()) return;
@@ -614,7 +644,7 @@ export default async function renderEmail(
           const nextRendered = await context.renderNestedBuffer(attachmentBuffer, extension, child, {
             ...context,
             filename: attachment.name,
-            options: context.options,
+            options: nestedOptions(),
             signal: previewAbortController.signal,
           });
           if (stale()) {
@@ -623,7 +653,7 @@ export default async function renderEmail(
           }
           nestedRendered = nextRendered;
         } else {
-          child.append(createElement('div', undefined, t('email.attachments.nestedUnavailable', { name: attachment.name })));
+          child.append(createLabel('div', () => t('email.attachments.nestedUnavailable', { name: attachment.name })));
         }
       } catch (nextError) {
         if (stale()) {
@@ -667,6 +697,7 @@ export default async function renderEmail(
       messagePanel.classList.remove('has-attachment-preview');
       hideLoading();
       void clearAttachmentPreview().catch(() => {});
+      bindings.release(attachmentTarget);
       attachmentTarget.replaceChildren();
       attachmentButtons.find(item => item.id === previous?.id)?.button.focus();
     });
@@ -686,9 +717,9 @@ export default async function renderEmail(
     await renderMessageContent();
   };
 
-  showLoading(t('email.loading.parsing'));
   try {
     signal.throwIfAborted();
+    showLoading(() => t('email.loading.parsing'));
     const parsed = await parseEmail(buffer, normalizedType, filename, objectUrls, cidUrls, t, signal);
     signal.throwIfAborted();
     await renderParsedEmail(parsed);

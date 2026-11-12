@@ -63,6 +63,9 @@ import { normalizeSource } from '../source';
 import { buildFileViewerWatermarkInlineStyle } from '../features/watermark';
 import { createFileViewerSnapshotDownload } from '../output/snapshotDownload';
 import { createFileViewerErrorState, createFileViewerUnsupportedState } from './state';
+import { createFileViewerI18nBindings } from '../i18n/bindings';
+import { createFileViewerTranslator } from '../i18n/messages';
+import { createFileViewerI18n, createFileViewerNestedI18n, type FileViewerI18nController } from '../i18n/context';
 import type {
   FileRenderContext,
   FileRenderExportAdapter,
@@ -78,6 +81,7 @@ import type {
   FileViewerFitOptions,
   FileViewerFitResult,
   FileViewerInstance,
+  FileViewerI18nContext,
   FileViewerLifecycleContext,
   FileViewerOperationType,
   FileViewerOptions,
@@ -97,6 +101,8 @@ export interface CreateViewerOptions {
   options?: FileViewerOptions;
   signal?: AbortSignal;
   onEvent?: FileViewerEventHandler;
+  /** Explicit parent language scope for nested viewers. */
+  i18n?: FileViewerI18nContext;
   renderPurpose?: FileViewerRenderPurpose;
 }
 
@@ -183,10 +189,12 @@ const isAbortError = (error: unknown) => {
 const renderMissingRendererState = (
   container: HTMLElement,
   type: string,
-  options?: FileViewerOptions
+  options?: FileViewerOptions,
+  i18n?: FileViewerI18nContext
 ) => {
   const documentRef = container.ownerDocument;
-  const state = createFileViewerUnsupportedState(type, undefined, options);
+  const bindings = createFileViewerI18nBindings(i18n);
+  const state = () => createFileViewerUnsupportedState(type, undefined, i18n?.options || options);
   const wrapper = documentRef.createElement('div');
   wrapper.className = 'file-viewer-missing-renderer';
   wrapper.style.cssText = [
@@ -204,24 +212,29 @@ const renderMissingRendererState = (
 
   const content = documentRef.createElement('div');
   const title = documentRef.createElement('strong');
-  title.textContent = state.message;
+  bindings.text(title, () => state().message);
   title.style.cssText = 'display:block;margin-bottom:8px;color:#172033;font-size:16px;';
   const description = documentRef.createElement('p');
-  description.textContent = state.description || state.title;
+  bindings.text(description, () => state().description || state().title);
   description.style.cssText = 'max-width:520px;margin:0;';
   content.append(title, description);
   wrapper.append(content);
   container.replaceChildren(wrapper);
+  return () => bindings.destroy();
 };
 
 const renderFileViewerErrorState = (
   container: HTMLElement,
   type: string,
   error: unknown,
-  options?: FileViewerOptions
+  options?: FileViewerOptions,
+  i18n?: FileViewerI18nContext
 ) => {
   const documentRef = container.ownerDocument;
-  const state = createFileViewerErrorState(type, error, undefined, options);
+  const bindings = createFileViewerI18nBindings(i18n);
+  const initial = createFileViewerErrorState(type, error, undefined, i18n?.options || options);
+  // Capture detail only once. Live labels must never inspect the original failure again.
+  const t = createFileViewerTranslator(i18n || options);
   const wrapper = documentRef.createElement('div');
   wrapper.className = 'file-viewer-render-error';
   wrapper.setAttribute('role', 'alert');
@@ -248,14 +261,15 @@ const renderFileViewerErrorState = (
     'box-shadow:0 16px 42px rgba(25,42,54,.08)',
   ].join(';');
   const title = documentRef.createElement('strong');
-  title.textContent = state.title;
+  bindings.text(title, () => t('state.error.title'));
   title.style.cssText = 'display:block;margin-bottom:10px;font-size:18px;';
   const message = documentRef.createElement('p');
-  message.textContent = state.message;
+  bindings.text(message, () => error == null ? t('error.unknown') : initial.message);
   message.style.cssText = 'margin:0;white-space:pre-wrap;overflow-wrap:anywhere;';
   content.append(title, message);
   wrapper.append(content);
   container.replaceChildren(wrapper);
+  return () => bindings.destroy();
 };
 
 export const createViewer = (
@@ -263,6 +277,19 @@ export const createViewer = (
   createOptions: CreateViewerOptions = {}
 ): FileViewerInstance => {
   let options = createOptions.options || {};
+  const reportI18nError = (error: unknown) => {
+    if (options.onDiagnostic) {
+      options.onDiagnostic({ code: 'i18n-update-failed', level: 'error', message: error instanceof Error ? error.message : String(error) });
+    } else console.error(error);
+  };
+  const viewerI18n = createFileViewerI18n(createOptions.i18n ? undefined : options, {
+    parent: createOptions.i18n,
+    signal: createOptions.signal,
+    ownerDocument: container.ownerDocument,
+    onError: reportI18nError,
+  });
+  let currentRenderI18n: FileViewerI18nController | null = null;
+  let retireStateLabels: (() => void) | undefined;
   let registry = createBaseRendererRegistry(createOptions, options);
   let installedRendererInput: FileViewerOptions['renderers'] | undefined = undefined;
   let installedPresetInput: FileViewerOptions['preset'] | undefined = undefined;
@@ -536,17 +563,22 @@ export const createViewer = (
     return source.extension
   };
 
-  const renderNestedBuffer: NonNullable<FileRenderContext['renderNestedBuffer']> = async (
-    buffer,
-    type,
-    target,
-    context
+  const renderNestedBuffer = async (
+    buffer: ArrayBuffer,
+    type: string,
+    target: HTMLDivElement,
+    context: FileRenderContext | undefined,
+    parentI18n: FileViewerI18nContext
   ): Promise<FileViewerRenderedInstance | undefined> => {
     const inheritedOptions = context?.options || options;
+    const languageScope = createFileViewerNestedI18n(context, parentI18n, target.ownerDocument, reportI18nError);
     const nestedViewer = createViewer(target, {
       registry,
+      i18n: languageScope,
       options: {
         ...inheritedOptions,
+        ...languageScope.options,
+        i18n: undefined,
         // The parent already resolved its renderer assembly into `registry`.
         // Reuse that exact registry without reinstalling presets or mutating a
         // shared registry while an attachment is open.
@@ -569,14 +601,19 @@ export const createViewer = (
         signal: context?.signal,
       });
       if (context?.signal?.aborted) {
+        languageScope.destroy();
         await nestedViewer.destroy('replace');
         return undefined;
       }
       return {
         $el: target,
-        destroy: () => nestedViewer.destroy('component-unmount'),
+        destroy: () => {
+          languageScope.destroy();
+          return nestedViewer.destroy('component-unmount');
+        },
       };
     } catch (error) {
+      languageScope.destroy();
       await nestedViewer.destroy('replace');
       throw error;
     }
@@ -708,39 +745,54 @@ export const createViewer = (
   viewStateController.observe();
   fitController.observe();
 
-  const destroyCurrent = async (reason: FileViewerLifecycleContext['reason'] = 'replace') => {
+  let teardown: Promise<void> | undefined;
+  let destroyed = false;
+  let destruction: Promise<void> | undefined;
+  const destroyCurrent = (reason: FileViewerLifecycleContext['reason'] = 'replace'): Promise<void> => {
+    // One teardown owns the old session through every awaited hook/destructor.
+    // Replacements wait for it instead of racing a second partial cleanup.
+    if (teardown) return teardown;
     const session = renderSurfaceState.session;
     const target = currentRenderTarget;
-
-    if (!currentSource && !session && !target) {
-      return;
-    }
-
     const source = currentSource;
+    const languageScope = currentRenderI18n;
+    if (!source && !session && !target) return Promise.resolve();
+    languageScope?.destroy();
+    retireStateLabels?.();
+    retireStateLabels = undefined;
+    if (currentRenderI18n === languageScope) currentRenderI18n = null;
+    const ownsState = () => currentSource === source && renderSurfaceState.session === session && currentRenderTarget === target;
     const startedAt = Date.now();
     const version = requestScope.getCurrentVersion();
-    if (source) {
-      await emitLifecycle(options, createOptions.onEvent, 'unload-start', source, version, startedAt, reason);
-    }
-    await session?.destroy?.();
-    removeRenderTarget(target || undefined);
-    currentSource = null;
-    currentRendererId = null;
-    currentDocumentRoot = null;
-    applyFileViewerRenderSurfaceState(renderSurfaceState, {
-      session: null,
-      exportAdapter: null,
-      thumbnailAdapter: null,
+    const pending = Promise.resolve().then(async () => {
+      let failure: unknown;
+      let failed = false;
+      try {
+        if (source) await emitLifecycle(options, createOptions.onEvent, 'unload-start', source, version, startedAt, reason);
+      } catch (error) { failure = error; failed = true; }
+      try { await session?.destroy?.(); }
+      catch (error) { if (!failed) failure = error; failed = true; }
+      // Even a rejected destructor must retire its own state. Never erase a new owner.
+      if (ownsState()) {
+        await documentActions.clearDocumentState();
+        if (ownsState()) {
+          removeRenderTarget(target || undefined);
+          currentSource = null;
+          currentRendererId = null;
+          currentDocumentRoot = null;
+          applyFileViewerRenderSurfaceState(renderSurfaceState, { session: null, exportAdapter: null, thumbnailAdapter: null });
+          removeWatermarkOverlay();
+          zoomController.clearProvider();
+          viewStateController.clearProvider();
+          fitController.resetAutoFit();
+          emitZoomAndOperationAvailabilityChange();
+        }
+      } else removeRenderTarget(target || undefined);
+      if (source) await emitLifecycle(options, createOptions.onEvent, 'unload-complete', source, version, startedAt, reason);
+      if (failed) throw failure;
     });
-    removeWatermarkOverlay();
-    await documentActions.clearDocumentState();
-    zoomController.clearProvider();
-    viewStateController.clearProvider();
-    fitController.resetAutoFit();
-    emitZoomAndOperationAvailabilityChange();
-    if (source) {
-      await emitLifecycle(options, createOptions.onEvent, 'unload-complete', source, version, startedAt, reason);
-    }
+    teardown = pending.finally(() => { teardown = undefined; });
+    return teardown;
   };
 
   const instance: FileViewerInstance = {
@@ -749,6 +801,7 @@ export const createViewer = (
       await ensureRendererPluginsInstalled();
     },
     async load(source: FileViewerSource, loadOptions = {}) {
+      if (destroyed) return null;
       const version = requestScope.requestController.createVersion();
       const requestAbortController = requestScope.requestController.createAbortController();
       const loadSignal = createFileViewerLoadSignal(requestAbortController, [
@@ -756,6 +809,7 @@ export const createViewer = (
         loadOptions.signal,
       ]);
       await destroyCurrent('replace');
+      if (destroyed || !requestScope.isCurrentRequest(version)) return null;
       await ensureRendererPluginsInstalled();
 
       if (!requestScope.isCurrentRequest(version)) {
@@ -789,6 +843,7 @@ export const createViewer = (
       currentRendererId = renderer?.id || null;
       const startedAt = Date.now();
       await emitLifecycle(options, createOptions.onEvent, 'load-start', normalized, version, startedAt);
+      if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted || destroyed) return null;
 
       const surface = createRenderTarget(
         renderer?.id !== 'office-presentation' && renderer?.id !== 'office-presentation-binary'
@@ -798,7 +853,7 @@ export const createViewer = (
       currentDocumentRoot = target;
 
       if (!renderer?.load) {
-        renderMissingRendererState(target, resolvedExtension, options);
+        retireStateLabels = renderMissingRendererState(target, resolvedExtension, options, viewerI18n);
         applyFileViewerRenderSurfaceState(renderSurfaceState, { session: null });
         syncWatermarkOverlay();
         emitZoomAndOperationAvailabilityChange();
@@ -806,9 +861,13 @@ export const createViewer = (
         return null;
       }
 
+      const languageScope = createFileViewerI18n(undefined, {
+        parent: viewerI18n, signal: loadSignal, ownerDocument: target.ownerDocument, onError: reportI18nError,
+      });
+      currentRenderI18n = languageScope;
       let session: RendererSession | undefined;
       try {
-        session = await renderer.load({
+        const rendererSession = await renderer.load({
           source: routedSource,
           surface,
           options,
@@ -825,7 +884,8 @@ export const createViewer = (
           },
           renderContext: {
             renderPurpose: createOptions.renderPurpose || 'preview',
-            renderNestedBuffer,
+            i18n: languageScope,
+            renderNestedBuffer: (buffer, type, target, context) => renderNestedBuffer(buffer, type, target, context, languageScope),
             requestSnapshotDownload: createFileViewerSnapshotDownload({
               getOptions: () => options,
               isCurrent: () => requestScope.isCurrentRequest(version),
@@ -833,7 +893,21 @@ export const createViewer = (
             }),
           },
         });
+        let sessionDestruction: Promise<void> | undefined;
+        session = {
+          ...rendererSession,
+          getAvailability: rendererSession.getAvailability?.bind(rendererSession),
+          destroy: () => {
+            if (!sessionDestruction) {
+              languageScope.destroy();
+              sessionDestruction = Promise.resolve().then(() => rendererSession.destroy?.());
+            }
+            return sessionDestruction;
+          },
+        };
       } catch (error) {
+        languageScope.destroy();
+        if (currentRenderI18n === languageScope) currentRenderI18n = null;
         if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted || isAbortError(error)) {
           removeRenderTarget(targetHost);
           return null;
@@ -844,12 +918,14 @@ export const createViewer = (
           thumbnailAdapter: null,
         });
         removeWatermarkOverlay();
-        renderFileViewerErrorState(target, resolvedExtension, error, options);
+        retireStateLabels = renderFileViewerErrorState(target, resolvedExtension, error, options, viewerI18n);
         emitZoomAndOperationAvailabilityChange();
         throw error;
       }
 
       if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted) {
+        languageScope.destroy();
+        if (currentRenderI18n === languageScope) currentRenderI18n = null;
         await disposeStaleSession(session, targetHost);
         requestScope.requestController.clearAbortController(requestAbortController);
         return null;
@@ -891,14 +967,19 @@ export const createViewer = (
       requestScope.requestController.createVersion();
       await destroyCurrent(reason);
     },
-    async destroy(reason = 'component-unmount') {
+    destroy(reason = 'component-unmount') {
+      if (destruction) return destruction;
+      destroyed = true;
+      viewerI18n.destroy();
       requestScope.requestController.createVersion();
-      await destroyCurrent(reason);
-      documentActions.destroyDocumentFeatures();
-      zoomController.destroy();
-      viewStateController.destroy();
-      fitController.destroy();
-      removeWatermarkOverlay();
+      destruction = destroyCurrent(reason).finally(() => {
+        documentActions.destroyDocumentFeatures();
+        zoomController.destroy();
+        viewStateController.destroy();
+        fitController.destroy();
+        removeWatermarkOverlay();
+      });
+      return destruction;
     },
     updateOptions(nextOptions: Partial<FileViewerOptions>) {
       const previousFit = options.fit;
@@ -906,6 +987,7 @@ export const createViewer = (
         ...options,
         ...nextOptions,
       };
+      if ('locale' in nextOptions || 'messages' in nextOptions || 'i18n' in nextOptions) viewerI18n.update(createOptions.i18n ? undefined : options);
       syncFileViewerRenderSurfaceBackground(currentRenderTarget, options);
       currentRenderTarget?.setAttribute('data-viewer-theme', options.theme || 'system');
       syncWatermarkOverlay();

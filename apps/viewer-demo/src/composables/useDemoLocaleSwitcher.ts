@@ -17,6 +17,8 @@ export type UseDemoLocaleSwitcherOptions = {
 
 const DEMO_LOCALE_OPTIONS: ReadonlyArray<DemoLocaleOption> = [
   { value: 'zh-CN', label: '简体中文', shortLabel: '中' },
+  { value: 'zh-TW', label: '繁體中文（台灣）', shortLabel: '繁' },
+  { value: 'zh-HK', label: '繁體中文（香港）', shortLabel: '港' },
   { value: 'en-US', label: 'English', shortLabel: 'EN' },
   { value: 'ja-JP', label: '日本語', shortLabel: '日' },
   { value: 'de-DE', label: 'Deutsch', shortLabel: 'DE' }

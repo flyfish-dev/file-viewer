@@ -3,6 +3,7 @@ import {
   createFileViewerTextDecoder,
   createEmptyFileViewerSearchState,
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   isSingleByteFileViewerTextEncoding,
   normalizeFileViewerSearchOptions,
@@ -379,7 +380,7 @@ export default async function renderLargeText(
   type = 'txt',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const documentRef = target.ownerDocument
   const sourceBytes = new Uint8Array(buffer)
   const source = resolveFileViewerTextEncoding(
@@ -401,6 +402,7 @@ export default async function renderLargeText(
   // explicit boolean has the same meaning in both regular and virtual views.
   const showLineNumbers = context?.options?.text?.lineNumbers !== false
   const wrapLongLines = context?.options?.text?.wrapLongLines === true
+  const bindings = createFileViewerI18nBindings(context?.i18n)
   let disposed = false
   let zoom = 1
   let scheduledFrame = 0
@@ -434,7 +436,7 @@ export default async function renderLargeText(
   toolbarMeta.className = 'code-toolbar-meta'
   const status = documentRef.createElement('span')
   const lineSummary = documentRef.createElement('strong')
-  status.textContent = t('text.code.indexingLargeFile', { progress: 0 })
+  bindings.text(status, () => t('text.code.indexingLargeFile', { progress: 0 }))
   toolbarMeta.append(status, lineSummary)
   toolbar.append(extensionLabel, toolbarMeta)
   if (showToolbar) {
@@ -445,16 +447,16 @@ export default async function renderLargeText(
 
   const index = await buildLargeTextIndex(bytes, source.encoding, target, progress => {
     if (!disposed) {
-      status.textContent = t('text.code.indexingLargeFile', { progress })
+      bindings.text(status, () => t('text.code.indexingLargeFile', { progress }))
     }
   })
   if (disposed) {
     return { $el: target, unmount() {} }
   }
 
-  status.textContent = t('text.code.virtualized')
+  bindings.text(status, () => t('text.code.virtualized'))
   root.dataset.totalLines = String(index.lineCount)
-  lineSummary.textContent = `${formatLargeNumber(index.lineCount)} lines`
+  bindings.text(lineSummary, () => t('text.code.lineCount', { count: formatLargeNumber(index.lineCount) }))
   root.style.setProperty('--code-line-number-width', `${Math.max(6, String(index.lineCount).length + 2)}ch`)
   root.style.setProperty('--code-line-number-offset', showLineNumbers ? 'var(--code-line-number-width)' : '0px')
 
@@ -703,18 +705,18 @@ export default async function renderLargeText(
         const segments = documentRef.createElement('span')
         segments.className = 'code-line-segments'
         const actions = [
-          ['first', '⇤', t('text.code.firstSegment')],
-          ['previous', '‹', t('text.code.previousSegment')],
-          ['next', '›', t('text.code.nextSegment')],
-          ['last', '⇥', t('text.code.lastSegment')]
+          ['first', '⇤', 'text.code.firstSegment'],
+          ['previous', '‹', 'text.code.previousSegment'],
+          ['next', '›', 'text.code.nextSegment'],
+          ['last', '⇥', 'text.code.lastSegment']
         ] as const
         for (const [action, label, title] of actions.slice(0, 2)) {
           const button = documentRef.createElement('button')
           button.type = 'button'
           button.dataset.segmentAction = action
           button.dataset.lineIndex = String(line.lineIndex)
-          button.title = title
-          button.setAttribute('aria-label', title)
+          bindings.attr(button, 'title', () => t(title))
+          bindings.attr(button, 'aria-label', () => t(title))
           button.textContent = label
           button.disabled = decoded.segmentIndex === 0
           segments.append(button)
@@ -727,8 +729,8 @@ export default async function renderLargeText(
           button.type = 'button'
           button.dataset.segmentAction = action
           button.dataset.lineIndex = String(line.lineIndex)
-          button.title = title
-          button.setAttribute('aria-label', title)
+          bindings.attr(button, 'title', () => t(title))
+          bindings.attr(button, 'aria-label', () => t(title))
           button.textContent = label
           button.disabled = decoded.segmentIndex === decoded.segmentCount - 1
           segments.append(button)
@@ -747,6 +749,7 @@ export default async function renderLargeText(
       fragment.append(row)
     }
 
+    bindings.release(windowElement)
     windowElement.replaceChildren(fragment)
     windowElement.style.transform = `translateY(${getWindowOffset(startLine, lines.length)}px)`
     scheduleWrappedMeasurement(startLine, lines.length)
@@ -1012,6 +1015,7 @@ export default async function renderLargeText(
     $el: target,
     unmount() {
       disposed = true
+      bindings.destroy()
       searchGeneration += 1
       const view = getWindow(target)
       if (scheduledFrame && view?.cancelAnimationFrame) {

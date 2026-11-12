@@ -1,4 +1,5 @@
 import type {
+  FileViewerI18nContext,
   FileViewerI18nOptions,
   FileViewerLocale,
   FileViewerMessageKey,
@@ -8,8 +9,10 @@ import type {
 } from '../contracts/types';
 import { JA_JP_MESSAGES } from './messages.ja';
 import { DE_DE_MESSAGES } from './messages.de';
+import { ZH_TW_MESSAGES } from './messages.zh-tw';
+import { ZH_HK_MESSAGES } from './messages.zh-hk';
 
-export const FILE_VIEWER_SUPPORTED_LOCALES = ['zh-CN', 'en-US', 'ja-JP', 'de-DE'] as const;
+export const FILE_VIEWER_SUPPORTED_LOCALES = ['zh-CN', 'zh-TW', 'zh-HK', 'en-US', 'ja-JP', 'de-DE'] as const;
 export type FileViewerResolvedLocale = typeof FILE_VIEWER_SUPPORTED_LOCALES[number];
 
 export interface ResolveFileViewerI18nInput {
@@ -32,6 +35,14 @@ const ZH_CN_MESSAGES: Record<FileViewerMessageKey, string> = {
   'signature.panel.validationNotices': '验证提示（{count}）',
   'signature.panel.checksFailed': '部分检查未通过',
   'signature.panel.checksIncomplete': '部分检查尚未完成',
+  'text.code.lineCount': '行数：{count}',
+  'text.patch.summary': '文件数：{count} · 并排对比',
+  'text.xml.viewSource': '查看源码',
+  'text.xml.viewRendered': '查看渲染结果',
+  'text.xml.diagnostics': 'XML 配置诊断',
+  'text.xml.renderedTitle': 'XML 渲染结果',
+  'media.midi.trackFallback': '音轨 {index}',
+  'media.midi.instrumentFallback': '未知',
 
   'toolbar.zoomGroup': '缩放控制',
   'toolbar.zoomOut': '缩小预览',
@@ -143,19 +154,18 @@ const ZH_CN_MESSAGES: Record<FileViewerMessageKey, string> = {
   'spreadsheet.state.rowsAndColumns': '共 {rows} 行，{cols} 列，按视口预取平滑加载',
   'spreadsheet.error.parseFailed': 'Excel 解析失败',
   'spreadsheet.error.workerFailed': 'Excel Worker 运行失败',
-  'spreadsheet.comments.title': "批注与备注",
-  'spreadsheet.comments.close': "关闭批注",
-  'spreadsheet.comments.note': "备注",
-  'spreadsheet.comments.thread': "批注",
-  'spreadsheet.comments.resolved': "已解决",
-  'spreadsheet.comments.unknown': "未知作者",
-  'spreadsheet.comments.empty': "没有批注或备注",
-  'spreadsheet.comments.more': "显示更多",
-  'spreadsheet.comments.open': "显示 {cell} 的批注",
-  'spreadsheet.comments.jump': "转到 {cell}",
-  'spreadsheet.comments.warning': "部分批注无法读取",
-  'spreadsheet.comments.count': "批注与备注（{count}）",
-
+  'spreadsheet.comments.title': '批注与备注',
+  'spreadsheet.comments.close': '关闭批注',
+  'spreadsheet.comments.note': '备注',
+  'spreadsheet.comments.thread': '批注',
+  'spreadsheet.comments.resolved': '已解决',
+  'spreadsheet.comments.unknown': '未知作者',
+  'spreadsheet.comments.empty': '没有批注或备注',
+  'spreadsheet.comments.more': '显示更多',
+  'spreadsheet.comments.open': '显示 {cell} 的批注',
+  'spreadsheet.comments.jump': '转到 {cell}',
+  'spreadsheet.comments.warning': '部分批注无法读取',
+  'spreadsheet.comments.count': '批注与备注（{count}）',
   'word.error.invalidDocx': '文件不是有效的 DOCX/OOXML 压缩包，可能下载不完整或被服务端错误内容替换，请重新上传或检查文件源。',
   'word.error.missingOdfContent': 'ODF 文件缺少 content.xml。',
   'word.error.odfXmlParseFailed': 'ODF XML 解析失败。',
@@ -237,6 +247,7 @@ const ZH_CN_MESSAGES: Record<FileViewerMessageKey, string> = {
   'media.video.codecUnsupportedTitle': '当前浏览器无法解码这个视频轨',
   'media.video.codecUnsupportedDescription': '文件的视频轨使用 {codec}。浏览器能读取 MP4 容器，但没有解码出画面，因此原生播放器可能只播放音频或显示黑屏。',
   'media.video.codecUnsupportedAction': '轻量软件解码器未能启动，请将视频转换为 H.264/AVC、VP9 或 AV1 后再预览；File Viewer 不会上传或修改原文件。',
+  'media.video.softwareWorkerFailed': 'MP4V 解码器 Worker 运行失败。',
   'media.video.softwareLoading': '正在按需加载轻量 MP4V 解码器…',
   'media.video.softwareBadge': 'MP4V · 轻量解码',
   'media.video.play': '播放',
@@ -518,6 +529,14 @@ const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
   'signature.panel.validationNotices': 'Validation notices ({count})',
   'signature.panel.checksFailed': 'Some checks failed',
   'signature.panel.checksIncomplete': 'Some checks have not been completed',
+  'text.code.lineCount': 'Lines: {count}',
+  'text.patch.summary': 'Files: {count} · Side by side',
+  'text.xml.viewSource': 'View source',
+  'text.xml.viewRendered': 'View rendered',
+  'text.xml.diagnostics': 'XML profile diagnostics',
+  'text.xml.renderedTitle': 'Rendered XML',
+  'media.midi.trackFallback': 'Track {index}',
+  'media.midi.instrumentFallback': 'Unknown',
 
   'toolbar.zoomGroup': 'Zoom controls',
   'toolbar.zoomOut': 'Zoom out',
@@ -629,19 +648,18 @@ const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
   'spreadsheet.state.rowsAndColumns': '{rows} rows, {cols} columns, loading smoothly by viewport',
   'spreadsheet.error.parseFailed': 'Failed to parse Excel',
   'spreadsheet.error.workerFailed': 'Excel Worker failed',
-  'spreadsheet.comments.title': "Comments and notes",
-  'spreadsheet.comments.close': "Close comments",
-  'spreadsheet.comments.note': "Note",
-  'spreadsheet.comments.thread': "Comment",
-  'spreadsheet.comments.resolved': "Resolved",
-  'spreadsheet.comments.unknown': "Unknown author",
-  'spreadsheet.comments.empty': "No comments or notes",
-  'spreadsheet.comments.more': "Show more",
-  'spreadsheet.comments.open': "Show comment at {cell}",
-  'spreadsheet.comments.jump': "Go to {cell}",
-  'spreadsheet.comments.warning': "Some comments could not be read",
-  'spreadsheet.comments.count': "Comments and notes ({count})",
-
+  'spreadsheet.comments.title': 'Comments and notes',
+  'spreadsheet.comments.close': 'Close comments',
+  'spreadsheet.comments.note': 'Note',
+  'spreadsheet.comments.thread': 'Comment',
+  'spreadsheet.comments.resolved': 'Resolved',
+  'spreadsheet.comments.unknown': 'Unknown author',
+  'spreadsheet.comments.empty': 'No comments or notes',
+  'spreadsheet.comments.more': 'Show more',
+  'spreadsheet.comments.open': 'Show comment at {cell}',
+  'spreadsheet.comments.jump': 'Go to {cell}',
+  'spreadsheet.comments.warning': 'Some comments could not be read',
+  'spreadsheet.comments.count': 'Comments and notes ({count})',
   'word.error.invalidDocx': 'The file is not a valid DOCX/OOXML package. It may be incomplete or replaced by an error response from the server. Upload it again or check the file source.',
   'word.error.missingOdfContent': 'The ODF file is missing content.xml.',
   'word.error.odfXmlParseFailed': 'Failed to parse ODF XML.',
@@ -723,6 +741,7 @@ const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
   'media.video.codecUnsupportedTitle': 'This browser cannot decode the video track',
   'media.video.codecUnsupportedDescription': 'The video track uses {codec}. The browser can read the MP4 container but cannot decode video frames, so the native player may play only audio or show a black screen.',
   'media.video.codecUnsupportedAction': 'The lightweight software decoder could not start. Convert the video to H.264/AVC, VP9, or AV1 and open it again. File Viewer does not upload or modify the original file.',
+  'media.video.softwareWorkerFailed': 'The MP4V decoder Worker failed.',
   'media.video.softwareLoading': 'Loading the lightweight MP4V decoder on demand…',
   'media.video.softwareBadge': 'MP4V · lightweight decode',
   'media.video.play': 'Play',
@@ -997,6 +1016,8 @@ const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
 
 export const FILE_VIEWER_BUILTIN_MESSAGES = Object.freeze({
   'zh-CN': ZH_CN_MESSAGES,
+  'zh-TW': ZH_TW_MESSAGES,
+  'zh-HK': ZH_HK_MESSAGES,
   'en-US': EN_US_MESSAGES,
   'ja-JP': JA_JP_MESSAGES,
   'de-DE': DE_DE_MESSAGES,
@@ -1008,6 +1029,15 @@ const normalizeLocaleCandidate = (
   const normalized = String(locale || '').trim().replace(/_/g, '-').toLowerCase();
   if (!normalized) {
     return undefined;
+  }
+  const chineseLocale = /^zh(?:-(hans|hant))?(?:-([a-z]{2}))?(?:-|$)/.exec(normalized);
+  const script = chineseLocale?.[1];
+  const region = chineseLocale?.[2];
+  if (script === 'hans') {
+    return 'zh-CN';
+  }
+  if (script === 'hant' || region === 'tw' || region === 'hk' || region === 'mo') {
+    return region === 'hk' || region === 'mo' ? 'zh-HK' : 'zh-TW';
   }
   if (normalized === 'zh' || normalized.startsWith('zh-')) {
     return 'zh-CN';
@@ -1084,7 +1114,11 @@ export const translateFileViewerMessage = (
   return formatFileViewerMessage(message, params);
 };
 
-export const createFileViewerTranslator = (input?: FileViewerI18nInput) => {
+export const createFileViewerTranslator = (input?: FileViewerI18nInput | FileViewerI18nContext) => {
+  // Structural dispatch is intentional: renderer bundles may contain another core copy.
+  if (input && 't' in input && typeof input.t === 'function' && 'subscribe' in input) {
+    return (key: FileViewerMessageKey, params?: FileViewerMessageParams) => input.t(key, params);
+  }
   return (key: FileViewerMessageKey, params?: FileViewerMessageParams) =>
     translateFileViewerMessage(input, key, params);
 };

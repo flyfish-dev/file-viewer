@@ -60,6 +60,42 @@ export const demoWelcomeCopy: Record<DemoLocale, DemoWelcomeCopy> = {
       model: { title: '探索低模狐狸', description: '拖动旋转，从不同角度观察狐狸' }
     }
   },
+  'zh-TW': {
+    eyebrow: '快速上手',
+    title: '從一份真實檔案開始',
+    description: '點選示例，體驗對應檔案的檢視方式；也可以直接拖入自己的檔案。',
+    drop: '將自己的檔案拖到這裡開啟',
+    privacy: '本地檔案不會上傳到任何伺服器。',
+    featured: '試試這些示例',
+    close: '關閉歡迎卡片',
+    previewUnavailable: '預覽圖暫不可用，仍可開啟檔案',
+    modelCredit: '3D 模型署名與許可',
+    examples: {
+      drawing: { title: '檢視圖紙細節', description: '縮放圖紙，拖動檢視不同區域' },
+      document: { title: '閱讀業務報告', description: '檢視目錄、圖表與分頁內容' },
+      presentation: { title: '翻閱簡報', description: '逐頁檢視幻燈片與圖文內容' },
+      workbook: { title: '瀏覽表格資料', description: '檢視儲存格，拖曳調整欄寬' },
+      model: { title: '探索低模狐狸', description: '拖動旋轉，從不同角度觀察狐狸' }
+    }
+  },
+  'zh-HK': {
+    eyebrow: '快速上手',
+    title: '從一份真實文件開始',
+    description: '點擊示例，體驗對應文件的查看方式；也可以直接拖入自己的文件。',
+    drop: '將自己的文件拖到這裏打開',
+    privacy: '本地文件不會上傳到任何服務器。',
+    featured: '試試這些示例',
+    close: '關閉歡迎卡片',
+    previewUnavailable: '預覽圖暫不可用，仍可打開文件',
+    modelCredit: '3D 模型署名與許可',
+    examples: {
+      drawing: { title: '查看圖紙細節', description: '縮放圖紙，拖動查看不同區域' },
+      document: { title: '閱讀業務報告', description: '查看目錄、圖表與分頁內容' },
+      presentation: { title: '翻閱演示文稿', description: '逐頁查看幻燈片與圖文內容' },
+      workbook: { title: '瀏覽表格數據', description: '查看單元格，拖動調整列寬' },
+      model: { title: '探索低模狐狸', description: '拖動旋轉，從不同角度觀察狐狸' }
+    }
+  },
   'en-US': {
     eyebrow: 'Quick start',
     title: 'Start with a real file',

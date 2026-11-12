@@ -1,3 +1,4 @@
+import type { FileViewerLoadingMessageMetadata, FileViewerErrorMessageMetadata } from '../viewer/loading';
 // Source loading orchestrates file/url/buffer acquisition before rendering.
 //
 // It may coordinate lifecycle state and request cancellation, but it must not
@@ -14,6 +15,9 @@ import {
 } from '../lifecycle/operations';
 import {
   resolveFileViewerPreviewMessages,
+  formatFileViewerErrorMessage,
+  formatFileViewerErrorDetail,
+  normalizeFileViewerErrorMessage,
   type FileViewerErrorMessageFormatter,
 } from '../viewer/state';
 import { translateFileViewerMessage } from '../i18n/messages';
@@ -58,11 +62,11 @@ export type FileViewerPreviewLoadErrorLogger = (error: unknown) => void;
 
 export interface ReportFileViewerPreviewLoadErrorInput extends ResolveFileViewerPreviewLoadErrorMessageInput {
   onLogError?: FileViewerPreviewLoadErrorLogger | null;
-  onErrorMessage?: (message: string) => void;
+  onErrorMessage?: (message: string, metadata?: FileViewerErrorMessageMetadata) => void;
 }
 
 export interface ReportFileViewerMissingRemoteDataInput extends ResolveFileViewerMissingRemoteDataErrorMessageInput {
-  onErrorMessage?: (message: string) => void;
+  onErrorMessage?: (message: string, metadata?: FileViewerErrorMessageMetadata) => void;
 }
 
 export interface FileViewerRequestController {
@@ -184,6 +188,7 @@ export type MutableFileViewerRenderReadinessState = FileViewerRenderReadinessSta
 
 export interface FileViewerLoadStartState {
   loadingMessage: string;
+  loadingMetadata?: FileViewerLoadingMessageMetadata;
   lifecycleContext: FileViewerLifecycleContext;
 }
 
@@ -209,7 +214,7 @@ export interface CommitFileViewerLoadStartStateInput {
   buildState: () => FileViewerLoadStartState;
   onMarkLoadStarted?: (version: number) => void;
   onLifecycle?: (context: FileViewerLifecycleContext) => void;
-  onStartLoading?: (message: string) => void;
+  onStartLoading?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
 }
 
 export interface FileViewerRenderCompleteState {
@@ -312,7 +317,7 @@ export interface RunFileViewerStreamingPdfPreviewInput<Session = unknown> {
   signal?: AbortSignal;
   typeOverride?: string;
   i18n?: FileViewerI18nInput;
-  onStartLoading?: (message: string) => void;
+  onStartLoading?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
   onSession?: (session: Session | null) => void;
   onActiveDocumentContext?: (context: FileViewerLifecycleContext) => void;
   onLifecycle?: (context: FileViewerLifecycleContext) => void;
@@ -379,7 +384,7 @@ export interface RunFileViewerLocalFilePreviewInput<Session = unknown> {
     file: File;
   }) => FileViewerRenderCompleteState;
   onMarkLoadStarted?: (version: number) => void;
-  onStartLoading?: (message: string) => void;
+  onStartLoading?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
   onSession?: (session: Session | null) => void;
   onActiveDocumentContext?: (context: FileViewerLifecycleContext) => void;
   onLifecycle?: (context: FileViewerLifecycleContext) => void;
@@ -438,7 +443,8 @@ export const resolveFileViewerMissingRemoteDataErrorMessage = ({
 
 export const DEFAULT_FILE_VIEWER_PREVIEW_LOAD_ERROR_LOGGER: FileViewerPreviewLoadErrorLogger = error => {
   if (typeof console !== 'undefined' && typeof console.error === 'function') {
-    console.error(error);
+    // Never pass an unknown object to console: browser inspection may invoke getters.
+    console.error(typeof error === 'string' ? error : '[File Viewer] Preview loading failed.');
   }
 };
 
@@ -447,8 +453,24 @@ export const reportFileViewerPreviewLoadError = ({
   onErrorMessage,
   ...messageInput
 }: ReportFileViewerPreviewLoadErrorInput) => {
-  onLogError?.(messageInput.error);
+  const usesDefaultLogger = onLogError === DEFAULT_FILE_VIEWER_PREVIEW_LOAD_ERROR_LOGGER;
+  // Preserve legacy custom logger identity, arity, and ordering.
+  if (!usesDefaultLogger) onLogError?.(messageInput.error);
+  // Only our default formatter and an absent custom prefix have semantic identity.
+  // Keep custom callbacks on the original single-string path, including equal-valued prefixes.
+  if (messageInput.formatErrorMessage === formatFileViewerErrorMessage
+    && messageInput.prefixes?.[messageInput.kind] == null) {
+    const key = messageInput.kind === 'local' ? 'error.localRead'
+      : messageInput.kind === 'stream' ? 'error.stream' : 'error.load';
+    const prefix = translateFileViewerMessage(messageInput.i18n, key);
+    const detail = normalizeFileViewerErrorMessage(messageInput.error, messageInput.i18n);
+    const message = formatFileViewerErrorDetail(prefix, detail, messageInput.i18n);
+    if (usesDefaultLogger) onLogError(message);
+    onErrorMessage?.(message, { key, detail });
+    return message;
+  }
   const message = resolveFileViewerPreviewLoadErrorMessage(messageInput);
+  if (usesDefaultLogger) onLogError(message);
   onErrorMessage?.(message);
   return message;
 };
@@ -458,7 +480,7 @@ export const reportFileViewerMissingRemoteData = ({
   ...messageInput
 }: ReportFileViewerMissingRemoteDataInput = {}) => {
   const message = resolveFileViewerMissingRemoteDataErrorMessage(messageInput);
-  onErrorMessage?.(message);
+  onErrorMessage?.(message, messageInput.message ? undefined : { key: 'error.remoteDownload' });
   return message;
 };
 
@@ -503,8 +525,8 @@ export interface RunFileViewerRemoteFilePreviewInput<Session = unknown> {
   }) => FileViewerRenderCompleteState;
   i18n?: FileViewerI18nInput;
   onMarkLoadStarted?: (version: number) => void;
-  onStartLoading?: (message: string) => void;
-  onSetLoadingMessage?: (message: string) => void;
+  onStartLoading?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
+  onSetLoadingMessage?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
   onSession?: (session: Session | null) => void;
   onActiveDocumentContext?: (context: FileViewerLifecycleContext) => void;
   onLifecycle?: (context: FileViewerLifecycleContext) => void;
@@ -691,10 +713,10 @@ export interface CreateFileViewerSourceLoadingActionHandlersInput<Session = unkn
   formatErrorMessage: FileViewerErrorMessageFormatter;
   onMarkLoadStarted?: (version: number) => void;
   onClearLoadStarted?: (version: number) => void;
-  onStartLoading?: (message: string) => void;
-  onSetLoadingMessage?: (message: string) => void;
+  onStartLoading?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
+  onSetLoadingMessage?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
   onStopLoading?: () => void;
-  onShowError?: (message: string) => void;
+  onShowError?: (message: string, metadata?: FileViewerErrorMessageMetadata) => void;
   onClearError?: () => void;
   onResetLoading?: () => void;
   onClearRenderedContent?: (reason?: FileViewerLifecycleContext['reason']) => void;
@@ -1258,7 +1280,7 @@ export const runFileViewerStreamingPdfPreview = async <Session = unknown>({
 }: RunFileViewerStreamingPdfPreviewInput<Session>): Promise<FileViewerStreamingPdfPreviewState<Session>> => {
   let placeholderFile: File | null = null;
 
-  onStartLoading?.(loadingMessage || resolveFileViewerPreviewMessages(i18n).streamingPdf);
+  onStartLoading?.(loadingMessage || resolveFileViewerPreviewMessages(i18n).streamingPdf, loadingMessage ? undefined : { key: 'preview.streamingPdf' });
 
   try {
     placeholderFile = createFileViewerStreamingPdfPlaceholderFile(filename);
@@ -1827,7 +1849,9 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
           error,
           formatErrorMessage,
           i18n: getI18n?.(),
-          onErrorMessage: onShowError,
+          onErrorMessage: (message, metadata) => {
+            if (isCurrentRequest(version)) onShowError?.(message, metadata);
+          },
         });
       },
     });
@@ -1874,7 +1898,9 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
       onMissingData: () => {
         reportFileViewerMissingRemoteData({
           i18n: getI18n?.(),
-          onErrorMessage: onShowError,
+          onErrorMessage: (message, metadata) => {
+            if (isCurrentRequest(version)) onShowError?.(message, metadata);
+          },
         });
       },
       onError: (error, kind) => {
@@ -1883,7 +1909,9 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
           error,
           formatErrorMessage,
           i18n: getI18n?.(),
-          onErrorMessage: onShowError,
+          onErrorMessage: (message, metadata) => {
+            if (isCurrentRequest(version)) onShowError?.(message, metadata);
+          },
         });
       },
     });
@@ -1970,7 +1998,7 @@ export const commitFileViewerLoadStartState = ({
   onMarkLoadStarted?.(version);
   const loadStartState = buildState();
   onLifecycle?.(loadStartState.lifecycleContext);
-  onStartLoading?.(loadStartState.loadingMessage);
+  onStartLoading?.(loadStartState.loadingMessage, loadStartState.loadingMetadata);
   return loadStartState;
 };
 
@@ -1987,6 +2015,7 @@ export const createFileViewerLoadStartState = ({
 }: CreateFileViewerLoadStartStateInput): FileViewerLoadStartState => {
   return {
     loadingMessage: loadingMessage || resolveFileViewerLoadStartMessage(source, i18n),
+    ...(loadingMessage ? {} : { loadingMetadata: { key: source === 'url' ? 'preview.downloading' as const : 'preview.reading' as const } }),
     lifecycleContext: buildFileViewerLifecycleContext({
       phase: 'load-start',
       version,
@@ -2104,7 +2133,7 @@ export interface CommitFileViewerRemoteDownloadStateInput {
   isCurrent: (version: number) => boolean;
   i18n?: FileViewerI18nInput;
   onMissingData?: () => void;
-  onSetLoadingMessage?: (message: string) => void;
+  onSetLoadingMessage?: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
 }
 
 export type FileViewerRemoteDownloadState =
@@ -2214,7 +2243,7 @@ export const commitFileViewerRemoteDownloadState = ({
     };
   }
 
-  onSetLoadingMessage?.(resolveFileViewerPreviewMessages(i18n).reading);
+  onSetLoadingMessage?.(resolveFileViewerPreviewMessages(i18n).reading, { key: 'preview.reading' });
 
   return {
     stale: false,
