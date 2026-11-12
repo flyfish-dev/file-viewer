@@ -19,6 +19,10 @@ for (const name of readdirSync(workflows).filter((name) => /\.ya?ml$/.test(name)
 test('release source evidence uses the disposable hosted runner directory', () => {
   const source = readFileSync(new URL('release-artifacts.yml', workflows), 'utf8')
   assert.match(source, /FILE_VIEWER_SOURCE_CACHE: \$\{\{ runner\.temp \}\}\/source-archives/)
+  assert.match(
+    source,
+    /      - name: Read exact public source bytes[^\n]*\n        env:\n          FILE_VIEWER_SOURCE_CACHE: \$\{\{ runner\.temp \}\}\/source-archives/
+  )
   assert.match(source, /path: \$\{\{ runner\.temp \}\}\/source-archives\//)
   assert.doesNotMatch(source, /\/work\/source-archives/)
 })
