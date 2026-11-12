@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 
 const root = new URL('../../../', import.meta.url)
 const read = path => readFileSync(new URL(path, root), 'utf8')
-const entries = source => new Map([...source.matchAll(/^\s*(?:'([^']+)'|([\w]+))\s*:\s*'((?:\\.|[^'])*)',?\s*$/gm)]
+export const entries = source => new Map([...source.matchAll(/^\s*(?:'([^']+)'|([\w]+))\s*:\s*'((?:\\.|[^'\\])*)',?\s*$/gm)]
   .map(match => [match[1] || match[2], match[3]]))
 const placeholders = value => [...value.matchAll(/\{([\w.-]+)\}/g)].map(match => match[1]).sort()
 const sameCatalog = (source, candidate, label) => {

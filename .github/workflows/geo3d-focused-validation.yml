@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   focused:
-    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
     steps:
       - name: Checkout
@@ -57,7 +57,7 @@ jobs:
         id: browser
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         timeout-minutes: 10
-        run: pnpm exec playwright install chromium webkit
+        run: pnpm exec playwright install --with-deps chromium webkit
       - name: Browser datasets and resource ownership
         if: >-
           ${{ !cancelled() && steps.entry.outcome == 'success' && steps.browser.outcome == 'success' }}

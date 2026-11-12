@@ -245,8 +245,8 @@ test('independent Public CI builds the exact browser sources, inspects DICOM, ru
   const build = runtimeJob.indexOf(
     'pnpm --filter @file-viewer/core --filter @file-viewer/renderer-text --filter @file-viewer/capability-mermaid --filter @file-viewer/renderer-drawing --filter @file-viewer/renderer-dicom build'
   )
-  assert.match(runtimeJob, /runs-on: \[self-hosted, Linux, ARM64, oracle, file-viewer-public\]/)
-  const install = runtimeJob.indexOf('pnpm exec playwright install chromium webkit')
+  assert.match(runtimeJob, /runs-on: ubuntu-24\.04-arm/)
+  const install = runtimeJob.indexOf('pnpm exec playwright install --with-deps chromium webkit')
   const inspection = runtimeJob.indexOf(
     'node packages/renderers/dicom/scripts/verify-node-inspection.mjs'
   )

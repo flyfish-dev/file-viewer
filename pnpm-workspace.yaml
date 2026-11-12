@@ -38,8 +38,9 @@ minimumReleaseAgeExclude:
   - 'styled-exceljs@0.21.6'
 
 overrides:
-  'fast-xml-parser@>=5.0.0 <5.12.0': 5.12.0
   '@thatopen/components>jszip': 3.10.2
+  # GHSA-474x-hrwr-fgx4: retain the v5 API while fixing stop-node scanning.
+  'fast-xml-parser@>=5.0.0 <5.12.0': 5.12.0
   'adm-zip@<0.6.1': 0.6.1
   'acorn@>=7.0.0 <7.1.1': 7.4.1
   'js-yaml@>=4.0.0 <4.3.2': 4.3.2
