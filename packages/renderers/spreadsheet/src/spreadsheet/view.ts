@@ -342,29 +342,9 @@ const isPlainTextCell = (value: unknown) => {
   return !/^\d+([./:-]\d+)*$/.test(text)
 }
 
-// 普通明细表通常会把第一行当成字段表头，而报表类工作表往往需要保留原始 Excel 行号。
-// 这里只在“首行像简单字段头且没有合并单元格”时，才给左侧序号做 1 行偏移。
-export const detectIndexOffset = (ws: SheetModel) => {
-  const meta = ws.meta
-  const rows = ws.data || []
-  if (!meta || rows.length < 2 || (ws.merge || []).length) {
-    return 0
-  }
-
-  const firstRow = rows[0] || []
-  const secondRow = rows[1] || []
-  const firstRowValues = firstRow.filter(value => `${value ?? ''}`.trim() !== '')
-  const secondRowValues = secondRow.filter(value => `${value ?? ''}`.trim() !== '')
-
-  if (firstRowValues.length < Math.min(Math.max(Math.floor(meta.totalCols / 2), 3), 6)) {
-    return 0
-  }
-  if (!firstRowValues.every(isPlainTextCell) || secondRowValues.length < 2) {
-    return 0
-  }
-
-  return 1
-}
+// 左侧序号必须与源表格的 Excel 行号一致（首行即第 1 行），不能因为首行看起来像表头而偏移，
+// 否则序号与搜索定位标签（如 Sales!A2）会对不上。
+export const detectIndexOffset = (_ws: SheetModel) => 0
 
 export const buildColumns = (ws: SheetModel) => {
   const columnsMeta = getSheetColumnsMeta(ws)
