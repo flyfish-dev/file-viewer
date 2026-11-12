@@ -1,0 +1,17 @@
+[
+  {
+    "file": "reviewer-vendor-present-anchors-8191.xlsx",
+    "source": "Independent synthetic review-fix-4 regression fixture: reviewer-vendor-present-anchors-8191.xlsx",
+    "sha256": "f490ab05a2efeac0c0e72db26bc2966acabc5780d6e3490b19b3222d9a8368ea"
+  },
+  {
+    "file": "reviewer-vendor-present-anchors-8192.xlsx",
+    "source": "Independent synthetic review-fix-4 regression fixture: reviewer-vendor-present-anchors-8192.xlsx",
+    "sha256": "47c244f81f60c9bccacae3c3c0a6195a51ab52fb814ae25ff7fc7e4f8d2ec4b5"
+  },
+  {
+    "file": "reviewer-vendor-present-anchors-8193.xlsx",
+    "source": "Independent synthetic review-fix-4 regression fixture: reviewer-vendor-present-anchors-8193.xlsx",
+    "sha256": "fe5d211c682b56ddf65502cd9456ee5b5936bd0321a8286a903fb8be854d500f"
+  }
+]

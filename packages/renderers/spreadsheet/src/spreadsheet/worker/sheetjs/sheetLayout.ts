@@ -1,10 +1,12 @@
 import { DOMParser } from '@xmldom/xmldom'
 import type JSZip from 'jszip'
 import type { WorkBook } from 'styled-exceljs'
+import type { StoredRowSizing } from './rowSizing.js'
 
 export interface StoredSheetLayout {
   columnWidth?: number
   rowHeightPt?: number
+  rowSizing?: StoredRowSizing
   maximumDigitWidth?: number
 }
 

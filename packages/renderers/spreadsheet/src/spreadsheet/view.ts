@@ -8,7 +8,8 @@ import type {
   VerticalAlign
 } from 'e-virt-table'
 import tinycolor from 'tinycolor2'
-import type { SheetCellMetadata, SheetModel, SheetRichTextRun } from './worker/type.js'
+import type { FileViewerSpreadsheetOptions } from '@file-viewer/core'
+import type { SheetCellMetadata, SheetComment, SheetModel, SheetRichTextRun } from './worker/type.js'
 import {
   displayCellKey,
   getDataKey,
@@ -27,7 +28,7 @@ export const INDEX_COLUMN_WIDTH = 68
 export const SPREADSHEET_MIN_ZOOM = 0.25
 export const SPREADSHEET_MAX_ZOOM = 2.5
 const TABLE_FONT_FAMILY = 'Aptos, Calibri, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif'
-const TABLE_FONT_SIZE = 11
+const TABLE_FONT_SIZE = 11 * 96 / 72
 const MIN_RENDERABLE_ROW_HEIGHT = 8
 const HIDDEN_ROW_HEIGHT = 0.1
 const CELL_PADDING = 2
@@ -63,6 +64,9 @@ interface TableConfigOptions {
   darkMode?: boolean
   resizableColumns?: boolean
   resizableRows?: boolean
+  comments?: SheetComment[]
+  showComment?: (comment: SheetComment, anchor: HTMLElement, focus?: boolean) => void
+  commentLabel?: (comment: SheetComment) => string
   copySelection?: (params: SpreadsheetCopyParams) => void
   searchCell?: (row: number, col: number) => 'active' | 'match' | undefined
   sheetDefaults: SheetDefaults
@@ -342,36 +346,33 @@ const isPlainTextCell = (value: unknown) => {
   return !/^\d+([./:-]\d+)*$/.test(text)
 }
 
-// 普通明细表通常会把第一行当成字段表头，而报表类工作表往往需要保留原始 Excel 行号。
-// 这里只在“首行像简单字段头且没有合并单元格”时，才给左侧序号做 1 行偏移。
-export const detectIndexOffset = (ws: SheetModel) => {
+// Source row numbers are the default. The historical heuristic is retained only
+// for explicitly requested record ordinals; it never changes data or addresses.
+export const detectIndexOffset = (
+  ws: SheetModel,
+  mode: FileViewerSpreadsheetOptions['rowNumberMode'] = 'source'
+): 0 | 1 => {
+  if (mode !== 'legacy-records') return 0
   const meta = ws.meta
   const rows = ws.data || []
-  if (!meta || rows.length < 2 || (ws.merge || []).length) {
-    return 0
-  }
+  if (!meta || rows.length < 2 || (ws.merge || []).length) return 0
 
-  const firstRow = rows[0] || []
-  const secondRow = rows[1] || []
-  const firstRowValues = firstRow.filter(value => `${value ?? ''}`.trim() !== '')
-  const secondRowValues = secondRow.filter(value => `${value ?? ''}`.trim() !== '')
-
-  if (firstRowValues.length < Math.min(Math.max(Math.floor(meta.totalCols / 2), 3), 6)) {
-    return 0
-  }
-  if (!firstRowValues.every(isPlainTextCell) || secondRowValues.length < 2) {
-    return 0
-  }
-
+  const firstRowValues = (rows[0] || []).filter(value => `${value ?? ''}`.trim() !== '')
+  const secondRowValues = (rows[1] || []).filter(value => `${value ?? ''}`.trim() !== '')
+  if (firstRowValues.length < Math.min(Math.max(Math.floor(meta.totalCols / 2), 3), 6)) return 0
+  if (!firstRowValues.every(isPlainTextCell) || secondRowValues.length < 2) return 0
   return 1
 }
 
-export const buildColumns = (ws: SheetModel) => {
+export const buildColumns = (
+  ws: SheetModel,
+  mode: FileViewerSpreadsheetOptions['rowNumberMode'] = 'source'
+) => {
   const columnsMeta = getSheetColumnsMeta(ws)
   const colWidths = getSheetColWidths(ws)
   const columns: Column[] = [{
     key: INDEX_COLUMN_KEY,
-    title: '',
+    title: mode === 'legacy-records' ? '#' : '',
     type: 'index',
     fixed: 'left',
     width: INDEX_COLUMN_WIDTH,
@@ -981,6 +982,16 @@ export const createTextLayer = (
   return text
 }
 
+/** Use exactly the cell text renderer's width/font/wrapping, with natural height. */
+export const createAutoHeightProbe = (
+  documentRef: Document, value: unknown, style: CellStyleCache, width: number, zoom: number
+) => {
+  const scaled: CellStyleCache = scaleCellStyle(style, zoom) || {}
+  const probe = createTextLayer(documentRef, value, { ...scaled, font: scaled.font || getBodyFont(zoom) }, scaleNumber(CELL_PADDING, zoom))
+  Object.assign(probe.style, { width: `${width}px`, height: 'auto', minHeight: '0', overflow: 'visible', alignItems: 'flex-start', transform: 'none' })
+  return probe
+}
+
 const applyOverflowLayout = (text: HTMLSpanElement, overflowLayout?: TextOverflowLayout) => {
   if (!overflowLayout) {
     return
@@ -1143,12 +1154,16 @@ export const createTableConfig = ({
   darkMode = false,
   resizableColumns = false,
   resizableRows = false,
+  comments = [],
+  showComment,
+  commentLabel,
   copySelection,
   searchCell,
   sheetDefaults,
   virtualState,
   zoomScale = 1
 }: TableConfigOptions): ConfigType => {
+  const commentsByCell = new Map(comments.map(comment => [displayCellKey(comment.row, comment.col + 1), comment]))
   const normalizedScale = normalizeZoomScale(zoomScale)
   const scaledPadding = scaleNumber(CELL_PADDING, normalizedScale)
   const scaledHeaderHeight = scaleNumber(HEADER_HEIGHT, normalizedScale)
@@ -1248,7 +1263,8 @@ export const createTableConfig = ({
       : undefined
     const match = searchCell?.(rowIndex, dataColIndex)
     const renderText = shouldRenderTextInOverlay(style, column) || !!overflowLayout || !!mirror || !!match
-    if (!hasBorder(style) && !renderText) {
+    const comment = commentsByCell.get(cellKey)
+    if (!hasBorder(style) && !renderText && !comment) {
       return undefined
     }
 
@@ -1272,6 +1288,30 @@ export const createTableConfig = ({
         mirror?.overflowLayout || overflowLayout,
         normalizedScale
       )
+      if (comment) {
+        cellEl.style.pointerEvents = 'auto'
+        const indicator = cellEl.ownerDocument.createElement('button')
+        indicator.type = 'button'
+        indicator.className = 'excel-comment-indicator'
+        indicator.dataset.cell = comment.address
+        indicator.dataset.kind = comment.kind
+        indicator.dataset.resolved = String(comment.resolved)
+        indicator.setAttribute('aria-label', commentLabel?.(comment) || comment.address)
+        const open = (event: Event) => { event.stopPropagation(); showComment?.(comment, indicator) }
+        indicator.addEventListener('pointerdown', event => event.stopPropagation())
+        indicator.addEventListener('click', open)
+        indicator.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(event) }
+        })
+        let hoverTimer: ReturnType<typeof setTimeout> | undefined
+        indicator.addEventListener('pointerenter', () => {
+          hoverTimer = setTimeout(() => {
+            if (indicator.isConnected) showComment?.(comment, indicator, false)
+          }, 250)
+        })
+        indicator.addEventListener('pointerleave', () => clearTimeout(hoverTimer))
+        cellEl.append(indicator)
+      }
       cellEl.style.boxShadow = match === 'active' ? 'inset 0 0 0 2px #9a5700' : ''
       if (match) {
         cellEl.dataset.spreadsheetSearch = match
@@ -1289,8 +1329,8 @@ export const createTableConfig = ({
   return {
     ROW_KEY: ROW_KEY_FIELD,
     DISABLED: true,
-    HEIGHT: Math.max(hostHeight, 240),
-    MAX_HEIGHT: Math.max(hostHeight, 240),
+    HEIGHT: hostHeight > 0 ? hostHeight : 240,
+    MAX_HEIGHT: hostHeight > 0 ? hostHeight : 240,
     HEADER_HEIGHT: scaledHeaderHeight,
     CELL_HEIGHT: scaledCellHeight,
     CELL_WIDTH: scaledCellWidth,

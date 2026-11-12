@@ -135,6 +135,18 @@ export type FileViewerMessageKey =
   | 'spreadsheet.state.rowsAndColumns'
   | 'spreadsheet.error.parseFailed'
   | 'spreadsheet.error.workerFailed'
+  | 'spreadsheet.comments.title'
+  | 'spreadsheet.comments.close'
+  | 'spreadsheet.comments.note'
+  | 'spreadsheet.comments.thread'
+  | 'spreadsheet.comments.resolved'
+  | 'spreadsheet.comments.unknown'
+  | 'spreadsheet.comments.empty'
+  | 'spreadsheet.comments.more'
+  | 'spreadsheet.comments.open'
+  | 'spreadsheet.comments.jump'
+  | 'spreadsheet.comments.warning'
+  | 'spreadsheet.comments.count'
   | 'word.error.invalidDocx'
   | 'word.error.missingOdfContent'
   | 'word.error.odfXmlParseFailed'
@@ -823,6 +835,13 @@ export interface FileViewerSpreadsheetOptions {
   resizableColumns?: boolean
   /** 允许用户在 Excel / CSV / ODS 预览中拖拽行头边界调整行高，默认关闭以保持历史行为。 */
   resizableRows?: boolean
+  /**
+   * Defaults to `source`: gutter numbers match source rows and A1 search addresses.
+   * `legacy-records` restores the historical header heuristic and marks the gutter
+   * with `#`. These are record ordinals, not cell addresses; header-like first
+   * rows are unnumbered. Search, data and zero-based ranges keep source coordinates.
+   */
+  rowNumberMode?: 'source' | 'legacy-records'
   /** Fill spreadsheet previews with display-only blank grid cells by default; false keeps the used range only. */
   fillViewport?: boolean
 }

@@ -1,3 +1,6 @@
+import { applyAutoRowDrawingGeometry } from './spreadsheet/drawingAutoHeight.js';
+import { createAutoRowHeight } from './spreadsheet/autoRowHeight.js';
+import { createSpreadsheetComments, spreadsheetCommentsStyle } from './spreadsheet/comments.js';
 import { createSpreadsheetRangeNavigation } from './spreadsheet/rangeNavigation.js';
 import {
   createFileViewerWorkerController,
@@ -30,7 +33,7 @@ import {
 import { renderSpreadsheetChart } from './spreadsheet/chartRenderer.js';
 import { createSpreadsheetImageSourceResolver } from './spreadsheet/imageSource.js';
 import { shouldFillSpreadsheetViewport, SpreadsheetViewportFill } from './spreadsheet/viewport.js';
-import type { SheetCellMetadata, SheetChart, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
+import type { SheetCellMetadata, SheetChart, SheetComment, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
 import {
   buildRows,
   clampWindowStart,
@@ -228,7 +231,7 @@ const spreadsheetStyle = `
 @media (max-width:720px){.excel-wrapper .toolbar{align-items:stretch;flex-direction:column}.excel-wrapper .btn-group{flex:0 0 auto}.excel-wrapper .summary{max-width:none;white-space:normal}.excel-wrapper .sheet-loading{left:12px;right:12px;bottom:58px;justify-content:center}.excel-wrapper .loading-card{margin:18px;flex-direction:column;text-align:center}.excel-wrapper .excel-image-lightbox button{top:12px;right:12px}}
 @media (prefers-reduced-motion:reduce){.excel-wrapper .excel-image-lightbox,.excel-wrapper .excel-image-lightbox img,.excel-wrapper .excel-image-lightbox button{transition:none}}
 `;
-const scopedSpreadsheetStyle = spreadsheetStyle.replace(
+const scopedSpreadsheetStyle = (spreadsheetStyle + spreadsheetCommentsStyle).replace(
   /\.excel-wrapper/g,
   SPREADSHEET_STYLE_SCOPE
 );
@@ -894,7 +897,10 @@ const renderFileViewerSpreadsheet = async (
   summary.className = 'summary';
   toolbar.append(sheetTabsBar, summary);
 
-  root.append(loading, error, tableWrapper, toolbar, imageLightbox);
+  const workbookBody = documentRef.createElement('div');
+  workbookBody.className = 'excel-body';
+  workbookBody.append(tableWrapper);
+  root.append(loading, error, workbookBody, toolbar, imageLightbox);
   target.replaceChildren(
     createEVirtTableStyle(documentRef, target, loadedEVirtTable.styleText),
     createStyle(documentRef),
@@ -902,6 +908,8 @@ const renderFileViewerSpreadsheet = async (
   );
 
   let sheets: SheetDefinition[] = [];
+  let commentsError = false;
+  let commentViewport: number[] | null = null;
   let sheetIndex = 0;
   let errorMessage = '';
   let totalRows = 0;
@@ -961,6 +969,8 @@ const renderFileViewerSpreadsheet = async (
   });
   const resizableColumns = context?.options?.spreadsheet?.resizableColumns === true;
   const resizableRows = context?.options?.spreadsheet?.resizableRows === true;
+  const rowNumberMode = context?.options?.spreadsheet?.rowNumberMode === 'legacy-records'
+    ? 'legacy-records' : 'source';
   const fillViewport = shouldFillSpreadsheetViewport(
     context?.options?.spreadsheet?.fillViewport,
     type || context?.filename?.split('.').pop()
@@ -1004,6 +1014,25 @@ const renderFileViewerSpreadsheet = async (
       table?.draw();
     },
   });
+  const commentsView = createSpreadsheetComments({
+    root, toolbar, body: workbookBody, options: context?.options,
+    getSheetId: () => sheetIndex,
+    navigate: entry => {
+      commentsView.hide();
+      void rangeNavigation.provider.applyState?.({ spreadsheet: { range: {
+        sheetId: entry.sheetId, startRow: entry.row, endRow: entry.row,
+        startCol: entry.col, endCol: entry.col,
+      } } });
+    },
+  });
+  const activeComments = () => getActiveSheet()?.comments || [];
+  const showComment = (comment: SheetComment, anchor: HTMLElement, focus = true) => {
+    const sheet = getActiveSheet();
+    if (!sheet) return;
+    commentViewport = [table?.ctx.scrollX || 0, table?.ctx.scrollY || 0, tableHost.clientWidth, tableHost.clientHeight];
+    commentsView.show(comment, sheet, anchor, focus);
+  };
+  const commentLabel = (comment: SheetComment) => t('spreadsheet.comments.open', { cell: comment.address });
   const getColumnLabel = (column: number) => {
     let value = Math.max(0, column) + 1;
     let label = '';
@@ -1126,10 +1155,10 @@ const renderFileViewerSpreadsheet = async (
 
     // Charts are appended after images and therefore paint above them. Do not
     // open an image hidden under a chart when their saved bounds overlap.
-    if ([...sheetCharts].reverse().some(chart => containsViewportPoint(chart, x, y))) {
+    if (sheetCharts.map(chart => applyAutoRowDrawingGeometry(chart, virtualState)).reverse().some(chart => containsViewportPoint(chart, x, y))) {
       return undefined;
     }
-    return [...sheetImages].reverse().find(image => containsViewportPoint(image, x, y));
+    return sheetImages.map(image => applyAutoRowDrawingGeometry(image, virtualState)).reverse().find(image => containsViewportPoint(image, x, y));
   };
 
   const handleImageDoubleClick = (event: MouseEvent) => {
@@ -1234,7 +1263,7 @@ const renderFileViewerSpreadsheet = async (
       imageViewportState.height - scalePx(HEADER_HEIGHT) - guard.horizontal,
       0
     );
-    const visibleImages = sheetImages.filter((image) => {
+    const visibleImages = sheetImages.map(image => applyAutoRowDrawingGeometry(image, virtualState)).filter((image) => {
       const x = scalePx(image.left) - imageViewportState.scrollX;
       const y = scalePx(image.top) - imageViewportState.scrollY;
       return x + scalePx(image.width) >= -margin &&
@@ -1242,7 +1271,7 @@ const renderFileViewerSpreadsheet = async (
         y + scalePx(image.height) >= -margin &&
         y <= height + margin;
     });
-    const visibleCharts = sheetCharts.filter((chart) => {
+    const visibleCharts = sheetCharts.map(chart => applyAutoRowDrawingGeometry(chart, virtualState)).filter((chart) => {
       const x = scalePx(chart.left) - imageViewportState.scrollX;
       const y = scalePx(chart.top) - imageViewportState.scrollY;
       return x + scalePx(chart.width) >= -margin &&
@@ -1306,6 +1335,7 @@ const renderFileViewerSpreadsheet = async (
   };
 
   const renderChrome = () => {
+    commentsView.update(sheets, commentsError);
     setHidden(loading, !showBlockingLoading());
     const loadingTitle = loading.querySelector<HTMLElement>('[data-loading-title]');
     if (loadingTitle) {
@@ -1363,6 +1393,34 @@ const renderFileViewerSpreadsheet = async (
     row._height = scaleRowHeight(baseHeight);
   };
 
+  const autoRowHeight = createAutoRowHeight({
+    host: root,
+    getState: () => virtualState,
+    getZoom: () => zoom,
+    getFirstVisibleRow: () => table?.ctx.body.headIndex || 0,
+    commit: changes => {
+      if (disposed || !virtualState.active) return;
+      const firstRow = table?.ctx.body.headIndex || 0;
+      const beforeTop = getSearchRowTop(firstRow);
+      const scrollY = table?.ctx.scrollY || 0, scrollX = table?.ctx.scrollX || 0;
+      let changed = false;
+      for (const [rowIndex, height] of changes) {
+        const row = virtualState.rows[rowIndex];
+        if (!row || Math.abs((virtualState.rowHeightCache.get(rowIndex) ?? virtualState.defaults.rowHeight) - height) < 0.001) continue;
+        virtualState.autoRowHeights.set(rowIndex, height);
+        virtualState.rowHeightCache.set(rowIndex, height);
+        applyRowHeight(row, height);
+        changed = true;
+      }
+      if (!changed) return;
+      virtualState.autoHeightRevision++;
+      syncTableLayout();
+      const delta = getSearchRowTop(firstRow) - beforeTop;
+      if (delta && table) table.scrollTo(scrollX, Math.max(0, scrollY + delta));
+      flushPendingSearchJump();
+    },
+  });
+
   const syncScaledRowHeights = () => {
     virtualState.rowHeightCache.forEach((height, rowIndex) => {
       const row = virtualState.rows[rowIndex];
@@ -1373,8 +1431,10 @@ const renderFileViewerSpreadsheet = async (
   };
 
   const setZoom = (scale: number) => {
+    commentsView.hide();
     zoom = clampZoom(scale);
     syncScaledRowHeights();
+    autoRowHeight.invalidate();
     syncTableLayout();
     zoomEmitter.emit();
     renderChrome();
@@ -1557,6 +1617,9 @@ const renderFileViewerSpreadsheet = async (
         darkMode,
         resizableColumns,
         resizableRows,
+        comments: activeComments(),
+        showComment,
+        commentLabel,
         copySelection: copySpreadsheetSelection,
         searchCell: getSearchCell,
         sheetDefaults,
@@ -1600,6 +1663,11 @@ const renderFileViewerSpreadsheet = async (
         return;
       }
 
+      const viewport = [table.ctx.scrollX || 0, table.ctx.scrollY || 0, tableHost.clientWidth, tableHost.clientHeight];
+      if (commentViewport && viewport.some((value, index) => value !== commentViewport?.[index])) {
+        commentsView.hide();
+        commentViewport = null;
+      }
       const head = Math.max(table.ctx.body.headIndex || 0, 0);
       const tail = Math.max(table.ctx.body.tailIndex || head, head);
       const scrollY = table.ctx.scrollY || 0;
@@ -1630,6 +1698,9 @@ const renderFileViewerSpreadsheet = async (
         darkMode,
         resizableColumns,
         resizableRows,
+        comments: activeComments(),
+        showComment,
+        commentLabel,
         copySelection: copySpreadsheetSelection,
         searchCell: getSearchCell,
         sheetDefaults,
@@ -1638,6 +1709,7 @@ const renderFileViewerSpreadsheet = async (
       }),
     });
     enableEVirtTableShadowEventTargeting(table.ctx);
+    table.on('overlayerChange', () => commentsView.restoreCellFocus());
     table.on('onScrollX', scheduleViewportLoad);
     table.on('onScrollY', scheduleViewportLoad);
     table.on('resize', scheduleViewportLoad);
@@ -1712,6 +1784,7 @@ const renderFileViewerSpreadsheet = async (
     }
 
     applyDefaultInitialFit();
+    autoRowHeight.enqueue(virtualState.autoHeightCells.keys());
     syncTableLayout();
   };
 
@@ -1805,6 +1878,7 @@ const renderFileViewerSpreadsheet = async (
     queueMicrotask(() => {
       if (disposed || !table) return;
       clearTableResizableHeaderCache();
+      autoRowHeight.invalidate();
       syncTableLayout();
     });
   }
@@ -1839,6 +1913,8 @@ const renderFileViewerSpreadsheet = async (
     );
     applyRowHeight(row, baseHeight);
     virtualState.rowHeightOverrides.set(rowIndex, baseHeight);
+    virtualState.autoRowHeights.delete(rowIndex);
+    virtualState.autoHeightRevision++;
     virtualState.rowHeightCache.set(rowIndex, baseHeight);
 
     const activeSheetId = getActiveSheetId();
@@ -1887,13 +1963,13 @@ const renderFileViewerSpreadsheet = async (
       return;
     }
 
-    const { columns, dataKeys } = buildColumns(ws);
+    const { columns, dataKeys } = buildColumns(ws, rowNumberMode);
     virtualState = {
       ...createEmptyVirtualState(),
       active: true,
       totalRows: meta.totalRows,
       totalCols: meta.totalCols,
-      indexOffset: detectIndexOffset(ws),
+      indexOffset: detectIndexOffset(ws, rowNumberMode),
       defaults: ws.defaults,
       dataKeys,
       rows: buildRows(meta.totalRows),
@@ -1925,8 +2001,10 @@ const renderFileViewerSpreadsheet = async (
       if (!row) {
         return;
       }
-      const height = virtualState.rowHeightOverrides.get(absoluteRow)
-        ?? normalizeRowHeight(rawHeight, virtualState.defaults.rowHeight);
+      virtualState.fixedHeightRows.add(absoluteRow);
+      const sourceHeight = normalizeRowHeight(rawHeight, virtualState.defaults.rowHeight);
+      virtualState.sourceRowHeights.set(absoluteRow, sourceHeight);
+      const height = sourceHeight <= 0.1 ? sourceHeight : virtualState.rowHeightOverrides.get(absoluteRow) ?? sourceHeight;
       applyRowHeight(row, height);
       virtualState.rowHeightCache.set(absoluteRow, height);
     });
@@ -1957,10 +2035,12 @@ const renderFileViewerSpreadsheet = async (
       });
 
       const windowHeight = getRowHeight(ws.rowHeights, relativeRow, virtualState.defaults.rowHeight);
-      const height = virtualState.rowHeightOverrides.get(absoluteRow) ?? normalizeRowHeight(
-        getRowHeight(ws.structure?.rowHeights, absoluteRow, windowHeight),
-        virtualState.defaults.rowHeight
+      const sourceHeight = normalizeRowHeight(
+        getRowHeight(ws.structure?.rowHeights, absoluteRow, windowHeight), virtualState.defaults.rowHeight
       );
+      virtualState.sourceRowHeights.set(absoluteRow, sourceHeight);
+      const height = sourceHeight <= 0.1 ? sourceHeight : virtualState.rowHeightOverrides.get(absoluteRow)
+        ?? (virtualState.fixedHeightRows.has(absoluteRow) ? sourceHeight : virtualState.autoRowHeights.get(absoluteRow) ?? sourceHeight);
       applyRowHeight(row, height);
       row[ROW_STATE_FIELD] = RowState.Loaded;
       virtualState.rowHeightCache.set(absoluteRow, height);
@@ -1977,6 +2057,7 @@ const renderFileViewerSpreadsheet = async (
     }
 
     const keys: string[] = [];
+    for (let row = meta.startRow; row < meta.endRow; row++) virtualState.autoHeightCells.delete(row);
     Object.entries(ws.cell || {}).forEach(([key, value]) => {
       const [row, col] = key.split('-').map(Number);
       const absoluteKey = displayCellKey(meta.startRow + row, col + 1);
@@ -1985,6 +2066,11 @@ const renderFileViewerSpreadsheet = async (
         return;
       }
       virtualState.cellCache.set(absoluteKey, style);
+      if (style.wrapText) {
+        const absoluteRow = meta.startRow + row;
+        const columns = virtualState.autoHeightCells.get(absoluteRow) || new Set<number>();
+        columns.add(col); virtualState.autoHeightCells.set(absoluteRow, columns);
+      }
       keys.push(absoluteKey);
     });
 
@@ -2032,6 +2118,10 @@ const renderFileViewerSpreadsheet = async (
       }
     }
 
+    if (structure?.rowSizing) {
+      virtualState.autoHeightDisabled = structure.rowSizing.autoHeightDisabled === true;
+      structure.rowSizing.fixedRows.forEach(row => virtualState.fixedHeightRows.add(row));
+    }
     applyStructureRowHeights(structure?.rowHeights);
     if (structure?.images) {
       sheetImages = structure.images;
@@ -2064,6 +2154,7 @@ const renderFileViewerSpreadsheet = async (
     applyWindowRows(ws);
     applyWindowCells(ws);
     applyDefaultInitialFit();
+    autoRowHeight.enqueue(virtualState.windowRows.get(meta.startRow) || []);
 
     virtualState.loadedWindows.add(meta.startRow);
     virtualState.loadingWindows.delete(meta.startRow);
@@ -2101,6 +2192,7 @@ const renderFileViewerSpreadsheet = async (
   };
 
   const resetViewState = () => {
+    autoRowHeight.cancel();
     errorMessage = '';
     totalRows = 0;
     totalCols = 0;
@@ -2139,6 +2231,7 @@ const renderFileViewerSpreadsheet = async (
 
     cached.loadingWindows.clear();
     virtualState = cached;
+    autoRowHeight.invalidate();
     // Cached rows store display heights from their last active zoom. Rebuild
     // those heights from unscaled state before loading them into the table.
     syncScaledRowHeights();
@@ -2317,6 +2410,7 @@ const renderFileViewerSpreadsheet = async (
   }
 
   function jumpToSpreadsheetCell(spreadsheet: SpreadsheetSearchTarget | null) {
+    commentsView.hide();
     pendingSearchJump = spreadsheet;
     if (!spreadsheet) {
       return;
@@ -2337,6 +2431,7 @@ const renderFileViewerSpreadsheet = async (
   }
 
   function handleSheet(index: number) {
+    commentsView.hide();
     latestSearchRequest += 1;
     rangeNavigation.cancel();
     if (sheetIndex === index) {
@@ -2448,8 +2543,9 @@ const renderFileViewerSpreadsheet = async (
     });
   };
 
-  controller.onWorkerEvent('sheets', ({ sheets: list }: { sheets: SheetDefinition[] }) => {
+  controller.onWorkerEvent('sheets', ({ sheets: list, commentsError: error }: { sheets: SheetDefinition[]; commentsError?: boolean }) => {
     sheets = list;
+    commentsError = !!error;
     resolveWorkbookReady?.();
     resolveWorkbookReady = null;
     const firstSheet = list.find((sheet: SheetDefinition) => !sheet.hidden) || list[0];
@@ -2540,6 +2636,7 @@ const renderFileViewerSpreadsheet = async (
       }
       resizeFrame = requestAnimationFrame(() => {
         resizeFrame = 0;
+        autoRowHeight.enqueue(virtualState.autoHeightCells.keys());
         syncTableLayout();
       });
     });
@@ -2552,6 +2649,8 @@ const renderFileViewerSpreadsheet = async (
     $el: root,
     unmount() {
       disposed = true;
+      autoRowHeight.destroy();
+      commentsView.destroy();
       rangeNavigation.cancel('disposed');
       unsubscribeViewStateZoom();
       unregisterFileViewerViewStateProvider(root);
