@@ -26,6 +26,7 @@
     "src/chart-types.ts",
     "src/chart-config.ts",
     "src/chart-text.ts",
+    "src/chart-axis-layout.ts",
     "src/chart-legend.ts",
     "src/worker.ts",
     "src/worker-location.ts",
