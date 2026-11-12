@@ -6,6 +6,15 @@ import type { FileViewerMessageKey } from '../contracts/types';
  * Chinese and English catalogs; scripts/verify-japanese-i18n.mjs enforces it.
  */
 export const JA_JP_MESSAGES: Record<FileViewerMessageKey, string> = {
+  'signature.panel.title': '署名の詳細',
+  'signature.panel.show': '署名の詳細を表示',
+  'signature.panel.hide': '署名の詳細を非表示',
+  'signature.panel.close': '署名の詳細を閉じる',
+  'signature.panel.reviewValidation': '検証の詳細を確認',
+  'signature.panel.validationNotices': '検証に関する注意事項（{count}）',
+  'signature.panel.checksFailed': '一部の検証に失敗しました',
+  'signature.panel.checksIncomplete': '一部の検証は未完了です',
+
   'toolbar.zoomGroup': 'ズーム操作',
   'toolbar.zoomOut': '縮小',
   'toolbar.zoomIn': '拡大',

@@ -4,6 +4,7 @@
 // should be introduced here. Higher layers depend on these contracts, never the
 // other way around.
 import type { FileViewerXmlOptions } from './xml'
+import type { FileViewerSignatureOptions } from './signature'
 
 export type FileViewerSourceKind = 'file' | 'url' | 'buffer' | 'empty'
 
@@ -16,6 +17,14 @@ export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE' | 
 export type FileViewerStyleIsolation = 'auto' | 'shadow' | 'scoped' | 'none'
 
 export type FileViewerMessageKey =
+  | 'signature.panel.title'
+  | 'signature.panel.show'
+  | 'signature.panel.hide'
+  | 'signature.panel.close'
+  | 'signature.panel.reviewValidation'
+  | 'signature.panel.validationNotices'
+  | 'signature.panel.checksFailed'
+  | 'signature.panel.checksIncomplete'
   | 'toolbar.zoomGroup'
   | 'toolbar.zoomOut'
   | 'toolbar.zoomIn'
@@ -1587,6 +1596,9 @@ export interface FileViewerDiagnostic {
 }
 
 export interface FileViewerOptions {
+  /** Opt-in signature renderer configuration, read when a document is rendered.
+   * updateOptions does not update an already mounted signature panel. */
+  signature?: FileViewerSignatureOptions
   theme?: FileViewerThemeMode
   /** Ctrl/Meta wheel and two-finger document zoom. Enabled when a zoom provider
    * is available; ordinary scrolling and interactive controls stay native.

@@ -614,3 +614,11 @@ export type {
   ViewerLifecycleContext,
   ViewerOperationContext,
 } from './contracts/types';
+
+export type {
+  FileViewerSignatureOptions,
+  FileViewerSignatureDetailsPanelOptions,
+  FileViewerSignatureParseLimits,
+  FileViewerSignatureContainerLimits,
+  FileViewerSignatureJwsVerificationKey
+} from './contracts/signature';

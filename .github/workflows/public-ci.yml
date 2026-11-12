@@ -234,6 +234,21 @@ jobs:
         timeout-minutes: 10
         run: pnpm exec playwright install chromium firefox webkit
 
+      - name: Verify signature panel state and actual signed PDF/XML layouts
+        if: steps.impact.outputs.runtime != 'false'
+        run: |
+          pnpm test:signature-panel
+          pnpm test:signature-panel:browser
+
+      - name: Retain signature panel evidence
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: signature-panel-evidence
+          path: output/signature-panel/**
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Run the issue regression gates
         if: steps.impact.outputs.runtime != 'false'
         run: |

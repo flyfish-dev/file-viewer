@@ -24,6 +24,15 @@ export const FILE_VIEWER_DEFAULT_LOCALE: FileViewerResolvedLocale = 'zh-CN';
 export const FILE_VIEWER_FALLBACK_LOCALE: FileViewerResolvedLocale = 'en-US';
 
 const ZH_CN_MESSAGES: Record<FileViewerMessageKey, string> = {
+  'signature.panel.title': '签名详细信息',
+  'signature.panel.show': '展开签名详细信息',
+  'signature.panel.hide': '收起签名详细信息',
+  'signature.panel.close': '关闭签名详细信息',
+  'signature.panel.reviewValidation': '查看验证详情',
+  'signature.panel.validationNotices': '验证提示（{count}）',
+  'signature.panel.checksFailed': '部分检查未通过',
+  'signature.panel.checksIncomplete': '部分检查尚未完成',
+
   'toolbar.zoomGroup': '缩放控制',
   'toolbar.zoomOut': '缩小预览',
   'toolbar.zoomIn': '放大预览',
@@ -488,6 +497,15 @@ const ZH_CN_MESSAGES: Record<FileViewerMessageKey, string> = {
 };
 
 const EN_US_MESSAGES: Record<FileViewerMessageKey, string> = {
+  'signature.panel.title': 'Signature details',
+  'signature.panel.show': 'Show signature details',
+  'signature.panel.hide': 'Hide signature details',
+  'signature.panel.close': 'Close signature details',
+  'signature.panel.reviewValidation': 'Review validation details',
+  'signature.panel.validationNotices': 'Validation notices ({count})',
+  'signature.panel.checksFailed': 'Some checks failed',
+  'signature.panel.checksIncomplete': 'Some checks have not been completed',
+
   'toolbar.zoomGroup': 'Zoom controls',
   'toolbar.zoomOut': 'Zoom out',
   'toolbar.zoomIn': 'Zoom in',

@@ -2,7 +2,7 @@ import {
   disposeFileViewerRendered,
   normalizeFileViewerUiDensity,
   type FileRenderContext,
-  type FileViewerOptions,
+  type FileViewerSignatureOptions,
   type FileViewerRenderedInstance
 } from '@file-viewer/core'
 import {
@@ -16,45 +16,24 @@ import {
 } from './signatureAsn1.js'
 import { isProbablyOpenPgp } from './openpgp/formatDetection.js'
 import type { OpenPgpWorkerClient as OpenPgpWorkerClientType } from './openpgp/client.js'
-import type {
-  OpenPgpInspectionResult,
-  OpenPgpVerificationResult,
-  SignatureParseLimits
-} from './openpgp/types.js'
+import type { OpenPgpInspectionResult, OpenPgpVerificationResult } from './openpgp/types.js'
 import { SignatureContainerWorkerClient } from './structured/containerClient.js'
-import {
-  normalizeSignatureContainerLimits,
-  type SignatureContainerLimits
-} from './structured/limits.js'
+import { normalizeSignatureContainerLimits } from './structured/limits.js'
 import { inspectJws, isProbablyJws } from './structured/jws.js'
 import type { AsicInspection, JwsInspection, JwsVerificationKey } from './structured/types.js'
 
 const DEFAULT_MAX_CONTAINER_SIZE = 64 * 1024 * 1024
 const DEFAULT_MAX_NESTED_PREVIEW_SIZE = 32 * 1024 * 1024
 
-export interface FileViewerSignatureOptions {
-  /** Original content used for detached CMS signatures and RFC 3161 imprint comparison. */
-  originalContent?: ArrayBuffer | Blob
-  originalFilename?: string
-  /** Maximum cryptographic container size parsed in memory. Defaults to 64 MiB. */
-  maxContainerSize?: number
-  /** Maximum extracted or supplied original size sent to a nested renderer. Defaults to 32 MiB. */
-  maxNestedPreviewSize?: number
-  /** Public keys for detached, cleartext, and unencrypted embedded OpenPGP verification. Secret keys are not accepted. */
-  openPgpPublicKeys?: Array<ArrayBuffer | Blob>
-  /** Conservative parser/resource limits forwarded to the rPGP WebAssembly wrapper. */
-  openPgpLimits?: Partial<SignatureParseLimits>
-  /** Bounded ASiC/JWS resource limits. Absolute hostile-input ceilings cannot be disabled. */
-  containerLimits?: Partial<SignatureContainerLimits>
-  /** Host-provided public verification keys for JWS. Private and symmetric JWKs are rejected. */
-  jwsVerificationKeys?: JwsVerificationKey[]
-  /** Trusted-Types/CSP-aware Worker factory for the optional parser Workers. */
-  workerFactory?: (kind: 'openpgp' | 'container') => Worker
-}
-
-type SignatureFileViewerOptions = FileViewerOptions & {
-  signature?: FileViewerSignatureOptions
-}
+export type {
+  FileViewerSignatureOptions,
+  FileViewerSignatureDetailsPanelOptions
+} from '@file-viewer/core'
+import {
+  createSignatureDetailsPanel,
+  normalizeSignatureDetailsPanelOptions,
+  signatureDetailsPanelStyle
+} from './detailsPanel.js'
 
 const signatureStyle = `
 .signature-shell{box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;overflow:auto;background:#edf2f7;color:#172033;font-family:Aptos,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
@@ -405,7 +384,7 @@ export default async function renderSignature(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument
-  const options = (context?.options as SignatureFileViewerOptions | undefined)?.signature
+  const options = context?.options?.signature
   const filename = context?.filename || `signature.${type || 'p7m'}`
   const requestedMaxContainer =
     typeof options?.maxContainerSize === 'number' &&
@@ -432,7 +411,7 @@ export default async function renderSignature(
   }
 
   const style = createElement(documentRef, 'style')
-  style.textContent = signatureStyle
+  style.textContent = signatureStyle + signatureDetailsPanelStyle
   const root = createElement(documentRef, 'section', 'signature-shell')
   root.dataset.viewerDensity = normalizeFileViewerUiDensity(context?.options?.ui?.density)
   target.replaceChildren(style, root)
@@ -449,28 +428,88 @@ export default async function renderSignature(
   let nestedRendered: FileViewerRenderedInstance | undefined
   let disposed = false
   let renderSequence = 0
+  const panelState = normalizeSignatureDetailsPanelOptions(options?.detailsPanel)
+  let detailsPanel: ReturnType<typeof createSignatureDetailsPanel> | undefined
+  const attachDetailsPanel = (
+    header: HTMLElement,
+    sidebar: HTMLElement,
+    main: HTMLElement,
+    checks: readonly (boolean | undefined)[]
+  ) => {
+    detailsPanel?.dispose()
+    detailsPanel = createSignatureDetailsPanel({
+      shell: root,
+      header,
+      sidebar,
+      main,
+      state: panelState,
+      options: context?.options,
+      checks,
+      onExpandedChange: (expanded) => {
+        panelState.expanded = expanded
+      }
+    })
+  }
 
+  const reportNestedCleanupFailure = () => {
+    try {
+      context?.options?.onDiagnostic?.({
+        code: 'signature-stale-nested-dispose-failed',
+        level: 'warning',
+        message: 'A nested preview could not be disposed.'
+      })
+    } catch {
+      /* A host diagnostic callback cannot revive a disposed signature. */
+    }
+  }
   const clearNested = async () => {
-    await disposeFileViewerRendered(nestedRendered)
+    // Release ownership before awaiting: another selection must not dispose the
+    // same child or clear a newer child when this asynchronous disposal finishes.
+    const rendered = nestedRendered
     nestedRendered = undefined
+    try {
+      await disposeFileViewerRendered(rendered)
+    } catch (error) {
+      reportNestedCleanupFailure()
+      throw error
+    }
+  }
+
+  // Only the latest live selection owns a late nested result.
+  const acceptNested = async (
+    rendered: FileViewerRenderedInstance | undefined,
+    sequence: number
+  ) => {
+    if (!disposed && sequence === renderSequence) {
+      nestedRendered = rendered
+      return
+    }
+    try {
+      await disposeFileViewerRendered(rendered)
+    } catch {
+      reportNestedCleanupFailure()
+    }
   }
 
   const renderInspection = async () => {
     const sequence = ++renderSequence
-    await clearNested()
-    root.replaceChildren(createElement(documentRef, 'div', 'signature-loading'))
-    const loading = root.firstElementChild as HTMLElement
-    loading.append(
-      createElement(documentRef, 'span', 'signature-spinner'),
-      createElement(
-        documentRef,
-        'span',
-        undefined,
-        'Inspecting signature and timestamp structures locally…'
-      )
-    )
-
+    detailsPanel?.dispose()
+    detailsPanel = undefined
     try {
+      await clearNested()
+      if (disposed || sequence !== renderSequence) return
+      root.replaceChildren(createElement(documentRef, 'div', 'signature-loading'))
+      const loading = root.firstElementChild as HTMLElement
+      loading.append(
+        createElement(documentRef, 'span', 'signature-spinner'),
+        createElement(
+          documentRef,
+          'span',
+          undefined,
+          'Inspecting signature and timestamp structures locally…'
+        )
+      )
+
       const sourceBytes = new Uint8Array(buffer)
       const extension = getFilenameExtension(filename) || (type || '').toLowerCase()
       if (['asics', 'scs', 'asice', 'sce'].includes(extension)) {
@@ -480,7 +519,12 @@ export default async function renderSignature(
         const inspection = await containerClient.inspectAsic(buffer, containerLimits)
         if (disposed || sequence !== renderSequence) return
 
-        const signatureResults: Array<{ name: string; result: string; document?: string }> = []
+        const panelChecks: Array<boolean | undefined> = []
+        const signatureResults: Array<{
+          name: string
+          result: string
+          document?: string
+        }> = []
         for (const member of inspection.signatures) {
           let result = 'Parsed metadata only'
           let document: string | undefined
@@ -516,6 +560,12 @@ export default async function renderSignature(
                   cms = checked
                 }
               }
+              panelChecks.push(
+                ...cms.signers.flatMap((signer) => [
+                  signer.cryptographicSignatureValid,
+                  signer.digestMatches
+                ])
+              )
               const checked = cms.signers.filter(
                 (signer) => signer.cryptographicSignatureValid !== undefined
               )
@@ -530,15 +580,26 @@ export default async function renderSignature(
               const timestamp = await inspectSignatureContainer(member.data, {
                 sourceFilename: member.name
               })
+              panelChecks.push(
+                ...timestamp.signers.map((signer) => signer.cryptographicSignatureValid)
+              )
               result = timestamp.timestamp ? 'Timestamp structure parsed' : timestamp.detectedFormat
             } else if (member.kind === 'evidence-record' && member.data) {
               const evidence = await inspectEvidenceRecord(member.data)
+              panelChecks.push(
+                evidence.originalEvidenceMatches,
+                ...evidence.archiveTimestamps.flatMap((item) => [
+                  item.timestampSignaturesValid,
+                  item.evidenceDigestMatchesOriginal
+                ])
+              )
               result = `${evidence.archiveTimestamps.length} archive timestamp(s) parsed`
             } else if (member.kind === 'jws' && member.data) {
               const jws = await inspectJws(member.data, {
                 verificationKeys: jwsVerificationKeys,
                 limits: containerLimits
               })
+              panelChecks.push(...jws.signatures.map((item) => item.cryptographicValid))
               result = jws.signatures.some((item) => item.cryptographicValid === false)
                 ? 'JWS signature invalid'
                 : jws.signatures.length &&
@@ -546,11 +607,13 @@ export default async function renderSignature(
                   ? 'JWS signatures valid'
                   : 'JWS parsed; verification key or payload required'
             } else if (member.kind === 'xades-or-xml') {
+              panelChecks.push(undefined)
               result = member.referencedDocuments.length
                 ? `XML signature metadata references ${member.referencedDocuments.length} document(s)`
                 : 'XML signature metadata parsed; canonicalization not verified'
             }
           } catch (error) {
+            panelChecks.push(false)
             result = `Inspection failed: ${error instanceof Error ? error.message : String(error)}`
           }
           signatureResults.push({ name: member.name, result, document })
@@ -636,9 +699,11 @@ export default async function renderSignature(
         main.append(previewCard)
         content.append(sidebar, main)
         root.append(header, content)
+        attachDetailsPanel(header, sidebar, main, panelChecks)
 
         const openDocument = async (member: AsicInspection['documents'][number]) => {
           const selection = ++renderSequence
+          detailsPanel?.cancelReading()
           await clearNested()
           if (disposed || selection !== renderSequence) return
           previewTarget.replaceChildren()
@@ -668,15 +733,38 @@ export default async function renderSignature(
             )
             return
           }
-          nestedRendered = await context.renderNestedBuffer(
-            member.data.buffer.slice(
-              member.data.byteOffset,
-              member.data.byteOffset + member.data.byteLength
-            ) as ArrayBuffer,
-            nestedExtension,
-            previewTarget,
-            { ...context, filename: member.name, url: undefined, streamUrl: undefined }
+          await acceptNested(
+            await context.renderNestedBuffer(
+              member.data.buffer.slice(
+                member.data.byteOffset,
+                member.data.byteOffset + member.data.byteLength
+              ) as ArrayBuffer,
+              nestedExtension,
+              previewTarget,
+              {
+                ...context,
+                filename: member.name,
+                url: undefined,
+                streamUrl: undefined
+              }
+            ),
+            selection
           )
+        }
+        const selectDocument = (member: AsicInspection['documents'][number]) => {
+          const pending = openDocument(member)
+          const selection = renderSequence
+          void pending.catch((error) => {
+            if (disposed || selection !== renderSequence) return
+            previewTarget.replaceChildren(
+              createElement(
+                documentRef,
+                'div',
+                'signature-error',
+                error instanceof Error ? error.message : String(error)
+              )
+            )
+          })
         }
         inspection.documents.forEach((member, index) => {
           const button = createElement(
@@ -687,10 +775,10 @@ export default async function renderSignature(
           ) as HTMLButtonElement
           button.type = 'button'
           button.addEventListener('click', () => {
-            void openDocument(member)
+            selectDocument(member)
           })
           chooserList.append(button)
-          if (index === 0) void openDocument(member)
+          if (index === 0) selectDocument(member)
         })
         if (!inspection.documents.length) {
           previewTarget.append(
@@ -809,6 +897,13 @@ export default async function renderSignature(
         main.append(timestamps)
         content.append(sidebar, main)
         root.append(header, content)
+        attachDetailsPanel(header, sidebar, main, [
+          inspection.originalEvidenceMatches,
+          ...inspection.archiveTimestamps.flatMap((item) => [
+            item.timestampSignaturesValid,
+            item.evidenceDigestMatchesOriginal
+          ])
+        ])
         return
       }
 
@@ -894,8 +989,7 @@ export default async function renderSignature(
             const keys: JwsVerificationKey[] = []
             for (const value of values) {
               const parsed = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(value)) as
-                | JsonWebKey
-                | { keys?: JsonWebKey[] }
+                JsonWebKey | { keys?: JsonWebKey[] }
               const candidates =
                 'keys' in parsed && Array.isArray(parsed.keys)
                   ? parsed.keys
@@ -903,7 +997,10 @@ export default async function renderSignature(
               for (const key of candidates) {
                 if (!key || typeof key !== 'object' || 'd' in key || 'k' in key)
                   throw new Error('Only public asymmetric JWKs are accepted.')
-                keys.push({ key, kid: (key as JsonWebKey & { kid?: string }).kid })
+                keys.push({
+                  key,
+                  kid: (key as JsonWebKey & { kid?: string }).kid
+                })
               }
             }
             jwsVerificationKeys = keys.slice(0, 64)
@@ -974,20 +1071,34 @@ export default async function renderSignature(
         main.append(previewCard)
         content.append(sidebar, main)
         root.append(header, content)
+        attachDetailsPanel(
+          header,
+          sidebar,
+          main,
+          inspection.signatures.map((item) => item.cryptographicValid)
+        )
         if (
           inspection.payload &&
           inspection.payload.byteLength <= maxNestedPreviewSize &&
           context?.renderNestedBuffer &&
           payloadExtension !== 'bin'
         ) {
-          nestedRendered = await context.renderNestedBuffer(
-            inspection.payload.buffer.slice(
-              inspection.payload.byteOffset,
-              inspection.payload.byteOffset + inspection.payload.byteLength
-            ) as ArrayBuffer,
-            payloadExtension,
-            previewTarget,
-            { ...context, filename: payloadName, url: undefined, streamUrl: undefined }
+          await acceptNested(
+            await context.renderNestedBuffer(
+              inspection.payload.buffer.slice(
+                inspection.payload.byteOffset,
+                inspection.payload.byteOffset + inspection.payload.byteLength
+              ) as ArrayBuffer,
+              payloadExtension,
+              previewTarget,
+              {
+                ...context,
+                filename: payloadName,
+                url: undefined,
+                streamUrl: undefined
+              }
+            ),
+            sequence
           )
         } else {
           previewTarget.append(
@@ -1232,6 +1343,12 @@ export default async function renderSignature(
         )
         previewCard.append(previewHead, previewTarget)
         main.append(previewCard)
+        content.append(sidebar, main)
+        root.append(header, content)
+        attachDetailsPanel(header, sidebar, main, [
+          ...inspection.signatures.map((item) => item.cryptographicValid),
+          ...(inspection.classification === 'detached-signature' ? [verification?.valid] : [])
+        ])
         if (!literalBytes) {
           previewTarget.append(
             createElement(
@@ -1264,19 +1381,25 @@ export default async function renderSignature(
             )
           )
         } else {
-          nestedRendered = await context.renderNestedBuffer(
-            literalBytes.buffer.slice(
-              literalBytes.byteOffset,
-              literalBytes.byteOffset + literalBytes.byteLength
-            ) as ArrayBuffer,
-            literalExtension,
-            previewTarget,
-            { ...context, filename: literalFilename, url: undefined, streamUrl: undefined }
+          await acceptNested(
+            await context.renderNestedBuffer(
+              literalBytes.buffer.slice(
+                literalBytes.byteOffset,
+                literalBytes.byteOffset + literalBytes.byteLength
+              ) as ArrayBuffer,
+              literalExtension,
+              previewTarget,
+              {
+                ...context,
+                filename: literalFilename,
+                url: undefined,
+                streamUrl: undefined
+              }
+            ),
+            sequence
           )
         }
 
-        content.append(sidebar, main)
-        root.append(header, content)
         return
       }
 
@@ -1466,6 +1589,13 @@ export default async function renderSignature(
 
       content.append(sidebar, main)
       root.append(header, content)
+      attachDetailsPanel(header, sidebar, main, [
+        ...inspection.signers.flatMap((signer) => [
+          signer.cryptographicSignatureValid,
+          signer.digestMatches
+        ]),
+        ...(inspection.timestamp ? [inspection.timestamp.messageImprintMatchesOriginal] : [])
+      ])
 
       if (!previewBytes) {
         previewTarget.append(
@@ -1497,19 +1627,22 @@ export default async function renderSignature(
           )
         )
       } else {
-        nestedRendered = await context.renderNestedBuffer(
-          previewBytes.buffer.slice(
-            previewBytes.byteOffset,
-            previewBytes.byteOffset + previewBytes.byteLength
-          ) as ArrayBuffer,
-          identity.extension,
-          previewTarget,
-          {
-            ...context,
-            filename: identity.filename,
-            url: undefined,
-            streamUrl: undefined
-          }
+        await acceptNested(
+          await context.renderNestedBuffer(
+            previewBytes.buffer.slice(
+              previewBytes.byteOffset,
+              previewBytes.byteOffset + previewBytes.byteLength
+            ) as ArrayBuffer,
+            identity.extension,
+            previewTarget,
+            {
+              ...context,
+              filename: identity.filename,
+              url: undefined,
+              streamUrl: undefined
+            }
+          ),
+          sequence
         )
       }
     } catch (error) {
@@ -1534,12 +1667,19 @@ export default async function renderSignature(
     async unmount() {
       disposed = true
       renderSequence += 1
+      detailsPanel?.dispose()
+      detailsPanel = undefined
       openPgpClient?.dispose()
       openPgpClient = undefined
       containerClient?.dispose()
       containerClient = undefined
-      await clearNested()
-      target.replaceChildren()
+      try {
+        await clearNested()
+      } finally {
+        // A replacement viewer may already own this target while disposal waits.
+        if (root.parentNode === target) root.remove()
+        if (style.parentNode === target) style.remove()
+      }
     }
   }
 }

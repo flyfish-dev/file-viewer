@@ -1324,3 +1324,11 @@ export { resolveFileViewerCopiedAssetUrl } from './platform/copiedAssets';
 
 export type { FileViewerSpreadsheetRange, FileViewerSpreadsheetNavigationStatus } from './contracts/types';
 export { installFileViewerImageHandTool } from './features/document/imageHandTool';
+
+export type {
+  FileViewerSignatureOptions,
+  FileViewerSignatureDetailsPanelOptions,
+  FileViewerSignatureParseLimits,
+  FileViewerSignatureContainerLimits,
+  FileViewerSignatureJwsVerificationKey
+} from './contracts/signature';

@@ -5,6 +5,15 @@ import type { FileViewerMessageKey } from '../contracts/types';
  * Keep placeholders aligned with the Chinese and English catalogs.
  */
 export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
+  'signature.panel.title': 'Signaturdetails',
+  'signature.panel.show': 'Signaturdetails anzeigen',
+  'signature.panel.hide': 'Signaturdetails ausblenden',
+  'signature.panel.close': 'Signaturdetails schließen',
+  'signature.panel.reviewValidation': 'Prüfdetails ansehen',
+  'signature.panel.validationNotices': 'Prüfhinweise ({count})',
+  'signature.panel.checksFailed': 'Einige Prüfungen sind fehlgeschlagen',
+  'signature.panel.checksIncomplete': 'Einige Prüfungen sind noch nicht abgeschlossen',
+
   "toolbar.zoomGroup": "Zoom-Steuerelemente",
   "toolbar.zoomOut": "Herauszoomen",
   "toolbar.zoomIn": "Vergrößern",

@@ -117,7 +117,9 @@
     "release:verify": "pnpm verify:docx-upstream && pnpm build && pnpm type-check && pnpm test",
     "verify:github-governance": "node --test .github/scripts/*.test.mjs && node .github/scripts/verify-community-standards.mjs && prettier --config .github/prettier-governance.json --check '.github/**/*.{md,yml,mjs,json}' CONTRIBUTING.md SUPPORT.md",
     "test:pdf-rendering-fallbacks": "node --test test/pdf-rendering-fallbacks.test.mjs",
-    "test:pptx-chart-layout": "pnpm exec vitest run test/pptx-chart-glyph-layout.spec.ts test/pptx-chart-axis-height.spec.ts test/pptx-chart-model.spec.ts --no-cache --fsModuleCachePath output/pptx-chart-layout/vitest-cache && PPTX_CHART_BROWSER=chromium PPTX_CHART_OUTPUT=\"$PWD/output/pptx-chart-layout/chromium\" pnpm --filter @file-viewer/pptx verify:chart-glyph-layout && PPTX_CHART_BROWSER=webkit PPTX_CHART_OUTPUT=\"$PWD/output/pptx-chart-layout/webkit\" pnpm --filter @file-viewer/pptx verify:chart-glyph-layout"
+    "test:pptx-chart-layout": "pnpm exec vitest run test/pptx-chart-glyph-layout.spec.ts test/pptx-chart-axis-height.spec.ts test/pptx-chart-model.spec.ts --no-cache --fsModuleCachePath output/pptx-chart-layout/vitest-cache && PPTX_CHART_BROWSER=chromium PPTX_CHART_OUTPUT=\"$PWD/output/pptx-chart-layout/chromium\" pnpm --filter @file-viewer/pptx verify:chart-glyph-layout && PPTX_CHART_BROWSER=webkit PPTX_CHART_OUTPUT=\"$PWD/output/pptx-chart-layout/webkit\" pnpm --filter @file-viewer/pptx verify:chart-glyph-layout",
+    "test:signature-panel": "vitest run --config vitest.signature.config.ts",
+    "test:signature-panel:browser": "node packages/renderers/signature/test/browser/verify-panel-suite.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
