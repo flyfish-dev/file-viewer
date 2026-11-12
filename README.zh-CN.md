@@ -418,6 +418,8 @@ Preset 选择:
 | `@file-viewer/preset-engineering` | CAD、3D、绘图、XMind、Geo、Typst、Archive、Data、EDA |
 | `@file-viewer/preset-all` | 已发布的 Full 兼容基线；不是所有后续专业 renderer 的合集 |
 
+当前源码在所有框架及 full 包中离线内置七种界面语言：`zh-CN`、`en-US`、`ja-JP`、`zh-TW`、`zh-HK`、`de-DE`、`ru-RU`。更新 `options.locale` 可切换界面文案并保留当前文件和阅读状态，语言匹配、自定义消息和格式化见[国际化指南](docs/zh/guide/i18n.md)。已发布包的可用范围见[更新记录](CHANGELOG.md)。
+
 国际化、主题、水印、工具栏、搜索、打印、导出、生命周期和前置权限校验都通过同一套 `options` 配置。完整 API 见 [官方文档](https://doc.file-viewer.app/guide/usage)。
 
 ## 当前 npm 生态

@@ -6,7 +6,8 @@ export type GeometryKernelOutput = 'three-object' | 'mesh' | 'fragments';
 
 export type GeometryKernelConfidence = 'none' | 'low' | 'medium' | 'high';
 
-export type GeometryKernelLocale = 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE';
+/** Accepts canonical UI tags; the viewer's locale registry owns negotiation. */
+export type GeometryKernelLocale = string;
 
 export interface GeometryKernelCapability {
   readonly renderer: string;
@@ -506,6 +507,12 @@ export const formatGeometryKernelNotice = (
     route?.format === 'brep';
 
   if (hasNativeOcctPreview) {
+    if (locale === 'zh-TW' || locale === 'zh-HK') {
+      return `${formatLabel} 已透過獨立 OCCT Worker/WASM 在瀏覽器內完成本機預覽，檔案無需上傳；僅於離線資源部署在自訂目錄時，才需要設定 options.model 路徑。`;
+    }
+    if (locale === 'ru-RU') {
+      return `${formatLabel} отображается локально через отдельный OCCT Worker/WASM. Файл остаётся в браузере. Настройте options.model, только если локальные ресурсы размещены по нестандартному пути.`;
+    }
     if (locale === 'en-US') {
       return `${formatLabel} is previewed locally with the dedicated OCCT Worker/WASM path. The file stays in the browser; configure options.model only when the self-hosted assets use a custom deployment path.`;
     }
@@ -518,6 +525,12 @@ export const formatGeometryKernelNotice = (
     return `${formatLabel} 已通过独立 OCCT Worker/WASM 在浏览器本地完成预览，文件无需上传；仅当离线资源部署在自定义目录时，才需要覆盖 options.model 路径。`;
   }
 
+  if (locale === 'zh-TW' || locale === 'zh-HK') {
+    return `${formatLabel} 需要獨立 WebAssembly 幾何核心（${engines}）才能在瀏覽器內完整預覽。Flyfish Viewer 將大型執行環境與 core 和預設 3D 模組分開；請接入獨立幾何核心，或在私有轉換流程輸出 ${targets} 後預覽。`;
+  }
+  if (locale === 'ru-RU') {
+    return `Для полного предпросмотра ${formatLabel} в браузере требуется отдельное геометрическое ядро WebAssembly (${engines}). Flyfish Viewer отделяет эти ресурсы от core и стандартного 3D-модуля. Подключите отдельное ядро или преобразуйте модель в ${targets} в частной среде.`;
+  }
   if (locale === 'en-US') {
     return `${formatLabel} requires a dedicated WebAssembly geometry kernel (${engines}) for full browser preview. Flyfish Viewer keeps these heavy runtimes outside core and the default 3D renderer install path; use the dedicated geometry engine route or convert the model to ${targets} in a private pipeline.`;
   }

@@ -52,7 +52,8 @@ export default defineConfig({
         'manual-js': resolve(demoRoot, 'manual-js.html'),
         'manual-iife': resolve(demoRoot, 'manual-iife.html'),
         'svelte-action': resolve(demoRoot, 'svelte-action.html'),
-        vue3: resolve(demoRoot, 'vue3.html')
+        vue3: resolve(demoRoot, 'vue3.html'),
+        requirejs: resolve(demoRoot, 'requirejs.html')
       }
     }
   }

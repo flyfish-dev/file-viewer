@@ -94,6 +94,9 @@ importers:
 
   apps/component-demo:
     dependencies:
+      '@file-viewer/core':
+        specifier: workspace:3.3.3
+        version: link:../../packages/core
       '@file-viewer/jquery':
         specifier: workspace:3.3.3
         version: link:../../packages/components/jquery

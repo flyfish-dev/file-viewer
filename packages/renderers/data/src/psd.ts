@@ -58,21 +58,7 @@ const psdStyle = `
 @media (max-width:760px){.psd-layout{grid-template-columns:1fr}.psd-sidebar{max-height:240px;border-right:0;border-bottom:1px solid var(--psd-border)}.psd-stage{padding:14px}}
 `
 
-const createElement = <TagName extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tagName: TagName,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tagName)
-  if (className) {
-    element.className = className
-  }
-  if (typeof text === 'string') {
-    element.textContent = text
-  }
-  return element
-}
+
 
 const createStyle = (documentRef: Document) => {
   const style = documentRef.createElement('style')
@@ -160,7 +146,8 @@ export default async function renderPsdAsset(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const createElement = t.element
   const imported = await import('ag-psd/dist/bundle.js')
   const { readPsd } = imported.default || imported
   const configuredLimit = context?.options?.design?.maxDecodedBytes
@@ -189,16 +176,16 @@ export default async function renderPsdAsset(
   const toolbar = createElement(documentRef, 'div', 'psd-toolbar')
   const title = createElement(documentRef, 'div', 'psd-title')
   title.append(
-    createElement(documentRef, 'strong', undefined, t('psd.title')),
-    createElement(documentRef, 'span', undefined, `${psd.width || 0} x ${psd.height || 0} · ${layers.length} layers · ag-psd`)
+    t.text(createElement(documentRef, 'strong', undefined), 'psd.title'),
+    createElement(documentRef, 'span', undefined, () => t('ui.data.ui.x.layers.ag.psd.7900d0', { p0: psd.width || 0, p1: psd.height || 0, p2: layers.length }))
   )
   const actions = createElement(documentRef, 'div', 'psd-actions')
   const zoomOut = createElement(documentRef, 'button', undefined, '-') as HTMLButtonElement
   const zoomLabel = createElement(documentRef, 'span', undefined, '100%')
   const zoomIn = createElement(documentRef, 'button', undefined, '+') as HTMLButtonElement
-  const reset = createElement(documentRef, 'button', undefined, t('psd.action.fit')) as HTMLButtonElement
-  const showAll = createElement(documentRef, 'button', undefined, t('psd.action.showAll')) as HTMLButtonElement
-  const hideAll = createElement(documentRef, 'button', undefined, t('psd.action.hideAll')) as HTMLButtonElement
+  const reset = t.text(createElement(documentRef, 'button', undefined), 'psd.action.fit') as HTMLButtonElement
+  const showAll = t.text(createElement(documentRef, 'button', undefined), 'psd.action.showAll') as HTMLButtonElement
+  const hideAll = t.text(createElement(documentRef, 'button', undefined), 'psd.action.hideAll') as HTMLButtonElement
   ;[zoomOut, zoomIn, reset, showAll, hideAll].forEach(button => {
     button.type = 'button'
   })
@@ -209,8 +196,8 @@ export default async function renderPsdAsset(
   const sidebar = createElement(documentRef, 'aside', 'psd-sidebar')
   const sidebarHeader = createElement(documentRef, 'div', 'psd-sidebar-header')
   sidebarHeader.append(
-    createElement(documentRef, 'span', undefined, t('psd.layers.title')),
-    createElement(documentRef, 'span', undefined, t('psd.layers.redrawable', { count: drawableLayers.length }))
+    t.text(createElement(documentRef, 'span', undefined), 'psd.layers.title'),
+    t.text(createElement(documentRef, 'span', undefined), 'psd.layers.redrawable', { count: drawableLayers.length })
   )
   const list = createElement(documentRef, 'ul', 'psd-layer-list')
   sidebar.append(sidebarHeader, list)
@@ -247,7 +234,7 @@ export default async function renderPsdAsset(
   }
 
   if (!layers.length) {
-    list.appendChild(createElement(documentRef, 'li', 'psd-empty', t('psd.layers.empty')))
+    list.appendChild(t.text(createElement(documentRef, 'li', 'psd-empty'), 'psd.layers.empty'))
   }
 
   panelLayers.forEach(layer => {
@@ -270,7 +257,7 @@ export default async function renderPsdAsset(
     const copy = createElement(documentRef, 'div')
     copy.append(
       createElement(documentRef, 'strong', undefined, layer.name),
-      createElement(documentRef, 'span', undefined, `${layer.left},${layer.top} · ${layer.width} x ${layer.height}${layer.hidden ? ` · ${t('psd.layers.hidden')}` : ''}`)
+      createElement(documentRef, 'span', undefined, () => `${layer.left},${layer.top} · ${layer.width} x ${layer.height}${layer.hidden ? ` · ${t('psd.layers.hidden')}` : ''}`)
     )
     item.append(checkbox, copy)
     list.appendChild(item)

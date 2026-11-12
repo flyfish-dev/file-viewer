@@ -63,6 +63,8 @@ import { normalizeSource } from '../source';
 import { buildFileViewerWatermarkInlineStyle } from '../features/watermark';
 import { createFileViewerSnapshotDownload } from '../output/snapshotDownload';
 import { createFileViewerErrorState, createFileViewerUnsupportedState } from './state';
+import { createFileViewerI18n } from '../i18n/context';
+import { FILE_VIEWER_LOCALE_METADATA } from '../i18n/locales';
 import type {
   FileRenderContext,
   FileRenderExportAdapter,
@@ -262,7 +264,10 @@ export const createViewer = (
   container: HTMLElement,
   createOptions: CreateViewerOptions = {}
 ): FileViewerInstance => {
-  let options = createOptions.options || {};
+  const viewerI18n = createFileViewerI18n(createOptions.options);
+  let options = viewerI18n.options;
+  let refreshStateCopy: (() => void) | null = null;
+  viewerI18n.subscribe(() => refreshStateCopy?.());
   let registry = createBaseRendererRegistry(createOptions, options);
   let installedRendererInput: FileViewerOptions['renderers'] | undefined = undefined;
   let installedPresetInput: FileViewerOptions['preset'] | undefined = undefined;
@@ -559,6 +564,10 @@ export const createViewer = (
       signal: context?.signal,
       renderPurpose: context?.renderPurpose || createOptions.renderPurpose || 'preview',
     });
+    const stopLanguageSync = (context?.i18n || viewerI18n).subscribe(() => {
+      const parent = context?.i18n || viewerI18n;
+      nestedViewer.updateOptions({ locale: parent.locale, messages: parent.options.messages, i18n: parent.options.i18n });
+    });
 
     try {
       await nestedViewer.load({
@@ -569,14 +578,16 @@ export const createViewer = (
         signal: context?.signal,
       });
       if (context?.signal?.aborted) {
+        stopLanguageSync();
         await nestedViewer.destroy('replace');
         return undefined;
       }
       return {
         $el: target,
-        destroy: () => nestedViewer.destroy('component-unmount'),
+        destroy: () => { stopLanguageSync(); return nestedViewer.destroy('component-unmount'); },
       };
     } catch (error) {
+      stopLanguageSync();
       await nestedViewer.destroy('replace');
       throw error;
     }
@@ -709,6 +720,7 @@ export const createViewer = (
   fitController.observe();
 
   const destroyCurrent = async (reason: FileViewerLifecycleContext['reason'] = 'replace') => {
+    refreshStateCopy = null;
     const session = renderSurfaceState.session;
     const target = currentRenderTarget;
 
@@ -799,6 +811,7 @@ export const createViewer = (
 
       if (!renderer?.load) {
         renderMissingRendererState(target, resolvedExtension, options);
+        refreshStateCopy = () => renderMissingRendererState(target, resolvedExtension, options);
         applyFileViewerRenderSurfaceState(renderSurfaceState, { session: null });
         syncWatermarkOverlay();
         emitZoomAndOperationAvailabilityChange();
@@ -807,11 +820,18 @@ export const createViewer = (
       }
 
       let session: RendererSession | undefined;
+      const renderI18n = createFileViewerI18n(options, { parent: viewerI18n, signal: loadSignal });
+      const syncLanguage = () => {
+        targetHost.setAttribute('lang', renderI18n.locale);
+        targetHost.setAttribute('dir', FILE_VIEWER_LOCALE_METADATA[renderI18n.locale].direction);
+      };
+      syncLanguage();
+      renderI18n.subscribe(syncLanguage);
       try {
-        session = await renderer.load({
+        const loadedSession = await renderer.load({
           source: routedSource,
           surface,
-          options,
+          options: renderI18n.options,
           signal: loadSignal,
           registerExportAdapter: adapter => {
             if (requestScope.isCurrentRequest(version)) {
@@ -824,6 +844,7 @@ export const createViewer = (
             }
           },
           renderContext: {
+            i18n: renderI18n,
             renderPurpose: createOptions.renderPurpose || 'preview',
             renderNestedBuffer,
             requestSnapshotDownload: createFileViewerSnapshotDownload({
@@ -833,7 +854,15 @@ export const createViewer = (
             }),
           },
         });
+        session = {
+          ...loadedSession,
+          destroy: async () => {
+            renderI18n.destroy();
+            await loadedSession.destroy?.();
+          },
+        };
       } catch (error) {
+        renderI18n.destroy();
         if (!requestScope.isCurrentRequest(version) || loadSignal?.aborted || isAbortError(error)) {
           removeRenderTarget(targetHost);
           return null;
@@ -845,6 +874,7 @@ export const createViewer = (
         });
         removeWatermarkOverlay();
         renderFileViewerErrorState(target, resolvedExtension, error, options);
+        refreshStateCopy = () => renderFileViewerErrorState(target, resolvedExtension, error, options);
         emitZoomAndOperationAvailabilityChange();
         throw error;
       }
@@ -892,6 +922,7 @@ export const createViewer = (
       await destroyCurrent(reason);
     },
     async destroy(reason = 'component-unmount') {
+      viewerI18n.destroy();
       requestScope.requestController.createVersion();
       await destroyCurrent(reason);
       documentActions.destroyDocumentFeatures();
@@ -902,10 +933,11 @@ export const createViewer = (
     },
     updateOptions(nextOptions: Partial<FileViewerOptions>) {
       const previousFit = options.fit;
-      options = {
+      viewerI18n.update({
         ...options,
         ...nextOptions,
-      };
+      });
+      options = viewerI18n.options;
       syncFileViewerRenderSurfaceBackground(currentRenderTarget, options);
       currentRenderTarget?.setAttribute('data-viewer-theme', options.theme || 'system');
       syncWatermarkOverlay();

@@ -20,10 +20,10 @@ export interface FileViewerLoadingController {
   readonly state: FileViewerLoadingState;
   setExtension(nextExtend?: string): FileViewerLoadingState;
   setI18n(nextI18n?: FileViewerI18nInput): FileViewerLoadingState;
-  startLoading(nextMessage: string): FileViewerLoadingState;
-  setLoadingMessage(nextMessage: string): FileViewerLoadingState;
+  startLoading(nextMessage: string, messageKey?: FileViewerMessageKey): FileViewerLoadingState;
+  setLoadingMessage(nextMessage: string, messageKey?: FileViewerMessageKey): FileViewerLoadingState;
   stopLoading(): FileViewerLoadingState;
-  showError(nextMessage: string): FileViewerLoadingState;
+  showError(nextMessage: string, resolveMessage?: (i18n?: FileViewerI18nInput) => string): FileViewerLoadingState;
   clearError(): FileViewerLoadingState;
   resetLoading(): FileViewerLoadingState;
   getState(): FileViewerLoadingState;
@@ -32,10 +32,10 @@ export interface FileViewerLoadingController {
 export interface FileViewerLoadingControllerActionHandlers {
   setExtension(nextExtend?: string): FileViewerLoadingState;
   setI18n(nextI18n?: FileViewerI18nInput): FileViewerLoadingState;
-  startLoading(nextMessage: string): FileViewerLoadingState;
-  setLoadingMessage(nextMessage: string): FileViewerLoadingState;
+  startLoading(nextMessage: string, messageKey?: FileViewerMessageKey): FileViewerLoadingState;
+  setLoadingMessage(nextMessage: string, messageKey?: FileViewerMessageKey): FileViewerLoadingState;
   stopLoading(): FileViewerLoadingState;
-  showError(nextMessage: string): FileViewerLoadingState;
+  showError(nextMessage: string, resolveMessage?: (i18n?: FileViewerI18nInput) => string): FileViewerLoadingState;
   clearError(): FileViewerLoadingState;
   resetLoading(): FileViewerLoadingState;
   syncLoadingState(): FileViewerLoadingState;
@@ -580,17 +580,17 @@ export const createFileViewerLoadingControllerActionHandlers = <
     setI18n(nextI18n?: FileViewerI18nInput) {
       return runFileViewerLoadingControllerAction(target, () => controller.setI18n(nextI18n));
     },
-    startLoading(nextMessage: string) {
-      return runFileViewerLoadingControllerAction(target, () => controller.startLoading(nextMessage));
+    startLoading(nextMessage: string, messageKey?: FileViewerMessageKey) {
+      return runFileViewerLoadingControllerAction(target, () => controller.startLoading(nextMessage, messageKey));
     },
-    setLoadingMessage(nextMessage: string) {
-      return runFileViewerLoadingControllerAction(target, () => controller.setLoadingMessage(nextMessage));
+    setLoadingMessage(nextMessage: string, messageKey?: FileViewerMessageKey) {
+      return runFileViewerLoadingControllerAction(target, () => controller.setLoadingMessage(nextMessage, messageKey));
     },
     stopLoading() {
       return runFileViewerLoadingControllerAction(target, () => controller.stopLoading());
     },
-    showError(nextMessage: string) {
-      return runFileViewerLoadingControllerAction(target, () => controller.showError(nextMessage));
+    showError(nextMessage: string, resolveMessage?: (i18n?: FileViewerI18nInput) => string) {
+      return runFileViewerLoadingControllerAction(target, () => controller.showError(nextMessage, resolveMessage));
     },
     clearError() {
       return runFileViewerLoadingControllerAction(target, () => controller.clearError());
@@ -614,6 +614,8 @@ export const createFileViewerLoadingController = (
 ): FileViewerLoadingController => {
   let currentExtend = extend;
   let currentI18n = initialI18n;
+  let currentMessageKey: FileViewerMessageKey | undefined;
+  let currentErrorResolver: ((i18n?: FileViewerI18nInput) => string) | undefined;
   const state = createFileViewerLoadingState(extend, initialI18n);
 
   const updateTheme = (nextExtend: string) => {
@@ -631,37 +633,48 @@ export const createFileViewerLoadingController = (
     setI18n(nextI18n?: FileViewerI18nInput) {
       currentI18n = nextI18n;
       updateTheme(currentExtend);
+      if (currentMessageKey) state.message = translateFileViewerMessage(currentI18n, currentMessageKey);
+      if (currentErrorResolver && state.error) state.error = currentErrorResolver(currentI18n);
       return cloneFileViewerLoadingState(state);
     },
-    startLoading(nextMessage: string) {
+    startLoading(nextMessage: string, messageKey?: FileViewerMessageKey) {
       state.loading = true;
-      state.message = nextMessage;
+      currentMessageKey = messageKey;
+      state.message = messageKey ? translateFileViewerMessage(currentI18n, messageKey) : nextMessage;
       state.error = '';
+      currentErrorResolver = undefined;
       return cloneFileViewerLoadingState(state);
     },
-    setLoadingMessage(nextMessage: string) {
-      state.message = nextMessage;
+    setLoadingMessage(nextMessage: string, messageKey?: FileViewerMessageKey) {
+      currentMessageKey = messageKey;
+      state.message = messageKey ? translateFileViewerMessage(currentI18n, messageKey) : nextMessage;
       return cloneFileViewerLoadingState(state);
     },
     stopLoading() {
       state.loading = false;
       state.message = '';
+      currentMessageKey = undefined;
       return cloneFileViewerLoadingState(state);
     },
-    showError(nextMessage: string) {
+    showError(nextMessage: string, resolveMessage?: (i18n?: FileViewerI18nInput) => string) {
       state.loading = false;
       state.message = '';
+      currentMessageKey = undefined;
+      currentErrorResolver = typeof resolveMessage === 'function' ? resolveMessage : undefined;
       state.error = nextMessage;
       return cloneFileViewerLoadingState(state);
     },
     clearError() {
       state.error = '';
+      currentErrorResolver = undefined;
       return cloneFileViewerLoadingState(state);
     },
     resetLoading() {
       state.loading = false;
       state.message = '';
+      currentMessageKey = undefined;
       state.error = '';
+      currentErrorResolver = undefined;
       return cloneFileViewerLoadingState(state);
     },
     getState() {

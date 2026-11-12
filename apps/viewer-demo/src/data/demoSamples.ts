@@ -5,6 +5,9 @@
  * component prevents every format addition from growing the UI controller and
  * lets tests validate format coverage without depending on template markup.
  */
+import { additionalGroupCopies, additionalSampleNames } from './sampleTranslations'
+import type { FileViewerResolvedLocale } from '@file-viewer/core'
+
 export type DemoPresetFile = {
   name: string
   url: string
@@ -631,6 +634,22 @@ export const sampleGroupsJa: DemoSampleGroup[] = sampleGroupsZh.map((group, inde
     }
   })
 }))
+
+const additionalGroups = (locale: keyof typeof additionalSampleNames): DemoSampleGroup[] => {
+  const source = locale === 'zh-TW' || locale === 'zh-HK' ? sampleGroupsZh : sampleGroupsEn
+  const names: Readonly<Record<string, string>> = additionalSampleNames[locale]
+  return source.map((group, index) => ({
+    ...group,
+    ...additionalGroupCopies[locale][index],
+    items: group.items.map(item => ({ ...item, name: names[item.url] || item.name }))
+  }))
+}
+
+export const sampleGroupsByLocale: Record<FileViewerResolvedLocale, DemoSampleGroup[]> = {
+  'zh-CN': sampleGroupsZh, 'en-US': sampleGroupsEn, 'ja-JP': sampleGroupsJa,
+  'zh-TW': additionalGroups('zh-TW'), 'zh-HK': additionalGroups('zh-HK'),
+  'de-DE': additionalGroups('de-DE'), 'ru-RU': additionalGroups('ru-RU')
+}
 
 // This union serves URL matching and upload-extension coverage across locales.
 export const allDemoPresetFiles = [...sampleGroupsZh, ...sampleGroupsEn, ...sampleGroupsJa]

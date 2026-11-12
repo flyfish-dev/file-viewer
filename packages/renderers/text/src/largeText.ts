@@ -379,7 +379,7 @@ export default async function renderLargeText(
   type = 'txt',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const documentRef = target.ownerDocument
   const sourceBytes = new Uint8Array(buffer)
   const source = resolveFileViewerTextEncoding(
@@ -434,7 +434,7 @@ export default async function renderLargeText(
   toolbarMeta.className = 'code-toolbar-meta'
   const status = documentRef.createElement('span')
   const lineSummary = documentRef.createElement('strong')
-  status.textContent = t('text.code.indexingLargeFile', { progress: 0 })
+  t.text(status, 'text.code.indexingLargeFile', { progress: 0 })
   toolbarMeta.append(status, lineSummary)
   toolbar.append(extensionLabel, toolbarMeta)
   if (showToolbar) {
@@ -445,16 +445,16 @@ export default async function renderLargeText(
 
   const index = await buildLargeTextIndex(bytes, source.encoding, target, progress => {
     if (!disposed) {
-      status.textContent = t('text.code.indexingLargeFile', { progress })
+      t.text(status, 'text.code.indexingLargeFile', { progress })
     }
   })
   if (disposed) {
     return { $el: target, unmount() {} }
   }
 
-  status.textContent = t('text.code.virtualized')
+  t.text(status, 'text.code.virtualized')
   root.dataset.totalLines = String(index.lineCount)
-  lineSummary.textContent = `${formatLargeNumber(index.lineCount)} lines`
+  t.bind(lineSummary, node => { node.textContent = t('ui.text.ui.lines.24e137', { p0: formatLargeNumber(index.lineCount) }); }, 'textContent')
   root.style.setProperty('--code-line-number-width', `${Math.max(6, String(index.lineCount).length + 2)}ch`)
   root.style.setProperty('--code-line-number-offset', showLineNumbers ? 'var(--code-line-number-width)' : '0px')
 

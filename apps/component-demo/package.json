@@ -10,6 +10,7 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "@file-viewer/core": "workspace:3.3.3",
     "@file-viewer/jquery": "workspace:3.3.3",
     "@file-viewer/jquery-full": "workspace:3.3.3",
     "@file-viewer/react": "workspace:3.3.3",

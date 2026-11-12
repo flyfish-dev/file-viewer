@@ -4,6 +4,7 @@ import type {
   FileViewerPrintStamp,
 } from '../contracts/types';
 import { createFileViewerTranslator, type FileViewerI18nInput } from '../i18n/messages';
+import { createFileViewerI18n, fileViewerI18nContexts } from '../i18n/context';
 import {
   normalizeFileViewerPrintMaskRegion,
   normalizeFileViewerPrintStamp,
@@ -128,7 +129,10 @@ export const openFileViewerPrintMaskDesigner = (
 ): Promise<FileViewerPrintMaskDesignerResult | null> => {
   const root = options.root;
   const documentRef = root.ownerDocument;
-  const t = createFileViewerTranslator(options.i18n);
+  const languageScope = createFileViewerI18n(options.i18n, {
+    parent: options.i18n ? fileViewerI18nContexts.get(options.i18n) : undefined,
+  });
+  const t = createFileViewerTranslator(languageScope);
   const color = options.color || '#000000';
   const regions: FileViewerPrintMaskRegion[] = [...(options.initialRegions || [])]
     .map(region => normalizeFileViewerPrintMaskRegion(region))
@@ -198,14 +202,14 @@ export const openFileViewerPrintMaskDesigner = (
     const toolbar = documentRef.createElement('div');
     toolbar.className = 'fv-print-mask-toolbar';
     toolbar.setAttribute('role', 'toolbar');
-    toolbar.setAttribute('aria-label', t('toolbar.printMaskTitle'));
+    t.attr(toolbar, 'aria-label', 'toolbar.printMaskTitle');
 
     const hint = documentRef.createElement('span');
-    hint.textContent = t('toolbar.printMaskHint');
+    t.text(hint, 'toolbar.printMaskHint');
 
     const addButton = documentRef.createElement('button');
     addButton.type = 'button';
-    addButton.textContent = t('toolbar.printMaskAdd');
+    t.text(addButton, 'toolbar.printMaskAdd');
 
     const stampInput = documentRef.createElement('input');
     stampInput.type = 'file';
@@ -215,20 +219,20 @@ export const openFileViewerPrintMaskDesigner = (
 
     const stampButton = documentRef.createElement('button');
     stampButton.type = 'button';
-    stampButton.textContent = t('toolbar.printStampUpload');
+    t.text(stampButton, 'toolbar.printStampUpload');
 
     const clearButton = documentRef.createElement('button');
     clearButton.type = 'button';
-    clearButton.textContent = t('toolbar.printMaskClear');
+    t.text(clearButton, 'toolbar.printMaskClear');
 
     const cancelButton = documentRef.createElement('button');
     cancelButton.type = 'button';
-    cancelButton.textContent = t('toolbar.printMaskCancel');
+    t.text(cancelButton, 'toolbar.printMaskCancel');
 
     const confirmButton = documentRef.createElement('button');
     confirmButton.type = 'button';
     confirmButton.className = 'primary';
-    confirmButton.textContent = t('toolbar.printMaskConfirm');
+    t.text(confirmButton, 'toolbar.printMaskConfirm');
 
     toolbar.append(hint, addButton, stampButton, clearButton, cancelButton, confirmButton);
     layer.append(stampInput, toolbar);
@@ -244,6 +248,7 @@ export const openFileViewerPrintMaskDesigner = (
         return;
       }
       settled = true;
+      languageScope.destroy();
       layer.remove();
       allSurfaces.forEach(surface => {
         surface.canvas.remove();
@@ -286,8 +291,8 @@ export const openFileViewerPrintMaskDesigner = (
         const remove = documentRef.createElement('button');
         remove.type = 'button';
         remove.className = 'fv-print-mask-block-remove';
-        remove.title = t('toolbar.printMaskClear');
-        remove.setAttribute('aria-label', t('toolbar.printMaskClear'));
+        t.attr(remove, 'title', 'toolbar.printMaskClear');
+        t.attr(remove, 'aria-label', 'toolbar.printMaskClear');
         remove.textContent = '−';
         remove.addEventListener('click', event => {
           event.preventDefault();
@@ -324,8 +329,8 @@ export const openFileViewerPrintMaskDesigner = (
         const remove = documentRef.createElement('button');
         remove.type = 'button';
         remove.className = 'fv-print-mask-block-remove';
-        remove.title = t('toolbar.printStampRemove');
-        remove.setAttribute('aria-label', t('toolbar.printStampRemove'));
+        t.attr(remove, 'title', 'toolbar.printStampRemove');
+        t.attr(remove, 'aria-label', 'toolbar.printStampRemove');
         remove.textContent = '−';
         remove.addEventListener('pointerdown', event => event.stopPropagation());
         remove.addEventListener('click', event => {
@@ -338,8 +343,8 @@ export const openFileViewerPrintMaskDesigner = (
         const resize = documentRef.createElement('span');
         resize.className = 'fv-print-stamp-resize';
         resize.setAttribute('role', 'button');
-        resize.setAttribute('aria-label', t('toolbar.printStampResize'));
-        resize.title = t('toolbar.printStampResize');
+        t.attr(resize, 'aria-label', 'toolbar.printStampResize');
+        t.attr(resize, 'title', 'toolbar.printStampResize');
 
         let interaction: {
           pointerId: number;

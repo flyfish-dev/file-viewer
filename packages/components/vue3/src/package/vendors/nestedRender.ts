@@ -2,6 +2,7 @@ import type {
   FileRenderContext,
   FileViewerRenderedInstance as Rendered
 } from '@file-viewer/core'
+import { createFileViewerI18n } from '@file-viewer/core'
 import { createVueRenderSession } from '../components/FileViewer/rendererBridge'
 
 /**
@@ -18,13 +19,25 @@ export const renderNestedBuffer = async (
   context?: FileRenderContext
 ): Promise<Rendered> => {
   const normalizedType = type.toLowerCase()
-  const session = await createVueRenderSession(buffer, normalizedType, target, {
-    ...context,
-    renderNestedBuffer: context?.renderNestedBuffer || renderNestedBuffer
+  const languageScope = createFileViewerI18n(context?.options, {
+    parent: context?.i18n,
+    signal: context?.signal
   })
+  let session
+  try {
+    session = await createVueRenderSession(buffer, normalizedType, target, {
+      ...context,
+      options: languageScope.options,
+      i18n: languageScope,
+      renderNestedBuffer
+    })
+  } catch (error) {
+    languageScope.destroy()
+    throw error
+  }
 
   return {
     $el: session.rendered?.$el,
-    destroy: () => session.destroy?.()
+    destroy: () => { languageScope.destroy(); return session.destroy?.() }
   }
 }

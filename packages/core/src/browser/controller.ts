@@ -1,3 +1,5 @@
+import { createFileViewerI18n } from '../i18n/context';
+import { FILE_VIEWER_LOCALE_METADATA } from '../i18n/locales';
 import {
   appendFileViewerStyle,
   cloneFileViewerViewState,
@@ -766,6 +768,7 @@ export const mountViewer = (
 
   let disposed = false;
   let currentOptions: ViewerMountOptions = initialOptions;
+  const shellI18n = createFileViewerI18n(currentOptions.options);
   const viewerColorSchemeQuery = documentRef.defaultView?.matchMedia?.('(prefers-color-scheme: dark)') ?? null;
   const resolveCurrentViewerTheme = (theme: ViewerOptions['theme']) => {
     return viewerColorSchemeQuery
@@ -837,6 +840,8 @@ export const mountViewer = (
     return !!renderer?.capabilities?.search;
   };
   const renderToolbar = () => {
+    shell.setAttribute('lang', shellI18n.locale);
+    shell.setAttribute('dir', FILE_VIEWER_LOCALE_METADATA[shellI18n.locale].direction);
     if (disposed) {
       return;
     }
@@ -859,7 +864,7 @@ export const mountViewer = (
     const showToolbar = hasVisibleFileViewerToolbarActions(visibleToolbar);
     const toolbarPosition = resolveFileViewerToolbarPosition(options, getCurrentExtension());
     const toolbarDisabled = state.loading || !!state.error;
-    const t = createFileViewerTranslator(options);
+    const t = createFileViewerTranslator(shellI18n.options);
     toolbarEl.hidden = !showToolbar;
     toolbarEl.dataset.toolbarPosition = toolbarPosition;
     toolbarEl.replaceChildren();
@@ -1234,6 +1239,7 @@ export const mountViewer = (
   });
   viewerColorSchemeQuery?.addEventListener?.('change', handleViewerColorSchemeChange);
   renderToolbar();
+  shellI18n.subscribe(notifyState);
 
   const cancel = () => {
     const previous = sourceRequest;
@@ -1326,6 +1332,7 @@ export const mountViewer = (
     async load(nextOptions) {
       if (disposed) return;
       currentOptions = nextOptions;
+      shellI18n.update(currentOptions.options);
       instance.updateOptions(currentOptions.options || {});
       renderToolbar();
       if (hasSource(currentOptions)) {
@@ -1334,7 +1341,9 @@ export const mountViewer = (
     },
     async update(nextOptions = {}) {
       if (disposed) return;
-      const nextViewerOptions = nextOptions.options ?? currentOptions.options;
+      const nextViewerOptions = nextOptions.options === undefined
+        ? currentOptions.options
+        : { ...currentOptions.options, ...nextOptions.options };
       const renderingOptionsChanged = hasViewerRenderingOptionsChanged(
         currentOptions.options,
         nextViewerOptions
@@ -1344,6 +1353,7 @@ export const mountViewer = (
         ...nextOptions,
         options: nextViewerOptions,
       };
+      shellI18n.update(currentOptions.options);
       const nextSource = hasSource(currentOptions)
         ? toViewerSourceInput(currentOptions)
         : null;
@@ -1382,6 +1392,7 @@ export const mountViewer = (
       }
     },
     destroy() {
+      shellI18n.destroy();
       if (disposed) return;
       disposed = true;
       disposeToolbarKeyboard();

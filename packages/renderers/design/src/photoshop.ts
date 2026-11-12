@@ -26,17 +26,7 @@ const photoshopStyle = `
 @media (max-width:760px){.psd-viewer{min-height:360px}.psd-toolbar{align-items:flex-start;padding:8px}.psd-title span{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.psd-actions{flex-wrap:wrap;justify-content:flex-end}.psd-actions button{height:30px;min-width:31px;padding:0 7px}.psd-actions .psd-wide-action:not(.psd-merged-action){display:none}.psd-layout{grid-template-columns:1fr}.psd-sidebar{position:absolute;inset:0 auto 0 0;z-index:5;width:min(82vw,320px);border-right:1px solid var(--psd-border);box-shadow:16px 0 40px rgba(15,23,42,.22);transform:translateX(-105%);transition:transform .2s ease}.psd-viewer[data-layers-open='true'] .psd-sidebar{transform:translateX(0)}.psd-layer-toggle{position:absolute;right:12px;bottom:calc(12px + var(--file-viewer-mobile-overlay-bottom,0px));z-index:6;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border:1px solid var(--psd-border);border-radius:999px;background:rgba(255,255,255,.9);color:var(--psd-text);font-size:12px;font-weight:800;box-shadow:0 10px 28px rgba(15,23,42,.18);backdrop-filter:blur(10px)}.psd-stage{padding:14px}.psd-stage-status{bottom:calc(62px + var(--file-viewer-mobile-overlay-bottom,0px))}}
 `
 
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tagName)
-  if (className) element.className = className
-  if (text !== undefined) element.textContent = text
-  return element
-}
+
 
 const createCanvasFromPixels = (
   documentRef: Document,
@@ -94,7 +84,8 @@ export default async function renderPhotoshop(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const createElement = t.element
   const parseLimits = resolvePhotoshopParseLimits(context?.options?.design)
   let destroyed = false
   let renderRevision = 0
@@ -169,18 +160,18 @@ export default async function renderPhotoshop(
   const toolbar = createElement(documentRef, 'div', 'psd-toolbar')
   const title = createElement(documentRef, 'div', 'psd-title')
   title.append(
-    createElement(documentRef, 'strong', undefined, t('psd.title')),
+    t.text(createElement(documentRef, 'strong', undefined), 'psd.title'),
     createElement(documentRef, 'span', undefined,
-      `${psdContainerAlias ? `${declaredType.toUpperCase()} · PSD v1` : detectedType.toUpperCase()} · ${header.width} × ${header.height} · ${layers.length} layers · ${opened.engine} ${parserExecution}`)
+      () => t('design.ui.layers.7c3bc0', { p0: psdContainerAlias ? `${declaredType.toUpperCase()} · PSD v1` : detectedType.toUpperCase(), p1: header.width, p2: header.height, p3: layers.length, p4: opened.engine, p5: parserExecution }))
   )
   const actions = createElement(documentRef, 'div', 'psd-actions')
   const zoomOut = createElement(documentRef, 'button', undefined, '−')
   const zoomLabel = createElement(documentRef, 'span', undefined, '100%')
   const zoomIn = createElement(documentRef, 'button', undefined, '+')
-  const fit = createElement(documentRef, 'button', undefined, t('psd.action.fit'))
-  const original = createElement(documentRef, 'button', 'psd-wide-action psd-merged-action', 'Merged')
-  const showAll = createElement(documentRef, 'button', 'psd-wide-action', t('psd.action.showAll'))
-  const hideAll = createElement(documentRef, 'button', 'psd-wide-action', t('psd.action.hideAll'))
+  const fit = t.text(createElement(documentRef, 'button', undefined), 'psd.action.fit')
+  const original = createElement(documentRef, 'button', 'psd-wide-action psd-merged-action', () => t('design.ui.merged.0c4455'))
+  const showAll = t.text(createElement(documentRef, 'button', 'psd-wide-action'), 'psd.action.showAll')
+  const hideAll = t.text(createElement(documentRef, 'button', 'psd-wide-action'), 'psd.action.hideAll')
   ;[zoomOut, zoomIn, fit, original, showAll, hideAll].forEach(button => { button.type = 'button' })
   zoomOut.dataset.photoshopAction = 'zoom-out'
   zoomIn.dataset.photoshopAction = 'zoom-in'
@@ -188,9 +179,9 @@ export default async function renderPhotoshop(
   original.dataset.photoshopAction = 'merged'
   showAll.dataset.photoshopAction = 'show-all'
   hideAll.dataset.photoshopAction = 'hide-all'
-  zoomOut.setAttribute('aria-label', 'Zoom out')
-  zoomIn.setAttribute('aria-label', 'Zoom in')
-  original.title = 'Restore the embedded merged composite'
+  t.bind(zoomOut, node => node.setAttribute('aria-label', t('toolbar.zoomOut')), 'aria-label')
+  t.bind(zoomIn, node => node.setAttribute('aria-label', t('toolbar.zoomIn')), 'aria-label')
+  t.bind(original, node => { node.title = t('design.ui.restore.the.embedded.merged.composite.e26241'); }, 'title')
   actions.append(zoomOut, zoomLabel, zoomIn, fit, original, showAll, hideAll)
   toolbar.append(title, actions)
 
@@ -201,8 +192,8 @@ export default async function renderPhotoshop(
   sidebar.tabIndex = -1
   const sidebarHeader = createElement(documentRef, 'div', 'psd-sidebar-header')
   sidebarHeader.append(
-    createElement(documentRef, 'span', undefined, t('psd.layers.title')),
-    createElement(documentRef, 'span', undefined, t('psd.layers.redrawable', { count: drawableLayers.length }))
+    t.text(createElement(documentRef, 'span', undefined), 'psd.layers.title'),
+    t.text(createElement(documentRef, 'span', undefined), 'psd.layers.redrawable', { count: drawableLayers.length })
   )
   const list = createElement(documentRef, 'ul', 'psd-layer-list')
   sidebar.append(sidebarHeader, list)
@@ -222,7 +213,7 @@ export default async function renderPhotoshop(
   shell.appendChild(canvas)
   wrap.appendChild(shell)
   stage.append(wrap, status)
-  const layerToggle = createElement(documentRef, 'button', 'psd-layer-toggle', t('psd.layers.title'))
+  const layerToggle = t.text(createElement(documentRef, 'button', 'psd-layer-toggle'), 'psd.layers.title')
   layerToggle.type = 'button'
   layerToggle.dataset.photoshopAction = 'toggle-layers'
   layerToggle.setAttribute('aria-controls', panelId)
@@ -317,7 +308,7 @@ export default async function renderPhotoshop(
     workCanvas.height = header.height
     const workContext = workCanvas.getContext('2d')
     if (!workContext) throw new Error('Canvas 2D is unavailable for Photoshop layer composition.')
-    status.textContent = 'Rendering selected layers…'
+    t.bind(status, node => { node.textContent = t('design.ui.rendering.selected.layers.2a5de9'); }, 'textContent')
     try {
       const visible = drawableLayers
         .filter(layer => selection.has(layer.id))
@@ -343,7 +334,7 @@ export default async function renderPhotoshop(
       canvasContext.clearRect(0, 0, canvas.width, canvas.height)
       canvasContext.drawImage(workCanvas, 0, 0)
       canvasContext.restore()
-      status.textContent = 'Interactive layer composite'
+      t.bind(status, node => { node.textContent = t('design.ui.interactive.layer.composite.cec553'); }, 'textContent')
       if (unsupportedModes.size || clippingLayers) {
         context?.options?.onDiagnostic?.({
           code: 'photoshop-interactive-composite-limits',
@@ -390,7 +381,7 @@ export default async function renderPhotoshop(
     })
   }
 
-  if (!layers.length) list.appendChild(createElement(documentRef, 'li', 'psd-empty', t('psd.layers.empty')))
+  if (!layers.length) list.appendChild(t.text(createElement(documentRef, 'li', 'psd-empty'), 'psd.layers.empty'))
   layers.forEach((layer, layerIndex) => {
     const item = createElement(documentRef, 'li', 'psd-layer')
     item.dataset.layerId = layer.id
@@ -400,7 +391,7 @@ export default async function renderPhotoshop(
     const checkbox = createElement(documentRef, 'input')
     checkbox.type = 'checkbox'
     checkbox.id = `${panelId}-item-${layerIndex}`
-    checkbox.setAttribute('aria-label', `Show Photoshop layer ${layer.name}`)
+    t.bind(checkbox, node => node.setAttribute('aria-label', t('design.ui.show.photoshop.layer.a96960', { p0: layer.name })), 'aria-label')
     const affectedIds = layer.drawable ? [layer.id] : childLayerIds(layers, layer.id)
     checkbox.disabled = affectedIds.length === 0 || !interactiveLayers
     checkbox.addEventListener('change', () => {

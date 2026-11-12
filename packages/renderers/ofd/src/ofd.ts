@@ -192,7 +192,7 @@ export default async function renderOfd(
   target: HTMLDivElement,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const documentRef = target.ownerDocument || document;
   const targetWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : null);
   const zoomEmitter = createFileViewerZoomChangeEmitter();
@@ -202,7 +202,7 @@ export default async function renderOfd(
   let resizeTimer = 0;
   let lastRenderedWidth = 0;
   let state: OfdRenderState = 'loading';
-  let errorMessage = '';
+  let errorMessage = () => '';
   let zoom = 1;
   let currentPage = 1;
   let pageCount = 0;
@@ -212,16 +212,16 @@ export default async function renderOfd(
   const style = createStyle(documentRef);
   const viewer = createElement(documentRef, 'div', 'ofd-viewer');
   viewer.dataset.viewerZoomProvider = 'ofd';
-  const stateNode = createElement(documentRef, 'div', 'ofd-state', t('ofd.state.loading'));
+  const stateNode = t.text(createElement(documentRef, 'div', 'ofd-state'), 'ofd.state.loading');
   stateNode.setAttribute('aria-live', 'polite');
   const toolbar = createElement(documentRef, 'div', 'ofd-toolbar');
   toolbar.setAttribute('role', 'toolbar');
-  toolbar.setAttribute('aria-label', t('ofd.toolbar.pageNavigation'));
+  t.attr(toolbar, 'aria-label', 'ofd.toolbar.pageNavigation');
   const pageGroup = createElement(documentRef, 'div', 'ofd-toolbar-group');
   const previousPageButton = createElement(documentRef, 'button', 'ofd-page-button', '‹') as HTMLButtonElement;
   previousPageButton.type = 'button';
-  previousPageButton.title = t('ofd.toolbar.previousPage');
-  previousPageButton.setAttribute('aria-label', t('ofd.toolbar.previousPage'));
+  t.attr(previousPageButton, 'title', 'ofd.toolbar.previousPage');
+  t.attr(previousPageButton, 'aria-label', 'ofd.toolbar.previousPage');
   const pageMeter = createElement(documentRef, 'span', 'ofd-page-meter');
   pageMeter.setAttribute('aria-live', 'polite');
   const pageMeterCurrent = createElement(documentRef, 'strong', undefined, '1');
@@ -229,13 +229,13 @@ export default async function renderOfd(
   pageMeter.append(pageMeterCurrent, pageMeterTotal);
   const nextPageButton = createElement(documentRef, 'button', 'ofd-page-button', '›') as HTMLButtonElement;
   nextPageButton.type = 'button';
-  nextPageButton.title = t('ofd.toolbar.nextPage');
-  nextPageButton.setAttribute('aria-label', t('ofd.toolbar.nextPage'));
+  t.attr(nextPageButton, 'title', 'ofd.toolbar.nextPage');
+  t.attr(nextPageButton, 'aria-label', 'ofd.toolbar.nextPage');
   pageGroup.append(previousPageButton, pageMeter, nextPageButton);
   toolbar.append(pageGroup);
   const stage = createElement(documentRef, 'div', 'ofd-stage');
   stage.tabIndex = 0;
-  stage.setAttribute('aria-label', t('ofd.toolbar.documentPages'));
+  t.attr(stage, 'aria-label', 'ofd.toolbar.documentPages');
   viewer.append(toolbar, stateNode, stage);
   target.replaceChildren(style, viewer);
 
@@ -246,7 +246,7 @@ export default async function renderOfd(
   const syncState = () => {
     stateNode.hidden = state === 'ready';
     stateNode.classList.toggle('error', state === 'error');
-    stateNode.textContent = state === 'error' ? errorMessage : t('ofd.state.loading');
+    t.bind(stateNode, localizedNode => { localizedNode.textContent = state === 'error' ? errorMessage() : t('ofd.state.loading'); }, 'textContent');
   };
 
   const getPageFrames = () => Array.from(
@@ -258,12 +258,9 @@ export default async function renderOfd(
     currentPage = pageCount ? Math.min(pageCount, Math.max(1, currentPage)) : 0;
     pageMeterCurrent.textContent = pageCount ? String(currentPage) : '-';
     pageMeterTotal.textContent = `/ ${pageCount || '-'}`;
-    pageMeter.setAttribute(
-      'aria-label',
-      pageCount
+    t.bind(pageMeter, localizedNode => { localizedNode.setAttribute('aria-label', pageCount
         ? t('ofd.toolbar.pageStatus', { current: currentPage, total: pageCount })
-        : t('ofd.toolbar.noPages')
-    );
+        : t('ofd.toolbar.noPages')); }, 'aria-label');
     previousPageButton.disabled = currentPage <= 1;
     nextPageButton.disabled = currentPage <= 0 || currentPage >= pageCount;
   };
@@ -336,7 +333,7 @@ export default async function renderOfd(
     ofdDocumentPromise ||= parseWithOfdJs(ofd, buffer).then(documents => {
       const ofdDocument = documents[0];
       if (!ofdDocument) {
-        throw new Error(t('ofd.error.empty'));
+        throw t.error('ofd.error.empty');
       }
       return ofdDocument;
     });
@@ -444,7 +441,7 @@ export default async function renderOfd(
       clearStage();
       syncState();
     }
-    errorMessage = '';
+    errorMessage = () => '';
 
     try {
       await waitForPaint(targetWindow);
@@ -475,7 +472,7 @@ export default async function renderOfd(
       }
       console.error(reason);
       state = 'error';
-      errorMessage = normalizeError(reason, t('ofd.error.parseFailed'), context) || t('ofd.error.parseFailed');
+      errorMessage = () => normalizeError(reason, t('ofd.error.parseFailed'), context) || t('ofd.error.parseFailed');
       syncState();
       if (options.rejectOnError) {
         throw reason;
@@ -544,7 +541,7 @@ export default async function renderOfd(
         });
       }
       if (state === 'error') {
-        throw new Error(errorMessage || t('ofd.error.parseFailed'));
+        throw new Error(errorMessage() || t('ofd.error.parseFailed'));
       }
     },
     getTarget: () => stage.querySelector('.ofd-page-frame, .ofd-page') || stage,

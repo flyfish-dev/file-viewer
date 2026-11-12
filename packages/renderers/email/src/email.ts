@@ -9,7 +9,7 @@ import type {
 } from '@file-viewer/core';
 
 import { createEmailHtmlDocument, createEmailImageResource, isEmailImageMimeType } from './emailHtml.js';
-import { getMsgLabels, type MsgNotice } from './msgMessages.js';
+import { type MsgNotice } from './msgMessages.js';
 
 type EmailKind = 'eml' | 'msg' | 'mbox';
 type EmailBodyMode = 'html' | 'rtf' | 'text' | 'headers';
@@ -105,19 +105,7 @@ const emailStyle = `
 @media (max-width:860px){.email-sidebar{max-height:220px;overflow:auto}.email-meta,.email-body{grid-template-columns:1fr}.email-body{grid-template-rows:auto minmax(0,1fr)}.email-sidebar{border-right:0;border-bottom:1px solid rgba(23,32,51,.08)}}
 `;
 
-const formatBytes = (value: number) => {
-  if (!Number.isFinite(value) || value < 0) {
-    return '-';
-  }
-  if (value < 1024) {
-    return `${value} B`;
-  }
-  const mb = value / 1024 / 1024;
-  if (mb >= 1) {
-    return `${mb.toFixed(mb < 10 ? 1 : 0)} MB`;
-  }
-  return `${(value / 1024).toFixed(value < 10 * 1024 ? 1 : 0)} KB`;
-};
+
 
 const normalizeAddress = (value: unknown): EmailAddress[] => {
   if (!value) {
@@ -301,15 +289,6 @@ const getAttachmentExtension = (name: string) => {
   return index >= 0 ? name.slice(index + 1).toLowerCase() : 'bin';
 };
 
-const appendMeta = (meta: HTMLElement, label: string, value: string) => {
-  const row = document.createElement('p');
-  const strong = document.createElement('strong');
-  strong.textContent = label;
-  row.title = value || '-';
-  row.append(strong, document.createTextNode(value || '-'));
-  meta.append(row);
-};
-
 export default async function renderEmail(
   buffer: ArrayBuffer,
   target: HTMLDivElement,
@@ -321,8 +300,18 @@ export default async function renderEmail(
   const filename = context?.filename || `message.${normalizedType}`;
   const objectUrls: string[] = [];
   const cidUrls = new Map<string, string>();
-  const t = createFileViewerTranslator(context?.options);
-  const msgLabels = getMsgLabels(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const formatBytes = t.formatBytes;
+const appendMeta = (meta: HTMLElement, label: () => string, value: string) => {
+  const row = document.createElement('p');
+  const strong = document.createElement('strong');
+  t.bind(strong, node => { node.textContent = label(); });
+  row.title = value || '-';
+  row.append(strong, document.createTextNode(value || '-'));
+  meta.append(row);
+};
+
+
   const controller = new AbortController();
   const abortFromParent = () => controller.abort(context?.signal?.reason);
   if (context?.signal?.aborted) abortFromParent();
@@ -375,7 +364,7 @@ export default async function renderEmail(
   const showError = (message: string) => {
     errorElement?.remove();
     errorElement = createElement('div', 'email-error');
-    errorElement.append(createElement('strong', undefined, t('email.error.title')));
+    errorElement.append(t.text(createElement('strong', undefined), 'email.error.title'));
     errorElement.append(createElement('p', undefined, message));
     root.append(errorElement);
   };
@@ -436,14 +425,14 @@ export default async function renderEmail(
     header.append(createElement('span', undefined, parsed.kind.toUpperCase()));
     header.append(createElement('h2', undefined, parsed.subject || filename));
     const meta = createElement('div', 'email-meta');
-    appendMeta(meta, t('email.meta.from'), addressText(parsed.from));
-    if (parsed.sender?.length) appendMeta(meta, msgLabels.sender, addressText(parsed.sender));
-    appendMeta(meta, t('email.meta.to'), addressText(parsed.to));
+    appendMeta(meta, () => t('email.meta.from'), addressText(parsed.from));
+    if (parsed.sender?.length) appendMeta(meta, () => t('email.msg.sender'), addressText(parsed.sender));
+    appendMeta(meta, () => t('email.meta.to'), addressText(parsed.to));
     if (parsed.cc.length) {
-      appendMeta(meta, t('email.meta.cc'), addressText(parsed.cc));
+      appendMeta(meta, () => t('email.meta.cc'), addressText(parsed.cc));
     }
-    if (parsed.bcc?.length) appendMeta(meta, msgLabels.bcc, addressText(parsed.bcc));
-    appendMeta(meta, t('email.meta.date'), parsed.date || '-');
+    if (parsed.bcc?.length) appendMeta(meta, () => t('email.msg.bcc'), addressText(parsed.bcc));
+    appendMeta(meta, () => t('email.meta.date'), parsed.date || '-');
     header.append(meta);
 
     const body = createElement('div', 'email-body');
@@ -455,13 +444,13 @@ export default async function renderEmail(
     attachmentPreview.hidden = true;
     const attachmentPreviewHead = createElement('div', 'attachment-preview-head');
     const attachmentPreviewTitle = createElement('strong');
-    const attachmentDownload = createElement('button', undefined, t('email.attachments.download'));
+    const attachmentDownload = t.text(createElement('button', undefined), 'email.attachments.download');
     attachmentDownload.type = 'button';
     const attachmentTarget = createElement('div', 'attachment-target') as HTMLDivElement;
     const attachmentClose = createElement('button', undefined, '×');
     attachmentClose.type = 'button';
-    attachmentClose.setAttribute('aria-label', msgLabels.close);
-    attachmentClose.title = msgLabels.close;
+    t.attr(attachmentClose, 'aria-label', 'email.msg.close');
+    t.attr(attachmentClose, 'title', 'email.msg.close');
     const attachmentActions = createElement('div', 'attachment-preview-actions');
     attachmentActions.append(attachmentDownload, attachmentClose);
     attachmentPreviewHead.append(attachmentPreviewTitle, attachmentActions);
@@ -472,7 +461,7 @@ export default async function renderEmail(
     const noticeKeys = new Set(parsed.warnings || []);
     const renderNotices = () => {
       notices.replaceChildren();
-      noticeKeys.forEach(key => notices.append(createElement('p', undefined, msgLabels[key])));
+      noticeKeys.forEach(key => notices.append(t.text(createElement('p'), key)));
       notices.hidden = !noticeKeys.size;
     };
     if (parsed.rtf && !parsed.html && !context?.renderNestedBuffer) noticeKeys.add('email.msg.rtfUnavailable');
@@ -570,10 +559,10 @@ export default async function renderEmail(
 
     const attachmentPanel = createElement('section', 'attachment-panel');
     const attachmentTitle = createElement('div', 'attachment-title');
-    attachmentTitle.append(createElement('strong', undefined, t('email.attachments.title')), createElement('span', undefined, String(parsed.attachments.length)));
+    attachmentTitle.append(t.text(createElement('strong', undefined), 'email.attachments.title'), createElement('span', undefined, String(parsed.attachments.length)));
     attachmentPanel.append(attachmentTitle);
     if (!parsed.attachments.length) {
-      attachmentPanel.append(createElement('p', 'attachment-empty', t('email.attachments.empty')));
+      attachmentPanel.append(t.text(createElement('p', 'attachment-empty'), 'email.attachments.empty'));
     }
 
     const syncAttachmentState = () => {
@@ -606,7 +595,7 @@ export default async function renderEmail(
         const attachmentBuffer = await attachment.load();
         if (stale()) return;
         const sizeLabel = attachmentButtons.find(item => item.id === attachment.id)?.button.querySelector('em');
-        if (sizeLabel) sizeLabel.textContent = formatBytes(attachmentBuffer.byteLength);
+        if (sizeLabel) t.bind(sizeLabel, node => { node.textContent = formatBytes(attachmentBuffer.byteLength); });
         const child = createElement('div', 'email-attachment-render') as HTMLDivElement;
         attachmentTarget.append(child);
         const extension = getAttachmentExtension(attachment.name);
@@ -623,7 +612,7 @@ export default async function renderEmail(
           }
           nestedRendered = nextRendered;
         } else {
-          child.append(createElement('div', undefined, t('email.attachments.nestedUnavailable', { name: attachment.name })));
+          child.append(t.text(createElement('div', undefined), 'email.attachments.nestedUnavailable', { name: attachment.name }));
         }
       } catch (nextError) {
         if (stale()) {
@@ -647,7 +636,7 @@ export default async function renderEmail(
       button.type = 'button';
       const icon = createElement('span', undefined, getAttachmentExtension(attachment.name).toUpperCase() || 'FILE');
       const name = createElement('strong', undefined, attachment.name);
-      const size = createElement('em', undefined, formatBytes(attachment.size));
+      const size = t.bind(createElement('em'), node => { node.textContent = formatBytes(attachment.size); });
       button.append(icon, name, size);
       listen(button, 'click', () => {
         void previewAttachment(attachment);

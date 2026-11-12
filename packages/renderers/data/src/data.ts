@@ -15,8 +15,8 @@ declare global {
 }
 
 interface DataPreview {
-  title: string;
-  summary: Array<{ label: string; value: string }>;
+  title: string | (() => string);
+  summary: Array<{ label: string | (() => string); value: string | (() => string) }>;
   rows?: Array<Record<string, unknown>>;
   text?: string;
   image?: string;
@@ -83,15 +83,7 @@ const createElement = <K extends keyof HTMLElementTagNameMap>(
   return element;
 };
 
-const formatBytes = (value: number) => {
-  if (value < 1024) {
-    return `${value} B`;
-  }
-  if (value < 1024 * 1024) {
-    return `${(value / 1024).toFixed(1)} KB`;
-  }
-  return `${(value / 1024 / 1024).toFixed(1)} MB`;
-};
+
 
 const makeRows = (rows: Array<Record<string, unknown>>) => {
   return rows.slice(0, 30).map(row => {
@@ -141,19 +133,19 @@ const renderFont = async (
   const ownerWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : undefined);
   const FontFaceConstructor = ownerWindow?.FontFace || (typeof FontFace !== 'undefined' ? FontFace : undefined);
   if (!FontFaceConstructor) {
-    throw new Error(t('data.error.fontFaceUnsupported'));
+    throw t.error('data.error.fontFaceUnsupported');
   }
 
   const face = new FontFaceConstructor(family, buffer);
   await face.load();
   documentRef.fonts?.add(face);
   return {
-    title: t('data.title.font'),
+    title: () => t('data.title.font'),
     fontFamily: family,
     summary: [
-      { label: t('data.label.format'), value: type.toUpperCase() },
-      { label: t('data.label.size'), value: formatBytes(buffer.byteLength) },
-      { label: t('data.label.rendering'), value: 'Browser FontFace API' },
+      { label: () => t('data.label.format'), value: type.toUpperCase() },
+      { label: () => t('data.label.size'), value: () => t.formatBytes(buffer.byteLength) },
+      { label: () => t('data.label.rendering'), value: 'Browser FontFace API' },
     ],
   };
 };
@@ -178,11 +170,11 @@ const renderSqlite = async (
       ? db.exec(`select * from "${firstTable.replace(/"/g, '""')}" limit 30`)[0]
       : null;
     return {
-      title: t('data.title.sqlite'),
+      title: () => t('data.title.sqlite'),
       summary: [
-        { label: t('data.label.objects'), value: String(tables.length) },
-        { label: t('data.label.sampleTable'), value: firstTable || '-' },
-        { label: t('data.label.rendering'), value: 'sql.js WASM' },
+        { label: () => t('data.label.objects'), value: String(tables.length) },
+        { label: () => t('data.label.sampleTable'), value: firstTable || '-' },
+        { label: () => t('data.label.rendering'), value: 'sql.js WASM' },
       ],
       rows: rows
         ? makeRows((rows.values as unknown[][]).map((values: unknown[]) => Object.fromEntries(
@@ -204,11 +196,11 @@ const renderParquet = async (buffer: ArrayBuffer, t: DataTranslator): Promise<Da
   const metadata = await parquetMetadataAsync(file);
   const rows = await parquetReadObjects({ file, rowFormat: 'object', rowEnd: 30 });
   return {
-    title: t('data.title.parquet'),
+    title: () => t('data.title.parquet'),
     summary: [
-      { label: t('data.label.rows'), value: metadata.num_rows?.toString?.() || '-' },
-      { label: t('data.label.columns'), value: String(metadata.schema?.filter(item => item.name).length || 0) },
-      { label: t('data.label.rendering'), value: 'hyparquet' },
+      { label: () => t('data.label.rows'), value: metadata.num_rows?.toString?.() || '-' },
+      { label: () => t('data.label.columns'), value: String(metadata.schema?.filter(item => item.name).length || 0) },
+      { label: () => t('data.label.rendering'), value: 'hyparquet' },
     ],
     rows: makeRows(rows),
   };
@@ -233,11 +225,11 @@ const renderAvro = async (buffer: ArrayBuffer, t: DataTranslator): Promise<DataP
     decoder.on('error', reject);
   });
   return {
-    title: t('data.title.avro'),
+    title: () => t('data.title.avro'),
     summary: [
-      { label: t('data.label.sampleRows'), value: String(rows.length) },
-      { label: 'Schema', value: schema ? t('data.value.schemaRead') : t('data.value.schemaUnread') },
-      { label: t('data.label.rendering'), value: 'avsc' },
+      { label: () => t('data.label.sampleRows'), value: String(rows.length) },
+      { label: 'Schema', value: () => schema ? t('data.value.schemaRead') : t('data.value.schemaUnread') },
+      { label: () => t('data.label.rendering'), value: 'avsc' },
     ],
     rows: makeRows(rows),
     text: schema.slice(0, 6000),
@@ -249,11 +241,11 @@ const renderWasm = async (buffer: ArrayBuffer, t: DataTranslator): Promise<DataP
   const imports = WebAssembly.Module.imports(module);
   const exports = WebAssembly.Module.exports(module);
   return {
-    title: t('data.title.wasm'),
+    title: () => t('data.title.wasm'),
     summary: [
-      { label: t('data.label.imports'), value: String(imports.length) },
-      { label: t('data.label.exports'), value: String(exports.length) },
-      { label: t('data.label.rendering'), value: 'WebAssembly.Module' },
+      { label: () => t('data.label.imports'), value: String(imports.length) },
+      { label: () => t('data.label.exports'), value: String(exports.length) },
+      { label: () => t('data.label.rendering'), value: 'WebAssembly.Module' },
     ],
     rows: makeRows([
       ...imports.map(item => ({ kind: 'import', module: item.module, name: item.name, type: item.kind })),
@@ -263,21 +255,21 @@ const renderWasm = async (buffer: ArrayBuffer, t: DataTranslator): Promise<DataP
 };
 
 const renderPostScriptLike = async (buffer: ArrayBuffer, type: string, t: DataTranslator): Promise<DataPreview> => ({
-  title: type === 'eps' ? t('data.title.eps') : t('data.title.ai'),
+  title: () => type === 'eps' ? t('data.title.eps') : t('data.title.ai'),
   summary: [
-    { label: t('data.label.magic'), value: readMagic(buffer).replace(/\s/g, ' ') },
-    { label: t('data.label.size'), value: formatBytes(buffer.byteLength) },
-    { label: t('data.label.note'), value: type === 'ai' ? t('data.note.aiSummary') : t('data.note.postscriptSummary') },
+    { label: () => t('data.label.magic'), value: readMagic(buffer).replace(/\s/g, ' ') },
+    { label: () => t('data.label.size'), value: () => t.formatBytes(buffer.byteLength) },
+    { label: () => t('data.label.note'), value: () => type === 'ai' ? t('data.note.aiSummary') : t('data.note.postscriptSummary') },
   ],
   text: extractReadableText(buffer),
 });
 
 const renderWebArchive = async (buffer: ArrayBuffer, t: DataTranslator): Promise<DataPreview> => ({
-  title: t('data.title.webarchive'),
+  title: () => t('data.title.webarchive'),
   summary: [
-    { label: t('data.label.container'), value: readMagic(buffer).startsWith('bplist') ? 'Binary plist' : 'WebArchive' },
-    { label: t('data.label.size'), value: formatBytes(buffer.byteLength) },
-    { label: t('data.label.note'), value: t('data.note.webarchive') },
+    { label: () => t('data.label.container'), value: readMagic(buffer).startsWith('bplist') ? 'Binary plist' : 'WebArchive' },
+    { label: () => t('data.label.size'), value: () => t.formatBytes(buffer.byteLength) },
+    { label: () => t('data.label.note'), value: () => t('data.note.webarchive') },
   ],
   text: extractReadableText(buffer),
 });
@@ -311,10 +303,10 @@ const buildPreview = async (
     return renderWebArchive(buffer, t);
   }
   return {
-    title: t('data.title.summary'),
+    title: () => t('data.title.summary'),
     summary: [
-      { label: t('data.label.format'), value: type.toUpperCase() },
-      { label: t('data.label.size'), value: formatBytes(buffer.byteLength) },
+      { label: () => t('data.label.format'), value: type.toUpperCase() },
+      { label: () => t('data.label.size'), value: () => t.formatBytes(buffer.byteLength) },
     ],
     text: extractReadableText(buffer),
   };
@@ -323,8 +315,10 @@ const buildPreview = async (
 const appendSummary = (
   documentRef: Document,
   parent: HTMLElement,
-  summary: DataPreview['summary']
+  summary: DataPreview['summary'],
+  t: DataTranslator
 ) => {
+  const createElement = t.element;
   const summaryRoot = createElement(documentRef, 'div', 'data-summary');
   summary.forEach(item => {
     const cell = createElement(documentRef, 'div');
@@ -375,6 +369,7 @@ const renderPreviewDom = (
   type: string,
   t: DataTranslator
 ) => {
+  const createElement = t.element;
   const root = createElement(documentRef, 'div', 'data-viewer');
   const card = createElement(documentRef, 'section', 'data-card');
   const header = createElement(documentRef, 'header', 'data-header');
@@ -383,10 +378,10 @@ const renderPreviewDom = (
     createElement(documentRef, 'h2', undefined, preview.title)
   );
   card.appendChild(header);
-  appendSummary(documentRef, card, preview.summary);
+  appendSummary(documentRef, card, preview.summary, t);
 
   if (preview.fontFamily) {
-    const fontPreview = createElement(documentRef, 'div', 'font-preview', t('data.font.sample'));
+    const fontPreview = t.text(createElement(documentRef, 'div', 'font-preview'), 'data.font.sample');
     fontPreview.style.fontFamily = preview.fontFamily;
     card.appendChild(fontPreview);
   }
@@ -395,7 +390,7 @@ const renderPreviewDom = (
     const imageWrap = createElement(documentRef, 'div', 'asset-image');
     const image = createElement(documentRef, 'img') as HTMLImageElement;
     image.src = preview.image;
-    image.alt = t('data.image.alt');
+    t.attr(image, 'alt', 'data.image.alt');
     imageWrap.appendChild(image);
     card.appendChild(imageWrap);
   }
@@ -417,7 +412,7 @@ export default async function renderDataAsset(
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document;
   const normalizedType = type.toLowerCase();
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
 
   if (normalizedType === 'ai' && readMagic(buffer, 5) === '%PDF-' && context?.renderNestedBuffer) {
     const rendered = await context.renderNestedBuffer(buffer, 'pdf', target, context);
