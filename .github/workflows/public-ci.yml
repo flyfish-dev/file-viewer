@@ -17,7 +17,7 @@ concurrency:
 jobs:
   browser-runtimes:
     name: Cold DICOM and Mermaid browser consumers
-    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -60,7 +60,7 @@ jobs:
         id: browsers
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 10
-        run: pnpm exec playwright install chromium webkit
+        run: pnpm exec playwright install --with-deps chromium webkit
 
       - name: Verify DICOM cold consumers, six transfer syntaxes and visible PNGs
         if: steps.impact.outputs.runtime != 'false'
@@ -110,7 +110,7 @@ jobs:
 
   verify:
     name: Install, type-check, test, build and smoke
-    runs-on: [self-hosted, Linux, ARM64, oracle, file-viewer-public]
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
 
     steps:
@@ -232,7 +232,7 @@ jobs:
       - name: Install Chromium, Firefox and WebKit
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 10
-        run: pnpm exec playwright install chromium firefox webkit
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Run the issue regression gates
         if: steps.impact.outputs.runtime != 'false'
@@ -312,10 +312,12 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm --filter @file-viewer/vite-plugin verify:lite-consumer
 
-      - name: Verify the provisioned Noto CJK font cohort
+      - name: Install and verify the Noto CJK font cohort
         if: steps.impact.outputs.runtime != 'false'
         timeout-minutes: 10
         run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
           # WenQuanYi's CJK vertical advances can be zero in Chromium. The
           # geometry contract needs the same reviewed Noto cohort as DOCX CI.
           dpkg-query -W -f='${Status}' fonts-noto-cjk | grep -Fxq 'install ok installed'

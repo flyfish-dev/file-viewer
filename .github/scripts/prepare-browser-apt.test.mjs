@@ -79,32 +79,32 @@ test('a symlink cannot redirect the privileged config write', (t) => {
   assert.equal(readFileSync(f.mirrors, 'utf8'), original)
 })
 
-test('all Oracle browser CI entrypoints use provisioned dependencies and bounded browser downloads', () => {
+test('all hosted browser CI entrypoints install dependencies with bounded browser downloads', () => {
   for (const file of [
     'public-ci.yml',
     'geo3d-focused-validation.yml',
     'geo3d-branch-validation.yml'
   ]) {
     const source = readFileSync(new URL(`../workflows/${file}`, import.meta.url), 'utf8')
-    assert.match(source, /runs-on: \[self-hosted, Linux, ARM64, oracle, file-viewer-public\]/)
+    assert.match(source, /runs-on: ubuntu-24\.04-arm/)
     const steps = source.split(/\n\s+- name: /)
     const downloads = steps.filter((step) => step.includes('pnpm exec playwright install'))
     assert.ok(downloads.length > 0, `${file} must retain its real browser installation`)
     for (const step of downloads) {
       assert.match(step, /timeout-minutes: 10/)
-      assert.match(step, /pnpm exec playwright install chromium (?:firefox )?webkit/)
-      assert.doesNotMatch(step, /--with-deps|sudo|apt-get/)
+      assert.match(step, /pnpm exec playwright install --with-deps chromium (?:firefox )?webkit/)
     }
   }
   const workflow = readFileSync(new URL('../workflows/public-ci.yml', import.meta.url), 'utf8')
   const fonts = workflow
-    .split('- name: Verify the provisioned Noto CJK font cohort')[1]
+    .split('- name: Install and verify the Noto CJK font cohort')[1]
     ?.split('- name:')[0]
   assert.ok(fonts)
   assert.match(fonts, /timeout-minutes: 10/)
   assert.match(fonts, /dpkg-query.*fonts-noto-cjk/)
   assert.match(fonts, /grep -Fxq 'install ok installed'/)
-  assert.doesNotMatch(fonts, /sudo|apt-get/)
+  assert.match(fonts, /sudo apt-get update/)
+  assert.match(fonts, /sudo apt-get install -y --no-install-recommends fonts-noto-cjk/)
   assert.match(fonts, /grep -q 'Noto Serif CJK SC'/)
   assert.match(fonts, /font-cohort\.log/)
   const browsers = workflow
@@ -113,7 +113,7 @@ test('all Oracle browser CI entrypoints use provisioned dependencies and bounded
   assert.match(browsers, /renderer-pdf verify:hand-tool/)
   assert.match(browsers, /@file-viewer\/doc verify:font-table-browser/)
   assert.ok(
-    workflow.indexOf('- name: Verify the provisioned Noto CJK font cohort') <
+    workflow.indexOf('- name: Install and verify the Noto CJK font cohort') <
       workflow.indexOf('- name: Verify PDF hand tool')
   )
 })
