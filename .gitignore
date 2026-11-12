@@ -70,3 +70,5 @@ examples/*/public/wasm/
 /软件著作权申请资料/
 *.log
 .DS_Store
+
+/artifacts/spreadsheet-comments/

@@ -8,7 +8,7 @@ import type {
   VerticalAlign
 } from 'e-virt-table'
 import tinycolor from 'tinycolor2'
-import type { SheetCellMetadata, SheetModel, SheetRichTextRun } from './worker/type.js'
+import type { SheetCellMetadata, SheetComment, SheetModel, SheetRichTextRun } from './worker/type.js'
 import {
   displayCellKey,
   getDataKey,
@@ -63,6 +63,9 @@ interface TableConfigOptions {
   darkMode?: boolean
   resizableColumns?: boolean
   resizableRows?: boolean
+  comments?: SheetComment[]
+  showComment?: (comment: SheetComment, anchor: HTMLElement, focus?: boolean) => void
+  commentLabel?: (comment: SheetComment) => string
   copySelection?: (params: SpreadsheetCopyParams) => void
   searchCell?: (row: number, col: number) => 'active' | 'match' | undefined
   sheetDefaults: SheetDefaults
@@ -1143,12 +1146,16 @@ export const createTableConfig = ({
   darkMode = false,
   resizableColumns = false,
   resizableRows = false,
+  comments = [],
+  showComment,
+  commentLabel,
   copySelection,
   searchCell,
   sheetDefaults,
   virtualState,
   zoomScale = 1
 }: TableConfigOptions): ConfigType => {
+  const commentsByCell = new Map(comments.map(comment => [displayCellKey(comment.row, comment.col + 1), comment]))
   const normalizedScale = normalizeZoomScale(zoomScale)
   const scaledPadding = scaleNumber(CELL_PADDING, normalizedScale)
   const scaledHeaderHeight = scaleNumber(HEADER_HEIGHT, normalizedScale)
@@ -1248,7 +1255,8 @@ export const createTableConfig = ({
       : undefined
     const match = searchCell?.(rowIndex, dataColIndex)
     const renderText = shouldRenderTextInOverlay(style, column) || !!overflowLayout || !!mirror || !!match
-    if (!hasBorder(style) && !renderText) {
+    const comment = commentsByCell.get(cellKey)
+    if (!hasBorder(style) && !renderText && !comment) {
       return undefined
     }
 
@@ -1272,6 +1280,30 @@ export const createTableConfig = ({
         mirror?.overflowLayout || overflowLayout,
         normalizedScale
       )
+      if (comment) {
+        cellEl.style.pointerEvents = 'auto'
+        const indicator = cellEl.ownerDocument.createElement('button')
+        indicator.type = 'button'
+        indicator.className = 'excel-comment-indicator'
+        indicator.dataset.cell = comment.address
+        indicator.dataset.kind = comment.kind
+        indicator.dataset.resolved = String(comment.resolved)
+        indicator.setAttribute('aria-label', commentLabel?.(comment) || comment.address)
+        const open = (event: Event) => { event.stopPropagation(); showComment?.(comment, indicator) }
+        indicator.addEventListener('pointerdown', event => event.stopPropagation())
+        indicator.addEventListener('click', open)
+        indicator.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(event) }
+        })
+        let hoverTimer: ReturnType<typeof setTimeout> | undefined
+        indicator.addEventListener('pointerenter', () => {
+          hoverTimer = setTimeout(() => {
+            if (indicator.isConnected) showComment?.(comment, indicator, false)
+          }, 250)
+        })
+        indicator.addEventListener('pointerleave', () => clearTimeout(hoverTimer))
+        cellEl.append(indicator)
+      }
       cellEl.style.boxShadow = match === 'active' ? 'inset 0 0 0 2px #9a5700' : ''
       if (match) {
         cellEl.dataset.spreadsheetSearch = match
@@ -1289,8 +1321,8 @@ export const createTableConfig = ({
   return {
     ROW_KEY: ROW_KEY_FIELD,
     DISABLED: true,
-    HEIGHT: Math.max(hostHeight, 240),
-    MAX_HEIGHT: Math.max(hostHeight, 240),
+    HEIGHT: hostHeight > 0 ? hostHeight : 240,
+    MAX_HEIGHT: hostHeight > 0 ? hostHeight : 240,
     HEADER_HEIGHT: scaledHeaderHeight,
     CELL_HEIGHT: scaledCellHeight,
     CELL_WIDTH: scaledCellWidth,

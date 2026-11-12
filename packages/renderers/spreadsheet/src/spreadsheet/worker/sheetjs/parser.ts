@@ -1,3 +1,4 @@
+import { parseSpreadsheetComments, readWorkbookNotes } from './commentParser.js';
 import type { CellObject, WorkBook, WorkSheet } from 'styled-exceljs';
 import { read, utils } from 'styled-exceljs';
 import SheetJsModel, { formatCellValue } from './SheetJsModel.js';
@@ -6,7 +7,7 @@ import {
   prepareSpreadsheetReadInput,
   type SpreadsheetTextSource,
 } from './textEncoding.js';
-import type { SheetCellImage, SheetChartDefinition, SheetDefinition } from '../type.js';
+import type { SheetCellImage, SheetChartDefinition, SheetComment, SheetDefinition } from '../type.js';
 import { parseSpreadsheetCellImages } from './richDataParser.js';
 import { recoverUncachedFormulaValues } from './formulaValues.js';
 
@@ -33,6 +34,8 @@ export interface SpreadsheetParserContext {
   sheets: SheetDefinition[];
   charts: Record<string, SheetChartDefinition[]>;
   cellImages: Record<string, SheetCellImage[]>;
+  comments: Record<string, SheetComment[]>;
+  commentsError: boolean;
 }
 
 export interface SpreadsheetWorkbookSource extends SpreadsheetTextSource {
@@ -208,6 +211,8 @@ export const createSpreadsheetParserContext = (): SpreadsheetParserContext => ({
   sheets: [],
   charts: {},
   cellImages: {},
+  comments: {},
+  commentsError: false,
 });
 
 const toErrorResponse = (
@@ -392,7 +397,8 @@ const reconcileDeclaredRange = (
 
 export const getWorksheetDisplayBounds = (
   worksheet: WorksheetRangeLike | undefined,
-  charts: SheetChartDefinition[] | undefined
+  charts: SheetChartDefinition[] | undefined,
+  comments: SheetComment[] = []
 ): WorksheetDisplayBounds => {
   let declaredRowCount = 0;
   let declaredColCount = 0;
@@ -411,17 +417,23 @@ export const getWorksheetDisplayBounds = (
   const mergeBounds = getMergeBounds(worksheet);
   const drawingBounds = getDrawingBounds(worksheet);
   const chartBounds = getChartBounds(charts);
+  const commentBounds = comments.reduce((bounds, comment) => ({
+    rowCount: Math.max(bounds.rowCount, comment.row + 1),
+    colCount: Math.max(bounds.colCount, comment.col + 1),
+  }), { rowCount: 0, colCount: 0 });
   const observedRowCount = Math.max(
     cellBounds.rowCount,
     mergeBounds.rowCount,
     drawingBounds.rowCount,
-    chartBounds.rowCount
+    chartBounds.rowCount,
+    commentBounds.rowCount
   );
   const observedColCount = Math.max(
     cellBounds.colCount,
     mergeBounds.colCount,
     drawingBounds.colCount,
-    chartBounds.colCount
+    chartBounds.colCount,
+    commentBounds.colCount
   );
   const reconciledRowCount = reconcileDeclaredRange(
     declaredRowCount,
@@ -464,7 +476,7 @@ const parseSheets = (context: SpreadsheetParserContext, includeEmptySheets = fal
   const workbookSheets = workbook.Workbook?.Sheets || [];
   context.sheets = workbook.SheetNames.reduce<SheetDefinition[]>((result, name, sourceIndex) => {
     const worksheet = workbook.Sheets[name] as WorksheetRangeLike | undefined;
-    const bounds = getWorksheetDisplayBounds(worksheet, context.charts[name]);
+    const bounds = getWorksheetDisplayBounds(worksheet, context.charts[name], context.comments[name]);
     const empty = !worksheet?.['!ref'] && !bounds.observedRowCount && !bounds.observedColCount;
     if (!worksheet || (empty && !includeEmptySheets)) {
       return result;
@@ -479,13 +491,14 @@ const parseSheets = (context: SpreadsheetParserContext, includeEmptySheets = fal
       id: result.length,
       name,
       hidden: !!workbookSheets[sourceIndex]?.Hidden,
+      comments: context.comments[name] || [],
       rowCount: empty ? 0 : bounds.rowCount,
       colCount: empty ? 0 : bounds.colCount,
     });
     return result;
   }, []);
 
-  return [{ type: 'sheets', payload: { sheets: context.sheets } }];
+  return [{ type: 'sheets', payload: { sheets: context.sheets, commentsError: context.commentsError } }];
 };
 
 export const parseSpreadsheetWorkbook = async (
@@ -496,7 +509,14 @@ export const parseSpreadsheetWorkbook = async (
   try {
     const input = prepareSpreadsheetReadInput(data, source);
     context.workbook = readWorkbookWithMergeRecovery(input);
-    recoverUncachedFormulaValues(context.workbook);
+    const workbook = context.workbook;
+    recoverUncachedFormulaValues(workbook);
+    const commentResult = await parseSpreadsheetComments(data, workbook).catch(error => {
+      console.warn('[file-viewer] Spreadsheet comment parsing failed; continuing with notes.', error);
+      return { comments: readWorkbookNotes(workbook), hasError: true };
+    });
+    context.comments = commentResult.comments;
+    context.commentsError = commentResult.hasError;
     const signature = data.byteLength >= 2 ? new DataView(data).getUint16(0, false) : 0;
     if (signature === 0x504b) {
       const [charts, cellImages] = await Promise.all([

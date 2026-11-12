@@ -120,7 +120,27 @@ export interface SheetColumn {
   renderer: 'styleRender';
 }
 
+export interface SheetCommentMessage {
+  id: string;
+  parentId: string | null;
+  author: string;
+  text: string;
+  createdAt: string | null;
+}
+
+export interface SheetCommentLocation {
+  address: string;
+  row: number;
+  col: number;
+}
+
+export type SheetComment = SheetCommentLocation & (
+  | { kind: 'note'; resolved: false; messages: SheetCommentMessage[] }
+  | { kind: 'thread'; resolved: boolean; messages: SheetCommentMessage[] }
+);
+
 export interface SheetDefinition {
+  comments?: SheetComment[];
   id: number;
   name: string;
   hidden?: boolean;

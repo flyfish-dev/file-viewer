@@ -1,3 +1,4 @@
+import { createSpreadsheetComments, spreadsheetCommentsStyle } from './spreadsheet/comments.js';
 import { createSpreadsheetRangeNavigation } from './spreadsheet/rangeNavigation.js';
 import {
   createFileViewerWorkerController,
@@ -30,7 +31,7 @@ import {
 import { renderSpreadsheetChart } from './spreadsheet/chartRenderer.js';
 import { createSpreadsheetImageSourceResolver } from './spreadsheet/imageSource.js';
 import { shouldFillSpreadsheetViewport, SpreadsheetViewportFill } from './spreadsheet/viewport.js';
-import type { SheetCellMetadata, SheetChart, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
+import type { SheetCellMetadata, SheetChart, SheetComment, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
 import {
   buildRows,
   clampWindowStart,
@@ -228,7 +229,7 @@ const spreadsheetStyle = `
 @media (max-width:720px){.excel-wrapper .toolbar{align-items:stretch;flex-direction:column}.excel-wrapper .btn-group{flex:0 0 auto}.excel-wrapper .summary{max-width:none;white-space:normal}.excel-wrapper .sheet-loading{left:12px;right:12px;bottom:58px;justify-content:center}.excel-wrapper .loading-card{margin:18px;flex-direction:column;text-align:center}.excel-wrapper .excel-image-lightbox button{top:12px;right:12px}}
 @media (prefers-reduced-motion:reduce){.excel-wrapper .excel-image-lightbox,.excel-wrapper .excel-image-lightbox img,.excel-wrapper .excel-image-lightbox button{transition:none}}
 `;
-const scopedSpreadsheetStyle = spreadsheetStyle.replace(
+const scopedSpreadsheetStyle = (spreadsheetStyle + spreadsheetCommentsStyle).replace(
   /\.excel-wrapper/g,
   SPREADSHEET_STYLE_SCOPE
 );
@@ -894,7 +895,10 @@ const renderFileViewerSpreadsheet = async (
   summary.className = 'summary';
   toolbar.append(sheetTabsBar, summary);
 
-  root.append(loading, error, tableWrapper, toolbar, imageLightbox);
+  const workbookBody = documentRef.createElement('div');
+  workbookBody.className = 'excel-body';
+  workbookBody.append(tableWrapper);
+  root.append(loading, error, workbookBody, toolbar, imageLightbox);
   target.replaceChildren(
     createEVirtTableStyle(documentRef, target, loadedEVirtTable.styleText),
     createStyle(documentRef),
@@ -902,6 +906,8 @@ const renderFileViewerSpreadsheet = async (
   );
 
   let sheets: SheetDefinition[] = [];
+  let commentsError = false;
+  let commentViewport: number[] | null = null;
   let sheetIndex = 0;
   let errorMessage = '';
   let totalRows = 0;
@@ -1004,6 +1010,25 @@ const renderFileViewerSpreadsheet = async (
       table?.draw();
     },
   });
+  const commentsView = createSpreadsheetComments({
+    root, toolbar, body: workbookBody, options: context?.options,
+    getSheetId: () => sheetIndex,
+    navigate: entry => {
+      commentsView.hide();
+      void rangeNavigation.provider.applyState?.({ spreadsheet: { range: {
+        sheetId: entry.sheetId, startRow: entry.row, endRow: entry.row,
+        startCol: entry.col, endCol: entry.col,
+      } } });
+    },
+  });
+  const activeComments = () => getActiveSheet()?.comments || [];
+  const showComment = (comment: SheetComment, anchor: HTMLElement, focus = true) => {
+    const sheet = getActiveSheet();
+    if (!sheet) return;
+    commentViewport = [table?.ctx.scrollX || 0, table?.ctx.scrollY || 0, tableHost.clientWidth, tableHost.clientHeight];
+    commentsView.show(comment, sheet, anchor, focus);
+  };
+  const commentLabel = (comment: SheetComment) => t('spreadsheet.comments.open', { cell: comment.address });
   const getColumnLabel = (column: number) => {
     let value = Math.max(0, column) + 1;
     let label = '';
@@ -1306,6 +1331,7 @@ const renderFileViewerSpreadsheet = async (
   };
 
   const renderChrome = () => {
+    commentsView.update(sheets, commentsError);
     setHidden(loading, !showBlockingLoading());
     const loadingTitle = loading.querySelector<HTMLElement>('[data-loading-title]');
     if (loadingTitle) {
@@ -1373,6 +1399,7 @@ const renderFileViewerSpreadsheet = async (
   };
 
   const setZoom = (scale: number) => {
+    commentsView.hide();
     zoom = clampZoom(scale);
     syncScaledRowHeights();
     syncTableLayout();
@@ -1557,6 +1584,9 @@ const renderFileViewerSpreadsheet = async (
         darkMode,
         resizableColumns,
         resizableRows,
+        comments: activeComments(),
+        showComment,
+        commentLabel,
         copySelection: copySpreadsheetSelection,
         searchCell: getSearchCell,
         sheetDefaults,
@@ -1600,6 +1630,11 @@ const renderFileViewerSpreadsheet = async (
         return;
       }
 
+      const viewport = [table.ctx.scrollX || 0, table.ctx.scrollY || 0, tableHost.clientWidth, tableHost.clientHeight];
+      if (commentViewport && viewport.some((value, index) => value !== commentViewport?.[index])) {
+        commentsView.hide();
+        commentViewport = null;
+      }
       const head = Math.max(table.ctx.body.headIndex || 0, 0);
       const tail = Math.max(table.ctx.body.tailIndex || head, head);
       const scrollY = table.ctx.scrollY || 0;
@@ -1630,6 +1665,9 @@ const renderFileViewerSpreadsheet = async (
         darkMode,
         resizableColumns,
         resizableRows,
+        comments: activeComments(),
+        showComment,
+        commentLabel,
         copySelection: copySpreadsheetSelection,
         searchCell: getSearchCell,
         sheetDefaults,
@@ -1638,6 +1676,7 @@ const renderFileViewerSpreadsheet = async (
       }),
     });
     enableEVirtTableShadowEventTargeting(table.ctx);
+    table.on('overlayerChange', () => commentsView.restoreCellFocus());
     table.on('onScrollX', scheduleViewportLoad);
     table.on('onScrollY', scheduleViewportLoad);
     table.on('resize', scheduleViewportLoad);
@@ -2317,6 +2356,7 @@ const renderFileViewerSpreadsheet = async (
   }
 
   function jumpToSpreadsheetCell(spreadsheet: SpreadsheetSearchTarget | null) {
+    commentsView.hide();
     pendingSearchJump = spreadsheet;
     if (!spreadsheet) {
       return;
@@ -2337,6 +2377,7 @@ const renderFileViewerSpreadsheet = async (
   }
 
   function handleSheet(index: number) {
+    commentsView.hide();
     latestSearchRequest += 1;
     rangeNavigation.cancel();
     if (sheetIndex === index) {
@@ -2448,8 +2489,9 @@ const renderFileViewerSpreadsheet = async (
     });
   };
 
-  controller.onWorkerEvent('sheets', ({ sheets: list }: { sheets: SheetDefinition[] }) => {
+  controller.onWorkerEvent('sheets', ({ sheets: list, commentsError: error }: { sheets: SheetDefinition[]; commentsError?: boolean }) => {
     sheets = list;
+    commentsError = !!error;
     resolveWorkbookReady?.();
     resolveWorkbookReady = null;
     const firstSheet = list.find((sheet: SheetDefinition) => !sheet.hidden) || list[0];
@@ -2552,6 +2594,7 @@ const renderFileViewerSpreadsheet = async (
     $el: root,
     unmount() {
       disposed = true;
+      commentsView.destroy();
       rangeNavigation.cancel('disposed');
       unsubscribeViewStateZoom();
       unregisterFileViewerViewStateProvider(root);

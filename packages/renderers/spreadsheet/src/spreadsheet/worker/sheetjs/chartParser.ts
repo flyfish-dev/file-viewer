@@ -1,3 +1,4 @@
+import { readBoundedZipText, type XmlReadBudget } from './xmlBudget.js'
 import {
   DOMParser,
   type Document as XmlDocument,
@@ -171,16 +172,20 @@ const parseXml = (xml: string) => {
   )
 }
 
-export const loadXml = async (zip: JSZip, path: string) => {
+export const loadXml = async (zip: JSZip, path: string, budget?: XmlReadBudget) => {
   const file = zip.file(path)
   if (!file) {
     return null
   }
-  return parseXml(await file.async('text'))
+  return parseXml(budget ? await readBoundedZipText(file, budget) : await file.async('text'))
 }
 
-export const loadRelationships = async (zip: JSZip, sourcePart: string) => {
-  const document = await loadXml(zip, relationshipPartPath(sourcePart))
+export const loadRelationships = async (
+  zip: JSZip,
+  sourcePart: string,
+  readPart = (path: string) => loadXml(zip, path)
+) => {
+  const document = await readPart(relationshipPartPath(sourcePart))
   if (!document) {
     return []
   }
