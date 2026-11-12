@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import { finalizeTableGrid, normalizeRowEndOnlyTables } from '../dist/msdoc/parser.js'
 import { applyTableStateToCells, tablePropsToState } from '../dist/msdoc/properties.js'
 import { decodeGrpprl, decodeSprm, SprmCodes } from '../dist/msdoc/sprm.js'
 import { mergePropertyArrays } from '../dist/msdoc/styles.js'
-import { renderMsDoc } from '../dist/index.js'
+import { parseMsDoc, renderMsDoc } from '../dist/index.js'
 
 function word(value) {
   return [value & 0xff, (value >>> 8) & 0xff]
@@ -140,6 +142,69 @@ assert.deepEqual(spacedCell.spacingTwips, { top: 120, left: 120, bottom: 120, ri
 const spacedHtml = renderSingleCellTable(spacedCell)
 assert.match(spacedHtml, /border-spacing:8px 8px/)
 assert.match(spacedHtml, /padding-inline-start:8px/)
+
+// MS-DOC bounds these CSSA widths by operation. An out-of-range value is not
+// a signed twip or a common sentinel and must not become a giant CSS margin.
+for (const code of [SprmCodes.sprmTCellPadding, SprmCodes.sprmTCellPaddingDefault]) {
+  const valid = decodeSprm(code, Uint8Array.from([6, 0, 1, 0x0f, 3, ...word(31680)]))
+  const oversized = decodeSprm(code, Uint8Array.from([6, 0, 1, 0x0f, 3, ...word(31681)]))
+  const malformed = decodeSprm(code, Uint8Array.from([6, 0, 1, 0x0f, 3, ...word(0xffff)]))
+  assert.equal(valid.warning, undefined)
+  assert.equal(oversized.warning?.code, 'MSDOC_TABLE_CSSA_WIDTH_OUT_OF_RANGE')
+  assert.equal(oversized.warning?.widthTwips, 31681)
+  assert.equal(malformed.warning?.widthTwips, 65535)
+  assert.equal(malformed.warning?.maxWidthTwips, 31680)
+  assert.equal(malformed.warning?.sprm, code)
+  assert.equal(applyTableStateToCells(makeTableState([valid], 1))[0].paddingTwips?.left, 31680)
+  assert.equal(applyTableStateToCells(makeTableState([oversized], 1))[0].paddingTwips?.left, undefined)
+  const recovered = applyTableStateToCells(makeTableState([padding, malformed], 1))[0]
+  assert.equal(recovered.paddingTwips?.left, 120)
+  assert.doesNotMatch(renderSingleCellTable(recovered), /4369px/)
+}
+const spacingAtLimit = decodeSprm(
+  SprmCodes.sprmTCellSpacingDefault,
+  Uint8Array.from([6, 0, 1, 0x0f, 3, ...word(15840)]),
+)
+const spacingTooWide = decodeSprm(
+  SprmCodes.sprmTCellSpacingDefault,
+  Uint8Array.from([6, 0, 1, 0x0f, 3, ...word(15841)]),
+)
+assert.equal(applyTableStateToCells(makeTableState([spacingAtLimit], 1))[0].spacingTwips?.left, 15840)
+assert.equal(spacingAtLimit.warning, undefined)
+assert.equal(spacingTooWide.warning?.widthTwips, 15841)
+assert.equal(spacingTooWide.warning?.maxWidthTwips, 15840)
+assert.equal(spacingTooWide.warning?.operation, 'cellSpacing')
+assert.equal(applyTableStateToCells(makeTableState([spacingTooWide], 1))[0].spacingTwips?.left, undefined)
+const systemSpacingTooWide = decodeSprm(
+  SprmCodes.sprmTCellSpacingDefault,
+  Uint8Array.from([6, 0, 1, 0x0f, 0x13, ...word(0xffff)]),
+)
+assert.equal(applyTableStateToCells(makeTableState([spacing, systemSpacingTooWide], 1))[0].spacingTwips?.left, 120)
+
+// Exercise the complete DOC container path with twelve malformed CSSA widths
+// in an existing table fixture. The source fixture stays byte-for-byte intact.
+const malformedDoc = Uint8Array.from(await readFile(new URL('../test/fixtures/github-34-wps-table.doc', import.meta.url)))
+let changedWidths = 0
+for (let index = 0; index < malformedDoc.length - 9 && changedWidths < 12; index++) {
+  if (malformedDoc[index] !== 0x34 || malformedDoc[index + 1] !== 0xd6 ||
+      malformedDoc[index + 2] !== 6 || malformedDoc[index + 3] !== 0 ||
+      malformedDoc[index + 4] !== 1 || malformedDoc[index + 6] !== 3 ||
+      malformedDoc[index + 7] !== 15 || malformedDoc[index + 8] !== 0) continue
+  malformedDoc[index + 7] = 0xff
+  malformedDoc[index + 8] = 0xff
+  changedWidths++
+}
+assert.equal(changedWidths, 12)
+assert.equal(createHash('sha256').update(malformedDoc).digest('hex'), '864c2ea4b06481fc8e1840f13f75697dd7cf0e726af8ca6e2271a7e9c17134f9')
+const malformedParsed = parseMsDoc(malformedDoc)
+assert.equal(malformedParsed.blocks.length, 2)
+assert.doesNotMatch(renderMsDoc(malformedParsed).html, /4369px/)
+const cssaWarnings = malformedParsed.warnings.filter(warning => warning.code === 'MSDOC_TABLE_CSSA_WIDTH_OUT_OF_RANGE')
+assert.equal(cssaWarnings.length, 1, 'repeated invalid operands produce one recovery diagnostic')
+assert.equal(cssaWarnings[0].widthTwips, 65535)
+assert.equal(cssaWarnings[0].maxWidthTwips, 31680)
+assert.deepEqual(renderMsDoc(malformedParsed).warnings, malformedParsed.warnings)
+assert.deepEqual(parseMsDoc(await readFile(new URL('../test/fixtures/github-34-wps-table.doc', import.meta.url))).warnings, [])
 
 // Fixed-size table operands must not desynchronize the following grpprl entry.
 const grpprl = Uint8Array.from([

@@ -387,9 +387,12 @@ function parseRangeWidthOperand(bytes: Uint8Array): RangeWidthOperand | null {
   };
 }
 
-function parseCssaOperand(bytes: Uint8Array): RangeWidthOperand | null {
+function parseCssaOperand(bytes: Uint8Array, maxWidthTwips: number): RangeWidthOperand | null {
   if (bytes.length < 7) return null;
   const width = u16(bytes, 5);
+  // CSSA.wWidth is unsigned. The allowed limit belongs to the containing
+  // table SPRM, so reject invalid widths without reinterpreting their sign.
+  if (width > maxWidthTwips) return null;
   return {
     cb: bytes[0] ?? 0,
     range: parseItcFirstLim(bytes, 1),
@@ -500,6 +503,21 @@ function boolValue(bytes: Uint8Array): boolean {
 
 function setMeta<TValue>(kind: PropertyKind, name: string, value: TValue, raw: number, bytes: Uint8Array): DecodedProperty<TValue> {
   return { kind, name, value, raw, operandBytes: bytes };
+}
+
+function decodeCssaProperty(name: string, bytes: Uint8Array, raw: number, maxWidthTwips: number): DecodedProperty {
+  const property = setMeta('table', name, parseCssaOperand(bytes, maxWidthTwips), raw, bytes);
+  if (bytes.length >= 7 && u16(bytes, 5) > maxWidthTwips) {
+    property.warning = {
+      code: 'MSDOC_TABLE_CSSA_WIDTH_OUT_OF_RANGE',
+      message: `Ignored out-of-range ${name} width; the preceding valid or default value is retained.`,
+      operation: name,
+      sprm: raw,
+      widthTwips: u16(bytes, 5),
+      maxWidthTwips,
+    };
+  }
+  return property;
 }
 
 export function decodeSprm(sprm: number, operandBytes: Uint8Array): DecodedProperty {
@@ -641,8 +659,8 @@ export function decodeSprm(sprm: number, operandBytes: Uint8Array): DecodedPrope
     case SprmCodes.sprmTSetBrc80: return setMeta('table', 'setBorder', parseRangeBrcOperand(bytes), raw, bytes);
     case SprmCodes.sprmTSetBrc: return setMeta('table', 'setBorder', parseRangeBrcOperand97(bytes), raw, bytes);
     case SprmCodes.sprmTCellPadding:
-    case SprmCodes.sprmTCellPaddingDefault: return setMeta('table', 'cellPadding', parseCssaOperand(bytes), raw, bytes);
-    case SprmCodes.sprmTCellSpacingDefault: return setMeta('table', 'cellSpacing', parseCssaOperand(bytes), raw, bytes);
+    case SprmCodes.sprmTCellPaddingDefault: return decodeCssaProperty('cellPadding', bytes, raw, 31680);
+    case SprmCodes.sprmTCellSpacingDefault: return decodeCssaProperty('cellSpacing', bytes, raw, 15840);
     case SprmCodes.sprmTCellWidth: return setMeta('table', 'cellWidth', parseRangeWidthOperand(bytes), raw, bytes);
     case SprmCodes.sprmTFitText: return setMeta('table', 'fitText', parseFixedRangeValueOperand(bytes), raw, bytes);
     case SprmCodes.sprmTFCellNoWrap: return setMeta('table', 'cellNoWrap', parseRangeValueOperand(bytes), raw, bytes);
