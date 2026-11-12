@@ -37,7 +37,7 @@ const verifyRejectedSemanticMutations=s=>{
  ];
  return mutations.map(([name,mutate])=>{const changed=structuredClone(s);mutate(changed);assert.throws(()=>contained(changed),assert.AssertionError,name);return{name,rejected:true}});
 };
-const browserName=process.env.PPTX_CHART_BROWSER||'chromium';const browser=await({chromium,webkit}[browserName]).launch({headless:true});
+const browserName=process.env.PPTX_CHART_BROWSER||'chromium';const browser=await({chromium,webkit}[browserName]).launch({executablePath:browserName==='chromium'?process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined:undefined,headless:true});
 try{for(const dpr of[1,2]){
  const page=await browser.newPage({viewport:{width:1200,height:900},deviceScaleFactor:dpr});
  page.on('pageerror',e=>errors.push(e.message));
