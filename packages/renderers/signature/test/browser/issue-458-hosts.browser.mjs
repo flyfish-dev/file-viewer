@@ -45,6 +45,8 @@ if (installedRoot)
 await mkdir(output, { recursive: true })
 const bytes = (await readFile(path.join(fixtures, 'reading.xml.p7m'))).toString('base64')
 const nested = (await readFile(path.join(fixtures, 'reading.xml.p7m.p7m'))).toString('base64')
+globalThis.__fileViewerPrepackObserveNodeFixture?.('generated/signature-panel/reading.xml.p7m', Buffer.from(bytes, 'base64'))
+globalThis.__fileViewerPrepackObserveNodeFixture?.('generated/signature-panel/reading.xml.p7m.p7m', Buffer.from(nested, 'base64'))
 const report = {
   passed: false,
   installedRoot: installedRoot || null,

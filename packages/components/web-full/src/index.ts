@@ -16,6 +16,7 @@ import type {
   ViewerMountOptions,
   ViewerOptions
 } from '@file-viewer/web'
+import { withFullControllerOptions } from './controller-options.js'
 
 export * from '@file-viewer/web'
 export { createViewerControllerHandle, FileViewerElement, FILE_VIEWER_ELEMENT_TAG }
@@ -81,7 +82,10 @@ export function mountViewer(
   initialOptions: ViewerMountOptions = {},
   coreOptions: ViewerCoreOptions = {}
 ): ViewerController {
-  return mountBaseViewer(container, withFullMountOptions(initialOptions), coreOptions)
+  return withFullControllerOptions(
+    mountBaseViewer(container, withFullMountOptions(initialOptions), coreOptions),
+    withFullMountOptions
+  )
 }
 
 export class FileViewerFullElement extends FileViewerElement {

@@ -45,7 +45,7 @@ export default defineConfig(ctx => {
         fileName: format => format === 'es' ? 'index.mjs' : 'index.umd.js'
       },
       rollupOptions: {
-        external: ['vue', '@file-viewer/core'],
+        external: ['vue', /^@file-viewer\/core(?:\/.+)?$/],
         output: {
           chunkFileNames: 'components/[name].js'
         }

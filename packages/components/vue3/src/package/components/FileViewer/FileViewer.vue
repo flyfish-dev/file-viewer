@@ -41,6 +41,7 @@ import {
 } from '@lucide/vue'
 import {
   createFileViewerTranslator,
+  FILE_VIEWER_LOCALE_METADATA,
   formatFileViewerErrorMessage,
   createFileViewerRequestScope,
   FILE_VIEWER_RENDER_SURFACE_BACKGROUND_PROPERTY,
@@ -61,11 +62,11 @@ import { useViewerDocumentFeatures } from './hooks/useViewerDocumentFeatures'
 import { useViewerExport } from './hooks/useViewerExport'
 import { useViewerFit } from './hooks/useViewerFit'
 import { useViewerLifecycle } from './hooks/useViewerLifecycle'
+import { useViewerI18n } from './hooks/useViewerI18n'
 import { useViewerErrorState, useViewerPresentation } from './hooks/useViewerPresentation'
 import { useViewerPreviewLifecycle } from './hooks/useViewerPreviewLifecycle'
 import { useViewerPublicApi } from './hooks/useViewerPublicApi'
 import { useViewerRenderSurface } from './hooks/useViewerRenderSurface'
-import { useViewerI18n } from './hooks/useViewerI18n'
 import { useViewerSourceLoading } from './hooks/useViewerSourceLoading'
 import { useViewerToolbar } from './hooks/useViewerToolbar'
 import { useViewerViewState } from './hooks/useViewerViewState'
@@ -156,7 +157,7 @@ watch(() => props.options?.theme, () => {
 })
 
 const onI18nError = (error: unknown) => emit('error', error instanceof Error ? error.message : String(error))
-const { i18n: viewerI18n, revision: i18nRevision } = useViewerI18n(
+const { viewerI18n, languageRevision: i18nRevision, resolvedLocale, getOptions: getLocalizedOptions } = useViewerI18n(
   () => effectiveOptions.value,
   () => viewerRoot.value?.ownerDocument,
   onI18nError
@@ -210,7 +211,7 @@ const {
   getDocumentTextChunks
 } = useViewerDocumentFeatures({
   output,
-  getOptions: () => effectiveOptions.value,
+  getOptions: getLocalizedOptions,
   emitSearchChange: state => emit('search-change', state),
   emitLocationChange: anchor => emit('location-change', anchor)
 })
@@ -227,7 +228,7 @@ const {
   getFile: () => props.file,
   getUrl: () => props.url,
   getSourceFilename: () => props.filename || props.name,
-  getOptions: () => effectiveOptions.value
+  getOptions: getLocalizedOptions
 })
 
 const {
@@ -337,7 +338,7 @@ const {
   buildRenderCompleteState,
   runBeforeOperation
 } = useViewerLifecycle({
-  getOptions: () => effectiveOptions.value,
+  getOptions: getLocalizedOptions,
   getFilename: () => filename.value,
   getBufferSize: () => currentBuffer.value?.byteLength,
   getCurrentFile: () => currentFile.value,
@@ -402,7 +403,7 @@ const {
   fitToView
 } = useViewerFit({
   output,
-  getOptions: () => effectiveOptions.value,
+  getOptions: getLocalizedOptions,
   refreshZoomProvider,
   refreshViewStateProvider,
   emitFitChange: result => emit('fit-change', result)
@@ -458,7 +459,7 @@ const {
   currentFile,
   currentSourceUrl,
   error,
-  getOptions: () => effectiveOptions.value,
+  getOptions: getLocalizedOptions,
   getZoomState,
   loading,
   normalizedToolbar,
@@ -578,7 +579,7 @@ const {
   currentSourceUrl,
   displayFilename,
   formatErrorMessage,
-  getOptions: () => effectiveOptions.value,
+  getOptions: getLocalizedOptions,
   operationAvailability,
   output,
   runBeforeOperation,
@@ -714,6 +715,8 @@ useViewerPreviewLifecycle({
 <template>
   <div
     ref='viewerRoot'
+    :lang='resolvedLocale'
+    :dir='FILE_VIEWER_LOCALE_METADATA[resolvedLocale].direction'
     class='file-viewer'
     part='shell'
     :data-viewer-theme='viewerTheme'

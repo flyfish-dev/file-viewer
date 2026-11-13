@@ -20,7 +20,7 @@ const localeFixture = () => process.env.EMAIL_LIVE_MSG_FIXTURE
   ? Uint8Array.from(readFileSync(process.env.EMAIL_LIVE_MSG_FIXTURE)).buffer
   : createMsgFixture();
 
-const locales = ['en-US', 'zh-CN', 'ja-JP', 'de-DE', 'zh-TW', 'zh-HK'] as const;
+const locales = ['en-US', 'zh-CN', 'ja-JP', 'de-DE', 'zh-TW', 'zh-HK', 'ru-RU'] as const;
 const cleanups: Array<() => void | Promise<void>> = [];
 afterEach(async () => {
   for (const cleanup of cleanups.splice(0).reverse()) await cleanup();
@@ -82,7 +82,7 @@ function assertChrome(target: Element, locale: (typeof locales)[number]) {
 }
 
 describe('email live locale ownership', () => {
-  it('updates six-locale chrome in place around a real parsed MSG iframe and active attachment', async () => {
+  it('updates seven-locale chrome in place around a real parsed MSG iframe and active attachment', async () => {
     const live = liveI18n();
     const parse = vi.spyOn(msg, 'parseMsg');
     const nestedUnmount = vi.fn();

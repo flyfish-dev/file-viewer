@@ -189,7 +189,7 @@ describe('desktop file capsule motion contract', () => {
   it('shows the remembered-open time with machine-readable metadata', () => {
     expect(recentFilesSource).toContain("<time class='demo-recent-files__time'")
     expect(recentFilesSource).toContain(":datetime='entry.timeIso'")
-    expect(helloWorldSource).toContain('timeLabel: recentTimeFormatter.value.format')
+    expect(helloWorldSource).toContain('timeLabel: formatFileViewerDateTime(demoLocale.value, new Date(entry.timestamp)')
     expect(helloWorldSource).toContain('timeIso: new Date(entry.timestamp).toISOString()')
   })
 })

@@ -272,12 +272,9 @@ export default async function renderOfd(
     currentPage = pageCount ? Math.min(pageCount, Math.max(1, currentPage)) : 0;
     pageMeterCurrent.textContent = pageCount ? String(currentPage) : '-';
     pageMeterTotal.textContent = `/ ${pageCount || '-'}`;
-    pageMeter.setAttribute(
-      'aria-label',
-      pageCount
-        ? t('ofd.toolbar.pageStatus', { current: currentPage, total: pageCount })
-        : t('ofd.toolbar.noPages')
-    );
+    bindings.attr(pageMeter, 'aria-label', () => pageCount
+      ? t('ofd.toolbar.pageStatus', { current: currentPage, total: pageCount })
+      : t('ofd.toolbar.noPages'));
     previousPageButton.disabled = currentPage <= 1;
     nextPageButton.disabled = currentPage <= 0 || currentPage >= pageCount;
   };

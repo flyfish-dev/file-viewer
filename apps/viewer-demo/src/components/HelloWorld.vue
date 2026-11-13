@@ -67,6 +67,7 @@ import type { DemoLocale } from '@/composables/useDemoCopy'
 import type { DemoSourcePanelAnchor } from '@/composables/useDemoFloatingPanels'
 import type { DemoRecentFile } from '@/composables/useDemoRecentFiles'
 import type { DemoPresetFile } from '@/data/demoSamples'
+import { formatFileViewerDateTime } from '@file-viewer/core'
 import type {
   FileViewerFileRef as FileRef,
   FileViewerFitMode,
@@ -126,7 +127,7 @@ const {
 } = useDemoPreferences({
   onSystemThemeChange: () => syncDemoDocumentChrome()
 })
-const officialSiteUrl = computed(() => demoLocale.value.startsWith('zh-') ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/')
+const officialSiteUrl = computed(() => demoLocale.value.startsWith('zh') ? 'https://file-viewer.app/' : 'https://file-viewer.app/en/')
 const { copy: demoCopy, getCopy: getDemoCopy } = useDemoCopy(demoLocale)
 const {
   localeOptions: demoLocaleOptions, menuOpen: localeMenuOpen,
@@ -335,15 +336,13 @@ const {
 //
 // Date formatting is derived from locale, while recent-file persistence and
 // deduplication remain owned by useDemoRecentFiles.
-const recentTimeFormatter = computed(() => new Intl.DateTimeFormat(demoLocale.value, {
-  hour: '2-digit',
-  minute: '2-digit'
-}))
 const recentDisplayEntries = computed(() => (
   recentFiles.value.slice(0, 3).map(entry => ({
     ...entry,
     ...getFileIconMeta(entry.iconTarget),
-    timeLabel: recentTimeFormatter.value.format(new Date(entry.timestamp)),
+    timeLabel: formatFileViewerDateTime(demoLocale.value, new Date(entry.timestamp), {
+      hour: '2-digit', minute: '2-digit'
+    }),
     timeIso: new Date(entry.timestamp).toISOString()
   }))
 ))
@@ -364,13 +363,7 @@ const demoThemeButtonTitle = computed(() => {
     ? demoCopy.value.themeToLight
     : demoCopy.value.themeToDark
 })
-const githubRepositoryAriaLabel = computed(() => {
-  if (demoLocale.value === 'zh-CN') return '在新标签页打开 File Viewer GitHub 开源仓库'
-  if (demoLocale.value === 'zh-TW') return '在新分頁開啟 File Viewer GitHub 開放原始碼專案'
-  if (demoLocale.value === 'zh-HK') return '在新分頁開啟 File Viewer GitHub 開源專案'
-  if (demoLocale.value === 'ja-JP') return 'File Viewer の GitHub リポジトリを新しいタブで開く'
-  return 'Open the File Viewer GitHub repository in a new tab'
-})
+const githubRepositoryAriaLabel = computed(() => demoCopy.value.openRepositoryAria)
 
 // Sample catalog data and URL identity rules are independent of panel layout.
 const {
@@ -854,6 +847,7 @@ function syncDemoDocumentChrome(nextLocale = demoLocale.value) {
   document.documentElement.dataset.demoTheme = resolvedDemoTheme.value
   document.title = getDemoCopy(nextLocale).pageTitle
 }
+watch(demoLocale, () => syncDemoDocumentChrome())
 
 onMounted(() => {
   // Global listeners exist only for page-level coordination. Renderer event
@@ -928,23 +922,17 @@ function openUrlPreview(nextUrl = url.value, recentSource: DemoRemoteRecentSourc
 }
 
 function setDemoLocale(nextLocale: DemoLocale) {
-  // Locale changes preserve the chosen document. Only the locale-specific
-  // default sample is exchanged for its counterpart.
+  // Locale changes preserve every chosen document, including the default sample.
   if (demoLocale.value === nextLocale) {
+    persistDemoLocale(nextLocale)
     return
   }
-  const previousDefaultUrl = DEFAULT_DEMO_URL_BY_LOCALE[demoLocale.value]
   const selectedSample = resolveDemoSampleParam(readDemoSampleParam(), demoLocale.value)
   persistDemoLocale(nextLocale)
   syncDemoDocumentChrome(nextLocale)
   if (!file.value && selectedSample) {
     syncDemoSampleParam(demoSampleParamFor(url.value || preview.value, nextLocale), nextLocale)
     return
-  }
-  if (!file.value && isSameSampleUrl(url.value || preview.value, previousDefaultUrl)) {
-    const nextDefaultUrl = DEFAULT_DEMO_URL_BY_LOCALE[nextLocale]
-    url.value = nextDefaultUrl
-    openUrlPreview(nextDefaultUrl)
   }
 }
 
@@ -1367,7 +1355,7 @@ function handleWindowResize() {
             :href='officialSiteUrl'
             target='_blank'
             rel='noreferrer'
-            :aria-label='demoLocale === "zh-CN" ? "打开 File Viewer 官网" : demoLocale.startsWith("zh-") ? "開啟 File Viewer 官方網站" : "Open the File Viewer official website"'
+            :aria-label='demoCopy.openSiteAria'
           >
             <span class='brand-mark'>
               <img :src='brandLogo' alt='' />

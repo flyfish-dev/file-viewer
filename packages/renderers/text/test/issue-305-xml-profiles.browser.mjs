@@ -5,6 +5,7 @@ import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, firefox, webkit } from 'playwright'
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const repo = path.resolve(here, '../../../..')
@@ -85,7 +86,7 @@ const server = createServer(async (req, res) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
 const origin = `http://127.0.0.1:${server.address().port}`
 const browserName = process.env.XML_PROFILE_BROWSER ?? 'chromium'
-const browser = await ({ chromium, firefox, webkit }[browserName]).launch({ headless: true })
+const browser = await launchBrowserForTest(({ chromium, firefox, webkit }[browserName]), browserName, { headless: true })
 const context = await browser.newContext({ viewport: { width: 900, height: 650 } })
 const external = []
 await context.route('**/*', route => {

@@ -1,6 +1,6 @@
 import {
   createFileViewerTranslator,
-  resolveFileViewerLocale,
+  type FileViewerI18nContext,
   type FileViewerMessageKey,
   type FileViewerMessageParams,
   type FileViewerOptions,
@@ -18,6 +18,7 @@ interface Options {
   toolbar: HTMLDivElement;
   body: HTMLDivElement;
   options?: FileViewerOptions;
+  i18n?: FileViewerI18nContext;
   navigate: (entry: SpreadsheetCommentEntry) => void;
   getSheetId: () => number;
 }
@@ -42,12 +43,12 @@ export const createSpreadsheetComments = ({
   toolbar,
   body,
   options,
+  i18n,
   navigate,
   getSheetId,
 }: Options) => {
   const document = root.ownerDocument;
-  const t = createFileViewerTranslator(options);
-  const locale = resolveFileViewerLocale(options);
+  const t = createFileViewerTranslator(i18n || options);
   const label = (
     key: keyof typeof commentKeys,
     values?: FileViewerMessageParams,
@@ -61,6 +62,7 @@ export const createSpreadsheetComments = ({
   let returnFocus: CellFocusTarget | null = null;
   let focusedCell: (CellFocusTarget & { element: HTMLElement }) | null = null;
   let activeList: HTMLDivElement | null = null;
+  let shownPopover: { entry: SpreadsheetCommentEntry; anchor: HTMLElement } | null = null;
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'excel-comments-toggle hidden';
@@ -142,6 +144,7 @@ export const createSpreadsheetComments = ({
   };
   const closePopover = (restoreFocus = false) => {
     popover.classList.add('hidden');
+    shownPopover = null;
     if (restoreFocus)
       (findIndicator(returnFocus) || toggle).focus({ preventScroll: true });
   };
@@ -179,13 +182,13 @@ export const createSpreadsheetComments = ({
       if (date && Number.isFinite(date.getTime())) {
         const time = textNode(
           'time',
-          new Intl.DateTimeFormat(locale, {
+          t.formatDateTime(date, {
             dateStyle: 'medium',
             timeStyle: 'short',
-          }).format(date),
+          }),
         );
         time.dateTime = date.toISOString();
-        time.title = date.toLocaleString(locale);
+        time.title = t.formatDateTime(date);
         metadata.append(time);
       }
       item.append(metadata, textNode('p', message.text));
@@ -291,6 +294,41 @@ export const createSpreadsheetComments = ({
       panel.querySelector('button')?.focus();
     } else toggle.focus();
   };
+  const renderPopover = () => {
+    if (!shownPopover) return;
+    const { entry, anchor } = shownPopover;
+    popover.replaceChildren();
+    const close = closeButton(() => closePopover(true));
+    renderThread(entry, popover, { close });
+    popover.classList.remove('hidden');
+    const hostRect = root.getBoundingClientRect();
+    const anchorRect = anchor.getBoundingClientRect();
+    const width = Math.min(320, hostRect.width - 16);
+    popover.style.width = `${width}px`;
+    popover.style.left = `${Math.max(8, Math.min(anchorRect.right - hostRect.left - width, hostRect.width - width - 8))}px`;
+    const height = popover.getBoundingClientRect().height;
+    popover.style.top = `${Math.max(8, Math.min(anchorRect.bottom - hostRect.top + 6, hostRect.height - height - 8))}px`;
+  };
+  const refreshLabels = () => {
+    for (const indicator of root.querySelectorAll<HTMLElement>('.excel-comment-indicator')) {
+      const cell = indicator.dataset.cell;
+      if (cell) indicator.setAttribute('aria-label', label('open', { cell }));
+    }
+    panel.setAttribute('aria-label', label('title'));
+    popover.setAttribute('aria-label', label('title'));
+    const count = entries().length;
+    toggle.textContent = label('count', { count });
+    toggle.classList.toggle('hidden', !count && !hasError);
+    if (toggle.getAttribute('aria-expanded') === 'true') renderPanel();
+    if (shownPopover) {
+      const focusedClose = Boolean(popover.querySelector('.excel-comments-close:focus'));
+      const previousScroll = popover.scrollTop;
+      renderPopover();
+      popover.scrollTop = previousScroll;
+      if (focusedClose)
+        popover.querySelector<HTMLButtonElement>('.excel-comments-close')?.focus({ preventScroll: true });
+    }
+  };
   toggle.addEventListener('click', () =>
     setOpen(toggle.getAttribute('aria-expanded') !== 'true'),
   );
@@ -329,6 +367,7 @@ export const createSpreadsheetComments = ({
   body.append(panel);
   toolbar.prepend(toggle);
   root.append(popover);
+  const unsubscribe = i18n?.subscribe(refreshLabels);
   return {
     restoreCellFocus() {
       if (!focusedCell || focusedCell.element.isConnected) return;
@@ -340,10 +379,7 @@ export const createSpreadsheetComments = ({
       if (sheets === nextSheets && hasError === error) return;
       sheets = nextSheets;
       hasError = error;
-      const count = entries().length;
-      toggle.textContent = label('count', { count });
-      toggle.classList.toggle('hidden', !count && !hasError);
-      if (toggle.getAttribute('aria-expanded') === 'true') renderPanel();
+      refreshLabels();
     },
     label,
     hide: () => closePopover(),
@@ -361,20 +397,13 @@ export const createSpreadsheetComments = ({
       };
       returnFocus = { address: comment.address, sheetId: sheet.id };
       selectedId = entry.key;
-      popover.replaceChildren();
-      const close = closeButton(() => closePopover(true));
-      renderThread(entry, popover, { close });
-      popover.classList.remove('hidden');
-      const hostRect = root.getBoundingClientRect();
-      const anchorRect = anchor.getBoundingClientRect();
-      const width = Math.min(320, hostRect.width - 16);
-      popover.style.width = `${width}px`;
-      popover.style.left = `${Math.max(8, Math.min(anchorRect.right - hostRect.left - width, hostRect.width - width - 8))}px`;
-      const height = popover.getBoundingClientRect().height;
-      popover.style.top = `${Math.max(8, Math.min(anchorRect.bottom - hostRect.top + 6, hostRect.height - height - 8))}px`;
+      shownPopover = { entry, anchor };
+      renderPopover();
       if (focus) popover.focus({ preventScroll: true });
     },
     destroy() {
+      unsubscribe?.();
+      shownPopover = null;
       focusRoot.removeEventListener('focusin', focusin, true);
       if (focusRoot !== document)
         document.removeEventListener('focusin', focusin, true);

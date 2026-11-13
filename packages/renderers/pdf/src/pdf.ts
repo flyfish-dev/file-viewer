@@ -25,6 +25,7 @@ import {
   createFileViewerViewStateChange,
   createFileViewerViewStateChangeEmitter,
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   observeFileViewerColorScheme,
   buildPrintPageStyle,
   formatCssPixels,
@@ -463,10 +464,10 @@ export default async function renderPdf(
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document;
   const targetWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : null);
-  const t = createFileViewerTranslator(context?.options);
-  const resolvedLocale = resolveFileViewerLocale(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  let activeL10n: InstanceType<typeof GenericL10n> | undefined;
   if (!targetWindow) {
-    throw new Error(t('pdf.error.browserWindow'));
+    throw t.error('pdf.error.browserWindow');
   }
   const options = context?.options?.pdf;
   const pdfRuntimeAssetBaseUrl = resolveFileViewerRuntimeAssetBaseUrl(documentRef);
@@ -491,7 +492,7 @@ export default async function renderPdf(
       : !isCompactViewport();
   let navMode: PdfNavMode = 'pages';
   let loadStatus: 'loading' | 'ready' | 'error' = 'loading';
-  let errorMessage = '';
+  let errorMessage = () => '';
   let currentPage = 1;
   let pageCount = 0;
   let currentScale = 1;
@@ -573,32 +574,32 @@ export default async function renderPdf(
   });
 
   const toolbar = createElement(documentRef, 'div', 'pdf-toolbar');
-  const navToggleButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.toggleNavigation'));
+  const navToggleButton = t.attr(t.attr(createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.toggleNavigation')), 'title', 'pdf.toolbar.toggleNavigation'), 'aria-label', 'pdf.toolbar.toggleNavigation');
   navToggleButton.setAttribute('aria-pressed', String(navVisible));
   navToggleButton.append(createElement(documentRef, 'span', 'pdf-panel-icon'));
 
   const pageGroup = createElement(documentRef, 'div', 'pdf-toolbar-group');
-  const previousPageButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.previousPage'), '‹');
+  const previousPageButton = t.attr(t.attr(createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.previousPage'), '‹'), 'title', 'pdf.toolbar.previousPage'), 'aria-label', 'pdf.toolbar.previousPage');
   const pageMeter = createElement(documentRef, 'span', 'pdf-page-meter');
   const pageMeterCurrent = createElement(documentRef, 'strong', undefined, '1');
   const pageMeterTotal = createElement(documentRef, 'span', undefined, '/ -');
   pageMeter.append(pageMeterCurrent, pageMeterTotal);
-  const nextPageButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.nextPage'), '›');
+  const nextPageButton = t.attr(t.attr(createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.nextPage'), '›'), 'title', 'pdf.toolbar.nextPage'), 'aria-label', 'pdf.toolbar.nextPage');
   pageGroup.append(previousPageButton, pageMeter, nextPageButton);
 
   const zoomGroup = createElement(documentRef, 'div', 'pdf-toolbar-group pdf-toolbar-group--zoom');
-  const zoomOutButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.zoomOut'), '−');
+  const zoomOutButton = t.attr(t.attr(createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.zoomOut'), '−'), 'title', 'pdf.toolbar.zoomOut'), 'aria-label', 'pdf.toolbar.zoomOut');
   const scaleButton = createElement(documentRef, 'button', 'pdf-scale-button', '100%') as HTMLButtonElement;
   scaleButton.type = 'button';
-  scaleButton.title = t('pdf.toolbar.fitWidth');
-  scaleButton.setAttribute('aria-label', t('pdf.toolbar.fitWidth'));
-  const zoomInButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.zoomIn'), '+');
+  t.attr(scaleButton, 'title', 'pdf.toolbar.fitWidth');
+  t.attr(scaleButton, 'aria-label', 'pdf.toolbar.fitWidth');
+  const zoomInButton = t.attr(t.attr(createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.zoomIn'), '+'), 'title', 'pdf.toolbar.zoomIn'), 'aria-label', 'pdf.toolbar.zoomIn');
   zoomGroup.append(zoomOutButton, scaleButton, zoomInButton);
 
   const rotateGroup = createElement(documentRef, 'div', 'pdf-toolbar-group pdf-toolbar-group--rotate');
-  const rotateLeftButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.rotateLeft'), '↺');
+  const rotateLeftButton = t.attr(t.attr(createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.rotateLeft'), '↺'), 'title', 'pdf.toolbar.rotateLeft'), 'aria-label', 'pdf.toolbar.rotateLeft');
   const rotationMeter = createElement(documentRef, 'span', 'pdf-rotation-meter', `${currentRotation}°`);
-  const rotateRightButton = createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.rotateRight'), '↻');
+  const rotateRightButton = t.attr(t.attr(createButton(documentRef, 'pdf-icon-button', t('pdf.toolbar.rotateRight'), '↻'), 'title', 'pdf.toolbar.rotateRight'), 'aria-label', 'pdf.toolbar.rotateRight');
   rotateGroup.append(rotateLeftButton, rotationMeter, rotateRightButton);
 
   if (navigationEnabled) {
@@ -611,17 +612,17 @@ export default async function renderPdf(
   const content = createElement(documentRef, 'div', 'pdf-content');
   const navPane = createElement(documentRef, 'aside', 'pdf-nav-pane');
   const navHead = createElement(documentRef, 'div', 'pdf-nav-head');
-  const navTitle = createElement(documentRef, 'span', undefined, t('pdf.nav.pagesTitle'));
-  const navCount = createElement(documentRef, 'strong', undefined, t('pdf.nav.pageCount', { count: 0 }));
+  const navTitle = t.text(createElement(documentRef, 'span', undefined), 'pdf.nav.pagesTitle');
+  const navCount = t.text(createElement(documentRef, 'strong', undefined), 'pdf.nav.pageCount', { count: 0 });
   navHead.append(navTitle, navCount);
 
   const navTabs = createElement(documentRef, 'div', 'pdf-nav-tabs');
   navTabs.setAttribute('role', 'tablist');
-  navTabs.setAttribute('aria-label', t('pdf.nav.typeLabel'));
-  const pagesTab = createButton(documentRef, '', t('pdf.nav.pagesTab')) as HTMLButtonElement;
-  const outlineTab = createButton(documentRef, '', t('pdf.nav.outlineTab')) as HTMLButtonElement;
-  pagesTab.textContent = t('pdf.nav.pagesTab');
-  outlineTab.textContent = t('pdf.nav.outlineTab');
+  t.attr(navTabs, 'aria-label', 'pdf.nav.typeLabel');
+  const pagesTab = t.attr(t.attr(createButton(documentRef, '', t('pdf.nav.pagesTab')), 'title', 'pdf.nav.pagesTab'), 'aria-label', 'pdf.nav.pagesTab') as HTMLButtonElement;
+  const outlineTab = t.attr(t.attr(createButton(documentRef, '', t('pdf.nav.outlineTab')), 'title', 'pdf.nav.outlineTab'), 'aria-label', 'pdf.nav.outlineTab') as HTMLButtonElement;
+  t.text(pagesTab, 'pdf.nav.pagesTab');
+  t.text(outlineTab, 'pdf.nav.outlineTab');
   pagesTab.setAttribute('role', 'tab');
   outlineTab.setAttribute('role', 'tab');
   navTabs.append(pagesTab, outlineTab);
@@ -633,7 +634,7 @@ export default async function renderPdf(
   const container = createElement(documentRef, 'div', 'pdf-wrapper');
   container.dataset.viewerScrollContainer = 'true';
   const pdfViewerRoot = createElement(documentRef, 'div', 'pdfViewer');
-  const stateNode = createElement(documentRef, 'div', 'pdf-state', t('pdf.state.loading'));
+  const stateNode = t.text(createElement(documentRef, 'div', 'pdf-state'), 'pdf.state.loading');
   container.append(pdfViewerRoot, stateNode);
   viewport.append(container);
   content.append(navPane, viewport);
@@ -683,6 +684,7 @@ export default async function renderPdf(
     } else if (navList.classList.contains('pdf-outline-list')) {
       navScrollTopByMode.outline = navList.scrollTop;
     }
+    t.release(navList);
     navList.replaceChildren();
     navList.className = navMode === 'pages' ? 'pdf-page-list' : 'pdf-outline-list';
 
@@ -706,7 +708,7 @@ export default async function renderPdf(
         }
         button.append(
           thumb,
-          createElement(documentRef, 'span', 'pdf-page-label', t('pdf.nav.pageLabel', { page }))
+          t.text(createElement(documentRef, 'span', 'pdf-page-label'), 'pdf.nav.pageLabel', { page })
         );
         button.addEventListener('click', () => goToPage(page, 'page-click', 'user'));
         navList.append(button);
@@ -734,7 +736,7 @@ export default async function renderPdf(
     });
 
     if (!entries.length) {
-      navList.append(createElement(documentRef, 'div', 'pdf-outline-empty', t('pdf.nav.outlineEmpty')));
+      navList.append(t.text(createElement(documentRef, 'div', 'pdf-outline-empty'), 'pdf.nav.outlineEmpty'));
     }
     restoreNavScrollTop();
   };
@@ -749,7 +751,7 @@ export default async function renderPdf(
 
     const image = documentRef.createElement('img');
     image.src = imageUrl;
-    image.alt = t('pdf.thumbnail.alt', { page: pageNumber });
+    t.attr(image, 'alt', 'pdf.thumbnail.alt', { page: pageNumber });
     image.loading = 'lazy';
     thumb.replaceChildren(image);
     return true;
@@ -865,7 +867,7 @@ export default async function renderPdf(
         await new Promise(resolve => targetWindow.setTimeout(resolve, 16));
       }
       if (loadStatus === 'error') {
-        throw new Error(errorMessage || t('pdf.error.loadFailed'));
+        throw new Error(errorMessage() || t('pdf.error.loadFailed'));
       }
     },
     capture: renderFirstPageThumbnail,
@@ -918,10 +920,10 @@ export default async function renderPdf(
     outlineTab.classList.toggle('active', navMode === 'outline');
     pagesTab.setAttribute('aria-selected', navMode === 'pages' ? 'true' : 'false');
     outlineTab.setAttribute('aria-selected', navMode === 'outline' ? 'true' : 'false');
-    navTitle.textContent = navMode === 'pages' ? t('pdf.nav.pagesTitle') : t('pdf.nav.outlineTitle');
-    navCount.textContent = navMode === 'pages'
+    t.bind(navTitle, localizedNode => { localizedNode.textContent = navMode === 'pages' ? t('pdf.nav.pagesTitle') : t('pdf.nav.outlineTitle'); }, 'textContent');
+    t.bind(navCount, localizedNode => { localizedNode.textContent = navMode === 'pages'
       ? t('pdf.nav.pageCount', { count: pageCount })
-      : t('pdf.nav.itemCount', { count: outlineCount() });
+      : t('pdf.nav.itemCount', { count: outlineCount() }); }, 'textContent');
     pageMeterCurrent.textContent = String(currentPage);
     pageMeterTotal.textContent = `/ ${pageCount || '-'}`;
     scaleButton.textContent = scaleText();
@@ -932,7 +934,7 @@ export default async function renderPdf(
     zoomInButton.disabled = !canZoomIn();
     stateNode.hidden = loadStatus === 'ready';
     stateNode.classList.toggle('pdf-state--error', loadStatus === 'error');
-    stateNode.textContent = loadStatus === 'error' ? errorMessage : t('pdf.state.loading');
+    t.bind(stateNode, localizedNode => { localizedNode.textContent = loadStatus === 'error' ? errorMessage() : t('pdf.state.loading'); }, 'textContent');
     renderNavList();
   };
 
@@ -1936,7 +1938,7 @@ export default async function renderPdf(
   const getPdfPrintPageSize = async (pageNumber = 1) => {
     const pdfDocument = pdfContext.document;
     if (!pdfDocument) {
-      throw new Error(t('pdf.error.notLoaded'));
+      throw t.error('pdf.error.notLoaded');
     }
     const page = await pdfDocument.getPage(Math.min(Math.max(pageNumber, 1), pdfDocument.numPages));
     const viewport = page.getViewport({
@@ -1954,7 +1956,7 @@ export default async function renderPdf(
     const sizes = [];
     const count = pdfContext.document?.numPages || 1;
     for (let number = 1; number <= count; number += 1) {
-      if (destroyed) throw new Error(t('pdf.error.unloaded'));
+      if (destroyed) throw t.error('pdf.error.unloaded');
       sizes.push(await getPdfPrintPageSize(number));
     }
     const size = sizes[0];
@@ -1969,13 +1971,13 @@ export default async function renderPdf(
   const renderPdfPagesForExport = async (exportOptions: FileRenderExportOptions) => {
     const pdfDocument = pdfContext.document;
     if (!pdfDocument) {
-      throw new Error(t('pdf.error.notLoaded'));
+      throw t.error('pdf.error.notLoaded');
     }
 
     const pagesHtml: string[] = [];
     for (let pageNumber = 1; pageNumber <= pdfDocument.numPages; pageNumber += 1) {
       if (destroyed) {
-        throw new Error(t('pdf.error.unloaded'));
+        throw t.error('pdf.error.unloaded');
       }
 
       const page = await pdfDocument.getPage(pageNumber);
@@ -1998,7 +2000,7 @@ export default async function renderPdf(
       const canvas = documentRef.createElement('canvas');
       const canvasContext = canvas.getContext('2d');
       if (!canvasContext) {
-        throw new Error(t('pdf.error.canvasUnavailable'));
+        throw t.error('pdf.error.canvasUnavailable');
       }
 
       canvas.width = Math.ceil(renderViewport.width);
@@ -2030,7 +2032,7 @@ export default async function renderPdf(
     pdfCjkFontFallbackPageLoads.clear();
     pdfCjkFontFallbackRenderHandledPages.clear();
     loadStatus = 'loading';
-    errorMessage = '';
+    errorMessage = () => '';
     pdfContext.document = null;
     outlineItems = [];
     pdfThumbnails.clear();
@@ -2053,12 +2055,38 @@ export default async function renderPdf(
         updateMatchesCountOnProgress: true,
       });
 
+      // The embedded fallback needs no host-level l10n link or network fetch.
+      // Viewer-owned page regions use the shared live catalog through IL10n.
+      void activeL10n?.destroy();
+      const fallbackL10n = new GenericL10n('');
+      activeL10n = fallbackL10n;
+      const bindPageRegions = (element: Element) => {
+        const selector = '[data-l10n-id="pdfjs-page-landmark"]';
+        const pages = [...(element.matches(selector) ? [element] : []), ...element.querySelectorAll(selector)];
+        for (const page of pages) {
+          const number = Number(page.getAttribute('data-page-number'));
+          if (!Number.isInteger(number) || number < 1) continue;
+          page.removeAttribute('data-l10n-id');
+          page.removeAttribute('data-l10n-args');
+          t.attr(page, 'aria-label', 'pdf.nav.pageLabel', { page: number });
+        }
+      };
+      const l10n = {
+        getLanguage: () => resolveFileViewerLocale(context?.options),
+        getDirection: () => 'ltr',
+        get: fallbackL10n.get.bind(fallbackL10n),
+        translate: async (element: Element) => { bindPageRegions(element); await fallbackL10n.translate(element); },
+        translateOnce: async (element: Element) => { bindPageRegions(element); await fallbackL10n.translateOnce(element); },
+        pause: () => fallbackL10n.pause(),
+        resume: () => fallbackL10n.resume(),
+        destroy: () => fallbackL10n.destroy(),
+      };
       const pdfViewer = new PDFViewer({
         container,
         eventBus,
         linkService: pdfLinkService,
         findController: pdfFindController,
-        l10n: new GenericL10n(resolvedLocale),
+        l10n,
         enableAutoLinking: false,
       });
       pdfContext.viewer = pdfViewer;
@@ -2070,6 +2098,7 @@ export default async function renderPdf(
       eventBus.on('updatefindmatchescount', handlePdfFindMatchesCount);
       eventBus.on('updatefindcontrolstate', handlePdfFindControlState);
       eventBus.on('pagesinit', () => {
+        void l10n.translate(container);
         applyRotation(currentRotation, 'rotation-change', 'viewer', false);
         loadStatus = 'ready';
         scheduleLegacyPageDimensionPatch();
@@ -2127,6 +2156,8 @@ export default async function renderPdf(
         }
       });
       eventBus.on('pagerendered', ({ pageNumber }: { pageNumber: number }) => {
+        const page = pdfViewer.getPageView(pageNumber - 1)?.div;
+        if (page) bindPageRegions(page);
         scheduleLegacyPageDimensionPatch();
         if (pdfBoundingBoxController.hasBoxes()) {
           void pdfBoundingBoxController.render({ pageNumber, source: 'viewer' });
@@ -2163,7 +2194,7 @@ export default async function renderPdf(
       });
 
       if (!context?.streamUrl && !buffer.byteLength) {
-        throw new Error(t('pdf.error.missingSource'));
+        throw t.error('pdf.error.missingSource');
       }
 
       const pdfAssets = resolveFileViewerPdfAssetUrls(
@@ -2374,7 +2405,7 @@ export default async function renderPdf(
         return;
       }
       loadStatus = 'error';
-      errorMessage = error instanceof Error ? error.message : t('pdf.error.loadFailed');
+      errorMessage = () => normalizeFileViewerErrorMessage(error, context?.options) || t('pdf.error.loadFailed');
       syncUi();
     }
   };
@@ -2461,6 +2492,7 @@ export default async function renderPdf(
     $el: root,
     unmount() {
       destroyed = true;
+      t.release(root);
       disposeReadingTheme();
       disposeHandTool();
       loadVersion += 1;
@@ -2481,6 +2513,8 @@ export default async function renderPdf(
       unregisterFileViewerZoomProvider(root);
       unregisterFileViewerViewStateProvider(root);
       pdfBoundingBoxController.destroy();
+      void activeL10n?.destroy();
+      activeL10n = undefined;
       outlineItems = [];
       context?.registerExportAdapter?.(null);
       context?.registerThumbnailAdapter?.(null);

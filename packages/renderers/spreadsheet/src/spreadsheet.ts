@@ -5,6 +5,7 @@ import { createSpreadsheetRangeNavigation } from './spreadsheet/rangeNavigation.
 import {
   createFileViewerWorkerController,
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   createEmptyFileViewerSearchState,
   registerFileViewerSearchProvider,
@@ -810,7 +811,7 @@ const renderFileViewerSpreadsheet = async (
   const documentRef = target.ownerDocument;
   const loadedEVirtTable = await loadEVirtTable(documentRef);
   const EVirtTable = loadedEVirtTable.constructor;
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const zoomEmitter = createZoomChangeEmitter();
   const systemDark = documentRef.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
   const darkMode = resolveFileViewerColorScheme(context?.options?.theme, systemDark) === 'dark';
@@ -833,12 +834,12 @@ const renderFileViewerSpreadsheet = async (
   loadingCopy.className = 'loading-copy';
   const loadingKicker = documentRef.createElement('span');
   loadingKicker.className = 'loading-kicker';
-  loadingKicker.textContent = t('spreadsheet.loading.kicker');
+  t.text(loadingKicker, 'spreadsheet.loading.kicker');
   const loadingTitle = documentRef.createElement('strong');
   loadingTitle.dataset.loadingTitle = 'true';
-  loadingTitle.textContent = t('spreadsheet.loading.title');
+  t.text(loadingTitle, 'spreadsheet.loading.title');
   const loadingHint = documentRef.createElement('p');
-  loadingHint.textContent = t('spreadsheet.loading.hint');
+  t.text(loadingHint, 'spreadsheet.loading.hint');
   loadingCopy.append(loadingKicker, loadingTitle, loadingHint);
   const loadingSpinner = documentRef.createElement('span');
   loadingSpinner.className = 'loading-spinner';
@@ -856,7 +857,7 @@ const renderFileViewerSpreadsheet = async (
   const sheetLoadingDot = documentRef.createElement('span');
   sheetLoadingDot.className = 'sheet-loading-dot';
   const sheetLoadingText = documentRef.createElement('span');
-  sheetLoadingText.textContent = t('spreadsheet.loading.streaming');
+  t.text(sheetLoadingText, 'spreadsheet.loading.streaming');
   const sheetLoadingSummary = documentRef.createElement('span');
   sheetLoadingSummary.className = 'sheet-loading-summary';
   sheetLoading.append(sheetLoadingDot, sheetLoadingText, sheetLoadingSummary);
@@ -880,11 +881,11 @@ const renderFileViewerSpreadsheet = async (
   imageLightbox.setAttribute('aria-modal', 'true');
   imageLightbox.setAttribute('aria-hidden', 'true');
   const lightboxImage = documentRef.createElement('img');
-  lightboxImage.alt = t('image.lightbox.alt');
+  t.attr(lightboxImage, 'alt', 'image.lightbox.alt');
   lightboxImage.draggable = false;
   const lightboxCloseButton = documentRef.createElement('button');
   lightboxCloseButton.type = 'button';
-  lightboxCloseButton.setAttribute('aria-label', t('image.lightbox.close'));
+  t.attr(lightboxCloseButton, 'aria-label', 'image.lightbox.close');
   lightboxCloseButton.textContent = '×';
   imageLightbox.append(lightboxImage, lightboxCloseButton);
 
@@ -892,7 +893,7 @@ const renderFileViewerSpreadsheet = async (
   toolbar.className = 'toolbar';
   const sheetTabsBar = documentRef.createElement('div');
   sheetTabsBar.className = 'btn-group';
-  sheetTabsBar.setAttribute('aria-label', t('spreadsheet.tabs.ariaLabel'));
+  t.attr(sheetTabsBar, 'aria-label', 'spreadsheet.tabs.ariaLabel');
   const summary = documentRef.createElement('div');
   summary.className = 'summary';
   toolbar.append(sheetTabsBar, summary);
@@ -912,6 +913,7 @@ const renderFileViewerSpreadsheet = async (
   let commentViewport: number[] | null = null;
   let sheetIndex = 0;
   let errorMessage = '';
+  let loadError: Error | undefined;
   let totalRows = 0;
   let totalCols = 0;
   let sheetDefaults = { ...DEFAULT_SHEET_DEFAULTS };
@@ -1015,7 +1017,7 @@ const renderFileViewerSpreadsheet = async (
     },
   });
   const commentsView = createSpreadsheetComments({
-    root, toolbar, body: workbookBody, options: context?.options,
+    root, toolbar, body: workbookBody, options: context?.options, i18n: context?.i18n,
     getSheetId: () => sheetIndex,
     navigate: entry => {
       commentsView.hide();
@@ -1205,8 +1207,8 @@ const renderFileViewerSpreadsheet = async (
     }
     const cachedRows = Math.min(loadedWindowCount * WINDOW_SIZE, totalRows);
     return t('spreadsheet.state.cachedRows', {
-      cached: cachedRows.toLocaleString(),
-      total: totalRows.toLocaleString(),
+      cached: cachedRows,
+      total: totalRows,
     });
   };
 
@@ -1217,11 +1219,11 @@ const renderFileViewerSpreadsheet = async (
       return '';
     }
     if (!cols) {
-      return t('spreadsheet.state.rows', { rows: rows.toLocaleString() });
+      return t('spreadsheet.state.rows', { rows });
     }
     return t('spreadsheet.state.rowsAndColumns', {
-      rows: rows.toLocaleString(),
-      cols: cols.toLocaleString(),
+      rows,
+      cols,
     });
   };
 
@@ -1339,16 +1341,16 @@ const renderFileViewerSpreadsheet = async (
     setHidden(loading, !showBlockingLoading());
     const loadingTitle = loading.querySelector<HTMLElement>('[data-loading-title]');
     if (loadingTitle) {
-      loadingTitle.textContent = getSheetLoadingText();
+      t.bind(loadingTitle, node => { node.textContent = getSheetLoadingText(); });
     }
-    error.textContent = errorMessage;
+    t.bind(error, node => { node.textContent = errorMessage ? normalizeFileViewerErrorMessage(loadError || errorMessage, context?.options) : ''; });
     setHidden(error, !errorMessage);
     setHidden(sheetLoading, !showStreamingLoading());
     const cacheText = sheetLoading.querySelector<HTMLElement>('.sheet-loading-summary');
     if (cacheText) {
-      cacheText.textContent = getCachedSummary();
+      t.bind(cacheText, node => { node.textContent = getCachedSummary(); });
     }
-    summary.textContent = getStatusSummary();
+    t.bind(summary, node => { node.textContent = getStatusSummary(); });
 
     sheetTabsBar.replaceChildren(...getSheetTabs().map(sheet => {
       const button = documentRef.createElement('button');
@@ -2097,7 +2099,7 @@ const renderFileViewerSpreadsheet = async (
             merge.row + rowOffset,
             merge.col + colOffset + 1
           );
-          virtualState.mergeCoveredMap.set(coveredKey, true);
+          virtualState.mergeCoveredMap.set(coveredKey, startKey);
         }
       }
     });
@@ -2589,7 +2591,8 @@ const renderFileViewerSpreadsheet = async (
       virtualState.loadingWindows.clear();
       syncWindowStats();
     }
-    errorMessage = message || t('spreadsheet.error.parseFailed');
+    loadError = message ? new Error(message) : t.error('spreadsheet.error.parseFailed');
+    errorMessage = loadError.message;
     renderChrome();
   });
 
@@ -2599,7 +2602,8 @@ const renderFileViewerSpreadsheet = async (
     resolveWorkbookReady = null;
     sheetInitializing = false;
     loadingState = false;
-    errorMessage = event.message || t('spreadsheet.error.workerFailed');
+    loadError = event.message ? new Error(event.message) : t.error('spreadsheet.error.workerFailed');
+    errorMessage = loadError.message;
     renderChrome();
   });
 
@@ -2620,7 +2624,7 @@ const renderFileViewerSpreadsheet = async (
         });
       }
       if (errorMessage) {
-        throw new Error(errorMessage);
+        throw loadError || new Error(errorMessage);
       }
     },
     getTarget: () => tableWrapper,

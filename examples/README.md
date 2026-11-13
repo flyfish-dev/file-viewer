@@ -29,7 +29,7 @@ pnpm build:examples
 
 ## Use as a standalone starter
 
-Copy one example directory outside this monorepo, then run `pnpm install && pnpm dev`. Its normal `^3.3.3` dependency ranges install the published packages from npm; the workspace-only overrides are not copied with it.
+These source examples target File Viewer `3.3.4`. Copy one example directory outside this monorepo, then run `pnpm install && pnpm dev` after the matching packages are available from npm. The modern Vite examples use `^3.3.4` ranges; the Vue 2.6 harness pins `3.3.4`. The workspace-only overrides are not copied with them. Check npm for published versions; preparing these examples does not publish their dependencies.
 
 The examples keep their viewer assets local through `@file-viewer/vite-plugin`. Replace the bundled sample with your own URL or `File`, and choose `preset-lite`, `preset-office`, `preset-engineering`, `preset-all`, or a matching full package according to your format and bundle requirements.
 

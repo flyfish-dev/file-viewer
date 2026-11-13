@@ -38,7 +38,7 @@ describe('explicit live language contexts', () => {
   })
   it('uses a structural context across independent module boundaries and isolates viewers', () => {
     const left = language({ locale: 'en-US' }); const right = language({ locale: 'de-DE' })
-    const foreign: FileViewerI18nContext = { get locale() { return left.locale }, get options() { return left.options }, t: (...args) => left.t(...args), subscribe: fn => left.subscribe(fn) }
+    const foreign: FileViewerI18nContext = { get locale() { return left.locale }, get options() { return left.options }, t: (...args) => left.t(...args), subscribe: fn => left.subscribe(fn), formatNumber: left.formatNumber, formatDateTime: left.formatDateTime, formatBytes: left.formatBytes }
     const t = createFileViewerTranslator(foreign); left.update({ locale: 'zh-HK' })
     expect(t('toolbar.print')).toBe('打印'); expect(right.t('toolbar.print')).toBe('Drucken')
   })

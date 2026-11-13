@@ -5,7 +5,7 @@ import renderCode from '../packages/renderers/text/src/code'
 import renderHtml from '../packages/renderers/text/src/html'
 import renderAudio from '../packages/renderers/media/src/audio'
 
-const locales = ['en-US', 'zh-CN', 'ja-JP', 'de-DE', 'zh-TW', 'zh-HK'] as const
+const locales = ['en-US', 'zh-CN', 'ja-JP', 'de-DE', 'zh-TW', 'zh-HK', 'ru-RU'] as const
 const instances: FileViewerRenderedInstance[] = []
 const scopes: ReturnType<typeof createFileViewerI18n>[] = []
 const root = () => { const n = document.createElement('div'); document.body.append(n); return n }
@@ -58,7 +58,7 @@ describe('B1 defaults, ownership and late mounting', () => {
     const c=scope(),host=root();const rendered=await renderXml(bytes('<r>原文</r>'),host,{i18n:c,options:{xml:{labels}}});instances.push(rendered)
     const source=host.querySelector<HTMLButtonElement>('[data-xml-view="source"]') || host.querySelector<HTMLButtonElement>('button')!;
     const all=host.querySelectorAll('button'), summary=host.querySelector('summary')!, body=host.querySelector('code')!, diagnostic=host.querySelector('.xml-profile-diagnostics div')!;const raw=diagnostic.textContent, content=body.textContent
-    for(const locale of locales) {c.update({locale});expect(all[0].textContent).toBe(labels?.viewRendered??c.t('text.xml.viewRendered'));expect(all[1].textContent).toBe(labels?.viewSource??c.t('text.xml.viewSource'));expect(summary.textContent).toBe(labels?.diagnostics??c.t('text.xml.diagnostics'));expect(host.querySelector('code')).toBe(body);expect(body.textContent).toBe(content);expect(diagnostic.textContent).toBe(raw)}
+    for(const locale of locales) {c.update({locale});expect(all[0].textContent).toBe(labels?.viewRendered??c.t('xml.viewRendered'));expect(all[1].textContent).toBe(labels?.viewSource??c.t('xml.viewSource'));expect(summary.textContent).toBe(labels?.diagnostics??c.t('xml.diagnostics'));expect(host.querySelector('code')).toBe(body);expect(body.textContent).toBe(content);expect(diagnostic.textContent).toBe(raw)}
   })
   it('retains patch source/content and updates only owned summary', async()=> {
     const c=scope(),host=root(),raw='--- a/x\n+++ b/x\n@@ -1 +1 @@\n-old\n+原文\n';instances.push(await renderPatch(bytes(raw),host,'patch',{i18n:c}))
@@ -81,7 +81,7 @@ describe('B1 defaults, ownership and late mounting', () => {
       instances.push(await renderAudio(new ArrayBuffer(0),host,'mid',{i18n:c}));const pending=host.querySelector('.fv-midi-state')!;c.update({locale:'zh-TW'});expect(pending.textContent).toBe(c.t('media.midi.loading'))
       resolve({Midi:class {name='';duration=1;header={ppq:1};tracks=[{name:'',instrument:{},channel:0,notes:[],duration:1},{name:'Track 2',instrument:{name:'Unknown'},channel:1,notes:[],duration:1}];constructor(){parse()}}})
       await vi.waitFor(()=>expect(host.querySelectorAll('tbody tr')).toHaveLength(2));const table=host.querySelector('table'),rows=host.querySelectorAll('tbody tr');
-      for(const locale of locales){c.update({locale});expect(rows[0].children[0].textContent).toBe(c.t('media.midi.trackFallback',{index:1}));expect(rows[0].children[1].textContent).toBe(c.t('media.midi.instrumentFallback'));expect(rows[1].children[0].textContent).toBe('Track 2');expect(rows[1].children[1].textContent).toBe('Unknown');expect(host.querySelector('table')).toBe(table)}expect(load).toHaveBeenCalledTimes(1);expect(parse).toHaveBeenCalledTimes(1)
+      for(const locale of locales){c.update({locale});expect(rows[0].children[0].textContent).toBe(c.t('media.midi.trackFallback',{index:1}));expect(rows[0].children[1].textContent).toBe(c.t('media.midi.unknownInstrument'));expect(rows[1].children[0].textContent).toBe('Track 2');expect(rows[1].children[1].textContent).toBe('Unknown');expect(host.querySelector('table')).toBe(table)}expect(load).toHaveBeenCalledTimes(1);expect(parse).toHaveBeenCalledTimes(1)
     } finally {registerFileViewerMidiLoader(null)}
   })
   it('captures raw MIDI errors once and retires bindings on destroy before late resolution',async()=>{
@@ -121,7 +121,7 @@ describe('B1 virtual/image ownership',()=>{
 })
 
 import { FILE_VIEWER_BUILTIN_MESSAGES, renderFileViewerImage as publicCoreImage } from '@file-viewer/core'
-it('retains six-catalog key parity, nonempty values and exact new-key placeholders',()=>{
+it('retains seven-catalog key parity, nonempty values and exact new-key placeholders',()=>{
   const keys=['text.code.lineCount','text.patch.summary','text.xml.viewSource','text.xml.viewRendered','text.xml.diagnostics','text.xml.renderedTitle','media.midi.trackFallback','media.midi.instrumentFallback'] as const
   const en=FILE_VIEWER_BUILTIN_MESSAGES['en-US'];const tokens=(s:string)=>[...s.matchAll(/\{(\w+)\}/g)].map(x=>x[1]).sort()
   for(const locale of locales){const catalog=FILE_VIEWER_BUILTIN_MESSAGES[locale];expect(Object.keys(catalog).sort()).toEqual(Object.keys(en).sort());for(const key of keys){expect(catalog[key].trim()).not.toBe('');expect(tokens(catalog[key])).toEqual(tokens(en[key]))}}

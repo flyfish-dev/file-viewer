@@ -1171,13 +1171,46 @@ export const createTableConfig = ({
   const scaledCellWidth = scaleNumber(sheetDefaults.colWidth, normalizedScale)
   const headerStyle = getIndexCellStyle(normalizedScale, darkMode)
   const loadingStyle = getLoadingCellStyle(normalizedScale, darkMode)
+  let firstVisibleColumn = 1
 
-  const spanMethod: SpanMethod = ({ rowIndex, colIndex, column }) => {
+  // The virtualizer omits an offscreen anchor. Its first visible covered cell
+  // must paint the surviving part of that merge, using the original text box.
+  const getProjectedMerge = (rowIndex: number, colIndex: number, column: Column) => {
+    const cellKey = getCellCacheKey(rowIndex, colIndex, column)
+    const anchorKey = virtualState.mergeCoveredMap.get(cellKey)
+    const merge = anchorKey ? virtualState.mergeStartMap.get(anchorKey) : undefined
+    const displayCol = getDataColumnIndex(column, colIndex) + 1
+    if (!merge || merge.row !== rowIndex || displayCol !== firstVisibleColumn ||
+        merge.col >= displayCol || displayCol >= merge.col + merge.colspan) {
+      return undefined
+    }
+    let width = 0
+    let offsetLeft = 0
+    for (let col = merge.col; col < merge.col + merge.colspan; col += 1) {
+      const sourceWidth = getRenderColumnWidth(virtualState.columns[col])
+      const scaledWidth = sourceWidth > 0 ? scaleNumber(sourceWidth, normalizedScale) : 0
+      width += scaledWidth
+      if (col < displayCol) offsetLeft += scaledWidth
+    }
+    return { merge, anchorKey: anchorKey!, width, offsetLeft, colspan: merge.col + merge.colspan - displayCol }
+  }
+
+  const spanMethod: SpanMethod = ({ rowIndex, colIndex, column, visibleLeafColumns }) => {
+    if (visibleLeafColumns?.length) {
+      const visibleDataColumns = visibleLeafColumns.filter(item => item.key !== INDEX_COLUMN_KEY && isVisibleDataColumn(item))
+      if (visibleDataColumns.length) {
+        firstVisibleColumn = Math.min(...visibleDataColumns.map(item => getDataColumnIndex(item, 1) + 1))
+      }
+    }
     if (colIndex === 0) {
       return
     }
 
     const key = getCellCacheKey(rowIndex, colIndex, column)
+    const projected = getProjectedMerge(rowIndex, colIndex, column)
+    if (projected) {
+      return { rowspan: projected.merge.rowspan, colspan: projected.colspan }
+    }
     if (virtualState.mergeCoveredMap.has(key)) {
       return { rowspan: 0, colspan: 0 }
     }
@@ -1209,8 +1242,9 @@ export const createTableConfig = ({
       return loadingStyle
     }
 
-    const style = scaleCellStyle(virtualState.cellCache.get(getCellCacheKey(rowIndex, colIndex, column)), normalizedScale)
-    const match = searchCell?.(rowIndex, getDataColumnIndex(column, colIndex))
+    const projected = getProjectedMerge(rowIndex, colIndex, column)
+    const style = scaleCellStyle(virtualState.cellCache.get(projected?.anchorKey || getCellCacheKey(rowIndex, colIndex, column)), normalizedScale)
+    const match = searchCell?.(rowIndex, projected ? projected.merge.col - 1 : getDataColumnIndex(column, colIndex))
     return match ? { ...style, backgroundColor: match === 'active' ? '#ffbf47' : '#fff1a8', color: '#202124' } : style
   }
 
@@ -1232,26 +1266,29 @@ export const createTableConfig = ({
       return undefined
     }
 
-    const cellKey = getCellCacheKey(rowIndex, colIndex, column)
-    if (virtualState.mergeCoveredMap.has(cellKey)) {
+    const ownCellKey = getCellCacheKey(rowIndex, colIndex, column)
+    const projected = getProjectedMerge(rowIndex, colIndex, column)
+    if (virtualState.mergeCoveredMap.has(ownCellKey) && !projected) {
       return undefined
     }
 
+    const cellKey = projected?.anchorKey || ownCellKey
     const style = scaleCellStyle(virtualState.cellCache.get(cellKey), normalizedScale)
-    const dataColIndex = getDataColumnIndex(column, colIndex)
+    const dataColIndex = projected ? projected.merge.col - 1 : getDataColumnIndex(column, colIndex)
+    const renderValue = projected ? currentRow[getDataKey(dataColIndex)] : value
     const measureDocument = typeof document === 'undefined' ? undefined : document
-    const overflowLayout = getExcelOverflowLayout(
+    const overflowLayout = projected ? { left: -projected.offsetLeft, width: projected.width } : getExcelOverflowLayout(
       virtualState,
       currentRow,
       rowIndex,
       dataColIndex,
       column,
       style,
-      value,
+      renderValue,
       normalizedScale,
       measureDocument
     )
-    const mirror = !hasRenderableValue(value)
+    const mirror = !projected && !hasRenderableValue(renderValue)
       ? getLeftOverflowMirror(
         virtualState,
         currentRow,
@@ -1281,9 +1318,9 @@ export const createTableConfig = ({
         : baseStyle
       renderCellOverlay(
         cellEl,
-        collapsedStyle,
+        projected ? { ...collapsedStyle, borderLeft: undefined } : collapsedStyle,
         mirror?.style || collapsedStyle,
-        mirror ? mirror.value : value,
+        mirror ? mirror.value : renderValue,
         renderText,
         mirror?.overflowLayout || overflowLayout,
         normalizedScale
@@ -1403,6 +1440,9 @@ export const createTableConfig = ({
         return displayIndex > 0 ? `${displayIndex}` : ''
       }
       if (getRowState(row as VirtualRow) !== RowState.Loaded) {
+        return ''
+      }
+      if (getProjectedMerge(rowIndex, colIndex, column)) {
         return ''
       }
       const currentRow = row as VirtualRow

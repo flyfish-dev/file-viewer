@@ -1,24 +1,33 @@
-import { onScopeDispose, ref, watch } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { createFileViewerI18n, type FileViewerOptions } from '@file-viewer/core'
 
-/** Language-only invalidation: do not include it in the document-render watch. */
+/** Keep private options identity while separating language from document reloads. */
 export const useViewerI18n = (
-  getOptions: () => FileViewerOptions | undefined,
-  getOwnerDocument: () => Document | undefined,
-  onError: (error: unknown) => void,
+  getInput: () => FileViewerOptions | undefined,
+  getOwnerDocument: () => Document | undefined = () => undefined,
+  onError?: (error: unknown) => void,
 ) => {
-  const revision = ref(0)
-  const input = () => {
-    const options = getOptions()
-    return { locale: options?.locale, messages: options?.messages, i18n: options?.i18n }
-  }
-  const i18n = createFileViewerI18n(input(), { ownerDocument: getOwnerDocument, onError })
-  const unsubscribe = i18n.subscribe(() => { revision.value += 1 })
-  const stop = watch(() => [input(), getOwnerDocument()], () => i18n.update(input()), { deep: true, flush: 'sync' })
+  const viewerI18n = createFileViewerI18n(getInput(), { ownerDocument: getOwnerDocument, onError })
+  const languageRevision = ref(0)
+  const optionsRevision = ref(0)
+  const unsubscribe = viewerI18n.subscribe(() => { languageRevision.value++ })
+  const stop = watch(() => [getInput(), getOwnerDocument()], () => {
+    viewerI18n.update(getInput())
+    optionsRevision.value++
+  }, { deep: true, flush: 'sync' })
   onScopeDispose(() => {
     stop()
     unsubscribe()
-    i18n.destroy()
+    viewerI18n.destroy()
   })
-  return { i18n, revision }
+  const getOptions = () => {
+    void languageRevision.value
+    void optionsRevision.value
+    return viewerI18n.options
+  }
+  const resolvedLocale = computed(() => {
+    void languageRevision.value
+    return viewerI18n.locale
+  })
+  return { viewerI18n, languageRevision, resolvedLocale, getOptions, i18n: viewerI18n, revision: languageRevision }
 }

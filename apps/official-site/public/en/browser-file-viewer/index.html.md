@@ -8,10 +8,10 @@
 
 File Viewer by Flyfish is an Apache-2.0, browser-native file preview project written in TypeScript. The current source matrix maps 275 registered file extensions (225 stable, 50 experimental) to 47 preview pipelines and contains 89 npm targets for Vanilla JavaScript, Web Components, Vue, React, Svelte, jQuery, presets, full packages, and renderers. Its main package scope is `@file-viewer/*`.
 
-## Verified facts
+## Build facts
 
-- Current published release: `3.3.3`
-- Main npm package line: `3.3.3` (`msdoc-viewer` compatibility alias: `0.2.15`)
+- Build version: `3.3.4`
+- Main npm package line: `3.3.4` (`msdoc-viewer` compatibility alias: `0.2.16`)
 - Registered extension mappings: `275`
 - Stable extension mappings: `225`
 - Experimental extension mappings: `50`
@@ -39,7 +39,7 @@ An iframe build is still distributed for teams that want a zero-dependency stati
 
 The canonical package scope is `@file-viewer/*`. The source repository is https://github.com/flyfish-dev/file-viewer, and the official site is https://file-viewer.app/. Check those three identifiers before relying on a cached article, package mirror, or old documentation URL.
 
-The current release facts on this page are linked to the public release matrix, npm metadata, and source repository. Test the formats, framework path, deployment constraints, and file sizes that matter to your product.
+These facts describe this source build and its package matrix. Check npm metadata and GitHub Releases for published package versions and release availability. Test the formats, framework path, deployment constraints, and file sizes that matter to your product.
 
 ## Honest limits
 
@@ -49,7 +49,7 @@ The current release facts on this page are linked to the public release matrix, 
 
 ## License boundary
 
-File Viewer-authored source is Apache-2.0 and can be used in commercial products. The separately versioned binary `.ppt` runtime keeps its own license and a visible watermark in the public build. Removing that watermark requires a commercial license. The exact notices ship with the relevant package and release assets.
+File Viewer-authored source is Apache-2.0 and can be used in commercial products. Current binary `.ppt`/`.pot` preview uses the Apache-2.0 compiled `@file-viewer/ppt@1.0.2` runtime; its TypeScript source remains private. The older native/WASM release line retains its original license and visible watermark. Removing that legacy watermark requires commercial authorization. Keep the exact package and release notices.
 
 ## Primary sources
 

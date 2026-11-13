@@ -362,6 +362,8 @@ export type {
   FileViewerResolvedLocale,
   ResolveFileViewerI18nInput,
 } from './i18n/messages';
+export { FILE_VIEWER_LOCALE_METADATA, FILE_VIEWER_LOCALE_OPTIONS } from './i18n/locales';
+export { formatFileViewerNumber, formatFileViewerDateTime, formatFileViewerBytes } from './i18n/format';
 export type {
   CreateFileViewerOperationActionHandlersInput,
   FileViewerOperationActionErrorFormatter,

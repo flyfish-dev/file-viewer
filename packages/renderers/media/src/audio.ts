@@ -216,6 +216,7 @@ const renderMidiElement = (
   }
   const t = createFileViewerTranslator(context?.i18n || context?.options)
   let disposed = false
+  let ownedErrorKey: 'media.midi.install' | undefined
   const root = element('div', 'fv-midi-viewer')
   const card = element('section', 'fv-midi-card')
   const header = document.createElement('header')
@@ -231,7 +232,7 @@ const renderMidiElement = (
   const renderError = (message: string, ownedFallback = false) => {
     bindings.release(body)
     body.className = 'fv-midi-state fv-midi-error'
-    if (ownedFallback) bindings.text(body, () => t('media.midi.parseFailed'))
+    if (ownedFallback) bindings.text(body, () => t(ownedErrorKey || 'media.midi.parseFailed'))
     else body.textContent = message
   }
 
@@ -251,13 +252,13 @@ const renderMidiElement = (
     }
     thead.append(headerRow)
     const tbody = document.createElement('tbody')
-    for (const track of tracks) {
+    for (const [index, track] of tracks.entries()) {
       const row = document.createElement('tr')
       row.append(
         track.name ? element('td', '', track.name) : owned('td', '', () => t('media.midi.trackFallback', { index: track.index })),
-        track.instrument ? element('td', '', track.instrument) : owned('td', '', () => t('media.midi.instrumentFallback')),
-        element('td', '', String(track.channel + 1)),
-        element('td', '', String(track.notes)),
+        track.instrument ? element('td', '', track.instrument) : owned('td', '', () => t('media.midi.unknownInstrument')),
+        owned('td', '', () => t.formatNumber(track.channel + 1)),
+        owned('td', '', () => t.formatNumber(track.notes)),
         element('td', '', formatDuration(track.duration))
       )
       tbody.append(row)
@@ -279,13 +280,13 @@ const renderMidiElement = (
     const totalNotes = input.tracks.reduce((sum, track) => sum + track.notes, 0)
     const stats = element('div', 'fv-midi-stats')
     for (const [label, value] of [
-      [() => t('media.midi.durationStat'), formatDuration(input.duration)],
-      [() => 'PPQ', String(input.ppq)],
-      [() => t('media.midi.trackStat'), String(input.tracks.length)],
-      [() => t('media.midi.noteStat'), String(totalNotes)]
+      [() => t('media.midi.durationStat'), () => formatDuration(input.duration)],
+      [() => 'PPQ', () => t.formatNumber(input.ppq)],
+      [() => t('media.midi.trackStat'), () => t.formatNumber(input.tracks.length)],
+      [() => t('media.midi.noteStat'), () => t.formatNumber(totalNotes)]
     ] as const) {
       const stat = document.createElement('div')
-      stat.append(owned('span', '', label), element('strong', '', value))
+      stat.append(owned('span', '', label), owned('strong', '', value))
       stats.append(stat)
     }
     bindings.release(body)
@@ -296,7 +297,8 @@ const renderMidiElement = (
     try {
       const loadMidi = getFileViewerMidiLoader()
       if (!loadMidi) {
-        throw new Error('MIDI support is opt-in. Run `npx file-viewer-cli add midi --write`, then `npx file-viewer-cli install --yes`.')
+        ownedErrorKey = 'media.midi.install'
+        throw t.error('media.midi.install')
       }
       const { Midi } = await loadMidi()
       if (disposed) return
@@ -322,7 +324,7 @@ const renderMidiElement = (
     } catch (error) {
       if (disposed) return
       let detail = ''
-      let ownedFallback = !(error instanceof Error)
+      let ownedFallback = Boolean(ownedErrorKey) || !(error instanceof Error)
       try {
         if (!ownedFallback) detail = (error as Error).message
       } catch {

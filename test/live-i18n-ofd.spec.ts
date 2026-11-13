@@ -4,7 +4,7 @@ import {createFileViewerI18n} from '@file-viewer/core'
 const model=vi.hoisted(()=>({success:null as any,fail:null as any,parses:0,renders:0,throws:false,error:undefined as unknown}))
 vi.mock('../packages/renderers/ofd/vendor/dltech/ofd/ofd.js',()=>({parseOfdDocument:({success,fail}:any)=>{model.parses++;model.success=success;model.fail=fail},renderOfd:()=>{model.renders++;if(model.throws)throw model.error;const page=document.createElement('div');page.textContent='原始 OFD BODY';return [page,page.cloneNode(true)]}}))
 import renderOfd from '../packages/renderers/ofd/src/ofd'
-const locales=['en-US','zh-CN','ja-JP','de-DE','zh-TW','zh-HK'] as const
+const locales=['en-US','zh-CN','ja-JP','de-DE','ru-RU','zh-TW','zh-HK'] as const
 const ends:Array<()=>void>=[]
 class RO {static all:RO[]=[];constructor(public cb:ResizeObserverCallback){RO.all.push(this)}observe(){}disconnect(){}trigger(){this.cb([],this as any)}}
 beforeEach(()=>{model.success=null;model.fail=null;model.parses=0;model.renders=0;model.throws=false;model.error=undefined;RO.all=[];vi.stubGlobal('ResizeObserver',RO);vi.spyOn(console,'error').mockImplementation(()=>{});vi.spyOn(HTMLElement.prototype,'getBoundingClientRect').mockReturnValue({width:700,height:400,top:0,bottom:400,left:0,right:700,x:0,y:0,toJSON(){}});vi.spyOn(window,'requestAnimationFrame').mockImplementation(cb=>setTimeout(()=>cb(0),0) as any)})

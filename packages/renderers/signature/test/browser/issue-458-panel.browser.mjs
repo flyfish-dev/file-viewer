@@ -61,6 +61,8 @@ const fixtures = await Promise.all(
       ]
   ).map(async ([format, container, content]) => {
     const bytes = await readFile(path.join(fixtureRoot, container))
+    globalThis.__fileViewerPrepackObserveNodeFixture?.(process.env.SIGNATURE_PANEL_DEEP_FIXTURES
+      ? `generated/signature-panel/${container}` : `packages/renderers/signature/test/fixtures/github-206-contributed/${container}`, bytes)
     return {
       format,
       container,

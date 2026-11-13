@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { resolvePptxPreviewErrorMessage } from '../packages/renderers/presentation/src/pptx'
+import { createFileViewerI18n } from '@file-viewer/core'
 
 const readSource = (relativePath: string) => {
   return readFileSync(join(process.cwd(), relativePath), 'utf8')
@@ -23,11 +24,11 @@ describe('@file-viewer/renderer-presentation regressions', () => {
   it('uses core i18n for PPTX renderer copy and errors', () => {
     const source = readSource('packages/renderers/presentation-pptx/src/index.ts')
 
-    expect(source).toContain('createFileViewerTranslator(context?.options)')
-    expect(source).toContain("t('presentation.state.loading')")
-    expect(source).toContain("t('presentation.error.title')")
+    expect(source).toContain('createFileViewerTranslator(context?.i18n || context?.options)')
+    expect(source).toContain("t.text(createElement(documentRef, 'span', undefined), 'presentation.state.loading')")
+    expect(source).toContain("t.text(createElement(documentRef, 'strong', undefined), 'presentation.error.title')")
     expect(source).toContain("t('presentation.error.parseFailed')")
-    expect(source).toContain('normalizeFileViewerErrorMessage(error, context?.options)')
+    expect(source).toContain('normalizeFileViewerErrorMessage(error, context?.i18n || context?.options)')
   })
 
   it('shows structured PPTX diagnostics instead of only the parse-failed fallback', () => {
@@ -47,7 +48,7 @@ describe('@file-viewer/renderer-presentation regressions', () => {
       } as any
     )
 
-    expect(message).toContain('PPTX 解析失败：PPTX 文件不是有效的 OpenXML 压缩包。')
+    expect(message).toContain('PPTX 解析失败：文件不是有效的 PowerPoint OpenXML 压缩包。')
     expect(message).toContain('阶段：read-zip')
     expect(message).toContain("详情：Can't find end of central directory")
     expect(message).toContain('建议：请确认接口返回的是原始 .pptx 二进制文件')
@@ -76,6 +77,27 @@ describe('@file-viewer/renderer-presentation regressions', () => {
     expect(message).toContain('Stage: read-zip')
     expect(message).toContain("Detail: Can't find end of central directory")
     expect(message).toContain('Hint: Confirm that the response is the original .pptx binary')
+  })
+
+  it('uses the explicit live context and overrides for structured diagnostics without losing raw detail', () => {
+    const scope = createFileViewerI18n({ locale: 'ru-RU' })
+    const error = { name: 'PptxDiagnosticError', code: 'PPTX_INVALID_ZIP', stage: 'read-zip',
+      message: 'Original engine message', detail: 'Original ZIP detail' }
+    try {
+      for (const locale of ['ru-RU', 'zh-TW', 'de-DE'] as const) {
+        scope.update({ locale, messages: { 'presentation.diagnostic.reason.PPTX_INVALID_ZIP': 'Scoped ZIP reason' } })
+        const message = resolvePptxPreviewErrorMessage(error, scope.t('presentation.error.parseFailed'), {
+          i18n: scope, options: { locale: 'en-US' },
+        })
+        expect(message).toContain('Scoped ZIP reason')
+        expect(message).toContain(scope.t('presentation.diagnostic.stage', { value: 'read-zip' }))
+        expect(message).toContain(scope.t('presentation.diagnostic.detail', { value: 'Original ZIP detail' }))
+        expect(message).toContain(scope.t('presentation.diagnostic.hint.PPTX_INVALID_ZIP'))
+        expect(message).not.toContain('Original engine message')
+      }
+    } finally {
+      scope.destroy()
+    }
   })
 
   it('uses the viewer locale for a known Worker recovery hint', () => {

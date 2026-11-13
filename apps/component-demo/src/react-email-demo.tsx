@@ -1,3 +1,4 @@
+import { demoLanguage, demoText, installDemoLanguageSelector } from './locale'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import * as ReactDom from 'react-dom'
 import { FileViewer as ReactViewer, type ViewerEvent, type ViewerOptions } from '@file-viewer/react'
@@ -154,6 +155,11 @@ const loadFixture = async (url: string) => {
 }
 
 function App() {
+  const [locale, setLocale] = useState(demoLanguage.locale)
+  useEffect(() => {
+    installDemoLanguageSelector()
+    return demoLanguage.subscribe(() => setLocale(demoLanguage.locale))
+  }, [])
   const [buffer, setBuffer] = useState<ArrayBuffer | null>(null)
   const [mounted, setMounted] = useState(true)
   const [fixture, setFixture] = useState<'initial' | 'replacement'>('initial')
@@ -213,24 +219,24 @@ function App() {
     <main className="react-email-shell">
       <header className="react-email-toolbar">
         <div>
-          <h1>React EML attachment lifecycle</h1>
-          <p>Standard, Full, Legacy standard, and Legacy Full use one fixed synthetic fixture.</p>
+          <h1>{demoText('emailTitle')}</h1>
+          <p>{demoText('emailDescription')}</p>
         </div>
         <div className="react-email-actions">
           <button id="switch-fixture" type="button" onClick={() => void switchFixture()}>
-            Switch fixture
+            {demoText('switchFixture')}
           </button>
           <button id="unmount-viewers" type="button" onClick={unmount}>
-            Unmount viewers
+            {demoText('unmountViewers')}
           </button>
           <button id="mount-viewers" type="button" onClick={mount}>
-            Mount viewers
+            {demoText('mountViewers')}
           </button>
-          <a href="/">Component examples</a>
+          <a href="/">{demoText('componentDemo')}</a>
         </div>
       </header>
       {mounted && source ? (
-        <section className="react-email-grid" aria-label="React package EML matrix">
+        <section className="react-email-grid" aria-label={demoText('preview')}>
           {cases.map(({ id, label, Viewer, options }) => {
             // The legacy packages intentionally publish against an older React type surface.
             // Runtime props are shared; normalize only this cross-version verification matrix.
@@ -242,7 +248,7 @@ function App() {
                   className="react-email-viewer"
                   buffer={source.buffer}
                   filename={source.filename}
-                  options={options}
+                  options={{ ...options, locale }}
                   onEvent={(event) => onEvent(id, event)}
                 />
               </article>
@@ -251,7 +257,7 @@ function App() {
         </section>
       ) : (
         <section className="react-email-empty" data-testid="react-email-empty">
-          {source ? 'All viewers are unmounted.' : 'Loading fixed EML fixture…'}
+          {source ? demoText('unmounted') : demoText('loadingFixture')}
         </section>
       )}
     </main>

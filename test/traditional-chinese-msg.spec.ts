@@ -22,8 +22,8 @@ describe('MSG locale coverage', () => {
   })
 
   it('preserves shared explicit-script, unsupported-locale and nested-option precedence', () => {
-    expect(getMsgLabels({ locale: 'zh-Hans-TW' })).toBe(getMsgLabels({ locale: 'zh-CN' }))
-    expect(getMsgLabels({ locale: 'fr-FR' })).toBe(getMsgLabels({ locale: 'en-US' }))
+    expect(getMsgLabels({ locale: 'zh-Hans-TW' })).toEqual(getMsgLabels({ locale: 'zh-CN' }))
+    expect(getMsgLabels({ locale: 'fr-FR' })).toEqual(getMsgLabels({ locale: 'en-US' }))
     expect(getMsgLabels({ locale: 'en-US', i18n: { locale: 'zh-TW' } }).bcc).toBe('密件副本')
   })
 })

@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
 import {
   collectFileViewerRendererPlugins,
+  attachFileViewerErrorMessage,
   createFileViewerPreviewStateTarget,
   createFileViewerSourceLoadingActionHandlers,
   getExtension,
@@ -15,6 +16,8 @@ import type {
   FileViewerFileRef as FileRef,
   FileViewerLifecycleContext,
   FileViewerLoadStartState,
+  FileViewerLoadingController,
+  FileViewerMessageKey,
   FileViewerOptions,
   FileViewerLoadingMessageMetadata,
   FileViewerErrorMessageMetadata,
@@ -264,7 +267,11 @@ export const useViewerSourceLoading = ({
       const requestUrl = normalizeFileViewerSourceUrl(downloadUrl) || downloadUrl
       const response = await fetch(requestUrl, { signal })
       if (!response.ok) {
-        throw new Error(`${translateFileViewerMessage(getOptions(), 'error.remoteDownload')}: HTTP ${response.status}`)
+        const status = response.status
+        const error = Object.assign(new Error(`HTTP ${status}`), {
+          code: 'FILE_VIEWER_HTTP_ERROR', params: Object.freeze({ status })
+        })
+        throw attachFileViewerErrorMessage(error, i18n => `${translateFileViewerMessage(i18n, 'error.remoteDownload')}: HTTP ${status}`)
       }
       return response.blob()
     },

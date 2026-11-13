@@ -204,7 +204,17 @@ await writeBundleInventory([...bundledInputs], join(packageDir, '.build/iife-inp
 await writeBundleNotices(
   { inputs: Object.fromEntries([...bundledInputs].map(id => [id, {}])) },
   join(outDir, 'THIRD_PARTY_LICENSES.txt'),
-  { readmeLicensePackages: ['@ljheee/xmind-parser'], includeWorkspacePackages: fullWorkspaceLicensePackages.map(owner => owner.packageName), includePrebundledSdkPackages: ['@file-viewer/capability-mermaid'] }
+  { readmeLicensePackages: ['@ljheee/xmind-parser'], includeWorkspacePackages: fullWorkspaceLicensePackages.map(owner => owner.packageName), includePrebundledSdkPackages: ['@file-viewer/capability-mermaid'],
+    includePrebundledRuntimeNotices: [
+      { packageName: '@file-viewer/capability-pdf-identity-repair', runtimePaths: ['dist/index.js'],
+        noticePath: 'dist/pdf-identity-repair.THIRD_PARTY_LICENSES.txt', receiptPath: 'dist/prebundled-notices.json' },
+      { packageName: '@file-viewer/renderer-data', runtimePaths: ['dist/vendor/avsc.cjs'],
+        noticePath: 'dist/vendor/avsc.NOTICE.txt', receiptPath: 'dist/prebundled-notices.json' },
+      { packageName: '@file-viewer/renderer-epub', runtimePaths: ['dist/vendor/epubjs.js'],
+        noticePath: 'dist/vendor/epubjs.NOTICE.txt', receiptPath: 'dist/prebundled-notices.json' },
+      { packageName: '@file-viewer/renderer-mindmap', runtimePaths: ['dist/vendor/xmind.js'],
+        noticePath: 'dist/vendor/xmind.NOTICE.txt', receiptPath: 'dist/prebundled-notices.json' }
+    ] }
 )
 await appendCadIntegrationSourceNotice(join(outDir, 'THIRD_PARTY_LICENSES.txt'), packageManifest.version)
 

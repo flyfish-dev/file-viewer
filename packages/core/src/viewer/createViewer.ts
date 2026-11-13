@@ -63,6 +63,7 @@ import { normalizeSource } from '../source';
 import { buildFileViewerWatermarkInlineStyle } from '../features/watermark';
 import { createFileViewerSnapshotDownload } from '../output/snapshotDownload';
 import { createFileViewerErrorState, createFileViewerUnsupportedState } from './state';
+import { FILE_VIEWER_LOCALE_METADATA } from '../i18n/locales';
 import { createFileViewerI18nBindings } from '../i18n/bindings';
 import { createFileViewerTranslator } from '../i18n/messages';
 import { createFileViewerI18n, createFileViewerNestedI18n, type FileViewerI18nController } from '../i18n/context';
@@ -591,7 +592,6 @@ export const createViewer = (
       signal: context?.signal,
       renderPurpose: context?.renderPurpose || createOptions.renderPurpose || 'preview',
     });
-
     try {
       await nestedViewer.load({
         buffer,
@@ -861,16 +861,22 @@ export const createViewer = (
         return null;
       }
 
-      const languageScope = createFileViewerI18n(undefined, {
+      const languageScope = createFileViewerI18n({ ...options, locale: undefined, messages: undefined, i18n: undefined }, {
         parent: viewerI18n, signal: loadSignal, ownerDocument: target.ownerDocument, onError: reportI18nError,
       });
       currentRenderI18n = languageScope;
       let session: RendererSession | undefined;
+      const syncLanguage = () => {
+        targetHost.setAttribute('lang', languageScope.locale);
+        targetHost.setAttribute('dir', FILE_VIEWER_LOCALE_METADATA[languageScope.locale].direction);
+      };
+      syncLanguage();
+      languageScope.subscribe(syncLanguage);
       try {
         const rendererSession = await renderer.load({
           source: routedSource,
           surface,
-          options,
+          options: languageScope.options,
           signal: loadSignal,
           registerExportAdapter: adapter => {
             if (requestScope.isCurrentRequest(version)) {

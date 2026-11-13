@@ -22,18 +22,18 @@ The asset sources above cover the native owner runtimes. The File Viewer integra
 
 File Viewer CAD integration corresponding source
 
-Package release: 3.3.3
-Corresponding source (immutable HTTPS): https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b
-HTTPS archive SHA-256: aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b
+Package release: 3.3.4
+Corresponding source (immutable HTTPS): https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/7028fe51d5bce7dc0262ccac9d6eb7f8386d5512
+HTTPS archive SHA-256: 2cdcc33e9f1e6f6d3291a2c891563576443bfcea1586c430927b1097710964bc
 
-The public archive contains the exact standalone preferred-source snapshot at packages/build-support/cad-source-snapshots/3.3.3.
+The public archive contains the exact standalone preferred-source snapshot at packages/build-support/cad-source-snapshots/3.3.4.
 Use Node.js 24.20.0 and npm 11.19.0. From that directory run: npm ci --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org/; npm run build.
 The standalone lock pins its canonical build tools; the normal workspace-toolchain reconstruction also verifies the actual Full runtime bytes.
 A standalone current preferred-source archive is also retained in the complete public source checkout and CAD asset directories as CORRESPONDING_SOURCE.zip.
-Standalone archive SHA-256: 778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f
+Standalone archive SHA-256: 84c1a5f780755aba6e9d109a8995356b66bf554516da38499607db43f32c80a8
 Runtime-only npm archives do not include source ZIPs; retain this notice and its immutable HTTPS source reference.
 It retains complete original license texts and identifies the exact public CAD, DWF and LibreDWG bindings sources in upstream-sources.json.
-The integration output is 627662 bytes with SHA-256 97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f.
+The integration output is 926335 bytes with SHA-256 aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143.
 Native owner preferred sources and their build inputs (in addition to the integration source):
 @flyfish-dev/cad-viewer 0.8.3
 https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6366d2f7b1013cd5c300008c3c3fbf017ca9aace

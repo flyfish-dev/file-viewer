@@ -296,14 +296,6 @@ const decodeLargeTextSegment = (
   }
 }
 
-const formatLargeNumber = (value: number) => {
-  try {
-    return new Intl.NumberFormat().format(value)
-  } catch {
-    return String(value)
-  }
-}
-
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 const createLargeTextSearchRegExp = (query: string, options: FileViewerSearchOptions) => {
@@ -456,7 +448,7 @@ export default async function renderLargeText(
 
   bindings.text(status, () => t('text.code.virtualized'))
   root.dataset.totalLines = String(index.lineCount)
-  bindings.text(lineSummary, () => t('text.code.lineCount', { count: formatLargeNumber(index.lineCount) }))
+  bindings.text(lineSummary, () => t('ui.text.ui.lines.24e137', { p0: t.formatNumber(index.lineCount) }))
   root.style.setProperty('--code-line-number-width', `${Math.max(6, String(index.lineCount).length + 2)}ch`)
   root.style.setProperty('--code-line-number-offset', showLineNumbers ? 'var(--code-line-number-width)' : '0px')
 

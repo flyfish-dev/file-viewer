@@ -162,7 +162,7 @@ const parseHeader = (bytes: Uint8Array, t: FileViewerTranslator): BundleHeader =
 
   const signature = lines.shift() || ''
   if (!signature.startsWith('# v') || !signature.includes('git bundle')) {
-    throw new Error(t('gitBundle.error.invalid'))
+    throw t.error('gitBundle.error.invalid')
   }
 
   const capabilities: string[] = []
@@ -367,7 +367,7 @@ const parsePack = async (
 ) => {
   const offset = header.packOffset
   if (asciiDecoder.decode(bytes.subarray(offset, offset + 4)) !== 'PACK') {
-    throw new Error(t('gitBundle.error.missingPack'))
+    throw t.error('gitBundle.error.missingPack')
   }
   const version = readUInt32(bytes, offset + 4)
   const count = readUInt32(bytes, offset + 8)
@@ -669,7 +669,7 @@ export default async function renderGitBundle(
     files.forEach((file, index) => {
       const button = createElement(documentRef, 'button')
       button.type = 'button'
-      button.textContent = `${file.path} · ${file.size} B`
+      t.bind(button, node => { node.textContent = `${file.path} · ${t.formatBytes(file.size)}` })
       button.addEventListener('click', () => {
         tree.querySelectorAll('button').forEach(item => item.classList.remove('active'))
         button.classList.add('active')

@@ -1,4 +1,5 @@
-import { createApp, h } from 'vue'
+import { demoLanguage } from './locale'
+import { createApp, h, ref } from 'vue'
 import FileViewerPlugin, {
   FileViewer,
   type FileViewerToolbarSlotProps,
@@ -32,6 +33,9 @@ const searchOnlyToolbar = {
   search: true,
   theme: false
 } as const
+
+const locale = ref(demoLanguage.locale)
+demoLanguage.subscribe(() => { locale.value = demoLanguage.locale })
 
 const options: ViewerOptions = {
   theme: 'light',
@@ -89,7 +93,7 @@ createApp({
       {
         url: demoSource.url,
         filename: demoSource.filename,
-        options
+        options: { ...options, locale: locale.value }
       },
       toolbarSlots
     )

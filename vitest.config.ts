@@ -14,6 +14,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./apps/viewer-demo/src', import.meta.url)),
       '@file-viewer/core/assets': fileURLToPath(new URL('./packages/core/src/assets.ts', import.meta.url)),
       '@file-viewer/core/browser': fileURLToPath(new URL('./packages/core/src/browser.ts', import.meta.url)),
+      '@file-viewer/core/headless': fileURLToPath(new URL('./packages/core/src/headless.ts', import.meta.url)),
       '@file-viewer/core': fileURLToPath(new URL('./packages/core/src/index.ts', import.meta.url)),
       '@file-viewer/vue3': fileURLToPath(
         new URL('./packages/components/vue3/src/package/index.ts', import.meta.url),

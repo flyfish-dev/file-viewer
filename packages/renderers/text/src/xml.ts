@@ -49,11 +49,11 @@ export default async function renderXml(
   const sourceButton = doc.createElement('button')
   sourceButton.type = 'button'
   sourceButton.dataset.xmlView = 'source'
-  bindings.text(sourceButton, () => options.labels?.viewSource ?? t('text.xml.viewSource'))
+  bindings.text(sourceButton, () => options.labels?.viewSource ?? t('xml.viewSource'))
   const renderedButton = doc.createElement('button')
   renderedButton.type = 'button'
   renderedButton.dataset.xmlView = 'rendered'
-  bindings.text(renderedButton, () => options.labels?.viewRendered ?? t('text.xml.viewRendered'))
+  bindings.text(renderedButton, () => options.labels?.viewRendered ?? t('xml.viewRendered'))
   controls.append(renderedButton, sourceButton)
   const sourceTarget = doc.createElement('div')
   sourceTarget.className = 'xml-profile-source'
@@ -61,7 +61,7 @@ export default async function renderXml(
   details.className = 'xml-profile-diagnostics'
   details.hidden = true
   const summary = doc.createElement('summary')
-  bindings.text(summary, () => options.labels?.diagnostics ?? t('text.xml.diagnostics'))
+  bindings.text(summary, () => options.labels?.diagnostics ?? t('xml.diagnostics'))
   const diagnosticText = doc.createElement('div')
   details.append(summary, diagnosticText)
   root.append(controls, sourceTarget, details)
@@ -157,7 +157,7 @@ export default async function renderXml(
       const html = createHtmlPreviewDocument(doc, result.html)
       frame = doc.createElement('iframe')
       frame.className = 'xml-profile-rendered'
-      bindings.attr(frame, 'title', () => options.labels?.viewRendered ?? t('text.xml.renderedTitle'))
+      bindings.attr(frame, 'title', () => options.labels?.viewRendered ?? t('xml.viewRendered'))
       frame.setAttribute('sandbox', '')
       frame.referrerPolicy = 'no-referrer'
       frame.srcdoc = html

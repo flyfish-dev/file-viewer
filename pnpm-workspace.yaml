@@ -41,6 +41,10 @@ overrides:
   '@thatopen/components>jszip': 3.10.2
   # GHSA-474x-hrwr-fgx4: retain the v5 API while fixing stop-node scanning.
   'fast-xml-parser@>=5.0.0 <5.12.0': 5.12.0
+  # Patch modern lint/build consumers without replacing unaffected legacy APIs.
+  # GHSA-3g3m-2fjr-6pw4 and GHSA-g3hv-75wg-m249.
+  'glob@>=9.0.0 <14.0.2': 14.0.2
+  'minimatch@>=7.0.0 <11.0.1': 11.0.1
   'adm-zip@<0.6.1': 0.6.1
   'acorn@>=7.0.0 <7.1.1': 7.4.1
   'js-yaml@>=4.0.0 <4.3.2': 4.3.2
@@ -82,14 +86,14 @@ overrides:
   # @kitware/vtk.js@36.4.1 pins the vulnerable fflate 0.7.3 release. Keep
   # the same API line while consuming the patched 0.7.5 security release.
   '@kitware/vtk.js>fflate': 0.7.5
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.3
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.3
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.3
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.3
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.3
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.3
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.3
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.3
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.4
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.4
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.4
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.4
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.4
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.4
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.4
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.4
 
 auditConfig:
   ignoreGhsas:

@@ -1,6 +1,8 @@
+import { createFileViewerTranslator, type FileViewerI18nInput } from '@file-viewer/core';
 import {
   resolveFileViewerLocale,
   type FileRenderContext,
+  type FileViewerI18nContext,
   type FileViewerRenderedInstance,
 } from '@file-viewer/core';
 import {
@@ -9,6 +11,7 @@ import {
 } from '@file-viewer/eda-layout';
 import {
   parseEdaFile,
+  localizeEdaParseResult,
   type EdaDomainRole,
   type EdaEntity,
   type EdaLayoutElement,
@@ -23,7 +26,7 @@ interface TreeRow extends EdaTreeNode {
   depth: number;
 }
 
-type EdaUiLocale = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE';
+type EdaUiLocale = FileViewerI18nInput | FileViewerI18nContext;
 
 type EdaUiTextKey =
   | 'role.root'
@@ -90,409 +93,14 @@ type EdaUiTextKey =
   | 'header.cfbViewer'
   | 'header.binaryViewer';
 
-const EDA_UI_TEXT: Record<EdaUiLocale, Record<EdaUiTextKey, string>> = {
-  'zh-CN': {
-    'role.root': '根',
-    'role.library': '库',
-    'role.symbol': '元件符号',
-    'role.footprint': '封装',
-    'role.padstack': 'Padstack',
-    'role.drawing': '图纸',
-    'role.metadata': '元数据',
-    'role.property': '属性',
-    'role.geometry': '几何',
-    'role.net': '网络',
-    'role.unknown': '未知',
-    'confidence.high': '高',
-    'confidence.medium': '中',
-    'confidence.low': '低',
-    'kind.storage': '目录',
-    'kind.text': '文本',
-    'kind.binary': '二进制',
-    'panel.layout': '版图预览',
-    'empty.noGeometry.title': '没有可绘制几何',
-    'empty.noGeometry.description': '已读取 {layout} 头部和 structure 信息，但未发现 boundary、path、text 或 reference 元素。',
-    'stats.textStreams': '文本流',
-    'stats.binaryStreams': '二进制流',
-    'stats.storageEntries': '目录',
-    'stats.properties': '属性',
-    'stats.symbols': '符号',
-    'stats.footprints': '封装',
-    'stats.confidence': '可信度',
-    'group.symbol': '元件符号',
-    'group.footprint': '封装图形',
-    'group.drawing': '图纸信息',
-    'state.loading': '正在解析 {type}...',
-    'state.errorTitle': 'EDA 预览提示',
-    'header.format': '格式',
-    'header.size': '大小',
-    'header.entries': '条目',
-    'summary.layoutReady': '{layout} 属于芯片版图工程文件。预览器已在浏览器端解析可识别几何，小图生成 SVG，大图自动切换 WebGL canvas，同时保留结构、字符串和诊断索引。',
-    'summary.layoutSafe': 'GDSII / OASIS 属于芯片版图工程文件。预览器优先索引结构、属性、可读字符串和二进制线索，并在纯前端安全退化。',
-    'summary.orcadSafe': 'OLB / DRA 属于 OrCAD / Allegro 生态的私有设计数据。预览器优先解析 CFB 结构、对象候选、属性和可读文本，并在纯前端安全退化。',
-    'search.placeholder': '筛选路径、角色、属性或文本',
-    'selection.title': '当前条目',
-    'selection.none': '未选择',
-    'selection.storageTitle': '目录条目',
-    'selection.storageDescription': '该节点用于组织下级流，没有可直接展示的文本或十六进制片段。',
-    'selection.localStrings': '当前条目字符串',
-    'panel.overview': '解析概览',
-    'panel.tree': '结构树',
-    'panel.objects': 'EDA 对象',
-    'panel.strings': '可读字符串',
-    'panel.diagnostics': '诊断',
-    'panel.nodeCount': '{count} 节点',
-    'panel.itemCount': '{count} 项',
-    'panel.entryCount': '{count} 条目',
-    'empty.noObjects.title': '没有明确对象候选',
-    'empty.noObjects.description': '仍可从结构树、属性和字符串索引中查看可读内容。',
-    'meta.renderer': '渲染器',
-    'meta.library': '库',
-    'meta.userUnit': '用户单位',
-    'meta.dbUnit': '数据库单位',
-    'layout.summary': '{structures} 个结构 · {elements} 个元素',
-    'layout.webglSummary': 'WebGL · {elements} 个元素',
-    'layout.aria': '{layout} 版图预览',
-    'header.cfbViewer': 'CFB 结构预览器',
-    'header.binaryViewer': '二进制结构预览器',
-  },
-  'zh-TW': {
-    'role.root': '根',
-    'role.library': '庫',
-    'role.symbol': '元件符號',
-    'role.footprint': '封裝',
-    'role.padstack': 'Padstack',
-    'role.drawing': '圖紙',
-    'role.metadata': '後設資料',
-    'role.property': '屬性',
-    'role.geometry': '幾何',
-    'role.net': '網路',
-    'role.unknown': '未知',
-    'confidence.high': '高',
-    'confidence.medium': '中',
-    'confidence.low': '低',
-    'kind.storage': '目錄',
-    'kind.text': '文字',
-    'kind.binary': '二進位制',
-    'panel.layout': '版圖預覽',
-    'empty.noGeometry.title': '沒有可繪製幾何',
-    'empty.noGeometry.description': '已讀取 {layout} 頭部和 structure 資訊，但未發現 boundary、path、text 或 reference 元素。',
-    'stats.textStreams': '文字流',
-    'stats.binaryStreams': '二進位制流',
-    'stats.storageEntries': '目錄',
-    'stats.properties': '屬性',
-    'stats.symbols': '符號',
-    'stats.footprints': '封裝',
-    'stats.confidence': '可信度',
-    'group.symbol': '元件符號',
-    'group.footprint': '封裝圖形',
-    'group.drawing': '圖紙資訊',
-    'state.loading': '正在解析 {type}...',
-    'state.errorTitle': 'EDA 預覽提示',
-    'header.format': '格式',
-    'header.size': '大小',
-    'header.entries': '條目',
-    'summary.layoutReady': '{layout} 屬於晶片版圖工程檔案。預覽器已在瀏覽器端解析可識別幾何，小圖生成 SVG，大圖自動切換 WebGL canvas，同時保留結構、字串和診斷索引。',
-    'summary.layoutSafe': 'GDSII / OASIS 屬於晶片版圖工程檔案。預覽器優先索引結構、屬性、可讀字串和二進位制線索，並在純前端安全退化。',
-    'summary.orcadSafe': 'OLB / DRA 屬於 OrCAD / Allegro 生態的私有設計資料。預覽器優先解析 CFB 結構、物件候選、屬性和可讀文字，並在純前端安全退化。',
-    'search.placeholder': '篩選路徑、角色、屬性或文字',
-    'selection.title': '當前條目',
-    'selection.none': '未選擇',
-    'selection.storageTitle': '目錄條目',
-    'selection.storageDescription': '該節點用於組織下級流，沒有可直接展示的文字或十六進位制片段。',
-    'selection.localStrings': '當前條目字串',
-    'panel.overview': '解析概覽',
-    'panel.tree': '結構樹',
-    'panel.objects': 'EDA 物件',
-    'panel.strings': '可讀字串',
-    'panel.diagnostics': '診斷',
-    'panel.nodeCount': '{count} 節點',
-    'panel.itemCount': '{count} 項',
-    'panel.entryCount': '{count} 條目',
-    'empty.noObjects.title': '沒有明確物件候選',
-    'empty.noObjects.description': '仍可從結構樹、屬性和字串索引中檢視可讀內容。',
-    'meta.renderer': '渲染器',
-    'meta.library': '庫',
-    'meta.userUnit': '使用者單位',
-    'meta.dbUnit': '資料庫單位',
-    'layout.summary': '{structures} 個結構 · {elements} 個元素',
-    'layout.webglSummary': 'WebGL · {elements} 個元素',
-    'layout.aria': '{layout} 版圖預覽',
-    'header.cfbViewer': 'CFB 結構預覽器',
-    'header.binaryViewer': '二進位制結構預覽器',
-  },
-  'zh-HK': {
-    'role.root': '根',
-    'role.library': '庫',
-    'role.symbol': '元件符號',
-    'role.footprint': '封裝',
-    'role.padstack': 'Padstack',
-    'role.drawing': '圖紙',
-    'role.metadata': '元數據',
-    'role.property': '屬性',
-    'role.geometry': '幾何',
-    'role.net': '網絡',
-    'role.unknown': '未知',
-    'confidence.high': '高',
-    'confidence.medium': '中',
-    'confidence.low': '低',
-    'kind.storage': '目錄',
-    'kind.text': '文本',
-    'kind.binary': '二進制',
-    'panel.layout': '版圖預覽',
-    'empty.noGeometry.title': '沒有可繪製幾何',
-    'empty.noGeometry.description': '已讀取 {layout} 頭部和 structure 信息，但未發現 boundary、path、text 或 reference 元素。',
-    'stats.textStreams': '文本流',
-    'stats.binaryStreams': '二進制流',
-    'stats.storageEntries': '目錄',
-    'stats.properties': '屬性',
-    'stats.symbols': '符號',
-    'stats.footprints': '封裝',
-    'stats.confidence': '可信度',
-    'group.symbol': '元件符號',
-    'group.footprint': '封裝圖形',
-    'group.drawing': '圖紙信息',
-    'state.loading': '正在解析 {type}...',
-    'state.errorTitle': 'EDA 預覽提示',
-    'header.format': '格式',
-    'header.size': '大小',
-    'header.entries': '條目',
-    'summary.layoutReady': '{layout} 屬於芯片版圖工程文件。預覽器已在瀏覽器端解析可識別幾何，小圖生成 SVG，大圖自動切換 WebGL canvas，同時保留結構、字符串和診斷索引。',
-    'summary.layoutSafe': 'GDSII / OASIS 屬於芯片版圖工程文件。預覽器優先索引結構、屬性、可讀字符串和二進制線索，並在純前端安全退化。',
-    'summary.orcadSafe': 'OLB / DRA 屬於 OrCAD / Allegro 生態的私有設計數據。預覽器優先解析 CFB 結構、對象候選、屬性和可讀文本，並在純前端安全退化。',
-    'search.placeholder': '篩選路徑、角色、屬性或文本',
-    'selection.title': '當前條目',
-    'selection.none': '未選擇',
-    'selection.storageTitle': '目錄條目',
-    'selection.storageDescription': '該節點用於組織下級流，沒有可直接展示的文本或十六進制片段。',
-    'selection.localStrings': '當前條目字符串',
-    'panel.overview': '解析概覽',
-    'panel.tree': '結構樹',
-    'panel.objects': 'EDA 對象',
-    'panel.strings': '可讀字符串',
-    'panel.diagnostics': '診斷',
-    'panel.nodeCount': '{count} 節點',
-    'panel.itemCount': '{count} 項',
-    'panel.entryCount': '{count} 條目',
-    'empty.noObjects.title': '沒有明確對象候選',
-    'empty.noObjects.description': '仍可從結構樹、屬性和字符串索引中查看可讀內容。',
-    'meta.renderer': '渲染器',
-    'meta.library': '庫',
-    'meta.userUnit': '用戶單位',
-    'meta.dbUnit': '數據庫單位',
-    'layout.summary': '{structures} 個結構 · {elements} 個元素',
-    'layout.webglSummary': 'WebGL · {elements} 個元素',
-    'layout.aria': '{layout} 版圖預覽',
-    'header.cfbViewer': 'CFB 結構預覽器',
-    'header.binaryViewer': '二進制結構預覽器',
-  },
-  'en-US': {
-    'role.root': 'Root',
-    'role.library': 'Library',
-    'role.symbol': 'Symbol',
-    'role.footprint': 'Footprint',
-    'role.padstack': 'Padstack',
-    'role.drawing': 'Drawing',
-    'role.metadata': 'Metadata',
-    'role.property': 'Property',
-    'role.geometry': 'Geometry',
-    'role.net': 'Net',
-    'role.unknown': 'Unknown',
-    'confidence.high': 'High',
-    'confidence.medium': 'Medium',
-    'confidence.low': 'Low',
-    'kind.storage': 'Directory',
-    'kind.text': 'Text',
-    'kind.binary': 'Binary',
-    'panel.layout': 'Layout preview',
-    'empty.noGeometry.title': 'No drawable geometry',
-    'empty.noGeometry.description': '{layout} headers and structure metadata were read, but no boundary, path, text, or reference elements were found.',
-    'stats.textStreams': 'Text streams',
-    'stats.binaryStreams': 'Binary streams',
-    'stats.storageEntries': 'Directories',
-    'stats.properties': 'Properties',
-    'stats.symbols': 'Symbols',
-    'stats.footprints': 'Footprints',
-    'stats.confidence': 'Confidence',
-    'group.symbol': 'Component symbols',
-    'group.footprint': 'Footprint graphics',
-    'group.drawing': 'Drawing information',
-    'state.loading': 'Parsing {type}...',
-    'state.errorTitle': 'EDA preview notice',
-    'header.format': 'Format',
-    'header.size': 'Size',
-    'header.entries': 'Entries',
-    'summary.layoutReady': '{layout} is an IC layout engineering file. Recognizable geometry is parsed in the browser, small drawings use SVG, large drawings switch to WebGL canvas, and structure, strings, and diagnostics remain indexed.',
-    'summary.layoutSafe': 'GDSII / OASIS are IC layout engineering files. The viewer prioritizes structure, properties, readable strings, and binary clues, then degrades safely in the frontend.',
-    'summary.orcadSafe': 'OLB / DRA are private OrCAD / Allegro design assets. The viewer prioritizes CFB structure, object candidates, properties, and readable text with safe frontend degradation.',
-    'search.placeholder': 'Filter paths, roles, properties, or text',
-    'selection.title': 'Current entry',
-    'selection.none': 'Not selected',
-    'selection.storageTitle': 'Directory entry',
-    'selection.storageDescription': 'This node organizes child streams and has no directly displayable text or hex fragment.',
-    'selection.localStrings': 'Current entry strings',
-    'panel.overview': 'Parse overview',
-    'panel.tree': 'Structure tree',
-    'panel.objects': 'EDA objects',
-    'panel.strings': 'Readable strings',
-    'panel.diagnostics': 'Diagnostics',
-    'panel.nodeCount': '{count} nodes',
-    'panel.itemCount': '{count} items',
-    'panel.entryCount': '{count} entries',
-    'empty.noObjects.title': 'No clear object candidates',
-    'empty.noObjects.description': 'Readable content is still available from the structure tree, properties, and string index.',
-    'meta.renderer': 'Renderer',
-    'meta.library': 'Library',
-    'meta.userUnit': 'User unit',
-    'meta.dbUnit': 'DB unit',
-    'layout.summary': '{structures} structures · {elements} elements',
-    'layout.webglSummary': 'WebGL · {elements} elements',
-    'layout.aria': '{layout} layout preview',
-    'header.cfbViewer': 'CFB structure viewer',
-    'header.binaryViewer': 'Binary structure viewer',
-  },
-  'ja-JP': {
-    'role.root': 'ルート',
-    'role.library': 'ライブラリ',
-    'role.symbol': 'シンボル',
-    'role.footprint': 'フットプリント',
-    'role.padstack': 'Padstack',
-    'role.drawing': '図面',
-    'role.metadata': 'メタデータ',
-    'role.property': 'プロパティ',
-    'role.geometry': '幾何',
-    'role.net': 'ネット',
-    'role.unknown': '不明',
-    'confidence.high': '高',
-    'confidence.medium': '中',
-    'confidence.low': '低',
-    'kind.storage': 'ディレクトリ',
-    'kind.text': 'テキスト',
-    'kind.binary': 'バイナリ',
-    'panel.layout': 'レイアウトプレビュー',
-    'empty.noGeometry.title': '描画可能な幾何要素がありません',
-    'empty.noGeometry.description': '{layout} のヘッダーと構造情報を読み込みましたが、boundary、path、text、reference 要素は見つかりませんでした。',
-    'stats.textStreams': 'テキストストリーム',
-    'stats.binaryStreams': 'バイナリストリーム',
-    'stats.storageEntries': 'ディレクトリ',
-    'stats.properties': 'プロパティ',
-    'stats.symbols': 'シンボル',
-    'stats.footprints': 'フットプリント',
-    'stats.confidence': '信頼度',
-    'group.symbol': 'コンポーネントシンボル',
-    'group.footprint': 'フットプリント図形',
-    'group.drawing': '図面情報',
-    'state.loading': '{type} を解析しています...',
-    'state.errorTitle': 'EDA プレビューのお知らせ',
-    'header.format': '形式',
-    'header.size': 'サイズ',
-    'header.entries': '項目',
-    'summary.layoutReady': '{layout} は IC レイアウトの工学ファイルです。認識可能な幾何要素をブラウザー内で解析し、小規模図面は SVG、大規模図面は WebGL canvas で表示します。構造、文字列、診断索引も保持します。',
-    'summary.layoutSafe': 'GDSII / OASIS は IC レイアウトの工学ファイルです。構造、プロパティ、可読文字列、バイナリ構造の手掛かりを優先的に索引化し、フロントエンド内で安全にフォールバックします。',
-    'summary.orcadSafe': 'OLB / DRA は OrCAD / Allegro 系の独自設計データです。CFB 構造、オブジェクト候補、プロパティ、可読テキストを優先的に解析し、フロントエンド内で安全にフォールバックします。',
-    'search.placeholder': 'パス、役割、プロパティ、テキストを絞り込み',
-    'selection.title': '現在の項目',
-    'selection.none': '未選択',
-    'selection.storageTitle': 'ディレクトリ項目',
-    'selection.storageDescription': 'このノードは下位ストリームを整理するためのもので、直接表示できるテキストや 16 進断片はありません。',
-    'selection.localStrings': '現在の項目の文字列',
-    'panel.overview': '解析概要',
-    'panel.tree': '構造ツリー',
-    'panel.objects': 'EDA オブジェクト',
-    'panel.strings': '可読文字列',
-    'panel.diagnostics': '診断',
-    'panel.nodeCount': '{count} ノード',
-    'panel.itemCount': '{count} 件',
-    'panel.entryCount': '{count} 項目',
-    'empty.noObjects.title': '明確なオブジェクト候補がありません',
-    'empty.noObjects.description': '構造ツリー、プロパティ、文字列索引から可読内容を確認できます。',
-    'meta.renderer': 'レンダラー',
-    'meta.library': 'ライブラリ',
-    'meta.userUnit': 'ユーザー単位',
-    'meta.dbUnit': 'データベース単位',
-    'layout.summary': '構造 {structures} 件 · 要素 {elements} 件',
-    'layout.webglSummary': 'WebGL · 要素 {elements} 件',
-    'layout.aria': '{layout} レイアウトプレビュー',
-    'header.cfbViewer': 'CFB 構造ビューアー',
-    'header.binaryViewer': 'バイナリ構造ビューアー',
-  },
-  'de-DE': {
-    'role.root': 'Wurzel',
-    'role.library': 'Bibliothek',
-    'role.symbol': 'Symbol',
-    'role.footprint': 'Footprint',
-    'role.padstack': 'Padstack',
-    'role.drawing': 'Zeichnung',
-    'role.metadata': 'Metadaten',
-    'role.property': 'Eigenschaft',
-    'role.geometry': 'Geometrie',
-    'role.net': 'Netz',
-    'role.unknown': 'Unbekannt',
-    'confidence.high': 'Hoch',
-    'confidence.medium': 'Mittel',
-    'confidence.low': 'Niedrig',
-    'kind.storage': 'Verzeichnis',
-    'kind.text': 'Text',
-    'kind.binary': 'Binär',
-    'panel.layout': 'Layoutvorschau',
-    'empty.noGeometry.title': 'Keine darstellbare Geometrie',
-    'empty.noGeometry.description': 'Header und Strukturinformationen von {layout} wurden gelesen, aber es wurden keine Boundary-, Path-, Text- oder Referenzelemente gefunden.',
-    'stats.textStreams': 'Textdatenströme',
-    'stats.binaryStreams': 'Binärdatenströme',
-    'stats.storageEntries': 'Verzeichnisse',
-    'stats.properties': 'Eigenschaften',
-    'stats.symbols': 'Symbole',
-    'stats.footprints': 'Footprints',
-    'stats.confidence': 'Verlässlichkeit',
-    'group.symbol': 'Bauteilsymbole',
-    'group.footprint': 'Footprint-Grafiken',
-    'group.drawing': 'Zeichnungsinformationen',
-    'state.loading': '{type} wird verarbeitet...',
-    'state.errorTitle': 'Hinweis zur EDA-Vorschau',
-    'header.format': 'Format',
-    'header.size': 'Größe',
-    'header.entries': 'Einträge',
-    'summary.layoutReady': '{layout} ist eine IC-Layoutdatei. Erkannte Geometrie wird im Browser verarbeitet; kleine Zeichnungen verwenden SVG, große WebGL. Struktur, Zeichenfolgen und Diagnosen bleiben indiziert.',
-    'summary.layoutSafe': 'GDSII / OASIS sind IC-Layoutdateien. Der Viewer priorisiert Struktur, Eigenschaften, lesbare Zeichenfolgen und binäre Hinweise und fällt im Frontend sicher zurück.',
-    'summary.orcadSafe': 'OLB / DRA sind private OrCAD-/Allegro-Designdaten. Der Viewer priorisiert CFB-Struktur, Objektkandidaten, Eigenschaften und lesbaren Text und fällt im Frontend sicher zurück.',
-    'search.placeholder': 'Pfade, Rollen, Eigenschaften oder Text filtern',
-    'selection.title': 'Aktueller Eintrag',
-    'selection.none': 'Nicht ausgewählt',
-    'selection.storageTitle': 'Verzeichniseintrag',
-    'selection.storageDescription': 'Dieser Knoten organisiert untergeordnete Datenströme und enthält keinen direkt darstellbaren Text- oder Hexadezimalabschnitt.',
-    'selection.localStrings': 'Zeichenfolgen des aktuellen Eintrags',
-    'panel.overview': 'Verarbeitungsübersicht',
-    'panel.tree': 'Strukturbaum',
-    'panel.objects': 'EDA-Objekte',
-    'panel.strings': 'Lesbare Zeichenfolgen',
-    'panel.diagnostics': 'Diagnosen',
-    'panel.nodeCount': '{count} Knoten',
-    'panel.itemCount': '{count} Elemente',
-    'panel.entryCount': '{count} Einträge',
-    'empty.noObjects.title': 'Keine eindeutigen Objektkandidaten',
-    'empty.noObjects.description': 'Lesbare Inhalte sind weiterhin im Strukturbaum, in den Eigenschaften und im Zeichenfolgenindex verfügbar.',
-    'meta.renderer': 'Renderer',
-    'meta.library': 'Bibliothek',
-    'meta.userUnit': 'Benutzereinheit',
-    'meta.dbUnit': 'Datenbankeinheit',
-    'layout.summary': '{structures} Strukturen · {elements} Elemente',
-    'layout.webglSummary': 'WebGL · {elements} Elemente',
-    'layout.aria': '{layout}-Layoutvorschau',
-    'header.cfbViewer': 'CFB-Strukturansicht',
-    'header.binaryViewer': 'Binärstrukturansicht',
-  },
-};
+
 
 const formatEdaUiText = (
   locale: EdaUiLocale,
   key: EdaUiTextKey,
   params: Record<string, string | number> = {}
 ) => {
-  const template = EDA_UI_TEXT[locale]?.[key] || EDA_UI_TEXT['en-US'][key] || key;
-  return Object.entries(params).reduce(
-    (message, [name, value]) => message.replace(new RegExp(`\\{${name}\\}`, 'g'), String(value)),
-    template
-  );
+  return createFileViewerTranslator(locale)(`eda.ui.${key}`, params);
 };
 
 const edaStyle = `
@@ -593,19 +201,7 @@ const edaStyle = `
 @media (max-width:640px){.eda-header dl,.eda-mini-grid,.eda-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.eda-tree button{grid-template-columns:minmax(22px,auto) minmax(0,1fr)}.eda-tree em,.eda-tree small{display:none}}
 `;
 
-const formatBytes = (value: number) => {
-  if (!Number.isFinite(value) || value < 0) {
-    return '-';
-  }
-  if (value < 1024) {
-    return `${value} B`;
-  }
-  const mb = value / 1024 / 1024;
-  if (mb >= 1) {
-    return `${mb.toFixed(mb < 10 ? 1 : 0)} MB`;
-  }
-  return `${(value / 1024).toFixed(value < 10 * 1024 ? 1 : 0)} KB`;
-};
+
 
 const roleLabel = (role: EdaDomainRole, locale: EdaUiLocale) => {
   return formatEdaUiText(locale, `role.${role}` as EdaUiTextKey) || role;
@@ -635,28 +231,17 @@ const createStyle = () => {
   return style;
 };
 
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = document.createElement(tagName);
-  if (className) {
-    element.className = className;
-  }
-  if (text !== undefined) {
-    element.textContent = text;
-  }
-  return element;
-};
+const createEdaUi = (t: ReturnType<typeof createFileViewerTranslator>) => {
 
-const appendDefinition = (list: HTMLDListElement, label: string, value: string) => {
+const createElement = <K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string | number | (() => string | number)) => t.element(document, tag, className, text);
+
+const appendDefinition = (list: HTMLDListElement, label: string | (() => string), value: string | (() => string)) => {
   const item = document.createElement('div');
   item.append(createElement('dt', undefined, label), createElement('dd', undefined, value));
   list.append(item);
 };
 
-const appendPanelHead = (panel: HTMLElement, title: string, value: string) => {
+const appendPanelHead = (panel: HTMLElement, title: string | (() => string), value: string | (() => string)) => {
   const head = createElement('div', 'eda-panel-head');
   head.append(createElement('span', undefined, title), createElement('strong', undefined, value));
   panel.append(head);
@@ -704,11 +289,12 @@ const formatOptionalNumber = (value?: number) => {
 
 const createSvgElement = <K extends keyof SVGElementTagNameMap>(
   tagName: K,
-  attributes: Record<string, string | number>
+  attributes: Record<string, string | number | (() => string)>
 ) => {
   const element = document.createElementNS(SVG_NS, tagName);
   Object.entries(attributes).forEach(([key, value]) => {
-    element.setAttribute(key, String(value));
+    if (typeof value === 'function') t.bind(element, node => node.setAttribute(key, value()), key);
+    else element.setAttribute(key, String(value));
   });
   return element;
 };
@@ -869,7 +455,7 @@ const createWebglLayoutPreview = (
 const createLayoutPreview = (layout: EdaLayoutPreview, locale: EdaUiLocale) => {
   const panel = createElement('section', 'eda-panel eda-layout-panel');
   const layoutLabel = layout.format === 'oasis' ? 'OASIS' : 'GDSII';
-  appendPanelHead(panel, formatEdaUiText(locale, 'panel.layout'), `${layoutLabel} · ${formatEdaUiText(locale, 'layout.summary', { structures: layout.structureCount || layout.structures.length, elements: layout.elements.length })}`);
+  appendPanelHead(panel, () => formatEdaUiText(locale, 'panel.layout'), () => `${layoutLabel} · ${formatEdaUiText(locale, 'layout.summary', { structures: layout.structureCount || layout.structures.length, elements: layout.elements.length })}`);
 
   const meta = createElement('div', 'eda-layout-meta');
   [
@@ -881,8 +467,8 @@ const createLayoutPreview = (layout: EdaLayoutPreview, locale: EdaUiLocale) => {
 
   if (!layout.bounds || !layout.elements.length) {
     panel.append(createEmpty(
-      formatEdaUiText(locale, 'empty.noGeometry.title'),
-      formatEdaUiText(locale, 'empty.noGeometry.description', { layout: layoutLabel })
+      () => formatEdaUiText(locale, 'empty.noGeometry.title'),
+      () => formatEdaUiText(locale, 'empty.noGeometry.description', { layout: layoutLabel })
     ));
     return panel;
   }
@@ -915,7 +501,7 @@ const createLayoutPreview = (layout: EdaLayoutPreview, locale: EdaUiLocale) => {
     ? createWebglLayoutPreview(layout, svgWidth, svgHeight)
     : null;
   if (webglPreview) {
-    meta.append(createElement('span', undefined, `${formatEdaUiText(locale, 'meta.renderer')}: ${formatEdaUiText(locale, 'layout.webglSummary', { elements: webglPreview.batch.elementCount })}`));
+    meta.append(createElement('span', undefined, () => `${formatEdaUiText(locale, 'meta.renderer')}: ${formatEdaUiText(locale, 'layout.webglSummary', { elements: webglPreview.batch.elementCount })}`));
     webglPreview.batch.warnings.forEach(item => {
       const warning = createElement('div', 'eda-warning');
       warning.append(createElement('p', undefined, item));
@@ -926,14 +512,14 @@ const createLayoutPreview = (layout: EdaLayoutPreview, locale: EdaUiLocale) => {
     return panel;
   }
 
-  meta.append(createElement('span', undefined, `${formatEdaUiText(locale, 'meta.renderer')}: SVG`));
+  meta.append(createElement('span', undefined, () => `${formatEdaUiText(locale, 'meta.renderer')}: SVG`));
   const svg = createSvgElement('svg', {
     class: 'eda-layout-svg',
     width: svgWidth,
     height: svgHeight,
     viewBox: `0 0 ${svgWidth} ${svgHeight}`,
     role: 'img',
-    'aria-label': formatEdaUiText(locale, 'layout.aria', { layout: layoutLabel }),
+    'aria-label': () => formatEdaUiText(locale, 'layout.aria', { layout: layoutLabel }),
   });
   svg.append(createSvgElement('rect', {
     x: 0,
@@ -996,23 +582,23 @@ const createLayoutPreview = (layout: EdaLayoutPreview, locale: EdaUiLocale) => {
 const buildStatsCards = (parsed: EdaParseResult, locale: EdaUiLocale) => {
   const stats = parsed.stats;
   return [
-    { label: formatEdaUiText(locale, 'stats.textStreams'), value: stats.textStreams },
-    { label: formatEdaUiText(locale, 'stats.binaryStreams'), value: stats.binaryStreams },
-    { label: formatEdaUiText(locale, 'stats.storageEntries'), value: stats.storageEntries },
-    { label: formatEdaUiText(locale, 'stats.properties'), value: stats.propertyCount },
-    { label: formatEdaUiText(locale, 'stats.symbols'), value: stats.symbolCount },
-    { label: formatEdaUiText(locale, 'stats.footprints'), value: stats.footprintCount },
+    { label: () => formatEdaUiText(locale, 'stats.textStreams'), value: stats.textStreams },
+    { label: () => formatEdaUiText(locale, 'stats.binaryStreams'), value: stats.binaryStreams },
+    { label: () => formatEdaUiText(locale, 'stats.storageEntries'), value: stats.storageEntries },
+    { label: () => formatEdaUiText(locale, 'stats.properties'), value: stats.propertyCount },
+    { label: () => formatEdaUiText(locale, 'stats.symbols'), value: stats.symbolCount },
+    { label: () => formatEdaUiText(locale, 'stats.footprints'), value: stats.footprintCount },
     { label: 'Padstack', value: stats.padstackCount },
-    { label: formatEdaUiText(locale, 'stats.confidence'), value: confidenceLabel(stats.confidence, locale) },
+    { label: () => formatEdaUiText(locale, 'stats.confidence'), value: () => confidenceLabel(stats.confidence, locale) },
   ];
 };
 
 const buildEntityGroups = (entities: EdaEntity[], locale: EdaUiLocale) => {
-  const groups: Array<{ role: EdaDomainRole; label: string; items: EdaEntity[] }> = [
-    { role: 'symbol', label: formatEdaUiText(locale, 'group.symbol'), items: [] },
-    { role: 'footprint', label: formatEdaUiText(locale, 'group.footprint'), items: [] },
+  const groups: Array<{ role: EdaDomainRole; label: string | (() => string); items: EdaEntity[] }> = [
+    { role: 'symbol', label: () => formatEdaUiText(locale, 'group.symbol'), items: [] },
+    { role: 'footprint', label: () => formatEdaUiText(locale, 'group.footprint'), items: [] },
     { role: 'padstack', label: 'Padstack', items: [] },
-    { role: 'drawing', label: formatEdaUiText(locale, 'group.drawing'), items: [] },
+    { role: 'drawing', label: () => formatEdaUiText(locale, 'group.drawing'), items: [] },
   ];
   groups.forEach(group => {
     group.items = entities.filter(entity => entity.role === group.role);
@@ -1020,20 +606,23 @@ const buildEntityGroups = (entities: EdaEntity[], locale: EdaUiLocale) => {
   return groups.filter(group => group.items.length);
 };
 
-const appendStatGrid = (target: HTMLElement, items: Array<{ label: string; value: string | number }>, className: string) => {
+const appendStatGrid = (target: HTMLElement, items: Array<{ label: string | (() => string); value: string | number | (() => string | number) }>, className: string) => {
   const grid = createElement('div', className);
   items.forEach(item => {
     const cell = document.createElement('div');
-    cell.append(createElement('span', undefined, item.label), createElement('strong', undefined, String(item.value)));
+    cell.append(createElement('span', undefined, item.label), createElement('strong', undefined, typeof item.value === 'function' ? item.value : typeof item.value === 'number' ? () => t.formatNumber(item.value as number) : item.value));
     grid.append(cell);
   });
   target.append(grid);
 };
 
-const createEmpty = (title: string, description: string) => {
+const createEmpty = (title: string | (() => string), description: string | (() => string)) => {
   const empty = createElement('div', 'eda-empty');
   empty.append(createElement('strong', undefined, title), createElement('p', undefined, description));
   return empty;
+};
+
+return { createElement, appendDefinition, appendPanelHead, createLayoutPreview, buildStatsCards, buildEntityGroups, appendStatGrid, createEmpty };
 };
 
 export default async function renderEda(
@@ -1043,7 +632,10 @@ export default async function renderEda(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const normalizedType = ['dra', 'gds', 'oas', 'oasis'].includes(type) ? type : 'olb';
-  const locale: EdaUiLocale = resolveFileViewerLocale(context?.options);
+  const locale: EdaUiLocale = context?.i18n || context?.options;
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const { createElement, appendDefinition, appendPanelHead, createLayoutPreview, buildStatsCards, buildEntityGroups, appendStatGrid, createEmpty } = createEdaUi(t);
+  const formatBytes = t.formatBytes;
   const filename = context?.filename || `preview.${normalizedType}`;
   const root = createElement('section', 'eda-viewer');
   const style = createStyle();
@@ -1065,7 +657,7 @@ export default async function renderEda(
     const state = createElement('div', 'eda-state');
     state.append(
       createElement('span'),
-      createElement('strong', undefined, formatEdaUiText(locale, 'state.loading', { type: normalizedType.toUpperCase() }))
+      t.text(createElement('strong', undefined), 'eda.ui.state.loading', { type: normalizedType.toUpperCase() })
     );
     root.append(state);
     return state;
@@ -1073,11 +665,12 @@ export default async function renderEda(
 
   const showError = (message: string) => {
     const error = createElement('div', 'eda-error');
-    error.append(createElement('strong', undefined, formatEdaUiText(locale, 'state.errorTitle')), createElement('p', undefined, message));
+    error.append(t.text(createElement('strong', undefined), 'eda.ui.state.errorTitle'), createElement('p', undefined, message));
     root.append(error);
   };
 
   const renderParsed = (parsed: EdaParseResult) => {
+    const localizedModel = () => localizeEdaParseResult(parsed, context?.i18n?.locale || resolveFileViewerLocale(context?.options));
     selectedStream = parsed.streams.find(stream => stream.properties.length)
       || parsed.streams.find(stream => stream.kind === 'text')
       || parsed.streams[0]
@@ -1092,39 +685,39 @@ export default async function renderEda(
     const header = createElement('header', 'eda-header');
     const headerTitle = document.createElement('div');
     headerTitle.append(
-      createElement('span', undefined, parsed.parser === 'cfb' ? formatEdaUiText(locale, 'header.cfbViewer') : formatEdaUiText(locale, 'header.binaryViewer')),
+      createElement('span', undefined, () => parsed.parser === 'cfb' ? t('eda.ui.header.cfbViewer') : t('eda.ui.header.binaryViewer')),
       createElement('h2', undefined, filename)
     );
     const headerStats = document.createElement('dl');
-    appendDefinition(headerStats, formatEdaUiText(locale, 'header.format'), parsed.type.toUpperCase());
-    appendDefinition(headerStats, formatEdaUiText(locale, 'header.size'), formatBytes(parsed.byteLength));
-    appendDefinition(headerStats, formatEdaUiText(locale, 'header.entries'), String(parsed.streamCount));
-    appendDefinition(headerStats, formatEdaUiText(locale, 'stats.confidence'), confidenceLabel(parsed.stats.confidence, locale));
+    appendDefinition(headerStats, () => t('eda.ui.header.format'), parsed.type.toUpperCase());
+    appendDefinition(headerStats, () => t('eda.ui.header.size'), () => formatBytes(parsed.byteLength));
+    appendDefinition(headerStats, () => t('eda.ui.header.entries'), String(parsed.streamCount));
+    appendDefinition(headerStats, () => t('eda.ui.stats.confidence'), () => confidenceLabel(parsed.stats.confidence, locale));
     header.append(headerTitle, headerStats);
 
     const body = createElement('div', 'eda-body');
     const sidebar = createElement('aside', 'eda-sidebar');
     const summary = createElement('div', 'eda-summary');
     summary.append(
-      createElement('strong', undefined, parsed.title),
-      createElement('p', undefined, parsed.type === 'gds' || parsed.type === 'oas' || parsed.type === 'oasis'
+      createElement('strong', undefined, () => localizedModel().title),
+      createElement('p', undefined, () => parsed.type === 'gds' || parsed.type === 'oas' || parsed.type === 'oasis'
         ? parsed.layout
-          ? formatEdaUiText(locale, 'summary.layoutReady', { layout: parsed.layout.format === 'oasis' ? 'OASIS' : 'GDSII' })
-          : formatEdaUiText(locale, 'summary.layoutSafe')
-        : formatEdaUiText(locale, 'summary.orcadSafe'))
+          ? t('eda.ui.summary.layoutReady', { layout: parsed.layout.format === 'oasis' ? 'OASIS' : 'GDSII' })
+          : t('eda.ui.summary.layoutSafe')
+        : t('eda.ui.summary.orcadSafe'))
     );
     sidebar.append(summary);
     appendStatGrid(sidebar, statsCards.slice(0, 4), 'eda-mini-grid');
 
     if (parsed.warnings.length) {
       const warning = createElement('div', 'eda-warning');
-      parsed.warnings.forEach(item => warning.append(createElement('p', undefined, item)));
+      parsed.warnings.forEach((_item, index) => warning.append(createElement('p', undefined, () => localizedModel().warnings[index])));
       sidebar.append(warning);
     }
 
     const search = createElement('input', 'eda-search') as HTMLInputElement;
     search.type = 'search';
-    search.placeholder = formatEdaUiText(locale, 'search.placeholder');
+    t.attr(search, 'placeholder', 'eda.ui.search.placeholder');
     sidebar.append(search);
 
     const streamList = createElement('div', 'eda-stream-list');
@@ -1133,8 +726,8 @@ export default async function renderEda(
 
     const currentPanel = createElement('section', 'eda-panel');
     const selectedHead = createElement('div', 'eda-panel-head');
-    const selectedTitle = createElement('span', undefined, formatEdaUiText(locale, 'selection.title'));
-    const selectedPath = createElement('strong', undefined, formatEdaUiText(locale, 'selection.none'));
+    const selectedTitle = t.text(createElement('span', undefined), 'eda.ui.selection.title');
+    const selectedPath = t.text(createElement('strong', undefined), 'eda.ui.selection.none');
     selectedHead.append(selectedTitle, selectedPath);
     const selectedMeta = createElement('div', 'eda-selected-meta');
     const selectedProperties = createElement('div', 'eda-property-grid');
@@ -1147,24 +740,28 @@ export default async function renderEda(
       streamButtons.forEach(({ path, button }) => {
         button.classList.toggle('active', normalizePath(path) === normalizePath(selectedStream?.path || ''));
       });
-      selectedPath.textContent = selectedStream?.path || formatEdaUiText(locale, 'selection.none');
+      t.bind(selectedPath, localizedNode => { localizedNode.textContent = selectedStream?.path || t('eda.ui.selection.none'); }, 'textContent');
+      t.release(selectedMeta);
       selectedMeta.replaceChildren();
+      t.release(selectedProperties);
       selectedProperties.replaceChildren();
       selectedPreviewContainer.replaceChildren();
+      t.release(localStrings);
       localStrings.replaceChildren();
 
       if (!selectedStream) {
         selectedPreviewContainer.append(createEmpty(
-          formatEdaUiText(locale, 'selection.storageTitle'),
-          formatEdaUiText(locale, 'selection.storageDescription')
+          () => t('eda.ui.selection.storageTitle'),
+          () => t('eda.ui.selection.storageDescription')
         ));
         return;
       }
 
+      const currentStream = selectedStream;
       selectedMeta.append(
-        createElement('span', undefined, roleLabel(selectedStream.role, locale)),
-        createElement('span', undefined, kindLabel(selectedStream.kind, locale)),
-        createElement('span', undefined, formatBytes(selectedStream.size))
+        createElement('span', undefined, () => roleLabel(currentStream.role, locale)),
+        createElement('span', undefined, () => kindLabel(currentStream.kind, locale)),
+        createElement('span', undefined, () => formatBytes(currentStream.size))
       );
 
       selectedStream.properties.forEach(property => {
@@ -1178,13 +775,13 @@ export default async function renderEda(
         selectedPreviewContainer.append(createElement('pre', undefined, previewText));
       } else {
         selectedPreviewContainer.append(createEmpty(
-          formatEdaUiText(locale, 'selection.storageTitle'),
-          formatEdaUiText(locale, 'selection.storageDescription')
+          () => t('eda.ui.selection.storageTitle'),
+          () => t('eda.ui.selection.storageDescription')
         ));
       }
 
       if (selectedStream.strings.length) {
-        localStrings.append(createElement('strong', undefined, formatEdaUiText(locale, 'selection.localStrings')));
+        localStrings.append(t.text(createElement('strong', undefined), 'eda.ui.selection.localStrings'));
         selectedStream.strings.forEach(item => localStrings.append(createElement('span', undefined, item)));
       }
     };
@@ -1224,18 +821,19 @@ export default async function renderEda(
 
     const renderStreams = () => {
       const keyword = search.value.trim().toLowerCase();
+      t.release(streamList);
       streamList.replaceChildren();
       streamButtons = [];
       parsed.streams.filter(stream => matchesFilter(stream, keyword)).forEach(stream => {
         const button = createElement('button', 'eda-stream') as HTMLButtonElement;
         button.type = 'button';
-        const role = createElement('span', undefined, roleLabel(stream.role, locale));
+        const role = createElement('span', undefined, () => roleLabel(stream.role, locale));
         role.dataset.role = stream.role;
         button.append(
           role,
           createElement('strong', undefined, stream.name || stream.path),
           createElement('em', undefined, stream.path),
-          createElement('small', undefined, `${kindLabel(stream.kind, locale)} · ${formatBytes(stream.size)}`)
+          createElement('small', undefined, () => `${kindLabel(stream.kind, locale)} · ${formatBytes(stream.size)}`)
         );
         listen(button, 'click', () => selectStream(stream));
         streamButtons.push({ path: stream.path, button });
@@ -1248,12 +846,12 @@ export default async function renderEda(
     sidebar.append(streamList);
 
     const overview = createElement('section', 'eda-panel eda-panel--compact');
-    appendPanelHead(overview, formatEdaUiText(locale, 'panel.overview'), `${parsed.parser.toUpperCase()} · ${formatBytes(parsed.totalStreamBytes)}`);
+    appendPanelHead(overview, () => t('eda.ui.panel.overview'), () => `${parsed.parser.toUpperCase()} · ${formatBytes(parsed.totalStreamBytes)}`);
     appendStatGrid(overview, statsCards, 'eda-stat-grid');
 
     const topology = createElement('section', 'eda-topology');
     const treePanel = createElement('div', 'eda-panel');
-    appendPanelHead(treePanel, formatEdaUiText(locale, 'panel.tree'), formatEdaUiText(locale, 'panel.nodeCount', { count: treeRows.length }));
+    appendPanelHead(treePanel, () => t('eda.ui.panel.tree'), () => t('eda.ui.panel.nodeCount', { count: treeRows.length }));
     const tree = createElement('div', 'eda-tree');
     treeRows.forEach(row => {
       const button = createElement('button') as HTMLButtonElement;
@@ -1263,8 +861,8 @@ export default async function renderEda(
       button.append(
         twist,
         createElement('strong', undefined, row.name),
-        createElement('em', undefined, roleLabel(row.role, locale)),
-        createElement('small', undefined, row.size ? formatBytes(row.size) : kindLabel(row.kind, locale))
+        createElement('em', undefined, () => roleLabel(row.role, locale)),
+        createElement('small', undefined, () => row.size ? formatBytes(row.size) : kindLabel(row.kind, locale))
       );
       listen(button, 'click', () => selectTreeRow(row));
       tree.append(button);
@@ -1272,7 +870,7 @@ export default async function renderEda(
     treePanel.append(tree);
 
     const entityPanel = createElement('div', 'eda-panel');
-    appendPanelHead(entityPanel, formatEdaUiText(locale, 'panel.objects'), formatEdaUiText(locale, 'panel.itemCount', { count: parsed.entities.length }));
+    appendPanelHead(entityPanel, () => t('eda.ui.panel.objects'), () => t('eda.ui.panel.itemCount', { count: parsed.entities.length }));
     if (entityGroups.length) {
       const entityRoot = createElement('div', 'eda-entities');
       entityGroups.forEach(group => {
@@ -1283,23 +881,23 @@ export default async function renderEda(
           button.type = 'button';
           button.append(
             createElement('strong', undefined, entity.name),
-            createElement('span', undefined, `${formatBytes(entity.byteLength)} · ${formatEdaUiText(locale, 'panel.entryCount', { count: entity.streamCount })}`)
+            createElement('span', undefined, () => `${formatBytes(entity.byteLength)} · ${t('eda.ui.panel.entryCount', { count: entity.streamCount })}`)
           );
           if (entity.description) {
             button.append(createElement('p', undefined, entity.description));
           }
           const detail = document.createElement('dl');
-          const addDetail = (label: string, values: string | string[] | undefined) => {
+          const addDetail = (label: () => string, values: string | string[] | undefined) => {
             const normalized = Array.isArray(values) ? values.join(', ') : values;
             if (!normalized) {
               return;
             }
             appendDefinition(detail, label, normalized);
           };
-          addDetail('Footprint', entity.footprint);
-          addDetail('Pins', entity.pins);
-          addDetail('Layers', entity.layers);
-          addDetail('Keywords', entity.keywords);
+          addDetail(() => t('eda.ui.role.footprint'), entity.footprint);
+          addDetail(() => t('eda.ui.detail.pins'), entity.pins);
+          addDetail(() => t('eda.ui.detail.layers'), entity.layers);
+          addDetail(() => t('eda.ui.detail.keywords'), entity.keywords);
           button.append(detail);
           listen(button, 'click', () => selectEntity(entity));
           groupRoot.append(button);
@@ -1309,26 +907,26 @@ export default async function renderEda(
       entityPanel.append(entityRoot);
     } else {
       entityPanel.append(createEmpty(
-        formatEdaUiText(locale, 'empty.noObjects.title'),
-        formatEdaUiText(locale, 'empty.noObjects.description')
+        () => t('eda.ui.empty.noObjects.title'),
+        () => t('eda.ui.empty.noObjects.description')
       ));
     }
     topology.append(treePanel, entityPanel);
 
     const bottom = createElement('section', 'eda-bottom');
     const stringsPanel = createElement('div', 'eda-panel');
-    appendPanelHead(stringsPanel, formatEdaUiText(locale, 'panel.strings'), formatEdaUiText(locale, 'panel.itemCount', { count: parsed.strings.length }));
+    appendPanelHead(stringsPanel, () => t('eda.ui.panel.strings'), () => t('eda.ui.panel.itemCount', { count: parsed.strings.length }));
     const stringGrid = createElement('div', 'eda-string-grid');
     parsed.strings.forEach(item => stringGrid.append(createElement('span', undefined, item)));
     stringsPanel.append(stringGrid);
 
     const diagnosticsPanel = createElement('div', 'eda-panel');
-    appendPanelHead(diagnosticsPanel, formatEdaUiText(locale, 'panel.diagnostics'), formatEdaUiText(locale, 'panel.itemCount', { count: parsed.diagnostics.length }));
+    appendPanelHead(diagnosticsPanel, () => t('eda.ui.panel.diagnostics'), () => t('eda.ui.panel.itemCount', { count: parsed.diagnostics.length }));
     const diagnostics = createElement('div', 'eda-diagnostics');
     parsed.diagnostics.forEach(diagnostic => {
       const item = createElement('p');
       item.dataset.level = diagnostic.level;
-      item.append(createElement('span', undefined, diagnostic.level), document.createTextNode(diagnostic.message));
+      item.append(createElement('span', undefined, diagnostic.level), createElement('span', undefined, () => localizedModel().diagnostics.find(entry => entry.code === diagnostic.code)?.message || diagnostic.message));
       diagnostics.append(item);
     });
     diagnosticsPanel.append(diagnostics, localStrings);
@@ -1345,7 +943,7 @@ export default async function renderEda(
 
   const loading = showLoading();
   try {
-    const parsed = await parseEdaFile(buffer, normalizedType, { locale });
+    const parsed = await parseEdaFile(buffer, normalizedType, { locale: context?.i18n?.locale || resolveFileViewerLocale(context?.options) });
     renderParsed(parsed);
   } catch (nextError) {
     console.error(nextError);
@@ -1360,6 +958,7 @@ export default async function renderEda(
     unmount() {
       cleanups.splice(0).forEach(cleanup => cleanup());
       selectedStream = null;
+      t.release(root);
       target.replaceChildren();
     },
   };

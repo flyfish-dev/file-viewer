@@ -47,6 +47,7 @@ for (const [kind, name] of Object.entries({
   xml: 'xml-encapsulated-but-named.p7s'
 })) {
   const bytes = await readFile(path.join(fixtureRoot, name))
+  globalThis.__fileViewerPrepackObserveNodeFixture?.(`packages/renderers/signature/test/fixtures/github-206-contributed/cms/${name}`, bytes)
   fixtures[kind] = {
     name,
     bytes: bytes.toString('base64'),

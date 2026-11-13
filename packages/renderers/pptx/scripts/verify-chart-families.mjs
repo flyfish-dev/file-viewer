@@ -8,6 +8,7 @@ import { build } from 'esbuild';
 import { chromium, webkit } from 'playwright';
 import { extractChartOptions } from '../src/engine/support/chart-options.js';
 import { makePresentation } from './chart-fixture.mjs';
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs';
 const root = path.resolve(import.meta.dirname, '../../../..');
 const packageDir = path.join(root, 'packages/renderers/pptx');
 const output = path.resolve(process.env.PPTX_CHART_OUTPUT || path.join(root, 'output/pptx-chart-families'));
@@ -101,7 +102,7 @@ const workerPath=process.env.PPTX_CHART_WORKER_FILE;
 const workerSource=workerPath?await readFile(path.resolve(workerPath),'utf8'):(await build({alias:sourceAliases,entryPoints:[path.join(packageDir,'src/worker-entry.ts')],bundle:true,format:'iife',write:false,platform:'browser',logLevel:'warning'})).outputFiles[0].text;
 const browserName=process.env.PPTX_CHART_BROWSER||'chromium';
 assert.ok(['chromium','webkit'].includes(browserName),'Select a supported chart browser');
-const browser=await ({chromium,webkit}[browserName]).launch({executablePath:browserName==='chromium'?process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined:undefined,headless:true});
+const browser=await launchBrowserForTest(({chromium,webkit}[browserName]),browserName,{executablePath:browserName==='chromium'?process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined:undefined,headless:true});
 try {
   for(const dpr of [1,2]) {
     const page=await browser.newPage({viewport:{width:1200,height:900},deviceScaleFactor:dpr});

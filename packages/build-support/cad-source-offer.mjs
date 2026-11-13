@@ -3,15 +3,15 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
 
-// This public snapshot was read back and cold-built on Oracle. Its standalone
-// preferred sources reproduce the canonical and actual Full owner runtimes.
+// This immutable public snapshot was read back and cold-built on Linux ARM64.
+// The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: '77fd41b331f3576b27f1414918051196fba3e57b',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b',
-  sha256: 'aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b',
-  bytes: 189976130,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.3',
-  runtimeSha256: '97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f'
+  sourceCommit: '7028fe51d5bce7dc0262ccac9d6eb7f8386d5512',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/7028fe51d5bce7dc0262ccac9d6eb7f8386d5512',
+  sha256: '2cdcc33e9f1e6f6d3291a2c891563576443bfcea1586c430927b1097710964bc',
+  bytes: 191004348,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.4',
+  runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
 })
 
 // Native preferred sources are distinct from the File Viewer integration source.
@@ -30,17 +30,17 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 ])
 
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
-  // This release includes its complete current integration source, independently
-  // rebuilt against the ordinary Full runtime. Native owner versions stay fixed.
-  releaseVersion: '3.3.3',
+  // Complete preferred inputs with a measured standalone reproduction. Normal
+  // Full/HTTPS verification remains mandatory; native owner versions stay fixed.
+  releaseVersion: '3.3.4',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f',
-  bytes: 354745,
-  files: 86,
-  runtimeBytes: 627662,
-  runtimeSha256: '97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f'
+  sha256: '84c1a5f780755aba6e9d109a8995356b66bf554516da38499607db43f32c80a8',
+  bytes: 457569,
+  files: 100,
+  runtimeBytes: 926335,
+  runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {

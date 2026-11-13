@@ -1,6 +1,9 @@
+// @vitest-environment jsdom
+
 import { expect, it, vi } from 'vitest'
+import { createFileViewerI18n } from '@file-viewer/core'
 import { SignatureContainerWorkerClient } from '../packages/renderers/signature/src/structured/containerClient'
-import renderSignature from '@signature-under-test'
+import renderSignature from '../packages/renderers/signature/src/signature'
 import * as jws from '../packages/renderers/signature/src/structured/jws'
 
 it('disposes a late ASiC nested result after signature unmount', async () => {
@@ -56,6 +59,58 @@ const fakeAsic = (names = ['first.pdf', 'second.pdf']) => ({
     uncompressedSize: 4,
     data: new Uint8Array([37, 80, 68, 70])
   }))
+})
+
+it('keeps live signature and panel copy bounded across selections and releases it on unmount', async () => {
+  const inspect = vi
+    .spyOn(SignatureContainerWorkerClient.prototype, 'inspectAsic')
+    .mockResolvedValue(fakeAsic() as never)
+  const messages = (key: string, _params: unknown, locale: string) => `${locale}:${key}`
+  const language = createFileViewerI18n({ locale: 'en-US', messages })
+  const listeners = new Set<() => void>()
+  const subscribe = language.subscribe.bind(language)
+  vi.spyOn(language, 'subscribe').mockImplementation((listener) => {
+    listeners.add(listener)
+    const unsubscribe = subscribe(listener)
+    return () => {
+      listeners.delete(listener)
+      unsubscribe()
+    }
+  })
+  const target = document.createElement('div')
+  document.body.append(target)
+  const result = await renderSignature(new ArrayBuffer(8), target, 'asics', {
+    filename: 'live.asics',
+    options: language.options,
+    i18n: language
+  })
+  try {
+    await tick()
+    const bindingCount = listeners.size
+    expect(bindingCount).toBeGreaterThan(0)
+    const toggle = target.querySelector('[aria-controls]')!
+    language.update({ locale: 'ru-RU', messages })
+    expect(toggle.textContent).toBe('ru-RU:signature.panel.hide')
+    expect(target.querySelector('.signature-card h3')?.textContent).toBe(
+      'ru-RU:signature.ui.asic.package.edd529'
+    )
+    for (let i = 0; i < 8; i++) {
+      const name = i % 2 ? 'first.pdf' : 'second.pdf'
+      const button = [...target.querySelectorAll('button')].find((node) => node.textContent === name)!
+      button.click()
+      await tick()
+      expect(listeners.size).toBe(bindingCount)
+    }
+    await result.unmount()
+    expect(listeners.size).toBe(0)
+    language.update({ locale: 'de-DE', messages })
+    expect(toggle.textContent).toBe('ru-RU:signature.panel.hide')
+  } finally {
+    await result.unmount()
+    language.destroy()
+    inspect.mockRestore()
+    target.remove()
+  }
 })
 
 it('accepts only the newest attachment and disposes each child exactly once', async () => {

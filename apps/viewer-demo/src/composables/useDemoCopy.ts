@@ -1,8 +1,9 @@
 import { computed, type Ref } from 'vue'
 import { demoCopyJa } from './useDemoCopy.ja'
 import { demoCopyDe } from './useDemoCopy.de'
-import { demoCopyZhTW } from './useDemoCopy.zh-tw'
-import { demoCopyZhHK } from './useDemoCopy.zh-hk'
+import { demoCopyRu } from './useDemoCopy.ru'
+import { demoCopyTw, demoCopyHk } from './useDemoCopy.zh-Hant'
+import type { FileViewerResolvedLocale } from '@file-viewer/core'
 
 /**
  * Localized product-demo copy.
@@ -11,11 +12,17 @@ import { demoCopyZhHK } from './useDemoCopy.zh-hk'
  * accessibility names change language together. Renderer translations remain
  * in core and are not duplicated here.
  */
-export type DemoLocale = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE'
-export type DemoCopy = Record<string, string>
+export type DemoLocale = FileViewerResolvedLocale
+export type DemoCopy = Record<keyof typeof demoCopyRu, string>
 
 const demoCopyMap: Record<DemoLocale, DemoCopy> = {
+  'zh-TW': demoCopyTw,
+  'zh-HK': demoCopyHk,
+  'ru-RU': demoCopyRu,
   'zh-CN': {
+  openRepositoryAria: "在新标签页打开 File Viewer GitHub 开源仓库",
+  openSiteAria: "打开 File Viewer 官网",
+
     pageTitle: 'File Viewer Demo - Office、PDF、CAD 在线预览',
     pureWeb: 'Pure Web',
     local: '本地',
@@ -237,6 +244,9 @@ const demoCopyMap: Record<DemoLocale, DemoCopy> = {
     copiedSnippet: '已复制'
   },
   'en-US': {
+  openRepositoryAria: "Open the File Viewer GitHub repository in a new tab",
+  openSiteAria: "Open the File Viewer website",
+
     pageTitle: 'File Viewer Demo — Office, PDF & CAD in Your Browser',
     pureWeb: 'Pure Web',
     local: 'Local',
@@ -457,8 +467,6 @@ const demoCopyMap: Record<DemoLocale, DemoCopy> = {
     copySnippet: 'Copy code',
     copiedSnippet: 'Copied'
   },
-  'zh-TW': demoCopyZhTW,
-  'zh-HK': demoCopyZhHK,
   'ja-JP': demoCopyJa,
   'de-DE': demoCopyDe
 }

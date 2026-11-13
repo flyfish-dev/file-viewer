@@ -289,7 +289,7 @@ export default async function renderText(
   const syncRepresentationControls = (lineCount: number) => {
     const formatted = showingFormatted && formattedText !== null
     root.dataset.textRepresentation = formatted ? 'formatted' : 'source'
-    bindings.text(lineSummary, () => t('text.code.lineCount', { count: lineCount }))
+    bindings.text(lineSummary, () => t('ui.text.ui.lines.24e137', { p0: lineCount }))
     representationStatus.hidden = !formatted
     bindings.text(representationStatus, () => formatted ? t('text.code.formattedPreview') : '')
     representationToggle.hidden = formattedText === null

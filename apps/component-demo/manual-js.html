@@ -73,14 +73,15 @@
       <header>
         <div>
           <h1>Manual Pure JS</h1>
-          <p>普通页面通过原生 JS 动态加载 <code>mountViewer</code> 浏览器包。</p>
+          <p data-demo-copy="description"></p>
         </div>
         <p id="status">loading</p>
       </header>
       <div id="viewer" data-testid="manual-js-viewer"></div>
     </main>
 
-    <script>
+    <script type="module">
+      import { demoLanguage } from "/src/locale.ts"
       var statusNode = document.getElementById('status')
       var host = document.getElementById('viewer')
       var bundleUrl = '/file-viewer/flyfish-file-viewer-web-full.iife.js'
@@ -122,10 +123,11 @@
 
       loadViewerApi()
         .then(function (api) {
-          api.mountViewer(host, {
+          var controller = api.mountViewer(host, {
             url: sampleUrl,
             filename: sampleName,
             options: {
+              locale: demoLanguage.locale,
               theme: 'light',
               toolbar: {
                 position: 'bottom-right'
@@ -138,6 +140,7 @@
               }
             }
           })
+          window.addEventListener('file-viewer-demo-language', function (event) { controller.update({ options: { locale: event.detail } }) })
           setStatus('mounted')
         })
         .catch(function (error) {

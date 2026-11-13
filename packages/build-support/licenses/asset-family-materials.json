@@ -3,13 +3,23 @@
   "scope": "Exact material identity mapping; generated provenance is not a grant; source availability is reviewed separately.",
   "materials": [
     {
+      "sourcePath": "packages/build-support/licenses/libarchive/THIRD_PARTY_NOTICES.txt",
+      "sha256": "f629465138b91f6cf0e907714605b69470a85f8624c3c682139c1c16e32f0570",
+      "bytes": 640439,
+      "kind": "generated-original-notice-collection",
+      "component": "libarchive.js@2.0.2 wrapper and native library source profiles",
+      "declaredLicense": null,
+      "source": "Fixed official libarchive.js 2.0.2 distribution; complete original libarchive 3.7.2, zlib 1.3, xz/liblzma 5.2.11, bzip2 1.0.8 and OpenSSL 1.0.2s library notices. Conservative source profiles, not post-link; license alternatives remain original and unelected. Floating Emscripten toolchain identity remains unverified.",
+      "initialOccurrences": 4
+    },
+    {
       "sourcePath": "packages/components/web/viewer/wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "4a565fff1d93f4bd6c80c63634a4b274c2cd264ffb0810b4a50a6975ab90bccb",
+      "sha256": "0359a99428b21c190b59fac453a74302bf4210898a2ce9a6e83ff4138ad061ad",
       "bytes": 3650,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.3",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b (SHA-256 aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b). All 86 snapshot files and the standalone cold build were verified; the workspace toolchain separately reproduced the actual Full integration. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/7028fe51d5bce7dc0262ccac9d6eb7f8386d5512 (SHA-256 2cdcc33e9f1e6f6d3291a2c891563576443bfcea1586c430927b1097710964bc). All 100 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "initialOccurrences": 10
     },
     {
@@ -391,6 +401,24 @@
       "declaredLicense": "MIT",
       "source": "Fixed public source archives and original materials in NATIVE_PROVENANCE.json",
       "initialOccurrences": 5
+    },
+    {
+      "sourcePath": "packages/renderers/wordperfect/vendor/libwpd-src/LICENSE.POLE-RVNGOLEStream.h.txt",
+      "sha256": "b64785f0016b464ab95671932f2b000cab1d792d822afbd3a4975b720c3becd4",
+      "bytes": 1633,
+      "kind": "original-license-grant",
+      "component": "POLE-derived librevenge OLE stream",
+      "declaredLicense": "BSD-3-Clause",
+      "source": "Original src/lib/RVNGOLEStream.h header in librevenge 0.0.6 archive SHA-256 686cc36be3196a0a808761cfd3951a46ff809cb0e028b0902c787261a1389d0f"
+    },
+    {
+      "sourcePath": "packages/renderers/wordperfect/vendor/libwpd-src/LICENSE.POLE-RVNGOLEStream.cpp.txt",
+      "sha256": "1a04bf9e2eeb4b0fa2ac5e21fb414417b1afc0d444881b893e0c6a4a3e3fde41",
+      "bytes": 1869,
+      "kind": "original-license-grant",
+      "component": "POLE-derived librevenge OLE stream",
+      "declaredLicense": "BSD-3-Clause",
+      "source": "Original src/lib/RVNGOLEStream.cpp header in librevenge 0.0.6 archive SHA-256 686cc36be3196a0a808761cfd3951a46ff809cb0e028b0902c787261a1389d0f"
     },
     {
       "sourcePath": "packages/renderers/wordperfect/vendor/libwpd-src/PROVENANCE.md",

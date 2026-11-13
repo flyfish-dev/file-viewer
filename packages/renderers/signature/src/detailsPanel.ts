@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  type FileViewerI18nContext,
   type FileViewerOptions,
   type FileViewerSignatureDetailsPanelOptions
 } from '@file-viewer/core'
@@ -62,6 +63,7 @@ export const createSignatureDetailsPanel = ({
   main,
   state,
   options,
+  i18n,
   checks,
   onExpandedChange
 }: {
@@ -71,23 +73,21 @@ export const createSignatureDetailsPanel = ({
   main: HTMLElement
   state: FileViewerSignaturePanelChangeDetail
   options?: FileViewerOptions
+  i18n?: FileViewerI18nContext
   /** Existing applicable check results only. Empty is neutral, never valid. */
   checks: readonly (boolean | undefined)[]
   onExpandedChange: (expanded: boolean) => void
 }) => {
   const doc = shell.ownerDocument
-  const t = createFileViewerTranslator(options)
+  const t = createFileViewerTranslator(i18n || options)
   const make = <K extends keyof HTMLElementTagNameMap>(
     tag: K,
     className: string,
-    text?: string
+    text?: string | (() => string)
   ) => {
-    const node = doc.createElement(tag)
-    node.className = className
-    if (text !== undefined) node.textContent = text
-    return node
+    return t.element(doc, tag, className, text)
   }
-  const button = (text: string) => {
+  const button = (text: string | (() => string)) => {
     const node = make('button', 'signature-panel-button', text)
     node.type = 'button'
     return node
@@ -95,10 +95,10 @@ export const createSignatureDetailsPanel = ({
   const panel = make('section', 'signature-details-panel')
   panel.id = `signature-details-${++panelSequence}`
   const heading = make('div', 'signature-details-heading')
-  const title = make('h3', '', t('signature.panel.title'))
+  const title = make('h3', '', () => t('signature.panel.title'))
   title.id = `${panel.id}-title`
   panel.setAttribute('aria-labelledby', title.id)
-  const close = button(t('signature.panel.close'))
+  const close = button(() => t('signature.panel.close'))
   heading.append(title, close)
   const body = make('div', 'signature-details-body')
   const details = Array.from(main.children).filter(
@@ -114,21 +114,21 @@ export const createSignatureDetailsPanel = ({
   toggle.setAttribute('aria-controls', panel.id)
   const failed = checks.some((value) => value === false)
   const incomplete = !failed && checks.some((value) => value === undefined)
-  const review = button(t('signature.panel.reviewValidation'))
+  const review = button(() => t('signature.panel.reviewValidation'))
   const summary = make(
     'span',
     'signature-panel-validation',
-    failed
-      ? t('signature.panel.checksFailed')
-      : incomplete
-        ? t('signature.panel.checksIncomplete')
-        : ''
+    failed || incomplete
+      ? () => t(failed ? 'signature.panel.checksFailed' : 'signature.panel.checksIncomplete')
+      : ''
   )
   summary.dataset.state = failed ? 'failed' : incomplete ? 'incomplete' : 'neutral'
   const notices = Array.from(sidebar.querySelectorAll<HTMLElement>('.signature-warning'))
-  const warnings = button(t('signature.panel.validationNotices', { count: notices.length }))
+  const warnings = button(
+    notices.length ? () => t('signature.panel.validationNotices', { count: notices.length }) : ''
+  )
   actions.append(toggle)
-  if (summary.textContent) actions.append(summary)
+  if (failed || incomplete) actions.append(summary)
   actions.append(review)
   if (notices.length) actions.append(warnings)
   header.append(actions)
@@ -141,7 +141,9 @@ export const createSignatureDetailsPanel = ({
     main.dataset.panelBehavior = state.openingBehavior
     main.dataset.panelExpanded = String(expanded)
     toggle.setAttribute('aria-expanded', String(expanded))
-    toggle.textContent = t(expanded ? 'signature.panel.hide' : 'signature.panel.show')
+    t.bind(toggle, (node) => {
+      node.textContent = t(expanded ? 'signature.panel.hide' : 'signature.panel.show')
+    })
   }
   const activeElement = () => {
     let active = (shell.getRootNode() as Document | ShadowRoot).activeElement
@@ -253,6 +255,8 @@ export const createSignatureDetailsPanel = ({
       panel.removeEventListener('keydown', onKey)
       review.removeEventListener('click', onReview)
       warnings.removeEventListener('click', onWarnings)
+      t.release(panel)
+      t.release(actions)
     }
   }
 }

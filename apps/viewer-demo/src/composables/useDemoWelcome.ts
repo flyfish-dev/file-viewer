@@ -42,24 +42,6 @@ export interface DemoWelcomeCopy {
 }
 
 export const demoWelcomeCopy: Record<DemoLocale, DemoWelcomeCopy> = {
-  'zh-CN': {
-    eyebrow: '快速上手',
-    title: '从一份真实文件开始',
-    description: '点击示例，体验对应文件的查看方式；也可以直接拖入自己的文件。',
-    drop: '将自己的文件拖到这里打开',
-    privacy: '本地文件不会上传到任何服务器。',
-    featured: '试试这些示例',
-    close: '关闭欢迎卡片',
-    previewUnavailable: '预览图暂不可用，仍可打开文件',
-    modelCredit: '3D 模型署名与许可',
-    examples: {
-      drawing: { title: '查看图纸细节', description: '缩放图纸，拖动查看不同区域' },
-      document: { title: '阅读业务报告', description: '查看目录、图表与分页内容' },
-      presentation: { title: '翻阅演示文稿', description: '逐页查看幻灯片与图文内容' },
-      workbook: { title: '浏览表格数据', description: '查看单元格，拖动调整列宽' },
-      model: { title: '探索低模狐狸', description: '拖动旋转，从不同角度观察狐狸' }
-    }
-  },
   'zh-TW': {
     eyebrow: '快速上手',
     title: '從一份真實檔案開始',
@@ -94,6 +76,57 @@ export const demoWelcomeCopy: Record<DemoLocale, DemoWelcomeCopy> = {
       presentation: { title: '翻閱演示文稿', description: '逐頁查看幻燈片與圖文內容' },
       workbook: { title: '瀏覽表格數據', description: '查看單元格，拖動調整列寬' },
       model: { title: '探索低模狐狸', description: '拖動旋轉，從不同角度觀察狐狸' }
+    }
+  },
+  'ru-RU': {
+  "eyebrow": "Быстрый старт",
+  "title": "Начните с реального файла",
+  "description": "Откройте пример или перетащите сюда свой файл.",
+  "drop": "Перетащите файл сюда, чтобы открыть",
+  "privacy": "Локальные файлы не отправляются на сервер.",
+  "featured": "Попробуйте примеры",
+  "close": "Закрыть приветствие",
+  "previewUnavailable": "Миниатюра недоступна. Файл можно открыть.",
+  "modelCredit": "Авторы и лицензия 3D-модели",
+  "examples": {
+    "drawing": {
+      "title": "Рассмотрите чертёж",
+      "description": "Увеличивайте детали и перемещайтесь по чертежу."
+    },
+    "document": {
+      "title": "Прочитайте деловой отчёт",
+      "description": "Посмотрите оглавление, таблицы и графики. Все деловые данные вымышлены."
+    },
+    "presentation": {
+      "title": "Откройте презентацию",
+      "description": "Просматривайте слайды, изображения и текст."
+    },
+    "workbook": {
+      "title": "Изучите таблицу",
+      "description": "Просматривайте ячейки и изменяйте ширину столбцов."
+    },
+    "model": {
+      "title": "Рассмотрите низкополигональную лису",
+      "description": "Перетаскивайте модель, чтобы увидеть её с разных сторон."
+    }
+  }
+},
+  'zh-CN': {
+    eyebrow: '快速上手',
+    title: '从一份真实文件开始',
+    description: '点击示例，体验对应文件的查看方式；也可以直接拖入自己的文件。',
+    drop: '将自己的文件拖到这里打开',
+    privacy: '本地文件不会上传到任何服务器。',
+    featured: '试试这些示例',
+    close: '关闭欢迎卡片',
+    previewUnavailable: '预览图暂不可用，仍可打开文件',
+    modelCredit: '3D 模型署名与许可',
+    examples: {
+      drawing: { title: '查看图纸细节', description: '缩放图纸，拖动查看不同区域' },
+      document: { title: '阅读业务报告', description: '查看目录、图表与分页内容' },
+      presentation: { title: '翻阅演示文稿', description: '逐页查看幻灯片与图文内容' },
+      workbook: { title: '浏览表格数据', description: '查看单元格，拖动调整列宽' },
+      model: { title: '探索低模狐狸', description: '拖动旋转，从不同角度观察狐狸' }
     }
   },
   'en-US': {

@@ -1,3 +1,4 @@
+import { translateFileViewerMessage, type FileViewerResolvedLocale } from '@file-viewer/core';
 import type { CFB$Entry } from 'cfb'
 import {
   inspectOasisLayout,
@@ -18,7 +19,7 @@ const MAX_STREAMS = 200
 const MAX_STREAM_STRINGS = 24
 const MAX_PROPERTIES = 420
 
-export type EdaParserLocale = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE'
+export type EdaParserLocale = FileViewerResolvedLocale
 
 type EdaParserTextKey =
   | 'oasisFixture'
@@ -41,145 +42,14 @@ type EdaParserTextKey =
   | 'maxStreams'
   | 'binaryFallback'
 
-const EDA_PARSER_TEXT: Record<EdaParserLocale, Record<EdaParserTextKey, string>> = {
-  'zh-CN': {
-    oasisFixture: '已识别为 OASIS 文本结构夹具，并在浏览器端解析几何预览和结构索引；真实 SEMI 二进制 OASIS 仍走安全索引与后续独立内核路线。',
-    gdsLayout: '已识别为标准 GDSII 二进制版图记录，并在浏览器端解析几何预览和结构索引。',
-    cfbContainer: '已识别为 Microsoft Compound File / OLE2 复合文档容器，并在浏览器端解析目录与流。',
-    binaryIndex: '未识别为 CFB 容器，已使用二进制字符串索引模式展示可读信息。',
-    coverage: '已索引 {streams} 个条目、{strings} 个可读字符串、{entities} 个 EDA 结构候选。',
-    layout: '已解析 {layout}: {structures} 个 structure、{elements} 个几何/引用/文本元素，可在版图预览面板中拖动查看。',
-    layoutOasisName: 'OASIS 文本结构',
-    layoutGdsName: 'GDSII 版图',
-    titleOrcadSymbolLibrary: 'OrCAD Capture 元件符号库',
-    titleOlbBinaryLibrary: 'OLB 二进制库',
-    titleOrcadDrawingLibrary: 'OrCAD / Allegro 图纸库',
-    titleDraBinaryDrawing: 'DRA 二进制图纸',
-    titleLayoutStructure: '{type} 版图结构',
-    noSymbol: '未发现明确的元件符号候选，文件可能使用了私有二进制编码或需要专业工具导出 ASCII/XML 后再检查。',
-    noFootprint: '未发现明确的封装、图形或 padstack 候选，文件可能使用了私有二进制数据库编码。',
-    noGds: '未发现明确的 GDSII 版图结构候选。文件可能不是标准 GDSII 二进制或使用了专有封装。',
-    noOasis: '未发现明确的 OASIS 版图结构候选。OASIS 完整几何浏览通常需要专业版图库或独立 WASM/TS 内核，当前前端包会安全展示头部、字符串、属性和二进制结构线索。',
-    maxStreams: '仅展示前 {count} 个 CFB 项，完整文件仍可下载后在专业 EDA 工具中打开。',
-    binaryFallback: '该文件不是标准 CFB 容器，已退化为安全的二进制字符串索引预览。',
-  },
-  'zh-TW': {
-    oasisFixture: '已識別為 OASIS 文字結構夾具，並在瀏覽器端解析幾何預覽和結構索引；真實 SEMI 二進位制 OASIS 仍走安全索引與後續獨立核心路線。',
-    gdsLayout: '已識別為標準 GDSII 二進位制版圖記錄，並在瀏覽器端解析幾何預覽和結構索引。',
-    cfbContainer: '已識別為 Microsoft Compound File / OLE2 複合文件容器，並在瀏覽器端解析目錄與流。',
-    binaryIndex: '未識別為 CFB 容器，已使用二進位制字串索引模式展示可讀資訊。',
-    coverage: '已索引 {streams} 個條目、{strings} 個可讀字串、{entities} 個 EDA 結構候選。',
-    layout: '已解析 {layout}: {structures} 個 structure、{elements} 個幾何/引用/文字元素，可在版圖預覽面板中拖動檢視。',
-    layoutOasisName: 'OASIS 文字結構',
-    layoutGdsName: 'GDSII 版圖',
-    titleOrcadSymbolLibrary: 'OrCAD Capture 元件符號庫',
-    titleOlbBinaryLibrary: 'OLB 二進位制庫',
-    titleOrcadDrawingLibrary: 'OrCAD / Allegro 圖紙庫',
-    titleDraBinaryDrawing: 'DRA 二進位制圖紙',
-    titleLayoutStructure: '{type} 版圖結構',
-    noSymbol: '未發現明確的元件符號候選，檔案可能使用了私有二進位制編碼或需要專業工具匯出 ASCII/XML 後再檢查。',
-    noFootprint: '未發現明確的封裝、圖形或 padstack 候選，檔案可能使用了私有二進位制資料庫編碼。',
-    noGds: '未發現明確的 GDSII 版圖結構候選。檔案可能不是標準 GDSII 二進位制或使用了專有封裝。',
-    noOasis: '未發現明確的 OASIS 版圖結構候選。OASIS 完整幾何瀏覽通常需要專業版圖處理函式庫或獨立 WASM/TS 核心，當前前端包會安全展示頭部、字串、屬性和二進位制結構線索。',
-    maxStreams: '僅展示前 {count} 個 CFB 項，完整檔案仍可下載後在專業 EDA 工具中開啟。',
-    binaryFallback: '該檔案不是標準 CFB 容器，已退化為安全的二進位制字串索引預覽。',
-  },
-  'zh-HK': {
-    oasisFixture: '已識別為 OASIS 文本結構夾具，並在瀏覽器端解析幾何預覽和結構索引；真實 SEMI 二進制 OASIS 仍走安全索引與後續獨立內核路線。',
-    gdsLayout: '已識別為標準 GDSII 二進制版圖記錄，並在瀏覽器端解析幾何預覽和結構索引。',
-    cfbContainer: '已識別為 Microsoft Compound File / OLE2 複合文檔容器，並在瀏覽器端解析目錄與流。',
-    binaryIndex: '未識別為 CFB 容器，已使用二進制字符串索引模式展示可讀信息。',
-    coverage: '已索引 {streams} 個條目、{strings} 個可讀字符串、{entities} 個 EDA 結構候選。',
-    layout: '已解析 {layout}: {structures} 個 structure、{elements} 個幾何/引用/文本元素，可在版圖預覽面板中拖動查看。',
-    layoutOasisName: 'OASIS 文本結構',
-    layoutGdsName: 'GDSII 版圖',
-    titleOrcadSymbolLibrary: 'OrCAD Capture 元件符號庫',
-    titleOlbBinaryLibrary: 'OLB 二進制庫',
-    titleOrcadDrawingLibrary: 'OrCAD / Allegro 圖紙庫',
-    titleDraBinaryDrawing: 'DRA 二進制圖紙',
-    titleLayoutStructure: '{type} 版圖結構',
-    noSymbol: '未發現明確的元件符號候選，文件可能使用了私有二進制編碼或需要專業工具導出 ASCII/XML 後再檢查。',
-    noFootprint: '未發現明確的封裝、圖形或 padstack 候選，文件可能使用了私有二進制數據庫編碼。',
-    noGds: '未發現明確的 GDSII 版圖結構候選。文件可能不是標準 GDSII 二進制或使用了專有封裝。',
-    noOasis: '未發現明確的 OASIS 版圖結構候選。OASIS 完整幾何瀏覽通常需要專業版圖庫或獨立 WASM/TS 內核，當前前端包會安全展示頭部、字符串、屬性和二進制結構線索。',
-    maxStreams: '僅展示前 {count} 個 CFB 項，完整文件仍可下載後在專業 EDA 工具中打開。',
-    binaryFallback: '該文件不是標準 CFB 容器，已退化為安全的二進制字符串索引預覽。',
-  },
-  'en-US': {
-    oasisFixture: 'Detected an OASIS text fixture and parsed geometry preview plus structure indexes in the browser. Full SEMI binary OASIS still follows the safe index and dedicated-kernel path.',
-    gdsLayout: 'Detected standard GDSII binary layout records and parsed geometry preview plus structure indexes in the browser.',
-    cfbContainer: 'Detected a Microsoft Compound File / OLE2 container and parsed its directory and streams in the browser.',
-    binaryIndex: 'This file is not recognized as a CFB container, so readable information is shown through a safe binary string index.',
-    coverage: 'Indexed {streams} entries, {strings} readable strings, and {entities} EDA structure candidates.',
-    layout: 'Parsed {layout}: {structures} structures and {elements} geometry/reference/text elements. Drag the layout preview panel to inspect it.',
-    layoutOasisName: 'OASIS text fixture',
-    layoutGdsName: 'GDSII layout',
-    titleOrcadSymbolLibrary: 'OrCAD Capture Symbol Library',
-    titleOlbBinaryLibrary: 'OLB Binary Library',
-    titleOrcadDrawingLibrary: 'OrCAD / Allegro Drawing Library',
-    titleDraBinaryDrawing: 'DRA Binary Drawing',
-    titleLayoutStructure: '{type} Layout Structure',
-    noSymbol: 'No clear component-symbol candidates were found. The file may use private binary encoding or need ASCII/XML export from a professional tool.',
-    noFootprint: 'No clear footprint, drawing, or padstack candidates were found. The file may use private binary database encoding.',
-    noGds: 'No clear GDSII layout structure candidates were found. The file may not be standard GDSII binary or may use a proprietary wrapper.',
-    noOasis: 'No clear OASIS layout structure candidates were found. Full OASIS geometry browsing usually needs a professional layout library or dedicated WASM/TS kernel; this frontend package safely exposes headers, strings, properties, and binary clues.',
-    maxStreams: 'Only the first {count} CFB entries are shown. Download the full file and open it in a professional EDA tool for complete inspection.',
-    binaryFallback: 'This file is not a standard CFB container, so it falls back to a safe binary string index preview.',
-  },
-  'ja-JP': {
-    oasisFixture: 'OASIS テキスト fixture を認識し、ブラウザー内で幾何プレビューと構造索引を解析しました。完全な SEMI バイナリ OASIS は安全な索引と専用カーネルの経路を使用します。',
-    gdsLayout: '標準 GDSII バイナリレイアウトレコードを認識し、ブラウザー内で幾何プレビューと構造索引を解析しました。',
-    cfbContainer: 'Microsoft Compound File / OLE2 コンテナーを認識し、ブラウザー内でディレクトリとストリームを解析しました。',
-    binaryIndex: 'CFB コンテナーとして認識できなかったため、安全なバイナリ文字列索引で可読情報を表示します。',
-    coverage: '{streams} 件の項目、{strings} 件の可読文字列、{entities} 件の EDA 構造候補を索引化しました。',
-    layout: '{layout} を解析しました：構造 {structures} 件、幾何・参照・テキスト要素 {elements} 件。レイアウトプレビューパネルをドラッグして確認できます。',
-    layoutOasisName: 'OASIS テキスト構造',
-    layoutGdsName: 'GDSII レイアウト',
-    titleOrcadSymbolLibrary: 'OrCAD Capture シンボルライブラリ',
-    titleOlbBinaryLibrary: 'OLB バイナリライブラリ',
-    titleOrcadDrawingLibrary: 'OrCAD / Allegro 図面ライブラリ',
-    titleDraBinaryDrawing: 'DRA バイナリ図面',
-    titleLayoutStructure: '{type} レイアウト構造',
-    noSymbol: '明確なコンポーネントシンボル候補を検出できませんでした。独自バイナリエンコーディングの可能性があるため、専門ツールから ASCII/XML を書き出して確認してください。',
-    noFootprint: '明確なフットプリント、図形、Padstack 候補を検出できませんでした。独自バイナリデータベース形式の可能性があります。',
-    noGds: '明確な GDSII レイアウト構造候補を検出できませんでした。標準 GDSII バイナリではないか、独自ラッパーを使用している可能性があります。',
-    noOasis: '明確な OASIS レイアウト構造候補を検出できませんでした。完全な OASIS 幾何プレビューには専門ライブラリまたは専用 WASM/TS カーネルが必要です。このフロントエンドパッケージはヘッダー、文字列、プロパティ、バイナリ構造の手掛かりを安全に表示します。',
-    maxStreams: '安全上の理由から、先頭 {count} 件の CFB 項目だけを表示します。完全な確認にはファイルをダウンロードして専門 EDA ツールで開いてください。',
-    binaryFallback: '標準 CFB コンテナーではないため、安全なバイナリ文字列索引プレビューへ切り替えました。',
-  },
-  'de-DE': {
-    oasisFixture: 'Eine OASIS-Textstruktur wurde erkannt; Geometrievorschau und Strukturindex wurden im Browser verarbeitet. Vollständiges binäres SEMI OASIS verwendet weiterhin den sicheren Index- und den eigenen Kernel-Pfad.',
-    gdsLayout: 'Standardmäßige binäre GDSII-Layoutdatensätze wurden erkannt; Geometrievorschau und Strukturindex wurden im Browser verarbeitet.',
-    cfbContainer: 'Ein Microsoft-Compound-File-/OLE2-Container wurde erkannt; Verzeichnis und Datenströme wurden im Browser verarbeitet.',
-    binaryIndex: 'Die Datei wurde nicht als CFB-Container erkannt. Lesbare Informationen werden über einen sicheren Binärzeichenfolgenindex angezeigt.',
-    coverage: '{streams} Einträge, {strings} lesbare Zeichenfolgen und {entities} EDA-Strukturkandidaten wurden indiziert.',
-    layout: '{layout} verarbeitet: {structures} Strukturen und {elements} Geometrie-, Referenz- oder Textelemente. Ziehen Sie die Layoutvorschau, um sie zu prüfen.',
-    layoutOasisName: 'OASIS-Textstruktur',
-    layoutGdsName: 'GDSII-Layout',
-    titleOrcadSymbolLibrary: 'OrCAD-Capture-Symbolbibliothek',
-    titleOlbBinaryLibrary: 'Binäre OLB-Bibliothek',
-    titleOrcadDrawingLibrary: 'OrCAD-/Allegro-Zeichnungsbibliothek',
-    titleDraBinaryDrawing: 'Binäre DRA-Zeichnung',
-    titleLayoutStructure: '{type}-Layoutstruktur',
-    noSymbol: 'Es wurden keine eindeutigen Bauteilsymbole gefunden. Die Datei verwendet möglicherweise eine private Binärcodierung oder muss mit einem Fachwerkzeug als ASCII/XML exportiert werden.',
-    noFootprint: 'Es wurden keine eindeutigen Footprint-, Zeichnungs- oder Padstack-Kandidaten gefunden. Die Datei verwendet möglicherweise eine private binäre Datenbankcodierung.',
-    noGds: 'Es wurden keine eindeutigen GDSII-Layoutstrukturen gefunden. Die Datei ist möglicherweise kein standardmäßiges GDSII-Binärformat oder verwendet einen proprietären Container.',
-    noOasis: 'Es wurden keine eindeutigen OASIS-Layoutstrukturen gefunden. Für die vollständige OASIS-Geometrie ist üblicherweise eine Fachbibliothek oder ein eigener WASM/TS-Kernel erforderlich; dieses Frontend zeigt Header, Zeichenfolgen, Eigenschaften und binäre Hinweise sicher an.',
-    maxStreams: 'Nur die ersten {count} CFB-Einträge werden angezeigt. Laden Sie die vollständige Datei für die Prüfung in einem EDA-Fachwerkzeug herunter.',
-    binaryFallback: 'Die Datei ist kein standardmäßiger CFB-Container. Deshalb wird eine sichere Vorschau des Binärzeichenfolgenindex angezeigt.',
-  },
-}
+
 
 const getEdaParserText = (
   locale: EdaParserLocale,
   key: EdaParserTextKey,
   params: Record<string, string | number> = {}
 ) => {
-  const template = EDA_PARSER_TEXT[locale]?.[key] || EDA_PARSER_TEXT['en-US'][key] || key
-  return Object.entries(params).reduce(
-    (message, [name, value]) => message.replace(new RegExp(`\\{${name}\\}`, 'g'), String(value)),
-    template
-  )
+  return translateFileViewerMessage({ locale }, `eda.parser.${key}`, params)
 }
 
 export type {
@@ -845,6 +715,27 @@ const parseBinaryFallback = (
       : [getEdaParserText(locale, 'binaryFallback')]
   return assembleResult(buffer, type, 'binary', 1, [stream], collectStrings([bytes]), warnings, layout, locale)
 }
+
+/** Localize presentation fields from the retained model without reading bytes again. */
+export const localizeEdaParseResult = (parsed: EdaParseResult, locale: EdaParserLocale): EdaParseResult => {
+  const warnings = parsed.parser === 'cfb'
+    ? parsed.warnings.map(() => getEdaParserText(locale, 'maxStreams', { count: MAX_STREAMS }))
+    : parsed.layout ? parsed.warnings : parsed.warnings.map((message, index) =>
+      index === parsed.warnings.length - 1 ? getEdaParserText(locale, 'binaryFallback') : message);
+  const diagnostics = buildDiagnostics(parsed.type, parsed.parser, parsed.streams, parsed.entities, parsed.strings, warnings, parsed.layout, locale);
+  const translated = new Map(diagnostics.map(item => [item.code, item]));
+  const titleKey = parsed.type === 'olb'
+    ? parsed.parser === 'cfb' ? 'titleOrcadSymbolLibrary' : 'titleOlbBinaryLibrary'
+    : parsed.type === 'dra'
+      ? parsed.parser === 'cfb' ? 'titleOrcadDrawingLibrary' : 'titleDraBinaryDrawing'
+      : 'titleLayoutStructure';
+  return {
+    ...parsed,
+    title: getEdaParserText(locale, titleKey, { type: parsed.type.toUpperCase() }),
+    warnings,
+    diagnostics: parsed.diagnostics.map(item => translated.get(item.code) || item),
+  };
+};
 
 export const parseEdaFile = async (
   buffer: ArrayBuffer,

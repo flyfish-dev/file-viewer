@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core'
 import {
   createFileViewerZoomChangeEmitter,
   registerFileViewerZoomProvider,
@@ -19,17 +20,7 @@ const postscriptStyle = `
 @media(max-width:760px){.postscript-viewer{min-height:360px}.postscript-toolbar{align-items:flex-start;padding:8px}.postscript-title span{max-width:148px}.postscript-actions{flex-wrap:wrap;justify-content:flex-end}.postscript-actions button{height:32px;min-width:34px;padding:0 7px}.postscript-layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.postscript-sidebar{max-width:100%;border-right:0;border-bottom:1px solid var(--ps-border);overflow-x:auto;overflow-y:hidden}.postscript-page-list{display:flex;width:max-content;max-width:none;padding:7px}.postscript-page-button{width:145px;min-height:44px}.postscript-stage{padding:14px}.postscript-status{bottom:calc(12px + var(--file-viewer-mobile-overlay-bottom,0px))}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string
-) => {
-  const node = documentRef.createElement(tag)
-  if (className) node.className = className
-  if (text !== undefined) node.textContent = text
-  return node
-}
+
 
 const clampZoom = (value: number) => Math.min(4, Math.max(0.05, Number(value.toFixed(3))))
 
@@ -45,6 +36,9 @@ export default async function renderPostscript(
   type = 'eps',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+
   if (context?.signal?.aborted) throw new DOMException('PostScript rendering was aborted.', 'AbortError')
   const documentRef = target.ownerDocument || document
   const design = context?.options?.design
@@ -85,24 +79,14 @@ export default async function renderPostscript(
     throw new DOMException('PostScript rendering was aborted.', 'AbortError')
   }
 
-  const chinese = (context?.options?.locale || documentRef.documentElement.lang || '')
-    .toLowerCase()
-    .startsWith('zh')
-  const copy = chinese
-    ? {
-        title: type.toLowerCase() === 'eps' ? 'Adobe EPS' : 'Adobe PostScript',
-        page: '页',
-        fit: '适合窗口',
-        loading: '正在格式化页面',
-        ready: 'URW Base35 字体 · ICC CMYK',
-      }
-    : {
-        title: type.toLowerCase() === 'eps' ? 'Adobe EPS' : 'Adobe PostScript',
-        page: 'Page',
-        fit: 'Fit',
-        loading: 'Rasterizing page',
-        ready: 'URW Base35 fonts · ICC CMYK',
-      }
+
+  const copy = {
+    get title() { return type.toLowerCase() === 'eps' ? 'Adobe EPS' : 'Adobe PostScript'; },
+    get page() { return t('design.postscript.page'); },
+    get fit() { return t('design.postscript.fit'); },
+    get loading() { return t('design.postscript.loading'); },
+    get ready() { return t('design.postscript.ready'); }
+  }
 
   const style = element(documentRef, 'style')
   style.textContent = postscriptStyle
@@ -114,12 +98,12 @@ export default async function renderPostscript(
   const toolbar = element(documentRef, 'header', 'postscript-toolbar')
   const title = element(documentRef, 'div', 'postscript-title')
   title.append(
-    element(documentRef, 'strong', undefined, copy.title),
+    element(documentRef, 'strong', undefined, () => copy.title),
     element(
       documentRef,
       'span',
       undefined,
-      `${opened.pages.length} ${copy.page.toLowerCase()} · ${opened.engineVersion}`
+      () => `${opened.pages.length} ${copy.page.toLowerCase()} · ${opened.engineVersion}`
     )
   )
   const actions = element(documentRef, 'div', 'postscript-actions')
@@ -128,7 +112,7 @@ export default async function renderPostscript(
   const zoomOut = element(documentRef, 'button', undefined, '−')
   const zoomLabel = element(documentRef, 'span', undefined, '100%')
   const zoomIn = element(documentRef, 'button', undefined, '+')
-  const fit = element(documentRef, 'button', undefined, copy.fit)
+  const fit = element(documentRef, 'button', undefined, () => copy.fit)
   ;[previous, next, zoomOut, zoomIn, fit].forEach(button => {
     button.type = 'button'
   })
@@ -142,14 +126,14 @@ export default async function renderPostscript(
 
   const layout = element(documentRef, 'div', 'postscript-layout')
   const sidebar = element(documentRef, 'nav', 'postscript-sidebar')
-  sidebar.setAttribute('aria-label', 'PostScript pages')
+  t.bind(sidebar, node => node.setAttribute('aria-label', t('design.ui.postscript.pages.8024cc')), 'aria-label')
   const pageList = element(documentRef, 'ol', 'postscript-page-list')
   sidebar.appendChild(pageList)
   const stage = element(documentRef, 'main', 'postscript-stage')
   const wrap = element(documentRef, 'div', 'postscript-canvas-wrap')
   const shell = element(documentRef, 'div', 'postscript-page-shell')
   const canvas = element(documentRef, 'canvas')
-  const status = element(documentRef, 'span', 'postscript-status', copy.loading)
+  const status = element(documentRef, 'span', 'postscript-status', () => copy.loading)
   shell.appendChild(canvas)
   wrap.appendChild(shell)
   stage.append(wrap, status)
@@ -167,8 +151,8 @@ export default async function renderPostscript(
     const number = element(documentRef, 'span', 'postscript-page-number', String(page.index + 1))
     const text = element(documentRef, 'span', 'postscript-page-copy')
     text.append(
-      element(documentRef, 'strong', undefined, `${copy.page} ${page.index + 1}`),
-      element(documentRef, 'span', undefined, `${Math.round(page.width)}×${Math.round(page.height)} @ ${Math.round(page.referenceDpi)} DPI`)
+      element(documentRef, 'strong', undefined, () => `${copy.page} ${page.index + 1}`),
+      element(documentRef, 'span', undefined, () => t('design.ui.dpi.036751', { p0: Math.round(page.width), p1: Math.round(page.height), p2: Math.round(page.referenceDpi) }))
     )
     button.append(number, text)
     item.appendChild(button)
@@ -288,7 +272,7 @@ export default async function renderPostscript(
     })
     previous.disabled = pageIndex === 0
     next.disabled = pageIndex === opened.pages.length - 1
-    status.textContent = `${copy.loading} ${pageIndex + 1}…`
+    t.bind(status, node => { node.textContent = `${copy.loading} ${pageIndex + 1}…`; }, 'textContent')
     const task = pageRenderQueue
       .catch(() => undefined)
       .then(async () => {
@@ -296,7 +280,7 @@ export default async function renderPostscript(
         const entry = await getPage(pageIndex, desiredDpi)
         if (destroyed || revision !== renderRevision) return
         displayPage(entry)
-        status.textContent = `${copy.ready} · ${pageIndex + 1}/${opened.pages.length} · ${Math.round(entry.dpi)} DPI`
+        t.bind(status, node => { node.textContent = `${copy.ready} · ${pageIndex + 1}/${opened.pages.length} · ${Math.round(entry.dpi)} DPI`; }, 'textContent')
         context?.onProgressiveRender?.()
         context?.registerThumbnailAdapter?.({ getTarget: () => canvas })
       })

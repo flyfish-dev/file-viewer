@@ -1,45 +1,12 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { lstat, readFile, readdir } from 'node:fs/promises'
+import { lstat, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import JSZip from 'jszip'
+import { cadPreferredSourceDigest, cadPreferredSourceHashMode, listCadPreferredSourcePaths } from './cad-preferred-source.mjs'
 
 export const CAD_SOURCE_ARCHIVE_NAME = 'CORRESPONDING_SOURCE.zip'
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex')
-const fixedInputs = [
-  'packages/core/package.json', 'packages/core/tsconfig.json',
-  'packages/renderers/cad/package.json', 'packages/renderers/cad/tsconfig.json',
-  'packages/core/scripts/fix-core-esm-extensions.mjs',
-  'packages/components/web/scripts/amd-entry.mjs',
-  'packages/components/web-full/scripts/offline-asset-sanitize.mjs'
-]
-const jsonInputs = new Set(fixedInputs.filter(path => path.endsWith('.json')))
-function sortedJson(value) {
-  if (Array.isArray(value)) return value.map(sortedJson)
-  return value && typeof value === 'object'
-    ? Object.fromEntries(Object.keys(value).sort().map(key => [key, sortedJson(value[key])]))
-    : value
-}
-const inputDigest = (path, bytes) => sha256(jsonInputs.has(path)
-  ? Buffer.from(JSON.stringify(sortedJson(JSON.parse(bytes.toString('utf8'))))) : bytes)
-
-async function preferredInputs(root) {
-  const paths = [...fixedInputs]
-  async function walk(relative) {
-    const path = join(root, relative)
-    const info = await lstat(path)
-    assert.ok(info.isDirectory() && !info.isSymbolicLink(), 'Unsafe CAD preferred-source directory')
-    for (const entry of await readdir(path, { withFileTypes: true })) {
-      assert.ok(!entry.isSymbolicLink(), 'Unsafe CAD preferred-source symlink')
-      const next = `${relative}/${entry.name}`
-      if (entry.isDirectory()) await walk(next)
-      else { assert.ok(entry.isFile(), 'Unsafe CAD preferred-source input'); paths.push(next) }
-    }
-  }
-  await walk('packages/core/src')
-  await walk('packages/renderers/cad/src')
-  return paths.sort()
-}
 
 export async function readCadCorrespondingSource(root, proof) {
   const path = join(root, 'packages/renderers/cad', CAD_SOURCE_ARCHIVE_NAME)
@@ -82,13 +49,13 @@ export async function readCadCorrespondingSource(root, proof) {
 
 export async function verifyCadPreferredSourceInputs(root, manifest) {
   assert.deepEqual(manifest.preferredSourceInputs.map(entry => entry.path).sort(),
-    await preferredInputs(root), 'CAD source archive omits or adds preferred source inputs')
+    await listCadPreferredSourcePaths(root), 'CAD source archive omits or adds preferred source inputs')
   for (const entry of manifest.preferredSourceInputs) {
     const path = join(root, entry.path)
     const info = await lstat(path)
     assert.ok(info.isFile() && !info.isSymbolicLink(), 'Unsafe CAD preferred-source input')
-    assert.equal(entry.hashMode, jsonInputs.has(entry.path) ? 'json' : 'bytes')
-    assert.equal(inputDigest(entry.path, await readFile(path)), entry.sha256,
+    assert.equal(entry.hashMode, cadPreferredSourceHashMode(entry.path))
+    assert.equal(cadPreferredSourceDigest(entry.path, await readFile(path)), entry.sha256,
       `CAD corresponding source is stale: ${entry.path}`)
   }
 }

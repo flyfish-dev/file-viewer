@@ -8,6 +8,7 @@ import {
   createFileRenderHandlerLoader,
   createFileViewerCoreRendererRegistry,
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   createFileViewerI18nBindings,
   createFileViewerNestedI18n,
   createRendererRegistry,
@@ -31,7 +32,6 @@ import {
   buildArchiveNestedRenderContext,
   createArchiveCacheKey,
   flattenArchiveObject,
-  formatArchiveBytes,
   getArchiveEntryExtension,
   isArchiveEntryDownloadAllowed,
   type ArchiveEntryView,
@@ -147,21 +147,7 @@ const createStyle = (documentRef: Document) => {
   return style;
 };
 
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tagName);
-  if (className) {
-    element.className = className;
-  }
-  if (text !== undefined) {
-    element.textContent = text;
-  }
-  return element;
-};
+
 
 const normalizeWorkerError = (reason: unknown) => {
   if (reason instanceof Error) {
@@ -469,6 +455,8 @@ export default async function renderArchive(
   let nestedRendered: FileViewerRenderedInstance | undefined;
   let loading = false;
   const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const createElement = t.element;
+  const formatArchiveBytes = t.formatBytes;
   const bindings = createFileViewerI18nBindings(context?.i18n);
   const owned = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string | undefined, value: () => string) => {
     const node = createElement(documentRef, tag, className);
@@ -805,22 +793,22 @@ export default async function renderArchive(
   };
 
   const renderEntryList = () => {
+    t.release(list);
     list.replaceChildren();
     getFilteredEntries().forEach(entry => {
       const button = createElement(documentRef, 'button', 'archive-entry') as HTMLButtonElement;
       button.type = 'button';
       button.style.setProperty('--entry-depth', String(entry.depth));
       button.classList.toggle('active', selectedEntry?.id === entry.id);
-      const icon = createElement(documentRef, 'span', 'entry-ext', entry.extension || 'file');
-      icon.title = entry.extension || 'file';
+      const icon = createElement(documentRef, 'span', 'entry-ext', () => entry.extension || t('ui.archive.ui.file.971c41'));
+      t.bind(icon, node => { node.title = entry.extension || t('ui.archive.ui.file.971c41'); }, 'title');
       const copy = createElement(documentRef, 'span', 'entry-copy');
       const nameNode = createElement(documentRef, 'strong', undefined, entry.name);
       const pathNode = createElement(documentRef, 'em', undefined, entry.path);
-      const sizeText = formatArchiveBytes(entry.size);
-      const sizeNode = createElement(documentRef, 'small', undefined, sizeText);
+      const sizeNode = createElement(documentRef, 'small', undefined, () => formatArchiveBytes(entry.size));
       nameNode.title = entry.name;
       pathNode.title = entry.path;
-      sizeNode.title = sizeText;
+      t.bind(sizeNode, node => { node.title = formatArchiveBytes(entry.size); }, 'title');
       button.title = entry.path;
       copy.append(nameNode, pathNode);
       button.append(icon, copy, sizeNode);
@@ -843,8 +831,10 @@ export default async function renderArchive(
     renderEmptyState();
   };
 
-  const setError = (message: string | (() => string)) => {
-    errorText = typeof message === 'function' ? message : () => message;
+  const setError = (cause: unknown) => {
+    errorText = typeof cause === 'function'
+      ? () => String(cause())
+      : () => normalizeFileViewerErrorMessage(cause, context?.i18n || context?.options);
     syncState();
   };
 
@@ -1008,7 +998,7 @@ export default async function renderArchive(
       if (isLikelyEncryptedArchive(buffer, filename)) {
         encrypted = true;
         syncState();
-        throw new Error(t('archive.error.encryptedRequiresWorker'));
+        throw t.error('archive.error.encryptedRequiresWorker');
       }
       if (await tryOpenArchiveWithFallback()) {
         return;
@@ -1017,7 +1007,7 @@ export default async function renderArchive(
       throw new Error(errors.join('; ') || t('archive.error.workerInitFailed'));
     } catch (nextError) {
       console.error(nextError);
-      setError(nextError instanceof Error ? nextError.message : String(nextError));
+      setError(nextError);
     } finally {
       setLoading(false);
     }
@@ -1128,7 +1118,7 @@ export default async function renderArchive(
     } catch (nextError) {
       if (requestId === previewSequence) {
         console.error(nextError);
-        setError(nextError instanceof Error ? nextError.message : String(nextError));
+        setError(nextError);
       }
     } finally {
       if (requestId === previewSequence) {
@@ -1164,7 +1154,7 @@ export default async function renderArchive(
     }
   });
 
-  syncState();
+  t.bind(root, () => syncState(), 'chrome');
   renderEmptyState();
   void openArchive();
 
@@ -1175,6 +1165,7 @@ export default async function renderArchive(
       // Invalidate late children before yielding. Repeated teardown shares one operation.
       previewSequence += 1;
       bindings.destroy();
+      t.release(root);
       // Wait for instances already claimed for cleanup, not delegates that have yet to return.
       const knownCleanups = [...pendingNestedCleanups];
       destroyPromise = Promise.resolve().then(async () => {

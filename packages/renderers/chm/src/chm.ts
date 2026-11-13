@@ -1,3 +1,4 @@
+import { createFileViewerTranslator, normalizeFileViewerErrorMessage } from '@file-viewer/core';
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core';
 import type {
   ChmEntry,
@@ -24,36 +25,10 @@ const MAX_RENDERED_NAVIGATION_ITEMS = 12_000;
 const MAX_LOADED_RESOURCE_PATHS = 4_096;
 const HTML_EXTENSIONS = new Set(['htm', 'html', 'xhtml', 'shtml']);
 
-const messages = {
-  'zh-CN': {
-    contents: '目录', index: '索引', search: '搜索', searchPlaceholder: '搜索主题和正文',
-    loading: '正在打开 CHM…', wasm: '正在加载本地 WASM…', directory: '正在读取 CHM 目录…',
-    manifest: '正在构建帮助目录…', searching: '正在搜索…', noContents: '没有可显示的目录。',
-    noIndex: '没有可显示的关键词索引。', searchHint: '输入至少两个字符搜索当前 CHM。',
-    noResults: '没有找到匹配内容。', truncated: '结果已按安全与性能上限截断。',
-    error: 'CHM 预览失败', topics: '个主题', ready: '离线安全预览', binaryToc: '二进制目录',
-    fullText: '全文索引', menu: '目录', opening: '正在打开主题…', unavailable: '没有找到可打开的主题。',
-  },
-  'en-US': {
-    contents: 'Contents', index: 'Index', search: 'Search', searchPlaceholder: 'Search topics and text',
-    loading: 'Opening CHM…', wasm: 'Loading local WASM…', directory: 'Reading the CHM directory…',
-    manifest: 'Building help navigation…', searching: 'Searching…', noContents: 'No table of contents is available.',
-    noIndex: 'No keyword index is available.', searchHint: 'Enter at least two characters to search this CHM.',
-    noResults: 'No matching content was found.', truncated: 'Results were truncated at the configured safety limit.',
-    error: 'CHM preview failed', topics: 'topics', ready: 'Safe offline preview', binaryToc: 'Binary TOC',
-    fullText: 'Full-text index', menu: 'Menu', opening: 'Opening topic…', unavailable: 'No readable topic was found.',
-  },
-} as const;
 
-type ChmMessageKey = keyof typeof messages['en-US'];
 
-const resolveLocale = (context?: FileRenderContext): keyof typeof messages => {
-  const configured = context?.options?.locale;
-  const candidate = configured && configured !== 'auto'
-    ? configured
-    : typeof navigator === 'undefined' ? 'en-US' : navigator.language;
-  return candidate.toLowerCase().startsWith('zh') ? 'zh-CN' : 'en-US';
-};
+type ChmMessageKey = "contents" | "index" | "search" | "searchPlaceholder" | "loading" | "wasm" | "directory" | "manifest" | "searching" | "noContents" | "noIndex" | "searchHint" | "noResults" | "truncated" | "error" | "topics" | "ready" | "binaryToc" | "fullText" | "menu" | "opening" | "unavailable";
+
 
 const createElement = <K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -191,8 +166,12 @@ export default async function renderChm(
   _type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const locale = resolveLocale(context);
-  const t = (key: ChmMessageKey) => messages[locale][key];
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const legacyText = Object.assign((key: ChmMessageKey) => t(`chm.${key}`), {
+    text: (node: Node, key: ChmMessageKey) => t.text(node, `chm.${key}`),
+    attr: (node: Element, attribute: string, key: ChmMessageKey) => t.attr(node, attribute, `chm.${key}`),
+    bind: t.bind,
+  });
   const options = (context?.options as { chm?: FileViewerChmOptions } | undefined)?.chm;
   const abortController = new AbortController();
   const objectUrls = new Set<string>();
@@ -217,11 +196,11 @@ export default async function renderChm(
   const header = createElement('header', 'chm-header');
   const sidebarToggle = createElement('button', 'chm-sidebar-toggle', '☰');
   sidebarToggle.type = 'button';
-  sidebarToggle.title = t('menu');
-  sidebarToggle.setAttribute('aria-label', t('menu'));
+  t.attr(sidebarToggle, 'title', 'chm.menu');
+  t.attr(sidebarToggle, 'aria-label', 'chm.menu');
   const heading = createElement('div', 'chm-heading');
   const title = createElement('h2', undefined, context?.filename || 'CHM');
-  const subtitle = createElement('p', undefined, t('loading'));
+  const subtitle = t.text(createElement('p', undefined), 'chm.loading');
   heading.append(title, subtitle);
   const badges = createElement('div', 'chm-badges');
   header.append(sidebarToggle, heading, badges);
@@ -241,9 +220,9 @@ export default async function renderChm(
   const searchBox = createElement('div', 'chm-search-box');
   const searchInput = createElement('input');
   searchInput.type = 'search';
-  searchInput.placeholder = t('searchPlaceholder');
-  searchInput.setAttribute('aria-label', t('search'));
-  const searchMeta = createElement('div', 'chm-search-meta', t('searchHint'));
+  t.attr(searchInput, 'placeholder', 'chm.searchPlaceholder');
+  t.attr(searchInput, 'aria-label', 'chm.search');
+  const searchMeta = t.text(createElement('div', 'chm-search-meta'), 'chm.searchHint');
   const searchResults = createElement('div', 'chm-search-results');
   searchBox.append(searchInput);
   searchPanel.append(searchBox, searchMeta, searchResults);
@@ -252,23 +231,23 @@ export default async function renderChm(
 
   const topic = createElement('main', 'chm-topic');
   const topicBar = createElement('div', 'chm-topic-bar');
-  const topicTitle = createElement('strong', undefined, t('loading'));
+  const topicTitle = t.text(createElement('strong', undefined), 'chm.loading');
   const topicPath = createElement('span', 'chm-topic-path');
   topicBar.append(topicTitle, topicPath);
   const frame = createElement('iframe', 'chm-topic-frame');
   frame.setAttribute('sandbox', 'allow-same-origin');
   frame.setAttribute('referrerpolicy', 'no-referrer');
-  frame.title = context?.filename || 'CHM topic';
+  t.bind(frame, node => { node.title = context?.filename || t('ui.chm.ui.chm.topic.8e67cb'); }, 'title');
   topic.append(topicBar, frame);
   body.append(sidebar, topic);
 
   const state = createElement('div', 'chm-state');
   const spinner = createElement('span', 'chm-spinner');
-  const stateText = createElement('p', undefined, t('loading'));
+  const stateText = t.text(createElement('p', undefined), 'chm.loading');
   state.append(spinner, stateText);
   const errorPanel = createElement('div', 'chm-error');
   errorPanel.hidden = true;
-  errorPanel.append(createElement('strong', undefined, t('error')), createElement('p'));
+  errorPanel.append(t.text(createElement('strong', undefined), 'chm.error'), createElement('p'));
   root.append(header, body, state);
   target.replaceChildren(style, root);
 
@@ -277,27 +256,28 @@ export default async function renderChm(
     listeners.push(() => node.removeEventListener(type, handler));
   };
 
-  const showState = (text: string, visible = true) => {
-    stateText.textContent = text;
+  const showState = (key: ChmMessageKey | '', visible = true) => {
+    if (key) t.text(stateText, `chm.${key}`);
+    else t.bind(stateText, node => { node.textContent = ''; });
     state.hidden = !visible;
   };
 
   const showError = (error: unknown) => {
     showState('', false);
     const paragraph = errorPanel.querySelector('p');
-    if (paragraph) paragraph.textContent = error instanceof Error ? error.message : String(error);
+    if (paragraph) t.bind(paragraph, node => { node.textContent = normalizeFileViewerErrorMessage(error, context?.options); });
     errorPanel.hidden = false;
     if (!errorPanel.isConnected) root.append(errorPanel);
   };
 
   const onProgress = (progress: ChmWorkerProgress) => {
     if (root.dataset.chmReady === 'true') {
-      if (progress.phase === 'search') searchMeta.textContent = t('searching');
+      if (progress.phase === 'search') t.text(searchMeta, 'chm.searching');
       return;
     }
-    if (progress.phase === 'wasm') showState(t('wasm'));
-    else if (progress.phase === 'directory') showState(t('directory'));
-    else if (progress.phase === 'manifest') showState(t('manifest'));
+    if (progress.phase === 'wasm') showState('wasm');
+    else if (progress.phase === 'directory') showState('directory');
+    else if (progress.phase === 'manifest') showState('manifest');
   };
 
   const resolveEntryPath = (path: string) => {
@@ -408,7 +388,7 @@ export default async function renderChm(
     const generation = ++topicGeneration;
     const actualPath = resolveEntryPath(path);
     if (!actualPath || !client) throw new Error(`CHM_ENTRY_NOT_FOUND: ${path}`);
-    showState(t('opening'));
+    showState('opening');
     try {
       const bytes = await client.read(actualPath, abortController.signal);
       if (bytes.byteLength > client.options.maxHtmlBytes) {
@@ -418,7 +398,8 @@ export default async function renderChm(
       if (destroyed || generation !== topicGeneration) return;
       currentHtml = hydrated.html;
       const canonicalPath = normalizeChmPath(actualPath) || actualPath;
-      topicTitle.textContent = hydrated.title || manifest?.topics.find(item => normalizeChmPath(item.path)?.toLocaleLowerCase() === canonicalPath.toLocaleLowerCase())?.title || actualPath;
+      const title = hydrated.title || manifest?.topics.find(item => normalizeChmPath(item.path)?.toLocaleLowerCase() === canonicalPath.toLocaleLowerCase())?.title || actualPath;
+      t.bind(topicTitle, node => { node.textContent = title; });
       topicPath.textContent = canonicalPath;
       frame.srcdoc = hydrated.html;
       frame.onload = () => {
@@ -451,11 +432,11 @@ export default async function renderChm(
     }
   };
 
-  const appendNavigation = (panel: HTMLElement, nodes: ChmNavigationNode[], emptyText: string) => {
+  const appendNavigation = (panel: HTMLElement, nodes: ChmNavigationNode[], emptyKey: ChmMessageKey) => {
     panel.replaceChildren();
     const flattened = flatNavigation(nodes);
     if (!flattened.length) {
-      panel.append(createElement('p', 'chm-panel-note', emptyText));
+      panel.append(t.text(createElement('p', 'chm-panel-note'), `chm.${emptyKey}`));
       return;
     }
     const list = createElement('ul', 'chm-navigation');
@@ -483,7 +464,7 @@ export default async function renderChm(
     }
     panel.append(list);
     if (flattened.length >= MAX_RENDERED_NAVIGATION_ITEMS) {
-      panel.append(createElement('p', 'chm-panel-note', t('truncated')));
+      panel.append(t.text(createElement('p', 'chm-panel-note'), 'chm.truncated'));
     }
   };
 
@@ -494,20 +475,21 @@ export default async function renderChm(
   };
 
   (['contents', 'index', 'search'] as const).forEach((name, index) => {
-    const button = createElement('button', `chm-tab${index === 0 ? ' is-active' : ''}`, t(name));
+    const button = createElement('button', `chm-tab${index === 0 ? ' is-active' : ''}`, legacyText(name));
+    t.text(button, `chm.${name}`);
     button.type = 'button';
     button.dataset.chmTab = name;
-    button.setAttribute('aria-label', t(name));
+    t.attr(button, 'aria-label', `chm.${name}`);
     tabs.append(button);
   });
 
   const renderSearchHits = (hits: ChmSearchHit[], query: string, truncated: boolean) => {
     searchResults.replaceChildren();
     if (!hits.length) {
-      searchMeta.textContent = t('noResults');
+      t.text(searchMeta, 'chm.noResults');
       return;
     }
-    searchMeta.textContent = truncated ? `${hits.length} · ${t('truncated')}` : String(hits.length);
+    t.bind(searchMeta, localizedNode => { localizedNode.textContent = truncated ? `${hits.length} · ${t('chm.truncated')}` : String(hits.length); }, 'textContent');
     for (const hit of hits) {
       const button = createElement('button', 'chm-search-result');
       button.type = 'button';
@@ -527,15 +509,15 @@ export default async function renderChm(
     const generation = ++searchGeneration;
     if (query.length < 2 || !client) {
       searchResults.replaceChildren();
-      searchMeta.textContent = t('searchHint');
+      t.text(searchMeta, 'chm.searchHint');
       return;
     }
-    searchMeta.textContent = t('searching');
+    t.text(searchMeta, 'chm.searching');
     try {
       const result = await client.search(query, abortController.signal);
       if (!destroyed && generation === searchGeneration) renderSearchHits(result.hits, query, result.truncated);
     } catch (error) {
-      if (!destroyed && generation === searchGeneration) searchMeta.textContent = error instanceof Error ? error.message : String(error);
+      if (!destroyed && generation === searchGeneration) t.bind(searchMeta, node => { node.textContent = normalizeFileViewerErrorMessage(error, context?.options); });
     }
   };
 
@@ -596,19 +578,19 @@ export default async function renderChm(
       return normalized ? [[normalized.toLocaleLowerCase(), entry.path] as const] : [];
     }));
     title.textContent = manifest.title || context?.filename || 'CHM';
-    subtitle.textContent = `${manifest.topics.length} ${t('topics')}`;
-    badges.replaceChildren(createElement('span', 'chm-badge', t('ready')));
-    if (manifest.hasBinaryToc) badges.append(createElement('span', 'chm-badge is-muted', t('binaryToc')));
-    if (manifest.hasFullTextIndex) badges.append(createElement('span', 'chm-badge is-muted', t('fullText')));
+    t.text(subtitle, 'chm.topicCount', () => ({ count: manifest?.topics.length || 0 }));
+    badges.replaceChildren(t.text(createElement('span', 'chm-badge'), 'chm.ready'));
+    if (manifest.hasBinaryToc) badges.append(t.text(createElement('span', 'chm-badge is-muted'), 'chm.binaryToc'));
+    if (manifest.hasFullTextIndex) badges.append(t.text(createElement('span', 'chm-badge is-muted'), 'chm.fullText'));
 
     const fallbackContents: ChmNavigationNode[] = manifest.topics.map(item => ({ title: item.title, path: item.path, children: [] }));
-    appendNavigation(contentsPanel, manifest.contents.length ? manifest.contents : fallbackContents, t('noContents'));
-    appendNavigation(indexPanel, manifest.index, t('noIndex'));
+    appendNavigation(contentsPanel, manifest.contents.length ? manifest.contents : fallbackContents, 'noContents');
+    appendNavigation(indexPanel, manifest.index, 'noIndex');
 
     const candidates = [manifest.homePath, ...manifest.topics.map(item => item.path), ...entries
       .filter(entry => HTML_EXTENSIONS.has(extensionOf(entry.path))).map(entry => entry.path)];
     const homePath = candidates.find(candidate => Boolean(candidate && resolveEntryPath(candidate)));
-    if (!homePath) throw new Error(`CHM_NO_TOPIC: ${t('unavailable')}`);
+    if (!homePath) throw new Error(`CHM_NO_TOPIC: ${t('chm.unavailable')}`);
     await openTopic(homePath);
     if (destroyed) return { $el: root, destroy };
     root.dataset.chmReady = 'true';

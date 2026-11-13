@@ -19,8 +19,8 @@ import { renderNestedBuffer } from '../../../vendors/nestedRender'
 interface UseViewerRenderSurfaceOptions {
   output: Ref<HTMLDivElement | null>;
   getOptions: () => FileViewerOptions | undefined;
-  i18n: FileViewerI18nContext;
-  onI18nError: (error: unknown) => void;
+  i18n?: FileViewerI18nContext;
+  onI18nError?: (error: unknown) => void;
   beforeDownload: () => Promise<boolean>;
   isCurrentRequest: (version: number) => boolean;
   notifyActiveUnloadStart: (
@@ -151,7 +151,7 @@ export const useViewerRenderSurface = ({
       version
     }) => {
       const renderOptions = getOptions();
-      const languageScope = createFileViewerI18n(undefined, {
+      const languageScope = createFileViewerI18n(i18n ? { ...renderOptions, locale: undefined, messages: undefined, i18n: undefined } : renderOptions, {
         parent: i18n, signal: nextSignal, ownerDocument: target.ownerDocument, onError: onI18nError,
       });
       const nestedRender: NonNullable<FileRenderContext['renderNestedBuffer']> = async (buffer, type, target, nestedContext) => {
@@ -172,7 +172,7 @@ export const useViewerRenderSurface = ({
           // Streaming URL placeholders are component state only; expose sourceFile
           // exclusively for real local File-backed random access.
           sourceFile: nextStreamUrl ? undefined : sourceFile,
-          options: renderOptions,
+          options: languageScope.options,
           i18n: languageScope,
           requestSnapshotDownload: createFileViewerSnapshotDownload({
             getOptions,

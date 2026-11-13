@@ -1,6 +1,9 @@
+// @vitest-environment jsdom
+
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { webcrypto } from 'node:crypto'
+import { createFileViewerI18n } from '@file-viewer/core'
 import {
   createSignatureDetailsPanel,
   FILE_VIEWER_SIGNATURE_PANEL_CHANGE_EVENT,
@@ -11,6 +14,7 @@ import renderSignature from '../packages/renderers/signature/src/signature'
 import * as inspection from '../packages/renderers/signature/src/signatureAsn1'
 import type {
   FileViewerOptions,
+  FileViewerI18nContext,
   FileViewerSignatureOptions,
   FileViewerSignatureDetailsPanelOptions
 } from '@file-viewer/core'
@@ -44,7 +48,8 @@ const mount = (
   checks: (boolean | undefined)[] = [],
   locale: FileViewerOptions['locale'] = 'en-US',
   shadow = false,
-  messages?: FileViewerOptions['messages']
+  messages?: FileViewerOptions['messages'],
+  i18n?: FileViewerI18nContext
 ) => {
   const host = document.createElement('div')
   document.body.append(host)
@@ -71,6 +76,7 @@ const mount = (
     main,
     state: normalizeSignatureDetailsPanelOptions(options),
     options: { locale, messages },
+    i18n,
     checks,
     onExpandedChange: changed
   })
@@ -193,7 +199,7 @@ describe('signature panel presentation contract', () => {
     expect(b.panel.hidden).toBe(false)
     expect(a.header.textContent).not.toContain('checks failed')
   })
-  it.each(['en-US', 'zh-CN', 'ja-JP', 'de-DE'] as const)(
+  it.each(['en-US', 'zh-CN', 'zh-TW', 'zh-HK', 'ja-JP', 'de-DE', 'ru-RU'] as const)(
     'uses its own existing translator for %s',
     (locale) => {
       const m = mount({}, [], locale)
@@ -209,6 +215,38 @@ describe('signature panel presentation contract', () => {
     m.toggle.click()
     expect(m.changed).not.toHaveBeenCalled()
     expect(m.panel.hidden).toBe(false)
+  })
+  it('follows its live context, including Russian, and releases every language binding', () => {
+    const messages: FileViewerOptions['messages'] = (key, _params, locale) => `${locale}:${key}`
+    const language = createFileViewerI18n({ locale: 'en-US', messages })
+    dispose.push(language.destroy)
+    const listeners = new Set<() => void>()
+    const subscribe = language.subscribe.bind(language)
+    vi.spyOn(language, 'subscribe').mockImplementation((listener) => {
+      listeners.add(listener)
+      const unsubscribe = subscribe(listener)
+      return () => {
+        listeners.delete(listener)
+        unsubscribe()
+      }
+    })
+    const m = mount({}, [false], 'en-US', false, undefined, language)
+    expect(m.toggle.textContent).toBe('en-US:signature.panel.hide')
+    const bindingCount = listeners.size
+    expect(bindingCount).toBeGreaterThan(0)
+    language.update({ locale: 'ru-RU', messages })
+    expect(m.toggle.textContent).toBe('ru-RU:signature.panel.hide')
+    expect(m.panel.querySelector('h3')?.textContent).toBe('ru-RU:signature.panel.title')
+    expect(m.header.querySelector('.signature-panel-validation')?.textContent).toBe(
+      'ru-RU:signature.panel.checksFailed'
+    )
+    for (let i = 0; i < 31; i++) m.toggle.click()
+    expect(m.toggle.textContent).toBe('ru-RU:signature.panel.show')
+    expect(listeners.size).toBe(bindingCount)
+    m.controller.dispose()
+    expect(listeners.size).toBe(0)
+    language.update({ locale: 'de-DE', messages })
+    expect(m.toggle.textContent).toBe('ru-RU:signature.panel.show')
   })
 })
 

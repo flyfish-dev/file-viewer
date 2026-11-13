@@ -8,6 +8,7 @@ import type {
   FileViewerFileRef,
   FileViewerLifecycleContext,
   FileViewerPdfOptions,
+  FileViewerMessageKey,
 } from '../contracts/types';
 import {
   buildFileViewerLifecycleContext,
@@ -188,6 +189,8 @@ export type MutableFileViewerRenderReadinessState = FileViewerRenderReadinessSta
 
 export interface FileViewerLoadStartState {
   loadingMessage: string;
+  /** Retained for private integrations using explicit semantic loading keys. */
+  loadingMessageKey?: FileViewerMessageKey;
   loadingMetadata?: FileViewerLoadingMessageMetadata;
   lifecycleContext: FileViewerLifecycleContext;
 }
@@ -200,6 +203,7 @@ export interface CreateFileViewerLoadStartStateInput {
   sourceUrl?: string | null;
   bufferSize?: number;
   loadingMessage?: string;
+  loadingMessageKey?: FileViewerMessageKey;
   signal?: AbortSignal;
   typeOverride?: string;
   i18n?: FileViewerI18nInput;
@@ -314,6 +318,7 @@ export interface RunFileViewerStreamingPdfPreviewInput<Session = unknown> {
     sourceUrl?: string | null;
   }) => FileViewerRenderCompleteState;
   loadingMessage?: string;
+  loadingMessageKey?: FileViewerMessageKey;
   signal?: AbortSignal;
   typeOverride?: string;
   i18n?: FileViewerI18nInput;
@@ -1267,6 +1272,7 @@ export const runFileViewerStreamingPdfPreview = async <Session = unknown>({
   destroyRenderSession,
   buildRenderCompleteState,
   loadingMessage,
+  loadingMessageKey,
   signal,
   typeOverride,
   i18n,
@@ -1280,7 +1286,10 @@ export const runFileViewerStreamingPdfPreview = async <Session = unknown>({
 }: RunFileViewerStreamingPdfPreviewInput<Session>): Promise<FileViewerStreamingPdfPreviewState<Session>> => {
   let placeholderFile: File | null = null;
 
-  onStartLoading?.(loadingMessage || resolveFileViewerPreviewMessages(i18n).streamingPdf, loadingMessage ? undefined : { key: 'preview.streamingPdf' });
+  const message = loadingMessage || resolveFileViewerPreviewMessages(i18n).streamingPdf;
+  const key = loadingMessageKey || (loadingMessage ? undefined : 'preview.streamingPdf');
+  if (key) onStartLoading?.(message, { key });
+  else onStartLoading?.(message);
 
   try {
     placeholderFile = createFileViewerStreamingPdfPlaceholderFile(filename);
@@ -1619,6 +1628,7 @@ export const runFileViewerRemoteFilePreview = async <Session = unknown>({
             sourceUrl,
           }),
         i18n,
+        loadingMessageKey: remoteSource.streamPdf ? 'preview.streamingPdf' : 'preview.downloading',
         loadingMessage: remoteSource.streamPdf
           ? undefined
           : resolveFileViewerPreviewMessages(i18n).downloading,
@@ -1850,7 +1860,9 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
           formatErrorMessage,
           i18n: getI18n?.(),
           onErrorMessage: (message, metadata) => {
-            if (isCurrentRequest(version)) onShowError?.(message, metadata);
+            if (!isCurrentRequest(version)) return;
+            if (metadata) onShowError?.(message, metadata);
+            else onShowError?.(message);
           },
         });
       },
@@ -1899,7 +1911,9 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
         reportFileViewerMissingRemoteData({
           i18n: getI18n?.(),
           onErrorMessage: (message, metadata) => {
-            if (isCurrentRequest(version)) onShowError?.(message, metadata);
+            if (!isCurrentRequest(version)) return;
+            if (metadata) onShowError?.(message, metadata);
+            else onShowError?.(message);
           },
         });
       },
@@ -1910,7 +1924,9 @@ export const createFileViewerSourceLoadingActionHandlers = <Session = unknown>({
           formatErrorMessage,
           i18n: getI18n?.(),
           onErrorMessage: (message, metadata) => {
-            if (isCurrentRequest(version)) onShowError?.(message, metadata);
+            if (!isCurrentRequest(version)) return;
+            if (metadata) onShowError?.(message, metadata);
+            else onShowError?.(message);
           },
         });
       },
@@ -1998,7 +2014,9 @@ export const commitFileViewerLoadStartState = ({
   onMarkLoadStarted?.(version);
   const loadStartState = buildState();
   onLifecycle?.(loadStartState.lifecycleContext);
-  onStartLoading?.(loadStartState.loadingMessage, loadStartState.loadingMetadata);
+  const metadata = loadStartState.loadingMetadata || (loadStartState.loadingMessageKey ? { key: loadStartState.loadingMessageKey } : undefined);
+  if (metadata) onStartLoading?.(loadStartState.loadingMessage, metadata);
+  else onStartLoading?.(loadStartState.loadingMessage);
   return loadStartState;
 };
 
@@ -2010,12 +2028,14 @@ export const createFileViewerLoadStartState = ({
   sourceUrl,
   bufferSize,
   loadingMessage,
+  loadingMessageKey,
   i18n,
   timestamp,
 }: CreateFileViewerLoadStartStateInput): FileViewerLoadStartState => {
+  const key = loadingMessageKey || (loadingMessage ? undefined : source === 'url' ? 'preview.downloading' : 'preview.reading');
   return {
     loadingMessage: loadingMessage || resolveFileViewerLoadStartMessage(source, i18n),
-    ...(loadingMessage ? {} : { loadingMetadata: { key: source === 'url' ? 'preview.downloading' as const : 'preview.reading' as const } }),
+    ...(key ? { loadingMessageKey: key, loadingMetadata: { key } } : {}),
     lifecycleContext: buildFileViewerLifecycleContext({
       phase: 'load-start',
       version,

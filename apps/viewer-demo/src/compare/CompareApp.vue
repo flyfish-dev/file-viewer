@@ -5,7 +5,11 @@ import { Check, ChevronDown, ChevronUp, Globe, Search, X } from '@lucide/vue'
 import { FileViewer } from '@file-viewer/vue3'
 import { allRenderers } from '@file-viewer/preset-all'
 import { designRenderer } from '@file-viewer/renderer-design'
-import { normalizeFileViewerLocale } from '@file-viewer/core'
+import { normalizeFileViewerLocale, FILE_VIEWER_LOCALE_OPTIONS, formatFileViewerNumber } from '@file-viewer/core'
+import { sampleGroupsByLocale } from '@/data/demoSamples'
+import type { FileViewerResolvedLocale } from '@file-viewer/core'
+import { compareCopyDe, compareCopyRu } from './copy.extra'
+
 import type {
   FileViewerFileRef as FileRef,
   FileViewerLifecycleContext,
@@ -22,7 +26,7 @@ import {
 } from './textDiff'
 
 type CompareSide = 'left' | 'right'
-type DemoLocale = 'zh-CN' | 'zh-TW' | 'zh-HK' | 'en-US' | 'ja-JP' | 'de-DE'
+type DemoLocale = FileViewerResolvedLocale
 
 interface CompareSample {
   label: string;
@@ -36,7 +40,10 @@ interface ComparePanelState {
   url: string;
   file?: FileRef;
   filename: string;
-  status: string;
+  readonly status: string;
+  statusKey: 'statusReady' | 'statusWaiting' | 'statusNoFile' | 'statusLoading' | 'statusComplete' | 'statusUnloaded';
+  duration?: number;
+  chunks?: number;
 }
 
 type FileViewerPublicApi = ComponentPublicInstance & FileViewerExpose
@@ -53,7 +60,8 @@ const resolveInitialDemoLocale = (): DemoLocale => {
   if (explicitLocale) {
     return normalizeDemoLocale(explicitLocale)
   }
-  const storedLocale = window.localStorage.getItem(DEMO_LOCALE_STORAGE_KEY)
+  let storedLocale: string | null = null
+  try { storedLocale = window.localStorage.getItem(DEMO_LOCALE_STORAGE_KEY) } catch { /* Optional storage. */ }
   if (storedLocale) {
     return normalizeDemoLocale(storedLocale)
   }
@@ -61,8 +69,11 @@ const resolveInitialDemoLocale = (): DemoLocale => {
 }
 
 const compareLocale = ref<DemoLocale>(resolveInitialDemoLocale())
+let automaticLocale = !(params.get('locale') || params.get('lang'))
+try { automaticLocale = automaticLocale && !window.localStorage.getItem(DEMO_LOCALE_STORAGE_KEY) } catch { /* Optional preference. */ }
+const handleLanguageChange = () => { if (automaticLocale) compareLocale.value = normalizeDemoLocale('auto') }
 
-const compareCopyMapBase: Record<Exclude<DemoLocale, 'de-DE'>, Record<string, string>> = {
+const compareCopyMapBase: Record<'zh-CN' | 'en-US' | 'ja-JP', Record<string, string>> = {
   'zh-CN': {
     backHome: '返回 File Viewer 主预览',
     pageTitle: 'File Viewer 文档比对',
@@ -118,118 +129,6 @@ const compareCopyMapBase: Record<Exclude<DemoLocale, 'de-DE'>, Record<string, st
     noDifferences: '两侧提取文字完全一致。',
     showOnlyChanges: '只看差异',
     diffEngine: 'jsdiff 字符级算法'
-  },
-  'zh-TW': {
-    backHome: '返回 File Viewer 主預覽',
-    pageTitle: 'File Viewer 文件比對',
-    pageDescription: 'File Viewer 獨立文件比對入口，支援 DOCX 等文件文字提取、逐行對齊和字元級差異檢視。',
-    title: '文件比對',
-    subtitle: '左右並排預覽，並可提取文件文字生成逐行對齊、字元級標記的真實差異檢視。',
-    leftPanel: '左側文件',
-    rightPanel: '右側文件',
-    lineLocator: '行級定位',
-    linePlaceholder: '行號',
-    locate: '定位',
-    syncScroll: '同步滾動',
-    hidePdfToolbar: '隱藏 PDF 工具欄',
-    swap: '交換',
-    reset: '重置',
-    compareSearch: '文件比對搜尋',
-    searchCurrent: '搜尋當前文件',
-    previousSearchResult: '上一個搜尋結果',
-    nextSearchResult: '下一個搜尋結果',
-    closeSearch: '關閉搜尋',
-    boardLabel: '文件左右比對',
-    sample: '示例',
-    uploadFile: '上傳檔案',
-    localFile: '本地檔案',
-    localUpload: '本地上傳',
-    urlFile: 'URL 檔案',
-    unselected: '未選擇',
-    statusReady: '準備就緒',
-    statusWaiting: '等待載入',
-    statusNoFile: '未選擇檔案',
-    statusLoading: '載入中',
-    statusComplete: '已完成',
-    statusUnloaded: '已卸載',
-    aiChunks: '{count} 個切片',
-    language: '語言',
-    textDiff: '文字對比',
-    closeTextDiff: '返回並排預覽',
-    textDiffTitle: '文字差異檢視',
-    textDiffDescription: '使用 jsdiff 對文件提取文字逐行對齊，並在修改行內標出具體字元。',
-    textDiffRefresh: '重新對比',
-    textDiffRunning: '正在提取並比較兩側文件文字…',
-    textDiffNoText: '至少一側沒有可提取文字。請等待文件載入完成；掃描 PDF 需要先做 OCR。',
-    textDiffPdfPartial: 'PDF 文字層尚未覆蓋全部頁面，已停止對比以避免展示不完整結果。完整 PDF 提取會在後續階段繼續實現。',
-    textDiffTooLarge: '文件文字超出互動對比上限，請縮小文件範圍後重試。',
-    textDiffFailed: '文字對比失敗，請檢查兩側文件是否已完整載入。',
-    textDiffPdfNotice: 'PDF 文字對比仍為實驗能力：結果取決於 PDF 文字層順序，掃描 PDF 暫不包含 OCR。',
-    diffAdded: '新增',
-    diffRemoved: '刪除',
-    diffChanged: '修改',
-    diffUnchanged: '未變化',
-    previousChange: '上一處差異',
-    nextChange: '下一處差異',
-    noDifferences: '兩側提取文字完全一致。',
-    showOnlyChanges: '只看差異',
-    diffEngine: 'jsdiff 字元級演算法'
-  },
-  'zh-HK': {
-    backHome: '返回 File Viewer 主預覽',
-    pageTitle: 'File Viewer 文檔比對',
-    pageDescription: 'File Viewer 獨立文檔比對入口，支持 DOCX 等文檔文本提取、逐行對齊和字符級差異視圖。',
-    title: '文檔比對',
-    subtitle: '左右並排預覽，並可提取文檔文字生成逐行對齊、字符級標記的真實差異視圖。',
-    leftPanel: '左側文檔',
-    rightPanel: '右側文檔',
-    lineLocator: '行級定位',
-    linePlaceholder: '行號',
-    locate: '定位',
-    syncScroll: '同步滾動',
-    hidePdfToolbar: '隱藏 PDF 工具欄',
-    swap: '交換',
-    reset: '重置',
-    compareSearch: '文檔比對搜索',
-    searchCurrent: '搜索當前文檔',
-    previousSearchResult: '上一個搜索結果',
-    nextSearchResult: '下一個搜索結果',
-    closeSearch: '關閉搜索',
-    boardLabel: '文檔左右比對',
-    sample: '示例',
-    uploadFile: '上傳文件',
-    localFile: '本地文件',
-    localUpload: '本地上傳',
-    urlFile: 'URL 文件',
-    unselected: '未選擇',
-    statusReady: '準備就緒',
-    statusWaiting: '等待加載',
-    statusNoFile: '未選擇文件',
-    statusLoading: '加載中',
-    statusComplete: '已完成',
-    statusUnloaded: '已卸載',
-    aiChunks: '{count} 個切片',
-    language: '語言',
-    textDiff: '文字對比',
-    closeTextDiff: '返回並排預覽',
-    textDiffTitle: '文字差異視圖',
-    textDiffDescription: '使用 jsdiff 對文檔提取文字逐行對齊，並在修改行內標出具體字符。',
-    textDiffRefresh: '重新對比',
-    textDiffRunning: '正在提取並比較兩側文檔文字…',
-    textDiffNoText: '至少一側沒有可提取文字。請等待文檔加載完成；掃描 PDF 需要先做 OCR。',
-    textDiffPdfPartial: 'PDF 文本層尚未覆蓋全部頁面，已停止對比以避免展示不完整結果。完整 PDF 提取會在後續階段繼續實現。',
-    textDiffTooLarge: '文檔文字超出交互對比上限，請縮小文檔範圍後重試。',
-    textDiffFailed: '文字對比失敗，請檢查兩側文檔是否已完整加載。',
-    textDiffPdfNotice: 'PDF 文字對比仍為實驗能力：結果取決於 PDF 文本層順序，掃描 PDF 暫不包含 OCR。',
-    diffAdded: '新增',
-    diffRemoved: '刪除',
-    diffChanged: '修改',
-    diffUnchanged: '未變化',
-    previousChange: '上一處差異',
-    nextChange: '下一處差異',
-    noDifferences: '兩側提取文字完全一致。',
-    showOnlyChanges: '只看差異',
-    diffEngine: 'jsdiff 字符級算法'
   },
   'en-US': {
     backHome: 'Back to File Viewer demo',
@@ -347,22 +246,125 @@ const compareCopyMapBase: Record<Exclude<DemoLocale, 'de-DE'>, Record<string, st
 
 const compareCopyMap: Record<DemoLocale, Record<string, string>> = {
   ...compareCopyMapBase,
-  'de-DE': compareCopyMapBase['en-US']
+  'zh-TW': {
+  "backHome": "返回 File Viewer 主預覽",
+  "pageTitle": "File Viewer 文件比對",
+  "pageDescription": 'File Viewer 獨立文件比對入口，支援 DOCX 等文件文字提取、逐行對齊和字元級差異檢視。',
+  "title": "文件比對",
+  "subtitle": '左右並排預覽，並可提取文件文字生成逐行對齊、字元級標記的真實差異檢視。',
+  "leftPanel": "左側文件",
+  "rightPanel": "右側文件",
+  "lineLocator": "行級定位",
+  "linePlaceholder": "行號",
+  "locate": "定位",
+  "syncScroll": "同步滾動",
+  "hidePdfToolbar": "隱藏 PDF 工具欄",
+  "swap": "交換",
+  "reset": '重置',
+  "compareSearch": "文件比對搜尋",
+  "searchCurrent": '搜尋當前文件',
+  "previousSearchResult": "上一個搜尋結果",
+  "nextSearchResult": "下一個搜尋結果",
+  "closeSearch": "關閉搜尋",
+  "boardLabel": "文件左右比對",
+  "sample": "示例",
+  "uploadFile": "上傳檔案",
+  "localFile": '本地檔案',
+  "localUpload": '本地上傳',
+  "urlFile": "URL 檔案",
+  "unselected": "未選擇",
+  "statusReady": "準備就緒",
+  "statusWaiting": "等待載入",
+  "statusNoFile": "未選擇檔案",
+  "statusLoading": "載入中",
+  "statusComplete": "已完成",
+  "statusUnloaded": "已卸載",
+  "aiChunks": "{count} 個切片",
+  "language": "語言",
+  "textDiff": "文字對比",
+  "closeTextDiff": "返回並排預覽",
+  "textDiffTitle": '文字差異檢視',
+  "textDiffDescription": '使用 jsdiff 對文件提取文字逐行對齊，並在修改行內標出具體字元。',
+  "textDiffRefresh": "重新對比",
+  "textDiffRunning": "正在提取並比較兩側文件文字…",
+  "textDiffNoText": "至少一側沒有可提取文字。請等待文件載入完成；掃描 PDF 需要先做 OCR。",
+  "textDiffPdfPartial": "PDF 文字層尚未覆蓋全部頁面，已停止對比以避免展示不完整結果。完整 PDF 提取會在後續階段繼續實現。",
+  "textDiffTooLarge": '文件文字超出互動對比上限，請縮小文件範圍後重試。',
+  "textDiffFailed": "文字對比失敗，請檢查兩側文件是否已完整載入。",
+  "textDiffPdfNotice": "PDF 文字對比仍為實驗能力：結果取決於 PDF 文字層順序，掃描 PDF 暫不包含 OCR。",
+  "diffAdded": "新增",
+  "diffRemoved": "刪除",
+  "diffChanged": "修改",
+  "diffUnchanged": "未變化",
+  "previousChange": "上一處差異",
+  "nextChange": "下一處差異",
+  "noDifferences": "兩側提取文字完全一致。",
+  "showOnlyChanges": "只看差異",
+  "diffEngine": 'jsdiff 字元級演算法'
+},
+'zh-HK': {
+  "backHome": "返回 File Viewer 主預覽",
+  "pageTitle": 'File Viewer 文檔比對',
+  "pageDescription": 'File Viewer 獨立文檔比對入口，支持 DOCX 等文檔文本提取、逐行對齊和字符級差異視圖。',
+  "title": '文檔比對',
+  "subtitle": '左右並排預覽，並可提取文檔文字生成逐行對齊、字符級標記的真實差異視圖。',
+  "leftPanel": '左側文檔',
+  "rightPanel": '右側文檔',
+  "lineLocator": "行級定位",
+  "linePlaceholder": "行號",
+  "locate": "定位",
+  "syncScroll": "同步滾動",
+  "hidePdfToolbar": "隱藏 PDF 工具欄",
+  "swap": "交換",
+  "reset": '重置',
+  "compareSearch": '文檔比對搜索',
+  "searchCurrent": '搜索當前文檔',
+  "previousSearchResult": '上一個搜索結果',
+  "nextSearchResult": '下一個搜索結果',
+  "closeSearch": '關閉搜索',
+  "boardLabel": '文檔左右比對',
+  "sample": "示例",
+  "uploadFile": '上傳文件',
+  "localFile": '本地文件',
+  "localUpload": '本地上傳',
+  "urlFile": 'URL 文件',
+  "unselected": "未選擇",
+  "statusReady": "準備就緒",
+  "statusWaiting": '等待加載',
+  "statusNoFile": '未選擇文件',
+  "statusLoading": '加載中',
+  "statusComplete": "已完成",
+  "statusUnloaded": "已卸載",
+  "aiChunks": "{count} 個切片",
+  "language": "語言",
+  "textDiff": "文字對比",
+  "closeTextDiff": "返回並排預覽",
+  "textDiffTitle": "文字差異視圖",
+  "textDiffDescription": '使用 jsdiff 對文檔提取文字逐行對齊，並在修改行內標出具體字符。',
+  "textDiffRefresh": "重新對比",
+  "textDiffRunning": '正在提取並比較兩側文檔文字…',
+  "textDiffNoText": '至少一側沒有可提取文字。請等待文檔加載完成；掃描 PDF 需要先做 OCR。',
+  "textDiffPdfPartial": 'PDF 文本層尚未覆蓋全部頁面，已停止對比以避免展示不完整結果。完整 PDF 提取會在後續階段繼續實現。',
+  "textDiffTooLarge": '文檔文字超出交互對比上限，請縮小文檔範圍後重試。',
+  "textDiffFailed": '文字對比失敗，請檢查兩側文檔是否已完整加載。',
+  "textDiffPdfNotice": 'PDF 文字對比仍為實驗能力：結果取決於 PDF 文本層順序，掃描 PDF 暫不包含 OCR。',
+  "diffAdded": "新增",
+  "diffRemoved": "刪除",
+  "diffChanged": "修改",
+  "diffUnchanged": "未變化",
+  "previousChange": "上一處差異",
+  "nextChange": "下一處差異",
+  "noDifferences": "兩側提取文字完全一致。",
+  "showOnlyChanges": "只看差異",
+  "diffEngine": "jsdiff 字符級算法"
+},
+  'de-DE': compareCopyDe,
+  'ru-RU': compareCopyRu
 }
 
 const compareCopy = computed(() => compareCopyMap[compareLocale.value])
-const compareLocaleOptions: ReadonlyArray<{
-  value: DemoLocale
-  label: string
-  shortLabel: string
-}> = [
-  { value: 'zh-CN', label: '简体中文', shortLabel: '中' },
-  { value: 'zh-TW', label: '繁體中文（台灣）', shortLabel: '繁' },
-  { value: 'zh-HK', label: '繁體中文（香港）', shortLabel: '港' },
-  { value: 'en-US', label: 'English', shortLabel: 'EN' },
-  { value: 'ja-JP', label: '日本語', shortLabel: '日' },
-  { value: 'de-DE', label: 'Deutsch', shortLabel: 'DE' }
-]
+const compareLocaleOptions = FILE_VIEWER_LOCALE_OPTIONS
+
 const activeCompareLocaleOption = computed(() => (
   compareLocaleOptions.find(option => option.value === compareLocale.value) || compareLocaleOptions[0]
 ))
@@ -377,7 +379,7 @@ const formatCompareCopy = (key: string, params: Record<string, string | number> 
   )
 }
 
-const samplesByLocaleBase: Record<Exclude<DemoLocale, 'de-DE'>, CompareSample[]> = {
+const samplesByLocaleBase: Partial<Record<DemoLocale, CompareSample[]>> = {
   'zh-CN': [
     { label: 'DOC 旧版合同', description: 'Word 97-2003 示例', url: '/example/test.doc' },
     { label: 'DOCX 中文长文档', description: '表格图示与正式页', url: '/example/word.docx' },
@@ -425,10 +427,14 @@ const samplesByLocaleBase: Record<Exclude<DemoLocale, 'de-DE'>, CompareSample[]>
   ]
 }
 
-const samplesByLocale: Record<DemoLocale, CompareSample[]> = {
-  ...samplesByLocaleBase,
-  'de-DE': samplesByLocaleBase['en-US']
-}
+const samplesByLocale = Object.fromEntries(FILE_VIEWER_LOCALE_OPTIONS.map(({ value }) => {
+  const source = samplesByLocaleBase[value === 'zh-TW' || value === 'zh-HK' ? 'zh-CN' : 'en-US']!
+  return [value, samplesByLocaleBase[value] || source.map(sample => {
+    const group = sampleGroupsByLocale[value].find(group => group.items.some(item => item.url === sample.url))
+    const item = group?.items.find(item => item.url === sample.url)
+    return { ...sample, label: item?.name || sample.label, description: group?.description || compareCopyMap[value].subtitle }
+  })]
+})) as Record<DemoLocale, CompareSample[]>
 
 const samples = computed(() => samplesByLocale[compareLocale.value])
 const initialSamples = samplesByLocale[compareLocale.value]
@@ -439,7 +445,12 @@ const createPanel = (side: CompareSide, title: string, fallbackUrl: string): Com
   url: params.get(side) || fallbackUrl,
   file: undefined,
   filename: '',
-  status: compareCopy.value.statusReady
+  statusKey: 'statusReady',
+  get status() {
+    const duration = this.statusKey === 'statusComplete' && this.duration ? ` ${formatFileViewerNumber(compareLocale.value, this.duration)} ms` : ''
+    const chunks = this.statusKey === 'statusComplete' && this.chunks ? ` · ${formatCompareCopy('aiChunks', { count: this.chunks })}` : ''
+    return compareCopy.value[this.statusKey] + duration + chunks
+  }
 })
 
 const leftPanel = reactive(createPanel('left', compareCopy.value.leftPanel, initialSamples[0].url))
@@ -556,13 +567,13 @@ const selectSample = (panel: ComparePanelState, url: string) => {
   panel.url = url
   panel.file = undefined
   panel.filename = ''
-  panel.status = compareCopy.value.statusWaiting
+  panel.statusKey = 'statusWaiting'
 }
 
 const handleUrlInput = (panel: ComparePanelState) => {
   panel.file = undefined
   panel.filename = ''
-  panel.status = panel.url ? compareCopy.value.statusWaiting : compareCopy.value.statusNoFile
+  panel.statusKey = panel.url ? 'statusWaiting' : 'statusNoFile'
 }
 
 const getEventValue = (event: Event) => {
@@ -578,7 +589,7 @@ const handleUpload = (panel: ComparePanelState, event: Event) => {
   panel.file = file
   panel.filename = file.name
   panel.url = ''
-  panel.status = compareCopy.value.statusWaiting
+  panel.statusKey = 'statusWaiting'
   input.value = ''
 }
 
@@ -587,16 +598,20 @@ const swapPanels = () => {
     url: leftPanel.url,
     file: leftPanel.file,
     filename: leftPanel.filename,
-    status: leftPanel.status
+    statusKey: leftPanel.statusKey, duration: leftPanel.duration, chunks: leftPanel.chunks
   }
   leftPanel.url = rightPanel.url
   leftPanel.file = rightPanel.file
   leftPanel.filename = rightPanel.filename
-  leftPanel.status = rightPanel.status
+  leftPanel.statusKey = rightPanel.statusKey
+  leftPanel.duration = rightPanel.duration
+  leftPanel.chunks = rightPanel.chunks
   rightPanel.url = leftSnapshot.url
   rightPanel.file = leftSnapshot.file
   rightPanel.filename = leftSnapshot.filename
-  rightPanel.status = leftSnapshot.status
+  rightPanel.statusKey = leftSnapshot.statusKey
+  rightPanel.duration = leftSnapshot.duration
+  rightPanel.chunks = leftSnapshot.chunks
 }
 
 const resetSamples = () => {
@@ -836,7 +851,7 @@ const queueTextDiffRefresh = () => {
 
 const handleLoadStart = (panel: ComparePanelState) => {
   panelLoaded[panel.side] = false
-  panel.status = compareCopy.value.statusLoading
+  panel.statusKey = 'statusLoading'
   if (textDiffOpen.value) {
     textDiffStatus.value = 'loading'
     textDiffMessage.value = compareCopy.value.textDiffRunning
@@ -846,8 +861,9 @@ const handleLoadStart = (panel: ComparePanelState) => {
 const handleLoadComplete = (panel: ComparePanelState, context: FileViewerLifecycleContext) => {
   panelLoaded[panel.side] = true
   const chunkCount = getAiChunkCount(panel.side)
-  const aiSuffix = chunkCount ? ` · ${formatCompareCopy('aiChunks', { count: chunkCount })}` : ''
-  panel.status = `${context.duration ? `${compareCopy.value.statusComplete} ${context.duration}ms` : compareCopy.value.statusComplete}${aiSuffix}`
+  panel.statusKey = 'statusComplete'
+  panel.duration = context.duration
+  panel.chunks = chunkCount
   void bindScrollSync()
   if (compareSearchQuery.value.trim()) {
     void runCompareSearch()
@@ -857,12 +873,16 @@ const handleLoadComplete = (panel: ComparePanelState, context: FileViewerLifecyc
 
 const handleUnload = (panel: ComparePanelState) => {
   panelLoaded[panel.side] = false
-  panel.status = compareCopy.value.statusUnloaded
+  panel.statusKey = 'statusUnloaded'
 }
 
 const setCompareLocale = (nextLocale: DemoLocale) => {
+  automaticLocale = false
   compareLocale.value = nextLocale
-  window.localStorage.setItem(DEMO_LOCALE_STORAGE_KEY, nextLocale)
+  const url = new URL(location.href)
+  url.searchParams.set('locale', nextLocale)
+  history.replaceState(null, '', url)
+  try { window.localStorage.setItem(DEMO_LOCALE_STORAGE_KEY, nextLocale) } catch { /* Optional storage. */ }
 }
 
 type CompareLocaleMenuFocusTarget = 'active' | 'first' | 'last'
@@ -994,30 +1014,23 @@ const handleDocumentKeydown = (event: KeyboardEvent) => {
 
 onMounted(() => {
   syncDocumentLocaleMeta()
+  window.addEventListener('languagechange', handleLanguageChange)
   document.addEventListener('pointerdown', handleCompareDocumentPointerDown)
   document.addEventListener('keydown', handleDocumentKeydown)
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('languagechange', handleLanguageChange)
   document.removeEventListener('pointerdown', handleCompareDocumentPointerDown)
   document.removeEventListener('keydown', handleDocumentKeydown)
 })
 
-watch(compareLocale, (nextLocale, previousLocale) => {
+watch(compareLocale, () => {
   syncDocumentLocaleMeta()
   leftPanel.title = compareCopy.value.leftPanel
   rightPanel.title = compareCopy.value.rightPanel
 
-  const previousSamples = samplesByLocale[previousLocale] || []
-  const nextSamples = samplesByLocale[nextLocale]
-  const previousLeftDefault = previousSamples[0]?.url
-  const previousRightDefault = previousSamples[1]?.url
-  if (!leftPanel.file && (!leftPanel.url || leftPanel.url === previousLeftDefault)) {
-    selectSample(leftPanel, nextSamples[0].url)
-  }
-  if (!rightPanel.file && (!rightPanel.url || rightPanel.url === previousRightDefault)) {
-    selectSample(rightPanel, nextSamples[1].url)
-  }
+
 })
 
 </script>
@@ -1029,7 +1042,7 @@ watch(compareLocale, (nextLocale, previousLocale) => {
         <img :src="brandLogo" alt="">
         <span>
           <strong>File Viewer</strong>
-          <small>Document Compare</small>
+          <small>{{ compareCopy.title }}</small>
         </span>
       </a>
       <div class="compare-title">
@@ -1353,6 +1366,8 @@ watch(compareLocale, (nextLocale, previousLocale) => {
 }
 
 .compare-header {
+  position: relative;
+  z-index: 50;
   flex-shrink: 0;
   min-height: 80px;
   display: grid;
@@ -1537,11 +1552,14 @@ watch(compareLocale, (nextLocale, previousLocale) => {
 }
 
 .compare-locale-menu {
+  max-height: min(420px, 50dvh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   position: absolute;
   z-index: 80;
   top: calc(100% + 8px);
-  left: 0;
-  width: 190px;
+  right: 0;
+  width: 240px;
   display: grid;
   gap: 3px;
   padding: 6px;
@@ -2168,7 +2186,9 @@ watch(compareLocale, (nextLocale, previousLocale) => {
   }
 
   .compare-locale-menu {
-    width: min(190px, calc(100vw - 36px));
+    right: auto;
+    left: 0;
+    width: min(240px, calc(100vw - 36px));
   }
 
   .compare-search-popover {

@@ -2,7 +2,7 @@
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { createFileViewerI18nBindings as create } from '../packages/core/src/i18n/bindings';
-import { createFileViewerI18n } from '../packages/core/src';
+import { createFileViewerI18n, createFileViewerTranslator } from '../packages/core/src';
 
 for (const kind of ['text','attr']) {
  const bind=(b,n,v)=>kind==='text'?b.text(n,v):b.attr(n,'title',v);
@@ -27,3 +27,27 @@ test('release root reentry preserves new slot; stale disposer cannot remove it',
 test('destroy reentry cannot establish replacement or read value',()=>{const n=document.createTextNode('');let reads=0;const b=create({subscribe(){return ()=>{b.destroy();b.release(n);b.text(n,()=>{reads++;return 'bad'})}}});b.text(n,()=> 'old');b.destroy();assert.equal(reads,0);assert.equal(n.data,'old')});
 test('all throwing releases attempted including undefined first error',()=>{let count=0,sub=0;const b=create({subscribe(){const i=sub++;return ()=>{count++;throw i?{}:undefined}}});b.text(document.createTextNode(''),()=> 'a');b.text(document.createTextNode(''),()=> 'b');thrown(()=>b.destroy(),undefined);assert.equal(count,2);b.destroy()});
 test('subscribe callback destroys then provider throws: first subscribe error identity',()=>{let cb,reads=0;const error={};const b=create({subscribe(fn){cb=fn;fn();throw error}});thrown(()=>b.text(document.createTextNode(''),()=>{if(++reads===2)b.destroy();return 'a'}),error);cb();assert.equal(reads,2)});
+
+for (const kind of ['text', 'attr']) {
+  test(`private translator ${kind} keeps the replacement made during a parameter callback`, () => {
+    const scope = createFileViewerI18n({ locale: 'en-US' });
+    const listeners = new Set();
+    const context = { ...scope, subscribe(fn) { listeners.add(fn); const off = scope.subscribe(fn); return () => { listeners.delete(fn); off(); }; } };
+    const t = createFileViewerTranslator(context), node = document.createElement('span');
+    const bind = params => kind === 'text' ? t.text(node, 'pdf.nav.pageLabel', params) : t.attr(node, 'title', 'pdf.nav.pageLabel', params);
+    bind(() => { bind({ page: 2 }); return { page: 1 }; });
+    const read = () => kind === 'text' ? node.textContent : node.title;
+    assert.equal(read(), 'Page 2'); assert.equal(listeners.size, 1);
+    scope.update({ locale: 'ru-RU' });
+    assert.equal(read(), scope.t('pdf.nav.pageLabel', { page: 2 }));
+    t.release(node); t.release(node); assert.equal(listeners.size, 0); scope.destroy();
+  });
+}
+test('private translator release attempts every composed UI cleanup after the first throws', () => {
+  const error = {}, root = document.createElement('div'); let releases = 0;
+  const context = { options: {}, locale: 'en-US', t: key => key, subscribe: () => () => { releases++; if (releases === 1) throw error; } };
+  const t = createFileViewerTranslator(context);
+  const first = t.element(document, 'span', undefined, () => 'first');
+  const second = document.createElement('span'); t.bind(second, node => { node.textContent = 'second'; }); root.append(first, second);
+  thrown(() => t.release(root), error); assert.equal(releases, 2); t.release(root); assert.equal(releases, 2);
+});

@@ -6,6 +6,7 @@ import { createRequire } from 'node:module'
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
+import { launchBrowserForTest } from '../packages/build-support/browser-test-launch.mjs'
 const root=resolve(import.meta.dirname,'..')
 const output=resolve(process.env.FILE_VIEWER_TOOLBAR_KEYBOARD_EVIDENCE||join(root,'output/issue-419'))
 const cold=process.env.FILE_VIEWER_TOOLBAR_COLD_ROOT
@@ -50,7 +51,7 @@ const report={status:'running',cases:[],runtime:cold||'current-source',fixture:'
 try{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port
  for(const [engine,type]of [['chromium',chromium],['webkit',webkit]]){
-  const browser=await type.launch({headless:true});try{
+  const browser=await launchBrowserForTest(type,engine,{headless:true});try{
    for(const mode of ['react','core','web','svelte','jquery'])for(const isolation of ['none','shadow']){
     const page=await browser.newPage({viewport:{width:1100,height:850}});const errors=[],slowRequests=[];page.on('request',r=>{if(new URL(r.url()).pathname==='/slow.png')slowRequests.push(r.url())});page.on('pageerror',e=>errors.push(e.message));await page.goto(base);await page.waitForFunction(()=>window.ready);await page.evaluate(([m,i])=>fixture.open(m,i),[mode,isolation]);await page.waitForFunction(()=>fixture.ready());
     // macOS WebKit uses Option-Tab for all controls when Full Keyboard Access

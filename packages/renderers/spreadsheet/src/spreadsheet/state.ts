@@ -65,7 +65,8 @@ export interface VirtualSheetState {
   columns: Column[]
   cellCache: Map<string, CellStyleCache>
   mergeStartMap: Map<string, CellMerge>
-  mergeCoveredMap: Map<string, true>
+  /** Covered display cell -> original merge anchor, without copying cell data. */
+  mergeCoveredMap: Map<string, string>
   rowHeightCache: Map<number, number>
   sourceRowHeights: Map<number, number>
   fixedHeightRows: Set<number>

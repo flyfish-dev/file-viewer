@@ -205,6 +205,7 @@ The table below lists the real props, event channel, and customization entry for
 | Options Field | Description |
 | --- | --- |
 | `theme` | `light`, `dark`, or `system`. This takes precedence over browser `prefers-color-scheme`. |
+| `locale` / `i18n` / `messages` | Bundled offline: `zh-CN`, `en-US`, `ja-JP`, `zh-TW`, `zh-HK`, `de-DE`, `ru-RU`. Update options to switch language while preserving the file and reading state. The i18n group takes priority. See [internationalization](https://doc.file-viewer.app/guide/i18n). |
 | `styleIsolation` | `auto`, `shadow`, `scoped`, or `none`. With `auto`, Web Component, IIFE, Vue, React, Svelte, jQuery, and full packages all use Shadow DOM by default. Legacy integrations that depend on deep class overrides can explicitly use `none`. |
 | `watermark` | Text or image watermark with opacity, rotation, gap, size, font, and color controls. |
 | `toolbar` | Controls the theme toggle, download, print, HTML export, zoom, item order, toolbar position, and operation-level preflight checks. |
@@ -340,6 +341,12 @@ import { setDefaultFullAssetBaseUrl } from '@file-viewer/web-full'
 
 setDefaultFullAssetBaseUrl('/static/file-viewer/')
 ```
+
+ESM and IIFE accept an origin-relative directory (`/static/file-viewer/`), a document-relative directory (`./file-viewer/`), a protocol-relative directory (`//assets.example.com/file-viewer/`), or an absolute URL. Strings are trimmed and receive a trailing `/`; `getDefaultFullAssetBaseUrl()` preserves an explicitly configured relative value.
+
+In a browser, the IIFE resolves relative directories when loading renderer scripts against `document.baseURI`, including a page's `<base href>`. An explicitly configured relative directory is resolved from the document, not from the CDN script's origin.
+
+Pass `null`, `undefined`, or a blank string to clear default asset injection. `resetDefaultFullAssetBaseUrl()` restores automatic defaults; clearing and resetting are different operations. During SSR, configuration and generated options keep relative values. IIFE lazy renderer loading requires a browser document; without one, `getFullRendererScriptUrl()` requires an absolute base.
 
 Explicit `options.archive.*` and `options.pdf.*` asset overrides still take precedence. Use `file-viewer-copy-assets --renderers <csv>` to narrow the legacy Full copy set, and run `file-viewer list` to inspect new opt-in capabilities, licenses, and asset packages.
 

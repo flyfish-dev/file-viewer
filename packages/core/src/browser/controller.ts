@@ -1,9 +1,10 @@
+import { createFileViewerI18n } from '../i18n/context';
+import { FILE_VIEWER_LOCALE_METADATA } from '../i18n/locales';
 import {
   appendFileViewerStyle,
   cloneFileViewerViewState,
   applyFileViewerZoomAvailability,
   createViewer,
-  createFileViewerI18n,
   createFileViewerI18nBindings,
   isFileViewerShadowRoot,
   normalizeFileViewerUiDensity,
@@ -862,6 +863,8 @@ export const mountViewer = (
     return !!renderer?.capabilities?.search;
   };
   const renderToolbar = () => {
+    shell.setAttribute('lang', language.locale);
+    shell.setAttribute('dir', FILE_VIEWER_LOCALE_METADATA[language.locale].direction);
     if (disposed) {
       return;
     }
@@ -1216,7 +1219,12 @@ export const mountViewer = (
       Boolean(sourceRequest?.rendering && contentEl.querySelector('.file-viewer-render-error')),
       sourceRequest?.unknownFailure
     );
-  const unsubscribeLanguage = language.subscribe(() => { if (!disposed) refreshSourceFeedback(); });
+  const unsubscribeLanguage = language.subscribe(() => {
+    if (disposed) return;
+    shell.setAttribute('lang', language.locale);
+    shell.setAttribute('dir', FILE_VIEWER_LOCALE_METADATA[language.locale].direction);
+    refreshSourceFeedback();
+  });
   const applyViewerEvent = (event: ViewerEvent) => {
     if (disposed || sourceRequest !== renderingRequest) return;
     if (event.type === 'load-start' || event.type === 'load-complete' ||
@@ -1372,7 +1380,16 @@ export const mountViewer = (
     },
     async update(nextOptions = {}) {
       if (disposed) return;
-      const nextViewerOptions = nextOptions.options ?? currentOptions.options;
+      const nextViewerOptions = nextOptions.options === undefined
+        ? currentOptions.options
+        : {
+          ...currentOptions.options,
+          ...nextOptions.options,
+          // Preserve the private partial-options API while clearing removed language overrides.
+          locale: nextOptions.options.locale,
+          messages: nextOptions.options.messages,
+          i18n: nextOptions.options.i18n,
+        };
       const toolbarOptionsChanged = !sameNonLanguageOptions(currentOptions.options, nextViewerOptions);
       const renderingOptionsChanged = hasViewerRenderingOptionsChanged(
         currentOptions.options,

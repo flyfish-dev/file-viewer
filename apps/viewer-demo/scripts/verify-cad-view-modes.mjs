@@ -5,6 +5,7 @@ import { delimiter, dirname, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createHash } from 'node:crypto'
 import { startRegressionDemo } from './regression-demo-server.mjs'
+import { launchBrowserForTest } from '../../../packages/build-support/browser-test-launch.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const output = resolve(root, 'output/cad-view-modes')
@@ -15,7 +16,7 @@ for (const path of [root, ...(process.env.PATH || '').split(delimiter).filter(p 
 }
 assert.ok(playwright, 'Run this check with npm exec --package playwright')
 await mkdir(output, { recursive: true })
-const browser = await (playwright.chromium || playwright.default.chromium).launch({ headless: true })
+const browser = await launchBrowserForTest(playwright.chromium || playwright.default.chromium, 'chromium', { headless: true })
 const demo = await startRegressionDemo(root)
 const { origin } = demo
 const page = await browser.newPage({ viewport: { width: 1280, height: 820 } })

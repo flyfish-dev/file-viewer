@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { createFileViewerI18n } from '@file-viewer/core'
 import { mountMp4vSoftwarePlayer } from '../packages/renderers/media/src/mp4vPlayer'
 
-const locales = ['en-US', 'zh-CN', 'ja-JP', 'de-DE', 'zh-TW', 'zh-HK'] as const
+const locales = ['en-US', 'zh-CN', 'ja-JP', 'de-DE', 'zh-TW', 'zh-HK', 'ru-RU'] as const
 const key = 'media.video.softwareWorkerFailed' as const
 const workers: TestWorker[] = []
 const disposers: Array<() => void> = []

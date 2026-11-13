@@ -7,13 +7,12 @@ import {
   normalizeFileViewerLocale,
   translateFileViewerMessage
 } from '../packages/core/src/i18n/messages'
-import { demoCopyZhTW } from '../apps/viewer-demo/src/composables/useDemoCopy.zh-tw'
-import { demoCopyZhHK } from '../apps/viewer-demo/src/composables/useDemoCopy.zh-hk'
+import { demoCopyTw as demoCopyZhTW, demoCopyHk as demoCopyZhHK } from '../apps/viewer-demo/src/composables/useDemoCopy.zh-Hant'
 import { useDemoCopy } from '../apps/viewer-demo/src/composables/useDemoCopy'
 import { demoWelcomeCopy } from '../apps/viewer-demo/src/composables/useDemoWelcome'
-import { sampleGroupsZh } from '../apps/viewer-demo/src/data/demoSamples'
-import { sampleGroupsZhTW } from '../apps/viewer-demo/src/data/demoSamples.zh-tw'
-import { sampleGroupsZhHK } from '../apps/viewer-demo/src/data/demoSamples.zh-hk'
+import { sampleGroupsZh, sampleGroupsByLocale } from '../apps/viewer-demo/src/data/demoSamples'
+const sampleGroupsZhTW = sampleGroupsByLocale['zh-TW']
+const sampleGroupsZhHK = sampleGroupsByLocale['zh-HK']
 import { buildExportHtmlDocument } from '../packages/core/src/exportDocument'
 
 describe('Traditional Chinese locales', () => {

@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   createFileViewerZoomChangeEmitter,
   registerFileViewerZoomProvider,
   readFileViewerText,
@@ -468,7 +469,8 @@ const renderRoughFallback = async (
   documentRef: Document,
   payload: any,
   elements: ExcalidrawElement[],
-  target: HTMLElement
+  target: HTMLElement,
+  t: DrawingTranslator
 ) => {
   const { default: rough } = await import('roughjs');
   const bounds = getSceneBounds(elements);
@@ -483,7 +485,7 @@ const renderRoughFallback = async (
   svg.setAttribute('width', String(width));
   svg.setAttribute('height', String(height));
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', 'Excalidraw rough.js preview');
+  t.bind(svg, node => node.setAttribute('aria-label', t('ui.drawing.ui.excalidraw.rough.js.preview.899b17')), 'aria-label');
 
   const background = createSvgElement<SVGRectElement>(documentRef, 'rect');
   background.setAttribute('x', String(bounds.minX - padding));
@@ -579,7 +581,7 @@ const renderExcalidraw = async (
     ? payload.elements.filter((element: any) => !element.isDeleted)
     : [];
   if (!elements.length) {
-    throw new Error(t('drawing.error.excalidrawEmpty'));
+    throw t.error('drawing.error.excalidrawEmpty');
   }
 
   try {
@@ -592,7 +594,7 @@ const renderExcalidraw = async (
     if (!isMissingOptionalExcalidraw(error)) {
       console.warn(error);
     }
-    await renderRoughFallback(documentRef, payload, elements, target);
+    await renderRoughFallback(documentRef, payload, elements, target, t);
   }
 };
 
@@ -882,13 +884,13 @@ const renderDrawioFallback = (
   const parsed = parser.parseFromString(text, 'text/xml');
   const parseError = parsed.querySelector('parsererror');
   if (parseError) {
-    throw new Error(t('drawing.error.drawioParseFailed', { message: parseError.textContent || 'invalid xml' }));
+    throw t.error('drawing.error.drawioParseFailed', { message: parseError.textContent || 'invalid xml' });
   }
 
   const firstDiagram = parsed.querySelector('diagram');
   const graphModel = firstDiagram?.querySelector('mxGraphModel') || parsed.querySelector('mxGraphModel');
   if (!graphModel) {
-    throw new Error(t('drawing.error.drawioNoModel'));
+    throw t.error('drawing.error.drawioNoModel');
   }
 
   const cells = Array.from(graphModel.querySelectorAll('mxCell'));
@@ -903,7 +905,7 @@ const renderDrawioFallback = (
     }))
     .filter(item => item.id && item.geometry);
   if (!vertices.length) {
-    throw new Error(t('drawing.error.drawioNoElements'));
+    throw t.error('drawing.error.drawioNoElements');
   }
 
   const vertexById = new Map(vertices.map(vertex => [vertex.id, vertex]));
@@ -942,7 +944,7 @@ const renderDrawioFallback = (
   svg.setAttribute('width', String(Math.ceil(width)));
   svg.setAttribute('height', String(Math.ceil(height)));
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', firstDiagram?.getAttribute('name') || 'Draw.io local SVG preview');
+  t.bind(svg, node => node.setAttribute('aria-label', firstDiagram?.getAttribute('name') || t('ui.drawing.ui.draw.io.local.svg.preview.4eff7a')), 'aria-label');
 
   const defs = createSvgElement<SVGDefsElement>(documentRef, 'defs');
   const marker = createSvgElement<SVGMarkerElement>(documentRef, 'marker');
@@ -1072,14 +1074,14 @@ const renderOfficialDrawio = async (
 ) => {
   const ownerWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : undefined);
   if (!ownerWindow) {
-    throw new Error(t('drawing.error.viewerInitFailed'));
+    throw t.error('drawing.error.viewerInitFailed');
   }
   const resolvedScriptUrl = resolveSafeDrawioViewerScript(documentRef, scriptUrl);
   const sanitizedText = sanitizeOfficialDrawioXml(documentRef, text, t('drawing.error.drawioNoModel'));
   const nonce = createDrawioSandboxNonce(ownerWindow);
   const channel = `file-viewer-drawio-${nonce}`;
   const frame = createElement(documentRef, 'iframe', 'drawing-mxgraph');
-  frame.title = 'diagrams.net preview';
+  t.bind(frame, node => { node.title = t('ui.drawing.ui.diagrams.net.preview.2b1dc3'); }, 'title');
   frame.referrerPolicy = 'no-referrer';
   frame.sandbox.add('allow-scripts');
   frame.srcdoc = buildDrawioSandboxDocument(sanitizedText, resolvedScriptUrl, nonce, channel);
@@ -1142,10 +1144,11 @@ export default async function renderDrawing(
 ): Promise<FileViewerRenderedInstance> {
   const documentRef = target.ownerDocument || document;
   const kind = normalizeDrawingType(type);
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const createElement = t.element;
   const zoomEmitter = createFileViewerZoomChangeEmitter();
   let status: DrawingStatus = 'loading';
-  let errorMessage = '';
+  let errorMessage = () => '';
   let zoom = 1;
   let disposed = false;
   let diagramController: DiagramController | null = null;
@@ -1157,7 +1160,7 @@ export default async function renderDrawing(
   const title = createElement(documentRef, 'div', 'drawing-title');
   title.append(
     createElement(documentRef, 'span', undefined, formatDrawingLabel(type)),
-    createElement(documentRef, 'strong', undefined, kind === 'excalidraw'
+    createElement(documentRef, 'strong', undefined, () => kind === 'excalidraw'
       ? t('drawing.title.excalidraw')
       : kind === 'mermaid'
         ? t('drawing.title.mermaid')
@@ -1169,13 +1172,13 @@ export default async function renderDrawing(
   const zoomOutButton = createElement(documentRef, 'button', undefined, '-') as HTMLButtonElement;
   const zoomLabel = createElement(documentRef, 'span');
   const zoomInButton = createElement(documentRef, 'button', undefined, '+') as HTMLButtonElement;
-  const resetButton = createElement(documentRef, 'button', undefined, t('drawing.toolbar.fit')) as HTMLButtonElement;
+  const resetButton = t.text(createElement(documentRef, 'button', undefined), 'drawing.toolbar.fit') as HTMLButtonElement;
   [zoomOutButton, zoomInButton, resetButton].forEach(button => {
     button.type = 'button';
   });
-  zoomOutButton.title = t('drawing.toolbar.zoomOut');
-  zoomInButton.title = t('drawing.toolbar.zoomIn');
-  resetButton.title = t('drawing.toolbar.fitWidth');
+  t.attr(zoomOutButton, 'title', 'drawing.toolbar.zoomOut');
+  t.attr(zoomInButton, 'title', 'drawing.toolbar.zoomIn');
+  t.attr(resetButton, 'title', 'drawing.toolbar.fitWidth');
   actions.append(zoomOutButton, zoomLabel, zoomInButton, resetButton);
   toolbar.append(title, actions);
 
@@ -1233,15 +1236,15 @@ export default async function renderDrawing(
   const syncUi = () => {
     state.hidden = status === 'ready';
     state.classList.toggle('error', status === 'error');
-    state.textContent = status === 'error'
-      ? errorMessage
-      : t('drawing.state.loading');
+    t.bind(state, localizedNode => { localizedNode.textContent = status === 'error'
+      ? errorMessage()
+      : t('drawing.state.loading'); }, 'textContent');
     applyZoom();
   };
 
   const loadDrawing = async () => {
     status = 'loading';
-    errorMessage = '';
+    errorMessage = () => '';
     zoom = 1;
     clearStage();
     syncUi();
@@ -1262,7 +1265,7 @@ export default async function renderDrawing(
           kind,
           options: context?.options?.drawing,
           theme: context?.options?.theme,
-          viewerOptions: context?.options,
+          viewerOptions: context?.i18n || context?.options,
         });
       } else {
         await renderDrawio(documentRef, text, canvas, context?.options?.drawing, t);
@@ -1277,7 +1280,7 @@ export default async function renderDrawing(
         return;
       }
       console.error(error);
-      errorMessage = error instanceof Error ? error.message : String(error);
+      errorMessage = () => normalizeFileViewerErrorMessage(error, context?.options);
       status = 'error';
       syncUi();
     }

@@ -52,6 +52,10 @@ export const createFileViewerI18nBindings = (context?: FileViewerI18nContext) =>
     if (failed) throw firstError;
   };
   return {
+    /** Shared ownership for the translator's explicit composed UI bindings. */
+    bind(node: Node, slot: string, apply: (active: () => boolean) => void) {
+      return bind(node, slot, apply);
+    },
     text(node: Text | HTMLElement, value: () => string) {
       if (destroyed) return () => {};
       // Refuse to erase icons/controls. A single existing text node is reused.

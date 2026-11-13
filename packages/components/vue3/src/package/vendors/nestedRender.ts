@@ -17,8 +17,11 @@ export const renderNestedBuffer = async (
   inheritedOptions?: FileViewerOptions,
   onError?: (error: unknown) => void,
 ): Promise<Rendered> => {
-  const languageScope = createFileViewerNestedI18n(context, parentI18n, target.ownerDocument, onError)
-  const options = { ...inheritedOptions, ...context?.options, ...languageScope.options, i18n: undefined }
+  const languageScope = createFileViewerNestedI18n({
+    ...context,
+    options: { ...inheritedOptions, ...((context?.i18n || parentI18n) ? { locale: undefined, messages: undefined, i18n: undefined } : {}), ...context?.options },
+  }, parentI18n, target.ownerDocument, onError)
+  const options = languageScope.options
   const nestedRender: NonNullable<FileRenderContext['renderNestedBuffer']> = (buffer, type, target, nextContext) =>
     renderNestedBuffer(buffer, type, target, {
       ...nextContext,

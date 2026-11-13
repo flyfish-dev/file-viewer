@@ -129,8 +129,8 @@ const compareUrl = 'https://demo.file-viewer.app/compare.html'
 const githubUrl = 'https://github.com/flyfish-dev/file-viewer'
 const githubApiUrl = 'https://api.github.com/repos/flyfish-dev/file-viewer'
 const releasesUrl = 'https://github.com/flyfish-dev/file-viewer/releases'
-const currentReleaseVersion = '3.3.3'
-const currentReleaseUrl = `${releasesUrl}/tag/v${currentReleaseVersion}`
+const currentReleaseVersion = '3.3.4'
+const currentReleaseUrl = releasesUrl
 const registeredExtensionCount = FORMAT_CATALOG_SUMMARY.registeredExtensionCount
 const stableExtensionCount = FORMAT_CATALOG_SUMMARY.stableExtensionCount
 const experimentalExtensionCount = FORMAT_CATALOG_SUMMARY.experimentalExtensionCount
@@ -354,10 +354,10 @@ const copy = {
       demo: '在线体验'
     },
     hero: {
-      eyebrow: `v${currentReleaseVersion} · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
+      eyebrow: `本页 v${currentReleaseVersion} · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
       title: '文件预览，全部在浏览器完成。',
       subtitle:
-        'Office、PDF、CAD、压缩包与更多文件，一个组件即可预览。浏览器原生、离线优先，让文件留在你的环境里，让体验融入你的产品。',
+        'Office、PDF、CAD、压缩包与更多文件，一个组件即可预览。浏览器原生、离线优先，让文件留在你的环境里，让体验融入你的产品。npm 最新版本以 registry 为准。',
       primary: '立即体验',
       secondary: '阅读文档',
       commercial: '了解商业版',
@@ -365,7 +365,7 @@ const copy = {
         `${stableExtensionCount} 个稳定扩展名`,
         `${experimentalExtensionCount} 个实验扩展名`,
         `${previewPipelineCount} 条预览链路`,
-        'Full 自托管资产契约'
+        '七语言组件界面 · 离线内置'
       ]
     },
     matrixTitle: `${registeredExtensionCount} 个已注册扩展名，按 ${previewPipelineCount} 条真实预览链路组织。`,
@@ -391,7 +391,7 @@ const copy = {
     supportTitle: '让开源维护持续下去。',
     supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
     releaseTitle:
-      'v3.3.3：升级二进制 PPT TypeScript 引擎，统一离线资产与 Full 默认配置，保留 PDF 3.3.2 修复。',
+      'v3.3.4 源码：改进实时语言切换、PDF 批注、PPTX 图表、签名面板、表格与 OFD；已发布归档以 Release 列表为准。',
     footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
   },
   en: {
@@ -406,10 +406,10 @@ const copy = {
       demo: 'Live Demo'
     },
     hero: {
-      eyebrow: `v${currentReleaseVersion} · ${registeredExtensionCount} registered extensions · no conversion server`,
+      eyebrow: `Source v${currentReleaseVersion} · ${registeredExtensionCount} registered extensions · no conversion server`,
       title: 'Preview files entirely in the browser.',
       subtitle:
-        'Office, PDF, CAD, archives and more, in one preview component. Browser-native and offline-first. Your files stay in your environment, and the experience fits your product.',
+        'Office, PDF, CAD, archives and more, in one preview component. Browser-native and offline-first. Your files stay in your environment, and the experience fits your product. Check npm for the latest published version.',
       primary: 'Try the Demo',
       secondary: 'Read the Docs',
       commercial: 'Commercial Edition',
@@ -417,7 +417,7 @@ const copy = {
         `${stableExtensionCount} stable extensions`,
         `${experimentalExtensionCount} experimental extensions`,
         `${previewPipelineCount} preview pipelines`,
-        'Self-hosted Full assets'
+        'Seven built-in UI languages'
       ]
     },
     matrixTitle: `${registeredExtensionCount} registered extensions. ${previewPipelineCount} real preview pipelines.`,
@@ -444,7 +444,7 @@ const copy = {
     supportIntro:
       'If File Viewer saves your team time, choose a support option when it makes sense.',
     releaseTitle:
-      'v3.3.3: TypeScript binary PPT, matching offline assets and Full defaults, with the PDF 3.3.2 fixes retained.',
+      'v3.3.4 source: live language updates, PDF annotations, PPTX charts, signature panels, spreadsheets and OFD improvements. Published archives are listed in GitHub Releases.',
     footer:
       'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
   }
@@ -650,7 +650,7 @@ npx file-viewer-cli verify --json`
   {
     label: isZh.value ? 'Vanilla JS Full' : 'Vanilla JS Full',
     packageName: '@file-viewer/web-full',
-    install: `npm install @file-viewer/web-full@${currentReleaseVersion}`,
+    install: 'npm install @file-viewer/web-full@latest',
     title: isZh.value
       ? '完整部署 dist，零 copy 直接预览'
       : 'Deploy the complete dist with zero copy steps',
@@ -1081,8 +1081,8 @@ const explorerResourceItems = computed<ExplorerItem[]>(() => [
   },
   {
     href: currentReleaseUrl,
-    label: `v${currentReleaseVersion}`,
-    note: isZh.value ? '下载最新离线包' : 'Download the latest offline build',
+    label: 'GitHub Releases',
+    note: isZh.value ? '查看已发布离线包' : 'Browse published offline builds',
     icon: Download
   },
   {

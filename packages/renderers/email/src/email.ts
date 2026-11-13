@@ -106,19 +106,7 @@ const emailStyle = `
 @media (max-width:860px){.email-sidebar{max-height:220px;overflow:auto}.email-meta,.email-body{grid-template-columns:1fr}.email-body{grid-template-rows:auto minmax(0,1fr)}.email-sidebar{border-right:0;border-bottom:1px solid rgba(23,32,51,.08)}}
 `;
 
-const formatBytes = (value: number) => {
-  if (!Number.isFinite(value) || value < 0) {
-    return '-';
-  }
-  if (value < 1024) {
-    return `${value} B`;
-  }
-  const mb = value / 1024 / 1024;
-  if (mb >= 1) {
-    return `${mb.toFixed(mb < 10 ? 1 : 0)} MB`;
-  }
-  return `${(value / 1024).toFixed(value < 10 * 1024 ? 1 : 0)} KB`;
-};
+
 
 const normalizeAddress = (value: unknown): EmailAddress[] => {
   if (!value) {
@@ -294,6 +282,7 @@ export default async function renderEmail(
   const cidUrls = new Map<string, string>();
   const document = target.ownerDocument;
   const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const formatBytes = t.formatBytes;
   // These two nested requests inherit this message's live UI language. Do not
   // repeat parent language fields as explicit child overrides; keep every other option.
   const nestedOptions = () => {
@@ -305,7 +294,7 @@ export default async function renderEmail(
     }
     return options;
   };
-  const msgLabels = () => getMsgLabels(context?.i18n ? { locale: context.i18n.locale } : context?.options);
+  const msgLabels = () => getMsgLabels(context?.i18n || context?.options);
   const bindings = createFileViewerI18nBindings(context?.i18n);
   const createElement = <K extends keyof HTMLElementTagNameMap>(
     tagName: K,
@@ -636,7 +625,7 @@ export default async function renderEmail(
         const attachmentBuffer = await attachment.load();
         if (stale()) return;
         const sizeLabel = attachmentButtons.find(item => item.id === attachment.id)?.button.querySelector('em');
-        if (sizeLabel) sizeLabel.textContent = formatBytes(attachmentBuffer.byteLength);
+        if (sizeLabel) bindings.text(sizeLabel, () => formatBytes(attachmentBuffer.byteLength));
         const child = createElement('div', 'email-attachment-render') as HTMLDivElement;
         attachmentTarget.append(child);
         const extension = getAttachmentExtension(attachment.name);
@@ -677,7 +666,7 @@ export default async function renderEmail(
       button.type = 'button';
       const icon = createElement('span', undefined, getAttachmentExtension(attachment.name).toUpperCase() || 'FILE');
       const name = createElement('strong', undefined, attachment.name);
-      const size = createElement('em', undefined, formatBytes(attachment.size));
+      const size = createLabel('em', () => formatBytes(attachment.size));
       button.append(icon, name, size);
       listen(button, 'click', () => {
         void previewAttachment(attachment);
