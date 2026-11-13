@@ -1018,7 +1018,7 @@ const EN_US_MESSAGES: Record<FileViewerBaseMessageKey, string> = {
   'loading.audio.hint': 'Preparing audio resource and playback controls.',
 };
 
-export const FILE_VIEWER_BUILTIN_MESSAGES = Object.freeze({
+export const FILE_VIEWER_BUILTIN_MESSAGES = /* @__PURE__ */ (() => (Object.freeze({
   'zh-CN': { ...ZH_CN_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['zh-CN'] },
   'en-US': { ...EN_US_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['en-US'] },
   'ja-JP': { ...JA_JP_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['ja-JP'] },
@@ -1026,7 +1026,7 @@ export const FILE_VIEWER_BUILTIN_MESSAGES = Object.freeze({
   'zh-TW': { ...ZH_TW_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['zh-TW'] },
   'zh-HK': { ...ZH_HK_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['zh-HK'] },
   'ru-RU': { ...RU_RU_MESSAGES, ...FILE_VIEWER_DOMAIN_MESSAGES['ru-RU'] },
-} satisfies Record<FileViewerResolvedLocale, Record<FileViewerMessageKey, string>>);
+} satisfies Record<FileViewerResolvedLocale, Record<FileViewerMessageKey, string>>)))();
 
 const normalizeLocaleCandidate = matchFileViewerLocale;
 

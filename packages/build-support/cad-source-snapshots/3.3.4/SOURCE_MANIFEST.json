@@ -228,8 +228,8 @@
     {
       "path": "packages/core/src/i18n/domains/index.ts",
       "hashMode": "bytes",
-      "sha256": "af4cb5d52b37ca26273f71f42db5b6c949e26286c0cbada578ffe019d4c08bdc",
-      "archiveSha256": "af4cb5d52b37ca26273f71f42db5b6c949e26286c0cbada578ffe019d4c08bdc"
+      "sha256": "c35bbe8edef14405b87f2a0b084ea93aa96b67b0df3f3632b90d8c2997e72e1e",
+      "archiveSha256": "c35bbe8edef14405b87f2a0b084ea93aa96b67b0df3f3632b90d8c2997e72e1e"
     },
     {
       "path": "packages/core/src/i18n/domains/panels.ts",
@@ -282,8 +282,8 @@
     {
       "path": "packages/core/src/i18n/messages.ts",
       "hashMode": "bytes",
-      "sha256": "da94a744a7ecd19f8d4f0bc020bf031270bd81aa6ecabb60378d846d1014e389",
-      "archiveSha256": "da94a744a7ecd19f8d4f0bc020bf031270bd81aa6ecabb60378d846d1014e389"
+      "sha256": "4ad737422217cdde11e601e621259d6020948f1f56716b228c10bd75856b8104",
+      "archiveSha256": "4ad737422217cdde11e601e621259d6020948f1f56716b228c10bd75856b8104"
     },
     {
       "path": "packages/core/src/i18n/messages.zh-Hant.ts",
@@ -869,8 +869,8 @@
       "path": "packages/core/src/i18n/domains/index.ts",
       "gitMode": "100644",
       "workingMode": "100644",
-      "gitBlob": "ad90cd27aa11e18bfceb85f7bbf4681fac019187",
-      "sha256": "af4cb5d52b37ca26273f71f42db5b6c949e26286c0cbada578ffe019d4c08bdc"
+      "gitBlob": "2d31b987f248b92e47fb8f2c7ae6a4f29644ec6e",
+      "sha256": "c35bbe8edef14405b87f2a0b084ea93aa96b67b0df3f3632b90d8c2997e72e1e"
     },
     {
       "path": "packages/core/src/i18n/domains/panels.ts",
@@ -932,8 +932,8 @@
       "path": "packages/core/src/i18n/messages.ts",
       "gitMode": "100644",
       "workingMode": "100644",
-      "gitBlob": "e53b48df8d21d2776448bd5443133af660d315dc",
-      "sha256": "da94a744a7ecd19f8d4f0bc020bf031270bd81aa6ecabb60378d846d1014e389"
+      "gitBlob": "f79fc5120601817e089a2001520efe3749ccbba7",
+      "sha256": "4ad737422217cdde11e601e621259d6020948f1f56716b228c10bd75856b8104"
     },
     {
       "path": "packages/core/src/i18n/messages.zh-Hant.ts",
@@ -1451,7 +1451,7 @@
     },
     {
       "path": "packages/core/src/i18n/domains/index.ts",
-      "sha256": "af4cb5d52b37ca26273f71f42db5b6c949e26286c0cbada578ffe019d4c08bdc"
+      "sha256": "c35bbe8edef14405b87f2a0b084ea93aa96b67b0df3f3632b90d8c2997e72e1e"
     },
     {
       "path": "packages/core/src/i18n/domains/panels.ts",
@@ -1487,7 +1487,7 @@
     },
     {
       "path": "packages/core/src/i18n/messages.ts",
-      "sha256": "da94a744a7ecd19f8d4f0bc020bf031270bd81aa6ecabb60378d846d1014e389"
+      "sha256": "4ad737422217cdde11e601e621259d6020948f1f56716b228c10bd75856b8104"
     },
     {
       "path": "packages/core/src/i18n/messages.zh-Hant.ts",

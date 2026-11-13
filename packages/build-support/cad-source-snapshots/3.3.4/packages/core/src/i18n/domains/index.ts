@@ -12,18 +12,18 @@ export type FileViewerExtendedMessageKey =
   | keyof typeof FILE_VIEWER_PANEL_MESSAGE_ROWS
   | keyof typeof FILE_VIEWER_PRESENTATION_MESSAGE_ROWS
 
-const rows: Record<FileViewerExtendedMessageKey, Record<FileViewerResolvedLocale, string>> = {
+const rows: Record<FileViewerExtendedMessageKey, Record<FileViewerResolvedLocale, string>> = /* @__PURE__ */ (() => ({
   ...FILE_VIEWER_RENDERER_MESSAGE_ROWS,
   ...FILE_VIEWER_COMMON_MESSAGE_ROWS,
   ...FILE_VIEWER_DESIGN_MESSAGE_ROWS,
   ...FILE_VIEWER_PANEL_MESSAGE_ROWS,
   ...FILE_VIEWER_PRESENTATION_MESSAGE_ROWS
-}
-export const FILE_VIEWER_DOMAIN_MESSAGES = Object.fromEntries(
+}))()
+export const FILE_VIEWER_DOMAIN_MESSAGES = /* @__PURE__ */ (() => (Object.fromEntries(
   FILE_VIEWER_SUPPORTED_LOCALES.map((locale) => [
     locale,
     Object.fromEntries(
       Object.entries(rows).map(([key, translations]) => [key, translations[locale]])
     )
   ])
-) as Record<FileViewerResolvedLocale, Record<FileViewerExtendedMessageKey, string>>
+) as Record<FileViewerResolvedLocale, Record<FileViewerExtendedMessageKey, string>>))()
