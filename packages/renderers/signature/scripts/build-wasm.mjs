@@ -1,7 +1,7 @@
 import { brotliCompressSync, constants as zlibConstants } from 'node:zlib'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { access, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { access, copyFile, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { homedir } from 'node:os'
 import { fileURLToPath } from 'node:url'
@@ -9,10 +9,18 @@ import { resolveWasmOpt } from '../../../../.github/scripts/lib/pinned-pnpm.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const rustDir = resolve(packageDir, 'rust')
-const targetDir = resolve(rustDir, 'target/wasm32-unknown-unknown/release')
+let targetDir = resolve(rustDir, 'target/wasm32-unknown-unknown/release')
 const outDir = resolve(packageDir, 'dist/rpgp-wasm')
-const wasmInput = resolve(targetDir, 'file_viewer_rpgp_wrapper.wasm')
+let wasmInput = resolve(targetDir, 'file_viewer_rpgp_wrapper.wasm')
 const buildDiagnostics = process.env.FILE_VIEWER_RPGP_BUILD_DIAGNOSTICS === '1'
+let canonicalBuild
+let canonicalMetadata
+if (process.env.FILE_VIEWER_RPGP_CANONICAL_METADATA === '1') {
+  canonicalMetadata = await import('./canonical-crate-metadata.mjs')
+  canonicalBuild = await canonicalMetadata.prepareCanonicalMetadata({ rustDir, environment: process.env })
+  targetDir = resolve(canonicalBuild.targetDirectory, 'wasm32-unknown-unknown/release')
+  wasmInput = resolve(targetDir, 'file_viewer_rpgp_wrapper.wasm')
+}
 
 const run = (command, args, options = {}) => {
   try {
@@ -49,7 +57,10 @@ const buildEnvironment = { ...process.env }
 }
 const cargoBuildArgs = ['build', '--release', '--locked', '--target', 'wasm32-unknown-unknown']
 if (buildDiagnostics) cargoBuildArgs.push('--verbose')
+if (canonicalBuild) Object.assign(buildEnvironment, canonicalBuild.environment)
 run('cargo', cargoBuildArgs, { env: buildEnvironment })
+if (buildDiagnostics)
+  await copyFile(wasmInput, resolve(rustDir, 'target/file-viewer-rpgp-raw-input.wasm'))
 run('wasm-bindgen', [
   wasmInput,
   '--target',
@@ -151,12 +162,13 @@ if (buildDiagnostics) {
     sources: await Promise.all(sourceFiles.map(name => identity(rustDir, name))),
     fingerprints: {
       target: await fingerprints(resolve(targetDir, '.fingerprint')),
-      host: await fingerprints(resolve(rustDir, 'target/release/.fingerprint'))
+      host: await fingerprints(resolve(canonicalBuild?.targetDirectory || resolve(rustDir, 'target'), 'release/.fingerprint'))
     },
     outputs: {
       rust: await identity(targetDir, 'file_viewer_rpgp_wrapper.wasm'),
       optimized: await identity(outDir, 'rpgp_wrapper_bg.wasm')
-    }
+    },
+    ...(canonicalBuild ? { canonicalMetadata: await canonicalMetadata.canonicalMetadataDiagnostics(canonicalBuild) } : {})
   }
   await writeFile(resolve(rustDir, 'target/file-viewer-rpgp-build-identity.json'), `${JSON.stringify(diagnostics, null, 2)}\n`)
 }

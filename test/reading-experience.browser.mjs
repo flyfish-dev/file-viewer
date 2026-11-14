@@ -12,6 +12,7 @@ const root = resolve(import.meta.dirname, '..')
 const output = resolve(process.env.READING_EVIDENCE || join(root, 'output/reading-experience'))
 const runtimeRoot = resolve(process.env.FILE_VIEWER_TEST_RUNTIME_ROOT || root)
 const record = process.argv.includes('--record-only')
+const bundleOnly = process.argv.includes('--bundle-only')
 const requirePdf = createRequire(join(root, 'packages/renderers/pdf/package.json'))
 const requireSheet = createRequire(join(root, 'packages/renderers/spreadsheet/package.json'))
 const JSZip = requireSheet('jszip')
@@ -130,15 +131,22 @@ const bundle = await build({
   format: 'esm',
   platform: 'browser',
   write: false,
+  metafile: bundleOnly,
   logLevel: 'warning',
-  alias: {
-    '@file-viewer/core/assets': join(root, 'packages/core/src/assets.ts'),
-    '@file-viewer/core': join(root, 'packages/core/src/index.ts')
-  },
   plugins: [
     {
       name: 'test-runtimes',
       setup(builder) {
+        builder.onResolve(
+          { filter: /^@file-viewer\/core(?:\/(?:assets|headless|browser|export|print-mask))?$/ },
+          (args) => ({
+            path: join(
+              root,
+              'packages/core/src',
+              (args.path.slice('@file-viewer/core'.length).replace(/^\//, '') || 'index') + '.ts'
+            )
+          })
+        )
         builder.onResolve({ filter: /^pdfjs-dist\// }, (args) => ({
           path: '/pdfjs/' + args.path.slice('pdfjs-dist/'.length),
           external: true
@@ -159,6 +167,12 @@ const bundle = await build({
     }
   ]
 })
+if (bundleOnly) {
+  await writeFile(join(output, 'browser.js'), bundle.outputFiles[0].contents)
+  await writeFile(join(output, 'bundle-metafile.json'), JSON.stringify(bundle.metafile, null, 2))
+  console.log('Reading experience bundle prepared without starting a server or browser')
+  process.exit(0)
+}
 assets.set('/browser.js', Buffer.from(bundle.outputFiles[0].text))
 assets.set(
   '/',

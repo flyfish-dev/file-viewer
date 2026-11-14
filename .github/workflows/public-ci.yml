@@ -114,6 +114,7 @@ jobs:
     timeout-minutes: 60
     env:
       FILE_VIEWER_RPGP_BUILD_DIAGNOSTICS: '1'
+      FILE_VIEWER_RPGP_CANONICAL_METADATA: '1'
 
     steps:
       - name: Checkout
@@ -189,6 +190,7 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: |
           node --test packages/renderers/3d/scripts/geo3d-build-path-privacy.test.mjs
+          node --test packages/renderers/signature/scripts/canonical-crate-metadata.test.mjs
           node packages/renderers/signature/scripts/verify-artifacts.mjs
 
       - name: Verify CAD source HTTPS bytes and rebuild against the actual Full runtime
@@ -260,7 +262,7 @@ jobs:
           name: native-runtime-build-diagnostics
           path: |
             packages/renderers/signature/rust/target/file-viewer-rpgp-build-identity.json
-            packages/renderers/signature/rust/target/wasm32-unknown-unknown/release/file_viewer_rpgp_wrapper.wasm
+            packages/renderers/signature/rust/target/file-viewer-rpgp-raw-input.wasm
             packages/renderers/signature/dist/rpgp-wasm/rpgp_wrapper_bg.wasm
           if-no-files-found: warn
           retention-days: 7
@@ -524,6 +526,7 @@ jobs:
       actions: read
     env:
       FILE_VIEWER_RPGP_BUILD_DIAGNOSTICS: '1'
+      FILE_VIEWER_RPGP_CANONICAL_METADATA: '1'
     steps:
       - name: Checkout the exact same-repository PR head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -546,7 +549,9 @@ jobs:
           cache: pnpm
 
       - name: Check the public prepack controls
-        run: node --test .github/scripts/source-prepack-browser.test.mjs
+        run: |
+          node --test .github/scripts/source-prepack-browser.test.mjs
+          node --test packages/renderers/signature/scripts/canonical-crate-metadata.test.mjs
 
       - name: Install the frozen public source dependencies
         run: pnpm install --frozen-lockfile
@@ -614,7 +619,7 @@ jobs:
           name: source-prepack-native-diagnostics
           path: |
             packages/renderers/signature/rust/target/file-viewer-rpgp-build-identity.json
-            packages/renderers/signature/rust/target/wasm32-unknown-unknown/release/file_viewer_rpgp_wrapper.wasm
+            packages/renderers/signature/rust/target/file-viewer-rpgp-raw-input.wasm
             packages/renderers/signature/dist/rpgp-wasm/rpgp_wrapper_bg.wasm
           if-no-files-found: warn
           retention-days: 7
