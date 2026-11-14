@@ -147,7 +147,7 @@ jobs:
       - name: Set up Rust WASM toolchain
         if: steps.impact.outputs.runtime != 'false'
         run: |
-          rustup toolchain install 1.88.0 --profile minimal --target wasm32-unknown-unknown
+          rustup toolchain install 1.88.0 --profile minimal --component rust-src --target wasm32-unknown-unknown
           rustup default 1.88.0
           rustc --version --verbose
           cargo install wasm-bindgen-cli --version 0.2.127 --locked
@@ -545,7 +545,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          rustup toolchain install 1.88.0 --profile minimal --target wasm32-unknown-unknown
+          rustup toolchain install 1.88.0 --profile minimal --component rust-src --target wasm32-unknown-unknown
           rustup default 1.88.0
           rustc --version --verbose
           cargo install wasm-bindgen-cli --version 0.2.127 --locked
@@ -589,5 +589,16 @@ jobs:
           name: source-prepack-browser-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.event.pull_request.head.sha }}
           path: output/source-prepack-browser/proof/
           if-no-files-found: error
+          retention-days: 7
+
+      - name: Retain failed native build inputs for diagnosis
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: source-prepack-native-diagnostics
+          path: |
+            packages/renderers/signature/rust/target/wasm32-unknown-unknown/release/file_viewer_rpgp_wrapper.wasm
+            packages/renderers/signature/dist/rpgp-wasm/rpgp_wrapper_bg.wasm
+          if-no-files-found: warn
           retention-days: 7
   # END REVIEWED SOURCE PREPACK BROWSER JOB

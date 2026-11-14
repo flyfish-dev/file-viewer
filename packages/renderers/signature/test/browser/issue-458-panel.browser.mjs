@@ -95,6 +95,21 @@ const configs = [
     }))
   )
 ]
+
+async function waitForWindowResizeFit(page, baselineScale, restoring) {
+  // A resize notification can precede its requested fit frame. Match the
+  // normal PDF viewport checks by waiting for public state, without forcing fit.
+  await page.waitForFunction(({ baselineScale, restoring }) => {
+    if (document.visibilityState !== 'visible') return false
+    const scale = window.panelReview.findFileViewerZoomProvider(
+      window.originalPreview
+    )?.getState().scale
+    return Number.isFinite(scale) && (restoring
+      ? Math.abs(scale - baselineScale) < 0.001
+      : scale > baselineScale)
+  }, { baselineScale, restoring }, { timeout: 5000, polling: 'raf' })
+}
+
 try {
   for (const browserName of (process.env.SIGNATURE_PANEL_BROWSERS || 'chromium,webkit').split(
     ','
@@ -485,6 +500,7 @@ try {
                 const beforeResize = await page.evaluate(() => panelState())
                 await page.setViewportSize({ ...viewport, width: viewport.width + 160 })
                 await page.waitForTimeout(350)
+                await waitForWindowResizeFit(page, beforeResize.scale, false)
                 row.windowResize = {
                   before: beforeResize,
                   wider: await page.evaluate(() => panelState())
@@ -495,6 +511,7 @@ try {
                 )
                 await page.setViewportSize(viewport)
                 await page.waitForTimeout(350)
+                await waitForWindowResizeFit(page, beforeResize.scale, true)
                 row.windowResize.restored = await page.evaluate(() => panelState())
                 assert.ok(
                   Math.abs(row.windowResize.restored.scale - beforeResize.scale) < 0.001,
