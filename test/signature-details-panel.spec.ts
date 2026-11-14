@@ -3,7 +3,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { webcrypto } from 'node:crypto'
-import { createFileViewerI18n } from '@file-viewer/core'
+import {
+  createFileViewerI18n,
+  createFileViewerViewStateChangeEmitter,
+  registerFileViewerViewStateProvider,
+  unregisterFileViewerViewStateProvider
+} from '@file-viewer/core'
 import {
   createSignatureDetailsPanel,
   FILE_VIEWER_SIGNATURE_PANEL_CHANGE_EVENT,
@@ -16,7 +21,8 @@ import type {
   FileViewerOptions,
   FileViewerI18nContext,
   FileViewerSignatureOptions,
-  FileViewerSignatureDetailsPanelOptions
+  FileViewerSignatureDetailsPanelOptions,
+  FileViewerViewStateChange
 } from '@file-viewer/core'
 import type { SignatureParseLimits } from '../packages/renderers/signature/src/openpgp/types'
 import type { SignatureContainerLimits } from '../packages/renderers/signature/src/structured/limits'
@@ -472,6 +478,233 @@ it('tracks a delayed nested reflow only within its bounded window and rejects st
   } finally {
     vi.useRealTimers()
   }
+})
+
+const slowReadingFixture = (withProvider = false) => {
+  vi.useFakeTimers()
+  vi.spyOn(window.performance, 'now').mockImplementation(() => Date.now())
+  const shell = document.createElement('div'), preview = document.createElement('div')
+  const anchor = document.createElement('section')
+  anchor.dataset.viewerAnchorId = 'reading-block'
+  preview.style.overflowY = 'auto'
+  preview.append(anchor)
+  shell.append(preview)
+  document.body.append(shell)
+  let height = 2000, width = 400, anchorTop = 600, anchorHeight = 1000, scale = 1
+  Object.defineProperties(preview, {
+    scrollHeight: { get: () => height }, clientHeight: { value: 500 },
+    clientWidth: { get: () => width }
+  })
+  anchor.getBoundingClientRect = () => rect(anchorTop - preview.scrollTop, anchorHeight)
+  preview.scrollTop = 750
+  const callbacks = new Map<number, FrameRequestCallback>()
+  let id = 0
+  vi.spyOn(window, 'requestAnimationFrame').mockImplementation(fn => {
+    callbacks.set(++id, fn)
+    return id
+  })
+  vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(key => { callbacks.delete(key) })
+  const emitter = createFileViewerViewStateChangeEmitter()
+  const listeners: Array<(change: FileViewerViewStateChange) => void> = []
+  const unsubscribe = vi.fn()
+  if (withProvider) registerFileViewerViewStateProvider(preview, {
+    getState: () => ({ renderer: 'unit-document', scale }),
+    subscribe(listener) {
+      listeners.push(listener)
+      const off = emitter.subscribe(listener)
+      return () => { off(); unsubscribe() }
+    }
+  })
+  const state = createSignaturePanelReadingState(shell, preview)
+  const emit = (source: string, action: string) => emitter.emit({
+    source, action, state: { renderer: 'unit-document', scale }, timestamp: Date.now()
+  })
+  return {
+    preview, anchor, callbacks, state, listeners, unsubscribe, emit,
+    setWidth(value: number) { width = value },
+    start() {
+      const after = state.beforeChange('left', 'push')
+      width = 800
+      after()
+    },
+    reflow() { height = 4000; anchorTop = 1200; anchorHeight = 2000; scale = 2 },
+    frame(milliseconds: number) {
+      vi.advanceTimersByTime(milliseconds)
+      const batch = [...callbacks.values()]
+      callbacks.clear()
+      batch.forEach(fn => fn(Date.now()))
+    },
+    close() { state.dispose(); unregisterFileViewerViewStateProvider(preview); vi.useRealTimers() }
+  }
+}
+
+it('flushes the captured reading anchor when slow frames reach the original deadline', () => {
+  const f = slowReadingFixture()
+  try {
+    f.start()
+    f.frame(70)
+    vi.advanceTimersByTime(30)
+    f.reflow()
+    f.frame(40)
+    f.frame(70)
+    vi.advanceTimersByTime(40)
+    // The authored block doubles in size; preserve the same point within it.
+    expect(f.preview.scrollTop).toBe(1710)
+    expect(f.callbacks.size).toBe(0)
+  } finally { f.close() }
+})
+
+it('restores a captured reading anchor when the viewer fit commits after the deadline', () => {
+  const f = slowReadingFixture(true)
+  try {
+    f.start()
+    vi.advanceTimersByTime(250)
+    expect(f.callbacks.size).toBe(0)
+    expect(vi.getTimerCount()).toBe(0)
+    vi.advanceTimersByTime(450)
+    f.reflow()
+    f.emit('viewer', 'zoom-change')
+    expect(f.preview.scrollTop).toBe(750)
+    f.emit('viewer', 'zoom-reset')
+    expect(f.preview.scrollTop).toBe(1710)
+    vi.advanceTimersByTime(250)
+    expect(f.callbacks.size).toBe(0)
+    expect(f.unsubscribe).toHaveBeenCalledOnce()
+  } finally { f.close() }
+})
+
+it('rejects a first fit after the captured reading anchor has expired without polling', () => {
+  const f = slowReadingFixture(true)
+  try {
+    f.start()
+    vi.advanceTimersByTime(250)
+    expect(f.callbacks.size).toBe(0)
+    expect(vi.getTimerCount()).toBe(0)
+    vi.advanceTimersByTime(4751)
+    expect(f.callbacks.size).toBe(0)
+    expect(vi.getTimerCount()).toBe(0)
+    f.preview.scrollTop = 1234
+    f.reflow()
+    f.emit('viewer', 'fit')
+    expect(f.preview.scrollTop).toBe(1234)
+    expect(f.callbacks.size).toBe(0)
+    expect(vi.getTimerCount()).toBe(0)
+    expect(f.unsubscribe).toHaveBeenCalledOnce()
+  } finally { f.close() }
+})
+
+it('does not renew the captured anchor age when a late fit begins bounded settling', () => {
+  const f = slowReadingFixture(true)
+  try {
+    f.start()
+    vi.advanceTimersByTime(4900)
+    f.reflow()
+    f.emit('viewer', 'fit')
+    expect(f.preview.scrollTop).toBe(1710)
+    f.preview.scrollTop = 1234
+    vi.advanceTimersByTime(250)
+    expect(f.preview.scrollTop).toBe(1234)
+    expect(f.callbacks.size).toBe(0)
+    expect(vi.getTimerCount()).toBe(0)
+    expect(f.unsubscribe).toHaveBeenCalledOnce()
+  } finally { f.close() }
+})
+
+it.each(['wheel', 'api', 'viewer-scroll', 'provider', 'viewport', 'anchor', 'dispose'])(
+  'cancels a passive late fit anchor after newer %s intent or ownership', reason => {
+    const f = slowReadingFixture(true)
+    try {
+      f.start()
+      vi.advanceTimersByTime(250)
+      expect(f.callbacks.size).toBe(0)
+      expect(vi.getTimerCount()).toBe(0)
+      if (reason === 'wheel') f.preview.dispatchEvent(new WheelEvent('wheel', { bubbles: true }))
+      if (reason === 'api') {
+        f.emit('viewer', 'zoom-change')
+        expect(f.preview.scrollTop).toBe(750)
+        f.emit('api', 'zoom-change')
+      }
+      if (reason === 'viewer-scroll') f.emit('viewer', 'scroll')
+      if (reason === 'provider') registerFileViewerViewStateProvider(f.preview, {
+        getState: () => ({ renderer: 'replacement', scale: 1 })
+      })
+      if (reason === 'viewport') f.setWidth(900)
+      if (reason === 'anchor') f.anchor.remove()
+      if (reason === 'dispose') f.state.dispose()
+      f.preview.scrollTop = 1234
+      f.reflow()
+      f.emit('viewer', 'fit')
+      expect(f.preview.scrollTop).toBe(1234)
+      expect(f.callbacks.size).toBe(0)
+      expect(vi.getTimerCount()).toBe(0)
+      expect(f.unsubscribe).toHaveBeenCalledOnce()
+    } finally { f.close() }
+  }
+)
+
+it('does not treat an unpaired viewer zoom change as a late automatic fit', async () => {
+  const f = slowReadingFixture(true)
+  try {
+    f.start()
+    vi.advanceTimersByTime(250)
+    f.reflow()
+    f.emit('viewer', 'zoom-change')
+    expect(f.preview.scrollTop).toBe(750)
+    await Promise.resolve()
+    f.preview.scrollTop = 1234
+    f.emit('viewer', 'fit')
+    expect(f.preview.scrollTop).toBe(1234)
+    expect(f.unsubscribe).toHaveBeenCalledOnce()
+  } finally { f.close() }
+})
+
+it('lets a newer API interaction cancel settling after a late fit commit', () => {
+  const f = slowReadingFixture(true)
+  try {
+    f.start()
+    vi.advanceTimersByTime(250)
+    f.reflow()
+    f.emit('viewer', 'fit')
+    expect(f.preview.scrollTop).toBe(1710)
+    f.preview.scrollTop = 1234
+    f.emit('api', 'zoom-change')
+    f.frame(300)
+    expect(f.preview.scrollTop).toBe(1234)
+    expect(f.callbacks.size).toBe(0)
+    expect(f.unsubscribe).toHaveBeenCalledOnce()
+  } finally { f.close() }
+})
+
+it('rejects a late fit callback retained from an earlier panel transition', () => {
+  const f = slowReadingFixture(true)
+  try {
+    f.start()
+    vi.advanceTimersByTime(250)
+    const stale = f.listeners[0]
+    const after = f.state.beforeChange('left', 'push')
+    f.setWidth(900)
+    after()
+    f.preview.scrollTop = 1234
+    f.reflow()
+    stale({ source: 'viewer', action: 'fit', state: { scale: 2 }, timestamp: Date.now() })
+    expect(f.preview.scrollTop).toBe(1234)
+  } finally { f.close() }
+})
+
+it.each([false, true])('does not retain unverifiable late work (provider present: %s)', withProvider => {
+  const f = slowReadingFixture(withProvider)
+  try {
+    delete f.anchor.dataset.viewerAnchorId
+    f.start()
+    vi.advanceTimersByTime(250)
+    f.preview.scrollTop = 1234
+    f.reflow()
+    f.emit('viewer', 'fit')
+    expect(f.preview.scrollTop).toBe(1234)
+    expect(f.callbacks.size).toBe(0)
+    expect(vi.getTimerCount()).toBe(0)
+    if (withProvider) expect(f.unsubscribe).toHaveBeenCalledOnce()
+  } finally { f.close() }
 })
 
 it('accepts the inline public createViewer signature options and keeps the loaded nested session', async () => {

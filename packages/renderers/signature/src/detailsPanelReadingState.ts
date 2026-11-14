@@ -2,6 +2,7 @@ import {
   DEFAULT_FILE_VIEWER_ANCHOR_SELECTOR,
   DEFAULT_FILE_VIEWER_ANCHOR_EXCLUDE_SELECTOR
 } from '@file-viewer/core'
+import type { FileViewerViewStateProviderHost } from '@file-viewer/core'
 
 /** A bounded, instance-owned layout adjustment. Never changes a renderer's fit/zoom provider. */
 export const createSignaturePanelReadingState = (
@@ -13,6 +14,7 @@ export const createSignaturePanelReadingState = (
   let frame: number | undefined
   let timer: number | undefined
   let deadline: number | undefined
+  let unsubscribeFit: (() => void) | undefined
   let disposed = false
   let pendingCapture:
     | {
@@ -25,16 +27,23 @@ export const createSignaturePanelReadingState = (
         oldClientWidth: number
         anchorElement?: HTMLElement
         anchorFraction: number
+        expiresAt: number
       }
     | undefined
 
-  const cancel = () => {
-    generation += 1
-    pendingCapture = undefined
+  const stopScheduledWork = () => {
     if (frame !== undefined) view?.cancelAnimationFrame(frame)
     if (timer !== undefined) view?.clearTimeout(timer)
     if (deadline !== undefined) view?.clearTimeout(deadline)
     frame = timer = deadline = undefined
+  }
+  const cancel = () => {
+    generation += 1
+    pendingCapture = undefined
+    stopScheduledWork()
+    const unsubscribe = unsubscribeFit
+    unsubscribeFit = undefined
+    unsubscribe?.()
   }
   const intent = (event: Event) => {
     if (
@@ -93,11 +102,34 @@ export const createSignaturePanelReadingState = (
     return best
   }
 
+  const ancestors = function* (element: HTMLElement) {
+    let node: HTMLElement | null = element
+    for (let budget = 512; node && budget-- > 0;) {
+      yield node
+      if (node === preview) return
+      const root = node.getRootNode() as Document | ShadowRoot
+      node = node.parentElement || ('host' in root ? root.host as HTMLElement : null)
+    }
+  }
+  const containsPreviewElement = (element: HTMLElement) =>
+    [...ancestors(element)].includes(preview!)
+  const resolveViewStateProvider = (scroller: HTMLElement) => {
+    // The public provider-host bridge gives a direct lookup. Searching the
+    // whole preview again would defeat the bounded document traversal above.
+    for (const node of ancestors(scroller)) {
+      const provider = (node as FileViewerViewStateProviderHost).__flyfishViewerViewStateProvider
+      if (provider?.subscribe) return { host: node as FileViewerViewStateProviderHost, provider }
+    }
+    return undefined
+  }
+
   const beforeChange = (position: 'top' | 'left', behavior: 'overlay' | 'push') => {
     // Coalesce rapid toggles around the original reading anchor, not an
     // intermediate reflowed position whose restoration has not yet run.
+    const capturedAt = view?.performance.now() ?? 0
     const remembered =
-      pendingCapture && preview?.contains(pendingCapture.scroller) ? pendingCapture : undefined
+      pendingCapture && capturedAt < pendingCapture.expiresAt &&
+      containsPreviewElement(pendingCapture.scroller) ? pendingCapture : undefined
     cancel()
     if (disposed || !preview || !view || (position === 'left' && behavior === 'overlay'))
       return () => {}
@@ -113,6 +145,10 @@ export const createSignaturePanelReadingState = (
     const oldWidth = remembered?.oldWidth ?? scroller?.scrollWidth ?? 0
     const oldClientHeight = remembered?.oldClientHeight ?? scroller?.clientHeight ?? 0
     const oldClientWidth = remembered?.oldClientWidth ?? scroller?.clientWidth ?? 0
+    const oldPreviewWidth = preview.clientWidth
+    const oldPreviewHeight = preview.clientHeight
+    // A passive fit may outlive the RAF window, but never renew an old capture.
+    const expiresAt = remembered?.expiresAt ?? capturedAt + 5000
     let anchorElement = remembered?.anchorElement
     let anchorFraction = remembered?.anchorFraction || 0
     if (!remembered && scroller && position === 'left') {
@@ -171,7 +207,8 @@ export const createSignaturePanelReadingState = (
         oldClientHeight,
         oldClientWidth,
         anchorElement,
-        anchorFraction
+        anchorFraction,
+        expiresAt
       }
 
     return () => {
@@ -188,27 +225,18 @@ export const createSignaturePanelReadingState = (
       let previousGeometry = ''
       let stableFrames = 0
       let restoredGeometry = ''
-      const startedAt = view.performance.now()
-      const restore = () => {
-        frame = timer = undefined
-        if (disposed || token !== generation || !scroller.isConnected || !preview.isConnected)
-          return
-        const geometry = [
-          scroller.clientWidth,
-          scroller.clientHeight,
-          scroller.scrollWidth,
-          scroller.scrollHeight
-        ].join(':')
-        stableFrames = geometry === previousGeometry ? stableFrames + 1 : 0
-        previousGeometry = geometry
-        const timedOut = view.performance.now() - startedAt >= 250
-        if ((stableFrames < 2 || geometry === restoredGeometry) && !timedOut) {
-          schedule()
-          return
-        }
-        if (timer !== undefined) view.clearTimeout(timer)
-        timer = undefined
-        restoredGeometry = geometry
+      let startedAt = view.performance.now()
+      let fitCommitted = false
+      let waitingForFit = false
+      let expectedViewport = ''
+      const binding = resolveViewStateProvider(scroller)
+      const viewport = () => `${preview.clientWidth}:${preview.clientHeight}`
+      const current = () => !disposed && token === generation &&
+        view.performance.now() < expiresAt && scroller.isConnected &&
+        preview.isConnected && containsPreviewElement(scroller) &&
+        (!binding || binding.host.__flyfishViewerViewStateProvider === binding.provider)
+      const applyAnchor = () => {
+        if (!current()) { cancel(); return false }
         const maxTop = Math.max(0, scroller.scrollHeight - scroller.clientHeight)
         const maxLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
         let nextTop = top
@@ -234,16 +262,80 @@ export const createSignaturePanelReadingState = (
               : 0
         scroller.scrollTop = Math.min(maxTop, Math.max(0, nextTop))
         scroller.scrollLeft = Math.min(maxLeft, Math.max(0, nextLeft))
-        // A nested renderer may debounce auto-fit after the first stable frame.
-        // Observe further geometry changes only within this same 250 ms window.
-        if (!timedOut) schedule()
-        else cancel()
+        return true
+      }
+      const finish = () => {
+        if (token !== generation || disposed) return
+        stopScheduledWork()
+        if (!current()) return cancel()
+        // Slow frames may never produce three stable observations. Flush once
+        // before ending the same bounded work window instead of losing its anchor.
+        if (!applyAnchor()) return
+        const viewportChanged = preview.clientWidth !== oldPreviewWidth ||
+          preview.clientHeight !== oldPreviewHeight
+        if (binding && !fitCommitted && viewportChanged &&
+            anchorElement?.isConnected && scroller.contains(anchorElement)) {
+          expectedViewport = viewport()
+          waitingForFit = true
+        } else cancel()
+      }
+      const restore = () => {
+        frame = timer = undefined
+        if (token !== generation || disposed) return
+        if (!current()) return cancel()
+        if (view.performance.now() - startedAt >= 250) return finish()
+        const geometry = [scroller.clientWidth, scroller.clientHeight,
+          scroller.scrollWidth, scroller.scrollHeight].join(':')
+        stableFrames = geometry === previousGeometry ? stableFrames + 1 : 0
+        previousGeometry = geometry
+        if (stableFrames >= 2 && geometry !== restoredGeometry) {
+          restoredGeometry = geometry
+          if (!applyAnchor()) return
+        }
+        schedule()
       }
       const schedule = () => {
         if (view.requestAnimationFrame) frame = view.requestAnimationFrame(restore)
         else timer = view.setTimeout(restore, 16)
       }
-      deadline = view.setTimeout(cancel, 250)
+      if (binding) {
+        const unsubscribe = binding.provider.subscribe!(change => {
+          if (token !== generation || disposed) return
+          if (!current() || change.source === 'user' || change.source === 'api') return cancel()
+          const fit = change.source === 'viewer' && ['fit', 'zoom-reset'].includes(change.action)
+          if (waitingForFit) {
+            if (viewport() !== expectedViewport || !anchorElement?.isConnected ||
+                !scroller.contains(anchorElement)) return cancel()
+            if (!fit) {
+              if (change.source === 'viewer' && change.action === 'zoom-change') {
+                // PDF emits this intermediate event before its synchronous fit
+                // commit, but manual zoom emits it too. Never restore on it.
+                void Promise.resolve().then(() => {
+                  if (token === generation && waitingForFit) cancel()
+                })
+                return
+              }
+              return cancel()
+            }
+          }
+          if (!fit) return
+          fitCommitted = true
+          if (!applyAnchor()) return
+          if (waitingForFit) {
+            // No polling survives the first deadline. A single late, same-view
+            // fit commit can resume bounded settling, never another fit/zoom call.
+            waitingForFit = false
+            startedAt = view.performance.now()
+            previousGeometry = restoredGeometry = ''
+            stableFrames = 0
+            deadline = view.setTimeout(finish, 250)
+            schedule()
+          }
+        })
+        if (token !== generation || disposed) { unsubscribe(); return }
+        unsubscribeFit = unsubscribe
+      }
+      deadline = view.setTimeout(finish, 250)
       schedule()
     }
   }

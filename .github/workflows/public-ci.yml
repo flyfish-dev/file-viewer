@@ -112,6 +112,8 @@ jobs:
     name: Install, type-check, test, build and smoke
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
+    env:
+      FILE_VIEWER_RPGP_BUILD_DIAGNOSTICS: '1'
 
     steps:
       - name: Checkout
@@ -248,6 +250,18 @@ jobs:
         with:
           name: signature-panel-evidence
           path: output/signature-panel/**
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Retain native build input diagnostics
+        if: always() && steps.impact.outputs.runtime != 'false'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-runtime-build-diagnostics
+          path: |
+            packages/renderers/signature/rust/target/file-viewer-rpgp-build-identity.json
+            packages/renderers/signature/rust/target/wasm32-unknown-unknown/release/file_viewer_rpgp_wrapper.wasm
+            packages/renderers/signature/dist/rpgp-wasm/rpgp_wrapper_bg.wasm
           if-no-files-found: warn
           retention-days: 7
 
@@ -508,6 +522,8 @@ jobs:
     permissions:
       contents: read
       actions: read
+    env:
+      FILE_VIEWER_RPGP_BUILD_DIAGNOSTICS: '1'
     steps:
       - name: Checkout the exact same-repository PR head
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -597,6 +613,7 @@ jobs:
         with:
           name: source-prepack-native-diagnostics
           path: |
+            packages/renderers/signature/rust/target/file-viewer-rpgp-build-identity.json
             packages/renderers/signature/rust/target/wasm32-unknown-unknown/release/file_viewer_rpgp_wrapper.wasm
             packages/renderers/signature/dist/rpgp-wasm/rpgp_wrapper_bg.wasm
           if-no-files-found: warn
