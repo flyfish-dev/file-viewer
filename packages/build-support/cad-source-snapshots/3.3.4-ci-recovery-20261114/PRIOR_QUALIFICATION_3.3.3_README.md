@@ -1,0 +1,13 @@
+# CAD corresponding source for File Viewer 3.3.3
+
+This bundled archive supplies the complete current preferred TypeScript source for the File Viewer CAD integration, an ordinary standalone build, and a fixed npm dependency lock. No private workspace scripts, credentials, customer files or compiled binaries are included.
+
+Use Node.js 24.20.0 and npm 11.19.0. Run `npm ci --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org/`, then `npm run build`. The resulting `dist/cad.iife.js` is 627,662 bytes with SHA-256 `97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f`. This standalone build pins Vite 8.3.3. The current Full owner uses Vite 8.3.5; the normal workspace-toolchain reconstruction separately verifies its exact distributed bytes.
+
+SOURCE_MANIFEST.json binds every preferred TypeScript/build-helper input to its exact public-workspace bytes. Own JSON configurations are hashed canonically so public-projection formatting has no effect; changed semantic values still fail. Two workspace manifests are normalized for ordinary local npm workspaces, and the standalone TypeScript configurations and build recipe make this subset independently buildable. These adaptations do not change any preferred TypeScript source. The standalone CAD extension-normalization helper is retained from the previously verified source archive; the normal current CAD source uses explicit relative module extensions.
+
+File Viewer source retains its Apache-2.0 grants. CAD 0.8.3 and DWF 0.6.7 retain their AGPL-3.0-only terms; LibreDWG bindings 0.7.9 retain GPL-3.0-only terms. LICENSES/ includes the complete original native license texts. upstream-sources.json identifies exact native owners, source commits, download URLs and SHA-256 values, including native build scripts. Dependency packages installed by the fixed lock retain their own original license texts.
+
+PRIOR_SOURCE_ARCHIVE_LICENSE_NOTICES.txt and PRIOR_SOURCE_ARCHIVE_README.md are unmodified historical notices from the earlier 3.2.0 integration source archive (SHA-256 ca91f24f8adf161bc41a787d111afca493f15f2ee15511dc25e5153a7a607b57). They document the prior rebuild and must not be read as the current dependency ledger or current runtime digest. Current dependency versions are fixed by package-lock.json.
+
+This source archive is retained in the complete public File Viewer source checkout and its CAD asset directories. Runtime-only npm archives retain the corresponding-source notice with an immutable HTTPS source download and its SHA-256 digest; they do not include source ZIPs. Follow that notice to obtain this integration source. The complete maintained File Viewer source remains in https://github.com/flyfish-dev/file-viewer.

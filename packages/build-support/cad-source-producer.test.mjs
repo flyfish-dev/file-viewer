@@ -9,7 +9,7 @@ import test from 'node:test'
 import JSZip from 'jszip'
 import { CAD_INTEGRATION_SOURCE } from './cad-source-offer.mjs'
 import { readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
-import { cadPreferredSourceDigest, listCadPreferredSourcePaths } from './cad-preferred-source.mjs'
+import { cadPreferredSourceDigest, cadSourceSnapshotIdentifier, listCadPreferredSourcePaths } from './cad-preferred-source.mjs'
 import { assertCadOutputTree, buildCadStandaloneSource, cadGitBlobDigest, captureCadCommittedInputs,
   captureCadPreferredSource, createDeterministicCadArchive,
   generateCadSourceSnapshot, planCadSourceSnapshot, prepareCadSourcePayload } from './cad-source-producer.mjs'
@@ -96,6 +96,11 @@ test('standalone adaptations bind original inputs, normalize only local lock met
   for (const [path, entry] of Object.entries(oldLock.packages))
     if (path && !['packages/core', 'packages/renderers/cad'].includes(path)) assert.deepEqual(lock.packages[path], entry)
   assert.deepEqual(payload.files.get('build.mjs'), prior.files.get('build.mjs'))
+  const revised = await prepareCadSourcePayload(source, '9.8.7', {
+    ...prior, manifest: { ...prior.manifest, sourceRevision: 'r1' }
+  })
+  assert.equal(revised.priorReadme, `PRIOR_QUALIFICATION_${prior.manifest.releaseVersion}-r1_README.md`)
+  assert.deepEqual(revised.files.get(revised.priorReadme), prior.files.get('README.md'))
 })
 
 test('an external dependency, optional dependency or original grant change requires review', async t => {
@@ -136,6 +141,54 @@ test('default plan leaves the entire fixture unchanged and cannot qualify dirty/
   assert.deepEqual(await inventory(source), before)
   const old = await planCadSourceSnapshot({ sourceRoot: source, version: CAD_INTEGRATION_SOURCE.releaseVersion })
   assert.ok(old.plan.blockers.some(message => message.includes('new version')))
+})
+
+test('explicit same-release revisions use new destinations and retain every source/worktree guard', async t => {
+  const version = CAD_INTEGRATION_SOURCE.releaseVersion
+  const source = await fixture(t, version), prior = await priorPromise
+  const revision = 'ci-recovery-20261114'
+  const { plan } = await planCadSourceSnapshot({ sourceRoot: source, version, sourceRevision: revision })
+  assert.equal(plan.snapshotId, `${version}-${revision}`)
+  assert.equal(plan.sourceRevision, revision)
+  assert.ok(plan.snapshot.endsWith(`/cad-source-snapshots/${version}-${revision}`))
+  assert.ok(plan.output.endsWith(`/cad-source/${version}-${revision}`))
+  assert.ok(!plan.blockers.some(message => message.includes('new version')))
+  assert.ok(plan.blockers.some(message => message.includes('clean committed')))
+  assert.equal(plan.releaseReady, false)
+  assert.equal(plan.publicSourceVerified, false)
+  assert.equal(plan.actualFullVerified, false)
+  const original = await readFile(join(source, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip'))
+  await assert.rejects(generateCadSourceSnapshot({ sourceRoot: source, version, sourceRevision: revision }), /generation blocked/)
+  assert.deepEqual(await readFile(join(source, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip')), original)
+  await put(source, 'packages/components/web-full/scripts/offline-asset-sanitize.mjs',
+    prior.files.get('packages/components/web-full/scripts/offline-asset-sanitize.mjs'))
+  const unchanged = await planCadSourceSnapshot({ sourceRoot: source, version, sourceRevision: revision })
+  assert.ok(unchanged.plan.blockers.some(message => message.includes('requires changed preferred-source inputs')))
+  const older = await planCadSourceSnapshot({ sourceRoot: source, version: '0.0.1', sourceRevision: revision })
+  assert.ok(older.plan.blockers.some(message => message.includes('new version')))
+})
+
+test('revision identifiers cannot escape, collide with the base directory or change release versions', () => {
+  assert.equal(cadSourceSnapshotIdentifier('3.3.4'), '3.3.4')
+  assert.equal(cadSourceSnapshotIdentifier('3.3.4', ''), '3.3.4')
+  assert.equal(cadSourceSnapshotIdentifier('3.3.4', 'r1'), '3.3.4-r1')
+  for (const revision of ['../outside', 'a/b', 'a\\b', '.', 'R1', 'r1-', 'r--1', 'x'.repeat(49)])
+    assert.throws(() => cadSourceSnapshotIdentifier('3.3.4', revision), /safe CAD source revision/)
+  assert.throws(() => cadSourceSnapshotIdentifier('3.3.4-r1', 'r2'), /explicit source version/)
+})
+
+test('a revised ZIP binds the exact revision without altering the retained archive', async t => {
+  const prior = await priorPromise, directory = await temporary(t)
+  const files = new Map(prior.files)
+  const manifest = { ...prior.manifest, sourceRevision: 'control-r1' }
+  files.set('SOURCE_MANIFEST.json', Buffer.from(json(manifest)))
+  const bytes = await createDeterministicCadArchive(files, manifest.releaseVersion)
+  await put(directory, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip', bytes)
+  const proof = { ...CAD_INTEGRATION_SOURCE, sourceRevision: 'control-r1', sha256: hash(bytes), bytes: bytes.length }
+  assert.equal((await readCadCorrespondingSource(directory, proof)).manifest.sourceRevision, 'control-r1')
+  await assert.rejects(readCadCorrespondingSource(directory, { ...proof, sourceRevision: 'control-r2' }), /source revision changed/)
+  await assert.rejects(readCadCorrespondingSource(directory, { ...proof, sourceRevision: '' }), /requires a source revision/)
+  assert.deepEqual(await readFile(join(root, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip')), prior.bytes)
 })
 
 test('archive bytes are order- and timezone-independent, with no implicit directories or private members', async () => {

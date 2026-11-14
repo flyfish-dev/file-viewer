@@ -17,6 +17,13 @@ const sortedJson = value => Array.isArray(value) ? value.map(sortedJson)
     : value
 
 export const cadPreferredSourceHashMode = path => jsonInputs.has(path) ? 'json' : 'bytes'
+export const cadSourceSnapshotIdentifier = (version, revision) => {
+  assert.match(version, /^\d+\.\d+\.\d+$/, 'An explicit source version is required')
+  if (revision === undefined || revision === '') return version
+  assert.ok(typeof revision === 'string' && revision.length <= 48 &&
+    /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(revision), 'An explicit safe CAD source revision is required')
+  return `${version}-${revision}`
+}
 export const cadPreferredSourceDigest = (path, bytes) => createHash('sha256').update(
   jsonInputs.has(path) ? Buffer.from(JSON.stringify(sortedJson(JSON.parse(bytes.toString('utf8'))))) : bytes
 ).digest('hex')

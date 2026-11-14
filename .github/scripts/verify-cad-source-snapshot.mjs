@@ -6,12 +6,17 @@ import { lstat, mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from 
 import { join, resolve } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { spawn } from 'node:child_process'
+import { cadSourceSnapshotIdentifier } from '../../packages/build-support/cad-preferred-source.mjs'
 
 const commit = process.env.CAD_SOURCE_COMMIT || ''
 const version = process.env.CAD_SOURCE_VERSION || ''
+const revision = process.env.CAD_SOURCE_REVISION || ''
 assert.match(commit, /^[a-f0-9]{40}$/, 'An immutable source commit is required')
 assert.match(version, /^\d+\.\d+\.\d+$/, 'An explicit source version is required')
-const sourceDirectory = `packages/build-support/cad-source-snapshots/${version}`
+const sourceDirectory = `packages/build-support/cad-source-snapshots/${cadSourceSnapshotIdentifier(
+  version,
+  revision
+)}`
 const workspace = resolve(process.env.GITHUB_WORKSPACE || '.')
 const cache = resolve(
   process.env.FILE_VIEWER_SOURCE_CACHE || process.env.RUNNER_TEMP || '.source-cache'
@@ -92,6 +97,11 @@ try {
 
 const manifest = JSON.parse(await readFile(join(expectedRoot, 'SOURCE_MANIFEST.json'), 'utf8'))
 assert.equal(manifest.releaseVersion, version)
+assert.equal(
+  manifest.sourceRevision || '',
+  revision,
+  'CAD source revision differs from the requested snapshot'
+)
 const expectedPaths = [...manifest.files.map((file) => file.path), 'SOURCE_MANIFEST.json'].sort()
 assert.deepEqual(
   await files(expectedRoot),

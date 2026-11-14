@@ -3,12 +3,14 @@ import { resolve } from 'node:path'
 import { generateCadSourceSnapshot, planCadSourceSnapshot } from './cad-source-producer.mjs'
 
 const usage = `Usage:
-  node packages/build-support/generate-cad-source-snapshot.mjs --version <x.y.z> [--source-root <clean-worktree>] [--write]
+  node packages/build-support/generate-cad-source-snapshot.mjs --version <x.y.z> [--source-revision <label>] [--source-root <clean-worktree>] [--write]
 
 The default is read-only planning: no files, installs or builds. Write mode
 requires clean committed source whose root/core/CAD versions all match the new
 version, and the recipe's actual Node 24.20.0/npm 11.19.0 toolchain. It never
 changes PATH, HOME or the reported toolchain. Run this CLI with that Node runtime.
+An explicit source revision permits changed preferred inputs for the same release
+in a new immutable version-revision directory; prior outputs are never replaced.
 
 Write mode performs two fresh standalone npm ci --ignore-scripts installations
 and real builds (source, then extracted-archive replay). It installs no browser.
@@ -31,10 +33,10 @@ if (args.length === 1 && args[0] === '--help') {
     seen.add(name)
     if (name === '--write') write = true
     else {
-      assert.ok(['--version', '--source-root'].includes(name), 'Unknown CAD producer argument: ' + name)
+      assert.ok(['--version', '--source-revision', '--source-root'].includes(name), 'Unknown CAD producer argument: ' + name)
       const value = args[++index]
       assert.ok(value && !value.startsWith('--'), 'Missing CAD producer argument value: ' + name)
-      options[name === '--version' ? 'version' : 'sourceRoot'] = value
+      options[name === '--version' ? 'version' : name === '--source-revision' ? 'sourceRevision' : 'sourceRoot'] = value
     }
   }
   assert.ok(options.version, usage)

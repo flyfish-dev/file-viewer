@@ -11,6 +11,10 @@ on:
         description: Version directory of the standalone source snapshot
         type: string
         required: false
+      source_revision:
+        description: Optional immutable source revision for the same release version
+        type: string
+        required: false
   release:
     types: [published]
 
@@ -27,6 +31,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       CAD_SOURCE_COMMIT: ${{ inputs.corresponding_source_commit }}
       CAD_SOURCE_VERSION: ${{ inputs.source_version }}
+      CAD_SOURCE_REVISION: ${{ inputs.source_revision }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:

@@ -8,7 +8,7 @@ import { dirname, join, relative, resolve } from 'node:path'
 import JSZip from 'jszip'
 import { CAD_INTEGRATION_SOURCE } from './cad-source-offer.mjs'
 import { readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
-import { cadPreferredSourceDigest, cadPreferredSourceHashMode, listCadPreferredSourcePaths } from './cad-preferred-source.mjs'
+import { cadPreferredSourceDigest, cadPreferredSourceHashMode, cadSourceSnapshotIdentifier, listCadPreferredSourcePaths } from './cad-preferred-source.mjs'
 import { readCadBuildToolchain } from './cad-rebuild-toolchain.mjs'
 
 export const CAD_SOURCE_PRODUCER_TOOLCHAIN = Object.freeze({ node: '24.20.0', npm: '11.19.0' })
@@ -196,7 +196,7 @@ export async function prepareCadSourcePayload(root, version, prior) {
   files.set('package-lock.json', json(lock))
   transformations.push({ path: 'package.json', kind: 'standalone-release-version', version },
     { path: 'package-lock.json', kind: 'local-workspace-metadata-only', version })
-  const priorReadme = `PRIOR_QUALIFICATION_${prior.manifest.releaseVersion}_README.md`
+  const priorReadme = `PRIOR_QUALIFICATION_${cadSourceSnapshotIdentifier(prior.manifest.releaseVersion, prior.manifest.sourceRevision)}_README.md`
   if (files.has(priorReadme)) assert.ok(files.get(priorReadme).equals(prior.files.get('README.md')), 'Conflicting prior README')
   files.set(priorReadme, prior.files.get('README.md'))
   transformations.push({ path: 'README.md', kind: 'generated-source-instructions', retainedPriorReadme: priorReadme })
@@ -208,8 +208,10 @@ export async function prepareCadSourcePayload(root, version, prior) {
   return { files, preferred, transformations, priorReadme }
 }
 
-export async function planCadSourceSnapshot({ sourceRoot, version }) {
+export async function planCadSourceSnapshot({ sourceRoot, version, sourceRevision }) {
   assert.match(version, stableVersion, 'An explicit stable --version x.y.z is required')
+  if (sourceRevision !== undefined) assert.ok(sourceRevision, 'An explicit safe CAD source revision is required')
+  const snapshotId = cadSourceSnapshotIdentifier(version, sourceRevision)
   const root = resolve(sourceRoot)
   assert.equal(await realpath(root), root, 'CAD source root cannot be a symlink')
   const prior = await readCadCorrespondingSource(root, CAD_INTEGRATION_SOURCE)
@@ -223,19 +225,29 @@ export async function planCadSourceSnapshot({ sourceRoot, version }) {
   for (const input of controllerInputs)
     if (committed.inputs.find(entry => entry.path === input.path)?.sha256 !== input.sha256)
       blockers.push('Executing CAD controller differs from committed source root: ' + input.path)
-  if (compareVersions(version, prior.manifest.releaseVersion) <= 0) blockers.push('Only a new version newer than the retained archive may be generated')
+  const versionOrder = compareVersions(version, prior.manifest.releaseVersion)
+  if (versionOrder < 0 || (versionOrder === 0 && !sourceRevision))
+    blockers.push('Only a new version newer than the retained archive may be generated without an explicit source revision')
+  if (versionOrder === 0 && sourceRevision) {
+    const identities = values => values.map(({ path, hashMode, sha256 }) => ({ path, hashMode, sha256 }))
+      .sort((a, b) => compareStrings(a.path, b.path))
+    const previous = identities(prior.manifest.preferredSourceInputs)
+    const current = identities(payload.preferred)
+    if (JSON.stringify(previous) === JSON.stringify(current))
+      blockers.push('A same-version source revision requires changed preferred-source inputs')
+  }
   for (const path of ['package.json', 'packages/core/package.json', 'packages/renderers/cad/package.json']) {
     const manifest = JSON.parse(await regularBytes(root, path))
     if (manifest.version !== version) blockers.push(`${path} version is ${manifest.version}, expected ${version}`)
   }
   for (const name of ['node', 'npm']) if (toolchain[name] !== CAD_SOURCE_PRODUCER_TOOLCHAIN[name])
     blockers.push(`Recipe requires ${name} ${CAD_SOURCE_PRODUCER_TOOLCHAIN[name]}, actual ${toolchain[name] || 'unavailable'}`)
-  const snapshot = join(root, 'packages/build-support/cad-source-snapshots', version)
-  const output = join(root, '.release/cad-source', version)
+  const snapshot = join(root, 'packages/build-support/cad-source-snapshots', snapshotId)
+  const output = join(root, '.release/cad-source', snapshotId)
   await safeOutputAncestors(root, snapshot)
   await safeOutputAncestors(root, output)
   const plan = {
-    mode: 'plan', version, sourceRoot: root, sourceCommit: identity.commit, clean: identity.clean,
+    mode: 'plan', version, sourceRevision, snapshotId, sourceRoot: root, sourceCommit: identity.commit, clean: identity.clean,
     previousVersion: prior.manifest.releaseVersion, priorArchiveSha256: hash(prior.bytes),
     preferredSourceInputs: payload.preferred.map(({ bytes, ...entry }) => ({ ...entry, bytes: bytes.length })),
     transformations: payload.transformations, toolchain, requiredToolchain: CAD_SOURCE_PRODUCER_TOOLCHAIN,
@@ -327,7 +339,7 @@ async function publishNewTree(path, files) {
 export async function generateCadSourceSnapshot(options) {
   const { plan, payload, prior } = await planCadSourceSnapshot(options)
   assert.deepEqual(plan.blockers, [], 'CAD source generation blocked: ' + plan.blockers.join('; '))
-  const lock = join(dirname(plan.output), `producer-${plan.version}.lock`)
+  const lock = join(dirname(plan.output), `producer-${plan.snapshotId}.lock`)
   await mkdir(dirname(lock), { recursive: true })
   await mkdir(lock) // Exclusive ownership; do not remove another run's stale lock.
   const lockIdentity = await lstat(lock)
@@ -351,7 +363,9 @@ export async function generateCadSourceSnapshot(options) {
       ...input, archiveSha256: hash(payload.files.get(input.path))
     }))
     const manifest = {
-      schemaVersion: 1, releaseVersion: plan.version, priorArchiveSha256: plan.priorArchiveSha256,
+      schemaVersion: 1, releaseVersion: plan.version,
+      ...(plan.sourceRevision ? { sourceRevision: plan.sourceRevision } : {}),
+      priorArchiveSha256: plan.priorArchiveSha256,
       preferredSourceInputs, manifestNormalization: payload.transformations,
       producerInputs: plan.committedInputs,
       controllerInputs: plan.controllerInputs,
@@ -365,7 +379,9 @@ export async function generateCadSourceSnapshot(options) {
     const archiveRoot = join(temporary, 'archive-validation')
     await mkdir(join(archiveRoot, 'packages/renderers/cad'), { recursive: true })
     await writeFile(join(archiveRoot, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip'), bytes, { flag: 'wx' })
-    const proof = { releaseVersion: plan.version, sha256: hash(bytes), bytes: bytes.length,
+    const proof = { releaseVersion: plan.version,
+      ...(plan.sourceRevision ? { sourceRevision: plan.sourceRevision } : {}),
+      sha256: hash(bytes), bytes: bytes.length,
       files: payload.files.size, runtimeBytes: runtime.bytes, runtimeSha256: runtime.sha256 }
     const extracted = await readCadCorrespondingSource(archiveRoot, proof)
     await verifyCadPreferredSourceInputs(plan.sourceRoot, extracted.manifest)
@@ -386,7 +402,8 @@ export async function generateCadSourceSnapshot(options) {
     const finalTools = await producerToolchain()
     assert.deepEqual(finalTools, plan.toolchain, 'CAD producer executable/toolchain changed during generation')
     const receipt = { schemaVersion: 1, status: 'local-source-and-extracted-replay', sourceCommit: plan.sourceCommit,
-      version: plan.version, archive: proof, toolchain: plan.toolchain, buildTools: built.installed,
+      version: plan.version, ...(plan.sourceRevision ? { sourceRevision: plan.sourceRevision } : {}),
+      archive: proof, toolchain: plan.toolchain, buildTools: built.installed,
       committedInputs: plan.committedInputs,
       controllerInputs: plan.controllerInputs,
       publicSourceVerified: false, actualFullVerified: false, releaseReady: false }

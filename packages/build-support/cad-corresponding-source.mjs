@@ -36,6 +36,10 @@ export async function readCadCorrespondingSource(root, proof) {
   const manifest = JSON.parse(files.get('SOURCE_MANIFEST.json').toString('utf8'))
   assert.equal(manifest.schemaVersion, 1)
   assert.equal(manifest.releaseVersion, proof.releaseVersion)
+  if (proof.sourceRevision !== undefined) {
+    assert.ok(proof.sourceRevision, 'CAD source proof requires a source revision')
+    assert.equal(manifest.sourceRevision, proof.sourceRevision, 'CAD source revision changed')
+  }
   assert.deepEqual(manifest.runtime, { bytes: proof.runtimeBytes, sha256: proof.runtimeSha256 })
   assert.equal(manifest.files.length + 1, files.size)
   assert.deepEqual(manifest.files.map(entry => entry.path).sort(),
