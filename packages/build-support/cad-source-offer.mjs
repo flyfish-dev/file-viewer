@@ -6,11 +6,11 @@ import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferred
 // This immutable public snapshot was read back and cold-built on Linux ARM64.
 // The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: '7028fe51d5bce7dc0262ccac9d6eb7f8386d5512',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/7028fe51d5bce7dc0262ccac9d6eb7f8386d5512',
-  sha256: '2cdcc33e9f1e6f6d3291a2c891563576443bfcea1586c430927b1097710964bc',
-  bytes: 191004348,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.4',
+  sourceCommit: 'a593ecd37fb14eb33eac91a5ac372c0e4f4629a8',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/a593ecd37fb14eb33eac91a5ac372c0e4f4629a8',
+  sha256: 'f1bc0b81f57d027a36c78d4b763e64e50aa2e0837f6195615aa1ca216b754503',
+  bytes: 192874837,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.4-ci-recovery-20261114',
   runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
 })
 
@@ -33,12 +33,13 @@ export const CAD_INTEGRATION_SOURCE = Object.freeze({
   // Complete preferred inputs with a measured standalone reproduction. Normal
   // Full/HTTPS verification remains mandatory; native owner versions stay fixed.
   releaseVersion: '3.3.4',
+  sourceRevision: 'ci-recovery-20261114',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '84c1a5f780755aba6e9d109a8995356b66bf554516da38499607db43f32c80a8',
-  bytes: 457569,
-  files: 100,
+  sha256: '41d42b3babc97e9d38b7bd47bbe3560b25f006bb32775fc2b149788dbcd87813',
+  bytes: 458788,
+  files: 101,
   runtimeBytes: 926335,
   runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
 })
