@@ -1,3 +1,5 @@
+import { assertSheetRegion, regionIntersects, ORDINARY_GRID_BUDGET } from '../../sourceRegion.js'
+import { readImageRowAnchors } from './drawingRowAnchor.js'
 import type {
   AlignmentStyle,
   CellObject,
@@ -21,7 +23,8 @@ import type {
   SheetImage,
   SheetModel,
   SheetStructure,
-  SheetWindow
+  SheetWindow,
+  SheetRegion
 } from '../type.js'
 import { getTintColor, indexedColors } from './color.js'
 import { parseCellRichText, richTextToPlainText } from './richText.js'
@@ -109,6 +112,7 @@ interface SheetSliceOptions {
   totalCols?: number
   charts?: SheetChartDefinition[]
   cellImages?: SheetCellImage[]
+  defaultFont?: CellStyle['font']
 }
 
 interface SheetObjectOptions {
@@ -465,6 +469,8 @@ export default class SheetJsModel implements SheetModel {
 
   private readonly _ws: WorkSheet
 
+  private readonly _defaultFont?: CellStyle['font']
+
   private readonly _startRow: number
 
   private readonly _pageSize: number
@@ -507,6 +513,7 @@ export default class SheetJsModel implements SheetModel {
 
   private constructor(ws: WorkSheet, options: SheetSliceOptions) {
     this._ws = ws
+    this._defaultFont = options.defaultFont
     this._startRow = Math.max(options.startRow || 0, 0)
     this._pageSize = Math.max(options.pageSize || 500, 1)
     this._totalRows = options.totalRows
@@ -611,9 +618,14 @@ export default class SheetJsModel implements SheetModel {
     sizes: number | number[] | undefined,
     fallback: number
   ) {
-    let offset = 0
-    for (let current = 0; current < index; current += 1) {
-      offset += getVectorSize(sizes, current, fallback)
+    if (typeof sizes === 'number') return index * sizes
+    let offset = index * fallback
+    if (sizes) for (const key in sizes) {
+      if (!Object.prototype.hasOwnProperty.call(sizes, key)) continue
+      const current = Number(key)
+      if (Number.isSafeInteger(current) && current >= 0 && current < index && sizes[current] !== undefined) {
+        offset += sizes[current] - fallback
+      }
     }
     return offset
   }
@@ -633,12 +645,13 @@ export default class SheetJsModel implements SheetModel {
   }
 
   private getImages(): SheetImage[] | undefined {
-    const drawings = (this.ws as WorkSheet & { '!drawings'?: { images?: DrawingImage[] } })['!drawings']
+    const drawings = (this.ws as WorkSheet & { '!drawings'?: { images?: DrawingImage[]; raw?: unknown } })['!drawings']
     const images = drawings?.images || []
     if (!images.length && !this._cellImages.length) {
       return undefined
     }
 
+    const rowAnchors = readImageRowAnchors(drawings?.raw, images)
     const drawingImages = images.flatMap((image, index): SheetImage[] => {
       const anchor = image.anchor
       if (!image.dataURI || !anchor) {
@@ -654,6 +667,7 @@ export default class SheetJsModel implements SheetModel {
       return [{
         id: image.id || image.objectId?.toString() || image.target || `image-${index + 1}`,
         src: image.dataURI,
+        ...(rowAnchors.has(image) ? { rowAnchor: rowAnchors.get(image) } : {}),
         contentType: image.contentType,
         left: Math.max(0, left),
         top: Math.max(0, top),
@@ -672,6 +686,7 @@ export default class SheetJsModel implements SheetModel {
       }
       return [{
         ...image,
+        rowAnchor: { mode: 'cell' as const, fromRow: image.row, fromOffset: 0 },
         left: this.getAxisOffset(image.col, this.getColWidths(), this.defaults.colWidth),
         top: this.getAxisOffset(image.row, this.getAllRowHeights(), this.defaults.rowHeight),
         width,
@@ -697,6 +712,7 @@ export default class SheetJsModel implements SheetModel {
 
       return {
         id: chart.id,
+        ...(chart.rowAnchor ? { rowAnchor: chart.rowAnchor } : {}),
         type: chart.type,
         title: chart.title,
         categoryAxisTitle: chart.categoryAxisTitle,
@@ -755,29 +771,54 @@ export default class SheetJsModel implements SheetModel {
     return fixMatrix(result, this.totalCols)
   }
 
+  private getCellMetadata(rowIndex: number, colIndex: number, cell: CellObject | undefined): SheetCellMetadata | undefined {
+    const { '!cols': cols = [], '!rows': rows = [] } = this.ws as WorkSheet & {
+      '!cols'?: SheetColumnMeta[], '!rows'?: SheetRowMeta[]
+    }
+    const inheritedStyle = mergeStyle(cols[colIndex]?.s, rows[rowIndex]?.s, cell?.s as CellStyle | undefined)
+    const rawStyle = resolveTableCellStyle(this.ws, rowIndex, colIndex, inheritedStyle)
+    let displayStyle = rawStyle
+    // Resolve table styles first: even a cell absent from a sparse worksheet
+    // can have table formatting. Do not allocate metadata for empty holes
+    // merely because a workbook default font is available.
+    if (this._defaultFont && (cell || rawStyle)) {
+      const explicitFont = inheritedStyle?.font || (
+        ['name', 'sz', 'bold', 'italic', 'color'].some(key => inheritedStyle?.[key] !== undefined)
+          ? inheritedStyle : undefined
+      )
+      displayStyle = {
+        ...rawStyle,
+        // A selected font record replaces bold/italic/color defaults. Only
+        // missing basic metrics inherit, avoiding bold leaking into an
+        // explicit normal font whose record omits the false flags.
+        font: {
+          ...(explicitFont ? {
+            name: this._defaultFont.name,
+            sz: this._defaultFont.sz,
+            ...explicitFont
+          } : this._defaultFont),
+          // Table DXFs are partial font overrides, not replacement records.
+          ...rawStyle?.font
+        }
+      }
+    }
+    const className = alignToClassName(rawStyle?.alignment)
+    const style = getCellStyle(displayStyle)
+    const richText = parseCellRichText(cell)
+    if (!className && !style && !richText?.length) return undefined
+    return {
+      ...(className ? { className } : {}),
+      style: style || {},
+      ...(richText?.length ? { richText } : {})
+    }
+  }
+
   private getCell() {
     const result: Record<string, SheetCellMetadata> = {}
-    const { '!cols': cols = [], '!rows': rows = [] } = this.ws as WorkSheet & {
-      '!cols'?: SheetColumnMeta[],
-      '!rows'?: SheetRowMeta[]
-    }
-
     for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex += 1) {
       for (let colIndex = 0; colIndex < this.totalCols; colIndex += 1) {
-        const cell = this.getCellAt(rowIndex, colIndex)
-        const inheritedStyle = mergeStyle(cols[colIndex]?.s, rows[rowIndex]?.s, cell?.s as CellStyle | undefined)
-        const rawStyle = resolveTableCellStyle(this.ws, rowIndex, colIndex, inheritedStyle)
-        const className = alignToClassName(rawStyle?.alignment)
-        const style = getCellStyle(rawStyle)
-        const richText = parseCellRichText(cell)
-        if (!className && !style && !richText?.length) {
-          continue
-        }
-        result[cellKey(rowIndex - this.startRow, colIndex)] = {
-          ...(className ? { className } : {}),
-          style: style || {},
-          ...(richText?.length ? { richText } : {})
-        }
+        const metadata = this.getCellMetadata(rowIndex, colIndex, this.getCellAt(rowIndex, colIndex))
+        if (metadata) result[cellKey(rowIndex - this.startRow, colIndex)] = metadata
       }
     }
     return result
@@ -808,7 +849,9 @@ export default class SheetJsModel implements SheetModel {
         }
       }
     }
-    if (heights.length === 1) {
+    // One explicit first-row height is still sparse in a multi-row window.
+    // Collapsing [0] to 0 would hide every row, rather than only that first row.
+    if (heights.length === 1 && this.endRow - this.startRow === 1) {
       return heights[0]
     }
     return heights.length ? heights : rowHeight
@@ -818,15 +861,24 @@ export default class SheetJsModel implements SheetModel {
   private getAllRowHeights() {
     const { '!rows': rows = [] } = this.ws as WorkSheet & { '!rows'?: SheetRowMeta[] }
     const heights: number[] = []
-    if (rows.length) {
-      for (let absoluteRow = 0; absoluteRow < this.totalRows; absoluteRow += 1) {
-        const height = getRowPixelHeight(rows[absoluteRow])
-        if (height !== undefined) {
-          heights[absoluteRow] = height
-        }
+    let entries = 0, visited = 0
+    for (const key in rows) {
+      if (!Object.prototype.hasOwnProperty.call(rows, key)) continue
+      const absoluteRow = Number(key)
+      if (!Number.isSafeInteger(absoluteRow) || absoluteRow < 0 || absoluteRow >= this.totalRows) continue
+      if (visited >= ORDINARY_GRID_BUDGET.rows) {
+        throw Object.assign(new RangeError('Stored row layout exceeds the metadata budget; request a data-only window or source region.'), {
+          code: 'LAYOUT_BUDGET_EXCEEDED', limit: ORDINARY_GRID_BUDGET.rows,
+        })
+      }
+      visited++
+      const height = getRowPixelHeight(rows[absoluteRow])
+      if (height !== undefined) {
+        entries++
+        heights[absoluteRow] = height
       }
     }
-    return heights.length ? heights : undefined
+    return entries ? heights : undefined
   }
 
   private getAutoFitColumns() {
@@ -900,7 +952,7 @@ export default class SheetJsModel implements SheetModel {
   }
 
   private get hasAnchoredObjects() {
-    const drawings = (this.ws as WorkSheet & { '!drawings'?: { images?: DrawingImage[] } })['!drawings']
+    const drawings = (this.ws as WorkSheet & { '!drawings'?: { images?: DrawingImage[]; raw?: unknown } })['!drawings']
     return !!drawings?.images?.length || !!this._charts.length || !!this._cellImages.length
   }
 
@@ -940,10 +992,73 @@ export default class SheetJsModel implements SheetModel {
       merge: this.getAllMerge(),
       colWidths: this.getColWidths(),
       rowHeights: this.getAllRowHeights(),
+      rowSizing: (this.ws['!fileViewerLayout'] as StoredSheetLayout | undefined)?.rowSizing,
       columns: this.getColumns(),
       images: this.getImages(),
       charts: this.getCharts()
     }
+  }
+
+  /** Source coordinates stay explicit. No full-sheet dimension/offset getter is used here. */
+  public toRegionObject(region: SheetRegion) {
+    assertSheetRegion(region)
+    const { '!cols': sourceCols = [], '!rows': sourceRows = [] } = this.ws as WorkSheet & {
+      '!cols'?: SheetColumnMeta[], '!rows'?: SheetRowMeta[]
+    }
+    const layout = this.ws['!fileViewerLayout'] as StoredSheetLayout | undefined
+    const defaults = this.defaults
+    const fixedRows = new Set(layout?.rowSizing?.fixedRows || [])
+    const data: string[][] = [], cell: Record<string, SheetCellMetadata> = {}
+    const rows = Array.from({ length: region.rowCount }, (_, localRow) => {
+      const sourceRow = region.startRow + localRow
+      const values: string[] = []
+      for (let localCol = 0; localCol < region.colCount; localCol++) {
+        const sourceCol = region.startCol + localCol, value = this.getCellAt(sourceRow, sourceCol)
+        values.push(this._cellImageKeys.has(cellKey(sourceRow, sourceCol)) ? '' : formatCellValue(value))
+        const metadata = this.getCellMetadata(sourceRow, sourceCol, value)
+        if (metadata) cell[cellKey(localRow, localCol)] = metadata
+      }
+      data.push(values)
+      const height = getRowPixelHeight(sourceRows[sourceRow])
+      return { sourceRow, height: height ?? defaults.rowHeight,
+        fixed: height !== undefined || fixedRows.has(sourceRow), hidden: height === 0 }
+    })
+    const columns = Array.from({ length: region.colCount }, (_, localCol) => {
+      const sourceCol = region.startCol + localCol, meta = sourceCols[sourceCol]
+      return { sourceCol, title: utils.encode_col(sourceCol), hidden: !!meta?.hidden,
+        width: getColumnPixelWidth(meta, layout?.maximumDigitWidth) ?? defaults.colWidth }
+    })
+    const merges = this.getAllMerge().filter(merge => regionIntersects(region, merge)).map(source => {
+      const anchor = this.getCellAt(source.row, source.col)
+      return { source, anchorValue: formatCellValue(anchor),
+        anchorMetadata: this.getCellMetadata(source.row, source.col, anchor),
+        contained: source.row >= region.startRow && source.col >= region.startCol
+          && source.row + source.rowspan <= region.startRow + region.rowCount
+          && source.col + source.colspan <= region.startCol + region.colCount }
+    })
+    // Metadata follows populated source entries/objects, never the maximum coordinate rectangle.
+    // The renderer must intersect and rebase these source objects, not treat them as local pixels.
+    const drawings = (this.ws as WorkSheet & { '!drawings'?: { images?: DrawingImage[]; raw?: unknown } })['!drawings']
+    const sourceImages = drawings?.images || [], rowAnchors = readImageRowAnchors(drawings?.raw, sourceImages)
+    const sourceObjects = {
+      images: sourceImages.map(image => ({ id: image.id, src: image.dataURI, anchor: image.anchor,
+        contentType: image.contentType, rowAnchor: rowAnchors.get(image) })),
+      charts: this._charts,
+      cellImages: this._cellImages,
+    }
+    const sourceGeometry = {
+      rows: Object.keys(sourceRows).flatMap(key => {
+        const index = Number(key), size = getRowPixelHeight(sourceRows[index])
+        return Number.isSafeInteger(index) && index >= 0 && size !== undefined ? [{ index, size }] : []
+      }),
+      columns: Object.keys(sourceCols).flatMap(key => {
+        const index = Number(key), size = getColumnPixelWidth(sourceCols[index], layout?.maximumDigitWidth)
+        return Number.isSafeInteger(index) && index >= 0 && size !== undefined ? [{ index, size }] : []
+      }),
+    }
+    return { coordinateSpace: 'region-local' as const, region: { ...region }, defaults, data, cell,
+      rows, columns, merges, sourceObjects, sourceGeometry,
+      autoHeightDisabled: !!layout?.rowSizing?.autoHeightDisabled }
   }
 
   public toObject(options: SheetObjectOptions = {}): object {

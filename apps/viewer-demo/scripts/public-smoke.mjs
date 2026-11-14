@@ -178,7 +178,7 @@ try {
       insideViewport: rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1
     }
   })
-  if (mobileLocaleMenu.optionCount !== 4 || !mobileLocaleMenu.insideViewport) {
+  if (mobileLocaleMenu.optionCount !== 6 || !mobileLocaleMenu.insideViewport) {
     throw new Error(`Mobile locale menu layout failed: ${JSON.stringify(mobileLocaleMenu)}`)
   }
   await page.keyboard.press('Escape')
@@ -287,6 +287,8 @@ try {
 
   const localeCases = [
     ['zh-CN', 'zh-CN'],
+    ['zh-TW', 'zh-TW'],
+    ['zh-HK', 'zh-HK'],
     ['en-US', 'en-US'],
     ['de-DE', 'de-DE'],
     ['ja-JP', 'ja-JP']
@@ -295,12 +297,17 @@ try {
     await page.locator('.viewer-locale-trigger').click()
     await page.locator('.viewer-locale-menu').waitFor({ state: 'visible', timeout })
     const localeOptionCount = await page.locator('.viewer-locale-option').count()
-    if (localeOptionCount !== 4) {
-      throw new Error(`Expected four locale options, got ${localeOptionCount}.`)
+    if (localeOptionCount !== 6) {
+      throw new Error(`Expected six locale options, got ${localeOptionCount}.`)
     }
     await page.locator(`.viewer-locale-option[data-locale="${locale}"]`).click()
     await page.waitForFunction(expected => document.documentElement.lang === expected, documentLocale)
     await page.locator('.viewer-locale-menu').waitFor({ state: 'detached', timeout })
+    if (locale === 'zh-TW' || locale === 'zh-HK') {
+      const title = await page.title()
+      const expected = locale === 'zh-TW' ? '線上預覽' : '在線預覽'
+      if (!title.includes(expected)) throw new Error(`${locale} demo copy did not update: ${title}`)
+    }
   }
 
   await page.locator('.viewer-locale-trigger').click()
@@ -365,7 +372,7 @@ try {
     }
   })
   if (
-    compareLocaleMenu.optionCount !== 4 ||
+    compareLocaleMenu.optionCount !== 6 ||
     !compareLocaleMenu.insideViewport ||
     !compareLocaleMenu.usesGlobeIcon ||
     compareLocaleMenu.usesEarthIcon
@@ -403,7 +410,7 @@ try {
     }
   })
   if (
-    compareMobileLocaleMenu.optionCount !== 4 ||
+    compareMobileLocaleMenu.optionCount !== 6 ||
     !compareMobileLocaleMenu.insideViewport ||
     compareMobileLocaleMenu.documentWidth > compareMobileLocaleMenu.viewportWidth + 2
   ) {

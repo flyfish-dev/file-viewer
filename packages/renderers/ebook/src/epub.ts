@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   type FileRenderContext,
   type FileViewerRenderedInstance,
 } from '@file-viewer/core';
@@ -307,7 +308,7 @@ export default async function renderEpub(
   target: HTMLDivElement,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   let book: EpubBook | undefined;
   let rendition: EpubRendition | undefined;
   let disposed = false;
@@ -327,16 +328,16 @@ export default async function renderEpub(
   const toolbar = createElement('div', 'epub-toolbar');
   const tocButton = createElement('button', 'epub-icon-button') as HTMLButtonElement;
   tocButton.type = 'button';
-  tocButton.title = t('ebook.toc');
+  t.attr(tocButton, 'title', 'ebook.toc');
   tocButton.append(createElement('span'));
   const titleRoot = createElement('div', 'epub-title');
   const titleText = createElement('strong', undefined, title);
-  const subtitleText = createElement('span', undefined, t('ebook.reading'));
+  const subtitleText = t.text(createElement('span', undefined), 'ebook.reading');
   titleRoot.append(titleText, subtitleText);
   const actions = createElement('div', 'epub-actions');
-  const prevButton = createElement('button', 'epub-button', t('epub.previousPage')) as HTMLButtonElement;
-  const progressText = createElement('span', 'epub-progress', t('ebook.reading'));
-  const nextButton = createElement('button', 'epub-button', t('epub.nextPage')) as HTMLButtonElement;
+  const prevButton = t.text(createElement('button', 'epub-button'), 'epub.previousPage') as HTMLButtonElement;
+  const progressText = t.text(createElement('span', 'epub-progress'), 'ebook.reading');
+  const nextButton = t.text(createElement('button', 'epub-button'), 'epub.nextPage') as HTMLButtonElement;
   prevButton.type = 'button';
   nextButton.type = 'button';
   actions.append(prevButton, progressText, nextButton);
@@ -345,13 +346,13 @@ export default async function renderEpub(
   const body = createElement('div', 'epub-body');
   const toc = createElement('aside', 'epub-toc');
   const tocHead = createElement('div', 'epub-toc-head');
-  const tocCount = createElement('span', undefined, t('ebook.itemCount', { count: 0 }));
-  tocHead.append(createElement('strong', undefined, t('ebook.toc')), tocCount);
+  const tocCount = t.text(createElement('span', undefined), 'ebook.itemCount', { count: 0 });
+  tocHead.append(t.text(createElement('strong', undefined), 'ebook.toc'), tocCount);
   const tocList = createElement('div', 'epub-toc-list');
   toc.append(tocHead, tocList);
   const stageWrap = createElement('main', 'epub-stage-wrap');
   const stage = createElement('div', 'epub-stage');
-  const state = createElement('div', 'epub-state', t('epub.loading'));
+  const state = t.text(createElement('div', 'epub-state'), 'epub.loading');
   stageWrap.append(stage, state);
   body.append(toc, stageWrap);
   root.append(toolbar, body);
@@ -379,7 +380,7 @@ export default async function renderEpub(
 
   const progressLabel = () => {
     if (typeof progress === 'number') {
-      return `${progress}%`;
+      return t.formatNumber(progress / 100, { style: 'percent', maximumFractionDigits: 0 });
     }
     return currentChapter() || t('ebook.reading');
   };
@@ -389,13 +390,13 @@ export default async function renderEpub(
     toc.hidden = !tocOpen;
     tocButton.classList.toggle('active', tocOpen);
     titleText.textContent = title;
-    subtitleText.textContent = author || progressLabel();
-    progressText.textContent = progressLabel();
+    t.bind(subtitleText, node => { node.textContent = author || progressLabel(); });
+    t.bind(progressText, node => { node.textContent = progressLabel(); });
     prevButton.disabled = status !== 'ready' || atStart;
     nextButton.disabled = status !== 'ready' || atEnd;
     state.hidden = status === 'ready';
     state.classList.toggle('error', status === 'error');
-    tocCount.textContent = t('ebook.itemCount', { count: tocItems.length });
+    t.text(tocCount, 'ebook.itemCount', { count: tocItems.length });
     Array.from(tocList.querySelectorAll<HTMLButtonElement>('.epub-toc-item')).forEach(button => {
       const itemPath = button.dataset.href?.split('#')[0];
       const currentPath = currentHref.split('#')[0];
@@ -409,7 +410,7 @@ export default async function renderEpub(
     }
     console.error(error);
     status = 'error';
-    state.textContent = error instanceof Error ? error.message : String(error);
+    t.bind(state, node => { node.textContent = normalizeFileViewerErrorMessage(error, context?.options); });
     syncUi();
   };
 
@@ -481,7 +482,7 @@ export default async function renderEpub(
 
   const openBook = async () => {
     status = 'loading';
-    state.textContent = t('epub.loading');
+    t.text(state, 'epub.loading');
     syncUi();
 
     try {
@@ -541,7 +542,7 @@ export default async function renderEpub(
 
       await rendition.display(pickInitialHref(tocItems));
       if (!await waitForReadableFrame()) {
-        throw new Error(t('epub.renderIncomplete'));
+        throw t.error('epub.renderIncomplete');
       }
       if (disposed) {
         return;

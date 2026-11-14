@@ -1,5 +1,22 @@
 # Changelog
 
+## File Viewer v3.3.4 — Unreleased
+
+Release preparation; npm publication and deployment are pending.
+
+- Update UI labels in place across seven supported languages in the shared viewer and nested previews. Preserve document content, reading position, selection and media state, release retired label subscriptions, and ignore late asynchronous results.
+- Complete bundled PDF and PPT assets when Full imperative `load` or `update` receives partial options, preserving source-only delegation and asynchronous errors.
+- Restore matching PDF.js annotation-layer styles for links, form widgets and comment popups.
+- Improve PPTX chart axis-label height and measure text using loaded fonts, retaining authored styles and discarding stale chart work.
+- Keep signature details within the host viewer, preserve focus and reading position, and bound long certificate and validation-detail lists.
+- Preserve meaningful spreadsheet source ranges and drawing anchors, size wrapped rows, and provide comment/thread previews with keyboard navigation and localized timestamps.
+- Respect inherited OFD drawing parameters and explicit text fill/stroke flags. Track the active page through nested scrolling containers.
+- Add bounded optional textbox, anchor and section metadata to legacy DOC parsing while retaining the existing linear content view.
+
+Planned cohort: 88 mainline packages at `3.3.4` and `msdoc-viewer@0.2.16` (89 targets). Vue 2.6/2.7 and existing Full package compatibility remain supported.
+
+Known limits: DOCX [#459](https://github.com/flyfish-dev/file-viewer/issues/459) remains unresolved. [#461](https://github.com/flyfish-dev/file-viewer/issues/461) adds metadata only; floating textbox placement, wrap exclusion and Word-compatible pagination remain unsupported.
+
 ## File Viewer v3.3.3 - 2026-10-31
 
 - Upgrade binary PPT/POT to the Apache-2.0 TypeScript `@file-viewer/ppt@1.0.2` engine. Ship exact package assets and the parsing Worker through Full, CLI and Vite routes, remove obsolete native WASM/font/cache requirements, and retain the PDF fixes from the published 3.3.2 baseline.

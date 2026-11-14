@@ -187,6 +187,8 @@ try {
 
   const actionableErrors = errors.filter((message) => !/favicon|ResizeObserver loop/i.test(message))
   assert.deepEqual(actionableErrors, [], `Browser console errors:\n${actionableErrors.join('\n')}`)
+  globalThis.__fileViewerPrepackObserveOwnerComplete?.({ engine: 'chromium', phase: 'original-main-toolbar',
+    caseIds: ['main-toolbar-shadow-slots', 'main-toolbar-reactive-slot-api', 'main-toolbar-renderer-bounded-search'] })
 
   console.log(
     '[verify-vue3-toolbar-browser] Vue 3 full, Shadow DOM slots, reactive slot API and renderer-bounded search verified.'

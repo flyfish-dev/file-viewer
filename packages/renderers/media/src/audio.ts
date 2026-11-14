@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   type FileRenderContext,
   type FileViewerRenderedInstance
 } from '@file-viewer/core'
@@ -19,6 +20,7 @@ const AUDIO_MIME_MAP: Record<string, string> = {
 }
 
 interface MidiTrackSummary {
+  index: number
   name: string
   instrument: string
   channel: number
@@ -117,38 +119,51 @@ const renderAudioElement = (
   type: string,
   context?: FileRenderContext
 ): FileViewerRenderedInstance => {
-  const t = createFileViewerTranslator(context?.options)
+  const document = target.ownerDocument
+  const bindings = createFileViewerI18nBindings(context?.i18n)
+  const element = <K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) => {
+    const node = document.createElement(tag)
+    if (className) node.className = className
+    if (text !== undefined) node.textContent = text
+    return node
+  }
+  const owned = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, value: () => string) => {
+    const node = element(tag, className)
+    bindings.text(node, value)
+    return node
+  }
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const normalizedType = type.trim().toLowerCase() || 'mp3'
   const mimeType = AUDIO_MIME_MAP[normalizedType] || 'audio/*'
   const sourceUrl = URL.createObjectURL(new Blob([buffer], { type: mimeType }))
 
-  const root = createElement('div', 'fv-audio-viewer')
-  const card = createElement('section', 'fv-audio-card')
-  const art = createElement('div', 'fv-audio-art')
-  art.append(createElement('span'), createElement('i'))
+  const root = element('div', 'fv-audio-viewer')
+  const card = element('section', 'fv-audio-card')
+  const art = element('div', 'fv-audio-art')
+  art.append(element('span'), element('i'))
 
-  const copy = createElement('div', 'fv-audio-copy')
+  const copy = element('div', 'fv-audio-copy')
   copy.append(
-    createElement('span', 'fv-audio-kicker', normalizedType.toUpperCase() || 'AUDIO'),
-    createElement('strong', '', t('media.audio.title')),
-    createElement('p', '', t('media.audio.description'))
+    element('span', 'fv-audio-kicker', normalizedType.toUpperCase() || 'AUDIO'),
+    owned('strong', '', () => t('media.audio.title')),
+    owned('p', '', () => t('media.audio.description'))
   )
 
-  const currentTimeText = createElement('span', '', '00:00')
-  const durationText = createElement('span', '', '--:--')
-  const progressFill = createElement('i')
-  const progress = createElement('div', 'fv-audio-progress')
+  const currentTimeText = element('span', '', '00:00')
+  const durationText = element('span', '', '--:--')
+  const progressFill = element('i')
+  const progress = element('div', 'fv-audio-progress')
   progress.setAttribute('aria-hidden', 'true')
   progress.append(progressFill)
 
-  const meter = createElement('div', 'fv-audio-meter')
+  const meter = element('div', 'fv-audio-meter')
   meter.append(currentTimeText, progress, durationText)
 
-  const audio = createElement('audio', 'fv-audio-control')
+  const audio = element('audio', 'fv-audio-control')
   audio.src = sourceUrl
   audio.controls = true
   audio.preload = 'metadata'
-  audio.textContent = t('media.audio.unsupported')
+  bindings.text(audio, () => t('media.audio.unsupported'))
 
   const handleLoadedMetadata = () => {
     durationText.textContent = Number.isFinite(audio.duration) && audio.duration > 0
@@ -168,9 +183,12 @@ const renderAudioElement = (
 
   card.append(art, copy, meter, audio)
   root.append(card)
-  target.replaceChildren(createStyle(), root)
+  const style = document.createElement('style')
+  style.textContent = audioStyle
+  target.replaceChildren(style, root)
 
   return createRenderedInstance(target, () => {
+    bindings.destroy()
     audio.pause()
     audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
     audio.removeEventListener('timeupdate', handleTimeUpdate)
@@ -183,47 +201,65 @@ const renderMidiElement = (
   target: HTMLDivElement,
   context?: FileRenderContext
 ): FileViewerRenderedInstance => {
-  const t = createFileViewerTranslator(context?.options)
+  const document = target.ownerDocument
+  const bindings = createFileViewerI18nBindings(context?.i18n)
+  const element = <K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) => {
+    const node = document.createElement(tag)
+    if (className) node.className = className
+    if (text !== undefined) node.textContent = text
+    return node
+  }
+  const owned = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, value: () => string) => {
+    const node = element(tag, className)
+    bindings.text(node, value)
+    return node
+  }
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   let disposed = false
-  const root = createElement('div', 'fv-midi-viewer')
-  const card = createElement('section', 'fv-midi-card')
+  let ownedErrorKey: 'media.midi.install' | undefined
+  const root = element('div', 'fv-midi-viewer')
+  const card = element('section', 'fv-midi-card')
   const header = document.createElement('header')
-  const title = createElement('strong', '', t('media.midi.title'))
-  header.append(createElement('span', '', 'MIDI'), title)
-  const body = createElement('div', 'fv-midi-state', t('media.midi.loading'))
+  const title = owned('strong', '', () => t('media.midi.title'))
+  header.append(element('span', '', 'MIDI'), title)
+  const body = owned('div', 'fv-midi-state', () => t('media.midi.loading'))
   card.append(header, body)
   root.append(card)
-  target.replaceChildren(createStyle(), root)
+  const style = document.createElement('style')
+  style.textContent = audioStyle
+  target.replaceChildren(style, root)
 
-  const renderError = (message: string) => {
+  const renderError = (message: string, ownedFallback = false) => {
+    bindings.release(body)
     body.className = 'fv-midi-state fv-midi-error'
-    body.textContent = message
+    if (ownedFallback) bindings.text(body, () => t(ownedErrorKey || 'media.midi.parseFailed'))
+    else body.textContent = message
   }
 
   const renderTrackTable = (tracks: MidiTrackSummary[]) => {
-    const wrap = createElement('div', 'fv-midi-table-wrap')
-    const table = createElement('table', 'fv-midi-table')
+    const wrap = element('div', 'fv-midi-table-wrap')
+    const table = element('table', 'fv-midi-table')
     const thead = document.createElement('thead')
     const headerRow = document.createElement('tr')
     for (const label of [
-      t('media.midi.trackHeader'),
-      t('media.midi.instrumentHeader'),
-      t('media.midi.channelHeader'),
-      t('media.midi.noteCountHeader'),
-      t('media.midi.durationHeader')
-    ]) {
-      headerRow.append(createElement('th', '', label))
+      'media.midi.trackHeader',
+      'media.midi.instrumentHeader',
+      'media.midi.channelHeader',
+      'media.midi.noteCountHeader',
+      'media.midi.durationHeader'
+    ] as const) {
+      headerRow.append(owned('th', '', () => t(label)))
     }
     thead.append(headerRow)
     const tbody = document.createElement('tbody')
-    for (const track of tracks) {
+    for (const [index, track] of tracks.entries()) {
       const row = document.createElement('tr')
       row.append(
-        createElement('td', '', track.name),
-        createElement('td', '', track.instrument),
-        createElement('td', '', String(track.channel + 1)),
-        createElement('td', '', String(track.notes)),
-        createElement('td', '', formatDuration(track.duration))
+        track.name ? element('td', '', track.name) : owned('td', '', () => t('media.midi.trackFallback', { index: track.index })),
+        track.instrument ? element('td', '', track.instrument) : owned('td', '', () => t('media.midi.unknownInstrument')),
+        owned('td', '', () => t.formatNumber(track.channel + 1)),
+        owned('td', '', () => t.formatNumber(track.notes)),
+        element('td', '', formatDuration(track.duration))
       )
       tbody.append(row)
     }
@@ -238,19 +274,22 @@ const renderMidiElement = (
     ppq: number
     tracks: MidiTrackSummary[]
   }) => {
-    title.textContent = input.name
+    bindings.release(title)
+    if (input.name) title.textContent = input.name
+    else bindings.text(title, () => t('media.midi.title'))
     const totalNotes = input.tracks.reduce((sum, track) => sum + track.notes, 0)
-    const stats = createElement('div', 'fv-midi-stats')
+    const stats = element('div', 'fv-midi-stats')
     for (const [label, value] of [
-      [t('media.midi.durationStat'), formatDuration(input.duration)],
-      ['PPQ', String(input.ppq)],
-      [t('media.midi.trackStat'), String(input.tracks.length)],
-      [t('media.midi.noteStat'), String(totalNotes)]
-    ]) {
+      [() => t('media.midi.durationStat'), () => formatDuration(input.duration)],
+      [() => 'PPQ', () => t.formatNumber(input.ppq)],
+      [() => t('media.midi.trackStat'), () => t.formatNumber(input.tracks.length)],
+      [() => t('media.midi.noteStat'), () => t.formatNumber(totalNotes)]
+    ] as const) {
       const stat = document.createElement('div')
-      stat.append(createElement('span', '', label), createElement('strong', '', value))
+      stat.append(owned('span', '', label), owned('strong', '', value))
       stats.append(stat)
     }
+    bindings.release(body)
     body.replaceWith(stats, renderTrackTable(input.tracks))
   }
 
@@ -258,34 +297,47 @@ const renderMidiElement = (
     try {
       const loadMidi = getFileViewerMidiLoader()
       if (!loadMidi) {
-        throw new Error('MIDI support is opt-in. Run `npx file-viewer-cli add midi --write`, then `npx file-viewer-cli install --yes`.')
+        ownedErrorKey = 'media.midi.install'
+        throw t.error('media.midi.install')
       }
       const { Midi } = await loadMidi()
+      if (disposed) return
       const midi = new Midi(buffer)
       if (disposed) {
         return
       }
-      renderSummary({
-        name: midi.name || t('media.midi.title'),
+      const summary = {
+        name: midi.name || '',
         duration: midi.duration,
         ppq: midi.header.ppq,
         tracks: midi.tracks.map((track, index) => ({
-          name: track.name || `Track ${index + 1}`,
-          instrument: track.instrument?.name || track.instrument?.family || 'Unknown',
+          index: index + 1,
+          name: track.name || '',
+          instrument: track.instrument?.name || track.instrument?.family || '',
           channel: track.channel,
           notes: track.notes.length,
           duration: track.duration
         }))
-      })
-    } catch (error) {
-      if (!disposed) {
-        renderError(error instanceof Error ? error.message : t('media.midi.parseFailed'))
       }
+      if (disposed) return
+      renderSummary(summary)
+    } catch (error) {
+      if (disposed) return
+      let detail = ''
+      let ownedFallback = Boolean(ownedErrorKey) || !(error instanceof Error)
+      try {
+        if (!ownedFallback) detail = (error as Error).message
+      } catch {
+        ownedFallback = true
+      }
+      if (disposed) return
+      renderError(detail, ownedFallback)
     }
   })()
 
   return createRenderedInstance(target, () => {
     disposed = true
+    bindings.destroy()
   })
 }
 

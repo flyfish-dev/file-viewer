@@ -360,7 +360,7 @@ React 16.8/17 projects can use `@file-viewer/react-legacy`.
 
 ## Locale And Copy
 
-The viewer defaults to `locale: 'auto'`, which follows the browser language and resolves to Chinese or English. Use the same `options` object across Vanilla JS / Pure Web, Vue, React, jQuery, and Svelte when you need a fixed locale or custom copy:
+The viewer defaults to `locale: 'auto'`, which negotiates the browser preferences against seven built-in languages: `zh-CN`, `en-US`, `ja-JP`, `zh-TW`, `zh-HK`, `de-DE`, `ru-RU`. See [internationalization](i18n.md) for aliases, live switching, custom copy and SSR. Use the same `options` object across Vanilla JS / Pure Web, Vue, React, jQuery, and Svelte when you need a fixed locale or custom copy:
 
 ```ts
 const options = {
@@ -483,6 +483,10 @@ pnpm dev
 ```
 
 The main demo opens at the Vite dev server URL. The zero-dependency iframe entry is available at `/iframe.html`, and the comparison demo is available at `/compare.html`.
+
+### Traditional Chinese locales
+
+Use `locale: 'zh-TW'` for Taiwan or `locale: 'zh-HK'` for Hong Kong. The shared viewer and both demos also recognize `zh-Hant`, `zh-Hant-TW`, `zh-Hant-HK`, and regional browser preferences. Explicit `zh-Hans` stays in Simplified Chinese. The demo language menus let visitors choose either locale without changing the previewed file.
 
 ### Japanese locale
 

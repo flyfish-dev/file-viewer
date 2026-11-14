@@ -1,6 +1,7 @@
 import type { Ref } from 'vue'
 import {
   collectFileViewerRendererPlugins,
+  attachFileViewerErrorMessage,
   createFileViewerPreviewStateTarget,
   createFileViewerSourceLoadingActionHandlers,
   getExtension,
@@ -15,7 +16,11 @@ import type {
   FileViewerFileRef as FileRef,
   FileViewerLifecycleContext,
   FileViewerLoadStartState,
+  FileViewerLoadingController,
+  FileViewerMessageKey,
   FileViewerOptions,
+  FileViewerLoadingMessageMetadata,
+  FileViewerErrorMessageMetadata,
   FileViewerRenderCompleteState
 } from '@file-viewer/core'
 import type { FileViewerVueRenderSession } from '../rendererBridge'
@@ -59,10 +64,10 @@ interface UseViewerSourceLoadingOptions {
   setActiveDocumentContext: (context: FileViewerLifecycleContext) => void;
   markLoadStarted: (version: number) => void;
   clearLoadStarted: (version: number) => void;
-  startLoading: (message: string) => void;
-  setLoadingMessage: (message: string) => void;
+  startLoading: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
+  setLoadingMessage: (message: string, metadata?: FileViewerLoadingMessageMetadata) => void;
   stopLoading: () => void;
-  showError: (message: string) => void;
+  showError: (message: string, metadata?: FileViewerErrorMessageMetadata) => void;
   clearError: () => void;
   resetLoading: () => void;
   formatErrorMessage: FileViewerErrorMessageFormatter;
@@ -262,7 +267,11 @@ export const useViewerSourceLoading = ({
       const requestUrl = normalizeFileViewerSourceUrl(downloadUrl) || downloadUrl
       const response = await fetch(requestUrl, { signal })
       if (!response.ok) {
-        throw new Error(`${translateFileViewerMessage(getOptions(), 'error.remoteDownload')}: HTTP ${response.status}`)
+        const status = response.status
+        const error = Object.assign(new Error(`HTTP ${status}`), {
+          code: 'FILE_VIEWER_HTTP_ERROR', params: Object.freeze({ status })
+        })
+        throw attachFileViewerErrorMessage(error, i18n => `${translateFileViewerMessage(i18n, 'error.remoteDownload')}: HTTP ${status}`)
       }
       return response.blob()
     },

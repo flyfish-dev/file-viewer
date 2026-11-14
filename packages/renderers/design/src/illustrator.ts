@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core';
 import {
   createFileViewerZoomChangeEmitter,
   registerFileViewerZoomProvider,
@@ -29,27 +30,9 @@ const illustratorStyle = `
 @media(max-width:760px){.ai-viewer{min-height:360px}.ai-modebar{padding:6px 8px}.ai-mode-copy{font-size:10px}.ai-toolbar{align-items:flex-start;padding:7px 8px}.ai-title span{max-width:145px}.ai-actions{flex-wrap:wrap;justify-content:flex-end}.ai-actions button{height:30px;min-width:31px;padding:0 7px}.ai-layout{grid-template-columns:1fr}.ai-sidebar{position:absolute;inset:0 auto 0 0;z-index:6;width:min(84vw,320px);border-right:1px solid var(--ai-border);box-shadow:15px 0 40px rgba(15,23,42,.22);transform:translateX(-105%);transition:transform .2s ease}.ai-native[data-layers-open='true'] .ai-sidebar{transform:translateX(0)}.ai-layer-toggle{position:absolute;right:12px;bottom:calc(12px + var(--file-viewer-mobile-overlay-bottom,0px));z-index:7;display:inline-flex;min-height:44px;align-items:center;padding:0 13px;border:1px solid var(--ai-border);border-radius:999px;background:rgba(255,255,255,.92);color:var(--ai-text);font-size:11px;font-weight:850;box-shadow:0 10px 28px rgba(15,23,42,.18)}.ai-stage{padding:13px}.ai-status{bottom:calc(60px + var(--file-viewer-mobile-overlay-bottom,0px))}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string,
-) => {
-  const node = documentRef.createElement(tag)
-  if (className) node.className = className
-  if (text !== undefined) node.textContent = text
-  return node
-}
+
 
 const clampZoom = (value: number) => Math.min(6, Math.max(0.05, Number(value.toFixed(3))))
-
-const fidelityLabel = (fidelity: IllustratorFidelity) => ({
-  exact: 'Exact',
-  high: 'High',
-  partial: 'Partial',
-  'structure-only': 'Structure only',
-  unsupported: 'Unsupported',
-})[fidelity]
 
 const diagnosticMessage = (error: unknown) => error instanceof Error ? error.message : String(error)
 
@@ -85,6 +68,10 @@ const renderNativeIllustrator = async (
   target: HTMLDivElement,
   context?: FileRenderContext,
 ): Promise<FileViewerRenderedInstance> => {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+  const fidelityLabel = (fidelity: IllustratorFidelity) => t(`design.fidelity.${fidelity}`)
+
   if (context?.signal?.aborted) throw new DOMException('Illustrator rendering was aborted.', 'AbortError')
   const documentRef = target.ownerDocument || document
   const design = context?.options?.design
@@ -148,12 +135,12 @@ const renderNativeIllustrator = async (
   const toolbar = element(documentRef, 'header', 'ai-toolbar')
   const title = element(documentRef, 'div', 'ai-title')
   title.append(
-    element(documentRef, 'strong', undefined, 'Adobe Illustrator · native PGF'),
+    element(documentRef, 'strong', undefined, () => t('design.ui.adobe.illustrator.native.pgf.606fad')),
     element(
       documentRef,
       'span',
       undefined,
-      `${metadata.artboards.length} artboard${metadata.artboards.length === 1 ? '' : 's'} · ${metadata.summary.layers} layers · ${metadata.summary.nodes} nodes · ${fidelityLabel(metadata.support.fidelity)}`,
+      () => t('design.ui.artboard.layers.nodes.768ef9', { p0: metadata.artboards.length, p2: metadata.summary.layers, p3: metadata.summary.nodes, p4: fidelityLabel(metadata.support.fidelity) }),
     ),
   )
   const actions = element(documentRef, 'div', 'ai-actions')
@@ -162,23 +149,23 @@ const renderNativeIllustrator = async (
   const zoomOut = element(documentRef, 'button', undefined, '−')
   const zoomLabel = element(documentRef, 'span', undefined, '100%')
   const zoomIn = element(documentRef, 'button', undefined, '+')
-  const fit = element(documentRef, 'button', undefined, 'Fit')
+  const fit = element(documentRef, 'button', undefined, () => t('psd.action.fit'))
   ;[previous, next, zoomOut, zoomIn, fit].forEach((button) => { button.type = 'button' })
-  previous.setAttribute('aria-label', 'Previous Illustrator artboard')
-  next.setAttribute('aria-label', 'Next Illustrator artboard')
-  zoomOut.setAttribute('aria-label', 'Zoom out')
-  zoomIn.setAttribute('aria-label', 'Zoom in')
+  t.bind(previous, node => node.setAttribute('aria-label', t('design.ui.previous.illustrator.artboard.2dc9be')), 'aria-label')
+  t.bind(next, node => node.setAttribute('aria-label', t('design.ui.next.illustrator.artboard.97698a')), 'aria-label')
+  t.bind(zoomOut, node => node.setAttribute('aria-label', t('toolbar.zoomOut')), 'aria-label')
+  t.bind(zoomIn, node => node.setAttribute('aria-label', t('toolbar.zoomIn')), 'aria-label')
   actions.append(previous, next, zoomOut, zoomLabel, zoomIn, fit)
   toolbar.append(title, actions)
 
   const layout = element(documentRef, 'div', 'ai-layout')
   const sidebar = element(documentRef, 'aside', 'ai-sidebar')
-  const artboardTitle = element(documentRef, 'div', 'ai-panel-title', 'Artboards')
+  const artboardTitle = element(documentRef, 'div', 'ai-panel-title', () => t('design.ui.artboards.d8d8a5'))
   const artboardList = element(documentRef, 'ol', 'ai-artboards')
-  const layerTitle = element(documentRef, 'div', 'ai-panel-title', 'Layers')
+  const layerTitle = element(documentRef, 'div', 'ai-panel-title', () => t('psd.layers.title'))
   const layerActions = element(documentRef, 'div', 'ai-layer-actions')
-  const showAll = element(documentRef, 'button', undefined, 'Show all')
-  const hideAll = element(documentRef, 'button', undefined, 'Hide all')
+  const showAll = element(documentRef, 'button', undefined, () => t('psd.action.showAll'))
+  const hideAll = element(documentRef, 'button', undefined, () => t('psd.action.hideAll'))
   showAll.type = 'button'; hideAll.type = 'button'
   layerActions.append(showAll, hideAll)
   const layerList = element(documentRef, 'ul', 'ai-layers')
@@ -187,11 +174,11 @@ const renderNativeIllustrator = async (
   const wrap = element(documentRef, 'div', 'ai-canvas-wrap')
   const shell = element(documentRef, 'div', 'ai-canvas-shell')
   const canvas = element(documentRef, 'canvas')
-  const status = element(documentRef, 'span', 'ai-status', 'Opening native Illustrator scene…')
+  const status = element(documentRef, 'span', 'ai-status', () => t('design.ui.opening.native.illustrator.scene.51c513'))
   shell.appendChild(canvas)
   wrap.appendChild(shell)
   stage.append(wrap, status)
-  const layerToggle = element(documentRef, 'button', 'ai-layer-toggle', 'Layers')
+  const layerToggle = element(documentRef, 'button', 'ai-layer-toggle', () => t('psd.layers.title'))
   layerToggle.type = 'button'
   layerToggle.setAttribute('aria-expanded', 'false')
   layout.append(sidebar, stage, layerToggle)
@@ -205,8 +192,8 @@ const renderNativeIllustrator = async (
     const width = Math.max(0, artboard.bounds.right - artboard.bounds.left)
     const height = Math.max(0, artboard.bounds.top - artboard.bounds.bottom)
     button.append(
-      element(documentRef, 'strong', undefined, artboard.name || `Artboard ${index + 1}`),
-      element(documentRef, 'span', undefined, `${Math.round(width)} × ${Math.round(height)} pt`),
+      element(documentRef, 'strong', undefined, () => artboard.name || t('design.ui.artboard.73f0ba', { p0: index + 1 })),
+      element(documentRef, 'span', undefined, () => t('design.ui.pt.081718', { p0: Math.round(width), p1: Math.round(height) })),
     )
     item.appendChild(button)
     artboardList.appendChild(item)
@@ -223,7 +210,7 @@ const renderNativeIllustrator = async (
     const label = element(documentRef, 'label')
     label.append(
       element(documentRef, 'strong', undefined, layer.name || layer.id),
-      element(documentRef, 'span', undefined, `${fidelityLabel(layer.fidelity)}${layer.locked ? ' · locked' : ''}`),
+      element(documentRef, 'span', undefined, () => layer.locked ? t('design.layer.locked', { label: fidelityLabel(layer.fidelity) }) : fidelityLabel(layer.fidelity)),
     )
     const checkboxId = `ai-layer-${layer.id.replace(/[^a-z0-9_-]/giu, '-')}`
     checkbox.id = checkboxId
@@ -284,7 +271,7 @@ const renderNativeIllustrator = async (
     ))
     const width = Math.max(1, Math.round(pointWidth * renderScale))
     const height = Math.max(1, Math.round(pointHeight * renderScale))
-    status.textContent = `Rendering ${artboard.name || `artboard ${index + 1}`} in Worker…`
+    t.bind(status, node => { node.textContent = t('design.ui.rendering.in.worker.3311db', { p0: artboard.name || `artboard ${index + 1}` }); }, 'textContent')
     const task = renderQueue.catch(() => undefined).then(async () => {
       if (destroyed || revision !== renderRevision) return
       const result = await illustrator!.render(canvas, {
@@ -298,7 +285,7 @@ const renderNativeIllustrator = async (
         signal: context?.signal,
       })
       if (destroyed || revision !== renderRevision) return
-      status.textContent = `${artboard.name || `Artboard ${index + 1}`} · ${width} × ${height}px · ${fidelityLabel(result.fidelity)} · ${metadata.support.unsupportedFeatures.length} unsupported feature group(s)`
+      t.bind(status, node => { node.textContent = t('design.ui.px.unsupported.feature.group.s.9000e5', { p0: artboard.name || t('design.artboard.fallback', { index: index + 1 }), p1: width, p2: height, p3: fidelityLabel(result.fidelity), p4: metadata.support.unsupportedFeatures.length }); }, 'textContent')
       if (!userAdjustedZoom) fitToStage()
       context?.onProgressiveRender?.()
       context?.registerThumbnailAdapter?.({ captureSource: 'rendered', getTarget: () => canvas })
@@ -445,6 +432,10 @@ export default async function renderIllustrator(
   type: string,
   context?: FileRenderContext,
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+
+
   const documentRef = target.ownerDocument || document
   const surface = inspectIllustratorPdfSurface(buffer)
   const design = context?.options?.design
@@ -467,10 +458,10 @@ export default async function renderIllustrator(
   const root = element(documentRef, 'section', 'ai-viewer')
   root.dataset.illustratorMode = requestedMode
   const modebar = element(documentRef, 'header', 'ai-modebar')
-  const modeCopy = element(documentRef, 'span', 'ai-mode-copy', 'Adobe Illustrator · selecting preview representation')
+  const modeCopy = element(documentRef, 'span', 'ai-mode-copy', () => t('design.ui.adobe.illustrator.selecting.preview.representation.8f529c'))
   const modeActions = element(documentRef, 'div', 'ai-mode-actions')
-  const pdfButton = element(documentRef, 'button', undefined, 'PDF surface')
-  const nativeButton = element(documentRef, 'button', undefined, 'Native PGF')
+  const pdfButton = element(documentRef, 'button', undefined, () => t('design.ui.pdf.surface.c1bf72'))
+  const nativeButton = element(documentRef, 'button', undefined, () => t('design.ui.native.pgf.08229f'))
   pdfButton.type = 'button'; nativeButton.type = 'button'
   pdfButton.hidden = !pdfAvailable
   nativeButton.hidden = !nativeCandidate
@@ -502,9 +493,7 @@ export default async function renderIllustrator(
   const switchMode = async (mode: 'pdf' | 'native', fallback = true) => {
     const revision = ++switchRevision
     setBusy(true)
-    modeCopy.textContent = mode === 'native'
-      ? 'Opening native PGF/private-source scene in a Dedicated Worker…'
-      : 'Opening the saved PDF-compatible representation…'
+    t.bind(modeCopy, node => { node.textContent = mode === 'native' ? t('design.ui.opening.native.pgf.private.source.scene.5c8fb3') : t('design.ui.opening.the.saved.pdf.compatible.representation.c7cb26'); }, 'textContent')
     try {
       await unmountRendered(activeRendered)
       activeRendered = undefined
@@ -521,11 +510,7 @@ export default async function renderIllustrator(
       root.dataset.activeIllustratorMode = mode
       pdfButton.dataset.active = String(mode === 'pdf')
       nativeButton.dataset.active = String(mode === 'native')
-      modeCopy.textContent = mode === 'native'
-        ? 'Native PGF scene · layers and artboards come from illustrator-pgf'
-        : nativeCandidate
-          ? 'PDF-compatible surface · switch to Native PGF for parsed artboards and layers'
-          : 'PDF-compatible Illustrator surface'
+      t.bind(modeCopy, node => { node.textContent = mode === 'native' ? t('design.ui.native.pgf.scene.layers.and.artboards.0b75eb') : nativeCandidate ? t('design.ui.pdf.compatible.surface.switch.to.native.1268f5') : t('design.ui.pdf.compatible.illustrator.surface.9a601c'); }, 'textContent')
     } catch (error) {
       const message = diagnosticMessage(error)
       context?.options?.onDiagnostic?.({
@@ -535,7 +520,7 @@ export default async function renderIllustrator(
         detail: { requestedMode, attemptedMode: mode, pdfAvailable, nativeCandidate },
       })
       if (fallback && requestedMode === 'auto' && mode === 'native' && pdfAvailable && !destroyed) {
-        modeCopy.textContent = `Native PGF unavailable: ${message}. Falling back to the PDF-compatible surface.`
+        t.bind(modeCopy, node => { node.textContent = t('design.ui.native.pgf.unavailable.falling.back.to.a6cb99', { p0: message }); }, 'textContent')
         await switchMode('pdf', false)
         return
       }
@@ -549,7 +534,7 @@ export default async function renderIllustrator(
   })
   nativeButton.addEventListener('click', () => {
     if (activeMode !== 'native') void switchMode('native', false).catch((error) => {
-      if (!destroyed) modeCopy.textContent = `Native PGF unavailable: ${diagnosticMessage(error)}`
+      if (!destroyed) t.bind(modeCopy, node => { node.textContent = t('design.ui.native.pgf.unavailable.2cd1f7', { p0: diagnosticMessage(error) }); }, 'textContent')
     })
   })
   const initialMode = requestedMode === 'native'

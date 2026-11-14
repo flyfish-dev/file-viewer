@@ -1,0 +1,47 @@
+[
+  {
+    "file": "adversarial-missing-to.xlsx",
+    "sha256": "9aafc0d47f76a27a509da112c69d1d3fc0bd3e29aa1844a9c74311c227a3d02c",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "adversarial-reversed-to.xlsx",
+    "sha256": "656d43faa8888dfee49efb36ac31ae119b0cfc61bb89d1a23820a8612151f544",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "adversarial-invalid-to.xlsx",
+    "sha256": "61811de224ff24971afc225963bca2689121e41d56ab33db683471e78ed0d058",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "clean-note-1-false.xlsx",
+    "sha256": "3d5478b58329e93fb7f5471310f76b1aac73be8bfe4cd6117ca621e4bd081336",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "clean-note-1-true.xlsx",
+    "sha256": "5b10484deebd9f79a6484054e9772c5ae7bbffcd6cef23a74a5ed72fc6140421",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "clean-note-1000-false.xlsx",
+    "sha256": "ae8f4770514f0683a5e7db54a85646dd16409dfeb5d4ea6909bf0e205eef319c",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "clean-note-1000-true.xlsx",
+    "sha256": "632fca16a0c8d745c3c75814853009322362aafab85c68dffdc11fa454795d5e",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "clean-note-1048576-false.xlsx",
+    "sha256": "b1f127e26c1d885e48a0d2dfea70def6d1f9fab030ba052bc7267b40e453f21f",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  },
+  {
+    "file": "clean-note-1048576-true.xlsx",
+    "sha256": "3f49f07492a29b049fa109ff760bee911f8c4ce7d8c3d2a67e2c077789026fb8",
+    "source": "Independent A/B review negative control, unchanged bytes"
+  }
+]

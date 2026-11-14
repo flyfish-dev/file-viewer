@@ -4,6 +4,7 @@ import { createRequire } from 'node:module'
 import { createServer } from 'node:http'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { launchBrowserForTest } from '../packages/build-support/browser-test-launch.mjs'
 
 const root = process.env.FILE_VIEWER_TEST_ROOT || path.resolve(import.meta.dirname, '..')
 const require = createRequire(path.join(root, 'package.json'))
@@ -141,6 +142,7 @@ const variants = new Map([
   ['/new.xlsx', await workbook('NEWEST 423')]
 ])
 variants.set('/control.txt', Buffer.from('Vue source-control ready.\n'))
+for (const [name, bytes] of variants) globalThis.__fileViewerPrepackObserveNodeFixture?.(`generated/source-feedback${name}`, bytes)
 const requests = [],
   gates = new Map()
 const runtime = path.join(root, 'packages/renderers/pdf/dist/vendor/pdfjs')
@@ -282,7 +284,7 @@ async function waiting(page, id, message) {
 }
 try {
   for (const engine of (process.env.FILE_VIEWER_TEST_BROWSERS || 'chromium,webkit').split(',')) {
-    const browser = await browsers[engine].launch({ headless: true })
+    const browser = await launchBrowserForTest(browsers[engine], engine, { headless: true })
     try {
       const configs = [
         ['core', 'zh-CN', 'light', 'none'],

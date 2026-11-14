@@ -4,6 +4,9 @@
 // should be introduced here. Higher layers depend on these contracts, never the
 // other way around.
 import type { FileViewerXmlOptions } from './xml'
+import type { FileViewerResolvedLocale } from '../i18n/locales'
+import type { FileViewerExtendedMessageKey } from '../i18n/domains'
+import type { FileViewerSignatureOptions } from './signature'
 
 export type FileViewerSourceKind = 'file' | 'url' | 'buffer' | 'empty'
 
@@ -11,11 +14,27 @@ export type FileViewerThemeMode = 'light' | 'dark' | 'system'
 
 export type FileViewerResolvedThemeMode = Exclude<FileViewerThemeMode, 'system'>
 
-export type FileViewerLocale = 'auto' | 'zh-CN' | 'en-US' | 'ja-JP' | 'de-DE' | (string & {})
+export type FileViewerLocale = 'auto' | FileViewerResolvedLocale | (string & {})
 
 export type FileViewerStyleIsolation = 'auto' | 'shadow' | 'scoped' | 'none'
 
-export type FileViewerMessageKey =
+export type FileViewerBaseMessageKey =
+  | 'signature.panel.title'
+  | 'signature.panel.show'
+  | 'signature.panel.hide'
+  | 'signature.panel.close'
+  | 'signature.panel.reviewValidation'
+  | 'signature.panel.validationNotices'
+  | 'signature.panel.checksFailed'
+  | 'signature.panel.checksIncomplete'
+  | 'text.code.lineCount'
+  | 'text.patch.summary'
+  | 'text.xml.viewSource'
+  | 'text.xml.viewRendered'
+  | 'text.xml.diagnostics'
+  | 'text.xml.renderedTitle'
+  | 'media.midi.trackFallback'
+  | 'media.midi.instrumentFallback'
   | 'toolbar.zoomGroup'
   | 'toolbar.zoomOut'
   | 'toolbar.zoomIn'
@@ -126,6 +145,18 @@ export type FileViewerMessageKey =
   | 'spreadsheet.state.rowsAndColumns'
   | 'spreadsheet.error.parseFailed'
   | 'spreadsheet.error.workerFailed'
+  | 'spreadsheet.comments.title'
+  | 'spreadsheet.comments.close'
+  | 'spreadsheet.comments.note'
+  | 'spreadsheet.comments.thread'
+  | 'spreadsheet.comments.resolved'
+  | 'spreadsheet.comments.unknown'
+  | 'spreadsheet.comments.empty'
+  | 'spreadsheet.comments.more'
+  | 'spreadsheet.comments.open'
+  | 'spreadsheet.comments.jump'
+  | 'spreadsheet.comments.warning'
+  | 'spreadsheet.comments.count'
   | 'word.error.invalidDocx'
   | 'word.error.missingOdfContent'
   | 'word.error.odfXmlParseFailed'
@@ -207,6 +238,7 @@ export type FileViewerMessageKey =
   | 'media.video.codecUnsupportedTitle'
   | 'media.video.codecUnsupportedDescription'
   | 'media.video.codecUnsupportedAction'
+  | 'media.video.softwareWorkerFailed'
   | 'media.video.softwareLoading'
   | 'media.video.softwareBadge'
   | 'media.video.play'
@@ -478,6 +510,8 @@ export type FileViewerMessageKey =
   | 'loading.audio.label'
   | 'loading.audio.hint'
 
+export type FileViewerMessageKey = FileViewerBaseMessageKey | FileViewerExtendedMessageKey
+
 export type FileViewerMessageParams = Record<string, string | number | boolean | null | undefined>
 
 export type FileViewerMessageResolver = (
@@ -492,6 +526,17 @@ export type FileViewerMessages =
 export interface FileViewerI18nOptions {
   locale?: FileViewerLocale
   messages?: FileViewerMessages
+}
+
+/** Per-viewer language state. Subscribers must unsubscribe when their UI is disposed. */
+export interface FileViewerI18nContext {
+  readonly locale: FileViewerResolvedLocale
+  readonly options: FileViewerOptions
+  t(key: FileViewerMessageKey, params?: FileViewerMessageParams): string
+  formatNumber(value: number, options?: Intl.NumberFormatOptions): string
+  formatDateTime(value: Date | number, options?: Intl.DateTimeFormatOptions): string
+  formatBytes(value: number): string
+  subscribe(listener: () => void): () => void
 }
 
 export type FileViewerFileRef = File | Blob | ArrayBuffer
@@ -814,6 +859,13 @@ export interface FileViewerSpreadsheetOptions {
   resizableColumns?: boolean
   /** 允许用户在 Excel / CSV / ODS 预览中拖拽行头边界调整行高，默认关闭以保持历史行为。 */
   resizableRows?: boolean
+  /**
+   * Defaults to `source`: gutter numbers match source rows and A1 search addresses.
+   * `legacy-records` restores the historical header heuristic and marks the gutter
+   * with `#`. These are record ordinals, not cell addresses; header-like first
+   * rows are unnumbered. Search, data and zero-based ranges keep source coordinates.
+   */
+  rowNumberMode?: 'source' | 'legacy-records'
   /** Fill spreadsheet previews with display-only blank grid cells by default; false keeps the used range only. */
   fillViewport?: boolean
 }
@@ -959,6 +1011,8 @@ export interface FileRenderContext {
   sourceFile?: File | Blob
   signal?: AbortSignal
   options?: FileViewerOptions
+  /** Live UI language inherited by attachments; document content is never translated. */
+  i18n?: FileViewerI18nContext
   surface?: RenderSurface
   registerExportAdapter?: (adapter: FileRenderExportAdapter | null) => void
   registerThumbnailAdapter?: (adapter: FileRenderThumbnailAdapter | null) => void
@@ -1587,6 +1641,9 @@ export interface FileViewerDiagnostic {
 }
 
 export interface FileViewerOptions {
+  /** Opt-in signature renderer configuration, read when a document is rendered.
+   * updateOptions does not update an already mounted signature panel. */
+  signature?: FileViewerSignatureOptions
   theme?: FileViewerThemeMode
   /** Ctrl/Meta wheel and two-finger document zoom. Enabled when a zoom provider
    * is available; ordinary scrolling and interactive controls stay native.
@@ -1602,7 +1659,7 @@ export interface FileViewerOptions {
   styleIsolation?: FileViewerStyleIsolation
   /**
    * Viewer UI language. `auto` follows the browser language and resolves the
-   * built-in Chinese, English, Japanese, and German locales before falling
+   * seven bundled locales from FILE_VIEWER_LOCALE_METADATA before falling
    * back to `en-US`.
    */
   locale?: FileViewerLocale

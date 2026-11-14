@@ -63,6 +63,7 @@ const DEFAULT_APP_VERSION = 16;
 const DEFAULT_SLIDE_EMU_SIZE = { cx: 9144000, cy: 6858000 };
 const OPENXML_REL_PREFIX = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
 const MS_REL_PREFIX = "http://schemas.microsoft.com/office/2007/relationships/";
+const imageContentTypesByZip = new WeakMap();
 
 function isConnectorShapeType(shapeType) {
   return shapeType === "line" ||
@@ -315,6 +316,7 @@ export async function readXmlFile(zip, filename, isSlideContent = false) {
 
 export async function getContentTypes(zip) {
   const ContentTypesJson = await readXmlFile(zip, '[Content_Types].xml');
+  cacheImageContentTypes(zip, ContentTypesJson);
 
   const subObj = asArray(getTextByPathList(ContentTypesJson, [ 'Types', 'Override' ]));
   const slidesLocArray = [];
@@ -336,6 +338,51 @@ export async function getContentTypes(zip) {
     slides: await getPresentationSlideOrder(zip, slidesLocArray),
     slideLayouts: slideLayoutsLocArray
   };
+}
+
+function cacheImageContentTypes(zip, contentTypes) {
+  const defaults = new Map();
+  const overrides = new Map();
+  for (const element of asArray(getTextByPathList(contentTypes, [ 'Types', 'Default' ]))) {
+    const attrs = element['attrs'] || {};
+    defaults.set(String(attrs['Extension'] || '').toLowerCase(), attrs['ContentType']);
+  }
+  for (const element of asArray(getTextByPathList(contentTypes, [ 'Types', 'Override' ]))) {
+    const attrs = element['attrs'] || {};
+    overrides.set(normalizePartPath(attrs['PartName']), attrs['ContentType']);
+  }
+  const types = { defaults, overrides };
+  imageContentTypesByZip.set(zip, types);
+  return types;
+}
+
+async function getPartImageMimeType(zip, partName) {
+  const types = imageContentTypesByZip.get(zip) ||
+    cacheImageContentTypes(zip, await readXmlFile(zip, '[Content_Types].xml'));
+  const part = normalizePartPath(partName);
+  const extension = extractFileExtension(part).toLowerCase();
+  const declared = String(types.overrides.has(part)
+    ? types.overrides.get(part)
+    : types.defaults.get(extension) || '').trim().toLowerCase();
+  // OPC declarations can use nonstandard file extensions. Accept only the
+  // image types handled below; malformed/unknown declarations retain the
+  // existing extension fallback rather than becoming arbitrary data URLs.
+  switch (declared) {
+    case 'image/jpeg':
+    case 'image/png':
+    case 'image/gif':
+    case 'image/svg+xml':
+    case 'image/tiff':
+    case 'image/x-emf':
+    case 'image/x-wmf':
+      return declared;
+    case 'image/emf':
+      return 'image/x-emf';
+    case 'image/wmf':
+      return 'image/x-wmf';
+    default:
+      return getMimeType(extension);
+  }
 }
 
 export async function getSlideSizeAndSetDefaultTextStyle(zip) {
@@ -812,24 +859,23 @@ async function convertTiffToPngDataUrl(imgArrayBuffer) {
   }
 }
 
-async function getImageDataUrl(imgFileExt, imgArrayBuffer) {
-  var normalizedExt = (imgFileExt || "").toLowerCase();
-  if (normalizedExt == "tif" || normalizedExt == "tiff") {
+async function getImageDataUrl(zip, partName, imgArrayBuffer) {
+  var mimeType = await getPartImageMimeType(zip, partName);
+  if (mimeType == "image/tiff") {
     return await convertTiffToPngDataUrl(imgArrayBuffer);
   }
-  if (normalizedExt == "emf" || normalizedExt == "wmf") {
+  if (mimeType == "image/x-emf" || mimeType == "image/x-wmf") {
     // Browsers cannot display raw EMF/WMF; only return a converted SVG data URL.
     return convertMetafileToSvgDataUrl(
       imgArrayBuffer,
-      normalizedExt == "wmf" ? "image/wmf" : "image/emf"
+      mimeType == "image/x-wmf" ? "image/wmf" : "image/emf"
     );
   }
 
-  if (normalizedExt == "jpg" || normalizedExt == "jpeg") {
+  if (mimeType == "image/jpeg") {
     imgArrayBuffer = normalizeJpegExifOrientation(imgArrayBuffer).bytes;
   }
 
-  var mimeType = getMimeType(normalizedExt);
   if (!mimeType) {
     return undefined;
   }
@@ -8667,7 +8713,8 @@ async function processPicNode(node, warpObj, source, sType, groupContext) {
   for (var candidate of getEmbeddedPictureCandidates(blip, resObj, zip)) {
     try {
       imageDataUrl = await getImageDataUrl(
-        extractFileExtension(candidate.target).toLowerCase(),
+        zip,
+        candidate.target,
         await candidate.entry.async('arraybuffer')
       );
       if (imageDataUrl) break;
@@ -9503,9 +9550,8 @@ async function genBuChar(node, i, spNode, textBodyNode, pFontStyle, idx, type, w
       var imgPath = warpObj["slideResObj"][buPicId]["target"];
       //console.log("imgPath: ", imgPath);
       var imgArrayBuffer = await warpObj["zip"].file(imgPath).async('arraybuffer');
-      var imgExt = imgPath.split(".").pop();
-      var imgMimeType = getMimeType(imgExt);
-      buImg = "<img src='data:" + imgMimeType + ";base64," + base64ArrayBuffer(imgArrayBuffer) + "' style='width: 100%;'/>"// height: 100%
+      var imageDataUrl = await getImageDataUrl(warpObj["zip"], imgPath, imgArrayBuffer);
+      buImg = imageDataUrl ? "<img src='" + imageDataUrl + "' style='width: 100%;'/>" : "&#8227;";
       //console.log("imgPath: "+imgPath+"\nimgMimeType: "+imgMimeType)
     }
     if (buPicId === undefined) {
@@ -12880,15 +12926,12 @@ async function getPicFill(type, node, warpObj) {
   }
   img = getTextByPathList(warpObj, [ "loaded-images", imgPath ]); //, type, rId
   if (img === undefined) {
-    imgPath = escapeHtml(imgPath);
-
-
     var imgExt = imgPath.split(".").pop();
     if (imgExt == "xml") {
       return undefined;
     }
     var imgArrayBuffer = await warpObj["zip"].file(imgPath).async('arraybuffer');
-    img = await getImageDataUrl(imgExt, imgArrayBuffer);
+    img = await getImageDataUrl(warpObj["zip"], imgPath, imgArrayBuffer);
     //warpObj["loaded-images"][imgPath] = img; //"defaultTextStyle": defaultTextStyle,
     setTextByPathList(warpObj, [ "loaded-images", imgPath ], img); //, type, rId
   }
@@ -14006,6 +14049,8 @@ function getMimeType(imgFileExt) {
   switch (imgFileExt.toLowerCase()) {
     case "jpg":
     case "jpeg":
+    case "jpe":
+    case "jfif":
       mimeType = "image/jpeg";
       break;
     case "png":

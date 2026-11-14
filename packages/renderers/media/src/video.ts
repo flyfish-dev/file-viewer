@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   type FileRenderContext,
   type FileViewerRenderedInstance
 } from '@file-viewer/core'
@@ -112,23 +113,25 @@ class UnsupportedVideoCodecError extends Error {
 
 const createCompatibilityNotice = (
   track: Mp4VideoTrackInfo,
-  t: ReturnType<typeof createFileViewerTranslator>
+  t: ReturnType<typeof createFileViewerTranslator>,
+  element: typeof createElement,
+  owned: <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, value: () => string) => HTMLElementTagNameMap[K]
 ) => {
-  const notice = createElement('div', 'fv-video-compatibility')
+  const notice = element('div', 'fv-video-compatibility')
   notice.setAttribute('role', 'alert')
   notice.dataset.codec = track.codec
 
-  const card = createElement('div', 'fv-video-compatibility-card')
+  const card = element('div', 'fv-video-compatibility-card')
   card.append(
-    createElement('span', '', t('media.video.codecUnsupportedBadge')),
-    createElement('strong', '', t('media.video.codecUnsupportedTitle')),
-    createElement(
+    owned('span', '', () => t('media.video.codecUnsupportedBadge')),
+    owned('strong', '', () => t('media.video.codecUnsupportedTitle')),
+    owned(
       'p',
       '',
-      t('media.video.codecUnsupportedDescription', { codec: track.label })
+      () => t('media.video.codecUnsupportedDescription', { codec: track.label })
     ),
-    createElement('code', '', track.contentType),
-    createElement('p', '', t('media.video.codecUnsupportedAction'))
+    element('code', '', track.contentType),
+    owned('p', '', () => t('media.video.codecUnsupportedAction'))
   )
   notice.append(card)
   return notice
@@ -146,7 +149,20 @@ export default async function renderVideo(
   type?: string,
   context?: FileRenderContext
 ) {
-  const t = createFileViewerTranslator(context?.options)
+  const document = target.ownerDocument
+  const bindings = createFileViewerI18nBindings(context?.i18n)
+  const element = <K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) => {
+    const node = document.createElement(tag)
+    if (className) node.className = className
+    if (text !== undefined) node.textContent = text
+    return node
+  }
+  const owned = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, value: () => string) => {
+    const node = element(tag, className)
+    bindings.text(node, value)
+    return node
+  }
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const normalizedType = (type || 'mp4').toLowerCase()
   const mp4VideoTrack = normalizedType === 'mp4'
     ? inspectMp4VideoTrack(buffer)
@@ -159,30 +175,32 @@ export default async function renderVideo(
   let hls: Hls | null = null
   let softwarePlayer: Mp4vSoftwarePlayerInstance | null = null
 
-  const root = createElement('div', 'fv-video-viewer')
-  const shell = createElement('section', 'fv-video-shell')
-  const heading = createElement('div', 'fv-video-heading')
+  const root = element('div', 'fv-video-viewer')
+  const shell = element('section', 'fv-video-shell')
+  const heading = element('div', 'fv-video-heading')
   heading.append(
-    createElement('span', '', normalizedType.toUpperCase() || 'VIDEO'),
-    createElement('strong', '', t('media.video.title'))
+    element('span', '', normalizedType.toUpperCase() || 'VIDEO'),
+    owned('strong', '', () => t('media.video.title'))
   )
 
-  const video = createElement('video', 'fv-video-player')
+  const video = element('video', 'fv-video-player')
   video.controls = true
   video.preload = 'metadata'
-  video.textContent = t('media.video.unsupported')
+  bindings.text(video, () => t('media.video.unsupported'))
   shell.append(heading, video)
 
   if (normalizedType === 'm3u8') {
-    shell.append(createElement(
+    shell.append(owned(
       'p',
       'fv-video-hint',
-      t('media.video.hlsHint')
+      () => t('media.video.hlsHint')
     ))
   }
 
   root.append(shell)
-  target.replaceChildren(createStyle(), root)
+  const style = document.createElement('style')
+  style.textContent = videoStyle
+  target.replaceChildren(style, root)
 
   const resolveSource = () => {
     if (normalizedType === 'm3u8' && context?.url) {
@@ -271,7 +289,9 @@ export default async function renderVideo(
   }
 
   const cleanup = () => {
+    if (disposed) return
     disposed = true
+    bindings.destroy()
     softwarePlayer?.cleanup()
     softwarePlayer = null
     releasePlaybackResources()
@@ -290,8 +310,18 @@ export default async function renderVideo(
             mp4vSoftwareTrack,
             context
           )
+          if (context?.signal?.aborted) {
+            throw new DOMException('The video request was aborted.', 'AbortError')
+          }
           root.dataset.videoState = 'software-decoder'
         } catch (softwareError) {
+          if (context?.signal?.aborted) {
+            cleanup()
+            // Remove only this render's nodes, never a newer render's target contents.
+            root.remove()
+            style.remove()
+            throw softwareError
+          }
           releasePlaybackResources()
           root.dataset.videoState = 'unsupported-codec'
           root.dataset.videoError = softwareError instanceof Error
@@ -299,12 +329,14 @@ export default async function renderVideo(
             : String(softwareError)
           const failedPlayer = shell.querySelector('.fv-video-software-player')
           const failedElement = failedPlayer || video
-          failedElement.replaceWith(createCompatibilityNotice(error.track, t))
+          bindings.release(video)
+          failedElement.replaceWith(createCompatibilityNotice(error.track, t, element, owned))
         }
       } else {
         releasePlaybackResources()
         root.dataset.videoState = 'unsupported-codec'
-        video.replaceWith(createCompatibilityNotice(error.track, t))
+        bindings.release(video)
+        video.replaceWith(createCompatibilityNotice(error.track, t, element, owned))
       }
     } else {
       cleanup()

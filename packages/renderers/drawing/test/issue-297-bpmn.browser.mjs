@@ -6,6 +6,7 @@ import { createServer } from 'node:http';
 import { dirname, resolve, join, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '../../../..');
@@ -99,7 +100,7 @@ const expectedIds = xml => [...xml.matchAll(/<bpmndi:BPMN(?:Shape|Edge)\b[^>]*bp
 
 try {
   for (const [name, browserType] of [['chromium', chromium], ['webkit', webkit]]) {
-    const browser = await browserType.launch({ headless: true });
+    const browser = await launchBrowserForTest(browserType, name, { headless: true });
     try {
       const context = await browser.newContext({ viewport: { width: 1000, height: 800 } });
       const page = await context.newPage();

@@ -2,12 +2,10 @@ import { computed, type Ref } from 'vue'
 import { safeDecodeURIComponent } from '@/composables/useDemoFileTypes'
 import {
   allDemoPresetFiles,
-  sampleGroupsEn,
-  sampleGroupsJa,
-  sampleGroupsZh
+  sampleGroupsByLocale
 } from '@/data/demoSamples'
 import type { DemoLocale } from '@/composables/useDemoCopy'
-import type { DemoSampleGroup } from '@/data/demoSamples'
+
 
 /**
  * Default documents are localized because the first render is part of the
@@ -15,9 +13,12 @@ import type { DemoSampleGroup } from '@/data/demoSamples'
  */
 export const DEFAULT_DEMO_URL_BY_LOCALE: Record<DemoLocale, string> = {
   'zh-CN': '/example/word.docx',
+  'zh-TW': '/example/word.docx',
+  'zh-HK': '/example/word.docx',
   'en-US': '/example/en/sample-presentation.pptx',
   'ja-JP': '/example/en/sample-presentation.pptx',
   'de-DE': '/example/en/sample-presentation.pptx'
+  , 'ru-RU': '/example/en/sample-presentation.pptx'
 }
 
 const extraUploadExtensions = [
@@ -132,12 +133,6 @@ export type UseDemoSamplesOptions = {
 export function useDemoSamples(options: UseDemoSamplesOptions) {
   // Both locale catalogs share structure and URLs where possible, so switching
   // language does not reset the selected group or active format.
-  const sampleGroupsByLocale = {
-    'zh-CN': sampleGroupsZh,
-    'en-US': sampleGroupsEn,
-    'ja-JP': sampleGroupsJa,
-    'de-DE': sampleGroupsEn
-  } satisfies Record<DemoLocale, DemoSampleGroup[]>
   const sampleGroups = computed(() => sampleGroupsByLocale[options.locale.value])
   const presetFiles = computed(() => sampleGroups.value.flatMap(group => group.items))
   const activePreset = computed(() => (

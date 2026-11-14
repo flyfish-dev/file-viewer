@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import { existsSync } from 'node:fs'
-import { readFile, mkdir, writeFile } from 'node:fs/promises'
+import { readFile, mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, extname, delimiter, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { requireJsCases } from './requirejs-cases.mjs'
+import { buildRequireJsDemo } from './requirejs-demo.mjs'
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workspaceRoot = resolve(packageDir, '../../..')
@@ -24,9 +26,14 @@ const lightDist = resolve(process.env.REQUIREJS_LIGHT_DIST || (inWorkspace
   ? resolve(packageDir, '../web/dist')
   : resolve(dirname(require.resolve('@file-viewer/web/package.json')), 'dist')))
 const sampleDir = inWorkspace ? resolve(root, 'apps/viewer-demo/public/example') : resolve(root, 'test/requirejs-samples')
-const demoSourceDir = inWorkspace ? resolve(root, 'apps/component-demo/public') : resolve(root, 'test/requirejs-demo')
-const requireJsLicense = inWorkspace ? resolve(root, 'apps/component-demo/licenses/requirejs-2.3.7.txt') : resolve(demoSourceDir, 'requirejs/LICENSE')
+const demoSourceDir = inWorkspace ? resolve(root, 'apps/component-demo') : resolve(root, 'test/requirejs-demo')
+const requireJsLicense = resolve(demoSourceDir, 'licenses/requirejs-2.3.7.txt')
 const demoDir = process.env.REQUIREJS_DEMO_DIR ? resolve(root, process.env.REQUIREJS_DEMO_DIR) : null
+await mkdir(output, { recursive: true })
+const pageDir = demoDir || await mkdtemp(resolve(output, 'compiled-demo-'))
+if (!demoDir) await buildRequireJsDemo(demoSourceDir, pageDir)
+const { FILE_VIEWER_BUILTIN_MESSAGES, FILE_VIEWER_SUPPORTED_LOCALES } = await import(pathToFileURL(require.resolve('@file-viewer/core', { paths: [packageDir, root] })).href)
+const readyText = FILE_VIEWER_BUILTIN_MESSAGES['en-US']['state.ready.title']
 const suffix = process.env.REQUIREJS_ENTRY_SUFFIX || 'amd'
 const mime = { '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.css': 'text/css', '.svg': 'image/svg+xml' }
 const html = `<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0}#viewer{height:720px}</style></head>
@@ -45,12 +52,13 @@ const server = createServer(async (request, response) => {
   const path = decodeURIComponent(new URL(request.url, 'http://localhost').pathname)
   if (path === '/tenant/app/requirejs.html') {
     response.setHeader('Content-Type', 'text/html')
-    response.end(await readFile(resolve(demoDir || demoSourceDir, 'requirejs.html')))
+    response.end(await readFile(resolve(pageDir, 'requirejs.html')))
     return
   }
   if (path === '/tenant/app/' || path === '/') { response.setHeader('Content-Type', 'text/html'); response.end(html); return }
   if (/^\/tenant\/app\/after-\w+\.js$/.test(path)) { response.setHeader('Content-Type', 'text/javascript'); response.end('define([], function () { return "host-module-ok" })'); return }
   const mounts = [
+    ['/tenant/app/assets/', resolve(pageDir, 'assets')],
     ['/tenant/app/viewer/', fullDist],
     ['/tenant/app/file-viewer/', demoDir ? resolve(demoDir, 'file-viewer') : fullDist],
     ['/tenant/app/example/', demoDir ? resolve(demoDir, 'example') : sampleDir],
@@ -78,7 +86,7 @@ const reports = []
 await mkdir(output, { recursive: true })
 try {
   for (const [engine, browserType] of [['chromium', chromium], ['webkit', webkit]]) {
-    const browser = await browserType.launch({ headless: true })
+    const browser = await launchBrowserForTest(browserType, engine, { headless: true })
     const page = await browser.newPage()
     const errors = []
     const requests = []
@@ -119,7 +127,11 @@ try {
       }))
       assert.equal(alternate, 'function')
       phase = 'demo-load'
-      await page.goto(`${origin}/tenant/app/requirejs.html`)
+      await page.goto(`${origin}/tenant/app/requirejs.html?locale=en-US`)
+      await page.locator('[data-demo-language]').waitFor()
+      assert.equal(await page.locator('html').getAttribute('lang'), 'en-US')
+      assert.deepEqual(await page.locator('[data-demo-language] option').evaluateAll(options =>
+        options.map(option => option.value)), [...FILE_VIEWER_SUPPORTED_LOCALES])
       const license = await page.request.get(`${origin}/tenant/app/requirejs/LICENSE`)
       assert.equal(license.status(), 200)
       assert.equal(await license.text(), await readFile(requireJsLicense, 'utf8'))
@@ -127,7 +139,12 @@ try {
         phase = `demo:${sample}`
         await page.locator('#sample:not([disabled])').waitFor()
         await page.locator('#sample').selectOption(sample)
-        await page.waitForFunction(sample => document.getElementById('status').textContent === 'Ready: ' + sample, sample, { timeout: 45000 })
+        await page.waitForFunction(({ sample, readyText }) =>
+          document.body.dataset.viewerStatus === 'load-complete' &&
+          document.getElementById('sample').value === sample &&
+          !document.getElementById('sample').disabled &&
+          document.getElementById('status').textContent === readyText,
+        { sample, readyText }, { timeout: 45000 })
         await page.locator(selector).first().waitFor({ timeout: 45000 })
         reports.push({ engine, sample, surface: demoDir ? 'built-component-demo-page' : 'actual-component-demo-page', passed: true })
       }
@@ -138,6 +155,9 @@ try {
         assert.match(request.mime, request.url.split('?')[0].endsWith('.wasm') ? /application\/wasm/ : /javascript/, request.url)
       }
       await page.screenshot({ path: resolve(output, `${engine}.png`) })
+      globalThis.__fileViewerPrepackObserveOwnerComplete?.({ engine, phase: 'original-boundaries',
+        caseIds: [...['word', 'pdf', 'ofd', 'presentation', 'spreadsheet', 'iwork', 'wordperfect', 'hangul', 'cad', 'typst', 'drawing', 'model', 'archive', 'email', 'ebook', 'text', 'image', 'media', 'mindmap', 'geo', 'data', 'eda'].map(id => `preload:${id}`),
+          'light-amd-api', 'alternate-amd-context', 'component-demo-language-and-license', 'worker-mime-and-local-base'] })
       console.log(`[issue-258] ${engine}: real RequireJS, five rendered formats plus actual Demo picker, 22 lazy renderer registrations, two contexts, light/full APIs and local Workers passed`)
     } finally {
       await writeFile(resolve(output, `${engine}.json`), JSON.stringify({ requests, errors, cases: reports.filter(r => r.engine === engine) }, null, 2))
@@ -147,5 +167,5 @@ try {
 } finally {
   server.closeAllConnections()
   await new Promise(resolve => server.close(resolve))
-  await writeFile(resolve(output, 'report.json'), JSON.stringify({ fullDist, lightDist, demoDir, cases: reports }, null, 2))
+  await writeFile(resolve(output, 'report.json'), JSON.stringify({ fullDist, lightDist, demoDir, pageDir, cases: reports }, null, 2))
 }

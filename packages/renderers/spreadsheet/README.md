@@ -54,6 +54,20 @@ const options = {
 
 This changes only the display: workbook data, used range, original-file downloads/exports, search results and content counts remain unchanged.
 
+## Row numbers and legacy record ordinals
+
+The gutter now defaults to source row numbers: the header is row 1 and the next row is 2, matching A1 addresses such as `Sales!A2`. Previous versions guessed whether the first row was a field header and could leave its number blank. To keep that display explicitly, set:
+
+```ts
+const options = {
+  spreadsheet: { rowNumberMode: 'legacy-records' },
+}
+```
+
+`rowNumberMode: 'source'` is the default. In `legacy-records` mode, the gutter is headed `#` and shows record ordinals, **not source cell addresses**. The original heuristic skips numbering the first row only when there are at least two rows, no merged cells in the initially loaded window, enough nonempty text cells in the first row, and at least two values in the second. It can also treat ordinary all-text data or negative numeric text as a header; this opt-in mode preserves that behavior rather than claiming reliable header detection. Blank and hidden rows are not compacted. Merged cells in the initial window prevent the offset; merges loaded in later windows do not trigger renumbering.
+
+Both modes retain every data row, including the first row. Search labels still use source A1 addresses, and public spreadsheet ranges remain zero-based source coordinates. Window loading, sheet switching, viewport padding and original-file downloads do not change these coordinates. This option changes only gutter display; use `source` when reading cell addresses.
+
 ## Offline Assets
 
 The optional worker path is:

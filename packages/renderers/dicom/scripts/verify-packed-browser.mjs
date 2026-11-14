@@ -185,6 +185,15 @@ export async function retainEvidence(output, consumer, report, verify) {
 async function verifyPackedBrowser(output) {
   assert.equal(process.env.NODE_PATH, undefined)
   assert.equal(process.env.NODE_OPTIONS, undefined)
+  // Keep the cold-consumer isolation guards. Observation is a separate,
+  // explicit opt-in, using only the reviewed public observer beside CI controls.
+  if (process.env.FILE_VIEWER_PREPACK_TRACE_DIR) {
+    process.env.FILE_VIEWER_PREPACK_GATE_ID = 'dicom-packed-browser'
+    const hostedObserver = resolve(root, '.github/scripts/source-prepack-observer.cjs')
+    assert.ok(lstatSync(hostedObserver).isFile() && !lstatSync(hostedObserver).isSymbolicLink(),
+      'The reviewed public hosted observer must be a regular file')
+    await import(pathToFileURL(hostedObserver).href)
+  }
   const packs = join(output, 'packs')
   // Neither ancestor node_modules nor a shared npm cache can supply this graph.
   const consumer = realpathSync(mkdtempSync(join(tmpdir(), 'file-viewer-dicom-packed-')))

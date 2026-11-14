@@ -1,3 +1,33 @@
+diff --git a/legacy/build/pdf.mjs b/legacy/build/pdf.mjs
+--- a/legacy/build/pdf.mjs
++++ b/legacy/build/pdf.mjs
+@@ -17996,7 +17996,14 @@
+           scaledX += (width - measuredWidth) / 2000 * fontSize / fontSizeScale;
+         }
+       }
+-      if (this.contentVisible && (glyph.isInFont || font.missingFile)) {
++      // File Viewer modification: an unmapped control in a missing-font
++      // fallback has no drawable glyph. Suppress only paint, not its PDF advance
++      // or Unicode. Explicit mappings, embedded fonts and Type3 stay untouched.
++      const isUnmappedControl = font.missingFile && !glyph.isInFont &&
++        character.length === 1 && character === glyph.unicode &&
++        character.charCodeAt(0) === glyph.originalCharCode &&
++        /[\x00-\x1f\x7f-\x9f]/.test(character);
++      if (this.contentVisible && !isUnmappedControl && (glyph.isInFont || font.missingFile)) {
+         if (simpleFillText && !accent) {
+           ctx.fillText(character, scaledX, scaledY);
+           this.dependencyTracker?.recordCharacterBBox(opIdx, ctx, measure ? {
+@@ -20562,6 +20569,10 @@
+     if (!ctx) {
+       const canvas = document.createElement("canvas");
+       canvas.className = "hiddenCanvasElement";
++      // File Viewer modification: this shared measurement canvas is appended
++      // outside the viewer (including Shadow DOM). Keep the upstream viewer CSS
++      // on its own node so hiding survives individual viewer lifecycles.
++      canvas.style.cssText = "position:absolute;top:0;left:0;width:0;height:0;display:none";
+       canvas.lang = lang;
+       document.body.append(canvas);
+       ctx = canvas.getContext("2d", {
 diff --git a/legacy/build/pdf.worker.mjs b/legacy/build/pdf.worker.mjs
 index b7416c415e6490b16f642562003f54e78ab345f8..e6ba8ba311fe6d589897ae7d5a894d032250aedb 100644
 --- a/legacy/build/pdf.worker.mjs

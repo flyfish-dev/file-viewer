@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core';
 import type {
   FileRenderContext,
   FileViewerDesignOptions,
@@ -12,27 +13,11 @@ const flaStyle = `
 @media(max-width:760px){.fla-viewer{min-height:360px}.fla-layout{grid-template-columns:1fr;grid-template-rows:minmax(260px,1fr) auto}.fla-sidebar{max-height:240px;border-top:1px solid rgba(15,23,42,.1);border-left:0}.fla-stage{padding:12px}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string
-) => {
-  const node = documentRef.createElement(tag)
-  if (className) node.className = className
-  if (text !== undefined) node.textContent = text
-  return node
-}
 
-const formatBytes = (bytes: number) => {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`
-}
 
-const appendFact = (documentRef: Document, list: HTMLDListElement, label: string, value: string) => {
-  list.append(element(documentRef, 'dt', undefined, label), element(documentRef, 'dd', undefined, value))
-}
+
+
+
 
 export default async function renderAdobeAnimate(
   buffer: ArrayBuffer,
@@ -40,6 +25,13 @@ export default async function renderAdobeAnimate(
   type = 'fla',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+  const formatBytes = t.formatBytes
+  const appendFact = (documentRef: Document, list: HTMLDListElement, label: string | (() => string), value: string | (() => string)) => {
+  list.append(element(documentRef, 'dt', undefined, label), element(documentRef, 'dd', undefined, value))
+}
+
   if (context?.signal?.aborted) throw new DOMException('Animate rendering was aborted.', 'AbortError')
   const format = type.toLowerCase() === 'xfl' ? 'xfl' : 'fla'
   const design: FileViewerDesignOptions | undefined = context?.options?.design
@@ -77,10 +69,10 @@ export default async function renderAdobeAnimate(
       documentRef,
       'span',
       undefined,
-      `${parsed.stage.width} × ${parsed.stage.height} · ${parsed.stage.frameRate} fps · XFL ${parsed.xflVersion}`
+      () => t('design.ui.fps.xfl.9e44dd', { p0: parsed.stage.width, p1: parsed.stage.height, p2: parsed.stage.frameRate, p3: parsed.xflVersion })
     )
   )
-  header.append(heading, element(documentRef, 'span', 'fla-badge', 'FIRST FRAME'))
+  header.append(heading, element(documentRef, 'span', 'fla-badge', () => t('design.ui.first.frame.9ceee4')))
 
   const layout = element(documentRef, 'div', 'fla-layout')
   const stage = element(documentRef, 'main', 'fla-stage')
@@ -89,36 +81,36 @@ export default async function renderAdobeAnimate(
   const previewUrl = urlApi.createObjectURL(svgBlob)
   const image = element(documentRef, 'img')
   image.src = previewUrl
-  image.alt = `${parsed.name} bounded first-frame preview`
+  t.bind(image, node => { node.alt = t('design.ui.bounded.first.frame.preview.609410', { p0: parsed.name }); }, 'alt')
   image.dataset.previewElements = String(parsed.previewElementCount)
   stage.appendChild(image)
   context?.registerThumbnailAdapter?.({ capture: async () => svgBlob })
 
   const sidebar = element(documentRef, 'aside', 'fla-sidebar')
   const factsSection = element(documentRef, 'section', 'fla-section')
-  factsSection.appendChild(element(documentRef, 'h3', undefined, 'Verified XFL document'))
+  factsSection.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.verified.xfl.document.a2f5b8')))
   const facts = element(documentRef, 'dl', 'fla-facts')
-  appendFact(documentRef, facts, 'Container', parsed.container)
-  appendFact(documentRef, facts, 'Creator', parsed.creatorInfo)
-  appendFact(documentRef, facts, 'Package', `${parsed.entryCount} entries · ${formatBytes(parsed.expandedBytes)}`)
-  appendFact(documentRef, facts, 'Library', `${parsed.symbols.length} symbols · ${parsed.resources.length} resources`)
+  appendFact(documentRef, facts, () => t('data.label.container'), parsed.container)
+  appendFact(documentRef, facts, () => t('design.ui.creator.817b79'), parsed.creatorInfo)
+  appendFact(documentRef, facts, () => t('design.ui.package.7431e3'), () => t('design.ui.entries.78be25', { p0: parsed.entryCount, p1: formatBytes(parsed.expandedBytes) }))
+  appendFact(documentRef, facts, () => t('eda.ui.role.library'), () => t('design.ui.symbols.resources.a2d8fc', { p0: parsed.symbols.length, p1: parsed.resources.length }))
   appendFact(
     documentRef,
     facts,
-    'Preview',
-    `${parsed.previewElementCount} rendered · ${parsed.unsupportedPreviewElements} omitted`
+    () => t('design.ui.preview.f1fbb2'),
+    () => t('design.ui.rendered.omitted.9e59bb', { p0: parsed.previewElementCount, p1: parsed.unsupportedPreviewElements })
   )
   factsSection.appendChild(facts)
   sidebar.appendChild(factsSection)
 
   const timelineSection = element(documentRef, 'section', 'fla-section')
-  timelineSection.appendChild(element(documentRef, 'h3', undefined, `Timelines (${parsed.timelines.length})`))
+  timelineSection.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.timelines.ff46e7', { p0: parsed.timelines.length })))
   const timelineList = element(documentRef, 'ul', 'fla-list')
   for (const timeline of parsed.timelines.slice(0, 128)) {
     const item = element(documentRef, 'li', 'fla-item')
     item.append(
       element(documentRef, 'strong', undefined, timeline.name),
-      element(documentRef, 'span', undefined, `${timeline.frameCount} frames · ${timeline.layers.length} layers`)
+      element(documentRef, 'span', undefined, () => t('design.ui.frames.layers.583824', { p0: timeline.frameCount, p1: timeline.layers.length }))
     )
     timelineList.appendChild(item)
   }
@@ -127,7 +119,7 @@ export default async function renderAdobeAnimate(
 
   const layerSection = element(documentRef, 'section', 'fla-section')
   const selected = parsed.timelines[Math.min(parsed.stage.currentTimeline, parsed.timelines.length - 1)] || parsed.timelines[0]
-  layerSection.appendChild(element(documentRef, 'h3', undefined, `Layers (${selected?.layers.length || 0})`))
+  layerSection.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.layers.18f822', { p0: selected?.layers.length || 0 })))
   const layerList = element(documentRef, 'ul', 'fla-list')
   for (const layer of selected?.layers.slice(0, 256) || []) {
     const item = element(documentRef, 'li', 'fla-item')
@@ -138,7 +130,7 @@ export default async function renderAdobeAnimate(
         documentRef,
         'span',
         undefined,
-        `${layer.layerType} · ${layer.frameCount} frames · ${elementCount} elements${layer.visible ? '' : ' · hidden'}`
+        () => t('design.ui.frames.elements.a5a0b3', { p0: layer.layerType, p1: layer.frameCount, p2: elementCount, p3: layer.visible ? '' : ' · hidden' })
       )
     )
     layerList.appendChild(item)
@@ -148,18 +140,18 @@ export default async function renderAdobeAnimate(
 
   const boundary = element(documentRef, 'section', 'fla-section')
   boundary.append(
-    element(documentRef, 'h3', undefined, 'Preview boundary'),
+    element(documentRef, 'h3', undefined, () => t('design.ui.preview.boundary.8378f0')),
     element(
       documentRef,
       'p',
       'fla-note',
-      'Only modern ZIP/XFL-based FLA is accepted. The static stage covers bounded first-frame shapes, text, symbols, and PNG/JPEG instances; the timeline and resource inventory remain authoritative when an effect is omitted.'
+      () => t('design.ui.only.modern.zip.xfl.based.fla.ebd4b1')
     )
   )
   sidebar.appendChild(boundary)
   if (parsed.warnings.length > 0) {
     const warningSection = element(documentRef, 'section', 'fla-section')
-    warningSection.appendChild(element(documentRef, 'h3', undefined, 'Read notes'))
+    warningSection.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.read.notes.fc2bee')))
     for (const warning of parsed.warnings) warningSection.appendChild(element(documentRef, 'p', 'fla-warning', warning))
     sidebar.appendChild(warningSection)
   }

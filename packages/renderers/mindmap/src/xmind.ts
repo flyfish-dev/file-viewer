@@ -7,6 +7,7 @@ import {
 } from '../dist/vendor/xmind.js';
 import {
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   createFileViewerViewStateChange,
   createFileViewerViewStateChangeEmitter,
   createFileViewerZoomChangeEmitter,
@@ -428,7 +429,7 @@ const createNodeElement = (
       image.draggable = false;
       card.append(image);
     } else {
-      card.append(createElement('p', 'xmind-note', t('xmind.imageResource', { name: node.image })));
+      card.append(t.text(createElement('p', 'xmind-note'), 'xmind.imageResource', { name: node.image }));
     }
   }
   if (node.hyperlink) {
@@ -459,11 +460,11 @@ export default async function renderXMind(
   _type = 'xmind',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const zoomEmitter = createFileViewerZoomChangeEmitter();
   const viewStateEmitter = createFileViewerViewStateChangeEmitter();
   let status: XMindStatus = 'loading';
-  let errorMessage = '';
+  let errorMessage = () => '';
   let zoom = 1;
   let panX = 0;
   let panY = 0;
@@ -489,13 +490,13 @@ export default async function renderXMind(
   const zoomOutButton = createElement('button', undefined, '-') as HTMLButtonElement;
   const zoomLabel = createElement('span', undefined, '100%');
   const zoomInButton = createElement('button', undefined, '+') as HTMLButtonElement;
-  const resetButton = createElement('button', undefined, t('xmind.toolbar.fit')) as HTMLButtonElement;
+  const resetButton = t.text(createElement('button', undefined), 'xmind.toolbar.fit') as HTMLButtonElement;
   [zoomOutButton, zoomInButton, resetButton].forEach(button => {
     button.type = 'button';
   });
-  zoomOutButton.title = t('xmind.toolbar.zoomOut');
-  zoomInButton.title = t('xmind.toolbar.zoomIn');
-  resetButton.title = t('xmind.toolbar.fitTitle');
+  t.attr(zoomOutButton, 'title', 'xmind.toolbar.zoomOut');
+  t.attr(zoomInButton, 'title', 'xmind.toolbar.zoomIn');
+  t.attr(resetButton, 'title', 'xmind.toolbar.fitTitle');
   actions.append(zoomOutButton, zoomLabel, zoomInButton, resetButton);
   toolbar.append(title, actions);
 
@@ -507,11 +508,11 @@ export default async function renderXMind(
   const ownerWindow = ownerDocument.defaultView || window;
   stage.tabIndex = 0;
   stage.setAttribute('role', 'application');
-  stage.setAttribute('aria-label', 'XMind canvas. Drag to pan, pinch on touch screens to zoom, double click to fit, use Ctrl or Command with wheel to zoom.');
+  t.bind(stage, node => node.setAttribute('aria-label', t('ui.mindmap.ui.xmind.canvas.drag.to.pan.pinch.cd3061')), 'aria-label');
   stage.setAttribute('aria-keyshortcuts', 'Space ArrowLeft ArrowRight ArrowUp ArrowDown Control+0 Meta+0');
   const zoomBox = createElement('div', 'xmind-zoom-box');
   const surface = createElement('div', 'xmind-surface');
-  const state = createElement('div', 'xmind-state', t('xmind.state.loading'));
+  const state = t.text(createElement('div', 'xmind-state'), 'xmind.state.loading');
   zoomBox.append(surface);
   stage.append(zoomBox, state);
   body.append(sidebar, stage);
@@ -859,14 +860,14 @@ export default async function renderXMind(
   const syncState = () => {
     state.hidden = status === 'ready';
     state.classList.toggle('error', status === 'error');
-    state.textContent = status === 'error'
-      ? errorMessage
-      : t('xmind.state.loading');
+    t.bind(state, localizedNode => { localizedNode.textContent = status === 'error'
+      ? errorMessage()
+      : t('xmind.state.loading'); }, 'textContent');
   };
 
   const load = async () => {
     status = 'loading';
-    errorMessage = '';
+    errorMessage = () => '';
     syncState();
     try {
       const parsed = await loadXMindSheets(buffer, t('xmind.error.unrecognized'));
@@ -874,7 +875,7 @@ export default async function renderXMind(
         return;
       }
       if (!Array.isArray(parsed) || !parsed.length) {
-        throw new Error(t('xmind.error.noCanvas'));
+        throw t.error('xmind.error.noCanvas');
       }
       sheets = parsed.map(createSheetView);
       activeSheetIndex = 0;
@@ -888,7 +889,7 @@ export default async function renderXMind(
         return;
       }
       console.error(error);
-      errorMessage = error instanceof Error ? error.message : String(error);
+      errorMessage = () => normalizeFileViewerErrorMessage(error, context?.options);
       status = 'error';
       syncState();
     }

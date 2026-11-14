@@ -3,6 +3,7 @@ import { parseHTML } from 'linkedom';
 import { extractChartModel } from '../packages/renderers/pptx/src/engine/support/chart-model.js';
 import { createPptxCartesianChart, formatPptxChartNumber } from '../packages/renderers/pptx/src/chart-config';
 import { registerPptxChartRenderer, renderPptxPostProcessing } from '../packages/renderers/pptx/src/chart';
+import { stylePptxChartText } from '../packages/renderers/pptx/src/chart-text';
 import type { PptxChartModel } from '../packages/renderers/pptx/src/chart-types';
 
 const val = (value: unknown) => ({ attrs: { val: String(value) } });
@@ -28,6 +29,17 @@ const libraries = { bar: () => 'bar', line: () => 'line', area: () => 'area' };
 
 afterEach(() => registerPptxChartRenderer(null));
 describe('DrawingML chart groups and metadata', () => {
+  it('serializes authored font rules even before the chart is connected to a style sheet', () => {
+    const { document } = parseHTML('<html><body></body></html>');
+    const surface = document.createElement('div');
+    const model = extractChartModel(combo()) as PptxChartModel;
+    model.font = { family: 'serif', sizePt: 18, color: '#123456' };
+    const style = stylePptxChartText(surface, model);
+    expect(style?.textContent).toContain('font-family:serif,sans-serif');
+    expect(style?.textContent).toContain('font-size:24px');
+    expect(style?.textContent).toContain('fill:#123456');
+    expect(style?.textContent).toContain('[data-pptx-chart-text=');
+  });
   it('carries authored chart, axis, legend and per-point fonts through the serializable model', () => {
     const source = combo() as any;
     const txPr = (size: number) => ({ 'a:p': { 'a:pPr': { 'a:defRPr': {

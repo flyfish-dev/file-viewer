@@ -1,0 +1,205 @@
+zlib 1.3 — original upstream license and source declarations
+Source archive: https://github.com/madler/zlib/releases/download/v1.3/zlib13.zip
+Source archive SHA-256: c561d09347f674f0d72692e7c75d9898919326c532aab7f8c07bb43b07efeb38
+Source Git commit: 09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851
+
+--- Complete original LICENSE ---
+Copyright notice:
+
+ (C) 1995-2022 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+
+
+--- Original source declaration: deflate.c, inftrees.c; SHA-256 002e549943b07d55675abec71c9c9cc4a361274e6e8f81fd33ecaa9c19065005 ---
+/*
+  If you use the zlib library in a product, an acknowledgment is welcome
+  in the documentation of your product. If for some reason you cannot
+  include such an acknowledgment, I would appreciate that you keep this
+  copyright string in the executable of your product.
+ */
+
+--- Original source declaration: infback.c; SHA-256 1decc82f88d05b8fa904b5468000976d5904f457ab891142cbcb9bc752d3fc4a ---
+/* infback.c -- inflate using a call-back interface
+ * Copyright (C) 1995-2022 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: gzread.c; SHA-256 2349b70268a88e11540c28587000795fa043c3a5180ec3a9b85bcdebc5e5115c ---
+/* gzread.c -- zlib functions for reading gzip files
+ * Copyright (C) 2004-2017 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: gzclose.c; SHA-256 295cc4471eecfa68fdc048ce0109883dc260ec833716f5991f6f5d3bb71b65c6 ---
+/* gzclose.c -- zlib gzclose() function
+ * Copyright (C) 2004, 2010 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: uncompr.c; SHA-256 29e55fab87a039e162eadca6f3972c4380d931bc35de6f0615889c98aa2d9d64 ---
+/* uncompr.c -- decompress a memory buffer
+ * Copyright (C) 1995-2003, 2010, 2014, 2016 Jean-loup Gailly, Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: inflate.h; SHA-256 30db5ebc2c6db6e4fb1aec7f0840ae0d10654636434211270b512a1eaf7b63f1 ---
+/* inflate.h -- internal inflate state definition
+ * Copyright (C) 1995-2019 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: gzlib.c; SHA-256 3db5c5d1604302eb78e38dcbb9bfbe05b618c612816cd8df45fa906c9e6139ad ---
+/* gzlib.c -- zlib functions common to reading and writing gzip files
+ * Copyright (C) 2004-2019 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: crc32.c; SHA-256 3eeee1a71dfcf9f48b131f76ef04e69bcc047b131bf16e2a14197d4b5ed07646 ---
+/* crc32.c -- compute the CRC-32 of a data stream
+ * Copyright (C) 1995-2022 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ *
+ * This interleaved implementation of a CRC makes use of pipelined multiple
+ * arithmetic-logic units, commonly found in modern CPU cores. It is due to
+ * Kadatch and Jenkins (2010). See doc/crc-doc.1.0.pdf in this distribution.
+ */
+
+--- Original source declaration: gzguts.h; SHA-256 44d4facc58b4235ae92eb06e0926aaa3153330c34268d8ca680a0bf5f3571a88 ---
+/* gzguts.h -- zlib internal header definitions for gz* operations
+ * Copyright (C) 2004-2019 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: compress.c; SHA-256 5224fb3fa511f6877c5e4e19ee1d69fbbf2672a302e00e6d5cf61542e33a0f61 ---
+/* compress.c -- compress a memory buffer
+ * Copyright (C) 1995-2005, 2014, 2016 Jean-loup Gailly, Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: trees.c; SHA-256 5f92d70ce8ed4a44c01f52ebcdf4604dfa823cd53ba8a551c36cfe8e0081d977 ---
+/* trees.c -- output deflated data using Huffman coding
+ * Copyright (C) 1995-2021 Jean-loup Gailly
+ * detect_data_type() function provided freely by Cosmin Truta, 2006
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: inftrees.c; SHA-256 74ca75fcbdb89191fcfa10761f88b046b6b7ddc215780fe8e4b32ef6a4ff6417 ---
+/* inftrees.c -- generate Huffman trees for efficient decoding
+ * Copyright (C) 1995-2023 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: deflate.h; SHA-256 826690e9738064a2c1661312a7f242409aa0361ebd30282c7c52ae89286a2b6f ---
+/* deflate.h -- internal compression state
+ * Copyright (C) 1995-2018 Jean-loup Gailly
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: inffast.c; SHA-256 886d7660da32fa28245159025a8bca17d9a03b9efdae24d0a6317ec18a161f2d ---
+/* inffast.c -- fast decoding
+ * Copyright (C) 1995-2017 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: zutil.h; SHA-256 928cb07ef7100c33f9aab31df023def3a571f2271ba1481416017636dca7b2e8 ---
+/* zutil.h -- internal interface and configuration of the compression library
+ * Copyright (C) 1995-2022 Jean-loup Gailly, Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: inftrees.h; SHA-256 9d1e9e45eb1bb2c0e0d8ec53cafab192f2fdfca1a3ac20e3629ec2675d0b58c2 ---
+/* inftrees.h -- header to use inftrees.c
+ * Copyright (C) 1995-2005, 2010 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: inflate.c; SHA-256 ad03e45514e0ea4425864a27c5029329e552fac2622fc36837de03baf595a8bb ---
+/* inflate.c -- zlib decompression
+ * Copyright (C) 1995-2022 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: deflate.c; SHA-256 afcbf07c2a701a239d54aadf95e490394f8297c20cd98318c52875892cd10db5 ---
+/* deflate.c -- compress data using the deflation algorithm
+ * Copyright (C) 1995-2023 Jean-loup Gailly and Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: adler32.c; SHA-256 c2f30f121fd430b99a0bc52aaa4d35080a3f8fff679250dd73063f24466d9bf1 ---
+/* adler32.c -- compute the Adler-32 checksum of a data stream
+ * Copyright (C) 1995-2011, 2016 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: zconf.h; SHA-256 cae196ad6c0ef6eda2a9ce32c7890107dc81f3780c48aad15c668ec32906036e ---
+/* zconf.h -- configuration of the zlib compression library
+ * Copyright (C) 1995-2016 Jean-loup Gailly, Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: gzwrite.c; SHA-256 e0115e7c4fdb5f1d1fdfa7cadebabcf157eabb8311c34aa09722a72c2bf41df7 ---
+/* gzwrite.c -- zlib functions for writing gzip files
+ * Copyright (C) 2004-2019 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: zlib.h; SHA-256 e7800d2e3e0a9bb5e371007c54cf3be91fb93a42093c3afb65a412f455d562fe ---
+/* zlib.h -- interface of the 'zlib' general purpose compression library
+  version 1.3, August 18th, 2023
+
+  Copyright (C) 1995-2023 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+
+
+  The data format used by the zlib library is described by RFCs (Request for
+  Comments) 1950 to 1952 in the files http://tools.ietf.org/html/rfc1950
+  (zlib format), rfc1951 (deflate format) and rfc1952 (gzip format).
+*/
+
+--- Original source declaration: zutil.c; SHA-256 f3eff289b6659160d0957a6c48ed7ca20820689e7a8d45070ed7145fbe40d5c1 ---
+/* zutil.c -- target dependent utility functions for the compression library
+ * Copyright (C) 1995-2017 Jean-loup Gailly
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+--- Original source declaration: inffast.h; SHA-256 fca828214f80f9d56bc371e322ff9ed2875a92880cec1b70ec710ca802a3093e ---
+/* inffast.h -- header to use inffast.c
+ * Copyright (C) 1995-2003, 2010 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */

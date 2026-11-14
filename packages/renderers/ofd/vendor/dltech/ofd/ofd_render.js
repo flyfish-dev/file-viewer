@@ -134,31 +134,17 @@ const resolveDrawParamStyle = function (drawParamResObj, drawParamId, base) {
     let fillColor = base?.fillColor ?? null;
     let strokeColor = base?.strokeColor ?? null;
     let lineWith = base?.lineWith;
-    if (!drawParamId || !drawParamResObj || !drawParamResObj[drawParamId]) {
-        return { fillColor, strokeColor, lineWith };
+    const chain = [];
+    const seen = new Set();
+    for (let id = drawParamId; id && drawParamResObj?.[id] && !seen.has(id); id = drawParamResObj[id].relative) {
+        seen.add(id);
+        chain.push(drawParamResObj[id]);
     }
-    let drawParam = drawParamId;
-    if (drawParamResObj[drawParam]['relative']) {
-        drawParam = drawParamResObj[drawParam]['relative'];
-        if (drawParamResObj[drawParam] && drawParamResObj[drawParam]['FillColor']) {
-            fillColor = parseColor(drawParamResObj[drawParam]['FillColor']);
-        }
-        if (drawParamResObj[drawParam] && drawParamResObj[drawParam]['StrokeColor']) {
-            strokeColor = parseColor(drawParamResObj[drawParam]['StrokeColor']);
-        }
-        if (drawParamResObj[drawParam] && drawParamResObj[drawParam]['LineWidth']) {
-            lineWith = converterDpi(drawParamResObj[drawParam]['LineWidth']);
-        }
-        drawParam = drawParamId;
-    }
-    if (drawParamResObj[drawParam]['FillColor']) {
-        fillColor = parseColor(drawParamResObj[drawParam]['FillColor']);
-    }
-    if (drawParamResObj[drawParam]['StrokeColor']) {
-        strokeColor = parseColor(drawParamResObj[drawParam]['StrokeColor']);
-    }
-    if (drawParamResObj[drawParam]['LineWidth']) {
-        lineWith = converterDpi(drawParamResObj[drawParam]['LineWidth']);
+    for (let i = chain.length - 1; i >= 0; i--) {
+        const param = chain[i];
+        if (param.FillColor) fillColor = parseColor(param.FillColor);
+        if (param.StrokeColor) strokeColor = parseColor(param.StrokeColor);
+        if (param.LineWidth != null && param.LineWidth !== '') lineWith = converterDpi(param.LineWidth);
     }
     return { fillColor, strokeColor, lineWith };
 }
@@ -304,7 +290,7 @@ const renderLayer = function (pageDiv, fontResObj, drawParamResObj, multiMediaRe
     textObjectArray = textObjectArray.concat(textObjects);
     for (const textObject of textObjectArray) {
         if (textObject) {
-            let svg = renderTextObject(drawParamResObj, fontResObj, textObject, fillColor, strokeColor);
+            let svg = renderTextObject(drawParamResObj, fontResObj, textObject, fillColor, strokeColor, lineWith);
             pageDiv.appendChild(svg);
         }
     }
@@ -440,7 +426,9 @@ export const renderImageOnDiv = function (pageWidth, pageHeight, imgSrc, boundar
     return div;
 }
 
-export const renderTextObject = function (drawParamResObj, fontResObj, textObject, defaultFillColor, defaultStrokeColor) {
+const ofdBoolean = (value, fallback) => value == null ? fallback : value === true || value === 1 || value === 'true' || value === '1';
+
+export const renderTextObject = function (drawParamResObj, fontResObj, textObject, defaultFillColor, defaultStrokeColor, defaultLineWith) {
     let defaultFillOpacity = 1;
     let boundary = parseStBox(textObject['@_Boundary']);
     boundary = converterBox(boundary);
@@ -457,9 +445,12 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
     const objectStyle = resolveDrawParamStyle(drawParamResObj, textObject['@_DrawParam'], {
         fillColor: defaultFillColor,
         strokeColor: defaultStrokeColor,
+        lineWith: defaultLineWith,
     });
     defaultFillColor = objectStyle.fillColor;
     defaultStrokeColor = objectStyle.strokeColor;
+    const fillEnabled = ofdBoolean(textObject['@_Fill'], true);
+    const strokeEnabled = ofdBoolean(textObject['@_Stroke'], false);
     const fillColor = textObject['ofd:FillColor'];
     if (fillColor) {
         defaultFillColor = parseColor(fillColor['@_Value']);
@@ -468,6 +459,21 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
             defaultFillOpacity = alpha>1? alpha/255:alpha;
         }
     }
+    // An inline stroke color must not become the fill of ordinary text.
+    const textFillColor = defaultFillColor || defaultStrokeColor || 'rgb(0, 0, 0)';
+    const strokeColor = textObject['ofd:StrokeColor'];
+    let strokeOpacity = 1;
+    if (strokeColor) {
+        defaultStrokeColor = parseColor(strokeColor['@_Value']);
+        const alpha = strokeColor['@_Alpha'];
+        if (alpha != null && alpha !== '') {
+            strokeOpacity = Number(alpha) / 255;
+        }
+    }
+    const lineWidth = textObject['@_LineWidth'];
+    const textStrokeWidth = lineWidth == null || lineWidth === ''
+        ? objectStyle.lineWith ?? converterDpi(0.353)
+        : converterDpi(lineWidth);
     for (const textCodePoint of textCodePointList) {
         if (textCodePoint && !isNaN(textCodePoint.x)) {
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -483,9 +489,13 @@ export const renderTextObject = function (drawParamResObj, fontResObj, textObjec
                 text.setAttribute('transform', `matrix(${hScale}, 0, 0, 1, ${(1-hScale)*textCodePoint.x}, 0)`)
                 // text.setAttribute('transform-origin', `${textCodePoint.x}`);
             }
-            const textFillColor = defaultFillColor || defaultStrokeColor || 'rgb(0, 0, 0)';
-            text.setAttribute('fill', textFillColor);
+            text.setAttribute('fill', fillEnabled ? textFillColor : 'none');
             text.setAttribute('fill-opacity', defaultFillOpacity);
+            if (strokeEnabled) {
+                text.setAttribute('stroke', defaultStrokeColor || 'rgb(0, 0, 0)');
+                text.setAttribute('stroke-width', textStrokeWidth);
+                text.setAttribute('stroke-opacity', strokeOpacity);
+            }
             text.setAttribute('style', `white-space:pre;font-weight: ${weight};font-size:${size}px;font-family: ${getFontFamily(fontResObj[font])};color:${textFillColor};`)
             svg.appendChild(text);
         }

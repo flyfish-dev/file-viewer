@@ -3,6 +3,7 @@ import { cleanTextControlChars, pushWarning, shallowEqual, uniqueId } from '../c
 import { parseClx, buildPieceTextCache, getTextByCp, splitParagraphRanges } from './clx.js';
 import { DOC_CONTROL } from './constants.js';
 import { parseFib } from './fib.js';
+import { readTextboxLayout } from './textboxes.js';
 import { readChpxRuns, readPapxRuns, type ChpxRun } from './fkp.js';
 import { parseFonts } from './fonts.js';
 import { parseHtmlWordDocumentStream } from './html-word.js';
@@ -33,6 +34,7 @@ import type {
   ParagraphRange,
   ParsedFib,
   ResolvedStyle,
+  MsDocSourceRange,
   StyleCollection,
   TableBlock,
   TableCellBlock,
@@ -401,8 +403,8 @@ function buildCharSegments(
 }
 
 function buildParagraphModel(
-  range: ParagraphRange & { storyKind?: StoryRange['kind'] },
-  paragraphText: string,
+  range: ParagraphRange & { storyKind?: StoryRange['kind']; sourceRange?: MsDocSourceRange },
+  rawContent: string,
   styles: StyleCollection,
   fonts: FontsCollection,
   chpxRuns: ChpxRun[],
@@ -424,7 +426,7 @@ function buildParagraphModel(
   const resolveFont = (fontId: number | undefined) => fonts.byIndex(fontId);
   const segments = buildCharSegments(
     range,
-    paragraphText,
+    rawContent,
     chpxRuns,
     styles,
     baseCharProps,
@@ -450,13 +452,14 @@ function buildParagraphModel(
     id: uniqueId('para'),
     cpStart: range.cpStart,
     cpEnd: range.cpEnd,
+    ...(range.sourceRange ? { sourceRange: range.sourceRange } : {}),
     terminator: range.terminator || '',
     paragraphMark: markState && {
       revisionDeleted: markState.revisionDeleted,
       revisionInserted: markState.revisionInserted,
     },
     storyKind: range.storyKind,
-    text: paragraphText,
+    text: normalizeParagraphText(rawContent),
     rawProperties: range.properties || [],
     styleId: paraStyleId,
     styleName: normalizeTextStyleName(styles.styles.get(paraStyleId)?.name),
@@ -610,6 +613,7 @@ function paragraphToBlock(paragraph: ParagraphModel): ParagraphBlock {
     text: paragraph.text,
     paragraphMark: paragraph.paragraphMark,
     storyKind: paragraph.storyKind,
+    ...(paragraph.sourceRange ? { sourceRange: paragraph.sourceRange } : {}),
   };
 }
 
@@ -658,7 +662,8 @@ export function normalizeRowEndOnlyTables(paragraphs: ParagraphModel[]): void {
     const rowParagraphs: ParagraphModel[] = [];
     for (; cursor >= 0 && remainingCells > 0; cursor -= 1) {
       const paragraph = paragraphs[cursor]!;
-      if (paragraph.paraState.tableRowEnd || paragraph.paraState.innerTableRowEnd) break;
+      if (paragraph.storyKind !== rowEnd.storyKind || paragraph.sourceRange?.flowId !== rowEnd.sourceRange?.flowId
+        || paragraph.paraState.tableRowEnd || paragraph.paraState.innerTableRowEnd) break;
       rowParagraphs.push(paragraph);
       if (paragraph.terminator === DOC_CONTROL.cellMark) remainingCells -= 1;
     }
@@ -673,6 +678,8 @@ export function normalizeRowEndOnlyTables(paragraphs: ParagraphModel[]): void {
     let previousRowEndIndex = cursor;
     while (
       previousRowEndIndex >= 0
+      && paragraphs[previousRowEndIndex]!.storyKind === rowEnd.storyKind
+      && paragraphs[previousRowEndIndex]!.sourceRange?.flowId === rowEnd.sourceRange?.flowId
       && !paragraphs[previousRowEndIndex]!.paraState.tableRowEnd
       && !paragraphs[previousRowEndIndex]!.paraState.innerTableRowEnd
       && paragraphs[previousRowEndIndex]!.terminator !== DOC_CONTROL.cellMark
@@ -682,6 +689,8 @@ export function normalizeRowEndOnlyTables(paragraphs: ParagraphModel[]): void {
     const previousRowEnd = paragraphs[previousRowEndIndex];
     if (
       previousRowEnd?.paraState.tableRowEnd
+      && previousRowEnd.storyKind === rowEnd.storyKind
+      && previousRowEnd.sourceRange?.flowId === rowEnd.sourceRange?.flowId
       && tableGridSignature(previousRowEnd) === tableGridSignature(rowEnd)
     ) {
       for (let leading = previousRowEndIndex + 1; leading < index; leading += 1) {
@@ -708,6 +717,7 @@ export function buildBlocks(paragraphs: ParagraphModel[]): MsDocParseResult['blo
     content: CellContent;
     lastState: ParagraphModel['tableState'];
     storyKind: ParagraphModel['storyKind'];
+    flowId?: string;
   }
   const stack: PendingTable[] = [];
   const finishCell = (pending: PendingTable) => {
@@ -752,7 +762,7 @@ export function buildBlocks(paragraphs: ParagraphModel[]): MsDocParseResult['blo
   for (const paragraph of paragraphs) {
     const depth = getTableDepth(paragraph.paraState);
     // Text-box stories must not extend the main story's final table.
-    if (stack.length && stack[0]!.storyKind !== paragraph.storyKind) {
+    if (stack.length && (stack[0]!.storyKind !== paragraph.storyKind || stack[0]!.flowId !== paragraph.sourceRange?.flowId)) {
       while (stack.length) finishTable();
     }
     while (stack.length && stack[stack.length - 1]!.table.depth > depth) finishTable();
@@ -764,7 +774,7 @@ export function buildBlocks(paragraphs: ParagraphModel[]): MsDocParseResult['blo
     if (!pending || pending.table.depth < depth) {
       pending = {
         table: { type: 'table', id: uniqueId('table'), depth, rows: [], state: paragraph.tableState, gridWidthTwips: 0 },
-        cells: [], content: [], lastState: paragraph.tableState, storyKind: paragraph.storyKind,
+        cells: [], content: [], lastState: paragraph.tableState, storyKind: paragraph.storyKind, flowId: paragraph.sourceRange?.flowId,
       };
       stack.push(pending);
     }
@@ -839,8 +849,57 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
     .filter((run) => run.cpStart < relevantStoryEnd)
     .map((run) => ({ ...run, cpEnd: Math.min(run.cpEnd, relevantStoryEnd) }));
 
-  const ranges: Array<ParagraphRange & { storyKind: StoryRange['kind'] }> = [mainStory, ...supplementalTextStories]
-    .flatMap((story) => buildStoryParagraphRanges(story, documentText, papxRuns));
+  // Preserve decoder diagnostics before style/direct-property merging. A
+  // repeated FKP or inherited style should not flood the result with copies
+  // of the same recovery warning. This data also crosses the Worker boundary.
+  const propertyWarnings = new Set<string>();
+  const collectPropertyWarnings = (properties: DecodedProperty[]) => {
+    for (const property of properties) {
+      if (!property.warning) continue;
+      const key = JSON.stringify(property.warning);
+      if (propertyWarnings.has(key)) continue;
+      propertyWarnings.add(key);
+      warnings.push(property.warning);
+    }
+  };
+  for (const style of styles.styles.values()) {
+    collectPropertyWarnings(style.paraProps);
+    collectPropertyWarnings(style.charProps);
+    collectPropertyWarnings(style.tableProps);
+  }
+  for (const run of [...chpxRuns, ...papxRuns]) collectPropertyWarnings(run.properties);
+
+  const textboxLayout = readTextboxLayout(wordBytes, tableBytes, fib, stories, documentText, (cp) => {
+    let low = 0, high = chpxRuns.length - 1;
+    while (low <= high) { const mid = (low + high) >>> 1; if (chpxRuns[mid]!.cpStart <= cp) low = mid + 1; else high = mid - 1; }
+    const run = high >= 0 && chpxRuns[high]!.cpEnd > cp ? chpxRuns[high] : undefined;
+    return !!run && charPropsToState(run.properties).special;
+  }, warnings);
+  // Split in increasing CP order, never drawing/Z order: CHPX uses a forward cursor.
+  // Invalid mapping cannot remove text. Unowned/reusable ranges stay on the old path.
+  const ranges: Array<ParagraphRange & { storyKind: StoryRange['kind']; sourceRange?: MsDocSourceRange }> = [];
+  for (const story of [mainStory, ...supplementalTextStories]) {
+    const frames = (textboxLayout?.frames || []).filter(f => f.mapping === 'mapped' && f.storyKind === story.kind
+      && f.globalRange.start >= story.cpStart && f.globalRange.end <= story.cpEnd
+      && f.globalRange.end > f.globalRange.start).sort((a, b) => a.globalRange.start - b.globalRange.start);
+    const boundaries = [...new Set(frames.flatMap(f => [f.globalRange.start, f.globalRange.end]))].sort((a, b) => a - b);
+    let boundaryCursor = 0, frameCursor = 0;
+    for (const range of buildStoryParagraphRanges(story, documentText, papxRuns)) {
+      while (boundaryCursor < boundaries.length && boundaries[boundaryCursor]! <= range.cpStart) boundaryCursor++;
+      const cuts = [range.cpStart];
+      while (boundaryCursor < boundaries.length && boundaries[boundaryCursor]! < range.cpEnd) cuts.push(boundaries[boundaryCursor++]!);
+      cuts.push(range.cpEnd);
+      for (let i = 0; i + 1 < cuts.length; i++) {
+        const cpStart = cuts[i]!, cpEnd = cuts[i + 1]!;
+        while (frameCursor < frames.length && frames[frameCursor]!.globalRange.end <= cpStart) frameCursor++;
+        const frame = frames[frameCursor];
+        const flowId = frame && cpStart >= frame.globalRange.start && cpEnd <= frame.globalRange.end ? frame.id : `${story.kind}-unmapped`;
+        ranges.push({ ...range, cpStart, cpEnd, terminator: documentText[cpEnd - 1] || '',
+          ...(textboxLayout ? { sourceRange: { storyKind: story.kind, global: { start: cpStart, end: cpEnd },
+            story: { start: cpStart - story.cpStart, end: cpEnd - story.cpStart }, flowId } } : {}) });
+      }
+    }
+  }
   if (supplementalTextStories.length) {
     pushWarning(
       warnings,
@@ -865,11 +924,45 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
     const paragraphText = normalizeParagraphText(rawContent);
     const isTextBoxStory = range.storyKind === 'textbox' || range.storyKind === 'header-textbox';
     if ((rawContent.includes(DOC_CONTROL.textBoxPlaceholder) || isTextBoxStory) && !paragraphText.trim()) return [];
-    return [buildParagraphModel({ ...range, terminator }, paragraphText, styles, fonts, chpxRuns, resolveAsset, chpxCursor)];
+    return [buildParagraphModel({ ...range, terminator }, rawContent, styles, fonts, chpxRuns, resolveAsset, chpxCursor)];
   });
 
   normalizeRowEndOnlyTables(paragraphs);
   const blocks = buildBlocks(paragraphs);
+  if (textboxLayout) {
+    const framesById = new Map(textboxLayout.frames.map(f => [f.id, f]));
+    const flows = (block: ParagraphBlock | TableBlock): Set<string> => block.type === 'paragraph'
+      ? new Set(block.sourceRange?.flowId ? [block.sourceRange.flowId] : [])
+      : new Set(block.rows.flatMap(row => row.cells.flatMap(cell => (cell.blocks || cell.paragraphs).flatMap(child => [...flows(child)]))));
+    for (const block of blocks) {
+      if (block.type === 'attachments') continue;
+      const ids = flows(block);
+      if (ids.size === 1) framesById.get([...ids][0]!)?.contentBlockIds.push(block.id);
+    }
+    const anchorRanges = new Map<string, { storyKind: 'main' | 'header'; globalRange: { start: number; end: number }; blockId?: string }>();
+    const rawAnchorRanges = new Map(['main', 'header'].map(kind => {
+      const story = stories.find(s => s.kind === kind);
+      return [kind, story ? buildStoryParagraphRanges(story, documentText, papxRuns) : []];
+    }));
+    const paragraphByRange = new Map(paragraphs.map(p => [`${p.cpStart}:${p.cpEnd}`, p]));
+    for (const frame of textboxLayout.frames) {
+      const anchor = frame.anchor;
+      if (!anchor) continue;
+      const anchorStory = stories.find(s => s.kind === anchor.storyKind);
+      if (!anchorStory) continue;
+      const candidates = rawAnchorRanges.get(anchor.storyKind) || [];
+      let low = 0, high = candidates.length - 1;
+      while (low <= high) { const mid = (low + high) >>> 1; if (candidates[mid]!.cpStart <= anchor.globalCp) low = mid + 1; else high = mid - 1; }
+      const range = high >= 0 && candidates[high]!.cpEnd > anchor.globalCp ? candidates[high] : undefined;
+      if (!range) continue;
+      anchor.paragraphRange = { start: range.cpStart, end: range.cpEnd };
+      const paragraph = paragraphByRange.get(`${range.cpStart}:${range.cpEnd}`);
+      if (paragraph) anchor.paragraphBlockId = paragraph.id;
+      anchorRanges.set(`${anchor.storyKind}:${range.cpStart}:${range.cpEnd}`, { storyKind: anchor.storyKind,
+        globalRange: anchor.paragraphRange, ...(paragraph ? { blockId: paragraph.id } : {}) });
+    }
+    textboxLayout.anchorParagraphs = [...anchorRanges.values()];
+  }
   const trailingAttachments = Array.from(objectPool.values())
     .filter((item) => item?.attachment && !usedAttachmentNames.has(item.entry.name))
     .map((item) => item.attachment as AttachmentAsset);
@@ -882,6 +975,7 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
   return {
     kind: 'msdoc',
     version: 1,
+    ...(textboxLayout ? { textboxLayout } : {}),
     warnings,
     meta: {
       fib: {

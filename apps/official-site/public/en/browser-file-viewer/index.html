@@ -63,7 +63,7 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Web Browser",
             "programmingLanguage": "TypeScript",
-            "softwareVersion": "3.3.3",
+            "softwareVersion": "3.3.4",
             "license": "https://www.apache.org/licenses/LICENSE-2.0",
             "codeRepository": "https://github.com/flyfish-dev/file-viewer",
             "sameAs": [
@@ -365,8 +365,9 @@
         and renderers. Its main package scope is <code>@file-viewer/*</code>.
       </section>
 
-      <div class="facts" aria-label="Current release facts">
-        <div class="fact"><strong>3.3.3</strong><span>current published release</span></div>
+      <p>These facts describe this source build. Check npm and GitHub Releases for published package versions and release availability.</p>
+      <div class="facts" aria-label="Build facts">
+        <div class="fact"><strong>3.3.4</strong><span>build version</span></div>
         <div class="fact"><strong>275</strong><span>registered extension mappings</span></div>
         <div class="fact"><strong>47</strong><span>preview pipelines</span></div>
         <div class="fact"><strong>89</strong><span>npm targets</span></div>
@@ -452,9 +453,10 @@
       <h2>License boundary</h2>
       <p>
         File Viewer-authored source is Apache-2.0 and can be used in commercial products. The
-        separately versioned binary <code>.ppt</code> runtime keeps its own license and a visible
-        watermark in the public build. Removing that watermark requires a commercial license. The
-        exact notices ship with the relevant package and release assets.
+        current binary <code>.ppt</code>/<code>.pot</code> preview uses the Apache-2.0 compiled
+        <code>@file-viewer/ppt@1.0.2</code> runtime; its TypeScript source remains private. The older
+        native/WASM release line retains its original license and visible watermark. Removing that
+        legacy watermark requires commercial authorization. Keep the exact package and release notices.
       </p>
 
       <h2>Primary sources</h2>

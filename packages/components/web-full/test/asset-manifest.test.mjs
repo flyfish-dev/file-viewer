@@ -176,6 +176,18 @@ test('runtime and legal stagers run in order and their notices reach the manifes
   assert.equal(evidence.validation.valid, true)
 })
 
+test('the production asset stage preserves complete bundle legal bytes and still localizes runtime URLs', async t => {
+  const f = await fixture(t)
+  const original = await readFile(new URL('../../../renderers/image/THIRD_PARTY_NOTICES.md', import.meta.url))
+  const notice = join(f.dist, 'THIRD_PARTY_LICENSES.txt')
+  const runtime = join(f.dist, 'renderers/runtime-fallback.js')
+  await writeFile(notice, original)
+  await writeFile(runtime, "fetch('https://api.github.com/repos/owner/runtime')")
+  await f.stage()
+  assert.deepEqual(await readFile(notice), original)
+  assert.doesNotMatch(await readFile(runtime, 'utf8'), /https:\/\/api\.github\.com/)
+})
+
 test('source metadata is regenerated from the packaged files', async t => {
   const f = await fixture(t)
   await writeFile(join(f.source, manifestFilename), JSON.stringify({

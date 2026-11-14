@@ -180,7 +180,7 @@ const createLightbox = (
   lightbox.setAttribute('aria-hidden', 'true');
 
   const image = documentRef.createElement('img');
-  image.alt = t('image.lightbox.alt');
+  t.attr(image, 'alt', 'image.lightbox.alt');
   image.src = src;
   const ownerWindow = documentRef.defaultView;
   let rotation = 0;
@@ -206,7 +206,7 @@ const createLightbox = (
 
   const closeButton = documentRef.createElement('button');
   closeButton.type = 'button';
-  closeButton.setAttribute('aria-label', t('image.lightbox.close'));
+  t.attr(closeButton, 'aria-label', 'image.lightbox.close');
   closeButton.textContent = '×';
 
   let previousFocus: HTMLElement | null = null;
@@ -272,7 +272,7 @@ export default async function renderImage(
     const { renderTiff } = await import('./tiff.js');
     return renderTiff(buffer, target, context);
   }
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const rotationEnabled = context?.options?.image?.rotation !== false;
   const documentRef = target.ownerDocument || document;
   const src = await resolveImageUrl(buffer, type);
@@ -294,7 +294,7 @@ export default async function renderImage(
   const toolbar = documentRef.createElement('div');
   toolbar.className = 'image-toolbar';
   toolbar.setAttribute('role', 'toolbar');
-  toolbar.setAttribute('aria-label', t('image.toolbar.rotation'));
+  t.attr(toolbar, 'aria-label', 'image.toolbar.rotation');
   const createRotateButton = (label: string, icon: string) => {
     const button = documentRef.createElement('button');
     button.type = 'button';
@@ -304,11 +304,15 @@ export default async function renderImage(
     return button;
   };
   const rotateLeftButton = createRotateButton(t('image.toolbar.rotateLeft'), '↺');
+  t.attr(rotateLeftButton, 'title', 'image.toolbar.rotateLeft');
+  t.attr(rotateLeftButton, 'aria-label', 'image.toolbar.rotateLeft');
   const rotationMeter = documentRef.createElement('span');
   rotationMeter.className = 'image-rotation-meter';
   rotationMeter.setAttribute('aria-live', 'polite');
   rotationMeter.textContent = '0°';
   const rotateRightButton = createRotateButton(t('image.toolbar.rotateRight'), '↻');
+  t.attr(rotateRightButton, 'title', 'image.toolbar.rotateRight');
+  t.attr(rotateRightButton, 'aria-label', 'image.toolbar.rotateRight');
   toolbar.append(rotateLeftButton, rotationMeter, rotateRightButton);
 
   const stage = documentRef.createElement('div');
@@ -318,7 +322,7 @@ export default async function renderImage(
   frame.className = 'image-frame';
 
   const image = documentRef.createElement('img');
-  image.alt = t('image.alt');
+  t.attr(image, 'alt', 'image.alt');
   image.src = src;
   image.tabIndex = 0;
   image.setAttribute('role', 'button');
@@ -632,6 +636,9 @@ export default async function renderImage(
 
   const cleanup = () => {
     destroyed = true;
+    t.release(root);
+    t.release(toolbar);
+    t.release(lightbox.element);
     disposeHandTool();
     context?.registerThumbnailAdapter?.(null);
     unregisterFileViewerViewStateProvider(root);

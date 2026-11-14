@@ -283,6 +283,7 @@ The table below lists the real props, event channel, and customization entry for
 | Options Field | Description |
 | --- | --- |
 | `theme` | `light`, `dark`, or `system`. This takes precedence over browser `prefers-color-scheme`. |
+| `locale` / `i18n` / `messages` | Bundled offline: `zh-CN`, `en-US`, `ja-JP`, `zh-TW`, `zh-HK`, `de-DE`, `ru-RU`. Update options to switch language while preserving the file and reading state. The i18n group takes priority. See [internationalization](https://doc.file-viewer.app/guide/i18n). |
 | `styleIsolation` | `auto`, `shadow`, `scoped`, or `none`. With `auto`, Web Component, IIFE, Vue, React, Svelte, jQuery, and full packages all use Shadow DOM by default. Legacy integrations that depend on deep class overrides can explicitly use `none`. |
 | `watermark` | Text or image watermark with opacity, rotation, gap, size, font, and color controls. |
 | `toolbar` | Controls the theme toggle, download, print, HTML export, zoom, item order, toolbar position, and operation-level preflight checks. |

@@ -20,7 +20,10 @@ const METADATA_RELATIONSHIP_SUFFIX = '/sheetmetadata'
 const RICH_VALUE_RELATIONSHIP_SUFFIX = '/rdrichvalue'
 const RICH_VALUE_STRUCTURE_RELATIONSHIP_SUFFIX = '/rdrichvaluestructure'
 const RICH_VALUE_RELATION_LIST_SUFFIX = '/richvaluerel'
-const WPS_CELL_IMAGE_RELATIONSHIP = 'http://www.wps.cn/officeDocument/2017/relationships/cellimage'
+const WPS_CELL_IMAGE_RELATIONSHIPS = new Set([
+  'http://www.wps.cn/officeDocument/2017/relationships/cellimage',
+  'http://www.wps.cn/officeDocument/2020/cellImage'
+].map(type => type.toLowerCase()))
 const RICH_VALUE_METADATA_NAME = 'XLRICHVALUE'
 const LOCAL_IMAGE_STRUCTURE_TYPE = '_localImage'
 const LOCAL_IMAGE_KEY_SUFFIX = 'LocalImageIdentifier'
@@ -384,7 +387,7 @@ export const parseSpreadsheetCellImages = async (data: ArrayBuffer) => {
 
   const wpsCellImageRelationship = workbookRelationships.find(
     (relationship) => (
-      relationship.type.toLowerCase() === WPS_CELL_IMAGE_RELATIONSHIP.toLowerCase()
+      WPS_CELL_IMAGE_RELATIONSHIPS.has(relationship.type.toLowerCase())
     )
   )
   const wpsCellImages = await loadWpsCellImages(

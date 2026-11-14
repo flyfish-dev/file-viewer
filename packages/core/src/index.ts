@@ -342,6 +342,10 @@ export {
   resolveFileViewerOperationFilename,
   resolveFileViewerOriginalFilename,
 } from './viewer/operations';
+export { createFileViewerI18n, createFileViewerNestedI18n } from './i18n/context';
+export type { FileViewerI18nContext } from './contracts/types';
+export type { FileViewerI18nController } from './i18n/context';
+export { createFileViewerI18nBindings } from './i18n/bindings';
 export {
   FILE_VIEWER_BUILTIN_MESSAGES,
   FILE_VIEWER_DEFAULT_LOCALE,
@@ -358,6 +362,8 @@ export type {
   FileViewerResolvedLocale,
   ResolveFileViewerI18nInput,
 } from './i18n/messages';
+export { FILE_VIEWER_LOCALE_METADATA, FILE_VIEWER_LOCALE_OPTIONS } from './i18n/locales';
+export { formatFileViewerNumber, formatFileViewerDateTime, formatFileViewerBytes } from './i18n/format';
 export type {
   CreateFileViewerOperationActionHandlersInput,
   FileViewerOperationActionErrorFormatter,
@@ -535,10 +541,11 @@ export const renderFileViewerGeo = async (
 export const renderFileViewerImage = async (
   buffer: ArrayBuffer,
   target: HTMLDivElement,
-  type?: string
+  type?: string,
+  context: FileRenderContext | undefined = undefined
 ): Promise<FileViewerRenderedInstance> => {
   const { default: renderImage } = await import('./renderers/image');
-  return renderImage(buffer, target, type);
+  return renderImage(buffer, target, type, context);
 };
 export const renderFileViewerMarkdown = async (
   buffer: ArrayBuffer,
@@ -804,6 +811,8 @@ export {
 } from './viewer/loading';
 export type {
   FileViewerLoadingController,
+  FileViewerLoadingMessageMetadata,
+  FileViewerErrorMessageMetadata,
   FileViewerLoadingControllerActionHandlers,
   RunFileViewerLoadingExtensionSyncInput,
 } from './viewer/loading';
@@ -1324,3 +1333,11 @@ export { resolveFileViewerCopiedAssetUrl } from './platform/copiedAssets';
 
 export type { FileViewerSpreadsheetRange, FileViewerSpreadsheetNavigationStatus } from './contracts/types';
 export { installFileViewerImageHandTool } from './features/document/imageHandTool';
+
+export type {
+  FileViewerSignatureOptions,
+  FileViewerSignatureDetailsPanelOptions,
+  FileViewerSignatureParseLimits,
+  FileViewerSignatureContainerLimits,
+  FileViewerSignatureJwsVerificationKey
+} from './contracts/signature';

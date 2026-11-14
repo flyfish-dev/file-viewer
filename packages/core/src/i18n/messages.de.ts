@@ -1,10 +1,27 @@
-import type { FileViewerMessageKey } from '../contracts/types';
+import type { FileViewerBaseMessageKey as FileViewerMessageKey } from '../contracts/types';
 
 /**
  * Built-in German messages for every runtime viewer state and renderer.
  * Keep placeholders aligned with the Chinese and English catalogs.
  */
 export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
+  'signature.panel.title': 'Signaturdetails',
+  'signature.panel.show': 'Signaturdetails anzeigen',
+  'signature.panel.hide': 'Signaturdetails ausblenden',
+  'signature.panel.close': 'Signaturdetails schließen',
+  'signature.panel.reviewValidation': 'Prüfdetails ansehen',
+  'signature.panel.validationNotices': 'Prüfhinweise ({count})',
+  'signature.panel.checksFailed': 'Einige Prüfungen sind fehlgeschlagen',
+  'signature.panel.checksIncomplete': 'Einige Prüfungen sind noch nicht abgeschlossen',
+  'text.code.lineCount': 'Zeilen: {count}',
+  'text.patch.summary': 'Dateien: {count} · Nebeneinander',
+  'text.xml.viewSource': 'Quelltext anzeigen',
+  'text.xml.viewRendered': 'Darstellung anzeigen',
+  'text.xml.diagnostics': 'XML-Profildiagnose',
+  'text.xml.renderedTitle': 'Dargestelltes XML',
+  'media.midi.trackFallback': 'Spur {index}',
+  'media.midi.instrumentFallback': 'Unbekannt',
+
   "toolbar.zoomGroup": "Zoom-Steuerelemente",
   "toolbar.zoomOut": "Herauszoomen",
   "toolbar.zoomIn": "Vergrößern",
@@ -115,6 +132,18 @@ export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
   "spreadsheet.state.rowsAndColumns": "{rows}-Zeilen, {cols}-Spalten, reibungsloses Laden je Ansichtsfenster",
   "spreadsheet.error.parseFailed": "Excel konnte nicht analysiert werden",
   "spreadsheet.error.workerFailed": "Excel Worker ist fehlgeschlagen",
+  'spreadsheet.comments.title': 'Kommentare und Notizen',
+  'spreadsheet.comments.close': 'Kommentare schließen',
+  'spreadsheet.comments.note': 'Notiz',
+  'spreadsheet.comments.thread': 'Kommentar',
+  'spreadsheet.comments.resolved': 'Erledigt',
+  'spreadsheet.comments.unknown': 'Unbekannter Autor',
+  'spreadsheet.comments.empty': 'Keine Kommentare oder Notizen',
+  'spreadsheet.comments.more': 'Mehr anzeigen',
+  'spreadsheet.comments.open': 'Kommentar bei {cell} anzeigen',
+  'spreadsheet.comments.jump': 'Zu {cell} wechseln',
+  'spreadsheet.comments.warning': 'Einige Kommentare konnten nicht gelesen werden',
+  'spreadsheet.comments.count': 'Kommentare und Notizen ({count})',
   "word.error.invalidDocx": "Die Datei ist kein gültiges DOCX/OOXML-Paket. Möglicherweise ist sie unvollständig oder wird durch eine Fehlerantwort des Servers ersetzt. Laden Sie es erneut hoch oder überprüfen Sie die Dateiquelle.",
   "word.error.missingOdfContent": "In der Datei ODF fehlt content.xml.",
   "word.error.odfXmlParseFailed": "Fehler beim Parsen von ODF XML.",
@@ -154,7 +183,7 @@ export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
   "archive.preview.chooseFile": "Wählen Sie eine Datei",
   "archive.preview.downloadFile": "Datei herunterladen",
   "archive.error.title": "Hinweis zur Archivvorschau",
-  "archive.stats.summary": "{count}-Dateien · {size} · {previewable} können direkt in der Vorschau angezeigt werden",
+  "archive.stats.summary": "Dateien: {count} · {size} · Direkt darstellbar: {previewable}",
   "archive.warning.encrypted": "Verschlüsselter Inhalt wurde erkannt. Geben Sie das richtige Passwort ein, um eine Vorschau anzuzeigen. Das Passwort wird für diese Sitzung nur an den libarchive-Worker weitergegeben.",
   "archive.password.title": "Geben Sie das Archivpasswort ein",
   "archive.password.description": "Dieses Archiv enthält verschlüsselte Inhalte. Zum Lesen des Verzeichnisses oder zur Vorschau von Einträgen ist ein Passwort erforderlich.",
@@ -196,6 +225,7 @@ export const DE_DE_MESSAGES: Record<FileViewerMessageKey, string> = {
   "media.video.codecUnsupportedTitle": "Dieser Browser kann die Videospur nicht dekodieren",
   "media.video.codecUnsupportedDescription": "Die Videospur verwendet {codec}. Der Browser kann den MP4-Container lesen, aber keine Videobilder dekodieren, sodass der native Player möglicherweise nur Audio abspielt oder einen schwarzen Bildschirm anzeigt.",
   "media.video.codecUnsupportedAction": "Der Lightweight-Software-Decoder konnte nicht gestartet werden. Konvertieren Sie das Video in H.264/AVC, VP9 oder AV1 und öffnen Sie es erneut. File Viewer lädt die Originaldatei nicht hoch oder ändert sie nicht.",
+  "media.video.softwareWorkerFailed": "Der MP4V-Decoder-Worker ist fehlgeschlagen.",
   "media.video.softwareLoading": "Laden des leichten MP4V-Decoders bei Bedarf…",
   "media.video.softwareBadge": "MP4V · leichte Dekodierung",
   "media.video.play": "Spielen",

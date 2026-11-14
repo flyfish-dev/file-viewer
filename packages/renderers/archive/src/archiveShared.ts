@@ -159,10 +159,16 @@ export const isArchiveEntryDownloadAllowed = (
 const buildNestedOptions = (
   context: FileRenderContext | undefined,
   archiveOptions: FileViewerArchiveOptions | undefined
-): FileViewerOptions => ({
-  ...(context?.options || {}),
-  archive: archiveOptions,
-});
+): FileViewerOptions => {
+  const options = { ...context?.options, archive: archiveOptions };
+  // These are internally inherited options, not an external explicit override.
+  if (context?.i18n) {
+    delete options.locale;
+    delete options.messages;
+    delete options.i18n;
+  }
+  return options;
+};
 
 export const buildArchiveNestedRenderContext = (
   context: FileRenderContext | undefined,

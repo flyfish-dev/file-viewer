@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
+import { copyComponentHelperLegalMaterials } from './lib/helper-legal-materials.mjs'
 
 const demoDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const repoDir = resolve(demoDir, '../..')
@@ -94,6 +95,7 @@ await cp(
   { recursive: true }
 )
 await removeMacMetadata(fullHelperTargetDir)
+await copyComponentHelperLegalMaterials({ sourceRoot: repoDir, outputRoot: fullHelperTargetDir })
 console.log(`[file-viewer-demo] web full helper and renderer bundles copied to ${fullHelperTargetDir}`)
 
 const requireJsDir = dirname(createRequire(import.meta.url).resolve('requirejs/package.json'))

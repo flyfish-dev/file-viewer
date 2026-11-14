@@ -6,6 +6,7 @@ import { mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { launchBrowserForTest } from '../packages/build-support/browser-test-launch.mjs'
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..')
 const scratch=await mkdtemp(join(tmpdir(),'image-pan-browser-'))
@@ -23,6 +24,7 @@ window.openImage=async(mode,enabled)=>{
   const canvas=document.createElement('canvas');canvas.width=2000;canvas.height=1400;
   const ctx=canvas.getContext('2d');ctx.fillStyle='#237cbd';ctx.fillRect(0,0,2000,1400);ctx.fillStyle='#e6194b';ctx.fillRect(0,0,300,300);ctx.fillStyle='#ffe119';ctx.fillRect(1700,1100,300,300);
   const bytes=mode==='tiff'?await(await fetch('/image.tiff')).arrayBuffer():await(await new Promise(resolve=>canvas.toBlob(resolve))).arrayBuffer();
+  if(mode!=='tiff'&&window.__fileViewerPrepackObserveFixture)await window.__fileViewerPrepackObserveFixture({path:'generated/image-pan.png',bytes:[...new Uint8Array(bytes)]});
   window.abort=new AbortController();
   if(mode==='vanilla'){
     window.publicViewer=createViewer(host,{options:{styleIsolation:'none',image:enabled===undefined?{}:{handTool:enabled}}});
@@ -65,7 +67,7 @@ try{
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve))
   const base=`http://127.0.0.1:${server.address().port}`
   for(const [engine,browserType] of [['chromium',chromium],['webkit',webkit]]){
-    const browser=await browserType.launch({headless:true})
+    const browser=await launchBrowserForTest(browserType,engine,{headless:true})
     try{
       for(const mode of ['core','standalone','tiff','vanilla']){
         const errors=[],external=[]

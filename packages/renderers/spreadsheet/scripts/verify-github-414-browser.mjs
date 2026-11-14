@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os'
 import { dirname, extname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createFormulaWorkbook } from '../test/formulaWorkbook.mjs'
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const root = await mkdtemp(join(tmpdir(), 'spreadsheet-414-browser-'))
@@ -16,6 +17,7 @@ const output = resolve(process.env.FILE_VIEWER_ISSUE_414_EVIDENCE || join(packag
 await mkdir(output, { recursive: true })
 const original = process.env.FILE_VIEWER_414_SAMPLE
 const fixture = original ? await readFile(original) : Buffer.from(await createFormulaWorkbook())
+globalThis.__fileViewerPrepackObserveNodeFixture?.('generated/issue-414-formulas.xlsx', fixture)
 const sheetNames = read(fixture, { type: 'buffer', bookSheets: true }).SheetNames
 await writeFile(join(root, 'formulas.xlsx'), fixture)
 await copyFile(join(packageDir, 'dist/worker/sheet.worker.js'), join(root, 'sheet.worker.js'))
@@ -54,7 +56,7 @@ try {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
   const base = `http://127.0.0.1:${server.address().port}`
   for (const [engine, type] of [['chromium',chromium],['webkit',webkit]]) {
-    const browser = await type.launch({ headless:true })
+    const browser = await launchBrowserForTest(type, engine, { headless:true })
     try {
       for (const worker of [false,true]) {
         const page = await browser.newPage({ viewport:{width:1000,height:700} })

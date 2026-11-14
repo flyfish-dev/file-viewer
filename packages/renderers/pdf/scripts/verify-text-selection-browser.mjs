@@ -14,6 +14,7 @@ const first = pdf.addPage([600, 500])
 first.drawText('SELECTABLE PDF TEXT 416', { x: 40, y: 400, size: 22, font })
 first.drawText('SECOND SELECTABLE LINE', { x: 40, y: 340, size: 22, font })
 const generated = Buffer.from(await pdf.save())
+globalThis.__fileViewerPrepackObserveNodeFixture?.('generated/pdf-selection.pdf', generated)
 const installedRoot = process.env.PDF_SELECTION_INSTALLED_ROOT
 const output = path.resolve(process.env.PDF_SELECTION_OUTPUT || path.join(root, 'output/pdf-text-selection', installedRoot ? 'installed' : 'source'))
 await mkdir(output, { recursive: true })

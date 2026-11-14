@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   createFileViewerZoomChangeEmitter,
   normalizeFileViewerErrorMessage,
   registerFileViewerZoomProvider,
@@ -88,7 +89,7 @@ const normalizeError = (
   context?: FileRenderContext
 ) => {
   if (reason instanceof Error || typeof reason === 'string') {
-    return normalizeFileViewerErrorMessage(reason, context?.options);
+    return normalizeFileViewerErrorMessage(reason, context?.i18n || context?.options);
   }
   try {
     return JSON.stringify(reason);
@@ -192,7 +193,8 @@ export default async function renderOfd(
   target: HTMLDivElement,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const bindings = createFileViewerI18nBindings(context?.i18n);
   const documentRef = target.ownerDocument || document;
   const targetWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : null);
   const zoomEmitter = createFileViewerZoomChangeEmitter();
@@ -203,25 +205,34 @@ export default async function renderOfd(
   let lastRenderedWidth = 0;
   let state: OfdRenderState = 'loading';
   let errorMessage = '';
+  let errorKey: 'ofd.error.empty' | 'ofd.error.parseFailed' | undefined;
+  let emptyDocumentError: Error | undefined;
+  const stateLabel = () => state === 'error'
+    ? (errorKey ? t(errorKey) : errorMessage)
+    : t('ofd.state.loading');
   let zoom = 1;
   let currentPage = 1;
   let pageCount = 0;
   let scrollFrame = 0;
+  const trackedEvents: Array<[EventTarget, string]> = [];
   let ofdDocumentPromise: Promise<unknown> | null = null;
 
   const style = createStyle(documentRef);
   const viewer = createElement(documentRef, 'div', 'ofd-viewer');
   viewer.dataset.viewerZoomProvider = 'ofd';
-  const stateNode = createElement(documentRef, 'div', 'ofd-state', t('ofd.state.loading'));
+  const stateNode = createElement(documentRef, 'div', 'ofd-state');
+  const stateText = documentRef.createTextNode('');
+  stateNode.append(stateText);
+  bindings.text(stateText, stateLabel);
   stateNode.setAttribute('aria-live', 'polite');
   const toolbar = createElement(documentRef, 'div', 'ofd-toolbar');
   toolbar.setAttribute('role', 'toolbar');
-  toolbar.setAttribute('aria-label', t('ofd.toolbar.pageNavigation'));
+  bindings.attr(toolbar, 'aria-label', () => t('ofd.toolbar.pageNavigation'));
   const pageGroup = createElement(documentRef, 'div', 'ofd-toolbar-group');
   const previousPageButton = createElement(documentRef, 'button', 'ofd-page-button', '‹') as HTMLButtonElement;
   previousPageButton.type = 'button';
-  previousPageButton.title = t('ofd.toolbar.previousPage');
-  previousPageButton.setAttribute('aria-label', t('ofd.toolbar.previousPage'));
+  bindings.attr(previousPageButton, 'title', () => t('ofd.toolbar.previousPage'));
+  bindings.attr(previousPageButton, 'aria-label', () => t('ofd.toolbar.previousPage'));
   const pageMeter = createElement(documentRef, 'span', 'ofd-page-meter');
   pageMeter.setAttribute('aria-live', 'polite');
   const pageMeterCurrent = createElement(documentRef, 'strong', undefined, '1');
@@ -229,13 +240,16 @@ export default async function renderOfd(
   pageMeter.append(pageMeterCurrent, pageMeterTotal);
   const nextPageButton = createElement(documentRef, 'button', 'ofd-page-button', '›') as HTMLButtonElement;
   nextPageButton.type = 'button';
-  nextPageButton.title = t('ofd.toolbar.nextPage');
-  nextPageButton.setAttribute('aria-label', t('ofd.toolbar.nextPage'));
+  bindings.attr(nextPageButton, 'title', () => t('ofd.toolbar.nextPage'));
+  bindings.attr(nextPageButton, 'aria-label', () => t('ofd.toolbar.nextPage'));
   pageGroup.append(previousPageButton, pageMeter, nextPageButton);
   toolbar.append(pageGroup);
   const stage = createElement(documentRef, 'div', 'ofd-stage');
   stage.tabIndex = 0;
-  stage.setAttribute('aria-label', t('ofd.toolbar.documentPages'));
+  bindings.attr(stage, 'aria-label', () => t('ofd.toolbar.documentPages'));
+  bindings.attr(pageMeter, 'aria-label', () => pageCount
+    ? t('ofd.toolbar.pageStatus', { current: currentPage, total: pageCount })
+    : t('ofd.toolbar.noPages'));
   viewer.append(toolbar, stateNode, stage);
   target.replaceChildren(style, viewer);
 
@@ -246,7 +260,7 @@ export default async function renderOfd(
   const syncState = () => {
     stateNode.hidden = state === 'ready';
     stateNode.classList.toggle('error', state === 'error');
-    stateNode.textContent = state === 'error' ? errorMessage : t('ofd.state.loading');
+    stateText.data = stateLabel();
   };
 
   const getPageFrames = () => Array.from(
@@ -258,12 +272,9 @@ export default async function renderOfd(
     currentPage = pageCount ? Math.min(pageCount, Math.max(1, currentPage)) : 0;
     pageMeterCurrent.textContent = pageCount ? String(currentPage) : '-';
     pageMeterTotal.textContent = `/ ${pageCount || '-'}`;
-    pageMeter.setAttribute(
-      'aria-label',
-      pageCount
-        ? t('ofd.toolbar.pageStatus', { current: currentPage, total: pageCount })
-        : t('ofd.toolbar.noPages')
-    );
+    bindings.attr(pageMeter, 'aria-label', () => pageCount
+      ? t('ofd.toolbar.pageStatus', { current: currentPage, total: pageCount })
+      : t('ofd.toolbar.noPages'));
     previousPageButton.disabled = currentPage <= 1;
     nextPageButton.disabled = currentPage <= 0 || currentPage >= pageCount;
   };
@@ -288,6 +299,50 @@ export default async function renderOfd(
     return true;
   };
 
+  const composedParent = (element: Element): Element | null => (
+    element.assignedSlot || element.parentElement || (element.getRootNode() as ShadowRoot).host || null
+  );
+
+  const clipsVertically = (element: Element) => {
+    // The root's overflow, and the body's when the root is visible, belong to
+    // the window viewport. Their boxes move during window scroll and must not
+    // be intersected with the viewport a second time.
+    if (element === documentRef.documentElement) return false;
+    const computedStyle = targetWindow?.getComputedStyle?.(element);
+    const style = (element as HTMLElement).style;
+    if (element === documentRef.body) {
+      const root = documentRef.documentElement;
+      const rootStyle = targetWindow?.getComputedStyle?.(root);
+      const rootOverflowX = rootStyle?.overflowX || root.style.overflowX || root.style.overflow || '';
+      const rootOverflowY = rootStyle?.overflowY || root.style.overflowY || root.style.overflow || '';
+      const rootContain = rootStyle?.contain || root.style.contain || 'none';
+      const bodyContain = computedStyle?.contain || style?.contain || 'none';
+      if ((!rootOverflowX || rootOverflowX === 'visible') &&
+          (!rootOverflowY || rootOverflowY === 'visible') &&
+          rootContain === 'none' && bodyContain === 'none') return false;
+    }
+    const overflow = computedStyle?.overflowY ||
+      style?.overflowY || style?.overflow || '';
+    return /^(auto|scroll|hidden|clip)$/.test(overflow);
+  };
+
+  const visibleViewport = () => {
+    let top = 0;
+    let bottom = targetWindow?.innerHeight || documentRef.documentElement.clientHeight || Infinity;
+    let hasStageBounds = false;
+    for (let element: Element | null = stage; element; element = composedParent(element)) {
+      if (element !== stage && !clipsVertically(element)) continue;
+      const box = element.getBoundingClientRect();
+      const html = element as HTMLElement;
+      if (html.clientHeight <= 0) continue;
+      const innerTop = box.top + html.clientTop;
+      top = Math.max(top, innerTop);
+      bottom = Math.min(bottom, innerTop + html.clientHeight);
+      if (element === stage) hasStageBounds = true;
+    }
+    return hasStageBounds && bottom > top ? { top, bottom } : null;
+  };
+
   const detectCurrentPage = () => {
     const frames = getPageFrames();
     if (!frames.length) {
@@ -295,15 +350,19 @@ export default async function renderOfd(
       syncPageNavigation();
       return;
     }
-    const stageRect = stage.getBoundingClientRect();
-    const viewportCenter = stageRect.top + stage.clientHeight / 2;
+    const viewport = visibleViewport();
+    if (!viewport) return;
+    const viewportCenter = (viewport.top + viewport.bottom) / 2;
     let closestIndex = 0;
+    let greatestOverlap = -1;
     let closestDistance = Number.POSITIVE_INFINITY;
     frames.forEach((frame, index) => {
       const rect = frame.getBoundingClientRect();
       const center = rect.top + rect.height / 2;
+      const overlap = Math.max(0, Math.min(rect.bottom, viewport.bottom) - Math.max(rect.top, viewport.top));
       const distance = Math.abs(center - viewportCenter);
-      if (distance < closestDistance) {
+      if (overlap > greatestOverlap || (overlap === greatestOverlap && distance < closestDistance)) {
+        greatestOverlap = overlap;
         closestDistance = distance;
         closestIndex = index;
       }
@@ -331,12 +390,27 @@ export default async function renderOfd(
     }, 0) || 0;
   };
 
+  const startScrollTracking = () => {
+    const listen = (source: EventTarget, type: string) => {
+      source.addEventListener(type, scheduleCurrentPageDetection, { passive: true });
+      trackedEvents.push([source, type]);
+    };
+    for (let element: Element | null = stage; element; element = composedParent(element)) {
+      listen(element, 'scroll');
+    }
+    if (targetWindow) {
+      listen(targetWindow, 'scroll');
+      listen(targetWindow, 'resize');
+    }
+  };
+
   const getOfdDocument = async (ofd: OfdModule) => {
     // OFD 解压和 XML 解析成本较高，尺寸变化只重排页面，不重复解析压缩包。
     ofdDocumentPromise ||= parseWithOfdJs(ofd, buffer).then(documents => {
       const ofdDocument = documents[0];
       if (!ofdDocument) {
-        throw new Error(t('ofd.error.empty'));
+        emptyDocumentError = new Error(t('ofd.error.empty'));
+        throw emptyDocumentError;
       }
       return ofdDocument;
     });
@@ -399,6 +473,7 @@ export default async function renderOfd(
   const setZoom = (nextZoom: number) => {
     zoom = clampZoom(nextZoom);
     syncPageZoom(true);
+    scheduleCurrentPageDetection();
     zoomEmitter.emit();
     return getZoomState();
   };
@@ -445,6 +520,7 @@ export default async function renderOfd(
       syncState();
     }
     errorMessage = '';
+    errorKey = undefined;
 
     try {
       await waitForPaint(targetWindow);
@@ -461,10 +537,15 @@ export default async function renderOfd(
       }
       lastRenderedWidth = width;
       await waitForPaint(targetWindow);
+      if (disposed || version !== renderVersion) return;
+      if (context?.signal?.aborted) {
+        throw context.signal.reason || new DOMException('OFD rendering aborted.', 'AbortError');
+      }
       syncPageZoom();
       enablePageZoomTransitions();
       syncPageNavigation();
       if (currentPage > 1) scrollToPage(currentPage, 'auto');
+      scheduleCurrentPageDetection();
       state = 'ready';
       syncState();
       zoomEmitter.emit();
@@ -473,13 +554,26 @@ export default async function renderOfd(
       if (disposed || version !== renderVersion) {
         return;
       }
-      console.error(reason);
-      state = 'error';
-      errorMessage = normalizeError(reason, t('ofd.error.parseFailed'), context) || t('ofd.error.parseFailed');
-      syncState();
+      if (context?.signal?.aborted) {
+        if (options.rejectOnError) throw reason;
+        return;
+      }
       if (options.rejectOnError) {
+        // The outer viewer owns the failure detail. Do not read a user getter twice.
+        state = 'error';
+        errorKey = 'ofd.error.parseFailed';
+        errorMessage = '';
+        syncState();
         throw reason;
       }
+      // Capture user/vendor details once. Only our own empty/fallback labels remain live.
+      const ownedEmpty = reason === emptyDocumentError && emptyDocumentError !== undefined;
+      const detail = ownedEmpty ? '' : normalizeError(reason, t('ofd.error.parseFailed'), context);
+      if (disposed || version !== renderVersion) return;
+      errorKey = ownedEmpty ? 'ofd.error.empty' : !detail ? 'ofd.error.parseFailed' : undefined;
+      errorMessage = detail || '';
+      state = 'error';
+      syncState();
     }
   };
 
@@ -503,7 +597,6 @@ export default async function renderOfd(
   nextPageButton.addEventListener('click', () => {
     scrollToPage(currentPage + 1);
   });
-  stage.addEventListener('scroll', scheduleCurrentPageDetection, { passive: true });
   stage.addEventListener('keydown', event => {
     if (event.key === 'PageUp') {
       event.preventDefault();
@@ -526,9 +619,11 @@ export default async function renderOfd(
     // parse failures through the normal renderer error lifecycle.
     await render({ force: true, showLoading: true, rejectOnError: true });
     if (!disposed) {
+      startScrollTracking();
       startResizeObserver();
     }
   } catch (error) {
+    bindings.destroy();
     unregisterFileViewerZoomProvider(viewer);
     throw error;
   }
@@ -544,7 +639,7 @@ export default async function renderOfd(
         });
       }
       if (state === 'error') {
-        throw new Error(errorMessage || t('ofd.error.parseFailed'));
+        throw new Error(errorKey ? t(errorKey) : errorMessage || t('ofd.error.parseFailed'));
       }
     },
     getTarget: () => stage.querySelector('.ofd-page-frame, .ofd-page') || stage,
@@ -569,6 +664,7 @@ export default async function renderOfd(
     $el: viewer,
     unmount() {
       disposed = true;
+      bindings.destroy();
       renderVersion += 1;
       targetWindow?.clearTimeout(resizeTimer);
       if (scrollFrame) {
@@ -576,6 +672,8 @@ export default async function renderOfd(
         else targetWindow?.clearTimeout(scrollFrame);
       }
       scrollFrame = 0;
+      trackedEvents.forEach(([source, type]) => source.removeEventListener(type, scheduleCurrentPageDetection));
+      trackedEvents.length = 0;
       resizeObserver?.disconnect();
       resizeObserver = null;
       unregisterFileViewerZoomProvider(viewer);

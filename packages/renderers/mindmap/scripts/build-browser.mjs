@@ -4,6 +4,7 @@ import { build } from 'esbuild'
 import { writeBundleNotices } from '../../../build-support/bundle-notices.mjs'
 import { writeBundleInventory } from '../../../build-support/bundle-inventory.mjs'
 import { browserRuntimeOptions } from '../../../build-support/browser-runtime-options.mjs'
+import { writePrebundledNoticeReceipt } from '../../../build-support/prebundled-notices.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const output = new URL('../dist/vendor/', import.meta.url)
@@ -27,3 +28,6 @@ await writeBundleNotices(result.metafile, new URL('xmind.NOTICE.txt', output), {
   readmeLicensePackages: ['@ljheee/xmind-parser']
 })
 await writeBundleInventory(Object.keys(result.metafile.inputs), fileURLToPath(new URL('../.build/xmind-inputs.json', import.meta.url)))
+await writePrebundledNoticeReceipt({
+  packageRoot: root, runtimePaths: ['dist/vendor/xmind.js'], noticePath: 'dist/vendor/xmind.NOTICE.txt'
+})

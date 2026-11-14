@@ -8,7 +8,8 @@ import type {
   VerticalAlign
 } from 'e-virt-table'
 import tinycolor from 'tinycolor2'
-import type { SheetCellMetadata, SheetModel, SheetRichTextRun } from './worker/type.js'
+import type { FileViewerSpreadsheetOptions } from '@file-viewer/core'
+import type { SheetCellMetadata, SheetComment, SheetModel, SheetRichTextRun } from './worker/type.js'
 import {
   displayCellKey,
   getDataKey,
@@ -27,7 +28,7 @@ export const INDEX_COLUMN_WIDTH = 68
 export const SPREADSHEET_MIN_ZOOM = 0.25
 export const SPREADSHEET_MAX_ZOOM = 2.5
 const TABLE_FONT_FAMILY = 'Aptos, Calibri, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif'
-const TABLE_FONT_SIZE = 11
+const TABLE_FONT_SIZE = 11 * 96 / 72
 const MIN_RENDERABLE_ROW_HEIGHT = 8
 const HIDDEN_ROW_HEIGHT = 0.1
 const CELL_PADDING = 2
@@ -63,6 +64,9 @@ interface TableConfigOptions {
   darkMode?: boolean
   resizableColumns?: boolean
   resizableRows?: boolean
+  comments?: SheetComment[]
+  showComment?: (comment: SheetComment, anchor: HTMLElement, focus?: boolean) => void
+  commentLabel?: (comment: SheetComment) => string
   copySelection?: (params: SpreadsheetCopyParams) => void
   searchCell?: (row: number, col: number) => 'active' | 'match' | undefined
   sheetDefaults: SheetDefaults
@@ -342,36 +346,33 @@ const isPlainTextCell = (value: unknown) => {
   return !/^\d+([./:-]\d+)*$/.test(text)
 }
 
-// 普通明细表通常会把第一行当成字段表头，而报表类工作表往往需要保留原始 Excel 行号。
-// 这里只在“首行像简单字段头且没有合并单元格”时，才给左侧序号做 1 行偏移。
-export const detectIndexOffset = (ws: SheetModel) => {
+// Source row numbers are the default. The historical heuristic is retained only
+// for explicitly requested record ordinals; it never changes data or addresses.
+export const detectIndexOffset = (
+  ws: SheetModel,
+  mode: FileViewerSpreadsheetOptions['rowNumberMode'] = 'source'
+): 0 | 1 => {
+  if (mode !== 'legacy-records') return 0
   const meta = ws.meta
   const rows = ws.data || []
-  if (!meta || rows.length < 2 || (ws.merge || []).length) {
-    return 0
-  }
+  if (!meta || rows.length < 2 || (ws.merge || []).length) return 0
 
-  const firstRow = rows[0] || []
-  const secondRow = rows[1] || []
-  const firstRowValues = firstRow.filter(value => `${value ?? ''}`.trim() !== '')
-  const secondRowValues = secondRow.filter(value => `${value ?? ''}`.trim() !== '')
-
-  if (firstRowValues.length < Math.min(Math.max(Math.floor(meta.totalCols / 2), 3), 6)) {
-    return 0
-  }
-  if (!firstRowValues.every(isPlainTextCell) || secondRowValues.length < 2) {
-    return 0
-  }
-
+  const firstRowValues = (rows[0] || []).filter(value => `${value ?? ''}`.trim() !== '')
+  const secondRowValues = (rows[1] || []).filter(value => `${value ?? ''}`.trim() !== '')
+  if (firstRowValues.length < Math.min(Math.max(Math.floor(meta.totalCols / 2), 3), 6)) return 0
+  if (!firstRowValues.every(isPlainTextCell) || secondRowValues.length < 2) return 0
   return 1
 }
 
-export const buildColumns = (ws: SheetModel) => {
+export const buildColumns = (
+  ws: SheetModel,
+  mode: FileViewerSpreadsheetOptions['rowNumberMode'] = 'source'
+) => {
   const columnsMeta = getSheetColumnsMeta(ws)
   const colWidths = getSheetColWidths(ws)
   const columns: Column[] = [{
     key: INDEX_COLUMN_KEY,
-    title: '',
+    title: mode === 'legacy-records' ? '#' : '',
     type: 'index',
     fixed: 'left',
     width: INDEX_COLUMN_WIDTH,
@@ -981,6 +982,16 @@ export const createTextLayer = (
   return text
 }
 
+/** Use exactly the cell text renderer's width/font/wrapping, with natural height. */
+export const createAutoHeightProbe = (
+  documentRef: Document, value: unknown, style: CellStyleCache, width: number, zoom: number
+) => {
+  const scaled: CellStyleCache = scaleCellStyle(style, zoom) || {}
+  const probe = createTextLayer(documentRef, value, { ...scaled, font: scaled.font || getBodyFont(zoom) }, scaleNumber(CELL_PADDING, zoom))
+  Object.assign(probe.style, { width: `${width}px`, height: 'auto', minHeight: '0', overflow: 'visible', alignItems: 'flex-start', transform: 'none' })
+  return probe
+}
+
 const applyOverflowLayout = (text: HTMLSpanElement, overflowLayout?: TextOverflowLayout) => {
   if (!overflowLayout) {
     return
@@ -1143,12 +1154,16 @@ export const createTableConfig = ({
   darkMode = false,
   resizableColumns = false,
   resizableRows = false,
+  comments = [],
+  showComment,
+  commentLabel,
   copySelection,
   searchCell,
   sheetDefaults,
   virtualState,
   zoomScale = 1
 }: TableConfigOptions): ConfigType => {
+  const commentsByCell = new Map(comments.map(comment => [displayCellKey(comment.row, comment.col + 1), comment]))
   const normalizedScale = normalizeZoomScale(zoomScale)
   const scaledPadding = scaleNumber(CELL_PADDING, normalizedScale)
   const scaledHeaderHeight = scaleNumber(HEADER_HEIGHT, normalizedScale)
@@ -1156,13 +1171,46 @@ export const createTableConfig = ({
   const scaledCellWidth = scaleNumber(sheetDefaults.colWidth, normalizedScale)
   const headerStyle = getIndexCellStyle(normalizedScale, darkMode)
   const loadingStyle = getLoadingCellStyle(normalizedScale, darkMode)
+  let firstVisibleColumn = 1
 
-  const spanMethod: SpanMethod = ({ rowIndex, colIndex, column }) => {
+  // The virtualizer omits an offscreen anchor. Its first visible covered cell
+  // must paint the surviving part of that merge, using the original text box.
+  const getProjectedMerge = (rowIndex: number, colIndex: number, column: Column) => {
+    const cellKey = getCellCacheKey(rowIndex, colIndex, column)
+    const anchorKey = virtualState.mergeCoveredMap.get(cellKey)
+    const merge = anchorKey ? virtualState.mergeStartMap.get(anchorKey) : undefined
+    const displayCol = getDataColumnIndex(column, colIndex) + 1
+    if (!merge || merge.row !== rowIndex || displayCol !== firstVisibleColumn ||
+        merge.col >= displayCol || displayCol >= merge.col + merge.colspan) {
+      return undefined
+    }
+    let width = 0
+    let offsetLeft = 0
+    for (let col = merge.col; col < merge.col + merge.colspan; col += 1) {
+      const sourceWidth = getRenderColumnWidth(virtualState.columns[col])
+      const scaledWidth = sourceWidth > 0 ? scaleNumber(sourceWidth, normalizedScale) : 0
+      width += scaledWidth
+      if (col < displayCol) offsetLeft += scaledWidth
+    }
+    return { merge, anchorKey: anchorKey!, width, offsetLeft, colspan: merge.col + merge.colspan - displayCol }
+  }
+
+  const spanMethod: SpanMethod = ({ rowIndex, colIndex, column, visibleLeafColumns }) => {
+    if (visibleLeafColumns?.length) {
+      const visibleDataColumns = visibleLeafColumns.filter(item => item.key !== INDEX_COLUMN_KEY && isVisibleDataColumn(item))
+      if (visibleDataColumns.length) {
+        firstVisibleColumn = Math.min(...visibleDataColumns.map(item => getDataColumnIndex(item, 1) + 1))
+      }
+    }
     if (colIndex === 0) {
       return
     }
 
     const key = getCellCacheKey(rowIndex, colIndex, column)
+    const projected = getProjectedMerge(rowIndex, colIndex, column)
+    if (projected) {
+      return { rowspan: projected.merge.rowspan, colspan: projected.colspan }
+    }
     if (virtualState.mergeCoveredMap.has(key)) {
       return { rowspan: 0, colspan: 0 }
     }
@@ -1194,8 +1242,9 @@ export const createTableConfig = ({
       return loadingStyle
     }
 
-    const style = scaleCellStyle(virtualState.cellCache.get(getCellCacheKey(rowIndex, colIndex, column)), normalizedScale)
-    const match = searchCell?.(rowIndex, getDataColumnIndex(column, colIndex))
+    const projected = getProjectedMerge(rowIndex, colIndex, column)
+    const style = scaleCellStyle(virtualState.cellCache.get(projected?.anchorKey || getCellCacheKey(rowIndex, colIndex, column)), normalizedScale)
+    const match = searchCell?.(rowIndex, projected ? projected.merge.col - 1 : getDataColumnIndex(column, colIndex))
     return match ? { ...style, backgroundColor: match === 'active' ? '#ffbf47' : '#fff1a8', color: '#202124' } : style
   }
 
@@ -1217,26 +1266,29 @@ export const createTableConfig = ({
       return undefined
     }
 
-    const cellKey = getCellCacheKey(rowIndex, colIndex, column)
-    if (virtualState.mergeCoveredMap.has(cellKey)) {
+    const ownCellKey = getCellCacheKey(rowIndex, colIndex, column)
+    const projected = getProjectedMerge(rowIndex, colIndex, column)
+    if (virtualState.mergeCoveredMap.has(ownCellKey) && !projected) {
       return undefined
     }
 
+    const cellKey = projected?.anchorKey || ownCellKey
     const style = scaleCellStyle(virtualState.cellCache.get(cellKey), normalizedScale)
-    const dataColIndex = getDataColumnIndex(column, colIndex)
+    const dataColIndex = projected ? projected.merge.col - 1 : getDataColumnIndex(column, colIndex)
+    const renderValue = projected ? currentRow[getDataKey(dataColIndex)] : value
     const measureDocument = typeof document === 'undefined' ? undefined : document
-    const overflowLayout = getExcelOverflowLayout(
+    const overflowLayout = projected ? { left: -projected.offsetLeft, width: projected.width } : getExcelOverflowLayout(
       virtualState,
       currentRow,
       rowIndex,
       dataColIndex,
       column,
       style,
-      value,
+      renderValue,
       normalizedScale,
       measureDocument
     )
-    const mirror = !hasRenderableValue(value)
+    const mirror = !projected && !hasRenderableValue(renderValue)
       ? getLeftOverflowMirror(
         virtualState,
         currentRow,
@@ -1248,7 +1300,8 @@ export const createTableConfig = ({
       : undefined
     const match = searchCell?.(rowIndex, dataColIndex)
     const renderText = shouldRenderTextInOverlay(style, column) || !!overflowLayout || !!mirror || !!match
-    if (!hasBorder(style) && !renderText) {
+    const comment = commentsByCell.get(cellKey)
+    if (!hasBorder(style) && !renderText && !comment) {
       return undefined
     }
 
@@ -1265,13 +1318,37 @@ export const createTableConfig = ({
         : baseStyle
       renderCellOverlay(
         cellEl,
-        collapsedStyle,
+        projected ? { ...collapsedStyle, borderLeft: undefined } : collapsedStyle,
         mirror?.style || collapsedStyle,
-        mirror ? mirror.value : value,
+        mirror ? mirror.value : renderValue,
         renderText,
         mirror?.overflowLayout || overflowLayout,
         normalizedScale
       )
+      if (comment) {
+        cellEl.style.pointerEvents = 'auto'
+        const indicator = cellEl.ownerDocument.createElement('button')
+        indicator.type = 'button'
+        indicator.className = 'excel-comment-indicator'
+        indicator.dataset.cell = comment.address
+        indicator.dataset.kind = comment.kind
+        indicator.dataset.resolved = String(comment.resolved)
+        indicator.setAttribute('aria-label', commentLabel?.(comment) || comment.address)
+        const open = (event: Event) => { event.stopPropagation(); showComment?.(comment, indicator) }
+        indicator.addEventListener('pointerdown', event => event.stopPropagation())
+        indicator.addEventListener('click', open)
+        indicator.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(event) }
+        })
+        let hoverTimer: ReturnType<typeof setTimeout> | undefined
+        indicator.addEventListener('pointerenter', () => {
+          hoverTimer = setTimeout(() => {
+            if (indicator.isConnected) showComment?.(comment, indicator, false)
+          }, 250)
+        })
+        indicator.addEventListener('pointerleave', () => clearTimeout(hoverTimer))
+        cellEl.append(indicator)
+      }
       cellEl.style.boxShadow = match === 'active' ? 'inset 0 0 0 2px #9a5700' : ''
       if (match) {
         cellEl.dataset.spreadsheetSearch = match
@@ -1289,8 +1366,8 @@ export const createTableConfig = ({
   return {
     ROW_KEY: ROW_KEY_FIELD,
     DISABLED: true,
-    HEIGHT: Math.max(hostHeight, 240),
-    MAX_HEIGHT: Math.max(hostHeight, 240),
+    HEIGHT: hostHeight > 0 ? hostHeight : 240,
+    MAX_HEIGHT: hostHeight > 0 ? hostHeight : 240,
     HEADER_HEIGHT: scaledHeaderHeight,
     CELL_HEIGHT: scaledCellHeight,
     CELL_WIDTH: scaledCellWidth,
@@ -1363,6 +1440,9 @@ export const createTableConfig = ({
         return displayIndex > 0 ? `${displayIndex}` : ''
       }
       if (getRowState(row as VirtualRow) !== RowState.Loaded) {
+        return ''
+      }
+      if (getProjectedMerge(rowIndex, colIndex, column)) {
         return ''
       }
       const currentRow = row as VirtualRow
