@@ -1,3 +1,4 @@
+import { browserCorePlugin } from '../packages/build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { build } from 'esbuild'
 import { chromium, webkit } from 'playwright'
@@ -53,7 +54,7 @@ window.openImage=async(mode,enabled)=>{
 window.state=()=>({left:root.scrollLeft,top:root.scrollTop,width:root.scrollWidth,clientWidth:root.clientWidth,cursor:root.style.cursor,panning:root.dataset.viewerImagePanning,open:!!document.querySelector('[data-open="true"]')});
 window.ready=true;
 for(const name of ['pointerdown','pointermove','pointerup','pointercancel','lostpointercapture','dragstart'])window.addEventListener(name,event=>window.events.push({type:name,pointerType:event.pointerType,buttons:event.buttons,id:event.pointerId,prevented:event.defaultPrevented,target:event.target.className,x:event.clientX,y:event.clientY}));
-`,resolveDir:root},bundle:true,format:'esm',platform:'browser',target:'es2022',alias:{'@file-viewer/core':join(root,'packages/core/src/index.ts')},outfile:join(scratch,'main.js'),logLevel:'warning'})
+`,resolveDir:root},bundle:true,format:'esm',platform:'browser',target:'es2022',plugins:[browserCorePlugin(root)],outfile:join(scratch,'main.js'),logLevel:'warning'})
 const script=await readFile(join(scratch,'main.js'))
 const server=createServer((request,response)=>{
   const path=new URL(request.url,'http://localhost').pathname

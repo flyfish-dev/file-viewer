@@ -1,3 +1,4 @@
+import { browserCoreAliases } from '../../../build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -167,10 +168,10 @@ try {
     clearScreen: false,
     logLevel: 'error',
     resolve: {
-      alias: {
-        '@media-regression/renderer': join(packageRoot, 'dist/index.js'),
-        '@file-viewer/core': join(sourceRoot, 'packages/core/dist/index.js')
-      }
+      alias: [
+        { find: '@media-regression/renderer', replacement: join(packageRoot, 'dist/index.js') },
+        ...browserCoreAliases(sourceRoot, { built: true })
+      ]
     },
     optimizeDeps: {
       exclude: ['@media-regression/renderer', '@file-viewer/core'],

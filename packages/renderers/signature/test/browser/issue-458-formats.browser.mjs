@@ -10,6 +10,12 @@ const root = path.resolve(import.meta.dirname, '../../../../..')
 const output = path.resolve(
   process.env.SIGNATURE_FORMATS_OUTPUT || path.join(root, 'output/signature-panel-formats')
 )
+const browserNames = (process.env.SIGNATURE_PANEL_BROWSERS ?? 'chromium,webkit').split(',')
+assert.ok(
+  browserNames.length > 0 && new Set(browserNames).size === browserNames.length &&
+    browserNames.every((name) => ['chromium', 'webkit'].includes(name)),
+  'SIGNATURE_PANEL_BROWSERS must name unique nonempty chromium/webkit engines'
+)
 const installedRoot =
   process.env.SIGNATURE_PANEL_INSTALLED_ROOT &&
   (await realpath(process.env.SIGNATURE_PANEL_INSTALLED_ROOT))
@@ -157,11 +163,14 @@ const report = {
     .digest('hex')
 }
 try {
-  for (const [browserName, engine] of [
-    ['chromium', chromium],
-    ['webkit', webkit]
-  ]) {
-    const browser = await engine.launch({ headless: true })
+  for (const browserName of browserNames) {
+    const engine = { chromium, webkit }[browserName]
+    const browser = await engine.launch({
+      headless: true,
+      ...(browserName === 'chromium' && process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+        ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+        : {})
+    })
     try {
       const page = await browser.newPage({
         viewport: { width: 1400, height: 1000 }

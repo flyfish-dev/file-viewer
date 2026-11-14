@@ -1,3 +1,4 @@
+import { browserCorePlugin } from '../../../build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { createServer } from 'node:http'
@@ -43,8 +44,7 @@ const bundle = await build({
     `,
   },
   bundle: true, format: 'iife', platform: 'browser', write: false, logLevel: 'warning',
-  alias: { '@file-viewer/core': join(root, 'packages/core/src/index.ts') },
-  plugins: [{ name: 'observe-real-virtual-table', setup(builder) {
+  plugins: [browserCorePlugin(root), { name: 'observe-real-virtual-table', setup(builder) {
     builder.onResolve({ filter: /^e-virt-table(?:\/dist\/index\.es\.js)?$/ }, () => ({ path: 'table', namespace: 'review-table' }))
     builder.onLoad({ filter: /.*/, namespace: 'review-table' }, () => ({
       contents: `import RealTable from ${JSON.stringify(tableEntry)};

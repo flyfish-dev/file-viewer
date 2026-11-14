@@ -1,3 +1,4 @@
+import { browserCorePlugin } from '../../../build-support/browser-runtime-options.mjs'
 /** Real browser/library checks; optional C048 stays outside the repository. */
 import assert from 'node:assert/strict';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -81,8 +82,8 @@ await check('Malformed chart metadata cannot create CSS or unbounded point alloc
   const result=extractChartOptions({'c:holeSize':val(-1),'c:firstSliceAng':val('NaN'),'c:grouping':val('stacked;bad'),'c:ser':{'c:dPt':{'c:idx':val('__proto__'),'c:spPr':{'a:solidFill':{}}}}},{},()=> 'red;bad');
   assert.equal(result.holeSize,50);assert.equal(result.firstSliceAngle,0);assert.equal(result.grouping,undefined);assert.deepEqual(result.series[0].points,{});assert.equal(result.legend.show,false);
 });
-const sourceAliases = { '@file-viewer/core': path.join(root, 'packages/core/src/index.ts') };
-const compiled=await build({plugins: process.env.REVIEW_EXACT_PR_TEXT ? [{name:'exact-pr468-text',setup(b){b.onLoad({filter:/[\\/]pptx[\\/]src[\\/]chart-text\.ts$/},async args=>({contents:await readFile(process.env.REVIEW_EXACT_PR_TEXT,'utf8'),loader:'ts',resolveDir:path.dirname(args.path)}));}}] : [],alias:sourceAliases,stdin:{resolveDir:packageDir,contents:`
+const sourceCore = browserCorePlugin(root);
+const compiled=await build({plugins: [sourceCore,...(process.env.REVIEW_EXACT_PR_TEXT ? [{name:'exact-pr468-text',setup(b){b.onLoad({filter:/[\\/]pptx[\\/]src[\\/]chart-text\.ts$/},async args=>({contents:await readFile(process.env.REVIEW_EXACT_PR_TEXT,'utf8'),loader:'ts',resolveDir:path.dirname(args.path)}));}}] : [])],stdin:{resolveDir:packageDir,contents:`
  import process from './src/engine/process.js';
  import {registerPptxChartLibraryLoader,registerPptxChartRenderer,renderPptxPostProcessing} from './src/chart.ts';
  import {createDefaultPptxOptions} from './src/options.ts';
@@ -98,7 +99,7 @@ const compiled=await build({plugins: process.env.REVIEW_EXACT_PR_TEXT ? [{name:'
  window.review={process,registerPptxChartRenderer,renderPptxPostProcessing,createDefaultPptxOptions,pptxViewerCss,sanitizePptxMarkup,sanitizePptxCss,PptxViewer};
 `},bundle:true,platform:'browser',format:'iife',write:false,logLevel:'warning'});
 const workerPath=process.env.PPTX_CHART_WORKER_FILE;
-const workerSource=workerPath?await readFile(path.resolve(workerPath),'utf8'):(await build({alias:sourceAliases,entryPoints:[path.join(packageDir,'src/worker-entry.ts')],bundle:true,format:'iife',write:false,platform:'browser',logLevel:'warning'})).outputFiles[0].text;
+const workerSource=workerPath?await readFile(path.resolve(workerPath),'utf8'):(await build({plugins:[sourceCore],entryPoints:[path.join(packageDir,'src/worker-entry.ts')],bundle:true,format:'iife',write:false,platform:'browser',logLevel:'warning'})).outputFiles[0].text;
 const browserName=process.env.PPTX_CHART_BROWSER||'chromium';
 assert.ok(['chromium','webkit'].includes(browserName),'Select a supported chart browser');
 const browser=await ({chromium,webkit}[browserName]).launch({executablePath:browserName==='chromium'?process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined:undefined,headless:true});

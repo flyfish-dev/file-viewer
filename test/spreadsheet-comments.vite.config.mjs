@@ -1,3 +1,4 @@
+import { browserCoreAliases } from '../packages/build-support/browser-runtime-options.mjs'
 import { fileURLToPath } from 'node:url';
 
 const local = (path) => fileURLToPath(new URL(path, import.meta.url));
@@ -9,10 +10,7 @@ export default {
   resolve: {
     dedupe: ['@file-viewer/core'],
     alias: [
-      {
-        find: /^@file-viewer\/core$/,
-        replacement: local('../packages/core/src/index.ts'),
-      },
+      ...browserCoreAliases(local('../')),
     ],
   },
 };

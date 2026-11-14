@@ -190,6 +190,7 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: |
           node --test packages/renderers/3d/scripts/geo3d-build-path-privacy.test.mjs
+          node --test packages/build-support/browser-runtime-options.test.mjs
           node --test packages/renderers/signature/scripts/canonical-crate-metadata.test.mjs
           node packages/renderers/signature/scripts/verify-artifacts.mjs
 
@@ -559,6 +560,7 @@ jobs:
       - name: Verify the locked browser tool identity
         run: |
           node --test packages/components/web-full/scripts/build-copy-assets.test.mjs
+          node --test packages/build-support/browser-runtime-options.test.mjs
           node .github/scripts/source-prepack-browser.mjs --check-tools
 
       - name: Set up the existing CHM source toolchain

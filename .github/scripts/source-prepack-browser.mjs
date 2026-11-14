@@ -680,8 +680,9 @@ export async function assertHeadSourceBytes(root, expectedHead, { records = fals
 async function execute(command, args, { cwd, env, log }) {
   await mkdir(dirname(log), { recursive: true })
   const stream = (await import('node:fs')).createWriteStream(log, { flags: 'wx', mode: 0o600 })
+  let exitCode
   try {
-    return await new Promise((accept, reject) => {
+    exitCode = await new Promise((accept, reject) => {
       const child = spawn(command, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] })
       child.stdout.pipe(stream, { end: false })
       child.stderr.pipe(stream, { end: false })
@@ -693,6 +694,13 @@ async function execute(command, args, { cwd, env, log }) {
   } finally {
     await new Promise((resolve) => stream.end(resolve))
   }
+  if (exitCode !== 0) {
+    const bytes = await readFile(log)
+    process.stderr.write(`\nOriginal command diagnostics (last 64 KiB): ${log}\n`)
+    process.stderr.write(bytes.subarray(-64 * 1024))
+    process.stderr.write('\n')
+  }
+  return exitCode
 }
 
 export function checkTools(root) {

@@ -11,7 +11,7 @@ import { delimiter, dirname, extname, join, relative, resolve, sep } from 'node:
 import { tmpdir } from 'node:os'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 import { buildPart10 } from '../../../test/fixtures/dicom/generate-fixtures.mjs'
-import { browserLibraryDefines } from '../browser-runtime-options.mjs'
+import { browserCoreAliases, browserLibraryDefines } from '../browser-runtime-options.mjs'
 import { browserTestLaunchOptions } from '../browser-test-launch.mjs'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
@@ -395,7 +395,7 @@ window.__dicomTest = {
 }
 `
 
-const html = `<!doctype html><html><head><meta charset="utf-8"><style>
+const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3Cpath d='M0 0h1v1H0z'/%3E%3C/svg%3E"><style>
 html,body{margin:0;height:100%;background:#101827;color:#fff;font-family:system-ui}main{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:100%;padding:8px;box-sizing:border-box}.target{min-width:0;min-height:0;border:1px solid #334155;background:#05080d}#host{grid-column:1/-1}
 </style></head><body><main><div id="viewer-a" class="target"></div><div id="viewer-b" class="target"></div><div id="host" class="target"></div></main><script type="module" src="/bootstrap.ts"></script></body></html>`
 
@@ -443,7 +443,7 @@ await build({
   resolve: {
     alias: [
       { find: '@file-viewer/renderer-dicom', replacement: join(sourceRuntimeRoot, 'index.js') },
-      { find: '@file-viewer/core', replacement: join(sourceRoot, 'packages/core/dist/index.js') },
+      ...browserCoreAliases(sourceRoot, { built: true }),
       { find: '@cornerstonejs/core', replacement: dicomRequire.resolve('@cornerstonejs/core') },
       { find: '@cornerstonejs/dicom-image-loader', replacement: dicomRequire.resolve('@cornerstonejs/dicom-image-loader') },
       { find: '@cornerstonejs/metadata', replacement: dicomRequire.resolve('@cornerstonejs/metadata') },

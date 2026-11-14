@@ -1,3 +1,4 @@
+import { browserCoreAliases } from '../browser-runtime-options.mjs'
 // BEGIN PREPACK COMPLETION OBSERVATION
 import { recordBrowserGateCompletion, recordBrowserGateFixture } from './lib/import-playwright.mjs'
 // END PREPACK COMPLETION OBSERVATION
@@ -110,8 +111,6 @@ const viteEntry = packageRequire.resolve('vite')
 const vuePluginEntry = packageRequire.resolve('@vitejs/plugin-vue')
 const vueEntry = packageRequire.resolve('vue/dist/vue.esm-bundler.js')
 const vue3Entry = join(sourceRoot, 'packages/components/vue3/src/package/index.ts')
-const coreEntry = join(sourceRoot, 'packages/core/src/index.ts')
-const coreBrowserEntry = join(sourceRoot, 'packages/core/src/browser.ts')
 const spreadsheetEntry = join(sourceRoot, 'packages/renderers/spreadsheet/src/index.ts')
 const spreadsheetWorkerEntry = join(
   sourceRoot,
@@ -397,13 +396,12 @@ try {
       logLevel: 'error',
       plugins: [vue()],
       resolve: {
-        alias: {
-          '@issue211/vue3': vue3Entry,
-          '@issue211/spreadsheet': spreadsheetEntry,
-          '@file-viewer/core/browser': coreBrowserEntry,
-          '@file-viewer/core': coreEntry,
-          vue: vueEntry
-        },
+        alias: [
+          { find: '@issue211/vue3', replacement: vue3Entry },
+          { find: '@issue211/spreadsheet', replacement: spreadsheetEntry },
+          ...browserCoreAliases(sourceRoot),
+          { find: 'vue', replacement: vueEntry }
+        ],
         dedupe: ['vue']
       },
       build: {

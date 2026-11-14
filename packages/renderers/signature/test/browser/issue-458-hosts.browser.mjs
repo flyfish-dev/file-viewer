@@ -1,3 +1,4 @@
+import { browserCorePlugin } from '../../../../build-support/browser-runtime-options.mjs'
 // Actual signed nested XML and independently sized signature hosts.
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
@@ -23,7 +24,7 @@ const code = installedRoot
 const baseline = process.env.SIGNATURE_PANEL_BASELINE_SOURCE
 const bundle = await build({
   ...(!installedRoot
-    ? { alias: { '@file-viewer/core': path.join(root, 'packages/core/src/index.ts') } }
+    ? { plugins: [browserCorePlugin(root)] }
     : {}),
   absWorkingDir: installedRoot || root,
   stdin: {

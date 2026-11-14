@@ -1,3 +1,4 @@
+import { browserCorePlugin } from '../../../build-support/browser-runtime-options.mjs'
 // Synthetic, repository-only regression for scaled/reparented PPTX charts.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -44,15 +45,14 @@ async function bundle(useBaseline) {
     ` },
     bundle: true, format: 'iife', platform: 'browser', write: false, logLevel: 'warning',
     loader: { '.css': 'text' },
-    alias: { '@file-viewer/core': path.join(root, 'packages/core/src/index.ts') },
-    plugins: useBaseline ? [{ name: 'repository-baseline', setup(builder) {
+    plugins: [browserCorePlugin(root), ...(useBaseline ? [{ name: 'repository-baseline', setup(builder) {
       builder.onLoad({ filter: /[\\/]pptx[\\/]src[\\/]chart(?:-text)?\.ts$/ }, args => {
         const file = path.basename(args.path);
         assert.ok(changedSources.includes(file));
         return { loader: 'ts', resolveDir: path.dirname(args.path), contents: execFileSync('git',
           ['show', `${baseline}:packages/renderers/pptx/src/${file}`], { cwd: root, encoding: 'utf8' }) };
       });
-    } }] : [],
+    } }] : [])],
   });
   return result.outputFiles[0].text;
 }

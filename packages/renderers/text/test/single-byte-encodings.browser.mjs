@@ -1,3 +1,4 @@
+import { browserCorePlugin } from '../../../build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
@@ -26,7 +27,7 @@ async function runBrowsers() {
   const { outputFiles } = await build({
     entryPoints: [fileURLToPath(new URL('./single-byte-encodings/browser-entry.mjs', import.meta.url))],
     // Use the exact checkout's core and renderers, never stale dist output.
-    alias: { '@file-viewer/core': resolve(workspace, 'packages/core/src/index.ts') },
+    plugins: [browserCorePlugin(workspace)],
     bundle: true, write: false, platform: 'browser', format: 'iife', target: 'es2022', logLevel: 'silent'
   })
   if (process.argv.includes('--check-bundle')) {
