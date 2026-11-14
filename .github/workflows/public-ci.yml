@@ -534,7 +534,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Verify the locked browser tool identity
-        run: node .github/scripts/source-prepack-browser.mjs --check-tools
+        run: |
+          node --test packages/components/web-full/scripts/build-copy-assets.test.mjs
+          node .github/scripts/source-prepack-browser.mjs --check-tools
 
       - name: Set up the existing CHM source toolchain
         env:
@@ -555,6 +557,7 @@ jobs:
           echo "$tool_dir" >> "$GITHUB_PATH"
 
       - name: Prepare the complete original browser matrix
+        timeout-minutes: 10
         run: |
           set -euo pipefail
           pnpm exec playwright install --with-deps chromium firefox webkit

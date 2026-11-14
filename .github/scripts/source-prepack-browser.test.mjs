@@ -594,7 +594,7 @@ test('explicit browser fixture binding preserves page/context calls and rejects 
 })
 
 test('pre-upload privacy checks reject actual PEM/plain and encrypted DER/JWK/PFX private keys while retaining public fixtures', () => {
-  const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 1024 })
+  const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 })
   const fixtures = [
     Buffer.from(privateKey.export({ type: 'pkcs8', format: 'pem' })),
     privateKey.export({ type: 'pkcs8', format: 'der' }),

@@ -13,7 +13,8 @@ await build({
   format: 'esm',
   target: 'node18',
   banner: { js: '#!/usr/bin/env node' },
-  minify: process.env.FILE_VIEWER_DISTRIBUTION_MODE === 'runtime-only',
+  // This tracked compatibility bin has one canonical format in every build.
+  minify: true,
   legalComments: 'eof',
 })
 await chmod(output, 0o755)

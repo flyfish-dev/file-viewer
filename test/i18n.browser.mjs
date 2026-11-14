@@ -185,8 +185,10 @@ const server = createServer(async (req, res) => {
       return
     }
     if (url.pathname.endsWith('.html') || url.pathname === '/') {
-      const id = url.searchParams.get('case') || cases[0].id
-      assert(cases.some((entry) => entry.id === id))
+      const requestedId = url.searchParams.get('case') || cases[0].id
+      const entry = cases.find((entry) => entry.id === requestedId)
+      assert(entry)
+      const id = entry.id
       res.setHeader('Content-Type', 'text/html; charset=utf-8')
       res.end(
         `<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;font-family:system-ui}#host{height:80vh;width:100%}#result{padding:12px;overflow-wrap:anywhere}</style><output id="result">Testing ${id}</output><div id="host"></div><script type="module" src="/${id}/entry.js"></script></html>`
@@ -201,8 +203,10 @@ const server = createServer(async (req, res) => {
     )
     res.end(await readFile(path))
   } catch (error) {
+    console.error('[i18n-browser] Request failed', error)
     res.statusCode = 404
-    res.end(String(error))
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+    res.end('Not found')
   }
 })
 const save = () => writeFile(join(output, 'CURRENT.json'), JSON.stringify(evidence, null, 2) + '\n')

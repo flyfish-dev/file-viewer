@@ -396,8 +396,9 @@ const startHarnessServer = async files => {
       })
       response.end(body)
     } catch (error) {
+      console.error('[issue-200-pptx] Request failed', error)
       response.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' })
-      response.end(error instanceof Error ? error.message : String(error))
+      response.end('Internal server error')
     }
   })
   await new Promise((resolveServer, rejectServer) => {
