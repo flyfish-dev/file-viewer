@@ -1,9 +1,44 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 import { sanitizeOfflineAssetText, sanitizeOfflineViewerAssetTree } from '../scripts/offline-asset-sanitize.mjs'
+
+test('producer-bound legal bytes survive tree sanitization while runtime fallbacks are still rewritten', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'file-viewer-original-notice-'))
+  t.after(() => rm(directory, { recursive: true, force: true }))
+  const original = await readFile(new URL('../../../renderers/image/THIRD_PARTY_NOTICES.md', import.meta.url))
+  const notice = join(directory, 'THIRD_PARTY_LICENSES.txt')
+  const runtime = join(directory, 'runtime.js')
+  await writeFile(notice, original)
+  await writeFile(runtime, "fetch('https://api.github.com/repos/owner/runtime')")
+  const descriptor = { path: 'THIRD_PARTY_LICENSES.txt', bytes: original.length,
+    sha256: createHash('sha256').update(original).digest('hex') }
+  const result = await sanitizeOfflineViewerAssetTree(directory, { retainedLegalFiles: [descriptor] })
+  assert.deepEqual(await readFile(notice), original)
+  assert.doesNotMatch(await readFile(runtime, 'utf8'), /https:\/\/api\.github\.com/)
+  assert.equal(result.replacementCount, 1)
+  assert.deepEqual(result.touchedFiles, [runtime])
+  await writeFile(runtime, "fetch('https://api.github.com/repos/owner/runtime')")
+  const runtimeBytes = await readFile(runtime)
+  await assert.rejects(sanitizeOfflineViewerAssetTree(directory, { retainedLegalFiles: [{
+    path: 'runtime.js', bytes: runtimeBytes.length,
+    sha256: createHash('sha256').update(runtimeBytes).digest('hex'),
+  }] }), /non-executable document/)
+  for (const change of [{ sha256: '0'.repeat(64) }, { bytes: original.length - 1 }, { path: '../outside.txt' }])
+    await assert.rejects(sanitizeOfflineViewerAssetTree(directory, {
+      retainedLegalFiles: [{ ...descriptor, ...change }],
+    }), /legal data|legal document/)
+  await mkdir(join(directory, 'legal'))
+  await writeFile(join(directory, 'legal/original.txt'), original)
+  await symlink(join(directory, 'legal'), join(directory, 'legal-alias'))
+  await assert.rejects(sanitizeOfflineViewerAssetTree(directory, {
+    retainedLegalFiles: [{ ...descriptor, path: 'legal-alias/original.txt' }],
+  }), /linked parent/)
+  assert.deepEqual(await readFile(runtime), runtimeBytes, 'Invalid retention must fail before any runtime mutation')
+})
 
 test('retains complete native grants and source offers without exempting executable or ordinary JSON fallbacks', async () => {
   const source = await readFile(new URL('../../../renderers/design/LICENSES/Introspect_NATIVE_THIRD_PARTY_LICENSES.json', import.meta.url), 'utf8')

@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { createHash } from 'node:crypto'
-import { readdir, readFile, stat, writeFile } from 'node:fs/promises'
-import { extname, join } from 'node:path'
+import { lstat, readdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 
 const textAssetExtensions = new Set([
   '.css',
@@ -307,11 +307,36 @@ export function sanitizeOfflineAssetText(original, file, options = {}) {
 }
 
 export async function sanitizeOfflineViewerAssetTree(root, options = {}) {
+  // Producers identify inert legal output by its complete bytes. Do not run
+  // runtime URL rewrites over original grants or corresponding-source offers.
+  const retainedLegalFiles = new Set()
+  for (const entry of options.retainedLegalFiles || []) {
+    if (!entry || typeof entry.path !== 'string' || isAbsolute(entry.path))
+      throw new Error('Retained legal data requires a relative document path')
+    const file = resolve(root, entry.path)
+    const child = relative(resolve(root), file)
+    if (!child || child === '..' || child.startsWith('..' + sep) || isAbsolute(child) ||
+        !['.txt', '.md'].includes(extname(file).toLowerCase()))
+      throw new Error('Retained legal data must be a non-executable document inside the output tree')
+    for (let parent = dirname(file); parent !== resolve(root); parent = dirname(parent)) {
+      if ((await lstat(parent)).isSymbolicLink())
+        throw new Error('Retained legal data cannot use a linked parent directory')
+    }
+    const info = await lstat(file)
+    const bytes = await readFile(file)
+    if (!info.isFile() || info.isSymbolicLink() || (info.mode & 0o111) ||
+        !Number.isSafeInteger(entry.bytes) || bytes.length !== entry.bytes ||
+        !/^[a-f0-9]{64}$/.test(entry.sha256 || '') ||
+        createHash('sha256').update(bytes).digest('hex') !== entry.sha256)
+      throw new Error('Retained legal document bytes or mode changed')
+    retainedLegalFiles.add(file)
+  }
   const files = await collectTextFiles(root)
   const touchedFiles = []
   let replacementCount = 0
 
   for (const file of files) {
+    if (retainedLegalFiles.has(resolve(file))) continue
     const original = await readFile(file, 'utf8')
     const sanitized = sanitizeOfflineAssetText(original, file, options)
     const text = sanitized.output

@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs'
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { sanitizeOfflineViewerAssetTree } from './offline-asset-sanitize.mjs'
 import { verifyPptRuntimeDistributionRoot } from './ppt-runtime-integrity.mjs'
@@ -64,7 +65,14 @@ export async function stageFullViewerAssets({
   await stagers.stageDesignRuntime(outDir)
   await stagers.stageCadRuntime(outDir)
   await stagers.stageBuiltWorkers(outDir)
-  const sanitization = await sanitizeOfflineViewerAssetTree(outDir)
+  const bundleNoticePath = join(outDir, 'THIRD_PARTY_LICENSES.txt')
+  const bundleNotice = existsSync(bundleNoticePath) ? await readFile(bundleNoticePath) : null
+  const sanitization = await sanitizeOfflineViewerAssetTree(outDir, {
+    retainedLegalFiles: bundleNotice ? [{
+      path: 'THIRD_PARTY_LICENSES.txt', bytes: bundleNotice.length,
+      sha256: createHash('sha256').update(bundleNotice).digest('hex'),
+    }] : [],
+  })
   await verifyPptRuntimeDistributionRoot(outDir, {
     unbundledJavaScriptPath: 'renderers/presentation.iife.js'
   })

@@ -1159,7 +1159,7 @@
           {
             "packageName": "pako",
             "spdx": "(MIT AND Zlib)",
-            "notice": "Reviewed runtime/SDK source pako@1.0.5; repository https://github.com/nodeca/pako; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+            "notice": "Reviewed runtime/SDK source pako@1.0.11; repository https://github.com/nodeca/pako; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
           },
           {
             "packageName": "pako",

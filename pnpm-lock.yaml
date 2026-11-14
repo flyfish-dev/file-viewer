@@ -51,6 +51,9 @@ overrides:
   '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.4
   '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.4
   '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.4
+  jszip@3.10.2>pako: 1.0.11
+  jszip@3.10.2>readable-stream: 2.3.8
+  utif@3.1.0>pako: 1.0.11
 
 patchedDependencies:
   illustrator-pgf@0.1.0: 20b0fb03a2d6dc6397b53ed6e83b26b2d47464a44831145881d4b17914319b3d
@@ -6152,9 +6155,6 @@ packages:
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
-  pako@1.0.2:
-    resolution: {integrity: sha512-qCaDHl8pk5JSbz5k1Bi5zTZf430DUuV13pmcFEHHan4fW++WIwm2HXUirpzfciBRyFUN+eeZW11bfIM/Y4Zeog==}
-
   pako@1.0.5:
     resolution: {integrity: sha512-umumrxStF9I4G8OZlhzEgTlwktjp4bofYq7E0mfH/IM7fctJ1pzLBhVrhNmP86hA1b3RNP5gAzxJJ4mjj0Up6Q==}
 
@@ -6397,8 +6397,8 @@ packages:
     resolution: {integrity: sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog==}
     engines: {node: '>=0.10.0'}
 
-  readable-stream@2.3.6:
-    resolution: {integrity: sha512-tQtKA9WIAhBF3+VLAseyMqZeBjW0AHJoxOtYqSUZNJxauErmLbVm2FW1y+J/YA9dUrAC39ITejlZWhVIwawkKw==}
+  readable-stream@2.3.8:
+    resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
 
   readable-stream@3.5.0:
     resolution: {integrity: sha512-gSz026xs2LfxBPudDuI41V1lka8cxg64E66SGe78zJlsUofOg/yqwezdIcdfwik6B4h8LFmWPA9ef9X3FiNFLA==}
@@ -10389,8 +10389,8 @@ snapshots:
   jszip@3.10.2:
     dependencies:
       lie: 3.3.0
-      pako: 1.0.2
-      readable-stream: 2.3.6
+      pako: 1.0.11
+      readable-stream: 2.3.8
       setimmediate: 1.0.5
 
   katex@0.18.2:
@@ -11286,8 +11286,6 @@ snapshots:
 
   pako@1.0.11: {}
 
-  pako@1.0.2: {}
-
   pako@1.0.5: {}
 
   pako@2.1.0: {}
@@ -11495,7 +11493,7 @@ snapshots:
 
   react@19.3.0: {}
 
-  readable-stream@2.3.6:
+  readable-stream@2.3.8:
     dependencies:
       core-util-is: 1.0.3
       inherits: 2.0.4
@@ -12145,7 +12143,7 @@ snapshots:
 
   utif@3.1.0:
     dependencies:
-      pako: 1.0.5
+      pako: 1.0.11
 
   util-deprecate@1.0.2: {}
 
