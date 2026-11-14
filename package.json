@@ -12,6 +12,8 @@
     "site:build": "pnpm --filter @flyfish-group/file-viewer-site build",
     "site:preview": "pnpm --filter @flyfish-group/file-viewer-site preview",
     "build": "pnpm verify:source-layout && pnpm verify:public-release-facts && pnpm build:core && pnpm build:renderers && pnpm build:presets && pnpm build:components && pnpm build:tools && pnpm build:thumbnail && pnpm build:examples && pnpm build:demo",
+    "build-only": "pnpm verify:public-release-facts && pnpm build:renderer-packages && pnpm --filter @flyfish-group/file-viewer-demo build",
+    "build:renderer-packages": "pnpm --filter @file-viewer/core build && pnpm --filter @file-viewer/thumbnail build && pnpm --filter './packages/renderers/**' --filter './packages/capabilities/**' build && pnpm --filter './packages/presets/**' build",
     "build:demo": "pnpm verify:public-release-facts && pnpm --filter @flyfish-group/file-viewer-demo build",
     "build:component-demo": "pnpm --filter @flyfish-group/file-viewer-component-demo build",
     "build:pptx": "pnpm --filter @file-viewer/pptx build",

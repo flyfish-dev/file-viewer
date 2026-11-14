@@ -80,6 +80,7 @@ const report = {
   installedRoot: installedRoot || null,
   fixtures,
   bundleInputs: inputs,
+  browserErrors: {},
   cases: [],
   narrow: []
 }
@@ -144,6 +145,111 @@ try {
                   target.style.cssText = 'width:100%;height:100%'
                   owner.append(target)
                   window.signatureTarget = target
+                  // Record native notifications without reading layout or adding frames before
+                  // an assertion fails. Only frames requested inside a PDF resize callback
+                  // are wrapped; all other requestAnimationFrame calls remain untouched.
+                  const resizeEvents = []
+                  let droppedResizeEvents = 0
+                  const recordResizeEvent = (event) => {
+                    if (resizeEvents.length === 256) {
+                      resizeEvents.shift()
+                      droppedResizeEvents++
+                    }
+                    resizeEvents.push({ at: performance.now(), ...event })
+                  }
+                  const nativeFrame = window.requestAnimationFrame.bind(window)
+                  const nativeCancelFrame = window.cancelAnimationFrame.bind(window)
+                  const resizeFrames = new Set()
+                  let insidePdfResize
+                  window.requestAnimationFrame = (callback) => {
+                    if (!insidePdfResize) return nativeFrame(callback)
+                    const requestedAt = performance.now()
+                    const observer = insidePdfResize
+                    const id = nativeFrame((timestamp) => {
+                      resizeFrames.delete(id)
+                      recordResizeEvent({ kind: 'resize-frame', observer, id, requestedAt, timestamp })
+                      callback.call(window, timestamp)
+                    })
+                    resizeFrames.add(id)
+                    recordResizeEvent({ kind: 'resize-frame-request', observer, id })
+                    return id
+                  }
+                  window.cancelAnimationFrame = (id) => {
+                    if (resizeFrames.delete(id))
+                      recordResizeEvent({ kind: 'resize-frame-cancel', id })
+                    nativeCancelFrame(id)
+                  }
+                  const NativeResizeObserver = window.ResizeObserver
+                  let resizeObserverSequence = 0
+                  if (NativeResizeObserver)
+                    window.ResizeObserver = class extends NativeResizeObserver {
+                      constructor(callback) {
+                        const observerId = ++resizeObserverSequence
+                        super((entries, observer) => {
+                          const pdfEntries = entries.filter((entry) =>
+                            entry.target.classList.contains('pdf-wrapper')
+                          )
+                          if (!pdfEntries.length) return callback.call(observer, entries, observer)
+                          recordResizeEvent({
+                            kind: 'resize-observer',
+                            observer: observerId,
+                            entries: pdfEntries.map((entry) => ({
+                              width: entry.contentRect.width,
+                              height: entry.contentRect.height
+                            }))
+                          })
+                          const previous = insidePdfResize
+                          insidePdfResize = observerId
+                          try {
+                            return callback.call(observer, entries, observer)
+                          } finally {
+                            insidePdfResize = previous
+                          }
+                        })
+                      }
+                    }
+                  window.addEventListener('resize', () =>
+                    recordResizeEvent({ kind: 'window-resize' })
+                  )
+                  window.signatureResizeProbe = {
+                    events: () => ({
+                      events: [...resizeEvents],
+                      dropped: droppedResizeEvents,
+                      nativeResizeObserverAvailable: !!NativeResizeObserver
+                    }),
+                    // Geometry reads are reserved for the failure path: these samples may
+                    // flush layout and therefore cannot count as passing the original gate.
+                    sample: () => ({
+                      at: performance.now(),
+                      visibility: document.visibilityState,
+                      viewport: { width: innerWidth, height: innerHeight },
+                      scale: panelReview.findFileViewerZoomProvider(
+                        target.querySelector('.signature-preview-target')
+                      )?.getState().scale,
+                      geometry: [
+                        ['host', host],
+                        ['target', target],
+                        ...[
+                          '.signature-shell', '.signature-content', '.signature-main',
+                          '.signature-preview', '.signature-preview-target', '.pdf-shell',
+                          '.pdf-content', '.pdf-viewport', '.pdf-wrapper', '.pdfViewer .page'
+                        ].map((selector) => [selector, target.querySelector(selector)])
+                      ].map(([selector, node]) => {
+                        const rect = node?.getBoundingClientRect()
+                        return {
+                          selector,
+                          connected: node?.isConnected ?? false,
+                          clientWidth: node?.clientWidth,
+                          clientHeight: node?.clientHeight,
+                          scrollWidth: node?.scrollWidth,
+                          scrollHeight: node?.scrollHeight,
+                          scrollTop: node?.scrollTop,
+                          scrollLeft: node?.scrollLeft,
+                          rect: rect && { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+                        }
+                      })
+                    })
+                  }
                   window.signatureCounts = {
                     nested: 0,
                     unmount: 0,
@@ -596,9 +702,31 @@ try {
               row.passed = true
             } catch (error) {
               row.error = error.stack
+              try {
+                row.resizeFailureDiagnostics = await page.evaluate(() => ({
+                  sampledAfterFailure: true,
+                  geometryReadsMayFlushLayout: true,
+                  initial: window.signatureResizeProbe?.sample(),
+                  notificationsAtFailure: window.signatureResizeProbe?.events()
+                }))
+              } catch (diagnosticError) {
+                row.resizeFailureDiagnostics = { error: String(diagnosticError) }
+              }
               await page
                 .screenshot({ path: path.join(output, key + '-failure.png') })
                 .catch(() => {})
+              try {
+                row.resizeFailureDiagnostics.late = await page.evaluate(async () => {
+                  const samples = []
+                  for (let index = 0; index < 8; index++) {
+                    await new Promise((resolve) => setTimeout(resolve, 250))
+                    samples.push(window.signatureResizeProbe?.sample())
+                  }
+                  return { samples, notifications: window.signatureResizeProbe?.events() }
+                })
+              } catch (diagnosticError) {
+                row.resizeFailureDiagnostics.lateError = String(diagnosticError)
+              }
               throw error
             } finally {
               await page.close()
@@ -612,6 +740,7 @@ try {
       assert.deepEqual(h.external, [])
       assert.ok(h.workers.some((url) => url.includes('pdf.worker.mjs')))
     } finally {
+      report.browserErrors[browserName] = [...h.errors]
       await h.close()
     }
   }

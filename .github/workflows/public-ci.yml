@@ -147,7 +147,9 @@ jobs:
       - name: Set up Rust WASM toolchain
         if: steps.impact.outputs.runtime != 'false'
         run: |
-          rustup target add wasm32-unknown-unknown
+          rustup toolchain install 1.88.0 --profile minimal --target wasm32-unknown-unknown
+          rustup default 1.88.0
+          rustc --version --verbose
           cargo install wasm-bindgen-cli --version 0.2.127 --locked
 
       - name: Set up pinned Binaryen WASM optimizer
@@ -543,7 +545,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          rustup target add wasm32-unknown-unknown
+          rustup toolchain install 1.88.0 --profile minimal --target wasm32-unknown-unknown
+          rustup default 1.88.0
+          rustc --version --verbose
           cargo install wasm-bindgen-cli --version 0.2.127 --locked
           tool_dir="$RUNNER_TEMP/file-viewer-binaryen"
           archive="$tool_dir/binaryen-version_132-node.tar.gz"
