@@ -589,7 +589,9 @@ jobs:
           set -euo pipefail
           pnpm exec playwright install --with-deps chromium firefox webkit
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk xvfb xauth
+          command -v xvfb-run
+          command -v xauth
           fc-cache -f
           dpkg-query -W -f='${Status}' fonts-noto-cjk | grep -Fxq 'install ok installed'
           fc-match -f '%{family}\n' 'Noto Serif CJK SC' | grep -q 'Noto Serif CJK SC'
@@ -604,7 +606,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           FILE_VIEWER_PREPACK_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-        run: node .github/scripts/source-prepack-browser.mjs
+        run: xvfb-run -a --server-args='-screen 0 1920x1200x24 -nolisten tcp' node .github/scripts/source-prepack-browser.mjs
 
       - name: Retain only the complete source prepack browser proof
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

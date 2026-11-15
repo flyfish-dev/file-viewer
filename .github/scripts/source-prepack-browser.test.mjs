@@ -463,6 +463,49 @@ test('the independent static manifest retains the whole original default matrix 
   assert.throws(() => validateManifest(ambiguousWitness), /ambiguous witness/)
 })
 
+test('only the two original DICOM-bearing gates receive headed Firefox after ambient overrides are cleared', async () => {
+  const manifest = JSON.parse(
+    await readFile(
+      join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json'),
+      'utf8'
+    )
+  )
+  validateManifest(manifest)
+  assert.equal(manifest.runs.length, 22)
+  assert.equal(manifest.requiredCases.length, 1383)
+  const headedIds = ['dicom-renderer', 'unified-specialist-demo']
+  for (const id of headedIds) {
+    const gate = manifest.runs.find((run) => run.id === id)
+    assert.deepEqual(gate.engines, ['chromium', 'firefox', 'webkit'])
+    assert.deepEqual(gate.env, { FILE_VIEWER_HEADFUL_BROWSERS: 'firefox' })
+  }
+  for (const mutate of [
+    (plan) => {
+      plan.forbiddenEnvironment = plan.forbiddenEnvironment.filter(
+        (name) => name !== 'FILE_VIEWER_HEADFUL_BROWSERS'
+      )
+    },
+    ...headedIds.flatMap((id) => [
+      (plan) => {
+        delete plan.runs.find((run) => run.id === id).env
+      },
+      (plan) => {
+        plan.runs.find((run) => run.id === id).env.FILE_VIEWER_HEADFUL_BROWSERS = 'chromium,firefox'
+      },
+      (plan) => {
+        plan.runs.find((run) => run.id === id).gate = 'test/other.browser.mjs'
+      }
+    ]),
+    (plan) => {
+      plan.runs[0].env = { ...plan.runs[0].env, FILE_VIEWER_HEADFUL_BROWSERS: 'firefox' }
+    }
+  ]) {
+    const changed = structuredClone(manifest)
+    mutate(changed)
+    assert.throws(() => validateManifest(changed))
+  }
+})
+
 test('DICOM actual child retains its clean-environment guards before explicit observation', async () => {
   const root = workspaceRoot
   const source = await readFile(

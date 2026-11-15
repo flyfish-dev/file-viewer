@@ -158,12 +158,36 @@ export function validateManifest(plan) {
     Array.isArray(plan.runs) && plan.runs.length === 22,
     'Keep nine canonical gates, the original TIFF variant and twelve public owners'
   )
+  assert.ok(
+    plan.forbiddenEnvironment.includes('FILE_VIEWER_HEADFUL_BROWSERS'),
+    'Ambient headed-browser overrides must be cleared before every original run'
+  )
+  const headedFirefoxGates = new Map([
+    ['dicom-renderer', 'packages/build-support/browser-gates/verify-dicom-renderer.mjs'],
+    [
+      'unified-specialist-demo',
+      'packages/build-support/browser-gates/verify-unified-specialist-demo-browser.mjs'
+    ]
+  ])
   const runIds = new Set(),
     cases = new Set()
   for (const run of plan.runs) {
     assert.ok(!runIds.has(run.id) && /^[a-z0-9-]+$/.test(run.id), 'Duplicate/invalid original run')
     runIds.add(run.id)
     safePath(run.gate)
+    if (headedFirefoxGates.has(run.id)) {
+      assert.equal(run.gate, headedFirefoxGates.get(run.id))
+      assert.equal(
+        run.env?.FILE_VIEWER_HEADFUL_BROWSERS,
+        'firefox',
+        'Only the two original DICOM-bearing gates use the existing headed-Firefox policy'
+      )
+    } else
+      assert.equal(
+        run.env?.FILE_VIEWER_HEADFUL_BROWSERS,
+        undefined,
+        'Headed Firefox must not expand to other original gates'
+      )
     assert.ok(
       run.gate.startsWith('packages/') ||
         run.gate.startsWith('test/') ||
