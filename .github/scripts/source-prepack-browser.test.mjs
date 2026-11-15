@@ -174,7 +174,7 @@ test('requires real completion, launch, document bytes and executable bytes for 
   assert(rows.every((row) => row.servedAssets[0].path === 'served/' + 'f'.repeat(64) + '.js'))
 })
 
-test('DICOM source and packed owners retain distinct exact Worker-byte plans', async () => {
+test('DICOM source, built Viewer and packed owners retain distinct exact Worker-byte plans', async () => {
   const plan = JSON.parse(
     await readFile(
       join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
@@ -190,8 +190,14 @@ test('DICOM source and packed owners retain distinct exact Worker-byte plans', a
     bytes: 8018848,
     sha256: '470125679ee57a0c16db4da78e895addae9c861bc68d10401d290d7bbf28456c'
   }
+  const viewer = {
+    path: 'served/f31e5943a8930ce2ac0331dc45aa6f6107c39c4e5927d3e530fcb1d37fa95786.js',
+    bytes: 3150913,
+    sha256: 'f31e5943a8930ce2ac0331dc45aa6f6107c39c4e5927d3e530fcb1d37fa95786'
+  }
   for (const [runId, count, asset] of [
     ['dicom-renderer', 27, source],
+    ['unified-specialist-demo', 13, viewer],
     ['dicom-packed-browser', 16, packed]
   ]) {
     const required = plan.requiredCases.filter((row) => row.runId === runId)
@@ -210,6 +216,23 @@ test('DICOM source and packed owners retain distinct exact Worker-byte plans', a
       collect({ required: required.map((row) => ({ ...row, servedAssets: [packed] })), events }),
     /Independent required product bytes/
   )
+  const viewerRequired = requiredPlan().map((row) => ({ ...row, servedAssets: [viewer] }))
+  const viewerEvents = actualEvents().map((row) =>
+    row.kind === 'served-runtime-asset'
+      ? { ...row, bytes: viewer.bytes, sha256: viewer.sha256 }
+      : row
+  )
+  assert.equal(collect({ required: viewerRequired, events: viewerEvents }).length, 6)
+  for (const incorrectScopeAsset of [source, packed]) {
+    assert.throws(
+      () =>
+        collect({
+          required: viewerRequired.map((row) => ({ ...row, servedAssets: [incorrectScopeAsset] })),
+          events: viewerEvents
+        }),
+      /Independent required product bytes/
+    )
+  }
 })
 
 test('all original generated-fixture and source-harness producers retain current exact source pins', async () => {
