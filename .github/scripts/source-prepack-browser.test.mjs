@@ -402,6 +402,134 @@ test('fresh generated witness must contain exactly the actual original load byte
   )
 })
 
+const generatedPrivacyPlan = (bytes) => {
+  const path = 'generated/unit-public-witness.bin'
+  const required = requiredPlan().map((row) => ({
+    ...row,
+    fixtures: [],
+    generatedFixtures: [
+      {
+        validator: 'original-generated-fixture-v1',
+        path,
+        witnessPath: 'witnesses/public.json'
+      }
+    ]
+  }))
+  const events = actualEvents()
+  for (const engine of runPlan.engines)
+    events.push(
+      { kind: 'browser-fixture', gateId: runPlan.id, engine, fixture: fileRecord(path, bytes) },
+      {
+        kind: 'generated-fixture-witness',
+        gateId: runPlan.id,
+        engine,
+        witness: {
+          schemaVersion: 1,
+          kind: 'original-generated-fixture',
+          fixturePath: path,
+          encoding: 'base64',
+          data: bytes.toString('base64')
+        }
+      }
+    )
+  return { required, events }
+}
+
+test('generated fixture privacy failures log only safe identities and decoded-string offsets', () => {
+  const positiveMessages = [],
+    positiveConsole = console.error
+  try {
+    console.error = (value) => positiveMessages.push(value)
+    assert.equal(collect(generatedPrivacyPlan(Buffer.from('public generated document'))).length, 6)
+  } finally {
+    console.error = positiveConsole
+  }
+  assert.deepEqual(positiveMessages, [])
+  const cases = [
+    {
+      text: '😀 public C:\\unit-only\\fixture',
+      guard: 'public-evidence-text',
+      matches: [{ category: 'windows-drive-path', utf16Offset: '😀 public '.length }]
+    },
+    {
+      text: 'public github_pat_' + 'a'.repeat(40),
+      guard: 'public-evidence-text',
+      matches: [{ category: 'github-pat-shape', utf16Offset: 'public '.length }]
+    },
+    {
+      text: '-----BEGIN PRIVATE KEY-----\nunit-only\n-----END PRIVATE KEY-----',
+      guard: 'synthetic-public-bytes',
+      matches: []
+    }
+  ]
+  for (const { text, guard, matches } of cases) {
+    const bytes = Buffer.from(text),
+      messages = []
+    const originalConsole = console.error
+    let error
+    try {
+      console.error = (value) => messages.push(value)
+      try {
+        collect(generatedPrivacyPlan(bytes))
+      } catch (caught) {
+        error = caught
+      }
+    } finally {
+      console.error = originalConsole
+    }
+    assert.equal(error?.code, 'ERR_ASSERTION')
+    assert.equal(messages.length, 1)
+    const prefix = '[generated-fixture-privacy] '
+    assert.equal(messages[0].slice(0, prefix.length), prefix)
+    assert.deepEqual(JSON.parse(messages[0].slice(prefix.length)), {
+      run: runPlan.id,
+      gate: runPlan.gate,
+      engine: 'chromium',
+      fixturePath: 'generated/unit-public-witness.bin',
+      bytes: bytes.length,
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+      guard,
+      matches
+    })
+  }
+})
+
+test('generated fixture diagnostic errors cannot replace the original privacy failure', () => {
+  const originalError = new Error('Original privacy guard error')
+  const originalOk = assert.ok,
+    originalConsole = console.error
+  try {
+    assert.ok = (value, message) => {
+      if (
+        !value &&
+        message === 'Evidence contains an absolute/private path or credential-shaped material'
+      )
+        throw originalError
+      return originalOk(value, message)
+    }
+    for (const unsafeMetadata of [false, true]) {
+      let error,
+        logged = 0
+      console.error = () => {
+        logged++
+        throw new Error('Diagnostic writer failed')
+      }
+      const plan = generatedPrivacyPlan(Buffer.from('public C:\\unit-only\\fixture'))
+      if (unsafeMetadata) plan.run = { ...runPlan, id: '/Users/unit-only/not-for-logging' }
+      try {
+        collect(plan)
+      } catch (caught) {
+        error = caught
+      }
+      assert.equal(error, originalError)
+      assert.equal(logged, unsafeMetadata ? 0 : 1)
+    }
+  } finally {
+    assert.ok = originalOk
+    console.error = originalConsole
+  }
+})
+
 test('fresh reviewed wrapper bytes match actual HTTP without weakening independent product hashes', () => {
   const bytes = Buffer.from('console.log("original synthetic wrapper")')
   const path = 'main.js'
