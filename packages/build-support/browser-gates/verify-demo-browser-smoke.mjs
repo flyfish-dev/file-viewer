@@ -2404,8 +2404,8 @@ const verifySamplePickerLayering = async page => {
 }
 
 const verifyFileCapsuleMotion = async (page) => {
-  const readCapsuleFrame = () =>
-    page.evaluate(() => {
+  const readCapsuleFrame = (diagnoseInitialFailure = false) =>
+    page.evaluate(diagnoseInitialFailure => {
       const shell = window.__fileViewerSmokeQuery('.demo-shell')
       const rail = window.__fileViewerSmokeQuery('.rail-navigation')
       const toolbar = window.__fileViewerSmokeQuery('.viewer-toolbar')
@@ -2448,7 +2448,7 @@ const verifyFileCapsuleMotion = async (page) => {
       const renderStyle = window.getComputedStyle(render)
       const activeScrollStyle =
         render.scrollHeight > render.clientHeight + 2 ? renderStyle : scrollRootStyle
-      return {
+      const frame = {
         state: shell.dataset.fileCapsuleState || '',
         viewportWidth: window.innerWidth,
         rail: readRect(rail),
@@ -2473,7 +2473,83 @@ const verifyFileCapsuleMotion = async (page) => {
         legacyVariables,
         legacyAnimations
       }
-    })
+      // Freeze the original metrics first. Failed frames gain same-tick read-only evidence.
+      if (diagnoseInitialFailure && frame.scrollbarWidth !== 'thin') {
+        try {
+          const properties = ['overflow', 'overflow-x', 'overflow-y', 'scrollbar-width', 'scrollbar-color',
+            '--file-viewer-scrollbar-width', '--file-viewer-scrollbar-size',
+            '--file-viewer-scrollbar-track', '--file-viewer-scrollbar-thumb']
+          const safe = value => /url\s*\(|:\/\/|[?\x00-\x1f]|\/(?:Users|home|private|tmp|var|etc|opt|root|workspace|mnt)\//i.test(value)
+            ? '[omitted]' : String(value).slice(0, 240)
+          const identify = element => ({ tag: element.localName,
+            classes: [...element.classList].filter(value => /^[\w-]+$/.test(value)).slice(0, 12),
+            part: safe(element.getAttribute('part') || '') })
+          const declarations = (style, names = properties) => names.flatMap(name => {
+            const value = style.getPropertyValue(name).trim()
+            return value ? [{ name, value: safe(value), priority: style.getPropertyPriority(name) }] : []
+          })
+          const nodes = new Set()
+          const describe = element => {
+            const style = window.getComputedStyle(element), root = element.getRootNode()
+            for (let node = element, depth = 0; node && depth < 8; depth += 1)
+              { nodes.add(node); node = node.parentElement || node.getRootNode().host }
+            return { ...identify(element), scrollHeight: element.scrollHeight,
+              clientHeight: element.clientHeight, scrollRange: element.scrollHeight - element.clientHeight,
+              scrollTop: element.scrollTop, overflowX: style.overflowX, overflowY: style.overflowY,
+              scrollbarWidth: style.scrollbarWidth,
+              scrollbarWidthProperty: style.getPropertyValue('scrollbar-width'),
+              computed: declarations(style), inline: declarations(element.style),
+              root: root.host ? { kind: 'shadow', host: identify(root.host) } : { kind: 'document' } }
+          }
+          const diagnostics = { selected: activeScrollStyle === renderStyle ? 'render' : 'content',
+            content: describe(scrollRoot), render: describe(render), matchedAuthorRules: [],
+            visitedRules: 0, unreadableSheets: 0, limited: false }
+          const roots = [...new Set([...nodes].map(node => node.getRootNode()))].slice(0, 4)
+          for (const root of roots) {
+            const sheets = new Set([...(root.styleSheets || []), ...(root.adoptedStyleSheets || [])])
+            for (const sheet of [...sheets].slice(0, 16)) {
+              let source = 'inline-author'
+              if (sheet.href) {
+                const url = new URL(sheet.href, window.location.href)
+                if (safe(url.pathname) !== url.pathname || url.origin !== window.location.origin ||
+                  !/^\/(?:assets\/[\w./-]+|[\w.-]+)\.css$/.test(url.pathname)) continue
+                source = url.pathname.slice(1)
+              }
+              if (sheet.disabled) continue
+              const visit = (rules, media = [], depth = 0) => {
+                for (const rule of rules) {
+                  if (++diagnostics.visitedRules > 2000 || diagnostics.matchedAuthorRules.length >= 24 || depth > 4)
+                    { diagnostics.limited = true; return }
+                  if (rule.media && rule.cssRules) {
+                    const condition = rule.media.mediaText, matches = window.matchMedia(condition).matches
+                    if (matches) visit(rule.cssRules, [...media, { condition: safe(condition), matches }], depth + 1)
+                  } else if (rule.selectorText && rule.style) {
+                    const values = declarations(rule.style, rule.selectorText.includes('::-webkit-scrollbar')
+                      ? [...properties, 'display', 'width', 'height'] : properties)
+                    if (!values.length) continue
+                    const selector = rule.selectorText.replace(/::-webkit-scrollbar(?:-[\w-]+)?(?:\([^)]*\))?/g, '')
+                    const matched = [...nodes].filter(node => node.getRootNode() === root &&
+                      (() => { try { return node.matches(selector) } catch { return false } })())
+                    if (matched.length) diagnostics.matchedAuthorRules.push({ source, media,
+                      selector: safe(rule.selectorText), properties: values, matched: matched.slice(0, 4).map(identify) })
+                  } else if (rule.cssRules && (!rule.conditionText ||
+                    (rule.constructor.name === 'CSSSupportsRule' && CSS.supports(rule.conditionText)))) {
+                    visit(rule.cssRules, media, depth + 1)
+                  }
+                }
+              }
+              try {
+                const media = sheet.media.mediaText
+                if (!media || window.matchMedia(media).matches)
+                  visit(sheet.cssRules, media ? [{ condition: safe(media), matches: true }] : [])
+              } catch { diagnostics.unreadableSheets += 1 }
+            }
+          }
+          frame.scrollbarDiagnostics = diagnostics
+        } catch { frame.scrollbarDiagnostics = { unavailable: true } }
+      }
+      return frame
+    }, diagnoseInitialFailure)
   const assertNoLegacyBridge = (frame, label) => {
     if (
       !frame ||
@@ -2496,7 +2572,7 @@ const verifyFileCapsuleMotion = async (page) => {
       Math.abs(first.height - second.height)
     )
 
-  const initial = await readCapsuleFrame()
+  const initial = await readCapsuleFrame(true)
   assertNoLegacyBridge(initial, 'Initial merged')
   if (!initial || initial.state !== 'merged') {
     throw new Error(`File capsule did not start merged: ${JSON.stringify(initial, null, 2)}`)
