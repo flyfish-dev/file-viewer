@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createOfflineAssetSanitizerPlugin } from '../../packages/components/web-full/scripts/offline-asset-sanitize.mjs'
+import { createComponentDemoOfflineAssetSanitizerPlugin } from './scripts/lib/offline-assets.mjs'
 import { verifyPptRuntimeDistributionRoot } from '../../packages/components/web-full/scripts/ppt-runtime-integrity.mjs'
 
 const demoRoot = fileURLToPath(new URL('.', import.meta.url))
@@ -13,7 +13,7 @@ const pptPackagedRuntimeFallback = resolve(
 
 export default defineConfig({
   plugins: [
-    createOfflineAssetSanitizerPlugin(resolve(demoRoot, 'dist'), {
+    createComponentDemoOfflineAssetSanitizerPlugin(resolve(demoRoot, 'dist'), {
       label: 'component-demo-offline-assets'
     }),
     {

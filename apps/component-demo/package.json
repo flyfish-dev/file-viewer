@@ -6,7 +6,7 @@
   "scripts": {
     "prepare-viewer": "node scripts/sync-viewer-assets.mjs",
     "dev": "pnpm prepare-viewer && vite --host 127.0.0.1",
-    "build": "pnpm prepare-viewer && tsc -b tsconfig.json && vite build",
+    "build": "pnpm prepare-viewer && tsc -b tsconfig.json && vite build && vite build --config vite.react-email.config.ts",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
