@@ -921,6 +921,50 @@ test('public proof paths and text reject links out of scope, private paths and c
   )
 })
 
+test('public relative source paths retain internal directory names while absolute paths and credentials remain rejected', () => {
+  const relativePaths = [
+    'apps/viewer-demo/public/vendor/drawio/img/lib/ibm/users/browser.svg',
+    'apps/viewer-demo/public/vendor/drawio/img/lib/ibm/users/device.svg',
+    'apps/viewer-demo/public/vendor/drawio/img/lib/ibm/users/integrated_digital_experiences.svg',
+    'apps/viewer-demo/public/vendor/drawio/img/lib/ibm/users/physical_entity.svg',
+    'apps/viewer-demo/public/vendor/drawio/img/lib/ibm/users/sensor.svg',
+    'apps/viewer-demo/public/vendor/drawio/img/lib/ibm/users/user.svg',
+    'fixtures/home/public.xml',
+    'fixtures/tmp/public.xml'
+  ]
+  for (const path of relativePaths) {
+    assert.equal(safePath(path), path)
+    assert.doesNotThrow(() => assertPublicEvidence({ path }))
+  }
+  for (const directory of [
+    'Users',
+    'home',
+    'private',
+    'tmp',
+    'var',
+    'etc',
+    'opt',
+    'root',
+    'workspace',
+    'mnt'
+  ]) {
+    const path = `/${directory}/person/private-input`
+    assert.throws(() => safePath(path))
+    for (const prefix of ['', ' ', '\n', '"', "'", '=', '('])
+      assert.throws(() => assertPublicEvidence(prefix + path), /absolute\/private path/)
+    assert.throws(() => assertPublicEvidence({ nested: [{ path }] }), /absolute\/private path/)
+  }
+  for (const value of [
+    'C:\\private\\input',
+    'file:///absolute-input',
+    'git.flyfish.dev',
+    'github_pat_' + 'a'.repeat(40),
+    'ghp_' + 'a'.repeat(40),
+    'Bearer ' + 'a'.repeat(40)
+  ])
+    assert.throws(() => assertPublicEvidence({ value }), /absolute\/private path/)
+})
+
 test('the independent static manifest retains the whole original default matrix and TIFF variant', async () => {
   const root = workspaceRoot
   const manifestBytes = await readFile(

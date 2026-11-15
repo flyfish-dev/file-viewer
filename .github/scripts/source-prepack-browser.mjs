@@ -64,7 +64,7 @@ export function fileRecord(path, bytes) {
 export function assertPublicEvidence(value) {
   const text = typeof value === 'string' ? value : JSON.stringify(value)
   assert.ok(
-    !/(?:\/(?:Users|home|private|tmp|var|etc|opt|root|workspace|mnt)\/|[a-z]:\\|file:\/\/|git\.flyfish\.dev|github_pat_[a-z0-9_]+|gh[pousr]_[a-z0-9]{20,}|\bBearer\s+[a-z0-9._~+/-]{12,})/i.test(
+    !/(?:(?:^|[\s"'=(])\/(?:Users|home|private|tmp|var|etc|opt|root|workspace|mnt)\/|[a-z]:\\|file:\/\/|git\.flyfish\.dev|github_pat_[a-z0-9_]+|gh[pousr]_[a-z0-9]{20,}|\bBearer\s+[a-z0-9._~+/-]{12,})/i.test(
       text
     ),
     'Evidence contains an absolute/private path or credential-shaped material'
