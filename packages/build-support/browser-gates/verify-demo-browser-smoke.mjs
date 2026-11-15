@@ -2403,6 +2403,108 @@ const verifySamplePickerLayering = async page => {
   }
 }
 
+// Runs only after the original capsule assertion has already failed.
+const probeScrollbarDeclarations = async (page) => {
+  let probePage
+  let timer
+  let finished = false
+  try {
+    return await Promise.race([
+      (async () => {
+        probePage = await page.context().browser().newPage({ viewport: page.viewportSize() })
+        if (finished) {
+          await probePage.close()
+          return { unavailable: true, reason: 'deadline' }
+        }
+        probePage.setDefaultTimeout(3000)
+        probePage.setDefaultNavigationTimeout(3000)
+        await probePage.setContent('<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'"><title>Scrollbar declaration probe</title><main id="fixture"></main>', { timeout: 3000 })
+        return await probePage.evaluate(async () => {
+          const variants = [
+            { id: 'standard-variable-only', standard: true, legacy: '', width: 'thin', size: '8px' },
+            { id: 'standard-literal-plus-legacy-variable', standard: true, literal: true, legacy: 'variable', width: 'thin', size: '8px' },
+            { id: 'standard-variable-plus-legacy-literal8', standard: true, legacy: 'literal', width: 'thin', size: '8px' },
+            { id: 'standard-variable-plus-legacy-variable8', standard: true, legacy: 'variable', width: 'thin', size: '8px' },
+            { id: 'standard-variable-plus-legacy-variable0', standard: true, legacy: 'variable', width: 'thin', size: '0px' },
+            { id: 'standard-variable-plus-legacy-display-none', standard: true, legacy: 'hidden', width: 'thin', size: '8px' },
+            { id: 'legacy-variable-only', standard: false, legacy: 'variable', width: 'thin', size: '8px' },
+            { id: 'standard-capability-gates-legacy', standard: true, legacy: 'variable', gated: true, width: 'thin', size: '8px' },
+            { id: 'standard-none-negative-control', standard: true, legacy: '', width: 'none', size: '8px' }
+          ]
+          const base = '.content{box-sizing:border-box;width:280px;height:120px;overflow:auto}.file-render{box-sizing:border-box;width:100%;height:100%;padding-block-start:24px;overflow:visible}.long{width:420px;height:900px}'
+          const standard = '.content,.content .file-render,.content .file-render-host{scrollbar-width:VALUE;scrollbar-color:var(--file-viewer-scrollbar-colors)}'
+          const legacy = '.content::-webkit-scrollbar,.content .file-render::-webkit-scrollbar,.content .file-render-host::-webkit-scrollbar{BODY;background:var(--file-viewer-scrollbar-track)}.content::-webkit-scrollbar-thumb{background-color:var(--file-viewer-scrollbar-thumb)}'
+          const cases = []
+          for (const variant of variants) for (const mode of ['document', 'shadow']) {
+            const host = document.createElement('div')
+            host.style.cssText = `--file-viewer-scrollbar-width:${variant.width};--file-viewer-scrollbar-size:${variant.size};--file-viewer-scrollbar-colors:#3f524a47 transparent;--file-viewer-scrollbar-track:transparent;--file-viewer-scrollbar-thumb:#3f524a47`
+            document.querySelector('#fixture').append(host)
+            const target = mode === 'shadow' ? host.attachShadow({ mode: 'open' }) : host
+            const dimension = variant.legacy === 'literal' ? '8px' : 'var(--file-viewer-scrollbar-size)'
+            const legacyBody = variant.legacy === 'hidden' ? 'display:none' : `width:${dimension};height:${dimension}`
+            const css = base + (variant.standard ? standard.replace('VALUE', variant.literal ? 'thin' : 'var(--file-viewer-scrollbar-width)') : '') + (variant.legacy ? (variant.gated ? '@supports not (scrollbar-width: thin){' : '') + legacy.replace('BODY', legacyBody) + (variant.gated ? '}' : '') : '')
+            const style = document.createElement('style')
+            if (mode === 'document') {
+              host.id = `scrollbar-probe-${cases.length}`
+              style.textContent = css.replace(/\.content/g, `#${host.id} .content`).replace(/\.file-render\{/g, `#${host.id} .file-render{`).replace(/\.long\{/g, `#${host.id} .long{`)
+            } else style.textContent = css
+            target.append(style)
+            const content = document.createElement('div')
+            content.className = 'content'
+            content.innerHTML = '<div class="file-render"><div class="long"></div></div>'
+            target.append(content)
+            await new Promise(resolve => requestAnimationFrame(resolve))
+            const read = node => {
+              const computed = getComputedStyle(node)
+              return { scrollbarWidth: computed.scrollbarWidth,
+                scrollbarWidthProperty: computed.getPropertyValue('scrollbar-width'),
+                scrollbarColor: computed.scrollbarColor,
+                scrollbarColorProperty: computed.getPropertyValue('scrollbar-color'),
+                widthVariable: computed.getPropertyValue('--file-viewer-scrollbar-width').trim(),
+                sizeVariable: computed.getPropertyValue('--file-viewer-scrollbar-size').trim(),
+                overflowX: computed.overflowX, overflowY: computed.overflowY,
+                clientHeight: node.clientHeight, scrollHeight: node.scrollHeight,
+                scrollRange: node.scrollHeight - node.clientHeight, scrollTop: node.scrollTop,
+                reservedWidth: node.offsetWidth - node.clientWidth }
+            }
+            const before = read(content)
+            content.scrollTop = 80
+            cases.push({ id: variant.id, mode, content: before,
+              render: read(content.querySelector('.file-render')),
+              realContentScrollTopAfterSet80: content.scrollTop })
+            content.scrollTop = 0
+          }
+          return { kind: 'failure-only-scrollbar-declaration-probe', cases,
+            supports: { width: CSS.supports('scrollbar-width', 'thin'),
+              color: CSS.supports('scrollbar-color', 'auto'),
+              legacySelector: CSS.supports('selector(::-webkit-scrollbar)') },
+            media: { forcedColors: matchMedia('(forced-colors: active)').matches,
+              reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+              coarsePointer: matchMedia('(pointer: coarse)').matches },
+            viewportWidth: innerWidth, viewportHeight: innerHeight, devicePixelRatio }
+        })
+      })(),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Scrollbar probe deadline')), 5000)
+      })
+    ])
+  } catch {
+    return { kind: 'failure-only-scrollbar-declaration-probe', unavailable: true }
+  } finally {
+    finished = true
+    clearTimeout(timer)
+    if (probePage) {
+      let closeTimer
+      try {
+        await Promise.race([
+          probePage.close().catch(() => {}),
+          new Promise(resolve => { closeTimer = setTimeout(resolve, 1000) })
+        ])
+      } finally { clearTimeout(closeTimer) }
+    }
+  }
+}
+
 const verifyFileCapsuleMotion = async (page) => {
   const readCapsuleFrame = (diagnoseInitialFailure = false) =>
     page.evaluate(diagnoseInitialFailure => {
@@ -2589,9 +2691,11 @@ const verifyFileCapsuleMotion = async (page) => {
     initial.scrollbarTrack !== 'transparent' ||
     !initial.scrollbarThumb
   ) {
-    throw new Error(
+    const initialError = new Error(
       `Document did not start safely below the capsule with its immersive scrollbar intact: ${JSON.stringify(initial, null, 2)}`
     )
+    console.error(`[file-capsule-scrollbar-probe] ${JSON.stringify(await probeScrollbarDeclarations(page))}`)
+    throw initialError
   }
 
   const immersiveScroll = await page.evaluate(async () => {
