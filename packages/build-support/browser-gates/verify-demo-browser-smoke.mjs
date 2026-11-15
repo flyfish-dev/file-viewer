@@ -3446,7 +3446,9 @@ const verifyPageAwarePrintMaskAdapter = async (
     const captureWindow = {
       document: captureDocument,
       addEventListener: window.addEventListener.bind(window),
+      removeEventListener: window.removeEventListener.bind(window),
       clearTimeout: window.clearTimeout.bind(window),
+      close() {},
       focus() {},
       print() {
         globalThis.__printedMaskHtml = `<!doctype html>${captureDocument.documentElement.outerHTML}`
@@ -3595,7 +3597,12 @@ const verifyPageAwarePrintMaskAdapters = async (page, baseUrl, failures) => {
     ['ofd.ofd', '.ofd-page-frame'],
   ]
   for (const [samplePath, pageSelector] of cases) {
-    await verifyPageAwarePrintMaskAdapter(page, baseUrl, failures, samplePath, pageSelector)
+    try {
+      await verifyPageAwarePrintMaskAdapter(page, baseUrl, failures, samplePath, pageSelector)
+    } catch (error) {
+      console.error(`[issue-112] ${samplePath} page-aware print-mask adapter failed.`)
+      throw error
+    }
   }
   console.log('[issue-112] DOCX/OFD/PPTX page-aware print-mask adapters verified in a real browser.')
 }
