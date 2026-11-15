@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto'
 import path from 'node:path'
 const root = path.resolve(import.meta.dirname, '../../../../..')
 const require = createRequire(path.join(root, 'packages/renderers/pdf/package.json'))
-const { PDFDocument, StandardFonts } = require('pdf-lib')
+const { PDFDocument, StandardFonts, PDFContentStream, PDFRawStream, PDFName } = require('pdf-lib')
 const output = path.resolve(
   process.env.SIGNATURE_PANEL_FIXTURES || path.join(root, 'output/signature-panel-fixtures')
 )
@@ -26,7 +26,15 @@ for (let p = 1; p <= 12; p++) {
       font
     })
 }
-await writeFile(path.join(output, 'reading.pdf'), await pdf.save())
+// Keep the original drawing operators in standard, uncompressed content streams.
+for (const [reference, stream] of pdf.context.enumerateIndirectObjects()) {
+  if (!(stream instanceof PDFContentStream)) continue
+  const dictionary = stream.dict.clone(pdf.context)
+  dictionary.delete(PDFName.of('Filter'))
+  dictionary.delete(PDFName.of('DecodeParms'))
+  pdf.context.assign(reference, PDFRawStream.of(dictionary, stream.getUnencodedContents()))
+}
+await writeFile(path.join(output, 'reading.pdf'), await pdf.save({ useObjectStreams: false }))
 const xml =
   '<?xml version="1.0" encoding="UTF-8"?>\n<synthetic>\n' +
   Array.from(
@@ -76,7 +84,7 @@ try {
         '-inkey',
         key,
         '-outform',
-        'DER',
+        'PEM',
         '-out',
         path.join(output, name + '.p7m')
       ],

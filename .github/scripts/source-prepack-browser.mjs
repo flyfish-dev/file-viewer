@@ -16,6 +16,21 @@ const reviewedHarnesses = new Map([
   ['test/image-hand-tool.browser.mjs', 'main.js'],
   ['test/toolbar-keyboard.browser.mjs', 'entry.js']
 ])
+const cmsPemFixturePaths = new Set([
+  'generated/signature-panel/reading.pdf.p7m',
+  'generated/signature-panel/reading.xml.p7m',
+  'generated/signature-panel/reading.xml.p7m.p7m'
+])
+const cmsPemGenerator = {
+  path: 'packages/renderers/signature/test/browser/generate-panel-fixtures.mjs',
+  bytes: 4323,
+  sha256: '8abd6d4fc4232bc44c04c895ec38e88ff653a69b7d90edea9af7f43208477b94'
+}
+const cmsPemConstraints = {
+  minBytes: 1,
+  maxBytes: 16777216,
+  prefixHex: '2d2d2d2d2d424547494e20434d532d2d2d2d2d0a'
+}
 const identity = (row) => JSON.stringify([row.gate, row.engine, row.id])
 const sorted = (values) =>
   [...values].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b), 'en'))
@@ -244,9 +259,11 @@ export function validateManifest(plan) {
     }
     for (const fixture of row.generatedFixtures || []) {
       assert.ok(
-        ['original-generated-fixture-v1', 'issue-206-public-rs256-jws-v1'].includes(
-          fixture.validator
-        )
+        [
+          'original-generated-fixture-v1',
+          'issue-206-public-rs256-jws-v1',
+          'signature-panel-public-cms-pem-v1'
+        ].includes(fixture.validator)
       )
       safePath(fixture.path)
       safePath(fixture.witnessPath)
@@ -262,6 +279,30 @@ export function validateManifest(plan) {
           Number.isSafeInteger(fixture.constraints?.maxBytes) &&
             fixture.constraints.maxBytes > 0 &&
             fixture.constraints.maxBytes <= 64 * 1024 * 1024
+        )
+      }
+      if (fixture.validator === 'signature-panel-public-cms-pem-v1') {
+        assert.equal(row.runId, 'signature-panel-suite')
+        assert.equal(row.gate, 'packages/renderers/signature/test/browser/verify-panel-suite.mjs')
+        assert.deepEqual(Object.keys(fixture).sort(), [
+          'constraints',
+          'format',
+          'generator',
+          'path',
+          'validator',
+          'witnessPath'
+        ])
+        assert.ok(cmsPemFixturePaths.has(fixture.path), 'Unreviewed CMS PEM input')
+        assert.deepEqual(
+          fixture.generator,
+          cmsPemGenerator,
+          'CMS PEM producer differs from the approved encoding recipe'
+        )
+        assert.equal(fixture.format, 'cms')
+        assert.deepEqual(
+          fixture.constraints,
+          cmsPemConstraints,
+          'CMS PEM input constraints changed'
         )
       }
     }

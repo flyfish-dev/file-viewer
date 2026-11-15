@@ -823,6 +823,66 @@ test('the independent static manifest retains the whole original default matrix 
   assert.throws(() => validateManifest(ambiguousWitness), /ambiguous witness/)
 })
 
+test('the new CMS PEM plan is confined to its approved producer, inputs and constraints', async () => {
+  const manifest = JSON.parse(
+    await readFile(
+      join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
+    )
+  )
+  const selected = manifest.requiredCases.flatMap((row) =>
+    (row.generatedFixtures || []).filter(
+      (fixture) => fixture.validator === 'signature-panel-public-cms-pem-v1'
+    )
+  )
+  assert.equal(selected.length, 72)
+  assert.deepEqual([...new Set(selected.map((fixture) => fixture.path))].sort(), [
+    'generated/signature-panel/reading.pdf.p7m',
+    'generated/signature-panel/reading.xml.p7m',
+    'generated/signature-panel/reading.xml.p7m.p7m'
+  ])
+  validateManifest(manifest)
+  const changes = [
+    (fixture) => {
+      fixture.validator = 'unreviewed-pem-validator'
+    },
+    (fixture) => {
+      fixture.path = 'generated/signature-panel/unreviewed.p7m'
+    },
+    (fixture) => {
+      fixture.generator.bytes += 1
+    },
+    (fixture) => {
+      fixture.generator.sha256 = '0'.repeat(64)
+    },
+    (fixture) => {
+      fixture.generator.path = 'test/unreviewed-generator.mjs'
+    },
+    (fixture) => {
+      fixture.format = 'binary'
+    },
+    (fixture) => {
+      fixture.constraints.prefixHex = '30'
+    },
+    (fixture) => {
+      fixture.constraints.maxBytes += 1
+    },
+    (fixture) => {
+      fixture.constraints.extra = 'unreviewed'
+    },
+    (fixture) => {
+      fixture.extra = 'unreviewed'
+    }
+  ]
+  for (const change of changes) {
+    const modified = structuredClone(manifest)
+    const fixture = modified.requiredCases
+      .flatMap((row) => row.generatedFixtures || [])
+      .find((fixture) => fixture.validator === 'signature-panel-public-cms-pem-v1')
+    change(fixture)
+    assert.throws(() => validateManifest(modified))
+  }
+})
+
 test('only the two original DICOM-bearing gates receive headed Firefox after ambient overrides are cleared', async () => {
   const manifest = JSON.parse(
     await readFile(
