@@ -163,6 +163,125 @@ const collect = (overrides = {}) =>
     ...overrides
   })
 
+test('streamed source documents retain both HTTP fixture and runtime roles', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'prepack-document-roles-'))
+  try {
+    const documentPath = 'apps/viewer-demo/public/example/code.cjs'
+    const bytes = await readFile(join(workspaceRoot, documentPath))
+    const document = fileRecord(documentPath, bytes)
+    const script = join(directory, 'http-document.cjs')
+    await writeFile(
+      script,
+      `
+      const assert = require('node:assert/strict');
+      const { createServer } = require('node:http');
+      const document = Buffer.from(${JSON.stringify(bytes.toString('base64'))}, 'base64');
+      const server = createServer((request, response) => {
+        if (request.url === '/missing.cjs') { response.writeHead(404).end('missing'); return; }
+        if (request.url === '/not-ok.cjs') { response.writeHead(201).end('not a fixture'); return; }
+        if (request.url === '/plain.txt') { response.writeHead(200, { 'content-type': 'text/plain' }).end('public plain document'); return; }
+        response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' });
+        response.write(document.subarray(0, 17));
+        response.end(document.subarray(17));
+      });
+      server.listen(0, '127.0.0.1', async () => {
+        const origin = 'http://127.0.0.1:' + server.address().port;
+        const headers = { 'user-agent': 'HeadlessChrome/158.0' };
+        assert.deepEqual(Buffer.from(await (await fetch(origin + '/example/code.cjs', { headers })).arrayBuffer()), document);
+        assert.equal(await (await fetch(origin + '/plain.txt', { headers })).text(), 'public plain document');
+        assert.equal((await fetch(origin + '/missing.cjs', { headers })).status, 404);
+        assert.equal((await fetch(origin + '/not-ok.cjs', { headers })).status, 201);
+        assert.equal((await fetch(origin + '/head.cjs', { method: 'HEAD', headers })).status, 200);
+        server.close();
+      });
+    `
+    )
+    const trace = join(directory, 'trace')
+    const child = run(script, directory, trace)
+    assert.equal(child.status, 0, child.stderr)
+    const records = (await readFile(join(trace, (await readdir(trace))[0]), 'utf8'))
+      .trim()
+      .split('\n')
+      .map(JSON.parse)
+    const localRun = {
+      ...runPlan,
+      id: 'fixture-gate',
+      gateId: 'fixture-gate',
+      engines: ['chromium'],
+      caseIds: ['source-document']
+    }
+    const runtime = {
+      path: `served/${document.sha256}.cjs`,
+      bytes: document.bytes,
+      sha256: document.sha256
+    }
+    const required = [
+      {
+        id: 'source-document',
+        gate: gatePath,
+        engine: 'chromium',
+        fixtures: [document],
+        servedAssets: [runtime]
+      }
+    ]
+    const controls = actualEvents()
+      .filter(
+        (row) =>
+          row.engine === 'chromium' &&
+          ['browser-launched', 'browser-gate-engine-complete'].includes(row.kind)
+      )
+      .map((row) => ({
+        ...row,
+        gateId: localRun.id,
+        ...(row.kind === 'browser-gate-engine-complete' ? { caseIds: [...localRun.caseIds] } : {})
+      }))
+    const read = (events) => collect({ run: localRun, required, events: [...controls, ...events] })
+    const proof = read(records)
+    assert.deepEqual(proof[0].fixtures, [document])
+    assert.deepEqual(proof[0].servedAssets, [runtime])
+    const roles = records.filter((row) => row.path === '/example/code.cjs')
+    assert.deepEqual(
+      roles.map((row) => row.kind),
+      ['served-runtime-asset', 'served-fixture']
+    )
+    const [{ kind: firstKind, ...first }, { kind: secondKind, ...second }] = roles
+    assert.deepEqual(first, second)
+    assert.equal(first.engine, 'chromium')
+    assert.equal(first.bytes, bytes.length)
+    assert.equal(first.sha256, document.sha256)
+    assert.equal(records.filter((row) => row.path === '/plain.txt').length, 1)
+    assert.equal(records.find((row) => row.path === '/plain.txt').kind, 'served-fixture')
+    assert(!records.some((row) => ['/missing.cjs', '/not-ok.cjs', '/head.cjs'].includes(row.path)))
+    assert.throws(
+      () => read(records.filter((row) => row.kind !== 'served-fixture')),
+      /Original fixture not actually observed/
+    )
+    for (const changed of [
+      { sha256: '0'.repeat(64) },
+      { bytes: document.bytes + 1 },
+      { engine: 'firefox' }
+    ]) {
+      assert.throws(
+        () =>
+          read(
+            records.map((row) =>
+              row.path === '/example/code.cjs' && row.kind === 'served-fixture'
+                ? { ...row, ...changed }
+                : row
+            )
+          ),
+        /Original fixture not actually observed/
+      )
+    }
+    assert.throws(
+      () => read(records.filter((row) => row.kind !== 'served-runtime-asset')),
+      /No actual executable HTTP bytes/
+    )
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
+})
+
 test('requires real completion, launch, document bytes and executable bytes for every original engine', () => {
   const rows = collect()
   assert.equal(rows.length, 6)

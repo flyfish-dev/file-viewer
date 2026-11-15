@@ -97,10 +97,12 @@ if (traceDirectory) {
           const assetPath = new URL(request.url, 'http://local.invalid/').pathname
           const mime = String(response.getHeader('content-type') || '').split(';')[0]
           const runtime = /(?:javascript|wasm|text\/css|font)/.test(mime) || /\.(?:[cm]?js|wasm|css|woff2?|ttf|otf)$/.test(assetPath)
-          // Non-runtime responses bind original HTTP document bytes as well.
+          // Runtime resources can also be previewed as original documents.
           // No response body, query string, origin or client data is retained.
-          emit({ kind: runtime ? 'served-runtime-asset' : 'served-fixture', engine: engineFromAgent(String(request.headers['user-agent'] || '')),
-            path: assetPath, bytes, sha256: hash.digest('hex'), contentType: mime })
+          const observed = { engine: engineFromAgent(String(request.headers['user-agent'] || '')),
+            path: assetPath, bytes, sha256: hash.digest('hex'), contentType: mime }
+          emit({ kind: runtime ? 'served-runtime-asset' : 'served-fixture', ...observed })
+          if (runtime) emit({ kind: 'served-fixture', ...observed })
           if (sourceHarness) {
             if (!runtime || bytes > sourceHarness.maxBytes) throw new Error('Source harness exceeds its reviewed executable-byte plan')
             emit({ kind: 'source-harness-witness', engine: engineFromAgent(String(request.headers['user-agent'] || '')),
