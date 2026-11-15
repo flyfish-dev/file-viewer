@@ -15,6 +15,7 @@ import { createRequire } from 'node:module'
 import { delimiter, extname, join, normalize, relative, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { installBrowserScrollContainerResolver } from './lib/browser-scroll-container.mjs'
+import { browserTestLaunchOptions } from '../browser-test-launch.mjs'
 import { collectDemoSampleFiles } from './lib/demo-sample-files.mjs'
 import {
   createSyntheticPdfIdentityFontRepair,
@@ -2043,6 +2044,12 @@ const startStaticServer = async () => {
 }
 
 const launchBrowser = async browserType => {
+  // Firefox headless registers an agent sheet forcing every scrollbar-width to none.
+  if (browserName === 'firefox') {
+    return browserType.launch(browserTestLaunchOptions(browserName, {
+      env: { ...process.env, FILE_VIEWER_HEADFUL_BROWSERS: 'firefox' }
+    }))
+  }
   try {
     return await browserType.launch({ headless: true })
   } catch (error) {
@@ -2548,8 +2555,8 @@ const verifyFileCapsuleMotion = async (page) => {
           : []
       const scrollRootStyle = window.getComputedStyle(scrollRoot)
       const renderStyle = window.getComputedStyle(render)
-      const activeScrollStyle =
-        render.scrollHeight > render.clientHeight + 2 ? renderStyle : scrollRootStyle
+      const activeScroll = window.__fileViewerSmokeResolveScrollContainer(scrollRoot)
+      const activeScrollStyle = window.getComputedStyle(activeScroll)
       const frame = {
         state: shell.dataset.fileCapsuleState || '',
         viewportWidth: window.innerWidth,
@@ -2603,7 +2610,7 @@ const verifyFileCapsuleMotion = async (page) => {
               computed: declarations(style), inline: declarations(element.style),
               root: root.host ? { kind: 'shadow', host: identify(root.host) } : { kind: 'document' } }
           }
-          const diagnostics = { selected: activeScrollStyle === renderStyle ? 'render' : 'content',
+          const diagnostics = { selected: activeScroll === render ? 'render' : activeScroll === scrollRoot ? 'content' : 'nested',
             content: describe(scrollRoot), render: describe(render), matchedAuthorRules: [],
             visitedRules: 0, unreadableSheets: 0, limited: false }
           const roots = [...new Set([...nodes].map(node => node.getRootNode()))].slice(0, 4)
@@ -2711,42 +2718,55 @@ const verifyFileCapsuleMotion = async (page) => {
     }
     const contentInset =
       Number.parseFloat(window.getComputedStyle(render).paddingBlockStart) || 0
-    const activeScroll =
-      render.scrollHeight > render.clientHeight + 2 ? render : scrollRoot
-    const maxScroll = Math.max(0, activeScroll.scrollHeight - activeScroll.clientHeight)
-    const targetScroll = Math.min(maxScroll, Math.max(96, contentInset + 24))
-    const previousScrollBehavior = activeScroll.style.getPropertyValue('scroll-behavior')
-    const previousScrollBehaviorPriority =
-      activeScroll.style.getPropertyPriority('scroll-behavior')
-    activeScroll.style.setProperty('scroll-behavior', 'auto', 'important')
+    let activeScroll, maxScroll, targetScroll
+    const touchedScrollBehaviors = new Map()
+    const readCurrentOwner = () => {
+      activeScroll = window.__fileViewerSmokeResolveScrollContainer(scrollRoot)
+      maxScroll = Math.max(0, activeScroll.scrollHeight - activeScroll.clientHeight)
+      targetScroll = Math.min(maxScroll, Math.max(96, contentInset + 24))
+    }
+    const prepareOwner = () => {
+      if (!touchedScrollBehaviors.has(activeScroll)) {
+        touchedScrollBehaviors.set(activeScroll, {
+          value: activeScroll.style.getPropertyValue('scroll-behavior'),
+          priority: activeScroll.style.getPropertyPriority('scroll-behavior')
+        })
+      }
+      activeScroll.style.setProperty('scroll-behavior', 'auto', 'important')
+    }
     const scrollDeadline = performance.now() + 1_500
-    do {
-      activeScroll.scrollTop = targetScroll
-      await new Promise((resolve) => setTimeout(resolve, 50))
-    } while (
-      Math.abs(activeScroll.scrollTop - targetScroll) > 2 &&
-      performance.now() < scrollDeadline
-    )
-    const frame = {
-      maxScroll,
-      targetScroll,
-      scrollTop: activeScroll.scrollTop,
-      toolbarBottom: toolbar.getBoundingClientRect().bottom,
-      renderTop: render.getBoundingClientRect().top,
-      contentStart: render.getBoundingClientRect().top + contentInset - activeScroll.scrollTop
-    }
-    activeScroll.scrollTop = 0
-    await new Promise((resolve) => requestAnimationFrame(resolve))
-    if (previousScrollBehavior) {
-      activeScroll.style.setProperty(
-        'scroll-behavior',
-        previousScrollBehavior,
-        previousScrollBehaviorPriority
+    try {
+      do {
+        readCurrentOwner()
+        prepareOwner()
+        activeScroll.scrollTop = targetScroll
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        readCurrentOwner()
+      } while (
+        Math.abs(activeScroll.scrollTop - targetScroll) > 2 &&
+        performance.now() < scrollDeadline
       )
-    } else {
-      activeScroll.style.removeProperty('scroll-behavior')
+      const frame = {
+        maxScroll,
+        targetScroll,
+        scrollTop: activeScroll.scrollTop,
+        toolbarBottom: toolbar.getBoundingClientRect().bottom,
+        renderTop: render.getBoundingClientRect().top,
+        contentStart: render.getBoundingClientRect().top + contentInset - activeScroll.scrollTop
+      }
+      prepareOwner()
+      for (const owner of touchedScrollBehaviors.keys()) owner.scrollTop = 0
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+      return frame
+    } finally {
+      for (const [owner, previous] of touchedScrollBehaviors) {
+        if (previous.value) {
+          owner.style.setProperty('scroll-behavior', previous.value, previous.priority)
+        } else {
+          owner.style.removeProperty('scroll-behavior')
+        }
+      }
     }
-    return frame
   })
   if (
     !immersiveScroll ||
@@ -2939,7 +2959,9 @@ const verifyMainDemo = async (page, baseUrl, failures) => {
   if (githubApiRequests.length) {
     throw new Error(`Main demo made forbidden GitHub API requests: ${githubApiRequests.join(', ')}`)
   }
+  const disposeCapsuleScrollResolver = await installBrowserScrollContainerResolver(page, baseUrl)
   await verifyFileCapsuleMotion(page)
+  await disposeCapsuleScrollResolver()
   await verifySamplePickerLayering(page)
   assertNoBrowserFailures(failures, 'Main demo chrome emitted browser errors.')
   failures.length = 0

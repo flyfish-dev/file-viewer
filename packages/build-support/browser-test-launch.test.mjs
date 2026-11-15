@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { browserTestLaunchOptions, launchBrowserForTest } from './browser-test-launch.mjs'
 
@@ -22,6 +23,58 @@ test('invalid browser selectors and missing Linux displays fail before launch', 
   assert.throws(() => browserTestLaunchOptions('firefox', {
     env: { FILE_VIEWER_HEADFUL_BROWSERS: 'firefoxx', DISPLAY: ':99' }, platform: 'linux'
   }), /unknown browser/)
+})
+
+async function demoGateLaunch(browserName, env) {
+  const source = await readFile(new URL('./browser-gates/verify-demo-browser-smoke.mjs', import.meta.url), 'utf8')
+  const start = source.indexOf('const launchBrowser = async browserType => {')
+  const end = source.indexOf('const createFailureRecorder', start)
+  assert(start >= 0 && end > start, 'Missing real demo browser launch function')
+  const bind = new Function('browserName', 'browserTestLaunchOptions', 'process',
+    `${source.slice(start, end)}\nreturn launchBrowser`)
+  return bind(browserName, (name, options) => browserTestLaunchOptions(name, {
+    ...options, platform: 'linux'
+  }), { env })
+}
+
+test('the real demo launch makes Firefox headed while Chromium and WebKit stay headless', async () => {
+  for (const name of ['firefox', 'chromium', 'webkit']) {
+    const env = { DISPLAY: ':99' }, browser = {}, calls = []
+    const launch = await demoGateLaunch(name, env)
+    const type = { async launch(options) { assert.equal(this, type); calls.push(options); return browser } }
+    assert.equal(await launch(type), browser)
+    assert.deepEqual(calls, [{ headless: name !== 'firefox' }])
+    assert.deepEqual(env, { DISPLAY: ':99' })
+  }
+})
+
+test('the real demo Firefox launch rejects a missing Linux display before launching', async () => {
+  let calls = 0
+  const launch = await demoGateLaunch('firefox', {})
+  await assert.rejects(launch({ async launch() { calls++ } }), /requires DISPLAY/)
+  assert.equal(calls, 0)
+})
+
+test('the real demo launch preserves engine failures and the original Chromium fallback', async () => {
+  for (const name of ['firefox', 'webkit']) {
+    const original = new Error(`${name} launch failed`), calls = []
+    const launch = await demoGateLaunch(name, { DISPLAY: ':99' })
+    await assert.rejects(launch({ async launch(options) { calls.push(options); throw original } }), error => error === original)
+    assert.deepEqual(calls, [{ headless: name !== 'firefox' }])
+  }
+  for (const fallbackFails of [false, true]) {
+    const original = new Error('Bundled Chromium failed'), calls = [], browser = {}
+    const launch = await demoGateLaunch('chromium', {})
+    const type = { async launch(options) {
+      calls.push(options)
+      if (calls.length === 1) throw original
+      if (fallbackFails) throw new Error('Installed Chrome failed')
+      return browser
+    } }
+    if (fallbackFails) await assert.rejects(launch(type), error => error === original)
+    else assert.equal(await launch(type), browser)
+    assert.deepEqual(calls, [{ headless: true }, { channel: 'chrome', headless: true }])
+  }
 })
 
 test('launch preserves the BrowserType receiver and caller options without mutating them', async () => {

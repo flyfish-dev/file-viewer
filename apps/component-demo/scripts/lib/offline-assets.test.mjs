@@ -9,6 +9,7 @@ import { createComponentDemoOfflineAssetSanitizerPlugin } from './offline-assets
 
 const sourceOffer = 'https://api.github.com/repos/upstream/library/tarball/fixed-source'
 const runtimeUrl = 'https://api.github.com/repos/runtime/data'
+const expectedOfflineUrl = 'file-viewer-offline-github-api/repos/runtime/data'
 
 async function fixture(t) {
   const sourceRoot = await mkdtemp(join(tmpdir(), 'component-offline-legal-'))
@@ -63,9 +64,13 @@ test('app plugin preserves all four verified original grants and source URLs inc
     assert.ok(material.bytes.includes(Buffer.from('\r\n')))
   }
   await verifyComponentHelperLegalMaterials(f)
-  for (const path of ['runtime.js', 'settings.json', 'UNVERIFIED_LEGAL.txt']) {
+  for (const [path, expected] of [
+    ['runtime.js', `fetch(${JSON.stringify(expectedOfflineUrl)});\n`],
+    ['settings.json', JSON.stringify({ endpoint: expectedOfflineUrl })],
+    ['UNVERIFIED_LEGAL.txt', `Unverified document ${expectedOfflineUrl}\n`]
+  ]) {
     const text = await readFile(join(f.outputDir, path), 'utf8')
-    assert.ok(!text.includes('https://api.github.com'))
+    assert.equal(text, expected)
     assert.ok(text.includes('file-viewer-offline-github-api'))
   }
 })
