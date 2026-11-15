@@ -293,6 +293,130 @@ test('requires real completion, launch, document bytes and executable bytes for 
   assert(rows.every((row) => row.servedAssets[0].path === 'served/' + 'f'.repeat(64) + '.js'))
 })
 
+test('real Node fixture events use the effective gate owner for reports and completions', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'prepack-node-owner-'))
+  try {
+    const documentPath = 'packages/renderers/drawing/test/fixtures/simple-process.bpmn'
+    const document = fileRecord(documentPath, await readFile(join(workspaceRoot, documentPath)))
+    assert.equal(document.bytes, 3375)
+    assert.equal(
+      document.sha256,
+      '1c6246bf4b4d89eb19bfd5a9c7bb6b75bd78738d01bc7a21fc1f429f4d1bb058'
+    )
+    const script = join(directory, 'node-input.cjs')
+    const executable = 'export const observedNodeInput = true;\n'
+    await writeFile(
+      script,
+      `
+      const { readFile } = require('node:fs/promises');
+      const { createServer } = require('node:http');
+      (async () => {
+        const bytes = await readFile(${JSON.stringify(join(workspaceRoot, documentPath))});
+        globalThis.__fileViewerPrepackObserveNodeFixture(${JSON.stringify(documentPath)}, bytes);
+        const server = createServer((request, response) => response.writeHead(200, { 'content-type': 'text/javascript' }).end(${JSON.stringify(executable)}));
+        await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+        const response = await fetch('http://127.0.0.1:' + server.address().port + '/entry.js', { headers: { 'user-agent': 'HeadlessChrome/156.0' } });
+        await response.arrayBuffer();
+        await new Promise(resolve => server.close(resolve));
+        globalThis.__fileViewerPrepackObserveOwnerComplete({ engine: 'chromium', phase: 'full', caseIds: ['node-fixture-case'] });
+      })().catch(error => { console.error(error); process.exitCode = 1; });
+    `
+    )
+    for (const alias of [undefined, 'explicit-shared-owner']) {
+      const owner = alias || 'bpmn-297'
+      const trace = join(directory, alias || 'default-owner')
+      const child = run(script, directory, trace, { FILE_VIEWER_PREPACK_GATE_ID: owner })
+      assert.equal(child.status, 0, child.stderr)
+      const events = (
+        await Promise.all(
+          (await readdir(trace)).map(async (name) =>
+            (await readFile(join(trace, name), 'utf8')).trim().split('\n').map(JSON.parse)
+          )
+        )
+      ).flat()
+      const observed = events.filter((event) => event.kind === 'browser-gate-fixture')
+      assert.equal(observed.length, 1)
+      assert.deepEqual(observed[0].fixture, document)
+      assert.equal(observed[0].gateId, owner)
+      assert.equal(events.filter((event) => event.kind === 'served-runtime-asset').length, 1)
+      // Browser identity is unit metadata; this test starts only the real Node/HTTP observer.
+      events.push({ ...actualEvents()[0], gateId: owner })
+      const plan = {
+        id: 'bpmn-297',
+        gate: 'packages/renderers/drawing/test/issue-297-bpmn.browser.mjs',
+        engines: ['chromium'],
+        observation: 'report',
+        phase: 'full',
+        ...(alias ? { gateId: alias } : {})
+      }
+      const asset = fileRecord('served/entry.js', Buffer.from(executable))
+      const required = [
+        {
+          id: 'node-fixture-case',
+          gate: plan.gate,
+          engine: 'chromium',
+          fixtures: [document],
+          servedAssets: [asset]
+        }
+      ]
+      const reports = [{ id: 'node-fixture-case', engine: 'chromium', passed: true }]
+      const proof = (overrides = {}) =>
+        collectRunProof({
+          run: plan,
+          required,
+          events,
+          reportCases: reports,
+          exitCode: 0,
+          toolVersions: tools,
+          ...overrides
+        })
+      assert.equal(proof().length, 1)
+      assert.equal(proof({ run: { ...plan, observation: 'completion' } }).length, 1)
+      for (const change of [
+        (event) => (event.kind === 'browser-gate-fixture' ? null : event),
+        (event) =>
+          event.kind === 'browser-gate-fixture' ? { ...event, gateId: 'foreign-owner' } : event,
+        (event) =>
+          event.kind === 'browser-gate-fixture'
+            ? { ...event, fixture: { ...event.fixture, bytes: document.bytes + 1 } }
+            : event,
+        (event) =>
+          event.kind === 'browser-gate-fixture'
+            ? { ...event, fixture: { ...event.fixture, sha256: '0'.repeat(64) } }
+            : event,
+        (event) => (event.kind === 'browser-launched' ? { ...event, engine: 'webkit' } : event),
+        (event) => (event.kind === 'served-runtime-asset' ? null : event),
+        (event) => (event.kind === 'served-runtime-asset' ? { ...event, engine: 'webkit' } : event),
+        (event) =>
+          event.kind === 'served-runtime-asset' ? { ...event, sha256: '0'.repeat(64) } : event
+      ])
+        assert.throws(() => proof({ events: events.map(change).filter(Boolean) }))
+      assert.throws(() => proof({ reportCases: [] }), /report matrix incomplete/)
+      assert.throws(() => proof({ reportCases: [{ ...reports[0], passed: false }] }), /failed case/)
+      assert.throws(
+        () => proof({ reportCases: [{ ...reports[0], engine: 'webkit' }] }),
+        /report matrix incomplete/
+      )
+      for (const change of [
+        { gateId: 'foreign-owner' },
+        { engine: 'webkit' },
+        { phase: 'other' },
+        { caseIds: [] }
+      ])
+        assert.throws(() =>
+          proof({
+            run: { ...plan, observation: 'completion' },
+            events: events.map((event) =>
+              event.kind === 'browser-gate-engine-complete' ? { ...event, ...change } : event
+            )
+          })
+        )
+    }
+  } finally {
+    await rm(directory, { recursive: true, force: true })
+  }
+})
+
 test('DICOM source, built Viewer and packed owners retain distinct exact Worker-byte plans', async () => {
   const plan = JSON.parse(
     await readFile(

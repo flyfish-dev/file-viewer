@@ -333,7 +333,8 @@ function metadataEqual(actual, expected) {
  * and real launch, fixture and HTTP-byte observations are all required. */
 export function collectRunProof({ run, required, events, reportCases, exitCode, toolVersions }) {
   assert.equal(exitCode, 0, `Original command failed: ${run.id}`)
-  events = events.filter((event) => event.gateId === (run.gateId || run.id))
+  const effectiveGateId = run.gateId || run.id
+  events = events.filter((event) => event.gateId === effectiveGateId)
   const result = []
   for (const engine of run.engines) {
     const expected = required.filter((row) => row.engine === engine)
@@ -345,7 +346,7 @@ export function collectRunProof({ run, required, events, reportCases, exitCode, 
       const completions = events.filter(
         (event) =>
           event.kind === 'browser-gate-engine-complete' &&
-          event.gateId === run.gateId &&
+          event.gateId === effectiveGateId &&
           event.engine === engine &&
           event.phase === run.phase
       )
@@ -412,7 +413,7 @@ export function collectRunProof({ run, required, events, reportCases, exitCode, 
     const observed = events.flatMap((event) => {
       if (event.kind === 'served-fixture' && event.engine === engine) return [event]
       if (event.kind === 'browser-fixture' && event.engine === engine) return [event.fixture]
-      if (event.kind === 'browser-gate-fixture' && event.gateId === run.gateId)
+      if (event.kind === 'browser-gate-fixture' && event.gateId === effectiveGateId)
         return [event.fixture]
       return []
     })
