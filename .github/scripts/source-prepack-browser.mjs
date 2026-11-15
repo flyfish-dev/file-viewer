@@ -541,7 +541,42 @@ export function collectRunProof({ run, required, events, reportCases, exitCode, 
         )
         const witness = selected[0].witness,
           bytes = Buffer.from(witness.data, 'base64')
-        assertPublicEvidence(bytes.toString('utf8'))
+        try {
+          assertPublicEvidence(bytes.toString('utf8'))
+        } catch (error) {
+          try {
+            const text = bytes.toString('utf8')
+            const matches = [
+              [
+                'unix-absolute-path',
+                /\/(?:Users|home|private|tmp|var|etc|opt|root|workspace|mnt)\//i
+              ],
+              ['windows-drive-path', /[a-z]:\\/i],
+              ['file-uri', /file:\/\//i],
+              ['private-git-domain', /git\.flyfish\.dev/i],
+              ['github-pat-shape', /github_pat_[a-z0-9_]+/i],
+              ['github-token-shape', /gh[pousr]_[a-z0-9]{20,}/i],
+              ['bearer-shape', /\bBearer\s+[a-z0-9._~+/-]{12,}/i]
+            ].flatMap(([category, pattern]) => {
+              const match = pattern.exec(text)
+              return match ? [{ category, utf16Offset: match.index }] : []
+            })
+            const context = assertPublicEvidence({
+              run: run.id,
+              gate: safePath(run.gate),
+              engine,
+              harnessPath: safePath(harness.path),
+              bytes: bytes.length,
+              sha256: sha256(bytes),
+              guard: 'public-evidence-text',
+              matches
+            })
+            console.error(`[source-harness-privacy] ${JSON.stringify(context)}`)
+          } catch {
+            // Diagnostic failures must never replace the original privacy error.
+          }
+          throw error
+        }
         const record = fileRecord(harness.path, bytes)
         assert.ok(
           events.some(

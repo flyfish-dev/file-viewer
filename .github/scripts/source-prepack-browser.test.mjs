@@ -824,24 +824,41 @@ test('fresh reviewed wrapper bytes match actual HTTP without weakening independe
     /differs/
   )
   const privateWrapper = Buffer.from('console.log("/home/person/private-document")')
-  assert.throws(
-    () =>
-      collect({
-        required,
-        events: events.map((row) =>
-          row.kind === 'source-harness-witness'
-            ? { ...row, witness: { ...row.witness, data: privateWrapper.toString('base64') } }
-            : row.path === '/main.js'
-              ? {
-                  ...row,
-                  bytes: privateWrapper.length,
-                  sha256: fileRecord(path, privateWrapper).sha256
-                }
-              : row
-        )
-      }),
-    /absolute\/private path/
-  )
+  const originalConsole = console.error
+  const diagnostics = []
+  console.error = (value) => diagnostics.push(value)
+  try {
+    assert.throws(
+      () =>
+        collect({
+          required,
+          events: events.map((row) =>
+            row.kind === 'source-harness-witness'
+              ? { ...row, witness: { ...row.witness, data: privateWrapper.toString('base64') } }
+              : row.path === '/main.js'
+                ? {
+                    ...row,
+                    bytes: privateWrapper.length,
+                    sha256: fileRecord(path, privateWrapper).sha256
+                  }
+                : row
+          )
+        }),
+      /absolute\/private path/
+    )
+  } finally {
+    console.error = originalConsole
+  }
+  assert.equal(diagnostics.length, 1)
+  assert.match(diagnostics[0], /^\[source-harness-privacy\] /)
+  const context = JSON.parse(diagnostics[0].slice('[source-harness-privacy] '.length))
+  assert.equal(context.run, runPlan.id)
+  assert.equal(context.gate, runPlan.gate)
+  assert.equal(context.harnessPath, path)
+  assert.equal(context.bytes, privateWrapper.length)
+  assert.equal(context.sha256, fileRecord(path, privateWrapper).sha256)
+  assert.deepEqual(context.matches, [{ category: 'unix-absolute-path', utf16Offset: 13 }])
+  assert.ok(!diagnostics[0].includes('/home/person'))
   const wrongProduct = requiredPlan().map((row) => ({
     ...row,
     servedAssets: [{ ...row.servedAssets[0], sha256: '0'.repeat(64) }]
