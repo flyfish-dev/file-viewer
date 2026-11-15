@@ -174,6 +174,96 @@ test('requires real completion, launch, document bytes and executable bytes for 
   assert(rows.every((row) => row.servedAssets[0].path === 'served/' + 'f'.repeat(64) + '.js'))
 })
 
+test('DICOM source and packed owners retain distinct exact Worker-byte plans', async () => {
+  const plan = JSON.parse(
+    await readFile(
+      join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
+    )
+  )
+  const source = {
+    path: 'served/bf7a793dd6446d4c0f287a92ca5abd20fb35d7d259072f845bf886b3723144c9.js',
+    bytes: 3155061,
+    sha256: 'bf7a793dd6446d4c0f287a92ca5abd20fb35d7d259072f845bf886b3723144c9'
+  }
+  const packed = {
+    path: 'served/470125679ee57a0c16db4da78e895addae9c861bc68d10401d290d7bbf28456c.js',
+    bytes: 8018848,
+    sha256: '470125679ee57a0c16db4da78e895addae9c861bc68d10401d290d7bbf28456c'
+  }
+  for (const [runId, count, asset] of [
+    ['dicom-renderer', 27, source],
+    ['dicom-packed-browser', 16, packed]
+  ]) {
+    const required = plan.requiredCases.filter((row) => row.runId === runId)
+    assert.equal(required.length, count)
+    assert(required.every((row) => JSON.stringify(row.servedAssets) === JSON.stringify([asset])))
+  }
+  const required = requiredPlan().map((row) => ({ ...row, servedAssets: [source] }))
+  const events = actualEvents().map((row) =>
+    row.kind === 'served-runtime-asset'
+      ? { ...row, bytes: source.bytes, sha256: source.sha256 }
+      : row
+  )
+  assert.equal(collect({ required, events }).length, 6)
+  assert.throws(
+    () =>
+      collect({ required: required.map((row) => ({ ...row, servedAssets: [packed] })), events }),
+    /Independent required product bytes/
+  )
+})
+
+test('all original generated-fixture and source-harness producers retain current exact source pins', async () => {
+  const plan = JSON.parse(
+    await readFile(
+      join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
+    )
+  )
+  const pins = new Map()
+  for (const row of plan.requiredCases)
+    for (const record of [
+      ...(row.generatedFixtures || []).map((fixture) => fixture.generator),
+      ...(row.sourceHarnesses || []).map((harness) => harness.producer)
+    ]) {
+      if (pins.has(record.path)) assert.deepEqual(record, pins.get(record.path))
+      pins.set(record.path, record)
+    }
+  for (const record of pins.values()) {
+    let bytes = await readFile(join(workspaceRoot, record.path))
+    if (record.path === 'packages/renderers/dicom/scripts/verify-packed-browser.mjs') {
+      // The normal public projector relocates this one existing helper import.
+      // Public checkouts already contain the projected spelling.
+      bytes = Buffer.from(
+        bytes
+          .toString('utf8')
+          .replace(
+            "from '../../../../scripts/lib/pinned-pnpm.mjs'",
+            "from '../../../../.github/scripts/lib/pinned-pnpm.mjs'"
+          )
+      )
+    }
+    assert.equal(bytes.length, record.bytes, record.path)
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), record.sha256, record.path)
+  }
+})
+
+test('missing product diagnostics name only bounded public gate, engine and observed byte identities', () => {
+  const required = requiredPlan().map((row) => ({
+    ...row,
+    servedAssets: [{ ...row.servedAssets[0], sha256: '0'.repeat(64) }]
+  }))
+  assert.throws(
+    () => collect({ required }),
+    (error) => {
+      assert.match(error.message, /Independent required product bytes/)
+      assert(error.message.includes(JSON.stringify({ gate: runPlan.gate }).slice(0, -1)))
+      assert(error.message.includes('"engine":"chromium"'))
+      assert(error.message.includes('"observedAssetCount":1'))
+      assert(!/\/Users\/|\/home\/|file:\/\/|original response body/.test(error.message))
+      return true
+    }
+  )
+})
+
 test('exit zero cannot stand in for an absent engine or partial/selected original matrix', () => {
   for (const mutate of [
     (events) => events.filter((row) => row.engine !== 'webkit'),

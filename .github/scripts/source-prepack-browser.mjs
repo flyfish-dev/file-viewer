@@ -428,9 +428,17 @@ export function collectRunProof({ run, required, events, reportCases, exitCode, 
       }
       const servedAssets = []
       for (const asset of row.servedAssets || []) {
+        const observedAssets = [...assets.values()]
         assert.ok(
-          [...assets.values()].some((actual) => metadataEqual(actual, asset)),
-          `Independent required product bytes were not actually observed: ${asset.path}`
+          observedAssets.some((actual) => metadataEqual(actual, asset)),
+          `Independent required product bytes were not actually observed: ${asset.path}; ${JSON.stringify(
+            {
+              gate: run.gate,
+              engine,
+              observedAssetCount: observedAssets.length,
+              observedAssets: observedAssets.slice(0, 32)
+            }
+          )}`
         )
         servedAssets.push(asset)
       }

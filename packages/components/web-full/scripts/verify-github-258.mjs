@@ -59,6 +59,9 @@ const server = createServer(async (request, response) => {
   if (/^\/tenant\/app\/after-\w+\.js$/.test(path)) { response.setHeader('Content-Type', 'text/javascript'); response.end('define([], function () { return "host-module-ok" })'); return }
   const mounts = [
     ['/tenant/app/assets/', resolve(pageDir, 'assets')],
+    // The normal component build uses Vite's root asset base; the standalone
+    // fixture uses a relative base. Serve both from the same compiled assets.
+    ['/assets/', resolve(pageDir, 'assets')],
     ['/tenant/app/viewer/', fullDist],
     ['/tenant/app/file-viewer/', demoDir ? resolve(demoDir, 'file-viewer') : fullDist],
     ['/tenant/app/example/', demoDir ? resolve(demoDir, 'example') : sampleDir],
