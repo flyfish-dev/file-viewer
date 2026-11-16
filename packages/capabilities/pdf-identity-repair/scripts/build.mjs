@@ -2,6 +2,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build } from 'esbuild'
 import { captureBundleEvidence } from '../../../build-support/bundle-evidence.mjs'
+import { writePrebundledNoticeReceipt } from '../../../build-support/prebundled-notices.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -33,3 +34,7 @@ await evidence.build({
   ]
 })
 await evidence.finish()
+await writePrebundledNoticeReceipt({
+  packageRoot: packageDir, runtimePaths: ['dist/index.js'],
+  noticePath: 'dist/pdf-identity-repair.THIRD_PARTY_LICENSES.txt'
+})

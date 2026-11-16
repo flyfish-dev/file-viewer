@@ -5,6 +5,7 @@ import { build } from 'esbuild'
 import { writeBundleNotices } from '../../../build-support/bundle-notices.mjs'
 import { writeBundleInventory } from '../../../build-support/bundle-inventory.mjs'
 import { browserRuntimeOptions } from '../../../build-support/browser-runtime-options.mjs'
+import { writePrebundledNoticeReceipt } from '../../../build-support/prebundled-notices.mjs'
 
 const require = createRequire(import.meta.url)
 const output = new URL('../dist/vendor/', import.meta.url)
@@ -44,3 +45,7 @@ const result = await build({
 })
 await writeBundleNotices(result.metafile, new URL('avsc.NOTICE.txt', output))
 await writeBundleInventory(Object.keys(result.metafile.inputs), fileURLToPath(new URL('../.build/avsc-inputs.json', import.meta.url)))
+await writePrebundledNoticeReceipt({
+  packageRoot: fileURLToPath(new URL('..', import.meta.url)),
+  runtimePaths: ['dist/vendor/avsc.cjs'], noticePath: 'dist/vendor/avsc.NOTICE.txt'
+})

@@ -1,3 +1,4 @@
+import type { FileViewerI18nInput, FileViewerMessageKey } from '@file-viewer/core';
 import { PptxViewer, RECOMMENDED_ZIP_LIMITS, resolvePptxPackageWorkerUrl } from '@file-viewer/pptx';
 import {
   DEFAULT_RENDERER_DEFINITIONS,
@@ -117,12 +118,6 @@ const clampZoomPercent = (value: number) => {
   return Math.min(300, Math.max(25, Math.round(value)));
 };
 
-type PptxDiagnosticCopy = {
-  zh: string;
-  en: string;
-  ja: string;
-  de: string;
-};
 
 type PptxDiagnosticErrorLike = Partial<PptxDiagnosticError> & {
   name?: string;
@@ -133,99 +128,26 @@ type PptxDiagnosticErrorLike = Partial<PptxDiagnosticError> & {
   hint?: string;
 };
 
-const pptxDiagnosticMessages: Record<string, PptxDiagnosticCopy> = {
-  PPTX_FILE_EMPTY: {
-    zh: '文件为空或过小，无法读取。',
-    en: 'The file is empty or too small to read.',
-    ja: 'ファイルが空であるか小さすぎるため、読み込めません。',
-    de: 'Die Datei ist leer oder zu klein zum Lesen.',
-  },
-  PPTX_FILE_TOO_LARGE: {
-    zh: '文件超过浏览器安全预览体积限制。',
-    en: 'The file is larger than the browser-safe preview limit.',
-    ja: 'ファイルがブラウザーで安全にプレビューできるサイズ上限を超えています。',
-    de: 'Die Datei überschreitet die sichere Vorschaugröße des Browsers.',
-  },
-  PPTX_INVALID_ZIP: {
-    zh: '文件不是有效的 PowerPoint OpenXML 压缩包。',
-    en: 'The file is not a valid PowerPoint OpenXML package.',
-    ja: '有効な PowerPoint OpenXML パッケージではありません。',
-    de: 'Die Datei ist kein gültiges PowerPoint-OpenXML-Paket.',
-  },
-  PPTX_MISSING_CONTENT_TYPES: {
-    zh: '文件缺少 [Content_Types].xml，无法识别内部结构。',
-    en: 'The package is missing [Content_Types].xml, so its structure cannot be identified.',
-    ja: '[Content_Types].xml がないため、内部構造を識別できません。',
-    de: '[Content_Types].xml fehlt; die Paketstruktur kann nicht erkannt werden.',
-  },
-  PPTX_MISSING_PRESENTATION: {
-    zh: '文件缺少 ppt/presentation.xml，无法读取幻灯片列表。',
-    en: 'The package is missing ppt/presentation.xml, so the slide list cannot be read.',
-    ja: 'ppt/presentation.xml がないため、スライド一覧を読み込めません。',
-    de: 'ppt/presentation.xml fehlt; die Folienliste kann nicht gelesen werden.',
-  },
-  PPTX_NO_SLIDES: {
-    zh: '文件中没有找到可预览的幻灯片。',
-    en: 'No previewable slides were found in the file.',
-    ja: 'プレビュー可能なスライドが見つかりませんでした。',
-    de: 'Es wurden keine Folien für die Vorschau gefunden.',
-  },
-  PPTX_MISSING_SLIDE: {
-    zh: '文件缺少某一页幻灯片内容。',
-    en: 'The package is missing one of the slide parts.',
-    ja: 'スライド部品の一部がありません。',
-    de: 'Ein Folienbestandteil fehlt im Paket.',
-  },
-  PPTX_SLIDE_RENDER_FAILED: {
-    zh: '某一页幻灯片解析失败。',
-    en: 'One slide failed to parse.',
-    ja: 'スライドの解析に失敗しました。',
-    de: 'Eine Folie konnte nicht verarbeitet werden.',
-  },
-  PPTX_WORKER_FAILED: {
-    zh: 'PPTX Worker 启动或运行失败。',
-    en: 'The PPTX Worker failed to start or run.',
-    ja: 'PPTX Worker の起動または実行に失敗しました。',
-    de: 'Der PPTX-Worker konnte nicht gestartet oder ausgeführt werden.',
-  },
-  PPTX_PARSE_FAILED: {
-    zh: 'PPTX 文件解析失败。',
-    en: 'The PPTX file could not be parsed.',
-    ja: 'PPTX ファイルを解析できませんでした。ファイルを再保存するか、入力元を確認してください。',
-    de: 'Die PPTX-Datei konnte nicht verarbeitet werden.',
-  },
+const pptxDiagnosticMessages: Record<string, FileViewerMessageKey> = {
+  "PPTX_FILE_EMPTY": "presentation.diagnostic.reason.PPTX_FILE_EMPTY",
+  "PPTX_FILE_TOO_LARGE": "presentation.diagnostic.reason.PPTX_FILE_TOO_LARGE",
+  "PPTX_INVALID_ZIP": "presentation.diagnostic.reason.PPTX_INVALID_ZIP",
+  "PPTX_MISSING_CONTENT_TYPES": "presentation.diagnostic.reason.PPTX_MISSING_CONTENT_TYPES",
+  "PPTX_MISSING_PRESENTATION": "presentation.diagnostic.reason.PPTX_MISSING_PRESENTATION",
+  "PPTX_NO_SLIDES": "presentation.diagnostic.reason.PPTX_NO_SLIDES",
+  "PPTX_MISSING_SLIDE": "presentation.diagnostic.reason.PPTX_MISSING_SLIDE",
+  "PPTX_SLIDE_RENDER_FAILED": "presentation.diagnostic.reason.PPTX_SLIDE_RENDER_FAILED",
+  "PPTX_WORKER_FAILED": "presentation.diagnostic.reason.PPTX_WORKER_FAILED",
+  "PPTX_PARSE_FAILED": "presentation.diagnostic.reason.PPTX_PARSE_FAILED"
 };
 
-const pptxDiagnosticFallbackHints: Record<string, PptxDiagnosticCopy> = {
-  PPTX_INVALID_ZIP: {
-    zh: '请确认接口返回的是原始 .pptx 二进制文件，而不是登录页、HTML/JSON 错误响应或被截断的内容。',
-    en: 'Confirm that the response is the original .pptx binary, not a login page, HTML/JSON error response, or truncated download.',
-    ja: 'レスポンスがログインページや HTML/JSON エラー、途中で切れたデータではなく、元の .pptx バイナリであることを確認してください。',
-    de: 'Prüfen Sie, ob die Antwort die ursprüngliche .pptx-Datei und keine Anmeldeseite, HTML/JSON-Fehlerantwort oder unvollständige Datei enthält.',
-  },
-  PPTX_WORKER_FAILED: {
-    zh: '请检查 presentation.workerUrl、Worker 文件路径、MIME 类型、CSP 和跨域策略。',
-    en: 'Check presentation.workerUrl, the Worker file path, MIME type, CSP, and cross-origin policy.',
-    ja: 'presentation.workerUrl、Worker のパス、MIME type、CSP、cross-origin policy を確認してください。',
-    de: 'Prüfen Sie presentation.workerUrl, den Worker-Pfad, den MIME-Typ, CSP und die Cross-Origin-Richtlinie.',
-  },
-  PPTX_NO_SLIDES: {
-    zh: '请重新保存演示文稿，或检查包内是否存在 ppt/slides/slide*.xml。',
-    en: 'Re-save the presentation, or check whether ppt/slides/slide*.xml exists inside the package.',
-    ja: 'プレゼンテーションを再保存するか、パッケージに ppt/slides/slide*.xml があるか確認してください。',
-    de: 'Speichern Sie die Präsentation erneut oder prüfen Sie, ob ppt/slides/slide*.xml im Paket vorhanden ist.',
-  },
+const pptxDiagnosticFallbackHints: Record<string, FileViewerMessageKey> = {
+  "PPTX_INVALID_ZIP": "presentation.diagnostic.hint.PPTX_INVALID_ZIP",
+  "PPTX_WORKER_FAILED": "presentation.diagnostic.hint.PPTX_WORKER_FAILED",
+  "PPTX_NO_SLIDES": "presentation.diagnostic.hint.PPTX_NO_SLIDES"
 };
 
-const localizePptxDiagnosticCopy = (
-  copy: PptxDiagnosticCopy | undefined,
-  locale: string
-) => {
-  if (!copy) {
-    return '';
-  }
-  return locale === 'zh-CN' ? copy.zh : locale === 'ja-JP' ? copy.ja : locale === 'de-DE' ? copy.de : copy.en;
-};
+const localizePptxDiagnosticCopy = (key: FileViewerMessageKey | undefined, input?: FileViewerI18nInput) => key ? createFileViewerTranslator(input)(key) : '';
 
 const sanitizePptxDiagnosticText = (value: unknown) => {
   if (typeof value !== 'string') {
@@ -305,35 +227,33 @@ const classifyPptxErrorString = (message: string): PptxDiagnosticErrorLike | nul
 const formatPptxDiagnosticError = (
   error: PptxDiagnosticErrorLike,
   fallback: string,
-  context?: FileRenderContext
+  context?: FileRenderContext,
+  i18n: FileViewerI18nInput | undefined = context?.i18n || context?.options
 ) => {
-  const locale = resolveFileViewerLocale(context?.options);
+  const t = createFileViewerTranslator(i18n);
+  const locale = resolveFileViewerLocale(i18n);
   const code = String(error.code || 'PPTX_PARSE_FAILED');
-  const localizedReason = localizePptxDiagnosticCopy(pptxDiagnosticMessages[code], locale);
+  const localizedReason = localizePptxDiagnosticCopy(pptxDiagnosticMessages[code], i18n);
   const rawReason = sanitizePptxDiagnosticText(error.message);
-  const reason = (
-    locale === 'zh-CN'
-      ? rawReason || localizedReason
-      : localizedReason || rawReason
-  ) || fallback;
+  const reason = localizedReason || rawReason || fallback;
   const detail = sanitizePptxDiagnosticText(error.detail);
   // Engine diagnostics may carry source-language hints. A known code has a
   // wrapper-owned translation, so prefer it over the engine's raw copy.
-  const hint = localizePptxDiagnosticCopy(pptxDiagnosticFallbackHints[code], locale) ||
+  const hint = localizePptxDiagnosticCopy(pptxDiagnosticFallbackHints[code], i18n) ||
     sanitizePptxDiagnosticText(error.hint);
   const stage = sanitizePptxDiagnosticText(error.stage);
-  const usesWesternPunctuation = locale === 'en-US' || locale === 'de-DE';
+  const usesWesternPunctuation = !locale.startsWith('zh') && locale !== 'ja-JP';
   const separator = usesWesternPunctuation ? ': ' : '：';
   const parts = [`${fallback}${separator}${reason}`];
 
   if (stage) {
-    parts.push(locale === 'zh-CN' ? `阶段：${stage}` : locale === 'ja-JP' ? `段階：${stage}` : locale === 'de-DE' ? `Phase: ${stage}` : `Stage: ${stage}`);
+    parts.push(t('presentation.diagnostic.stage', { value: stage }));
   }
   if (detail && detail !== reason) {
-    parts.push(locale === 'zh-CN' ? `详情：${detail}` : locale === 'ja-JP' ? `詳細：${detail}` : locale === 'de-DE' ? `Details: ${detail}` : `Detail: ${detail}`);
+    parts.push(t('presentation.diagnostic.detail', { value: detail }));
   }
   if (hint) {
-    parts.push(locale === 'zh-CN' ? `建议：${hint}` : locale === 'ja-JP' ? `対処：${hint}` : locale === 'de-DE' ? `Hinweis: ${hint}` : `Hint: ${hint}`);
+    parts.push(t('presentation.diagnostic.hint', { value: hint }));
   }
   return parts.join(usesWesternPunctuation ? '; ' : '；');
 };
@@ -347,7 +267,7 @@ const formatErrorMessage = (
     return formatPptxDiagnosticError(error, fallback, context);
   }
   if (error instanceof Error || typeof error === 'string') {
-    const normalized = normalizeFileViewerErrorMessage(error, context?.options);
+    const normalized = normalizeFileViewerErrorMessage(error, context?.i18n || context?.options);
     const classified = classifyPptxErrorString(normalized);
     if (classified) {
       return formatPptxDiagnosticError(classified, fallback, context);
@@ -406,13 +326,14 @@ export default async function renderPptx(
   _type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const documentRef = target.ownerDocument || document;
   const targetWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : null);
   const zoomEmitter = createFileViewerZoomChangeEmitter();
   let viewer: PptxViewer | null = null;
   let state: PptxRenderState = 'loading';
   let errorMessage = '';
+  let errorCopy: ((i18n?: FileViewerI18nInput) => string) | undefined;
   let zoomPercent = 100;
   let progressiveReady = false;
   let disposed = false;
@@ -425,11 +346,11 @@ export default async function renderPptx(
   loading.setAttribute('aria-live', 'polite');
   loading.append(
     createElement(documentRef, 'span', 'pptx-loading-dot'),
-    createElement(documentRef, 'span', undefined, t('presentation.state.loading'))
+    t.text(createElement(documentRef, 'span', undefined), 'presentation.state.loading')
   );
 
   const error = createElement(documentRef, 'div', 'pptx-error');
-  const errorTitle = createElement(documentRef, 'strong', undefined, t('presentation.error.title'));
+  const errorTitle = t.text(createElement(documentRef, 'strong', undefined), 'presentation.error.title');
   const errorText = createElement(documentRef, 'p');
   error.append(errorTitle, errorText);
 
@@ -437,7 +358,7 @@ export default async function renderPptx(
   slideshowButton.type = 'button';
   slideshowButton.hidden = true;
   const slideshowGlyph = createElement(documentRef, 'span', 'pptx-slideshow-button-glyph', '▶');
-  const slideshowText = createElement(documentRef, 'span', undefined, t('presentation.slideshow.start'));
+  const slideshowText = t.text(createElement(documentRef, 'span', undefined), 'presentation.slideshow.start');
   const slideshowKey = createElement(documentRef, 'span', 'pptx-slideshow-button-key', SLIDESHOW_HOTKEY_LABEL);
   slideshowButton.append(slideshowGlyph, slideshowText, slideshowKey);
   slideshowButton.addEventListener('click', () => {
@@ -574,13 +495,13 @@ export default async function renderPptx(
   const syncUi = () => {
     loading.hidden = !(state === 'loading' && !errorMessage);
     error.hidden = state !== 'error';
-    errorText.textContent = errorMessage;
+    t.bind(errorText, node => { node.textContent = errorCopy?.(context?.options) || errorMessage; });
     surface.classList.toggle('is-loading', state === 'loading');
     const presenting = Boolean(viewer?.presenting);
     slideshowButton.hidden = state !== 'ready' || (viewer?.slideCount ?? 0) === 0;
-    slideshowText.textContent = presenting
+    t.bind(slideshowText, localizedNode => { localizedNode.textContent = presenting
       ? t('presentation.slideshow.exit')
-      : t('presentation.slideshow.start');
+      : t('presentation.slideshow.start'); }, 'textContent');
     slideshowButton.setAttribute('aria-pressed', presenting ? 'true' : 'false');
   };
 
@@ -590,10 +511,19 @@ export default async function renderPptx(
 
   const reportPptxFailure = (failure: unknown) => {
     state = 'error';
+    const retainedDiagnostic = isPptxDiagnosticErrorLike(failure)
+      ? { ...failure }
+      : classifyPptxErrorString(normalizeFileViewerErrorMessage(failure, context?.i18n || context?.options));
+    errorCopy = retainedDiagnostic ? i18n => formatPptxDiagnosticError(
+      retainedDiagnostic,
+      createFileViewerTranslator(i18n)('presentation.error.parseFailed'),
+      context,
+      i18n
+    ) : undefined;
     errorMessage = formatErrorMessage(failure, t('presentation.error.parseFailed'), context);
     context?.registerExportAdapter?.(null);
     syncUi();
-    return attachFileViewerErrorMessage(failure, errorMessage);
+    return attachFileViewerErrorMessage(failure, errorCopy || errorMessage);
   };
 
   registerFileViewerZoomProvider(shell, {
@@ -608,6 +538,7 @@ export default async function renderPptx(
   const openPresentation = async () => {
     state = 'loading';
     errorMessage = '';
+    errorCopy = undefined;
     progressiveReady = false;
     syncUi();
     const presentationOptions = context?.options?.presentation;

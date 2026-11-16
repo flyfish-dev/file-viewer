@@ -58,6 +58,45 @@ const signature = {
 
 The policy must accept only application-resolved, fixed package URLs. Never pass document-derived strings to `createScriptURL`.
 
+## Signature details panel
+
+The initial layout is configured through the optional core `FileViewerOptions.signature` contract. Register the signature renderer and the desired nested document renderers as usual.
+
+```ts
+import { createViewer } from '@file-viewer/core'
+import { signatureRenderer, FILE_VIEWER_SIGNATURE_PANEL_CHANGE_EVENT } from '@file-viewer/renderer-signature'
+import { pdfRenderer } from '@file-viewer/renderer-pdf'
+import { textRenderer } from '@file-viewer/renderer-text'
+
+const viewer = createViewer(container, {
+  options: {
+    renderers: [signatureRenderer, pdfRenderer, textRenderer],
+    signature: {
+      detailsPanel: {
+        initialState: 'collapsed',
+        position: 'left',
+        openingBehavior: 'overlay'
+      }
+    }
+  }
+})
+container.addEventListener(FILE_VIEWER_SIGNATURE_PANEL_CHANGE_EVENT, event => {
+  // Persist event.detail.expanded, position and openingBehavior in your application.
+  // Nested signature containers emit their own events; use composedPath()[0]
+  // to identify the originating signature shell when that distinction matters.
+})
+```
+
+Defaults remain `initialState: 'expanded'` and `position: 'top'`. `openingBehavior` defaults to `'overlay'` and applies only to left placement. The panel contains signature details only; metadata, validation boundaries, original/key inputs and attachment selection remain available. In the left layout, the permanent metadata column remains separate from the details rail and preview. Narrow hosts stack the existing metadata column according to their own width.
+
+The initial settings are read once per rendered signature document. Changing `viewer.updateOptions()` does not change an already mounted panel or reload it. Users can always show/hide details; their choice survives verification-input changes within that instance. A new document starts from its configured initial state. The renderer does not store preferences globally or in localStorage.
+
+Show/hide retains the live nested preview and does not repeat signature verification. Overlay retains the preview dimensions, zoom and reading position. Push changes the available width: manual zoom is retained, while the document's existing automatic-fit policy may recalculate scale. A bounded reading-position adjustment preserves the current page/block where possible; arbitrary renderers without stable anchors fall back to scroll position. Closing restores the available width without reloading.
+
+The bubbling, composed `file-viewer-signature-panel-change` DOM event fires once per actual user state change, with serializable `{ expanded, position, openingBehavior }` detail, not on initialization. It is separate from the nested document's view-state events. No callback is added to Worker options. The exported `FileViewerSignaturePanelChangeDetail` type describes the payload.
+
+Failures and incomplete checks remain discoverable when details are collapsed. The summary never claims overall validity or trust. Existing security boundaries and verification results are unchanged. New panel controls use the core Chinese, English, Japanese and German catalogs and custom-message overrides; existing engine diagnostic wording is unchanged.
+
 ## OpenPGP and size boundary
 
 The OpenPGP backend uses permissively licensed rPGP `0.20.0` inside a dedicated, lazy Worker/WASM path. It does not use OpenPGP.js, GnuPG, or LGPL source. The narrow public boundary supports classification, bounded metadata inspection, and multi-signature verification for detached, cleartext, and unencrypted embedded/compressed messages; it does not expose rPGP internals or secret key material.

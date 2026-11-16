@@ -1,3 +1,4 @@
+import { browserCoreAliases } from '../../../build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { createServer as createHttpServer } from 'node:http'
 import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, stat, writeFile } from 'node:fs/promises'
@@ -298,11 +299,7 @@ try {
           replacement: wordRequire.resolve('rtf.js/dist/RTFJS.bundle.js')
         },
         { find: '@security/word', replacement: join(packageRoot, 'src/index.ts') },
-        {
-          find: '@file-viewer/core/assets',
-          replacement: join(root, 'packages/core/src/assets.ts')
-        },
-        { find: '@file-viewer/core', replacement: join(root, 'packages/core/src/index.ts') },
+        ...browserCoreAliases(root),
         { find: '@file-viewer/doc', replacement: join(root, 'packages/renderers/doc/src/index.ts') }
       ]
     },

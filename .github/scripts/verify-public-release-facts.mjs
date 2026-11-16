@@ -18,6 +18,14 @@ function assertIncludes(content, expected, label) {
   assert(content.includes(expected), `${label} is missing ${JSON.stringify(expected)}`)
 }
 
+function assertSourceVersion(content, expected, label) {
+  assertIncludes(content, expected, label)
+  assert(
+    !/current published (?:release|version)/i.test(content),
+    `${label} must describe this source build; publication requires registry and release evidence`
+  )
+}
+
 function releaseEntries(wrappers) {
   const groups = [
     wrappers.corePackage,
@@ -161,7 +169,7 @@ async function assertStaticPageFacts(sourceRoot, facts) {
     join(siteRoot, 'public', 'en', 'browser-file-viewer', 'index.html.md')
   )
   for (const expected of [
-    `Current published release: \`${facts.version}\``,
+    `Build version: \`${facts.version}\``,
     `Main npm package line: \`${facts.version}\` (\`msdoc-viewer\` compatibility alias: \`${facts.msdocVersion}\`)`,
     `Registered extension mappings: \`${facts.uniqueExtensionCount}\``,
     `Stable extension mappings: \`${facts.stableExtensionCount}\``,
@@ -181,17 +189,28 @@ async function assertStaticPageFacts(sourceRoot, facts) {
     `${facts.rendererCount} preview pipelines`,
     `${facts.npmTargetCount} npm targets`,
     `"softwareVersion": "${facts.version}"`,
-    `<strong>${facts.version}</strong><span>current published release</span>`,
+    `<strong>${facts.version}</strong><span>build version</span>`,
     `<strong>${facts.uniqueExtensionCount}</strong><span>registered extension mappings</span>`,
     `<strong>${facts.rendererCount}</strong><span>preview pipelines</span>`,
     `<strong>${facts.npmTargetCount}</strong><span>npm targets</span>`
   ]) {
     assertIncludes(factsHtml, expected, 'official-site verified facts HTML')
   }
+  assertSourceVersion(
+    factsMarkdown,
+    `Build version: \`${facts.version}\``,
+    'official-site build facts Markdown'
+  )
+  assertSourceVersion(
+    factsHtml,
+    `<strong>${facts.version}</strong><span>build version</span>`,
+    'official-site build facts HTML'
+  )
 
   const llms = await readText(join(siteRoot, 'public', 'llms.txt'))
   const llmsFull = await readText(join(siteRoot, 'public', 'llms-full.txt'))
   for (const content of [llms, llmsFull]) {
+    assertSourceVersion(content, `Build version: ${facts.version}`, 'official-site LLM build facts')
     assertIncludes(
       content,
       `${facts.npmTargetCount} File Viewer npm targets`,
@@ -235,6 +254,7 @@ async function assertDemoFacts(sourceRoot, facts) {
     'demo PPT runtime package'
   )
   const llms = await readText(join(demoRoot, 'llms.txt'))
+  assertSourceVersion(llms, `Build version: ${facts.version}`, 'demo LLM build facts')
   assertIncludes(
     llms,
     `${facts.uniqueExtensionCount} registered extensions (${facts.stableExtensionCount} stable, ${facts.experimentalExtensionCount} experimental) to ${facts.rendererCount} preview pipelines`,
@@ -252,14 +272,17 @@ async function assertDocsFacts(sourceRoot, facts) {
   const docsRoot = join(sourceRoot, 'docs')
   const docsLlms = await readText(join(docsRoot, 'public', 'llms.txt'))
   const docsLlmsFull = await readText(join(docsRoot, 'public', 'llms-full.txt'))
+  for (const content of [docsLlms, docsLlmsFull]) {
+    assertSourceVersion(content, `Documentation version: ${facts.version}`, 'docs LLM build facts')
+  }
   assertIncludes(docsLlms, `${facts.npmTargetCount} File Viewer npm targets`, 'docs LLM overview')
   for (const expected of [
     `Version: ${facts.version}`,
-    `Current published version: ${facts.version}`,
+    `Documentation version: ${facts.version}`,
     `Source matrix npm targets: ${facts.npmTargetCount}`,
     `Registered extension mappings: ${facts.uniqueExtensionCount}`,
     `Preview pipelines: ${facts.rendererCount}`,
-    `Current release: ${facts.releaseUrl}`
+    `Release reference for this documentation: ${facts.releaseUrl}`
   ]) {
     assertIncludes(docsLlmsFull, expected, 'docs LLM reference')
   }
@@ -302,6 +325,6 @@ export async function verifyPublicReleaseFacts(sourceRoot = defaultSourceRoot) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const facts = await verifyPublicReleaseFacts()
   console.log(
-    `[public-release-facts] Verified v${facts.version}: ${facts.npmTargetCount} npm targets, ${facts.uniqueExtensionCount} extensions, and ${facts.rendererCount} preview pipelines.`
+    `[public-release-facts] Verified source-build v${facts.version}: ${facts.npmTargetCount} npm targets, ${facts.uniqueExtensionCount} extensions, and ${facts.rendererCount} preview pipelines; publication is verified separately.`
   )
 }

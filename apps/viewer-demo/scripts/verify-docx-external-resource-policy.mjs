@@ -1,3 +1,4 @@
+import { browserCoreAliases } from '../../../packages/build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { mkdtemp, rm, writeFile } from 'node:fs/promises'
@@ -166,11 +167,7 @@ try {
           find: '@security/word-renderer',
           replacement: join(root, 'packages/renderers/word/src/wordDocx.ts')
         },
-        {
-          find: '@file-viewer/core/assets',
-          replacement: join(root, 'packages/core/src/assets.ts')
-        },
-        { find: '@file-viewer/core', replacement: join(root, 'packages/core/src/index.ts') }
+        ...browserCoreAliases(root)
       ]
     },
     server: {

@@ -15,7 +15,7 @@ describe('viewer demo ?sample= links', () => {
   it('resolves every alias to a bundled catalog sample in every locale', () => {
     const catalog = new Set(allDemoPresetFiles.map(item => item.url))
     for (const name of Object.keys(DEMO_SAMPLE_ALIASES)) {
-      for (const locale of ['zh-CN', 'en-US', 'ja-JP', 'de-DE'] as const) {
+      for (const locale of ['zh-CN', 'zh-TW', 'zh-HK', 'en-US', 'ja-JP', 'de-DE'] as const) {
         const resolved = resolveDemoSampleParam(name, locale)
         expect(resolved, `${name} (${locale})`).toBeDefined()
         expect(catalog.has(resolved as string)).toBe(true)
@@ -33,6 +33,8 @@ describe('viewer demo ?sample= links', () => {
     expect(resolveDemoSampleParam('model.step')).toBe('/example/model.step')
     expect(resolveDemoSampleParam('%2Fexample%2Fpdf.pdf')).toBe('/example/pdf.pdf')
     expect(resolveDemoSampleParam('pptx', 'zh-CN')).toBe('/example/ppt.pptx')
+    expect(resolveDemoSampleParam('pptx', 'zh-TW')).toBe('/example/ppt.pptx')
+    expect(resolveDemoSampleParam('pptx', 'zh-HK')).toBe('/example/ppt.pptx')
     expect(resolveDemoSampleParam('pptx', 'en-US')).toBe('/example/en/sample-presentation.pptx')
   })
 

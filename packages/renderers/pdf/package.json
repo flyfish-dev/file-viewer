@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-pdf",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "private": false,
   "type": "module",
   "description": "Standalone PDF renderer plugin for File Viewer powered by PDF.js.",
@@ -58,6 +58,7 @@
     "README.md",
     "README.en.md",
     "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
     "README.zh-CN.md"
   ],
   "scripts": {
@@ -66,13 +67,14 @@
     "verify:worker-network": "node scripts/verify-worker-network.mjs --built",
     "verify:pdfjs-runtime": "node scripts/stage-pdfjs-runtime.mjs --check",
     "verify:cid-fonts": "node scripts/verify-cid-fonts.mjs",
+    "verify:annotations": "node scripts/verify-annotations-browser.mjs",
     "verify:worker-lifecycle": "npm exec --yes --package playwright@1.61.1 -- node scripts/verify-worker-lifecycle.mjs",
     "prepack": "node scripts/stage-pdfjs-runtime.mjs --check",
     "verify:hand-tool": "node scripts/verify-hand-tool-browser.mjs && node scripts/verify-hand-tool-installed.mjs",
     "verify:hand-tool:installed": "node scripts/verify-hand-tool-installed.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.3",
+    "@file-viewer/core": "workspace:3.3.4",
     "@fontsource-variable/noto-sans-sc": "5.3.1"
   },
   "peerDependencies": {

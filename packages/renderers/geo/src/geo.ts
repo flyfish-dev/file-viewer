@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   createFileViewerViewStateChange,
   createFileViewerViewStateChangeEmitter,
   createFileViewerZoomChangeEmitter,
@@ -232,7 +233,7 @@ const normalizeGeoJson = (value: unknown, t: FileViewerTranslator): FeatureColle
       features: [{ type: 'Feature', geometry: candidate as Geometry, properties: {} }],
     };
   }
-  throw new Error(t('geo.error.unrecognized'));
+  throw t.error('geo.error.unrecognized');
 };
 
 const normalizeShapefileOutput = (value: unknown, t: FileViewerTranslator): FeatureCollection => {
@@ -308,7 +309,7 @@ const parseGeo = async (
       declaredProjection: 'EPSG:4326',
     };
   }
-  throw new Error(t('geo.error.unsupported', { type }));
+  throw t.error('geo.error.unsupported', { type });
 };
 
 const walkPositions = (geometry: Geometry | null, visit: (position: Position) => void) => {
@@ -498,7 +499,7 @@ const createProjectionTransformer = async (
       return [lng, lat, ...position.slice(2)] as Position;
     };
   } catch (error) {
-    throw new Error(t('geo.error.projection', { reason: normalizeError(error) }));
+    throw t.error('geo.error.projection', { reason: normalizeError(error) });
   }
 };
 
@@ -539,7 +540,7 @@ const validatePositionBounds = (bounds: Bounds | null, t: FileViewerTranslator) 
     bounds.minY < -90.000001 ||
     bounds.maxY > 90.000001
   ) {
-    throw new Error(t('geo.error.projection', { reason: 'coordinates are outside WGS84 longitude/latitude bounds' }));
+    throw t.error('geo.error.projection', { reason: 'coordinates are outside WGS84 longitude/latitude bounds' });
   }
 };
 
@@ -719,7 +720,7 @@ const buildPanel = (
   const badge = document.createElement('span');
   badge.textContent = type.toUpperCase();
   const heading = document.createElement('h2');
-  heading.textContent = t('geo.title');
+  t.text(heading, 'geo.title');
   const description = document.createElement('dl');
   appendDescriptionItem(description, t('geo.featureCount'), parsed.collection.features.length);
   appendDescriptionItem(description, t('geo.bounds'), formatBounds(parsed.bounds));
@@ -729,7 +730,7 @@ const buildPanel = (
   const counts = document.createElement('div');
   counts.className = 'geo-counts';
   const countsHeading = document.createElement('strong');
-  countsHeading.textContent = t('geo.geometryTypes');
+  t.text(countsHeading, 'geo.geometryTypes');
   counts.appendChild(countsHeading);
   buildGeometryCounts(parsed.collection.features).forEach(([name, count]) => {
     const row = document.createElement('p');
@@ -745,7 +746,7 @@ const buildSvgPreview = (parsed: ParseGeoResult, t: FileViewerTranslator) => {
   const svg = createSvgElement('svg');
   svg.setAttribute('viewBox', `0 0 ${GEO_WIDTH} ${GEO_HEIGHT}`);
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', t('geo.aria'));
+  t.attr(svg, 'aria-label', 'geo.aria');
   const rect = createSvgElement('rect');
   rect.setAttribute('width', String(GEO_WIDTH));
   rect.setAttribute('height', String(GEO_HEIGHT));
@@ -1087,7 +1088,8 @@ const waitForMapLoad = (map: MapLibreMap) => {
 const createMapLibreMap = (
   maplibre: MapLibreModule,
   host: HTMLDivElement,
-  basemap: ResolvedGeoBasemapConfig
+  basemap: ResolvedGeoBasemapConfig,
+  t: FileViewerTranslator
 ) => {
   return new maplibre.Map({
     container: host,
@@ -1097,6 +1099,12 @@ const createMapLibreMap = (
     pitchWithRotate: false,
     minZoom: MIN_MAP_ZOOM,
     maxZoom: MAX_MAP_ZOOM,
+    locale: {
+      'NavigationControl.ZoomIn': t('toolbar.zoomIn'),
+      'NavigationControl.ZoomOut': t('toolbar.zoomOut'),
+      'AttributionControl.ToggleAttribution': t('geo.attribution'),
+      'Map.Title': t('geo.map'),
+    },
   });
 };
 
@@ -1111,8 +1119,22 @@ const mountMapLibre = async (
   const maplibre = await import('maplibre-gl');
   configureMapLibreWorker(maplibre);
   let activeBasemap = basemap;
-  let map = createMapLibreMap(maplibre, host, activeBasemap);
-  map.addControl(new maplibre.NavigationControl({ showCompass: false, visualizePitch: false }), 'top-right');
+  const addNavigation = (map: MapLibreMap) => {
+    map.addControl(new maplibre.NavigationControl({ showCompass: false, visualizePitch: false }), 'top-right');
+    const container = map.getContainer();
+    for (const [selector, key] of [
+      ['.maplibregl-ctrl-zoom-in', 'toolbar.zoomIn'],
+      ['.maplibregl-ctrl-zoom-out', 'toolbar.zoomOut'],
+      ['.maplibregl-ctrl-attrib-button', 'geo.attribution'],
+    ] as const) {
+      const button = container.querySelector(selector);
+      t.attr(button, 'title', key);
+      t.attr(button, 'aria-label', key);
+    }
+    t.attr(map.getCanvas(), 'aria-label', 'geo.map');
+  };
+  let map = createMapLibreMap(maplibre, host, activeBasemap, t);
+  addNavigation(map);
 
   try {
     await waitForMapLoad(map);
@@ -1125,8 +1147,8 @@ const mountMapLibre = async (
     host.replaceChildren();
     activeBasemap = createOfflineBasemapConfig(t);
     updatePanelValue(root, 'basemap', activeBasemap.label);
-    map = createMapLibreMap(maplibre, host, activeBasemap);
-    map.addControl(new maplibre.NavigationControl({ showCompass: false, visualizePitch: false }), 'top-right');
+    map = createMapLibreMap(maplibre, host, activeBasemap, t);
+    addNavigation(map);
     await waitForMapLoad(map);
   }
 
@@ -1330,7 +1352,7 @@ const mountMapLibre = async (
 
   const fitButton = root.querySelector<HTMLButtonElement>('[data-geo-action="fit"]');
   fitButton?.addEventListener('click', fit);
-  fitButton?.setAttribute('title', t('geo.action.fit'));
+  t.attr(fitButton, 'title', 'geo.action.fit');
 
   return {
     map,
@@ -1356,7 +1378,7 @@ const buildMapShell = (
   const root = createElement('div', 'geo-viewer');
   const stage = createElement('main', 'geo-stage');
   const toolbar = createElement('div', 'geo-toolbar');
-  const fitButton = createElement('button', undefined, t('geo.action.fit'));
+  const fitButton = t.text(createElement('button', undefined), 'geo.action.fit');
   fitButton.dataset.geoAction = 'fit';
   const frame = createElement('div', 'geo-map-frame');
   const mapHost = createElement('div', 'geo-map-engine');
@@ -1399,12 +1421,12 @@ export default async function renderGeo(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const normalizedType = normalizeGeoType(type);
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const options = context?.options?.geo;
   const style = createStyle();
   const state = document.createElement('div');
   state.className = 'geo-state';
-  state.textContent = t('geo.loading');
+  t.text(state, 'geo.loading');
   let cleanup: (() => void) | undefined;
   target.replaceChildren(style, state);
 
@@ -1425,7 +1447,7 @@ export default async function renderGeo(
   } catch (error) {
     console.error(error);
     state.classList.add('error');
-    state.textContent = error instanceof Error ? error.message : String(error);
+    t.bind(state, node => { node.textContent = normalizeFileViewerErrorMessage(error, context?.options); });
   }
 
   return {

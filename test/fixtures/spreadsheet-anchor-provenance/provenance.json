@@ -1,0 +1,52 @@
+[
+  {
+    "file": "new-chart-absolute.xlsx",
+    "sha256": "01a628c8765504dbc4b92f985f9ccaca6cbe0100a75a75a31a7af0e6a31b56b0",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-chart-missing-from.xlsx",
+    "sha256": "6c5da60038f5129f6f2fcf9163baaa44416b7a8ef87f9ba4e4c0b22d540bef58",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-chart-missing-to.xlsx",
+    "sha256": "fd2564b7a6917c8d3faa54ef6224fd6fa4ae4111f8a86f6c2e2700948ccf5fc9",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-chart-unknown-edit.xlsx",
+    "sha256": "b61ab693ff13fb80c738ca36b87f28649870ad5116ba1c28a2d1b99c7e4c426f",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-chart-unknown-mode.xlsx",
+    "sha256": "0dd24af4c8cbe9673a23a0315238a413a949579dadbd6fc2888de6577bd3cb1c",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-chart-valid.xlsx",
+    "sha256": "803c982bd05ed9948a452d10d95558d888bc411e8fc146d6126de02077016958",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-image-absolute-edit.xlsx",
+    "sha256": "d88df311805850619b45f3ca746e9baefbf697994815f89ca6735a4773a3209a",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-image-oneCell-edit.xlsx",
+    "sha256": "868e38675cfa17c56f89cb56cf654bfca93e09b2ebfa321ffb76f3b9841ed2a0",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-image-unknown-edit.xlsx",
+    "sha256": "c9002603e05a132061da774c0b2e90a765b07790895d51f2da8bc9c1e3cb689c",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  },
+  {
+    "file": "new-image-valid.xlsx",
+    "sha256": "c094a1565a5e7f3bd77be0494f37b5965bb965373db39ffb862cac6af4a0cb6f",
+    "source": "Independent reassessment original OOXML bytes, unchanged"
+  }
+]

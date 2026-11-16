@@ -4,6 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { delimiter, dirname, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { startRegressionDemo } from './regression-demo-server.mjs'
+import { launchBrowserForTest } from '../../../packages/build-support/browser-test-launch.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const require = createRequire(import.meta.url)
@@ -16,7 +17,7 @@ assert.ok(playwright, 'Run with npm exec --package playwright')
 const output = resolve(root, 'output/spreadsheet-resize')
 await mkdir(output, { recursive: true })
 const demo = await startRegressionDemo(root)
-const browser = await (playwright.chromium || playwright.default.chromium).launch({ headless: true })
+const browser = await launchBrowserForTest(playwright.chromium || playwright.default.chromium, 'chromium', { headless: true })
 const page = await browser.newPage({ viewport: { width: 1280, height: 820 } })
 page.setDefaultTimeout(60_000)
 const errors = []

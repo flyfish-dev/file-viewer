@@ -1,3 +1,5 @@
+import { startDemoBootstrap } from './demoBootstrap'
+
 async function bootstrap() {
   // Keep the component shell out of the initial entry. The HTML boot screen is
   // immediately visible while the standard Vue component loads on demand.
@@ -11,16 +13,4 @@ async function bootstrap() {
     .mount('#app')
 }
 
-function reportBootstrapFailure(error: unknown) {
-  console.error('[file-viewer] Failed to start the demo.', error)
-
-  const bootScreen = document.querySelector<HTMLElement>('.app-boot-screen')
-  const bootStatus = document.querySelector<HTMLElement>('.app-boot-status')
-  bootScreen?.classList.add('app-boot-screen--error')
-  bootScreen?.setAttribute('aria-label', 'File Viewer failed to load')
-  if (bootStatus) {
-    bootStatus.textContent = 'The preview could not start. Reload the page to try again.'
-  }
-}
-
-void bootstrap().catch(reportBootstrapFailure)
+startDemoBootstrap(bootstrap)

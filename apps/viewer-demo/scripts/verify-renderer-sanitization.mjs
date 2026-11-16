@@ -1,3 +1,4 @@
+import { browserCoreAliases } from '../../../packages/build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -24,11 +25,8 @@ const sourceAliases = [
   ['@security/maplibre', 'packages/renderers/geo/node_modules/maplibre-gl/dist/maplibre-gl.mjs'],
   ['@security/map-worker', 'packages/renderers/geo/src/maplibre-worker.ts'],
   ['@security/geo', 'packages/renderers/geo/src/geo.ts'],
-  ['@file-viewer/core/assets', 'packages/core/src/assets.ts'],
-  ['@file-viewer/core/export', 'packages/core/src/export.ts'],
-  ['@file-viewer/renderer-text', 'packages/renderers/text/src/index.ts'],
-  ['@file-viewer/core', 'packages/core/src/index.ts']
-].map(([find, relativePath]) => ({ find, replacement: join(root, relativePath) }))
+  ['@file-viewer/renderer-text', 'packages/renderers/text/src/index.ts']
+].map(([find, relativePath]) => ({ find, replacement: join(root, relativePath) })).concat(browserCoreAliases(root))
 
 const findInjectedPackage = (packageName) => {
   const packageRoots =

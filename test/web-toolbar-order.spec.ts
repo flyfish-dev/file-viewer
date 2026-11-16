@@ -280,9 +280,11 @@ describe('@file-viewer/web toolbar order', () => {
       'export-action',
       'theme',
     ]);
-    expect(renderRoot.querySelector('style')?.textContent).toContain(
-      '.file-viewer-web-toolbar[data-toolbar-position="top-center"]{justify-content:center}'
-    );
+    const rules = Array.from(renderRoot.querySelector('style')?.sheet?.cssRules || []);
+    const centeredToolbar = rules.find(rule =>
+      'selectorText' in rule && rule.selectorText === '.file-viewer-web-toolbar[data-toolbar-position="top-center"]'
+    ) as CSSStyleRule | undefined;
+    expect(centeredToolbar?.style.getPropertyValue('justify-content')).toBe('safe center');
   });
 
   it('toggles light and dark mode from a configurable toolbar button (GitHub #97)', async () => {

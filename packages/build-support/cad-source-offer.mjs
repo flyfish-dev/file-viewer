@@ -3,15 +3,15 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
 
-// This public snapshot was read back and cold-built on Oracle. Its standalone
-// preferred sources reproduce the canonical and actual Full owner runtimes.
+// This immutable public snapshot was read back and cold-built on Linux ARM64.
+// The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: '77fd41b331f3576b27f1414918051196fba3e57b',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/77fd41b331f3576b27f1414918051196fba3e57b',
-  sha256: 'aefaf6b781102034095406a095026c3edd5cb4572eaadfd78e7f4833f2bd4a9b',
-  bytes: 189976130,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.3',
-  runtimeSha256: '97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f'
+  sourceCommit: 'a593ecd37fb14eb33eac91a5ac372c0e4f4629a8',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/a593ecd37fb14eb33eac91a5ac372c0e4f4629a8',
+  sha256: 'f1bc0b81f57d027a36c78d4b763e64e50aa2e0837f6195615aa1ca216b754503',
+  bytes: 192874837,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.4-ci-recovery-20261114',
+  runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
 })
 
 // Native preferred sources are distinct from the File Viewer integration source.
@@ -30,17 +30,18 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 ])
 
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
-  // This release includes its complete current integration source, independently
-  // rebuilt against the ordinary Full runtime. Native owner versions stay fixed.
-  releaseVersion: '3.3.3',
+  // Complete preferred inputs with a measured standalone reproduction. Normal
+  // Full/HTTPS verification remains mandatory; native owner versions stay fixed.
+  releaseVersion: '3.3.4',
+  sourceRevision: 'ci-recovery-20261114',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '778a5d0aae54cc731d362155e4679338a1404383d57c0f4464d28ce20203737f',
-  bytes: 354745,
-  files: 86,
-  runtimeBytes: 627662,
-  runtimeSha256: '97010ad2adb3e12f5264ac32eefdfbdf01d4f67271c8db43b5a417fed0e6969f'
+  sha256: '41d42b3babc97e9d38b7bd47bbe3560b25f006bb32775fc2b149788dbcd87813',
+  bytes: 458788,
+  files: 101,
+  runtimeBytes: 926335,
+  runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {

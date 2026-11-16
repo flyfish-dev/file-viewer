@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core'
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core'
 import { parseAdobePaletteInWorker } from './adobeContainerWorkerClient.js'
 import { resolvePhotoshopParseLimits } from './limits.js'
@@ -16,17 +17,7 @@ const resourceStyle = `
 @media (max-width:390px){.adobe-resource-grid{grid-template-columns:1fr}}
 `
 
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tagName)
-  if (className) element.className = className
-  if (text !== undefined) element.textContent = text
-  return element
-}
+
 
 const byteSize = (value: number) => value < 1024
   ? `${value} B`
@@ -42,6 +33,9 @@ export default async function renderAdobeDesignResource(
   type: AdobePaletteFormat,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const createElement = t.element
+
   if (context?.signal?.aborted) throw new DOMException('Adobe resource rendering was aborted.', 'AbortError')
   const documentRef = target.ownerDocument || document
   const limits = resolvePhotoshopParseLimits(context?.options?.design)
@@ -53,13 +47,17 @@ export default async function renderAdobeDesignResource(
     context?.signal
   )
   if (context?.signal?.aborted) throw new DOMException('Adobe resource rendering was aborted.', 'AbortError')
-  const isChinese = (context?.options?.locale || documentRef.documentElement.lang || '').toLowerCase().startsWith('zh')
-  const copy = isChinese ? {
-    ase: 'Adobe 交换色板', aco: 'Adobe Photoshop 色板', colors: '颜色', groups: '分组', version: '版本', size: '文件大小',
-    search: '筛选名称、色值或模型', ungrouped: '未分组', empty: '没有匹配的颜色',
-  } : {
-    ase: 'Adobe Swatch Exchange', aco: 'Adobe Photoshop Color Swatch', colors: 'Colors', groups: 'Groups', version: 'Version', size: 'File size',
-    search: 'Filter names, values, or models', ungrouped: 'Ungrouped', empty: 'No matching colors',
+
+  const copy = {
+    get ase() { return t('design.designResources.ase'); },
+    get aco() { return t('design.designResources.aco'); },
+    get colors() { return t('design.designResources.colors'); },
+    get groups() { return t('design.designResources.groups'); },
+    get version() { return t('design.designResources.version'); },
+    get size() { return t('design.designResources.size'); },
+    get search() { return t('design.designResources.search'); },
+    get ungrouped() { return t('design.designResources.ungrouped'); },
+    get empty() { return t('design.designResources.empty'); }
   }
 
   const style = createElement(documentRef, 'style')
@@ -70,28 +68,28 @@ export default async function renderAdobeDesignResource(
   const toolbar = createElement(documentRef, 'header', 'adobe-resource-toolbar')
   const title = createElement(documentRef, 'div', 'adobe-resource-title')
   title.append(
-    createElement(documentRef, 'strong', undefined, type === 'ase' ? copy.ase : copy.aco),
-    createElement(documentRef, 'span', undefined, `${parsed.colors.length} ${copy.colors.toLowerCase()} · ${type.toUpperCase()} ${parsed.version}`)
+    createElement(documentRef, 'strong', undefined, () => type === 'ase' ? copy.ase : copy.aco),
+    createElement(documentRef, 'span', undefined, () => `${parsed.colors.length} ${copy.colors.toLowerCase()} · ${type.toUpperCase()} ${parsed.version}`)
   )
   const search = createElement(documentRef, 'input', 'adobe-resource-search')
   search.type = 'search'
-  search.placeholder = copy.search
-  search.setAttribute('aria-label', copy.search)
+  t.bind(search, node => { node.placeholder = copy.search; }, 'placeholder')
+  t.bind(search, node => { node.setAttribute('aria-label', copy.search); }, 'aria-label')
   toolbar.append(title, search)
 
   const content = createElement(documentRef, 'div', 'adobe-resource-content')
   const summary = createElement(documentRef, 'div', 'adobe-resource-summary')
   ;[
-    [copy.colors, String(parsed.colors.length)],
-    [copy.groups, String(parsed.groups.length)],
-    [copy.version, parsed.version],
-    [copy.size, byteSize(buffer.byteLength)],
+    [() => copy.colors, String(parsed.colors.length)],
+    [() => copy.groups, String(parsed.groups.length)],
+    [() => copy.version, parsed.version],
+    [() => copy.size, byteSize(buffer.byteLength)],
   ].forEach(([label, value]) => {
     const cell = createElement(documentRef, 'div')
     cell.append(createElement(documentRef, 'span', undefined, label), createElement(documentRef, 'strong', undefined, value))
     summary.appendChild(cell)
   })
-  const empty = createElement(documentRef, 'div', 'adobe-resource-empty', copy.empty)
+  const empty = createElement(documentRef, 'div', 'adobe-resource-empty', () => copy.empty)
   empty.hidden = true
   const groups = new Map<string, AdobePaletteColor[]>()
   parsed.colors.forEach(color => {

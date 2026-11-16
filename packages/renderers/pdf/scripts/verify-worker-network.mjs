@@ -1,3 +1,4 @@
+import { browserCorePlugin } from '../../../build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
 import { createReadStream, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
@@ -26,10 +27,7 @@ window.reloadPdf().then(() => window.probeLoaded = true).catch(error => window.p
   outdir: output, entryNames: 'probe', outExtension: { '.js': '.mjs' },
   bundle: true, splitting: true, format: 'esm', platform: 'browser', target: 'es2022',
   legalComments: 'inline', sourcemap: false,
-  alias: {
-    '@file-viewer/core': join(root, 'packages/core', built ? 'dist/index.js' : 'src/index.ts'),
-    '@file-viewer/core/assets': join(root, 'packages/core', built ? 'dist/assets.js' : 'src/assets.ts')
-  }
+  plugins: [browserCorePlugin(root, { built })]
 })
 
 const scenarios = [

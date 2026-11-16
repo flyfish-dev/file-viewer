@@ -3,9 +3,10 @@ import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { dirname, resolve, join, extname, sep } from 'node:path';
+import { dirname, resolve, join, extname, sep, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '../../../..');
@@ -19,6 +20,7 @@ assert.equal(bpmnPackage.version, drawingPackage.devDependencies['bpmn-js'], 'BP
 const output = resolve(process.env.BPMN_EVIDENCE_DIR || join(root, '.release/issue-297-bpmn'));
 await mkdir(output, { recursive: true });
 const simple = await readFile(join(here, 'fixtures/simple-process.bpmn'), 'utf8');
+globalThis.__fileViewerPrepackObserveNodeFixture?.(relative(root, join(here, 'fixtures/simple-process.bpmn')).split(sep).join('/'), Buffer.from(simple, 'utf8'));
 const pizzaPath = process.env.BPMN_PIZZA_FILE || process.argv[2];
 const pizza = pizzaPath ? await readFile(resolve(pizzaPath), 'utf8') : null;
 if (pizza) assert.equal(createHash('sha256').update(pizza).digest('hex'), '0f2dde4a3698328d1f0be91fd40d2db1c6f18397f56909171a636d1991b4dd2b');
@@ -99,7 +101,7 @@ const expectedIds = xml => [...xml.matchAll(/<bpmndi:BPMN(?:Shape|Edge)\b[^>]*bp
 
 try {
   for (const [name, browserType] of [['chromium', chromium], ['webkit', webkit]]) {
-    const browser = await browserType.launch({ headless: true });
+    const browser = await launchBrowserForTest(browserType, name, { headless: true });
     try {
       const context = await browser.newContext({ viewport: { width: 1000, height: 800 } });
       const page = await context.newPage();

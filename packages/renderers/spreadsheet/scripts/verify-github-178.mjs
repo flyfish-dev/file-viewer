@@ -1,3 +1,4 @@
+import { browserCoreAliases } from '../../../build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -10,6 +11,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const packageRoot = resolve(scriptDir, '..')
 const sourceRoot = resolve(packageRoot, '../../..')
+const bundleOnly = process.argv.includes('--bundle-only')
+const bundleInputs = new Set()
 const sampleOverride = process.env.FILE_VIEWER_ISSUE_178_SAMPLE
 const fixtureCases = sampleOverride
   ? [
@@ -266,8 +269,6 @@ const viteEntry = packageRequire.resolve('vite')
 const vuePluginEntry = packageRequire.resolve('@vitejs/plugin-vue')
 const vueEntry = packageRequire.resolve('vue/dist/vue.esm-bundler.js')
 const vue3Entry = join(sourceRoot, 'packages/components/vue3/src/package/index.ts')
-const coreEntry = join(sourceRoot, 'packages/core/src/index.ts')
-const coreBrowserEntry = join(sourceRoot, 'packages/core/src/browser.ts')
 const spreadsheetEntry = join(packageRoot, 'src/index.ts')
 const { build: viteBuild } = await import(pathToFileURL(viteEntry).href)
 const { default: vue } = await import(pathToFileURL(vuePluginEntry).href)
@@ -379,15 +380,21 @@ try {
       publicDir: false,
       clearScreen: false,
       logLevel: 'error',
-      plugins: [vue()],
+      plugins: [vue(), ...(bundleOnly ? [{
+        name: 'record-bundle-inputs',
+        generateBundle(_options, bundle) {
+          for (const chunk of Object.values(bundle)) {
+            if (chunk.type === 'chunk') for (const id of Object.keys(chunk.modules)) bundleInputs.add(id)
+          }
+        }
+      }] : [])],
       resolve: {
-        alias: {
-          '@issue178/vue3': vue3Entry,
-          '@issue178/spreadsheet': spreadsheetEntry,
-          '@file-viewer/core/browser': coreBrowserEntry,
-          '@file-viewer/core': coreEntry,
-          vue: vueEntry
-        },
+        alias: [
+          { find: '@issue178/vue3', replacement: vue3Entry },
+          { find: '@issue178/spreadsheet', replacement: spreadsheetEntry },
+          ...browserCoreAliases(sourceRoot),
+          { find: 'vue', replacement: vueEntry }
+        ],
         dedupe: ['vue']
       },
       build: {
@@ -398,6 +405,13 @@ try {
     })
   } finally {
     process.chdir(previousCwd)
+  }
+  if (bundleOnly) {
+    const metafile = join(screenshotDir, 'bundle-inputs.json')
+    await writeFile(metafile, JSON.stringify({ inputs: [...bundleInputs].sort() }, null, 2) + '\n')
+    console.log(JSON.stringify({ bundleOnly: true, metafile, inputs: bundleInputs.size }))
+    await rm(harnessRoot, { recursive: true, force: true })
+    process.exit(0)
   }
   await Promise.all([
     ...fixtureCases.map(({ format, path }) => copyFile(path, join(distRoot, `sample.${format}`))),

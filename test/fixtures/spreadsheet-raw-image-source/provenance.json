@@ -1,0 +1,27 @@
+[
+  {
+    "file": "xml-image-valid.xlsx",
+    "source": "Independent synthetic review-fix-3 regression fixture: xml-image-valid.xlsx",
+    "sha256": "de990d26f96671f5a2f6ffa367c5fc7ecc6f3fea6f62ffcfb771ca3c5c455925"
+  },
+  {
+    "file": "xml-image-prefix-alias.xlsx",
+    "source": "Independent synthetic review-fix-3 regression fixture: xml-image-prefix-alias.xlsx",
+    "sha256": "d9f2ab5426abf6ecda654db6360761fa871f54cd6f4d5caad8ddce7a111b2eae"
+  },
+  {
+    "file": "xml-image-default-namespace.xlsx",
+    "source": "Independent synthetic review-fix-3 regression fixture: xml-image-default-namespace.xlsx",
+    "sha256": "2b2be448a65486820908f06b3da6269ec10666e8ed0fa637c10aac6b692e2661"
+  },
+  {
+    "file": "xml-chart-prefix-alias.xlsx",
+    "source": "Independent synthetic review-fix-3 regression fixture: xml-chart-prefix-alias.xlsx",
+    "sha256": "927037911c08a7800d1746fa6c0bf46ed93be76ec0e84fefea988a5cdead7075"
+  },
+  {
+    "file": "xml-chart-default-namespace.xlsx",
+    "source": "Independent synthetic review-fix-3 regression fixture: xml-chart-default-namespace.xlsx",
+    "sha256": "90ce78856b796b249d8c5f0eb72efe73a0a652dc25395923fbc58c304455a99e"
+  }
+]

@@ -1,18 +1,20 @@
+import { browserCorePlugin } from '../packages/build-support/browser-runtime-options.mjs'
 import assert from 'node:assert/strict'
 import { build } from 'esbuild'
 import { chromium, webkit } from 'playwright'
 import { createServer } from 'node:http'
 import { mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { launchBrowserForTest } from '../packages/build-support/browser-test-launch.mjs'
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..')
 const scratch=await mkdtemp(join(tmpdir(),'image-pan-browser-'))
 const output=resolve(process.env.FILE_VIEWER_IMAGE_PAN_EVIDENCE||join(root,'output/issue-392'))
 await mkdir(output,{recursive:true})
 const tiff=await readFile(join(root,'packages/renderers/3d/test/fixtures/geo3d/samples-mit/ordinary.tiff'))
-await build({stdin:{contents:`
+const built=await build({stdin:{contents:`
 import coreImage from './packages/core/src/renderers/image.ts';
 import image from './packages/renderers/image/src/image.ts';
 import {findFileViewerZoomProvider,createViewer} from '@file-viewer/core';
@@ -23,6 +25,7 @@ window.openImage=async(mode,enabled)=>{
   const canvas=document.createElement('canvas');canvas.width=2000;canvas.height=1400;
   const ctx=canvas.getContext('2d');ctx.fillStyle='#237cbd';ctx.fillRect(0,0,2000,1400);ctx.fillStyle='#e6194b';ctx.fillRect(0,0,300,300);ctx.fillStyle='#ffe119';ctx.fillRect(1700,1100,300,300);
   const bytes=mode==='tiff'?await(await fetch('/image.tiff')).arrayBuffer():await(await new Promise(resolve=>canvas.toBlob(resolve))).arrayBuffer();
+  if(mode!=='tiff'&&window.__fileViewerPrepackObserveFixture)await window.__fileViewerPrepackObserveFixture({path:'generated/image-pan.png',bytes:[...new Uint8Array(bytes)]});
   window.abort=new AbortController();
   if(mode==='vanilla'){
     window.publicViewer=createViewer(host,{options:{styleIsolation:'none',image:enabled===undefined?{}:{handTool:enabled}}});
@@ -51,11 +54,18 @@ window.openImage=async(mode,enabled)=>{
 window.state=()=>({left:root.scrollLeft,top:root.scrollTop,width:root.scrollWidth,clientWidth:root.clientWidth,cursor:root.style.cursor,panning:root.dataset.viewerImagePanning,open:!!document.querySelector('[data-open="true"]')});
 window.ready=true;
 for(const name of ['pointerdown','pointermove','pointerup','pointercancel','lostpointercapture','dragstart'])window.addEventListener(name,event=>window.events.push({type:name,pointerType:event.pointerType,buttons:event.buttons,id:event.pointerId,prevented:event.defaultPrevented,target:event.target.className,x:event.clientX,y:event.clientY}));
-`,resolveDir:root},bundle:true,format:'esm',platform:'browser',target:'es2022',alias:{'@file-viewer/core':join(root,'packages/core/src/index.ts')},outfile:join(scratch,'main.js'),logLevel:'warning'})
-const script=await readFile(join(scratch,'main.js'))
+`,resolveDir:root},bundle:true,splitting:true,format:'esm',platform:'browser',target:'es2022',plugins:[browserCorePlugin(root)],outdir:scratch,entryNames:'main',chunkNames:'chunks/[name]-[hash]',write:false,logLevel:'warning'})
+const scripts=new Map()
+for(const file of built.outputFiles){
+  const path=relative(scratch,file.path).split(sep).join('/')
+  assert.ok(path&&!isAbsolute(path)&&!path.split('/').some(part=>!part||part==='.'||part==='..')&&!path.includes('\\')&&path.endsWith('.js'),'Expected an owned JavaScript output route')
+  assert.ok(!scripts.has('/'+path),'Duplicate owned JavaScript output route')
+  scripts.set('/'+path,file.contents)
+}
+assert.ok(scripts.has('/main.js'),'Original image entry route is missing')
 const server=createServer((request,response)=>{
   const path=new URL(request.url,'http://localhost').pathname
-  if(path==='/main.js'){response.setHeader('Content-Type','text/javascript');response.end(script)}
+  if(scripts.has(path)){response.setHeader('Content-Type','text/javascript');response.end(scripts.get(path))}
   else if(path==='/image.tiff'){response.setHeader('Content-Type','image/tiff');response.end(tiff)}
   else if(path==='/'){response.setHeader('Content-Type','text/html');response.end('<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><style>body{margin:0}#app{width:700px;height:500px}</style><div id="app"></div><script type="module" src="/main.js"></script>')}
   else{response.writeHead(404);response.end()}
@@ -65,7 +75,7 @@ try{
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve))
   const base=`http://127.0.0.1:${server.address().port}`
   for(const [engine,browserType] of [['chromium',chromium],['webkit',webkit]]){
-    const browser=await browserType.launch({headless:true})
+    const browser=await launchBrowserForTest(browserType,engine,{headless:true})
     try{
       for(const mode of ['core','standalone','tiff','vanilla']){
         const errors=[],external=[]

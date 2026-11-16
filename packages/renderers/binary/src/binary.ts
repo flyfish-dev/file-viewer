@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core';
 import type {
   FileRenderContext,
   FileViewerBinaryInspectorOptions,
@@ -23,23 +24,9 @@ const styles = `
 [data-viewer-theme='dark'] .fv-binary{background:#101720;color:#e5edf7}[data-viewer-theme='dark'] .fv-binary-header,[data-viewer-theme='dark'] .fv-binary-panel,[data-viewer-theme='dark'] .fv-binary-scroll{background:#111b27}[data-viewer-theme='dark'] .fv-binary-header,[data-viewer-theme='dark'] .fv-binary-panel,[data-viewer-theme='dark'] .fv-binary-panel:last-child,[data-viewer-theme='dark'] .fv-binary-column-head{border-color:#29394c}[data-viewer-theme='dark'] .fv-binary-column-head,[data-viewer-theme='dark'] .fv-binary-panel h3{background:#162231;color:#9bb0c8}[data-viewer-theme='dark'] .fv-binary-row,[data-viewer-theme='dark'] .fv-binary-inspector div{border-color:#1d2a39}[data-viewer-theme='dark'] .fv-binary-byte{color:#dbeafe}[data-viewer-theme='dark'] .fv-binary-byte:hover,[data-viewer-theme='dark'] .fv-binary-byte.is-selected,[data-viewer-theme='dark'] .fv-binary-tree-node:hover,[data-viewer-theme='dark'] .fv-binary-tree-node.is-selected{background:#1e3a5f;color:#eff6ff}
 `;
 
-const create = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tag);
-  if (className) element.className = className;
-  if (text !== undefined) element.textContent = text;
-  return element;
-};
 
-const formatBytes = (value: number) => value < 1024
-  ? `${value} B`
-  : value < 1024 * 1024
-    ? `${(value / 1024).toFixed(1)} KiB`
-    : `${(value / 1024 / 1024).toFixed(1)} MiB`;
+
+
 
 const abortError = () => new DOMException('Binary inspection was cancelled.', 'AbortError');
 
@@ -129,6 +116,10 @@ export default async function renderBinary(
   context?: FileRenderContext,
   overrides: FileViewerBinaryInspectorOptions = {}
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const create = t.element
+  const formatBytes = t.formatBytes
+
   const options = { ...context?.options?.binary, ...overrides };
   const limits = normalizeBinaryInspectorLimits(options);
   if (buffer.byteLength > limits.maxFileBytes) {
@@ -145,17 +136,17 @@ export default async function renderBinary(
   root.dataset.binaryInspectorReady = 'true';
   root.dataset.binaryTemplate = analysis.template;
   const header = create(documentRef, 'header', 'fv-binary-header');
-  const title = create(documentRef, 'h2', undefined, 'Binary inspector');
-  const summary = create(documentRef, 'span', 'fv-binary-summary', `${analysis.label} | ${formatBytes(bytes.byteLength)} | Worker parsed`);
+  const title = create(documentRef, 'h2', undefined, () => t('binary.ui.binary.inspector.a17d48'));
+  const summary = create(documentRef, 'span', 'fv-binary-summary', () => t('binary.ui.worker.parsed.82ab13', { p0: analysis.label, p1: formatBytes(bytes.byteLength) }));
   header.append(title, summary);
   const layout = create(documentRef, 'div', 'fv-binary-layout');
   const treePanel = create(documentRef, 'aside', 'fv-binary-panel');
-  treePanel.append(create(documentRef, 'h3', undefined, 'Structure'));
+  treePanel.append(create(documentRef, 'h3', undefined, () => t('cad.inspector.title')));
   const tree = create(documentRef, 'div', 'fv-binary-tree');
   treePanel.append(tree);
   const hexPanel = create(documentRef, 'section', 'fv-binary-hex-panel');
   const columnHead = create(documentRef, 'div', 'fv-binary-column-head');
-  columnHead.append(create(documentRef, 'span', undefined, 'Offset'), create(documentRef, 'span', undefined, 'Hexadecimal'), create(documentRef, 'span', undefined, 'ASCII'));
+  columnHead.append(create(documentRef, 'span', undefined, () => t('binary.ui.offset.ce6677')), create(documentRef, 'span', undefined, () => t('binary.ui.hexadecimal.54b1a9')), create(documentRef, 'span', undefined, 'ASCII'));
   const scroll = create(documentRef, 'div', 'fv-binary-scroll');
   const spacer = create(documentRef, 'div', 'fv-binary-spacer');
   const rows = create(documentRef, 'div', 'fv-binary-rows');
@@ -163,7 +154,7 @@ export default async function renderBinary(
   scroll.append(spacer);
   hexPanel.append(columnHead, scroll);
   const inspectorPanel = create(documentRef, 'aside', 'fv-binary-panel');
-  inspectorPanel.append(create(documentRef, 'h3', undefined, 'Typed values'));
+  inspectorPanel.append(create(documentRef, 'h3', undefined, () => t('binary.ui.typed.values.4e4cf0')));
   const inspector = create(documentRef, 'div', 'fv-binary-inspector');
   inspectorPanel.append(inspector);
   layout.append(treePanel, hexPanel, inspectorPanel);
@@ -200,7 +191,7 @@ export default async function renderBinary(
         const byte = create(documentRef, 'button', `fv-binary-byte${isSelected(byteOffset) ? (selection.end - selection.start === 1 ? ' is-selected' : ' is-range') : ''}`, formatBinaryByte(bytes[byteOffset]));
         byte.type = 'button';
         byte.dataset.binaryByteOffset = String(byteOffset);
-        byte.setAttribute('aria-label', `Byte ${byteOffset}: ${formatBinaryByte(bytes[byteOffset])}`);
+        t.bind(byte, node => node.setAttribute('aria-label', t('binary.ui.byte.8ed6f4', { p0: byteOffset, p1: formatBinaryByte(bytes[byteOffset]) })), 'aria-label');
         byte.addEventListener('click', () => selectRange(byteOffset, byteOffset + 1, false));
         hexValues.append(byte);
         ascii += printable(bytes[byteOffset]);
@@ -232,7 +223,7 @@ export default async function renderBinary(
   const renderInspector = () => {
     const description = create(documentRef, 'div');
     const selected = create(documentRef, 'div');
-    selected.append(create(documentRef, 'dt', undefined, 'Selection'), create(documentRef, 'dd', undefined, selection.end > selection.start ? rangeText(selection.start, selection.end) : 'none'));
+    selected.append(create(documentRef, 'dt', undefined, () => t('binary.ui.selection.d1f8e5')), create(documentRef, 'dd', undefined, () => selection.end > selection.start ? rangeText(selection.start, selection.end) : t('binary.ui.none.71f8e7')));
     description.append(selected);
     for (const [label, value] of typedValues(bytes, selection.start, limits.maxStringBytes)) {
       const row = create(documentRef, 'div');

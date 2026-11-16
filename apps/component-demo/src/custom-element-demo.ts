@@ -1,3 +1,4 @@
+import { demoLanguage } from './locale'
 import {
   defineFileViewerElement,
   type FileViewerElement,
@@ -18,6 +19,7 @@ if (!viewer) {
 viewer.src = demoSource.url
 viewer.filename = demoSource.filename
 viewer.options = {
+  locale: demoLanguage.locale,
   theme: 'light',
   toolbar: {
     position: 'bottom-right'
@@ -35,3 +37,5 @@ viewer.addEventListener('viewer-event', event => {
 viewer.addEventListener('viewer-ready', () => {
   document.body.setAttribute('data-component', 'custom-element')
 })
+
+demoLanguage.subscribe(() => { viewer.options = { ...viewer.options, locale: demoLanguage.locale } })

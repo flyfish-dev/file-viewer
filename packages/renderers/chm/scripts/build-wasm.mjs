@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { access, mkdir, readFile, rm } from 'node:fs/promises'
-import { dirname, resolve } from 'node:path'
+import { dirname, isAbsolute, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { brotliCompressSync, constants as zlibConstants } from 'node:zlib'
 import { distributionMode } from '../../../build-support/distribution-mode.mjs'
@@ -33,8 +33,29 @@ await access(resolve(rustDir, 'Cargo.lock'))
 await rm(outputDir, { recursive: true, force: true })
 await mkdir(outputDir, { recursive: true })
 
+// Validate the requested distribution and normalize native source labels in both
+// modes, so source builds reproduce the reviewed runtime-only WASM bytes.
+distributionMode()
+const buildEnvironment = runtimeOnlyRustBuildEnvironment({
+  mode: 'runtime-only', workspaceRoot: resolve(packageDir, '../../..')
+})
+const sysroot = execFileSync('rustc', ['--print', 'sysroot'], {
+  cwd: rustDir, env: buildEnvironment, encoding: 'utf8'
+}).trim()
+if (!isAbsolute(sysroot) || /[\r\n\0]/.test(sysroot)) throw new Error('Rust sysroot must be one absolute path.')
+// This is the frozen artifact's existing file!/panic source-label namespace.
+// The compiler's real host, sysroot and version are recorded separately below.
+const sourceSysroot = '/build-user/.rustup/toolchains/stable-aarch64-apple-darwin'
+buildEnvironment.CARGO_ENCODED_RUSTFLAGS += `\x1f--remap-path-prefix=${sysroot}=${sourceSysroot}`
+console.log('[renderer-chm] Rust build identity:', JSON.stringify({
+  compiler: execFileSync('rustc', ['--version', '--verbose'], {
+    cwd: rustDir, env: buildEnvironment, encoding: 'utf8'
+  }).trim(),
+  sysroot,
+  sourceLabelSysroot: sourceSysroot
+}))
 run('cargo', ['build', '--release', '--locked', '--target', 'wasm32-unknown-unknown'], {
-  env: runtimeOnlyRustBuildEnvironment({ mode: distributionMode(), workspaceRoot: resolve(packageDir, '../../..') })
+  env: buildEnvironment
 })
 run('wasm-bindgen', [
   wasmInput,

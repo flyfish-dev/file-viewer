@@ -1,12 +1,14 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import FileViewer from '@file-viewer/react-full'
 import { mountViewer, type ViewerController } from '@file-viewer/web-full'
 import { getDemoSource } from './demoSource'
+import { demoLanguage, demoText, installDemoLanguageSelector } from './locale'
 import './styles.css'
 
 const demoSource = getDemoSource()
 const viewerOptions = {
+  locale: demoLanguage.locale,
   theme: 'light' as const,
   toolbar: {
     position: 'bottom-right' as const,
@@ -34,7 +36,9 @@ function WebViewerPanel() {
       options: viewerOptions
     })
 
+    const unsubscribe = demoLanguage.subscribe(() => controller.update({ options: { ...viewerOptions, locale: demoLanguage.locale } }))
     return () => {
+      unsubscribe()
       controller.destroy()
     }
   }, [])
@@ -43,6 +47,11 @@ function WebViewerPanel() {
 }
 
 function App() {
+  const [locale, setLocale] = useState(demoLanguage.locale)
+  useEffect(() => {
+    installDemoLanguageSelector()
+    return demoLanguage.subscribe(() => setLocale(demoLanguage.locale))
+  }, [])
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -50,18 +59,18 @@ function App() {
           <img src="/logo.png" alt="" />
           <div>
             <h1>File Viewer</h1>
-            <p>Native component examples with the full offline runtime</p>
+            <p>{demoText('description')}</p>
           </div>
         </div>
-        <nav className="topbar-actions" aria-label="Demo links">
+        <nav className="topbar-actions" aria-label={demoText('links')}>
           <a href="/manual-js.html" target="_blank" rel="noreferrer">
-            Manual JS
+            {demoText('manual')}
           </a>
           <a href="/custom-element.html" target="_blank" rel="noreferrer">
-            Custom element
+            {demoText('element')}
           </a>
           <a href="/manual-iife.html" target="_blank" rel="noreferrer">
-            Script tag
+            {demoText('script')}
           </a>
           <a href="/requirejs.html" target="_blank" rel="noreferrer">
             RequireJS
@@ -81,7 +90,7 @@ function App() {
         </nav>
       </header>
 
-      <section className="viewer-grid" aria-label="Component preview">
+      <section className="viewer-grid" aria-label={demoText('preview')}>
         <article className="viewer-panel">
           <h2>Vanilla JS / Web Full</h2>
           <div className="viewer-frame">
@@ -95,7 +104,7 @@ function App() {
             <FileViewer
               url={demoSource.url}
               filename={demoSource.filename}
-              options={viewerOptions}
+              options={{ ...viewerOptions, locale }}
               data-testid="react-viewer"
             />
           </div>

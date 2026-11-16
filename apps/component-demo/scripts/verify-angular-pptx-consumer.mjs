@@ -8,6 +8,7 @@ import { delimiter, dirname, extname, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { buildPackedIssueConsumer } from './build-packed-issue-consumer.mjs'
 import { verifyAngularDevelopmentAssetModes } from './lib/angular-asset-modes.mjs'
+import { launchBrowserForTest } from '../../../packages/build-support/browser-test-launch.mjs'
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const project = process.env.PACKED_ANGULAR_CONSUMER_DIR
@@ -57,7 +58,7 @@ for (const path of [
 assert.ok(playwright, 'Run with npm exec --package playwright')
 const browserType = playwright[browserName] || playwright.default?.[browserName]
 assert.ok(browserType, `Playwright does not provide ${browserName}`)
-const browser = await browserType.launch({
+const browser = await launchBrowserForTest(browserType, browserName, {
   headless: true
 })
 const report = {

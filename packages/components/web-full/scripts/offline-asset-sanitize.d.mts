@@ -25,7 +25,10 @@ export interface OfflineAssetSanitizerPlugin {
 }
 
 export declare function sanitizeOfflineViewerAssetTree(
-  root: string
+  root: string,
+  options?: {
+    retainedLegalFiles?: Array<{ path: string; bytes: number; sha256: string }>
+  }
 ): Promise<OfflineAssetSanitizationResult>
 
 export declare function createOfflineAssetSanitizerPlugin(

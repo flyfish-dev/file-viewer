@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>File Viewer — spreadsheet comments</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #fff;
+        color: #1f2937;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        min-height: 48px;
+        box-sizing: border-box;
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      header span {
+        font-size: 12px;
+        font-weight: 400;
+        color: #64748b;
+      }
+      #viewer {
+        flex: 1;
+        min-height: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>File Viewer <span>Spreadsheet comments</span></header>
+    <div id="viewer"></div>
+    <script type="module" src="./entry.ts"></script>
+  </body>
+</html>

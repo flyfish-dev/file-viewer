@@ -7,6 +7,7 @@ import { resolve } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { chromium } from 'playwright'
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs'
 
 const workspace = fileURLToPath(new URL('../../../../', import.meta.url))
 const packageRoot = fileURLToPath(new URL('../', import.meta.url))
@@ -153,7 +154,7 @@ test('issue #304: actual diff2html keeps patch panes and source rows aligned', a
       }
     }]
   })
-  const browser = await chromium.launch({ headless: true })
+  const browser = await launchBrowserForTest(chromium, 'chromium', { headless: true })
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
   const errors = []
   const requests = []

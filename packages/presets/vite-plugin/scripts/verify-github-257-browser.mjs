@@ -6,6 +6,7 @@ import { copyFile, mkdir, mkdtemp, readFile, readdir, realpath, rm, writeFile } 
 import { tmpdir } from 'node:os'
 import { delimiter, dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const sourceRoot = resolve(packageDir, '../../..')
@@ -30,7 +31,7 @@ await mkdir(output, { recursive: true })
 await mkdir(join(work, 'pack'))
 run('pnpm', ['pack', '--pack-destination', join(work, 'pack')], packageDir)
 const tarball = join(work, 'pack', (await readdir(join(work, 'pack'))).find(name => name.endsWith('.tgz')))
-const browser = await chromium.launch({ headless: true })
+const browser = await launchBrowserForTest(chromium, 'chromium', { headless: true })
 async function checkPage(origin, expectedBase, workerPath, label) {
   const page = await browser.newPage()
   const errors = []

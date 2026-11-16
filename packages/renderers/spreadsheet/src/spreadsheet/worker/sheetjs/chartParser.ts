@@ -1,3 +1,7 @@
+import { readSourceAnchor } from './sourceAnchor.js'
+import { createDrawingRowAnchor } from './drawingRowAnchor.js'
+import { readStoredRowSizing } from './rowSizing.js'
+import { readBoundedZipText, type XmlReadBudget } from './xmlBudget.js'
 import {
   DOMParser,
   type Document as XmlDocument,
@@ -171,16 +175,20 @@ const parseXml = (xml: string) => {
   )
 }
 
-export const loadXml = async (zip: JSZip, path: string) => {
+export const loadXml = async (zip: JSZip, path: string, budget?: XmlReadBudget) => {
   const file = zip.file(path)
   if (!file) {
     return null
   }
-  return parseXml(await file.async('text'))
+  return parseXml(budget ? await readBoundedZipText(file, budget) : await file.async('text'))
 }
 
-export const loadRelationships = async (zip: JSZip, sourcePart: string) => {
-  const document = await loadXml(zip, relationshipPartPath(sourcePart))
+export const loadRelationships = async (
+  zip: JSZip,
+  sourcePart: string,
+  readPart = (path: string) => loadXml(zip, path)
+) => {
+  const document = await readPart(relationshipPartPath(sourcePart))
   if (!document) {
     return []
   }
@@ -559,6 +567,8 @@ const parseDrawingCharts = async (
         return null
       }
 
+      const sourceAnchor = readSourceAnchor(anchor, chartReference, 'chart')
+      // Preserve existing display fallback separately; it is never source evidence.
       const from = parseMarker(firstChildByLocal(anchor, 'from')) || {
         row: 0,
         col: 0,
@@ -571,6 +581,8 @@ const parseDrawingCharts = async (
 
       return {
         ...chart,
+        sourceAnchor,
+        rowAnchor: createDrawingRowAnchor(localName(anchor), anchor.getAttribute('editAs'), from, to),
         id: name || chartRelationship.target || `chart-${index + 1}`,
         from,
         to,
@@ -614,7 +626,8 @@ export const parseSpreadsheetCharts = async (data: ArrayBuffer, workbook?: WorkB
       worksheet['!fileViewerLayout'] = {}
       worksheet['!fileViewerLayout'] = {
         ...await readStoredSheetLayout(zip, worksheetRelationship.target),
-        maximumDigitWidth
+        maximumDigitWidth,
+        rowSizing: await readStoredRowSizing(zip, worksheetRelationship.target)
       }
     }
 

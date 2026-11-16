@@ -1,7 +1,7 @@
+import { createFileViewerTranslator } from '@file-viewer/core'
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core'
 import { parseAdobeBrushResourceInWorker } from './adobeBrushResourceClient.js'
 import type {
-  AdobeBrushLibraryDocument,
   AdobeBrushResourceFormat,
   AdobeBrushSamplePreview,
   AdobeBrushShapeSummary,
@@ -18,12 +18,7 @@ const styles = `
 @media(max-width:390px){.adobe-brush-grid{grid-template-columns:1fr}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(documentRef: Document, tag: K, className?: string, text?: string) => {
-  const value = documentRef.createElement(tag)
-  if (className) value.className = className
-  if (text !== undefined) value.textContent = text
-  return value
-}
+
 
 const byteSize = (value: number) => value < 1024
   ? `${value} B`
@@ -97,20 +92,29 @@ export default async function renderAdobeBrushResource(
   format: AdobeBrushResourceFormat,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+
   const parsed = await parseAdobeBrushResourceInWorker(buffer, format, context?.options?.design, context?.signal)
   if (context?.signal?.aborted) throw new DOMException('Adobe resource rendering was aborted.', 'AbortError')
   const documentRef = target.ownerDocument || document
-  const isChinese = (context?.options?.locale || documentRef.documentElement.lang || '').toLowerCase().startsWith('zh')
-  const copy = isChinese ? {
-    abr: 'Photoshop 笔刷库', csh: 'Photoshop 自定形状', search: '筛选名称、ID 或类型', empty: '没有匹配的资源',
-    version: '版本', size: '文件大小', engine: '解析引擎', brushes: '笔刷预设', samples: '笔尖像素', patterns: '图案', shapes: '形状',
-    metadata: '元数据', noPreview: '无像素预览', vectorBoundary: '路径几何已解析；减去、相交、排除等 Photoshop 布尔运算仅保留元数据，不冒充最终栅格效果。',
-    brushBoundary: '展示文件中实际解码的笔尖/图案及预设参数，不模拟 Photoshop 笔触引擎。',
-  } : {
-    abr: 'Photoshop Brush Library', csh: 'Photoshop Custom Shapes', search: 'Filter names, IDs, or types', empty: 'No matching resources',
-    version: 'Version', size: 'File size', engine: 'Parser', brushes: 'Brush presets', samples: 'Decoded tips', patterns: 'Patterns', shapes: 'Shapes',
-    metadata: 'Metadata', noPreview: 'No pixel preview', vectorBoundary: 'Path geometry is decoded. Photoshop subtract/intersect/exclude composition is exposed as metadata, not presented as final raster output.',
-    brushBoundary: 'Decoded tip/pattern pixels and preset parameters are shown; Photoshop stroke simulation is outside this preview.',
+
+  const copy = {
+    get abr() { return t('design.adobeBrushResources.abr'); },
+    get csh() { return t('design.adobeBrushResources.csh'); },
+    get search() { return t('design.adobeBrushResources.search'); },
+    get empty() { return t('design.adobeBrushResources.empty'); },
+    get version() { return t('design.adobeBrushResources.version'); },
+    get size() { return t('design.adobeBrushResources.size'); },
+    get engine() { return t('design.adobeBrushResources.engine'); },
+    get brushes() { return t('design.adobeBrushResources.brushes'); },
+    get samples() { return t('design.adobeBrushResources.samples'); },
+    get patterns() { return t('design.adobeBrushResources.patterns'); },
+    get shapes() { return t('design.adobeBrushResources.shapes'); },
+    get metadata() { return t('design.adobeBrushResources.metadata'); },
+    get noPreview() { return t('design.adobeBrushResources.noPreview'); },
+    get vectorBoundary() { return t('design.adobeBrushResources.vectorBoundary'); },
+    get brushBoundary() { return t('design.adobeBrushResources.brushBoundary'); }
   }
   const style = element(documentRef, 'style')
   style.textContent = styles
@@ -122,26 +126,26 @@ export default async function renderAdobeBrushResource(
     ? parsed.brushes.length + parsed.samples.length + parsed.patterns.length
     : parsed.shapes.length
   title.append(
-    element(documentRef, 'strong', undefined, parsed.format === 'abr' ? copy.abr : copy.csh),
-    element(documentRef, 'span', undefined, `${total} resources · ${parsed.format.toUpperCase()} ${parsed.version}`)
+    element(documentRef, 'strong', undefined, () => parsed.format === 'abr' ? copy.abr : copy.csh),
+    element(documentRef, 'span', undefined, () => t('design.ui.resources.eabdb3', { p0: total, p1: parsed.format.toUpperCase(), p2: parsed.version }))
   )
   const search = element(documentRef, 'input', 'adobe-brush-search')
   search.type = 'search'
-  search.placeholder = copy.search
-  search.setAttribute('aria-label', copy.search)
+  t.bind(search, node => { node.placeholder = copy.search; }, 'placeholder')
+  t.bind(search, node => { node.setAttribute('aria-label', copy.search); }, 'aria-label')
   const toolbar = element(documentRef, 'header', 'adobe-brush-toolbar')
   toolbar.append(title, search)
   const content = element(documentRef, 'div', 'adobe-brush-content')
   const summary = element(documentRef, 'div', 'adobe-brush-summary')
-  const summaryValues: Array<[string, string]> = parsed.format === 'abr'
-    ? [[copy.brushes, String(parsed.brushes.length)], [copy.samples, String(parsed.samples.length)], [copy.patterns, String(parsed.patterns.length)], [copy.size, byteSize(buffer.byteLength)]]
-    : [[copy.shapes, String(parsed.shapes.length)], [copy.version, parsed.version], [copy.engine, parsed.engine], [copy.size, byteSize(buffer.byteLength)]]
+  const summaryValues: Array<[() => string, string]> = parsed.format === 'abr'
+    ? [[() => copy.brushes, String(parsed.brushes.length)], [() => copy.samples, String(parsed.samples.length)], [() => copy.patterns, String(parsed.patterns.length)], [() => copy.size, byteSize(buffer.byteLength)]]
+    : [[() => copy.shapes, String(parsed.shapes.length)], [() => copy.version, parsed.version], [() => copy.engine, parsed.engine], [() => copy.size, byteSize(buffer.byteLength)]]
   summaryValues.forEach(([label, value]) => {
     const cell = element(documentRef, 'div')
     cell.append(element(documentRef, 'span', undefined, label), element(documentRef, 'strong', undefined, value))
     summary.appendChild(cell)
   })
-  content.append(summary, element(documentRef, 'p', 'adobe-brush-note', parsed.format === 'abr' ? copy.brushBoundary : copy.vectorBoundary))
+  content.append(summary, element(documentRef, 'p', 'adobe-brush-note', () => parsed.format === 'abr' ? copy.brushBoundary : copy.vectorBoundary))
   const cards: CardBinding[] = []
   const deferredDraws = new Map<Element, () => void>()
   const observerConstructor = documentRef.defaultView?.IntersectionObserver
@@ -203,12 +207,12 @@ export default async function renderAdobeBrushResource(
           const canvas = element(documentRef, 'canvas')
           preview.appendChild(canvas)
           deferPreview(preview, () => renderComputedTip(canvas, brush.shape))
-        } else preview.appendChild(element(documentRef, 'span', undefined, copy.noPreview))
+        } else preview.appendChild(element(documentRef, 'span', undefined, () => copy.noPreview))
         const details = element(documentRef, 'div', 'adobe-brush-copy')
         details.append(
-          element(documentRef, 'strong', undefined, brush.name || '(unnamed brush)'),
-          element(documentRef, 'span', undefined, `${brush.shape.type} · ${brush.shape.size.toFixed(1)} px · ${brush.shape.angle.toFixed(1)}°`),
-          element(documentRef, 'code', undefined, [brush.hasDynamics && 'dynamics', brush.hasTexture && 'texture', brush.hasDualBrush && 'dual', brush.toolType].filter(Boolean).join(' · ') || copy.metadata)
+          element(documentRef, 'strong', undefined, () => brush.name || t('design.ui.unnamed.brush.30bf19')),
+          element(documentRef, 'span', undefined, () => t('design.ui.px.0898ab', { p0: brush.shape.type, p1: brush.shape.size.toFixed(1), p2: brush.shape.angle.toFixed(1) })),
+          element(documentRef, 'code', undefined, () => [brush.hasDynamics && 'dynamics', brush.hasTexture && 'texture', brush.hasDualBrush && 'dual', brush.toolType].filter(Boolean).join(' · ') || copy.metadata)
         )
         card.append(preview, details)
         bindCard(grid, card, `${brush.name} ${brush.shape.type} ${brush.shape.sampledDataId || ''} ${brush.toolType || ''}`)
@@ -223,7 +227,7 @@ export default async function renderAdobeBrushResource(
         preview.appendChild(canvas)
         deferPreview(preview, () => renderAlpha(canvas, sample))
         const details = element(documentRef, 'div', 'adobe-brush-copy')
-        details.append(element(documentRef, 'strong', undefined, sample.id || '(unnamed tip)'), element(documentRef, 'span', undefined, `${sample.width} × ${sample.height}`))
+        details.append(element(documentRef, 'strong', undefined, () => sample.id || t('design.ui.unnamed.tip.0813e8')), element(documentRef, 'span', undefined, `${sample.width} × ${sample.height}`))
         card.append(preview, details)
         bindCard(grid, card, `${sample.id} tip ${sample.width} ${sample.height}`)
       })
@@ -264,15 +268,15 @@ export default async function renderAdobeBrushResource(
       const operations = [...new Set(shape.paths.map(path => path.operation).filter(Boolean))]
       const details = element(documentRef, 'div', 'adobe-brush-copy')
       details.append(
-        element(documentRef, 'strong', undefined, shape.name || '(unnamed shape)'),
-        element(documentRef, 'span', undefined, `${shape.width} × ${shape.height} · ${shape.paths.length} paths`),
+        element(documentRef, 'strong', undefined, () => shape.name || t('design.ui.unnamed.shape.1b3a1c')),
+        element(documentRef, 'span', undefined, () => t('design.ui.paths.eb5db6', { p0: shape.width, p1: shape.height, p2: shape.paths.length })),
         element(documentRef, 'code', undefined, operations.join(' · ') || shape.id)
       )
       card.append(preview, details)
       bindCard(grid, card, `${shape.name} ${shape.id} ${operations.join(' ')}`)
     })
   }
-  const empty = element(documentRef, 'div', 'adobe-brush-empty', copy.empty)
+  const empty = element(documentRef, 'div', 'adobe-brush-empty', () => copy.empty)
   empty.hidden = true
   content.appendChild(empty)
   root.append(toolbar, content)

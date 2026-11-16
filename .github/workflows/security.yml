@@ -98,6 +98,7 @@ jobs:
             pkg:npm/jszip@3.10.2,
             pkg:npm/@flyfish-dev/cad-viewer@0.8.3,
             pkg:npm/dwf-viewer@0.6.7,
+            pkg:npm/@mlightcad/libredwg-web@0.7.9,
             pkg:npm/@img/sharp-libvips-darwin-arm64@1.3.3,
             pkg:npm/@img/sharp-libvips-darwin-x64@1.3.3,
             pkg:npm/@img/sharp-libvips-linux-arm@1.3.3,

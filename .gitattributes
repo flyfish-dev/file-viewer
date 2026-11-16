@@ -51,3 +51,5 @@ apps/viewer-demo/public/example/licenses/fox/UPSTREAM-README.md -text
 apps/viewer-demo/public/example/licenses/fox/metadata.json -text
 # Corresponding-source snapshots retain all original source and legal bytes.
 packages/build-support/cad-source-snapshots/** -text -whitespace
+# Preserve the fixed HEIC upstream originals, including the outer MIT's CRLF.
+packages/renderers/image/THIRD_PARTY_NOTICES.md -text

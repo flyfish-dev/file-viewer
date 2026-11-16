@@ -5,7 +5,8 @@ import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { launchBrowserForTest } from '../packages/build-support/browser-test-launch.mjs'
 const root=resolve(import.meta.dirname,'..')
 const output=resolve(process.env.FILE_VIEWER_TOOLBAR_KEYBOARD_EVIDENCE||join(root,'output/issue-419'))
 const cold=process.env.FILE_VIEWER_TOOLBAR_COLD_ROOT
@@ -43,14 +44,22 @@ window.fixture={
  ready(){const img=this.find('img');return window.controller()?.getState()?.ready&&img?.complete&&img?.naturalWidth>0;},
  update(){window.loadRevision=(window.loadRevision||0)+1;return window.controller().update({buffer:undefined,url:'/slow.png?load='+window.loadRevision,filename:'replacement.png'});}
 };window.ready=true;
-`},bundle:true,format:'esm',platform:'browser',target:'es2022',write:false,define:{'process.env.NODE_ENV':'"production"'},plugins:[{name:'one-core',setup(b){b.onResolve({filter:/^(?:react|react-dom)(?:\/.*)?$/},args=>({path:appRequire.resolve(args.path)}));b.onResolve({filter:/^@file-viewer\/core(?:\/.*)?$/},args=>({path:cold?consumer.resolve(args.path):join(root,'packages/core/src',args.path.slice('@file-viewer/core'.length).replace(/^\//,'')||'index')+'.ts'}))}}],logLevel:'warning'})
+`},bundle:true,splitting:true,format:'esm',platform:'browser',target:'es2022',outdir:scratch,entryNames:'entry',chunkNames:'chunks/[name]-[hash]',write:false,define:{'process.env.NODE_ENV':'"production"'},plugins:[{name:'one-core',setup(b){b.onResolve({filter:/^(?:react|react-dom)(?:\/.*)?$/},args=>({path:appRequire.resolve(args.path)}));b.onResolve({filter:/^@file-viewer\/core(?:\/.*)?$/},args=>({path:cold?consumer.resolve(args.path):join(root,'packages/core/src',args.path.slice('@file-viewer/core'.length).replace(/^\//,'')||'index')+'.ts'}))}}],logLevel:'warning'})
+const scripts=new Map()
+for(const file of result.outputFiles){
+ const path=relative(scratch,file.path).split(sep).join('/')
+ assert.ok(path&&!isAbsolute(path)&&!path.split('/').some(part=>!part||part==='.'||part==='..')&&!path.includes('\\')&&path.endsWith('.js'),'Expected an owned JavaScript output route')
+ assert.ok(!scripts.has('/'+path),'Duplicate owned JavaScript output route')
+ scripts.set('/'+path,file.contents)
+}
+assert.ok(scripts.has('/entry.js'),'Original keyboard entry route is missing')
 const image=await readFile(join(root,'.github/social-preview.png'))
-const server=createServer((req,res)=>{const path=new URL(req.url,'http://localhost').pathname;if(path==='/entry.js'){res.setHeader('Content-Type','text/javascript');res.end(result.outputFiles[0].contents)}else if(path==='/image.png'||path==='/slow.png'){res.setHeader('Content-Type','image/png');if(path==='/slow.png')setTimeout(()=>res.end(image),250);else res.end(image)}else if(path==='/'){res.setHeader('Content-Type','text/html');res.end('<!doctype html><meta charset="utf-8"><style>#host{width:900px;height:650px}</style><button id="before">Before viewer</button><main id="host"></main><button id="after">After viewer</button><script type="module" src="/entry.js"></script>')}else{res.writeHead(404);res.end()}})
+const server=createServer((req,res)=>{const path=new URL(req.url,'http://localhost').pathname;if(scripts.has(path)){res.setHeader('Content-Type','text/javascript');res.end(scripts.get(path))}else if(path==='/image.png'||path==='/slow.png'){res.setHeader('Content-Type','image/png');if(path==='/slow.png')setTimeout(()=>res.end(image),250);else res.end(image)}else if(path==='/'){res.setHeader('Content-Type','text/html');res.end('<!doctype html><meta charset="utf-8"><style>#host{width:900px;height:650px}</style><button id="before">Before viewer</button><main id="host"></main><button id="after">After viewer</button><script type="module" src="/entry.js"></script>')}else{res.writeHead(404);res.end()}})
 const report={status:'running',cases:[],runtime:cold||'current-source',fixture:'Unmodified repository .github/social-preview.png; no reporter-private input.'}
 try{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port
  for(const [engine,type]of [['chromium',chromium],['webkit',webkit]]){
-  const browser=await type.launch({headless:true});try{
+  const browser=await launchBrowserForTest(type,engine,{headless:true});try{
    for(const mode of ['react','core','web','svelte','jquery'])for(const isolation of ['none','shadow']){
     const page=await browser.newPage({viewport:{width:1100,height:850}});const errors=[],slowRequests=[];page.on('request',r=>{if(new URL(r.url()).pathname==='/slow.png')slowRequests.push(r.url())});page.on('pageerror',e=>errors.push(e.message));await page.goto(base);await page.waitForFunction(()=>window.ready);await page.evaluate(([m,i])=>fixture.open(m,i),[mode,isolation]);await page.waitForFunction(()=>fixture.ready());
     // macOS WebKit uses Option-Tab for all controls when Full Keyboard Access

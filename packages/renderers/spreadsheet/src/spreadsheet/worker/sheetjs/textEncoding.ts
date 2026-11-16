@@ -3,7 +3,7 @@ import {
   isValidFileViewerUtf8,
   resolveFileViewerTextEncoding,
   type ResolvedFileViewerTextEncoding,
-} from '@file-viewer/core';
+} from '@file-viewer/core/headless';
 
 export type SpreadsheetTextEncoding = 'auto' | 'utf-8' | 'gbk' | 'gb18030';
 

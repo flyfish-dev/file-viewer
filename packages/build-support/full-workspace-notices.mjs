@@ -10,7 +10,9 @@ export const fullWorkspaceLicensePackages = Object.freeze([
   { packageName: '@file-viewer/renderer-3d', directory: 'packages/renderers/3d', noticeFiles: ['GEO3D_THIRD_PARTY_NOTICES.md'] },
   { packageName: '@file-viewer/renderer-hangul', directory: 'packages/renderers/hangul' },
   { packageName: '@file-viewer/renderer-iwork', directory: 'packages/renderers/iwork' },
-  { packageName: '@file-viewer/renderer-wordperfect', directory: 'packages/renderers/wordperfect' }
+  { packageName: '@file-viewer/renderer-image', directory: 'packages/renderers/image', noticeFiles: ['THIRD_PARTY_NOTICES.md'] },
+  { packageName: '@file-viewer/renderer-wordperfect', directory: 'packages/renderers/wordperfect', noticeFiles: ['THIRD_PARTY_NOTICES.md'] },
+  { packageName: '@file-viewer/renderer-pdf', directory: 'packages/renderers/pdf', noticeFiles: ['THIRD_PARTY_NOTICES.md'] }
 ])
 
 export async function verifyFullWorkspaceNotices(root) {

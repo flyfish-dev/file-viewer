@@ -85,6 +85,8 @@ const options = { preset: officePreset }
 
 `options.preset` also accepts an array. See [presets and renderers](https://doc.file-viewer.app/guide/on-demand-renderers) for the available combinations.
 
+The current source bundles seven offline UI languages across every framework and Full package: `zh-CN`, `en-US`, `ja-JP`, `zh-TW`, `zh-HK`, `de-DE` and `ru-RU`. Update `options.locale` to switch UI copy while retaining the current file and reading state. See the [internationalization guide](docs/guide/i18n.md) for language matching, custom messages and formatting. Consult the [changelog](CHANGELOG.md) for availability in published packages.
+
 ## Flutter development preview
 
 The independent [File Viewer Flutter](https://flutter.file-viewer.app/en/) SDK is available on [pub.dev](https://pub.dev/packages/file_viewer_flutter) as development preview `0.1.0-dev.2`. It provides bundled offline assets, application-scoped warm-up and reusable viewer sessions. Start with the [Flutter quick start](docs/guide/quickstart-flutter.md), or read the [complete integration guides](https://flutter.file-viewer.app/en/docs/quickstart/).

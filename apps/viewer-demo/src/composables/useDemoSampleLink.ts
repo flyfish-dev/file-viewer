@@ -53,7 +53,7 @@ export function resolveDemoSampleParam(value: string | null | undefined, locale:
   const key = raw.toLowerCase()
   const alias = Object.hasOwn(DEMO_SAMPLE_ALIASES, key) ? DEMO_SAMPLE_ALIASES[key] : undefined
   if (alias) {
-    const target = locale === 'zh-CN' ? alias.zh || alias.default : alias.default
+    const target = locale.startsWith('zh-') ? alias.zh || alias.default : alias.default
     return isCatalogPath(target) ? target : undefined
   }
   let path = raw
@@ -74,7 +74,7 @@ export function readDemoSampleParam(search = typeof window === 'undefined' ? '' 
 export function demoSampleParamFor(url: string, locale: DemoLocale = 'en-US') {
   const clean = sampleUrlKey(url)
   for (const [name, alias] of Object.entries(DEMO_SAMPLE_ALIASES)) {
-    const target = locale === 'zh-CN' ? alias.zh || alias.default : alias.default
+    const target = locale.startsWith('zh-') ? alias.zh || alias.default : alias.default
     if (target === clean) return name
   }
   return isCatalogPath(clean) ? clean : undefined

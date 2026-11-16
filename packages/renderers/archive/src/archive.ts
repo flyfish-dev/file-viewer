@@ -8,6 +8,9 @@ import {
   createFileRenderHandlerLoader,
   createFileViewerCoreRendererRegistry,
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
+  createFileViewerI18nBindings,
+  createFileViewerNestedI18n,
   createRendererRegistry,
   disposeFileViewerRendered,
   installFileViewerRendererPlugins,
@@ -29,7 +32,6 @@ import {
   buildArchiveNestedRenderContext,
   createArchiveCacheKey,
   flattenArchiveObject,
-  formatArchiveBytes,
   getArchiveEntryExtension,
   isArchiveEntryDownloadAllowed,
   type ArchiveEntryView,
@@ -145,21 +147,7 @@ const createStyle = (documentRef: Document) => {
   return style;
 };
 
-const createElement = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tagName: K,
-  className?: string,
-  text?: string
-) => {
-  const element = documentRef.createElement(tagName);
-  if (className) {
-    element.className = className;
-  }
-  if (text !== undefined) {
-    element.textContent = text;
-  }
-  return element;
-};
+
 
 const normalizeWorkerError = (reason: unknown) => {
   if (reason instanceof Error) {
@@ -403,12 +391,13 @@ const renderNestedWithCurrentOptions = async (
   target: HTMLDivElement,
   context?: FileRenderContext
 ) => {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const registry = await createNestedRendererRegistry(context);
   const renderer = registry.getByExtension(type);
   if (!renderer?.load) {
-    target.textContent = t('archive.error.nestedUnsupported', { type });
-    return undefined;
+    const bindings = createFileViewerI18nBindings(context?.i18n);
+    bindings.text(target, () => t('archive.error.nestedUnsupported', { type }));
+    return { $el: target, unmount() { bindings.destroy(); target.replaceChildren(); } };
   }
 
   const session = await renderer.load({
@@ -465,17 +454,27 @@ export default async function renderArchive(
   let selectedEntry: ArchiveEntryView | null = null;
   let nestedRendered: FileViewerRenderedInstance | undefined;
   let loading = false;
-  const t = createFileViewerTranslator(context?.options);
-  let loadingText = t('archive.loading.readingDirectory');
-  let loadingHint = t('archive.loading.readingDirectoryHint');
-  let errorText = '';
-  let archiveNotice = '';
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const createElement = t.element;
+  const formatArchiveBytes = t.formatBytes;
+  const bindings = createFileViewerI18nBindings(context?.i18n);
+  const owned = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string | undefined, value: () => string) => {
+    const node = createElement(documentRef, tag, className);
+    bindings.text(node, value);
+    return node;
+  };
+  let loadingText = () => t('archive.loading.readingDirectory');
+  let loadingHint = () => t('archive.loading.readingDirectoryHint');
+  let errorText = () => '';
+  let archiveNotice = () => '';
   let encrypted: boolean | null = null;
   let filterText = '';
   let passwordAttempt = 0;
   let passwordResolver: ((password: string | null) => void) | null = null;
   let sidebarCollapsed = false;
   let previewSequence = 0;
+  let destroyPromise: Promise<void> | undefined;
+  const pendingNestedCleanups = new Set<Promise<void>>();
 
   const style = createStyle(documentRef);
   const root = createElement(documentRef, 'section', 'archive-shell archive-viewer');
@@ -498,7 +497,7 @@ export default async function renderArchive(
   const info = createElement(documentRef, 'div', 'archive-info');
   const search = createElement(documentRef, 'input', 'archive-search') as HTMLInputElement;
   search.type = 'search';
-  search.placeholder = t('archive.search.placeholder');
+  bindings.attr(search, 'placeholder', () => t('archive.search.placeholder'));
   const list = createElement(documentRef, 'div', 'archive-list');
   list.setAttribute('role', 'list');
   sidebar.append(head, warning, info, search, list);
@@ -509,10 +508,10 @@ export default async function renderArchive(
   sidebarShowButton.type = 'button';
   const toolbarTitle = createElement(documentRef, 'div', 'archive-preview-title');
   toolbarTitle.append(
-    createElement(documentRef, 'span', undefined, t('archive.preview.title')),
-    createElement(documentRef, 'strong', undefined, t('archive.preview.chooseFile'))
+    owned('span', undefined, () => t('archive.preview.title')),
+    owned('strong', undefined, () => t('archive.preview.chooseFile'))
   );
-  const downloadButton = createElement(documentRef, 'button', 'archive-download-button', t('archive.preview.downloadFile')) as HTMLButtonElement;
+  const downloadButton = owned('button', 'archive-download-button', () => t('archive.preview.downloadFile')) as HTMLButtonElement;
   downloadButton.type = 'button';
   const nestedTarget = createElement(documentRef, 'div', 'archive-nested-target') as HTMLDivElement;
   const comicBook = createComicBookController({
@@ -525,6 +524,10 @@ export default async function renderArchive(
     getEntries: () => entries,
     openEntry: entry => void previewEntry(entry),
   });
+  for (const [node, key] of [[comicBook.toolbarElements[0], 'epub.previousPage'], [comicBook.toolbarElements[2], 'epub.nextPage']] as const) {
+    bindings.attr(node, 'title', () => t(key));
+    bindings.attr(node, 'aria-label', () => t(key));
+  }
   badge.textContent = comicBook.badge;
   toolbar.append(sidebarShowButton, toolbarTitle, ...comicBook.toolbarElements, downloadButton);
   preview.append(toolbar, nestedTarget);
@@ -534,15 +537,15 @@ export default async function renderArchive(
   const stateContent = createElement(documentRef, 'div');
   const spinner = createElement(documentRef, 'span', 'archive-spinner');
   const stateCopy = createElement(documentRef, 'div');
-  const stateTitle = createElement(documentRef, 'strong', undefined, loadingText);
-  const stateHint = createElement(documentRef, 'p', undefined, loadingHint);
+  const stateTitle = owned('strong', undefined, () => loadingText());
+  const stateHint = owned('p', undefined, () => loadingHint());
   stateCopy.append(stateTitle, stateHint);
   stateContent.append(spinner, stateCopy);
   state.append(stateContent);
   root.append(state);
 
   const error = createElement(documentRef, 'div', 'archive-error');
-  const errorTitle = createElement(documentRef, 'strong', undefined, t('archive.error.title'));
+  const errorTitle = owned('strong', undefined, () => t('archive.error.title'));
   const errorMessage = createElement(documentRef, 'p');
   error.append(errorTitle, errorMessage);
   root.append(error);
@@ -551,17 +554,17 @@ export default async function renderArchive(
   passwordDialog.setAttribute('role', 'dialog');
   passwordDialog.setAttribute('aria-modal', 'true');
   const passwordCard = createElement(documentRef, 'form', 'archive-password-card') as HTMLFormElement;
-  const passwordTitle = createElement(documentRef, 'h3', undefined, t('archive.password.title'));
-  const passwordDescription = createElement(documentRef, 'p', undefined, t('archive.password.description'));
+  const passwordTitle = owned('h3', undefined, () => t('archive.password.title'));
+  const passwordDescription = owned('p', undefined, () => t('archive.password.description'));
   const passwordInput = createElement(documentRef, 'input') as HTMLInputElement;
   passwordInput.type = 'password';
   passwordInput.autocomplete = 'current-password';
-  passwordInput.placeholder = t('archive.password.placeholder');
+  bindings.attr(passwordInput, 'placeholder', () => t('archive.password.placeholder'));
   const passwordError = createElement(documentRef, 'p', 'archive-password-error');
   const passwordActions = createElement(documentRef, 'div', 'archive-password-actions');
-  const passwordCancelButton = createElement(documentRef, 'button', 'archive-password-cancel', t('archive.password.cancel')) as HTMLButtonElement;
+  const passwordCancelButton = owned('button', 'archive-password-cancel', () => t('archive.password.cancel')) as HTMLButtonElement;
   passwordCancelButton.type = 'button';
-  const passwordSubmitButton = createElement(documentRef, 'button', 'archive-password-submit', t('archive.password.confirm')) as HTMLButtonElement;
+  const passwordSubmitButton = owned('button', 'archive-password-submit', () => t('archive.password.confirm')) as HTMLButtonElement;
   passwordSubmitButton.type = 'submit';
   passwordActions.append(passwordCancelButton, passwordSubmitButton);
   passwordCard.append(passwordTitle, passwordDescription, passwordInput, passwordError, passwordActions);
@@ -595,10 +598,9 @@ export default async function renderArchive(
       syncState();
       renderEmptyState();
     }
-    passwordDescription.textContent = t('archive.password.description');
-    passwordError.textContent = previousError || reason === 'invalid-password'
-      ? t('archive.password.invalid')
-      : '';
+    // Dedicated labels are bound once; opening never resets locale ownership.
+    const invalid = Boolean(previousError || reason === 'invalid-password');
+    bindings.text(passwordError, () => invalid ? t('archive.password.invalid') : '');
     passwordInput.value = '';
     passwordDialog.classList.remove('archive-hidden');
     targetWindow?.setTimeout(() => passwordInput.focus(), 0);
@@ -661,7 +663,7 @@ export default async function renderArchive(
     event.preventDefault();
     const password = passwordInput.value;
     if (!password) {
-      passwordError.textContent = t('archive.password.required');
+      bindings.text(passwordError, () => t('archive.password.required'));
       passwordInput.focus();
       return;
     }
@@ -704,9 +706,31 @@ export default async function renderArchive(
     return source.slice(0, MAX_LISTED_ENTRIES);
   };
 
+  const disposeNestedPreview = (rendered: FileViewerRenderedInstance | undefined) => {
+    if (!rendered) return Promise.resolve();
+    // Register ownership before invoking user cleanup, including synchronous/reentrant cleanup.
+    const pending = Promise.resolve().then(() => disposeFileViewerRendered(rendered));
+    pendingNestedCleanups.add(pending);
+    void pending.then(
+      () => { pendingNestedCleanups.delete(pending); },
+      () => { pendingNestedCleanups.delete(pending); }
+    );
+    return pending;
+  };
+
   const clearNestedPreview = async () => {
-    await disposeFileViewerRendered(nestedRendered);
+    const sequence = previewSequence;
+    const retired = nestedRendered;
     nestedRendered = undefined;
+    try {
+      await disposeNestedPreview(retired);
+    } catch (error) {
+      // A newer preview no longer owns this failure UI. Terminal teardown awaits known cleanups.
+      if (sequence !== previewSequence && !destroyPromise) console.error(error);
+      throw error;
+    }
+    if (sequence !== previewSequence) return;
+    bindings.release(nestedTarget);
     nestedTarget.replaceChildren();
   };
 
@@ -716,40 +740,32 @@ export default async function renderArchive(
   };
 
   const syncSidebarToggleState = () => {
-    const showLabel = t('archive.sidebar.show');
-    const hideLabel = t('archive.sidebar.hide');
-    const activeLabel = sidebarCollapsed ? showLabel : hideLabel;
-
     root.classList.toggle('archive-sidebar-collapsed', sidebarCollapsed);
     sidebarHideButton.textContent = '‹';
     sidebarShowButton.textContent = sidebarCollapsed ? '☰' : '‹';
-    sidebarHideButton.title = hideLabel;
-    sidebarShowButton.title = activeLabel;
-    sidebarHideButton.setAttribute('aria-label', hideLabel);
-    sidebarShowButton.setAttribute('aria-label', activeLabel);
+    bindings.attr(sidebarHideButton, 'title', () => t('archive.sidebar.hide'));
+    bindings.attr(sidebarShowButton, 'title', () => t(sidebarCollapsed ? 'archive.sidebar.show' : 'archive.sidebar.hide'));
+    bindings.attr(sidebarHideButton, 'aria-label', () => t('archive.sidebar.hide'));
+    bindings.attr(sidebarShowButton, 'aria-label', () => t(sidebarCollapsed ? 'archive.sidebar.show' : 'archive.sidebar.hide'));
     sidebarHideButton.setAttribute('aria-expanded', String(!sidebarCollapsed));
     sidebarShowButton.setAttribute('aria-expanded', String(!sidebarCollapsed));
   };
 
   const syncState = () => {
     const archiveStats = getArchiveStats();
-    const statsText = t('archive.stats.summary', {
-      count: archiveStats.count,
-      size: formatArchiveBytes(archiveStats.totalSize),
-      previewable: archiveStats.previewableCount,
-    });
-    stats.textContent = statsText;
-    stats.title = statsText;
-    stats.setAttribute('aria-label', statsText);
-    warning.textContent = t('archive.warning.encrypted');
+    const label = () => t('archive.stats.summary', { count: archiveStats.count, size: formatArchiveBytes(archiveStats.totalSize), previewable: archiveStats.previewableCount });
+    bindings.text(stats, label);
+    bindings.attr(stats, 'title', label);
+    bindings.attr(stats, 'aria-label', label);
+    bindings.text(warning, () => t('archive.warning.encrypted'));
     warning.classList.toggle('archive-hidden', !encrypted);
-    info.textContent = archiveNotice;
-    info.classList.toggle('archive-hidden', !archiveNotice);
+    bindings.text(info, () => archiveNotice());
+    info.classList.toggle('archive-hidden', !archiveNotice());
     state.classList.toggle('archive-hidden', !loading);
-    stateTitle.textContent = loadingText;
-    stateHint.textContent = loadingHint;
-    error.classList.toggle('archive-hidden', !errorText);
-    errorMessage.textContent = errorText;
+    bindings.text(stateTitle, () => loadingText());
+    bindings.text(stateHint, () => loadingHint());
+    error.classList.toggle('archive-hidden', !errorText());
+    bindings.text(errorMessage, () => errorText());
     const downloadAllowed = selectedEntry
       ? isArchiveEntryDownloadAllowed(selectedEntry, archiveOptions)
       : false;
@@ -757,7 +773,7 @@ export default async function renderArchive(
     downloadButton.disabled = !downloadAllowed;
     const activeTitle = toolbarTitle.querySelector('strong');
     if (activeTitle) {
-      activeTitle.textContent = selectedEntry?.name || t('archive.preview.chooseFile');
+      bindings.text(activeTitle, () => selectedEntry?.name || t('archive.preview.chooseFile'));
       activeTitle.setAttribute('title', selectedEntry?.path || selectedEntry?.name || '');
     }
     comicBook.sync();
@@ -770,29 +786,29 @@ export default async function renderArchive(
     }
     const empty = createElement(documentRef, 'div', 'archive-empty');
     empty.append(
-      createElement(documentRef, 'strong', undefined, t('archive.empty.title')),
-      createElement(documentRef, 'p', undefined, t('archive.empty.message'))
+      owned('strong', undefined, () => t('archive.empty.title')),
+      owned('p', undefined, () => t('archive.empty.message'))
     );
     nestedTarget.replaceChildren(empty);
   };
 
   const renderEntryList = () => {
+    t.release(list);
     list.replaceChildren();
     getFilteredEntries().forEach(entry => {
       const button = createElement(documentRef, 'button', 'archive-entry') as HTMLButtonElement;
       button.type = 'button';
       button.style.setProperty('--entry-depth', String(entry.depth));
       button.classList.toggle('active', selectedEntry?.id === entry.id);
-      const icon = createElement(documentRef, 'span', 'entry-ext', entry.extension || 'file');
-      icon.title = entry.extension || 'file';
+      const icon = createElement(documentRef, 'span', 'entry-ext', () => entry.extension || t('ui.archive.ui.file.971c41'));
+      t.bind(icon, node => { node.title = entry.extension || t('ui.archive.ui.file.971c41'); }, 'title');
       const copy = createElement(documentRef, 'span', 'entry-copy');
       const nameNode = createElement(documentRef, 'strong', undefined, entry.name);
       const pathNode = createElement(documentRef, 'em', undefined, entry.path);
-      const sizeText = formatArchiveBytes(entry.size);
-      const sizeNode = createElement(documentRef, 'small', undefined, sizeText);
+      const sizeNode = createElement(documentRef, 'small', undefined, () => formatArchiveBytes(entry.size));
       nameNode.title = entry.name;
       pathNode.title = entry.path;
-      sizeNode.title = sizeText;
+      t.bind(sizeNode, node => { node.title = formatArchiveBytes(entry.size); }, 'title');
       button.title = entry.path;
       copy.append(nameNode, pathNode);
       button.append(icon, copy, sizeNode);
@@ -803,7 +819,7 @@ export default async function renderArchive(
     });
   };
 
-  const setLoading = (next: boolean, text?: string, hint?: string) => {
+  const setLoading = (next: boolean, text?: () => string, hint?: () => string) => {
     loading = next;
     if (text) {
       loadingText = text;
@@ -815,8 +831,10 @@ export default async function renderArchive(
     renderEmptyState();
   };
 
-  const setError = (message: string) => {
-    errorText = message;
+  const setError = (cause: unknown) => {
+    errorText = typeof cause === 'function'
+      ? () => String(cause())
+      : () => normalizeFileViewerErrorMessage(cause, context?.i18n || context?.options);
     syncState();
   };
 
@@ -864,7 +882,7 @@ export default async function renderArchive(
         },
       });
 
-      setLoading(true, t('archive.loading.initializingCandidate', { label: candidate.label }), t('archive.loading.initializingCandidateHint'));
+      setLoading(true, () => t('archive.loading.initializingCandidate', { label: candidate.label }), () => t('archive.loading.initializingCandidateHint'));
       const archiveFile = createArchiveFile(documentRef, buffer, filename);
       const archive = await withTimeout<any>(
         Archive.open(archiveFile),
@@ -886,7 +904,7 @@ export default async function renderArchive(
         await requestAndApplyPassword('encrypted');
       }
 
-      setLoading(true, t('archive.loading.readingDirectory'), t('archive.loading.directoryReadyHint'));
+      setLoading(true, () => t('archive.loading.readingDirectory'), () => t('archive.loading.directoryReadyHint'));
       const fileTree = await readArchiveDirectoryWithPassword(archive, candidate);
 
       entries = comicBook.sortEntries(flattenArchiveObject(fileTree));
@@ -911,10 +929,10 @@ export default async function renderArchive(
     const showWorkerFallbackNotice = options.showWorkerFallbackNotice !== false;
     setLoading(
       true,
-      showWorkerFallbackNotice
+      () => showWorkerFallbackNotice
         ? t('archive.loading.workerFallback')
         : t('archive.loading.readingDirectory'),
-      showWorkerFallbackNotice
+      () => showWorkerFallbackNotice
         ? t('archive.loading.workerFallbackHint')
         : t('archive.loading.directoryReadyHint')
     );
@@ -929,7 +947,7 @@ export default async function renderArchive(
 
     entries = comicBook.sortEntries(fallbackEntries);
     encrypted = null;
-    archiveNotice = showWorkerFallbackNotice ? t('archive.notice.workerFallback') : '';
+    archiveNotice = () => showWorkerFallbackNotice ? t('archive.notice.workerFallback') : '';
     syncState();
     renderEntryList();
     renderEmptyState();
@@ -939,16 +957,16 @@ export default async function renderArchive(
 
   const openArchive = async () => {
     if (buffer.byteLength > maxArchiveSize) {
-      setError(t('archive.error.tooLarge', {
+      setError(() => t('archive.error.tooLarge', {
         size: formatArchiveBytes(buffer.byteLength),
         limit: formatArchiveBytes(maxArchiveSize),
       }));
       return;
     }
 
-    setLoading(true, t('archive.loading.initializingWorker'), t('archive.loading.initializingWorkerHint'));
+    setLoading(true, () => t('archive.loading.initializingWorker'), () => t('archive.loading.initializingWorkerHint'));
     setError('');
-    archiveNotice = '';
+    archiveNotice = () => '';
 
     try {
       if (hasLegacyGbkZipFilenames && !isLikelyEncryptedArchive(buffer, filename)) {
@@ -980,7 +998,7 @@ export default async function renderArchive(
       if (isLikelyEncryptedArchive(buffer, filename)) {
         encrypted = true;
         syncState();
-        throw new Error(t('archive.error.encryptedRequiresWorker'));
+        throw t.error('archive.error.encryptedRequiresWorker');
       }
       if (await tryOpenArchiveWithFallback()) {
         return;
@@ -989,7 +1007,7 @@ export default async function renderArchive(
       throw new Error(errors.join('; ') || t('archive.error.workerInitFailed'));
     } catch (nextError) {
       console.error(nextError);
-      setError(nextError instanceof Error ? nextError.message : String(nextError));
+      setError(nextError);
     } finally {
       setLoading(false);
     }
@@ -1007,10 +1025,22 @@ export default async function renderArchive(
     const child = createElement(documentRef, 'div', 'archive-nested-content') as HTMLDivElement;
     nestedTarget.append(child);
     const nestedContext = buildArchiveNestedRenderContext(context, entry, archiveOptions);
-    const rendered = await renderNestedEntry(entryBuffer, entry.extension, child, nestedContext);
+    const childI18n = createFileViewerNestedI18n(nestedContext, context?.i18n, documentRef);
+    let rendered: FileViewerRenderedInstance | undefined;
+    try {
+      const result = await renderNestedEntry(entryBuffer, entry.extension, child, { ...nestedContext, i18n: childI18n });
+      rendered = { $el: result?.$el || child, async unmount() { childI18n.destroy(); await disposeFileViewerRendered(result); } };
+    } catch (error) { childI18n.destroy(); throw error; }
     if (requestId !== previewSequence) {
-      await disposeFileViewerRendered(rendered);
-      child.remove();
+      try {
+        await disposeNestedPreview(rendered);
+      } catch (error) {
+        // Late delegates are not awaited by terminal teardown. Report cleanup failures once,
+        // without reviving a stale preview or leaving an unhandled rejection.
+        console.error(error);
+      } finally {
+        child.remove();
+      }
       return;
     }
     nestedRendered = rendered;
@@ -1065,7 +1095,7 @@ export default async function renderArchive(
       ? shapefileEntries.reduce((sum, component) => sum + component.size, 0)
       : entry.size;
     if (previewSize > maxEntryPreviewSize) {
-      setError(t('archive.error.entryTooLarge', {
+      setError(() => t('archive.error.entryTooLarge', {
         name: entry.name,
         size: formatArchiveBytes(previewSize),
         limit: formatArchiveBytes(maxEntryPreviewSize),
@@ -1073,7 +1103,7 @@ export default async function renderArchive(
       return;
     }
 
-    setLoading(true, t('archive.loading.extracting', { name: entry.name }));
+    setLoading(true, () => t('archive.loading.extracting', { name: entry.name }));
     setError('');
 
     try {
@@ -1083,12 +1113,12 @@ export default async function renderArchive(
       if (requestId !== previewSequence) {
         return;
       }
-      setLoading(true, t('archive.loading.rendering', { name: entry.name }));
+      setLoading(true, () => t('archive.loading.rendering', { name: entry.name }));
       await renderEntryBuffer(entry, entryBuffer, requestId);
     } catch (nextError) {
       if (requestId === previewSequence) {
         console.error(nextError);
-        setError(nextError instanceof Error ? nextError.message : String(nextError));
+        setError(nextError);
       }
     } finally {
       if (requestId === previewSequence) {
@@ -1098,7 +1128,7 @@ export default async function renderArchive(
   }
 
   const downloadEntry = async (entry: ArchiveEntryView) => {
-    setLoading(true, t('archive.loading.exporting', { name: entry.name }));
+    setLoading(true, () => t('archive.loading.exporting', { name: entry.name }));
     try {
       const entryBuffer = await extractEntryBuffer(entry);
       const url = URL.createObjectURL(new Blob([entryBuffer]));
@@ -1124,20 +1154,39 @@ export default async function renderArchive(
     }
   });
 
-  syncState();
+  t.bind(root, () => syncState(), 'chrome');
   renderEmptyState();
   void openArchive();
 
   return {
     $el: root,
-    async unmount() {
-      closePasswordDialog(null);
-      comicBook.dispose();
-      cleanups.splice(0).forEach(cleanup => cleanup());
-      await clearNestedPreview();
-      await closeArchive();
-      objectUrls.forEach(url => URL.revokeObjectURL(url));
-      target.replaceChildren();
+    unmount() {
+      if (destroyPromise) return destroyPromise;
+      // Invalidate late children before yielding. Repeated teardown shares one operation.
+      previewSequence += 1;
+      bindings.destroy();
+      t.release(root);
+      // Wait for instances already claimed for cleanup, not delegates that have yet to return.
+      const knownCleanups = [...pendingNestedCleanups];
+      destroyPromise = Promise.resolve().then(async () => {
+        const failures: unknown[] = [];
+        const attempt = async (action: () => unknown) => {
+          try { await action(); } catch (error) { failures.push(error); }
+        };
+        await attempt(() => closePasswordDialog(null));
+        await attempt(() => comicBook.dispose());
+        for (const cleanup of cleanups.splice(0)) await attempt(cleanup);
+        const results = await Promise.allSettled([...knownCleanups, clearNestedPreview()]);
+        for (const result of results) if (result.status === 'rejected') failures.push(result.reason);
+        await attempt(closeArchive);
+        for (const url of objectUrls) await attempt(() => URL.revokeObjectURL(url));
+        await attempt(() => target.replaceChildren());
+        if (failures.length) {
+          for (const failure of failures.slice(1)) console.error(failure);
+          throw failures[0];
+        }
+      });
+      return destroyPromise;
     },
   };
 }

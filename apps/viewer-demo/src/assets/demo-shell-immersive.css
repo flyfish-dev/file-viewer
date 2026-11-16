@@ -850,11 +850,14 @@
 }
 
 .viewer-locale-menu {
+  max-height: min(420px, calc(100dvh - 120px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   position: absolute;
   z-index: 80;
   top: calc(100% + 10px);
   right: 0;
-  width: 190px;
+  width: 240px;
   display: grid;
   gap: 3px;
   padding: 6px;
@@ -2103,7 +2106,7 @@
   }
 
   .viewer-locale-menu {
-    width: min(190px, calc(100vw - 22px));
+    width: min(240px, calc(100vw - 22px));
   }
 
   .demo-shell[data-file-capsule-state] .viewer-toolbar {

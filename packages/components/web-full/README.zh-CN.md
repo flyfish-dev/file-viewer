@@ -186,6 +186,7 @@ npx --no-install file-viewer-copy-assets ./public/file-viewer
 
 | Options 字段 | 说明 |
 | --- | --- |
+| `locale` / `i18n` / `messages` | 离线内置 `zh-CN`, `en-US`, `ja-JP`, `zh-TW`, `zh-HK`, `de-DE`, `ru-RU`。通过 options 更新语言并保留当前文件和阅读状态，i18n 分组优先。详见[国际化指南](https://doc.file-viewer.app/zh/guide/i18n)。 |
 | `theme` | `light`、`dark` 或 `system`，优先级高于浏览器 `prefers-color-scheme`。 |
 | `styleIsolation` | `auto`、`shadow`、`scoped` 或 `none`。`auto` 下 Web Component、IIFE、Vue、React、Svelte、jQuery 和 full 包均默认使用 Shadow DOM；依赖深层 class 覆盖的旧项目可显式使用 `none`。 |
 | `watermark` | 开启文字或图片水印，可设置透明度、旋转、间距、尺寸、字体和颜色。 |
@@ -322,6 +323,12 @@ import { setDefaultFullAssetBaseUrl } from '@file-viewer/web-full'
 
 setDefaultFullAssetBaseUrl('/static/file-viewer/')
 ```
+
+ESM 与 IIFE 均接受根相对目录（`/static/file-viewer/`）、文档相对目录（`./file-viewer/`）、协议相对目录（`//assets.example.com/file-viewer/`）和绝对 URL。字符串会去除首尾空白并补齐末尾 `/`；`getDefaultFullAssetBaseUrl()` 保留显式配置的相对值。
+
+浏览器中的 IIFE 在加载 renderer 脚本时，按 `document.baseURI` 解析相对目录，包含页面 `<base href>` 的影响。显式配置的相对目录以文档为基准，不以 CDN 脚本来源为基准。
+
+传入 `null`、`undefined` 或空白字符串会清除默认资产注入；`resetDefaultFullAssetBaseUrl()` 则恢复自动默认值，两者含义不同。SSR 中的配置与生成的 options 保留相对值；IIFE 懒加载 renderer 需要浏览器文档，没有文档时调用 `getFullRendererScriptUrl()` 必须提供绝对 base。
 
 显式传入的 `options.archive.*`、`options.pdf.*` 等仍然会覆盖默认值；`file-viewer-copy-assets --renderers <csv>` 可缩小旧 Full 的复制范围，运行 `file-viewer list` 可查看新增的 opt-in capability、许可证和资产包。
 

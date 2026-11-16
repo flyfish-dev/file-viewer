@@ -1,5 +1,8 @@
 /** Japanese product-demo copy shared by desktop, mobile, dialogs and accessibility labels. */
 export const demoCopyJa = {
+  openRepositoryAria: "File Viewer の GitHub リポジトリを新しいタブで開く",
+  openSiteAria: "File Viewer の公式サイトを開く",
+
   pageTitle: 'File Viewer Demo — Office・PDF・CADをブラウザで表示',
   pureWeb: 'Pure Web',
   local: 'ローカル',

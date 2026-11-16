@@ -296,6 +296,7 @@ const options = {
 
 | Options 字段 | 说明 |
 | --- | --- |
+| `locale` / `i18n` / `messages` | 离线内置 `zh-CN`, `en-US`, `ja-JP`, `zh-TW`, `zh-HK`, `de-DE`, `ru-RU`。通过 options 更新语言并保留当前文件和阅读状态，i18n 分组优先。详见[国际化指南](https://doc.file-viewer.app/zh/guide/i18n)。 |
 | `theme` | `light`、`dark` 或 `system`，优先级高于浏览器 `prefers-color-scheme`。 |
 | `styleIsolation` | `auto`、`shadow`、`scoped` 或 `none`。`auto` 下 Web Component、IIFE、Vue、React、Svelte、jQuery 和 full 包均默认使用 Shadow DOM；依赖深层 class 覆盖的旧项目可显式使用 `none`。 |
 | `watermark` | 开启文字或图片水印，可设置透明度、旋转、间距、尺寸、字体和颜色。 |

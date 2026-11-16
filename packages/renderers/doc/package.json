@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/doc",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "private": false,
   "type": "module",
   "description": "Browser-native legacy MS-DOC (.doc) parser and HTML renderer extracted from the public msdoc-viewer 0.2.0 line.",
@@ -60,7 +60,8 @@
     "README.md",
     "README.en.md",
     "LICENSE",
-    "README.zh-CN.md"
+    "README.zh-CN.md",
+    "TEXTBOX-METADATA.md"
   ],
   "scripts": {
     "build": "tsc -b tsconfig.json && node --test test/*.test.mjs",
@@ -71,7 +72,9 @@
     "verify:github-171": "pnpm build && node scripts/verify-github-171.mjs",
     "verify:github-192": "pnpm build && node scripts/verify-github-192.mjs",
     "verify:github-236": "pnpm build && node scripts/verify-github-236.mjs",
-    "verify:font-table-browser": "node scripts/verify-font-table-browser.mjs"
+    "verify:font-table-browser": "node scripts/verify-font-table-browser.mjs",
+    "verify:textbox-layout": "pnpm build && node scripts/verify-textbox-layout.mjs",
+    "verify:textbox-browser": "node scripts/verify-textbox-browser.mjs"
   },
   "dependencies": {
     "dompurify": "3.4.17"

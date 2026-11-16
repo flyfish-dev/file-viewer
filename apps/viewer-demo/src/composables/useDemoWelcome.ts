@@ -42,6 +42,75 @@ export interface DemoWelcomeCopy {
 }
 
 export const demoWelcomeCopy: Record<DemoLocale, DemoWelcomeCopy> = {
+  'zh-TW': {
+    eyebrow: '快速上手',
+    title: '從一份真實檔案開始',
+    description: '點選示例，體驗對應檔案的檢視方式；也可以直接拖入自己的檔案。',
+    drop: '將自己的檔案拖到這裡開啟',
+    privacy: '本地檔案不會上傳到任何伺服器。',
+    featured: '試試這些示例',
+    close: '關閉歡迎卡片',
+    previewUnavailable: '預覽圖暫不可用，仍可開啟檔案',
+    modelCredit: '3D 模型署名與許可',
+    examples: {
+      drawing: { title: '檢視圖紙細節', description: '縮放圖紙，拖動檢視不同區域' },
+      document: { title: '閱讀業務報告', description: '檢視目錄、圖表與分頁內容' },
+      presentation: { title: '翻閱簡報', description: '逐頁檢視幻燈片與圖文內容' },
+      workbook: { title: '瀏覽表格資料', description: '檢視儲存格，拖曳調整欄寬' },
+      model: { title: '探索低模狐狸', description: '拖動旋轉，從不同角度觀察狐狸' }
+    }
+  },
+  'zh-HK': {
+    eyebrow: '快速上手',
+    title: '從一份真實文件開始',
+    description: '點擊示例，體驗對應文件的查看方式；也可以直接拖入自己的文件。',
+    drop: '將自己的文件拖到這裏打開',
+    privacy: '本地文件不會上傳到任何服務器。',
+    featured: '試試這些示例',
+    close: '關閉歡迎卡片',
+    previewUnavailable: '預覽圖暫不可用，仍可打開文件',
+    modelCredit: '3D 模型署名與許可',
+    examples: {
+      drawing: { title: '查看圖紙細節', description: '縮放圖紙，拖動查看不同區域' },
+      document: { title: '閱讀業務報告', description: '查看目錄、圖表與分頁內容' },
+      presentation: { title: '翻閱演示文稿', description: '逐頁查看幻燈片與圖文內容' },
+      workbook: { title: '瀏覽表格數據', description: '查看單元格，拖動調整列寬' },
+      model: { title: '探索低模狐狸', description: '拖動旋轉，從不同角度觀察狐狸' }
+    }
+  },
+  'ru-RU': {
+  "eyebrow": "Быстрый старт",
+  "title": "Начните с реального файла",
+  "description": "Откройте пример или перетащите сюда свой файл.",
+  "drop": "Перетащите файл сюда, чтобы открыть",
+  "privacy": "Локальные файлы не отправляются на сервер.",
+  "featured": "Попробуйте примеры",
+  "close": "Закрыть приветствие",
+  "previewUnavailable": "Миниатюра недоступна. Файл можно открыть.",
+  "modelCredit": "Авторы и лицензия 3D-модели",
+  "examples": {
+    "drawing": {
+      "title": "Рассмотрите чертёж",
+      "description": "Увеличивайте детали и перемещайтесь по чертежу."
+    },
+    "document": {
+      "title": "Прочитайте деловой отчёт",
+      "description": "Посмотрите оглавление, таблицы и графики. Все деловые данные вымышлены."
+    },
+    "presentation": {
+      "title": "Откройте презентацию",
+      "description": "Просматривайте слайды, изображения и текст."
+    },
+    "workbook": {
+      "title": "Изучите таблицу",
+      "description": "Просматривайте ячейки и изменяйте ширину столбцов."
+    },
+    "model": {
+      "title": "Рассмотрите низкополигональную лису",
+      "description": "Перетаскивайте модель, чтобы увидеть её с разных сторон."
+    }
+  }
+},
   'zh-CN': {
     eyebrow: '快速上手',
     title: '从一份真实文件开始',

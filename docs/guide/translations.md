@@ -6,18 +6,18 @@ description: "Translate File Viewer documentation and interface text while prese
 
 [简体中文](../zh/guide/translations.md)
 
-Documentation currently has English and Simplified Chinese routes. The Demo and shared viewer
-also have Japanese and German dictionaries. This does not mean that every documentation page
-has a Japanese or German translation. See [collaboration](collaboration.md) for language and review etiquette.
+Documentation currently has English and Simplified Chinese routes. The Demo and shared viewer bundle seven UI languages; see [interface languages](i18n.md). UI language support does not add documentation routes. See [collaboration](collaboration.md) for language and review etiquette.
+
+Independent native-speaker review for all seven languages is pending; the source inventory `docs/maintenance/i18n-review.md` records its scope.
 
 ## Where text lives
 
 | Surface | Maintained source |
 | --- | --- |
 | English / Chinese docs | `docs/guide/` and `docs/zh/guide/` |
-| Demo interface | `apps/viewer-demo/src/composables/useDemoCopy.ts`, `useDemoCopy.ja.ts`, `useDemoCopy.de.ts` |
+| Demo interface | `apps/viewer-demo/src/composables/useDemoCopy*.ts` |
 | Demo welcome | `apps/viewer-demo/src/composables/useDemoWelcome.ts` |
-| Shared viewer messages | `packages/core/src/i18n/messages.ts`, `messages.ja.ts`, `messages.de.ts` |
+| Shared viewer messages | `packages/core/src/i18n/messages*.ts`, `i18n/domains/`; locale registry `i18n/locales.ts` |
 | Website | `apps/official-site/src/App.vue` and its static HTML metadata |
 | Package docs | English `README.md`, Chinese `README.zh-CN.md`; `README.en.md` is a compatibility copy |
 
@@ -43,7 +43,6 @@ selector wiring and review of both shared viewer and Demo text; adding one dicti
 
 ## Verify the user experience
 
-Run the relevant docs build or package type check, then `pnpm test:i18n` for Japanese / German Demo
-changes. Open the translated page in a real browser. Check navigation, search, code-copy actions,
+Run the relevant docs build or package type check, then `pnpm test:i18n` for changes to any bundled UI language. Open the translated page in a real browser. Check navigation, search, code-copy actions,
 keyboard focus, screen-reader labels, dark mode, 200% text scaling, long words and narrow screens.
 Keep a screenshot for visible changes and state the languages and browsers actually checked.

@@ -4,6 +4,7 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, delimiter, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const sourceRoot = resolve(packageDir, '../../..')
@@ -85,7 +86,7 @@ try {
     ['chromium', chromium],
     ['webkit', webkit]
   ]) {
-    const browser = await type.launch({ headless: true })
+    const browser = await launchBrowserForTest(type, engine, { headless: true })
     try {
       for (const mode of ['real', 'fake']) {
         const page = await browser.newPage()

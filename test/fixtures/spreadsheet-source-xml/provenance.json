@@ -1,0 +1,82 @@
+[
+  {
+    "file": "xml-chart-anchor-as-root.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-anchor-as-root.xlsx",
+    "sha256": "ea1d49f457c9fbb5fd1d001db7cd0b721931d5c9fa2218bfdf77fe201a8a31f8"
+  },
+  {
+    "file": "xml-chart-empty-editAs.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-empty-editAs.xlsx",
+    "sha256": "ce49a910dde959fd8e48d45a670d5c091815d818d53f9188679a95301ef90571"
+  },
+  {
+    "file": "xml-chart-foreign-drawing-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-foreign-drawing-namespace.xlsx",
+    "sha256": "be81da51bc9d16ee214c8bfc2961e8d0de9f8cbd25f9ee95cde0919b578c8b7e"
+  },
+  {
+    "file": "xml-chart-foreign-main-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-foreign-main-namespace.xlsx",
+    "sha256": "6fc04814bdb4ca5153e43eda36a661bbe63646fb3c54ce2217eb5399c039f5eb"
+  },
+  {
+    "file": "xml-chart-foreign-marker-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-foreign-marker-namespace.xlsx",
+    "sha256": "3de478c4b8b3764ec0fc4b8575028125e0d3a35e4d00accd596b80ba8461d9eb"
+  },
+  {
+    "file": "xml-chart-foreign-relationship-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-foreign-relationship-namespace.xlsx",
+    "sha256": "4369e4131a91a2b45b67e5c749daa7a86f534dcd98b3193944e06f8292182f72"
+  },
+  {
+    "file": "xml-chart-valid.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-valid.xlsx",
+    "sha256": "055c7744ef1d5d373ddef92ed90f2931a58a71074c4de32bf2a765b7a7d7ac56"
+  },
+  {
+    "file": "xml-chart-wrong-root.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-chart-wrong-root.xlsx",
+    "sha256": "acfbd008f157166e2f70eccc534d9ea21cc70da19715156082e08df609ad1cba"
+  },
+  {
+    "file": "xml-image-anchor-as-root.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-anchor-as-root.xlsx",
+    "sha256": "a3331fcaf89d72bbbd41e53bc1a254e294c7e171685343f7c50f96ff18459684"
+  },
+  {
+    "file": "xml-image-empty-editAs.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-empty-editAs.xlsx",
+    "sha256": "79a93102fe4d17e639cb8c871fb642981f76b1fee4307fd142908820c0d857cd"
+  },
+  {
+    "file": "xml-image-foreign-drawing-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-foreign-drawing-namespace.xlsx",
+    "sha256": "b55fc9357b817b666212968de649c20942624ceab0ed9712fa4906b835570f12"
+  },
+  {
+    "file": "xml-image-foreign-main-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-foreign-main-namespace.xlsx",
+    "sha256": "3f8c9d0a8ea24aa3bebfd86584611f0381ec8069435433e5c11e8fb1d59abce4"
+  },
+  {
+    "file": "xml-image-foreign-marker-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-foreign-marker-namespace.xlsx",
+    "sha256": "d56d79840537cdb0aea8b668cc75969540766bbf092d54f5dd8f52f5543844c3"
+  },
+  {
+    "file": "xml-image-foreign-relationship-namespace.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-foreign-relationship-namespace.xlsx",
+    "sha256": "6c1c5dc9d201b16ece7628a6585ce54ac30f7f2d8a69ac1ce2d8b41b9905cbf8"
+  },
+  {
+    "file": "xml-image-valid.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-valid.xlsx",
+    "sha256": "de990d26f96671f5a2f6ffa367c5fc7ecc6f3fea6f62ffcfb771ca3c5c455925"
+  },
+  {
+    "file": "xml-image-wrong-root.xlsx",
+    "source": "Independent synthetic review-fix-2 regression fixture: xml-image-wrong-root.xlsx",
+    "sha256": "2ae61c43218a03570718e031ceddcd9f5f3777729534feabef6574d9a1a20679"
+  }
+]

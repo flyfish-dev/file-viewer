@@ -147,7 +147,7 @@ export default async function renderPpt(
   _type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const documentRef = target.ownerDocument || document;
   const targetWindow = documentRef.defaultView || (typeof window !== 'undefined' ? window : null);
   const zoomEmitter = createFileViewerZoomChangeEmitter();
@@ -158,13 +158,13 @@ export default async function renderPpt(
   const loading = createElement(documentRef, 'div', 'ppt-binary-loading');
   loading.setAttribute('role', 'status');
   loading.setAttribute('aria-live', 'polite');
-  const loadingLabel = createElement(documentRef, 'span', undefined, t('presentation.ppt.state.loading'));
+  const loadingLabel = t.text(createElement(documentRef, 'span', undefined), 'presentation.ppt.state.loading');
   loading.append(createElement(documentRef, 'span', 'ppt-binary-loading-dot'), loadingLabel);
   const error = createElement(documentRef, 'div', 'ppt-binary-error');
   error.hidden = true;
-  const errorTitle = createElement(documentRef, 'strong', undefined, t('presentation.ppt.error.title'));
+  const errorTitle = t.text(createElement(documentRef, 'strong', undefined), 'presentation.ppt.error.title');
   const errorMessage = createElement(documentRef, 'p');
-  const errorHint = createElement(documentRef, 'small', undefined, t('presentation.ppt.error.assetHint'));
+  const errorHint = t.text(createElement(documentRef, 'small', undefined), 'presentation.ppt.error.assetHint');
   error.append(errorTitle, errorMessage, errorHint);
   const slides = createElement(documentRef, 'div', 'ppt-binary-slides');
   shell.append(loading, error, slides);
@@ -437,7 +437,7 @@ export default async function renderPpt(
     encode: (canvas: HTMLCanvasElement) => Promise<Output> | Output
   ) => {
     const runtimeOptions = snapshotRuntimeOptions;
-    if (!runtimeOptions) throw new Error(t('presentation.ppt.error.parseFailed'));
+    if (!runtimeOptions) throw t.error('presentation.ppt.error.parseFailed');
     const runtime = await loadPptRuntime(snapshotModuleUrl, {
       ...runtimeOptions,
       worker: false,
@@ -543,7 +543,7 @@ export default async function renderPpt(
     canvases.push(...mounted.canvases);
     canvases.forEach((canvas, index) => {
       canvas.setAttribute('role', 'img');
-      canvas.setAttribute('aria-label', `Slide ${index + 1}`);
+      t.bind(canvas, node => node.setAttribute('aria-label', t('ui.presentation-ppt.ui.slide.18e030', { p0: index + 1 })), 'aria-label');
       canvas.style.maxWidth = 'none';
     });
 
@@ -601,7 +601,7 @@ export default async function renderPpt(
     context?.registerThumbnailAdapter?.({
       captureSource: 'rendered',
       beforeCapture: () => {
-        if (!ready) throw new Error(t('presentation.ppt.error.parseFailed'));
+        if (!ready) throw t.error('presentation.ppt.error.parseFailed');
       },
       capture: async () => (await captureDirectSlides([0], canvasToBlob))[0] || null,
       getTarget: () => pages[0] || null,
@@ -618,8 +618,8 @@ export default async function renderPpt(
     }
     loading.hidden = true;
     error.hidden = false;
-    errorMessage.textContent = normalizeFileViewerErrorMessage(renderError, context?.options) ||
-      t('presentation.ppt.error.parseFailed');
+    t.bind(errorMessage, localizedNode => { localizedNode.textContent = normalizeFileViewerErrorMessage(renderError, context?.options) ||
+      t('presentation.ppt.error.parseFailed'); }, 'textContent');
     context?.registerExportAdapter?.(null);
     context?.registerThumbnailAdapter?.(null);
     unregisterFileViewerZoomProvider(shell);

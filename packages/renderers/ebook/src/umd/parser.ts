@@ -37,6 +37,7 @@ export interface UmdImage {
 }
 
 export interface UmdChapter {
+  fallbackTitle?: 'chapter' | 'gallery'
   content: string
   end: number
   id: string
@@ -46,6 +47,8 @@ export interface UmdChapter {
 }
 
 export interface UmdBook {
+  titleIsFallback?: boolean
+  warningCodes?: Partial<Record<number, 'UMD_TEXT_TOO_SHORT'>>
   author: string
   category: string
   chapters: UmdChapter[]
@@ -121,7 +124,7 @@ class UmdCursor {
 
   private ensure(size: number) {
     if (this.remaining < size) {
-      throw new Error('UMD 文件结构不完整，读取时遇到意外结尾')
+      throw Object.assign(new Error('UMD 文件结构不完整，读取时遇到意外结尾'), { code: 'UMD_UNEXPECTED_END' })
     }
   }
 }
@@ -299,7 +302,8 @@ const createTextChapters = (textBytes: Uint8Array, chapterOffsets: number[], tit
       id: `chapter-${index}-${alignedStart}`,
       images: [],
       start: alignedStart,
-      title: titles[index] || `章节 ${index + 1}`
+      title: titles[index] || `章节 ${index + 1}`,
+      fallbackTitle: titles[index] ? undefined : 'chapter' as const
     }
   })
 }
@@ -322,7 +326,8 @@ const createImageChapters = (images: UmdImage[], chapterOffsets: number[], title
       id: `image-chapter-${index}-${start}`,
       images: images.slice(start, end),
       start,
-      title: titles[index] || `图集 ${index + 1}`
+      title: titles[index] || `图集 ${index + 1}`,
+      fallbackTitle: titles[index] ? undefined : 'gallery' as const
     }
   })
 }
@@ -334,7 +339,8 @@ const createEmptyChapters = (titles: string[]) => {
     id: `empty-chapter-${index}`,
     images: [],
     start: index,
-    title: title || `章节 ${index + 1}`
+    title: title || `章节 ${index + 1}`,
+    fallbackTitle: title ? undefined : 'chapter' as const
   }))
 }
 
@@ -353,6 +359,7 @@ export const parseUmdBook = (buffer: ArrayBuffer): UmdBook => {
   }
   const sectionChecks = new Map<number, number>()
   const warnings: string[] = []
+  const warningCodes: NonNullable<UmdBook['warningCodes']> = {}
   const textSegments: Uint8Array[] = []
   const images: UmdImage[] = []
   let activeSection = 0
@@ -363,7 +370,7 @@ export const parseUmdBook = (buffer: ArrayBuffer): UmdBook => {
   let rawType = 0
 
   if (cursor.readUint32() !== UMD_MAGIC) {
-    throw new Error('不是有效的 UMD 电子书文件')
+    throw Object.assign(new Error('不是有效的 UMD 电子书文件'), { code: 'UMD_INVALID_FILE' })
   }
 
   while (cursor.remaining > 0) {
@@ -471,6 +478,7 @@ export const parseUmdBook = (buffer: ArrayBuffer): UmdBook => {
   const joinedText = joinByteArrays(inflatedText, contentLength)
 
   if (contentLength > joinedText.length && textSegments.length) {
+    warningCodes[warnings.length] = 'UMD_TEXT_TOO_SHORT'
     warnings.push('UMD 正文长度小于声明长度，文件可能不完整')
   }
 
@@ -497,7 +505,9 @@ export const parseUmdBook = (buffer: ArrayBuffer): UmdBook => {
     publisher: metadata.publisher,
     rawType,
     title: metadata.title || 'UMD 电子书',
+    titleIsFallback: !metadata.title,
     vendor: metadata.vendor,
-    warnings
+    warnings,
+    warningCodes
   }
 }

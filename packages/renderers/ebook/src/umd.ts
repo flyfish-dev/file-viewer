@@ -2,7 +2,7 @@ import type {
   FileRenderContext,
   FileViewerRenderedInstance,
 } from '@file-viewer/core';
-import { createFileViewerTranslator } from '@file-viewer/core';
+import { createFileViewerTranslator, normalizeFileViewerErrorMessage } from '@file-viewer/core';
 import {
   parseUmdBook,
   type UmdBook,
@@ -73,47 +73,15 @@ const createButton = (label: string, className: string) => {
   return button;
 };
 
-const buildMetaLine = (book: UmdBook | null, readingText: string, chapter?: UmdChapter) => {
+const buildMetaLine = (book: UmdBook | null, readingText: string, chapterTitle?: string) => {
   if (!book) {
-    return chapter?.title || readingText;
+    return chapterTitle || readingText;
   }
   return [
     book.author,
     book.category,
     book.publishedAt,
-  ].filter(Boolean).join(' / ') || chapter?.title || readingText;
-};
-
-const createUmdTextLocalizer = (t: ReturnType<typeof createFileViewerTranslator>) => {
-  const localize = (value: string) => {
-    if (value === 'UMD 电子书') {
-      return t('umd.title');
-    }
-    const chapterMatch = /^章节\s+(\d+)$/.exec(value);
-    if (chapterMatch) {
-      return t('umd.chapterFallback', { index: chapterMatch[1] });
-    }
-    const galleryMatch = /^图集\s+(\d+)$/.exec(value);
-    if (galleryMatch) {
-      return t('umd.galleryFallback', { index: galleryMatch[1] });
-    }
-    if (value === 'UMD 正文长度小于声明长度，文件可能不完整') {
-      return t('umd.warningBodyTooShort');
-    }
-    if (value === 'UMD 文件结构不完整，读取时遇到意外结尾') {
-      return t('umd.error.unexpectedEnd');
-    }
-    if (value === '不是有效的 UMD 电子书文件') {
-      return t('umd.error.invalidFile');
-    }
-    return value;
-  };
-  return {
-    localize,
-    localizeJoinedWarnings(warnings: string[]) {
-      return warnings.filter(Boolean).map(localize).join('；');
-    },
-  };
+  ].filter(Boolean).join(' / ') || chapterTitle || readingText;
 };
 
 const copyImageBytes = (image: UmdImage) => {
@@ -127,8 +95,7 @@ export default async function renderUmd(
   target: HTMLDivElement,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
-  const { localize, localizeJoinedWarnings } = createUmdTextLocalizer(t);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const objectUrls = new Map<string, string>();
   let book: UmdBook | null = null;
   let activeIndex = 0;
@@ -145,7 +112,7 @@ export default async function renderUmd(
   const tocButton = document.createElement('button');
   tocButton.type = 'button';
   tocButton.className = 'umd-icon-button active';
-  tocButton.title = t('ebook.toc');
+  t.attr(tocButton, 'title', 'ebook.toc');
   tocButton.appendChild(document.createElement('span'));
 
   const title = document.createElement('div');
@@ -155,11 +122,11 @@ export default async function renderUmd(
 
   const actions = document.createElement('div');
   actions.className = 'umd-actions';
-  const prevButton = createButton(t('umd.previousChapter'), 'umd-button');
+  const prevButton = t.text(createButton('', 'umd-button'), 'umd.previousChapter');
   const progress = document.createElement('span');
   progress.className = 'umd-progress';
   progress.textContent = '0/0';
-  const nextButton = createButton(t('umd.nextChapter'), 'umd-button');
+  const nextButton = t.text(createButton('', 'umd-button'), 'umd.nextChapter');
   actions.append(prevButton, progress, nextButton);
   toolbar.append(tocButton, title, actions);
 
@@ -169,7 +136,7 @@ export default async function renderUmd(
   toc.className = 'umd-toc';
   const tocHead = document.createElement('div');
   tocHead.className = 'umd-toc-head';
-  appendText(tocHead, 'strong', t('ebook.toc'));
+  t.text(appendText(tocHead, 'strong', ''), 'ebook.toc');
   const tocCount = appendText(tocHead, 'span', t('ebook.itemCount', { count: 0 }));
   const tocList = document.createElement('div');
   tocList.className = 'umd-toc-list';
@@ -181,7 +148,7 @@ export default async function renderUmd(
   stage.className = 'umd-stage';
   const state = document.createElement('div');
   state.className = 'umd-state';
-  state.textContent = t('umd.loading');
+  t.text(state, 'umd.loading');
   stageWrap.append(stage, state);
   body.append(toc, stageWrap);
   root.append(toolbar, body);
@@ -206,18 +173,24 @@ export default async function renderUmd(
   };
 
   const getCurrentChapter = () => book?.chapters[activeIndex];
+  const bookTitle = () => book?.titleIsFallback ? t('umd.title') : book?.title || t('umd.title');
+  const chapterTitle = (chapter: UmdChapter, index = book?.chapters.indexOf(chapter) ?? -1) => chapter.fallbackTitle
+    ? t(chapter.fallbackTitle === 'gallery' ? 'umd.galleryFallback' : 'umd.chapterFallback', { index: index + 1 })
+    : chapter.title;
+  const warningsText = () => book?.warnings.map((warning, index) => book?.warningCodes?.[index] === 'UMD_TEXT_TOO_SHORT'
+    ? t('umd.warningBodyTooShort') : warning).filter(Boolean).join('; ') || '';
 
   const updateChrome = () => {
     const chapter = getCurrentChapter();
     const total = book?.chapters.length || 0;
-    titleText.textContent = book?.title ? localize(book.title) : t('umd.title');
-    metaText.textContent = localize(buildMetaLine(book, t('ebook.reading'), chapter));
+    t.bind(titleText, node => { node.textContent = bookTitle(); });
+    t.bind(metaText, node => { node.textContent = buildMetaLine(book, t('ebook.reading'), chapter ? chapterTitle(chapter) : undefined); });
     progress.textContent = total ? `${activeIndex + 1}/${total}` : '0/0';
     prevButton.disabled = !book || activeIndex <= 0;
     nextButton.disabled = !book || !total || activeIndex >= total - 1;
     tocButton.classList.toggle('active', tocOpen);
     root.classList.toggle('umd-viewer--toc-hidden', !tocOpen);
-    tocCount.textContent = t('ebook.itemCount', { count: total });
+    t.text(tocCount, 'ebook.itemCount', { count: total });
   };
 
   const scrollToTop = () => {
@@ -227,7 +200,8 @@ export default async function renderUmd(
   const renderToc = () => {
     tocList.replaceChildren();
     book?.chapters.forEach((chapter, index) => {
-      const item = createButton(localize(chapter.title), 'umd-toc-item');
+      const item = createButton(chapter.title, 'umd-toc-item');
+      t.bind(item, node => { node.textContent = chapterTitle(chapter, index); });
       item.classList.toggle('active', index === activeIndex);
       item.addEventListener('click', () => {
         activeIndex = index;
@@ -253,13 +227,13 @@ export default async function renderUmd(
     if (coverUrl) {
       const image = document.createElement('img');
       image.src = coverUrl;
-    image.alt = localize(book.title);
+      t.bind(image, node => { node.alt = bookTitle(); }, 'alt');
       head.appendChild(image);
     }
     const info = document.createElement('div');
-    appendText(info, 'h1', localize(book.title));
+    t.bind(appendText(info, 'h1', book.title), node => { node.textContent = bookTitle(); });
     if (metaLine) {
-      appendText(info, 'p', metaLine);
+      t.bind(appendText(info, 'p', metaLine), node => { node.textContent = buildMetaLine(book, t('ebook.reading')); });
     }
     const publisher = [book.publisher, book.vendor].filter(Boolean).join(' / ');
     if (publisher) {
@@ -273,7 +247,7 @@ export default async function renderUmd(
     const section = document.createElement('section');
     section.className = 'umd-chapter';
     section.dataset.viewerAnchorId = chapter.id;
-    appendText(section, 'h2', localize(chapter.title));
+    t.bind(appendText(section, 'h2', chapter.title), node => { node.textContent = chapterTitle(chapter); });
 
     if (chapter.images.length) {
       const images = document.createElement('div');
@@ -282,7 +256,7 @@ export default async function renderUmd(
         const figure = document.createElement('figure');
         const img = document.createElement('img');
         img.src = getImageUrl(image);
-        img.alt = localize(chapter.title);
+        t.bind(img, node => { node.alt = chapterTitle(chapter); }, 'alt');
         figure.appendChild(img);
         images.appendChild(figure);
       });
@@ -292,7 +266,7 @@ export default async function renderUmd(
     if (chapter.content) {
       appendText(section, 'div', chapter.content, 'umd-text');
     } else if (!chapter.images.length) {
-      appendText(section, 'div', t('umd.emptyContent'), 'umd-empty');
+      t.text(appendText(section, 'div', '', 'umd-empty'), 'umd.emptyContent');
     }
 
     return section;
@@ -310,17 +284,17 @@ export default async function renderUmd(
       stage.appendChild(renderChapter(chapter));
     }
 
-    const warningText = book ? localizeJoinedWarnings(book.warnings) : '';
+    const warningText = warningsText();
     if (warningText) {
-      appendText(stage, 'div', warningText, 'umd-warning');
+      t.bind(appendText(stage, 'div', warningText, 'umd-warning'), node => { node.textContent = warningsText(); });
     }
   };
 
-  const renderError = (message: string) => {
+  const renderError = (message: () => string) => {
     updateChrome();
     state.hidden = false;
     state.classList.add('error');
-    state.textContent = message;
+    t.bind(state, node => { node.textContent = message(); });
   };
 
   const toggleToc = () => {
@@ -358,7 +332,12 @@ export default async function renderUmd(
   } catch (error) {
     if (!disposed) {
       console.error(error);
-      renderError(error instanceof Error ? localize(error.message) : String(error));
+      renderError(() => {
+        const code = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
+        if (code === 'UMD_UNEXPECTED_END') return t('umd.error.unexpectedEnd');
+        if (code === 'UMD_INVALID_FILE') return t('umd.error.invalidFile');
+        return normalizeFileViewerErrorMessage(error, context?.options);
+      });
     }
   }
   context?.registerThumbnailAdapter?.({

@@ -1,4 +1,5 @@
 import { pdfRendererDefinition } from '@file-viewer/renderer-pdf'
+import { normalizeFileViewerAssetBaseUrl as normalizeAssetBaseUrl } from '@file-viewer/core/assets'
 import {
   DEFAULT_FILE_VIEWER_CAD_RUNTIME_VERSION,
   DEFAULT_FILE_VIEWER_DOCX_RUNTIME_VERSION,
@@ -25,6 +26,7 @@ import type {
   ViewerOptions
 } from '@file-viewer/web'
 import { resolveFullAssetPackBaseUrl } from './asset-pack-base.js'
+import { withFullControllerOptions } from './controller-options.js'
 
 declare const __FILE_VIEWER_WEB_FULL_VERSION__: string
 const fullAssetPackVersion = typeof __FILE_VIEWER_WEB_FULL_VERSION__ === 'undefined'
@@ -99,17 +101,6 @@ const initialFullAssetBaseUrl = detectInitialFullAssetBaseUrl(
 )
 let defaultFullAssetBaseUrl: string | undefined = initialFullAssetBaseUrl
 let defaultFullRendererBaseUrl: string | undefined = initialFullRendererBaseUrl
-
-function normalizeAssetBaseUrl(baseUrl?: string | URL | null) {
-  if (!baseUrl) {
-    return undefined
-  }
-  const value = String(baseUrl).trim()
-  if (!value) {
-    return undefined
-  }
-  return value.endsWith('/') ? value : `${value}/`
-}
 
 function detectCurrentScriptUrl() {
   if (typeof document === 'undefined') {
@@ -280,7 +271,9 @@ export function getFullRendererScriptUrl(
     return undefined
   }
   const baseUrl = normalizeAssetBaseUrl(assetBaseUrl) || './'
-  return new URL(`renderers/${line.scriptName}`, baseUrl).href
+  const documentBaseUrl = typeof document === 'undefined' ? undefined : document.baseURI || document.URL
+  const resolvedBaseUrl = documentBaseUrl ? new URL(baseUrl, documentBaseUrl).href : baseUrl
+  return new URL(`renderers/${line.scriptName}`, resolvedBaseUrl).href
 }
 
 async function loadFullRendererLine(line: LazyRendererLine) {
@@ -431,7 +424,10 @@ export function mountViewer(
   initialOptions: ViewerMountOptions = {},
   coreOptions: ViewerCoreOptions = {}
 ): ViewerController {
-  return mountBaseViewer(container, withFullMountOptions(initialOptions), coreOptions)
+  return withFullControllerOptions(
+    mountBaseViewer(container, withFullMountOptions(initialOptions), coreOptions),
+    withFullMountOptions
+  )
 }
 
 export class FileViewerFullElement extends FileViewerElement {

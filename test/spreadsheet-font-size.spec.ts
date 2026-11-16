@@ -79,6 +79,6 @@ describe('spreadsheet font point sizes', () => {
       value: 'Text sample'
     })
     expect(measuredFonts).toEqual([config.BODY_FONT])
-    expect(measuredFonts[0]).toMatch(/^22px /)
+    expect(Number(measuredFonts[0]?.match(/([\d.]+)px/)?.[1])).toBeCloseTo(11 * 96 / 72 * 2)
   })
 })

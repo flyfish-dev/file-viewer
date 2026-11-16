@@ -1,6 +1,7 @@
 import { computed, nextTick, ref } from 'vue'
 import type { Ref } from 'vue'
 import type { DemoLocale } from '@/composables/useDemoCopy'
+import { FILE_VIEWER_LOCALE_OPTIONS } from '@file-viewer/core'
 
 export type DemoLocaleOption = {
   value: DemoLocale
@@ -15,12 +16,7 @@ export type UseDemoLocaleSwitcherOptions = {
   onSelect: (locale: DemoLocale) => void
 }
 
-const DEMO_LOCALE_OPTIONS: ReadonlyArray<DemoLocaleOption> = [
-  { value: 'zh-CN', label: '简体中文', shortLabel: '中' },
-  { value: 'en-US', label: 'English', shortLabel: 'EN' },
-  { value: 'ja-JP', label: '日本語', shortLabel: '日' },
-  { value: 'de-DE', label: 'Deutsch', shortLabel: 'DE' }
-]
+const DEMO_LOCALE_OPTIONS: ReadonlyArray<DemoLocaleOption> = FILE_VIEWER_LOCALE_OPTIONS
 
 type LocaleMenuFocusTarget = 'active' | 'first' | 'last'
 

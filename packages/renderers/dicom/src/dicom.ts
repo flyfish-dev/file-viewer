@@ -1,3 +1,4 @@
+import { createFileViewerTranslator, normalizeFileViewerErrorMessage } from '@file-viewer/core';
 import {
   createFileViewerViewStateChange,
   createFileViewerViewStateChangeEmitter,
@@ -69,41 +70,8 @@ const dicomStyle = `
 @media(max-width:720px){.dicom-toolbar{align-items:flex-start;flex-wrap:wrap}.dicom-window-controls{width:100%;margin-left:0}.dicom-window-controls label{flex:1}.dicom-window-controls input{width:100%;min-width:0}.dicom-body{min-height:300px}}
 `;
 
-const copyByLocale = {
-  'de-DE': {
-    fit: 'Ansicht einpassen', loading: 'DICOM wird geladen ...', next: 'Nächstes Bild', previous: 'Vorheriges Bild',
-    rotateLeft: 'Nach links drehen', rotateRight: 'Nach rechts drehen', windowCenter: 'Fenstermitte',
-    windowWidth: 'Fensterbreite', zoomIn: 'Vergrößern', zoomOut: 'Verkleinern',
-  },
-  'en-US': {
-    fit: 'Fit to view', loading: 'Loading DICOM ...', next: 'Next frame', previous: 'Previous frame',
-    rotateLeft: 'Rotate left', rotateRight: 'Rotate right', windowCenter: 'Window center',
-    windowWidth: 'Window width', zoomIn: 'Zoom in', zoomOut: 'Zoom out',
-  },
-  'ja-JP': {
-    fit: '画面に合わせる', loading: 'DICOM を読み込み中 ...', next: '次のフレーム', previous: '前のフレーム',
-    rotateLeft: '左に回転', rotateRight: '右に回転', windowCenter: 'ウィンドウ中心',
-    windowWidth: 'ウィンドウ幅', zoomIn: '拡大', zoomOut: '縮小',
-  },
-  'zh-CN': {
-    fit: '适合视图', loading: '正在加载 DICOM ...', next: '下一帧', previous: '上一帧',
-    rotateLeft: '向左旋转', rotateRight: '向右旋转', windowCenter: '窗位',
-    windowWidth: '窗宽', zoomIn: '放大', zoomOut: '缩小',
-  },
-} as const;
 
-const resolveCopy = (context?: FileRenderContext) => {
-  const requested = context?.options?.locale;
-  if (requested && requested !== 'auto' && requested in copyByLocale) {
-    return copyByLocale[requested as keyof typeof copyByLocale];
-  }
-  const language = context?.surface?.container?.ownerDocument.defaultView?.navigator.language ||
-    (typeof navigator !== 'undefined' ? navigator.language : 'en-US');
-  if (language.toLowerCase().startsWith('zh')) return copyByLocale['zh-CN'];
-  if (language.toLowerCase().startsWith('ja')) return copyByLocale['ja-JP'];
-  if (language.toLowerCase().startsWith('de')) return copyByLocale['de-DE'];
-  return copyByLocale['en-US'];
-};
+
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -212,11 +180,6 @@ const makeImageIds = (baseImageId: string, frameCount: number) => {
 
 const normalizeZoom = (value: number) => clamp(Number(value.toFixed(3)), MIN_ZOOM, MAX_ZOOM);
 
-const safeErrorMessage = (error: unknown) => {
-  if (error instanceof Error && error.message) return error.message;
-  return 'Unable to render this DICOM file.';
-};
-
 export default async function renderDicom(
   buffer: ArrayBuffer,
   target: HTMLDivElement,
@@ -229,7 +192,7 @@ export default async function renderDicom(
   }
   const inspected = inspectDicomPart10(buffer, options?.limits);
   const documentRef = target.ownerDocument;
-  const copy = resolveCopy(context);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const root = createElement(documentRef, 'div', 'dicom-viewer');
   const hasDicomWindow = inspected.windowWidth !== null && inspected.windowCenter !== null;
   Object.assign(root.dataset, {
@@ -244,33 +207,48 @@ export default async function renderDicom(
 
   const toolbar = createElement(documentRef, 'div', 'dicom-toolbar');
   const navigation = createElement(documentRef, 'div', 'dicom-tool-group');
-  const previousButton = createButton(documentRef, copy.previous, '‹');
+  const previousButton = createButton(documentRef, t('dicom.previous'), '‹');
+  t.attr(previousButton, 'title', 'dicom.previous');
+  t.attr(previousButton, 'aria-label', 'dicom.previous');
   const frameMeter = createElement(documentRef, 'span', 'dicom-frame-meter', `1 / ${inspected.frameCount}`);
   frameMeter.setAttribute('aria-live', 'polite');
-  const nextButton = createButton(documentRef, copy.next, '›');
+  const nextButton = createButton(documentRef, t('dicom.next'), '›');
+  t.attr(nextButton, 'title', 'dicom.next');
+  t.attr(nextButton, 'aria-label', 'dicom.next');
   navigation.append(previousButton, frameMeter, nextButton);
   const zoomTools = createElement(documentRef, 'div', 'dicom-tool-group');
-  const zoomOutButton = createButton(documentRef, copy.zoomOut, '−');
+  const zoomOutButton = createButton(documentRef, t('dicom.zoomOut'), '−');
+  t.attr(zoomOutButton, 'title', 'dicom.zoomOut');
+  t.attr(zoomOutButton, 'aria-label', 'dicom.zoomOut');
   const zoomMeter = createElement(documentRef, 'span', 'dicom-zoom-meter', '100%');
-  const zoomInButton = createButton(documentRef, copy.zoomIn, '+');
-  const fitButton = createButton(documentRef, copy.fit, 'Fit');
-  const rotateLeftButton = createButton(documentRef, copy.rotateLeft, '↶');
-  const rotateRightButton = createButton(documentRef, copy.rotateRight, '↷');
+  const zoomInButton = createButton(documentRef, t('dicom.zoomIn'), '+');
+  t.attr(zoomInButton, 'title', 'dicom.zoomIn');
+  t.attr(zoomInButton, 'aria-label', 'dicom.zoomIn');
+  const fitButton = t.attr(t.attr(createButton(documentRef, t('dicom.fit'), t('dicom.fit')), 'title', 'dicom.fit'), 'aria-label', 'dicom.fit');
+  t.attr(fitButton, 'title', 'dicom.fit');
+  t.attr(fitButton, 'aria-label', 'dicom.fit');
+  t.text(fitButton, 'dicom.fit');
+  const rotateLeftButton = createButton(documentRef, t('dicom.rotateLeft'), '↶');
+  t.attr(rotateLeftButton, 'title', 'dicom.rotateLeft');
+  t.attr(rotateLeftButton, 'aria-label', 'dicom.rotateLeft');
+  const rotateRightButton = createButton(documentRef, t('dicom.rotateRight'), '↷');
+  t.attr(rotateRightButton, 'title', 'dicom.rotateRight');
+  t.attr(rotateRightButton, 'aria-label', 'dicom.rotateRight');
   zoomTools.append(zoomOutButton, zoomMeter, zoomInButton, fitButton, rotateLeftButton, rotateRightButton);
   const windowControls = createElement(documentRef, 'div', 'dicom-window-controls');
   const widthLabel = createElement(documentRef, 'label', undefined, 'WW');
-  widthLabel.title = copy.windowWidth;
+  t.attr(widthLabel, 'title', 'dicom.windowWidth');
   const widthInput = createElement(documentRef, 'input');
   widthInput.type = 'number'; widthInput.min = '1'; widthInput.step = '1';
   widthInput.value = inspected.windowWidth === null ? '' : String(Math.round(inspected.windowWidth));
-  widthInput.setAttribute('aria-label', copy.windowWidth);
+  t.attr(widthInput, 'aria-label', 'dicom.windowWidth');
   widthLabel.append(widthInput);
   const centerLabel = createElement(documentRef, 'label', undefined, 'WC');
-  centerLabel.title = copy.windowCenter;
+  t.attr(centerLabel, 'title', 'dicom.windowCenter');
   const centerInput = createElement(documentRef, 'input');
   centerInput.type = 'number'; centerInput.step = '1';
   centerInput.value = inspected.windowCenter === null ? '' : String(Math.round(inspected.windowCenter));
-  centerInput.setAttribute('aria-label', copy.windowCenter);
+  t.attr(centerInput, 'aria-label', 'dicom.windowCenter');
   centerLabel.append(centerInput);
   windowControls.append(widthLabel, centerLabel);
   toolbar.append(navigation, zoomTools, windowControls);
@@ -279,9 +257,10 @@ export default async function renderDicom(
   const stage = createElement(documentRef, 'div', 'dicom-stage');
   stage.tabIndex = 0;
   stage.setAttribute('role', 'application');
-  stage.setAttribute('aria-label', 'DICOM image viewport');
-  const metadata = createElement(documentRef, 'div', 'dicom-meta', `${inspected.columns}×${inspected.rows} · ${inspected.frameCount} frame${inspected.frameCount === 1 ? '' : 's'} · ${inspected.modality || 'OT'} · ${inspected.photometricInterpretation || 'unknown'}`);
-  const state = createElement(documentRef, 'div', 'dicom-state', copy.loading);
+  t.bind(stage, node => node.setAttribute('aria-label', t('ui.dicom.ui.dicom.image.viewport.ee1ec0')), 'aria-label');
+  const metadata = createElement(documentRef, 'div', 'dicom-meta', `${inspected.columns}×${inspected.rows} · ${t('dicom.frames', { count: inspected.frameCount })} · ${inspected.modality || 'OT'} · ${inspected.photometricInterpretation || '—'}`);
+  t.bind(metadata, node => { node.textContent = `${inspected.columns}×${inspected.rows} · ${t('dicom.frames', { count: inspected.frameCount })} · ${inspected.modality || 'OT'} · ${inspected.photometricInterpretation || '—'}`; });
+  const state = t.text(createElement(documentRef, 'div', 'dicom-state'), 'dicom.loading');
   state.setAttribute('role', 'status');
   body.append(stage, metadata, state);
   root.append(toolbar, body);
@@ -559,7 +538,8 @@ export default async function renderDicom(
     root.dataset.status = 'ready'; state.hidden = true; syncFrameUi(); syncZoomUi(); emitViewState('init', 'viewer');
   } catch (error) {
     if (!destroyed) {
-      root.dataset.status = 'error'; state.hidden = false; state.classList.add('error'); state.textContent = safeErrorMessage(error);
+      root.dataset.status = 'error'; state.hidden = false; state.classList.add('error');
+      t.bind(state, node => { node.textContent = normalizeFileViewerErrorMessage(error, context?.options) || t('dicom.error.renderFailed'); });
     }
     cleanup();
     // An abort can destroy the viewport while its initial worker request is

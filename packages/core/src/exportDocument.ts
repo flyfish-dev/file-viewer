@@ -872,9 +872,10 @@ const buildExportDocumentMarkup = ({
   const printOverrideStyle = printStyle ? `<style data-viewer-print-style>${printStyle}</style>` : ''
   const maskStyle = normalizedMask ? `<style data-viewer-print-mask-style>${FILE_VIEWER_PRINT_MASK_STYLE}</style>` : ''
   const safeTitle = escapeHtmlAttribute(title)
+  const language = escapeHtmlAttribute(documentRef?.documentElement?.lang || 'zh-CN')
 
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="${language}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />

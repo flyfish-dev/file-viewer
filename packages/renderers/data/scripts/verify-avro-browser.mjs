@@ -4,6 +4,7 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import { launchBrowserForTest } from '../../../build-support/browser-test-launch.mjs';
 
 const require = createRequire(new URL('../package.json', import.meta.url));
 const avsc = require('avsc');
@@ -32,7 +33,7 @@ async function encode(codec, records) {
     encoder.end();
   });
 }
-const browser = await chromium.launch({ headless: true });
+const browser = await launchBrowserForTest(chromium, 'chromium', { headless: true });
 const page = await browser.newPage();
 const errors = [], requests = [], cases = [];
 page.on('pageerror', error => errors.push(error.message));

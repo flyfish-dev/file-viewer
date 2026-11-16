@@ -157,6 +157,7 @@ export interface DecodedProperty<TValue = unknown> {
   code?: number;
   operandBytes?: Uint8Array;
   raw?: number | Uint8Array;
+  warning?: MsDocWarning;
 }
 
 export interface StyleBase {
@@ -620,6 +621,7 @@ export interface PageBreakInlineNode {
 export type InlineNode = TextInlineNode | ImageInlineNode | AttachmentInlineNode | LineBreakInlineNode | PageBreakInlineNode;
 
 export interface ParagraphBlock {
+  sourceRange?: MsDocSourceRange;
   type: 'paragraph';
   id: string;
   styleId: number;
@@ -669,6 +671,7 @@ export interface AttachmentsBlock {
 export type MsDocBlock = ParagraphBlock | TableBlock | AttachmentsBlock;
 
 export interface ParagraphModel {
+  sourceRange?: MsDocSourceRange;
   id: string;
   cpStart: number;
   cpEnd: number;
@@ -729,6 +732,7 @@ export interface MsDocStyleSummary {
 }
 
 export interface MsDocParseResult {
+  textboxLayout?: MsDocTextboxLayout;
   kind: 'msdoc';
   version: number;
   warnings: MsDocWarning[];
@@ -808,3 +812,92 @@ export interface MsDocWorkerClientLike {
 }
 
 export type CssStyleObject = Record<string, string | number | undefined>;
+
+/** Optional evidence only. No page coordinates or layout capability are implied. */
+export interface MsDocSourceRange {
+  storyKind: string;
+  global: { start: number; end: number };
+  story: { start: number; end: number };
+  flowId?: string;
+}
+export interface MsDocDrawingProperty {
+  id: number;
+  value: number;
+  complex: boolean;
+  blip: boolean;
+  source: 'document-default' | 'shape';
+  recordType: number;
+  offset: number;
+  /** Boolean property flags are pairs: low value bits, high explicit-use bits. */
+  useMask?: number;
+}
+export interface MsDocDrawingShape {
+  shapeId: number;
+  storyKind: 'main' | 'header';
+  shapeType: number;
+  flags: number;
+  fileOrder: number;
+  offset: number;
+  parentShapeId?: number;
+  textId?: number;
+  clientTextId?: number;
+  /** Effective properties, with boolean use bits merged individually. */
+  properties: MsDocDrawingProperty[];
+  rawProperties: MsDocDrawingProperty[];
+  reasons: string[];
+}
+export interface MsDocTextboxFrame {
+  id: string;
+  textboxIndex: number;
+  storyKind: 'textbox' | 'header-textbox';
+  storyRange: { start: number; end: number };
+  globalRange: { start: number; end: number };
+  shapeId: number;
+  chainCount: number;
+  contentBlockIds: string[];
+  mapping: 'mapped' | 'invalid' | 'unmapped';
+  layoutEligibility: 'pending-evidence' | 'unsupported';
+  reasons: string[];
+  tableOffset: number;
+  anchor?: {
+    storyKind: 'main' | 'header';
+    /** Relative to anchor story, unlike globalCp. */
+    cp: number;
+    globalCp: number;
+    paragraphRange?: { start: number; end: number };
+    paragraphBlockId?: string;
+  };
+  raw?: {
+    rectTwips: { left: number; top: number; right: number; bottom: number };
+    flags: number;
+    bx: number; by: number; wrap: number; wrapSide: number;
+    belowText: boolean; anchorLocked: boolean;
+    spaOffset: number;
+    drawing?: MsDocDrawingShape;
+  };
+}
+export interface MsDocSectionGeometry {
+  id: string;
+  mainCpRange: { start: number; end: number };
+  tableOffset: number;
+  sepxOffset?: number;
+  pageWidthTwips?: number;
+  pageHeightTwips?: number;
+  marginsTwips: { left?: number; right?: number; top?: number; bottom?: number; gutter?: number };
+  columnsMinusOne?: number;
+  columnSpaceTwips?: number;
+  breakKind?: number;
+  orientation?: number;
+  status: 'explicit' | 'partial' | 'invalid';
+  unknownSprms: number[];
+  /** The explicit prefix is incomplete after an aggregate work/output limit. */
+  budgetExceeded?: 'scannedBytes' | 'sprms' | 'unknownSprms';
+}
+export interface MsDocTextboxLayout {
+  schemaVersion: 1;
+  /** Text exists only in the canonical blocks. These are references, not copies. */
+  frames: MsDocTextboxFrame[];
+  sections: MsDocSectionGeometry[];
+  /** Preserves anchor-only paragraphs omitted by the legacy display path. */
+  anchorParagraphs: Array<{ storyKind: 'main' | 'header'; globalRange: { start: number; end: number }; blockId?: string }>;
+}

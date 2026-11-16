@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "purpose": "fixed-libarchive-original-notice-retention",
+  "packageName": "libarchive.js",
+  "packageVersion": "2.0.2",
+  "runtime": {
+    "path": "dist/libarchive.wasm",
+    "bytes": 1002547,
+    "sha256": "8a66066ed3ea1e6db0469ec752d8fca888a6bf737c6cff21fdbcb62241a72424"
+  },
+  "worker": {
+    "path": "dist/worker-bundle.js",
+    "bytes": 61634,
+    "sha256": "552fd4c4e96e677b8d1ee28b96eec3f7761f19ae9069b6df40c1848b3b632493"
+  },
+  "originalMaterials": [
+    {
+      "path": "originals/libarchivejs-2.0.2-MIT.txt",
+      "bytes": 1069,
+      "sha256": "cd2233ededca3500350239c4995a3bf4f57cb810b77074d266b0fb0d781dc161",
+      "component": "libarchive.js wrapper",
+      "version": "2.0.2",
+      "commit": "0989c1a6db20d030d793b1763e20d880068091bd",
+      "source": "https://github.com/nika-begiashvili/libarchivejs/blob/0989c1a6db20d030d793b1763e20d880068091bd/LICENSE",
+      "profile": "Original wrapper MIT is independent of the native source profiles below."
+    },
+    {
+      "path": "originals/libarchive-3.7.2-original-grants.txt",
+      "bytes": 167035,
+      "sha256": "9b1afb11d76b122be448d7710300b1380a5119f4af7bed42cb11c52da85dec33",
+      "component": "libarchive",
+      "version": "3.7.2",
+      "commit": "6468cd1f5c9b76e2c3b10cdd6938faf6b82823b6",
+      "source": "https://github.com/libarchive/libarchive/releases/download/v3.7.2/libarchive-3.7.2.zip",
+      "profile": "Conservative library C/header sources; BSD/ISC/BLAKE2 alternatives and original copyrights remain distinct. No license option elected.",
+      "sourceArchive": {
+        "bytes": 8486078,
+        "sha256": "7a47337f6b36bc396c13843e0dc5c4c276cf0e862a8ecd9fdc5ae192f7712642"
+      }
+    },
+    {
+      "path": "originals/xz-liblzma-5.2.11-original-grants.txt",
+      "bytes": 78062,
+      "sha256": "0b3d2491bd455f52c1dfc4aa98d14edd81681ceff692d29c1fca9ea74ee54fd4",
+      "component": "xz/liblzma",
+      "version": "5.2.11",
+      "commit": "3e206e5c436d35ac8942357c1867cf8253dad862",
+      "source": "https://github.com/tukaani-project/xz/tree/3e206e5c436d35ac8942357c1867cf8253dad862",
+      "profile": "Conservative liblzma/common C/header source profile; library public-domain declaration is distinct from GPL scripts/build/CLI support.",
+      "sourceBlobProfileSha256": "0888281ec53572c3849521cd55dc1f7941980332ca9d1565177ef4d076b88338"
+    },
+    {
+      "path": "originals/zlib-1.3-original-grants.txt",
+      "bytes": 10038,
+      "sha256": "7165214b4cec0848ca8b2ab1cae1c32eb62f370d95dd6752675670246f2fc397",
+      "component": "zlib",
+      "version": "1.3",
+      "commit": "09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851",
+      "source": "https://github.com/madler/zlib/releases/download/v1.3/zlib13.zip",
+      "profile": "Library source/header originals.",
+      "sourceArchive": {
+        "bytes": 1628983,
+        "sha256": "c561d09347f674f0d72692e7c75d9898919326c532aab7f8c07bb43b07efeb38"
+      }
+    },
+    {
+      "path": "originals/bzip2-1.0.8-original-grants.txt",
+      "bytes": 2916,
+      "sha256": "5d011f15626289c40ada39f7f3bd4d8ce0f5bf4dd4a99446c340b38b6df53ab5",
+      "component": "bzip2",
+      "version": "1.0.8",
+      "source": "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz",
+      "profile": "Library source/header originals; no invented standard SPDX replacement.",
+      "sourceArchive": {
+        "bytes": 810029,
+        "sha256": "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"
+      }
+    },
+    {
+      "path": "originals/openssl-1.0.2s-original-grants.txt",
+      "bytes": 379191,
+      "sha256": "9c1d3cba416c00564aa997672efdda79fc75d4d5e18172926cccd39752fa688a",
+      "component": "OpenSSL",
+      "version": "1.0.2s",
+      "commit": "cf9143f945a67f3d540e2704fdbdf1bdc985233d",
+      "source": "https://www.openssl.org/source/old/1.0.2/openssl-1.0.2s.tar.gz",
+      "profile": "Conservative no-asm library C/header profile; separate conditional/engine candidates, original OpenSSL/SSLeay and other authors. Not post-link.",
+      "sourceArchive": {
+        "bytes": 5349149,
+        "sha256": "cabd5c9492825ce5bd23f3c3aeed6a97f8142f606d893df216411f07d1abab96"
+      }
+    }
+  ],
+  "collection": {
+    "path": "THIRD_PARTY_NOTICES.txt",
+    "bytes": 640439,
+    "sha256": "f629465138b91f6cf0e907714605b69470a85f8624c3c682139c1c16e32f0570"
+  },
+  "header": "# libarchive.js 2.0.2 retained original materials\n\nThis generated collection preserves the original wrapper grant and complete\nknown native library source-profile notices. Upstream terms, alternatives and\nattributions remain independent; no single MIT or other license is elected\nfor the combined runtime. The conservative profiles include optional library\nheaders and are not a post-link inventory.\n\nThe official fixed distribution binds libarchive.wasm SHA-256\n8a66066ed3ea1e6db0469ec752d8fca888a6bf737c6cff21fdbcb62241a72424.\nIts floating Emscripten toolchain/ports identities remain unverified. This\ncollection is material retention, not source-availability or release approval.\n\nlibarchive.js wrapper 2.0.2\nSource: https://github.com/nika-begiashvili/libarchivejs/blob/0989c1a6db20d030d793b1763e20d880068091bd/LICENSE\nOriginal collection SHA-256: cd2233ededca3500350239c4995a3bf4f57cb810b77074d266b0fb0d781dc161\n\nlibarchive 3.7.2\nSource: https://github.com/libarchive/libarchive/releases/download/v3.7.2/libarchive-3.7.2.zip\nOriginal collection SHA-256: 9b1afb11d76b122be448d7710300b1380a5119f4af7bed42cb11c52da85dec33\n\nxz/liblzma 5.2.11\nSource: https://github.com/tukaani-project/xz/tree/3e206e5c436d35ac8942357c1867cf8253dad862\nOriginal collection SHA-256: 0b3d2491bd455f52c1dfc4aa98d14edd81681ceff692d29c1fca9ea74ee54fd4\n\nzlib 1.3\nSource: https://github.com/madler/zlib/releases/download/v1.3/zlib13.zip\nOriginal collection SHA-256: 7165214b4cec0848ca8b2ab1cae1c32eb62f370d95dd6752675670246f2fc397\n\nbzip2 1.0.8\nSource: https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz\nOriginal collection SHA-256: 5d011f15626289c40ada39f7f3bd4d8ce0f5bf4dd4a99446c340b38b6df53ab5\n\nOpenSSL 1.0.2s\nSource: https://www.openssl.org/source/old/1.0.2/openssl-1.0.2s.tar.gz\nOriginal collection SHA-256: 9c1d3cba416c00564aa997672efdda79fc75d4d5e18172926cccd39752fa688a\n\n",
+  "assembly": "Header followed by one newline/title, complete original bytes, and newline for each originalMaterials entry in order. Original compilation books are generated from fixed upstream original spans, not original single upstream files.",
+  "sourceProfile": "conservative-library-source-profile-not-post-link",
+  "licenseElections": null,
+  "toolchainIdentity": "unverified-floating-emsdk-and-ports",
+  "releaseApproval": false
+}

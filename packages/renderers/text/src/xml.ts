@@ -1,4 +1,6 @@
 import {
+  createFileViewerTranslator,
+  createFileViewerI18nBindings,
   decodeFileViewerTextBuffer, disposeFileViewerRendered,
   type FileRenderContext, type FileViewerRenderedInstance, type FileViewerXmlDiagnostic
 } from '@file-viewer/core'
@@ -20,6 +22,8 @@ export default async function renderXml(
   buffer: ArrayBuffer, target: HTMLDivElement, context?: FileRenderContext
 ): Promise<FileViewerXmlRenderedInstance> {
   const options = context?.options?.xml ?? {}
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const bindings = createFileViewerI18nBindings(context?.i18n)
   const doc = target.ownerDocument
   const controller = new AbortController()
   const signal = controller.signal
@@ -45,11 +49,11 @@ export default async function renderXml(
   const sourceButton = doc.createElement('button')
   sourceButton.type = 'button'
   sourceButton.dataset.xmlView = 'source'
-  sourceButton.textContent = options.labels?.viewSource ?? 'View Source'
+  bindings.text(sourceButton, () => options.labels?.viewSource ?? t('xml.viewSource'))
   const renderedButton = doc.createElement('button')
   renderedButton.type = 'button'
   renderedButton.dataset.xmlView = 'rendered'
-  renderedButton.textContent = options.labels?.viewRendered ?? 'View Rendered'
+  bindings.text(renderedButton, () => options.labels?.viewRendered ?? t('xml.viewRendered'))
   controls.append(renderedButton, sourceButton)
   const sourceTarget = doc.createElement('div')
   sourceTarget.className = 'xml-profile-source'
@@ -57,7 +61,7 @@ export default async function renderXml(
   details.className = 'xml-profile-diagnostics'
   details.hidden = true
   const summary = doc.createElement('summary')
-  summary.textContent = options.labels?.diagnostics ?? 'XML profile diagnostics'
+  bindings.text(summary, () => options.labels?.diagnostics ?? t('xml.diagnostics'))
   const diagnosticText = doc.createElement('div')
   details.append(summary, diagnosticText)
   root.append(controls, sourceTarget, details)
@@ -88,6 +92,7 @@ export default async function renderXml(
   const unmount = () => {
     if (disposed) return
     disposed = true
+    bindings.destroy()
     controller.abort(new XmlProfileError('cancelled', 'XML profile processing was cancelled.'))
     context?.signal?.removeEventListener('abort', unmount)
     sourceButton.removeEventListener('click', showSource)
@@ -152,7 +157,7 @@ export default async function renderXml(
       const html = createHtmlPreviewDocument(doc, result.html)
       frame = doc.createElement('iframe')
       frame.className = 'xml-profile-rendered'
-      frame.title = options.labels?.viewRendered ?? 'Rendered XML'
+      bindings.attr(frame, 'title', () => options.labels?.viewRendered ?? t('xml.viewRendered'))
       frame.setAttribute('sandbox', '')
       frame.referrerPolicy = 'no-referrer'
       frame.srcdoc = html

@@ -163,7 +163,7 @@ export default async function renderImage(
   type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const documentRef = target.ownerDocument || document;
   const targetWindow = documentRef.defaultView;
   const src = await resolveImageUrl(buffer, type);
@@ -197,6 +197,13 @@ export default async function renderImage(
     ? installFileViewerImageHandTool(root, context.signal) : () => {};
 
   const lightbox = createLightbox(documentRef, src, t);
+  const refreshLocale = () => {
+    image.alt = t('image.alt');
+    lightbox.element.querySelector('img')!.alt = t('image.lightbox.alt');
+    lightbox.element.querySelector('button')!.setAttribute('aria-label', t('image.lightbox.close'));
+  };
+  const unsubscribeLocale = context?.i18n?.subscribe(refreshLocale);
+  refreshLocale();
   const openLightbox = () => lightbox.open(image);
   const openLightboxFromKeyboard = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -347,6 +354,7 @@ export default async function renderImage(
     $el: target,
     unmount() {
       destroyed = true;
+      unsubscribeLocale?.();
       if (viewportResizeFrame !== null) {
         targetWindow?.cancelAnimationFrame(viewportResizeFrame);
         viewportResizeFrame = null;

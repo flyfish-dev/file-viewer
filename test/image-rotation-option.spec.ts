@@ -16,10 +16,11 @@ const providers = vi.hoisted(() => ({
 
 // Real renderer code and jsdom are used. Core registration/emission and browser
 // image decoding are test doubles: this suite tests controls, not pixel fidelity.
-vi.mock('@file-viewer/core', () => {
+vi.mock('@file-viewer/core', async importActual => {
+  const actual = await importActual<typeof import('@file-viewer/core')>()
   const emitter = () => ({ emit: () => {}, subscribe: () => () => {} })
   return {
-    createFileViewerTranslator: () => (key: string) => key,
+    createFileViewerTranslator: actual.createFileViewerTranslator,
     createFileViewerViewStateChange: (state: unknown, options: object) => ({
       state, ...options, timestamp: Date.now()
     }),
@@ -112,7 +113,7 @@ describe('per-viewer image rotation option (#298)', () => {
   it('preserves the default controls and user rotation', async () => {
     const { root, view } = await mount()
     expect(root.querySelectorAll('.image-toolbar button')).toHaveLength(2)
-    root.querySelector<HTMLButtonElement>('[title="image.toolbar.rotateRight"]')!.click()
+    root.querySelectorAll<HTMLButtonElement>('.image-toolbar button')[1]!.click()
     expect(view.getState().rotation).toBe(90)
   })
   it('preserves explicitly enabled view-state rotation', async () => {
@@ -144,7 +145,7 @@ describe('multipage TIFF rotation option (#298)', () => {
   it('preserves default TIFF rotation controls', async () => {
     const { root, view } = await mount(undefined, true)
     expect(root.querySelectorAll('.tiff-toolbar button')).toHaveLength(2)
-    root.querySelector<HTMLButtonElement>('[title="image.toolbar.rotateRight"]')!.click()
+    root.querySelectorAll<HTMLButtonElement>('.tiff-toolbar button')[1]!.click()
     expect(view.getState().rotation).toBe(90)
   })
   it('retains accessible page status without rotation controls', async () => {

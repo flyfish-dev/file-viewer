@@ -60,6 +60,35 @@ const signature = {
 
 策略只能接受应用自己解析出的固定包内 URL，不能把文档内容传入 `createScriptURL`。
 
+## 签名详情面板
+
+通过 core 的可选 `FileViewerOptions.signature` 类型配置初始布局。仍需按原有方式注册 signature 和所需的嵌套文档 renderer。
+
+```ts
+const viewer = createViewer(container, {
+  options: {
+    renderers: [signatureRenderer, pdfRenderer, textRenderer],
+    signature: {
+      detailsPanel: {
+        initialState: 'collapsed',
+        position: 'left',
+        openingBehavior: 'overlay'
+      }
+    }
+  }
+})
+```
+
+默认保留 `initialState: 'expanded'`、`position: 'top'`。`openingBehavior` 默认 `'overlay'`，只在左侧布局生效。面板仅收纳签名详情；元数据、验证边界、原件/公钥输入和附件选择始终保留。左侧布局中的元数据栏与详情栏、预览区域相互独立；窄容器按自身宽度将原元数据栏改为单列排列。
+
+初始配置只在每个签名文档实例创建时读取。`viewer.updateOptions()` 不会更新已挂载的面板，也不会因此重载文档。用户可随时展开或收起；同一实例中更换验证输入时保留当前选择，新文档重新采用其初始配置。renderer 不使用全局偏好或 localStorage。
+
+展开/收起保留同一个嵌套预览实例，不重新验签。Overlay 保持预览尺寸、缩放和阅读位置。Push 改变可用宽度，保留手动缩放；原有自动适配策略可能重新计算比例。有界的阅读位置调整尽可能保留当前页面/内容块；没有稳定锚点的第三方 renderer 使用滚动位置回退。关闭后恢复可用宽度，不重载文档。
+
+导出的 `FILE_VIEWER_SIGNATURE_PANEL_CHANGE_EVENT` 对应 `file-viewer-signature-panel-change` DOM 事件，可冒泡并穿过 Shadow DOM。仅在用户实际改变状态时触发，不在初始化时触发；其可序列化 detail 为 `{ expanded, position, openingBehavior }`，类型为 `FileViewerSignaturePanelChangeDetail`。宿主可自行持久化这些值。嵌套签名各自触发事件，需要区分来源时可读取 `event.composedPath()[0]`。该事件不替代嵌套文档的 view-state 事件，也不向 Worker options 增加回调。
+
+收起时仍可发现失败和未完成的检查，摘要不会宣称整体有效或可信。原验证结果及安全边界保持不变。新面板控件使用 core 的中、英、日、德文目录和自定义文案机制；原有引擎诊断文字不变。
+
 ## OpenPGP 与体积边界
 
 OpenPGP 后端使用 MIT/Apache-2.0 的 rPGP `0.20.0`，在专用 Worker 中懒加载 WASM；不使用 OpenPGP.js、GnuPG 或 LGPL 源码。公开 API 只暴露分类、受限元数据检查，以及分离、cleartext、未加密内嵌/压缩消息的多签名验证，不暴露 rPGP 底层对象或私钥材料。

@@ -6,6 +6,7 @@ import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { declaredSpdxNotice } from '../../../build-support/declared-spdx-notices.mjs';
 import { epubSourcePolicy } from './epub-source-policy.mjs';
+import { writePrebundledNoticeReceipt } from '../../../build-support/prebundled-notices.mjs';
 
 const EPUBJS_VERSION = '0.3.93';
 const XMLDOM_VERSION = '0.9.12';
@@ -261,6 +262,9 @@ const manifest = {
   })),
 };
 await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+await writePrebundledNoticeReceipt({
+  packageRoot, runtimePaths: ['dist/vendor/epubjs.js'], noticePath: 'dist/vendor/epubjs.NOTICE.txt',
+});
 
 console.log(
   `[epub-engine] Built ${packageJson.name} ${normalize(relative(packageRoot, outputPath))} ` +

@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   decodeFileViewerTextBuffer,
   registerFileViewerZoomProvider,
@@ -192,7 +193,7 @@ export default async function renderText(
   type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options)
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
   const extension = type || 'txt'
   const normalizedExtension = extension.trim().toLowerCase()
   const textOptions = context?.options?.text
@@ -245,6 +246,7 @@ export default async function renderText(
   const showLineNumbers = textOptions?.lineNumbers === true
   const wrapLongLines = textOptions?.wrapLongLines === true
   const documentRef = target.ownerDocument
+  const bindings = createFileViewerI18nBindings(context?.i18n)
   let disposed = false
   let zoom = 1
   let showingFormatted = formattedText !== null
@@ -287,13 +289,13 @@ export default async function renderText(
   const syncRepresentationControls = (lineCount: number) => {
     const formatted = showingFormatted && formattedText !== null
     root.dataset.textRepresentation = formatted ? 'formatted' : 'source'
-    lineSummary.textContent = `${lineCount} lines`
+    bindings.text(lineSummary, () => t('ui.text.ui.lines.24e137', { p0: lineCount }))
     representationStatus.hidden = !formatted
-    representationStatus.textContent = formatted ? t('text.code.formattedPreview') : ''
+    bindings.text(representationStatus, () => formatted ? t('text.code.formattedPreview') : '')
     representationToggle.hidden = formattedText === null
-    representationToggle.textContent = formatted
+    bindings.text(representationToggle, () => formatted
       ? t('text.code.showOriginal')
-      : t('text.code.showFormatted')
+      : t('text.code.showFormatted'))
     representationToggle.setAttribute('aria-pressed', String(formatted))
   }
 
@@ -309,19 +311,22 @@ export default async function renderText(
       return
     }
 
-    code.textContent = t('text.code.loadingHighlight')
+    code.replaceChildren()
+    const releaseLoadingLabel = bindings.text(code, () => t('text.code.loadingHighlight'))
     try {
       const hljs = await loadHighlighter()
       const hasLanguage = await registerLanguageOnce(hljs, language)
       if (disposed || generation !== renderGeneration) {
         return
       }
+      releaseLoadingLabel()
       const highlighted = hasLanguage
         ? hljs.highlight(text, { language, ignoreIllegals: true }).value
         : escapeHtml(text)
       mountCodeMarkup(pre, code, highlighted, lineCount, showLineNumbers, wrapLongLines)
     } catch {
       if (!disposed && generation === renderGeneration) {
+        releaseLoadingLabel()
         mountCodeMarkup(pre, code, escapeHtml(text), lineCount, showLineNumbers, wrapLongLines)
       }
     }
@@ -367,6 +372,7 @@ export default async function renderText(
     $el: target,
     unmount() {
       disposed = true
+      bindings.destroy()
       renderGeneration += 1
       representationToggle.removeEventListener('click', toggleRepresentation)
       unregisterFileViewerZoomProvider(root)

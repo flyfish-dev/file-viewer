@@ -21,7 +21,7 @@ test('copied PDF CMap grants bind to the actual canonical payload; altered paylo
 
 test('generated provenance remains informational and the original Atlassian restrictions remain explicit', async () => {
   const registry = JSON.parse(await readFile(new URL('./licenses/asset-family-materials.json', import.meta.url)))
-  assert.equal(registry.materials.length, 55)
+  assert.equal(registry.materials.length, 58)
   for (const entry of registry.materials.filter(entry => entry.kind.startsWith('generated-'))) assert.equal(entry.declaredLicense, null)
   const restricted = registry.materials.filter(entry => entry.kind === 'original-restricted-grant')
   assert.equal(restricted.length, 2)

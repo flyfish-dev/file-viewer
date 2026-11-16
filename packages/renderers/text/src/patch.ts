@@ -1,4 +1,6 @@
 import {
+  createFileViewerTranslator,
+  createFileViewerI18nBindings,
   createFileViewerZoomChangeEmitter as createZoomChangeEmitter,
   decodeFileViewerTextBuffer,
   registerFileViewerZoomProvider,
@@ -90,6 +92,11 @@ export default async function renderPatch(
     context?.options?.text?.encoding,
     context?.options?.text?.fallbackEncoding
   ).text
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const bindings = createFileViewerI18nBindings(context?.i18n)
+  const summary = createElement(documentRef, 'strong')
+  const fileCount = countFiles(text)
+  bindings.text(summary, () => t('text.patch.summary', { count: fileCount }))
   let zoom = 1
   const zoomEmitter = createZoomChangeEmitter()
 
@@ -98,7 +105,7 @@ export default async function renderPatch(
   const toolbar = createElement(documentRef, 'div', 'patch-toolbar')
   toolbar.append(
     createElement(documentRef, 'span', undefined, type.toUpperCase()),
-    createElement(documentRef, 'strong', undefined, `${countFiles(text)} files · side-by-side`)
+    summary
   )
   const body = createElement(documentRef, 'div', 'patch-body')
 
@@ -153,6 +160,7 @@ export default async function renderPatch(
   return {
     $el: root,
     unmount() {
+      bindings.destroy()
       unregisterFileViewerZoomProvider(root)
       target.replaceChildren()
     }

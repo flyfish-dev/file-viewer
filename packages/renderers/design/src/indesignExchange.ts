@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core'
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core'
 import { parseInDesignExchangeInWorker } from './adobeContainerWorkerClient.js'
 import { resolveInDesignExchangeLimits } from './indesignExchangeParser.js'
@@ -18,17 +19,7 @@ const exchangeStyle = `
 @media(max-width:760px){.indesign-exchange-viewer{min-height:360px}.ix-toolbar{position:relative;align-items:stretch;flex-direction:column;padding:9px 10px}.ix-tools{align-items:stretch;flex-direction:column}.ix-tabs{overflow-x:auto}.ix-tab{flex:1;min-width:84px}.ix-search{width:100%}.ix-body{padding:10px}.ix-summary{grid-template-columns:1fr 1fr}.ix-layout-stage{padding:10px}.ix-story-content{padding:16px 14px;font-size:14px}.ix-list li{grid-template-columns:1fr;gap:3px}.ix-title span{white-space:normal}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string
-) => {
-  const node = documentRef.createElement(tag)
-  if (className) node.className = className
-  if (text !== undefined) node.textContent = text
-  return node
-}
+
 
 const svgElement = <K extends keyof SVGElementTagNameMap>(documentRef: Document, tag: K) =>
   documentRef.createElementNS('http://www.w3.org/2000/svg', tag)
@@ -153,6 +144,8 @@ const storyTextPreview = (story: InDesignExchangeStory, maximumCharacters: numbe
   return output
 }
 
+const createExchangeUi = (t: ReturnType<typeof createFileViewerTranslator>) => {
+const element = t.element
 const appendPanelLimitNotice = (
   documentRef: Document,
   container: HTMLElement,
@@ -182,7 +175,7 @@ const renderStories = (
   const colors = colorMap(parsed.colors)
   if (!parsed.stories.length) {
     if (claimPanelNodes(budget, 2))
-      container.appendChild(element(documentRef, 'div', 'ix-empty', copy.noStories))
+      container.appendChild(element(documentRef, 'div', 'ix-empty', () => copy.noStories))
     appendPanelLimitNotice(documentRef, container, copy.capped, budget)
     return {
       container,
@@ -198,8 +191,8 @@ const renderStories = (
       `${story.id} ${story.title || ''} ${storyTextPreview(story, 65_536)}`.toLocaleLowerCase()
     const header = element(documentRef, 'header', 'ix-story-header')
     header.append(
-      element(documentRef, 'strong', undefined, story.title || `${copy.story} ${storyIndex + 1}`),
-      element(documentRef, 'span', undefined, `${story.characterCount} ${copy.characters}`)
+      element(documentRef, 'strong', undefined, () => story.title || `${copy.story} ${storyIndex + 1}`),
+      element(documentRef, 'span', undefined, () => `${story.characterCount} ${copy.characters}`)
     )
     const content = element(documentRef, 'div', 'ix-story-content')
     for (const paragraph of story.paragraphs) {
@@ -254,7 +247,7 @@ const renderLayout = (
   )
   if (!drawable.length) {
     if (claimPanelNodes(budget, 2))
-      container.appendChild(element(documentRef, 'div', 'ix-empty', copy.noGeometry))
+      container.appendChild(element(documentRef, 'div', 'ix-empty', () => copy.noGeometry))
     appendPanelLimitNotice(documentRef, container, copy.capped, budget)
     return {
       container,
@@ -294,7 +287,7 @@ const renderLayout = (
   svg.classList.add('ix-layout-paper')
   svg.setAttribute('viewBox', viewBox.join(' '))
   svg.setAttribute('role', 'img')
-  svg.setAttribute('aria-label', `${parsed.format.toUpperCase()} layout fragment`)
+  t.bind(svg, node => node.setAttribute('aria-label', t('design.ui.layout.fragment.1fe731', { p0: parsed.format.toUpperCase() })), 'aria-label')
   const background = svgElement(documentRef, 'rect')
   background.setAttribute('x', String(viewBox[0]))
   background.setAttribute('y', String(viewBox[1]))
@@ -467,12 +460,20 @@ const renderStructure = (
   return { container, thumbnail: container, nodes: budget.used, truncated: budget.truncated }
 }
 
+
+return { renderStories, renderLayout, renderStructure }
+}
+
 export default async function renderInDesignExchange(
   buffer: ArrayBuffer,
   target: HTMLDivElement,
   format: InDesignExchangeFormat,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+  const { renderStories, renderLayout, renderStructure } = createExchangeUi(t)
+
   if (context?.signal?.aborted)
     throw new DOMException('InDesign exchange rendering was aborted.', 'AbortError')
   const documentRef = target.ownerDocument || document
@@ -496,59 +497,28 @@ export default async function renderInDesignExchange(
   )
   if (context?.signal?.aborted)
     throw new DOMException('InDesign exchange rendering was aborted.', 'AbortError')
-  const locale = (context?.options?.locale || documentRef.documentElement.lang || '').toLowerCase()
-  const isChinese = locale.startsWith('zh')
-  const copy = isChinese
-    ? {
-        title: {
-          icml: 'Adobe InCopy 内容',
-          idms: 'Adobe InDesign 片段',
-          inx: 'Adobe InDesign 旧版交换'
-        }[format],
-        preview: '版面',
-        stories: '内容',
-        structure: '结构',
-        search: '筛选故事、对象或样式',
-        bytes: '文件',
-        nodes: 'XML 节点',
-        story: '故事',
-        storiesLabel: '故事',
-        characters: '字符',
-        items: '页面对象',
-        styles: '样式',
-        colors: '颜色',
-        unresolved: '未映射元素',
-        empty: '没有记录',
-        noStories: '该文件没有可显示的故事内容。',
-        noGeometry: '该文件没有可验证的页面对象几何；请查看内容和结构清单。',
-        capped: '该面板已达到安全 DOM 上限，仅显示前部内容；上方统计仍代表完整解析结果。'
-      }
-    : {
-        title: {
-          icml: 'Adobe InCopy Content',
-          idms: 'Adobe InDesign Snippet',
-          inx: 'Adobe InDesign Legacy Interchange'
-        }[format],
-        preview: 'Layout',
-        stories: 'Content',
-        structure: 'Structure',
-        search: 'Filter stories, items, or styles',
-        bytes: 'File',
-        nodes: 'XML nodes',
-        story: 'Story',
-        storiesLabel: 'Stories',
-        characters: 'characters',
-        items: 'Page items',
-        styles: 'Styles',
-        colors: 'Colors',
-        unresolved: 'Unmapped elements',
-        empty: 'No records',
-        noStories: 'This file does not contain a displayable story.',
-        noGeometry:
-          'No verified page-item geometry is present; use the content and structure views.',
-        capped:
-          'This panel reached its safe DOM budget and shows only the leading records; the summary still reports the complete parsed result.'
-      }
+
+
+  const copy = {
+    get title() { return t(`design.indesignExchange.title.${format}`); },
+    get preview() { return t('design.indesignExchange.preview'); },
+    get stories() { return t('design.indesignExchange.stories'); },
+    get structure() { return t('design.indesignExchange.structure'); },
+    get search() { return t('design.indesignExchange.search'); },
+    get bytes() { return t('design.indesignExchange.bytes'); },
+    get nodes() { return t('design.indesignExchange.nodes'); },
+    get story() { return t('design.indesignExchange.story'); },
+    get storiesLabel() { return t('design.indesignExchange.storiesLabel'); },
+    get characters() { return t('design.indesignExchange.characters'); },
+    get items() { return t('design.indesignExchange.items'); },
+    get styles() { return t('design.indesignExchange.styles'); },
+    get colors() { return t('design.indesignExchange.colors'); },
+    get unresolved() { return t('design.indesignExchange.unresolved'); },
+    get empty() { return t('design.indesignExchange.empty'); },
+    get noStories() { return t('design.indesignExchange.noStories'); },
+    get noGeometry() { return t('design.indesignExchange.noGeometry'); },
+    get capped() { return t('design.indesignExchange.capped'); }
+  }
 
   const style = element(documentRef, 'style')
   style.textContent = exchangeStyle
@@ -560,7 +530,7 @@ export default async function renderInDesignExchange(
   const toolbar = element(documentRef, 'header', 'ix-toolbar')
   const title = element(documentRef, 'div', 'ix-title')
   title.append(
-    element(documentRef, 'strong', undefined, copy.title),
+    element(documentRef, 'strong', undefined, () => copy.title),
     element(
       documentRef,
       'span',
@@ -573,12 +543,12 @@ export default async function renderInDesignExchange(
   tabs.setAttribute('role', 'tablist')
   const search = element(documentRef, 'input', 'ix-search')
   search.type = 'search'
-  search.placeholder = copy.search
-  search.setAttribute('aria-label', copy.search)
+  t.bind(search, node => { node.placeholder = copy.search; }, 'placeholder')
+  t.bind(search, node => { node.setAttribute('aria-label', copy.search); }, 'aria-label')
   const tabDefinitions = [
-    ['layout', copy.preview],
-    ['stories', copy.stories],
-    ['structure', copy.structure]
+    ['layout', () => copy.preview],
+    ['stories', () => copy.stories],
+    ['structure', () => copy.structure]
   ] as const
   const tabButtons = new Map<string, HTMLButtonElement>()
   tabDefinitions.forEach(([id, label]) => {
@@ -594,12 +564,12 @@ export default async function renderInDesignExchange(
   const body = element(documentRef, 'div', 'ix-body')
   const summary = element(documentRef, 'div', 'ix-summary')
   ;[
-    [copy.bytes, byteSize(parsed.statistics.bytes)],
-    [copy.nodes, String(parsed.statistics.nodes)],
-    [copy.storiesLabel, String(parsed.statistics.storyCount)],
-    [copy.items, String(parsed.statistics.itemCount)],
-    [copy.styles, String(parsed.statistics.styleCount)],
-    [copy.colors, String(parsed.statistics.colorCount)]
+    [() => copy.bytes, byteSize(parsed.statistics.bytes)],
+    [() => copy.nodes, String(parsed.statistics.nodes)],
+    [() => copy.storiesLabel, String(parsed.statistics.storyCount)],
+    [() => copy.items, String(parsed.statistics.itemCount)],
+    [() => copy.styles, String(parsed.statistics.styleCount)],
+    [() => copy.colors, String(parsed.statistics.colorCount)]
   ].forEach(([label, value]) => {
     const cell = element(documentRef, 'div')
     cell.append(
@@ -616,7 +586,7 @@ export default async function renderInDesignExchange(
     documentRef,
     'div',
     'ix-footer',
-    `Worker · UTF-8 XML · ${parsed.statistics.maxDepth} max depth · ${parsed.layers.length} layers`
+    () => t('design.ui.worker.utf.8.xml.max.depth.bdc9b9', { p0: parsed.statistics.maxDepth, p1: parsed.layers.length })
   )
   type PanelId = (typeof tabDefinitions)[number][0]
   const renderPanel = (panel: PanelId): RenderedPanel => {

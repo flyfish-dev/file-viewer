@@ -1,0 +1,10 @@
+--- a/packages/renderers/ofd/vendor/dltech/ofd/ofd.js
++++ b/packages/renderers/ofd/vendor/dltech/ofd/ofd.js
+@@ -43,7 +43,6 @@
+             }
+         })
+         .catch(res => {
+-            console.log(res)
+             if (options.fail) {
+                 options.fail(res);
+             }

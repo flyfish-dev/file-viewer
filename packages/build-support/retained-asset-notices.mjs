@@ -5,12 +5,14 @@ import { dirname, join, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 import { stageSharedAssetAttribution } from './shared-asset-attribution.mjs'
 import { resolveWorkspaceAsset } from './public-asset-mirror.mjs'
+import { libarchiveNoticeSource, readLibarchiveRetainedNotice } from './libarchive-runtime-notices.mjs'
 
 const workspaceRoot = resolve(import.meta.dirname, '../..')
 const workerNotices = [
   { runtime: 'vendor/iwork/iwork.worker.js', source: 'packages/renderers/iwork/dist/iwork.worker.js', grant: 'packages/renderers/iwork/dist/workers.THIRD_PARTY_LICENSES.txt' },
   { runtime: 'vendor/hangul/hangul.worker.js', source: 'packages/renderers/hangul/dist/hangul.worker.js', grant: 'packages/renderers/hangul/dist/workers.THIRD_PARTY_LICENSES.txt' },
-  { runtime: 'vendor/xlsx/sheet.worker.js', source: 'packages/renderers/spreadsheet/dist/worker/sheet.worker.js', grant: 'packages/renderers/spreadsheet/dist/worker.THIRD_PARTY_LICENSES.txt' }
+  { runtime: 'vendor/xlsx/sheet.worker.js', source: 'packages/renderers/spreadsheet/dist/worker/sheet.worker.js', grant: 'packages/renderers/spreadsheet/dist/worker.THIRD_PARTY_LICENSES.txt' },
+  { runtime: 'vendor/pptx/pptx.worker.js', source: 'packages/renderers/pptx/dist/worker/pptx.worker.js', grant: 'packages/renderers/pptx/dist/worker.THIRD_PARTY_LICENSES.txt' }
 ]
 const builtWorkerSources = [
   ...workerNotices,
@@ -19,9 +21,18 @@ const builtWorkerSources = [
 const runtimePaths = new Set([...workerNotices.map(entry => entry.runtime), 'wasm/data/sql-wasm.wasm'])
 const noticeDirectories = new Set([...runtimePaths].map(path => `${dirname(path)}/licenses/`))
 const extraLegalAssets = [
+  { runtime: 'vendor/libarchive/libarchive.wasm', path: 'vendor/libarchive/licenses/THIRD_PARTY_NOTICES.txt', source: libarchiveNoticeSource,
+    description: 'Complete original wrapper and conservative native library source-profile notices; not a post-link or source-availability approval.' },
   { runtime: 'vendor/design/stet_wasm_bg.wasm', path: 'vendor/design/Stet_NATIVE_THIRD_PARTY_LICENSES.json', source: 'packages/renderers/design/LICENSES/Stet_NATIVE_THIRD_PARTY_LICENSES.json' },
   { runtime: 'wasm/model/occt-import-js.wasm', path: 'wasm/model/OCCT_LGPL_EXCEPTION.txt', source: 'packages/build-support/licenses/native/OCCT_LGPL_EXCEPTION.txt' },
   { runtime: 'wasm/model/occt-import-js.wasm', path: 'wasm/model/CORRESPONDING_SOURCE_NOTICE.txt', source: 'packages/renderers/geometry-engine/dist/vendor/occt.NOTICE.txt' },
+  ...[
+    ['LICENSE', 'LICENSE'],
+    ['RUST_NOTICE.md', 'rust/NOTICE.md'],
+    ['RUST_THIRD_PARTY_LICENSES.md', 'rust/THIRD_PARTY_LICENSES.md'],
+    ['THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md']
+  ].map(([filename, source]) => ({ runtime: 'vendor/chm/chm_wasm_bg.wasm', path: `vendor/chm/${filename}`,
+    source: `packages/renderers/chm/${source}`, description: 'Complete original CHM runtime licenses and notices.' }))
 ]
 
 export function resolveRetainedAssetNoticeSource(asset, assets, { sourceRoot = workspaceRoot } = {}) {
@@ -45,7 +56,7 @@ export function withRetainedAssetNoticeManifests(manifests) {
       for (const extra of extraLegalAssets.filter(entry => entry.runtime === asset.defaultPath)) {
         if (!assets.some(entry => entry.defaultPath === extra.path)) assets.push({ id: `${asset.id}-${extra.path.split('/').at(-1)}`,
           rendererId: asset.rendererId, kind: 'file', target: 'public', required: asset.required, defaultPath: extra.path,
-          description: 'Complete original native license materials and public corresponding source notice.' })
+          description: extra.description || 'Complete original native license materials and public corresponding source notice.' })
       }
       if (!runtimePaths.has(asset.defaultPath)) continue
       const defaultPath = `${dirname(asset.defaultPath)}/licenses/`
@@ -103,6 +114,10 @@ export async function stageBuiltRetainedWorkers(viewerRoot, { sourceRoot = works
 export async function stageRetainedAssetNotices(viewerRoot, { sourceRoot = workspaceRoot, externalAssetOwners = [] } = {}) {
   const writes = []
   const readOptional = async path => readFile(path).catch(error => { if (error.code === 'ENOENT') return null; throw error })
+  const archiveWasm = await readOptional(join(viewerRoot, 'vendor/libarchive/libarchive.wasm'))
+  const archiveWorker = await readOptional(join(viewerRoot, 'vendor/libarchive/worker-bundle.js'))
+  const archiveNotice = archiveWasm || archiveWorker
+    ? await readLibarchiveRetainedNotice(sourceRoot, { wasm: archiveWasm, worker: archiveWorker }) : null
   for (const entry of builtWorkerSources) {
     const runtime = await readOptional(join(viewerRoot, entry.runtime))
     if (!runtime) continue
@@ -144,14 +159,23 @@ export async function stageRetainedAssetNotices(viewerRoot, { sourceRoot = works
   for (const extra of extraLegalAssets) {
     const runtime = await readOptional(join(viewerRoot, extra.runtime))
     if (!runtime) continue
-    if (extra.runtime.includes('/design/')) {
+    if (extra.runtime === 'vendor/libarchive/libarchive.wasm') {
+      assert.ok(archiveNotice, 'Missing complete retained libarchive material')
+      writes.push({ target: join(viewerRoot, extra.path), bytes: archiveNotice })
+      continue
+    } else if (extra.runtime === 'vendor/chm/chm_wasm_bg.wasm') {
+      assert.ok(runtime.equals(await readFile(join(sourceRoot, 'packages/renderers/chm/dist/chm_wasm_bg.wasm'))), 'Copied CHM WASM changed')
+    } else if (extra.runtime.includes('/design/')) {
       assert.ok(runtime.equals(await readFile(join(sourceRoot, 'packages/renderers/design/runtime/postscript/stet_wasm_bg.wasm'))), 'Copied Stet WASM changed')
     } else {
+      assert.equal(extra.runtime, 'wasm/model/occt-import-js.wasm', 'Unknown retained legal runtime')
       const require = createRequire(join(sourceRoot, 'packages/renderers/geometry-engine/package.json'))
       const expected = join(dirname(require.resolve('occt-import-js')), 'occt-import-js.wasm')
       assert.ok(runtime.equals(await readFile(expected)), 'Copied OCCT WASM changed')
     }
-    writes.push({ target: join(viewerRoot, extra.path), bytes: await readFile(resolveWorkspaceAsset(sourceRoot, extra.source)) })
+    const bytes = await readFile(resolveWorkspaceAsset(sourceRoot, extra.source))
+    assert.ok(bytes.length > 0, `Missing complete retained legal material: ${extra.path}`)
+    writes.push({ target: join(viewerRoot, extra.path), bytes })
   }
   // Verify every present payload before writing any grant, so a stale Worker
   // cannot be paired with the notices of a different normal build.

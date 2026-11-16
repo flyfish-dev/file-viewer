@@ -3,6 +3,7 @@ import {
   assertFileViewerMermaidSourceHasNoExternalResources,
   type FileViewerDrawingOptions,
   type FileViewerOptions,
+  type FileViewerI18nContext,
   type FileViewerThemeMode
 } from '@file-viewer/core'
 import Panzoom from '@panzoom/panzoom/dist/panzoom.es.js'
@@ -25,7 +26,7 @@ interface RenderDiagramParams {
   kind: DiagramKind
   options?: FileViewerDrawingOptions
   theme?: FileViewerThemeMode
-  viewerOptions?: FileViewerOptions
+  viewerOptions?: FileViewerOptions | FileViewerI18nContext
 }
 
 type DiagramTranslator = ReturnType<typeof createFileViewerTranslator>
@@ -106,7 +107,8 @@ const appendSvgText = (
 const renderPlantumlFallbackSvg = (
   documentRef: Document,
   text: string,
-  message: string
+  message: string,
+  t: DiagramTranslator
 ) => {
   const width = 1100
   const height = 720
@@ -139,7 +141,7 @@ const renderPlantumlFallbackSvg = (
   title.setAttribute('font-family', 'Inter, Arial, sans-serif')
   title.setAttribute('font-size', '24')
   title.setAttribute('font-weight', '800')
-  title.textContent = 'PlantUML source preview'
+  t.bind(title, node => { node.textContent = t('ui.drawing.ui.plantuml.source.preview.89583d'); }, 'textContent')
   svg.appendChild(title)
 
   const note = documentRef.createElementNS('http://www.w3.org/2000/svg', 'text')
@@ -148,7 +150,7 @@ const renderPlantumlFallbackSvg = (
   note.setAttribute('fill', '#64748b')
   note.setAttribute('font-family', 'Inter, Arial, sans-serif')
   note.setAttribute('font-size', '15')
-  note.textContent = message
+  t.text(note, 'drawing.plantuml.configure')
   svg.appendChild(note)
 
   const source = documentRef.createElementNS('http://www.w3.org/2000/svg', 'text')
@@ -188,7 +190,8 @@ const renderPlantumlSvg = async (
     return renderPlantumlFallbackSvg(
       documentRef,
       text,
-      'Offline mode is active. Configure options.drawing.plantumlServerUrl for server-rendered PlantUML SVG.'
+      'Offline mode is active. Configure options.drawing.plantumlServerUrl for server-rendered PlantUML SVG.',
+      t
     )
   }
   const { encode } = await import('plantuml-encoder')
@@ -204,14 +207,14 @@ const renderPlantumlSvg = async (
       signal: controller.signal
     })
     if (!response.ok) {
-      throw new Error(t('drawing.error.plantumlRenderFailed', { status: response.status }))
+      throw t.error('drawing.error.plantumlRenderFailed', { status: response.status })
     }
     return sanitizeDrawingSvg(documentRef, await response.text(), t('drawing.error.svgParseFailed'))
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw error
     }
-    return renderPlantumlFallbackSvg(documentRef, text, 'Configure options.drawing.plantumlServerUrl for full PlantUML SVG rendering.')
+    return renderPlantumlFallbackSvg(documentRef, text, 'Configure options.drawing.plantumlServerUrl for full PlantUML SVG rendering.', t)
   } finally {
     if (timeout !== undefined) {
       ownerWindow?.clearTimeout(timeout)
@@ -219,10 +222,10 @@ const renderPlantumlSvg = async (
   }
 }
 
-const applySvgDefaults = (svg: SVGSVGElement, kind: DiagramKind) => {
+const applySvgDefaults = (svg: SVGSVGElement, kind: DiagramKind, t: DiagramTranslator) => {
   svg.classList.add('drawing-svg', 'drawing-diagram-svg')
   svg.setAttribute('role', 'img')
-  svg.setAttribute('aria-label', `${kind} diagram preview`)
+  t.bind(svg, node => node.setAttribute('aria-label', t('ui.drawing.ui.diagram.preview.e53a74', { p0: kind })), 'aria-label')
   if (!svg.getAttribute('width') && svg.viewBox.baseVal.width) {
     svg.setAttribute('width', String(Math.ceil(svg.viewBox.baseVal.width)))
   }
@@ -249,7 +252,7 @@ export const renderDiagram = async ({
   const svg = kind === 'mermaid'
     ? await renderMermaidSvg(documentRef, text, theme, t)
     : await renderPlantumlSvg(documentRef, text, options, t)
-  applySvgDefaults(svg, kind)
+  applySvgDefaults(svg, kind, t)
   panTarget.replaceChildren(svg)
 
   const panzoom: PanzoomObject = Panzoom(panTarget, {

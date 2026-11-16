@@ -132,6 +132,7 @@ export async function createVueRenderSession(
         styleIsolation: context?.surface?.styleIsolation
       },
       options: context?.options || {},
+      signal: context?.signal,
       registerExportAdapter: context?.registerExportAdapter,
       renderContext: context
     }) as FileRenderHandlerRendererSession<Rendered>

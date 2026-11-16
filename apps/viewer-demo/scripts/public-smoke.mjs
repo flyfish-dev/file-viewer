@@ -1,8 +1,17 @@
+import assert from 'node:assert/strict'
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
 import { delimiter, extname, join, normalize, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { launchBrowserForTest } from '../../../packages/build-support/browser-test-launch.mjs'
+import { FILE_VIEWER_SUPPORTED_LOCALES, FILE_VIEWER_LOCALE_OPTIONS } from '@file-viewer/core'
+
+const expectedLocaleValues = FILE_VIEWER_LOCALE_OPTIONS.map(option => option.value)
+assert(expectedLocaleValues.length > 0, 'Core must declare its supported locale options')
+assert.equal(new Set(expectedLocaleValues).size, expectedLocaleValues.length, 'Core locale options must be unique')
+assert.equal(new Set(FILE_VIEWER_SUPPORTED_LOCALES).size, FILE_VIEWER_SUPPORTED_LOCALES.length, 'Core supported locales must be unique')
+assert.deepEqual([...expectedLocaleValues].sort(), [...FILE_VIEWER_SUPPORTED_LOCALES].sort(), 'Core locale declarations must agree')
 
 const distDir = resolve(process.env.FILE_VIEWER_PUBLIC_SMOKE_DIST || 'apps/viewer-demo/dist')
 const timeout = Number(process.env.FILE_VIEWER_PUBLIC_SMOKE_TIMEOUT || 45_000)
@@ -95,7 +104,7 @@ const baseUrl = `http://127.0.0.1:${address.port}`
 let browser
 
 try {
-  browser = await chromium.launch({ headless: true })
+  browser = await launchBrowserForTest(chromium, 'chromium', { headless: true })
   const page = await browser.newPage({ viewport: { width: 1440, height: 800 }, locale: 'en-US' })
   const errors = []
   page.on('console', message => {
@@ -175,12 +184,14 @@ try {
     const rect = element.getBoundingClientRect()
     return {
       optionCount: element.querySelectorAll('.viewer-locale-option').length,
+      optionValues: Array.from(element.querySelectorAll('.viewer-locale-option'), option => option.getAttribute('data-locale')),
       insideViewport: rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1
     }
   })
-  if (mobileLocaleMenu.optionCount !== 4 || !mobileLocaleMenu.insideViewport) {
+  if (mobileLocaleMenu.optionCount !== expectedLocaleValues.length || !mobileLocaleMenu.insideViewport) {
     throw new Error(`Mobile locale menu layout failed: ${JSON.stringify(mobileLocaleMenu)}`)
   }
+  assert.deepEqual(mobileLocaleMenu.optionValues, expectedLocaleValues, 'Mobile locale options must match Core')
   await page.keyboard.press('Escape')
 
   await page.setViewportSize({ width: 1440, height: 800 })
@@ -285,22 +296,26 @@ try {
   })
   await page.waitForSelector('.file-viewer .content:not(.hidden)', { timeout })
 
-  const localeCases = [
-    ['zh-CN', 'zh-CN'],
-    ['en-US', 'en-US'],
-    ['de-DE', 'de-DE'],
-    ['ja-JP', 'ja-JP']
-  ]
+  // Exercise every declared locale; leave Japanese active for the original UI checks below.
+  const localeCases = [...expectedLocaleValues.filter(locale => locale !== 'ja-JP'),
+    ...expectedLocaleValues.filter(locale => locale === 'ja-JP')].map(locale => [locale, locale])
   for (const [locale, documentLocale] of localeCases) {
     await page.locator('.viewer-locale-trigger').click()
     await page.locator('.viewer-locale-menu').waitFor({ state: 'visible', timeout })
     const localeOptionCount = await page.locator('.viewer-locale-option').count()
-    if (localeOptionCount !== 4) {
-      throw new Error(`Expected four locale options, got ${localeOptionCount}.`)
+    if (localeOptionCount !== expectedLocaleValues.length) {
+      throw new Error(`Expected ${expectedLocaleValues.length} Core-declared locale options, got ${localeOptionCount}.`)
     }
+    assert.deepEqual(await page.locator('.viewer-locale-option').evaluateAll(options =>
+      options.map(option => option.getAttribute('data-locale'))), expectedLocaleValues, 'Locale options must match Core')
     await page.locator(`.viewer-locale-option[data-locale="${locale}"]`).click()
     await page.waitForFunction(expected => document.documentElement.lang === expected, documentLocale)
     await page.locator('.viewer-locale-menu').waitFor({ state: 'detached', timeout })
+    if (locale === 'zh-TW' || locale === 'zh-HK') {
+      const title = await page.title()
+      const expected = locale === 'zh-TW' ? '線上預覽' : '在線預覽'
+      if (!title.includes(expected)) throw new Error(`${locale} demo copy did not update: ${title}`)
+    }
   }
 
   await page.locator('.viewer-locale-trigger').click()
@@ -359,19 +374,21 @@ try {
     const triggerIcon = document.querySelector('.compare-locale-trigger svg')
     return {
       optionCount: element.querySelectorAll('.compare-locale-option').length,
+      optionValues: Array.from(element.querySelectorAll('.compare-locale-option'), option => option.getAttribute('data-locale')),
       insideViewport: rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1,
       usesGlobeIcon: triggerIcon?.classList.contains('lucide-globe') === true,
       usesEarthIcon: triggerIcon?.classList.contains('lucide-earth') === true
     }
   })
   if (
-    compareLocaleMenu.optionCount !== 4 ||
+    compareLocaleMenu.optionCount !== expectedLocaleValues.length ||
     !compareLocaleMenu.insideViewport ||
     !compareLocaleMenu.usesGlobeIcon ||
     compareLocaleMenu.usesEarthIcon
   ) {
     throw new Error(`Compare locale menu contract failed: ${JSON.stringify(compareLocaleMenu)}`)
   }
+  assert.deepEqual(compareLocaleMenu.optionValues, expectedLocaleValues, 'Compare locale options must match Core')
 
   await page.locator('.compare-locale-option[data-locale="ja-JP"]').click()
   await page.waitForFunction(() => document.documentElement.lang === 'ja-JP')
@@ -397,18 +414,20 @@ try {
     const rect = element.getBoundingClientRect()
     return {
       optionCount: element.querySelectorAll('.compare-locale-option').length,
+      optionValues: Array.from(element.querySelectorAll('.compare-locale-option'), option => option.getAttribute('data-locale')),
       insideViewport: rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1,
       documentWidth: document.documentElement.scrollWidth,
       viewportWidth: innerWidth
     }
   })
   if (
-    compareMobileLocaleMenu.optionCount !== 4 ||
+    compareMobileLocaleMenu.optionCount !== expectedLocaleValues.length ||
     !compareMobileLocaleMenu.insideViewport ||
     compareMobileLocaleMenu.documentWidth > compareMobileLocaleMenu.viewportWidth + 2
   ) {
     throw new Error(`Mobile compare locale menu layout failed: ${JSON.stringify(compareMobileLocaleMenu)}`)
   }
+  assert.deepEqual(compareMobileLocaleMenu.optionValues, expectedLocaleValues, 'Mobile compare locale options must match Core')
   await page.keyboard.press('Escape')
 
   const actionableErrors = errors.filter(message => !/favicon|ResizeObserver loop/i.test(message))
@@ -416,7 +435,7 @@ try {
     throw new Error(`Browser console errors:\n${actionableErrors.join('\n')}`)
   }
 
-  console.log('[public-browser-smoke] Main and compare four-language globe menus, English Markdown, CHM Worker/WASM, Binary PE, IFC4, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile layout verified.')
+  console.log(`[public-browser-smoke] Main and compare Core-declared locale menus (${expectedLocaleValues.join(', ')}), English Markdown, CHM Worker/WASM, Binary PE, IFC4, native toolbar search, Japanese UI, metadata, desktop picker and 390px mobile layout verified.`)
 } finally {
   await browser?.close()
   await new Promise(resolveClose => server.close(resolveClose))

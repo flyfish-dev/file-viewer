@@ -57,12 +57,12 @@ const parseOdf = async (
   const zip = await JSZip.loadAsync(buffer);
   const content = await zip.file('content.xml')?.async('text');
   if (!content) {
-    throw new Error(t('word.error.missingOdfContent'));
+    throw t.error('word.error.missingOdfContent');
   }
   const doc = new DOMParser().parseFromString(content, 'application/xml');
   const parseError = doc.querySelector('parsererror');
   if (parseError) {
-    throw new Error(t('word.error.odfXmlParseFailed'));
+    throw t.error('word.error.odfXmlParseFailed');
   }
   if (type === 'odp') {
     const slides = Array.from(doc.getElementsByTagName('draw:page'));
@@ -150,7 +150,7 @@ export default async function renderOpenDocument(
   type?: string,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const normalizedType = (type || 'odt').toLowerCase();
   if (normalizedType === 'rtf') {
     return renderRtf(buffer, target, context);

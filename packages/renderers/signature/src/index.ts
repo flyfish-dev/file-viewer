@@ -61,7 +61,12 @@ export const signatureRenderer: FileViewerRendererPlugin<
   id: 'file-viewer-renderer-signature',
   label: 'Flyfish File Viewer signature renderer',
   definitions: [signatureRendererDefinition],
-  handlers: [{ rendererId: signatureRendererDefinition.id, handler: renderFileViewerSignature }]
+  handlers: [
+    {
+      rendererId: signatureRendererDefinition.id,
+      handler: renderFileViewerSignature
+    }
+  ]
 }
 
 export {
@@ -85,7 +90,12 @@ export {
   DEFAULT_SIGNATURE_CONTAINER_LIMITS,
   normalizeSignatureContainerLimits
 } from './inspect.js'
-export type { FileViewerSignatureOptions } from './signature.js'
+export type {
+  FileViewerSignatureOptions,
+  FileViewerSignatureDetailsPanelOptions
+} from './signature.js'
+export { FILE_VIEWER_SIGNATURE_PANEL_CHANGE_EVENT } from './detailsPanel.js'
+export type { FileViewerSignaturePanelChangeDetail } from './detailsPanel.js'
 
 export default signatureRenderer
 

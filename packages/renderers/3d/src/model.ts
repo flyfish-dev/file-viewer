@@ -5,6 +5,8 @@ import {
   createFileViewerViewStateChangeEmitter,
   createFileViewerZoomChangeEmitter,
   createFileViewerTranslator,
+  attachFileViewerErrorMessage,
+  normalizeFileViewerErrorMessage,
   registerFileViewerZoomProvider,
   registerFileViewerViewStateProvider,
   resolveFileViewerColorScheme,
@@ -14,6 +16,7 @@ import {
   unregisterFileViewerZoomProvider,
   unregisterFileViewerViewStateProvider,
   type FileRenderContext,
+  type FileViewerI18nInput,
   type FileViewerFitRequest,
   type FileViewerFitResult,
   type FileViewerRenderedInstance,
@@ -227,10 +230,10 @@ export default async function renderModel(
 ): Promise<FileViewerRenderedInstance> {
   const normalizedType = type.toLowerCase();
   const sourceUrl = context?.url;
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   let status: ModelStatus = 'loading';
-  let errorMessage = '';
-  let objectSummary = t('model.state.loadingSummary');
+  let errorMessage = () => '';
+  let objectSummary = () => t('model.state.loadingSummary');
   let autoRotate = false;
   let wireframe = false;
   let showGrid = true;
@@ -262,17 +265,17 @@ export default async function renderModel(
   const root = createElement('div', 'model-viewer');
   const toolbar = createElement('div', 'model-toolbar');
   const actions = createElement('div', 'model-actions');
-  const fitButton = createElement('button', undefined, t('model.toolbar.fit')) as HTMLButtonElement;
-  const rotateButton = createElement('button', undefined, t('model.toolbar.rotate')) as HTMLButtonElement;
-  const wireframeButton = createElement('button', undefined, t('model.toolbar.wireframe')) as HTMLButtonElement;
-  const gridButton = createElement('button', undefined, t('model.toolbar.grid')) as HTMLButtonElement;
-  const axesButton = createElement('button', undefined, t('model.toolbar.axes')) as HTMLButtonElement;
+  const fitButton = t.text(createElement('button', undefined), 'model.toolbar.fit') as HTMLButtonElement;
+  const rotateButton = t.text(createElement('button', undefined), 'model.toolbar.rotate') as HTMLButtonElement;
+  const wireframeButton = t.text(createElement('button', undefined), 'model.toolbar.wireframe') as HTMLButtonElement;
+  const gridButton = t.text(createElement('button', undefined), 'model.toolbar.grid') as HTMLButtonElement;
+  const axesButton = t.text(createElement('button', undefined), 'model.toolbar.axes') as HTMLButtonElement;
   const meta = createElement('div', 'model-meta');
   const typeText = createElement('strong', undefined, normalizedType.toUpperCase());
-  const summaryText = createElement('span', undefined, objectSummary);
+  const summaryText = createElement('span');
   const stage = createElement('div', 'model-stage');
   const canvas = document.createElement('canvas');
-  const state = createElement('div', 'model-state', t('model.state.loading'));
+  const state = t.text(createElement('div', 'model-state'), 'model.state.loading');
   const buttons = [fitButton, rotateButton, wireframeButton, gridButton, axesButton];
 
   root.dataset.modelFormat = normalizedType;
@@ -305,19 +308,19 @@ export default async function renderModel(
     wireframeButton.classList.toggle('active', wireframe);
     gridButton.classList.toggle('active', showGrid);
     axesButton.classList.toggle('active', showAxes);
-    summaryText.textContent = objectSummary;
+    t.bind(summaryText, node => { node.textContent = objectSummary(); });
     root.dataset.modelStatus = status;
     root.dataset.modelMeshCount = String(modelMeshCount);
     state.hidden = status === 'ready';
     state.classList.toggle('error', status === 'error');
-    if (status === 'loading') {
-      state.textContent = t('model.state.loading');
-    } else if (status === 'error') {
-      state.replaceChildren(
-        createElement('strong', undefined, t('model.state.parseFailed')),
-        createElement('span', undefined, errorMessage)
-      );
-    }
+    t.bind(state, node => {
+      if (status === 'error') {
+        node.replaceChildren(
+          createElement('strong', undefined, t('model.state.parseFailed')),
+          createElement('span', undefined, errorMessage())
+        );
+      } else node.textContent = t('model.state.loading');
+    });
   };
 
   const updateHelperVisibility = () => {
@@ -684,14 +687,12 @@ export default async function renderModel(
   const summarizeModel = (object: THREE.Object3D) => {
     const { meshes, points } = countMeshes(object);
     modelMeshCount = meshes;
-    const parts = [];
-    if (meshes) {
-      parts.push(t('model.summary.meshes', { count: meshes }));
-    }
-    if (points) {
-      parts.push(t('model.summary.points', { count: points }));
-    }
-    objectSummary = parts.length ? parts.join(' · ') : t('model.state.loaded');
+    objectSummary = () => {
+      const parts = [];
+      if (meshes) parts.push(t('model.summary.meshes', { count: meshes }));
+      if (points) parts.push(t('model.summary.points', { count: points }));
+      return parts.length ? parts.join(' · ') : t('model.state.loaded');
+    };
     updateUi();
   };
 
@@ -865,7 +866,7 @@ export default async function renderModel(
     const { ColladaLoader } = await import('three/addons/loaders/ColladaLoader.js');
     const result = new ColladaLoader().parse(readText(), getResourcePath(sourceUrl));
     if (!result?.scene) {
-      throw new Error(t('model.error.daeEmpty'));
+      throw t.error('model.error.daeEmpty');
     }
     return result.scene;
   };
@@ -939,13 +940,14 @@ export default async function renderModel(
 
   const explainEngineeringModel = (modelType: string): never => {
     const inspection = inspectGeometryKernelFile(buffer, modelType);
-    const notice = formatGeometryKernelNotice(
-      inspection.format || modelType,
-      resolveFileViewerLocale(context?.options)
-    );
-    const signature = inspection.signature ? t('model.notice.signature', { signature: inspection.signature }) : '';
-    const warnings = inspection.warnings.length ? ` ${inspection.warnings.join(' ')}` : '';
-    throw new ModelPreviewNotice(`${signature}${notice}${warnings}`);
+    const copy = (options?: FileViewerI18nInput) => {
+      const noticeT = createFileViewerTranslator(options);
+      const notice = formatGeometryKernelNotice(inspection.format || modelType, resolveFileViewerLocale(options));
+      const signature = inspection.signature ? noticeT('model.notice.signature', { signature: inspection.signature }) : '';
+      const warnings = inspection.warnings.length ? ` ${inspection.warnings.join(' ')}` : '';
+      return `${signature}${notice}${warnings}`;
+    };
+    throw attachFileViewerErrorMessage(new ModelPreviewNotice(copy(context?.options)), copy);
   };
 
   const parsePcd = async () => {
@@ -1026,16 +1028,16 @@ export default async function renderModel(
         if (isGeometryKernelFormat(modelType)) {
           return explainEngineeringModel(modelType);
         }
-        throw new Error(t('model.error.unsupported', { type: modelType }));
+        throw t.error('model.error.unsupported', { type: modelType });
     }
   };
 
   const loadModel = async () => {
     const version = ++activeVersion;
     status = 'loading';
-    errorMessage = '';
+    errorMessage = () => '';
     modelMeshCount = 0;
-    objectSummary = t('model.state.loadingSummary');
+    objectSummary = () => t('model.state.loadingSummary');
     updateUi();
     ensureScene();
 
@@ -1062,10 +1064,10 @@ export default async function renderModel(
       }
       status = 'error';
       modelMeshCount = 0;
-      errorMessage = normalizeError(reason) || t('model.error.parseFailed', { type: normalizedType.toUpperCase() });
+      errorMessage = () => normalizeFileViewerErrorMessage(reason, context?.options) || t('model.error.parseFailed', { type: normalizedType.toUpperCase() });
       updateUi();
       zoomEmitter.emit();
-      throw reason instanceof Error ? reason : new Error(errorMessage);
+      throw reason instanceof Error ? reason : new Error(errorMessage());
     }
   };
 

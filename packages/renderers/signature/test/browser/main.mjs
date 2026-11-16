@@ -347,6 +347,24 @@ const run = async (name) => {
   nestedCalls = []
   window.__issue206Sentinel = 0
   const scenario = await getScenario(name)
+  // Explicit hosted-test observation only; original bytes and crypto remain unchanged.
+  if (window.__fileViewerPrepackObserveFixture) {
+    const path = `generated/issue-206-${name}.bin`
+    await window.__fileViewerPrepackObserveFixture({ path, bytes: [...new Uint8Array(scenario.buffer)],
+      ...(name === 'jws' ? { witness: { schemaVersion: 1, kind: 'issue-206-public-jws-fixture',
+        fixturePath: path, compactJws: decoder.decode(scenario.buffer),
+        publicJwk: scenario.options.jwsVerificationKeys[0].key } } : {}) })
+    if (scenario.options?.originalContent) await window.__fileViewerPrepackObserveFixture({
+      path: `generated/issue-206-${name}-original.bin`, bytes: [...new Uint8Array(scenario.options.originalContent)] })
+    for (const [index, key] of (scenario.options?.openPgpPublicKeys || []).entries()) {
+      await window.__fileViewerPrepackObserveFixture({ path: `generated/issue-206-${name}-public-key-${index}.bin`,
+        bytes: [...new Uint8Array(key)] })
+    }
+    for (const [index, key] of (scenario.options?.jwsVerificationKeys || []).entries()) {
+      await window.__fileViewerPrepackObserveFixture({ path: `generated/issue-206-${name}-public-jwk-${index}.json`,
+        bytes: [...encoder.encode(JSON.stringify(key))] })
+    }
+  }
   try {
     rendered = await renderSignature(scenario.buffer, target, scenario.type, {
       filename: scenario.filename,

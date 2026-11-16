@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core';
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core'
 import { readXdContainerInWorker } from './adobeContainerWorkerClient.js'
 import type { XdContainerLimits } from './xdContainer.js'
@@ -13,23 +14,9 @@ const xdStyle = `
 @media(max-width:760px){.xd-viewer{min-height:360px}.xd-layout{grid-template-columns:1fr;grid-template-rows:minmax(260px,1fr) auto}.xd-sidebar{max-height:220px;border-top:1px solid rgba(15,23,42,.1);border-left:0}.xd-stage{padding:12px}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(
-  documentRef: Document,
-  tag: K,
-  className?: string,
-  text?: string
-) => {
-  const node = documentRef.createElement(tag)
-  if (className) node.className = className
-  if (text !== undefined) node.textContent = text
-  return node
-}
 
-const formatBytes = (bytes: number) => {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`
-}
+
+
 
 export default async function renderAdobeXd(
   buffer: ArrayBuffer,
@@ -37,6 +24,10 @@ export default async function renderAdobeXd(
   _type = 'xd',
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+  const formatBytes = t.formatBytes
+
   if (context?.signal?.aborted) throw new DOMException('Adobe XD rendering was aborted.', 'AbortError')
   const limits: Partial<XdContainerLimits> | undefined = context?.options?.design
     ? {
@@ -77,10 +68,10 @@ export default async function renderAdobeXd(
       documentRef,
       'span',
       undefined,
-      `${parsed.entryCount} entries · ${formatBytes(parsed.expandedBytes)} expanded · manifest ${parsed.manifestVersion}`
+      () => t('design.ui.entries.expanded.manifest.a4e5c5', { p0: parsed.entryCount, p1: formatBytes(parsed.expandedBytes), p2: parsed.manifestVersion })
     )
   )
-  header.append(heading, element(documentRef, 'span', 'xd-badge', parsed.preview ? 'EMBEDDED PREVIEW' : 'STRUCTURE ONLY'))
+  header.append(heading, element(documentRef, 'span', 'xd-badge', () => parsed.preview ? t('design.ui.embedded.preview.0a32a6') : t('design.ui.structure.only.ba4f09')))
 
   const layout = element(documentRef, 'div', 'xd-layout')
   const stage = element(documentRef, 'main', 'xd-stage')
@@ -92,7 +83,7 @@ export default async function renderAdobeXd(
     previewBlob = new Blob([previewBuffer], { type: parsed.preview.mimeType })
     previewUrl = urlApi.createObjectURL(previewBlob)
     const image = element(documentRef, 'img')
-    image.alt = `${parsed.name} embedded preview`
+    t.bind(image, node => { node.alt = t('design.ui.embedded.preview.08818c', { p0: parsed.name }); }, 'alt')
     image.src = previewUrl
     image.dataset.previewPath = parsed.preview.path
     stage.appendChild(image)
@@ -103,16 +94,16 @@ export default async function renderAdobeXd(
         documentRef,
         'div',
         'xd-empty',
-        'This XD package has no valid bounded PNG/JPEG rendition. Its manifest, artboard structure, and resource inventory are still available.'
+        () => t('design.ui.this.xd.package.has.no.valid.714d44')
       )
     )
   }
 
   const sidebar = element(documentRef, 'aside', 'xd-sidebar')
   const artboardSection = element(documentRef, 'section', 'xd-section')
-  artboardSection.appendChild(element(documentRef, 'h3', undefined, `Artboards (${parsed.artboards.length})`))
+  artboardSection.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.artboards.0b7d30', { p0: parsed.artboards.length })))
   if (parsed.artboards.length === 0) {
-    artboardSection.appendChild(element(documentRef, 'div', 'xd-muted', 'No artboard metadata was present in the bounded AGC structure.'))
+    artboardSection.appendChild(element(documentRef, 'div', 'xd-muted', () => t('design.ui.no.artboard.metadata.was.present.in.3be5bb')))
   } else {
     const list = element(documentRef, 'ul', 'xd-list')
     for (const artboard of parsed.artboards) {
@@ -128,9 +119,9 @@ export default async function renderAdobeXd(
   }
 
   const resourceSection = element(documentRef, 'section', 'xd-section')
-  resourceSection.appendChild(element(documentRef, 'h3', undefined, `Resources (${parsed.resources.length})`))
+  resourceSection.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.resources.df7fbd', { p0: parsed.resources.length })))
   if (parsed.resources.length === 0) {
-    resourceSection.appendChild(element(documentRef, 'div', 'xd-muted', 'No additional packaged resources.'))
+    resourceSection.appendChild(element(documentRef, 'div', 'xd-muted', () => t('design.ui.no.additional.packaged.resources.6a5c47')))
   } else {
     const list = element(documentRef, 'ul', 'xd-list')
     for (const resource of parsed.resources) {
@@ -146,7 +137,7 @@ export default async function renderAdobeXd(
 
   if (parsed.warnings.length > 0) {
     const warningSection = element(documentRef, 'section', 'xd-section')
-    warningSection.appendChild(element(documentRef, 'h3', undefined, 'Read limits'))
+    warningSection.appendChild(element(documentRef, 'h3', undefined, () => t('design.ui.read.limits.5290ec')))
     for (const warning of parsed.warnings) warningSection.appendChild(element(documentRef, 'p', 'xd-warning', warning))
     sidebar.append(artboardSection, resourceSection, warningSection)
   } else {

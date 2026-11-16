@@ -47,7 +47,7 @@ const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: root, maxBuffer: 
 const inventory = readFileSync(join(root, 'ecosystem/source-retention.json'))
 assert.equal(
   createHash('sha256').update(inventory).digest('hex'),
-  'd50e0a655a65273672f057d951731ce40472d496387c7982ecec0cb690a8b725',
+  '930c79f48d9f92b3fcf1d407481d584654daa0392731af475bd405b851b76d46',
   'Source retention policy changed; review the complete baseline and each removal'
 )
 const policy = JSON.parse(inventory)

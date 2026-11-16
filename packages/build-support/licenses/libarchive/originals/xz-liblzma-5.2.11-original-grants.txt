@@ -1,0 +1,2029 @@
+===== Complete upstream original document: COPYING =====
+
+XZ Utils Licensing
+==================
+
+    Different licenses apply to different files in this package. Here
+    is a rough summary of which licenses apply to which parts of this
+    package (but check the individual files to be sure!):
+
+      - liblzma is in the public domain.
+
+      - xz, xzdec, and lzmadec command line tools are in the public
+        domain unless GNU getopt_long had to be compiled and linked
+        in from the lib directory. The getopt_long code is under
+        GNU LGPLv2.1+.
+
+      - The scripts to grep, diff, and view compressed files have been
+        adapted from gzip. These scripts and their documentation are
+        under GNU GPLv2+.
+
+      - All the documentation in the doc directory and most of the
+        XZ Utils specific documentation files in other directories
+        are in the public domain.
+
+      - Translated messages are in the public domain.
+
+      - The build system contains public domain files, and files that
+        are under GNU GPLv2+ or GNU GPLv3+. None of these files end up
+        in the binaries being built.
+
+      - Test files and test code in the tests directory, and debugging
+        utilities in the debug directory are in the public domain.
+
+      - The extra directory may contain public domain files, and files
+        that are under various free software licenses.
+
+    You can do whatever you want with the files that have been put into
+    the public domain. If you find public domain legally problematic,
+    take the previous sentence as a license grant. If you still find
+    the lack of copyright legally problematic, you have too many
+    lawyers.
+
+    As usual, this software is provided "as is", without any warranty.
+
+    If you copy significant amounts of public domain code from XZ Utils
+    into your project, acknowledging this somewhere in your software is
+    polite (especially if it is proprietary, non-free software), but
+    naturally it is not legally required. Here is an example of a good
+    notice to put into "about box" or into documentation:
+
+        This software includes code from XZ Utils <https://tukaani.org/xz/>.
+
+    The following license texts are included in the following files:
+      - COPYING.LGPLv2.1: GNU Lesser General Public License version 2.1
+      - COPYING.GPLv2: GNU General Public License version 2
+      - COPYING.GPLv3: GNU General Public License version 3
+
+    Note that the toolchain (compiler, linker etc.) may add some code
+    pieces that are copyrighted. Thus, it is possible that e.g. liblzma
+    binary wouldn't actually be in the public domain in its entirety
+    even though it contains no copyrighted code from the XZ Utils source
+    package.
+
+    If you have questions, don't hesitate to ask the author(s) for more
+    information.
+
+
+
+===== Original source notice; src/liblzma/delta/delta_encoder.h:1-12; SHA256 001cd6dc0528ae52a6d07032c6d0ccb66f2942457dd0a8e3e76eb7bdc0f9a2b4 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       delta_encoder.h
+/// \brief      Delta filter encoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_encoder_presets.c:1-13; SHA256 004fc2ac1d863fd524503786ebc788f4afd37be5b2a609eaf87d64f46b6ec8fb =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_encoder_presets.c
+/// \brief      Encoder presets
+/// \note       xz needs this even when only decoding is enabled.
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/common.h:1-12; SHA256 02be721747c0e035f19fdc61a32d28a68b23f02a4ec8f9be8a1d87861a1dd2cd =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       common.h
+/// \brief      Definitions common to the whole liblzma library
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/delta/delta_encoder.c:1-12; SHA256 077c3d3f54541336d5de03ab21a51f1cec916c0fe7e09dbe5519002fa8861090 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       delta_encoder.c
+/// \brief      Delta filter encoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_buffer_encoder.c:1-12; SHA256 07d282add9bfaabd7a7730cd33fd55fa77ae7c9de2c53f593b7d8af487592885 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_buffer_encoder.c
+/// \brief      Single-call .xz Block encoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/easy_decoder_memusage.c:1-12; SHA256 08be42595a830a5442561a8913d49eb6e72d44852d818135ebbf7969babe0704 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       easy_decoder_memusage.c
+/// \brief      Decoder memory usage calculation to match easy encoder presets
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma2_encoder.h:1-13; SHA256 09d8b23e3b2435b80b9277c51247126badb3d027953f4aa731d991e288db0f85 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma2_encoder.h
+/// \brief      LZMA2 encoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lz/lz_encoder.h:1-13; SHA256 0ac3d4ec668ecd51bf343c1c27e855f2cae189edbde60cd8e58c7af220958ff6 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lz_encoder.h
+/// \brief      LZ in window and match finder API
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_decoder.h:1-13; SHA256 0b73da6924238d8b69177ad303f3d4eb47b5b9a1f7f2ab4a39b8f48404b1faa5 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_decoder.h
+/// \brief      LZMA decoder API
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc_macros.h:1-12; SHA256 0bc12c1d0ec5afddf405e5011480477dc1f8bb1b5f2534952fa2d7c955727897 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc_macros.h
+/// \brief      Some endian-dependent macros for CRC32 and CRC64
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/alone_decoder.c:1-12; SHA256 117a6082238ccbdc8e6c604a6a40c3d0b194ed18cde41d65985e48f41d4bb476 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       alone_decoder.c
+/// \brief      Decoder for LZMA_Alone files
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/alone_encoder.c:1-12; SHA256 13fdfa45a86f1595c33912c1e72c38ca5ff4877326085a579cc14165169b78e6 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       alone_encoder.c
+/// \brief      Encoder for LZMA_Alone files
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_buffer_decoder.c:1-12; SHA256 1549ad73ff53527815be68185a9043ba93e9bdd95f046372dec8a26a16eb128b =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_buffer_decoder.c
+/// \brief      Single-call .xz Block decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/sparc.c:1-13; SHA256 16b88a1a0c55b02856fd69eee9d846990dde96a3f5887075d3d35c46a1086093 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       sparc.c
+/// \brief      Filter for SPARC binaries
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_buffer_decoder.c:1-12; SHA256 197dab82c7702292616ad4ecdb021ee0aa12998b20bccf962f231416d23f0f41 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_buffer_decoder.c
+/// \brief      Single-call .xz Stream decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/api/lzma.h:23-28; SHA256 1bc4e2b7478aa9d2dc1638e4f014dc9faf7506ab6c720393682868bc34cdc910 =====
+/*
+ * Author: Lasse Collin
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+===== Original source notice; src/liblzma/common/stream_encoder.c:1-12; SHA256 1f8ae4a41a92e50addc853b023676c0b586dc1ff6f673e4b0188bd728752d737 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_encoder.c
+/// \brief      Encodes .xz Streams
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/ia64.c:1-13; SHA256 205d8af5901adbe452824e10322c10e51886d68334676f9661dfe31130555087 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       ia64.c
+/// \brief      Filter for IA64 (Itanium) binaries
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/vli_decoder.c:1-12; SHA256 21c4e78197d985fe6095d051af88e3be5d6b1e490c5d3ca546bf9c3b9508599c =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       vli_decoder.c
+/// \brief      Decodes variable-length integers
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_encoder_optimum_normal.c:1-11; SHA256 23f8a79299b6e3dabf2070eef2dac11874870813bd348665c1a2ce82f1f11c22 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_encoder_optimum_normal.c
+//
+//  Author:     Igor Pavlov
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lz/lz_encoder_mf.c:1-13; SHA256 242d4ce8aa7dfd1c28a363f64b764b6dc06ccf64547a1d5efb14a47926e33a8f =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lz_encoder_mf.c
+/// \brief      Match finders
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_decoder.c:1-12; SHA256 2532efb940028f432e5b57d38fbf4d77d6c7e177f055daff7dd416f0db8194e8 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_decoder.c
+/// \brief      Decodes .xz Streams
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/hardware_cputhreads.c:1-12; SHA256 268f8098a8bfd663c75cda38d9a4630822ff17964ca0042fe123821d0d806a89 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       hardware_cputhreads.c
+/// \brief      Get the number of CPU threads or cores
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/delta/delta_common.c:1-12; SHA256 29482950d6ea78f36c81c16ff7e30515f797668f7042c9548011339216b93566 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       delta_common.c
+/// \brief      Common stuff for Delta encoder and decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_buffer_encoder.c:1-12; SHA256 2a1b3c7da82e3f2fd7edcb55d844c4cb39d2f5f1ac05f30ddbbf857a8dcf6c58 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_buffer_encoder.c
+/// \brief      Single-call raw encoding
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/index_encoder.c:1-12; SHA256 2ddb1939c0924cc502493e8338e7f36ec8c7d3a4dd72551903af9bdb262d8c84 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       index_encoder.c
+/// \brief      Encodes the Index field
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/easy_encoder.c:1-12; SHA256 34347205b7fdbe9b52fddc0d05b1fe00a2f221760792ce93250e90c04c7a97ad =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       easy_encoder.c
+/// \brief      Easy .xz Stream encoder initialization
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lz/lz_encoder.c:1-13; SHA256 38e8febbd21a4e2782b2fd7f3bfa6e727d00f2acc435f0ee0e9ab422960e99d9 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lz_encoder.c
+/// \brief      LZ in window
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_exit.h:1-13; SHA256 38f5a96c4cd992de9a6f03a9d557fb2901140eb1443408bf5bc5547382300418 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_exit.h
+/// \brief      Close stdout and stderr, and exit
+/// \note       Requires tuklib_progname and tuklib_gettext modules
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/simple_encoder.c:1-12; SHA256 3d7242a2d1d5174fac6d385790436916b85ac1819c675702c335459a94dd0692 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       simple_encoder.c
+/// \brief      Properties encoder for simple filters
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_decoder.h:1-12; SHA256 3f3a8cb9e8c3ea35d6a7e2ea708b667f1be5ca2a577b52390855c4f24a6fe0a8 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_decoder.h
+/// \brief      Decodes .xz Blocks
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/memcmplen.h:1-12; SHA256 3f73ba5943afc7a0cdef3f5a0041f29371a7851f933e285c619f85fa7c9a8784 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       memcmplen.h
+/// \brief      Optimized comparison of two buffers
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/api/lzma.h:1-21; SHA256 40bb5bac867f6047fc6489e3f41f5700e010fe690af9537de53e60380f4bab51 =====
+/**
+ * \file        api/lzma.h
+ * \brief       The public API of liblzma data compression library
+ *
+ * liblzma is a public domain general-purpose data compression library with
+ * a zlib-like API. The native file format is .xz, but also the old .lzma
+ * format and raw (no headers) streams are supported. Multiple compression
+ * algorithms (filters) are supported. Currently LZMA2 is the primary filter.
+ *
+ * liblzma is part of XZ Utils <https://tukaani.org/xz/>. XZ Utils includes
+ * a gzip-like command line tool named xz and some other tools. XZ Utils
+ * is developed and maintained by Lasse Collin.
+ *
+ * Major parts of liblzma are based on Igor Pavlov's public domain LZMA SDK
+ * <https://7-zip.org/sdk.html>.
+ *
+ * The SHA-256 implementation is based on the public domain code found from
+ * 7-Zip <https://7-zip.org/>, which has a modified version of the public
+ * domain SHA-256 code found from Crypto++ <https://www.cryptopp.com/>.
+ * The SHA-256 code in Crypto++ was written by Kevin Springle and Wei Dai.
+ */
+
+===== Original source notice; src/liblzma/check/crc64_small.c:1-12; SHA256 417c37a7afb892694ac42185f5b6ee59fcd5c4987afc7922b433ecf3fca07021 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc64_small.c
+/// \brief      CRC64 calculation (size-optimized)
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc32_tablegen.c:1-16; SHA256 425f99ed72c8187d9f527cc5821e3571cad9e48a16d08919d3af3aefcf6398c0 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc32_tablegen.c
+/// \brief      Generate crc32_table_le.h and crc32_table_be.h
+///
+/// Compiling: gcc -std=c99 -o crc32_tablegen crc32_tablegen.c
+/// Add -DWORDS_BIGENDIAN to generate big endian table.
+/// Add -DLZ_HASH_TABLE to generate lz_encoder_hash_table.h (little endian).
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/easy_preset.c:1-12; SHA256 4511bf4ccb02f8f868fe4d2840c45230a3ada9ef8ba14d90739d6eec687c911c =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       easy_preset.c
+/// \brief      Preset handling for easy encoder and decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/check.c:1-12; SHA256 48eb2aac8fadc8861267a928aeea20061ad45606ab6552fd6d0c9eab17d742ee =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       check.c
+/// \brief      Single API to access different integrity checks
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/common.c:1-12; SHA256 4d72d0b62c262c84ec024b1b9502c558911b3d15b906725ce29560d89bfa09b2 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       common.c
+/// \brief      Common functions needed in many places in liblzma
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/sysdefs.h:1-15; SHA256 4e94a45b2348986118c86ba35b0253ed971869bde091867fe8136d2b9e5a8435 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       sysdefs.h
+/// \brief      Common includes, definitions, system-specific things etc.
+///
+/// This file is used also by the lzma command line tool, that's why this
+/// file is separate from common.h.
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/fastpos.h:1-13; SHA256 4fa80a812c421ca8e3ea9e3e59faa11c9a14b3e77ea1e8247c8184ca0dd1a755 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       fastpos.h
+/// \brief      Kind of two-bit version of bit scan reverse
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/x86.c:1-13; SHA256 54afffab503d7e17eb2b6c6023e3f1c1374224706e568ec43f4af3cca84fb227 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       x86.c
+/// \brief      Filter for x86 binaries (BCJ filter)
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/index.h:1-12; SHA256 552c3a67ebda10720f9cbd90444f42cb32886f18dcf6bd1b4735139ef07e2825 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       index.h
+/// \brief      Handling of Index
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_flags_common.c:1-12; SHA256 56837fb4d0ae4cec5f9b093a2ce90e63e99247dd0eee44945941a6d57c48635b =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_flags_common.c
+/// \brief      Common stuff for Stream flags coders
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_open_stdxxx.h:1-12; SHA256 59b9782414d94247824d747143044b257214b87c3b57aed5a4e28a27a2244657 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_open_stdxxx.h
+/// \brief      Make sure that file descriptors 0, 1, and 2 are open
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_flags_encoder.c:1-12; SHA256 59e236af2094dd39836ef85c8f24cdca3aeac9017f6bd3215d12ec8ead084b17 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_flags_encoder.c
+/// \brief      Encodes Stream Header and Stream Footer for .xz files
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_encoder.c:1-13; SHA256 619872c8c1d2be3958be64153bd184cc30b31bb76c21c62872d98ad977810e3b =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_encoder.c
+/// \brief      LZMA encoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_encoder.h:1-12; SHA256 62d1627f172419d0b4c8c7e2965f3bb70b2e92d197e5c22dccc949b7a8440c1f =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_encoder.h
+/// \brief      Encodes .xz Blocks
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/simple_coder.h:1-12; SHA256 63ed1fbbe92ddc1c2cec730e3c850bd2359c8c17b97e8a5ad888dea55dcaa629 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       simple_coder.h
+/// \brief      Wrapper for simple filters
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_exit.c:1-12; SHA256 66080f035a22c0ce46b96a5a8dfd7926f4a7224a26cbf44649ec5ddb1258ac51 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_exit.c
+/// \brief      Close stdout and stderr, and exit
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_flags_common.h:1-12; SHA256 662729768f8292ed6261a1f08c3ffd163b6d6a4e337e4d14e6efe7a27339c5dc =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_flags_common.h
+/// \brief      Common stuff for Stream flags coders
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_cpucores.h:1-12; SHA256 6675f32f23aa724796256cf3fd64e50399a58708e1030049c14e29d2be3d28ab =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_cpucores.h
+/// \brief      Get the number of CPU cores online
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/index.c:1-12; SHA256 6888495202b29430019ac21749b26924ce711be5508ad86443f822464b9c318a =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       index.c
+/// \brief      Handling of .xz Indexes and some other Stream information
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma2_encoder.c:1-13; SHA256 6a7fa92d46eb00a7fddf64dc76d298d3cfb2d1fdca945095b5039e52c767f2fc =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma2_encoder.c
+/// \brief      LZMA2 encoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_encoder.h:1-12; SHA256 6a93fd4ddfbeb82b27d6220771638b574b9a9f05c92aaaf17b82550191ab66af =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_encoder.c
+/// \brief      Filter ID mapping to filter-specific functions
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/easy_buffer_encoder.c:1-12; SHA256 6df8da2745c5db99a685bab0ebb320b845c4f4f0d39e24113f67786769a81650 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       easy_buffer_encoder.c
+/// \brief      Easy single-call .xz Stream encoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/rangecoder/range_common.h:1-13; SHA256 6e30d399adbefb748e2238395a0dd6a7240c963c7af340ad4d5316552ba931fb =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       range_common.h
+/// \brief      Common things for range encoder and decoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_buffer_decoder.c:1-12; SHA256 6f34144d093cd7705f249edd9522cef56b3575205b6d2add1004f160b3829193 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_buffer_decoder.c
+/// \brief      Single-call raw decoding
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_integer.h:1-44; SHA256 6fbc0e1aa9af7320eb7199ec3423adaf2c1a30fa5063be78a5e093b86eb4dd52 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_integer.h
+/// \brief      Various integer and bit operations
+///
+/// This file provides macros or functions to do some basic integer and bit
+/// operations.
+///
+/// Native endian inline functions (XX = 16, 32, or 64):
+///   - Unaligned native endian reads: readXXne(ptr)
+///   - Unaligned native endian writes: writeXXne(ptr, num)
+///   - Aligned native endian reads: aligned_readXXne(ptr)
+///   - Aligned native endian writes: aligned_writeXXne(ptr, num)
+///
+/// Endianness-converting integer operations (these can be macros!)
+/// (XX = 16, 32, or 64; Y = b or l):
+///   - Byte swapping: bswapXX(num)
+///   - Byte order conversions to/from native (byteswaps if Y isn't
+///     the native endianness): convXXYe(num)
+///   - Unaligned reads (16/32-bit only): readXXYe(ptr)
+///   - Unaligned writes (16/32-bit only): writeXXYe(ptr, num)
+///   - Aligned reads: aligned_readXXYe(ptr)
+///   - Aligned writes: aligned_writeXXYe(ptr, num)
+///
+/// Since the above can macros, the arguments should have no side effects
+/// because they may be evaluated more than once.
+///
+/// Bit scan operations for non-zero 32-bit integers (inline functions):
+///   - Bit scan reverse (find highest non-zero bit): bsr32(num)
+///   - Count leading zeros: clz32(num)
+///   - Count trailing zeros: ctz32(num)
+///   - Bit scan forward (simply an alias for ctz32()): bsf32(num)
+///
+/// The above bit scan operations return 0-31. If num is zero,
+/// the result is undefined.
+//
+//  Authors:    Lasse Collin
+//              Joachim Henke
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc64_fast.c:1-16; SHA256 6fca8e44e5af4fe1c7b83750548fea37e6b08e2a996e6d5c3df4ddbd23228dba =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc64.c
+/// \brief      CRC64 calculation
+///
+/// Calculate the CRC64 using the slice-by-four algorithm. This is the same
+/// idea that is used in crc32_fast.c, but for CRC64 we use only four tables
+/// instead of eight to avoid increasing CPU cache usage.
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_flags_decoder.c:1-12; SHA256 6fdd04ae3392d22f14ab9f8993221b8aa27f25cf1abf9f90da831d261d8d346f =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_flags_decoder.c
+/// \brief      Decodes a Filter Flags field
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_util.c:1-12; SHA256 74fe8a1429287b250daa4d5c64e4c3bd1132287ab2360ef5e884f6cb4db760dd =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_util.c
+/// \brief      Utility functions to handle lzma_block
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/rangecoder/price_tablegen.c:1-15; SHA256 754c26dbb81bd691b4ee9b348de7cce7d645b9c3fadcbb9edda5e6cd5230237e =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       price_tablegen.c
+/// \brief      Probability price table generator
+///
+/// Compiling: gcc -std=c99 -o price_tablegen price_tablegen.c
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_encoder_private.h:1-13; SHA256 77d7e697d997eb8887b605387b3db7554b0f625523b58c92d119d6e7227a05b5 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_encoder_private.h
+/// \brief      Private definitions for LZMA encoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_physmem.h:1-12; SHA256 7b2adbeb128f430835b42a6c67337430c90afbc9ee57261eb348835438be71e3 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_physmem.h
+/// \brief      Get the amount of physical memory
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/vli_size.c:1-12; SHA256 7bdaeb014e9b5fd1eca9fcfdd07beff2e9df31466dd6ddf2c1f1f1db7fc61e7d =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       vli_size.c
+/// \brief      Calculates the encoded size of a variable-length integer
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc64_tablegen.c:1-15; SHA256 7efdf00eb6ac590909af25cbd23fd8a64bff630b1ffdcb0388ed0c878b2df334 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc64_tablegen.c
+/// \brief      Generate crc64_table_le.h and crc64_table_be.h
+///
+/// Compiling: gcc -std=c99 -o crc64_tablegen crc64_tablegen.c
+/// Add -DWORDS_BIGENDIAN to generate big endian table.
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc32_table.c:1-12; SHA256 819ec2433a7e9070b6c013365c3df7fc680723aa0c399ee2a080a7bdcd77b24f =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc32_table.c
+/// \brief      Precalculated CRC32 table with correct endianness
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/rangecoder/range_encoder.h:1-13; SHA256 81b2a74583fa4f5f85cdb5c7c5bad027bdfd50e801523edeef5666dd3c3168e5 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       range_encoder.h
+/// \brief      Range Encoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/easy_encoder_memusage.c:1-12; SHA256 8365727d045508e4e3c93e40fdec9160e042d6a3caf1bfb9a9aa6b25fea58bd3 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       easy_encoder_memusage.c
+/// \brief      Easy .xz Stream encoder memory usage calculation
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_cpucores.c:1-12; SHA256 84f4d049cfc2fc31f79737b0f482e260b8808e72d24893106cadc88082f84792 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_cpucores.c
+/// \brief      Get the number of CPU cores online
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/delta/delta_decoder.c:1-12; SHA256 87e58b14320f2c78b89c9e94eaebca5216a818ccd023b7ec79f286a93a2c7b77 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       delta_decoder.c
+/// \brief      Delta filter decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/rangecoder/range_decoder.h:1-13; SHA256 88319b31304fb42ff59a2c74d95d2e9bf55ea58137599237b6dc012f60dbd4c9 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       range_decoder.h
+/// \brief      Range Decoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_header_encoder.c:1-12; SHA256 88e8d8177be8fd42fad7f5db19e16d365434a1efd258c9ebe32292d522e69917 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_header_encoder.c
+/// \brief      Encodes Block Header for .xz files
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/check.h:1-12; SHA256 8edcaad17d550a66cb63b5ea28bbc0fe42cb58ee91c1c2a13f1bcf02cf111d95 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       check.h
+/// \brief      Internal API to different integrity check functions
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_common.h:1-12; SHA256 91c7ca89c905ffb73ff600f68059e78844ff25ae12fa023da3b0cf94a08e7506 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_common.h
+/// \brief      Common definitions for tuklib modules
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_gettext.h:1-12; SHA256 9375dbcc4a08237e00faf884fb0fd7994b6a7b0720e1464896cde4873eb1fa01 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_gettext.h
+/// \brief      Wrapper for gettext and friends
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_open_stdxxx.c:1-12; SHA256 93d577b3fe629501d472def52be12fbb4bfdc6f9790b514506a0fb92494c532f =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_open_stdxxx.c
+/// \brief      Make sure that file descriptors 0, 1, and 2 are open
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_common.h:1-12; SHA256 96426af78f9db30252c02af2f41d5d427e34f8991313e13ae162be6640a76c61 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_common.h
+/// \brief      Filter-specific stuff common for both encoder and decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/sha256.c:1-23; SHA256 99c1de15b074e54de8b27ee2835ebde92f2208e4c98dfc0933488d05890639e9 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       sha256.c
+/// \brief      SHA-256
+///
+/// \todo       Crypto++ has x86 ASM optimizations. They use SSE so if they
+///             are imported to liblzma, SSE instructions need to be used
+///             conditionally to keep the code working on older boxes.
+//
+//  This code is based on the code found from 7-Zip, which has a modified
+//  version of the SHA-256 found from Crypto++ <https://www.cryptopp.com/>.
+//  The code was modified a little to fit into liblzma.
+//
+//  Authors:    Kevin Springle
+//              Wei Dai
+//              Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/outqueue.h:1-12; SHA256 9d6cee45653d38409b52191fdb57f6ce2f2bdb70ee4f694915e21c134c69ab55 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       outqueue.h
+/// \brief      Output queue handling in multithreaded coding
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_decoder.h:1-12; SHA256 9e1e02cd644291187fa695ee4a02291b76d91c2df42f7965b374770d597e1cc0 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_decoder.h
+/// \brief      Decodes .xz Streams
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/index_decoder.c:1-12; SHA256 9e9eaa0a3f51866268307c87df3b5c5e5ce56973ba148252ba1c8ee0f4790edb =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       index_decoder.c
+/// \brief      Decodes the Index field
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/simple_coder.c:1-15; SHA256 a179a707b8bce7173ea476b550f7d0af112f976e785f48fcbbf6f245e38857e1 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       simple_coder.c
+/// \brief      Wrapper for simple filters
+///
+/// Simple filters don't change the size of the data i.e. number of bytes
+/// in equals the number of bytes out.
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc32_small.c:1-12; SHA256 a1d487822fce7db67c0111d1295ef41baece9f55e762c38927966988343cb3de =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc32_small.c
+/// \brief      CRC32 calculation (size-optimized)
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/rangecoder/price.h:1-12; SHA256 a4493d76228765d9643eef5aa7942152e5adf31517046b6dc74da03dc275ed58 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       price.h
+/// \brief      Probability price calculation
+//
+//  Author:     Igor Pavlov
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/index_encoder.h:1-12; SHA256 a83d943f4973351ee4b224b36ec42a46708422bcfe2212be31403ed49ae1154b =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       index_encoder.h
+/// \brief      Encodes the Index field
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/vli_encoder.c:1-12; SHA256 a9a8f6a6066c289a951ec1f1788bbe615cf6ff95479df84892d8221f935b8609 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       vli_encoder.c
+/// \brief      Encodes variable-length integers
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/armthumb.c:1-13; SHA256 ad0b1f5928b674e87503c67e61086b53ee1c9988997413229b7375af5a4524e3 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       armthumb.c
+/// \brief      Filter for ARM-Thumb binaries
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_common.h:1-13; SHA256 ad9dd84eb458e903e9167644ce56371afec8641403df04ae0bf6e07c7d9f3ff4 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_common.h
+/// \brief      Private definitions common to LZMA encoder and decoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/mythread.h:1-12; SHA256 b18c1b2cb2af5773050741e112318ec408dd726ec8fa12cc032523ee9bb6ac9b =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       mythread.h
+/// \brief      Some threading related helper macros and functions
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/delta/delta_private.h:1-12; SHA256 b865911d1b16599d54459ef48f426052a8e4960ee12f95084e64351f5f50769d =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       delta_private.h
+/// \brief      Private common stuff for Delta encoder and decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/arm.c:1-13; SHA256 ba999f40887c0409395e274f4de21aea47a2489d2fdcb6a85079b1d45eaab963 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       arm.c
+/// \brief      Filter for ARM binaries
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma2_decoder.c:1-13; SHA256 bc3e00af8cc1b9c64cc6a69dab0e032c7fa32d444a57dadaaa9b30b7db6a6b1b =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma2_decoder.c
+/// \brief      LZMA2 decoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_decoder.c:1-13; SHA256 bcff1d2f4c94179b2347fb9bd5ab1ed04e83919223a4625bac35782795009630 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_decoder.c
+/// \brief      LZMA decoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_encoder.c:1-12; SHA256 be989c2858d6f443cc3ede6baeee8dd251f4e7989305fbe29a60034227aa17e8 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_encoder.c
+/// \brief      Encodes .xz Blocks
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/hardware_physmem.c:1-12; SHA256 beaede6893e4203eeb1e4b584951b74270c67201cd2d4a789813b0fbbb45d28f =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       hardware_physmem.c
+/// \brief      Get the total amount of physical memory (RAM)
+//
+//  Author:     Jonathan Nieder
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/simple_private.h:1-12; SHA256 bfd069394e13742bab93f5d30b36643594999764879e496b4229120a19232ec4 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       simple_private.h
+/// \brief      Private definitions for so called simple filters
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_mbstr_fw.c:1-12; SHA256 c0694acc716ff32eb1dca1914faba7a6f7f9622a29015b97778420026d33f96a =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_mbstr_fw.c
+/// \brief      Get the field width for printf() e.g. to align table columns
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_physmem.c:1-12; SHA256 c127eb07c912b95b1a01165a7964247faa6c341c562063495c9c74a04246f5f1 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_physmem.c
+/// \brief      Get the amount of physical memory
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_encoder_optimum_fast.c:1-11; SHA256 c24664359e725088b4c25cecfbfba83227bc5b44b513a60b16c8a0ee0233467c =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_encoder_optimum_fast.c
+//
+//  Author:     Igor Pavlov
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/delta/delta_decoder.h:1-12; SHA256 c37b0d9b8c2f39bffcaab29f8e72da632131098cf239de3de5af1f1a71c3c613 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       delta_decoder.h
+/// \brief      Delta filter decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lz/lz_encoder_hash.h:1-12; SHA256 c3d660afd1422fda188ebc0f15e5d152c29b1b1c779ebb6786183084517dcae5 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lz_encoder_hash.h
+/// \brief      Hash macros for match finders
+//
+//  Author:     Igor Pavlov
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma2_decoder.h:1-13; SHA256 c3e6fc48a5fa17aa34129a30def87ab2d5b603de1af1a3f614936194b1de958b =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma2_decoder.h
+/// \brief      LZMA2 decoder
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/fastpos_tablegen.c:1-13; SHA256 c5263329d11172750fdf81da4bbd9201c1fbae8c3a3a43ee279eb9c99f845c52 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       fastpos_tablegen.c
+/// \brief      Generates the lzma_fastpos[] lookup table
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_flags_encoder.c:1-12; SHA256 c7bc2d2e647fef0d179c11a2493c4551c78f5d829388882a6efb01005abf1e97 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_flags_encoder.c
+/// \brief      Encodes a Filter Flags field
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_mbstr.h:1-17; SHA256 c7caf7f5a68caeffd1566d1f8ebb70f730567520256ea93ff4d34b6f6741ffd4 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_mbstr.h
+/// \brief      Utility functions for handling multibyte strings
+///
+/// If not enough multibyte string support is available in the C library,
+/// these functions keep working with the assumption that all strings
+/// are in a single-byte character set without combining characters, e.g.
+/// US-ASCII or ISO-8859-*.
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_decoder.c:1-12; SHA256 c7d8e6e830ce6ef70f773f03bfbdae62e29a2fb882e3c5e103c59ecaf5316900 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_decoder.c
+/// \brief      Filter ID mapping to filter-specific functions
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/api/lzma/base.h:6-13; SHA256 cafff80f4fa629de4f5565d511309fece52469a53a7e2969d54239c903d00f1c =====
+/*
+ * Author: Lasse Collin
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ *
+ * See ../lzma.h for information about liblzma as a whole.
+ */
+
+===== Original source notice; src/liblzma/lz/lz_decoder.h:1-13; SHA256 d311f2f79f6a4988c9c2393cf6729d8c9bbc244883925885b19f530d8351aaba =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lz_decoder.h
+/// \brief      LZ out window
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/powerpc.c:1-13; SHA256 d5a8adb0c0d74e2ed985771a81566fd5e9aa85d8f9b057758d8e8ad78d41602a =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       powerpc.c
+/// \brief      Filter for PowerPC (big endian) binaries
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/simple_decoder.h:1-12; SHA256 d8151260bd931388ff62133c94b1ef1efaf5587cae65f90df0b9b9d5c68ec3e3 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       simple_decoder.h
+/// \brief      Properties decoder for simple filters
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_progname.c:1-12; SHA256 d837bea7ac13dd33c4a2e15372814870dbf0389b563b602827ffbfa5610cdbc6 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_progname.c
+/// \brief      Program name to be displayed in messages
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/delta/delta_common.h:1-12; SHA256 d840427b7dc03e04fcbe22875dd69f743c8fd9f251babb1a84a06ff883de1d29 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       delta_common.h
+/// \brief      Common stuff for Delta encoder and decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lzma/lzma_encoder.h:1-13; SHA256 d95f89e3025f67563126a3835e723959984e89eb4ab4c6185f41859086483787 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lzma_encoder.h
+/// \brief      LZMA encoder API
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/simple/simple_decoder.c:1-12; SHA256 dc312254e6e364aabdf3471a31afc5af82c07e32253930b77e07f2cc4fe26c1a =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       simple_decoder.c
+/// \brief      Properties decoder for simple filters
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/lz/lz_decoder.c:1-13; SHA256 e1bb42aab5c6d4e6dd88659506853df17016744081aa0b11b1cd24a86216c9c0 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       lz_decoder.c
+/// \brief      LZ out window
+///
+//  Authors:    Igor Pavlov
+//              Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/alone_decoder.h:1-12; SHA256 e30235ed7c9609a560daf78f4d6666efb27f6f675dd6614ea69c753909c2fa3c =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       alone_decoder.h
+/// \brief      Decoder for LZMA_Alone files
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/auto_decoder.c:1-12; SHA256 e377f83dffa2fb47682a9d33b4ef25fc6aac4c7c84801aa16ac28f82eef4cec5 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       auto_decoder.c
+/// \brief      Autodetect between .xz Stream and .lzma (LZMA_Alone) formats
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc32_fast.c:1-18; SHA256 e5873d94009499de6d76ef80dc98cba470d1feb1ed82998329d725a847605304 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc32.c
+/// \brief      CRC32 calculation
+///
+/// Calculate the CRC32 using the slice-by-eight algorithm.
+/// It is explained in this document:
+/// http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
+/// The code in this file is not the same as in Intel's paper, but
+/// the basic principle is identical.
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_buffer_encoder.h:1-12; SHA256 e6517f10a7d91324b01b655b205a8e60c906188aff4676e2f02d8ee7bc8175d5 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_buffer_encoder.h
+/// \brief      Single-call .xz Block encoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_encoder_mt.c:1-12; SHA256 e76514170c263b019f95e53c50ccec47b0433425d1180971208c743972290ca4 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_encoder_mt.c
+/// \brief      Multithreaded .xz Stream encoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_decoder.h:1-12; SHA256 e8153f99ba637ecfc2f3c8f6113b1af47f5132eb50a03d768a43e00270a463c8 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_decoder.h
+/// \brief      Filter ID mapping to filter-specific functions
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_buffer_encoder.c:1-12; SHA256 e97d429c3487ac2d34861f18d8f3f64152a7b3ce2d9c45ea3a7c0ae2310b13b2 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_buffer_encoder.c
+/// \brief      Single-call .xz Stream encoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_decoder.c:1-12; SHA256 e9b32902b6d4882a20201d4806ae01d4ea608d78c82104b55fefe8069fad03b5 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_decoder.c
+/// \brief      Decodes .xz Blocks
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/filter_common.c:1-12; SHA256 eaa8575e3c474c2d335fadef93216b990899372bdab83681db15cdeb98845a5a =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       filter_common.c
+/// \brief      Filter-specific stuff common for both encoder and decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_mbstr_width.c:1-12; SHA256 eb1edef69012d7c01ac0ca3a0c2217df8d60a978bf5b5097295ac9fc50923de1 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_mbstr_width.c
+/// \brief      Calculate width of a multibyte string
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/easy_preset.h:1-12; SHA256 ef45e6709f848b04a4105dae47c72013944850ab8232b07af8aee8bc145534bf =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       easy_preset.h
+/// \brief      Preset handling for easy encoder and decoder
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/stream_flags_decoder.c:1-12; SHA256 f0a29596a566c2873322d2876e29b717e293284dad04f097f036619bcf63f631 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       stream_flags_decoder.c
+/// \brief      Decodes Stream Header and Stream Footer from .xz files
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/block_header_decoder.c:1-12; SHA256 f0b472091c560dac85e12919080bcf80a170bb53662d080646a0e98ee8e0ae48 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       block_header_decoder.c
+/// \brief      Decodes Block Header from .xz files
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/outqueue.c:1-12; SHA256 f7c7b866cf73935bfddacf85dc31b2ba2f4e4155a67a3fdc85727c0c507f8cc8 =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       outqueue.c
+/// \brief      Output queue handling in multithreaded coding
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/common/tuklib_progname.h:1-12; SHA256 faba7fd43a50d019da28a91b5f5cbdc34105c2b81eb6f4ce8651de0a4c18773e =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       tuklib_progname.h
+/// \brief      Program name to be displayed in messages
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/check/crc64_table.c:1-12; SHA256 fb6cc9f6a5507258b9d3ba2381bc51ef98ce1deb9bceb02429efcc108ef7513a =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       crc64_table.c
+/// \brief      Precalculated CRC64 table with correct endianness
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+===== Original source notice; src/liblzma/common/index_hash.c:1-12; SHA256 fc374403d4249fefb25ecf5c3b761a9a97e7eba2e069f6ba10e00aed8ebd72ad =====
+///////////////////////////////////////////////////////////////////////////////
+//
+/// \file       index_hash.c
+/// \brief      Validates Index by using a hash function
+//
+//  Author:     Lasse Collin
+//
+//  This file has been put into the public domain.
+//  You can do whatever you want with this file.
+//
+///////////////////////////////////////////////////////////////////////////////
+
+

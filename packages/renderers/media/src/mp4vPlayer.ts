@@ -1,5 +1,6 @@
 import {
   createFileViewerTranslator,
+  createFileViewerI18nBindings,
   type FileRenderContext
 } from '@file-viewer/core'
 import type { Mp4vSoftwareTrack } from './mp4.js'
@@ -58,51 +59,65 @@ export const mountMp4vSoftwarePlayer = async (
   track: Mp4vSoftwareTrack,
   context?: FileRenderContext
 ): Promise<Mp4vSoftwarePlayerInstance> => {
+  if (context?.signal?.aborted) throw new DOMException('The video request was aborted.', 'AbortError')
   if (typeof Worker === 'undefined') throw new Error('Web Worker is unavailable.')
   if (typeof HTMLCanvasElement.prototype.transferControlToOffscreen !== 'function') {
     throw new Error('OffscreenCanvas is unavailable.')
   }
 
-  const t = createFileViewerTranslator(context?.options)
-  const player = createElement('div', 'fv-video-software-player')
+  const document = video.ownerDocument
+  const bindings = createFileViewerI18nBindings(context?.i18n)
+  const element = <K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) => {
+    const node = document.createElement(tag)
+    if (className) node.className = className
+    if (text !== undefined) node.textContent = text
+    return node
+  }
+  const owned = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string, value: () => string) => {
+    const node = element(tag, className)
+    bindings.text(node, value)
+    return node
+  }
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const player = element('div', 'fv-video-software-player')
   player.tabIndex = 0
   player.dataset.state = 'loading'
   player.style.aspectRatio = `${track.width} / ${track.height}`
 
-  const canvas = createElement('canvas', 'fv-video-software-canvas')
+  const canvas = element('canvas', 'fv-video-software-canvas')
   canvas.width = track.width
   canvas.height = track.height
-  const loading = createElement(
+  const loading = owned(
     'div',
     'fv-video-software-loading',
-    t('media.video.softwareLoading')
+    () => t('media.video.softwareLoading')
   )
   loading.setAttribute('role', 'status')
 
-  const badge = createElement('span', 'fv-video-software-badge', t('media.video.softwareBadge'))
-  const controls = createElement('div', 'fv-video-software-controls')
-  const playButton = createElement('button', 'fv-video-software-button', '▶')
+  const badge = owned('span', 'fv-video-software-badge', () => t('media.video.softwareBadge'))
+  const controls = element('div', 'fv-video-software-controls')
+  const playButton = element('button', 'fv-video-software-button', '▶')
   playButton.type = 'button'
-  playButton.setAttribute('aria-label', t('media.video.play'))
-  const currentTime = createElement('span', 'fv-video-software-time', '00:00')
-  const seek = createElement('input', 'fv-video-software-seek')
+  bindings.attr(playButton, 'aria-label', () => t(video.paused ? 'media.video.play' : 'media.video.pause'))
+  const currentTime = element('span', 'fv-video-software-time', '00:00')
+  const seek = element('input', 'fv-video-software-seek')
   seek.type = 'range'
   seek.min = '0'
   seek.max = String(track.duration / track.timescale)
   seek.step = '0.01'
   seek.value = '0'
-  seek.setAttribute('aria-label', t('media.video.seek'))
-  const duration = createElement(
+  bindings.attr(seek, 'aria-label', () => t('media.video.seek'))
+  const duration = element(
     'span',
     'fv-video-software-time',
     formatTime(track.duration / track.timescale)
   )
-  const volumeButton = createElement('button', 'fv-video-software-button', '🔊')
+  const volumeButton = element('button', 'fv-video-software-button', '🔊')
   volumeButton.type = 'button'
-  volumeButton.setAttribute('aria-label', t('media.video.mute'))
-  const fullscreenButton = createElement('button', 'fv-video-software-button', '⛶')
+  bindings.attr(volumeButton, 'aria-label', () => t(video.muted || video.volume === 0 ? 'media.video.unmute' : 'media.video.mute'))
+  const fullscreenButton = element('button', 'fv-video-software-button', '⛶')
   fullscreenButton.type = 'button'
-  fullscreenButton.setAttribute('aria-label', t('media.video.fullscreen'))
+  bindings.attr(fullscreenButton, 'aria-label', () => t('media.video.fullscreen'))
   controls.append(playButton, currentTime, seek, duration, volumeButton, fullscreenButton)
 
   video.controls = false
@@ -129,6 +144,7 @@ export const mountMp4vSoftwarePlayer = async (
   }
 
   const syncControls = () => {
+    if (disposed) return
     const value = Number.isFinite(video.currentTime) ? video.currentTime : 0
     currentTime.textContent = formatTime(value)
     seek.value = String(value)
@@ -160,10 +176,22 @@ export const mountMp4vSoftwarePlayer = async (
   const onVolumeChange = () => syncControls()
   const onAbort = () => cleanup()
   const togglePlayback = () => {
+    if (disposed) return
     if (video.paused) {
       void video.play().catch((error) => {
+        if (disposed) return
+        let detail: string
+        try {
+          detail = error instanceof Error ? error.message : String(error)
+        } catch {
+          // A user-supplied getter may throw or synchronously dispose the player.
+          // No readable raw detail exists; keep the current UI and consume the rejection.
+          return
+        }
+        if (disposed) return
         player.dataset.state = 'error'
-        loading.textContent = error instanceof Error ? error.message : String(error)
+        bindings.release(loading)
+        loading.textContent = detail
       })
     } else {
       video.pause()
@@ -198,6 +226,8 @@ export const mountMp4vSoftwarePlayer = async (
   const cleanup = () => {
     if (disposed) return
     disposed = true
+    if (!ready) rejectReady?.(new DOMException('The video request was aborted.', 'AbortError'))
+    bindings.destroy()
     video.pause()
     worker.postMessage({ type: 'dispose' })
     worker.terminate()
@@ -217,6 +247,7 @@ export const mountMp4vSoftwarePlayer = async (
   }
 
   worker.onmessage = (event: MessageEvent<Mp4vWorkerResponse>) => {
+    if (disposed) return
     const message = event.data
     if (message.type === 'ready') {
       ready = true
@@ -234,17 +265,30 @@ export const mountMp4vSoftwarePlayer = async (
       player.dataset.decodeMs = String(message.decodeMs)
       return
     }
-    const error = new Error(message.message)
+    const detail = message.message
+    if (disposed) return
+    const error = new Error(detail)
     player.dataset.state = 'error'
     loading.hidden = false
-    loading.textContent = message.message
+    bindings.release(loading)
+    loading.textContent = detail
     if (!ready) rejectReady?.(error)
   }
   worker.onerror = (event) => {
-    const error = new Error(event.message || 'The MP4V decoder Worker failed.')
+    if (disposed) return
+    // Capture the raw detail once. Whitespace and English-looking details are still original text.
+    const detail = event.message
+    if (disposed) return
+    const error = new Error(detail || t('media.video.softwareWorkerFailed'))
+    if (disposed) return
     player.dataset.state = 'error'
     loading.hidden = false
-    loading.textContent = error.message
+    if (detail) {
+      bindings.release(loading)
+      loading.textContent = detail
+    } else {
+      bindings.text(loading, () => t('media.video.softwareWorkerFailed'))
+    }
     if (!ready) rejectReady?.(error)
   }
 
@@ -263,11 +307,19 @@ export const mountMp4vSoftwarePlayer = async (
   context?.signal?.addEventListener('abort', onAbort, { once: true })
   syncControls()
 
-  const offscreen = canvas.transferControlToOffscreen()
-  worker.postMessage({ type: 'init', buffer, canvas: offscreen }, [buffer, offscreen])
   try {
+    if (context?.signal?.aborted) cleanup()
+    if (!disposed) {
+      const offscreen = canvas.transferControlToOffscreen()
+      worker.postMessage({ type: 'init', buffer, canvas: offscreen }, [buffer, offscreen])
+    }
     await readyPromise
+    // A ready event and cancellation can occur before this continuation runs.
+    if (disposed || context?.signal?.aborted) {
+      throw new DOMException('The video request was aborted.', 'AbortError')
+    }
   } catch (error) {
+    void readyPromise.catch(() => {})
     cleanup()
     throw error
   }

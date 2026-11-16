@@ -8,6 +8,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { extname, resolve, sep } from 'node:path'
 import { pixelPng } from '../../../packages/renderers/ofd/test/fixtures/resource-path-fixture.mjs'
+import { launchChromium } from './lib/chromium-launch.mjs'
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 assert.ok(
@@ -61,9 +62,7 @@ assert.ok(
   playwright,
   'Run with npm exec --package playwright -- node apps/component-demo/scripts/verify-packed-issue-regressions.mjs'
 )
-const browser = await (playwright.chromium ? playwright : playwright.default).chromium.launch({
-  headless: true
-})
+const browser = await launchChromium((playwright.chromium ? playwright : playwright.default).chromium)
 const report = []
 async function poll(read, check, label, timeout = 45000) {
   const end = Date.now() + timeout

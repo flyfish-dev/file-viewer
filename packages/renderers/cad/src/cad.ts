@@ -22,6 +22,7 @@ import {
   createFileViewerViewStateChange,
   createFileViewerViewStateChangeEmitter,
   createFileViewerTranslator,
+  normalizeFileViewerErrorMessage,
   createFileViewerZoomChangeEmitter,
   createFileViewerCanvasImageBlob,
   isFileViewerSnapshotDownloadPermitted,
@@ -32,7 +33,6 @@ import {
   unregisterFileViewerZoomProvider,
   type FileViewerApplyViewStateOptions,
   type FileRenderContext,
-  type FileViewerCadColorMode,
   type FileViewerCadOptions,
   type FileViewerFitRequest,
   type FileViewerFitResult,
@@ -810,13 +810,13 @@ export default async function renderCad(
 ): Promise<FileViewerRenderedInstance> {
   const normalizedType = normalizeType(type);
   const options: FileViewerCadOptions = context?.options?.cad || {};
-  const t = createFileViewerTranslator(context?.options);
+  const t = createFileViewerTranslator(context?.i18n || context?.options);
   const locale = resolveFileViewerLocale(context?.options);
   const monochromeColor = resolveFileViewerCadMonochromeColor(options.monochromeColor);
   let colorMode = normalizeFileViewerCadColorMode(options.colorMode);
   let status: CadStatus = 'loading';
-  let progressMessage = t('cad.state.loadingViewer');
-  let errorMessage = '';
+  let progressMessage = () => t('cad.state.loadingViewer');
+  let errorMessage = () => '';
   let loadResult: CadViewerLoadResult | null = null;
   let renderStats: RenderStats | null = null;
   let viewState: ViewChangeEvent | null = null;
@@ -837,7 +837,7 @@ export default async function renderCad(
 
   const toolbar = createElement('div', 'cad-toolbar');
   const tools = createElement('div', 'cad-tools');
-  const fitButton = createElement('button', undefined, t('cad.toolbar.fit')) as HTMLButtonElement;
+  const fitButton = t.text(createElement('button', undefined), 'cad.toolbar.fit') as HTMLButtonElement;
   const zoomOutButton = createElement('button', undefined, '-') as HTMLButtonElement;
   const zoomText = createElement('span', 'cad-zoom', '100%');
   const zoomInButton = createElement('button', undefined, '+') as HTMLButtonElement;
@@ -849,14 +849,14 @@ export default async function renderCad(
   [fitButton, zoomOutButton, zoomInButton, colorModeButton].forEach(button => {
     button.type = 'button';
   });
-  fitButton.title = t('cad.toolbar.fit');
-  zoomOutButton.title = t('cad.toolbar.zoomOut');
-  zoomInButton.title = t('cad.toolbar.zoomIn');
+  t.attr(fitButton, 'title', 'cad.toolbar.fit');
+  t.attr(zoomOutButton, 'title', 'cad.toolbar.zoomOut');
+  t.attr(zoomInButton, 'title', 'cad.toolbar.zoomIn');
   tools.append(fitButton, zoomOutButton, zoomText, zoomInButton, colorModeButton);
   const imageButtons = (['png', 'jpeg'] as const).map(format => {
     const button = createElement('button', `cad-export-image cad-export-${format}`, format.toUpperCase()) as HTMLButtonElement;
     button.type = 'button';
-    button.title = t('cad.toolbar.exportImage', { format: format.toUpperCase() });
+    t.attr(button, 'title', 'cad.toolbar.exportImage', { format: format.toUpperCase() });
     button.setAttribute('aria-label', button.title);
     button.hidden = !context?.requestSnapshotDownload || options.showImageExport === false ||
       !isFileViewerSnapshotDownloadPermitted(context?.options);
@@ -874,7 +874,7 @@ export default async function renderCad(
         });
       } catch (error) {
         if (!disposed) {
-          exportError.textContent = t('cad.error.exportFailed', { message: error instanceof Error ? error.message : String(error) });
+          t.text(exportError, 'cad.error.exportFailed', { message: error instanceof Error ? error.message : String(error) });
           exportError.hidden = false;
           console.error(error);
         }
@@ -896,8 +896,8 @@ export default async function renderCad(
   const layersPanel = createElement('aside', 'cad-layers');
   layersPanel.hidden = true;
   const layersHead = createElement('div', 'cad-layers-head');
-  const layersCount = createElement('span', undefined, t('cad.layers.count', { count: 0 }));
-  layersHead.append(createElement('strong', undefined, t('cad.layers.title')), layersCount);
+  const layersCount = t.text(createElement('span', undefined), 'cad.layers.count', { count: 0 });
+  layersHead.append(t.text(createElement('strong', undefined), 'cad.layers.title'), layersCount);
   const layersList = createElement('div', 'cad-layers-list');
   layersPanel.append(layersHead, layersList);
 
@@ -905,11 +905,11 @@ export default async function renderCad(
   const stage = createElement('div', 'cad-stage');
   const nativeHost = createElement('div', 'cad-native-stage');
   stage.append(nativeHost);
-  const state = createElement('div', 'cad-state', progressMessage);
+  const state = createElement('div', 'cad-state', progressMessage());
   canvasWrap.append(stage, state);
 
   const inspector = createElement('aside', 'cad-inspector');
-  const inspectorTitle = createElement('strong', undefined, t('cad.inspector.title'));
+  const inspectorTitle = t.text(createElement('strong', undefined), 'cad.inspector.title');
   const inspectorList = createElement('dl');
   const warningText = createElement('p', 'cad-warning');
   warningText.hidden = true;
@@ -1102,7 +1102,7 @@ export default async function renderCad(
   };
 
   const syncLayers = () => {
-    layersCount.textContent = t('cad.layers.count', { count: layers.length });
+    t.text(layersCount, 'cad.layers.count', { count: layers.length });
     layersPanel.hidden = layers.length === 0;
     body.classList.toggle('without-layers', layers.length === 0);
     layersList.replaceChildren(...layers.map(layer => {
@@ -1110,9 +1110,9 @@ export default async function renderCad(
       button.type = 'button';
       const layerVisible = layer.isVisible !== false && !layer.isFrozen;
       button.classList.toggle('muted', !layerVisible);
-      button.title = layer.duplicateCount > 1
+      t.bind(button, localizedNode => { localizedNode.title = layer.duplicateCount > 1
         ? t('cad.layers.merged', { name: layer.name, count: layer.duplicateCount })
-        : layer.name;
+        : layer.name; }, 'title');
       button.setAttribute('aria-pressed', String(layerVisible));
       const color = createElement('span', 'cad-layer-color');
       if (colorMode === 'monochrome') {
@@ -1158,19 +1158,11 @@ export default async function renderCad(
     const colorModeSupported = supportsCadViewerColorMode(viewer);
     colorModeButton.disabled = status !== 'ready' || !colorModeSupported;
     colorModeButton.setAttribute('aria-pressed', String(colorMode === 'monochrome'));
-    colorModeButton.textContent = t(colorMode === 'monochrome'
-      ? 'cad.toolbar.monochrome'
-      : 'cad.toolbar.colorSource');
-    colorModeButton.title = t(colorMode === 'monochrome'
-      ? 'cad.toolbar.colorSource'
-      : 'cad.toolbar.monochrome');
+    t.bind(colorModeButton, node => { node.textContent = t(colorMode === 'monochrome' ? 'cad.toolbar.monochrome' : 'cad.toolbar.colorSource'); });
+    t.bind(colorModeButton, node => { node.title = t(colorMode === 'monochrome' ? 'cad.toolbar.colorSource' : 'cad.toolbar.monochrome'); }, 'title');
     state.hidden = status === 'ready';
     state.classList.toggle('error', status === 'error');
-    if (status === 'loading') {
-      state.textContent = progressMessage;
-    } else if (status === 'error') {
-      state.textContent = errorMessage;
-    }
+    t.bind(state, node => { node.textContent = status === 'error' ? errorMessage() : progressMessage(); });
   };
 
   const syncUi = () => {
@@ -1182,7 +1174,7 @@ export default async function renderCad(
   const updateProgress = (progress: CadLoadProgress) => {
     const prefix = progress.format ? `${progress.format.toUpperCase()} ` : '';
     const percent = Number.isFinite(progress.percent) ? ` ${Math.round(progress.percent || 0)}%` : '';
-    progressMessage = `${prefix}${progress.message}${percent}`;
+    progressMessage = () => `${prefix}${progress.message}${percent}`;
     syncState();
   };
 
@@ -1385,7 +1377,7 @@ export default async function renderCad(
         syncUi();
       },
       onError: error => {
-        errorMessage = error.message || t('cad.error.parseFailed');
+        errorMessage = () => normalizeFileViewerErrorMessage(error, context?.options) || t('cad.error.parseFailed');
         syncState();
       },
     });
@@ -1414,8 +1406,8 @@ export default async function renderCad(
 
   const loadCad = async () => {
     status = 'loading';
-    progressMessage = t('cad.state.parsing');
-    errorMessage = '';
+    progressMessage = () => t('cad.state.parsing');
+    errorMessage = () => '';
     loadResult = null;
     renderStats = null;
     viewState = null;
@@ -1464,7 +1456,7 @@ export default async function renderCad(
       }
       console.error(reason);
       status = 'error';
-      errorMessage = reason instanceof Error ? reason.message : t('cad.error.parseFailed');
+      errorMessage = () => normalizeFileViewerErrorMessage(reason, context?.options) || t('cad.error.parseFailed');
       syncUi();
     }
   };

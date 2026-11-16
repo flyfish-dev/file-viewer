@@ -1,9 +1,10 @@
-import { readFile, readdir, writeFile } from 'node:fs/promises'
+import { readFile, readdir, realpath, writeFile } from 'node:fs/promises'
 import { dirname, join, relative, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 import assert from 'node:assert/strict'
 import { declaredSpdxNotice } from './declared-spdx-notices.mjs'
 import { correspondingSourceNotice } from './corresponding-source-notices.mjs'
+import { readPrebundledNoticeReceipt } from './prebundled-notices.mjs'
 
 export async function readReviewedSourceLicense(metadata, reviewedSourceLicenses = []) {
   const matches = reviewedSourceLicenses.filter((entry) => entry.name === metadata.name)
@@ -89,9 +90,10 @@ export async function resolveBundleLicense(directory, metadata) {
   throw new Error(`Missing reviewed license declaration for bundled ${metadata.name}@${metadata.version}`)
 }
 
-export async function writeBundleNotices(metafile, output, { readmeLicensePackages = [], reviewedSourceLicenses = [], includeWorkspacePackages = [], includePrebundledSdkPackages = [] } = {}) {
+export async function writeBundleNotices(metafile, output, { readmeLicensePackages = [], reviewedSourceLicenses = [], includeWorkspacePackages = [], includePrebundledSdkPackages = [], includePrebundledRuntimeNotices = [] } = {}) {
   const packages = new Map()
   const prebundled = new Map()
+  const producerNotices = new Map()
   for (const input of Object.keys(metafile.inputs)) {
     const installedPackage = input.includes('node_modules/')
     let directory = dirname(resolve(input))
@@ -99,6 +101,17 @@ export async function writeBundleNotices(metafile, output, { readmeLicensePackag
       try {
         const metadata = JSON.parse(await readFile(join(directory, 'package.json'), 'utf8'))
         if (metadata.name && metadata.version) {
+          const ownerInput = relative(directory, resolve(input)).replaceAll('\\', '/')
+          for (const configuration of includePrebundledRuntimeNotices.filter(item => item.packageName === metadata.name)) {
+            if (!configuration.runtimePaths.includes(ownerInput)) continue
+            const id = `${metadata.name}@${metadata.version}:${configuration.receiptPath}`
+            const found = producerNotices.get(id)
+            const ownerDirectory = await realpath(directory)
+            assert.ok(!found || found.directory === ownerDirectory, `Ambiguous prebundled producer owner: ${metadata.name}`)
+            if (found) assert.deepEqual(found.configuration, configuration, 'Ambiguous prebundled producer descriptor')
+            if (!found) producerNotices.set(id, { directory: ownerDirectory, metadata, configuration, inputs: new Set() })
+            producerNotices.get(id).inputs.add(ownerInput)
+          }
           const sdkInput = relative(join(directory, 'dist'), resolve(input)).replaceAll('\\', '/')
           if (includePrebundledSdkPackages.includes(metadata.name) && !sdkInput.startsWith('../') && /\.[cm]?js$/.test(sdkInput)) {
             const id = `${metadata.name}@${metadata.version}`
@@ -195,6 +208,14 @@ export async function writeBundleNotices(metafile, output, { readmeLicensePackag
     assert.equal(createHash('sha256').update(original).digest('hex'), expected.sha256,
       `Prebundled SDK original grants changed: ${id}`)
     notices.push(`Prebundled browser runtime: ${id}\n\nExact build receipt SHA-256: ${createHash('sha256').update(receiptBytes).digest('hex')}\n\n--- Complete original SDK third-party grants ---\n${original.toString('utf8')}`)
+  }
+  for (const [, { directory, metadata, configuration, inputs }] of [...producerNotices].sort(([a], [b]) => a.localeCompare(b))) {
+    const { original, receiptSha256 } = await readPrebundledNoticeReceipt({
+      packageRoot: directory, metadata, configuration, inputs: [...inputs]
+    })
+    // A producer notice can truthfully include metadata/README supplements when
+    // upstream published no standalone license. Preserve that distinction.
+    notices.push(`Prebundled producer runtime: ${metadata.name}@${metadata.version}\n\nExact build receipt SHA-256: ${receiptSha256}\n\n--- Complete producer third-party notice ---\n${original.toString('utf8')}`)
   }
   await writeFile(output, notices.join('\n\n========================================\n\n') + '\n')
 }

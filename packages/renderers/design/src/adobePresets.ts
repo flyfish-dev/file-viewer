@@ -1,3 +1,4 @@
+import { createFileViewerTranslator } from '@file-viewer/core'
 import type { FileRenderContext, FileViewerRenderedInstance } from '@file-viewer/core'
 import { parseAdobePresetInWorker } from './adobePresetClient.js'
 import { resolvePhotoshopParseLimits } from './limits.js'
@@ -14,12 +15,7 @@ const styles = `
 @media(max-width:600px){.adobe-preset-toolbar{align-items:flex-start;flex-direction:column;gap:8px;padding:9px 12px}.adobe-preset-search{width:100%}.adobe-preset-content{padding:12px}.adobe-preset-grid{grid-template-columns:1fr 1fr;gap:8px}.adobe-preset-preview{height:116px}.adobe-preset-copy{padding:9px}.adobe-preset-summary{grid-template-columns:1fr 1fr}}@media(max-width:390px){.adobe-preset-grid{grid-template-columns:1fr}}
 `
 
-const element = <K extends keyof HTMLElementTagNameMap>(documentRef: Document, tag: K, className?: string, text?: string) => {
-  const value = documentRef.createElement(tag)
-  if (className) value.className = className
-  if (text !== undefined) value.textContent = text
-  return value
-}
+
 
 const renderPattern = (canvas: HTMLCanvasElement, pattern: AdobePatternTile) => {
   const width = 256
@@ -61,16 +57,27 @@ export default async function renderAdobePreset(
   format: AdobePresetFormat,
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
+  const t = createFileViewerTranslator(context?.i18n || context?.options)
+  const element = t.element
+
   const parsed = await parseAdobePresetInWorker(buffer, format, context?.options?.design, context?.signal)
   if (context?.signal?.aborted) throw new DOMException('Adobe preset rendering was aborted.', 'AbortError')
   const documentRef = target.ownerDocument || document
-  const chinese = (context?.options?.locale || documentRef.documentElement.lang || '').toLowerCase().startsWith('zh')
-  const labels = chinese ? {
-    pat: 'Photoshop 图案库', grd: 'Photoshop 渐变库', asl: 'Photoshop 图层样式库', search: '筛选名称、ID 或效果', empty: '没有匹配的预设',
-    version: '版本', size: '文件大小', engine: '解析引擎', resources: '资源数', patterns: '图案', gradients: '渐变', styles: '图层样式', embedded: '内嵌图案',
-  } : {
-    pat: 'Photoshop Pattern Library', grd: 'Photoshop Gradient Library', asl: 'Photoshop Layer Style Library', search: 'Filter names, IDs, or effects', empty: 'No matching presets',
-    version: 'Version', size: 'File size', engine: 'Parser', resources: 'Resources', patterns: 'Patterns', gradients: 'Gradients', styles: 'Layer styles', embedded: 'Embedded patterns',
+
+  const labels = {
+    get pat() { return t('design.adobePresets.pat'); },
+    get grd() { return t('design.adobePresets.grd'); },
+    get asl() { return t('design.adobePresets.asl'); },
+    get search() { return t('design.adobePresets.search'); },
+    get empty() { return t('design.adobePresets.empty'); },
+    get version() { return t('design.adobePresets.version'); },
+    get size() { return t('design.adobePresets.size'); },
+    get engine() { return t('design.adobePresets.engine'); },
+    get resources() { return t('design.adobePresets.resources'); },
+    get patterns() { return t('design.adobePresets.patterns'); },
+    get gradients() { return t('design.adobePresets.gradients'); },
+    get styles() { return t('design.adobePresets.styles'); },
+    get embedded() { return t('design.adobePresets.embedded'); }
   }
   const style = element(documentRef, 'style')
   style.textContent = styles
@@ -79,17 +86,17 @@ export default async function renderAdobePreset(
   root.dataset.engine = parsed.engine
   const total = parsed.format === 'pat' ? parsed.patterns.length : parsed.format === 'grd' ? parsed.gradients.length : parsed.styles.length + parsed.patterns.length
   const title = element(documentRef, 'div', 'adobe-preset-title')
-  title.append(element(documentRef, 'strong', undefined, labels[parsed.format]), element(documentRef, 'span', undefined, `${total} resources · ${parsed.format.toUpperCase()} ${parsed.version}`))
+  title.append(element(documentRef, 'strong', undefined, labels[parsed.format]), element(documentRef, 'span', undefined, () => t('design.ui.resources.eabdb3', { p0: total, p1: parsed.format.toUpperCase(), p2: parsed.version })))
   const search = element(documentRef, 'input', 'adobe-preset-search')
   search.type = 'search'
-  search.placeholder = labels.search
-  search.setAttribute('aria-label', labels.search)
+  t.bind(search, node => { node.placeholder = labels.search; }, 'placeholder')
+  t.bind(search, node => { node.setAttribute('aria-label', labels.search); }, 'aria-label')
   const toolbar = element(documentRef, 'header', 'adobe-preset-toolbar')
   toolbar.append(title, search)
   const content = element(documentRef, 'div', 'adobe-preset-content')
   const summary = element(documentRef, 'div', 'adobe-preset-summary')
   const byteText = buffer.byteLength < 1024 ? `${buffer.byteLength} B` : `${(buffer.byteLength / 1024).toFixed(1)} KiB`
-  ;[[labels.version, parsed.version], [labels.size, byteText], [labels.engine, parsed.engine], [labels.resources, String(total)]].forEach(([label, value]) => {
+  ;[[() => labels.version, parsed.version], [() => labels.size, byteText], [() => labels.engine, parsed.engine], [() => labels.resources, String(total)]].forEach(([label, value]) => {
     const cell = element(documentRef, 'div')
     cell.append(element(documentRef, 'span', undefined, label), element(documentRef, 'strong', undefined, value))
     summary.appendChild(cell)
@@ -186,7 +193,7 @@ export default async function renderAdobePreset(
         `adobe-style-chip${effect.enabled ? '' : ' adobe-style-chip-off'}`,
         `${effect.kind}${effect.instances > 1 ? ` ×${effect.instances}` : ''}${effect.enabled ? '' : ' · off'}`
       )))
-      if (!preset.effects.length) preview.appendChild(element(documentRef, 'span', 'adobe-style-chip', 'blend options'))
+      if (!preset.effects.length) preview.appendChild(element(documentRef, 'span', 'adobe-style-chip', () => t('design.ui.blend.options.e3dab3')))
       preview.dataset.previewRendered = 'true'
       const copy = element(documentRef, 'div', 'adobe-preset-copy')
       const details = [
@@ -202,7 +209,7 @@ export default async function renderAdobePreset(
     })
     addPatternCards(parsed.patterns, labels.embedded)
   }
-  const empty = element(documentRef, 'div', 'adobe-preset-empty', labels.empty)
+  const empty = element(documentRef, 'div', 'adobe-preset-empty', () => labels.empty)
   empty.hidden = true
   content.appendChild(empty)
   root.append(toolbar, content)
