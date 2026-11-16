@@ -160,8 +160,8 @@ test('explicit same-release revisions use new destinations and retain every sour
   const original = await readFile(join(source, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip'))
   await assert.rejects(generateCadSourceSnapshot({ sourceRoot: source, version, sourceRevision: revision }), /generation blocked/)
   assert.deepEqual(await readFile(join(source, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip')), original)
-  await put(source, 'packages/components/web-full/scripts/offline-asset-sanitize.mjs',
-    prior.files.get('packages/components/web-full/scripts/offline-asset-sanitize.mjs'))
+  for (const input of prior.manifest.preferredSourceInputs)
+    if (input.hashMode === 'bytes') await put(source, input.path, prior.files.get(input.path))
   const unchanged = await planCadSourceSnapshot({ sourceRoot: source, version, sourceRevision: revision })
   assert.ok(unchanged.plan.blockers.some(message => message.includes('requires changed preferred-source inputs')))
   const older = await planCadSourceSnapshot({ sourceRoot: source, version: '0.0.1', sourceRevision: revision })
