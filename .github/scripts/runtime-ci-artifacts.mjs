@@ -19,7 +19,11 @@ export const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex'
 
 export async function command(program, args, { cwd, env = process.env, timeout = 900_000 } = {}) {
   return new Promise((done, reject) => {
-    const child = spawn(program, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] })
+    const child = spawn(program, args, {
+      cwd,
+      env,
+      stdio: ['ignore', 'pipe', 'pipe']
+    })
     let stdout = '',
       stderr = ''
     child.stdout.on('data', (value) => {
@@ -415,7 +419,9 @@ export async function downloadRegistrySupport(directory, records) {
     const temporaryDirectory = await mkdtemp(join(directory, '.registry-support-download-'))
     const temporaryPath = join(temporaryDirectory, item.tarball)
     try {
-      const response = await fetch(metadata.dist.tarball, { signal: AbortSignal.timeout(60_000) })
+      const response = await fetch(metadata.dist.tarball, {
+        signal: AbortSignal.timeout(60_000)
+      })
       assert(response.ok)
       let received = 0
       const bounded = new Transform({
@@ -452,9 +458,52 @@ export async function downloadRegistrySupport(directory, records) {
   }
 }
 
+/** Explicit stable-release recovery; the default candidate contract above is unchanged. */
+export async function downloadPublishedRelease({ root, directory }) {
+  const {
+    readPublishedReleaseContext,
+    verifyPublishedReleaseRemote,
+    verifyPublishedReleaseDownloads
+  } = await import('./lib/published-release-qualification.mjs')
+  const context = await readPublishedReleaseContext(root)
+  await command('git', ['merge-base', '--is-ancestor', context.contract.tagCommit, 'HEAD'], {
+    cwd: root
+  })
+  await verifyPublishedReleaseRemote(context, (args) => command('gh', args, { cwd: root }))
+  await mkdir(directory, { recursive: false })
+  await command(
+    'gh',
+    [
+      'release',
+      'download',
+      context.contract.tag,
+      '--repo',
+      context.contract.repository,
+      '--dir',
+      directory
+    ],
+    { cwd: root }
+  )
+  await verifyPublishedReleaseDownloads(directory, context, {
+    supportPresent: false
+  })
+  await verifyFrozenArtifacts(directory, context.manifest, {
+    sourceRoot: root
+  })
+  await downloadRegistrySupport(directory, context.contract.registrySupport)
+  await verifyPublishedReleaseDownloads(directory, context)
+  return context.manifest
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const args = process.argv.slice(2)
-  if (args[0] === '--verify') {
+  if (args[0] === '--published-release') {
+    assert.equal(args.length, 3)
+    await downloadPublishedRelease({
+      root: resolve(args[1]),
+      directory: resolve(args[2])
+    })
+  } else if (args[0] === '--verify') {
     assert.equal(args.length, 3)
     const manifestBytes = await readFile(
       join(resolve(args[1]), 'artifacts/npm-release-manifest.json')
@@ -466,7 +515,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     await verifyFrozenArtifacts(resolve(args[2]), JSON.parse(manifestBytes))
   } else {
     assert.equal(args.length, 2)
-    await downloadFrozenCandidate({ root: resolve(args[0]), directory: resolve(args[1]) })
+    await downloadFrozenCandidate({
+      root: resolve(args[0]),
+      directory: resolve(args[1])
+    })
   }
   console.log('Frozen archives, package identities, entrypoints and runtime boundaries verified.')
 }
