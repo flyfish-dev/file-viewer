@@ -521,6 +521,55 @@ test('legacy AMD Worker bytes cannot satisfy the newly measured source or packed
   }
 })
 
+test('all spreadsheet owners require the Worker built from the actual current Core catalog', async () => {
+  const plan = JSON.parse(
+    await readFile(
+      join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
+    )
+  )
+  const asset = {
+    path: 'served/a93cf71745c076d59b1049d5358e2a04635fb5b5022b177a2a2603943e855e2a.js',
+    bytes: 779775,
+    sha256: 'a93cf71745c076d59b1049d5358e2a04635fb5b5022b177a2a2603943e855e2a'
+  }
+  for (const [runId, count] of [
+    ['issue-211-spreadsheet-table-styles', 9],
+    ['spreadsheet-414', 4],
+    ['url-source-feedback', 32]
+  ]) {
+    const rows = plan.requiredCases.filter((row) => row.runId === runId)
+    assert.equal(rows.length, count)
+    assert(rows.every((row) => JSON.stringify(row.servedAssets) === JSON.stringify([asset])))
+  }
+  const required = requiredPlan().map((row) => ({ ...row, servedAssets: [asset] }))
+  const events = actualEvents().map((row) =>
+    row.kind === 'served-runtime-asset' ? { ...row, bytes: asset.bytes, sha256: asset.sha256 } : row
+  )
+  assert.equal(collect({ required, events }).length, 6)
+  const legacy = {
+    path: 'served/42ed769b3366c5147f1990393f56f20ad0cd84a8da01539bd4184cc66b7e5d41.js',
+    bytes: 779759,
+    sha256: '42ed769b3366c5147f1990393f56f20ad0cd84a8da01539bd4184cc66b7e5d41'
+  }
+  assert.throws(
+    () =>
+      collect({ required: required.map((row) => ({ ...row, servedAssets: [legacy] })), events }),
+    /Independent required product bytes/
+  )
+  assert.throws(
+    () =>
+      collect({
+        required,
+        events: events.map((row) =>
+          row.kind === 'served-runtime-asset'
+            ? { ...row, bytes: legacy.bytes, sha256: legacy.sha256 }
+            : row
+        )
+      }),
+    /Independent required product bytes/
+  )
+})
+
 test('all original generated-fixture and source-harness producers retain current exact source pins', async () => {
   const plan = JSON.parse(
     await readFile(
