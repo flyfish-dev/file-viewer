@@ -55,7 +55,10 @@ const summarizeBrush = (brush: ReturnType<typeof readAbr>['brushes'][number], li
 
 const parseAbr = (buffer: ArrayBuffer, limits: PhotoshopParseLimits): AdobeBrushLibraryDocument => {
   const preflight = inspectAdobeBrushLibrary(buffer, limits)
-  const parsed = readAbr(new Uint8Array(buffer), { logMissingFeatures: false })
+  const parsed = readAbr(new Uint8Array(buffer), {
+    logMissingFeatures: false,
+    totalMemoryLimit: limits.maxDecodedBytes,
+  })
   const totalItems = parsed.brushes.length + parsed.samples.length + parsed.patterns.length
   if (totalItems > limits.maxResourceItems) {
     throw new Error(`ABR decoded resources exceed the ${limits.maxResourceItems}-item safety limit.`)
@@ -113,7 +116,7 @@ const parseAbr = (buffer: ArrayBuffer, limits: PhotoshopParseLimits): AdobeBrush
     patterns,
     limitations: [
       'The preview shows decoded tip alpha, embedded pattern pixels, and preset metadata; it does not simulate a painted stroke.',
-      'Legacy ABR versions 1 and 2 and 16-bit RLE brush samples are rejected because the decoding engine does not implement them.',
+      'The bounded decoder rejects legacy ABR versions 1 and 2 and 16-bit RLE brush samples.',
     ],
   }
 }
@@ -147,7 +150,7 @@ const pathToSvg = (path: BezierPath, label: string): AdobeCustomShapePathPreview
 
 const parseCsh = (buffer: ArrayBuffer, limits: PhotoshopParseLimits): AdobeCustomShapeLibraryDocument => {
   const preflight = inspectAdobeCustomShapeLibrary(buffer, limits)
-  const parsed = readCsh(new Uint8Array(buffer))
+  const parsed = readCsh(new Uint8Array(buffer), { totalMemoryLimit: limits.maxDecodedBytes })
   if (parsed.shapes.length !== preflight.shapes) throw new Error('CSH decoded shape count does not match its bounded preflight result.')
   let pathCount = 0
   let knotCount = 0

@@ -1,5 +1,6 @@
 import {
   DEFAULT_RENDERER_DEFINITIONS,
+  renderWithFileViewerDocumentInspection,
   type FileRenderHandler,
   type FileViewerRenderedInstance,
   type FileViewerRendererPlugin,
@@ -31,7 +32,8 @@ export const renderFileViewerPdf: FileRenderHandler<FileViewerRenderedInstance, 
   target,
   _type,
   context
-) => import('./pdf.js').then(({ default: renderPdf }) => renderPdf(buffer, target, context));
+) => renderWithFileViewerDocumentInspection(buffer, target, 'pdf', context,
+  () => import('./pdf.js').then(({ default: renderPdf }) => renderPdf(buffer, target, context)));
 
 export const pdfRenderer: FileViewerRendererPlugin<FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>> = {
   id: 'file-viewer-renderer-pdf',

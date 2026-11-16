@@ -69,14 +69,14 @@ export async function copyIfcAssets(destination) {
     )),
   ];
   if (
-    webIfc.metadata.version !== "0.0.77" ||
-    fragments.metadata.version !== "3.6.0" ||
+    webIfc.metadata.version !== "0.0.79" ||
+    fragments.metadata.version !== "3.6.1" ||
     components.metadata.version !== "3.6.0" ||
     realpathSync(importerWebIfc.path) !== realpathSync(webIfc.path) ||
     realpathSync(componentFragments.path) !== realpathSync(fragments.path)
   )
     throw new Error(
-      "IFC assets and importer must share the tested web-ifc@0.0.77, @thatopen/fragments@3.6.0 and @thatopen/components@3.6.0 engines",
+      "IFC assets and importer must share the tested web-ifc@0.0.79, @thatopen/fragments@3.6.1 and @thatopen/components@3.6.0 engines",
     );
   const { build } = await import("esbuild");
   destination = resolve(destination);
@@ -132,8 +132,8 @@ export async function copyIfcAssets(destination) {
       "Optional IFC runtime assets for File Viewer.",
       "These assets are not loaded by the ordinary model/Office entry.",
       "web-ifc is MPL-2.0. Its WASM and bundled import code are unmodified upstream implementations.",
-      "Corresponding source and build instructions: https://github.com/ThatOpen/engine_web-ifc/tree/f26c4beef0a668ebdb180d2b95a94097a1e21cef (release 0.0.77).",
-      "Fragments is MIT: https://github.com/ThatOpen/engine_fragment/tree/baa139d1899bc5fddd90e0d83d21567e1bd50b00 (release 3.6.0).",
+      "Corresponding source and build instructions: https://github.com/ThatOpen/engine_web-ifc/tree/8e9bfebfbc6505960f01376c24f5a8e76ded6042 (release 0.0.79).",
+      "Fragments is MIT. Exact upstream package: https://registry.npmjs.org/@thatopen/fragments/-/fragments-3.6.1.tgz (version 3.6.1); repository: https://github.com/ThatOpen/engine_fragment. No source commit was supplied with this npm version.",
       "Components is MIT: https://github.com/ThatOpen/engine_components/tree/bd53d29cf22bf89526b74bf05fdfe919d1189dfa (release 3.6.0).",
       "Preserve licenses/, the linked worker legal notices and this notice when redistributing.",
       ...packages.map(

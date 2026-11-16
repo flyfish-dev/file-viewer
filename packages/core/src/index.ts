@@ -1,4 +1,6 @@
 // Public browser-facing entrypoint.
+export { registerFileViewerDocumentInspector, registerFileViewerPdfSignatureReader, renderWithFileViewerDocumentInspection } from './features/document/inspection'
+export type { FileViewerDocumentInspector, FileViewerDocumentInspectionRequest, FileViewerPdfSignatureDictionary } from './features/document/inspection'
 //
 // Keep this file as a compatibility barrel only: framework packages import from
 // here, while implementation details live in the domain folders below

@@ -247,6 +247,8 @@ const normalizeSignatureAsn1Limits = (
 }
 
 export interface InspectSignatureOptions {
+  /** Extract metadata without signature verification or content-imprint comparison. Default verification behavior is unchanged. */
+  metadataOnly?: boolean
   sourceFilename?: string
   extensionHint?: string
   originalContent?: ArrayBuffer | Uint8Array
@@ -1497,18 +1499,21 @@ const inspectCmsNode = async (
   bytes: Uint8Array,
   root: Asn1Node,
   originalContent: Uint8Array | undefined,
-  limits: SignatureAsn1Limits
+  limits: SignatureAsn1Limits,
+  metadataOnly = false
 ): Promise<SignatureInspection> => {
   const cms = parseCmsContentInfo(bytes, root, limits)
   await enrichCertificateFingerprints(cms.certificates, bytes)
   const verificationContent = cms.embeddedContent || originalContent
-  await Promise.all(
-    cms.signers.map((signer) => verifySigner(bytes, signer, cms.certificates, verificationContent))
-  )
+  if (!metadataOnly) {
+    await Promise.all(
+      cms.signers.map((signer) => verifySigner(bytes, signer, cms.certificates, verificationContent))
+    )
+  }
   const kind = cmsKind(cms)
   const timestamp =
     cms.signedContentTypeOid === OID.tstInfo && cms.embeddedContent
-      ? await parseTstInfo(cms.embeddedContent, originalContent, limits)
+      ? await parseTstInfo(cms.embeddedContent, metadataOnly ? undefined : originalContent, limits)
       : undefined
   return {
     kind,
@@ -1530,7 +1535,9 @@ const inspectCmsNode = async (
     signers: cms.signers.map((signer) => signer.summary),
     timestamp,
     crlCount: cms.crlCount,
-    warnings: baseWarnings()
+    warnings: metadataOnly
+      ? ['Metadata only: signatures, content digests, trust, revocation and legal validity were not checked.', ...baseWarnings().slice(1)]
+      : baseWarnings()
   }
 }
 
@@ -1642,7 +1649,8 @@ const parseTimestampedData = async (
   bytes: Uint8Array,
   root: Asn1Node,
   originalContent: Uint8Array | undefined,
-  limits: SignatureAsn1Limits
+  limits: SignatureAsn1Limits,
+  metadataOnly = false
 ): Promise<SignatureInspection> => {
   const content = root.children.find((child) => isTag(child, CONTEXT, 0))?.children[0]
   assertBounds(
@@ -1688,7 +1696,7 @@ const parseTimestampedData = async (
   const evidenceNode = fields[cursor]
   const cmsNode = evidenceNode ? findCmsContentInfoNode(bytes, evidenceNode) : undefined
   const evidenceInspection = cmsNode
-    ? await inspectCmsNode(bytes, cmsNode, embeddedContent || originalContent, limits)
+    ? await inspectCmsNode(bytes, cmsNode, embeddedContent || originalContent, limits, metadataOnly)
     : undefined
   const evidenceEntries = evidenceNode?.children.length || 0
   assertBounds(
@@ -1728,6 +1736,21 @@ const parseTimestampedData = async (
   }
 }
 
+/** Bounded X.509 metadata extraction; never imports a key or verifies a certificate. */
+export const inspectSignatureCertificate = async (
+  input: ArrayBuffer | Uint8Array,
+  limitsInput?: Partial<SignatureAsn1Limits>
+): Promise<SignatureCertificateSummary> => {
+  const limits = normalizeSignatureAsn1Limits(limitsInput)
+  const bytes = toUint8Array(input)
+  assertBounds(bytes.byteLength > 0 && bytes.byteLength <= Math.min(limits.maxInputBytes, 1024 * 1024), 'Certificate metadata input exceeds its boundary.')
+  const root = parseRoot(bytes, limits)
+  const certificate = parseCertificate(bytes, root, 0)
+  assertBounds(certificate, 'Unsupported X.509 certificate structure.')
+  await enrichCertificateFingerprints([certificate], bytes)
+  return certificate.summary
+}
+
 export const inspectSignatureContainer = async (
   input: ArrayBuffer | Uint8Array,
   options: InspectSignatureOptions = {}
@@ -1761,13 +1784,13 @@ export const inspectSignatureContainer = async (
   if (first && isTag(first, UNIVERSAL, TAG.oid)) {
     const contentTypeOid = decodeOid(bytes, first)
     if (contentTypeOid === OID.timestampedData) {
-      return parseTimestampedData(bytes, root, originalContent, limits)
+      return parseTimestampedData(bytes, root, originalContent, limits, options.metadataOnly === true)
     }
-    return inspectCmsNode(bytes, root, originalContent, limits)
+    return inspectCmsNode(bytes, root, originalContent, limits, options.metadataOnly === true)
   }
 
   if (looksLikeTimestampRequest(root)) {
-    const timestamp = await parseTimestampRequest(bytes, root, originalContent)
+    const timestamp = await parseTimestampRequest(bytes, root, options.metadataOnly ? undefined : originalContent)
     return {
       kind: 'timestamp-request',
       detectedFormat: detectedFormatForKind('timestamp-request'),
@@ -1789,7 +1812,7 @@ export const inspectSignatureContainer = async (
   if (looksLikeTimestampResponse(root)) {
     const { response, tokenNode } = parseTimestampResponse(bytes, root)
     if (tokenNode) {
-      const tokenInspection = await inspectCmsNode(bytes, tokenNode, originalContent, limits)
+      const tokenInspection = await inspectCmsNode(bytes, tokenNode, originalContent, limits, options.metadataOnly === true)
       return {
         ...tokenInspection,
         kind: 'timestamp-response',

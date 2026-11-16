@@ -7,20 +7,20 @@
     "build": "ng build"
   },
   "dependencies": {
-    "@angular/common": "22.2.3",
-    "@angular/compiler": "22.2.3",
-    "@angular/core": "22.2.3",
-    "@angular/platform-browser": "22.2.3",
-    "@file-viewer/web": "3.3.4",
-    "@file-viewer/preset-office": "3.3.4",
-    "file-viewer-copy-assets": "3.3.4",
+    "@angular/common": "22.2.6",
+    "@angular/compiler": "22.2.6",
+    "@angular/core": "22.2.6",
+    "@angular/platform-browser": "22.2.6",
+    "@file-viewer/web": "3.3.5",
+    "@file-viewer/preset-office": "3.3.5",
+    "file-viewer-copy-assets": "3.3.5",
     "rxjs": "7.8.2",
-    "tslib": "2.8.1"
+    "tslib": "2.9.1"
   },
   "devDependencies": {
-    "@angular/build": "22.2.4",
-    "@angular/cli": "22.2.4",
-    "@angular/compiler-cli": "22.2.3",
+    "@angular/build": "22.2.7",
+    "@angular/cli": "22.2.7",
+    "@angular/compiler-cli": "22.2.6",
     "typescript": "6.0.3"
   },
   "overrides": {

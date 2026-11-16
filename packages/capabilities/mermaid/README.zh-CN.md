@@ -4,7 +4,7 @@
 
 导入后为 Markdown 内嵌 Mermaid 代码块注册 Mermaid loader。Full/preset-all 自动导入；base、light 和 standard 消费方可显式导入本包。
 
-当前源码通过正常构建，将 Mermaid 12.2.0 与 KaTeX 0.18.2 打入包内，并通过 `@file-viewer/capability-mermaid/engine` 为绘图渲染器提供相同引擎。应用安装当前候选无需配置依赖安全 overrides。`dist/bundled-runtime.json` 记录实际输入版本、锁文件和源码哈希、许可文本及输出文件哈希；完整第三方许可位于 `dist/THIRD_PARTY_LICENSES.txt`。
+当前源码通过正常构建，将 Mermaid 12.3.0 与 KaTeX 0.18.2 打入包内，并通过 `@file-viewer/capability-mermaid/engine` 为绘图渲染器提供相同引擎。应用安装当前候选无需配置依赖安全 overrides。`dist/bundled-runtime.json` 记录实际输入版本、锁文件和源码哈希、许可文本及输出文件哈希；完整第三方许可位于 `dist/THIRD_PARTY_LICENSES.txt`。
 
 浏览器构建保留打入包内的 CommonJS 布局工厂，并移除其未启用的 AMD 导入。架构图和思维导图使用包内布局引擎。
 

@@ -33,6 +33,10 @@ export interface JwsVerificationKey {
 }
 
 export interface JwsSignatureInspection {
+  /** Unsupported critical extensions remain visible in metadata-only inspection. */
+  unsupportedCriticalHeaders?: string[]
+  verificationStatus?: 'not-checked' | 'unsupported'
+  metadataWarnings?: string[]
   index: number
   algorithm?: string
   keyId?: string
@@ -55,6 +59,8 @@ export interface JwsInspection {
 }
 
 export interface InspectJwsOptions {
+  /** Parse metadata without importing keys or verifying signatures. Default verification behavior is unchanged. */
+  metadataOnly?: boolean
   detachedPayload?: ArrayBuffer | Uint8Array
   verificationKeys?: JwsVerificationKey[]
   limits?: Partial<SignatureContainerLimits>

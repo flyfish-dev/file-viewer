@@ -315,7 +315,8 @@ const verifyOne = async (
   }
 }
 
-const checkHeaderBoundary = (signature: ParsedJwsSignature) => {
+const checkHeaderBoundary = (signature: ParsedJwsSignature, metadataOnly = false) => {
+  const unsupportedCriticalHeaders: string[] = []
   const protectedKeys = new Set(Object.keys(signature.protectedHeader))
   for (const key of Object.keys(signature.unprotectedHeader)) {
     assertJws(
@@ -323,7 +324,7 @@ const checkHeaderBoundary = (signature: ParsedJwsSignature) => {
       `header parameter ${key} appears in both protected and unprotected headers.`
     )
   }
-  assertJws(typeof signature.protectedHeader.alg === 'string', 'alg must be integrity protected.')
+  if (!metadataOnly) assertJws(typeof signature.protectedHeader.alg === 'string', 'alg must be integrity protected.')
   const critical = signature.protectedHeader.crit
   if (critical !== undefined) {
     assertJws(
@@ -332,7 +333,12 @@ const checkHeaderBoundary = (signature: ParsedJwsSignature) => {
     )
     const unique = new Set(critical as string[])
     assertJws(unique.size === critical.length, 'crit contains duplicate names.')
-    for (const name of unique) assertJws(name === 'b64', `unsupported critical header ${name}.`)
+    for (const name of unique) {
+      if (name !== 'b64') {
+        if (!metadataOnly) assertJws(false, `unsupported critical header ${name}.`)
+        unsupportedCriticalHeaders.push(name)
+      }
+    }
   }
   const b64 = signature.protectedHeader.b64
   assertJws(b64 === undefined || typeof b64 === 'boolean', 'b64 must be boolean.')
@@ -341,6 +347,7 @@ const checkHeaderBoundary = (signature: ParsedJwsSignature) => {
       Array.isArray(critical) && critical.includes('b64'),
       'b64=false must be declared critical.'
     )
+  return unsupportedCriticalHeaders
 }
 
 export const isProbablyJws = (bytes: Uint8Array, filename?: string) => {
@@ -392,7 +399,9 @@ export const inspectJws = async (
     `detached payload exceeds ${limits.maxEntryBytes} bytes.`
   )
   const warnings = [
-    'JWS parsing and public-key signature verification do not establish key trust, signer identity, policy compliance or legal validity.',
+    options.metadataOnly
+      ? 'Metadata only: no signature verification, key import, trust, policy or legal-validity check was performed.'
+      : 'JWS parsing and public-key signature verification do not establish key trust, signer identity, policy compliance or legal validity.',
     'jku, x5u and other remote key or certificate locations are displayed as metadata and are never fetched automatically.'
   ]
 
@@ -402,7 +411,7 @@ export const inspectJws = async (
   const inspections: JwsSignatureInspection[] = []
   for (let index = 0; index < parsed.signatures.length; index += 1) {
     const signature = parsed.signatures[index]!
-    checkHeaderBoundary(signature)
+    const unsupportedCriticalHeaders = checkHeaderBoundary(signature, options.metadataOnly === true)
     const encoded = signature.protectedHeader.b64 !== false
     if (index === 0) payloadEncoded = encoded
     else assertJws(payloadEncoded === encoded, 'all signatures must use the same b64 payload mode.')
@@ -444,7 +453,7 @@ export const inspectJws = async (
       : undefined
     let cryptographicValid: boolean | undefined
     let verificationError: string | undefined
-    try {
+    if (!options.metadataOnly) try {
       if (!signingInput) {
         verificationError =
           'Detached payload is required before the cryptographic signature can be checked.'
@@ -462,11 +471,18 @@ export const inspectJws = async (
       cryptographicValid = false
       verificationError = error instanceof Error ? error.message : String(error)
     }
-    const algorithm = signature.protectedHeader.alg as string
-    const keyId = (signature.protectedHeader.kid || signature.unprotectedHeader.kid) as
+    const declaredAlgorithm = signature.protectedHeader.alg
+    const algorithm = (options.metadataOnly && typeof declaredAlgorithm !== 'string' ? undefined : declaredAlgorithm) as string
+    const declaredKeyId = signature.protectedHeader.kid || signature.unprotectedHeader.kid
+    const keyId = (options.metadataOnly && typeof declaredKeyId !== 'string' ? undefined : declaredKeyId) as
       | string
       | undefined
     inspections.push({
+      ...(options.metadataOnly ? {
+        unsupportedCriticalHeaders,
+        verificationStatus: unsupportedCriticalHeaders.length || typeof signature.protectedHeader.alg !== 'string' ? 'unsupported' as const : 'not-checked' as const,
+        metadataWarnings: typeof signature.protectedHeader.alg !== 'string' ? ['Signature algorithm is missing or not integrity protected.'] : []
+      } : {}),
       index,
       algorithm,
       keyId,

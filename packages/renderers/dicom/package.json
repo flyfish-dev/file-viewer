@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-dicom",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "private": false,
   "type": "module",
   "sideEffects": false,
@@ -73,18 +73,18 @@
     "verify:packed-browser": "pnpm --filter @file-viewer/core build && pnpm build && node scripts/verify-packed-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.4",
+    "@file-viewer/core": "workspace:3.3.5",
     "dicom-parser": "1.8.21",
     "events": "3.3.0",
     "pako": "2.2.0"
   },
   "devDependencies": {
-    "@cornerstonejs/core": "5.13.2",
-    "@cornerstonejs/dicom-image-loader": "5.13.2",
-    "@cornerstonejs/metadata": "5.13.2",
+    "@cornerstonejs/core": "5.18.1",
+    "@cornerstonejs/dicom-image-loader": "5.18.1",
+    "@cornerstonejs/metadata": "5.18.1",
     "@types/pako": "^2.0.4",
     "typescript": "^6.0.3",
-    "vite": "8.3.5"
+    "vite": "8.3.8"
   },
   "license": "Apache-2.0"
 }

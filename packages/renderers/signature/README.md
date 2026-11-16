@@ -28,6 +28,40 @@ const options = {
 
 Register the relevant PDF, XML, image, or Office renderer as well when extracted documents should be previewed. This package is not added to the frozen legacy `preset-all` or historical `*-full` dependency matrix, so existing upgrades do not unexpectedly download cryptographic WASM. A new project created with the File Viewer CLI's `full` selection installs every renderer from the catalog, including `signature`; users can also select it alone.
 
+## Signed metadata beside PDF, XML and JSON previews
+
+Register the optional `signatureRenderer` together with the normal PDF/text renderers. It adds the existing show/hide details panel when locally available document bytes contain PDF signature dictionaries, namespace-correct XMLDSig/XAdES, or compact/flattened/general JWS. The original PDF canvas or XML/JSON source preview remains mounted; unsigned documents keep their usual preview. This document path only parses metadata: it never verifies a signature or reference digest, imports a key, executes XML transforms, or fetches certificates, detached content or trust services. Certificate SHA-256 fingerprints are local digests. Missing material, unsupported extensions and unchecked claims do not mean invalid signatures.
+
+Vanilla integration with original File or buffer input:
+
+```ts
+import { createViewer } from '@file-viewer/core/browser'
+import { signatureRenderer } from '@file-viewer/renderer-signature'
+import { pdfRenderer } from '@file-viewer/renderer-pdf'
+import { textRenderer } from '@file-viewer/renderer-text'
+import { enableFileViewerPdfSignatureInspection } from '@file-viewer/renderer-pdf/signature-inspection'
+
+// The explicit PDF entry needs the existing optional pdf-lib@1.17.1 peer.
+// Full's existing PDF repair capability already registers this reader.
+enableFileViewerPdfSignatureInspection()
+const viewer = createViewer(document.querySelector('#viewer')!, {
+  options: {
+    renderers: [signatureRenderer, pdfRenderer, textRenderer],
+    signature: { documentInspection: true, detailsPanel: { position: 'left' } }
+  }
+})
+await viewer.load({ file: originalFile, filename: originalFile.name })
+// Alternatively: viewer.load({ buffer: originalBytes, filename: 'signed.pdf' })
+```
+
+The optional signature capability enables this path by default; `signature.documentInspection: false` opts out. Full/presets do not install the signature plugin: explicitly add the same-version `signatureRenderer` to enable these panels. Full already supplies the PDF reader, while standard/lightweight PDF needs the optional peer and explicit reader entry above; its normal entry never imports the dictionary parser.
+
+PDF inspection copies the original bytes before preview repair or Worker transfer. An already supplied original File/Blob can provide those bytes. A streaming URL with no original bytes retains its normal streaming preview and emits `document-inspection-unavailable`; it is not classified as unsigned. Use an original File/buffer, or `pdf.streaming: false` for a URL. Inspection never starts an extra URL fetch or inspects font-repaired preview bytes.
+
+PDF dictionaries include original incremental definitions and multiple signers, with structural ByteRange/revision metadata; this does not establish active-field ownership, coverage or integrity. Direct CMS literal/hex strings and bounded unfiltered/Flate object streams are supported; encrypted PDFs, unsupported structural filters and malformed/oversized structures report unavailable. XML rejects DTD/entity declarations and external stylesheet instructions before parsing, scopes claims to the matching signature and never follows references or executes canonicalization/transforms. JWS displays unknown critical extensions as unsupported, including multiple signatures and missing detached payloads, without attempting verification. Existing standalone CMS/JWS verification defaults remain unchanged.
+
+Inspection has hard ceilings (64 MiB original input, 4 MiB XML, 8 MiB JWS, 64 document signatures, bounded PDF structural decompression/nodes/depth and processing time). Host `signature.containerLimits` can lower the relevant limits. Unsupported or cancelled inspection preserves the preview and releases its panel/source references on teardown. These views do not establish trust, revocation, qualified status, legal validity or full PAdES/XAdES/JAdES compliance.
+
 ## Host inputs
 
 `options.signature` accepts:

@@ -55,6 +55,10 @@ test('the opt-in repair is self-contained without changing the base renderer dep
       const result = await repairMalformedIdentityCjkFonts(bytes);
       assert.equal(result.bytes, bytes);
       assert.equal(result.repairedFonts, 0);
+      const inspection = globalThis[Symbol.for('file-viewer.document-inspection.v1')];
+      assert.equal(typeof inspection.pdfReader, 'function');
+      const metadata = await inspection.pdfReader(bytes, new AbortController().signal);
+      assert.deepEqual(metadata.signatures, []);
     `
       ],
       { cwd: root, encoding: 'utf8', timeout: 10000 }

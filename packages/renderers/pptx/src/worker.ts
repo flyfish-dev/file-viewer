@@ -1,5 +1,6 @@
 import type { PptxWorkerFactoryOptions } from './types';
 import { isResolvedPptxWorkerLocation } from './worker-location';
+import { createPptxUrlWorker } from './module-worker';
 
 const viteOptimizedWorkerPathPattern = /\/\.?vite\/deps\/worker\/pptx\.worker\.js$/;
 const viteSourceWorkerModulePattern = /\/src\/worker\.[cm]?[jt]s$/;
@@ -100,9 +101,7 @@ export const createPptxWorker = (options: PptxWorkerFactoryOptions = {}) => {
   }
 
   if (options.workerUrl) {
-    return new Worker(options.workerUrl, {
-      type: options.workerType ?? 'module',
-    });
+    return createPptxUrlWorker(options.workerUrl, options.workerType ?? 'module');
   }
 
   // Direct PptxViewer users have no renderer-level copied-asset discovery.
@@ -112,5 +111,5 @@ export const createPptxWorker = (options: PptxWorkerFactoryOptions = {}) => {
       'PPTX Worker URL is unavailable. Run file-viewer-copy-assets or provide workerUrl.'
     )
   }
-  return new Worker(workerUrl, { type: 'module' })
+  return createPptxUrlWorker(workerUrl, 'module')
 };

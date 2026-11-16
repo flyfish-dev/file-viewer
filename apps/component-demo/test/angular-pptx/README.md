@@ -1,6 +1,6 @@
 # Angular PPTX Worker regression
 
-This fixture reproduces issue #140 with Angular 22.1.6 and build/CLI 22.1.8. It uses the application builder,
+This fixture reproduces issue #140 with Angular 22.2.6 and build/CLI 22.2.7. It uses the application builder,
 the standard Web component, an Office preset, and `baseHref: /ui/`. There is no
 `deployUrl`, application alias, optimizer exclusion, custom Worker factory, or
 replacement Worker. The normal asset-copy CLI provides offline resources.
@@ -22,8 +22,8 @@ This application fixture explicitly overrides only the affected tooling paths:
 `@angular/build > piscina` uses 5.3.2 and
 `@angular/cli > @modelcontextprotocol/sdk` uses 1.31.0. These are same-major
 security updates to Angular's exact transitive pins; they still require the
-consumer build and browser regressions. The Angular framework and tooling pins
-remain unchanged.
+consumer build and browser regressions. The fixture pins one Angular framework
+cohort and one independently patched build/CLI cohort, with tslib 2.9.1.
 
 The packed-consumer helper preserves these fixture-owned npm overrides. It does
 not inherit the repository's pnpm overrides. A clean audit of this application

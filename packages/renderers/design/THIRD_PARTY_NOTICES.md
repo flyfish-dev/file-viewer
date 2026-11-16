@@ -12,7 +12,7 @@ Source: <https://github.com/101arrowz/fzstd>
 
 The MIT-licensed streaming zstd decoder is bundled only into the terminable Illustrator Worker so Illustrator 24+ private source can be decoded offline. File Viewer enforces the configured decoded-byte ceiling while chunks are emitted instead of retaining output beyond that ceiling. The complete license is shipped as `LICENSES/fzstd-MIT.txt`.
 
-## ag-psd 31.0.2
+## ag-psd 34.2.0
 
 Source: <https://github.com/Agamnentzar/ag-psd>
 
@@ -28,7 +28,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The upstream license states that image and brush files included in that repository are not covered by the MIT license. This package redistributes no such fixture.
 
-The complete upstream text is also shipped as `LICENSES/ag-psd-MIT.txt`.
+The complete upstream text is also shipped as `LICENSES/ag-psd-MIT.txt`, including its original attribution of CMYK-to-RGB conversion coefficients to PDF.js, Copyright 2012 Mozilla Foundation, under Apache-2.0. The complete Apache License 2.0 text already retained as `LICENSES/Stet-Apache-2.0.txt` also accompanies this attribution.
 
 ## @webtoon/psd 0.4.0
 

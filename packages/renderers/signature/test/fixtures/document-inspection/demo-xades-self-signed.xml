@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<demo:SignedDocument xmlns:demo="urn:flyfish:signature-demo:1" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="demo-document">
+  <demo:Metadata>
+    <demo:SampleId>flyfish-xades-self-signed-001</demo:SampleId>
+    <demo:Title>Synthetic XAdES signature inspection sample</demo:Title>
+    <demo:Purpose>Test local extraction and display of signature metadata in a file viewer.</demo:Purpose>
+    <demo:DataNotice>Entirely synthetic test data. No real person or organization is represented.</demo:DataNotice>
+    <demo:Redistribution>Freely redistributable synthetic fixture, dedicated to the public domain under CC0-1.0.</demo:Redistribution>
+    <demo:TrustNotice>Self-signed test certificate. No trust-chain validation, trusted timestamp, or qualified-signature claim.</demo:TrustNotice>
+  </demo:Metadata>
+  <demo:Content>
+    <demo:Message>This message is covered by the enveloped XML signature.</demo:Message>
+    <demo:Reference>DEMO-2026-001</demo:Reference>
+    <demo:Amount currency="EUR">123.45</demo:Amount>
+  </demo:Content>
+  <ds:Signature Id="signature-1">
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference Id="document-reference" URI="">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+          <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>5r5V7l4Bvoslbuz6YuBNbye5q7CVHMM5Q6M76YHwneU=</ds:DigestValue>
+      </ds:Reference>
+      <ds:Reference URI="#signed-properties-1" Type="http://uri.etsi.org/01903#SignedProperties">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>6uZpUbQALoEw9gLtZuPkDnvK8LD9WmZq1K8CI4DWVRY=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue Id="signature-value-1">YvztEApMi+YgeuOBnVidbht1dXn3VbFrYzQQlkM2fzjD8+gHfjqinVSy9VGKZJu8Fe5gek3D6E+dNKMO3cB5aKu3Nrc1BwNCTrc15z7/dUJL35nfgv/3Kqq1brHtunjRBiTISBO3xu0WmblVMGcjYSVCSivuOyzsEd6pIb5DJydzCm2hM4jbboZ+6TvhaEpMPq1RIfyW3UiQegwM+PwBpqLdvRuxbDmtjOAmzqvrZmPv1xamZ5yK3vQX7VlaFUSXJJmrL+XYmSlkvWs9b8AjzRk7XuuVHL6MWrGPo+z0C+SMR393GkMJPRVSzHSXeF5w0cjhEcNfXo56cFjJSlUZQQ==</ds:SignatureValue>
+    <ds:KeyInfo Id="key-info-1">
+      <ds:X509Data>
+        <ds:X509Certificate>MIIDhjCCAm6gAwIBAgIUZnHPDa8LTQ0XuL2+sQNDXkbgJ1YwDQYJKoZIhvcNAQELBQAwTDELMAkGA1UEBhMCSVQxHDAaBgNVBAoME1N5bnRoZXRpYyBUZXN0IERhdGExHzAdBgNVBAMMFkZseWZpc2ggU2lnbmF0dXJlIERlbW8wHhcNMjYxMTE0MTExMTU2WhcNMjcxMTE1MTExMTU2WjBMMQswCQYDVQQGEwJJVDEcMBoGA1UECgwTU3ludGhldGljIFRlc3QgRGF0YTEfMB0GA1UEAwwWRmx5ZmlzaCBTaWduYXR1cmUgRGVtbzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKEn9CbpuHQ0dH6+3Dhr8AYgWy6sJTKuupihSvlP9CP/aTNRwGQo8eOLLu6V26rHRyeTtRrZkar4PLjEiJOAWDfZmpM3YUTEQdYUGbQz8E2HwMX0zzkM30tojhbo1NIeDQ0iZ0M/3BCARf9dWpfsZEzZ4Unn7Psii0PhtnDWjMDMXiMSBk10nHmhqYFiDT9XHXkH8WjY3j1/7WefB88nzKijlZ681vifRMVroPw8tByXcHNe+zQMgSw/L8xrTdcQxfACpgVkB6YsIXho61pzHLOTn50SpP2vr8YXoubweb/hWNpZ/xLkfDggzNMcL9+5Nimju/2rfiJPOdGdsZ3e+o8CAwEAAaNgMF4wDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCBsAwHQYDVR0OBBYEFCb4pEKt/3ntigT9SlEJp+HRZQ6sMB8GA1UdIwQYMBaAFCb4pEKt/3ntigT9SlEJp+HRZQ6sMA0GCSqGSIb3DQEBCwUAA4IBAQAbVLgfRXcOU+QN1lLftcHsZijEyUHe7AH4dnKiFpWlEHnKcQ7vTQ6mtcKY5NSZ5jau78rCYz/1PLOAjy4gOnFdpAQVW8rXA/wgsKD+xXjUFmQdZcWSDIZ5VgSWYxw/dml9l3N8HPAn+Ah7xIW9Otz+v6fTc7AACqi/BhpfS2q0vK4044HpUeZk0aZr06GiQL5l1xcfsBddHbihsNkxjD8ZLfrMYn06msSGqUfBOqoXzpu+5GE78YkypUp/5rz22f+t24ZdBsPTSbZBUSstb531VTbiqjE2vVwVDp1//7e+A8nTDdKr5/sQpxU5wdGjxq3XURwVbG9QAfvDhHsr477m</ds:X509Certificate>
+        <ds:X509SubjectName>CN=Flyfish Signature Demo,O=Synthetic Test Data,C=IT</ds:X509SubjectName>
+      </ds:X509Data>
+    </ds:KeyInfo>
+    <ds:Object>
+      <xades:QualifyingProperties Target="#signature-1">
+        <xades:SignedProperties Id="signed-properties-1">
+          <xades:SignedSignatureProperties>
+            <xades:SigningTime>2026-11-15T11:11:56Z</xades:SigningTime>
+            <xades:SigningCertificateV2>
+              <xades:Cert>
+                <xades:CertDigest>
+                  <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                  <ds:DigestValue>ESVoI5TFkLvGS+SmUDSvhnBzUoPZEEWiAPdk4zZmo7M=</ds:DigestValue>
+                </xades:CertDigest>
+              </xades:Cert>
+            </xades:SigningCertificateV2>
+          </xades:SignedSignatureProperties>
+          <xades:SignedDataObjectProperties>
+            <xades:DataObjectFormat ObjectReference="#document-reference">
+              <xades:Description>Synthetic XML document excluding the enveloped Signature element.</xades:Description>
+              <xades:MimeType>application/xml</xades:MimeType>
+            </xades:DataObjectFormat>
+          </xades:SignedDataObjectProperties>
+        </xades:SignedProperties>
+      </xades:QualifyingProperties>
+    </ds:Object>
+  </ds:Signature>
+</demo:SignedDocument>

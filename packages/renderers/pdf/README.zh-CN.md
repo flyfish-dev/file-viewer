@@ -4,6 +4,12 @@
 
 Flyfish File Viewer 的独立 PDF renderer 包，基于 PDF.js，提供 PDF 页面渲染、导航、目录、搜索、缩放、打印和 HTML 导出能力。
 
+## 可选签名元数据
+
+注册可选 signatureRenderer 后，PDF 原预览旁可显示只读签名元数据。轻量包需安装现有可选 peer pdf-lib@1.17.1 并调用 enableFileViewerPdfSignatureInspection()（来自 @file-viewer/renderer-pdf/signature-inspection）；Full 原有 PDF 能力已注册该 reader。普通 PDF 入口不引入此解析器。使用原始 File/buffer 或 pdf.streaming:false；仅流式 URL 缺原字节时保留预览并报告不可检查，不额外请求。只解析原始字节字典/CMS，不验证签名、摘要、修订覆盖或信任。
+
+完整 Vanilla 示例及限制见 [renderer-signature](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/signature/README.zh-CN.md)。
+
 ## 用法
 
 ```ts

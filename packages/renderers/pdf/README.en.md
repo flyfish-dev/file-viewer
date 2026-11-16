@@ -9,6 +9,12 @@ use asynchronous resource fetching instead of synchronous binary XHR.
 
 Standalone PDF renderer package for Flyfish File Viewer. It is powered by PDF.js and provides page rendering, navigation, outline, search, zoom, print, and HTML export support.
 
+## Optional signature metadata
+
+With the optional signatureRenderer, PDF keeps its normal preview and can show metadata-only signature details. For lightweight packages, install the existing optional pdf-lib@1.17.1 peer and call enableFileViewerPdfSignatureInspection() from @file-viewer/renderer-pdf/signature-inspection; Full already registers the reader through its existing PDF capability. The normal PDF entry does not import this parser. Supply an original File/buffer or pdf.streaming:false. A streaming URL without original bytes preserves preview and reports unavailable without an extra fetch. This reads original-source dictionaries/CMS without checking signatures, digests, revision coverage or trust.
+
+See the Vanilla example and boundaries in [renderer-signature](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/signature/README.md)。
+
 ## Usage
 
 ```ts

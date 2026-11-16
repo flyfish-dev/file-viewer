@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-web",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "private": false,
   "type": "module",
   "description": "Private-deploy pure web component for File Viewer",
@@ -73,12 +73,12 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/web": "workspace:3.3.4"
+    "@file-viewer/web": "workspace:3.3.5"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "typescript": "^6.0.3",
-    "vite": "8.3.5"
+    "vite": "8.3.8"
   },
   "license": "Apache-2.0"
 }

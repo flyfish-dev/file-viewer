@@ -24,3 +24,8 @@ SOFTWARE.
 
 Any image or brush files included in this repository are not covered by this
 license and belong to their copyright holders.
+
+CMYK to RGB conversion coefficients in src/psdReader.ts are taken from pdf.js
+(https://github.com/mozilla/pdf.js), Copyright 2012 Mozilla Foundation,
+licensed under the Apache License, Version 2.0
+(http://www.apache.org/licenses/LICENSE-2.0).
