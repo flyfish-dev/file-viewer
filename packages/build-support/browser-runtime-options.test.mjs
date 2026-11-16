@@ -102,3 +102,34 @@ export function assetBase() { return globalThis.PUBLIC_URL || globalThis.config?
     assert.equal(module.exports.assetBase(), expected)
   }
 })
+
+test('bundled browser SDKs remove dead AMD dependency names and keep the actual CommonJS factory', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'browser-sdk-umd-'))
+  t.after(() => rm(directory, { recursive: true, force: true }))
+  await writeFile(join(directory, 'base.cjs'), 'module.exports = 41\n')
+  const commonjs = "typeof exports === 'object' && typeof module === 'object'"
+  const amd = "typeof define === 'function' && define.amd"
+  for (const amdFirst of [false, true]) {
+    const source = `(function (root, factory) {
+      ${amdFirst
+        ? `if (${amd}) define(['uninstalled-layout-engine'], factory); else if (${commonjs}) module.exports = factory(require('./base.cjs'));`
+        : `if (${commonjs}) module.exports = factory(require('./base.cjs')); else if (${amd}) define(['uninstalled-layout-engine'], factory);`}
+      else root.layout = factory(root.base);
+    })(this, function (base) { return value => base + value; });`
+    await writeFile(join(directory, 'layout.cjs'), source)
+    const output = (await build({
+      absWorkingDir: directory,
+      stdin: { contents: 'import layout from "./layout.cjs"; export const result = layout(1)', resolveDir: directory },
+      // The SDK producer uses syntax minification to remove the disabled UMD arm.
+      bundle: true, format: 'cjs', platform: 'browser', target: 'es2020', write: false, minifySyntax: true,
+      define: browserLibraryDefines()
+    })).outputFiles[0].text
+    assert.doesNotMatch(output, /uninstalled-layout-engine|define\.amd/,
+      'A consuming bundler must never resolve a dead SDK AMD dependency')
+    const define = () => { throw new Error('The host AMD loader must not own bundled SDK internals') }
+    define.amd = {}
+    const module = { exports: {} }
+    new Function('define', 'module', 'exports', output)(define, module, module.exports)
+    assert.equal(module.exports.result, 42, 'The bundled CommonJS layout implementation must still execute')
+  }
+})

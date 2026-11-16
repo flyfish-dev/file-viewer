@@ -259,6 +259,7 @@ const options = {
 | `spreadsheet.resizableColumns` | 是否允许用户在 Excel / CSV / ODS 等表格预览中拖拽表头边界调整列宽，默认 `false` 以保持历史兼容；Demo 默认开启，便于查看被截断的长文本 |
 | `spreadsheet.fillViewport` | 默认 `true`，适用于 Excel、CSV / TSV 等表格格式。按默认行高/列宽补充空白字母列标题、行号和虚拟网格，随 resize/缩放重算；不拉伸已有单元格，不改变数据、used-range、导出、搜索或内容统计。设为 `false` 可只显示已用区域。 |
 | `pdf.darkMode`、`epub.darkMode` | 正文默认跟随 `theme`。观察到的主题属性、系统配色与 Vanilla core 主题更新可无需重载地调整配色；框架组件与工具栏/controller 选项更新可能重新初始化预览。`false` 保留原始配色，`true` 强制深色阅读。PDF 仅对预览使用滤镜（图片颜色也会变化），不改变原文件或导出像素；EPUB 调整文字、背景，不反相图片。 |
+| `epub.externalResources` | 默认 `'allow'`，兼容依赖外部资源的书籍。用户上传的 EPUB 归档可设为 `'block'`：章节及渲染器原生封面捕获仅使用本地 blob/data 资源，移除 base、refresh 和外部导航；保留归档内图片/字体、内联/blob 样式和书内导航。block 模式捕获需要本地封面，缺少时报告不可用。不改变宿主网络或独立嵌入缩略图提取器。 |
 | `presentation.workerUrl` | 自定义 `@file-viewer/pptx` Worker 地址，显式配置优先。未配置时先识别打包器已输出或应用资产基址下的标准复制清单；未知路径不会猜测应用相对 URL。Angular 子路径部署应使用标准 `file-viewer-copy-assets`，参见 [Web 接入](/zh/guide/quickstart-web) |
 | `cad.showImageExport` | 是否显示 CAD 渲染器内的 PNG/JPEG 按钮，默认 `true`。隐藏它们不影响共享工具栏的原文件下载；操作仍同时受下载和 HTML 导出权限约束 |
 | `presentation.workerType` | PPTX Worker 类型，通常保持默认 `module`；只有旧 WebView、特殊 CSP 或构建系统要求 classic Worker 时再覆盖 |

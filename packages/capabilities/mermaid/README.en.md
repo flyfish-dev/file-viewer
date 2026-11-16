@@ -2,9 +2,11 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/capabilities/mermaid/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/capabilities/mermaid/README.zh-CN.md)
 
-Registers the Mermaid loader used by Mermaid code blocks in Markdown. The standard profile does not install this package.
+Registers the Mermaid loader used by Mermaid code blocks in Markdown. Full/preset-all imports it automatically. Base, light and standard consumers can import this package explicitly.
 
-The normal source build bundles Mermaid 12.1.0 and KaTeX 0.18.2. Drawing uses the same engine through `@file-viewer/capability-mermaid/engine`. Installing the compiled package needs no dependency security overrides. `dist/bundled-runtime.json` records the actual input versions, lockfile and source hashes, license files, and output hashes. Complete third-party licenses are retained in `dist/THIRD_PARTY_LICENSES.txt`.
+The normal source build bundles Mermaid 12.2.0 and KaTeX 0.18.2. Drawing uses the same engine through `@file-viewer/capability-mermaid/engine`. Installing the compiled package needs no dependency security overrides. `dist/bundled-runtime.json` records the actual input versions, lockfile and source hashes, license files, and output hashes. Complete third-party licenses are retained in `dist/THIRD_PARTY_LICENSES.txt`.
+
+The browser build keeps bundled CommonJS layout factories and removes their inactive AMD imports. Architecture and mindmap diagrams use the bundled layout engines.
 
 Building the source requires Node.js 22.12 or later for the Mermaid 12 build dependency. The published package provides the compiled browser engine, so applications do not install the raw Mermaid package.
 
@@ -12,4 +14,4 @@ Node20 consumer compatibility is checked by installing and building the browser 
 
 Math labels use KaTeX MathML by default, without external styles or fonts. Diagrams with math labels use `foreignObject` after resource-policy checks and DOMPurify sanitization; ordinary diagrams retain SVG labels.
 
-`pnpm --filter @file-viewer/capability-mermaid verify:packed-browser` verifies packed files and both dependency audits in an independent consumer with an empty cache and no security overrides. Chromium and WebKit check the actual Markdown and drawing diagrams, math labels, sequence participants with configuration objects, and offline requests. The 3.2.2 build uses this bundled runtime; earlier npm 3.1.2 packages retain their older dependency graph.
+`pnpm --filter @file-viewer/capability-mermaid verify:packed-browser` verifies packed files and both dependency audits in an independent consumer with an empty cache and no security overrides. Chromium and WebKit check the actual Markdown and drawing diagrams, math labels, sequence participants with configuration objects, architecture and mindmap layouts, and offline requests. The 3.2.2 build uses this bundled runtime; earlier npm 3.1.2 packages retain their older dependency graph.

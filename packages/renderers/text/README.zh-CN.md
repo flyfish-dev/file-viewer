@@ -4,7 +4,7 @@
 
 Markdown 中标明受支持语言的围栏代码块默认自动高亮，Shadow DOM 内同样可用，无需调用 `highlightAll()`。语言模块按需从本地加载；未知语言以及超过每份文档 512 KiB 高亮预算的代码保持原文显示。通过 `options.text.markdownHighlight: false` 可以关闭。
 
-Flyfish File Viewer 的基础代码、文本和 Markdown renderer 包。Mermaid、patch 左右比对和 Git bundle 检查已拆到 `@file-viewer/capability-mermaid` 与 `@file-viewer/capability-text-tools`，不进入 standard/full 默认闭包。
+Flyfish File Viewer 的基础代码、文本和 Markdown renderer 包。Mermaid、patch 左右比对和 Git bundle 检查位于 `@file-viewer/capability-mermaid` 与 `@file-viewer/capability-text-tools`。standard 预设不包含这些能力，`preset-all` 和 Full 包已包含。
 
 ## 用法
 
@@ -39,6 +39,7 @@ const options = {
 ## 能力边界
 
 - 代码和文本使用 `highlight.js` core + 按语言动态加载，避免一次性注册全部语言。
+- 代码、文本和 Markdown 通过共享能力声明启用已有缩放 provider。Viewer 工具栏遵循当前 provider 的最小、最大和重置状态，无需覆盖 renderer 定义。
 - 代码、文本和超大 Markdown 源码视图默认显示文件类型、索引状态和行数元信息栏；传入 `options.text.toolbar: false` 可隐藏该 renderer 内部栏，不影响 Viewer 的下载、搜索、缩放等全局工具栏。
 - 普通代码和文本可通过 `options.text.lineNumbers: true` 显示行号；行号不会进入复制内容、搜索结果或无障碍朗读。超大文本保留原有的虚拟行号栏，可显式传 `false` 隐藏。
 - `options.text.wrapLongLines: true` 仅改变布局，不向源码插入换行。普通预览会按逻辑行维护行号，超大文本仍使用有界虚拟窗口并按可用宽度换行。
@@ -55,7 +56,7 @@ const options = {
 
 ## 迁移说明
 
-standard/full 默认包含基础代码、文本和 Markdown，不安装 `diff2html`、`pako` 或 Mermaid。打开可选格式时会提示运行 `npx file-viewer-cli add text-tools --write` 或 `add mermaid-markdown --write`；`preset-all` 仅用于显式全量/调试。
+基础 text renderer 和 standard 预设提供代码、文本和 Markdown，不安装 `diff2html`、`pako` 或 Mermaid。轻量接入可通过 CLI 加入 `text-tools` 或 `mermaid-markdown`；`preset-all` 和 Full 包已包含这些能力。
 
 ## 可选 XML Profiles
 

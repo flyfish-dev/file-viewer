@@ -276,7 +276,7 @@ const encoder = new TextEncoder()
 const instances = []
 window.mermaidPacked = {
   async render(caseName = 'flowchart') {
-    const source = caseName === 'math' ? String.raw\`flowchart LR\nA["$$x^2$$"] --> B["$$\\sqrt{x}$$"]\` : caseName === 'sequence' ? 'sequenceDiagram\\nparticipant Bob @{ "type" : "database" }\\nparticipant Link\\nLink->>Bob: Cold sequence\\nBob-->>Link: Offline response' : 'flowchart LR\\nA[Cold] --> B[Offline]'
+    const source = caseName === 'math' ? String.raw\`flowchart LR\nA["$$x^2$$"] --> B["$$\\sqrt{x}$$"]\` : caseName === 'sequence' ? 'sequenceDiagram\\nparticipant Bob @{ "type" : "database" }\\nparticipant Link\\nLink->>Bob: Cold sequence\\nBob-->>Link: Offline response' : caseName === 'architecture' ? 'architecture-beta\\ngroup cloud(cloud)[Cloud]\\nservice cold(server)[Cold] in cloud\\nservice offline(database)[Offline] in cloud\\ncold:R -- L:offline' : caseName === 'mindmap' ? 'mindmap\\n  root((Cold))\\n    Offline' : 'flowchart LR\\nA[Cold] --> B[Offline]'
     instances.push(await renderFileViewerMarkdown(encoder.encode('# Verified Mermaid\\n\\n' + '\`\`\`mermaid\\n' + source + '\\n\`\`\`').buffer, document.getElementById('markdown'), 'md', { filename: 'cold.md', options: { locale: 'en-US' } }))
     instances.push(await renderFileViewerDrawing(encoder.encode(source).buffer, document.getElementById('drawing'), 'mmd', { filename: 'cold.mmd', options: { locale: 'en-US' } }))
     await document.fonts.ready
@@ -391,7 +391,7 @@ window.mermaidPacked = {
           })
           await page.goto(origin)
           await page.waitForFunction(() => Boolean(window.mermaidPacked))
-          for (const caseName of ['flowchart', 'math', 'sequence']) {
+          for (const caseName of ['flowchart', 'math', 'sequence', 'architecture', 'mindmap']) {
             await page.evaluate((caseName) => window.mermaidPacked.render(caseName), caseName)
             await page.waitForFunction(
               () =>

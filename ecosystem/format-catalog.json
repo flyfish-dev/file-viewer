@@ -461,7 +461,7 @@
       "status": "stable",
       "containerVersions": ["CommonMark/GFM"],
       "knownLimits": [],
-      "capabilities": { "download": true, "print": true, "exportHtml": true, "zoom": false, "search": true }
+      "capabilities": { "download": true, "print": true, "exportHtml": true, "zoom": "provider", "search": true }
     },
     {
       "id": "code",
@@ -474,7 +474,7 @@
       "status": "stable",
       "containerVersions": ["Plain text", "source code", "Git bundle", "LRC lyrics"],
       "knownLimits": ["LRC is a static annotated/lyrics/source preview, not synchronized audio playback"],
-      "capabilities": { "download": true, "print": true, "exportHtml": true, "zoom": false, "search": true }
+      "capabilities": { "download": true, "print": true, "exportHtml": true, "zoom": "provider", "search": true }
     },
     {
       "id": "video",
