@@ -1,0 +1,1313 @@
+{
+  "schemaVersion": 1,
+  "mode": "published-release",
+  "repository": "flyfish-dev/file-viewer",
+  "releaseId": 446503317,
+  "version": "3.3.4",
+  "tag": "v3.3.4",
+  "tagCommit": "41eb96d21b13d27233235a9360fa6612862c2c42",
+  "sourceCommit": "488d8cd525210182362781f113df5ea3d03439c0",
+  "manifestSha256": "092ba2cd4b7c107a60a97e509a2c36d8ff84fd13c56a29c22f9feee40d412514",
+  "assetCount": 100,
+  "assetBytes": 714752619,
+  "assets": [
+    {
+      "id": 752970174,
+      "name": "create-file-viewer-3.3.4.tgz",
+      "size": 9850,
+      "digest": "sha256:467aabd71990769d61fe4204d088651269da8d4e1d2fc892d6cf4ec4ab8da2b3",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970154,
+      "name": "file-viewer-asset-installer-3.3.4.tgz",
+      "size": 14415,
+      "digest": "sha256:477181c5ae513507bce4bbe3c957e95d23347d6c9f84b3e61a54b683136d01f8",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970171,
+      "name": "file-viewer-assets-cad-3.3.4.tgz",
+      "size": 7089687,
+      "digest": "sha256:a564fc98a5bd76af80530f555a3e65067d961297079e98b8486d96f9512960dd",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970155,
+      "name": "file-viewer-assets-chm-3.3.4.tgz",
+      "size": 281636,
+      "digest": "sha256:acbe0e24b3e876682e1d6290fe47548a0af103eac9cdcaa9bc9c7f9ef9ca8151",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970173,
+      "name": "file-viewer-assets-data-3.3.4.tgz",
+      "size": 342758,
+      "digest": "sha256:82fc5dac985d3b89b83798d2216a0880a3420609c7fa9ca1356d3793a27dbd54",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970197,
+      "name": "file-viewer-assets-design-3.3.4.tgz",
+      "size": 17543520,
+      "digest": "sha256:60459260bd4e5765465d0b36ee5011d955d2efa72fa550d476a985f374d24144",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970200,
+      "name": "file-viewer-assets-drawing-3.3.4.tgz",
+      "size": 10857127,
+      "digest": "sha256:7dad845755c4b5c3e154f95441b2d1ada40b0f55b7974058cea053c158db0d3b",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970211,
+      "name": "file-viewer-assets-hangul-3.3.4.tgz",
+      "size": 199187,
+      "digest": "sha256:b90967c24b157ee399a9189a9521c106fbff2c1affadb1fbc81beaf213126e9a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970212,
+      "name": "file-viewer-assets-iwork-3.3.4.tgz",
+      "size": 590815,
+      "digest": "sha256:ac4496a4e21b6d8516dc67f869a326191e13a2615aef644a98c991202a525d46",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970270,
+      "name": "file-viewer-assets-model-3.3.4.tgz",
+      "size": 3178492,
+      "digest": "sha256:907fc58d8ec56f1175d201c534c10beefe263fd129593e3059507198db995481",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970273,
+      "name": "file-viewer-assets-ppt-3.3.4.tgz",
+      "size": 560180,
+      "digest": "sha256:d25cffc555f1eaa771c0550d4e8ccd1ff60ff664f85c551a33c730130dc2f696",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970347,
+      "name": "file-viewer-assets-standard-3.3.4.tgz",
+      "size": 7895981,
+      "digest": "sha256:9d4913f84a072e26e1fc456ffccb76411c4baa8a26d7f0390a7d31cfea7f60df",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970451,
+      "name": "file-viewer-assets-typst-3.3.4.tgz",
+      "size": 17183019,
+      "digest": "sha256:0b7883db3ddf264b82d55cb7c1e0737f012d3efc4adae31fa25d4e030dd9408b",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970565,
+      "name": "file-viewer-assets-wordperfect-3.3.4.tgz",
+      "size": 244653,
+      "digest": "sha256:d3ef05534d2615ea1c4db5e1889abaf4c75b1ac63a466c0d66e38e857ede058a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970614,
+      "name": "file-viewer-capability-drawio-official-3.3.4.tgz",
+      "size": 4763,
+      "digest": "sha256:454988d88dd8d0cc8dda121111f45abe9bb8fedc7498695a55bf4860fddcc0ad",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970677,
+      "name": "file-viewer-capability-mermaid-3.3.4.tgz",
+      "size": 1764452,
+      "digest": "sha256:38e01e53afcd77cffadfa05bd627987d966f27a197853f353162f2c542337fc9",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970688,
+      "name": "file-viewer-capability-midi-3.3.4.tgz",
+      "size": 4722,
+      "digest": "sha256:e2b33b77e8dda85084fa557d57209afcad5c78165a3f77e8d891ad40b71c544f",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970731,
+      "name": "file-viewer-capability-pdf-identity-repair-3.3.4.tgz",
+      "size": 191748,
+      "digest": "sha256:0f6d079c93dd61e722a4e8fdc09e62a75461efa8867b3d8700ed2d2856c3db01",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970737,
+      "name": "file-viewer-capability-pptx-charts-3.3.4.tgz",
+      "size": 4886,
+      "digest": "sha256:ee84a0cd3d8e606355653befbf43265d97cdadd873d7790db8094b3eb36c0e3f",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970799,
+      "name": "file-viewer-capability-rtf-3.3.4.tgz",
+      "size": 4745,
+      "digest": "sha256:f02f5b9e7577db2540579eede84a8fc65b9a55b0536d000d688c85d9ad41d1c5",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970804,
+      "name": "file-viewer-capability-streaming-media-3.3.4.tgz",
+      "size": 4773,
+      "digest": "sha256:83dc901177985e8d4d3463499cb423260fdb481b72ac2fb85617ea3265a41b22",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970809,
+      "name": "file-viewer-capability-text-tools-3.3.4.tgz",
+      "size": 4876,
+      "digest": "sha256:3ba4d5dcf8adf593a9b0da300ca0e78aef02618c67aaf4184ac71b152ca44506",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970844,
+      "name": "file-viewer-cli-3.3.4.tgz",
+      "size": 77671,
+      "digest": "sha256:f907fa8e508d9b9c80d1e489626a4d4213f608c9830241415bd681b930c9c9d0",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970850,
+      "name": "file-viewer-cli-carrier-3.3.4.tgz",
+      "size": 1742,
+      "digest": "sha256:3c69c93483486f1ec77109e0dc53652e57aa4a7de764d67dee43301ed3b8d010",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970848,
+      "name": "file-viewer-copy-assets-3.3.4.tgz",
+      "size": 68262841,
+      "digest": "sha256:ef936278a18312b6dda572b81aa60fd2107f26cb8fe9f261e1d949d651d4fb98",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970873,
+      "name": "file-viewer-core-3.3.4.tgz",
+      "size": 404543,
+      "digest": "sha256:6be4b7ca8a8032cc0aa5bc5db315bb18cac163ab4bc50c2f02829c0263ae454a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970894,
+      "name": "file-viewer-doc-3.3.4.tgz",
+      "size": 87690,
+      "digest": "sha256:a8854ca260b154d66c8203166056010dfee75c849b7085226fe37cc67c81392b",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970899,
+      "name": "file-viewer-eda-layout-3.3.4.tgz",
+      "size": 11086,
+      "digest": "sha256:b1d50a6ce85c0e4c6df8d63827b935e9109607057788f2074848ba565ed1e40e",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970941,
+      "name": "file-viewer-eda-orcad-3.3.4.tgz",
+      "size": 6859,
+      "digest": "sha256:7ba9626bffe64651a4244cdc2eaa25d1839cdcdc183deef814efdfc04c4fc6de",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970952,
+      "name": "file-viewer-geometry-engine-3.3.4.tgz",
+      "size": 61553,
+      "digest": "sha256:d05a91c8d52bdc87c4cd3bbd089b0df57d00306c153e860a7d36f00d8075da85",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752970956,
+      "name": "file-viewer-jquery-3.3.4.tgz",
+      "size": 45508,
+      "digest": "sha256:d73b16d79840b8246fe294eaa2fc4d24fc000227700e9ce8a0647bc97f13aad6",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971002,
+      "name": "file-viewer-jquery-full-3.3.4.tgz",
+      "size": 40142,
+      "digest": "sha256:ba6738ed820d34226660d287e257e508152ebf6050eb5db345f98ded508b0a02",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971009,
+      "name": "file-viewer-pptx-3.3.4.tgz",
+      "size": 202360,
+      "digest": "sha256:412d15ee172a4261ec3ed0d4bc5bb75342b9688ee12a58a1161eb0a86ed95775",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971030,
+      "name": "file-viewer-preset-all-3.3.4.tgz",
+      "size": 12238,
+      "digest": "sha256:139c15b34950de3444cf6a2d8c1e5271fea3231cc69aba747ba54661022b9050",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971061,
+      "name": "file-viewer-preset-engineering-3.3.4.tgz",
+      "size": 7619,
+      "digest": "sha256:354b99fe49fc4a24cd42e22ddd967683769d41349fa7949116428fa39fc7b338",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971068,
+      "name": "file-viewer-preset-lite-3.3.4.tgz",
+      "size": 7182,
+      "digest": "sha256:7e229c346c43b7c15a13928363ad336462a189c19cd0ea6877e6006e86ff6b50",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971079,
+      "name": "file-viewer-preset-office-3.3.4.tgz",
+      "size": 7247,
+      "digest": "sha256:979fa076eaccb083f6eb44d7a0acae57fe34066276baa5d4636334adde404a2c",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971080,
+      "name": "file-viewer-preset-standard-3.3.4.tgz",
+      "size": 8677,
+      "digest": "sha256:d9ec654c3ff9bdd2f7fce6e285e8d691eeaaa6cd6a7b681f08a29811b53de51f",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971132,
+      "name": "file-viewer-react-3.3.4.tgz",
+      "size": 44785,
+      "digest": "sha256:8ac0392c19a9f2a71e59fbd00f5ea4086aa986ee83eff57b9153a3f26461f853",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971136,
+      "name": "file-viewer-react-full-3.3.4.tgz",
+      "size": 39844,
+      "digest": "sha256:3f36dbac55c21d55fdd1f552efd6ba3e2116bbad24142b09996babe8c35de700",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971190,
+      "name": "file-viewer-react-legacy-3.3.4.tgz",
+      "size": 45201,
+      "digest": "sha256:ad37889f0f5b06a1bf5e0fd313386f890dd62d5bb4408ac6828d6e695c253cf8",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971195,
+      "name": "file-viewer-react-legacy-full-3.3.4.tgz",
+      "size": 39872,
+      "digest": "sha256:9093bc14ffc3b44c59a8dd46ba67980818e19212c126226b22a2ec7a36260acf",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971210,
+      "name": "file-viewer-renderer-3d-3.3.4.tgz",
+      "size": 619241,
+      "digest": "sha256:d502b29010b3036299ec8cc03714bf01ce03109d2bfbb7c99802c4382e0bbd98",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971214,
+      "name": "file-viewer-renderer-archive-3.3.4.tgz",
+      "size": 29666,
+      "digest": "sha256:16e2e505166db9cc8fbcc982660a2d0b79f02208ab549a91be6baa99e7efb771",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971277,
+      "name": "file-viewer-renderer-binary-3.3.4.tgz",
+      "size": 14936,
+      "digest": "sha256:a7136c950a668ea1b3bd6fbd10a3fafd645b900583a71cff5ff4a5c61976c975",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971286,
+      "name": "file-viewer-renderer-cad-3.3.4.tgz",
+      "size": 25369,
+      "digest": "sha256:c1120567d38f11d09711a5a1dc10faa725e7025351c462ebbe75bccf77b4971e",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971296,
+      "name": "file-viewer-renderer-chm-3.3.4.tgz",
+      "size": 278813,
+      "digest": "sha256:8b10641aee3f735a64219e0ade46f38ce437c386c4ab0c68f5cc5152d06f8e41",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971343,
+      "name": "file-viewer-renderer-data-3.3.4.tgz",
+      "size": 111205,
+      "digest": "sha256:e97d1fd0e09f44c1a809849e92968605d5286b0742eac681dd11f7a716fab2d9",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971357,
+      "name": "file-viewer-renderer-design-3.3.4.tgz",
+      "size": 12051031,
+      "digest": "sha256:008fa20dc8bd406dc7c35e431372b1867bd7406670ee2c501cf1a6a21ae0830a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971360,
+      "name": "file-viewer-renderer-dicom-3.3.4.tgz",
+      "size": 6621076,
+      "digest": "sha256:28568e92b0e670df3031613688b565eb957ec75fde3f734e57930b947f644d4a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971398,
+      "name": "file-viewer-renderer-drawing-3.3.4.tgz",
+      "size": 40975,
+      "digest": "sha256:2cda32c34adece4fce407e030d9c2a62a775894499ee9358538e2c6dc83dcf20",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971413,
+      "name": "file-viewer-renderer-eda-3.3.4.tgz",
+      "size": 23417,
+      "digest": "sha256:4bdf0adeeec806938a01c8c3a8a402fc3f5e3879ff4fc140a8aa584b21a9ae75",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971455,
+      "name": "file-viewer-renderer-email-3.3.4.tgz",
+      "size": 31013,
+      "digest": "sha256:ef579e124237bd0d7528b63ca79060a6ccb644814e1eeedd57621563b0af9f3b",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971462,
+      "name": "file-viewer-renderer-epub-3.3.4.tgz",
+      "size": 170422,
+      "digest": "sha256:f1b58b0500f8a8261641a05219f78e22c26a97278b1d1fc2fce3f0b378b1dcb6",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971505,
+      "name": "file-viewer-renderer-geo-3.3.4.tgz",
+      "size": 176410,
+      "digest": "sha256:3e36db927046bf025e8fb49138a9ae437af3d772f7f6cd866dae5fa633dcef67",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971531,
+      "name": "file-viewer-renderer-hangul-3.3.4.tgz",
+      "size": 385742,
+      "digest": "sha256:903270fd513ccc4a7d10b05457a1c61c2dd907477e5e12138104d339df459d7a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971628,
+      "name": "file-viewer-renderer-image-3.3.4.tgz",
+      "size": 48786,
+      "digest": "sha256:a2237d2504b75a73cd95a29af3f739cd5f9499ba8b9fc0d6de10470f0350ce63",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971667,
+      "name": "file-viewer-renderer-iwork-3.3.4.tgz",
+      "size": 1183121,
+      "digest": "sha256:b78028c089fb1a2bbfa1f571cc0de802ee9c1676bc06b7257637ad9eb6c71686",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971728,
+      "name": "file-viewer-renderer-media-3.3.4.tgz",
+      "size": 81405,
+      "digest": "sha256:dd2673010fc7f9670af32ae0de31d5d7d4d091c29afafab5438ffee6ce61ad21",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971836,
+      "name": "file-viewer-renderer-mindmap-3.3.4.tgz",
+      "size": 58089,
+      "digest": "sha256:11da69083bcd205f00dfb39e7bc59cc72d13458d7f72166f5c3b31cd00ef117d",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971919,
+      "name": "file-viewer-renderer-ofd-3.3.4.tgz",
+      "size": 114965,
+      "digest": "sha256:449e17f8e3587a1b5c5ba058fe7b9d99c636340a1c3ea05ce51e8e4cbddf09d6",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752971987,
+      "name": "file-viewer-renderer-pdf-3.3.4.tgz",
+      "size": 2483252,
+      "digest": "sha256:be7d4c1f0b6b58c68512c427f8bb72f3637196e6857fad20bb5151a018b9c36c",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972046,
+      "name": "file-viewer-renderer-ppt-3.3.4.tgz",
+      "size": 12774,
+      "digest": "sha256:7a95490aef985e1589ea0b8eee2177c8bf3c186926ed6f396be6e94f4ed19347",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972129,
+      "name": "file-viewer-renderer-pptx-3.3.4.tgz",
+      "size": 12473,
+      "digest": "sha256:aebdca35a5055641e3f8b491ebffb3db0567b5f4af5cce35728b31fa11392ceb",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972183,
+      "name": "file-viewer-renderer-presentation-3.3.4.tgz",
+      "size": 7649,
+      "digest": "sha256:8d9939d3cda0613285b5ce758b136d2b065eb14d51b907af0569152d460ea55b",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972196,
+      "name": "file-viewer-renderer-signature-3.3.4.tgz",
+      "size": 729068,
+      "digest": "sha256:759025c7aa1be6da23fb73a2335d0ac13c40d7db15c270c9731132a9f9618ef0",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972242,
+      "name": "file-viewer-renderer-spreadsheet-3.3.4.tgz",
+      "size": 393006,
+      "digest": "sha256:1475d913159e2d915f4f6b9c7ce4d14a3cf4bd7d5ce5560f1f6b5895c8e95fd7",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972266,
+      "name": "file-viewer-renderer-text-3.3.4.tgz",
+      "size": 68312,
+      "digest": "sha256:a2010f642ce22207efe4643ac32e1ecfa28783c28a554aedb1af334ba814a40b",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972290,
+      "name": "file-viewer-renderer-typst-3.3.4.tgz",
+      "size": 5990171,
+      "digest": "sha256:0123b287b8a8747bf4ac8a29e496f76693971a6fffb0cfa96e74708b56a8d5cc",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972315,
+      "name": "file-viewer-renderer-word-3.3.4.tgz",
+      "size": 30116,
+      "digest": "sha256:07666c58389987b73345320e9786b91f1df69253a64ce73c6de0479f91fde819",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972322,
+      "name": "file-viewer-renderer-wordperfect-3.3.4.tgz",
+      "size": 247090,
+      "digest": "sha256:2eebbf6afb5f7e61b48a3677db95304f92f4b45ec49156613f1b1e942a531c7d",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972408,
+      "name": "file-viewer-svelte-3.3.4.tgz",
+      "size": 48552,
+      "digest": "sha256:54b8277617ac55ac1dd4cece5d7fcbe00137f18c422dd6631589876975f34da0",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972428,
+      "name": "file-viewer-svelte-full-3.3.4.tgz",
+      "size": 43468,
+      "digest": "sha256:4cc1578446fec9c809dcf83d641161e58a2e9aee708e402d294c0f036bc3e823",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972452,
+      "name": "file-viewer-thumbnail-3.3.4.tgz",
+      "size": 158060,
+      "digest": "sha256:d10fd1d3e34459a2afb2e6636fe34b0bbb59c36fb341c3db39ea6f65a6779a08",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972481,
+      "name": "file-viewer-v2-3.3.4-component-demo.tar.gz",
+      "size": 102399130,
+      "digest": "sha256:1795c6f600caf2ee62fa01bf2f55c47d0e9753e2db00973cdb80c23210de1015",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972528,
+      "name": "file-viewer-v2-3.3.4-demo.tar.gz",
+      "size": 156322181,
+      "digest": "sha256:c325b549c70fcfb58537918fc7be1951f77b15d0f3e0194390e83f8b82a079c2",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972550,
+      "name": "file-viewer-v2-3.3.4-docs.tar.gz",
+      "size": 18291382,
+      "digest": "sha256:53fb688d143b2aa80dc3f6b2b3efc52bb05c6e493c148bdbc28a6a2223b1474a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972886,
+      "name": "file-viewer-v2-3.3.4-lib-dist.tar.gz",
+      "size": 49673,
+      "digest": "sha256:dd5797039332b3d21b056ab18a1cbe13407b97044ee27c0f2494eb396f2d2ac7",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752972955,
+      "name": "file-viewer-v2-3.3.4-official-demo-iframe.tar.gz",
+      "size": 156325943,
+      "digest": "sha256:7b79855722e52eec0018e934f55cc322a897dc2c1698ff87e51f7e51371a6670",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752974582,
+      "name": "file-viewer-vite-plugin-3.3.4.tgz",
+      "size": 32606,
+      "digest": "sha256:0bf999307d9c3f1535e9b0bed777d9c5fdf756c905edb72e32186f85b6440165",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752974657,
+      "name": "file-viewer-vue2.6-3.3.4.tgz",
+      "size": 45816,
+      "digest": "sha256:ebafb1d44de11e52dfb96fd7327b09badfa345cdd41fe23eb9f6375286b5aafa",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752974729,
+      "name": "file-viewer-vue2.6-full-3.3.4.tgz",
+      "size": 40239,
+      "digest": "sha256:6009fd0de80fafdcbf3ed001d7ba26d9b65313630acfb400243a8273da51f68d",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752974823,
+      "name": "file-viewer-vue2.7-3.3.4.tgz",
+      "size": 45362,
+      "digest": "sha256:e3695eba2c2db30bdce2f954843d51baef4131ccfd4c0e4be78aac0289b344c6",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752974883,
+      "name": "file-viewer-vue2.7-full-3.3.4.tgz",
+      "size": 40285,
+      "digest": "sha256:1f0a75dbc0f89e6819f38a2dbcaac7d80de162119b324d61bcc8bfe0127d17ae",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752974958,
+      "name": "file-viewer-vue3-3.3.4.tgz",
+      "size": 92976,
+      "digest": "sha256:805097e42a7a297d3fb3547140a5b702c66aa42e73baa118d95f157fa4f2aa7f",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752975025,
+      "name": "file-viewer-vue3-full-3.3.4.tgz",
+      "size": 40803,
+      "digest": "sha256:c632392f1003f73afeb4cad2dca5c5b943d59398e856c4e76fb3f27246d87c44",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752975090,
+      "name": "file-viewer-web-3.3.4.tgz",
+      "size": 439594,
+      "digest": "sha256:4fbc06e1476e8865c0c1a7250f2fbd1d122febcc22545b89a3d73fb0a15d7aa9",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752975187,
+      "name": "file-viewer-web-full-3.3.4.tgz",
+      "size": 41624572,
+      "digest": "sha256:3e49597b96afd4e43049c986ee86bd929149dad6bdd323978c303d04db10709a",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752976139,
+      "name": "file-viewer3-3.3.4.tgz",
+      "size": 5220,
+      "digest": "sha256:fdf3622d2af8675f9d3f96a6597fcd60ee1cc34da58c72cf0361a58bfb5548fa",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752976226,
+      "name": "flyfish-group-file-viewer-3.3.4.tgz",
+      "size": 5144,
+      "digest": "sha256:d9e4e7c83dafdb1556ed2fd7c91d06713f8ecc722e4a095d5a466ff06545988e",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752976301,
+      "name": "flyfish-group-file-viewer-react-3.3.4.tgz",
+      "size": 5854,
+      "digest": "sha256:5c19c1cfe6c6fe8b3c24325ffe06e44cd94d823454b92c5bd9ec679a1d23a241",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752976359,
+      "name": "flyfish-group-file-viewer-web-3.3.4.tgz",
+      "size": 68456482,
+      "digest": "sha256:31bf5ac9de3a974b4da3f340bffeab899c9834c75185de1d9c5ef318ac977251",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978077,
+      "name": "flyfish-group-file-viewer3-3.3.4.tgz",
+      "size": 4788,
+      "digest": "sha256:03310b2d5e27a2aa86378961b5d677a48ac7dceaa23a8e1523e726d526de6691",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978114,
+      "name": "msdoc-viewer-0.2.16.tgz",
+      "size": 2039,
+      "digest": "sha256:0d05cca487e2a8f967fc9c6d2ac8fa01c2a0cf2b66fd10f996812ea32e63bf90",
+      "content_type": "application/x-gtar",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978154,
+      "name": "npm-release-manifest.json",
+      "size": 109030,
+      "digest": "sha256:092ba2cd4b7c107a60a97e509a2c36d8ff84fd13c56a29c22f9feee40d412514",
+      "content_type": "application/json",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978230,
+      "name": "release-manifest.json",
+      "size": 78127,
+      "digest": "sha256:6220dea7f8570f44fdcaa65e50e66e37750b26cc4b8d556f53c2cfd54cef6901",
+      "content_type": "application/json",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978257,
+      "name": "release-matrix.json",
+      "size": 529865,
+      "digest": "sha256:ada5b15d914f0d4d92df89a09c281aab9cc753878dddcd07b904ee29d76e1acc",
+      "content_type": "application/json",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978312,
+      "name": "release-matrix.schema.json",
+      "size": 13919,
+      "digest": "sha256:b6114e439ee1b38aea47c9c8e5fcb5e31d2e43598384f455f4ff161a9f01797e",
+      "content_type": "application/json",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978358,
+      "name": "release-status.json",
+      "size": 62857,
+      "digest": "sha256:03d4193fa041fe8fdda7758125182fa23105bd7d38ac9c864f16bbcc079bc2d4",
+      "content_type": "application/json",
+      "state": "uploaded"
+    },
+    {
+      "id": 752978402,
+      "name": "release-status.schema.json",
+      "size": 8114,
+      "digest": "sha256:e6e2db2ffce76b0f89cef0f31bca6cd1270c3b6268ce16b6033f9567ef27004a",
+      "content_type": "application/json",
+      "state": "uploaded"
+    }
+  ],
+  "registrySupport": [
+    {
+      "packageName": "@file-viewer/docx",
+      "version": "0.3.39",
+      "tarball": "file-viewer-docx-0.3.39.tgz",
+      "tarballSize": 719704,
+      "sha256": "a96b610b549981f23b30fbf0fd5ee362d38981ebc7382c12a7508d85f71cf539",
+      "integrity": "sha512-+cHcv/YkTck9d6CKaYUBJVXreDLHkPkinc1JjWB9NUiGsfYkGlySM+6NSO9iCU1Do/7PbincByJwZHqYgsm3SQ=="
+    },
+    {
+      "packageName": "styled-exceljs",
+      "version": "0.21.6",
+      "tarball": "styled-exceljs-0.21.6.tgz",
+      "tarballSize": 2629444,
+      "sha256": "4aa2800a2d4e286bf9c06db866a26796a719b848ad9ba2f4eb3ff836a813eba7",
+      "integrity": "sha512-n3lHSH5rKn7wlu6+rBIv1/anXDDJd1+IAWI60iCfXW9QlYRDHQDEN6P2Vq9b/6TxT+hUiLTNFy9Hoo0TGk5t8g=="
+    },
+    {
+      "packageName": "@file-viewer/ppt",
+      "version": "1.0.2",
+      "tarball": "file-viewer-ppt-1.0.2.tgz",
+      "tarballSize": 550197,
+      "sha256": "df5c226f6a771c1ade4e64add03e2f533a568afa6820a70a581e49613ed4f458",
+      "integrity": "sha512-dyq341piRU3vjeImNwkyb+OWAn26SyUqhFNiOxyrsYfDMTGEZgVdk/AmCxlmbCXeIMGRM2zHdzUUWRBRxfSQdg=="
+    }
+  ],
+  "ownedPackageVerification": [
+    {
+      "packageName": "@file-viewer/core",
+      "integrity": "sha512-OUCmt/CqppVPtBdP2KbWO4z+Ov0GlCo4ug2UB7LJB36e5tsBDAXArsGPeN2qnj2Y0VhaszHR3LfUtxGjDrgv1w==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/asset-installer",
+      "integrity": "sha512-v1hKGbdL1YpN3thUF6TULn2uZ1TrRKuhhRkluXXI+naJWAZKoNWu1E342WJSHZ+6/BMXJ2wvwzBxot5CE0PrLQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-cad",
+      "integrity": "sha512-VsJeAciv29UQ3broZpgi7e9/XMkIeGXjIsB758ssmIqWKJkYTwA0mIaA4TmX+FOyxJDDTcRIUWrVq4MmgFmKPQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-typst",
+      "integrity": "sha512-OP2kpPK0mwWPdzytrabKVpOY7k+nTeLcHMjP8ihKuMMENLOvqvaqpBHrgXa4ZzjjU6Q9GM+JX9dzsSNlB9tZvw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-model",
+      "integrity": "sha512-TvWQoeJx02LmKGDeQiFfcMWW18/csjADKE2LPXQEaUemfPLxttPCnTi5ByjPD82G17Nrrf25yh3WlFwiH1LukQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-drawing",
+      "integrity": "sha512-FeGyLEFMZE8rY9GO+bpZoF8ugvmpS3rHaGATYTl8nL3lDHA5DT58vwzyjMsEopg2QG0tlUA6FrMFjeB7hC4sMw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-iwork",
+      "integrity": "sha512-yuvHbdtza9J00Ss4GEzJBNJK58sBWJ7FOoQZ9p168oB3wDKIEWmMBvOZc+H1raFpMZjQlcDyloLN0m+lEjboqQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-ppt",
+      "integrity": "sha512-8xQzZNPAovy8WaYebIQevJy/j1rbQ/OWsxLc8WxAuGXDeJwK2x4mI1W9i6sh2pPCoVInAy/rzoYFgGZ54A5nTA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-hangul",
+      "integrity": "sha512-J2QYkBF3VoILEGGiDUKhc3nToXBhXhTUJpsV+X0zhjgjesmpvBb8XClJ8pRfJxTHz2isUc3QeKtHx9NExS49Ig==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-wordperfect",
+      "integrity": "sha512-bRB+m97g1Wj3QDa1/GOMO+uAQaN/41ArTH7uvO2h6t8FZrhcCiE/4IQ1FIJBj6lP1L3jYQAvxj/71JGW9H/v2w==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-chm",
+      "integrity": "sha512-7o09qqdOx8aHWNj4UT6UPQldujUcnYLEAH1Nh1grp/0LwWVB612ny7Id93Qa7SL5DOe8ghVWj8DNGOzjLJrTfw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-data",
+      "integrity": "sha512-uwylz0O+z2bScoUNfGE/GX0iTalVyUTPKdasabO2LyJvHtIDYTsbpAG8Nn/cCsZwHClE0g8osMYg6NX4dNq/rQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-design",
+      "integrity": "sha512-xmoSrmMgar3f0juDdZdwiMwlLhVvJtp5LH2uMw9fHwAxQqzT2s/9TKaCUE42lJ4kR4phuorw3VYDykSrDInm+Q==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/thumbnail",
+      "integrity": "sha512-RVqomxVp8YzzLDZwq0E8gVh9096KXfvDU6BkYrsJ0XyxZdbX/lQ4/hfm6C2iMJE+8nY6GykolGwOWobtPuDLyA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "file-viewer-copy-assets",
+      "integrity": "sha512-cLYXSYZZ2PmHyXte9ByFZ6f7YFZnca79YeyqkHHY7cTWEgEXbq4hmoUgRzwBLNmHPaaC3jYNvCZb2NVfCM3xzA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/assets-standard",
+      "integrity": "sha512-zmsmwcjYeBoTEgMqYoFwOX9QdJ+CbLkfiDAojkNZ9kSPOeyQGBQgIWB77YsdkFmHsuSQBzlF98dB5c67o0jlKw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/cli",
+      "integrity": "sha512-qdQcZ4H2UFKuV9nsK+DPDX9CfidH9+je1YTqJXWZk1mmtVMUelPnXM3gztZsBpaPgenHAhkN44odYKSx+F+MfQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-pdf",
+      "integrity": "sha512-JmKJqQWOHGEP13L9bYB7KBE7s+2uWTphGYJqUfMNASXUoFU4BG4rp/xXvBeW5U7lLG5ESgJWH327GylMM+ux2A==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-pdf-identity-repair",
+      "integrity": "sha512-T+csJhsms3a95CIvCyLXskB4LdQ4Ew+xV+2tAWlNohFCPZF+67lyK00czHENwpBW5UfBSkQdxK/z503lJduqyw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-ofd",
+      "integrity": "sha512-7tsWP7eXkHVt9ezsVJofo87VBdcadcDdC1yQaUyK61pNCEORSmfZf8eCFSpWawIM7nUhClZi82A95qvIbooNxg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-ppt",
+      "integrity": "sha512-IscZd81MAlCQmqZH9WEcngdWU8v6XQeeqEcwJ5PyYYzajNR/RdIPy5rbuiesznMenSA1DOJr7DCrwWk9jCuJCg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/doc",
+      "integrity": "sha512-T5b+Q/iIWDm6DoMcYLGBRIYP8O6XWdXcpr4T0iyw6TygGkdM0WhZWXEF3YupoxDsBajmFWnDnkud+q/onFyR1w==",
+      "license": "MIT"
+    },
+    {
+      "packageName": "@file-viewer/renderer-word",
+      "integrity": "sha512-1hNTUzZ/nvPXPfXR0EjDb3aHUjlq8Q7MDvY3A+ar6madqrnbXA0kZVBiX5jXGB+pg3wZJQHl1NK/Ie/0qoPrLw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-rtf",
+      "integrity": "sha512-WQBDOEmb5pUoLLsNkkzKL1ug9gaQ3zj5G/eENsDIc4uizhXqZLB7zvW/5aelj9Avhs+nnqnzeUlb08L3fKncDA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-spreadsheet",
+      "integrity": "sha512-5yst0ocFBcvf4l/IGWpL4+Ma9q1EsPuT1+U3TsdeCq5HJpYiD5EbEl2vd2wqS1OGKbdq7w8DsKgWcJ474XP0hQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-iwork",
+      "integrity": "sha512-AyNjEQhci2SPzTuzz/gcRFh7mO2O0FtSr0Qmu7fNuL7Luf5tCSw8TjVSYQ4ngBbyNapgHbdkz913zkhsqQv+sA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-wordperfect",
+      "integrity": "sha512-6SlqlqEDITkv98C5TX50rkSdkhhkcfyD/jbAYqQj8R68JJy23uZUXldInkZpSWGRBBvEAGwpdU8Kv0+RK6a3Nw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-hangul",
+      "integrity": "sha512-iv9IfcadYZn1nJxH9+NxnfokXbI7blZJfvF8bh7IPKY2Swb5cvqXkbKhru4cGQkc8gU9nokEt9TwYap0dy4Cig==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-mindmap",
+      "integrity": "sha512-x7YMtqNEPlfjXJQMBFHEknY9z/jzBXABJtjNDoWoJTORn6j301bUrSRRY0boUND2Hi2GoKDGuZni92o9h1jflg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-cad",
+      "integrity": "sha512-vVdbEh4nBC0fB6QKDxiZg3XkgwRbU6eb+c+30+ob56YlSfSZrcWN5cROVu+AWMQxSIrlFDel/qLSBrzX/f9mMw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-typst",
+      "integrity": "sha512-ZdNVMdwy1Z1yYeXbhYLcpfLmiZzJutTmuYECdYdXoTfpdn7+TVyX/6l9HTs9LhdCZQBWywYBqHtCh/3bMuA87w==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-archive",
+      "integrity": "sha512-g6KKyzAqpkn1pCMOiVHv3no2hyAYyDVl1Dzt1xWyYgNtOSEQyhjKYLJe1bN1kN6wVYuLZGNEsWUlx45cunqMKg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-chm",
+      "integrity": "sha512-QDcezN+rTZl5qfgHDeDKSH5JEp066aVpWuDV1+Ntvu06sHxbHERillOR1nF94G5FX386yr+tNWnj8CvcOYa0eQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-email",
+      "integrity": "sha512-oj6hOSzIbUWI+/Gx8xrE6yztOGRY9Qw95TLu2JVCYxya3B0AYsziSJ6VLuWqdipO/63RSHGzIge4x842Q2K8rg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-epub",
+      "integrity": "sha512-W2YphsOI15TEhkhPEwpOiiuGrAsKmcpOXhYVkOsn33+rlU+vpjaGdGWwsqp1RbS2ohEQccBryJF0cmXFKa2ttQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-text",
+      "integrity": "sha512-DIzkWuhLP+LwlNTvs+2ME7BJHGBdFdxiiueQ/piZbtdkGlVQtlL/HbWwsbxaAiJVqvJnHNiPfOISHA70WciW9w==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-mermaid",
+      "integrity": "sha512-GKei3lJaqlg3UwUkmPJmuLld6sFYrT/A9XWUEcjqNgNKSgQW8RUiM2GAsb06GPOsOXhpA85/ZEy227gLLbp9XA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-text-tools",
+      "integrity": "sha512-fze4BWKzW2fTue7Qnlphp8DDz5mrIALK7BHqMmzlz3MMtm2/VIM99vnQNxIFxEjmnn0Eyo1gZw1mCj1Wv96mcw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-drawing",
+      "integrity": "sha512-F1hSvDCjyGIM4qn8vF308oK+MaXBA4r2S5ukkBUo4tG9v6bZyji1wvsQn3TUPd4Ix8U2vEapYjxQxMshi1yatg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-drawio-official",
+      "integrity": "sha512-CzXKw3Cx6pPSqeIQAQT5NS491R1DPz5auKYjkj3i7VaKFg6VLPpQKdrnSrgRI7ydD/YZI0PSixLzVjN2vIy9Fg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-image",
+      "integrity": "sha512-C4rfTj9HWpLA/WK4iQxTkZvmYlqp7pqgOYxlK61UaCPe84l4FarObLwxTdLQkhRGwaIwjZPun7D2HcbYDxTuCg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-dicom",
+      "integrity": "sha512-Qd0sEqREv0IMoHaK83PA4x5mkzb80F8YRZirR9odXQLbjmNcxPkzvJoK+wxQAPLe7FdcdG0l364jem5vrWgaxg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-signature",
+      "integrity": "sha512-2dEB+/qOzBBqN7dT6iVkH923tUjSanQe/i6CpvT9YOvxkYvTiDo8/bj7vp4mWgcm9O3NfGSG2n+u5hrv+URWnw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-media",
+      "integrity": "sha512-zY1NrHsg9EVYLOIs/Dguz9hfhRvwHgNEFzFtjSL/o5gBl6GLJnz2D+1ZCmVt8TPWe4Su5k1XFh8+Wftx/rOPCg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-midi",
+      "integrity": "sha512-oZE/ClPxFWyQZM1XrUl0hUyWtlzWfcuGaZ70J9eZUVEVpUXwymjQo70zmjBaHk0x0xvrBtNxaPl6C6EgyDeQxw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-streaming-media",
+      "integrity": "sha512-plpd/Fz0ZumBUCqn2m8Za/V8dz6skktSMjzqNFHMB13YZSQRHXIqUbV3Xg6kDkDjTRpGrx81CQVO+n2Blnq+kQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-geo",
+      "integrity": "sha512-2KBlBMY5+mIXFsw/lz3M4D+wSfmS5BW/FJsiUnuvm8J5UKt6/P7W2yyaZe2uQZp7MVeGwRCKw5jAkYLWstQGXA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-data",
+      "integrity": "sha512-/xjzjXue/oHYPS0vWpLd1cmlAQXw/e40xnEnmSb1a2JX9+P3Z7xFDJzD5njBn3+oq8s/ksHG0DFnY7qb9l1tSQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-design",
+      "integrity": "sha512-k4ganu6IpkAakK7lXiKXTixAxJmPo/6yGdYBpk8K07cTj0FEoyO+pzOUL7ttJFS5JIPDyqSnM3bmdTxVKM+Y6w==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-binary",
+      "integrity": "sha512-79kGgAhMkeJJkJl6QfxoHvtAEDvTvJzjY7GKhqPzBUVxHrmCRdxcf/kroh9xSmlCVn3fzoiTxMfMlan5powZNw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/eda-layout",
+      "integrity": "sha512-+lX9ikWBPHsuHGYSNo35xMo2jVkF+/c3OIJs9iVh1bnVAcD76K2T1mRY+pdijFOyP68yX/924e5V4mP+Ya6KQA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/eda-orcad",
+      "integrity": "sha512-X0YyUTSyxNwJR7DIsUzpuzoCYMahcw1UH0kHb7C6Iqu/7Ox0uIgk89NGXCLqKISNdwEIvV6ZlQ9+CUI2LaY0Xg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/geometry-engine",
+      "integrity": "sha512-UAQbhl0HNcn7LKSt8Uel7/MIsk2ulONBVyDSf0kQ4pymyMlvObdsdVb8ROayC8egDvLk15nNjPrb4ZCm1N7L4w==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-3d",
+      "integrity": "sha512-bWOZLSPKqHsKrG/umlNRdb+q/TeLzI/20k/18CjbAj+3LNSo9vZwbcFCs38ERkgLHltCnduVL2AuphXkVSfmfQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-eda",
+      "integrity": "sha512-a4iDlKK1XAe+e+VZzs2nx5EWNbUiriXDOhF8VmritqZjQf4V0mqE9uLsT8mTR6yWT62BagvG/dj103faon+3Gw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/pptx",
+      "integrity": "sha512-+gWZHjHCIi0JS9b5y9Tngr2b2OzAUY5ypCH5Dr4VJLqEUlVqP3isSBkp84hdlpLqkSZo0iDIJhnOTOl+f0UNaw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/capability-pptx-charts",
+      "integrity": "sha512-iliScAqLOvsjZ8IXBG9RROxy0LMjARlttyUiKKo7dq1oY2R3SkqU2GCxZ35YgLni/6vAO9Ltz/iKchT6zbf5rg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-pptx",
+      "integrity": "sha512-sH7OP+q3a/AIrkdQDo936Rm3U2HHgm+85rLcT21xcQmPXdK9zBrA1OZivz3a3ffNT0CV5DsFMUscBIqNYDAyvQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/renderer-presentation",
+      "integrity": "sha512-yBFBhkJTFWR097m7Iui+0y+C+kX4JZ4JfY2qC4dHS7UKLiv1xQe44J6CuuPH+z0Sib0hxx19yJfqurHycB69xg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/preset-all",
+      "integrity": "sha512-EEB3HnAN1g7up4PWxgOk1PSqifuI10RVnos1BT4f6XTlyewhFHHeEsX93keBvbDIyASYy3SDwLf99lnhKZeOag==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/preset-lite",
+      "integrity": "sha512-Kc9hlkkAwPFJpOaQTb61H3/GVLourb/46ycmQvAXtqI2POnwWg+JBdy42HJ9su3wnaspqTXdofGvKJN2h33HhA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/preset-standard",
+      "integrity": "sha512-vnLyKw/D0ohvL1J89rsMwsAlvSMwk+2CD/1NJ2ppaHurCAwRUdTR78107YUocIMqnOu0C2HuJ4DXqlHTDwd/fQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/preset-office",
+      "integrity": "sha512-J1Xejz5dpKixzvT5rxT9yPWf54AzHjAXYdmCckkdeN2OovN47BYqrPcvY0TCtC9FIlit1YhHHycGYo2nugGF7Q==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/preset-engineering",
+      "integrity": "sha512-/djPRtwGUjwla0w04mPimXRfcu6aYF5et5Z8XlWDkwX88dNboXo9hXsLU+xuJMo8UrPURVskEXpsMe0QK77j4g==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/vite-plugin",
+      "integrity": "sha512-UHbrcJZJNuLVxwEQWX+aVqC15n9P/tg9J9aoBuDqhlvN/m/kCw876i0F/HT5pbbNRY07c2zNXjScxa4HtXH8rA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "msdoc-viewer",
+      "integrity": "sha512-x6z92qOUhye25wNDXD7f1e6UHeAEJG6KDZ3wtbddbybrX35k18xmS9L/Ikjla1aqkCPMGFVhrwk1KWIj3SdeMQ==",
+      "license": "MIT"
+    },
+    {
+      "packageName": "create-file-viewer",
+      "integrity": "sha512-OnIvxpA8f/nEWHkrn3TrVYphbvSghABZqJ1nRtOnYN0HwM4PtboJ9j3Td/pz7hzmoKYgNDGjxjpPfeZTzo431A==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "file-viewer-cli",
+      "integrity": "sha512-2NjaFnWArz4uE91YWaO6r4bYpc5ekYvg8euqVchIHjpKkNxNGvTODdnUmv1wE9+XtlgA+oDAKqgfBXapJsL/aA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/web",
+      "integrity": "sha512-FKGa3gCDFOPOAwwqk323hM7Juq/UXzsgHRCA9LKWXWNgt7Jio4zACvjONiiGDhAXm6+aIPGYClTltUP6zSML1g==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@flyfish-group/file-viewer-web",
+      "integrity": "sha512-uldtL169WV5HMoi/unCS6TTqYT3zWswPzyD9ShVKA94OEQfzdXCwtn5D8R81yafChAqo/lnV8bSXWAnpl8ty8g==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/web-full",
+      "integrity": "sha512-Ovz4571WHW88isGoCBCVi44OExqiaF3Od+hjpXO6ziARfdJdQmsB2Ec2rB+MSE4GcX9PV58ik6NprBewHo/3Pg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/vue3",
+      "integrity": "sha512-zY3HS4LHbglF5fetIR1SUr1OE2wg2LCzgkX4apPBrxbvjR1bFdplM+WympmczZtu33+vnpMlJ8XztGxJYprLxw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@flyfish-group/file-viewer3",
+      "integrity": "sha512-VOZRWaUcHtOARXtyw0Ist0sBiyugc6Uq48gKRy437YKDjRzFfYY15RdIjoGhRy4gfz3HeZZXkVQgUkTQJtOUJg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "file-viewer3",
+      "integrity": "sha512-CGbVjadSct2d+YIQJf8a5tvrRP3QIGdtqe5WsUeVECX8X61/0JjLffOVgmFZGQK0uWMOvmWG7F1FOzsGzHbk+Q==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/vue3-full",
+      "integrity": "sha512-OvNrcxQ43+aiQ1hI0rtk9Wfxd3/IHx55JOMYRqY5diyhJDUux0wXbUNG1Vrxs9v0NgKCXkGvHjSXXVdCFeRyvA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/vue2.7",
+      "integrity": "sha512-+7RvXIsAML4ckVbAiWn/XOnsCqtBMaOrPlSbTWeoDrlIJT/j1k7Rw6pDnzpNRytDZ2tMVaTGVRau7lrOkMLSyQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@flyfish-group/file-viewer",
+      "integrity": "sha512-VNuHsXvvnXQ50iZ99A9Y3obqR91J1Eh5Jv9knXkvESBUYlqyWjGelND9mJ+U+1pe+mkEprz8Bp8fc5150ZN/2g==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/vue2.7-full",
+      "integrity": "sha512-Y4m7ZWzU82eM2T7gW0CTp4TLiCiC9GzZgOXNxTY/n0usFH1XKhEOZMrID8rv9QAtoIGVe3rt/bTQpfnhT5kr/Q==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/vue2.6",
+      "integrity": "sha512-27jkcqb0VH3BYKGXX20xg1AL+e4tluwdAfezDElTGJ6PMSA2nIuqrpn34P8HfmJFZV9hAs58I5mdZoDPfz86pQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/vue2.6-full",
+      "integrity": "sha512-cB6d6yM8LmmADUun5ishYf87tD6uTYPtMwlFiaCdkQy8MskSg1ducQaM+6GtuKrL6doL/15qirhWUUKLTjuhZw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/react",
+      "integrity": "sha512-gZhCRmdULYxpv++ZdyNFnykYws+EeQ0hS1Hg0D4F+wCZAqG8klDykB2bcoJOShcajf3v6WOII/A51uZw5YVrdw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@flyfish-group/file-viewer-react",
+      "integrity": "sha512-5pORy9aYRowFLRsU4+nJ8CZ0OEDj48u/z8P7jpuh+Z9FL9yBMZdWT5IIBHekL5UL/aAGB3/khraDK60/nh1Xtw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/react-full",
+      "integrity": "sha512-/r9tfxIAYrKq+8huLLbIFeoWKIj4dQXR7Hf+Mwdtl17UJIUUAB6wjFXX9pSEfF/R1gOVKjJmYhRisgdH4N1dRQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/react-legacy",
+      "integrity": "sha512-xLj/POlJMlOxQQqlJ3MxX5N/mGTVFfzVOgv5qAAgi1qQDkqgPztsLBlBowvFma9RC/UECUkAnVyEjhaI0flvVg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/react-legacy-full",
+      "integrity": "sha512-SJ2cGuYBZXKx9PfGNYQupw459ZF/JoSAoqtau4/WQbZUjvAQ80S+kGvNqANNgVee6Tig5lruSz3xOJXqisUPSQ==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/jquery",
+      "integrity": "sha512-IOnlcAsdtkoCaZ3gcHZRr9IjHaRHFuNDrUCRkonHbGGTcThtndhiWqfAF6MKxPv+dMOFHdI+/xsQ1UhqKrrSpg==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/jquery-full",
+      "integrity": "sha512-2UBodr6jch3Jh6STtOst5ervsmNfZtSMgDgeTIxNv3qfvQSAB8gY0zPUxybP489AEw8e68BWCvI48FJ3EFcJKw==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/svelte",
+      "integrity": "sha512-hSf8+JXgi9Bo/WjFv4/VTarUvNveCctrJYccvPgicOgKL1VsG+mHU/B/8fORbBPJtNQGgTjMS8N8igRzje+gTA==",
+      "license": "Apache-2.0"
+    },
+    {
+      "packageName": "@file-viewer/svelte-full",
+      "integrity": "sha512-CmcHKX0t8WCIZT4879kLnjQV2tXIfC0n8t1bi34NJszIhV5F03qDSfUKdMMDvKndfvHZl7iUOvW98gSbSYX6pQ==",
+      "license": "Apache-2.0"
+    }
+  ],
+  "auditApproval": {
+    "status": "approved-exact-public-production-bodies",
+    "scope": "exact-public-production-bodies",
+    "sourceLockSha256": "1a3045bef69ecbc94b59afefc4b9d282951d87a44081efdacdb36e431576df53",
+    "catalogSha256": "c93369ce7d4a20aef3fb6eb0036a7cc262ddcc092e878a7048abad48fa405c19",
+    "publicCatalogSha256": "057ace523addab488ce6d8cac48d00e109edd68e9dd569ce79d00e27e3f875d4"
+  },
+  "productionAuditPayloadSha256": {
+    "web-standard": "6660be719fe7246deb3465d8c0f4730d0d5421dbed449be313fe2d0e63ca8acb",
+    "web-full": "c862c5781205e67cd77f7de7e6e3062e32dc0160c55a71911de7dfefb3dcdf7c",
+    "vue3-standard": "36460b698158c58974232934a8e1346b2012dbd4b6eafb6fce255daace513520",
+    "vue3-full": "dbd41cc09ff44cd9c4a6e79fbcc6ba9d35238335e48ef1356609abb7d480bd49",
+    "vue2.7-standard": "98431509b101e1c50b13b511f99a560381c48f49c02970413344b89bec298f8c",
+    "vue2.7-full": "082301b46a14c6aab698115984cca4b091e43146eab6a04c40d58f96a05ea6ed",
+    "vue2.6-standard": "0f6e15cdf0aa6f2d8af852687c1e8a2640df599fd54db5ef5343cb284a828a11",
+    "vue2.6-full": "cd6964f60e9227edd24c2bdcdbd5125edbbbae7296467c230c7dfb682d5fc104",
+    "react-standard": "6c3e9daf06818be30aab89e62b0a3a64aa46bc58d4d4bdf7b7d1f5f815a45912",
+    "react-full": "2261872fb3287f3c5d5ec5a0184f95bcac44c9ea5370483c127530ecb76c069c",
+    "react-legacy-standard": "17c8578e438eb2b549a8e2aa4c44d7116424806027c2b7d2db0255db7ed657b8",
+    "react-legacy-full": "cc01f5bd07f714bbefa170abfc7a2ac97a2f90d441f3ca8f292c58bf2c97bab5",
+    "svelte-standard": "a2b0b0f2d054179a1fb60e86d4a7ec45d1809041629d605bd227602ff529944d",
+    "svelte-full": "c859aebe42f167ea7ec4d60f1a87fd013776a29bfed80d53fb50149b69b44130",
+    "jquery-standard": "5dbcc53c1dad6a480f2bc9d5f340d0ac8667d533ab6e8408516743f84a87d0eb",
+    "jquery-full": "970bbbef858863efd573645ee5e34a2fca60de240ffea796fb6945291b62f72c"
+  }
+}

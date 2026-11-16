@@ -15,16 +15,27 @@ assert.equal(
   'true',
   'Expanded runtime dependency audit disclosure is not authorized; no audit was submitted'
 )
-assert.equal(process.argv.length, 4)
-const root = resolve(process.argv[2]),
-  directory = resolve(process.argv[3])
-const manifest = JSON.parse(
-  await readFile(join(root, 'artifacts/npm-release-manifest.json'), 'utf8')
-)
+const published = process.argv[2] === '--published-release'
+if (published) assert.equal(process.argv.length, 5)
+else assert.equal(process.argv.length, 4)
+const root = resolve(process.argv[published ? 3 : 2]),
+  directory = resolve(process.argv[published ? 4 : 3])
+const context = published
+  ? await (
+      await import('./lib/published-release-qualification.mjs')
+    ).readPublishedReleaseContext(root, { requireAudit: true })
+  : null
+if (context)
+  await (
+    await import('./lib/published-release-qualification.mjs')
+  ).verifyPublishedReleaseDownloads(directory, context)
+const manifest = context
+  ? context.manifest
+  : JSON.parse(await readFile(join(root, 'artifacts/npm-release-manifest.json'), 'utf8'))
 const verified = await verifyFrozenArtifacts(directory, manifest)
-const candidate = JSON.parse(
-  await readFile(join(root, 'artifacts/runtime-ci-candidate.json'), 'utf8')
-)
+const candidate = context
+  ? context.contract
+  : JSON.parse(await readFile(join(root, 'artifacts/runtime-ci-candidate.json'), 'utf8'))
 const approvedAuditDigests = candidate.productionAuditPayloadSha256
 assert.ok(
   approvedAuditDigests && Object.keys(approvedAuditDigests).length === 16,
@@ -67,13 +78,27 @@ try {
     { encoding: 'utf8' }
   )
   assert.equal(extracted.status, 0)
+  if (context) {
+    const { createHash } = await import('node:crypto')
+    assert.equal(
+      createHash('sha256').update(extracted.stdout).digest('hex'),
+      context.contract.auditApproval.catalogSha256,
+      'Published CLI catalog differs from approved production body inputs'
+    )
+  }
   const catalog = JSON.parse(extracted.stdout)
-  const env = { ...process.env, npm_config_audit: 'false', npm_config_fund: 'false' }
+  const env = {
+    ...process.env,
+    npm_config_audit: 'false',
+    npm_config_fund: 'false'
+  }
   for (const framework of consumerFrameworks)
     for (const profile of ['standard', 'full']) {
       const project = join(temporary, `${framework}-${profile}`)
       await mkdir(project)
-      const dependencies = { ...catalog.frameworkTemplates[framework].runtimeDependencies }
+      const dependencies = {
+        ...catalog.frameworkTemplates[framework].runtimeDependencies
+      }
       if (profile === 'full')
         dependencies[catalog.frameworkOverrides.full[framework].packageName] = manifest.version
       else
@@ -103,8 +128,13 @@ try {
       const caseId = `${framework}-${profile}`
       assert.ok(/^[a-f0-9]{64}$/.test(approvedAuditDigests[caseId] || ''))
       // Resolve the normal virtual lock offline before any authorized audit disclosure.
-      const virtual = await new Arborist({ path: project, audit: false }).loadVirtual()
-      const payload = new AuditReport(virtual, { omit: ['dev'] }).prepareBulkData()
+      const virtual = await new Arborist({
+        path: project,
+        audit: false
+      }).loadVirtual()
+      const payload = new AuditReport(virtual, {
+        omit: ['dev']
+      }).prepareBulkData()
       // Standing permission enables these cases; it must never broaden the
       // exact approved body if registry resolution changes.
       const scope = resolvedAuditScope(payload, approvedAuditDigests[caseId])
@@ -138,14 +168,23 @@ try {
           '--json',
           '--fetch-retries=0'
         ],
-        { cwd: project, env: auditEnv, encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }
+        {
+          cwd: project,
+          env: auditEnv,
+          encoding: 'utf8',
+          maxBuffer: 8 * 1024 * 1024
+        }
       )
       await writeFile(join(project, 'normal-npm-audit.json'), audit.stdout || '')
       assert.ok([0, 1].includes(audit.status), 'Normal npm audit could not complete')
       const auditReport = JSON.parse(audit.stdout)
       assert.ok(
         !auditReport.error,
-        JSON.stringify({ caseId, error: auditReport.error, stderr: audit.stderr })
+        JSON.stringify({
+          caseId,
+          error: auditReport.error,
+          stderr: audit.stderr
+        })
       )
       const lock = JSON.parse(await readFile(join(project, 'package-lock.json'), 'utf8'))
       const policy = assessRuntimeAudit(auditReport, {

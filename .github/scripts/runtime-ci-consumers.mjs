@@ -116,7 +116,12 @@ export function pdfCanvasState() {
     if (luma < 245) ink++
   }
   return ink > 1 && maximum - minimum > 5
-    ? { width: canvas.width, height: canvas.height, ink, contrast: maximum - minimum }
+    ? {
+        width: canvas.width,
+        height: canvas.height,
+        ink,
+        contrast: maximum - minimum
+      }
     : null
 }
 
@@ -180,12 +185,19 @@ export async function verifyConsumerBrowser(browser, directory, screenshot) {
             : /^(?:text|application)\/(?:java|ecma)script\b/i
         )
         if (extension === '.wasm') assert.deepEqual([...bytes.subarray(0, 4)], [0, 97, 115, 109])
-        resources.push({ path: new URL(response.url()).pathname, bytes: bytes.length, contentType })
+        resources.push({
+          path: new URL(response.url()).pathname,
+          bytes: bytes.length,
+          contentType
+        })
       })().catch((error) => errors.push(error.message))
     )
   })
   try {
-    const response = await page.goto(server.url, { waitUntil: 'load', timeout: 60_000 })
+    const response = await page.goto(server.url, {
+      waitUntil: 'load',
+      timeout: 60_000
+    })
     assert(response?.ok())
     await page.waitForFunction(pdfCanvasState, undefined, { timeout: 60_000 })
     const canvas = await page.evaluate(pdfCanvasState)
@@ -219,7 +231,13 @@ export async function verifyConsumerBrowser(browser, directory, screenshot) {
     assert(resources.length > 0)
     assert.deepEqual(external, [], 'The runtime requested external resources')
     assert.deepEqual(errors, [], errors.join('\n'))
-    return { canvas, workers, resources, warnings, externalRequests: external.length }
+    return {
+      canvas,
+      workers,
+      resources,
+      warnings,
+      externalRequests: external.length
+    }
   } finally {
     await context.close()
     await server.close()
@@ -266,7 +284,10 @@ export async function runFrozenConsumers({
     writeFile(join(output, 'consumers.json'), JSON.stringify(report, null, 2) + '\n')
   let registry, chromium, webkit
   try {
-    registry = await startFrozenValidationRegistry({ archives, cacheDirectory })
+    registry = await startFrozenValidationRegistry({
+      archives,
+      cacheDirectory
+    })
     const env = {
       ...process.env,
       npm_config_registry: registry.url,
@@ -442,20 +463,32 @@ export async function runFrozenConsumers({
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  assert.equal(
-    process.argv.length,
-    4,
-    'Public control root and verified artifact directory are required'
-  )
-  const root = resolve(process.argv[2]),
-    directory = resolve(process.argv[3])
-  const manifest = JSON.parse(
-    await readFile(join(root, 'artifacts/npm-release-manifest.json'), 'utf8')
-  )
+  const published = process.argv[2] === '--published-release'
+  if (published) assert.equal(process.argv.length, 5)
+  else
+    assert.equal(
+      process.argv.length,
+      4,
+      'Public control root and verified artifact directory are required'
+    )
+  const root = resolve(process.argv[published ? 3 : 2]),
+    directory = resolve(process.argv[published ? 4 : 3])
+  const context = published
+    ? await (
+        await import('./lib/published-release-qualification.mjs')
+      ).readPublishedReleaseContext(root)
+    : null
+  if (context)
+    await (
+      await import('./lib/published-release-qualification.mjs')
+    ).verifyPublishedReleaseDownloads(directory, context)
+  const manifest = context
+    ? context.manifest
+    : JSON.parse(await readFile(join(root, 'artifacts/npm-release-manifest.json'), 'utf8'))
   const verified = await verifyFrozenArtifacts(directory, manifest)
-  const candidate = JSON.parse(
-    await readFile(join(root, 'artifacts/runtime-ci-candidate.json'), 'utf8')
-  )
+  const candidate = context
+    ? context.contract
+    : JSON.parse(await readFile(join(root, 'artifacts/runtime-ci-candidate.json'), 'utf8'))
   const archives = verified.map((item) => ({
     packageName: item.packageName,
     version: item.version,

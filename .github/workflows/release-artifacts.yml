@@ -3,6 +3,12 @@ name: Frozen release artifacts
 on:
   workflow_dispatch:
     inputs:
+      qualification_mode:
+        description: Reviewed input contract; published-release qualifies the immutable 3.3.4 stable assets
+        type: choice
+        options: [candidate, published-release]
+        default: candidate
+        required: true
       corresponding_source_commit:
         description: Immutable commit containing a new standalone CAD source snapshot
         type: string
@@ -62,6 +68,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       npm_config_audit: 'false'
+      FILE_VIEWER_RELEASE_QUALIFICATION_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.qualification_mode || 'candidate' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -74,13 +81,37 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/file-viewer-npm" npm@11.19.0 --ignore-scripts --registry=https://registry.npmjs.org
           echo "$RUNNER_TEMP/file-viewer-npm/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Download and byte-check immutable release archives
-        run: node .github/scripts/runtime-ci-artifacts.mjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
+        run: |
+          qualification_args=()
+          case "$FILE_VIEWER_RELEASE_QUALIFICATION_MODE" in
+            candidate) ;;
+            published-release) qualification_args+=(--published-release) ;;
+            *) exit 1 ;;
+          esac
+          if [[ "$FILE_VIEWER_RELEASE_QUALIFICATION_MODE" == published-release ]]; then
+            node --test .github/scripts/lib/published-release-qualification.test.mjs
+          fi
+          node .github/scripts/runtime-ci-artifacts.mjs "${qualification_args[@]}" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
       - name: Validate declarations, builds and offline Chromium and WebKit consumers
-        run: node .github/scripts/runtime-ci-consumers.mjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
+        run: |
+          qualification_args=()
+          case "$FILE_VIEWER_RELEASE_QUALIFICATION_MODE" in
+            candidate) ;;
+            published-release) qualification_args+=(--published-release) ;;
+            *) exit 1 ;;
+          esac
+          node .github/scripts/runtime-ci-consumers.mjs "${qualification_args[@]}" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
       - name: Audit only approved frozen production scopes
         env:
           RUNTIME_AUDIT_DISCLOSURE_APPROVED: ${{ vars.RUNTIME_AUDIT_DISCLOSURE_APPROVED }}
-        run: node .github/scripts/runtime-ci-security.mjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
+        run: |
+          qualification_args=()
+          case "$FILE_VIEWER_RELEASE_QUALIFICATION_MODE" in
+            candidate) ;;
+            published-release) qualification_args+=(--published-release) ;;
+            *) exit 1 ;;
+          esac
+          node .github/scripts/runtime-ci-security.mjs "${qualification_args[@]}" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/runtime-candidate"
       - name: Retain consumer evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
