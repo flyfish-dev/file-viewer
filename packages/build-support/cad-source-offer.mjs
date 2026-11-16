@@ -6,12 +6,12 @@ import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferred
 // This immutable public snapshot was read back and cold-built on Linux ARM64.
 // The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: 'a593ecd37fb14eb33eac91a5ac372c0e4f4629a8',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/a593ecd37fb14eb33eac91a5ac372c0e4f4629a8',
-  sha256: 'f1bc0b81f57d027a36c78d4b763e64e50aa2e0837f6195615aa1ca216b754503',
-  bytes: 192874837,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.4-ci-recovery-20261114',
-  runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
+  sourceCommit: '40d57f0402e0f99ac70f3053372fa89f82fc1534',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/40d57f0402e0f99ac70f3053372fa89f82fc1534',
+  sha256: '4fe8e5cd69383f265aac51e2d16bd82b4e78fdc591c5c9b562459391751acecc',
+  bytes: 193418616,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.4-ci-followup-20261116',
+  runtimeSha256: 'b1e0cf2cd8fd9879bc463b9bcab4e1c8f68aebad11a81cbc61d5177741cd9d30'
 })
 
 // Native preferred sources are distinct from the File Viewer integration source.
@@ -33,15 +33,15 @@ export const CAD_INTEGRATION_SOURCE = Object.freeze({
   // Complete preferred inputs with a measured standalone reproduction. Normal
   // Full/HTTPS verification remains mandatory; native owner versions stay fixed.
   releaseVersion: '3.3.4',
-  sourceRevision: 'ci-recovery-20261114',
+  sourceRevision: 'ci-followup-20261116',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '41d42b3babc97e9d38b7bd47bbe3560b25f006bb32775fc2b149788dbcd87813',
-  bytes: 458788,
-  files: 101,
-  runtimeBytes: 926335,
-  runtimeSha256: 'aaaebd43c94467e686ab8320f817df07fba69b2e5610b35c2d010056aab81143'
+  sha256: '43462425fe8fc20163654f59a51d5f7f5705f1d7a0214d75926cb173c37306e5',
+  bytes: 459612,
+  files: 102,
+  runtimeBytes: 926351,
+  runtimeSha256: 'b1e0cf2cd8fd9879bc463b9bcab4e1c8f68aebad11a81cbc61d5177741cd9d30'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {
