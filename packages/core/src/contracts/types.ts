@@ -841,6 +841,8 @@ export interface FileViewerDocxOptions {
 }
 
 export interface FileViewerEpubOptions {
+  /** Archive resource policy. Defaults to allow for compatibility; block disables external chapter/cover requests. */
+  externalResources?: 'allow' | 'block'
   /** Follows the viewer theme when omitted; false retains the book's authored colors. */
   darkMode?: boolean
 }

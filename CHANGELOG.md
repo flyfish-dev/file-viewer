@@ -1,8 +1,15 @@
 # Changelog
 
-## File Viewer v3.3.4 — Unreleased
+## Unreleased
 
-Release preparation; npm publication and deployment are pending.
+- Remove unreachable AMD dependencies from bundled browser SDKs so downstream bundlers can resolve Mermaid layouts without host aliases (#487).
+- Add `epub.externalResources: 'block'` for archive chapter and cover isolation while retaining local book resources and navigation (#488).
+- Expose the existing code/text and Markdown zoom providers through the shared capability declarations; retain provider-owned action limits (#483).
+- Run the existing PDF annotation regression and retain its reports and screenshots in Public CI (#440).
+
+## File Viewer v3.3.4 — 2026-11-16
+
+Published the 89-package cohort and deployed the website, Demo, documentation and component Demo.
 
 - Update UI labels in place across seven supported languages in the shared viewer and nested previews. Preserve document content, reading position, selection and media state, release retired label subscriptions, and ignore late asynchronous results.
 - Complete bundled PDF and PPT assets when Full imperative `load` or `update` receives partial options, preserving source-only delegation and asynchronous errors.
@@ -13,7 +20,7 @@ Release preparation; npm publication and deployment are pending.
 - Respect inherited OFD drawing parameters and explicit text fill/stroke flags. Track the active page through nested scrolling containers.
 - Add bounded optional textbox, anchor and section metadata to legacy DOC parsing while retaining the existing linear content view.
 
-Planned cohort: 88 mainline packages at `3.3.4` and `msdoc-viewer@0.2.16` (89 targets). Vue 2.6/2.7 and existing Full package compatibility remain supported.
+Release cohort: 88 mainline packages at `3.3.4` and `msdoc-viewer@0.2.16` (89 targets). Vue 2.6/2.7 and existing Full package compatibility remain supported.
 
 Known limits: DOCX [#459](https://github.com/flyfish-dev/file-viewer/issues/459) remains unresolved. [#461](https://github.com/flyfish-dev/file-viewer/issues/461) adds metadata only; floating textbox placement, wrap exclusion and Word-compatible pagination remain unsupported.
 

@@ -2,7 +2,7 @@
 
 [English](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/text/README.md) · [简体中文](https://github.com/flyfish-dev/file-viewer/blob/main/packages/renderers/text/README.zh-CN.md)
 
-Base code, text, and Markdown renderer package for Flyfish File Viewer. Mermaid, side-by-side patch diff, and Git bundle inspection live in `@file-viewer/capability-mermaid` and `@file-viewer/capability-text-tools`; they are excluded from the standard/full default closure.
+Base code, text, and Markdown renderer package for Flyfish File Viewer. Mermaid, side-by-side patch diff, and Git bundle inspection live in `@file-viewer/capability-mermaid` and `@file-viewer/capability-text-tools`. The standard preset omits them; `preset-all` and Full packages include them.
 
 ## Usage
 
@@ -37,6 +37,7 @@ const options = {
 ## Capabilities
 
 - Code and text preview uses `highlight.js` core with per-language dynamic imports instead of registering every language up front.
+- Code/text and Markdown expose their existing zoom providers through the shared capabilities. Viewer toolbar actions follow the active provider's minimum, maximum, and reset state without renderer overrides.
 - Code, text, and virtualized Markdown source views show their file type, indexing status, and line-count metadata bar by default. Set `options.text.toolbar: false` to hide this renderer-local bar without hiding the viewer-level download, search, or zoom toolbar.
 - Regular code and text previews can show a line-number gutter with `options.text.lineNumbers: true`. The gutter is excluded from copied source, search matches, and assistive reading. Virtual large-text views keep their existing gutter unless it is explicitly set to `false`.
 - `options.text.wrapLongLines: true` changes layout only and never inserts source newlines. Regular previews keep one gutter entry per logical line; large files remain bounded in the virtual window while wrapping to the available width.
@@ -54,7 +55,7 @@ const options = {
 
 ## Migration Note
 
-Standard/full includes base code, text, and Markdown without installing `diff2html`, `pako`, or Mermaid. Optional uploads show `npx file-viewer-cli add text-tools --write` or `add mermaid-markdown --write`; `preset-all` is only for explicit all/debug use.
+The base text renderer and standard preset provide code, text, and Markdown without installing `diff2html`, `pako`, or Mermaid. Add `text-tools` or `mermaid-markdown` with the CLI when composing a lightweight integration. `preset-all` and Full packages already include those capabilities.
 
 ## Optional XML Profiles
 

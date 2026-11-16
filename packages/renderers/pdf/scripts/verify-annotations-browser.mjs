@@ -68,7 +68,7 @@ async function compareAppearances(page) {
     reference.width = actual.width; reference.height = actual.height;
     const sourcePage = await annotationReference.getPage(1);
     const viewport = sourcePage.getViewport({ scale: provider.getState().scale * pdfReview.PixelsPerInch.PDF_TO_CSS_UNITS });
-    await sourcePage.render({ canvasContext: reference.getContext('2d'), viewport,
+    await sourcePage.render({ canvasContext: reference.getContext('2d', actual.getContext('2d').getContextAttributes()), viewport,
       transform: [actual.width / viewport.width, 0, 0, actual.height / viewport.height, 0, 0],
       annotationMode: 2 }).promise;
     return sourceAnnotations.filter(a => a.subtype === 'FreeText').map(annotation => {

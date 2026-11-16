@@ -36,6 +36,8 @@ export function browserRuntimeOptions(mode = process.env.FILE_VIEWER_DISTRIBUTIO
 }
 
 export function browserLibraryDefines() {
+  // Bundled ES modules own their CommonJS SDK factories. A host AMD loader must
+  // not claim those internals or make downstream bundlers resolve dead AMD imports.
   // Deployment URLs belong to explicit library options, not the host bundler.
-  return { 'process.env.PUBLIC_URL': 'undefined' }
+  return { 'process.env.PUBLIC_URL': 'undefined', 'define.amd': 'false' }
 }

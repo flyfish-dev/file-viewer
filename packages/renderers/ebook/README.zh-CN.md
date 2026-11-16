@@ -44,6 +44,12 @@ const options = {
 
 EPUB 正文与目录跟随 `options.theme`，支持 `system` 与实时切换。深色阅读覆盖文字和纯色背景，不反相图片，也不重新加载章节。设置 `epub.darkMode: false` 保留书籍原始配色，设为 `true` 可强制深色阅读。UMD、FB2 的渲染不受影响。
 
+## EPUB 外部资源
+
+预览用户上传或不受信任的 EPUB 归档时，在 viewer options 中设置 `epub: { externalResources: 'block' }`。EPUB 渲染器会阻止章节外部资源及自身封面捕获请求，移除 base 地址和 refresh 跳转，保留归档内 blob/data 图片与字体、内联/blob 样式和书内导航。无法应用策略的章节会报错并释放书籍资源。
+
+默认值为 `'allow'`，兼容依赖外部资源的已有书籍；离线阅读请显式选择 `'block'`。block 模式的捕获需要本地封面，缺少时会报告捕获不可用，不委托宿主 DOM 捕获。该选项作用于 EPUB 渲染器及其原生封面捕获，不改变宿主页面的网络能力或独立的嵌入缩略图提取器。UMD、FB2 不受影响。
+
 ## 迁移说明
 
 `@file-viewer/core` 已不再内置 EPUB / UMD renderer，也不再直接安装 `epubjs` 或 `pako`。需要电子书预览时，请显式安装本包，或直接使用 `@file-viewer/preset-all` 聚合能力；`epubjs` 已作为本包的离线懒加载产物随包发布，不会进入应用的外部生产依赖树。

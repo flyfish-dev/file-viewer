@@ -1082,7 +1082,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
       "download": true,
       "print": true,
       "exportHtml": true,
-      "zoom": false,
+      "zoom": "provider",
       "search": true
     }
   },
@@ -1163,7 +1163,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
       "download": true,
       "print": true,
       "exportHtml": true,
-      "zoom": false,
+      "zoom": "provider",
       "search": true
     }
   },

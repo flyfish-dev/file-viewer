@@ -44,6 +44,12 @@ The no-reload behavior applies to observed theme attributes, system color-scheme
 
 EPUB chapters and navigation follow `options.theme`, including `system` and live changes. Dark reading overrides text and solid backgrounds without inverting images or reloading the chapter. Set `epub.darkMode: false` to retain the book's authored colors, or `true` to force dark reading. UMD and FB2 rendering are unchanged.
 
+## EPUB external resources
+
+For uploaded or untrusted EPUB archives, set `epub: { externalResources: 'block' }` in the viewer options. The EPUB renderer then blocks external chapter resources and its native cover capture requests, removes base URLs and refresh navigation, and keeps packaged blob/data images and fonts, inline/blob styles, and book navigation available. A chapter that cannot receive the policy fails closed and releases the book resources.
+
+The default is `'allow'` to preserve compatibility with books that depend on external assets; explicitly choose `'block'` for offline reading. Block-mode capture requires a local cover and reports capture unavailable when it is missing, rather than delegating to host DOM capture. This option covers the EPUB renderer, including its native cover capture. It does not change host-page networking or the separate embedded-thumbnail extractor. UMD and FB2 are unchanged.
+
 ## Migration Note
 
 The core package no longer bundles the EPUB / UMD renderer and no longer installs `epubjs` or `pako` directly. Install this renderer explicitly, or use `@file-viewer/preset-all`, when ebook preview is required. The EPUB engine ships as an offline, lazy-loaded artifact inside this package and does not enter the application's external production dependency tree.

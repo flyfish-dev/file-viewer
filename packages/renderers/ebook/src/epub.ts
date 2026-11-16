@@ -6,6 +6,7 @@ import {
 } from '@file-viewer/core';
 import { bindEpubViewportMedia, type EpubMediaRendition } from './epub-viewport-media.js';
 import { bindEpubReadingTheme } from './epubReadingTheme.js';
+import { bindEpubArchiveNavigation, captureEpubCover, createEpubArchiveNavigation, installEpubResourcePolicy, rejectEpubNetworkRequest, type EpubSerializeHooks } from './epub-resource-policy.js';
 
 type EpubLocation = {
   atEnd?: boolean;
@@ -38,12 +39,14 @@ type EpubPackaging = {
 };
 
 type EpubSpine = {
+  hooks?: { serialize?: EpubSerializeHooks };
   items?: Array<{
     href?: unknown;
   }>;
 };
 
 type EpubRendition = EpubMediaRendition & {
+  clear(): void;
   destroy(): void;
   display(href?: string): Promise<unknown>;
   next(): Promise<unknown>;
@@ -67,6 +70,7 @@ type EpubBook = {
   };
   package?: EpubPackaging;
   packaging?: EpubPackaging;
+  path?: { relative(href: string): string };
   ready: Promise<unknown>;
   renderTo(target: HTMLElement, options: Record<string, unknown>): EpubRendition;
   spine?: EpubSpine;
@@ -75,6 +79,7 @@ type EpubBook = {
 type EpubFactory = (buffer: ArrayBuffer, options?: {
   openAs?: string;
   replacements?: string;
+  requestMethod?: typeof rejectEpubNetworkRequest;
 }) => EpubBook;
 
 const isEpubFactory = (value: unknown): value is EpubFactory => {
@@ -309,6 +314,12 @@ export default async function renderEpub(
   context?: FileRenderContext
 ): Promise<FileViewerRenderedInstance> {
   const t = createFileViewerTranslator(context?.i18n || context?.options);
+  const externalResources = context?.options?.epub?.externalResources ?? 'allow';
+  if (externalResources !== 'allow' && externalResources !== 'block') {
+    throw new Error('Unknown EPUB external resource policy.');
+  }
+  const blockExternal = externalResources === 'block';
+  const captureAbort = new AbortController();
   let book: EpubBook | undefined;
   let rendition: EpubRendition | undefined;
   let disposed = false;
@@ -321,7 +332,7 @@ export default async function renderEpub(
   let progress: number | null = null;
   let atStart = true;
   let atEnd = false;
-  const timers = new Set<number>();
+  const timers = new Map<number, () => void>();
   const cleanups: Array<() => void> = [];
 
   const root = createElement('div', 'epub-viewer');
@@ -404,12 +415,26 @@ export default async function renderEpub(
     });
   };
 
+  const releaseBook = () => {
+    captureAbort.abort();
+    cleanups.splice(0).forEach(cleanup => cleanup());
+    const currentBook = book;
+    const currentRendition = rendition;
+    book = undefined;
+    rendition = undefined;
+    currentRendition?.off('relocated', updateLocation);
+    // epub.js Book owns its rendition and destroys it along with archive blob URLs.
+    if (currentBook) currentBook.destroy();
+    else currentRendition?.destroy();
+  };
+
   const showRenditionError = (error: unknown) => {
     if (disposed) {
       return;
     }
     console.error(error);
     status = 'error';
+    releaseBook();
     t.bind(state, node => { node.textContent = normalizeFileViewerErrorMessage(error, context?.options); });
     syncUi();
   };
@@ -454,7 +479,7 @@ export default async function renderEpub(
       timers.delete(timer);
       resolve(undefined);
     }, ms);
-    timers.add(timer);
+    timers.set(timer, () => resolve(undefined));
   });
 
   const hasReadableFrame = () => {
@@ -494,6 +519,7 @@ export default async function renderEpub(
       book = ePub(buffer.slice(0), {
         openAs: 'binary',
         replacements: 'blobUrl',
+        ...(blockExternal ? { requestMethod: rejectEpubNetworkRequest } : {}),
       });
 
       rendition = book.renderTo(stage, {
@@ -526,6 +552,21 @@ export default async function renderEpub(
       rendition.on('relocated', updateLocation);
 
       await book.ready;
+      if (disposed) return;
+      if (blockExternal) {
+        const relativeHref = book.path?.relative?.bind(book.path);
+        if (!relativeHref) throw new Error('EPUB archive navigation is unavailable.');
+        const navigation = createEpubArchiveNavigation();
+        cleanups.push(navigation.release);
+        cleanups.push(installEpubResourcePolicy(book.spine?.hooks?.serialize, showRenditionError, navigation.urlForHref));
+        cleanups.push(bindEpubArchiveNavigation(rendition.hooks.content, (href, native) => {
+          runRenditionAction(() => {
+            // A native ticket replaced the iframe document; discard that view before reuse.
+            if (native) rendition?.clear();
+            return rendition?.display(relativeHref(href)) || Promise.resolve();
+          });
+        }, navigation));
+      }
       const metadata = await book.loaded.metadata.catch(() => undefined);
       title = normalizeLabel(metadata?.title, title);
       author = normalizeLabel(metadata?.creator, '');
@@ -580,14 +621,36 @@ export default async function renderEpub(
         throw new Error(state.textContent || t('epub.renderIncomplete'));
       }
     },
-    capture: async () => {
-      const coverUrl = await book
-        ?.coverUrl?.()
-        .catch(() => null);
-      if (!coverUrl) {
+    capture: async ({ signal }: { signal?: AbortSignal } = {}) => {
+      if (disposed || status === 'error') throw new Error('EPUB is not available for capture.');
+      const activeBook = book;
+      let coverUrl: string | null | undefined;
+      try {
+        coverUrl = await activeBook?.coverUrl?.();
+      } catch {
+        if (blockExternal) throw new Error('A local EPUB cover is required for capture in block mode.');
         return null;
       }
-      return fetch(coverUrl).then(response => response.ok ? response.blob() : null).catch(() => null);
+      if (!coverUrl) {
+        // Returning null delegates to a host DOM capture, outside the chapter CSP.
+        if (blockExternal) throw new Error('A local EPUB cover is required for capture in block mode.');
+        return null;
+      }
+      if (disposed || book !== activeBook || captureAbort.signal.aborted) throw new Error('EPUB capture was cancelled.');
+      const controller = new AbortController();
+      const abort = () => controller.abort();
+      signal?.addEventListener('abort', abort, { once: true });
+      captureAbort.signal.addEventListener('abort', abort, { once: true });
+      if (signal?.aborted) abort();
+      try {
+        return await captureEpubCover(coverUrl, blockExternal, controller.signal);
+      } catch (error) {
+        if (blockExternal) throw error;
+        return null;
+      } finally {
+        signal?.removeEventListener('abort', abort);
+        captureAbort.signal.removeEventListener('abort', abort);
+      }
     },
     getTarget: () => stage.querySelector('iframe')?.contentDocument?.body || stage,
   });
@@ -598,16 +661,9 @@ export default async function renderEpub(
     unmount() {
       disposed = true;
       context?.registerThumbnailAdapter?.(null);
-      timers.forEach(timer => window.clearTimeout(timer));
+      timers.forEach((finish, timer) => { window.clearTimeout(timer); finish(); });
       timers.clear();
-      cleanups.splice(0).forEach(cleanup => cleanup());
-      if (rendition) {
-        rendition.off('relocated', updateLocation);
-        rendition.destroy();
-        rendition = undefined;
-      }
-      book?.destroy();
-      book = undefined;
+      releaseBook();
       target.replaceChildren();
     },
   };
