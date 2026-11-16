@@ -4,8 +4,9 @@ import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { pathToFileURL } from 'node:url'
 import test from 'node:test'
-import { downloadFrozenCandidate } from '../runtime-ci-artifacts.mjs'
+import { command, downloadFrozenCandidate } from '../runtime-ci-artifacts.mjs'
 import {
   productionCaseIds,
   readPublishedReleaseContext,
@@ -22,6 +23,52 @@ const contract = JSON.parse(
 )
 const clone = (value) => structuredClone(value)
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex')
+
+test('published ancestry needs retained Git history and still rejects unrelated commits', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'published-release-history-test-'))
+  const upstream = join(dir, 'upstream'),
+    checkout = join(dir, 'checkout')
+  const git = (cwd, ...args) => command('git', args, { cwd })
+  const ancestry = (ancestor) => git(checkout, 'merge-base', '--is-ancestor', ancestor, 'HEAD')
+  try {
+    await mkdir(upstream)
+    await git(upstream, 'init', '--initial-branch=main')
+    await git(upstream, 'config', 'user.name', 'Control fixture')
+    await git(upstream, 'config', 'user.email', 'control@example.invalid')
+    await writeFile(join(upstream, 'release.txt'), 'immutable release\n')
+    await git(upstream, 'add', 'release.txt')
+    await git(upstream, 'commit', '-m', 'Retain a release ancestor')
+    const release = (await git(upstream, 'rev-parse', 'HEAD')).trim()
+    await writeFile(join(upstream, 'release.txt'), 'qualified control descendant\n')
+    await git(upstream, 'commit', '-am', 'Add descendant release controls')
+    await git(upstream, 'switch', '--orphan', 'unrelated')
+    await writeFile(join(upstream, 'unrelated.txt'), 'independent history\n')
+    await git(upstream, 'add', 'unrelated.txt')
+    await git(upstream, 'commit', '-m', 'Keep unrelated ancestry rejected')
+    const unrelated = (await git(upstream, 'rev-parse', 'HEAD')).trim()
+    await git(upstream, 'switch', 'main')
+
+    await git(dir, 'clone', '--depth=1', '--branch=main', pathToFileURL(upstream).href, checkout)
+    assert.equal((await git(checkout, 'rev-parse', '--is-shallow-repository')).trim(), 'true')
+    await assert.rejects(ancestry(release), /git failed \(128\)/)
+    await ancestry('HEAD')
+
+    await git(
+      checkout,
+      'fetch',
+      '--unshallow',
+      '--no-recurse-submodules',
+      'origin',
+      '+refs/heads/*:refs/remotes/origin/*'
+    )
+    assert.equal((await git(checkout, 'rev-parse', '--is-shallow-repository')).trim(), 'false')
+    await ancestry(release)
+    assert.equal((await git(checkout, 'cat-file', '-t', unrelated)).trim(), 'commit')
+    await assert.rejects(ancestry(unrelated), /git failed \(1\)/)
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
 
 test('the explicit profile retains all 89 original TAR checks and exact three support inputs', async () => {
   const context = await readPublishedReleaseContext(root)
