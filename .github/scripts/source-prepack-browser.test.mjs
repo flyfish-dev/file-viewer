@@ -528,9 +528,9 @@ test('all spreadsheet owners require the Worker built from the actual current Co
     )
   )
   const asset = {
-    path: 'served/402bccc165309c46c1340ff74aa14640f1a917866b72dc4c110c7cb9e046aacc.js',
-    bytes: 779775,
-    sha256: '402bccc165309c46c1340ff74aa14640f1a917866b72dc4c110c7cb9e046aacc'
+    path: 'served/89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18.js',
+    bytes: 782171,
+    sha256: '89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18'
   }
   for (const [runId, count] of [
     ['issue-211-spreadsheet-table-styles', 9],
@@ -637,6 +637,7 @@ test('the reviewed 3.3.5 profile rejects superseded Playwright and independently
       779775,
       'a93cf71745c076d59b1049d5358e2a04635fb5b5022b177a2a2603943e855e2a'
     ],
+    ['issue-211-spreadsheet-table-styles', 779775, '402bccc165309c46c1340ff74aa14640f1a917866b72dc4c110c7cb9e046aacc'],
     ['issue-208-tiff', 83504, '84587f5b6f559e2efead4dbb63dfa399e716c347db61d6199172f52e6bf082d4']
   ]) {
     const asset = plan.requiredCases.find((row) => row.runId === runId).servedAssets[0]
