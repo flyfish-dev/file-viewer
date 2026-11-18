@@ -2346,7 +2346,10 @@ const verifySamplePickerLayering = async page => {
     await page.waitForSelector('.mobile-action-panel', { timeout })
     await page.locator('.mobile-action-source-grid button').nth(2).click()
     await page.waitForSelector('.mobile-controls-open .sample-picker.open .sample-menu', { timeout })
-    await page.waitForTimeout(300)
+    await page.waitForFunction(() => {
+      const panel = window.__fileViewerSmokeQuery('.control-panel')
+      return panel instanceof HTMLElement && panel.getBoundingClientRect().bottom <= window.innerHeight + 1
+    }, undefined, { timeout: 2_000 })
     const mobileLayout = await page.evaluate(() => {
       const panel = window.__fileViewerSmokeQuery('.control-panel')
       const menu = window.__fileViewerSmokeQuery('.sample-menu')
@@ -2513,8 +2516,7 @@ const probeScrollbarDeclarations = async (page) => {
 }
 
 const verifyFileCapsuleMotion = async (page) => {
-  const readCapsuleFrame = (diagnoseInitialFailure = false) =>
-    page.evaluate(diagnoseInitialFailure => {
+  const measureFrame = await page.evaluateHandle(() => diagnoseInitialFailure => {
       const shell = window.__fileViewerSmokeQuery('.demo-shell')
       const rail = window.__fileViewerSmokeQuery('.rail-navigation')
       const toolbar = window.__fileViewerSmokeQuery('.viewer-toolbar')
@@ -2658,7 +2660,9 @@ const verifyFileCapsuleMotion = async (page) => {
         } catch { frame.scrollbarDiagnostics = { unavailable: true } }
       }
       return frame
-    }, diagnoseInitialFailure)
+    })
+  const readCapsuleFrame = (diagnoseInitialFailure = false) =>
+    measureFrame.evaluate((measure, diagnose) => measure(diagnose), diagnoseInitialFailure)
   const assertNoLegacyBridge = (frame, label) => {
     if (
       !frame ||
@@ -2670,6 +2674,16 @@ const verifyFileCapsuleMotion = async (page) => {
         `${label} file capsule retained a bridge artifact: ${JSON.stringify(frame, null, 2)}`
       )
     }
+  }
+  const readSettledCapsuleFrame = async (state, timeout, isSettled) => {
+    const deadline = Date.now() + timeout
+    let frame = await readCapsuleFrame()
+    // CSS positioning can settle a frame after the state timer fires.
+    while (Date.now() < deadline && (frame?.state !== state || !isSettled(frame))) {
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => resolve())))
+      frame = await readCapsuleFrame()
+    }
+    return frame
   }
   const maxRectDelta = (first, second) =>
     Math.max(
@@ -2780,59 +2794,79 @@ const verifyFileCapsuleMotion = async (page) => {
   }
 
   await page.locator('.rail-navigation').hover()
-  await page.waitForFunction(
-    () => window.__fileViewerSmokeQuery('.demo-shell')?.dataset.fileCapsuleState === 'expanded',
-    undefined,
-    { timeout: 2_000 }
-  )
-  const expanded = await readCapsuleFrame()
+  const isExpandedGeometry = frame => {
+    const center = frame.toolbar.left + frame.toolbar.width / 2
+    return frame.toolbar.top >= frame.rail.bottom + 16 &&
+      Math.abs(center - frame.viewportWidth / 2) <= 1
+  }
+  const expanded = await readSettledCapsuleFrame('expanded', 2_000, isExpandedGeometry)
   assertNoLegacyBridge(expanded, 'Expanded')
-  const expandedCenter = expanded.toolbar.left + expanded.toolbar.width / 2
-  if (
-    expanded.state !== 'expanded' ||
-    expanded.toolbar.top < expanded.rail.bottom + 16 ||
-    Math.abs(expandedCenter - expanded.viewportWidth / 2) > 1
-  ) {
+  if (expanded.state !== 'expanded' || !isExpandedGeometry(expanded)) {
     throw new Error(`File capsule expansion is misaligned: ${JSON.stringify(expanded, null, 2)}`)
   }
 
-  const leaveStartedAt = Date.now()
-  await page.mouse.move(24, 920)
-  await page.waitForTimeout(900)
-  const beforeIdleDelay = await readCapsuleFrame()
-  assertNoLegacyBridge(beforeIdleDelay, 'Idle delay')
-  if (beforeIdleDelay.state !== 'expanded') {
-    throw new Error(
-      `File capsule merged before its one-second delay: ${JSON.stringify(beforeIdleDelay, null, 2)}`
+  const outside = { x: 24, y: 920 }
+  const monitor = await measureFrame.evaluateHandle((measure, outside) => {
+    const shell = window.__fileViewerSmokeQuery('.demo-shell')
+    const events = []
+    const recordFrame = () => events.push({ at: performance.now(), frame: measure(false) })
+    const recordDeparture = event => {
+      if (event.clientX !== outside.x || event.clientY !== outside.y) return
+      recordFrame()
+      document.removeEventListener('pointermove', recordDeparture, true)
+    }
+    const observer = new MutationObserver(() => {
+      if (events.length && events.at(-1).frame.state !== shell.dataset.fileCapsuleState) {
+        recordFrame()
+      }
+    })
+    document.addEventListener('pointermove', recordDeparture, true)
+    observer.observe(shell, { attributes: true, attributeFilter: ['data-file-capsule-state'] })
+    return {
+      events,
+      stop() {
+        observer.disconnect()
+        document.removeEventListener('pointermove', recordDeparture, true)
+      }
+    }
+  }, outside)
+  let phases
+  try {
+    await page.mouse.move(outside.x, outside.y)
+    await page.waitForFunction(
+      trace => trace.events.length > 1 && trace.events.at(-1).frame.state === 'merged',
+      monitor,
+      { timeout: 2_500 }
     )
+    phases = await monitor.evaluate(trace => trace.events)
+  } finally {
+    await monitor.evaluate(trace => trace.stop())
+    await monitor.dispose()
   }
-  await page.waitForFunction(
-    () => window.__fileViewerSmokeQuery('.demo-shell')?.dataset.fileCapsuleState === 'compacting',
-    undefined,
-    { timeout: 500 }
-  )
-  const compactStartedAfter = Date.now() - leaveStartedAt
-  if (compactStartedAfter < 950 || compactStartedAfter > 1_300) {
-    throw new Error(`File capsule compact timing drifted to ${compactStartedAfter}ms.`)
+  // Use the browser's event times so that host scheduling cannot hide an intermediate phase.
+  const states = phases.map(phase => phase.frame.state)
+  if (states.join(',') !== 'expanded,compacting,merging,merged') {
+    throw new Error(`File capsule did not traverse its original phases: ${JSON.stringify(phases)}`)
   }
-  const compacting = await readCapsuleFrame()
-  assertNoLegacyBridge(compacting, 'Compacting')
+  const [departure, compacting, merging, settledState] = phases
+  const beforeIdleDelay = phases.findLast(phase => phase.at - departure.at <= 900)
+  assertNoLegacyBridge(beforeIdleDelay.frame, 'Idle delay')
+  if (beforeIdleDelay.frame.state !== 'expanded') {
+    throw new Error(`File capsule merged before its one-second delay: ${JSON.stringify(phases)}`)
+  }
+  const compactStartedAfter = compacting.at - departure.at
+  if (compactStartedAfter < 950 || compactStartedAfter > 1_300 ||
+      merging.at - compacting.at > 500 || settledState.at - merging.at > 700) {
+    throw new Error(`File capsule compact timing drifted: ${JSON.stringify(phases)}`)
+  }
+  assertNoLegacyBridge(compacting.frame, 'Compacting')
+  assertNoLegacyBridge(merging.frame, 'Merging')
 
-  await page.waitForFunction(
-    () => window.__fileViewerSmokeQuery('.demo-shell')?.dataset.fileCapsuleState === 'merging',
-    undefined,
-    { timeout: 500 }
-  )
-  const merging = await readCapsuleFrame()
-  assertNoLegacyBridge(merging, 'Merging')
-  await page.waitForFunction(
-    () => window.__fileViewerSmokeQuery('.demo-shell')?.dataset.fileCapsuleState === 'merged',
-    undefined,
-    { timeout: 700 }
-  )
-  const merged = await readCapsuleFrame()
+  const isMergedGeometry = frame => maxRectDelta(initial.toolbar, frame.toolbar) <= 1
+  const merged = await readSettledCapsuleFrame('merged', 700, isMergedGeometry)
+  await measureFrame.dispose()
   assertNoLegacyBridge(merged, 'Final merged')
-  if (maxRectDelta(initial.toolbar, merged.toolbar) > 1) {
+  if (merged.state !== 'merged' || !isMergedGeometry(merged)) {
     throw new Error(
       `File capsule did not settle on its original rect: ${JSON.stringify({ initial, merged }, null, 2)}`
     )
@@ -3439,24 +3473,24 @@ const verifyPageAwarePrintMaskAdapter = async (
   await page.locator('.viewer-print-menu').first().waitFor({ state: 'visible', timeout: sampleTimeout })
   await page.evaluate(() => {
     globalThis.__printedMaskHtml = ''
-    const captureDocument = new DOMParser().parseFromString(
-      '<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body></body></html>',
-      'text/html'
-    )
-    const captureWindow = {
-      document: captureDocument,
-      addEventListener: window.addEventListener.bind(window),
-      removeEventListener: window.removeEventListener.bind(window),
-      clearTimeout: window.clearTimeout.bind(window),
-      close() {},
-      focus() {},
-      print() {
-        globalThis.__printedMaskHtml = `<!doctype html>${captureDocument.documentElement.outerHTML}`
-      },
-      requestAnimationFrame: window.requestAnimationFrame.bind(window),
-      setTimeout: window.setTimeout.bind(window),
-    }
-    window.open = () => captureWindow
+    globalThis.__printedMaskMode = ''
+    // The print action commits the snapshot to the browser's print frame.
+    // Intercept the native dialog on that actual frame after it has loaded.
+    document.addEventListener('load', function capturePrintFrame(event) {
+      const frame = event.target
+      if (!(frame instanceof HTMLIFrameElement) ||
+          frame.getAttribute('aria-hidden') !== 'true' ||
+          frame.tabIndex !== -1 ||
+          !frame.src.startsWith('blob:')) return
+      const printWindow = frame.contentWindow
+      if (!printWindow) return
+      printWindow.print = () => {
+        const printDocument = printWindow.document
+        globalThis.__printedMaskMode = printDocument.compatMode
+        globalThis.__printedMaskHtml = `<!doctype html>${printDocument.documentElement.outerHTML}`
+      }
+      document.removeEventListener('load', capturePrintFrame, true)
+    }, true)
   })
 
   const printMenu = page.locator('.viewer-print-menu:visible').first()
@@ -3568,6 +3602,7 @@ const verifyPageAwarePrintMaskAdapter = async (
       '[data-viewer-print-page-index] > .viewer-export-print-mask'
     )]
     return {
+      mode: globalThis.__printedMaskMode,
       indexedPages: documentRef.querySelectorAll('[data-viewer-print-page-index]').length,
       pageMasks: pageMasks.length,
       maskPageIndices: pageMasks.map(mask => mask.parentElement?.getAttribute(
@@ -3579,6 +3614,7 @@ const verifyPageAwarePrintMaskAdapter = async (
     }
   })
   if (
+    exportState.mode !== 'CSS1Compat' ||
     exportState.indexedPages < 1 ||
     exportState.pageMasks !== 1 ||
     exportState.maskPageIndices.some(value => value === null) ||

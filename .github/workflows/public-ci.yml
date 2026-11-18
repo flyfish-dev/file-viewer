@@ -251,7 +251,21 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         env:
           FILE_VIEWER_ISSUE474_ENGINES: chromium,firefox,webkit
-        run: node packages/renderers/pptx/scripts/verify-cross-origin-worker.mjs
+        run: |
+          set -euo pipefail
+          fixture='test/fixtures/issue-200/layout.pptx'
+          checksum='59e13ce544852ba07f4f9e2e324339e261999ccb5b57bf1168c54c58a867c40e'
+          if [[ ! -e "$fixture" ]]; then
+            mkdir -p "$(dirname "$fixture")"
+            download="$(mktemp "$(dirname "$fixture")/.layout.pptx.XXXXXX")"
+            trap 'rm -f -- "$download"' EXIT
+            curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+              --max-time 30 --retry 2 --output "$download" 'https://github.com/user-attachments/files/31445055/PPTX.pptx'
+            printf '%s  %s\n' "$checksum" "$download" | sha256sum --check --status
+            mv -- "$download" "$fixture"
+          fi
+          printf '%s  %s\n' "$checksum" "$fixture" | sha256sum --check --status
+          node packages/renderers/pptx/scripts/verify-cross-origin-worker.mjs
 
       - name: Verify metadata-only document inspection in three browser engines
         if: steps.impact.outputs.runtime != 'false'
