@@ -4,7 +4,7 @@ import { resolvePptxEngineOptions, RECOMMENDED_ZIP_LIMITS } from './options';
 import { PptxPresentation } from './presentation';
 import type { PptxPresentationState } from './presentation';
 import { sanitizePptxCss, sanitizePptxMarkup } from './sanitize';
-import { ensurePptxViewerStyles } from './styles';
+import { ensurePptxViewerStyles, pptxViewerCss } from './styles';
 import type { PptxDiagnosticError, PptxSlideSize, PptxViewerOptions, PptxWorkerMessage } from './types';
 import { createPptxWorker } from './worker';
 
@@ -909,7 +909,7 @@ export class PptxViewer {
   /** Materializes every lazy slide only for the duration of an export snapshot. */
   async cloneForExport() {
     if (!this.shouldWindowSlides()) {
-      return this.target.cloneNode(true) as HTMLElement;
+      return this.snapshot();
     }
 
     const previouslyRendered = new Set(
@@ -918,7 +918,7 @@ export class PptxViewer {
     try {
       this.slideRecords.forEach(record => this.renderSlideRecord(record));
       await Promise.all(this.slideRecords.map(record => this.postProcessSlideRecord(record)));
-      return this.target.cloneNode(true) as HTMLElement;
+      return this.snapshot();
     } finally {
       this.slideRecords.forEach(record => {
         if (!previouslyRendered.has(record)) {
@@ -928,6 +928,23 @@ export class PptxViewer {
       this.scheduleSlideWindowUpdate();
       this.scheduleResize();
     }
+  }
+
+  private snapshot() {
+    const clone = this.target.cloneNode(false) as HTMLElement;
+    clone.classList.add('flyfish-pptx-export');
+    const scaleBox = this.scaleBox.cloneNode(true) as HTMLElement;
+    scaleBox.style.removeProperty('width');
+    scaleBox.style.removeProperty('height');
+    const content = scaleBox.firstElementChild as HTMLElement;
+    content.style.removeProperty('transform');
+    content.classList.remove('is-presenting');
+    // The viewer can install its stylesheet in a ShadowRoot outside the slide
+    // tree. The standalone snapshot needs the renderer-owned rules explicitly.
+    const style = clone.ownerDocument.createElement('style');
+    style.textContent = pptxViewerCss;
+    clone.append(style, scaleBox);
+    return clone;
   }
 
   private async complete(charts: unknown) {

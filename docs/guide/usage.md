@@ -216,7 +216,7 @@ Built-in operation keys are `download`, `print`, `export-html`, `zoom-in`, `zoom
 
 Print delivery notes:
 
-- `printRenderedHtml()` prints the full rendered document and keeps the current watermark when `options.watermark` is enabled.
+- `printRenderedHtml()` prints the full rendered document in place and keeps the current watermark when `options.watermark` is enabled. If you set a Content Security Policy, allow `blob:` in `frame-src` for direct printing. Use `{ autoPrint: false }` to open a separate print preview.
 - `printWithMask()` opens the page-aware mask and stamp designer. It can draw black cover regions or upload a local PNG, JPEG, WebP, GIF, or SVG stamp, then move, resize, remove, and print it under the watermark. Uploaded files stay in the browser as data URLs. The designer is loaded asynchronously inside core, so installing a component package is enough—no extra subpath alias is required.
 - Custom toolbars can call either API directly; `printRenderedHtml({ mask })` also accepts precomputed `regions` and `stamps`. Stamp geometry uses percent `left`, `top`, `width`, and `height`, with optional `pageIndex`, `opacity`, `rotate`, and `alt` fields.
 - Export / print HTML inlines ephemeral `blob:` image URLs as portable `data:` URLs, so DOCX figures remain visible after download or in the print window.

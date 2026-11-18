@@ -1,4 +1,4 @@
-import type { SheetChart, SheetChartSeries } from './worker/type.js'
+import type { SheetChart, SheetChartSeries, SheetChartValueAxis } from './worker/type.js'
 import { extremaPointIndexes } from './chartSampling.js'
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
@@ -13,6 +13,7 @@ type Plot = {
   height: number
   bottom: number
 }
+type IndexedSeries = { series: SheetChartSeries; index: number }
 
 const svgElement = <K extends keyof SVGElementTagNameMap>(
   documentRef: Document,
@@ -96,22 +97,22 @@ const showsSeriesLine = (chart: SheetChart, series: SheetChartSeries) => {
   if (series.lineVisible === false) {
     return false
   }
-  return chart.type !== 'scatter' || chart.scatterStyle?.toLowerCase() !== 'marker'
+  return (series.type || chart.type) !== 'scatter' || chart.scatterStyle?.toLowerCase() !== 'marker'
 }
 
 const showsSeriesMarker = (chart: SheetChart, series: SheetChartSeries) => {
   if (series.marker) {
     return series.marker.symbol.toLowerCase() !== 'none'
   }
-  if (chart.type !== 'scatter') {
+  if ((series.type || chart.type) !== 'scatter') {
     return false
   }
   const scatterStyle = (chart.scatterStyle || 'lineMarker').toLowerCase()
   return scatterStyle === 'marker' || scatterStyle.endsWith('marker')
 }
 
-const categoryLabelIndexes = (count: number, plotWidth: number) => {
-  const limit = Math.max(2, Math.floor(plotWidth / 28))
+const categoryLabelIndexes = (count: number, plotWidth: number, labelWidth = 28) => {
+  const limit = Math.max(2, Math.floor(plotWidth / labelWidth))
   if (count <= limit) {
     return Array.from({ length: count }, (_, index) => index)
   }
@@ -221,7 +222,11 @@ const drawSeriesMarker = (
 }
 
 const categoryLabels = (chart: SheetChart) => {
-  const labels = chart.series.reduce<string[]>((longest, series) =>
+  const matching = chart.categoryAxisId
+    ? chart.series.filter(series => series.categoryAxisId === chart.categoryAxisId)
+    : []
+  const candidates = matching.some(series => series.categories.length) ? matching : chart.series
+  const labels = candidates.reduce<string[]>((longest, series) =>
     series.categories.length > longest.length ? series.categories : longest, [])
   const valueCount = chart.series.reduce(
     (count, series) => Math.max(count, series.values.length),
@@ -230,10 +235,10 @@ const categoryLabels = (chart: SheetChart) => {
   return labels.length ? labels : Array.from({ length: valueCount }, (_, index) => `${index + 1}`)
 }
 
-const valueDomain = (chart: SheetChart) => {
+const valueDomain = (seriesList: SheetChartSeries[]) => {
   let min = 0
   let max = 0
-  chart.series.forEach((series) => {
+  seriesList.forEach((series) => {
     series.values.forEach((value) => {
       if (!Number.isFinite(value)) {
         return
@@ -248,14 +253,16 @@ const valueDomain = (chart: SheetChart) => {
   return { min, max, span: max - min }
 }
 
-const createPlot = (chart: SheetChart): Plot => {
+const createPlot = (chart: SheetChart, rightAxis = false): Plot => {
   const hasTitle = !!chart.title
   const hasLegend = !!chart.legendPosition
   const rightLegend = chart.legendPosition === 'right'
-  const top = hasTitle ? 48 : 24
-  const bottom = hasLegend && !rightLegend ? 302 : 326
+  const topLegend = chart.legendPosition === 'top'
+  const legendRows = Math.ceil(Math.min(chart.series.length, MAX_LEGEND_ITEMS) / 4)
+  const top = (hasTitle ? 48 : 24) + (topLegend ? legendRows * 20 : 0)
+  const bottom = hasLegend && !rightLegend && !topLegend ? 302 : 326
   const left = chart.valueAxisTitle ? 76 : 58
-  const right = rightLegend ? 492 : 612
+  const right = (rightLegend ? 492 : 612) - (rightAxis ? 42 : 0)
   return {
     left,
     top,
@@ -270,14 +277,22 @@ const drawValueGrid = (
   svg: SVGSVGElement,
   plot: Plot,
   domain: ReturnType<typeof valueDomain>,
-  fontSize = 10
+  fontSize = 10,
+  axis?: SheetChartValueAxis
 ) => {
+  const right = axis?.position === 'right'
+  const edge = right ? plot.left + plot.width : plot.left
+  if (right) {
+    svg.appendChild(svgElement(documentRef, 'line', {
+      x1: edge, x2: edge, y1: plot.top, y2: plot.bottom, stroke: '#9ca3af'
+    }))
+  }
   const tickCount = 5
   for (let index = 0; index <= tickCount; index += 1) {
     const ratio = index / tickCount
     const y = plot.bottom - ratio * plot.height
     const value = domain.min + ratio * domain.span
-    svg.appendChild(
+    if (!right) svg.appendChild(
       svgElement(documentRef, 'line', {
         x1: plot.left,
         y1: y,
@@ -287,18 +302,24 @@ const drawValueGrid = (
         'stroke-width': 1
       })
     )
-    svg.appendChild(
-      svgText(
+    if (!axis?.hidden) {
+      const label = svgText(
         documentRef,
         Number.isInteger(value) ? `${value}` : value.toFixed(1),
-        plot.left - 8,
+        edge + (right ? 8 : -8),
         y + fontSize / 3,
         {
-          anchor: 'end',
+          anchor: right ? 'start' : 'end',
           size: fontSize
         }
       )
-    )
+      if (axis) {
+        label.classList.add('excel-chart-value-label')
+        label.dataset.axisId = axis.id
+        label.dataset.axisSide = axis.position
+      }
+      svg.appendChild(label)
+    }
   }
 }
 
@@ -307,7 +328,8 @@ const drawCategoryLabels = (
   svg: SVGSVGElement,
   chart: SheetChart,
   plot: Plot,
-  pointAxis = false
+  pointAxis = false,
+  bandCount?: number
 ) => {
   const categories = categoryLabels(chart)
   if (!categories.length) {
@@ -318,21 +340,24 @@ const drawCategoryLabels = (
     ...chart.series.map(series => series.sourcePointCount || Math.max(series.values.length, series.categories.length)),
     categories.length
   )
-  const step = plot.width / categories.length
+  const step = plot.width / (bandCount || categories.length)
   const visible = categories.flatMap((label, i) => label ? [i] : [])
-  categoryLabelIndexes(visible.length, plot.width).forEach((visibleIndex) => {
+  const fontSize = axisFontSize(chart, chart.categoryAxisFontSize, 10)
+  const dateLabelWidth = chart.categoryAxisDate ? categories.reduce((width, label) =>
+    Math.max(width, label.length * fontSize * (/[^\x00-\x7f]/.test(label) ? 0.8 : 0.55) + 8), 28) : 28
+  categoryLabelIndexes(visible.length, plot.width, dateLabelWidth).forEach((visibleIndex) => {
     const index = visible[visibleIndex]
     const category = categories[index]
     const maxLength = categories.length > 8 ? 8 : 14
-    const label = category.length > maxLength ? `${category.slice(0, maxLength - 1)}…` : category
+    const label = !chart.categoryAxisDate && category.length > maxLength ? `${category.slice(0, maxLength - 1)}…` : category
     const sourceIndex = categorySeries?.sourcePointIndexes?.[index] ?? index
     const x =
       pointAxis && categories.length > 1
         ? plot.left + (sourceIndex / Math.max(sourcePointCount - 1, 1)) * plot.width
-        : plot.left + (index + 0.5) * step
+        : plot.left + ((bandCount ? sourceIndex : index) + 0.5) * step
     const labelElement = svgText(documentRef, label, x, plot.bottom + 17, {
       anchor: 'middle',
-      size: axisFontSize(chart, chart.categoryAxisFontSize, 10)
+      size: fontSize
     })
     labelElement.classList.add('excel-chart-category-label')
     labelElement.dataset.categoryIndex = `${sourceIndex}`
@@ -340,37 +365,31 @@ const drawCategoryLabels = (
   })
 }
 
-const drawColumnChart = (
+const drawColumnSeries = (
   documentRef: Document,
   svg: SVGSVGElement,
-  chart: SheetChart,
-  plot: Plot
+  plot: Plot,
+  entries: IndexedSeries[],
+  categoryCount: number,
+  domainFor: (series: SheetChartSeries) => ReturnType<typeof valueDomain>
 ) => {
-  const domain = valueDomain(chart)
-  const categories = categoryLabels(chart)
-  const categoryCount = Math.max(
-    categories.length,
-    chart.series.reduce((count, series) => Math.max(count, series.values.length), 0),
-    1
-  )
   const groupWidth = plot.width / categoryCount
-  const seriesCount = Math.max(chart.series.length, 1)
-  const slotWidth = (groupWidth * 0.76) / seriesCount
-  const zeroY = plot.bottom - ((0 - domain.min) / domain.span) * plot.height
+  const slotWidth = (groupWidth * 0.76) / Math.max(entries.length, 1)
 
-  drawValueGrid(documentRef, svg, plot, domain, axisFontSize(chart, chart.valueAxisFontSize, 10))
-  chart.series.forEach((series, seriesIndex) => {
+  entries.forEach(({series, index}, slot) => {
+    const domain = domainFor(series)
+    const zeroY = plot.bottom - ((0 - domain.min) / domain.span) * plot.height
     series.values.forEach((value, valueIndex) => {
       if (!Number.isFinite(value)) return
       const valueY = plot.bottom - ((value - domain.min) / domain.span) * plot.height
-      const x = plot.left + valueIndex * groupWidth + groupWidth * 0.12 + seriesIndex * slotWidth
+      const x = plot.left + valueIndex * groupWidth + groupWidth * 0.12 + slot * slotWidth
       const y = Math.min(zeroY, valueY)
       const rect = svgElement(documentRef, 'rect', {
         x,
         y,
         width: Math.max(1, slotWidth - 2),
         height: Math.max(1, Math.abs(zeroY - valueY)),
-        fill: seriesColor(series, seriesIndex),
+        fill: seriesColor(series, index),
         rx: 1
       })
       const title = svgElement(documentRef, 'title')
@@ -379,6 +398,16 @@ const drawColumnChart = (
       svg.appendChild(rect)
     })
   })
+}
+
+const drawColumnChart = (documentRef: Document, svg: SVGSVGElement, chart: SheetChart, plot: Plot) => {
+  const domain = valueDomain(chart.series)
+  const categoryCount = chart.series.reduce(
+    (count, series) => Math.max(count, series.values.length, series.categories.length), 1
+  )
+  drawValueGrid(documentRef, svg, plot, domain, axisFontSize(chart, chart.valueAxisFontSize, 10))
+  drawColumnSeries(documentRef, svg, plot, chart.series.map((series, index) => ({series, index})),
+    categoryCount, () => domain)
   drawCategoryLabels(documentRef, svg, chart, plot)
 }
 
@@ -388,7 +417,7 @@ const drawHorizontalBarChart = (
   chart: SheetChart,
   plot: Plot
 ) => {
-  const domain = valueDomain(chart)
+  const domain = valueDomain(chart.series)
   const categories = categoryLabels(chart)
   const categoryCount = Math.max(
     categories.length,
@@ -443,89 +472,130 @@ const drawHorizontalBarChart = (
   })
 }
 
-const drawLineChart = (
+const drawLineSeries = (
   documentRef: Document,
   svg: SVGSVGElement,
   chart: SheetChart,
   plot: Plot,
-  fillArea: boolean
+  entry: IndexedSeries,
+  domain: ReturnType<typeof valueDomain>,
+  xAt: (sourceIndex: number) => number,
+  fillArea = false
 ) => {
-  const domain = valueDomain(chart)
-  const count = Math.max(
-    chart.series.reduce(
-      (pointCount, series) => Math.max(pointCount, series.sourcePointCount || series.values.length),
-      0
-    ),
-    1
+  const { series, index: seriesIndex } = entry
+  const pointIndexes = extremaPointIndexes(
+    series.values,
+    Math.max(64, Math.floor(plot.width * MAX_LINE_POINTS_PER_PIXEL)),
+    series.spanBlankIndexes
   )
-  const step = count > 1 ? plot.width / (count - 1) : plot.width
-
-  drawValueGrid(documentRef, svg, plot, domain, axisFontSize(chart, chart.valueAxisFontSize, 10))
-  chart.series.forEach((series, seriesIndex) => {
-    const pointIndexes = extremaPointIndexes(
-      series.values,
-      Math.max(64, Math.floor(plot.width * MAX_LINE_POINTS_PER_PIXEL)),
-      series.spanBlankIndexes
-    )
-    const spanning = new Set(series.spanBlankIndexes || [])
-    type Point = {x: number; y: number}
-    const segments: Point[][] = []
-    let segment: Point[] = []
-    for (const index of pointIndexes) {
-      const value = series.values[index]
-      if (!Number.isFinite(value)) {
-        if (spanning.has(index)) continue
-        if (segment.length) segments.push(segment)
-        segment = []
-        continue
-      }
-      const sourceIndex = series.sourcePointIndexes?.[index] ?? index
-      segment.push({
-        x: plot.left + (count > 1 ? sourceIndex * step : plot.width / 2),
-        y: plot.bottom - ((value - domain.min) / domain.span) * plot.height
+  const spanning = new Set(series.spanBlankIndexes || [])
+  type Point = {x: number; y: number}
+  const segments: Point[][] = []
+  let segment: Point[] = []
+  for (const index of pointIndexes) {
+    const value = series.values[index]
+    if (!Number.isFinite(value)) {
+      if (spanning.has(index)) continue
+      if (segment.length) segments.push(segment)
+      segment = []
+      continue
+    }
+    const sourceIndex = series.sourcePointIndexes?.[index] ?? index
+    segment.push({
+      x: xAt(sourceIndex),
+      y: plot.bottom - ((value - domain.min) / domain.span) * plot.height
+    })
+  }
+  if (segment.length) segments.push(segment)
+  const points = segments.flat()
+  if (!points.length) return
+  const pathFor = (points: Point[]) => points
+    .map((point, index) => `${index ? 'L' : 'M'}${point.x},${point.y}`).join(' ')
+  const pathData = segments.map(pathFor).join(' ')
+  if (fillArea) {
+    const zeroY = plot.bottom - ((0 - domain.min) / domain.span) * plot.height
+    for (const points of segments) {
+      if (points.length < 2) continue
+      svg.appendChild(svgElement(documentRef, 'path', {
+        class: 'excel-chart-area',
+        d: `${pathFor(points)} L${points[points.length - 1].x},${zeroY} L${points[0].x},${zeroY} Z`,
+        fill: seriesColor(series, seriesIndex), opacity: 0.2
+      }))
+    }
+  }
+  const color = seriesColor(series, seriesIndex)
+  const dashArray = seriesDashArray(series)
+  if (showsSeriesLine(chart, series)) {
+    svg.appendChild(
+      svgElement(documentRef, 'path', {
+        class: 'excel-chart-series-line',
+        ...(series.valueAxisId ? { 'data-axis-id': series.valueAxisId } : {}),
+        'data-source-point-count': series.sourcePointCount || series.values.length,
+        'data-transferred-point-count': series.values.length,
+        'data-rendered-point-count': points.length,
+        d: pathData,
+        fill: 'none',
+        stroke: color,
+        'stroke-width': seriesStrokeWidth(series),
+        ...(dashArray ? { 'stroke-dasharray': dashArray } : {}),
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round'
       })
-    }
-    if (segment.length) segments.push(segment)
-    const points = segments.flat()
-    if (!points.length) return
-    const pathFor = (points: Point[]) => points
-      .map((point, index) => `${index ? 'L' : 'M'}${point.x},${point.y}`).join(' ')
-    const pathData = segments.map(pathFor).join(' ')
-    if (fillArea) {
-      const zeroY = plot.bottom - ((0 - domain.min) / domain.span) * plot.height
-      for (const points of segments) {
-        if (points.length < 2) continue
-        svg.appendChild(svgElement(documentRef, 'path', {
-          class: 'excel-chart-area',
-          d: `${pathFor(points)} L${points[points.length - 1].x},${zeroY} L${points[0].x},${zeroY} Z`,
-          fill: seriesColor(series, seriesIndex), opacity: 0.2
-        }))
-      }
-    }
-    const color = seriesColor(series, seriesIndex)
-    const dashArray = seriesDashArray(series)
-    if (showsSeriesLine(chart, series)) {
-      svg.appendChild(
-        svgElement(documentRef, 'path', {
-          class: 'excel-chart-series-line',
-          'data-source-point-count': series.sourcePointCount || series.values.length,
-          'data-transferred-point-count': series.values.length,
-          'data-rendered-point-count': points.length,
-          d: pathData,
-          fill: 'none',
-          stroke: color,
-          'stroke-width': seriesStrokeWidth(series),
-          ...(dashArray ? { 'stroke-dasharray': dashArray } : {}),
-          'stroke-linejoin': 'round',
-          'stroke-linecap': 'round'
-        })
-      )
-    }
-    if (showsSeriesMarker(chart, series)) {
-      points.forEach((point) => drawSeriesMarker(documentRef, svg, series, color, point.x, point.y))
-    }
-  })
+    )
+  }
+  if (showsSeriesMarker(chart, series)) {
+    points.forEach((point) => drawSeriesMarker(documentRef, svg, series, color, point.x, point.y))
+  }
+}
+
+const drawLineChart = (
+  documentRef: Document, svg: SVGSVGElement, chart: SheetChart, plot: Plot, fillArea: boolean
+) => {
+  const domain = valueDomain(chart.series)
+  const count = chart.series.reduce(
+    (pointCount, series) => Math.max(pointCount, series.sourcePointCount || series.values.length), 1
+  )
+  const xAt = (index: number) => plot.left + plot.width * (count > 1 ? index / (count - 1) : 0.5)
+  drawValueGrid(documentRef, svg, plot, domain, axisFontSize(chart, chart.valueAxisFontSize, 10))
+  chart.series.forEach((series, index) =>
+    drawLineSeries(documentRef, svg, chart, plot, {series, index}, domain, xAt, fillArea))
   drawCategoryLabels(documentRef, svg, chart, plot, true)
+}
+
+const drawCombinationChart = (documentRef: Document, svg: SVGSVGElement, chart: SheetChart, plot: Plot) => {
+  const byAxis = new Map<string | undefined, SheetChartSeries[]>()
+  const entries = chart.series.map((series, index) => {
+    const group = byAxis.get(series.valueAxisId)
+    if (group) group.push(series)
+    else byAxis.set(series.valueAxisId, [series])
+    return {series, index}
+  })
+  const domains = new Map([...byAxis].map(([id, series]) => [id, valueDomain(series)]))
+  const fallback = valueDomain(chart.series)
+  const domainFor = (series: SheetChartSeries) => domains.get(series.valueAxisId) || fallback
+  const left = chart.valueAxes?.find(axis => axis.position === 'left')
+  const right = chart.valueAxes?.find(axis => axis.position === 'right' && !axis.hidden)
+  drawValueGrid(documentRef, svg, plot, domains.get(left?.id) || fallback,
+    axisFontSize(chart, left?.fontSize || chart.valueAxisFontSize, 10), left)
+  if (right) {
+    drawValueGrid(documentRef, svg, plot, domains.get(right.id) || fallback,
+      axisFontSize(chart, right.fontSize, 10), right)
+    if (right.title) {
+      svg.appendChild(svgText(documentRef, right.title, plot.left + plot.width + 62, plot.top + plot.height / 2,
+        { anchor: 'middle', size: 11, rotate: 90 }))
+    }
+  }
+  const count = chart.series.reduce((length, series) => Math.max(
+    length, series.sourcePointCount || series.values.length, series.categories.length
+  ), 1)
+  drawColumnSeries(documentRef, svg, plot, entries.filter(({series}) => series.type === 'bar'), count, domainFor)
+  for (const entry of entries) {
+    if (entry.series.type === 'line') {
+      drawLineSeries(documentRef, svg, chart, plot, entry, domainFor(entry.series),
+        index => plot.left + (index + 0.5) * plot.width / count)
+    }
+  }
+  drawCategoryLabels(documentRef, svg, chart, plot, false, count)
 }
 
 const polarPoint = (cx: number, cy: number, radius: number, angle: number) => {
@@ -604,6 +674,7 @@ const drawLegend = (documentRef: Document, svg: SVGSVGElement, chart: SheetChart
     return
   }
   const right = chart.legendPosition === 'right'
+  const top = chart.legendPosition === 'top'
   const categorySeries = chart.type === 'pie' || chart.type === 'doughnut' ? chart.series[0] : undefined
   // Build only visible entries when a pie has a large category cache.
   const entries = chart.type === 'pie' || chart.type === 'doughnut'
@@ -615,9 +686,12 @@ const drawLegend = (documentRef: Document, svg: SVGSVGElement, chart: SheetChart
     : chart.series
   entries.slice(0, MAX_LEGEND_ITEMS).forEach((series, index) => {
     const x = right ? 510 : 76 + (index % 4) * 136
-    const y = right ? 72 + index * 28 : 342 - Math.floor(index / 4) * 20
+    const y = right ? 72 + index * 28 : top
+      ? (chart.title ? 48 : 24) + Math.floor(index / 4) * 20
+      : 342 - Math.floor(index / 4) * 20
     const color = seriesColor(series, index)
-    const lineLike = chart.type === 'line' || chart.type === 'scatter' || chart.type === 'radar'
+    const seriesType = series.type || chart.type
+    const lineLike = seriesType === 'line' || seriesType === 'scatter' || seriesType === 'radar'
     if (lineLike) {
       if (showsSeriesLine(chart, series)) {
         const dashArray = seriesDashArray(series)
@@ -692,8 +766,11 @@ export const renderSpreadsheetChart = (documentRef: Document, chart: SheetChart)
     )
   }
 
-  const plot = createPlot(chart)
-  switch (chart.type) {
+  const rightAxis = chart.valueAxes?.find(axis => axis.position === 'right' && !axis.hidden)
+  const plot = createPlot(chart, !!rightAxis)
+  if (chart.series.some(series => series.type === 'bar') && chart.series.some(series => series.type === 'line')) {
+    drawCombinationChart(documentRef, svg, chart, plot)
+  } else switch (chart.type) {
     case 'pie':
       drawPieChart(documentRef, svg, chart, false)
       break

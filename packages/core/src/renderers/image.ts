@@ -6,7 +6,7 @@ import { installFileViewerImageHandTool } from '../features/document/imageHandTo
 import {
   resolveFileViewerFitScale,
 } from '../features/document/fit';
-import { createFileViewerTranslator } from '../i18n/messages';
+import { createFileViewerTranslator } from '../i18n/runtime';
 import { createFileViewerZoomChangeEmitter as createZoomChangeEmitter } from '../features/document/zoom';
 import type {
   FileRenderContext,

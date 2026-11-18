@@ -7,7 +7,7 @@ import { dirname, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import test from 'node:test'
 import JSZip from 'jszip'
-import { CAD_INTEGRATION_SOURCE } from './cad-source-offer.mjs'
+import { CAD_INTEGRATION_SOURCE, CAD_NATIVE_CORRESPONDING_SOURCES } from './cad-source-offer.mjs'
 import { readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
 import { cadPreferredSourceDigest, cadSourceSnapshotIdentifier, listCadPreferredSourcePaths } from './cad-preferred-source.mjs'
 import { assertCadOutputTree, buildCadStandaloneSource, cadGitBlobDigest, captureCadCommittedInputs,
@@ -78,7 +78,7 @@ test('new source membership replaces dropped files and includes newly added lang
   await assert.rejects(verifyCadPreferredSourceInputs(source, manifest), /omits or adds/)
 })
 
-test('standalone adaptations bind original inputs, normalize only local lock metadata and retain all grants', async t => {
+test('standalone adaptations retain grants and only update local metadata and reviewed native packages', async t => {
   const source = await fixture(t), prior = await priorPromise
   const payload = await prepareCadSourcePayload(source, '9.8.7', prior)
   for (const [path, bytes] of prior.files)
@@ -93,8 +93,23 @@ test('standalone adaptations bind original inputs, normalize only local lock met
   const oldLock = JSON.parse(prior.files.get('package-lock.json')), lock = JSON.parse(payload.files.get('package-lock.json'))
   assert.equal(lock.packages['packages/core'].version, '9.8.7')
   assert.equal(lock.packages['packages/renderers/cad'].dependencies['@file-viewer/core'], '9.8.7')
-  for (const [path, entry] of Object.entries(oldLock.packages))
-    if (path && !['packages/core', 'packages/renderers/cad'].includes(path)) assert.deepEqual(lock.packages[path], entry)
+  const nativeRefresh = oldLock.packages['node_modules/@flyfish-dev/cad-viewer'].version !==
+    cad.dependencies['@flyfish-dev/cad-viewer']
+  for (const [path, entry] of Object.entries(oldLock.packages)) {
+    if (!path || ['packages/core', 'packages/renderers/cad'].includes(path)) continue
+    const refreshed = nativeRefresh && CAD_NATIVE_CORRESPONDING_SOURCES.find(source =>
+      source.npm && path === 'node_modules/' + source.npm.name)
+    if (!refreshed) assert.deepEqual(lock.packages[path], entry)
+    else {
+      const { name, version, integrity } = refreshed.npm
+      const expected = { ...entry, version, integrity,
+        resolved: `https://registry.npmjs.org/${name}/-/${name.split('/').at(-1)}-${version}.tgz` }
+      if (name === '@flyfish-dev/cad-viewer') expected.dependencies = {
+        ...entry.dependencies, 'dwf-viewer': '^' + lock.packages['node_modules/dwf-viewer'].version
+      }
+      assert.deepEqual(lock.packages[path], expected)
+    }
+  }
   assert.deepEqual(payload.files.get('build.mjs'), prior.files.get('build.mjs'))
   const revised = await prepareCadSourcePayload(source, '9.8.7', {
     ...prior, manifest: { ...prior.manifest, sourceRevision: 'r1' }
@@ -162,6 +177,10 @@ test('explicit same-release revisions use new destinations and retain every sour
   assert.deepEqual(await readFile(join(source, 'packages/renderers/cad/CORRESPONDING_SOURCE.zip')), original)
   for (const input of prior.manifest.preferredSourceInputs)
     if (input.hashMode === 'bytes') await put(source, input.path, prior.files.get(input.path))
+  const cadPath = 'packages/renderers/cad/package.json'
+  const cad = JSON.parse(await readFile(join(source, cadPath)))
+  cad.dependencies['@flyfish-dev/cad-viewer'] = CAD_INTEGRATION_SOURCE.cadVersion
+  await put(source, cadPath, json(cad))
   const unchanged = await planCadSourceSnapshot({ sourceRoot: source, version, sourceRevision: revision })
   assert.ok(unchanged.plan.blockers.some(message => message.includes('requires changed preferred-source inputs')))
   const older = await planCadSourceSnapshot({ sourceRoot: source, version: '0.0.1', sourceRevision: revision })

@@ -38,6 +38,10 @@ npm install @file-viewer/core
 
 The browser `mountViewer` shell shows localized download feedback while buffering a URL, then reading feedback until the renderer takes over. File and buffer inputs use reading feedback. The status follows the configured locale/theme, reports acquisition failures, and is cleared when a source is replaced or the viewer is destroyed.
 
+## Choose UI dictionaries (unreleased)
+
+Default imports retain all seven offline languages. Single-language ESM applications can enable the `file-viewer-custom-locales` bundler condition and register only the complete dictionaries they import from `@file-viewer/core/locales/en-US` (or another supported locale) with `registerFileViewerLocale`. Core's public subpaths and framework imports share the same registry; existing `options.messages` overrides keep priority. See [the build configuration, fallback and lazy-loading examples](https://doc.file-viewer.app/guide/i18n#select-dictionaries-at-build-time). Prebuilt Full IIFE/AMD bundles retain all languages.
+
 ## Preflight Before Rendering
 
 `precheckFileViewerSource()` does not create a viewer or load a heavy renderer. It checks whether the extension is available and validates known PDF, OpenXML / OpenDocument, legacy OLE Office, and RTF signatures or package parts. `valid: null` explicitly means capability-only detection, not a full parse; the real renderer remains the final authority for malformed content.

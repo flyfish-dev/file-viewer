@@ -25,11 +25,12 @@ window.run=async(name)=>{
  const base=parseMsDoc(bytes),a=renderMsDoc(base),b=await parseMsDocToHtml(bytes),c=renderMsDoc(await worker.parse(bytes)),d=await worker.parseToHtml(bytes);
  const e=await worker.render(base),old=structuredClone(base);delete old.textboxLayout;
  const strip=b=>{delete b.sourceRange;if(b.type==='table')for(const r of b.rows)for(const c of r.cells)for(const x of c.blocks||c.paragraphs)strip(x);};old.blocks.forEach(strip);
- const oldRender=await worker.render(old);worker.destroy();
+ const oldRender=await worker.render(old),oldMain=renderMsDoc(old);worker.destroy();
+ if(JSON.stringify([oldRender.html,oldRender.css,oldRender.warnings])!==JSON.stringify([oldMain.html,oldMain.css,oldMain.warnings]))throw Error('Old model Worker render changed its readable fallback');
  const routes=[];
  for(const [route,result] of Object.entries({mainParseRender:a,mainParseToHtml:b,workerParseMainRender:c,workerParseToHtml:d,workerRender:e,workerOldModelRender:oldRender})){
   const target=document.createElement('div');document.body.appendChild(target);mountMsDoc(target,result);
-  routes.push({route,html:result.html,css:result.css,warnings:result.warnings,model:result.parsed,text:target.innerText,tables:[...target.querySelectorAll('table')].map(t=>({height:t.getBoundingClientRect().height,width:t.getBoundingClientRect().width})),paragraphs:[...target.querySelectorAll('p')].map(p=>({text:p.innerText,position:getComputedStyle(p).position}))});target.remove();
+  routes.push({route,html:result.html,css:result.css,warnings:result.warnings,model:result.parsed,text:target.innerText,layoutPages:result.layoutPages,tables:[...target.querySelectorAll('table')].map(t=>({height:t.getBoundingClientRect().height,width:t.getBoundingClientRect().width})),paragraphs:[...target.querySelectorAll('p')].map(p=>({text:p.innerText,position:getComputedStyle(p).position}))});target.remove();
  }
  return routes;
 };`;
@@ -184,6 +185,14 @@ try {
         );
         const baseline = routes[0];
         for (const r of routes) {
+          if (r.route === "workerOldModelRender" && baseline.layoutPages) {
+            // A pre-layout model must remain readable; its historical story
+            // order cannot equal the new anchored presentation order.
+            assert.equal(r.layoutPages, undefined);
+            assert.equal(r.text.split("FLOATING BOX CONTROL").length - 1, 1);
+            assert(r.warnings.some(w => w.code === "MSDOC_TEXTBOX_STORY_LINEARIZED"));
+            continue;
+          }
           assert.deepEqual(r.warnings, baseline.warnings);
           assert.equal(r.text, baseline.text);
           assert.equal(r.css, baseline.css);
@@ -197,11 +206,13 @@ try {
             baseline.text.split("FLOATING BOX CONTROL").length - 1,
             1,
           );
-          assert.ok(
+          assert.ok(!
             baseline.warnings.some(
               (w) => w.code === "MSDOC_TEXTBOX_STORY_LINEARIZED",
             ),
           );
+          assert(baseline.html.indexOf("FLOATING BOX CONTROL") < baseline.html.indexOf("MAIN BODY LAST"));
+          assert(baseline.warnings.some(w => w.code === "MSDOC_TEXTBOX_MAPPING_INVALID" && w.textboxIndex === 0));
           assert.equal(
             baseline.model.textboxLayout.frames[1].mapping,
             "mapped",

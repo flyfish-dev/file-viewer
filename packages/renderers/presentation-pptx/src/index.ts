@@ -3,10 +3,12 @@ import { PptxViewer, RECOMMENDED_ZIP_LIMITS, resolvePptxPackageWorkerUrl } from 
 import {
   DEFAULT_RENDERER_DEFINITIONS,
   attachFileViewerErrorMessage,
+  buildPrintPageStyle,
   createFileViewerTranslator,
   createFileViewerZoomChangeEmitter,
   getFileViewerShadowRootForNode,
   getDefaultFileViewerAssetBaseUrl,
+  getElementPrintPageSize,
   normalizeFileViewerErrorMessage,
   registerFileViewerZoomProvider,
   resolveFileViewerLocale,
@@ -55,24 +57,13 @@ const pptxStyle = `
 @media (prefers-color-scheme:dark){[data-viewer-theme='system'] .pptx-viewer-shell{background:var(--file-viewer-render-surface-background,#101820);color:#e5eef8}[data-viewer-theme='system'] .pptx-loading{border-color:rgba(148,163,184,.18);background:rgba(15,23,42,.9);color:#cbd5e1;box-shadow:0 18px 44px rgba(0,0,0,.26)}[data-viewer-theme='system'] .pptx-error{border-color:rgba(148,163,184,.18);background:#151f2b;color:#f8fafc;box-shadow:0 22px 56px rgba(0,0,0,.32)}[data-viewer-theme='system'] .pptx-error p{color:#94a3b8}[data-viewer-theme='system'] .pptx-render-surface .slide,[data-viewer-theme='system'] .pptx-render-surface [data-slide-index]{color-scheme:only light;forced-color-adjust:none}}
 `;
 
-const pptxPrintStyle = `
-  .pptx-viewer-shell {
-    background: #fff !important;
-    padding: 0 !important;
-  }
-  .pptx-render-surface {
-    display: block !important;
-    overflow: visible !important;
-  }
-  .pptx-render-surface [data-slide-index] {
-    break-after: page;
-    page-break-after: always;
-    margin: 0 auto !important;
-  }
-  .pptx-render-surface [data-slide-index]:last-child {
+const pptxPrintStyle = `@media print {
+  .flyfish-pptx-export .flyfish-pptx-content .slide { margin: 0 !important; }
+  .flyfish-pptx-export .flyfish-pptx-content > [data-viewer-print-page-index]:last-of-type {
     break-after: auto;
     page-break-after: auto;
   }
+}
 `;
 
 const SLIDESHOW_HOTKEY_LABEL = 'F5 / P';
@@ -307,10 +298,21 @@ const buildExportAdapter = (
 ): FileRenderExportAdapter => ({
   print: true,
   exportHtml: true,
-  includeDocumentStyles: true,
+  // The snapshot carries the slide styles. Host viewport rules can clip the
+  // standalone document before the browser paginates it.
+  includeDocumentStyles: false,
   beforeSnapshot: () => waitForFileViewerNextPaint(targetWindow || undefined),
   getPrintMaskPages: () => collectPptxPrintMaskPages(surface),
-  printStyle: pptxPrintStyle,
+  printStyle: () => {
+    const slide = surface.querySelector<HTMLElement>('.flyfish-pptx-content .slide');
+    const size = getViewer()?.slideDimensions || (slide && getElementPrintPageSize(slide));
+    return size?.width && size.height
+      ? buildPrintPageStyle({
+          ...size,
+          selector: '.flyfish-pptx-export [data-viewer-print-page-index]',
+        }) + pptxPrintStyle
+      : pptxPrintStyle;
+  },
   toHtml: async () => {
     const clone = await getViewer()?.cloneForExport() || surface.cloneNode(true) as HTMLElement;
     collectPptxPrintMaskPages(clone).forEach((page, index) => {

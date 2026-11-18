@@ -6,24 +6,26 @@ import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferred
 // This immutable public snapshot was read back and cold-built on Linux ARM64.
 // The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: '40d57f0402e0f99ac70f3053372fa89f82fc1534',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/40d57f0402e0f99ac70f3053372fa89f82fc1534',
-  sha256: '4fe8e5cd69383f265aac51e2d16bd82b4e78fdc591c5c9b562459391751acecc',
-  bytes: 193418616,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.4-ci-followup-20261116',
-  runtimeSha256: 'b1e0cf2cd8fd9879bc463b9bcab4e1c8f68aebad11a81cbc61d5177741cd9d30'
+  sourceCommit: 'c3ed058fbc9ad3564edb1e093b489773e005a7e2',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c3ed058fbc9ad3564edb1e093b489773e005a7e2',
+  sha256: 'aa21ad44222fd891ad9489bca3ad3e3db59db8d6415025a219568d2aff1cd7d8',
+  bytes: 193914125,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.5',
+  runtimeSha256: 'b733acb06346d6bf0692273d0408a07db3096c0dbd2a051ca2a7dd44b11d4934'
 })
 
 // Native preferred sources are distinct from the File Viewer integration source.
 // Keep them in the common notice as well as the optional native asset layer:
 // the Full bundle includes owner JavaScript even when assets are separate deps.
 export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
-  Object.freeze({ name: '@flyfish-dev/cad-viewer 0.8.3',
-    url: 'https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6366d2f7b1013cd5c300008c3c3fbf017ca9aace',
-    sha256: '65d00f07230553734262d671abf45be94d83d3068318c0f25f8665494ec82bcb' }),
-  Object.freeze({ name: 'dwf-viewer 0.6.7',
-    url: 'https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/72783571e2cd744862d8eb32f7d3455906c76226',
-    sha256: 'd246d61b914475412fdc33ea250646710c4a3431bfecad9c9a7700602923afb1' }),
+  Object.freeze({ name: '@flyfish-dev/cad-viewer 0.8.4',
+    url: 'https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6721a3dbcd5027a31006029243c505c460a521c6',
+    sha256: '1de0f46746ccd832524c312e5760719941bbece19b693738d1bea408eee20434',
+    npm: Object.freeze({ name: '@flyfish-dev/cad-viewer', version: '0.8.4', integrity: 'sha512-o95aj+Tvy79VRPVbp3xeeIYQs+EkGwNfWPXbPy5B1ZR9v4ISmA7q7IUuTN5Js28bktLStf7tGjMO889zkBogFA==' }) }),
+  Object.freeze({ name: 'dwf-viewer 0.6.8',
+    url: 'https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/274e7c86af0c97c569176c43ff317e92b0e30584',
+    sha256: 'e98577a7f4b5434d975d2e00c8560e3ba53e3890c89bb6f85c357709d630df7c',
+    npm: Object.freeze({ name: 'dwf-viewer', version: '0.6.8', integrity: 'sha512-0t7uEq1U08bhJr79elRzX4UU0EuMHeHb+Q+P/O/6Q6qNL+97mN5DICopPYW7b7hbV+K2XAC29tWWR9/MRosqCA==' }) }),
   Object.freeze({ name: '@mlightcad/libredwg-web 0.7.9',
     url: 'https://codeload.github.com/mlightcad/libredwg-web/tar.gz/b70b5573a6bf2345e5fb10f2adff7fb74a8123c5',
     sha256: 'af350d628535a2842262af5b49d50568b6dae62854667e13bb9f161b26c00431' })
@@ -32,16 +34,15 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
   // Complete preferred inputs with a measured standalone reproduction. Normal
   // Full/HTTPS verification remains mandatory; native owner versions stay fixed.
-  releaseVersion: '3.3.4',
-  sourceRevision: 'ci-followup-20261116',
+  releaseVersion: '3.3.5',
   cadVersion: '0.8.3',
   dwfVersion: '0.6.7',
   url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '43462425fe8fc20163654f59a51d5f7f5705f1d7a0214d75926cb173c37306e5',
-  bytes: 459612,
-  files: 102,
-  runtimeBytes: 926351,
-  runtimeSha256: 'b1e0cf2cd8fd9879bc463b9bcab4e1c8f68aebad11a81cbc61d5177741cd9d30'
+  sha256: '2df7675ffe986ae45a60d63843a49b68a70122703d1526703e989d8a3211ff4b',
+  bytes: 463125,
+  files: 104,
+  runtimeBytes: 926728,
+  runtimeSha256: 'b733acb06346d6bf0692273d0408a07db3096c0dbd2a051ca2a7dd44b11d4934'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {

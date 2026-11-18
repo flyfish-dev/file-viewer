@@ -29,12 +29,13 @@ allowBuilds:
   fsevents: true
 
 minimumReleaseAgeExclude:
-  - '@file-viewer/docx@0.3.41'
+  - '@file-viewer/docx@0.3.42'
   - '@file-viewer/ppt@0.3.5'
   - '@file-viewer/ppt@0.3.6'
   - '@file-viewer/ppt@1.0.1'
   - '@file-viewer/ppt@1.0.2'
-  - '@flyfish-dev/cad-viewer@0.8.3'
+  - '@flyfish-dev/cad-viewer@0.8.4'
+  - 'dwf-viewer@0.6.8'
   - 'styled-exceljs@0.21.6'
 
 overrides:
@@ -110,6 +111,9 @@ auditConfig:
     # dependency. docs/guide/quickstart-vue2.md points security-sensitive users at this
     # advisory. Re-check the ignore if Vue 2 ever ships a patch or the line is retired.
     - GHSA-5j4c-8p2g-v4jx
+    # File Viewer 3.3.5 accepts this advisory while no patched picomatch is
+    # available on npm. Remove the exception when updating to a fixed release.
+    - GHSA-fc5q-39xc-vjpf
 
 patchedDependencies:
   illustrator-pgf@0.1.0: patches/illustrator-pgf@0.1.0.patch

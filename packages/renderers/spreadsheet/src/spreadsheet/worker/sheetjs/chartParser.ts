@@ -9,12 +9,13 @@ import {
   type Node as XmlNode
 } from '@xmldom/xmldom'
 import JSZip from 'jszip'
-import type { WorkBook } from 'styled-exceljs'
+import { SSF, type WorkBook } from 'styled-exceljs'
 import { readStoredSheetLayout, readWorkbookDigitWidth } from './sheetLayout.js'
 import type {
   SheetChartDefinition,
   SheetChartSeries,
   SheetChartType,
+  SheetChartValueAxis,
   SheetDrawingMarker
 } from '../type.js'
 import {
@@ -429,7 +430,52 @@ const parseSeriesMarker = (series: XmlElement): SheetChartSeries['marker'] => {
   }
 }
 
-const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null, blankMode = 'gap') => {
+const xmlBoolean = (value: string | null | undefined) => value === '1' || value === 'true'
+const excelNumericText = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/
+
+const categoryDateFormatter = (format: string | undefined, date1904: boolean) => {
+  if (!format || format.length > 255) return undefined
+  try {
+    if (!SSF.is_date(format)) return undefined
+    return (value: string) => {
+      if (!excelNumericText.test(value.trim())) return value
+      const serial = Number(value)
+      try {
+        return serial >= 0 && serial < 2_958_466 ? SSF.format(format, serial, { date1904 }) || value : value
+      } catch {
+        return value
+      }
+    }
+  } catch {
+    return undefined
+  }
+}
+
+const categoryFormat = (category: XmlElement | undefined, axis: XmlElement | undefined) => {
+  const numFmt = firstChildByLocal(axis, 'numFmt')
+  const axisFormat = numFmt?.getAttribute('formatCode') || undefined
+  const sourceLinked = numFmt?.getAttribute('sourceLinked')
+  const cache = firstChildByLocal(category, 'numLit') ||
+    firstChildByLocal(firstChildByLocal(category, 'numRef'), 'numCache')
+  const cacheFormat = textContent(firstChildByLocal(cache, 'formatCode'))
+  if (axisFormat && (sourceLinked === '0' || sourceLinked === 'false')) return axisFormat
+  if (cacheFormat && cacheFormat !== 'General') return cacheFormat
+  if (cache || !category) {
+    return axisFormat || (axis && localName(axis) === 'dateAx' ? 'm/d/yyyy' : undefined)
+  }
+  // Without a numeric cache, prefer the referenced worksheet's formatted
+  // value. That preserves cell-level formats in source-linked charts.
+  return undefined
+}
+
+const parseSeries = (
+  chartNode: XmlElement,
+  workbook: WorkBook | null | undefined,
+  blankMode: string,
+  categoryAxis: XmlElement | undefined,
+  date1904: boolean,
+  seriesOffset: number
+) => {
   const chartType = CHART_TYPE_MAP[localName(chartNode)]
   const compactLineSeries = chartType === 'line'
     || chartType === 'area'
@@ -440,7 +486,12 @@ const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null, blankMod
     const tx = firstChildByLocal(series, 'tx')
     const category = firstChildByLocal(series, 'cat') || firstChildByLocal(series, 'xVal')
     const value = firstChildByLocal(series, 'val') || firstChildByLocal(series, 'yVal')
-    const categories = parsePointValues(category, workbook)
+    const format = categoryFormat(category, categoryAxis)
+    const textCategories = firstChildByLocal(category, 'strRef') ||
+      firstChildByLocal(category, 'strLit') || firstChildByLocal(category, 'multiLvlStrRef')
+    const formatDate = textCategories ? undefined : categoryDateFormatter(format, date1904)
+    const rawCategories = parsePointValues(category, workbook, !format || !!textCategories)
+    const categories = formatDate ? rawCategories.map(formatDate) : rawCategories
     const rawValues = parsePointValues(value, workbook, false)
     const count = Math.max(categories.length, rawValues.length)
     const spanBlankIndexes: number[] = []
@@ -452,15 +503,18 @@ const parseSeries = (chartNode: XmlElement, workbook?: WorkBook | null, blankMod
       }
       // Empty cells and error values are not zero. Keep an error as a hard gap,
       // even when blank cells are explicitly spanned or plotted as zero.
-      const number = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(raw) ? Number(raw) : NaN
+      const number = excelNumericText.test(raw) ? Number(raw) : NaN
       return Number.isFinite(number) ? number : Number.NaN
     })
 
     const result: SheetChartSeries = {
-      name: chartText(tx, workbook) || `Series ${index + 1}`,
+      name: chartText(tx, workbook) || `Series ${seriesOffset + index + 1}`,
       categories: categories.length
         ? Array.from({length: count}, (_, i) => categories[i] ?? '')
-        : values.map((_, valueIndex) => `${valueIndex + 1}`),
+        : values.map((_, valueIndex) => {
+            const label = `${valueIndex + 1}`
+            return !category && formatDate ? formatDate(label) : label
+          }),
       values,
       ...(spanBlankIndexes.length ? {spanBlankIndexes} : {}),
       color: parseSeriesColor(series),
@@ -500,46 +554,102 @@ const parseAxisFontSize = (axis: XmlElement | undefined, chartSpace: XmlElement 
 
 type ParsedChart = Omit<SheetChartDefinition, 'id' | 'from' | 'to' | 'ext'>
 
-const parseChart = (document: XmlDocument, workbook?: WorkBook | null): ParsedChart | null => {
+const axisId = (axis: XmlElement | undefined) => firstChildByLocal(axis, 'axId')?.getAttribute('val') || undefined
+const isCategoryAxis = (axis: XmlElement) => ['catAx', 'dateAx'].includes(localName(axis))
+const legendPosition = (legend: XmlElement | undefined): SheetChartDefinition['legendPosition'] => {
+  if (!legend) return undefined
+  const position = firstChildByLocal(legend, 'legendPos')?.getAttribute('val') || ''
+  const manual = firstByLocal(firstChildByLocal(legend, 'layout'), 'manualLayout')
+  const y = Number(firstChildByLocal(manual, 'y')?.getAttribute('val') ?? NaN)
+  if (position === 'b' && firstChildByLocal(manual, 'yMode')?.getAttribute('val') === 'edge' && y >= 0 && y < 0.15) {
+    return 'top'
+  }
+  return LEGEND_POSITION_MAP[position] || 'bottom'
+}
+
+const parseChart = (document: XmlDocument, workbook: WorkBook | null | undefined, workbookDate1904: boolean): ParsedChart | null => {
   const root = document.documentElement
   const chart = firstByLocal(root, 'chart')
   const plotArea = firstChildByLocal(chart, 'plotArea') || firstByLocal(chart, 'plotArea')
-  const chartEntry = childElements(plotArea)
+  const chartEntries = childElements(plotArea)
     .map((element) => ({ element, type: CHART_TYPE_MAP[localName(element)] }))
-    .find((entry) => entry.type)
+    .filter((entry) => entry.type)
+  const chartEntry = chartEntries[0]
   if (!chartEntry) {
     return null
   }
 
-  const legend = firstChildByLocal(chart, 'legend')
-  const legendPositionValue = firstChildByLocal(legend, 'legendPos')?.getAttribute('val') || ''
-  const categoryAxis = firstChildByLocal(plotArea, 'catAx')
-  const valueAxis = firstChildByLocal(plotArea, 'valAx')
-  const barDirection: SheetChartDefinition['barDirection'] =
-    firstChildByLocal(chartEntry.element, 'barDir')?.getAttribute('val') === 'bar'
-      ? 'bar'
-      : 'column'
+  const direction = (element: XmlElement) =>
+    firstChildByLocal(element, 'barDir')?.getAttribute('val') === 'bar' ? 'bar' : 'column'
+  const supportsCombination = chartEntries.every(({element, type}) =>
+    type === 'line' || (type === 'bar' && direction(element) === 'column'))
+    && chartEntries.some(entry => entry.type === 'line') && chartEntries.some(entry => entry.type === 'bar')
+  const axes = childElements(plotArea)
+  const categoryAxes = axes.filter(isCategoryAxis)
+  const valueAxisElements = axes.filter(axis => localName(axis) === 'valAx')
+  const boundAxes = (element: XmlElement) => {
+    const ids = childrenByLocal(element, 'axId').map(id => id.getAttribute('val'))
+    return {
+      category: categoryAxes.find(axis => ids.includes(axisId(axis) || '')),
+      value: valueAxisElements.find(axis => ids.includes(axisId(axis) || '')),
+    }
+  }
+  const primaryAxes = boundAxes(chartEntry.element)
+  const categoryAxis = primaryAxes.category || categoryAxes[0]
+  const valueAxis = primaryAxes.value || valueAxisElements[0]
+  const dateEpoch = firstChildByLocal(root, 'date1904')
+  const date1904 = dateEpoch ? xmlBoolean(dateEpoch.getAttribute('val') ?? '1') : workbookDate1904
+  const blankMode = firstChildByLocal(chart, 'dispBlanksAs')?.getAttribute('val') || 'gap'
+  const series: SheetChartSeries[] = []
+  for (const entry of supportsCombination ? chartEntries : [chartEntry]) {
+    const binding = boundAxes(entry.element)
+    const entries = parseSeries(entry.element, workbook, blankMode, binding.category || categoryAxis, date1904, series.length)
+    for (const item of entries) {
+      if (supportsCombination) {
+        item.type = entry.type
+        item.categoryAxisId = axisId(binding.category)
+        item.valueAxisId = axisId(binding.value || valueAxis)
+      }
+      series.push(item)
+    }
+  }
+
+  const valueAxes = supportsCombination ? valueAxisElements.flatMap((axis): SheetChartValueAxis[] => {
+    const id = axisId(axis)
+    if (!id || !series.some(item => item.valueAxisId === id)) return []
+    return [{
+      id,
+      position: firstChildByLocal(axis, 'axPos')?.getAttribute('val') === 'r' ? 'right' : 'left',
+      hidden: xmlBoolean(firstChildByLocal(axis, 'delete')?.getAttribute('val')),
+      fontSize: parseAxisFontSize(axis, root),
+      title: chartText(firstChildByLocal(axis, 'title'), workbook) || undefined
+    }]
+  }) : undefined
 
   return {
     type: chartEntry.type,
     title: chartText(firstChildByLocal(chart, 'title'), workbook) || undefined,
     categoryAxisTitle: chartText(firstChildByLocal(categoryAxis, 'title'), workbook) || undefined,
+    categoryAxisId: supportsCombination ? axisId(categoryAxis) : undefined,
+    categoryAxisDate: categoryAxis && localName(categoryAxis) === 'dateAx' ? true : undefined,
     valueAxisTitle: chartText(firstChildByLocal(valueAxis, 'title'), workbook) || undefined,
-    barDirection,
+    valueAxes,
+    barDirection: direction(chartEntry.element),
     categoryAxisFontSize: parseAxisFontSize(categoryAxis, root),
     valueAxisFontSize: parseAxisFontSize(valueAxis, root),
     grouping: firstChildByLocal(chartEntry.element, 'grouping')?.getAttribute('val') || undefined,
     scatterStyle:
       firstChildByLocal(chartEntry.element, 'scatterStyle')?.getAttribute('val') || undefined,
-    legendPosition: legend ? LEGEND_POSITION_MAP[legendPositionValue] || 'bottom' : undefined,
-    series: parseSeries(chartEntry.element, workbook, firstChildByLocal(chart, 'dispBlanksAs')?.getAttribute('val') || 'gap')
+    legendPosition: legendPosition(firstChildByLocal(chart, 'legend')),
+    series
   }
 }
 
 const parseDrawingCharts = async (
   zip: JSZip,
   drawingPart: string,
-  workbook?: WorkBook | null
+  workbook: WorkBook | null | undefined,
+  date1904: boolean
 ): Promise<SheetChartDefinition[]> => {
   const [document, relationships] = await Promise.all([
     loadXml(zip, drawingPart),
@@ -562,7 +672,7 @@ const parseDrawingCharts = async (
       }
 
       const chartDocument = await loadXml(zip, chartRelationship.target)
-      const chart = chartDocument ? parseChart(chartDocument, workbook) : null
+      const chart = chartDocument ? parseChart(chartDocument, workbook, date1904) : null
       if (!chart || !chart.series.length || chart.series.every((series) => !series.values.length)) {
         return null
       }
@@ -611,6 +721,7 @@ export const parseSpreadsheetCharts = async (data: ArrayBuffer, workbook?: WorkB
     return result
   }
   const maximumDigitWidth = readWorkbookDigitWidth(workbook)
+  const date1904 = xmlBoolean(firstChildByLocal(workbookDocument.documentElement, 'workbookPr')?.getAttribute('date1904'))
 
   for (const sheet of elementsByLocal(workbookDocument.documentElement, 'sheet')) {
     const name = sheet.getAttribute('name') || ''
@@ -643,7 +754,7 @@ export const parseSpreadsheetCharts = async (data: ArrayBuffer, workbook?: WorkB
         .map((relationship) => relationship.target)
     ))
     const charts = (
-      await Promise.all(drawingParts.map((part) => parseDrawingCharts(zip, part, workbook)))
+      await Promise.all(drawingParts.map((part) => parseDrawingCharts(zip, part, workbook, date1904)))
     ).flat()
     if (charts.length) {
       result[name] = charts

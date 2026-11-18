@@ -4,7 +4,7 @@ import {
   resolveFileViewerLocale,
   translateFileViewerMessage,
   type FileViewerI18nInput,
-} from '../i18n/messages';
+} from '../i18n/runtime';
 import type {
   FileViewerMessageKey,
   FileViewerRenderStateKind,

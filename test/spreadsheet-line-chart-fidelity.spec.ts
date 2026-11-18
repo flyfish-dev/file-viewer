@@ -23,7 +23,7 @@ const { read: readSpreadsheet } = spreadsheetRequire('styled-exceljs') as {
   ) => NonNullable<Parameters<typeof parseSpreadsheetCharts>[1]>
 }
 
-const createLineChartFixture = async (count = 3) => {
+const createLineChartFixture = async (count = 3, overrides: { chartXml?: string; workbookProperties?: string } = {}) => {
   const fixtureValues = count === 3
     ? [46, 64, 24]
     : Array.from({ length: count }, (_, index) => 60 + Math.round(Math.sin(index / 20) * 30))
@@ -40,6 +40,7 @@ const createLineChartFixture = async (count = 3) => {
     `
     <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+      ${overrides.workbookProperties || ''}
       <sheets><sheet name="Data" sheetId="1" r:id="rId1"/></sheets>
     </workbook>`
   )
@@ -89,7 +90,7 @@ const createLineChartFixture = async (count = 3) => {
   )
   zip.file(
     'xl/charts/chart1.xml',
-    `
+    overrides.chartXml ?? `
     <chartSpace xmlns="http://schemas.openxmlformats.org/drawingml/2006/chart">
       <chart><plotArea><lineChart><grouping val="standard"/><ser>
         <tx><v>Grayscale</v></tx>
@@ -137,6 +138,46 @@ describe('spreadsheet line-chart fidelity', () => {
       ]
     })
     expect(charts.Data?.[0]?.series[0]?.lineWidth).toBeCloseTo(4800 / 9525, 6)
+  })
+
+  it('combines clustered columns and a secondary line using authored axis IDs and Excel dates', async () => {
+    const points = (values: number[]) => values.map((value, index) =>
+      `<pt idx="${index}"><v>${value}</v></pt>`).join('')
+    const series = (name: string, values: number[]) => `<ser><tx><v>${name}</v></tx>
+      <cat><numRef><numCache><formatCode>yyyy/m/d</formatCode>${points([1, 2, 3])}</numCache></numRef></cat>
+      <val><numLit>${points(values)}</numLit></val></ser>`
+    const fixture = await createLineChartFixture(3, {
+      workbookProperties: '<workbookPr date1904="1"/>',
+      chartXml: `<chartSpace xmlns="http://schemas.openxmlformats.org/drawingml/2006/chart">
+        <chart><plotArea>
+          <barChart><barDir val="col"/>${series('Visits', [1000, 2500, 3000])}
+          ${series('Saves', [100, 200, 300])}<axId val="10"/><axId val="20"/></barChart>
+          <lineChart>${series('Orders', [6, 12, 8])}<axId val="30"/><axId val="40"/></lineChart>
+          <valAx><axId val="40"/><axPos val="r"/></valAx>
+          <dateAx><axId val="30"/><delete val="1"/></dateAx>
+          <valAx><axId val="20"/><axPos val="l"/></valAx>
+          <dateAx><axId val="10"/><numFmt formatCode="m/d/yyyy" sourceLinked="0"/></dateAx>
+        </plotArea><legend><legendPos val="b"/></legend></chart></chartSpace>`,
+    })
+    const [chart] = (await parseSpreadsheetCharts(fixture)).Data
+    expect(chart.series.map(item => [item.name, item.type, item.categoryAxisId, item.valueAxisId])).toEqual([
+      ['Visits', 'bar', '10', '20'],
+      ['Saves', 'bar', '10', '20'],
+      ['Orders', 'line', '30', '40'],
+    ])
+    expect(chart.series[0].categories).toEqual(['1/2/1904', '1/3/1904', '1/4/1904'])
+    expect(chart.series[2].categories).toEqual(['1904/1/2', '1904/1/3', '1904/1/4'])
+
+    const element = render({ ...chart, left: 0, top: 0, width: 640, height: 360, row: 1, col: 5 })
+    expect(element.querySelectorAll('rect:has(title)')).toHaveLength(6)
+    expect(element.querySelector('.excel-chart-series-line[data-axis-id="40"]')
+      ?.getAttribute('data-rendered-point-count')).toBe('3')
+    const tickMax = (side: string) => Array.from(element.querySelectorAll(`[data-axis-side="${side}"]`)).at(-1)?.textContent
+    expect(tickMax('left')).toBe('3000')
+    expect(tickMax('right')).toBe('12')
+    expect(Array.from(element.querySelectorAll('.excel-chart-category-label'), label => label.textContent))
+      .toEqual(['1/2/1904', '1/3/1904', '1/4/1904'])
+    expect(element.textContent).toContain('Orders')
   })
 
   it('renders a large marker-free line as a bounded SVG path with sampled labels', () => {

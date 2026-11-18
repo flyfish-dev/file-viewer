@@ -112,6 +112,7 @@ export function mountMsDoc(container: HTMLElement, rendered: MsDocRenderResult):
   style.textContent = rendered.css;
   const root = container.ownerDocument.createElement('div');
   root.className = 'msdoc-root';
+  if (rendered.layoutPages?.length) root.style.padding = '0';
   root.append(sanitizeMsDocHtml(rendered.html, targetWindow));
   container.replaceChildren(style, root);
   return container;

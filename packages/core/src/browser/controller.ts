@@ -12,7 +12,7 @@ import {
   normalizeFileViewerStyleIsolation,
   syncFileViewerRenderSurfaceBackground,
   type FileViewerStyleHandle,
-} from '../index';
+} from '../api';
 import {
   DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
   createFileViewerTranslator,
@@ -68,7 +68,7 @@ import {
   type FileViewerZoomState,
   type RendererRegistry,
   type RendererSession,
-} from '../index';
+} from '../api';
 
 import { resolveFileViewerToolbarZoomButtons } from '../lifecycle/operations';
 import { createToolbarFocusRestorer } from './toolbar-focus';

@@ -12,6 +12,6 @@ import type {
 export const openFileViewerPrintMaskDesignerAsync = async (
   options: OpenFileViewerPrintMaskDesignerOptions
 ): Promise<FileViewerPrintMaskDesignerResult | null> => {
-  const { openFileViewerPrintMaskDesigner } = await import('../print-mask');
+  const { openFileViewerPrintMaskDesigner } = await import('../custom-locales-print-mask');
   return openFileViewerPrintMaskDesigner(options);
 };

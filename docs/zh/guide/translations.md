@@ -17,7 +17,7 @@ description: "贡献 File Viewer 文档和界面翻译，保持 API 示例、语
 | 英文 / 中文文档 | `docs/guide/`、`docs/zh/guide/` |
 | Demo 界面 | `apps/viewer-demo/src/composables/useDemoCopy*.ts` |
 | Demo 欢迎卡片 | `apps/viewer-demo/src/composables/useDemoWelcome.ts` |
-| 共享预览器 | `packages/core/src/i18n/messages*.ts`、`i18n/domains/`；语言注册表 `i18n/locales.ts` |
+| 共享预览器 | `packages/core/src/i18n/builtin-messages.ts`、`messages.*.ts`、`builtin-plurals.ts`、`domains/`；语言注册表 `i18n/locales.ts`。`dist/locales/` 由正常 Core 构建生成。 |
 | 官网 | `apps/official-site/src/App.vue` 及静态 HTML 元数据 |
 | 包说明 | 英文 `README.md`、中文 `README.zh-CN.md`；`README.en.md` 是兼容副本 |
 

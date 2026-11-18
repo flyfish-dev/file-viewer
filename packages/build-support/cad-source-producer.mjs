@@ -6,7 +6,7 @@ import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, realpath, rm, writeFil
 import { tmpdir } from 'node:os'
 import { dirname, join, relative, resolve } from 'node:path'
 import JSZip from 'jszip'
-import { CAD_INTEGRATION_SOURCE } from './cad-source-offer.mjs'
+import { CAD_INTEGRATION_SOURCE, CAD_NATIVE_CORRESPONDING_SOURCES } from './cad-source-offer.mjs'
 import { readCadCorrespondingSource, verifyCadPreferredSourceInputs } from './cad-corresponding-source.mjs'
 import { cadPreferredSourceDigest, cadPreferredSourceHashMode, cadSourceSnapshotIdentifier, listCadPreferredSourcePaths } from './cad-preferred-source.mjs'
 import { readCadBuildToolchain } from './cad-rebuild-toolchain.mjs'
@@ -130,6 +130,50 @@ export async function captureCadPreferredSource(root) {
 const externalDependencies = (manifest, group) => Object.fromEntries(Object.entries(manifest[group] || {})
   .filter(([name]) => name !== '@file-viewer/core').sort(([a], [b]) => compareStrings(a, b)))
 
+function refreshNativeDependencies(files, manifest, prior) {
+  const cad = '@flyfish-dev/cad-viewer'
+  const dwf = 'dwf-viewer'
+  if (manifest.dependencies?.[cad] === prior.dependencies?.[cad]) return
+  const approved = new Map(CAD_NATIVE_CORRESPONDING_SOURCES.filter(source => source.npm)
+    .map(source => [source.npm.name, source]))
+  const updatedCad = approved.get(cad)?.npm
+  assert.equal(updatedCad?.version, manifest.dependencies[cad],
+    'CAD external dependencies changed; review a new standalone lock before generating')
+  const packageJson = JSON.parse(files.get('package.json'))
+  const lock = JSON.parse(files.get('package-lock.json'))
+  const sources = JSON.parse(files.get('upstream-sources.json'))
+  for (const name of [cad, dwf]) {
+    const { npm, sha256, url } = approved.get(name)
+    const existing = lock.packages['node_modules/' + name]
+    const source = sources.find(entry => entry.name === name)
+    assert.equal(source.version, existing.version)
+    if (name === cad) assert.equal(prior.dependencies[cad], existing.version)
+    assert.equal(packageJson.dependencies[name], existing.version)
+    assert.equal(lock.packages[''].dependencies[name], existing.version)
+    assert.match(npm.version, stableVersion)
+    assert.match(npm.integrity, /^sha512-[A-Za-z0-9+/]{86}==$/)
+    packageJson.dependencies[name] = npm.version
+    lock.packages[''].dependencies[name] = npm.version
+    if (name === dwf) {
+      const cadEntry = lock.packages['node_modules/' + cad]
+      assert.equal(cadEntry.dependencies[dwf], '^' + existing.version)
+      cadEntry.dependencies[dwf] = '^' + npm.version
+    }
+    const basename = name.split('/').at(-1)
+    Object.assign(existing, {
+      version: npm.version,
+      resolved: `https://registry.npmjs.org/${name}/-/${basename}-${npm.version}.tgz`,
+      integrity: npm.integrity
+    })
+    Object.assign(source, { version: npm.version, url, sha256, commit: url.split('/').at(-1) })
+  }
+  files.set('package.json', json(packageJson))
+  files.set('package-lock.json', json(lock))
+  files.set('upstream-sources.json', json(sources))
+  prior.dependencies[cad] = updatedCad.version
+  return [cad, dwf].map(name => ({ name, ...approved.get(name).npm }))
+}
+
 async function safeOutputAncestors(root, target) {
   const path = relative(root, target)
   assert.ok(path && !path.startsWith('..') && !path.startsWith('/'), 'CAD output escapes the source root')
@@ -155,6 +199,10 @@ export async function prepareCadSourcePayload(root, version, prior) {
   for (const directory of ['packages/core', 'packages/renderers/cad']) {
     const path = directory + '/package.json'
     const manifest = JSON.parse(files.get(path)), old = JSON.parse(prior.files.get(path))
+    if (directory === 'packages/renderers/cad') {
+      const updated = refreshNativeDependencies(files, manifest, old)
+      if (updated) transformations.push({ path: 'package-lock.json', kind: 'reviewed-native-dependencies', packages: updated })
+    }
     for (const group of ['dependencies', 'optionalDependencies', 'peerDependencies'])
       assert.deepEqual(externalDependencies(manifest, group), externalDependencies(old, group),
         'CAD external dependencies changed; review a new standalone lock before generating: ' + path + ' ' + group)

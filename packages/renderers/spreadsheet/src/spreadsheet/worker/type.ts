@@ -63,6 +63,9 @@ export interface SheetDrawingMarker {
 
 export interface SheetChartSeries {
   name: string;
+  type?: SheetChartType;
+  categoryAxisId?: string;
+  valueAxisId?: string;
   categories: string[];
   /** Non-finite entries are gaps; structured clone preserves their positions. */
   values: number[];
@@ -78,6 +81,14 @@ export interface SheetChartSeries {
     symbol: string;
     size?: number;
   };
+}
+
+export interface SheetChartValueAxis {
+  id: string;
+  position: 'left' | 'right';
+  hidden: boolean;
+  fontSize?: number;
+  title?: string;
 }
 
 /** Source truth captured before renderer compatibility fallbacks. */
@@ -102,10 +113,13 @@ export interface SheetChartDefinition {
   type: SheetChartType;
   title?: string;
   categoryAxisTitle?: string;
+  categoryAxisId?: string;
+  categoryAxisDate?: boolean;
   /** Unscaled CSS pixels from DrawingML hundredth-point text properties. */
   categoryAxisFontSize?: number;
   valueAxisFontSize?: number;
   valueAxisTitle?: string;
+  valueAxes?: SheetChartValueAxis[];
   barDirection?: 'column' | 'bar';
   grouping?: string;
   scatterStyle?: string;

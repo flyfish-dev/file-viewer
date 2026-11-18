@@ -392,7 +392,9 @@ function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext)
       }
 
       page.style.transform = `translateX(-50%) scale(${scale})`
-      frame.style.width = `${Math.ceil(Math.max(pageWidth * scale, target.clientWidth - 28, 120))}px`
+      // The print-mask designer stores percentages of this frame. Its box must
+      // follow the centered paper even when the viewport is wider than the page.
+      frame.style.width = `${pageWidth * scale}px`
       frame.style.maxWidth = 'none'
       frame.style.height = `${Math.ceil(contentHeight * scale)}px`
     })
@@ -678,8 +680,13 @@ async function prepareDocxCloneForExport(target: HTMLDivElement) {
       printDocument.appendChild(frame.cloneNode(true))
     })
 
+    const screenPaperStyle = `<style>@media screen {
+      .docx-print-document > :is(.docx-page-frame, .docx-flow-frame) > section.docx {
+        background-color: var(--file-viewer-docx-page-background, #fff);
+      }
+    }</style>`
     return printDocument.childElementCount
-      ? `${scopedStyles}${printDocument.outerHTML}`
+      ? `${scopedStyles}${screenPaperStyle}${printDocument.outerHTML}`
       : clone.innerHTML
   } finally {
     if (materializedForSnapshot && view) {

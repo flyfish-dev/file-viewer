@@ -2,7 +2,7 @@ import { formatFileViewerErrorDetail } from './state';
 import {
   translateFileViewerMessage,
   type FileViewerI18nInput,
-} from '../i18n/messages';
+} from '../i18n/runtime';
 import type { FileViewerMessageKey, FileViewerStateTheme } from '../contracts/types';
 
 export type FileViewerLoadingTheme = FileViewerStateTheme;

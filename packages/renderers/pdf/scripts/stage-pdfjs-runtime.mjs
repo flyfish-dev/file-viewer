@@ -3,7 +3,7 @@ import { access, cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
-  isolatePdfJsWebpackRuntime,
+  projectPdfJsRuntime,
   pdfJsRuntimeIsolationTransform,
 } from './pdfjs-runtime-transform.mjs'
 import {
@@ -97,7 +97,7 @@ if (checkOnly) {
     const targetPath = resolve(vendorRoot, target)
     await mkdir(dirname(targetPath), { recursive: true })
     const sourceContent = await readBuffer(resolve(pdfJsRoot, source))
-    const transformed = isolatePdfJsWebpackRuntime(sourceContent.toString('utf8'))
+    const transformed = await projectPdfJsRuntime(sourceContent.toString('utf8'), target)
     if (transformed.replacements < 1) {
       throw new Error(`PDF.js runtime did not contain the expected webpack bindings: ${source}`)
     }
@@ -108,6 +108,7 @@ if (checkOnly) {
       sourceSize: sourceContent.byteLength,
       sourceSha256: sha256(sourceContent),
       runtimeBindingReplacements: transformed.replacements,
+      ...(transformed.projection ? { projection: transformed.projection } : {}),
       size: content.byteLength,
       sha256: sha256(content),
     })

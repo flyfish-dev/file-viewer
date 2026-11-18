@@ -11,9 +11,10 @@ import {
   normalizeFileViewerLocale,
   translateFileViewerMessage,
   type FileViewerI18nInput,
-} from './messages'
+} from './runtime'
 import { matchFileViewerLocale } from './locales'
 import { formatFileViewerBytes, formatFileViewerDateTime, formatFileViewerNumber } from './format'
+import { getFileViewerLocaleDictionary, subscribeFileViewerLocaleChanges } from './locale-registry'
 
 // Preserve options-based translators within a bundle and explicit contexts across bundles.
 export const fileViewerI18nContexts = new WeakMap<object, FileViewerI18nContext>()
@@ -74,6 +75,10 @@ export const createFileViewerI18n = (
     messages: copyMessages(own.messages ?? scope.parent?.options.messages),
   })
   let effective = resolve()
+  const dictionaries = (locale: typeof effective.locale) => [
+    getFileViewerLocaleDictionary(locale), getFileViewerLocaleDictionary(FILE_VIEWER_FALLBACK_LOCALE),
+  ]
+  let activeDictionaries = dictionaries(effective.locale)
   const syncOptions = () => {
     for (const key of Object.keys(options)) delete (options as Record<string, unknown>)[key]
     Object.assign(options, scope.parent?.options, source, effective, { i18n: undefined })
@@ -100,12 +105,16 @@ export const createFileViewerI18n = (
       browser?.addEventListener?.('languagechange', languageChange)
     }
     const next = resolve()
+    const nextDictionaries = dictionaries(next.locale)
     const changed = next.locale !== effective.locale || !sameMessages(next.messages, effective.messages)
+      || nextDictionaries.some((dictionary, index) => dictionary !== activeDictionaries[index])
     effective = next
+    activeDictionaries = nextDictionaries
     syncOptions()
     if (changed || force) notify()
   }
   let unsubscribeParent: (() => void) | undefined
+  let unsubscribeLocales: (() => void) | undefined
   const languageChange = () => { if (!own.locale || own.locale === 'auto') refresh() }
   const abort = () => controller.destroy()
   const controller: FileViewerI18nController = {
@@ -133,12 +142,16 @@ export const createFileViewerI18n = (
       listeners.clear()
       fileViewerI18nContexts.delete(options)
       unsubscribeParent?.()
+      unsubscribeLocales?.()
       browser?.removeEventListener?.('languagechange', languageChange)
       scope.signal?.removeEventListener('abort', abort)
     },
   }
   fileViewerI18nContexts.set(options, controller)
   if (!scope.signal?.aborted) {
+    unsubscribeLocales = subscribeFileViewerLocaleChanges(locale => {
+      if (locale === effective.locale || locale === FILE_VIEWER_FALLBACK_LOCALE) refresh()
+    })
     unsubscribeParent = scope.parent?.subscribe(() => refresh(typeof effective.messages === 'function'))
     browser?.addEventListener?.('languagechange', languageChange)
     scope.signal?.addEventListener('abort', abort, { once: true })

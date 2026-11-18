@@ -495,7 +495,7 @@ const EXPORT_DOCUMENT_STYLE = `
   .viewer-export-content .file-render,
   .viewer-export-content .file-viewer,
   .viewer-export-content .viewer-stage,
-  .viewer-export-content .content,
+  .viewer-export-content .content:not(:where(.flyfish-pptx-export .slide .content)),
   .viewer-export-content .pdf-shell,
   .viewer-export-content .pdf-content,
   .viewer-export-content .pdf-viewport,

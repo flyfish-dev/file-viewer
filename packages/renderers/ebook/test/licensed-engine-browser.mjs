@@ -58,8 +58,8 @@ const bundle = await build({
     context.onLoad({ filter: /.*/, namespace: 'license-browser' }, () => ({
       loader: 'js', resolveDir: root,
       contents: `import ePub from ${JSON.stringify(join(root, 'packages/renderers/ebook/dist/vendor/epubjs.js'))};
-        export default (...args) => {
-          const book = ePub(...args), render = book.renderTo.bind(book);
+        const observed = new Proxy(ePub, { apply(factory, receiver, args) {
+          const book = Reflect.apply(factory, receiver, args), render = book.renderTo.bind(book);
           window.compareCfi = (a, b) => new ePub.CFI().compare(a, b);
           book.renderTo = (...options) => {
             const rendition = render(...options);
@@ -67,7 +67,17 @@ const bundle = await build({
             return rendition;
           };
           return book;
-        };`,
+        } });
+        const keys = Reflect.ownKeys(ePub);
+        const protocol = {
+          ownKeys: keys.length === Reflect.ownKeys(observed).length && keys.every(key => Reflect.ownKeys(observed).includes(key)),
+          staticDescriptors: keys.every(key => {const expected=Object.getOwnPropertyDescriptor(ePub,key), actual=Object.getOwnPropertyDescriptor(observed,key);return Reflect.ownKeys(expected).every(field=>expected[field]===actual[field]);}),
+          renditionIdentity: observed.Rendition === ePub.Rendition,
+          continuousManagerIdentity: observed.Rendition.prototype.requireManager('continuous') === ePub.Rendition.prototype.requireManager('continuous'),
+        };
+        if (!Object.values(protocol).every(Boolean)) throw new Error('Observed EPUB factory must preserve the real factory protocol');
+        window.epubFactoryProtocol = protocol;
+        export default observed;`,
     }));
   } }],
 });
@@ -98,6 +108,8 @@ try {
   await page.goto(origin);
   await page.waitForFunction(() => window.loaded);
   await page.waitForSelector('.epub-state[hidden]', { state: 'attached' });
+  report.factoryProtocol = await page.evaluate(() => window.epubFactoryProtocol);
+  assert.deepEqual(report.factoryProtocol, { ownKeys: true, staticDescriptors: true, renditionIdentity: true, continuousManagerIdentity: true });
   report.cover = await page.evaluate(() => window.coverResult);
   assert.equal(report.cover.type, 'image/png'); assert.ok(report.cover.bytes > 0);
   report.knownLifecycleObservations.push({ operation: 'thumbnail', liveUrls: report.cover.liveUrls, scope: 'Existing upstream URL lifecycle; functionality restored from 43c71de3 as requested' });

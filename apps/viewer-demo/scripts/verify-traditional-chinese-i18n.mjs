@@ -30,10 +30,10 @@ const sameCatalog = (base, translated, label) => {
 }
 
 export const verifyTraditionalChineseI18n = () => {
-  const core = read('packages/core/src/i18n/messages.ts')
+  const core = read('packages/core/src/i18n/builtin-messages.ts')
   const registry = read('packages/core/src/i18n/locales.ts')
   const demo = read('apps/viewer-demo/src/composables/useDemoCopy.ts')
-  const coreBase = catalog('packages/core/src/i18n/messages.ts', 'ZH_CN_MESSAGES')
+  const coreBase = catalog('packages/core/src/i18n/builtin-messages.ts', 'ZH_CN_MESSAGES')
   const demoBase = catalog('apps/viewer-demo/src/composables/useDemoCopy.ru.ts', 'demoCopyRu')
   for (const [region, copyName] of [['TW', 'demoCopyTw'], ['HK', 'demoCopyHk']]) {
     const locale = 'zh-' + region

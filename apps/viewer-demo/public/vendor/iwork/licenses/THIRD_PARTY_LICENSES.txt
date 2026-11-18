@@ -1166,7 +1166,7 @@ Source: git+https://github.com/flyfish-dev/styled-exceljs.git
 
 ========================================
 
-tslib@2.8.1
+tslib@2.9.1
 
 License: 0BSD
 

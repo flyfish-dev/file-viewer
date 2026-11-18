@@ -18,12 +18,13 @@ const setup = (ready: Promise<unknown> = Promise.resolve()) => {
     loaded: { metadata: Promise.resolve({ title: 'Book' }), navigation: Promise.resolve({ toc: [] }) },
     locations: { generate: vi.fn().mockResolvedValue(undefined) }, spine: { hooks: { serialize: { register } } },
     path: { relative: (href: string) => href.replace(/^\/OPS\//, '') },
-    renderTo: vi.fn((stage: HTMLElement) => {
+    renderTo: vi.fn((stage: HTMLElement, _options: Record<string, unknown>) => {
       const frame = document.createElement('iframe'); stage.append(frame);
       frame.contentDocument!.body.textContent = 'Readable local chapter'; return rendition;
     }),
   };
   mock.factory.mockReturnValue(book);
+  Object.assign(mock.factory, { Rendition: { prototype: { requireManager: () => class {} } } });
   const target = document.createElement('div'); document.body.append(target);
   let adapter: FileRenderThumbnailAdapter | null = null;
   const mount = (options: FileViewerOptions = { epub: { externalResources: 'block' } }) => renderEpub(new ArrayBuffer(8), target, {
@@ -47,6 +48,8 @@ describe('EPUB policy renderer lifecycle', () => {
     expect(fixture.register).not.toHaveBeenCalled();
     expect(fixture.rendition.display).not.toHaveBeenCalled();
     expect(mock.factory.mock.calls[0][1].requestMethod).toBeTypeOf('function');
+    expect(fixture.book.renderTo.mock.calls[0][1]).toMatchObject({ flow: 'scrolled', snap: false });
+    expect(fixture.book.renderTo.mock.calls[0][1].manager).toBeTypeOf('function');
     finish();
     await vi.waitFor(() => expect(fixture.rendition.display).toHaveBeenCalledOnce());
     expect(fixture.register).toHaveBeenCalledOnce();

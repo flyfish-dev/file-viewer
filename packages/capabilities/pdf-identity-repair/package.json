@@ -27,6 +27,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
+    "@file-viewer/core": "workspace:3.3.5",
     "@file-viewer/renderer-pdf": "workspace:3.3.5"
   },
   "devDependencies": {

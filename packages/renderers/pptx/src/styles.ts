@@ -82,6 +82,10 @@ export const pptxViewerCss = `
 ${scopePptxContentStyleText(legacyPptxCss)}
 .flyfish-pptx-content > .slide:last-of-type{margin-bottom:0}
 .flyfish-pptx-slide-slot:last-of-type > .slide{margin-bottom:0}
+.flyfish-pptx-export .flyfish-pptx-scale-box{max-width:none;width:max-content}
+.flyfish-pptx-export .flyfish-pptx-content{position:relative;inset:auto;will-change:auto}
+.flyfish-pptx-export .flyfish-pptx-content .slide{box-shadow:none}
+.flyfish-pptx-export .slide :is(img, canvas, svg, video){max-width:none}
 .flyfish-pptx-presentation{position:fixed;inset:0;z-index:2147483000;display:block;overflow:hidden;background:#000;cursor:default;user-select:none;-webkit-user-select:none}
 .flyfish-pptx-presentation:focus{outline:none}
 .flyfish-pptx-presentation-stage{position:absolute;inset:0;overflow:hidden}

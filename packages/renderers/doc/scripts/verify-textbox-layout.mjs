@@ -16,5 +16,5 @@ assert.deepEqual(renderMsDoc(parsed).warnings, parsed.warnings);
 assert.deepEqual(structuredClone(parsed), parsed);
 assert.ok(parsed.textboxLayout.frames.every((f) => !("position" in f)));
 console.log(
-  "[doc] Textbox raw mapping and fallback contract verified; visual placement remains unsupported.",
+  "[doc] Public resume raw mapping and readable fallback verified; bounded floating placement is covered by the build and browser regressions.",
 );

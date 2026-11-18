@@ -17,7 +17,7 @@ Independent native-speaker review for all seven languages is pending; the source
 | English / Chinese docs | `docs/guide/` and `docs/zh/guide/` |
 | Demo interface | `apps/viewer-demo/src/composables/useDemoCopy*.ts` |
 | Demo welcome | `apps/viewer-demo/src/composables/useDemoWelcome.ts` |
-| Shared viewer messages | `packages/core/src/i18n/messages*.ts`, `i18n/domains/`; locale registry `i18n/locales.ts` |
+| Shared viewer messages | `packages/core/src/i18n/builtin-messages.ts`, `messages.*.ts`, `builtin-plurals.ts`, `domains/`; locale registry `i18n/locales.ts`. `dist/locales/` is generated during the normal Core build. |
 | Website | `apps/official-site/src/App.vue` and its static HTML metadata |
 | Package docs | English `README.md`, Chinese `README.zh-CN.md`; `README.en.md` is a compatibility copy |
 

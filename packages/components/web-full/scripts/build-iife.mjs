@@ -10,6 +10,7 @@ import { writeBundleNotices } from '../../../build-support/bundle-notices.mjs'
 import { fullWorkspaceLicensePackages } from '../../../build-support/full-workspace-notices.mjs'
 import { appendCadIntegrationSourceNotice } from '../../../build-support/cad-source-offer.mjs'
 import { writeBundleInventory } from '../../../build-support/bundle-inventory.mjs'
+import { prebundledRuntimePathsFromInputs } from '../../../build-support/prebundled-notices.mjs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const packageManifest = JSON.parse(await readFile(resolve(packageDir, 'package.json'), 'utf8'))
@@ -206,7 +207,8 @@ await writeBundleNotices(
   join(outDir, 'THIRD_PARTY_LICENSES.txt'),
   { readmeLicensePackages: ['@ljheee/xmind-parser'], includeWorkspacePackages: fullWorkspaceLicensePackages.map(owner => owner.packageName), includePrebundledSdkPackages: ['@file-viewer/capability-mermaid'],
     includePrebundledRuntimeNotices: [
-      { packageName: '@file-viewer/capability-pdf-identity-repair', runtimePaths: ['dist/index.js'],
+      { packageName: '@file-viewer/capability-pdf-identity-repair',
+        runtimePaths: prebundledRuntimePathsFromInputs(bundledInputs, resolve(packageDir, '../../capabilities/pdf-identity-repair')),
         noticePath: 'dist/pdf-identity-repair.THIRD_PARTY_LICENSES.txt', receiptPath: 'dist/prebundled-notices.json' },
       { packageName: '@file-viewer/renderer-data', runtimePaths: ['dist/vendor/avsc.cjs'],
         noticePath: 'dist/vendor/avsc.NOTICE.txt', receiptPath: 'dist/prebundled-notices.json' },

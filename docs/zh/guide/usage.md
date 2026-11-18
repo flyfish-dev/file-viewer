@@ -606,7 +606,7 @@ Vanilla JS / Pure Web、React、jQuery 和 Svelte 接入时，搜索和定位仍
 ## 打印、导出和水印的交付行为
 
 - 下载原文件会保留用户传入的原始二进制内容，不会把渲染后的页面反向写回文件。
-- 打印会生成只包含预览内容和水印的独立打印窗口，不带 Demo 侧边栏、示例选择器或操作工具条；开启 `options.watermark` 后，打印输出会附带同一套水印样式（`print-color-adjust: exact`）。
+- 直接打印会留在当前页面，仅输出文档内容和水印。使用内容安全策略时，请在 `frame-src` 中允许 `blob:`。需要单独打开打印预览时，使用 `printRenderedHtml({ autoPrint: false })`。开启 `options.watermark` 后，打印输出会附带同一套水印样式（`print-color-adjust: exact`）。
 - 内置工具栏的「打印」保持紧凑单按钮：点击后下拉可选「直接打印」或「遮罩/盖章打印」。后者会打开页级设计器，可以拖拽绘制黑色遮盖块，也可以上传 PNG、JPEG、WebP、GIF 或 SVG 印章图片；图片只在本地读取为 data URL，并可在当前页拖动、缩放或删除，确认后叠在内容之上、水印之下再打印。设计器由 core 内部异步加载，安装组件即可开箱使用，无需额外配置子路径 alias。
 - 自定义工具栏可调用 `printRenderedHtml()` 直接打印，或 `printWithMask()` 进入遮罩/盖章设计后再打印；也可向 `printRenderedHtml({ mask })` 传入已有 `regions` 与 `stamps`。`stamps` 使用百分比 `left`、`top`、`width`、`height`，并支持 `pageIndex`、`opacity`、`rotate`、`alt` 与 `src`。
 - PDF 打印和导出 HTML 使用 PDF 专属导出适配器逐页生成完整页面，和当前滚动位置、当前可见页、导航窗格显隐状态都解耦，避免只输出当前页或被滚动容器截断。

@@ -1,5 +1,5 @@
 import type { FileViewerI18nContext } from '../contracts/types'
-import { createFileViewerTranslator, type FileViewerI18nInput } from '../i18n/messages'
+import { createFileViewerTranslator, type FileViewerI18nInput } from '../i18n/runtime'
 import { createFileViewerErrorState } from '../viewer/state'
 
 export type ViewerSourcePhase = 'downloading' | 'reading' | 'streamingPdf'

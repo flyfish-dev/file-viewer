@@ -76,11 +76,25 @@ type EpubBook = {
   spine?: EpubSpine;
 };
 
-type EpubFactory = (buffer: ArrayBuffer, options?: {
+type EpubContinuousManager = {
+  addEventListeners(): void;
+  addScrollListeners(): void;
+  removeEventListeners(): void;
+  destroy(): void;
+  ignore: boolean;
+};
+
+type EpubManagerConstructor = new (...args: unknown[]) => EpubContinuousManager;
+
+type EpubFactory = ((buffer: ArrayBuffer, options?: {
   openAs?: string;
   replacements?: string;
   requestMethod?: typeof rejectEpubNetworkRequest;
-}) => EpubBook;
+}) => EpubBook) & {
+  Rendition?: {
+    prototype: { requireManager(name: 'continuous'): EpubManagerConstructor };
+  };
+};
 
 const isEpubFactory = (value: unknown): value is EpubFactory => {
   return typeof value === 'function';
@@ -102,6 +116,48 @@ export const resolveEpubJs = (module: unknown): EpubFactory => {
   }
 
   return ePub;
+};
+
+// The reader always uses scrolled flow with snapping disabled. Reuse the
+// continuous manager's scrolling and teardown without its anonymous unload
+// handler, which browsers can reject and which cannot be removed on unmount.
+export const createEpubScrolledManager = (ePub: EpubFactory): EpubManagerConstructor => {
+  const ContinuousManager = ePub.Rendition?.prototype.requireManager('continuous');
+  if (typeof ContinuousManager !== 'function') {
+    throw new Error('epubjs module does not expose its continuous view manager.');
+  }
+
+  return class EpubScrolledManager extends ContinuousManager {
+    private listenersAttached = false;
+    private destroyed = false;
+    private readonly onPageHide = (event: PageTransitionEvent) => {
+      // A persisted page remains live in the back/forward cache.
+      if (event.persisted) return;
+      this.ignore = true;
+      this.destroy();
+    };
+
+    override addEventListeners(): void {
+      if (this.destroyed || this.listenersAttached) return;
+      this.addScrollListeners();
+      this.listenersAttached = true;
+      window.addEventListener('pagehide', this.onPageHide);
+    }
+
+    override removeEventListeners(): void {
+      if (!this.listenersAttached) return;
+      window.removeEventListener('pagehide', this.onPageHide);
+      this.listenersAttached = false;
+      super.removeEventListeners();
+    }
+
+    override destroy(): void {
+      if (this.destroyed) return;
+      this.destroyed = true;
+      this.removeEventListeners();
+      super.destroy();
+    }
+  };
 };
 
 const epubStyle = `
@@ -526,8 +582,9 @@ export default async function renderEpub(
         allowScriptedContent: false,
         flow: 'scrolled',
         height: '100%',
-        manager: 'continuous',
+        manager: createEpubScrolledManager(ePub),
         resizeOnOrientationChange: true,
+        snap: false,
         spread: 'none',
         width: '100%',
       });
