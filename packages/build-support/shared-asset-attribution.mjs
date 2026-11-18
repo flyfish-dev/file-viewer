@@ -21,6 +21,10 @@ export function canonicalRuntimePath(path, sourceRoot) {
     if (path.startsWith(`vendor/${renderer}/`) && /\.(?:wasm|js)$/.test(path)) return join(sourceRoot, `packages/renderers/${renderer}/dist`, path.slice(`vendor/${renderer}/`.length))
   }
   if (path === 'vendor/xlsx/sheet.worker.js') return join(sourceRoot, 'packages/renderers/spreadsheet/dist/worker/sheet.worker.js')
+  // The CAD stager generates this compatibility copy before the Demo is built.
+  if (path === 'wasm/cad/0.8.3/libredwg-web.wasm') {
+    return join(sourceRoot, 'apps/viewer-demo/public/wasm/cad/libredwg-web.wasm')
+  }
   // The normal installed-runtime stagers verify CAD, PPT, fonts and OCCT
   // sources before this common bootstrap tree is copied. Alias paths remain
   // aliases; they do not elect a component version from the directory name.
