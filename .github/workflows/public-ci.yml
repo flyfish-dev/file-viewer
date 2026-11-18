@@ -586,6 +586,10 @@ jobs:
         run: |
           node --test packages/components/web-full/scripts/build-copy-assets.test.mjs
           node --test packages/build-support/browser-runtime-options.test.mjs
+          # Use the matrix version already installed by the binary renderer's frozen lock.
+          browser_tool=$(node -p 'require("node:module").createRequire(process.cwd() + "/packages/renderers/binary/package.json").resolve("playwright/package.json")')
+          test -L node_modules/playwright
+          ln -sfn "$(dirname "$browser_tool")" node_modules/playwright
           node .github/scripts/source-prepack-browser.mjs --check-tools
 
       - name: Set up the existing CHM source toolchain
@@ -612,7 +616,7 @@ jobs:
         timeout-minutes: 10
         run: |
           set -euo pipefail
-          pnpm exec playwright install --with-deps chromium firefox webkit
+          node node_modules/playwright/cli.js install --with-deps chromium firefox webkit
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends fonts-noto-cjk xvfb xauth
           command -v xvfb-run
