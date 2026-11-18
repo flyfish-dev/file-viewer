@@ -94,8 +94,10 @@ jobs:
             LGPL-3.0-only, LGPL-3.0-or-later, SSPL-1.0
           # Each exception is version-pinned: CAD/DWF are disclosed in README,
           # jszip uses its MIT option, and Sharp platform artifacts retain their own terms.
+          # elkjs@0.12.1 uses its documented EPL-2.0 option. See the corresponding-sources registry.
           allow-dependencies-licenses: >-
             pkg:npm/jszip@3.10.2,
+            pkg:npm/elkjs@0.12.1,
             pkg:npm/@flyfish-dev/cad-viewer@0.8.4,
             pkg:npm/dwf-viewer@0.6.8,
             pkg:npm/@mlightcad/libredwg-web@0.7.9,
