@@ -146,6 +146,21 @@ try {
     assert.match(await page.locator('#host').textContent(), /ordinary/)
     cases.push({ name, originalPreviewUnchanged: true })
   }
+  const earlierConsoleErrors = consoleErrors.length
+  const earlierDiagnostics = await page.evaluate(() => window.diagnostics.length)
+  const vueSource = '<script setup lang="ts">const text = "Vue source";</script><template><button @click="text">ordinary</button></template>'
+  await mount('component.vue', 'vue', {}, vueSource)
+  await page.waitForFunction(() => document.querySelector('#host').textContent.includes('Vue source'))
+  assert.equal(await page.locator('.signature-document-inspection').count(), 0)
+  assert.equal(await page.evaluate(() => window.diagnostics.length), earlierDiagnostics)
+  assert.deepEqual(consoleErrors.slice(earlierConsoleErrors), [])
+  cases.push({ name: 'component.vue', previewRetained: true, noXmlParserDiagnostic: true })
+  const signedMarkup = '<r xmlns:s="http://www.w3.org/2000/09/xmldsig&#35;"><s:Signature><s:SignedInfo><s:SignatureMethod Algorithm="urn:sample"/></s:SignedInfo></s:Signature></r>'
+  await mount('renamed-signature.txt', 'txt', {}, signedMarkup)
+  await page.waitForSelector('.signature-document-inspection')
+  assert.equal(await page.locator('.signature-card').count(), 1)
+  assert.match(await page.locator('.signature-document-inspection').textContent(), /urn:sample/)
+  cases.push({ name: 'renamed-signature.txt', signedMetadataVisible: true })
   await mount('demo-jades-self-signed.json', 'json', { signature: { documentInspection: false } })
   await page.waitForTimeout(100); assert.equal(await page.locator('.signature-document-inspection').count(), 0)
   cases.push({ name: 'explicit-opt-out', originalPreviewUnchanged: true })

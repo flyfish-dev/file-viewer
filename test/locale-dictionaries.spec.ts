@@ -3,16 +3,14 @@ import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
-import { constants } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import { basename, dirname, join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
-import { runInNewContext } from 'node:vm'
 import ts from 'typescript'
 import { build } from 'esbuild'
 import { buildLocaleExports } from '../packages/core/scripts/build-locale-exports.mjs'
-import { copyPublicSourceTree } from '../scripts/lib/component-public-source-profile.mjs'
+import { copyCoreSource, copyPublicSourceTree } from '../packages/build-support/core-source-export.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const require = createRequire(join(root, 'package.json'))
@@ -136,20 +134,6 @@ describe('published locale dictionary boundaries', () => {
 })
 
 it('preserves the locale producer and package metadata in both Core source export copy modes', async () => {
-  const file = ts.createSourceFile('sync-core-repo.mjs', readFileSync(join(root, 'scripts/sync-core-repo.mjs'), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
-  const names = new Set(['writeJson', 'normalizeWorkspaceRange', 'normalizeDependencyBlock', 'removePath', 'copyCleanDir', 'normalizePackageJson'])
-  const declarations = file.statements.filter(statement =>
-    (ts.isFunctionDeclaration(statement) && names.has(statement.name!.text)) ||
-    (ts.isVariableStatement(statement) && statement.declarationList.declarations.some(declaration => declaration.name.getText(file) === 'shouldCopy')),
-  )
-  expect(declarations).toHaveLength(names.size + 1)
-  const awaitedCall = (statement: ts.Statement, name: string) => ts.isExpressionStatement(statement) &&
-    ts.isAwaitExpression(statement.expression) && ts.isCallExpression(statement.expression.expression) &&
-    statement.expression.expression.expression.getText(file) === name
-  const first = file.statements.findIndex(statement => awaitedCall(statement, 'copyCleanDir'))
-  const last = file.statements.findIndex(statement => awaitedCall(statement, 'normalizePackageJson'))
-  expect(first).toBeGreaterThan(0); expect(last).toBeGreaterThan(first)
-  const production = [...declarations, ...file.statements.slice(first, last + 1)].map(statement => statement.getText(file)).join('\n')
   const owned = await fs.realpath(await fs.mkdtemp(join(tmpdir(), 'file-viewer-core-source-export-')))
   try {
     const sourceRoot = join(owned, 'source')
@@ -161,8 +145,8 @@ it('preserves the locale producer and package metadata in both Core source expor
     const coreMetadata = JSON.parse(readFileSync(join(root, 'ecosystem/wrappers.json'), 'utf8')).corePackage
     for (const publicProfile of [null, {}]) {
       const targetDir = join(owned, publicProfile ? 'profile-core' : 'normal-core')
-      await runInNewContext(`(async () => {${production}\n})()`, {
-        ...fs, constants, basename, join, sourceRoot, targetDir, sourceDir: join(root, 'packages/core'),
+      await copyCoreSource({
+        sourceRoot, targetDir, sourceDir: join(root, 'packages/core'),
         rootPackage, coreMetadata, corePackage: structuredClone(maintainedPackage),
         workspaceVersions: new Map([[maintainedPackage.name, maintainedPackage.version]]),
         publicProfile, copy: publicProfile ? copyPublicSourceTree : fs.cp,

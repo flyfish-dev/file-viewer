@@ -121,11 +121,17 @@ export const inspectPdfDocumentMetadata = async (request: FileViewerDocumentInsp
   return { format: 'pdf', signatures, limitations: source.warnings }
 }
 
-const parseXmlSource = (bytes: Uint8Array, signal?: AbortSignal) => {
-  let text: string
-  if (bytes[0] === 0xff && bytes[1] === 0xfe) text = new TextDecoder('utf-16le', { fatal: true }).decode(bytes)
-  else if (bytes[0] === 0xfe && bytes[1] === 0xff) text = new TextDecoder('utf-16be', { fatal: true }).decode(bytes)
-  else text = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+const decodeXmlSource = (bytes: Uint8Array) => {
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) return new TextDecoder('utf-16le', { fatal: true }).decode(bytes)
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) return new TextDecoder('utf-16be', { fatal: true }).decode(bytes)
+  return new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+}
+
+// XML element names cannot be encoded as character references. Match the local
+// name before parsing, then let the DOM resolve the actual signature namespace.
+const potentialXmlSignature = /<(?:[^\s<>:/'"]+:)?Signature(?=[\s/>])/
+
+const parseXmlSource = (text: string, signal?: AbortSignal) => {
   // Never pass DTD/entity declarations or stylesheet instructions to a DOM implementation.
   if (/<!\s*(?:DOCTYPE|ENTITY)\b|<\?xml-stylesheet\b/i.test(text)) throw new Error('XML metadata inspection does not allow DTDs, entity declarations or external stylesheet instructions.')
   const doc = new DOMParser().parseFromString(text, 'application/xml')
@@ -141,11 +147,20 @@ const parseXmlSource = (bytes: Uint8Array, signal?: AbortSignal) => {
   return doc
 }
 
-export const inspectXmlDocumentMetadata = async (bytes: Uint8Array, signal?: AbortSignal, limits?: Partial<SignatureContainerLimits>): Promise<DocumentSignatureMetadataResult | null> => {
+export const inspectXmlDocumentMetadata = async (
+  bytes: Uint8Array,
+  signal?: AbortSignal,
+  limits?: Partial<SignatureContainerLimits>,
+  probingMarkup = false
+): Promise<DocumentSignatureMetadataResult | null> => {
   const bounds = normalizeSignatureContainerLimits(limits)
   if (bytes.byteLength > Math.min(4 * 1024 * 1024, bounds.maxXmlBytes)) throw new Error('XML inspection exceeds its byte limit.')
   check(signal)
-  const doc = parseXmlSource(bytes, signal)
+  const text = decodeXmlSource(bytes)
+  // A leading angle bracket also occurs in source code and HTML fragments.
+  // Parse declared XML as before and inspect renamed files with signature markup.
+  if (probingMarkup && !/^\s*<\?xml\s/.test(text) && !potentialXmlSignature.test(text)) return null
+  const doc = parseXmlSource(text, signal)
   const found = Array.from(doc.getElementsByTagNameNS(DSIG, 'Signature'))
   if (!found.length) return null
   if (found.length > 64) throw new Error('XML signature count exceeds its limit.')
@@ -264,7 +279,9 @@ export const inspectDocumentSignatureMetadata = async (request: FileViewerDocume
   if (bytes.byteLength > Math.min(64 * 1024 * 1024, limits.maxContainerBytes)) throw new Error('Document inspection input exceeds its byte limit.')
   const head = new TextDecoder('utf-8', { fatal: false }).decode(bytes.subarray(0, 2048)).trim()
   if (head.startsWith('%PDF-')) return inspectPdfDocumentMetadata(request)
-  if (head.startsWith('<') || (bytes[0] === 0xff && bytes[1] === 0xfe) || (bytes[0] === 0xfe && bytes[1] === 0xff)) return inspectXmlDocumentMetadata(bytes, request.signal, limits)
+  if (head.startsWith('<') || (bytes[0] === 0xff && bytes[1] === 0xfe) || (bytes[0] === 0xfe && bytes[1] === 0xff)) {
+    return inspectXmlDocumentMetadata(bytes, request.signal, limits, request.type.toLowerCase() !== 'xml')
+  }
   if (bytes.byteLength > Math.min(8 * 1024 * 1024, limits.maxJsonBytes)) {
     if (head.startsWith('{') || /^(?:json|jws)$/i.test(request.type) || /^[A-Za-z0-9_-]+\./.test(head)) throw new Error('JWS metadata inspection exceeds its byte limit; no unsigned-document conclusion was made.')
     return null
