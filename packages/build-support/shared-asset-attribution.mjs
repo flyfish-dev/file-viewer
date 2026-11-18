@@ -106,13 +106,13 @@ export async function stageSharedAssetAttribution(viewerRoot, { sourceRoot = wor
   // version-checked normal CAD stager, outside the initial unmapped backlog.
   byDigest.set('d8a6cc31abc16b6748c7a21f21611f5a1ec33f67d22ca23d7da1c19b95496bee', {
     sha256: 'd8a6cc31abc16b6748c7a21f21611f5a1ec33f67d22ca23d7da1c19b95496bee',
-    kind: 'original-license-grant', component: '@flyfish-dev/cad-viewer@0.8.3', declaredLicense: 'AGPL-3.0-only',
-    source: 'https://github.com/flyfish-dev/cad-viewer/tree/6366d2f7b1013cd5c300008c3c3fbf017ca9aace',
+    kind: 'original-license-grant', component: '@flyfish-dev/cad-viewer@0.8.4', declaredLicense: 'AGPL-3.0-only',
+    source: 'https://github.com/flyfish-dev/cad-viewer/tree/6721a3dbcd5027a31006029243c505c460a521c6',
   })
   byDigest.set('a6f4f2d3dacfe44c2d3c9f8860aa3b8a1f64d4d61b749f4c53af247dd9df4a83', {
     sha256: 'a6f4f2d3dacfe44c2d3c9f8860aa3b8a1f64d4d61b749f4c53af247dd9df4a83',
-    kind: 'original-attribution-notice', component: '@flyfish-dev/cad-viewer@0.8.3', declaredLicense: null,
-    source: 'https://github.com/flyfish-dev/cad-viewer/tree/6366d2f7b1013cd5c300008c3c3fbf017ca9aace',
+    kind: 'original-attribution-notice', component: '@flyfish-dev/cad-viewer@0.8.4', declaredLicense: null,
+    source: 'https://github.com/flyfish-dev/cad-viewer/tree/6721a3dbcd5027a31006029243c505c460a521c6',
   })
   const attribution = []
   const payloads = new Map()

@@ -14,12 +14,12 @@
     },
     {
       "sourcePath": "packages/components/web/viewer/wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "a178a48082aa5425b98f1073772cd6004f77344024d1cfc84ffa7d52ec478c71",
-      "bytes": 3650,
+      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
+      "bytes": 3665,
       "kind": "generated-corresponding-source-offer",
-      "component": "CAD runtime@0.8.3",
+      "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c3ed058fbc9ad3564edb1e093b489773e005a7e2 (SHA-256 aa21ad44222fd891ad9489bca3ad3e3db59db8d6415025a219568d2aff1cd7d8). All 104 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "initialOccurrences": 10
     },
     {

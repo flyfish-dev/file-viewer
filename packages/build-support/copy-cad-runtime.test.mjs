@@ -20,8 +20,8 @@ test('the normal Demo CAD copier retains the complete source offer and grants in
   assert.equal(result.status, 0, result.stderr)
   assert.equal(await readFile(join(cad, 'host-owned.json'), 'utf8'), '{"retained":true}\n')
   const registry = JSON.parse(await readFile(join(root, 'packages/build-support/licenses/asset-family-materials.json')))
-  const material = registry.materials.find(item => item.component === 'CAD runtime@0.8.3')
-  for (const alias of ['', '0.8.0', '0.8.1', '0.8.3']) {
+  const material = registry.materials.find(item => item.component === 'CAD runtime@0.8.4')
+  for (const alias of ['', '0.8.0', '0.8.1', '0.8.3', '0.8.4']) {
     const directory = join(cad, alias)
     const notice = await readFile(join(directory, 'CORRESPONDING_SOURCE_NOTICE.txt'))
     assert.ok(notice.toString().includes(CAD_INTEGRATION_SOURCE.url), alias)

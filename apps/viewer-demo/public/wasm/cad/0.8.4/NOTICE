@@ -1,0 +1,10 @@
+@flyfish-dev/cad-viewer
+
+This project integrates third-party open-source projects for CAD parsing and rendering:
+
+- @mlightcad/libredwg-web: DWG parsing in the browser through LibreDWG WebAssembly. License: GPL-3.0-only.
+- @mlightcad/shx-parser: AutoCAD SHX shape/font parsing and glyph geometry. License: MIT.
+- dxf-parser: DXF parser for JavaScript. License: MIT.
+- dwf-viewer 0.6.x: native frontend DWF/DWFx/XPS renderer for DWF 6+ ZIP containers, DWFx/OPC/XPS, WHIP/W2D 2D sheets, W3D/HSF eModel content, embedded XPS fonts and optional WASM fallback. License: AGPL-3.0-only.
+
+The combined package is distributed under AGPL-3.0-only. Keep attribution and license notices when redistributing, modifying, embedding, or using this package as part of another application.

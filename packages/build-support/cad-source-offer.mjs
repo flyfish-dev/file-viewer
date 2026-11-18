@@ -6,12 +6,12 @@ import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferred
 // This immutable public snapshot was read back and cold-built on Linux ARM64.
 // The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: 'c3ed058fbc9ad3564edb1e093b489773e005a7e2',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c3ed058fbc9ad3564edb1e093b489773e005a7e2',
-  sha256: 'aa21ad44222fd891ad9489bca3ad3e3db59db8d6415025a219568d2aff1cd7d8',
-  bytes: 193914125,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.5',
-  runtimeSha256: 'b733acb06346d6bf0692273d0408a07db3096c0dbd2a051ca2a7dd44b11d4934'
+  sourceCommit: '6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c',
+  sha256: '15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6',
+  bytes: 193754006,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.5-cad-084',
+  runtimeSha256: 'c5390e93249b839205e4c380e818e82417408ef83270ebb6b148b8e282199e66'
 })
 
 // Native preferred sources are distinct from the File Viewer integration source.
@@ -32,17 +32,16 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 ])
 
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
-  // Complete preferred inputs with a measured standalone reproduction. Normal
-  // Full/HTTPS verification remains mandatory; native owner versions stay fixed.
   releaseVersion: '3.3.5',
-  cadVersion: '0.8.3',
-  dwfVersion: '0.6.7',
-  url: CAD_PUBLIC_CORRESPONDING_SOURCE.url,
-  sha256: '2df7675ffe986ae45a60d63843a49b68a70122703d1526703e989d8a3211ff4b',
-  bytes: 463125,
-  files: 104,
-  runtimeBytes: 926728,
-  runtimeSha256: 'b733acb06346d6bf0692273d0408a07db3096c0dbd2a051ca2a7dd44b11d4934'
+  sourceRevision: 'cad-084',
+  sha256: '74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f',
+  bytes: 472538,
+  files: 117,
+  runtimeBytes: 945926,
+  runtimeSha256: 'c5390e93249b839205e4c380e818e82417408ef83270ebb6b148b8e282199e66',
+  cadVersion: '0.8.4',
+  dwfVersion: '0.6.8',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {
