@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
 import { createEpubScrolledManager, resolveEpubJs, resolveEpubNavigationHref } from '../packages/renderers/ebook/src/epub';
 
