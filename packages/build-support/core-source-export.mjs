@@ -103,7 +103,18 @@ export async function copyPublicSourceTree(from, to, { recursive = false, filter
       execFileSync('/bin/cp', ['-c', ...(node.info.isDirectory() ? ['-R', `${node.source}/.`] : [node.source]), node.target])
     } else if (node.info.isDirectory()) {
       for (const child of node.children) await copy(child)
-    } else await copyFile(node.source, node.target, constants.COPYFILE_FICLONE_FORCE)
+    } else {
+      // Reflink cloning is an optimization, not a correctness requirement:
+      // filesystems without copy-on-write support (ext4, tmpfs) reject
+      // COPYFILE_FICLONE_FORCE. Fall back to an ordinary byte copy, which
+      // keeps the exact-byte and no-hard-link guarantees above.
+      try {
+        await copyFile(node.source, node.target, constants.COPYFILE_FICLONE_FORCE)
+      } catch (error) {
+        if (!['ENOSYS', 'ENOTSUP', 'EOPNOTSUPP', 'EXDEV', 'EINVAL'].includes(error?.code)) throw error
+        await copyFile(node.source, node.target)
+      }
+    }
     await chmod(node.target, node.info.mode & 0o777)
   }
   const plan = await inspect(from, to)

@@ -627,7 +627,9 @@ jobs:
           echo "$tool_dir" >> "$GITHUB_PATH"
 
       - name: Prepare the complete original browser matrix
-        timeout-minutes: 10
+        # Three browser downloads plus the Noto CJK apt packages exceed ten
+        # minutes on a cold, slow runner; every original check is retained.
+        timeout-minutes: 20
         run: |
           set -euo pipefail
           node node_modules/playwright/cli.js install --with-deps chromium firefox webkit
