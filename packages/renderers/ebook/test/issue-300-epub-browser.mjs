@@ -45,8 +45,8 @@ const bundle = await build({
       context.onLoad({ filter: /.*/, namespace: 'issue-300' }, () => ({
         resolveDir: root,
         contents: `import ePub from ${JSON.stringify(join(packageRoot, 'dist/vendor/epubjs.js'))};
-          export default (...args) => {
-            const book = ePub(...args);
+          const observed = new Proxy(ePub, { apply(factory, receiver, args) {
+            const book = Reflect.apply(factory, receiver, args);
             window.epubBook = book;
             const renderTo = book.renderTo.bind(book);
             book.renderTo = (...renderArgs) => {
@@ -62,7 +62,17 @@ const bundle = await build({
               return rendition;
             };
             return book;
-          };`,
+          } });
+          const keys = Reflect.ownKeys(ePub);
+          const protocol = {
+            ownKeys: keys.length === Reflect.ownKeys(observed).length && keys.every(key => Reflect.ownKeys(observed).includes(key)),
+            staticDescriptors: keys.every(key => {const expected=Object.getOwnPropertyDescriptor(ePub,key), actual=Object.getOwnPropertyDescriptor(observed,key);return Reflect.ownKeys(expected).every(field=>expected[field]===actual[field]);}),
+            renditionIdentity: observed.Rendition === ePub.Rendition,
+            continuousManagerIdentity: observed.Rendition.prototype.requireManager('continuous') === ePub.Rendition.prototype.requireManager('continuous'),
+          };
+          if (!Object.values(protocol).every(Boolean)) throw new Error('Observed EPUB factory must preserve the real factory protocol');
+          window.epubFactoryProtocol = protocol;
+          export default observed;`,
       }));
     },
   }],
@@ -136,6 +146,10 @@ try {
     });
   }
   await page.waitForSelector('.epub-state[hidden]', { state: 'attached' });
+  if (!useDemo) {
+    report.factoryProtocol = await page.evaluate(() => window.epubFactoryProtocol);
+    assert.deepEqual(report.factoryProtocol, { ownKeys: true, staticDescriptors: true, renditionIdentity: true, continuousManagerIdentity: true });
+  }
 
   const observe = async (name, chapterNumber, expectedFont) => {
     const trace = await page.locator('.epub-stage').evaluate(async stage => {

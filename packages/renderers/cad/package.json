@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-cad",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "private": false,
   "type": "module",
   "description": "Standalone CAD renderer plugin for File Viewer powered by @flyfish-dev/cad-viewer.",
@@ -64,8 +64,8 @@
     "verify:color-mode": "node scripts/verify-color-mode.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.4",
-    "@flyfish-dev/cad-viewer": "0.8.3"
+    "@file-viewer/core": "workspace:3.3.5",
+    "@flyfish-dev/cad-viewer": "0.8.4"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

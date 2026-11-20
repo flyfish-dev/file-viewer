@@ -7,15 +7,17 @@ import { pathToFileURL } from 'node:url'
 // All paths intentionally resolve from the repository root.
 const coreEntry = resolve('packages/core/dist/index.js')
 const coreMessagesEntry = resolve('packages/core/dist/i18n/messages.js')
+const coreBuiltinMessagesEntry = resolve('packages/core/dist/i18n/builtin-messages.js')
 const vueEntry = resolve('packages/components/vue3/dist/index.mjs')
 const vueFullTypesEntry = resolve('packages/components/vue3-full/dist/index.d.ts')
 
 assert.ok(existsSync(coreEntry), `Missing built core entry: ${coreEntry}`)
 assert.ok(existsSync(coreMessagesEntry), `Missing built core messages entry: ${coreMessagesEntry}`)
+assert.ok(existsSync(coreBuiltinMessagesEntry), `Missing built core dictionary entry: ${coreBuiltinMessagesEntry}`)
 assert.ok(existsSync(vueEntry), `Missing built Vue 3 entry: ${vueEntry}`)
 assert.ok(existsSync(vueFullTypesEntry), `Missing built Vue 3 full types: ${vueFullTypesEntry}`)
 
-const builtMessages = readFileSync(coreMessagesEntry, 'utf8')
+const builtMessages = readFileSync(coreBuiltinMessagesEntry, 'utf8')
 const vueFullTypes = readFileSync(vueFullTypesEntry, 'utf8')
 assert.match(
   builtMessages,

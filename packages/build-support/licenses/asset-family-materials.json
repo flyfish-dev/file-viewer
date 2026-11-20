@@ -14,12 +14,12 @@
     },
     {
       "sourcePath": "packages/components/web/viewer/wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "f1c654c5ab1cebe3226a3cbb713a23fb55220ad4064ffe3cc9d89c2ffcdf1c70",
-      "bytes": 3671,
+      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
+      "bytes": 3665,
       "kind": "generated-corresponding-source-offer",
-      "component": "CAD runtime@0.8.3",
+      "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/40d57f0402e0f99ac70f3053372fa89f82fc1534 (SHA-256 4fe8e5cd69383f265aac51e2d16bd82b4e78fdc591c5c9b562459391751acecc). All 102 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "initialOccurrences": 10
     },
     {
@@ -244,7 +244,7 @@
     },
     {
       "sourcePath": "apps/viewer-demo/public/vendor/iwork/licenses/THIRD_PARTY_LICENSES.txt",
-      "sha256": "5c50b49023ab5666629a5491c46b49d8d8997bdddd8ecbed95f2641dac06a514",
+      "sha256": "bd1a22e512f49c248010135fb7410bf3cc2032624c17f344958c9a7eea0fc116",
       "bytes": 61552,
       "kind": "generated-original-bundle-grants",
       "component": "Physical Worker dependency inputs",
@@ -472,7 +472,7 @@
     },
     {
       "sourcePath": "packages/renderers/dicom/THIRD_PARTY_NOTICES.md",
-      "sha256": "c87a0e0e8b8bbba852f3165e083972f218e8f3f4f48430108801e561af4b076c",
+      "sha256": "0c0fe0501feb3a4779ef80fbc6d48cf96d2066a1a49dfb4cd6c103b3706d4003",
       "bytes": 14378,
       "kind": "generated-attribution-inventory",
       "component": "DICOM source inventory",
@@ -552,7 +552,7 @@
     },
     {
       "sourcePath": "packages/renderers/text/licenses/xml-profiles/NOTICE.md",
-      "sha256": "8f0fae92f691506d50490166a846fe4abc8d5bc1fbce0d493ba2754ee75a5431",
+      "sha256": "eae05f70f79edfa58b61b148b4e61ece0445179ec9b5e290c18016f8898148db",
       "bytes": 2392,
       "kind": "generated-runtime-provenance",
       "component": "XML optional profiles",

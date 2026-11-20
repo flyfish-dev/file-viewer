@@ -5,7 +5,11 @@ import { fileURLToPath } from 'node:url'
 
 const scriptDir = dirname(fileURLToPath(import.meta.url))
 const packageRoot = resolve(scriptDir, '..')
-const coreDistDir = join(packageRoot, 'dist')
+const args = process.argv.slice(2)
+if (!(args.length === 0 || args.length === 2 && args[0] === '--dist-dir')) {
+  throw new Error('Only an explicit dist directory is supported')
+}
+const coreDistDir = args[1] ? resolve(args[1]) : join(packageRoot, 'dist')
 
 const relativeSpecifierPattern = /(\bfrom\s*['"]|\bimport\s*\(\s*['"]|\bimport\s*['"])(\.{1,2}(?:\/[^'"]+)?)(['"])/g
 const runtimeExtensions = new Set(['.js', '.mjs', '.cjs', '.json', '.node'])

@@ -38,6 +38,10 @@ npm install @file-viewer/core
 
 浏览器 `mountViewer` 在缓冲 URL 时显示本地化的下载提示，随后显示读取提示，直至渲染器接管。File 和 buffer 输入显示读取提示。状态遵循配置的语言和主题，展示获取失败，并在切源或销毁时清理。
 
+## 按需选择界面字典（未发布）
+
+默认导入继续提供全部七种离线语言。单语言 ESM 应用可启用 `file-viewer-custom-locales` 打包条件，通过 `registerFileViewerLocale` 仅注册从 `@file-viewer/core/locales/en-US`（或其他支持语言）导入的完整字典。Core 公共子入口及各框架共用同一注册表，原 `options.messages` 保持优先覆盖。构建配置、回退和延迟加载见[国际化指南](https://doc.file-viewer.app/zh/guide/i18n#构建时选择字典)。预打包的 Full IIFE/AMD 仍保留全部语言。
+
 ## 渲染前预检
 
 `precheckFileViewerSource()` 不会创建 viewer，也不会加载重型 renderer。它先检查当前扩展名是否在能力范围内，并对 PDF、OpenXML / OpenDocument、旧版 OLE Office、RTF 等格式执行签名或包结构检查。`valid: null` 明确表示该格式只有能力检查、没有做完整解析；真实 renderer 仍是畸形文件的最终判断者。

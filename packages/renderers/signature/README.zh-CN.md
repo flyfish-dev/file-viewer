@@ -30,6 +30,40 @@ const options = {
 
 需要预览容器内的 PDF、XML、图片或 Office 文档时，同时注册相应 renderer。此包不会进入冻结的旧版 `preset-all` 或历史 `*-full` 依赖矩阵，避免既有用户升级时突然下载密码学 WASM；File Viewer CLI 的新项目 `full` 选择会按清单安装全部 renderer，也可以只勾选 `signature`。
 
+## 在 PDF、XML、JSON 原预览旁查看签名元数据
+
+将可选 `signatureRenderer` 与普通 PDF/text renderer 一起注册后，本地文档含 PDF 签名字典、命名空间正确的 XMLDSig/XAdES 或 Compact/Flattened/General JWS 时，会复用已有的签名详情开关面板。PDF 画布、XML/JSON 源码预览保持挂载，未签名文档保持原预览。此路径只读取元数据：不验证签名或引用摘要、不导入密钥、不执行 XML transform，也不请求证书、分离内容或信任服务。证书 SHA-256 指纹只在本地计算；缺材料、不支持或未检查均不表示签名无效。
+
+Vanilla 接入，使用原始 File 或 buffer：
+
+```ts
+import { createViewer } from '@file-viewer/core/browser'
+import { signatureRenderer } from '@file-viewer/renderer-signature'
+import { pdfRenderer } from '@file-viewer/renderer-pdf'
+import { textRenderer } from '@file-viewer/renderer-text'
+import { enableFileViewerPdfSignatureInspection } from '@file-viewer/renderer-pdf/signature-inspection'
+
+// 此可选 PDF 入口需要现有可选 peer pdf-lib@1.17.1。
+// Full 原有 PDF 修复能力已注册该 reader。
+enableFileViewerPdfSignatureInspection()
+const viewer = createViewer(document.querySelector('#viewer')!, {
+  options: {
+    renderers: [signatureRenderer, pdfRenderer, textRenderer],
+    signature: { documentInspection: true, detailsPanel: { position: 'left' } }
+  }
+})
+await viewer.load({ file: originalFile, filename: originalFile.name })
+// 也可使用 viewer.load({ buffer: originalBytes, filename: 'signed.pdf' })
+```
+
+启用可选签名能力后，此路径默认开启；`signature.documentInspection: false` 可关闭。Full/preset 本身不安装签名插件，需显式添加同版本 `signatureRenderer` 才显示面板。Full 已提供 PDF reader；标准/轻量 PDF 还需安装可选 peer 并调用上面的独立入口，普通 PDF 入口不加载字典解析器。
+
+PDF 在预览修复或 Worker transfer 前拷贝原始字节，也可读取调用方已提供的原始 File/Blob。仅有流式 URL、没有原始字节时保留流式预览并报告 `document-inspection-unavailable`，不会当作“未签名”。需要检查时传原始 File/buffer，或对 URL 设置 `pdf.streaming: false`。检查器不会额外请求 URL，也不使用字体修复后的预览字节。
+
+PDF 可列出多签名者及原始增量修订中的字典定义、结构性 ByteRange/修订末尾；不据此认定当前活动域、签名覆盖或完整性。支持直接 CMS literal/hex 字符串及有界无过滤/Flate 对象流；加密 PDF、不支持的结构过滤器和超限/损坏结构报告不可检查。XML 解析前拒绝 DTD、实体声明和外部样式指令，只把结构正确且明确关联的声明归入对应签名，不跟随引用、不执行规范化或 transform。JWS 未知 crit 标为不支持，仍展示多签和缺失分离内容；不尝试验证。独立 CMS/JWS 原有默认验证行为保持不变。
+
+检查有硬上限：原始输入 64 MiB、XML 4 MiB、JWS 8 MiB、文档签名 64 个，以及 PDF 结构解压、节点、深度和耗时限制。`signature.containerLimits` 可降低相关限制。不可检查或取消时保留预览，销毁时释放面板及源引用。此视图不证明信任、撤销、合格签名、法律效力或完整 PAdES/XAdES/JAdES 合规。
+
 ## 主机输入
 
 `options.signature` 支持：

@@ -3,6 +3,7 @@ import { test } from 'node:test'
 import { cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
+import { resolveWorkspaceAsset } from './public-asset-mirror.mjs'
 import { stageSharedAssetAttribution } from './shared-asset-attribution.mjs'
 
 test('copied PDF CMap grants bind to the actual canonical payload; altered payload fails', async t => {
@@ -33,7 +34,7 @@ test('the established Full asset split names exact owners without claiming their
   t.after(() => rm(target, { recursive: true, force: true }))
   const drawio = join(target, 'vendor/drawio')
   await mkdir(drawio, { recursive: true })
-  await cp(resolve(import.meta.dirname, '../../third_party/drawio/LICENSE'), join(drawio, 'LICENSE'))
+  await cp(resolveWorkspaceAsset(resolve(import.meta.dirname, '../..'), 'third_party/drawio/LICENSE'), join(drawio, 'LICENSE'))
   await writeFile(join(drawio, 'outside-this-npm-package.js'), 'delegated to the existing asset owner')
   const owner = { prefix: 'vendor/drawio/', packageName: '@file-viewer/assets-drawing', version: '3.2.0', inventoryPath: 'viewer/THIRD_PARTY_LICENSES.assets.json' }
   const receipt = await stageSharedAssetAttribution(target, { externalAssetOwners: [owner] })
@@ -65,4 +66,15 @@ test('separate native CAD bindings retain their GPL text and independent AGPL ow
   const owner = receipt.materials.find(item => item.path.endsWith('/LICENSE'))
   assert.equal(owner.declaredLicense, 'AGPL-3.0-only')
   assert.ok(owner.runtimePaths.includes('wasm/cad/dwfv-render.wasm'))
+  const aliasDir = join(cad, '0.8.3')
+  const aliasPath = 'wasm/cad/0.8.3/libredwg-web.wasm'
+  await mkdir(aliasDir)
+  await cp(join(cad, 'GPL-3.0.txt'), join(aliasDir, 'GPL-3.0.txt'))
+  await cp(join(cad, 'libredwg-web.wasm'), join(aliasDir, 'libredwg-web.wasm'))
+  const compatible = await stageSharedAssetAttribution(target)
+  const alias = compatible.runtimeFiles.find(item => item.path === aliasPath)
+  assert.equal(alias.sourceSha256, receipt.runtimeFiles.find(item => item.path === 'wasm/cad/libredwg-web.wasm').sha256)
+  assert.equal(alias.sourceSha256, alias.sha256)
+  await writeFile(join(aliasDir, 'libredwg-web.wasm'), 'This does not match the canonical CAD WASM')
+  await assert.rejects(stageSharedAssetAttribution(target), /differs from its canonical owner/)
 })

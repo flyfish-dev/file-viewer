@@ -11,6 +11,7 @@ test('normal design staging retains complete original bytes and inherited sax at
   try {
     await mkdir(join(root, 'LICENSES')); await mkdir(join(root, 'node_modules'));
     await writeFile(join(root, 'package.json'), '{}');
+    await writeFile(join(root, 'LICENSES/Stet-Apache-2.0.txt'), await readFile(new URL('../renderers/design/LICENSES/Stet-Apache-2.0.txt', import.meta.url)));
     const require = createRequire(new URL('../renderers/design/package.json', import.meta.url));
     for (const name of ['ag-psd', 'fzstd', 'saxes']) {
       let directory = dirname(require.resolve(name));
@@ -28,6 +29,9 @@ test('normal design staging retains complete original bytes and inherited sax at
     // inventing a more specific holder from package authorship metadata.
     assert.match(saxes, /Copyright \(c\) Contributors/);
     assert.match(saxes, /Isaac|Schlueter/);
+    const agPsd = await readFile(join(root, 'LICENSES/ag-psd-MIT.txt'), 'utf8');
+    assert.match(agPsd, /CMYK to RGB conversion coefficients[\s\S]*pdf\.js[\s\S]*Copyright 2012 Mozilla Foundation/);
+    assert.match(agPsd, /Apache License, Version 2\.0/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
@@ -42,4 +46,29 @@ test('an unreviewed dependency cannot overwrite existing original materials', as
     await assert.rejects(() => stageDesignLicenseTexts({ packageRoot: root }), /Unreviewed design dependency version/);
     assert.equal(await readFile(join(root, 'LICENSES/ag-psd-MIT.txt'), 'utf8'), 'retained before failed validation');
   } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test('inherited Apache material must be present and exact before any grant is overwritten', async () => {
+  for (const inherited of [null, 'changed Apache license']) {
+    const root = await mkdtemp(join(tmpdir(), 'design-inherited-grant-'));
+    try {
+      await mkdir(join(root, 'LICENSES')); await mkdir(join(root, 'node_modules'));
+      await writeFile(join(root, 'package.json'), '{}');
+      const require = createRequire(new URL('../renderers/design/package.json', import.meta.url));
+      for (const name of ['ag-psd', 'fzstd', 'saxes']) {
+        let directory = dirname(require.resolve(name));
+        for (;;) {
+          const meta = await readFile(join(directory, 'package.json')).then(bytes => JSON.parse(bytes)).catch(() => null);
+          if (meta?.name === name) break;
+          directory = dirname(directory);
+        }
+        await symlink(directory, join(root, 'node_modules', name));
+      }
+      await writeFile(join(root, 'LICENSES/ag-psd-MIT.txt'), 'retained before failed validation');
+      if (inherited !== null) await writeFile(join(root, 'LICENSES/Stet-Apache-2.0.txt'), inherited);
+      await assert.rejects(() => stageDesignLicenseTexts({ packageRoot: root }),
+        inherited === null ? /ENOENT/ : /Original inherited ag-psd Apache license drift/);
+      assert.equal(await readFile(join(root, 'LICENSES/ag-psd-MIT.txt'), 'utf8'), 'retained before failed validation');
+    } finally { await rm(root, { recursive: true, force: true }); }
+  }
 });

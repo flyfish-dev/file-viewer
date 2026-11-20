@@ -2,6 +2,7 @@ import { escapeHtml, slugify, twipsToPx } from '../core/utils.js';
 import { HIGHLIGHT_COLORS } from '../msdoc/constants.js';
 import { cssTextAlign, cssUnderline, cssVerticalAlign } from '../msdoc/properties.js';
 import { msDocFontFallbacks, textFontRuns } from './fonts.js';
+import { buildTextboxRenderPlan, type TextboxPlacement } from './textbox-layout.js';
 import type {
   AttachmentAsset,
   AttachmentsBlock,
@@ -19,6 +20,7 @@ import type {
   ShadingSpec,
   TextInlineNode,
   FontInfo,
+  MsDocBlock,
 } from '../types.js';
 
 const COLOR_INDEX_MAP: Record<number, string> = {
@@ -623,6 +625,12 @@ export function defaultMsDocCss(): string {
 .msdoc-attachments{margin-top:20px;padding-top:12px;border-top:1px solid #e5e7eb}
 .msdoc-attachments-title{font-weight:600;margin-bottom:8px}
 .msdoc-page-break{display:block;height:0;border-top:1px dashed #cbd5e1;margin:16px 0}
+.msdoc-layout-page{position:relative;isolation:isolate;background:inherit;color:inherit;overflow:visible}
+.msdoc-layout-body{line-height:normal}
+.msdoc-layout-anchor{position:relative;display:flow-root}
+.msdoc-layout-content{position:relative;z-index:var(--msdoc-body-layer)}
+.msdoc-textbox{position:absolute;box-sizing:border-box;overflow:visible;line-height:normal}
+.msdoc-textbox .msdoc-paragraph{overflow-wrap:break-word;word-break:normal}
 `;
 }
 
@@ -640,27 +648,99 @@ export function renderMsDoc(parsed: MsDocParseResult, options: MsDocRenderOption
     fonts: new Map((parsed.fonts ?? []).flatMap(font =>
       [font.name, font.altName].filter(Boolean).map(name => [name, font] as const))),
   };
-  const parts: string[] = [];
-  let paragraphs: ParagraphBlock[] = [];
-  const flushParagraphs = () => {
-    parts.push(...reviewParagraphs(paragraphs, context).map(block => renderParagraphBlock(block, context)));
-    paragraphs = [];
-  };
-  for (const block of parsed.blocks) {
-    if (block.type === 'paragraph') {
-      paragraphs.push(block);
-      continue;
+  const renderBlocks = (blocks: MsDocBlock[]): string => {
+    const parts: string[] = [];
+    let paragraphs: ParagraphBlock[] = [];
+    const flushParagraphs = () => {
+      parts.push(...reviewParagraphs(paragraphs, context).map(block => renderParagraphBlock(block, context)));
+      paragraphs = [];
+    };
+    for (const block of blocks) {
+      if (block.type === 'paragraph') {
+        paragraphs.push(block);
+        continue;
+      }
+      flushParagraphs();
+      if (block.type === 'table') parts.push(renderTableBlock(block, context));
+      if (block.type === 'attachments') parts.push(renderAttachmentsBlock(block));
     }
     flushParagraphs();
-    if (block.type === 'table') parts.push(renderTableBlock(block, context));
-    if (block.type === 'attachments') parts.push(renderAttachmentsBlock(block));
+    return parts.join('');
+  };
+  // Removing a main-story paragraph mark changes the anchor's paragraph box.
+  // Keep the existing reviewed-text merger rather than invent that geometry.
+  const reviewReflowsAnchors = parsed.blocks.some(block => block.type === 'paragraph'
+    && block.storyKind === 'main' && hiddenRevision(block.paragraphMark, context));
+  const plan = reviewReflowsAnchors ? null : buildTextboxRenderPlan(parsed);
+  let html = renderBlocks(parsed.blocks), warnings = parsed.warnings || [];
+  let layoutPages: MsDocRenderResult['layoutPages'];
+  if (plan) {
+    const width = plan.section.pageWidthTwips! / 15, height = plan.section.pageHeightTwips! / 15;
+    const margin = plan.section.marginsTwips;
+    const ordered = [...plan.placements].sort((a, b) => a.order - b.order);
+    const bodyLayer = ordered.length + 1;
+    const frameHtml = (placement: TextboxPlacement) => {
+      const { frame, insets } = placement;
+      const layer = ordered.indexOf(placement) + 1 + (placement.belowText ? 0 : bodyLayer);
+      const style: CssStyleObject = { position: 'absolute', left: `${placement.x}px`, top: `${placement.y}px`,
+        width: `${placement.width}px`, height: `${placement.height}px`,
+        padding: `${insets.top}px ${insets.right}px ${insets.bottom}px ${insets.left}px`, 'z-index': layer };
+      if (placement.fill !== undefined) style.background = colorRefToCss(placement.fill);
+      if (placement.line) style.border = `${placement.line.width}px solid ${colorRefToCss(placement.line.color)}`;
+      return `<div class="msdoc-textbox" data-msdoc-textbox="${escapeHtml(frame.id)}" data-msdoc-shape="${frame.shapeId}" data-msdoc-origin="${placement.relativeTo}" style="${styleObjectToCss(style)}">${renderBlocks(placement.blocks)}</div>`;
+    };
+    const columns = (plan.section.columnsMinusOne ?? 0) + 1;
+    const anchorHtml = (block: MsDocBlock) => {
+      let actual = block, columnBreak = false;
+      if (columns > 1 && block.type === 'paragraph' && block.storyKind === 'main' && block.inlines[0]?.type === 'text' && block.inlines[0].text.startsWith('\u000e')) {
+        // A leading MS-DOC column break changes flow, never canonical CP/text.
+        actual = { ...block, inlines: [{ ...block.inlines[0], text: block.inlines[0].text.slice(1) }, ...block.inlines.slice(1)] };
+        columnBreak = true;
+      }
+      const anchored = ordered.filter(row => row.relativeTo === 'paragraph' && row.frame.anchor?.paragraphBlockId === block.id);
+      return `<div class="msdoc-layout-anchor"${columnBreak ? ' style="break-before:column"' : ''}>${anchored.map(frameHtml).join('')}<div class="msdoc-layout-content">${renderBlocks([actual])}</div></div>`;
+    };
+    const omitted = [...(parsed.textboxLayout?.omittedAnchorParagraphs || [])].sort((a, b) => a.globalRange.start - b.globalRange.start);
+    let omittedIndex = 0;
+    const body: string[] = [];
+    const emptyAnchor = (row: typeof omitted[number]) => `<div class="msdoc-layout-anchor"><p class="msdoc-paragraph" style="${styleObjectToCss(paragraphStyleToCss(row.paraState))}"><span style="${styleObjectToCss(inlineStyleToCss(row.characterStyle, context))}"><br></span></p></div>`;
+    for (const block of parsed.blocks) {
+      if (plan.consumed.has(block.id)) continue;
+      if (block.type === 'paragraph' && block.storyKind === 'main') {
+        const start = block.sourceRange?.global.start ?? Infinity;
+        while (omittedIndex < omitted.length && omitted[omittedIndex]!.globalRange.end <= start) body.push(emptyAnchor(omitted[omittedIndex++]!));
+      }
+      body.push(anchorHtml(block));
+    }
+    while (omittedIndex < omitted.length) body.push(emptyAnchor(omitted[omittedIndex++]!));
+    const flowStyle: CssStyleObject = {};
+    if (columns > 1) Object.assign(flowStyle, { 'column-count': columns, 'column-gap': `${(plan.section.columnSpaceTwips ?? 0) / 15}px`,
+      'column-fill': 'auto', height: `${(plan.section.pageHeightTwips! - margin.top! - margin.bottom!) / 15}px` });
+    const pageStyle = styleObjectToCss({ width: `${width}px`, 'min-height': `${height}px`, '--msdoc-body-layer': bodyLayer });
+    const bodyStyle = styleObjectToCss({ padding: `${margin.top! / 15}px ${margin.right! / 15}px ${margin.bottom! / 15}px ${margin.left! / 15}px` });
+    html = `<section class="msdoc-layout-page" data-msdoc-layout-page="0" style="${pageStyle}">${ordered.filter(row => row.relativeTo === 'page').sort((a, b) => a.frame.anchor!.globalCp - b.frame.anchor!.globalCp).map(frameHtml).join('')}<div class="msdoc-layout-body" style="${bodyStyle}"><div style="${styleObjectToCss(flowStyle)}">${body.join('')}</div></div></section>`;
+    layoutPages = [{ width, height, html }];
+    const placed = new Set(plan.placements.map(row => `${row.frame.storyKind}:${row.frame.textboxIndex}:${row.frame.shapeId}`));
+    const hasTextboxContent = (block: MsDocBlock): boolean => block.type === 'paragraph'
+      ? ['textbox', 'header-textbox'].includes(block.storyKind || '')
+      : block.type === 'table' && block.rows.some(row => row.cells.some(cell => (cell.blocks || cell.paragraphs).some(hasTextboxContent)));
+    const remaining = parsed.blocks.some(block => !plan.consumed.has(block.id) && hasTextboxContent(block));
+    warnings = warnings.filter(warning => {
+      if (warning.code === 'MSDOC_TEXTBOX_POSITION_AMBIGUOUS' && placed.has(`${warning.storyKind}:${warning.textboxIndex}:${warning.shapeId}`)) return false;
+      return warning.code !== 'MSDOC_TEXTBOX_STORY_LINEARIZED' || remaining;
+    });
+    for (const [id, reason] of plan.rejected) {
+      const frame = parsed.textboxLayout!.frames.find(row => row.id === id)!;
+      if (frame.mapping === 'mapped' && frame.contentBlockIds.length) warnings.push({ code: 'MSDOC_TEXTBOX_LAYOUT_UNSUPPORTED',
+        message: `Textbox remains in readable story order: ${reason}.`, reason, storyKind: frame.storyKind,
+        textboxIndex: frame.textboxIndex, shapeId: frame.shapeId });
+    }
   }
-  flushParagraphs();
-  const html = parts.join('');
   return {
     html,
     css,
-    warnings: parsed.warnings || [],
+    ...(layoutPages ? { layoutPages } : {}),
+    warnings,
     meta: parsed.meta,
     assets: parsed.assets || [],
     parsed,

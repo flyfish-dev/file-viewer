@@ -207,7 +207,7 @@ console.log('Both public entries imported with all optional specialist peers abs
       'install',
       '--save-exact',
       ...npmFlags,
-      '@giro3d/giro3d@2.0.5',
+      '@giro3d/giro3d@2.0.7',
       'jszip@3.10.2',
       `@types/three@${threeTypesVersion}`
     ],
@@ -254,7 +254,7 @@ console.log('Both public entries imported with all optional specialist peers abs
     manifest.raster.factorySha256
   )
   const giroRoot = dirname(dirname(consumerRequire.resolve('@giro3d/giro3d/core/Instance.js')))
-  assert.equal(JSON.parse(await readFile(join(giroRoot, 'package.json'), 'utf8')).version, '2.0.5')
+  assert.equal(JSON.parse(await readFile(join(giroRoot, 'package.json'), 'utf8')).version, '2.0.7')
   const engineFiles = {
     LASSource: 'sources/LASSource.js',
     COPCSource: 'sources/COPCSource.js',
@@ -269,7 +269,7 @@ console.log('Both public entries imported with all optional specialist peers abs
       `Installed engine drift: ${name}`
     )
   passed('physical installed factories and reviewed engine hashes', {
-    engine: '2.0.5',
+    engine: '2.0.7',
     sourceAndBuildScriptsAbsent: true,
     adapterSha256: manifest.adapterSha256,
     rasterSha256: manifest.raster.factorySha256

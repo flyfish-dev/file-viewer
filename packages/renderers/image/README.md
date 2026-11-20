@@ -43,4 +43,6 @@ const options = {
 
 Set `image: { handTool: true }` in the viewer options to pan a zoomed image with the primary mouse button. The default is `false`. The setting applies to the core native-image path, this renderer and multipage TIFF. Both image edges remain reachable when zoomed.
 
+TIFF page and lightbox previews disable native image dragging.
+
 Ordinary image clicks and keyboard activation still open the lightbox (TIFF uses double-click or keyboard activation). A completed drag suppresses its accidental click. Controls, scrollbars and native touch scrolling/pinch retain their normal behavior; pointer cancellation, blur, source abort and unmount release the drag.

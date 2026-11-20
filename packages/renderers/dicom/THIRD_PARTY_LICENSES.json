@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "generatedFrom": {
     "packageName": "@file-viewer/renderer-dicom",
-    "packageVersion": "3.3.4",
+    "packageVersion": "3.3.5",
     "packageManager": "pnpm",
     "command": "pnpm --filter @file-viewer/renderer-dicom list --depth Infinity --json; direct runtime and three bundled Cornerstone SDK roots only"
   },
@@ -228,12 +228,12 @@
     "sdkSourceLicenses": [
       {
         "name": "@cornerstonejs/core",
-        "version": "5.13.2",
+        "version": "5.18.1",
         "declaredLicense": "MIT",
         "sourceLicense": "MIT",
         "repository": "https://github.com/cornerstonejs/cornerstone3D",
-        "gitCommit": "2adf417c1c2762e6bafc6ed29fad1b82ed0ed8cf",
-        "buildGitCommit": "0cae0c3564ad81d3c62422cc663e500844f0ef13",
+        "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+        "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
         "sourcePath": "LICENSE",
         "path": "third-party/native-codecs/sdk/LICENSE",
         "bytes": 1087,
@@ -241,12 +241,12 @@
       },
       {
         "name": "@cornerstonejs/metadata",
-        "version": "5.13.2",
+        "version": "5.18.1",
         "declaredLicense": "MIT",
         "sourceLicense": "MIT",
         "repository": "https://github.com/cornerstonejs/cornerstone3D",
-        "gitCommit": "2adf417c1c2762e6bafc6ed29fad1b82ed0ed8cf",
-        "buildGitCommit": "0cae0c3564ad81d3c62422cc663e500844f0ef13",
+        "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+        "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
         "sourcePath": "LICENSE",
         "path": "third-party/native-codecs/sdk/LICENSE",
         "bytes": 1087,
@@ -254,12 +254,12 @@
       },
       {
         "name": "@cornerstonejs/utils",
-        "version": "5.13.2",
+        "version": "5.18.1",
         "declaredLicense": "MIT",
         "sourceLicense": "MIT",
         "repository": "https://github.com/cornerstonejs/cornerstone3D",
-        "gitCommit": "2adf417c1c2762e6bafc6ed29fad1b82ed0ed8cf",
-        "buildGitCommit": "0cae0c3564ad81d3c62422cc663e500844f0ef13",
+        "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+        "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
         "sourcePath": "LICENSE",
         "path": "third-party/native-codecs/sdk/LICENSE",
         "bytes": 1087,
@@ -407,7 +407,7 @@
     },
     {
       "name": "@cornerstonejs/core",
-      "version": "5.13.2",
+      "version": "5.18.1",
       "license": "MIT",
       "direct": true,
       "optional": false,
@@ -419,12 +419,12 @@
       "retainedSourceLicenses": [
         {
           "name": "@cornerstonejs/core",
-          "version": "5.13.2",
+          "version": "5.18.1",
           "declaredLicense": "MIT",
           "sourceLicense": "MIT",
           "repository": "https://github.com/cornerstonejs/cornerstone3D",
-          "gitCommit": "2adf417c1c2762e6bafc6ed29fad1b82ed0ed8cf",
-          "buildGitCommit": "0cae0c3564ad81d3c62422cc663e500844f0ef13",
+          "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+          "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
           "sourcePath": "LICENSE",
           "path": "third-party/native-codecs/sdk/LICENSE",
           "bytes": 1087,
@@ -434,7 +434,7 @@
     },
     {
       "name": "@cornerstonejs/dicom-image-loader",
-      "version": "5.13.2",
+      "version": "5.18.1",
       "license": "MIT",
       "direct": true,
       "optional": false,
@@ -462,7 +462,7 @@
     },
     {
       "name": "@cornerstonejs/metadata",
-      "version": "5.13.2",
+      "version": "5.18.1",
       "license": "MIT",
       "direct": true,
       "optional": false,
@@ -474,12 +474,12 @@
       "retainedSourceLicenses": [
         {
           "name": "@cornerstonejs/metadata",
-          "version": "5.13.2",
+          "version": "5.18.1",
           "declaredLicense": "MIT",
           "sourceLicense": "MIT",
           "repository": "https://github.com/cornerstonejs/cornerstone3D",
-          "gitCommit": "2adf417c1c2762e6bafc6ed29fad1b82ed0ed8cf",
-          "buildGitCommit": "0cae0c3564ad81d3c62422cc663e500844f0ef13",
+          "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+          "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
           "sourcePath": "LICENSE",
           "path": "third-party/native-codecs/sdk/LICENSE",
           "bytes": 1087,
@@ -489,7 +489,7 @@
     },
     {
       "name": "@cornerstonejs/utils",
-      "version": "5.13.2",
+      "version": "5.18.1",
       "license": "MIT",
       "direct": false,
       "optional": false,
@@ -501,12 +501,12 @@
       "retainedSourceLicenses": [
         {
           "name": "@cornerstonejs/utils",
-          "version": "5.13.2",
+          "version": "5.18.1",
           "declaredLicense": "MIT",
           "sourceLicense": "MIT",
           "repository": "https://github.com/cornerstonejs/cornerstone3D",
-          "gitCommit": "2adf417c1c2762e6bafc6ed29fad1b82ed0ed8cf",
-          "buildGitCommit": "0cae0c3564ad81d3c62422cc663e500844f0ef13",
+          "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+          "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
           "sourcePath": "LICENSE",
           "path": "third-party/native-codecs/sdk/LICENSE",
           "bytes": 1087,
@@ -516,7 +516,7 @@
     },
     {
       "name": "@file-viewer/core",
-      "version": "3.3.4",
+      "version": "3.3.5",
       "license": "Apache-2.0",
       "direct": true,
       "optional": false,
@@ -528,7 +528,7 @@
     },
     {
       "name": "@file-viewer/renderer-dicom",
-      "version": "3.3.4",
+      "version": "3.3.5",
       "license": "Apache-2.0",
       "direct": false,
       "optional": false,
@@ -1440,7 +1440,7 @@
     },
     {
       "name": "postcss",
-      "version": "8.5.31",
+      "version": "8.5.32",
       "license": "MIT",
       "direct": false,
       "optional": false,

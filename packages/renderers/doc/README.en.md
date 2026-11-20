@@ -15,12 +15,12 @@ Historical imports from `msdoc-viewer` remain supported through the compatibilit
 ## Usage
 
 ```ts
-import { parseMsDoc, renderMsDoc } from '@file-viewer/doc'
+import { parseMsDoc, renderMsDoc, mountMsDoc } from '@file-viewer/doc'
 
 const parsed = parseMsDoc(arrayBuffer)
 const rendered = renderMsDoc(parsed)
 
-container.innerHTML = `<style>${rendered.css}</style><div class="msdoc-root">${rendered.html}</div>`
+mountMsDoc(container, rendered)
 ```
 
 External links and linked images are blocked by default. Trusted integrations
@@ -37,5 +37,8 @@ The package also exports `parseMsDocToHtml`, `mountMsDoc`, `createMsDocViewer`, 
 - Embedded picture extraction via MS-DOC PICF / OfficeArt BLIP records (PNG, JPEG, DIB, TIFF), with EMF/WMF → SVG conversion for browser preview
 - Browser-native HTML/CSS rendering without server-side conversion
 - Optional module worker entry at `@file-viewer/doc/worker`
+- Anchored, unrotated legacy text boxes with no text wrapping, explicit first-page/margin or paragraph/column origins; canonical text remains unchanged
+
+Use `mountMsDoc` or `createMsDocViewer` to retain authored page dimensions for floating text boxes. Direct HTML integrations can consume the optional `rendered.layoutPages`. Complex wrapping, rotation, linked/grouped shapes and unresolved pagination keep readable fallback with diagnostics; see [textbox layout boundaries](./TEXTBOX-METADATA.md).
 
 This package intentionally tracks the old public `msdoc-viewer@0.2.0` code line and continues to harden that public MS-DOC path. Newer private document-engine work is not used here.

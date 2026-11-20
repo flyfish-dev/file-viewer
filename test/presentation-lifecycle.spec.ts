@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { FileRenderExportAdapter } from '../packages/core/src/contracts/types'
 import renderPptx from '../packages/renderers/presentation-pptx/src/index'
 import {
   resetDefaultFileViewerAssetBaseUrl,
@@ -266,15 +267,13 @@ describe('@file-viewer/renderer-presentation lifecycle', () => {
 
   it('materializes every lazy slide in exported HTML before restoring the live window', async () => {
     const target = createTarget()
-    let exportAdapter: { toHtml?: (options: any) => Promise<string> | string } | null = null
-    const registerExportAdapter = vi.fn(adapter => {
-      if (adapter?.toHtml) exportAdapter = adapter
-    })
+    const registerExportAdapter = vi.fn((_adapter: FileRenderExportAdapter | null) => {})
     const renderPromise = renderPptx(new ArrayBuffer(16), target, 'pptx', {
       registerExportAdapter,
     })
 
     await vi.waitFor(() => expect(FakeWorker.instances).toHaveLength(1))
+    FakeWorker.instances[0]!.emitMessage({ type: 'slideSize', data: { width: 1280, height: 720 } })
     for (let slide = 1; slide <= 20; slide += 1) {
       FakeWorker.instances[0]!.emitMessage({
         type: 'slide',
@@ -285,11 +284,21 @@ describe('@file-viewer/renderer-presentation lifecycle', () => {
     FakeWorker.instances[0]!.emitMessage({ type: 'Done', charts: null })
 
     const rendered = await renderPromise
-    expect(exportAdapter).not.toBeNull()
-    const html = await exportAdapter!.toHtml!({ mode: 'print', title: 'twenty-slides.pptx' })
+    const exportAdapter = registerExportAdapter.mock.calls.find(([adapter]) => adapter?.toHtml)?.[0]
+    const options = { mode: 'print', title: 'twenty-slides.pptx' } as const
+    expect(exportAdapter?.includeDocumentStyles).toBe(false)
+    const html = await exportAdapter?.toHtml?.(options)
+    expect(typeof html).toBe('string')
+    if (typeof html !== 'string') throw new Error('Missing PPTX export snapshot')
     expect((html.match(/ISSUE112_SLIDE_/g) || [])).toHaveLength(20)
     expect((html.match(/data-viewer-print-page-index=/g) || [])).toHaveLength(20)
     expect(html).toContain('data-viewer-print-page-index="19"')
+    expect(html).toContain('flyfish-pptx-export')
+    expect(html).toContain('.flyfish-pptx-content .slide div.block')
+    const printStyle = exportAdapter?.printStyle
+    const style = typeof printStyle === 'function' ? await printStyle(options) : printStyle
+    expect(style).toContain('@page { size: 13.3333in 7.5in; margin: 0; }')
+    expect(style).toContain('.flyfish-pptx-export [data-viewer-print-page-index]')
     rendered.unmount()
   })
 

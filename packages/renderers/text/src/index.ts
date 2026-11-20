@@ -1,5 +1,6 @@
 import {
   DEFAULT_RENDERER_DEFINITIONS,
+  renderWithFileViewerDocumentInspection,
   type FileRenderContext,
   type FileRenderHandler,
   type FileViewerRenderedInstance,
@@ -36,7 +37,7 @@ if (textDefinitions.length !== textRendererIds.length) {
 
 export const textRendererDefinitions = textDefinitions;
 
-export const renderFileViewerCode: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = async (
+const renderCodePreview: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = async (
   buffer,
   target,
   type,
@@ -67,6 +68,11 @@ export const renderFileViewerCode: FileRenderHandler<FileViewerRenderedInstance,
   const { default: renderCode } = await import('./code.js');
   return renderCode(buffer, target, type, context);
 };
+
+export const renderFileViewerCode: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = (
+  buffer, target, type, context
+) => renderWithFileViewerDocumentInspection(buffer, target, type || '', context,
+  () => renderCodePreview(buffer, target, type, context));
 
 export const renderFileViewerMarkdown: FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement> = (
   buffer,

@@ -228,7 +228,7 @@
           "kind": "wasm-directory",
           "target": "public",
           "required": true,
-          "defaultPath": "wasm/cad/0.8.3/",
+          "defaultPath": "wasm/cad/0.8.4/",
           "optionPath": "cad.wasmPath",
           "description": "@flyfish-dev/cad-viewer WebAssembly directory for DWG/DXF helpers."
         },
@@ -238,7 +238,7 @@
           "kind": "worker",
           "target": "public",
           "required": true,
-          "defaultPath": "wasm/cad/0.8.3/dwg-worker.js",
+          "defaultPath": "wasm/cad/0.8.4/dwg-worker.js",
           "optionPath": "cad.workerUrl",
           "description": "DWG worker entry used by @flyfish-dev/cad-viewer."
         },
@@ -248,7 +248,7 @@
           "kind": "wasm",
           "target": "public",
           "required": true,
-          "defaultPath": "wasm/cad/0.8.3/dwfv-render.wasm",
+          "defaultPath": "wasm/cad/0.8.4/dwfv-render.wasm",
           "optionPath": "cad.dwfWasmUrl",
           "description": "DWF/DWFx/XPS raster WebAssembly module used by @flyfish-dev/cad-viewer."
         },
@@ -258,7 +258,7 @@
           "kind": "script",
           "target": "public",
           "required": true,
-          "defaultPath": "wasm/cad/0.8.3/libredwg-web.js",
+          "defaultPath": "wasm/cad/0.8.4/libredwg-web.js",
           "description": "LibreDWG JavaScript runtime loaded by the CAD DWG worker for offline parsing."
         },
         {
@@ -267,7 +267,7 @@
           "kind": "wasm",
           "target": "public",
           "required": true,
-          "defaultPath": "wasm/cad/0.8.3/libredwg-web.wasm",
+          "defaultPath": "wasm/cad/0.8.4/libredwg-web.wasm",
           "description": "LibreDWG WebAssembly runtime loaded by the CAD DWG worker for offline parsing."
         },
         {
@@ -276,7 +276,7 @@
           "kind": "license",
           "target": "public",
           "required": true,
-          "defaultPath": "wasm/cad/0.8.3/LICENSE",
+          "defaultPath": "wasm/cad/0.8.4/LICENSE",
           "description": "The installed CAD runtime redistribution license."
         },
         {
@@ -285,7 +285,7 @@
           "kind": "license",
           "target": "public",
           "required": true,
-          "defaultPath": "wasm/cad/0.8.3/NOTICE",
+          "defaultPath": "wasm/cad/0.8.4/NOTICE",
           "description": "The installed CAD runtime third-party attribution notice."
         },
         {
@@ -1565,7 +1565,7 @@
         "kind": "wasm-directory",
         "target": "public",
         "required": true,
-        "relativePath": "wasm/cad/0.8.3/",
+        "relativePath": "wasm/cad/0.8.4/",
         "exists": true,
         "description": "@flyfish-dev/cad-viewer WebAssembly directory for DWG/DXF helpers."
       },
@@ -1575,7 +1575,7 @@
         "kind": "worker",
         "target": "public",
         "required": true,
-        "relativePath": "wasm/cad/0.8.3/dwg-worker.js",
+        "relativePath": "wasm/cad/0.8.4/dwg-worker.js",
         "exists": true,
         "description": "DWG worker entry used by @flyfish-dev/cad-viewer."
       },
@@ -1585,7 +1585,7 @@
         "kind": "wasm",
         "target": "public",
         "required": true,
-        "relativePath": "wasm/cad/0.8.3/dwfv-render.wasm",
+        "relativePath": "wasm/cad/0.8.4/dwfv-render.wasm",
         "exists": true,
         "description": "DWF/DWFx/XPS raster WebAssembly module used by @flyfish-dev/cad-viewer."
       },
@@ -1595,7 +1595,7 @@
         "kind": "script",
         "target": "public",
         "required": true,
-        "relativePath": "wasm/cad/0.8.3/libredwg-web.js",
+        "relativePath": "wasm/cad/0.8.4/libredwg-web.js",
         "exists": true,
         "description": "LibreDWG JavaScript runtime loaded by the CAD DWG worker for offline parsing."
       },
@@ -1605,7 +1605,7 @@
         "kind": "wasm",
         "target": "public",
         "required": true,
-        "relativePath": "wasm/cad/0.8.3/libredwg-web.wasm",
+        "relativePath": "wasm/cad/0.8.4/libredwg-web.wasm",
         "exists": true,
         "description": "LibreDWG WebAssembly runtime loaded by the CAD DWG worker for offline parsing."
       },
@@ -1615,7 +1615,7 @@
         "kind": "license",
         "target": "public",
         "required": true,
-        "relativePath": "wasm/cad/0.8.3/LICENSE",
+        "relativePath": "wasm/cad/0.8.4/LICENSE",
         "exists": true,
         "description": "The installed CAD runtime redistribution license."
       },
@@ -1625,7 +1625,7 @@
         "kind": "license",
         "target": "public",
         "required": true,
-        "relativePath": "wasm/cad/0.8.3/NOTICE",
+        "relativePath": "wasm/cad/0.8.4/NOTICE",
         "exists": true,
         "description": "The installed CAD runtime third-party attribution notice."
       },

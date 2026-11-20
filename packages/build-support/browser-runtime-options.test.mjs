@@ -7,10 +7,19 @@ import { fileURLToPath } from 'node:url'
 import test from 'node:test'
 import { browserCoreAliases, browserCorePlugin, browserLibraryDefines, browserRuntimeOptions } from './browser-runtime-options.mjs'
 
-test('browser Core aliases cover exactly the executable public exports in one selected tree', async () => {
+const customLocaleEntries = {
+  './custom-locales': 'custom-locales',
+  './custom-locales/browser': 'custom-locales-browser',
+  './custom-locales/headless': 'custom-locales-headless',
+  './custom-locales/export': 'custom-locales-export',
+  './custom-locales/print-mask': 'custom-locales-print-mask'
+}
+
+test('browser Core aliases cover exactly the default executable public exports in one selected tree', async () => {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
   const manifest = JSON.parse(await readFile(join(root, 'packages/core/package.json'), 'utf8'))
-  const names = Object.keys(manifest.exports).filter(name => name !== './package.json')
+  const names = Object.keys(manifest.exports).filter(name =>
+    name !== './package.json' && name !== './locales/*' && !Object.hasOwn(customLocaleEntries, name))
     .map(name => '@file-viewer/core' + (name === '.' ? '' : name.slice(1)))
   for (const built of [false, true]) {
     const aliases = browserCoreAliases(root, { built })
@@ -25,6 +34,31 @@ test('browser Core aliases cover exactly the executable public exports in one se
       assert.equal(aliases.filter(alias => alias.find.test(name)).length, 0, name)
     }
   }
+})
+
+test('opt-in Core exports retain their executable paths and independent locale dictionaries', async () => {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+  const manifest = JSON.parse(await readFile(join(root, 'packages/core/package.json'), 'utf8'))
+  const expectedDictionary = { types: './dist/locales/*.d.ts', import: './dist/locales/*.js', default: './dist/locales/*.js' }
+  assert.deepEqual(manifest.exports['./locales/*'], expectedDictionary)
+  assert.match(manifest.scripts.build, /build-locale-exports\.mjs/)
+  for (const [specifier, entry] of Object.entries(customLocaleEntries)) {
+    assert.deepEqual(manifest.exports[specifier], {
+      types: `./dist/${entry}.d.ts`, import: `./dist/${entry}.js`, default: `./dist/${entry}.js`
+    })
+    for (const built of [false, true]) {
+      assert.equal(browserCoreAliases(root, { built }).some(alias =>
+        alias.find.test('@file-viewer/core' + specifier.slice(1))), false, specifier)
+    }
+  }
+  const result = await build({
+    absWorkingDir: root,
+    entryPoints: Object.values(customLocaleEntries).map(entry => `packages/core/src/${entry}.ts`),
+    outdir: 'out', bundle: true, write: false, metafile: true, platform: 'browser', format: 'esm', logLevel: 'silent'
+  })
+  const inputs = Object.keys(result.metafile.inputs)
+  assert.equal(result.outputFiles.length, Object.keys(customLocaleEntries).length)
+  assert.ok(!inputs.some(input => input.endsWith('/i18n/builtin-messages.ts')), 'Opt-in exports must stay independent of the built-in dictionaries')
 })
 
 test('real source Core public entries bundle with a single physical Core identity', async () => {

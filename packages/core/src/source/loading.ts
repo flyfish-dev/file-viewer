@@ -21,8 +21,8 @@ import {
   normalizeFileViewerErrorMessage,
   type FileViewerErrorMessageFormatter,
 } from '../viewer/state';
-import { translateFileViewerMessage } from '../i18n/messages';
-import type { FileViewerI18nInput } from '../i18n/messages';
+import { translateFileViewerMessage } from '../i18n/runtime';
+import type { FileViewerI18nInput } from '../i18n/runtime';
 import {
   DEFAULT_FILE_VIEWER_SOURCE_FILENAME,
   getExtension,

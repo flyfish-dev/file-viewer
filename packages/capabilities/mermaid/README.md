@@ -4,7 +4,7 @@
 
 Registers the Mermaid loader used by Mermaid code blocks in Markdown. Full/preset-all imports it automatically. Base, light and standard consumers can import this package explicitly.
 
-The normal source build bundles Mermaid 12.2.0 and KaTeX 0.18.2. Drawing uses the same engine through `@file-viewer/capability-mermaid/engine`. Installing the compiled package needs no dependency security overrides. `dist/bundled-runtime.json` records the actual input versions, lockfile and source hashes, license files, and output hashes. Complete third-party licenses are retained in `dist/THIRD_PARTY_LICENSES.txt`.
+The normal source build bundles Mermaid 12.3.0 and KaTeX 0.18.2. Drawing uses the same engine through `@file-viewer/capability-mermaid/engine`. Installing the compiled package needs no dependency security overrides. `dist/bundled-runtime.json` records the actual input versions, lockfile and source hashes, license files, and output hashes. Complete third-party licenses are retained in `dist/THIRD_PARTY_LICENSES.txt`.
 
 The browser build keeps bundled CommonJS layout factories and removes their inactive AMD imports. Architecture and mindmap diagrams use the bundled layout engines.
 

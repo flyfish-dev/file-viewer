@@ -192,13 +192,27 @@ function injectPageBreakMarkers(html: string): string {
   )
 }
 
-function wrapAsWordPages(html: string): string {
+type WordLayoutPages = Array<{ width: number; height: number; html: string }>
+
+function wrapAsWordPages(html: string, layoutPages?: WordLayoutPages): string {
+  if (layoutPages?.length && layoutPages.every(page => isPositiveFinite(page.width) && isPositiveFinite(page.height))) {
+    // The DOC renderer owns authored page geometry and nested textbox markup.
+    // String page-break splitting belongs only to the older continuous path.
+    return `<div class="msdoc-stage">${layoutPages.map(page =>
+      `<section class="msdoc-page" data-msdoc-page-width="${page.width}" data-msdoc-page-height="${page.height}"><div class="msdoc-root" style="width:${page.width}px;min-height:${page.height}px;padding:0">${page.html}</div></section>`
+    ).join('')}</div>`
+  }
   const normalizedHtml = injectPageBreakMarkers(html)
   const pages = normalizedHtml.split(PAGE_BREAK_MARKER)
 
   return `<div class="msdoc-stage">${pages.map(page => (
     `<section class="msdoc-page"><div class="msdoc-root">${page || EMPTY_PAGE_HTML}</div></section>`
   )).join('')}</div>`
+}
+
+function authoredPageSize(page: HTMLElement) {
+  const width = Number(page.dataset.msdocPageWidth), height = Number(page.dataset.msdocPageHeight)
+  return isPositiveFinite(width) && isPositiveFinite(height) ? { width, height } : MSDOC_PAGE_SIZE
 }
 
 function prepareMsDocCloneForExport(target: HTMLDivElement) {
@@ -213,10 +227,11 @@ function prepareMsDocCloneForExport(target: HTMLDivElement) {
   })
 
   clone.querySelectorAll<HTMLElement>('.msdoc-page').forEach((page, index) => {
+    const pageSize = authoredPageSize(page)
     page.dataset.viewerPrintPageIndex = String(index)
-    applyPrintPageSize(page, MSDOC_PAGE_SIZE, { heightMode: 'min' })
+    applyPrintPageSize(page, pageSize, { heightMode: 'min' })
     page.style.position = 'relative'
-    page.style.width = formatCssPixels(MSDOC_PAGE_SIZE.width)
+    page.style.width = formatCssPixels(pageSize.width)
     page.style.maxWidth = 'none'
     page.style.margin = '0 auto 18px'
 
@@ -228,9 +243,9 @@ function prepareMsDocCloneForExport(target: HTMLDivElement) {
     root.style.position = 'relative'
     root.style.top = 'auto'
     root.style.left = 'auto'
-    root.style.width = formatCssPixels(MSDOC_PAGE_SIZE.width)
+    root.style.width = formatCssPixels(pageSize.width)
     root.style.maxWidth = 'none'
-    root.style.minHeight = formatCssPixels(MSDOC_PAGE_SIZE.height)
+    root.style.minHeight = formatCssPixels(pageSize.height)
     root.style.height = 'auto'
     root.style.transform = 'none'
     root.style.transformOrigin = 'top left'
@@ -242,11 +257,13 @@ function prepareMsDocCloneForExport(target: HTMLDivElement) {
   return clone.innerHTML
 }
 
-function buildMsDocPrintStyle() {
+function buildMsDocPrintStyle(target: HTMLDivElement) {
+  const page = target.querySelector<HTMLElement>('.msdoc-page')
+  const pageSize = page ? authoredPageSize(page) : MSDOC_PAGE_SIZE
   return buildPrintPageStyle({
     selector: '.viewer-export-content .msdoc-page',
-    width: MSDOC_PAGE_SIZE.width,
-    height: MSDOC_PAGE_SIZE.height,
+    width: pageSize.width,
+    height: pageSize.height,
     heightMode: 'min'
   })
 }
@@ -286,8 +303,9 @@ function makeMsDocResponsive(target: HTMLDivElement) {
         return
       }
 
-      const rootWidth = root.offsetWidth || MSDOC_PAGE_SIZE.width
-      const rootHeight = Math.max(root.scrollHeight, root.offsetHeight, MSDOC_PAGE_SIZE.height)
+      const pageSize = authoredPageSize(page)
+      const rootWidth = root.offsetWidth || pageSize.width
+      const rootHeight = Math.max(root.scrollHeight, root.offsetHeight, pageSize.height)
       const availableWidth = Math.max(target.clientWidth - 48, 120)
       const fitScale = Math.min(1, Math.max(MSDOC_MIN_SCALE, availableWidth / rootWidth))
       const scale = clampScale(fitScale * userZoom)
@@ -453,7 +471,7 @@ export default async function render(buffer: ArrayBuffer, target: HTMLDivElement
 
 /** Shared page, zoom, export and cleanup boundary for legacy Word containers. */
 export function mountWordDocument(
-  rendered: { html: string; css: string }, target: HTMLDivElement, context?: FileRenderContext
+  rendered: { html: string; css: string; layoutPages?: WordLayoutPages }, target: HTMLDivElement, context?: FileRenderContext
 ): AppWrapper {
   const targetWindow = target.ownerDocument.defaultView
   if (!targetWindow) {
@@ -463,13 +481,13 @@ export function mountWordDocument(
   style.dataset.msdoc = ''
   style.textContent = `${rendered.css}\n${WORD_PAGE_CSS}`
   const content = target.ownerDocument.createElement('div')
-  content.append(sanitizeMsDocHtml(wrapAsWordPages(rendered.html), targetWindow))
+  content.append(sanitizeMsDocHtml(wrapAsWordPages(rendered.html, rendered.layoutPages), targetWindow))
   target.replaceChildren(style, ...Array.from(content.childNodes))
   const disposeResponsive = makeMsDocResponsive(target)
   context?.registerExportAdapter?.({
     includeDocumentStyles: false,
     getPrintMaskPages: () => Array.from(target.querySelectorAll<HTMLElement>('.msdoc-page')),
-    printStyle: buildMsDocPrintStyle,
+    printStyle: () => buildMsDocPrintStyle(target),
     toHtml: () => prepareMsDocCloneForExport(target)
   })
   context?.registerThumbnailAdapter?.({

@@ -39,6 +39,8 @@ export interface FileViewerSignatureJwsVerificationKey {
 }
 
 export interface FileViewerSignatureOptions {
+  /** Inspect signed PDF/XML/JSON beside their normal previews when the optional signature capability is installed. Default: true. */
+  documentInspection?: boolean
   detailsPanel?: FileViewerSignatureDetailsPanelOptions
   /** Original content used for detached CMS signatures and RFC 3161 imprint comparison. */
   originalContent?: ArrayBuffer | Blob

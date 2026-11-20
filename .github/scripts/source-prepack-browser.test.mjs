@@ -53,7 +53,7 @@ test('observes exact streamed runtime bytes and real launch return values withou
     await mkdir(moduleDirectory, { recursive: true })
     await writeFile(
       join(moduleDirectory, 'package.json'),
-      JSON.stringify({ name: 'playwright', version: '1.64.1', main: 'index.cjs' })
+      JSON.stringify({ name: 'playwright', version: '1.65.1', main: 'index.cjs' })
     )
     await writeFile(
       join(moduleDirectory, 'index.cjs'),
@@ -76,7 +76,7 @@ test('observes exact streamed runtime bytes and real launch return values withou
     const launch = records.find((row) => row.kind === 'browser-launched')
     assert.equal(launch.engine, 'chromium')
     assert.equal(launch.browserVersion, 'unit-fixture-version')
-    assert.equal(launch.playwrightVersion, '1.64.1')
+    assert.equal(launch.playwrightVersion, '1.65.1')
     const assets = records.filter((row) => row.kind === 'served-runtime-asset')
     assert.equal(assets.length, 1)
     assert.deepEqual(
@@ -101,7 +101,7 @@ test('observes exact streamed runtime bytes and real launch return values withou
 
 const gatePath = 'packages/build-support/browser-gates/verify-issue-200-pptx-layout.mjs'
 const fixture = fileRecord('test/public-document.bin', Buffer.from('actual-public-fixture'))
-const tools = { node: '24.20.0', pnpm: '11.0.9', playwright: '1.64.1' }
+const tools = { node: '24.20.0', pnpm: '11.0.9', playwright: '1.65.1' }
 const runPlan = {
   id: 'unit-gate',
   gateId: 'unit-gate',
@@ -129,7 +129,7 @@ const actualEvents = () =>
       gateId: runPlan.id,
       engine,
       nodeVersion: 'v24.20.0',
-      playwrightVersion: '1.64.1',
+      playwrightVersion: '1.65.1',
       browserVersion: `actual-${engine}`
     },
     {
@@ -424,19 +424,19 @@ test('DICOM source, built Viewer and packed owners retain distinct exact Worker-
     )
   )
   const source = {
-    path: 'served/35592a6fc7d3c7d8c828256d9b39546331262dc8a534e30bce5bfdab1b998c3c.js',
-    bytes: 3154646,
-    sha256: '35592a6fc7d3c7d8c828256d9b39546331262dc8a534e30bce5bfdab1b998c3c'
+    path: 'served/c8d8ca135aff6f3ee8f2719e04c394b677234a44ddb615e9175dc10009df812d.js',
+    bytes: 3326618,
+    sha256: 'c8d8ca135aff6f3ee8f2719e04c394b677234a44ddb615e9175dc10009df812d'
   }
   const packed = {
-    path: 'served/a7fac4bbe521963cc406ebf12ca414f9713345789af148f1bc56d64192a2d894.js',
-    bytes: 8018353,
-    sha256: 'a7fac4bbe521963cc406ebf12ca414f9713345789af148f1bc56d64192a2d894'
+    path: 'served/b6cb5c0edbfc9e21421e58b5afe951b398df1ef33ce915238b6c90261db04ecf.js',
+    bytes: 8233891,
+    sha256: 'b6cb5c0edbfc9e21421e58b5afe951b398df1ef33ce915238b6c90261db04ecf'
   }
   const viewer = {
-    path: 'served/f31e5943a8930ce2ac0331dc45aa6f6107c39c4e5927d3e530fcb1d37fa95786.js',
-    bytes: 3150913,
-    sha256: 'f31e5943a8930ce2ac0331dc45aa6f6107c39c4e5927d3e530fcb1d37fa95786'
+    path: 'served/1c6fe31dc9a7cd14f7f032a18e7b1b017d00e869234cb83b32216ce3a063db1c.js',
+    bytes: 3322672,
+    sha256: '1c6fe31dc9a7cd14f7f032a18e7b1b017d00e869234cb83b32216ce3a063db1c'
   }
   for (const [runId, count, asset] of [
     ['dicom-renderer', 27, source],
@@ -528,9 +528,9 @@ test('all spreadsheet owners require the Worker built from the actual current Co
     )
   )
   const asset = {
-    path: 'served/a93cf71745c076d59b1049d5358e2a04635fb5b5022b177a2a2603943e855e2a.js',
-    bytes: 779775,
-    sha256: 'a93cf71745c076d59b1049d5358e2a04635fb5b5022b177a2a2603943e855e2a'
+    path: 'served/89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18.js',
+    bytes: 782171,
+    sha256: '89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18'
   }
   for (const [runId, count] of [
     ['issue-211-spreadsheet-table-styles', 9],
@@ -568,6 +568,112 @@ test('all spreadsheet owners require the Worker built from the actual current Co
       }),
     /Independent required product bytes/
   )
+})
+
+test('the reviewed 3.3.5 profile rejects superseded Playwright and independently measured 3.3.4 product bytes', async () => {
+  const plan = JSON.parse(
+    await readFile(
+      join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
+    )
+  )
+  const metadataPath = 'apps/viewer-demo/public/example/data.json'
+  const metadataBytes = await readFile(join(workspaceRoot, metadataPath))
+  const metadata = fileRecord(metadataPath, metadataBytes)
+  const sourcePackage = JSON.parse(await readFile(join(workspaceRoot, 'package.json')))
+  assert.equal(JSON.parse(metadataBytes).version, sourcePackage.version)
+  const metadataRows = plan.requiredCases.filter(
+    (row) => row.runId === 'demo-browser-smoke' && row.id === 'sample:data.json'
+  )
+  assert.equal(metadataRows.length, 3)
+  assert(metadataRows.every((row) => JSON.stringify(row.fixtures) === JSON.stringify([metadata])))
+  const metadataRequired = requiredPlan().map((row) => ({ ...row, fixtures: [metadata] }))
+  const metadataEvents = actualEvents().map((row) =>
+    row.kind === 'served-fixture'
+      ? { ...row, ...metadata }
+      : row.kind === 'browser-gate-engine-complete'
+        ? { ...row, fixtures: [metadata] }
+        : row
+  )
+  assert.equal(collect({ required: metadataRequired, events: metadataEvents }).length, 6)
+  const oldMetadata = {
+    ...metadata,
+    sha256: 'b727f15222df59599e92e9cd9539852318f814aa40a2b85a72030c1542664e29'
+  }
+  assert.throws(
+    () =>
+      collect({
+        required: metadataRequired.map((row) => ({ ...row, fixtures: [oldMetadata] })),
+        events: metadataEvents
+      }),
+    /Original fixture not actually observed/
+  )
+  assert.throws(
+    () =>
+      collect({
+        required: metadataRequired,
+        events: metadataEvents.map((row) =>
+          row.kind === 'served-fixture' ? { ...row, ...oldMetadata } : row
+        )
+      }),
+    /Original fixture not actually observed/
+  )
+  const oldTools = structuredClone(plan)
+  oldTools.tools.playwright = '1.64.1'
+  assert.throws(() => validateManifest(oldTools))
+  for (const [runId, oldBytes, oldSha256] of [
+    ['dicom-renderer', 3154646, '35592a6fc7d3c7d8c828256d9b39546331262dc8a534e30bce5bfdab1b998c3c'],
+    [
+      'dicom-packed-browser',
+      8018353,
+      'a7fac4bbe521963cc406ebf12ca414f9713345789af148f1bc56d64192a2d894'
+    ],
+    [
+      'unified-specialist-demo',
+      3150913,
+      'f31e5943a8930ce2ac0331dc45aa6f6107c39c4e5927d3e530fcb1d37fa95786'
+    ],
+    [
+      'issue-211-spreadsheet-table-styles',
+      779775,
+      'a93cf71745c076d59b1049d5358e2a04635fb5b5022b177a2a2603943e855e2a'
+    ],
+    [
+      'issue-211-spreadsheet-table-styles',
+      779775,
+      '402bccc165309c46c1340ff74aa14640f1a917866b72dc4c110c7cb9e046aacc'
+    ],
+    ['issue-208-tiff', 83504, '84587f5b6f559e2efead4dbb63dfa399e716c347db61d6199172f52e6bf082d4']
+  ]) {
+    const asset = plan.requiredCases.find((row) => row.runId === runId).servedAssets[0]
+    const required = requiredPlan().map((row) => ({ ...row, servedAssets: [asset] }))
+    const events = actualEvents().map((row) =>
+      row.kind === 'served-runtime-asset'
+        ? { ...row, bytes: asset.bytes, sha256: asset.sha256 }
+        : row
+    )
+    assert.equal(collect({ required, events }).length, 6)
+    const previous = { path: `served/${oldSha256}.js`, bytes: oldBytes, sha256: oldSha256 }
+    assert.throws(
+      () =>
+        collect({
+          required: required.map((row) => ({ ...row, servedAssets: [previous] })),
+          events
+        }),
+      /Independent required product bytes/
+    )
+    assert.throws(
+      () =>
+        collect({
+          required,
+          events: events.map((row) =>
+            row.kind === 'served-runtime-asset'
+              ? { ...row, bytes: oldBytes, sha256: oldSha256 }
+              : row
+          )
+        }),
+      /Independent required product bytes/
+    )
+  }
 })
 
 test('all original generated-fixture and source-harness producers retain current exact source pins', async () => {
@@ -1306,7 +1412,7 @@ test('explicit browser fixture binding preserves page/context calls and rejects 
     await mkdir(moduleDirectory, { recursive: true })
     await writeFile(
       join(moduleDirectory, 'package.json'),
-      JSON.stringify({ name: 'playwright', version: '1.64.1', main: 'index.cjs' })
+      JSON.stringify({ name: 'playwright', version: '1.65.1', main: 'index.cjs' })
     )
     await writeFile(
       join(moduleDirectory, 'index.cjs'),

@@ -11,6 +11,8 @@ const outfile = resolve(packageDir, 'dist/worker/sheet.worker.js')
 
 await build({
   bundle: true,
+  // The worker shares Core's text decoder and has no viewer UI to translate.
+  conditions: ['file-viewer-custom-locales', 'module'],
   entryPoints: [resolve(packageDir, 'src/spreadsheet/worker/sheetjs/sheet.worker.ts')],
   format: 'esm',
   minify: true,

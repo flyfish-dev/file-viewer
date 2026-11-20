@@ -4,6 +4,12 @@ import type {
   FileViewerRendererPlugin,
   RendererDefinition
 } from '@file-viewer/core'
+import { registerFileViewerDocumentInspector } from '@file-viewer/core'
+
+/** Presence of this optional capability enables metadata panels, never verification. */
+export const enableFileViewerSignatureDocumentInspection = () => registerFileViewerDocumentInspector(
+  'signature-metadata', request => import('./documentInspection.js').then(module => module.attachDocumentSignatureInspection(request))
+)
 
 export const signatureRendererDefinition: RendererDefinition = {
   id: 'signature',
@@ -42,7 +48,7 @@ export const signatureRendererDefinition: RendererDefinition = {
     'Certificate trust, policy compliance, qualified status, and legal validity are not established.',
     'ASiC XML signature references and RFC 4998 renewal chains are structurally inspected; full XAdES and archival-policy validation are not claimed.',
     'OpenPGP inspection plus detached, cleartext and embedded signature verification use a lazy rPGP WebAssembly Worker; private-key operations and automatic decryption are intentionally excluded.',
-    'JAdES properties are reported as metadata only. PAdES, full XMLDSig/XAdES/JAdES validation, S/MIME and PGP/MIME remain outside this renderer because they require host integration with their existing document and message renderers.'
+    'Optional document inspection reuses the signature panel beside PDF/XML/JSON previews without verification. PDF dictionary inspection additionally requires the explicit PDF signature-inspection entry and its existing optional pdf-lib peer. Full XMLDSig/XAdES/JAdES verification, trust, S/MIME and PGP/MIME remain outside this integration.'
   ],
   capabilities: { download: true }
 }
@@ -57,7 +63,10 @@ export const renderFileViewerSignature: FileRenderHandler<
 
 export const signatureRenderer: FileViewerRendererPlugin<
   FileRenderHandler<FileViewerRenderedInstance, HTMLDivElement>
-> = {
+> = (() => {
+  // Keep initialization attached to the consumed plugin value even with sideEffects:false.
+  enableFileViewerSignatureDocumentInspection()
+  return {
   id: 'file-viewer-renderer-signature',
   label: 'Flyfish File Viewer signature renderer',
   definitions: [signatureRendererDefinition],
@@ -67,10 +76,12 @@ export const signatureRenderer: FileViewerRendererPlugin<
       handler: renderFileViewerSignature
     }
   ]
-}
+  }
+})()
 
 export {
   inspectSignatureContainer,
+  inspectSignatureCertificate,
   inspectEvidenceRecord,
   DEFAULT_SIGNATURE_ASN1_LIMITS,
   signatureOidLabels,

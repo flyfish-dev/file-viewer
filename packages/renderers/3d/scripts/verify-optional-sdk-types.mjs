@@ -67,8 +67,8 @@ async function run(label, command, args, cwd, extraEnv = {}, expectedExitCode = 
 }
 const metadata = packages.get('@file-viewer/renderer-3d').manifest
 const configs = [
-  {id: 'without-sdk', peers: {}, fixture: 'without-sdk-consumer.mts', threeTypes: '0.186.0'},
-  {id: 'ifc', peers: {'@thatopen/components': metadata.peerDependencies['@thatopen/components'], '@thatopen/fragments': metadata.peerDependencies['@thatopen/fragments'], 'web-ifc': metadata.peerDependencies['web-ifc'], three: '0.186.0'}, fixture: 'ifc-consumer.mts', threeTypes: '0.186.0'},
+  {id: 'without-sdk', peers: {}, fixture: 'without-sdk-consumer.mts', threeTypes: '0.187.0'},
+  {id: 'ifc', peers: {'@thatopen/components': metadata.peerDependencies['@thatopen/components'], '@thatopen/fragments': metadata.peerDependencies['@thatopen/fragments'], 'web-ifc': metadata.peerDependencies['web-ifc'], three: '0.187.0'}, fixture: 'ifc-consumer.mts', threeTypes: '0.187.0'},
   {id: 'giro3d', peers: {'@giro3d/giro3d': metadata.peerDependencies['@giro3d/giro3d'], three: '0.180.0'}, fixture: 'geo3d-consumer.mts', threeTypes: '0.185.0'},
 ]
 try {

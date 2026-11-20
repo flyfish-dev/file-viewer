@@ -72,6 +72,77 @@
     ],
     "upstreamBuildLimitation": "Official build scripts used master and a Melk 0.10.0-SNAPSHOT compiler; exact upstream compiler provenance and bit-identical regeneration are not claimed."
   },
+  "elkjs@0.12.1": {
+    "license": "EPL-2.0",
+    "scope": "Distribution elects EPL-2.0 from the upstream alternative license expression. Exact unmodified published elkjs 0.12.1 runtime: its immutable tagged runtime matches the installed input byte for byte; preferred ELK Java source is the official release-declared v0.12.1 base, with original source material notices.",
+    "sources": [
+      {
+        "name": "elkjs-source.tar.gz",
+        "url": "https://api.github.com/repos/kieler/elkjs/tarball/624ae90aa37110033a8af59c5ccbb292708b4317",
+        "bytes": 1934838,
+        "sha256": "05e3c2a1addb49b3aa55fb770eb26cadf49ddb06d58a57e0fb3c68f09888378a"
+      },
+      {
+        "name": "elk-java-base.tar.gz",
+        "url": "https://api.github.com/repos/eclipse-elk/elk/tarball/3aa3b9fb98d8f9a41285b3061cff5efe79ed2ba4",
+        "bytes": 9433961,
+        "sha256": "5b86afd61bfbfaa63235be4d56fc214f2bed9d1061f3b987868192ca80ba034f"
+      },
+      {
+        "name": "org.eclipse.xtext-2.36.0-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/org/eclipse/xtext/org.eclipse.xtext/2.36.0/org.eclipse.xtext-2.36.0-sources.jar",
+        "bytes": 1443299,
+        "sha256": "430cbd3e63c4b988f011a50360db5843094525871a2cc5c905a7c50db91a9372"
+      },
+      {
+        "name": "org.eclipse.xtext.util-2.36.0-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/org/eclipse/xtext/org.eclipse.xtext.util/2.36.0/org.eclipse.xtext.util-2.36.0-sources.jar",
+        "bytes": 149275,
+        "sha256": "608c88e6da99d8897af4ae22273224c534377b7b95583f1aaea9259a2ed64f9f"
+      },
+      {
+        "name": "org.eclipse.xtext.xbase.lib-2.36.0-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/org/eclipse/xtext/org.eclipse.xtext.xbase.lib/2.36.0/org.eclipse.xtext.xbase.lib-2.36.0-sources.jar",
+        "bytes": 109222,
+        "sha256": "5e06e3cfc74663d11e0debe4cce88e1134d00eba8122b90712fccbb3a5f6754a"
+      },
+      {
+        "name": "org.eclipse.xtend.lib-2.36.0-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/org/eclipse/xtend/org.eclipse.xtend.lib/2.36.0/org.eclipse.xtend.lib-2.36.0-sources.jar",
+        "bytes": 125962,
+        "sha256": "c06d94fbce7b4c831282f5ec818798e970cc893a498ed6524d9e1e47347d362f"
+      },
+      {
+        "name": "emf-common-2.12.4-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/com/genmymodel/emf/gwt/emf-common/2.12.4/emf-common-2.12.4-sources.jar",
+        "bytes": 138710,
+        "sha256": "8dfc4e97ca8eee5474927e2b0c5f3bdbd9a52dcd5dff8c0b433b1e938b843bbe"
+      },
+      {
+        "name": "emf-ecore-2.12.4-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/com/genmymodel/emf/gwt/emf-ecore/2.12.4/emf-ecore-2.12.4-sources.jar",
+        "bytes": 655830,
+        "sha256": "dd3b8c1c3bd0a27c1fbba908bcf0ff21a999148da4e68b3546bcde1dbce7b13a"
+      },
+      {
+        "name": "gwt-user-2.13.0-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/org/gwtproject/gwt-user/2.13.0/gwt-user-2.13.0-sources.jar",
+        "bytes": 6563091,
+        "sha256": "3d306a865b59ece234e0e4acbb56f39ad14b4e79feec84d53caa3259bd7b1984"
+      },
+      {
+        "name": "guava-gwt-31.1-jre-sources.jar",
+        "url": "https://repo.maven.apache.org/maven2/com/google/guava/guava-gwt/31.1-jre/guava-gwt-31.1-jre-sources.jar",
+        "bytes": 1212945,
+        "sha256": "d7e52f41ac6ea010787b5b3c8db7ffb54375d8d0c39c98c2badc9c38de7bf14b"
+      }
+    ],
+    "originalNoticeBook": {
+      "file": "elk-java-original-notices-0.12.1.json",
+      "sha256": "6e3a4907939f3db66a296df53190988c1be252bb04ab489106877198311d98a9"
+    },
+    "upstreamBuildLimitation": "The official 0.12.1 release declares ELK 0.12.1. Its public CI checks out ELK master and build.gradle names the Melk 0.13.0-SNAPSHOT compiler. The exact original compiler environment and bit-identical GWT regeneration are not claimed. Source declarations use GWT 2.13.0, Xtext/Xtend 2.36.0, EMF GWT 2.12.4 and Guava 31.1-jre; original notices are version-specific."
+  },
   "occt-import-js@0.0.23": {
     "license": "LGPL-2.1-only",
     "scope": "Exact published wrapper WASM and public preferred wrapper/OCCT library sources; no private renderer source is included.",

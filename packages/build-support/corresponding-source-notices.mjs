@@ -16,8 +16,21 @@ export async function correspondingSourceNotice(metadata) {
       const raw = await readFile(new URL('./licenses/native/' + file, import.meta.url))
       sections.push(`Original upstream EPL standard text, retained for public Java libraries (${file}, SHA-256 ${digest(raw)}):\n${raw.toString('utf8')}`)
     }
-    const book = JSON.parse(await readFile(new URL('./licenses/elk-java-original-notices.json', import.meta.url)))
+    const noticeBook = entry.originalNoticeBook
+    if (metadata.version !== '0.9.3' && !noticeBook)
+      throw new Error('Original Java notice book is required for the selected release')
+    if (noticeBook && noticeBook.file !== `elk-java-original-notices-${metadata.version}.json`)
+      throw new Error('Original Java notice book does not match the selected release')
+    const bookBytes = await readFile(new URL('./licenses/' + (noticeBook?.file || 'elk-java-original-notices.json'), import.meta.url))
+    if (noticeBook && digest(bookBytes) !== noticeBook.sha256)
+      throw new Error('Original Java notice book byte identity changed')
+    const book = JSON.parse(bookBytes)
+    if (noticeBook && (book.length !== entry.sources.length ||
+      new Set(book.map(archive => archive.artifact)).size !== entry.sources.length))
+      throw new Error('Original Java notice book must cover every selected source artifact once')
     for (const archive of book) {
+      if (noticeBook && !entry.sources.some(source => source.name === archive.artifact && source.sha256 === archive.sha256))
+        throw new Error('Original Java notice artifact is not in the selected corresponding sources')
       sections.push(`Conservative source artifact: ${archive.artifact}\nSHA-256: ${archive.sha256}\n${archive.scope}`)
       for (const [sha256, original] of Object.entries(archive.materials)) {
         const bytes = Buffer.from(original.text, original.encoding)

@@ -60,12 +60,12 @@
       {
         "packageName": "@cornerstonejs/core",
         "spdx": "MIT",
-        "notice": "Reviewed runtime/SDK source @cornerstonejs/core@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source @cornerstonejs/core@5.18.1; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "@cornerstonejs/dicom-image-loader",
         "spdx": "MIT",
-        "notice": "Reviewed runtime/SDK source @cornerstonejs/dicom-image-loader@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source @cornerstonejs/dicom-image-loader@5.18.1; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "@cornerstonejs/jpeg-lossless-decoder-js",
@@ -75,12 +75,12 @@
       {
         "packageName": "@cornerstonejs/metadata",
         "spdx": "MIT",
-        "notice": "Reviewed runtime/SDK source @cornerstonejs/metadata@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source @cornerstonejs/metadata@5.18.1; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "@cornerstonejs/utils",
         "spdx": "MIT",
-        "notice": "Reviewed runtime/SDK source @cornerstonejs/utils@5.13.2; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source @cornerstonejs/utils@5.18.1; repository https://github.com/cornerstonejs/cornerstone3D; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "@kitware/vtk.js",
@@ -405,7 +405,7 @@
       {
         "packageName": "postcss",
         "spdx": "MIT",
-        "notice": "Reviewed runtime/SDK source postcss@8.5.31; repository https://github.com/postcss/postcss; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
+        "notice": "Reviewed runtime/SDK source postcss@8.5.32; repository https://github.com/postcss/postcss; complete license and notice filenames are recorded in THIRD_PARTY_LICENSES.json."
       },
       {
         "packageName": "postcss-value-parser",

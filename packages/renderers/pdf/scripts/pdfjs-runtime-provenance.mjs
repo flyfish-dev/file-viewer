@@ -2,7 +2,9 @@ import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import {
-  isolatePdfJsWebpackRuntime,
+  projectPdfJsRuntime,
+  pdfJsMainRuntimePath,
+  pdfJsMainRuntimeProjection,
   pdfJsRuntimeIsolationTransform,
   pdfJsRuntimeModificationNotice
 } from './pdfjs-runtime-transform.mjs'
@@ -63,7 +65,14 @@ export async function verifyPdfJsRuntimeProvenance(vendorRoot, { sourceRoot, pat
     if (!record) throw new Error(`PDF.js provenance is missing ${target}`)
     const content = await readFile(resolve(vendorRoot, target))
     const source = await readFile(resolve(sourceRoot, target))
-    const expected = isolatePdfJsWebpackRuntime(source.toString('utf8'))
+    const expected = await projectPdfJsRuntime(source.toString('utf8'), target)
+    if (target === pdfJsMainRuntimePath) {
+      if (JSON.stringify(record.projection) !== JSON.stringify(pdfJsMainRuntimeProjection)) {
+        throw new Error('PDF.js main projection recipe does not match the reviewed formatter')
+      }
+    } else if (Object.hasOwn(record, 'projection')) {
+      throw new Error(`PDF.js main projection must not change Worker or viewer: ${target}`)
+    }
     if (
       record.sourceSha256 !== sha256(source) ||
       record.sourceSize !== source.byteLength ||

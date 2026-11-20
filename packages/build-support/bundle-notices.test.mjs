@@ -2,14 +2,97 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { lstat, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import test from 'node:test'
+import { pathToFileURL } from 'node:url'
 import { writeBundleNotices } from './bundle-notices.mjs'
-import { writePrebundledNoticeReceipt } from './prebundled-notices.mjs'
+import { prebundledRuntimePathsFromInputs, writePrebundledNoticeReceipt } from './prebundled-notices.mjs'
+import { correspondingSourceNotice } from './corresponding-source-notices.mjs'
 import {
   fullWorkspaceLicensePackages,
   verifyFullWorkspaceNotices
 } from './full-workspace-notices.mjs'
+
+test('ELK corresponding source keeps legacy outputs and binds the current release to its own original materials', async () => {
+  for (const [name, version, expected] of [
+    ['elkjs', '0.9.3', '331c182bcc6181c249ce0656310f06a3442b6e11f436bfb23a0f4ffbb0f1b3a1'],
+    ['occt-import-js', '0.0.23', '2e5d27593ec529c32eb26e42b324febe9b57e3809a694638b16a267cb76b7c27']
+  ]) {
+    const notice = await correspondingSourceNotice({ name, version })
+    assert.equal(createHash('sha256').update(notice.text).digest('hex'), expected)
+  }
+  const registry = JSON.parse(await readFile(new URL('./licenses/corresponding-sources.json', import.meta.url)))
+  const entry = registry['elkjs@0.12.1']
+  const notice = await correspondingSourceNotice({ name: 'elkjs', version: '0.12.1' })
+  assert.equal(notice.license, 'EPL-2.0')
+  assert.equal(entry.originalNoticeBook.file, 'elk-java-original-notices-0.12.1.json')
+  const raw = await readFile(new URL('./licenses/' + entry.originalNoticeBook.file, import.meta.url))
+  assert.equal(createHash('sha256').update(raw).digest('hex'), entry.originalNoticeBook.sha256)
+  const book = JSON.parse(raw)
+  assert.equal(book.length, entry.sources.length)
+  for (const source of entry.sources) {
+    assert.ok(notice.text.includes(`Source: ${source.url}\nBytes: ${source.bytes}\nSHA-256: ${source.sha256}`))
+    const original = book.find(archive => archive.artifact === source.name)
+    assert.equal(original.sha256, source.sha256)
+    for (const [expected, material] of Object.entries(original.materials)) {
+      const bytes = Buffer.from(material.text, material.encoding)
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), expected)
+      assert.ok(Buffer.from(notice.text).includes(bytes), `Complete original material absent: ${material.sourcePath}`)
+    }
+  }
+  assert.ok(notice.text.includes(entry.upstreamBuildLimitation))
+  assert.ok(!notice.text.includes('org.eclipse.xtext-2.28.0-sources.jar'))
+  assert.ok(!notice.text.includes('gwt-user-2.10.0-sources.jar'))
+  assert.equal(await correspondingSourceNotice({ name: 'elkjs', version: '0.12.2' }), null)
+})
+
+test('ELK current source notice rejects a mismatched release book, altered bytes and incomplete or foreign original materials', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'file-viewer-current-elk-notices-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  await mkdir(join(root, 'licenses/native'), { recursive: true })
+  await writeFile(join(root, 'corresponding-source-notices.mjs'),
+    await readFile(new URL('./corresponding-source-notices.mjs', import.meta.url)))
+  for (const file of ['EPL-1.0.html.txt', 'EPL-2.0.html.txt'])
+    await writeFile(join(root, 'licenses/native', file),
+      await readFile(new URL('./licenses/native/' + file, import.meta.url)))
+  const registry = JSON.parse(await readFile(new URL('./licenses/corresponding-sources.json', import.meta.url)))
+  const original = registry['elkjs@0.12.1']
+  const originalBook = await readFile(new URL('./licenses/' + original.originalNoticeBook.file, import.meta.url))
+  const load = (await import(pathToFileURL(join(root, 'corresponding-source-notices.mjs')).href)).correspondingSourceNotice
+  const save = async (entry, bytes = originalBook) => {
+    await writeFile(join(root, 'licenses/corresponding-sources.json'), JSON.stringify({ 'elkjs@0.12.1': entry }))
+    await writeFile(join(root, 'licenses', original.originalNoticeBook.file), bytes)
+  }
+  await save(original)
+  assert.equal((await load({ name: 'elkjs', version: '0.12.1' })).text,
+    (await correspondingSourceNotice({ name: 'elkjs', version: '0.12.1' })).text)
+  const missingBook = { ...original }
+  delete missingBook.originalNoticeBook
+  await save(missingBook)
+  await assert.rejects(() => load({ name: 'elkjs', version: '0.12.1' }),
+    /book is required for the selected release/)
+  for (const [entry, bytes, expected] of [
+    [{ ...original, originalNoticeBook: { ...original.originalNoticeBook, file: 'elk-java-original-notices-0.9.3.json' } },
+      originalBook, /does not match the selected release/],
+    [original, Buffer.concat([originalBook, Buffer.from('\n')]), /book byte identity changed/]
+  ]) {
+    await save(entry, bytes)
+    await assert.rejects(() => load({ name: 'elkjs', version: '0.12.1' }), expected)
+  }
+  for (const mutate of [
+    book => book.pop(),
+    book => { book[0].sha256 = '0'.repeat(64) },
+    book => { Object.values(book[0].materials)[0].text += '\n' }
+  ]) {
+    const book = JSON.parse(originalBook)
+    mutate(book)
+    const bytes = Buffer.from(JSON.stringify(book))
+    await save({ ...original, originalNoticeBook: { ...original.originalNoticeBook,
+      sha256: createHash('sha256').update(bytes).digest('hex') } }, bytes)
+    await assert.rejects(() => load({ name: 'elkjs', version: '0.12.1' }),
+      /must cover every selected source artifact once|not in the selected corresponding sources|notice byte identity changed/)
+  }
+})
 
 test('HEIC image notice propagates once beside an existing decoder LICENSE and rejects missing or altered bytes', async t => {
   const root = await mkdtemp(join(tmpdir(), 'file-viewer-heic-owner-notices-'))
@@ -110,6 +193,42 @@ async function prebundledProducerFixture(t) {
   return { root, packageRoot, metadata, notice, files, configuration, receipt, save, plain,
     inputs, options, output: join(root, 'THIRD_PARTY_LICENSES.txt') }
 }
+
+test('split runtime paths derive from canonical bundled owner inputs rather than a producer receipt', () => {
+  const owner = resolve('/normal/package-owner')
+  const index = join(owner, 'dist/index.js')
+  const chunk = join(owner, 'dist/chunks/parser-actual.js')
+  assert.deepEqual(prebundledRuntimePathsFromInputs(new Set([
+    chunk, index, chunk, join(owner, 'dist/index.d.ts'),
+    join(owner, 'src/index.ts'), resolve('/normal/unrelated/dist/index.js')
+  ]), owner), ['dist/chunks/parser-actual.js', 'dist/index.js'])
+  for (const input of ['dist/index.js', owner + '/dist/../index.js',
+    owner + '/dist/index.js?raw', owner + '/dist/index.js\0', owner + '/dist\\index.js']) {
+    assert.throws(() => prebundledRuntimePathsFromInputs([index, input], owner), /canonical absolute/)
+  }
+  assert.throws(() => prebundledRuntimePathsFromInputs([chunk], owner), /normal owner index/)
+  assert.throws(() => prebundledRuntimePathsFromInputs([index], resolve('/normal/wrong-owner')),
+    /normal owner index/)
+  assert.throws(() => prebundledRuntimePathsFromInputs([index], './relative-owner'),
+    /canonical absolute/)
+})
+
+test('the actual split input set rejects a missing or extra runtime chunk without weakening receipt checks', async t => {
+  const f = await prebundledProducerFixture(t)
+  const index = join(f.packageRoot, 'dist/index.js')
+  await writeFile(index, "export * from './vendor/first.js'; export * from './vendor/second.js';\n")
+  const inputs = [index, ...Object.keys(f.inputs)]
+  f.configuration.runtimePaths = prebundledRuntimePathsFromInputs(inputs, f.packageRoot)
+  await writePrebundledNoticeReceipt({ packageRoot: f.packageRoot,
+    runtimePaths: f.configuration.runtimePaths, noticePath: f.configuration.noticePath })
+  const produce = actual => writeBundleNotices({ inputs: Object.fromEntries(actual.map(path => [path, {}])) },
+    f.output, { includePrebundledRuntimeNotices: [{ ...f.configuration,
+      runtimePaths: prebundledRuntimePathsFromInputs(actual, f.packageRoot) }] })
+  await produce(inputs)
+  assert.ok((await readFile(f.output)).includes(f.notice))
+  await assert.rejects(() => produce(inputs.slice(0, -1)), /runtime paths changed/)
+  await assert.rejects(() => produce([...inputs, f.plain]), /runtime paths changed/)
+})
 
 test('prebundled producer preserves the complete notice only for actual matching runtime inputs', async t => {
   const f = await prebundledProducerFixture(t)

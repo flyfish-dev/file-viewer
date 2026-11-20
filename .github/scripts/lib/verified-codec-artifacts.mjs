@@ -37,7 +37,7 @@ const reviewedSdkBinShims = [
 
 function verifyGeneratedSdkBins(packagePath, artifact, manifest) {
   const expected =
-    artifact.name === '@cornerstonejs/core' && artifact.version === '5.13.2'
+    artifact.name === '@cornerstonejs/core' && artifact.version === '5.18.1'
       ? reviewedSdkBinShims
       : []
   assert.deepEqual(
@@ -223,12 +223,12 @@ export function verifyDicomSourceLicenses(packagePath, provenance) {
   const expected = ['@cornerstonejs/core', '@cornerstonejs/metadata', '@cornerstonejs/utils'].map(
     (name) => ({
       name,
-      version: '5.13.2',
+      version: '5.18.1',
       declaredLicense: 'MIT',
       sourceLicense: 'MIT',
       repository: 'https://github.com/cornerstonejs/cornerstone3D',
-      gitCommit: '2adf417c1c2762e6bafc6ed29fad1b82ed0ed8cf',
-      buildGitCommit: '0cae0c3564ad81d3c62422cc663e500844f0ef13',
+      gitCommit: 'c63b7751930c5bc81e06574cbb17909aad3c1427',
+      buildGitCommit: '9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9',
       sourcePath: 'LICENSE',
       path: 'third-party/native-codecs/sdk/LICENSE',
       bytes: 1087,

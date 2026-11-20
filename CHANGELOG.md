@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Print rendered documents in the current page and wait for the print content to load before calling the browser print dialog.
+- Apply the document's East Asian font to East Asian text in DOCX, including headings that mix Chinese and Latin text.
+- Restore supported floating text box placement in legacy DOC previews and print output (#461).
+- Let applications bundle only the Core locale dictionaries they register. The default entry points still provide all seven languages (#490).
 - Remove unreachable AMD dependencies from bundled browser SDKs so downstream bundlers can resolve Mermaid layouts without host aliases (#487).
 - Add `epub.externalResources: 'block'` for archive chapter and cover isolation while retaining local book resources and navigation (#488).
 - Expose the existing code/text and Markdown zoom providers through the shared capability declarations; retain provider-owned action limits (#483).

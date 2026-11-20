@@ -108,7 +108,7 @@ export async function stageInstalledCadRuntimeDirectory(targetDirectory) {
   )
   assert.equal(manifest.version, version, 'Installed CAD version differs from the asset contract')
   assert.match(version, /^\d+\.\d+\.\d+$/)
-  assert.equal(manifest.version, '0.8.3', 'Retained CAD source notices require review for a new owner version')
+  assert.equal(manifest.version, CAD_INTEGRATION_SOURCE.cadVersion, 'Retained CAD source notices require review for a new owner version')
   assert.equal(manifest.dependencies['@mlightcad/libredwg-web'], '0.7.9', 'Retained GPL text belongs to another LibreDWG release')
   const compatibilityContract = JSON.parse(await readFile(
     resolve(workspaceRoot, 'ecosystem/copy-assets-backward-compat.json'), 'utf8'
@@ -178,13 +178,13 @@ export async function stageInstalledCadRuntimeDirectory(targetDirectory) {
     'JavaScript source-map reference comments are omitted and the normal public offline sanitizer localizes fallback markers. WebAssembly bytes are unchanged.',
     'The exact offline sanitizer is included in the integration source at the immutable HTTPS reference below.',
     '',
-    '@flyfish-dev/cad-viewer 0.8.3 (AGPL-3.0-only), including its Worker and asset build scripts:',
-    'https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6366d2f7b1013cd5c300008c3c3fbf017ca9aace',
-    'SHA-256: 65d00f07230553734262d671abf45be94d83d3068318c0f25f8665494ec82bcb',
+    '@flyfish-dev/cad-viewer 0.8.4 (AGPL-3.0-only), including its Worker and asset build scripts:',
+    'https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6721a3dbcd5027a31006029243c505c460a521c6',
+    'SHA-256: 1de0f46746ccd832524c312e5760719941bbece19b693738d1bea408eee20434',
     '',
-    'dwf-viewer 0.6.7 (AGPL-3.0-only), including C source and scripts/build-wasm.sh:',
-    'https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/72783571e2cd744862d8eb32f7d3455906c76226',
-    'SHA-256: d246d61b914475412fdc33ea250646710c4a3431bfecad9c9a7700602923afb1',
+    'dwf-viewer 0.6.8 (AGPL-3.0-only), including C source and scripts/build-wasm.sh:',
+    'https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/274e7c86af0c97c569176c43ff317e92b0e30584',
+    'SHA-256: e98577a7f4b5434d975d2e00c8560e3ba53e3890c89bb6f85c357709d630df7c',
     '',
     '@mlightcad/libredwg-web 0.7.9 (GPL-3.0-only), including JavaScript bindings and their build scripts:',
     'https://codeload.github.com/mlightcad/libredwg-web/tar.gz/b70b5573a6bf2345e5fb10f2adff7fb74a8123c5',

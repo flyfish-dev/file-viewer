@@ -164,6 +164,7 @@ const createLightbox = (
   element.setAttribute('aria-modal', 'true');
   element.setAttribute('aria-hidden', 'true');
   const image = documentRef.createElement('img');
+  image.draggable = false;
   t.attr(image, 'alt', 'image.lightbox.alt');
   const closeButton = documentRef.createElement('button');
   closeButton.type = 'button';
@@ -541,6 +542,8 @@ export async function renderTiffWithDecoder(
       frame.className = 'tiff-frame';
       frame.dataset.pageNumber = String(index + 1);
       const image = documentRef.createElement('img');
+      // Keep derived page previews within the viewer's gesture handling.
+      image.draggable = false;
       image.src = objectUrl;
       t.bind(image, localizedNode => { localizedNode.alt = `${t('image.alt')} ${index + 1}`; }, 'alt');
       image.tabIndex = 0;

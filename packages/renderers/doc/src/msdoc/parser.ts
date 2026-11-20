@@ -940,6 +940,7 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
       if (ids.size === 1) framesById.get([...ids][0]!)?.contentBlockIds.push(block.id);
     }
     const anchorRanges = new Map<string, { storyKind: 'main' | 'header'; globalRange: { start: number; end: number }; blockId?: string }>();
+    const omittedAnchors = new Map<string, NonNullable<typeof textboxLayout.omittedAnchorParagraphs>[number]>();
     const rawAnchorRanges = new Map(['main', 'header'].map(kind => {
       const story = stories.find(s => s.kind === kind);
       return [kind, story ? buildStoryParagraphRanges(story, documentText, papxRuns) : []];
@@ -958,10 +959,28 @@ export function parseMsDoc(input: ArrayBuffer | Uint8Array | ArrayBufferView, op
       anchor.paragraphRange = { start: range.cpStart, end: range.cpEnd };
       const paragraph = paragraphByRange.get(`${range.cpStart}:${range.cpEnd}`);
       if (paragraph) anchor.paragraphBlockId = paragraph.id;
+      else if (anchor.storyKind === 'main') {
+        const key = `${range.cpStart}:${range.cpEnd}`;
+        if (!omittedAnchors.has(key)) {
+          const split = splitPropertiesByKind(range.properties || []);
+          const resolved = styles.resolveStyle(range.styleId || 0);
+          const cp = range.cpEnd - 1;
+          let low = 0, high = chpxRuns.length - 1;
+          while (low <= high) { const mid = (low + high) >>> 1; if (chpxRuns[mid]!.cpStart <= cp) low = mid + 1; else high = mid - 1; }
+          const direct = high >= 0 && chpxRuns[high]!.cpEnd > cp ? chpxRuns[high]!.properties : [];
+          const directState = charPropsToState(direct);
+          const character = directState.charStyleId != null ? styles.resolveStyle(directState.charStyleId).charProps : [];
+          const characterStyle = charPropsToState(mergePropertyArrays(resolved.charProps, character, direct));
+          resolveCharacterFonts(characterStyle, id => fonts.byIndex(id), styles.header);
+          omittedAnchors.set(key, { globalRange: { start: range.cpStart, end: range.cpEnd },
+            paraState: paraPropsToState(mergePropertyArrays(resolved.paraProps, split.para)), characterStyle });
+        }
+      }
       anchorRanges.set(`${anchor.storyKind}:${range.cpStart}:${range.cpEnd}`, { storyKind: anchor.storyKind,
         globalRange: anchor.paragraphRange, ...(paragraph ? { blockId: paragraph.id } : {}) });
     }
     textboxLayout.anchorParagraphs = [...anchorRanges.values()];
+    if (omittedAnchors.size) textboxLayout.omittedAnchorParagraphs = [...omittedAnchors.values()];
   }
   const trailingAttachments = Array.from(objectPool.values())
     .filter((item) => item?.attachment && !usedAttachmentNames.has(item.entry.name))

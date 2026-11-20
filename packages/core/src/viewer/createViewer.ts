@@ -65,7 +65,7 @@ import { createFileViewerSnapshotDownload } from '../output/snapshotDownload';
 import { createFileViewerErrorState, createFileViewerUnsupportedState } from './state';
 import { FILE_VIEWER_LOCALE_METADATA } from '../i18n/locales';
 import { createFileViewerI18nBindings } from '../i18n/bindings';
-import { createFileViewerTranslator } from '../i18n/messages';
+import { createFileViewerTranslator } from '../i18n/runtime';
 import { createFileViewerI18n, createFileViewerNestedI18n, type FileViewerI18nController } from '../i18n/context';
 import type {
   FileRenderContext,

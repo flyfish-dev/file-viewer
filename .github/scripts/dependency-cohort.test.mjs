@@ -157,9 +157,9 @@ test('root browser regression tools are declared without relying on an ancestor 
 })
 test('Demo query parsing uses the reviewed qs security patch without losing nested options', () => {
   const manifest = JSON.parse(read('apps/viewer-demo/package.json'))
-  assert.equal(manifest.dependencies.qs, '^6.16.1')
+  assert.equal(manifest.dependencies.qs, '^6.17.1')
   const require = createRequire(new URL('../../apps/viewer-demo/package.json', import.meta.url))
-  assert.equal(require('qs/package.json').version, '6.16.1')
+  assert.equal(require('qs/package.json').version, '6.17.1')
   const qs = require('qs')
   assert.deepEqual(
     qs.parse(
@@ -197,13 +197,13 @@ test('docs-site Next uses the reviewed sharp security runtime', () => {
   const docs = JSON.parse(read('apps/docs-site/package.json'))
   assert.equal(
     docs.dependencies.next,
-    '16.4.3',
+    '16.4.6',
     'Docs must declare the reviewed Next security release'
   )
   const docsRequire = createRequire(new URL('../../apps/docs-site/package.json', import.meta.url))
   assert.equal(
     docsRequire('next/package.json').version,
-    '16.4.3',
+    '16.4.6',
     'Installed Next must match the security declaration'
   )
   const patchedVersion = '0.35.5'
@@ -230,9 +230,9 @@ test('Dependabot groups version and security Angular updates in the nested fixtu
 })
 
 test('IFC importer and copied WASM use the same verified physical web-ifc package', () => {
-  // 0.0.78's JS calls StreamMeshes with four arguments, while its official
-  // WASM still accepts three. Retain the working ABI until upstream fixes it.
-  const version = '0.0.77'
+  // 0.0.78's JS/WASM StreamMeshes ABI was incompatible. Verify the exact
+  // 0.0.79 physical JS/WASM pair with the original IFC4/IFC4.3 browser cases.
+  const version = '0.0.79'
   const manifest = JSON.parse(read('packages/renderers/3d/package.json'))
   const demo = JSON.parse(read('apps/viewer-demo/package.json'))
   assert.equal(manifest.devDependencies['web-ifc'], version)

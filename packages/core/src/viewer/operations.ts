@@ -8,7 +8,7 @@ import type { FileViewerErrorMessageFormatter } from './state';
 import {
   translateFileViewerMessage,
   type FileViewerI18nInput,
-} from '../i18n/messages';
+} from '../i18n/runtime';
 import type {
   FileRenderExportAdapter,
   FileViewerDownloadOptions,
@@ -240,7 +240,7 @@ const buildRenderedHtmlDocumentFromOperation = async (
     throw new Error(translateFileViewerMessage(i18n, 'error.noExportContent'));
   }
 
-  const { buildFileViewerRenderedHtmlDocument } = await import('../export');
+  const { buildFileViewerRenderedHtmlDocument } = await import('../custom-locales-export');
   return buildFileViewerRenderedHtmlDocument({
     source,
     mode,
@@ -267,7 +267,7 @@ const buildRenderedDomDocumentFromOperation = async ({
     throw new Error(translateFileViewerMessage(i18n, 'error.noExportContent'));
   }
 
-  const { buildFileViewerRenderedDomDocument } = await import('../export');
+  const { buildFileViewerRenderedDomDocument } = await import('../custom-locales-export');
   return buildFileViewerRenderedDomDocument({
     source,
     mode: 'print',
@@ -333,6 +333,74 @@ const ensureFileViewerPrintStandardsMode = async (targetWindow: Window) => {
     });
   } finally {
     targetGlobal.URL.revokeObjectURL(objectUrl);
+  }
+};
+
+const printFileViewerDocumentInFrame = async (
+  ownerDocument: Document,
+  printableRoot: HTMLHtmlElement,
+) => {
+  const hostWindow = ownerDocument.defaultView;
+  if (!hostWindow || !ownerDocument.body) {
+    throw new Error('Unable to initialize the print frame.');
+  }
+
+  const frame = ownerDocument.createElement('iframe');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.tabIndex = -1;
+  Object.assign(frame.style, {
+    position: 'fixed',
+    left: '-10000px',
+    top: '0',
+    width: '1px',
+    height: '1px',
+    border: '0',
+    pointerEvents: 'none',
+  });
+
+  // Parse a fixed shell in standards mode. Mount the sanitized snapshot with
+  // DOM APIs so the document also works under Trusted Types.
+  const objectUrl = URL.createObjectURL(new Blob([FILE_VIEWER_PRINT_STANDARDS_DOCUMENT], {
+    type: 'text/html;charset=utf-8',
+  }));
+  let keepForPrint = false;
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const timeout = hostWindow.setTimeout(() => {
+        reject(new Error('Unable to initialize the print frame in standards mode.'));
+      }, 1500);
+      frame.addEventListener('load', () => {
+        hostWindow.clearTimeout(timeout);
+        if (frame.contentDocument?.compatMode === 'CSS1Compat') {
+          resolve();
+        } else {
+          reject(new Error('Unable to initialize the print frame in standards mode.'));
+        }
+      }, { once: true });
+      frame.src = objectUrl;
+      ownerDocument.body.append(frame);
+    });
+
+    const { contentWindow, contentDocument } = frame;
+    if (!contentWindow || !contentDocument) {
+      throw new Error('Unable to access the print frame.');
+    }
+    replaceFileViewerPrintDocument(contentDocument, printableRoot);
+    await waitForFileViewerPrintWindowReady(contentWindow);
+
+    let fallback: number | undefined;
+    const remove = () => {
+      if (fallback !== undefined) hostWindow.clearTimeout(fallback);
+      frame.remove();
+    };
+    contentWindow.addEventListener('afterprint', remove, { once: true });
+    contentWindow.print();
+    keepForPrint = true;
+    // Some browsers return before the dialog closes or omit afterprint.
+    if (frame.isConnected) fallback = hostWindow.setTimeout(remove, 60_000);
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+    if (!keepForPrint) frame.remove();
   }
 };
 
@@ -449,7 +517,17 @@ export const executeFileViewerPrintOperation = async ({
     return false;
   }
 
-  // Preserve the browser's transient user activation while the snapshot is built.
+  if (autoPrint && !printWindow && !openWindow) {
+    if (!await beforeResult) return false;
+    if (!input.source) {
+      throw new Error(translateFileViewerMessage(i18n, 'error.noExportContent'));
+    }
+    const printableRoot = await buildRenderedDomDocumentFromOperation({ ...input, i18n });
+    await printFileViewerDocumentInFrame(input.source.ownerDocument, printableRoot);
+    return true;
+  }
+
+  // Reserve an explicit preview window while the caller still has user activation.
   const ownsPrintWindow = !printWindow;
   const targetWindow = printWindow ||
     openWindow?.() ||

@@ -19,9 +19,17 @@ await mkdir(output, { recursive: true })
 const browser = await launchBrowserForTest(playwright.chromium || playwright.default.chromium, 'chromium', { headless: true })
 const demo = await startRegressionDemo(root)
 const { origin } = demo
-const page = await browser.newPage({ viewport: { width: 1280, height: 820 } })
-await page.context().addInitScript(() => {
-  window.print = () => { window.__regressionPrintRequested = true }
+const context = await browser.newContext({ viewport: { width: 1280, height: 820 } })
+const page = await context.newPage()
+await context.addInitScript(() => {
+  document.addEventListener('load', event => {
+    if (!(event.target instanceof HTMLIFrameElement) || !event.target.src.startsWith('blob:')) return
+    const printWindow = event.target.contentWindow
+    if (!printWindow) return
+    printWindow.print = () => {
+      window.__regressionPrintedHtml = '<!doctype html>' + printWindow.document.documentElement.outerHTML
+    }
+  }, true)
 })
 page.setDefaultTimeout(90000)
 const report = []
@@ -182,19 +190,19 @@ try {
     const exportedPixels = await Promise.all(images.map(match => pixels(Buffer.from(match[1], 'base64'))))
     assert.ok(exportedPixels.some(image => image.white > image.total * 0.6 && image.black > 100 && image.colored === 0), 'Export did not preserve the black-on-white drawing')
     await page.locator('[data-viewer-action="more"]').click()
-    const popupPromise = page.waitForEvent('popup')
     await page.getByRole('menuitem', { name: 'Print now', exact: true }).click()
-    const popup = await popupPromise
-    await popup.waitForFunction(() => window.__regressionPrintRequested === true)
-    const printed = await popup.content()
+    await page.waitForFunction(() => typeof window.__regressionPrintedHtml === 'string')
+    const printed = await page.evaluate(() => window.__regressionPrintedHtml)
     assert.ok(printed.includes('data-viewer-print-page-index="0"'), 'Print lost the drawing page boundary')
-    const printImage = await popup.locator('[data-viewer-print-page-index="0"] > img').getAttribute('src')
+    const printPage = await context.newPage()
+    await printPage.setContent(printed, { waitUntil: 'load' })
+    const printImage = await printPage.locator('[data-viewer-print-page-index="0"] > img').getAttribute('src')
     const printPixels = await pixels(Buffer.from(printImage.split(',')[1], 'base64'))
     assert.ok(printPixels.white > printPixels.total * 0.6 && printPixels.black > 100 && printPixels.colored === 0, 'Print did not contain black-on-white drawing pixels')
-    const pdf = await popup.pdf({ path: resolve(output, `${backend}-monochrome.pdf`), printBackground: true })
+    const pdf = await printPage.pdf({ path: resolve(output, `${backend}-monochrome.pdf`), printBackground: true })
     assert.equal(pdf.subarray(0, 5).toString(), '%PDF-')
     assert.ok(pdf.length > 1000)
-    await popup.close()
+    await printPage.close()
     await page.locator('.cad-color-mode').click()
     const restored = await snapshot(`${backend}-restored`)
     assert.deepEqual([restored.width, restored.height], [source.width, source.height], 'Mode comparison requires identical settled view geometry')

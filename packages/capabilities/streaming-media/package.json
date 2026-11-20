@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/capability-streaming-media",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "private": false,
   "type": "module",
   "description": "Opt-in HLS fallback for File Viewer media playback.",
@@ -35,8 +35,8 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "@file-viewer/renderer-media": "workspace:3.3.4",
-    "hls.js": "^1.7.2"
+    "@file-viewer/renderer-media": "workspace:3.3.5",
+    "hls.js": "^1.7.4"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

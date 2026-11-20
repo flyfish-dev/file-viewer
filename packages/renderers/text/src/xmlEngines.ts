@@ -41,6 +41,12 @@ function runXsltWorker() {
     }
   }
   let networkAttempt = false
+  let engineError = false
+  // libxslt can return partial output after a recoverable error. The pinned
+  // factory also reports resource-loader failures through console.error before
+  // reaching fetch, so both diagnostic channels must invalidate that output.
+  const reportEngineError = () => { engineError = true }
+  console.error = reportEngineError
   const deny = () => { networkAttempt = true; throw new Error('External XML resources are disabled.') }
   Object.defineProperty(globalThis, 'fetch', { value: async () => deny(), writable: false, configurable: false })
   for (const name of ['XMLHttpRequest', 'WebSocket', 'EventSource', 'importScripts']) {
@@ -50,7 +56,7 @@ function runXsltWorker() {
     let engine: EngineModule | undefined
     const pointers: number[] = []
     try {
-      engine = await createXSLTTransformModule({ print: () => undefined, printErr: () => undefined })
+      engine = await createXSLTTransformModule({ print: () => undefined, printErr: reportEngineError })
       const encoder = new TextEncoder()
       const allocate = (bytes: Uint8Array) => {
         const pointer = engine!._malloc(bytes.length + 1)
@@ -72,6 +78,7 @@ function runXsltWorker() {
       if (!result) throw new Error('The XSLT engine could not transform this document.')
       pointers.push(result)
       if (networkAttempt) throw new Error('The XSLT engine attempted to read a blocked external resource.')
+      if (engineError) throw new Error('The XSLT engine reported an error while transforming this document.')
       const heap = new Uint8Array(engine.wasmMemory.buffer)
       let end = result
       const bound = Math.min(heap.length, result + data.maxOutputBytes + 1)

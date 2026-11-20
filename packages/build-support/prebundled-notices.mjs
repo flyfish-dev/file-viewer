@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { lstat, readFile, realpath, writeFile } from 'node:fs/promises'
-import { isAbsolute, join, resolve } from 'node:path'
+import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex')
 const fingerprint = bytes => ({ bytes: bytes.length, sha256: sha256(bytes) })
@@ -21,6 +21,31 @@ function runtimePaths(paths) {
     assert.match(path, /\.[cm]?js$/, 'Prebundled producer must identify compiled JavaScript')
   }
   return [...paths].sort()
+}
+
+// The consuming bundler's physical inputs determine this set, never the
+// producer receipt. A split output omitted by the bundler remains a hard
+// mismatch with the unchanged complete receipt reader below.
+export function prebundledRuntimePathsFromInputs(inputs, packageRoot) {
+  const canonical = path => typeof path === 'string' && isAbsolute(path) &&
+    !/[\x00-\x1f\x7f?#]/.test(path) && (sep === '\\' || !path.includes('\\')) &&
+    (path === resolve(path) ||
+      sep === '\\' && path === resolve(path).replaceAll('\\', '/'))
+  assert.ok(canonical(packageRoot),
+  'Prebundled runtime owner must be a canonical absolute package root')
+  assert.ok(Array.isArray(inputs) || inputs instanceof Set,
+    'Prebundled runtime paths require actual bundled inputs')
+  const paths = new Set()
+  for (const input of inputs) {
+    assert.ok(canonical(input), 'Prebundled runtime input must be a canonical absolute file')
+    const path = relative(packageRoot, input)
+    if (!path || path === '..' || path.startsWith('..' + sep) || isAbsolute(path)) continue
+    const ownerPath = path.split(sep).join('/')
+    if (!ownerPath.startsWith('dist/') || !/\.[cm]?js$/.test(ownerPath)) continue
+    paths.add(publicPath(ownerPath))
+  }
+  assert.ok(paths.has('dist/index.js'), 'Prebundled runtime inputs must include the normal owner index')
+  return runtimePaths([...paths])
 }
 
 async function regularBytes(root, path) {

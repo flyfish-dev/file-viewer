@@ -1,3 +1,4 @@
+import './i18n/defaults';
 /**
  * Explicit HTML export and print-document entrypoint.
  *

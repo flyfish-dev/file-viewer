@@ -168,7 +168,7 @@ export function validateManifest(plan) {
   assert.equal(plan.mode, 'prepack-only')
   assert.equal(plan.repository, 'flyfish-dev/file-viewer')
   assert.equal(plan.workflowPath, '.github/workflows/public-ci.yml')
-  assert.deepEqual(plan.tools, { node: '24.20.0', pnpm: '11.0.9', playwright: '1.64.1' })
+  assert.deepEqual(plan.tools, { node: '24.20.0', pnpm: '11.0.9', playwright: '1.65.1' })
   assert.ok(
     Array.isArray(plan.runs) && plan.runs.length === 22,
     'Keep nine canonical gates, the original TIFF variant and twelve public owners'
@@ -858,7 +858,7 @@ export function checkTools(root) {
   }
   assert.deepEqual(
     versions,
-    { node: '24.20.0', pnpm: '11.0.9', playwright: '1.64.1' },
+    { node: '24.20.0', pnpm: '11.0.9', playwright: '1.65.1' },
     'Use the fixed actual tools; do not relabel or substitute them'
   )
   return versions

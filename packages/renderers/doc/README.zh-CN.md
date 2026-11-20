@@ -33,6 +33,9 @@
 - OLE / ObjectPool 附件提取
 - 域代码的基础处理（例如超链接）
 - 浏览器 Viewer 与 Worker Client
+- 无旋转、无文字环绕的浮动文本框：按明确的首页/页边距或段落/栏锚点定位，规范文本及搜索顺序不变
+
+浮动布局建议使用 `mountMsDoc` 或 `createMsDocViewer`，以保留原页尺寸；直接嵌入 HTML 时可读取可选的 `rendered.layoutPages`。复杂环绕、旋转、链接/分组形状和无法确定的分页保留可读回退及诊断，详见 [文本框布局边界](./TEXTBOX-METADATA.md)。
 
 ## 工程结构
 

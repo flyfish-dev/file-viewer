@@ -1646,7 +1646,7 @@ describe('@file-viewer/core operation helpers', () => {
       expect(printed).toBe(false);
 
       printAvailable = true;
-      await expect(actions.printRenderedHtml()).resolves.toBe(true);
+      await expect(actions.printRenderedHtml({ openWindow: () => printWindow })).resolves.toBe(true);
       expect(printed).toBe(true);
       printHtml = printWindow.document.documentElement.outerHTML;
       expect(printHtml).toContain('data-mode="print"');
@@ -1660,7 +1660,7 @@ describe('@file-viewer/core operation helpers', () => {
     }
   });
 
-  it('opens the print window before asynchronous snapshot work', async () => {
+  it('opens an explicit preview window before asynchronous snapshot work', async () => {
     const sourceDocument = new JSDOM(
       '<!doctype html><html><head></head><body><main id="root"><article>CAD</article></main></body></html>',
       { pretendToBeVisual: true },

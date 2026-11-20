@@ -1555,7 +1555,7 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
       "PAT v1",
       "GRD v5",
       "ASL v2",
-      "ag-psd 31.0.2"
+      "ag-psd 34.2.0"
     ],
     "knownLimits": [
       "ABR previews decode saved brush-tip alpha, embedded patterns, and bounded preset metadata; they do not simulate Photoshop's stroke engine, dynamics, or paint blending",

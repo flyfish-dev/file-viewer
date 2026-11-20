@@ -29,12 +29,13 @@ allowBuilds:
   fsevents: true
 
 minimumReleaseAgeExclude:
-  - '@file-viewer/docx@0.3.39'
+  - '@file-viewer/docx@0.3.42'
   - '@file-viewer/ppt@0.3.5'
   - '@file-viewer/ppt@0.3.6'
   - '@file-viewer/ppt@1.0.1'
   - '@file-viewer/ppt@1.0.2'
-  - '@flyfish-dev/cad-viewer@0.8.3'
+  - '@flyfish-dev/cad-viewer@0.8.4'
+  - 'dwf-viewer@0.6.8'
   - 'styled-exceljs@0.21.6'
 
 overrides:
@@ -49,7 +50,7 @@ overrides:
   'acorn@>=7.0.0 <7.1.1': 7.4.1
   'js-yaml@>=4.0.0 <4.3.2': 4.3.2
   'sharp@<0.35.5': 0.35.5
-  vitest: 5.0.5
+  vitest: 5.1.0
   'epubjs>@xmldom/xmldom': 0.9.12
   # issue #246: @xmldom/xmldom <0.9.12 has six GHSA advisories and the XMind
   # parser reaches it through an open range, so keep the security release pinned.
@@ -65,9 +66,9 @@ overrides:
   '@file-viewer/docx>jszip': 3.10.2
   'immutable@5.1.6': 5.1.9
   'ini@<1.3.6': 1.3.8
-  mermaid: 12.2.0
+  mermaid: 12.3.0
   nanoid: 3.3.18
-  postcss: 8.5.31
+  postcss: 8.5.32
   style-to-js: 1.1.21
   'postcss-selector-parser': 7.1.6
   'undici@>=6.0.0 <6.29.1': 6.29.1
@@ -86,14 +87,14 @@ overrides:
   # @kitware/vtk.js@36.4.1 pins the vulnerable fflate 0.7.3 release. Keep
   # the same API line while consuming the patched 0.7.5 security release.
   '@kitware/vtk.js>fflate': 0.7.5
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.4
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.4
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.4
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.4
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.4
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.4
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.4
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.4
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.5
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.5
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.5
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.5
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.5
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.5
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.5
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.5
   # Retain the validated runtime dependency closure.
   'jszip@3.10.2>pako': 1.0.11
   'jszip@3.10.2>readable-stream': 2.3.8
@@ -110,6 +111,9 @@ auditConfig:
     # dependency. docs/guide/quickstart-vue2.md points security-sensitive users at this
     # advisory. Re-check the ignore if Vue 2 ever ships a patch or the line is retired.
     - GHSA-5j4c-8p2g-v4jx
+    # File Viewer 3.3.5 accepts this advisory while no patched picomatch is
+    # available on npm. Remove the exception when updating to a fixed release.
+    - GHSA-fc5q-39xc-vjpf
 
 patchedDependencies:
   illustrator-pgf@0.1.0: patches/illustrator-pgf@0.1.0.patch

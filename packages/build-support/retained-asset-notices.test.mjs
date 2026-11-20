@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { cp, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import test from 'node:test'
 import { createRequire } from 'node:module'
 import { resolveRetainedAssetNoticeSource, stageBuiltRetainedWorkers, stageRetainedAssetNotices, withRetainedAssetNoticeManifests, withRetainedAssetNoticeValidation } from './retained-asset-notices.mjs'
@@ -376,13 +376,18 @@ test('SQL grants resolve the exported WASM and reject changed bytes before repla
     const viewer = join(root, 'viewer')
     const target = join(viewer, 'wasm/data/sql-wasm.wasm')
     const grantTarget = join(dirname(target), 'licenses/LICENSE.sql-js.txt')
+    const canonicalRuntime = join(sourceRoot, 'apps/viewer-demo/public/wasm/data/sql-wasm.wasm')
     await mkdir(join(packageRoot, 'dist'), { recursive: true })
     await mkdir(dirname(target), { recursive: true })
     await writeFile(join(dataRoot, 'package.json'), '{}')
-    await writeFile(join(packageRoot, 'package.json'), JSON.stringify({ name: 'sql.js', version: '1.15.2',
+    await writeFile(join(packageRoot, 'package.json'), JSON.stringify({ name: 'sql.js', version: '1.16.0',
       license: 'MIT', exports: { './dist/*': './dist/*' } }))
     const wasm = Buffer.from([0, 97, 115, 109, 1, 0, 0, 0])
-    const grant = await readFile(new URL('../renderers/doc/LICENSE', import.meta.url))
+    await mkdir(dirname(canonicalRuntime), { recursive: true })
+    await writeFile(canonicalRuntime, wasm)
+    const require = createRequire(new URL('../renderers/data/package.json', import.meta.url))
+    const sqlRoot = resolve(dirname(require.resolve('sql.js/dist/sql-wasm.wasm')), '..')
+    const grant = await readFile(join(sqlRoot, 'LICENSE'))
     await writeFile(join(packageRoot, 'dist/sql-wasm.wasm'), wasm)
     await writeFile(join(packageRoot, 'LICENSE'), grant)
     await writeFile(target, wasm)
@@ -391,6 +396,15 @@ test('SQL grants resolve the exported WASM and reject changed bytes before repla
     await writeFile(grantTarget, 'previous grant remains')
     await writeFile(target, Buffer.from([0]))
     await assert.rejects(() => stageRetainedAssetNotices(viewer, { sourceRoot }), /differs from its exact installed package/)
+    assert.equal(await readFile(grantTarget, 'utf8'), 'previous grant remains')
+    await writeFile(target, wasm)
+    await writeFile(join(packageRoot, 'LICENSE'), 'changed grant')
+    await assert.rejects(() => stageRetainedAssetNotices(viewer, { sourceRoot }), /Original SQL license drift/)
+    assert.equal(await readFile(grantTarget, 'utf8'), 'previous grant remains')
+    await writeFile(join(packageRoot, 'LICENSE'), grant)
+    await writeFile(join(packageRoot, 'package.json'), JSON.stringify({ name: 'sql.js', version: '1.15.2',
+      license: 'MIT', exports: { './dist/*': './dist/*' } }))
+    await assert.rejects(() => stageRetainedAssetNotices(viewer, { sourceRoot }), /Unreviewed SQL runtime version/)
     assert.equal(await readFile(grantTarget, 'utf8'), 'previous grant remains')
   } finally {
     await rm(root, { recursive: true, force: true })

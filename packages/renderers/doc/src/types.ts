@@ -746,6 +746,8 @@ export interface MsDocParseResult {
 export interface MsDocRenderResult {
   html: string;
   css: string;
+  /** Authored page geometry used by the HTML, not an automatic Word paginator. */
+  layoutPages?: Array<{ width: number; height: number; html: string }>;
   warnings: MsDocWarning[];
   meta: MsDocMeta;
   assets: MsDocAsset[];
@@ -900,4 +902,10 @@ export interface MsDocTextboxLayout {
   sections: MsDocSectionGeometry[];
   /** Preserves anchor-only paragraphs omitted by the legacy display path. */
   anchorParagraphs: Array<{ storyKind: 'main' | 'header'; globalRange: { start: number; end: number }; blockId?: string }>;
+  /** Formatting of placeholder-only anchor paragraphs; no copied story text. */
+  omittedAnchorParagraphs?: Array<{
+    globalRange: { start: number; end: number };
+    paraState: ParaState;
+    characterStyle: CharState;
+  }>;
 }

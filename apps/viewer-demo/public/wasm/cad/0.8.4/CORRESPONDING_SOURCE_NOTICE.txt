@@ -1,0 +1,50 @@
+CAD runtime corresponding source
+
+The current (0.8.4), unversioned and compatibility (0.8.0, 0.8.1, 0.8.3) paths contain the same installed CAD 0.8.4 runtime.
+The compatibility paths are aliases for existing deployments; they do not distribute older binaries.
+JavaScript source-map reference comments are omitted and the normal public offline sanitizer localizes fallback markers. WebAssembly bytes are unchanged.
+The exact offline sanitizer is included in the integration source at the immutable HTTPS reference below.
+
+@flyfish-dev/cad-viewer 0.8.4 (AGPL-3.0-only), including its Worker and asset build scripts:
+https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6721a3dbcd5027a31006029243c505c460a521c6
+SHA-256: 1de0f46746ccd832524c312e5760719941bbece19b693738d1bea408eee20434
+
+dwf-viewer 0.6.8 (AGPL-3.0-only), including C source and scripts/build-wasm.sh:
+https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/274e7c86af0c97c569176c43ff317e92b0e30584
+SHA-256: e98577a7f4b5434d975d2e00c8560e3ba53e3890c89bb6f85c357709d630df7c
+
+@mlightcad/libredwg-web 0.7.9 (GPL-3.0-only), including JavaScript bindings and their build scripts:
+https://codeload.github.com/mlightcad/libredwg-web/tar.gz/b70b5573a6bf2345e5fb10f2adff7fb74a8123c5
+SHA-256: af350d628535a2842262af5b49d50568b6dae62854667e13bb9f161b26c00431
+
+Redistributors must retain LICENSE (AGPL-3.0), GPL-3.0.txt, NOTICE and this source notice.
+The asset sources above cover the native owner runtimes. The File Viewer integration source offer follows.
+
+File Viewer CAD integration corresponding source
+
+Package release: 3.3.5
+Corresponding source (immutable HTTPS): https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c
+HTTPS archive SHA-256: 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6
+
+The public archive contains the exact standalone preferred-source snapshot at packages/build-support/cad-source-snapshots/3.3.5-cad-084.
+Use Node.js 24.20.0 and npm 11.19.0. From that directory run: npm ci --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org/; npm run build.
+The standalone lock pins its canonical build tools; the normal workspace-toolchain reconstruction also verifies the actual Full runtime bytes.
+A standalone current preferred-source archive is also retained in the complete public source checkout and CAD asset directories as CORRESPONDING_SOURCE.zip.
+Standalone archive SHA-256: 74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f
+Runtime-only npm archives do not include source ZIPs; retain this notice and its immutable HTTPS source reference.
+It retains complete original license texts and identifies the exact public CAD, DWF and LibreDWG bindings sources in upstream-sources.json.
+The integration output is 945926 bytes with SHA-256 c5390e93249b839205e4c380e818e82417408ef83270ebb6b148b8e282199e66.
+Native owner preferred sources and their build inputs (in addition to the integration source):
+@flyfish-dev/cad-viewer 0.8.4
+https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6721a3dbcd5027a31006029243c505c460a521c6
+SHA-256: 1de0f46746ccd832524c312e5760719941bbece19b693738d1bea408eee20434
+
+dwf-viewer 0.6.8
+https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/274e7c86af0c97c569176c43ff317e92b0e30584
+SHA-256: e98577a7f4b5434d975d2e00c8560e3ba53e3890c89bb6f85c357709d630df7c
+
+@mlightcad/libredwg-web 0.7.9
+https://codeload.github.com/mlightcad/libredwg-web/tar.gz/b70b5573a6bf2345e5fb10f2adff7fb74a8123c5
+SHA-256: af350d628535a2842262af5b49d50568b6dae62854667e13bb9f161b26c00431
+
+The original component grants, attribution and native source notices remain applicable.

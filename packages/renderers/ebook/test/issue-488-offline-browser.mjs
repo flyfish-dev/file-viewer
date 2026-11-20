@@ -69,10 +69,20 @@ const bundle = prebuilt ? { outputFiles: [{ contents: await readFile(join(prebui
     name: 'observe-real-archive-engine', setup(context) {
       context.onResolve({ filter: /^\.\/vendor\/epubjs\.js$/ }, () => ({ path: 'observed-engine', namespace: 'issue-488' }));
       context.onLoad({ filter: /.*/, namespace: 'issue-488' }, () => ({ resolveDir: root, contents: `import ePub from ${JSON.stringify(enginePath)};
-        export default (...args) => {const book=ePub(...args);window.epubBook=book;window.engineOptions=args[1];
+        const observed = new Proxy(ePub, { apply(factory, receiver, args) {const book=Reflect.apply(factory,receiver,args);window.epubBook=book;window.engineOptions=args[1];
           const original=book.renderTo.bind(book);book.renderTo=(...args)=>{const rendition=original(...args);window.epubRendition=rendition;window.displayCalls=[];window.displayed=[];
             const display=rendition.display.bind(rendition);rendition.display=(href)=>{window.displayCalls.push(href);return display(href)};
-            rendition.on('displayed',section=>window.displayed.push(section.href));return rendition};return book;};` }));
+            rendition.on('displayed',section=>window.displayed.push(section.href));return rendition};return book;} });
+        const keys = Reflect.ownKeys(ePub);
+        const protocol = {
+          ownKeys: keys.length === Reflect.ownKeys(observed).length && keys.every(key => Reflect.ownKeys(observed).includes(key)),
+          staticDescriptors: keys.every(key => {const expected=Object.getOwnPropertyDescriptor(ePub,key), actual=Object.getOwnPropertyDescriptor(observed,key);return Reflect.ownKeys(expected).every(field=>expected[field]===actual[field]);}),
+          renditionIdentity: observed.Rendition === ePub.Rendition,
+          continuousManagerIdentity: observed.Rendition.prototype.requireManager('continuous') === ePub.Rendition.prototype.requireManager('continuous'),
+        };
+        if (!Object.values(protocol).every(Boolean)) throw new Error('Observed EPUB factory must preserve the real factory protocol');
+        window.epubFactoryProtocol = protocol;
+        export default observed;` }));
     },
   }],
 });
@@ -142,6 +152,8 @@ try {
     return result;
   };
   const blocked = await run('resources', 'block');
+  report.factoryProtocol = await page.evaluate(() => window.epubFactoryProtocol);
+  assert.deepEqual(report.factoryProtocol, { ownKeys: true, staticDescriptors: true, renditionIdentity: true, continuousManagerIdentity: true });
   assert.equal(blocked.requests.length, 0, 'blocked archive must never request external resources');
   assert.equal(blocked.facts.cspFirst?.toLowerCase(), 'content-security-policy');
   assert.equal(blocked.facts.localImage, true);

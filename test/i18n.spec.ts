@@ -6,6 +6,8 @@ import {
   FILE_VIEWER_LOCALE_METADATA,
   createFileViewerI18n,
   createFileViewerTranslator,
+  registerFileViewerLocale,
+  defineFileViewerLocaleDictionary,
   normalizeFileViewerLocale,
   createRendererRegistry,
   normalizeFileViewerErrorMessage
@@ -13,6 +15,79 @@ import {
 import { mountViewer } from '../packages/core/src/browser'
 
 afterEach(() => vi.unstubAllGlobals())
+
+describe('explicit locale dictionaries', () => {
+  const cleanups: Array<() => void> = []
+  afterEach(() => { for (const cleanup of cleanups.splice(0).reverse()) cleanup() })
+
+  it('copies registered strings, preserves default missing keys, and restores disposed registrations', () => {
+    const original = FILE_VIEWER_BUILTIN_MESSAGES['en-US']['toolbar.print']
+    const dictionary = { 'toolbar.print': 'Application print' }
+    const unregister = registerFileViewerLocale('en-US', dictionary)
+    cleanups.push(unregister)
+    dictionary['toolbar.print'] = 'Changed after registration'
+    expect(createFileViewerTranslator({ locale: 'en-US' })('toolbar.print')).toBe('Application print')
+    expect(createFileViewerTranslator({ locale: 'en-US' })('toolbar.download')).toBe('Download')
+    unregister()
+    expect(createFileViewerTranslator({ locale: 'en-US' })('toolbar.print')).toBe(original)
+  })
+
+  it('does not restore an earlier registration that was disposed while another was active', () => {
+    const originalPrint = FILE_VIEWER_BUILTIN_MESSAGES['en-US']['toolbar.print']
+    const first = registerFileViewerLocale('en-US', { 'toolbar.print': 'First registration' })
+    const second = registerFileViewerLocale('en-US', { 'toolbar.download': 'Second registration' })
+    cleanups.push(first, second)
+    first()
+    const t = createFileViewerTranslator({ locale: 'en-US' })
+    expect(t('toolbar.print')).toBe(originalPrint)
+    expect(t('toolbar.download')).toBe('Second registration')
+  })
+
+  it('retains locale plural forms and the existing messages override precedence', () => {
+    cleanups.push(registerFileViewerLocale('ru-RU', defineFileViewerLocaleDictionary(
+      { 'pdf.nav.pageCount': '{count} страниц' },
+      { 'pdf.nav.pageCount': { one: '{count} страница', few: '{count} страницы', many: '{count} страниц', other: '{count} страницы' } },
+    )))
+    const t = createFileViewerTranslator({ locale: 'ru-RU' })
+    expect(t('pdf.nav.pageCount', { count: 1 })).toBe('1 страница')
+    expect(t('pdf.nav.pageCount', { count: 2 })).toBe('2 страницы')
+    expect(t('pdf.nav.pageCount', { count: 5 })).toBe('5 страниц')
+    expect(createFileViewerTranslator({ locale: 'ru-RU', messages: { 'pdf.nav.pageCount': 'App: {count}' } })(
+      'pdf.nav.pageCount', { count: 2 },
+    )).toBe('App: 2')
+  })
+
+  it('refreshes live parent and nested contexts once without changing their owned options identity', () => {
+    const parent = createFileViewerI18n({ locale: 'en-US' })
+    const child = createFileViewerI18n(undefined, { parent })
+    cleanups.push(() => parent.destroy(), () => child.destroy())
+    const parentOptions = parent.options, childOptions = child.options
+    const parentChanged = vi.fn(), childChanged = vi.fn()
+    parent.subscribe(parentChanged); child.subscribe(childChanged)
+    const unregister = registerFileViewerLocale('en-US', { 'toolbar.print': 'Updated dictionary' })
+    cleanups.push(unregister)
+    expect(parent.t('toolbar.print')).toBe('Updated dictionary')
+    expect(child.t('toolbar.print')).toBe('Updated dictionary')
+    expect(parent.options).toBe(parentOptions); expect(child.options).toBe(childOptions)
+    expect(parentChanged).toHaveBeenCalledTimes(1); expect(childChanged).toHaveBeenCalledTimes(1)
+    child.destroy(); unregister()
+    expect(childChanged).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps unknown-locale fallback and custom wording synchronous', () => {
+    expect(createFileViewerTranslator({ locale: 'fr-CA' })('toolbar.print')).toBe('Print')
+    expect(createFileViewerTranslator({ locale: 'fr-CA', messages: { 'toolbar.print': 'My print' } })(
+      'toolbar.print',
+    )).toBe('My print')
+  })
+
+  it('rejects unsupported registrations and invalid dictionaries before altering active messages', () => {
+    const original = FILE_VIEWER_BUILTIN_MESSAGES['en-US']['toolbar.print']
+    expect(() => registerFileViewerLocale('fr-CA', { 'toolbar.print': 'Other' })).toThrow(RangeError)
+    expect(() => registerFileViewerLocale('en-US', { 'toolbar.print': 12 } as never)).toThrow(TypeError)
+    expect(FILE_VIEWER_BUILTIN_MESSAGES['en-US']['toolbar.print']).toBe(original)
+  })
+})
 
 describe('viewer locale negotiation', () => {
   it.each([

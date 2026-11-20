@@ -3,7 +3,7 @@ import type {
   FileViewerPrintMaskRegion,
   FileViewerPrintStamp,
 } from '../contracts/types';
-import { createFileViewerTranslator, type FileViewerI18nInput } from '../i18n/messages';
+import { createFileViewerTranslator, type FileViewerI18nInput } from '../i18n/runtime';
 import { createFileViewerI18n, fileViewerI18nContexts } from '../i18n/context';
 import {
   normalizeFileViewerPrintMaskRegion,

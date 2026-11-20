@@ -25,7 +25,7 @@ test('appending or reusing the integration offer preserves every original notice
   const dir = await mkdtemp(join(tmpdir(), 'file-viewer-cad-source-'))
   t.after(() => rm(dir, { recursive: true, force: true }))
   const path = join(dir, 'THIRD_PARTY_LICENSES.txt')
-  const original = Buffer.from('@flyfish-dev/cad-viewer@0.8.3\r\ndwf-viewer@0.6.7\r\nOriginal grant ©\r\n')
+  const original = Buffer.from(`@flyfish-dev/cad-viewer@${CAD_INTEGRATION_SOURCE.cadVersion}\r\ndwf-viewer@${CAD_INTEGRATION_SOURCE.dwfVersion}\r\nOriginal grant ©\r\n`)
   await writeFile(path, original)
   await appendCadIntegrationSourceNotice(path, releaseVersion)
   const output = await readFile(path)
@@ -50,7 +50,7 @@ test('a different runtime or release cannot acquire a stale integration offer', 
   assert.equal(await readFile(path, 'utf8'), original)
   await writeFile(join(dir, 'package.json'), JSON.stringify({
     name: '@file-viewer/renderer-cad', version: unsupportedRelease,
-    dependencies: { '@flyfish-dev/cad-viewer': '0.8.3' }
+    dependencies: { '@flyfish-dev/cad-viewer': CAD_INTEGRATION_SOURCE.cadVersion }
   }))
   await assert.rejects(writeCadIntegrationSourceNotice(dir), /different release/)
   await assert.rejects(readFile(join(dir, 'CORRESPONDING_SOURCE_NOTICE.txt')), { code: 'ENOENT' })
@@ -60,7 +60,7 @@ test('combined CAD notices append or preserve exactly the reviewed source offer'
   const root = await mkdtemp(join(tmpdir(), 'file-viewer-cad-offer-'))
   try {
     const file = join(root, 'NOTICE')
-    const original = '@flyfish-dev/cad-viewer@0.8.3\ndwf-viewer@0.6.7\n'
+    const original = `@flyfish-dev/cad-viewer@${CAD_INTEGRATION_SOURCE.cadVersion}\ndwf-viewer@${CAD_INTEGRATION_SOURCE.dwfVersion}\n`
     await writeFile(file, original)
     await appendCadIntegrationSourceNotice(file, releaseVersion)
     const expected = original + '\n\n' + cadIntegrationSourceNotice(releaseVersion)
@@ -69,7 +69,7 @@ test('combined CAD notices append or preserve exactly the reviewed source offer'
     assert.equal(await readFile(file, 'utf8'), expected)
     for (const bad of [expected + cadIntegrationSourceNotice(releaseVersion),
       expected.replace(CAD_INTEGRATION_SOURCE.sha256, 'invalid'),
-      expected.replace('@flyfish-dev/cad-viewer@0.8.3', '@flyfish-dev/cad-viewer@0.8.0')]) {
+      expected.replace(`@flyfish-dev/cad-viewer@${CAD_INTEGRATION_SOURCE.cadVersion}`, '@flyfish-dev/cad-viewer@0.8.0')]) {
       assert.notEqual(bad, expected, 'The tamper probe must change the current reviewed offer')
       await writeFile(file, bad)
       await assert.rejects(() => appendCadIntegrationSourceNotice(file, releaseVersion))
