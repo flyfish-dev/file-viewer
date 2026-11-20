@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "mode": "runtime-only",
-  "sourceCommit": "acdaf841f05a658ff5956df5c981da72e9e9e757",
-  "policyCatalogSha256": "9cb5df86c60d780c8828f786feb9e11b9978ab3a0a16eb00ca892c66ab0208b6",
+  "sourceCommit": "a6437969498581c4c0320fd7fcbbc1ac232094a9",
+  "policyCatalogSha256": "a1e91e9abf88dbcd1bdebac74b7680442378dbf789b0e2cc9fbfade82c7ac70c",
   "version": "3.3.5",
-  "generatedAt": "2026-11-18T19:16:25.263Z",
+  "generatedAt": "2026-11-20T10:29:03.425Z",
   "packageCount": 89,
   "packages": [
     {
@@ -1633,10 +1633,10 @@
           "sha256": "87e282c73b8b12506288b0c62c58bea844e466e7a0502eac8f9447e86d217480"
         }
       },
-      "integrity": "sha512-8fpFUOQhw2Aa8eYkiEVGWcD6jv078KIPsFyvpxd0TXwESOmQ3mD3XyyLN2d2eSwqcYr8i7o/+IdLerCSnhZbsQ==",
+      "integrity": "sha512-aLWIUm67hUbeqNsBLsZIKPODYBpOCl40R6mpHiKym8f1wHqMhUhVoJalD6xM0cY78kOFrl00e2FxsUOQUJDN9w==",
       "license": "Apache-2.0",
-      "tarballSize": 738870,
-      "sha256": "23481d5fc8b1604e05d3f720afc578fe7e180922afe2daeddd190c1ff70547a8",
+      "tarballSize": 738982,
+      "sha256": "9a20e9e114ff928ba78a3b0f3da83d1834eb8a2325834e2ca6c00b053155af58",
       "entrypointCount": 10,
       "assetCount": 46,
       "fileCount": 54

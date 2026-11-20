@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "acdaf841f05a658ff5956df5c981da72e9e9e757",
-  "manifestSha256": "93b4433634f2076f1da17843081d9058a70fd007c84f58addfa3189a383a4147",
-  "tag": "v3.3.5-candidate-93b4433634f2",
+  "sourceCommit": "a6437969498581c4c0320fd7fcbbc1ac232094a9",
+  "manifestSha256": "5018fdbf77d0356859f534f714a0335957709c7a57c794e070ec20215246c8bf",
+  "tag": "v3.3.5-candidate-5018fdbf77d0",
   "registrySupport": [
     {
       "packageName": "@file-viewer/docx",
@@ -31,20 +31,20 @@
   ],
   "productionAuditPayloadSha256": {
     "web-standard": "a3a6bab41a28a795f595bb8dc2bff7f36759e7d57da72219618778d8f17226b1",
-    "web-full": "67759ff0a1062da157c532b8685faca395c1c94e69799a9c0f3d86268471bd7b",
-    "vue3-standard": "d8111727a90f7165945154176e0f4e53901a0bcacc29bf377119ecf56027fb5f",
-    "vue3-full": "91a328aff0729ac022d05a6616757b0229b4864d599d897544f5808e4ec67380",
-    "vue2.7-standard": "2c04f26c1e76a433ae546e21971d06d653a1154f6dd624937167df2be993aae5",
-    "vue2.7-full": "b7308f510323dddf783f8e151f834dc280d481ea9f8cf2e4a483d60db12c318b",
+    "web-full": "b12aae4c1f020082a66d92cf71d8484bbd26ddbecc31f797620ef229f2c0802d",
+    "vue3-standard": "dee59483ed986f8ec27c4452b2cdde4077f6dc0f49dd3094a7b3c2ab4580719a",
+    "vue3-full": "8eaaecc6970c659e60f3423e52544452293a3b6a724f03311b9aabf174215070",
+    "vue2.7-standard": "a2dc327579c2bc2cc7f7df16d8ba96b8e89c488eb92af1a6cb3d9c60fd268dd0",
+    "vue2.7-full": "7116228a1abe60da7c51cebf8e7a1ccd2db44aa6c74b9402407acc510f789b31",
     "vue2.6-standard": "eec5ecafd7514f0434269f232442097356a38e1de53d4428771a0a68992868d9",
-    "vue2.6-full": "4094a8edca2c886ae78fe133adac01638f1c3c48bd34de0d691a855fe1a8209f",
+    "vue2.6-full": "824777ae9fb0cd2fd4967fe3268246a05ce036752cb8acb73f193416f21841fc",
     "react-standard": "b85bac7c550a36cb7eb84802421fa291c71bec5c34ec110a42e3d33c4cddb540",
-    "react-full": "3c2a027380e0bba34452ba9cf106eca718f0e310026d8cdaf273687b410502d2",
+    "react-full": "121c7b304ac4b3795fcb48512a521eeae6d74b6524e50b524a2a4ec58ad460d6",
     "react-legacy-standard": "1a345629bfdd40adb47b968a7037db94abee6f808903c88ba1e0ea50a628695b",
-    "react-legacy-full": "cca3099559b3d1818dbfe13d25f5ae7888f61bd974d303e055821374f000264b",
+    "react-legacy-full": "0c4d0349cb84053f73d16739ab251cad39d85ba8024d6f6c43ab61eae920ce27",
     "svelte-standard": "15a4d6c944ea6ee7d0820fa961072874512ed3af68a838ed8f71cb163afb1860",
-    "svelte-full": "612cce6882aa9325bbe0a4b427ce2c3521e19a681c49aebb6982bcd132940a8c",
+    "svelte-full": "4ba3341b381f8decdc1e008eb7197f59ea2cfdff2abfaee8ad067b6bc656acb6",
     "jquery-standard": "e25c8676997c81c475a58848fc4c71861559c4b9580960f5149fafccdd8cfb58",
-    "jquery-full": "4bd2b1817dff38c3c85a65af26761a798b3807060aa00d31e530d65abd66b430"
+    "jquery-full": "1fbb9e472054f00433223c3fb882e93d0a8295c072f3e1157b068b49e528b220"
   }
 }
