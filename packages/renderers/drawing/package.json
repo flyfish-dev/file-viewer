@@ -76,16 +76,16 @@
     "@file-viewer/capability-mermaid": "workspace:3.3.5",
     "@file-viewer/core": "workspace:3.3.5",
     "@panzoom/panzoom": "^4.6.2",
-    "dompurify": "3.4.17",
+    "dompurify": "3.4.18",
     "plantuml-encoder": "^1.4.0",
     "roughjs": "^4.6.6"
   },
   "devDependencies": {
-    "bpmn-js": "18.31.1",
+    "bpmn-js": "18.33.0",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "bpmn-js": "18.31.1"
+    "bpmn-js": "18.33.0"
   },
   "peerDependenciesMeta": {
     "bpmn-js": {

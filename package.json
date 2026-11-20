@@ -133,7 +133,7 @@
     "@types/node": "^26.6.6",
     "prettier": "3.10.1",
     "esbuild": "0.28.2",
-    "playwright": "^1.61.1",
+    "playwright": "^1.65.1",
     "pngjs": "7.0.0",
     "typescript": "^6.0.3",
     "vitest": "5.1.0",
