@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.3.5",
-    "ag-psd": "^34.2.0",
+    "ag-psd": "^34.2.1",
     "avsc": "^5.7.9",
     "hyparquet": "^1.33.0",
     "sql.js": "1.16.0"
