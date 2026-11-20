@@ -330,6 +330,11 @@ jobs:
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:data-avro-browser
 
+      - name: Install the Chromium version locked by the binary inspector
+        if: steps.impact.outputs.runtime != 'false'
+        timeout-minutes: 10
+        run: pnpm --filter @file-viewer/renderer-binary exec playwright install --only-shell chromium
+
       - name: Verify the optional binary inspector in Chromium
         if: steps.impact.outputs.runtime != 'false'
         run: pnpm verify:binary-inspector
