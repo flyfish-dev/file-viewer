@@ -201,11 +201,13 @@ export const createDocxOptions = (
 
   const externalLinkPolicy = docxOptions?.externalLinkPolicy ?? 'block'
   const externalResourcePolicy = docxOptions?.externalResourcePolicy ?? 'block'
+  const reviewMode = docxOptions?.reviewMode ?? 'all'
   const options: DocxRenderOptions = {
     useWorker,
     // 仅传递原生身份开关，不介入 DOCX 解析、分页或文档写回。
     exposeDisplayTargets: docxOptions?.exposeDisplayTargets === true,
-    reviewMode: docxOptions?.reviewMode ?? 'all',
+    reviewMode,
+    renderComments: reviewMode === 'all',
     // Authored page breaks define separate anchor coordinate spaces even in
     // flow mode. Only measured/fixed-height pagination remains opt-in.
     breakPages: true,
@@ -659,6 +661,7 @@ async function prepareDocxCloneForExport(target: HTMLDivElement) {
     const selector = '.docx-page-frame, .docx-flow-frame, .docx-canvas-sheet'
     const liveFrames = Array.from(target.querySelectorAll<HTMLElement>(selector))
     const clone = target.cloneNode(true) as HTMLElement
+    clone.querySelectorAll('[data-docx-change-kind="comment"]').forEach(comment => comment.remove())
     replaceFileViewerCanvasWithImages(target, clone)
     // The engine wrapper carries document theme variables and review metadata.
     // Preserve that context while replacing only the viewer's zoom/scroll frames.

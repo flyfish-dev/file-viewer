@@ -46,6 +46,8 @@ Word 2003 XML 按根元素及其完整命名空间识别，HTML 注释、正文�
 
 `options.docx.reviewMode` 同时适用于 DOC 和 DOCX：`all`（默认）用下划线显示实际插入、用删除线显示实际删除；`final` 显示定稿，`original` 显示修订前文字。同一组件修改该参数后会更新预览，不需要重新选择文件，也不会接受、拒绝修订或重写原始文件。文本修订支持不等于完整支持 Word 审阅历史、格式修订或移动记录。
 
+在 DOCX 的 `all` 审阅预览中，点击标记可阅读批注。`final` 和 `original` 模式隐藏批注标记。打印和 HTML 导出省略批注浮层。
+
 ## 离线资产
 
 DOCX Worker 默认读取 viewer assets 下的：

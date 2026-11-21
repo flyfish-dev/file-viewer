@@ -5,6 +5,7 @@ import {
   assertSheetRegion, createSheetRegion, EXCEL_SOURCE_EXTENT, regionToSource,
   sourceToRegion, regionIntersects, getSheetMaterialization,
 } from '../packages/renderers/spreadsheet/src/spreadsheet/sourceRegion'
+import { buildRows, collectWindowStarts, getOrdinaryWindowSize, getRowState, getWindowStart, markWindowState, RowState } from '../packages/renderers/spreadsheet/src/spreadsheet/state'
 import SheetJsModel from '../packages/renderers/spreadsheet/src/spreadsheet/worker/sheetjs/SheetJsModel'
 import {
   createSpreadsheetParserContext, getWorksheetDisplayBounds,
@@ -67,6 +68,33 @@ describe('bounded source region contract', () => {
 })
 
 describe('bounded parser access and source metadata', () => {
+  it.each([
+    { columns: 200, windowSize: 500 },
+    { columns: 300, windowSize: 426 },
+    { columns: 16_306, windowSize: 7 },
+  ])('uses a consistent $windowSize-row stride for $columns columns', async ({ columns, windowSize }) => {
+    expect(getOrdinaryWindowSize(columns)).toBe(windowSize)
+    const totalRows = 600
+    const row = windowSize + 1
+    const rows = buildRows(totalRows)
+    const windowStart = getWindowStart(row, totalRows, windowSize)
+    expect(windowStart).toBe(windowSize)
+    markWindowState(rows, totalRows, windowStart, RowState.Loading, windowSize)
+    expect(getRowState(rows[windowStart - 1])).toBe(RowState.Placeholder)
+    expect(getRowState(rows[row])).toBe(RowState.Loading)
+    expect(collectWindowStarts({ startRow: 0, endRow: row, direction: 1, totalRows, windowSize }))
+      .toEqual(expect.arrayContaining([0, windowSize]))
+
+    const context = contextFor({ '!ref': 'A1:XFD600', A1: { t: 's', v: 'First' }, A600: { t: 's', v: 'Last' } }, [])
+    context.sheets[0] = { ...context.sheets[0], rowCount: totalRows, colCount: columns }
+    const reply = await handleSpreadsheetWorkerRequest(context, { type: 'parseSheet', payload: {
+      sheet: 0, startRow: windowStart, pageSize: windowSize, sessionId: 2,
+    } })
+    expect(reply[0]).toMatchObject({ type: 'parseSheet', payload: {
+      sheet: 0, sessionId: 2, sheetData: { meta: { startRow: windowStart, endRow: Math.min(2 * windowSize, totalRows) } },
+    } })
+  })
+
   it('blocks the old dense entry before model allocation when real data exceeds the declared budget', async () => {
     const context = contextFor({ '!ref': 'A1:XFD1048576', XFD1048576: { t: 's', v: 'Must stay reachable' } })
     const create = vi.spyOn(SheetJsModel, 'create')
