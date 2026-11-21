@@ -43,12 +43,12 @@ import {
   DEFAULT_SHEET_DEFAULTS,
   displayCellKey,
   getDataKey,
+  getOrdinaryWindowSize,
   getWindowStart,
   INDEX_COLUMN_KEY,
   markWindowState,
   ROW_STATE_FIELD,
   RowState,
-  WINDOW_SIZE,
   type ScrollDirection,
   type VirtualSheetState,
 } from './spreadsheet/state.js';
@@ -919,7 +919,6 @@ const renderFileViewerSpreadsheet = async (
   let sheetDefaults = { ...DEFAULT_SHEET_DEFAULTS };
   let sheetInitializing = true;
   let hasInitialWindow = false;
-  let loadedWindowCount = 0;
   let loadingWindowCount = 0;
   let sheetImages: SheetImage[] = [];
   let sheetCharts: SheetChart[] = [];
@@ -1205,7 +1204,7 @@ const renderFileViewerSpreadsheet = async (
     if (!totalRows) {
       return '';
     }
-    const cachedRows = Math.min(loadedWindowCount * WINDOW_SIZE, totalRows);
+    const cachedRows = Array.from(virtualState.windowRows.values()).reduce((count, rows) => count + rows.length, 0);
     return t('spreadsheet.state.cachedRows', {
       cached: cachedRows,
       total: totalRows,
@@ -1566,7 +1565,6 @@ const renderFileViewerSpreadsheet = async (
   });
 
   const syncWindowStats = () => {
-    loadedWindowCount = virtualState.loadedWindows.size;
     loadingWindowCount = virtualState.loadingWindows.size;
     renderChrome();
   };
@@ -1649,6 +1647,7 @@ const renderFileViewerSpreadsheet = async (
       endRow,
       direction: scrollDirection,
       totalRows: virtualState.totalRows,
+      windowSize: virtualState.windowSize,
     }).forEach(windowStart => requestWindow(windowStart, true));
   };
 
@@ -1933,7 +1932,7 @@ const renderFileViewerSpreadsheet = async (
       return;
     }
 
-    const windowStart = clampWindowStart(startRow, virtualState.totalRows);
+    const windowStart = clampWindowStart(startRow, virtualState.totalRows, virtualState.windowSize);
     if (virtualState.loadedWindows.has(windowStart) || virtualState.loadingWindows.has(windowStart)) {
       return;
     }
@@ -1941,7 +1940,7 @@ const renderFileViewerSpreadsheet = async (
     virtualState.loadingWindows.add(windowStart);
     syncWindowStats();
     if (virtualState.active) {
-      markWindowState(virtualState.rows, virtualState.totalRows, windowStart, RowState.Loading);
+      markWindowState(virtualState.rows, virtualState.totalRows, windowStart, RowState.Loading, virtualState.windowSize);
       table?.draw();
     }
 
@@ -1949,7 +1948,7 @@ const renderFileViewerSpreadsheet = async (
     emitWorker('parseSheet', {
       sheet: sheetId,
       startRow: windowStart,
-      pageSize: WINDOW_SIZE,
+      pageSize: virtualState.windowSize,
       sessionId: sheetSessionId,
     });
 
@@ -1967,7 +1966,7 @@ const renderFileViewerSpreadsheet = async (
 
     const { columns, dataKeys } = buildColumns(ws, rowNumberMode);
     virtualState = {
-      ...createEmptyVirtualState(),
+      ...createEmptyVirtualState(virtualState.windowSize),
       active: true,
       totalRows: meta.totalRows,
       totalCols: meta.totalCols,
@@ -2188,9 +2187,9 @@ const renderFileViewerSpreadsheet = async (
     requestPendingSearchWindow();
     flushPendingSearchJump();
 
-    const start = viewportRange.start || meta.startRow;
-    const end = Math.max(viewportRange.end, meta.endRow - 1, meta.startRow);
-    ensureViewportWindows(start, end);
+    // Use the actual viewport. A completed prefetch must not move the
+    // prefetch range further down a sheet that the user has not scrolled.
+    ensureViewportWindows(viewportRange.start, viewportRange.end);
   };
 
   const resetViewState = () => {
@@ -2201,7 +2200,7 @@ const renderFileViewerSpreadsheet = async (
     sheetDefaults = { ...DEFAULT_SHEET_DEFAULTS };
     sheetImages = [];
     sheetCharts = [];
-    virtualState = createEmptyVirtualState();
+    virtualState = createEmptyVirtualState(getOrdinaryWindowSize(getActiveSheet()?.colCount ?? 0));
     hasInitialWindow = false;
     resetViewportTracking();
     syncWindowStats();
@@ -2358,7 +2357,7 @@ const renderFileViewerSpreadsheet = async (
     if (
       !pending ||
       pending.sheetId !== getActiveSheetId() ||
-      !virtualState.loadedWindows.has(getWindowStart(pending.row, virtualState.totalRows)) ||
+      !virtualState.loadedWindows.has(getWindowStart(pending.row, virtualState.totalRows, virtualState.windowSize)) ||
       !table
     ) {
       return;
@@ -2398,7 +2397,7 @@ const renderFileViewerSpreadsheet = async (
     if (!pending || pending.sheetId !== getActiveSheetId() || !virtualState.totalRows) {
       return;
     }
-    const windowStart = getWindowStart(pending.row, virtualState.totalRows);
+    const windowStart = getWindowStart(pending.row, virtualState.totalRows, virtualState.windowSize);
     if (virtualState.loadedWindows.has(windowStart)) {
       flushPendingSearchJump();
       return;
@@ -2584,7 +2583,7 @@ const renderFileViewerSpreadsheet = async (
       virtualState.loadingWindows.delete(startRow);
       syncWindowStats();
       if (virtualState.active) {
-        markWindowState(virtualState.rows, virtualState.totalRows, startRow, RowState.Placeholder);
+        markWindowState(virtualState.rows, virtualState.totalRows, startRow, RowState.Placeholder, virtualState.windowSize);
         table?.draw();
       }
     } else {

@@ -1,4 +1,5 @@
 import type { Align, Column, VerticalAlign } from 'e-virt-table'
+import { ORDINARY_GRID_BUDGET } from './sourceRegion.js'
 import type { CellMerge, SheetRichTextRun } from './worker/type.js'
 
 export const WINDOW_SIZE = 500
@@ -7,6 +8,9 @@ export const PREFETCH_BEHIND = 1
 export const INDEX_COLUMN_KEY = '__index'
 export const ROW_KEY_FIELD = '__k'
 export const ROW_STATE_FIELD = '__s'
+
+export const getOrdinaryWindowSize = (columns: number) =>
+  Math.min(WINDOW_SIZE, Math.max(1, Math.floor(ORDINARY_GRID_BUDGET.windowCells / Math.max(1, columns))))
 
 export interface SheetDefaults {
   rowHeight: number
@@ -58,6 +62,7 @@ export interface VirtualSheetState {
   active: boolean
   totalRows: number
   totalCols: number
+  windowSize: number
   indexOffset: number
   defaults: SheetDefaults
   dataKeys: string[]
@@ -90,12 +95,14 @@ interface CollectWindowStartsOptions {
   far?: boolean
   startRow: number
   totalRows: number
+  windowSize?: number
 }
 
-export const createEmptyVirtualState = (): VirtualSheetState => ({
+export const createEmptyVirtualState = (windowSize = WINDOW_SIZE): VirtualSheetState => ({
   active: false,
   totalRows: 0,
   totalCols: 0,
+  windowSize,
   indexOffset: 0,
   defaults: { ...DEFAULT_SHEET_DEFAULTS },
   dataKeys: [],
@@ -141,20 +148,20 @@ export const buildRows = (count: number) => {
   return rows
 }
 
-export const getMaxWindowStart = (totalRows: number) => {
+export const getMaxWindowStart = (totalRows: number, windowSize = WINDOW_SIZE) => {
   if (!totalRows) {
     return 0
   }
-  return Math.floor(Math.max(totalRows - 1, 0) / WINDOW_SIZE) * WINDOW_SIZE
+  return Math.floor(Math.max(totalRows - 1, 0) / windowSize) * windowSize
 }
 
-export const clampWindowStart = (startRow = 0, totalRows = 0) => {
-  return Math.min(Math.max(startRow, 0), getMaxWindowStart(totalRows))
+export const clampWindowStart = (startRow = 0, totalRows = 0, windowSize = WINDOW_SIZE) => {
+  return Math.min(Math.max(startRow, 0), getMaxWindowStart(totalRows, windowSize))
 }
 
-export const getWindowStart = (row = 0, totalRows = 0) => {
-  const start = Math.floor(Math.max(row, 0) / WINDOW_SIZE) * WINDOW_SIZE
-  return clampWindowStart(start, totalRows)
+export const getWindowStart = (row = 0, totalRows = 0, windowSize = WINDOW_SIZE) => {
+  const start = Math.floor(Math.max(row, 0) / windowSize) * windowSize
+  return clampWindowStart(start, totalRows, windowSize)
 }
 
 // 视口周边始终保留一小圈热窗口，滚轮滚动和拖动滚动条都可以直接命中缓存，
@@ -164,13 +171,14 @@ export const collectWindowStarts = ({
   endRow,
   direction,
   totalRows,
+  windowSize = WINDOW_SIZE,
   far = false
 }: CollectWindowStartsOptions) => {
   const starts = new Set<number>()
-  const firstWindow = getWindowStart(startRow, totalRows)
-  const lastWindow = getWindowStart(endRow, totalRows)
+  const firstWindow = getWindowStart(startRow, totalRows, windowSize)
+  const lastWindow = getWindowStart(endRow, totalRows, windowSize)
 
-  for (let current = firstWindow; current <= lastWindow; current += WINDOW_SIZE) {
+  for (let current = firstWindow; current <= lastWindow; current += windowSize) {
     starts.add(current)
   }
 
@@ -179,11 +187,11 @@ export const collectWindowStarts = ({
   const anchor = direction > 0 ? lastWindow : firstWindow
 
   for (let step = 1; step <= ahead; step += 1) {
-    starts.add(clampWindowStart(anchor + direction * step * WINDOW_SIZE, totalRows))
+    starts.add(clampWindowStart(anchor + direction * step * windowSize, totalRows, windowSize))
   }
 
   for (let step = 1; step <= behind; step += 1) {
-    starts.add(clampWindowStart(anchor - direction * step * WINDOW_SIZE, totalRows))
+    starts.add(clampWindowStart(anchor - direction * step * windowSize, totalRows, windowSize))
   }
 
   return Array.from(starts)
@@ -193,9 +201,10 @@ export const markWindowState = (
   rows: VirtualRow[],
   totalRows: number,
   windowStart: number,
-  nextState: RowStateValue
+  nextState: RowStateValue,
+  windowSize = WINDOW_SIZE
 ) => {
-  const endRow = Math.min(windowStart + WINDOW_SIZE, totalRows)
+  const endRow = Math.min(windowStart + windowSize, totalRows)
   for (let rowIndex = windowStart; rowIndex < endRow; rowIndex += 1) {
     const row = rows[rowIndex]
     if (!row) {

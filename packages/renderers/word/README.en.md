@@ -57,6 +57,10 @@ current preview without replacing the file. It does not accept/reject revisions
 or rewrite the original bytes. Text revisions are not a claim of complete
 Word review-history, formatting-change, or move-tracking support.
 
+In DOCX preview, select a comment marker in `all` review mode to read its
+contents. The `final` and `original` modes hide comment markers. Printing
+and HTML export omit the comment overlays.
+
 ## Offline Assets
 
 DOCX Worker defaults to viewer assets:

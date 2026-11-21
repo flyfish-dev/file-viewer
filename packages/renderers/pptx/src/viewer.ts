@@ -341,9 +341,13 @@ export class PptxViewer {
   }
 
   async setZoom(percent: number) {
+    if (this.disposed) {
+      return;
+    }
     const desiredEffectivePercent = toPercent(percent);
     this.userZoomPercent = clamp(desiredEffectivePercent / Math.max(this.fitScale, 0.01), 25, 600);
-    this.scheduleResize();
+    // The zoom provider reads the applied percentage as soon as this resolves.
+    this.resize();
   }
 
   destroy() {

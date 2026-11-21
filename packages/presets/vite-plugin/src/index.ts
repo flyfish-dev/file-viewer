@@ -131,6 +131,12 @@ interface PresetModuleDescriptor {
   chunkName: string
 }
 
+interface PresetCapabilityDependencies {
+  presetId: FileViewerVitePreset
+  packageJsonPath: string
+  packages: string[]
+}
+
 interface MissingRendererNotice {
   format: string
   targetPackage?: string
@@ -1355,14 +1361,34 @@ function createOptimizeDepsExclude(config: UserConfig) {
 function createOptimizeDepsInclude(
   config: UserConfig,
   exclude: readonly string[],
-  anchorPackages: readonly string[]
+  anchorPackages: readonly string[],
+  presetCapabilities: readonly PresetCapabilityDependencies[]
 ) {
   const excluded = new Set(exclude)
+  const capabilityExcludes = exclude.map(id => id.replace(/\s*>\s*/g, ' > '))
+  const userIncludes = config.optimizeDeps?.include || []
+  const included = new Set(userIncludes.map(id => id.replace(/\s*>\s*/g, ' > ')))
   return unique([
-    ...(config.optimizeDeps?.include || []),
+    ...userIncludes,
     ...cjsInteropPackages.filter((packageName) =>
       !excluded.has(packageName) && Boolean(resolvePackageJson(packageName, anchorPackages))
-    )
+    ),
+    ...presetCapabilities.flatMap(({ presetId, packageJsonPath, packages }) => {
+      const presetRequire = createRequire(packageJsonPath)
+      return packages.flatMap((packageName) => {
+        // An isolated install can resolve the capability from the preset only.
+        const entry = `${presetModules[presetId].packageName} > ${packageName}`
+        const isExcluded = capabilityExcludes.some(id => {
+          const prefix = id.endsWith('/') ? id : `${id}/`
+          return entry === id || packageName === id || entry.startsWith(prefix) || packageName.startsWith(prefix)
+        })
+        return !isExcluded &&
+          !included.has(packageName) && !included.has(entry) &&
+          tryResolvePackageJson(packageName, presetRequire)
+          ? [entry]
+          : []
+      })
+    })
   ])
 }
 
@@ -1571,41 +1597,47 @@ function collectSelectedPackages(
   ])
 }
 
-function collectDependencyAnchorPackages(
+function collectPluginDependencies(
   selection: RendererSelection,
-  autoPresetIds: readonly FileViewerVitePreset[] = []
+  autoPresetIds: readonly FileViewerVitePreset[],
+  projectRoot: string
 ) {
   const presetIds = unique([
     ...(selection.preset ? [selection.preset] : []),
     ...autoPresetIds
   ])
-  return unique([
-    ...collectSelectedPackages(selection, autoPresetIds),
-    ...presetIds.flatMap((presetId) => {
-      const packageJsonPath = resolvePackageJson(presetModules[presetId].packageName)
-      if (!packageJsonPath) {
-        return []
+  const projectPackageRequire = createRequire(join(projectRoot, 'package.json'))
+  const presetCapabilities = presetIds.flatMap((presetId): PresetCapabilityDependencies[] => {
+    const presetPackage = presetModules[presetId].packageName
+    const packageJsonPath = tryResolvePackageJson(presetPackage, projectPackageRequire) ||
+      resolvePackageJson(presetPackage)
+    if (!packageJsonPath) return []
+    try {
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
+        dependencies?: Record<string, string>
+        optionalDependencies?: Record<string, string>
       }
-      try {
-        const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
-          dependencies?: Record<string, string>
-          optionalDependencies?: Record<string, string>
-        }
-        return Object.keys({
-          ...(packageJson.dependencies || {}),
-          ...(packageJson.optionalDependencies || {})
-        }).filter(packageName => packageName.startsWith('@file-viewer/capability-'))
-      } catch {
-        return []
-      }
-    }),
-    ...presetIds.flatMap((presetId) =>
-      presetModules[presetId].rendererIds
-        .map((rendererId) => descriptorsById.get(rendererId)?.packageName)
-        .filter((packageName): packageName is string => Boolean(packageName))
-    ),
-    ...selection.descriptors.map((descriptor) => descriptor.packageName)
-  ])
+      const packages = Object.keys({
+        ...packageJson.dependencies,
+        ...packageJson.optionalDependencies
+      }).filter(packageName => packageName.startsWith('@file-viewer/capability-'))
+      return [{ presetId, packageJsonPath, packages }]
+    } catch {
+      return []
+    }
+  })
+  return {
+    anchorPackages: unique([
+      ...collectSelectedPackages(selection, autoPresetIds),
+      ...presetCapabilities.flatMap(({ packages }) => packages),
+      ...presetIds.flatMap((presetId) =>
+        presetModules[presetId].rendererIds
+          .map((rendererId) => descriptorsById.get(rendererId)?.packageName)
+          .filter((packageName): packageName is string => Boolean(packageName))
+      )
+    ]),
+    presetCapabilities
+  }
 }
 
 function resolvePackageRoot(packageName: string, anchorPackages: readonly string[] = []) {
@@ -3504,18 +3536,19 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
       const projectRoot = resolve(process.cwd(), userConfig.root || '.')
       refreshSelection(projectRoot)
       refreshFullAssetRuntime(projectRoot, userConfig.base)
-      const dependencyAnchorPackages = collectDependencyAnchorPackages(
+      const { anchorPackages, presetCapabilities } = collectPluginDependencies(
         selection,
-        installedFullPackages.length ? unique([...autoPresetIds, 'all' as const]) : autoPresetIds
+        installedFullPackages.length ? unique([...autoPresetIds, 'all' as const]) : autoPresetIds,
+        projectRoot
       )
       const resolvedDependencyAnchorPackages = runtimeAssetBase
         ? unique([
-            ...dependencyAnchorPackages,
+            ...anchorPackages,
             '@file-viewer/core',
             ...installedFullPackages,
             ...(installedFullPackages.length ? ['@file-viewer/preset-all'] : [])
           ])
-        : dependencyAnchorPackages
+        : anchorPackages
       const optimizeDepsExclude = createOptimizeDepsExclude(userConfig)
       const manualChunksFunction = getManualChunksFunction(userConfig)
       const nextConfig: UserConfig = {
@@ -3524,7 +3557,10 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
           include: createOptimizeDepsInclude(
             userConfig,
             optimizeDepsExclude,
-            resolvedDependencyAnchorPackages
+            resolvedDependencyAnchorPackages,
+            presetCapabilities.filter(({ presetId }) =>
+              selection.preset === presetId || autoPresetIds.includes(presetId)
+            )
           )
         },
         resolve: {
