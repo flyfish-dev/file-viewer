@@ -1364,10 +1364,14 @@ function createOptimizeDepsInclude(
   anchorPackages: readonly string[],
   presetCapabilities: readonly PresetCapabilityDependencies[]
 ) {
+  const normalizeDependencyId = (id: string) => id.split('>').map((part, index, parts) => {
+    const start = index === 0 ? part : part.trimStart()
+    return index === parts.length - 1 ? start : start.trimEnd()
+  }).join(' > ')
   const excluded = new Set(exclude)
-  const capabilityExcludes = exclude.map(id => id.replace(/\s*>\s*/g, ' > '))
+  const capabilityExcludes = exclude.map(normalizeDependencyId)
   const userIncludes = config.optimizeDeps?.include || []
-  const included = new Set(userIncludes.map(id => id.replace(/\s*>\s*/g, ' > ')))
+  const included = new Set(userIncludes.map(normalizeDependencyId))
   return unique([
     ...userIncludes,
     ...cjsInteropPackages.filter((packageName) =>
