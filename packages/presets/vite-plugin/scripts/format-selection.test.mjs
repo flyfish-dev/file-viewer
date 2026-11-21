@@ -69,7 +69,9 @@ test('Vite pre-bundles the selected preset’s installed capability dependencies
       [manualEntry]
     )
     assert.deepEqual(capabilityIncludes({ exclude: ['@file-viewer'] }), [])
+    assert.deepEqual(capabilityIncludes({ exclude: [' @file-viewer '] }), [requiredEntry, optionalEntry])
     assert.deepEqual(capabilityIncludes({ exclude: [`${preset}>${required}`] }), [optionalEntry])
+    assert.deepEqual(capabilityIncludes({ exclude: [`${preset}\t > \t${required}`] }), [optionalEntry])
   } finally {
     await rm(project, { recursive: true, force: true })
   }
