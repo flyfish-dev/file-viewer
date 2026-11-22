@@ -38,7 +38,7 @@ const viewer = createFileViewerCore({
 BPMN 2.0 使用独立子路径 `/bpmn`，不会自动加入普通 `drawingRenderer`、现有 preset 或 Full。安装可选引擎后显式注册：
 
 ```sh
-npm install @file-viewer/core @file-viewer/renderer-drawing bpmn-js@18.28.0
+npm install @file-viewer/core @file-viewer/renderer-drawing bpmn-js@18.33.0
 ```
 
 ```ts

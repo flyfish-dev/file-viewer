@@ -1930,8 +1930,12 @@ export default async function renderPdf(
   };
 
   const getPdfExportRatio = (width: number, height: number, mode: FileRenderExportOptions['mode']) => {
-    const preferredRatio = mode === 'print' ? 1.75 : 1.5;
     const maxRatio = Math.sqrt(PDF_EXPORT_MAX_PAGE_PIXELS / Math.max(width * height, 1));
+    const printScale = options?.printScale;
+    if (mode === 'print' && typeof printScale === 'number' && Number.isFinite(printScale) && printScale > 0) {
+      return Math.min(Math.max(0.75, printScale), maxRatio);
+    }
+    const preferredRatio = mode === 'print' ? 1.75 : 1.5;
     return Math.max(0.75, Math.min(preferredRatio, maxRatio));
   };
 

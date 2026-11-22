@@ -130,6 +130,45 @@ export async function captureCadPreferredSource(root) {
 const externalDependencies = (manifest, group) => Object.fromEntries(Object.entries(manifest[group] || {})
   .filter(([name]) => name !== '@file-viewer/core').sort(([a], [b]) => compareStrings(a, b)))
 
+function refreshCoreSanitizer(files, manifest, prior) {
+  const name = 'dompurify'
+  const before = prior.dependencies?.[name]
+  const after = manifest.dependencies?.[name]
+  if (before === after) return
+  assert.ok(before === '3.4.17' && after === '3.4.18',
+    'CAD external dependencies changed; review a new standalone lock before generating: packages/core/package.json dependencies')
+
+  // Both registry tarballs retain identical original grants and dependency metadata.
+  const packageJson = JSON.parse(files.get('package.json'))
+  const lock = JSON.parse(files.get('package-lock.json'))
+  assert.equal(packageJson.dependencies[name], before, 'Unreviewed standalone DOMPurify root pin')
+  assert.equal(lock.packages[''].dependencies[name], before, 'Unreviewed standalone DOMPurify root lock pin')
+  assert.equal(lock.packages['packages/core'].dependencies[name], before, 'Unreviewed standalone DOMPurify core lock pin')
+  const packagePath = 'node_modules/' + name
+  const existing = lock.packages[packagePath]
+  assert.deepEqual(existing, {
+    version: before,
+    resolved: 'https://registry.npmjs.org/dompurify/-/dompurify-3.4.17.tgz',
+    integrity: 'sha512-B/pSlYVHQ58kqISD/yDjuJ1yfzI34m1gF4lAod2bwSRhiN4K5Cl3H8Af7hqB2PmTL911tdEudnnXn5FnhRoz0w==',
+    license: '(MPL-2.0 OR Apache-2.0)',
+    optionalDependencies: { '@types/trusted-types': '^2.0.7' }
+  }, 'Unreviewed standalone DOMPurify lock entry')
+
+  packageJson.dependencies[name] = after
+  lock.packages[''].dependencies[name] = after
+  lock.packages['packages/core'].dependencies[name] = after
+  const updated = {
+    version: after,
+    resolved: 'https://registry.npmjs.org/dompurify/-/dompurify-3.4.18.tgz',
+    integrity: 'sha512-ofe3wI/uNm68HInABYFJYqQxRw1EaKAjNdrFVKqjUY+UZurvNd2L/HuQe097s/4RivWiZyP6tT7aoT8atjfhwg=='
+  }
+  lock.packages[packagePath] = { ...existing, ...updated }
+  files.set('package.json', json(packageJson))
+  files.set('package-lock.json', json(lock))
+  prior.dependencies[name] = after
+  return { name, ...updated }
+}
+
 function refreshNativeDependencies(files, manifest, prior) {
   const cad = '@flyfish-dev/cad-viewer'
   const dwf = 'dwf-viewer'
@@ -199,7 +238,10 @@ export async function prepareCadSourcePayload(root, version, prior) {
   for (const directory of ['packages/core', 'packages/renderers/cad']) {
     const path = directory + '/package.json'
     const manifest = JSON.parse(files.get(path)), old = JSON.parse(prior.files.get(path))
-    if (directory === 'packages/renderers/cad') {
+    if (directory === 'packages/core') {
+      const updated = refreshCoreSanitizer(files, manifest, old)
+      if (updated) transformations.push({ path: 'package-lock.json', kind: 'reviewed-core-dependency', package: updated })
+    } else {
       const updated = refreshNativeDependencies(files, manifest, old)
       if (updated) transformations.push({ path: 'package-lock.json', kind: 'reviewed-native-dependencies', packages: updated })
     }

@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/core",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "private": false,
   "type": "module",
   "description": "Framework-neutral TypeScript APIs for browser-side file preview, renderer presets, search, zoom, page navigation, print and export.",
@@ -150,7 +150,7 @@
     "type-check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "dompurify": "3.4.17"
+    "dompurify": "3.4.18"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

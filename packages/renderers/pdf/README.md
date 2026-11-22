@@ -36,6 +36,10 @@ const options = {
 }
 ```
 
+## Print resolution
+
+Set `options.pdf.printScale` to a finite positive number, such as `3`, to request more raster detail for printing. The default is `1.75`, and the renderer may reduce it to stay within the page pixel budget. The scale applies to print output pixels. Paper dimensions, preview zoom, and HTML export resolution stay the same.
+
 ## PDF URL loading
 
 The standard PDF renderer accepts URL sources across Vanilla/Web Component, React, Svelte, jQuery and Vue. `pdf.streaming` defaults to `'same-origin'`; use `true` for a CORS-enabled cross-origin or signed URL and supply `filename: 'document.pdf'` or `type: 'pdf'` when the URL has no extension. The renderer gives that URL directly to PDF.js without a complete core prefetch. Range requests require server support and, across origins, exposed `Accept-Ranges`, `Content-Length` and `Content-Range` response headers.

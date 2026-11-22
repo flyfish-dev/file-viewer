@@ -2,7 +2,7 @@
 
 此功能从 3.1.2 起提供。BPMN 需要显式启用，不会增加现有 Full 包的默认依赖。
 
-安装 `@file-viewer/renderer-drawing` 及可选依赖 `bpmn-js@18.28.0`，再向任一标准组件注册：
+安装 `@file-viewer/renderer-drawing` 及可选依赖 `bpmn-js@18.33.0`，再向任一标准组件注册：
 
 ```ts
 import { mountViewer } from '@file-viewer/web'

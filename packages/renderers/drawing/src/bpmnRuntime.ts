@@ -9,7 +9,7 @@ import type Viewer from 'bpmn-js/lib/Viewer.js';
 import type { BpmnDiagram, BpmnView, BpmnViewerInstance, BpmnViewerOptions } from './bpmn.js';
 import { BpmnInputError, decodeBpmnSource, prepareBpmnXml } from './bpmnXml.js';
 import { bpmnStyles } from './bpmnStyles.js';
-import { bpmnVendorStyles } from './bpmnVendorStyles.js';
+import { bpmnPeerVersion, bpmnVendorStyles } from './bpmnVendorStyles.js';
 
 interface Point { x: number; y: number }
 interface Bounds extends Point { width: number; height: number }
@@ -36,7 +36,7 @@ const messages = {
     warnings: 'Some elements or styles could not be imported. Check the original XML in Source.',
     size: 'This BPMN file exceeds the configured size limit.',
     decode: 'The XML text encoding could not be decoded.',
-    dependency: 'BPMN requires bpmn-js@18.28.0. Install it alongside @file-viewer/renderer-drawing.',
+    dependency: `BPMN requires bpmn-js@${bpmnPeerVersion}. Install it alongside @file-viewer/renderer-drawing.`,
   },
   zh: {
     diagram: '流程图', source: '源码', diagrams: 'BPMN 图',
@@ -51,7 +51,7 @@ const messages = {
     warnings: '部分元素或样式未能导入，请在源码视图核对原始 XML。',
     size: 'BPMN 文件超过了配置的大小限制。',
     decode: '无法按 XML 声明的编码读取文本。',
-    dependency: 'BPMN 需要 bpmn-js@18.28.0，请与 @file-viewer/renderer-drawing 一起安装。',
+    dependency: `BPMN 需要 bpmn-js@${bpmnPeerVersion}，请与 @file-viewer/renderer-drawing 一起安装。`,
   },
 };
 

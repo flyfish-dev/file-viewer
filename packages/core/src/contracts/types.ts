@@ -723,6 +723,8 @@ export interface FileViewerArchivePasswordRequestContext {
 export interface FileViewerPdfOptions {
   /** Preview-only dark reading palette; follows the viewer theme when omitted. */
   darkMode?: boolean
+  /** Preferred raster scale for printing, relative to the CSS page size. Defaults to 1.75 and is limited by the per-page pixel budget. */
+  printScale?: number
   /** Opt-in mouse hand-tool panning. Touch/pinch, links and form fields remain native. Default: false. */
   handTool?: boolean
   toolbar?: boolean

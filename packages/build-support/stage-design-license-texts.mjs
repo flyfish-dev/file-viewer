@@ -7,7 +7,7 @@ import { retainedBundleLicense } from './bundle-notices.mjs';
 
 const workspace = resolve(import.meta.dirname, '../..');
 const reviewed = [
-  { name: 'ag-psd', version: '34.2.0', license: 'MIT', file: 'ag-psd-MIT.txt', sha256: '3907e1664a7d749644e33d1936ccad8c3d23df35277fca9ecec61146b46dc8fd' },
+  { name: 'ag-psd', version: '34.2.1', license: 'MIT', file: 'ag-psd-MIT.txt', sha256: '3907e1664a7d749644e33d1936ccad8c3d23df35277fca9ecec61146b46dc8fd' },
   { name: 'fzstd', version: '0.1.1', license: 'MIT', file: 'fzstd-MIT.txt', sha256: '62249119bb7df6e54300f37a37145c26a6d4420410aac8881a119c5b427cf751' },
   { name: 'saxes', version: '6.0.0', license: 'ISC', file: 'saxes-ISC.txt', sha256: '0fac2374380621b22e6b50451057721a9c52935b02d16d106a9f04897f061d0e' },
 ];

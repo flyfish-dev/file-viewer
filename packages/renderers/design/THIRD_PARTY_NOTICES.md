@@ -12,7 +12,7 @@ Source: <https://github.com/101arrowz/fzstd>
 
 The MIT-licensed streaming zstd decoder is bundled only into the terminable Illustrator Worker so Illustrator 24+ private source can be decoded offline. File Viewer enforces the configured decoded-byte ceiling while chunks are emitted instead of retaining output beyond that ceiling. The complete license is shipped as `LICENSES/fzstd-MIT.txt`.
 
-## ag-psd 34.2.0
+## ag-psd 34.2.1
 
 Source: <https://github.com/Agamnentzar/ag-psd>
 

@@ -16,6 +16,10 @@ assert.equal(inspected.modality, 'CT')
 // Change only the Part 10 transfer-syntax header. These controls prove rejection
 // before decoding; they do not pretend to contain compressed JPEG XL pixels.
 const dataSet = dicomParser.parseDicom(new Uint8Array(buffer), { untilTag: 'x7fe00010' })
+const pixelData = dataSet.elements.x7fe00010
+assert.throws(() => inspectDicomPart10(buffer.slice(0, pixelData.dataOffset + 1)), {
+  message: 'DICOM native Pixel Data is truncated or has an invalid length.'
+})
 const syntax = dataSet.elements.x00020010
 const groupLength = dataSet.elements.x00020000
 for (const uid of [
@@ -41,5 +45,5 @@ for (const uid of [
   })
 }
 console.log(
-  'Native Node ESM inspection passed: original CT header and four unsupported codec syntax boundaries'
+  'Native Node ESM inspection passed: original CT header, truncated native pixels and four unsupported codec syntax boundaries'
 )

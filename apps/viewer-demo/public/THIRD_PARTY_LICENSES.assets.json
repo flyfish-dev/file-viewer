@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "purpose": "shared-runtime-material-attribution",
   "scope": "Material identity and actual copied payloads; not a source-availability or release approval.",
-  "registrySha256": "b01da0a8815d54d89ca911651592a5123d22a9b55049927fe0522e32e5499021",
+  "registrySha256": "50630a516fd51f4faa63586d26db23f5794fbd1953ed98689084cfdf61e99d7e",
   "releaseApproval": false,
   "materials": [
     {
@@ -3338,7 +3338,7 @@
     },
     {
       "path": "vendor/xlsx/licenses/THIRD_PARTY_LICENSES.txt",
-      "sha256": "cb601b1ed88a83b18a79f08e122879b979d7f71f99f93b7513be189ccbf1ba2f",
+      "sha256": "e543e3ec605f212445e53dcfcad40d37a2e2203c2f6612fd8112e1d7a4c64ffb",
       "bytes": 76320,
       "kind": "generated-original-bundle-grants",
       "component": "Physical Worker dependency inputs",
@@ -3350,12 +3350,12 @@
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
-      "bytes": 3665,
+      "sha256": "5f93529721affdd58956414010ca8dafbbedb964664d53173c6596daa73d2e2d",
+      "bytes": 3657,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268 (SHA-256 343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf). All 118 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
@@ -3407,12 +3407,12 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
-      "bytes": 3665,
+      "sha256": "5f93529721affdd58956414010ca8dafbbedb964664d53173c6596daa73d2e2d",
+      "bytes": 3657,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268 (SHA-256 343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf). All 118 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.1/dwfv-render.wasm",
@@ -3464,12 +3464,12 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
-      "bytes": 3665,
+      "sha256": "5f93529721affdd58956414010ca8dafbbedb964664d53173c6596daa73d2e2d",
+      "bytes": 3657,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268 (SHA-256 343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf). All 118 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.3/dwfv-render.wasm",
@@ -3521,12 +3521,12 @@
     },
     {
       "path": "wasm/cad/0.8.4/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
-      "bytes": 3665,
+      "sha256": "5f93529721affdd58956414010ca8dafbbedb964664d53173c6596daa73d2e2d",
+      "bytes": 3657,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268 (SHA-256 343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf). All 118 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.4/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.4/dwfv-render.wasm",
@@ -3578,12 +3578,12 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
-      "bytes": 3665,
+      "sha256": "5f93529721affdd58956414010ca8dafbbedb964664d53173c6596daa73d2e2d",
+      "bytes": 3657,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268 (SHA-256 343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf). All 118 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "runtimePaths": [
         "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
         "wasm/cad/0.8.0/dwfv-render.wasm",
@@ -22732,15 +22732,15 @@
     {
       "path": "vendor/xlsx/sheet.worker.js",
       "bytes": 782171,
-      "sha256": "89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18",
-      "sourceSha256": "89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18",
+      "sha256": "638f40eb8fb9e7e9aeec64fc39b28476552c8d85b2fc3dc43f09a29e2ce3937d",
+      "sourceSha256": "638f40eb8fb9e7e9aeec64fc39b28476552c8d85b2fc3dc43f09a29e2ce3937d",
       "sourceTransform": "none"
     },
     {
       "path": "wasm/cad/0.8.0/CORRESPONDING_SOURCE.zip",
-      "bytes": 472538,
-      "sha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
-      "sourceSha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
+      "bytes": 473241,
+      "sha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
+      "sourceSha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
       "sourceTransform": "none"
     },
     {
@@ -22773,9 +22773,9 @@
     },
     {
       "path": "wasm/cad/0.8.1/CORRESPONDING_SOURCE.zip",
-      "bytes": 472538,
-      "sha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
-      "sourceSha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
+      "bytes": 473241,
+      "sha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
+      "sourceSha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
       "sourceTransform": "none"
     },
     {
@@ -22808,9 +22808,9 @@
     },
     {
       "path": "wasm/cad/0.8.3/CORRESPONDING_SOURCE.zip",
-      "bytes": 472538,
-      "sha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
-      "sourceSha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
+      "bytes": 473241,
+      "sha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
+      "sourceSha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
       "sourceTransform": "none"
     },
     {
@@ -22843,9 +22843,9 @@
     },
     {
       "path": "wasm/cad/0.8.4/CORRESPONDING_SOURCE.zip",
-      "bytes": 472538,
-      "sha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
-      "sourceSha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
+      "bytes": 473241,
+      "sha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
+      "sourceSha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
       "sourceTransform": "none"
     },
     {
@@ -22878,9 +22878,9 @@
     },
     {
       "path": "wasm/cad/CORRESPONDING_SOURCE.zip",
-      "bytes": 472538,
-      "sha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
-      "sourceSha256": "74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f",
+      "bytes": 473241,
+      "sha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
+      "sourceSha256": "ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164",
       "sourceTransform": "none"
     },
     {

@@ -19,7 +19,8 @@ const provenance = JSON.parse(
 const lockfile = await readFile(join(root, 'pnpm-lock.yaml'), 'utf8')
 const wasmHashes = []
 for (const artifact of provenance.sdkArtifacts) {
-  let directory = dirname(coreRequire.resolve(artifact.name))
+  const dependencyRequire = artifact.name === '@cornerstonejs/utils' ? coreRequire : require
+  let directory = dirname(dependencyRequire.resolve(artifact.name))
   while (
     JSON.parse(await readFile(join(directory, 'package.json'), 'utf8').catch(() => '{}')).name !==
     artifact.name

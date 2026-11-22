@@ -179,7 +179,7 @@ test('Demo query parsing uses the reviewed qs security patch without losing nest
   assert.equal({}.fileViewerPolluted, undefined)
 })
 test('DOMPurify manifests, override and installed runtimes use the reviewed security release', () => {
-  const patchedVersion = '3.4.17'
+  const patchedVersion = '3.4.18'
   const override = read('pnpm-workspace.yaml').match(/^  dompurify: (\S+)$/m)?.[1]
   assert.equal(override, patchedVersion, 'Workspace override must not restore vulnerable DOMPurify')
   for (const path of [

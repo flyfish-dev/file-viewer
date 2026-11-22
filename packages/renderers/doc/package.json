@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/doc",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "private": false,
   "type": "module",
   "description": "Browser-native legacy MS-DOC (.doc) parser and HTML renderer extracted from the public msdoc-viewer 0.2.0 line.",
@@ -77,7 +77,7 @@
     "verify:textbox-browser": "node scripts/verify-textbox-browser.mjs"
   },
   "dependencies": {
-    "dompurify": "3.4.17"
+    "dompurify": "3.4.18"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

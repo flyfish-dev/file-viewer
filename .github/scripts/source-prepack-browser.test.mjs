@@ -424,19 +424,19 @@ test('DICOM source, built Viewer and packed owners retain distinct exact Worker-
     )
   )
   const source = {
-    path: 'served/c8d8ca135aff6f3ee8f2719e04c394b677234a44ddb615e9175dc10009df812d.js',
-    bytes: 3326618,
-    sha256: 'c8d8ca135aff6f3ee8f2719e04c394b677234a44ddb615e9175dc10009df812d'
+    path: 'served/def51158f67a8096d3e8f375e85efcb4c8d71b0d645e4c8c04a370a8dd8e0e56.js',
+    bytes: 3331347,
+    sha256: 'def51158f67a8096d3e8f375e85efcb4c8d71b0d645e4c8c04a370a8dd8e0e56'
   }
   const packed = {
-    path: 'served/b6cb5c0edbfc9e21421e58b5afe951b398df1ef33ce915238b6c90261db04ecf.js',
-    bytes: 8233891,
-    sha256: 'b6cb5c0edbfc9e21421e58b5afe951b398df1ef33ce915238b6c90261db04ecf'
+    path: 'served/ba71b4e77a0342233b9363b4ec289755eb90f02724507251b4f8f53c8edda4d2.js',
+    bytes: 8240714,
+    sha256: 'ba71b4e77a0342233b9363b4ec289755eb90f02724507251b4f8f53c8edda4d2'
   }
   const viewer = {
-    path: 'served/1c6fe31dc9a7cd14f7f032a18e7b1b017d00e869234cb83b32216ce3a063db1c.js',
-    bytes: 3322672,
-    sha256: '1c6fe31dc9a7cd14f7f032a18e7b1b017d00e869234cb83b32216ce3a063db1c'
+    path: 'served/101d7316a90a8f2c96aca68bf3da12748677d3875ed3eab232009a8ef71d703b.js',
+    bytes: 3327434,
+    sha256: '101d7316a90a8f2c96aca68bf3da12748677d3875ed3eab232009a8ef71d703b'
   }
   for (const [runId, count, asset] of [
     ['dicom-renderer', 27, source],
@@ -528,9 +528,9 @@ test('all spreadsheet owners require the Worker built from the actual current Co
     )
   )
   const asset = {
-    path: 'served/89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18.js',
+    path: 'served/638f40eb8fb9e7e9aeec64fc39b28476552c8d85b2fc3dc43f09a29e2ce3937d.js',
     bytes: 782171,
-    sha256: '89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18'
+    sha256: '638f40eb8fb9e7e9aeec64fc39b28476552c8d85b2fc3dc43f09a29e2ce3937d'
   }
   for (const [runId, count] of [
     ['issue-211-spreadsheet-table-styles', 9],
@@ -570,7 +570,7 @@ test('all spreadsheet owners require the Worker built from the actual current Co
   )
 })
 
-test('the reviewed 3.3.5 profile rejects superseded Playwright and independently measured 3.3.4 product bytes', async () => {
+test('the current profile rejects superseded Playwright and independently measured prior product bytes', async () => {
   const plan = JSON.parse(
     await readFile(
       join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
@@ -595,42 +595,55 @@ test('the reviewed 3.3.5 profile rejects superseded Playwright and independently
         : row
   )
   assert.equal(collect({ required: metadataRequired, events: metadataEvents }).length, 6)
-  const oldMetadata = {
-    ...metadata,
-    sha256: 'b727f15222df59599e92e9cd9539852318f814aa40a2b85a72030c1542664e29'
+  for (const sha256 of [
+    'b727f15222df59599e92e9cd9539852318f814aa40a2b85a72030c1542664e29',
+    '5165977c1f33578a49618cb6641b6324c63cdbbf76a2e1acbec6bc25553a51b2'
+  ]) {
+    const oldMetadata = { ...metadata, sha256 }
+    assert.throws(
+      () =>
+        collect({
+          required: metadataRequired.map((row) => ({ ...row, fixtures: [oldMetadata] })),
+          events: metadataEvents
+        }),
+      /Original fixture not actually observed/
+    )
+    assert.throws(
+      () =>
+        collect({
+          required: metadataRequired,
+          events: metadataEvents.map((row) =>
+            row.kind === 'served-fixture' ? { ...row, ...oldMetadata } : row
+          )
+        }),
+      /Original fixture not actually observed/
+    )
   }
-  assert.throws(
-    () =>
-      collect({
-        required: metadataRequired.map((row) => ({ ...row, fixtures: [oldMetadata] })),
-        events: metadataEvents
-      }),
-    /Original fixture not actually observed/
-  )
-  assert.throws(
-    () =>
-      collect({
-        required: metadataRequired,
-        events: metadataEvents.map((row) =>
-          row.kind === 'served-fixture' ? { ...row, ...oldMetadata } : row
-        )
-      }),
-    /Original fixture not actually observed/
-  )
   const oldTools = structuredClone(plan)
   oldTools.tools.playwright = '1.64.1'
   assert.throws(() => validateManifest(oldTools))
   for (const [runId, oldBytes, oldSha256] of [
     ['dicom-renderer', 3154646, '35592a6fc7d3c7d8c828256d9b39546331262dc8a534e30bce5bfdab1b998c3c'],
+    ['dicom-renderer', 3326618, 'c8d8ca135aff6f3ee8f2719e04c394b677234a44ddb615e9175dc10009df812d'],
     [
       'dicom-packed-browser',
       8018353,
       'a7fac4bbe521963cc406ebf12ca414f9713345789af148f1bc56d64192a2d894'
     ],
     [
+      'dicom-packed-browser',
+      8233891,
+      'b6cb5c0edbfc9e21421e58b5afe951b398df1ef33ce915238b6c90261db04ecf'
+    ],
+    [
       'unified-specialist-demo',
       3150913,
       'f31e5943a8930ce2ac0331dc45aa6f6107c39c4e5927d3e530fcb1d37fa95786'
+    ],
+    [
+      'unified-specialist-demo',
+      3322672,
+      '1c6fe31dc9a7cd14f7f032a18e7b1b017d00e869234cb83b32216ce3a063db1c'
     ],
     [
       'issue-211-spreadsheet-table-styles',
@@ -641,6 +654,11 @@ test('the reviewed 3.3.5 profile rejects superseded Playwright and independently
       'issue-211-spreadsheet-table-styles',
       779775,
       '402bccc165309c46c1340ff74aa14640f1a917866b72dc4c110c7cb9e046aacc'
+    ],
+    [
+      'issue-211-spreadsheet-table-styles',
+      782171,
+      '89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18'
     ],
     ['issue-208-tiff', 83504, '84587f5b6f559e2efead4dbb63dfa399e716c347db61d6199172f52e6bf082d4']
   ]) {

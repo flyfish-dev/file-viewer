@@ -1,7 +1,7 @@
 # Optional BPMN viewer
 
 The File Viewer adapter is licensed under Apache-2.0 (see `LICENSE`). The explicit
-`@file-viewer/renderer-drawing/bpmn` entry uses **bpmn-js 18.28.0**. Its upstream
+`@file-viewer/renderer-drawing/bpmn` entry uses **bpmn-js 18.33.0**. Its upstream
 license is **not MIT**: it adds a mandatory, visible bpmn.io watermark condition.
 This package neither removes nor replaces that watermark. Applications must not
 hide, alter, crop, or cover it. Rendering runs locally; the watermark's link is
@@ -9,8 +9,8 @@ not a runtime CDN dependency.
 
 The original license was verified at:
 
-- [bpmn-js v18.28.0 LICENSE](https://github.com/bpmn-io/bpmn-js/blob/v18.28.0/LICENSE)
-- [bpmn-js v18.28.0 package.json](https://github.com/bpmn-io/bpmn-js/blob/v18.28.0/package.json)
+- [bpmn-js v18.33.0 LICENSE](https://github.com/bpmn-io/bpmn-js/blob/v18.33.0/LICENSE)
+- [bpmn-js v18.33.0 package.json](https://github.com/bpmn-io/bpmn-js/blob/v18.33.0/package.json)
 
 ## bpmn-js license (verbatim)
 
@@ -43,7 +43,7 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 `scripts/build-bpmn-styles.mjs` embeds the unmodified official `diagram-js.css`
 and `bpmn-js.css` distributed by the installed bpmn-js package. The latter is
 covered by the license above. The diagram-js stylesheet uses the MIT license,
-verified against [diagram-js v15.26.0 LICENSE](https://github.com/bpmn-io/diagram-js/blob/v15.26.0/LICENSE).
+verified against [diagram-js v15.30.0 LICENSE](https://github.com/bpmn-io/diagram-js/blob/v15.30.0/LICENSE).
 Other runtime dependencies retain their own licenses in their installed packages;
 applications bundling them must also retain the applicable notices.
 

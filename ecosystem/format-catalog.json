@@ -680,7 +680,7 @@
       "extensions": ["abr", "csh", "pat", "grd", "asl"],
       "supportLevel": "structured",
       "status": "experimental",
-      "containerVersions": ["Photoshop ABR 6.x", "Photoshop CSH v2", "PAT v1", "GRD v5", "ASL v2", "ag-psd 34.2.0"],
+      "containerVersions": ["Photoshop ABR 6.x", "Photoshop CSH v2", "PAT v1", "GRD v5", "ASL v2", "ag-psd 34.2.1"],
       "knownLimits": [
         "ABR previews decode saved brush-tip alpha, embedded patterns, and bounded preset metadata; they do not simulate Photoshop's stroke engine, dynamics, or paint blending",
         "CSH previews reconstruct bounded Bezier path geometry; subtract, intersect, and exclude composition is exposed as metadata rather than claimed as Photoshop-equivalent raster output",
