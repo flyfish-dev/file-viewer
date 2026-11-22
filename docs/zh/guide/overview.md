@@ -75,6 +75,6 @@ File Viewer by Flyfish 可以为业务系统快速补齐文件在线预览能力
 File Viewer 自有代码遵循 `Apache-2.0` 许可证。二开或商用时，请保留许可证、版权和来源说明，并注明项目来源为 File Viewer by Flyfish / `@flyfish-group/file-viewer3` 或 `@flyfish-group/file-viewer`。第三方与独立版本依赖继续适用各自许可证；`@file-viewer/ppt@1.0.2` 编译运行时采用包内 Apache-2.0 许可证，源码暂不公开，旧原生版本仍保留其原有授权与水印要求。如果你基于项目修复了通用问题或增强了通用能力，也欢迎一起贡献。
 
 <div class="doc-shot">
-  <img src="/_media/file-viewer-demo-v2.2.6-formats-zh.gif" alt="File Viewer by Flyfish v2.3.0 中文特色 DOCX、PPTX、DWG 与可交互三维 STEP 预览动图" width="1200" height="750" loading="lazy" />
-  <p class="doc-caption">最新中文 Demo 展示固定工具栏、文件胶囊融合、按格式分组的样例选择器，以及 DOCX、PPTX、XMind、工程文件和压缩包共享的统一交互。</p>
+  <img src="/_media/file-viewer-demo-v3-zh.webp" alt="File Viewer 中文界面实录，展示 DOCX 季度报告、PPTX 放映、DWFx 图纸缩放和 GLB 模型旋转" width="1200" height="750" loading="lazy" />
+  <p class="doc-caption">滚动阅读季度报告，通过样例库切换到 NASA 幻灯片并换页，放大建筑立面图，再拖动旋转 Khronos 狐狸模型。<a href="https://demo.file-viewer.app/example/licenses/fox/NOTICE.txt">狐狸模型作者与许可</a>。</p>
 </div>
