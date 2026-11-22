@@ -100,7 +100,7 @@
     "typescript": "^6.0.3",
     "@thatopen/components": "3.6.0",
     "@thatopen/fragments": "3.6.1",
-    "web-ifc": "0.0.79",
+    "web-ifc": "0.0.80",
     "esbuild": "^0.28.2",
     "@giro3d/giro3d": "2.0.7",
     "jszip": "3.10.2"
@@ -113,7 +113,7 @@
   "peerDependencies": {
     "@thatopen/components": "3.6.0",
     "@thatopen/fragments": "3.6.1",
-    "web-ifc": "0.0.79",
+    "web-ifc": "0.0.80",
     "esbuild": "^0.28.2",
     "@giro3d/giro3d": "2.0.7",
     "jszip": "3.10.2"

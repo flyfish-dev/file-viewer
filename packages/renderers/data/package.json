@@ -64,10 +64,10 @@
   },
   "dependencies": {
     "@file-viewer/core": "workspace:3.3.6",
-    "ag-psd": "^34.2.1",
+    "ag-psd": "^34.2.2",
     "avsc": "^5.7.9",
     "hyparquet": "^1.33.1",
-    "sql.js": "1.16.0"
+    "sql.js": "1.17.0"
   },
   "devDependencies": {
     "assert": "2.1.0",
