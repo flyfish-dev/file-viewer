@@ -137,10 +137,11 @@ test('retained wrapper license requires the exact source text and reviewed sourc
 })
 
 test('all SDK inputs match official artifacts and require their complete exact-source license', () => {
-  assert.equal(provenance.sdkArtifacts.length, 3)
+  assert.equal(provenance.sdkArtifacts.length, 4)
   const coreRequire = createRequire(dicomRequire.resolve('@cornerstonejs/core'))
   for (const artifact of provenance.sdkArtifacts) {
-    let directory = dirname(coreRequire.resolve(artifact.name))
+    const dependencyRequire = artifact.name === '@cornerstonejs/utils' ? coreRequire : dicomRequire
+    let directory = dirname(dependencyRequire.resolve(artifact.name))
     while (
       !existsSync(join(directory, 'package.json')) ||
       JSON.parse(readFileSync(join(directory, 'package.json'), 'utf8')).name !== artifact.name
@@ -151,6 +152,14 @@ test('all SDK inputs match official artifacts and require their complete exact-s
     verifyCodecArtifact(directory, artifact)
     verifyCodecLockIntegrity(lockfile, artifact)
   }
+  const loader = provenance.sdkArtifacts.find(
+    (entry) => entry.name === '@cornerstonejs/dicom-image-loader'
+  )
+  const [uuidShim] = loader.installationGeneratedBinShims
+  assert.throws(
+    () => verifyCodecLockIntegrity(lockfile.replace(uuidShim.integrity, 'sha512-changed'), loader),
+    /uuid@11\.1\.1: lockfile integrity drifted/
+  )
   assert.equal(verifyDicomSourceLicenses(packageRoot, provenance).length, 6)
   const directory = mkdtempSync(join(tmpdir(), 'file-viewer-sdk-license-'))
   try {

@@ -6,12 +6,12 @@ import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferred
 // This immutable public snapshot was read back and cold-built on Linux ARM64.
 // The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: '6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c',
-  sha256: '15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6',
-  bytes: 193754006,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.5-cad-084',
-  runtimeSha256: 'c5390e93249b839205e4c380e818e82417408ef83270ebb6b148b8e282199e66'
+  sourceCommit: 'c013bea0ab5dc21a7eb40cae9775638c40248268',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268',
+  sha256: '343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf',
+  bytes: 194674702,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.6',
+  runtimeSha256: '22dc5b6f689adf96b3a3a439f6e16f2bb19ba7d8dc5f6bf2c6d917b2c120cacc'
 })
 
 // Native preferred sources are distinct from the File Viewer integration source.
@@ -32,16 +32,15 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 ])
 
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
-  releaseVersion: '3.3.5',
-  sourceRevision: 'cad-084',
-  sha256: '74eb9d9110c35ff39d5292f69af3a492b593af55df472eabf31f65e4e0a29c3f',
-  bytes: 472538,
-  files: 117,
+  releaseVersion: '3.3.6',
+  sha256: 'ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164',
+  bytes: 473241,
+  files: 118,
   runtimeBytes: 945926,
-  runtimeSha256: 'c5390e93249b839205e4c380e818e82417408ef83270ebb6b148b8e282199e66',
+  runtimeSha256: '22dc5b6f689adf96b3a3a439f6e16f2bb19ba7d8dc5f6bf2c6d917b2c120cacc',
   cadVersion: '0.8.4',
   dwfVersion: '0.6.8',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c'
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {

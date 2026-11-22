@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/vue3",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "private": false,
   "type": "module",
   "packageManager": "pnpm@11.0.9",
@@ -58,13 +58,13 @@
   },
   "types": "dist/src/package/index.d.ts",
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.5"
+    "@file-viewer/core": "workspace:3.3.6"
   },
   "peerDependencies": {
     "vue": ">=3.3 <4"
   },
   "devDependencies": {
-    "@lucide/vue": "^1.72.0",
+    "@lucide/vue": "^1.74.0",
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.11",
     "@vitejs/plugin-vue-jsx": "^5.1.5",

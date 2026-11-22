@@ -40,7 +40,7 @@ BPMN 2.0 uses the separate `/bpmn` entry. It does not extend the default
 register the plugin explicitly:
 
 ```sh
-npm install @file-viewer/core @file-viewer/renderer-drawing bpmn-js@18.28.0
+npm install @file-viewer/core @file-viewer/renderer-drawing bpmn-js@18.33.0
 ```
 
 ```ts

@@ -12,11 +12,15 @@ export const DEFAULT_DICOM_LIMITS: Readonly<Required<FileViewerDicomLimits>> = O
   maxTotalPixels: 48_000_000,
 });
 
-/** Transfer syntaxes accepted by this tested MVP (intentionally narrower than the loader). */
-export const SUPPORTED_DICOM_TRANSFER_SYNTAXES = new Set([
+const nativeTransferSyntaxes = new Set([
   '1.2.840.10008.1.2',
   '1.2.840.10008.1.2.1',
   '1.2.840.10008.1.2.1.99',
+]);
+
+/** Transfer syntaxes accepted by this tested MVP (intentionally narrower than the loader). */
+export const SUPPORTED_DICOM_TRANSFER_SYNTAXES = new Set([
+  ...nativeTransferSyntaxes,
   '1.2.840.10008.1.2.4.70',
   '1.2.840.10008.1.2.4.80',
   '1.2.840.10008.1.2.4.90',
@@ -173,8 +177,17 @@ export const inspectDicomPart10 = (
   if (!SUPPORTED_DICOM_TRANSFER_SYNTAXES.has(transferSyntax)) {
     throw new Error(`DICOM transfer syntax ${transferSyntax || '(missing)'} is not supported by this preview renderer.`);
   }
-  if (!dataSet.elements.x7fe00010) {
+  const pixelData = dataSet.elements.x7fe00010;
+  if (!pixelData) {
     throw new Error('The DICOM file has no pixel data element.');
+  }
+  // Parsing through the element header does not read its value. Validate the
+  // declared native span against the parsed byte array, including after inflate.
+  // Encapsulated fragments are handled by their original codec path.
+  if (nativeTransferSyntaxes.has(transferSyntax) &&
+      (pixelData.hadUndefinedLength || pixelData.length < 1 ||
+       pixelData.dataOffset < 0 || pixelData.length > dataSet.byteArray.byteLength - pixelData.dataOffset)) {
+    throw new Error('DICOM native Pixel Data is truncated or has an invalid length.');
   }
 
   const rows = finitePositiveInteger(dataSet.uint16('x00280010'), 'rows');

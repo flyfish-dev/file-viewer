@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-data",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "private": false,
   "type": "module",
   "description": "Standalone data asset renderer plugin for File Viewer with PSD, SQLite, Parquet, Avro, WASM, font, AI/EPS, and WebArchive previews.",
@@ -63,10 +63,10 @@
     "verify:avro-browser": "node scripts/verify-avro-browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.5",
-    "ag-psd": "^34.2.0",
+    "@file-viewer/core": "workspace:3.3.6",
+    "ag-psd": "^34.2.1",
     "avsc": "^5.7.9",
-    "hyparquet": "^1.33.0",
+    "hyparquet": "^1.33.1",
     "sql.js": "1.16.0"
   },
   "devDependencies": {

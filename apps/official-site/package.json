@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-site",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "verify:contact": "node scripts/verify-contact-qr.mjs"
   },
   "dependencies": {
-    "@lucide/vue": "^1.72.0",
+    "@lucide/vue": "^1.74.0",
     "highlight.js": "^11.11.1",
     "vue": "^3.5.42"
   },

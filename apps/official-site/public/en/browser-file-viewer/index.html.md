@@ -10,8 +10,8 @@ File Viewer by Flyfish is an Apache-2.0, browser-native file preview project wri
 
 ## Build facts
 
-- Build version: `3.3.5`
-- Main npm package line: `3.3.5` (`msdoc-viewer` compatibility alias: `0.2.17`)
+- Build version: `3.3.6`
+- Main npm package line: `3.3.6` (`msdoc-viewer` compatibility alias: `0.2.18`)
 - Registered extension mappings: `275`
 - Stable extension mappings: `225`
 - Experimental extension mappings: `50`

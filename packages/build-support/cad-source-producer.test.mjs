@@ -118,6 +118,69 @@ test('standalone adaptations retain grants and only update local metadata and re
   assert.deepEqual(revised.files.get(revised.priorReadme), prior.files.get('README.md'))
 })
 
+test('the reviewed DOMPurify refresh updates exactly the standalone pins and retains every original grant', async t => {
+  const source = await fixture(t), currentPrior = await priorPromise
+  const rootManifestPath = 'package.json', coreManifestPath = 'packages/core/package.json'
+  const lockPath = 'package-lock.json', sanitizerPath = 'node_modules/dompurify'
+  const files = new Map(currentPrior.files)
+  for (const path of [rootManifestPath, coreManifestPath]) {
+    const manifest = JSON.parse(files.get(path))
+    manifest.dependencies.dompurify = '3.4.17'
+    files.set(path, Buffer.from(json(manifest)))
+  }
+  const oldLock = JSON.parse(files.get(lockPath))
+  oldLock.packages[''].dependencies.dompurify = '3.4.17'
+  oldLock.packages['packages/core'].dependencies.dompurify = '3.4.17'
+  oldLock.packages[sanitizerPath] = {
+    version: '3.4.17',
+    resolved: 'https://registry.npmjs.org/dompurify/-/dompurify-3.4.17.tgz',
+    integrity: 'sha512-B/pSlYVHQ58kqISD/yDjuJ1yfzI34m1gF4lAod2bwSRhiN4K5Cl3H8Af7hqB2PmTL911tdEudnnXn5FnhRoz0w==',
+    license: '(MPL-2.0 OR Apache-2.0)',
+    optionalDependencies: { '@types/trusted-types': '^2.0.7' }
+  }
+  const lockBytes = Buffer.from(json(oldLock))
+  files.set(lockPath, lockBytes)
+  const prior = { ...currentPrior, files }
+  const worktreeManifest = JSON.parse(await readFile(join(source, coreManifestPath)))
+  worktreeManifest.dependencies.dompurify = '3.4.18'
+  await put(source, coreManifestPath, json(worktreeManifest))
+
+  const result = await prepareCadSourcePayload(source, '9.8.7', prior)
+  const updated = {
+    version: '3.4.18',
+    resolved: 'https://registry.npmjs.org/dompurify/-/dompurify-3.4.18.tgz',
+    integrity: 'sha512-ofe3wI/uNm68HInABYFJYqQxRw1EaKAjNdrFVKqjUY+UZurvNd2L/HuQe097s/4RivWiZyP6tT7aoT8atjfhwg=='
+  }
+  for (const path of [rootManifestPath, coreManifestPath])
+    assert.equal(JSON.parse(result.files.get(path)).dependencies.dompurify, updated.version)
+  const lock = JSON.parse(result.files.get(lockPath))
+  assert.equal(lock.packages[''].dependencies.dompurify, updated.version)
+  assert.equal(lock.packages['packages/core'].dependencies.dompurify, updated.version)
+  assert.deepEqual(lock.packages[sanitizerPath], { ...oldLock.packages[sanitizerPath], ...updated })
+  for (const [path, entry] of Object.entries(oldLock.packages))
+    if (path.startsWith('node_modules/') && path !== sanitizerPath) assert.deepEqual(lock.packages[path], entry)
+  for (const [path, bytes] of files)
+    if (/LICENSE|NOTICE|^PRIOR_/.test(path)) assert.deepEqual(result.files.get(path), bytes)
+  assert.deepEqual(files.get(lockPath), lockBytes)
+  assert.deepEqual(result.transformations.find(entry => entry.kind === 'reviewed-core-dependency'), {
+    path: lockPath, kind: 'reviewed-core-dependency', package: { name: 'dompurify', ...updated }
+  })
+
+  const unreviewedLock = structuredClone(oldLock)
+  unreviewedLock.packages[sanitizerPath].optionalDependencies['@types/trusted-types'] = '^3.0.0'
+  const alteredFiles = new Map(files)
+  alteredFiles.set(lockPath, Buffer.from(json(unreviewedLock)))
+  await assert.rejects(prepareCadSourcePayload(source, '9.8.7', { ...prior, files: alteredFiles }),
+    /Unreviewed standalone DOMPurify lock entry/)
+  worktreeManifest.dependencies['unreviewed-dependency'] = '1.0.0'
+  await put(source, coreManifestPath, json(worktreeManifest))
+  await assert.rejects(prepareCadSourcePayload(source, '9.8.7', prior), /external dependencies changed/)
+  delete worktreeManifest.dependencies['unreviewed-dependency']
+  worktreeManifest.dependencies.dompurify = '3.4.19'
+  await put(source, coreManifestPath, json(worktreeManifest))
+  await assert.rejects(prepareCadSourcePayload(source, '9.8.7', prior), /review a new standalone lock/)
+})
+
 test('an external dependency, optional dependency or original grant change requires review', async t => {
   const source = await fixture(t), prior = await priorPromise
   const path = 'packages/core/package.json', original = await readFile(join(source, path))

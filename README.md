@@ -43,6 +43,37 @@ For fixes and package versions, see the [changelog](CHANGELOG.md).
 - **Loads only what a file needs.** Heavy engines (PDF, CAD, Office, 3D) are lazy-loaded per format.
 - **One API, every framework.** Web Component, Vue 3, Vue 2.7/2.6, React 16.8–19, Svelte and jQuery share options, events and controller methods.
 
+## Browser Compatibility
+
+| Desktop browser or test engine | Demo build target | Verified version and environment | Verified scope |
+| --- | --- | --- | --- |
+| Google Chrome | 111+ | 158.0.8127.37, macOS 27.0.1 | Full 3.3.5 PDF and plain-text preview. Targeted checks also cover EPUB preview and 3.3.6 candidate PDF printing. |
+| Microsoft Edge | 111+ | 158.0.4370.33, macOS 27.0.1 | Full 3.3.5 PDF and plain-text preview, including a real PDF Worker |
+| Mozilla Firefox / Firefox ESR | 114+ | — | Branded Firefox 154.0 and ESR acceptance pending |
+| Apple Safari | 16.4+ | — | Desktop Safari 27.0.1 acceptance pending |
+| Chrome for Testing (Chromium) | 111+ | 159.0.8154.6, Playwright on Linux | Source browser matrix and frozen Standard / Full framework integrations |
+| Playwright Firefox | 114+ | 159.0, Linux | Source browser matrix and Firefox Demo sample regression |
+| Playwright WebKit | — | 27.2, Linux | Source browser matrix and frozen Standard / Full framework integrations |
+| Brave, Opera, Vivaldi and other desktop browsers | — | — | Acceptance depends on the exact product and engine version |
+| IE / EdgeHTML | — | IE 11 / Edge 12–18 | Unsupported |
+
+| Mobile browser or host | Demo build target | Verified version and environment | Verified scope |
+| --- | --- | --- | --- |
+| Safari on iPhone | iOS 16.4+ | Safari 26.4, iOS 26.4.1 (23E254a), iPhone 17 Pro Simulator | Published Full 3.3.5 PPTX preview, navigation and remounts, plus production PDF navigation |
+| Safari on iPad | iPadOS 16.4+ | — | iPad acceptance pending |
+| Chrome on Android | Chrome engine 111+ | — | Android device acceptance pending |
+| Samsung Internet, other mobile browsers and browser forks | — | — | Acceptance depends on the exact product and engine version |
+| Android System WebView, WKWebView and in-app browsers | — | — | Acceptance depends on the host app, OS and embedded engine version |
+
+The build target describes JavaScript syntax in the Vite 8 production demos. The verified version and scope columns describe runtime acceptance on the recorded OS. The Linux matrix uses Playwright 1.65.1 and covers 1,383 source case and engine results. Frozen npm tests cover 16 Standard / Full integrations in Chromium and WebKit. [Vite 8 build target](https://vite.dev/config/build-options#build-target) · [Source browser matrix](https://github.com/flyfish-dev/file-viewer/actions/runs/44860233476/job/136711685229) · [Frozen package matrix](https://github.com/flyfish-dev/file-viewer/actions/runs/44756935324) · [Playwright engine coverage](https://playwright.dev/docs/browsers)
+
+| Runtime feature | Compatibility requirements |
+| --- | --- |
+| Standard preview, Web Component and script-tag / iframe integration | A modern browser with DOM, Canvas and module support. Embedded hosts must allow the actions actually used, including printing, downloads and opening links. |
+| PDF / Office, archives and specialist renderers | Publish the matching Worker, WASM, font and vendor assets as required by the selected renderer. Serve WASM as `application/wasm`, and allow the configured Worker and asset origins in CSP and CORS. |
+| DICOM and GPU-based 3D / map paths | Enable WebGL 2 and verify context creation in the browser or WebView on deployment hardware. DICOM is opt-in. |
+| Audio, video and clipboard | Playback depends on browser and OS codecs. Clipboard writes depend on a secure origin, permissions and the browser's interaction policy. |
+
 ## Quick start
 
 The Web Component works without a framework:

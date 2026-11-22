@@ -20,6 +20,7 @@ import {
 import {
   cache,
   Enums,
+  eventTarget,
   getWebWorkerManager,
   registerImageLoader,
   init as initCornerstone,
@@ -441,8 +442,22 @@ export default async function renderDicom(
     renderingEngine = new TiledRenderingEngine(renderingEngineId);
     renderingEngine.enableElement({ element: stage, viewportId, type: Enums.ViewportType.STACK, defaultOptions: { background: [0.015, 0.025, 0.045] } });
     viewport = renderingEngine.getViewport<StackViewport>(viewportId);
-    await viewport.setStack(imageIds, 0);
+    let initialFrameError: unknown;
+    const captureFrameError = (event: Event) => {
+      const detail = (event as CustomEvent<{ imageId?: string; error?: unknown }>).detail;
+      if (detail?.imageId === imageIds[0]) initialFrameError = detail.error;
+    };
+    eventTarget.addEventListener(Enums.Events.IMAGE_LOAD_ERROR, captureFrameError);
+    try {
+      await viewport.setStack(imageIds, 0);
+    } finally {
+      eventTarget.removeEventListener(Enums.Events.IMAGE_LOAD_ERROR, captureFrameError);
+    }
     if (destroyed || context?.signal?.aborted) throw context?.signal?.reason || new DOMException('DICOM render aborted.', 'AbortError');
+    // Cornerstone's stack promise can settle after notifying a load failure.
+    if (!viewport.getCornerstoneImage()) {
+      throw initialFrameError ?? new Error('Unable to load the first DICOM frame.');
+    }
     if (hasDicomWindow) {
       const width = inspected.windowWidth as number;
       const center = inspected.windowCenter as number;

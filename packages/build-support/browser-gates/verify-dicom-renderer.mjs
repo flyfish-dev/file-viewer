@@ -95,6 +95,13 @@ XMLHttpRequest.prototype.open = function(method, url, ...rest) {
 }
 
 const targetFor = id => document.getElementById(id)
+const expectRenderRejection = rendering => rendering.then(
+  instance => {
+    instance.destroy()
+    throw new Error('DICOM renderer resolved instead of rejecting')
+  },
+  error => ({ errorName: String(error?.name || ''), message: String(error?.message || error) }),
+)
 const loadModules = async () => Promise.all([
   import('@cornerstonejs/core'),
   import('@cornerstonejs/dicom-image-loader'),
@@ -241,7 +248,7 @@ window.__dicomTest = {
       recordRuntimeNetwork = false
     }
   },
-  async failFirstFrame(id, name) {
+  async rejectTruncatedFrame(id, name) {
     const target = targetFor(id)
     const source = preloaded.get(name)
     const sourceBytes = new Uint8Array(source)
@@ -254,18 +261,35 @@ window.__dicomTest = {
     }
     if (pixelTagOffset < 0) throw new Error('Unable to locate synthetic Pixel Data element')
     const truncated = source.slice(0, pixelTagOffset + 13)
-    const observed = observeBaseImageId(target)
+    records.delete(id)
     runtimeNetwork.length = 0
     recordRuntimeNetwork = true
     try {
-      const instance = await renderFileViewerDicom(truncated, target, 'dcm', { filename: name, options: { locale: 'en-US' } })
-      instance.destroy()
-      throw new Error('Truncated DICOM unexpectedly rendered')
-    } catch (error) {
+      const rejection = await expectRenderRejection(renderFileViewerDicom(truncated, target, 'dcm', { filename: name, options: { locale: 'en-US' } }))
+      return { ...rejection, network: [...runtimeNetwork] }
+    } finally {
+      recordRuntimeNetwork = false
+    }
+  },
+  async failFirstFrame(id, name) {
+    const target = targetFor(id)
+    const [core, loader] = await loadModules()
+    const source = preloaded.get(name)
+    const observed = observeBaseImageId(target)
+    let requests = 0
+    core.registerImageLoader('dicomfile', () => {
+      requests++
+      return { promise: Promise.reject(new Error('DICOM first-frame probe rejected')) }
+    })
+    runtimeNetwork.length = 0
+    recordRuntimeNetwork = true
+    try {
+      const rejection = await expectRenderRejection(renderFileViewerDicom(source.slice(0), target, 'dcm', { filename: name, options: { locale: 'en-US' } }))
       const baseImageId = await Promise.race([observed.promise, new Promise(resolve => setTimeout(() => resolve(''), 500))])
       records.set(id, { baseImageId, frameCount: 1, name })
-      return { baseImageId, message: String(error?.message || error), network: [...runtimeNetwork] }
+      return { ...rejection, baseImageId, requests, network: [...runtimeNetwork] }
     } finally {
+      core.registerImageLoader('dicomfile', loader.wadouri.loadImageFromNaturalizedMetadata)
       observed.disconnect()
       recordRuntimeNetwork = false
     }
@@ -277,19 +301,17 @@ window.__dicomTest = {
     const observed = observeBaseImageId(target)
     runtimeNetwork.length = 0
     recordRuntimeNetwork = true
-    const rendering = renderFileViewerDicom(source.slice(0), target, 'dcm', {
+    const rendering = expectRenderRejection(renderFileViewerDicom(source.slice(0), target, 'dcm', {
       filename: name,
       signal: controller.signal,
       options: { locale: 'en-US' },
-    })
+    }))
     const baseImageId = await observed.promise
     controller.abort(new DOMException('Regression abort', 'AbortError'))
     try {
-      await rendering
-      throw new Error('Aborted DICOM unexpectedly rendered')
-    } catch (error) {
+      const rejection = await rendering
       records.set(id, { baseImageId, frameCount: 1, name })
-      return { baseImageId, message: String(error?.message || error), network: [...runtimeNetwork] }
+      return { ...rejection, baseImageId, network: [...runtimeNetwork] }
     } finally {
       observed.disconnect()
       recordRuntimeNetwork = false
@@ -786,16 +808,25 @@ try {
       assertCleanProbe(implicitProbe, `${browserName}: implicit cleanup leaked`)
       assert(errors.length === 0, `${browserName}: browser errors during successful local renders:\n${errors.join('\n')}`)
 
+      const truncated = await page.evaluate(() => window.__dicomTest.rejectTruncatedFrame('viewer-a', 'single-frame.dcm'))
+      assert(truncated.errorName === 'Error' && truncated.message === 'DICOM native Pixel Data is truncated or has an invalid length.' && truncated.network.length === 0,
+        `${browserName}: truncated native Pixel Data was not rejected before rendering: ${JSON.stringify(truncated)}`)
+      const truncatedProbe = await page.evaluate(() => window.__dicomTest.probe('viewer-a'))
+      assert(!truncatedProbe.baseImageId, `${browserName}: truncated native Pixel Data allocated an image ID`)
+      assertCleanProbe(truncatedProbe, `${browserName}: truncated native Pixel Data leaked resources`)
       const failure = await page.evaluate(() => window.__dicomTest.failFirstFrame('viewer-a', 'single-frame.dcm'))
-      assert(failure.baseImageId && failure.network.length === 0, `${browserName}: first-frame failure did not reach owner-scoped cleanup`)
+      assert(failure.baseImageId && failure.errorName === 'Error' && failure.message === 'DICOM first-frame probe rejected' && failure.requests === 1 && failure.network.length === 0,
+        `${browserName}: first-frame failure did not reach owner-scoped cleanup: ${JSON.stringify(failure)}`)
       const failureProbe = await page.evaluate(() => window.__dicomTest.probe('viewer-a'))
       assertCleanProbe(failureProbe, `${browserName}: first-frame failure leaked`)
       const aborted = await page.evaluate(() => window.__dicomTest.abortDuringFirstFrame('viewer-b', 'single-frame.dcm'))
-      assert(aborted.baseImageId && aborted.network.length === 0, `${browserName}: abort did not reach owner-scoped cleanup`)
+      assert(aborted.baseImageId && aborted.errorName === 'AbortError' && aborted.message === 'Regression abort' && aborted.network.length === 0,
+        `${browserName}: abort did not reach owner-scoped cleanup: ${JSON.stringify(aborted)}`)
       const abortProbe = await page.evaluate(() => window.__dicomTest.probe('viewer-b'))
       assertCleanProbe(abortProbe, `${browserName}: abort leaked`)
       const expectedFailureErrors = errors.splice(0)
-      assert(expectedFailureErrors.length >= 1 && expectedFailureErrors.every(message => /Invalid vr type ox|Stream has insufficient data/.test(message)), `${browserName}: unexpected negative-path browser errors:\n${expectedFailureErrors.join('\n')}`)
+      assert(expectedFailureErrors.every(message => /Invalid vr type ox|Stream has insufficient data|DICOM first-frame probe rejected/.test(message)),
+        `${browserName}: unexpected negative-path browser errors:\n${expectedFailureErrors.join('\n')}`)
 
       await page.reload({ waitUntil: 'networkidle' })
       for (const fixture of ['single-frame.dcm', 'jpeg-lossless-process-14-sv1.dcm']) await page.evaluate(name => window.__dicomTest.preload(name), fixture)

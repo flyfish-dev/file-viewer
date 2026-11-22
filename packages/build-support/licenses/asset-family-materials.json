@@ -14,12 +14,12 @@
     },
     {
       "sourcePath": "packages/components/web/viewer/wasm/cad/CORRESPONDING_SOURCE_NOTICE.txt",
-      "sha256": "21626ec2f1404fa63bc5a047b61413af51d62871f4c2dc2f711e605ec0f1b842",
-      "bytes": 3665,
+      "sha256": "5f93529721affdd58956414010ca8dafbbedb964664d53173c6596daa73d2e2d",
+      "bytes": 3657,
       "kind": "generated-corresponding-source-offer",
       "component": "CAD runtime@0.8.4",
       "declaredLicense": null,
-      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/6e1986e0ed994bc7d33ff48d7dc7e35b80b95b4c (SHA-256 15b2c8c3cfc00860da9ffb13774c4055afda5f62156e8eaedeff9816e562a6d6). All 117 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
+      "source": "Immutable public preferred-source snapshot at https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268 (SHA-256 343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf). All 118 snapshot files and the standalone cold build were verified on Linux ARM64. The normal workspace verifier separately checks the actual Full integration before release. Original native owner source URLs remain in the notice.",
       "initialOccurrences": 10
     },
     {
@@ -374,7 +374,7 @@
     },
     {
       "sourcePath": "packages/renderers/spreadsheet/dist/worker.THIRD_PARTY_LICENSES.txt",
-      "sha256": "cb601b1ed88a83b18a79f08e122879b979d7f71f99f93b7513be189ccbf1ba2f",
+      "sha256": "e543e3ec605f212445e53dcfcad40d37a2e2203c2f6612fd8112e1d7a4c64ffb",
       "bytes": 76320,
       "kind": "generated-original-bundle-grants",
       "component": "Physical Worker dependency inputs",
@@ -472,8 +472,8 @@
     },
     {
       "sourcePath": "packages/renderers/dicom/THIRD_PARTY_NOTICES.md",
-      "sha256": "0c0fe0501feb3a4779ef80fbc6d48cf96d2066a1a49dfb4cd6c103b3706d4003",
-      "bytes": 14378,
+      "sha256": "e095a1b898726aa52ae8dcf4f53c98910f20bb1e2c0b08833dde07d25645ccf5",
+      "bytes": 14429,
       "kind": "generated-attribution-inventory",
       "component": "DICOM source inventory",
       "declaredLicense": null,

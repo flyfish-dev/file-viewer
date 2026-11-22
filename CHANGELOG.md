@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Set `pdf.printScale` for sharper PDF print images while preserving the paper layout (#500).
+- Open wide XLSX sheets without dropping columns by sizing requests to the existing cell budget (#503).
+- Keep the PPTX zoom readout in sync with the preview (#501).
+- Show native DOCX comments in the default review view (#497).
+- Pre-bundle the selected preset's capabilities in Vite to prevent avoidable page reloads during development (#502).
+
 - Print rendered documents in the current page and wait for the print content to load before calling the browser print dialog.
 - Apply the document's East Asian font to East Asian text in DOCX, including headings that mix Chinese and Latin text.
 - Restore supported floating text box placement in legacy DOC previews and print output (#461).

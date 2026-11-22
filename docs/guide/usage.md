@@ -180,6 +180,7 @@ EML and MSG attachments open through the same resolved renderer registry as the 
 | `pdf.streaming` / `pdf.rangeChunkSize` | Standard components share same-origin URL streaming by default; true permits CORS URLs and false buffers once. Signed URLs may use filename/type hints. Explicit bytes/custom fetch hooks retain precedence. |
 | `pdf.disableStream` / `pdf.disableAutoFetch` | PDF.js network controls; set both to true for demanded ranges. Omitted values retain PDF.js defaults. |
 | `pdf.toolbar` | Shows or hides the PDF renderer's own page / zoom / rotation toolbar. Useful for comparison layouts. |
+| `pdf.printScale` | Preferred PDF print raster scale, default `1.75`. Set a finite positive number, such as `3`, for higher detail. The page pixel budget can reduce the scale. Preview zoom, paper size, and HTML export resolution stay the same. |
 | `pdf.navigation` / `pdf.defaultNavigationVisible` | Enables the left page / outline navigation pane and initial visibility. |
 | `pdf.bbox` | Highlights and focuses one or more PDF regions. Supports normalized ratios, percentages, native PDF points, and OCR pixels with explicit source dimensions. |
 | `pdf.workerUrl`, `pdf.cMapUrl`, `pdf.wasmUrl`, `pdf.standardFontDataUrl` | Self-host PDF.js worker, CMap, WASM, and standard font assets. The real Worker checks API compatibility directly; unavailable or incompatible workers fall back to the packaged matching PDF.js handler. `pdf.assetBaseUrl` pins all PDF asset paths for custom deployment layouts. |

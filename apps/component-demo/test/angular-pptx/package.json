@@ -11,9 +11,9 @@
     "@angular/compiler": "22.2.6",
     "@angular/core": "22.2.6",
     "@angular/platform-browser": "22.2.6",
-    "@file-viewer/web": "3.3.5",
-    "@file-viewer/preset-office": "3.3.5",
-    "file-viewer-copy-assets": "3.3.5",
+    "@file-viewer/web": "3.3.6",
+    "@file-viewer/preset-office": "3.3.6",
+    "file-viewer-copy-assets": "3.3.6",
     "rxjs": "7.8.2",
     "tslib": "2.9.1"
   },

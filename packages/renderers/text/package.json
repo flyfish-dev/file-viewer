@@ -1,6 +1,6 @@
 {
   "name": "@file-viewer/renderer-text",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "private": false,
   "type": "module",
   "description": "Standalone code, text, and Markdown renderer for File Viewer; Mermaid, patch diff, and Git bundle tools are explicit opt-in capabilities.",
@@ -75,12 +75,12 @@
     "test:xml-profiles:browser": "node test/issue-305-xml-profiles.browser.mjs"
   },
   "dependencies": {
-    "@file-viewer/core": "workspace:3.3.5",
+    "@file-viewer/core": "workspace:3.3.6",
     "@types/pako": "^2.0.4",
     "@prettier/plugin-xml": "3.4.2",
-    "dompurify": "3.4.17",
+    "dompurify": "3.4.18",
     "highlight.js": "^11.11.1",
-    "marked": "^18.2.0",
+    "marked": "^18.2.1",
     "prettier": "3.10.1"
   },
   "devDependencies": {

@@ -31,6 +31,10 @@ const options = {
 }
 ```
 
+## 打印分辨率
+
+通过 `options.pdf.printScale` 设置打印光栅倍率，例如 `3`。默认值为 `1.75`，可填写有限正数。单页像素预算可能降低实际倍率。该参数调节打印像素密度，纸张尺寸、预览缩放和 HTML 导出分辨率不受影响。
+
 ## PDF URL 读取
 
 标准 PDF 渲染器在 Vanilla/Web Component、React、Svelte、jQuery 和 Vue 使用相同的 URL 策略。`pdf.streaming` 默认 `same-origin`；跨域或签名 URL 可显式设为 `true`，无扩展名 URL 同时提供 `filename: 'document.pdf'` 或 `type: 'pdf'`。此时直接交给 PDF.js，不先在 core 完整下载。Range 需要服务端支持；跨域还须通过 CORS 暴露 `Accept-Ranges`、`Content-Length`、`Content-Range`。

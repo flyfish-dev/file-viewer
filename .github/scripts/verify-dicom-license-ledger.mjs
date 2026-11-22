@@ -6,6 +6,7 @@ import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { pnpmInvocation } from './lib/pinned-pnpm.mjs'
 import {
+  reviewedDicomSdkVersion,
   verifyCodecArtifact,
   verifyCodecLockIntegrity,
   verifyDicomSourceLicenses
@@ -392,7 +393,10 @@ for (const name of [
 ]) {
   const sdk = roots[0].devDependencies?.[name]
   assert(sdk, `Missing bundled SDK build dependency: ${name}`)
-  assert(loadPackageJson(sdk.path)?.version === '5.18.1', `Unreviewed SDK source version: ${name}`)
+  assert(
+    loadPackageJson(sdk.path)?.version === reviewedDicomSdkVersion,
+    `Unreviewed SDK source version: ${name}`
+  )
   visit(sdk, name, { direct: true, root: false, optional: false })
 }
 
@@ -491,13 +495,13 @@ const packageVersionList = (name) => {
 const noticeLines = [
   '# Third-party notices',
   '',
-  'This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone 5.18.1 SDK build dependencies. All declared optional dependency edges are traversed. The five reviewed codec wrappers declare no runtime or optional dependencies, and this closure contains no Rollup build tools. The direct core closure retains its optional trusted-types declarations. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in `THIRD_PARTY_LICENSES.json`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in `dist/bundled-runtime.json`; complete JavaScript license texts are retained in `dist/THIRD_PARTY_LICENSES.txt`.',
+  `This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone ${reviewedDicomSdkVersion} SDK build dependencies. All declared optional dependency edges are traversed. The five reviewed codec wrappers declare no runtime or optional dependencies, and this closure contains no Rollup build tools. The direct core closure retains its optional trusted-types declarations. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in \`THIRD_PARTY_LICENSES.json\`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in \`dist/bundled-runtime.json\`; complete JavaScript license texts are retained in \`dist/THIRD_PARTY_LICENSES.txt\`.`,
   '',
   'The DICOM renderer is not part of any standard/full package or preset. The bundled Cornerstone implementation is installed only when this capability is selected and loaded only when a DICOM file is opened. Source-closure entries are an attribution inventory; unused build dependencies are not necessarily present in the runtime bundle.',
   '',
   '## Required attribution',
   '',
-  '- `caniuse-lite@1.0.30001810` data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as `caniuse-lite/LICENSE` in the installed dependency.',
+  `- ${packageVersionList('caniuse-lite')} data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as \`caniuse-lite/LICENSE\` in each installed dependency.`,
   `${packageVersionList('pako')} contain zlib-derived code by Jean-loup Gailly and Mark Adler under \`(MIT AND Zlib)\`; their installed source retains the zlib notices and license terms.`,
   '- `spark-md5@3.0.2` is available under `(WTFPL OR MIT)` as declared by the package. Its installed package retains the upstream license file.',
   '- `argparse@2.0.1` is licensed under Python-2.0 and retains the complete Python Software Foundation license in its installed `LICENSE` file.',
@@ -517,7 +521,7 @@ const noticeLines = [
   '',
   '**libjpeg-turbo attribution:** This software is based in part on the work of the Independent JPEG Group.',
   '',
-  'The full exact-source SDK MIT text is retained for core, metadata and utils 5.18.1, whose tarballs omit it. Their separate registry and verified publisher-build commits and complete official file inventories are recorded in `PROVENANCE.json`; normal builds check these bytes and include the unmodified license text in bundle notices.',
+  'The full exact-source SDK MIT text is retained for core, metadata and utils. The DICOM image loader ships its full original MIT license. Separate registry and verified publisher-build commits and complete official file inventories are recorded in `PROVENANCE.json` for all four SDK packages. Normal builds check these bytes and include the unmodified license texts in bundle notices.',
   '',
   'The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package, together with the exact CharLS, OpenJPEG, and OpenJPH license texts. The additional JPEG XL component ships its LICENSE, PATENTS and AUTHORS along with the exact linked Brotli MIT, Highway Apache-2.0 (both dual-license texts retained) and skcms BSD-3-Clause texts. The native components use BSD-style, MIT, Apache-2.0, IJG and zlib terms; none is LGPL or strong copyleft.',
   '',

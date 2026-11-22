@@ -2,7 +2,7 @@
 
 > Canonical technical documentation for File Viewer by Flyfish.
 
-- Documentation version: 3.3.5
+- Documentation version: 3.3.6
 - Official site: https://file-viewer.app/
 - Verified project facts: https://file-viewer.app/en/browser-file-viewer/
 - Documentation root: https://doc.file-viewer.app/

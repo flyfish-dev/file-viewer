@@ -272,6 +272,7 @@ const options = {
 | `pdf.navigation` / `pdf.defaultNavigationVisible` | 是否启用左侧导航窗格以及初始是否展开。导航窗格支持页面列表和目录树切换 |
 | `pdf.thumbnails` | 页面列表是否显示真实页面缩略图，默认 `false`；开启后只对可见页懒渲染缩略图，避免大 PDF 一次性生成所有 canvas |
 | `pdf.bbox` | 首次打开时框选并定位一个或多个 PDF 区域；支持比例、百分比、PDF points，以及带原图尺寸的 OCR 像素坐标 |
+| `pdf.printScale` | PDF 打印光栅倍率，默认 `1.75`。可设为有限正数（如 `3`）以提高细节。实际倍率受单页像素预算限制。纸张尺寸、预览缩放和 HTML 导出分辨率不受影响。 |
 | `pdf.rangeChunkSize` | PDF.js Range 请求分片大小，默认 64KB；仅在文件服务支持 Range 时生效 |
 | `pdf.withCredentials` | PDF.js URL 读取是否携带浏览器凭据，默认 `false` |
 | `pdf.workerUrl` | 自托管 PDF.js Worker 地址。默认先从站点根路径探测 `/vendor/pdf/pdf.worker.mjs`，可用时使用真实 Worker；资源不存在、返回 HTML 或本地临时服务未复制 viewer assets 时，会懒加载包内 PDF.js worker handler 兜底，保证轻量组件 + preset 也能预览。子路径、独立静态域或严格 CSP 部署时请显式传入绝对 URL |

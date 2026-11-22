@@ -1,16 +1,16 @@
 # Third-party notices
 
-This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone 5.18.1 SDK build dependencies. All declared optional dependency edges are traversed. The five reviewed codec wrappers declare no runtime or optional dependencies, and this closure contains no Rollup build tools. The direct core closure retains its optional trusted-types declarations. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in `THIRD_PARTY_LICENSES.json`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in `dist/bundled-runtime.json`; complete JavaScript license texts are retained in `dist/THIRD_PARTY_LICENSES.txt`.
+This file records direct runtime dependencies and the complete reviewed source closure of the three Cornerstone 5.19.4 SDK build dependencies. All declared optional dependency edges are traversed. The five reviewed codec wrappers declare no runtime or optional dependencies, and this closure contains no Rollup build tools. The direct core closure retains its optional trusted-types declarations. The browser SDK is compiled into the ordinary npm package; consumers do not need application security overrides. Exact source versions, SPDX expressions, repositories, and upstream license/notice filenames are in `THIRD_PARTY_LICENSES.json`. Actual bundled inputs, output hashes, and decoder WASM hashes are recorded in `dist/bundled-runtime.json`; complete JavaScript license texts are retained in `dist/THIRD_PARTY_LICENSES.txt`.
 
 The DICOM renderer is not part of any standard/full package or preset. The bundled Cornerstone implementation is installed only when this capability is selected and loaded only when a DICOM file is opened. Source-closure entries are an attribution inventory; unused build dependencies are not necessarily present in the runtime bundle.
 
 ## Required attribution
 
-- `caniuse-lite@1.0.30001810` data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as `caniuse-lite/LICENSE` in the installed dependency.
+- `caniuse-lite@1.0.30001819` data is by Ben Briggs and contributors, from <https://github.com/browserslist/caniuse-lite>, licensed under CC-BY-4.0. The renderer does not modify that upstream data. The complete CC-BY-4.0 text is retained as `caniuse-lite/LICENSE` in each installed dependency.
 `pako@1.0.11`, `pako@2.1.0`, `pako@2.2.0` contain zlib-derived code by Jean-loup Gailly and Mark Adler under `(MIT AND Zlib)`; their installed source retains the zlib notices and license terms.
 - `spark-md5@3.0.2` is available under `(WTFPL OR MIT)` as declared by the package. Its installed package retains the upstream license file.
 - `argparse@2.0.1` is licensed under Python-2.0 and retains the complete Python Software Foundation license in its installed `LICENSE` file.
-`dompurify@3.4.17` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
+`dompurify@3.4.18` is dual-licensed as `(MPL-2.0 OR Apache-2.0)`. File Viewer elects Apache-2.0, and the installed `LICENSE` file retains the complete Apache-2.0 text.
 
 ### Native libraries statically linked into codec WebAssembly
 
@@ -31,7 +31,7 @@ The official libjpeg-turbo-8bit 1.2.7, OpenJPEG 1.3.6 and libjxl 1.1.1 tarballs 
 
 **libjpeg-turbo attribution:** This software is based in part on the work of the Independent JPEG Group.
 
-The full exact-source SDK MIT text is retained for core, metadata and utils 5.18.1, whose tarballs omit it. Their separate registry and verified publisher-build commits and complete official file inventories are recorded in `PROVENANCE.json`; normal builds check these bytes and include the unmodified license text in bundle notices.
+The full exact-source SDK MIT text is retained for core, metadata and utils. The DICOM image loader ships its full original MIT license. Separate registry and verified publisher-build commits and complete official file inventories are recorded in `PROVENANCE.json` for all four SDK packages. Normal builds check these bytes and include the unmodified license texts in bundle notices.
 
 The complete libjpeg-turbo `LICENSE.md` and unmodified `README.ijg` are shipped with the package, together with the exact CharLS, OpenJPEG, and OpenJPH license texts. The additional JPEG XL component ships its LICENSE, PATENTS and AUTHORS along with the exact linked Brotli MIT, Highway Apache-2.0 (both dual-license texts retained) and skcms BSD-3-Clause texts. The native components use BSD-style, MIT, Apache-2.0, IJG and zlib terms; none is LGPL or strong copyleft.
 
@@ -53,7 +53,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 
 - `baseline-browser-mapping@2.11.33` — https://github.com/web-platform-dx/baseline-browser-mapping
 - `comlink@4.4.2` — https://github.com/GoogleChromeLabs/comlink
-- `dompurify@3.4.17` — https://github.com/cure53/DOMPurify
+- `dompurify@3.4.18` — https://github.com/cure53/DOMPurify
 - `typescript@6.0.3` — https://github.com/microsoft/TypeScript
 
 ### BSD-3-Clause
@@ -97,11 +97,11 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `@cornerstonejs/codec-charls@1.2.7` — https://github.com/cornerstonejs/codecs
 - `@cornerstonejs/codec-openjpeg@1.3.6` — https://github.com/cornerstonejs/codecs
 - `@cornerstonejs/codec-openjph@2.4.11` — https://github.com/cornerstonejs/codecs
-- `@cornerstonejs/core@5.18.1` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/dicom-image-loader@5.18.1` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/core@5.19.4` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/dicom-image-loader@5.19.4` — https://github.com/cornerstonejs/cornerstone3D
 - `@cornerstonejs/jpeg-lossless-decoder-js@2.2.1` — https://github.com/cornerstonejs/JPEGLosslessDecoderJS
-- `@cornerstonejs/metadata@5.18.1` — https://github.com/cornerstonejs/cornerstone3D
-- `@cornerstonejs/utils@5.18.1` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/metadata@5.19.4` — https://github.com/cornerstonejs/cornerstone3D
+- `@cornerstonejs/utils@5.19.4` — https://github.com/cornerstonejs/cornerstone3D
 - `@oozcitak/dom@2.0.2` — https://github.com/oozcitak/dom
 - `@oozcitak/infra@2.0.2` — https://github.com/oozcitak/infra
 - `@oozcitak/url@3.0.0` — https://github.com/oozcitak/url
@@ -140,7 +140,7 @@ None of the Apache-2.0 dependencies in this closure publishes a top-level `NOTIC
 - `node-releases@2.0.58` — https://github.com/chicoxyzzy/node-releases
 - `path-is-absolute@1.0.1` — https://github.com/sindresorhus/path-is-absolute
 - `path-parse@1.0.7` — https://github.com/jbgutierrez/path-parse
-- `postcss@8.5.32` — https://github.com/postcss/postcss
+- `postcss@8.5.33` — https://github.com/postcss/postcss
 - `postcss-value-parser@4.2.0` — https://github.com/TrySound/postcss-value-parser
 - `rechoir@0.6.2` — https://github.com/tkellen/node-rechoir
 - `resolve@1.22.13` — https://github.com/browserify/resolve

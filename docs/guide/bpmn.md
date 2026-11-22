@@ -2,7 +2,7 @@
 
 Available in 3.1.2 and later. BPMN is an explicit opt-in; Full packages keep their existing dependency set.
 
-Install `@file-viewer/renderer-drawing` and its optional peer `bpmn-js@18.28.0`, then register it with any standard component:
+Install `@file-viewer/renderer-drawing` and its optional peer `bpmn-js@18.33.0`, then register it with any standard component:
 
 ```ts
 import { mountViewer } from '@file-viewer/web'

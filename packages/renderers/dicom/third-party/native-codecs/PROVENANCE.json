@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "The five codec wrapper archives, WASM digests and their existing native-source review remain unchanged. SDK 5.18.1 was reviewed on 2026-11-16 against the official npm SHA512, complete archive file SHA256 inventories, npm registry signatures and Sigstore-verified GitHub build identities/transparency. Each attested subject digest matches its downloaded SDK archive. SDK release/build Git license blobs are identical to the retained original MIT text. No independent bit-for-bit source rebuild is claimed.",
+  "note": "The five codec wrapper archives, WASM digests and their existing native-source review remain unchanged. SDK 5.19.4 was reviewed on 2026-11-21 against the official npm SHA512, complete archive file SHA256 inventories, npm registry signatures and Sigstore-verified GitHub build identities/transparency. Each attested subject digest matches its downloaded SDK archive. The retained original MIT text for core, metadata and utils matches the SDK release and build Git license blobs. The loader ships its complete original LICENSE in the reviewed archive. No independent bit-for-bit source rebuild is claimed.",
   "wrapperArtifacts": [
     {
       "package": "@cornerstonejs/codec-charls@1.2.7",
@@ -459,18 +459,18 @@
   ],
   "sdkArtifacts": [
     {
-      "package": "@cornerstonejs/core@5.18.1",
+      "package": "@cornerstonejs/core@5.19.4",
       "name": "@cornerstonejs/core",
-      "version": "5.18.1",
-      "gitHead": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+      "version": "5.19.4",
+      "gitHead": "eee712024c5c8089f3a7bbbb654cadedd4baab6d",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
       "registry": "https://registry.npmjs.org",
-      "integrity": "sha512-8PEJPjcgZYpFFxgMaqyiu5xe2NijyjhOXerg+ko2EkQ6Ew89pJ0ynyG1EOnjZXwqz9QazxITFYZtBIaa7UAEpQ==",
+      "integrity": "sha512-dW695g+Ggnn7eqh0FIbYY89/7cva29wLbrygLsTnhsT6e8IzxUubqSxAq5inOqAn4sfq0jfjBWgmAUfURcPGTA==",
       "buildProvenance": {
         "predicateType": "https://slsa.dev/provenance/v1",
-        "gitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
+        "gitCommit": "5ea535b37d3414f599037d11636c24ae52db821c",
         "workflow": ".github/workflows/publish.yml",
-        "invocation": "https://github.com/cornerstonejs/cornerstone3D/actions/runs/43348155588/attempts/1"
+        "invocation": "https://github.com/cornerstonejs/cornerstone3D/actions/runs/44107698950/attempts/1"
       },
       "files": [
         {
@@ -480,8 +480,8 @@
         },
         {
           "path": "dist/esm/RenderingEngine/BaseRenderingEngine.d.ts",
-          "bytes": 3192,
-          "sha256": "67cfac7988884b516bf4d39d1e68dd05e33ac89cb4c2e7cfe73c2eaefb38d1d5"
+          "bytes": 3228,
+          "sha256": "be4710766270fde5f94cd4482c912e48f43e8c8a062c2b8ea40aff4a7ab6ee97"
         },
         {
           "path": "dist/esm/RenderingEngine/BaseRenderingEngine.js",
@@ -490,13 +490,13 @@
         },
         {
           "path": "dist/esm/RenderingEngine/BaseVolumeViewport.d.ts",
-          "bytes": 7321,
-          "sha256": "3e55590d9073c0d7f782530e72bdb79985b848f07c0d24446a94b05e6ff0629f"
+          "bytes": 7359,
+          "sha256": "5e064146aca0f8442400ee838604dd31f5ae349a3999f126ff796caca6e7864c"
         },
         {
           "path": "dist/esm/RenderingEngine/BaseVolumeViewport.js",
-          "bytes": 61848,
-          "sha256": "9a1e82a87ed4b72da15596d44dc3cd6efcd5715bb6f4dc9531e435de699050b9"
+          "bytes": 63185,
+          "sha256": "21e475c5b57632db867887e380bac26c2579e3632594c08f69992494608e34aa"
         },
         {
           "path": "dist/esm/RenderingEngine/CanvasActor/CanvasMapper.d.ts",
@@ -530,13 +530,13 @@
         },
         {
           "path": "dist/esm/RenderingEngine/ContextPoolRenderingEngine.d.ts",
-          "bytes": 1675,
-          "sha256": "7781f6a7e2962b8db58ac083a80c1002eb5d41f5ef866fe304450473da63339f"
+          "bytes": 1717,
+          "sha256": "73b1d9b85ab1a4e5a5a2d067bf3e26a30d5118c4aaaaea6e9f0f8757dfc95743"
         },
         {
           "path": "dist/esm/RenderingEngine/ContextPoolRenderingEngine.js",
-          "bytes": 19365,
-          "sha256": "40effe86bf8caa20030db71c80ca44d2dbe61564dc23c1677ffe177506ae1387"
+          "bytes": 19628,
+          "sha256": "d968fd1d40f51c2eb955826fbbb6da4ba412c3853fe0c60c32999276c38e143d"
         },
         {
           "path": "dist/esm/RenderingEngine/ECGViewport.d.ts",
@@ -785,8 +785,8 @@
         },
         {
           "path": "dist/esm/RenderingEngine/GenericViewport/Planar/PlanarCPUVolumeSampler.js",
-          "bytes": 32366,
-          "sha256": "01b0cc10dae7f88c205f307c6e4db226e26378f60cf9e0f206590c5fde1fc2aa"
+          "bytes": 33167,
+          "sha256": "0f0d6e9ccfee14aa43921da0c0907183476f39c61c4aee6f33262df0728d1fb6"
         },
         {
           "path": "dist/esm/RenderingEngine/GenericViewport/Planar/PlanarLegacyCompatibilityController.d.ts",
@@ -1725,8 +1725,8 @@
         },
         {
           "path": "dist/esm/RenderingEngine/TiledRenderingEngine.js",
-          "bytes": 13870,
-          "sha256": "9c7cd4b6dc3abd81b05f1fcfcd7a27371a8372de8004fc105e60de8ea99d94e1"
+          "bytes": 13910,
+          "sha256": "35f88d87fef183401a4ff98443d74533b100369f4884343d85a0e5d87c02003d"
         },
         {
           "path": "dist/esm/RenderingEngine/VideoViewport.d.ts",
@@ -1780,13 +1780,13 @@
         },
         {
           "path": "dist/esm/RenderingEngine/WebGLContextPool.d.ts",
-          "bytes": 1015,
-          "sha256": "ce11b38d772025416432592312862b44d3e9b842be54c387b581348e5b49435c"
+          "bytes": 1051,
+          "sha256": "3f667a52aa2e63e534928e789bdf3c88ff32685cb83b021207e70afa223e0c8f"
         },
         {
           "path": "dist/esm/RenderingEngine/WebGLContextPool.js",
-          "bytes": 3546,
-          "sha256": "56086ff1277b69acc9316508f2637f914763b093b791458cdc93f65b083c8979"
+          "bytes": 3631,
+          "sha256": "2473034f4dc157435244ca6c9d97f87cab9c52bf787cf6cdcd2f79e89170f66a"
         },
         {
           "path": "dist/esm/RenderingEngine/getRenderingEngine.d.ts",
@@ -2900,13 +2900,13 @@
         },
         {
           "path": "dist/esm/cache/cache.d.ts",
-          "bytes": 3457,
-          "sha256": "8caf87ea2cfe90d03b4cfa1e35c7ee00fb43d660beab065815b1914e31ed1294"
+          "bytes": 3497,
+          "sha256": "12bd7463c2c37345c7c88b193b653773f0edf17f346b63083906d3a4cf251050"
         },
         {
           "path": "dist/esm/cache/cache.js",
-          "bytes": 27728,
-          "sha256": "791040f83277edaa0f82728acd7d9b00b0ca604fc23b9bc2073a3bc7cb7164ed"
+          "bytes": 28200,
+          "sha256": "a79002401bc41595769bcb1862befafdaee170fea8df12d6493240ff258a8179"
         },
         {
           "path": "dist/esm/cache/classes/BaseStreamingImageVolume.d.ts",
@@ -3925,8 +3925,8 @@
         },
         {
           "path": "dist/esm/types/EventTypes.d.ts",
-          "bytes": 8566,
-          "sha256": "4bf9ed802729f654c31a73e2cd09a34653cef09724b125f73b4c93f7c5190c44"
+          "bytes": 8786,
+          "sha256": "2f89e2342dd1e5b62e05f768733a4bc6375b4797e54693c9c2b4ef5e8acd4536"
         },
         {
           "path": "dist/esm/types/EventTypes.js",
@@ -4795,8 +4795,8 @@
         },
         {
           "path": "dist/esm/types/VtkOffscreenMultiRenderWindow.d.ts",
-          "bytes": 1679,
-          "sha256": "afddd1486b4bd72bda980836544e8476edef2269615eb0d298fd8007fb6d1f0f"
+          "bytes": 1809,
+          "sha256": "0fe5bb0ee2c6a095d8310b49333c2267717a29b3ca1bd2eacfba4a7d2ef1cede"
         },
         {
           "path": "dist/esm/types/VtkOffscreenMultiRenderWindow.js",
@@ -4825,8 +4825,8 @@
         },
         {
           "path": "dist/esm/types/index.d.ts",
-          "bytes": 11882,
-          "sha256": "a747402b15078c0829ff9f445f337f079263df8e11c279f5cf270ac9e9c2e483"
+          "bytes": 11934,
+          "sha256": "c0fa1db8e356934e4059d6e8fbd5b08836d5cf6087b8732296fa54ed24f7fedd"
         },
         {
           "path": "dist/esm/types/index.js",
@@ -4920,8 +4920,8 @@
         },
         {
           "path": "dist/esm/utilities/VoxelManager.js",
-          "bytes": 49842,
-          "sha256": "0d2e0aa8146191e42bcd00dc6bd155df1f841e514b7c577085918729ed354519"
+          "bytes": 50132,
+          "sha256": "053ee400bd2662218761627501ef800755463c244c0e39a7b5dddaaaea3d9820"
         },
         {
           "path": "dist/esm/utilities/WSIUtilities.d.ts",
@@ -5020,8 +5020,8 @@
         },
         {
           "path": "dist/esm/utilities/calculateViewportsSpatialRegistration.js",
-          "bytes": 1695,
-          "sha256": "545cfe38c5f37b80aad06f28c52a9f709f84927f52988600960bfb83f7739c66"
+          "bytes": 1681,
+          "sha256": "493bf7766e6c4b2d4cea488487aac28d8c44b75ddb84bff2e54fc9a2ab75fbf8"
         },
         {
           "path": "dist/esm/utilities/calibratedPixelSpacingMetadataProvider.d.ts",
@@ -5735,13 +5735,13 @@
         },
         {
           "path": "dist/esm/utilities/index.d.ts",
-          "bytes": 11539,
-          "sha256": "968a4748d677b3c818c1a4d9e8b53ed6976630308021efb07e5fafd2647fc251"
+          "bytes": 11611,
+          "sha256": "2836b537c31c2b704a2afcbffba7fcce5b90bc9f87a04009dba2e66318b2abf8"
         },
         {
           "path": "dist/esm/utilities/index.js",
-          "bytes": 11574,
-          "sha256": "e28d8a731803d900cefaeba8bf9a53febcb3e67d073d5fe6ffa9370e69305149"
+          "bytes": 11646,
+          "sha256": "a07582af1a26d450347a6993025d69d01d6f3e946128a1f02a95960fb60c68ea"
         },
         {
           "path": "dist/esm/utilities/indexAlmostWithinDimensions.d.ts",
@@ -5982,6 +5982,16 @@
           "path": "dist/esm/utilities/roundNumber.js",
           "bytes": 1069,
           "sha256": "7f9f1bb8e9d676c906b173e9799e6dcfc14c8dd50db07eab559a0a3cf3f9ef1c"
+        },
+        {
+          "path": "dist/esm/utilities/sampleVolumeGrid.d.ts",
+          "bytes": 826,
+          "sha256": "8876685d81a78d6fbcaa2fb4a576d19f050b7b6cef79e97ddfb7c3c8e4a9eaf2"
+        },
+        {
+          "path": "dist/esm/utilities/sampleVolumeGrid.js",
+          "bytes": 12686,
+          "sha256": "1106ec0bac61b11b7f6114b969c69b6c060db041a3deed07ea339aebc96dcc12"
         },
         {
           "path": "dist/esm/utilities/scaleArray.d.ts",
@@ -6496,12 +6506,12 @@
         {
           "path": "dist/esm/version.d.ts",
           "bytes": 41,
-          "sha256": "2dc19a367c14eac30d1a668a5382206bf8069d0f1928215677f18b8789e68cd2"
+          "sha256": "2e47d6ea03ec095fd86916871bd9fb9e5a5fa1758bc99763b41dc9f237b94727"
         },
         {
           "path": "dist/esm/version.js",
           "bytes": 33,
-          "sha256": "0e0db65848f32da827c7ef332ed6745339f71ebc6911090520522efe30406063"
+          "sha256": "a9efac33cec5a0489e209d85c054eb844f4d06926e176ebf2bee9347271b965f"
         },
         {
           "path": "dist/esm/webWorkerManager/webWorkerManager.d.ts",
@@ -6516,7 +6526,7 @@
         {
           "path": "package.json",
           "bytes": 3658,
-          "sha256": "858f8ce858d6daba6f652c17cac654753f39c65b8ae78577f98fcc880aa39b05"
+          "sha256": "7cbf4774c8d9df72414256e059455e0cd12cc4dfff3628019f07a1607852ae83"
         }
       ],
       "installationGeneratedBinShims": [
@@ -6557,18 +6567,1355 @@
       ]
     },
     {
-      "package": "@cornerstonejs/metadata@5.18.1",
-      "name": "@cornerstonejs/metadata",
-      "version": "5.18.1",
-      "gitHead": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+      "package": "@cornerstonejs/dicom-image-loader@5.19.4",
+      "name": "@cornerstonejs/dicom-image-loader",
+      "version": "5.19.4",
+      "gitHead": "eee712024c5c8089f3a7bbbb654cadedd4baab6d",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
       "registry": "https://registry.npmjs.org",
-      "integrity": "sha512-CDXk3kPb3zfL+acnw6PKZlyuJd+uQXbl+ijxIiVhVgSEfnCezo9zDRMj5Vi6lSDewsowlTVeqZWd6EIQRAB/Eg==",
+      "integrity": "sha512-U3i0VloGqIfXmigIPFbevvXJzNnyoFXJs99qOASAAdtUeQ+Ry/mA5yuZg/duipLlEjtX7EL/JV7uStyghpvoCA==",
       "buildProvenance": {
         "predicateType": "https://slsa.dev/provenance/v1",
-        "gitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
+        "gitCommit": "5ea535b37d3414f599037d11636c24ae52db821c",
         "workflow": ".github/workflows/publish.yml",
-        "invocation": "https://github.com/cornerstonejs/cornerstone3D/actions/runs/43348155588/attempts/1"
+        "invocation": "https://github.com/cornerstonejs/cornerstone3D/actions/runs/44107698950/attempts/1"
+      },
+      "files": [
+        {
+          "path": "LICENSE",
+          "bytes": 1096,
+          "sha256": "01323491c1f1f1f8f738fa558e96ab0b07f1ca9ba70c79675e0a4beb41f156c1"
+        },
+        {
+          "path": "README.md",
+          "bytes": 88,
+          "sha256": "116629ee34066f8996cae10d107d1f96e638a6cff1fc138761801ea822239cef"
+        },
+        {
+          "path": "dist/esm/codecs/jpeg.d.ts",
+          "bytes": 658,
+          "sha256": "437a7860a4e99ffef4a7bb2a64b69973e243fa7a5d6ee69683e437575ae7496b"
+        },
+        {
+          "path": "dist/esm/codecs/jpeg.js",
+          "bytes": 34414,
+          "sha256": "78f36930f6aae037fc1cc2a30ac40cf21813e357d9f1790d0a0815ff7526e660"
+        },
+        {
+          "path": "dist/esm/constants/index.d.ts",
+          "bytes": 83,
+          "sha256": "a4acbadbe9b3c14bdf04f2e2cd1fdf091a6e2e725b9ddb1357aecf9596b25e83"
+        },
+        {
+          "path": "dist/esm/constants/index.js",
+          "bytes": 83,
+          "sha256": "bd72345c6a876195a58a0372f8a7af7a83c069ef441099f80a9ea797e1d2e9b9"
+        },
+        {
+          "path": "dist/esm/constants/transferSyntaxes.d.ts",
+          "bytes": 2786,
+          "sha256": "cfd2e0ae06498e9a807a63a860c193fa5298c3e0b94c7bc2cf86e2a502c5e94c"
+        },
+        {
+          "path": "dist/esm/constants/transferSyntaxes.js",
+          "bytes": 3447,
+          "sha256": "db21e903ddddc5553f139646d80e98ee12f63d25ea46ab01e89164d85052bd41"
+        },
+        {
+          "path": "dist/esm/decodeImageFrameWorker.d.ts",
+          "bytes": 261,
+          "sha256": "72d97a8d9d6b71348664118b290ca7110ea5d8200a2d2aa6167e5f37452f1150"
+        },
+        {
+          "path": "dist/esm/decodeImageFrameWorker.js",
+          "bytes": 13860,
+          "sha256": "2c4638d303e02f3893ed4124cf5a9c1cec859c5ec1aa86bfb877043996640781"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertPALETTECOLOR.d.ts",
+          "bytes": 363,
+          "sha256": "7fd7cadc0124fa981cb118eccfcfe2e8e1d8c0849f2b548d7f62a212eae8a57c"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertPALETTECOLOR.js",
+          "bytes": 2578,
+          "sha256": "997b15f69bc95e97eefb011be10ce566c6d3ea36947f9d3b07883c935a9bd99b"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertRGBColorByPixel.d.ts",
+          "bytes": 144,
+          "sha256": "ea178e5139839d83af7a9b1a002c904d91d50610f3f468841374a5ad6fc206b4"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertRGBColorByPixel.js",
+          "bytes": 778,
+          "sha256": "182e8fefdf8d5341d6a7115b24f89caeea34076250094a2c6c1529333333ca8c"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertRGBColorByPlane.d.ts",
+          "bytes": 144,
+          "sha256": "ea178e5139839d83af7a9b1a002c904d91d50610f3f468841374a5ad6fc206b4"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertRGBColorByPlane.js",
+          "bytes": 1043,
+          "sha256": "6d945dd708b971c35aef82e88703f18be1f3ff74e5712b951adfb364de1d224d"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertYBRFull422ByPixel.d.ts",
+          "bytes": 144,
+          "sha256": "ea178e5139839d83af7a9b1a002c904d91d50610f3f468841374a5ad6fc206b4"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertYBRFull422ByPixel.js",
+          "bytes": 1964,
+          "sha256": "7b2b90e8eda05d29b9bbb3fbdc4e294a8dfa516ab7668b158512b71cb424d227"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertYBRFullByPixel.d.ts",
+          "bytes": 144,
+          "sha256": "ea178e5139839d83af7a9b1a002c904d91d50610f3f468841374a5ad6fc206b4"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertYBRFullByPixel.js",
+          "bytes": 1346,
+          "sha256": "454d69ea80df2d11bf6ba481167c74093efc77541dc963d2569d85d7057adc4c"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertYBRFullByPlane.d.ts",
+          "bytes": 144,
+          "sha256": "ea178e5139839d83af7a9b1a002c904d91d50610f3f468841374a5ad6fc206b4"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/convertYBRFullByPlane.js",
+          "bytes": 1398,
+          "sha256": "9b2826ce19a2d34701ba3181eb9614b82c4fa314e6b8916aee1580c7f3efedaa"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/fetchLUTForInstance.d.ts",
+          "bytes": 148,
+          "sha256": "58ee29284720bd33be41be5527ad1cdcfb442150d21714b0f174a69aab803257"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/fetchLUTForInstance.js",
+          "bytes": 1020,
+          "sha256": "60de6efe5c8566afebaef70521eb533d2f42d039b30b62d8021e9e129b2ba7aa"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/fetchPaletteData.d.ts",
+          "bytes": 176,
+          "sha256": "202b39f3cd04c5c9ab41a4090a10cb2eeb60cc72a723e76f3172199ed8f5e87c"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/fetchPaletteData.js",
+          "bytes": 599,
+          "sha256": "879793be0a6cf921717958735d21ceafb65b6c9dc457ba064576edb05f01bf22"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/index.d.ts",
+          "bytes": 778,
+          "sha256": "949268ba53b0983e98afbe9d02d420e270f3b446b10a281312b99c3d59ffa5d6"
+        },
+        {
+          "path": "dist/esm/imageLoader/colorSpaceConverters/index.js",
+          "bytes": 779,
+          "sha256": "e7054fbb989ea587d00d85e79335eb20d1f841bdcc9456c8e1455f28bd10e762"
+        },
+        {
+          "path": "dist/esm/imageLoader/convertColorSpace.d.ts",
+          "bytes": 98,
+          "sha256": "a3fe6eb00d99c6d4ba8a446ee5887a8078ab827f731827c9526883a59c7dbebe"
+        },
+        {
+          "path": "dist/esm/imageLoader/convertColorSpace.js",
+          "bytes": 1767,
+          "sha256": "963922d061d25f2bc488dee81c408e5167c5d2f4bde8f24feff6232980fc7d1f"
+        },
+        {
+          "path": "dist/esm/imageLoader/createImage.d.ts",
+          "bytes": 386,
+          "sha256": "adcc57bf0166895de94c2c59ba59fc8a5b227717c47432177943e5834c8ebbd3"
+        },
+        {
+          "path": "dist/esm/imageLoader/createImage.js",
+          "bytes": 16888,
+          "sha256": "276b51d8813c23ba0e4de43bb32a31a3b9af7eb3ac49937e05b78059585a765e"
+        },
+        {
+          "path": "dist/esm/imageLoader/decodeImageFrame.d.ts",
+          "bytes": 245,
+          "sha256": "9d7f4ab9eb29a1428492ced51f8f3966e3a8e9dfd791b040f1199079d862ac1d"
+        },
+        {
+          "path": "dist/esm/imageLoader/decodeImageFrame.js",
+          "bytes": 3920,
+          "sha256": "4d7a15182fc450e507fe326483c508f85c9bc4d277488895f167c1ba3e59d1e8"
+        },
+        {
+          "path": "dist/esm/imageLoader/decodeJPEGBaseline8BitColor.d.ts",
+          "bytes": 295,
+          "sha256": "9aab47c7d75c0598106c13418cf39a1f6180309d8d2094fc064c0d5a4c7ad093"
+        },
+        {
+          "path": "dist/esm/imageLoader/decodeJPEGBaseline8BitColor.js",
+          "bytes": 2497,
+          "sha256": "ea140e91326701d9b91fc770caaf2e2a32cf863f1f07ea8713293b77d61bc32e"
+        },
+        {
+          "path": "dist/esm/imageLoader/getImageFrame.d.ts",
+          "bytes": 148,
+          "sha256": "94a535420fb500b5d0be64c6d6d644e3f3fb6bfeaf26da718ebf44d4cfa9fec2"
+        },
+        {
+          "path": "dist/esm/imageLoader/getImageFrame.js",
+          "bytes": 1419,
+          "sha256": "30a989e57e64c53e2bfc0ff6f03f52810e0ab85f40f0566b0e15d61f699986e5"
+        },
+        {
+          "path": "dist/esm/imageLoader/getInstanceModule.d.ts",
+          "bytes": 185,
+          "sha256": "a4515c2ffe81794a59ca4d30959bcf830eb8bb0db9524266b7f74fb4dbd25f0f"
+        },
+        {
+          "path": "dist/esm/imageLoader/getInstanceModule.js",
+          "bytes": 1253,
+          "sha256": "858960d973dcc315ab9cc92cc2be4d25480f016423eab929f62765526bb33848"
+        },
+        {
+          "path": "dist/esm/imageLoader/getMinMax.d.ts",
+          "bytes": 110,
+          "sha256": "7c358e1a9ae5878e3147daebcbc4fee1901a5cbbe4011d227c4952f132c44674"
+        },
+        {
+          "path": "dist/esm/imageLoader/getMinMax.js",
+          "bytes": 426,
+          "sha256": "40d1b162446cba8c3edf6831bde5ade671d30a730370f8ef2033931636536db1"
+        },
+        {
+          "path": "dist/esm/imageLoader/getScalingParameters.d.ts",
+          "bytes": 259,
+          "sha256": "7dc1226f632f73235aa08f9b9b8572cb989caf82a44158c86888ef6bdcec018a"
+        },
+        {
+          "path": "dist/esm/imageLoader/getScalingParameters.js",
+          "bytes": 1602,
+          "sha256": "03ce681fcf724f048d954e864f925573344d9988850d023b5e2f31d179802e82"
+        },
+        {
+          "path": "dist/esm/imageLoader/imageIdToURI.d.ts",
+          "bytes": 63,
+          "sha256": "35dcdefd94b9c047f5721e051c21baa4420e8ed76678f5cc61c9df1366c0e7ab"
+        },
+        {
+          "path": "dist/esm/imageLoader/imageIdToURI.js",
+          "bytes": 141,
+          "sha256": "6924a625ab69a46a343d8ecd6d9a6aebb7412740e53122c2fe7633e4a0ea14a4"
+        },
+        {
+          "path": "dist/esm/imageLoader/index.d.ts",
+          "bytes": 6606,
+          "sha256": "85a1de175abc711ae5708e87eb8d4742a81c3374ea4407fd08ce1c6ea378835b"
+        },
+        {
+          "path": "dist/esm/imageLoader/index.js",
+          "bytes": 2286,
+          "sha256": "9dd5a245a326c63d782e3aa68cdcc36b7ccd124f16a9738aac8caf9a842fd882"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/getRetrieveValue.d.ts",
+          "bytes": 93,
+          "sha256": "0cddce85440ca54101eb3eab21b3c707073a6344bcb20d1c600a366dd9e083c3"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/getRetrieveValue.js",
+          "bytes": 311,
+          "sha256": "d7a31bd3451cb22b7a5b8b2e8f82bb1b417fd3a891f4d62199d0daa5e9b37833"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/index.d.ts",
+          "bytes": 422,
+          "sha256": "e1aa11582463425953bb160361a8167aeb5adcd6c7b2948fc5c13f7abb9915e6"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/index.js",
+          "bytes": 336,
+          "sha256": "532d0fb04461efb8c03433b69c77bf4ad77cdcbb301739b3a379e6edde517cf8"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/options.d.ts",
+          "bytes": 181,
+          "sha256": "1f9f0c9da198822f83b94b0e6e11fb8612b86ffd2e04376b86f19a9722c810d0"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/options.js",
+          "bytes": 558,
+          "sha256": "aa4d8853aaa3a53224b1cef7d11193e50dc6f28eadd238f06557661de5e9a8eb"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/rangeRequest.d.ts",
+          "bytes": 509,
+          "sha256": "c40b125d4083cdd33637cf72e683a47bfece91cb8b94ee645d4e24e9de05cecb"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/rangeRequest.js",
+          "bytes": 5231,
+          "sha256": "fd50ba629cb1996d8d0d7540c103c1d4a069d0d94eb0d189ba942bc41c57ebc1"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/retrieveDefaults.d.ts",
+          "bytes": 162,
+          "sha256": "bd9af07604c39e05508392798a1c44ff4dda2db0b4be9bcd7d03779f4037cb4a"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/retrieveDefaults.js",
+          "bytes": 138,
+          "sha256": "d63d8ddf2d488000ae5e629f9804303ae4cb8217b908a876dde910eee9103bd8"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/streamRequest.d.ts",
+          "bytes": 428,
+          "sha256": "04604c54928921cfc3032051713b0bac6ee64f37ed198fc42a2bbb1998afb871"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/streamRequest.js",
+          "bytes": 4612,
+          "sha256": "49489f6dea4ae8bb1f6c460e8ffe609f45adab57cf3006a89a82fa6140635178"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/xhrRequest.d.ts",
+          "bytes": 291,
+          "sha256": "5ede2a32ad83dec08761d5c329dbfaf0bf28d1ee1ab6e50addf980e96b261a54"
+        },
+        {
+          "path": "dist/esm/imageLoader/internal/xhrRequest.js",
+          "bytes": 3725,
+          "sha256": "344ed7c7dc8d4d7afdaf71f026b0661095a2aa086948878b8e3eefa47e822a78"
+        },
+        {
+          "path": "dist/esm/imageLoader/isColorConversionRequired.d.ts",
+          "bytes": 77,
+          "sha256": "381eb2ec7bbf1ca1b4fb66b7e4f1d82570d63a2e365a1f6fbb0891adadf2cc8a"
+        },
+        {
+          "path": "dist/esm/imageLoader/isColorConversionRequired.js",
+          "bytes": 925,
+          "sha256": "819c30e0eca378bcc1aceef00150fe8a0945f4a53bba59400d92bd90b9f26f4a"
+        },
+        {
+          "path": "dist/esm/imageLoader/isJPEGBaseline8BitColor.d.ts",
+          "bytes": 196,
+          "sha256": "e4275792ddfe568a9b30a8130f66dfa3c63c9e4ef60e4760d5410960ea9b3cc1"
+        },
+        {
+          "path": "dist/esm/imageLoader/isJPEGBaseline8BitColor.js",
+          "bytes": 377,
+          "sha256": "55e7b33221a38b4ac0a3dcd977581b8f88870aca8484401432aa75b05fe2f6d5"
+        },
+        {
+          "path": "dist/esm/imageLoader/isModalityLutForDisplay.d.ts",
+          "bytes": 112,
+          "sha256": "884b4de1beb762733ea4982af8d1037a267634edb7c4d2ded1d9dc67bff88c3b"
+        },
+        {
+          "path": "dist/esm/imageLoader/isModalityLutForDisplay.js",
+          "bytes": 211,
+          "sha256": "6ed1920b01aaa461babc1b613265fb2bed8da15a840d050d6910e58192b38e8c"
+        },
+        {
+          "path": "dist/esm/imageLoader/isNMReconstructable.d.ts",
+          "bytes": 73,
+          "sha256": "641569cf222d6078530027805b853b16a89ec9f09379213992aab46a788f67d1"
+        },
+        {
+          "path": "dist/esm/imageLoader/isNMReconstructable.js",
+          "bytes": 143,
+          "sha256": "a6f1e1d6033fb217a17015eaeb96e3b3a300df6f2b564f651a7667a2f8500cb0"
+        },
+        {
+          "path": "dist/esm/imageLoader/prefetchPart10Instance.d.ts",
+          "bytes": 261,
+          "sha256": "3db07a00e2d97c4c7d4777da609be027b2b59f3176324723b5483de10b36db20"
+        },
+        {
+          "path": "dist/esm/imageLoader/prefetchPart10Instance.js",
+          "bytes": 258,
+          "sha256": "308f21bf25d2d4aa7c41618e14ac42ff4f0796508890013f8334350cdc23849f"
+        },
+        {
+          "path": "dist/esm/imageLoader/registerLoaders.d.ts",
+          "bytes": 128,
+          "sha256": "11c5e356c30204308f2682621f12fbfe3fcf71bb4b5fd39b086a7d6c72c2c88a"
+        },
+        {
+          "path": "dist/esm/imageLoader/registerLoaders.js",
+          "bytes": 588,
+          "sha256": "2ad9b27118ac7fdc4523f96fc33c829eca50a0aa076b3219e5e4921c0f32591f"
+        },
+        {
+          "path": "dist/esm/imageLoader/removeAFromRGBA.d.ts",
+          "bytes": 232,
+          "sha256": "35cbc63c3f47dc43481f684063149af72d46acb5f7294bd9f27e1f5295a1958c"
+        },
+        {
+          "path": "dist/esm/imageLoader/removeAFromRGBA.js",
+          "bytes": 453,
+          "sha256": "6ac3704e63e6c763c40901fe661acbd62b7ff34510848c69a3bbbe50796995c2"
+        },
+        {
+          "path": "dist/esm/imageLoader/setPixelDataType.d.ts",
+          "bytes": 91,
+          "sha256": "09fd988bc581c2be27236bcdff35a5719758b49bc836a1280cb4d2b6e09e6924"
+        },
+        {
+          "path": "dist/esm/imageLoader/setPixelDataType.js",
+          "bytes": 560,
+          "sha256": "9455e177d31303a0d0c9abe7f1a6357a5abc35a160a4003f86776ca48e1f963e"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/combineFrameInstance.d.ts",
+          "bytes": 521,
+          "sha256": "9d87ee0bc4ac8ceaf698fc3216e8ba1cec8ceb00beac01f69cb5a47ba9c48c4d"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/combineFrameInstance.js",
+          "bytes": 2102,
+          "sha256": "e9e2bb5e219f958534a86d4de500ef6e58fa68ab5382e174f2ebf616acd25b94"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/extractMultipart.d.ts",
+          "bytes": 841,
+          "sha256": "1c4b1084ba8052b3e9f1aa7c5f31ec919023caf2280dc006bfe5d7050f9c7bf3"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/extractMultipart.js",
+          "bytes": 2644,
+          "sha256": "4617cc896cec17fc2ab7f07927d7f0198ed365db15ce4de1ae53c5bb0e452145"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/findIndexOfString.d.ts",
+          "bytes": 126,
+          "sha256": "4f8ef70b59d4429f944423e6083b05765452be5436d3499075db9d76a39503e1"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/findIndexOfString.js",
+          "bytes": 855,
+          "sha256": "0ebb974fb40ed0aa4dd7c2b80626d9df45874fe83f719d675c31e32642996320"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/getImageQualityStatus.d.ts",
+          "bytes": 224,
+          "sha256": "85732a7458a85665f64f3fdc319dfecd9331b003d338b6e8bdecb46384d4c96b"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/getImageQualityStatus.js",
+          "bytes": 401,
+          "sha256": "7ae8d409e9b34551fc73a09bf4d87cea2a2bc51aa4de7f05787544a937119775"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/getPixelData.d.ts",
+          "bytes": 1048,
+          "sha256": "a080212071feb9ba21b287af0438d93a79b4e3e16d958bc977f3e73a04e2fe3f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/getPixelData.js",
+          "bytes": 1565,
+          "sha256": "a991c015d13e629bd1cbc71bb6ea8e7cb60f9f7ad6ffeaf5733fb2549f702901"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/getTagValue.d.ts",
+          "bytes": 75,
+          "sha256": "321015c10f26644455473884910f8be931cc52259e24c0f493334c89a5eb93d1"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/getTagValue.js",
+          "bytes": 227,
+          "sha256": "e7b7099bbb957559a4814dde9225237f5f0d6a71181e0d0474ad8ad6c6d54196"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/index.d.ts",
+          "bytes": 1591,
+          "sha256": "e148b68de73419f0d508c0e66bfee45d9a2929e2153c70c1474207bdb111f37a"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/index.js",
+          "bytes": 861,
+          "sha256": "64b4e492dbb7214f0d13e6adbb501a5061c16f6f3953f25c3184720c981ee1ad"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/loadImage.d.ts",
+          "bytes": 1245,
+          "sha256": "0de67c53d4805f03e58e076369c6aa5979cc7be3a5054a5b5e45a7e5d45f385a"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/loadImage.js",
+          "bytes": 7010,
+          "sha256": "edb76d5ecf4966f31088a3a76a17bda574572485dc8f2acc8be4cd7af079eb2f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/loadImageFromRegistry.d.ts",
+          "bytes": 295,
+          "sha256": "d3cbe1242cf72bc0411ba8b548e5643e54a4c264490b6711cb0214fa39ca8b38"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/loadImageFromRegistry.js",
+          "bytes": 2150,
+          "sha256": "27752e85b065d82fe20a71003379681659d2a58f96062729025a59e70d0850c6"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/loadImage_test.d.ts",
+          "bytes": 11,
+          "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/loadImage_test.js",
+          "bytes": 1658,
+          "sha256": "46286c7b9249e37365a58f26fd81849a377c675b97f682d50ab80f58297023a2"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/ECGHelpers.d.ts",
+          "bytes": 586,
+          "sha256": "eb6327d4a1d1af935fa0462a569cf8775d248ed4f1dbade019227f5899e0fb70"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/ECGHelpers.js",
+          "bytes": 7667,
+          "sha256": "1031ab85dcc62af7e7db1cab08b29ad0568a0199105fd191ba3882d99339725e"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/NMHelpers.d.ts",
+          "bytes": 440,
+          "sha256": "7377dba8a4db31e3f32701e77cb04a5d748d6b6ae9fffb9115535e09264ffc12"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/NMHelpers.js",
+          "bytes": 1672,
+          "sha256": "458df2445d002f44a9ea39ec6003acbcaa5d64718270fd1c7a1d176e84ae8845"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/USHelpers.d.ts",
+          "bytes": 619,
+          "sha256": "42fb709afce182a661a6ea1bb845297e818cfbe9068279a8b62ceb712d181457"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/USHelpers.js",
+          "bytes": 2291,
+          "sha256": "c8278858666c61367650f7ef252653b9474539ad668c26d7bc581930bc8ec932"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/extractPositioningFromMetadata.d.ts",
+          "bytes": 217,
+          "sha256": "14a6d0f5d005b65895b44ac83f697748d7d1827026d1cab7d1b47024debeedf5"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/extractPositioningFromMetadata.js",
+          "bytes": 895,
+          "sha256": "943a91cf8c2af7a9bbea817880c12b9765458e6e50ffe4e7e4642bb437eea7a3"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getFirstNumberValue.d.ts",
+          "bytes": 117,
+          "sha256": "c0046d403e50400101d8f327d346ccd45bc60aff635af01bc068f6c198201e88"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getFirstNumberValue.js",
+          "bytes": 221,
+          "sha256": "69e4f997ef2dee7d9aa7fe10e4dcb358ab27a20193286bff19dfb0c8d6488626"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getNumberString.d.ts",
+          "bytes": 213,
+          "sha256": "5ff7fe7e83dafed4e633653978ad44253e74a592c2d57fccd499b8c64cce9e3d"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getNumberString.js",
+          "bytes": 278,
+          "sha256": "bd4e414f39b2bd5154a8cdd7ec1519119b5ea9bd9fa9ff647a5c6d9c18cf2466"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getNumberValue.d.ts",
+          "bytes": 190,
+          "sha256": "79d05e10e80ec1b200d9dc516f530d7b1e37b3dc9e49a866358751f91e3bf44f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getNumberValue.js",
+          "bytes": 240,
+          "sha256": "db94ac8c442a9fd50c7739958216d9ffe46cfe0e63528bd1eba00a5bede4ed1a"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getNumberValues.d.ts",
+          "bytes": 202,
+          "sha256": "70fb5a526c27ec4c2c146e916fdc755957067e195e767eb4e3620581175705e4"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getNumberValues.js",
+          "bytes": 477,
+          "sha256": "ff1bbe9e62ade6eb0e278781b625468b90260777817e23532a3e92a521dd1bb8"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getOverlayPlaneModule.d.ts",
+          "bytes": 162,
+          "sha256": "9abfcfe5b7b457f02082cf6c53d28ac9a0aed6ab36d7bb6c4ae32241cc191934"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getOverlayPlaneModule.js",
+          "bytes": 1550,
+          "sha256": "6e057b9551adcd6210ce069d1ff124603f43279d9a1298bc34b8041762eb09cb"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getSequenceItems.d.ts",
+          "bytes": 177,
+          "sha256": "4594cae67f7785674325f581f0e3dbb0317017b7ee2c045f8cb985f41484a95f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getSequenceItems.js",
+          "bytes": 544,
+          "sha256": "312a66d40766f798bc3ffff93cc00030fb80d54410b4c604d3a41fd63c33f951"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getValue.d.ts",
+          "bytes": 231,
+          "sha256": "8d08f12b3678ea67c6811a61c5930859b6f35873d24e9dd42c62f9656a20c79b"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/getValue.js",
+          "bytes": 358,
+          "sha256": "b2561b1b400fbbc50ced501702846c376375520a01efbf2c0cbc1c38837d9870"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/index.d.ts",
+          "bytes": 440,
+          "sha256": "92bd6b9e44a72a9a7eebfe022027a7cd6db62d05b8c3dd32a5a49738b27a8a2b"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/index.js",
+          "bytes": 440,
+          "sha256": "92bd6b9e44a72a9a7eebfe022027a7cd6db62d05b8c3dd32a5a49738b27a8a2b"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/metaDataProvider.d.ts",
+          "bytes": 473,
+          "sha256": "53de60692dbcadcbb8ae2f5a2feee3446781ac99f394d2184158d40ffc3d3798"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaData/metaDataProvider.js",
+          "bytes": 12121,
+          "sha256": "56d7bdc93c13d2b53ae07fba2432e7ab13e41b6febad189e36c45b285b891d36"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaDataManager.d.ts",
+          "bytes": 694,
+          "sha256": "3071e8fcdd62e5f989cc97cab0d983cd0188c2e7e2a3cd35939dbaed7e2d6916"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/metaDataManager.js",
+          "bytes": 2421,
+          "sha256": "28f7593d27f04cac4bbd91eaf7830334019944f62846c73c87aa1cd03afcf12c"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/register.d.ts",
+          "bytes": 88,
+          "sha256": "862c6b82dd4f9b86b6140ea610898c984ba68dde1caf765191afc830ffe3c689"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadors/register.js",
+          "bytes": 691,
+          "sha256": "e4ea230277f329349ea7618a5bd9cefc8e65923bac1a6077e7d76d94df7d6460"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/combineFrameInstanceDataset.d.ts",
+          "bytes": 890,
+          "sha256": "7674d4e3a248be25fcad6d84ddaf07bb98324149d26afa5d442651f4bf33dddd"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/combineFrameInstanceDataset.js",
+          "bytes": 2650,
+          "sha256": "5f2952c4f624f6f9875d7728c95e7f69c1acf6ef3c85e992d28469ec71816690"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/dataSetCacheManager.d.ts",
+          "bytes": 1170,
+          "sha256": "ea18393d9d6598869b3fed4d5a568a09540a3233504fec5a4a14f12750f4742e"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/dataSetCacheManager.js",
+          "bytes": 4863,
+          "sha256": "8800e87951934c5808d0504c7f465a9708cf1615d856d88caa040511500950eb"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/dataSetCacheManager_test.d.ts",
+          "bytes": 11,
+          "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/dataSetCacheManager_test.js",
+          "bytes": 418,
+          "sha256": "6daa9969b35ffe495a49df81cea1afe0a16bd78cc8865eb021641d05dc39291f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/dataset-from-partial-content.d.ts",
+          "bytes": 337,
+          "sha256": "84d4bfc7d7a1cdebd53eaf858711209a3247fdeeb459365fa4979a7de85ec85e"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/dataset-from-partial-content.js",
+          "bytes": 2302,
+          "sha256": "3278c3b11e33242ed6d303351e32f10be4ed589f2614524e29bb545228305b2d"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/fileManager.d.ts",
+          "bytes": 311,
+          "sha256": "e09aa4adc39cb0684717b937032782a740d65971f2ec19cad2f14f7d9b92fcec"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/fileManager.js",
+          "bytes": 324,
+          "sha256": "18c3057712e05199469417d153f07b72f79135779dab1841db0da5259e20f222"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/getEncapsulatedImageFrame.d.ts",
+          "bytes": 156,
+          "sha256": "f2608822933a644e8dbb6a443af6be232089e438d6b81e1254639b381c5759c7"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/getEncapsulatedImageFrame.js",
+          "bytes": 1832,
+          "sha256": "75826fbf730929d9827ea925377a293580117ff74ad328b93abc478924420bf5"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/getPixelData.d.ts",
+          "bytes": 166,
+          "sha256": "797411cb0971fc31a7456bf0d427a63e697b9743ebd4fa24ba8a6d73eae6e4b0"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/getPixelData.js",
+          "bytes": 545,
+          "sha256": "646e5fcd91bdfe29b09969293f05b05037463936123d2eac34f4283d33368ff6"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/getUncompressedImageFrame.d.ts",
+          "bytes": 181,
+          "sha256": "42d499124e848195059959f23ae0e2dc6ed6cc9c484f76e8eb2c1a2005c8c230"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/getUncompressedImageFrame.js",
+          "bytes": 2487,
+          "sha256": "47299331cfe4f617311890d24c4973448fafaaac4f145f8d7a83a6f9186e28e1"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/index.d.ts",
+          "bytes": 3191,
+          "sha256": "3f73aed9d4a4ebd4ec018ccfe6fe80ce698452c9516152f46e6211e31857ce55"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/index.js",
+          "bytes": 1550,
+          "sha256": "ce64fa47b504f81688f3198cd0e7e795df48a82683d21a888badd58e4a425089"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/loadFileRequest.d.ts",
+          "bytes": 101,
+          "sha256": "2d4f6e321cb4d0a907b279898d0e0a0a6ebf9e5a0f91c05d648b14eb5cb48e8f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/loadFileRequest.js",
+          "bytes": 638,
+          "sha256": "988ae40bb86c6e31875e45cd38111f50ef9955fda12a21c6499a2d7250fa400e"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/loadImage.d.ts",
+          "bytes": 1039,
+          "sha256": "dba0115817ec8c0940b69c87273379dc304a716101b5615118a5b1bac7b46bed"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/loadImage.js",
+          "bytes": 7583,
+          "sha256": "080548a73bff3e6b668e218d749aec0b9bc76601b76096de72d79215a1eb48d7"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/loadedDataSets.d.ts",
+          "bytes": 235,
+          "sha256": "802efd1afdeaea44587ba667bb7d52f3aad75221ae679b8489fed181fae0631f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/loadedDataSets.js",
+          "bytes": 137,
+          "sha256": "d806fc3b89d3b200e0ac2f372c6c441ccdd3a5272401b696a6f8b385a8bcfab6"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/USHelpers.d.ts",
+          "bytes": 92,
+          "sha256": "148c99e6933446b2b960ae108bd7d5459f9fd741f3ae9ff8ef8911ea77fe949f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/USHelpers.js",
+          "bytes": 1958,
+          "sha256": "ff30c50ba8a1c7ec78bb4e621faf08a0a2cdef096ebe149bfecbf615ba83f499"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/extractPositioningFromDataset.d.ts",
+          "bytes": 597,
+          "sha256": "6e23b46aaf7fd7a48a435339478a570da17d6c2e73d559aee5a55c218d5c645a"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/extractPositioningFromDataset.js",
+          "bytes": 3476,
+          "sha256": "eda3d247e8690b896477702875d74ac77822a88a27a1a754bcf97f06b8e0f63f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getImagePixelModule.d.ts",
+          "bytes": 219,
+          "sha256": "fed09ea5a716570ea58875e343a3a110f175ba533c38894e26190e6a43da1f96"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getImagePixelModule.js",
+          "bytes": 3739,
+          "sha256": "bfa1e302c88460920bf6c0c40d0b76d244f41ef7ccce1ae770cfaa5ac34b6da8"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getLUTs.d.ts",
+          "bytes": 213,
+          "sha256": "2d67fb6a7f7ee895f735b0d0bdfd1a8e3d2e12d3206887075e87b6c8e5989a8d"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getLUTs.js",
+          "bytes": 1281,
+          "sha256": "441ba18e44f0e26e6c2424c7b65c1de929375e86e604cf71fb61fb1b684c94e2"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getModalityLUTOutputPixelRepresentation.d.ts",
+          "bytes": 185,
+          "sha256": "5793708e0a5804d1caee6556b03b31b7da5a310edd06ba6d720093eb74d02bd7"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getModalityLUTOutputPixelRepresentation.js",
+          "bytes": 1153,
+          "sha256": "ed761909cabba020a26935fcb49c4015cbdb19fb118bdc868f67d93624c5aa85"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getNumberValues.d.ts",
+          "bytes": 175,
+          "sha256": "525fa2b450bb496bd359fdbf622b03fdbe3642fd8fa2b36dda6d8d7fa33def86"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getNumberValues.js",
+          "bytes": 445,
+          "sha256": "ab818eaaf9ef345ae46f5462a7b3c94ef66ddf0585554e6d9ca9bbeee703d556"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getOverlayPlaneModule.d.ts",
+          "bytes": 136,
+          "sha256": "b81ad8598717ee5d45482b93c59550516e3c55c1a5e18a35ad98ee1194b88ec3"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/getOverlayPlaneModule.js",
+          "bytes": 1396,
+          "sha256": "d4b6e45f607f605ad2814c4525180f5d5e7d6797cb028bf84a3bc9ca3193688f"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/index.d.ts",
+          "bytes": 398,
+          "sha256": "c1273c2bb9f00976893b87a67a42043bd60eda3fcb7559d038d633d1e85426c9"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/index.js",
+          "bytes": 398,
+          "sha256": "c1273c2bb9f00976893b87a67a42043bd60eda3fcb7559d038d633d1e85426c9"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/metaDataProvider.d.ts",
+          "bytes": 247,
+          "sha256": "0bb72f7fee6ddd1aec1eeae76b6fa7ee11ab09214abb010d818f95ecb3813fed"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/metaData/metaDataProvider.js",
+          "bytes": 9842,
+          "sha256": "d00da76827f2b34e7d7642540080ebeff8a80608be1eafd62a8de33550742cce"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/parseDicomWithInflater.d.ts",
+          "bytes": 333,
+          "sha256": "dd0bd6c03996cc6f27027451cd5e68ea3e37a4fb287d4f33f4a127f91e651864"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/parseDicomWithInflater.js",
+          "bytes": 607,
+          "sha256": "f768a9114c27066a3d839b9409ded28842727490902cfccca937dcdf287d46ed"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/parseImageId.d.ts",
+          "bytes": 223,
+          "sha256": "872d44b3ee787a4b5918f63a112323d3ca5b838d66a2a69248d3951370080420"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/parseImageId.js",
+          "bytes": 640,
+          "sha256": "a2eb7c40e6590943027a48a537011645f40934dbcf71f05930c5556b8c7050ed"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/register.d.ts",
+          "bytes": 168,
+          "sha256": "58e8e345ac88fb1949941fec218cf6e3ab347f0a140eb981750300f42b1d39b7"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/register.js",
+          "bytes": 1111,
+          "sha256": "779bbff6f72010e81f8471e08f9f72666f00f05f36cc6a4784f7f014393d9d37"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/retrieveMultiframeDataset.d.ts",
+          "bytes": 584,
+          "sha256": "a898496329250330da9174ce35d357ee2ca059acdf0034059f3142dc6b1e8883"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/retrieveMultiframeDataset.js",
+          "bytes": 1618,
+          "sha256": "b7e7a002ac0a3fead1e278f7d77252f7996a6dba7895195d9342e1a505b0fbcf"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/unpackBinaryFrame.d.ts",
+          "bytes": 196,
+          "sha256": "132017e680a1cebf4cc24e4f7aaf60a3b839329b0436ccaf65803db827c400c2"
+        },
+        {
+          "path": "dist/esm/imageLoader/wadouri/unpackBinaryFrame.js",
+          "bytes": 486,
+          "sha256": "0c755eaabcfaf7a902c644f8fad12e1b3f6c99d98e6f0c252b6f0eb6e2fc9d3d"
+        },
+        {
+          "path": "dist/esm/index.d.ts",
+          "bytes": 8344,
+          "sha256": "14ef14286a9fe95c469748540a3d9464cb187a5a56765c81207394ff1dbee700"
+        },
+        {
+          "path": "dist/esm/index.js",
+          "bytes": 2425,
+          "sha256": "13fa124b7c1b54ea1972d1e22ae201e8755eade6b37fa048e76ff378e49edd9a"
+        },
+        {
+          "path": "dist/esm/init.d.ts",
+          "bytes": 130,
+          "sha256": "c8a8a5a215942de6ceaf7ba97786652c4d2feebb2b19d1700bbd4bf9c405e994"
+        },
+        {
+          "path": "dist/esm/init.js",
+          "bytes": 903,
+          "sha256": "28e505888b4dcc999edf1bda0dbc2d4ab814feaab469416d8d84a66bd03e125c"
+        },
+        {
+          "path": "dist/esm/package.json",
+          "bytes": 23,
+          "sha256": "3ca9d4afd21425087cf31893b8f9f63c81b0b8408db5e343ca76e5f8aa26ab9a"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeBigEndian.d.ts",
+          "bytes": 244,
+          "sha256": "4ab108319e7b1028777669ca4168e06e36bfc720bd1785e47da00612cd99dd48"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeBigEndian.js",
+          "bytes": 978,
+          "sha256": "afcf12398f71e741282c55523eed8cadeecf4881efbf0c0458545b63d64f190e"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeDeflatedFrame.d.ts",
+          "bytes": 252,
+          "sha256": "5fc557ecdeefd90234b10f21b3ec9002c1d8f0b44752fc6f208c81222075da14"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeDeflatedFrame.js",
+          "bytes": 605,
+          "sha256": "5b5c3bdffc6de9539b043f28c5519231cb4096f03bc4da534c26bdef6a8d3265"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeEncapsulatedUncompressed.d.ts",
+          "bytes": 274,
+          "sha256": "d78fc839a19c0a5644803931d9aebdb265b041405eed2153dc66261e9dd90088"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeEncapsulatedUncompressed.js",
+          "bytes": 356,
+          "sha256": "86e0ff5b57436ebb0153a5e29531dcd9a31b1db101fc6d9da1619713a15b6713"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeHTJ2K.d.ts",
+          "bytes": 320,
+          "sha256": "864f76e811256eb1798230bc69b6c0d5958a2777f673570aa7765b5f5c45f47f"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeHTJ2K.js",
+          "bytes": 4067,
+          "sha256": "6994110c3ee9c4bd5e6da1d266600252509c6352e96015169fd17dcb7f3f62ad"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEG2000.d.ts",
+          "bytes": 335,
+          "sha256": "b25c289237a50be39a7bc5b3a0365691e0abdb57b87f2e731dc4635b6e7d1752"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEG2000.js",
+          "bytes": 3280,
+          "sha256": "3de4acd1d3b9ae6429f2081f154f06fe9cf72ca9db967d9eb1fc75b769699b29"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGBaseline12Bit-js.d.ts",
+          "bytes": 426,
+          "sha256": "86847b51048ceacee31767132f700f5dce59b5cb39f7d0da900a3923b8cc4dcb"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGBaseline12Bit-js.js",
+          "bytes": 1129,
+          "sha256": "8300b212017a13eb7eea297d1259a11dc1392f45547eb673efc62ebd7fdd282a"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGBaseline12Bit-wasm-not-yet-working.d.ts",
+          "bytes": 11,
+          "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGBaseline12Bit-wasm-not-yet-working.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGBaseline8Bit.d.ts",
+          "bytes": 404,
+          "sha256": "e663cbb31d75682e95d648eeeed382223a38f3654fca282413a8f0439e59604c"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGBaseline8Bit.js",
+          "bytes": 2106,
+          "sha256": "e5e7c936fd7c422f6d55a0bb04f959b342c0fa572b87f8bf90a3e3d72a10cfc4"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGLS.d.ts",
+          "bytes": 335,
+          "sha256": "38f923aba746b25c1fe7724bea2925105135632e5502f4ab65eaf99041b93567"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGLS.js",
+          "bytes": 2577,
+          "sha256": "ec8c62e0aedb0292bb26973b2e37cd08469ca2128dfa3545d7fa76d99334ced3"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGLossless.d.ts",
+          "bytes": 406,
+          "sha256": "d71e8ba7b47c9d21dddf75dfcbf0870429184a73b249cff8d330823a6fb33038"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGLossless.js",
+          "bytes": 1383,
+          "sha256": "c771422019a2a969a623c3df3562a8ccb4ace0dc35ad4094cd79b299550ff0b1"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGXL.d.ts",
+          "bytes": 335,
+          "sha256": "b25c289237a50be39a7bc5b3a0365691e0abdb57b87f2e731dc4635b6e7d1752"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeJPEGXL.js",
+          "bytes": 2443,
+          "sha256": "e3697196ad44d4bb13050997be5945f5496a4030f22b1c355d57126301470d08"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeLittleEndian.d.ts",
+          "bytes": 250,
+          "sha256": "4cc2c639e2e35cfcdf7b2f158ca29029e9cc0098430533ebf61dc4be409ae9df"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeLittleEndian.js",
+          "bytes": 1538,
+          "sha256": "13502ee47e141f9b85abe78d74afe4e6aed1a5ce2d2e7fc3b91d1a0256199e9d"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeRLE.d.ts",
+          "bytes": 358,
+          "sha256": "d5150083c2c954de47114481ace8a29744197e02d1432bcc2289a535cb4743dd"
+        },
+        {
+          "path": "dist/esm/shared/decoders/decodeRLE.js",
+          "bytes": 6106,
+          "sha256": "a8bce28844a2ff5239374ab252156f6f23b3e9c716a6b67e70a1cedc5a5af38e"
+        },
+        {
+          "path": "dist/esm/shared/decoders/getPixelData.d.ts",
+          "bytes": 349,
+          "sha256": "12338397c330a5302fb504c9eb9bdf872762a44e6fe96c74c7d07e5b95989ada"
+        },
+        {
+          "path": "dist/esm/shared/decoders/getPixelData.js",
+          "bytes": 824,
+          "sha256": "2360ee213eb83c98fcfc09039f23da76631a8817984a3b7f6471605d31a79734"
+        },
+        {
+          "path": "dist/esm/shared/decoders/index.d.ts",
+          "bytes": 1655,
+          "sha256": "68201af016cc68ae8daf45c4e43fd1bed67437b58002fc4608b10ee8a8798ca5"
+        },
+        {
+          "path": "dist/esm/shared/decoders/index.js",
+          "bytes": 1553,
+          "sha256": "520def0040da9466f7b8c8f63b851bbaa5936534d5ea69491ae3684998268fa0"
+        },
+        {
+          "path": "dist/esm/shared/decoders/isSignedPixelData.d.ts",
+          "bytes": 131,
+          "sha256": "f416ad6b3508435e8f6a2a02abdb7226a0a35a4b7b6075875a6e101951d39f08"
+        },
+        {
+          "path": "dist/esm/shared/decoders/isSignedPixelData.js",
+          "bytes": 204,
+          "sha256": "03a7b96676dd90fa5264584cce71d9a636bf9280a8aec3cfdbf03cdf16399719"
+        },
+        {
+          "path": "dist/esm/shared/decoders/nativeFrameBytes.d.ts",
+          "bytes": 303,
+          "sha256": "92ab7f962b80276e51659b8211a95715eaf5d0d45a094eab89377c2ce0f8c0a4"
+        },
+        {
+          "path": "dist/esm/shared/decoders/nativeFrameBytes.js",
+          "bytes": 837,
+          "sha256": "804b130040700a184d0b757b37856c29c740e80080fcc3f67fc3c400c64c2f78"
+        },
+        {
+          "path": "dist/esm/shared/getMinMax.d.ts",
+          "bytes": 187,
+          "sha256": "e6335a274062ba18a669257c727e728dd2bcd92eea02c5beb3bf96dea90846ac"
+        },
+        {
+          "path": "dist/esm/shared/getMinMax.js",
+          "bytes": 437,
+          "sha256": "c898ab9ca7a1a11237832f9250d6d806230a93b166947dc703fed09ccb197cfc"
+        },
+        {
+          "path": "dist/esm/shared/getMinMax_test.d.ts",
+          "bytes": 11,
+          "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
+        },
+        {
+          "path": "dist/esm/shared/getMinMax_test.js",
+          "bytes": 324,
+          "sha256": "7de32b6681009b03c1da3929bb67d6249ef1e5767e49de86f7b0f32a01480bbe"
+        },
+        {
+          "path": "dist/esm/shared/getPixelDataTypeFromMinMax.d.ts",
+          "bytes": 264,
+          "sha256": "12c00d08d76d0859bffe642f4b375e4aeb7737addcdfabb321bd2f9b7eed7bfa"
+        },
+        {
+          "path": "dist/esm/shared/getPixelDataTypeFromMinMax.js",
+          "bytes": 909,
+          "sha256": "69303d2956c030c516811b1b9606a55900d311d1cdeb51385ffb3868bdf93ab1"
+        },
+        {
+          "path": "dist/esm/shared/isColorImage.d.ts",
+          "bytes": 70,
+          "sha256": "e1db60cab2e47520cedd1f664fa907c54dfff700943aa6a58930ecebfb998f58"
+        },
+        {
+          "path": "dist/esm/shared/isColorImage.js",
+          "bytes": 491,
+          "sha256": "b27612e16f0596e6b00b2a60d375b503e4234dcbad3dc46c3ea78aa6e8eb0dcf"
+        },
+        {
+          "path": "dist/esm/shared/scaling/bilinear.d.ts",
+          "bytes": 60,
+          "sha256": "8a706c1afc694135910103843f84ff05b52d3cd8675aef277299ad32438288a9"
+        },
+        {
+          "path": "dist/esm/shared/scaling/bilinear.js",
+          "bytes": 1338,
+          "sha256": "2c23b96f64bf350a15f5cfd031c9cafd35195d30e3506579986a2d916e6eab50"
+        },
+        {
+          "path": "dist/esm/shared/scaling/replicate.d.ts",
+          "bytes": 61,
+          "sha256": "6b49c799d34c3f3d4b45f3f5dc6f91e9ab4b0c073b64f2839d8e2f8e82cfc4f3"
+        },
+        {
+          "path": "dist/esm/shared/scaling/replicate.js",
+          "bytes": 840,
+          "sha256": "9b37ffe5ba5f73f0939adca6d4999e2b8811ef3aa2c6dc44b2f8f232e5d0b963"
+        },
+        {
+          "path": "dist/esm/shared/scaling/scaleArray.d.ts",
+          "bytes": 153,
+          "sha256": "68568c5a012b8d718af0ca97d8ff5c2db6feeb97044358fc1f6e118cdaaacc2a"
+        },
+        {
+          "path": "dist/esm/shared/scaling/scaleArray.js",
+          "bytes": 855,
+          "sha256": "8a02377e866d2444a89d3cc622d2f470fbb0d161a99d93d61d0e53eb349eea3e"
+        },
+        {
+          "path": "dist/esm/shared/wasmBasePath.d.ts",
+          "bytes": 337,
+          "sha256": "1893d0ded47a628ce4df8d92c2819e06ec4a52c489e4c9379772887f1b8b60de"
+        },
+        {
+          "path": "dist/esm/shared/wasmBasePath.js",
+          "bytes": 811,
+          "sha256": "f22ecbd146010d22d1653e1aaa05fb8079781304c2592100df53bcb3ba98ccc7"
+        },
+        {
+          "path": "dist/esm/types/DICOMLoaderDataSetWithFetchMore.d.ts",
+          "bytes": 307,
+          "sha256": "386eeea5b031fa35cb258ac59dcb520aef45b30a9ad38db07a549f6d81009cd5"
+        },
+        {
+          "path": "dist/esm/types/DICOMLoaderDataSetWithFetchMore.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/DICOMLoaderIImage.d.ts",
+          "bytes": 384,
+          "sha256": "52a3960f8edd0ecb77c2aa63fd2fb9145c990119e7fb57a793af2c5d0bc29be1"
+        },
+        {
+          "path": "dist/esm/types/DICOMLoaderIImage.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/DICOMLoaderImageOptions.d.ts",
+          "bytes": 748,
+          "sha256": "77e3f1059c8f1212a0fea8e6e8e99ffa98b5903d75e40d19aeb5c1bee6bec9b6"
+        },
+        {
+          "path": "dist/esm/types/DICOMLoaderImageOptions.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/LoadRequestFunction.d.ts",
+          "bytes": 110,
+          "sha256": "7e75741c7d2669d4731d575bb9a99844bdad19e9c9917dc1c5b878ea0837a57c"
+        },
+        {
+          "path": "dist/esm/types/LoadRequestFunction.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/LoaderDecodeOptions.d.ts",
+          "bytes": 68,
+          "sha256": "ea0e4629919230125284026061100d7fd1cd55d6310a0a1e6a34cfcdec83906d"
+        },
+        {
+          "path": "dist/esm/types/LoaderDecodeOptions.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/LoaderOptions.d.ts",
+          "bytes": 1165,
+          "sha256": "b9cfdd82892a5ad8b43c70da19e13bc463ff486a7b5cb3c49c0f452580687055"
+        },
+        {
+          "path": "dist/esm/types/LoaderOptions.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/LutType.d.ts",
+          "bytes": 123,
+          "sha256": "bd87e611f031b79d307bccf746adef063a827297bcb5dadeda76ec2fbfba5247"
+        },
+        {
+          "path": "dist/esm/types/LutType.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/WADORSMetaData.d.ts",
+          "bytes": 176,
+          "sha256": "84901b01f4e684e5c521a51ef2fbba355bd52e1ca096d11405ed60c682469d05"
+        },
+        {
+          "path": "dist/esm/types/WADORSMetaData.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/WebWorkerTypes.d.ts",
+          "bytes": 2042,
+          "sha256": "00c88db17c7574d2abce32b759b2a9e4ce0853b7a9c5a0cd2c7e396211c0a678"
+        },
+        {
+          "path": "dist/esm/types/WebWorkerTypes.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/XHRRequest.d.ts",
+          "bytes": 443,
+          "sha256": "b2fadbe0afeabbee0b1db723933ad9fa461ba8c11eaa0842d99c17eb6da2087c"
+        },
+        {
+          "path": "dist/esm/types/XHRRequest.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/types/index.d.ts",
+          "bytes": 1464,
+          "sha256": "8902ea31330d4a81ddfc6fe893af94d24560722c4f950bb2b885a24ebd6165cf"
+        },
+        {
+          "path": "dist/esm/types/index.js",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "dist/esm/version.d.ts",
+          "bytes": 41,
+          "sha256": "2e47d6ea03ec095fd86916871bd9fb9e5a5fa1758bc99763b41dc9f237b94727"
+        },
+        {
+          "path": "dist/esm/version.js",
+          "bytes": 33,
+          "sha256": "a9efac33cec5a0489e209d85c054eb844f4d06926e176ebf2bee9347271b965f"
+        },
+        {
+          "path": "package.json",
+          "bytes": 5541,
+          "sha256": "75467edd15644fc623e6c5d31a2a204b0ca8c50de9c2d89c70888066e2ed4c58"
+        }
+      ],
+      "installationGeneratedBinShims": [
+        {
+          "path": "node_modules/.bin/uuid",
+          "provider": "uuid",
+          "version": "11.1.1",
+          "requestedVersion": "9.0.1",
+          "providerManifest": {
+            "path": "package.json",
+            "bytes": 4252,
+            "sha256": "e5ebc4600db1bfcb5c00d8cc3430d869bdbe229c8d46b4bfac06ab2dfc180c39"
+          },
+          "providerBin": {
+            "path": "./dist/esm/bin/uuid",
+            "bytes": 45,
+            "sha256": "a9dc67d05c3b08842280064e7e65fab9de3f4257b1dfd88e6e51d5afd967bdf4"
+          },
+          "integrity": "sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==",
+          "normalizedShimSHA256": "a220a8e6c4f9dae2194ded89882e49b84a5faa9c673667898ff7837f62e22f5b"
+        }
+      ]
+    },
+    {
+      "package": "@cornerstonejs/metadata@5.19.4",
+      "name": "@cornerstonejs/metadata",
+      "version": "5.19.4",
+      "gitHead": "eee712024c5c8089f3a7bbbb654cadedd4baab6d",
+      "repository": "https://github.com/cornerstonejs/cornerstone3D",
+      "registry": "https://registry.npmjs.org",
+      "integrity": "sha512-moU5DgM+NR8fhj7WgWr/Lm2OzDohFpj6ctE/1gRx6QEya05rlgcPEipyxLRAHhk4Ve1DHVvDXPCMoGutEwCvFA==",
+      "buildProvenance": {
+        "predicateType": "https://slsa.dev/provenance/v1",
+        "gitCommit": "5ea535b37d3414f599037d11636c24ae52db821c",
+        "workflow": ".github/workflows/publish.yml",
+        "invocation": "https://github.com/cornerstonejs/cornerstone3D/actions/runs/44107698950/attempts/1"
       },
       "files": [
         {
@@ -7779,17 +9126,17 @@
         {
           "path": "dist/esm/version.d.ts",
           "bytes": 41,
-          "sha256": "2dc19a367c14eac30d1a668a5382206bf8069d0f1928215677f18b8789e68cd2"
+          "sha256": "2e47d6ea03ec095fd86916871bd9fb9e5a5fa1758bc99763b41dc9f237b94727"
         },
         {
           "path": "dist/esm/version.js",
           "bytes": 33,
-          "sha256": "0e0db65848f32da827c7ef332ed6745339f71ebc6911090520522efe30406063"
+          "sha256": "a9efac33cec5a0489e209d85c054eb844f4d06926e176ebf2bee9347271b965f"
         },
         {
           "path": "package.json",
           "bytes": 3561,
-          "sha256": "8f09a94aa35a5eb246faf524a73e0544752ae94b11a48cd847d58de37dc1ed55"
+          "sha256": "08f6570e49cfd6de56c33a65a5681df35f85485b4e24dcd5cc5f78fffcf24bec"
         },
         {
           "path": "rules/optional/byAcquisition.jsonc",
@@ -7834,18 +9181,18 @@
       ]
     },
     {
-      "package": "@cornerstonejs/utils@5.18.1",
+      "package": "@cornerstonejs/utils@5.19.4",
       "name": "@cornerstonejs/utils",
-      "version": "5.18.1",
-      "gitHead": "c63b7751930c5bc81e06574cbb17909aad3c1427",
+      "version": "5.19.4",
+      "gitHead": "eee712024c5c8089f3a7bbbb654cadedd4baab6d",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
       "registry": "https://registry.npmjs.org",
-      "integrity": "sha512-hJRWuiJUJEUD224uJGzW3g18eOQTgggLOXL2jcDYtg48DUO7VJcWJFAuS6oF9yCjQdB+iapzCuP6i1PSkOs/DA==",
+      "integrity": "sha512-zsZplWfChSzKONSKOEBHquDdMJinEgsVIJjHhkS0bsR+QoARkWwYFJVoUff08Tf49kTQI00GbZ12t5Or6y8++Q==",
       "buildProvenance": {
         "predicateType": "https://slsa.dev/provenance/v1",
-        "gitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
+        "gitCommit": "5ea535b37d3414f599037d11636c24ae52db821c",
         "workflow": ".github/workflows/publish.yml",
-        "invocation": "https://github.com/cornerstonejs/cornerstone3D/actions/runs/43348155588/attempts/1"
+        "invocation": "https://github.com/cornerstonejs/cornerstone3D/actions/runs/44107698950/attempts/1"
       },
       "files": [
         {
@@ -7936,17 +9283,17 @@
         {
           "path": "dist/esm/version.d.ts",
           "bytes": 41,
-          "sha256": "2dc19a367c14eac30d1a668a5382206bf8069d0f1928215677f18b8789e68cd2"
+          "sha256": "2e47d6ea03ec095fd86916871bd9fb9e5a5fa1758bc99763b41dc9f237b94727"
         },
         {
           "path": "dist/esm/version.js",
           "bytes": 33,
-          "sha256": "0e0db65848f32da827c7ef332ed6745339f71ebc6911090520522efe30406063"
+          "sha256": "a9efac33cec5a0489e209d85c054eb844f4d06926e176ebf2bee9347271b965f"
         },
         {
           "path": "package.json",
           "bytes": 3284,
-          "sha256": "7cf641cebb33c700eeaf9fba6650ee8f101d1b14211633bcac5724b2a594ce2e"
+          "sha256": "5655c0b7c03c46196c275c740b2f969cc1a3d82bc1248cc35825a96b7b06ed2a"
         }
       ]
     }
@@ -7954,12 +9301,12 @@
   "sdkSourceLicenses": [
     {
       "name": "@cornerstonejs/core",
-      "version": "5.18.1",
+      "version": "5.19.4",
       "declaredLicense": "MIT",
       "sourceLicense": "MIT",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
-      "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
-      "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
+      "gitCommit": "eee712024c5c8089f3a7bbbb654cadedd4baab6d",
+      "buildGitCommit": "5ea535b37d3414f599037d11636c24ae52db821c",
       "sourcePath": "LICENSE",
       "path": "third-party/native-codecs/sdk/LICENSE",
       "bytes": 1087,
@@ -7967,12 +9314,12 @@
     },
     {
       "name": "@cornerstonejs/metadata",
-      "version": "5.18.1",
+      "version": "5.19.4",
       "declaredLicense": "MIT",
       "sourceLicense": "MIT",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
-      "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
-      "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
+      "gitCommit": "eee712024c5c8089f3a7bbbb654cadedd4baab6d",
+      "buildGitCommit": "5ea535b37d3414f599037d11636c24ae52db821c",
       "sourcePath": "LICENSE",
       "path": "third-party/native-codecs/sdk/LICENSE",
       "bytes": 1087,
@@ -7980,12 +9327,12 @@
     },
     {
       "name": "@cornerstonejs/utils",
-      "version": "5.18.1",
+      "version": "5.19.4",
       "declaredLicense": "MIT",
       "sourceLicense": "MIT",
       "repository": "https://github.com/cornerstonejs/cornerstone3D",
-      "gitCommit": "c63b7751930c5bc81e06574cbb17909aad3c1427",
-      "buildGitCommit": "9e3d4adee3e5df93c5043ec140c7e075c7e1f8f9",
+      "gitCommit": "eee712024c5c8089f3a7bbbb654cadedd4baab6d",
+      "buildGitCommit": "5ea535b37d3414f599037d11636c24ae52db821c",
       "sourcePath": "LICENSE",
       "path": "third-party/native-codecs/sdk/LICENSE",
       "bytes": 1087,
