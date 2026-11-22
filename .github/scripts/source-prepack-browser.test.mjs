@@ -570,7 +570,7 @@ test('all spreadsheet owners require the Worker built from the actual current Co
   )
 })
 
-test('the reviewed 3.3.5 profile rejects superseded Playwright and independently measured 3.3.4 product bytes', async () => {
+test('the current profile rejects superseded Playwright and independently measured prior product bytes', async () => {
   const plan = JSON.parse(
     await readFile(
       join(workspaceRoot, 'packages/build-support/browser-gates/prepack-browser-manifest.json')
@@ -595,28 +595,30 @@ test('the reviewed 3.3.5 profile rejects superseded Playwright and independently
         : row
   )
   assert.equal(collect({ required: metadataRequired, events: metadataEvents }).length, 6)
-  const oldMetadata = {
-    ...metadata,
-    sha256: 'b727f15222df59599e92e9cd9539852318f814aa40a2b85a72030c1542664e29'
+  for (const sha256 of [
+    'b727f15222df59599e92e9cd9539852318f814aa40a2b85a72030c1542664e29',
+    '5165977c1f33578a49618cb6641b6324c63cdbbf76a2e1acbec6bc25553a51b2'
+  ]) {
+    const oldMetadata = { ...metadata, sha256 }
+    assert.throws(
+      () =>
+        collect({
+          required: metadataRequired.map((row) => ({ ...row, fixtures: [oldMetadata] })),
+          events: metadataEvents
+        }),
+      /Original fixture not actually observed/
+    )
+    assert.throws(
+      () =>
+        collect({
+          required: metadataRequired,
+          events: metadataEvents.map((row) =>
+            row.kind === 'served-fixture' ? { ...row, ...oldMetadata } : row
+          )
+        }),
+      /Original fixture not actually observed/
+    )
   }
-  assert.throws(
-    () =>
-      collect({
-        required: metadataRequired.map((row) => ({ ...row, fixtures: [oldMetadata] })),
-        events: metadataEvents
-      }),
-    /Original fixture not actually observed/
-  )
-  assert.throws(
-    () =>
-      collect({
-        required: metadataRequired,
-        events: metadataEvents.map((row) =>
-          row.kind === 'served-fixture' ? { ...row, ...oldMetadata } : row
-        )
-      }),
-    /Original fixture not actually observed/
-  )
   const oldTools = structuredClone(plan)
   oldTools.tools.playwright = '1.64.1'
   assert.throws(() => validateManifest(oldTools))
