@@ -18,7 +18,7 @@ import {
   DEMO_BRAND_ICONS,
   DEMO_BRAND_DARK_COLORS,
   type DemoBrandIconName
-} from '../../../viewer-demo/src/data/demoFileBrandIcons'
+} from '../data/demoFileBrandIcons'
 
 // The homepage uses the Demo's actual, locally bundled format artwork.
 // No renderer, file parser, or remote icon service is loaded for decoration.

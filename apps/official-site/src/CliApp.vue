@@ -12,11 +12,13 @@ import {
   FileCheck2,
   FolderCog,
   Languages,
+  Moon,
   PackageCheck,
   PlugZap,
   ScanSearch,
   ShieldCheck,
   Sparkles,
+  Sun,
   TerminalSquare
 } from '@lucide/vue'
 
@@ -25,13 +27,78 @@ type TerminalExample = 'create' | 'add' | 'prepare'
 
 const locale = computed<Locale>(() => (window.location.pathname.startsWith('/en/') ? 'en' : 'zh'))
 const isZh = computed(() => locale.value === 'zh')
-const homeUrl = computed(() => (isZh.value ? '/' : '/en/'))
-const switchLocaleUrl = computed(() => (isZh.value ? '/en/cli/' : '/cli/'))
+const themePreferenceKey = 'flyfish-site-theme-preference'
+const search = new URLSearchParams(window.location.search)
+const requestedTheme = search.get('theme')
+const hasThemeOverride = requestedTheme === 'light' || requestedTheme === 'dark'
+let storedTheme: string | null = null
+try {
+  storedTheme = window.localStorage.getItem(themePreferenceKey)
+} catch {
+  // Fall back to the browser preference when storage is unavailable.
+}
+const theme = ref(
+  hasThemeOverride
+    ? requestedTheme
+    : storedTheme === 'light' || storedTheme === 'dark'
+      ? storedTheme
+      : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+)
+
+function applyTheme() {
+  document.documentElement.dataset.theme = theme.value
+  document.querySelector('meta[name="theme-color"]')?.setAttribute(
+    'content', theme.value === 'dark' ? '#0f211f' : '#f5f1e9'
+  )
+}
+
+function toggleTheme() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light'
+  applyTheme()
+  if (hasThemeOverride) {
+    const url = new URL(window.location.href)
+    url.searchParams.set('theme', theme.value)
+    window.history.replaceState(window.history.state, '', url)
+  }
+  try {
+    window.localStorage.setItem(themePreferenceKey, theme.value)
+  } catch {
+    // The current page can still change theme.
+  }
+}
+
+applyTheme()
+
+const themeQuery = computed(() => (hasThemeOverride ? `?theme=${theme.value}` : ''))
+const themeLabel = computed(() =>
+  theme.value === 'dark'
+    ? (isZh.value ? '切换到浅色主题' : 'Switch to light theme')
+    : (isZh.value ? '切换到深色主题' : 'Switch to dark theme')
+)
+const homeUrl = computed(() => (isZh.value ? '/' : '/en/') + themeQuery.value)
+const switchLocaleUrl = computed(() => (isZh.value ? '/en/cli/' : '/cli/') + themeQuery.value)
 const guideUrl = computed(() =>
   isZh.value ? 'https://doc.file-viewer.app/zh/guide/cli' : 'https://doc.file-viewer.app/guide/cli'
 )
 const activeExample = ref<TerminalExample>('create')
 const copied = ref(false)
+const exampleOrder: TerminalExample[] = ['create', 'add', 'prepare']
+
+function navigateExamples(event: KeyboardEvent) {
+  const current = exampleOrder.indexOf(activeExample.value)
+  const choices = {
+    ArrowLeft: (current + exampleOrder.length - 1) % exampleOrder.length,
+    ArrowRight: (current + 1) % exampleOrder.length,
+    Home: 0,
+    End: exampleOrder.length - 1
+  } as const
+  const next = choices[event.key as keyof typeof choices]
+  if (next === undefined) return
+
+  event.preventDefault()
+  activeExample.value = exampleOrder[next]
+  document.getElementById(`cli-example-${activeExample.value}`)?.focus()
+}
 
 const terminalExamples = computed<Record<TerminalExample, { label: string; command: string }>>(
   () => ({
@@ -76,52 +143,52 @@ const workflow = computed(() =>
     ? [
         {
           index: '01',
-          title: '创建脚手架',
-          text: '选择框架、已校验版本、File Viewer 版本、格式、包管理器和资源目录，确认后生成可构建项目。',
+          title: '创建项目',
+          text: '先选框架和已验证的框架版本，再选 File Viewer 版本、文件格式、包管理器和资源目录。确认计划后，create 生成可直接构建的项目。',
           icon: Sparkles
         },
         {
           index: '02',
           title: '接入已有项目',
-          text: '检测 package.json、lockfile、框架、preset / Full、Vite、Vue CLI、Webpack、Next、Nuxt、静态目录和入口；不能安全判断时先给出手工步骤。',
+          text: 'add 读取 package.json 和锁文件，识别框架、preset 或 Full 包、构建工具、静态目录和入口。支持 Vite、Vue CLI、Webpack、Next 和 Nuxt。无法确定怎么接入时，CLI 会给出手动步骤。',
           icon: ScanSearch
         },
         {
           index: '03',
-          title: '部署运行时资产',
-          text: '按已选能力复制资源，也完整保留 file-viewer-copy-assets 的参数、环境变量、合并与安全清理契约。',
+          title: '复制预览资源',
+          text: '按已选格式和功能复制所需的运行时文件。file-viewer-copy-assets 继续支持原有参数、环境变量、合并和安全清理。',
           icon: FolderCog
         },
         {
           index: '04',
-          title: '缓存与离线交付',
-          text: '从明确的 npm 或私有源并行准备精确 tgz，生成完整性清单，并在隔离网络中按哈希复用。',
+          title: '准备离线安装包',
+          text: '从指定的 npm 源或私有源同时下载所需版本的 .tgz 文件，并生成完整性清单。在隔离网络里可按哈希校验后复用。',
           icon: PackageCheck
         }
       ]
     : [
         {
           index: '01',
-          title: 'Create a scaffold',
-          text: 'Choose a framework, validated version, File Viewer release, formats, package manager, and asset path before writing a buildable project.',
+          title: 'Create a project',
+          text: 'Choose a supported framework version, a File Viewer release, formats, a package manager, and an asset folder. Review the plan, then run create to generate a project you can build.',
           icon: Sparkles
         },
         {
           index: '02',
-          title: 'Integrate an existing app',
-          text: 'Detect package.json, lockfiles, framework, preset or Full packages, Vite, Vue CLI, Webpack, Next, Nuxt, static directories, and entries; unsafe cases stop with manual steps.',
+          title: 'Add to an existing project',
+          text: 'add reads package.json and the lockfile to find the framework, preset or Full package, build tool, static folder, and entry point. It supports Vite, Vue CLI, Webpack, Next, and Nuxt. If it cannot determine a safe change, it gives you manual steps.',
           icon: ScanSearch
         },
         {
           index: '03',
-          title: 'Deploy runtime assets',
-          text: 'Copy selected capability assets while preserving the complete file-viewer-copy-assets argument, environment, merge, and safe-cleanup contract.',
+          title: 'Copy runtime files',
+          text: 'Copy the files needed by the formats and features you selected. Existing file-viewer-copy-assets scripts keep their options, environment variables, merge rules, and safe cleanup behavior.',
           icon: FolderCog
         },
         {
           index: '04',
-          title: 'Cache for offline delivery',
-          text: 'Prepare exact tgz files from an explicit npm or private registry in parallel, record integrity, and reuse them by hash in an isolated network.',
+          title: 'Prepare packages for offline use',
+          text: 'Download the required versions as .tgz files in parallel from npm or a private registry. Use the integrity manifest to check the files by hash before reusing them on an isolated network.',
           icon: PackageCheck
         }
       ]
@@ -141,29 +208,29 @@ const frameworks = [
 const profiles = computed(() => [
   {
     name: 'standard',
-    badge: isZh.value ? '新项目推荐' : 'Recommended',
-    title: isZh.value ? '常用格式，明确边界' : 'Common formats, explicit boundary',
+    badge: isZh.value ? '新项目推荐' : 'For new projects',
+    title: isZh.value ? '安装常用格式' : 'Install common formats',
     text: isZh.value
-      ? 'Word、PDF/OFD、现代 PPTX、Spreadsheet、Archive、Email、Text、Image 和 Media；专业能力保持显式。'
-      : 'Word, PDF/OFD, modern PPTX, Spreadsheet, Archive, Email, Text, Image, and Media, with specialist capabilities kept explicit.',
+      ? '支持 Word、PDF、OFD、PPTX、电子表格、压缩包、邮件、文本、图片和媒体。专业格式和功能按需另选。'
+      : 'Includes Word, PDF, OFD, PPTX, spreadsheets, archives, email, text, images, and media. Select specialist formats and features separately.',
     tone: 'standard'
   },
   {
     name: 'full',
-    badge: isZh.value ? '显式全功能' : 'Explicit all-capability',
-    title: isZh.value ? '保留 Full，再加入后续可选项' : 'Keep Full, then add later opt-ins',
+    badge: isZh.value ? '完整安装' : 'Full installation',
+    title: isZh.value ? '安装 Full 和新增格式' : 'Install Full and the newer formats',
     text: isZh.value
-      ? 'CLI 保留对应历史 Full 包的 preset-all、API 和资产行为，再加入目录中的后续显式能力。当前新增项是 DICOM 与数字签名容器。'
-      : 'The CLI preserves the matching historical Full package, preset-all, API, and asset behavior, then adds later explicit catalog capabilities. The current additions are DICOM and digital-signature containers.',
+      ? '使用对应的 Full 包及其 preset-all、API 和运行时文件，再安装 DICOM 和数字签名容器。'
+      : 'Use the matching Full package with its preset-all, APIs, and runtime files, and add DICOM and digital-signature containers.',
     tone: 'full'
   },
   {
     name: 'custom',
-    badge: isZh.value ? '精确选择' : 'Exact selection',
-    title: isZh.value ? '只安装实际需要的能力' : 'Install only what the product needs',
+    badge: isZh.value ? '按需安装' : 'Selective installation',
+    title: isZh.value ? '自行选择格式或功能' : 'Choose specific formats or features',
     text: isZh.value
-      ? '直接选择 renderer、格式或 capability，并生成确定性的注册模块和资产计划。'
-      : 'Select renderers, formats, or capabilities and generate a deterministic registration module and asset plan.',
+      ? '选择渲染器、格式或功能。相同的选项会生成相同的注册模块和资源清单。'
+      : 'Select renderers, formats, or features. The same options generate the same registration module and asset plan.',
     tone: 'custom'
   }
 ])
@@ -205,8 +272,23 @@ async function copyCommand() {
           <Languages :size="16" />
           {{ isZh ? 'EN' : '中文' }}
         </a>
-        <a class="cli-guide-link" :href="guideUrl" target="_blank" rel="noreferrer">
-          {{ isZh ? '完整指南' : 'Complete guide' }}
+        <button
+          class="a-subpage-theme"
+          type="button"
+          :aria-label="themeLabel"
+          @click="toggleTheme"
+        >
+          <Sun v-if="theme === 'dark'" :size="18" aria-hidden="true" />
+          <Moon v-else :size="18" aria-hidden="true" />
+        </button>
+        <a
+          class="cli-guide-link"
+          :aria-label="isZh ? 'CLI 使用指南' : 'CLI guide'"
+          :href="guideUrl"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {{ isZh ? 'CLI 使用指南' : 'CLI guide' }}
           <ArrowRight :size="16" />
         </a>
       </nav>
@@ -216,20 +298,20 @@ async function copyCommand() {
       <section class="cli-hero">
         <div class="cli-hero-copy">
           <p class="cli-kicker"><TerminalSquare :size="17" /> @file-viewer/cli</p>
-          <h1 v-if="isZh">从空目录到可运行预览，<span>也能接好已有项目。</span></h1>
+          <h1 v-if="isZh">用命令行<span>接入文件预览</span></h1>
           <h1 v-else>
-            From an empty folder to a working viewer, <span>or into the app you already have.</span>
+            Add file previews <span>from the command line</span>
           </h1>
           <p class="cli-hero-intro">
             {{
               isZh
-                ? '一个 CLI 完成脚手架、框架检测、格式选型、依赖安装、运行时资产部署和离线 tgz 准备。模块化流程在写入前显示完整计划；旧 copy-assets 兼容命令仍按原契约直接执行。'
-                : 'One CLI handles scaffolding, framework detection, format selection, dependency installation, runtime assets, and offline tgz preparation. Modular workflows show a complete plan before writing; the legacy copy-assets command keeps its direct compatibility contract.'
+                ? '运行 create 新建项目，或在已有项目中运行 add。选好要预览的格式，CLI 就会准备依赖和运行时文件，并在修改前显示计划。现有 copy-assets 命令仍可直接复制资源。'
+                : 'Run create to start a project or add to set up an existing one. Choose the formats you need. The CLI shows what it will change before it installs dependencies and copies runtime files. Existing copy-assets commands still run directly.'
             }}
           </p>
           <div class="cli-hero-actions">
             <a :href="guideUrl" target="_blank" rel="noreferrer">
-              {{ isZh ? '查看使用指南' : 'Read the guide' }}
+              {{ isZh ? '查看 CLI 指南' : 'Read the CLI guide' }}
               <ArrowRight :size="17" />
             </a>
             <a
@@ -237,66 +319,71 @@ async function copyCommand() {
               target="_blank"
               rel="noreferrer"
             >
-              npm @file-viewer/cli
+              {{ isZh ? '在 npm 上查看' : 'View on npm' }}
             </a>
           </div>
           <div class="cli-hero-proof">
             <span
-              ><ShieldCheck :size="15" />{{ isZh ? '写入前确认' : 'Confirm before writes' }}</span
+              ><ShieldCheck :size="15" />{{ isZh ? '改动前可检查' : 'Review changes first' }}</span
             >
-            <span><FileCheck2 :size="15" />{{ isZh ? '确定性配置' : 'Deterministic config' }}</span>
-            <span><Download :size="15" />{{ isZh ? '离线可交付' : 'Offline-ready' }}</span>
+            <span><FileCheck2 :size="15" />{{ isZh ? '可重复生成配置' : 'Repeatable setup' }}</span>
+            <span><Download :size="15" />{{ isZh ? '可准备离线包' : 'Prepare for offline use' }}</span>
           </div>
         </div>
 
-        <div class="cli-terminal" aria-label="File Viewer CLI examples">
-          <div class="cli-terminal-topbar">
-            <div aria-hidden="true"><i /><i /><i /></div>
-            <span>file-viewer</span>
-            <button
-              type="button"
-              :aria-label="isZh ? '复制命令' : 'Copy command'"
-              @click="copyCommand"
-            >
-              <Check v-if="copied" :size="15" />
-              <Copy v-else :size="15" />
-              {{ copied ? (isZh ? '已复制' : 'Copied') : isZh ? '复制' : 'Copy' }}
-            </button>
-          </div>
+        <div class="cli-terminal-stage">
           <div
-            class="cli-terminal-tabs"
-            role="tablist"
-            :aria-label="isZh ? '命令示例' : 'Command examples'"
+            class="cli-terminal"
+            role="region"
+            :aria-label="isZh ? 'File Viewer CLI 示例' : 'File Viewer CLI examples'"
           >
-            <button
-              v-for="(example, id) in terminalExamples"
-              :key="id"
-              type="button"
-              role="tab"
-              :aria-selected="activeExample === id"
-              :class="{ 'is-active': activeExample === id }"
-              @click="activeExample = id"
+            <div class="cli-terminal-topbar">
+              <div aria-hidden="true"><i /><i /><i /></div>
+              <span>file-viewer</span>
+              <button
+                type="button"
+                :aria-label="isZh ? '复制命令' : 'Copy command'"
+                @click="copyCommand"
+              >
+                <Check v-if="copied" :size="15" />
+                <Copy v-else :size="15" />
+                {{ copied ? (isZh ? '已复制' : 'Copied') : isZh ? '复制' : 'Copy' }}
+              </button>
+            </div>
+            <div
+              class="cli-terminal-tabs"
+              role="tablist"
+              :aria-label="isZh ? '命令示例' : 'Command examples'"
+              @keydown="navigateExamples"
             >
-              {{ example.label }}
-            </button>
-          </div>
-          <pre><code><span class="cli-prompt">$</span> {{ terminalExamples[activeExample].command }}</code></pre>
-          <div class="cli-terminal-status">
-            <span><i /> {{ isZh ? '计划可审阅' : 'Reviewable plan' }}</span>
-            <span>{{ isZh ? '无运行时 CDN' : 'No runtime CDN' }}</span>
+              <button
+                v-for="id in exampleOrder"
+                :id="`cli-example-${id}`"
+                :key="id"
+                type="button"
+                role="tab"
+                :aria-selected="activeExample === id"
+                :tabindex="activeExample === id ? 0 : -1"
+                aria-controls="cli-command-panel"
+                :class="{ 'is-active': activeExample === id }"
+                @click="activeExample = id"
+              >
+                {{ terminalExamples[id].label }}
+              </button>
+            </div>
+            <pre id="cli-command-panel" role="tabpanel" :aria-labelledby="`cli-example-${activeExample}`" tabindex="0"><code><span class="cli-prompt">$</span> {{ terminalExamples[activeExample].command }}</code></pre>
+            <div class="cli-terminal-status">
+              <span><i /> {{ isZh ? '可先检查计划' : 'Preview the plan first' }}</span>
+              <span>{{ isZh ? '自行托管运行时文件' : 'Host your own runtime files' }}</span>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="cli-workflow" aria-labelledby="workflow-title">
         <div class="cli-section-heading">
-          <p>{{ isZh ? '四条工作流' : 'Four workflows' }}</p>
           <h2 id="workflow-title">
-            {{
-              isZh
-                ? '创建、接入、部署、离线准备，在同一套模型中完成。'
-                : 'Create, integrate, deploy, and prepare offline from one model.'
-            }}
+            {{ isZh ? 'CLI 能做什么' : 'What you can do with the CLI' }}
           </h2>
         </div>
         <div class="cli-workflow-grid">
@@ -311,19 +398,19 @@ async function copyCommand() {
 
       <section class="cli-frameworks" aria-labelledby="frameworks-title">
         <div class="cli-framework-copy">
-          <p>{{ isZh ? '脚手架与自动检测' : 'Scaffold and detection' }}</p>
+          <p>create / add</p>
           <h2 id="frameworks-title">
             {{
               isZh
-                ? '选择已校验版本，或尊重现有项目。'
-                : 'Choose a validated version, or preserve the project you have.'
+                ? '支持的框架和版本'
+                : 'Supported frameworks and versions'
             }}
           </h2>
           <p>
             {{
               isZh
-                ? 'create 会生成匹配框架的最小可构建项目；add 会检测依赖与构建配置。既有框架版本没有精确模板时，CLI 保留它并给出警告，不会擅自升级。'
-                : 'create writes the smallest buildable project for the selected framework. add inspects dependencies and build config. When an existing runtime has no exact scaffold template, the CLI preserves it and warns instead of upgrading it.'
+              ? 'create 为所选框架生成最小的可构建项目。add 会读取现有依赖和构建配置。找不到与当前版本匹配的模板时，CLI 会保留你的框架版本并提示。'
+              : 'create generates a minimal project for the framework you choose. add reads the project’s dependencies and build configuration. If no template matches the installed framework version, it keeps that version and shows a warning.'
             }}
           </p>
           <a
@@ -331,7 +418,7 @@ async function copyCommand() {
             target="_blank"
             rel="noreferrer"
           >
-            {{ isZh ? '查看版本与检测规则' : 'See version and detection rules' }}
+            {{ isZh ? '查看支持的版本和检测方式' : 'Check framework versions and how detection works' }}
             <ChevronRight :size="16" />
           </a>
         </div>
@@ -345,20 +432,15 @@ async function copyCommand() {
       <section class="cli-profiles" aria-labelledby="profiles-title">
         <div class="cli-section-heading is-split">
           <div>
-            <p>{{ isZh ? '可持续的格式组合' : 'Sustainable format composition' }}</p>
             <h2 id="profiles-title">
-              {{
-                isZh
-                  ? 'Standard 不是 Full。Full 也不会无限变重。'
-                  : 'Standard is not Full. Full does not grow silently.'
-              }}
+              {{ isZh ? '选择要安装的格式' : 'Choose which formats to install' }}
             </h2>
           </div>
           <small>
             {{
               isZh
-                ? '现有八个 Full 包继续保持已发布的 preset-all、API、资产和格式行为。'
-                : 'The eight existing Full packages keep their published preset-all, API, asset, and format behavior.'
+                ? '已发布的八个 Full 包保持原有 preset-all、API、运行时文件和格式支持。'
+                : 'The eight published Full packages keep the same preset-all, APIs, runtime files, and supported formats.'
             }}
           </small>
         </div>
@@ -377,14 +459,14 @@ async function copyCommand() {
           <div>
             <strong>{{
               isZh
-                ? 'DICOM 是可选的轻量本地预览，不是医学影像工作站。'
-                : 'DICOM is optional local preview, not a medical imaging workstation.'
+                ? 'DICOM 用于在本地浏览单个文件'
+                : 'DICOM opens one local file for preview'
             }}</strong>
             <p>
               {{
                 isZh
-                  ? '支持一个本地 DICOM Part 10 文件及其多帧浏览；不包含 series、PACS/DICOMweb、MPR、分割、诊断或内嵌 OHIF。'
-                  : 'It supports one local DICOM Part 10 file, including multi-frame navigation. It does not include series, PACS/DICOMweb, MPR, segmentation, diagnosis, or embedded OHIF.'
+                  ? '可选装 DICOM 预览，打开 DICOM Part 10 文件后可逐帧查看。不支持序列、PACS/DICOMweb、MPR、分割、诊断或内嵌 OHIF。'
+                  : 'Install DICOM support to open a Part 10 file and browse its frames. The preview does not support series, PACS/DICOMweb, MPR, segmentation, diagnosis, or embedded OHIF.'
               }}
             </p>
           </div>
@@ -393,19 +475,19 @@ async function copyCommand() {
 
       <section class="cli-delivery" aria-labelledby="delivery-title">
         <div class="cli-delivery-copy">
-          <p>{{ isZh ? '私有源与离线交付' : 'Private and offline delivery' }}</p>
+          <p>prepare / cache</p>
           <h2 id="delivery-title">
             {{
               isZh
-                ? '先并行准备，进入隔离网络后按完整性复用。'
-                : 'Prepare in parallel, then reuse by integrity inside the isolated network.'
+                ? '为隔离网络准备安装包'
+                : 'Prepare packages for an isolated network'
             }}
           </h2>
           <p>
             {{
               isZh
-                ? 'prepare/cache 从明确 registry 获取 File Viewer 自有依赖闭包，限制并发、检查每个 tgz，并原子写入清单。认证继续由包管理器或 CI 管理。'
-                : 'prepare/cache fetches the File Viewer-owned closure from an explicit registry, bounds concurrency, inspects every tgz, and commits the manifest atomically. Authentication stays in package-manager or CI configuration.'
+                ? 'prepare 和 cache 从指定的源下载所需的 File Viewer 自有包，限制同时下载的数量，并检查每个 .tgz 文件。全部检查完成后再一次性写入清单。源的认证仍由包管理器或 CI 配置。'
+                : 'prepare and cache download the required File Viewer packages from the registry you specify. They limit concurrent downloads, check every .tgz file, and replace the manifest in one step after all checks pass. Configure registry authentication in your package manager or CI.'
             }}
           </p>
         </div>
@@ -413,25 +495,25 @@ async function copyCommand() {
           <li>
             <span>01</span
             ><strong>{{
-              isZh ? '明确 npm 或私有 registry' : 'Select npm or a private registry'
+              isZh ? '指定 npm 源或私有源' : 'Specify npm or a private registry'
             }}</strong>
           </li>
           <li>
             <span>02</span
             ><strong>{{
-              isZh ? '准备精确 tgz 与完整性清单' : 'Prepare exact tgz files and integrity'
+              isZh ? '下载指定版本并生成完整性清单' : 'Download the required versions and write the integrity manifest'
             }}</strong>
           </li>
           <li>
             <span>03</span
             ><strong>{{
-              isZh ? '复用离线目录与受控 cache' : 'Reuse the offline directory and bounded cache'
+              isZh ? '在隔离网络中复用离线目录和受控缓存' : 'Reuse the offline folder and bounded cache on the isolated network'
             }}</strong>
           </li>
           <li>
             <span>04</span
             ><strong>{{
-              isZh ? 'doctor / verify 阻断漂移' : 'Block drift with doctor / verify'
+              isZh ? '运行 doctor 和 verify 检查安装和文件' : 'Run doctor and verify to check the setup and files'
             }}</strong>
           </li>
         </ol>
@@ -439,19 +521,19 @@ async function copyCommand() {
 
       <section class="cli-languages" aria-labelledby="languages-title">
         <div>
-          <p><Languages :size="17" /> {{ isZh ? '多语言帮助' : 'Multilingual help' }}</p>
+          <p><Languages :size="17" /> --lang</p>
           <h2 id="languages-title">
             {{
               isZh
-                ? '交互面向团队，JSON 面向自动化。'
-                : 'Localized for teams. Stable JSON for automation.'
+                ? '设置命令行语言'
+                : 'Set the CLI language'
             }}
           </h2>
           <p>
             {{
               isZh
-                ? '向导、帮助和人类可读计划支持四种语言；--json 始终保留稳定英文键，避免 CI 因语言变化失效。'
-                : 'Prompts, help, and human-readable plans support four languages. --json keeps stable English keys so CI does not depend on display language.'
+                ? '用 --lang 切换向导、帮助和计划的显示语言。CI 中可用 --json 读取固定的英文键名。'
+                : 'Use --lang to set the language for prompts, help, and plans. In CI, use --json for the same English keys in every language.'
             }}
           </p>
         </div>
@@ -465,17 +547,16 @@ async function copyCommand() {
       <section class="cli-cta">
         <div>
           <Boxes :size="25" />
-          <p>{{ isZh ? '从可审阅计划开始' : 'Start with a reviewable plan' }}</p>
           <h2>
             {{
               isZh
-                ? '创建新项目，或在已有项目里运行 add。'
-                : 'Create a new project or run add in the application you already have.'
+                ? '查看适合你项目的命令'
+                : 'Find the right command for your project'
             }}
           </h2>
         </div>
         <a :href="guideUrl" target="_blank" rel="noreferrer">
-          {{ isZh ? '打开完整 CLI 指南' : 'Open the complete CLI guide' }}
+          {{ isZh ? '打开 CLI 使用指南' : 'Open the CLI guide' }}
           <ArrowRight :size="17" />
         </a>
       </section>
@@ -489,8 +570,8 @@ async function copyCommand() {
       <p>
         {{
           isZh
-            ? '浏览器原生 · 离线优先 · Apache-2.0'
-            : 'Browser-native · Offline-first · Apache-2.0'
+            ? '在浏览器中运行，支持离线预览。Apache-2.0'
+            : 'Runs in the browser and supports offline previews. Apache-2.0'
         }}
       </p>
       <a href="https://github.com/flyfish-dev/file-viewer" target="_blank" rel="noreferrer"
