@@ -473,7 +473,6 @@ h1 {
 .format-card:hover,
 .capability-card:hover,
 .commercial-card:hover,
-.metric-card:hover,
 .commercial-summary-card:hover,
 .route-step:hover {
   transform: translateY(-3px) scale(1.012);
@@ -898,7 +897,6 @@ h1 {
     border-color 180ms ease;
 }
 
-.metric-card:hover,
 .format-card:hover,
 .scenario-card:hover,
 .capability-card:hover,
@@ -3716,7 +3714,6 @@ body::after {
     background 260ms ease;
 }
 
-.metric-card::before,
 .format-card::before,
 .scenario-card::before,
 .capability-card::before,
@@ -3739,7 +3736,6 @@ body::after {
     opacity 300ms ease;
 }
 
-.metric-card:hover::before,
 .format-card:hover::before,
 .scenario-card:hover::before,
 .capability-card:hover::before,
@@ -3751,7 +3747,6 @@ body::after {
   opacity: 0.65;
 }
 
-.metric-card:hover,
 .format-card:hover,
 .scenario-card:hover,
 .capability-card:hover,

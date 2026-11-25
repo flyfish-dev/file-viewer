@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { FORMAT_CATALOG_SUMMARY } from './formatCatalog.generated'
 import {
   ArrowLeft,
@@ -14,18 +14,68 @@ import {
   Languages,
   LifeBuoy,
   LockKeyhole,
+  Moon,
   Rocket,
   Scale,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  Sun
 } from '@lucide/vue'
 
 type Locale = 'zh' | 'en'
 
 const locale = computed<Locale>(() => (window.location.pathname.startsWith('/en/') ? 'en' : 'zh'))
 const isZh = computed(() => locale.value === 'zh')
-const homeUrl = computed(() => (isZh.value ? '/' : '/en/'))
-const switchLocaleUrl = computed(() => (isZh.value ? '/en/commercial/' : '/commercial/'))
+const themePreferenceKey = 'flyfish-site-theme-preference'
+const search = new URLSearchParams(window.location.search)
+const requestedTheme = search.get('theme')
+const hasThemeOverride = requestedTheme === 'light' || requestedTheme === 'dark'
+let storedTheme: string | null = null
+try {
+  storedTheme = window.localStorage.getItem(themePreferenceKey)
+} catch {
+  // Fall back to the browser preference when storage is unavailable.
+}
+const theme = ref(
+  hasThemeOverride
+    ? requestedTheme
+    : storedTheme === 'light' || storedTheme === 'dark'
+      ? storedTheme
+      : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+)
+
+function applyTheme() {
+  document.documentElement.dataset.theme = theme.value
+  document.querySelector('meta[name="theme-color"]')?.setAttribute(
+    'content', theme.value === 'dark' ? '#0f211f' : '#f5f1e9'
+  )
+}
+
+function toggleTheme() {
+  theme.value = theme.value === 'light' ? 'dark' : 'light'
+  applyTheme()
+  if (hasThemeOverride) {
+    const url = new URL(window.location.href)
+    url.searchParams.set('theme', theme.value)
+    window.history.replaceState(window.history.state, '', url)
+  }
+  try {
+    window.localStorage.setItem(themePreferenceKey, theme.value)
+  } catch {
+    // The current page can still change theme.
+  }
+}
+
+applyTheme()
+
+const themeQuery = computed(() => (hasThemeOverride ? `?theme=${theme.value}` : ''))
+const themeLabel = computed(() =>
+  theme.value === 'dark'
+    ? (isZh.value ? '切换到浅色主题' : 'Switch to light theme')
+    : (isZh.value ? '切换到深色主题' : 'Switch to dark theme')
+)
+const homeUrl = computed(() => (isZh.value ? '/' : '/en/') + themeQuery.value)
+const switchLocaleUrl = computed(() => (isZh.value ? '/en/commercial/' : '/commercial/') + themeQuery.value)
 const commercialProductUrl = 'https://product.flyfish.group/'
 const commercialSupportUrl = 'https://dev.flyfish.group/shop'
 const demoUrl = 'https://office.flyfish.dev/'
@@ -34,75 +84,75 @@ const comparisonRows = computed(() =>
   isZh.value
     ? [
         {
-          dimension: '产品定位',
+          dimension: '支持哪些文件',
           icon: Boxes,
-          open: `浏览器原生、多格式、离线优先的开源预览组件。覆盖 ${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} 个已注册扩展名与 ${FORMAT_CATALOG_SUMMARY.rendererCount} 条独立预览链路，其中 ${FORMAT_CATALOG_SUMMARY.stableExtensionCount} 个稳定、${FORMAT_CATALOG_SUMMARY.experimentalExtensionCount} 个实验。`,
+          open: `免费开源，可在浏览器中离线预览。${FORMAT_CATALOG_SUMMARY.rendererCount} 个渲染器覆盖 ${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} 种已注册的扩展名，其中 ${FORMAT_CATALOG_SUMMARY.stableExtensionCount} 种稳定、${FORMAT_CATALOG_SUMMARY.experimentalExtensionCount} 种处于实验阶段。`,
           commercial:
-            '面向严肃 Office 场景的原生文档引擎，重点解决 Word、Excel、PowerPoint 的高还原与企业交付。'
+            '用于预览 Word、Excel 和 PowerPoint，重点保留原文件版式，并提供企业交付。'
         },
         {
-          dimension: 'Office 还原度',
+          dimension: 'Office 版式',
           icon: Scale,
-          open: '目标是可读、可搜索、可打印、可嵌入。DOCX 偏流式阅读，不承诺与桌面 Office 逐像素一致。',
+          open: '可嵌入网页，提供阅读、搜索和打印。DOCX 会按预览窗口重排，分页和版式可能与桌面 Office 不同。',
           commercial:
-            '针对分页、字体、表格、图形、页眉页脚、批注修订与复杂演示布局，适合合同、报表和正式档案。'
+            '可用合同、报表和正式档案核对分页、字体、表格、图形、页眉页脚、批注、修订和复杂幻灯片版式。'
         },
         {
-          dimension: '大文件性能',
+          dimension: '打开大文件',
           icon: Gauge,
-          open: 'core 与 renderer 按需加载，Worker / WASM 懒加载，适合大多数附件中心和在线预览。',
-          commercial: '针对大文档、大表格和复杂演示稿提供分块渲染、虚拟滚动、缓存与内存调优。'
+          open: '按需加载核心、渲染器、Worker 和 WASM，适合在网页和附件列表中查看文件。',
+          commercial: '通过分块渲染、虚拟滚动、缓存和内存优化处理大文档、大表格和复杂演示稿。'
         },
         {
-          dimension: '格式组合',
+          dimension: '接入方式',
           icon: GitBranch,
-          open: 'PDF、OFD、CAD、Archive、Email、Drawing、3D、Data 等能力按 preset 或 renderer 自由装配。',
+          open: '用 preset 或渲染器选装 PDF、OFD、CAD、压缩包、邮件、绘图、3D 和数据文件等格式。',
           commercial:
-            '只替换 Office 预览链路；其它开源格式能力、组件 API、主题、工具栏、事件和水印继续保留。'
+            '更换 Office 渲染器，继续使用原有的其他格式、组件 API、主题、工具栏、事件和水印。'
         },
         {
           dimension: '授权与支持',
           icon: ShieldCheck,
-          open: 'File Viewer 自有源码与软件包采用 Apache-2.0；社区 issue 与开源维护支持不包含明确交付承诺。',
+          open: 'File Viewer 自有源码和软件包采用 Apache-2.0。可在 GitHub 提交问题，由社区和维护者跟进。正式交付需另行约定。',
           commercial:
-            '提供商业授权、私有交付、样本回归、定制兼容和优先技术支持，责任边界与周期更明确。'
+            '可约定商业授权、私有交付、交付周期和支持范围，安排样例回归测试、定制兼容和优先技术支持。'
         }
       ]
     : [
         {
-          dimension: 'Product role',
+          dimension: 'File support',
           icon: Boxes,
-          open: `A browser-native, multi-format, offline-first open-source viewer covering ${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} registered extensions across ${FORMAT_CATALOG_SUMMARY.rendererCount} preview pipelines: ${FORMAT_CATALOG_SUMMARY.stableExtensionCount} stable and ${FORMAT_CATALOG_SUMMARY.experimentalExtensionCount} experimental.`,
+          open: `Preview files offline in the browser with the free, open-source viewer. The ${FORMAT_CATALOG_SUMMARY.rendererCount} renderers cover ${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} registered file extensions, including ${FORMAT_CATALOG_SUMMARY.stableExtensionCount} stable and ${FORMAT_CATALOG_SUMMARY.experimentalExtensionCount} experimental extensions.`,
           commercial:
-            'A native document engine for serious Office workflows, focused on Word, Excel, and PowerPoint fidelity and enterprise delivery.'
+            'Preview Word, Excel, and PowerPoint files with an engine built to preserve their layout. Enterprise delivery is available.'
         },
         {
-          dimension: 'Office fidelity',
+          dimension: 'Office layout',
           icon: Scale,
-          open: 'Built for readable, searchable, printable, embeddable previews. DOCX is flow-first and does not promise desktop Office pixel parity.',
+          open: 'Embed previews for reading, searching, and printing. DOCX text reflows to fit the viewer, so page breaks and layout can differ from desktop Office.',
           commercial:
-            'Targets pagination, fonts, tables, shapes, headers, revisions, and complex slide layouts for contracts, reports, and archives.'
+            'Check page breaks, fonts, tables, shapes, headers, footers, comments, tracked changes, and complex slide layouts in your contracts, reports, and records.'
         },
         {
-          dimension: 'Large-file performance',
+          dimension: 'Large files',
           icon: Gauge,
-          open: 'Core and renderers load on demand, with lazy Worker and WASM paths for most attachment centers and browser previews.',
+          open: 'The core, renderers, workers, and WebAssembly modules load when needed. This works for typical web previews and attachment lists.',
           commercial:
-            'Adds chunked rendering, virtual scrolling, caching, and memory tuning for large documents, sheets, and complex decks.'
+            'Uses chunked rendering, virtual scrolling, caching, and memory tuning for large documents, spreadsheets, and complex presentations.'
         },
         {
-          dimension: 'Format composition',
+          dimension: 'Integration',
           icon: GitBranch,
-          open: 'PDF, OFD, CAD, archives, email, drawings, 3D, data, and other capabilities stay composable through presets or renderers.',
+          open: 'Use presets or individual renderers for formats such as PDF, OFD, CAD, archives, email, drawings, 3D, and data files.',
           commercial:
-            'Only the Office path changes. Open-source formats, component APIs, themes, toolbars, events, and watermarks stay in place.'
+            'Switch the Office renderer and keep your other formats, component APIs, themes, toolbars, events, and watermarks.'
         },
         {
           dimension: 'License and support',
           icon: ShieldCheck,
-          open: 'File Viewer-owned source and packages use Apache-2.0. Community issues and maintenance support do not include delivery commitments.',
+          open: 'File Viewer uses Apache-2.0 for its own source and packages. Report problems on GitHub for community and maintainer support. Agreed delivery terms are a separate arrangement.',
           commercial:
-            'Commercial licensing, private delivery, sample regression, custom compatibility work, and priority support define clearer ownership.'
+            'Agree on licensing, private delivery, timing, and support. You can arrange regression tests using sample files, compatibility work, and priority technical support.'
         }
       ]
 )
@@ -110,32 +160,32 @@ const comparisonRows = computed(() =>
 const decisionItems = computed(() =>
   isZh.value
     ? [
-        { label: '通用附件预览', open: '优先免费版', commercial: '通常不需要', icon: FileText },
+        { label: '预览一般附件', open: '从开源版开始', commercial: '有 Office 版式要求时再评估', icon: FileText },
         {
-          label: '合同 / 报表 / 正式档案',
-          open: '先用真实样本验证',
-          commercial: '优先评估',
+          label: '预览合同、报表或正式档案',
+          open: '用实际文件核对排版',
+          commercial: '优先用实际文件试用',
           icon: BadgeCheck
         },
-        { label: '明确 SLA 与定制兼容', open: '不包含交付承诺', commercial: '适合', icon: LifeBuoy }
+        { label: '要求服务级别协议（SLA）或定制兼容', open: '通过 GitHub 获取社区支持', commercial: '联系团队确认服务内容和交付时间', icon: LifeBuoy }
       ]
     : [
         {
-          label: 'General attachment preview',
-          open: 'Start open source',
-          commercial: 'Usually unnecessary',
+          label: 'Preview everyday attachments',
+          open: 'Start with the open-source viewer',
+          commercial: 'Consider it if you have specific Office layout needs',
           icon: FileText
         },
         {
-          label: 'Contracts, reports, formal archives',
-          open: 'Validate real samples first',
-          commercial: 'Evaluate early',
+          label: 'Preview contracts, reports, or official records',
+          open: 'Check the layout with actual files',
+          commercial: 'Test actual files early',
           icon: BadgeCheck
         },
         {
-          label: 'Explicit SLA and custom compatibility',
-          open: 'No delivery commitment',
-          commercial: 'Designed for it',
+          label: 'Agree on a service-level agreement (SLA) or custom compatibility',
+          open: 'Ask for community support on GitHub',
+          commercial: 'Contact the team to agree on scope and timing',
           icon: LifeBuoy
         }
       ]
@@ -158,8 +208,17 @@ const decisionItems = computed(() =>
           <Languages :size="16" />
           {{ isZh ? 'EN' : '中文' }}
         </a>
+        <button
+          class="a-subpage-theme"
+          type="button"
+          :aria-label="themeLabel"
+          @click="toggleTheme"
+        >
+          <Sun v-if="theme === 'dark'" :size="18" aria-hidden="true" />
+          <Moon v-else :size="18" aria-hidden="true" />
+        </button>
         <a class="commercial-demo" :href="demoUrl" target="_blank" rel="noreferrer">
-          {{ isZh ? '查看商业版 Demo' : 'Commercial demo' }}
+          {{ isZh ? '试用商业版' : 'Try the commercial demo' }}
           <ArrowRight :size="16" />
         </a>
       </div>
@@ -168,109 +227,103 @@ const decisionItems = computed(() =>
     <main>
       <section class="commercial-hero">
         <div class="commercial-hero-copy">
-          <p><Gem :size="17" /> {{ isZh ? '版本选择指南' : 'Edition guide' }}</p>
+          <p><Gem :size="17" /> File Viewer</p>
           <h1>
             <template v-if="isZh">
-              免费版解决通用预览。<br />商业版解决 <span>Office 高还原与交付责任。</span>
+              开源预览组件<span>和商业 Office 引擎</span>
             </template>
             <template v-else>
-              Open source handles general preview.<br />Commercial handles
-              <span>Office fidelity and delivery ownership.</span>
+              Open-source viewer and <span>commercial Office engine</span>
             </template>
           </h1>
           <p class="commercial-hero-intro">
             {{
               isZh
-                ? '两者不是互斥产品。商业版可以只替换 Word、Excel、PowerPoint 的渲染链路，其它开源格式与接入 API 保持不变。'
-                : 'These are not mutually exclusive products. The commercial engine can replace only the Word, Excel, and PowerPoint path while other open-source formats and APIs stay unchanged.'
+                ? '日常附件可用开源版预览。需要保留 Office 文件版式，或要约定交付和支持时，可把 Word、Excel 和 PowerPoint 的渲染器换成商业版。'
+                : 'Use the open-source viewer for everyday attachments. Switch to the commercial Word, Excel, and PowerPoint renderer when document layout or agreed delivery and support matter.'
             }}
           </p>
           <div class="commercial-hero-actions">
             <a :href="commercialProductUrl" target="_blank" rel="noreferrer">
-              {{ isZh ? '了解商业版产品' : 'Explore the commercial product' }}
+              {{ isZh ? '查看商业版' : 'View the commercial edition' }}
               <ArrowRight :size="17" />
             </a>
             <a :href="commercialSupportUrl" target="_blank" rel="noreferrer">
-              {{ isZh ? '咨询适配方案' : 'Discuss fit and delivery' }}
+              {{ isZh ? '联系商业支持' : 'Contact commercial support' }}
             </a>
           </div>
         </div>
-        <div class="edition-rail" aria-label="Edition overview">
-          <article>
-            <span>01 / OPEN SOURCE</span>
-            <Boxes :size="25" />
-            <strong>{{ isZh ? '免费 File Viewer' : 'Open-source File Viewer' }}</strong>
-            <p>
-              {{
-                isZh
-                  ? '多格式 · 浏览器原生 · Apache-2.0'
-                  : 'Multi-format · Browser-native · Apache-2.0'
-              }}
-            </p>
-          </article>
-          <ArrowRight :size="20" aria-hidden="true" />
-          <article class="is-commercial">
-            <span>02 / COMMERCIAL</span>
-            <Sparkles :size="25" />
-            <strong>{{ isZh ? '商业版 Office 引擎' : 'Commercial Office engine' }}</strong>
-            <p>
-              {{
-                isZh
-                  ? '高还原 · 大文件 · 企业交付'
-                  : 'High fidelity · Large files · Enterprise delivery'
-              }}
-            </p>
-          </article>
+        <div class="edition-stage">
+          <div class="edition-rail" role="region" :aria-label="isZh ? '版本概览' : 'Edition overview'">
+            <article>
+              <Boxes :size="25" />
+              <strong>{{ isZh ? '开源 File Viewer' : 'Open-source File Viewer' }}</strong>
+              <p>
+                {{
+                  isZh
+                    ? '在浏览器中预览多种格式。Apache-2.0'
+                    : 'Preview many file types in the browser. Apache-2.0'
+                }}
+              </p>
+            </article>
+            <ArrowRight :size="20" aria-hidden="true" />
+            <article class="is-commercial">
+              <Sparkles :size="25" />
+              <strong>{{ isZh ? '商业版 Office 引擎' : 'Commercial Office engine' }}</strong>
+              <p>
+                {{
+                  isZh
+                    ? '保留 Office 版式，处理大文件，可约定企业交付。'
+                    : 'Preserve Office layouts, open large files, and arrange enterprise delivery.'
+                }}
+              </p>
+            </article>
+          </div>
         </div>
       </section>
 
       <section class="decision-section" aria-labelledby="decision-title">
         <div class="commercial-section-heading">
-          <p>{{ isZh ? '先做选择' : 'Choose quickly' }}</p>
           <h2 id="decision-title">
-            {{ isZh ? '什么场景该选哪一个？' : 'Which edition fits the job?' }}
+            {{ isZh ? '按使用场景选版本' : 'Choose an edition for your files' }}
           </h2>
         </div>
         <div class="decision-table">
           <div class="decision-head" aria-hidden="true">
-            <span>{{ isZh ? '业务场景' : 'Workload' }}</span>
-            <span>{{ isZh ? '免费版' : 'Open source' }}</span>
+            <span>{{ isZh ? '使用场景' : 'What you need to do' }}</span>
+            <span>{{ isZh ? '开源版' : 'Open source' }}</span>
             <span>{{ isZh ? '商业版' : 'Commercial' }}</span>
           </div>
           <article v-for="item in decisionItems" :key="item.label">
             <strong><component :is="item.icon" :size="18" />{{ item.label }}</strong>
-            <span>{{ item.open }}</span>
-            <span>{{ item.commercial }}</span>
+            <span class="decision-answer">
+              <span class="decision-edition">{{ isZh ? '开源版' : 'Open source' }}</span>
+              {{ item.open }}
+            </span>
+            <span class="decision-answer">
+              <span class="decision-edition">{{ isZh ? '商业版' : 'Commercial' }}</span>
+              {{ item.commercial }}
+            </span>
           </article>
         </div>
       </section>
 
       <section class="comparison-section" aria-labelledby="comparison-title">
-        <div class="commercial-section-heading is-split">
-          <div>
-            <p>{{ isZh ? '详细差异' : 'Detailed differences' }}</p>
-            <h2 id="comparison-title">
-              {{ isZh ? '只比较真正影响决策的维度。' : 'Compare only what changes the decision.' }}
-            </h2>
-          </div>
-          <small>
-            {{
-              isZh
-                ? '商业版不是“更多格式”，而是更深的 Office 能力与更明确的交付边界。'
-                : 'Commercial is not “more formats.” It is deeper Office capability and clearer delivery ownership.'
-            }}
-          </small>
+        <div class="commercial-section-heading">
+          <h2 id="comparison-title">
+            {{ isZh ? '比较开源版和商业版' : 'Compare the two editions' }}
+          </h2>
         </div>
         <div class="comparison-table">
           <div class="comparison-head" aria-hidden="true">
-            <span>{{ isZh ? '维度' : 'Dimension' }}</span>
-            <span>{{ isZh ? '免费 File Viewer' : 'Open-source File Viewer' }}</span>
+            <span>{{ isZh ? '功能或服务' : 'Feature or service' }}</span>
+            <span>{{ isZh ? '开源 File Viewer' : 'Open-source File Viewer' }}</span>
             <span>{{ isZh ? '商业版 Office 引擎' : 'Commercial Office engine' }}</span>
           </div>
           <article v-for="row in comparisonRows" :key="row.dimension">
             <strong><component :is="row.icon" :size="19" />{{ row.dimension }}</strong>
             <p>
-              <span>{{ isZh ? '免费版' : 'Open source' }}</span
+              <span>{{ isZh ? '开源版' : 'Open source' }}</span
               >{{ row.open }}
             </p>
             <p class="commercial-cell">
@@ -283,38 +336,37 @@ const decisionItems = computed(() =>
 
       <section class="replacement-section" aria-labelledby="replacement-title">
         <div class="replacement-copy">
-          <p>{{ isZh ? '替换路线' : 'Replacement path' }}</p>
           <h2 id="replacement-title">
             {{
               isZh
-                ? '不用重做接入。只替换 Office 引擎。'
-                : 'Keep the integration. Replace the Office engine.'
+                ? '在现有项目中更换 Office 渲染器'
+                : 'Switch the Office renderer in your existing project'
             }}
           </h2>
           <span>
             {{
               isZh
-                ? '组件、options、事件、主题、水印和其它格式继续复用。'
-                : 'Components, options, events, themes, watermarks, and other formats stay reusable.'
+              ? '保留已有组件、配置、事件、主题、水印及其他文件格式。'
+              : 'Keep your components, options, events, themes, watermarks, and support for other file types.'
             }}
           </span>
         </div>
         <div class="replacement-flow">
           <article>
             <span>01</span><FileText :size="21" /><strong>{{
-              isZh ? '保留组件入口' : 'Keep the component'
+              isZh ? '沿用现有组件' : 'Keep your viewer component'
             }}</strong>
           </article>
           <ArrowRight :size="17" />
           <article>
             <span>02</span><Cpu :size="21" /><strong>{{
-              isZh ? '替换 Office preset' : 'Replace the Office preset'
+              isZh ? '更换 Office preset' : 'Switch the Office preset'
             }}</strong>
           </article>
           <ArrowRight :size="17" />
           <article>
             <span>03</span><LockKeyhole :size="21" /><strong>{{
-              isZh ? '私有交付与回归' : 'Private delivery and regression'
+              isZh ? '安排私有交付和回归测试' : 'Arrange private delivery and test your files'
             }}</strong>
           </article>
         </div>
@@ -326,20 +378,20 @@ const decisionItems = computed(() =>
           <h2>
             {{
               isZh
-                ? '还不确定？拿真实 Office 文件来判断。'
-                : 'Still unsure? Decide with real Office files.'
+                ? '用你的 Office 文件试用'
+                : 'Test with your own Office files'
             }}
           </h2>
           <p>
             {{
               isZh
-                ? '高还原、大文件或支持责任是关键时，再进入商业版。'
-                : 'Move to commercial when fidelity, large files, or support ownership becomes decisive.'
+                ? '先打开常用文档和最大的几个文件，检查版式和打开速度。如果项目还要求定制兼容或交付支持，可以联系团队。'
+                : 'Start with everyday documents and a few of your largest files. Check the layout and how long they take to open. Contact the team if you need compatibility work or a support agreement.'
             }}
           </p>
         </div>
         <a :href="commercialSupportUrl" target="_blank" rel="noreferrer">
-          {{ isZh ? '咨询方案' : 'Discuss your case' }}
+          {{ isZh ? '联系商业支持' : 'Contact commercial support' }}
           <ArrowRight :size="17" />
         </a>
       </section>

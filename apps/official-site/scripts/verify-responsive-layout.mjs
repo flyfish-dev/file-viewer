@@ -27,7 +27,7 @@ async function assertLayout(page, label) {
     const solutions = box('#solutions')
     const ecosystem = box('#ecosystem')
     const headerCopy = box('.quickstart-header > div')
-    const headerTitle = box('.quickstart-header strong')
+    const headerCommand = box('.quickstart-header .quickstart-command')
     const contained = [
       ...document.querySelectorAll(
         '.workflow-grid, #solutions, #ecosystem, .quickstart-workbench, .quickstart-tab, .format-family, #resources'
@@ -51,7 +51,8 @@ async function assertLayout(page, label) {
     return {
       contained,
       escapedColumns,
-      headerEmptySpace: headerCopy.bottom - headerTitle.bottom,
+      headerCommandFits: headerCommand.height > 0 && headerCommand.right <= headerCopy.right + 1,
+      headerEmptySpace: headerCopy.bottom - headerCommand.bottom,
       separated: solutions.right <= ecosystem.left - 16 || solutions.bottom <= ecosystem.top - 16,
       pageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       tabs: [...document.querySelectorAll('.quickstart-tab')].map((element) => ({
@@ -63,10 +64,11 @@ async function assertLayout(page, label) {
   })
   assert.deepEqual(result.contained, [], `${label}: content escapes its page column`)
   assert.deepEqual(result.escapedColumns, [], `${label}: content overlaps a neighboring column`)
+  assert.ok(result.headerCommandFits, `${label}: install command escapes its header`)
   assert.ok(result.headerEmptySpace <= 2, `${label}: example header has artificial empty space`)
   assert.ok(result.separated, `${label}: use cases and code examples overlap`)
   assert.ok(!result.pageOverflow, `${label}: page scrolls horizontally`)
-  assert.equal(result.tabs.length, 10, `${label}: all framework examples remain available`)
+  assert.equal(result.tabs.length, 11, `${label}: all framework examples remain available`)
   assert.ok(
     result.tabs.every((tab) => tab.visible && tab.height >= 44),
     `${label}: tabs must stay visible and usable`
@@ -79,7 +81,10 @@ try {
     ['chromium', chromium],
     ['webkit', webkit]
   ]) {
-    const browser = await engine.launch({ headless: true })
+    const browser = await engine.launch({
+      headless: true,
+      channel: engineName === 'chromium' ? process.env.OFFICIAL_SITE_BROWSER_CHANNEL : undefined
+    })
     try {
       for (const locale of ['en-US', 'zh-CN']) {
         const context = await browser.newContext({ locale, reducedMotion: 'reduce' })
@@ -155,7 +160,7 @@ try {
     }
   }
   console.log(
-    '[site-responsive] Chromium/WebKit passed at 320-5120px, both languages, dark theme, 200% text, and all 10 examples.'
+    '[site-responsive] Chromium/WebKit passed at 320-5120px, both languages, dark theme, 200% text, and all 11 examples.'
   )
 } finally {
   if (server) await new Promise((done) => server.httpServer.close(done))

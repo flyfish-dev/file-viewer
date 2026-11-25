@@ -8,19 +8,20 @@ import typescript from 'highlight.js/lib/languages/typescript'
 import xml from 'highlight.js/lib/languages/xml'
 import {
   ArrowRight,
+  ArrowUpRight,
   BadgeCheck,
   BookOpen,
   Boxes,
+  ChevronDown,
   Cloud,
   Cpu,
   Download,
+  Film,
   FileCode2,
   FileSpreadsheet,
   FileText,
   Gem,
   GitBranch,
-  HeartHandshake,
-  Languages,
   Layers3,
   LockKeyhole,
   Mail,
@@ -28,10 +29,7 @@ import {
   MessageCircle,
   Moon,
   MonitorPlay,
-  Newspaper,
   PackageCheck,
-  Pause,
-  Play,
   PanelTop,
   Radar,
   Rocket,
@@ -40,14 +38,14 @@ import {
   ShieldCheck,
   ShoppingCart,
   Sparkles,
-  Star,
   Sun,
-  Users,
   Wrench,
   X,
   Zap
 } from '@lucide/vue'
 import { FORMAT_CATALOG_SUMMARY } from './formatCatalog.generated'
+import AFileStage from './components/AFileStage.vue'
+import BrowserCompatibility from './components/BrowserCompatibility.vue'
 import FormatExperience from './components/FormatExperience.vue'
 import ProductResources from './components/ProductResources.vue'
 import serviceQrImage from './assets/contact/wecom.webp'
@@ -56,23 +54,8 @@ import communityQrImage from './assets/contact/community.webp'
 
 type Locale = 'zh' | 'en'
 type SiteTheme = 'light' | 'dark'
-type SupportDialogView = 'sponsor' | 'contact'
 type ChineseContactId = 'service' | 'updates' | 'community'
 type HighlightLanguage = 'bash' | 'dart' | 'javascript' | 'typescript' | 'xml'
-type HeroPreviewId = 'word' | 'cad' | 'sheet' | 'slide'
-type HeroPreviewPhase = 'idle' | 'entering' | 'active' | 'leaving'
-type HeroPreviewShield = {
-  id: HeroPreviewId
-  left: number
-  top: number
-  width: number
-  height: number
-  clientLeft: number
-  clientTop: number
-  clientRight: number
-  clientBottom: number
-}
-
 type MetricItem = {
   title: string
   value: string
@@ -86,15 +69,11 @@ type Scenario = {
   icon: Component
 }
 
-type QrItem = {
+type ChineseContactItem = {
+  id: ChineseContactId
   label: string
   note: string
   image: string
-}
-
-type ChineseContactItem = QrItem & {
-  id: ChineseContactId
-  icon: Component
 }
 
 type QuickStartItem = {
@@ -111,9 +90,9 @@ type QuickStartItem = {
   icon: Component
 }
 
-type NavAnchorId = 'formats' | 'demo' | 'solutions' | 'ecosystem' | 'support'
+type NavAnchorId = 'formats' | 'demo' | 'ecosystem'
 
-type SectionId = 'top' | NavAnchorId
+type SectionId = NavAnchorId | 'top' | 'compatibility' | 'solutions' | 'resources' | 'support'
 
 type ExplorerItem = {
   href: string
@@ -196,33 +175,21 @@ hljs.registerLanguage('xml', xml)
 
 const locale = ref<Locale>('en')
 const siteTheme = ref<SiteTheme>('light')
-const heroMotionPaused = ref(false)
-const heroMotionVisible = ref(true)
 const siteMain = ref<HTMLElement | null>(null)
 const topbar = ref<HTMLElement | null>(null)
-const flatNav = ref<HTMLElement | null>(null)
+const navMenuButton = ref<HTMLButtonElement | null>(null)
 const demoReveal = ref<HTMLElement | null>(null)
 const quickStartSection = ref<HTMLElement | null>(null)
-const supportDialogPanel = ref<HTMLElement | null>(null)
-const supportDialogCloseButton = ref<HTMLButtonElement | null>(null)
-const supportDialogSponsorTriggerButton = ref<HTMLButtonElement | null>(null)
-const supportDialogContactTriggerButton = ref<HTMLButtonElement | null>(null)
 const isTopbarPinned = ref(false)
 const activeSectionId = ref<SectionId>('top')
 const navExplorerOpen = ref(false)
-const activeHeroPreviewId = ref<HeroPreviewId | null>(null)
-const pinnedHeroPreviewId = ref<HeroPreviewId | null>(null)
-const heroPreviewPhase = ref<HeroPreviewPhase>('idle')
-const heroPreviewShield = ref<HeroPreviewShield | null>(null)
 const demoRevealActive = ref(false)
 const demoFrameMounted = ref(false)
 const demoFrameReady = ref(false)
+const recordingOpen = ref(false)
 const quickStartSectionActive = ref(false)
 const activeQuickStartIndex = ref(0)
 const githubStarCount = ref<number | null>(null)
-const supportDialogOpen = ref(false)
-const supportDialogView = ref<SupportDialogView>('sponsor')
-const activeChineseContactId = ref<ChineseContactId>('service')
 const isZh = computed(() => locale.value === 'zh')
 const nextLocaleLabel = computed(() => (isZh.value ? 'EN' : '中文'))
 const nextThemeLabel = computed(() =>
@@ -234,16 +201,6 @@ const nextThemeLabel = computed(() =>
       ? '切换到亮色主题'
       : 'Switch to light theme'
 )
-const heroPreviewShieldStyle = computed(() => {
-  const shield = heroPreviewShield.value
-  if (!shield) return undefined
-  return {
-    left: `${shield.left}px`,
-    top: `${shield.top}px`,
-    width: `${shield.width}px`,
-    height: `${shield.height}px`
-  }
-})
 const githubStarsLabel = computed(() =>
   githubStarCount.value === null ? 'GitHub' : formatStarCount(githubStarCount.value)
 )
@@ -274,6 +231,11 @@ function resolveLocalizedDocsUrl(path = '') {
 }
 
 const localizedDemoUrl = computed(() => resolveLocalizedDemoUrl(demoUrl))
+const embeddedDemoUrl = computed(() => {
+  const url = new URL(localizedDemoUrl.value)
+  url.searchParams.set('welcome', '0')
+  return url.toString()
+})
 const localizedCompareUrl = computed(() => resolveLocalizedDemoUrl(compareUrl))
 const localizedDocsUrl = computed(() => resolveLocalizedDocsUrl())
 const localizedDocsQuickstartUrl = computed(() => resolveLocalizedDocsUrl('guide/quickstart'))
@@ -291,6 +253,8 @@ function formatStarCount(count: number) {
 }
 
 function resolveInitialTheme(): SiteTheme {
+  const requestedTheme = new URLSearchParams(window.location.search).get('theme')
+  if (requestedTheme === 'dark' || requestedTheme === 'light') return requestedTheme
   const documentTheme = document.documentElement.dataset.theme
   if (documentTheme === 'light' || documentTheme === 'dark') {
     return documentTheme
@@ -311,11 +275,14 @@ function applyTheme(nextTheme: SiteTheme) {
   document.documentElement.style.colorScheme = nextTheme
   document
     .querySelector<HTMLMetaElement>('meta[name="theme-color"]')
-    ?.setAttribute('content', nextTheme === 'dark' ? '#081b16' : '#fbfdfc')
+    ?.setAttribute('content', nextTheme === 'dark' ? '#04171d' : '#f4f8f6')
 }
 
 function toggleTheme() {
   siteTheme.value = siteTheme.value === 'light' ? 'dark' : 'light'
+  const url = new URL(window.location.href)
+  url.searchParams.set('theme', siteTheme.value)
+  window.history.replaceState(null, '', url)
 }
 
 async function loadGithubStarCount() {
@@ -343,112 +310,53 @@ async function loadGithubStarCount() {
 
 const copy = {
   zh: {
-    nav: {
-      formats: '支持矩阵',
-      solutions: '应用落地',
-      ecosystem: '生态组件',
-      commercial: '商业版',
-      delivery: '部署分发',
-      support: '打赏支持',
-      docs: '文档',
-      demo: '在线体验'
-    },
+    nav: { demo: '在线演示' },
     hero: {
-      eyebrow: `本页 v${currentReleaseVersion} · ${registeredExtensionCount} 个已注册扩展名 · 无需转码服务器`,
-      title: '文件预览，全部在浏览器完成。',
       subtitle:
-        'Office、PDF、CAD、压缩包与更多文件，一个组件即可预览。浏览器原生、离线优先，让文件留在你的环境里，让体验融入你的产品。npm 最新版本以 registry 为准。',
-      primary: '立即体验',
-      secondary: '阅读文档',
-      commercial: '了解商业版',
+        '支持 Office 文档、PDF、CAD 图纸和压缩包。文件由浏览器处理，可以部署到内网，也能离线用。',
+      secondary: '接入文档',
       proof: [
         `${stableExtensionCount} 个稳定扩展名`,
         `${experimentalExtensionCount} 个实验扩展名`,
-        `${previewPipelineCount} 条预览链路`,
-        '七语言组件界面 · 离线内置'
+        `${previewPipelineCount} 条预览链路`
       ]
     },
-    matrixTitle: `${registeredExtensionCount} 个已注册扩展名，按 ${previewPipelineCount} 条真实预览链路组织。`,
-    matrixIntro:
-      '这不是一个通用降级页面配一长串后缀。PDF/OFD、Word、Spreadsheet、二进制 PPT、PPTX、CAD、Archive、XMind 和 STEP 等格式会匹配独立 renderer；Worker、WASM、字体与 vendor 资产按需加载，Full 包可整套离线交付。',
-    formatsTitle: '支持矩阵',
-    solutionsTitle: '适合长期运行在企业系统里',
-    solutionsIntro:
-      '从 OA 审批到工程图纸，从客服工单到 AI 文档工作台，File Viewer 更关注真实文件、复杂网络、私有化部署和用户每天都会遇到的细节。',
-    ecosystemTitle: '原生组件接入，统一参数与事件。',
-    ecosystemIntro:
-      'Full 包直接内置 preset-all，无需再安装或传入 preset。Vite 注册插件并开启 copyAssets:true 后自动发布包内资产；Webpack、Vue CLI 等非 Vite 项目只需执行一次包内 CLI。',
-    demoTitle: '不看截图想象。直接打开真实文件。',
+    demoTitle: '打开文件试试',
     demoIntro:
-      '用完整样例矩阵检查沉浸式文档滚动、独立工具弹层、格式图标、全局缩放、明暗主题、本地上传和显式 URL 模式；桌面与移动端共用同一渲染链路。',
-    docsTitle: '接入文档，快速参阅关键能力。',
-    docsIntro:
-      '从快速开始进入，集中查阅 Full 包、Vite 自动资产、非 Vite 单次复制、完整 web-full dist、格式矩阵、组件参数与私有化部署。',
-    commercialTitle: '免费组件与商业版的边界，一眼看清。',
-    commercialIntro:
-      '开源 File Viewer 负责浏览器原生、多格式、可离线部署的通用预览；商业版来自 Flyfish Office 自研原生文档引擎，专注 Word、Excel、PowerPoint 的高还原、大文件性能、授权交付和优先支持。两者不是二选一：商业版可以作为可替换的 Office 能力接入现有 File Viewer 组件，获得 file-viewer-pro 体验。',
-    commercialCta: '了解商业授权',
-    supportTitle: '让开源维护持续下去。',
-    supportIntro: '如果 File Viewer 帮到了你的项目，可以在需要时选择一种方式支持维护。',
-    releaseTitle:
-      'v3.3.4 源码：改进实时语言切换、PDF 批注、PPTX 图表、签名面板、表格与 OFD；已发布归档以 Release 列表为准。',
-    footer: '本仓库源码与软件包采用 Apache-2.0；可选外部依赖保留各自许可。由 Flyfish Dev 持续维护。'
+      '打开本地文件、粘贴文件链接，或从样例里选一份。可以翻页、缩放和切换主题，手机上也能用。',
+    solutionsTitle: '常见用法',
+    solutionsIntro: '把预览放到原来处理文件的地方，比如审批页、图纸审核页或工单详情。',
+    ecosystemTitle: '把预览接到你的项目里',
+    ecosystemIntro:
+      '选你在用的框架，照着下面的安装命令和示例接入。Full 包自带全部格式预设。用 Vite 可以让插件自动复制资源，其他构建工具可以运行一次包里的复制命令。',
+    supportTitle: '支持与联系',
+    footer: 'File Viewer 由 Flyfish Dev 维护。项目源码和软件包采用 Apache-2.0，第三方依赖沿用各自的许可证。'
   },
   en: {
-    nav: {
-      formats: 'Format Matrix',
-      solutions: 'Use Cases',
-      ecosystem: 'Components',
-      commercial: 'Commercial',
-      delivery: 'Delivery',
-      support: 'Sponsor',
-      docs: 'Docs',
-      demo: 'Live Demo'
-    },
+    nav: { demo: 'Live demo' },
     hero: {
-      eyebrow: `Source v${currentReleaseVersion} · ${registeredExtensionCount} registered extensions · no conversion server`,
-      title: 'Preview files entirely in the browser.',
       subtitle:
-        'Office, PDF, CAD, archives and more, in one preview component. Browser-native and offline-first. Your files stay in your environment, and the experience fits your product. Check npm for the latest published version.',
-      primary: 'Try the Demo',
-      secondary: 'Read the Docs',
-      commercial: 'Commercial Edition',
+        'Open Office files, PDFs, CAD drawings, and archives. The browser processes the files. You can host the viewer on a private network or use it offline.',
+      secondary: 'Integration docs',
       proof: [
         `${stableExtensionCount} stable extensions`,
         `${experimentalExtensionCount} experimental extensions`,
-        `${previewPipelineCount} preview pipelines`,
-        'Seven built-in UI languages'
+        `${previewPipelineCount} preview pipelines`
       ]
     },
-    matrixTitle: `${registeredExtensionCount} registered extensions. ${previewPipelineCount} real preview pipelines.`,
-    matrixIntro:
-      'This is not one generic fallback page with a long suffix list. PDF/OFD, Word, Spreadsheet, binary PPT, PPTX, CAD, Archive, XMind, STEP, and other families match dedicated renderers. Workers, WASM, fonts, and vendor assets load on demand, while Full packages deliver the complete offline payload.',
-    formatsTitle: 'Format matrix',
-    solutionsTitle: 'Built for long-running enterprise workspaces',
-    solutionsIntro:
-      'From approvals to engineering drawings, support tickets, and AI document workflows, File Viewer focuses on real files, private networks, self-hosted delivery, and the details users meet every day.',
-    ecosystemTitle: 'Native integrations with one options and event model.',
-    ecosystemIntro:
-      'Full packages include preset-all, so there is no separate preset to install or pass. Vite publishes packaged assets with copyAssets:true; Webpack, Vue CLI, and other builds run the included CLI once.',
-    demoTitle: 'Do not guess from screenshots. Open real files.',
+    demoTitle: 'Try it with a file',
     demoIntro:
-      'Use the full sample matrix to check immersive document scrolling, anchored tool panels, format icons, global zoom, light and dark themes, local uploads, and explicit URL mode. Desktop and mobile use the same renderer paths.',
-    docsTitle: 'Integration docs for fast technical reference.',
-    docsIntro:
-      'Start with Full packages, Vite asset publishing, the one-command non-Vite path, complete web-full dist, format coverage, component options, and self-hosted deployment.',
-    commercialTitle: 'Open-source component or commercial edition? Make the boundary obvious.',
-    commercialIntro:
-      'The open-source File Viewer focuses on browser-native, multi-format, offline-ready preview. The commercial edition comes from the Flyfish Office product line and focuses on Word, Excel, and PowerPoint fidelity, large-file performance, licensed delivery, and priority support. They are not mutually exclusive: the commercial engine can replace the Office capability inside the same File Viewer integration to deliver a file-viewer-pro experience.',
-    commercialCta: 'Commercial Licensing',
-    supportTitle: 'Keep the open-source work moving.',
-    supportIntro:
-      'If File Viewer saves your team time, choose a support option when it makes sense.',
-    releaseTitle:
-      'v3.3.4 source: live language updates, PDF annotations, PPTX charts, signature panels, spreadsheets and OFD improvements. Published archives are listed in GitHub Releases.',
+      'Open a local file, paste a file link, or choose a sample. You can turn pages, zoom, and change themes on your phone or computer.',
+    solutionsTitle: 'Common uses',
+    solutionsIntro: 'Add a preview where people already work with files, such as an approval page, a drawing review, or a support ticket.',
+    ecosystemTitle: 'Add File Viewer to your project',
+    ecosystemIntro:
+      'Pick your framework below for the install command and an example. Full packages include all presets. Let the Vite plugin copy the assets or run the included copy command for other build tools.',
+    supportTitle: 'Support and contact',
     footer:
-      'Repository source and packages use Apache-2.0; optional external dependencies keep their own licenses. Maintained by Flyfish Dev.'
+      'Flyfish Dev maintains File Viewer. The source and packages use Apache-2.0. Third-party dependencies use their own licenses.'
   }
-} satisfies Record<Locale, Record<string, any>>
+} satisfies Record<Locale, Record<string, unknown>>
 
 const metrics = computed<MetricItem[]>(() =>
   isZh.value
@@ -466,13 +374,13 @@ const metrics = computed<MetricItem[]>(() =>
           tone: 'blue'
         },
         {
-          title: 'Preset 层级',
+          title: '格式预设',
           value: '4',
           detail: 'lite、office、engineering、all 按产品形态装配',
           tone: 'violet'
         },
         {
-          title: 'npm 发布目标',
+          title: 'npm 包',
           value: '89',
           detail: '81 个标准包、8 个历史兼容包，msdoc-viewer 独立版本',
           tone: 'amber'
@@ -492,13 +400,13 @@ const metrics = computed<MetricItem[]>(() =>
           tone: 'blue'
         },
         {
-          title: 'Preset tiers',
+          title: 'Format presets',
           value: '4',
           detail: 'lite, office, engineering, and all product-shaped bundles',
           tone: 'violet'
         },
         {
-          title: 'npm targets',
+          title: 'npm packages',
           value: '89',
           detail:
             '81 standard packages, 8 legacy-compatible packages, and independently versioned msdoc-viewer',
@@ -511,28 +419,28 @@ const scenarios = computed<Scenario[]>(() =>
   isZh.value
     ? [
         {
-          title: 'OA 审批与合同归档',
-          summary: 'PDF、Word、OFD、图片和压缩包直接在审批流里打开，减少下载和外部应用跳转。',
+          title: '审批与合同归档',
+          summary: '在审批页直接打开 PDF、Word、OFD、图片和压缩包。',
           icon: ShieldCheck
         },
         {
-          title: '知识库与附件中心',
-          summary: '文档、表格、演示稿、代码片段和媒体附件在同一阅读体验中被检索、定位和复用。',
+          title: '知识库与附件',
+          summary: '在知识库里打开文档、表格、演示稿、代码和媒体附件。支持搜索的文件可以直接查找内容。',
           icon: SearchCheck
         },
         {
-          title: '工程图纸协同',
-          summary: 'CAD/DWG/DXF/DWF、EDA 和 3D 模型进入浏览器，适合工程、制造和图纸审核。',
+          title: '工程图纸审核',
+          summary: '工程和制造团队可以在网页上核对 DWG、DXF、DWF 等 CAD 图纸，也能查看 EDA 文件和三维模型。',
           icon: Radar
         },
         {
-          title: '客服与工单平台',
-          summary: '邮件、附件包、截图、录音和文档在线预览，帮助团队快速判断问题来源。',
+          title: '客服工单',
+          summary: '在工单里打开邮件、压缩包、截图、录音和文档。',
           icon: Mail
         },
         {
-          title: '私有化与离线部署',
-          summary: '前端静态资源即可运行，支持 npm、Docker、Release tarball 和内网静态站。',
+          title: '内网和离线部署',
+          summary: '可以用 npm、Docker 或 GitHub Releases 的归档部署，也可以把静态资源放到内网站点。',
           icon: LockKeyhole
         },
         {
@@ -545,31 +453,31 @@ const scenarios = computed<Scenario[]>(() =>
         {
           title: 'Approvals and contract archives',
           summary:
-            'Open PDF, Word, OFD, images, and archives directly in approval flows without downloads or external apps.',
+            'Open PDFs, Word documents, OFD files, images, and archives on the approval page.',
           icon: ShieldCheck
         },
         {
-          title: 'Knowledge bases and attachment hubs',
+          title: 'Knowledge bases and attachments',
           summary:
-            'Documents, spreadsheets, decks, snippets, and media attachments become searchable and reusable in one reading surface.',
+            'Open documents, spreadsheets, slides, code, and media in your knowledge base. Search within files that support it.',
           icon: SearchCheck
         },
         {
-          title: 'Engineering drawing collaboration',
+          title: 'Drawing reviews',
           summary:
-            'Bring CAD/DWG/DXF/DWF, EDA assets, and 3D models into browser workflows for review and manufacturing teams.',
+            'Review DWG, DXF, and DWF drawings, EDA files, and 3D models in the browser.',
           icon: Radar
         },
         {
-          title: 'Support and ticketing systems',
+          title: 'Support tickets',
           summary:
-            'Preview email, attachment bundles, screenshots, recordings, and documents to identify issues quickly.',
+            'Open emails, archives, screenshots, recordings, and documents from a support ticket.',
           icon: Mail
         },
         {
-          title: 'Private and offline deployment',
+          title: 'Private networks and offline use',
           summary:
-            'Run from static assets with npm, Docker, GitHub Release tarballs, or internal static hosting.',
+            'Deploy with npm, Docker, or a GitHub release archive. You can also serve the static files on your internal network.',
           icon: LockKeyhole
         },
         {
@@ -627,11 +535,11 @@ const quickStartItems = computed<QuickStartItem[]>(() => [
     packageName: '@file-viewer/cli',
     install: 'npm create file-viewer@latest my-viewer',
     title: isZh.value
-      ? '选择框架与格式，直接生成或接入'
-      : 'Choose a framework and formats, then create or integrate',
+      ? '创建项目或接入已有项目'
+      : 'Create a project or add File Viewer to one',
     summary: isZh.value
-      ? 'CLI 支持脚手架、已有项目自动检测、按需能力、完整 copy-assets 兼容，以及私有源和离线 tgz 准备。'
-      : 'The CLI covers scaffolding, existing-project detection, selected capabilities, complete copy-assets compatibility, private registries, and offline tgz preparation.',
+      ? 'CLI 可以新建项目，也能识别已有项目的框架。你可以选需要的格式、用私有 npm 源，或准备离线用的 tgz 包。原有 copy-assets 命令也能用。'
+      : 'The CLI can create a project or detect the framework in an existing one. You can pick formats, use a private registry, or prepare offline tgz packages. The copy-assets command still works.',
     language: 'Shell',
     highlightLanguage: 'bash',
     href: cliPageUrl.value,
@@ -652,11 +560,11 @@ npx file-viewer-cli verify --json`
     packageName: '@file-viewer/web-full',
     install: 'npm install @file-viewer/web-full@latest',
     title: isZh.value
-      ? '完整部署 dist，零 copy 直接预览'
-      : 'Deploy the complete dist with zero copy steps',
+      ? '部署整个 dist 目录'
+      : 'Deploy the whole dist directory',
     summary: isZh.value
-      ? 'web-full 内置 preset-all；完整 dist 已包含 renderer、Worker、WASM、字体和 vendor，保持目录结构部署即可。'
-      : 'web-full includes preset-all; its complete dist already contains renderers, Workers, WASM, fonts, and vendor assets.',
+      ? 'web-full 自带 preset-all。把 dist 原样部署，其中已经有渲染器、Worker、WASM、字体和第三方资源。'
+      : 'Keep the dist directory as it is when you deploy it. It includes preset-all, renderers, Workers, WASM, fonts, and vendor assets.',
     language: 'HTML',
     highlightLanguage: 'xml',
     href: resolveLocalizedDocsUrl('guide/quickstart-web'),
@@ -688,10 +596,10 @@ controller.zoomIn()
     label: 'Vue 3',
     packageName: '@file-viewer/vue3-full',
     install: 'npm install @file-viewer/vue3-full',
-    title: isZh.value ? 'Vue 3 一步获得完整能力' : 'Vue 3 with complete capability',
+    title: isZh.value ? '在 Vue 3 中使用 Full 包' : 'Use the Full package with Vue 3',
     summary: isZh.value
-      ? 'Full 已内置 preset-all，无需另装或传入 preset；完整资产通过 Vite 自动发布或非 Vite CLI 一次复制。'
-      : 'Full includes preset-all with no separate preset option; Vite publishes assets automatically, or the non-Vite CLI copies them once.',
+      ? 'Full 包自带 preset-all。用 Vite 插件自动复制资源，或者用包里的 CLI 复制一次。'
+      : 'The Full package includes preset-all. Let the Vite plugin copy the assets, or run the included CLI to copy them once.',
     language: 'Vue SFC',
     highlightLanguage: 'typescript',
     href: resolveLocalizedDocsUrl('guide/quickstart-vue3'),
@@ -717,10 +625,10 @@ createApp(App).use(FileViewer).mount('#app')
     label: isZh.value ? 'Vue 3 按需' : 'Vue 3 On Demand',
     packageName: '@file-viewer/vue3',
     install: 'npm install @file-viewer/vue3 @file-viewer/preset-office',
-    title: isZh.value ? 'Vue 3 标准包按需装配' : 'Vue 3 standard package with presets',
+    title: isZh.value ? '在 Vue 3 中只安装需要的格式' : 'Install only the formats you need in Vue 3',
     summary: isZh.value
-      ? '标准包保持最轻入口，格式能力通过 preset 或单 renderer 注入，适合控制安装体积。'
-      : 'The standard package stays light; presets or single renderers control the installed capability set.',
+      ? '用标准包加格式预设，也可以只装单个渲染器，减少安装体积。'
+      : 'Use the standard package with a format preset or a single renderer to keep the install smaller.',
     language: 'Vue SFC',
     highlightLanguage: 'typescript',
     href: resolveLocalizedDocsUrl('guide/quickstart-vue3'),
@@ -748,10 +656,10 @@ createApp(App).use(FileViewer).mount('#app')
     label: 'React',
     packageName: '@file-viewer/react-full',
     install: 'npm install @file-viewer/react-full',
-    title: isZh.value ? 'React full 包一行接入' : 'React full package in one line',
+    title: isZh.value ? '在 React 中使用 Full 包' : 'Use the Full package with React',
     summary: isZh.value
-      ? '内置 preset-all 与同版本完整资产，同时保留 React 组件、hooks、事件回调和 ref/controller。'
-      : 'Includes preset-all and the same-version complete asset payload, while keeping components, hooks, callbacks, and ref/controller APIs.',
+      ? 'Full 包自带 preset-all 和同版本资源。可以用 React 组件、Hook、事件回调或 ref/controller 操作预览器。'
+      : 'The package includes preset-all and matching assets. Use React components, hooks, callbacks, or the ref/controller API to work with the viewer.',
     language: 'TSX',
     highlightLanguage: 'typescript',
     href: resolveLocalizedDocsUrl('guide/quickstart-react'),
@@ -781,10 +689,10 @@ export function Preview() {
     label: 'Flutter',
     packageName: 'file_viewer_flutter',
     install: 'flutter pub add file_viewer_flutter:0.1.0-dev.2',
-    title: isZh.value ? 'Flutter 文件预览与应用级预热' : 'Flutter previews with application warm-up',
+    title: isZh.value ? '在 Flutter 应用里预览文件' : 'Preview files in a Flutter app',
     summary: isZh.value
-      ? '开发预览版已在 pub.dev 发布。离线资源随应用分发，统一 Dart API 面向移动、桌面与 Web；实测范围与平台配置见 Flutter 文档。'
-      : 'The development preview is on pub.dev. Bundled offline resources and one Dart API target mobile, desktop and Web; check measured scope and host setup in the Flutter docs.',
+      ? 'pub.dev 上提供开发预览版。移动端、桌面端和 Web 使用同一套 Dart API，离线资源随应用发布。Flutter 文档列出了各平台的设置和已测试的功能。'
+      : 'The development preview is on pub.dev. The same Dart API covers mobile, desktop, and web, with offline assets bundled in the app. See the Flutter docs for setup and tested features by platform.',
     language: 'Dart',
     highlightLanguage: 'dart',
     href: `https://flutter.file-viewer.app/${isZh.value ? 'zh' : 'en'}/docs/quickstart/`,
@@ -813,10 +721,10 @@ void main() {
     label: 'Svelte',
     packageName: '@file-viewer/svelte-full',
     install: 'npm install @file-viewer/svelte-full',
-    title: isZh.value ? 'Svelte full 包完整接入' : 'Svelte full package with the complete matrix',
+    title: isZh.value ? '在 Svelte 中使用 Full 包' : 'Use the Full package with Svelte',
     summary: isZh.value
-      ? 'Svelte Full 内置 preset-all 与完整离线资产，并保留统一的 options、事件、主题、搜索、缩放和打印导出能力。'
-      : 'Svelte Full includes preset-all and complete offline assets while keeping the shared options, events, themes, search, zoom, print, and export APIs.',
+      ? 'Full 包自带 preset-all 和离线资源。可以设置主题、监听事件，以及搜索、缩放、打印和导出。'
+      : 'The Full package includes preset-all and offline assets. Use the shared options and events for themes, search, zoom, printing, and export.',
     language: 'Svelte',
     highlightLanguage: 'xml',
     href: resolveLocalizedDocsUrl('guide/quickstart-svelte'),
@@ -841,10 +749,10 @@ ${'</' + 'script>'}
     label: 'Vue 2.7 / 2.6',
     packageName: '@file-viewer/vue2.7-full',
     install: 'npm install @file-viewer/vue2.7-full',
-    title: isZh.value ? 'Vue 2.7 / 2.6 项目平滑接入' : 'Smooth Vue 2.7 / 2.6 integration',
+    title: isZh.value ? '按 Vue 版本安装对应的包' : 'Install the package for your Vue version',
     summary: isZh.value
-      ? 'Vue 2.7 与 Vue 2.6 Full 均内置 preset-all、同版本复制 CLI，并保持相同的 props、事件和样式入口。'
-      : 'Vue 2.7 and Vue 2.6 Full both include preset-all, the same-version copy CLI, and the same props, events, and style entry.',
+      ? 'Vue 2.7 和 2.6 各有一个 Full 包。两者都带 preset-all 和同版本的资源复制命令，组件参数、事件和样式入口相同。'
+      : 'Vue 2.7 and 2.6 have separate Full packages. Both include preset-all and a matching asset copy command. They use the same props, events, and style entry.',
     language: 'Vue 2',
     highlightLanguage: 'javascript',
     href: resolveLocalizedDocsUrl('guide/quickstart-vue2'),
@@ -877,11 +785,11 @@ new Vue({
     packageName: '@file-viewer/jquery-full',
     install: 'npm install @file-viewer/jquery-full',
     title: isZh.value
-      ? 'jQuery Full 命令式完整接入'
-      : 'Complete imperative jQuery Full integration',
+      ? '在 jQuery 页面中挂载预览器'
+      : 'Mount the viewer on a jQuery page',
     summary: isZh.value
-      ? '内置 preset-all 与同版本完整资产，面向传统多页应用保留 controller、事件解绑、销毁和运行时更新能力。'
-      : 'Includes preset-all and same-version complete assets, with controller, event cleanup, destroy, and runtime updates for classic apps.',
+      ? 'Full 包自带 preset-all 和同版本资源。用 controller 换文件、更新设置、解除事件绑定或销毁预览器。'
+      : 'The Full package includes preset-all and matching assets. Use the controller to load files, update settings, remove listeners, or destroy the viewer.',
     language: 'JavaScript',
     highlightLanguage: 'javascript',
     href: resolveLocalizedDocsUrl('guide/ecosystem#jquery'),
@@ -903,17 +811,17 @@ const controller = mountViewer(document.getElementById('viewer'), {
 controller.load({ url: '/files/contract.pdf' })`
   },
   {
-    label: isZh.value ? 'Vite 自动装配' : 'Vite Auto',
+    label: isZh.value ? 'Vite 复制资源' : 'Vite asset copy',
     packageName: '@file-viewer/vite-plugin',
     install: isZh.value
       ? 'npm install @file-viewer/vue3-full && npm install -D @file-viewer/vite-plugin'
       : 'npm install @file-viewer/vue3-full && npm install -D @file-viewer/vite-plugin',
     title: isZh.value
-      ? 'Full + copyAssets:true 自动完成格式与资产'
-      : 'Full + copyAssets:true completes formats and assets',
+      ? '让 Vite 自动复制资源'
+      : 'Let Vite copy the assets',
     summary: isZh.value
-      ? 'Full 自带 preset-all；插件在 dev/build 中自动发布全部 Worker、WASM、字体和 vendor，并兼容根路径与子路径部署。'
-      : 'Full brings preset-all; the plugin publishes every Worker, WASM, font, and vendor asset in dev/build for root or subpath deployments.',
+      ? 'Full 自带 preset-all。打开 copyAssets 后，插件会在开发和构建时复制 Worker、WASM、字体和第三方资源。网站可以部署到根路径或子目录。'
+      : 'Full includes preset-all. With copyAssets enabled, Vite copies Workers, WASM, fonts, and vendor assets in development and builds. You can deploy at the root or a subpath.',
     language: 'Vite',
     highlightLanguage: 'typescript',
     href: resolveLocalizedDocsUrl('guide/on-demand-renderers'),
@@ -937,14 +845,14 @@ export default defineConfig({
     label: isZh.value ? '离线部署' : 'Offline',
     packageName: '@file-viewer/*-full',
     install: isZh.value
-      ? '非 Vite：任一 Full 包自带复制命令'
-      : 'Non-Vite: every Full package includes the copy command',
+      ? '每个 Full 包都带资源复制命令'
+      : 'Every Full package includes the asset copy command',
     title: isZh.value
-      ? 'Webpack / Vue CLI 只执行一次 CLI'
-      : 'One CLI command for Webpack or Vue CLI',
+      ? '在 Webpack 或 Vue CLI 项目中复制资源'
+      : 'Copy assets in a Webpack or Vue CLI project',
     summary: isZh.value
-      ? '命令来自已安装的 Full 包，复制同版本完整资产并写入清单；运行时不依赖公共 CDN。'
-      : 'The command comes with the installed Full package, copies its same-version complete payload, and writes the manifest; runtime stays off public CDNs.',
+      ? '在项目里运行这条命令，复制 Full 包里的资源并生成清单。资源由你的站点提供，离线也能加载。'
+      : 'Run this command in your project to copy assets from the installed Full package and write the manifest. Your site serves the assets, including offline.',
     language: 'Shell',
     highlightLanguage: 'bash',
     href: resolveLocalizedDocsUrl('guide/distribution'),
@@ -966,60 +874,25 @@ const activeQuickStart = computed(() => {
 const chineseContactItems: ChineseContactItem[] = [
   {
     id: 'service',
-    label: '客服企业微信',
-    note: '商务咨询、商业授权与优先技术支持',
-    image: serviceQrImage,
-    icon: MessageCircle
+    label: '企业微信',
+    note: '商务咨询、授权与优先技术支持',
+    image: serviceQrImage
   },
   {
     id: 'updates',
     label: '微信公众号',
-    note: '获取版本更新与文件预览实践文章',
-    image: updatesQrImage,
-    icon: Newspaper
+    note: '版本更新与使用说明',
+    image: updatesQrImage
   },
   {
     id: 'community',
     label: '用户交流群',
-    note: '与开发者和 File Viewer 用户交流',
-    image: communityQrImage,
-    icon: Users
+    note: '和开发者、用户交流',
+    image: communityQrImage
   }
 ]
 
-const contactQrStates = ref<Record<ChineseContactId, 'loading' | 'ready' | 'error'>>({
-  service: 'loading',
-  updates: 'loading',
-  community: 'loading'
-})
-const contactQrPreloads = new Map<ChineseContactId, HTMLImageElement>()
-
-function preloadContactQrs() {
-  if (!isZh.value) return
-  for (const item of chineseContactItems) {
-    if (contactQrPreloads.has(item.id)) continue
-    const image = new Image()
-    image.decoding = 'async'
-    image.onload = () => {
-      void image.decode().catch(() => undefined)
-    }
-    image.onerror = () => contactQrPreloads.delete(item.id)
-    contactQrPreloads.set(item.id, image)
-    image.src = item.image
-  }
-}
-
-function retryContactQr(item: ChineseContactItem) {
-  contactQrStates.value[item.id] = 'loading'
-  contactQrPreloads.delete(item.id)
-  preloadContactQrs()
-}
-
-const activeChineseContact = computed(
-  () =>
-    chineseContactItems.find((item) => item.id === activeChineseContactId.value) ??
-    chineseContactItems[0]!
-)
+const failedContactQrs = ref<Partial<Record<ChineseContactId, boolean>>>({})
 
 const currentCopy = computed(() => copy[locale.value])
 
@@ -1027,8 +900,10 @@ const pageSectionIds: readonly SectionId[] = [
   'top',
   'demo',
   'formats',
+  'compatibility',
   'solutions',
   'ecosystem',
+  'resources',
   'support'
 ]
 
@@ -1036,14 +911,14 @@ const explorerPrimaryItems = computed<ExplorerItem[]>(() => [
   {
     href: '#demo',
     section: 'demo',
-    label: isZh.value ? '先看真实预览' : 'See the real viewer',
-    note: isZh.value ? '直接体验真实文件与完整工具栏' : 'Open real files with the complete toolbar',
+    label: isZh.value ? '试用文件预览' : 'Try file preview',
+    note: isZh.value ? '打开本地文件或试用样例' : 'Open a local file or try a sample',
     icon: MonitorPlay
   },
   {
     href: '#formats',
     section: 'formats',
-    label: isZh.value ? '查看支持格式' : 'Check format coverage',
+    label: isZh.value ? '查文件格式' : 'Find supported formats',
     note: isZh.value
       ? `${registeredExtensionCount} 个已注册扩展名，匹配 ${previewPipelineCount} 条预览链路`
       : `${registeredExtensionCount} registered extensions across ${previewPipelineCount} preview pipelines`,
@@ -1054,8 +929,8 @@ const explorerPrimaryItems = computed<ExplorerItem[]>(() => [
     section: 'ecosystem',
     label: isZh.value ? '开始集成' : 'Start integrating',
     note: isZh.value
-      ? '选择组件，一段代码即可运行'
-      : 'Choose a component and run one focused snippet',
+      ? '按框架查看安装命令和代码示例'
+      : 'Find install commands and examples by framework',
     icon: FileCode2
   }
 ])
@@ -1064,7 +939,7 @@ const explorerResourceItems = computed<ExplorerItem[]>(() => [
   {
     href: cliPageUrl.value,
     label: 'File Viewer CLI',
-    note: isZh.value ? '创建、接入与离线准备' : 'Create, integrate, and prepare offline',
+    note: isZh.value ? '创建项目、接入已有项目或准备离线包' : 'Create a project, add the viewer, or prepare offline packages',
     icon: PackageCheck
   },
   {
@@ -1087,28 +962,26 @@ const explorerResourceItems = computed<ExplorerItem[]>(() => [
   },
   {
     href: '/en/browser-file-viewer/',
-    label: isZh.value ? '项目事实' : 'Verified facts',
+    label: isZh.value ? '项目介绍' : 'About File Viewer',
     note: isZh.value
-      ? '统一版本、包名与架构口径'
-      : 'Canonical identity, packages, architecture, and limits',
+      ? '查看官方包名、架构和支持范围'
+      : 'Find the official packages, architecture, and limits',
     icon: BadgeCheck
   },
   {
     href: commercialPageUrl.value,
     label: isZh.value ? '商业版' : 'Commercial',
     note: isZh.value
-      ? '高保真 Office 引擎与企业支持'
-      : 'High-fidelity Office engine and enterprise support',
+      ? '查看 Office 引擎、授权和技术支持'
+      : 'Compare the Office engine, licensing, and support',
     icon: Gem
   }
 ])
 
-const activeFlatNavId = computed<NavAnchorId>(() => {
-  if (activeSectionId.value === 'formats') return 'formats'
-  if (activeSectionId.value === 'ecosystem' || activeSectionId.value === 'solutions') {
-    return 'ecosystem'
-  }
-  return 'demo'
+const activeFlatNavId = computed<NavAnchorId | null>(() => {
+  const section = activeSectionId.value
+  if (section === 'demo' || section === 'formats' || section === 'ecosystem') return section
+  return null
 })
 
 function resolveLocaleFromPathname(pathname: string): Locale | undefined {
@@ -1197,6 +1070,9 @@ function prefersChineseEnvironment() {
 }
 
 function resolveInitialLocale(): Locale {
+  const requested = new URLSearchParams(window.location.search).get('lang')
+  if (requested === 'zh-CN' || requested === 'zh') return 'zh'
+  if (requested === 'en-US' || requested === 'en') return 'en'
   const pathLocale = resolveLocaleFromPathname(window.location.pathname)
   if (pathLocale) {
     return pathLocale
@@ -1223,6 +1099,9 @@ function toggleLocale() {
   navExplorerOpen.value = false
   writeStoredLocalePreference(nextLocale)
   locale.value = nextLocale
+  const url = new URL(window.location.href)
+  url.searchParams.delete('lang')
+  window.history.replaceState(null, '', url)
   syncBrowserPathForLocale(nextLocale)
 }
 
@@ -1250,7 +1129,7 @@ function handleQuickStartKeydown(event: KeyboardEvent, index: number) {
   if (event.defaultPrevented) {
     siteMain.value
       ?.querySelector<HTMLButtonElement>(`#quickstart-tab-${activeQuickStartIndex.value}`)
-      ?.focus()
+      ?.focus({ preventScroll: true })
   }
 }
 
@@ -1262,282 +1141,33 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function usesCoarsePointer() {
-  return window.matchMedia('(hover: none), (pointer: coarse)').matches
-}
-
-const heroPreviewEnterFallbackMs = 740
-const heroPreviewLeaveFallbackMs = 230
-let heroPreviewTransitionTimer: number | null = null
-let heroPreviewExitRequested = false
-
-function clearHeroPreviewTransitionTimer() {
-  if (heroPreviewTransitionTimer === null) return
-  window.clearTimeout(heroPreviewTransitionTimer)
-  heroPreviewTransitionTimer = null
-}
-
-function scheduleHeroPreviewTransitionFallback(callback: () => void, delay: number) {
-  clearHeroPreviewTransitionTimer()
-  heroPreviewTransitionTimer = window.setTimeout(() => {
-    heroPreviewTransitionTimer = null
-    callback()
-  }, delay)
-}
-
-function finishHeroPreviewLeave() {
-  if (heroPreviewPhase.value !== 'leaving') return
-  clearHeroPreviewTransitionTimer()
-  heroPreviewShield.value = null
-  activeHeroPreviewId.value = null
-  heroPreviewPhase.value = 'idle'
-  heroPreviewExitRequested = false
-
-  if (pinnedHeroPreviewId.value) {
-    startHeroPreviewEnter(pinnedHeroPreviewId.value)
-  }
-}
-
-function startHeroPreviewLeave() {
-  if (heroPreviewPhase.value !== 'active' || !activeHeroPreviewId.value) return
-  heroPreviewPhase.value = 'leaving'
-
-  if (prefersReducedMotion()) {
-    finishHeroPreviewLeave()
-    return
-  }
-
-  scheduleHeroPreviewTransitionFallback(finishHeroPreviewLeave, heroPreviewLeaveFallbackMs)
-}
-
-function finishHeroPreviewEnter() {
-  if (heroPreviewPhase.value !== 'entering' || !activeHeroPreviewId.value) return
-  clearHeroPreviewTransitionTimer()
-  heroPreviewPhase.value = 'active'
-
-  if (
-    heroPreviewExitRequested ||
-    (pinnedHeroPreviewId.value && pinnedHeroPreviewId.value !== activeHeroPreviewId.value)
-  ) {
-    startHeroPreviewLeave()
-  }
-}
-
-function startHeroPreviewEnter(id: HeroPreviewId) {
-  if (heroPreviewPhase.value !== 'idle') return
-  clearHeroPreviewTransitionTimer()
-  heroPreviewExitRequested = false
-  activeHeroPreviewId.value = id
-  heroPreviewPhase.value = 'entering'
-
-  if (prefersReducedMotion()) {
-    finishHeroPreviewEnter()
-    return
-  }
-
-  scheduleHeroPreviewTransitionFallback(finishHeroPreviewEnter, heroPreviewEnterFallbackMs)
-}
-
-function setHeroPreviewPointerAnchor(event: PointerEvent, id: HeroPreviewId) {
-  if (!(event.currentTarget instanceof HTMLElement)) return
-  const bounds = event.currentTarget.getBoundingClientRect()
-  const anchorX = Math.min(bounds.width, Math.max(0, event.clientX - bounds.left))
-  const anchorY = Math.min(bounds.height, Math.max(0, event.clientY - bounds.top))
-  event.currentTarget.style.setProperty('--focus-origin-x', `${anchorX}px`)
-  event.currentTarget.style.setProperty('--focus-origin-y', `${anchorY}px`)
-
-  const stage = event.currentTarget.closest<HTMLElement>('.hero-orbit-stage')
-  if (!stage) return
-  const stageBounds = stage.getBoundingClientRect()
-  const focusScale =
-    Number.parseFloat(
-      window.getComputedStyle(event.currentTarget).getPropertyValue('--focus-scale')
-    ) || 1
-  const guard = 10
-  const clientLeft = event.clientX - anchorX * focusScale - guard
-  const clientTop = event.clientY - anchorY * focusScale - guard
-  const width = bounds.width * focusScale + guard * 2
-  const height = bounds.height * focusScale + guard * 2
-  heroPreviewShield.value = {
-    id,
-    left: clientLeft - stageBounds.left,
-    top: clientTop - stageBounds.top,
-    width,
-    height,
-    clientLeft,
-    clientTop,
-    clientRight: clientLeft + width,
-    clientBottom: clientTop + height
-  }
-}
-
-function resetHeroPreviewPointerAnchor(event: Event) {
-  if (!(event.currentTarget instanceof HTMLElement)) return
-  event.currentTarget.style.setProperty('--focus-origin-x', '50%')
-  event.currentTarget.style.setProperty('--focus-origin-y', '50%')
-}
-
-function handleHeroPreviewPointerEnter(event: PointerEvent, id: HeroPreviewId) {
-  if (usesCoarsePointer() || pinnedHeroPreviewId.value) return
-
-  if (heroPreviewPhase.value === 'idle') {
-    setHeroPreviewPointerAnchor(event, id)
-    startHeroPreviewEnter(id)
-  } else if (heroPreviewPhase.value === 'entering' && activeHeroPreviewId.value === id) {
-    heroPreviewExitRequested = false
-  }
-}
-
-function requestHeroPreviewPointerLeave(id: HeroPreviewId) {
-  if (usesCoarsePointer() || pinnedHeroPreviewId.value || activeHeroPreviewId.value !== id) {
-    return
-  }
-
-  if (heroPreviewPhase.value === 'entering') {
-    heroPreviewExitRequested = true
-  } else if (heroPreviewPhase.value === 'active') {
-    startHeroPreviewLeave()
-  }
-}
-
-function handleHeroPreviewPointerLeave(event: PointerEvent, id: HeroPreviewId) {
-  const shield = heroPreviewShield.value
-  if (
-    shield?.id === id &&
-    event.clientX >= shield.clientLeft &&
-    event.clientX <= shield.clientRight &&
-    event.clientY >= shield.clientTop &&
-    event.clientY <= shield.clientBottom
-  ) {
-    return
-  }
-  requestHeroPreviewPointerLeave(id)
-}
-
-function handleHeroPreviewShieldPointerEnter() {
-  if (heroPreviewPhase.value === 'entering') {
-    heroPreviewExitRequested = false
-  }
-}
-
-function handleHeroPreviewShieldPointerLeave() {
-  if (activeHeroPreviewId.value) {
-    requestHeroPreviewPointerLeave(activeHeroPreviewId.value)
-  }
-}
-
-function setPinnedHeroPreview(id: HeroPreviewId | null) {
-  pinnedHeroPreviewId.value = id
-
-  if (heroPreviewPhase.value === 'idle') {
-    if (id) startHeroPreviewEnter(id)
-    return
-  }
-
-  if (activeHeroPreviewId.value === id) {
-    heroPreviewExitRequested = false
-  } else if (heroPreviewPhase.value === 'entering') {
-    heroPreviewExitRequested = true
-  } else if (heroPreviewPhase.value === 'active') {
-    startHeroPreviewLeave()
-  }
-}
-
-function activateHeroPreview(event: PointerEvent, id: HeroPreviewId) {
-  if (event.pointerType !== 'touch' && !usesCoarsePointer()) return
-  resetHeroPreviewPointerAnchor(event)
-  setPinnedHeroPreview(pinnedHeroPreviewId.value === id ? null : id)
-}
-
-function activateHeroPreviewFromKeyboard(event: KeyboardEvent, id: HeroPreviewId) {
-  if (event.key !== 'Enter' && event.key !== ' ') return
-  event.preventDefault()
-  resetHeroPreviewPointerAnchor(event)
-  setPinnedHeroPreview(pinnedHeroPreviewId.value === id ? null : id)
-}
-
-function handleHeroPreviewTransitionEnd(event: TransitionEvent, id: HeroPreviewId) {
-  if (
-    event.target !== event.currentTarget ||
-    event.propertyName !== 'transform' ||
-    activeHeroPreviewId.value !== id
-  ) {
-    return
-  }
-
-  if (heroPreviewPhase.value === 'entering') {
-    finishHeroPreviewEnter()
-  } else if (heroPreviewPhase.value === 'leaving') {
-    finishHeroPreviewLeave()
-  }
-}
-
-function clearHeroPreviewOutside(event: PointerEvent) {
-  if (!pinnedHeroPreviewId.value || !(event.target instanceof Element)) return
-  if (!event.target.closest('.hero-preview-item')) {
-    setPinnedHeroPreview(null)
-  }
-}
-
 function getTopbarScrollOffset() {
-  const rect = topbar.value?.getBoundingClientRect()
-  const height = rect?.height ?? 72
-  const top = rect ? Math.max(8, rect.top) : 14
-  return Math.ceil(height + top + 62)
+  const nav = topbar.value
+  const inset = nav ? Number.parseFloat(window.getComputedStyle(nav).top) || 0 : 8
+  return Math.ceil((nav?.getBoundingClientRect().height ?? 68) + inset + 18)
 }
 
-function updateAnchorOffsetVariable() {
-  const rect = topbar.value?.getBoundingClientRect()
-  const styles = topbar.value ? window.getComputedStyle(topbar.value) : null
-  const marginTop = styles ? Number.parseFloat(styles.marginTop) || 0 : 14
-  const marginBottom = styles ? Number.parseFloat(styles.marginBottom) || 0 : 32
-  const topbarSpace = Math.ceil((rect?.height ?? 72) + marginTop + marginBottom)
-  document.documentElement.style.setProperty('--site-anchor-offset', `${getTopbarScrollOffset()}px`)
-  document.documentElement.style.setProperty('--site-topbar-space', `${topbarSpace}px`)
-}
-
-function resolveActiveSection() {
-  const anchorY = window.scrollY + getTopbarScrollOffset() + 56
-  let nextSection: SectionId = 'top'
-
-  pageSectionIds.forEach((id) => {
+function resolveActiveSection(offset: number) {
+  const readingLine = offset + Math.min(240, window.innerHeight * 0.25)
+  let active: SectionId = 'top'
+  for (const id of pageSectionIds) {
     const section = document.getElementById(id)
-    if (section && section.offsetTop <= anchorY) {
-      nextSection = id
-    }
-  })
-
-  const pageBottom = window.scrollY + window.innerHeight
-  const documentHeight = document.documentElement.scrollHeight
-  if (pageBottom >= documentHeight - 8) {
-    nextSection = 'support'
+    if (section && section.getBoundingClientRect().top <= readingLine) active = id
   }
-
-  return nextSection
-}
-
-function syncFlatNavHighlight() {
-  const nav = flatNav.value
-  const target = nav?.querySelector<HTMLElement>(`[data-flat-nav="${activeFlatNavId.value}"]`)
-  if (!nav || !target) return
-
-  nav.style.setProperty('--flat-nav-x', `${target.offsetLeft}px`)
-  nav.style.setProperty('--flat-nav-width', `${target.offsetWidth}px`)
+  return active
 }
 
 function updatePageNavStateNow() {
-  isTopbarPinned.value = window.scrollY > 24
-  updateAnchorOffsetVariable()
-  activeSectionId.value = resolveActiveSection()
+  pageScrollFrame = 0
+  isTopbarPinned.value = window.scrollY > 4
+  activeSectionId.value = resolveActiveSection(getTopbarScrollOffset())
   const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
   const progress = Math.min(1, Math.max(0, window.scrollY / scrollRange))
   document.documentElement.style.setProperty('--site-scroll-progress', progress.toFixed(4))
-  void nextTick(syncFlatNavHighlight)
 }
 
 function requestPageNavStateUpdate() {
-  window.cancelAnimationFrame(pageScrollFrame)
-  pageScrollFrame = window.requestAnimationFrame(updatePageNavStateNow)
+  if (!pageScrollFrame) pageScrollFrame = window.requestAnimationFrame(updatePageNavStateNow)
 }
 
 function scrollInitialHashIntoView() {
@@ -1562,8 +1192,9 @@ function scrollInitialHashIntoView() {
 }
 
 function scrollToSection(event: MouseEvent, id: SectionId) {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
   event.preventDefault()
-  navExplorerOpen.value = false
+  if (navExplorerOpen.value) closeNavExplorer()
   const target = document.getElementById(id)
   if (!target) return
 
@@ -1574,149 +1205,24 @@ function scrollToSection(event: MouseEvent, id: SectionId) {
   if (id === 'ecosystem') {
     quickStartSectionActive.value = true
   }
-  activeSectionId.value = id
   window.history.replaceState(null, '', `#${id}`)
   window.scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
 }
 
-let supportDialogPreviousBodyOverflow = ''
-let supportDialogReturnFocusElement: HTMLButtonElement | null = null
-
-function openSupportDialog(view: SupportDialogView) {
-  if (supportDialogOpen.value) return
-
-  if (view === 'contact') preloadContactQrs()
+function closeNavExplorer() {
   navExplorerOpen.value = false
-  supportDialogView.value = view
-  activeChineseContactId.value = 'service'
-  supportDialogReturnFocusElement =
-    view === 'sponsor'
-      ? supportDialogSponsorTriggerButton.value
-      : supportDialogContactTriggerButton.value
-  supportDialogPreviousBodyOverflow = document.body.style.overflow
-  document.body.style.overflow = 'hidden'
-  supportDialogOpen.value = true
-  void nextTick(() => supportDialogCloseButton.value?.focus())
-}
-
-function closeSupportDialog() {
-  if (!supportDialogOpen.value) return
-
-  supportDialogOpen.value = false
-  document.body.style.overflow = supportDialogPreviousBodyOverflow
-  void nextTick(() => supportDialogReturnFocusElement?.focus())
-}
-
-function handleSupportDialogKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Tab' || !supportDialogOpen.value) return
-
-  const focusableElements = Array.from(
-    supportDialogPanel.value?.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    ) ?? []
-  ).filter((element) => !element.hasAttribute('disabled'))
-  if (!focusableElements.length) return
-
-  const firstElement = focusableElements[0]!
-  const lastElement = focusableElements[focusableElements.length - 1]!
-  const activeElement = document.activeElement
-
-  if (supportDialogView.value === 'sponsor' && !event.altKey && !event.ctrlKey && !event.metaKey) {
-    event.preventDefault()
-    const activeIndex = focusableElements.findIndex((element) => element === activeElement)
-    const nextIndex =
-      activeIndex < 0
-        ? event.shiftKey
-          ? focusableElements.length - 1
-          : 0
-        : (activeIndex + (event.shiftKey ? -1 : 1) + focusableElements.length) %
-          focusableElements.length
-    focusableElements[nextIndex]!.focus()
-    return
-  }
-
-  if (
-    event.shiftKey &&
-    (activeElement === firstElement || !supportDialogPanel.value?.contains(activeElement))
-  ) {
-    event.preventDefault()
-    lastElement.focus()
-  } else if (!event.shiftKey && activeElement === lastElement) {
-    event.preventDefault()
-    firstElement.focus()
-  }
+  navMenuButton.value?.focus({ preventScroll: true })
 }
 
 function handleGlobalKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape') {
-    if (supportDialogOpen.value) {
-      closeSupportDialog()
-      return
-    }
-    navExplorerOpen.value = false
-  }
+  if (event.key === 'Escape' && navExplorerOpen.value) closeNavExplorer()
 }
 
 let demoRevealObserver: IntersectionObserver | undefined
-let heroMotionObserver: IntersectionObserver | undefined
 let quickStartObserver: IntersectionObserver | undefined
-let siteRevealObserver: IntersectionObserver | undefined
 let topbarResizeObserver: ResizeObserver | undefined
 let demoFrameUnmountTimer: number | undefined
 
-function setupSiteRevealMotion() {
-  const root = siteMain.value
-  if (!root) return
-
-  const revealGroups = [
-    '.section-heading',
-    '.metric-card',
-    '.format-experience-heading',
-    '.format-family',
-    '.resources-heading',
-    '.resource-card',
-    '.delivery-panel',
-    '.demo-reveal-copy > *',
-    '.scenario-card',
-    '.ecosystem-copy > :not(.quickstart-tabs)',
-    '.trust-rail-heading > *',
-    '.trust-flow article',
-    '.support-copy > *',
-    '.support-entry',
-    '.footer-bottom'
-  ]
-  const elements = Array.from(
-    new Set(
-      revealGroups.flatMap((selector) => Array.from(root.querySelectorAll<HTMLElement>(selector)))
-    )
-  )
-
-  elements.forEach((element, index) => {
-    element.classList.add('site-reveal')
-    element.style.setProperty('--reveal-delay', `${(index % 5) * 55}ms`)
-  })
-
-  if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
-    elements.forEach((element) => element.classList.add('is-visible'))
-    return
-  }
-
-  siteRevealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return
-        const target = entry.target as HTMLElement
-        target.classList.add('is-visible')
-        siteRevealObserver?.unobserve(target)
-      })
-    },
-    {
-      rootMargin: '0px 0px -9% 0px',
-      threshold: [0.08, 0.2]
-    }
-  )
-  elements.forEach((element) => siteRevealObserver?.observe(element))
-}
 
 function clearFrameUnmountTimers() {
   if (demoFrameUnmountTimer) {
@@ -1753,7 +1259,7 @@ function handleDemoFrameLoad() {
 watch(locale, (nextLocale) => {
   demoFrameReady.value = false
   updateDocumentMetadata(nextLocale)
-  void nextTick(syncFlatNavHighlight)
+  void nextTick(requestPageNavStateUpdate)
 })
 
 watch(siteTheme, (nextTheme) => {
@@ -1773,25 +1279,20 @@ onMounted(async () => {
     syncBrowserPathForLocale(locale.value)
   }
   updateDocumentMetadata(locale.value)
-  preloadContactQrs()
   void loadGithubStarCount()
   await nextTick()
-  topbarResizeObserver = new ResizeObserver(requestPageNavStateUpdate)
+  topbarResizeObserver = new ResizeObserver(() => {
+    document.documentElement.style.setProperty('--site-anchor-offset', `${getTopbarScrollOffset()}px`)
+    requestPageNavStateUpdate()
+  })
   if (topbar.value) {
     topbarResizeObserver.observe(topbar.value)
   }
+  if (siteMain.value) topbarResizeObserver.observe(siteMain.value)
   window.addEventListener('scroll', requestPageNavStateUpdate, { passive: true })
   window.addEventListener('resize', requestPageNavStateUpdate)
   window.addEventListener('keydown', handleGlobalKeydown)
-  window.addEventListener('pointerdown', clearHeroPreviewOutside, { passive: true })
   updatePageNavStateNow()
-  syncFlatNavHighlight()
-  setupSiteRevealMotion()
-  heroMotionObserver = new IntersectionObserver(([entry]) => {
-    heroMotionVisible.value = Boolean(entry?.isIntersecting)
-  })
-  const heroSection = siteMain.value?.querySelector('#top')
-  if (heroSection) heroMotionObserver.observe(heroSection)
   if (window.location.hash === '#ecosystem') {
     quickStartSectionActive.value = true
   }
@@ -1804,7 +1305,7 @@ onMounted(async () => {
         setDemoFrameActive(active)
       },
       {
-        rootMargin: '-12% 0px -18% 0px',
+        rootMargin: '-60px 0px -24px 0px',
         threshold: [0, 0.18, 0.4, 0.72]
       }
     )
@@ -1819,7 +1320,7 @@ onMounted(async () => {
           (entry.isIntersecting && entry.intersectionRatio > 0.16)
       },
       {
-        rootMargin: '-14% 0px -18% 0px',
+        rootMargin: '-60px 0px -24px 0px',
         threshold: [0, 0.16, 0.42, 0.72]
       }
     )
@@ -1828,19 +1329,12 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  if (supportDialogOpen.value) {
-    document.body.style.overflow = supportDialogPreviousBodyOverflow
-  }
   window.removeEventListener('scroll', requestPageNavStateUpdate)
   window.removeEventListener('resize', requestPageNavStateUpdate)
   window.removeEventListener('keydown', handleGlobalKeydown)
-  window.removeEventListener('pointerdown', clearHeroPreviewOutside)
   demoRevealObserver?.disconnect()
-  heroMotionObserver?.disconnect()
   quickStartObserver?.disconnect()
-  siteRevealObserver?.disconnect()
   topbarResizeObserver?.disconnect()
-  clearHeroPreviewTransitionTimer()
   clearFrameUnmountTimers()
   window.cancelAnimationFrame(pageScrollFrame)
 })
@@ -1850,7 +1344,6 @@ onBeforeUnmount(() => {
   <main
     ref="siteMain"
     class="site-shell"
-    :class="{ 'has-pinned-nav': isTopbarPinned }"
     :lang="locale"
   >
     <div class="site-progress" aria-hidden="true"><span /></div>
@@ -1864,20 +1357,21 @@ onBeforeUnmount(() => {
         <img src="/brand-mark-96.png" alt="" />
         <span>File Viewer</span>
       </a>
-      <div ref="flatNav" class="flat-nav" aria-label="Homepage sections">
-        <span class="flat-nav-highlight" aria-hidden="true" />
+      <div class="flat-nav" :aria-label="isZh ? '首页导航' : 'Homepage sections'">
         <a
           href="#demo"
           data-flat-nav="demo"
           :class="{ 'is-active': activeFlatNavId === 'demo' }"
+          :aria-current="activeFlatNavId === 'demo' ? 'location' : undefined"
           @click="scrollToSection($event, 'demo')"
         >
-          {{ isZh ? '在线体验' : 'Live Demo' }}
+          {{ currentCopy.nav.demo }}
         </a>
         <a
           href="#formats"
           data-flat-nav="formats"
           :class="{ 'is-active': activeFlatNavId === 'formats' }"
+          :aria-current="activeFlatNavId === 'formats' ? 'location' : undefined"
           @click="scrollToSection($event, 'formats')"
         >
           {{ isZh ? '支持格式' : 'Formats' }}
@@ -1886,6 +1380,7 @@ onBeforeUnmount(() => {
           href="#ecosystem"
           data-flat-nav="ecosystem"
           :class="{ 'is-active': activeFlatNavId === 'ecosystem' }"
+          :aria-current="activeFlatNavId === 'ecosystem' ? 'location' : undefined"
           @click="scrollToSection($event, 'ecosystem')"
         >
           {{ isZh ? '快速接入' : 'Integrate' }}
@@ -1896,25 +1391,25 @@ onBeforeUnmount(() => {
         </a>
       </div>
       <button
+        ref="navMenuButton"
         class="nav-explorer-toggle"
         type="button"
-        :aria-label="isZh ? '探索产品' : 'Explore products'"
+        :aria-label="navExplorerOpen ? (isZh ? '收起菜单' : 'Close menu') : (isZh ? '打开菜单' : 'Open menu')"
+        :title="isZh ? '网站菜单' : 'Site menu'"
         aria-controls="primary-navigation"
         :aria-expanded="navExplorerOpen"
         @click="navExplorerOpen = !navExplorerOpen"
       >
-        <Radar :size="17" />
-        <span>{{ isZh ? '探索产品' : 'Explore' }}</span>
-        <X v-if="navExplorerOpen" :size="15" />
-        <Menu v-else :size="15" />
+        <X v-if="navExplorerOpen" :size="16" />
+        <Menu v-else :size="16" />
       </button>
 
       <button
         v-if="navExplorerOpen"
         class="nav-explorer-scrim"
         type="button"
-        :aria-label="isZh ? '关闭探索菜单' : 'Close explore menu'"
-        @click="navExplorerOpen = false"
+        :aria-label="isZh ? '关闭菜单' : 'Close menu'"
+        @click="closeNavExplorer"
       />
 
       <section
@@ -1922,16 +1417,16 @@ onBeforeUnmount(() => {
         class="nav-explorer-panel"
         :class="{ 'is-open': navExplorerOpen }"
         :aria-hidden="!navExplorerOpen"
+        :inert="!navExplorerOpen"
       >
         <div class="nav-explorer-heading">
           <div>
-            <span>{{ isZh ? '从一个问题开始' : 'Start with one question' }}</span>
-            <strong>{{ isZh ? '你现在想看什么？' : 'What do you need right now?' }}</strong>
+            <strong>{{ isZh ? '网站导航' : 'Site navigation' }}</strong>
           </div>
           <button
             type="button"
-            :aria-label="isZh ? '关闭探索菜单' : 'Close explore menu'"
-            @click="navExplorerOpen = false"
+            :aria-label="isZh ? '关闭导航面板' : 'Close navigation panel'"
+            @click="closeNavExplorer"
           >
             <X :size="18" />
           </button>
@@ -1942,6 +1437,7 @@ onBeforeUnmount(() => {
             v-for="(item, index) in explorerPrimaryItems"
             :key="item.href"
             :href="item.href"
+            :aria-current="item.section === activeFlatNavId ? 'location' : undefined"
             @click="item.section && scrollToSection($event, item.section)"
           >
             <span class="nav-explorer-index">0{{ index + 1 }}</span>
@@ -1979,8 +1475,8 @@ onBeforeUnmount(() => {
           :title="nextThemeLabel"
           @click="toggleTheme"
         >
-          <Moon v-if="siteTheme === 'light'" :size="17" />
-          <Sun v-else :size="17" />
+          <Moon v-if="siteTheme === 'light'" :size="16" />
+          <Sun v-else :size="16" />
         </button>
         <a
           class="nav-icon-button github-star-button"
@@ -1990,261 +1486,43 @@ onBeforeUnmount(() => {
           :aria-label="githubStarsAriaLabel"
         >
           <GitHubMark />
-          <span class="github-star-badge" aria-hidden="true">
-            <Star :size="9" fill="currentColor" :stroke-width="2.5" />
-            <span>{{ githubStarsLabel }}</span>
-          </span>
+          <span v-if="githubStarCount !== null" class="github-star-count" aria-hidden="true">{{ githubStarsLabel }}</span>
         </a>
-        <button class="language-toggle" type="button" @click="toggleLocale">
-          <Languages :size="16" />
+        <button class="language-toggle" type="button" :title="isZh ? 'Switch to English' : '切换到中文'" @click="toggleLocale">
           {{ nextLocaleLabel }}
         </button>
         <a class="topbar-action" :href="localizedDemoUrl" target="_blank" rel="noreferrer">
           <span class="topbar-action-label-full">{{ currentCopy.nav.demo }}</span>
-          <span class="topbar-action-label-short">{{ isZh ? '体验' : 'Demo' }}</span>
-          <ArrowRight :size="16" />
+          <span class="topbar-action-label-short">{{ isZh ? '演示' : 'Demo' }}</span>
+          <ArrowRight :size="13" />
         </a>
       </div>
     </nav>
 
-    <section
-      id="top"
-      class="hero-section"
-      :class="{ 'hero-motion-paused': heroMotionPaused || !heroMotionVisible }"
-    >
-      <div class="hero-copy">
-        <p class="eyebrow">
-          <Sparkles :size="17" />
-          {{ currentCopy.hero.eyebrow }}
+    <section id="top" class="a-hero" aria-labelledby="a-hero-title">
+      <div class="a-hero-copy">
+        <p class="a-hero-release">
+          <a :href="currentReleaseUrl" target="_blank" rel="noreferrer">v{{ currentReleaseVersion }}</a>
+          <span>{{ isZh ? '无需转码服务器' : 'No conversion server' }}</span>
         </p>
-        <h1>
-          <template v-if="isZh">
-            <span class="hero-title-line">File Viewer.</span>
-            <span class="hero-title-line">文件世界，</span>
-            <span class="hero-title-line hero-title-accent">一屏打开。</span>
-          </template>
-          <template v-else>
-            <span class="hero-title-line">File Viewer.</span>
-            <span class="hero-title-line">Every file.</span>
-            <span class="hero-title-line hero-title-accent">Within reach.</span>
-          </template>
+        <h1 id="a-hero-title">
+          <template v-if="isZh">在浏览器里<br />预览文件</template>
+          <template v-else>Preview files<br />in your browser</template>
         </h1>
-        <p class="hero-subtitle">{{ currentCopy.hero.subtitle }}</p>
-        <div class="hero-actions">
-          <a class="button primary" :href="localizedDemoUrl" target="_blank" rel="noreferrer">
-            <span>{{ currentCopy.hero.primary }}</span>
-            <MonitorPlay :size="18" />
+        <p class="a-hero-description">{{ currentCopy.hero.subtitle }}</p>
+        <div class="a-hero-actions">
+          <a class="a-hero-primary" :href="localizedDemoUrl" target="_blank" rel="noreferrer">
+            {{ currentCopy.nav.demo }}<ArrowRight :size="18" />
           </a>
-          <a class="button secondary" :href="localizedDocsUrl" target="_blank" rel="noreferrer">
-            <span>{{ currentCopy.hero.secondary }}</span>
-            <BookOpen :size="18" />
+          <a class="a-hero-secondary" :href="localizedDocsUrl" target="_blank" rel="noreferrer">
+            {{ currentCopy.hero.secondary }}
           </a>
         </div>
-        <div class="hero-badges" aria-label="Highlights">
-          <span v-for="item in currentCopy.hero.proof.slice(0, 3)" :key="item">
-            <BadgeCheck :size="15" />
-            {{ item }}
-          </span>
-        </div>
+        <ul class="a-hero-proof" :aria-label="isZh ? '支持情况' : 'Format coverage'">
+          <li v-for="item in currentCopy.hero.proof" :key="item">{{ item }}</li>
+        </ul>
       </div>
-
-      <div
-        class="hero-visual hero-orbit-stage"
-        :data-preview-phase="heroPreviewPhase"
-        :data-preview-active="activeHeroPreviewId || undefined"
-        :aria-label="
-          isZh
-            ? 'Word、CAD、电子表格与演示文稿的真实浏览器预览'
-            : 'Real browser previews for Word, CAD, spreadsheets, and presentations'
-        "
-      >
-        <div class="hero-stage-heading">
-          <span class="hero-stage-dot" /><span>{{
-            isZh ? '你的文件，原生呈现' : 'Your files. Natively rendered.'
-          }}</span
-          ><span class="hero-stage-index">01 — 04</span>
-        </div>
-        <div class="hero-orbit-stack">
-          <div
-            class="hero-preview-item hero-preview-word"
-            :class="{
-              'is-preview-active': activeHeroPreviewId === 'word' && heroPreviewPhase !== 'leaving',
-              'is-preview-cancelling':
-                activeHeroPreviewId === 'word' && heroPreviewPhase === 'leaving'
-            }"
-            tabindex="0"
-            role="button"
-            :aria-pressed="pinnedHeroPreviewId === 'word'"
-            :aria-label="isZh ? '置顶查看 DOCX 预览' : 'Bring the DOCX preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter($event, 'word')"
-            @pointerleave="handleHeroPreviewPointerLeave($event, 'word')"
-            @pointerdown="activateHeroPreview($event, 'word')"
-            @keydown="activateHeroPreviewFromKeyboard($event, 'word')"
-          >
-            <div
-              class="hero-preview-focus"
-              @transitionend="handleHeroPreviewTransitionEnd($event, 'word')"
-            >
-              <figure class="hero-preview-card">
-                <figcaption>
-                  <span><FileText :size="15" />DOCX</span>
-                  <strong>{{ isZh ? '版式文档' : 'Layout document' }}</strong>
-                </figcaption>
-                <img
-                  src="/hero-previews/word.webp"
-                  :alt="isZh ? 'Word 文档真实渲染样例' : 'Real Word document rendering sample'"
-                  width="1280"
-                  height="800"
-                  decoding="async"
-                  fetchpriority="high"
-                />
-              </figure>
-            </div>
-          </div>
-
-          <div
-            class="hero-preview-item hero-preview-cad"
-            :class="{
-              'is-preview-active': activeHeroPreviewId === 'cad' && heroPreviewPhase !== 'leaving',
-              'is-preview-cancelling':
-                activeHeroPreviewId === 'cad' && heroPreviewPhase === 'leaving'
-            }"
-            tabindex="0"
-            role="button"
-            :aria-pressed="pinnedHeroPreviewId === 'cad'"
-            :aria-label="isZh ? '置顶查看 DWG 预览' : 'Bring the DWG preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter($event, 'cad')"
-            @pointerleave="handleHeroPreviewPointerLeave($event, 'cad')"
-            @pointerdown="activateHeroPreview($event, 'cad')"
-            @keydown="activateHeroPreviewFromKeyboard($event, 'cad')"
-          >
-            <div
-              class="hero-preview-focus"
-              @transitionend="handleHeroPreviewTransitionEnd($event, 'cad')"
-            >
-              <figure class="hero-preview-card">
-                <figcaption>
-                  <span><Layers3 :size="15" />DWG</span>
-                  <strong>{{ isZh ? '工程图纸' : 'CAD drawing' }}</strong>
-                </figcaption>
-                <img
-                  src="/hero-previews/cad.webp"
-                  :alt="isZh ? 'CAD 图纸真实渲染样例' : 'Real CAD drawing rendering sample'"
-                  width="1280"
-                  height="800"
-                  decoding="async"
-                />
-              </figure>
-            </div>
-          </div>
-
-          <div
-            class="hero-preview-item hero-preview-sheet"
-            :class="{
-              'is-preview-active':
-                activeHeroPreviewId === 'sheet' && heroPreviewPhase !== 'leaving',
-              'is-preview-cancelling':
-                activeHeroPreviewId === 'sheet' && heroPreviewPhase === 'leaving'
-            }"
-            tabindex="0"
-            role="button"
-            :aria-pressed="pinnedHeroPreviewId === 'sheet'"
-            :aria-label="isZh ? '置顶查看 XLSX 预览' : 'Bring the XLSX preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter($event, 'sheet')"
-            @pointerleave="handleHeroPreviewPointerLeave($event, 'sheet')"
-            @pointerdown="activateHeroPreview($event, 'sheet')"
-            @keydown="activateHeroPreviewFromKeyboard($event, 'sheet')"
-          >
-            <div
-              class="hero-preview-focus"
-              @transitionend="handleHeroPreviewTransitionEnd($event, 'sheet')"
-            >
-              <figure class="hero-preview-card">
-                <figcaption>
-                  <span><FileSpreadsheet :size="15" />XLSX</span>
-                  <strong>{{ isZh ? '数据报表' : 'Spreadsheet' }}</strong>
-                </figcaption>
-                <img
-                  src="/hero-previews/spreadsheet.webp"
-                  :alt="isZh ? '电子表格真实渲染样例' : 'Real spreadsheet rendering sample'"
-                  width="1280"
-                  height="818"
-                  decoding="async"
-                />
-              </figure>
-            </div>
-          </div>
-
-          <div
-            class="hero-preview-item hero-preview-slide"
-            :class="{
-              'is-preview-active':
-                activeHeroPreviewId === 'slide' && heroPreviewPhase !== 'leaving',
-              'is-preview-cancelling':
-                activeHeroPreviewId === 'slide' && heroPreviewPhase === 'leaving'
-            }"
-            tabindex="0"
-            role="button"
-            :aria-pressed="pinnedHeroPreviewId === 'slide'"
-            :aria-label="isZh ? '置顶查看 PPTX 预览' : 'Bring the PPTX preview to front'"
-            @pointerenter="handleHeroPreviewPointerEnter($event, 'slide')"
-            @pointerleave="handleHeroPreviewPointerLeave($event, 'slide')"
-            @pointerdown="activateHeroPreview($event, 'slide')"
-            @keydown="activateHeroPreviewFromKeyboard($event, 'slide')"
-          >
-            <div
-              class="hero-preview-focus"
-              @transitionend="handleHeroPreviewTransitionEnd($event, 'slide')"
-            >
-              <figure class="hero-preview-card">
-                <figcaption>
-                  <span><PanelTop :size="15" />PPTX</span>
-                  <strong>{{ isZh ? '演示文稿' : 'Presentation' }}</strong>
-                </figcaption>
-                <img
-                  src="/hero-previews/presentation.webp"
-                  :alt="isZh ? '演示文稿真实渲染样例' : 'Real presentation rendering sample'"
-                  width="1280"
-                  height="800"
-                  decoding="async"
-                />
-              </figure>
-            </div>
-          </div>
-        </div>
-        <div
-          v-if="heroPreviewShield"
-          class="hero-preview-event-shield"
-          :data-preview-shield="heroPreviewShield.id"
-          :style="heroPreviewShieldStyle"
-          aria-hidden="true"
-          @pointerenter="handleHeroPreviewShieldPointerEnter"
-          @pointerleave="handleHeroPreviewShieldPointerLeave"
-        />
-        <div class="hero-orbit-status">
-          <span><LockKeyhole :size="14" />{{ isZh ? '浏览器本地渲染' : 'Browser-local' }}</span>
-          <span class="hero-interaction-hint">{{
-            isZh ? '悬停置顶 · 真实预览' : 'Hover to lift · real previews'
-          }}</span>
-          <button
-            type="button"
-            class="hero-motion-toggle"
-            :aria-pressed="heroMotionPaused"
-            :aria-label="
-              heroMotionPaused
-                ? isZh
-                  ? '播放首屏动效'
-                  : 'Play hero motion'
-                : isZh
-                  ? '暂停首屏动效'
-                  : 'Pause hero motion'
-            "
-            @click="heroMotionPaused = !heroMotionPaused"
-          >
-            <Play v-if="heroMotionPaused" :size="14" /><Pause v-else :size="14" />
-          </button>
-        </div>
-      </div>
+      <AFileStage :is-zh="isZh" />
     </section>
 
     <section
@@ -2266,7 +1544,6 @@ onBeforeUnmount(() => {
 
     <section
       id="demo"
-      ref="demoReveal"
       class="demo-reveal-section"
       :class="{ 'demo-reveal-active': demoRevealActive }"
       aria-labelledby="demo-title"
@@ -2274,7 +1551,6 @@ onBeforeUnmount(() => {
       <div class="demo-reveal-stage">
         <div class="demo-reveal-copy">
           <div>
-            <p class="section-kicker">Live demo</p>
             <h2 id="demo-title">{{ currentCopy.demoTitle }}</h2>
             <p>{{ currentCopy.demoIntro }}</p>
           </div>
@@ -2297,7 +1573,7 @@ onBeforeUnmount(() => {
 
         <div class="demo-reveal-window">
           <div class="demo-seam demo-seam-top">
-            <span>{{ isZh ? '完整预览器' : 'full viewer' }}</span>
+            <span>{{ isZh ? '文件预览' : 'File preview' }}</span>
           </div>
           <div class="demo-browser demo-browser-wide">
             <div class="demo-browser-bar">
@@ -2306,15 +1582,15 @@ onBeforeUnmount(() => {
               <span />
               <strong>demo.file-viewer.app</strong>
             </div>
-            <div class="demo-frame-stack">
+            <div ref="demoReveal" class="demo-frame-stack">
               <picture class="demo-frame-poster" :class="{ 'is-hidden': demoFrameReady }">
                 <source media="(max-width: 760px)" :srcset="demoPreviewMobilePath" />
                 <img
                   :src="demoPreviewDesktopPath"
                   :alt="
                     isZh
-                      ? `File Viewer v${currentReleaseVersion} 沉浸式 DOCX 预览界面`
-                      : `File Viewer v${currentReleaseVersion} immersive DOCX preview UI`
+                      ? `File Viewer v${currentReleaseVersion} DOCX 预览界面`
+                      : `File Viewer v${currentReleaseVersion} DOCX preview`
                   "
                   width="1600"
                   height="900"
@@ -2326,7 +1602,7 @@ onBeforeUnmount(() => {
                 v-if="demoFrameMounted"
                 :key="`demo-${locale}`"
                 :class="{ 'is-ready': demoFrameReady }"
-                :src="localizedDemoUrl"
+                :src="embeddedDemoUrl"
                 :title="isZh ? 'File Viewer 在线 Demo' : 'File Viewer live demo'"
                 loading="lazy"
                 @load="handleDemoFrameLoad"
@@ -2334,10 +1610,33 @@ onBeforeUnmount(() => {
             </div>
           </div>
           <div class="demo-seam demo-seam-bottom">
-            <span>{{ isZh ? '真实样例矩阵' : 'real sample matrix' }}</span>
+            <span>{{ isZh ? '文件样例' : 'Sample files' }}</span>
           </div>
         </div>
       </div>
+      <details class="a-recording" @toggle="recordingOpen = ($event.currentTarget as HTMLDetailsElement).open">
+        <summary>
+          <span class="a-recording-title">
+            <Film :size="17" aria-hidden="true" />
+            {{ isZh ? '看操作演示' : 'Watch the walkthrough' }}
+          </span>
+          <small>{{ isZh ? '翻报告、放幻灯片、看图纸和三维模型' : 'Read a report, show slides, and inspect a drawing and a 3D model' }}</small>
+          <ChevronDown class="a-recording-chevron" :size="17" aria-hidden="true" />
+        </summary>
+        <figure v-if="recordingOpen">
+          <img
+            :src="`/a-media/file-viewer-demo-v3-${locale}.webp`"
+            :alt="isZh ? '实际操作 File Viewer，滚动报告、播放幻灯片、放大建筑图、旋转狐狸模型' : 'File Viewer in action, scrolling a report, playing slides, zooming a drawing and rotating a fox model'"
+            width="1200"
+            height="750"
+          />
+          <figcaption>
+            <a href="https://demo.file-viewer.app/example/licenses/fox/NOTICE.txt" target="_blank" rel="noreferrer">
+              {{ isZh ? '狐狸模型作者与许可' : 'Fox model credits and license' }}
+            </a>
+          </figcaption>
+        </figure>
+      </details>
     </section>
 
     <FormatExperience
@@ -2346,10 +1645,11 @@ onBeforeUnmount(() => {
       :demo-url="localizedDemoUrl"
     />
 
+    <BrowserCompatibility :is-zh="isZh" />
+
     <div class="workflow-grid">
       <section id="solutions" class="band scenario-section" aria-labelledby="solutions-title">
         <div class="section-heading compact">
-          <p class="section-kicker">In production</p>
           <h2 id="solutions-title">{{ currentCopy.solutionsTitle }}</h2>
           <p>{{ currentCopy.solutionsIntro }}</p>
         </div>
@@ -2374,7 +1674,6 @@ onBeforeUnmount(() => {
         aria-labelledby="ecosystem-title"
       >
         <div class="ecosystem-copy">
-          <p class="section-kicker">Native components</p>
           <h2 id="ecosystem-title">{{ currentCopy.ecosystemTitle }}</h2>
           <p>{{ currentCopy.ecosystemIntro }}</p>
           <div
@@ -2413,8 +1712,8 @@ onBeforeUnmount(() => {
         <div class="quickstart-workbench" aria-label="Ecosystem quick start code">
           <div class="quickstart-header">
             <div>
-              <span>{{ activeQuickStart.install }}</span>
               <strong>{{ activeQuickStart.title }}</strong>
+              <code class="quickstart-command">{{ activeQuickStart.install }}</code>
             </div>
             <a :href="activeQuickStart.href" target="_blank" rel="noreferrer">
               {{ isZh ? '完整文档' : 'Full docs' }}
@@ -2422,7 +1721,7 @@ onBeforeUnmount(() => {
             </a>
           </div>
 
-          <div class="quickstart-track" tabindex="0" aria-live="polite">
+          <div class="quickstart-track">
             <article
               v-for="(item, index) in quickStartItems"
               v-show="index === activeQuickStartIndex"
@@ -2435,9 +1734,7 @@ onBeforeUnmount(() => {
               :aria-hidden="index !== activeQuickStartIndex"
             >
               <div class="code-toolbar">
-                <span />
-                <span />
-                <span />
+                <FileCode2 :size="15" aria-hidden="true" />
                 <strong>{{ item.language }}</strong>
               </div>
               <pre
@@ -2453,22 +1750,6 @@ onBeforeUnmount(() => {
 
           <div class="quickstart-footer">
             <span>{{ activeQuickStart.summary }}</span>
-            <div
-              class="quickstart-dots"
-              role="group"
-              :aria-label="isZh ? '切换接入示例' : 'Switch integration example'"
-            >
-              <button
-                v-for="(item, index) in quickStartItems"
-                :key="`dot-${item.packageName}`"
-                type="button"
-                :class="{ 'is-active': index === activeQuickStartIndex }"
-                :aria-label="`${isZh ? '切换到' : 'Show'} ${item.label}`"
-                :aria-pressed="index === activeQuickStartIndex"
-                :aria-controls="`quickstart-panel-${index}`"
-                @click="selectQuickStart(index)"
-              />
-            </div>
           </div>
         </div>
       </section>
@@ -2477,13 +1758,12 @@ onBeforeUnmount(() => {
     <section class="trust-rail-section" aria-labelledby="trust-rail-title">
       <div class="trust-rail-heading">
         <div>
-          <p class="section-kicker">Offline architecture</p>
           <h2 id="trust-rail-title">
-            {{ isZh ? '文件留在你的环境里。' : 'Your files stay in your environment.' }}
+            {{ isZh ? '在内网或离线使用' : 'Use File Viewer on a private network or offline' }}
           </h2>
         </div>
         <a :href="resolveLocalizedDocsUrl('guide/distribution')" target="_blank" rel="noreferrer">
-          {{ isZh ? '查看部署方式' : 'See deployment options' }}
+          {{ isZh ? '部署说明' : 'Deployment guide' }}
           <ArrowRight :size="16" />
         </a>
       </div>
@@ -2491,8 +1771,8 @@ onBeforeUnmount(() => {
         <article>
           <span>01</span>
           <Boxes :size="21" />
-          <strong>{{ isZh ? '你的业务' : 'Your application' }}</strong>
-          <small>{{ isZh ? '上传、URL 或业务附件' : 'Upload, URL, or attachment' }}</small>
+          <strong>{{ isZh ? '文件来源' : 'File source' }}</strong>
+          <small>{{ isZh ? '本地文件、链接或附件' : 'Local file, link, or attachment' }}</small>
         </article>
         <ArrowRight class="trust-flow-arrow" :size="18" aria-hidden="true" />
         <article>
@@ -2505,15 +1785,15 @@ onBeforeUnmount(() => {
         <article>
           <span>03</span>
           <Cpu :size="21" />
-          <strong>{{ isZh ? '预览链路' : 'Preview pipelines' }}</strong>
-          <small>{{ isZh ? '按需加载 Worker / WASM' : 'Lazy Worker / WASM loading' }}</small>
+          <strong>{{ isZh ? '按格式加载' : 'Load by format' }}</strong>
+          <small>{{ isZh ? '加载当前格式所需的 Worker 和 WASM' : 'Load the Workers and WASM each format needs' }}</small>
         </article>
         <ArrowRight class="trust-flow-arrow" :size="18" aria-hidden="true" />
         <article>
           <span>04</span>
           <Cloud :size="21" />
           <strong>{{ isZh ? '私有部署' : 'Self-hosted assets' }}</strong>
-          <small>{{ isZh ? '不上传第三方服务' : 'No third-party upload' }}</small>
+          <small>{{ isZh ? '文件由浏览器在本地处理' : 'The browser processes files locally' }}</small>
         </article>
       </div>
     </section>
@@ -2534,38 +1814,72 @@ onBeforeUnmount(() => {
           <strong>File Viewer</strong>
         </div>
         <h2>{{ currentCopy.supportTitle }}</h2>
-        <p>{{ currentCopy.supportIntro }}</p>
       </div>
-      <div class="support-entry">
-        <button
-          ref="supportDialogSponsorTriggerButton"
-          type="button"
-          class="support-trigger"
-          aria-haspopup="dialog"
-          :aria-expanded="supportDialogOpen && supportDialogView === 'sponsor'"
-          aria-controls="support-dialog"
-          @click="openSupportDialog('sponsor')"
-        >
-          <HeartHandshake :size="20" aria-hidden="true" />
-          <span>{{ isZh ? '打赏支持' : 'Support the project' }}</span>
-          <ArrowRight :size="18" aria-hidden="true" />
-        </button>
-        <button
-          ref="supportDialogContactTriggerButton"
-          type="button"
-          class="support-trigger is-contact"
-          aria-haspopup="dialog"
-          :aria-expanded="supportDialogOpen && supportDialogView === 'contact'"
-          aria-controls="support-dialog"
-          @pointerenter="preloadContactQrs"
-          @focus="preloadContactQrs"
-          @click="openSupportDialog('contact')"
-        >
-          <MessageCircle :size="20" aria-hidden="true" />
-          <span>{{ isZh ? '联系我们' : 'Contact us' }}</span>
-          <ArrowRight :size="18" aria-hidden="true" />
-        </button>
-      </div>
+      <section class="support-channels" aria-labelledby="footer-contact-title">
+        <h3 id="footer-contact-title">{{ isZh ? '联系团队' : 'Contact us' }}</h3>
+        <template v-if="isZh">
+          <p class="support-scan-note">微信扫码，或在微信内长按识别。</p>
+          <ul class="support-qr-grid">
+            <li v-for="item in chineseContactItems" :key="item.id" class="support-qr-card">
+              <div class="support-qr-copy">
+                <strong>{{ item.label }}</strong>
+                <span>{{ item.note }}</span>
+              </div>
+              <div class="support-qr-frame">
+                <img
+                  v-if="!failedContactQrs[item.id]"
+                  :src="item.image"
+                  :alt="`${item.label}二维码`"
+                  width="108"
+                  height="108"
+                  loading="lazy"
+                  decoding="async"
+                  @error="failedContactQrs[item.id] = true"
+                />
+                <button
+                  v-else
+                  type="button"
+                  :aria-label="`重新加载${item.label}二维码`"
+                  @click="failedContactQrs[item.id] = false"
+                >重新加载</button>
+              </div>
+            </li>
+          </ul>
+        </template>
+        <div v-else class="support-links">
+          <a :href="whatsappContactUrl" target="_blank" rel="noopener noreferrer">
+            <MessageCircle :size="17" aria-hidden="true" />
+            <span>WhatsApp</span>
+            <ArrowUpRight :size="16" aria-hidden="true" />
+          </a>
+          <a :href="telegramContactUrl" target="_blank" rel="noopener noreferrer">
+            <Send :size="17" aria-hidden="true" />
+            <span>Telegram</span>
+            <ArrowUpRight :size="16" aria-hidden="true" />
+          </a>
+          <a class="support-email" href="mailto:admin@flyfish.dev">
+            <Mail :size="17" aria-hidden="true" />
+            <span>admin@flyfish.dev</span>
+            <ArrowUpRight :size="16" aria-hidden="true" />
+          </a>
+        </div>
+      </section>
+
+      <section class="support-sponsor" aria-labelledby="footer-sponsor-title">
+        <h3 id="footer-sponsor-title">{{ isZh ? '赞助项目' : 'Sponsor the project' }}</h3>
+        <div class="support-links">
+          <a :href="githubSponsorsUrl" target="_blank" rel="noopener noreferrer">
+            <GitHubMark />
+            <span>GitHub Sponsors</span>
+            <ArrowUpRight :size="16" aria-hidden="true" />
+          </a>
+          <a :href="domesticSponsorUrl" target="_blank" rel="noopener noreferrer">
+            <ShoppingCart :size="17" aria-hidden="true" />
+            <span>{{ isZh ? '飞鱼小铺' : 'Flyfish Shop' }}</span>
+            <ArrowUpRight :size="16" aria-hidden="true" />
+          </a>
+        </div>
+      </section>
       <div class="footer-bottom">
         <p>{{ currentCopy.footer }}</p>
         <div class="footer-badges" aria-label="File Viewer directory badges">
@@ -2605,231 +1919,4 @@ onBeforeUnmount(() => {
       </div>
     </footer>
   </main>
-
-  <Teleport to="body">
-    <Transition name="support-dialog">
-      <div
-        v-show="supportDialogOpen"
-        id="support-dialog"
-        class="support-dialog-backdrop"
-        :aria-hidden="!supportDialogOpen"
-        @click.self="closeSupportDialog"
-      >
-        <section
-          ref="supportDialogPanel"
-          class="support-dialog-panel"
-          :class="{ 'is-sponsor': supportDialogView === 'sponsor' }"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="support-dialog-title"
-          aria-describedby="support-dialog-description"
-          @keydown="handleSupportDialogKeydown"
-        >
-          <button
-            ref="supportDialogCloseButton"
-            type="button"
-            class="support-dialog-close"
-            :aria-label="
-              isZh
-                ? supportDialogView === 'sponsor'
-                  ? '关闭打赏弹层'
-                  : '关闭联系弹层'
-                : supportDialogView === 'sponsor'
-                  ? 'Close support dialog'
-                  : 'Close contact dialog'
-            "
-            @click="closeSupportDialog"
-          >
-            <X :size="20" aria-hidden="true" />
-          </button>
-
-          <header class="support-dialog-heading">
-            <span>
-              <MessageCircle v-if="supportDialogView === 'contact'" :size="16" aria-hidden="true" />
-              <HeartHandshake v-else :size="16" aria-hidden="true" />
-              {{
-                supportDialogView === 'contact'
-                  ? isZh
-                    ? '中文联系渠道'
-                    : 'International contact'
-                  : isZh
-                    ? '支持开源维护'
-                    : 'Support open source'
-              }}
-            </span>
-            <h2 id="support-dialog-title">
-              {{
-                supportDialogView === 'contact'
-                  ? isZh
-                    ? '选择最适合你的联系渠道'
-                    : 'Choose a direct contact channel.'
-                  : isZh
-                    ? '让开源维护持续向前。'
-                    : 'Keep open-source work moving.'
-              }}
-            </h2>
-            <p id="support-dialog-description">
-              {{
-                supportDialogView === 'contact'
-                  ? isZh
-                    ? '企业微信用于商务与优先支持；公众号和交流群用于获取更新与社区交流。'
-                    : 'Reach the File Viewer team through WhatsApp or Telegram.'
-                  : isZh
-                    ? '通过 GitHub Sponsors 或飞鱼小铺，支持 File Viewer 的持续维护。'
-                    : 'Support ongoing maintenance through GitHub Sponsors or the Flyfish support shop.'
-              }}
-            </p>
-          </header>
-
-          <div
-            v-if="supportDialogView === 'sponsor'"
-            class="support-dialog-sponsor"
-            :data-support-locale="isZh ? 'zh-CN' : 'international'"
-          >
-            <div
-              class="support-dialog-actions"
-              :aria-label="isZh ? '打赏支持方式' : 'Support options'"
-            >
-              <a
-                class="is-github"
-                :href="githubSponsorsUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHubMark />
-                <span>
-                  <strong>GitHub Sponsors</strong>
-                  <small>{{
-                    isZh ? '一次性支持，也可持续赞助' : 'One-time or recurring support'
-                  }}</small>
-                </span>
-                <ArrowRight :size="18" aria-hidden="true" />
-              </a>
-              <a :href="domesticSponsorUrl" target="_blank" rel="noopener noreferrer">
-                <ShoppingCart :size="20" aria-hidden="true" />
-                <span>
-                  <strong>{{ isZh ? '小铺打赏' : 'Support shop' }}</strong>
-                  <small>{{
-                    isZh ? '打开飞鱼小铺支持页面' : 'Open the Flyfish support page'
-                  }}</small>
-                </span>
-                <ArrowRight :size="18" aria-hidden="true" />
-              </a>
-            </div>
-
-            <p class="support-dialog-note">
-              {{
-                isZh
-                  ? '支持完全自愿，不影响 File Viewer 的开源功能与使用许可。'
-                  : 'Support is optional and does not change the open-source features or license.'
-              }}
-            </p>
-          </div>
-
-          <div
-            v-else-if="isZh && supportDialogView === 'contact'"
-            class="support-dialog-contact-layout"
-            data-support-locale="zh-CN"
-          >
-            <div class="support-contact-list" aria-label="中文联系渠道">
-              <button
-                v-for="item in chineseContactItems"
-                :key="item.id"
-                type="button"
-                :aria-pressed="activeChineseContactId === item.id"
-                :class="{ 'is-active': activeChineseContactId === item.id }"
-                @click="activeChineseContactId = item.id"
-              >
-                <span class="support-contact-list-icon">
-                  <component :is="item.icon" :size="18" aria-hidden="true" />
-                </span>
-                <span>
-                  <strong>{{ item.label }}</strong>
-                  <small>{{ item.note }}</small>
-                </span>
-                <ArrowRight :size="17" aria-hidden="true" />
-              </button>
-            </div>
-
-            <article class="support-contact-preview" aria-live="polite">
-              <div
-                v-for="item in chineseContactItems"
-                v-show="activeChineseContactId === item.id"
-                :key="item.id"
-                class="support-contact-preview-image"
-                :aria-busy="contactQrStates[item.id] === 'loading'"
-              >
-                <img
-                  v-if="contactQrStates[item.id] !== 'error'"
-                  v-show="contactQrStates[item.id] === 'ready'"
-                  :src="item.image"
-                  :alt="`${item.label}二维码`"
-                  width="624"
-                  height="624"
-                  decoding="async"
-                  @load="contactQrStates[item.id] = 'ready'"
-                  @error="contactQrStates[item.id] = 'error'"
-                />
-                <span
-                  v-if="contactQrStates[item.id] === 'loading'"
-                  class="support-contact-loading"
-                  role="status"
-                >
-                  正在加载{{ item.label }}二维码…
-                </span>
-                <div v-else-if="contactQrStates[item.id] === 'error'" class="support-contact-error">
-                  <span>二维码加载失败</span>
-                  <button type="button" @click="retryContactQr(item)">重新加载</button>
-                </div>
-              </div>
-              <strong>{{ activeChineseContact.label }}</strong>
-              <span>{{ activeChineseContact.note }}</span>
-            </article>
-          </div>
-
-          <div
-            v-else
-            class="support-dialog-international is-contact-only"
-            data-support-locale="international"
-          >
-            <section aria-labelledby="international-contact-title">
-              <h3 id="international-contact-title">International contact</h3>
-              <div class="support-international-grid">
-                <a
-                  :href="whatsappContactUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Open WhatsApp contact"
-                >
-                  <span class="support-international-icon is-whatsapp">
-                    <MessageCircle :size="20" aria-hidden="true" />
-                  </span>
-                  <span>
-                    <strong>WhatsApp</strong>
-                    <small>Open a direct chat</small>
-                  </span>
-                  <ArrowRight :size="18" aria-hidden="true" />
-                </a>
-                <a
-                  :href="telegramContactUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Open Telegram contact"
-                >
-                  <span class="support-international-icon is-telegram">
-                    <Send :size="20" aria-hidden="true" />
-                  </span>
-                  <span>
-                    <strong>Telegram</strong>
-                    <small>@wybaby168</small>
-                  </span>
-                  <ArrowRight :size="18" aria-hidden="true" />
-                </a>
-              </div>
-            </section>
-          </div>
-        </section>
-      </div>
-    </Transition>
-  </Teleport>
 </template>
