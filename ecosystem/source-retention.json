@@ -7290,6 +7290,11 @@
       "reason": "Japanese dictionary completeness and interpolation checks now run from the central locale registry in the shared i18n suite, replacing fixed-key and source-string assertions."
     },
     {
+      "path": "apps/viewer-demo/public/wasm/cad/0.8.1/libredwg-web.wasm",
+      "reason": "The CAD runtime stager restores this byte-identical legacy version alias from its canonical WASM asset.",
+      "replacement": "apps/viewer-demo/public/wasm/cad/libredwg-web.wasm"
+    },
+    {
       "path": "apps/viewer-demo/public/wasm/cad/0.8.3/libredwg-web.wasm",
       "reason": "The CAD runtime stager restores this byte-identical legacy version alias from its canonical WASM asset.",
       "replacement": "apps/viewer-demo/public/wasm/cad/libredwg-web.wasm"

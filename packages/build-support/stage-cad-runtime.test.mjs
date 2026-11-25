@@ -61,6 +61,7 @@ test('installed runtime retains every CAD path promised by the public copy-asset
   await writeFile(join(cadRoot, 'host-notes.txt'), hostNotes)
   const result = await stageInstalledCadRuntime(root)
   const worker = await readFile(join(cadRoot, 'dwg-worker.js'))
+  const wasm = await readFile(join(cadRoot, 'libredwg-web.wasm'))
   const sourceArchive = await readFile(join(cadRoot, 'CORRESPONDING_SOURCE.zip'))
   assert.equal(sourceArchive.length, CAD_INTEGRATION_SOURCE.bytes)
   const notice = await readFile(join(cadRoot, 'CORRESPONDING_SOURCE_NOTICE.txt'), 'utf8')
@@ -69,6 +70,7 @@ test('installed runtime retains every CAD path promised by the public copy-asset
   for (const version of expectedVersions) {
     assert.ok(result.versions.includes(version), `Missing promised CAD path: ${version}`)
     assert.deepEqual(await readFile(join(cadRoot, version, 'dwg-worker.js')), worker)
+    assert.deepEqual(await readFile(join(cadRoot, version, 'libredwg-web.wasm')), wasm)
     assert.deepEqual(await readFile(join(cadRoot, version, 'CORRESPONDING_SOURCE.zip')), sourceArchive)
     assert.ok(notice.includes(version), `Source notice omits compatibility path: ${version}`)
     assert.equal(await readFile(join(cadRoot, version, 'CORRESPONDING_SOURCE_NOTICE.txt'), 'utf8'), notice)
