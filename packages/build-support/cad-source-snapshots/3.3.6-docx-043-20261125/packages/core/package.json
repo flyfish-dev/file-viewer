@@ -1,0 +1,152 @@
+{
+  "name": "@file-viewer/core",
+  "version": "3.3.6",
+  "private": false,
+  "type": "module",
+  "description": "Framework-neutral TypeScript APIs for browser-side file preview, renderer presets, search, zoom, page navigation, print and export.",
+  "keywords": [
+    "file-viewer",
+    "document-preview",
+    "typescript",
+    "core",
+    "document-viewer",
+    "file-preview",
+    "self-hosted",
+    "browser",
+    "wasm",
+    "office-viewer",
+    "pdf-viewer"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Yu Wang",
+    "email": "admin@flyfish.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyfish-dev/file-viewer.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/flyfish-dev/file-viewer/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://dev.flyfish.group/donate?source=npm"
+  },
+  "homepage": "https://github.com/flyfish-dev/file-viewer#readme",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "file-viewer-custom-locales": {
+        "types": "./dist/custom-locales.d.ts",
+        "import": "./dist/custom-locales.js",
+        "default": "./dist/custom-locales.js"
+      },
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./assets": {
+      "types": "./dist/assets.d.ts",
+      "import": "./dist/assets.js",
+      "default": "./dist/assets.js"
+    },
+    "./headless": {
+      "file-viewer-custom-locales": {
+        "types": "./dist/custom-locales-headless.d.ts",
+        "import": "./dist/custom-locales-headless.js",
+        "default": "./dist/custom-locales-headless.js"
+      },
+      "types": "./dist/headless.d.ts",
+      "import": "./dist/headless.js",
+      "default": "./dist/headless.js"
+    },
+    "./browser": {
+      "file-viewer-custom-locales": {
+        "types": "./dist/custom-locales-browser.d.ts",
+        "import": "./dist/custom-locales-browser.js",
+        "default": "./dist/custom-locales-browser.js"
+      },
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js",
+      "default": "./dist/browser.js"
+    },
+    "./export": {
+      "file-viewer-custom-locales": {
+        "types": "./dist/custom-locales-export.d.ts",
+        "import": "./dist/custom-locales-export.js",
+        "default": "./dist/custom-locales-export.js"
+      },
+      "types": "./dist/export.d.ts",
+      "import": "./dist/export.js",
+      "default": "./dist/export.js"
+    },
+    "./print-mask": {
+      "file-viewer-custom-locales": {
+        "types": "./dist/custom-locales-print-mask.d.ts",
+        "import": "./dist/custom-locales-print-mask.js",
+        "default": "./dist/custom-locales-print-mask.js"
+      },
+      "types": "./dist/print-mask.d.ts",
+      "import": "./dist/print-mask.js",
+      "default": "./dist/print-mask.js"
+    },
+    "./custom-locales": {
+      "types": "./dist/custom-locales.d.ts",
+      "import": "./dist/custom-locales.js",
+      "default": "./dist/custom-locales.js"
+    },
+    "./custom-locales/browser": {
+      "types": "./dist/custom-locales-browser.d.ts",
+      "import": "./dist/custom-locales-browser.js",
+      "default": "./dist/custom-locales-browser.js"
+    },
+    "./custom-locales/headless": {
+      "types": "./dist/custom-locales-headless.d.ts",
+      "import": "./dist/custom-locales-headless.js",
+      "default": "./dist/custom-locales-headless.js"
+    },
+    "./custom-locales/export": {
+      "types": "./dist/custom-locales-export.d.ts",
+      "import": "./dist/custom-locales-export.js",
+      "default": "./dist/custom-locales-export.js"
+    },
+    "./custom-locales/print-mask": {
+      "types": "./dist/custom-locales-print-mask.d.ts",
+      "import": "./dist/custom-locales-print-mask.js",
+      "default": "./dist/custom-locales-print-mask.js"
+    },
+    "./locales/*": {
+      "types": "./dist/locales/*.d.ts",
+      "import": "./dist/locales/*.js",
+      "default": "./dist/locales/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "assets.js",
+    "assets.d.ts",
+    "browser.js",
+    "browser.d.ts",
+    "dist",
+    "headless.js",
+    "headless.d.ts",
+    "print-mask.js",
+    "print-mask.d.ts",
+    "vendor",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "README.zh-CN.md"
+  ],
+  "dependencies": {
+    "dompurify": "3.4.18"
+  },
+  "license": "Apache-2.0"
+}

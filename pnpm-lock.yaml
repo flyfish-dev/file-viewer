@@ -2088,8 +2088,8 @@ importers:
         specifier: workspace:3.3.6
         version: link:../doc
       '@file-viewer/docx':
-        specifier: 0.3.42
-        version: 0.3.42
+        specifier: 0.3.43
+        version: 0.3.43
       jszip:
         specifier: 3.10.2
         version: 3.10.2
@@ -2759,8 +2759,8 @@ packages:
       '@noble/hashes':
         optional: true
 
-  '@file-viewer/docx@0.3.42':
-    resolution: {integrity: sha512-tmqxWONZ6Z3jX9IF8YrdnkC+4V+3aiT06H9e6ashxngaBZWP5Ay2hRL54qujNahC401znbTxUdg+6WAvNYpT2A==}
+  '@file-viewer/docx@0.3.43':
+    resolution: {integrity: sha512-dKi6Q/k2EwaQl9IHx3TtWSfeAZQ8o43UlOMnXCYjjx0SYuE1TIifYjcRR8KJmz4UfgkDjMBpnyOs8chXhDsh3g==}
 
   '@file-viewer/ppt@1.0.2':
     resolution: {integrity: sha512-dyq341piRU3vjeImNwkyb+OWAn26SyUqhFNiOxyrsYfDMTGEZgVdk/AmCxlmbCXeIMGRM2zHdzUUWRBRxfSQdg==}
@@ -7599,7 +7599,7 @@ snapshots:
 
   '@exodus/bytes@1.16.0': {}
 
-  '@file-viewer/docx@0.3.42':
+  '@file-viewer/docx@0.3.43':
     dependencies:
       '@xmldom/xmldom': 0.9.12
       jszip: 3.10.2

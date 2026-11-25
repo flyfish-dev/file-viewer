@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { ArrowRight, Check, MousePointer2, Pause, Play, Sparkles } from '@lucide/vue'
+import { computed, ref } from 'vue'
+import { ArrowRight, Check, Sparkles } from '@lucide/vue'
+import CarouselPlayback from './CarouselPlayback.vue'
 import FormatMark from './FormatMark.vue'
 import { FORMAT_CATALOG_SUMMARY, OFFICE_FORMAT_GROUPS } from '../formatCatalog.generated'
-import type { DemoBrandIconName } from '../../../viewer-demo/src/data/demoFileBrandIcons'
+import type { DemoBrandIconName } from '../data/demoFileBrandIcons'
+import { useCarouselPlayback } from '../useCarouselPlayback'
 
 const props = defineProps<{ isZh: boolean; docsUrl: string; demoUrl: string }>()
 const officeExtensions = OFFICE_FORMAT_GROUPS.flatMap((group) => [...group.extensions])
@@ -36,10 +38,10 @@ const groups: Group[] = [
   {
     id: 'office',
     title: ['Office 文档', 'Office documents'],
-    note: ['从日常文档到数据与演示', 'Documents, data & presentations'],
+    note: ['文字文档、电子表格和演示文稿', 'Documents, spreadsheets and presentations'],
     detail: [
-      'Word、电子表格与演示文稿在同一组件中打开，适合审批、知识库与附件中心。具体排版还原与宏等限制以格式矩阵为准。',
-      'Open Word, spreadsheets and presentations in one component, for approvals, knowledge bases and attachments. See the matrix for layout fidelity and macro limitations.'
+      '在审批系统、知识库或附件中心预览 Word、Excel 和 PowerPoint 文件。下表列出了扩展名，具体排版效果和功能限制见格式支持表。',
+      'Preview Word, Excel and PowerPoint files in approval tools, knowledge bases and attachment lists. Use the format guide to check layout support and limitations.'
     ],
     formats: [
       { extension: 'doc', brand: 'microsoft-word' },
@@ -53,11 +55,11 @@ const groups: Group[] = [
   },
   {
     id: 'layout',
-    title: ['版式与阅读', 'Pages & publications'],
-    note: ['让文档回到熟悉的阅读方式', 'A familiar space for every page'],
+    title: ['版式文档和电子书', 'Page formats and ebooks'],
+    note: ['PDF、OFD、Typst 和电子书', 'PDF, OFD, Typst and ebooks'],
     detail: [
-      'PDF、OFD、Typst、电子书与帮助文档各走对应预览链路。纸张、阅读区与明暗外壳分开处理。',
-      'PDF, OFD, Typst, ebooks and help files use their respective preview pipelines. Document pages stay separate from the light or dark viewer shell.'
+      '预览 PDF 和 OFD 页面、Typst 源文件、电子书和帮助文件。切换预览器主题时，文档页面与工具栏分别显示。',
+      'Preview PDF and OFD pages, Typst source, ebooks and help files. The viewer theme applies to the controls separately from the document pages.'
     ],
     formats: [
       { extension: 'pdf', brand: 'adobe-acrobat' },
@@ -70,11 +72,11 @@ const groups: Group[] = [
   },
   {
     id: 'engineering',
-    title: ['工程与设计', 'Engineering & design'],
-    note: ['从二维图纸，延伸到三维空间', 'From drawings to spatial ideas'],
+    title: ['工程图纸和模型', 'Engineering drawings and models'],
+    note: ['CAD、三维模型、流程图和思维导图', 'CAD, 3D models, diagrams and mind maps'],
     detail: [
-      'CAD、三维模型与设计文件按格式匹配渲染器，Worker / WASM 按需加载。模型、图纸与思维导图的能力范围分别列明。',
-      'CAD, models and design assets select format-specific renderers, with Workers and WASM loaded on demand. Drawing, model and mind-map capabilities are documented separately.'
+      '预览 DWG 或 DXF 图纸、STEP 或 STL 模型，以及 Draw.io 等图表文件。预览器按文件格式加载所需的 Worker 和 WASM。',
+      'Preview DWG or DXF drawings, STEP or STL models, and diagrams such as Draw.io files. The viewer loads the Workers and WebAssembly it needs for each format.'
     ],
     formats: [
       { extension: 'dwg', brand: 'autocad' },
@@ -87,11 +89,11 @@ const groups: Group[] = [
   },
   {
     id: 'archive',
-    title: ['归档与邮件', 'Archives & mail'],
-    note: ['让压缩包与沟通记录可以被阅读', 'Explore what is inside'],
+    title: ['压缩包和邮件', 'Archives and email'],
+    note: ['压缩包目录、邮件正文和附件', 'Archive contents, email messages and attachments'],
     detail: [
-      '查看压缩包目录、邮件与附件，把分散的业务文件带回同一个预览入口。压缩算法、加密与嵌套附件能力以文档为准。',
-      'Inspect archive contents, email and attachments through a shared preview entry point. Refer to the docs for supported compression, encryption and nested attachments.'
+      '查看 ZIP、7z 和 RAR 中的文件，或打开 EML、MSG 邮件及附件。支持的压缩方式、加密方式和嵌套附件见格式支持表。',
+      'List files in ZIP, 7z and RAR archives, or open EML and MSG messages and their attachments. Check the format guide for compression, encryption and nested attachments.'
     ],
     formats: [
       { extension: 'zip', family: 'archive' },
@@ -104,11 +106,11 @@ const groups: Group[] = [
   },
   {
     id: 'data',
-    title: ['代码与数据', 'Code & data'],
-    note: ['结构、语法与数据，一目了然', 'Structure, syntax & insight'],
+    title: ['代码和数据', 'Code and data'],
+    note: ['Markdown、源代码、数据库和列式数据', 'Markdown, source code, databases and columnar data'],
     detail: [
-      '从 Markdown 与代码文件，到 JSON、数据库和列式数据，使用适合内容的展示方式。预览、结构化读取与执行是不同能力。',
-      'Read Markdown, source files, JSON, database and columnar data in views suited to their content. Preview, structured reading and execution are distinct capabilities.'
+      '查看 Markdown 和源代码，读取 JSON、SQLite 和 Parquet 数据。代码预览只显示内容。',
+      'Read Markdown and source files, and inspect data in JSON, SQLite and Parquet. The source viewer displays code as text.'
     ],
     formats: [
       { extension: 'md', brand: 'markdown' },
@@ -121,11 +123,11 @@ const groups: Group[] = [
   },
   {
     id: 'media',
-    title: ['图像与媒体', 'Images & media'],
-    note: ['设计素材与声画内容，各就其位', 'Room for images, sound & video'],
+    title: ['图片和音视频', 'Images, audio and video'],
+    note: ['图片、设计源文件、音频和视频', 'Images, design files, audio and video'],
     detail: [
-      '图片、设计文件、音频与视频复用统一预览外壳。设计源文件的预览不等于可编辑，音视频支持也取决于浏览器编解码器。',
-      'Images, design files, audio and video share a consistent viewer shell. Previewing a design file does not imply editing, and media support depends on browser codecs.'
+      '查看 PNG、SVG、PSD 和 AI 文件，或播放音频和视频。设计源文件只供预览。可播放的音视频取决于浏览器支持的编解码器。',
+      'View PNG, SVG, PSD and AI files, or play audio and video. Design files are read-only. Playback depends on the codecs available in your browser.'
     ],
     formats: [
       { extension: 'psd', brand: 'adobe-photoshop' },
@@ -138,13 +140,12 @@ const groups: Group[] = [
   }
 ]
 const selected = ref(0)
-const paused = ref(false)
-const inView = ref(false)
-const root = ref<HTMLElement | null>(null)
+const grid = ref<HTMLElement | null>(null)
+const { paused, playing, pause, toggle, setHover } = useCarouselPlayback(grid, selected, groups.length, 7500)
 const activeGroup = computed(() => groups[selected.value]!)
 const lang = computed(() => (props.isZh ? 0 : 1))
-let observer: IntersectionObserver | undefined
 function chooseGroup(index: number) {
+  pause()
   selected.value = index
 }
 function navigateGroups(event: KeyboardEvent, index: number) {
@@ -163,75 +164,47 @@ function navigateGroups(event: KeyboardEvent, index: number) {
         ? groups.length - 1
         : (index + offsets[event.key]! + groups.length) % groups.length
   chooseGroup(next)
-  root.value?.querySelector<HTMLButtonElement>(`#format-group-${groups[next]!.id}`)?.focus()
+  const tab = grid.value?.querySelector<HTMLButtonElement>(`#format-group-${groups[next]!.id}`)
+  tab?.focus({ preventScroll: true })
+  tab?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' })
 }
-onMounted(() => {
-  observer = new IntersectionObserver(
-    ([entry]) => {
-      inView.value = Boolean(entry?.isIntersecting)
-    },
-    { rootMargin: '80px' }
-  )
-  if (root.value) observer.observe(root.value)
-})
-onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <template>
   <section
     id="formats"
-    ref="root"
-    class="format-experience"
-    :class="{ 'motion-paused': paused || !inView }"
+    class="format-experience format-directory-grid"
+    :class="{ 'motion-paused': !playing }"
     aria-labelledby="formats-title"
   >
     <header class="format-experience-heading">
       <div>
-        <p class="section-kicker">A WORLD OF FILES</p>
-        <h2 id="formats-title">
-          {{ isZh ? '格式各不相同。' : 'Different formats.' }}<br /><span>{{
-            isZh ? '预览，自成一体。' : 'One place to preview.'
-          }}</span>
-        </h2>
+        <h2 id="formats-title">{{ isZh ? '支持的文件格式' : 'Supported file formats' }}</h2>
       </div>
       <div class="format-experience-intro">
         <p>
           {{
             isZh
-              ? `从一份文档，到整个文件世界。${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} 个已注册扩展名，匹配 ${FORMAT_CATALOG_SUMMARY.rendererCount} 条预览链路。`
-              : `From one document to a whole world of files. ${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} registered extensions, matched to ${FORMAT_CATALOG_SUMMARY.rendererCount} preview pipelines.`
+              ? `已登记 ${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} 个扩展名，使用 ${FORMAT_CATALOG_SUMMARY.rendererCount} 个预览模块。`
+              : `${FORMAT_CATALOG_SUMMARY.registeredExtensionCount} registered file extensions use ${FORMAT_CATALOG_SUMMARY.rendererCount} preview modules.`
           }}
         </p>
         <div class="format-experience-tools">
-          <span
-            ><MousePointer2 :size="14" />{{
-              isZh ? '悬停展开 · 点击探索' : 'Hover to unfold · select to explore'
-            }}</span
-          >
-          <button
-            type="button"
-            :aria-pressed="paused"
-            :aria-label="
-              paused
-                ? isZh
-                  ? '播放格式动效'
-                  : 'Play format motion'
-                : isZh
-                  ? '暂停格式动效'
-                  : 'Pause format motion'
-            "
-            @click="paused = !paused"
-          >
-            <Play v-if="paused" :size="15" /><Pause v-else :size="15" />
-          </button>
+          <CarouselPlayback :is-zh="isZh" :paused="paused" controls="format-carousel" @toggle="toggle" />
+          <span>{{ isZh ? '点选类别查看详情' : 'Choose a type for details' }}</span>
         </div>
       </div>
     </header>
 
     <div
+      id="format-carousel"
+      ref="grid"
       class="format-constellation"
       role="tablist"
-      :aria-label="isZh ? '文件类型分组' : 'File format families'"
+      :aria-label="isZh ? '文件类型' : 'File types'"
+      @focusin="pause"
+      @pointerenter="setHover"
+      @pointerleave="setHover"
     >
       <button
         v-for="(group, index) in groups"
@@ -247,9 +220,9 @@ onBeforeUnmount(() => observer?.disconnect())
         @click="chooseGroup(index)"
         @keydown="navigateGroups($event, index)"
       >
-        <span class="format-family-number"
-          >0{{ index + 1 }}<Check v-if="selected === index" :size="14"
-        /></span>
+        <span v-if="selected === index" class="format-family-check" aria-hidden="true">
+          <Check :size="15" :stroke-width="2.4" />
+        </span>
         <span
           class="format-stack"
           :style="{ '--stack-middle': (group.formats.length - 1) / 2 }"
@@ -266,7 +239,7 @@ onBeforeUnmount(() => observer?.disconnect())
         </span>
         <span class="format-family-heading"
           ><strong>{{ group.title[lang] }}</strong
-          ><ArrowRight :size="18"
+          ><ArrowRight :size="18" aria-hidden="true"
         /></span>
         <span class="format-family-note">{{ group.note[lang] }}</span>
         <span class="format-family-extensions">{{
@@ -285,6 +258,9 @@ onBeforeUnmount(() => observer?.disconnect())
       role="tabpanel"
       :aria-labelledby="`format-group-${activeGroup.id}`"
       tabindex="0"
+      @focusin="pause"
+      @pointerenter="setHover"
+      @pointerleave="setHover"
     >
       <div class="format-detail-copy">
         <span class="format-detail-eyebrow"
@@ -295,12 +271,12 @@ onBeforeUnmount(() => observer?.disconnect())
       <div
         v-if="activeGroup.id !== 'office'"
         class="format-detail-formats"
-        :aria-label="isZh ? '代表扩展名' : 'Representative extensions'"
+        :aria-label="isZh ? '扩展名示例' : 'Example file extensions'"
       >
         <span v-for="ext in activeGroup.extensions" :key="ext">.{{ ext }}</span>
       </div>
       <a :href="demoUrl" target="_blank" rel="noreferrer"
-        >{{ isZh ? '打开真实样例' : 'Try real samples' }}<ArrowRight :size="16"
+        >{{ isZh ? '试用样例文件' : 'Try sample files' }}<ArrowRight :size="16"
       /></a>
       <section
         v-if="activeGroup.id === 'office'"
@@ -309,7 +285,7 @@ onBeforeUnmount(() => observer?.disconnect())
       >
         <header>
           <h3 id="office-matrix-title">
-            {{ isZh ? '完整 Office 矩阵' : 'Complete Office matrix' }}
+            {{ isZh ? 'Office 及相关格式' : 'Office and related formats' }}
           </h3>
           <span>{{ officeExtensions.length }} {{ isZh ? '个扩展名' : 'extensions' }}</span>
         </header>
@@ -324,8 +300,8 @@ onBeforeUnmount(() => observer?.disconnect())
         <p>
           {{
             isZh
-              ? '按当前格式注册表完整列出。宏与外部程序不会执行；旧版 PPT / POT 保留内置引擎水印。各格式的还原程度与限制请查看完整能力矩阵。'
-              : 'Listed in full from the current format registry. Macros and external programs are not executed; legacy PPT / POT retain the embedded engine watermark. See the full matrix for fidelity and format-specific limitations.'
+              ? '预览时不会运行宏或外部程序。旧版 PPT 和 POT 文件会显示内置引擎的水印。各格式的排版效果和功能限制见完整格式支持表。'
+              : 'The viewer does not run macros or external programs. Legacy PPT and POT files retain the built-in engine’s watermark. See the full format guide for layout support and limitations.'
           }}
         </p>
       </section>
@@ -339,9 +315,12 @@ onBeforeUnmount(() => observer?.disconnect())
         }}
         {{ isZh ? '个实验扩展名' : 'experimental extensions' }}
       </p>
-      <a :href="docsUrl" target="_blank" rel="noreferrer"
-        >{{ isZh ? '完整矩阵与能力边界' : 'Full matrix & limitations' }}<ArrowRight :size="15"
-      /></a>
+      <div class="format-coverage-actions">
+        <a href="#compatibility">{{ isZh ? '浏览器兼容性' : 'Browser support' }}<ArrowRight :size="15" /></a>
+        <a :href="docsUrl" target="_blank" rel="noreferrer">
+          {{ isZh ? '完整格式支持表' : 'Full format guide' }}<ArrowRight :size="15" />
+        </a>
+      </div>
     </div>
   </section>
 </template>

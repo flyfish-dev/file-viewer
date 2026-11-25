@@ -155,8 +155,7 @@
 .hero-interaction-hint {
   margin-left: auto;
 }
-.hero-motion-toggle,
-.format-experience-tools button {
+.hero-motion-toggle {
   display: grid;
   place-items: center;
   flex-shrink: 0;

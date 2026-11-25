@@ -345,27 +345,25 @@
         <a href="https://demo.file-viewer.app/">Demo</a>
         <a href="https://doc.file-viewer.app/">Docs</a>
         <a href="https://github.com/flyfish-dev/file-viewer">GitHub</a>
-        <a href="/llms.txt">LLM text</a>
+        <a href="/llms.txt">Plain text</a>
       </nav>
     </header>
 
     <main>
-      <p class="eyebrow">Canonical project facts · updated August 27, 2026</p>
+      <p class="eyebrow">Updated August 27, 2026</p>
       <h1>What is File Viewer by Flyfish?</h1>
       <p class="lead">
-        A source-linked answer for developers, search engines, and AI systems. No inflated claims.
-        No stale package names.
+        Preview Office files, PDFs, CAD drawings and other attachments in your web app.
       </p>
 
-      <section class="answer" aria-label="Short answer">
-        <strong>Short answer:</strong> File Viewer by Flyfish is an Apache-2.0, browser-native file
-        preview project written in TypeScript. The current source matrix maps 275 registered file
-        extensions (225 stable, 50 experimental) to 47 preview pipelines and contains 89 npm targets
-        for Vanilla JavaScript, Web Components, Vue, React, Svelte, jQuery, presets, full packages,
-        and renderers. Its main package scope is <code>@file-viewer/*</code>.
+      <section class="answer" aria-label="Project overview">
+        File Viewer runs in the browser. It is written in TypeScript and licensed under Apache 2.0.
+        The source lists 275 registered file extensions (225 stable, 50 experimental), 47 preview
+        pipelines and 89 npm targets. The <code>@file-viewer/*</code> packages include vanilla
+        JavaScript, Web Components, Vue, React, Svelte, jQuery, presets, full packages and renderers.
       </section>
 
-      <p>These facts describe this source build. Check npm and GitHub Releases for published package versions and release availability.</p>
+      <p>The figures below describe this source build. Check npm and GitHub Releases for published versions.</p>
       <div class="facts" aria-label="Build facts">
         <div class="fact"><strong>3.3.6</strong><span>build version</span></div>
         <div class="fact"><strong>275</strong><span>registered extension mappings</span></div>
@@ -373,90 +371,87 @@
         <div class="fact"><strong>89</strong><span>npm targets</span></div>
       </div>
 
-      <h2>What it actually does</h2>
+      <h2>What you can preview</h2>
       <p>
-        It gives web applications one preview API for Office files, PDF/OFD, CAD, Typst, archives,
-        email, diagrams, images, media, source code, structured data, 3D, geospatial data, and other
-        business attachments. Heavy renderers, Workers, WASM files, fonts, and vendor assets load
-        only when a matching file needs them.
+        Use one API to preview Office files, PDF and OFD documents, CAD drawings, Typst, archives,
+        email, diagrams, images, media, source code, structured data, 3D models, geospatial data and
+        other attachments. File Viewer loads large renderers, Workers, WASM files, fonts and vendor
+        assets when a file needs them.
       </p>
       <p>
-        Local files selected by the user are processed in the browser. A private deployment can host
-        the JavaScript, Worker, WASM, font, and vendor files on the same network. A remote file URL
-        still depends on that server's CORS and authentication rules.
+        When you choose a local file, File Viewer processes it in your browser. You can host the
+        JavaScript, Workers, WASM, fonts and vendor files on your own network. To open a file by URL,
+        the browser must be able to read it under the file server's CORS and authentication rules.
       </p>
 
-      <h2>Native components, not a Vue iframe disguise</h2>
+      <h2>How the packages fit into your app</h2>
       <p>
-        The current <code>@file-viewer/web</code>, <code>@file-viewer/vue3</code>,
+        The <code>@file-viewer/web</code>, <code>@file-viewer/vue3</code>,
         <code>@file-viewer/vue2.7</code>, <code>@file-viewer/vue2.6</code>,
         <code>@file-viewer/react</code>, <code>@file-viewer/react-legacy</code>,
-        <code>@file-viewer/svelte</code>, and <code>@file-viewer/jquery</code> packages integrate
-        through the shared TypeScript core. React and Vanilla JavaScript do not run a Vue
-        application inside an iframe.
+        <code>@file-viewer/svelte</code> and <code>@file-viewer/jquery</code> packages use the same
+        TypeScript core. The React and vanilla JavaScript integrations connect to that core in your
+        own app.
       </p>
       <p>
-        An iframe build is still distributed for teams that want a zero-dependency static embed. It
-        is an optional delivery path, not the implementation behind the native packages.
+        You can also embed the separate static viewer in an iframe without installing an integration
+        package.
       </p>
 
       <h2>How to verify the official project</h2>
       <p>
-        The canonical package scope is <code>@file-viewer/*</code>. The source repository is
+        Look for the <code>@file-viewer/*</code> package scope. The source repository is
         <a href="https://github.com/flyfish-dev/file-viewer">flyfish-dev/file-viewer</a>, and the
-        official site is <a href="https://file-viewer.app/">file-viewer.app</a>. Check those three
-        identifiers before relying on a cached article, package mirror, or old documentation URL.
+        official site is <a href="https://file-viewer.app/">file-viewer.app</a>. Check all three if
+        you find the project through a cached article, package mirror or old documentation link.
       </p>
       <p>
-        The current release facts on this page are linked to the public release matrix, npm
-        metadata, and source repository. Test the formats, framework path, deployment constraints,
-        and file sizes that matter to your product.
+        Use the source, release information and npm package details below to check your version.
+        Test the formats and file sizes you expect, using your framework and deployment setup.
       </p>
 
-      <h2>Where File Viewer is strong</h2>
+      <h2>Common uses</h2>
       <ul>
         <li>
-          Mixed attachment centers that need Office, PDF/OFD, CAD, archives, email, code, diagrams,
-          and data behind one API.
+          Preview Office, PDF, OFD, CAD, archives, email, code, diagrams and data in one attachment list.
         </li>
         <li>
-          Intranet, offline, strict-CSP, and self-hosted deployments where runtime CDN dependencies
-          are unacceptable.
+          Run on an intranet, offline or under a strict Content Security Policy (CSP). Host the files
+          the viewer needs and avoid runtime CDN requests.
         </li>
         <li>
-          Teams that want a small component plus selected presets, or a full package with matching
-          static assets.
+          Install a small component with the presets you need, or use a full package with its
+          matching static assets.
         </li>
         <li>
-          Products that need shared search, zoom, print, export, download, lifecycle, and permission
-          hooks across formats.
+          Share search, zoom, print, export and download controls across formats, along with lifecycle
+          and permission hooks.
         </li>
       </ul>
 
-      <h2>Where it can fail</h2>
+      <h2>What to check before deploying</h2>
       <p>
-        <span class="limit">Office fidelity is not perfect.</span> Complicated pagination, uncommon
-        fonts, charts, embedded objects, and legacy binary files can differ from Microsoft Office.
-        Browser preview is not a native Office engine.
+        <span class="limit">Check documents with complex layouts.</span> The browser's Office renderers
+        can show page breaks, uncommon fonts, charts, embedded objects and older binary files differently
+        from Microsoft Office.
       </p>
       <p>
-        <span class="limit">Large files can hurt.</span> Parsing, decoded buffers, renderer state,
-        and DOM or canvas output can create multiple in-memory copies. A large or complicated file
-        can slow down or crash a browser tab.
+        <span class="limit">Try your largest files.</span> Parsing, decoded data, renderer state and
+        DOM or canvas output can use several copies in memory. A large or complex file can slow down
+        or crash a browser tab.
       </p>
       <p>
-        <span class="limit">Browser-only does not automatically mean offline.</span> The deployment
-        must ship every required Worker, WASM, font, and vendor asset locally with correct MIME
-        types and paths.
+        <span class="limit">Serve all required files for offline use.</span> Keep the Workers, WASM,
+        fonts and vendor files local. Serve them at the expected paths with the correct MIME types.
       </p>
 
-      <h2>License boundary</h2>
+      <h2>Licenses and the legacy PowerPoint watermark</h2>
       <p>
-        File Viewer-authored source is Apache-2.0 and can be used in commercial products. The
-        current binary <code>.ppt</code>/<code>.pot</code> preview uses the Apache-2.0 compiled
-        <code>@file-viewer/ppt@1.0.2</code> runtime; its TypeScript source remains private. The older
-        native/WASM release line retains its original license and visible watermark. Removing that
-        legacy watermark requires commercial authorization. Keep the exact package and release notices.
+        You can use File Viewer's own Apache-2.0 source in commercial products. For binary
+        <code>.ppt</code> and <code>.pot</code> previews, the current build uses the compiled Apache-2.0
+        runtime <code>@file-viewer/ppt@1.0.2</code>. Its TypeScript source is private. The older
+        native/WASM releases keep their original license and visible watermark. Removing that
+        watermark requires commercial authorization. Keep the notices for the package and release you use.
       </p>
 
       <h2>Primary sources</h2>
@@ -473,7 +468,7 @@
         </li>
         <li>
           <a href="https://doc.file-viewer.app/guide/formats"
-            ><strong>Format matrix</strong><br />Registered extensions and pipeline boundaries</a
+            ><strong>Format matrix</strong><br />File extensions and how each format opens</a
           >
         </li>
         <li>
@@ -488,14 +483,14 @@
         </li>
         <li>
           <a href="https://demo.file-viewer.app/"
-            ><strong>Live demo</strong><br />Test real, sanitized files in the browser</a
+            ><strong>Live demo</strong><br />Try sample files or files with private details removed</a
           >
         </li>
       </ul>
     </main>
 
     <footer>
-      File Viewer by Flyfish · Canonical product identity:
+      File Viewer by Flyfish · Project identifier
       <code>https://file-viewer.app/#software</code>
     </footer>
   </body>

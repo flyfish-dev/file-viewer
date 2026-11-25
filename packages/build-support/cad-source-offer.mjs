@@ -6,11 +6,11 @@ import { CAD_SOURCE_ARCHIVE_NAME, readCadCorrespondingSource, verifyCadPreferred
 // This immutable public snapshot was read back and cold-built on Linux ARM64.
 // The normal release verifier separately compares its canonical and actual Full runtimes.
 export const CAD_PUBLIC_CORRESPONDING_SOURCE = Object.freeze({
-  sourceCommit: 'c013bea0ab5dc21a7eb40cae9775638c40248268',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268',
-  sha256: '343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf',
-  bytes: 194674702,
-  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.6',
+  sourceCommit: '34e340b2d63e79a976f7195a36913813c6efbf3c',
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/34e340b2d63e79a976f7195a36913813c6efbf3c',
+  sha256: 'b44af9232245c7f2d2940c1d0a72d6d67edaf7251d0a0fe7db37487e09a929a4',
+  bytes: 197653941,
+  buildDirectory: 'packages/build-support/cad-source-snapshots/3.3.6-docx-043-20261125',
   runtimeSha256: '22dc5b6f689adf96b3a3a439f6e16f2bb19ba7d8dc5f6bf2c6d917b2c120cacc'
 })
 
@@ -33,14 +33,15 @@ export const CAD_NATIVE_CORRESPONDING_SOURCES = Object.freeze([
 
 export const CAD_INTEGRATION_SOURCE = Object.freeze({
   releaseVersion: '3.3.6',
-  sha256: 'ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164',
-  bytes: 473241,
-  files: 118,
+  sourceRevision: 'docx-043-20261125',
+  sha256: '2bdf01fa27dd76ca05a59da9f81a0cb738df237bb4cce815751d791ff27b6c19',
+  bytes: 473766,
+  files: 119,
   runtimeBytes: 945926,
   runtimeSha256: '22dc5b6f689adf96b3a3a439f6e16f2bb19ba7d8dc5f6bf2c6d917b2c120cacc',
   cadVersion: '0.8.4',
   dwfVersion: '0.6.8',
-  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268'
+  url: 'https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/34e340b2d63e79a976f7195a36913813c6efbf3c'
 })
 
 export function cadIntegrationSourceNotice(releaseVersion) {

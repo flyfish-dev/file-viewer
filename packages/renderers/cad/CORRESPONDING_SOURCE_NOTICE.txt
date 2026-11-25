@@ -1,14 +1,14 @@
 File Viewer CAD integration corresponding source
 
 Package release: 3.3.6
-Corresponding source (immutable HTTPS): https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/c013bea0ab5dc21a7eb40cae9775638c40248268
-HTTPS archive SHA-256: 343f7ae2f63d3157ab8b58eb7663c6f7c87498870bb4df7c472ad587a5edcbbf
+Corresponding source (immutable HTTPS): https://codeload.github.com/flyfish-dev/file-viewer/tar.gz/34e340b2d63e79a976f7195a36913813c6efbf3c
+HTTPS archive SHA-256: b44af9232245c7f2d2940c1d0a72d6d67edaf7251d0a0fe7db37487e09a929a4
 
-The public archive contains the exact standalone preferred-source snapshot at packages/build-support/cad-source-snapshots/3.3.6.
+The public archive contains the exact standalone preferred-source snapshot at packages/build-support/cad-source-snapshots/3.3.6-docx-043-20261125.
 Use Node.js 24.20.0 and npm 11.19.0. From that directory run: npm ci --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org/; npm run build.
 The standalone lock pins its canonical build tools; the normal workspace-toolchain reconstruction also verifies the actual Full runtime bytes.
 A standalone current preferred-source archive is also retained in the complete public source checkout and CAD asset directories as CORRESPONDING_SOURCE.zip.
-Standalone archive SHA-256: ef168bd8138333bcf62a6065b942cb1b39ac0ee9c08d4e689d085f8dda503164
+Standalone archive SHA-256: 2bdf01fa27dd76ca05a59da9f81a0cb738df237bb4cce815751d791ff27b6c19
 Runtime-only npm archives do not include source ZIPs; retain this notice and its immutable HTTPS source reference.
 It retains complete original license texts and identifies the exact public CAD, DWF and LibreDWG bindings sources in upstream-sources.json.
 The integration output is 945926 bytes with SHA-256 22dc5b6f689adf96b3a3a439f6e16f2bb19ba7d8dc5f6bf2c6d917b2c120cacc.
