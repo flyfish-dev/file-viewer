@@ -1,7 +1,6 @@
 interface RenderedCell {
   drawY: number
   visibleHeight: number
-  getOverlayerViewsStyle(): Record<string, string>
   isInside(x: number, y: number): boolean
   isInsideVisible(x: number, y: number): boolean
 }
@@ -33,25 +32,30 @@ interface TableBody {
   draw(): void
 }
 
-function clipCell(cell: RenderedCell, minY: number, maxY: number) {
-  const top = Math.max(0, minY - cell.drawY)
-  const bottom = Math.max(0, cell.drawY + cell.visibleHeight - maxY)
-  if (!top && !bottom) return
+interface BodyOverlayCell {
+  rowIndex: number
+  cellType: string
+}
 
+interface BodyOverlay {
+  views: { style: Record<string, string>; cells: BodyOverlayCell[] }[]
+}
+
+function clipCellHitTest(cell: RenderedCell, minY: number, maxY: number) {
+  if (cell.drawY >= minY && cell.drawY + cell.visibleHeight <= maxY) return
   for (const hitTest of ['isInside', 'isInsideVisible'] as const) {
     const original = cell[hitTest].bind(cell)
     cell[hitTest] = (x, y) => y >= minY && y < maxY && original(x, y)
   }
-  const originalStyle = cell.getOverlayerViewsStyle.bind(cell)
-  cell.getOverlayerViewsStyle = () => ({
-    ...originalStyle(),
-    clipPath: `inset(${top}px 0 ${bottom}px 0)`,
-  })
 }
 
 /** Bridge the pinned e-virt-table canvas and DOM renderer without remapping sheet indexes. */
 export function installFrozenRows(table: unknown, getRequestedCount: () => number) {
-  const { body, ctx } = table as { body?: TableBody; ctx: TableContext }
+  const { body, ctx, overlayer } = table as {
+    body?: TableBody
+    ctx: TableContext
+    overlayer?: { getBody(): BodyOverlay }
+  }
   const layout = { count: 0, height: 0 }
   if (!body || typeof body.update !== 'function' || typeof body.draw !== 'function') return layout
 
@@ -59,6 +63,31 @@ export function installFrozenRows(table: unknown, getRequestedCount: () => numbe
   const draw = body.draw.bind(body)
   let frozen: RenderedRow[] = []
   let scrolling: RenderedRow[] = []
+
+  if (typeof overlayer?.getBody === 'function') {
+    const getBodyOverlay = overlayer.getBody.bind(overlayer)
+    overlayer.getBody = () => {
+      const overlay = getBodyOverlay()
+      if (!layout.height) return overlay
+
+      // Clip the same panes as the canvas, preserving native cell positions
+      // and allowing borders and text to extend between cells within a pane.
+      overlay.views = overlay.views.flatMap(pane => {
+        const frozenCells: BodyOverlayCell[] = []
+        const scrollingCells: BodyOverlayCell[] = []
+        for (const cell of pane.cells) {
+          const cells = cell.cellType === 'body' && cell.rowIndex < layout.count ? frozenCells : scrollingCells
+          cells.push(cell)
+        }
+        const cut = `${layout.height - Number.parseFloat(pane.style.top)}px`
+        return [
+          { ...pane, cells: scrollingCells, style: { ...pane.style, clipPath: `inset(${cut} 0 0)` } },
+          { ...pane, cells: frozenCells, style: { ...pane.style, clipPath: `inset(0 0 calc(100% - ${cut}))` } },
+        ].filter(view => view.cells.length)
+      })
+      return overlay
+    }
+  }
 
   body.update = () => {
     update()
@@ -93,11 +122,11 @@ export function installFrozenRows(table: unknown, getRequestedCount: () => numbe
       const row = Reflect.construct(sample.constructor, [
         ctx, index, 0, ctx.body.y + top + ctx.scrollY, ctx.header.width, height, ctx.body.data[index],
       ]) as RenderedRow
-      row.cells.forEach(cell => clipCell(cell, ctx.body.y, cut))
+      row.cells.forEach(cell => clipCellHitTest(cell, ctx.body.y, cut))
       frozen.push(row)
     }
     for (const row of scrolling) {
-      row.cells.forEach(cell => clipCell(cell, cut, end))
+      row.cells.forEach(cell => clipCellHitTest(cell, cut, end))
     }
     // The event dispatcher searches these rows in order. Pinned cells win at the cut.
     body.renderRows = [...frozen, ...scrolling]
