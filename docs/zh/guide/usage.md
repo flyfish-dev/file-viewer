@@ -256,6 +256,7 @@ const options = {
 | `spreadsheet.worker` | 是否启用表格静态 Worker。默认 `auto`：文件体积达到 `spreadsheet.workerAutoThreshold` 时自动尝试 Worker，小文件继续主线程兼容路径；显式设为 `true` / `false` 时按业务配置执行 |
 | `spreadsheet.workerAutoThreshold` | `worker: 'auto'` 时的大文件阈值，单位字节，默认 1MB。需要更激进优化可调低；WebView、CSP 或静态资源不稳定环境可调高或设 `worker: false` |
 | `spreadsheet.workerUrl` | 自定义 Excel/XLSX Worker 地址，默认尝试当前部署 base 下的 `vendor/xlsx/sheet.worker.js` |
+| `spreadsheet.password` / `spreadsheet.requestPassword` | 设置加密 Excel 的首次尝试密码，或用回调接管输入。回调可读取文件名、尝试次数和原因，返回 `null` 取消。未提供回调时使用内置密码框。 |
 | `spreadsheet.textEncoding` | CSV / TSV 文本编码，默认 `auto`：优先 UTF-8 BOM 和严格 UTF-8，否则使用浏览器 GB18030 解码（同时覆盖 GBK）；也可显式指定 `utf-8`、`gbk` 或 `gb18030` |
 | `spreadsheet.resizableColumns` | 是否允许用户在 Excel / CSV / ODS 等表格预览中拖拽表头边界调整列宽，默认 `false` 以保持历史兼容；Demo 默认开启，便于查看被截断的长文本 |
 | `spreadsheet.fillViewport` | 默认 `true`，适用于 Excel、CSV / TSV 等表格格式。按默认行高/列宽补充空白字母列标题、行号和虚拟网格，随 resize/缩放重算；不拉伸已有单元格，不改变数据、used-range、导出、搜索或内容统计。设为 `false` 可只显示已用区域。 |

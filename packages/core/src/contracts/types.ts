@@ -144,6 +144,12 @@ export type FileViewerBaseMessageKey =
   | 'spreadsheet.state.rows'
   | 'spreadsheet.state.rowsAndColumns'
   | 'spreadsheet.error.parseFailed'
+  | 'spreadsheet.password.title'
+  | 'spreadsheet.password.invalid'
+  | 'spreadsheet.password.cancelled'
+  | 'spreadsheet.password.unsupported'
+  | 'spreadsheet.password.retry'
+  | 'spreadsheet.password.decryptFailed'
   | 'spreadsheet.error.workerFailed'
   | 'spreadsheet.comments.title'
   | 'spreadsheet.comments.close'
@@ -852,6 +858,11 @@ export interface FileViewerEpubOptions {
 export interface FileViewerSpreadsheetOptions {
   worker?: boolean | 'auto'
   workerUrl?: string
+  /** First password to try for an encrypted Excel workbook. */
+  password?: string
+  /** Supplies credentials instead of opening the built-in dialog. Null or undefined cancels. */
+  requestPassword?: (context: FileViewerSpreadsheetPasswordRequestContext) =>
+    string | null | undefined | Promise<string | null | undefined>
   /** `worker: 'auto'` 时，大于该字节数的表格自动使用静态 Worker，默认 1MB。 */
   workerAutoThreshold?: number
   /**
@@ -872,6 +883,16 @@ export interface FileViewerSpreadsheetOptions {
   rowNumberMode?: 'source' | 'legacy-records'
   /** Fill spreadsheet previews with display-only blank grid cells by default; false keeps the used range only. */
   fillViewport?: boolean
+}
+
+export type FileViewerSpreadsheetPasswordRequestReason = 'encrypted' | 'invalid-password' | 'read-failed'
+
+export interface FileViewerSpreadsheetPasswordRequestContext {
+  filename: string
+  attempt: number
+  reason: FileViewerSpreadsheetPasswordRequestReason
+  error?: unknown
+  signal?: AbortSignal
 }
 
 export interface FileViewerPresentationOptions {

@@ -336,7 +336,7 @@ const resolveImageGeometry = function (imageObject) {
             w: Math.abs(a),
             h: Math.abs(d),
         });
-        return { boundary: ctmBoundary, matrix: null };
+        return { boundary: ctmBoundary, matrix: null, flipX: a < 0, flipY: d < 0 };
     }
     // 存在旋转/斜切时使用矩阵直接变换单位方块，但仍需叠加
     // Boundary 原点，否则旋转图像也会被错放到页面左上角。
@@ -347,22 +347,26 @@ const resolveImageGeometry = function (imageObject) {
 }
 
 export const renderImageObject = function (pageWidth, pageHeight, multiMediaResObj, imageObject){
-    const { boundary, matrix } = resolveImageGeometry(imageObject);
+    const { boundary, matrix, flipX, flipY } = resolveImageGeometry(imageObject);
     const resId = imageObject['@_ResourceID'];
     const imageResource = multiMediaResObj ? multiMediaResObj[resId] : null;
     if (!imageResource || typeof imageResource !== 'object') {
         return renderMissingImageObject(boundary, imageObject['pfIndex']);
     }
+    let element;
     if (imageResource.format === 'gbig2') {
         const img = imageResource.img;
         const width = imageResource.width;
         const height = imageResource.height;
-        return renderImageOnCanvas(img, width, height, boundary, imageObject['pfIndex']);
+        element = renderImageOnCanvas(img, width, height, boundary, imageObject['pfIndex']);
     } else if (matrix) {
         return renderImageWithMatrix(imageResource.img, matrix, imageObject['pfIndex']);
     } else {
-        return renderImageOnDiv(pageWidth, pageHeight, imageResource.img, boundary, false, false, null, null, imageObject['pfIndex']);
+        element = renderImageOnDiv(pageWidth, pageHeight, imageResource.img, boundary, false, false, null, null, imageObject['pfIndex']);
     }
+    // The positive box fixes placement. Restore the signed axes around its center.
+    if (flipX || flipY) element.style.transform = `scale(${flipX ? -1 : 1}, ${flipY ? -1 : 1})`;
+    return element;
 }
 
 const renderImageWithMatrix = function (imgSrc, ctmValues, oid) {

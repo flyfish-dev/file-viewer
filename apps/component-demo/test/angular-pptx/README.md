@@ -1,6 +1,6 @@
 # Angular PPTX Worker regression
 
-This fixture reproduces issue #140 with Angular 22.2.6 and build/CLI 22.2.7. It uses the application builder,
+This fixture reproduces issue #140 with Angular 22.3.0 and build/CLI 22.3.0. It uses the application builder,
 the standard Web component, an Office preset, and `baseHref: /ui/`. There is no
 `deployUrl`, application alias, optimizer exclusion, custom Worker factory, or
 replacement Worker. The normal asset-copy CLI provides offline resources.

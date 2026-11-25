@@ -37,8 +37,16 @@ const options = {
 - 支持多 sheet、横向滚动标签栏、合并单元格、列宽/行高、边框、填充、对齐、文本颜色、Office 365 / WPS 单元格内嵌图片、workbook drawing 图片、图片双击大图预览、统一缩放 provider 和可选表头拖拽调整列宽。
 - XLSX drawing 中的 TIFF 图片会按需加载 MIT 许可的 UTIF.js，在浏览器内转换为 PNG；普通表格不会加载 TIFF 解码器。
 - 表格使用虚拟渲染，适合交互预览；完整打印按钮通常由上层能力判断隐藏，避免只打印当前视口。
+- XLSX 预览读取每张工作表保存的冻结窗格，滚动时保留冻结的顶部行和左侧列。
+- Excel 可在预览中输入打开密码。支持 OOXML 的 Agile AES、Standard AES，以及 BIFF8 的 RC4 CryptoAPI 和使用 ASCII 密码的 XOR。AES 和 RC4 CryptoAPI 需要浏览器安全上下文中的 Web Crypto。
 - XLSX 保留文件保存的默认列宽、显式列宽和以磅记录的行高；CSV/TSV 继续按内容调整列宽，大文本解析避免重复创建完整 UTF-8 字节数组。
 - 列宽单位以工作簿 Normal 样式为基准。宋体、新宋体的数字宽度先从磅转换为像素，再进行取整；尚未测定的自定义字体沿用标准回退，实际尺寸可能受字体影响。
+
+## 预览带打开密码的 Excel
+
+在预览区输入工作簿密码。输错可以重试，取消后可以重新输入。解密在当前解析路径的内存中完成，下载仍提供原文件，再次打开文件会重新开始密码流程。
+
+通过 `options.spreadsheet.password` 提供首次尝试的密码，或用 `options.spreadsheet.requestPassword` 接管密码输入。回调接收 `filename`、`attempt`、`reason` 和可选的 `error`，返回 `null` 或 `undefined` 取消。Extensible 加密、经典 RC4 和低于 BIFF8 的版本会显示暂不支持。
 
 ## 小内容 Excel 填满视口
 

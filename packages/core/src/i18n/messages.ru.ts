@@ -147,6 +147,12 @@ export const RU_RU_MESSAGES: Record<FileViewerMessageKey, string> = {
   'spreadsheet.state.rowsAndColumns':
     'Строк: {rows}, столбцов: {cols}. Данные загружаются по мере прокрутки',
   'spreadsheet.error.parseFailed': 'Не удалось обработать Excel',
+  'spreadsheet.password.title': 'Введите пароль Excel',
+  'spreadsheet.password.invalid': 'Неверный пароль. Попробуйте ещё раз.',
+  'spreadsheet.password.cancelled': 'Ввод пароля отменён.',
+  'spreadsheet.password.unsupported': 'Это шифрование Excel или среда браузера не поддерживается.',
+  'spreadsheet.password.retry': 'Введите пароль ещё раз',
+  'spreadsheet.password.decryptFailed': 'Не удалось расшифровать файл Excel.',
   'spreadsheet.error.workerFailed': 'Ошибка Worker для Excel',
   'word.error.invalidDocx':
     'Файл не является допустимым пакетом DOCX/OOXML. Возможно, он загружен не полностью или заменён ответом сервера с ошибкой. Загрузите файл повторно или проверьте источник.',

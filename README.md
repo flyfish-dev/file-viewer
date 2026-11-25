@@ -49,32 +49,19 @@ For fixes and package versions, see the [changelog](CHANGELOG.md).
 
 ## Browser Compatibility
 
-The minimum versions below are the support floors for the checked platform and workflow. The desktop preview suite uses the same frozen Full 3.3.6 candidate for PDF pixels and a real PDF Module Worker, plain text, offline Typst WASM, and DOCX heading and table rendering.
-
-| Desktop browser | Minimum supported version | Verified platform | Qualification |
-| --- | --- | --- | --- |
-| Google Chrome | **113.0.5672.63** | macOS 27.0.1, Apple Silicon, official Chrome for Testing | All four desktop preview checks passed. Retail Chrome 158.0.8127.37 also passed the published Full 3.3.5 PDF and text smoke tests. |
-| Microsoft Edge | **111.0.1661.62** | macOS 27.0.1, Apple Silicon, official Edge | All four desktop preview checks passed. Edge 158.0.4370.33 also passed the published Full 3.3.5 PDF and text smoke tests. |
-| Mozilla Firefox | **114.0.2** | Ubuntu 24.04.5 ARM64, Canonical Firefox build ID 20230619081400 | All four desktop preview checks passed. macOS and Firefox ESR are pending separate acceptance. |
-| Apple Safari | **27.0.1** | macOS 27.0.1, Apple Silicon, system WebKit build 22625.1.29.11.28 | All four desktop preview checks passed in native Safari. |
-| Brave, Opera, Vivaldi and other desktop browsers | Pending | — | Product-specific acceptance pending |
-| Internet Explorer 11 and EdgeHTML 12–18 | Unsupported | — | Outside the browser support matrix |
-
-| Mobile browser or embedded host | Minimum supported version | Verified platform | Qualification |
-| --- | --- | --- | --- |
-| iPhone Safari | **18.4** | iOS 18.4 (22E238), iPhone 16e Simulator, WebKit build 8621.1.15.10.7 | Full 3.3.6 candidate PPTX preview, native navigation and remounts. Published 3.3.5 PDF navigation and zoom also passed. |
-| iPad Safari | **18.4** | iPadOS 18.4 (22E238), iPad (A16) Simulator, WebKit build 8621.1.15.10.7 | Full 3.3.6 candidate PPTX preview, native navigation, teardown and three remounts |
-| Chrome on Android, Samsung Internet and other mobile browsers | Pending | — | Android device acceptance pending |
-| Android System WebView, WKWebView, WebView2 and in-app browsers | Pending | — | Acceptance depends on the host app, OS and exact embedded engine version |
-
-The Vite 8.3.8 production demos use JavaScript syntax targets of Chrome 111, Edge 111, Firefox 114, Safari 16.4 and iOS 16.4. The Linux regression matrix ran Playwright 1.65.1 with Chromium 159.0.8154.6, Firefox 159.0 and WebKit 27.2 across 1,383 source case and engine results. The frozen npm matrix covers 16 Standard / Full integrations in Chromium and WebKit. [Vite 8 build target](https://vite.dev/config/build-options#build-target) · [Chrome for Testing](https://developer.chrome.com/docs/automation-and-testing/chrome-for-testing) · [Source browser matrix](https://github.com/flyfish-dev/file-viewer/actions/runs/44860233476/job/136711685229) · [Frozen package matrix](https://github.com/flyfish-dev/file-viewer/actions/runs/44756935324) · [Playwright engine coverage](https://playwright.dev/docs/browsers)
-
-| Runtime feature | Compatibility requirements |
+| Browser | Minimum supported version |
 | --- | --- |
-| Standard preview, Web Component and script-tag / iframe integration | A modern browser with DOM, Canvas and module support. Embedded hosts must allow the actions actually used, including printing, downloads and opening links. |
-| PDF / Office, archives and specialist renderers | Publish the matching Worker, WASM, font and vendor assets as required by the selected renderer. Serve WASM as `application/wasm`, and allow the configured Worker and asset origins in CSP and CORS. |
-| DICOM and GPU-based 3D / map paths | Enable WebGL 2 and verify context creation in the browser or WebView on deployment hardware. DICOM is opt-in. |
-| Audio, video and clipboard | Playback depends on browser and OS codecs. Clipboard writes depend on a secure origin, permissions and the browser's interaction policy. |
+| Chrome | 113.0.5672.63 |
+| Edge | 111.0.1661.62 |
+| Firefox | 114.0.2 |
+| Safari | 27.0.1 |
+| Mobile Safari (iPhone / iPad) | 18.4 |
+
+**Pending** — Brave, Opera, Vivaldi, Android browsers, and embedded WebViews.
+
+**Unsupported** — Internet Explorer 11 and EdgeHTML 12–18.
+
+[Browser compatibility guide](https://doc.file-viewer.app/guide/demo?no_lang_redirect=1#browser-compatibility)
 
 ## Quick start
 

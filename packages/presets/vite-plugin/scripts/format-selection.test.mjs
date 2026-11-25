@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises'
+import Module from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import test from 'node:test'
@@ -27,6 +28,38 @@ test('LRC selection normalizes extension punctuation and case', () => {
       root
     )
     assert.deepEqual(selected.packages, [text.packageName], format)
+  }
+})
+
+test('Vite config shares preset probes and refreshes the cache for the next config', async () => {
+  const project = await realpath(await mkdtemp(resolve(tmpdir(), 'file-viewer-vite-cache-')))
+  const originalResolve = Module._resolveFilename
+  const originalCwd = process.cwd()
+  try {
+    const projectManifest = resolve(project, 'package.json')
+    const presetManifest = resolve(project, 'node_modules/@file-viewer/preset-office/package.json')
+    await mkdir(dirname(presetManifest), { recursive: true })
+    await writeFile(projectManifest, '{}')
+    await writeFile(presetManifest, JSON.stringify({ name: '@file-viewer/preset-office' }))
+    process.chdir(project)
+    const plugin = fileViewerRenderers({ inject: false, copyAssets: true })
+    let probes = 0
+    Module._resolveFilename = function (request, parent, ...args) {
+      if (request === '@file-viewer/preset-office/package.json' && parent?.filename === projectManifest) {
+        probes++
+      }
+      return originalResolve.call(this, request, parent, ...args)
+    }
+
+    const first = plugin.config({ root: project })
+    assert.equal(probes, 1)
+    const second = plugin.config({ root: project })
+    assert.equal(probes, 2)
+    assert.deepEqual(second.optimizeDeps, first.optimizeDeps)
+  } finally {
+    Module._resolveFilename = originalResolve
+    process.chdir(originalCwd)
+    await rm(project, { recursive: true, force: true })
   }
 })
 

@@ -35,6 +35,7 @@
 
 ## Office and Apple evidence boundary
 
+- XLSX previews keep the rows and columns saved in each worksheet’s frozen panes visible while scrolling.
 - `xla`, `xlam`, `pot`, `dbf`, and `fb2` have real container fixtures, parser assertions, hashes, and Demo smoke cases. Macro and add-in code is never executed.
 - `pages`, `numbers`, and `key` include iWork '09 and modern IWA parser fixtures, bounded ZIP/Snappy/Protobuf parsing in a module Worker, a normalized static scene model, search/text layers, sheet/slide navigation, notes, and explicit encrypted-file detection.
 - `pages`, `numbers`, and `key` are **high-fidelity / stable**. The gate covers iWork '09, 2013+, and current Apple 15.3.1 native containers with exact structural assertions, real-browser smoke, and fixed-font visual goldens. Pages/Keynote use a 3% pixel-difference threshold and Numbers uses 5%; Quick Look images remain loading placeholders or explicit limited-preview fallbacks only.

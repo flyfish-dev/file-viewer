@@ -1,5 +1,29 @@
 type BootstrapCopyModule = typeof import('./bootstrapCopy')
 
+export function bufferDemoFileHandoff() {
+  const params = new URLSearchParams(window.location.search)
+  const from = params.get('from')
+  if (!from || !params.get('name') || params.get('url')) return () => {}
+
+  let origin = from
+  try {
+    origin = new URL(from).origin
+  } catch {
+    // The mounted handoff listener also keeps an unparseable origin literal.
+  }
+  let pending: MessageEvent | undefined
+  const capture = (event: MessageEvent) => {
+    if (event.origin === origin && event.data instanceof Blob) pending = event
+  }
+  window.addEventListener('message', capture)
+  return () => {
+    window.removeEventListener('message', capture)
+    const event = pending
+    pending = undefined
+    if (event) window.dispatchEvent(event)
+  }
+}
+
 export function startDemoBootstrap(
   bootstrap: () => Promise<void>,
   loadCopy: () => Promise<BootstrapCopyModule> = () => import('./bootstrapCopy')

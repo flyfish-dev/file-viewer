@@ -1,4 +1,6 @@
-import { startDemoBootstrap } from './demoBootstrap'
+import { bufferDemoFileHandoff, startDemoBootstrap } from './demoBootstrap'
+
+const finishFileHandoff = bufferDemoFileHandoff()
 
 async function bootstrap() {
   // Keep the component shell out of the initial entry. The HTML boot screen is
@@ -13,4 +15,4 @@ async function bootstrap() {
     .mount('#app')
 }
 
-startDemoBootstrap(bootstrap)
+void startDemoBootstrap(bootstrap).appReady.then(finishFileHandoff)

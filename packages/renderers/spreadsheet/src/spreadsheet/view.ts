@@ -59,6 +59,8 @@ const BORDER_STYLE_PRIORITY: Record<string, number> = {
 const HEADER_FONT = `bold 12px ${TABLE_FONT_FAMILY}`
 const BODY_FONT = `${TABLE_FONT_SIZE}px ${TABLE_FONT_FAMILY}`
 const MAX_OVERFLOW_SCAN_COLS = 32
+const MIN_SCROLLABLE_PANE_WIDTH = 24
+const VERTICAL_SCROLLBAR_TRACK_WIDTH = 14
 interface TableConfigOptions {
   hostHeight: number
   darkMode?: boolean
@@ -370,6 +372,7 @@ export const buildColumns = (
 ) => {
   const columnsMeta = getSheetColumnsMeta(ws)
   const colWidths = getSheetColWidths(ws)
+  const frozenColumns = ws.structure?.freeze?.columns || 0
   const columns: Column[] = [{
     key: INDEX_COLUMN_KEY,
     title: mode === 'legacy-records' ? '#' : '',
@@ -400,6 +403,7 @@ export const buildColumns = (
       title: column?.title || `${index + 1}`,
       width: hidden ? 0 : Math.max(Math.ceil(width), 1),
       hide: hidden,
+      ...(index < frozenColumns ? { fixed: 'left' } : {}),
       widthFillDisable: true,
       renderType: 'both',
       headerAlign: 'center',
@@ -441,6 +445,28 @@ export const getDisplayColumns = (columns: Column[], zoomScale = 1) => {
     return cloneColumns(columns)
   }
   return columns.map(column => scaleColumn(column, normalizedScale))
+}
+
+/** Keep space for the scrolled pane without changing the saved worksheet split. */
+export const getSpreadsheetDisplayColumns = (columns: Column[], zoomScale: number, viewportWidth: number) => {
+  const display = getDisplayColumns(columns, zoomScale)
+  const available = viewportWidth > 0
+    ? Math.max(0, viewportWidth - VERTICAL_SCROLLBAR_TRACK_WIDTH - MIN_SCROLLABLE_PANE_WIDTH)
+    : Infinity
+  let fixedWidth = getRenderColumnWidth(display[0])
+  let frozenColumns = 0
+  for (let index = 1; index < display.length; index += 1) {
+    const column = display[index]!
+    if (column.fixed !== 'left') break
+    const nextWidth = fixedWidth + (column.hide ? 0 : getRenderColumnWidth(column))
+    if (frozenColumns === index - 1 && nextWidth <= available) {
+      fixedWidth = nextWidth
+      frozenColumns = index
+    } else {
+      delete column.fixed
+    }
+  }
+  return { columns: display, frozenColumns }
 }
 
 export const getSearchColumnLeft = (columns: Column[], key: string): number | undefined => {
@@ -658,6 +684,8 @@ const isBlankOverflowTarget = (
   return !hasRenderableValue(row[getDataKey(dataColIndex)])
 }
 
+const getFrozenColumnCount = (state: VirtualSheetState) => state.visibleFrozenColumns ?? state.freeze?.columns ?? 0
+
 const collectOverflowRoom = (
   virtualState: VirtualSheetState,
   row: VirtualRow,
@@ -666,9 +694,12 @@ const collectOverflowRoom = (
   direction: 1 | -1
 ) => {
   let room = 0
+  const freeze = getFrozenColumnCount(virtualState)
+  const insideFrozenPane = dataColIndex < freeze
   for (let step = 1; step <= MAX_OVERFLOW_SCAN_COLS; step += 1) {
     const nextColIndex = dataColIndex + step * direction
-    if (nextColIndex < 0 || nextColIndex >= virtualState.totalCols) {
+    if (nextColIndex < 0 || nextColIndex >= virtualState.totalCols ||
+        (nextColIndex < freeze) !== insideFrozenPane) {
       break
     }
     if (!isBlankOverflowTarget(virtualState, row, rowIndex, nextColIndex)) {
@@ -760,9 +791,11 @@ const getLeftOverflowMirror = (
     return undefined
   }
 
+  const freeze = getFrozenColumnCount(virtualState)
+  const firstPaneColumn = targetDataColIndex < freeze ? 0 : freeze
   for (let step = 1; step <= MAX_OVERFLOW_SCAN_COLS; step += 1) {
     const sourceDataColIndex = targetDataColIndex - step
-    if (sourceDataColIndex < 0) {
+    if (sourceDataColIndex < firstPaneColumn) {
       break
     }
 
@@ -1171,17 +1204,25 @@ export const createTableConfig = ({
   const scaledCellWidth = scaleNumber(sheetDefaults.colWidth, normalizedScale)
   const headerStyle = getIndexCellStyle(normalizedScale, darkMode)
   const loadingStyle = getLoadingCellStyle(normalizedScale, darkMode)
-  let firstVisibleColumn = 1
+  const frozenColumns = getFrozenColumnCount(virtualState)
+  let firstVisibleColumn = frozenColumns + 1
 
-  // The virtualizer omits an offscreen anchor. Its first visible covered cell
-  // must paint the surviving part of that merge, using the original text box.
+  // Paint a merge separately within each horizontal pane. The scrolled pane's
+  // first visible covered cell reuses the original text box when its anchor
+  // was outside the pane or scrolled away.
   const getProjectedMerge = (rowIndex: number, colIndex: number, column: Column) => {
     const cellKey = getCellCacheKey(rowIndex, colIndex, column)
-    const anchorKey = virtualState.mergeCoveredMap.get(cellKey)
-    const merge = anchorKey ? virtualState.mergeStartMap.get(anchorKey) : undefined
+    const anchorKey = virtualState.mergeCoveredMap.get(cellKey) || cellKey
+    const merge = virtualState.mergeStartMap.get(anchorKey)
     const displayCol = getDataColumnIndex(column, colIndex) + 1
-    if (!merge || merge.row !== rowIndex || displayCol !== firstVisibleColumn ||
-        merge.col >= displayCol || displayCol >= merge.col + merge.colspan) {
+    if (!merge || merge.row !== rowIndex) {
+      return undefined
+    }
+    const mergeEnd = merge.col + merge.colspan
+    const frozenSegment = displayCol === merge.col && merge.col <= frozenColumns && mergeEnd > frozenColumns + 1
+    const scrollingSegment = displayCol === firstVisibleColumn && displayCol > frozenColumns &&
+      merge.col < displayCol && displayCol < mergeEnd
+    if (!frozenSegment && !scrollingSegment) {
       return undefined
     }
     let width = 0
@@ -1192,12 +1233,15 @@ export const createTableConfig = ({
       width += scaledWidth
       if (col < displayCol) offsetLeft += scaledWidth
     }
-    return { merge, anchorKey: anchorKey!, width, offsetLeft, colspan: merge.col + merge.colspan - displayCol }
+    const segmentEnd = frozenSegment ? frozenColumns + 1 : mergeEnd
+    return { merge, anchorKey, width, offsetLeft, colspan: segmentEnd - displayCol, frozenSegment }
   }
 
   const spanMethod: SpanMethod = ({ rowIndex, colIndex, column, visibleLeafColumns }) => {
     if (visibleLeafColumns?.length) {
-      const visibleDataColumns = visibleLeafColumns.filter(item => item.key !== INDEX_COLUMN_KEY && isVisibleDataColumn(item))
+      const visibleDataColumns = visibleLeafColumns.filter(item =>
+        item.key !== INDEX_COLUMN_KEY && !item.fixed && isVisibleDataColumn(item)
+      )
       if (visibleDataColumns.length) {
         firstVisibleColumn = Math.min(...visibleDataColumns.map(item => getDataColumnIndex(item, 1) + 1))
       }
@@ -1300,7 +1344,10 @@ export const createTableConfig = ({
       : undefined
     const match = searchCell?.(rowIndex, dataColIndex)
     const renderText = shouldRenderTextInOverlay(style, column) || !!overflowLayout || !!mirror || !!match
-    const comment = commentsByCell.get(cellKey)
+    // A projected scrolling tail must not duplicate a comment already visible
+    // on the real anchor in the frozen pane.
+    const hasFrozenAnchor = projected && !projected.frozenSegment && projected.merge.col <= frozenColumns
+    const comment = hasFrozenAnchor ? undefined : commentsByCell.get(cellKey)
     if (!hasBorder(style) && !renderText && !comment) {
       return undefined
     }
@@ -1318,7 +1365,9 @@ export const createTableConfig = ({
         : baseStyle
       renderCellOverlay(
         cellEl,
-        projected ? { ...collapsedStyle, borderLeft: undefined } : collapsedStyle,
+        projected?.frozenSegment
+          ? { ...collapsedStyle, borderRight: undefined }
+          : projected ? { ...collapsedStyle, borderLeft: undefined } : collapsedStyle,
         mirror?.style || collapsedStyle,
         mirror ? mirror.value : renderValue,
         renderText,
@@ -1387,6 +1436,7 @@ export const createTableConfig = ({
     EDIT_BG_COLOR: darkMode ? '#18212f' : '#ffffff',
     PLACEHOLDER_COLOR: darkMode ? '#94a3b8' : '#8a94a3',
     SCROLLER_COLOR: darkMode ? '#475569' : '#c1c7d0',
+    SCROLLER_TRACK_SIZE: VERTICAL_SCROLLBAR_TRACK_WIDTH,
     SCROLLER_FOCUS_COLOR: darkMode ? '#64748b' : '#9aa0a6',
     SELECT_ROW_COL_BG_COLOR: EXCEL_GREEN_SOFT,
     SELECT_AREA_COLOR: 'rgba(33, 163, 102, 0.14)',

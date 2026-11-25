@@ -1292,6 +1292,8 @@ export type {
   FileViewerThumbnailFit,
   FileViewerThumbnailFormat,
   FileViewerSpreadsheetOptions,
+  FileViewerSpreadsheetPasswordRequestContext,
+  FileViewerSpreadsheetPasswordRequestReason,
   FileViewerStateDescriptor,
   FileViewerStateTheme,
   FileViewerStyleIsolation,

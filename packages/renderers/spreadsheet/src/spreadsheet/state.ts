@@ -1,6 +1,6 @@
 import type { Align, Column, VerticalAlign } from 'e-virt-table'
 import { ORDINARY_GRID_BUDGET } from './sourceRegion.js'
-import type { CellMerge, SheetRichTextRun } from './worker/type.js'
+import type { CellMerge, SheetFreezePane, SheetRichTextRun } from './worker/type.js'
 
 export const WINDOW_SIZE = 500
 export const PREFETCH_AHEAD = 3
@@ -64,6 +64,9 @@ export interface VirtualSheetState {
   totalCols: number
   windowSize: number
   indexOffset: number
+  freeze?: SheetFreezePane
+  /** Data columns still frozen after accounting for the display width. */
+  visibleFrozenColumns?: number
   defaults: SheetDefaults
   dataKeys: string[]
   rows: VirtualRow[]
