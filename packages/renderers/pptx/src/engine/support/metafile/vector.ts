@@ -1,3 +1,4 @@
+import { codePoint as dingbatCodePoint } from 'dingbat-to-unicode';
 import { BinaryReader } from './binary.js';
 import { dataUrlFromBytes, escapeHtml } from './utils.js';
 
@@ -16,6 +17,11 @@ type VectorSourceMime = ConvertedVectorImage['sourceMime'];
 interface Point {
   x: number;
   y: number;
+}
+
+interface TextAdvances {
+  x: number[];
+  y?: number[];
 }
 
 interface Rect {
@@ -54,6 +60,7 @@ interface FontState {
   underline?: boolean;
   strike?: boolean;
   escapement?: number;
+  charset?: number;
 }
 
 interface GraphicsState {
@@ -61,6 +68,8 @@ interface GraphicsState {
   windowExt: Point;
   viewportOrg: Point;
   viewportExt: Point;
+  /** Set once the metafile selects its own viewport; until then the window drives it. */
+  viewportExplicit: boolean;
   worldTransform: Matrix;
   currentPosition: Point;
   pen: PenState;
@@ -115,9 +124,11 @@ const WMF_RECORD = {
   META_OFFSETVIEWPORTORG: 0x0211,
   META_LINETO: 0x0213,
   META_MOVETO: 0x0214,
+  META_SETTEXTALIGN: 0x012e,
   META_POLYGON: 0x0324,
   META_POLYLINE: 0x0325,
   META_TEXTOUT: 0x0521,
+  META_EXTTEXTOUT: 0x0a32,
   META_POLYPOLYGON: 0x0538,
   META_ELLIPSE: 0x0418,
   META_RECTANGLE: 0x041b,
@@ -364,6 +375,7 @@ function defaultContext(width: number, height: number, viewBox: Rect): ParseCont
       windowExt: { x: rectWidth(viewBox), y: rectHeight(viewBox) },
       viewportOrg: { x: viewBox.left, y: viewBox.top },
       viewportExt: { x: rectWidth(viewBox), y: rectHeight(viewBox) },
+      viewportExplicit: false,
       worldTransform: { ...IDENTITY_MATRIX },
       currentPosition: { x: 0, y: 0 },
       pen: { ...DEFAULT_PEN },
@@ -644,8 +656,56 @@ function addRasterImage(ctx: ParseContext, rect: Rect, bmpBytes: Uint8Array): vo
   ]);
 }
 
-function decodeAnsi(bytes: Uint8Array): string {
-  return new TextDecoder('windows-1252').decode(bytes).replace(/\0+$/g, '');
+// LOGFONT.CharSet values that select a legacy code page instead of the Latin default.
+const CHARSET_ENCODINGS: Record<number, string> = {
+  128: 'shift_jis',
+  129: 'euc-kr',
+  130: 'euc-kr',
+  134: 'gbk',
+  136: 'big5',
+  161: 'windows-1253',
+  162: 'windows-1254',
+  163: 'windows-1258',
+  177: 'windows-1255',
+  178: 'windows-1256',
+  186: 'windows-1257',
+  204: 'windows-1251',
+  222: 'windows-874',
+  238: 'windows-1250',
+};
+
+function charsetEncoding(charset?: number): string {
+  return (charset === undefined ? undefined : CHARSET_ENCODINGS[charset]) ?? 'windows-1252';
+}
+
+function decodeAnsi(bytes: Uint8Array, charset?: number): string {
+  return new TextDecoder(charsetEncoding(charset)).decode(bytes).replace(/\0+$/g, '');
+}
+
+/**
+ * WMF spacing arrays carry one entry per byte, but charsets such as GB2312 are multi-byte.
+ * Feeding the decoder a byte at a time reveals how many bytes each character consumed, so
+ * their spacing can be folded onto the first code unit of that character.
+ */
+function decodeWmfRun(bytes: Uint8Array, charset: number | undefined, dx: number[]): { text: string; advances: number[] } {
+  const encoding = charsetEncoding(charset);
+  if (!dx.length || encoding === charsetEncoding(undefined)) return { text: decodeAnsi(bytes, charset), advances: dx };
+
+  const decoder = new TextDecoder(encoding);
+  let text = '';
+  const advances: number[] = [];
+  let pending = 0;
+  for (let index = 0; index < bytes.length; index += 1) {
+    const decoded = decoder.decode(bytes.subarray(index, index + 1), { stream: true });
+    pending += dx[index] ?? 0;
+    if (!decoded) continue;
+    text += decoded;
+    advances.push(pending);
+    for (let unit = 1; unit < decoded.length; unit += 1) advances.push(0);
+    pending = 0;
+  }
+  const trimmed = text.replace(/\0+$/g, '');
+  return { text: trimmed, advances: advances.slice(0, Math.max(trimmed.length, 0)) };
 }
 
 function decodeUtf16(bytes: Uint8Array): string {
@@ -682,8 +742,61 @@ function normalizeFontFamily(family: string): string {
   return trimmed.replace(/\s+(?:Baltic|CE|Cyr|Greek|Tur|Vietnamese|Hebrew|Arabic|Thai|Symbol)$/i, '') || 'sans-serif';
 }
 
-function addText(ctx: ParseContext, point: Point, text: string): void {
-  if (!text) return;
+// Office metafiles encode Symbol / MT Extra / Euclid Math Two glyphs in the 0xF000
+// private-use range (EMF) or as raw font bytes (WMF). Browsers do not ship those fonts,
+// and the glyphs are not reachable even when they are installed — MT Extra omits 0x3A
+// from its cmap entirely — so the characters are mapped to Unicode before emitting SVG.
+
+// MathType companion font. Code points confirmed from equation context in courseware:
+// 0x3A in "tan x ∼ x", 0x4C in "(k = 0, ±1, ±2, ⋯)", 0x55 in "(1,2) ∪ (2,+∞)";
+// 0x4F and 0x72 additionally match the glyph outlines shipped in MT Extra.
+const MT_EXTRA_MAP: Record<number, string> = {
+  0x3a: '∼', 0x4c: '⋯', 0x4f: '⋱', 0x55: '∪', 0x72: '→',
+};
+
+// Euclid Math Two arrives either as raw bytes or as the matching CP1252 characters.
+const EUCLID_MATH_TWO_MAP: Record<number, string> = {
+  0x84: '≤', 0x85: '≥', 0x201e: '≤', 0x201f: '≥',
+};
+
+// WMF stores symbol-font runs as raw bytes, and decoding them as text remaps 0x80-0x9F to
+// typographic characters. The original byte has to be recovered before the table lookup.
+const CP1252_TO_BYTE = new Map<number, number>(
+  Array.from(new TextDecoder('windows-1252').decode(Uint8Array.from({ length: 32 }, (_, index) => 0x80 + index)))
+    .map((character, index) => [character.codePointAt(0) ?? 0, 0x80 + index]),
+);
+
+function mapMetafileText(text: string, family: string): string {
+  if (!text) return text;
+  const name = family.trim().toLowerCase();
+  const table = name === 'mt extra'
+    ? MT_EXTRA_MAP
+    : name === 'euclid math two'
+      ? EUCLID_MATH_TWO_MAP
+      : null;
+  const adobeSymbol = name === 'symbol';
+  if (!table && !adobeSymbol) return text;
+
+  let result = '';
+  for (const character of text) {
+    const raw = character.codePointAt(0) ?? 0;
+    const inPrivateUse = raw >= 0xf000 && raw <= 0xf0ff;
+    const code = inPrivateUse ? raw - 0xf000 : (CP1252_TO_BYTE.get(raw) ?? raw);
+    const mapped = table ? (table[raw] ?? table[code]) : dingbatCodePoint('Symbol', code)?.string;
+    if (mapped) {
+      result += mapped;
+      continue;
+    }
+    // Positions the font shares with ASCII (=, <, +, digits) have no table entry;
+    // keeping the private-use character would leave a tofu box behind.
+    result += inPrivateUse && code >= 0x20 && code <= 0x7e ? String.fromCharCode(code) : character;
+  }
+  return result;
+}
+
+function addText(ctx: ParseContext, point: Point, text: string, advances?: TextAdvances): void {
+  const renderedText = mapMetafileText(text, ctx.state.font.family);
+  if (!renderedText) return;
   const mapped = mapPoint(ctx, point);
   const fontSize = effectiveFontSize(ctx, ctx.state.font.size || 12);
   const attrs = [
@@ -704,7 +817,47 @@ function addText(ctx: ParseContext, point: Point, text: string): void {
     // the screen coordinate system and therefore turns clockwise.
     attrs.push(`transform="rotate(${numberCss(-ctx.state.font.escapement / 10)}, ${numberCss(mapped.x)}, ${numberCss(mapped.y)})"`);
   }
-  addNode(ctx, `<text ${attrs.join(' ')}>${escapeHtml(text)}</text>`, [mapped]);
+  const body = glyphRunBody(ctx, renderedText, mapped, advances);
+  addNode(ctx, `<text ${attrs.join(' ')}>${body}</text>`, [mapped]);
+}
+
+function addExtText(ctx: ParseContext, reference: Point, text: string, advances: TextAdvances): void {
+  // TA_UPDATECP uses the current logical position in place of the record reference.
+  const updatePosition = (ctx.state.textAlign & 0x0001) !== 0;
+  const point = updatePosition ? ctx.state.currentPosition : reference;
+  addText(ctx, point, text, advances);
+  if (updatePosition) {
+    const dx = advances.x.length
+      ? advances.x.reduce((sum, value) => sum + value, 0)
+      : Math.abs(ctx.state.font.size || 12) * Array.from(text).length * 0.5;
+    const dy = advances.y?.reduce((sum, value) => sum + value, 0) ?? 0;
+    ctx.state.currentPosition = { x: point.x + dx, y: point.y + dy };
+  }
+}
+
+/**
+ * MathType packs glyphs that are scattered across an equation into a single ExtTextOut
+ * and positions them through the per-character spacing array. Emitting the run as one
+ * string would let browser font metrics decide the spacing and scramble the layout, so
+ * every character gets an explicit coordinate whenever the array is present.
+ */
+function glyphRunBody(ctx: ParseContext, text: string, origin: Point, advances?: TextAdvances): string {
+  const characters = Array.from(text);
+  if (!advances || advances.x.length < characters.length) return escapeHtml(text);
+
+  const spans: string[] = [];
+  const offset = { x: 0, y: 0 };
+  let index = 0;
+  for (const character of characters) {
+    const delta = mapVector(ctx, offset);
+    spans.push(`<tspan x="${numberCss(origin.x + delta.x)}" y="${numberCss(origin.y + delta.y)}">${escapeHtml(character)}</tspan>`);
+    // Surrogate pairs consume one spacing entry per UTF-16 unit.
+    for (let unit = 0; unit < character.length; unit += 1, index += 1) {
+      offset.x += advances.x[index] ?? 0;
+      offset.y += advances.y?.[index] ?? 0;
+    }
+  }
+  return spans.join('');
 }
 
 function finalizeSvg(ctx: ParseContext, sourceMime: VectorSourceMime): ConvertedVectorImage | null {
@@ -805,6 +958,9 @@ function parseWmf(bytes: Uint8Array): ConvertedVectorImage | null {
       case WMF_RECORD.META_SETTEXTCOLOR:
         ctx.state.textColor = colorRefToCss(recordReader.u32(6));
         break;
+      case WMF_RECORD.META_SETTEXTALIGN:
+        ctx.state.textAlign = recordReader.u16(6);
+        break;
       case WMF_RECORD.META_MOVETO:
         ctx.state.currentPosition = { x: recordReader.i16(8), y: recordReader.i16(6) };
         break;
@@ -877,11 +1033,27 @@ function parseWmf(bytes: Uint8Array): ConvertedVectorImage | null {
         const length = recordReader.u16(6);
         const textOffset = 8;
         const paddedLength = length + (length % 2);
-        const text = decodeAnsi(recordReader.slice(textOffset, Math.min(length, Math.max(0, recordSize - textOffset - 4))));
+        const text = decodeAnsi(recordReader.slice(textOffset, Math.min(length, Math.max(0, recordSize - textOffset - 4))), ctx.state.font.charset);
         const yOffset = textOffset + paddedLength;
         const y = recordReader.i16(yOffset);
         const x = recordReader.i16(yOffset + 2);
         addText(ctx, { x, y }, text);
+        break;
+      }
+      case WMF_RECORD.META_EXTTEXTOUT: {
+        const textRecord = new BinaryReader(bytes.subarray(cursor, cursor + recordSize));
+        const length = textRecord.i16(10);
+        const options = textRecord.u16(12);
+        // ETO_OPAQUE and ETO_CLIPPED both insert the optional rectangle before the string.
+        const textOffset = options & 0x0006 ? 22 : 14;
+        if (length <= 0 || !textRecord.ensure(textOffset, length)) break;
+        const dxOffset = textOffset + length + (length % 2);
+        const dx: number[] = [];
+        if (textRecord.ensure(dxOffset, length * 2)) {
+          for (let index = 0; index < length; index += 1) dx.push(textRecord.i16(dxOffset + index * 2));
+        }
+        const run = decodeWmfRun(textRecord.slice(textOffset, length), ctx.state.font.charset, dx);
+        addExtText(ctx, { x: textRecord.i16(8), y: textRecord.i16(6) }, run.text, { x: run.advances });
         break;
       }
       case WMF_RECORD.META_CREATEPENINDIRECT: {
@@ -906,11 +1078,12 @@ function parseWmf(bytes: Uint8Array): ConvertedVectorImage | null {
         const italic = Boolean(recordReader.u8(16));
         const underline = Boolean(recordReader.u8(17));
         const strike = Boolean(recordReader.u8(18));
-        const faceName = decodeAnsi(recordReader.slice(24, Math.max(0, recordSize - 24)) ).split('\0')[0] || 'sans-serif';
+        const charset = recordReader.u8(19);
+        const faceName = decodeAnsi(recordReader.slice(24, Math.max(0, recordSize - 24)), charset).split('\0')[0] || 'sans-serif';
         const index = ensureObjectSlot(ctx.objects);
         setObject(ctx.objects, index, {
           kind: 'font',
-          value: { family: faceName, size: height || 12, weight, italic, underline, strike, escapement },
+          value: { family: faceName, size: height || 12, weight, italic, underline, strike, escapement, charset },
         });
         break;
       }
@@ -945,16 +1118,34 @@ function readEmfPointArray(reader: BinaryReader, offset: number, count: number, 
   return points;
 }
 
-function parseEmfText(reader: BinaryReader, unicode: boolean): { point: Point; text: string } | null {
-  if (!reader.ensure(36, 40)) return null;
+function parseEmfText(reader: BinaryReader, unicode: boolean): { point: Point; text: string; advances: TextAdvances } | null {
+  if (!reader.ensure(36, 20)) return null;
   const point = { x: reader.i32(36), y: reader.i32(40) };
   const chars = reader.u32(44);
   const offString = reader.u32(48);
-  if (!chars || !offString || offString >= reader.length) return null;
+  if (!chars || !offString || offString >= reader.length || chars > 0x10000) return null;
   const byteLength = unicode ? chars * 2 : chars;
+  if (!reader.ensure(offString, byteLength)) return null;
   const bytes = reader.slice(offString, byteLength);
   const text = unicode ? decodeUtf16(bytes) : decodeAnsi(bytes);
-  return { point, text };
+
+  // EMRTEXT drops the bounding rectangle when ETO_NO_RECT is set, which moves offDx;
+  // ETO_PDY widens each spacing entry to an (x, y) pair.
+  const options = reader.u32(52);
+  const offDxField = (options & 0x0100) === 0 ? 72 : 56;
+  const paired = (options & 0x2000) !== 0;
+  const stride = paired ? 8 : 4;
+  const advances: TextAdvances = { x: [] };
+  const offDx = reader.u32(offDxField);
+  if (offDx && reader.ensure(offDx, chars * stride)) {
+    if (paired) advances.y = [];
+    for (let index = 0; index < chars; index += 1) {
+      const offset = offDx + index * stride;
+      advances.x.push(reader.i32(offset));
+      advances.y?.push(reader.i32(offset + 4));
+    }
+  }
+  return { point, text, advances };
 }
 
 function parseSmallEmfText(reader: BinaryReader): { point: Point; text: string } | null {
@@ -1035,17 +1226,25 @@ function parseEmf(bytes: Uint8Array): ConvertedVectorImage | null {
     switch (type) {
       case EMF_RECORD.EMR_EOF:
         return finalizeSvg(ctx, 'image/emf');
+      // Word and MathType emit SetWindow* without ever selecting a viewport and rely on
+      // the playback device default. Mirroring the window keeps that mapping at 1:1;
+      // seeding the viewport from the record bounds instead would scale and offset the
+      // whole picture, which collides with the viewport each embedded equation sets up.
       case EMF_RECORD.EMR_SETWINDOWORGEX:
         ctx.state.windowOrg = { x: record.i32(8), y: record.i32(12) };
+        if (!ctx.state.viewportExplicit) ctx.state.viewportOrg = { ...ctx.state.windowOrg };
         break;
       case EMF_RECORD.EMR_SETWINDOWEXTEX:
         ctx.state.windowExt = { x: record.i32(8), y: record.i32(12) };
+        if (!ctx.state.viewportExplicit) ctx.state.viewportExt = { ...ctx.state.windowExt };
         break;
       case EMF_RECORD.EMR_SETVIEWPORTORGEX:
         ctx.state.viewportOrg = { x: record.i32(8), y: record.i32(12) };
+        ctx.state.viewportExplicit = true;
         break;
       case EMF_RECORD.EMR_SETVIEWPORTEXTEX:
         ctx.state.viewportExt = { x: record.i32(8), y: record.i32(12) };
+        ctx.state.viewportExplicit = true;
         break;
       case EMF_RECORD.EMR_SETBKMODE:
         ctx.state.bkMode = record.u32(8);
@@ -1238,19 +1437,19 @@ function parseEmf(bytes: Uint8Array): ConvertedVectorImage | null {
         if (index >= 0 && index < ctx.objects.length) ctx.objects[index] = null;
         break;
       }
-      case EMF_RECORD.EMR_EXTTEXTOUTA: {
-        const parsed = parseEmfText(record, false);
-        if (parsed) addText(ctx, parsed.point, parsed.text);
-        break;
-      }
+      case EMF_RECORD.EMR_EXTTEXTOUTA:
       case EMF_RECORD.EMR_EXTTEXTOUTW: {
-        const parsed = parseEmfText(record, true);
-        if (parsed) addText(ctx, parsed.point, parsed.text);
+        const textRecord = new BinaryReader(bytes.subarray(cursor, cursor + size));
+        const parsed = parseEmfText(textRecord, type === EMF_RECORD.EMR_EXTTEXTOUTW);
+        if (parsed) addExtText(ctx, parsed.point, parsed.text, parsed.advances);
         break;
       }
       case EMF_RECORD.EMR_SMALLTEXTOUT: {
         const parsed = parseSmallEmfText(record);
-        if (parsed) addText(ctx, parsed.point, parsed.text);
+        if (parsed) {
+          const point = (ctx.state.textAlign & 0x0001) !== 0 ? ctx.state.currentPosition : parsed.point;
+          addText(ctx, point, parsed.text);
+        }
         break;
       }
       case EMF_RECORD.EMR_STRETCHDIBITS:
