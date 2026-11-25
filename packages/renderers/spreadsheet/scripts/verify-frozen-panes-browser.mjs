@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
-import { mkdir, readFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { build } from 'esbuild'
 import JSZip from 'jszip'
 import { chromium } from 'playwright'
+import { PNG } from 'pngjs'
 import { utils, write } from 'styled-exceljs'
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -18,6 +19,7 @@ const sheets = [
 const rowCount = 700
 const columnCount = 16
 const lastRow = 660
+const theme = process.env.FILE_VIEWER_FROZEN_PANES_THEME === 'dark' ? 'dark' : 'light'
 const token = (sheet, row, column) => `${sheet.prefix}_r${row}_c${column}`
 
 async function createWorkbook() {
@@ -31,6 +33,12 @@ async function createWorkbook() {
     utils.book_append_sheet(workbook, worksheet, sheet.name)
   }
   const zip = await JSZip.loadAsync(write(workbook, { type: 'array', bookType: 'xlsx' }))
+  const styles = await zip.file('xl/styles.xml').async('string')
+  zip.file('xl/styles.xml', styles
+    .replace('<fonts count="1">', '<fonts count="2">')
+    .replace('</fonts>', '<font><b/><sz val="12"/><color rgb="FFFF2020"/><name val="Calibri"/></font></fonts>')
+    .replace('<cellXfs count="1">', '<cellXfs count="2">')
+    .replace('</cellXfs>', '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment wrapText="1"/></xf></cellXfs>'))
   for (const [index, sheet] of sheets.entries()) {
     if (!sheet.rows && !sheet.columns) continue
     const part = `xl/worksheets/sheet${index + 1}.xml`
@@ -43,7 +51,8 @@ async function createWorkbook() {
     ].join('')
     const view = `<sheetViews><sheetView workbookViewId="0"><pane${freeze}/></sheetView></sheetViews>`
     assert.match(xml, /<sheetViews>[\s\S]*?<\/sheetViews>/)
-    zip.file(part, xml.replace(/<sheetViews>[\s\S]*?<\/sheetViews>/, view))
+    const styledXml = sheet.name === 'Both' ? xml.replace(/<c r="[A-D][34]"/g, '$& s="1"') : xml
+    zip.file(part, styledXml.replace(/<sheetViews>[\s\S]*?<\/sheetViews>/, view))
   }
   return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
 }
@@ -135,7 +144,7 @@ window.readMarkers = (wanted) => {
 const bytes = await (await fetch('/frozen-panes.xlsx')).arrayBuffer();
 window.viewer = await renderFileViewerSpreadsheet(bytes, document.querySelector('#app'), 'xlsx', {
   filename: 'frozen-panes.xlsx',
-  options: { theme: 'light', fit: 'none', spreadsheet: { worker: true, workerUrl: '/sheet.worker.js' } }
+  options: { theme: ${JSON.stringify(theme)}, fit: 'none', spreadsheet: { worker: true, workerUrl: '/sheet.worker.js' } }
 });
 window.provider = findFileViewerViewStateProvider(window.viewer.$el);
 window.moveToRange = (sheetId, row, column) => window.provider.applyState({
@@ -169,6 +178,53 @@ const server = createServer((request, response) => {
 
 const near = (left, right, label) => assert.ok(Math.abs(left - right) <= 5, `${label}: ${left} versus ${right}`)
 const output = process.env.FILE_VIEWER_FROZEN_PANES_EVIDENCE
+
+function countRedInk(image, left, right, top, bottom) {
+  let count = 0
+  for (let y = Math.ceil(top); y < Math.floor(bottom); y++) {
+    for (let x = Math.ceil(left); x < Math.floor(right); x++) {
+      const offset = (y * image.width + x) * 4
+      if (image.data[offset] > 155 && image.data[offset + 1] < 90 && image.data[offset + 2] < 90) count++
+    }
+  }
+  return count
+}
+
+async function verifyFrozenOcclusion(page, label) {
+  const overlay = page.locator('.e-virt-table-overlayer-body')
+  const text = overlay.getByText('b_r2_c0', { exact: true })
+  await text.waitFor()
+  const { cell, body } = await text.evaluate(element => {
+    const { x, y, width, height } = element.parentElement.getBoundingClientRect()
+    const area = element.closest('.e-virt-table-overlayer-body').getBoundingClientRect()
+    return { cell: { x, y, width, height }, body: { x: area.x, y: area.y, width: area.width } }
+  })
+  const left = cell.x
+  const right = Math.min(body.x + body.width, left + cell.width * 4)
+  const seam = cell.y + 1
+  const before = PNG.sync.read(await page.screenshot(output ? { path: join(output, `overlay-${label}-before.png`) } : {}))
+  assert.ok(countRedInk(before, left, right, seam + 2, seam + cell.height * 2) > 50,
+    'styled body text must paint distinct pixels in the scrolling pane')
+
+  await page.mouse.move(left + 20, seam + 50)
+  const scrollAgainstSeam = Math.round(cell.height * 0.75)
+  await page.mouse.wheel(0, scrollAgainstSeam)
+  await page.waitForFunction(delta => window.provider.getState().scroll.top >= delta - 2, scrollAgainstSeam)
+  // After the wheel, wait for the real text layer to cross the pane boundary.
+  await page.waitForFunction(y => [...document.querySelectorAll('.e-virt-table-overlayer-body span')].some(element =>
+    element.textContent === 'b_r2_c0' && element.getBoundingClientRect().top < y
+  ), seam)
+  const after = PNG.sync.read(await page.screenshot(output ? { path: join(output, `overlay-${label}-scrolled.png`) } : {}))
+  assert.ok(countRedInk(after, left, right, seam + 2, seam + cell.height * 2) > 50,
+    'clipping must preserve body text below the frozen pane')
+  const overlapPixels = countRedInk(after, left, right, body.y + 2, seam - 2)
+  assert.equal(overlapPixels, 0, 'scrolling body text painted above the frozen pane boundary')
+  console.log(`[spreadsheet] ${theme} ${label}: overlap pixels ${overlapPixels}, scrolling text stays visible.`)
+  await page.mouse.wheel(0, -100)
+  await page.waitForFunction(() => window.provider.getState().scroll.top === 0)
+  return cell.height
+}
+
 let browser
 try {
   await new Promise(resolveListen => server.listen(0, '127.0.0.1', resolveListen))
@@ -187,7 +243,17 @@ try {
   })
   await page.goto(origin)
   await page.waitForFunction(() => !!window.provider)
-  if (output) await mkdir(output, { recursive: true })
+  if (output) {
+    await mkdir(output, { recursive: true })
+    await writeFile(join(output, 'styled-freeze.xlsx'), fixture)
+  }
+  const unscaledHeight = await verifyFrozenOcclusion(page, '100%')
+  await page.evaluate(() => window.provider.applyState({ scale: 1.25 }))
+  await page.waitForFunction(height => [...document.querySelectorAll('.e-virt-table-overlayer-body span')].some(element =>
+    element.textContent === 'b_r2_c0' && element.parentElement.getBoundingClientRect().height > height * 1.15
+  ), unscaledHeight)
+  await verifyFrozenOcclusion(page, '125%')
+  await page.evaluate(() => window.provider.applyState({ scale: 1 }))
 
   for (const [sheetId, sheet] of sheets.entries()) {
     const initial = token(sheet, 1, 1)
