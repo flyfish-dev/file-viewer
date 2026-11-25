@@ -19,6 +19,11 @@ interface Point {
   y: number;
 }
 
+interface TextAdvances {
+  x: number[];
+  y?: number[];
+}
+
 interface Rect {
   left: number;
   top: number;
@@ -684,7 +689,7 @@ function decodeAnsi(bytes: Uint8Array, charset?: number): string {
  */
 function decodeWmfRun(bytes: Uint8Array, charset: number | undefined, dx: number[]): { text: string; advances: number[] } {
   const encoding = charsetEncoding(charset);
-  if (encoding === charsetEncoding(undefined)) return { text: decodeAnsi(bytes, charset), advances: dx };
+  if (!dx.length || encoding === charsetEncoding(undefined)) return { text: decodeAnsi(bytes, charset), advances: dx };
 
   const decoder = new TextDecoder(encoding);
   let text = '';
@@ -763,13 +768,13 @@ const CP1252_TO_BYTE = new Map<number, number>(
 
 function mapMetafileText(text: string, family: string): string {
   if (!text) return text;
-  const name = String(family || '').toLowerCase();
-  const table = /mt\s*extra/.test(name)
+  const name = family.trim().toLowerCase();
+  const table = name === 'mt extra'
     ? MT_EXTRA_MAP
-    : /euclid/.test(name)
+    : name === 'euclid math two'
       ? EUCLID_MATH_TWO_MAP
       : null;
-  const adobeSymbol = !table && /symbol|system/.test(name);
+  const adobeSymbol = name === 'symbol';
   if (!table && !adobeSymbol) return text;
 
   let result = '';
@@ -789,7 +794,7 @@ function mapMetafileText(text: string, family: string): string {
   return result;
 }
 
-function addText(ctx: ParseContext, point: Point, text: string, advances?: number[]): void {
+function addText(ctx: ParseContext, point: Point, text: string, advances?: TextAdvances): void {
   const renderedText = mapMetafileText(text, ctx.state.font.family);
   if (!renderedText) return;
   const mapped = mapPoint(ctx, point);
@@ -816,24 +821,41 @@ function addText(ctx: ParseContext, point: Point, text: string, advances?: numbe
   addNode(ctx, `<text ${attrs.join(' ')}>${body}</text>`, [mapped]);
 }
 
+function addExtText(ctx: ParseContext, reference: Point, text: string, advances: TextAdvances): void {
+  // TA_UPDATECP uses the current logical position in place of the record reference.
+  const updatePosition = (ctx.state.textAlign & 0x0001) !== 0;
+  const point = updatePosition ? ctx.state.currentPosition : reference;
+  addText(ctx, point, text, advances);
+  if (updatePosition) {
+    const dx = advances.x.length
+      ? advances.x.reduce((sum, value) => sum + value, 0)
+      : Math.abs(ctx.state.font.size || 12) * Array.from(text).length * 0.5;
+    const dy = advances.y?.reduce((sum, value) => sum + value, 0) ?? 0;
+    ctx.state.currentPosition = { x: point.x + dx, y: point.y + dy };
+  }
+}
+
 /**
  * MathType packs glyphs that are scattered across an equation into a single ExtTextOut
  * and positions them through the per-character spacing array. Emitting the run as one
  * string would let browser font metrics decide the spacing and scramble the layout, so
  * every character gets an explicit coordinate whenever the array is present.
  */
-function glyphRunBody(ctx: ParseContext, text: string, origin: Point, advances?: number[]): string {
+function glyphRunBody(ctx: ParseContext, text: string, origin: Point, advances?: TextAdvances): string {
   const characters = Array.from(text);
-  if (!advances?.length || advances.length < characters.length) return escapeHtml(text);
+  if (!advances || advances.x.length < characters.length) return escapeHtml(text);
 
   const spans: string[] = [];
-  let offset = 0;
+  const offset = { x: 0, y: 0 };
   let index = 0;
   for (const character of characters) {
-    const delta = mapVector(ctx, { x: offset, y: 0 });
+    const delta = mapVector(ctx, offset);
     spans.push(`<tspan x="${numberCss(origin.x + delta.x)}" y="${numberCss(origin.y + delta.y)}">${escapeHtml(character)}</tspan>`);
     // Surrogate pairs consume one spacing entry per UTF-16 unit.
-    for (let unit = 0; unit < character.length; unit += 1) offset += advances[index++] ?? 0;
+    for (let unit = 0; unit < character.length; unit += 1, index += 1) {
+      offset.x += advances.x[index] ?? 0;
+      offset.y += advances.y?.[index] ?? 0;
+    }
   }
   return spans.join('');
 }
@@ -1019,30 +1041,19 @@ function parseWmf(bytes: Uint8Array): ConvertedVectorImage | null {
         break;
       }
       case WMF_RECORD.META_EXTTEXTOUT: {
-        const length = recordReader.i16(10);
-        const options = recordReader.u16(12);
+        const textRecord = new BinaryReader(bytes.subarray(cursor, cursor + recordSize));
+        const length = textRecord.i16(10);
+        const options = textRecord.u16(12);
         // ETO_OPAQUE and ETO_CLIPPED both insert the optional rectangle before the string.
         const textOffset = options & 0x0006 ? 22 : 14;
-        if (length <= 0 || !recordReader.ensure(textOffset, length)) break;
+        if (length <= 0 || !textRecord.ensure(textOffset, length)) break;
         const dxOffset = textOffset + length + (length % 2);
         const dx: number[] = [];
-        if (recordReader.ensure(dxOffset, length * 2)) {
-          for (let index = 0; index < length; index += 1) dx.push(recordReader.i16(dxOffset + index * 2));
+        if (textRecord.ensure(dxOffset, length * 2)) {
+          for (let index = 0; index < length; index += 1) dx.push(textRecord.i16(dxOffset + index * 2));
         }
-        const run = decodeWmfRun(recordReader.slice(textOffset, length), ctx.state.font.charset, dx);
-        // TA_UPDATECP: ExtTextOut starts at the position left by MoveTo rather than at the
-        // reference point, which MathType always stores as (0, 0).
-        const useCurrentPosition = (ctx.state.textAlign & 0x0001) !== 0;
-        const point = useCurrentPosition
-          ? ctx.state.currentPosition
-          : { x: recordReader.i16(8), y: recordReader.i16(6) };
-        addText(ctx, point, run.text, run.advances);
-        if (useCurrentPosition) {
-          const advance = run.advances.length
-            ? run.advances.reduce((sum, value) => sum + value, 0)
-            : Math.abs(ctx.state.font.size || 12) * Array.from(run.text).length * 0.5;
-          ctx.state.currentPosition = { x: point.x + advance, y: point.y };
-        }
+        const run = decodeWmfRun(textRecord.slice(textOffset, length), ctx.state.font.charset, dx);
+        addExtText(ctx, { x: textRecord.i16(8), y: textRecord.i16(6) }, run.text, { x: run.advances });
         break;
       }
       case WMF_RECORD.META_CREATEPENINDIRECT: {
@@ -1107,13 +1118,14 @@ function readEmfPointArray(reader: BinaryReader, offset: number, count: number, 
   return points;
 }
 
-function parseEmfText(reader: BinaryReader, unicode: boolean): { point: Point; text: string; dx: number[] } | null {
-  if (!reader.ensure(36, 40)) return null;
+function parseEmfText(reader: BinaryReader, unicode: boolean): { point: Point; text: string; advances: TextAdvances } | null {
+  if (!reader.ensure(36, 20)) return null;
   const point = { x: reader.i32(36), y: reader.i32(40) };
   const chars = reader.u32(44);
   const offString = reader.u32(48);
   if (!chars || !offString || offString >= reader.length || chars > 0x10000) return null;
   const byteLength = unicode ? chars * 2 : chars;
+  if (!reader.ensure(offString, byteLength)) return null;
   const bytes = reader.slice(offString, byteLength);
   const text = unicode ? decodeUtf16(bytes) : decodeAnsi(bytes);
 
@@ -1121,15 +1133,19 @@ function parseEmfText(reader: BinaryReader, unicode: boolean): { point: Point; t
   // ETO_PDY widens each spacing entry to an (x, y) pair.
   const options = reader.u32(52);
   const offDxField = (options & 0x0100) === 0 ? 72 : 56;
-  const stride = options & 0x2000 ? 8 : 4;
-  const dx: number[] = [];
-  if (reader.ensure(offDxField, 4)) {
-    const offDx = reader.u32(offDxField);
-    if (offDx && reader.ensure(offDx, chars * stride)) {
-      for (let index = 0; index < chars; index += 1) dx.push(reader.i32(offDx + index * stride));
+  const paired = (options & 0x2000) !== 0;
+  const stride = paired ? 8 : 4;
+  const advances: TextAdvances = { x: [] };
+  const offDx = reader.u32(offDxField);
+  if (offDx && reader.ensure(offDx, chars * stride)) {
+    if (paired) advances.y = [];
+    for (let index = 0; index < chars; index += 1) {
+      const offset = offDx + index * stride;
+      advances.x.push(reader.i32(offset));
+      advances.y?.push(reader.i32(offset + 4));
     }
   }
-  return { point, text, dx };
+  return { point, text, advances };
 }
 
 function parseSmallEmfText(reader: BinaryReader): { point: Point; text: string } | null {
@@ -1423,21 +1439,9 @@ function parseEmf(bytes: Uint8Array): ConvertedVectorImage | null {
       }
       case EMF_RECORD.EMR_EXTTEXTOUTA:
       case EMF_RECORD.EMR_EXTTEXTOUTW: {
-        const parsed = parseEmfText(record, type === EMF_RECORD.EMR_EXTTEXTOUTW);
-        if (parsed) {
-          // TA_UPDATECP: ExtTextOut draws from the current position set by MoveToEx and
-          // ignores the reference point in the record. Word and MathType use this mode
-          // for equation previews, where the stored point is always (0, 0).
-          const useCurrentPosition = (ctx.state.textAlign & 0x0001) !== 0;
-          const point = useCurrentPosition ? ctx.state.currentPosition : parsed.point;
-          addText(ctx, point, parsed.text, parsed.dx);
-          if (useCurrentPosition) {
-            const advance = parsed.dx.length
-              ? parsed.dx.reduce((sum, value) => sum + value, 0)
-              : Math.abs(ctx.state.font.size || 12) * Array.from(parsed.text).length * 0.5;
-            ctx.state.currentPosition = { x: point.x + advance, y: point.y };
-          }
-        }
+        const textRecord = new BinaryReader(bytes.subarray(cursor, cursor + size));
+        const parsed = parseEmfText(textRecord, type === EMF_RECORD.EMR_EXTTEXTOUTW);
+        if (parsed) addExtText(ctx, parsed.point, parsed.text, parsed.advances);
         break;
       }
       case EMF_RECORD.EMR_SMALLTEXTOUT: {
