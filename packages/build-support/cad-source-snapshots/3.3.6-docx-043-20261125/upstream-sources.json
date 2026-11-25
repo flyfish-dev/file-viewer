@@ -1,0 +1,23 @@
+[
+  {
+    "name": "@flyfish-dev/cad-viewer",
+    "version": "0.8.4",
+    "commit": "6721a3dbcd5027a31006029243c505c460a521c6",
+    "url": "https://codeload.github.com/flyfish-dev/cad-viewer/tar.gz/6721a3dbcd5027a31006029243c505c460a521c6",
+    "sha256": "1de0f46746ccd832524c312e5760719941bbece19b693738d1bea408eee20434"
+  },
+  {
+    "name": "dwf-viewer",
+    "version": "0.6.8",
+    "commit": "274e7c86af0c97c569176c43ff317e92b0e30584",
+    "url": "https://codeload.github.com/flyfish-dev/dwf-viewer/tar.gz/274e7c86af0c97c569176c43ff317e92b0e30584",
+    "sha256": "e98577a7f4b5434d975d2e00c8560e3ba53e3890c89bb6f85c357709d630df7c"
+  },
+  {
+    "name": "@mlightcad/libredwg-web",
+    "version": "0.7.9",
+    "commit": "b70b5573a6bf2345e5fb10f2adff7fb74a8123c5",
+    "url": "https://codeload.github.com/mlightcad/libredwg-web/tar.gz/b70b5573a6bf2345e5fb10f2adff7fb74a8123c5",
+    "sha256": "af350d628535a2842262af5b49d50568b6dae62854667e13bb9f161b26c00431"
+  }
+]
