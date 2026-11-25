@@ -56,7 +56,8 @@ packages/tools/assets-*/viewer/
 apps/component-demo/public/file-viewer/
 apps/component-demo/public/requirejs/
 apps/viewer-demo/public/file-viewer/
-apps/viewer-demo/public/wasm/cad/0.8.3/
+/apps/viewer-demo/public/wasm/cad/0.8.1/libredwg-web.wasm
+/apps/viewer-demo/public/wasm/cad/0.8.3/libredwg-web.wasm
 apps/component-demo/public/example/word.docx
 apps/component-demo/public/example/pdf.pdf
 apps/component-demo/public/example/ppt.pptx

@@ -66,15 +66,22 @@ test('separate native CAD bindings retain their GPL text and independent AGPL ow
   const owner = receipt.materials.find(item => item.path.endsWith('/LICENSE'))
   assert.equal(owner.declaredLicense, 'AGPL-3.0-only')
   assert.ok(owner.runtimePaths.includes('wasm/cad/dwfv-render.wasm'))
-  const aliasDir = join(cad, '0.8.3')
-  const aliasPath = 'wasm/cad/0.8.3/libredwg-web.wasm'
-  await mkdir(aliasDir)
-  await cp(join(cad, 'GPL-3.0.txt'), join(aliasDir, 'GPL-3.0.txt'))
-  await cp(join(cad, 'libredwg-web.wasm'), join(aliasDir, 'libredwg-web.wasm'))
+  const aliases = ['0.8.1', '0.8.3']
+  for (const version of aliases) {
+    const aliasDir = join(cad, version)
+    await mkdir(aliasDir)
+    await cp(join(cad, 'GPL-3.0.txt'), join(aliasDir, 'GPL-3.0.txt'))
+    await cp(join(cad, 'libredwg-web.wasm'), join(aliasDir, 'libredwg-web.wasm'))
+  }
   const compatible = await stageSharedAssetAttribution(target)
-  const alias = compatible.runtimeFiles.find(item => item.path === aliasPath)
-  assert.equal(alias.sourceSha256, receipt.runtimeFiles.find(item => item.path === 'wasm/cad/libredwg-web.wasm').sha256)
-  assert.equal(alias.sourceSha256, alias.sha256)
-  await writeFile(join(aliasDir, 'libredwg-web.wasm'), 'This does not match the canonical CAD WASM')
-  await assert.rejects(stageSharedAssetAttribution(target), /differs from its canonical owner/)
+  const primary = receipt.runtimeFiles.find(item => item.path === 'wasm/cad/libredwg-web.wasm')
+  for (const version of aliases) {
+    const alias = compatible.runtimeFiles.find(item => item.path === `wasm/cad/${version}/libredwg-web.wasm`)
+    assert.equal(alias.sourceSha256, primary.sha256)
+    assert.equal(alias.sourceSha256, alias.sha256)
+    const aliasFile = join(cad, version, 'libredwg-web.wasm')
+    await writeFile(aliasFile, 'This does not match the canonical CAD WASM')
+    await assert.rejects(stageSharedAssetAttribution(target), /differs from its canonical owner/)
+    await cp(join(cad, 'libredwg-web.wasm'), aliasFile)
+  }
 })

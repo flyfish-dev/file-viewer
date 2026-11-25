@@ -29,7 +29,7 @@ allowBuilds:
   fsevents: true
 
 minimumReleaseAgeExclude:
-  - '@file-viewer/docx@0.3.42'
+  - '@file-viewer/docx@0.3.43'
   - '@file-viewer/ppt@0.3.5'
   - '@file-viewer/ppt@0.3.6'
   - '@file-viewer/ppt@1.0.1'
