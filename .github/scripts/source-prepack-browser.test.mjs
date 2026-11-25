@@ -528,9 +528,9 @@ test('all spreadsheet owners require the Worker built from the actual current Co
     )
   )
   const asset = {
-    path: 'served/638f40eb8fb9e7e9aeec64fc39b28476552c8d85b2fc3dc43f09a29e2ce3937d.js',
-    bytes: 782171,
-    sha256: '638f40eb8fb9e7e9aeec64fc39b28476552c8d85b2fc3dc43f09a29e2ce3937d'
+    path: 'served/7173172aff854c273ec04ac0a2d172c47ef9707005f82d3a6c36a54219b6ab33.js',
+    bytes: 794149,
+    sha256: '7173172aff854c273ec04ac0a2d172c47ef9707005f82d3a6c36a54219b6ab33'
   }
   for (const [runId, count] of [
     ['issue-211-spreadsheet-table-styles', 9],
