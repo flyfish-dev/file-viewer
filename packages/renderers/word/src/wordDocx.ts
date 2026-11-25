@@ -338,6 +338,11 @@ const DOCX_RESPONSIVE_CSS = `
   position: relative;
   z-index: 1;
 }
+/* MathType / Equation OLE previews are inline runs. The upstream docx engine wraps
+   them in display:block spans, which stretches each formula to the line width. */
+.docx-fit-viewer p span:has(> svg[data-docx-vml='true']:not([data-docx-float='true'])) {
+  display: inline-block !important;
+}
 `
 
 function installResponsiveStyle(target: HTMLDivElement) {
@@ -345,6 +350,41 @@ function installResponsiveStyle(target: HTMLDivElement) {
   style.textContent = DOCX_RESPONSIVE_CSS
   target.prepend(style)
   return style
+}
+
+/**
+ * Upstream `@file-viewer/docx` has two VML OLE quirks that break MathType previews:
+ * 1. Every VmlPicture wrapper is `display: block`, so inline equations take the full
+ *    line width and break mid-sentence flow.
+ * 2. The nested image viewport uses `viewBox="0 0 100 100"` with
+ *    `preserveAspectRatio="none"`. Mapping that square coordinate system onto a
+ *    wide/short shape stretches the converted WMF/EMF SVG and flattens glyphs.
+ */
+function normalizeInlineOlePictures(target: HTMLElement) {
+  const pictures = target.querySelectorAll<SVGElement>('svg[data-docx-vml="true"]')
+  for (const svg of pictures) {
+    if (svg.dataset.docxFloat !== 'true' && svg.closest('p')) {
+      const wrap = svg.parentElement
+      if (wrap instanceof HTMLElement && (wrap.style.display === 'block' || wrap.style.display === '')) {
+        wrap.style.display = 'inline-block'
+      }
+    }
+    restoreVmlImageAspect(svg)
+  }
+}
+
+function restoreVmlImageAspect(root: SVGElement) {
+  // Nested VML image viewports are authored as a percentage square (0 0 100 100).
+  // Remap that viewBox to the actual width/height so wide MathType shapes are not
+  // vertically compressed by preserveAspectRatio="none".
+  for (const viewport of root.querySelectorAll('svg')) {
+    const viewBox = viewport.getAttribute('viewBox')?.trim()
+    if (viewBox !== '0 0 100 100') continue
+    const width = Number.parseFloat(viewport.getAttribute('width') || '')
+    const height = Number.parseFloat(viewport.getAttribute('height') || '')
+    if (!(width > 0 && height > 0)) continue
+    viewport.setAttribute('viewBox', `0 0 ${width} ${height}`)
+  }
 }
 
 function makeDocxResponsive(target: HTMLDivElement, context?: FileRenderContext) {
@@ -725,6 +765,7 @@ export default async function (
   target.dataset.docxWorker = docxOptions.useWorker ? 'self' : 'false'
   target.dataset.docxDarkMode = docxOptions.darkMode ? 'true' : 'false'
   await renderAsync(buffer, target, undefined, { ...defaultOptions, ...docxOptions })
+  normalizeInlineOlePictures(target)
   notifyProgressiveRender()
 
   const disposeResponsive = makeDocxResponsive(target, context)
