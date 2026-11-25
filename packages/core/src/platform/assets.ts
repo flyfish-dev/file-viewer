@@ -1677,9 +1677,13 @@ export const resolveFileViewerSpreadsheetWorkerUrl = (
   options?: Pick<FileViewerSpreadsheetOptions, 'workerUrl'> | null,
   documentBaseUrl?: string
 ) => {
-  return resolveFileViewerAssetUrl(options?.workerUrl, DEFAULT_FILE_VIEWER_SPREADSHEET_WORKER_PATH, {
+  const resolved = resolveFileViewerAssetUrl(options?.workerUrl, DEFAULT_FILE_VIEWER_SPREADSHEET_WORKER_PATH, {
     documentBaseUrl,
   });
+  if (options?.workerUrl) return resolved;
+  // Use the workbook-password protocol even if a browser cached an earlier Worker.
+  const separator = resolved.includes('?') ? '&' : '?';
+  return `${resolved}${separator}file-viewer-xlsx=2`;
 };
 
 export const resolveFileViewerIworkWorkerUrl = (

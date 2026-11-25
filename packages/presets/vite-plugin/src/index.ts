@@ -178,6 +178,12 @@ const isPresentationRendererImporter = (importer?: string) => {
   )
 }
 const pluginRequire = createRequire(import.meta.url)
+type PackageResolutionCache = {
+  requires: Map<string, NodeJS.Require>
+  probes: Map<NodeJS.Require, Map<string, string | null>>
+  packages: Map<string, string | null>
+}
+let packageResolutionCache: PackageResolutionCache | undefined
 let workspacePackageJsonCache: { root: string; packages: Map<string, string> } | null = null
 
 const rendererModules: readonly RendererModuleDescriptor[] = [
@@ -1378,7 +1384,7 @@ function createOptimizeDepsInclude(
       !excluded.has(packageName) && Boolean(resolvePackageJson(packageName, anchorPackages))
     ),
     ...presetCapabilities.flatMap(({ presetId, packageJsonPath, packages }) => {
-      const presetRequire = createRequire(packageJsonPath)
+      const presetRequire = requireFromPackageJson(packageJsonPath)
       return packages.flatMap((packageName) => {
         // An isolated install can resolve the capability from the preset only.
         const entry = `${presetModules[presetId].packageName} > ${packageName}`
@@ -1436,8 +1442,30 @@ function createManualChunks(
   }
 }
 
+function withPackageResolutionCache<T>(configure: (config: UserConfig) => T) {
+  return (config: UserConfig): T => {
+    // Share probes within this synchronous hook and discard misses before the next config.
+    const previous = packageResolutionCache
+    packageResolutionCache = { requires: new Map(), probes: new Map(), packages: new Map() }
+    try {
+      return configure(config)
+    } finally {
+      packageResolutionCache = previous
+    }
+  }
+}
+
+function requireFromPackageJson(packageJsonPath: string) {
+  const requires = packageResolutionCache?.requires
+  const cached = requires?.get(packageJsonPath)
+  if (cached) return cached
+  const requireFn = createRequire(packageJsonPath)
+  requires?.set(packageJsonPath, requireFn)
+  return requireFn
+}
+
 function projectRequire() {
-  return createRequire(resolve(process.cwd(), 'package.json'))
+  return requireFromPackageJson(resolve(process.cwd(), 'package.json'))
 }
 
 function findPackageJsonFromEntry(entry: string) {
@@ -1453,6 +1481,20 @@ function findPackageJsonFromEntry(entry: string) {
 }
 
 function tryResolvePackageJson(packageName: string, requireFn: NodeJS.Require) {
+  if (!packageResolutionCache) return probePackageJson(packageName, requireFn)
+  let probes = packageResolutionCache.probes.get(requireFn)
+  if (!probes) {
+    probes = new Map()
+    packageResolutionCache.probes.set(requireFn, probes)
+  }
+  const cached = probes.get(packageName)
+  if (cached !== undefined) return cached
+  const result = probePackageJson(packageName, requireFn)
+  probes.set(packageName, result)
+  return result
+}
+
+function probePackageJson(packageName: string, requireFn: NodeJS.Require) {
   try {
     return requireFn.resolve(`${packageName}/package.json`)
   } catch {
@@ -1514,6 +1556,16 @@ function resolveWorkspacePackageJson(packageName: string) {
 }
 
 function resolvePackageJson(packageName: string, anchorPackages: readonly string[] = []) {
+  if (!packageResolutionCache) return resolvePackageJsonFromAnchors(packageName, anchorPackages)
+  const key = JSON.stringify([process.cwd(), packageName, anchorPackages])
+  const cached = packageResolutionCache.packages.get(key)
+  if (cached !== undefined) return cached
+  const result = resolvePackageJsonFromAnchors(packageName, anchorPackages)
+  packageResolutionCache.packages.set(key, result)
+  return result
+}
+
+function resolvePackageJsonFromAnchors(packageName: string, anchorPackages: readonly string[]) {
   const rootRequireFns = [projectRequire(), pluginRequire]
   const requireFns = [...rootRequireFns]
   const effectiveAnchorPackages = unique([
@@ -1532,7 +1584,7 @@ function resolvePackageJson(packageName: string, anchorPackages: readonly string
           resolveWorkspacePackageJson(anchorPackage)
         if (anchorPackageJson && !anchorPackageJsons.has(anchorPackageJson)) {
           anchorPackageJsons.add(anchorPackageJson)
-          requireFns.push(createRequire(anchorPackageJson))
+          requireFns.push(requireFromPackageJson(anchorPackageJson))
           discoveredAnchor = true
         }
       }
@@ -1545,7 +1597,7 @@ function resolvePackageJson(packageName: string, anchorPackages: readonly string
       .find(Boolean) || resolveWorkspacePackageJson(anchorPackage))
     .filter((packageJson): packageJson is string => Boolean(packageJson)))
   const targetRequireFns = [
-    ...preferredAnchorPackageJsons.map((packageJson) => createRequire(packageJson)),
+    ...preferredAnchorPackageJsons.map(requireFromPackageJson),
     ...requireFns
   ]
   for (const requireFn of targetRequireFns) {
@@ -1610,7 +1662,7 @@ function collectPluginDependencies(
     ...(selection.preset ? [selection.preset] : []),
     ...autoPresetIds
   ])
-  const projectPackageRequire = createRequire(join(projectRoot, 'package.json'))
+  const projectPackageRequire = requireFromPackageJson(join(projectRoot, 'package.json'))
   const presetCapabilities = presetIds.flatMap((presetId): PresetCapabilityDependencies[] => {
     const presetPackage = presetModules[presetId].packageName
     const packageJsonPath = tryResolvePackageJson(presetPackage, projectPackageRequire) ||
@@ -1709,7 +1761,7 @@ function resolvePackageEntry(packageName: string, anchorPackages: readonly strin
   const requireFns = [
     projectRequire(),
     pluginRequire,
-    ...(anchorPackageJson ? [createRequire(anchorPackageJson)] : [])
+    ...(anchorPackageJson ? [requireFromPackageJson(anchorPackageJson)] : [])
   ]
   try {
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
@@ -3536,7 +3588,7 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
   return {
     name: 'file-viewer-renderers',
     enforce: 'pre',
-    config(userConfig) {
+    config: withPackageResolutionCache((userConfig) => {
       const projectRoot = resolve(process.cwd(), userConfig.root || '.')
       refreshSelection(projectRoot)
       refreshFullAssetRuntime(projectRoot, userConfig.base)
@@ -3607,7 +3659,7 @@ export function fileViewerRenderers(options: FileViewerRenderersPluginOptions = 
           }
         }
       }
-    },
+    }),
     configResolved(config) {
       resolvedConfig = config
       refreshSelection(config.root)

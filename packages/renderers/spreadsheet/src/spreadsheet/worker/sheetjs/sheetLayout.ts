@@ -1,6 +1,8 @@
-import { DOMParser } from '@xmldom/xmldom'
+import { DOMParser, type Element as XmlElement } from '@xmldom/xmldom'
 import type JSZip from 'jszip'
 import type { WorkBook } from 'styled-exceljs'
+import { EXCEL_SOURCE_EXTENT } from '../../sourceRegion.js'
+import type { SheetFreezePane } from '../type.js'
 import type { StoredRowSizing } from './rowSizing.js'
 
 export interface StoredSheetLayout {
@@ -8,6 +10,7 @@ export interface StoredSheetLayout {
   rowHeightPt?: number
   rowSizing?: StoredRowSizing
   maximumDigitWidth?: number
+  freeze?: SheetFreezePane
 }
 
 /** OOXML column units refer to the workbook's Normal style, which need not
@@ -33,8 +36,30 @@ export const readWorkbookDigitWidth = (workbook?: WorkBook | null): number => {
   return 7
 }
 
-/** Read only the worksheet header; never materialize a large sheet's cells a
- * second time merely to recover sheetFormatPr. */
+const sheetChildren = (element: XmlElement | undefined, name: string) =>
+  Array.from(element?.childNodes ?? []).filter((node): node is XmlElement =>
+    node.nodeType === 1 && (node as XmlElement).localName === name
+    && (node as XmlElement).namespaceURI === element?.namespaceURI)
+
+const readFrozenPane = (views: XmlElement): SheetFreezePane | undefined => {
+  const sheetViews = sheetChildren(views, 'sheetView')
+  const view = sheetViews.find(candidate => candidate.getAttribute('workbookViewId') === '0') ?? sheetViews[0]
+  const [pane] = sheetChildren(view, 'pane')
+  const state = pane?.getAttribute('state')
+  if (state !== 'frozen' && state !== 'frozenSplit') return undefined
+
+  const count = (attribute: 'xSplit' | 'ySplit', max: number) => {
+    const raw = pane.getAttribute(attribute)?.trim() ?? ''
+    if (!/^\+?(?:\d+\.?\d*|\.\d+)(?:[Ee][+-]?\d+)?$/.test(raw)) return 0
+    const value = Number(raw)
+    return Number.isSafeInteger(value) ? Math.min(value, max) : 0
+  }
+  const rows = count('ySplit', EXCEL_SOURCE_EXTENT.rows - 1)
+  const columns = count('xSplit', EXCEL_SOURCE_EXTENT.cols - 1)
+  return rows || columns ? { rows, columns } : undefined
+}
+
+/** Read only the worksheet header for size defaults and frozen panes. */
 export const readStoredSheetLayout = async (zip: JSZip, part: string): Promise<StoredSheetLayout> => {
   const file = zip.file(part)
   if (!file) return {}
@@ -62,17 +87,27 @@ export const readStoredSheetLayout = async (zip: JSZip, part: string): Promise<S
     stream.resume()
   })
   const tag = /<(?:[\w.-]+:)?sheetFormatPr\b[^>]*>/.exec(header)?.[0]
-  if (!tag) return {}
+  const views = /<((?:[\w.-]+:)?sheetViews)\b[^>]*>[\s\S]*?<\/\1\s*>/.exec(header)?.[0]
+  if (!tag && !views) return {}
   const root = /<(?:[\w.-]+:)?worksheet\b[^>]*>/.exec(header)?.[0] || ''
   const namespaces = root.match(/\sxmlns(?::[\w.-]+)?\s*=\s*(?:"[^"]*"|'[^']*')/g)?.join('') || ''
-  const element = new DOMParser().parseFromString(
+  const parser = new DOMParser()
+  const layout = tag ? parser.parseFromString(
     `<layout${namespaces}>${tag.replace(/\/?>(?:\s*)$/, '/>')}</layout>`, 'application/xml'
-  ).documentElement?.getElementsByTagName('*')[0]
+  ).documentElement?.getElementsByTagName('*')[0] : undefined
   const bounded = (name: string, max: number) => {
-    const raw = element?.getAttribute(name)
+    const raw = layout?.getAttribute(name)
     if (raw == null || raw.trim() === '') return undefined
     const value = Number(raw)
     return Number.isFinite(value) && value > 0 && value <= max ? value : undefined
   }
-  return { columnWidth: bounded('defaultColWidth', 255), rowHeightPt: bounded('defaultRowHeight', 409.5) }
+  const viewRoot = views ? parser.parseFromString(
+    `<layout${namespaces}>${views}</layout>`, 'application/xml'
+  ).documentElement?.getElementsByTagName('*')[0] : undefined
+  const freeze = viewRoot ? readFrozenPane(viewRoot) : undefined
+  return {
+    columnWidth: bounded('defaultColWidth', 255),
+    rowHeightPt: bounded('defaultRowHeight', 409.5),
+    ...(freeze ? { freeze } : {})
+  }
 }

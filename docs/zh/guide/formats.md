@@ -103,6 +103,7 @@
 
 ### 表格类文件
 
+- XLSX 预览读取每张工作表保存的冻结窗格，滚动时保留冻结的顶部行和左侧列。
 - 表格类文件统一走 `styled-exceljs` 解析和 `e-virt-table` 虚拟渲染，适合需要保留表格结构、合并单元格、Office 365 / WPS 单元格内嵌图片、workbook drawing 图片和视觉层级的场景；渲染出的图片可双击进入大图预览，并通过 Escape、遮罩或关闭按钮退出。
 - 表格解析默认使用 `options.spreadsheet.worker: 'auto'`：小文件走同一套 `styled-exceljs` 主线程解析以保持本地服务器、手机 WebView、MIME 和 CSP 兼容；大文件达到 `options.spreadsheet.workerAutoThreshold`（默认 1MB）时自动尝试 `vendor/xlsx/sheet.worker.js`，避免百万单元格解析阻塞 UI。静态资源路径特殊时可配置 `options.spreadsheet.workerUrl`，不希望自动启用时设为 `worker: false`。
 - CSV / TSV 默认按 UTF-8 BOM、严格 UTF-8、GB18030 的固定顺序识别文本编码，GB18030 同时覆盖常见 GBK 文件。来源编码已知或字节序列存在歧义时，可用 `options.spreadsheet.textEncoding` 显式选择 `utf-8`、`gbk` 或 `gb18030`；XLS / XLSX 等二进制表格不会进入文本解码路径。

@@ -13,6 +13,7 @@ import type { SheetCellImage, SheetChartDefinition, SheetComment, SheetDefinitio
 import { parseSpreadsheetCellImages } from './richDataParser.js';
 import { recoverUncachedFormulaValues } from './formulaValues.js';
 import { readWorkbookDefaultFont } from './workbookFont.js';
+import { decryptSpreadsheetPackage, SpreadsheetEncryptionError } from './encryption.js';
 
 interface DrawingMarkerLike {
   row?: number;
@@ -44,6 +45,8 @@ export interface SpreadsheetParserContext {
 export interface SpreadsheetWorkbookSource extends SpreadsheetTextSource {
   /** Retain truly empty sheets only for the opt-in Excel viewport grid. */
   includeEmptySheets?: boolean;
+  password?: string;
+  signal?: AbortSignal;
 }
 
 export interface SpreadsheetWorkerRequest {
@@ -226,6 +229,7 @@ const toErrorResponse = (
   payload: {
     ...payload,
     message: error instanceof Error ? error.message : String(error),
+    ...(error instanceof SpreadsheetEncryptionError ? { code: error.code } : {}),
   },
 });
 
@@ -565,10 +569,11 @@ const parseSheets = (context: SpreadsheetParserContext, includeEmptySheets = fal
 
 export const parseSpreadsheetWorkbook = async (
   context: SpreadsheetParserContext,
-  data: ArrayBuffer,
+  sourceBytes: ArrayBuffer,
   source: SpreadsheetWorkbookSource = {}
 ): Promise<SpreadsheetWorkerResponse[]> => {
   try {
+    const data = await decryptSpreadsheetPackage(sourceBytes, source.fileType, source.password, source.signal);
     const input = prepareSpreadsheetReadInput(data, source);
     context.workbook = readWorkbookWithMergeRecovery(input);
     const workbook = context.workbook;
@@ -1046,7 +1051,8 @@ export const searchSpreadsheetWorkbook = (
 
 export const handleSpreadsheetWorkerRequest = (
   context: SpreadsheetParserContext,
-  request: SpreadsheetWorkerRequest
+  request: SpreadsheetWorkerRequest,
+  signal?: AbortSignal
 ): SpreadsheetWorkerResponse[] | Promise<SpreadsheetWorkerResponse[]> => {
   switch (request.type) {
     case 'parseWorkbook':
@@ -1055,6 +1061,8 @@ export const handleSpreadsheetWorkerRequest = (
         filename: request.payload?.filename,
         textEncoding: request.payload?.textEncoding,
         includeEmptySheets: request.payload?.includeEmptySheets,
+        password: request.payload?.password,
+        signal,
       });
     case 'parseSheet':
       return parseSpreadsheetSheet(context, request.payload);

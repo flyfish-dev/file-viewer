@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { parseHTML } from 'linkedom'
 import { applyDemoBootstrapCopy } from '../apps/viewer-demo/src/bootstrapCopy'
-import { startDemoBootstrap } from '../apps/viewer-demo/src/demoBootstrap'
+import { bufferDemoFileHandoff, startDemoBootstrap } from '../apps/viewer-demo/src/demoBootstrap'
 
 const deferred = <T>() => {
   let resolve!: (value: T) => void
@@ -32,6 +32,25 @@ function bootEnvironment({ search = '', stored = null, languages = ['en-US'], la
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('Demo asynchronous bootstrap', () => {
+  it('delivers an early parent Blob only once after the actual listener mounts', () => {
+    const origin = 'https://parent.example.test'
+    const search = `?from=${encodeURIComponent(origin)}&name=certificate.ofd`
+    const window = Object.assign(new EventTarget(), { location: { search } })
+    vi.stubGlobal('window', window)
+    const finish = bufferDemoFileHandoff()
+    const file = new Blob(['original'])
+    window.dispatchEvent(new MessageEvent('message', { origin, data: file }))
+    window.dispatchEvent(new MessageEvent('message', { origin: 'https://another.example.test', data: new Blob() }))
+    window.dispatchEvent(new MessageEvent('message', { origin, data: 'wrong type' }))
+
+    const received = vi.fn()
+    window.addEventListener('message', received)
+    finish()
+    finish()
+    expect(received).toHaveBeenCalledOnce()
+    expect(received.mock.calls[0][0]).toMatchObject({ origin, data: file })
+  })
+
   it.each([
     ['zh-CN', '正在准备文件预览环境…', 'File Viewer 启动失败'],
     ['en-US', 'Preparing the file preview environment…', 'File Viewer failed to start'],

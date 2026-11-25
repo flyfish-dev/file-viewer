@@ -37,8 +37,16 @@ const options = {
 - Supports multiple sheets, horizontally scrollable sheet tabs, merged cells, row and column sizing, borders, fills, alignment, text color, Office 365 and WPS in-cell images, workbook drawing images, double-click image previews, the global zoom provider, and optional header drag column resizing.
 - TIFF drawings in XLSX files load the MIT-licensed UTIF.js decoder only when needed and are converted to PNG in the browser. Ordinary spreadsheets do not load the TIFF decoder.
 - Uses virtual rendering for interaction. Host components usually hide full-document print for spreadsheets to avoid printing only the current viewport.
+- XLSX previews keep the rows and columns saved in each worksheet’s frozen panes visible while scrolling.
+- Open password-protected Excel files in place. The renderer supports OOXML Agile AES and Standard AES, plus BIFF8 RC4 CryptoAPI and ASCII-password XOR. AES and RC4 CryptoAPI require Web Crypto in a secure browser context.
 - XLSX uses saved default and explicit column widths and point-based row heights. CSV/TSV retains content auto-fit and supports large decoded text without creating a second UTF-8 byte array.
 - Column units follow the workbook's Normal style. SimSun/NSimSun digit advances are converted from points before rounding; unmeasured custom fonts retain the standard fallback, so exact geometry can depend on the font.
+
+## Password-protected Excel files
+
+Enter the workbook password in the preview. A wrong password can be retried, and cancelling offers a way to start again. The file is decrypted in memory in the selected parser, and downloads continue to return the original file. Reopening an encrypted workbook starts a new password request.
+
+Set `options.spreadsheet.password` to supply a first attempt, or use `options.spreadsheet.requestPassword` to supply your own prompt. The callback receives `filename`, `attempt`, `reason` and an optional `error`. Return `null` or `undefined` to cancel. Extensible encryption, classic RC4 and BIFF before version 8 show an unsupported status.
 
 ## Fill the viewport for small Excel sheets
 

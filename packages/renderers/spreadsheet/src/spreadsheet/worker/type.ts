@@ -147,7 +147,13 @@ export interface SheetRowSizing {
   autoHeightDisabled?: boolean;
 }
 
+export interface SheetFreezePane {
+  rows: number;
+  columns: number;
+}
+
 export interface SheetStructure {
+  freeze?: SheetFreezePane;
   rowSizing?: SheetRowSizing;
   merge?: CellMerge[];
   colWidths?: number | number[];

@@ -82,7 +82,7 @@
       "supportLevel": "structured",
       "status": "stable",
       "containerVersions": ["OOXML", "BIFF", "OpenDocument", "Delimited text"],
-      "knownLimits": ["VBA and add-in code are never executed", "Formula results are read from the saved workbook cache"],
+      "knownLimits": ["VBA and add-in code are never executed", "Formula results are read from the saved workbook cache", "Password preview supports OOXML Agile and Standard AES, BIFF8 RC4 CryptoAPI and ASCII-password XOR"],
       "capabilities": { "download": true, "print": false, "exportHtml": false, "zoom": "provider", "search": true },
       "evidence": {
         "xla": { "fixture": "packages/renderers/spreadsheet/test/fixtures/addin.xla", "sha256": "1b1edc8dad88921c58f24ba650e44b3e5a93000dfee3df97959abc0677c81501", "assertions": ["load-complete", "sheet-tabs", "saved-values"], "required": true },

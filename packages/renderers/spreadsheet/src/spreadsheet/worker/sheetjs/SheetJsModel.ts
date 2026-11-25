@@ -991,11 +991,15 @@ export default class SheetJsModel implements SheetModel {
   }
 
   private getStructure(): SheetStructure {
+    const layout = this.ws['!fileViewerLayout'] as StoredSheetLayout | undefined
+    const rows = Math.min(layout?.freeze?.rows ?? 0, this.totalRows)
+    const columns = Math.min(layout?.freeze?.columns ?? 0, this.totalCols)
     return {
       merge: this.getAllMerge(),
       colWidths: this.getColWidths(),
       rowHeights: this.getAllRowHeights(),
-      rowSizing: (this.ws['!fileViewerLayout'] as StoredSheetLayout | undefined)?.rowSizing,
+      rowSizing: layout?.rowSizing,
+      ...(rows || columns ? { freeze: { rows, columns } } : {}),
       columns: this.getColumns(),
       images: this.getImages(),
       charts: this.getCharts()

@@ -2,6 +2,7 @@ import { applyAutoRowDrawingGeometry } from './spreadsheet/drawingAutoHeight.js'
 import { createAutoRowHeight } from './spreadsheet/autoRowHeight.js';
 import { createSpreadsheetComments, spreadsheetCommentsStyle } from './spreadsheet/comments.js';
 import { createSpreadsheetRangeNavigation } from './spreadsheet/rangeNavigation.js';
+import { createSpreadsheetPasswordPrompt, spreadsheetPasswordStyle } from './spreadsheet/passwordPrompt.js';
 import {
   createFileViewerWorkerController,
   createFileViewerTranslator,
@@ -28,12 +29,15 @@ import {
   type FileViewerSearchOptions,
   type FileViewerSearchProvider,
   type FileViewerSearchState,
+  type FileViewerSpreadsheetPasswordRequestReason,
   type FileViewerWorkerFactory,
   type FileViewerZoomState,
 } from '@file-viewer/core';
 import { renderSpreadsheetChart } from './spreadsheet/chartRenderer.js';
 import { createSpreadsheetImageSourceResolver } from './spreadsheet/imageSource.js';
 import { shouldFillSpreadsheetViewport, SpreadsheetViewportFill } from './spreadsheet/viewport.js';
+import { installFrozenRows } from './spreadsheet/frozenRows.js';
+import { drawingContainsPoint, getDrawingPlacements, getDrawingPlacementStyle, type DrawingPlacement } from './spreadsheet/drawingPanes.js';
 import type { SheetCellMetadata, SheetChart, SheetComment, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
 import {
   buildRows,
@@ -57,6 +61,7 @@ import {
   createTableConfig,
   detectIndexOffset,
   getDisplayColumns,
+  getSpreadsheetDisplayColumns,
   getSearchColumnLeft,
   getRowHeight,
   HEADER_HEIGHT,
@@ -77,6 +82,7 @@ type EVirtTableInstance = {
     };
     scrollX?: number;
     scrollY?: number;
+    fixedLeftWidth?: number;
     containerElement: HTMLElement;
     isTarget(event: Event): boolean;
     selector?: {
@@ -232,7 +238,7 @@ const spreadsheetStyle = `
 @media (max-width:720px){.excel-wrapper .toolbar{align-items:stretch;flex-direction:column}.excel-wrapper .btn-group{flex:0 0 auto}.excel-wrapper .summary{max-width:none;white-space:normal}.excel-wrapper .sheet-loading{left:12px;right:12px;bottom:58px;justify-content:center}.excel-wrapper .loading-card{margin:18px;flex-direction:column;text-align:center}.excel-wrapper .excel-image-lightbox button{top:12px;right:12px}}
 @media (prefers-reduced-motion:reduce){.excel-wrapper .excel-image-lightbox,.excel-wrapper .excel-image-lightbox img,.excel-wrapper .excel-image-lightbox button{transition:none}}
 `;
-const scopedSpreadsheetStyle = (spreadsheetStyle + spreadsheetCommentsStyle).replace(
+const scopedSpreadsheetStyle = (spreadsheetStyle + spreadsheetCommentsStyle + spreadsheetPasswordStyle).replace(
   /\.excel-wrapper/g,
   SPREADSHEET_STYLE_SCOPE
 );
@@ -399,6 +405,7 @@ class MainThreadSpreadsheetWorker {
   private destroyed = false;
   private readonly listeners = new Map<string, Set<SpreadsheetMessageListener>>();
   private readonly targetWindow: Window | null;
+  private readonly abort = new AbortController();
   private parserPromise: Promise<typeof import('./spreadsheet/worker/sheetjs/parser.js')> | null = null;
   private context: import('./spreadsheet/worker/sheetjs/parser.js').SpreadsheetParserContext | null = null;
 
@@ -419,6 +426,7 @@ class MainThreadSpreadsheetWorker {
 
   terminate() {
     this.destroyed = true;
+    this.abort.abort();
     this.listeners.clear();
   }
 
@@ -472,7 +480,8 @@ class MainThreadSpreadsheetWorker {
       const parser = await this.loadParser();
       const responses = await parser.handleSpreadsheetWorkerRequest(
         this.context || parser.createSpreadsheetParserContext(),
-        message as import('./spreadsheet/worker/sheetjs/parser.js').SpreadsheetWorkerRequest
+        message as import('./spreadsheet/worker/sheetjs/parser.js').SpreadsheetWorkerRequest,
+        this.abort.signal
       );
       responses.forEach(response => {
         if (!this.destroyed) {
@@ -848,6 +857,13 @@ const renderFileViewerSpreadsheet = async (
 
   const error = documentRef.createElement('div');
   error.className = 'error hidden';
+  const errorText = documentRef.createElement('span');
+  errorText.setAttribute('role', 'status');
+  const retryPassword = t.text(documentRef.createElement('button'), 'spreadsheet.password.retry');
+  retryPassword.type = 'button';
+  retryPassword.className = 'excel-password-retry hidden';
+  error.append(errorText, retryPassword);
+  const passwordPrompt = createSpreadsheetPasswordPrompt(documentRef, t);
 
   const tableWrapper = documentRef.createElement('div');
   tableWrapper.className = 'table-wrapper';
@@ -901,7 +917,7 @@ const renderFileViewerSpreadsheet = async (
   const workbookBody = documentRef.createElement('div');
   workbookBody.className = 'excel-body';
   workbookBody.append(tableWrapper);
-  root.append(loading, error, workbookBody, toolbar, imageLightbox);
+  root.append(loading, error, workbookBody, toolbar, imageLightbox, passwordPrompt.element);
   target.replaceChildren(
     createEVirtTableStyle(documentRef, target, loadedEVirtTable.styleText),
     createStyle(documentRef),
@@ -914,6 +930,10 @@ const renderFileViewerSpreadsheet = async (
   let sheetIndex = 0;
   let errorMessage = '';
   let loadError: Error | undefined;
+  let passwordAttempts = 0;
+  let requestingPassword = false;
+  let workbookSubmittedPassword = false;
+  let retryReason: FileViewerSpreadsheetPasswordRequestReason | undefined;
   let totalRows = 0;
   let totalCols = 0;
   let sheetDefaults = { ...DEFAULT_SHEET_DEFAULTS };
@@ -922,6 +942,8 @@ const renderFileViewerSpreadsheet = async (
   let loadingWindowCount = 0;
   let sheetImages: SheetImage[] = [];
   let sheetCharts: SheetChart[] = [];
+  let renderedImages: DrawingPlacement<SheetImage>[] = [];
+  let renderedCharts: DrawingPlacement<SheetChart>[] = [];
   let zoom = 1;
   let imageViewportState = {
     scrollX: 0,
@@ -935,6 +957,7 @@ const renderFileViewerSpreadsheet = async (
   const sheetImageCache = new Map<number, SheetImage[]>();
   const sheetChartCache = new Map<number, SheetChart[]>();
   let table: EVirtTableInstance | null = null;
+  let frozenRows = { count: 0, height: 0 };
   let resizeObserver: ResizeObserver | null = null;
   let resizeFrame = 0;
   let scrollFrame = 0;
@@ -1134,18 +1157,6 @@ const renderFileViewerSpreadsheet = async (
     lightboxCloseButton.focus({ preventScroll: true });
   };
 
-  const containsViewportPoint = (
-    item: Pick<SheetImage, 'left' | 'top' | 'width' | 'height'>,
-    x: number,
-    y: number
-  ) => {
-    const left = scalePx(item.left) - imageViewportState.scrollX;
-    const top = scalePx(item.top) - imageViewportState.scrollY;
-    const right = left + scalePx(item.width);
-    const bottom = top + scalePx(item.height);
-    return x >= left && x <= right && y >= top && y <= bottom;
-  };
-
   const findImageAtViewportPoint = (clientX: number, clientY: number) => {
     const viewportRect = imageViewport.getBoundingClientRect();
     const x = clientX - viewportRect.left;
@@ -1156,10 +1167,10 @@ const renderFileViewerSpreadsheet = async (
 
     // Charts are appended after images and therefore paint above them. Do not
     // open an image hidden under a chart when their saved bounds overlap.
-    if (sheetCharts.map(chart => applyAutoRowDrawingGeometry(chart, virtualState)).reverse().some(chart => containsViewportPoint(chart, x, y))) {
+    if (renderedCharts.some(chart => drawingContainsPoint(chart, x, y))) {
       return undefined;
     }
-    return sheetImages.map(image => applyAutoRowDrawingGeometry(image, virtualState)).reverse().find(image => containsViewportPoint(image, x, y));
+    return renderedImages.slice().reverse().find(image => drawingContainsPoint(image, x, y))?.drawing;
   };
 
   const handleImageDoubleClick = (event: MouseEvent) => {
@@ -1254,7 +1265,6 @@ const renderFileViewerSpreadsheet = async (
   };
 
   const renderImages = () => {
-    const margin = 240;
     const guard = getImageViewportScrollbarGuard();
     const width = Math.max(
       imageViewportState.width - scalePx(INDEX_COLUMN_WIDTH) - guard.vertical,
@@ -1264,24 +1274,21 @@ const renderFileViewerSpreadsheet = async (
       imageViewportState.height - scalePx(HEADER_HEIGHT) - guard.horizontal,
       0
     );
-    const visibleImages = sheetImages.map(image => applyAutoRowDrawingGeometry(image, virtualState)).filter((image) => {
-      const x = scalePx(image.left) - imageViewportState.scrollX;
-      const y = scalePx(image.top) - imageViewportState.scrollY;
-      return x + scalePx(image.width) >= -margin &&
-        x <= width + margin &&
-        y + scalePx(image.height) >= -margin &&
-        y <= height + margin;
-    });
-    const visibleCharts = sheetCharts.map(chart => applyAutoRowDrawingGeometry(chart, virtualState)).filter((chart) => {
-      const x = scalePx(chart.left) - imageViewportState.scrollX;
-      const y = scalePx(chart.top) - imageViewportState.scrollY;
-      return x + scalePx(chart.width) >= -margin &&
-        x <= width + margin &&
-        y + scalePx(chart.height) >= -margin &&
-        y <= height + margin;
-    });
+    const frozenWidth = virtualState.freeze?.columns
+      ? Math.min(width, Math.max(0, (table?.ctx.fixedLeftWidth ?? 0) - scalePx(INDEX_COLUMN_WIDTH)))
+      : 0;
+    const frozenHeight = virtualState.freeze?.rows ? Math.min(height, frozenRows.height) : 0;
+    const project = <T extends SheetImage | SheetChart>(drawing: T) => {
+      const item = applyAutoRowDrawingGeometry(drawing, virtualState);
+      return getDrawingPlacements(item, {
+        left: scalePx(item.left), top: scalePx(item.top),
+        width: scalePx(item.width), height: scalePx(item.height),
+      }, { ...imageViewportState, width, height }, frozenWidth, frozenHeight);
+    };
+    renderedImages = sheetImages.flatMap(project);
+    renderedCharts = sheetCharts.flatMap(project);
 
-    setHidden(imageViewport, visibleImages.length === 0 && visibleCharts.length === 0);
+    setHidden(imageViewport, renderedImages.length === 0 && renderedCharts.length === 0);
     Object.assign(imageViewport.style, {
       left: `${scalePx(INDEX_COLUMN_WIDTH)}px`,
       top: `${scalePx(HEADER_HEIGHT)}px`,
@@ -1290,20 +1297,14 @@ const renderFileViewerSpreadsheet = async (
       width: `${width}px`,
       height: `${height}px`,
     });
-    imageLayer.style.transform =
-      `translate(${-imageViewportState.scrollX}px, ${-imageViewportState.scrollY}px)`;
-    const imageElements = visibleImages.map((image, index) => {
+    const imageElements = renderedImages.map((placement, index) => {
+      const image = placement.drawing;
       const element = documentRef.createElement('img');
       element.className = 'excel-image';
       element.src = image.src;
       element.alt = image.id;
       element.draggable = false;
-      Object.assign(element.style, {
-        left: `${scalePx(image.left)}px`,
-        top: `${scalePx(image.top)}px`,
-        width: `${scalePx(image.width)}px`,
-        height: `${scalePx(image.height)}px`,
-      });
+      Object.assign(element.style, getDrawingPlacementStyle(placement));
       element.dataset.imageIndex = `${index}`;
       void imageSourceResolver.resolve(image).then((source) => {
         if (!disposed && element.isConnected && element.src !== source) {
@@ -1312,14 +1313,9 @@ const renderFileViewerSpreadsheet = async (
       });
       return element;
     });
-    const chartElements = visibleCharts.map((chart) => {
-      const element = renderSpreadsheetChart(documentRef, chart);
-      Object.assign(element.style, {
-        left: `${scalePx(chart.left)}px`,
-        top: `${scalePx(chart.top)}px`,
-        width: `${scalePx(chart.width)}px`,
-        height: `${scalePx(chart.height)}px`,
-      });
+    const chartElements = renderedCharts.map((placement) => {
+      const element = renderSpreadsheetChart(documentRef, placement.drawing);
+      Object.assign(element.style, getDrawingPlacementStyle(placement));
       return element;
     });
     imageLayer.replaceChildren(...imageElements, ...chartElements);
@@ -1342,8 +1338,9 @@ const renderFileViewerSpreadsheet = async (
     if (loadingTitle) {
       t.bind(loadingTitle, node => { node.textContent = getSheetLoadingText(); });
     }
-    t.bind(error, node => { node.textContent = errorMessage ? normalizeFileViewerErrorMessage(loadError || errorMessage, context?.options) : ''; });
+    t.bind(errorText, node => { node.textContent = errorMessage ? normalizeFileViewerErrorMessage(loadError || errorMessage, context?.options) : ''; });
     setHidden(error, !errorMessage);
+    setHidden(retryPassword, !retryReason);
     setHidden(sheetLoading, !showStreamingLoading());
     const cacheText = sheetLoading.querySelector<HTMLElement>('.sheet-loading-summary');
     if (cacheText) {
@@ -1611,6 +1608,8 @@ const renderFileViewerSpreadsheet = async (
     const display = fillViewport && virtualState.active
       ? viewportFill.build(virtualState, tableHost.clientWidth, Math.max(getHostHeight(), 240), zoom)
       : { columns: virtualState.columns, rows: virtualState.rows };
+    const layout = getSpreadsheetDisplayColumns(display.columns, zoom, tableHost.clientWidth);
+    virtualState.visibleFrozenColumns = layout.frozenColumns;
     return {
       config: createTableConfig({
         hostHeight: getHostHeight(),
@@ -1626,7 +1625,7 @@ const renderFileViewerSpreadsheet = async (
         virtualState,
         zoomScale: zoom,
       }),
-      columns: getDisplayColumns(display.columns, zoom),
+      columns: layout.columns,
       rows: display.rows,
     };
   };
@@ -1683,6 +1682,9 @@ const renderFileViewerSpreadsheet = async (
       viewportRange = { start: head, end: tail };
       syncImageViewport();
       ensureViewportWindows(head, tail);
+      for (let start = 0; start < frozenRows.count; start += virtualState.windowSize) {
+        requestWindow(start, true);
+      }
     });
   };
 
@@ -1710,6 +1712,7 @@ const renderFileViewerSpreadsheet = async (
       }),
     });
     enableEVirtTableShadowEventTargeting(table.ctx);
+    frozenRows = installFrozenRows(table, () => virtualState.freeze?.rows ?? 0);
     table.on('overlayerChange', () => commentsView.restoreCellFocus());
     table.on('onScrollX', scheduleViewportLoad);
     table.on('onScrollY', scheduleViewportLoad);
@@ -1972,6 +1975,7 @@ const renderFileViewerSpreadsheet = async (
       totalCols: meta.totalCols,
       indexOffset: detectIndexOffset(ws, rowNumberMode),
       defaults: ws.defaults,
+      freeze: ws.structure?.freeze,
       dataKeys,
       rows: buildRows(meta.totalRows),
       columns,
@@ -2371,19 +2375,18 @@ const renderFileViewerSpreadsheet = async (
       const navigatingRange = rangeNavigation.isPending();
       const finishRange = rangeNavigation.prepare(virtualState.totalRows, virtualState.totalCols);
       if (navigatingRange && !finishRange) return;
-      const targetTop = Math.max(
-        0,
-        getSearchRowTop(pending.row) - Math.max(0, (tableHost.clientHeight || 0) * 0.35)
-      );
+      const targetTop = pending.row < frozenRows.count
+        ? table.ctx.scrollY || 0
+        : Math.max(0, getSearchRowTop(pending.row) - Math.max(frozenRows.height, tableHost.clientHeight * 0.35));
       // The vendor's rendered header index can still be empty before its first
       // draw. Source column geometry is ready as soon as the window is loaded.
       const columnLeft = getSearchColumnLeft(
         getDisplayColumns(virtualState.columns, zoom),
         virtualState.dataKeys[pending.col] || getDataKey(pending.col)
       );
-      const targetLeft = columnLeft === undefined
+      const targetLeft = columnLeft === undefined || pending.col < (virtualState.visibleFrozenColumns ?? 0)
         ? table.ctx.scrollX || 0
-        : Math.max(0, columnLeft - tableHost.clientWidth / 2);
+        : Math.max(0, columnLeft - Math.max(table.ctx.fixedLeftWidth ?? 0, tableHost.clientWidth / 2));
       table.scrollTo(targetLeft, targetTop);
       table.draw();
       syncImageViewport();
@@ -2473,7 +2476,7 @@ const renderFileViewerSpreadsheet = async (
       }
 
       await workbookReady;
-      if (requestNumber !== latestSearchRequest || disposed || errorMessage) return searchState;
+      if (requestNumber !== latestSearchRequest || disposed || errorMessage || !sheets.length) return searchState;
       const matches = await requestWorkbookSearch(normalizedQuery, searchOptions);
       if (requestNumber !== latestSearchRequest || disposed) {
         return searchState;
@@ -2534,17 +2537,72 @@ const renderFileViewerSpreadsheet = async (
     rangeNavigation.notify('zoom-change', 'viewer');
   });
 
-  const emitParseWorkbook = () => {
+  const emitParseWorkbook = (password?: string) => {
+    workbookSubmittedPassword = password !== undefined;
     emitWorker('parseWorkbook', {
       workbook: buffer,
       fileType: type,
       filename: context?.filename,
       textEncoding: context?.options?.spreadsheet?.textEncoding,
       includeEmptySheets: fillViewport,
+      ...(password === undefined ? {} : { password }),
     });
   };
 
+  const setPasswordError = (
+    key: 'spreadsheet.password.cancelled' | 'spreadsheet.password.unsupported' | 'spreadsheet.password.decryptFailed',
+    retry?: FileViewerSpreadsheetPasswordRequestReason
+  ) => {
+    resolveWorkbookReady?.();
+    resolveWorkbookReady = null;
+    sheetInitializing = false;
+    loadingState = false;
+    retryReason = retry;
+    loadError = t.error(key);
+    errorMessage = loadError.message;
+    renderChrome();
+    if (retry) retryPassword.focus({ preventScroll: true });
+  };
+
+  const requestWorkbookPassword = async (reason: FileViewerSpreadsheetPasswordRequestReason, previousError?: Error) => {
+    if (disposed || requestingPassword) return;
+    requestingPassword = true;
+    retryReason = undefined;
+    loadError = undefined;
+    errorMessage = '';
+    sheetInitializing = false;
+    loadingState = false;
+    renderChrome();
+
+    const options = context?.options?.spreadsheet;
+    const attempt = ++passwordAttempts;
+    let password: string | null | undefined;
+    try {
+      if (attempt === 1 && reason === 'encrypted' && typeof options?.password === 'string') {
+        password = options.password;
+      } else if (options?.requestPassword) {
+        password = await options.requestPassword({
+          filename: context?.filename ?? '', attempt, reason, error: previousError, signal: context?.signal
+        });
+      } else {
+        password = await passwordPrompt.request(reason);
+      }
+    } catch {
+      if (!disposed) setPasswordError('spreadsheet.password.decryptFailed', 'read-failed');
+      return;
+    } finally {
+      requestingPassword = false;
+    }
+    if (disposed || context?.signal?.aborted) return;
+    if (password == null) setPasswordError('spreadsheet.password.cancelled', reason);
+    else emitParseWorkbook(password);
+  };
+  retryPassword.addEventListener('click', () => {
+    if (retryReason) void requestWorkbookPassword(retryReason, loadError);
+  });
+
   controller.onWorkerEvent('sheets', ({ sheets: list, commentsError: error }: { sheets: SheetDefinition[]; commentsError?: boolean }) => {
+    workbookSubmittedPassword = false;
     sheets = list;
     commentsError = !!error;
     resolveWorkbookReady?.();
@@ -2569,7 +2627,20 @@ const renderFileViewerSpreadsheet = async (
     applyVirtualWindow(ws as SheetModel);
   });
 
-  controller.onWorkerEvent('parseError', ({ sessionId, startRow, message }) => {
+  controller.onWorkerEvent('parseError', ({ sessionId, startRow, message, code }) => {
+    if (code === 'encrypted' || code === 'invalid-password') {
+      void requestWorkbookPassword(code, code === 'invalid-password' ? t.error('spreadsheet.password.invalid') : undefined);
+      return;
+    }
+    if (code === 'unsupported-encryption') {
+      setPasswordError('spreadsheet.password.unsupported');
+      return;
+    }
+    if (workbookSubmittedPassword) {
+      workbookSubmittedPassword = false;
+      setPasswordError('spreadsheet.password.decryptFailed', 'read-failed');
+      return;
+    }
     resolveWorkbookReady?.();
     resolveWorkbookReady = null;
     if (sessionId && sessionId !== sheetSessionId) {
@@ -2652,6 +2723,7 @@ const renderFileViewerSpreadsheet = async (
     $el: root,
     unmount() {
       disposed = true;
+      passwordPrompt.close();
       autoRowHeight.destroy();
       commentsView.destroy();
       rangeNavigation.cancel('disposed');

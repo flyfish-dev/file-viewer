@@ -21,6 +21,9 @@ const { parseOfdDocument, renderOfdByScale, setPageScale } = await import(
 const { converterDpi, parseStBox } = await import(
   pathToFileURL(join(packageDir, 'vendor/dltech/ofd/ofd_util.js')).href
 )
+const { renderImageObject } = await import(
+  pathToFileURL(join(packageDir, 'vendor/dltech/ofd/ofd_render.js')).href
+)
 
 const assert = (condition, message) => {
   if (!condition) {
@@ -83,6 +86,18 @@ const getRenderedImageBox = image => {
 const almostEqual = (actual, expected, tolerance = 0.05) =>
   Number.isFinite(actual) && Math.abs(actual - expected) <= tolerance
 
+for (const [ctm, transform] of [
+  ['8 0 0 12 15 18', ''],
+  ['-8 0 0 12 15 18', 'scale(-1, 1)'],
+  ['8 0 0 -12 15 18', 'scale(1, -1)'],
+  ['-8 0 0 -12 15 18', 'scale(-1, -1)'],
+]) {
+  const element = renderImageObject(300, 400, {
+    1: { format: 'png', img: 'data:image/png;base64,' },
+  }, { '@_Boundary': '10 20 40 50', '@_CTM': ctm, '@_ResourceID': 1, pfIndex: 0 })
+  assert((element.style.transform || '') === transform, `CTM ${ctm} lost its signed image scale`)
+}
+
 const verifyFile = async filePath => {
   const bytes = await readFile(filePath)
   const documents = await parseOfd(bytes)
@@ -143,6 +158,11 @@ const verifyFile = async filePath => {
               `${filePath}: page ${pageIndex + 1} image ${imageObject['@_ID'] || order} expected ${property}=${value}, got: ${style}`,
             )
           }
+          if (a < 0 || d < 0) {
+            const expectedScale = `scale(${a < 0 ? -1 : 1}, ${d < 0 ? -1 : 1})`
+            assert(renderedImage.style.transform === expectedScale,
+              `${filePath}: page ${pageIndex + 1} image ${imageObject['@_ID'] || order} lost its signed image scale`)
+          }
         } else {
           const matrix = /transform:\s*matrix\(([^)]+)\)/.exec(style)?.[1]?.split(/\s*,\s*/).map(Number)
           assert(matrix?.length === 6, `${filePath}: page ${pageIndex + 1} rotated image is missing its CTM: ${style}`)
@@ -163,7 +183,7 @@ const fixtureFiles = (await readdir(fixturesDir))
   .filter(name => name.endsWith('.ofd'))
   .sort()
   .map(name => join(fixturesDir, name))
-const sampleFiles = [join(repositoryRoot, 'apps/viewer-demo/public/example/ofd.ofd')]
+const sampleFiles = [join(repositoryRoot, 'apps/viewer-demo/public/example/ofd.ofd'), ...process.argv.slice(2)]
 
 let pageCount = 0
 let ordinaryImageCount = 0

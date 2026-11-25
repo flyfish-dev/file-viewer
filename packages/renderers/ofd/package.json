@@ -55,7 +55,7 @@
     "README.zh-CN.md"
   ],
   "scripts": {
-    "build": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.json && node scripts/verify-image-placement.mjs",
     "type-check": "tsc -b tsconfig.json",
     "verify:github-94": "node scripts/verify-github-94.mjs",
     "verify:image-placement": "node scripts/verify-image-placement.mjs",
