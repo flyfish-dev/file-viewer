@@ -71,6 +71,9 @@ interface TableConfigOptions {
   commentLabel?: (comment: SheetComment) => string
   copySelection?: (params: SpreadsheetCopyParams) => void
   searchCell?: (row: number, col: number) => 'active' | 'match' | undefined
+  getRowPosition?: (row: number) => { top: number; bottom: number } | undefined
+  getFrozenRowCount?: () => number
+  requestMergeAnchor?: (row: number) => void
   sheetDefaults: SheetDefaults
   virtualState: VirtualSheetState
   zoomScale?: number
@@ -86,6 +89,8 @@ interface SpreadsheetCopyParams {
 interface TextOverflowLayout {
   left: number
   width: number
+  top?: number
+  height?: number
 }
 
 interface TextOverflowMirror {
@@ -1033,8 +1038,9 @@ const applyOverflowLayout = (text: HTMLSpanElement, overflowLayout?: TextOverflo
   Object.assign(text.style, {
     position: 'absolute',
     left: `${overflowLayout.left}px`,
-    top: '0',
+    top: `${overflowLayout.top ?? 0}px`,
     width: `${overflowLayout.width}px`,
+    height: overflowLayout.height === undefined ? '100%' : `${overflowLayout.height}px`,
     overflow: 'hidden',
     textOverflow: 'clip'
   } satisfies Partial<CSSStyleDeclaration>)
@@ -1192,6 +1198,9 @@ export const createTableConfig = ({
   commentLabel,
   copySelection,
   searchCell,
+  getRowPosition,
+  getFrozenRowCount,
+  requestMergeAnchor,
   sheetDefaults,
   virtualState,
   zoomScale = 1
@@ -1206,38 +1215,75 @@ export const createTableConfig = ({
   const loadingStyle = getLoadingCellStyle(normalizedScale, darkMode)
   const frozenColumns = getFrozenColumnCount(virtualState)
   let firstVisibleColumn = frozenColumns + 1
+  let firstVisibleRow = 0
+  let frozenRows = 0
 
-  // Paint a merge separately within each horizontal pane. The scrolled pane's
-  // first visible covered cell reuses the original text box when its anchor
-  // was outside the pane or scrolled away.
+  // Each pane paints a single representative of the part it can display.
+  // Geometry and content still come from the full merge at its original anchor.
   const getProjectedMerge = (rowIndex: number, colIndex: number, column: Column) => {
     const cellKey = getCellCacheKey(rowIndex, colIndex, column)
     const anchorKey = virtualState.mergeCoveredMap.get(cellKey) || cellKey
     const merge = virtualState.mergeStartMap.get(anchorKey)
+    if (!merge) return undefined
+
+    const mergeBottom = merge.row + merge.rowspan
+    const inFrozenRows = rowIndex < frozenRows
+    const bottom = inFrozenRows ? Math.min(frozenRows, mergeBottom) : mergeBottom
+    let top = inFrozenRows ? merge.row : Math.max(merge.row, firstVisibleRow, frozenRows)
+    const row = virtualState.rows[rowIndex]
+    if (rowIndex < top || rowIndex >= bottom || (row && isHiddenVirtualRow(row))) return undefined
+    while (top < rowIndex) {
+      const candidate = virtualState.rows[top]
+      if (!candidate || !isHiddenVirtualRow(candidate)) break
+      top += 1
+    }
+    if (rowIndex !== top) return undefined
+
     const displayCol = getDataColumnIndex(column, colIndex) + 1
-    if (!merge || merge.row !== rowIndex) {
-      return undefined
-    }
-    const mergeEnd = merge.col + merge.colspan
-    const frozenSegment = displayCol === merge.col && merge.col <= frozenColumns && mergeEnd > frozenColumns + 1
-    const scrollingSegment = displayCol === firstVisibleColumn && displayCol > frozenColumns &&
-      merge.col < displayCol && displayCol < mergeEnd
-    if (!frozenSegment && !scrollingSegment) {
-      return undefined
-    }
+    const mergeRight = merge.col + merge.colspan
+    const inFrozenColumns = displayCol <= frozenColumns
+    const right = inFrozenColumns ? Math.min(frozenColumns + 1, mergeRight) : mergeRight
+    const left = inFrozenColumns ? merge.col : Math.max(merge.col, firstVisibleColumn, frozenColumns + 1)
+    if (displayCol !== left || displayCol >= right) return undefined
+    const rowspan = bottom - top
+    const colspan = right - left
+    if (rowspan === merge.rowspan && colspan === merge.colspan) return undefined
+
+    return { merge, anchorKey, top, bottom, left, right, rowspan, colspan }
+  }
+
+  const getProjectedLayout = (projected: NonNullable<ReturnType<typeof getProjectedMerge>>): TextOverflowLayout => {
+    const { merge, top, left, rowspan } = projected
     let width = 0
     let offsetLeft = 0
     for (let col = merge.col; col < merge.col + merge.colspan; col += 1) {
       const sourceWidth = getRenderColumnWidth(virtualState.columns[col])
       const scaledWidth = sourceWidth > 0 ? scaleNumber(sourceWidth, normalizedScale) : 0
       width += scaledWidth
-      if (col < displayCol) offsetLeft += scaledWidth
+      if (col < left) offsetLeft += scaledWidth
     }
-    const segmentEnd = frozenSegment ? frozenColumns + 1 : mergeEnd
-    return { merge, anchorKey, width, offsetLeft, colspan: segmentEnd - displayCol, frozenSegment }
+    if (rowspan === merge.rowspan) return { left: -offsetLeft, width }
+
+    const first = getRowPosition?.(merge.row)
+    const visible = getRowPosition?.(top)
+    const last = getRowPosition?.(merge.row + merge.rowspan - 1)
+    if (first && visible && last) {
+      return { left: -offsetLeft, width, top: first.top - visible.top, height: last.bottom - first.top }
+    }
+
+    let height = 0
+    let offsetTop = 0
+    for (let row = merge.row; row < merge.row + merge.rowspan; row += 1) {
+      const rowHeight = virtualState.rows[row]?._height ?? scaledCellHeight
+      height += rowHeight
+      if (row < top) offsetTop += rowHeight
+    }
+    return { left: -offsetLeft, width, top: -offsetTop, height }
   }
 
-  const spanMethod: SpanMethod = ({ rowIndex, colIndex, column, visibleLeafColumns }) => {
+  const spanMethod: SpanMethod = ({ row, rowIndex, colIndex, column, visibleLeafColumns, headIndex }) => {
+    firstVisibleRow = Math.max(headIndex ?? 0, 0)
+    frozenRows = getFrozenRowCount?.() ?? 0
     if (visibleLeafColumns?.length) {
       const visibleDataColumns = visibleLeafColumns.filter(item =>
         item.key !== INDEX_COLUMN_KEY && !item.fixed && isVisibleDataColumn(item)
@@ -1253,7 +1299,7 @@ export const createTableConfig = ({
     const key = getCellCacheKey(rowIndex, colIndex, column)
     const projected = getProjectedMerge(rowIndex, colIndex, column)
     if (projected) {
-      return { rowspan: projected.merge.rowspan, colspan: projected.colspan }
+      return { rowspan: projected.rowspan, colspan: projected.colspan }
     }
     if (virtualState.mergeCoveredMap.has(key)) {
       return { rowspan: 0, colspan: 0 }
@@ -1262,6 +1308,9 @@ export const createTableConfig = ({
     const merge = virtualState.mergeStartMap.get(key)
     if (!merge) {
       return
+    }
+    if (isHiddenVirtualRow(row as VirtualRow)) {
+      return { rowspan: 0, colspan: 0 }
     }
 
     return {
@@ -1282,13 +1331,15 @@ export const createTableConfig = ({
       return undefined
     }
 
-    if (getRowState(currentRow) !== RowState.Loaded) {
+    const projected = getProjectedMerge(rowIndex, colIndex, column)
+    const sourceRowIndex = projected?.merge.row ?? rowIndex
+    const sourceRow = sourceRowIndex === rowIndex ? currentRow : virtualState.rows[sourceRowIndex]
+    if (getRowState(sourceRow) !== RowState.Loaded) {
       return loadingStyle
     }
 
-    const projected = getProjectedMerge(rowIndex, colIndex, column)
     const style = scaleCellStyle(virtualState.cellCache.get(projected?.anchorKey || getCellCacheKey(rowIndex, colIndex, column)), normalizedScale)
-    const match = searchCell?.(rowIndex, projected ? projected.merge.col - 1 : getDataColumnIndex(column, colIndex))
+    const match = searchCell?.(sourceRowIndex, projected ? projected.merge.col - 1 : getDataColumnIndex(column, colIndex))
     return match ? { ...style, backgroundColor: match === 'active' ? '#ffbf47' : '#fff1a8', color: '#202124' } : style
   }
 
@@ -1306,7 +1357,7 @@ export const createTableConfig = ({
     value: unknown
   }) => {
     const currentRow = row as VirtualRow
-    if (colIndex === 0 || isHiddenVirtualRow(currentRow) || getRowState(currentRow) !== RowState.Loaded) {
+    if (colIndex === 0 || isHiddenVirtualRow(currentRow)) {
       return undefined
     }
 
@@ -1315,13 +1366,19 @@ export const createTableConfig = ({
     if (virtualState.mergeCoveredMap.has(ownCellKey) && !projected) {
       return undefined
     }
+    const sourceRowIndex = projected?.merge.row ?? rowIndex
+    const sourceRow = sourceRowIndex === rowIndex ? currentRow : virtualState.rows[sourceRowIndex]
+    if (!sourceRow || getRowState(sourceRow) !== RowState.Loaded) {
+      if (sourceRowIndex !== rowIndex) requestMergeAnchor?.(sourceRowIndex)
+      return undefined
+    }
 
     const cellKey = projected?.anchorKey || ownCellKey
     const style = scaleCellStyle(virtualState.cellCache.get(cellKey), normalizedScale)
     const dataColIndex = projected ? projected.merge.col - 1 : getDataColumnIndex(column, colIndex)
-    const renderValue = projected ? currentRow[getDataKey(dataColIndex)] : value
+    const renderValue = projected ? sourceRow[getDataKey(dataColIndex)] : value
     const measureDocument = typeof document === 'undefined' ? undefined : document
-    const overflowLayout = projected ? { left: -projected.offsetLeft, width: projected.width } : getExcelOverflowLayout(
+    const overflowLayout = projected ? getProjectedLayout(projected) : getExcelOverflowLayout(
       virtualState,
       currentRow,
       rowIndex,
@@ -1342,11 +1399,12 @@ export const createTableConfig = ({
         measureDocument
       )
       : undefined
-    const match = searchCell?.(rowIndex, dataColIndex)
+    const match = searchCell?.(sourceRowIndex, dataColIndex)
     const renderText = shouldRenderTextInOverlay(style, column) || !!overflowLayout || !!mirror || !!match
-    // A projected scrolling tail must not duplicate a comment already visible
-    // on the real anchor in the frozen pane.
-    const hasFrozenAnchor = projected && !projected.frozenSegment && projected.merge.col <= frozenColumns
+    const hasFrozenAnchor = projected && (
+      projected.merge.col <= frozenColumns && projected.left > frozenColumns ||
+      projected.merge.row < frozenRows && projected.top >= frozenRows
+    )
     const comment = hasFrozenAnchor ? undefined : commentsByCell.get(cellKey)
     if (!hasBorder(style) && !renderText && !comment) {
       return undefined
@@ -1361,13 +1419,18 @@ export const createTableConfig = ({
         verticalAlign: style?.verticalAlign || column?.verticalAlign
       }
       const collapsedStyle = hasBorder(style)
-        ? getCollapsedBorderStyle(virtualState, rowIndex, dataColIndex, baseStyle, normalizedScale)
+        ? getCollapsedBorderStyle(virtualState, sourceRowIndex, dataColIndex, baseStyle, normalizedScale)
         : baseStyle
+      const borders = projected ? {
+        ...collapsedStyle,
+        borderTop: projected.top === projected.merge.row ? collapsedStyle.borderTop : undefined,
+        borderBottom: projected.bottom === projected.merge.row + projected.merge.rowspan ? collapsedStyle.borderBottom : undefined,
+        borderLeft: projected.left === projected.merge.col ? collapsedStyle.borderLeft : undefined,
+        borderRight: projected.right === projected.merge.col + projected.merge.colspan ? collapsedStyle.borderRight : undefined
+      } : collapsedStyle
       renderCellOverlay(
         cellEl,
-        projected?.frozenSegment
-          ? { ...collapsedStyle, borderRight: undefined }
-          : projected ? { ...collapsedStyle, borderLeft: undefined } : collapsedStyle,
+        borders,
         mirror?.style || collapsedStyle,
         mirror ? mirror.value : renderValue,
         renderText,
@@ -1401,7 +1464,7 @@ export const createTableConfig = ({
       cellEl.style.boxShadow = match === 'active' ? 'inset 0 0 0 2px #9a5700' : ''
       if (match) {
         cellEl.dataset.spreadsheetSearch = match
-        cellEl.dataset.spreadsheetRow = `${rowIndex}`
+        cellEl.dataset.spreadsheetRow = `${sourceRowIndex}`
         cellEl.dataset.spreadsheetCol = `${dataColIndex}`
         cellEl.style.background = match === 'active' ? '#ffbf47' : '#fff1a8'
       } else {

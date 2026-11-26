@@ -67,6 +67,7 @@ describe('spreadsheet CSV / TSV text decoding', () => {
       absWorkingDir: packageDir,
       entryPoints: [fileURLToPath(new URL('../packages/renderers/spreadsheet/src/spreadsheet/worker/sheetjs/sheet.worker.ts', import.meta.url))],
       bundle: true,
+      conditions: ['file-viewer-custom-locales', 'module'],
       format: 'esm',
       platform: 'browser',
       target: ['es2019'],
@@ -76,12 +77,12 @@ describe('spreadsheet CSV / TSV text decoding', () => {
       plugins: [{
         name: 'workspace-public-core-entries',
         setup(bundle) {
-          // Match the source aliases used by the ordinary unit suite, while
-          // keeping the real public barrels and the complete Worker graph.
+          // Match the custom-locale Core entrypoints selected by the Worker build
+          // while retaining the real source graph for the decoder assertion.
           bundle.onResolve({ filter: /^@file-viewer\/core(?:\/headless)?$/ }, ({ path }) => ({
             path: fileURLToPath(new URL(path.endsWith('/headless')
-              ? '../packages/core/src/headless.ts'
-              : '../packages/core/src/index.ts', import.meta.url)),
+              ? '../packages/core/src/custom-locales-headless.ts'
+              : '../packages/core/src/custom-locales.ts', import.meta.url)),
           }))
         },
       }],

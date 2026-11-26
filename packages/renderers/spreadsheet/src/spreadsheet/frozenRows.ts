@@ -49,6 +49,24 @@ function clipCellHitTest(cell: RenderedCell, minY: number, maxY: number) {
   }
 }
 
+export function getEffectiveFrozenRowCount(
+  visibleHeight: number,
+  requestedCount: number,
+  getRowBottom: (index: number) => number
+) {
+  if (visibleHeight <= 0 || requestedCount <= 0) return 0
+  // Leave room to scroll when the saved pane is larger than the viewport.
+  const limit = visibleHeight - Math.min(24, visibleHeight / 4)
+  let low = 0
+  let high = requestedCount
+  while (low < high) {
+    const mid = Math.ceil((low + high) / 2)
+    if (getRowBottom(mid - 1) <= limit) low = mid
+    else high = mid - 1
+  }
+  return low
+}
+
 /** Bridge the pinned e-virt-table canvas and DOM renderer without remapping sheet indexes. */
 export function installFrozenRows(table: unknown, getRequestedCount: () => number) {
   const { body, ctx, overlayer } = table as {
@@ -100,23 +118,15 @@ export function installFrozenRows(table: unknown, getRequestedCount: () => numbe
     if (!requestedCount || !sample || ctx.body.visibleHeight <= 0) return
 
     const positions = ctx.database
-    // Leave room to scroll on layouts where the saved pane is larger than the viewport.
-    const limit = ctx.body.visibleHeight - Math.min(24, ctx.body.visibleHeight / 4)
-    let low = 0
-    let high = requestedCount
-    while (low < high) {
-      const mid = Math.ceil((low + high) / 2)
-      if (positions.getPositionForRowIndex(mid - 1).bottom <= limit) low = mid
-      else high = mid - 1
-    }
-    if (!low) return
+    const count = getEffectiveFrozenRowCount(ctx.body.visibleHeight, requestedCount, index => positions.getPositionForRowIndex(index).bottom)
+    if (!count) return
 
-    layout.count = low
-    layout.height = positions.getPositionForRowIndex(low - 1).bottom
+    layout.count = count
+    layout.height = positions.getPositionForRowIndex(count - 1).bottom
     const cut = ctx.body.y + layout.height
     const end = ctx.body.y + ctx.body.visibleHeight
-    scrolling = body.renderRows.filter(row => row.rowIndex >= low)
-    for (let index = 0; index < low; index += 1) {
+    scrolling = body.renderRows.filter(row => row.rowIndex >= count)
+    for (let index = 0; index < count; index += 1) {
       const { top, height } = positions.getPositionForRowIndex(index)
       if (height <= 0.1) continue
       const row = Reflect.construct(sample.constructor, [
