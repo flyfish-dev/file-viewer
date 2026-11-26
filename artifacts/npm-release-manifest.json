@@ -1,25 +1,25 @@
 {
   "schemaVersion": 1,
   "mode": "runtime-only",
-  "sourceCommit": "fb596fda74cf521cf3cf4e680271ef19cda89c92",
-  "policyCatalogSha256": "d942baa3db90ecd1d8fde2a28643c16de7d6fd29847836eef8ff56e6027b2120",
-  "version": "3.3.6",
-  "generatedAt": "2026-11-21T15:16:27.235Z",
+  "sourceCommit": "b5f8219fa4ccf48b6f415a7a54c53c9f6aeb9bf0",
+  "policyCatalogSha256": "c00e61915d1ee5fa85ad5733061a0afd92d2c32c31cb76a62cca653ae54f6132",
+  "version": "3.3.7",
+  "generatedAt": "2026-11-26T03:47:22.652Z",
   "packageCount": 89,
   "packages": [
     {
       "id": "core",
       "kind": "core",
       "packageName": "@file-viewer/core",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/core",
-      "tarball": "file-viewer-core-3.3.6.tgz",
+      "tarball": "file-viewer-core-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": "https://github.com/flyfish-dev/file-viewer-core",
@@ -37,10 +37,10 @@
           "sha256": "c68f42dfc4aefecd46bece2f8c14b45581772e8e7ad364c3273c28e7147efaa6"
         }
       },
-      "integrity": "sha512-yyu/rFJEPjZ9IBZeJAdFeHRKR7tPFN2dNAVkaQCa/9BNM3UqQdqA8kq3TEOrKwcC6JE5VTtjWt7Ad0IbiHt/yg==",
+      "integrity": "sha512-HlVcpa4NqXDKgnq8Wsawnjwh5Jn8M2HyThA4cANHHIQBbYp+GS9IbpzSoTA4W1n6mVwAaScJ7nJ8rN/4bzn+Dw==",
       "license": "Apache-2.0",
-      "tarballSize": 564230,
-      "sha256": "27630d9e459d42d5e803364d487858b624af43c0080bcb6ea219c8c76eaadd82",
+      "tarballSize": 566072,
+      "sha256": "32c55d433a73cb9e7ad9f38826b64028f86d424ffa2b532505425386b2ec00b7",
       "entrypointCount": 23,
       "assetCount": 188,
       "fileCount": 201
@@ -49,15 +49,15 @@
       "id": "asset-installer",
       "kind": "utility",
       "packageName": "@file-viewer/asset-installer",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/asset-installer",
-      "tarball": "file-viewer-asset-installer-3.3.6.tgz",
+      "tarball": "file-viewer-asset-installer-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -75,10 +75,10 @@
           "sha256": "a06badebc40d2d21bb1dafc8425fe8f8815f3c56e7a053965f5b03e8e917dccf"
         }
       },
-      "integrity": "sha512-3CJYfAs9dm5fQo2gtTfnBYHmspug0ihR9ffdcfhJ3RJoVCLWjsUlDZC4NL8gbzm2pjnHWdcd3t+XIidhNYs6xA==",
+      "integrity": "sha512-eV+hfVfMBFKlD+wu2cH05wK52XQeZ6HJNVmCqooBD4trfW26Pox8/NyRF39GAe5OeBzXZ2EfAU50mGUsbjqfYw==",
       "license": "Apache-2.0",
       "tarballSize": 14415,
-      "sha256": "1d8a8f8384185b772a81d392458461857a4e266fd9203843eb1dadb2da3447dd",
+      "sha256": "b908ed3b389e88853c90d2ae7995257a9a9ecfad38e853ed317db2201b77b04f",
       "entrypointCount": 4,
       "assetCount": 4,
       "fileCount": 9
@@ -87,15 +87,15 @@
       "id": "assets-cad",
       "kind": "utility",
       "packageName": "@file-viewer/assets-cad",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-cad",
-      "tarball": "file-viewer-assets-cad-3.3.6.tgz",
+      "tarball": "file-viewer-assets-cad-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -113,10 +113,10 @@
           "sha256": "e778b5aff2780a74da0c7877a7c033461fc5048510b6ccdf03c5f9620515b7ad"
         }
       },
-      "integrity": "sha512-Ejwtb53kSSDIOBCvR1XwbiN4mTlrIxG3E0Frn/7dYDZ8EAlnSNelwLrG12YGfGWMbHHZdb7T8BHREhRLRQfadQ==",
+      "integrity": "sha512-W4bjAw6pIfs/blkMa6kcH5Nlo20E1bkuQI6Ym2lUpmNYxMacdZYWoi16xzNxToap1gTPIJ0DcsrM/efrTy2GEQ==",
       "license": "Apache-2.0",
       "tarballSize": 7097962,
-      "sha256": "a30a958635281557a8175bb19bc3ec11bb0cda4bd27f0084c0b968d855921d27",
+      "sha256": "1c233cb4260233213c541bf47ec6f95bd03a565083063b97247825918e0cecf3",
       "entrypointCount": 3,
       "assetCount": 22,
       "fileCount": 29
@@ -125,15 +125,15 @@
       "id": "assets-typst",
       "kind": "utility",
       "packageName": "@file-viewer/assets-typst",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-typst",
-      "tarball": "file-viewer-assets-typst-3.3.6.tgz",
+      "tarball": "file-viewer-assets-typst-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -151,10 +151,10 @@
           "sha256": "417f75ca2c64167ec1c2de2ee92c472587ef3970694dc702c8dd75c6b2561530"
         }
       },
-      "integrity": "sha512-AqZk1uyI2dvQGj5863zccCP76bTxPP2ZheL93xY7tq+FkqzsWuX8VEL7tBKiSe1c16I/Ab823vOK4I/5Xp2dzQ==",
+      "integrity": "sha512-iqFXzdeec1FhdjtmNiYAql3YILmJ3jzvbSdLbOlTOX0jMrCtUKxR8oTJTS0KRRp8dGTf7s/BF1LOXW9rcM97jw==",
       "license": "Apache-2.0",
-      "tarballSize": 17183027,
-      "sha256": "c9c83e8ed22d53d89eb92a933a52dbe67dfdc9fc9d10b6f5dbade634f9a3c14d",
+      "tarballSize": 17183047,
+      "sha256": "2b2b98db06c5e576ca7049fe57f88a1335f16cc2a63c2109bd0cf6822ceb39b9",
       "entrypointCount": 3,
       "assetCount": 26,
       "fileCount": 33
@@ -163,15 +163,15 @@
       "id": "assets-model",
       "kind": "utility",
       "packageName": "@file-viewer/assets-model",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-model",
-      "tarball": "file-viewer-assets-model-3.3.6.tgz",
+      "tarball": "file-viewer-assets-model-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -189,10 +189,10 @@
           "sha256": "aaf2f128a1469676a24a9c297d0568ac4ba54b911dd747ad13df917734097c62"
         }
       },
-      "integrity": "sha512-Sm4Q/YmgbCr8c/aNKMGOtSEW+3qyAgX7Lu2DLFJ/zo1SgrDrunXO2aHZxgwodvfp963g3+7xor0DPpCq063BZg==",
+      "integrity": "sha512-lOV8HquyzbtYvWq4uuo4UJbFFgkGDhl9SdG8XEMSW1b2mZ90+tfLV7hHIUaE37I7D+G+HzPM1IcAACTLhPvW8w==",
       "license": "Apache-2.0",
-      "tarballSize": 3178492,
-      "sha256": "c2872904c1d62e12de4be51a04755acbef322166fad592ab2d5d8758e2996f07",
+      "tarballSize": 3178493,
+      "sha256": "6488687aa3944c2a9f0e45070789388180b2be7e411547e926e713a1a62e11b6",
       "entrypointCount": 3,
       "assetCount": 9,
       "fileCount": 16
@@ -201,15 +201,15 @@
       "id": "assets-drawing",
       "kind": "utility",
       "packageName": "@file-viewer/assets-drawing",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-drawing",
-      "tarball": "file-viewer-assets-drawing-3.3.6.tgz",
+      "tarball": "file-viewer-assets-drawing-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -227,10 +227,10 @@
           "sha256": "22c4a9525435e2671f56733a7260443b4117ebdeb02b4f48f73efcdf422c30cd"
         }
       },
-      "integrity": "sha512-4WNEwP3plZXJD+s2SZynNsJKvY9rjZo3v5zjAx4qBJoNWAsXIDXlQrbjLpSwThs5Ux0SsQ58B7i4VB9PD17prA==",
+      "integrity": "sha512-HklWpmCCADgjqEORyV+/RiFS2DUzSeVNbW0f0YbITNdT7amQjIj1YkPnn40N8VTM6mLu+hLrSDuWZKInVcLdlQ==",
       "license": "Apache-2.0",
-      "tarballSize": 10857122,
-      "sha256": "667943d4fabcaa3373a6dd0d12e2f7bbc676ea52e52ef906da2cb9cac5d61538",
+      "tarballSize": 10857128,
+      "sha256": "478133e040ff116d52e87f225ced5979869b58c04b5c24a4cd1170f03d636755",
       "entrypointCount": 3,
       "assetCount": 2408,
       "fileCount": 2415
@@ -239,15 +239,15 @@
       "id": "assets-iwork",
       "kind": "utility",
       "packageName": "@file-viewer/assets-iwork",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-iwork",
-      "tarball": "file-viewer-assets-iwork-3.3.6.tgz",
+      "tarball": "file-viewer-assets-iwork-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -265,10 +265,10 @@
           "sha256": "35fbec7a063a45b703a2b4c8394b3931b52f1641c8d37b57fae73cbf35885d8e"
         }
       },
-      "integrity": "sha512-3ex5s47AZ0+1H/5/aWI5YROKeZeHSkENnnR0KN5UGg37eCqCpoFWJV6H69PsI4MDyKwDrvcPni0wwZ9S3ZCGCg==",
+      "integrity": "sha512-9Fdm33Rxs4lZpHP2FYTIzeMA621KxMEVBTArV14pAe43lQMHxuBNnDZ0EdmUoAfKSOQdeWh4Wwb9bFxgxuiyaw==",
       "license": "Apache-2.0",
-      "tarballSize": 590876,
-      "sha256": "e01fcdf2e2732a17decac22a3d41c047033475b11bed1f401acb10781395365a",
+      "tarballSize": 590878,
+      "sha256": "d68c78f3d3ba5d8c06d2afbf4bcca0d6e84f5e08c453371ffdd4b6869341fae7",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 11
@@ -277,15 +277,15 @@
       "id": "assets-ppt",
       "kind": "utility",
       "packageName": "@file-viewer/assets-ppt",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-ppt",
-      "tarball": "file-viewer-assets-ppt-3.3.6.tgz",
+      "tarball": "file-viewer-assets-ppt-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -303,10 +303,10 @@
           "sha256": "0d804700acf892718fbb497d4c991396dde2530d86e67e6bd32dc446cc8e1ad4"
         }
       },
-      "integrity": "sha512-KySBU+ljb4WQTUyM4jDIsstNhL0v+APLZ8WVxKvmQ4qOhdWsuJfpBrWQStJImSfGcsHOk7W7iQQV0dSVdJ+UlQ==",
+      "integrity": "sha512-JK1ze9yCMuG+sl4eQlvaklnEBRM2K2wEPe2ONGyuP4tUPy0+5Imo9nsSJu59Eyt9myq/48Pv0jQ0BaZPwsqVWw==",
       "license": "Apache-2.0",
-      "tarballSize": 560178,
-      "sha256": "f42924c3ef707edd7801f5ad311bcf52a4e3adf33e2e04fdff76f4d85420629b",
+      "tarballSize": 560181,
+      "sha256": "ed15a64329cec98ea20c99f1e7985fa6a9c3e9c336ba345017dc7d978ae4d9f9",
       "entrypointCount": 3,
       "assetCount": 98,
       "fileCount": 105
@@ -315,15 +315,15 @@
       "id": "assets-hangul",
       "kind": "utility",
       "packageName": "@file-viewer/assets-hangul",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-hangul",
-      "tarball": "file-viewer-assets-hangul-3.3.6.tgz",
+      "tarball": "file-viewer-assets-hangul-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -341,10 +341,10 @@
           "sha256": "f7d4213011db7105838a917613da84415d7f25ef94f5ac063678865658439a74"
         }
       },
-      "integrity": "sha512-qzCp2QBLiXP4anXA5wbz2Y2CNF+ViOqTp1SRr89V7IdBpe+QVgZkHIt0ik1RpA1VnLnlzcmQNOqRwVkYhIkEGQ==",
+      "integrity": "sha512-HY0dzEzkxp3VWpy4Z+Iyabq2KHIQmqvNMH7IyttqAHXcB18MFHuQguk7MQ2blBDCOkcqqRntnRWdryvPTLDeQw==",
       "license": "Apache-2.0",
       "tarballSize": 199192,
-      "sha256": "1c31e9119904e2d86f33d960cf843f5fcb074419a0bf8b3ec502510db973d2c2",
+      "sha256": "6741d643cba0f5c174fb9bc2439af189562f67c02587a9b6fc9fee9500275667",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 11
@@ -353,15 +353,15 @@
       "id": "assets-wordperfect",
       "kind": "utility",
       "packageName": "@file-viewer/assets-wordperfect",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-wordperfect",
-      "tarball": "file-viewer-assets-wordperfect-3.3.6.tgz",
+      "tarball": "file-viewer-assets-wordperfect-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -379,10 +379,10 @@
           "sha256": "fee6818797928c31abba58a6caac8d69ef7de2c83957b165171027a3e364e434"
         }
       },
-      "integrity": "sha512-2c9QhhOyJuTnlarE9cqERSRsDa30s/Rrsg9UasmEHfxBqSK+lPExJoQMoydOuUbuYKNxJ5kknlD1hR8/N3efBA==",
+      "integrity": "sha512-wts6If8B5aitqnSNXdW4SXPc6JMtGvhv1xyqh2yl7d5HJtfC8fLe6b2d2HGWNhkxJ02wTVMNSiGcrSIyQZXhhg==",
       "license": "Apache-2.0",
-      "tarballSize": 244652,
-      "sha256": "73e4e14f2173e151cba40dd455772fdab8ed8659275cb62699c0af8f67d7efda",
+      "tarballSize": 244654,
+      "sha256": "f55c086428c70b3a3bcc33409b9f5801c298e4c1aa2d0281e7d99fcc256b6309",
       "entrypointCount": 3,
       "assetCount": 21,
       "fileCount": 28
@@ -391,15 +391,15 @@
       "id": "assets-chm",
       "kind": "utility",
       "packageName": "@file-viewer/assets-chm",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-chm",
-      "tarball": "file-viewer-assets-chm-3.3.6.tgz",
+      "tarball": "file-viewer-assets-chm-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -417,10 +417,10 @@
           "sha256": "087724214b3d004b6793ca0f867f24390d23191227a699e53011495be7dcfbd8"
         }
       },
-      "integrity": "sha512-EonYOFi3LbS+fqhZpbChPKwEKXCE9I8pgdx2KmJe6d77/nqPT7CcDrQpvD9AzHfVWQ7ZJGBfOgzuIS6Ir5mJZw==",
+      "integrity": "sha512-1FK7MKAJzHfpda8JqtHaKsLm24WglFcCiURGxTfuX0HZcYa44DKsA7TKOGbjswuqHxYD7neG3gyxzUWaev3FKw==",
       "license": "Apache-2.0",
-      "tarballSize": 281634,
-      "sha256": "5f5681652f134b9ff213bb8290fe9277a8797299187a9460f918e60669db31bc",
+      "tarballSize": 281637,
+      "sha256": "af42c1818e9880d8f6dc73743c41013f20846c1b28ab752e66423015ce0bfd5a",
       "entrypointCount": 3,
       "assetCount": 9,
       "fileCount": 19
@@ -429,15 +429,15 @@
       "id": "assets-data",
       "kind": "utility",
       "packageName": "@file-viewer/assets-data",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-data",
-      "tarball": "file-viewer-assets-data-3.3.6.tgz",
+      "tarball": "file-viewer-assets-data-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -455,10 +455,10 @@
           "sha256": "e9d0ee6f10796fbb00c00b110f5af396ac38a3306bde2e1c10085f5ca707553e"
         }
       },
-      "integrity": "sha512-flyPsU2jH2BWv7RT1Iyg3jUguusC6FU1CdZSpkK3GUgOPUUD2V8FHEOJUdYE3Ri05bOVUc56J1ekRy/9r9YThQ==",
+      "integrity": "sha512-NcLzXc3Kihars+Hk8dj1G7bJcDGVRTYYjKv3PGz3Z3RG/MnNJcF/BzWkftPw1cONNapwSKxeem0+vyziKg3DCA==",
       "license": "Apache-2.0",
-      "tarballSize": 343956,
-      "sha256": "b3475e571e439b01f9e036c626e8ce0463e2d0ee7949369e4c9f855ca15a6f81",
+      "tarballSize": 343951,
+      "sha256": "44e9396f09ec0dfe575e9eec865ad9a1cafbf6aba3ef9d9785820b58fd060678",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 11
@@ -467,15 +467,15 @@
       "id": "assets-design",
       "kind": "utility",
       "packageName": "@file-viewer/assets-design",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-design",
-      "tarball": "file-viewer-assets-design-3.3.6.tgz",
+      "tarball": "file-viewer-assets-design-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -493,10 +493,10 @@
           "sha256": "18f0638a5c041cc4e486a4d54597a0490d22b7b32105bab9e1156befeeaafad3"
         }
       },
-      "integrity": "sha512-iWoF5bELUyQWPwWp/f/uzwzBlfKiZkdZF6da5lABYT8iWcX7jWccQPkrootI47RfvMNa44MaLSe2VaN7MNJuGw==",
+      "integrity": "sha512-DFYQu51vwB3ztasNGskoArnUaupD7KRKU7NSuevgc/OGRd+KMX+2iQg7Vip+wmoiKCCbGFdSyV8RYUZqR3eYHA==",
       "license": "Apache-2.0",
-      "tarballSize": 17588846,
-      "sha256": "84baff9defeda3aa6fedcc5e4409131143b2225e398862f41231f305a831b834",
+      "tarballSize": 17588837,
+      "sha256": "2c0277604271cdab7bb3f2d199c447dca14db25c4072aff933bec6cc198f9b1e",
       "entrypointCount": 3,
       "assetCount": 32,
       "fileCount": 39
@@ -505,15 +505,15 @@
       "id": "thumbnail",
       "kind": "utility",
       "packageName": "@file-viewer/thumbnail",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/thumbnail",
-      "tarball": "file-viewer-thumbnail-3.3.6.tgz",
+      "tarball": "file-viewer-thumbnail-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -531,10 +531,10 @@
           "sha256": "e85f180dd9ad8060ff064f1f06ff512f8bbaa4572576b7406c721fc330a4597b"
         }
       },
-      "integrity": "sha512-quTzIr5ecCJiBJ80hxxDEI9losPN5FQO0w0SKNvxFVBIYApW7Ap6HGJ66317A65cEeWXkdXGkd1UIFpYNoSYDg==",
+      "integrity": "sha512-5xLS/Uqrs6uG1lebMtTUxhxvVDHbMC/cvw3KMw/AlJkacinSceXXIwMdv6pkcrejenwmbW+SK2womwn9Mi5PdA==",
       "license": "Apache-2.0",
       "tarballSize": 158191,
-      "sha256": "36ebfc06e97d5181a7a147d01f7d8a7e09f11baa7d859af203980cae2e1af03f",
+      "sha256": "fdba394f5c240dbd2510a134ea82d264724285c694ef7754e6038ae19e86c72c",
       "entrypointCount": 3,
       "assetCount": 23,
       "fileCount": 28
@@ -543,15 +543,15 @@
       "id": "copy-assets-cli",
       "kind": "utility",
       "packageName": "file-viewer-copy-assets",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/copy-assets",
-      "tarball": "file-viewer-copy-assets-3.3.6.tgz",
+      "tarball": "file-viewer-copy-assets-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -569,10 +569,10 @@
           "sha256": "2a6288b806594a85ebdfa63ba15ccc16546384ea7f9eb43a99ad7c1c98050bb7"
         }
       },
-      "integrity": "sha512-PHGMskZSn6zo/RUF3AAxAQ2iDfU+zgm9kpyPuWESjmy3LDXk6CzMUscNbRcc0MMQOo/qGy9ua+TwiE/NJ0aUhg==",
+      "integrity": "sha512-18osUnGvPYFTuQ4t9UM1pnLQr6fJ80RgZ8V8R5L2fQ8fooy956f62Nb2eof4dPq9L+/bqYI+3RjSydiicqFADw==",
       "license": "Apache-2.0",
-      "tarballSize": 70682559,
-      "sha256": "6c46f41561d172a9333cbc690adf2c854da1ef7492dea6ce4357687506d50938",
+      "tarballSize": 70684608,
+      "sha256": "55a0782985389d3590ce8e97b171faac3e5bac94d99489375316c273b2b33e9a",
       "entrypointCount": 4,
       "assetCount": 2950,
       "fileCount": 2955
@@ -581,15 +581,15 @@
       "id": "assets-standard",
       "kind": "utility",
       "packageName": "@file-viewer/assets-standard",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/assets-standard",
-      "tarball": "file-viewer-assets-standard-3.3.6.tgz",
+      "tarball": "file-viewer-assets-standard-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -607,10 +607,10 @@
           "sha256": "90ecfceb3d1e1241101de11542290954741974c1644382ded1cff484da361bef"
         }
       },
-      "integrity": "sha512-tP86bfB7KiNV4Y7UEOgmnHjvB3lyRI8o/5WqV+bNxuCsceVXIj29uHjLiz67DTqiP48xWtbsP5Kv9ouXW1+NQQ==",
+      "integrity": "sha512-6Ov929UlW4gsupCy3IsOFvt17/nytBapVkmOInGCja04g4NQThVLLikF0n0WZZ9K+8YYwPXl1nzggMoGAaKTyA==",
       "license": "Apache-2.0",
-      "tarballSize": 7880209,
-      "sha256": "f1bf518de4eede8d45f366913e7d36a62f83565afb39589090b08052aa1b066a",
+      "tarballSize": 7887026,
+      "sha256": "88bea4bea2b66c9b68bbd021a2106dcea4e6278f988df5213cff172627f092b9",
       "entrypointCount": 4,
       "assetCount": 315,
       "fileCount": 320
@@ -619,15 +619,15 @@
       "id": "integration-cli",
       "kind": "utility",
       "packageName": "@file-viewer/cli",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/tools/cli",
-      "tarball": "file-viewer-cli-3.3.6.tgz",
+      "tarball": "file-viewer-cli-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -645,10 +645,10 @@
           "sha256": "677a830329b6cacc3b1701d73e90c75e09a6907363848141a9359d0629a69e76"
         }
       },
-      "integrity": "sha512-C5wGIb3DFV6VDajGPVcQT6E3oTrypnfSIw/WSD2Ku9na9jDwaCHosBi6gr/ogFkYk27ylrZErpM49pY4tyXJLQ==",
+      "integrity": "sha512-HUYyhrz8X6oVp7gLxp3Nqh8isp5tuuAbtUmjxlEH+z1ld6CDYx8BfYZDsNBVWUIGpzMjIzocYcTe7ebEp3MRPQ==",
       "license": "Apache-2.0",
-      "tarballSize": 77680,
-      "sha256": "f2125ee7457512598f073b7343bc45ea937b95b595e4eae4dfbdfab35ebb2c9e",
+      "tarballSize": 77681,
+      "sha256": "4839677135842acc93987ea0e6cd135a9e451c1a101e3822d3a886b273a1e1d4",
       "entrypointCount": 6,
       "assetCount": 18,
       "fileCount": 24
@@ -657,15 +657,15 @@
       "id": "renderer-pdf",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-pdf",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/pdf",
-      "tarball": "file-viewer-renderer-pdf-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-pdf-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -683,10 +683,10 @@
           "sha256": "41037b3f17a678ff083651eab7cd0afe0b761d8623ef2b305b4cb79df0dd2dd9"
         }
       },
-      "integrity": "sha512-+hRuzrzAkp66rW6eXK3/iYtqxkiIVPeO3icD1HQGuF/XmReahuW5yUqH2WMcuFDb4LXWsmexInT74mrrEPUYCQ==",
+      "integrity": "sha512-zsBFai2e3MQxBvBQQ/EfTEi4AOIGmWHAWwsp2PwypvkxYkbp+SFqUu6j2Ua8yU+Y9Cg4QedPu8inCyoB1OEKkw==",
       "license": "Apache-2.0",
       "tarballSize": 2456747,
-      "sha256": "b417b105bacb6940a9f4d1acaab10016959f9360e3a95238b5b4532c711750c8",
+      "sha256": "c8e4692c3f06a38a87eb3bda65102ee971e5b91f54679d2b1eec1c1844fb597b",
       "entrypointCount": 7,
       "assetCount": 241,
       "fileCount": 248
@@ -695,15 +695,15 @@
       "id": "capability-pdf-identity-repair",
       "kind": "utility",
       "packageName": "@file-viewer/capability-pdf-identity-repair",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/pdf-identity-repair",
-      "tarball": "file-viewer-capability-pdf-identity-repair-3.3.6.tgz",
+      "tarball": "file-viewer-capability-pdf-identity-repair-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -721,10 +721,10 @@
           "sha256": "466ba42c6ed6eba68b49bb48ee07129f19613d4632c037a52acab9983193edf9"
         }
       },
-      "integrity": "sha512-DDVf8jM9dKtguGvEbYSizrNSeKc+KJIK8+kMM5AtxWQeBSVxofMWDJ4x40tMyHXyvolGdAC9R5y9lDuVUrVAFg==",
+      "integrity": "sha512-if3y5Zv0KXk0+Av5dfHiFYnP6Fpt9cptRJFoKyrXI0Kur1BDSBgtHLGfE1BAnsf3yDzG4fkEO9SmSC/C/q6AhQ==",
       "license": "Apache-2.0",
-      "tarballSize": 194014,
-      "sha256": "04994a046a28f1cabadef9dd8a16b24d1c84a1e85f129143116100dd51222885",
+      "tarballSize": 194016,
+      "sha256": "8a71eca5d9239ef198c0635fd79c9dbe26d02ba167ad28433c6b4ba825cce43c",
       "entrypointCount": 3,
       "assetCount": 9,
       "fileCount": 15
@@ -733,15 +733,15 @@
       "id": "renderer-ofd",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-ofd",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/ofd",
-      "tarball": "file-viewer-renderer-ofd-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-ofd-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -759,10 +759,10 @@
           "sha256": "c65b8225c8351397b3ade43df3964a364eb0ca7b17c98aae33fd933d9be92123"
         }
       },
-      "integrity": "sha512-BnVd+ROrv3ml8pu3igXKYnzrkzEPGSicHOqxa6gnLq7lkQnfNMyLYI4alCCoqeqp5S+9ldIilEtuOUTVeLD/rw==",
+      "integrity": "sha512-ICGcgak0gHM1VukUqrllRYwBxoCpWpQpDF/AxehOiBjHSyvevy6iKxJtfIokKq6tjR8TZZA1Qr49EtTc1tQ+Ww==",
       "license": "Apache-2.0",
-      "tarballSize": 114965,
-      "sha256": "2efe4f93ca97ada89119a9ed8f18011f09144ba38bd12c40a9e753ba280e6119",
+      "tarballSize": 115087,
+      "sha256": "f7fb795f7e31ba2b18a8f56509a365b335c5d7a676f46d01bec6f3b013f58cc3",
       "entrypointCount": 3,
       "assetCount": 28,
       "fileCount": 34
@@ -771,15 +771,15 @@
       "id": "renderer-presentation-ppt",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-ppt",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/presentation-ppt",
-      "tarball": "file-viewer-renderer-ppt-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-ppt-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -797,10 +797,10 @@
           "sha256": "2973fca1dab9c5694c177aa9252dd57fbcee16f6fbad9651cafcbb8ebd9171c9"
         }
       },
-      "integrity": "sha512-X5GiFHqAABJg5BLCXX+Wwya14rACRuJHOLpOlJv2NfRhS8cxJPeGr1eISz5WU6GRRIwpDdUZ7DdLYLkJ8AUFHg==",
+      "integrity": "sha512-KqNpHWEEGCBRWpcfZyf7ki4gAR+ocnPw0WYIaozDKx1y7AlfQBrQ6L+VlXJDM1l4oBkiHuJ/IOs/L8s1DWm0nQ==",
       "license": "Apache-2.0",
       "tarballSize": 12774,
-      "sha256": "9b1b23725f59566c4a8c89c669869d4a52cb2879a82529bd5efcf655ed9291ff",
+      "sha256": "3e07b6b3b96c2922fd14966f67b9daf972f20d872518861038aca7be2b8768e6",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -809,15 +809,15 @@
       "id": "renderer-doc",
       "kind": "renderer",
       "packageName": "@file-viewer/doc",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/doc",
-      "tarball": "file-viewer-doc-3.3.6.tgz",
+      "tarball": "file-viewer-doc-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/docjs",
       "gitee": "https://gitee.com/flyfish-dev/docjs",
       "sourceRepository": null,
@@ -835,10 +835,10 @@
           "sha256": "197187c18f1fee11b8ae39774b915fb34b2a602ce19c2c083b69e6b902581ba4"
         }
       },
-      "integrity": "sha512-FKSi3Ji73n6MfZUR12Xi02COBhKWoMvNCNl0zukWdY9U0woE5p6cqNb9/y/VrB0A4WTct5D/Z7SAt4jfdOYrjg==",
+      "integrity": "sha512-X5kYkQc27WM3ztjtsqQAuO0/P0pXrjWtxBMmYXDxTVzWq5hHUvDph8OWp01br3KqEMby1EA+RIvLCShHoe7ieg==",
       "license": "MIT",
-      "tarballSize": 93320,
-      "sha256": "4c9587482f0807f45f6752a915a629bb76d8e8ed436643fb71bf4ca25779f8ec",
+      "tarballSize": 93321,
+      "sha256": "feaa8ce904a9813a7b7df2e4c91deca7e4eed0718a74f2c9b43d54da3e41f234",
       "entrypointCount": 5,
       "assetCount": 58,
       "fileCount": 64
@@ -847,15 +847,15 @@
       "id": "renderer-word",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-word",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/word",
-      "tarball": "file-viewer-renderer-word-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-word-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -873,10 +873,10 @@
           "sha256": "c57feebec20cb38186703ef2ee429bc726f5fbe0df44eca462614b60ad3344ee"
         }
       },
-      "integrity": "sha512-pXaj0VCW8qbcJBBucHY6FG2H42T4RXPHV+YksnkfW+fU5OjxZ5uTzDxTA+yem76Qh4AwZCEh6uQyEZRAfhpaRA==",
+      "integrity": "sha512-z/t63JHkv8VD+I1ea/mlb/cQbztN1zpQ4F6VZeI49gxvnH1LIR9eykGmue0pjMEbjxWiZQLubPKcfu2+kjGt/A==",
       "license": "Apache-2.0",
       "tarballSize": 30603,
-      "sha256": "882fb5808a534ee298a50d948e78dbf7abaaf775f1c1eb42c9206fdda157388c",
+      "sha256": "f22a281238778c3052d0dafb213af305cf2ebc1f1e9a480f3f2a76ebb295d91b",
       "entrypointCount": 3,
       "assetCount": 24,
       "fileCount": 30
@@ -885,15 +885,15 @@
       "id": "capability-rtf",
       "kind": "utility",
       "packageName": "@file-viewer/capability-rtf",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/rtf",
-      "tarball": "file-viewer-capability-rtf-3.3.6.tgz",
+      "tarball": "file-viewer-capability-rtf-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -911,10 +911,10 @@
           "sha256": "e1025289f23676ad535c5b098c77f1968d21ca6be13d471be3c37931a158fa29"
         }
       },
-      "integrity": "sha512-G2gkRETmIDe1zRQieX82eiyFu9mCqDLWgJDy02i1gTiA8y3pAvHWEWQpZPbAqEUGKLV9Q1dALT98FkOK2p2W9g==",
+      "integrity": "sha512-NyXhyJKzs+Qxbt39fIMgJF7zW1VxVW7fpprVVxXyGDP1oZelSMD2fpT409AR6CoZXcty8HbtBRsEjPokG4O6+A==",
       "license": "Apache-2.0",
       "tarballSize": 4745,
-      "sha256": "89f8f8e3cd34067e006f2e82a521c56b816c5c0648d7b88f4495c66d164ce386",
+      "sha256": "d7df042ee052baa49db5a0736895131b58e3c6813b026f0db05679a6b8ac540c",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -923,53 +923,53 @@
       "id": "renderer-spreadsheet",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-spreadsheet",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/spreadsheet",
-      "tarball": "file-viewer-renderer-spreadsheet-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-spreadsheet-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
       "readmes": {
         "README.md": {
-          "bytes": 6388,
-          "sha256": "cc1c34b7527aacca2bd11a4822782407a352f954c5550c472e0f0b00c465d2fc"
+          "bytes": 7390,
+          "sha256": "8ce21413dff14d9e6c63796b19cd9052ab301fbb6b4b0c30623f16e6c6670759"
         },
         "README.en.md": {
-          "bytes": 6388,
-          "sha256": "cc1c34b7527aacca2bd11a4822782407a352f954c5550c472e0f0b00c465d2fc"
+          "bytes": 7390,
+          "sha256": "8ce21413dff14d9e6c63796b19cd9052ab301fbb6b4b0c30623f16e6c6670759"
         },
         "README.zh-CN.md": {
-          "bytes": 6005,
-          "sha256": "b2d0c39ee3a04ff4467ae92e21e75993bbe2472bc9bd1d8019ed0b5108fbcfdd"
+          "bytes": 6908,
+          "sha256": "40e0b84c375a488d247358ff0cf53d5ed938b42fff0c23e3b5f5396a64a8206d"
         }
       },
-      "integrity": "sha512-pfDe8GVlJgIGbPY0ckYj2voEdvODqBaeNbcmeztu9eSzQJ4TWTTh+u14KqgLTuQQza8X+B6nJuuE46BDjKcsiA==",
+      "integrity": "sha512-pEAyQjWm0luKVjX+gH/WGS5wu/9Av560PTQi/o5uleb2kC4uHBiZwoBs9GxxqlA2LpUJZ8GCdFYrB7Ms3iXQxw==",
       "license": "Apache-2.0",
-      "tarballSize": 396498,
-      "sha256": "68a078589e56deaa8a34bf717f26c15b6b7cd540880398a0e808635f5b7c895f",
+      "tarballSize": 414067,
+      "sha256": "5847a66d4c4db2c537adf9348a444f059a4ed71471bc851dcb3760882097cea5",
       "entrypointCount": 8,
-      "assetCount": 66,
-      "fileCount": 73
+      "assetCount": 74,
+      "fileCount": 81
     },
     {
       "id": "renderer-iwork",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-iwork",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/iwork",
-      "tarball": "file-viewer-renderer-iwork-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-iwork-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -987,10 +987,10 @@
           "sha256": "d02a7c468255c76dbb62469a3921081fbbe9760dc15187fced1c81fbca8b5c54"
         }
       },
-      "integrity": "sha512-wqSvxlTwBJefEFiED2gxKWgPLvEs7P1GdooFCtIZVUkXJGUo3fv9XyTVx1u42sLw3JvXhdhVaFVfHORacixwVw==",
+      "integrity": "sha512-fvc9l0rBgnf+ZT1wa8ki/XhPdoecCBsB4zgteJMKSBuL2PvogLGvuIiOAqakSi5vpPT3TRnj7kKZ9JkKgzjVpA==",
       "license": "Apache-2.0",
-      "tarballSize": 1183231,
-      "sha256": "3f6fa4ce422a60cfee5c187f8416e17a52f58b2b49a1d03226a4ffce216fc444",
+      "tarballSize": 1183233,
+      "sha256": "742bcc5352901cd78aff3e9cd077a4f48d9b4c98fac7483884f08c4a74bc7636",
       "entrypointCount": 6,
       "assetCount": 21,
       "fileCount": 27
@@ -999,15 +999,15 @@
       "id": "renderer-wordperfect",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-wordperfect",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/wordperfect",
-      "tarball": "file-viewer-renderer-wordperfect-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-wordperfect-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1025,10 +1025,10 @@
           "sha256": "1343d09ff58b337247dfac4b41d9f473d84405c8e512f56286379ae5aefb1217"
         }
       },
-      "integrity": "sha512-uEWcd+gthH+iSFh3oCJgKVZRhkyrkcaXmheocpLAb+qb1QDClEJuh1Q78GZ8IXm0AVf/ZpVYXut3igh+89Ep7w==",
+      "integrity": "sha512-sIPZT+YzWdj1yZVpcYIvnDyn8EFu2un1pihwDRgs4b3Q5tpiosSQlgwg/nTZ+qLV+Wz+QVJyAoN4MiPka2ogVA==",
       "license": "Apache-2.0",
       "tarballSize": 247089,
-      "sha256": "0b517a2bf31e7f88e9a21a03bd2a0aa13b9c8587320e950f40886af472f1d40c",
+      "sha256": "1314e1e40f3ef758a90e2f0a09d0658e7825f245297debf8a666c94ac7efa24c",
       "entrypointCount": 7,
       "assetCount": 29,
       "fileCount": 35
@@ -1037,15 +1037,15 @@
       "id": "renderer-hangul",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-hangul",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/hangul",
-      "tarball": "file-viewer-renderer-hangul-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-hangul-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1063,10 +1063,10 @@
           "sha256": "0ad509027dc23a859b37f3511e94c3797b9f91aca02f6424fd42a4ead42452cd"
         }
       },
-      "integrity": "sha512-43N04M4fa351uWxgwX0HEqDHrHcl9h/ni/zEp4L1NocJDfrPH5MqeWgH6KUwFgIFUiPh5zqueTg0Leg5vB851w==",
+      "integrity": "sha512-jyE2/6uEQ8gD9s/bh6RoGH52AgWiaD6Nv7SnhjurjCIExMYhQ05PcHc9Nr4wDZtucqEcHSgGHUUj1EwUu6UdrQ==",
       "license": "Apache-2.0",
       "tarballSize": 385742,
-      "sha256": "5a5bfe6c33c80da770d9691263b614dab90c85ab71d9a1ed2ba09c8898de29aa",
+      "sha256": "a24c97136897baf769e190036a89cb0b48d494bc64f1b2557d23eebb59c27a34",
       "entrypointCount": 6,
       "assetCount": 17,
       "fileCount": 23
@@ -1075,15 +1075,15 @@
       "id": "renderer-mindmap",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-mindmap",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/mindmap",
-      "tarball": "file-viewer-renderer-mindmap-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-mindmap-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1101,10 +1101,10 @@
           "sha256": "eea994ccf2bbd66c936e864ae97f5c111c78e159e389d64a1be5555ba54c6dab"
         }
       },
-      "integrity": "sha512-Fbi/+G2JbvkCpzIU1BpbmZF5OHa3hGx0le5PqtXbesee7f2YtrwCLpVRe2j5H9vf3Jvq1Z+P2iTv9iQBbAb3ww==",
+      "integrity": "sha512-KRSaSetW+lJhL7BXU1HY0PzSqukXuWqaOnXwYg/mnyaxkexhz/21p/DuQgPRPiGDni+eGM5mUN5QdT1jEpJ1AA==",
       "license": "Apache-2.0",
       "tarballSize": 58089,
-      "sha256": "0f146a4fc4f9ffe3e3c36433fa313ccdbeb1e4ff85172f5013915f61ae03c777",
+      "sha256": "cee636da45dbb1c1dca0dc14e5363b48505470d4f7b3a0a91b82dabc018dc2f8",
       "entrypointCount": 3,
       "assetCount": 7,
       "fileCount": 12
@@ -1113,15 +1113,15 @@
       "id": "renderer-cad",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-cad",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/cad",
-      "tarball": "file-viewer-renderer-cad-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-cad-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1139,10 +1139,10 @@
           "sha256": "b1f11d330e307270a89759b72dbe62f8e0843067bfc06e5f5be3e668a982e903"
         }
       },
-      "integrity": "sha512-pwiV+3eggpUrRzD8d7ELB/pvzcm4f0YaZ3AjjB5xN3tcOGzVjw6+Jv5zs8ZhUeucJoZ05XAt1szp3FYhaugHAQ==",
+      "integrity": "sha512-51BH0BAEX5waRsqty8uILzCoM6jk7iE5HM141egFs9U3YjhQE5Q2G5hWoCvakezF3qEDt0etMWbUPV5uROijFg==",
       "license": "Apache-2.0",
-      "tarballSize": 25354,
-      "sha256": "71d4ed1ea12e5a92b396b8625942192085b74404ac62b2b1f6dbeb0c031fc77f",
+      "tarballSize": 25350,
+      "sha256": "e688c7b656c66b55ae1dde80af1c4c971d9273011d7c59b93b6e321335aa190b",
       "entrypointCount": 3,
       "assetCount": 8,
       "fileCount": 14
@@ -1151,15 +1151,15 @@
       "id": "renderer-typst",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-typst",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/typst",
-      "tarball": "file-viewer-renderer-typst-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-typst-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1177,10 +1177,10 @@
           "sha256": "81499779099eaa0d8c1f937c083ab071216d2ff79fb0ab9e8efa0b7d7565e03d"
         }
       },
-      "integrity": "sha512-wL7fEULa9y/ikla06YgvxReLc+7IT+dKsZuXdfo/mXnJzpiW0YYC6a9l+vcP9e5d9WU6vLHc5FPnwEl45CGImw==",
+      "integrity": "sha512-jKQruDa0NMDx//vgyrISMlot2IfvwKpw53jPp8BIebb2dfT+P2SVey0YVqOCzTP6F6znaBYV/+s5Erg8+OzfsQ==",
       "license": "Apache-2.0",
       "tarballSize": 5990171,
-      "sha256": "049c12653998460aadac91ff74342c0acaf94346809bf0142bc1d85e5997fa9c",
+      "sha256": "8ca1a635409be11da8ed0bfad26214d24ada1a3b7a5ec01eae8f30d74449eb93",
       "entrypointCount": 4,
       "assetCount": 6,
       "fileCount": 34
@@ -1189,15 +1189,15 @@
       "id": "renderer-archive",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-archive",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/archive",
-      "tarball": "file-viewer-renderer-archive-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-archive-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1215,10 +1215,10 @@
           "sha256": "b5ac60fff2e012837ff490852d7bfefb2e55fec6c1b62f0abfa029790566758c"
         }
       },
-      "integrity": "sha512-DDR5LlcJe6hHBfabIr6lIbaeQwbAM3ruvD8hJSMYYbZYbv5Y9iitcvjIga1yxWcUDL0L3FiAYy8NBtilGSSqMA==",
+      "integrity": "sha512-Oe7CnxorDIxUqOca7beQvPXD39qCMdgBJp4sZ2lo0keZr98UxUWfMhabwbQ2GhtYHJquUx7jWQ8QIU6sHRJ0mQ==",
       "license": "Apache-2.0",
       "tarballSize": 29666,
-      "sha256": "1204b03b1de6d76a30e33e90b28c2196553c15b976acc3b71141f374ba6f1fc8",
+      "sha256": "6b757f961fafff016acfb15f81eb57d2a118639e123d627b492d33818bf30dd8",
       "entrypointCount": 3,
       "assetCount": 16,
       "fileCount": 22
@@ -1227,15 +1227,15 @@
       "id": "renderer-chm",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-chm",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/chm",
-      "tarball": "file-viewer-renderer-chm-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-chm-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1253,10 +1253,10 @@
           "sha256": "886c78ad81501d42d2613fc97e2e9ea973f79992259197c71f925f1652f8d7ea"
         }
       },
-      "integrity": "sha512-hTqGMRnwS/vSvVOQpIiQvhFVm4ieFNLJ/lIsRh+0jVSdz2lWqJUAIewJWvIKFNXPJWVPaVZtQKI84ntSWKSlgA==",
+      "integrity": "sha512-sPWozohEymeTMS8qNf6YHNTQ2q+sxryXunyTKs24lxy3THiI6llhcuJAb905HmyvtkH+X89y4F00Ghetxw3Zhg==",
       "license": "Apache-2.0",
       "tarballSize": 278809,
-      "sha256": "46705595b603be7ba317a3d749d143ccffd114bbe4471593ce527530b3984bfe",
+      "sha256": "943c6731dba2b50465c6145a61c19732c37f54ee199d125f427f5c3d03578d00",
       "entrypointCount": 9,
       "assetCount": 18,
       "fileCount": 30
@@ -1265,15 +1265,15 @@
       "id": "renderer-email",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-email",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/email",
-      "tarball": "file-viewer-renderer-email-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-email-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1291,10 +1291,10 @@
           "sha256": "a08f5ab8e92ba817889fe88f66a914d71326928af52286a6889d30fe40006f40"
         }
       },
-      "integrity": "sha512-P9Rb1t69kTwFmBzSZj09l4dcm+uulLuYPFY6Vr4lczdrnfVZToSZw+8zRRQ58WgBIH+Sac1psI6SFibyoPJM/A==",
+      "integrity": "sha512-FRZ/7ppyNDzatJky0qkRAdWdHmUUoW8YZsu/Uwx2vejwXvK+VLJpnMzyIYrLXgH5mScAamcYLwfOw9Oi3+R34w==",
       "license": "Apache-2.0",
       "tarballSize": 31013,
-      "sha256": "97deb38864b44684176bf812d989c61ffb5fb10962177be996c33103c9519676",
+      "sha256": "55104bbdd8aadaf6fe782458882490b8e999509f69988893b1a1527914c10621",
       "entrypointCount": 3,
       "assetCount": 16,
       "fileCount": 22
@@ -1303,15 +1303,15 @@
       "id": "renderer-ebook",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-epub",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/ebook",
-      "tarball": "file-viewer-renderer-epub-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-epub-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1329,10 +1329,10 @@
           "sha256": "3cbcaae8d6ba8dec84a02c1fb3421250a7eaf90f2889c93db8423548405c065e"
         }
       },
-      "integrity": "sha512-9/AZ7F/xcxA0VsTQnTdv50L3h7MLW0uE5Yv7CV97i9Pt3i3u7P4Z+BraynGFWR9jQBPtPWiHzhDpeYwwC7kM4Q==",
+      "integrity": "sha512-722dvZGh2R+Av2auHKDahU/nmczHb0V11Ohpk0OjnWODntKpDbxTUhgfTpAWdbyi9U+Wbmg0tV9zZNngvrH8UA==",
       "license": "Apache-2.0",
       "tarballSize": 175830,
-      "sha256": "13165b203a0bdaaabc12b11b352169ac12c42019f5f2e43e480061a0d3b071ef",
+      "sha256": "44a12ed0fc466940aff233ca60b1d17a5fc7be401fa2025e580b59c9b76d7cab",
       "entrypointCount": 3,
       "assetCount": 23,
       "fileCount": 28
@@ -1341,15 +1341,15 @@
       "id": "renderer-text",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-text",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/text",
-      "tarball": "file-viewer-renderer-text-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-text-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1367,10 +1367,10 @@
           "sha256": "70f9d8cd196bbd6e83539261d7f9769b9a9bab02e5607c83387009df8805aeb4"
         }
       },
-      "integrity": "sha512-Xfe9i17nDZq/5n51j8vcM22ldgQuhf5KvHmad108YtjsJ4y31/ZFXLg8wACNERsvuCOlddpvbDIv0pOssCOMKA==",
+      "integrity": "sha512-6yU0E+KLV3fNp+Ul29EJANXX3MI/Hn55c7k+bNJrNx/5ODmI1OQqALJ5xehg9btAgOmEQP9Kdi4E1pjNHeHKDw==",
       "license": "Apache-2.0",
       "tarballSize": 68561,
-      "sha256": "9e4262a4f99cf354dc6a7b5a35b4f73205c0ee9c7c92fe2a7c01641c4af93e21",
+      "sha256": "3978241c89ec4edf8ccd098ad93c4e247e126dbcf8a00a529dbc9ce76168c9dd",
       "entrypointCount": 6,
       "assetCount": 60,
       "fileCount": 74
@@ -1379,15 +1379,15 @@
       "id": "capability-mermaid",
       "kind": "utility",
       "packageName": "@file-viewer/capability-mermaid",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/mermaid",
-      "tarball": "file-viewer-capability-mermaid-3.3.6.tgz",
+      "tarball": "file-viewer-capability-mermaid-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1405,10 +1405,10 @@
           "sha256": "4de6066a09ceb61f4711fdfffdbe8480e9c5f840c361a5963293279d51a6df11"
         }
       },
-      "integrity": "sha512-TSy6pPx9rHWTkEICTSdHX8e6qYbwOFe0K+JWGcomAi/ROjzZL/J/OvipzfVDxOwzrMm2mZYOmrjsfVZpylqGYw==",
+      "integrity": "sha512-j/lx//YQUm1qtZ6I6Va0s5epobwIojBQ+bbYQqUOjTHdrZ9vhrutK6m1avHKsi83ccAqJ5zbb/WNIwhnXFl/xw==",
       "license": "Apache-2.0",
-      "tarballSize": 1796538,
-      "sha256": "16af7818b65182f60c3b0fa845734b33e72da134b3572410f7f5829b5cafda81",
+      "tarballSize": 1796542,
+      "sha256": "4fd1ccae00fd60cbdb62ca6d8c644abe734250866f5bd67f3e7a413187e23de2",
       "entrypointCount": 5,
       "assetCount": 106,
       "fileCount": 112
@@ -1417,15 +1417,15 @@
       "id": "capability-text-tools",
       "kind": "utility",
       "packageName": "@file-viewer/capability-text-tools",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/text-tools",
-      "tarball": "file-viewer-capability-text-tools-3.3.6.tgz",
+      "tarball": "file-viewer-capability-text-tools-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1443,10 +1443,10 @@
           "sha256": "394938f78263f3c2b95b2c7fb64a0f157fd0de86a367d8fa9bfbdccd807ae388"
         }
       },
-      "integrity": "sha512-k4jbtyPzT/mqcimUtIgNUf9NvrrRKjkjBhG5ZVdM55oe4t5+RyCCD619SLMPy/6STBPEnDfhx/pAlT6smI2X2Q==",
+      "integrity": "sha512-z3rjeTLXb/jHGbnxFTDA2Rw/1iyV1jMACiPNbyfHj+Kc6CZPEmPLhH3jHCDtEFzQl+3H1DZN2IGAFKuMfwNxNQ==",
       "license": "Apache-2.0",
-      "tarballSize": 4875,
-      "sha256": "06413e8bc4220be121dcd9ec461a9d5ce726faa659b82d570686f0084cc59dff",
+      "tarballSize": 4876,
+      "sha256": "a1a561e94822d5caf28194ff1016cc538f4da568d9227ec0ac8e2b2a2466148d",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -1455,15 +1455,15 @@
       "id": "renderer-drawing",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-drawing",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/drawing",
-      "tarball": "file-viewer-renderer-drawing-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-drawing-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1481,10 +1481,10 @@
           "sha256": "86fc76206052983084cb616920d139577f885b39a67988177793b9f0f86baac6"
         }
       },
-      "integrity": "sha512-sOpM/1+vHue6dwCU4VUdTG04FV1AQg3pnN6+LzFflCDO8Hb4OPhlQ2BXDtNSUXZJ9cNa/wEoe/MO/uZhMb50gg==",
+      "integrity": "sha512-39+/ey/k6dOm6YwJzqAmqxDe470r7L58nm0qJU+SMfDC1G6q8Z8bL682cN6JFBlCjj9F43U5MzhVYd6dbJs9tQ==",
       "license": "Apache-2.0",
       "tarballSize": 41021,
-      "sha256": "92413aef608b49493cfd1bc4b0cc6dcfa6f3458d992e471ae88b0111b403517a",
+      "sha256": "cec673bfd8f42f5aa7bf619c01d630daa265771a7c613d4287f5346fde969d17",
       "entrypointCount": 5,
       "assetCount": 20,
       "fileCount": 27
@@ -1493,15 +1493,15 @@
       "id": "capability-drawio-official",
       "kind": "utility",
       "packageName": "@file-viewer/capability-drawio-official",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/drawio-official",
-      "tarball": "file-viewer-capability-drawio-official-3.3.6.tgz",
+      "tarball": "file-viewer-capability-drawio-official-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1519,10 +1519,10 @@
           "sha256": "b4b019d5e5787ec9089b2e48e6eafafd5c693c0ec4d2c8533c0d79820e08e4c3"
         }
       },
-      "integrity": "sha512-q1tUw8TCs7zz3deHatFbbJ6/7dFgSNHIUvVqDGQmY3takKVl5jyT5InJPGFPAW2hLCa8FVBWmzPWlpgOn9JPpA==",
+      "integrity": "sha512-wfYYX66QRzEA58mlLEssJqz3Q1xSVCS7uXrV+elS2JH4WZVunP54XU1dMCNighKawiYs6v25h9Anvn9R0o8EpQ==",
       "license": "Apache-2.0",
       "tarballSize": 4763,
-      "sha256": "78275897bca4b65bdaf2cb85f2f8de2552659ce47bb97ae4c9433698ec563883",
+      "sha256": "36de0fea0bf20cf40507574736391a92c9b15736a189bd4b6e984e9301eac193",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -1531,15 +1531,15 @@
       "id": "renderer-image",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-image",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/image",
-      "tarball": "file-viewer-renderer-image-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-image-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1557,10 +1557,10 @@
           "sha256": "387b4fdd5c8a6e641eded2b1afc639a9480005984c2aaf95512ab8d47cb15a11"
         }
       },
-      "integrity": "sha512-BxhvwZU/cLSW3C257pqSQUaLixIubCAAuHA5J4wJUxGT2e8/b7ebsPMISVRsY0A2e7lSkSB9Ec+BpDLFVAm0ZA==",
+      "integrity": "sha512-TP9SK4T2M5db4ueKnqUCB0ZkK8wOTLdx9Zgn/kFpC3jIW5HDO0bQPQmfUZ6M08SGJ2jvwhiHBPSxoNJ5nU0MLw==",
       "license": "Apache-2.0",
       "tarballSize": 48854,
-      "sha256": "f7adc4dc415ed8111d2c53fa566a8922af027ee28d59855d1165aa40a0e1fc3f",
+      "sha256": "da8999d7b887c165457782b6ba67cf2334c07fa7d06181ab6fd0a679e7744742",
       "entrypointCount": 3,
       "assetCount": 6,
       "fileCount": 13
@@ -1569,15 +1569,15 @@
       "id": "renderer-dicom",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-dicom",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/dicom",
-      "tarball": "file-viewer-renderer-dicom-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-dicom-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1595,10 +1595,10 @@
           "sha256": "4b6cc300ed6aa20408b0914b40d6b037fd4c522ed20aa3cd89e34c65a7766bfe"
         }
       },
-      "integrity": "sha512-QdXiVDZsoBTofLHPiYPRxOO+KZh9mEporLa5SwGvX3Xwxvzd7xBCYmdOEqToGypk/aRiN6LMV/XQYPncopZL9w==",
+      "integrity": "sha512-dniYrgZCVMsArPMFpN4EDo+mK15ekupGE0y83nSXnz4cFZqV5Ml+dzdq++IzRiPoB3764nftrIKAvKjqg6SgLg==",
       "license": "Apache-2.0",
       "tarballSize": 6779121,
-      "sha256": "a19ad9f0f0dc537c545a4edec50c876434b8a6b8f17f673389bf178ff0b7354e",
+      "sha256": "5ded9bfebec0d2ba783c09a2d86c6b1a77e3ac937df2079838581917ca283f69",
       "entrypointCount": 6,
       "assetCount": 17,
       "fileCount": 40
@@ -1607,15 +1607,15 @@
       "id": "renderer-signature",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-signature",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/signature",
-      "tarball": "file-viewer-renderer-signature-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-signature-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1633,10 +1633,10 @@
           "sha256": "87e282c73b8b12506288b0c62c58bea844e466e7a0502eac8f9447e86d217480"
         }
       },
-      "integrity": "sha512-9WAUEBhK0LxGBWEcTBPS5MuvoYWdwt2cnKZDmOqKvPU2yvRmcau7RnRhTCt58iy1B8+4Dmk+jgK55KsOv+OcgA==",
+      "integrity": "sha512-xGDvxGE4jRGK4f1ozdMjisad/vQidUjOoBDZU1eiXA7DvTyVem7dgqCYQ0ARAVAEB3GDmEFiQdcSjeUZ6XKU1Q==",
       "license": "Apache-2.0",
-      "tarballSize": 739097,
-      "sha256": "e7dc991b6e47d804d303f2e175303cd3140fd05e5abfca469e02ddd39782121e",
+      "tarballSize": 739000,
+      "sha256": "49da2c19966325e4641e50d5f2dd9a54c8585f6dcd8772a1cf5f38150bf6c160",
       "entrypointCount": 10,
       "assetCount": 46,
       "fileCount": 54
@@ -1645,15 +1645,15 @@
       "id": "renderer-media",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-media",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/media",
-      "tarball": "file-viewer-renderer-media-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-media-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1671,10 +1671,10 @@
           "sha256": "772e1f161f73da6809ea9939a1c8cb30d7e62dceaa2c30b51cf665d466672700"
         }
       },
-      "integrity": "sha512-27fv3E3RhiY35Meairar6hwHvkopxljyvMX/NRs7U8mUsbyDtvlZvN0sgPE/SJ/Y7V3KGTPHbEegw9aO65T19g==",
+      "integrity": "sha512-yGFERz70Ih2ObUIBq6+kgIwVmvLDuftIn1x6bbtlLgRKkQ3xh+sTEJLhoTIZOdhbvaT9yEWReS+xv3hoWb2FHg==",
       "license": "Apache-2.0",
-      "tarballSize": 81406,
-      "sha256": "1d78b5d50af07a2d9b0660f629b43e7bac40893c2ff12b7bc457baa5dbc4eebb",
+      "tarballSize": 81405,
+      "sha256": "6eccf5b7152b9d47a615bd3568dcb2f1964bce7d8e4bd5dffdbd79b11a39a717",
       "entrypointCount": 3,
       "assetCount": 20,
       "fileCount": 26
@@ -1683,15 +1683,15 @@
       "id": "capability-midi",
       "kind": "utility",
       "packageName": "@file-viewer/capability-midi",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/midi",
-      "tarball": "file-viewer-capability-midi-3.3.6.tgz",
+      "tarball": "file-viewer-capability-midi-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1709,10 +1709,10 @@
           "sha256": "6edcaeb2dbe5eb05fe6d496e7b665d6b2b533d6001d8b8a2cbf0939e783958fa"
         }
       },
-      "integrity": "sha512-lXFnUgi862n7P2jornaOvEQphpNOPZ/jgEgn6PNQzMCPxfV9VRTGmJiFftz6jDteDpraUDOFXxnpciDsPd0qLQ==",
+      "integrity": "sha512-GiWIvETxA+me36iIenojEMPF9h0j5WMU2zowI6T61Xj4eJdN6R6LlZLZA4/jXpIH2ZNh8C2ZLAH10CUB2fXS6A==",
       "license": "Apache-2.0",
       "tarballSize": 4722,
-      "sha256": "c239c5bc5d1a363234aac6df1e1bbd6faa1b10f891f95f4c8235c4200f7f66dd",
+      "sha256": "1a41de93611b211295a8046c303de814a2f4daf193aa07adb6019201d3a98bf7",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -1721,15 +1721,15 @@
       "id": "capability-streaming-media",
       "kind": "utility",
       "packageName": "@file-viewer/capability-streaming-media",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/streaming-media",
-      "tarball": "file-viewer-capability-streaming-media-3.3.6.tgz",
+      "tarball": "file-viewer-capability-streaming-media-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1747,10 +1747,10 @@
           "sha256": "8dbce09f6bf3ce47704f0970d48922f6f70c1d838e197984a3faaff2f6934772"
         }
       },
-      "integrity": "sha512-kyNQ9DvHlTT5rmh83FFYM3MWgwoAGYWi8FYWpxDw9BRNwdWI5+eLAnc4M6bF+snn+P86hq9PsA3QMU2D+Merpg==",
+      "integrity": "sha512-yDKk54lUw4ZAIrzY7JESP3pOHQvu7LUKqr8pSuIjTby4Sv18w1KCp8Hy8slRwcQ1dizHjmAZUZBwGYcFDOFxRA==",
       "license": "Apache-2.0",
       "tarballSize": 4773,
-      "sha256": "298c7d6f676aabc29a5abca3c8c5efb243b2cba754f81f291f5f81b00aa5c7d4",
+      "sha256": "e7908c6a5695a9989ca5202a67392140bf31ed4c193c900c743f7b8c3fb24108",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -1759,15 +1759,15 @@
       "id": "renderer-geo",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-geo",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/geo",
-      "tarball": "file-viewer-renderer-geo-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-geo-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1785,10 +1785,10 @@
           "sha256": "273d777f161521b04c920505c2f91620637ecd3b5c1321f9541396e31d506cd7"
         }
       },
-      "integrity": "sha512-fjETTqvXplYeIQ9x9lawFzTrB5sy6IFo5EdiNQ6OwC7xVFiIB0PdkBesIsyd3DIalx+ag4jU3Bcjt7Tgnyhurw==",
+      "integrity": "sha512-tThmQLlPTIKI6OmBwFZAk7EYH0nMQeKeloBQ05EgLNPx9rGc0GouXYTDWXMD0WBLGUkBC78HpYOu7tn9Nybqtw==",
       "license": "Apache-2.0",
-      "tarballSize": 186651,
-      "sha256": "394851ddc63ac91a3c375ee6ed11e54acd017f3f22031b556d02a7131a49bf38",
+      "tarballSize": 186652,
+      "sha256": "bc0ad30b9bf43adbcc0375840a41da591702e9525407a7022988578de29d0d4a",
       "entrypointCount": 3,
       "assetCount": 9,
       "fileCount": 14
@@ -1797,15 +1797,15 @@
       "id": "renderer-data",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-data",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/data",
-      "tarball": "file-viewer-renderer-data-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-data-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1823,10 +1823,10 @@
           "sha256": "d89187f739d7bb01ceac3b3b0cb79eb60e58806b63dfb374a785737f8586d675"
         }
       },
-      "integrity": "sha512-xPAGaSeziQotc6rS/yps3YQm8WFYPxClmaS2sqjURSnItK8byjSGzqiaIRn7axMSuUS6DLpzdti6WiY+s6HkJw==",
+      "integrity": "sha512-YccPnEFFTFg+HrLX0i/H4jhlkTGdCgcFvh82MElHtdw6fRx9mhyjefm/+iGdtPt8RLz3FUr0VF/n+NObXy/qcA==",
       "license": "Apache-2.0",
       "tarballSize": 111204,
-      "sha256": "db13b5eb6e0bae97858e8c64b2ddff83496e248450e783c83dd9777dcde80c72",
+      "sha256": "7f794b2c70d8e207d7c006b95aa17f8fa5e77d9ea85761d51acd04fd3a426ca1",
       "entrypointCount": 3,
       "assetCount": 9,
       "fileCount": 14
@@ -1835,15 +1835,15 @@
       "id": "renderer-design",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-design",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/design",
-      "tarball": "file-viewer-renderer-design-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-design-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1861,10 +1861,10 @@
           "sha256": "5222019da16d6ed8237dcadbfa0820fa3dfd451dbf5cda6515a8dee071a9681d"
         }
       },
-      "integrity": "sha512-O418BZYtjJfMd1ZRvrnt9Vf/qy3kHRVg0mNss6TxSHdOYvkBhNcvUbHdhACYbtGiJ+M9TPxWaENwkS7+wArNlw==",
+      "integrity": "sha512-QO50AcY+OxR11+Uyna8YwFIm0akFgJ0Ljvz77CKAK2Up6/4HNLBlOFytsHsCVb+paZ5Q2GZkz6rqp5hoehnDhQ==",
       "license": "Apache-2.0",
       "tarballSize": 12097549,
-      "sha256": "cff01846ee4ed5ceeda0c11c3f68fbbde3d07658b57fd63129ca80557cfe0c09",
+      "sha256": "d1e73e7ad01fe40982b1324f2301195b88608e5ffd000f5ec46fdeaf63bff62b",
       "entrypointCount": 32,
       "assetCount": 115,
       "fileCount": 144
@@ -1873,15 +1873,15 @@
       "id": "renderer-binary",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-binary",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/binary",
-      "tarball": "file-viewer-renderer-binary-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-binary-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1899,10 +1899,10 @@
           "sha256": "23502a6c94a10cdb214eb0426c34b2d6d27aff2136c0a76994baaf9f5c907072"
         }
       },
-      "integrity": "sha512-v7c8d2iVcKaRl1DBaSLgBWs8Pf7eICF630hcnu3BDVXPLdmLYkDVqAaDBU5bLiQDPiYapaiXA/jqTIPsVUUGcA==",
+      "integrity": "sha512-Letn6mp9A8WMH3aqhYqCBkUN4o0azIyaCgf9tCpM0rScvQ4ErrjQkyOmuw8nTkGK0NyaqRv3mYc4dFwmfRRnAw==",
       "license": "Apache-2.0",
       "tarballSize": 14936,
-      "sha256": "45ed8b35159d5c348a90fa5f4da79da83cc9fb7d34679b73a7cee5daa33a5acb",
+      "sha256": "61542d2c70e8064c56bce09aa12a7b0433cb09e17c2f7a8e481b2902c75c8282",
       "entrypointCount": 3,
       "assetCount": 10,
       "fileCount": 15
@@ -1911,15 +1911,15 @@
       "id": "renderer-eda-layout",
       "kind": "renderer",
       "packageName": "@file-viewer/eda-layout",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/eda-layout",
-      "tarball": "file-viewer-eda-layout-3.3.6.tgz",
+      "tarball": "file-viewer-eda-layout-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1937,10 +1937,10 @@
           "sha256": "d9fff55abf4b568508769ad01f3654b312528de0af1236e7d7878f79727b24b2"
         }
       },
-      "integrity": "sha512-BbCduaNSc+/mBm18jnL5Pp6rSiT2AayB6wI2Ao0+z/RnYJM9XbB9rgk57adb+oFFgRHV8zTxSUH4X3BiY/wKpg==",
+      "integrity": "sha512-dCKhPJqTOXnbAS3xGgSplAO+CxwAQv7iF52ePGJq6QXX0TGEXsTBvaidfRHnXkE8A5oh48XljgKreMzvPY5udg==",
       "license": "Apache-2.0",
       "tarballSize": 11086,
-      "sha256": "5780ac2b4bab80829734a93a7920b337109b0166b6cc24eaaedf7d145f5e48bc",
+      "sha256": "9799660fb3542453ce8fe2a169441df553f9da7957b40f1ff4c318d908805fb0",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 7
@@ -1949,15 +1949,15 @@
       "id": "renderer-eda-orcad",
       "kind": "renderer",
       "packageName": "@file-viewer/eda-orcad",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/eda-orcad",
-      "tarball": "file-viewer-eda-orcad-3.3.6.tgz",
+      "tarball": "file-viewer-eda-orcad-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -1975,10 +1975,10 @@
           "sha256": "89dead03d7f490b5d42bce4fbc7fdc065eff140a681e2fae41abd1ad323be068"
         }
       },
-      "integrity": "sha512-RwjVcQQWp/d1Vhdht7Jei3jJlwnVTMWXJVWd2rdQPG0uL5qTteS8hSQ6/XdNaynvtlAnVisfh0xvslNjnPGSYA==",
+      "integrity": "sha512-nhZG7LHTDWQBNg3Qvc1eFRz2b9QT2xk8X3KfOhpI3xiFqDqKsyPwH/79gEvs1AMf+qOWe822hsNQysN5oHP2UQ==",
       "license": "Apache-2.0",
       "tarballSize": 6859,
-      "sha256": "82e0aa97e197eaa0cfb01daa5a0ea8b59b5b31d46e9a33ce6fb73ffbc6544561",
+      "sha256": "615dab6b4bb22bf38ff07b97c165d0c9a94532b80d6e1c0a6df1c17be3372e31",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 7
@@ -1987,15 +1987,15 @@
       "id": "renderer-geometry-engine",
       "kind": "renderer",
       "packageName": "@file-viewer/geometry-engine",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/geometry-engine",
-      "tarball": "file-viewer-geometry-engine-3.3.6.tgz",
+      "tarball": "file-viewer-geometry-engine-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2013,10 +2013,10 @@
           "sha256": "a98b0866d408a7a98ba96db102ab82368b37584e4bab4c9be13aa22d9c70844d"
         }
       },
-      "integrity": "sha512-K1lMR8m8814bfC9vKvwDfPoamHNuxprvq+m7vO4cVihigoNfDeIKlMPWSCGsc0co7cF8VaDG48DputH/xfondQ==",
+      "integrity": "sha512-FgxQ5vbZLTqEjrL4aP1RMVZ/lExTufEoN4v7XIM8G/JooXBmbC3I3ayOZEdc4E2AInR2Tyqv7+qVQr99zKyb2Q==",
       "license": "Apache-2.0",
-      "tarballSize": 61553,
-      "sha256": "4670251ed55bd882867a1c84e9c9387268174df2eced6283a7cdd922cc9d3c97",
+      "tarballSize": 61554,
+      "sha256": "16bbeff1f7e1e6029883b5c9e4f4a42de27ae678ed54fe5b19cdc5a47d855d82",
       "entrypointCount": 3,
       "assetCount": 7,
       "fileCount": 13
@@ -2025,15 +2025,15 @@
       "id": "renderer-model",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-3d",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/3d",
-      "tarball": "file-viewer-renderer-3d-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-3d-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2051,10 +2051,10 @@
           "sha256": "43e348a97ccc1ae040fdeeebd1cefafb4abed40ed54da59d9a3752d23dad7a49"
         }
       },
-      "integrity": "sha512-vVSjR8mhRDWT6wwAzPDWeuKi2AhUaBnu4kyFntrm4B0g2zedL58ISwhiBW5B8TmEQe1kBJv3X/N4xo6d1WcbCQ==",
+      "integrity": "sha512-eu0clegSFAHWxNxymL2XOePwXYnPx8+54cimcDXD6k9YFgivXcZkJXWCV2e1Ok28LKezBx505SpTlAHLK3IY8g==",
       "license": "Apache-2.0",
       "tarballSize": 629427,
-      "sha256": "5064dfc2b30d83262237ccbff3a61f8d1c7095d76b24979e1bbea9d448640cd0",
+      "sha256": "b683a0234730d994fea62f7c56c6ffb28b005117e1d40918d0eae8cc1a385267",
       "entrypointCount": 11,
       "assetCount": 73,
       "fileCount": 92
@@ -2063,15 +2063,15 @@
       "id": "renderer-eda",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-eda",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/eda",
-      "tarball": "file-viewer-renderer-eda-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-eda-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2089,10 +2089,10 @@
           "sha256": "44c6af7520d0e2de9cbd5f50e83f6d9ceee4f2e2df0af8176bbea348b102e77b"
         }
       },
-      "integrity": "sha512-98ynavWegPYBpqNw9pAYF6Zjkl9xqKLRUr/qXj1h709XfL4ERmE4Axy/XBtQDfG6QvBva1hwYsd77grQrUd9Bw==",
+      "integrity": "sha512-pdSHtIPyvgsIkPI6XZz5vqpfCdiEThQZQ7DwUP2aNuYjk9guanWiu6649CL5DkvccLnI4A2839Q7y1AkjZF6dw==",
       "license": "Apache-2.0",
       "tarballSize": 23417,
-      "sha256": "16f5e4b2a5ce56e5291d0ec501f50d05d49953756953b499a1b496c47a0e4d9f",
+      "sha256": "062a86f8d7c06d0d4d21c139a931268b617e177c1ade318d444ae706f0362df7",
       "entrypointCount": 3,
       "assetCount": 6,
       "fileCount": 11
@@ -2101,15 +2101,15 @@
       "id": "renderer-pptx",
       "kind": "renderer",
       "packageName": "@file-viewer/pptx",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/pptx",
-      "tarball": "file-viewer-pptx-3.3.6.tgz",
+      "tarball": "file-viewer-pptx-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/pptxjs",
       "gitee": "https://gitee.com/flyfish-dev/pptxjs",
       "sourceRepository": null,
@@ -2127,10 +2127,10 @@
           "sha256": "348c05a2ab5e29e7c8db0d99cab31acf3e64fc0c47861e1c0c2dacb7bd63c47f"
         }
       },
-      "integrity": "sha512-IUTvi4/7HCnSWdIyHXCtZBBZ1uzEbLGq74wXNEnQJVguRhXxQw2XJ+fzGXRSB1AwzBLkj697AMj2XVleOi/qcA==",
+      "integrity": "sha512-5iTlsTC3PEvl6Aen9dL7yfmJ0QrQ9yRvKMCeLAino6B5rrf0iDNPGiegERzB4QHNMqp8nWLzz1k5dnPGK9ZKQA==",
       "license": "Apache-2.0",
-      "tarballSize": 203051,
-      "sha256": "5e9331effd57cc61531476b10088b77c2c35514930752ce5a44b5530a3a2b001",
+      "tarballSize": 204396,
+      "sha256": "d03060d4f0bd3c1fb3a1b809b3fda9a69a6911f64d2bfb0fc9c87ccdb3dffa7f",
       "entrypointCount": 7,
       "assetCount": 35,
       "fileCount": 40
@@ -2139,15 +2139,15 @@
       "id": "capability-pptx-charts",
       "kind": "utility",
       "packageName": "@file-viewer/capability-pptx-charts",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/capabilities/pptx-charts",
-      "tarball": "file-viewer-capability-pptx-charts-3.3.6.tgz",
+      "tarball": "file-viewer-capability-pptx-charts-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2165,10 +2165,10 @@
           "sha256": "0e5e61daf37b5cf969a9c8658dbec41312ab3910626916ddbf31183ef13c4258"
         }
       },
-      "integrity": "sha512-oZbwxiDBj12iMHBmdpshYOqJuAPPZtVGqecUhtW3x1UFJjq2RjUvfvnpqWranear4gsJ8H7QxaYH1NgpO9JZqA==",
+      "integrity": "sha512-CgBpVl7KhoqfLVq2HRuGhINkIs2t0+gqvUFQraemzFyx3ql3kSzjZ9HPXDYrfgFdO9R9iVeY5yjjLMelHqwtRw==",
       "license": "Apache-2.0",
-      "tarballSize": 4886,
-      "sha256": "1c3f9bc033353f3d4db0ec5b765cea7f79b879497590738d4ed3e59f798f01c6",
+      "tarballSize": 4887,
+      "sha256": "7c31b386ae0749715fa3983f5c7af424712fb8ec6e9372be114bb4d852b1b003",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -2177,15 +2177,15 @@
       "id": "renderer-presentation-pptx",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-pptx",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/presentation-pptx",
-      "tarball": "file-viewer-renderer-pptx-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-pptx-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2203,10 +2203,10 @@
           "sha256": "d28de0babc2f9ec021d7a942a471e9de88609578018af6490b51076e8ef78a2c"
         }
       },
-      "integrity": "sha512-Xi52WXzquD3q7jj2V2lW3afCvjENGD2kNnwBojoB1KB5b0VRuqhliV/AdM5oucSIJcUURn4xp7Fz+0kJ0JLeKw==",
+      "integrity": "sha512-lX0q+cA4GqS2/KVqjNO0cxyEOI0hmz25je2lWnbe8gR5KpzMNU53W+OFB+kS2urRIXT+QNU7IUtgphX7gvAA5Q==",
       "license": "Apache-2.0",
       "tarballSize": 13374,
-      "sha256": "00c2d2cd64d85e87f5b65d3fd39181f3962851e664d24acac46d72a90c8ac95f",
+      "sha256": "7c275b6a731b5b83c85dae0d1bd3591cdf2b3dee121ab451751f9bb9dd791ae3",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 8
@@ -2215,15 +2215,15 @@
       "id": "renderer-presentation",
       "kind": "renderer",
       "packageName": "@file-viewer/renderer-presentation",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/renderers/presentation",
-      "tarball": "file-viewer-renderer-presentation-3.3.6.tgz",
+      "tarball": "file-viewer-renderer-presentation-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2241,10 +2241,10 @@
           "sha256": "aabc88e5d653b2e9b6c6b04947dcd0167e5019fb09209b81d6f2480c015ab2de"
         }
       },
-      "integrity": "sha512-pJxncq/utkbVPxnMwbX0x3z/eXdGVt56GswHMfFMuDaf+MkbiSMgG5NviIBEUWd0OUVu8wKVcqe5fv4eXIho1Q==",
+      "integrity": "sha512-tNbPfUZBPvXSAFtet3u8m/tTeYyBFK4eLB17lfzP3FdW84EczTSIeSeQajYJ/z6vo3fDY2v+ayrv/7porCcbsw==",
       "license": "Apache-2.0",
       "tarballSize": 7649,
-      "sha256": "21497e79b49424cafe0ff57a5ab56bb4d09dce2d679ce31e919097266cff5dc1",
+      "sha256": "9f884b486fcfb5ea0489d639cd91fbdce81af852db44f5b681dbfdcc43c8aee1",
       "entrypointCount": 7,
       "assetCount": 6,
       "fileCount": 11
@@ -2253,15 +2253,15 @@
       "id": "preset-all",
       "kind": "preset",
       "packageName": "@file-viewer/preset-all",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/presets/all",
-      "tarball": "file-viewer-preset-all-3.3.6.tgz",
+      "tarball": "file-viewer-preset-all-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2279,10 +2279,10 @@
           "sha256": "f083f769f1f329af87ad18499adb36def29d3db19f1e9118f707711068193a3e"
         }
       },
-      "integrity": "sha512-ze6qYCLuQq0I1pFoAfOp/YaJeTMow5brj2PWBzYQT9Gb4atx0j/GfgmQlHBeDI8O2OpkJTeHrGP95TVVyKnD+w==",
+      "integrity": "sha512-e1BgppzVMZKYfkGw+48OZ1szWXp29Bu05XAJMdxgJdbDqG6r+3UDZFub67obrhYizxepe91usz+m7zJRpCnFjA==",
       "license": "Apache-2.0",
       "tarballSize": 12238,
-      "sha256": "70fd8959a7dd54e8d0b2969d995f42d33fa7c439b701b99e825ce54545ea00be",
+      "sha256": "0cf449eba3ffb009af5912cbe215a54e50daf6116de0921ad560ecdd72bdfbfa",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 10
@@ -2291,15 +2291,15 @@
       "id": "preset-lite",
       "kind": "preset",
       "packageName": "@file-viewer/preset-lite",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/presets/lite",
-      "tarball": "file-viewer-preset-lite-3.3.6.tgz",
+      "tarball": "file-viewer-preset-lite-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2317,10 +2317,10 @@
           "sha256": "3e86d5f4d75068bce46a7c7cdfdb706550f644ca28a778bd0a7ee2e206292a7a"
         }
       },
-      "integrity": "sha512-GSQHs5ULWkNEJMMSMPIpjzhTjIyU/ocUbsdvoYAHGhS/Gg8/BolRV5c/9gNlH5GCzKb2+CGIiJ45kN8sz0n0Pg==",
+      "integrity": "sha512-eNBUpA6A+FTpaWR1iZlkEhMBYLjNO/V+q0zR/5talL/GCq2h8IXdOSyiXYKJIEIbsOwLBTybkWnppDn3yjEEcA==",
       "license": "Apache-2.0",
       "tarballSize": 7182,
-      "sha256": "61263921c5ca506a8deae9a7788eb887ad57338ed1fd42475d2277dd2f392825",
+      "sha256": "90ee157b338d9e7d04a23dae6e7dcd7d6244bf2ae61c731634856d352e3a8f29",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 7
@@ -2329,15 +2329,15 @@
       "id": "preset-standard",
       "kind": "preset",
       "packageName": "@file-viewer/preset-standard",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/presets/standard",
-      "tarball": "file-viewer-preset-standard-3.3.6.tgz",
+      "tarball": "file-viewer-preset-standard-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2355,10 +2355,10 @@
           "sha256": "7f85beb6fc76b4e90685483a45250b54d3e038ab85edfa29fe2f2fd16f188d4c"
         }
       },
-      "integrity": "sha512-GCA0I60muxUI0/BUwmI/+3WuiZXRpUGxviIc3RH7o/aaM570cmi6iwOXqUzHos4eitzyUeD9/OOZ9KHZCMgGjg==",
+      "integrity": "sha512-3D9v1RLy9P9p6tVQ/sVMOlGy2ekWxeN6QJxy80OPg/d+4+jGFDfDxM2DPNkhl0MUDv6+ynq1SrQgZjYTNgDRRw==",
       "license": "Apache-2.0",
       "tarballSize": 8677,
-      "sha256": "bfecac5738b2b5b37627361510bafadaf171f12c03061284c6a78958926f8db2",
+      "sha256": "a62858dd21a778a570a11a8bddce24b8ea5fea43ad925dbf69b14b73baa06a9e",
       "entrypointCount": 6,
       "assetCount": 6,
       "fileCount": 12
@@ -2367,15 +2367,15 @@
       "id": "preset-office",
       "kind": "preset",
       "packageName": "@file-viewer/preset-office",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/presets/office",
-      "tarball": "file-viewer-preset-office-3.3.6.tgz",
+      "tarball": "file-viewer-preset-office-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2393,10 +2393,10 @@
           "sha256": "07c443d0540553a84510d30c393b5e5b272e6bf493731ba2bb82c74be0357e68"
         }
       },
-      "integrity": "sha512-slLumGY4uuAYhuE5152h3TCrgn964ODK02JGQR79mOgWEe01ZN2H0lXgPGt6ityy6VO53cnof48lDS4BrMnCrA==",
+      "integrity": "sha512-GcRnnFL+jmNeWx9ymaye3rdGuvsSiuPiAX670uT8OTv2DYTxVzwymIGaJmTr03sFEq9Z9HhFi4VnL+m9LF8IDA==",
       "license": "Apache-2.0",
       "tarballSize": 7247,
-      "sha256": "7bb1f16d235478134f7d545c7301e24e94cbb596178430ea3f98468af46ab38f",
+      "sha256": "f9f139f4c05a0465188dca4dbf6f5512e14325ba4a1f27f699a9a3e6f4838325",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 7
@@ -2405,15 +2405,15 @@
       "id": "preset-engineering",
       "kind": "preset",
       "packageName": "@file-viewer/preset-engineering",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/presets/engineering",
-      "tarball": "file-viewer-preset-engineering-3.3.6.tgz",
+      "tarball": "file-viewer-preset-engineering-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2431,10 +2431,10 @@
           "sha256": "fd35d10e3171c0edfd0d4392b06604c28f0d9f172d496d4d7bea95ade12413a6"
         }
       },
-      "integrity": "sha512-EkLTVpFd/AouDUnjauZIH+Os6oDcKKudGVqQdDGNXrM48PDNkLyqpTRqHaAggosN1U6P9gUojA1DgbkhE05Bnw==",
+      "integrity": "sha512-zNSKCrmlivlXFxoscLvIAn95GVc45JFqTP37mBUWFn+yA44F002ssjikYnCnGy10zE/a38CXEOhDnNmY9waPrg==",
       "license": "Apache-2.0",
-      "tarballSize": 7619,
-      "sha256": "ddabe9899b9b0ee7a3afc7af180ebb61db6854f0996987aa6f562999494ed702",
+      "tarballSize": 7618,
+      "sha256": "510e4d439ec22ea92e3af7cbd7b6bff19553db084f5921f23f979d5c07dd6fa8",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 7
@@ -2443,15 +2443,15 @@
       "id": "preset-vite-plugin",
       "kind": "preset",
       "packageName": "@file-viewer/vite-plugin",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/presets/vite-plugin",
-      "tarball": "file-viewer-vite-plugin-3.3.6.tgz",
+      "tarball": "file-viewer-vite-plugin-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer",
       "sourceRepository": null,
@@ -2469,10 +2469,10 @@
           "sha256": "589e269c6cdfd3a63bbaa4883fe1d6fb294ec51ce818cb34b8b9d40310c4da4d"
         }
       },
-      "integrity": "sha512-tpFWqkCWGMxncHrwyTZ1Sg3GRp1dEsb+FJTs8I0fh5WkMe5/+ZNE2j+CZwMenL1ahOT1c3W7O92v+4CS/W5xWg==",
+      "integrity": "sha512-gh7jZm34tJwOSdBEXLyhi264ALLz0i3dZmwJLmOg+YMdCs5IUI3j69qICfKeUbU5kwhWKBaJJ5vz/YulpqGMJg==",
       "license": "Apache-2.0",
-      "tarballSize": 33034,
-      "sha256": "c276ca2dde1bfd039c9b3e959f31d752f22a98b4612dff0335a36652e6daf07a",
+      "tarballSize": 33383,
+      "sha256": "5a1d4f85c298718954d0329056bc3265c8399f9456dc173c6981f425da2aaa16",
       "entrypointCount": 4,
       "assetCount": 2,
       "fileCount": 8
@@ -2481,15 +2481,15 @@
       "id": "msdoc-viewer-compat",
       "kind": "compatibility",
       "packageName": "msdoc-viewer",
-      "version": "0.2.18",
+      "version": "0.2.19",
       "packageDir": "packages/compat/msdoc-viewer",
-      "tarball": "msdoc-viewer-0.2.18.tgz",
+      "tarball": "msdoc-viewer-0.2.19.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": "@file-viewer/doc",
-      "releaseVersion": "0.2.18",
+      "releaseVersion": "0.2.19",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -2507,10 +2507,10 @@
           "sha256": "9164915f4db1bee45d395124cb27db889f771b23c39f885bd422fe50842d19e5"
         }
       },
-      "integrity": "sha512-j68dlq+210qvW9CXCR5v2PD8YJeu9VLLoafO+82OEMmqbygLQUA4XZVpy4p9mNLHKyo3dYmbBhHdQgdVGmqUvQ==",
+      "integrity": "sha512-skCYgfDTNl64qVnAvSOMBd9dMiqI/qD53uUIBkmvZgCvpfWrz6t5vC5hpiMKNOx2yyE1ia1JtC49HT9KJs6log==",
       "license": "MIT",
       "tarballSize": 2040,
-      "sha256": "533193bff8fc2a03dfa2508b0df5eeb5af1812600eb021a3b479e130c7fba65d",
+      "sha256": "82bbc4ca41c0d4a97e9672b641c873a354254280e16b7c4a1422aaa288eff557",
       "entrypointCount": 5,
       "assetCount": 4,
       "fileCount": 9
@@ -2519,15 +2519,15 @@
       "id": "create-file-viewer",
       "kind": "compatibility",
       "packageName": "create-file-viewer",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/compat/create-file-viewer",
-      "tarball": "create-file-viewer-3.3.6.tgz",
+      "tarball": "create-file-viewer-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": "@file-viewer/cli",
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -2545,10 +2545,10 @@
           "sha256": "3a35367fbaf0c703241e3afafa2f9de7f00a7b3408570e0b07012356e342d78d"
         }
       },
-      "integrity": "sha512-tjijliixKD6oCGcjQngBGdgVw5ooW+Xmi0TVCRQdX4ytchP6L5nvOCv9WLV2Klqke8LEN55AF0RDWTKf5pCU2w==",
+      "integrity": "sha512-tPtl/wMfj/uDZO1BFhZAc49pB/eZMxQ6cKl4dymu7IL+nIaL+z71ojjvN7psPfk7QUVZXPjY4v35mCUApFJFAQ==",
       "license": "Apache-2.0",
       "tarballSize": 9850,
-      "sha256": "7dde9d1fa09f77c06d1dc05427ab812b6406555381ac5838004d73118396591d",
+      "sha256": "90bdd3b4693a257578bd72d209b6f1b7605fea122bc95cf96548519432f69f38",
       "entrypointCount": 1,
       "assetCount": 2,
       "fileCount": 7
@@ -2557,16 +2557,16 @@
       "id": "file-viewer-cli",
       "kind": "compatibility",
       "packageName": "file-viewer-cli",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/compat/file-viewer-cli",
-      "tarball": "file-viewer-cli-carrier-3.3.6.tgz",
+      "tarball": "file-viewer-cli-carrier-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true,
         "tarballBaseName": "file-viewer-cli-carrier"
       },
       "targetPackage": "@file-viewer/cli",
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -2584,10 +2584,10 @@
           "sha256": "72742be1e58cb63e18b739f306b5ea637936e6aeba966c7052c577c784f8da10"
         }
       },
-      "integrity": "sha512-V0Qe9vSISeJ+l7/EC6GBNx1E9FnFiheKD3HDdhAAdY4lqaas1RO84TGiSwUBPsAtTk19WWnHUWioAODeLLEpSg==",
+      "integrity": "sha512-X/eo+6u/K5wJHdcF7BjhdljDgnhQGpc+Y3nGcPzspgd+HnnKRt7yUHAynzimCCgoVTIsu3LjdTivVVgwBS6NkQ==",
       "license": "Apache-2.0",
       "tarballSize": 1742,
-      "sha256": "350b2ab5f30de3764ece1ce64afc193758f97bdc1ce5b873981783e28dd35131",
+      "sha256": "44fec4855a594a1c5454db44730a0d9578056b781691e9e4261cf8fe95987473",
       "entrypointCount": 1,
       "assetCount": 1,
       "fileCount": 6
@@ -2596,15 +2596,15 @@
       "id": "web",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/web",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/web",
-      "tarball": "file-viewer-web-3.3.6.tgz",
+      "tarball": "file-viewer-web-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-web",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-web",
       "sourceRepository": null,
@@ -2622,10 +2622,10 @@
           "sha256": "fa56c10d3e5303d1b60a580f1e54173b2a5d9e58147318097f6bf785abb827af"
         }
       },
-      "integrity": "sha512-N67BDY2vbQPFGW/HHoPmXxccVB3RZ8nORVjT+NXsPsDc2I51S/8Nc0XOgPs3b9W8S5vyl7YWR6rmsKf5QtfAtw==",
+      "integrity": "sha512-NF57f7GFUOFPb7bF+vgIu1jogGy6SoW6puuHBWlZ5yT2JACgGR87egaLkb6ZYxDCG1MKNGup2ZAJcMeiHmifoQ==",
       "license": "Apache-2.0",
-      "tarballSize": 438688,
-      "sha256": "e28f86919abd5974740da351f0a3826e0a384038c91021642f741cfe17b05069",
+      "tarballSize": 440565,
+      "sha256": "8545ecdd5782bc385e73b947fd0faa69bae3e8b3467da9bc80640739fcb11b0b",
       "entrypointCount": 6,
       "assetCount": 15,
       "fileCount": 20
@@ -2634,15 +2634,15 @@
       "id": "web-compat",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer-web",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/compat/web",
-      "tarball": "flyfish-group-file-viewer-web-3.3.6.tgz",
+      "tarball": "flyfish-group-file-viewer-web-3.3.7.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": "@file-viewer/web",
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -2660,10 +2660,10 @@
           "sha256": "e1d59d54a76944668c10f03f8410521289fa65a4eddcd7696651d9de56ab0f0a"
         }
       },
-      "integrity": "sha512-cRvfo7J5s4/UyhZpY9pobG001Ma6VHYxqiQR0S7hR7UxC3GJNUDERzx/V3olWH+5ij3ZfytdKFVDckbMWooEqw==",
+      "integrity": "sha512-Ga5o116dgf3UgJu4hYsVkIV4xcARPSngrlmDea/6jBjfNx7c750YCFmD/1hBgQmbOeHgXqwOp56ASjErdnF72w==",
       "license": "Apache-2.0",
-      "tarballSize": 70863294,
-      "sha256": "6b722d585b77516f658be17f7940da2aade63a72f501bbe1ab9f95ed7368dc19",
+      "tarballSize": 70882506,
+      "sha256": "a64af49b673e3858ef94b07d301545d5d16a3c12117614df3d3078489f139b76",
       "entrypointCount": 6,
       "assetCount": 2954,
       "fileCount": 2960
@@ -2672,15 +2672,15 @@
       "id": "web-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/web-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/web-full",
-      "tarball": "file-viewer-web-full-3.3.6.tgz",
+      "tarball": "file-viewer-web-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-web-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-web-full",
       "sourceRepository": null,
@@ -2698,10 +2698,10 @@
           "sha256": "6ad95852c4df7df49ac23bb2c34eb40c3309c17871e4e9b44ed0fcc60c0d799b"
         }
       },
-      "integrity": "sha512-9NhRU6cqzrDCfdwZ0Jw+pQjdOfj+JrHfAT8bnPFmwVCQlIuxxUH4pd4cKGwXyWvr5quvU61P9xP32ZPUw3MVkQ==",
+      "integrity": "sha512-7YhdM7Wdk7NWumw1oOeO8+0bRLSYgcdm151x1Tuoue1fnsxQ0GSYmFLwkB4wYt3tSPRuXSFqqjl8tqeyFSospQ==",
       "license": "Apache-2.0",
-      "tarballSize": 41729732,
-      "sha256": "b67fd2e3d99665f279fb6a2231dc363e181742a3b2790ebbcc381f4fc4291615",
+      "tarballSize": 41765358,
+      "sha256": "3e43880cf2642c1f1e0c54979b212becf14ce552116c645bff535951cc8b5420",
       "entrypointCount": 5,
       "assetCount": 506,
       "fileCount": 512
@@ -2710,15 +2710,15 @@
       "id": "vue3",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue3",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/vue3",
-      "tarball": "file-viewer-vue3-3.3.6.tgz",
+      "tarball": "file-viewer-vue3-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-vue3",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue3",
       "sourceRepository": null,
@@ -2736,10 +2736,10 @@
           "sha256": "da4896a00a5c7402ec4114de2e9a8c47942b41b87bca76478e3daccb1f1c05e7"
         }
       },
-      "integrity": "sha512-d64ONiPk08bs2PXPwew68QSa9xJ4aW9gX43/Luq23xM8Th0WsbVGRkp5H5FsgteJUZxffwcQqEorPXYeF5PAfQ==",
+      "integrity": "sha512-hkOWkyhYqOe6BN1RqHRzDMt4n9WINGxyGNr9+B7U1Gn90JyYsdgTodaNQ/jXDmXOGj27X5Lyft90t97kGxpJ8Q==",
       "license": "Apache-2.0",
-      "tarballSize": 92945,
-      "sha256": "ae7d15d2796a59ee713ef8bec6ae9635d4de9d04e0bdfd45aaebdfb57d1b7d52",
+      "tarballSize": 90389,
+      "sha256": "448fd3f15160d7bd6c780f03f113aaee4fee62b15f9fd6e986ddf0e0dcc02860",
       "entrypointCount": 5,
       "assetCount": 35,
       "fileCount": 40
@@ -2748,15 +2748,15 @@
       "id": "vue3-compat-scoped",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer3",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/compat/vue3-scoped",
-      "tarball": "flyfish-group-file-viewer3-3.3.6.tgz",
+      "tarball": "flyfish-group-file-viewer3-3.3.7.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": "@file-viewer/vue3",
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -2774,10 +2774,10 @@
           "sha256": "17c8dde3dc9f3eba7143f20dab1ce5a1e8672ebe9584dcdb6b72adf6e58083cc"
         }
       },
-      "integrity": "sha512-LzvAuGlg3AHEforCXP8tHEF4loM0rFzNXOBZj/0pMtB+8xxfH/M/R/5uVrxjJuGnTcY1ZG97UTiVJHOo8ojCDA==",
+      "integrity": "sha512-87griaMAAbmrVtltVfaxBHVCGpzGZHQkeb9+3rVm2mXmgYvFhNs5SMBkHriOIErkaiNA0kI4wDYlWg6PF51BEQ==",
       "license": "Apache-2.0",
       "tarballSize": 4788,
-      "sha256": "85b5472cd53d3a91d2f75e9962426a57f028a4e5767b31c417b85795f5a3978c",
+      "sha256": "58fbca7db1ecbe96edbcb4116ce28bbba55afc7d841dedf2e722bef3332d7af0",
       "entrypointCount": 5,
       "assetCount": 3,
       "fileCount": 8
@@ -2786,15 +2786,15 @@
       "id": "vue3-compat-unscoped",
       "kind": "compatibility",
       "packageName": "file-viewer3",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/compat/vue3-unscoped",
-      "tarball": "file-viewer3-3.3.6.tgz",
+      "tarball": "file-viewer3-3.3.7.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": "@file-viewer/vue3",
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -2812,10 +2812,10 @@
           "sha256": "f12e53085a2220de3944967cdc6ee2f852cce3f49ca772a7f043b929dc1f51df"
         }
       },
-      "integrity": "sha512-Gt98Evk/S+gLQElZNYhAu7WNSYp9/fvCyIr1rJEd1iYonbwO7WoxyFYA6heHUO5baUnCLdoB3HPDrEUIdWhRvQ==",
+      "integrity": "sha512-Dgc1d100RlpqSnKUXc7w9qhVo2SpixBhNJYq1g9ooVe7wWvRUoXkIPFTx/Hbhkx0vLu6Yi8DxWILjYT4fMhgzg==",
       "license": "Apache-2.0",
-      "tarballSize": 5219,
-      "sha256": "759fcec2d552f10cdc32caef2b01229d483706148e1eb6c4aa891c2992cb8c33",
+      "tarballSize": 5220,
+      "sha256": "a085f44032e8e329304eff40400c9014e1c7569595f07e33bf1654b5bcc14023",
       "entrypointCount": 4,
       "assetCount": 3,
       "fileCount": 8
@@ -2824,15 +2824,15 @@
       "id": "vue3-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue3-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/vue3-full",
-      "tarball": "file-viewer-vue3-full-3.3.6.tgz",
+      "tarball": "file-viewer-vue3-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-vue3-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue3-full",
       "sourceRepository": null,
@@ -2850,10 +2850,10 @@
           "sha256": "71388ade11974de103c2b102bbf4c9edae04170590e7336d9795bf6b07cb18c4"
         }
       },
-      "integrity": "sha512-POpBlON1nFx6Vx5T3CGZNvNzU/K+vhmwaINKtLWJTIPimnCnadud1CKgA/4WPsP/SSOk21lrQ95te8gz6/QNDA==",
+      "integrity": "sha512-SICaXoPNuoDmun5ktb36LuiSFGwr7RNbc1I8dM3/atBBUXhZq7ps/ssbuVz62OxU7SL2IKU9B0YksQ5H1FBe+A==",
       "license": "Apache-2.0",
-      "tarballSize": 40803,
-      "sha256": "e670cbfd91adf480d6abdb982284ba460830abfdfb2155c8415ba9e20e4ed3fb",
+      "tarballSize": 40804,
+      "sha256": "3b25a27d2408c06672318cfc3647d55b50f51c009fd6566f5f4bc9d912b8ca0a",
       "entrypointCount": 4,
       "assetCount": 4,
       "fileCount": 10
@@ -2862,15 +2862,15 @@
       "id": "vue2.7",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.7",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/vue2.7",
-      "tarball": "file-viewer-vue2.7-3.3.6.tgz",
+      "tarball": "file-viewer-vue2.7-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-vue2.7",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.7",
       "sourceRepository": null,
@@ -2888,10 +2888,10 @@
           "sha256": "2e4d13135c78f3e8e1f193812ca23c192014c33f4ee88b69a9b6aadac3d5e2b6"
         }
       },
-      "integrity": "sha512-Xm6bFDMvXTKJ+6jvS2QhcByryoBY7IKnhCVGGjE2pXi5RFIh/m6MvfnQpx8KC2N5WJMgbtJHhW4/YDKaDJpBig==",
+      "integrity": "sha512-RyR1u2vlkz4NyuXiOHq1iLI4/Ye8XBZYM9mTA+DI+wfN8CpMVFl3alcR0YtvqDK/Mt2Svt2sWDFJ03+2AO8H4A==",
       "license": "Apache-2.0",
-      "tarballSize": 45364,
-      "sha256": "21f721ff88883d794c2141ce5d3cdb498f78d533e1b1240aa79af5f15755f660",
+      "tarballSize": 45362,
+      "sha256": "e85438be6d00efb189be353c32f624cb444e5ab73d21d712102e19c6dda177ce",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 9
@@ -2900,15 +2900,15 @@
       "id": "vue27-compat-scoped",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/compat/vue2.7",
-      "tarball": "flyfish-group-file-viewer-3.3.6.tgz",
+      "tarball": "flyfish-group-file-viewer-3.3.7.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": "@file-viewer/vue2.7",
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -2926,10 +2926,10 @@
           "sha256": "8b9763d1efc64d2f373b459dbf9f23c8c8c1ed9beeff9fc3bf23e842139a6741"
         }
       },
-      "integrity": "sha512-/5hvBP/Z3rL9d9r18Z0w/wF2g6qwoaQyh9HdqOT807NiwQHAbscvrAQdpnt8x6FVCboM2cYyqMcW5w39VK/JIQ==",
+      "integrity": "sha512-wJnXKWbg+8JOHYozzJnzxER7Z2zUkSMA1pejIkF5iqq9gy8+/7M3AwRJ8L96cZi/JF4W6nvXuu09rq7kqLzMZA==",
       "license": "Apache-2.0",
-      "tarballSize": 5144,
-      "sha256": "49961d44a7f35ea5960269f6e3c10f1f9751a37727f0833743db04b09f168087",
+      "tarballSize": 5142,
+      "sha256": "c550e7ec8dbf985e49c5525fc0447a30d8733054d0519b7ccd09b9e31616337f",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 7
@@ -2938,15 +2938,15 @@
       "id": "vue2.7-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.7-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/vue2.7-full",
-      "tarball": "file-viewer-vue2.7-full-3.3.6.tgz",
+      "tarball": "file-viewer-vue2.7-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-vue2.7-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.7-full",
       "sourceRepository": null,
@@ -2964,10 +2964,10 @@
           "sha256": "613024bdbb03f2acbe35f30f89002783b70239a9dee842da606206b05069152c"
         }
       },
-      "integrity": "sha512-dZD0jAVbVpMdkYxSw5IVFA8ErPML1YDZpYEmRK10Ow5m5DyyE0W5rU/S1P+GtHW54E/tUhWJNwyGYYo721kyKA==",
+      "integrity": "sha512-vPfDWU+0SaPxdAQvUlvciTsHnh9j1aCuA3PkdX+WAaEHNSaMqw5kEHlVye2iP4C4jPB9qM/u/VohJn/YqvTH5Q==",
       "license": "Apache-2.0",
       "tarballSize": 40289,
-      "sha256": "64e0b4ff72356310a2718563389c5e026f7a3cc060ea7339f1417fffd253f14d",
+      "sha256": "02cfafe8a9794f5abb7854d0e8b888316e96ae422a5f9e30d4f8374808ff840a",
       "entrypointCount": 4,
       "assetCount": 4,
       "fileCount": 10
@@ -2976,15 +2976,15 @@
       "id": "vue2.6",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.6",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/vue2.6",
-      "tarball": "file-viewer-vue2.6-3.3.6.tgz",
+      "tarball": "file-viewer-vue2.6-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-vue2.6",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.6",
       "sourceRepository": null,
@@ -3002,10 +3002,10 @@
           "sha256": "c7d165b0ac0b4274081911e031ef2c91eee45973458e3c73a1c39e5ef2666a57"
         }
       },
-      "integrity": "sha512-vCYpVisKV6cWSpw5gIuiHXlkaBlv7ui57MzbKwTjHY5501MIASgkbGvNQi6Hc0i+npw/GfnGtt+gpO58GIvVYg==",
+      "integrity": "sha512-CN78vM2SlRt+Zm6Wv1eT7oJDrMa6UFcNyQ/XhDzMiL6eHS4b6C6eInOMsw6vubwD8NKcT84Ije4buqajqDg6Rw==",
       "license": "Apache-2.0",
-      "tarballSize": 45826,
-      "sha256": "4f896d96b8de7e31bb41e843b6179a950395a837415d7b14ddb8973a0fb4ea0e",
+      "tarballSize": 45828,
+      "sha256": "5adb9daaeeec1d4cd6064d32bbc95a6650191acd6cd461cd8b5c5fe8b31b989d",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 9
@@ -3014,15 +3014,15 @@
       "id": "vue2.6-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/vue2.6-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/vue2.6-full",
-      "tarball": "file-viewer-vue2.6-full-3.3.6.tgz",
+      "tarball": "file-viewer-vue2.6-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-vue2.6-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-vue2.6-full",
       "sourceRepository": null,
@@ -3040,10 +3040,10 @@
           "sha256": "8750dc2dbd98faef4f9a2e72fbd06d2ecf1f0b67fefba8a0b09aca61956939e9"
         }
       },
-      "integrity": "sha512-l951AY0E4yE+4FDjyahBF+vVr2gfrvZmd/4vUnZkg6/OQ6zNaUH086QGTN4lCF7/x7In7UdP5oDBzaAXnXupWQ==",
+      "integrity": "sha512-WLEHazjC8iRVi9QqewvOpbnQdueoiF9eYFx7oNIKhfnw/oeLDGAppPAcA9LrwozOyjswnD3/vM8sZw9HxX8HeA==",
       "license": "Apache-2.0",
-      "tarballSize": 40245,
-      "sha256": "c97a33529c21631d5ff703862cc6d407f6593474e1d7e1b64ec1f9da3a87eb4e",
+      "tarballSize": 40244,
+      "sha256": "6f509a335f63c82c9835f26d3a1ac8638e80202ceabfec21dedea1d0c00a9394",
       "entrypointCount": 4,
       "assetCount": 4,
       "fileCount": 10
@@ -3052,15 +3052,15 @@
       "id": "react",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/react",
-      "tarball": "file-viewer-react-3.3.6.tgz",
+      "tarball": "file-viewer-react-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-react",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-react",
       "sourceRepository": null,
@@ -3078,10 +3078,10 @@
           "sha256": "8a85864acf055862fba9d43a989c53451f4964bacc38f8e227b01e9a2362eccf"
         }
       },
-      "integrity": "sha512-BAd5bXDJrQZdpfLN1Nax1X6wXB19E+lVJe+jep07CViErEZAvxIgPVBghvnxqd9As68obkVJJRDpp2chLnIyEQ==",
+      "integrity": "sha512-uaHamr7rqnZCMIgCFlQ90fWAoTd+J+voMxwCYWom0EyX3fARLwdgwHiTf7Vr6bav9CfEUa/HLekviiQec+5AkQ==",
       "license": "Apache-2.0",
-      "tarballSize": 44785,
-      "sha256": "9f28fc3cabde42723c9eab866a9672e53504442f8a8d74d9b640bd1beed2ad77",
+      "tarballSize": 44786,
+      "sha256": "2193bce7f3e5fc0c3c5a568a49d4a07a5b707b2b7f314b5c5bf812877ca34753",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 9
@@ -3090,15 +3090,15 @@
       "id": "react-compat",
       "kind": "compatibility",
       "packageName": "@flyfish-group/file-viewer-react",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/compat/react",
-      "tarball": "flyfish-group-file-viewer-react-3.3.6.tgz",
+      "tarball": "flyfish-group-file-viewer-react-3.3.7.tgz",
       "publicSource": false,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": "@file-viewer/react",
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": null,
       "gitee": null,
       "sourceRepository": null,
@@ -3116,10 +3116,10 @@
           "sha256": "84047c06748077fe74aaab98af6fe9e9674804986854c87de87a620392e04203"
         }
       },
-      "integrity": "sha512-9JJTqXgusKgMheZHOU6KKGmbtBTxONUcAM/uwsdJgBRzOxZhJY9cW2E3T4xvZZKHKzjZAaF/338oyabADV7Rew==",
+      "integrity": "sha512-gkQN8DVAslJ2HxnxQ8+3cFi+8XZEnfMDxniNABCbolyTRHj1CaUYCvz3EwQZZ2H+tJlu2Z9dB+DYtbEf7DBPVQ==",
       "license": "Apache-2.0",
       "tarballSize": 5854,
-      "sha256": "7fdb87d4b3e9603b04647d879f355f6f9b22f65058532131b20e244830b3e528",
+      "sha256": "7ec6ef32e109342c5319294c4332167a13d83045a41c23352696b9830f8dc469",
       "entrypointCount": 3,
       "assetCount": 2,
       "fileCount": 7
@@ -3128,15 +3128,15 @@
       "id": "react-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/react-full",
-      "tarball": "file-viewer-react-full-3.3.6.tgz",
+      "tarball": "file-viewer-react-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-react-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-react-full",
       "sourceRepository": null,
@@ -3154,10 +3154,10 @@
           "sha256": "eeb1f161aec9e12d0c77485e086e4127bdf403d32195a97a762d283cacde4df1"
         }
       },
-      "integrity": "sha512-2JNUKhYxRfPj4LNQJqE6Vu3fBuTbg8TXYy0Jlxumdxw/m0/SUQeIeNHrdQ+NzG2h3ybMHmopk3A3v3bbIjyONg==",
+      "integrity": "sha512-aDFX8e7rXIQ+inSgavARe6A7d8bHUIBba9TYGGUUDnZ5S2/gtK7a6IiENLYAXCDHyI3IwUbNILlq956Er6X88w==",
       "license": "Apache-2.0",
       "tarballSize": 39847,
-      "sha256": "5015465cfdc325641042dd2c699e01ac60e273fc308374062adeb41a811988ed",
+      "sha256": "105213d20f32c6d044eb5febe427e1e198f38f0a6e3200bac9bd45f403561020",
       "entrypointCount": 4,
       "assetCount": 2,
       "fileCount": 8
@@ -3166,15 +3166,15 @@
       "id": "react-legacy",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react-legacy",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/react-legacy",
-      "tarball": "file-viewer-react-legacy-3.3.6.tgz",
+      "tarball": "file-viewer-react-legacy-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-react-legacy",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-react-legacy",
       "sourceRepository": null,
@@ -3192,10 +3192,10 @@
           "sha256": "5b8eb9972da059299f3b0c843793e2c6f539675da423b02d4561cfc666e48b1a"
         }
       },
-      "integrity": "sha512-KnA4l0ZOLJyzZHkGTCdKx+E1vzquUHDunn/OhsXnVewBBEKC3n6+GX0WosUQ6SQT8YijD6ZhnGdrouxwHR5taA==",
+      "integrity": "sha512-au3uWl7T+ZBkBPegWCwBEwgjQieoqROmaFwvBwbCYhwAdXzeKLzw7cD86tGDQHGMnUatJwDKXi5vF0cLmKO1IQ==",
       "license": "Apache-2.0",
       "tarballSize": 45208,
-      "sha256": "5058551f34a220023d99a0c7b5b0809fee736fa6c3f8b854fcf988bbe951e7d6",
+      "sha256": "357b2d612e49f132360e9559bcf05484927b028956f77a35b71edc84bfef6b25",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 9
@@ -3204,15 +3204,15 @@
       "id": "react-legacy-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/react-legacy-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/react-legacy-full",
-      "tarball": "file-viewer-react-legacy-full-3.3.6.tgz",
+      "tarball": "file-viewer-react-legacy-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-react-legacy-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-react-legacy-full",
       "sourceRepository": null,
@@ -3230,10 +3230,10 @@
           "sha256": "857346d50dbe34b1c67ab1099599628df4854b6839e83ad29962aa0bf27993c8"
         }
       },
-      "integrity": "sha512-7wRmMTt34mFcnVKoWYW4tao1OSuuEK1ftS0XRpp1Gv9KqpvNAZ3EgfmY4uS5BC/NasL072Nwm9bp/nPvYsG8/w==",
+      "integrity": "sha512-ftkVHoju4eFv+7jZAvTcSOP8Gd/DxCC3N+L2I1yVLY3VngwgPIYUJeLQWtfuTOe/rzLJVQdQrAvR/H2WYCREHQ==",
       "license": "Apache-2.0",
       "tarballSize": 39871,
-      "sha256": "91578edd65ce3a4e846674ba85514d356e6ef19a6f61f4a03e9e99345603c8b4",
+      "sha256": "ebd5c808f10cf0f65f41df3a39f16fd06eaf9991fa478c5622a25e21e94276fa",
       "entrypointCount": 4,
       "assetCount": 2,
       "fileCount": 8
@@ -3242,15 +3242,15 @@
       "id": "jquery",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/jquery",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/jquery",
-      "tarball": "file-viewer-jquery-3.3.6.tgz",
+      "tarball": "file-viewer-jquery-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-jquery",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-jquery",
       "sourceRepository": null,
@@ -3268,10 +3268,10 @@
           "sha256": "71a8bd498ce0c0518819679ee10444db17efbd31133851034d2946f211d3b12b"
         }
       },
-      "integrity": "sha512-J59sbsJ+NiQz+iRwm9fs4pfD4XV3vY4md08KiYFsol6VNrnjaQfyE5sIv1QRsEBtYvFVd92mAd7TJVbLxZw0yg==",
+      "integrity": "sha512-ucWjbC5uRXge/tp/obb3l9PD+CcMdqOHIdn9Os3ujlmRNEp4E302fGJMcfu27FDyJEVZRtR6rWa2dmPmyKOvGw==",
       "license": "Apache-2.0",
-      "tarballSize": 45508,
-      "sha256": "cf83220c9096178f0364555e7a38395c990ca050b6a46125ff1728095e210492",
+      "tarballSize": 45509,
+      "sha256": "b778d6c0410faeea12b1dfbea0b793690b67a7458ec185ba43be45f4404f3621",
       "entrypointCount": 3,
       "assetCount": 4,
       "fileCount": 9
@@ -3280,15 +3280,15 @@
       "id": "jquery-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/jquery-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/jquery-full",
-      "tarball": "file-viewer-jquery-full-3.3.6.tgz",
+      "tarball": "file-viewer-jquery-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-jquery-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-jquery-full",
       "sourceRepository": null,
@@ -3306,10 +3306,10 @@
           "sha256": "c58b2de3cd6a48cd852507cab1f91c9c9564f80b7d6bdea42c61576d36e78990"
         }
       },
-      "integrity": "sha512-tBJU/+E0gyQ4uzX+V0hh1ioPlI2hSkTCSX7ALglyMHbhVPpi8EFlmFlr5HELRCGz8cBCQFW1rgpVuHfdXeYO3w==",
+      "integrity": "sha512-sduV56JdB3y95nriAVxHkTU1H7XXFCsPjrWB0bqQfCybFvaAGMLRhUjbgh3lF2KJKRebBFc+qmxqeFVUZFCz5Q==",
       "license": "Apache-2.0",
       "tarballSize": 40149,
-      "sha256": "1b2123f462b3b5f472767ea98affbca714f6b8cf9990c494ea12d42afafc49e8",
+      "sha256": "fc733ae1ac86617e7a7587dc463f321850a17d4185bf4939ce0a4e6236291b2e",
       "entrypointCount": 4,
       "assetCount": 2,
       "fileCount": 8
@@ -3318,15 +3318,15 @@
       "id": "svelte",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/svelte",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/svelte",
-      "tarball": "file-viewer-svelte-3.3.6.tgz",
+      "tarball": "file-viewer-svelte-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-svelte",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-svelte",
       "sourceRepository": null,
@@ -3344,10 +3344,10 @@
           "sha256": "b69aa15b05d57602cd12dabf060c97fc88a73c83bc6aa22a25439c4cf179f0ec"
         }
       },
-      "integrity": "sha512-CS+mt6wkvyCK2CyfsHPcd8Nq2YRmvmcGieK26X1E2rcfUVx10WeJ5n23GvB4bl95YgwwsIx7k9jipWyZwRnuEg==",
+      "integrity": "sha512-rU+QcrirDYb+CX5yxnzQugqipJkSA75ayiu/NTzV1IZPg9N+CqxsOTR2sUebmnWCfTxYMWkrsk+fFJznHR3+8g==",
       "license": "Apache-2.0",
       "tarballSize": 48558,
-      "sha256": "faa181c428331cca8c808f13e980e260e48af5b8a6e1e4b7198ac09d6dfbdb9e",
+      "sha256": "8d50589b71063063ed1e84ad618bd06e9b0ef45156e03adc0042a4d56474d97e",
       "entrypointCount": 8,
       "assetCount": 8,
       "fileCount": 13
@@ -3356,15 +3356,15 @@
       "id": "svelte-full",
       "kind": "standard-wrapper",
       "packageName": "@file-viewer/svelte-full",
-      "version": "3.3.6",
+      "version": "3.3.7",
       "packageDir": "packages/components/svelte-full",
-      "tarball": "file-viewer-svelte-full-3.3.6.tgz",
+      "tarball": "file-viewer-svelte-full-3.3.7.tgz",
       "publicSource": true,
       "releaseArtifact": {
         "includeTarball": true
       },
       "targetPackage": null,
-      "releaseVersion": "3.3.6",
+      "releaseVersion": "3.3.7",
       "github": "https://github.com/flyfish-dev/file-viewer-svelte-full",
       "gitee": "https://gitee.com/flyfish-dev/file-viewer-svelte-full",
       "sourceRepository": null,
@@ -3382,10 +3382,10 @@
           "sha256": "94b7460dbbc0b6aae11854b15e49e0af6ccee5c1f1d8fe15dd9344ba52d58c80"
         }
       },
-      "integrity": "sha512-kpeODd9svelE8XI07yB4/uZCDOebL7D8dQDRfp0kPk6Qm5V/yeRFNp57IUBnWMBYJTeNtcP+MJxbCDtFeDDp6A==",
+      "integrity": "sha512-WgbfIDz8lygL4xo0KWtyKGKOEWNn5TsXsxVks3x7zetBNN53T8WDStEQROy+n7wVCwupMVcHJo8jHzn+oOrG4w==",
       "license": "Apache-2.0",
       "tarballSize": 43468,
-      "sha256": "d05e17db07960b9a31ae8ba7d9c345456fcb8780af0c7b057e69949de3142b3b",
+      "sha256": "e3952def036f5e6e43c7b7bc0bac074e78abedb9c4d31d14febdfe5a029b8099",
       "entrypointCount": 9,
       "assetCount": 8,
       "fileCount": 14
