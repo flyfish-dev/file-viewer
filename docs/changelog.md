@@ -6,6 +6,13 @@
   The notable user-facing changes shipped from the current File Viewer mainline. GitHub Releases remains the source for downloadable artifacts and immutable release notes.
 </p>
 
+## File Viewer v3.3.7
+
+- Reuse Vite dependency lookups during configuration so large workspaces start faster with the same preview dependencies (#516).
+- Keep Excel headers visible while scrolling in frozen panes, and open supported password-protected Excel sheets (#514, #518).
+- Keep OFD files loaded in the demo iframe and preserve MathType formula layout in PPTX previews (#517, #519).
+- Use `@file-viewer/docx@0.3.43` for the verified Word preview fixes (#520).
+
 ## File Viewer v3.3.4 — Unreleased
 
 Release preparation; npm publication and deployment are pending.

@@ -10,8 +10,8 @@ The `@file-viewer/*` packages include vanilla JavaScript, Web Components, Vue, R
 
 ## About this build
 
-- Build version: `3.3.6`
-- Main npm package line: `3.3.6` (`msdoc-viewer` compatibility alias: `0.2.18`)
+- Build version: `3.3.7`
+- Main npm package line: `3.3.7` (`msdoc-viewer` compatibility alias: `0.2.19`)
 - Registered extension mappings: `275`
 - Stable extension mappings: `225`
 - Experimental extension mappings: `50`

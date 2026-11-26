@@ -2,7 +2,7 @@
 
 > This is the official interactive demo for File Viewer by Flyfish, a browser-native, offline-first, self-hosted file preview project.
 
-- Build version: 3.3.6
+- Build version: 3.3.7
 - Demo: https://demo.file-viewer.app/
 - Official site: https://file-viewer.app/en/
 - Stable project facts: https://file-viewer.app/en/browser-file-viewer/

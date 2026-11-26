@@ -528,9 +528,9 @@ test('all spreadsheet owners require the Worker built from the actual current Co
     )
   )
   const asset = {
-    path: 'served/7173172aff854c273ec04ac0a2d172c47ef9707005f82d3a6c36a54219b6ab33.js',
-    bytes: 794149,
-    sha256: '7173172aff854c273ec04ac0a2d172c47ef9707005f82d3a6c36a54219b6ab33'
+    path: 'served/287d75e39313ac942b0e31643123cc8ae9e5e31f77380194de31eaeae780b5ca.js',
+    bytes: 794250,
+    sha256: '287d75e39313ac942b0e31643123cc8ae9e5e31f77380194de31eaeae780b5ca'
   }
   for (const [runId, count] of [
     ['issue-211-spreadsheet-table-styles', 9],
@@ -597,7 +597,8 @@ test('the current profile rejects superseded Playwright and independently measur
   assert.equal(collect({ required: metadataRequired, events: metadataEvents }).length, 6)
   for (const sha256 of [
     'b727f15222df59599e92e9cd9539852318f814aa40a2b85a72030c1542664e29',
-    '5165977c1f33578a49618cb6641b6324c63cdbbf76a2e1acbec6bc25553a51b2'
+    '5165977c1f33578a49618cb6641b6324c63cdbbf76a2e1acbec6bc25553a51b2',
+    '4f867501c70faf3ed01ed818046792d29e4ee4e1f9c7166453a7b79d6ec495ea'
   ]) {
     const oldMetadata = { ...metadata, sha256 }
     assert.throws(
@@ -659,6 +660,11 @@ test('the current profile rejects superseded Playwright and independently measur
       'issue-211-spreadsheet-table-styles',
       782171,
       '89524f75b98f1362ab0a755335918af299d25056c74aa94ffed61c92eafcfd18'
+    ],
+    [
+      'issue-211-spreadsheet-table-styles',
+      794149,
+      '7173172aff854c273ec04ac0a2d172c47ef9707005f82d3a6c36a54219b6ab33'
     ],
     ['issue-208-tiff', 83504, '84587f5b6f559e2efead4dbb63dfa399e716c347db61d6199172f52e6bf082d4']
   ]) {

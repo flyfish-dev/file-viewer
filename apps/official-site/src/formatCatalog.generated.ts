@@ -100,7 +100,8 @@ export const OFFICE_FORMAT_GROUPS = [
     "status": "stable",
     "knownLimits": [
       "VBA and add-in code are never executed",
-      "Formula results are read from the saved workbook cache"
+      "Formula results are read from the saved workbook cache",
+      "Password preview supports OOXML Agile and Standard AES, BIFF8 RC4 CryptoAPI and ASCII-password XOR"
     ]
   },
   {

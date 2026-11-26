@@ -11246,6 +11246,175 @@
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${fmt(physicalWidth)}mm" height="${fmt(physicalHeight)}mm" viewBox="${fmt(bounds.left)} ${fmt(bounds.top)} ${fmt(width)} ${fmt(height)}" preserveAspectRatio="xMidYMid meet" data-docx-metafile="emf"><rect x="${fmt(bounds.left)}" y="${fmt(bounds.top)}" width="${fmt(width)}" height="${fmt(height)}" fill="none" stroke="#999" stroke-width="1"/><text x="${fmt(bounds.left + width / 2)}" y="${fmt(bounds.top + height / 2)}" text-anchor="middle" font-size="12" fill="#666">${esc(message)}</text></svg>`;
     }
 
+    // src/document/symbol-encoding.ts
+    var symbolEncoding = {
+      33: 33,
+      34: 8704,
+      35: 35,
+      36: 8707,
+      37: 37,
+      38: 38,
+      39: 8715,
+      40: 40,
+      41: 41,
+      42: 8727,
+      43: 43,
+      44: 44,
+      45: 8722,
+      46: 46,
+      47: 47,
+      48: 48,
+      49: 49,
+      50: 50,
+      51: 51,
+      52: 52,
+      53: 53,
+      54: 54,
+      55: 55,
+      56: 56,
+      57: 57,
+      58: 58,
+      59: 59,
+      60: 60,
+      61: 61,
+      62: 62,
+      63: 63,
+      64: 8773,
+      65: 913,
+      66: 914,
+      67: 935,
+      69: 917,
+      70: 934,
+      71: 915,
+      72: 919,
+      73: 921,
+      74: 977,
+      75: 922,
+      76: 923,
+      77: 924,
+      78: 925,
+      79: 927,
+      80: 928,
+      81: 920,
+      82: 929,
+      83: 931,
+      84: 932,
+      85: 933,
+      86: 962,
+      88: 926,
+      89: 936,
+      90: 918,
+      91: 91,
+      92: 8756,
+      93: 93,
+      94: 8869,
+      95: 95,
+      97: 945,
+      98: 946,
+      99: 967,
+      100: 948,
+      101: 949,
+      102: 966,
+      103: 947,
+      104: 951,
+      105: 953,
+      106: 981,
+      107: 954,
+      108: 955,
+      110: 957,
+      111: 959,
+      112: 960,
+      113: 952,
+      114: 961,
+      115: 963,
+      116: 964,
+      117: 965,
+      118: 982,
+      119: 969,
+      120: 958,
+      121: 968,
+      122: 950,
+      123: 123,
+      124: 124,
+      125: 125,
+      126: 8764,
+      160: 8364,
+      161: 978,
+      162: 8242,
+      163: 8804,
+      165: 8734,
+      166: 402,
+      167: 9827,
+      168: 9830,
+      169: 9829,
+      170: 9824,
+      171: 8596,
+      172: 8592,
+      173: 8593,
+      174: 8594,
+      175: 8595,
+      176: 176,
+      177: 177,
+      178: 8243,
+      179: 8805,
+      180: 215,
+      181: 8733,
+      182: 8706,
+      183: 8226,
+      184: 247,
+      185: 8800,
+      186: 8801,
+      187: 8776,
+      188: 8230,
+      191: 8629,
+      192: 8501,
+      193: 8465,
+      194: 8476,
+      195: 8472,
+      196: 8855,
+      197: 8853,
+      198: 8709,
+      199: 8745,
+      200: 8746,
+      201: 8835,
+      202: 8839,
+      203: 8836,
+      204: 8834,
+      205: 8838,
+      206: 8712,
+      207: 8713,
+      208: 8736,
+      209: 8711,
+      213: 8719,
+      214: 8730,
+      215: 8901,
+      216: 172,
+      217: 8743,
+      218: 8744,
+      219: 8660,
+      220: 8656,
+      221: 8657,
+      222: 8658,
+      223: 8659,
+      224: 9674,
+      225: 9001,
+      229: 8721,
+      241: 9002,
+      242: 8747,
+      243: 8992,
+      245: 8993
+    };
+    function decodeWordSymbol(font, code) {
+      const original = String.fromCharCode(code);
+      const family = (font ?? "").trim().replace(/^(["'])(.*)\1$/, "$2").trim().toLowerCase();
+      if (family !== "symbol")
+        return { text: original, normalized: false };
+      const slot = code >= 61440 && code <= 61695 ? code - 61440 : code;
+      const unicode = slot >= 0 && slot <= 255 ? symbolEncoding[slot] : void 0;
+      const text = unicode === void 0 ? original : String.fromCharCode(unicode);
+      return { text, normalized: text !== original };
+    }
+
     // src/metafile/wmf-to-svg.ts
     var PLACEABLE_KEY = 2596720087;
     var META = {
@@ -11321,7 +11490,7 @@
         return null;
       const fileSizeWords = view.getUint32(offset + 6, true);
       const objectCount = Math.max(1, view.getUint16(offset + 10, true) || 16);
-      const declaredBytes = fileSizeWords > 0 ? fileSizeWords * 2 : view.byteLength;
+      const declaredEnd = fileSizeWords > 0 ? offset + fileSizeWords * 2 : view.byteLength;
       offset += 18;
       const width = Math.max(1, bounds.right - bounds.left);
       const height = Math.max(1, bounds.bottom - bounds.top);
@@ -11332,7 +11501,7 @@
       let records = 0;
       const maxRecords = options.maxRecords ?? 1e4;
       const maxShapes = options.maxShapes ?? 5e4;
-      const endLimit = Math.min(view.byteLength, declaredBytes);
+      const endLimit = Math.min(view.byteLength, declaredEnd);
       const emit = (markup) => {
         if (!markup || shapeCount >= maxShapes)
           return;
@@ -11343,13 +11512,10 @@
         const sizeWords = view.getUint32(offset, true);
         const fn = view.getUint16(offset + 4, true);
         const end = offset + sizeWords * 2;
-        if (sizeWords < 3 || end > view.byteLength)
+        if (fn == META.EOF || sizeWords < 3 || end > endLimit)
           break;
         const params = offset + 6;
         switch (fn) {
-          case META.EOF:
-            offset = endLimit;
-            break;
           case META.SETBKMODE:
             state.bkMode = readInt16(view, params);
             break;
@@ -11459,8 +11625,11 @@
       };
     }
     function transformScalarX(state, value) {
+      return Math.abs(transformDeltaX(state, value));
+    }
+    function transformDeltaX(state, value) {
       const viewportExt = state.viewportExt ?? state.windowExt;
-      return Math.abs(value * safeRatio(viewportExt.x, state.windowExt.x));
+      return value * safeRatio(viewportExt.x, state.windowExt.x);
     }
     function transformScalarY(state, value) {
       const viewportExt = state.viewportExt ?? state.windowExt;
@@ -11532,7 +11701,7 @@
       const alignedStringEnd = stringOffset + count + count % 2;
       if (alignedStringEnd + 4 > end)
         return;
-      const text = decodeText(view, stringOffset, count, state.font.charset);
+      const text = decodeText(readTextBytes(view, stringOffset, count), state.font);
       const y = readInt16(view, alignedStringEnd);
       const x = readInt16(view, alignedStringEnd + 2);
       emitText2(text, resolveTextPoint(state, { x, y }), null, state, emit);
@@ -11546,17 +11715,14 @@
       let pos = offset + 8;
       if (options & 6)
         pos += 8;
-      if (pos + count > end)
+      if (pos + count + count % 2 > end)
         return;
-      const text = decodeText(view, pos, count, state.font.charset);
+      const bytes = readTextBytes(view, pos, count);
+      const text = decodeText(bytes, state.font);
       pos += count + count % 2;
-      const dx = [];
-      while (pos + 2 <= end && dx.length < count) {
-        dx.push(readInt16(view, pos));
-        pos += 2;
-      }
-      emitText2(text, resolveTextPoint(state, { x, y }), dx.length ? dx : null, state, emit);
-      advanceCurrentPoint(text, dx.length ? dx : null, state);
+      const dx = count > 0 && pos + count * 2 <= end ? Array.from({ length: count }, (_, i) => readInt16(view, pos + i * 2)) : null;
+      emitText2(text, resolveTextPoint(state, { x, y }), groupGlyphAdvances(bytes, text, dx, state.font), state, emit);
+      advanceCurrentPoint(text, dx, state);
     }
     function resolveTextPoint(state, declared) {
       if (state.textAlign & 1)
@@ -11568,7 +11734,7 @@
         return;
       const logicalAdvance = dx?.length ? dx.reduce((sum, value) => sum + value, 0) : text.length * state.font.size * 0.5;
       state.currentPoint = {
-        x: state.currentPoint.x + transformScalarX(state, logicalAdvance),
+        x: state.currentPoint.x + transformDeltaX(state, logicalAdvance),
         y: state.currentPoint.y
       };
     }
@@ -11577,8 +11743,11 @@
         return;
       const font = state.font;
       const size = Math.max(1, transformScalarY(state, font.size));
+      const symbol = isSymbolFont(font);
+      const family = symbol ? "Cambria Math, Times New Roman, serif" : quoteFont(font.family);
+      const symbolAttr = symbol ? ` font-family="${escAttr(font.family)}"` : "";
       const style = [
-        `font-family:${quoteFont(font.family)}`,
+        `font-family:${family}`,
         `font-size:${fmt2(size)}px`,
         `font-weight:${font.weight >= 600 ? "700" : font.weight}`,
         `font-style:${font.italic ? "italic" : "normal"}`
@@ -11596,14 +11765,17 @@
         textAnchorAttr2(state.textAlign)
       ].filter(Boolean).join(" ");
       if (!dx || dx.length == 0) {
-        emit(`<text ${attrs}>${esc2(text)}</text>`);
+        const escaped = esc2(text);
+        const content = symbol ? escaped.replace(/[\uf000-\uf0ff]+/g, (glyphs) => `<tspan${symbolAttr}>${glyphs}</tspan>`) : escaped;
+        emit(`<text ${attrs}>${content}</text>`);
         return;
       }
       let x = point.x;
       const chars = Array.from(text);
       const tspans = chars.map((ch, i) => {
-        const t = `<tspan x="${fmt2(x)}">${esc2(ch)}</tspan>`;
-        x += transformScalarX(state, dx[i] ?? 0);
+        const fontAttr = symbol && /[\uf000-\uf0ff]/.test(ch) ? symbolAttr : "";
+        const t = `<tspan x="${fmt2(x)}"${fontAttr}>${esc2(ch)}</tspan>`;
+        x += transformDeltaX(state, dx[i] ?? 0);
         return t;
       }).join("");
       emit(`<text ${attrs}>${tspans}</text>`);
@@ -11636,8 +11808,17 @@
         return `text-anchor="middle"`;
       return "";
     }
-    function decodeText(view, offset, count, charset) {
-      const bytes = new Uint8Array(view.buffer, view.byteOffset + offset, Math.max(0, Math.min(count, view.byteLength - offset)));
+    function readTextBytes(view, offset, count) {
+      return new Uint8Array(view.buffer, view.byteOffset + offset, count);
+    }
+    function isSymbolFont(font) {
+      return font.family.toLowerCase() === "symbol";
+    }
+    function decodeText(bytes, font) {
+      if (isSymbolFont(font)) {
+        return Array.from(bytes, (byte) => byte == 0 || byte == 32 ? String.fromCharCode(byte) : decodeWordSymbol(font.family, 61440 + byte).text).join("").replace(/\0+$/g, "");
+      }
+      const charset = font.charset;
       const preferred = charset == 2 ? "symbol" : charset == 134 ? "gb18030" : "windows-1252";
       try {
         return new TextDecoder(preferred).decode(bytes).replace(/\0+$/g, "");
@@ -11647,6 +11828,29 @@
           result += String.fromCharCode(b);
         return result.replace(/\0+$/g, "");
       }
+    }
+    function groupGlyphAdvances(bytes, text, dx, font) {
+      if (!dx || font.charset != 134 || isSymbolFont(font))
+        return dx;
+      const glyphCount = Array.from(text).length;
+      if (glyphCount == bytes.length)
+        return dx;
+      const decoder = new TextDecoder("gb18030");
+      const advances = [];
+      let advance = 0;
+      for (let i = 0; i < bytes.length; i++) {
+        advance += dx[i];
+        const glyph = decoder.decode(bytes.subarray(i, i + 1), { stream: true });
+        if (!glyph)
+          continue;
+        if (Array.from(glyph).length != 1)
+          return null;
+        advances.push(advance);
+        advance = 0;
+      }
+      if (decoder.decode())
+        advances.push(advance);
+      return advances.length >= glyphCount ? advances : null;
     }
     function readPointYX(view, offset) {
       return { y: readInt16(view, offset), x: readInt16(view, offset + 2) };
@@ -13460,7 +13664,11 @@
         const result = { type: "vmlPicture" /* VmlPicture */, children: [] };
         for (const el of xml_parser_default.elements(elem)) {
           const child = parseVmlElement(el, this);
-          child && result.children.push(child);
+          if (!child)
+            continue;
+          if (elem.localName === "object" && child.tagName === "image" && child.cssStyle?.position !== "absolute")
+            child.props = { ...child.props, inlineObjectPreview: true };
+          result.children.push(child);
         }
         return result;
       }
@@ -15427,6 +15635,24 @@
       }
     };
   })();
+  /*! @license Adobe Symbol Encoding to Unicode
+   *  Copyright (c) 1991-2011 Unicode, Inc. All Rights reserved.
+   *
+   *  This file is provided as-is by Unicode, Inc. (The Unicode Consortium). No
+   *  claims are made as to fitness for any particular purpose. No warranties of
+   *  any kind are expressed or implied. The recipient agrees to determine
+   *  applicability of information provided. If this file has been provided on
+   *  magnetic media by Unicode, Inc., the sole remedy for any claim will be
+   *  exchange of defective media within 90 days of receipt.
+   *
+   *  Unicode, Inc. hereby grants the right to freely use the information
+   *  supplied in this file in the creation of products supporting the
+   *  Unicode Standard, and to make copies of this file in any form for
+   *  internal or external distribution as long as this notice remains
+   *  attached.
+   *
+   * Source: https://www.unicode.org/Public/MAPPINGS/VENDORS/ADOBE/symbol.txt
+   */
   /*! Bundled license information:
 
   jszip/dist/jszip.min.js:

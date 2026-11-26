@@ -1,6 +1,6 @@
 {
   "name": "@flyfish-group/file-viewer-site",
-  "version": "3.3.6",
+  "version": "3.3.7",
   "private": true,
   "type": "module",
   "scripts": {

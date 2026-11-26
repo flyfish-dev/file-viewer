@@ -201,7 +201,8 @@ export const DEFAULT_RENDERER_DEFINITIONS = [
     ],
     "knownLimits": [
       "VBA and add-in code are never executed",
-      "Formula results are read from the saved workbook cache"
+      "Formula results are read from the saved workbook cache",
+      "Password preview supports OOXML Agile and Standard AES, BIFF8 RC4 CryptoAPI and ASCII-password XOR"
     ],
     "capabilities": {
       "download": true,

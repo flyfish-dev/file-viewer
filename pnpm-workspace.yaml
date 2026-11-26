@@ -87,14 +87,14 @@ overrides:
   # @kitware/vtk.js@36.4.1 pins the vulnerable fflate 0.7.3 release. Keep
   # the same API line while consuming the patched 0.7.5 security release.
   '@kitware/vtk.js>fflate': 0.7.5
-  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.6
-  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.6
-  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.6
-  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.6
-  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.6
-  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.6
-  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.6
-  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.6
+  '@file-viewer/example-vanilla-vite>@file-viewer/web': workspace:3.3.7
+  '@file-viewer/example-vanilla-vite>@file-viewer/preset-lite': workspace:3.3.7
+  '@file-viewer/example-vanilla-vite>@file-viewer/vite-plugin': workspace:3.3.7
+  '@file-viewer/example-react-vite>@file-viewer/react': workspace:3.3.7
+  '@file-viewer/example-react-vite>@file-viewer/preset-office': workspace:3.3.7
+  '@file-viewer/example-react-vite>@file-viewer/vite-plugin': workspace:3.3.7
+  '@file-viewer/example-vue3-vite>@file-viewer/vue3-full': workspace:3.3.7
+  '@file-viewer/example-vue3-vite>@file-viewer/vite-plugin': workspace:3.3.7
   # Retain the validated runtime dependency closure.
   'jszip@3.10.2>pako': 1.0.11
   'jszip@3.10.2>readable-stream': 2.3.8

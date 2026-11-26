@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "fb596fda74cf521cf3cf4e680271ef19cda89c92",
-  "manifestSha256": "10331c1b9d99ed22833867dc722573ed00be74eca88457bbcd72d4cd9e02c4f6",
-  "tag": "v3.3.6-candidate-10331c1b9d99",
+  "sourceCommit": "b5f8219fa4ccf48b6f415a7a54c53c9f6aeb9bf0",
+  "manifestSha256": "19f7146eed6a6a7621a4acb28a0a015f0fcc95a7ea9341e069ec7724729c4b14",
+  "tag": "v3.3.7-candidate-19f7146eed6a",
   "registrySupport": [
     {
       "packageName": "@file-viewer/docx",
-      "version": "0.3.42",
-      "tarball": "file-viewer-docx-0.3.42.tgz",
-      "tarballSize": 723798,
-      "sha256": "c9fd225ab68cc3394ca403f485437768d225447bfe3201debb480c7d5ab35990",
-      "integrity": "sha512-tmqxWONZ6Z3jX9IF8YrdnkC+4V+3aiT06H9e6ashxngaBZWP5Ay2hRL54qujNahC401znbTxUdg+6WAvNYpT2A=="
+      "version": "0.3.43",
+      "tarball": "file-viewer-docx-0.3.43.tgz",
+      "tarballSize": 727698,
+      "sha256": "6726f28185f647bef424b9bdcc36b1aa4d2f05b5cf55beec8504e5f46fdb7615",
+      "integrity": "sha512-dKi6Q/k2EwaQl9IHx3TtWSfeAZQ8o43UlOMnXCYjjx0SYuE1TIifYjcRR8KJmz4UfgkDjMBpnyOs8chXhDsh3g=="
     },
     {
       "packageName": "styled-exceljs",
@@ -30,21 +30,21 @@
     }
   ],
   "productionAuditPayloadSha256": {
-    "web-standard": "d4e3422b23b7c76464998644af9d733425be135a74a1b547cb27b916497db6e2",
-    "web-full": "28977d6aa1aa996109945076d034c6106ef233d075c26c8fcaf7a758bf524942",
-    "vue3-standard": "5af64af7fba8b3184674105a1353fd59f60d698ea905e11cb612c3daadbd3dbe",
-    "vue3-full": "8688c07ace9aec2867c227200ce20cb3a446c9adcb094f1e4f59ecfd28f8855d",
-    "vue2.7-standard": "2ac2a6ad9a951d9545cbcbfdaedea16a881f0139e770bdf04579d14d1fd2b2d0",
-    "vue2.7-full": "7e2a4b931cd3305447b253bf8688024946767edc5ae52207faa25e690dbcabbd",
-    "vue2.6-standard": "cd1dbfe09c8275b0e50076864bbfee6f332954a0957c6d81e5e86864a3d48d02",
-    "vue2.6-full": "e9b42e41da0c0614674ca109bfc038309be4e97da12d79801183c05a7e6318e5",
-    "react-standard": "24918a5b40ee5d17ec9eae7b129db129be897050ea6fc37a4bf38b4ef2c6ae74",
-    "react-full": "081da9c805baa02ecb112d40bfbef997b6d540d5717de1de2bbef09ec915c7c2",
-    "react-legacy-standard": "c7815232fdc5c694ea9330f346077e8ed3b47c362802fc50065a8d3d344faf18",
-    "react-legacy-full": "4c539b5fc1f6f8001244eee42a4a352b6d60259087befcefd953fc056f47aa0a",
-    "svelte-standard": "83e7c7cb0b46d4eae51b9738d7a58b101c0d7ebb1b5a07c17832bb37b26737c6",
-    "svelte-full": "6155a6929caa918784038ee35712209e208b5ecc3dc6565f008b42a381cfc892",
-    "jquery-standard": "0067426c81814e3216096634b719b4b8b24267feb0635933496e848547713460",
-    "jquery-full": "483f4332e6d874fd38cf473e2eae6bffdda8f4e397735a716a4f3e1db986f447"
+    "web-standard": "4490df55d27a482747c801af355dbc66e0ee95e5b119aedc1aa79d793dc79c8d",
+    "web-full": "9e5a255b5408b34952e43aabfb2a21f5de187acec1dec15baadd87df53fb8991",
+    "vue3-standard": "76286a3f68c234c2eb088f2732973453a1ef38e85f44b8714b81cab6ceeaecab",
+    "vue3-full": "3044ea715b659aeb18befcd7465686589f957a32ca80fc1556bfb9c858ceb2d0",
+    "vue2.7-standard": "7621e5d49ad526c12ef4ea9bc8e6419004052ccf5e69373f99b4c712fe10b281",
+    "vue2.7-full": "be2bfdeee24752e42fd121071a41b851c06d03f6f7099d82891cd4b1cef897ba",
+    "vue2.6-standard": "0a67d3db6a7deba240e77078ba6c7cbecf04fc8c83e4d9109be67e1d610da264",
+    "vue2.6-full": "b621e15b09ab905f639c8b8b807b5b035695c5b846934bb10c8fb47ef44c4b85",
+    "react-standard": "674c78ebd1683a5659e5c84e1bd500ebf0859b94c508c5db032727109756cc36",
+    "react-full": "76a8b5b2b7912d191ae6d3159fb3e43719c99206615086dc3db37b7bb42d591a",
+    "react-legacy-standard": "1da25c2d3e9e01e28ddf989b2be062782929b85f2442286221ecb7ebfd6d8ba2",
+    "react-legacy-full": "63802c5564a9ae41d2ae8a3797f912a6c236468097118252df61b71a2b213996",
+    "svelte-standard": "705ebb238a94a04428cc0cd73c890ec838042b049220366659a3440674e855d7",
+    "svelte-full": "159a1a89b0ba47ee604180ad1010ff32dc102667ea7cf0ecc4b2175ec4988608",
+    "jquery-standard": "a5753ea580d167977615f5eb73a7b24c9f703f25ffb174fc3ea03ff49654a01d",
+    "jquery-full": "5e06458f8e6da5d946f467b52f5b8a59bcd3df6c42c92da33e6a76c123556db6"
   }
 }

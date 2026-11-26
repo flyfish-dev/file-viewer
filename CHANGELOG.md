@@ -17,6 +17,13 @@
 - Expose the existing code/text and Markdown zoom providers through the shared capability declarations; retain provider-owned action limits (#483).
 - Run the existing PDF annotation regression and retain its reports and screenshots in Public CI (#440).
 
+## File Viewer v3.3.7
+
+- Reuse Vite dependency lookups during configuration so large workspaces start faster with the same preview dependencies (#516).
+- Keep Excel headers visible while scrolling in frozen panes, and open supported password-protected Excel sheets (#514, #518).
+- Keep OFD files loaded in the demo iframe and preserve MathType formula layout in PPTX previews (#517, #519).
+- Use `@file-viewer/docx@0.3.43` for the verified Word preview fixes (#520).
+
 ## File Viewer v3.3.4 — 2026-11-16
 
 Published the 89-package cohort and deployed the website, Demo, documentation and component Demo.
