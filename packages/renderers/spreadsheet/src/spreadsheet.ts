@@ -36,7 +36,7 @@ import {
 import { renderSpreadsheetChart } from './spreadsheet/chartRenderer.js';
 import { createSpreadsheetImageSourceResolver } from './spreadsheet/imageSource.js';
 import { shouldFillSpreadsheetViewport, SpreadsheetViewportFill } from './spreadsheet/viewport.js';
-import { installFrozenRows } from './spreadsheet/frozenRows.js';
+import { getEffectiveFrozenRowCount, installFrozenRows } from './spreadsheet/frozenRows.js';
 import { drawingContainsPoint, getDrawingPlacements, getDrawingPlacementStyle, type DrawingPlacement } from './spreadsheet/drawingPanes.js';
 import type { SheetCellMetadata, SheetChart, SheetComment, SheetDefinition, SheetImage, SheetModel } from './spreadsheet/worker/type.js';
 import {
@@ -79,7 +79,10 @@ type EVirtTableInstance = {
     body: {
       headIndex?: number;
       tailIndex?: number;
+      visibleHeight: number;
+      data: unknown[];
     };
+    database: { getPositionForRowIndex(index: number): { top: number; bottom: number } };
     scrollX?: number;
     scrollY?: number;
     fixedLeftWidth?: number;
@@ -1604,6 +1607,41 @@ const renderFileViewerSpreadsheet = async (
     });
   };
 
+  const buildTableConfig = () => createTableConfig({
+    hostHeight: getHostHeight(),
+    darkMode,
+    resizableColumns,
+    resizableRows,
+    comments: activeComments(),
+    showComment,
+    commentLabel,
+    copySelection: copySpreadsheetSelection,
+    searchCell: getSearchCell,
+    getRowPosition: row => table?.ctx.database.getPositionForRowIndex(row),
+    getFrozenRowCount: () => {
+      const requestedCount = virtualState.freeze?.rows ?? 0;
+      if (!table || !requestedCount) return 0;
+      const { body, database } = table.ctx;
+      return getEffectiveFrozenRowCount(
+        body.visibleHeight,
+        Math.min(requestedCount, body.data.length),
+        index => database.getPositionForRowIndex(index).bottom
+      );
+    },
+    requestMergeAnchor: row => {
+      const state = virtualState;
+      const start = getWindowStart(row, state.totalRows, state.windowSize);
+      if (state.loadedWindows.has(start) || state.loadingWindows.has(start)) return;
+      // Draw callbacks must not reenter the table when loading an off-screen anchor.
+      queueMicrotask(() => {
+        if (!disposed && virtualState === state) requestWindow(start, true);
+      });
+    },
+    sheetDefaults,
+    virtualState,
+    zoomScale: zoom,
+  });
+
   const buildTableView = () => {
     const display = fillViewport && virtualState.active
       ? viewportFill.build(virtualState, tableHost.clientWidth, Math.max(getHostHeight(), 240), zoom)
@@ -1611,20 +1649,7 @@ const renderFileViewerSpreadsheet = async (
     const layout = getSpreadsheetDisplayColumns(display.columns, zoom, tableHost.clientWidth);
     virtualState.visibleFrozenColumns = layout.frozenColumns;
     return {
-      config: createTableConfig({
-        hostHeight: getHostHeight(),
-        darkMode,
-        resizableColumns,
-        resizableRows,
-        comments: activeComments(),
-        showComment,
-        commentLabel,
-        copySelection: copySpreadsheetSelection,
-        searchCell: getSearchCell,
-        sheetDefaults,
-        virtualState,
-        zoomScale: zoom,
-      }),
+      config: buildTableConfig(),
       columns: layout.columns,
       rows: display.rows,
     };
@@ -1696,20 +1721,7 @@ const renderFileViewerSpreadsheet = async (
     table = new EVirtTable(tableHost, {
       data: [],
       columns: [],
-      config: createTableConfig({
-        hostHeight: getHostHeight(),
-        darkMode,
-        resizableColumns,
-        resizableRows,
-        comments: activeComments(),
-        showComment,
-        commentLabel,
-        copySelection: copySpreadsheetSelection,
-        searchCell: getSearchCell,
-        sheetDefaults,
-        virtualState,
-        zoomScale: zoom,
-      }),
+      config: buildTableConfig(),
     });
     enableEVirtTableShadowEventTargeting(table.ctx);
     frozenRows = installFrozenRows(table, () => virtualState.freeze?.rows ?? 0);
